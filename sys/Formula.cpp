@@ -5099,7 +5099,7 @@ static void do_MATmul_tn () {
 		Melder_require (yNrow == xNrow,
 			U"In the function \"mul_tn##\", the number of rows of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNrow, U" and ", yNrow, U".");
-		autoMAT result = MATmul (constMATVUtranspose (x->numericMatrix), y->numericMatrix);
+		autoMAT result = MATmul (x->numericMatrix.transpose(), y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_tn##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5118,7 +5118,7 @@ static void do_MATmul_nt () {
 		Melder_require (yNcol == xNcol,
 			U"In the function \"mul_tn##\", the number of columns of the first matrix and the number of columns of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNcol, U".");
-		autoMAT result = MATmul (x->numericMatrix, constMATVUtranspose (y->numericMatrix));
+		autoMAT result = MATmul (x->numericMatrix, y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_nt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5137,7 +5137,7 @@ static void do_MATmul_tt () {
 		Melder_require (yNcol == xNrow,
 			U"In the function \"mul_tt##\", the number of rows of the first matrix and the number of columns of the second matrix should be equal, "
 			U"not ", xNrow, U" and ", yNcol, U".");
-		autoMAT result = MATmul (constMATVUtranspose (x->numericMatrix), constMATVUtranspose (y->numericMatrix));
+		autoMAT result = MATmul (x->numericMatrix.transpose(), y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_tt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");

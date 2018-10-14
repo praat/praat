@@ -338,13 +338,12 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 	}
 }
 
-void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y) {
-
+void MATouter_preallocated (MAT const& target, constVEC const& x, constVEC const& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
 			target [irow] [icol] = x [irow] * y [icol];
 }
-autoMAT MATouter (const constVEC& x, const constVEC& y) {
+autoMAT MATouter (constVEC const& x, constVEC const& y) {
 	autoMAT result = MATraw (x.size, y.size);
 	MATouter_preallocated (result.get(), x, y);
 	return result;

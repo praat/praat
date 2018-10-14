@@ -159,12 +159,10 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	Melder_assert (result.nrow == result.ncol);
 	MATset (result, 0.0);
 	if (true) {
-		autoVEC row = VECraw (data.ncol);
 		autoMAT outer = MATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			VECcopy_preallocated (row.get(), data.row (irow));
-			MATouter_preallocated (outer, row.get(), row.get());
-			MATsaxpy (result, outer.get(), rowWeights [irow]);
+			MATouter_preallocated (outer, data.row (irow), data.row (irow));
+			MATaxpy (result, outer.get(), rowWeights [irow]);
 		}
 	} else {
 		autoVEC w = VECraw (rowWeights.size);
@@ -785,7 +783,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 	autoMAT yc = MATcopy (y);
 	if (! orthogonal)
 		MATcentreEachColumn_inplace (yc.get());
-	autoMAT c = MATmul (constMATVUtranspose (x), yc.get()); // X'(JY)
+	autoMAT c = MATmul (x.transpose(), yc.get()); // X'(JY)
 
 	// 2. Decompose C by SVD: C = UDV' (our SVD has eigenvectors stored row-wise V!)
 
@@ -795,7 +793,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 
 	// 3. T = VU'
 
-	autoMAT rotation = MATmul (svd->v.get(), constMATVUtranspose (svd->u.get()));
+	autoMAT rotation = MATmul (svd->v.all(), svd->u.transpose());
 	
 	if (! orthogonal) {
 
