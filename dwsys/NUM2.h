@@ -225,7 +225,7 @@ inline autoVEC VECdiagonal (constMAT& x) {
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = VECraw (x.ncol);
 	autoVEC column = VECraw (x.ncol);
-	for (integer icol; icol <= norm.size; icol ++) {
+	for (integer icol = 1; icol <= norm.size; icol ++) {
 		VECcopy_preallocated (column.get(), x, icol);
 		norm [icol] = NUMnorm (column.get(), power);
 	}
@@ -234,7 +234,7 @@ inline autoVEC VECnorm_columns (constMAT x, double power) {
 
 inline autoVEC VECnorm_rows (constMAT x, double power) {
 	autoVEC norm = VECraw (x.nrow);
-	for (integer irow; irow <= norm.size; irow ++)
+	for (integer irow = 1; irow <= norm.size; irow ++)
 		norm [irow] = NUMnorm (x.row (irow), power);
 	return norm;
 }
