@@ -5001,14 +5001,14 @@ static void do_tensorLiteral () {
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		integer sharedNumberOfColumns = last->numericVector.size;
 		autoMAT result = MATraw (numberOfElements, sharedNumberOfColumns);
-		VECcopy_preallocated (result.row (numberOfElements), last->numericVector);
+		result.row (numberOfElements) <<= last->numericVector;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
 			Stackel element = pop;
 			Melder_require (element->which == Stackel_NUMERIC_VECTOR,
 				U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a vector.");
 			Melder_require (element->numericVector.size == sharedNumberOfColumns,
 				U"The vectors have to be of the same size, not ", element->numericVector.size, U" and ", sharedNumberOfColumns);
-			VECcopy_preallocated (result.row (ielement), element->numericVector);
+			result.row (ielement) <<= element->numericVector;
 		}
 		pushNumericMatrix (result.move());
 	} else {

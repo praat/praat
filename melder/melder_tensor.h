@@ -345,6 +345,7 @@ public:
 			vec1 = vec2;
 		should be allowed...
 	*/
+	//vector& operator= (const vector&) = delete;
 	vector& operator= (const vector&) = default;
 	/*
 		but an assignment like
@@ -1118,6 +1119,12 @@ inline autoBOOLMAT BOOLMATcopy (constBOOLMAT source) { return matrixcopy (source
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
+
+inline void operator<<= (VECVU const& lhs, constVECVU const& rhs) {
+	Melder_assert (lhs.size == rhs.size);
+	for (integer i = 1; i <= lhs.size; i ++)
+		lhs [i] = rhs [i];
+}
 
 /* End of file melder_tensor.h */
 #endif
