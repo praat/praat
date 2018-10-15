@@ -145,11 +145,6 @@ inline void MATset (MAT x, double value) {
 	VECset (asvector (x), value);
 }
 
-inline void VECset (VEC x, double value, integer to) {
-	Melder_assert (to > 0 && to <= x.size);
-	for (integer i = 1; i <= to; i ++) x [i] = value;
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
