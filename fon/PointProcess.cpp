@@ -197,7 +197,7 @@ void PointProcess_addPoints (PointProcess me, constVEC times) {
 	try {
 		integer newNumberOfPoints = my nt + times.size;
 		my t.resize (newNumberOfPoints, & my maxnt);
-		VECcopy_preallocated (my t.subview (my nt + 1, newNumberOfPoints), times);
+		my t.subview (my nt + 1, newNumberOfPoints) <<= times;
 		my nt = newNumberOfPoints;   // maintain invariant
 		VECsort_inplace (my t.get());
 	} catch (MelderError) {

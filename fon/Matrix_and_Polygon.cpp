@@ -29,18 +29,16 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 				The first row will be interpreted as x values, the second as y values.
 			*/
 			thee = Polygon_create (my nx);
-			VECcopy_preallocated (thy x.get(), my z.row (1));
-			VECcopy_preallocated (thy y.get(), my z.row (2));
+			thy x.get() <<= my z.row (1);
+			thy y.get() <<= my z.row (2);
 		} else {
 			/*
 				The matrix has two columns.
 				The first column will be interpreted as x values, the second as y values.
 			*/
 			thee = Polygon_create (my ny);
-			for (integer i = 1; i <= my ny; i ++) {
-				thy x [i] = my z [i] [1];
-				thy y [i] = my z [i] [2];
-			}
+			thy x.get() <<= my z.column (1);
+			thy y.get() <<= my z.column (2);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -55,8 +53,8 @@ autoMatrix Polygon_to_Matrix (Polygon me) {
 			the first column will represent x, the second will represent y.
 		*/
 		autoMatrix thee = Matrix_create (1.0, my numberOfPoints, my numberOfPoints, 1.0, 1.0, 1.0, 2.0, 2, 1.0, 1.0);
-		VECcopy_preallocated (thy z.row (1), my x.get());
-		VECcopy_preallocated (thy z.row (2), my y.get());
+		thy z.row (1) <<= my x.get();
+		thy z.row (2) <<= my y.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
