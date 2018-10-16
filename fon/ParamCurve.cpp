@@ -120,14 +120,14 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		dt = my x -> dx < my y -> dx ? my x -> dx : my y -> dx;
 	integer numberOfPoints = Melder_iceiling ((t2 - t1) / dt) + 1;
 	if (numberOfPoints > 0) {
-		autoNUMvector <double> x (1, numberOfPoints);
-		autoNUMvector <double> y (1, numberOfPoints);
+		autoVEC x = VECraw (numberOfPoints);
+		autoVEC y = VECraw (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
 			double index = Sampled_xToIndex (my x.get(), t);
-			x [i] = NUM_interpolate_sinc (& my x -> z [1] [0], my x -> nx, index, 50);
+			x [i] = NUM_interpolate_sinc (my x -> z.row (1), index, 50);
 			index = Sampled_xToIndex (my y.get(), t);
-			y [i] = NUM_interpolate_sinc (& my y -> z [1] [0], my y -> nx, index, 50);
+			y [i] = NUM_interpolate_sinc (my y -> z.row (1), index, 50);
 		}
 		Graphics_setWindow (g, x1, x2, y1, y2);
 		Graphics_setInner (g);

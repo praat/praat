@@ -335,8 +335,8 @@ static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, boo
 			double myf = thyf - shiftBy;
 			if (myf >= my xmin && myf <= my xmax) {
 				double index = Sampled_xToIndex (me, myf);
-				thy z [1] [i] = NUM_interpolate_sinc (my z [1], my nx, index, interpolationDepth);
-				thy z [2] [i] = NUM_interpolate_sinc (my z [2], my nx, index, interpolationDepth);
+				thy z [1] [i] = NUM_interpolate_sinc (my z.row (1), index, interpolationDepth);
+				thy z [2] [i] = NUM_interpolate_sinc (my z.row (2), index, interpolationDepth);
 			}
 		}
 		return thee;
@@ -361,8 +361,8 @@ autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newM
 			double myf = thyf - shiftBy;
 			if (myf >= my xmin && myf <= my xmax) {
 				double index = Sampled_xToIndex (me, myf);
-				thy z [1] [i] = NUM_interpolate_sinc (& my z [1] [0], my nx, index, interpolationDepth);
-				thy z [2] [i] = NUM_interpolate_sinc (& my z [2] [0], my nx, index, interpolationDepth);
+				thy z [1] [i] = NUM_interpolate_sinc (my z.row (1), index, interpolationDepth);
+				thy z [2] [i] = NUM_interpolate_sinc (my z.row (2), index, interpolationDepth);
 			}
 		}
 		// Make imaginary part of first and last sample zero
@@ -370,7 +370,8 @@ autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newM
 		double amp = sqrt (thy z [1] [1] * thy z [1] [1] + thy z [2] [1] * thy z [2] [1]);
 		thy z [1] [1] = amp; thy z [2] [1] = 0;
 		amp = sqrt (thy z [1] [thy nx] * thy z [1] [thy nx] + thy z [2] [thy nx] * thy z [2] [thy nx]);
-		thy z [1] [thy nx] = amp; thy z [2] [thy nx] = 0;
+		thy z [1] [thy nx] = amp;
+		thy z [2] [thy nx] = 0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not shifted.");
@@ -384,7 +385,8 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer
 		double xmax = my xmax / factor;
 		integer numberOfFrequencies = Melder_ifloor (my nx / factor); // keep dx the same, otherwise the "duration" changes
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
-		thy z [1] [1] = my z [1] [1]; thy z [2] [1] = my z [2] [1];
+		thy z [1] [1] = my z [1] [1];
+		thy z [2] [1] = my z [2] [1];
 		double df = freqscale == 1 ? factor * my dx : log10 (fdomain) / (numberOfFrequencies - 1);
 		for (integer i = 2; i <= numberOfFrequencies; i ++) {
 			double f = my xmin + (freqscale == 1 ? (i - 1) * df : pow (10.0, (i - 1) * df));
@@ -393,13 +395,14 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer
 				break;
 			}
 			if (method == 1) {
-				x = NUM_interpolate_sinc (& my z [1] [0], my nx, index, interpolationDepth);
-				y = NUM_interpolate_sinc (& my z [2] [0], my nx, index, interpolationDepth);
+				x = NUM_interpolate_sinc (my z.row (1), index, interpolationDepth);
+				y = NUM_interpolate_sinc (my z.row (2), index, interpolationDepth);
 			} else {
 				x = undefined;   // ppgb: better than data from random memory
 				y = undefined;
 			}
-			thy z [1] [i] = x; thy z [2] [i] = y;
+			thy z [1] [i] = x;
+			thy z [2] [i] = y;
 		}
 		return thee;
 	} catch (MelderError) {

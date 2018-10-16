@@ -527,7 +527,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, integer ileve
 				} else if (fmid < fleft && fmid <= fright) {
 					double y [4], i_real, localMinimum;
 					y [1] = fleft, y [2] = fmid, y [3] = fright;
-					localMinimum = NUMimproveMinimum (y, 3, 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
+					localMinimum = NUMimproveMinimum (constVEC (y, 3), 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
 					if (localMinimum < minimum)
 						minimum = localMinimum, xOfMinimum = i_real + i - 2;
 				}
@@ -604,7 +604,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, integer ileve
 				} else if (fmid > fleft && fmid >= fright) {
 					double y [4], i_real, localMaximum;
 					y [1] = fleft, y [2] = fmid, y [3] = fright;
-					localMaximum = NUMimproveMaximum (y, 3, 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
+					localMaximum = NUMimproveMaximum (constVEC (y, 3), 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
 					if (localMaximum > maximum)
 						maximum = localMaximum, xOfMaximum = i_real + i - 2;
 				}

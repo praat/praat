@@ -399,44 +399,39 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 			while (nfft < my nx + antiTurnAround * 2) nfft *= 2;
 			autoVEC data (nfft, kTensorInitializationType::RAW);   // will be zeroed in every turn of the loop
 			filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-			for (integer channel = 1; channel <= my ny; channel ++) {
-				for (integer i = 1; i <= nfft; i ++) {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
+				for (integer i = 1; i <= nfft; i ++)
 					data [i] = 0.0;
-				}
-				NUMvector_copyElements (& my z [channel] [0], & data [antiTurnAround], 1, my nx);
+				NUMvector_copyElements (& my z [ichan] [0], & data [antiTurnAround], 1, my nx);
 				NUMrealft (data.get(), 1);   // go to the frequency domain
-				for (integer i = Melder_ifloor (upfactor * nfft); i <= nfft; i ++) {
+				for (integer i = Melder_ifloor (upfactor * nfft); i <= nfft; i ++)
 					data [i] = 0.0;   // filter away high frequencies
-				}
 				data [2] = 0.0;
 				NUMrealft (data.get(), -1);   // return to the time domain
 				double factor = 1.0 / nfft;
-				double *to = & filtered -> z [channel] [0];
-				for (integer i = 1; i <= my nx; i ++) {
+				VEC to = filtered -> z.row (ichan);
+				for (integer i = 1; i <= my nx; i ++)
 					to [i] = data [i + antiTurnAround] * factor;
-				}
 			}
 			me = filtered.get();   // reference copy; remove at end
 		}
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, numberOfSamples, 1.0 / samplingFrequency,
-			0.5 * (my xmin + my xmax - (numberOfSamples - 1) / samplingFrequency));
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			double *from = & my z [channel] [0];
-			double *to = & thy z [channel] [0];
+				0.5 * (my xmin + my xmax - (numberOfSamples - 1) / samplingFrequency));
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
 			if (precision <= 1) {
 				for (integer i = 1; i <= numberOfSamples; i ++) {
 					double x = Sampled_indexToX (thee.get(), i);
 					double index = Sampled_xToIndex (me, x);
 					integer leftSample = Melder_ifloor (index);
 					double fraction = index - leftSample;
-					to [i] = leftSample < 1 || leftSample >= my nx ? 0.0 :
-						(1 - fraction) * from [leftSample] + fraction * from [leftSample + 1];
+					thy z [ichan] [i] = ( leftSample < 1 || leftSample >= my nx ? 0.0 :
+							(1 - fraction) * my z [ichan] [leftSample] + fraction * my z [ichan] [leftSample + 1] );
 				}
 			} else {
 				for (integer i = 1; i <= numberOfSamples; i ++) {
 					double x = Sampled_indexToX (thee.get(), i);
 					double index = Sampled_xToIndex (me, x);
-					to [i] = NUM_interpolate_sinc (& my z [channel] [0], my nx, index, precision);
+					thy z [ichan] [i] = NUM_interpolate_sinc (my z.row (ichan), index, precision);
 				}
 			}
 		}

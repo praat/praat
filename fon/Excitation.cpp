@@ -1,6 +1,6 @@
 /* Excitation.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +59,14 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 }
 
 void structExcitation :: v_info () {
-	double *y = & z [1] [0];
+	constVEC y = z.row (1);
 	integer numberOfMaxima = 0;
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
 	for (integer i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		if (++ numberOfMaxima > 15) break;
 		double i_real;
-		double strength = NUMimproveMaximum (& z [1] [0], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
+		double strength = NUMimproveMaximum (y, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		double formant_bark = x1 + (i_real - 1.0) * dx;
 		MelderInfo_write (U"Peak at ", Melder_single (formant_bark), U" Bark");
 		MelderInfo_write (U", ", (integer) NUMbarkToHertz (formant_bark), U" Hz");

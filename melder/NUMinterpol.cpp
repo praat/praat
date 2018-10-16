@@ -30,13 +30,13 @@
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
 
 #define NUM_interpolate_simple_cases \
-	if (nx < 1) return undefined; \
-	if (x > nx) return y [nx]; \
+	if (y.size < 1) return undefined; \
+	if (x > y.size) return y [y.size]; \
 	if (x < 1) return y [1]; \
 	if (x == midleft) return y [midleft]; \
-	/* 1 < x < nx && x not integer: interpolate. */ \
+	/* 1 < x < y.size && x not integer: interpolate. */ \
 	if (maxDepth > midright - 1) maxDepth = midright - 1; \
-	if (maxDepth > nx - midleft) maxDepth = nx - midleft; \
+	if (maxDepth > y.size - midleft) maxDepth = y.size - midleft; \
 	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) return y [(integer) floor (x + 0.5)]; \
 	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR) return y [midleft] + (x - midleft) * (y [midright] - y [midleft]); \
 	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) { \
@@ -47,7 +47,7 @@
 	}
 
 #if defined (__POWERPC__)
-double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
+double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
 	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa;
 	NUM_interpolate_simple_cases
@@ -81,7 +81,7 @@ double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth
 	return result;
 }
 #else
-double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
+double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
 	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa;
 	NUM_interpolate_simple_cases
@@ -118,22 +118,21 @@ double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth
 
 struct improve_params {
 	int depth;
-	double *y;
-	integer ixmax;
+	constVEC y;
 	int isMaximum;
 };
 
 static double improve_evaluate (double x, void *closure) {
 	struct improve_params *me = (struct improve_params *) closure;
-	double y = NUM_interpolate_sinc (my y, my ixmax, x, my depth);
+	double y = NUM_interpolate_sinc (my y, x, my depth);
 	return my isMaximum ? - y : y;
 }
 
-double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real, int isMaximum) {
+double NUMimproveExtremum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real, bool isMaximum) {
 	struct improve_params params;
 	double result;
 	if (ixmid <= 1) { *ixmid_real = 1; return y [1]; }
-	if (ixmid >= nx) { *ixmid_real = nx; return y [nx]; }
+	if (ixmid >= y.size) { *ixmid_real = y.size; return y [y.size]; }
 	if (interpolation <= NUM_PEAK_INTERPOLATE_NONE) { *ixmid_real = ixmid; return y [ixmid]; }
 	if (interpolation == NUM_PEAK_INTERPOLATE_PARABOLIC) {
 		double dy = 0.5 * (y [ixmid + 1] - y [ixmid - 1]);
@@ -142,9 +141,8 @@ double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolati
 		return y [ixmid] + 0.5 * dy * dy / d2y;
 	}
 	/* Sinc interpolation. */
-	params. y = y;
 	params. depth = interpolation == NUM_PEAK_INTERPOLATE_SINC70 ? 70 : 700;
-	params. ixmax = nx;
+	params. y = y;
 	params. isMaximum = isMaximum;
 	/*return isMaximum ?
 		- NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate, & params, 1e-10, 1e-11, ixmid_real) :
@@ -153,10 +151,10 @@ double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolati
 	return isMaximum ? - result : result;
 }
 
-double NUMimproveMaximum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real)
-	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 1); }
-double NUMimproveMinimum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real)
-	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 0); }
+double NUMimproveMaximum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real)
+	{ return NUMimproveExtremum (y, ixmid, interpolation, ixmid_real, true); }
+double NUMimproveMinimum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real)
+	{ return NUMimproveExtremum (y, ixmid, interpolation, ixmid_real, false); }
 
 /********** Viterbi **********/
 
