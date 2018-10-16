@@ -27,7 +27,6 @@
  djmw 20100212 Analysis window length is now "Window length"
 */
 
-#include <math.h>
 #include "Cepstrumc.h"
 #include "Cepstrogram.h"
 #include "Cepstrum_and_Spectrum.h"

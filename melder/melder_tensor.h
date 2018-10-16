@@ -870,7 +870,7 @@ public:
 		Melder_assert (givenNcol >= 0);
 		#if PACKED_TENSORS
 		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: NUMvector<T> (1, givenNrow * givenNcol, initializationType == kTensorInitializationType::ZERO));
+				: NUMvector<T> (0, givenNrow * givenNcol - 1, initializationType == kTensorInitializationType::ZERO));
 		#else
 		our at_deprecated = ( givenNrow == 0 || givenNcol == 0 ? nullptr
 				: NUMmatrix<T> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO));
@@ -1046,6 +1046,214 @@ automatrix<T> matrixpart (const matrix<T>& x, integer firstRow, integer lastRow,
 	matrixpart (constmatrix<T> (x), firstRow, lastRow, firstColumn, lastColumn);
 }
 
+template <typename T>
+class autotensor3;
+
+template <typename T>
+class tensor3 {
+public:
+	T * cells = nullptr;
+	integer npla = 0, planeStride = 0;
+	integer nrow = 0, rowStride = 0;
+	integer ncol = 0, columnStride = 1;
+	tensor3 () = default;
+	tensor3 (const autotensor3<T>& other) = delete;
+	explicit tensor3 (T * const cells, integer const npla, integer const planeStride, integer const nrow, integer const rowStride, integer const ncol, integer const columnStride) :
+			cells (cells), npla (npla), planeStride (planeStride), nrow (nrow), rowStride (rowStride), ncol (ncol), columnStride (columnStride) { }
+	matrixview<T> operator[] (integer planeNumber) const {
+		return matrixview<T> (our cells + (planeNumber - 1) * our planeStride, our nrow, our ncol, our rowStride, our columnStride);
+	}
+	tensor3<T> part (integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
+		const integer newNpla = lastPlane - (firstPlane - 1), newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNpla <= 0 || newNrow <= 0 || newNcol <= 0) return tensor3<T> ();
+		return tensor3<T> (
+			our cells + (firstPlane - 1) * our planeStride + (firstRow - 1) * our rowStride + (firstColumn - 1) * our columnStride,
+			newNpla, our planeStride, newNrow, our rowStride, newNcol, our columnStride
+		);
+	}
+};
+
+template <typename T>
+class consttensor3 {
+public:
+	const T * cells = nullptr;
+	integer npla = 0, planeStride = 0;
+	integer nrow = 0, rowStride = 0;
+	integer ncol = 0, columnStride = 1;
+	consttensor3 () = default;
+	consttensor3 (const autotensor3<T>& other) = delete;
+	explicit consttensor3 (const T * const cells, integer const npla, integer const planeStride, integer const nrow, integer const rowStride, integer const ncol, integer const columnStride) :
+			cells (cells), npla (npla), planeStride (planeStride), nrow (nrow), rowStride (rowStride), ncol (ncol), columnStride (columnStride) { }
+	consttensor3 (tensor3<T> ten) :
+			cells (ten.cells), npla (ten.npla), planeStride (ten.planeStride), nrow (ten.nrow), rowStride (ten.rowStride), ncol (ten.ncol), columnStride (ten.columnStride) { }
+	constmatrixview<T> operator[] (integer planeNumber) const {
+		return constmatrixview<T> (our cells + (planeNumber - 1) * our planeStride, our nrow, our ncol, our rowStride, our columnStride);
+	}
+	consttensor3<T> part (integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
+		const integer newNpla = lastPlane - (firstPlane - 1), newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNpla <= 0 || newNrow <= 0 || newNcol <= 0) return consttensor3<T> ();
+		return consttensor3<T> (
+			our cells + (firstPlane - 1) * our planeStride + (firstRow - 1) * our rowStride + (firstColumn - 1) * our columnStride,
+			newNpla, our planeStride, newNrow, our rowStride, newNcol, our columnStride
+		);
+	}
+};
+
+template <typename T>
+class autotensor3 : public tensor3<T> {
+public:
+	autotensor3 () = default;   // come into existence without a payload
+	explicit autotensor3 (integer givenNpla, integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		Melder_assert (givenNpla >= 0);
+		Melder_assert (givenNrow >= 0);
+		Melder_assert (givenNcol >= 0);
+		our cells = ( givenNpla == 0 || givenNrow == 0 || givenNcol == 0 ? nullptr
+				: NUMvector<T> (0, givenNpla * givenNrow * givenNcol - 1, initializationType == kTensorInitializationType::ZERO));
+		our npla = givenNpla;
+		our nrow = givenNrow;
+		our ncol = givenNcol;
+		our columnStride = 1;
+		our rowStride = givenNcol;
+		our planeStride = givenNrow * givenNcol;
+	}
+	~autotensor3 () {   // destroy the payload (if any)
+		if (our cells) NUMvector_free (our cells, 0);
+	}
+	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
+	const tensor3<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
+	void adoptFromAmbiguousOwner (tensor3<T> given) {   // buy the payload from a non-automatrix
+		our reset();
+		our cells = given.cells;
+		our npla = given.npla;
+		our nrow = given.nrow;
+		our ncol = given.ncol;
+		our planeStride = given.planeStride;
+		our rowStride = given.rowStride;
+		our columnStride = given.columnStride;
+	}
+	tensor3<T> releaseToAmbiguousOwner () {   // sell the payload to a non-automatrix
+		T * oldCells = our cells;
+		our cells = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		return tensor3<T> (oldCells, our npla, our planeStride, our nrow, our rowStride, our ncol, our colStride);
+	}
+	/*
+		Disable copying via construction or assignment (which would violate unique ownership of the payload).
+	*/
+	autotensor3 (const autotensor3&) = delete;   // disable copy constructor
+	autotensor3& operator= (const autotensor3&) = delete;   // disable copy assignment
+	/*
+		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
+		This implements buying a payload from another automatrix (which involves destroying our current payload).
+	*/
+	autotensor3 (autotensor3&& other) noexcept : tensor3<T> (other.get()) {   // enable move constructor
+		other.cells = nullptr;   // disown source
+		other.npla = 0;   // to keep the source in a valid state
+		other.nrow = 0;   // to keep the source in a valid state
+		other.ncol = 0;   // to keep the source in a valid state
+	}
+	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
+		if (other.cells != our cells) {
+			if (our cells) NUMvector_free (our cells, 0);
+			our cells = other.cells;
+			our npla = other.npla;
+			our nrow = other.nrow;
+			our ncol = other.ncol;
+			other.cells = nullptr;   // disown source
+			other.npla = 0;   // to keep the source in a valid state
+			other.nrow = 0;   // to keep the source in a valid state
+			other.ncol = 0;   // to keep the source in a valid state
+		}
+		return *this;
+	}
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
+		if (our cells) {
+			NUMvector_free (our cells, 0);
+			our cells = nullptr;
+		}
+		our npla = 0;
+		our nrow = 0;
+		our ncol = 0;
+	}
+	autotensor3&& move () noexcept { return static_cast <autotensor3&&> (*this); }
+};
+template <typename T>
+autotensor3<T> tensor3raw (integer npla, integer nrow, integer ncol) {
+	return autotensor3<T> (npla, nrow, ncol, kTensorInitializationType::RAW);
+}
+template <typename T>
+autotensor3<T> tensor3zero (integer npla, integer nrow, integer ncol) {
+	return autotensor3<T> (npla, nrow, ncol, kTensorInitializationType::ZERO);
+}
+template <typename T>
+void tensor3copy_preallocated (tensor3<T> target, consttensor3<T> source) {
+	Melder_assert (source.npla == target.npla && source.nrow == target.nrow && source.ncol == target.ncol);
+	for (integer ipla = 1; ipla <= source.npla; ipla ++)
+		for (integer irow = 1; irow <= source.nrow; irow ++)
+			for (integer icol = 1; icol <= source.ncol; icol ++)
+				target [ipla] [irow] [icol] = source [ipla] [irow] [icol];
+}
+template <typename T>
+void tensor3copy_preallocated (tensor3<T> target, tensor3<T> source) {
+	tensor3copy_preallocated (target, consttensor3<T> (source));
+}
+template <typename T>
+autotensor3<T> tensor3copy (consttensor3<T> source) {
+	autotensor3<T> result = tensor3raw<T> (source.npla, source.nrow, source.ncol);
+	tensor3copy_preallocated (result.get(), source);
+	return result;
+}
+template <typename T>
+autotensor3<T> tensor3copy (tensor3<T> source) {
+	return tensor3copy (consttensor3<T> (source));
+}
+template <typename T>
+void assertPlane (const consttensor3<T>& x, integer planeNumber) {
+	Melder_assert (planeNumber >= 1 && planeNumber <= x.npla);
+}
+template <typename T>
+void assertRow (const consttensor3<T>& x, integer rowNumber) {
+	Melder_assert (rowNumber >= 1 && rowNumber <= x.nrow);
+}
+template <typename T>
+void assertColumn (const consttensor3<T>& x, integer columnNumber) {
+	Melder_assert (columnNumber >= 1 && columnNumber <= x.ncol);
+}
+template <typename T>
+void assertCell (const consttensor3<T>& x, integer planeNumber, integer rowNumber, integer columnNumber) {
+	assertPlane (x, planeNumber);
+	assertRow (x, rowNumber);
+	assertColumn (x, columnNumber);
+}
+template <typename T>
+autotensor3<T> tensor3part (const consttensor3<T>& x, integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	assertCell (x, firstPlane, firstRow, firstColumn);
+	assertCell (x, lastPlane, lastRow, lastColumn);
+	integer numberOfPlanes = lastPlane - (firstPlane - 1);
+	Melder_assert (numberOfPlanes >= 0);
+	integer numberOfRows = lastRow - (firstRow - 1);
+	Melder_assert (numberOfRows >= 0);
+	integer numberOfColumns = lastColumn - (firstColumn - 1);
+	Melder_assert (numberOfColumns >= 0);
+	autotensor3<T> result = tensor3raw<T> (numberOfPlanes, numberOfRows, numberOfColumns);
+	for (integer ipla = 1; ipla <= numberOfPlanes; ipla ++)
+		for (integer irow = 1; irow <= numberOfRows; irow ++)
+			for (integer icol = 1; icol <= numberOfColumns; icol ++)
+				result [ipla] [irow] [icol] = x [firstPlane - 1 + ipla] [firstRow - 1 + irow] [firstColumn - 1 + icol];
+	return result;
+}
+template <typename T>
+autotensor3<T> tensor3part (const tensor3<T>& x, integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	tensor3part (consttensor3<T> (x), firstPlane, lastPlane, firstRow, lastRow, firstColumn, lastColumn);
+}
+
 /*
 	instead of vector<double> we say VEC, because we want to have a one-to-one
 	relation between VEC functions and the scripting language.
@@ -1098,6 +1306,16 @@ inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double>
 inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
 inline autoMAT MATpart (const constMAT& source, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
 	return matrixpart (source, firstRow, lastRow, firstColumn, lastColumn);
+}
+
+using TEN3 = tensor3 <double>;
+using constTEN3 = consttensor3 <double>;
+using autoTEN3 = autotensor3 <double>;
+inline autoTEN3 TEN3raw  (integer npla, integer nrow, integer ncol) { return tensor3raw  <double> (npla, nrow, ncol); }
+inline autoTEN3 TEN3zero (integer npla, integer nrow, integer ncol) { return tensor3zero <double> (npla, nrow, ncol); }
+inline autoTEN3 TEN3copy (constTEN3 source) { return tensor3copy (source); }
+inline autoTEN3 TEN3part (const constTEN3& source, integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	return tensor3part (source, firstPlane, lastPlane, firstRow, lastRow, firstColumn, lastColumn);
 }
 
 using INTMAT = matrix <integer>;
