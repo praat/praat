@@ -272,8 +272,9 @@ autoVEC VECmonotoneRegression (constVEC x);
 	Sorts (inplace) an array a[1..n] into ascending order using the Heapsort algorithm,
 	while making the corresponding rearrangement of the companion
 	array b[1..n]. A characteristic of heapsort is that it does not conserve
-	the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3.
-	It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
+	the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3 and
+	it may occur that the first 1 after sorting came from position 3 and the second 
+	1 came from position 2.
 */
 template<typename T1, typename T2>
 void NUMsortTogether (vector<T1> a, vector<T2> b) {
