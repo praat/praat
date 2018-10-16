@@ -27,7 +27,7 @@
 // Higher values than 2 yield a true sinc interpolation. Here are some examples:
 #define NUM_VALUE_INTERPOLATE_SINC70  70
 #define NUM_VALUE_INTERPOLATE_SINC700  700
-double NUM_interpolate_sinc (double y [], integer nx, double x, integer interpolationDepth);
+double NUM_interpolate_sinc (constVEC const& y, double x, integer interpolationDepth);
 
 #define NUM_PEAK_INTERPOLATE_NONE  0
 #define NUM_PEAK_INTERPOLATE_PARABOLIC  1
@@ -35,9 +35,9 @@ double NUM_interpolate_sinc (double y [], integer nx, double x, integer interpol
 #define NUM_PEAK_INTERPOLATE_SINC70  3
 #define NUM_PEAK_INTERPOLATE_SINC700  4
 
-double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real, int isMaximum);
-double NUMimproveMaximum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real);
-double NUMimproveMinimum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real);
+double NUMimproveExtremum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real, bool isMaximum);
+double NUMimproveMaximum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real);
+double NUMimproveMinimum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real);
 
 void NUM_viterbi (
 	integer numberOfFrames, integer maxnCandidates,

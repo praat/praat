@@ -194,7 +194,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
 		integer offset = - brent_ixmax - 1;
 		double strengthOfMaximum = /* method & 1 ? */
-			NUM_interpolate_sinc (& r [offset], brent_ixmax - offset, 1 / my dx / frequencyOfMaximum - offset, 30)
+			NUM_interpolate_sinc (constVEC (& r [offset], brent_ixmax - offset), 1.0 / my dx / frequencyOfMaximum - offset, 30)
 			/* : r [i] + 0.5 * dr * dr / d2r */;
 		/* High values due to short windows are to be reflected around 1. */
 		if (strengthOfMaximum > 1.0) strengthOfMaximum = 1.0 / strengthOfMaximum;
@@ -235,7 +235,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		if (method != AC_HANNING || pitchFrame -> candidate [i]. frequency > 0.0 / my dx) {
 			double xmid, ymid;
 			integer offset = - brent_ixmax - 1;
-			ymid = NUMimproveMaximum (& r [offset], brent_ixmax - offset, imax [i] - offset,
+			ymid = NUMimproveMaximum (constVEC (& r [offset], brent_ixmax - offset), imax [i] - offset,
 				pitchFrame -> candidate [i]. frequency > 0.3 / my dx ? NUM_PEAK_INTERPOLATE_SINC700 : brent_depth, & xmid);
 			xmid += offset;
 			pitchFrame -> candidate [i]. frequency = 1.0 / my dx / xmid;

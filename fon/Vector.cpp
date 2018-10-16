@@ -113,14 +113,14 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 	if (x <  leftEdge || x > rightEdge) return undefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		return NUM_interpolate_sinc (& my z [ilevel] [0], my nx, Sampled_xToIndex (me, x),
+		return NUM_interpolate_sinc (my z.row (ilevel), Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
 	longdouble sum = 0.0;
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		sum += NUM_interpolate_sinc (& my z [channel] [0], my nx, Sampled_xToIndex (me, x),
+	for (integer ichan = 1; ichan <= my ny; ichan ++) {
+		sum += NUM_interpolate_sinc (my z.row (ichan), Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
@@ -130,22 +130,22 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 
 /***** Get shape. *****/
 
-void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
+void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channelNumber, int interpolation,
 	double *out_minimum, double *out_xOfMinimum)
 {
-	integer imin, imax, n = my nx;
-	Melder_assert (channel >= 1 && channel <= my ny);
-	double *y = & my z [channel] [0];
+	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
+	constVEC y = my z.row (channelNumber);
 	double minimum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	integer imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 			No samples between xmin and xmax.
 			Try to return the lesser of the values at these two points.
 		*/
-		double yleft = Vector_getValueAtX (me, xmin, channel,
+		double yleft = Vector_getValueAtX (me, xmin, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		double yright = Vector_getValueAtX (me, xmax, channel,
+		double yright = Vector_getValueAtX (me, xmax, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
 		minimum = yleft < yright ? yleft : yright;
 		x = yleft == yright ? (xmin + xmax) / 2 : yleft < yright ? xmin : xmax;
@@ -160,7 +160,7 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 		if (imax == my nx) imax --;
 		for (integer i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
-				double i_real, localMinimum = NUMimproveMinimum (y, n, i, interpolation, & i_real);
+				double i_real, localMinimum = NUMimproveMinimum (y, i, interpolation, & i_real);
 				if (localMinimum < minimum) {
 					minimum = localMinimum;
 					x = i_real;
@@ -212,22 +212,22 @@ integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int int
 	return channelOfMinimum;
 }
 
-void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
+void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channelNumber, int interpolation,
 	double *out_maximum, double *out_xOfMaximum)
 {
-	integer imin, imax, i, n = my nx;
-	Melder_assert (channel >= 1 && channel <= my ny);
-	double *y = & my z [channel] [0];
+	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
+	constVEC y = my z.row (channelNumber);
 	double maximum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	integer imin, imax, i;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 			No samples between xmin and xmax.
 			Try to return the greater of the values at these two points.
 		*/
-		double yleft = Vector_getValueAtX (me, xmin, channel,
+		double yleft = Vector_getValueAtX (me, xmin, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		double yright = Vector_getValueAtX (me, xmax, channel,
+		double yright = Vector_getValueAtX (me, xmax, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
 		maximum = yleft > yright ? yleft : yright;
 		x = yleft == yright ? (xmin + xmax) / 2 : yleft > yright ? xmin : xmax;
@@ -242,7 +242,7 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 		if (imax == my nx) imax --;
 		for (i = imin; i <= imax; i ++) {
 			if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-				double i_real, localMaximum = NUMimproveMaximum (y, n, i, interpolation, & i_real);
+				double i_real, localMaximum = NUMimproveMaximum (y, i, interpolation, & i_real);
 				if (localMaximum > maximum) {
 					maximum = localMaximum;
 					x = i_real;
