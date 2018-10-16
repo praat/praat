@@ -34,27 +34,22 @@ autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer nu
 autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements_string) {
 	try {
 		autostring32vector elements = STRVECtokenize (elements_string);
-		integer inum = 1, ntokens = elements.size;
-		if (ntokens == 0)
-			Melder_throw (U"No matrix elements.");
+		
 		integer numberOfCells = numberOfInputChannels * numberOfOutputChannels;
-
+		
+		Melder_require (elements.size == numberOfCells, U"The number of mixing coefficients (", elements.size, U") must equal the number of cells (", numberOfCells, U") in the mixing matrix.");
+		
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
 
 		/*
 			Construct the full matrix from the elements
 		*/
-		double number;
-		for (; inum <= ntokens; inum ++) {
-			integer irow = (inum - 1) / numberOfInputChannels + 1;
-			integer icol = (inum - 1) % numberOfInputChannels + 1;
+		for (integer inum = 1; inum <= numberOfCells; inum ++) {
+			double number;
 			Interpreter_numericExpression (0, elements [inum].get(), & number);
-			my data [irow] [icol] = number;
-		}
-		for (; inum <= numberOfCells; inum ++) {
 			integer irow = (inum - 1) / numberOfInputChannels + 1;
 			integer icol = (inum - 1) % numberOfInputChannels + 1;
-			my data [irow] [icol] = number;   // repeat the last number given!
+			my data [irow] [icol] = number;
 		}
 		return me;
 	} catch (MelderError) {
