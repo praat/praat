@@ -37,7 +37,8 @@ autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, inte
 		
 		integer numberOfCells = numberOfInputChannels * numberOfOutputChannels;
 		
-		Melder_require (elements.size == numberOfCells, U"The number of mixing coefficients (", elements.size, U") must equal the number of cells (", numberOfCells, U") in the mixing matrix.");
+		Melder_require (elements.size == numberOfCells,
+			U"The number of mixing coefficients (", elements.size, U") should equal the number of cells (", numberOfCells, U") in the mixing matrix.");
 		
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
 
