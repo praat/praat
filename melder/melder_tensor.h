@@ -732,7 +732,8 @@ public:
 		Melder_assert (rowRange.last >= 1 && rowRange.last <= our nrow);
 		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
 		Melder_assert (columnRange.last >= 1 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
+		const integer newNrow = rowRange.size();
+		const integer newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return matrixview<T> ();
 		return matrixview<T> (
 			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
@@ -792,7 +793,8 @@ public:
 		Melder_assert (rowRange.last >= 0 && rowRange.last <= our nrow);
 		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
 		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
+		const integer newNrow = rowRange.size();
+		const integer newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
 		return constmatrixview<T> (
 			our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1),
@@ -845,8 +847,11 @@ public:
 		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
 		return constmatrixview<T> (
-			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
-			newNrow, newNcol, our rowStride, our colStride
+			our firstCell
+			+ (rowRange.first - 1) * our rowStride
+			+ (columnRange.first - 1) * our colStride,
+			newNrow, newNcol,
+			our rowStride, our colStride
 		);
 	}
 	constmatrixview<T> transpose () {
@@ -1071,29 +1076,62 @@ public:
 	vectorview<T> line1 (integer dim2, integer dim3) const {
 		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
 		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
-		return vectorview<T> (& our cells [1] [dim2] [dim3] - 1, our stride1);
+		return vectorview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2
+			+ (dim3 - 1) * our stride3,
+			our ndim1,
+			our stride1
+		);
 	}
 	vectorview<T> line2 (integer dim1, integer dim3) const {
 		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
 		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
-		return vectorview<T> (& our cells [dim1] [1] [dim3] - 1, our stride2);
+		return vectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim3 - 1) * our stride3,
+			our ndim2,
+			our stride2
+		);
 	}
 	vectorview<T> line3 (integer dim1, integer dim2) const {
 		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
 		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
-		return vectorview<T> (& our cells [dim1] [dim2] [1] - 1, our stride3);
+		return vectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim2 - 1) * our stride2,
+			our ndim3,
+			our stride3
+		);
 	}
 	matrixview<T> plane12 (integer dim3) const {
 		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
-		return matrixview<T> (our cells + (dim3 - 1) * our stride3, our ndim1, our ndim2, our stride1, our stride2);
+		return matrixview<T> (
+			our cells
+			+ (dim3 - 1) * our stride3,
+			our ndim1, our ndim2,
+			our stride1, our stride2
+		);
 	}
 	matrixview<T> plane13 (integer dim2) const {
 		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
-		return matrixview<T> (our cells + (dim2 - 1) * our stride2, our ndim1, our ndim3, our stride1, our stride3);
+		return matrixview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2,
+			our ndim1, our ndim3,
+			our stride1, our stride3
+		);
 	}
 	matrixview<T> plane23 (integer dim1) const {
 		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
-		return matrixview<T> (our cells + (dim1 - 1) * our stride1, our ndim2, our ndim3, our stride2, our stride3);
+		return matrixview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1,
+			our ndim2, our ndim3,
+			our stride2, our stride3
+		);
 	}
 	tensor3<T> part (
 		integer firstDim1, integer lastDim1,
@@ -1149,29 +1187,62 @@ public:
 	constvectorview<T> line1 (integer dim2, integer dim3) const {
 		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
 		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
-		return constvectorview<T> (& our cells [1] [dim2] [dim3] - 1, our stride1);
+		return constvectorview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2
+			+ (dim3 - 1) * our stride3,
+			our nidm1,
+			our stride1
+		);
 	}
 	constvectorview<T> line2 (integer dim1, integer dim3) const {
 		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
 		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
-		return constvectorview<T> (& our cells [dim1] [1] [dim3] - 1, our stride2);
+		return constvectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim3 - 1) * our stride3,
+			our ndim2,
+			our stride2
+		);
 	}
 	constvectorview<T> line3 (integer dim1, integer dim2) const {
 		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
 		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
-		return constvectorview<T> (& our cells [dim1] [dim2] [1] - 1, our stride3);
+		return constvectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim2 - 1) * our stride2,
+			our ndim3,
+			our stride3
+		);
 	}
 	constmatrixview<T> plane12 (integer dim3) const {
 		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
-		return constmatrixview<T> (our cells + (dim3 - 1) * our stride3, our ndim1, our ndim2, our stride1, our stride2);
+		return constmatrixview<T> (
+			our cells
+			+ (dim3 - 1) * our stride3,
+			our ndim1, our ndim2,
+			our stride1, our stride2
+		);
 	}
 	constmatrixview<T> plane13 (integer dim2) const {
 		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
-		return constmatrixview<T> (our cells + (dim2 - 1) * our stride2, our ndim1, our ndim3, our stride1, our stride3);
+		return constmatrixview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2,
+			our ndim1, our ndim3,
+			our stride1, our stride3
+		);
 	}
 	constmatrixview<T> plane23 (integer dim1) const {
 		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
-		return constmatrixview<T> (our cells + (dim1 - 1) * our stride1, our ndim2, our ndim3, our stride2, our stride3);
+		return constmatrixview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1,
+			our ndim2, our ndim3,
+			our stride2, our stride3
+		);
 	}
 	consttensor3<T> part (
 		integer firstDim1, integer lastDim1,
