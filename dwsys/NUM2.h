@@ -382,14 +382,13 @@ template <class T>
 void NUMrank (vector<T> a) {
 	integer jt, j = 1;
 	while (j < a.size) {
-		for (jt = j + 1; jt <= a.size && a[jt] == a[j]; jt++) {}
+		for (jt = j + 1; jt <= a.size && a [jt] == a [j]; jt ++) {}
 		T rank = (j + jt - 1) * 0.5;
-		for (integer i = j; i <= jt - 1; i++) {
-			a[i] = rank;
-		}
+		for (integer i = j; i <= jt - 1; i ++)
+			a [i] = rank;
 		j = jt;
 	}
-	if (j == a.size) a[a.size] = a.size;
+	if (j == a.size) a [a.size] = a.size;
 }
 
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
@@ -471,31 +470,6 @@ void NUMdominantEigenvector (constMAT mns, VEC inout_q, double *out_lambda, doub
 	G. Golub & C. van Loan (1996), Matrix computations, third edition,
 	The Johns Hopkins University Press Ltd.,
 	London, (Par. 7.3.1 The Power Method)
-*/
-
-void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer ncols,
-	integer numberOfComponents, double **pc);
-/*
-	Precondition:
-		numberOfComponents > 0 && numberOfComponents <= ncols
-		pc[1..nrows][1..numberOfComponents] exists
-	Function:
-		Calculates the first 'numberOfComponents' principal components for the
-		matrix m[1..nrows][1..ncols].
-	Postcondition:
-		Matrix pc contains the principal components
-	Algorithm:
-		Singular Value Decomposition:
-		1. Centre the columns of m, this results in a new matrix mc
-		2. SVD the mc matrix -> U.d.V'
-			(Covariance matrix from mc is mc'.mc = (U.d.V')'.(U.d.V') =
-				V.d^2.V')
-		3. Sort singular values d (descending) and corresponding vectors in V
-		4. The principal components are now:
-			pc[i][j] = sum (k=1..ncols, v[k][j] * m[i][k])
-	Remark:
-		The resulting configuration is unique up to reflections along the new
-		principal directions.
 */
 
 integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2);
@@ -846,8 +820,7 @@ double NUMburg_preallocated (VEC a, constVEC x);
 
 autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
 
-void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce,
-	double ref, double factor, double floor);
+void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's
 
@@ -863,17 +836,14 @@ void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer 
 		Matrix elements < 0;
 */
 
-double **NUMcosinesTable (integer first, integer last, integer npoints);
+autoMAT MATcosinesTable (integer  n);
 /*
 	Generate table with cosines.
 
-	result[i][j] = cos (i * pi * (j - 1/2) / npoints)
-	i=first..last; j=1..npoints
-
-	Preconditions:
-		1 <= first <= last
-		npoints > 1
+	result [i] [j] = cos (i * pi * (j - 1/2) / npoints)
 */
+void VECcosineTransform_preallocated (VEC target, constVEC x, constMAT cosinesTable);
+void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT cosinesTable);
 
 /******  Interpolation ****/
 

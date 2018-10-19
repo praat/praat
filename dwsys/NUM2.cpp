@@ -45,7 +45,6 @@
  djmw 20070614 updated to version 1.30 of regular expressions.
  djmw 20071022 Removed function NUMfvector_moment2.
  djmw 20071201 Melder_warning<n>
- djmw 20080107 Changed assertion to "npoints > 0" in NUMcosinesTable
  djmw 20080110 Corrected some bugs in replace_regexStr
  djmw 20080122 Bug in replace_regexStr
  djmw 20080317 +NUMsinc
@@ -376,25 +375,6 @@ void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, 
 	// MATmul_tt (data.get(), eigenvectors.get()) ??
 }
 
-
-void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer ncols, integer numberOfComponents, double **pc) {
-	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
-	autoMAT mc = MATcopy (MAT (m, nrows, ncols));
-
-	/*MATcentreEachColumn_inplace (mc.get());*/
-	autoSVD svd = SVD_createFromGeneralMatrix (mc.get());
-	for (integer i = 1; i <= nrows; i ++) {
-		for (integer j = 1; j <= numberOfComponents; j ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= ncols; k ++) {
-				sum += svd -> v [k] [j] * m [i] [k];
-			}
-			pc [i] [j] = (double) sum;
-		}
-	}
-	// MATmul_tt (svd->v.get(), m.get()); ??
-}
-
 integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2) {
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
@@ -406,17 +386,6 @@ autoVEC NUMsolveEquation (constMAT a, constVEC b, double tolerance) {
 	autoVEC x = SVD_solve (me.get(), b);
 	return x;
 }
-
-/*void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
-
-	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
-
-	Melder_require (nr > 0 && nc > 0, U"The number of rows and the number of columns should at least be 1.");
-
-	autoSVD me = SVD_createFromGeneralMatrix ({a, nr, nc});
-	SVD_zeroSmallSingularValues (me.get(), tol);
-	SVD_solve (me.get(), b, result);
-}*/
 
 autoMAT NUMsolveEquations (constMAT a, constMAT b, double tolerance) {
 	Melder_assert (a.nrow == b.nrow);
@@ -1584,18 +1553,18 @@ autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out
 	return a;
 }
 
-void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce, double ref, double factor, double floor) {
+void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor) {
 	double ref_db, factor10 = factor * 10.0;
-	double max = m [rb] [cb], min = max;
+	double max = m [1] [1], min = max;
 
-	Melder_assert (ref > 0 && factor > 0 && rb <= re && cb <= ce);
+	Melder_assert (ref > 0 && factor > 0);
 
-	for (integer i = rb; i <= re; i ++) {
-		for (integer j = cb; j <= ce; j ++) {
-			if (m [i] [j] > max) {
-				max = m [i] [j];
-			} else if (m [i] [j] < min) {
-				min = m [i] [j];
+	for (integer irow = 1; irow <= m.nrow; irow ++) {
+		for (integer icol = 1; icol <= m.ncol; icol ++) {
+			if (m [irow] [icol] > max) {
+				max = m [irow] [icol];
+			} else if (m [irow] [icol] < min) {
+				min = m [irow] [icol];
 			}
 		}
 	}
@@ -1604,30 +1573,45 @@ void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer 
 	
 	ref_db = factor10 * log10 (ref);
 
-	for (integer i = rb; i <= re; i ++) {
-		for (integer j = cb; j <= ce; j ++) {
+	for (integer irow = 1; irow <= m.nrow; irow ++) {
+		for (integer icol = 1; icol <= m.ncol; icol ++) {
 			double mij = floor;
-			if (m [i] [j] > 0.0) {
-				mij = factor10 * log10 (m [i] [j]) - ref_db;
+			if (m [irow] [icol] > 0.0) {
+				mij = factor10 * log10 (m [irow] [icol]) - ref_db;
 				if (mij < floor) {
 					mij = floor;
 				}
 			}
-			m [i] [j] = mij;
+			m [irow] [icol] = mij;
 		}
 	}
 }
 
-double **NUMcosinesTable (integer first, integer last, integer npoints) {
-	Melder_assert (0 < first && first <= last && npoints > 0);
-	autoNUMmatrix<double> m (first, last, 1, npoints);
-	for (integer i = first; i <= last; i ++) {
-		double f = i * NUMpi / npoints;
-		for (integer j = 1; j <= npoints; j ++) {
-			m [i] [j] = cos (f * (j - 0.5));
-		}
+autoMAT MATcosinesTable (integer  n) {
+	autoMAT result = MATraw (n, n);
+	for (integer irow = 1; irow <= n; irow ++) {
+		for (integer icol = 1; icol <= n; icol ++)
+			result [irow] [icol] = cos (NUMpi * (irow - 1) * (icol - 0.5) / n);
 	}
-	return m.transfer();
+	return result;
+}
+
+void VECcosineTransform_preallocated (VEC target, constVEC x, constMAT cosinesTable) {
+	Melder_assert (cosinesTable.nrow == cosinesTable.ncol);
+	Melder_assert (x.size == target.size && x.size == cosinesTable.nrow);
+	for (integer k = 1; k <= target.size; k ++)
+		target [k] = NUMinner (x, cosinesTable.row (k));
+}
+
+void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT cosinesTable) {
+	Melder_assert (cosinesTable.nrow == cosinesTable.ncol);
+	Melder_assert (x.size == target.size && x.size == cosinesTable.nrow);
+	for (integer j = 1; j <= target.size; j ++) {
+		target [j] = 0.5 * x [1] * cosinesTable [1] [j];
+		for (integer k = 2; k <= target.size; k ++)
+			target [j] += x [k] * cosinesTable [k] [j];
+		target [j] *= 2.0 / target.size;
+	}
 }
 
 void NUMcubicSplineInterpolation_getSecondDerivatives (double x [], double y [], integer n, double yp1, double ypn, double y2 []) {
