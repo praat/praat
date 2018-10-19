@@ -29,15 +29,18 @@
 
 //TODO 20181013 massive cleanups only at pointers removed rest follows
 // matrix multiply R = V*C*V', V is nrv x ncv, C is ncv x ncv, R is nrv x nrv
-static void NUMdmatrices_multiply_VCVp (MAT r, MAT v, integer nrv, integer ncv, MAT c, bool csym) {
-// TODO asserts less arguments
-	for (integer i = 1; i <= nrv; i ++) {
+static void MATmul_VCVt_preallocated (MAT r, constMAT v, constMAT c, bool csym) {
+	Melder_assert (r.nrow == r.ncol);
+	Melder_assert (v.nrow == r.ncol);
+	Melder_assert (c.nrow == c.ncol);
+	Melder_assert (v.ncol == c.ncol);
+	for (integer i = 1; i <= r.nrow; i ++) {
 		integer jstart = csym ? i : 1;
-		for (integer j = jstart; j <= nrv; j ++) {
+		for (integer j = jstart; j <= r.nrow; j ++) {
 			// V_ik C_kl V'_lj = V_ik C_kl V_jl
-			double vcv = 0.0;
-			for (integer k = 1; k <= ncv; k ++) {
-				for (integer l = 1; l <= ncv; l ++) {
+			longdouble vcv = 0.0;
+			for (integer k = 1; k <= c.nrow; k ++) {
+				for (integer l = 1; l <= c.nrow; l ++) {
 					vcv += v [i] [k] * c [k] [l] * v [j] [l];
 				}
 			}
@@ -262,7 +265,7 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 					CrossCorrelationTable ct = ccts -> at [k];
 					Melder_assert (ct -> data.nrow == dimension && ct -> data.ncol == dimension);   // ppgb 20180913
 					matrixcopy_preallocated (cc.get(), ct -> data.get());
-					NUMdmatrices_multiply_VCVp (ct -> data.get(), w.get(), dimension, dimension, cc.get(), true);
+					MATmul_VCVt_preallocated (ct -> data.get(), w.get(), cc.get(), true);
 				}
 				dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
 				iter ++;
@@ -348,7 +351,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		for (integer ic = 1; ic <= thy size; ic ++) {
 			CrossCorrelationTable cov1 = thy at [ic];
 			CrossCorrelationTable cov2 = ccts -> at [ic];
-			NUMdmatrices_multiply_VCVp (cov2 -> data.get(), p.get(), dimension, dimension, cov1 -> data.get(), true);
+			MATmul_VCVt_preallocated (cov2 -> data.get(), p.get(), cov1 -> data.get(), true);
 		}
 
 		// W = P'\W == inv(P') * W
@@ -818,7 +821,7 @@ autoCrossCorrelationTable CrossCorrelationTable_Diagonalizer_diagonalize (CrossC
 		Melder_require (my numberOfRows == thy numberOfRows, U"The CrossCorrelationTable and the Diagonalizer matrix dimensions should be equal.");
 
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (my numberOfColumns);
-		NUMdmatrices_multiply_VCVp (his data.get(), thy data.get(), my numberOfColumns, my numberOfColumns, my data.get(), true);
+		MATmul_VCVt_preallocated (his data.get(), thy data.get(), my data.get(), true);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTable not diagonalized.");
@@ -919,7 +922,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 				}
 			}
 			// we need V'DV, however our V has eigenvectors row-wise -> VDV'
-			NUMdmatrices_multiply_VCVp (ct -> data.get(), v.get(), dimension, dimension, d.get(), true);
+			MATmul_VCVt_preallocated (ct -> data.get(), v.get(), d.get(), true);
             my addItem_move (ct.move());
 		}
 		return me;

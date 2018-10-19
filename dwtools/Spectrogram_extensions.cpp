@@ -1,6 +1,6 @@
 /* Spectrogram_extensions.cpp
  *
- * Copyright (C) 2014-2017 David Weenink
+ * Copyright (C) 2014-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,48 +85,14 @@ autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double sc
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
-				double val = floor_dB;
 				Melder_require (my z [i] [j] >= 0.0,
 					U"Power in Spectrogram should be positive.");
-				val = scaleFactor * log10 (my z [i] [j] / reference);
-				if (val < floor_dB)
-					val = floor_dB;
-				thy z [i] [j] = val;
+				thy z [i] [j] = std::max (floor_dB, scaleFactor * log10 (my z [i] [j] / reference));
 			}
 		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix with dB values not created.");
-	}
-}
-
-static double **NUMcosinesTable (integer  n) {
-	autoNUMmatrix<double> costab (1, n, 1, n);
-	for (integer k = 1; k <= n; k ++) {
-		for (integer j = 1; j <= n; j ++)
-			costab [k] [j] = cos (NUMpi * (k - 1) * (j - 0.5) / n);
-	}
-	return costab.transfer();
-}
-// x [1..n] : input
-// y [1..n] : output
-static void NUMcosineTransform (double *x, double *y, integer n, double **cosinesTable) {
-	for (integer k = 1; k <= n; k ++) {
-		y [k] = 0.0;
-		for (integer j = 1; j <= n; j ++)
-			y [k] += x [j] * cosinesTable [k] [j];
-	}
-}
-
-
-// x: input
-// y: output
-static void NUMinverseCosineTransform (double *x, double *y, integer n, double **cosinesTable) {
-	for (integer j = 1; j <= n; j ++) {
-		y [j] = 0.5 * x [1] * cosinesTable [1] [j];
-		for (integer k = 2; k <= n; k ++)
-			y [j] += x [k] * cosinesTable [k] [j];
-		y [j] *= 2.0 / n;
 	}
 }
 
@@ -137,9 +103,9 @@ static void NUMinverseCosineTransform (double *x, double *y, integer n, double *
  * 2. cosine transform of dB-spectrum
 */
 void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer numberOfCoefficients) {
-	autoNUMmatrix<double> cosinesTable (NUMcosinesTable (my ny), 1, 1);
-	autoNUMvector<double> x (1, my ny);
-	autoNUMvector<double> y (1, my ny);
+	autoMAT cosinesTable = MATcosinesTable (my ny);
+	autoVEC x = VECraw (my ny);
+	autoVEC y = VECraw (my ny);
 	numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
 	Melder_assert (numberOfCoefficients > 0);
 	// 20130220 new interpretation of maximumNumberOfCoefficients: necessary for the inverse transform 
@@ -147,7 +113,7 @@ void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer n
 		CC_Frame ccframe = & thy frame [frame];
 		for (integer i = 1; i <= my ny; i ++)
 			x [i] = my v_getValueAtSample (frame, i, 1);   // z [i] [frame];
-		NUMcosineTransform (x.peek(), y.peek(), my ny, cosinesTable.peek());
+		VECcosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
 		CC_Frame_init (ccframe, numberOfCoefficients);
 		for (integer i = 1; i <= numberOfCoefficients; i ++)
 			ccframe -> c [i] = y [i + 1];
@@ -159,16 +125,16 @@ void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer n
 //                0 <= first <= last <= my ny-1
 void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, integer first, integer last, bool use_c0) {
 	integer nf = my maximumNumberOfCoefficients + 1;
-	autoNUMmatrix<double> cosinesTable (NUMcosinesTable (nf), 1, 1);
-	autoNUMvector<double> x (1, nf);
-	autoNUMvector<double> y (1, nf);
+	autoMAT cosinesTable = MATcosinesTable (nf);
+	autoVEC x = VECraw (nf);
+	autoVEC y = VECraw (nf);
 	for (integer frame = 1; frame <= my nx; frame ++) {
 		CC_Frame ccframe = & my frame [frame];
 		integer iend = last < ccframe -> numberOfCoefficients ? last : ccframe -> numberOfCoefficients;
 		x [1] = use_c0 ? ccframe -> c0 : 0;
 		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
 			x [i + 1] = ( i < first || i > iend ? 0.0 : ccframe -> c [i] );
-		NUMinverseCosineTransform (x.peek(), y.peek(), nf, cosinesTable.peek());
+		VECinverseCosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
 		for (integer i = 1; i <= nf; i ++)
 			thy z [i] [frame] = BandFilterSpectrogram_DBREF * pow (10, y [i] / BandFilterSpectrogram_DBFAC);
 	}
@@ -317,7 +283,7 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 		icol = 1;
 	if (icol > my nx)
 		icol = my nx;
-	autoNUMvector<double> spectrum (1, my ny);
+	autoVEC spectrum = VECraw (my ny);
 	for (integer i = 1; i <= my ny; i ++)
 		spectrum [i] = my v_getValueAtSample (icol, i, 1);   // dB's
 	integer iymin, iymax;
@@ -385,7 +351,7 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		toFilter = my ny;
 	}
 	integer n = xIsHertz ? 1000 : 500;
-	autoNUMvector<double> xz (1, n), xhz (1, n), y (1, n);
+	autoVEC xz = VECraw (n), xhz = VECraw (n), y = VECraw (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -481,7 +447,7 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 		fromFilter = 1, toFilter = my ny;
 	
 	integer n = xIsHertz ? 1000 : 500;
-	autoNUMvector<double> xz (1, n), xhz (1,n), y (1, n);
+	autoVEC xz = VECraw (n), xhz = VECraw (n), y = VECraw (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);

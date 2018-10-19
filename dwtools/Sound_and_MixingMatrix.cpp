@@ -43,16 +43,15 @@ autoSound Sound_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTi
 			U"The number of inputs in the MixingMatrix and the number of channels in the Sound should be equal.");
 		
 		if (fromTime == toTime) { 
-			fromTime = my xmin; toTime = my xmax; 
+			fromTime = my xmin;
+			toTime = my xmax; 
 		}
 	
 		// Determine index range. We use all the real or virtual samples that fit within [fromTime..toTime].
 
 		integer ix1 = 1 + Melder_iceiling ((fromTime - my x1) / my dx);
 		integer ix2 = 1 + Melder_ifloor ((toTime - my x1) / my dx);
-		if (ix2 < ix1) {
-			Melder_throw (U"Mixed Sound would contain no samples.");
-		}
+		if (ix2 < ix1) Melder_throw (U"Mixed Sound would contain no samples.");
 
 		autoSound him = Sound_create (thy numberOfRows, fromTime, toTime, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
 		/*
@@ -84,19 +83,16 @@ autoSound Sound_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTi
 						if (ix1 < 1) { // (1) + (2)
 							to = & his z [i] [0] + 1 - ix1;
 							to_i1 = 1 - ix1; to_i2 = to_i1 + my nx; // (2)
-							if (ix2 < my nx) { // (1)
+							if (ix2 < my nx) // (1)
 								to_i2 = 1 - ix1 + ix2;
-							}
 						} else { // (3) + (4)
 							from = & my z [ichan] [0] + ix1 - 1;
 							to_i2 = to_i1 + ix2 - ix1; // (3)
-							if (ix2 > my nx) { // (4)
+							if (ix2 > my nx) // (4)
 								to_i2 = his nx;
-							}
 						}
-						for (integer j = 1; j <= to_i2 - to_i1 + 1; j ++) {
+						for (integer j = 1; j <= to_i2 - to_i1 + 1; j ++)
 							to [j] += mixingCoeffient * from [j];
-						}
 					}
 				}
 			}
