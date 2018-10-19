@@ -99,7 +99,7 @@ void structSPINET :: v_info () {
 	MelderInfo_writeLine (U"Minimum power: ", miny);
 	MelderInfo_writeLine (U"Maximum power: ", maxy);
 	MelderInfo_writeLine (U"Minimum power rectified: ", mins);
-	MelderInfo_writeLine (U"Maximum powerrectified: ", maxs);
+	MelderInfo_writeLine (U"Maximum power rectified: ", maxs);
 }
 
 autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, double t1, double minimumFrequency, double maximumFrequency, integer nFilters, double excitationErbProportion, double inhibitionErbProportion) {

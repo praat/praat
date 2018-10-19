@@ -732,7 +732,8 @@ public:
 		Melder_assert (rowRange.last >= 1 && rowRange.last <= our nrow);
 		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
 		Melder_assert (columnRange.last >= 1 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
+		const integer newNrow = rowRange.size();
+		const integer newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return matrixview<T> ();
 		return matrixview<T> (
 			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
@@ -792,7 +793,8 @@ public:
 		Melder_assert (rowRange.last >= 0 && rowRange.last <= our nrow);
 		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
 		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
+		const integer newNrow = rowRange.size();
+		const integer newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
 		return constmatrixview<T> (
 			our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1),
@@ -845,8 +847,11 @@ public:
 		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
 		return constmatrixview<T> (
-			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
-			newNrow, newNcol, our rowStride, our colStride
+			our firstCell
+			+ (rowRange.first - 1) * our rowStride
+			+ (columnRange.first - 1) * our colStride,
+			newNrow, newNcol,
+			our rowStride, our colStride
 		);
 	}
 	constmatrixview<T> transpose () {
@@ -977,7 +982,7 @@ automatrix<T> matrixzero (integer nrow, integer ncol) {
 	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
 }
 template <typename T>
-vector<T> asvector (matrix<T> x) {
+vector<T> asvector (matrix<T> const& x) {
 	#if PACKED_TENSORS
 	return vector<T> (x.cells, x.nrow * x.ncol);
 	#else
@@ -985,50 +990,50 @@ vector<T> asvector (matrix<T> x) {
 	#endif
 }
 template <typename T>
-constvector<T> asvector (constmatrix<T> x) {
+constvector<T> asvector (constmatrix<T> const& x) {
 	return constvector<T> (& x [1] [0], x.nrow * x.ncol);
 }
 template <typename T>
-void matrixcopy_preallocated (matrix<T> target, constmatrix<T> source) {
+void matrixcopy_preallocated (matrix<T> const& target, constmatrix<T> const& source) {
 	Melder_assert (source.nrow == target.nrow && source.ncol == target.ncol);
 	for (integer irow = 1; irow <= source.nrow; irow ++)
 		for (integer icol = 1; icol <= source.ncol; icol ++)
 			target [irow] [icol] = source [irow] [icol];
 }
 template <typename T>
-void matrixcopy_preallocated (matrix<T> target, matrix<T> source) {
+void matrixcopy_preallocated (matrix<T> const& target, matrix<T> const& source) {
 	matrixcopy_preallocated (target, constmatrix<T> (source));
 }
 template <typename T>
-automatrix<T> matrixcopy (constmatrix<T> source) {
+automatrix<T> matrixcopy (constmatrix<T> const& source) {
 	automatrix<T> result = matrixraw<T> (source.nrow, source.ncol);
 	matrixcopy_preallocated (result.get(), source);
 	return result;
 }
 template <typename T>
-automatrix<T> matrixcopy (matrix<T> source) {
-	return matrixcopy (constmatrix<T> (source));
+automatrix<T> matrixcopy (matrix<T> const& source) {
+	return matrixcopy<T> (constmatrix<T> (source));
 }
 
 template <typename T>
-void assertCell (const constvector<T>& x, integer elementNumber) {
+void assertCell (constvector<T> const& x, integer elementNumber) {
 	Melder_assert (elementNumber >= 1 && elementNumber <= x.size);
 }
 template <typename T>
-void assertRow (const constmatrix<T>& x, integer rowNumber) {
+void assertRow (constmatrix<T> const& x, integer rowNumber) {
 	Melder_assert (rowNumber >= 1 && rowNumber <= x.nrow);
 }
 template <typename T>
-void assertColumn (const constmatrix<T>& x, integer columnNumber) {
+void assertColumn (constmatrix<T> const& x, integer columnNumber) {
 	Melder_assert (columnNumber >= 1 && columnNumber <= x.ncol);
 }
 template <typename T>
-void assertCell (const constmatrix<T>& x, integer rowNumber, integer columnNumber) {
+void assertCell (constmatrix<T> const& x, integer rowNumber, integer columnNumber) {
 	assertRow (x, rowNumber);
 	assertColumn (x, columnNumber);
 }
 template <typename T>
-automatrix<T> matrixpart (const constmatrix<T>& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+automatrix<T> matrixpart (constmatrix<T> const& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
 	assertCell (x, firstRow, firstColumn);
 	assertCell (x, lastRow, lastColumn);
 	integer numberOfRows = lastRow - (firstRow - 1);
@@ -1042,7 +1047,7 @@ automatrix<T> matrixpart (const constmatrix<T>& x, integer firstRow, integer las
 	return result;
 }
 template <typename T>
-automatrix<T> matrixpart (const matrix<T>& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+automatrix<T> matrixpart (matrix<T> const& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
 	matrixpart (constmatrix<T> (x), firstRow, lastRow, firstColumn, lastColumn);
 }
 
@@ -1053,26 +1058,104 @@ template <typename T>
 class tensor3 {
 public:
 	T * cells = nullptr;
-	integer npla = 0, planeStride = 0;
-	integer nrow = 0, rowStride = 0;
-	integer ncol = 0, columnStride = 1;
+	integer ndim1 = 0, ndim2 = 0, ndim3 = 0;
+	integer stride1 = 0, stride2 = 0, stride3 = 1;
 	tensor3 () = default;
 	tensor3 (const autotensor3<T>& other) = delete;
-	explicit tensor3 (T * const cells, integer const npla, integer const planeStride, integer const nrow, integer const rowStride, integer const ncol, integer const columnStride) :
-			cells (cells), npla (npla), planeStride (planeStride), nrow (nrow), rowStride (rowStride), ncol (ncol), columnStride (columnStride) { }
-	matrixview<T> operator[] (integer planeNumber) const {
-		return matrixview<T> (our cells + (planeNumber - 1) * our planeStride, our nrow, our ncol, our rowStride, our columnStride);
+	explicit tensor3 (T * cells,
+		integer ndim1, integer ndim2, integer ndim3,
+		integer stride1, integer stride2, integer stride3
+	) :
+		cells (cells),
+		ndim1 (ndim1), ndim2 (ndim2), ndim3 (ndim3),
+		stride1 (stride1), stride2 (stride2), stride3 (stride3)
+	{ }
+	matrixview<T> operator[] (integer dim1) const {
+		return matrixview<T> (our cells + (dim1 - 1) * our stride1, our ndim2, our ndim3, our stride2, our stride3);
 	}
-	tensor3<T> part (integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
-		const integer newNpla = lastPlane - (firstPlane - 1), newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
-		if (newNpla <= 0 || newNrow <= 0 || newNcol <= 0) return tensor3<T> ();
+	vectorview<T> line1 (integer dim2, integer dim3) const {
+		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
+		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
+		return vectorview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2
+			+ (dim3 - 1) * our stride3,
+			our ndim1,
+			our stride1
+		);
+	}
+	vectorview<T> line2 (integer dim1, integer dim3) const {
+		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
+		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
+		return vectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim3 - 1) * our stride3,
+			our ndim2,
+			our stride2
+		);
+	}
+	vectorview<T> line3 (integer dim1, integer dim2) const {
+		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
+		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
+		return vectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim2 - 1) * our stride2,
+			our ndim3,
+			our stride3
+		);
+	}
+	matrixview<T> plane12 (integer dim3) const {
+		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
+		return matrixview<T> (
+			our cells
+			+ (dim3 - 1) * our stride3,
+			our ndim1, our ndim2,
+			our stride1, our stride2
+		);
+	}
+	matrixview<T> plane13 (integer dim2) const {
+		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
+		return matrixview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2,
+			our ndim1, our ndim3,
+			our stride1, our stride3
+		);
+	}
+	matrixview<T> plane23 (integer dim1) const {
+		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
+		return matrixview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1,
+			our ndim2, our ndim3,
+			our stride2, our stride3
+		);
+	}
+	tensor3<T> part (
+		integer firstDim1, integer lastDim1,
+		integer firstDim2, integer lastDim2,
+		integer firstDim3, integer lastDim3
+	) const {
+		Melder_assert (firstDim1 >= 1 && firstDim1 <= our ndim1);
+		Melder_assert (lastDim1 >= 1 && lastDim1 <= our ndim1);
+		Melder_assert (firstDim2 >= 1 && firstDim2 <= our ndim2);
+		Melder_assert (lastDim2 >= 1 && lastDim2 <= our ndim2);
+		Melder_assert (firstDim3 >= 1 && firstDim3 <= our ndim3);
+		Melder_assert (lastDim3 >= 1 && lastDim3 <= our ndim3);
+		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
+		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
+		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
+		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
+			return tensor3<T> ();
 		return tensor3<T> (
-			our cells + (firstPlane - 1) * our planeStride + (firstRow - 1) * our rowStride + (firstColumn - 1) * our columnStride,
-			newNpla, our planeStride, newNrow, our rowStride, newNcol, our columnStride
+			our cells
+			+ (firstDim1 - 1) * our stride1
+			+ (firstDim2 - 1) * our stride2
+			+ (firstDim3 - 1) * our stride3,
+			newNdim1, newNdim2, newNdim3,
+			our stride1, our stride2, our stride3
 		);
 	}
 };
@@ -1081,28 +1164,109 @@ template <typename T>
 class consttensor3 {
 public:
 	const T * cells = nullptr;
-	integer npla = 0, planeStride = 0;
-	integer nrow = 0, rowStride = 0;
-	integer ncol = 0, columnStride = 1;
+	integer ndim1 = 0, ndim2 = 0, ndim3 = 0;
+	integer stride1 = 0, stride2 = 0, stride3 = 1;
 	consttensor3 () = default;
 	consttensor3 (const autotensor3<T>& other) = delete;
-	explicit consttensor3 (const T * const cells, integer const npla, integer const planeStride, integer const nrow, integer const rowStride, integer const ncol, integer const columnStride) :
-			cells (cells), npla (npla), planeStride (planeStride), nrow (nrow), rowStride (rowStride), ncol (ncol), columnStride (columnStride) { }
+	explicit consttensor3 (const T * cells,
+		integer ndim1, integer ndim2, integer ndim3,
+		integer stride1, integer stride2, integer stride3
+	) :
+		cells (cells),
+		ndim1 (ndim1), ndim2 (ndim2), ndim3 (ndim3),
+		stride1 (stride1), stride2 (stride2), stride3 (stride3)
+	{ }
 	consttensor3 (tensor3<T> ten) :
-			cells (ten.cells), npla (ten.npla), planeStride (ten.planeStride), nrow (ten.nrow), rowStride (ten.rowStride), ncol (ten.ncol), columnStride (ten.columnStride) { }
-	constmatrixview<T> operator[] (integer planeNumber) const {
-		return constmatrixview<T> (our cells + (planeNumber - 1) * our planeStride, our nrow, our ncol, our rowStride, our columnStride);
+		cells (ten.cells),
+		ndim1 (ten.ndim1), ndim2 (ten.ndim2), ndim3 (ten.ndim3),
+		stride1 (ten.stride1), stride2 (ten.stride2), stride3 (ten.stride3)
+	{ }
+	constmatrixview<T> operator[] (integer dim1) const {
+		return constmatrixview<T> (our cells + (dim1 - 1) * our stride1, our ndim2, our ndim3, our stride2, our stride3);
 	}
-	consttensor3<T> part (integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
-		const integer newNpla = lastPlane - (firstPlane - 1), newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
-		if (newNpla <= 0 || newNrow <= 0 || newNcol <= 0) return consttensor3<T> ();
+	constvectorview<T> line1 (integer dim2, integer dim3) const {
+		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
+		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
+		return constvectorview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2
+			+ (dim3 - 1) * our stride3,
+			our nidm1,
+			our stride1
+		);
+	}
+	constvectorview<T> line2 (integer dim1, integer dim3) const {
+		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
+		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
+		return constvectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim3 - 1) * our stride3,
+			our ndim2,
+			our stride2
+		);
+	}
+	constvectorview<T> line3 (integer dim1, integer dim2) const {
+		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
+		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
+		return constvectorview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1
+			+ (dim2 - 1) * our stride2,
+			our ndim3,
+			our stride3
+		);
+	}
+	constmatrixview<T> plane12 (integer dim3) const {
+		Melder_assert (dim3 >= 1 && dim3 <= our ndim3);
+		return constmatrixview<T> (
+			our cells
+			+ (dim3 - 1) * our stride3,
+			our ndim1, our ndim2,
+			our stride1, our stride2
+		);
+	}
+	constmatrixview<T> plane13 (integer dim2) const {
+		Melder_assert (dim2 >= 1 && dim2 <= our ndim2);
+		return constmatrixview<T> (
+			our cells
+			+ (dim2 - 1) * our stride2,
+			our ndim1, our ndim3,
+			our stride1, our stride3
+		);
+	}
+	constmatrixview<T> plane23 (integer dim1) const {
+		Melder_assert (dim1 >= 1 && dim1 <= our ndim1);
+		return constmatrixview<T> (
+			our cells
+			+ (dim1 - 1) * our stride1,
+			our ndim2, our ndim3,
+			our stride2, our stride3
+		);
+	}
+	consttensor3<T> part (
+		integer firstDim1, integer lastDim1,
+		integer firstDim2, integer lastDim2,
+		integer firstDim3, integer lastDim3
+	) const {
+		Melder_assert (firstDim1 >= 1 && firstDim1 <= our ndim1);
+		Melder_assert (lastDim1 >= 1 && lastDim1 <= our ndim1);
+		Melder_assert (firstDim2 >= 1 && firstDim2 <= our ndim2);
+		Melder_assert (lastDim2 >= 1 && lastDim2 <= our ndim2);
+		Melder_assert (firstDim3 >= 1 && firstDim3 <= our ndim3);
+		Melder_assert (lastDim3 >= 1 && lastDim3 <= our ndim3);
+		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
+		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
+		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
+		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
+			return consttensor3<T> ();
 		return consttensor3<T> (
-			our cells + (firstPlane - 1) * our planeStride + (firstRow - 1) * our rowStride + (firstColumn - 1) * our columnStride,
-			newNpla, our planeStride, newNrow, our rowStride, newNcol, our columnStride
+			our cells
+			+ (firstDim1 - 1) * our stride1
+			+ (firstDim2 - 1) * our stride2
+			+ (firstDim3 - 1) * our stride3,
+			newNdim1, newNdim2, newNdim3,
+			our stride1, our stride2, our stride3
 		);
 	}
 };
@@ -1111,38 +1275,38 @@ template <typename T>
 class autotensor3 : public tensor3<T> {
 public:
 	autotensor3 () = default;   // come into existence without a payload
-	explicit autotensor3 (integer givenNpla, integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
-		Melder_assert (givenNpla >= 0);
-		Melder_assert (givenNrow >= 0);
-		Melder_assert (givenNcol >= 0);
-		our cells = ( givenNpla == 0 || givenNrow == 0 || givenNcol == 0 ? nullptr
-				: NUMvector<T> (0, givenNpla * givenNrow * givenNcol - 1, initializationType == kTensorInitializationType::ZERO));
-		our npla = givenNpla;
-		our nrow = givenNrow;
-		our ncol = givenNcol;
-		our columnStride = 1;
-		our rowStride = givenNcol;
-		our planeStride = givenNrow * givenNcol;
+	explicit autotensor3 (integer givenNdim1, integer givenNdim2, integer givenNdim3, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		Melder_assert (givenNdim1 >= 0);
+		Melder_assert (givenNdim2 >= 0);
+		Melder_assert (givenNdim3 >= 0);
+		our cells = ( givenNdim1 == 0 || givenNdim2 == 0 || givenNdim3 == 0 ? nullptr
+				: NUMvector<T> (0, givenNdim3 * givenNdim2 * givenNdim1 - 1, initializationType == kTensorInitializationType::ZERO));
+		our ndim1 = givenNdim1;
+		our ndim2 = givenNdim2;
+		our ndim3 = givenNdim3;
+		our stride3 = 1;
+		our stride2 = givenNdim3;
+		our stride1 = givenNdim3 * givenNdim2;
 	}
 	~autotensor3 () {   // destroy the payload (if any)
 		if (our cells) NUMvector_free (our cells, 0);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	const tensor3<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
-	void adoptFromAmbiguousOwner (tensor3<T> given) {   // buy the payload from a non-automatrix
+	void adoptFromAmbiguousOwner (tensor3<T> const& given) {   // buy the payload from a non-automatrix
 		our reset();
 		our cells = given.cells;
-		our npla = given.npla;
-		our nrow = given.nrow;
-		our ncol = given.ncol;
-		our planeStride = given.planeStride;
-		our rowStride = given.rowStride;
-		our columnStride = given.columnStride;
+		our ndim1 = given.ndim1;
+		our ndim2 = given.ndim2;
+		our ndim3 = given.ndim3;
+		our stride1 = given.stride1;
+		our stride2 = given.stride2;
+		our stride3 = given.stride3;
 	}
 	tensor3<T> releaseToAmbiguousOwner () {   // sell the payload to a non-automatrix
 		T * oldCells = our cells;
 		our cells = nullptr;   // disown ourselves, preventing automatic destruction of the payload
-		return tensor3<T> (oldCells, our npla, our planeStride, our nrow, our rowStride, our ncol, our colStride);
+		return tensor3<T> (oldCells, our ndim1, our ndim2, our ndim3, our stride1, our stride2, our stride3);
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
@@ -1155,21 +1319,21 @@ public:
 	*/
 	autotensor3 (autotensor3&& other) noexcept : tensor3<T> (other.get()) {   // enable move constructor
 		other.cells = nullptr;   // disown source
-		other.npla = 0;   // to keep the source in a valid state
-		other.nrow = 0;   // to keep the source in a valid state
-		other.ncol = 0;   // to keep the source in a valid state
+		other.ndim1 = 0;   // to keep the source in a valid state
+		other.ndim2 = 0;   // to keep the source in a valid state
+		other.ndim3 = 0;   // to keep the source in a valid state
 	}
 	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells) NUMvector_free (our cells, 0);
 			our cells = other.cells;
-			our npla = other.npla;
-			our nrow = other.nrow;
-			our ncol = other.ncol;
+			our ndim1 = other.ndim1;
+			our ndim2 = other.ndim2;
+			our ndim3 = other.ndim3;
 			other.cells = nullptr;   // disown source
-			other.npla = 0;   // to keep the source in a valid state
-			other.nrow = 0;   // to keep the source in a valid state
-			other.ncol = 0;   // to keep the source in a valid state
+			other.ndim1 = 0;   // to keep the source in a valid state
+			other.ndim2 = 0;   // to keep the source in a valid state
+			other.ndim3 = 0;   // to keep the source in a valid state
 		}
 		return *this;
 	}
@@ -1178,80 +1342,88 @@ public:
 			NUMvector_free (our cells, 0);
 			our cells = nullptr;
 		}
-		our npla = 0;
-		our nrow = 0;
-		our ncol = 0;
+		our ndim1 = 0;
+		our ndim2 = 0;
+		our ndim3 = 0;
 	}
 	autotensor3&& move () noexcept { return static_cast <autotensor3&&> (*this); }
 };
 template <typename T>
-autotensor3<T> tensor3raw (integer npla, integer nrow, integer ncol) {
-	return autotensor3<T> (npla, nrow, ncol, kTensorInitializationType::RAW);
+autotensor3<T> tensor3raw (integer ndim1, integer ndim2, integer ndim3) {
+	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::RAW);
 }
 template <typename T>
-autotensor3<T> tensor3zero (integer npla, integer nrow, integer ncol) {
-	return autotensor3<T> (npla, nrow, ncol, kTensorInitializationType::ZERO);
+autotensor3<T> tensor3zero (integer ndim1, integer ndim2, integer ndim3) {
+	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::ZERO);
 }
 template <typename T>
-void tensor3copy_preallocated (tensor3<T> target, consttensor3<T> source) {
-	Melder_assert (source.npla == target.npla && source.nrow == target.nrow && source.ncol == target.ncol);
-	for (integer ipla = 1; ipla <= source.npla; ipla ++)
-		for (integer irow = 1; irow <= source.nrow; irow ++)
-			for (integer icol = 1; icol <= source.ncol; icol ++)
-				target [ipla] [irow] [icol] = source [ipla] [irow] [icol];
+void tensor3copy_preallocated (tensor3<T> const& target, consttensor3<T> const& source) {
+	Melder_assert (source.ndim1 == target.ndim1 && source.ndim2 == target.ndim2 && source.ndim3 == target.ndim3);
+	for (integer idim1 = 1; idim1 <= source.ndim1; idim1 ++)
+		for (integer idim2 = 1; idim2 <= source.ndim2; idim2 ++)
+			for (integer idim3 = 1; idim3 <= source.ndim3; idim3 ++)
+				target [idim1] [idim2] [idim3] = source [idim1] [idim2] [idim3];
 }
 template <typename T>
-void tensor3copy_preallocated (tensor3<T> target, tensor3<T> source) {
+void tensor3copy_preallocated (tensor3<T> const& target, tensor3<T> const& source) {
 	tensor3copy_preallocated (target, consttensor3<T> (source));
 }
 template <typename T>
-autotensor3<T> tensor3copy (consttensor3<T> source) {
-	autotensor3<T> result = tensor3raw<T> (source.npla, source.nrow, source.ncol);
+autotensor3<T> tensor3copy (consttensor3<T> const& source) {
+	autotensor3<T> result = tensor3raw<T> (source.ndim1, source.ndim2, source.ndim3);
 	tensor3copy_preallocated (result.get(), source);
 	return result;
 }
 template <typename T>
-autotensor3<T> tensor3copy (tensor3<T> source) {
-	return tensor3copy (consttensor3<T> (source));
+autotensor3<T> tensor3copy (tensor3<T> const& source) {
+	return tensor3copy<T> (consttensor3<T> (source));
 }
 template <typename T>
-void assertPlane (const consttensor3<T>& x, integer planeNumber) {
-	Melder_assert (planeNumber >= 1 && planeNumber <= x.npla);
+void assertDim1 (consttensor3<T> const& x, integer dim1) {
+	Melder_assert (dim1 >= 1 && dim1 <= x.ndim1);
 }
 template <typename T>
-void assertRow (const consttensor3<T>& x, integer rowNumber) {
-	Melder_assert (rowNumber >= 1 && rowNumber <= x.nrow);
+void assertDim2 (consttensor3<T> const& x, integer dim2) {
+	Melder_assert (dim2 >= 1 && dim2 <= x.ndim2);
 }
 template <typename T>
-void assertColumn (const consttensor3<T>& x, integer columnNumber) {
-	Melder_assert (columnNumber >= 1 && columnNumber <= x.ncol);
+void assertDim3 (consttensor3<T> const& x, integer dim3) {
+	Melder_assert (dim3 >= 1 && dim3 <= x.ndim3);
 }
 template <typename T>
-void assertCell (const consttensor3<T>& x, integer planeNumber, integer rowNumber, integer columnNumber) {
-	assertPlane (x, planeNumber);
-	assertRow (x, rowNumber);
-	assertColumn (x, columnNumber);
+void assertCell (consttensor3<T> const& x, integer dim1, integer dim2, integer dim3) {
+	assertDim1 (x, dim1);
+	assertDim2 (x, dim2);
+	assertDim3 (x, dim3);
 }
 template <typename T>
-autotensor3<T> tensor3part (const consttensor3<T>& x, integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
-	assertCell (x, firstPlane, firstRow, firstColumn);
-	assertCell (x, lastPlane, lastRow, lastColumn);
-	integer numberOfPlanes = lastPlane - (firstPlane - 1);
-	Melder_assert (numberOfPlanes >= 0);
-	integer numberOfRows = lastRow - (firstRow - 1);
-	Melder_assert (numberOfRows >= 0);
-	integer numberOfColumns = lastColumn - (firstColumn - 1);
-	Melder_assert (numberOfColumns >= 0);
-	autotensor3<T> result = tensor3raw<T> (numberOfPlanes, numberOfRows, numberOfColumns);
-	for (integer ipla = 1; ipla <= numberOfPlanes; ipla ++)
-		for (integer irow = 1; irow <= numberOfRows; irow ++)
-			for (integer icol = 1; icol <= numberOfColumns; icol ++)
-				result [ipla] [irow] [icol] = x [firstPlane - 1 + ipla] [firstRow - 1 + irow] [firstColumn - 1 + icol];
+autotensor3<T> tensor3part (consttensor3<T> const& x,
+	integer firstDim1, integer lastDim1,
+	integer firstDim2, integer lastDim2,
+	integer firstDim3, integer lastDim3
+) {
+	assertCell (x, firstDim1, firstDim2, firstDim3);
+	assertCell (x, lastDim1, lastDim2, lastDim3);
+	integer ndim1 = lastDim1 - (firstDim1 - 1);
+	Melder_assert (ndim1 >= 0);
+	integer ndim2 = lastDim2 - (firstDim2 - 1);
+	Melder_assert (ndim2 >= 0);
+	integer ndim3 = lastDim3 - (firstDim3 - 1);
+	Melder_assert (ndim3 >= 0);
+	autotensor3<T> result = tensor3raw<T> (ndim1, ndim2, ndim3);
+	for (integer idim1 = 1; idim1 <= ndim1; idim1 ++)
+		for (integer idim2 = 1; idim2 <= ndim2; idim2 ++)
+			for (integer idim3 = 1; idim3 <= ndim3; idim3 ++)
+				result [idim1] [idim2] [idim3] = x [firstDim1 - 1 + idim1] [firstDim2 - 1 + idim2] [firstDim3 - 1 + idim3];
 	return result;
 }
 template <typename T>
-autotensor3<T> tensor3part (const tensor3<T>& x, integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
-	tensor3part (consttensor3<T> (x), firstPlane, lastPlane, firstRow, lastRow, firstColumn, lastColumn);
+autotensor3<T> tensor3part (tensor3<T> const& x,
+	integer firstDim1, integer lastDim1,
+	integer firstDim2, integer lastDim2,
+	integer firstDim3, integer lastDim3
+) {
+	tensor3part (consttensor3<T> (x), firstDim1, lastDim1, firstDim2, lastDim2, firstDim3, lastDim3);
 }
 
 /*
@@ -1264,10 +1436,18 @@ using VECVU = vectorview <double>;
 using constVEC = constvector <double>;
 using constVECVU = constvectorview <double>;
 using autoVEC = autovector <double>;
-inline autoVEC VECraw  (integer size) { return vectorraw  <double> (size); }
-inline autoVEC VECzero (integer size) { return vectorzero <double> (size); }
-inline void VECcopy_preallocated (VEC target, constVEC source) { vectorcopy_preallocated (target, source); }
-inline autoVEC VECcopy (constVEC source) { return vectorcopy (source); }
+inline autoVEC VECraw  (integer size) {
+	return vectorraw <double> (size);
+}
+inline autoVEC VECzero (integer size) {
+	return vectorzero <double> (size);
+}
+inline void VECcopy_preallocated (VEC target, constVEC source) {
+	vectorcopy_preallocated (target, source);
+}
+inline autoVEC VECcopy (constVEC source) {
+	return vectorcopy (source);
+}
 
 /*
 	And simply because we use vector<integer> so much as well,
@@ -1280,68 +1460,125 @@ inline autoVEC VECcopy (constVEC source) { return vectorcopy (source); }
 using INTVEC = vector <integer>;
 using constINTVEC = constvector <integer>;
 using autoINTVEC = autovector <integer>;
-inline autoINTVEC INTVECraw  (integer size) { return vectorraw  <integer> (size); }
-inline autoINTVEC INTVECzero (integer size) { return vectorzero <integer> (size); }
-inline void INTVECcopy_preallocated (INTVEC target, constINTVEC source) { vectorcopy_preallocated (target, source); }
-inline autoINTVEC INTVECcopy (constINTVEC source) { return vectorcopy (source); }
+inline autoINTVEC INTVECraw  (integer size) {
+	return vectorraw <integer> (size);
+}
+inline autoINTVEC INTVECzero (integer size) {
+	return vectorzero <integer> (size);
+}
+inline void INTVECcopy_preallocated (INTVEC target, constINTVEC source) {
+	vectorcopy_preallocated (target, source);
+}
+inline autoINTVEC INTVECcopy (constINTVEC source) {
+	return vectorcopy (source);
+}
 
 using BOOLVEC = vector <bool>;
 using constBOOLVEC = constvector <bool>;
 using autoBOOLVEC = autovector <bool>;
-inline autoBOOLVEC BOOLVECraw  (integer size) { return vectorraw  <bool> (size); }
-inline autoBOOLVEC BOOLVECzero (integer size) { return vectorzero <bool> (size); }
-inline void BOOLVECcopy_preallocated (BOOLVEC target, constBOOLVEC source) { vectorcopy_preallocated (target, source); }
-inline autoBOOLVEC BOOLVECcopy (constBOOLVEC source) { return vectorcopy (source); }
-
-#define emptyVEC  VEC (nullptr, 0)
-#define emptyINTVEC  INTVEC (nullptr, 0)
+inline autoBOOLVEC BOOLVECraw  (integer size) {
+	return vectorraw <bool> (size);
+}
+inline autoBOOLVEC BOOLVECzero (integer size) {
+	return vectorzero <bool> (size);
+}
+inline void BOOLVECcopy_preallocated (BOOLVEC target, constBOOLVEC source) {
+	vectorcopy_preallocated (target, source);
+}
+inline autoBOOLVEC BOOLVECcopy (constBOOLVEC source) {
+	return vectorcopy (source);
+}
 
 using MAT = matrix <double>;
 using MATVU = matrixview <double>;
 using constMAT = constmatrix <double>;
 using constMATVU = constmatrixview <double>;
 using autoMAT = automatrix <double>;
-inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
-inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
-inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
-inline autoMAT MATpart (const constMAT& source, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+inline autoMAT MATraw  (integer nrow, integer ncol) {
+	return matrixraw <double> (nrow, ncol);
+}
+inline autoMAT MATzero (integer nrow, integer ncol) {
+	return matrixzero <double> (nrow, ncol);
+}
+inline autoMAT MATcopy (constMAT source) {
+	return matrixcopy (source);
+}
+inline autoMAT MATpart (const constMAT& source,
+	integer firstRow, integer lastRow,
+	integer firstColumn, integer lastColumn
+) {
 	return matrixpart (source, firstRow, lastRow, firstColumn, lastColumn);
 }
 
 using TEN3 = tensor3 <double>;
 using constTEN3 = consttensor3 <double>;
 using autoTEN3 = autotensor3 <double>;
-inline autoTEN3 TEN3raw  (integer npla, integer nrow, integer ncol) { return tensor3raw  <double> (npla, nrow, ncol); }
-inline autoTEN3 TEN3zero (integer npla, integer nrow, integer ncol) { return tensor3zero <double> (npla, nrow, ncol); }
-inline autoTEN3 TEN3copy (constTEN3 source) { return tensor3copy (source); }
-inline autoTEN3 TEN3part (const constTEN3& source, integer firstPlane, integer lastPlane, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
-	return tensor3part (source, firstPlane, lastPlane, firstRow, lastRow, firstColumn, lastColumn);
+inline autoTEN3 TEN3raw  (integer ndim1, integer ndim2, integer ndim3) {
+	return tensor3raw <double> (ndim1, ndim2, ndim3);
+}
+inline autoTEN3 TEN3zero (integer ndim1, integer ndim2, integer ndim3) {
+	return tensor3zero <double> (ndim1, ndim2, ndim3);
+}
+inline autoTEN3 TEN3copy (constTEN3 source) {
+	return tensor3copy (source);
+}
+inline autoTEN3 TEN3part (const constTEN3& source,
+	integer firstDim1, integer lastDim1,
+	integer firstDim2, integer lastDim2,
+	integer firstDim3, integer lastDim3
+) {
+	return tensor3part (source, firstDim1, lastDim1, firstDim2, lastDim2, firstDim3, lastDim3);
 }
 
 using INTMAT = matrix <integer>;
 using constINTMAT = constmatrix <integer>;
 using autoINTMAT = automatrix <integer>;
-inline autoINTMAT INTMATraw  (integer nrow, integer ncol) { return matrixraw  <integer> (nrow, ncol); }
-inline autoINTMAT INTMATzero (integer nrow, integer ncol) { return matrixzero <integer> (nrow, ncol); }
-inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); }
+inline autoINTMAT INTMATraw  (integer nrow, integer ncol) {
+	return matrixraw <integer> (nrow, ncol);
+}
+inline autoINTMAT INTMATzero (integer nrow, integer ncol) {
+	return matrixzero <integer> (nrow, ncol);
+}
+inline autoINTMAT INTMATcopy (constINTMAT source) {
+	return matrixcopy (source);
+}
 
 using BOOLMAT = matrix <bool>;
 using constBOOLMAT = constmatrix <bool>;
 using autoBOOLMAT = automatrix <bool>;
-inline autoBOOLMAT BOOLMATraw  (integer nrow, integer ncol) { return matrixraw  <bool> (nrow, ncol); }
-inline autoBOOLMAT BOOLMATzero (integer nrow, integer ncol) { return matrixzero <bool> (nrow, ncol); }
-inline autoBOOLMAT BOOLMATcopy (constBOOLMAT source) { return matrixcopy (source); }
-
-#define emptyMAT  MAT (nullptr, 0, 0)
-#define emptyINTMAT  INTMAT (nullptr, 0, 0)
+inline autoBOOLMAT BOOLMATraw  (integer nrow, integer ncol) {
+	return matrixraw <bool> (nrow, ncol);
+}
+inline autoBOOLMAT BOOLMATzero (integer nrow, integer ncol) {
+	return matrixzero <bool> (nrow, ncol);
+}
+inline autoBOOLMAT BOOLMATcopy (constBOOLMAT source) {
+	return matrixcopy (source);
+}
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
-inline void operator<<= (VECVU const& lhs, constVECVU const& rhs) {
-	Melder_assert (lhs.size == rhs.size);
-	for (integer i = 1; i <= lhs.size; i ++)
-		lhs [i] = rhs [i];
+inline void operator<<= (VECVU const& target, constVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+inline void operator<<= (MATVU const& target, constMATVU const& source) {
+	Melder_assert (target.nrow == source.nrow);
+	Melder_assert (target.ncol == source.ncol);
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = 1; icol <= target.ncol; icol ++)
+			target [irow] [icol] = source [irow] [icol];
+}
+inline void operator<<= (TEN3 const& target, constTEN3 const& source) {
+	Melder_assert (target.ndim1 == source.ndim1);
+	Melder_assert (target.ndim2 == source.ndim2);
+	Melder_assert (target.ndim3 == source.ndim3);
+	for (integer idim1 = 1; idim1 <= target.ndim1; idim1 ++)
+		for (integer idim2 = 1; idim2 <= target.ndim2; idim2 ++)
+			for (integer idim3 = 1; idim3 <= target.ndim3; idim3 ++)
+				target [idim1] [idim2] [idim3] = source [idim1] [idim2] [idim3];
 }
 
 /* End of file melder_tensor.h */
