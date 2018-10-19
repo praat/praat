@@ -1409,17 +1409,13 @@ autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, b
 		autoTableOfReal thee = Data_copy (me);
 
 		if (upper) {
-			for (integer i = 2; i <= n; i ++) {
-				for (integer j = 1; j < i; j ++) {
+			for (integer i = 2; i <= n; i ++)
+				for (integer j = 1; j < i; j ++)
 					thy data [i] [j] = 0.0;
-				}
-			}
 		} else {
-			for (integer i = 1; i < n; i ++) {
-				for (integer j = i + 1; j <= n; j ++) {
+			for (integer i = 1; i < n; i ++)
+				for (integer j = i + 1; j <= n; j ++)
 					thy data [i] [j] = 0.0;
-				}
-			}
 		}
 		char uplo = upper ? 'L' : 'U';
 		NUMlapack_dpotf2 (& uplo, & n, & thy data [1] [1], & lda, & info);
