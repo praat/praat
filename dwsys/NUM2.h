@@ -847,12 +847,12 @@ void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT co
 
 /******  Interpolation ****/
 
-void NUMcubicSplineInterpolation_getSecondDerivatives (double x[], double y[], integer n, double yp1, double ypn, double y2[]);
+void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, constVEC y, double yp1, double ypn);
 /*
-	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
+	Given arrays x[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
 	ypn for the first derivative of the interpolating function at point
-	1 and n, respectively, this routine returns an array y2[1..n] that
+	1 and n, respectively, this routine returns an array out_y[1..n] that
 	contains the second derivative of the interpolating function at the
 	tabulated point x.
 	If yp1 and/or ypn are >= 10^30, the routine is signaled to
@@ -860,7 +860,7 @@ void NUMcubicSplineInterpolation_getSecondDerivatives (double x[], double y[], i
 	zero second derivative on that boundary.
 */
 
-double NUMcubicSplineInterpolation (double xa[], double ya[], double y2a[], integer n, double x);
+double NUMcubicSplineInterpolation (constVEC xa, constVEC ya, constVEC y2a, double x);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the

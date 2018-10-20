@@ -1614,55 +1614,57 @@ void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT co
 	}
 }
 
-void NUMcubicSplineInterpolation_getSecondDerivatives (double x [], double y [], integer n, double yp1, double ypn, double y2 []) {
-	autoNUMvector<double> u (1, n - 1);
+void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, constVEC y, double yp1, double ypn) {
+	Melder_assert (x.size == y.size && out_y.size == y.size);
+	
+	autoVEC u = VECraw (x.size - 1);
 
-	if (yp1 > 0.99e30) {
-		y2 [1] = u [1] = 0.0;
-	} else {
-		y2 [1] = -0.5;
+	if (yp1 > 0.99e30)
+		out_y [1] = u [1] = 0.0;
+	else {
+		out_y [1] = -0.5;
 		u [1] = (3.0 / (x [2] - x [1])) * ( (y [2] - y [1]) / (x [2] - x [1]) - yp1);
 	}
 
-	for (integer i = 2; i <= n - 1; i ++) {
+	for (integer i = 2; i <= x.size - 1; i ++) {
 		double sig = (x [i] - x [i - 1]) / (x [i + 1] - x [i - 1]);
-		double p = sig * y2 [i - 1] + 2.0;
-		y2 [i] = (sig - 1.0) / p;
+		double p = sig * out_y [i - 1] + 2.0;
+		out_y [i] = (sig - 1.0) / p;
 		u [i] = (y [i + 1] - y [i]) / (x [i + 1] - x [i]) - (y [i] - y [i - 1]) / (x [i] - x [i - 1]);
 		u [i] = (6.0 * u [i] / (x [i + 1] - x [i - 1]) - sig * u [i - 1]) / p;
 	}
 
 	double qn, un;
-	if (ypn > 0.99e30) {
+	if (ypn > 0.99e30)
 		qn = un = 0.0;
-	} else {
+	else {
 		qn = 0.5;
-		un = (3.0 / (x [n] - x [n - 1])) * (ypn - (y [n] - y [n - 1]) / (x [n] - x [n - 1]));
+		un = (3.0 / (x [x.size] - x [x.size - 1])) * (ypn - (y [x.size] - y [x.size - 1]) / (x [x.size] - x [x.size - 1]));
 	}
 
-	y2 [n] = (un - qn * u [n - 1]) / (qn * y2 [n - 1] + 1.0);
-	for (integer k = n - 1; k >= 1; k--) {
-		y2 [k] = y2 [k] * y2 [k + 1] + u [k];
-	}
+	out_y [x.size] = (un - qn * u [x.size - 1]) / (qn * out_y [x.size - 1] + 1.0);
+	for (integer k = x.size - 1; k >= 1; k--)
+		out_y [k] = out_y [k] * out_y [k + 1] + u [k];
 }
 
-double NUMcubicSplineInterpolation (double xa [], double ya [], double y2a [], integer n, double x) {
-	integer klo = 1, khi = n;
+double NUMcubicSplineInterpolation (constVEC x, constVEC y, constVEC y2, double xin) {
+	Melder_assert (x.size == y.size && x.size == y2.size);
+	integer klo = 1, khi = x.size;
 	while (khi - klo > 1) {
 		integer k = (khi + klo) >> 1;
-		if (xa [k] > x) {
+		if (x [k] > xin) {
 			khi = k;
 		} else {
 			klo = k;
 		}
 	}
-	double h = xa [khi] - xa [klo];
+	double h = x [khi] - x [klo];
 	Melder_require (h != 0.0, U"NUMcubicSplineInterpolation: bad input value.");
 	
-	double a = (xa [khi] - x) / h;
-	double b = (x - xa [klo]) / h;
-	double y = a * ya [klo] + b * ya [khi] + ( (a * a * a - a) * y2a [klo] + (b * b * b - b) * y2a [khi]) * (h * h) / 6.0;
-	return y;
+	double a = (x [khi] - xin) / h;
+	double b = (xin - x [klo]) / h;
+	double yint = a * y [klo] + b * y [khi] + ((a * a * a - a) * y2 [klo] + (b * b * b - b) * y2 [khi]) * (h * h) / 6.0;
+	return yint;
 }
 
 double NUMsinc (const double x) {
