@@ -404,7 +404,7 @@ static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservatio
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
 	my transitionProbs = NUMmatrix<double> (0, numberOfStates, 1, numberOfStates + 1);
-	my emissionProbs = NUMmatrix<double> (1, numberOfStates, 1, numberOfObservationSymbols);
+	my emissionProbs = MATraw (numberOfStates, numberOfObservationSymbols);
 }
 
 autoHMM HMM_create (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols) {
@@ -529,10 +529,9 @@ void HMM_setDefaultStartProbs (HMM me) {
 
 void HMM_setDefaultEmissionProbs (HMM me) {
 	double p = 1.0 / my numberOfObservationSymbols;
-	for (integer i = 1; i <= my numberOfStates; i ++) {
+	for (integer i = 1; i <= my numberOfStates; i ++)
 		for (integer j = 1; j <= my numberOfObservationSymbols; j ++)
-			my emissionProbs [i] [j] = ( my notHidden ? ( i == j ? 1.0 : 0.0 ) : p );
-	}
+			my emissionProbs [i] [j] = (my notHidden ? (i == j ? 1.0 : 0.0 ) : p);
 }
 
 void HMM_setDefaultMixingProbabilities (HMM me) {
@@ -757,7 +756,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 			for (integer i = 1; i <= numberOfItems; i ++) {
 				// Emit a symbol from istate
 
-				integer isymbol = NUMgetIndexFromProbability (my emissionProbs [istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
+				integer isymbol = NUMgetIndexFromProbability (my emissionProbs.row (istate), NUMrandomUniform (0.0, 1.0));
 				HMMObservation s = my observationSymbols->at [isymbol];
 				char32 *name;
 				GaussianMixture_generateOneVector_inline (s -> gm.get(), obs.get(), &name, buf.get());
@@ -780,7 +779,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 			for (integer i = 1; i <= numberOfItems; i ++) {
 				// Emit a symbol from istate
 
-				integer isymbol = NUMgetIndexFromProbability (my emissionProbs [istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
+				integer isymbol = NUMgetIndexFromProbability (my emissionProbs.row (istate), NUMrandomUniform (0.0, 1.0));
 				HMMObservation s = my observationSymbols->at [isymbol];
 
 				Table_setStringValue (thee.get(), i, 1, s -> label.get());
