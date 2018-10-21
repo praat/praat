@@ -304,11 +304,11 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 			/*
 				This case will be appropriate for the multiplication of full matrices
 					X'.Y'
-				However, this will work only once an automatrix has row and column strides;
-				until that time we cannot really modify the structure of `target`.
 
 				So we will make this fast by making the target matrix column-major.
 				The speed will be 0.065, 1.27, 1.45, 1.21 Gflops for size = 1,10,100,1000.
+				However, this will work only once an automatrix has row and column strides;
+				until that time we cannot really modify the structure of `target`.
 
 				For the moment, the target has to stay row-major.
 				The speed is 0.064, 1.21, 1.41, 0.43 Gflops for size = 1,10,100,1000.
