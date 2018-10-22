@@ -1447,9 +1447,8 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 		*/
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, ncols);
 		his rowLabels. copyElementsFrom (my rowLabels.get());
-		his columnLabels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
-		for (integer icol = 1; icol <= thy numberOfColumns; icol ++)
-			his columnLabels [my numberOfColumns + icol] = Melder_dup (thy columnLabels [icol].get());
+		his columnLabels. part (1, my numberOfColumns). copyElementsFrom (my columnLabels.get());
+		his columnLabels. part (my numberOfColumns + 1, ncols). copyElementsFrom (thy columnLabels.get());
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			if (! Melder_equ (my rowLabels [i].get(), thy rowLabels [i].get())) {
 				labeldiffs ++;

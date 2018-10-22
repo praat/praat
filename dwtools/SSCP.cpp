@@ -640,7 +640,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
 		VECcopy_preallocated (thy centroid.get(), my centroid.get());
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
-		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
+		thy labels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");

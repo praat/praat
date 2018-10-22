@@ -544,8 +544,8 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 			thy data [my numberOfRows + 1] [j] = (double) columnSum;
 		}
 
-		thy rowLabels. copyElementsFrom_upTo (my rowLabels.get(), my numberOfRows);
-		thy columnLabels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
+		thy rowLabels. part (1, my numberOfRows). copyElementsFrom (my rowLabels.get());
+		thy columnLabels. part (1, my numberOfColumns). copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": table with marginals not created.");
