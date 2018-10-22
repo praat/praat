@@ -16,6 +16,11 @@ Around pa_linux_alsa.c, do
 ...
 #endif
 
+Around pa_jack.c, do
+#if defined (UNIX) && defined (JACK)
+...
+#endif
+
 Around pa_win_*.c, do
 #ifdef _WIN32
 ...
