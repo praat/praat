@@ -1,10 +1,10 @@
 # Makefile of the library "external/portaudio"
-# Paul Boersma, 14 February 2014
+# Paul Boersma, 21 October 2018
 
 include ../../makefile.defs
 
 OBJECTS = \
-	pa_unix_hostapis.o pa_unix_util.o pa_linux_alsa.o \
+	pa_unix_hostapis.o pa_unix_util.o pa_linux_alsa.o pa_jack.o pa_ringbuffer.o \
 	pa_win_hostapis.o pa_win_util.o pa_win_wmme.o pa_win_waveformat.o \
 	pa_front.o pa_debugprint.o pa_cpuload.o \
 	pa_allocation.o pa_process.o pa_converters.o pa_dither.o \
