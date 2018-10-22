@@ -159,7 +159,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
 			VECcopy_preallocated ( thy data.row (i), sscp -> centroid.get());
 		}
-		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
+		thy columnLabels. copyElementsFrom (my groups->at [m] -> columnLabels.part (1, n));
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
@@ -180,7 +180,7 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
-		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
+		thy columnLabels. copyElementsFrom (my groups->at [m] -> columnLabels.part (1, n));
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
@@ -211,7 +211,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 
 		SSCP total = my total.get();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
-		thy columnLabels. copyElementsFrom_upTo (my total -> columnLabels.get(), nx);
+		thy columnLabels. part (1, nx). copyElementsFrom (my total -> columnLabels.part (1, nx));
 			// ppgb FIXME: that other number of columns should be at least nx (is it nx?), but that is not documented; if so, add an assert above
 
 		autoSSCP within;

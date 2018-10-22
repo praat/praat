@@ -28,6 +28,20 @@ public:
 	T* & operator[] (integer i) {
 		return our at [i];
 	}
+	_stringvector<T> part (integer firstPosition, integer lastPosition) {
+		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
+		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
+		integer newSize = lastPosition - (firstPosition - 1);
+		if (newSize <= 0) return _stringvector<T> ();
+		return _stringvector (at + (firstPosition -1), newSize);
+	}
+	void copyElementsFrom (_stringvector<T> other) {
+		Melder_assert (other. size == our size);
+		for (integer i = 1; i <= our size; i ++) {
+			Melder_free (our at [i]);   // YUCK
+			our at [i] = Melder_dup (other [i]). transfer();
+		}
+	}
 };
 typedef _stringvector <char32> string32vector;
 typedef _stringvector <char> string8vector;
@@ -42,6 +56,13 @@ public:
 	_conststringvector (_stringvector<T> other): at (other.at), size (other.size) { }
 	const T* const & operator[] (integer i) {
 		return our at [i];
+	}
+	_conststringvector<T> part (integer firstPosition, integer lastPosition) {
+		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
+		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
+		integer newSize = lastPosition - (firstPosition - 1);
+		if (newSize <= 0) return _stringvector<T> ();
+		return _conststringvector (at + (firstPosition -1), newSize);
 	}
 };
 typedef _conststringvector <char32> conststring32vector;
@@ -105,10 +126,12 @@ public:
 		for (integer i = 1; i <= our size; i ++)
 			our _ptr [i] = Melder_dup (other [i]);
 	}
-	void copyElementsFrom_upTo (_conststringvector<T> other, integer to) {
-		Melder_assert (to <= other. size && to <= our size);
-		for (integer i = 1; i <= to; i ++)
-			our _ptr [i] = Melder_dup (other [i]);
+	_stringvector<T> part (integer firstPosition, integer lastPosition) {
+		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
+		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
+		integer newSize = lastPosition - (firstPosition - 1);
+		if (newSize <= 0) return _stringvector<T> ();
+		return _stringvector ((T **) our _ptr + (firstPosition - 1), newSize);
 	}
 };
 

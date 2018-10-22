@@ -1191,7 +1191,7 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
 		autoVEC buf (my dimension, kTensorInitializationType::RAW);
-		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels.get(), my dimension);
+		thy columnLabels. copyElementsFrom (cov -> columnLabels.part (1, my dimension));
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;

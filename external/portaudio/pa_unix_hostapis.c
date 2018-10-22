@@ -58,8 +58,12 @@ PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiI
 
 PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
-		#if defined (linux) && defined (ALSA)
-			PaAlsa_Initialize,   // ppgb
+		#if defined (linux)
+			#if defined (ALSA)
+				PaAlsa_Initialize,   // ppgb
+			#elif defined (JACK)
+				PaJack_Initialize,
+			#endif
 		#endif
         0   /* NULL terminated array */
     };
