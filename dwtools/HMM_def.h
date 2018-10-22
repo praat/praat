@@ -47,7 +47,7 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_INTEGER (componentDimension)
 	oo_INT (componentStorage)
 	oo_DOUBLE_MATRIX_FROM (transitionProbs, 0, numberOfStates, 1, numberOfStates + 1) // row 0: initial probabilities
-	oo_DOUBLE_MATRIX (emissionProbs, numberOfStates, numberOfObservationSymbols)
+	oo_MAT (emissionProbs, numberOfStates, numberOfObservationSymbols)
 	oo_OBJECT (HMMStateList, 1, states)
 	oo_OBJECT (HMMObservationList, 1, observationSymbols)
 

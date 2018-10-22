@@ -363,7 +363,7 @@ void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending); // TODO template
 
 autoINTVEC NUMindexx (constVEC a);
 autoINTVEC NUMindexx_s (constSTRVEC a);
-void NUMindexx (const double a[], integer n, integer indx[]);
+
 void NUMindexx_s (char32 *a[], integer n, integer indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
@@ -847,12 +847,12 @@ void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT co
 
 /******  Interpolation ****/
 
-void NUMcubicSplineInterpolation_getSecondDerivatives (double x[], double y[], integer n, double yp1, double ypn, double y2[]);
+void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, constVEC y, double yp1, double ypn);
 /*
-	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
+	Given arrays x[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
 	ypn for the first derivative of the interpolating function at point
-	1 and n, respectively, this routine returns an array y2[1..n] that
+	1 and n, respectively, this routine returns an array out_y[1..n] that
 	contains the second derivative of the interpolating function at the
 	tabulated point x.
 	If yp1 and/or ypn are >= 10^30, the routine is signaled to
@@ -860,7 +860,7 @@ void NUMcubicSplineInterpolation_getSecondDerivatives (double x[], double y[], i
 	zero second derivative on that boundary.
 */
 
-double NUMcubicSplineInterpolation (double xa[], double ya[], double y2a[], integer n, double x);
+double NUMcubicSplineInterpolation (constVEC xa, constVEC ya, constVEC y2a, double x);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the
@@ -915,7 +915,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 */
 
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
-	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2);
+	double xr2, double yr2, double *out_xo1, double *out_yo1, double *out_xo2, double *out_yo2);
 /*
 	If true, then returns in (xo1, yo1) and (xo2, yo2) the coordinates of that piece of the line (xl1, yl1)..(xl2, yl2)
 	that can be drawn within the rectangle with lowerleft corner (xr1, yr1) and upperright (xr2, yr2).
@@ -923,7 +923,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 */
 
 void NUMgetEllipseBoundingBox (double a, double b, double cospsi,
-	double *width, double *height);
+	double *out_width, double *out_height);
 /*
 	Get the width and the height of the bonding box around an ellipse.
 	a and b are the lengths of the long axes.
@@ -1104,6 +1104,7 @@ void NUMreverseRealFastFourierTransform (VEC data);
 */
 void NUMrealft (VEC data, int direction);
 
+integer NUMgetIndexFromProbability (constVEC probs, double p); //TODO HMM zero start matrices
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);
 
 // Fit the line y= ax+b
@@ -1256,7 +1257,7 @@ inline autoINTVEC INTVECto (integer to) {
 	return result;
 }
 
-void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2, double *cs1, double *sn1 );
+void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1 );
 /*
 	This routine is copied from LAPACK.
 	Computes the eigendecomposition of a 2-by-2 symmetric matrix

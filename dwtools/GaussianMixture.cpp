@@ -242,7 +242,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC c, char32 **covname, VEC buf) {
 	try {
 		double p = NUMrandomUniform (0.0, 1.0);
-		integer im = NUMgetIndexFromProbability (my mixingProbabilities.at, my numberOfComponents, p);
+		integer im = NUMgetIndexFromProbability (my mixingProbabilities.get(), p);
 		Covariance thee = my covariances->at [im];
 		*covname = thy name.get();   // BUG dangle
 		if (thy numberOfRows == 1) { // 1xn reduced form
