@@ -33,18 +33,14 @@ public:
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
 		if (newSize <= 0) return _stringvector<T> ();
-		return _stringvector (at + (firstPosition -1), newSize);
-	}
-	void copyElementsFrom (_stringvector<T> other) {
-		Melder_assert (other. size == our size);
-		for (integer i = 1; i <= our size; i ++) {
-			Melder_free (our at [i]);   // YUCK
-			our at [i] = Melder_dup (other [i]). transfer();
-		}
+		return _stringvector (at + (firstPosition - 1), newSize);
 	}
 };
-typedef _stringvector <char32> string32vector;
-typedef _stringvector <char> string8vector;
+using string32vector = _stringvector <char32>;
+using string8vector  = _stringvector <char>;
+
+template <typename T>
+class _autostringvectorview;
 
 template <typename T>
 class _conststringvector {
@@ -54,6 +50,7 @@ public:
 	_conststringvector () { }
 	_conststringvector (const T* const * givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): at (other.at), size (other.size) { }
+	_conststringvector (_autostringvectorview<T> other): at ((T**) other._ptr), size (other.size) { }
 	const T* const & operator[] (integer i) {
 		return our at [i];
 	}
@@ -61,35 +58,52 @@ public:
 		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
-		if (newSize <= 0) return _stringvector<T> ();
-		return _conststringvector (at + (firstPosition -1), newSize);
+		if (newSize <= 0) return _conststringvector<T> ();
+		return _conststringvector (at + (firstPosition - 1), newSize);
 	}
 };
-typedef _conststringvector <char32> conststring32vector;
-typedef _conststringvector <char> conststring8vector;
+using conststring32vector = _conststringvector <char32>;
+using conststring8vector  = _conststringvector <char>;
 
-template <class T>
-class _autostringvector {
+template <typename T>
+class _autostringvectorview {
+public:
+	_autostring <T> * _ptr = nullptr;
+	integer size = 0;
+	_autostringvectorview<T> () = default;
+	_autostringvectorview<T> (_autostring <T> * givenPtr, integer givenSize): _ptr (givenPtr), size (givenSize) { }
+	_autostring <T> & operator[] (integer i) {
+		return our _ptr [i];
+	}
+	void copyElementsFrom (_conststringvector<T> other) {
+		Melder_assert (other. size == our size);
+		for (integer i = 1; i <= our size; i ++)
+			our _ptr [i] = Melder_dup (other [i]);
+	}
+};
+
+template <typename T>
+class _autostringautovector {
 	_autostring <T> * _ptr;
 public:
 	integer size;
-	_autostringvector () {
+	_autostringautovector () {
 		our _ptr = nullptr;
 		our size = 0;
 	}
-	_autostringvector<T> (integer initialSize) {
+	_autostringautovector<T> (integer initialSize) {
 		our _ptr = NUMvector <_autostring <T>> (1, initialSize, true);
 		our size = initialSize;
 	}
-	_autostringvector (const _autostringvector &) = delete;
-	_autostringvector (_autostringvector&& other) {
+	_autostringautovector (const _autostringautovector &) = delete;
+	_autostringautovector (_autostringautovector&& other) {
 		our _ptr = other. _ptr;
 		our size = other. size;
 		other. _ptr = nullptr;
 		other. size = 0;
 	}
-	_autostringvector& operator= (const _autostringvector &) = delete;   // disable copy assignment
-	_autostringvector& operator= (_autostringvector&& other) noexcept {   // enable move assignment
+	_autostringautovector& operator= (const _autostringautovector &) = delete;   // disable copy assignment
+	_autostringautovector& operator= (_autostringautovector&& other) noexcept {   // enable move assignment
 		if (& other != this) {
 			our reset ();
 			our _ptr = other. _ptr;
@@ -99,7 +113,7 @@ public:
 		}
 		return *this;
 	}
-	~ _autostringvector<T> () {
+	~ _autostringautovector<T> () {
 		our reset ();
 	}
 	explicit operator bool () const { return !! our _ptr; }
@@ -126,21 +140,21 @@ public:
 		for (integer i = 1; i <= our size; i ++)
 			our _ptr [i] = Melder_dup (other [i]);
 	}
-	_stringvector<T> part (integer firstPosition, integer lastPosition) {
+	_autostringvectorview<T> part (integer firstPosition, integer lastPosition) {
 		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
-		if (newSize <= 0) return _stringvector<T> ();
-		return _stringvector ((T **) our _ptr + (firstPosition - 1), newSize);
+		if (newSize <= 0) return _autostringvectorview<T> ();
+		return _autostringvectorview (our _ptr + (firstPosition - 1), newSize);
 	}
 };
 
-typedef _autostringvector <char32> autostring32vector;
-typedef _autostringvector <char> autostring8vector;
+using autostring32vector = _autostringautovector <char32>;
+using autostring8vector  = _autostringautovector <char>;
 
 using STRVEC = _stringvector <char32>;
 using constSTRVEC = _conststringvector <char32>;
-using autoSTRVEC = _autostringvector <char32>;
+using autoSTRVEC = _autostringautovector <char32>;
 
 inline static autoSTRVEC STRVECclone (constSTRVEC strvec) {
 	autoSTRVEC result (strvec.size);
