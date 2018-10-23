@@ -86,6 +86,12 @@ void MATprintMatlabForm (constMAT m, conststring32 name);
  * Precondition:
  *	 lo and hi should be valid indices in the array.
 */
+
+inline void NUMextrema (constVEC x, double *out_minimum, double *out_maximum) {
+	if (out_minimum) *out_minimum = NUMmin (x);
+	if (out_maximum) *out_maximum = NUMmax (x);
+}
+
 template <class T>
 void NUMvector_extrema (const T *v, integer lo, integer hi, double *p_min, double *p_max) {
 	double min = v [lo];
@@ -128,6 +134,15 @@ double NUMmatrix_extremum (const T * const *x, integer rb, integer re, integer c
 	Clip array values.
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
+
+inline void VECclip_inplace (VEC x, double min, double max) {
+	for (integer i = 1; i <= x.size; i++)
+		if (x [i] < min)
+			x [i] = min;
+		else if (x [i] > max) 
+			x [i] = max;
+}
+
 template <class T>
 void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	for (integer i = lo; i <= hi; i++)
