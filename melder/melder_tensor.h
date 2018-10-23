@@ -638,9 +638,9 @@ class constmatrixview;
 template <typename T>
 class matrix {
 public:
-	T *cells = nullptr;   // the future
-	T **at_deprecated = nullptr;   // deprecated
+	T **at_deprecated = nullptr;   // deprecated; WATCH OUT: when removed, change MatrixEditor
 	integer nrow = 0, ncol = 0;
+	T *cells = nullptr;   // the future
 public:
 	matrix () = default;
 	//matrix (T *givenCells, integer givenNrow, integer givenNcol) :
