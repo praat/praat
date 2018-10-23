@@ -72,19 +72,15 @@
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
 static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tmax, double multiplier, double fref_Hz) {
-	if (fref_Hz <= 0) {
+	if (fref_Hz <= 0)
 		return;
-	}
-
 	double fref_st = 12.0 * log (fref_Hz / 100.0) / NUMln2;
-
 	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		double f = point -> value;
-		if (point -> number < tmin || point -> number > tmax) {
+		if (point -> number < tmin || point -> number > tmax)
 			continue;
-		}
-		if (f > 0) {
+		if (f > 0.0) {
 			double f_st = fref_st + 12.0 * log2 (f / fref_Hz) * multiplier;
 			point -> value = 100.0 * exp (f_st * (NUMln2 / 12.0));
 		}
@@ -92,7 +88,7 @@ static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tm
 }
 
 static void Pitch_scaleDuration (Pitch me, double multiplier) {
-	if (multiplier != 1) {
+	if (multiplier != 1.0) {
 		// keep xmin at the same value
 		my dx *= multiplier;
 		my x1 = my xmin + (my x1 - my xmin) * multiplier;
@@ -104,17 +100,16 @@ static void Pitch_scalePitch (Pitch me, double multiplier) {
 	for (integer i = 1; i <= my nx; i ++) {
 		double f = my frame [i].candidate [1].frequency;
 		f *= multiplier;
-		if (f < my ceiling) {
+		if (f < my ceiling)
 			my frame [i].candidate [1].frequency = f;
-		}
 	}
 }
 
 static void i1write (Sound me, FILE *f, integer *nClip) {
-	double *s = & my z [1] [0], min = -128, max = 127;
+	double min = -128.0, max = 127.0;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double sample = round (s [i] * 128);
+		double sample = round (my z [1] [i] * 128.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -127,17 +122,15 @@ static void i1write (Sound me, FILE *f, integer *nClip) {
 }
 
 static void i1read (Sound me, FILE *f) {
-	double *s = & my z [1] [0];
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = bingeti8 (f) / 128.0;
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = bingeti8 (f) / 128.0;
 }
 
 static void u1write (Sound me, FILE *f, integer *nClip) {
-	double *s = & my z [1] [0], min = 0, max = 255;
+	double min = 0.0, max = 255.0;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double sample = round ( (s [i] + 1) * 255 / 2);
+		double sample = round ((my z [1] [i] + 1.0) * 255.0 / 2.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -150,18 +143,16 @@ static void u1write (Sound me, FILE *f, integer *nClip) {
 }
 
 static void u1read (Sound me, FILE *f) {
-	double *s = & my z [1] [0];
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = bingetu8 (f) / 128.0 - 1.0;
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = bingetu8 (f) / 128.0 - 1.0;
 }
 
 static void i2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double *s = & my z [1] [0], min = -32768, max = 32767;
+	double min = -32768.0, max = 32767.0;
 	void (*put) (int16, FILE *) = littleEndian ? binputi16LE : binputi16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double sample = round (s [i] * 32768);
+		double sample = round (my z [1] [i] * 32768.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -174,19 +165,17 @@ static void i2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 }
 
 static void i2read (Sound me, FILE *f, bool littleEndian) {
-	double *s = & my z [1] [0];
 	int16 (*get) (FILE *) = littleEndian ? bingeti16LE : bingeti16;
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = get (f) / 32768.;
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = get (f) / 32768.0;
 }
 
 static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double *s = & my z [1] [0], min = 0, max = 65535;
+	double min = 0.0, max = 65535.0;
 	void (*put) (uint16, FILE *) = littleEndian ? binputu16LE : binputu16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double sample = round ( (s [i] + 1) * 65535 / 2);
+		double sample = round ((my z [1] [i] + 1.0) * 65535.0 / 2.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -199,20 +188,17 @@ static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 }
 
 static void u2read (Sound me, FILE *f, bool littleEndian) {
-	double *s = & my z [1] [0];
 	uint16 (*get) (FILE *) = littleEndian ? bingetu16LE : bingetu16;
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = get (f) / 32768.0 - 1.0;
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = get (f) / 32768.0 - 1.0;
 }
 
 static void i4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double *s = & my z [1] [0];
 	double min = -2147483648.0, max = 2147483647.0;
 	void (*put) (int32, FILE *) = littleEndian ? binputi32LE : binputi32;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double sample = round (s [i] * 2147483648.0);
+		double sample = round (my z [1] [i] * 2147483648.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -225,21 +211,18 @@ static void i4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 }
 
 static void i4read (Sound me, FILE *f, bool littleEndian) {
-	double *s = & my z [1] [0];
 	int32 (*get) (FILE *) = littleEndian ? bingeti32LE : bingeti32;
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = get (f) / 2147483648.0;
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = get (f) / 2147483648.0;
 }
 
 
 static void u4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double *s = & my z [1] [0];
 	double min = 0.0, max = 4294967295.0;
 	void (*put) (uint32, FILE *) = littleEndian ? binputu32LE : binputu32;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double sample = Melder_round_tieUp (s [i] * 4294967295.0);
+		double sample = Melder_round_tieUp (my z [1] [i] * 4294967295.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -252,26 +235,20 @@ static void u4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 }
 
 static void u4read (Sound me, FILE *f, bool littleEndian) {
-	double *s = & my z [1] [0];
 	int32 (*get) (FILE *) = littleEndian ? bingeti32LE : bingeti32;
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = get (f) / 2147483648.0 - 1.0;
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = get (f) / 2147483648.0 - 1.0;
 }
 
 
 static void r4write (Sound me, FILE *f) {
-	double *s = & my z [1] [0];
-	for (integer i = 1; i <= my nx; i ++) {
-		binputr32 (s [i], f);
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		binputr32 (my z [1] [i], f);
 }
 
 static void r4read (Sound me, FILE *f) {
-	double *s = & my z [1] [0];
-	for (integer i = 1; i <= my nx; i ++) {
-		s [i] = bingetr32 (f);
-	}
+	for (integer i = 1; i <= my nx; i ++)
+		my z [1] [i] = bingetr32 (f);
 }
 
 /* Old TIMIT sound-file format */
