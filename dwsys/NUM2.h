@@ -136,7 +136,7 @@ double NUMmatrix_extremum (const T * const *x, integer rb, integer re, integer c
 */
 
 inline void VECclip_inplace (VEC x, double min, double max) {
-	for (integer i = 1; i <= x.size; i++)
+	for (integer i = 1; i <= x.size; i ++)
 		if (x [i] < min)
 			x [i] = min;
 		else if (x [i] > max) 

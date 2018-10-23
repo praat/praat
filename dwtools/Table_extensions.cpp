@@ -51,15 +51,15 @@ static bool Table_selectedColumnPartIsNumeric (Table me, integer column, constIN
 }
 
 // column and selectedRows are valid; *min & *max must have been initialized
-static void Table_columnExtremesFromSelectedRows (Table me, integer column, constINTVEC selectedRows, double *min, double *max) {
+static void Table_columnExtremesFromSelectedRows (Table me, integer column, constINTVEC selectedRows, double *out_min, double *out_max) {
 	double cmin = 1e308, cmax = - cmin;
 	for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 		double val = Table_getNumericValue_Assert (me, selectedRows [irow], column);
-		if (val < cmin) { cmin = val; }
-		if (val > cmax) { cmax = val; }
+		if (val < cmin) cmin = val; 
+		if (val > cmax) cmax = val;
 	}
-	*min = cmin;
-	*max = cmax;
+	if (out_min) *out_min = cmin;
+	if (out_max) *out_max = cmax;
 }
 
 /*
@@ -1638,16 +1638,18 @@ autoTable Table_create_petersonBarney1952 () {
 			int speaker_type, speaker_sex;
 
 			if (speaker_id <= 33) { /* 33 men */
-				speaker_type = 0; speaker_sex = 0;
+				speaker_type = 0;
+				speaker_sex = 0;
 			} else if (speaker_id <= (33 + 28)) { /* 28 women */
-				speaker_type = 1; speaker_sex = 1;
+				speaker_type = 1;
+				speaker_sex = 1;
 			} else { /*15  children */
-				speaker_type = 2; speaker_sex = 0;
+				speaker_type = 2;
+				speaker_sex = 0;
 				if (speaker_id == 62 || speaker_id == 63 ||
-				        (speaker_id >= 65 && speaker_id <= 68) ||
-				        speaker_id == 73 || speaker_id == 76) {
+					(speaker_id >= 65 && speaker_id <= 68) ||
+					speaker_id == 73 || speaker_id == 76)
 					speaker_sex = 1;
-				}
 			}
 
 			row -> cells [1]. string = Melder_dup (type [speaker_type]);
@@ -1655,9 +1657,8 @@ autoTable Table_create_petersonBarney1952 () {
 			row -> cells [3]. string = Melder_dup (Melder_integer (speaker_id));
 			row -> cells [4]. string = Melder_dup (vowel [vowel_id - 1]);
 			row -> cells [5]. string = Melder_dup (ipa [vowel_id - 1]);
-			for (integer j = 0; j <= 3; j ++) {
+			for (integer j = 0; j <= 3; j ++)
 				row -> cells [j + 6]. string = Melder_dup (Melder_integer (pbdata [i - 1].f [j]));
-			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
 			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
@@ -3100,11 +3101,14 @@ autoTable Table_create_weenink1983 () {
 			int speaker_type, speaker_sex;
 
 			if (speaker_id <= 10) {   // 10 men
-				speaker_type = 0; speaker_sex = 0;
+				speaker_type = 0;
+				speaker_sex = 0;
 			} else if (speaker_id <= 20) {   // 10 women
-				speaker_type = 1; speaker_sex = 1;
+				speaker_type = 1;
+				speaker_sex = 1;
 			} else {   // 10 children
-				speaker_type = 2; speaker_sex = 0;   // which children were m/f
+				speaker_type = 2;
+				speaker_sex = 0;   // which children were m/f
 			}
 
 			row -> cells [1]. string = Melder_dup (type [speaker_type]);
@@ -3113,9 +3117,8 @@ autoTable Table_create_weenink1983 () {
 			row -> cells [4]. string = Melder_dup (vowel [vowel_id]);
 			row -> cells [5]. string = Melder_dup (ipa [vowel_id]);
 
-			for (integer j = 0; j <= 3; j ++) {
+			for (integer j = 0; j <= 3; j ++)
 				row -> cells [j + 6]. string = Melder_dup (Melder_integer (weeninkdata [index_in_data]. f [j]));
-			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
 			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
@@ -3195,27 +3198,18 @@ autoTable Table_create_ganong1980 () {
 }
 
 static bool intervalsIntersect (double x1, double x2, double xmin, double xmax, double *xc1, double *xc2) {
-	if (x1 > x2) { 
-		double tmp = x1;
-		x1 = x2;
-		x2 = tmp;
-	}
-	if (xmin > xmax) {
-		double tmp = xmin;
-		xmin = xmax;
-		xmin = tmp;
-	}
+	if (x1 > x2) 
+		std::swap (x1, x2);
+	if (xmin > xmax)
+		std::swap (xmin, xmax);
 	*xc1 = x1;
 	*xc2 = x2;
-	if (x2 <= xmin || x1 >= xmax) {
+	if (x2 <= xmin || x1 >= xmax)
 		return false;
-	}
-	if (x1 < xmin) {
+	if (x1 < xmin) 
 		*xc1 = xmin;
-	}
-	if (x2 > xmax) {
+	if (x2 > xmax) 
 		*xc2 = xmax;
-	}
 	return true;
 }
 
@@ -3370,9 +3364,9 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_Assert (me, columnNumber);
-		if (my rows.size < 1) {
+		if (my rows.size < 1)
 			return undefined;
-		}
+
 		autoVEC data = VECraw (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -3387,9 +3381,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
 	}
 
-autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factorColumn,
-	double *out_prob, double *out_kruskalWallis, double *out_df)
-{
+autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factorColumn, double *out_prob, double *out_kruskalWallis, double *out_df) {
 	try {
 		Melder_require (column > 0 && column <= my numberOfColumns, 
 			U"Invalid column number.");
@@ -3405,9 +3397,9 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		Melder_require (numberOfLevels > 1, 
 			U"There should be at least two levels.");
 
-		for (integer irow = 1; irow <= numberOfData; irow ++) {
+		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
-		}
+
 		NUMsortTogether <double, integer> (data.get(), levels -> classIndex.get());
 		NUMrank (data.get());
 
@@ -3416,18 +3408,17 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		longdouble c = 0.0;
 		integer jt, j = 1;
 		while (j < numberOfData) {
-        	for (jt = j + 1; jt <= numberOfData && data [jt] == data [j]; jt ++) { }
+        	for (jt = j + 1; jt <= numberOfData && data [jt] == data [j]; jt ++);
         	double multiplicity = jt - j;
-			if (multiplicity > 1) {
+			if (multiplicity > 1)
 				c += multiplicity * (multiplicity *multiplicity - 1.0);
-			}
         	j = jt;
 		}
 		double tiesCorrection = 1.0 - (double) c / (numberOfData * (numberOfData * numberOfData - 1.0));
 
-		autoNUMvector <integer> factorLevelSizes (1, numberOfLevels);
-		autoNUMvector <double> factorLevelSums (1, numberOfLevels);
-		autoNUMvector <integer> ties (1, numberOfLevels);
+		autoINTVEC factorLevelSizes = INTVECzero (numberOfLevels);
+		autoVEC factorLevelSums = VECzero (numberOfLevels);
+		autoINTVEC ties = INTVECzero (numberOfLevels);
 		for (integer i = 1; i <= numberOfData; i ++) {
 			integer index = levels -> classIndex [i];
 			factorLevelSizes [index] ++;
@@ -3465,13 +3456,13 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 }
 
 // Table with Group Means Cases
-static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double degreesOfFreedomWithin, autoTable *meansDiff, autoTable *meansDiffProbabilities) {
+static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double degreesOfFreedomWithin, autoTable *out_meansDiff, autoTable *out_meansDiffProbabilities) {
 	try {
 		Table_numericize_Assert (me, 2);
 		Table_numericize_Assert (me, 3);
 		integer numberOfMeans = my rows.size;
-		autoNUMvector<double> means (1, numberOfMeans);
-		autoNUMvector<double> cases (1, numberOfMeans);
+		autoVEC means = VECraw (numberOfMeans);
+		autoVEC cases = VECraw (numberOfMeans);
 		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
 		for (integer i = 1; i <= numberOfMeans; i ++) {
 			TableRow row = my rows.at [i];
@@ -3500,12 +3491,8 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 				Table_setNumericValue (meansP.get(), irow, icol, p);
 			}
 		}
-		if (meansDiff) {
-			*meansDiff = meansD.move();
-		}
-		if (meansDiffProbabilities) {
-			*meansDiffProbabilities = meansP.move();
-		}
+		if (out_meansDiff) *out_meansDiff = meansD.move();
+		if (out_meansDiffProbabilities) *out_meansDiffProbabilities = meansP.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no post-hoc performed.");
 	}
@@ -3524,20 +3511,18 @@ void Table_printAsAnovaTable (Table me) {
 		Melder_pad (width [5], U"F"), U"\t",
 		Melder_pad (width [6], U"P")
 	);
-	for (integer icol = 2; icol <= 6; icol ++) {
+	for (integer icol = 2; icol <= 6; icol ++)
 		Table_numericize_Assert (me, icol);
-	}
 
 	for (integer i = 1; i <= my rows.size; i ++) {
 		TableRow row = my rows.at [i];
 		MelderString_copy (& s, Melder_padOrTruncate (width [1], row -> cells [1]. string.get()), U"\t");
 		for (integer j = 2; j <= 6; j ++) {
 			double value = row -> cells [j]. number;
-			if (isdefined (value)) {
+			if (isdefined (value))
 				MelderString_append (& s, Melder_pad (width [j], Melder_single (value)), j == 6 ? U"" : U"\t");
-			} else {
+			else
 				MelderString_append (& s, Melder_pad (width [j], U""), j == 6 ? U"" : U"\t");
-			}
 		}
 		MelderInfo_writeLine (s.string);
 	}
@@ -3545,29 +3530,24 @@ void Table_printAsAnovaTable (Table me) {
 
 void Table_printAsMeansTable (Table me) {
 	autoMelderString s;
-	for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
+	for (integer icol = 2; icol <= my numberOfColumns; icol ++)
 		Table_numericize_Assert (me, icol);
-	}
-	for (integer j = 1; j <= my numberOfColumns; j ++) {
+
+	for (integer j = 1; j <= my numberOfColumns; j ++)
 		MelderString_append (& s,
 			Melder_padOrTruncate (10, my columnHeaders [j]. label ? my columnHeaders [j]. label.get() : U""),
 			j == my numberOfColumns ? U"" : U"\t");
-	}
+
 	MelderInfo_writeLine (s.string);
 	for (integer i = 1; i <= my rows.size; i ++) {
 		TableRow row = my rows.at [i];
 		MelderString_copy (& s, Melder_padOrTruncate (10, row -> cells [1]. string.get()), U"\t");
 		for (integer j = 2; j <= my numberOfColumns; j ++) {
 			double value = row -> cells [j].number;
-			if (isdefined (value)) {
-				MelderString_append (& s,
-					Melder_pad (10, Melder_half (value)),
-					j == my numberOfColumns ? U"" : U"\t");
-			} else {
-				MelderString_append (& s,
-					Melder_pad (10, U""),
-					j == my numberOfColumns ? U"" : U"\t");
-			}
+			if (isdefined (value))
+				MelderString_append (& s, Melder_pad (10, Melder_half (value)), j == my numberOfColumns ? U"" : U"\t");
+			else
+				MelderString_append (& s, Melder_pad (10, U""), j == my numberOfColumns ? U"" : U"\t");
 		}
 		MelderInfo_writeLine (s.string);
 	}
@@ -3581,21 +3561,21 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			U"Invalid group column number.");
 		integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoNUMvector<double> data (1, numberOfData);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		// copy data from Table
+		autoVEC data = VECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
 		integer numberOfLevels = levels -> classes->size;
 		Melder_require (numberOfLevels > 1,
 			U"There should be at least two levels.");
-		autoNUMvector<integer> factorLevelSizes (1, numberOfLevels);
-		autoNUMvector<double> factorLevelMeans (1, numberOfLevels);
+		autoINTVEC factorLevelSizes = INTVECzero (numberOfLevels);
+		autoVEC factorLevelMeans = VECzero (numberOfLevels);
 
 		// a, ty, c according to scheme of Hayes, 10.14 pg 363
 
-		double a = 0.0, ty = 0.0;
+		longdouble a = 0.0, ty = 0.0;
 		for (integer i = 1; i <= numberOfData; i ++) {
 			integer index = levels -> classIndex [i];
 			factorLevelSizes [index] ++;
@@ -3604,7 +3584,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			ty += data [i];
 		}
 
-		double c = 0.0;
+		longdouble c = 0.0;
 		for (integer j = 1; j <= numberOfLevels; j ++) {
 			if (factorLevelSizes [j] < 2) {
 				SimpleString ss = (SimpleString) levels -> classes->at [j];
@@ -3664,7 +3644,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 	}
 }
 
-autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer factorColumnA, integer factorColumnB, autoTable *means, autoTable *levelSizes) {
+autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer factorColumnA, integer factorColumnB, autoTable *out_means, autoTable *out_levelSizes) {
 	try {
 		Melder_require (column > 0 && column <= my numberOfColumns,
 			U"Invalid column number.");
@@ -3678,10 +3658,10 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoNUMvector<double> data (1, numberOfData);
 		autoStringsIndex levelsA = Table_to_StringsIndex_column (me, factorColumnA);
 		autoStringsIndex levelsB = Table_to_StringsIndex_column (me, factorColumnB);
 		// copy data from Table
+		autoVEC data = VECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
@@ -3716,9 +3696,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		 *
 		 */
 
-		autoNUMmatrix<integer> factorLevelSizes (1, numberOfLevelsA + 1, 1, numberOfLevelsB + 1); // sum + weighted sum
+		autoMAT factorLevelSizes = MATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // sum + weighted sum
 		// extra column for ystar [i.], extra row for ystar [.j]
-		autoNUMmatrix<double> factorLevelMeans (1, numberOfLevelsA + 1, 1, numberOfLevelsB + 1); // weighted mean + mean
+		autoMAT factorLevelMeans = MATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // weighted mean + mean
 
 		for (integer k = 1; k <= numberOfData; k ++) {
 			integer indexA = levelsA -> classIndex [k];
@@ -3729,7 +3709,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		// check for unfilled cells and calculate cell means
 
-		double nh = 0;
+		longdouble nh = 0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
 				if (factorLevelSizes [i] [j] < 1) {
@@ -3745,16 +3725,14 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		// row marginals (ystar [i.])
 
-		double mean = 0; // ystar [..]
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
 				factorLevelMeans [i] [numberOfLevelsB + 1] += factorLevelMeans [i] [j];
-				mean += factorLevelMeans [i] [j];
 				factorLevelSizes [i] [numberOfLevelsB + 1] += factorLevelSizes [i] [j];
 			}
 			factorLevelMeans [i] [numberOfLevelsB + 1] /= numberOfLevelsB;
 		}
-		mean /= numberOfLevelsA * numberOfLevelsB;
+		double mean = NUMmean (asvector(factorLevelMeans.get()));
 		factorLevelMeans [numberOfLevelsA + 1] [numberOfLevelsB + 1] = mean;
 		factorLevelSizes [numberOfLevelsA + 1] [numberOfLevelsB + 1] = numberOfData;
 
@@ -3770,27 +3748,27 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		// the sums of squares
 
-		double ss_T = 0;
+		longdouble ss_T = 0.0;
 		for (integer k = 1; k <= numberOfData; k ++) {
 			double dif = data [k] - mean;
 			ss_T += dif * dif;
 		}
 
-		double ss_A = 0;
+		longdouble ss_A = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			double dif = factorLevelMeans [i] [numberOfLevelsB + 1] - mean;
 			ss_A += dif * dif;
 		}
 		ss_A *= nh * numberOfLevelsB;
 
-		double ss_B = 0;
+		longdouble ss_B = 0.0;
 		for (integer j = 1; j <= numberOfLevelsB; j ++) {
 			double dif = factorLevelMeans [numberOfLevelsA + 1] [j] - mean;
 			ss_B += dif * dif;
 		}
 		ss_B *= nh * numberOfLevelsA;
 
-		double ss_AB = 0;
+		longdouble ss_AB = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
 				double dif = factorLevelMeans [i] [j] - factorLevelMeans [i] [numberOfLevelsB + 1] - factorLevelMeans [numberOfLevelsA + 1] [j] + mean;
@@ -3804,9 +3782,8 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		// are there any replications? if not then the error term is the AB interaction.
 
 		bool replications = true;
-		if (factorLevelSizes [numberOfLevelsA + 1] [1] == numberOfLevelsA) {
+		if (factorLevelSizes [numberOfLevelsA + 1] [1] == numberOfLevelsA)
 			replications = false;
-		}
 
 		// Construct the means Table (numberOfLevelsA+1)x(numberOfLevelsB + 1 + 1)
 
@@ -3822,22 +3799,19 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		}
 		Table_setStringValue (ameans.get(), numberOfLevelsA + 1, 1, U"Mean");
 
-		for (integer i = 1; i <= numberOfLevelsA + 1; i ++) {
-			for (integer j = 1; j <= numberOfLevelsB + 1; j ++) {
+		for (integer i = 1; i <= numberOfLevelsA + 1; i ++)
+			for (integer j = 1; j <= numberOfLevelsB + 1; j ++)
 				Table_setNumericValue (ameans.get(), i, j + 1, factorLevelMeans [i] [j]);
-			}
-		}
 
-		if (levelSizes) {
+
+		if (out_levelSizes) {
 			autoTable asizes = Data_copy (ameans.get());
 			Table_setColumnLabel (asizes.get(), numberOfLevelsB + 1 + 1, U"Total");
 			Table_setStringValue (asizes.get(), numberOfLevelsA + 1, 1, U"Total");
-			for (integer i = 1; i <= numberOfLevelsA + 1; i ++) {
-				for (integer j = 1; j <= numberOfLevelsB + 1; j ++) {
+			for (integer i = 1; i <= numberOfLevelsA + 1; i ++)
+				for (integer j = 1; j <= numberOfLevelsB + 1; j ++)
 					Table_setNumericValue (asizes.get(), i, j + 1, factorLevelSizes [i] [j]);
-				}
-			}
-			*levelSizes = asizes.move();
+			*out_levelSizes = asizes.move();
 		}
 
 		autoTable anova = Table_createWithColumnNames (replications ? 5 : 4, U"Source SS Df MS F P");
@@ -3846,9 +3820,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Table_setStringValue (anova.get(), row_A, col_s, label_A);
 		Table_setStringValue (anova.get(), row_B, col_s, label_B);
 		Table_setStringValue (anova.get(), row_AB, col_s, Melder_cat (label_A, U" x ", label_B));
-		if (replications) {
+		if (replications)
 			Table_setStringValue (anova.get(), row_E, col_s, U"Error");
-		}
+
 		Table_setStringValue (anova.get(), row_t, col_s, U"Total");
 
 		double dof_A = numberOfLevelsA - 1, ms_A = ss_A / dof_A;
@@ -3894,29 +3868,27 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 			Table_setNumericValue (anova.get(), row_AB, col_f, f_AB);
 			Table_setNumericValue (anova.get(), row_AB, col_p, p_AB);
 		}
-		if (means) {
-			*means = ameans.move();
-		}
+		if (out_means)
+			*out_means = ameans.move();
 		return anova;
 	} catch (MelderError) {
 		Melder_throw (me, U": two-way anova not created.");
 	}
 }
 
-void Table_normalProbabilityPlot (Table me, Graphics g,
-	integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish)
-{
+void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish) {
 	try {
-		if (column < 1 || column > my numberOfColumns) return;
+		if (column < 1 || column > my numberOfColumns)
+			return;
 		Table_numericize_Assert (me, column);
 		integer numberOfData = my rows.size;
-		autoVEC data (numberOfData, kTensorInitializationType::RAW);
-		for (integer irow = 1; irow <= numberOfData; irow ++) {
+		autoVEC data = VECraw (numberOfData);
+		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
-		}
+
 		double mean, stdev;
 		NUM_sum_mean_sumsq_variance_stdev (data.get(), nullptr, & mean, nullptr, nullptr, & stdev);
-		double xmin = 100, xmax = -xmin, ymin = 1e308, ymax = -ymin;
+		double xmin = 100.0, xmax = -xmin, ymin = 1e308, ymax = -ymin;
 		if (numberOfSigmas != 0) {
 			xmin = -numberOfSigmas; 
 			xmax =  numberOfSigmas;
@@ -3979,14 +3951,14 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		xdata.resize (xnumberOfData);
 		ydata.resize (ynumberOfData);
 		if (xmin == xmax) {
-			NUMvector_extrema<double> (xdata.at, 1, xnumberOfData, & xmin, & xmax);
+			NUMextrema (xdata.subview (1, xnumberOfData), & xmin, & xmax);
 			if (xmin == xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
-			NUMvector_extrema<double> (ydata.at, 1, ynumberOfData, & ymin, & ymax);
+			NUMextrema (ydata.subview (1, ynumberOfData), & ymin, & ymax);
 			if (ymin == ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
