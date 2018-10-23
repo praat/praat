@@ -29,13 +29,11 @@
 
 autoTableOfReal Eigen_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, integer from_col, integer numberOfComponents) {
 	try {
-		if (numberOfComponents <= 0 || numberOfComponents > my numberOfEigenvalues) {
+		if (numberOfComponents <= 0 || numberOfComponents > my numberOfEigenvalues)
 			numberOfComponents = my numberOfEigenvalues;
-		}
-
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, from_col, him.get(), 1, numberOfComponents);
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created from projection.");

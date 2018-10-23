@@ -366,7 +366,7 @@ autoSound Sound_upsample (Sound me) {
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			autoVEC data (2 * nfft, kTensorInitializationType::ZERO);   // zeroing is important...
 			NUMvector_copyElements (& my z [channel] [0], & data [1000], 1, my nx);   // ...because this fills only part of the sound
-			NUMrealft (data.subview (1, nfft), 1);
+			NUMrealft (data.part (1, nfft), 1);
 			integer imin = (integer) (nfft * 0.95);
 			for (integer i = imin + 1; i <= nfft; i ++) {
 				data [i] *= ((double) (nfft - i)) / (nfft - imin);
@@ -1146,7 +1146,7 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 			if (n <= 2)
 				Melder_throw (U"Sound too short.");
 			VEC channel = my z.row (ichan);
-			VEC window = channel.subview (itmin, itmax);
+			VEC window = channel.part (itmin, itmax);
 			NUMdeemphasize_f (window, my dx, 50.0);
 			for (int iformant = 1; iformant <= numberOfFormants; iformant ++) {
 				NUMfilterSecondOrderSection_fb (window, my dx, formant [iformant], bandwidth [iformant]);

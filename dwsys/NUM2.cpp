@@ -2092,12 +2092,12 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 					for (integer j = i + 1; j <= x.size; j ++)
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 			}
-			VECsort_inplace (mbs.subview(1, numberOfCombinations));
+			VECsort_inplace (mbs.part (1, numberOfCombinations));
 			m = NUMquantile (mbs.get(), 0.5);
 			for (integer i = 1; i <= x.size; i ++)
 				mbs [i] = y [i] - m * x [i];
-			VECsort_inplace (mbs.subview (1, x.size));
-			intercept = NUMquantile (mbs.subview (1, x.size), 0.5);
+			VECsort_inplace (mbs.part (1, x.size));
+			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
 		}
 		if (out_m) *out_m = m;
 		if (out_intercept) *out_intercept = intercept;

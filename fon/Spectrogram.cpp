@@ -86,7 +86,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 		for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++)
 			my z [ifreq] [itime] += dynamicFactor [itime];
 	}
-	Graphics_image (g, my z.subview ({ ifmin, ifmax }, { itmin, itmax }),
+	Graphics_image (g, my z.part (ifmin, ifmax, itmin, itmax),
 		Matrix_columnToX (me, itmin - 0.5),
 		Matrix_columnToX (me, itmax + 0.5),
 		Matrix_rowToY (me, ifmin - 0.5),

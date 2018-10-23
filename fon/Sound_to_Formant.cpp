@@ -317,7 +317,7 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int num
 
 		/* Copy a pre-emphasized window to a frame. */
 		const integer actualFrameLength = endSample - startSample + 1;   // should rarely be less than nsamp_window
-		VEC frame = frameBuffer.subview (1, actualFrameLength);
+		VEC frame = frameBuffer.part (1, actualFrameLength);
 		const integer offset = startSample - 1;
 		for (integer isamp = 1; isamp <= actualFrameLength; isamp ++)
 			frame [isamp] = Sampled_getValueAtSample (me, offset + isamp, Sound_LEVEL_MONO, 0) * window [isamp];

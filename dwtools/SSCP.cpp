@@ -400,7 +400,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 		autoVEC buf = VECraw (my numberOfColumns);
 		for (integer i = 1; i <= numberOfData; i ++)
 			Covariance_PCA_generateOneVector_inline (me, pca.get(), thy data.row (i), buf.get());
-		thy columnLabels. copyElementsFrom (my columnLabels.get());
+		thy columnLabels.all() <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not random sampled.");
@@ -534,7 +534,7 @@ autoTableOfReal Covariance_TableOfReal_extractDistanceQuantileRange (Covariance 
 		Melder_require (nsel > 0, U"Not enough data in quantile interval.");
 		
 		autoTableOfReal r = TableOfReal_create (nsel, thy numberOfColumns);
-		r -> columnLabels. copyElementsFrom (thy columnLabels.get());
+		r -> columnLabels.all() <<= thy columnLabels.all();
 
 		integer k = 0;
 		for (integer i = 1; i <= thy numberOfRows; i ++)
@@ -640,7 +640,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
 		VECcopy_preallocated (thy centroid.get(), my centroid.get());
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
-		thy labels. copyElementsFrom (my columnLabels.get());
+		thy labels.all() <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
@@ -1020,7 +1020,7 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
 		VECcopy_preallocated (thy data.row(1), my centroid.get());
-		thy columnLabels. copyElementsFrom (my columnLabels.get());
+		thy columnLabels.all() <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": centroid not extracted.");
