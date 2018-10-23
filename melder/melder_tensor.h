@@ -606,19 +606,10 @@ autovector<T> vectorzero (integer size) {
 	return autovector<T> (size, kTensorInitializationType::ZERO);
 }
 template <typename T>
-void vectorcopy_preallocated (vector<T> target, constvector<T> source) {
-	Melder_assert (source.size == target.size);
-	for (integer i = 1; i <= source.size; i ++)
-		target [i] = source [i];
-}
-template <typename T>
-void vectorcopy_preallocated (vector<T> target, vector<T> source) {
-	vectorcopy_preallocated (target, constvector<T> (source));
-}
-template <typename T>
 autovector<T> vectorcopy (constvector<T> source) {
 	autovector<T> result = vectorraw<T> (source.size);
-	vectorcopy_preallocated (result.get(), source);
+	for (integer i = 1; i <= source.size; i ++)
+		result [i] = source [i];
 	return result;
 }
 template <typename T>
@@ -1440,9 +1431,6 @@ inline autoVEC VECraw  (integer size) {
 inline autoVEC VECzero (integer size) {
 	return vectorzero <double> (size);
 }
-inline void VECcopy_preallocated (VEC target, constVEC source) {
-	vectorcopy_preallocated (target, source);
-}
 inline autoVEC VECcopy (constVEC source) {
 	return vectorcopy (source);
 }
@@ -1456,16 +1444,15 @@ inline autoVEC VECcopy (constVEC source) {
 	This is fine, as a double can contain an integer up to 54 bits.
 */
 using INTVEC = vector <integer>;
+using INTVECVU = vectorview <integer>;
 using constINTVEC = constvector <integer>;
+using constINTVECVU = constvectorview <integer>;
 using autoINTVEC = autovector <integer>;
 inline autoINTVEC INTVECraw  (integer size) {
 	return vectorraw <integer> (size);
 }
 inline autoINTVEC INTVECzero (integer size) {
 	return vectorzero <integer> (size);
-}
-inline void INTVECcopy_preallocated (INTVEC target, constINTVEC source) {
-	vectorcopy_preallocated (target, source);
 }
 inline autoINTVEC INTVECcopy (constINTVEC source) {
 	return vectorcopy (source);
@@ -1479,9 +1466,6 @@ inline autoBOOLVEC BOOLVECraw  (integer size) {
 }
 inline autoBOOLVEC BOOLVECzero (integer size) {
 	return vectorzero <bool> (size);
-}
-inline void BOOLVECcopy_preallocated (BOOLVEC target, constBOOLVEC source) {
-	vectorcopy_preallocated (target, source);
 }
 inline autoBOOLVEC BOOLVECcopy (constBOOLVEC source) {
 	return vectorcopy (source);
@@ -1558,6 +1542,11 @@ conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
 inline void operator<<= (VECVU const& target, constVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	Melder_assert (target.size == source.size);
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = source [i];

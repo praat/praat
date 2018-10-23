@@ -308,7 +308,7 @@ autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring
 		integer npc;
 		autoVEC pc = VEC_createFromString (numstring);
 		autoConfiguration c = Configuration_create (1, pc.size);
-		VECcopy_preallocated (c -> data.row (1), pc.get());
+		c -> data.row (1) <<= pc.all();
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {

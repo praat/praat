@@ -157,7 +157,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (integer i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			VECcopy_preallocated ( thy data.row (i), sscp -> centroid.get());
+			thy data.row (i) <<= sscp -> centroid.all();
 		}
 		thy columnLabels.all() <<= my groups->at [m] -> columnLabels.part (1, n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
@@ -485,7 +485,7 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
-			VECcopy_preallocated (covg -> centroid.get(), cov -> centroid.get());
+			covg -> centroid.all() <<= cov -> centroid.all();
 			him = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
 			him = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);

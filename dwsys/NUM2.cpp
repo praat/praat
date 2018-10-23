@@ -330,10 +330,9 @@ void NUMdominantEigenvector (constMAT m, VEC inout_q, double *out_lambda, double
 		lambda = NUMvtmv (z.get(), m); // z'. M . z
 
 	} while (fabs (lambda - lambda0) > tolerance || ++ iter < 30);
-	VECcopy_preallocated (inout_q, z.get());
-	if (out_lambda) {
+	inout_q <<= z.all();
+	if (out_lambda)
 		*out_lambda = (double) lambda;
-	}
 }
 
 /* Input:

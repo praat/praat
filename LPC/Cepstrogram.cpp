@@ -196,9 +196,9 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 			autoVEC qin = VECraw (my nx);
 			autoVEC qout = VECraw (my nx);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				VECcopy_preallocated (qin.get(), thy z.row (iq));   // ppgb: why this extra copying?
+				qin.all() <<= thy z.row (iq);   // ppgb: why this extra copying?
 				VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfFrames);
-				VECcopy_preallocated (thy z.row (iq), qout.get());
+				thy z.row (iq) <<= qout.all();
 			}
 		}
 		// 2. average across quefrencies

@@ -28,15 +28,11 @@ autoTableOfReal TableOfReal_Permutation_permuteRows (TableOfReal me, Permutation
 	try {
 		Melder_require (my numberOfRows == thy numberOfElements,
 			U"The number of rows in the table and the number of elements in the Permutation should be equal.");
-		
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
-
-		for (integer i = 1; i <= thy numberOfElements; i ++) {
+		for (integer i = 1; i <= thy numberOfElements; i ++)
 			TableOfReal_copyOneRowWithLabel (me, him.get(), thy p [i], i);
-		}
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			TableOfReal_setColumnLabel (him.get(), j, my columnLabels [j].get());
-		}
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted.");
@@ -47,7 +43,7 @@ autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows);
 		autoINTVEC index = NUMindexx_s (my rowLabels.get());
-		vectorcopy_preallocated (thy p.get(), index.get());
+		thy p.all() <<= index.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
