@@ -448,8 +448,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		}
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
-		thy rowLabels. part (1, nrow). copyElementsFrom (my rowLabels.get());
-		thy rowLabels. part (nrow + 1, nrow + ncol). copyElementsFrom (my columnLabels.get());
+		thy rowLabels.part (1, nrow) <<= my rowLabels.all();
+		thy rowLabels.part (nrow + 1, nrow + ncol) <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");

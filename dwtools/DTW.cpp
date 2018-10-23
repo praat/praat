@@ -626,7 +626,7 @@ static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax
 	if (inset)
 		Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_cellArray (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+	Graphics_cellArray (g, my z.part (iymin, iymax, ixmin, ixmax),
 			Matrix_columnToX (me, ixmin - 0.5), Matrix_columnToX (me, ixmax + 0.5),
 			Matrix_rowToY (me, iymin - 0.5), Matrix_rowToY (me, iymax + 0.5),
 			minimum, maximum);

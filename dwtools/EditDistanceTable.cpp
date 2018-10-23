@@ -615,8 +615,8 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_dire
 autoTableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		thy columnLabels. copyElementsFrom (my columnLabels.get());
-		thy rowLabels. copyElementsFrom (my rowLabels.get());
+		thy columnLabels.all() <<= my columnLabels.all();
+		thy rowLabels.all() <<= my rowLabels.all();
 		matrixcopy_preallocated (thy data.get(), my data.get());
 		return thee;
 	} catch (MelderError) {

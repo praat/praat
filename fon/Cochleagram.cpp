@@ -50,7 +50,7 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, bo
 				}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, tmin, tmax, 0.0, my ny * my dy);
-		Graphics_grey (g, copy -> z.subview ({ 1, my ny }, { itmin, itmax }),
+		Graphics_grey (g, copy -> z.part (1, my ny, itmin, itmax),
 			Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
 			0.5 * my dy, (my ny - 0.5) * my dy,
 			12, border);
@@ -95,7 +95,7 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 autoCochleagram Matrix_to_Cochleagram (Matrix me) {
 	try {
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1, my dy, my ny);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Cochleagram.");
@@ -105,7 +105,7 @@ autoCochleagram Matrix_to_Cochleagram (Matrix me) {
 autoMatrix Cochleagram_to_Matrix (Cochleagram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

@@ -372,8 +372,8 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 
 		autoConfusion thee = Confusion_create (nstim, nresp);
 
-		thy rowLabels. copyElementsFrom (drow -> rowLabels.get());
-		thy columnLabels. copyElementsFrom (dcol -> rowLabels.get());
+		thy rowLabels.all() <<= drow -> rowLabels.all();
+		thy columnLabels.all() <<= dcol -> rowLabels.all();
 
 		autoNUMvector<integer> rowIndex (1, my numberOfRows);
 		create_index (srow -> strings.get(), drow -> rowLabels.get(), rowIndex.peek());
@@ -445,8 +445,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 		if (newpos > newnstim)
 			newpos = newnstim;
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
-		thy columnLabels. copyElementsFrom (my columnLabels.get());
-
+		thy columnLabels.all() <<= my columnLabels.all();
 		TableOfReal_setRowLabel (thee.get(), newpos, newLabel);
 		integer inewrow = 1;
 		for (integer i = 1; i <= my numberOfRows; i ++) {
@@ -499,7 +498,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_strin
 		if (newpos > newnresp)
 			newpos = newnresp;
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
-		thy rowLabels. copyElementsFrom (my rowLabels.get());
+		thy rowLabels.all() <<= my rowLabels.all();
 		TableOfReal_setColumnLabel (thee.get(), newpos, newLabel);
 		integer inewcol = 1;
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
@@ -544,8 +543,8 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 			thy data [my numberOfRows + 1] [j] = (double) columnSum;
 		}
 
-		thy rowLabels. part (1, my numberOfRows). copyElementsFrom (my rowLabels.get());
-		thy columnLabels. part (1, my numberOfColumns). copyElementsFrom (my columnLabels.get());
+		thy rowLabels.part (1, my numberOfRows) <<= my rowLabels.all();
+		thy columnLabels.part (1, my numberOfColumns) <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": table with marginals not created.");

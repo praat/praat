@@ -197,7 +197,7 @@ void PointProcess_addPoints (PointProcess me, constVEC times) {
 	try {
 		integer newNumberOfPoints = my nt + times.size;
 		my t.resize (newNumberOfPoints, & my maxnt);
-		my t.subview (my nt + 1, newNumberOfPoints) <<= times;
+		my t.part (my nt + 1, newNumberOfPoints) <<= times;
 		my nt = newNumberOfPoints;   // maintain invariant
 		VECsort_inplace (my t.get());
 	} catch (MelderError) {
@@ -322,12 +322,11 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) 
 
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period) {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		if (tmax <= tmin) void (tmin = my xmin), tmax = my xmax;   // autowindowing
 		integer n = Melder_ifloor ((tmax - tmin) / period);
 		double t = 0.5 * (tmin + tmax - n * period);
-		for (integer i = 1; i <= n; i ++, t += period) {
+		for (integer i = 1; i <= n; i ++, t += period)
 			PointProcess_addPoint (me, t);
-		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filled.");
 	}

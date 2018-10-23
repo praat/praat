@@ -72,15 +72,17 @@ public:
 	integer size = 0;
 	_autostringvectorview<T> () = default;
 	_autostringvectorview<T> (_autostring <T> * givenPtr, integer givenSize): _ptr (givenPtr), size (givenSize) { }
-	_autostring <T> & operator[] (integer i) {
+	_autostring <T> & operator[] (integer i) const {
 		return our _ptr [i];
 	}
-	void copyElementsFrom (_conststringvector<T> other) {
-		Melder_assert (other. size == our size);
-		for (integer i = 1; i <= our size; i ++)
-			our _ptr [i] = Melder_dup (other [i]);
-	}
 };
+
+template <typename T>
+void operator<<= (_autostringvectorview <T> const& target, _autostringvectorview <T> const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = Melder_dup (source [i]);
+}
 
 template <typename T>
 class _autostringautovector {
@@ -123,6 +125,9 @@ public:
 	_stringvector<T> get () const {
 		return _stringvector<T> { (T**) our _ptr, our size };
 	}
+	_autostringvectorview<T> all () const {
+		return _autostringvectorview<T> (our _ptr, our size);
+	}
 	T** peek2 () const {   // can be assigned to a [const] mutablestring32* and to a const conststring32*, but not to a conststring32*
 		return (T**) our _ptr;
 	}
@@ -134,11 +139,6 @@ public:
 			our _ptr = nullptr;
 			our size = 0;
 		}
-	}
-	void copyElementsFrom (_conststringvector<T> other) {
-		Melder_assert (other. size == our size);
-		for (integer i = 1; i <= our size; i ++)
-			our _ptr [i] = Melder_dup (other [i]);
 	}
 	_autostringvectorview<T> part (integer firstPosition, integer lastPosition) {
 		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
@@ -161,6 +161,12 @@ inline static autoSTRVEC STRVECclone (constSTRVEC strvec) {
 	for (integer i = 1; i <= result.size; i ++)
 		result [i] = Melder_dup (strvec [i]);
 	return result;
+}
+
+inline void operator<<= (_autostringvectorview <char32> const& target, _autostringvectorview <char32> const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = Melder_dup (source [i].get());
 }
 
 /* End of file melder_strvec.h */
