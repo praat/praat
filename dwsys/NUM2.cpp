@@ -1614,55 +1614,57 @@ void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT co
 	}
 }
 
-void NUMcubicSplineInterpolation_getSecondDerivatives (double x [], double y [], integer n, double yp1, double ypn, double y2 []) {
-	autoNUMvector<double> u (1, n - 1);
+void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, constVEC y, double yp1, double ypn) {
+	Melder_assert (x.size == y.size && out_y.size == y.size);
+	
+	autoVEC u = VECraw (x.size - 1);
 
-	if (yp1 > 0.99e30) {
-		y2 [1] = u [1] = 0.0;
-	} else {
-		y2 [1] = -0.5;
+	if (yp1 > 0.99e30)
+		out_y [1] = u [1] = 0.0;
+	else {
+		out_y [1] = -0.5;
 		u [1] = (3.0 / (x [2] - x [1])) * ( (y [2] - y [1]) / (x [2] - x [1]) - yp1);
 	}
 
-	for (integer i = 2; i <= n - 1; i ++) {
+	for (integer i = 2; i <= x.size - 1; i ++) {
 		double sig = (x [i] - x [i - 1]) / (x [i + 1] - x [i - 1]);
-		double p = sig * y2 [i - 1] + 2.0;
-		y2 [i] = (sig - 1.0) / p;
+		double p = sig * out_y [i - 1] + 2.0;
+		out_y [i] = (sig - 1.0) / p;
 		u [i] = (y [i + 1] - y [i]) / (x [i + 1] - x [i]) - (y [i] - y [i - 1]) / (x [i] - x [i - 1]);
 		u [i] = (6.0 * u [i] / (x [i + 1] - x [i - 1]) - sig * u [i - 1]) / p;
 	}
 
 	double qn, un;
-	if (ypn > 0.99e30) {
+	if (ypn > 0.99e30)
 		qn = un = 0.0;
-	} else {
+	else {
 		qn = 0.5;
-		un = (3.0 / (x [n] - x [n - 1])) * (ypn - (y [n] - y [n - 1]) / (x [n] - x [n - 1]));
+		un = (3.0 / (x [x.size] - x [x.size - 1])) * (ypn - (y [x.size] - y [x.size - 1]) / (x [x.size] - x [x.size - 1]));
 	}
 
-	y2 [n] = (un - qn * u [n - 1]) / (qn * y2 [n - 1] + 1.0);
-	for (integer k = n - 1; k >= 1; k--) {
-		y2 [k] = y2 [k] * y2 [k + 1] + u [k];
-	}
+	out_y [x.size] = (un - qn * u [x.size - 1]) / (qn * out_y [x.size - 1] + 1.0);
+	for (integer k = x.size - 1; k >= 1; k--)
+		out_y [k] = out_y [k] * out_y [k + 1] + u [k];
 }
 
-double NUMcubicSplineInterpolation (double xa [], double ya [], double y2a [], integer n, double x) {
-	integer klo = 1, khi = n;
+double NUMcubicSplineInterpolation (constVEC x, constVEC y, constVEC y2, double xin) {
+	Melder_assert (x.size == y.size && x.size == y2.size);
+	integer klo = 1, khi = x.size;
 	while (khi - klo > 1) {
 		integer k = (khi + klo) >> 1;
-		if (xa [k] > x) {
+		if (x [k] > xin) {
 			khi = k;
 		} else {
 			klo = k;
 		}
 	}
-	double h = xa [khi] - xa [klo];
+	double h = x [khi] - x [klo];
 	Melder_require (h != 0.0, U"NUMcubicSplineInterpolation: bad input value.");
 	
-	double a = (xa [khi] - x) / h;
-	double b = (x - xa [klo]) / h;
-	double y = a * ya [klo] + b * ya [khi] + ( (a * a * a - a) * y2a [klo] + (b * b * b - b) * y2a [khi]) * (h * h) / 6.0;
-	return y;
+	double a = (x [khi] - xin) / h;
+	double b = (xin - x [klo]) / h;
+	double yint = a * y [klo] + b * y [khi] + ((a * a * a - a) * y2 [klo] + (b * b * b - b) * y2 [khi]) * (h * h) / 6.0;
+	return yint;
 }
 
 double NUMsinc (const double x) {
@@ -1688,20 +1690,19 @@ int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, doub
 
 int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3) {
 	int orientation;
-	double dx2 = x2 - x1, dy2 = y2 - y1;
-	double dx3 = x3 - x1, dy3 = y3 - y1;
-	if (dx2 * dy3 > dy2 * dx3) {
+	longdouble dx2 = x2 - x1, dy2 = y2 - y1;
+	longdouble dx3 = x3 - x1, dy3 = y3 - y1;
+	if (dx2 * dy3 > dy2 * dx3)
 		orientation = 1;
-	} else if (dx2 * dy3 < dy2 * dx3) {
+	else if (dx2 * dy3 < dy2 * dx3)
 		orientation = -1;
-	} else {
-		if ((dx2 * dx3 < 0) || (dy2 * dy3 < 0)) {
+	else {
+		if ((dx2 * dx3 < 0) || (dy2 * dy3 < 0))
 			orientation = -1;
-		} else if ((dx2 * dx2 + dy2 * dy2) >= (dx3 * dx3 + dy3 * dy3)) {
+		else if ((dx2 * dx2 + dy2 * dy2) >= (dx3 * dx3 + dy3 * dy3))
 			orientation = 0;
-		} else {
+		else 
 			orientation = 1;
-		}
 	}
 	return orientation;
 }
@@ -1745,26 +1746,24 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	for (integer i = 1; i <= 4; i ++) {
 		double denom = (x [i + 1] - x [i]) * (y2 - y1) - (y [i + 1] - y [i]) * (x2 - x1);
 		double s, t, x3, y3;
-		if (denom == 0.0) {
+		if (denom == 0.0)
 			continue;
-		}
 		/* We have an intersection. */
 		t = ((y [i] - y1) * (x2 - x1) - (x [i] - x1) * (y2 - y1)) / denom;
-		if (t < 0 || t >= 1) {
+		if (t < 0 || t >= 1)
 			continue;
-		}
 		/* Intersection is within rectangle side. */
 		x3 = x [i] + t * (x [i + 1] - x [i]);
 		y3 = y [i] + t * (y [i + 1] - y [i]);
 		/* s must also be valid */
-		if (x1 != x2) {
+		if (x1 != x2)
 			s = (x3 - x1) / (x2 - x1);
-		} else {
+		else
 			s = (y3 - y1) / (y2 - y1);
-		}
-		if (s < 0 || s >= 1) {
+
+		if (s < 0 || s >= 1)
 			continue;
-		}
+
 		ni ++;
 		Melder_require (ni <= 3, U"Too many intersections.");
 		
@@ -1774,61 +1773,56 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	return ni;
 }
 
-bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
+bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *out_xo1, double *out_yo1, double *out_xo2, double *out_yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
 	double xc [5], yc [5], xmin, xmax, ymin, ymax;
 
-	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
+	double xo1 = xl1, yo1 = yl1, xo2 = xl2, yo2 = yl2;
 
 	// This test first because we expect the majority of the tested segments to be
 	// within the rectangle
 	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 &&
-			xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2) {
+			xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2)
 		return true;
-	}
 
 	// All lines that are completely outside the rectangle
 	if ( (xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
-			(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2)) {
+			(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2))
 		return false;
-	}
+
 
 	// At least line spans (part of) the rectangle.
 	// Get extremes in x and y of the line for easy testing further on.
 	if (xl1 < xl2) {
-		xmin = xl1; xmax = xl2; xswap = false;
+		xmin = xl1;
+		xmax = xl2;
+		xswap = false;
 	} else {
-		xmin = xl2; xmax = xl1; xswap = true;
+		xmin = xl2;
+		xmax = xl1;
+		xswap = true;
 	}
 	if (yl1 < yl2) {
-		ymin = yl1; ymax = yl2; yswap = false;
+		ymin = yl1;
+		ymax = yl2;
+		yswap = false;
 	} else {
-		ymin = yl2; ymax = yl1; yswap = true;
+		ymin = yl2;
+		ymax = yl1;
+		yswap = true;
 	}
 	bool hline = yl1 == yl2, vline = xl1 == xl2;
 	if (hline) {
-		if (xmin < xr1) {
-			*xo1 = xr1;
-		}
-		if (xmax > xr2) {
-			*xo2 = xr2;
-		}
-		if (xswap) {
-			std::swap (*xo1, *xo2);
-		}
+		if (xmin < xr1) xo1 = xr1;
+		if (xmax > xr2) xo2 = xr2;
+		if (xswap) std::swap (xo1, xo2);
 		return true;
 	}
 	if (vline) {
-		if (ymin < yr1) {
-			*yo1 = yr1;
-		}
-		if (ymax > yr2) {
-			*yo2 = yr2;
-		}
-		if (yswap) {
-			std::swap (*yo1, *yo2);
-		}
+		if (ymin < yr1) yo1 = yr1;
+		if (ymax > yr2) yo2 = yr2;
+		if (yswap) std::swap (yo1, yo2);
 		return true;
 	}
 
@@ -1847,8 +1841,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	double y = a * xr1 + b; // Crossing at y with left border: x = xr1
 
 	if (y >= yr1 && y <= yr2 && xmin < xr1) { // Within vertical range?
-		ncrossings ++;
-		xc [ncrossings] = xr1; yc [ncrossings] = y;
+		xc [++ ncrossings] = xr1;
+		yc [ncrossings] = y;
 		xc [2] = xmax;
 		yc [2] = xl1 > xl2 ? yl1 : yl2;
 	}
@@ -1856,8 +1850,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	double x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
 
 	if (x > xr1 && x < xr2 && ymax > yr2) { // Within horizontal range?
-		ncrossings ++;
-		xc [ncrossings] = x; yc [ncrossings] = yr2;
+		xc [++ ncrossings] = x;
+		yc [ncrossings] = yr2;
 		if (ncrossings == 1) {
 			yc [2] = ymin;
 			xc [2] = yl1 < yl2 ? xl1 : xl2;
@@ -1867,8 +1861,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	y = a * xr2 + b; // Crossing at y with right border: x = xr2
 
 	if (y >= yr1 && y <= yr2 && xmax > xr2) { // Within vertical range?
-		ncrossings ++;
-		xc [ncrossings] = xr2; yc [ncrossings] = y;
+		xc [++ ncrossings] = xr2;
+		yc [ncrossings] = y;
 		if (ncrossings == 1) {
 			xc [2] = xmin;
 			yc [2] = xl1 < xl2 ? yl1 : yl2;
@@ -1878,31 +1872,32 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	x = (yr1 - b) / a; // Crossing at x with bottom border: y = yr1
 
 	if (x > xr1 && x < xr2 && ymin < yr1) {
-		ncrossings ++;
-		xc [ncrossings] = x; yc [ncrossings] = yr1;
+		xc [++ ncrossings] = x;
+		yc [ncrossings] = yr1;
 		if (ncrossings == 1) {
 			yc [2] = ymax;
 			xc [2] = yl1 > yl2 ? xl1 : xl2;
 		}
 	}
-	if (ncrossings == 0) {
+	if (ncrossings == 0)
 		return false;
-	}
 	Melder_require (ncrossings <= 2, U"Too many crossings found.");
 
 	/*
 		if start and endpoint of line are outside rectangle and ncrossings == 1, than the line only touches.
 	*/
 	if (ncrossings == 1 && (xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
-		(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) {
+		(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2))
 		return true;
-	}
 
 	if ((xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
 		std::swap (xc [1], xc [2]);
 		std::swap (yc [1], yc [2]);
 	}
-	*xo1 = xc [1]; *yo1 = yc [1]; *xo2 = xc [2]; *yo2 = yc [2];
+	if (out_xo1) *out_xo1 = xc [1]; 
+	if (out_yo1) *out_yo1 = yc [1]; 
+	if (out_xo2) *out_xo2 = xc [2]; 
+	if (out_yo2) *out_yo2 = yc [2]; 
 	return true;
 }
 
@@ -2043,6 +2038,14 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	probs is probability vector, i.e. all 0 <= probs [i] <= 1 and sum(i=1;i=nprobs, probs [i])= 1
 	p is a probability
 */
+integer NUMgetIndexFromProbability (constVEC probs, double p) { //TODO HMM zero start matrices
+	integer index = 1;
+	double psum = probs [index];
+	while (p > psum && index < probs.size) {
+		psum += probs [++ index];
+	}
+	return index;
+}
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) { //TODO HMM zero start matrices
 	integer index = 1;
 	double psum = probs [index];
@@ -2753,9 +2756,8 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	} else if (adf < ab) {
 		tn = adf / ab;
 		rt = ab * sqrt (1.0 + tn * tn);
-	} else {
+	} else 
 		rt = ab * sqrt (2.0);
-	}
 	
 	longdouble rt1, rt2;
 	integer sgn1, sgn2;

@@ -49,9 +49,9 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		autoNUMvector<double> power (1, my nx);
 		autoNUMvector<double> pitch (1, nFrequencyPoints);
 		autoNUMvector<double> sumspec (1, nFrequencyPoints);
-		autoNUMvector<double> y (1, my ny);
-		autoNUMvector<double> yv2 (1, my ny);
-		autoNUMvector<double> fl2 (1, my ny);
+		autoVEC y = VECraw (my ny);
+		autoVEC yv2 = VECraw (my ny);
+		autoVEC fl2 = VECraw (my ny);
 
 		// From ERB's to log (f)
 
@@ -81,10 +81,10 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			for (integer i = 1; i <= my ny; i ++) {
 				y [i] = my s [i] [j];
 			}
-			NUMcubicSplineInterpolation_getSecondDerivatives (fl2.peek(), y.peek(), my ny, 1e30, 1e30, yv2.peek());
+			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), y.get(), 1e30, 1e30);
 			for (integer k = 1; k <= nFrequencyPoints; k ++) {
 				double f = fminl2 + (k - 1) * dfl2;
-				pitch [k] = NUMcubicSplineInterpolation (fl2.peek(), y.peek(), yv2.peek(), my ny, f);
+				pitch [k] = NUMcubicSplineInterpolation (fl2.get(), y.get(), yv2.get(), f);
 				sumspec [k] = 0.0;
 			}
 

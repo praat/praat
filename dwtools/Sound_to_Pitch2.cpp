@@ -30,42 +30,41 @@
 #include "SPINET_to_Pitch.h"
 #include "NUM2.h"
 
-static int spec_enhance_SHS (double a [], integer n) {
-	if (n < 2) {
+static int spec_enhance_SHS (VEC a) {
+	if (a.size < 2)
 		return 0;
-	}
-	autoNUMvector<integer> posmax (1, (n + 1) / 2);
+
+	autoINTVEC posmax = INTVECraw ((a.size + 1) / 2);
 	integer nmax = 0;
-	if (a [1] > a [2]) {
+	if (a [1] > a [2])
 		posmax [++ nmax] = 1;
-	}
-	for (integer i = 2; i <= n - 1; i ++) if (a [i] > a [i - 1] && a [i] >= a [i + 1]) {
+
+	for (integer i = 2; i <= a.size - 1; i ++)
+		if (a [i] > a [i - 1] && a [i] >= a [i + 1])
 			posmax [++ nmax] = i;
-		}
-	if (a [n] > a [n - 1]) {
-		posmax [++ nmax] = n;
-	}
+		
+	if (a [a.size] > a [a.size - 1])
+		posmax [++ nmax] = a.size;
+
 	if (nmax == 1) {
-		for (integer j = 1; j <= posmax [1] - 3; j ++) {
-			a [j] = 0;
-		}
-		for (integer j = posmax [1] + 3; j <= n; j ++) {
-			a [j] = 0;
-		}
+		for (integer j = 1; j <= posmax [1] - 3; j ++)
+			a [j] = 0.0;
+		for (integer j = posmax [1] + 3; j <= a.size; j ++)
+			a [j] = 0.0;
 	} else {
-		for (integer i = 2; i <= nmax; i ++) {
-			for (integer j = posmax [i - 1] + 3; j <= posmax [i] - 3; j ++) {
+		for (integer i = 2; i <= nmax; i ++)
+			for (integer j = posmax [i - 1] + 3; j <= posmax [i] - 3; j ++)
 				a [j] = 0.0;
-			}
-		}
 	}
 	return 1;
 }
 
-static void spec_smoooth_SHS (double a [], integer n) {
-	double ai, aim1 = 0;
-	for (integer i = 1; i <= n - 1; i ++) {
-		ai = a [i]; a [i] = (aim1 + 2 * ai + a [i + 1]) / 4; aim1 = ai;
+static void spec_smoooth_SHS (VEC a) {
+	double ai, aim1 = 0.0;
+	for (integer i = 1; i <= a.size - 1; i ++) {
+		ai = a [i];
+		a [i] = (aim1 + 2 * ai + a [i + 1]) / 4;
+		aim1 = ai;
 	}
 }
 
@@ -104,12 +103,12 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		autoSound frame = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
-		autoNUMvector<double> cc (1, numberOfFrames);
-		autoNUMvector<double> specAmp (1, nfft2);
-		autoNUMvector<double> fl2 (1, nfft2);
-		autoNUMvector<double> yv2 (1, nfft2);
-		autoNUMvector<double> arctg (1, nFrequencyPoints);
-		autoNUMvector<double> al2 (1, nFrequencyPoints);
+		autoVEC cc = VECzero (numberOfFrames);
+		autoVEC specAmp = VECraw (nfft2);
+		autoVEC fl2 = VECraw (nfft2);
+		autoVEC yv2 = VECraw (nfft2);
+		autoVEC arctg = VECraw (nFrequencyPoints);
+		autoVEC al2 = VECraw (nFrequencyPoints);
 
 		Melder_assert (frame -> nx >= nx);
 		Melder_assert (hamming -> nx == nx);
@@ -126,18 +125,17 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			Because log2(f==0) is not defined, we use the heuristic: f [2] - f [1] == f [3] - f [2].
 		*/
 
-		for (integer i = 2; i <= nfft2; i ++) {
+		for (integer i = 2; i <= nfft2; i ++)
 			fl2 [i] = NUMlog2 ((i - 1) * df);
-		}
+
 		fl2 [1] = 2 * fl2 [2] - fl2 [3];
 
 		/*
 			Calculate frequencies regularly spaced on a log2-scale and the frequency weighting function.
 		*/
 
-		for (integer i = 1; i <= nFrequencyPoints; i ++) {
+		for (integer i = 1; i <= nFrequencyPoints; i ++)
 			arctg [i] = 0.5 + atan (3.0 * (i - atans) / nPointsPerOctave) / NUMpi;
-		}
 
 		/*
 			Perform the analysis on all frames.
@@ -173,38 +171,36 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 			// Enhance the peaks in the spectrum.
 
-			spec_enhance_SHS (specAmp.peek(), nfft2);
+			spec_enhance_SHS (specAmp.get());
 
 			// Smooth the enhanced spectrum.
 
-			spec_smoooth_SHS (specAmp.peek(), nfft2);
+			spec_smoooth_SHS (specAmp.get());
 
 			// Go to a logarithmic scale and perform cubic spline interpolation to get
 			// spectral values for the increased number of frequency points.
 
-			NUMcubicSplineInterpolation_getSecondDerivatives (fl2.peek(), specAmp.peek(), nfft2, 1e30, 1e30, yv2.peek());
+			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), specAmp.get(), 1e30, 1e30);
 			for (integer j = 1; j <= nFrequencyPoints; j ++) {
 				double f = fminl2 + (j - 1) * dfl2;
-				al2 [j] = NUMcubicSplineInterpolation (fl2.peek(), specAmp.peek(), yv2.peek(), nfft2, f);
+				al2 [j] = NUMcubicSplineInterpolation (fl2.get(), specAmp.get(), yv2.get(), f);
 			}
 
 			// Multiply by frequency selectivity of the auditory system.
 
-			for (integer j = 1; j <= nFrequencyPoints; j ++) {
+			for (integer j = 1; j <= nFrequencyPoints; j ++)
 				al2 [j] = al2 [j] > 0 ? al2 [j] * arctg [j] : 0.0;
-			}
 
 			// The subharmonic summation. Shift spectra in octaves and sum.
 
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
-			autoNUMvector<double> sumspec (1, nFrequencyPoints);
+			autoVEC sumspec = VECzero (nFrequencyPoints);
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 
 			for (integer m = 1; m <= maxnSubharmonics + 1; m ++) {
 				integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));
-				for (integer k = kb; k <= nFrequencyPoints; k ++) {
+				for (integer k = kb; k <= nFrequencyPoints; k ++)
 					sumspec [k - kb + 1] += al2 [k] * hm;
-				}
 				hm *= compressionFactor;
 			}
 
@@ -246,19 +242,18 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 				pitch, e.g. Shepard sounds.
 			*/
 
-			Pitch_Frame_getPitch (pitchFrame, &f0, &pitch_strength);
-			if (f0 > 0) {
+			Pitch_Frame_getPitch (pitchFrame, & f0, & pitch_strength);
+			if (f0 > 0)
 				cc [i] = Sound_correlateParts (sound.get(), tmid - 1.0 / f0, tmid, 1.0 / f0);
-			}
 		}
 
 		// Base V/UV decision on correlation coefficients.
 		// Resize the pitch strengths w.r.t. the cc.
 
 		double vuvCriterium = 0.52;
-		for (integer i = 1; i <= numberOfFrames; i ++) {
+		for (integer i = 1; i <= numberOfFrames; i ++)
 			Pitch_Frame_resizeStrengths (& thy frame [i], cc [i], vuvCriterium);
-		}
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pitch (shs) created.");

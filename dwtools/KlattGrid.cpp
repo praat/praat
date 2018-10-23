@@ -1,6 +1,6 @@
 /* KlattGrid.cpp
  *
- * Copyright (C) 2008-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2008-2018 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,12 +115,10 @@ static void rel_to_abs (double *w, double *ws, integer n, double d) {
 static bool RealTier_valuesInRange (RealTier me, double min, double max) {
 	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint p = my points.at [i];
-		if (isdefined (min) && p -> value < min) {
+		if (isdefined (min) && p -> value < min)
 			return false;
-		}
-		if (isdefined (max) && p -> value < max) {
+		if (isdefined (max) && p -> value < max)
 			return false;
-		}
 	}
 	return true;
 }
@@ -129,16 +127,14 @@ static double PointProcess_getPeriodAtIndex (PointProcess me, integer it, double
 	double period = undefined;
 	if (it >= 2) {
 		period = my t [it] - my t [it - 1];
-		if (period > maximumPeriod) {
+		if (period > maximumPeriod)
 			period = undefined;
-		}
 	}
 	if (isundef (period)) {
 		if (it < my nt) {
 			period = my t [it + 1] - my t [it];
-			if (period > maximumPeriod) {
+			if (period > maximumPeriod)
 				period = undefined;
-			}
 		}
 	}
 	// undefined can only occur for a single isolated pulse.
@@ -336,14 +332,12 @@ static autoSound _Sound_diff (Sound me, int scale) {
 
 typedef struct structconnections {
 	integer numberOfConnections;
-	double *x, *y;
+	autoVEC x, y;
 } *connections;
 
 static void connections_free (connections me) {
 	if (! me)
 		return;
-	NUMvector_free (my x, 1);
-	NUMvector_free (my y, 1);
 	Melder_free (me);
 }
 
@@ -352,8 +346,8 @@ static connections connections_create (integer numberOfConnections) {
 	try {
 		me = (connections) Melder_malloc (structconnections, 1);
 		my numberOfConnections = numberOfConnections;
-		my x = NUMvector<double> (1, numberOfConnections);
-		my y = NUMvector<double> (1, numberOfConnections);
+		my x = VECzero (numberOfConnections);
+		my y = VECzero (numberOfConnections);
 		return me;
 	} catch (MelderError) {
 		connections_free (me);
@@ -383,9 +377,8 @@ static void summer_draw (Graphics g, double x, double y, double r, bool alternat
 		y += r / 4.0;
 	Graphics_line (g, x, y + r / 2.0, x, y - r / 2.0);
 	Graphics_line (g, x - r / 2.0, y, x + r / 2.0, y);
-	if (alternating) {
+	if (alternating)
 		Graphics_line (g, x - r / 2.0, y - dy , x + r / 2.0, y - dy);
-	}
 }
 
 static void _summer_drawConnections (Graphics g, double x, double y, double r, connections thee, bool arrow, bool alternating, double horizontalFraction) {
@@ -400,14 +393,13 @@ static void _summer_drawConnections (Graphics g, double x, double y, double r, c
 				Graphics_line (g, thy x [i], yp, xp, yp);
 			}
 		}
-		NUMcircle_radial_intersection_sq (x, y, r, xp, yp, &xto, &yto);
+		NUMcircle_radial_intersection_sq (x, y, r, xp, yp, & xto, & yto);
 		if (isundef (xto) || isundef (yto))
 			continue;
-		if (arrow) {
+		if (arrow)
 			Graphics_arrow (g, xp, yp, xto, yto);
-		} else {
+		else
 			Graphics_line (g, xp, yp, xto, yto);
-		}
 	}
 }
 
@@ -470,11 +462,11 @@ static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGr
 		Melder_throw (U"Empty tier");
 	double nyquist = 0.5 / my dx;
 	autoFilter r;
-	if (antiformant != 0) {
+	if (antiformant != 0)
 		r = AntiResonator_create (my dx);
-	} else {
+	else
 		r = Resonator_create (my dx, Resonator_NORMALISATION_H0);
-	}
+
 	for (integer is = 1; is <= my nx; is ++) {
 		double t = my x1 + (is - 1) * my dx;
 		double f = RealTier_getValueAtTime (ftier, t);
@@ -539,9 +531,8 @@ autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Orde
 			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant)) {
 				autoSound tmp = Data_copy (me);
 				Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (tmp.get(), thee, amplitudes, iformant);
-				for (integer is = 1; is <= my nx; is ++) {
+				for (integer is = 1; is <= my nx; is ++)
 					his z [1] [is] += ( alternatingSign >= 0 ? tmp -> z [1] [is] : - tmp -> z [1] [is] );
-				}
 				if (alternatingSign != 0)
 					alternatingSign = - alternatingSign;
 			}
@@ -556,8 +547,7 @@ autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Orde
 
 Thing_implement (PhonationPoint, AnyPoint, 0);
 
-autoPhonationPoint PhonationPoint_create (double time, double period, double openPhase, double collisionPhase, double te,
-                                      double power1, double power2, double pulseScale) {
+autoPhonationPoint PhonationPoint_create (double time, double period, double openPhase, double collisionPhase, double te, double power1, double power2, double pulseScale) {
 	try {
 		autoPhonationPoint me = Thing_new (PhonationPoint);
 		my number = time;
@@ -724,7 +714,7 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 	} while ( ++ ipoint < my power2 -> points.size);
 }
 
-static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout) {
+static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *out_y) {
 	// dum voicing conn tilt conn summer
 	(void) me;
 	double xw [6] = { 0.0, 1.0, 0.5, 1.0, 0.5, 0.5 }, xws [6];
@@ -739,20 +729,27 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 	double y2 = ymax, y1 = y2 - dy;
 	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Voicing", nullptr);
 
-	x1 = x2; x2 = x1 + xw [2];
+	x1 = x2;
+	x2 = x1 + xw [2];
 	double ymid = (y1 + y2) / 2.0;
 	Graphics_line (g, x1, ymid, x2, ymid);
 
-	x1 = x2; x2 = x1 + xw [3];
+	x1 = x2;
+	x2 = x1 + xw [3];
 	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Tilt", nullptr);
 
-	thy x [1] = x2; thy y [1] = ymid;
+	thy x [1] = x2;
+	thy y [1] = ymid;
 
-	y2 = y1 - 0.5 * dy; y1 = y2 - dy; ymid = (y1 + y2) / 2.0;
-	x2 = xmin + xws [3]; x1 = x2 - 1.5 * xw [3]; // some extra space
+	y2 = y1 - 0.5 * dy;
+	y1 = y2 - dy;
+	ymid = (y1 + y2) / 2.0;
+	x2 = xmin + xws [3];
+	x1 = x2 - 1.5 * xw [3]; // some extra space
 	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Aspiration", nullptr);
 
-	thy x [2] = x2; thy y [2] = ymid;
+	thy x [2] = x2;
+	thy y [2] = ymid;
 
 	double r = xw [5] / 2.0;
 	double xs = xmax - r, ys = (ymax + ymin) / 2.0;
@@ -761,8 +758,8 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 	summer_drawConnections (g, xs, ys, r, thee, arrow, 0.4);
 	connections_free (thee);
 
-	if (yout)
-		*yout = ys;
+	if (out_y)
+		*out_y = ys;
 }
 
 void PhonationGrid_draw (PhonationGrid me, Graphics g) {
@@ -867,6 +864,7 @@ struct nrfunction_struct {
 	double m;
 	double a;
 };
+
 static void nrfunction (double x, double *fx, double *dfx, void *closure) {
 	struct nrfunction_struct *nrfs = (struct nrfunction_struct *) closure;
 	double mplusax = nrfs -> m + nrfs -> a * x;
@@ -896,11 +894,10 @@ static double get_collisionPoint_x (double n, double m, double collisionPhase) {
 		double b = m - a;
 		double c = - n, y1, y2;
 		integer nroots = NUMsolveQuadraticEquation (a, b, c, &y1, &y2);
-		if (nroots == 2) {
+		if (nroots == 2)
 			y = y2;
-		} else if (nroots == 1) {
+		else if (nroots == 1)
 			y = y1;
-		}
 	} else { // Newton-Raphson
 		// search in the interval from where the flow is a maximum to 1
 		struct nrfunction_struct nrfs = {n, m, a};
@@ -982,20 +979,17 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 				diplophonicPulseIndex ++;
 				if (diplophonicPulseIndex % 2 == 1) {   // the odd-numbered one
 					double nextPeriod = PointProcess_getPeriodAtIndex (point.get(), it + 1, pp -> maximumPeriod);
-					if (isundef (nextPeriod)) {
+					if (isundef (nextPeriod))
 						nextPeriod = period;
-					}
 					double openPhase2 = KlattGrid_OPENPHASE_DEFAULT;
-					if (my openPhase -> points.size > 0) {
+					if (my openPhase -> points.size > 0)
 						openPhase2 = RealTier_getValueAtTime (my openPhase.get(), t);
-					}
 					double maxDelay = period * (1.0 - openPhase2);
 					pulseDelay = maxDelay * doublePulsing;
 					pulseScale *= 1.0 - doublePulsing;
 				}
-			} else {
+			} else
 				diplophonicPulseIndex = 0;
-			}
 
 			t += pulseDelay;
 			autoPhonationPoint phonationPoint = PhonationPoint_create (t, period, openPhase, collisionPhase, te, power1, power2, pulseScale);
@@ -1012,13 +1006,14 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 		PhonationGridPlayOptions p = my options.get();
 		double lastVal = undefined;
 
-		Melder_require (my voicingAmplitude -> points.size > 0, U"Voicing amplitude tier should not be empty.");
+		Melder_require (my voicingAmplitude -> points.size > 0,
+			U"Voicing amplitude tier should not be empty.");
 
 		autoSound him = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		autoSound breathy;
-		if (p -> breathiness && my breathinessAmplitude -> points.size > 0) {
+		if (p -> breathiness && my breathinessAmplitude -> points.size > 0)
 			breathy = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
-		}
+
 		/*
 			Cycle through the points of the PhonationTier. Each will become a period.
 			We assume that the planning for the pitch period occurs approximately at a time T before the glottal closure.
@@ -1140,21 +1135,19 @@ static autoSound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, dou
 		PhonationGridPlayOptions pp = my options.get();
 		autoSound thee;
 		if (pp -> voicing) {
-			if (him && his glottis -> points.size > 0) {
+			if (him && his glottis -> points.size > 0)
 				thee = PhonationGrid_PhonationTier_to_Sound_voiced (me, his glottis.get(), samplingFrequency);
-			} else {
+			else
 				thee = PhonationGrid_to_Sound_voiced (me, samplingFrequency);
-			}
 			if (pp -> spectralTilt)
 				Sound_PhonationGrid_spectralTilt_inplace (thee.get(), me);
 		}
 		if (pp -> aspiration) {
 			autoSound aspiration = PhonationGrid_to_Sound_aspiration (me, samplingFrequency);
-			if (thee) {
+			if (thee)
 				_Sounds_add_inplace (thee.get(), aspiration.get());
-			} else {
+			else
 				thee = aspiration.move();
-			}
 		}
 		if (! thee)
 			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
@@ -2135,11 +2128,10 @@ static void getYpositions (double h1, double h2, double h3, double h4, double h5
 		h = h13 + h2 + h5;
 	} else { // h2 < h4
 		double maximumOverlap3 = fractionOverlap * h5;
-		if (maximumOverlap3 < h1 + h2) {
+		if (maximumOverlap3 < h1 + h2)
 			maximumOverlap3 = 0.0;
-		} else if (maximumOverlap3 > h4 - h2) {
+		else if (maximumOverlap3 > h4 - h2)
 			maximumOverlap3 = h4 - h2;
-		}
 		h = h13 + h4 + h5 - maximumOverlap3;
 	}
 	*dy = 1.0 / (1.1 * h);
