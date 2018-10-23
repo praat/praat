@@ -638,7 +638,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		}
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
-		VECcopy_preallocated (thy centroid.get(), my centroid.get());
+		thy centroid.all() <<= my centroid.all();
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
 		thy labels.all() <<= my columnLabels.all();
 		return thee;
@@ -1019,7 +1019,7 @@ autoTableOfReal SSCP_to_TableOfReal (SSCP me) {
 autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		VECcopy_preallocated (thy data.row(1), my centroid.get());
+		thy data.row (1) <<= my centroid.all();
 		thy columnLabels.all() <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
@@ -1071,15 +1071,15 @@ autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring
 			rowNumber = (inumc - 1) / centroid.size + 1;
 			integer icol = ((inumc - 1) % centroid.size) + 1;
 			my data [rowNumber] [icol] = my data [icol] [rowNumber] = covariances [inum];
-			if (icol == centroid.size) {
+			if (icol == centroid.size)
 				rowNumber ++;
-			}
 		}
 
 		// Check if a valid covariance, first check variances then covariances
 
 		for (integer irow = 1; irow <= centroid.size; irow ++)
-			Melder_require (my data [irow] [irow] > 0.0, U"The diagonal matrix elements should all be positive numbers.");
+			Melder_require (my data [irow] [irow] > 0.0,
+				U"The diagonal matrix elements should all be positive numbers.");
 
 		for (integer irow = 1; irow <= centroid.size; irow ++)
 			for (integer icol = irow + 1; icol <= centroid.size; icol ++)
@@ -1088,9 +1088,7 @@ autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring
 					integer inum = (irow - 1) * centroid.size + icol - nmissing;
 					Melder_throw (U"The covariance in cell [", irow, U",", icol, U"], i.e. input item ", inum, U" is too large.");
 				}
-		
-		VECcopy_preallocated (my centroid.get(), centroid.get());
-
+		my centroid.all() <<= centroid.all();
 		my numberOfObservations = numberOfObservations;
 		return me;
 	} catch (MelderError) {

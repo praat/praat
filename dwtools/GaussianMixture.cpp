@@ -136,7 +136,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	autoVEC row = VECraw (data.ncol);
 	autoMAT outer = MATraw (data.ncol,data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
-		VECcopy_preallocated (row.get(), data.row (irow));
+		row.all() <<= data.row (irow);
 		VECsubtract_inplace (row.get(), thy centroid.get());
 		if (thy numberOfRows == 1) {
 			VECmultiply_inplace (row.get(), row.get());
@@ -565,7 +565,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance covi = my covariances->at [im];
-				VECcopy_preallocated (covi -> centroid.get(), means.row (im));
+				covi -> centroid.all() <<= means.row (im);
 				covi -> numberOfObservations = thy numberOfRows / my numberOfComponents;
 			}
 

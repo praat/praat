@@ -2028,13 +2028,11 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 			Graphics_fillArea (g, his numberOfPoints, &his x [1], &his y [1]);
 		}
 		Graphics_setWindow (g, tmin, tmax, minimum, maximum);
-		if (garnish && (my ny == 2 || thy ny == 2)) {
+		if (garnish && (my ny == 2 || thy ny == 2))
 			Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
-		}
 		Graphics_unsetInner (g);
-		if (garnish) {
+		if (garnish)
 			_Sound_garnish (my ny == 2 ? me : thee, g, tmin, tmax, minimum, maximum);
-		}
 	} catch (MelderError) {
 		Melder_clearError ();
 	}
@@ -2044,9 +2042,8 @@ autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 	try {
 		autoINTVEC channels = NUMstring_getElementsOfRanges (ranges, my ny, U"channel", true);
 		autoSound thee = Sound_create (channels.size, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer ichan = 1; ichan <= channels.size; ichan ++) {
-			VECcopy_preallocated (thy z.row (ichan), my z.row (channels [ichan]));
-		}
+		for (integer ichan = 1; ichan <= channels.size; ichan ++)
+			thy z.row (ichan) <<= my z.row (channels [ichan]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not extract channels.");

@@ -2217,7 +2217,7 @@ autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecLis
 		autoVEC w = VECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
-			VECcopy_preallocated ( conf -> w.get(), weights -> data.row(i));
+			conf -> w.all() <<= weights -> data.row (i);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.get(), tiesHandling);
 			distances -> addItem_move (dist.move());
@@ -2432,10 +2432,10 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 		}
 
 		if (out_varianceAccountedFor) *out_varianceAccountedFor = (n > 0.0 ? 1.0 - t / n : 0.0);
-		VECcopy_preallocated (thy w.get(), w.get()); // restore weights
+		thy w.all() <<= w.all(); // restore weights
 		
 	} catch (MelderError) {
-		VECcopy_preallocated (thy w.get(), w.get());
+		thy w.all() <<= w.all();
 		Melder_throw (U"No out_varianceAccountedFor calculated.");
 	}
 }

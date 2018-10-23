@@ -101,7 +101,7 @@ autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary
 }
 
 static void copyOutputsToInputs (Layer me, Layer you) {
-	vectorcopy_preallocated (your inputActivities.get(), my outputActivities.get());
+	your inputActivities.all() <<= my outputActivities.all();
 }
 
 inline static double logistic (double excitation) {
@@ -161,7 +161,7 @@ void Net_sampleOutput (Net me) {
 }
 
 static void copyInputsToOutputs (Layer me, Layer you) {
-	vectorcopy_preallocated (your outputActivities.get(), my inputActivities.get());
+	your outputActivities.all() <<= my inputActivities.all();
 }
 
 void structRBMLayer :: v_spreadDown (kLayer_activationType activationType) {

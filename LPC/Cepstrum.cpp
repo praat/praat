@@ -326,7 +326,7 @@ void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWi
 					VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
 				else
 					VECsmoothByMovingAverage_preallocated (qin.get(), qout.get(), numberOfQuefrencyBins);
-			VECcopy_preallocated (my z.row (1), numberOfIterations % 2 == 1 ? qout.get() : qin.get());
+			my z.row (1) <<= ( numberOfIterations % 2 == 1 ? qout.get() : qin.get() );
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
