@@ -433,12 +433,12 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
 			(L**-1.(x-m))' . (L**-1.(x-m))
 */
 
-double NUMtrace (constMAT a);
-
-double NUMtrace2_nn (constMAT x, constMAT y);
-double NUMtrace2_nt (constMAT x, constMAT y);
-double NUMtrace2_tn (constMAT x, constMAT y);
-double NUMtrace2_tt (constMAT x, constMAT y);
+double NUMtrace (const constMATVU& a);
+double NUMtrace2 (const constMATVU& x, const constMATVU& y);
+double NUMtrace2_nn (const constMAT& x, const constMAT& y);
+double NUMtrace2_nt (const constMAT& x, const constMAT& y);
+double NUMtrace2_tn (const constMAT& x, const constMAT& y);
+double NUMtrace2_tt (const constMAT& x, const constMAT& y);
 /*
 	Calculates the trace from a product matrix
 	_nn : trace (X.Y)

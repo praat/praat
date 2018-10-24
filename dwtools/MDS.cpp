@@ -1062,7 +1062,6 @@ void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions,
 
 void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
 	integer numberOfSources = my size;
-	autoNUMvector<double **> ci (1, numberOfSources);
 	try {
 		integer nPoints = my at [1] -> numberOfRows;
 
@@ -1078,24 +1077,15 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			Determine the average scalar product matrix (Pmean) of dimension [1..nPoints] [1..nPoints].
 		*/
 		
-		autoMAT pmean (nPoints, nPoints, kTensorInitializationType::ZERO);
+		autoMAT pmean = MATzero (nPoints, nPoints);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			for (integer j = 1; j <= nPoints; j ++) {
-				for (integer k = 1; k <= nPoints; k ++) {
-					pmean [j] [k] += sp -> data [j] [k];
-				}
-			}
+			MATadd_inplace (pmean.get(), sp -> data.get());
 		}
-
-		if (numberOfSources > 1) {
-			for (integer j = 1; j <= nPoints; j ++) {
-				for (integer k = 1; k <= nPoints; k ++) {
-					pmean [j] [k] /= numberOfSources;
-				}
-			}
-		}
+		
+		if (numberOfSources > 1) 
+			MATmultiply_inplace (pmean.get(), 1.0 / numberOfSources);
 
 		/*
 			Up to a rotation K, the initial configuration can be found by
@@ -1117,10 +1107,11 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		*/
 		
 		autoMAT yinv = MATpseudoInverse (y.get(), 1e-14);
+		autoTEN3 ci = TEN3raw (numberOfSources, numberOfDimensions, numberOfDimensions);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			ci [i] = NUMmatrix<double> (1, numberOfDimensions, 1, numberOfDimensions);
+			//ci [i] = NUMmatrix<double> (1, numberOfDimensions, 1, numberOfDimensions);
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
 				for (integer k = 1; k <= numberOfDimensions; k ++) {
 					for (integer l = 1; l <= nPoints; l ++) {
@@ -1140,14 +1131,12 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			Get the first eigenvector and form matrix cl from a linear combination of the C [i]'s
 		*/
 		
-		autoMAT a (numberOfSources, numberOfSources, kTensorInitializationType::RAW);
+		autoMAT a = MATraw (numberOfSources, numberOfSources);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = i; j <= numberOfSources; j ++) {
-				MAT cii (ci [i], numberOfDimensions,numberOfDimensions);
-				MAT cij (ci [j], numberOfDimensions,numberOfDimensions);
-				a [j] [i] = a [i] [j] =  NUMtrace2_nn (cii, cij)
-					- NUMtrace (cii) * NUMtrace (cij) / numberOfDimensions;
+				a [j] [i] = a [i] [j] =  NUMtrace2 (ci [i], ci [j])
+					- NUMtrace (ci [i]) * NUMtrace (ci [j]) / numberOfDimensions;
 			}
 		}
 		
