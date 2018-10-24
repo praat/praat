@@ -47,7 +47,7 @@ autoSVD TableOfReal_to_SVD (TableOfReal me) {
 autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		MATcopy_preallocated (thy data.get(), my u.get());
+		thy data.all() <<= my u.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": left singular vector not extracted.");
@@ -57,7 +57,7 @@ autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfColumns);
-		MATcopy_preallocated (thy data.get(), my v.get());
+		thy data.all() <<= my v.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": right singular vector not extracted.");
@@ -67,7 +67,7 @@ autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 autoTableOfReal SVD_extractSingularValues (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		VECcopy_preallocated (thy data.row(1), my d.get());
+		thy data.row (1) <<= my d.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": singular values not extracted.");
@@ -77,8 +77,7 @@ autoTableOfReal SVD_extractSingularValues (SVD me) {
 autoGSVD TablesOfReal_to_GSVD (TableOfReal me, TableOfReal thee) {
 	try {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
-			U"Both tables must have the same number of columns.");
-
+			U"Both tables should have the same number of columns.");
 		autoGSVD him = GSVD_create_d (my data.get(), thy data.get());
 		return him;
 	} catch (MelderError) {

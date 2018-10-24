@@ -136,7 +136,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	autoVEC row = VECraw (data.ncol);
 	autoMAT outer = MATraw (data.ncol,data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
-		VECcopy_preallocated (row.get(), data.row (irow));
+		row.all() <<= data.row (irow);
 		VECsubtract_inplace (row.get(), thy centroid.get());
 		if (thy numberOfRows == 1) {
 			VECmultiply_inplace (row.get(), row.get());
@@ -187,21 +187,16 @@ static void GaussianMixture_setLabelsFromTableOfReal (GaussianMixture me, TableO
 
 // only from big to reduced or same
 static void Covariance_into_Covariance (Covariance me, Covariance thee) {
-	Melder_require (my numberOfColumns == thy numberOfColumns, U"Dimensions should be equal.");
-	
+	Melder_require (my numberOfColumns == thy numberOfColumns,
+		U"Dimensions should be equal.");
 	SSCP_unExpand (thee); // to its original state
-
 	thy numberOfObservations = my numberOfObservations;
-	// copy centroid & column labels
-	for (integer ic = 1; ic <= my numberOfColumns; ic ++) {
-		thy centroid [ic] = my centroid [ic];
-	}
-	thy columnLabels. copyElementsFrom (my columnLabels.get());
+	thy centroid.all() <<= my centroid.all();
+	thy columnLabels.all() <<= my columnLabels.all();
 	// Are the matrix sizes equal
 	if (my numberOfRows == thy numberOfRows) {
-		thy rowLabels. copyElementsFrom (my rowLabels.get());
-		matrixcopy_preallocated (thy data.get(), my data.get());
-		return;
+		thy rowLabels.all() <<= my rowLabels.all();
+		thy data.all() <<= my data.all();
 	} else {
 		for (integer ir = 1; ir <= my numberOfRows; ir ++) {
 			for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
@@ -570,7 +565,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance covi = my covariances->at [im];
-				VECcopy_preallocated (covi -> centroid.get(), means.row (im));
+				covi -> centroid.all() <<= means.row (im);
 				covi -> numberOfObservations = thy numberOfRows / my numberOfComponents;
 			}
 
@@ -826,7 +821,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				}
 
 				// M-step: 2. new mixingProbabilities
-				VECcopy_preallocated (my mixingProbabilities.get(), p.row(p.nrow).subview (1, p.ncol - 1));
+				my mixingProbabilities.all() <<= p.row (p.nrow).part (1, p.ncol - 1);
 				VECmultiply_inplace (my mixingProbabilities.get(), 1.0 / thy numberOfRows);
 				
 				GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
@@ -875,10 +870,9 @@ integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p) {
 	Melder_assert (p.ncol == my numberOfComponents + 1);
 	Melder_assert (p.nrow > 1);
-	
 	VECset (p.row (p.nrow), 0.0);
 	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
-		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).subview (1, p.ncol - 1));
+		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
 		for (integer icol = 1; icol <= my numberOfComponents; icol ++)
 			p [p.nrow] [icol] += my mixingProbabilities [icol] * p [irow] [icol] / p [irow] [p.ncol];
 	}
@@ -928,7 +922,7 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT p, int c
 
 	longdouble lnp = 0.0;
 	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
-		double psum = NUMinner (my mixingProbabilities.get(), p.row (irow).subview (1, p.ncol - 1));
+		double psum = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
 		if (psum > 0.0)
 			lnp += (longdouble) log (psum);
 	}
@@ -1191,7 +1185,7 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
 		autoVEC buf (my dimension, kTensorInitializationType::RAW);
-		thy columnLabels. copyElementsFrom (cov -> columnLabels.part (1, my dimension));
+		thy columnLabels.all() <<= cov -> columnLabels.part (1, my dimension);
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;

@@ -709,7 +709,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			/*
 				Statement like: a# = b#   // with matching sizes
 			*/
-			vectorcopy_preallocated (variable -> numericVectorValue.get(), movedVector);
+			variable -> numericVectorValue.all() <<= movedVector;
 		}
 	} else {
 		/*

@@ -448,8 +448,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		}
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
-		thy rowLabels. part (1, nrow). copyElementsFrom (my rowLabels.get());
-		thy rowLabels. part (nrow + 1, nrow + ncol). copyElementsFrom (my columnLabels.get());
+		thy rowLabels.part (1, nrow) <<= my rowLabels.all();
+		thy rowLabels.part (nrow + 1, nrow + ncol) <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");
@@ -1186,13 +1186,8 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		
 		if (out1) *out1 = thee.move();
 		if (out2) *out2 = mdsw.move();
-		for (integer i = 1; i <= numberOfSources; i ++) {
-			NUMmatrix_free<double> (ci [i], 1, 1);
-		}
+		
 	} catch (MelderError) {
-		for (integer i = 1; i <= numberOfSources; i ++) {
-			NUMmatrix_free<double> (ci [i], 1, 1);
-		}
 		Melder_throw (me, U": no Configuration (ytl) created.");
 	}
 }
@@ -2206,7 +2201,7 @@ autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecLis
 		autoVEC w = VECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
-			VECcopy_preallocated ( conf -> w.get(), weights -> data.row(i));
+			conf -> w.all() <<= weights -> data.row (i);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.get(), tiesHandling);
 			distances -> addItem_move (dist.move());
@@ -2421,10 +2416,10 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 		}
 
 		if (out_varianceAccountedFor) *out_varianceAccountedFor = (n > 0.0 ? 1.0 - t / n : 0.0);
-		VECcopy_preallocated (thy w.get(), w.get()); // restore weights
+		thy w.all() <<= w.all(); // restore weights
 		
 	} catch (MelderError) {
-		VECcopy_preallocated (thy w.get(), w.get());
+		thy w.all() <<= w.all();
 		Melder_throw (U"No out_varianceAccountedFor calculated.");
 	}
 }

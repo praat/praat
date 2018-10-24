@@ -157,9 +157,9 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (integer i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			VECcopy_preallocated ( thy data.row (i), sscp -> centroid.get());
+			thy data.row (i) <<= sscp -> centroid.all();
 		}
-		thy columnLabels. copyElementsFrom (my groups->at [m] -> columnLabels.part (1, n));
+		thy columnLabels.all() <<= my groups->at [m] -> columnLabels.part (1, n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
@@ -180,7 +180,7 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
-		thy columnLabels. copyElementsFrom (my groups->at [m] -> columnLabels.part (1, n));
+		thy columnLabels.all() <<= my groups->at [m] -> columnLabels.part (1, n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
@@ -211,7 +211,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 
 		SSCP total = my total.get();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
-		thy columnLabels. part (1, nx). copyElementsFrom (my total -> columnLabels.part (1, nx));
+		thy columnLabels.part (1, nx) <<= my total -> columnLabels.part (1, nx);
 			// ppgb FIXME: that other number of columns should be at least nx (is it nx?), but that is not documented; if so, add an assert above
 
 		autoSSCP within;
@@ -485,7 +485,7 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
-			VECcopy_preallocated (covg -> centroid.get(), cov -> centroid.get());
+			covg -> centroid.all() <<= cov -> centroid.all();
 			him = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
 			him = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
@@ -511,7 +511,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoNUMvector<SSCP> sscpvec (1, numberOfGroups);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, numberOfGroups);
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 
 		// Scale the sscp to become a covariance matrix.
 
@@ -631,7 +631,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 		autoTableOfReal adisplacements = Data_copy (thee);
 
 		// Scale the sscp to become a covariance matrix.

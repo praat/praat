@@ -245,24 +245,21 @@ double Eigen_getSumOfEigenvalues (Eigen me, integer from, integer to) {
 	if (to < 1) to = my numberOfEigenvalues;
 	if (to > my numberOfEigenvalues || from > to)
 		return undefined;	
-	return NUMsum (my eigenvalues.subview (from, to));
+	return NUMsum (my eigenvalues.part (from, to));
 }
 
 double Eigen_getCumulativeContributionOfComponents (Eigen me, integer from, integer to) {
 	longdouble partial = 0.0, sum = 0.0;
-
-	if (to == 0) {
+	if (to == 0)
 		to = my numberOfEigenvalues;
-	}
 	if (from > 0 && to <= my numberOfEigenvalues && from <= to) {
 		for (integer i = 1; i <= my numberOfEigenvalues; i ++) {
 			sum += my eigenvalues [i];
-			if (i >= from && i <= to) {
+			if (i >= from && i <= to)
 				partial += my eigenvalues [i];
-			}
 		}
 	}
-	return sum > 0.0 ? partial / sum : 0.0;
+	return sum > 0.0 ? double (partial / sum) : 0.0;
 }
 
 integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {

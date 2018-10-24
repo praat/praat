@@ -253,7 +253,7 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
 		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_image (g, thy z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+	Graphics_image (g, thy z.part (iymin, iymax, ixmin, ixmax),
 		Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
 		SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
 		minimum, maximum

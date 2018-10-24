@@ -108,8 +108,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 
 		autoSVD svdy = SVD_create (numberOfObservations, numberOfDependents);   // numberOfObservations >= numberOfDependents, hence no transposition
 		autoSVD svdx = SVD_create (numberOfObservations, numberOfIndependents);	 // numberOfObservations >= numberOfIndependents, hence no transposition
-		svdy -> u.get() <<= my data.verticalBand (1, numberOfDependents);
-		svdx -> u.get() <<= my data.verticalBand (numberOfDependents + 1, my numberOfColumns);
+		svdy -> u.all() <<= my data.verticalBand (1, numberOfDependents);
+		svdx -> u.all() <<= my data.verticalBand (numberOfDependents + 1, my numberOfColumns);
 		double fnormy = NUMfrobeniusnorm (svdy -> u.get());
 		double fnormx = NUMfrobeniusnorm (svdx -> u.get());
 		
@@ -194,7 +194,7 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 			U"The number of factors should be in interval [1, ", my numberOfCoefficients, U"].");
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 		Eigen_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);

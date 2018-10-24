@@ -360,7 +360,7 @@ public:
 	T& operator[] (integer i) const {
 		return our at [i];
 	}
-	vector<T> subview (integer first, integer last) const {
+	vector<T> part (integer first, integer last) const {
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
@@ -384,7 +384,7 @@ public:
 	T& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
-	vectorview<T> subview (integer first, integer last) const {
+	vectorview<T> part (integer first, integer last) const {
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
@@ -411,7 +411,7 @@ public:
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our at [i];
 	}
-	constvector<T> subview (integer first, integer last) const {
+	constvector<T> part (integer first, integer last) const {
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
@@ -438,7 +438,7 @@ public:
 	T const& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
-	constvectorview<T> subview (integer first, integer last) const {
+	constvectorview<T> part (integer first, integer last) const {
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
@@ -606,19 +606,10 @@ autovector<T> vectorzero (integer size) {
 	return autovector<T> (size, kTensorInitializationType::ZERO);
 }
 template <typename T>
-void vectorcopy_preallocated (vector<T> target, constvector<T> source) {
-	Melder_assert (source.size == target.size);
-	for (integer i = 1; i <= source.size; i ++)
-		target [i] = source [i];
-}
-template <typename T>
-void vectorcopy_preallocated (vector<T> target, vector<T> source) {
-	vectorcopy_preallocated (target, constvector<T> (source));
-}
-template <typename T>
 autovector<T> vectorcopy (constvector<T> source) {
 	autovector<T> result = vectorraw<T> (source.size);
-	vectorcopy_preallocated (result.get(), source);
+	for (integer i = 1; i <= source.size; i ++)
+		result [i] = source [i];
 	return result;
 }
 template <typename T>
@@ -638,9 +629,9 @@ class constmatrixview;
 template <typename T>
 class matrix {
 public:
-	T *cells = nullptr;   // the future
-	T **at_deprecated = nullptr;   // deprecated
+	T **at_deprecated = nullptr;   // deprecated; WATCH OUT: when removed, change MatrixEditor
 	integer nrow = 0, ncol = 0;
+	T *cells = nullptr;   // the future
 public:
 	matrix () = default;
 	//matrix (T *givenCells, integer givenNrow, integer givenNcol) :
@@ -681,15 +672,15 @@ public:
 		if (newNcol <= 0) return matrixview<T> ();
 		return matrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
-	matrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
-		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
-		Melder_assert (rowRange.last >= 0 && rowRange.last <= our nrow);
-		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
-		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
-		if (newNrow == 0 || newNcol == 0) return matrixview<T> ();
+	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNrow <= 0 || newNcol <= 0) return matrixview<T> ();
 		return matrixview<T> (
-			our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1),
+			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
 			newNrow, newNcol, our ncol, 1
 		);
 	}
@@ -727,16 +718,15 @@ public:
 		return matrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
 				our nrow, newNcol, our rowStride, our colStride);
 	}
-	matrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
-		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
-		Melder_assert (rowRange.last >= 1 && rowRange.last <= our nrow);
-		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
-		Melder_assert (columnRange.last >= 1 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size();
-		const integer newNcol = columnRange.size();
-		if (newNrow == 0 || newNcol == 0) return matrixview<T> ();
+	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNrow <= 0 || newNcol <= 0) return matrixview<T> ();
 		return matrixview<T> (
-			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
+			our firstCell + (firstRow - 1) * our rowStride + (firstColumn - 1) * our colStride,
 			newNrow, newNcol, our rowStride, our colStride
 		);
 	}
@@ -788,16 +778,15 @@ public:
 		if (newNcol <= 0) return constmatrixview<T> ();
 		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
-	constmatrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
-		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
-		Melder_assert (rowRange.last >= 0 && rowRange.last <= our nrow);
-		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
-		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size();
-		const integer newNcol = columnRange.size();
-		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
+	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNrow <= 0 || newNcol <= 0) return constmatrixview<T> ();
 		return constmatrixview<T> (
-			our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1),
+			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
 			newNrow, newNcol, our ncol, 1
 		);
 	}
@@ -839,17 +828,17 @@ public:
 		return constmatrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
 				our nrow, newNcol, our rowStride, our colStride);
 	}
-	constmatrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
-		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
-		Melder_assert (rowRange.last >= 1 && rowRange.last <= our nrow);
-		Melder_assert (columnRange.first >= 1 && columnRange.first <= our ncol);
-		Melder_assert (columnRange.last >= 1 && columnRange.last <= our ncol);
-		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
-		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
+	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNrow <= 0 || newNcol <= 0) return constmatrixview<T> ();
 		return constmatrixview<T> (
 			our firstCell
-			+ (rowRange.first - 1) * our rowStride
-			+ (columnRange.first - 1) * our colStride,
+			+ (firstRow - 1) * our rowStride
+			+ (firstColumn - 1) * our colStride,
 			newNrow, newNcol,
 			our rowStride, our colStride
 		);
@@ -1442,9 +1431,6 @@ inline autoVEC VECraw  (integer size) {
 inline autoVEC VECzero (integer size) {
 	return vectorzero <double> (size);
 }
-inline void VECcopy_preallocated (VEC target, constVEC source) {
-	vectorcopy_preallocated (target, source);
-}
 inline autoVEC VECcopy (constVEC source) {
 	return vectorcopy (source);
 }
@@ -1458,16 +1444,15 @@ inline autoVEC VECcopy (constVEC source) {
 	This is fine, as a double can contain an integer up to 54 bits.
 */
 using INTVEC = vector <integer>;
+using INTVECVU = vectorview <integer>;
 using constINTVEC = constvector <integer>;
+using constINTVECVU = constvectorview <integer>;
 using autoINTVEC = autovector <integer>;
 inline autoINTVEC INTVECraw  (integer size) {
 	return vectorraw <integer> (size);
 }
 inline autoINTVEC INTVECzero (integer size) {
 	return vectorzero <integer> (size);
-}
-inline void INTVECcopy_preallocated (INTVEC target, constINTVEC source) {
-	vectorcopy_preallocated (target, source);
 }
 inline autoINTVEC INTVECcopy (constINTVEC source) {
 	return vectorcopy (source);
@@ -1481,9 +1466,6 @@ inline autoBOOLVEC BOOLVECraw  (integer size) {
 }
 inline autoBOOLVEC BOOLVECzero (integer size) {
 	return vectorzero <bool> (size);
-}
-inline void BOOLVECcopy_preallocated (BOOLVEC target, constBOOLVEC source) {
-	vectorcopy_preallocated (target, source);
 }
 inline autoBOOLVEC BOOLVECcopy (constBOOLVEC source) {
 	return vectorcopy (source);
@@ -1560,6 +1542,11 @@ conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
 inline void operator<<= (VECVU const& target, constVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	Melder_assert (target.size == source.size);
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = source [i];

@@ -342,7 +342,7 @@ static void NUMcrossCorrelate_rows (constMAT x, integer icol1, integer icol2, in
 	integer nsamples = icol2 - icol1 + 1 + lag;
 	Melder_require (nsamples > 0, U"Not enough samples to perform crosscorrealtions."); 
 	for (integer i = 1; i <= x.nrow; i ++) {
-		inout_centroid [i] = NUMmean (x.row(i).subview (icol1,icol2 + lag));
+		inout_centroid [i] = NUMmean (x.row (i).part (icol1, icol2 + lag));
 	}
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = irow; icol <= x.nrow; icol ++) {
@@ -420,16 +420,16 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 		autoVEC centroid1 = VECraw (my ny);
 		autoMAT x1x1 = MATraw (my ny, my ny);
 		NUMcrossCorrelate_rows (my z.get(), i1, i2, lag, x1x1.get(), centroid1.get(), my dx);
-		VECcopy_preallocated (his centroid.subview (1, my ny), centroid1.get());
+		his centroid.part (1, my ny) <<= centroid1.all();
 		for (integer irow = 1; irow <= my ny; irow ++)
-			VECcopy_preallocated (his data.row(irow).subview (1, my ny), x1x1.row(irow));
+			his data.row (irow).part (1, my ny) <<= x1x1.row (irow);
 
 		autoVEC centroid2 = VECraw (thy ny);
 		autoMAT x2x2 = MATraw (thy ny, thy ny);
 		NUMcrossCorrelate_rows (thy z.get(), i1, i2, lag, x2x2.get(), centroid2.get(), my dx);
-		VECcopy_preallocated (his centroid.subview (my ny + 1, nchannels), centroid2.get());
+		his centroid.part (my ny + 1, nchannels) <<= centroid2.all();
 		for (integer irow = 1; irow <= thy ny; irow ++)
-			VECcopy_preallocated (his data.row (my ny + irow).subview (my ny + 1, nchannels), x2x2.row(irow));
+			his data.row (my ny + irow).part (my ny + 1, nchannels) <<= x2x2.row (irow);
 
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			for (integer icol = 1; icol <= thy ny; icol ++) {

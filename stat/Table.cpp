@@ -827,7 +827,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 					++ icol;
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++)
 						sortingColumn [jrow] = my rows.at [jrow] -> cells [columns [icol]]. number;
-					VEC part = sortingColumn.subview (rowmin, rowmax);
+					VEC part = sortingColumn.part (rowmin, rowmax);
 					VECsort_inplace (part);
 					double median = NUMquantile (part, 0.5);
 					Table_setNumericValue (thee.get(), thy rows.size, icol, median);
@@ -861,7 +861,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 						}
 						sortingColumn [jrow] = log (value);
 					}
-					VEC part = sortingColumn.subview (rowmin, rowmax);
+					VEC part = sortingColumn.part (rowmin, rowmax);
 					VECsort_inplace (part);
 					double median = NUMquantile (part, 0.5);
 					Table_setNumericValue (thee.get(), thy rows.size, icol, exp (median));

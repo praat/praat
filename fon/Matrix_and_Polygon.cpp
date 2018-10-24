@@ -29,16 +29,16 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 				The first row will be interpreted as x values, the second as y values.
 			*/
 			thee = Polygon_create (my nx);
-			thy x.get() <<= my z.row (1);
-			thy y.get() <<= my z.row (2);
+			thy x.all() <<= my z.row (1);
+			thy y.all() <<= my z.row (2);
 		} else {
 			/*
 				The matrix has two columns.
 				The first column will be interpreted as x values, the second as y values.
 			*/
 			thee = Polygon_create (my ny);
-			thy x.get() <<= my z.column (1);
-			thy y.get() <<= my z.column (2);
+			thy x.all() <<= my z.column (1);
+			thy y.all() <<= my z.column (2);
 		}
 		return thee;
 	} catch (MelderError) {

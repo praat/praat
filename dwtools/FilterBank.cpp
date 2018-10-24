@@ -262,7 +262,7 @@ void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax,
 		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_image (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+	Graphics_image (g, my z.part (iymin, iymax, ixmin, ixmax),
 			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);

@@ -224,14 +224,10 @@ MACRO_NUMindex (const char32_t *, a.size)
 
 void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
 	Melder_assert (a.size == iv1.size && a.size == iv2.size);
-	
-	if (a.size == 1) {
+	if (a.size == 1)
 		return;
-	}
-	
 	autoVEC atmp = VECcopy (a);
 	autoINTVEC index = NUMindexx (atmp.get());
-	
 	if (descending) {
 		for (integer j = 1; j <= a.size / 2; j ++) {
 			integer tmp = index [j];
@@ -239,14 +235,15 @@ void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
 			index [a.size - j + 1] = tmp;
 		}
 	}
-	
-	for (integer j = 1; j <= a.size; j ++) a [j] = atmp [index [j]];
-	
+	for (integer j = 1; j <= a.size; j ++)
+		a [j] = atmp [index [j]];
 	autoINTVEC itmp = INTVECraw (a.size);
-	vectorcopy_preallocated (itmp.get(), iv1);
-	for (integer j = 1; j <= a.size; j ++) iv1 [j ] = itmp [index [j]];
-	vectorcopy_preallocated (itmp.get(), iv2);
-	for (integer j = 1; j <= a.size; j ++) iv2 [j] = itmp [index [j]];
+	itmp.all() <<= iv1;
+	for (integer j = 1; j <= a.size; j ++)
+		iv1 [j] = itmp [index [j]];
+	itmp.all() <<= iv2;
+	for (integer j = 1; j <= a.size; j ++)
+		iv2 [j] = itmp [index [j]];
 }
 
 /* End of file NUMsort.cpp */

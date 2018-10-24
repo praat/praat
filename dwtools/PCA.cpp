@@ -188,7 +188,7 @@ autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
 		autoPCA thee = MAT_to_PCA (my data.get(), false);
 		Melder_assert (thy labels.size == my numberOfColumns);
-		thy labels. copyElementsFrom (my columnLabels.get());
+		thy labels.all() <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
@@ -228,7 +228,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 				his data [i] [j] = (double) r;
 			}
 		}
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -244,7 +244,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -259,7 +259,7 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his rowLabels.all() <<= thy rowLabels.all();
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -278,8 +278,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		Melder_assert (my labels.size == my dimension);
-		his columnLabels. copyElementsFrom (my labels.get());
-		his rowLabels. copyElementsFrom (thy rowLabels.get());
+		his columnLabels.all() <<= my labels.all();
+		his rowLabels.all() <<= thy rowLabels.all();
 
 		MATVUmul (his data.get(), thy data.get(), my eigenvectors.get());
 		
@@ -308,7 +308,7 @@ autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring
 		integer npc;
 		autoVEC pc = VEC_createFromString (numstring);
 		autoConfiguration c = Configuration_create (1, pc.size);
-		VECcopy_preallocated (c -> data.row (1), pc.get());
+		c -> data.row (1) <<= pc.all();
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {

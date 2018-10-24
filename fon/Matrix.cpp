@@ -281,7 +281,7 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
-	Graphics_contour (g, my z.subview (MelderIntegerRange { iymin, iymax }, MelderIntegerRange { ixmin, ixmax }),
+	Graphics_contour (g, my z.part (iymin, iymax, ixmin, ixmax),
 		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		height);
@@ -306,7 +306,7 @@ void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, doubl
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_altitude (g, my z.subview (MelderIntegerRange { iymin, iymax }, MelderIntegerRange { ixmin, ixmax }),
+	Graphics_altitude (g, my z.part (iymin, iymax, ixmin, ixmax),
 		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		8, border);
@@ -331,7 +331,7 @@ void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, doub
 	if (xmin >= xmax || ymin >= ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_grey (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+	Graphics_grey (g, my z.part (iymin, iymax, ixmin, ixmax),
 		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		30, border);
@@ -356,12 +356,12 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
-		Graphics_image (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+		Graphics_image (g, my z.part (iymin, iymax, ixmin, ixmax),
 			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
 	else
-		Graphics_cellArray (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+		Graphics_cellArray (g, my z.part (iymin, iymax, ixmin, ixmax),
 			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);

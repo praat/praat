@@ -268,7 +268,7 @@ double SVD_getSumOfSingularValues (SVD me, integer from, integer to) {
 	from = from == 0 ? 1 : from;
 	to = to == 0 ? my numberOfColumns : to;
 	Melder_require (from > 0 && from <= to && to <= my numberOfColumns, U"The range should be within [1,", my numberOfColumns, U"].");
-	return NUMsum (my d.subview (from, to));
+	return NUMsum (my d.part (from, to));
 }
 
 integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
