@@ -3665,8 +3665,8 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
-		integer numberOfLevelsA = levelsA -> classes->size;
-		integer numberOfLevelsB = levelsB -> classes->size;
+		integer numberOfLevelsA = levelsA -> classes -> size;
+		integer numberOfLevelsB = levelsB -> classes -> size;
 		
 		Melder_require (numberOfLevelsA > 1,
 			U"There should be at least two levels in \"", label_A, U"\".");
@@ -3709,7 +3709,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		// check for unfilled cells and calculate cell means
 
-		longdouble nh = 0;
+		longdouble nh = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
 				if (factorLevelSizes [i] [j] < 1) {
@@ -3724,15 +3724,16 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		nh = numberOfLevelsA * numberOfLevelsB / nh;
 
 		// row marginals (ystar [i.])
-
+		longdouble mean = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
 				factorLevelMeans [i] [numberOfLevelsB + 1] += factorLevelMeans [i] [j];
+				mean += factorLevelMeans [i] [j];
 				factorLevelSizes [i] [numberOfLevelsB + 1] += factorLevelSizes [i] [j];
 			}
 			factorLevelMeans [i] [numberOfLevelsB + 1] /= numberOfLevelsB;
 		}
-		double mean = NUMmean (asvector(factorLevelMeans.get()));
+		mean /= numberOfLevelsA * numberOfLevelsB;
 		factorLevelMeans [numberOfLevelsA + 1] [numberOfLevelsB + 1] = mean;
 		factorLevelSizes [numberOfLevelsA + 1] [numberOfLevelsB + 1] = numberOfData;
 
@@ -3948,17 +3949,19 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 				ydata [ ++ ynumberOfData] = val;
 			}
 		}
+		if (xnumberOfData == 0 || ynumberOfData == 0) 
+			return;
 		xdata.resize (xnumberOfData);
 		ydata.resize (ynumberOfData);
 		if (xmin == xmax) {
-			NUMextrema (xdata.subview (1, xnumberOfData), & xmin, & xmax);
+			NUMextrema (xdata.part (1, xnumberOfData), & xmin, & xmax);
 			if (xmin == xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
-			NUMextrema (ydata.subview (1, ynumberOfData), & ymin, & ymax);
+			NUMextrema (ydata.part (1, ynumberOfData), & ymin, & ymax);
 			if (ymin == ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
@@ -4057,7 +4060,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 					data [ ++ numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
 				}
 			}
-			Graphics_boxAndWhiskerPlot (g, data.subview (1, numberOfDataInLevel), ilevel, 0.2, 0.35, ymin, ymax);
+			Graphics_boxAndWhiskerPlot (g, data.part (1, numberOfDataInLevel), ilevel, 0.2, 0.35, ymin, ymax);
 		}
 		Graphics_unsetInner (g);
 		if (garnish) {
@@ -4119,7 +4122,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 				if (numberOfDataInLevelColumn > 0) {
 					// determine position
 					double xc = xlevel - 0.5 + (spaceBetweenGroupsdiv2 + (icol - 1) * (boxWidth + spaceBetweenBoxesInGroup) + boxWidth / 2) * widthUnit;
-					Graphics_boxAndWhiskerPlot (g, data.subview(1, numberOfDataInLevelColumn), xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
+					Graphics_boxAndWhiskerPlot (g, data.part (1, numberOfDataInLevelColumn), xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
 				}
 			}
 		}

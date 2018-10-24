@@ -6422,7 +6422,7 @@ DO
 }
 
 FORM (GRAPHICS_Table_boxPlots, U"Table: Box plots", nullptr) {
-	WORD (dataColumns_string, U"Data columns", U"F1 F2")
+	SENTENCE (dataColumns_string, U"Data columns", U"F1 F2")
 	WORD (factorColumn_string, U"Factor column", U"Sex")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")

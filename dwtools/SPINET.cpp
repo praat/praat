@@ -139,13 +139,13 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	autoVEC spec = VECcolumn (enhanced ? my s.get() : my y.get(), icol);
 
 	if (maximum <= minimum)
-		NUMextrema (spec.subview (ifmin, ifmax), & minimum, & maximum);
+		NUMextrema (spec.part (ifmin, ifmax), & minimum, & maximum);
 
 	if (maximum <= minimum) {
 		minimum -= 1;
 		maximum += 1;
 	}
-	VECclip_inplace (spec.subview (ifmin, ifmax), minimum, maximum);
+	VECclip_inplace (spec.part (ifmin, ifmax), minimum, maximum);
 	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fromErb, toErb, minimum, maximum);
