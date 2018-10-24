@@ -2701,42 +2701,46 @@ double NUMfrobeniusnorm (constMAT x) {
 	return scale * sqrt ((double) ssq);
 }
 
-double NUMtrace (constMAT a) {
+double NUMtrace (const constMATVU& a) {
 	Melder_assert (a.nrow == a.ncol);
 	longdouble trace = 0.0;
-	for (integer i = 1; i <= a.nrow; i ++) {
+	for (integer i = 1; i <= a.nrow; i ++)
 		trace += a [i] [i];
-	}
 	return (double) trace;
 }
 
-double NUMtrace2_nn (constMAT x, constMAT y) {
+double NUMtrace2 (const constMATVU& x, const constMATVU& y) {
 	Melder_assert (x.ncol == y.nrow && x.nrow == y.ncol);
 	longdouble trace = 0.0;
-	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer k = 1; k <= x.ncol; k ++) {
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer k = 1; k <= x.ncol; k ++)
 			trace += x [irow] [k] * y [k] [irow];
-		}
-	}
 	return (double) trace;
 }
 
-double NUMtrace2_tn (constMAT x, constMAT y) {
+double NUMtrace2_nn (const constMAT& x, const constMAT& y) {
+	Melder_assert (x.ncol == y.nrow && x.nrow == y.ncol);
+	longdouble trace = 0.0;
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer k = 1; k <= x.ncol; k ++)
+			trace += x [irow] [k] * y [k] [irow];
+	return (double) trace;
+}
+
+double NUMtrace2_tn (const constMAT& x, const constMAT& y) {
 	Melder_assert (x.ncol == y.ncol && x.nrow == y.nrow);
 	longdouble trace = 0.0;
-	for (integer irow = 1; irow <= x.ncol; irow ++) {
-		for (integer k = 1; k <= x.nrow; k ++) {
+	for (integer irow = 1; irow <= x.ncol; irow ++)
+		for (integer k = 1; k <= x.nrow; k ++)
 			trace += x [k] [irow] * y [k] [irow];
-		}
-	}
 	return (double) trace;
 }
 
-double NUMtrace2_nt (constMAT x, constMAT y) {
+double NUMtrace2_nt (const constMAT& x, const constMAT& y) {
 	return NUMtrace2_tn (y, x);
 }
 
-double NUMtrace2_tt (constMAT x, constMAT y) {
+double NUMtrace2_tt (const constMAT& x, const constMAT& y) {
 	return NUMtrace2_nn (y, x);
 }
 

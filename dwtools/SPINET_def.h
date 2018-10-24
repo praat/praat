@@ -22,9 +22,9 @@ oo_DEFINE_CLASS (SPINET, SampledXY)
 	oo_INTEGER (gamma)						/* filter order */
 	oo_DOUBLE (excitationErbProportion)	/* excitatory bandwidth proportionality factor*/
 	oo_DOUBLE (inhibitionErbProportion)	/* inhibitatory bandwidth proportionality factor*/
-	oo_DOUBLE_MATRIX (y, ny, nx) /* short term average energy spectrum */
+	oo_MAT (y, ny, nx) /* short term average energy spectrum */
 	/* spectrum after on-center/off-surround and rectification */
-	oo_DOUBLE_MATRIX (s, ny, nx)
+	oo_MAT (s, ny, nx)
 
 	#if oo_DECLARING
 		void v_info ()

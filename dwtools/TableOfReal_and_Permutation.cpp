@@ -1,6 +1,6 @@
 /* TableOfReal_and_Permutation.cpp
  *
- * Copyright (C) 2005-2017 David Weenink
+ * Copyright (C) 2005-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ autoTableOfReal TableOfReal_Permutation_permuteRows (TableOfReal me, Permutation
 		Melder_require (my numberOfRows == thy numberOfElements,
 			U"The number of rows in the table and the number of elements in the Permutation should be equal.");
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
+
 		for (integer i = 1; i <= thy numberOfElements; i ++)
 			TableOfReal_copyOneRowWithLabel (me, him.get(), thy p [i], i);
 		for (integer j = 1; j <= my numberOfColumns; j ++)

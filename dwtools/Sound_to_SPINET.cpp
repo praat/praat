@@ -1,6 +1,6 @@
 /* Sound_to_SPINET.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,8 @@
 
 static double fgamma (double x, integer n) {
 	double x2p1 = 1.0 + x * x, d = x2p1;
-	for (integer i = 2; i <= n; i ++) {
+	for (integer i = 2; i <= n; i ++)
 		d *= x2p1;
-	}
 	return 1.0 / d;
 }
 
@@ -41,12 +40,9 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 	try {
 		const double b = 1.02, samplingFrequency = 1.0 / my dx;
 
-		if (timeStep < my dx) {
-			timeStep = my dx;
-		}
-		if (maximumFrequencyHz > samplingFrequency / 2.0) {
+		if (timeStep < my dx) timeStep = my dx;
+		if (maximumFrequencyHz > samplingFrequency / 2.0)
 			maximumFrequencyHz = samplingFrequency / 2.0;
-		}
 
 		integer numberOfFrames;
 		double firstTime;
@@ -54,10 +50,10 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 		autoSPINET thee = SPINET_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, minimumFrequencyHz, maximumFrequencyHz, nFilters, excitationErbProportion, inhibitionErbProportion);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoSound frame = Sound_createSimple (1, windowDuration, samplingFrequency);
-		autoNUMvector<double> f (1, nFilters);
-		autoNUMvector<double> bw (1, nFilters);
-		autoNUMvector<double> aex (1, nFilters);
-		autoNUMvector<double> ain (1, nFilters);
+		autoVEC f = VECraw (nFilters);
+		autoVEC bw = VECraw (nFilters);
+		autoVEC aex = VECraw (nFilters);
+		autoVEC ain = VECraw (nFilters);
 
 		/*
 			Cochlear filterbank: gammatone.

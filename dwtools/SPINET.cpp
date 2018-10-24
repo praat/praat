@@ -1,6 +1,6 @@
 /* SPINET.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@
 
 Thing_implement (SPINET, SampledXY, 0);
 
-static integer SampledXY_getWindowExtrema (SampledXY me, double **z, integer ixmin, integer ixmax, integer iymin, integer iymax, double *minimum, double *maximum) {
+static integer SampledXY_getWindowExtrema (SampledXY me, constMAT z, integer ixmin, integer ixmax, integer iymin, integer iymax, double *minimum, double *maximum) {
 /*
 	Function:
 		compute the minimum and maximum values of z over all samples inside [ixmin, ixmax] * [iymin, iymax].
@@ -61,21 +61,12 @@ static integer SampledXY_getWindowExtrema (SampledXY me, double **z, integer ixm
 		if result == 0, *minimum and *maximum are not changed;
 */
 
-	if (ixmin == 0) {
-		ixmin = 1;
-	}
-	if (ixmax == 0) {
-		ixmax = my nx;
-	}
-	if (iymin == 0) {
-		iymin = 1;
-	}
-	if (iymax == 0) {
-		iymax = my ny;
-	}
-	if (ixmin > ixmax || iymin > iymax) {
+	if (ixmin == 0) ixmin = 1;
+	if (ixmax == 0) ixmax = my nx;
+	if (iymin == 0) iymin = 1;
+	if (iymax == 0) iymax = my ny;
+	if (ixmin > ixmax || iymin > iymax) 
 		return 0;
-	}
 	*minimum = *maximum = z [iymin] [ixmin];
 	for (integer iy = iymin; iy <= iymax; iy ++)
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
@@ -92,8 +83,8 @@ static integer SampledXY_getWindowExtrema (SampledXY me, double **z, integer ixm
 void structSPINET :: v_info () {
 	structDaata :: v_info ();
 	double miny, maxy, mins, maxs;
-	if (! SampledXY_getWindowExtrema (this, y, 1, nx, 1, ny, & miny, & maxy) ||
-	        ! SampledXY_getWindowExtrema (this, s, 1, nx, 1, ny, & mins, & maxs)) {
+	if (! SampledXY_getWindowExtrema (this, y.get(), 1, nx, 1, ny, & miny, & maxy) ||
+	        ! SampledXY_getWindowExtrema (this, s.get(), 1, nx, 1, ny, & mins, & maxs)) {
 		return;
 	}
 	MelderInfo_writeLine (U"Minimum power: ", miny);
@@ -109,8 +100,8 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 		double maxErb = NUMhertzToErb (maximumFrequency);
 		double dErb = (maxErb - minErb) / nFilters;
 		SampledXY_init (me.get(), tmin, tmax, nt, dt, t1, minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
-		my y = NUMmatrix<double> (1, nFilters, 1, nt);
-		my s = NUMmatrix<double> (1, nFilters, 1, nt);
+		my y = MATzero (nFilters, nt);
+		my s = MATzero (nFilters, nt);
 		my gamma = 4;
 		my excitationErbProportion = excitationErbProportion;
 		my inhibitionErbProportion = inhibitionErbProportion;
@@ -121,13 +112,10 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 }
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
-	double **z = enhanced ? my s : my y;
+
 	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-	for (integer j = 1; j <= my ny; j ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			thy z [j] [i] = z [j] [i];
-		}
-	}
+	MATcopy_preallocated (thy z.get(), enhanced ? my s.get() : my y.get());
+
 	Matrix_paintCells (thee.get(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -141,37 +129,27 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
 	integer ifmin, ifmax, icol = Sampled_xToLowIndex (me, time);   // ppgb: don't use Sampled2_xToColumn for integer rounding
-	double **z = enhanced ? my s : my y;
-	if (icol < 1 || icol > my nx) {
+	if (icol < 1 || icol > my nx)
 		return;
-	}
 	if (toErb <= fromErb) {
 		fromErb = my ymin;
 		toErb = my ymax;
 	}
-	SampledXY_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax);
-	autoNUMvector<double> spec (1, my ny);
+	SampledXY_getWindowSamplesY (me, fromErb, toErb, & ifmin, & ifmax);
+	autoVEC spec = VECcolumn (enhanced ? my s.get() : my y.get(), icol);
 
-	for (integer i = 1; i <= my ny; i ++) {
-		spec [i] = z [i] [icol];
-	}
-	if (maximum <= minimum) {
-		NUMvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
-	}
+	if (maximum <= minimum)
+		NUMextrema (spec.part (ifmin, ifmax), & minimum, & maximum);
+
 	if (maximum <= minimum) {
 		minimum -= 1;
 		maximum += 1;
 	}
-	for (integer i = ifmin; i <= ifmax; i ++) {
-		if (spec [i] > maximum) {
-			spec [i] = maximum;
-		} else if (spec [i] < minimum) {
-			spec [i] = minimum;
-		}
-	}
+	VECclip_inplace (spec.part (ifmin, ifmax), minimum, maximum);
+	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fromErb, toErb, minimum, maximum);
-	Graphics_function (g, spec.peek(), ifmin, ifmax, SampledXY_indexToY (me, ifmin), SampledXY_indexToY (me, ifmax));
+	Graphics_function (g, & spec [0], ifmin, ifmax, SampledXY_indexToY (me, ifmin), SampledXY_indexToY (me, ifmax));
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

@@ -630,12 +630,15 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 
 autoPCA SSCP_to_PCA (SSCP me) {
 	try {
-		autoMAT mat = MATcopy (my data.get());
-		if (my numberOfRows == 1) {   // 1xn matrix -> nxn
-			MATset (mat.get(), 0.0);
-			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-				mat [icol] [icol] = my data [1] [icol];
-		}
+		Melder_assert (my data.ncol == my numberOfColumns);
+		autoMAT mat;
+		if (my numberOfRows == 1) {
+			mat = MATzero (my numberOfColumns, my numberOfColumns);
+			mat.diagonal() <<= my data.row (1); // 1xn matrix -> nxn
+		} else if (my data.nrow == my numberOfColumns && my data.ncol == my numberOfColumns)
+			mat = MATcopy (my data.get());
+		else
+			Melder_throw (me, U": the SSCP has the wrong dimensions.");
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
 		thy centroid.all() <<= my centroid.all();
