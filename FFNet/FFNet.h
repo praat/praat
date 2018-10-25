@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-207 David Weenink
+ * Copyright (C) 1997-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include "Minimizers.h"
 #include "PatternList.h"
 #include "TableOfReal.h"
+#include "melder.h"
 
 #include "FFNet_def.h"
 
@@ -156,16 +157,16 @@ const char32* FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit);
 
 integer FFNet_getOutputUnitOfCategory (FFNet me, const char32* category);
 
-void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], integer layer);
+void FFNet_propagateToLayer (FFNet me, constVEC input, VEC activity, integer layer);
 /* propagate the input through the net to layer and calculate the activities */
 
-void FFNet_propagate (FFNet me, const double input[], double output[]);
+void FFNet_propagate (FFNet me, constVEC input, autoVEC *output);
 /* step (1) feed forward input from "input layer" to "output layer"
  * if output != nullptr the output activity is copied into output.
  * postcondition: my activities defined
  */
 
-double FFNet_computeError (FFNet me, const double target[]);
+double FFNet_computeError (FFNet me, constVEC target);
 /* step (2) calculate error on output nodes w.r.t. desired output */
 /* step (3) backpropagate this error to previous nodes */
 /* precondition: step (1) */
@@ -188,7 +189,7 @@ integer FFNet_dimensionOfSearchSpace (FFNet me);
 integer FFNet_getNumberOfWeights (FFNet me);
 /* return my nWeights */
 
-void FFNet_weightConnectsUnits (FFNet me, integer index, integer *fromUnit, integer *toUnit, integer *layer);
+void FFNet_weightConnectsUnits (FFNet me, integer index, integer *out_fromUnit, integer *out_toUnit, integer *out_layer);
 /*
  * w[index] connects unit fromUnit in "layer-1" with unit toUnit in "layer".
  *  fromUnit returns 0 then w[index] is bias.
@@ -196,7 +197,7 @@ void FFNet_weightConnectsUnits (FFNet me, integer index, integer *fromUnit, inte
 
 integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer);
 
-void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *unit, integer *layer);
+void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *out_unit, integer *out_layer);
 /* translate node index to unit "unit" in layer "layer" */
 
 integer FFNet_getNumberOfLayers (FFNet me);

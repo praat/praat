@@ -1,6 +1,6 @@
 /* FFNet.cpp
  *
- * Copyright (C) 1997-2017 David Weenink
+ * Copyright (C) 1997-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  djmw 20110304 Thing_new
 */
 
+#include "FFNet.h"
 #include "FFNet_Matrix.h"
 #include "Matrix_extensions.h"
 #include "TableOfReal_extensions.h"
@@ -74,9 +75,9 @@ autostring32 FFNet_createNameFromTopology (FFNet me) {
 
 /****** non-linearities ****************************************************/
 
-static double sigmoid (FFNet /*me*/, double x, double *deriv) {
+static double sigmoid (FFNet /*me*/, double x, double *out_deriv) {
 	double act = NUMsigmoid (x);
-	*deriv = act * (1.0 - act);
+	if (out_deriv) *out_deriv = act * (1.0 - act);
 	return act;
 }
 
@@ -88,7 +89,8 @@ static double sigmoid (FFNet /*me*/, double x, double *deriv) {
 		if target < activity ==> error < 0
 */
 
-static double minimumSquaredError (FFNet me, const double target []) {
+static double minimumSquaredError (FFNet me, constVEC& target) {
+	Melder_assert (my nOutputs == target.size);
 	integer k = my nNodes - my nOutputs + 1;
 	double cost = 0.0;
 	for (integer i = 1; i <= my nOutputs; i ++, k ++) {
@@ -101,7 +103,8 @@ static double minimumSquaredError (FFNet me, const double target []) {
 /* E = - sum (i=1; i=nPatterns; sum (k=1;k=nOutputs; t [k]*ln (o [k]) + (1-t [k])ln (1-o [k]))) */
 /* dE/do [k] = -(1-t [k])/ (1-o [k]) + t [k]/o [k] */
 /* werkt niet bij (grote?) netten */
-static double minimumCrossEntropy (FFNet me, const double target []) {
+static double minimumCrossEntropy (FFNet me, constVEC& target) {
+	Melder_assert (my nOutputs == target.size);
 	integer k = my nNodes - my nOutputs + 1;
 	double cost = 0.0;
 
@@ -125,26 +128,26 @@ static void bookkeeping (FFNet me) {
 		my nNodes += my nUnitsInLayer [i] + 1;
 		nWeights += my nUnitsInLayer [i] * (my nUnitsInLayer [i - 1] + 1);
 	}
-	if (my nWeights > 0 && my nWeights != nWeights) {
+	if (my nWeights > 0 && my nWeights != nWeights)
 		Melder_throw (U"Number of weights is incorret.");
-	}
+
 	my nWeights = nWeights;
 
 	// The following test is essential because when an FFNet is read from file the w array already exists
-	if (! my w) {
-		my w = NUMvector<double> (1, my nWeights);
+	if (! my w.at) {
+		my w = VECzero (my nWeights);
 	}
-	my activity = NUMvector<double> (1, my nNodes);
-	my isbias = NUMvector<integer> (1, my nNodes);
-	my nodeFirst = NUMvector<integer> (1, my nNodes);
-	my nodeLast = NUMvector<integer> (1, my nNodes);
-	my wFirst = NUMvector<integer> (1, my nNodes);
-	my wLast = NUMvector<integer> (1, my nNodes);
-	my wSelected = NUMvector<integer> (1, my nWeights);
-	my error = NUMvector<double> (1, my nNodes);
-	my deriv = NUMvector<double> (1, my nNodes);
-	my dwi = NUMvector<double> (1, my nWeights);
-	my dw = NUMvector<double> (1, my nWeights);
+	my activity = VECzero (my nNodes);
+	my isbias = INTVECzero (my nNodes);
+	my nodeFirst = INTVECzero (my nNodes);
+	my nodeLast = INTVECzero (my nNodes);
+	my wFirst = INTVECzero (my nNodes);
+	my wLast = INTVECzero (my nNodes);
+	my wSelected = INTVECzero (my nWeights);
+	my error = VECzero (my nNodes);
+	my deriv = VECzero (my nNodes);
+	my dwi = VECzero (my nWeights);
+	my dw = VECzero (my nWeights);
 	my nInputs = my nUnitsInLayer [0];
 	my nOutputs = my nUnitsInLayer [my nLayers];
 	my isbias [my nInputs + 1] = 1;
@@ -175,9 +178,8 @@ void structFFNet :: v_info () {
 	MelderInfo_writeLine (U"Number of layers: ", our nLayers);
 	MelderInfo_writeLine (U"Total number of units: ", FFNet_getNumberOfUnits (this));
 	MelderInfo_writeLine (U"   Number of units in layer ", our nLayers, U" (output): ", our nUnitsInLayer [nLayers]);
-	for (integer i = our nLayers - 1; i >= 1; i --) {
+	for (integer i = our nLayers - 1; i >= 1; i --)
 		MelderInfo_writeLine (U"   Number of units in layer ", i, U" (hidden): ", our nUnitsInLayer [i]);
-	}
 	MelderInfo_writeLine (U"   Number of units in layer 0 (input): ", our nUnitsInLayer [0]);
 	MelderInfo_writeLine (U"Outputs are linear: ", Melder_boolean (our outputsAreLinear));
 	MelderInfo_writeLine (U"Number of weights: ", our nWeights, U" (",
@@ -191,22 +193,18 @@ void FFNet_init (FFNet me, integer numberOfInputs, integer nodesInLayer1, intege
 	Melder_require (numberOfInputs > 0, U"Number of inputs should be greater than zero.");
 	Melder_require (numberOfOutputs > 0, U"Number of outputs should be greater than zero.");
 	
-	if (nodesInLayer1 < 1) {
+	if (nodesInLayer1 < 1)
 		numberOfLayers --;
-	}
-	if (nodesInLayer2 < 1) {
+	if (nodesInLayer2 < 1)
 		numberOfLayers --;
-	}
 	my nLayers = numberOfLayers;
 	my nUnitsInLayer = NUMvector<integer> (0, numberOfLayers);
 
 	my nUnitsInLayer [numberOfLayers --] = numberOfOutputs;
-	if (nodesInLayer2 > 0) {
+	if (nodesInLayer2 > 0)
 		my nUnitsInLayer [numberOfLayers --] = nodesInLayer2;
-	}
-	if (nodesInLayer1 > 0) {
+	if (nodesInLayer1 > 0)
 		my nUnitsInLayer [numberOfLayers --] = nodesInLayer1;
-	}
 	my nUnitsInLayer [numberOfLayers] = numberOfInputs;
 	Melder_assert (numberOfLayers == 0);
 	my outputsAreLinear = outputsAreLinear;
@@ -220,9 +218,8 @@ void FFNet_init (FFNet me, integer numberOfInputs, integer nodesInLayer1, intege
 
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
 	autoCategories uniq = Categories_selectUniqueItems (thee);
-	if (uniq->size == thy size) {
+	if (uniq->size == thy size)
 		my outputCategories = uniq.move();
-	}
 }
 
 autoFFNet FFNet_create (integer numberOfInputs, integer numberInLayer1, integer numberInLayer2, integer numberOfOutputs, bool outputsAreLinear) {
@@ -289,14 +286,13 @@ double FFNet_getWeight (FFNet me, integer layer, integer unit, integer unit_from
 }
 
 void FFNet_reset (FFNet me, double weightRange) {
-	for (integer i = 1; i <= my nWeights; i ++) {
-		if (my wSelected [i]) {
+	for (integer i = 1; i <= my nWeights; i ++)
+		if (my wSelected [i])
 			my w [i] = NUMrandomUniform (- weightRange, weightRange);
-		}
-	}
-	for (integer i = 1; i <= my nNodes; i ++) {
+
+	for (integer i = 1; i <= my nNodes; i ++)
 		my activity [i] = ( my isbias [i] ? 1.0 : 0.0 );
-	}
+
 	my accumulatedCost = 0.0;
 	my minimizer.reset();
 }
@@ -326,64 +322,61 @@ integer FFNet_getOutputUnitOfCategory (FFNet me, const char32* category) {
 
 /***** OPERATION: ***********************************************************/
 /* step 1 */
-void FFNet_propagate (FFNet me, const double input [], double output []) {
+void FFNet_propagate (FFNet me, constVEC input, autoVEC *output) {
+	Melder_assert (my nInputs == input.size);
 	// clamp input pattern on the network
-	for (integer i = 1; i <= my nUnitsInLayer [0]; i ++) {
+	for (integer i = 1; i <= my nUnitsInLayer [0]; i ++)
 		my activity [i] = input [i];
-	}
 
 	// on hidden units use activation function
 	integer k = 1, nNodes = my outputsAreLinear ? my nNodes - my nOutputs : my nNodes;
 	for (integer i = my nUnitsInLayer [0] + 2; i <= nNodes; i ++) {
-		if (my isbias [i]) {
+		if (my isbias [i])
 			continue;
-		}
-		double act = 0.0;
-		for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++) {
+		longdouble act = 0.0;
+		for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++) 
 			act += my w [k] * my activity [j];
-		}
+
 		my activity [i] = my nonLinearity (me, act, & my deriv [i]);
 	}
 	// on output units use another activation function
 	if (my outputsAreLinear) {
 		for (integer i = nNodes + 1; i <= my nNodes; i ++) {
-			if (my isbias [i]) {
+			if (my isbias [i])
 				continue;
-			}
-			double act = 0.0;
-			for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++) {
+			longdouble act = 0.0;
+			for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++)
 				act += my w [k] * my activity [j];
-			}
-			my activity [i] = act;
+			my activity [i] = (double) act;
 			my deriv [i] = 1.0;
 		}
 	}
 	k = my nNodes - my nOutputs + 1;
 	if (output) {
-		for (integer i = 1; i <= my nOutputs; i ++, k ++) {
-			output [i] = my activity [k];
-		}
+		Melder_assert (my nOutputs == (*output).size);
+		for (integer i = 1; i <= my nOutputs; i ++, k ++)
+			(*output) [i] = my activity [k];
 	}
 }
 
 
-double FFNet_computeError (FFNet me, const double target []) {
+double FFNet_computeError (FFNet me, constVEC target) {
+	Melder_assert (my nOutputs == target.size);
 	// compute error at output layer
 	double cost = my costFunction (me, target);
-	for (integer i = 1; i <= my nNodes - my nOutputs; i ++) {
+	for (integer i = 1; i <= my nNodes - my nOutputs; i ++)
 		my error [i] = 0.0;
-	}
+
 	// backpropagation of errors from output to first hidden layer
 	for (integer i = my nNodes; i > my nInputs + 1; i--) {
-		if (my isbias [i]) {
+		if (my isbias [i])
 			continue;
-		}
+
 		my error [i] *= my deriv [i];
 		if (my nodeFirst [i] > my nInputs + 1) {
 			integer k = my wFirst [i];
-			for (integer j = my nodeFirst [i]; j <= my nodeLast [i] - 1; j ++, k ++) {
+			for (integer j = my nodeFirst [i]; j <= my nodeLast [i] - 1; j ++, k ++)
 				my error [j] += my error [i] * my w [k];
-			}
 		}
 	}
 	return cost;
@@ -392,11 +385,9 @@ double FFNet_computeError (FFNet me, const double target []) {
 void FFNet_computeDerivative (FFNet me) {
 	integer k = 1;
 	for (integer i = my nInputs + 2; i <= my nNodes; i ++) {
-		if (! my isbias [i]) {
-			for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++) {
+		if (! my isbias [i])
+			for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++)
 				my dwi [k] = - my error [i] * my activity [j];
-			}
-		}
 	}
 }
 
@@ -406,18 +397,18 @@ integer FFNet_getWinningUnit (FFNet me, int labeling) {
 	integer pos = 1, k = my nNodes - my nOutputs;
 	if (labeling == 2) { /* stochastic */
 		double sum = 0.0;
-		for (integer i = 1; i <= my nOutputs; i ++) {
+		for (integer i = 1; i <= my nOutputs; i ++)
 			sum += my activity [k + i];
-		}
+
 		double random = NUMrandomUniform (0.0, sum);
 		for (pos = my nOutputs; pos >= 2; pos--) {
-			if (random > (sum -= my activity [k + pos])) {
+			if (random > (sum -= my activity [k + pos]))
 				break;
-			}
 		}
 	} else { /* winner-takes-all */
 		double max = my activity [k + 1];
-		for (integer i = 2; i <= my nOutputs; i ++) if (my activity [k + i] > max) {
+		for (integer i = 2; i <= my nOutputs; i ++)
+			if (my activity [k + i] > max) {
 				max = my activity [k + i];
 				pos = i;
 			}
@@ -425,53 +416,46 @@ integer FFNet_getWinningUnit (FFNet me, int labeling) {
 	return pos;
 }
 
-void FFNet_propagateToLayer (FFNet me, const double input [], double activity [], integer layer) {
-	Melder_assert (activity);
+void FFNet_propagateToLayer (FFNet me, constVEC input, VEC activity, integer layer) {
+	Melder_assert (my nUnitsInLayer [layer] == activity.size);
 	integer k = 0;
 	FFNet_propagate (me, input, nullptr);
-	for (integer i = 0; i < layer; i ++) {
+	for (integer i = 0; i < layer; i ++)
 		k += my nUnitsInLayer [i] + 1;
-	}
-	for (integer i = 1; i <= my nUnitsInLayer [layer]; i ++) {
+
+	for (integer i = 1; i <= my nUnitsInLayer [layer]; i ++)
 		activity [i] = my activity [k + i];
-	}
 }
 
 void FFNet_selectAllWeights (FFNet me) {
-	for (integer i = 1; i <= my nWeights; i ++) {
+	for (integer i = 1; i <= my nWeights; i ++)
 		my wSelected [i] = 1;
-	}
 	my dimension = my nWeights;
 }
 
 integer FFNet_dimensionOfSearchSpace (FFNet me) {
 	integer n = 0;
-	for (integer i = 1; i <= my nWeights; i ++) {
-		if (my wSelected [i]) {
+	for (integer i = 1; i <= my nWeights; i ++)
+		if (my wSelected [i])
 			n ++;
-		}
-	}
 	return n;
 }
 
 void FFNet_selectBiasesInLayer (FFNet me, integer layer) {
 	integer node = my nUnitsInLayer [0] + 1;
-	if (layer < 1 || layer > my nLayers) {
+	if (layer < 1 || layer > my nLayers)
 		return;
-	}
-	for (integer i = 1; i <= my nWeights; i ++) {
+
+	for (integer i = 1; i <= my nWeights; i ++)
 		my wSelected [i] = 0.0;
-	}
-	for (integer i = 1; i < layer; i ++) {
+	for (integer i = 1; i < layer; i ++)
 		node += my nUnitsInLayer [i] + 1;
-	}
-	for (integer i = node + 1; i <= node + my nUnitsInLayer [layer]; i ++) {
+	for (integer i = node + 1; i <= node + my nUnitsInLayer [layer]; i ++)
 		my wSelected [my wLast [i]] = 1;
-	}
 	my dimension = my nUnitsInLayer [layer];
 }
 
-void FFNet_weightConnectsUnits (FFNet me, integer index, integer *fromUnit, integer *toUnit, integer *layer) {
+void FFNet_weightConnectsUnits (FFNet me, integer index, integer *out_fromUnit, integer *out_toUnit, integer *out_layer) {
 	Melder_assert (index > 0 && index <= my nWeights);
 
 	integer i = 1, np = 0, nw = my nUnitsInLayer [1] * (my nInputs + 1);
@@ -479,44 +463,36 @@ void FFNet_weightConnectsUnits (FFNet me, integer index, integer *fromUnit, inte
 		i ++;
 		nw += (np = my nUnitsInLayer [i] * (my nUnitsInLayer [i - 1] + 1));
 	}
-	if (i > 1) {
+	if (i > 1)
 		index -= nw - np;
-	}
-	if (fromUnit) {
-		*fromUnit = index % (my nUnitsInLayer [i - 1] + 1);
-	}
-	if (toUnit) {
-		*toUnit = (index - 1) / (my nUnitsInLayer [i - 1] + 1) + 1;
-	}
-	if (layer) {
-		*layer = i;
-	}
+
+	if (out_fromUnit) *out_fromUnit = index % (my nUnitsInLayer [i - 1] + 1);
+	if (out_toUnit) *out_toUnit = (index - 1) / (my nUnitsInLayer [i - 1] + 1) + 1;
+	if (out_layer) *out_layer = i;
 }
 
 integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer) {
-	if (layer < 0 || layer > my nLayers || unit > my nUnitsInLayer [layer]) {
+	if (layer < 0 || layer > my nLayers || unit > my nUnitsInLayer [layer])
 		return -1;
-	}
 
 	integer node = unit;
-	for (integer i = 0; i < layer; i ++) {
+	for (integer i = 0; i < layer; i ++) 
 		node += my nUnitsInLayer [i] + 1;
-	}
 	return node;
 }
 
-void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *unit, integer *layer) {
+void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *out_unit, integer *out_layer) {
 	Melder_assert (node > 0 && node <= my nNodes);
 
 	integer i = 0, nn = my nUnitsInLayer [0] + 1;
-	while (node > nn) {
+	while (node > nn)
 		nn += my nUnitsInLayer [ ++i] + 1;
-	}
-	if (i > 0) {
+
+	if (i > 0)
 		node -= nn - (my nUnitsInLayer [i] + 1);
-	}
-	*unit = node % (my nUnitsInLayer [i] + 1);
-	*layer = i;
+
+	if (out_unit) *out_unit = node % (my nUnitsInLayer [i] + 1);
+	if (out_layer) *out_layer = i;
 }
 
 integer FFNet_getNumberOfWeights (FFNet me) {
@@ -551,11 +527,10 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 	int dxIsFixed = 1;
 	double dy = 1.0 / (my nLayers + 1);
 
-	for (integer i = 1; i <= my nLayers; i ++) {
-		if (my nUnitsInLayer [i] > maxNumOfUnits) {
+	for (integer i = 1; i <= my nLayers; i ++)
+		if (my nUnitsInLayer [i] > maxNumOfUnits)
 			maxNumOfUnits = my nUnitsInLayer [i];
-		}
-	}
+
 	double dx = 1.0 / maxNumOfUnits;
 	double radius = dx / 10.0;
 	Graphics_setInner (g);
@@ -580,9 +555,8 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 		x2WC = x2;
 		for (integer j = 1; j <= my nUnitsInLayer [i]; j ++) {
 			Graphics_circle (g, x2WC, y2WC, radius);
-			if (i > 0) {
+			if (i > 0)
 				Graphics_fillCircle (g, x2WC, y2WC, radius);
-			}
 			x2WC += dx2;
 		}
 		Graphics_setColour (g, Graphics_BLACK);
@@ -612,9 +586,8 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 			for (integer j = 1; j <= my nOutputs; j ++) {
 				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
-				if (my outputCategories) {
+				if (my outputCategories)
 					Categories_drawItem (my outputCategories.get(), g, j, x2WC, y2WC + radius + dy / 4.0);
-				}
 				x2WC += dx2;
 			}
 		}
@@ -630,11 +603,10 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
-	for (integer i = 1; i <= my nLayers; i ++) {
-		if (my nUnitsInLayer [i] > maxNumOfUnits) {
+	for (integer i = 1; i <= my nLayers; i ++)
+		if (my nUnitsInLayer [i] > maxNumOfUnits)
 			maxNumOfUnits = my nUnitsInLayer [i];
-		}
-	}
+
 	double dx = 1.0 / maxNumOfUnits;
 	double r1 = dx / 2.0; /* May touch when neighbouring activities are both 1 (very rare). */
 	for (integer i = 0; i <= my nLayers; i ++, node ++) {
@@ -650,9 +622,8 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 			double radius = r1 * (fabs (activity) < 0.05 ? 0.05 : fabs (activity));
 			/*Graphics_setColour (g, activity < 0 ? Graphics_BLACK : Graphics_RED);*/
 			Graphics_circle (g, x2WC, y2WC, radius);
-			if (activity < 0) {
+			if (activity < 0)
 				Graphics_fillCircle (g, x2WC, y2WC, radius);
-			}
 			x2WC += dx2;
 		}
 	}
@@ -671,11 +642,11 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 		double x1WC, x2WC, y1WC, y2WC;
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
 		Graphics_textBottom (g, false, Melder_cat (U"Units in layer ", layer, U" ->"));
-		if (layer == 1) {
+		if (layer == 1)
 			Graphics_textLeft (g, false, U"Input units ->");
-		} else {
+		else
 			Graphics_textLeft (g, false, Melder_cat (U"Units in layer ", layer - 1, U" ->"));
-		}
+
 		/* how do I find out the current settings ??? */
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_setInner (g);
@@ -690,9 +661,9 @@ void FFNet_drawWeights (FFNet me, Graphics g, integer layer, int garnish) {
 }
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, integer iFrom, integer iTo, double costMin, double costMax, int garnish) {
-	if (my minimizer) {
+	if (my minimizer)
 		Minimizer_drawHistory (my minimizer.get(), g, iFrom, iTo, costMin, costMax, 0);
-	}
+
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textLeft (g, true, my costFunctionType == FFNet_COST_MSE ? U"Minimum squared error" : U"Minimum cross entropy");
@@ -713,14 +684,7 @@ autoCollection FFNet_createIrisExample (integer numberOfHidden1, integer numberO
 		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
-		/*
-			Scale data to interval [0-1]
-		 */
-		for (integer i = 1; i <= 150; i ++) {
-			for (integer j = 1; j <= 4; j ++) {
-				iris -> data [i] [j] /= 10.0;
-			}
-		}
+		MATmultiply_inplace (iris -> data.get(), 0.1); // Scale data to interval [0-1]
 
 		autoPatternList ap;
 		autoCategories ac;
@@ -737,7 +701,8 @@ autoCollection FFNet_createIrisExample (integer numberOfHidden1, integer numberO
 
 autoTableOfReal FFNet_extractWeights (FFNet me, integer layer) {
 	try {
-		Melder_require (layer > 0 && layer <= my nLayers, U"Layer number should be between 1 and ", my nLayers, U".");
+		Melder_require (layer > 0 && layer <= my nLayers,
+			U"Layer number should be between 1 and ", my nLayers, U".");
 
 		integer numberOfUnitsFrom = my nUnitsInLayer [layer - 1] + 1;
 		integer numberOfUnitsTo = my nUnitsInLayer [layer];
@@ -755,14 +720,13 @@ autoTableOfReal FFNet_extractWeights (FFNet me, integer layer) {
 		}
 
 		integer node = 1;
-		for (integer i = 0; i < layer; i ++) {
+		for (integer i = 0; i < layer; i ++)
 			node += my nUnitsInLayer [i] + 1;
-		}
+
 		for (integer i = 1; i <= numberOfUnitsTo; i ++, node ++) {
 			integer k = 1;
-			for (integer j = my wFirst [node]; j <= my wLast [node]; j ++) {
+			for (integer j = my wFirst [node]; j <= my wLast [node]; j ++)
 				thy data [k ++] [i] = my w [j];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
