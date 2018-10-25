@@ -187,9 +187,9 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 			U"The number of columns in the table (", thy numberOfColumns,
 			U") should agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
 
-		if (numberOfFactors == 0) {
+		if (numberOfFactors == 0)
 			numberOfFactors = my numberOfCoefficients;
-		}
+
 		Melder_require (numberOfFactors > 0 && numberOfFactors <= my numberOfCoefficients, 
 			U"The number of factors should be in interval [1, ", my numberOfCoefficients, U"].");
 		
@@ -217,9 +217,9 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		Melder_require (ny == nev, U"There are not enough correlations present for prediction.");
 		
 
-		if (from == 0) {
+		if (from == 0)
 			from = 1;
-		}
+
 		integer ncols = thy numberOfColumns - from + 1;
 		Melder_require (from > 0 && ncols == nx, U"The number of columns to analyze should be equal to ", nx, U".");
 
@@ -230,14 +230,12 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 
 		// u = V a -> a = V'u
 
-		double **v = my y -> eigenvectors.at_deprecated;
-		double *d = my y -> eigenvalues.at;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			NUMvector_copyElements (& his data [i] [0], buf.peek(), 1, ny);
 			for (integer j = 1; j <= ny; j ++) {
 				longdouble t = 0.0;
 				for (integer k = 1; k <= ny; k ++) {
-					t += sqrt (d [k]) * v [k] [j] * buf [k];
+					t += sqrt (my y -> eigenvalues [k]) * my y -> eigenvectors [k] [j] * buf [k];
 				}
 				his data [i] [j] = (double) t;
 			}
@@ -259,9 +257,8 @@ autoTableOfReal CCA_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
 }
 
 double CCA_getCorrelationCoefficient (CCA me, integer index) {
-	if (index < 1 || index > my numberOfCoefficients) {
+	if (index < 1 || index > my numberOfCoefficients)
 		return undefined;
-	}
 	return sqrt (my y -> eigenvalues[index]);
 }
 
@@ -273,22 +270,16 @@ void CCA_getZeroCorrelationProbability (CCA me, integer index, double *out_prob,
 	double chisq = undefined, prob = undefined, df = undefined;
 
 	if (index >= 1 && index <= nev) {
-		for (integer i = index; i <= nev; i ++) {
+		for (integer i = index; i <= nev; i ++)
 			lambda *= 1.0 - ev [i];
-		}
 		df = (ny - index + 1) * (nx - index + 1);
 		chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);
 		prob = NUMchiSquareQ (chisq, df);
 	}
-	if (out_chisq) {
-		*out_chisq = chisq;
-	}
-	if (out_df) {
-		*out_df = df;
-	}
-	if (out_prob) {
-		*out_prob = prob;
-	}
+	
+	if (out_chisq) *out_chisq = chisq;
+	if (out_df) *out_df = df;
+	if (out_prob) *out_prob = prob;
 }
 
 /* End of file CCA.c */

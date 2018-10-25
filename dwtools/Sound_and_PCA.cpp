@@ -27,9 +27,8 @@
 
 static void checkChannelsWithinRange (constINTVEC channels, integer min, integer max) {
 	for (integer i = 1; i <= channels.size; i ++) {
-		if (channels [i] < min || channels [i] > max) {
+		if (channels [i] < min || channels [i] > max)
 			Melder_throw (U"Channel ", channels [i], U" is not within range [", min, U", ", max, U"].");
-		}
 	}
 }
 
@@ -46,9 +45,9 @@ autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 
 autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC channels) {
 	try {
-		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
+		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues)
 			numberOfComponents = thy numberOfEigenvalues;
-		}
+
 		numberOfComponents = numberOfComponents > my ny ? my ny : numberOfComponents;
 
 		checkChannelsWithinRange (channels, 1, my ny);
@@ -85,9 +84,8 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
         for (integer i = 1; i <= thy dimension; i ++) {
             for (integer j = i; j <= thy dimension; j ++) {
                 longdouble wij = 0.0;
-                for (integer k = 1; k <= numberOfComponents; k ++) {
+                for (integer k = 1; k <= numberOfComponents; k ++)
                     wij += thy eigenvectors [k] [i] * thy eigenvectors [k] [j] / sqrt (thy eigenvalues [k]);
-                }
                 whiten [i] [j] = whiten [j] [i] = wij;
             }
         }
@@ -95,9 +93,8 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
 		for (integer k = 1; k <= channels.size; k ++) {
             for (integer i = 1; i <= channels.size; i ++) {
 				double w_ik = whiten [i] [k];
-                for (integer j = 1; j <= my nx; j ++) {
+                for (integer j = 1; j <= my nx; j ++)
                     his z [channels [i]] [j] += w_ik * my z [channels [k]] [j];
-                }
             }
         }
 		return him;

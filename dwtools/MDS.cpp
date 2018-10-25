@@ -1986,6 +1986,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 		NUMdominantEigenvector (wsih.get(), solution.get(), nullptr, tolerance);
 
 		// normalize the solution: centre and x'x = 1
+		
 		double mean;
 		VECcentre_inplace (solution.get(), & mean);
 		if (mean == 0.0) continue;
@@ -2018,9 +2019,8 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 		autoConfiguration conf = Data_copy (configuration);
 		autoSalience sal = Data_copy (weights);
 
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (0.0, U"INDSCAL analysis");
-		}
 
 		// Solve for X, and W matrix via Alternating Least Squares.
 
@@ -2031,13 +2031,12 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 			ScalarProductList_Configuration_Salience_vaf (sp, conf.get(), sal.get(), & varianceAccountedFor);
 
-			if (varianceAccountedFor > 1.0 - tol || fabs (varianceAccountedFor - vafp) /  vafp < tolerance) {
+			if (varianceAccountedFor > 1.0 - tol || fabs (varianceAccountedFor - vafp) /  vafp < tolerance)
 				break;
-			}
+
 			vafp = varianceAccountedFor;
-			if (showProgress) {
+			if (showProgress)
 				Melder_progress ( (double) iter / (numberOfIterations + 1), U"indscal: varianceAccountedFor ", varianceAccountedFor);
-			}
 		}
 
 		// Count number of zero weights
@@ -2057,18 +2056,17 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n",
 				Thing_className (sp), U"number of objects: ", nSources);
-			for (integer i = 1; i <= nSources; i ++) {
+			for (integer i = 1; i <= nSources; i ++) 
 				MelderInfo_writeLine (U"  ", Thing_getName (sp->at [i]));
-			}
-			if (nZeros > 0) {
+
+			if (nZeros > 0)
 				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", (nZeros > 1 ? U"s" : U""), U"!");
-			}
+
 			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", varianceAccountedFor, U"\nThe optimal configuration was reached in ", (iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
 			MelderInfo_drain();
 		}
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 	} catch (MelderError) {
 		if (showProgress) {
 			Melder_progress (1.0);
@@ -2121,38 +2119,28 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 		Thing_setName (salience.get(), U"indscal_mr");
 		TableOfReal_setLabelsFromCollectionItemNames (salience.get(), (Collection) dissims, true, false);   // FIXME cast
 
-		if (out_configuration) {
-			*out_configuration = configuration.move();
-		}
-		if (out_salience) {
-			*out_salience = salience.move();
-		}
-		if (out_varianceAccountedFor) {
-			*out_varianceAccountedFor = vaf;
-		}
+		if (out_configuration) *out_configuration = configuration.move();
+		if (out_salience) *out_salience = salience.move();
+		if (out_varianceAccountedFor) *out_varianceAccountedFor = vaf;
 
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL with monotone regression *******************");
 			MelderInfo_writeLine (Thing_className (dissims));
 			MelderInfo_writeLine (U"Number of objects: ", nSources);
-			for (integer i = 1; i <= nSources; i ++) {
+			for (integer i = 1; i <= nSources; i ++)
 				MelderInfo_writeLine (U"  ", Thing_getName (dissims->at [i]));
-			}
-			if (nZeros > 0) {
+			if (nZeros > 0)
 				MelderInfo_writeLine (U"WARNING: ", nZeros, U" zero weight", (nZeros > 1 ? U"s" : U""));
-			}
 			MelderInfo_writeLine (U"Variance Accounted For: ", vaf);
 			MelderInfo_writeLine (U"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine (U"number of iterations: ", (iter > numberOfIterations ?	numberOfIterations : iter));
 			MelderInfo_drain();
 		}
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 	} catch (MelderError) {
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 		Melder_throw (U"No inscal configuration calculated.");
 	}
 }
@@ -2239,9 +2227,8 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 		autoConfiguration conf = Data_copy (cstart.get());
 		autoSalience sal = Data_copy (wstart.get());
 
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (0.0, U"Indscal many times");
-		}
 
 		for (integer iter = 1; iter <= numberOfRepetitions; iter ++) {
 			autoConfiguration cresult; 
@@ -2286,9 +2273,8 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 		autoConfiguration conf = Data_copy (cstart.get());
 		autoSalience sal = Data_copy (wstart.get());
 
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (0.0, U"Indscal many times");
-		}
 
 		for (integer i = 1; i <= numberOfRepetitions; i ++) {
 			autoConfiguration cresult;
@@ -2303,9 +2289,8 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 			Configuration_normalize (cstart.get(), 1.0, true);
 			Salience_setDefaults (wstart.get());
 
-			if (showMulti) {
+			if (showMulti)
 				Melder_progress ((double) i / (numberOfRepetitions + 1), i, U" from ", numberOfRepetitions);
-			}
 		}
 
 		if (out_conf) *out_conf = conf.move();
@@ -2313,9 +2298,8 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 		if (showMulti) Melder_progress (1.0);
 		
 	} catch (MelderError) {
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (1.0);
-		}
 		Melder_throw (distances, U": no indscal performed.");
 	}
 }
@@ -2376,9 +2360,8 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 
 			// weigh configuration before calculating variances
 
-			for (integer j = 1; j <= thy numberOfColumns; j ++) {
+			for (integer j = 1; j <= thy numberOfColumns; j ++)
 				thy w [j] = sqrt (his data [i] [j]);
-			}
 
 			double vare, vart;
 			ScalarProduct_Configuration_getVariances (sp, thee, & vare, & vart);
@@ -2429,9 +2412,8 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 			autoDistance d = Configuration_to_Distance (c.get());
 			autoDissimilarity dissim = Distance_to_Dissimilarity (d.get());
 			for (integer i = 1; i <= numberOfObjects - 1; i ++) {
-				for (integer j = i + 1; j <= numberOfObjects; j ++) {
+				for (integer j = i + 1; j <= numberOfObjects; j ++)
 					dissim -> data [i] [j] = (dissim -> data [j] [i] += NUMrandomUniform (0.0, noiseRange));
-				}
 			}
 			Thing_setName (dissim.get(), s -> rowLabels [l].get());
 			my addItem_move (dissim.move());
@@ -2450,12 +2432,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	integer nSplines, n = 1000;
 	double knot [101], y [1001];
 	if (k > 100) return; // 
-	if (splineType == MDS_ISPLINE) {
+	if (splineType == MDS_ISPLINE)
 		k ++;
-	}
-	for (integer i = 1; i <= k; i ++) {
+	for (integer i = 1; i <= k; i ++)
 		knot [i] = low;
-	}
 	numberOfKnots = k;
 
 	{ // scope
@@ -2472,20 +2452,18 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 				Melder_warning (U"drawSplines: too many knots (101)");
 				return;
 			}
-			knot [ ++ numberOfKnots] = value;
+			knot [++ numberOfKnots] = value;
 		}
 	}
 
 	numberOfInteriorKnots = numberOfKnots - k;
-	for (integer i = 1; i <= k; i ++) {
-		knot [ ++numberOfKnots] = high;
-	}
+	for (integer i = 1; i <= k; i ++)
+		knot [++numberOfKnots] = high;
 
 	nSplines = order + numberOfInteriorKnots;
 
-	if (nSplines == 0) {
+	if (nSplines == 0)
 		return;
-	}
 
 	Graphics_setWindow (g, low, high, ymin, ymax);
 	Graphics_setInner (g);
@@ -2493,11 +2471,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	for (integer i = 1; i <= nSplines; i ++) {
 		for (integer j = 1; j <= n; j ++) {
 			double yx, x = low + dx * (j - 1);
-			if (splineType == MDS_MSPLINE) {
+			if (splineType == MDS_MSPLINE)
 				yx = NUMmspline (constVEC (knot, numberOfKnots), order, i, x);
-			} else {
+			else
 				yx = NUMispline (constVEC (knot, numberOfKnots), order, i, x);
-			}
 			y [j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
 		}
 		Graphics_function (g, y, 1, n, low, high);
@@ -2511,13 +2488,12 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		Graphics_marksTop (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot [order]) {
-			if (order == 1) {
+			if (order == 1)
 				MelderString_copy (&ts, U"t__1_");
-			} else if (order == 2) {
+			else if (order == 2)
 				MelderString_copy (&ts,  U"{t__1_, t__2_}");
-			} else {
+			else
 				MelderString_copy (&ts, U"{t__1_..t__", order, U"_}");
-			}
 			Graphics_markBottom (g, low, false, false, false, ts.string);
 		}
 		for (integer i = 1; i <= numberOfInteriorKnots; i ++) {
@@ -2528,11 +2504,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			}
 		}
 		if (knot [lastKnot - order + 1] <= high) {
-			if (order == 1) {
+			if (order == 1)
 				MelderString_copy (&ts, U"t__", lastKnot, U"_");
-			} else {
+			else
 				MelderString_copy (&ts, U"{t__", (order == 2 ? lastKnot - 1 : lastKnot - order + 1), U"_, t__", lastKnot, U"_}");
-			}
 			Graphics_markBottom (g, high, false, false, false, ts.string);
 		}
 	}

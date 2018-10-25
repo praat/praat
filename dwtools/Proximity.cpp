@@ -111,7 +111,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		// Calculate the B matrix according to eq. 6
 		
-		autoMAT b (nPoints2, nPoints2, kTensorInitializationType::ZERO);
+		autoMAT b = MATzero (nPoints2, nPoints2);
 
 		for (integer i = 1; i <= nPoints; i ++) {
 			for (integer j = 1; j <= nPoints; j ++) {
