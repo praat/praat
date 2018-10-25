@@ -1947,7 +1947,6 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, Salience weights) {
 	integer nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
 	integer nSources = zc->size;
-	double **x = xc -> data.at_deprecated, **w = weights -> data.at_deprecated, lambda;
 
 	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
 
@@ -1957,82 +1956,55 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
-		for (integer k = 1; k <= nPoints; k ++) {
-			for (integer l = 1; l <= nPoints; l ++) {
-				wsih [k] [l] = 0.0;
-			}
-		}
+		MATset (wsih.get(), 0.0);
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data.at_deprecated;
 
 			// Construct the S [i] [h] matrices (eq. 6)
 
 			for (integer j = 1; j <= nDimensions; j ++) {
-				if (j == h) {
+				if (j == h)
 					continue;
-				}
 				for (integer k = 1; k <= nPoints; k ++) {
-					for (integer l = 1; l <= nPoints; l ++) {
-						sih [k] [l] -= x [k] [j] * x [l] [j] * w [i] [j];
-					}
+					for (integer l = 1; l <= nPoints; l ++)
+						spr -> data [k] [l] -= xc -> data [k] [j] * xc -> data [l] [j] * weights -> data [i] [j];
 				}
 			}
 
 			// the weighted S matrix (eq. 8)
 
 			for (integer k = 1; k <= nPoints; k ++) {
-				for (integer l = 1; l <= nPoints; l ++) {
-					wsih [k] [l] += w [i] [h] * sih [k] [l];
-				}
+				for (integer l = 1; l <= nPoints; l ++)
+					wsih [k] [l] += weights -> data [i] [h] * spr -> data [k] [l];
 			}
 		}
 
 		// largest eigenvalue of m (nonsymmetric matrix!!) is optimal solution for this dimension
+		VECcolumn_preallocated (solution.get(), xc -> data.get(), h);
 
-		for (integer k = 1; k <= nPoints; k ++) {
-			solution [k] = x [k] [h];
-		}
-
-		NUMdominantEigenvector (wsih.get(), solution.get(), & lambda, tolerance);
+		NUMdominantEigenvector (wsih.get(), solution.get(), nullptr, tolerance);
 
 		// normalize the solution: centre and x'x = 1
+		double mean;
+		VECcentre_inplace (solution.get(), & mean);
+		if (mean == 0.0) continue;
+		VECnormalize_inplace (solution.get(), 2.0, 1.0);
 
-		longdouble mean = 0.0;
-		for (integer k = 1; k <= nPoints; k ++) {
-			mean += solution [k];
-		}
-		mean /= nPoints;
-
-		if (mean == 0.0) {
-			continue;
-		}
-
-		longdouble scale = 0.0;
-		for (integer k = 1; k <= nPoints; k ++) {
-			solution [k] -= mean;
-			scale += solution [k] * solution [k];
-		}
-
-		for (integer k = 1; k <= nPoints; k ++) {
-			x [k] [h] = solution [k] / sqrt ((double) scale);
-		}
+		for (integer k = 1; k <= nPoints; k ++)
+			xc -> data [k] [h] = solution [k];
 
 		// update weights. Make negative weights zero.
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data.at_deprecated, wih = 0.0;
+			double wih = 0.0;
 			for (integer k = 1; k <= nPoints; k ++) {
-				for (integer l = 1; l <= nPoints; l ++) {
-					wih += x [k] [h] * sih [k] [l] * x [l] [h];
-				}
+				for (integer l = 1; l <= nPoints; l ++)
+					wih += xc -> data [k] [h] * spr -> data [k] [l] * xc -> data [l] [h];
 			}
-			if (wih < 0.0) {
-				wih = 0.0;
-			}
-			w [i] [h] = wih;
+			wih = std::max (0.0, wih);
+			weights -> data [i] [h] = wih;
 		}
 	}
 }
@@ -2305,7 +2277,7 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 void DistanceList_to_Configuration_indscal (DistanceList distances, integer numberOfDimensions, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
+		bool showSingle = (showProgress && numberOfRepetitions == 1);
 		double vaf, vafmin = 0.0;
 
 		autoConfiguration cstart;

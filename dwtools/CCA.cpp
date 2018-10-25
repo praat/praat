@@ -136,8 +136,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, numberOfDependents, numberOfIndependents);
-		thy yLabels = strings_to_Strings (my columnLabels.peek2(), 1, numberOfDependents);
-		thy xLabels = strings_to_Strings (my columnLabels.peek2(), numberOfDependents + 1, my numberOfColumns);
+		thy yLabels = strings_to_Strings (my columnLabels.get(), 1, numberOfDependents);
+		thy xLabels = strings_to_Strings (my columnLabels.get(), numberOfDependents + 1, my numberOfColumns);
 		thy numberOfObservations = numberOfObservations;
 
 		/*
