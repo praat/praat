@@ -55,7 +55,7 @@ autoMatrix PatternList_to_Matrix (PatternList me);
 
 autoPatternList ActivationList_to_PatternList (ActivationList me);
 
-int _PatternList_checkElements (PatternList me);
-/* Return 1 if all elements are in interval [0,1] else 0. */
+bool _PatternList_checkElements (PatternList me);
+/* Return true if all elements are in interval [0,1] else 0. */
 
 #endif /* _PatternList_h_ */

@@ -1,6 +1,6 @@
 /* FFNet_Eigen.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,14 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 	integer numberOfEigenvalues = eigen -> numberOfEigenvalues;
 	integer dimension = eigen -> dimension;
 
-	if (ix > numberOfEigenvalues || iy > numberOfEigenvalues || my nInputs != dimension) {
+	if (ix > numberOfEigenvalues || iy > numberOfEigenvalues || my nInputs != dimension)
 		return;
-	}
+
 	Melder_assert (ix > 0 && iy > 0);
 	double x1, x2, y1, y2;
-	if (xmax <= xmin || ymax <= ymin) {
+	if (xmax <= xmin || ymax <= ymin)
 		Graphics_inqWindow (g, & x1, & x2, & y1, & y2);
-	}
+
 	if (xmax <= xmin) {
 		xmin = x1;
 		xmax = x2;
@@ -63,20 +63,18 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 			double p1 = c1 * x [j] + c2 * y [j] + bias;
 			double p2 = c1 * x [j + 1] + c2 * y [j + 1] + bias;
 			double r = fabs (p1) / (fabs (p1) + fabs (p2));
-			if (p1 *p2 > 0 || r == 0.0) {
+			if (p1 *p2 > 0 || r == 0.0) 
 				continue;
-			}
-			if (++ ns > 2) {
-				break;
-			}
+
+			if (++ ns > 2) break;
+
 			xs [ns] = x [j] + (x [j + 1] - x [j]) * r;
 			ys [ns] = y [j] + (y [j + 1] - y [j]) * r;
 		}
-		if (ns < 2) {
+		if (ns < 2)
 			Melder_casual (U"Intersection for unit ", i, U" outside range");
-		} else {
+		else
 			Graphics_line (g, xs [1], ys [1], xs [2], ys [2]);
-		}
 	}
 	Graphics_unsetInner (g);
 }
@@ -88,34 +86,27 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, integer unit, integer layer,
 	integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax)
 {
-	if (layer < 1 || layer > my nLayers) {
-		return;
-	}
-	if (unit < 1 || unit > my nUnitsInLayer [layer]) {
-		return;
-	}
-	if (pcx > thy numberOfEigenvalues || pcy > thy numberOfEigenvalues) {
-		return;
-	}
-	if (my nUnitsInLayer [layer - 1] != thy dimension) {
-		return;
-	}
+	if (layer < 1 || layer > my nLayers) return;
+	if (unit < 1 || unit > my nUnitsInLayer [layer]) return;
+	if (pcx > thy numberOfEigenvalues || pcy > thy numberOfEigenvalues) return;
+	if (my nUnitsInLayer [layer - 1] != thy dimension) return;
+
 
 	double x1, x2, y1, y2;
 	Graphics_inqWindow (g, & x1, & x2, & y1, & y2);
 	if (xmax <= xmin) {
-		xmin = x1; xmax = x2;
+		xmin = x1;
+		xmax = x2;
 	}
 	if (ymax <= ymin) {
-		ymin = y1; ymax = y2;
+		ymin = y1; 
+		ymax = y2;
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	integer node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
-	if (node < 1) {
-		return;
-	}
+	if (node < 1) return;
 
 	/*
 		Suppose p1 and p2 are the two points in the eigenplane, spanned by the eigenvectors
@@ -154,10 +145,12 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 	x1 = xmin; x2 = xmax;
 	y1 = ymin; y2 = ymax;
 	if (we1 != 0.0) {
-		x1 = -bias / we1; y1 = 0.0;
+		x1 = -bias / we1;
+		y1 = 0.0;
 	}
 	if (we2 != 0.0) {
-		x2 = 0.0; y2 = -bias / we2;
+		x2 = 0.0;
+		y2 = -bias / we2;
 	}
 	if (we1 == 0.0 && we2 == 0.0) {
 		Melder_warning (U"We cannot draw the intersection of the neural net decision plane\n"
@@ -166,11 +159,11 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 	}
 	double xi [3], yi [3]; /* Intersections */
 	double ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
-	if (ni == 2) {
+	if (ni == 2)
 		Graphics_line (g, xi [1], yi [1], xi [2], yi [2]);
-	} else {
+	else
 		Melder_warning (U"There were no intersections in the drawing area.\nPlease enlarge the drawing area.");
-	}
+
 	Graphics_unsetInner (g);
 }
 

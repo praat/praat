@@ -1,6 +1,6 @@
 /* NUMstring.cpp
  *
- * Copyright (C) 2012-2017 David Weenink
+ * Copyright (C) 2012-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

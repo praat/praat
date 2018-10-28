@@ -61,10 +61,9 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 void Permutation_checkInvariant (Permutation me) {
 	autoPermutation thee = Data_copy (me);
 	NUMsort_integer (thy numberOfElements, thy p.at);
-	for (integer i = 1; i <= my numberOfElements; i ++) {
+	for (integer i = 1; i <= my numberOfElements; i ++)
 		Melder_require (thy p [i] == i,
 			me, U": is not a valid permutation.");
-	}
 }
 
 void structPermutation :: v_info () {
