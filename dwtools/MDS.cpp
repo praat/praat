@@ -1109,7 +1109,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			MATmul3_VtMV (ci [i], yinv.get(), sp -> data.get()); //yinv'.Data.yinv
+			MATmul3_VMVt (ci [i], yinv.get(), sp -> data.get()); //yinv.Data.yinv'
 		}
 
 		/*

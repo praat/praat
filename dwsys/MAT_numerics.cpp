@@ -143,7 +143,7 @@ autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
 }
 
 void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
-	Melder_assert (target.nrow == m.nrow && target.ncol == m.ncol);
+	Melder_assert (target.nrow == m.ncol && target.ncol == m.nrow);
 	autoSVD me = SVD_createFromGeneralMatrix (m);
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (integer i = 1; i <= m.ncol; i ++) {
@@ -160,7 +160,7 @@ void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
 }
 
 autoMAT MATpseudoInverse (constMAT m, double tolerance) {
-	autoMAT result = MATraw (m.nrow, m.ncol);
+	autoMAT result = MATraw (m.ncol, m.nrow);
 	MATpseudoInverse_preallocated (result.get(), m, tolerance);
 	return result;
 }
