@@ -38,7 +38,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	Melder_require (info == 0, U"dsyev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt [0]);
-	autoVEC work = VECraw (workSize);
+	autoVEC work = newVECraw (workSize);
 
 	// 2. Calculate the eigenvalues and eigenvectors (row-wise)
 	
@@ -59,8 +59,8 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);	
-	autoVEC eigenvalues = VECraw (a.nrow);	
-	autoMAT eigenvectors = MATraw (a.nrow, a.ncol);	
+	autoVEC eigenvalues = newVECraw (a.nrow);
+	autoMAT eigenvectors = newMATraw (a.nrow, a.ncol);	
 	
 	bool wantEigenvectors = out_eigenvectors != nullptr;
 	MAT_getEigenSystemFromSymmetricMatrix_preallocated (eigenvectors.get(), eigenvalues.get(), a, sortAscending);
@@ -74,7 +74,7 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 	Melder_assert (eigenvalues_im.size == n);
 	Melder_assert (eigenvectors.nrow == n && eigenvectors.ncol == eigenvectors.nrow);
 		
-	autoMAT eigenvectors_reim = MATzero (n, 2 * n);
+	autoMAT eigenvectors_reim = newMATzero (n, 2 * n);
 	integer pair_index = 0;
 	for (integer ivec = 1; ivec <= eigenvalues_re.size; ivec ++) {
 		// eigenvalues of a real matrix are either real or occur in complex conjugate pairs
@@ -105,19 +105,19 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	integer right_nvecs = out_righteigenvectors ? n : 1;
 	double wt;
 	
-	autoMAT data = MATraw (n, n);
+	autoMAT data = newMATraw (n, n);
 	MATtranspose_preallocated (data.get(), a); // lapack is fortran storage
-	autoVEC eigenvalues_re = VECraw (n);
-	autoVEC eigenvalues_im = VECraw (n);
-	autoMAT righteigenvectors = MATraw (right_nvecs, right_nvecs); // 1x1 if not needed
-	autoMAT lefteigenvectors = MATraw (left_nvecs, left_nvecs); // 1x1 if not needed
+	autoVEC eigenvalues_re = newVECraw (n);
+	autoVEC eigenvalues_im = newVECraw (n);
+	autoMAT righteigenvectors = newMATraw (right_nvecs, right_nvecs); // 1x1 if not needed
+	autoMAT lefteigenvectors = newMATraw (left_nvecs, left_nvecs); // 1x1 if not needed
 	
 	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n,	eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & wt, & workSize, & info);
 	Melder_require (info == 0, U"dgeev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt);
-	autoVEC work = VECraw (workSize);
+	autoVEC work = newVECraw (workSize);
 	
 	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n, eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & work [1], & workSize, & info);
@@ -134,7 +134,7 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT 
 	Melder_assert (nComponents > 0 && nComponents <= a.ncol);
 	Melder_assert (pc.nrow == a.nrow && pc.ncol == nComponents);
 	
-	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
+	autoMAT eigenvectors = newMATraw (a.nrow, a.nrow);
 	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
 	
 	MATVUmul (pc, a.transpose(), eigenvectors.verticalBand (1, nComponents));   // TODO: check
@@ -158,7 +158,7 @@ void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m) {
 
 autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
 	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
-	autoMAT result = MATraw (m.nrow, numberOfComponents);
+	autoMAT result = newMATraw (m.nrow, numberOfComponents);
 	MAT_asPrincipalComponents_preallocated (result.get(), m);
 	return result;
 }
@@ -181,7 +181,7 @@ void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
 }
 
 autoMAT MATpseudoInverse (constMAT m, double tolerance) {
-	autoMAT result = MATraw (m.nrow, m.ncol);
+	autoMAT result = newMATraw (m.nrow, m.ncol);
 	MATpseudoInverse_preallocated (result.get(), m, tolerance);
 	return result;
 }

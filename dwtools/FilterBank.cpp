@@ -683,8 +683,8 @@ autoSpectrogram FormantFilter_to_Spectrogram (FormantFilter me) {
 autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 	try {
 		autoMAT cosinesTable = MATcosinesTable (my ny);
-		autoVEC x = VECraw (my ny);
-		autoVEC y = VECraw (my ny);
+		autoVEC x = newVECraw (my ny);
+		autoVEC y = newVECraw (my ny);
 		
 		//double fmax_mel = my y1 + (my ny - 1) * my dy;
 		numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
@@ -711,8 +711,8 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 	try {
 		integer nf = my maximumNumberOfCoefficients + 1;
 		autoMAT cosinesTable = MATcosinesTable (nf);
-		autoVEC x = VECraw (nf);
-		autoVEC y = VECraw (nf);
+		autoVEC x = newVECraw (nf);
+		autoVEC y = newVECraw (nf);
 
 		if (first >= last) {
 			first = 0;

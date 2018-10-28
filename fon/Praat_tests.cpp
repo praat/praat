@@ -77,7 +77,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SORT: {
 			integer size = Melder_atoi (arg2);
-			autoVEC array = VECraw (size);
+			autoVEC array = newVECraw (size);
 			Melder_stopwatch ();
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (int64 i = 1; i <= size; i ++)
@@ -372,7 +372,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				autoVEC result = VECraw (size);
+				autoVEC result = newVECraw (size);
 				for (integer i = 1; i <= size; i ++)
 					result [i] = 0.0;
 			}
@@ -381,7 +381,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++)
-				autoVEC result = VECzero (size);
+				autoVEC result = newVECzero (size);
 			t = Melder_stopwatch () / size;   // 10^0..7: 76/7.7/1.23 / 0.165/0.24/0.25 / 1.30/1.63 ns
 		} break;
 		case kPraatTests::TIME_ZERO: {
@@ -445,7 +445,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			integer size = Melder_atoi (arg2);
 			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
 			autoVEC y = VECrandomGauss (size, 0.0, 1.0);
-			autoVEC result = VECraw (size);
+			autoVEC result = newVECraw (size);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				VECVUadd (result.all(), x.all(), y.all());
@@ -457,7 +457,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			integer size = Melder_atoi (arg2);
 			autoMAT x = MATrandomGauss (size, size, 0.0, 1.0);
 			autoMAT y = MATrandomGauss (size, size, 0.0, 1.0);
-			autoMAT result = MATraw (size, size);
+			autoMAT result = newMATraw (size, size);
 			//MAT resultget = result.get();
 			//constMAT xget = x.get(), yget = y.get();
 			MATVU result_all = result.all();
@@ -607,8 +607,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				VEC h;
 				autoVEC j;
 				//VEC jh = j;
-				//VEC zero = VECzero (10);   // should be ruled out
-				//constVEC zero = VECzero (10);   // should be ruled out
+				//VEC zero = newVECzero (10);   // should be ruled out
+				//constVEC zero = newVECzero (10);   // should be ruled out
 				//j = h;   // up assignment standardly correctly ruled out
 				//h = j;   // down assignment was explicitly ruled out as well
 				//h = VEC (j);

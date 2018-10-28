@@ -184,8 +184,8 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2)
 void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, int fontSize) {
 	try {
 		integer nsteps = 100;
-		autoVEC x = VECraw (nsteps + 1);
-		autoVEC y = VECraw (nsteps + 1);
+		autoVEC x = newVECraw (nsteps + 1);
+		autoVEC y = newVECraw (nsteps + 1);
 		// Get principal axes and orientation for the ellipse by performing the
 		// eigen decomposition of a symmetric 2-by-2 matrix.
 		// Principal axes are a and b with eigenvector/orientation (cs, sn).
@@ -256,7 +256,7 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, constVEC v1, constVEC v2) {
 
 void SSCP_init (SSCP me, integer dimension, integer storage) {
 	TableOfReal_init (me, storage, dimension);
-	my centroid = VECzero (dimension);
+	my centroid = newVECzero (dimension);
 }
 
 autoSSCP SSCP_create (integer dimension) {
@@ -388,7 +388,7 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VEC vec, 
 	// Rotate back
 	
 	VECmul_preallocated (vec, buf, thy eigenvectors.get());
-	VECadd_inplace (vec, my centroid.get());
+	vec  +=  my centroid.get();
 }
 
 autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer numberOfData) {
@@ -397,7 +397,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 			numberOfData = Melder_ifloor (my numberOfObservations);
 		autoPCA pca = SSCP_to_PCA (me);
 		autoTableOfReal thee = TableOfReal_create (numberOfData, my numberOfColumns);
-		autoVEC buf = VECraw (my numberOfColumns);
+		autoVEC buf = newVECraw (my numberOfColumns);
 		for (integer i = 1; i <= numberOfData; i ++)
 			Covariance_PCA_generateOneVector_inline (me, pca.get(), thy data.row (i), buf.get());
 		thy columnLabels.all() <<= my columnLabels.all();
@@ -413,7 +413,7 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 			U"All the table's elements should be defined.");
 		fixAndCheckRowRange (& rowb, & rowe, my data.get(), 1);
 		fixAndCheckColumnRange (& colb, & cole, my data.get(), 1);
-		autoMAT part = MATpart (my data.get(), rowb, rowe, colb, cole);
+		autoMAT part = newMATpart (my data.get(), rowb, rowe, colb, cole);
 		if (part.nrow < part.ncol)
 			Melder_warning (U"The selected number of rows (", part.nrow,
 				U") is less than the selected number of columns (", part.ncol,
@@ -444,7 +444,7 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 		if (weightColumnNumber != 0) 
 			Melder_require (weightColumnNumber < colb || weightColumnNumber > cole, 
 				U"The weight columns must be outside the selected block.");
-		autoMAT part = MATpart (my data.get(), rowb, rowe, colb, cole);
+		autoMAT part = newMATpart (my data.get(), rowb, rowe, colb, cole);
 		if (part.nrow < part.ncol)
 			Melder_warning (U"The selected number of data points (", part.nrow,
 				U") is less than the selected number of variables (", part.ncol,
@@ -489,8 +489,8 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 			ik kom er niet achter of onderstaande de hele vector kopieert of niet;
 			in elk geval zijn hier enkele asserts nodig
 		*/
-		autoVEC centroid = VECcopy (my centroid.get());
-		autoMAT covari = matrixcopy (my data.get());
+		autoVEC centroid = newVECcopy (my centroid.get());
+		autoMAT covari = newMATcopy (my data.get());
 
 		/*
 			Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
@@ -633,10 +633,10 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		Melder_assert (my data.ncol == my numberOfColumns);
 		autoMAT mat;
 		if (my numberOfRows == 1) {
-			mat = MATzero (my numberOfColumns, my numberOfColumns);
+			mat = newMATzero (my numberOfColumns, my numberOfColumns);
 			mat.diagonal() <<= my data.row (1); // 1xn matrix -> nxn
 		} else if (my data.nrow == my numberOfColumns && my data.ncol == my numberOfColumns)
-			mat = MATcopy (my data.get());
+			mat = newMATcopy (my data.get());
 		else
 			Melder_throw (me, U": the SSCP has the wrong dimensions.");
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
@@ -689,9 +689,9 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Copy Syy and Sxx into upper part of syy and sxx matrices.
 
-		autoMAT syy = MATpart (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
-		autoMAT sxx = MATpart (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
-		autoMAT syx = MATpart (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
+		autoMAT syy = newMATpart (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
+		autoMAT sxx = newMATpart (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
+		autoMAT syx = newMATpart (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
 
 		// Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
 		// (Pretend as if colum-major storage)
@@ -738,11 +738,11 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Prepare Uxi' * Syx' = (Syx * Uxi)'
 
-		autoMAT a = MATmul (sxx.transpose(), syx.transpose());
+		autoMAT a = newMATmul (sxx.transpose(), syx.transpose());
 		Melder_assert (a.nrow == nx && a.ncol == ny);
 
 		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
-		autoMAT ri = MATcopy (gsvd -> r.get());
+		autoMAT ri = newMATcopy (gsvd -> r.get());
 		
 		autoCCA thee = Thing_new (CCA);
 
@@ -865,8 +865,8 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		}
 		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
 		
-		autoVEC mean = VECraw (thy numberOfColumns);
-		autoMAT outer = MATraw (thy numberOfColumns, thy numberOfColumns);
+		autoVEC mean = newVECraw (thy numberOfColumns);
+		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
 			VECsubtract_preallocated (mean.get(), covi -> centroid.get(), thy centroid.get());
@@ -1229,14 +1229,14 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 
 static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s2) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
-	autoMAT m = MATmul (s1, s2);
+	autoMAT m = newMATmul (s1, s2);
 	double trace2 = NUMtrace2_nn (m.get(), m.get());
 	return trace2;
 }
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
 	autostring32vector vector = STRVECtokenize (vector_string);
-	autoVEC v = VECzero (my numberOfColumns);
+	autoVEC v = newVECzero (my numberOfColumns);
 	for (integer i = 1; i <= vector.size; i ++) {
 		v [i] = Melder_atof (vector [i].get());
 		if (i == my numberOfColumns)
@@ -1313,7 +1313,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		// Morrison, page 141
 		autoCovariance pool = Covariances_pool (me, thee);
 		Melder_assert (my data.ncol == p);   // ppgb 20180913
-		autoMAT s = matrixcopy (my data.get());
+		autoMAT s = newMATcopy (my data.get());
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 
@@ -1331,7 +1331,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 			S is the pooled covar divided by N.
 		*/
 		
-		autoMAT s1 = MATraw (p, p), s2  = MATraw (p, p), s = MATraw (p, p);
+		autoMAT s1 = newMATraw (p, p), s2 = newMATraw (p, p), s = newMATraw (p, p);
 
 		for (integer i = 1; i <= p; i ++) {
 			for (integer j = 1; j <= p; j ++) {
@@ -1429,13 +1429,13 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
-				autoMAT s1 = MATmul (ci -> data.get(), si.get());
+				autoMAT s1 = newMATmul (ci -> data.get(), si.get());
 				double trace_ii = NUMtrace2_nn (s1.get(), s1.get());
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (integer j = i + 1; j <= numberOfMatrices; j ++) {
 					Covariance cj = my at [j];
 					double nj = cj -> numberOfObservations - 1;
-					autoMAT s2 = MATmul (cj -> data.get(), si.get());
+					autoMAT s2 = newMATmul (cj -> data.get(), si.get());
 					double trace_ij = NUMtrace2_nn (s1.get(), s2.get());
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
@@ -1470,7 +1470,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	Melder_require (numberOfObservations > 1,
 		U"Number of observations too small.");
 	Melder_assert (thy data.ncol == p);
-	autoMAT linv = matrixcopy (thy data.get());
+	autoMAT linv = newMATcopy (thy data.get());
 	MATlowerCholeskyInverse_inplace (linv.get(), & ln_thee);
 	ln_me = MATdeterminant_fromSymmetricMatrix (my data.get());
 
@@ -1732,7 +1732,7 @@ void SSCP_expand (SSCP me) {
 		return;
 
 	if (NUMisEmpty (my expansion.get()))
-		my expansion = MATzero (my numberOfColumns, my numberOfColumns);
+		my expansion = newMATzero (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++)
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 			integer dij = labs (ir - ic);
@@ -1757,7 +1757,7 @@ void SSCP_unExpand (SSCP me) {
 
 void SSCP_expandLowerCholeskyInverse (SSCP me) {
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
-		my lowerCholeskyInverse = MATraw (my numberOfColumns, my numberOfColumns);
+		my lowerCholeskyInverse = newMATraw (my numberOfColumns, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
 		for (integer j = 1; j <= my numberOfColumns; j ++) {

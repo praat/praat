@@ -392,8 +392,8 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
 		}
 
-		autoMAT u = MATraw (nr, nc);
-		autoVEC b = VECraw (nr);
+		autoMAT u = newMATraw (nr, nc);
+		autoVEC b = newVECraw (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 
 		for (integer i = 1; i <= nr; i ++) {

@@ -61,9 +61,8 @@ void structLPC :: v_info () {
 }
 
 void LPC_Frame_init (LPC_Frame me, integer nCoefficients) {
-	if (nCoefficients != 0) {
-		my a = VECzero (nCoefficients);
-	}
+	if (nCoefficients != 0)
+		my a = newVECzero (nCoefficients);
 	my nCoefficients = nCoefficients;
 }
 

@@ -193,8 +193,8 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 		// 1. average across time
 		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
-			autoVEC qin = VECraw (my nx);
-			autoVEC qout = VECraw (my nx);
+			autoVEC qin = newVECraw (my nx);
+			autoVEC qout = newVECraw (my nx);
 			for (integer iq = 1; iq <= my ny; iq ++) {
 				qin.all() <<= thy z.row (iq);   // ppgb: why this extra copying?
 				VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfFrames);
@@ -204,8 +204,8 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 		// 2. average across quefrencies
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
-			autoVEC qin = VECraw (thy ny);
-			autoVEC qout = VECraw (thy ny);
+			autoVEC qin = newVECraw (thy ny);
+			autoVEC qout = newVECraw (thy ny);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				for (integer iq = 1; iq <= thy ny; iq ++) {
 					//qin[iq] = TO10LOG (my z[iq][iframe]);
@@ -310,17 +310,15 @@ autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 	try {
 		autoNUMfft_Table fftTable;
 		// originalNumberOfSamplesProbablyOdd irrelevant
-		if (my x1 != 0.0) {
-			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
-		}
+		Melder_require (my x1 == 0.0,
+			U"A Fourier-transformable Spectrum should have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		integer numberOfSamples = my nx - 1;
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
 		NUMfft_Table_init (& fftTable, my nx);
-		autoVEC amp = VECraw (my nx);
+		autoVEC amp = newVECraw (my nx);
 		
-		for (integer i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++)
 			amp [i] = my v_getValueAtSample (i, 0, 2);
-		}
 		NUMfft_forward (& fftTable, amp.get());
 		
 		for (integer i = 1; i <= my nx; i ++) {
@@ -385,8 +383,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		integer nfft = 8; // minimum possible
 		while (nfft < nosInWindow) { nfft *= 2; }
 		integer nfftdiv2 = nfft / 2;
-		autoVEC fftbuf = VECzero (nfft); // "complex" array
-		autoVEC spectrum = VECzero (nfftdiv2 + 1); // +1 needed 
+		autoVEC fftbuf = newVECzero (nfft); // "complex" array
+		autoVEC spectrum = newVECzero (nfftdiv2 + 1); // +1 needed 
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (& fftTable, nfft); // sound to spectrum
 		

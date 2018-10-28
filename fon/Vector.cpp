@@ -336,7 +336,7 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 
 void Vector_addScalar (Vector me, double scalar) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++)
-		VECadd_inplace (my channel (ichan), scalar);
+		my channel (ichan)  +=  scalar;
 }
 
 void Vector_subtractMean (Vector me) {

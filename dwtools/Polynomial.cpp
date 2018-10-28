@@ -1479,9 +1479,9 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 		Melder_require (numberOfData > 1, U"The number of data point should be larger than 1.");
 
 		autoFunctionTerms frozen = Data_copy (me);
-		autoVEC terms = VECzero (my numberOfCoefficients);
-		autoVEC p = VECzero (numberOfParameters);
-		autoVEC y_residual = VECzero (numberOfData);
+		autoVEC terms = newVECzero (my numberOfCoefficients);
+		autoVEC p = newVECzero (numberOfParameters);
+		autoVEC y_residual = newVECzero (numberOfData);
 		autoCovariance ac;
 		if (ic)
 			ac = (Covariance_create (numberOfParameters));
@@ -1717,11 +1717,9 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 	Melder_require (my numberOfCoefficients == n, U"Number of coefficients should equal ", n, U".");
 
 	my numberOfKnots = interiorKnots.size + 2;
-	my knots = VECzero (my numberOfKnots);
-
-	for (integer i = 1; i <= interiorKnots.size; i ++) {
+	my knots = newVECzero (my numberOfKnots);
+	for (integer i = 1; i <= interiorKnots.size; i ++)
 		my knots [i + 1] = interiorKnots [i];
-	}
 	my knots [1] = my xmin;
 	my knots [my numberOfKnots] = my xmax;
 }
@@ -1731,7 +1729,7 @@ void Spline_init (Spline me, double xmin, double xmax, integer degree, integer n
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
-	my knots = VECzero (numberOfKnots);
+	my knots = newVECzero (numberOfKnots);
 	my degree = degree;
 	my numberOfKnots = numberOfKnots;
 	my knots [1] = xmin;

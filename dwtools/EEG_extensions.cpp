@@ -40,16 +40,13 @@ static autoEEG EEG_copyWithoutSound (EEG me) {
 
 static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, string32vector channelNames) {
 	try {
-		autoINTVEC channelNumbers = INTVECzero (channelNames.size);
+		autoINTVEC channelNumbers = newINTVECzero (channelNames.size);
 		for (integer i = 1; i <= channelNames.size; i ++) {
-			for (integer j = 1; j <= my numberOfChannels; j ++) {
-				if (Melder_equ (channelNames [i], my channelNames [j].get())) {
+			for (integer j = 1; j <= my numberOfChannels; j ++)
+				if (Melder_equ (channelNames [i], my channelNames [j].get()))
 					channelNumbers [i] = j;
-				}
-			}
-			if (channelNumbers [i] == 0) {
+			if (channelNumbers [i] == 0)
 				Melder_throw (U"Channel name \"", channelNames [i], U"\" not found.");
-			}
 		}
 		return channelNumbers;
 	} catch (MelderError) {

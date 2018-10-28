@@ -112,7 +112,7 @@ void MATprintMatlabForm (constMAT m, conststring32 name) {
 
 void MATnormalizeColumns_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0.0);
-	autoVEC column = VECraw (a.nrow);
+	autoVEC column = newVECraw (a.nrow);
 	for (integer icol = 1; icol <= a.ncol; icol ++) {
 		for (integer irow = 1; irow <= column.size; irow ++)
 			column [irow] = a [irow] [icol];
@@ -158,14 +158,14 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	Melder_assert (result.nrow == result.ncol);
 	MATset (result, 0.0);
 	if (true) {
-		autoMAT outer = MATraw (result.ncol, result.ncol);
+		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
 			MATouter_preallocated (outer, data.row (irow), data.row (irow));
 			MATaxpy (result, outer.get(), rowWeights [irow]);
 		}
 	} else {
-		autoVEC w = VECraw (rowWeights.size);
-		autoMAT d = MATcopy (data);
+		autoVEC w = newVECraw (rowWeights.size);
+		autoMAT d = newMATcopy (data);
 		for (integer irow = 1; irow <= w.size; irow ++) 
 			w [irow] = sqrt (rowWeights [irow]);
 		MATweighRows (d.get(), w.get());
@@ -184,8 +184,8 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 	if (m.nrow < 5) {
 		return kurt;
 	}
-	autoMAT x = MATcopy (m);
-	autoVEC mean = VECraw (x.ncol);
+	autoMAT x = newMATcopy (m);
+	autoVEC mean = newVECraw (x.ncol);
 	VECcolumnMeans_preallocated (mean.get(), x.get());
 	MATsubtract_inplace (x.get(), mean.get());
 	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
@@ -214,7 +214,7 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 	Regression is ascending
 */
 autoVEC VECmonotoneRegression (constVEC x) {
-	autoVEC fit = VECcopy (x);
+	autoVEC fit = newVECcopy (x);
 	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
 	for (integer i = 2; i <= x.size; i ++) {
 		if (fit [i] >= fit [i - 1])
@@ -238,7 +238,7 @@ autoVEC VECmonotoneRegression (constVEC x) {
 
 double MATdeterminant_fromSymmetricMatrix (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT a = MATcopy (m);
+	autoMAT a = newMATcopy (m);
 	
 	//	 Cholesky decomposition in lower, leave upper intact
 
@@ -283,7 +283,7 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 
 autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT result = MATraw (m.nrow, m.nrow);
+	autoMAT result = newMATraw (m.nrow, m.nrow);
 	for (integer irow = 1; irow <= m.nrow; irow ++) {
 		for (integer icol = 1; icol <= irow; icol ++) {
 			longdouble sum = 0.0;
@@ -321,7 +321,7 @@ void NUMdominantEigenvector (constMAT m, VEC inout_q, double *out_lambda, double
 
 	double lambda0, lambda = NUMvtmv (inout_q, m); //  q'. M . q
 	Melder_require (lambda > 0.0, U"Zero matrices ??");
-	autoVEC z = VECraw (m.nrow);
+	autoVEC z = newVECraw (m.nrow);
 	integer iter = 0;
 	do {
 		lambda0 = lambda;
@@ -391,8 +391,8 @@ autoMAT NUMsolveEquations (constMAT a, constMAT b, double tolerance) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * a.nrow;
 	
 	autoSVD me = SVD_createFromGeneralMatrix (a);
-	autoMAT x = MATraw (b.nrow, b.ncol);
-	autoVEC bt = VECraw (b.nrow);
+	autoMAT x = newMATraw (b.nrow, b.ncol);
+	autoVEC bt = newVECraw (b.nrow);
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
@@ -414,7 +414,7 @@ autoMAT NUMsolveEquations (constMAT a, constMAT b, double tolerance) {
 autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax) {
 	Melder_assert (m.nrow == d.size);
 	long nr = m.nrow, nc = m.ncol;
-	autoVEC b = VECzero (nc);
+	autoVEC b = newVECzero (nc);
 	for (integer iter = 1; iter <= itermax; iter ++) {
 
 		// Fix all weights except b [j]
@@ -481,8 +481,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	integer n3 = 3, info;
 	double eps = 1e-5, t1, t2, t3;
 
-	autoMAT g = MATzero (n3, n3);
-	autoMAT ptfinv = MATzero (n3, n3);
+	autoMAT g = newMATzero (n3, n3);
+	autoMAT ptfinv = newMATzero (n3, n3);
 
 	// Construct O'.O	[1..3] [1..3].
 
@@ -500,7 +500,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	// Construct G and its eigen-decomposition (eq. (4,5))
 	// Sort eigenvalues (& eigenvectors) ascending.
 	
-	autoMAT b = MATzero (n3, n3);
+	autoMAT b = newMATzero (n3, n3);
 	b [3] [1] = b [1] [3] = -0.5;
 	b [2] [2] = 1.0;
 
@@ -637,9 +637,9 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 
 autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta) {
 	// n = f.nrow m=f.ncol
-	autoMAT u = MATzero (f.ncol, f.ncol);
-	autoVEC c = VECzero (f.ncol);
-	autoVEC x = VECzero (f.nrow);
+	autoMAT u = newMATzero (f.ncol, f.ncol);
+	autoVEC c = newVECzero (f.ncol);
+	autoVEC x = newVECzero (f.nrow);
 	autoVEC t;
 	
 	autoSVD svd = SVD_createFromGeneralMatrix (f);
@@ -748,10 +748,10 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 			JY amounts to centering the columns of Y.
 	*/
 	
-	autoMAT yc = MATcopy (y);
+	autoMAT yc = newMATcopy (y);
 	if (! orthogonal)
 		MATcentreEachColumn_inplace (yc.get());
-	autoMAT c = MATmul (x.transpose(), yc.get()); // X'(JY)
+	autoMAT c = newMATmul (x.transpose(), yc.get()); // X'(JY)
 
 	// 2. Decompose C by SVD: C = UDV' (our SVD has eigenvectors stored row-wise V!)
 
@@ -761,18 +761,18 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 
 	// 3. T = VU'
 
-	autoMAT rotation = MATmul (svd->v.all(), svd->u.transpose());
+	autoMAT rotation = newMATmul (svd->v.all(), svd->u.transpose());
 	
 	if (! orthogonal) {
 
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 		// First we need YT.
 		
-		autoMAT yt = MATmul (y, rotation.get());
+		autoMAT yt = newMATmul (y, rotation.get());
 		
 		// X'J = (JX)' centering the columns of X
 
-		autoMAT xc = MATcopy (x);
+		autoMAT xc = newMATcopy (x);
 		MATcentreEachColumn_inplace (xc.get());
 
 		// tr X'J YT == tr xc' yt
@@ -783,7 +783,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 
 		// 5. Translation vector tr = (X - sYT)'1 / x.nrow
 		if (out_translation) {
-			autoVEC translation = VECzero (x.ncol);
+			autoVEC translation = newVECzero (x.ncol);
 			for (integer i = 1; i <= x.ncol; i ++) {
 				longdouble productsum = 0.0;
 				for (integer j = 1; j <= x.nrow; j ++)
@@ -1320,8 +1320,8 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double 
 	if (n < 2 || p < 1)
 		return prob;
 
-	autoVEC zero = VECzero (p);
-	autoMAT x = MATcopy (data);
+	autoVEC zero = newVECzero (p);
+	autoMAT x = newMATcopy (data);
 
 	MATcentreEachColumn_inplace (x.get()); // x - xmean
 
@@ -1482,7 +1482,7 @@ double NUMburg_preallocated (VEC a, constVEC x) {
 		a [j] = 0.0;
 	}
 
-	autoVEC b1 = VECzero (n), b2 = VECzero (n), aa = VECzero (m);
+	autoVEC b1 = newVECzero (n), b2 = newVECzero (n), aa = newVECzero (m);
 
 	// (3)
 
@@ -1546,7 +1546,7 @@ double NUMburg_preallocated (VEC a, constVEC x) {
 }
 
 autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms) {
-	autoVEC a = VECraw (numberOfPredictionCoefficients);
+	autoVEC a = newVECraw (numberOfPredictionCoefficients);
 	double xms = NUMburg_preallocated (a.get(), x);
 	if (out_xms) *out_xms = xms;
 	return a;
@@ -1587,7 +1587,7 @@ void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor) {
 }
 
 autoMAT MATcosinesTable (integer  n) {
-	autoMAT result = MATraw (n, n);
+	autoMAT result = newMATraw (n, n);
 	for (integer irow = 1; irow <= n; irow ++) {
 		for (integer icol = 1; icol <= n; icol ++)
 			result [irow] [icol] = cos (NUMpi * (irow - 1) * (icol - 0.5) / n);
@@ -1616,7 +1616,7 @@ void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT co
 void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, constVEC y, double yp1, double ypn) {
 	Melder_assert (x.size == y.size && out_y.size == y.size);
 	
-	autoVEC u = VECraw (x.size - 1);
+	autoVEC u = newVECraw (x.size - 1);
 
 	if (yp1 > 0.99e30)
 		out_y [1] = u [1] = 0.0;
@@ -2079,13 +2079,13 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 			autoVEC mbs;
 			if (incompleteMethod) {
 				numberOfCombinations = x.size / 2;
-				mbs = VECzero (x.size); // allocate twice the space for convenience later
+				mbs = newVECzero (x.size); // allocate twice the space for convenience later
 				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
 				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
 			} else { // use all combinations
 				numberOfCombinations = (x.size - 1) * x.size / 2;
-				mbs = VECzero (numberOfCombinations);
+				mbs = newVECzero (numberOfCombinations);
 				integer index = 0;
 				for (integer i = 1; i < x.size; i ++)
 					for (integer j = i + 1; j <= x.size; j ++)

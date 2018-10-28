@@ -34,7 +34,7 @@ static int spec_enhance_SHS (VEC a) {
 	if (a.size < 2)
 		return 0;
 
-	autoINTVEC posmax = INTVECraw ((a.size + 1) / 2);
+	autoINTVEC posmax = newINTVECraw ((a.size + 1) / 2);
 	integer nmax = 0;
 	if (a [1] > a [2])
 		posmax [++ nmax] = 1;
@@ -103,12 +103,12 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		autoSound frame = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
-		autoVEC cc = VECzero (numberOfFrames);
-		autoVEC specAmp = VECraw (nfft2);
-		autoVEC fl2 = VECraw (nfft2);
-		autoVEC yv2 = VECraw (nfft2);
-		autoVEC arctg = VECraw (nFrequencyPoints);
-		autoVEC al2 = VECraw (nFrequencyPoints);
+		autoVEC cc = newVECzero (numberOfFrames);
+		autoVEC specAmp = newVECraw (nfft2);
+		autoVEC fl2 = newVECraw (nfft2);
+		autoVEC yv2 = newVECraw (nfft2);
+		autoVEC arctg = newVECraw (nFrequencyPoints);
+		autoVEC al2 = newVECraw (nFrequencyPoints);
 
 		Melder_assert (frame -> nx >= nx);
 		Melder_assert (hamming -> nx == nx);
@@ -194,7 +194,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			// The subharmonic summation. Shift spectra in octaves and sum.
 
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
-			autoVEC sumspec = VECzero (nFrequencyPoints);
+			autoVEC sumspec = newVECzero (nFrequencyPoints);
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 
 			for (integer m = 1; m <= maxnSubharmonics + 1; m ++) {

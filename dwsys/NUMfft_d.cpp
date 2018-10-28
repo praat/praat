@@ -76,8 +76,8 @@ void NUMfft_backward (NUMfft_Table me, VEC data) {
 
 void NUMfft_Table_init (NUMfft_Table me, integer n) {
 	my n = n;
-	my trigcache = VECzero (3 * n);
-	my splitcache = INTVECzero (32);
+	my trigcache = newVECzero (3 * n);
+	my splitcache = newINTVECzero (32);
 	NUMrffti (n, my trigcache.begin(), my splitcache.begin());
 }
 

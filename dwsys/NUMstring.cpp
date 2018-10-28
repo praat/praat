@@ -29,7 +29,7 @@ autoVEC VEC_createFromString (conststring32 s) {
 	autostring32vector tokens = STRVECtokenize (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
-	autoVEC numbers = VECraw (tokens.size);
+	autoVEC numbers = newVECraw (tokens.size);
 	for (integer inum = 1; inum <= tokens.size; inum ++)
 		Interpreter_numericExpression (0, tokens [inum].get(), & numbers [inum]);
 	return numbers;
@@ -169,7 +169,7 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	
 	if (numberOfElements == 0)
 		Melder_throw (U"No element(s) found");
-	autoINTVEC elements = INTVECraw (numberOfElements);
+	autoINTVEC elements = newINTVECraw (numberOfElements);
 
 	/*
 		Store the elements.

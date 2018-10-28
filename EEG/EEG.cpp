@@ -409,18 +409,16 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 	}
 }
 
-static void detrend (double *a, integer numberOfSamples) {
-	double firstValue = a [1], lastValue = a [numberOfSamples];
-	a [1] = a [numberOfSamples] = 0.0;
-	for (integer isamp = 2; isamp < numberOfSamples; isamp ++) {
-		a [isamp] -= ((isamp - 1.0) * lastValue + (numberOfSamples - isamp) * firstValue) / (numberOfSamples - 1);
-	}
+static void detrend (VEC const& channel) {
+	double firstValue = channel [1], lastValue = channel [channel.size];
+	channel [1] = channel [channel.size] = 0.0;
+	for (integer isamp = 2; isamp < channel.size; isamp ++)
+		channel [isamp] -= ((isamp - 1.0) * lastValue + (channel.size - isamp) * firstValue) / (channel.size - 1);
 }
 
 void EEG_detrend (EEG me) {
-	for (integer ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
-		detrend (& my sound -> z [ichan] [0], my sound -> nx);
-	}
+	for (integer ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++)
+		detrend (my sound -> z.row (ichan));
 }
 
 void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz) {

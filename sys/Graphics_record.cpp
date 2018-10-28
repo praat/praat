@@ -178,7 +178,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 * This works because the data is a packed array of double, just as Graphics_cellArray expects.
 				 */
 				#if 0
-				autoMAT z = MATraw (nrow, ncol);
+				autoMAT z = newMATraw (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
@@ -259,7 +259,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
 				integer nrow = iget, ncol = iget;
-				automatrix <uint8> z = matrixzero <uint8> (nrow, ncol);
+				automatrix <uint8> z = newmatrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = (uint8) iget;
@@ -338,7 +338,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
 				integer nrow = iget, ncol = iget;
-				automatrix <uint8> z = matrixzero <uint8> (nrow, ncol);
+				automatrix <uint8> z = newmatrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = (uint8) iget;
@@ -347,7 +347,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case IMAGE: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				autoMAT z = MATraw (nrow, ncol);
+				autoMAT z = newMATraw (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
@@ -387,7 +387,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case CELL_ARRAY_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				automatrix <double_rgbt> z = matrixzero <double_rgbt> (nrow, ncol);
+				automatrix <double_rgbt> z = newmatrixzero <double_rgbt> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++) {
 						z [irow] [icol]. red = get;
@@ -400,7 +400,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case IMAGE_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				automatrix <double_rgbt> z = matrixzero <double_rgbt> (nrow, ncol);
+				automatrix <double_rgbt> z = newmatrixzero <double_rgbt> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++) {
 						z [irow] [icol]. red = get;

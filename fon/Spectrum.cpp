@@ -104,8 +104,8 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 		if (oneSidedPowerSpectralDensity > *maximum) *maximum = oneSidedPowerSpectralDensity;
 	}
 	if (*maximum == 0.0) return 0;
-	*minimum = 10 * log10 (*minimum / 4.0e-10);
-	*maximum = 10 * log10 (*maximum / 4.0e-10);
+	*minimum = 10.0 * log10 (*minimum / 4.0e-10);
+	*maximum = 10.0 * log10 (*maximum / 4.0e-10);
 	return 1;
 }
 

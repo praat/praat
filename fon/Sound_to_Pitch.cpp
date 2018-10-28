@@ -307,10 +307,10 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 	{// scope
 		MelderThread_LOCK (mutex);
 		if (my method >= FCC_NORMAL) {   // cross-correlation
-			frame = MATzero (my sound -> ny, my nsamp_window);
+			frame = newMATzero (my sound -> ny, my nsamp_window);
 		} else {   // autocorrelation
 			NUMfft_Table_init (& fftTable, my nsampFFT);
-			frame = MATzero (my sound -> ny, my nsampFFT);
+			frame = newMATzero (my sound -> ny, my nsampFFT);
 			ac.reset (1, my nsampFFT);
 		}
 		r.reset (- my nsamp_window, my nsamp_window);

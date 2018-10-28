@@ -181,10 +181,10 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		my playBuffer.reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
-		my stimuli = INTVECzero (my numberOfTrials);
-		my responses = INTVECzero (my numberOfTrials);
-		my goodnesses = VECzero (my numberOfTrials);
-		my reactionTimes = VECzero (my numberOfTrials);
+		my stimuli = newINTVECzero (my numberOfTrials);
+		my responses = newINTVECzero (my numberOfTrials);
+		my goodnesses = newVECzero (my numberOfTrials);
+		my reactionTimes = newVECzero (my numberOfTrials);
 		/*
 			Read all the sounds. They must all have the same sampling frequency and number of channels.
 		*/

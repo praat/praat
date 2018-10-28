@@ -69,7 +69,7 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				for (integer i = first; i <= last; i ++)
 					publish -> z [channel] [++ j] = sound -> z [channel] [i];
 			}
-			autoMAT newData = MATraw (sound -> ny, newNumberOfSamples);
+			autoMAT newData = newMATraw (sound -> ny, newNumberOfSamples);
 			for (integer channel = 1; channel <= sound -> ny; channel ++) {
 				integer j = 0;
 				for (integer i = 1; i < first; i ++)
@@ -165,7 +165,7 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	/*
 		Check without change.
 	*/
-	autoMAT newData = MATraw (sound -> ny, newNumberOfSamples);
+	autoMAT newData = newMATraw (sound -> ny, newNumberOfSamples);
 	for (integer channel = 1; channel <= sound -> ny; channel ++) {
 		integer j = 0;
 		for (integer i = 1; i <= leftSample; i ++)

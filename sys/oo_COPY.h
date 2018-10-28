@@ -33,7 +33,7 @@
 	}
 
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
-	thy x = vectorcopy (our x.get());
+	thy x = newvectorcopy (our x.get());
 
 #define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
 	{ \
@@ -42,7 +42,7 @@
 	}
 
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
-	thy x = matrixcopy (our x.get());
+	thy x = newmatrixcopy (our x.get());
 
 #define oo_ENUMx(kType, storage, x)  \
 	thy x = our x;

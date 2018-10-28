@@ -48,7 +48,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft))
 		Melder_throw (U"Spectrum size not large enough.");
 
-	autoVEC fftbuffer = VECzero (nfft);
+	autoVEC fftbuffer = newVECzero (nfft);
 
 	// Copy 1, a [1], ... a [p] into fftbuffer
 

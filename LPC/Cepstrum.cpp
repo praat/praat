@@ -229,8 +229,8 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		if (numberOfPoints < 2) {
 			Melder_throw (U"Not enough points for fit.");
 		}
-		autoVEC y = VECraw (numberOfPoints);
-		autoVEC x = VECraw (numberOfPoints);
+		autoVEC y = newVECraw (numberOfPoints);
+		autoVEC x = newVECraw (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
@@ -240,8 +240,8 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 			y [i] = my v_getValueAtSample (isamp, 1, 0);
 		}
 		if (method == 3) { // try local maxima first
-			autoVEC ym = VECraw (numberOfPoints / 2 + 1);
-			autoVEC xm = VECraw (numberOfPoints / 2 + 1);
+			autoVEC ym = newVECraw (numberOfPoints / 2 + 1);
+			autoVEC xm = newVECraw (numberOfPoints / 2 + 1);
 			integer numberOfLocalPeaks = 0;
 			// forget y [1] if y [2]<y [1] and y [n] if y [n-1]<y [n] !
 			for (integer i = 2; i <= numberOfPoints; i ++) {
@@ -319,8 +319,8 @@ void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWi
 	try {
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
-			autoVEC qin = VECcopy (my z.row (1));
-			autoVEC qout = VECraw (my nx);
+			autoVEC qin = newVECcopy (my z.row (1));
+			autoVEC qout = newVECraw (my nx);
 			for (integer k = 1; k <= numberOfIterations; k ++)
 				if (k % 2 == 1) 
 					VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
