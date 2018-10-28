@@ -166,9 +166,9 @@ void NUM_viterbi (
 	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure)
 {
-	autoMAT delta = MATraw (numberOfFrames, maxnCandidates);
-	autoINTMAT psi = INTMATraw (numberOfFrames, maxnCandidates);
-	autoINTVEC numberOfCandidates = INTVECraw (numberOfFrames);
+	autoMAT delta = newMATraw (numberOfFrames, maxnCandidates);
+	autoINTMAT psi = newINTMATraw (numberOfFrames, maxnCandidates);
+	autoINTVEC numberOfCandidates = newINTVECraw (numberOfFrames);
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
 		for (integer icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
@@ -275,8 +275,8 @@ void NUM_viterbi_multi (
 			2 4 5
 			3 4 5
 	*/
-	autoINTMAT indices = INTMATzero (ncomb, ntrack);
-	autoINTVEC icand = INTVECraw (ntrack);
+	autoINTMAT indices = newINTMATzero (ncomb, ntrack);
+	autoINTVEC icand = newINTVECraw (ntrack);
 	for (integer itrack = 1; itrack <= ntrack; itrack ++)
 		icand [itrack] = itrack;   // start out with "1 2 3"
 	integer jcomb = 0;

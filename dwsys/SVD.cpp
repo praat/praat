@@ -83,9 +83,9 @@ void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 		NUMmachar ();
 	}
 	my tolerance = NUMfpp -> eps * numberOfRows;
-	my u = MATzero (numberOfRows,  numberOfColumns);
-	my v = MATzero (numberOfColumns, numberOfColumns);
-	my d = VECzero (numberOfColumns);
+	my u = newMATzero (numberOfRows,  numberOfColumns);
+	my v = newMATzero (numberOfColumns, numberOfColumns);
+	my d = newVECzero (numberOfColumns);
 }
 
 autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
@@ -162,7 +162,7 @@ void SVD_compute (SVD me) {
 		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
-		autoVEC work = VECraw (lwork);
+		autoVEC work = newVECraw (lwork);
 		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 		/*
@@ -194,7 +194,7 @@ void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse) {
 }
 
 autoMAT SVD_getSquared (SVD me, bool inverse) {
-	autoMAT result = MATraw (my numberOfColumns, my numberOfColumns);
+	autoMAT result = newMATraw (my numberOfColumns, my numberOfColumns);
 	SVD_getSquared_preallocated (result.get(), me, inverse);
 	return result;
 }
@@ -206,7 +206,7 @@ autoVEC SVD_solve (SVD me, constVEC b) {
 			Solution: x = V D^-1 U' b
 		*/
 		Melder_assert (my numberOfRows == b.size);
-		autoVEC t = VECzero (my numberOfColumns);
+		autoVEC t = newVECzero (my numberOfColumns);
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			longdouble tmp = 0.0;
 			if (my d [j] > 0.0) {
@@ -218,7 +218,7 @@ autoVEC SVD_solve (SVD me, constVEC b) {
 			t [j] = (double) tmp;
 		}
 
-		autoVEC x = VECmul (my v.get(), t.get());
+		autoVEC x = newVECmul (my v.get(), t.get());
 		return x;
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
@@ -342,10 +342,10 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 		autoGSVD me = Thing_new (GSVD);
 		my numberOfColumns = numberOfColumns;
 
-		my q = MATzero (numberOfColumns, numberOfColumns);
-		my r = MATzero (numberOfColumns, numberOfColumns);
-		my d1 = VECzero (numberOfColumns);
-		my d2 = VECzero (numberOfColumns);
+		my q = newMATzero (numberOfColumns, numberOfColumns);
+		my r = newMATzero (numberOfColumns, numberOfColumns);
+		my d1 = newVECzero (numberOfColumns);
+		my d2 = newVECzero (numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not created.");
@@ -358,13 +358,13 @@ autoGSVD GSVD_create_d (constMAT m1, constMAT m2) {
 		integer lwork = std::max (std::max (3 * n, m), p) + n;
 
 		// Store the matrices a and b as column major!
-		autoMAT a = MATtranspose (m1);
-		autoMAT b = MATtranspose (m2);
-		autoMAT q = MATraw (n, n);
-		autoVEC alpha = VECraw (n);
-		autoVEC beta = VECraw (n);
-		autoVEC work =VECraw (lwork);
-		autoINTVEC iwork = INTVECraw (n);
+		autoMAT a = newMATtranspose (m1);
+		autoMAT b = newMATtranspose (m2);
+		autoMAT q = newMATraw (n, n);
+		autoVEC alpha = newVECraw (n);
+		autoVEC beta = newVECraw (n);
+		autoVEC work = newVECraw (lwork);
+		autoINTVEC iwork = newINTVECraw (n);
 
 
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';

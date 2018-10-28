@@ -95,7 +95,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 				0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz));
 
-		autoVEC frame = VECzero (nsampFFT);
+		autoVEC frame = newVECzero (nsampFFT);
 		autoNUMvector <double> spec (1, nsampFFT);
 		autoNUMvector <double> window (1, nsamp_window);
 		autoNUMfft_Table fftTable;

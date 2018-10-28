@@ -234,9 +234,9 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	int status = 1;
 	constVEC x = my z.row (1);
 
-	autoVEC c = VECzero (mmax + 1);
-	autoVEC d = VECzero (mmax + 1);
-	autoVEC r = VECzero (mmax + 1);
+	autoVEC c = newVECzero (mmax + 1);
+	autoVEC d = newVECzero (mmax + 1);
+	autoVEC r = newVECzero (mmax + 1);
 	double e0 = 0.0;
 	for (integer k = 1; k <= n; k ++) {
 		e0 += x [k] * x [k];

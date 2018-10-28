@@ -58,11 +58,11 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration, i
 	hs -> wantscale = 1;	integer n = hs -> e -> nx;
 	hs -> n = n;
 	hs -> p = p;
-	hs -> w = VECzero (n);
-	hs -> work = VECraw (n);
-	hs -> a = VECraw (p);
-	hs -> c = VECzero (p);
-	hs -> covar = MATzero (p, p);
+	hs -> w = newVECzero (n);
+	hs -> work = newVECraw (n);
+	hs -> a = newVECraw (p);
+	hs -> c = newVECzero (p);
+	hs -> covar = newMATzero (p, p);
 	hs -> svd = SVD_create (p, p);
 }
 

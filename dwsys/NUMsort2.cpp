@@ -39,8 +39,8 @@ void NUMrankColumns (MAT m, integer cb, integer ce) {
 	Melder_assert (cb > 0 && cb <= m.ncol);
 	Melder_assert (ce > 0 && ce <= m.ncol);
 	Melder_assert (cb <= ce);
-	autoVEC v = VECraw (m.nrow);
-	autoINTVEC index = INTVECraw (m.nrow);
+	autoVEC v = newVECraw (m.nrow);
+	autoINTVEC index = newINTVECraw (m.nrow);
 
 	for (integer j = cb; j <= ce; j ++) {
 		VECcolumn_preallocated (v.get(), m, j);
@@ -128,7 +128,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 {\
 	integer l, r, j, i, ii, k, imin; \
 	TYPE min; \
-	autoINTVEC index = INTVECraw (n); \
+	autoINTVEC index = newINTVECraw (n); \
 	for (j = 1; j <= n; j ++) index[j] = j;	\
 	if (n < 2) return index;   /* Already sorted. */ \
 	if (n == 2) \
@@ -226,7 +226,7 @@ void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
 	Melder_assert (a.size == iv1.size && a.size == iv2.size);
 	if (a.size == 1)
 		return;
-	autoVEC atmp = VECcopy (a);
+	autoVEC atmp = newVECcopy (a);
 	autoINTVEC index = NUMindexx (atmp.get());
 	if (descending) {
 		for (integer j = 1; j <= a.size / 2; j ++) {
@@ -237,7 +237,7 @@ void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
 	}
 	for (integer j = 1; j <= a.size; j ++)
 		a [j] = atmp [index [j]];
-	autoINTVEC itmp = INTVECraw (a.size);
+	autoINTVEC itmp = newINTVECraw (a.size);
 	itmp.all() <<= iv1;
 	for (integer j = 1; j <= a.size; j ++)
 		iv1 [j] = itmp [index [j]];

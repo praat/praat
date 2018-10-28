@@ -135,19 +135,19 @@ static void bookkeeping (FFNet me) {
 
 	// The following test is essential because when an FFNet is read from file the w array already exists
 	if (! my w.at) {
-		my w = VECzero (my nWeights);
+		my w = newVECzero (my nWeights);
 	}
-	my activity = VECzero (my nNodes);
-	my isbias = INTVECzero (my nNodes);
-	my nodeFirst = INTVECzero (my nNodes);
-	my nodeLast = INTVECzero (my nNodes);
-	my wFirst = INTVECzero (my nNodes);
-	my wLast = INTVECzero (my nNodes);
-	my wSelected = INTVECzero (my nWeights);
-	my error = VECzero (my nNodes);
-	my deriv = VECzero (my nNodes);
-	my dwi = VECzero (my nWeights);
-	my dw = VECzero (my nWeights);
+	my activity = newVECzero (my nNodes);
+	my isbias = newINTVECzero (my nNodes);
+	my nodeFirst = newINTVECzero (my nNodes);
+	my nodeLast = newINTVECzero (my nNodes);
+	my wFirst = newINTVECzero (my nNodes);
+	my wLast = newINTVECzero (my nNodes);
+	my wSelected = newINTVECzero (my nWeights);
+	my error = newVECzero (my nNodes);
+	my deriv = newVECzero (my nNodes);
+	my dwi = newVECzero (my nWeights);
+	my dw = newVECzero (my nWeights);
 	my nInputs = my nUnitsInLayer [0];
 	my nOutputs = my nUnitsInLayer [my nLayers];
 	my isbias [my nInputs + 1] = 1;

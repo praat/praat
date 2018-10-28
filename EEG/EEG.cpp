@@ -409,18 +409,16 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 	}
 }
 
-static void detrend (double *a, integer numberOfSamples) {
-	double firstValue = a [1], lastValue = a [numberOfSamples];
-	a [1] = a [numberOfSamples] = 0.0;
-	for (integer isamp = 2; isamp < numberOfSamples; isamp ++) {
-		a [isamp] -= ((isamp - 1.0) * lastValue + (numberOfSamples - isamp) * firstValue) / (numberOfSamples - 1);
-	}
+static void detrend (VEC const& channel) {
+	double firstValue = channel [1], lastValue = channel [channel.size];
+	channel [1] = channel [channel.size] = 0.0;
+	for (integer isamp = 2; isamp < channel.size; isamp ++)
+		channel [isamp] -= ((isamp - 1.0) * lastValue + (channel.size - isamp) * firstValue) / (channel.size - 1);
 }
 
 void EEG_detrend (EEG me) {
-	for (integer ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
-		detrend (& my sound -> z [ichan] [0], my sound -> nx);
-	}
+	for (integer ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++)
+		detrend (my sound -> z.row (ichan));
 }
 
 void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz) {
@@ -632,7 +630,7 @@ autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 			Melder_throw (U"Cannot concatenate zero EEG objects.");
 		EEG first = my at [1];
 		integer numberOfChannels = first -> numberOfChannels;
-		autostring32vector channelNames = STRVECclone (first -> channelNames.get());
+		autostring32vector channelNames = newSTRVECcopy (first -> channelNames.get());
 		for (integer ieeg = 2; ieeg <= my size; ieeg ++) {
 			EEG other = my at [ieeg];
 			if (other -> numberOfChannels != numberOfChannels)
@@ -667,7 +665,7 @@ autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames = STRVECclone (my channelNames.get());
+		thy channelNames = newSTRVECcopy (my channelNames.get());
 		thy sound = Sound_extractPart (my sound.get(), tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 		thy textgrid = TextGrid_extractPart (my textgrid.get(), tmin, tmax, preserveTimes);
 		thy xmin = thy textgrid -> xmin;
@@ -719,7 +717,7 @@ autoEEG EEG_MixingMatrix_to_EEG_unmix (EEG me, MixingMatrix you) {
 	his sound = Sound_MixingMatrix_unmix (my sound.get(), you);
 	his textgrid = Data_copy (my textgrid.get());
 	his numberOfChannels = your numberOfColumns;
-	his channelNames = STRVECclone (your columnLabels.get());
+	his channelNames = newSTRVECcopy (your columnLabels.get());
 	return him;
 }
 
@@ -737,7 +735,7 @@ autoEEG EEG_MixingMatrix_to_EEG_mix (EEG me, MixingMatrix you) {
 	his sound = Sound_MixingMatrix_mix (my sound.get(), you);
 	his textgrid = Data_copy (my textgrid.get());
 	his numberOfChannels = your numberOfRows;
-	his channelNames = STRVECclone (your rowLabels.get());
+	his channelNames = newSTRVECcopy (your rowLabels.get());
 	return him;
 }
 

@@ -28,8 +28,8 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 		Melder_require (my dimension == thy dimension, U"The eigenvectors should have the same dimension.");
 		Melder_require (evec_from <= evec_to && evec_from > 0 && evec_to <= nmin, U"Eigenvector range is too large.");
 
-		autoMAT x = MATraw (my dimension, nvectors);
-		autoMAT y = MATraw (my dimension, nvectors);
+		autoMAT x = newMATraw (my dimension, nvectors);
+		autoMAT y = newMATraw (my dimension, nvectors);
 
 		for (integer j = 1; j <= nvectors; j ++) {
 			for (integer i = 1; i <= my dimension; i ++) {

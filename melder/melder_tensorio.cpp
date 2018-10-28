@@ -63,7 +63,7 @@
 		} \
 	} \
 	autovector<T> vector_readText_##storage (integer size, MelderReadText text, const char *name) { \
-		autovector<T> result = vectorzero<T> (size); \
+		autovector<T> result = newvectorzero<T> (size); \
 		for (integer i = 1; i <= size; i ++) { \
 			try { \
 				result [i] = texget##storage (text); \
@@ -87,7 +87,7 @@
 		} \
 	} \
 	autovector<T> vector_readBinary_##storage (integer size, FILE *f) { \
-		autovector<T> result = vectorzero<T> (size); \
+		autovector<T> result = newvectorzero<T> (size); \
 		for (integer i = 1; i <= size; i ++) { \
 			result [i] = binget##storage (f); \
 		} \
@@ -153,7 +153,7 @@
 		} \
 	} \
 	automatrix<T> matrix_readText_##storage (integer nrow, integer ncol, MelderReadText text, const char *name) { \
-		automatrix<T> result = matrixzero<T> (nrow, ncol); \
+		automatrix<T> result = newmatrixzero<T> (nrow, ncol); \
 		for (integer irow = 1; irow <= nrow; irow ++) for (integer icol = 1; icol <= ncol; icol ++) { \
 			try { \
 				result [irow] [icol] = texget##storage (text); \
@@ -176,7 +176,7 @@
 		} \
 	} \
 	automatrix<T> matrix_readBinary_##storage (integer nrow, integer ncol, FILE *f) { \
-		automatrix<T> result = matrixzero<T> (nrow, ncol); \
+		automatrix<T> result = newmatrixzero<T> (nrow, ncol); \
 		for (integer irow = 1; irow <= nrow; irow ++) for (integer icol = 1; icol <= ncol; icol ++) \
 			result [irow] [icol] = binget##storage (f); \
 		return result; \

@@ -2043,7 +2043,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape::HANNING);
 		double const bandwidth = samplingFrequency / windowSamples;
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
-		autoVEC noiseAmplitudes = VECraw (noiseLtas -> nx);
+		autoVEC noiseAmplitudes = newVECraw (noiseLtas -> nx);
 		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++)
 			noiseAmplitudes [iband] = pow (10.0, (noiseLtas -> z [1] [iband] - 94.0) / 20.0);
 		

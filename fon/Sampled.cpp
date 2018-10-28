@@ -133,7 +133,7 @@ autoVEC Sampled_getSortedValues (Sampled me, double xmin, double xmax, integer i
 	integer numberOfDefinedSamples = Sampled_countDefinedSamples (me, xmin, xmax, ilevel, unit);
 	if (numberOfDefinedSamples == 0)
 		return autoVEC();
-	autoVEC definedValues = VECraw (numberOfDefinedSamples);
+	autoVEC definedValues = newVECraw (numberOfDefinedSamples);
 	integer imin, imax;
 	autoWindowDomainSamples (me, & xmin, & xmax, & imin, & imax);
 	integer definedSampleNumber = 0;

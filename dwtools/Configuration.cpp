@@ -71,7 +71,7 @@ autoConfiguration Configuration_create (integer numberOfPoints, integer numberOf
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfDimensions);
-		my w = VECraw (numberOfDimensions);
+		my w = newVECraw (numberOfDimensions);
 		TableOfReal_setSequentialRowLabels (me.get(), 0, 0, nullptr, 1, 1);
 		TableOfReal_setSequentialColumnLabels (me.get(), 0, 0, U"dimension ", 1, 1);
 

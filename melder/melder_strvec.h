@@ -156,7 +156,7 @@ using STRVEC = _stringvector <char32>;
 using constSTRVEC = _conststringvector <char32>;
 using autoSTRVEC = _autostringautovector <char32>;
 
-inline static autoSTRVEC STRVECclone (constSTRVEC strvec) {
+inline static autoSTRVEC newSTRVECcopy (constSTRVEC strvec) {
 	autoSTRVEC result (strvec.size);
 	for (integer i = 1; i <= result.size; i ++)
 		result [i] = Melder_dup (strvec [i]);

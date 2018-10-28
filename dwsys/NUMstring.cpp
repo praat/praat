@@ -26,10 +26,10 @@
 #include "NUM2.h"
 
 autoVEC VEC_createFromString (conststring32 s) {
-	autostring32vector tokens = STRVECtokenize (s);
+	autostring32vector tokens = newSTRVECtokenize (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
-	autoVEC numbers = VECraw (tokens.size);
+	autoVEC numbers = newVECraw (tokens.size);
 	for (integer inum = 1; inum <= tokens.size; inum ++)
 		Interpreter_numericExpression (0, tokens [inum].get(), & numbers [inum]);
 	return numbers;
@@ -59,7 +59,7 @@ static autostring32vector string32vector_searchAndReplace_literal (string32vecto
 	for (integer i = 1; i <= me.size; i ++) {
 		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
 
-		result [i] = STRreplace (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = newSTRreplace (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
@@ -88,7 +88,7 @@ static autostring32vector string32vector_searchAndReplace_regexp (string32vector
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
 		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
-		result [i] = STRreplace_regex (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = newSTRreplace_regex (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
@@ -169,7 +169,7 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	
 	if (numberOfElements == 0)
 		Melder_throw (U"No element(s) found");
-	autoINTVEC elements = INTVECraw (numberOfElements);
+	autoINTVEC elements = newINTVECraw (numberOfElements);
 
 	/*
 		Store the elements.

@@ -98,8 +98,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		additiveConstant = Dissimilarity_getAverage (me);
 		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
 		
-		autoMAT wd = MATzero (nPoints, nPoints);
-		autoMAT wdsqrt = MATzero (nPoints, nPoints);
+		autoMAT wd = newMATzero (nPoints, nPoints);
+		autoMAT wdsqrt = newMATzero (nPoints, nPoints);
 
 		// The matrices D & D1/2 with distances (squared and linear)
 
@@ -116,7 +116,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		// Calculate the B matrix according to eq. 6
 		
-		autoMAT b = MATzero (nPoints2, nPoints2);
+		autoMAT b = newMATzero (nPoints2, nPoints2);
 
 		for (integer i = 1; i <= nPoints; i ++) {
 			for (integer j = 1; j <= nPoints; j ++) {

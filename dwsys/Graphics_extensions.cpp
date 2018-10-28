@@ -49,7 +49,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 		(lower/upper) outerfence = (lower/upper) hinge +/- 3.0 hspread
 	*/
 	
-	autoVEC sorted = VECcopy (data);
+	autoVEC sorted = newVECcopy (data);
 	VECsort_inplace (sorted.get());
 
 	if (ymax <= ymin) {
@@ -169,9 +169,9 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
-	autoVEC xsorted = VECcopy (x);
+	autoVEC xsorted = newVECcopy (x);
 	VECsort_inplace (xsorted.get());
-	autoVEC ysorted = VECcopy (y);
+	autoVEC ysorted = newVECcopy (y);
 	VECsort_inplace (ysorted.get());
 
 	integer numberOfData = x.size < y.size ? x.size : y.size;

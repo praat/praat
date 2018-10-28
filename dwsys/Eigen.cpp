@@ -99,8 +99,8 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
-	my eigenvalues = VECzero (numberOfEigenvalues);
-	my eigenvectors = MATzero (numberOfEigenvalues, dimension);
+	my eigenvalues = newVECzero (numberOfEigenvalues);
+	my eigenvectors = newMATzero (numberOfEigenvalues, dimension);
 }
 
 /*
@@ -155,13 +155,13 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 	my dimension = a.ncol;
 
-	autoVEC alpha = VECraw (n);
-	autoVEC beta = VECraw (n);
-	autoVEC work = VECraw (lwork);
-	autoINTVEC iwork = INTVECzero (n);
-	autoMAT q = MATraw (n, n);
-	autoMAT ac = MATtranspose (a);
-	autoMAT bc  = MATtranspose (b);
+	autoVEC alpha = newVECraw (n);
+	autoVEC beta = newVECraw (n);
+	autoVEC work = newVECraw (lwork);
+	autoINTVEC iwork = newINTVECzero (n);
+	autoMAT q = newMATraw (n, n);
+	autoMAT ac = newMATtranspose (a);
+	autoMAT bc = newMATtranspose (b);
 
 	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
 		& ac [1][1], & lda, & bc [1][1], & ldb, alpha.begin(), beta.begin(), u, & ldu,
@@ -174,9 +174,8 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		double t = alpha [i] / beta [i];
 		alpha [i] = t * t;
-		if (alpha [i] > maxsv2) {
+		if (alpha [i] > maxsv2)
 			maxsv2 = alpha [i];
-		}
 	}
 
 	// Deselect the eigenvalues < eps * max_eigenvalue by making them -1.0
@@ -313,7 +312,8 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, integer first, integer last, d
 		first = 1; 
 		last = my numberOfEigenvalues;
 	}
-	xmin = first - 0.5; xmax = last + 0.5;
+	xmin = first - 0.5;
+	xmax = last + 0.5;
 	if (fractionOfTotal || cumulative) {
 		sumOfEigenvalues = Eigen_getSumOfEigenvalues (me, 0, 0);
 		if (sumOfEigenvalues <= 0.0)
@@ -323,10 +323,8 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, integer first, integer last, d
 	if (ymax <= ymin) {
 		ymax = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : first ), first) / scale;
 		ymin = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : last ), last) / scale;
-		if (ymin > ymax) {
-			double tmp = ymin;
-			ymin = ymax; ymax = tmp;
-		}
+		if (ymin > ymax)
+			std::swap (ymin, ymax);
 		if (ymin == ymax) { // only one eigenvalue
 			ymin -= 0.1 * ymin;
 			ymax += 0.1 * ymax;
@@ -359,7 +357,7 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 	if (last <= first) {
 		first = 1;
 		last = my dimension;
-		xmin = 0.5; 
+		xmin = 0.5;
 		xmax = last + 0.5;
 	}
 	constVEC vec = my eigenvectors.row (ivec);
@@ -435,9 +433,9 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 		Compute C.
 	*/
 
-	autoVEC angles_degrees = VECraw (numberOfVectors);
+	autoVEC angles_degrees = newVECraw (numberOfVectors);
 
-	autoMAT c = MATmul (
+	autoMAT c = newMATmul (
 			my eigenvectors.horizontalBand (ivec_from, ivec_to),
 			thy eigenvectors. horizontalBand (ivec_from, ivec_to). transpose()
 	);

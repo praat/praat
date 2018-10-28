@@ -85,8 +85,8 @@ autoAffineTransform structProcrustes :: v_invert () {
 
 static void Procrustes_setDefaults (Procrustes me) {
 	my s = 1.0;
-	VECset (my t.get(), 0.0);
-	MATset (my r.get(), 0.0);
+	VECsetValues (my t.get(), 0.0);
+	MATsetValues (my r.get(), 0.0);
 	for (integer i = 1; i <= my dimension; i ++)
 		my r [i] [i] = 1.0;
 }

@@ -67,7 +67,7 @@ void Transition_init (Transition me, integer numberOfStates) {
 		Melder_throw (U"Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
 	my stateLabels = autostring32vector (numberOfStates);
-	my data = MATzero (my numberOfStates, my numberOfStates);
+	my data = newMATzero (my numberOfStates, my numberOfStates);
 }
 
 autoTransition Transition_create (integer numberOfStates) {

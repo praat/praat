@@ -73,7 +73,7 @@ autoPCA PCA_create (integer numberOfComponents, integer dimension) {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.get(), numberOfComponents, dimension);
 		my labels = autostring32vector (dimension);
-		my centroid = VECzero (dimension);
+		my centroid = newVECzero (dimension);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PCA not created");
@@ -158,15 +158,15 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 		if (byColumns) {
 			if (m.ncol < m.nrow)
 				Melder_warning (U"The number of columns in your table is less than the number of rows.");
-			mcopy = MATtranspose (m);
+			mcopy = newMATtranspose (m);
 		} else {
 			if (m.nrow < m.ncol)
 				Melder_warning (U"The number of rows in your table is less than the number of columns.");
-			mcopy = MATcopy (m);
+			mcopy = newMATcopy (m);
 		}
 		
 		autoPCA thee = Thing_new (PCA);
-		thy centroid = VECcolumnMeans (mcopy.get());
+		thy centroid = newVECcolumnMeans (mcopy.get());
 		MATsubtract_inplace (mcopy.get(), thy centroid.get());
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);

@@ -3367,7 +3367,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 		if (my rows.size < 1)
 			return undefined;
 
-		autoVEC data = VECraw (my rows.size);
+		autoVEC data = newVECraw (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			data [irow] = row -> cells [columnNumber].number;
@@ -3390,7 +3390,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 
 		integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoVEC data = VECraw (numberOfData);
+		autoVEC data = newVECraw (numberOfData);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		integer numberOfLevels = levels -> classes->size;
 		
@@ -3416,9 +3416,9 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		}
 		double tiesCorrection = 1.0 - (double) c / (numberOfData * (numberOfData * numberOfData - 1.0));
 
-		autoINTVEC factorLevelSizes = INTVECzero (numberOfLevels);
-		autoVEC factorLevelSums = VECzero (numberOfLevels);
-		autoINTVEC ties = INTVECzero (numberOfLevels);
+		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
+		autoVEC factorLevelSums = newVECzero (numberOfLevels);
+		autoINTVEC ties = newINTVECzero (numberOfLevels);
 		for (integer i = 1; i <= numberOfData; i ++) {
 			integer index = levels -> classIndex [i];
 			factorLevelSizes [index] ++;
@@ -3461,8 +3461,8 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 		Table_numericize_Assert (me, 2);
 		Table_numericize_Assert (me, 3);
 		integer numberOfMeans = my rows.size;
-		autoVEC means = VECraw (numberOfMeans);
-		autoVEC cases = VECraw (numberOfMeans);
+		autoVEC means = newVECraw (numberOfMeans);
+		autoVEC cases = newVECraw (numberOfMeans);
 		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
 		for (integer i = 1; i <= numberOfMeans; i ++) {
 			TableRow row = my rows.at [i];
@@ -3563,15 +3563,14 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Table_numericize_Assert (me, column);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		// copy data from Table
-		autoVEC data = VECraw (numberOfData);
-		for (integer irow = 1; irow <= numberOfData; irow ++) {
+		autoVEC data = newVECraw (numberOfData);
+		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
-		}
 		integer numberOfLevels = levels -> classes->size;
 		Melder_require (numberOfLevels > 1,
 			U"There should be at least two levels.");
-		autoINTVEC factorLevelSizes = INTVECzero (numberOfLevels);
-		autoVEC factorLevelMeans = VECzero (numberOfLevels);
+		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
+		autoVEC factorLevelMeans = newVECzero (numberOfLevels);
 
 		// a, ty, c according to scheme of Hayes, 10.14 pg 363
 
@@ -3661,10 +3660,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		autoStringsIndex levelsA = Table_to_StringsIndex_column (me, factorColumnA);
 		autoStringsIndex levelsB = Table_to_StringsIndex_column (me, factorColumnB);
 		// copy data from Table
-		autoVEC data = VECraw (numberOfData);
-		for (integer irow = 1; irow <= numberOfData; irow ++) {
+		autoVEC data = newVECraw (numberOfData);
+		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
-		}
 		integer numberOfLevelsA = levelsA -> classes -> size;
 		integer numberOfLevelsB = levelsB -> classes -> size;
 		
@@ -3696,9 +3694,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		 *
 		 */
 
-		autoMAT factorLevelSizes = MATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // sum + weighted sum
+		autoMAT factorLevelSizes = newMATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // sum + weighted sum
 		// extra column for ystar [i.], extra row for ystar [.j]
-		autoMAT factorLevelMeans = MATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // weighted mean + mean
+		autoMAT factorLevelMeans = newMATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // weighted mean + mean
 
 		for (integer k = 1; k <= numberOfData; k ++) {
 			integer indexA = levelsA -> classIndex [k];
@@ -3883,7 +3881,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 			return;
 		Table_numericize_Assert (me, column);
 		integer numberOfData = my rows.size;
-		autoVEC data = VECraw (numberOfData);
+		autoVEC data = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 
@@ -3937,8 +3935,8 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
 		Table_numericize_Assert (me, dataColumn);
 		integer numberOfData = my rows.size;
-		autoVEC xdata = VECraw (numberOfData);
-		autoVEC ydata = VECraw (numberOfData);
+		autoVEC xdata = newVECraw (numberOfData);
+		autoVEC ydata = newVECraw (numberOfData);
 		integer xnumberOfData = 0, ynumberOfData = 0;
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			char32 *label = my rows.at [irow] -> cells [factorColumn]. string.get();
@@ -3994,8 +3992,8 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		Table_numericize_Assert (me, xcolumn);
 		Table_numericize_Assert (me, ycolumn);
 		integer numberOfData = my rows.size;
-		autoVEC xdata = VECraw (numberOfData);
-		autoVEC ydata = VECraw (numberOfData);
+		autoVEC xdata = newVECraw (numberOfData);
+		autoVEC ydata = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			xdata [irow] = my rows.at [irow] -> cells [xcolumn]. number;
 			ydata [irow] = my rows.at [irow] -> cells [ycolumn]. number;
@@ -4052,7 +4050,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 		}
 		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
 		Graphics_setInner (g);
-		autoVEC data = VECraw (numberOfData);
+		autoVEC data = newVECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			integer numberOfDataInLevel = 0;
 			for (integer k = 1; k <= numberOfData; k ++) {
@@ -4106,7 +4104,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 		double boxWidth = 4.0, spaceBetweenBoxesInGroup = 1.0, barWidth = boxWidth / 3.0;
 		double spaceBetweenGroupsdiv2 = 3.0 / 2.0;
 		double widthUnit = 1.0 / (numberOfSelectedColumns * boxWidth + (numberOfSelectedColumns - 1) * spaceBetweenBoxesInGroup + spaceBetweenGroupsdiv2 + spaceBetweenGroupsdiv2);
-		autoVEC data = VECraw (numberOfData);
+		autoVEC data = newVECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			double xlevel = ilevel;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
@@ -4166,7 +4164,7 @@ static autoStrings itemizeColourString (conststring32 colourString) {
 	// remove all spaces within { } so each {1,2,3} can be itemized
 	static const conststring32 searchRE = U"\\{\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*\\}";
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
-	autostring32 colourStringWithoutSpaces = STRreplace_regex (colourString, compiledRE, U"{\\1,\\2,\\3}", 0);
+	autostring32 colourStringWithoutSpaces = newSTRreplace_regex (colourString, compiledRE, U"{\\1,\\2,\\3}", 0);
 	autoStrings thee = Strings_createAsTokens (colourStringWithoutSpaces.get(), U" ");
 	return thee;
 }
@@ -4236,7 +4234,7 @@ autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Int
 			Melder_throw (U"No rows selected.");
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
-		autoINTVEC selectedRows = INTVECzero (numberOfMatches);
+		autoINTVEC selectedRows = newINTVECzero (numberOfMatches);
 		integer n = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_run (irow, 1, & result);
@@ -4461,10 +4459,9 @@ void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, doub
 		if (xmax <= xmin) { // autoscaling
 			Table_columnExtremesFromSelectedRows (me, column, selectedRows.get(), & xmin, & xmax);
 		}
-		autoVEC x = VECraw (selectedRows.size);
-		for (integer i = 1; i <= selectedRows.size; i ++) {
+		autoVEC x = newVECraw (selectedRows.size);
+		for (integer i = 1; i <= selectedRows.size; i ++)
 			x [i] = Table_getNumericValue_Assert (me, selectedRows [i], column);
-		}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, xmin, xmax);
 		Graphics_lagPlot (g, x.get(), xmin, xmax, lag, labelSize, symbol);
@@ -4555,8 +4552,8 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		SSCP sscp = thy at [1];
 		integer numberOfColumns = sscp -> numberOfColumns;
 		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
-		autoINTVEC columnIndex = INTVECraw (numberOfColumns);
-		autoVEC vector = VECraw (numberOfColumns);
+		autoINTVEC columnIndex = newINTVECraw (numberOfColumns);
+		autoVEC vector = newVECraw (numberOfColumns);
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
 			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present

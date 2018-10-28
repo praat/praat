@@ -387,8 +387,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	Melder_require (nmin > 1,
 		U"There should be at least two (independent) columns in the table.");
 
-	autoVEC x = VECraw (nPoints);
-	autoVEC y = VECraw ( nPoints);
+	autoVEC x = newVECraw (nPoints);
+	autoVEC y = newVECraw ( nPoints);
 
 	double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	double lambda2 = pow (svd -> d [2], sv_splitfactor);
@@ -481,7 +481,7 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
 	Graphics_setInner (g);
 
-	autoVEC data = VECraw (numberOfRows);
+	autoVEC data = newVECraw (numberOfRows);
 	for (integer j = colmin; j <= colmax; j ++) {
 		double x = j, r = 0.05, w = 0.2, t;
 		integer ndata = 0;
@@ -910,7 +910,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, integer columnNumber, doub
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns)
 			return undefined;
-		autoVEC values = VECcolumn (my data.get(), columnNumber);
+		autoVEC values = newVECcolumn (my data.get(), columnNumber);
 		VECsort_inplace (values.get());
 		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
@@ -1254,7 +1254,7 @@ static void NUMmedianizeColumns (double **a, integer rb, integer re, integer cb,
 	integer n = re - rb + 1;
 	if (n < 2)
 		return;
-	autoVEC tmp = VECzero (n);
+	autoVEC tmp = newVECzero (n);
 	for (integer j = cb; j <= ce; j ++) {
 		integer k = 1;
 		for (integer i = rb; i <= re; i ++, k ++)
@@ -1274,7 +1274,7 @@ static void NUMaverageBlock_byColumns_inplace (MAT a, integer rb, integer re, in
 	integer n = re - rb + 1;
 	if (n < 2)
 		return;
-	autoVEC tmp = VECraw (n);
+	autoVEC tmp = newVECraw (n);
 	for (integer j = cb; j <= ce; j ++) {
 		integer k = 1;
 		for (integer i = rb; i <= re; i ++, k ++)
@@ -1565,8 +1565,8 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 			Melder_throw (U"Both tables should have the same number of columns.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, thy numberOfRows);
-		autoMAT my_data = MATcopy (my data.get());
-		autoMAT thy_data = MATcopy (thy data.get());
+		autoMAT my_data = newMATcopy (my data.get());
+		autoMAT thy_data = newMATcopy (thy data.get());
 		if (centre) {
 			MATcentreEachRow_inplace (my_data.get());
 			MATcentreEachRow_inplace (thy_data.get());
@@ -1597,8 +1597,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 			Melder_throw (U"Both tables should have the same number of rows.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
-		autoMAT my_data = MATcopy (my data.get());
-		autoMAT thy_data = MATcopy (thy data.get());
+		autoMAT my_data = newMATcopy (my data.get());
+		autoMAT thy_data = newMATcopy (thy data.get());
 		if (center) {
 			MATcentreEachColumn_inplace (my_data.get());
 			MATcentreEachColumn_inplace (thy_data.get());
@@ -1628,9 +1628,9 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 	try {
 		if (my numberOfColumns < 3 || my numberOfRows < 3)
 			Melder_throw (U"There should be at least three colums and three rows.");
-		autoVEC x = VECraw (my numberOfRows);
-		autoVEC y = VECraw (my numberOfRows);
-		autoVEC z = VECraw (my numberOfRows);
+		autoVEC x = newVECraw (my numberOfRows);
+		autoVEC y = newVECraw (my numberOfRows);
+		autoVEC z = newVECraw (my numberOfRows);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			x [irow] = my data [irow] [1];
 			y [irow] = my data [irow] [2];

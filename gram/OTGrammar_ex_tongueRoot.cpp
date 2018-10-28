@@ -43,7 +43,7 @@ static void countVowelViolations (const INTVEC marks, const int ncons, const int
 
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
 	my output = Melder_dup (Melder_cat (vowels [v1], U"t", vowels [v2]));
-	my marks = INTVECzero (my numberOfConstraints = ncons);
+	my marks = newINTVECzero (my numberOfConstraints = ncons);
 	/*
 		Count vowel-gesture violations.
 	*/

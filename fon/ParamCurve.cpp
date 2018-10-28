@@ -120,8 +120,8 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		dt = my x -> dx < my y -> dx ? my x -> dx : my y -> dx;
 	integer numberOfPoints = Melder_iceiling ((t2 - t1) / dt) + 1;
 	if (numberOfPoints > 0) {
-		autoVEC x = VECraw (numberOfPoints);
-		autoVEC y = VECraw (numberOfPoints);
+		autoVEC x = newVECraw (numberOfPoints);
+		autoVEC y = newVECraw (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
 			double index = Sampled_xToIndex (my x.get(), t);

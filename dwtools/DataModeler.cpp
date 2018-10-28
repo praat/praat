@@ -759,10 +759,10 @@ void DataModeler_fit (DataModeler me) {
 		integer numberOfParameters = DataModeler_getNumberOfFreeParameters (me);
 		if (numberOfParameters == 0) return;
 		integer numberOfDataPoints = DataModeler_getNumberOfValidDataPoints (me);
-		autoVEC b = VECzero (numberOfDataPoints);
-		autoVEC term = VECzero (my numberOfParameters);
-		autoVEC parameter = VECzero (my numberOfParameters);
-		autoMAT design = MATzero (numberOfDataPoints, numberOfParameters);
+		autoVEC b = newVECzero (numberOfDataPoints);
+		autoVEC term = newVECzero (my numberOfParameters);
+		autoVEC parameter = newVECzero (my numberOfParameters);
+		autoMAT design = newMATzero (numberOfDataPoints, numberOfParameters);
 
 		// For function evaluation with only the FIXED parameters
 
@@ -816,7 +816,7 @@ void DataModeler_fit (DataModeler me) {
 		if (numberOfParameters < my numberOfParameters) {
 			autoMAT covtmp = SVD_getSquared (thee.get(), true);
 			// Set fixed parameters variances and covariances to zero.
-			MATset (cov -> data.get(), 0.0);
+			MATsetValues (cov -> data.get(), 0.0);
 			
 			ipar = 0;
 			for (integer i = 1; i <= my numberOfParameters; i ++) {

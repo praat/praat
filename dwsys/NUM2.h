@@ -152,12 +152,12 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-inline void VECset (VEC x, double value) {
+inline void VECsetValues (VEC x, double value) {
 	for (integer i = 1; i <= x.size; i ++) x [i] = value;
 }
 
-inline void MATset (MAT x, double value) {
-	VECset (asvector (x), value);
+inline void MATsetValues (MAT x, double value) {
+	VECsetValues (asvector (x), value);
 }
 
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
@@ -182,8 +182,8 @@ inline void MATcopy_preallocated (MAT target, constMAT x) {
 }
 
 inline autoVEC VECnorm_columns (constMAT x, double power) {
-	autoVEC norm = VECraw (x.ncol);
-	autoVEC column = VECraw (x.nrow);
+	autoVEC norm = newVECraw (x.ncol);
+	autoVEC column = newVECraw (x.nrow);
 	for (integer icol = 1; icol <= norm.size; icol ++) {
 		VECcolumn_preallocated (column.get(), x, icol);
 		norm [icol] = NUMnorm (column.get(), power);
@@ -192,7 +192,7 @@ inline autoVEC VECnorm_columns (constMAT x, double power) {
 }
 
 inline autoVEC VECnorm_rows (constMAT x, double power) {
-	autoVEC norm = VECraw (x.nrow);
+	autoVEC norm = newVECraw (x.nrow);
 	for (integer irow = 1; irow <= norm.size; irow ++)
 		norm [irow] = NUMnorm (x.row (irow), power);
 	return norm;
@@ -233,7 +233,7 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeights);
 
 inline autoMAT MATmtm_weighRows (constMAT data, constVEC rowWeights) {
-	autoMAT result = MATraw (data.ncol, data.ncol);
+	autoMAT result = newMATraw (data.ncol, data.ncol);
 	MATmtm_weighRows_preallocated (result.get(), data, rowWeights);
 	return result;
 }
@@ -1274,7 +1274,7 @@ inline void MATfromUpperTriangularVector_preallocated (MAT m, constVEC v) {
 }
 
 inline autoINTVEC INTVECto (integer to) {
-	autoINTVEC result = INTVECraw (to);
+	autoINTVEC result = newINTVECraw (to);
 	for (integer i = 1; i <= to; i ++)
 		result [i] = i;
 	return result;

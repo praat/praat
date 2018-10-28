@@ -715,7 +715,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 		/*
 			Statement like: a# = b#   // with non-matching sizes
 		*/
-		variable -> numericVectorValue = VECcopy (movedVector);
+		variable -> numericVectorValue = newVECcopy (movedVector);
 	}
 }
 
@@ -741,12 +741,12 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 		/*
 			Statement like: a## = b##   // with non-matching sizes
 		*/
-		variable -> numericMatrixValue = matrixcopy (movedMatrix);
+		variable -> numericMatrixValue = newMATcopy (movedMatrix);
 	}
 }
 
 inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
-	VECadd_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  +=  scalar;
 }
 inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -754,7 +754,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, cons
 		U"You cannot add a vector with size ", vector.size,
 		U" to a vector with a different size (", variableVector.size, U")."
 	);
-	VECadd_inplace (variableVector, vector);
+	variableVector  +=  vector;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
 	VECsubtract_inplace (variable -> numericVectorValue, scalar);

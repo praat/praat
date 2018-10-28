@@ -33,7 +33,7 @@ autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer nu
 
 autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements_string) {
 	try {
-		autostring32vector elements = STRVECtokenize (elements_string);
+		autostring32vector elements = newSTRVECtokenize (elements_string);
 		
 		integer numberOfCells = numberOfInputChannels * numberOfOutputChannels;
 		

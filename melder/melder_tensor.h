@@ -333,8 +333,8 @@ public:
 	vector (const vector& other) = default;
 	/*
 		Letting an autovector convert to a vector would lead to errors such as in
-			VEC vec = VECzero (10);
-		where VECzero produces a temporary that is deleted immediately
+			VEC vec = newVECzero (10);
+		where newVECzero produces a temporary that is deleted immediately
 		after the initialization of vec.
 		So we rule out this initialization.
 	*/
@@ -349,7 +349,7 @@ public:
 	vector& operator= (const vector&) = default;
 	/*
 		but an assignment like
-			autoVEC x = VECzero (10);
+			autoVEC x = newVECzero (10);
 			VEC y;
 			y = x;
 		should be ruled out. Instead, one should do
@@ -598,23 +598,23 @@ public:
 };
 
 template <typename T>
-autovector<T> vectorraw (integer size) {
+autovector<T> newvectorraw (integer size) {
 	return autovector<T> (size, kTensorInitializationType::RAW);
 }
 template <typename T>
-autovector<T> vectorzero (integer size) {
+autovector<T> newvectorzero (integer size) {
 	return autovector<T> (size, kTensorInitializationType::ZERO);
 }
 template <typename T>
-autovector<T> vectorcopy (constvector<T> source) {
-	autovector<T> result = vectorraw<T> (source.size);
+autovector<T> newvectorcopy (constvector<T> source) {
+	autovector<T> result = newvectorraw<T> (source.size);
 	for (integer i = 1; i <= source.size; i ++)
 		result [i] = source [i];
 	return result;
 }
 template <typename T>
-autovector<T> vectorcopy (vector<T> source) {
-	return vectorcopy (constvector<T> (source));
+autovector<T> newvectorcopy (vector<T> source) {
+	return newvectorcopy (constvector<T> (source));
 }
 
 template <typename T>
@@ -963,11 +963,11 @@ public:
 };
 
 template <typename T>
-automatrix<T> matrixraw (integer nrow, integer ncol) {
+automatrix<T> newmatrixraw (integer nrow, integer ncol) {
 	return automatrix<T> (nrow, ncol, kTensorInitializationType::RAW);
 }
 template <typename T>
-automatrix<T> matrixzero (integer nrow, integer ncol) {
+automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
 }
 template <typename T>
@@ -994,14 +994,14 @@ void matrixcopy_preallocated (matrix<T> const& target, matrix<T> const& source) 
 	matrixcopy_preallocated (target, constmatrix<T> (source));
 }
 template <typename T>
-automatrix<T> matrixcopy (constmatrix<T> const& source) {
-	automatrix<T> result = matrixraw<T> (source.nrow, source.ncol);
+automatrix<T> newmatrixcopy (constmatrix<T> const& source) {
+	automatrix<T> result = newmatrixraw<T> (source.nrow, source.ncol);
 	matrixcopy_preallocated (result.get(), source);
 	return result;
 }
 template <typename T>
-automatrix<T> matrixcopy (matrix<T> const& source) {
-	return matrixcopy<T> (constmatrix<T> (source));
+automatrix<T> newmatrixcopy (matrix<T> const& source) {
+	return newmatrixcopy<T> (constmatrix<T> (source));
 }
 
 template <typename T>
@@ -1022,22 +1022,22 @@ void assertCell (constmatrix<T> const& x, integer rowNumber, integer columnNumbe
 	assertColumn (x, columnNumber);
 }
 template <typename T>
-automatrix<T> matrixpart (constmatrix<T> const& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+automatrix<T> newmatrixpart (constmatrix<T> const& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
 	assertCell (x, firstRow, firstColumn);
 	assertCell (x, lastRow, lastColumn);
 	integer numberOfRows = lastRow - (firstRow - 1);
 	Melder_assert (numberOfRows >= 0);
 	integer numberOfColumns = lastColumn - (firstColumn - 1);
 	Melder_assert (numberOfColumns >= 0);
-	automatrix<T> result = matrixraw<T> (numberOfRows, numberOfColumns);
+	automatrix<T> result = newmatrixraw<T> (numberOfRows, numberOfColumns);
 	for (integer irow = 1; irow <= numberOfRows; irow ++)
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
 			result [irow] [icol] = x [firstRow - 1 + irow] [firstColumn - 1 + icol];
 	return result;
 }
 template <typename T>
-automatrix<T> matrixpart (matrix<T> const& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
-	matrixpart (constmatrix<T> (x), firstRow, lastRow, firstColumn, lastColumn);
+automatrix<T> newmatrixpart (matrix<T> const& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	newmatrixpart (constmatrix<T> (x), firstRow, lastRow, firstColumn, lastColumn);
 }
 
 template <typename T>
@@ -1338,11 +1338,11 @@ public:
 	autotensor3&& move () noexcept { return static_cast <autotensor3&&> (*this); }
 };
 template <typename T>
-autotensor3<T> tensor3raw (integer ndim1, integer ndim2, integer ndim3) {
+autotensor3<T> newtensor3raw (integer ndim1, integer ndim2, integer ndim3) {
 	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::RAW);
 }
 template <typename T>
-autotensor3<T> tensor3zero (integer ndim1, integer ndim2, integer ndim3) {
+autotensor3<T> newtensor3zero (integer ndim1, integer ndim2, integer ndim3) {
 	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::ZERO);
 }
 template <typename T>
@@ -1358,14 +1358,14 @@ void tensor3copy_preallocated (tensor3<T> const& target, tensor3<T> const& sourc
 	tensor3copy_preallocated (target, consttensor3<T> (source));
 }
 template <typename T>
-autotensor3<T> tensor3copy (consttensor3<T> const& source) {
-	autotensor3<T> result = tensor3raw<T> (source.ndim1, source.ndim2, source.ndim3);
+autotensor3<T> newtensor3copy (consttensor3<T> const& source) {
+	autotensor3<T> result = newtensor3raw<T> (source.ndim1, source.ndim2, source.ndim3);
 	tensor3copy_preallocated (result.get(), source);
 	return result;
 }
 template <typename T>
-autotensor3<T> tensor3copy (tensor3<T> const& source) {
-	return tensor3copy<T> (consttensor3<T> (source));
+autotensor3<T> newtensor3copy (tensor3<T> const& source) {
+	return newtensor3copy<T> (consttensor3<T> (source));
 }
 template <typename T>
 void assertDim1 (consttensor3<T> const& x, integer dim1) {
@@ -1386,7 +1386,7 @@ void assertCell (consttensor3<T> const& x, integer dim1, integer dim2, integer d
 	assertDim3 (x, dim3);
 }
 template <typename T>
-autotensor3<T> tensor3part (consttensor3<T> const& x,
+autotensor3<T> newtensor3part (consttensor3<T> const& x,
 	integer firstDim1, integer lastDim1,
 	integer firstDim2, integer lastDim2,
 	integer firstDim3, integer lastDim3
@@ -1399,7 +1399,7 @@ autotensor3<T> tensor3part (consttensor3<T> const& x,
 	Melder_assert (ndim2 >= 0);
 	integer ndim3 = lastDim3 - (firstDim3 - 1);
 	Melder_assert (ndim3 >= 0);
-	autotensor3<T> result = tensor3raw<T> (ndim1, ndim2, ndim3);
+	autotensor3<T> result = newtensor3raw<T> (ndim1, ndim2, ndim3);
 	for (integer idim1 = 1; idim1 <= ndim1; idim1 ++)
 		for (integer idim2 = 1; idim2 <= ndim2; idim2 ++)
 			for (integer idim3 = 1; idim3 <= ndim3; idim3 ++)
@@ -1407,32 +1407,32 @@ autotensor3<T> tensor3part (consttensor3<T> const& x,
 	return result;
 }
 template <typename T>
-autotensor3<T> tensor3part (tensor3<T> const& x,
+autotensor3<T> newtensor3part (tensor3<T> const& x,
 	integer firstDim1, integer lastDim1,
 	integer firstDim2, integer lastDim2,
 	integer firstDim3, integer lastDim3
 ) {
-	tensor3part (consttensor3<T> (x), firstDim1, lastDim1, firstDim2, lastDim2, firstDim3, lastDim3);
+	return newtensor3part (consttensor3<T> (x), firstDim1, lastDim1, firstDim2, lastDim2, firstDim3, lastDim3);
 }
 
 /*
 	instead of vector<double> we say VEC, because we want to have a one-to-one
 	relation between VEC functions and the scripting language.
-	For instance, we make VECraw and VECzero because Praat scripting has raw# and zero#.
+	For instance, we have newVECraw and newVECzero because Praat scripting has raw# and zero#.
 */
 using VEC = vector <double>;
 using VECVU = vectorview <double>;
 using constVEC = constvector <double>;
 using constVECVU = constvectorview <double>;
 using autoVEC = autovector <double>;
-inline autoVEC VECraw  (integer size) {
-	return vectorraw <double> (size);
+inline autoVEC newVECraw (integer size) {
+	return newvectorraw <double> (size);
 }
-inline autoVEC VECzero (integer size) {
-	return vectorzero <double> (size);
+inline autoVEC newVECzero (integer size) {
+	return newvectorzero <double> (size);
 }
-inline autoVEC VECcopy (constVEC source) {
-	return vectorcopy (source);
+inline autoVEC newVECcopy (constVEC source) {
+	return newvectorcopy (source);
 }
 
 /*
@@ -1448,27 +1448,27 @@ using INTVECVU = vectorview <integer>;
 using constINTVEC = constvector <integer>;
 using constINTVECVU = constvectorview <integer>;
 using autoINTVEC = autovector <integer>;
-inline autoINTVEC INTVECraw  (integer size) {
-	return vectorraw <integer> (size);
+inline autoINTVEC newINTVECraw (integer size) {
+	return newvectorraw <integer> (size);
 }
-inline autoINTVEC INTVECzero (integer size) {
-	return vectorzero <integer> (size);
+inline autoINTVEC newINTVECzero (integer size) {
+	return newvectorzero <integer> (size);
 }
-inline autoINTVEC INTVECcopy (constINTVEC source) {
-	return vectorcopy (source);
+inline autoINTVEC newINTVECcopy (constINTVEC source) {
+	return newvectorcopy (source);
 }
 
 using BOOLVEC = vector <bool>;
 using constBOOLVEC = constvector <bool>;
 using autoBOOLVEC = autovector <bool>;
-inline autoBOOLVEC BOOLVECraw  (integer size) {
-	return vectorraw <bool> (size);
+inline autoBOOLVEC newBOOLVECraw (integer size) {
+	return newvectorraw <bool> (size);
 }
-inline autoBOOLVEC BOOLVECzero (integer size) {
-	return vectorzero <bool> (size);
+inline autoBOOLVEC newBOOLVECzero (integer size) {
+	return newvectorzero <bool> (size);
 }
-inline autoBOOLVEC BOOLVECcopy (constBOOLVEC source) {
-	return vectorcopy (source);
+inline autoBOOLVEC newBOOLVECcopy (constBOOLVEC source) {
+	return newvectorcopy (source);
 }
 
 using MAT = matrix <double>;
@@ -1476,66 +1476,66 @@ using MATVU = matrixview <double>;
 using constMAT = constmatrix <double>;
 using constMATVU = constmatrixview <double>;
 using autoMAT = automatrix <double>;
-inline autoMAT MATraw  (integer nrow, integer ncol) {
-	return matrixraw <double> (nrow, ncol);
+inline autoMAT newMATraw (integer nrow, integer ncol) {
+	return newmatrixraw <double> (nrow, ncol);
 }
-inline autoMAT MATzero (integer nrow, integer ncol) {
-	return matrixzero <double> (nrow, ncol);
+inline autoMAT newMATzero (integer nrow, integer ncol) {
+	return newmatrixzero <double> (nrow, ncol);
 }
-inline autoMAT MATcopy (constMAT source) {
-	return matrixcopy (source);
+inline autoMAT newMATcopy (constMAT source) {
+	return newmatrixcopy (source);
 }
-inline autoMAT MATpart (const constMAT& source,
+inline autoMAT newMATpart (const constMAT& source,
 	integer firstRow, integer lastRow,
 	integer firstColumn, integer lastColumn
 ) {
-	return matrixpart (source, firstRow, lastRow, firstColumn, lastColumn);
+	return newmatrixpart (source, firstRow, lastRow, firstColumn, lastColumn);
 }
 
 using TEN3 = tensor3 <double>;
 using constTEN3 = consttensor3 <double>;
 using autoTEN3 = autotensor3 <double>;
-inline autoTEN3 TEN3raw  (integer ndim1, integer ndim2, integer ndim3) {
-	return tensor3raw <double> (ndim1, ndim2, ndim3);
+inline autoTEN3 newTEN3raw (integer ndim1, integer ndim2, integer ndim3) {
+	return newtensor3raw <double> (ndim1, ndim2, ndim3);
 }
-inline autoTEN3 TEN3zero (integer ndim1, integer ndim2, integer ndim3) {
-	return tensor3zero <double> (ndim1, ndim2, ndim3);
+inline autoTEN3 newTEN3zero (integer ndim1, integer ndim2, integer ndim3) {
+	return newtensor3zero <double> (ndim1, ndim2, ndim3);
 }
-inline autoTEN3 TEN3copy (constTEN3 source) {
-	return tensor3copy (source);
+inline autoTEN3 newTEN3copy (constTEN3 source) {
+	return newtensor3copy (source);
 }
-inline autoTEN3 TEN3part (const constTEN3& source,
+inline autoTEN3 newTEN3part (const constTEN3& source,
 	integer firstDim1, integer lastDim1,
 	integer firstDim2, integer lastDim2,
 	integer firstDim3, integer lastDim3
 ) {
-	return tensor3part (source, firstDim1, lastDim1, firstDim2, lastDim2, firstDim3, lastDim3);
+	return newtensor3part (source, firstDim1, lastDim1, firstDim2, lastDim2, firstDim3, lastDim3);
 }
 
 using INTMAT = matrix <integer>;
 using constINTMAT = constmatrix <integer>;
 using autoINTMAT = automatrix <integer>;
-inline autoINTMAT INTMATraw  (integer nrow, integer ncol) {
-	return matrixraw <integer> (nrow, ncol);
+inline autoINTMAT newINTMATraw (integer nrow, integer ncol) {
+	return newmatrixraw <integer> (nrow, ncol);
 }
-inline autoINTMAT INTMATzero (integer nrow, integer ncol) {
-	return matrixzero <integer> (nrow, ncol);
+inline autoINTMAT newINTMATzero (integer nrow, integer ncol) {
+	return newmatrixzero <integer> (nrow, ncol);
 }
-inline autoINTMAT INTMATcopy (constINTMAT source) {
-	return matrixcopy (source);
+inline autoINTMAT newINTMATcopy (constINTMAT source) {
+	return newmatrixcopy (source);
 }
 
 using BOOLMAT = matrix <bool>;
 using constBOOLMAT = constmatrix <bool>;
 using autoBOOLMAT = automatrix <bool>;
-inline autoBOOLMAT BOOLMATraw  (integer nrow, integer ncol) {
-	return matrixraw <bool> (nrow, ncol);
+inline autoBOOLMAT newBOOLMATraw (integer nrow, integer ncol) {
+	return newmatrixraw <bool> (nrow, ncol);
 }
-inline autoBOOLMAT BOOLMATzero (integer nrow, integer ncol) {
-	return matrixzero <bool> (nrow, ncol);
+inline autoBOOLMAT newBOOLMATzero (integer nrow, integer ncol) {
+	return newmatrixzero <bool> (nrow, ncol);
 }
-inline autoBOOLMAT BOOLMATcopy (constBOOLMAT source) {
-	return matrixcopy (source);
+inline autoBOOLMAT newBOOLMATcopy (constBOOLMAT source) {
+	return newmatrixcopy (source);
 }
 
 conststring32 Melder_VEC (constVEC value);

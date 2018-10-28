@@ -72,14 +72,14 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 		return;
 	}
 	integer nr = b.nrow, nc = b.ncol;
-	autoMAT u = MATzero (nc, nc);
-	autoVEC evec = VECzero (nc);
+	autoMAT u = newMATzero (nc, nc);
+	autoVEC evec = newVECzero (nc);
 	autoSVD svd = SVD_create (nc, nc);
 
 	// Steps 1 & 2: C = A'A and W = A'B
 
-	autoMAT c = MATmtm (a);
-	autoMAT w = MATmul (a.transpose(), b);
+	autoMAT c = newMATmtm (a);
+	autoMAT w = newMATmul (a.transpose(), b);
 	double checkc = NUMsum (c.get());
 	double checkw = NUMsum (w.get());
 	
