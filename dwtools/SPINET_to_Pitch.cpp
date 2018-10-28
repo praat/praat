@@ -45,12 +45,12 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		Melder_require (fmin < ceiling, U"The centre frequency of the lowest filter should be smaller than the ceiling.");
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
-		autoVEC power = VECraw (my nx);
-		autoVEC pitch = VECraw (nFrequencyPoints);
-		autoVEC sumspec = VECraw (nFrequencyPoints);
-		autoVEC y = VECraw (my ny);
-		autoVEC yv2 = VECraw (my ny);
-		autoVEC fl2 = VECraw (my ny);
+		autoVEC power = newVECraw (my nx);
+		autoVEC pitch = newVECraw (nFrequencyPoints);
+		autoVEC sumspec = newVECraw (nFrequencyPoints);
+		autoVEC y = newVECraw (my ny);
+		autoVEC yv2 = newVECraw (my ny);
+		autoVEC fl2 = newVECraw (my ny);
 
 		// From ERB's to log (f)
 
@@ -63,9 +63,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 		for (integer j = 1; j <= my nx; j ++) {
 			double p = NUMcolumnSum (my s.get(), j);
-			if (p > maxPower) {
+			if (p > maxPower)
 				maxPower = p;
-			}
 			power [j] = p;
 		}
 		Melder_require (maxPower != 0.0, U"The sound should not have all amplitudes equal to zero.");

@@ -36,8 +36,8 @@ void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee) {
 	integer p = my nCoefficients;
 	Melder_assert (p <= thy nSegments); //TODO
 
-	autoVEC b = VECraw (p);
-	autoVEC a = VECcopy (my a.get());
+	autoVEC b = newVECraw (p);
+	autoVEC a = newVECcopy (my a.get());
 
 	double *rc = thy c;
 	for (integer m = p; m > 0; m --) {
@@ -220,7 +220,7 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bo
 autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
 		integer m = my nCoefficients;
-		autoVEC area = VECzero (m + 1);
+		autoVEC area = newVECzero (m + 1);
 		NUMlpc_lpc_to_area (my a.at, m, area.at);
 		autoVocalTract thee = VocalTract_create (m, length / m);
 

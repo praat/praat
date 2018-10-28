@@ -281,7 +281,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 					U" (input: ", tableau -> input.get(), U") in line ", MelderReadText_getLineNumber (text), U".");
 			}
 			candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
-			candidate -> marks = INTVECzero (candidate -> numberOfConstraints);
+			candidate -> marks = newINTVECzero (candidate -> numberOfConstraints);
 			for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
 				try {
 					candidate -> marks [icons] = texgeti16 (text);
@@ -1811,7 +1811,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribut
 		{
 			Melder_throw (U"To find positive weights, the decision strategy has to be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
 		}
-		autoINTVEC optimalCandidates = INTVECraw (my numberOfTableaus);
+		autoINTVEC optimalCandidates = newINTVECraw (my numberOfTableaus);
 		/*
 			Check that there is exactly one optimal output for each input.
 		*/
@@ -1924,23 +1924,19 @@ void OTGrammar_setConstraintPlasticity (OTGrammar me, integer constraint, double
 	}
 }
 
-integer theSaveNumberOfConstraints, *theSaveIndex;
-double *theSaveRankings, *theSaveDisharmonies;
-bool *theSaveTiedToTheLeft, *theSaveTiedToTheRight;
+integer theSaveNumberOfConstraints;
+autoINTVEC theSaveIndex;
+autoVEC theSaveRankings, theSaveDisharmonies;
+autoBOOLVEC theSaveTiedToTheLeft, theSaveTiedToTheRight;
 static void OTGrammar_save (OTGrammar me) {
 	if (my numberOfConstraints != theSaveNumberOfConstraints) {
-		NUMvector_free (theSaveIndex, 1); theSaveIndex = nullptr;
-		NUMvector_free (theSaveRankings, 1); theSaveRankings = nullptr;
-		NUMvector_free (theSaveDisharmonies, 1); theSaveDisharmonies = nullptr;
-		NUMvector_free (theSaveTiedToTheLeft, 1); theSaveTiedToTheLeft = nullptr;
-		NUMvector_free (theSaveTiedToTheRight, 1); theSaveTiedToTheRight = nullptr;
+		theSaveIndex = newINTVECraw (my numberOfConstraints);
+		theSaveRankings = newVECraw (my numberOfConstraints);
+		theSaveDisharmonies = newVECraw (my numberOfConstraints);
+		theSaveTiedToTheLeft = newBOOLVECraw (my numberOfConstraints);
+		theSaveTiedToTheRight = newBOOLVECraw (my numberOfConstraints);
 		theSaveNumberOfConstraints = my numberOfConstraints;
 	}
-	if (! theSaveIndex) theSaveIndex = NUMvector <integer> (1, my numberOfConstraints);
-	if (! theSaveRankings) theSaveRankings = NUMvector <double> (1, my numberOfConstraints);
-	if (! theSaveDisharmonies) theSaveDisharmonies = NUMvector <double> (1, my numberOfConstraints);
-	if (! theSaveTiedToTheLeft) theSaveTiedToTheLeft = NUMvector <bool> (1, my numberOfConstraints);
-	if (! theSaveTiedToTheRight) theSaveTiedToTheRight = NUMvector <bool> (1, my numberOfConstraints);
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		theSaveIndex [icons] = my index [icons];
 		theSaveRankings [icons] = my constraints [icons]. ranking;

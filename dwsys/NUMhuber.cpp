@@ -36,7 +36,7 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 		tmp = *work;
 		Melder_assert (tmp.size = x.size);
 	} else {
-		atmp = VECzero (x.size);
+		atmp = newVECzero (x.size);
 		tmp = atmp.get();
 	}
 	for (integer i = 1; i <= x.size; i ++)
@@ -68,7 +68,7 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 		tmp = *work;
 		Melder_assert (tmp.size = x.size);
 	} else {
-		atmp = VECzero (x.size);
+		atmp = newVECzero (x.size);
 		tmp = atmp.get();
 	}
 	double mad;

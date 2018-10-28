@@ -55,8 +55,8 @@ autoFormantPoint FormantPoint_create (double time, integer numberOfFormants) {
 		autoFormantPoint me = Thing_new (FormantPoint);
 		my number = time;
 		my numberOfFormants = numberOfFormants;
-		my formant = VECzero (numberOfFormants);
-		my bandwidth = VECzero (numberOfFormants);
+		my formant = newVECzero (numberOfFormants);
+		my bandwidth = newVECzero (numberOfFormants);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Formant point not created.");

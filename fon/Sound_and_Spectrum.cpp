@@ -44,7 +44,7 @@ autoSpectrum Sound_to_Spectrum (Sound me, bool fast) {
 		}
 		integer numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
 
-		autoVEC data = VECzero (numberOfSamples);
+		autoVEC data = newVECzero (numberOfSamples);
 		if (numberOfChannels == 1) {
 			const double *channel = & my z [1] [0];
 			for (integer i = 1; i <= my nx; i ++) {
@@ -132,7 +132,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 
 		autoSound sound = Spectrum_to_Sound (me);
 		NUMpreemphasize_f (sound -> z.row (1), sound -> dx, preemphasisFrequency);
-		autoVEC a = VECraw (numberOfCoefficients);
+		autoVEC a = newVECraw (numberOfCoefficients);
 		double gain = NUMburg_preallocated (a.get(), sound -> z.row(1));
 		for (integer i = 1; i <= numberOfCoefficients; i ++) a [i] = - a [i];
 		autoSpectrum thee = Data_copy (me);
@@ -140,7 +140,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 		integer nfft = 2 * (thy nx - 1);
 		integer ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
 		double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
-		autoVEC data = VECraw (nfft);
+		autoVEC data = newVECraw (nfft);
 		data [1] = 1.0;
 		for (integer i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];

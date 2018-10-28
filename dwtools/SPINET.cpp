@@ -100,8 +100,8 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 		double maxErb = NUMhertzToErb (maximumFrequency);
 		double dErb = (maxErb - minErb) / nFilters;
 		SampledXY_init (me.get(), tmin, tmax, nt, dt, t1, minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
-		my y = MATzero (nFilters, nt);
-		my s = MATzero (nFilters, nt);
+		my y = newMATzero (nFilters, nt);
+		my s = newMATzero (nFilters, nt);
 		my gamma = 4;
 		my excitationErbProportion = excitationErbProportion;
 		my inhibitionErbProportion = inhibitionErbProportion;

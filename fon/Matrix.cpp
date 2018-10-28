@@ -115,7 +115,7 @@ void Matrix_init
 	my ny = ny;
 	my dy = dy;
 	my y1 = y1;
-	my z = MATzero (my ny, my nx);
+	my z = newMATzero (my ny, my nx);
 }
 
 autoMatrix Matrix_create
@@ -402,7 +402,7 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 }
 
 void Matrix_movie (Matrix me, Graphics g) {
-	autoVEC column = VECraw (my ny);
+	autoVEC column = newVECraw (my ny);
 	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	for (integer icol = 1; icol <= my nx; icol ++) {

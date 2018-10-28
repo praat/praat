@@ -80,8 +80,8 @@ autoDiscriminant Discriminant_create (integer numberOfGroups, integer numberOfEi
 		my numberOfGroups = numberOfGroups;
 		my groups = SSCPList_create ();
 		my total = SSCP_create (dimension);
-		my aprioriProbabilities = VECraw (numberOfGroups);
-		my costs = MATraw (numberOfGroups, numberOfGroups);
+		my aprioriProbabilities = newVECraw (numberOfGroups);
+		my costs = newMATraw (numberOfGroups, numberOfGroups);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Discriminant not created.");
@@ -413,9 +413,9 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 		// Overall centroid and apriori probabilities and costs.
 
-		autoVEC centroid = VECzero (dimension);
-		autoMAT between = MATzero (thy numberOfGroups, dimension);
-		thy aprioriProbabilities = VECraw (thy numberOfGroups);
+		autoVEC centroid = newVECzero (dimension);
+		autoMAT between = newMATzero (thy numberOfGroups, dimension);
+		thy aprioriProbabilities = newVECraw (thy numberOfGroups);
 
 		longdouble sum = 0.0;
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
@@ -447,7 +447,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		/*
 			Costs.
 		*/
-		thy costs = MATraw (thy numberOfGroups, thy numberOfGroups);
+		thy costs = newMATraw (thy numberOfGroups, thy numberOfGroups);
 		for (integer igroup = 1; igroup <= thy numberOfGroups; igroup ++) {
 			for (integer jgroup = igroup + 1; jgroup <= thy numberOfGroups; jgroup ++)
 				thy costs [igroup] [jgroup] = thy costs [jgroup] [igroup] = 1.0;
@@ -627,7 +627,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoNUMvector<double> ln_determinant (1, g);
 		autoNUMvector<double> buf (1, p);
 		autoNUMvector<double> displacement (1, p);
-		autoVEC x = VECzero (p);
+		autoVEC x = newVECzero (p);
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);

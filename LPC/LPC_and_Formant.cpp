@@ -42,8 +42,8 @@ void Formant_Frame_scale (Formant_Frame me, double scale) {
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin) {
 	integer n = my max - my min + 1;
-	autoVEC fc = VECzero (n);
-	autoVEC bc = VECzero (n);
+	autoVEC fc = newVECzero (n);
+	autoVEC bc = newVECzero (n);
 
 	// Determine the formants and bandwidths
 
@@ -131,7 +131,7 @@ void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samp
 		return;
 	}
 	
-	autoVEC lpc = VECraw (n + 2);
+	autoVEC lpc = newVECraw (n + 2);
 	lpc [1] = 0;
 	lpc [2] = 1;
 	integer m = 2;

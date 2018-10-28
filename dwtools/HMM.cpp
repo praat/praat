@@ -404,7 +404,7 @@ static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservatio
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
 	my transitionProbs = NUMmatrix<double> (0, numberOfStates, 1, numberOfStates + 1);
-	my emissionProbs = MATraw (numberOfStates, numberOfObservationSymbols);
+	my emissionProbs = newMATraw (numberOfStates, numberOfObservationSymbols);
 }
 
 autoHMM HMM_create (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols) {

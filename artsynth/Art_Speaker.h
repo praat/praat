@@ -22,7 +22,7 @@
 
 void Art_Speaker_toVocalTract (Art art, Speaker speaker,
 	double intX [], double intY [], double extX [], double extY [],
-	double *bodyX, double *bodyY);
+	double *out_bodyX, double *out_bodyY);
 /*
 	Function:
 		compute key places of the supralaryngeal vocal tract.

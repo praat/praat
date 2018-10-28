@@ -139,10 +139,10 @@ void Graphics_contour (Graphics me, constMATVU const& z,
 	xoff = x1WC - dx;
 	yoff = y1WC - dy;
 	if (NUMisEmpty (right.get())) {   // static!
-		right = BOOLMATzero (MAXALTSIDE, MAXALTSIDE);
-		below = BOOLMATzero (MAXALTSIDE, MAXALTSIDE);
-		x = VECzero (MAXALTPATH);
-		y = VECzero (MAXALTPATH);
+		right = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
+		below = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
+		x = newVECzero (MAXALTPATH);
+		y = newVECzero (MAXALTPATH);
 	}
 	for (row1 = 1; row1 < z.nrow; row1 += MAXALTSIDE - 1) {
 		for (col1 = 1; col1 < z.ncol; col1 += MAXALTSIDE - 1) {
@@ -163,10 +163,10 @@ void Graphics_altitude (Graphics me, constMATVU const& z,
 	xoff = x1WC - dx;
 	yoff = y1WC - dy;
 	if (NUMisEmpty (right.get())) {   // static!
-		right = BOOLMATzero (MAXALTSIDE, MAXALTSIDE);
-		below = BOOLMATzero (MAXALTSIDE, MAXALTSIDE);
-		x = VECzero (MAXALTPATH);
-		y = VECzero (MAXALTPATH);
+		right = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
+		below = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
+		x = newVECzero (MAXALTPATH);
+		y = newVECzero (MAXALTPATH);
 	}
 	for (row1 = 1; row1 < z.nrow; row1 += MAXALTSIDE - 1) {
 		for (col1 = 1; col1 < z.ncol; col1 += MAXALTSIDE - 1) {

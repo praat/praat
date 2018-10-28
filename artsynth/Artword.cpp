@@ -49,8 +49,8 @@ autoArtword Artword_create (double totalTime) {
 
 void Artword_setDefault (Artword me, kArt_muscle muscle) {
 	ArtwordData f = & my data [(int) muscle];
-	f -> times = VECzero (2);
-	f -> targets = VECzero (2);
+	f -> times = newVECzero (2);
+	f -> targets = newVECzero (2);
 	f -> numberOfTargets = 2;
 	f -> times [1] = 0.0;
 	f -> targets [1] = 0.0;
@@ -131,7 +131,7 @@ void Artword_intoArt (Artword me, Art art, double time) {
 void Artword_draw (Artword me, Graphics g, kArt_muscle muscle, bool garnish) {
 	int16 numberOfTargets = my data [(int) muscle]. numberOfTargets;
 	if (numberOfTargets > 0) {
-		autoVEC x = VECraw (numberOfTargets), y = VECraw (numberOfTargets);
+		autoVEC x = newVECraw (numberOfTargets), y = newVECraw (numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int16 i = 1; i <= numberOfTargets; i ++) {

@@ -27,7 +27,7 @@ static autoVEC Harmonicity_getSoundingValues (Harmonicity me, double tmin, doubl
 	integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (numberOfFrames < 1)
 		return autoVEC();
-	autoVEC soundingValues = VECraw (numberOfFrames);
+	autoVEC soundingValues = newVECraw (numberOfFrames);
 	integer numberOfSoundingFrames = 0;
 	for (integer iframe = imin; iframe <= imax; iframe ++)
 		if (my z [1] [iframe] != -200.0)

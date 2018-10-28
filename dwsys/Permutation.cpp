@@ -83,14 +83,14 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
-	my p = INTVECraw (numberOfElements);
+	my p = newINTVECraw (numberOfElements);
 	Permutation_sort (me);
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
 	if (jumpSize >= my numberOfElements || first > my numberOfElements)
 		return;
-	autoINTVEC p_copy = INTVECcopy (my p.get());
+	autoINTVEC p_copy = newINTVECcopy (my p.get());
 
 	integer index = first, column = 1;
 	if (first > 1)

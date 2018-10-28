@@ -140,7 +140,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 		OTCandidate candidate = & candidates [icand];
 		candidate -> string = texgetw16 (text);
 		candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
-		candidate -> marks = INTVECraw (candidate -> numberOfConstraints);
+		candidate -> marks = newINTVECraw (candidate -> numberOfConstraints);
 		for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
 			candidate -> marks [icons] = texgeti16 (text);
 	}
@@ -1432,7 +1432,7 @@ autoDistributions OTMulti_to_Distribution (OTMulti me, conststring32 form1, cons
 			Create the distribution. One row for every output form.
 		*/
 		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1);
-		autoINTVEC index = INTVECraw (my numberOfCandidates);
+		autoINTVEC index = newINTVECraw (my numberOfCandidates);
 		/*
 			Set the row labels to the output strings.
 		*/

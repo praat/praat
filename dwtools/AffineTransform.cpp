@@ -80,8 +80,8 @@ void AffineTransform_init (AffineTransform me, integer dimension) {
 	Melder_require (dimension > 0, U"Dimensionality should be greater than zero.");
 	
 	my dimension = dimension;
-	my r = MATzero (dimension, dimension);
-	my t = VECzero (dimension);
+	my r = newMATzero (dimension, dimension);
+	my t = newVECzero (dimension);
 }
 
 autoAffineTransform AffineTransform_create (integer dimension) {

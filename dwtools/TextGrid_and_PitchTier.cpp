@@ -166,7 +166,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		integer numberOfPitches = items -> numberOfStrings;
 		Melder_require (times.size == numberOfPitches,
 			U"The number of items in the times and the pitches string have to be equal.");
-		autoVEC pitchesraw = VECraw (numberOfPitches);
+		autoVEC pitchesraw = newVECraw (numberOfPitches);
 		for (integer i = 1; i <= numberOfPitches; i ++) {
 			conststring32 token = items -> strings [i].get();
 			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
@@ -178,7 +178,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		
 		// now we have the real times and we can sort them tohether with the pitches
 		
-		autoVEC pitches = VECcopy (pitchesraw.get());
+		autoVEC pitches = newVECcopy (pitchesraw.get());
 		NUMsortTogether (times.get(), pitches.get());
 		double pitchAnchor, pitch;
 		for (integer i = 1; i <= times.size; i ++) {
