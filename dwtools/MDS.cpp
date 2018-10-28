@@ -249,9 +249,8 @@ autoRatioTransformator RatioTransformator_create (integer numberOfPoints) {
 autoDistance structMonotoneTransformator :: v_transform (MDSVec vec, Distance d, Weight w) {
 	try {
 		autoDistance thee = MDSVec_Distance_monotoneRegression (vec, d, tiesHandling);
-		if (normalization) {
+		if (normalization)
 			Distance_Weight_smacofNormalize (thee.get(), w);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Distance not created.");
@@ -603,10 +602,7 @@ integer Salience_correctNegatives (Salience me) {
 }
 
 void Salience_setDefaults (Salience me) {
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++)
-			my data [i] [j] = 1.0 / sqrt (my numberOfColumns);
-	}
+	MATsetValues (my data.get(), 1.0 / sqrt (my numberOfColumns));
 	for (integer j = 1; j <= my numberOfColumns; j ++)
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
 }
@@ -846,13 +842,13 @@ void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, 
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions) {
+autoConfiguration Distance_to_Configuration_torsca (Distance me, integer numberOfDimensions) {
 	try {
 		Melder_require (numberOfDimensions <= my numberOfRows, U"Number of dimensions should not exceed ", my numberOfRows, U".");
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, false);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		TableOfReal_copyLabels (me, thee.get(), 1, 0);
-		MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (thy data.get(), sp -> data.get(), numberOfDimensions);
+		MAT_asPrincipalComponents_preallocated (thy data.get(), sp -> data.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created (torsca method).");
@@ -871,6 +867,7 @@ autoScalarProduct Distance_to_ScalarProduct (Distance me, bool normalize) {
 				double d = 0.5 * (my data [i] [j] + my data [j] [i]);
 				thy data [i] [j] = thy data [j] [i] = - 0.5 * d * d;
 			}
+			// thy data [i] [i] = 0.0; // redundant
 		}
 		TableOfReal_doubleCentre (thee.get());
 		
@@ -1058,9 +1055,15 @@ void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions,
 	}
 }
 
+/*
+	Algorithm : F. Young, Y. Takane & R. Lewyckyj (1978), "Three notes on ALSCAL", 
+	Psychometrika 43, 433-435.
+*/
 void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
-	integer numberOfSources = my size;
 	try {
+		integer numberOfSources = my size;
+		Melder_require (numberOfSources > 1, 
+			U"The number of sources should exceed one.");
 		integer nPoints = my at [1] -> numberOfRows;
 
 		autoConfiguration thee = Configuration_create (nPoints, numberOfDimensions);
@@ -1079,11 +1082,11 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
+			Melder_require (sp -> numberOfRows == nPoints, U"The dimension of ScalarProduct ", i, U" does not conform.");
 			MATadd_inplace (pmean.get(), sp -> data.get());
 		}
 		
-		if (numberOfSources > 1) 
-			MATmultiply_inplace (pmean.get(), 1.0 / numberOfSources);
+		MATmultiply_inplace (pmean.get(), 1.0 / numberOfSources);
 
 		/*
 			Up to a rotation K, the initial configuration can be found by
@@ -1092,12 +1095,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		
 		autoMAT y = MAT_asPrincipalComponents (pmean.get (), numberOfDimensions);
 
-		matrixcopy_preallocated (thy data.get(), y.get());
-		/*
-			We cannot determine weights from only one sp-matrix.
-		*/
-
-		Melder_require (numberOfSources > 1, U"The number of sources should exceed one.");
+		thy data.get() <<= y.get();
 		
 		/*
 			Calculate the C [i] matrices [1..numberOfDimensions] [1..numberOfDimensions]
@@ -1109,18 +1107,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			//ci [i] = NUMmatrix<double> (1, numberOfDimensions, 1, numberOfDimensions);
-			for (integer j = 1; j <= numberOfDimensions; j ++) {
-				for (integer k = 1; k <= numberOfDimensions; k ++) {
-					for (integer l = 1; l <= nPoints; l ++) {
-						if (yinv [j] [l] != 0.0) {
-							for (integer m = 1; m <= nPoints; m ++) {
-								ci [i] [j] [k] += yinv [j] [l] * sp -> data [l] [m] * yinv [k] [m];
-							}
-						}
-					}
-				}
-			}
+			MATmul3_VMVt (ci [i], yinv.get(), sp -> data.get()); //yinv.Data.yinv'
 		}
 
 		/*
@@ -1142,7 +1129,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		
 		MAT_getEigenSystemFromSymmetricMatrix (a.get(), & evec, nullptr, false);
 		
-		autoMAT cl (numberOfDimensions, numberOfDimensions, kTensorInitializationType::ZERO);
+		autoMAT cl = newMATzero (numberOfDimensions, numberOfDimensions);
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
 				for (integer k = 1; k <= numberOfDimensions; k ++) {
@@ -1371,20 +1358,14 @@ double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Confi
 }
 
 void Distance_Weight_smacofNormalize (Distance me, Weight w) {
-	double sumsq = 0.0;
+	longdouble sumsq = 0.0;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-		constVEC wi = w -> data.row (i);
-		constVEC di = my data.row (i);
 		for (integer j = i + 1; j <= my numberOfRows; j ++) {
-			sumsq += wi [j] * di [j] * di [j];
+			sumsq += w -> data [i] [j] * my data [i] [j] * my data [i] [j];
 		}
 	}
 	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / (2.0 * sumsq));
-	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-		for (integer j = i + 1; j <= my numberOfRows; j ++) {
-			my data [j] [i] = (my data [i] [j] *= scale);
-		}
-	}
+	MATmultiply_inplace (my data.get(), scale);
 }
 
 double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) {
@@ -1425,24 +1406,19 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
-		double **w = weight -> data.at_deprecated;
-
-		if (showProgress) {
-			Melder_progress (0.0, U"MDS analysis");
-		}
+		if (showProgress) Melder_progress (0.0, U"MDS analysis");
 
 		// Get V (eq. 8.19).
 
-		for (integer i = 1; i <= nPoints; i ++) {
+		for (integer irow = 1; irow <= nPoints; irow ++) {
 			longdouble wsum = 0.0;
-			for (integer j = 1; j <= nPoints; j ++) {
-				if (i == j) {
-					continue;
+			for (integer icol = 1; icol <= nPoints; icol ++) {
+				if (irow != icol) {
+					v [irow] [icol] = -  weight -> data [irow] [icol];
+					wsum +=  weight -> data [irow] [icol];
 				}
-				v [i] [j] = - w [i] [j];
-				wsum += w [i] [j];
 			}
-			v [i] [i] = (double) wsum;
+			v [irow] [irow] = (double) wsum;
 		}
 
 		/*
@@ -1505,9 +1481,8 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (
 		autoConfiguration cstart = Data_copy (conf);
 		autoConfiguration  cbest = Data_copy (conf);
 
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (0.0, U"MDS many times");
-		}
 
 		for (integer i = 1; i <= numberOfRepetitions; i ++) {
 			autoConfiguration cresult = Dissimilarity_Configuration_Weight_Transformator_smacof (me, cstart.get(), w, t, tolerance, numberOfIterations, showSingle, &stress);
@@ -1944,79 +1919,60 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, Salience weights) {
 	integer nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
-	integer nSources = zc->size;
-	double **x = xc -> data.at_deprecated, **w = weights -> data.at_deprecated, lambda;
+	integer nSources = zc -> size;
 
-	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
-
-	double tolerance = 1e-4;
+	double tolerance = 1e-4; // reasonable for dominant eigenvector estimation.
 	autoMAT wsih = newMATraw (nPoints, nPoints);
 	autoVEC solution = newVECraw (nPoints);
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
-		for (integer k = 1; k <= nPoints; k ++)
-			for (integer l = 1; l <= nPoints; l ++)
-				wsih [k] [l] = 0.0;
-
+		MATsetValues (wsih.get(), 0.0);
 		for (integer i = 1; i <= nSources; i ++) {
-			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data.at_deprecated;
+			ScalarProduct sih = sprc -> at [i];
 
-			// Construct the S [i] [h] matrices (eq. 6)
+			// Construct the Sih matrices (eq. 6)
 
 			for (integer j = 1; j <= nDimensions; j ++) {
-				if (j == h)
-					continue;
-				for (integer k = 1; k <= nPoints; k ++)
-					for (integer l = 1; l <= nPoints; l ++)
-						sih [k] [l] -= x [k] [j] * x [l] [j] * w [i] [j];
+				if (j != h) {
+					for (integer k = 1; k <= nPoints; k ++)
+						for (integer l = 1; l <= nPoints; l ++)
+							sih -> data [k] [l] -= xc -> data [k] [j] * xc -> data [l] [j] * weights -> data [i] [j];
+				}
 			}
 
 			// the weighted S matrix (eq. 8)
-
-			for (integer k = 1; k <= nPoints; k ++)
-				for (integer l = 1; l <= nPoints; l ++)
-					wsih [k] [l] += w [i] [h] * sih [k] [l];
+			
+			MATaxpy (wsih.get(), sih -> data.get(), weights -> data [i] [h]);
 		}
 
-		// largest eigenvalue of m (nonsymmetric matrix!!) is optimal solution for this dimension
-
-		for (integer k = 1; k <= nPoints; k ++)
-			solution [k] = x [k] [h];
-
-		NUMdominantEigenvector (wsih.get(), solution.get(), & lambda, tolerance);
+		VECcolumn_preallocated (solution.get(), xc -> data.get(), h); // initial guess
+		// largest eigenvalue of wsih (nonsymmetric matrix!!) is optimal solution for this dimension
+		double lambda = VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
 
 		// normalize the solution: centre and x'x = 1
-
-		longdouble mean = 0.0;
-		for (integer k = 1; k <= nPoints; k ++)
-			mean += solution [k];
-		mean /= nPoints;
-
-		if (mean == 0.0)
-			continue;
-
-		longdouble scale = 0.0;
-		for (integer k = 1; k <= nPoints; k ++) {
-			solution [k] -= mean;
-			scale += solution [k] * solution [k];
-		}
+		
+		double mean;
+		VECcentre_inplace (solution.get(), & mean);
+		if (mean == 0.0) continue;
+		VECnormalize_inplace (solution.get(), 2.0, 1.0);
 
 		for (integer k = 1; k <= nPoints; k ++)
-			x [k] [h] = solution [k] / sqrt ((double) scale);
+			xc -> data [k] [h] = solution [k];
+
 
 		// update weights. Make negative weights zero.
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data.at_deprecated, wih = 0.0;
-			for (integer k = 1; k <= nPoints; k ++)
+			longdouble wih = 0.0;
+			for (integer k = 1; k <= nPoints; k ++) {
 				for (integer l = 1; l <= nPoints; l ++)
-					wih += x [k] [h] * sih [k] [l] * x [l] [h];
-			if (wih < 0.0)
-				wih = 0.0;
-			w [i] [h] = wih;
+					wih += xc -> data [k] [h] * spr -> data [k] [l] * xc -> data [l] [h];
+			}
+			wih = std::max (0.0, (double) wih);
+			weights -> data [i] [h] = wih;
+
 		}
 	}
 }
@@ -2025,14 +1981,13 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration configuration, Salience weights, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal, double *out_varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, varianceAccountedFor;
-		integer nSources = sp->size, iter;
+		integer nSources = sp -> size, iter;
 
 		autoConfiguration conf = Data_copy (configuration);
 		autoSalience sal = Data_copy (weights);
 
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (0.0, U"INDSCAL analysis");
-		}
 
 		// Solve for X, and W matrix via Alternating Least Squares.
 
@@ -2043,13 +1998,12 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 			ScalarProductList_Configuration_Salience_vaf (sp, conf.get(), sal.get(), & varianceAccountedFor);
 
-			if (varianceAccountedFor > 1.0 - tol || fabs (varianceAccountedFor - vafp) /  vafp < tolerance) {
+			if (varianceAccountedFor > 1.0 - tol || fabs (varianceAccountedFor - vafp) /  vafp < tolerance)
 				break;
-			}
+
 			vafp = varianceAccountedFor;
-			if (showProgress) {
-				Melder_progress ( (double) iter / (numberOfIterations + 1), U"indscal: varianceAccountedFor ", varianceAccountedFor);
-			}
+			if (showProgress) Melder_progress (iter / (numberOfIterations + 1.0), 
+				U"indscal: varianceAccountedFor ", varianceAccountedFor);
 		}
 
 		// Count number of zero weights
@@ -2069,18 +2023,17 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n",
 				Thing_className (sp), U"number of objects: ", nSources);
-			for (integer i = 1; i <= nSources; i ++) {
+			for (integer i = 1; i <= nSources; i ++) 
 				MelderInfo_writeLine (U"  ", Thing_getName (sp->at [i]));
-			}
-			if (nZeros > 0) {
+
+			if (nZeros > 0)
 				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", (nZeros > 1 ? U"s" : U""), U"!");
-			}
+
 			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", varianceAccountedFor, U"\nThe optimal configuration was reached in ", (iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
 			MelderInfo_drain();
 		}
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 	} catch (MelderError) {
 		if (showProgress) {
 			Melder_progress (1.0);
@@ -2133,38 +2086,28 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 		Thing_setName (salience.get(), U"indscal_mr");
 		TableOfReal_setLabelsFromCollectionItemNames (salience.get(), (Collection) dissims, true, false);   // FIXME cast
 
-		if (out_configuration) {
-			*out_configuration = configuration.move();
-		}
-		if (out_salience) {
-			*out_salience = salience.move();
-		}
-		if (out_varianceAccountedFor) {
-			*out_varianceAccountedFor = vaf;
-		}
+		if (out_configuration) *out_configuration = configuration.move();
+		if (out_salience) *out_salience = salience.move();
+		if (out_varianceAccountedFor) *out_varianceAccountedFor = vaf;
 
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL with monotone regression *******************");
 			MelderInfo_writeLine (Thing_className (dissims));
 			MelderInfo_writeLine (U"Number of objects: ", nSources);
-			for (integer i = 1; i <= nSources; i ++) {
+			for (integer i = 1; i <= nSources; i ++)
 				MelderInfo_writeLine (U"  ", Thing_getName (dissims->at [i]));
-			}
-			if (nZeros > 0) {
+			if (nZeros > 0)
 				MelderInfo_writeLine (U"WARNING: ", nZeros, U" zero weight", (nZeros > 1 ? U"s" : U""));
-			}
 			MelderInfo_writeLine (U"Variance Accounted For: ", vaf);
 			MelderInfo_writeLine (U"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine (U"number of iterations: ", (iter > numberOfIterations ?	numberOfIterations : iter));
 			MelderInfo_drain();
 		}
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 	} catch (MelderError) {
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 		Melder_throw (U"No inscal configuration calculated.");
 	}
 }
@@ -2251,9 +2194,8 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 		autoConfiguration conf = Data_copy (cstart.get());
 		autoSalience sal = Data_copy (wstart.get());
 
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (0.0, U"Indscal many times");
-		}
 
 		for (integer iter = 1; iter <= numberOfRepetitions; iter ++) {
 			autoConfiguration cresult; 
@@ -2289,7 +2231,7 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 void DistanceList_to_Configuration_indscal (DistanceList distances, integer numberOfDimensions, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
+		bool showSingle = (showProgress && numberOfRepetitions == 1);
 		double vaf, vafmin = 0.0;
 
 		autoConfiguration cstart;
@@ -2298,9 +2240,8 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 		autoConfiguration conf = Data_copy (cstart.get());
 		autoSalience sal = Data_copy (wstart.get());
 
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (0.0, U"Indscal many times");
-		}
 
 		for (integer i = 1; i <= numberOfRepetitions; i ++) {
 			autoConfiguration cresult;
@@ -2315,9 +2256,8 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 			Configuration_normalize (cstart.get(), 1.0, true);
 			Salience_setDefaults (wstart.get());
 
-			if (showMulti) {
+			if (showMulti)
 				Melder_progress ((double) i / (numberOfRepetitions + 1), i, U" from ", numberOfRepetitions);
-			}
 		}
 
 		if (out_conf) *out_conf = conf.move();
@@ -2325,9 +2265,8 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 		if (showMulti) Melder_progress (1.0);
 		
 	} catch (MelderError) {
-		if (showMulti) {
+		if (showMulti)
 			Melder_progress (1.0);
-		}
 		Melder_throw (distances, U": no indscal performed.");
 	}
 }
@@ -2388,9 +2327,8 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 
 			// weigh configuration before calculating variances
 
-			for (integer j = 1; j <= thy numberOfColumns; j ++) {
+			for (integer j = 1; j <= thy numberOfColumns; j ++)
 				thy w [j] = sqrt (his data [i] [j]);
-			}
 
 			double vare, vart;
 			ScalarProduct_Configuration_getVariances (sp, thee, & vare, & vart);
@@ -2441,9 +2379,8 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 			autoDistance d = Configuration_to_Distance (c.get());
 			autoDissimilarity dissim = Distance_to_Dissimilarity (d.get());
 			for (integer i = 1; i <= numberOfObjects - 1; i ++) {
-				for (integer j = i + 1; j <= numberOfObjects; j ++) {
+				for (integer j = i + 1; j <= numberOfObjects; j ++)
 					dissim -> data [i] [j] = (dissim -> data [j] [i] += NUMrandomUniform (0.0, noiseRange));
-				}
 			}
 			Thing_setName (dissim.get(), s -> rowLabels [l].get());
 			my addItem_move (dissim.move());
@@ -2462,12 +2399,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	integer nSplines, n = 1000;
 	double knot [101], y [1001];
 	if (k > 100) return; // 
-	if (splineType == MDS_ISPLINE) {
+	if (splineType == MDS_ISPLINE)
 		k ++;
-	}
-	for (integer i = 1; i <= k; i ++) {
+	for (integer i = 1; i <= k; i ++)
 		knot [i] = low;
-	}
 	numberOfKnots = k;
 
 	{ // scope
@@ -2484,20 +2419,18 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 				Melder_warning (U"drawSplines: too many knots (101)");
 				return;
 			}
-			knot [ ++ numberOfKnots] = value;
+			knot [++ numberOfKnots] = value;
 		}
 	}
 
 	numberOfInteriorKnots = numberOfKnots - k;
-	for (integer i = 1; i <= k; i ++) {
-		knot [ ++numberOfKnots] = high;
-	}
+	for (integer i = 1; i <= k; i ++)
+		knot [++numberOfKnots] = high;
 
 	nSplines = order + numberOfInteriorKnots;
 
-	if (nSplines == 0) {
+	if (nSplines == 0)
 		return;
-	}
 
 	Graphics_setWindow (g, low, high, ymin, ymax);
 	Graphics_setInner (g);
@@ -2505,11 +2438,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	for (integer i = 1; i <= nSplines; i ++) {
 		for (integer j = 1; j <= n; j ++) {
 			double yx, x = low + dx * (j - 1);
-			if (splineType == MDS_MSPLINE) {
+			if (splineType == MDS_MSPLINE)
 				yx = NUMmspline (constVEC (knot, numberOfKnots), order, i, x);
-			} else {
+			else
 				yx = NUMispline (constVEC (knot, numberOfKnots), order, i, x);
-			}
 			y [j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
 		}
 		Graphics_function (g, y, 1, n, low, high);
@@ -2523,13 +2455,12 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		Graphics_marksTop (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot [order]) {
-			if (order == 1) {
+			if (order == 1)
 				MelderString_copy (&ts, U"t__1_");
-			} else if (order == 2) {
+			else if (order == 2)
 				MelderString_copy (&ts,  U"{t__1_, t__2_}");
-			} else {
+			else
 				MelderString_copy (&ts, U"{t__1_..t__", order, U"_}");
-			}
 			Graphics_markBottom (g, low, false, false, false, ts.string);
 		}
 		for (integer i = 1; i <= numberOfInteriorKnots; i ++) {
@@ -2540,11 +2471,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			}
 		}
 		if (knot [lastKnot - order + 1] <= high) {
-			if (order == 1) {
+			if (order == 1)
 				MelderString_copy (&ts, U"t__", lastKnot, U"_");
-			} else {
+			else
 				MelderString_copy (&ts, U"{t__", (order == 2 ? lastKnot - 1 : lastKnot - order + 1), U"_, t__", lastKnot, U"_}");
-			}
 			Graphics_markBottom (g, high, false, false, false, ts.string);
 		}
 	}

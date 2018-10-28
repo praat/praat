@@ -110,12 +110,12 @@ autoSound Sound_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 
 		autoMAT minv = MATpseudoInverse (thy data.get(), 0.0);
 		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer i = 1; i <= thy numberOfColumns; i ++) {
-			for (integer j = 1; j <= my nx; j ++) {
+		for (integer irow = 1; irow <= thy numberOfColumns; irow ++) {
+			for (integer icol = 1; icol <= my nx; icol ++) {
 				longdouble s = 0.0;
 				for (integer k = 1; k <= my ny; k ++)
-					s += minv [i] [k] * my z [k] [j];
-				his z [i] [j] = (double) s;
+					s += minv [irow] [k] * my z [k] [icol];
+				his z [irow] [icol] = (double) s;
 			}
 		}
 		return him;

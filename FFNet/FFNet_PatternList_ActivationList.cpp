@@ -39,8 +39,8 @@ static double func (Daata object, const double p []) {
 		}
 	}
 	for (integer i = 1; i <= my nPatterns; i ++) {
-		FFNet_propagate (me, my inputPattern [i], nullptr);
-		fp += FFNet_computeError (me, my targetActivation [i]);
+		FFNet_propagate (me, my inputPattern.row (i), nullptr);
+		fp += FFNet_computeError (me, my targetActivation.row (i));
 		FFNet_computeDerivative (me);
 		/* derivative (cumulative) */
 		for (integer k = 1; k <= my nWeights; k ++) {
@@ -87,19 +87,19 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 		// Link the things to be learned
 
 		my nPatterns = pattern -> ny;
-		my inputPattern = pattern -> z.at_deprecated;
-		my targetActivation = activation -> z.at_deprecated;
+		my inputPattern = pattern -> z.get();
+		my targetActivation = activation -> z.get();
 		FFNet_setCostFunction (me, costFunctionType);
 
 		if (reset) {
-			autoNUMvector<double> wbuf (1, my dimension);
+			autoVEC wbuf = newVECzero (my dimension);
 			integer k = 1;
 			for (integer i = 1; i <= my nWeights; i ++) {
 				if (my wSelected [i]) {
 					wbuf [k ++] = my w [i];
 				}
 			}
-			Minimizer_reset (my minimizer.get(), wbuf.peek());
+			Minimizer_reset (my minimizer.get(), wbuf.at);
 		}
 
 		Minimizer_minimize (my minimizer.get(), maxNumOfEpochs, tolerance, 1);
@@ -107,12 +107,12 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 		// Unlink
 
 		my nPatterns = 0;
-		my inputPattern = nullptr;
-		my targetActivation = nullptr;
+		my inputPattern.at_deprecated = nullptr;
+		my targetActivation.at_deprecated = nullptr;
 	} catch (MelderError) {
 		my nPatterns = 0;
-		my inputPattern = nullptr;
-		my targetActivation = nullptr;
+		my inputPattern.at_deprecated = nullptr;
+		my targetActivation.at_deprecated = nullptr;
 	}
 }
 
@@ -158,8 +158,8 @@ double FFNet_PatternList_ActivationList_getCosts_total (FFNet me, PatternList p,
 
 		double cost = 0.0;
 		for (integer i = 1; i <= p -> ny; i ++) {
-			FFNet_propagate (me, & p -> z [i] [0], nullptr);
-			cost += FFNet_computeError (me, & a -> z [i] [0]);
+			FFNet_propagate (me, p -> z.row (i), nullptr);
+			cost += FFNet_computeError (me, a -> z.row (i));
 		}
 		return cost;
 	} catch (MelderError) {
@@ -184,7 +184,7 @@ autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p,
 		autoActivationList thee = ActivationList_create (nPatterns, my nUnitsInLayer [layer]);
 
 		for (integer i = 1; i <= nPatterns; i ++) {
-			FFNet_propagateToLayer (me, & p -> z [i] [0], & thy z [i] [0], layer);
+			FFNet_propagateToLayer (me, p -> z.row (i), thy z.row (i), layer);
 		}
 		return thee;
 	} catch (MelderError) {

@@ -152,12 +152,12 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-inline void VECset (VEC x, double value) {
+inline void VECsetValues (VEC x, double value) {
 	for (integer i = 1; i <= x.size; i ++) x [i] = value;
 }
 
-inline void MATset (MAT x, double value) {
-	VECset (asvector (x), value);
+inline void MATsetValues (MAT x, double value) {
+	VECsetValues (asvector (x), value);
 }
 
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
@@ -474,7 +474,7 @@ void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, 
 */
 
 
-void NUMdominantEigenvector (constMAT mns, VEC inout_q, double *out_lambda, double tolerance);
+double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance);
 /*
 	Determines the first dominant eigenvector from a square GENERAL matrix m.
 	Besides the matrix m, a first guess for the eigenvector q must
@@ -1246,6 +1246,14 @@ inline void MATaxpy (MAT y, constMAT x, double a) {
 			y [irow] [icol] += a * x [irow] [icol];
 }
 
+/* R = X.Y.Z */
+void MATmul3 (MATVU const & target, constMATVU& X, constMATVU& Y, constMATVU& Z);
+
+/* Z = X.Y.X' */
+void MATmul3_VMVt (MATVU target, constMAT X, constMAT Y);
+
+/* Z = X'.Y.X */
+void MATmul3_VtMV (MATVU target, constMAT x, constMAT y);	
 /*
 	First row (n elements) is at v[1]..v[n],
 	second row (n-1 elements) is at v[n+1],..,v[n+n-1],

@@ -1,6 +1,6 @@
 /* FFNet_def.h
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 
 	oo_INTEGER (nWeights)	/* number of weights */
 
-	oo_DOUBLE_VECTOR (w, nWeights)
+	oo_VEC (w, nWeights)
 	
 	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_INTEGER (nNodes)
@@ -51,7 +51,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 		#if oo_DECLARING
 			double (*nonLinearity) (FFNet /* me */, double /* x */, double * /* deriv */);
     		void *nlClosure;
-    		double (*costFunction) (FFNet /* me */, const double * /* target */);
+    		double (*costFunction) (FFNet /* me */, constVEC& /* target */);
 			void *cfClosure;
 		#endif
 		
@@ -59,24 +59,24 @@ oo_DEFINE_CLASS (FFNet, Daata)
 			oo_DOUBLE (accumulatedCost)
 			oo_INTEGER (nPatterns)
 			oo_INTEGER (currentPattern)
-			double **inputPattern, **targetActivation;
+			MAT inputPattern, targetActivation;
 		#endif
 		#if oo_DECLARING || oo_DESTROYING
 			oo_OBJECT (Minimizer, 0, minimizer)
 		#endif
 
-		oo_DOUBLE_VECTOR (activity, nNodes)
-		oo_INTEGER_VECTOR (isbias, nNodes)
-		oo_INTEGER_VECTOR (nodeFirst, nNodes)
-		oo_INTEGER_VECTOR (nodeLast, nNodes)
-		oo_INTEGER_VECTOR (wFirst, nNodes)
-		oo_INTEGER_VECTOR (wLast, nNodes)
+		oo_VEC (activity, nNodes)
+		oo_INTVEC (isbias, nNodes)
+		oo_INTVEC (nodeFirst, nNodes)
+		oo_INTVEC (nodeLast, nNodes)
+		oo_INTVEC (wFirst, nNodes)
+		oo_INTVEC (wLast, nNodes)
 			
-		oo_DOUBLE_VECTOR (deriv, nNodes)	
-		oo_DOUBLE_VECTOR (error, nNodes)	
-		oo_INTEGER_VECTOR (wSelected, nWeights)
-		oo_DOUBLE_VECTOR (dw, nWeights)
-		oo_DOUBLE_VECTOR (dwi, nWeights)
+		oo_VEC (deriv, nNodes)	
+		oo_VEC (error, nNodes)	
+		oo_INTVEC (wSelected, nWeights)
+		oo_VEC (dw, nWeights)
+		oo_VEC (dwi, nWeights)
 	#endif
 
 	#if oo_READING

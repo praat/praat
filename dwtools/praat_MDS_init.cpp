@@ -1111,6 +1111,15 @@ DO
 	END
 }
 
+FORM (NEW_Distance_to_Configuration_torsca, U"Distance: To Configuration (torsca)", U"") {
+	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
+	OK
+DO
+	CONVERT_EACH (Distance)
+		autoConfiguration result = Distance_to_Configuration_torsca (me, numberOfDimensions);
+	CONVERT_EACH_END (my name.get(), U"_torsca")
+}
+
 FORM (NEW1_Dissimilarity_Distance_monotoneRegression, U"Dissimilarity & Distance: Monotone regression", nullptr) {
 	RADIO (tiesHandling, U"Handling of ties", 1)
 		RADIOBUTTON (U"Primary approach")
@@ -1413,6 +1422,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1, NEWMANY_Distances_to_Configuration_indscal);
 	praat_addAction1 (classDistance, 0, U"-- linear scaling --", nullptr, 1, nullptr);
 	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1, NEWMANY_Distances_to_Configuration_ytl);
+	praat_addAction1 (classDistance, 0, U"To Configuration (torsca)...", nullptr, 1, NEW_Distance_to_Configuration_torsca);
 	praat_addAction1 (classDistance, 0, U"To Dissimilarity", nullptr, 0, NEW_Distance_to_Dissimilarity);
 	praat_addAction1 (classDistance, 0, U"To ScalarProduct...", nullptr, 0, NEW_Distance_to_ScalarProduct);
 

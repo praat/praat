@@ -156,7 +156,7 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol = result.ncol);
 	Melder_assert (result.nrow == result.ncol);
-	MATset (result, 0.0);
+	MATsetValues (result, 0.0);
 	if (true) {
 		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -316,23 +316,26 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
 	return (double) chisq;
 }
 
-void NUMdominantEigenvector (constMAT m, VEC inout_q, double *out_lambda, double tolerance) {
+/*
+	G. Golub & C. van Loan (1996), Matrix computations, third edition,
+	The Johns Hopkins University Press Ltd.,
+	London, (Par. 7.3.1 The Power Method)
+*/
+double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance) {
 	Melder_assert (m.nrow == m.ncol && inout_q.size == m.nrow);
 
 	double lambda0, lambda = NUMvtmv (inout_q, m); //  q'. M . q
-	Melder_require (lambda > 0.0, U"Zero matrices ??");
+	//Melder_require (lambda > 0.0, U"Zero matrices ??");
 	autoVEC z = newVECraw (m.nrow);
-	integer iter = 0;
+	integer numberOfIterations = 0;
 	do {
 		lambda0 = lambda;
 		VECmul_preallocated (z.get(), m, inout_q);
 		VECnormalize_inplace (z.get(), 2.0, 1.0);
 		lambda = NUMvtmv (z.get(), m); // z'. M . z
-
-	} while (fabs (lambda - lambda0) > tolerance || ++ iter < 30);
+	} while (fabs (lambda - lambda0) > tolerance || ++ numberOfIterations < 30);
 	inout_q <<= z.all();
-	if (out_lambda)
-		*out_lambda = (double) lambda;
+	return lambda;
 }
 
 /* Input:
@@ -2824,4 +2827,22 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	if (out_sn1) *out_sn1 = (double) sn1;
 }
 
+void MATmul3_VMVt (MATVU target, constMAT x, constMAT y) { // X.Y.X'
+	Melder_assert (x.ncol == y.nrow && y.ncol == x.ncol);
+	Melder_assert (target.nrow == target.ncol && target.nrow == x.nrow);
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			longdouble sum = 0.0;
+			for (integer k = 1; k <= x.ncol; k ++)
+				sum += x [irow] [k] * NUMinner (y.row (k), x.row (icol));
+			target [irow] [icol] = sum;
+		}
+}
+
+void MATmul3_VtMV (MATVU target, constMAT x, constMAT y) { // X'.Y.X'
+	Melder_assert (x.nrow == y.nrow && y.ncol == x.nrow);
+	Melder_assert (target.nrow == target.ncol && target.nrow == x.ncol);
+	autoMAT xTranspose = newMATtranspose (x);
+	MATmul3_VMVt (target, xTranspose.get(), y);
+}
 /* End of file NUM2.cpp */

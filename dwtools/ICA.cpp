@@ -228,6 +228,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// [vb,db] = eig(C0);
 		// P = db^(-1/2)*vb';
 		Eigen_initFromSymmetricMatrix (eigen.get(), c0 -> data.get());
+		
 		for (integer i = 1; i <= dimension; i ++) {
 			Melder_require (eigen -> eigenvalues [i] >= 0.0, U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
 			double scalef = 1.0 / sqrt (eigen -> eigenvalues [i]);
@@ -325,7 +326,6 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	autoDiagonalizer him = MixingMatrix_to_Diagonalizer (me);
 	Diagonalizer_CrossCorrelationTableList_improveDiagonality (him.get(), thee, maxNumberOfIterations, tol, method);
-
 	MATpseudoInverse_preallocated (my data.get(), his data.get(), 0);
 }
 
@@ -535,7 +535,7 @@ autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me) {
 autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	try {
 		autoMixingMatrix thee = MixingMatrix_create (my numberOfRows, my numberOfColumns);
-		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
+		MixingMatrix_setRandomGauss (thee.get(), 0.0, 1.0);
 		MATpseudoInverse_preallocated (thy data.get(), my data.get(), 0.0);
 
 		return thee;
@@ -544,10 +544,7 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	}
 }
 
-void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee,
-	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
-	integer maxNumberOfIterations, double tol, int method)
-{
+void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, integer maxNumberOfIterations, double tol, int method) {
 	autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (thee, startTime, endTime, numberOfCrossCorrelations, lagStep);
 	MixingMatrix_CrossCorrelationTableList_improveUnmixing (me, ccs.get(), maxNumberOfIterations, tol, method);
 }
@@ -752,7 +749,7 @@ autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTabl
 void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	if (method == 1) {
 		autoVEC cweights = newVECraw (thy size);
-		VECset (cweights.get(), 1.0 / thy size);
+		VECsetValues (cweights.get(), 1.0 / thy size);
 		Diagonalizer_CrossCorrelationTable_qdiag (me, thee, cweights.get(), maxNumberOfIterations, tol);
 	} else {
 		Diagonalizer_CrossCorrelationTableList_ffdiag (me, thee, maxNumberOfIterations, tol);

@@ -129,27 +129,6 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
 }
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents) {
-	Melder_assert (a.nrow == a.ncol);
-	Melder_assert (nComponents > 0 && nComponents <= a.ncol);
-	Melder_assert (pc.nrow == a.nrow && pc.ncol == nComponents);
-	
-	autoMAT eigenvectors = newMATraw (a.nrow, a.nrow);
-	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
-	
-	MATVUmul (pc, a.transpose(), eigenvectors.verticalBand (1, nComponents));   // TODO: check
-	/*
-	for (integer irow = 1; irow <= pc.nrow; irow ++) {
-		for (integer icol = 1; icol <= pc.ncol; icol ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= a.nrow; k ++)
-				sum += a [k] [irow] * eigenvectors [k] [icol];
-			pc [irow] [icol] = double (sum);
-		}
-	}
-	*/
-}
-
 void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m) {
 	Melder_assert (pc.nrow == m.nrow && pc.ncol <= m.ncol);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
@@ -164,7 +143,7 @@ autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
 }
 
 void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
-	Melder_assert (target.nrow == m.nrow && target.ncol == m.ncol);
+	Melder_assert (target.nrow == m.ncol && target.ncol == m.nrow);
 	autoSVD me = SVD_createFromGeneralMatrix (m);
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (integer i = 1; i <= m.ncol; i ++) {
@@ -181,7 +160,7 @@ void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
 }
 
 autoMAT MATpseudoInverse (constMAT m, double tolerance) {
-	autoMAT result = newMATraw (m.nrow, m.ncol);
+	autoMAT result = newMATraw (m.ncol, m.nrow);
 	MATpseudoInverse_preallocated (result.get(), m, tolerance);
 	return result;
 }

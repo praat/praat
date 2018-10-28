@@ -816,7 +816,7 @@ void DataModeler_fit (DataModeler me) {
 		if (numberOfParameters < my numberOfParameters) {
 			autoMAT covtmp = SVD_getSquared (thee.get(), true);
 			// Set fixed parameters variances and covariances to zero.
-			MATset (cov -> data.get(), 0.0);
+			MATsetValues (cov -> data.get(), 0.0);
 			
 			ipar = 0;
 			for (integer i = 1; i <= my numberOfParameters; i ++) {

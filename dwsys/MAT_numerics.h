@@ -44,17 +44,6 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		eigenvalues, eigenvalues sorted according to sortAscending
 */
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents);
-/*
-	Input:
-		a, a symmetric nrow x nrow matrix
-		   only the upper-half of the matrix is used in the calculation
-		nComponents, the number of components to determine (1 <= nComponents <= a.nrow)
-		inout_pc, a a.nrow x nComponents matrix
-	Output:
-		inout_pc, the principal components stored column-wise
-*/
-
 void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvectors, autoMAT *out_righteigenvectors, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im);
 /* no standard sorting with complex numbers.
 	Compute eigenvalues of general nxn matrix with optionally the left/right eigenvectors.

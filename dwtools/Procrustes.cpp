@@ -46,15 +46,16 @@
 #include "oo_DESCRIPTION.h"
 #include "Procrustes_def.h"
 
+#include "NUM2.h"
+
 Thing_implement (Procrustes, AffineTransform, 0);
 
 void structProcrustes :: v_transform (double **in, integer nrows, double **out) {
 	for (integer i = 1; i <= nrows; i ++) {
 		for (integer j = 1; j <= dimension; j ++) {
 			longdouble tmp = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
+			for (integer k = 1; k <= dimension; k ++)
 				tmp += in [i] [k] * r [k] [j];
-			}
 			out [i] [j] = s * tmp + t [j];
 		}
 	}
@@ -75,10 +76,8 @@ autoAffineTransform structProcrustes :: v_invert () {
 			thy r [j] [i] = r [i] [j];
 		}
 		thy t [i] = 0.0;
-		for (integer j = 1; j <= thy dimension; j ++) {
+		for (integer j = 1; j <= thy dimension; j ++)
 			thy t [i] -= thy r [j] [i] * t [j];
-		}
-
 		thy t [i] *= thy s;
 	}
 	return thee.move();   // explicit move() seems to be needed because of the type difference
@@ -86,13 +85,10 @@ autoAffineTransform structProcrustes :: v_invert () {
 
 static void Procrustes_setDefaults (Procrustes me) {
 	my s = 1.0;
-	for (integer i = 1; i <= my dimension; i ++) {
-		my t [i] = 0.0;
+	VECsetValues (my t.get(), 0.0);
+	MATsetValues (my r.get(), 0.0);
+	for (integer i = 1; i <= my dimension; i ++)
 		my r [i] [i] = 1.0;
-		for (integer j = i + 1; j <= my dimension; j ++) {
-			my r [i] [j] = my r [j] [i] = 0.0;
-		}
-	}
 }
 
 autoProcrustes Procrustes_create (integer dimension) {

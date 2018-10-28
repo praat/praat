@@ -82,6 +82,11 @@ autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd) {
 	}
 }
 
+/*
+	Get the best estimate for the additive constant:
+		"distance = dissimilarity + constant"
+	F. Cailliez (1983), The analytical solution of the additive constant problem, Psychometrika 48, 305-308.
+*/
 double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 	double additiveConstant = undefined;
 	try {
@@ -93,8 +98,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		additiveConstant = Dissimilarity_getAverage (me);
 		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
 		
-		autoMAT wd (nPoints, nPoints, kTensorInitializationType::ZERO);
-		autoMAT wdsqrt (nPoints, nPoints, kTensorInitializationType::ZERO);
+		autoMAT wd = newMATzero (nPoints, nPoints);
+		autoMAT wdsqrt = newMATzero (nPoints, nPoints);
 
 		// The matrices D & D1/2 with distances (squared and linear)
 
@@ -111,7 +116,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		// Calculate the B matrix according to eq. 6
 		
-		autoMAT b (nPoints2, nPoints2, kTensorInitializationType::ZERO);
+		autoMAT b = newMATzero (nPoints2, nPoints2);
 
 		for (integer i = 1; i <= nPoints; i ++) {
 			for (integer j = 1; j <= nPoints; j ++) {
@@ -137,7 +142,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			}
 		}
 		
-		Melder_require (largestEigenvalue >= 0, U"The largest eigenvalue should not be negative.");
+		Melder_require (largestEigenvalue >= 0, U"The largest eigenvalue should be positive.");
 		
 		additiveConstant = largestEigenvalue;
 		return additiveConstant;

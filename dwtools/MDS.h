@@ -340,7 +340,7 @@ autoDistance Configuration_to_Distance (Configuration me);
 
 void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark, bool garnish);
 
-autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions);
+autoConfiguration Distance_to_Configuration_torsca (Distance me, integer numberOfDimensions);
 
 
 /************** DISSIMILARITY & CONFIGURATION ************************/

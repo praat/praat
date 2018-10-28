@@ -132,7 +132,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	}
 
 	// update covariance with the new mean
-	MATset (thy data.get(), 0.0);
+	MATsetValues (thy data.get(), 0.0);
 	autoVEC row = newVECraw (data.ncol);
 	autoMAT outer = newMATraw (data.ncol,data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -226,7 +226,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
 			my covariances -> addItemAtPosition_move (cov.move(), im);
 		}
-		VECset (my mixingProbabilities.get(), 1.0 / numberOfComponents);
+		VECsetValues (my mixingProbabilities.get(), 1.0 / numberOfComponents);
 		GaussianMixture_setDefaultMixtureNames (me.get());
 		return me;
 	} catch (MelderError) {
@@ -870,7 +870,7 @@ integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p) {
 	Melder_assert (p.ncol == my numberOfComponents + 1);
 	Melder_assert (p.nrow > 1);
-	VECset (p.row (p.nrow), 0.0);
+	VECsetValues (p.row (p.nrow), 0.0);
 	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
 		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
 		for (integer icol = 1; icol <= my numberOfComponents; icol ++)
