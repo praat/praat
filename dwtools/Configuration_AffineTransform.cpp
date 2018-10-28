@@ -89,22 +89,19 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 
 	for (integer j = 1; j <= nc; j ++) {
 		longdouble scale = 0.0;
-		for (integer k = 1; k <= nr; k ++) {
+		for (integer k = 1; k <= nr; k ++)
 			scale += b [k] [j] * b [k] [j];
-		}
-		if (scale > 0.0) {
+		if (scale > 0.0)
 			scale = 1.0 / sqrt (scale);
-		}
-		for (integer i = 1; i <= nc; i++) {
+		for (integer i = 1; i <= nc; i++)
 			w [i] [j] *= scale;
-		}
 	}
 
 	// Step 3: largest eigenvalue of C
 
 	evec [1] = 1.0;
-	double rho, f, f_old;
-	NUMdominantEigenvector (c.get(), evec.get(), & rho, 1.0e-6);
+	double f, f_old;
+	double rho = VECdominantEigenvector_inplace (evec.get(),c.get(), 1.0e-6);
 
 	do_steps45 (w.get(), t, c.get(), & f);
 	do {
