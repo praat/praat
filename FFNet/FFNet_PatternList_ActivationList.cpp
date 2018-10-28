@@ -1,6 +1,6 @@
 /* FFNet_PatternList_ActivationList.cpp
  *
- * Copyright (C) 1994-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1994-2018 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,18 +34,16 @@ static double func (Daata object, const double p []) {
 
 	for (integer j = 1, k = 1; k <= my nWeights; k ++) {
 		my dw [k] = 0.0;
-		if (my wSelected [k]) {
+		if (my wSelected [k])
 			my w [k] = p [j ++];
-		}
 	}
 	for (integer i = 1; i <= my nPatterns; i ++) {
 		FFNet_propagate (me, my inputPattern.row (i), nullptr);
 		fp += FFNet_computeError (me, my targetActivation.row (i));
 		FFNet_computeDerivative (me);
 		/* derivative (cumulative) */
-		for (integer k = 1; k <= my nWeights; k ++) {
+		for (integer k = 1; k <= my nWeights; k ++)
 			my dw [k] += my dwi [k];
-		}
 	}
 	thy funcCalls ++;
 	return fp;
@@ -57,22 +55,18 @@ static void dfunc_optimized (Daata object, const double p [], double dp []) {
 
 	integer j = 1;
 	for (integer k = 1; k <= my nWeights; k ++) {
-		if (my wSelected [k]) {
+		if (my wSelected [k])
 			dp [j ++] = my dw [k];
-		}
 	}
 }
 
 static void _FFNet_PatternList_ActivationList_checkDimensions (FFNet me, PatternList p, ActivationList a) {
-	if (my nInputs != p -> nx) {
-		Melder_throw (U"The PatternList and the FFNet do not match.\nThe number of columns in the PatternList must equal the number of inputs in the FFNet.");
-	}
-	if (my nOutputs != a -> nx) {
-		Melder_throw (U"The Activation and the FFNet do not match.\nThe number of columns in the Activation must equal the number of outputs in the FFNet.");
-	}
-	if (p -> ny != a -> ny) {
-		Melder_throw (U"The PatternList and the ActivationList do not match.\nThe number of rows in the PatternList must equal the number of rows in the Activation.");
-	}
+	Melder_require (my nInputs == p -> nx,
+		U"The PatternList and the FFNet do not match.\nThe number of columns in the PatternList must equal the number of inputs in the FFNet.");
+	Melder_require (my nOutputs == a -> nx,
+		U"The Activation and the FFNet do not match.\nThe number of columns in the Activation must equal the number of outputs in the FFNet.");
+	Melder_require (p -> ny == a -> ny,
+		U"The PatternList and the ActivationList do not match.\nThe number of rows in the PatternList must equal the number of rows in the Activation.");
 	if (! _PatternList_checkElements (p)) {
 		Melder_throw (U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");	}
 	if (! _ActivationList_checkElements (a)) {
