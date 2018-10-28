@@ -843,13 +843,13 @@ void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, 
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions) {
+autoConfiguration Distance_to_Configuration_torsca (Distance me, integer numberOfDimensions) {
 	try {
 		Melder_require (numberOfDimensions <= my numberOfRows, U"Number of dimensions should not exceed ", my numberOfRows, U".");
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, false);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		TableOfReal_copyLabels (me, thee.get(), 1, 0);
-		MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (thy data.get(), sp -> data.get(), numberOfDimensions);
+		MAT_asPrincipalComponents_preallocated (thy data.get(), sp -> data.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created (torsca method).");

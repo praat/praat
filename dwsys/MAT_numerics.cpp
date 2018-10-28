@@ -129,17 +129,6 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
 }
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents) {
-	Melder_assert (a.nrow == a.ncol);
-	Melder_assert (nComponents > 0 && nComponents <= a.ncol);
-	Melder_assert (pc.nrow == a.nrow && pc.ncol == nComponents);
-	
-	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
-	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
-	
-	MATVUmul (pc, a.transpose(), eigenvectors.verticalBand (1, nComponents));
-}
-
 void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m) {
 	Melder_assert (pc.nrow == m.nrow && pc.ncol <= m.ncol);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
