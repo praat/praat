@@ -74,7 +74,7 @@ void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT
 	}
 }
 
-autoVEC VECmul (const constVEC& vec, const constMAT& mat) noexcept {
+autoVEC newVECmul (const constVEC& vec, const constMAT& mat) noexcept {
 	autoVEC result = newVECraw (mat.ncol);
 	VECmul_preallocated (result.get(), vec, mat);
 	return result;
@@ -94,7 +94,7 @@ void VECmul_preallocated (const VEC& target, const constMAT& mat, const constVEC
 	}
 }
 
-autoVEC VECmul (const constMAT& mat, const constVEC& vec) noexcept {
+autoVEC newVECmul (const constMAT& mat, const constVEC& vec) noexcept {
 	autoVEC result = newVECraw (mat.nrow);
 	VECmul_preallocated (result.get(), mat, vec);
 	return result;

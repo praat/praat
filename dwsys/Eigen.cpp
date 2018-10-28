@@ -160,8 +160,8 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoVEC work = newVECraw (lwork);
 	autoINTVEC iwork = newINTVECzero (n);
 	autoMAT q = newMATraw (n, n);
-	autoMAT ac = MATtranspose (a);
-	autoMAT bc  = MATtranspose (b);
+	autoMAT ac = newMATtranspose (a);
+	autoMAT bc = newMATtranspose (b);
 
 	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
 		& ac [1][1], & lda, & bc [1][1], & ldb, alpha.begin(), beta.begin(), u, & ldu,
@@ -174,9 +174,8 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		double t = alpha [i] / beta [i];
 		alpha [i] = t * t;
-		if (alpha [i] > maxsv2) {
+		if (alpha [i] > maxsv2)
 			maxsv2 = alpha [i];
-		}
 	}
 
 	// Deselect the eigenvalues < eps * max_eigenvalue by making them -1.0

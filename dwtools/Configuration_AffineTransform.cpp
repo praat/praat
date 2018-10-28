@@ -78,7 +78,7 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 
 	// Steps 1 & 2: C = A'A and W = A'B
 
-	autoMAT c = MATmtm (a);
+	autoMAT c = newMATmtm (a);
 	autoMAT w = newMATmul (a.transpose(), b);
 	double checkc = NUMsum (c.get());
 	double checkw = NUMsum (w.get());

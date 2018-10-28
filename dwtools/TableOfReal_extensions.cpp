@@ -910,7 +910,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, integer columnNumber, doub
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns)
 			return undefined;
-		autoVEC values = VECcolumn (my data.get(), columnNumber);
+		autoVEC values = newVECcolumn (my data.get(), columnNumber);
 		VECsort_inplace (values.get());
 		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {

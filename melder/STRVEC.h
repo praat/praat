@@ -40,6 +40,6 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	separated (and perhaps preceded and followed) by white space.
 	The tokens cannot contain spaces themselves (there are no escapes).
 */
-autostring32vector STRVECtokenize (conststring32 string);
+autostring32vector newSTRVECtokenize (conststring32 string);
 
 /* End of file STRVEC.h */

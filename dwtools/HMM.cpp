@@ -467,19 +467,19 @@ autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, inte
 // for a simple non-hidden model leave either states empty or symbols empty !!!
 autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string) {
 	try {
-		autostring32vector states = STRVECtokenize (states_string);
-		autostring32vector symbols = STRVECtokenize (symbols_string);
+		autostring32vector states = newSTRVECtokenize (states_string);
+		autostring32vector symbols = newSTRVECtokenize (symbols_string);
 		autoHMM me = Thing_new (HMM);
 
 		Melder_require (states.size > 0 || symbols.size > 0,
 			U"The states and symbols should not both be empty.");
 		
 		if (symbols.size <= 0) {
-			symbols = STRVECclone (states.get());
+			symbols = newSTRVECcopy (states.get());
 			my notHidden = 1;
 		}
 		if (states.size <= 0) {
-			states = STRVECclone (symbols.get());
+			states = newSTRVECcopy (symbols.get());
 			my notHidden = 1;
 		}
 

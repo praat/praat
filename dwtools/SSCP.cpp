@@ -455,7 +455,7 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 		MATsubtract_inplace (part.get(), thy centroid.get());
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
 		if (weightColumnNumber != 0) {
-			autoVEC rowWeights = VECcolumn (my data.horizontalBand (rowb, rowe), weightColumnNumber);
+			autoVEC rowWeights = newVECcolumn (my data.horizontalBand (rowb, rowe), weightColumnNumber);
 			MATmtm_weighRows_preallocated (thy data.get(), part.get(), rowWeights.get());
 		} else
 			MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
@@ -1235,7 +1235,7 @@ static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s
 }
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
-	autostring32vector vector = STRVECtokenize (vector_string);
+	autostring32vector vector = newSTRVECtokenize (vector_string);
 	autoVEC v = newVECzero (my numberOfColumns);
 	for (integer i = 1; i <= vector.size; i ++) {
 		v [i] = Melder_atof (vector [i].get());

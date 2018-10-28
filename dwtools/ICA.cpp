@@ -217,7 +217,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		autoVEC wnew = newVECraw (dimension);
 		autoVEC mvec = newVECzero (dimension);
 
-		autoMAT wc = MATtranspose (my data.get());
+		autoMAT wc = newMATtranspose (my data.get());
 
 		// d = diag(diag(W'*C0*W));
 		// W = W*d^(-1/2);
@@ -601,8 +601,8 @@ autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 
 autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars_string, conststring32 centroid_string, integer numberOfSamples) {
 	try {
-		autostring32vector covars = STRVECtokenize (covars_string);
-		autostring32vector centroid = STRVECtokenize (centroid_string);
+		autostring32vector covars = newSTRVECtokenize (covars_string);
+		autostring32vector centroid = newSTRVECtokenize (centroid_string);
 		integer dimension = centroid.size;
 		integer ncovars = covars.size;
 		integer ncovars_wanted = dimension * (dimension + 1) / 2;
@@ -790,7 +790,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 			The V matrix will be the common diagonalizer matrix that we use.
 		*/
 
-		autoMAT d = MATrandomGauss (dimension, dimension, 0.0, 1.0);
+		autoMAT d = newMATrandomGauss (dimension, dimension, 0.0, 1.0);
 		autoMAT v = newMATraw (dimension, dimension);
 		autoSVD svd = SVD_createFromGeneralMatrix (d.get());
 		autoCrossCorrelationTableList me = CrossCorrelationTableList_create ();

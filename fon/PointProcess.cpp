@@ -110,7 +110,7 @@ autoPointProcess PointProcess_createPoissonProcess (double startingTime, double 
 	try {
 		autoPointProcess me = PointProcess_create (startingTime, finishingTime, 0);
 		integer numberOfPoints = (integer) NUMrandomPoisson ((finishingTime - startingTime) * density);
-		my t = VECrandomUniform (numberOfPoints, startingTime, finishingTime);
+		my t = newVECrandomUniform (numberOfPoints, startingTime, finishingTime);
 		my maxnt = my nt;
 		my nt = my t.size;   // maintain invariant
 		VECsort_inplace (my t.get());
