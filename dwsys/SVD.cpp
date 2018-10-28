@@ -218,7 +218,7 @@ autoVEC SVD_solve (SVD me, constVEC b) {
 			t [j] = (double) tmp;
 		}
 
-		autoVEC x = VECmul (my v.get(), t.get());
+		autoVEC x = newVECmul (my v.get(), t.get());
 		return x;
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
@@ -358,8 +358,8 @@ autoGSVD GSVD_create_d (constMAT m1, constMAT m2) {
 		integer lwork = std::max (std::max (3 * n, m), p) + n;
 
 		// Store the matrices a and b as column major!
-		autoMAT a = MATtranspose (m1);
-		autoMAT b = MATtranspose (m2);
+		autoMAT a = newMATtranspose (m1);
+		autoMAT b = newMATtranspose (m2);
 		autoMAT q = newMATraw (n, n);
 		autoVEC alpha = newVECraw (n);
 		autoVEC beta = newVECraw (n);

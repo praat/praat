@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-autostring32 STRleft (conststring32 str, integer newLength) {
+autostring32 newSTRleft (conststring32 str, integer newLength) {
 	integer length = str32len (str);
 	if (newLength < 0)
 		newLength = 0;
@@ -29,7 +29,7 @@ autostring32 STRleft (conststring32 str, integer newLength) {
 	return result;
 }
 
-autostring32 STRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
+autostring32 newSTRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
 	integer length = str32len (str), endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
 	if (startingPosition_1 < 1)
 		startingPosition_1 = 1;
@@ -43,7 +43,7 @@ autostring32 STRmid (conststring32 str, integer startingPosition_1, integer numb
 	return result;
 }
 
-autostring32 STRreplace (conststring32 string,
+autostring32 newSTRreplace (conststring32 string,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
@@ -123,7 +123,7 @@ autostring32 STRreplace (conststring32 string,
 	return result;
 }
 
-autostring32 STRreplace_regex (conststring32 string,
+autostring32 newSTRreplace_regex (conststring32 string,
 	regexp *compiledSearchRE, conststring32 replaceRE, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
@@ -229,7 +229,7 @@ autostring32 STRreplace_regex (conststring32 string,
 	return buf;
 }
 
-autostring32 STRright (conststring32 str, integer newLength) {
+autostring32 newSTRright (conststring32 str, integer newLength) {
 	integer length = str32len (str);
 	if (newLength < 0)
 		newLength = 0;

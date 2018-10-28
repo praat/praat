@@ -373,8 +373,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		integer dimmin = nrow < ncol ? nrow : ncol;
 
 		autoMAT h = newMATcopy (my data.get());
-		autoVEC rowsum = VECsumPerRow (my data.get());
-		autoVEC colsum = VECsumPerColumn (my data.get());
+		autoVEC rowsum = newVECsumPerRow (my data.get());
+		autoVEC colsum = newVECsumPerColumn (my data.get());
 		autoConfiguration thee = Configuration_create (nrow + ncol, numberOfDimensions);
 
 		if (numberOfDimensions == 0)

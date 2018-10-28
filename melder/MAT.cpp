@@ -343,13 +343,13 @@ void MATouter_preallocated (MAT const& target, constVEC const& x, constVEC const
 		for (integer icol = 1; icol <= y.size; icol ++)
 			target [irow] [icol] = x [irow] * y [icol];
 }
-autoMAT MATouter (constVEC const& x, constVEC const& y) {
+autoMAT newMATouter (constVEC const& x, constVEC const& y) {
 	autoMAT result = newMATraw (x.size, y.size);
 	MATouter_preallocated (result.get(), x, y);
 	return result;
 }
 
-autoMAT MATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT newMATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) includeEdges = false;
 	integer numberOfPeaks = 0;
 	for (integer i = 2; i < x.size; i ++)

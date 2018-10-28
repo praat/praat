@@ -4164,7 +4164,7 @@ static autoStrings itemizeColourString (conststring32 colourString) {
 	// remove all spaces within { } so each {1,2,3} can be itemized
 	static const conststring32 searchRE = U"\\{\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*\\}";
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
-	autostring32 colourStringWithoutSpaces = STRreplace_regex (colourString, compiledRE, U"{\\1,\\2,\\3}", 0);
+	autostring32 colourStringWithoutSpaces = newSTRreplace_regex (colourString, compiledRE, U"{\\1,\\2,\\3}", 0);
 	autoStrings thee = Strings_createAsTokens (colourStringWithoutSpaces.get(), U" ");
 	return thee;
 }

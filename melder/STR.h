@@ -17,14 +17,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-autostring32 STRleft (conststring32 str, integer newLength = 1);
+autostring32 newSTRleft (conststring32 str, integer newLength = 1);
 
-autostring32 STRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
+autostring32 newSTRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
 
 /**
 	Look for occurrences of `search` in `str`, and replace them with `replace`.
 */
-autostring32 STRreplace (conststring32 str, conststring32 search,
+autostring32 newSTRreplace (conststring32 str, conststring32 search,
 	conststring32 replace, integer maximumNumberOfReplacements,
 	integer *out_numberOfReplacements = nullptr);
 
@@ -36,10 +36,10 @@ autostring32 STRreplace (conststring32 str, conststring32 search,
 	is the result of the compileRE-function which should be called before this function.
 	The number of actual replacements performed is returned in `out_numberOfReplacements`.
 */
-autostring32 STRreplace_regex (conststring32 string, regexp *search_compiled,
+autostring32 newSTRreplace_regex (conststring32 string, regexp *search_compiled,
 	conststring32 replace_regex, integer maximumNumberOfReplacements,
 	integer *out_numberOfReplacements = nullptr);
 
-autostring32 STRright (conststring32 str, integer newLength = 1);
+autostring32 newSTRright (conststring32 str, integer newLength = 1);
 
 /* End of file STR.h */

@@ -35,7 +35,7 @@ inline void MATadd_preallocated (const MAT& target, const constMAT& x, double ad
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
 	VECadd_preallocated (asvector (target), asvector (x), addend);
 }
-inline autoMAT MATadd (const constMAT& x, double addend) {
+inline autoMAT newMATadd (const constMAT& x, double addend) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
 	MATadd_preallocated (result.get(), x, addend);
 	return result;
@@ -45,7 +45,7 @@ inline void MATadd_preallocated (const MAT& target, const constMAT& x, const con
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
 	VECadd_preallocated (asvector (target), asvector (x), asvector (y));
 }
-inline autoMAT MATadd (const constMAT& x, const constMAT& y) noexcept {
+inline autoMAT newMATadd (const constMAT& x, const constMAT& y) noexcept {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
 	MATadd_preallocated (result.get(), x, y);
 	return result;
@@ -70,7 +70,7 @@ extern void MATcentreEachRow_inplace (const MAT& x) noexcept;
 extern void MATdoubleCentre_inplace (const MAT& x) noexcept;
 
 extern void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept;
-inline autoMAT MATmtm (const constMAT& x) {
+inline autoMAT newMATmtm (const constMAT& x) {
 	autoMAT result = newMATraw (x.ncol, x.ncol);
 	MATmtm_preallocated (result.get(), x);
 	return result;
@@ -101,7 +101,7 @@ inline void MATVUmul_fast  (const MATVU& target, const constMATVU& x, const cons
 	Melder_assert (x.ncol == y.nrow);
 	MATVUmul_fast_ (target, x, y);
 }
-inline autoMAT MATmul_fast (const constMAT& x, const constMAT& y) {
+inline autoMAT newMATmul_fast (const constMAT& x, const constMAT& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
 	MATVUmul_fast (result.all(), x, y);
 	return result;
@@ -114,11 +114,11 @@ inline void MATmultiply_inplace (const MAT& x, double factor) noexcept {
 }
 
 void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y);
-extern autoMAT MATouter (const constVEC& x, const constVEC& y);
+extern autoMAT newMATouter (const constVEC& x, const constVEC& y);
 
-extern autoMAT MATpeaks (const constVEC& x, bool includeEdges, int interpolate, bool sortByHeight);
+extern autoMAT newMATpeaks (const constVEC& x, bool includeEdges, int interpolate, bool sortByHeight);
 
-inline autoMAT MATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
+inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
 	autoMAT result = newMATraw (nrow, ncol);
 	for (integer irow = 1; irow <= nrow; irow ++)
 		for (integer icol = 1; icol <= ncol; icol ++)
@@ -158,21 +158,21 @@ inline void MATsubtractReversed_inplace (const MAT& x, const constMAT& y) noexce
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
 }
-inline autoMAT MATsubtract (const constMAT& x, double y) {
+inline autoMAT newMATsubtract (const constMAT& x, double y) {
 	auto result = newMATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] - y;
 	return result;
 }
-inline autoMAT MATsubtract (double x, const constMAT& y) {
+inline autoMAT newMATsubtract (double x, const constMAT& y) {
 	auto result = newMATraw (y.nrow, y.ncol);
 	for (integer irow = 1; irow <= y.nrow; irow ++)
 		for (integer icol = 1; icol <= y.ncol; icol ++)
 			result [irow] [icol] = x - y [irow] [icol];
 	return result;
 }
-inline autoMAT MATsubtract (const constMAT& x, const constMAT& y) {
+inline autoMAT newMATsubtract (const constMAT& x, const constMAT& y) {
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
 	auto result = newMATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
@@ -194,7 +194,7 @@ inline void MATtranspose_preallocated (const MAT& target, const constMAT& x) noe
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = x [icol] [irow];
 }
-inline autoMAT MATtranspose (const constMAT& x) {
+inline autoMAT newMATtranspose (const constMAT& x) {
 	autoMAT result = newMATraw (x.ncol, x.nrow);
 	MATtranspose_preallocated (result.get(), x);
 	return result;
