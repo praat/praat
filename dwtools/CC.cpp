@@ -1,6 +1,6 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2012, 2014-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ void structCC :: v_info () {
 }
 
 void CC_Frame_init (CC_Frame me, integer numberOfCoefficients) {
-	my c = NUMvector<double> (1, numberOfCoefficients);
+	my c = newVECzero (numberOfCoefficients);
 	my numberOfCoefficients = numberOfCoefficients;
 }
 
