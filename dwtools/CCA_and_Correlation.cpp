@@ -40,18 +40,10 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 		double **evecy = my y -> eigenvectors.at_deprecated, **evecx = my x -> eigenvectors.at_deprecated;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				longdouble t = 0.0;
-				for (integer k = 1; k <= ny; k ++) {
-					t += thy data [i] [k] * evecy [j] [k];
-				}
-				his data [j] [i] = (double) t;
+				his data [j] [i] = NUMinner (thy data.row (i).part (1, ny), my y -> eigenvectors.row (j));
 			}
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				longdouble t = 0.0;
-				for (integer k = 1; k <= nx; k ++) {
-					t += thy data [i] [ny + k] * evecx [j] [k];
-				}
-				his data [my numberOfCoefficients + j] [i] = (double) t;
+				his data [my numberOfCoefficients + j] [i] = NUMinner (thy data.row (i).part (ny + 1, ny + nx), my x -> eigenvectors.row (j));
 			}
 		}
 		return him;
