@@ -24,14 +24,14 @@ oo_DEFINE_STRUCT (CC_Frame)
 	#if oo_READING_BINARY
 		oo_VERSION_UNTIL (1)
 			oo_FLOAT (c0)
-			oo_FLOAT_VECTOR (c, numberOfCoefficients)
+			oo_obsoleteVEC32 (c, numberOfCoefficients)
 		oo_VERSION_ELSE
 			oo_DOUBLE (c0)
-			oo_DOUBLE_VECTOR (c, numberOfCoefficients)
+			oo_VEC (c, numberOfCoefficients)
 		oo_VERSION_END
 	#else
 		oo_DOUBLE (c0)
-		oo_DOUBLE_VECTOR (c, numberOfCoefficients)
+		oo_VEC (c, numberOfCoefficients)
 	#endif
 
 oo_END_STRUCT (CC_Frame)

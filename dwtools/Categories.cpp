@@ -1,6 +1,6 @@
 /* Categories.cpp
  *
- * Copyright (C) 1993-2013,2015 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,13 +32,13 @@ void structCategories :: v_info () {
 
 void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	integer l_size = texgeti32 (a_text);
-	if (l_size == 0) {
+	if (l_size == 0)
 		(void) 0;
-	} else if (l_size < 0) {
+	else if (l_size < 0)
 		Melder_throw (U"Size cannot be negative.");
-	} else {
+	else
 		our _grow (l_size);
-	}
+
 	for (integer i = 1; i <= l_size; i ++) {
 		autoSimpleString itemi = Thing_new (SimpleString);
 		itemi -> v_readText (a_text, 0);
@@ -92,9 +92,7 @@ autoCategories Categories_selectUniqueItems (Categories me) {
 }
 
 void Categories_drawItem (Categories me, Graphics g, integer position, double xWC, double yWC) {
-	if (position < 1 || position > my size) {
-		return;
-	}
+	if (position < 1 || position > my size) return;
 	SimpleString item = my at [position];
 	Graphics_text (g, xWC, yWC, item -> string.get());
 }

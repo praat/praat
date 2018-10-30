@@ -25,27 +25,22 @@
 #include "NUM2.h"
 
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
-	double *c = thy c, *a = my a.at;
 
 	thy c0 = 0.5 * log (my gain);
-	if (my nCoefficients < 1) {
-		return;
-	}
+	if (my nCoefficients < 1) return;
 
-	c [1] = -a [1];
+	thy c [1] = - my a [1];
 	for (integer n = 2; n <= std::min ((integer) my nCoefficients, thy numberOfCoefficients); n ++) {
-		double s = 0;
-		for (integer k = 1; k < n; k ++) {
-			s += a [k] * c [n - k] * (n - k);
-		}
-		c [n] = -a [n] - s / n;
+		longdouble s = 0.0;
+		for (integer k = 1; k < n; k ++)
+			s += my a [k] * thy c [n - k] * (n - k);
+		thy c [n] = - my a [n] - s / n;
 	}
 	for (integer n = my nCoefficients + 1; n <= thy numberOfCoefficients; n ++) {
-		double s = 0;
-		for (integer k = 1; k <= my nCoefficients; k ++) {
-			s += a [k] * c [n - k] * (n - k);
-		}
-		c [n] = - s / n;
+		longdouble s = 0.0;
+		for (integer k = 1; k <= my nCoefficients; k ++)
+			s += my a [k] * thy c [n - k] * (n - k);
+		thy c [n] = - s / n;
 	}
 }
 
@@ -58,18 +53,16 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 	thy a [1] = - my c [1];
 	for (integer i = 2; i <= n; i ++) {
 		longdouble ai = my c [i] * i;
-		for (integer j = 1; j < i; j ++) {
+		for (integer j = 1; j < i; j ++)
 			ai += thy a [j] * my c [i - j] * (i - j);
-		}
 		thy a [i] = -ai / i;
 	}
 }
 
 autoLFCC LPC_to_LFCC (LPC me, integer numberOfCoefficients) {
 	try {
-		if (numberOfCoefficients < 1) {
+		if (numberOfCoefficients < 1)
 			numberOfCoefficients = my maxnCoefficients;
-		}
 
 		autoLFCC thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0, 0.5 / my samplingPeriod);
 
@@ -85,9 +78,9 @@ autoLFCC LPC_to_LFCC (LPC me, integer numberOfCoefficients) {
 
 autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 	try {
-		if (numberOfCoefficients < 1) {
+		if (numberOfCoefficients < 1)
 			numberOfCoefficients = my maximumNumberOfCoefficients;
-		}
+
 		numberOfCoefficients = std::min (numberOfCoefficients, my maximumNumberOfCoefficients);
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0.5 / my fmax);
 
