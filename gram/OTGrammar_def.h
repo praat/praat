@@ -92,7 +92,7 @@ oo_DEFINE_CLASS (OTGrammar, Daata)
 	oo_ENDFROM
 	oo_INTEGER (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, numberOfConstraints)
-	oo_INTEGER_VECTOR (index, numberOfConstraints)   // not read or written in text files
+	oo_INTVEC (index, numberOfConstraints)   // not read or written in text files
 	oo_INTEGER (numberOfFixedRankings)
 	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, numberOfFixedRankings)
 	oo_INTEGER (numberOfTableaus)
