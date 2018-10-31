@@ -185,7 +185,7 @@ inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = newVECraw (x.ncol);
 	autoVEC column = newVECraw (x.nrow);
 	for (integer icol = 1; icol <= norm.size; icol ++) {
-		VECcolumn_preallocated (column.get(), x, icol);
+		column.all() <<= x.column (icol);
 		norm [icol] = NUMnorm (column.get(), power);
 	}
 	return norm;
