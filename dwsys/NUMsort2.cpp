@@ -43,8 +43,7 @@ void NUMrankColumns (MAT m, integer cb, integer ce) {
 	autoINTVEC index = newINTVECraw (m.nrow);
 
 	for (integer j = cb; j <= ce; j ++) {
-		VECcolumn_preallocated (v.get(), m, j);
-		
+		v.all() <<= m.column (j);
 		for (integer i = 1; i <= m.nrow; i ++)
 			index [i] = i;
 		NUMsortTogether (v.get(), index.get());

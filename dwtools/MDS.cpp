@@ -1946,7 +1946,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			MATaxpy (wsih.get(), sih -> data.get(), weights -> data [i] [h]);
 		}
 
-		VECcolumn_preallocated (solution.get(), xc -> data.get(), h); // initial guess
+		solution.all() <<= xc -> data.column (h); // initial guess
 		// largest eigenvalue of wsih (nonsymmetric matrix!!) is optimal solution for this dimension
 		double lambda = VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
 

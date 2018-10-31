@@ -79,15 +79,9 @@ inline void VECcentre_inplace (const VEC& x, double *out_mean = nullptr) noexcep
 		*out_mean = xmean;
 }
 
-inline void VECcolumn_preallocated (const VEC& target, const constMAT& source, integer columnNumber) noexcept {
-	Melder_assert (source.nrow == target.size);
-	Melder_assert (columnNumber >= 1 && columnNumber <= source.ncol);
-	for (integer irow = 1; irow <= target.size; irow ++)
-		target [irow] = source [irow] [columnNumber];
-}
 inline autoVEC newVECcolumn (const constMAT& source, integer columnNumber) {
 	autoVEC target = newVECraw (source.nrow);
-	VECcolumn_preallocated (target.get(), source, columnNumber);
+	target.all() <<= source.column (columnNumber);
 	return target;
 }
 
