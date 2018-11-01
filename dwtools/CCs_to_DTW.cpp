@@ -26,7 +26,7 @@
 
 #include "CCs_to_DTW.h"
 
-static void regression (VEC r, CC me, integer frame, integer nr) { //CC me, integer frame, constVEC r, integer nr
+static void regression (VEC r, CC me, integer frame, integer nr) {
 
 	// sum(i^2;i=-n..n) = 2n^3/3 + n^2 +n/3 = n (n (2n/3 + 1) + 1/3);
 
