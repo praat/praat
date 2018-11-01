@@ -2684,7 +2684,7 @@ static void do_sub () {
 				result# = x - y#
 			*/
 			if (y->owned) {
-				VECsubtractReversed_inplace (y->numericVector, x->number);
+				y->numericVector <<= x->number  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
 				x->numericVector = newVECsubtract (x->number, y->numericVector). releaseToAmbiguousOwner();
@@ -2721,7 +2721,7 @@ static void do_sub () {
 			if (x -> owned) {
 				x->numericVector  -=  y->numericVector;
 			} else if (y -> owned) {
-				VECsubtractReversed_inplace (y->numericVector, x->numericVector);
+				y->numericVector <<= x->numericVector  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
 				// no clean-up of x required, because x is not owned and has the right type
