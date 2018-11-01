@@ -819,7 +819,7 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 			VECaxpy (pool -> centroid.get(), t->centroid.get(), t -> numberOfObservations);
 		}
 		
-		VECmultiply_inplace (pool -> centroid.get(), 1.0 / pool -> numberOfObservations);
+		pool -> centroid.all()  *=  1.0 / pool -> numberOfObservations;
 		
 		return pool;
 	} catch (MelderError) {
@@ -863,7 +863,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			VECaxpy (thy centroid.get(), covi -> centroid.get(), covi -> numberOfObservations);
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
-		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
+		thy centroid.all()  *=  1.0 / thy numberOfObservations;
 		
 		autoVEC mean = newVECraw (thy numberOfColumns);
 		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
@@ -902,7 +902,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 			VECaxpy (thy centroid.get(), covi -> centroid.get(), covi -> numberOfObservations);
 		}
 		
-		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
+		thy centroid.all()  *=  1.0 / thy numberOfObservations;
 		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - my size));
 
 		return thee;

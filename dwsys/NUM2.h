@@ -202,7 +202,7 @@ inline void VECnormalize_inplace (VEC v, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	double oldnorm = NUMnorm (v, power);
 	if (oldnorm > 0.0)
-		VECmultiply_inplace (v, norm / oldnorm);
+		v  *=  norm / oldnorm;
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {

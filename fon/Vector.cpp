@@ -346,7 +346,7 @@ void Vector_subtractMean (Vector me) {
 
 void Vector_multiplyByScalar (Vector me, double scalar) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++)
-		VECmultiply_inplace (my channel (ichan), scalar);
+		my channel (ichan)  *=  scalar;
 }
 
 void Vector_scale (Vector me, double scale) {

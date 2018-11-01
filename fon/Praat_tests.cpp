@@ -448,7 +448,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoVEC result = newVECraw (size);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				VECVUadd (result.all(), x.all(), y.all());
+				//VECVUadd (result.all(), x.all(), y.all());
+				result.all() <<= x.all() + y.all();
 			t = Melder_stopwatch () / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);

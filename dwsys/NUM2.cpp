@@ -149,7 +149,7 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
 static void MATweighRows (MAT x, constVEC y) {
 	Melder_assert (x.nrow == y.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		VECmultiply_inplace (x.row (irow), y [irow]);
+		x.row (irow)  *=  y [irow];
 }
 
 void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeights) {
@@ -176,7 +176,7 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 inline void MATmul_rows_inplace (MAT x, constVEC v) { // TODO better name??
 	Melder_assert (x.nrow == v.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		VECmultiply_inplace (x.row (irow), v [irow]);
+		x.row (irow)  *=  v [irow];
 }
 
 double NUMmultivariateKurtosis (constMAT m, int method) {
