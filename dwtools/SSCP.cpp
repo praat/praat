@@ -271,7 +271,7 @@ autoSSCP SSCP_create (integer dimension) {
 
 void SSCP_reset (SSCP me) {
 	MATsetValues (my data.get(), 0.0);
-	VECsetValues (my centroid.get(), 0.0);
+	my centroid.all() <<= 0.0;
 	my numberOfObservations = 0;
 }
 

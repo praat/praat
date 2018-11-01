@@ -36,7 +36,7 @@ static void regression (CC me, integer frame, double r[], integer nr) { //CC me,
 	if (frame <= nrd2 || frame >= my nx - nrd2)
 		return;
 
-	for (integer i = 0; i <= my maximumNumberOfCoefficients; i ++) //VECsetValues (r.get(), 0.0);
+	for (integer i = 0; i <= my maximumNumberOfCoefficients; i ++) //r.all() <<= 0.0;
 		r [i] = 0.0;
 
 
