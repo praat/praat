@@ -37,7 +37,6 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.get(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
 
-		double **evecy = my y -> eigenvectors.at_deprecated, **evecx = my x -> eigenvectors.at_deprecated;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
 				his data [j] [i] = NUMinner (thy data.row (i).part (1, ny), my y -> eigenvectors.row (j));
@@ -78,31 +77,26 @@ double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y
 		varianceFraction = s'.s / n = c'Rxx' Rxx c/n = (e'.Rxx' Rxx.e) /(e'.Rxx.e) * 1/n
 		(for one can. variate)
 	*/
-
-	integer n = my x -> dimension;
-	double **evec = my x -> eigenvectors.at_deprecated;
-	integer ioffset = my y -> dimension;
-	if (x_or_y == 1) { /* y: dependent set */
-		n = my y -> dimension;
-		evec = my y -> eigenvectors.at_deprecated;
-		ioffset = 0;
-	}
-
+	
 	longdouble varianceFraction = 0.0;
 	for (integer icv = canonicalVariate_from; icv <= canonicalVariate_to; icv ++) {
 		longdouble variance = 0.0, varianceScaling = 0.0;
-
-		for (integer i = 1; i <= n; i ++) {
-			longdouble si = 0.0;
-			for (integer j = 1; j <= n; j++) {
-				si += thy data [ioffset + i] [ioffset + j] * evec [icv] [j]; /* Rxx.e */
+		if (x_or_y == 1) { /* y: dependent set */
+			for (integer i = 1; i <= my y -> dimension; i ++) {
+				double si = NUMinner (thy data.row (i).part (1, my y -> dimension), my y -> eigenvectors.row (icv));
+				variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
+				varianceScaling +=  my y -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
 			}
-			variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
-			varianceScaling +=  evec [icv] [i] * si; /* e'.Rxx.e*/
+			varianceFraction += (variance / varianceScaling) / my y -> dimension;
+		} else {
+			for (integer i = 1; i <= my x -> dimension; i ++) {
+				double si = NUMinner (thy data.row (my y -> dimension + i).part (my y -> dimension + 1, thy data.ncol), my x -> eigenvectors.row (icv));
+				variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
+				varianceScaling +=  my x -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
+			}
+			varianceFraction += (variance / varianceScaling) / my y -> dimension;
 		}
-		varianceFraction += (variance / varianceScaling) / n;
-	}
-
+	} 
 	return (double) varianceFraction;
 }
 
@@ -112,9 +106,8 @@ double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, i
 	longdouble redundancy = 0.0;
 	for (integer icv = canonicalVariate_from; icv <= canonicalVariate_to; icv ++) {
 		double varianceFraction = CCA_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
-		if (isundef (varianceFraction)) {
-			return undefined;
-		}
+		if (isundef (varianceFraction)) return undefined;
+
 		redundancy += varianceFraction * my y -> eigenvalues [icv];
 	}
 
