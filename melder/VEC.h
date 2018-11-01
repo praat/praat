@@ -17,44 +17,135 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	From here on alphabetical order.
-*/
-
-inline void operator+= (VECVU const& x, double addend) noexcept {
+inline void operator<<= (const VECVU& x, double number) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
-		x [i] += addend;
+		x [i] = number;
 }
-inline void operator+= (VECVU const& x, constVECVU const& y) noexcept {
+inline void operator+= (const VECVU& x, double number) noexcept {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] += number;
+}
+inline void operator-= (const VECVU& x, double number) noexcept {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] -= number;
+}
+inline void operator*= (const VECVU& x, double number) noexcept {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] *= number;
+}
+inline void operator/= (const VECVU& x, double number) noexcept {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] /= number;
+}
+
+inline void operator<<= (VECVU const& target, constVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+inline void operator+= (const VECVU& x, const constVECVU& y) noexcept {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
 }
-inline void VECadd_preallocated (VEC const& target, constVEC const& x, double addend) noexcept {
-	Melder_assert (x.size == target.size);
+inline void operator-= (const VECVU& x, const constVECVU& y) noexcept {
+	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
-		target [i] = x [i] + addend;
+		x [i] -= y [i];
 }
-extern void VECadd_macfast_ (VEC const& target, constVEC const& x, constVEC const& y) noexcept;
-inline void VECadd_preallocated (VEC const& target, constVEC const& x, constVEC const& y) noexcept {
-	integer n = target.size;
-	Melder_assert (x.size == n);
-	Melder_assert (y.size == n);
-	#if defined (macintosh)
-		if (n >= 64)
-			return VECadd_macfast_ (target, x, y);
-	#endif
-	for (integer i = 1; i <= n; i ++)
-		target [i] = x [i] + y [i];
+inline void operator*= (const VECVU& x, const constVECVU& y) noexcept {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] *= y [i];
 }
-inline autoVEC newVECadd (constVEC const& x, double addend) {
+inline void operator/= (const VECVU& x, const constVECVU& y) noexcept {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] /= y [i];
+}
+
+struct TypeVECadd_VEC_NUM {
+	const constVECVU &x;
+	double addend;
+};
+inline TypeVECadd_VEC_NUM operator+ (const constVECVU &x, double addend) {
+	return { x, addend };
+}
+inline void operator<<= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
+	Melder_assert (expr.x.size == target.size);
+	for (integer i = 1; i <= expr.x.size; i ++)
+		target [i] = expr.x [i] + expr.addend;
+}
+inline void operator+= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
+	Melder_assert (expr.x.size == target.size);
+	for (integer i = 1; i <= expr.x.size; i ++)
+		target [i] += expr.x [i] + expr.addend;
+}
+inline void operator-= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
+	Melder_assert (expr.x.size == target.size);
+	for (integer i = 1; i <= expr.x.size; i ++)
+		target [i] -= expr.x [i] + expr.addend;
+}
+inline void operator*= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
+	Melder_assert (expr.x.size == target.size);
+	for (integer i = 1; i <= expr.x.size; i ++)
+		target [i] *= expr.x [i] + expr.addend;
+}
+inline void operator/= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
+	Melder_assert (expr.x.size == target.size);
+	for (integer i = 1; i <= expr.x.size; i ++)
+		target [i] /= expr.x [i] + expr.addend;
+}
+inline autoVEC newVECadd (const constVEC& x, double addend) {
 	autoVEC result = newVECraw (x.size);
-	VECadd_preallocated (result.get(), x, addend);
+	result.all() <<= x  +  addend;
 	return result;
 }
-inline autoVEC newVECadd (constVEC const& x, constVEC const& y) {
+
+struct TypeVECadd_VEC_VEC {
+	const constVECVU &x, &y;
+};
+inline TypeVECadd_VEC_VEC operator+ (const constVECVU &x, const constVECVU& y) {
+	return { x, y };
+}
+inline void operator<<= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
+	integer n = target.size;
+	Melder_assert (expr.x.size == n);
+	Melder_assert (expr.y.size == n);
+	for (integer i = 1; i <= n; i ++)
+		target [i] = expr.x [i] + expr.y [i];
+}
+inline void operator+= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
+	integer n = target.size;
+	Melder_assert (expr.x.size == n);
+	Melder_assert (expr.y.size == n);
+	for (integer i = 1; i <= n; i ++)
+		target [i] += expr.x [i] + expr.y [i];
+}
+inline void operator-= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
+	integer n = target.size;
+	Melder_assert (expr.x.size == n);
+	Melder_assert (expr.y.size == n);
+	for (integer i = 1; i <= n; i ++)
+		target [i] -= expr.x [i] + expr.y [i];
+}
+inline void operator*= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
+	integer n = target.size;
+	Melder_assert (expr.x.size == n);
+	Melder_assert (expr.y.size == n);
+	for (integer i = 1; i <= n; i ++)
+		target [i] *= expr.x [i] + expr.y [i];
+}
+inline void operator/= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
+	integer n = target.size;
+	Melder_assert (expr.x.size == n);
+	Melder_assert (expr.y.size == n);
+	for (integer i = 1; i <= n; i ++)
+		target [i] /= expr.x [i] + expr.y [i];
+}
+inline autoVEC newVECadd (const constVECVU& x, const constVECVU& y) {
 	autoVEC result = newVECraw (x.size);
-	VECadd_preallocated (result.get(), x, y);
+	result.all() <<= x  +  y;
 	return result;
 }
 
@@ -96,15 +187,6 @@ inline autoVEC newVECcolumnMeans (const constMAT& x) {
 	return result;
 }
 
-inline void VECdivide_inplace (VEC const& x, double factor) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] /= factor;
-}
-inline void VECdivide_inplace (VEC const& x, constVEC const& y) noexcept {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] /= y [i];
-}
 inline void VECdivide_preallocated (VEC const& target, constVEC const& x, double factor) noexcept {
 	Melder_assert (x.size == target.size);
 	for (integer i = 1; i <= x.size; i ++)
@@ -133,15 +215,6 @@ extern void VECmul_preallocated (const VEC& target, const constMAT& mat, const c
 extern autoVEC newVECmul (const constVEC& vec, const constMAT& mat) noexcept;
 extern autoVEC newVECmul (const constMAT& mat, const constVEC& vec) noexcept;
 
-inline void VECmultiply_inplace (VEC const& x, double factor) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] *= factor;
-}
-inline void VECmultiply_inplace (VEC const& x, constVEC const& y) noexcept {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] *= y [i];
-}
 inline void VECmultiply_preallocated (VEC const& target, constVEC const& x, double factor) noexcept {
 	Melder_assert (x.size == target.size);
 	for (integer i = 1; i <= x.size; i ++)
@@ -185,15 +258,6 @@ inline void VECsin_inplace (VEC const& x) noexcept {
 
 extern void VECsort_inplace (VEC const& x) noexcept;
 
-inline void VECsubtract_inplace (VEC const& x, double number) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] -= number;
-}
-inline void VECsubtract_inplace (VEC const& x, constVEC const& y) noexcept {
-	Melder_assert (x.size == y.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] -= y [i];
-}
 inline void VECsubtractReversed_inplace (VEC const& x, double number) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = number - x [i];

@@ -1541,11 +1541,6 @@ inline autoBOOLMAT newBOOLMATcopy (constBOOLMAT source) {
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
-inline void operator<<= (VECVU const& target, constVECVU const& source) {
-	Melder_assert (target.size == source.size);
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = source [i];
-}
 inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	Melder_assert (target.size == source.size);
 	for (integer i = 1; i <= target.size; i ++)

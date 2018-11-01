@@ -33,7 +33,7 @@ inline void MATadd_inplace (MAT const& x, constMAT const& y) noexcept {
 }
 inline void MATadd_preallocated (const MAT& target, const constMAT& x, double addend) noexcept {
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
-	VECadd_preallocated (asvector (target), asvector (x), addend);
+	asvector (target) <<= asvector (x)  +  addend;
 }
 inline autoMAT newMATadd (const constMAT& x, double addend) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
@@ -43,7 +43,7 @@ inline autoMAT newMATadd (const constMAT& x, double addend) {
 inline void MATadd_preallocated (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
-	VECadd_preallocated (asvector (target), asvector (x), asvector (y));
+	asvector (target) <<= asvector (x)  +  asvector (y);
 }
 inline autoMAT newMATadd (const constMAT& x, const constMAT& y) noexcept {
 	autoMAT result = newMATraw (x.nrow, x.ncol);

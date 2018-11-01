@@ -2719,7 +2719,7 @@ static void do_sub () {
 			if (nx != ny)
 				Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 			if (x -> owned) {
-				VECsubtract_inplace (x->numericVector, y->numericVector);
+				x->numericVector  -=  y->numericVector;
 			} else if (y -> owned) {
 				VECsubtractReversed_inplace (y->numericVector, x->numericVector);
 				moveNumericVector (y, x);
@@ -2738,7 +2738,7 @@ static void do_sub () {
 				result# [i] = x# [i] - y
 			*/
 			if (x->owned) {
-				VECsubtract_inplace (x->numericVector, y->number);
+				x->numericVector  -=  y->number;
 			} else {
 				x->numericVector = newVECsubtract (x->numericVector, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
@@ -2813,7 +2813,7 @@ static void do_mul () {
 				result# = x * y#
 			*/
 			if (y->owned) {
-				VECmultiply_inplace (y->numericVector, xvalue);
+				y->numericVector  *=  xvalue;
 				x->which = Stackel_NUMERIC_VECTOR;
 				moveNumericVector (y, x);
 				w ++;

@@ -757,7 +757,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, cons
 	variableVector  +=  vector;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
-	VECsubtract_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  -=  scalar;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -765,10 +765,10 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 		U"You cannot subtract a vector with size ", vector.size,
 		U" from a vector with a different size (", variableVector.size, U")."
 	);
-	VECsubtract_inplace (variableVector, vector);
+	variableVector  -=  vector;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
-	VECmultiply_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  *=  scalar;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -776,10 +776,10 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 		U"You cannot multiply a vector with size ", variableVector.size,
 		U" with a vector with a different size (", vector.size, U")."
 	);
-	VECmultiply_inplace (variableVector, vector);
+	variableVector  *=  vector;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
-	VECdivide_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  /=  scalar;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -787,7 +787,7 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, c
 		U"You cannot divide a vector with size ", variableVector.size,
 		U" by a vector with a different size (", vector.size, U")."
 	);
-	VECdivide_inplace (variableVector, vector);
+	variableVector  /=  vector;
 }
 inline static void NumericMatrixVariable_add (InterpreterVariable variable, double scalar) {
 	MAT variableMatrix = variable -> numericMatrixValue.get();
