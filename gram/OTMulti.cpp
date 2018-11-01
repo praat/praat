@@ -95,8 +95,8 @@ void structOTMulti :: v_writeText (MelderFile file) {
 }
 
 void OTMulti_checkIndex (OTMulti me) {
-	if (my index) return;
-	my index = NUMvector <integer> (1, my numberOfConstraints);
+	if (my index.size != 0) return;
+	my index = newINTVECraw (my numberOfConstraints);
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
 	OTMulti_sort (me);
 }
@@ -1335,27 +1335,15 @@ void OTMulti_setConstraintPlasticity (OTMulti me, integer constraint, double pla
 
 void OTMulti_removeConstraint (OTMulti me, conststring32 constraintName) {
 	try {
-		integer removed = 0;
-
 		if (my numberOfConstraints <= 1)
 			Melder_throw (me, U": cannot remove last constraint.");
-
-		/*
-			Look for the constraint to be removed.
-		*/
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			OTConstraint constraint = & my constraints [icons];
-			if (str32equ (constraint -> name.get(), constraintName)) {
-				removed = icons;
-				break;
-			}
-		}
-		if (removed == 0)
+		integer constraintToBeRemoved = OTMulti_getConstraintIndexFromName (me, constraintName);
+		if (constraintToBeRemoved == 0)
 			Melder_throw (U"No constraint \"", constraintName, U"\".");
 		/*
 			Remove the constraint while reusing the memory space.
 		*/
-		for (integer icons = removed; icons < my numberOfConstraints; icons ++) {
+		for (integer icons = constraintToBeRemoved; icons < my numberOfConstraints; icons ++) {
 			my constraints [icons] = std::move (my constraints [icons + 1]);
 		}
 		my constraints [my numberOfConstraints]. destroy ();   // this will do nothing except if the removed constraint is the last one
@@ -1366,14 +1354,16 @@ void OTMulti_removeConstraint (OTMulti me, conststring32 constraintName) {
 		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
 			OTCandidate candidate = & my candidates [icand];
 			candidate -> numberOfConstraints -= 1;
-			for (integer icons = removed; icons <= my numberOfConstraints; icons ++)
+			for (integer icons = constraintToBeRemoved; icons <= my numberOfConstraints; icons ++)
 				candidate -> marks [icons] = candidate -> marks [icons + 1];
 			candidate -> marks. size -= 1;   // maintain invariant
 		}
 		/*
 			Rebuild index.
 		*/
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+		my index. resize (my numberOfConstraints);
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+			my index [icons] = icons;
 		OTMulti_sort (me);
 	} catch (MelderError) {
 		Melder_throw (me, U": constraint not removed.");

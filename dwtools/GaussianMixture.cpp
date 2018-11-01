@@ -127,20 +127,20 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 		gamma [irow] = my mixingProbabilities [component] * p [irow] [component] / p [irow] [p.ncol + 1];
 	autoVEC column = newVECraw (data.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++) {
-		VECcolumn_preallocated (column.get(), data, icol);
+		column.all() <<= data.column (icol);
 		thy centroid [icol] = NUMinner (column.get (), gamma.get()) / p [p.nrow] [component];
 	}
 
 	// update covariance with the new mean
 	MATsetValues (thy data.get(), 0.0);
 	autoVEC row = newVECraw (data.ncol);
-	autoMAT outer = newMATraw (data.ncol,data.ncol);
+	autoMAT outer = newMATraw (data.ncol, data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
 		row.all() <<= data.row (irow);
-		VECsubtract_inplace (row.get(), thy centroid.get());
+		row.all()  -=  thy centroid.all();
 		if (thy numberOfRows == 1) {
-			VECmultiply_inplace (row.get(), row.get());
-			VECaxpy (thy data.row (1), row.get(), gamma [irow]);
+			row.all()  *=  row.all();
+			thy data.row (1)  +=  row.all()  *  gamma [irow];
 		} else {
 			MATouter_preallocated (outer, row.get(), row.get());
 			MATaxpy (thy data.get(), outer.get(), gamma [irow]);
@@ -150,18 +150,16 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 }
 
 static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer im, Covariance him, double fraction) {
-	if (im < 1 || im > my numberOfComponents || fraction == 0) {
+	if (im < 1 || im > my numberOfComponents || fraction == 0)
 		return;
-	}
 
 	Covariance thee = my covariances->at [im];
 
 	// prevent instability: add lambda fraction of global covariances
 
 	if (thy numberOfRows == 1) {
-		for (integer j = 1; j <= thy numberOfColumns; j ++) {
+		for (integer j = 1; j <= thy numberOfColumns; j ++)
 			thy data [1] [j] += fraction * his data [j] [j];
-		}
 	} else
 		MATaxpy (thy data.get(), his data.get(), fraction);
 }
@@ -672,7 +670,7 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 			if (rowsum == 0.0) continue;    // This is ok because gamma [i]'s will all be zero
 
 			// scale gamma and get log(likehood) (Bishop eq. 9.40)
-			VECmultiply_inplace (gamma.row (i), 1.0 / rowsum);
+			gamma.row (i)  *=  1.0 / rowsum;
 			gamma.row (gamma.nrow)  +=  gamma.row (i);  // eq. Bishop 9.18
 			for (integer im = 1; im <= my numberOfComponents; im ++)
 				lnp += gamma [i] [im] * (log (my mixingProbabilities [im])  + lnN [im]); // eq. Bishop 9.40
@@ -822,7 +820,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 
 				// M-step: 2. new mixingProbabilities
 				my mixingProbabilities.all() <<= p.row (p.nrow).part (1, p.ncol - 1);
-				VECmultiply_inplace (my mixingProbabilities.get(), 1.0 / thy numberOfRows);
+				my mixingProbabilities.all()  *=  1.0 / thy numberOfRows;
 				
 				GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
 				

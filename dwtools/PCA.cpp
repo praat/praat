@@ -176,7 +176,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 			the eigenstructure for A'A. This has no consequences for the
 			eigenvectors, but the eigenvalues have to be divided by (N-1).
 		*/
-		VECmultiply_inplace (thy eigenvalues.get(), 1.0 / (mcopy.nrow - 1));
+		thy eigenvalues.all()  *=  1.0 / (mcopy.nrow - 1);
 		
 		return thee;
 	} catch (MelderError) {

@@ -82,20 +82,17 @@ static void NUMdvector_into_matrix (const double *v, double **m, integer r1, int
 static void MAT_divideRowByRowsum_inplace (MAT m) {
 	for (integer i = 1; i <= m.nrow; i ++) {
 		longdouble rowSum = NUMsum (m.row (i));
-		if (rowSum != 0.0) VECmultiply_inplace (m.row (i), 1.0 / rowSum);
+		if (rowSum != 0.0)
+			m.row (i)  *=  1.0 / rowSum;
 	}
 }
 
 static integer NUMdmatrix_countZeros (double **m, integer nr, integer nc) {
 	integer nZeros = 0;
-
-	for (integer i = 1; i <= nr; i ++) {
-		for (integer j = 1; j <= nc; j ++) {
-			if (m [i] [j] == 0) {
+	for (integer i = 1; i <= nr; i ++)
+		for (integer j = 1; j <= nc; j ++)
+			if (m [i] [j] == 0)
 				nZeros ++;
-			}
-		}
-	}
 	return nZeros;
 }
 
@@ -1946,7 +1943,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			MATaxpy (wsih.get(), sih -> data.get(), weights -> data [i] [h]);
 		}
 
-		VECcolumn_preallocated (solution.get(), xc -> data.get(), h); // initial guess
+		solution.all() <<= xc -> data.column (h); // initial guess
 		// largest eigenvalue of wsih (nonsymmetric matrix!!) is optimal solution for this dimension
 		double lambda = VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
 

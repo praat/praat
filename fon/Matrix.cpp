@@ -406,7 +406,7 @@ void Matrix_movie (Matrix me, Graphics g) {
 	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	for (integer icol = 1; icol <= my nx; icol ++) {
-		VECcolumn_preallocated (column.get(), my z.get(), icol);
+		column.all() <<= my z.column (icol);
 		Graphics_beginMovieFrame (g, & Graphics_WHITE);
 		Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
 		Graphics_function (g, column.at, 1, my ny, my ymin, my ymax);
