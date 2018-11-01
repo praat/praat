@@ -816,7 +816,7 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 
 			// Sum the sscp's and weigh the centroid.
 			MATadd_inplace (pool -> data.get(), t -> data.get());
-			VECaxpy (pool -> centroid.get(), t->centroid.get(), t -> numberOfObservations);
+			pool -> centroid.all()  +=  t->centroid.all()  *  t -> numberOfObservations;
 		}
 		
 		pool -> centroid.all()  *=  1.0 / pool -> numberOfObservations;
@@ -836,7 +836,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
 			if (covi -> numberOfRows == 1) {
-				VECaxpy (thy data.row (1), covi -> data.row (1), covi -> numberOfObservations - 1.0);
+				thy data.row (1)  +=  covi -> data.row (1)  *  (covi -> numberOfObservations - 1.0);
 			} else {
 				MATaxpy (thy data.get(), covi -> data.get(), covi -> numberOfObservations - 1.0);
 			}
@@ -860,7 +860,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
-			VECaxpy (thy centroid.get(), covi -> centroid.get(), covi -> numberOfObservations);
+			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
 		thy centroid.all()  *=  1.0 / thy numberOfObservations;
@@ -869,15 +869,14 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
-			VECsubtract_preallocated (mean.get(), covi -> centroid.get(), thy centroid.get());
+			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
 			MATouter_preallocated (outer.get(), mean.get(), mean.get());
 			if (thy numberOfRows == 1) {
-				VECaxpy (thy data.row (1), outer.diagonal(), covi -> numberOfObservations);
+				thy data.row (1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
 			} else
 				MATaxpy (thy data.get(), outer.get(), covi -> numberOfObservations); // Y += aX
 		}
 		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - 1.0));
-		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (between) created.");
@@ -888,7 +887,6 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 	try {
 		autoCovariance thee = Data_copy (my at [1]);
 		SSCP_reset (thee.get());
-		
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
 			Melder_require (covi -> numberOfRows == thy numberOfRows, U"The dimension of item ", i, U" should agree.");
@@ -897,14 +895,12 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 
 			// Sum the sscp's and weigh the centroid.
 			for (integer i = 1; i <= thy numberOfRows; i ++) // catch 1xn
-				VECaxpy (thy data.row (i), covi -> data.row (i), covi -> numberOfObservations - 1.0);
-				
-			VECaxpy (thy centroid.get(), covi -> centroid.get(), covi -> numberOfObservations);
+				thy data.row (i)  +=  covi -> data.row (i)  *  (covi -> numberOfObservations - 1.0);
+
+			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
 		}
-		
 		thy centroid.all()  *=  1.0 / thy numberOfObservations;
 		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - my size));
-
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not pooled.");
