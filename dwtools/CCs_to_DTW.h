@@ -46,7 +46,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 
 	PRECONDITIONS:
 
-	at least one of wc, wle, wr, wer != 0
+	at least one of the four weights != 0
 */
 
 #endif /* _CCs_to_DTW_h_ */
