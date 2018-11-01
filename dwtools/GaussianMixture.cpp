@@ -218,13 +218,13 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 		autoGaussianMixture me = Thing_new (GaussianMixture);
 		my numberOfComponents = numberOfComponents;
 		my dimension = dimension;
-		my mixingProbabilities = newVECzero (numberOfComponents);
+		my mixingProbabilities = newVECraw (numberOfComponents);
+		my mixingProbabilities.all() <<= 1.0 / numberOfComponents;
 		my covariances = CovarianceList_create ();
 		for (integer im = 1; im <= numberOfComponents; im ++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
 			my covariances -> addItemAtPosition_move (cov.move(), im);
 		}
-		VECsetValues (my mixingProbabilities.get(), 1.0 / numberOfComponents);
 		GaussianMixture_setDefaultMixtureNames (me.get());
 		return me;
 	} catch (MelderError) {
@@ -868,7 +868,7 @@ integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p) {
 	Melder_assert (p.ncol == my numberOfComponents + 1);
 	Melder_assert (p.nrow > 1);
-	VECsetValues (p.row (p.nrow), 0.0);
+	p.row (p.nrow) <<= 0.0;
 	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
 		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
 		for (integer icol = 1; icol <= my numberOfComponents; icol ++)
@@ -880,11 +880,10 @@ autoMAT GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer
 	Melder_assert (my numberOfComponents == p.ncol - 1);
 	Melder_assert (p.nrow > 1);
 	// p is (numberOfRows+1) by (numberOfComponents+1)
-	autoMAT pc = newMATpart (p, 1, p.nrow, 1, p.ncol - 1);
-	for (integer i = 1; i <= p.nrow; i ++)
-		for (integer ic = component; ic <= pc.ncol; ic ++)
-			pc [i] [ic] = p [i] [ic + 1];
-		
+	autoMAT pc = newMATraw (p.nrow, p.ncol - 1);
+	pc.verticalBand (1, component - 1) <<= p.verticalBand (1, component - 1);
+	pc.verticalBand (component, pc.ncol) <<= p.verticalBand (component + 1, p.ncol);
+
 	// First we have to remove the component before we can update probabilities!
 	GaussianMixture_removeComponent (me, component);
 	GaussianMixture_updateProbabilityMarginals (me, pc.get());

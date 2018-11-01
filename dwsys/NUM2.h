@@ -152,12 +152,8 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-inline void VECsetValues (VEC x, double value) {
-	for (integer i = 1; i <= x.size; i ++) x [i] = value;
-}
-
 inline void MATsetValues (MAT x, double value) {
-	VECsetValues (asvector (x), value);
+	asvector (x) <<= value;
 }
 
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x

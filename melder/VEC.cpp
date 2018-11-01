@@ -45,8 +45,6 @@ void VECVUadd_macfast_ (const VECVU& target, const constVECVU& x, const constVEC
 		Speed if always vDSP_vaddD:
 			//9.3,1.26,0.21, 0.10,0.42,0.70, 1.17,1.97,5.32
 		Speed if always explicit loop:
-			1.6,0.43,0.23, 0.22,0.37,0.65, 1.10,1.98,2.28
-			0.61,1.99,4.35, 4.40,2.60,1.52, 0.84,0.50,0.41
 			0.61,1.99,4.32, 4.39,2.61,1.51, 0.85,0.50,0.41
 		Combined:
 			6.1,1.19,0.23, 0.13,0.41,0.70, 1.19,2.02,2.45
