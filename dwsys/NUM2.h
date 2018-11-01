@@ -1230,13 +1230,6 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	return inproduct / wsum;
 }
 
-/*  scalar a x plus y: y += a x */
-inline void VECaxpy (VEC const& y, constVECVU const& x, double a) {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= y.size; i ++)
-		y [i] += a * x [i];
-}
-
 /* Y += +a X */
 inline void MATaxpy (MAT y, constMAT x, double a) {
 	Melder_assert (y.nrow = x.nrow);

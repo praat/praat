@@ -230,9 +230,10 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		Eigen_initFromSymmetricMatrix (eigen.get(), c0 -> data.get());
 		
 		for (integer i = 1; i <= dimension; i ++) {
-			Melder_require (eigen -> eigenvalues [i] >= 0.0, U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
+			Melder_require (eigen -> eigenvalues [i] >= 0.0,
+				U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
 			double scalef = 1.0 / sqrt (eigen -> eigenvalues [i]);
-			VECmultiply_preallocated (p.row (dimension - i + 1), eigen -> eigenvectors.row (i), scalef);
+			p.row (dimension - i + 1) <<= eigen -> eigenvectors.row (i)  *  scalef;
 		}
 
 		// P*C [i]*P'

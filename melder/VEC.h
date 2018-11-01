@@ -17,135 +17,135 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline void operator<<= (const VECVU& x, double number) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] = number;
-}
-inline void operator+= (const VECVU& x, double number) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] += number;
-}
-inline void operator-= (const VECVU& x, double number) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] -= number;
-}
-inline void operator*= (const VECVU& x, double number) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] *= number;
-}
-inline void operator/= (const VECVU& x, double number) noexcept {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] /= number;
-}
+#define GENERATE_FIVE_TENSOR_FUNCTIONS  \
+	GENERATE_ONE_TENSOR_FUNCTION (operator<<=, =) \
+	GENERATE_ONE_TENSOR_FUNCTION (operator+=, +=) \
+	GENERATE_ONE_TENSOR_FUNCTION (operator-=, -=) \
+	GENERATE_ONE_TENSOR_FUNCTION (operator*=, *=) \
+	GENERATE_ONE_TENSOR_FUNCTION (operator/=, /=)
 
-inline void operator<<= (VECVU const& target, constVECVU const& source) {
-	Melder_assert (target.size == source.size);
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = source [i];
-}
-inline void operator+= (const VECVU& x, const constVECVU& y) noexcept {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] += y [i];
-}
-inline void operator-= (const VECVU& x, const constVECVU& y) noexcept {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] -= y [i];
-}
-inline void operator*= (const VECVU& x, const constVECVU& y) noexcept {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] *= y [i];
-}
-inline void operator/= (const VECVU& x, const constVECVU& y) noexcept {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] /= y [i];
-}
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (VECVU const& target, double number) noexcept { \
+		for (integer i = 1; i <= target.size; i ++) \
+			target [i] op number; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
 
-struct TypeVECadd_VEC_NUM {
-	const constVECVU &x;
-	double addend;
-};
-inline TypeVECadd_VEC_NUM operator+ (const constVECVU &x, double addend) {
-	return { x, addend };
-}
-inline void operator<<= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
-	Melder_assert (expr.x.size == target.size);
-	for (integer i = 1; i <= expr.x.size; i ++)
-		target [i] = expr.x [i] + expr.addend;
-}
-inline void operator+= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
-	Melder_assert (expr.x.size == target.size);
-	for (integer i = 1; i <= expr.x.size; i ++)
-		target [i] += expr.x [i] + expr.addend;
-}
-inline void operator-= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
-	Melder_assert (expr.x.size == target.size);
-	for (integer i = 1; i <= expr.x.size; i ++)
-		target [i] -= expr.x [i] + expr.addend;
-}
-inline void operator*= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
-	Melder_assert (expr.x.size == target.size);
-	for (integer i = 1; i <= expr.x.size; i ++)
-		target [i] *= expr.x [i] + expr.addend;
-}
-inline void operator/= (const VECVU& target, const TypeVECadd_VEC_NUM& expr) noexcept {
-	Melder_assert (expr.x.size == target.size);
-	for (integer i = 1; i <= expr.x.size; i ++)
-		target [i] /= expr.x [i] + expr.addend;
-}
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (VECVU const& target, constVECVU const& x) { \
+		Melder_assert (target.size == x.size); \
+		for (integer i = 1; i <= target.size; i ++) \
+			target [i] op x [i]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+
+struct TypeVECadd_VEC_NUM          { const constVECVU &x; double addend; };
+inline TypeVECadd_VEC_NUM operator+ (const constVECVU &x, double addend)
+                                            { return { x,        addend }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (VECVU const& target, TypeVECadd_VEC_NUM const& expr) noexcept { \
+		Melder_assert (expr.x.size == target.size); \
+		for (integer i = 1; i <= expr.x.size; i ++) \
+			target [i] op expr.x [i] + expr.addend; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (const constVEC& x, double addend) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= x  +  addend;
 	return result;
 }
 
-struct TypeVECadd_VEC_VEC {
-	const constVECVU &x, &y;
-};
-inline TypeVECadd_VEC_VEC operator+ (const constVECVU &x, const constVECVU& y) {
-	return { x, y };
+struct TypeVECsubtract_VEC_NUM          { const constVECVU &x; double number; };
+inline TypeVECsubtract_VEC_NUM operator- (const constVECVU &x, double number)
+                                                 { return { x,        number }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (VECVU const& target, TypeVECsubtract_VEC_NUM const& expr) noexcept { \
+		Melder_assert (expr.x.size == target.size); \
+		for (integer i = 1; i <= expr.x.size; i ++) \
+			target [i] op expr.x [i] - expr.number; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoVEC newVECsubtract (constVECVU const& x, double number) {
+	autoVEC result = newVECraw (x.size);
+	result.all() <<= x  -  number;
+	return result;
 }
-inline void operator<<= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
-	integer n = target.size;
-	Melder_assert (expr.x.size == n);
-	Melder_assert (expr.y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] = expr.x [i] + expr.y [i];
+
+struct TypeVECmultiply_VEC_NUM          { const constVECVU &x; double factor; };
+inline TypeVECmultiply_VEC_NUM operator* (const constVECVU &x, double factor)
+                                                 { return { x,        factor }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (VECVU const& target, TypeVECmultiply_VEC_NUM const& expr) noexcept { \
+		Melder_assert (expr.x.size == target.size); \
+		for (integer i = 1; i <= expr.x.size; i ++) \
+			target [i] op expr.x [i] * expr.factor; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoVEC newVECmultiply (constVEC const& x, double factor) {
+	autoVEC result = newVECraw (x.size);
+	result.all() <<= x  *  factor;
+	return result;
 }
-inline void operator+= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
-	integer n = target.size;
-	Melder_assert (expr.x.size == n);
-	Melder_assert (expr.y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] += expr.x [i] + expr.y [i];
-}
-inline void operator-= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
-	integer n = target.size;
-	Melder_assert (expr.x.size == n);
-	Melder_assert (expr.y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] -= expr.x [i] + expr.y [i];
-}
-inline void operator*= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
-	integer n = target.size;
-	Melder_assert (expr.x.size == n);
-	Melder_assert (expr.y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] *= expr.x [i] + expr.y [i];
-}
-inline void operator/= (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept {
-	integer n = target.size;
-	Melder_assert (expr.x.size == n);
-	Melder_assert (expr.y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] /= expr.x [i] + expr.y [i];
-}
+
+struct TypeVECadd_VEC_VEC          { const constVECVU& x; const constVECVU& y; };
+inline TypeVECadd_VEC_VEC operator+ (const constVECVU& x, const constVECVU& y)
+                                            { return { x,                   y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept { \
+		integer n = target.size; \
+		Melder_assert (expr.x.size == n); \
+		Melder_assert (expr.y.size == n); \
+		for (integer i = 1; i <= n; i ++) \
+			target [i] op expr.x [i] + expr.y [i]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (const constVECVU& x, const constVECVU& y) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= x  +  y;
+	return result;
+}
+
+struct TypeVECsubtract_VEC_VEC          { const constVECVU& x; const constVECVU& y; };
+inline TypeVECsubtract_VEC_VEC operator- (const constVECVU& x, const constVECVU& y)
+                                                 { return { x,                   y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (const VECVU& target, TypeVECsubtract_VEC_VEC expr) noexcept { \
+		integer n = target.size; \
+		Melder_assert (expr.x.size == n); \
+		Melder_assert (expr.y.size == n); \
+		for (integer i = 1; i <= n; i ++) \
+			target [i] op expr.x [i] - expr.y [i]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoVEC newVECsubtract (const constVECVU& x, const constVECVU& y) {
+	autoVEC result = newVECraw (x.size);
+	result.all() <<= x  -  y;
+	return result;
+}
+
+struct TypeVECmultiply_VEC_VEC          { const constVECVU& x; const constVECVU& y; };
+inline TypeVECmultiply_VEC_VEC operator* (const constVECVU& x, const constVECVU& y)
+                                                 { return { x,                   y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (const VECVU& target, TypeVECmultiply_VEC_VEC expr) noexcept { \
+		integer n = target.size; \
+		Melder_assert (expr.x.size == n); \
+		Melder_assert (expr.y.size == n); \
+		for (integer i = 1; i <= n; i ++) \
+			target [i] op expr.x [i] * expr.y [i]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoVEC newVECmultiply (const constVECVU& x, const constVECVU& y) {
+	autoVEC result = newVECraw (x.size);
+	result.all() <<= x  *  y;
 	return result;
 }
 
@@ -215,26 +215,9 @@ extern void VECmul_preallocated (const VEC& target, const constMAT& mat, const c
 extern autoVEC newVECmul (const constVEC& vec, const constMAT& mat) noexcept;
 extern autoVEC newVECmul (const constMAT& mat, const constVEC& vec) noexcept;
 
-inline void VECmultiply_preallocated (VEC const& target, constVEC const& x, double factor) noexcept {
-	Melder_assert (x.size == target.size);
-	for (integer i = 1; i <= x.size; i ++)
-		target [i] = x [i] * factor;
-}
-inline void VECmultiply_preallocated (VEC const& target, constVEC const& x, constVEC const& y) noexcept {
-	integer n = target.size;
-	Melder_assert (x.size == n);
-	Melder_assert (y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] = x [i] * y [i];
-}
-inline autoVEC newVECmultiply (constVEC const& x, double factor) {
-	autoVEC result = newVECraw (x.size);
-	VECmultiply_preallocated (result.get(), x, factor);
-	return result;
-}
 inline autoVEC newVECmultiply (constVEC const& x, constVEC const& y) {
 	autoVEC result = newVECraw (x.size);
-	VECmultiply_preallocated (result.get(), x, y);
+	result.all() <<= x  *  y;
 	return result;
 }
 
@@ -267,38 +250,14 @@ inline void VECsubtractReversed_inplace (VEC const& x, constVEC const& y) noexce
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = y [i] - x [i];
 }
-inline void VECsubtract_preallocated (VEC const& target, constVEC const& x, double number) noexcept {
-	Melder_assert (x.size == target.size);
-	for (integer i = 1; i <= x.size; i ++)
-		target [i] = x [i] - number;
-}
 inline void VECsubtract_preallocated (VEC const& target, double number, constVEC const& x) noexcept {
 	Melder_assert (x.size == target.size);
 	for (integer i = 1; i <= x.size; i ++)
 		target [i] = number - x [i];
 }
-inline void VECsubtract_preallocated (VEC const& target, constVEC const& x, constVEC const& y) noexcept {
-	integer n = target.size;
-	Melder_assert (x.size == n);
-	Melder_assert (y.size == n);
-	for (integer i = 1; i <= n; i ++)
-		target [i] = x [i] - y [i];
-}
-inline autoVEC newVECsubtract (constVEC const& vec, double number) {
-	autoVEC result = newVECraw (vec.size);
-	VECsubtract_preallocated (result.get(), vec, number);
-	return result;
-}
 inline autoVEC newVECsubtract (double number, constVEC const& vec) {
 	autoVEC result = newVECraw (vec.size);
 	VECsubtract_preallocated (result.get(), number, vec);
-	return result;
-}
-inline autoVEC newVECsubtract (constVEC const& x, constVEC const& y) {
-	Melder_assert (x.size == y.size);
-	autoVEC result = newVECraw (x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		result [i] = x [i] - y [i];
 	return result;
 }
 

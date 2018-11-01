@@ -134,13 +134,13 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	// update covariance with the new mean
 	MATsetValues (thy data.get(), 0.0);
 	autoVEC row = newVECraw (data.ncol);
-	autoMAT outer = newMATraw (data.ncol,data.ncol);
+	autoMAT outer = newMATraw (data.ncol, data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
 		row.all() <<= data.row (irow);
 		row.all()  -=  thy centroid.all();
 		if (thy numberOfRows == 1) {
 			row.all()  *=  row.all();
-			VECaxpy (thy data.row (1), row.get(), gamma [irow]);
+			thy data.row (1)  +=  row.all()  *  gamma [irow];
 		} else {
 			MATouter_preallocated (outer, row.get(), row.get());
 			MATaxpy (thy data.get(), outer.get(), gamma [irow]);
