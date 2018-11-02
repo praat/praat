@@ -49,6 +49,22 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, constVECVU const& x) { \
+		Melder_assert (target.ncol == x.size); \
+		integer mindim = ( target.rowStride < target.colStride ? 1 : 2 ); \
+		if (mindim == 1) \
+			for (integer icol = 1; icol <= target.ncol; icol ++) \
+				for (integer irow = 1; irow <= target.nrow; irow ++) \
+					target [irow] [icol] op x [icol]; \
+		else \
+			for (integer irow = 1; irow <= target.nrow; irow ++) \
+				for (integer icol = 1; icol <= target.ncol; icol ++) \
+					target [irow] [icol] op x [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+
 inline void MATadd_preallocated (const MAT& target, const constMAT& x, double addend) noexcept {
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
 	asvector (target) <<= asvector (x)  +  addend;
@@ -142,27 +158,10 @@ inline void MATsin_inplace (const MAT& x) noexcept {
 	VECsin_inplace (asvector (x));
 }
 
-inline void MATsubtract_inplace (const MAT& x, double number) noexcept {
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			x [irow] [icol] -= number;
-}
-inline void MATsubtract_inplace (const MAT& x, const constVEC& y) noexcept {
-	Melder_assert (x.ncol == y.size);
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			x [irow] [icol] -= y [icol];
-}
 inline void MATsubtractReversed_inplace (const MAT& x, double number) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = number - x [irow] [icol];
-}
-inline void MATsubtract_inplace (const MAT& x, const constMAT& y) noexcept {
-	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			x [irow] [icol] -= y [irow] [icol];
 }
 inline void MATsubtractReversed_inplace (const MAT& x, const constMAT& y) noexcept {
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);

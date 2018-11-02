@@ -186,7 +186,7 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 	}
 	autoMAT x = newMATcopy (m);
 	autoVEC mean = newVECcolumnMeans (x.get());
-	MATsubtract_inplace (x.get(), mean.get());
+	x.all()  -=  mean.all();
 	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
 	
 	if (method == 1) { // Schott (2001, page 33)

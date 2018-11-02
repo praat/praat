@@ -2756,7 +2756,7 @@ static void do_sub () {
 			if (xncol != yncol)
 				Melder_throw (U"When subtracting matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
 			if (x->owned) {
-				MATsubtract_inplace (x->numericMatrix, y->numericMatrix);
+				x->numericMatrix  -=  y->numericMatrix;
 			} else if (y->owned) {
 				MATsubtractReversed_inplace (y->numericMatrix, x->numericMatrix);
 				moveNumericMatrix (y, x);
@@ -2770,7 +2770,7 @@ static void do_sub () {
 		}
 		if (y->which == Stackel_NUMBER) {
 			if (x->owned) {
-				MATsubtract_inplace (x->numericMatrix, y->number);
+				x->numericMatrix  -=  y->number;
 			} else {
 				x->numericMatrix = newMATsubtract (x->numericMatrix, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
