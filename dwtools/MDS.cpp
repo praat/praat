@@ -599,7 +599,7 @@ integer Salience_correctNegatives (Salience me) {
 }
 
 void Salience_setDefaults (Salience me) {
-	MATsetValues (my data.get(), 1.0 / sqrt (my numberOfColumns));
+	my data.all() <<= 1.0 / sqrt (my numberOfColumns);
 	for (integer j = 1; j <= my numberOfColumns; j ++)
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
 }
@@ -1924,7 +1924,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
-		MATsetValues (wsih.get(), 0.0);
+		wsih.all() <<= 0.0;
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct sih = sprc -> at [i];
 

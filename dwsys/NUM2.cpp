@@ -156,7 +156,7 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol = result.ncol);
 	Melder_assert (result.nrow == result.ncol);
-	MATsetValues (result, 0.0);
+	result <<= 0.0;
 	if (true) {
 		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -185,8 +185,7 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 		return kurt;
 	}
 	autoMAT x = newMATcopy (m);
-	autoVEC mean = newVECraw (x.ncol);
-	VECcolumnMeans_preallocated (mean.get(), x.get());
+	autoVEC mean = newVECcolumnMeans (x.get());
 	MATsubtract_inplace (x.get(), mean.get());
 	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
 	

@@ -132,7 +132,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	}
 
 	// update covariance with the new mean
-	MATsetValues (thy data.get(), 0.0);
+	thy data.all() <<= 0.0;
 	autoVEC row = newVECraw (data.ncol);
 	autoMAT outer = newMATraw (data.ncol, data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {

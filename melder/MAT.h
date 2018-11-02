@@ -17,13 +17,21 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	Some functions that are included below.
-*/
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, double number) noexcept { \
+		integer mindim = ( target.rowStride < target.colStride ? 1 : 2 ); \
+		if (mindim == 1) \
+			for (integer icol = 1; icol <= target.ncol; icol ++) \
+				for (integer irow = 1; irow <= target.nrow; irow ++) \
+					target [irow] [icol] op number; \
+		else \
+			for (integer irow = 1; irow <= target.nrow; irow ++) \
+				for (integer icol = 1; icol <= target.ncol; icol ++) \
+					target [irow] [icol] op number; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
 
-/*
-	From here on alphabetical order.
-*/
 
 inline void MATadd_inplace (MAT const& x, double addend) noexcept {
 	asvector (x)  +=  addend;
