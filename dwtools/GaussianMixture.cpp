@@ -290,10 +290,7 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 	try {
 		autoCovariance thee = GaussianMixture_to_Covariance_between (me);
 		autoCovariance within = GaussianMixture_to_Covariance_within (me);
-
-		
-		MATadd_inplace (thy data.get(), within -> data.get());
-		
+		thy data.all()  +=  within -> data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (total) created.");
@@ -302,8 +299,8 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 
 autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U".");
-
+		Melder_require (component > 0 && component <= my numberOfComponents,
+			U"The component should be in [1, ", my numberOfComponents, U".");
 		autoCovariance thee = Data_copy (my covariances->at [component]);
 		return thee;
 	} catch (MelderError) {

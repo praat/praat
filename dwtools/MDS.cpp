@@ -1079,8 +1079,9 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			Melder_require (sp -> numberOfRows == nPoints, U"The dimension of ScalarProduct ", i, U" does not conform.");
-			MATadd_inplace (pmean.get(), sp -> data.get());
+			Melder_require (sp -> numberOfRows == nPoints,
+				U"The dimension of ScalarProduct ", i, U" does not conform.");
+			pmean.all()  +=  sp -> data.all();
 		}
 		
 		MATmultiply_inplace (pmean.get(), 1.0 / numberOfSources);

@@ -32,13 +32,23 @@
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, constMATVU const& x) { \
+		Melder_assert (target.nrow == x.nrow); \
+		Melder_assert (target.ncol == x.ncol); \
+		integer mindim = ( target.rowStride < target.colStride ? 1 : 2 ); \
+		if (mindim == 1) \
+			for (integer icol = 1; icol <= target.ncol; icol ++) \
+				for (integer irow = 1; irow <= target.nrow; irow ++) \
+					target [irow] [icol] op x [irow] [icol]; \
+		else \
+			for (integer irow = 1; irow <= target.nrow; irow ++) \
+				for (integer icol = 1; icol <= target.ncol; icol ++) \
+					target [irow] [icol] op x [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
 
-inline void MATadd_inplace (MAT const& x, double addend) noexcept {
-	asvector (x)  +=  addend;
-}
-inline void MATadd_inplace (MAT const& x, constMAT const& y) noexcept {
-	asvector (x)  +=  asvector (y);
-}
 inline void MATadd_preallocated (const MAT& target, const constMAT& x, double addend) noexcept {
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
 	asvector (target) <<= asvector (x)  +  addend;

@@ -426,7 +426,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoMAT result = newMATrandomGauss (size, size, 0.0, 1.0);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				MATadd_inplace (result.get(), 5.0);
+				result.all() <<= 5.0;
 			t = Melder_stopwatch () / size / size;   // 10^0..4: 2.7/0.16/0.24 / 0.38/0.98
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);

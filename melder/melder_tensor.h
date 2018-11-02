@@ -1546,13 +1546,6 @@ inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = source [i];
 }
-inline void operator<<= (MATVU const& target, constMATVU const& source) {
-	Melder_assert (target.nrow == source.nrow);
-	Melder_assert (target.ncol == source.ncol);
-	for (integer irow = 1; irow <= target.nrow; irow ++)
-		for (integer icol = 1; icol <= target.ncol; icol ++)
-			target [irow] [icol] = source [irow] [icol];
-}
 inline void operator<<= (TEN3 const& target, constTEN3 const& source) {
 	Melder_assert (target.ndim1 == source.ndim1);
 	Melder_assert (target.ndim2 == source.ndim2);

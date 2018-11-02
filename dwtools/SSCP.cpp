@@ -815,7 +815,7 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 			pool -> numberOfObservations += t -> numberOfObservations;
 
 			// Sum the sscp's and weigh the centroid.
-			MATadd_inplace (pool -> data.get(), t -> data.get());
+			pool -> data.all()  +=  t -> data.all();
 			pool -> centroid.all()  +=  t->centroid.all()  *  t -> numberOfObservations;
 		}
 		

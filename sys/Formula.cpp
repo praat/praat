@@ -2518,7 +2518,7 @@ static void do_add () {
 				result## = x + y##
 			*/
 			if (y->owned) {
-				MATadd_inplace (y->numericMatrix, x->number);
+				y->numericMatrix  +=  x->number;
 				// x does not have to be cleaned up, because it was a number
 				moveNumericMatrix (y, x);
 			} else {
@@ -2622,9 +2622,9 @@ static void do_add () {
 			if (xncol != yncol)
 				Melder_throw (U"When adding matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
 			if (x->owned) {
-				MATadd_inplace (x->numericMatrix, y->numericMatrix);
+				x->numericMatrix  +=  y->numericMatrix;
 			} else if (y->owned) {
-				MATadd_inplace (y->numericMatrix, x->numericMatrix);
+				y->numericMatrix  +=  x->numericMatrix;
 				// x does not have to be cleaned up, because it was not owned
 				moveNumericMatrix (y, x);
 			} else {
@@ -2642,7 +2642,7 @@ static void do_add () {
 				result## [i, j] = x## [i, j] + y
 			*/
 			if (x->owned) {
-				MATadd_inplace (x->numericMatrix, y->number);
+				x->numericMatrix  +=  y->number;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
 				x->numericMatrix = newMATadd (x->numericMatrix, y->number). releaseToAmbiguousOwner();
