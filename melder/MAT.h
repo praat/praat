@@ -125,12 +125,6 @@ inline autoMAT newMATmul_fast (const constMAT& x, const constMAT& y) {
 	return result;
 }
 
-inline void MATmultiply_inplace (const MAT& x, double factor) noexcept {
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			x [irow] [icol] *= factor;
-}
-
 void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y);
 extern autoMAT newMATouter (const constVEC& x, const constVEC& y);
 

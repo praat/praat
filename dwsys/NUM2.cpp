@@ -142,7 +142,7 @@ void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window
 autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
 	Melder_require (ndf >= 0 && x.nrow - ndf > 0, U"Invalid arguments.");
 	autoMAT covar = newMATmtm (x);
-	MATmultiply_inplace (covar.get(), 1.0 / (x.nrow - ndf));
+	covar.all()  *=  1.0 / (x.nrow - ndf);
 	return covar;
 }
 

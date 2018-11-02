@@ -2833,7 +2833,7 @@ static void do_mul () {
 				result## = x * y##
 			*/
 			if (y->owned) {
-				MATmultiply_inplace (y->numericMatrix, xvalue);
+				y->numericMatrix  *=  xvalue;
 				x->which = Stackel_NUMERIC_MATRIX;
 				moveNumericMatrix (y, x);
 				w ++;

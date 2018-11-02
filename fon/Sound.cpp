@@ -1038,10 +1038,10 @@ void Sound_multiplyByWindow (Sound me, kSound_windowShape windowShape) {
 }
 
 void Sound_scaleIntensity (Sound me, double newAverageIntensity) {
-	double const currentIntensity = Sound_getIntensity_dB (me);
+	const double currentIntensity = Sound_getIntensity_dB (me);
 	if (isundef (currentIntensity)) return;
-	double const factor = pow (10, (newAverageIntensity - currentIntensity) / 20.0);
-	MATmultiply_inplace (my z.get(), factor);
+	const double factor = pow (10.0, (newAverageIntensity - currentIntensity) / 20.0);
+	my z.all()  *=  factor;
 }
 
 void Sound_overrideSamplingFrequency (Sound me, double rate) {

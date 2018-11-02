@@ -583,7 +583,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			// Within variances are now (total - between) / numberOfComponents;
 
 			if (my numberOfComponents > 1)
-				MATmultiply_inplace (cov_t -> data.get(), (var_b / var_t) / my numberOfComponents);
+				cov_t -> data.all()  *=  var_b / var_t / my numberOfComponents;
 
 			// Copy them
 

@@ -1084,7 +1084,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			pmean.all()  +=  sp -> data.all();
 		}
 		
-		MATmultiply_inplace (pmean.get(), 1.0 / numberOfSources);
+		pmean.all()  *=  1.0 / numberOfSources;
 
 		/*
 			Up to a rotation K, the initial configuration can be found by
@@ -1362,8 +1362,8 @@ void Distance_Weight_smacofNormalize (Distance me, Weight w) {
 			sumsq += w -> data [i] [j] * my data [i] [j] * my data [i] [j];
 		}
 	}
-	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / (2.0 * sumsq));
-	MATmultiply_inplace (my data.get(), scale);
+	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / double (2.0 * sumsq));
+	my data.all()  *=  scale;
 }
 
 double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) {

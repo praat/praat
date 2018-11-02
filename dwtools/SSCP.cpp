@@ -842,7 +842,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 			}
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
-		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - 1.0));
+		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (within) created.");
@@ -876,7 +876,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			} else
 				MATaxpy (thy data.get(), outer.get(), covi -> numberOfObservations); // Y += aX
 		}
-		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - 1.0));
+		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (between) created.");
@@ -900,7 +900,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
 		}
 		thy centroid.all()  *=  1.0 / thy numberOfObservations;
-		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - my size));
+		thy data.all()  *=  1.0 / (thy numberOfObservations - my size);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not pooled.");
