@@ -152,10 +152,6 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-inline void MATsetValues (MAT x, double value) {
-	asvector (x) <<= value;
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;

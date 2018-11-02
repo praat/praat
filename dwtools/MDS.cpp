@@ -599,7 +599,7 @@ integer Salience_correctNegatives (Salience me) {
 }
 
 void Salience_setDefaults (Salience me) {
-	MATsetValues (my data.get(), 1.0 / sqrt (my numberOfColumns));
+	my data.all() <<= 1.0 / sqrt (my numberOfColumns);
 	for (integer j = 1; j <= my numberOfColumns; j ++)
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
 }
@@ -1079,11 +1079,12 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			Melder_require (sp -> numberOfRows == nPoints, U"The dimension of ScalarProduct ", i, U" does not conform.");
-			MATadd_inplace (pmean.get(), sp -> data.get());
+			Melder_require (sp -> numberOfRows == nPoints,
+				U"The dimension of ScalarProduct ", i, U" does not conform.");
+			pmean.all()  +=  sp -> data.all();
 		}
 		
-		MATmultiply_inplace (pmean.get(), 1.0 / numberOfSources);
+		pmean.all()  *=  1.0 / numberOfSources;
 
 		/*
 			Up to a rotation K, the initial configuration can be found by
@@ -1361,8 +1362,8 @@ void Distance_Weight_smacofNormalize (Distance me, Weight w) {
 			sumsq += w -> data [i] [j] * my data [i] [j] * my data [i] [j];
 		}
 	}
-	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / (2.0 * sumsq));
-	MATmultiply_inplace (my data.get(), scale);
+	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / double (2.0 * sumsq));
+	my data.all()  *=  scale;
 }
 
 double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) {
@@ -1924,7 +1925,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
-		MATsetValues (wsih.get(), 0.0);
+		wsih.all() <<= 0.0;
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct sih = sprc -> at [i];
 

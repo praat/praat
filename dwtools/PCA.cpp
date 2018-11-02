@@ -167,7 +167,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 		
 		autoPCA thee = Thing_new (PCA);
 		thy centroid = newVECcolumnMeans (mcopy.get());
-		MATsubtract_inplace (mcopy.get(), thy centroid.get());
+		mcopy.all()  -=  thy centroid.all();
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);
 		PCA_setNumberOfObservations (thee.get(), mcopy.nrow);

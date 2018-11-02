@@ -132,7 +132,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	}
 
 	// update covariance with the new mean
-	MATsetValues (thy data.get(), 0.0);
+	thy data.all() <<= 0.0;
 	autoVEC row = newVECraw (data.ncol);
 	autoMAT outer = newMATraw (data.ncol, data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -290,10 +290,7 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 	try {
 		autoCovariance thee = GaussianMixture_to_Covariance_between (me);
 		autoCovariance within = GaussianMixture_to_Covariance_within (me);
-
-		
-		MATadd_inplace (thy data.get(), within -> data.get());
-		
+		thy data.all()  +=  within -> data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (total) created.");
@@ -302,8 +299,8 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 
 autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U".");
-
+		Melder_require (component > 0 && component <= my numberOfComponents,
+			U"The component should be in [1, ", my numberOfComponents, U".");
 		autoCovariance thee = Data_copy (my covariances->at [component]);
 		return thee;
 	} catch (MelderError) {
@@ -586,7 +583,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			// Within variances are now (total - between) / numberOfComponents;
 
 			if (my numberOfComponents > 1)
-				MATmultiply_inplace (cov_t -> data.get(), (var_b / var_t) / my numberOfComponents);
+				cov_t -> data.all()  *=  var_b / var_t / my numberOfComponents;
 
 			// Copy them
 

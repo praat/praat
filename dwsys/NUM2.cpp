@@ -142,7 +142,7 @@ void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window
 autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
 	Melder_require (ndf >= 0 && x.nrow - ndf > 0, U"Invalid arguments.");
 	autoMAT covar = newMATmtm (x);
-	MATmultiply_inplace (covar.get(), 1.0 / (x.nrow - ndf));
+	covar.all()  *=  1.0 / (x.nrow - ndf);
 	return covar;
 }
 
@@ -156,7 +156,7 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol = result.ncol);
 	Melder_assert (result.nrow == result.ncol);
-	MATsetValues (result, 0.0);
+	result <<= 0.0;
 	if (true) {
 		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -185,9 +185,8 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 		return kurt;
 	}
 	autoMAT x = newMATcopy (m);
-	autoVEC mean = newVECraw (x.ncol);
-	VECcolumnMeans_preallocated (mean.get(), x.get());
-	MATsubtract_inplace (x.get(), mean.get());
+	autoVEC mean = newVECcolumnMeans (x.get());
+	x.all()  -=  mean.all();
 	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
 	
 	if (method == 1) { // Schott (2001, page 33)
