@@ -515,7 +515,7 @@ NORMAL (U"The scores for the dependent data will be in the lower numbered column
 MAN_END
 
 
-MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20170829)
+MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20181118)
 INTRO (U"This tutorial will show you how to perform canonical correlation "
        "analysis with Praat.")
 ENTRY (U"1. Objective of canonical correlation analysis")
@@ -608,7 +608,7 @@ CODE (U"u1     1      .      .     0.860   .      .")
 CODE (U"u2     .      1      .      .     0.531   .")
 CODE (U"u3     .      .      1      .      .     0.070")
 CODE (U"v1    0.860   .      .      1      .      .")
-CODE (U"v2     .     0.1     .      .      1      .")
+CODE (U"v2     .     0.531     .      .      1      .")
 CODE (U"v3     .      .     0.070   .      .      1")
 NORMAL (U"The scores with a dot are zero to numerical precision. In this table the "
 	"only correlations that differ from zero are the canonical correlations. "
