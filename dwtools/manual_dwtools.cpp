@@ -441,7 +441,7 @@ INTRO (U"Determine from the selected @CCA and @Correlation objects the correlati
 	"coefficients%.")
 MAN_END
 
-MAN_BEGIN (U"CCA & Correlation: Get variance fraction...", U"djmw", 20060323)
+MAN_BEGIN (U"CCA & Correlation: Get variance fraction...", U"djmw", 20181112)
 INTRO (U"Determine from the selected @CCA and @Correlation objects the fraction of the variance "
 	"explained by the selected @@canonical variate@ range.")
 ENTRY (U"Settings")
@@ -452,7 +452,7 @@ DEFINITION (U"determines the canonical variates (or canonical variables).")
 ENTRY (U"Remarks")
 NORMAL (U"1. In general the variance fractions for a particular canonical variate in the "
 	"dependent and in the independent set are not the same.")
-NORMAL (U"2. In general, the variance fractions for all canonical variates do not sum to 1.")
+NORMAL (U"2. In general, the variance fractions for all canonical variates do not sum to 1. \n(The technical reason is that for canonical correlation analysis in general the eigenvectors are not orthogonal, i.e. they overlap and therefore, necessarily, also the variance fractions overlap.) ")
 ENTRY (U"Algorithm")
 NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
 NORMAL (U"For example, the fraction of the variance explained by the %i^^th^ canonical "
