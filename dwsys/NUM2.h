@@ -152,14 +152,6 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-inline void VECsetValues (VEC x, double value) {
-	for (integer i = 1; i <= x.size; i ++) x [i] = value;
-}
-
-inline void MATsetValues (MAT x, double value) {
-	VECsetValues (asvector (x), value);
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
@@ -185,7 +177,7 @@ inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = newVECraw (x.ncol);
 	autoVEC column = newVECraw (x.nrow);
 	for (integer icol = 1; icol <= norm.size; icol ++) {
-		VECcolumn_preallocated (column.get(), x, icol);
+		column.all() <<= x.column (icol);
 		norm [icol] = NUMnorm (column.get(), power);
 	}
 	return norm;
@@ -202,7 +194,7 @@ inline void VECnormalize_inplace (VEC v, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	double oldnorm = NUMnorm (v, power);
 	if (oldnorm > 0.0)
-		VECmultiply_inplace (v, norm / oldnorm);
+		v  *=  norm / oldnorm;
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
@@ -1228,13 +1220,6 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	double inproduct = NUMinner (x, w);
 	double wsum = NUMsum (w);
 	return inproduct / wsum;
-}
-
-/*  scalar a x plus y: y += a x */
-inline void VECaxpy (VEC const& y, constVECVU const& x, double a) {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= y.size; i ++)
-		y [i] += a * x [i];
 }
 
 /* Y += +a X */

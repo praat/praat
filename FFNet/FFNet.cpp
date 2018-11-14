@@ -684,7 +684,7 @@ autoCollection FFNet_createIrisExample (integer numberOfHidden1, integer numberO
 		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
-		MATmultiply_inplace (iris -> data.get(), 0.1); // Scale data to interval [0-1]
+		iris -> data.all()  *=  0.1; // Scale data to interval [0-1]
 
 		autoPatternList ap;
 		autoCategories ac;

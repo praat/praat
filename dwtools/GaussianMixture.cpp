@@ -127,20 +127,20 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 		gamma [irow] = my mixingProbabilities [component] * p [irow] [component] / p [irow] [p.ncol + 1];
 	autoVEC column = newVECraw (data.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++) {
-		VECcolumn_preallocated (column.get(), data, icol);
+		column.all() <<= data.column (icol);
 		thy centroid [icol] = NUMinner (column.get (), gamma.get()) / p [p.nrow] [component];
 	}
 
 	// update covariance with the new mean
-	MATsetValues (thy data.get(), 0.0);
+	thy data.all() <<= 0.0;
 	autoVEC row = newVECraw (data.ncol);
-	autoMAT outer = newMATraw (data.ncol,data.ncol);
+	autoMAT outer = newMATraw (data.ncol, data.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++) {
 		row.all() <<= data.row (irow);
-		VECsubtract_inplace (row.get(), thy centroid.get());
+		row.all()  -=  thy centroid.all();
 		if (thy numberOfRows == 1) {
-			VECmultiply_inplace (row.get(), row.get());
-			VECaxpy (thy data.row (1), row.get(), gamma [irow]);
+			row.all()  *=  row.all();
+			thy data.row (1)  +=  row.all()  *  gamma [irow];
 		} else {
 			MATouter_preallocated (outer, row.get(), row.get());
 			MATaxpy (thy data.get(), outer.get(), gamma [irow]);
@@ -150,18 +150,16 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 }
 
 static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer im, Covariance him, double fraction) {
-	if (im < 1 || im > my numberOfComponents || fraction == 0) {
+	if (im < 1 || im > my numberOfComponents || fraction == 0)
 		return;
-	}
 
 	Covariance thee = my covariances->at [im];
 
 	// prevent instability: add lambda fraction of global covariances
 
 	if (thy numberOfRows == 1) {
-		for (integer j = 1; j <= thy numberOfColumns; j ++) {
+		for (integer j = 1; j <= thy numberOfColumns; j ++)
 			thy data [1] [j] += fraction * his data [j] [j];
-		}
 	} else
 		MATaxpy (thy data.get(), his data.get(), fraction);
 }
@@ -220,13 +218,13 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 		autoGaussianMixture me = Thing_new (GaussianMixture);
 		my numberOfComponents = numberOfComponents;
 		my dimension = dimension;
-		my mixingProbabilities = newVECzero (numberOfComponents);
+		my mixingProbabilities = newVECraw (numberOfComponents);
+		my mixingProbabilities.all() <<= 1.0 / numberOfComponents;
 		my covariances = CovarianceList_create ();
 		for (integer im = 1; im <= numberOfComponents; im ++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
 			my covariances -> addItemAtPosition_move (cov.move(), im);
 		}
-		VECsetValues (my mixingProbabilities.get(), 1.0 / numberOfComponents);
 		GaussianMixture_setDefaultMixtureNames (me.get());
 		return me;
 	} catch (MelderError) {
@@ -292,10 +290,7 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 	try {
 		autoCovariance thee = GaussianMixture_to_Covariance_between (me);
 		autoCovariance within = GaussianMixture_to_Covariance_within (me);
-
-		
-		MATadd_inplace (thy data.get(), within -> data.get());
-		
+		thy data.all()  +=  within -> data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (total) created.");
@@ -304,8 +299,8 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 
 autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U".");
-
+		Melder_require (component > 0 && component <= my numberOfComponents,
+			U"The component should be in [1, ", my numberOfComponents, U".");
 		autoCovariance thee = Data_copy (my covariances->at [component]);
 		return thee;
 	} catch (MelderError) {
@@ -588,7 +583,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			// Within variances are now (total - between) / numberOfComponents;
 
 			if (my numberOfComponents > 1)
-				MATmultiply_inplace (cov_t -> data.get(), (var_b / var_t) / my numberOfComponents);
+				cov_t -> data.all()  *=  var_b / var_t / my numberOfComponents;
 
 			// Copy them
 
@@ -672,7 +667,7 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 			if (rowsum == 0.0) continue;    // This is ok because gamma [i]'s will all be zero
 
 			// scale gamma and get log(likehood) (Bishop eq. 9.40)
-			VECmultiply_inplace (gamma.row (i), 1.0 / rowsum);
+			gamma.row (i)  *=  1.0 / rowsum;
 			gamma.row (gamma.nrow)  +=  gamma.row (i);  // eq. Bishop 9.18
 			for (integer im = 1; im <= my numberOfComponents; im ++)
 				lnp += gamma [i] [im] * (log (my mixingProbabilities [im])  + lnN [im]); // eq. Bishop 9.40
@@ -822,7 +817,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 
 				// M-step: 2. new mixingProbabilities
 				my mixingProbabilities.all() <<= p.row (p.nrow).part (1, p.ncol - 1);
-				VECmultiply_inplace (my mixingProbabilities.get(), 1.0 / thy numberOfRows);
+				my mixingProbabilities.all()  *=  1.0 / thy numberOfRows;
 				
 				GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
 				
@@ -870,7 +865,7 @@ integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p) {
 	Melder_assert (p.ncol == my numberOfComponents + 1);
 	Melder_assert (p.nrow > 1);
-	VECsetValues (p.row (p.nrow), 0.0);
+	p.row (p.nrow) <<= 0.0;
 	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
 		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
 		for (integer icol = 1; icol <= my numberOfComponents; icol ++)
@@ -882,11 +877,10 @@ autoMAT GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer
 	Melder_assert (my numberOfComponents == p.ncol - 1);
 	Melder_assert (p.nrow > 1);
 	// p is (numberOfRows+1) by (numberOfComponents+1)
-	autoMAT pc = newMATpart (p, 1, p.nrow, 1, p.ncol - 1);
-	for (integer i = 1; i <= p.nrow; i ++)
-		for (integer ic = component; ic <= pc.ncol; ic ++)
-			pc [i] [ic] = p [i] [ic + 1];
-		
+	autoMAT pc = newMATraw (p.nrow, p.ncol - 1);
+	pc.verticalBand (1, component - 1) <<= p.verticalBand (1, component - 1);
+	pc.verticalBand (component, pc.ncol) <<= p.verticalBand (component + 1, p.ncol);
+
 	// First we have to remove the component before we can update probabilities!
 	GaussianMixture_removeComponent (me, component);
 	GaussianMixture_updateProbabilityMarginals (me, pc.get());

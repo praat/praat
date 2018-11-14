@@ -26,7 +26,7 @@
 
 #include "CCs_to_DTW.h"
 
-static void regression (CC me, integer frame, double r[], integer nr) { //CC me, integer frame, constVEC r, integer nr
+static void regression (VEC r, CC me, integer frame, integer nr) {
 
 	// sum(i^2;i=-n..n) = 2n^3/3 + n^2 +n/3 = n (n (2n/3 + 1) + 1/3);
 
@@ -35,18 +35,16 @@ static void regression (CC me, integer frame, double r[], integer nr) { //CC me,
 
 	if (frame <= nrd2 || frame >= my nx - nrd2)
 		return;
-
-	for (integer i = 0; i <= my maximumNumberOfCoefficients; i ++) //VECsetValues (r.get(), 0.0);
-		r [i] = 0.0;
-
+	
+	r <<= 0.0;
 
 	integer nmin = CC_getMinimumNumberOfCoefficients (me, frame - nrd2, frame + nrd2);
 
-	for (integer i = 0; i <= nmin; i ++) {
-		double ri = 0.0;
+	for (integer i = 1; i <= nmin + 1; i ++) {
+		longdouble ri = 0.0;
 		for (integer j = -nrd2; j <= nrd2; j ++) {
 			CC_Frame cf = & my frame[frame + j];
-			double c = i == 0 ? cf -> c0 : cf -> c [i];
+			double c = i == 1 ? cf -> c0 : cf -> c [i];
 			ri += c * j;
 		}
 		r [i] = ri / sumsq / my dx;
@@ -65,8 +63,8 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 		if (nr % 2 == 0) nr ++;
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoNUMvector <double> ri ((integer) 0, my maximumNumberOfCoefficients); // autoVEC ri = VECraw (my maximumNumberOfCoefficients+1);
-		autoNUMvector <double> rj ((integer) 0, my maximumNumberOfCoefficients); // autoVEC rj = VECraw (my maximumNumberOfCoefficients+1);
+		autoVEC ri = newVECraw (my maximumNumberOfCoefficients + 1);
+		autoVEC rj = newVECraw (my maximumNumberOfCoefficients + 1);
 
 		/* Calculate distance matrix. */
 
@@ -74,13 +72,11 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 		for (integer i = 1; i <= my nx; i ++) {
 			CC_Frame fi = & my frame [i];
 
-			regression (me, i, ri.peek(), nr); //regression (me, i, ri.get(), nr)
+			regression (ri.get(), me, i, nr);
 
 			for (integer j = 1; j <= thy nx; j ++) {
 				CC_Frame fj = & thy frame [j];
 				longdouble dist = 0.0, distr = 0.0;
-
-				// Cepstral distance 
 
 				if (coefficientWeight != 0.0) {
 					for (integer k = 1; k <= fj -> numberOfCoefficients; k ++) {
@@ -90,30 +86,24 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 					dist *= coefficientWeight;
 				}
 
-				// Log energy distance
-
 				if (logEnergyWeight != 0.0) {
 					double d = fi -> c0 - fj -> c0;
 					dist += logEnergyWeight * d * d;
 				}
 
-				// Regression distance
-
 				if (coefficientRegressionWeight != 0.0) {
-					regression (thee, j, rj.peek(), nr); // regression (thee, j, rj.get(), nr);
-					for (integer k = 1; k <= fj -> numberOfCoefficients; k ++) {// ; k = 2; k <= fj -> numberOfCoefficients + 1; k ++)
+					regression (rj.get(), thee, j, nr);
+					for (integer k = 2; k <= fj -> numberOfCoefficients + 1; k ++) {
 						double d = ri [k] - rj [k];
 						distr += d * d;
 					}
 					dist += coefficientRegressionWeight * distr;
 				}
 
-				// Regression on log(energy)
-
 				if (logEnergyRegressionWeight != 0.0) {
 					if (coefficientRegressionWeight == 0.0)
-						regression (thee, j, rj.peek(), nr); // regression (thee, j, rj.get (), nr)
-					double d = ri [0] - rj [0]; // ri [1] - rj [1]
+						regression (rj.get(), thee, j, nr);
+					double d = ri [1] - rj [1];
 					dist += logEnergyRegressionWeight * d * d;
 				}
 

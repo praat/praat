@@ -30,7 +30,7 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
 		integer ny = my y -> dimension, nx = my x -> dimension;
 		Melder_require (ny + nx == thy numberOfColumns,
-			U"The number of columns in the Correlation must equal the sum of the dimensions in the CCA object");
+			U"The number of columns in the Correlation should equal the sum of the dimensions in the CCA object");
 		
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 		his columnLabels.all() <<= thy columnLabels.all();
@@ -85,14 +85,14 @@ double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y
 			for (integer i = 1; i <= my y -> dimension; i ++) {
 				double si = NUMinner (thy data.row (i).part (1, my y -> dimension), my y -> eigenvectors.row (icv));
 				variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
-				varianceScaling +=  my y -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
+				varianceScaling += my y -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
 			}
 			varianceFraction += (variance / varianceScaling) / my y -> dimension;
 		} else {
 			for (integer i = 1; i <= my x -> dimension; i ++) {
 				double si = NUMinner (thy data.row (my y -> dimension + i).part (my y -> dimension + 1, thy data.ncol), my x -> eigenvectors.row (icv));
 				variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
-				varianceScaling +=  my x -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
+				varianceScaling += my x -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
 			}
 			varianceFraction += (variance / varianceScaling) / my y -> dimension;
 		}
@@ -108,7 +108,7 @@ double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, i
 		double varianceFraction = CCA_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
 		if (isundef (varianceFraction)) return undefined;
 
-		redundancy += varianceFraction * my y -> eigenvalues [icv];
+		redundancy += varianceFraction * my y -> eigenvalues [icv]; // eigenvalue == (coefficient)^2
 	}
 
 	return (double) redundancy;

@@ -1,6 +1,6 @@
 /* CC_def.h
  * 
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
