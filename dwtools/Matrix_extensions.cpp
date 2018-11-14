@@ -256,11 +256,7 @@ void Matrix_scale (Matrix me, int choice) {
 autoMatrix Matrix_transpose (Matrix me) {
 	try {
 		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer i = 1; i <= my ny; i ++) {
-			for (integer j = 1; j <= my nx; j ++) {
-				thy z [j ] [i] = my z [i] [j];
-			}
-		}
+		thy z.all() <<= my z.transpose();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
@@ -415,10 +411,12 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	if (xmax <= xmin) {
-		xmin = my xmin; xmax = my xmax;
+		xmin = my xmin;
+		xmax = my xmax;
 	}
 	if (ymax <= ymin) {
-		ymin = my ymin; ymax = my ymax;
+		ymin = my ymin;
+		ymax = my ymax;
 	}
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
@@ -436,10 +434,12 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	if (xmax <= xmin) {
-		xmin = my xmin; xmax = my xmax;
+		xmin = my xmin;
+		xmax = my xmax;
 	}
 	if (ymax <= ymin) {
-		ymin = my ymin; ymax = my ymax;
+		ymin = my ymin;
+		ymax = my ymax;
 	}
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||

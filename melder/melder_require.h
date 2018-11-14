@@ -134,7 +134,7 @@ inline void fixUnspecifiedRange (integer *inout_from, integer *inout_to, integer
 }
 
 template <typename T>
-void fixUnspecifiedElementRange (integer *inout_firstElement, integer *inout_lastElement, const constvector<T> x, integer minimumNewNumberOfElements) {
+void fixUnspecifiedElementRange (integer *inout_firstElement, integer *inout_lastElement, const constvector<T> x) {
 	fixUnspecifiedRange (inout_firstElement, inout_lastElement, x.size);
 }
 template <typename T>

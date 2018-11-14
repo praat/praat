@@ -62,6 +62,12 @@
 		our x = matrix_readText_##storage (_nrow, _ncol, _textSource_, #x); \
 	}
 
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	{ \
+		integer _ndim1 = (ndim1Expression), _ndim2 = (ndim2Expression), _ndim3 = (ndim3Expression); \
+		our x = tensor3_readText_##storage (_ndim1, _ndim2, _ndim3, _textSource_, #x); \
+	}
+
 #define oo_ENUMx(kType, storage, x)  \
 	our x = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue);
 

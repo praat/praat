@@ -57,6 +57,16 @@
 		} \
 	}
 
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	{ \
+		integer _ndim1 = (ndim1Expression); \
+		integer _ndim2 = (ndim2Expression); \
+		integer _ndim3 = (ndim3Expression); \
+		if (_ndim1 != 0 && _ndim2 != 0 && _ndim3 != 0) { \
+			if (! NUMequal (our x.get(), thy x.get())) return false; \
+		} \
+	}
+
 #define oo_ENUMx(kType, storage, x)  \
 	if (our x != thy x) return false;
 

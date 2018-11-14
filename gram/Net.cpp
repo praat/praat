@@ -64,6 +64,10 @@ static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberO
 	}
 }
 
+void Net_initEmpty (Net me) {
+	my layers = LayerList_create ();
+}
+
 autoNet Net_createEmpty (integer numberOfInputNodes) {
 	try {
 		autoNet me = Thing_new (Net);
@@ -75,11 +79,25 @@ autoNet Net_createEmpty (integer numberOfInputNodes) {
 	}
 }
 
+/*
+void Net_addRBMLayer (Net me, integer numberOfOutputNodes) {
+	Melder_require (my layers.size >= 1,
+		U"Cannot add an RBM layer if there is no input layer.");
+	integer layerNumber = my layers.size + 1;
+	autoRBMLayer layer = RBMLayer_create (
+		layerNumber == 1 ? my numberOfInputNodes : Melder_iround (numbersOfNodes [ilayer]),
+		Melder_iround (numbersOfNodes [ilayer + 1]),
+		ilayer == 1 ? inputsAreBinary : true
+	);
+	my layers -> addItem_move (layer.move());
+}
+*/
+
 void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary) {
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
-	my layers = LayerList_create ();
+	Net_initEmpty (me);
 	for (integer ilayer = 1; ilayer <= numberOfLayers; ilayer ++) {
 		autoRBMLayer layer = RBMLayer_create (
 			Melder_iround (numbersOfNodes [ilayer]),

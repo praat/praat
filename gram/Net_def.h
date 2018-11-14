@@ -60,6 +60,14 @@ oo_END_CLASS (RBMLayer)
 
 
 
+#define ooSTRUCT InputLayer
+oo_DEFINE_CLASS (InputLayer, Layer)
+
+oo_END_CLASS (InputLayer)
+#undef ooSTRUCT
+
+
+
 #define ooSTRUCT FullyConnectedLayer
 oo_DEFINE_CLASS (FullyConnectedLayer, Layer)
 

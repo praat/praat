@@ -28,10 +28,12 @@
 
 void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary);
 
+void Net_initEmpty (Net me);
 autoNet Net_createEmpty (integer numberOfInputNodes);
 
 autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary);
 
+void Net_addInputLayer (Net me, integer numberOfNodes);
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);
 void Net_addFullyConnectedLayer (Net me, integer numberOfOutputNodes);
 

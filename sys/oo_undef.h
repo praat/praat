@@ -22,6 +22,7 @@
 #undef oo_ANYVEC
 #undef oo_MATRIX
 #undef oo_ANYMAT
+#undef oo_ANYTEN3
 
 #undef oo_ENUMx
 //#undef oo_ENUMx_SET
