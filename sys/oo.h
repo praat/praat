@@ -126,6 +126,8 @@
 #define oo_INTMAT(x,nrow,ncol)  oo_ANYMAT (integer, integer32BE, x, nrow, ncol)
 #define oo_obsoleteMAT32(x,nrow,ncol)  oo_ANYMAT (double, r32, x, nrow, ncol)
 
+#define oo_TEN3(x,ndi1,ndim2,ndim3) oo_ANYTEN3 (double, r64, x, ndim1, ndim2, ndim3)
+
 /*** Enumerated types. ***/
 
 /* The possible storage types give these binary formats: */
@@ -185,6 +187,7 @@
 #define oo_ANYVEC(type,storage,x,size)  autovector <type> x;
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
 #define oo_ANYMAT(type,storage,x,nrow,ncol)  automatrix <type> x;
+#define oo_ANYTEN3(type,storage,x,ndim1,ndim2,ndim3)  autotensor3 <type> x;
 
 #define oo_ENUMx(kType,storage,x)  kType x;
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];

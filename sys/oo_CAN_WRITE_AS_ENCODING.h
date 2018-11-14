@@ -30,6 +30,8 @@
 
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)
 
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)
+
 #define oo_ENUMx(kType, storage, x)
 
 //#define oo_ENUMx_SET(kType, storage, x, setType)

@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Declaring 192 functions. */
+/* Declaring 240 functions. */
 #define FUNCTION(T,storage)  \
 	void NUMvector_writeText_##storage (const T *v, integer lo, integer hi, MelderFile file, conststring32 name); \
 	void vector_writeText_##storage (const constvector<T>& vec, MelderFile file, conststring32 name); \
@@ -35,7 +35,12 @@
 	T ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
 	automatrix<T> matrix_readText_##storage (integer nrow, integer ncol, MelderReadText text, const char *name); \
 	T ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f); \
-	automatrix<T> matrix_readBinary_##storage (integer nrow, integer ncol, FILE *f);
+	automatrix<T> matrix_readBinary_##storage (integer nrow, integer ncol, FILE *f); \
+	void tensor3_writeText_##storage (const consttensor3<T>& mat, MelderFile file, conststring32 name); \
+	void tensor3_writeBinary_##storage (const consttensor3<T>& mat, FILE *f); \
+	autotensor3<T> tensor3_readText_##storage (integer ndim1, integer ndim2, integer ndim3, MelderReadText text, const char *name); \
+	autotensor3<T> tensor3_readBinary_##storage (integer ndim1, integer ndim2, integer ndim3, FILE *f);
+
 FUNCTION (signed char, i8)
 FUNCTION (int, i16)
 FUNCTION (long, i32)

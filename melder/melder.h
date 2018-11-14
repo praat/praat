@@ -28,7 +28,7 @@
 #ifdef __MINGW32__
 	#include <sys/types.h>   // for off_t
 #endif
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <functional>   // std::move, std::forward
 #include <memory>   // unique_ptr
 #include <new>   // placement new

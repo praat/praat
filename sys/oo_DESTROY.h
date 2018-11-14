@@ -44,6 +44,11 @@
 		our x. reset (); \
 	}
 
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
+	}
+
 #define oo_ENUMx(kType, storage, x)
 
 //#define oo_ENUMx_SET(kType, storage, x, setType)

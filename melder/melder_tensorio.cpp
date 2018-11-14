@@ -180,6 +180,57 @@
 		for (integer irow = 1; irow <= nrow; irow ++) for (integer icol = 1; icol <= ncol; icol ++) \
 			result [irow] [icol] = binget##storage (f); \
 		return result; \
+	} \
+	void tensor3_writeText_##storage (const consttensor3<T>& ten3, MelderFile file, conststring32 name) { \
+		texputintro (file, name, U" [] [] []: ", ten3.ndim1 >= 1 && ten3.ndim2 >= 1 && ten3.ndim3 >= 1 ? nullptr : U"(empty)", 0,0,0); \
+		for (integer idim1 = 1; idim1 <= ten3.ndim1; idim1 ++) { \
+			texputintro (file, name, U" [", Melder_integer (idim1), U"]:", 0,0); \
+			for (integer idim2 = 1; idim2 <= ten3.ndim2; idim2 ++) { \
+				texputintro (file, name, U" [", Melder_integer (idim1), U"] [", Melder_integer (idim2), U"]:", 0,0); \
+				for (integer idim3 = 1; idim3 <= ten3.ndim3; idim3 ++) { \
+					texput##storage (file, ten3 [idim1] [idim2] [idim3], name, U" [", Melder_integer (idim1), U"] [", Melder_integer (idim2), U"] [", Melder_integer (idim3), U"]"); \
+				} \
+			} \
+			texexdent (file); \
+		} \
+		texexdent (file); \
+		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
+	} \
+	void tensor3_writeBinary_##storage (const consttensor3<T>& ten3, FILE *f) { \
+		for (integer idim1 = 1; idim1 <= ten3.ndim1; idim1 ++) { \
+			for (integer idim2 = 1; idim2 <= ten3.ndim2; idim2 ++) { \
+				for (integer idim3 = 1; idim3 <= ten3.ndim3; idim3 ++) { \
+					binput##storage (ten3 [idim1] [idim2] [idim3], f); \
+				} \
+			} \
+		} \
+		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
+	} \
+	autotensor3<T> tensor3_readText_##storage (integer ndim1, integer ndim2, integer ndim3, MelderReadText text, const char *name) { \
+		autotensor3<T> result = newtensor3zero<T> (ndim1, ndim2, ndim3); \
+		for (integer idim1 = 1; idim1 <= result.ndim1; idim1 ++) { \
+			for (integer idim2 = 1; idim2 <= result.ndim2; idim2 ++) { \
+				for (integer idim3 = 1; idim3 <= result.ndim3; idim3 ++) { \
+					try { \
+						result [idim1] [idim2] [idim3] = texget##storage (text); \
+					} catch (MelderError) { \
+						Melder_throw (U"Could not read ", Melder_peek8to32 (name), U" [", idim1, U"] [", idim2, U"] [", idim3, U"]."); \
+					} \
+				} \
+			} \
+		} \
+		return result; \
+	} \
+	autotensor3<T> tensor3_readBinary_##storage (integer ndim1, integer ndim2, integer ndim3, FILE *f) { \
+		autotensor3<T> result = newtensor3zero<T> (ndim1, ndim2, ndim3); \
+		for (integer idim1 = 1; idim1 <= result.ndim1; idim1 ++) { \
+			for (integer idim2 = 1; idim2 <= result.ndim2; idim2 ++) { \
+				for (integer idim3 = 1; idim3 <= result.ndim3; idim3 ++) { \
+					result [idim1] [idim2] [idim3] = binget##storage (f); \
+				} \
+			} \
+		} \
+		return result; \
 	}
 
 FUNCTION (signed char, i8)

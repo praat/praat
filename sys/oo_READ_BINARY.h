@@ -54,6 +54,12 @@
 		our x = matrix_readBinary_##storage (_nrow, _ncol, _filePointer_); \
 	}
 
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	{ \
+		integer _ndim1 = (ndim1Expression), _ndim2 = (ndim2Expression), _ndim3 = (ndim3Expression); \
+		our x = tensor3_readBinary_##storage (_ndim1, _ndim2, _ndim3, _filePointer_); \
+	}
+
 #define oo_ENUMx(kType, storage, x)  \
 	our x = (kType) binget##storage (_filePointer_, (int) kType::MIN, (int) kType::MAX, U"" #kType);
 
