@@ -352,7 +352,7 @@ void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, 
 	fromColumn = fromColumn <= 0 ? 1 : fromColumn;
 	toColumn = toColumn <= 0 ? 1 : toColumn;
 	Melder_assert (fromColumn + eigenvectors.ncol - 1 <= data.ncol);
-	Melder_assert (toColumn + eigenvectors.ncol - 1 <= projection.ncol);
+	Melder_assert (toColumn + eigenvectors.nrow - 1 <= projection.ncol);
 	for (integer irow = 1; irow <= data.nrow; irow ++)
 		for (integer icol = 1; icol <= eigenvectors.nrow; icol ++) {
 			longdouble r = 0.0;
