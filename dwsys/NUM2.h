@@ -80,10 +80,9 @@ void MATprintMatlabForm (constMAT m, conststring32 name);
 		7, 8, 9 ];
 */
 
-inline double NUMmax (VEC v, integer *out_index) {
-	*out_index = 0;
-	if (NUMisEmpty (v)) return undefined;
-	long index = 1;
+inline integer NUMmaxPos (VEC v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
 	double maximum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] > maximum) {
@@ -91,14 +90,12 @@ inline double NUMmax (VEC v, integer *out_index) {
 			index = i;
 		}
 	}
-	if (out_index) *out_index = index;
-	return maximum;	
+	return index;	
 }
 
-inline double NUMmin (VEC v, integer *out_index) {
-	*out_index = 0;
-	if (NUMisEmpty (v)) return undefined;
-	long index = 1;
+inline integer NUMminPos (VEC v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
 	double minimum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] < minimum) {
@@ -106,8 +103,7 @@ inline double NUMmin (VEC v, integer *out_index) {
 			index = i;
 		}
 	}
-	if (out_index) *out_index = index;
-	return minimum;	
+	return index;	
 }
 
 /*  NUMvector_extrema

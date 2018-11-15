@@ -71,8 +71,7 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
 		Melder_assert (my numberOfColumns > 0);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			integer col = 1;
-			(void) NUMmax (my data.row (i), & col);
+			integer col = NUMmaxPos (my data.row (i));
 			if (my columnLabels [col])
 				Strings_replace (thee.get(), i, my columnLabels [col].get());
 		}
@@ -87,8 +86,7 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 		autoCategories thee = Categories_create ();
 		Melder_assert (my numberOfColumns > 0);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			integer col = 1;
-			(void) NUMmax (my data.row (i), & col);
+			integer col = NUMmaxPos (my data.row (i));
 			OrderedOfString_append (thee.get(), my columnLabels [col].get());
 		}
 		return thee;
