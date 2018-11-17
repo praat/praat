@@ -17,7 +17,7 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
+//#include <stdbool.h>
 
 #include "phoneme.h"
 #include "voice.h"
