@@ -863,7 +863,9 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		if (useSigmaY)
 			Table_checkSpecifiedColumnNumberWithinRange (me, scolumn);
 		integer numberOfRows = my rows.size, numberOfData = 0;
-		autoNUMvector<double> x (1, numberOfRows), y (1, numberOfRows), sy (1, numberOfRows);
+		autoVEC x = newVECraw (numberOfRows);
+		autoVEC y = newVECraw (numberOfRows);
+		autoVEC sy = newVECraw (numberOfRows);
 		for (integer i = 1; i <= numberOfRows; i ++) {
 			double val = Table_getNumericValue_Assert (me, i, xcolumn);
 			if (isdefined (val)) {
@@ -880,7 +882,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			}
 		}
 		if (xmax <= xmin)
-			NUMvector_extrema<double> (x.peek(), 1, numberOfData, & xmin, & xmax);
+			NUMextrema (x.get(), 1, numberOfData, & xmin, & xmax);
 		Melder_require (xmin < xmax, U"The range of the x-values is too small.");
 		
 		integer numberOfDataPoints = 0, validData = 0;
@@ -1185,16 +1187,16 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 			U"The are not enough data points in the drawing range.");
 
 		integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoNUMvector<double> var (1, numberOfDataPoints);
+		autoVEC var = newVECzero (numberOfDataPoints);
 		autoNUMvector<double> varShifted (1, numberOfDataPoints);
 		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, & fromFormant, & toFormant, varShifted.peek());
-		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, 0, & fromFormant, & toFormant, var.peek());
+		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, 0, & fromFormant, & toFormant, var.at);
 		for (integer i = ixmin + 1; i <= ixmax; i ++) {
 			if (isdefined (varShifted [i]) && isdefined (var [i]))
 				var [i] -= varShifted [i];
 		}
 		if (ymax <= ymin)
-			NUMvector_extrema<double> (var.peek(), ixmin, ixmax, & ymin, & ymax);
+			NUMextrema (var.get(), ixmin, ixmax, & ymin, & ymax);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];
@@ -1228,10 +1230,10 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 		Melder_require (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) > 0,
 			U"Not enough data points in drawing range.");
 		integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoNUMvector<double> chisq (1, numberOfDataPoints);
-		FormantModeler_getCumulativeChiScores (me, useSigmaY, chisq.peek());
+		autoVEC chisq = newVECzero (numberOfDataPoints);
+		FormantModeler_getCumulativeChiScores (me, useSigmaY, chisq.at);
 		if (ymax <= ymin)
-			NUMvector_extrema<double> (chisq.peek(), ixmin, ixmax, & ymin, & ymax);
+			NUMextrema (chisq.get(), ixmin, ixmax, & ymin, & ymax);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];

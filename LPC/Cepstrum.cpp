@@ -92,32 +92,28 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 	Graphics_setInner (g);
 
 	if (qmax <= qmin) {
-		qmin = my xmin; qmax = my xmax;
+		qmin = my xmin;
+		qmax = my xmax;
 	}
 
 	integer imin, imax;
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 		return;
 	}
-	autoNUMvector<double> y (imin, imax);
+	integer numberOfSelected = imax - imin + 1;
+	autoVEC y = newVECraw (numberOfSelected);
 
-	for (integer i = imin; i <= imax; i ++) {
-		y [i] = my v_getValueAtSample (i, (power ? 1 : 0), 0);
+	for (integer i = 1; i <= numberOfSelected; i ++) {
+		y [i] = my v_getValueAtSample (imin + i - 1, (power ? 1 : 0), 0);
 	}
 
-	if (autoscaling) {
-		NUMvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
-	} else {
-		for (integer i = imin; i <= imax; i ++) {
-			if (y [i] > maximum) {
-				y [i] = maximum;
-			} else if (y [i] < minimum) {
-				y [i] = minimum;
-			}
-		}
-	}
+	if (autoscaling)
+		NUMextrema (y.get(), & minimum, & maximum);
+	else
+		VECclip_inplace (y.get(), minimum, maximum);
+
 	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
-	Graphics_function (g, y.peek(), imin, imax, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
+	Graphics_function (g, y.at, 1, numberOfSelected, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
 
 	Graphics_unsetInner (g);
 

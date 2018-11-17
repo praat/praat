@@ -152,13 +152,13 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 	}
 
 	if (xmax == xmin) {
-		NUMvector_extrema (my x.at, 1, my numberOfPoints, & min, & max);
+		NUMextrema (my x.get(), & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		xmin = min - tmp; xmax = max + tmp;
 	}
 
 	if (ymax == ymin) {
-		NUMvector_extrema (my y.at, 1, my numberOfPoints, & min, & max);
+		NUMextrema (my y.get(), & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		ymin = min - tmp; ymax = max + tmp;
 	}
