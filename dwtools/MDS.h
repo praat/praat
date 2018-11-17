@@ -185,11 +185,8 @@ Thing_define (Kruskal, Thing) {
 	autoProximityList proximities;
 	int stress_formula;
 	autoMDSVec vec;
-	double **dx;
+	autoMAT dx;
 	autoMinimizer minimizer;
-
-	void v_destroy () noexcept
-		override;
 };
 
 autoKruskal Kruskal_create (integer numberOfpoints, integer numberOfDimensions);

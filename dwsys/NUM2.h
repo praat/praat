@@ -24,7 +24,7 @@
 */
 
 #include <limits.h>
-#include "../melder/melder.h"
+#include "melder.h"
 #include "MAT_numerics.h"
 
 /* machine precision */
@@ -80,10 +80,31 @@ void MATprintMatlabForm (constMAT m, conststring32 name);
 		7, 8, 9 ];
 */
 
-inline integer NUMmaxPos (VEC v) {
+inline integer NUMmax (const constINTVEC& vec) {
+	if (NUMisEmpty (vec)) return undefined;
+	integer maximum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value > maximum) maximum = value;
+	}
+	return maximum;
+}
+
+inline integer NUMmin (const constINTVEC& vec) {
+	if (NUMisEmpty (vec)) return undefined;
+	integer minimum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value < minimum) minimum = value;
+	}
+	return minimum;
+}
+
+template<typename T>
+inline integer NUMmaxPos (vector<T> v) {
 	if (NUMisEmpty (v)) return 0;
 	integer index = 1;
-	double maximum = v [1];
+	T maximum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] > maximum) {
 			maximum = v [i];
@@ -93,10 +114,11 @@ inline integer NUMmaxPos (VEC v) {
 	return index;	
 }
 
-inline integer NUMminPos (VEC v) {
+template<typename T>
+inline integer NUMminPos (vector<T> v) {
 	if (NUMisEmpty (v)) return 0;
 	integer index = 1;
-	double minimum = v [1];
+	T minimum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] < minimum) {
 			minimum = v [i];
@@ -130,6 +152,7 @@ void NUMvector_extrema (const T *v, integer lo, integer hi, double *p_min, doubl
 	if (p_min) *p_min = min;
 	if (p_max) *p_max = max;
 }
+
 
 template <class T>
 void NUMmatrix_extrema (const T * const *x, integer rb, integer re, integer cb, integer ce, double *p_min, double *p_max) {

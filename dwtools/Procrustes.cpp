@@ -50,15 +50,12 @@
 
 Thing_implement (Procrustes, AffineTransform, 0);
 
-void structProcrustes :: v_transform (double **in, integer nrows, double **out) {
-	for (integer i = 1; i <= nrows; i ++) {
-		for (integer j = 1; j <= dimension; j ++) {
-			longdouble tmp = 0.0;
-			for (integer k = 1; k <= dimension; k ++)
-				tmp += in [i] [k] * r [k] [j];
-			out [i] [j] = s * tmp + t [j];
-		}
-	}
+void structProcrustes :: v_transform (MAT out, MAT in) {
+	Melder_assert (in.nrow == out.nrow && in.ncol == out.ncol);
+	Melder_assert (in.ncol == dimension);
+	MATVUmul (out, in, r.get());
+	out *= s;
+	out += t;
 }
 
 autoAffineTransform structProcrustes :: v_invert () {

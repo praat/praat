@@ -47,16 +47,11 @@
 #include "oo_DESCRIPTION.h"
 #include "AffineTransform_def.h"
 
-void structAffineTransform :: v_transform (double **in, integer nrows, double **out) {
-	for (integer i = 1; i <= nrows; i ++) {
-		for (integer j = 1; j <= dimension; j ++) {
-			longdouble tmp = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
-				tmp += in [i] [k] * r [k] [j];
-			}
-			out [i] [j] = tmp + t [j];
-		}
-	}
+void structAffineTransform :: v_transform (MAT out, MAT in) {
+	Melder_assert (in.nrow == out.nrow);
+	Melder_assert (in.ncol == out.ncol);
+	MATVUmul (out, in, r.get());
+	out += t;
 }
 
 autoAffineTransform structAffineTransform :: v_invert () {

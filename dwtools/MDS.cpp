@@ -60,23 +60,21 @@ Thing_implement (Similarity, Proximity, 0);
 
 
 /********************** NUMERICAL STUFF **************************************/
-// TODO use VEC and MAT
-static void NUMdmatrix_into_vector (double **m, double *v, integer r1, integer r2, integer c1, integer c2) {
+
+static void VECfromMAT_inplace (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
-	for (integer i = r1; i <= r2; i ++) {
-		for (integer j = c1; j <= c2; j ++) {
-			v [k ++] = m [i] [j];
-		}
-	}
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol ++)
+			v [k ++] = m [irow] [icol];
 }
-//TODO
-static void NUMdvector_into_matrix (const double *v, double **m, integer r1, integer r2, integer c1, integer c2) {
+
+static void MATfromVEC_inplace (MAT m, VEC v, integer numberOfColumns) {
+	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
-	for (integer i = r1; i <= r2; i ++) {
-		for (integer j = c1; j <= c2; j ++) {
-			m [i] [j] = v [k ++];
-		}
-	}
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol ++)
+			m [irow] [icol] = v [k ++];
 }
 
 static void MAT_divideRowByRowsum_inplace (MAT m) {
@@ -1642,7 +1640,7 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 	if (out_dbar) *out_dbar = dbar;
 }
 
-static double func (Daata object, const double p []) {
+static double func (Daata object, VEC p) {
 	Kruskal me = (Kruskal) object;
 	MDSVec him = my vec.get();
 	MAT x = my configuration -> data.get();
@@ -1655,12 +1653,9 @@ static double func (Daata object, const double p []) {
 	// Substitute results of minimizer into configuration and
 	// normalize the configuration
 
-	NUMdvector_into_matrix (p, x.at_deprecated, 1, numberOfPoints, 1, numberOfDimensions); //TODO
-
-	// Normalize
-
-	MATcentreEachColumn_inplace (x); //TODO
-	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints)); //TODO
+	MATfromVEC_inplace (x, p, numberOfDimensions);
+	MATcentreEachColumn_inplace (x);
+	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
 
 	// Calculate interpoint distances from the configuration
 
@@ -1676,11 +1671,7 @@ static double func (Daata object, const double p []) {
 
 	// Gradient calculation.
 
-	for (integer i = 1; i <= numberOfPoints; i ++) {
-		for (integer j = 1; j <= numberOfDimensions; j ++) {
-			my dx [i] [j] = 0.0;
-		}
-	}
+	my dx.get() <<= 0.0;
 
 	// Prevent overflow when stress is small
 
@@ -1709,7 +1700,7 @@ static double func (Daata object, const double p []) {
 }
 
 /* Precondition: configuration was not changed since previous call to func */
-static void dfunc (Daata object, const double * /* p */, double dp []) {
+static void dfunc (Daata object, VEC /* p */, VEC dp) {
 	Kruskal me = (Kruskal) object;
 	Configuration thee = my configuration.get();
 
@@ -1721,17 +1712,12 @@ static void dfunc (Daata object, const double * /* p */, double dp []) {
 	}
 }
 
-void structKruskal :: v_destroy () noexcept {
-	NUMmatrix_free<double> (dx, 1, 1);
-	Kruskal_Parent :: v_destroy ();
-}
-
 autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) {
 	try {
 		autoKruskal me = Thing_new (Kruskal);
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
 		my proximities = ProximityList_create ();
-		my dx = NUMmatrix<double> (1, numberOfPoints, 1, numberOfDimensions);
+		my dx = newMATraw (numberOfPoints, numberOfDimensions);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Kruskal not created.");
@@ -1889,7 +1875,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 		thy minimizer = VDSmagtMinimizer_create (numberOfCoordinates, (Daata) thee.get(), func, dfunc);
 
-		NUMdmatrix_into_vector (his data.at_deprecated, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
+		VECfromMAT_inplace (thy minimizer -> p.get(), his data.get());
 
 		thy stress_formula = stress_formula;
 		thy process = tiesHandling;
@@ -1899,7 +1885,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 		// call the function to get the best configuration
 
-		(void) func ((Daata) thee.get(), thy minimizer -> p); 
+		(void) func ((Daata) thee.get(), thy minimizer -> p.get()); 
 
 		autoConfiguration result = Data_copy (thy configuration.get()); // TODO move from its autoConfiguration
 		return result;
