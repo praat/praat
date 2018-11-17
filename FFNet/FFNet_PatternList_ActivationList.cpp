@@ -27,7 +27,7 @@
 #include "Graphics.h"
 #include "FFNet_PatternList_ActivationList.h"
 
-static double func (Daata object, const double p []) {
+static double func (Daata object, VEC p) {
 	FFNet me = (FFNet) object;
 	Minimizer thee = my minimizer.get();
 	double fp = 0.0;
@@ -49,7 +49,7 @@ static double func (Daata object, const double p []) {
 	return fp;
 }
 
-static void dfunc_optimized (Daata object, const double p [], double dp []) {
+static void dfunc_optimized (Daata object, VEC p, VEC dp) {
 	FFNet me = (FFNet) object;
 	(void) p;
 
@@ -93,7 +93,7 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 					wbuf [k ++] = my w [i];
 				}
 			}
-			Minimizer_reset (my minimizer.get(), wbuf.at);
+			Minimizer_reset (my minimizer.get(), wbuf.get());
 		}
 
 		Minimizer_minimize (my minimizer.get(), maxNumOfEpochs, tolerance, 1);

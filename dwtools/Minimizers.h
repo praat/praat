@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2017 David Weenink, 2015-2018 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 
 Thing_define (Minimizer, Thing) {
 	integer nParameters;	/* the number of parameters */
-	double *p;          /* the parameters */
+	autoVEC p;          /* the parameters */
 	double minimum;     /* current minimum */
-	double *history;    /* previous minima */
+	autoVEC history;    /* previous minima */
 	double tolerance;   /* stopping criterion */
 	Daata object;       /* reference to the object that uses this Minimizer */
 	integer funcCalls;  /* the number of times 'func' has been called */
@@ -39,8 +39,6 @@ Thing_define (Minimizer, Thing) {
 	Thing afterBoss;
 	Graphics gmonitor;   /* graphics to monitor the minimization process */
 
-	void v_destroy () noexcept
-		override;
 	void v_info ()
 		override { }
 
@@ -54,10 +52,9 @@ void Minimizer_init (Minimizer me, integer nParameters, Daata object);
 		nParameters > 0;
 */
 
-void Minimizer_reset (Minimizer me, const double guess[]);
+void Minimizer_reset (Minimizer me, constVEC guess);
 /* reset the start values for the minimizer
- * Preconditions:
- *    !! guess;
+ * 
  * Post conditions:
  *    p[] = guess[];
  *    my minimum = 1e308;
@@ -87,18 +84,15 @@ double Minimizer_getMinimum (Minimizer me);
 
 Thing_define (LineMinimizer, Minimizer) {
 	/* the function to be minimized */
-	double (*func) (Daata object, const double p[]);
+	double (*func) (Daata object, VEC p);
 	double maxLineStep;   // maximum step in line search direction
-	double *direction;    // search direction vector
-	double *ptry;         // point in search direction
-
-	void v_destroy () noexcept
-		override;
+	autoVEC direction;    // search direction vector
+	autoVEC ptry;         // point in search direction
 
 	//virtual void v_linmin (double p[], double fp, double direction[], double *fret);
 };
 
-void LineMinimizer_init (LineMinimizer me, integer nParameters, Daata object, double (*func) (Daata object, const double p[]));
+void LineMinimizer_init (LineMinimizer me, integer nParameters, Daata object, double (*func) (Daata object, VEC p));
 
 /******************  class SteepestDescentMinimizer**************************/
 
@@ -108,15 +102,15 @@ typedef struct structSteepestDescentMinimizer_parameters {
 
 Thing_define (SteepestDescentMinimizer, Minimizer) {
 	double eta, momentum;
-	double (*func) (Daata object, const double p[]);
-	void  (*dfunc) (Daata object, const double p[], double dp[]);
+	double (*func) (Daata object, VEC p);
+	void  (*dfunc) (Daata object, VEC p, VEC dp);
 	/* calculates gradient at position p */
 
 	void v_minimize ()
 		override;
 };
 
-autoSteepestDescentMinimizer SteepestDescentMinimizer_create (integer nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
+autoSteepestDescentMinimizer SteepestDescentMinimizer_create (integer nParameters, Daata object, double (*func) (Daata object, VEC p), void (*dfunc) (Daata object, VEC p, VEC dp));
 
 
 /**********  class VDSmagtMinimizer ********************************/
@@ -127,31 +121,29 @@ typedef struct structVDSmagtMinimizer_parameters {
 } *VDSmagtMinimizer_parameters;
 
 Thing_define (VDSmagtMinimizer, Minimizer) {
-	double (*func) (Daata object, const double p[]);
-	void  (*dfunc) (Daata object, const double p[], double dp[]);
-	double *dp;
+	double (*func) (Daata object, VEC p);
+	void  (*dfunc) (Daata object, VEC p, VEC dp);
+	autoVEC dp;
 	double lineSearchGradient;
 	integer lineSearchMaxNumOfIterations;
 	double gr0, gropt, df, alplim, alpha, dalpha, alphamin;
-	double *pc;   /* position of current point */
-	double *gc;   /* gradient of current point */
-	double *g0;   /* gradient at beginning of line search */
-	double *s;   /* search direction for line search */
-	double *srst;   /* search direction for first iteration after restart */
-	double *grst;   /* gradient for first iteration after restart */
+	autoVEC pc;   /* position of current point */
+	autoVEC gc;   /* gradient of current point */
+	autoVEC g0;   /* gradient at beginning of line search */
+	autoVEC s;   /* search direction for line search */
+	autoVEC srst;   /* search direction for first iteration after restart */
+	autoVEC grst;   /* gradient for first iteration after restart */
 	double fc, grc, fch, gr2s, temp, grs, beta, gcg0;
 	double gamma, gamma_in, f0, gsq, gopt_sq;
 	integer lineSearch_iteration, flag, again, one_up, restart;
 	bool restart_flag;
 
-	void v_destroy () noexcept
-		override;
 	void v_minimize ()
 		override;
 	void v_reset ()
 		override;
 };
 
-autoVDSmagtMinimizer VDSmagtMinimizer_create (integer dimension, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[]));
+autoVDSmagtMinimizer VDSmagtMinimizer_create (integer dimension, Daata object, double (*func) (Daata object, VEC p), void (*dfunc) (Daata object, VEC p, VEC dp));
 
 #endif /* _Minimizer_h_ */
