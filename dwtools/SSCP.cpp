@@ -91,8 +91,8 @@ Thing_implement (Correlation, SSCP, 0);
 
 void structSSCP :: v_info () {
 	structTableOfReal :: v_info ();
-	double zmin, zmax;
-	NUMmatrix_extrema<double> (data.at_deprecated, 1, numberOfRows, 1, numberOfColumns, &zmin, &zmax);
+	double zmin = NUMmin (asvector (data.get()));
+	double zmax = NUMmax (asvector (data.get()));
 	MelderInfo_writeLine (U"Minimum value: ", zmin);
 	MelderInfo_writeLine (U"Maximum value: ", zmax);
 }
@@ -894,8 +894,8 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 			thy numberOfObservations += covi -> numberOfObservations;
 
 			// Sum the sscp's and weigh the centroid.
-			for (integer i = 1; i <= thy numberOfRows; i ++) // catch 1xn
-				thy data.row (i)  +=  covi -> data.row (i)  *  (covi -> numberOfObservations - 1.0);
+			for (integer k = 1; k <= thy numberOfRows; k ++) // catch 1xn
+				thy data.row (k)  +=  covi -> data.row (k)  *  (covi -> numberOfObservations - 1.0);
 
 			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
 		}

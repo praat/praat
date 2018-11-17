@@ -751,25 +751,20 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 		ii ++;
 	ixmax = ii;
 
-	autoNUMvector<double> d (ixmin, ixmax);
+	long numberOfSelected = ixmax - ixmin + 1;
+	autoVEC d = newVECraw (numberOfSelected);
 
 	for (integer i = ixmin; i <= ixmax; i ++)
-		d [i] = my z [my path [i]. y] [i];
+		d [i - ixmin + 1] = my z [my path [i]. y] [i];
 
-	if (dmin >= dmax) {
-		NUMvector_extrema (d.peek(), ixmin, ixmax, & dmin, & dmax);
-	} else {
-		for (integer i = ixmin; i <= ixmax; i ++) {
-			if (d [i] > dmax)
-				d [i] = dmax;
-			else if (d [i] < dmin)
-				d [i] = dmin;
-		}
-	}
+	if (dmin >= dmax)
+		NUMextrema (d.get(), & dmin, & dmax);
+	else 
+		VECclip_inplace (d.get(), dmin, dmax);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, dmin, dmax);
-	Graphics_function (g, d.peek(), ixmin, ixmax, xmin, xmax);
+	Graphics_function (g, d.at, 1, numberOfSelected, xmin, xmax);
 	Graphics_unsetInner (g);
 
 	if (garnish) {

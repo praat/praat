@@ -131,7 +131,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
 	}
 	
-	double extremum = NUMmatrix_extremum<double> (my z.at_deprecated, 1, my ny, 1, my nx);
+	double extremum = NUMextremum (my z.get(), 1, my ny, 1, my nx);
 
 	extremum = fabs (extremum);
 	Graphics_Colour colour = Graphics_inqColour (g);
@@ -266,23 +266,20 @@ autoMatrix Matrix_transpose (Matrix me) {
 void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum,
 	integer nBins, double freqMin, double freqMax, bool cumulative, bool garnish)
 {
-	if (nBins <= 0) {
-		return;
-	}
+	if (nBins <= 0) return;
 	if (xmax <= xmin) {
-		xmin = my xmin; xmax = my xmax;
+		xmin = my xmin;
+		xmax = my xmax;
 	}
 	if (ymax <= ymin) {
-		ymin = my ymin; ymax = my ymax;
+		ymin = my ymin;
+		ymax = my ymax;
 	}
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) || 
-		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
-		return;
-	}
-	if (maximum <= minimum) {
+		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) return;
+	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
-	}
 	if (maximum <= minimum) {
 		minimum -= 1.0; 
 		maximum += 1.0;
@@ -290,10 +287,9 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 
 	// Count the numbers per bin and the total
 
-	if (nBins < 1) {
-		nBins = 10;
-	}
-	autoNUMvector<integer> freq (1, nBins);
+	if (nBins < 1) nBins = 10;
+
+	autoVEC freq = newVECraw (nBins);
 	double binWidth = (maximum - minimum) / nBins;
 	integer nxy = 0;
 	for (integer i = iymin; i <= iymax; i ++) {
@@ -308,9 +304,10 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 
 	if (freqMax <= freqMin) {
 		if (cumulative) {
-			freqMin = 0; freqMax = 1.0;
+			freqMin = 0;
+			freqMax = 1.0;
 		} else {
-			NUMvector_extrema (freq.peek(), 1, nBins, & freqMin, & freqMax);
+			NUMextrema (freq.get(), & freqMin, & freqMax);
 			if (freqMax <= freqMin) {
 				freqMin = freqMin > 1.0 ? freqMin - 1.0 : 0.0;
 				freqMax += 1.0;

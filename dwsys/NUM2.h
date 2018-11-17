@@ -140,43 +140,63 @@ inline void NUMextrema (constVEC x, double *out_minimum, double *out_maximum) {
 	if (out_maximum) *out_maximum = NUMmax (x);
 }
 
-template <class T>
-void NUMvector_extrema (const T *v, integer lo, integer hi, double *p_min, double *p_max) {
+inline void NUMextrema (constVEC v, integer lo, integer hi, double *out_min, double *out_max) {
 	double min = v [lo];
 	double max = min;
-	for (integer i = lo + 1; i <= hi; i++)
-	{
+	for (integer i = lo + 1; i <= hi; i++) {
 		if (v [i] < min) min = v [i];
 		else if (v [i] > max) max = v [i];
 	}
-	if (p_min) *p_min = min;
-	if (p_max) *p_max = max;
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
 }
 
+inline void NUMextrema (constINTVEC v, integer lo, integer hi, double *out_min, double *out_max) {
+	integer min = v [lo];
+	integer max = min;
+	for (integer i = lo + 1; i <= hi; i++) {
+		if (v [i] < min) min = v [i];
+		else if (v [i] > max) max = v [i];
+	}
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
+}
 
-template <class T>
-void NUMmatrix_extrema (const T * const *x, integer rb, integer re, integer cb, integer ce, double *p_min, double *p_max) {
-	T min = x[rb][cb], max = min;
-	for (integer i = rb; i <= re; i++) {
-		for (integer j = cb; j <= ce; j++) {
-			T t = x[i] [j];
-			if (t < min) min = t;
-			else if (t > max) max = t;
+inline double NUMmax (constMAT x, integer rb, integer re, integer cb, integer ce) {
+	Melder_assert (rb > 0 && rb <= re && re <= x.nrow);
+	Melder_assert (cb > 0 && cb <= ce && ce <= x.ncol);
+	double max = x [rb] [cb];
+	for (integer irow = rb; irow <= re; irow ++)
+		for (integer icol = cb; icol <= ce; icol ++) {
+			const double value = x [irow] [icol];
+			if (value > max) max = value;
 		}
-	}
-	if (p_min) {
-		*p_min = min;
-	}
-	if (p_max) {
-		*p_max = max;
-	}
+	return max;
 }
 
-template <class T>
-double NUMmatrix_extremum (const T * const *x, integer rb, integer re, integer cb, integer ce) {
-	double min, max;
-	NUMmatrix_extrema (x, rb, re, cb, ce, & min, & max);
-	return fabs (max) > fabs (min) ? max : min;
+inline double NUMmin (constMAT x, integer rb, integer re, integer cb, integer ce) {
+	Melder_assert (rb > 0 && rb <= re && re <= x.nrow);
+	Melder_assert (cb > 0 && cb <= ce && ce <= x.ncol);
+	double min = x [rb] [cb];
+	for (integer irow = rb; irow <= re; irow ++)
+		for (integer icol = cb; icol <= ce; icol ++) {
+			const double value = x [irow] [icol];
+			if (value < min) min = value;
+		}
+	return min;
+}
+
+inline void NUMextrema (constMAT x, integer rb, integer re, integer cb, integer ce, double *out_min, double *out_max) {
+	double min = NUMmin (x, rb, re, cb, ce);
+	double max = NUMmax (x, rb, re, cb, ce);
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
+}
+
+inline double NUMextremum (constMAT x, integer rb, integer re, integer cb, integer ce) {
+	double min = NUMmin (x, rb, re, cb, ce);
+	double max = NUMmax (x, rb, re, cb, ce);
+	return std::max (fabs (min), fabs (max));
 }
 
 /* NUMvector_clip

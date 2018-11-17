@@ -92,14 +92,15 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
 		return;
 	}
-	autoNUMvector<double> gain (itmin, itmax);
+	integer numberOfSelected = itmax - itmin + 1;
+	autoVEC gain = newVECraw (numberOfSelected);
 
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
-		gain [iframe] = my d_frames [iframe]. gain;
+		gain [iframe - itmin + 1] = my d_frames [iframe]. gain;
 	}
-	if (gmax <= gmin) {
-		NUMvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
-	}
+	if (gmax <= gmin)
+		NUMextrema (gain.get(), & gmin, & gmax);
+
 	if (gmax == gmin) {
 		gmin = 0;
 		gmax += 0.5;
@@ -109,7 +110,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		double x = Sampled_indexToX (me, iframe);
-		Graphics_speckle (g, x, gain[iframe]);
+		Graphics_speckle (g, x, gain [iframe - itmin + 1]);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {

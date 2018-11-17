@@ -129,23 +129,24 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 
 	integer bframe, eframe;
 	(void) Sampled_getWindowSamples (me, xmin, xmax, & bframe, & eframe);
-	autoNUMvector <double> c (bframe, eframe);
-	for (integer i = bframe; i <= eframe; i ++) {
-		CC_Frame cf = & my frame [i];
+	integer numberOfSelected = eframe - bframe + 1;
+	autoVEC c = newVECraw (numberOfSelected);
+	for (integer i = 1; i <= numberOfSelected; i ++) {
+		CC_Frame cf = & my frame [bframe + i - 1];
 		c [i] = cf -> c0;
 	}
 	if (ymin >= ymax) {
-		NUMvector_extrema (c.peek(), bframe, eframe, &ymin, &ymax);
+		NUMextrema (c.get(), & ymin, & ymax);
 		if (ymax <= ymin) {
 			ymin -= 1.0;
 			ymax += 1.0;
 		}
-	} else {
-		NUMvector_clip (c.peek(), bframe, eframe, ymin, ymax);
-	}
+	} else
+		VECclip_inplace (c.get(), ymin, ymax);
+
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_function (g, c.peek(), bframe, eframe, xmin, xmax);
+	Graphics_function (g, c.at, 1, numberOfSelected, xmin, xmax);
 	Graphics_unsetInner (g);
 }
 
