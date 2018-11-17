@@ -145,7 +145,7 @@ public:
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
 		if (newSize <= 0) return _autostringvectorview<T> ();
-		return _autostringvectorview (our _ptr + (firstPosition - 1), newSize);
+		return _autostringvectorview<T> (our _ptr + (firstPosition - 1), newSize);
 	}
 };
 
