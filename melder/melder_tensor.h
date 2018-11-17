@@ -379,8 +379,8 @@ public:
 	integer stride = 1;
 	vectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
-	explicit vectorview (T * const firstCell, integer const size, integer const stride) :
-			firstCell (firstCell), size (size), stride (stride) { }
+	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_) :
+			firstCell (firstCell_), size (size_), stride (stride_) { }
 	T& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
@@ -432,8 +432,8 @@ public:
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
 	constvectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
-	explicit constvectorview (const T * const firstCell, integer const size, integer const stride) :
-			firstCell (firstCell), size (size), stride (stride) { }
+	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_) :
+			firstCell (firstCell_), size (size_), stride (stride_) { }
 	constvectorview (vectorview<T> vec): firstCell (vec.firstCell), size (vec.size), stride (vec.stride) { }
 	T const& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
@@ -699,8 +699,8 @@ public:
 	matrixview (const matrix<T>& other) :
 			firstCell (other.cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	matrixview (const automatrix<T>& other) = delete;
-	explicit matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
-			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
+	explicit matrixview (T * const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_) :
+			firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
 	vectorview<T> operator[] (integer rowNumber) const {
 		return vectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
 	}
@@ -807,8 +807,8 @@ public:
 	constmatrixview (const matrix<T>& other) :
 			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	constmatrixview (const automatrix<T>& other) = delete;
-	explicit constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
-			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
+	explicit constmatrixview (const T * const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_) :
+			firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
 	constmatrixview (matrixview<T> mat) :
 			firstCell (mat.firstCell), nrow (mat.nrow), ncol (mat.ncol), rowStride (mat.rowStride), colStride (mat.colStride) { }
 	constvectorview<T> operator[] (integer i) const {
@@ -1051,13 +1051,13 @@ public:
 	integer stride1 = 0, stride2 = 0, stride3 = 1;
 	tensor3 () = default;
 	tensor3 (const autotensor3<T>& other) = delete;
-	explicit tensor3 (T * cells,
-		integer ndim1, integer ndim2, integer ndim3,
-		integer stride1, integer stride2, integer stride3
+	explicit tensor3 (T * cells_,
+		integer ndim1_, integer ndim2_, integer ndim3_,
+		integer stride1_, integer stride2_, integer stride3_
 	) :
-		cells (cells),
-		ndim1 (ndim1), ndim2 (ndim2), ndim3 (ndim3),
-		stride1 (stride1), stride2 (stride2), stride3 (stride3)
+		cells (cells_),
+		ndim1 (ndim1_), ndim2 (ndim2_), ndim3 (ndim3_),
+		stride1 (stride1_), stride2 (stride2_), stride3 (stride3_)
 	{ }
 	matrixview<T> operator[] (integer dim1) const {
 		return matrixview<T> (our cells + (dim1 - 1) * our stride1, our ndim2, our ndim3, our stride2, our stride3);
@@ -1157,13 +1157,13 @@ public:
 	integer stride1 = 0, stride2 = 0, stride3 = 1;
 	consttensor3 () = default;
 	consttensor3 (const autotensor3<T>& other) = delete;
-	explicit consttensor3 (const T * cells,
-		integer ndim1, integer ndim2, integer ndim3,
-		integer stride1, integer stride2, integer stride3
+	explicit consttensor3 (const T * cells_,
+		integer ndim1_, integer ndim2_, integer ndim3_,
+		integer stride1_, integer stride2_, integer stride3_
 	) :
-		cells (cells),
-		ndim1 (ndim1), ndim2 (ndim2), ndim3 (ndim3),
-		stride1 (stride1), stride2 (stride2), stride3 (stride3)
+		cells (cells_),
+		ndim1 (ndim1_), ndim2 (ndim2_), ndim3 (ndim3_),
+		stride1 (stride1_), stride2 (stride2_), stride3 (stride3_)
 	{ }
 	consttensor3 (tensor3<T> ten) :
 		cells (ten.cells),

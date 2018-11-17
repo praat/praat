@@ -1,5 +1,5 @@
 Praats/external/portaudio/READ_ME.TXT
-Paul Boersma, 22 October 2018
+Paul Boersma, 17 November 2018
 This file describes the adaptations to the PortAudio v19 sources (2014/01)
 that are needed to make them compatible with Praat.
 
@@ -26,7 +26,7 @@ Around pa_win_*.c, do
 ...
 #endif
 
-Around pa_unix_util.c, do
+Around pa_unix_util.c and pa_jack.c, do
 #if defined (UNIX)
 ...
 #endif

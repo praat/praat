@@ -1,3 +1,4 @@
+#ifdef UNIX
 /*
  * $Id: pa_jack.c 1912 2013-11-15 12:27:07Z gineera $
  * PortAudio Portable Real-Time Audio Library
@@ -1769,3 +1770,4 @@ PaError PaJack_GetClientName(const char** clientName)
 error:
     return result;
 }
+#endif
