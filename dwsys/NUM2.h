@@ -1256,21 +1256,28 @@ double NUMrandomBinomial_real (double p, integer n);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 
+
+
+
 // lpc[1..n] to rc[1..n]
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc);
+void VECrc_from_lpc (VEC rc, constVEC lpc);
 
 // rc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
 void NUMlpc_rc_to_area (double *rc, integer n, double *area);
+void VECarea_from_rc (VEC area, constVEC rc);
 
 // area[1..n] to rc[1..n-1] (modification: LPTRN assumes area[n+1])
 void NUMlpc_area_to_rc (double *area, integer n, double *rc);
+void VECrc_from_area (VEC rc, constVEC area);
 
 // area[1..n] to lpc[1..n-1]! (modification: lptrn gives lpc[1] = 1 we don't)
 void NUMlpc_area_to_lpc (double *area, integer n, double *lpc);
+void VEClpc_from_area (VEC lpc, constVEC area);
 
 // lpc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
 void NUMlpc_lpc_to_area (double *lpc, integer m, double *area);
-
+void VECarea_from_lpc (VEC area, constVEC lpc);
 /*
  Fix indices to be in the range [lowerLimit, upperLimit].
 */

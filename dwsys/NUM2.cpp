@@ -2136,6 +2136,68 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
 // lpc [1..n] to rc [1..n]
+
+void VECrc_from_lpc (VEC rc, constVEC lpc) {
+	Melder_assert (rc.size == lpc.size);
+	autoVEC b = newVECraw (lpc.size);
+	autoVEC a = newVECraw (lpc.size);
+	a.get() <<= lpc;
+	for (integer m = lpc.size; m > 0; m--) {
+		rc [m] = a [m];
+		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
+		b.part (1, m) <<= a.part (1, m);
+		for (integer i = 1; i < m; i ++) {
+			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
+		}
+	}
+}
+
+void VEClpc_from_rc (VEC lpc, constVEC rc) {
+	Melder_assert (lpc.size == rc.size);
+	lpc <<= rc;
+	for (integer j = 2; j <= lpc.size; j ++) {
+		for (integer k = 1; k <= j / 2; k ++) {
+			double at = lpc [k] + rc [j] * lpc [j - k];
+			lpc [j - k] += rc [j] * lpc [k];
+			lpc [k] = at;
+		}
+	}
+}
+
+void VECarea_from_rc (VEC area, constVEC rc) {
+	Melder_assert (area.size == rc.size);
+	longdouble s = 0.0001; // 1.0 cm^2 at glottis
+	for (integer i = area.size; i > 0; i --) {
+		s *= (1.0 + rc [i]) / (1.0 - rc [i]);
+		area [i] = s;
+	}
+}
+
+void VECrc_from_area (VEC rc, constVEC area) {
+	Melder_assert (rc.size == area.size);
+	double ar;
+	for (integer j = 1; j <= rc.size - 1; j ++) {
+		ar = area [j + 1] / area [j];
+		rc [j] = (1.0 - ar) / (1.0 + ar);
+	}
+	ar = 0.0001 / area [rc.size];  // 1.0 cm^2 at glottis
+	rc [rc.size] = (1.0 - ar) / (1.0 + ar);
+}
+
+void VEClpc_from_area (VEC lpc, constVEC area) {
+	Melder_assert (lpc.size == area.size);
+	autoVEC rc = newVECzero (lpc.size);
+	VECrc_from_area (rc.get(), area);
+	VEClpc_from_rc (lpc, rc.get());
+}
+
+void VECarea_from_lpc (VEC area, constVEC lpc) {
+	Melder_assert (area.size == lpc.size);
+	autoVEC rc = newVECraw (lpc.size);
+	VECrc_from_lpc (rc.get(), lpc);
+	VECarea_from_rc (area, rc.get());
+}
+
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoNUMvector<double> b (1, p);
 	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
@@ -2231,7 +2293,7 @@ void NUMlpc_area_to_lpc (double *area, integer m, double *lpc) {
 	autoNUMvector<double> rc (1, m);
 	// normalisation: area [n+1] = 0.0001
 	NUMlpc_area_to_rc (area, m, rc.peek());
-	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc);
+	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc); // m-1 ???
 }
 
 void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {

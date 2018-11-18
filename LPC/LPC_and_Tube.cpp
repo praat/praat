@@ -33,30 +33,12 @@
 // IEEE: Programs fo digital signal processing section 4.3 LPTRN
 
 void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee) {
-	integer p = my nCoefficients;
-	Melder_assert (p <= thy nSegments); //TODO
-
-	autoVEC b = newVECraw (p);
-	autoVEC a = newVECcopy (my a.get());
-
-	double *rc = thy c;
-	for (integer m = p; m > 0; m --) {
-		rc [m] = a [m];
-		Melder_require (rc [m] <= 1.0, U"Relection coefficient [", m, U"] should be smaller than 1.");
-		for (integer i = 1; i < m; i ++)
-			b [i] = a [i];
-		for (integer i = 1; i < m; i ++)
-			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
-	}
+	Melder_assert (my nCoefficients <= thy numberOfSegments);
+	VECrc_from_lpc (thy c.part (1, my nCoefficients), my a.part (1, my nCoefficients));
 }
 
 void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee) {
-	struct structTube_Frame rc_struct = { 0 };
-	Tube_Frame rc = & rc_struct;
-	Tube_Frame_init (rc, my nCoefficients, thy length);
-	LPC_Frame_into_Tube_Frame_rc (me, rc);
-	Tube_Frames_rc_into_area (rc, thee);
-	rc -> destroy ();
+	VECarea_from_lpc (thy c.part (1, my nCoefficients), my a.part (1, my nCoefficients));
 }
 
 double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping) {
@@ -111,7 +93,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		Melder_require (f -> nFormants > 0, U"Not enough formants.");
 		
 
-		double *area = af -> c;
+		double *area = af -> c.at; // TODO
 		double lmin = length = 0.10;
 		double plength = refLength;
 		while (length <= 0.25) {
@@ -150,15 +132,15 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 			// step 6.2 Log(areas)
 
 			double logSum = 0.0;
-			for (integer i = 1; i <= af -> nSegments; i ++) {
+			for (integer i = 1; i <= af -> numberOfSegments; i ++) {
 				area [i] = log (area [i]);
 				logSum += area [i];
 			}
 
 			// step 6.3 and 7
 			double var = 0.0;
-			for (integer i = 1; i <= af -> nSegments; i ++) {
-				double delta = area [i] - logSum / af -> nSegments;
+			for (integer i = 1; i <= af -> numberOfSegments; i ++) {
+				double delta = area [i] - logSum / af -> numberOfSegments;
 				var += delta * delta;
 			}
 
@@ -220,15 +202,12 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bo
 autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
 		integer m = my nCoefficients;
-		autoVEC area = newVECzero (m + 1);
-		NUMlpc_lpc_to_area (my a.at, m, area.at);
 		autoVocalTract thee = VocalTract_create (m, length / m);
-
+		VECarea_from_lpc (thy z.row (1), my a.part (1, m));
 		// area [lips..glottis] (m^2) to VocalTract [glottis..lips] (m^2)
 
-		for (integer i = 1; i <= m; i ++) {
-			thy z [1] [i] = area [m + 1 - i];
-		}
+		for (integer i = 1; i <= m / 2; i ++)
+			std::swap (thy z [1] [i], thy z [1] [m + 1 - i]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No VocalTract created from LPC_Frame.");

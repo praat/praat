@@ -35,9 +35,7 @@
 
 void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction, double deEmphasisFrequency) {
 	if (my nCoefficients == 0) {
-		for (integer i = 1; i <= thy nx; i ++) {
-			thy z [1] [i] = thy z [2] [i] = 0.0;
-		}
+		thy z.get() <<= 0.0;
 		return;
 	}
 
@@ -52,10 +50,8 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 
 	// Copy 1, a [1], ... a [p] into fftbuffer
 
-	fftbuffer [1] = 1;
-	for (integer i = 2; i <= ndata; i ++) {
-		fftbuffer [i] = my a [i - 1];
-	}
+	fftbuffer [1] = 1.0;
+	fftbuffer.part (2, ndata) <<= my a.get();
 
 	if (deEmphasisFrequency < thy xmax) {
 		// Multiply (1, a [1] z^-1, ... a [p] z^-p) by (1 - b z^-1)
