@@ -2198,6 +2198,7 @@ void VECarea_from_lpc (VEC area, constVEC lpc) {
 	VECarea_from_rc (area, rc.get());
 }
 
+/*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoNUMvector<double> b (1, p);
 	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
@@ -2302,6 +2303,7 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 	NUMlpc_rc_to_area (rc.peek(), m, area);
 
 }
+/*********** End deprecated LPC routines ***********************************/
 
 #undef SIGN
 
@@ -2334,14 +2336,12 @@ integer NUMrandomBinomial (double p, integer n) {
 		return -100000000;
 	}
 	integer ix;			// return value
-	int flipped = 0;
+	bool flipped = false;
 
-	if (n == 0) {
-		return 0;
-	}
+	if (n == 0) return 0;
 	if (p > 0.5) {
 		p = 1.0 - p;	// work with small p
-		flipped = 1;
+		flipped = true;
 	}
 
 	double q = 1.0 - p;
@@ -2607,7 +2607,7 @@ TryAgain:
 
 Finish:
 
-	return (flipped) ? (n - ix) : ix;
+	return flipped ? (n - ix) : ix;
 }
 
 double NUMrandomBinomial_real (double p, integer n) {
@@ -2631,7 +2631,7 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 
 autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
-	autoMAT g (x.size, x.size, kTensorInitializationType :: RAW);
+	autoMAT g = newMATraw (x.size, x.size);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w
@@ -2695,8 +2695,7 @@ void MAT_getEntropies (constMAT m, double *out_h, double *out_hx,
 	if (totalSum > 0.0) {
 		longdouble hy_t = 0.0;
 		for (integer i = 1; i <= m.nrow; i ++) {
-			longdouble rowsum = 0.0;
-			for (integer j = 1; j <= m.ncol; j++) rowsum += m [i] [j];
+			double rowsum = NUMsum (m.row (i));
 			if (rowsum > 0.0) {
 				longdouble p = rowsum / totalSum;
 				hy_t -= p * NUMlog2 (p);
