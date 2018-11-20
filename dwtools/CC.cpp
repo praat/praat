@@ -97,8 +97,7 @@ autoMatrix CC_to_Matrix (CC me) {
 		
 		for (integer i = 1; i <= my nx; i ++) {
 			CC_Frame cf = & my frame [i];
-			for (integer j = 1; j <= cf -> numberOfCoefficients; j ++)
-				thy z [j] [i] = cf -> c [j];
+			thy z.column (i) <<= cf -> c.get(); // not coefficients must equal zero!
 		}
 		return thee;
 	} catch (MelderError) {

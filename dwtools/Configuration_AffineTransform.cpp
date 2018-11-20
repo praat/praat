@@ -31,7 +31,7 @@
 static void do_steps45 (const constMAT& w, const MAT& t, const constMAT& c, double *out_f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 	for (integer i = 1; i <= w.ncol; i ++) {
-		double d = 0.0;
+		longdouble d = 0.0;
 		for (integer k = 1; k <= w.ncol; k++) {
 			d += w [k] [i] * t [k] [i];
 		}
@@ -108,7 +108,7 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 		for (integer j = 1; j <= nc; j ++) {
 			// Step 7.a
 
-			longdouble p = 0.0;
+			longdouble p = 0.0; 
 			for (integer k = 1; k <= nc; k ++) {
 				for (integer i = 1; i <= nc; i ++) {
 					p += t [k] [j] * c [k] [i] * t [i] [j];
@@ -117,7 +117,7 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 
 			// Step 7.b
 
-			longdouble q = 0.0;
+			longdouble q = 0.0; // TODO NUMinner (w.column (j), t.column (j) if argument of NUMinner wer VECVU type
 			for (integer k = 1; k <= nc; k ++) {
 				q += w [k] [j] * t [k] [j];
 			}
@@ -125,9 +125,7 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 			// Step 7.c
 
 			if (q == 0.0) {
-				for (integer i = 1; i <= nc; i ++) {
-					u [i] [j] = 0.0;
-				}
+				u.column (j) <<= 0.0;
 			} else {
 				longdouble ww = 0.0;
 				for (integer k = 1; k <= nc; k ++) {
@@ -148,15 +146,8 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 		SVD_svd_d (svd.get(), u.get());
 
 		// Step 9
-
-		for (integer i = 1; i <= nc; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				t [i] [j] = 0.0;
-				for (integer k = 1; k <= nc; k ++) {
-					t [i] [j] -= svd -> u [i] [k] * svd -> v [j] [k];
-				}
-			}
-		}
+		MATVUmul (t, svd -> u.get(), svd -> v.transpose ());
+		t *= -1.0;
 
 		numberOfIterations++;
 		f_old = f;
@@ -175,9 +166,9 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 		autoProcrustes p = Configurations_to_Procrustes (me, thee, false);
 		Melder_assert (p -> dimension == my data.ncol);
 		Melder_assert (p -> dimension == thy data.ncol);
-		NUMmaximizeCongruence_inplace (p -> r.get(), my data.get(), thy data.get(), maximumNumberOfIterations, tolerance);
+		NUMmaximizeCongruence_inplace (p -> r.get (), my data.get (), thy data.get (), maximumNumberOfIterations, tolerance);
 		autoAffineTransform at = AffineTransform_create (p -> dimension);
-		matrixcopy_preallocated (at -> r.get(), p -> r.get());
+		at -> r.get () <<= p -> r.get ();
 		return at;
 	} catch (MelderError) {
 		Melder_throw (me, U": no congruence transformation created.");
