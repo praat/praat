@@ -89,15 +89,15 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		tmax = my xmax;
 	}
 	integer itmin, itmax;
-	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
+	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
-	}
+
 	integer numberOfSelected = itmax - itmin + 1;
 	autoVEC gain = newVECraw (numberOfSelected);
 
-	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++)
 		gain [iframe - itmin + 1] = my d_frames [iframe]. gain;
-	}
+
 	if (gmax <= gmin)
 		NUMextrema (gain.get(), & gmin, & gmax);
 
@@ -133,9 +133,7 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
 			LPC_Frame lpc = & my d_frames [j];
-			for (integer i = 1; i <= lpc -> nCoefficients; i ++) {
-				thy z [i] [j] = lpc -> a [i];
-			}
+			thy z.column (j) <<= lpc-> a.get();
 		}
 		return thee;
 	} catch (MelderError) {
@@ -146,13 +144,13 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 autoMatrix LPC_downto_Matrix_rc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
-		autoNUMvector<double> rc (1, my maxnCoefficients);
+		autoVEC rc = newVECzero (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
 			LPC_Frame lpc = & my d_frames [j];
-			NUMlpc_lpc_to_rc (lpc -> a.at, lpc -> nCoefficients, rc.peek());
-			for (integer i = 1; i <= lpc -> nCoefficients; i ++) {
-				thy z [i] [j] = rc [i];
-			}
+			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
+			if (lpc -> nCoefficients < my maxnCoefficients)
+				rc.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
+			thy z.column (j) <<= rc.get();
 		}
 		return thee;
 	} catch (MelderError) {
@@ -163,15 +161,14 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 autoMatrix LPC_downto_Matrix_area (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
-		autoNUMvector<double> rc (1, my maxnCoefficients);
-		autoNUMvector<double> area (1, my maxnCoefficients);
+		autoVEC rc = newVECraw (my maxnCoefficients);
+		autoVEC area = newVECraw (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
 			LPC_Frame lpc = & my d_frames [j];
-			NUMlpc_lpc_to_rc (lpc -> a.at, lpc -> nCoefficients, rc.peek());
-			NUMlpc_rc_to_area (rc.peek(), lpc -> nCoefficients, area.peek());
-			for (integer i = 1; i <= lpc -> nCoefficients; i ++) {
-				thy z [i] [j] = area [i];
-			}
+			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
+			VECarea_from_rc (area.part (1, lpc -> nCoefficients), rc.part (1, lpc -> nCoefficients));
+			if (lpc -> nCoefficients < my maxnCoefficients) area.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
+			thy z.column (j) <<= area.get();
 		}
 		return thee;
 	} catch (MelderError) {

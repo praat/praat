@@ -815,22 +815,19 @@ double NUMmspline (constVEC knot, integer order, integer i, double x) {
 	*/
 	
 	for (jj = order; jj <= knot.size - order + 1; jj ++) {
-		if (x < knot [jj]) {
-			break;
-		}
+		if (x < knot [jj]) break;
 	}
-	if (jj < i || (jj > i + order) || jj == order || jj > (knot.size - order + 1)) {
+	if (jj < i || (jj > i + order) || jj == order || jj > (knot.size - order + 1))
 		return y;
-	}
+
 
 	// Calculate M [i](x|1,t) according to eq.2.
 
 	integer ito = i + order - 1;
 	autoNUMvector<double> m (i, ito);
 	for (integer j = i; j <= ito; j ++) {
-		if (x >= knot [j] && x < knot [j + 1]) {
+		if (x >= knot [j] && x < knot [j + 1])
 			m [j] = 1 / (knot [j + 1] - knot [j]);
-		}
 	}
 
 	// Iterate to get M [i](x|k,t)
@@ -838,9 +835,8 @@ double NUMmspline (constVEC knot, integer order, integer i, double x) {
 	for (integer k = 2; k <= order; k ++) {
 		for (integer j = i; j <= i + order - k; j ++) {
 			double kj = knot [j], kjpk = knot [j + k];
-			if (kjpk > kj) {
+			if (kjpk > kj)
 				m [j] = k * ((x - kj) * m [j] + (kjpk - x) * m [j + 1]) / ((k - 1) * (kjpk - kj));
-			}
 		}
 	}
 	y = m [i];
@@ -853,16 +849,14 @@ double NUMispline (constVEC aknot, integer order, integer i, double x) {
 	double y = 0.0;
 
 	for (j = orderp1; j <= aknot.size - order; j ++) {
-		if (x < aknot [j]) {
-			break;
-		}
+		if (x < aknot [j]) break;
 	}
-	if (-- j < i) {
+	if (-- j < i)
 		return y;
-	}
-	if (j > i + order || (j == aknot.size - order && x == aknot [j])) {
+
+	if (j > i + order || (j == aknot.size - order && x == aknot [j]))
 		return 1.0;
-	}
+
 	/*
 		Equation 5 in Ramsay's article contains some errors!!!
 		1. the interval selection should be 'j-k <= i <= j' instead of
@@ -880,20 +874,15 @@ double NUMispline (constVEC aknot, integer order, integer i, double x) {
 double NUMwilksLambda (constVEC lambda, integer from, integer to) {
 	Melder_assert (from > 0 && to <= lambda.size && from <= to);
 	longdouble result = 1.0;
-	for (integer i = from; i <= to; i ++) {
+	for (integer i = from; i <= to; i ++)
 		result *= 1.0 / (1.0 + lambda [i]);
-	}
 	return (double) result;
 }
 
 double NUMfactln (int n) {
 	static double table [101];
-	if (n < 0) {
-		return undefined;
-	}
-	if (n <= 1) {
-		return 0.0;
-	}
+	if (n < 0) return undefined;
+	if (n <= 1) return 0.0;
 	return n > 100 ? NUMlnGamma (n + 1.0) : table [n] != 0.0 ? table [n] : (table [n] = NUMlnGamma (n + 1.0));
 }
 
@@ -972,32 +961,19 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	integer itermax = 100;
 
 	double f1 = f (x1, closure);
-	if (f1 == 0.0) {
-		return x1;
-	}
-	if (isundef (f1)) {
-		return undefined;
-	}
+	if (f1 == 0.0) return x1;
+	if (isundef (f1)) return undefined;
+
 	double f2 = f (x2, closure);
-	if (f2 == 0.0) {
-		return x2;
-	}
-	if (isundef (f2)) {
-		return undefined;
-	}
-	if ((f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
-		return undefined;
-	}
+	if (f2 == 0.0) return x2;
+	if (isundef (f2)) return undefined;
+	if ((f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) return undefined;
 
 	for (integer iter = 1; iter <= itermax; iter ++) {
 		x3 = 0.5 * (x1 + x2);
 		double f3 = f (x3, closure);
-		if (f3 == 0.0) {
-			return x3;
-		}
-		if (isundef (f3)) {
-			return undefined;
-		}
+		if (f3 == 0.0) return x3;
+		if (isundef (f3)) return undefined;
 
 		// New guess: x4 = x3 + (x3 - x1) * sign(f1 - f2) * f3 / sqrt(f3^2 - f1*f2)
 
@@ -1010,9 +986,8 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		if (d == 0.0) {
 			// pb test added because f1 f2 f3 may be 1e-170 or so
 			tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
-			if (iter > 1 && fabs (x3 - root) < tol) {
+			if (iter > 1 && fabs (x3 - root) < tol)
 				return root;
-			}
 			root = x3;
 
 			// Perform bisection.
@@ -1020,18 +995,22 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			if (f1 > 0.0) { 
 				// falling curve: f1 > 0, f2 < 0 
 				if (f3 > 0.0) {
-					x1 = x3; f1 = f3; // retain invariant: f1 > 0, f2 < 0
+					x1 = x3; 
+					f1 = f3; // retain invariant: f1 > 0, f2 < 0
 				} else {
 					// f3 <= 0.0
-					x2 = x3; f2 = f3; // retain invariant: f1 > 0, f2 < 0
+					x2 = x3; 
+					f2 = f3; // retain invariant: f1 > 0, f2 < 0
 				}
 			} else {
 				// rising curve: f1 < 0, f2 > 0 
 				if (f3 > 0.0) {
-					x2 = x3; f2 = f3; // retain invariant: f1 < 0, f2 > 0
+					x2 = x3;
+					f2 = f3; // retain invariant: f1 < 0, f2 > 0
 				} else {
 					// f3 < 0.0
-					x1 = x3; f1 = f3; // retain invariant: f1 < 0, f2 > 0
+					x1 = x3;
+					f1 = f3; // retain invariant: f1 < 0, f2 > 0
 				}
 			}
 		} else {
@@ -1039,9 +1018,8 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			if (isnan (d)) {
 				// pb: square root of denormalized small number fails on some computers
 				tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
-				if (iter > 1 && fabs (x3 - root) < tol) {
+				if (iter > 1 && fabs (x3 - root) < tol) 
 					return root;
-				}
 				root = x3;
 
 				// Perform bisection.
@@ -1049,55 +1027,58 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				if (f1 > 0.0) {
 					// falling curve: f1 > 0, f2 < 0
 					if (f3 > 0.0) {
-						x1 = x3; f1 = f3; // retain invariant: f1 > 0, f2 < 0
+						x1 = x3; 
+						f1 = f3; // retain invariant: f1 > 0, f2 < 0
 					} else {
 						// f3 <= 0.0
-						x2 = x3; f2 = f3; // retain invariant: f1 > 0, f2 < 0
+						x2 = x3; 
+						f2 = f3; // retain invariant: f1 > 0, f2 < 0
 					}
 				} else {
 					// rising curve: f1 < 0, f2 > 0
 					if (f3 > 0.0) {
-						x2 = x3; f2 = f3; // retain invariant: f1 < 0, f2 > 0
+						x2 = x3; 
+						f2 = f3; // retain invariant: f1 < 0, f2 > 0
 					} else {
 						// f3 < 0.0
-						x1 = x3; f1 = f3; // retain invariant: f1 < 0, f2 > 0 */
+						x1 = x3; 
+						f1 = f3; // retain invariant: f1 < 0, f2 > 0 */
 					}
 				}
 			} else {
 				d = (x3 - x1) * f3 / d;
 				x4 = f1 - f2 < 0 ? x3 - d : x3 + d;
 				tol = NUMfpp -> eps * (x4 == 0.0 ? 1.0 : fabs (x4));
-				if (iter > 1 && fabs (x4 - root) < tol) {
+				if (iter > 1 && fabs (x4 - root) < tol) 
 					return root;
-				}
 				root = x4;
 				double f4 = f (x4, closure);
-				if (f4 == 0.0) {
-					return root;
-				}
-				if (isundef (f4)) {
-					return undefined;
-				}
+				if (f4 == 0.0) return root;
+				if (isundef (f4)) return undefined;
 				if ((f1 > f2) == (d > 0.0) /* pb: instead of x3 < x4 */) {
 					if (SIGN (f3, f4) != f3) {
-						x1 = x3; f1 = f3;
-						x2 = x4; f2 = f4;
+						x1 = x3; 
+						f1 = f3;
+						x2 = x4; 
+						f2 = f4;
 					} else {
-						x1 = x4; f1 = f4;
+						x1 = x4; 
+						f1 = f4;
 					}
 				} else {
 					if (SIGN (f3, f4) != f3) {
-						x1 = x4; f1 = f4;
-						x2 = x3; f2 = f3;
+						x1 = x4; 
+						f1 = f4;
+						x2 = x3; 
+						f2 = f3;
 					} else {
-						x2 = x4; f2 = f4;
+						x2 = x4; 
+						f2 = f4;
 					}
 				}
 			}
 		}
-		if (fabs (x1 - x2) < tol) {
-			return root;
-		}
+		if (fabs (x1 - x2) < tol) return root;
 	}
 
 	{
@@ -1117,63 +1098,44 @@ double NUMlogNormalQ (double x, double zeta, double sigma) {
 }
 
 double NUMstudentP (double t, double df) {
-	if (df < 1.0) {
-		return undefined;
-	}
+	if (df < 1.0) return undefined;
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (isundef (ib)) {
-		return undefined;
-	}
+	if (isundef (ib)) return undefined;
 	ib *= 0.5;
 	return t < 0.0 ? ib : 1.0 - ib;
 }
 
 double NUMstudentQ (double t, double df) {
-	if (df < 1) {
-		return undefined;
-	}
+	if (df < 1) return undefined;
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (isundef (ib)) {
-		return undefined;
-	}
+	if (isundef (ib)) return undefined;
 	ib *= 0.5;
 	return t > 0.0 ? ib : 1.0 - ib;
 }
 
 double NUMfisherP (double f, double df1, double df2) {
-	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) {
-		return undefined;
-	}
+	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) return undefined;
 	double ib = NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
-	if (isundef (ib)) {
-		return undefined;
-	}
+	if (isundef (ib)) return undefined;
 	return 1.0 - ib;
 }
 
 double NUMfisherQ (double f, double df1, double df2) {
-	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) {
-		return undefined;
-	}
+	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) return undefined;
 	if (Melder_debug == 28) {
 		return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
 	} else {
 		double result = gsl_cdf_fdist_Q (f, df1, df2);
-		if (isnan (result)) {
-			return undefined;
-		}
+		if (isnan (result)) return undefined;
 		return result;
 	}
 }
 
 double NUMinvGaussQ (double p) {
 	double pc = p;
-	if (p <= 0.0 || p >= 1.0) {
-		return undefined;
-	}
-	if (p > 0.5) {
+	if (p <= 0.0 || p >= 1.0) return undefined;
+	if (p > 0.5)
 		pc = 1.0 - p;
-	}
 	double t = sqrt (- 2.0 * log (pc));
 	t -= (2.515517 + (0.802853 + 0.010328 * t) * t) /
 		 (1.0 + (1.432788 + (0.189269 + 0.001308 * t) * t) * t);
@@ -1183,71 +1145,57 @@ double NUMinvGaussQ (double p) {
 static double studentQ_func (double x, void *voidParams) {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
 	double q = NUMstudentQ (x, params -> df);
-	return ( isundef (q) ? undefined : q - params -> p );
+	return isundef (q) ? undefined : q - params -> p;
 }
 
 double NUMinvStudentQ (double p, double df) {
 	struct pdf1_struct params;
-	double pc = ( p > 0.5 ? 1.0 - p : p ), xmin, xmax = 1.0, x;
+	double pc = p > 0.5 ? 1.0 - p : p;
 
-	if (p < 0.0 || p >= 1.0) {
-		return undefined;
-	}
+	if (p < 0.0 || p >= 1.0) return undefined;
 
 	// Bracket the function f(x) = NUMstudentQ (x, df) - p.
-
+	
+	double xmax = 1.0;
 	for (;;) {
 		double q = NUMstudentQ (xmax, df);
-		if (isundef (q)) {
-			return undefined;
-		}
-		if (q < pc) {
-			break;
-		}
+		if (isundef (q)) return undefined;
+		if (q < pc)  break;
 		xmax *= 2.0;
 	}
 
-	xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
+	double xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
 
 	// Find zero of f(x) with Ridders' method.
 
 	params. df = df;
 	params. p = pc;
-	x = NUMridders (studentQ_func, xmin, xmax, & params);
-	if (isundef (x)) {
-		return undefined;
-	}
-
-	return ( p > 0.5 ? -x : x );
+	double x = NUMridders (studentQ_func, xmin, xmax, & params);
+	if (isundef (x)) return undefined;
+	return p > 0.5 ? -x : x;
 }
 
 static double chiSquareQ_func (double x, void *voidParams) {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
 	double q = NUMchiSquareQ (x, params -> df);
-	return ( isundef (q) ? undefined : q - params -> p );
+	return isundef (q) ? undefined : q - params -> p;
 }
 
 double NUMinvChiSquareQ (double p, double df) {
 	struct pdf1_struct params;
-	double xmin, xmax = 1;
 
-	if (p < 0.0 || p >= 1.0) {
-		return undefined;
-	}
+	if (p < 0.0 || p >= 1.0) return undefined;
 
 	// Bracket the function f(x) = NUMchiSquareQ (x, df) - p.
 
+	double xmax = 1.0;
 	for (;;) {
 		double q = NUMchiSquareQ (xmax, df);
-		if (isundef (q)) {
-			return undefined;
-		}
-		if (q < p) {
-			break;
-		}
+		if (isundef (q)) return undefined;
+		if (q < p) break;
 		xmax *= 2.0;
 	}
-	xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
+	double xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
 
 	// Find zero of f(x) with Ridders' method.
 
@@ -1263,32 +1211,22 @@ static double fisherQ_func (double x, void *voidParams) {
 }
 
 double NUMinvFisherQ (double p, double df1, double df2) {
-	if (p <= 0.0 || p > 1.0 || df1 < 1.0 || df2 < 1.0) {
-		return undefined;
-	}
+	if (p <= 0.0 || p > 1.0 || df1 < 1.0 || df2 < 1.0) return undefined;
 	if (Melder_debug == 29) {
 		//if (p == 1.0) return 0.0;
 		return gsl_cdf_fdist_Qinv (p, df1, df2);
 	} else {
 		struct pdf2_struct params;
-		double top = 1000.0;
-		if (p == 1.0) {
-			return 0.0;
-		}
+		if (p == 1.0) return 0.0;
 		params. p = p;
 		params. df1 = df1;
 		params. df2 = df2;
+		double top = 1000.0;
 		for (;;) {
 			double q = NUMfisherQ (top, df1, df2);
-			if (isundef (q)) {
-				return undefined;
-			}
-			if (q < p) {
-				break;
-			}
-			if (top > 0.9e300) {
-				return undefined;
-			}
+			if (isundef (q)) return undefined;
+			if (q < p) break;
+			if (top > 0.9e300) return undefined;
 			top *= 1e9;
 		}
 		return NUMridders (fisherQ_func, 0.0, p > 0.5 ? 2.2 : top, & params);
@@ -2136,6 +2074,69 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
 // lpc [1..n] to rc [1..n]
+
+void VECrc_from_lpc (VEC rc, constVEC lpc) {
+	Melder_assert (rc.size == lpc.size);
+	autoVEC b = newVECraw (lpc.size);
+	autoVEC a = newVECraw (lpc.size);
+	a.get() <<= lpc;
+	for (integer m = lpc.size; m > 0; m--) {
+		rc [m] = a [m];
+		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
+		b.part (1, m) <<= a.part (1, m);
+		for (integer i = 1; i < m; i ++) {
+			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
+		}
+	}
+}
+
+void VEClpc_from_rc (VEC lpc, constVEC rc) {
+	Melder_assert (lpc.size == rc.size);
+	lpc <<= rc;
+	for (integer j = 2; j <= lpc.size; j ++) {
+		for (integer k = 1; k <= j / 2; k ++) {
+			double at = lpc [k] + rc [j] * lpc [j - k];
+			lpc [j - k] += rc [j] * lpc [k];
+			lpc [k] = at;
+		}
+	}
+}
+
+void VECarea_from_rc (VEC area, constVEC rc) {
+	Melder_assert (area.size == rc.size);
+	longdouble s = 0.0001; // 1.0 cm^2 at glottis
+	for (integer i = area.size; i > 0; i --) {
+		s *= (1.0 + rc [i]) / (1.0 - rc [i]);
+		area [i] = s;
+	}
+}
+
+void VECrc_from_area (VEC rc, constVEC area) {
+	Melder_assert (rc.size == area.size);
+	double ar;
+	for (integer j = 1; j <= rc.size - 1; j ++) {
+		ar = area [j + 1] / area [j];
+		rc [j] = (1.0 - ar) / (1.0 + ar);
+	}
+	ar = 0.0001 / area [rc.size];  // 1.0 cm^2 at glottis
+	rc [rc.size] = (1.0 - ar) / (1.0 + ar);
+}
+
+void VEClpc_from_area (VEC lpc, constVEC area) {
+	Melder_assert (lpc.size == area.size);
+	autoVEC rc = newVECzero (lpc.size);
+	VECrc_from_area (rc.get(), area);
+	VEClpc_from_rc (lpc, rc.get());
+}
+
+void VECarea_from_lpc (VEC area, constVEC lpc) {
+	Melder_assert (area.size == lpc.size);
+	autoVEC rc = newVECraw (lpc.size);
+	VECrc_from_lpc (rc.get(), lpc);
+	VECarea_from_rc (area, rc.get());
+}
+
+/*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoNUMvector<double> b (1, p);
 	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
@@ -2231,7 +2232,7 @@ void NUMlpc_area_to_lpc (double *area, integer m, double *lpc) {
 	autoNUMvector<double> rc (1, m);
 	// normalisation: area [n+1] = 0.0001
 	NUMlpc_area_to_rc (area, m, rc.peek());
-	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc);
+	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc); // m-1 ???
 }
 
 void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
@@ -2240,6 +2241,7 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 	NUMlpc_rc_to_area (rc.peek(), m, area);
 
 }
+/*********** End deprecated LPC routines ***********************************/
 
 #undef SIGN
 
@@ -2272,14 +2274,12 @@ integer NUMrandomBinomial (double p, integer n) {
 		return -100000000;
 	}
 	integer ix;			// return value
-	int flipped = 0;
+	bool flipped = false;
 
-	if (n == 0) {
-		return 0;
-	}
+	if (n == 0) return 0;
 	if (p > 0.5) {
 		p = 1.0 - p;	// work with small p
-		flipped = 1;
+		flipped = true;
 	}
 
 	double q = 1.0 - p;
@@ -2545,7 +2545,7 @@ TryAgain:
 
 Finish:
 
-	return (flipped) ? (n - ix) : ix;
+	return flipped ? (n - ix) : ix;
 }
 
 double NUMrandomBinomial_real (double p, integer n) {
@@ -2569,7 +2569,7 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 
 autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
-	autoMAT g (x.size, x.size, kTensorInitializationType :: RAW);
+	autoMAT g = newMATraw (x.size, x.size);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w
@@ -2633,8 +2633,7 @@ void MAT_getEntropies (constMAT m, double *out_h, double *out_hx,
 	if (totalSum > 0.0) {
 		longdouble hy_t = 0.0;
 		for (integer i = 1; i <= m.nrow; i ++) {
-			longdouble rowsum = 0.0;
-			for (integer j = 1; j <= m.ncol; j++) rowsum += m [i] [j];
+			double rowsum = NUMsum (m.row (i));
 			if (rowsum > 0.0) {
 				longdouble p = rowsum / totalSum;
 				hy_t -= p * NUMlog2 (p);

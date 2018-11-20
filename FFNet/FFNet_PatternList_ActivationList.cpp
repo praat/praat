@@ -30,7 +30,7 @@
 static double func (Daata object, VEC p) {
 	FFNet me = (FFNet) object;
 	Minimizer thee = my minimizer.get();
-	double fp = 0.0;
+	longdouble fp = 0.0;
 
 	for (integer j = 1, k = 1; k <= my nWeights; k ++) {
 		my dw [k] = 0.0;
@@ -46,12 +46,11 @@ static double func (Daata object, VEC p) {
 			my dw [k] += my dwi [k];
 	}
 	thy funcCalls ++;
-	return fp;
+	return (double) fp;
 }
 
-static void dfunc_optimized (Daata object, VEC p, VEC dp) {
+static void dfunc_optimized (Daata object, VEC /* p */, VEC dp) {
 	FFNet me = (FFNet) object;
-	(void) p;
 
 	integer j = 1;
 	for (integer k = 1; k <= my nWeights; k ++) {
