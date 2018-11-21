@@ -1,6 +1,6 @@
 # Praat: doing phonetics by computer
 
-Most information on how the program works is in its manual and on http://www.praat.org,
+Most information on how the program works is in its manual and on http://praat.org,
 which is also where you can download the latest binary executables from.
 
 ## 1. Compiling the source code
@@ -36,7 +36,7 @@ Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/
 ### 1.4. The programming language
 
 Most of the source code is written in C++, but some parts are written in C.
-The code requires that your compiler supports C99 and C++14 (for e.g. `char32_t`, rvalue references, and `make_unique`).
+The code requires that your compiler supports C99 and C++14.
 
 ### 1.5. Compiling for Windows
 
@@ -107,7 +107,7 @@ When compiling Praat for use as a server for commands from your web pages, you m
 
     cp makefiles/makefile.defs.linux.nogui ./makefile.defs
 
-which creates the executable `praat_nogui`. If you don't need graphics (.e.g PNG files) either
+which creates the executable `praat_nogui`. If you don't need graphics (e.g. PNG files) either
 (i.e. you need only Praat's computation), you can create an even lighter edition:
 
     cp makefiles/makefile.defs.linux.barren ./makefile.defs
@@ -117,7 +117,7 @@ you may have to edit the library names in the makefile.
 
 ## 2. Binary executables
 
-While the [Praat website](http://www.praat.org) contains the latest executable for all platforms that we support
+While the [Praat website](http://praat.org) contains the latest executable for all platforms that we support
 (or used to support), the [releases on GitHub](https://github.com/praat/praat/releases) contain many older executables as well.
 
 The meaning of the names of binary files available on GitHub is as follows:
