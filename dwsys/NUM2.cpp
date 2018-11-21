@@ -2674,10 +2674,10 @@ void MAT_getEntropies (constMAT m, double *out_h, double *out_hx,
 	if (out_hy) *out_hy = hy;
 	// Conditional entropies
 	if (out_hygx) *out_hygx = hygx;
-	if (*out_hxgy) *out_hxgy = hxgy;
-	if (*out_uygx) *out_uygx = uygx;
-	if (*out_uxgy) *out_uxgy = uxgy;
-	if (*out_uxy) *out_uxy = uxy;
+	if (out_hxgy) *out_hxgy = hxgy;
+	if (out_uygx) *out_uygx = uygx;
+	if (out_uxgy) *out_uxgy = uxgy;
+	if (out_uxy) *out_uxy = uxy;
 }
 #undef TINY
 
