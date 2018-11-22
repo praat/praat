@@ -34,8 +34,10 @@
 */
 
 #include "SVD.h"
+#include <algorithm>
 #include "NUMmachar.h"
 #include "Collection.h"
+#include "../melder/melder.h"
 #include "NUMclapack.h"
 #include "NUMcblas.h"
 
@@ -73,15 +75,11 @@ Thing_implement (SVD, Daata, 1);
 void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 	if (numberOfRows < numberOfColumns) {
 		my isTransposed = true;
-		integer tmp = numberOfRows;
-		numberOfRows = numberOfColumns;
-		numberOfColumns = tmp;
+		std::swap (numberOfRows, numberOfColumns);
 	}
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	if (! NUMfpp) {
-		NUMmachar ();
-	}
+	if (! NUMfpp) NUMmachar ();
 	my tolerance = NUMfpp -> eps * numberOfRows;
 	my u = newMATzero (numberOfRows,  numberOfColumns);
 	my v = newMATzero (numberOfColumns, numberOfColumns);
@@ -102,9 +100,8 @@ autoSVD SVD_createFromGeneralMatrix (constMAT m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
+			for (integer j = 1; j <= my numberOfColumns; j ++)
 				my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
-			}
 		}
 		SVD_compute (me.get());
 		return me;
@@ -118,9 +115,8 @@ void SVD_svd_d (SVD me, constMAT m) {
 	Melder_assert ((my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
 		(my isTransposed && my numberOfRows == m.ncol && my numberOfColumns == m.nrow));
 	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
-		}
 	}
 	SVD_compute (me);
 }
@@ -210,9 +206,8 @@ autoVEC SVD_solve (SVD me, constVEC b) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			longdouble tmp = 0.0;
 			if (my d [j] > 0.0) {
-				for (integer i = 1; i <= my numberOfRows; i ++) {
+				for (integer i = 1; i <= my numberOfRows; i ++)
 					tmp += my u [i] [j] * b [i];
-				}
 				tmp /= my d [j];
 			}
 			t [j] = (double) tmp;
@@ -304,25 +299,25 @@ integer SVD_getRank (SVD me) {
 	we can write the svd expansion  A = sum_{i=1}^n {d [i] u [i] v [i]'}.
 	Golub & van Loan, 3rd ed, p 71.
 */
-void SVD_synthesize (SVD me, integer sv_from, integer sv_to, MAT m) {
-	if (sv_to == 0)
-			sv_to = my numberOfColumns;
+autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
+	if (sv_to == 0) sv_to = my numberOfColumns;
 	try {
-		Melder_assert (! my isTransposed && m.nrow == my numberOfRows && m.ncol == my numberOfColumns ||
-			my isTransposed && m.nrow == my numberOfColumns && m.ncol == my numberOfRows);
 		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns, U"Indices must be in range [1, ", my numberOfColumns, U"].");
-		m <<= 0.0;
-
+		long nrow = my numberOfRows;
+		long ncol = my numberOfColumns;
+		if (my isTransposed) std::swap (nrow, ncol);
+		autoMAT result = newMATzero (nrow, ncol);
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			for (integer i = 1; i <= my numberOfRows; i ++)
 				for (integer j = 1; j <= my numberOfColumns; j ++) {
 					double value = my d [k] * my u [i] [k] * my v [j] [k];
 					if (my isTransposed)
-						m [j] [i] += value;
+						result [j] [i] += value;
 					else
-						m [i] [j] += value;
+						result [i] [j] += value;
 				}
 		}
+		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": no synthesis.");
 	}
