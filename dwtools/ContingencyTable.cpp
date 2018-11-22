@@ -138,7 +138,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 }
 
 void ContingencyTable_getEntropies (ContingencyTable me, double *out_h, double *out_hx, double *out_hy, double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {	
-	MAT_getEntropies (my data.get(), out_h, out_hx,
+	NUMgetEntropies (my data.get(), out_h, out_hx,
 			out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);	
 }
 

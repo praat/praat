@@ -1274,7 +1274,7 @@ void VECarea_from_lpc (VEC area, constVEC lpc);
 */
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
-void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
+void NUMgetEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
 
 double NUMfrobeniusnorm (constMAT x);
