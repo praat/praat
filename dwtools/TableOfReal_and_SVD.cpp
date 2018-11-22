@@ -1,6 +1,6 @@
 /* TableOfReal_and_SVD.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 
 autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 	try {
-		autoTableOfReal thee = TableOfReal_create (my isTransposed ? my numberOfColumns : my numberOfRows, 
-												   my isTransposed ? my numberOfRows : my numberOfColumns);
-		SVD_synthesize (me, from, to, thy data.get());
+		autoMAT synthesis = SVD_synthesize (me, from, to);
+		autoTableOfReal thee = TableOfReal_create (synthesis.nrow, synthesis.ncol);
+		thy data.get() <<= synthesis.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal synthesized.");
