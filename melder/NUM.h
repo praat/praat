@@ -158,9 +158,18 @@ bool NUMisEmpty (vector<T> const& x) noexcept {
 	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
 }
 template <typename T>
+bool NUMisEmpty (vectorview<T> const& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+template <typename T>
 bool NUMisEmpty (constvector<T> const& x) noexcept {
 	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
 }
+template <typename T>
+bool NUMisEmpty (constvectorview<T> const& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+
 template <typename T>
 bool NUMisEmpty (matrix<T> const& x) noexcept {
 	integer const numberOfCells = x.nrow * x.ncol;
@@ -200,7 +209,7 @@ inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline double NUMmax (const constVEC& vec) {
+inline double NUMmax (const constVECVU& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double maximum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
@@ -229,7 +238,7 @@ inline double NUMmean (constVEC const& x) noexcept {
 	return mean;
 }
 
-inline double NUMmin (const constVEC& vec) {
+inline double NUMmin (const constVECVU& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
