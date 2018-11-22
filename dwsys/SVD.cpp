@@ -304,17 +304,14 @@ integer SVD_getRank (SVD me) {
 	we can write the svd expansion  A = sum_{i=1}^n {d [i] u [i] v [i]'}.
 	Golub & van Loan, 3rd ed, p 71.
 */
-void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m) {
-	try {
-		if (sv_to == 0)
+void SVD_synthesize (SVD me, integer sv_from, integer sv_to, MAT m) {
+	if (sv_to == 0)
 			sv_to = my numberOfColumns;
+	try {
+		Melder_assert (! my isTransposed && m.nrow == my numberOfRows && m.ncol == my numberOfColumns ||
+			my isTransposed && m.nrow == my numberOfColumns && m.ncol == my numberOfRows);
 		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns, U"Indices must be in range [1, ", my numberOfColumns, U"].");
-		for (integer i = 1; i <= my numberOfRows; i ++)
-			for (integer j = 1; j <= my numberOfColumns; j ++)
-				if (my isTransposed)
-					m [j] [i] = 0.0;
-				else 
-					m [i] [j] = 0.0;
+		m <<= 0.0;
 
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			for (integer i = 1; i <= my numberOfRows; i ++)

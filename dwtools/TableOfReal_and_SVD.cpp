@@ -28,7 +28,7 @@ autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my isTransposed ? my numberOfColumns : my numberOfRows, 
 												   my isTransposed ? my numberOfRows : my numberOfColumns);
-		SVD_synthesize (me, from, to, thy data.at_deprecated);
+		SVD_synthesize (me, from, to, thy data.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal synthesized.");

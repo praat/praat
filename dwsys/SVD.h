@@ -75,11 +75,11 @@ integer SVD_zeroSmallSingularValues (SVD me, double tolerance);
 	Return the number of s.v.'s zeroed.
 */
 
-void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m);
+void SVD_synthesize (SVD me, integer sv_from, integer sv_to, MAT synthesis);
 /*
 	Synthesize matrix as U D(sv_from:sv_to) V'.
-	(The synthesized matrix is an approximation of the svd'ed matrix with
-	only a selected number of sv's).
+	(The synthesized matrix is an approximation of the svd'ed matrix if
+	only a selected number of sv's is used).
 	Matrix m is [numberOfRows x numberOfColumns] and must be allocated
 	by caller!
 */
