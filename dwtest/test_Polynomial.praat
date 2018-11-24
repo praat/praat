@@ -2,9 +2,9 @@
 # djmw 20160509
 
 appendInfoLine: "test_Polynomial.praat"
-for i to 100
-@test_roots
-@test_products
+for i to 10
+	@test_roots
+	@test_products
 endfor
 appendInfoLine: "test_Polynomial.praat OK"
 
