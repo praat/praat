@@ -85,10 +85,10 @@ static void MAT_divideRowByRowsum_inplace (MAT m) {
 	}
 }
 
-static integer NUMdmatrix_countZeros (double **m, integer nr, integer nc) {
+static integer NUMcountZeros (constMAT m) {
 	integer nZeros = 0;
-	for (integer i = 1; i <= nr; i ++)
-		for (integer j = 1; j <= nc; j ++)
+	for (integer i = 1; i <= m.nrow; i ++)
+		for (integer j = 1; j <= m.ncol; j ++)
 			if (m [i] [j] == 0)
 				nZeros ++;
 	return nZeros;
@@ -1227,7 +1227,7 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 }
 
 double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int stressMeasure) {
-	double eta_fit, eta_conf, rho, stress = undefined, denum, tmp;
+	double eta_fit, eta_conf, rho, stress = undefined, denum;
 
 	Distance_Weight_rawStressComponents (fit, conf, weight, & eta_fit, & eta_conf, & rho);
 
@@ -1236,29 +1236,24 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 
 	if (stressMeasure == MDS_NORMALIZED_STRESS) {
 		denum = eta_fit * eta_conf;
-		if (denum > 0.0) {
+		if (denum > 0.0)
 			stress = 1.0 - rho * rho / denum;
-		}
 	} else if (stressMeasure == MDS_STRESS_1) {
 		denum = eta_fit * eta_conf;
 		if (denum > 0.0) {
-			tmp = 1.0 - rho * rho / denum;
-			if (tmp > 0.0) {
+			double tmp = 1.0 - rho * rho / denum;
+			if (tmp > 0.0)
 				stress = sqrt (tmp);
-			}
 		}
 	} else if (stressMeasure == MDS_STRESS_2) {
-		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data.at_deprecated;
-		double **c = conf -> data.at_deprecated;
-		integer nPoints = conf -> numberOfRows;
 
 		// Get average distance
 
+		integer nPoints = conf -> numberOfRows;
+		double m = 0.0, wsum = 0.0, var = 0.0;
 		for (integer i = 1; i <= nPoints - 1; i ++) {
-			for (integer j = i + 1; j <= nPoints; j ++) {
-				m += w [i] [j] * c [i] [j];
-				wsum += w [i] [j];
-			}
+			m += NUMinner (weight -> data.row (i).part (i + 1, nPoints), conf -> data.row (i).part (i + 1, nPoints));
+			wsum += NUMsum (weight -> data.row (i).part (i + 1, nPoints));
 		}
 		m /= wsum;
 		if (m > 0.0) {
@@ -1266,8 +1261,8 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 
 			for (integer i = 1; i <= nPoints - 1; i ++) {
 				for (integer j = i + 1; j <= nPoints; j ++) {
-					tmp = c [i] [j] - m;
-					var += w [i] [j] * tmp * tmp;
+					double tmp = conf -> data [i] [j] - m;
+					var += weight -> data [i] [j] * tmp * tmp;
 				}
 			}
 			denum = var * eta_fit;
@@ -1992,7 +1987,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 		// Count number of zero weights
 
-		integer nZeros = NUMdmatrix_countZeros (sal -> data.at_deprecated, sal -> numberOfRows, sal -> numberOfColumns);
+		integer nZeros = NUMcountZeros (sal -> data.get());
 
 		if (out_conf) {
 			Thing_setName (conf.get(), U"indscal");
@@ -2062,7 +2057,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		// Count number of zero weights
 
-		integer nZeros = NUMdmatrix_countZeros (salience -> data.at_deprecated, salience -> numberOfRows, salience -> numberOfColumns);
+		integer nZeros = NUMcountZeros (salience -> data.get());
 
 		// Set labels & names.
 
