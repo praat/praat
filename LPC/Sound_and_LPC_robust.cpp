@@ -107,7 +107,6 @@ static void huber_struct_solvelpc (struct huber_struct *hs) {
 
 void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
 	integer p = my nCoefficients > his nCoefficients ? his nCoefficients : my nCoefficients;
-	integer n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
 
 	hs -> iter = 0;
 	hs -> scale = 1e308;
