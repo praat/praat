@@ -2614,7 +2614,7 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 	}
 }
 
-void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
+void NUMgetEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {
 	
 	double h = undefined, hx = undefined, hy = undefined;

@@ -4796,12 +4796,12 @@ FORM (INFO_Polynomial_getDerivativesAtX, U"Polynomial: Get derivatives at X", nu
 	INTEGER (numberOfDerivatives, U"Number of derivatives", U"2")
 	OK
 DO
-	autoNUMvector <double> derivatives ((integer) 0, numberOfDerivatives);
 	INFO_ONE (Polynomial)
-		Polynomial_evaluateDerivatives (me, x, derivatives.peek(), numberOfDerivatives);
+		autoVEC derivatives = Polynomial_evaluateDerivatives (me, x, numberOfDerivatives);
 		MelderInfo_open ();
-			for (integer i = 0; i <= numberOfDerivatives; i ++) {
-				MelderInfo_writeLine (i, U": ", i < my numberOfCoefficients ? derivatives [i] : undefined);
+			MelderInfo_writeLine (U"Function value: ", derivatives [1]);
+			for (integer i = 2; i <= numberOfDerivatives + 1; i ++) {
+				MelderInfo_writeLine (U"Derivative ", i - 1, U": ", i < my numberOfCoefficients ? derivatives [i] : undefined, U"");
 			}
 		MelderInfo_close ();
 	INFO_ONE_END

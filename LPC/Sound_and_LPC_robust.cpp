@@ -52,10 +52,9 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration, i
 	hs -> iter = 1;
 	hs -> itermax = 1;
 	hs -> wantlocation = wantlocation;
-	if (! wantlocation) {
-		hs -> location = location;
-	}
-	hs -> wantscale = 1;	integer n = hs -> e -> nx;
+	if (! wantlocation) hs -> location = location;
+	hs -> wantscale = 1;
+	integer n = hs -> e -> nx;
 	hs -> n = n;
 	hs -> p = p;
 	hs -> w = newVECzero (n);
@@ -69,40 +68,36 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration, i
 static void huber_struct_getWeights (struct huber_struct *hs, constVEC e) {
 	Melder_assert (e.size == hs -> n);
 	double kstdev = hs -> k_stdev * hs -> scale;
-	double *w = hs -> w.at;
 
 	for (integer i = 1 ; i <= hs -> n; i ++) {
 		double ei = e [i] - hs -> location;
-		w [i] = ei > -kstdev && ei < kstdev ? 1.0 : kstdev / fabs (ei);
+		hs -> w [i] = ei > -kstdev && ei < kstdev ? 1.0 : kstdev / fabs (ei);
 	}
 }
 
 static void huber_struct_getWeightedCovars (struct huber_struct *hs, VEC s) {
 	Melder_assert (s.size == hs -> n);
 	integer p = hs -> p, n = hs -> n;
-	double *w = hs -> w.at, **covar = hs -> covar.at_deprecated, *c = hs -> c.at;
 
 	for (integer i = 1; i <= p; i ++) {
 		for (integer j = i; j <= p; j ++) {
-			double tmp = 0.0;
-			for (integer k = p + 1; k <= s.size; k ++) {
-				tmp += s [k - j] * s [k - i] * w [k];
-			}
-			covar [i] [j] = covar [j] [i] = tmp;
+			longdouble tmp = 0.0;
+			for (integer k = p + 1; k <= s.size; k ++)
+				tmp += s [k - j] * s [k - i] *  hs -> w [k];
+			hs -> covar [i] [j] = hs -> covar [j] [i] = (double) tmp;
 		}
 
-		double tmp = 0.0;
+		longdouble tmp = 0.0;
 		for (integer k = p + 1; k <= n; k ++) {
-			tmp += s [k - i] * s [k] * w [k];
+			tmp += s [k - i] * s [k] *  hs -> w [k];
 		}
-		c [i] = -tmp;
+		hs -> c [i] = - tmp;
 	}
 }
 
 static void huber_struct_solvelpc (struct huber_struct *hs) {
 	SVD me = hs -> svd.get();
-
-	matrixcopy_preallocated(my u.get(), hs -> covar.get());
+	my u.get() <<= hs -> covar.get();
 	SVD_setTolerance (me, hs -> tol_svd);
 	SVD_compute (me);
 
@@ -112,7 +107,6 @@ static void huber_struct_solvelpc (struct huber_struct *hs) {
 
 void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
 	integer p = my nCoefficients > his nCoefficients ? his nCoefficients : my nCoefficients;
-	integer n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
 
 	hs -> iter = 0;
 	hs -> scale = 1e308;
@@ -138,32 +132,14 @@ void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct hub
 			huber_struct_solvelpc (hs);
 		} catch (MelderError) {
 			// Copy the starting lpc coeffs */
-			for (integer i = 1; i <= p; i ++) {
-				his a [i] = my a [i];
-			}
+			his a.part (1, p) <<= my a.part (1, p); 
 			throw MelderError();
 		}
-		for (integer i = 1; i <= p; i ++) {
-			his a [i] = hs -> a [i];
-		}
-
+		his a.part (1, p) <<= hs -> a.part (1, p);
 		hs -> iter ++;
 	} while (hs -> iter < hs -> itermax && fabs (s0 - hs -> scale) > hs -> tol * s0);
 }
 
-#if 0
-	autoSound e;
-	double k, tol, tol_svd;
-	integer iter, itermax;
-	bool wantlocation, wantscale;
-	double location, scale;
-	integer n, p;
-	double *w, *work;
-	double *a;
-	double **covar, *c;
-	autoSVD svd;
-#endif
-	
 autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
 	int itermax, double tol, bool wantlocation) {
 	struct huber_struct struct_huber;
@@ -233,11 +209,10 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 	integer predictionOrder = Melder_ifloor (2 * numberOfFormants);
 	try {
 		autoSound sound;
-		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12) {
+		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12)
 			sound = Data_copy (me);   // will be modified
-		} else {
+		else
 			sound = Sound_resample (me, maximumFrequency * 2.0, 50);
-		}
 
 		autoLPC lpc = Sound_to_LPC_auto (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
 		autoLPC lpcr = LPC_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);

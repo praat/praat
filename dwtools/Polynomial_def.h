@@ -25,7 +25,7 @@
 oo_DEFINE_CLASS (FunctionTerms, Function)
 
 	oo_INTEGER (numberOfCoefficients)
-	oo_DOUBLE_VECTOR (coefficients, numberOfCoefficients)
+	oo_VEC (coefficients, numberOfCoefficients)
 	
 	#if ! oo_READING && ! oo_WRITING
 		oo_INTEGER (_capacity)
@@ -38,7 +38,7 @@ oo_DEFINE_CLASS (FunctionTerms, Function)
 	#if oo_DECLARING
 		virtual double v_evaluate (double x);
 		virtual dcomplex v_evaluate_z (dcomplex z);
-		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_evaluateTerms (double x, VEC terms);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 		virtual integer v_getDegree ();
 	#endif
