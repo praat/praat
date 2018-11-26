@@ -1150,7 +1150,7 @@ static double studentQ_func (double x, void *voidParams) {
 
 double NUMinvStudentQ (double p, double df) {
 	struct pdf1_struct params;
-	double pc = p > 0.5 ? 1.0 - p : p;
+	double pc = ( p > 0.5 ? 1.0 - p : p );
 
 	if (p < 0.0 || p >= 1.0) return undefined;
 
@@ -1164,7 +1164,7 @@ double NUMinvStudentQ (double p, double df) {
 		xmax *= 2.0;
 	}
 
-	double xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
+	double xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
 
 	// Find zero of f(x) with Ridders' method.
 
