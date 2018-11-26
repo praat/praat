@@ -49,6 +49,7 @@ void Net_PatternList_applyToInput (Net me, PatternList thee, integer rowNumber);
 void Net_PatternList_applyToOutput (Net me, PatternList thee, integer rowNumber);
 void Net_PatternList_learn (Net me, PatternList thee, double learningRate);
 void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate);
+void Net_PatternList_learn_twoPhases (Net me, PatternList thee, double learningRate);
 
 autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kLayer_activationType activationType);
 

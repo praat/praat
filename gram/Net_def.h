@@ -41,6 +41,10 @@ oo_DEFINE_CLASS (RBMLayer, Layer)
 			override;
 		void v_update (double learningRate)
 			override;
+		void v_updateFirstPhase (double learningRate)
+			override;
+		void v_updateSecondPhase (double learningRate)
+			override;
 		autoMatrix v_extractInputReconstruction ()
 			override;
 		autoMatrix v_extractOutputReconstruction ()

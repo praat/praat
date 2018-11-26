@@ -1701,6 +1701,15 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
+FORM (MODIFY_Net_PatternList_learn_twoPhases, U"Net & PatternList: Learn (two phases)", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (Net, PatternList)
+		Net_PatternList_learn_twoPhases (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
 FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {
 	RADIO_ENUM (kLayer_activationType, activationType,
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
@@ -1909,6 +1918,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_Net_PatternList_applyToOutput);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_Net_PatternList_learn);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_Net_PatternList_learnByLayer);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn (two phases)...", nullptr, 0, MODIFY_Net_PatternList_learn_twoPhases);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_Net_PatternList_to_ActivationList);
 
 	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);

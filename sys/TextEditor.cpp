@@ -529,7 +529,7 @@ static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		autostring32 text = GuiText_getString (my textWidget);
 		integer currentLine = 1;
-		int64 left = 0, right = 0;
+		integer left = 0, right = 0;
 		if (lineToGo == 1) {
 			for (; text [right] != U'\n' && text [right] != U'\0'; right ++) { }
 		} else {

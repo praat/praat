@@ -436,11 +436,13 @@ int Data_Description_evaluateInteger (void *structAddress, Data_Description stru
 		return 1;
 	}
 	if (formula [0] >= U'a' && formula [0] <= U'z') {
-		char32 buffer [100], *minus1, *psize;
+		char32 buffer [100], *minus1, *plus1, *psize;
 		Data_Description sizeDescription;
 		str32cpy (buffer, formula);
 		if ((minus1 = str32str (buffer, U" - 1")) != nullptr)
 			*minus1 = U'\0';   // strip trailing " - 1", but remember
+		if ((plus1 = str32str (buffer, U" + 1")) != nullptr)
+			*plus1 = U'\0';   // strip trailing " + 1", but remember
 		if ((psize = str32str (buffer, U" -> size")) != nullptr)
 			*psize = U'\0';   // strip trailing " -> size"
 		if (! (sizeDescription = Data_Description_findMatch (structDescription, buffer))) {
@@ -449,6 +451,7 @@ int Data_Description_evaluateInteger (void *structAddress, Data_Description stru
 		}
 		*result = Data_Description_integer (structAddress, sizeDescription);
 		if (minus1) *result -= 1;
+		if (plus1) *result += 1;
 	} else {
 		*result = Melder_atoi (formula);
 	}
