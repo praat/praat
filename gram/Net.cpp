@@ -254,16 +254,36 @@ void Net_spreadUp_reconstruction (Net me) {
 }
 
 void structRBMLayer :: v_update (double learningRate) {
-	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
 		our outputBiases [jnode] += learningRate * (our outputActivities [jnode] - our outputReconstruction [jnode]);
-	}
 	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
 		our inputBiases [inode] += learningRate * (our inputActivities [inode] - our inputReconstruction [inode]);
-		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
 			our weights [inode] [jnode] += learningRate *
-				(our inputActivities [inode] * our outputActivities [jnode] -
-				 our inputReconstruction [inode] * our outputReconstruction [jnode]);
-		}
+					(our inputActivities [inode] * our outputActivities [jnode] -
+					 our inputReconstruction [inode] * our outputReconstruction [jnode]);
+	}
+}
+
+void structRBMLayer :: v_updateFirstPhase (double learningRate) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+		our outputBiases [jnode] += learningRate * our outputActivities [jnode];
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		our inputBiases [inode] += learningRate * our inputActivities [inode];
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+			our weights [inode] [jnode] += learningRate *
+					our inputActivities [inode] * our outputActivities [jnode];
+	}
+}
+
+void structRBMLayer :: v_updateSecondPhase (double learningRate) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+		our outputBiases [jnode] -= learningRate * our outputActivities [jnode];
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		our inputBiases [inode] -= learningRate * our inputActivities [inode];
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+			our weights [inode] [jnode] -= learningRate *
+					our inputActivities [inode] * our outputActivities [jnode];
 	}
 }
 
@@ -334,6 +354,32 @@ void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate
 				layer -> v_spreadDown_reconstruction ();
 				layer -> v_spreadUp_reconstruction ();
 				layer -> v_update (learningRate);
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": not learned.");
+	}
+}
+
+void Net_PatternList_learn_twoPhases (Net me, PatternList thee, double learningRate) {
+	try {
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			Net_PatternList_applyToInput (me, thee, ipattern);
+			Net_spreadUp (me, kLayer_activationType::STOCHASTIC);
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				layer -> v_updateFirstPhase (learningRate);
+			}
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				for (integer isweep = 1; isweep <= 10; isweep ++) {
+					layer -> v_spreadDown (kLayer_activationType::DETERMINISTIC);
+					layer -> v_spreadUp (kLayer_activationType::DETERMINISTIC);
+				}
+			}
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				layer -> v_updateSecondPhase (learningRate);
 			}
 		}
 	} catch (MelderError) {

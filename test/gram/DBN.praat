@@ -16,7 +16,8 @@ formant# ~ randomGauss (mean# [randomInteger (1, numberOfVowels)], sigma)
 Formula: ~ 5 * exp (-0.5/sigma^2 * (col - formant# [row]) ^ 2) - 0.5
 
 selectObject: my.Net, my.PatternList
-Learn by layer: learningRate
+;Learn by layer: learningRate
+Learn: learningRate
 
 appendInfoLine: "Trained in ", stopwatch, " seconds"
 
