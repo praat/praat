@@ -2625,7 +2625,8 @@ void MAT_getEntropies (constMAT m, double *out_h, double *out_hx,
 	longdouble totalSum = 0.0;
 	for (integer i = 1; i <= m.nrow; i ++) {
 		for (integer j = 1; j <= m.ncol; j++) {
-			Melder_require (m [i][j] >= 0, U"Matrix elements should not be negative.");
+			Melder_require (m [i] [j] >= 0.0,
+				U"Matrix elements should not be negative.");
 			totalSum += m [i] [j];
 		}
 	}
