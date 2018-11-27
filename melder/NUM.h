@@ -53,10 +53,6 @@ inline double NUMsum (constVECVU const& x) noexcept {
 
 extern double NUMcenterOfGravity (constVEC const& x) noexcept;
 
-extern double NUMcolumnMean (constMAT const& x, integer columnNumber) noexcept;
-
-extern double NUMcolumnSum (constMAT const& x, integer columnNumber) noexcept;
-
 inline bool NUMdefined (constMAT const& x) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
@@ -257,10 +253,6 @@ integer NUMnumberOfTokens (conststring32 str) noexcept;
 */
 inline double NUMpow (double base, double exponent) {
 	return base <= 0.0 ? 0.0 : pow (base, exponent);
-}
-
-inline double NUMrowSum (constMAT const& x, integer rowNumber) noexcept {
-	return NUMsum (x.row (rowNumber));
 }
 
 inline double NUMsqrt (double x) {

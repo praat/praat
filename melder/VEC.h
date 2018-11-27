@@ -221,7 +221,7 @@ inline autoVEC newVECcolumn (const constMAT& source, integer columnNumber) {
 inline void VECcolumnMeans_preallocated (const VEC& target, const constMAT& x) noexcept {
 	Melder_assert (target.size == x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
-		target [icol] = NUMcolumnMean (x, icol);
+		target [icol] = NUMmean (x.column (icol));
 }
 inline autoVEC newVECcolumnMeans (const constMAT& x) {
 	autoVEC result = newVECraw (x.ncol);
@@ -257,14 +257,14 @@ extern void VECsort_inplace (VEC const& x) noexcept;
 inline autoVEC newVECsumPerRow (const constMAT& x) {
 	autoVEC result = newVECraw (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		result [irow] = NUMrowSum (x, irow);
+		result [irow] = NUMsum (x.row (irow));
 	return result;
 }
 
 inline autoVEC newVECsumPerColumn (const constMAT& x) {
 	autoVEC result = newVECraw (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
-		result [icol] = NUMcolumnSum (x, icol);
+		result [icol] = NUMsum (x.column (icol));
 	return result;
 }
 

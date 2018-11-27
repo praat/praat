@@ -28,7 +28,7 @@
 
 void MATcentreEachColumn_inplace (MAT const& x) noexcept {
 	for (integer icol = 1; icol <= x.ncol; icol ++) {
-		const double columnMean = NUMcolumnMean (x, icol);
+		const double columnMean = NUMmean (x.column (icol));
 		for (integer irow = 1; irow <= x.nrow; irow ++)
 			x [irow] [icol] -= columnMean;
 	}

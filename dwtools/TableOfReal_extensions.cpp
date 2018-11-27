@@ -579,14 +579,13 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
 	Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
 		U"Row number not in valid range.");
-	return NUMrowSum (my data.get(), rowNumber);
+	return NUMsum (my data.row (rowNumber));
 }
 
-double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
-	integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
-	Melder_require (columnNumber > 0,
-		U"There is no \"", columnLabel, U"\" column label.");
-	return TableOfReal_getColumnSum (me, columnNumber);
+double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
+	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
+		U"Column number not in valid range.");
+	return NUMsum (my data.column (columnNumber));
 }
 
 double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
@@ -596,10 +595,11 @@ double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
 	return TableOfReal_getRowSum (me, rowNumber);
 }
 
-double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
-	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
-		U"Column number not in valid range.");
-	return NUMcolumnSum (my data.get(), columnNumber);
+double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
+	integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+	Melder_require (columnNumber > 0,
+		U"There is no \"", columnLabel, U"\" column label.");
+	return TableOfReal_getColumnSum (me, columnNumber);
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {

@@ -27,16 +27,6 @@ double NUMcenterOfGravity (constVEC const& x) noexcept {
 	return double (weightedSumOfIndexes / sumOfWeights);
 }
 
-double NUMcolumnMean (constMAT const& x, integer columnNumber) noexcept {
-	Melder_assert (columnNumber > 0 && columnNumber <= x.ncol);
-	return NUMmean (x.column (columnNumber));
-}
-
-double NUMcolumnSum (constMAT const& x, integer columnNumber) noexcept {
-	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
-	return NUMsum (x.column (columnNumber));
-}
-
 double NUMinner_ (constVEC const& x, constVEC const& y) noexcept {
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
 		const double *px = & x [1];
