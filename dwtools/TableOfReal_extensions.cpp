@@ -632,7 +632,8 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (my data.get(), icol, nullptr, & mean, nullptr, nullptr, & stdev);
+		NUM_sum_mean_sumsq_variance_stdev (my data.column (icol),
+				nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
 	}
@@ -648,7 +649,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (constVEC (& my data [irow] [0], my numberOfColumns),
+		NUM_sum_mean_sumsq_variance_stdev (my data.row (irow),
 				nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
