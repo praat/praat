@@ -28,7 +28,7 @@
 
 void MATcentreEachColumn_inplace (MAT const& x) noexcept {
 	for (integer icol = 1; icol <= x.ncol; icol ++) {
-		double const columnMean = NUMcolumnMean (x, icol);
+		const double columnMean = NUMmean (x.column (icol));
 		for (integer irow = 1; irow <= x.nrow; irow ++)
 			x [irow] [icol] -= columnMean;
 	}
@@ -60,8 +60,8 @@ void MATmtm_preallocated (MAT const& target, constMAT const& x) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = irow; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-				double const *px1 = & x [1] [irow];
-				double const *px2 = & x [1] [icol],
+				const double *px1 = & x [1] [irow];
+				const double *px2 = & x [1] [icol],
 				longdouble (*px1) * longdouble (*px2),
 				(px1 += x.ncol, px2 += x.ncol)
 			)
@@ -89,8 +89,8 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
-				double const *px = & x [irow] [1];
-				double const *py = & y [1] [icol],
+				const double *px = & x [irow] [1];
+				const double *py = & y [1] [icol],
 				longdouble (*px) * longdouble (*py),
 				(px += x.colStride, py += y.rowStride)
 			)
@@ -141,7 +141,7 @@ inline void MATmul_fast_preallocated_ (MAT const& target, constMAT const& x, con
 			This version is 20,0.80,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
 		*/
 		double *ptarget = & asvector (target) [1];
-		double const *px = & asvector (x) [1], *py = & asvector (y) [1];
+		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
 		for (integer irow = 0; irow < target.nrow; irow ++) {
 			for (integer icol = 0; icol < target.ncol; icol ++)
 				ptarget [irow * target.ncol + icol] = 0.0;
@@ -172,7 +172,7 @@ inline void MATmul_fast_preallocated_ (MAT const& target, constMAT const& x, con
 			the speed is 9.1,0.63,0.83,1.83 ns per multiply-add for size = 1,10,100,1000.
 		*/
 		double *ptarget = & asvector (target) [1];
-		double const *px = & asvector (x) [1], *py = & asvector (y) [1];
+		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
 		for (integer irow = 0; irow < target.nrow; irow ++) {
 			for (integer icol = 0; icol < target.ncol; icol ++) {
 				ptarget [irow * target.ncol + icol] = 0.0;
@@ -270,7 +270,7 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 			for (integer icol = 1; icol <= target.ncol; icol ++)
 				targetrow [icol] = 0.0;
 			for (integer i = 1; i <= x.ncol; i ++) {
-				double const xcell = x [irow] [i];
+				const double xcell = x [irow] [i];
 				constVECVU const yrow = y [i];
 				for (integer icol = 1; icol <= target.ncol; icol ++)
 					targetrow [icol] += xcell * yrow [icol];
@@ -372,8 +372,8 @@ autoMAT newMATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool
 				/*
 					Parabolic interpolation.
 				*/
-				double dy = 0.5 * (x [i + 1] - x [i - 1]);
-				double d2y = (x [i] - x [i - 1]) + (x [i] - x [i + 1]);
+				const double dy = 0.5 * (x [i + 1] - x [i - 1]);
+				const double d2y = (x [i] - x [i - 1]) + (x [i] - x [i + 1]);
 				Melder_assert (d2y > 0.0);
 				result [1] [peakNumber] = (double) i + dy / d2y;
 				result [2] [peakNumber] = x [i] + 0.5 * dy * (dy / d2y);
