@@ -1,6 +1,6 @@
 /* DataModeler_def.h
  *
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,20 +23,20 @@ oo_DEFINE_CLASS (DataModeler, Function)
 	oo_INT (type)	// polynomial, legendre ...
 	oo_INTEGER (numberOfDataPoints)
 	oo_INTEGER (numberOfParameters)
-	oo_DOUBLE_VECTOR (x, numberOfDataPoints)
-	oo_DOUBLE_VECTOR (y, numberOfDataPoints)
-	oo_DOUBLE_VECTOR (sigmaY, numberOfDataPoints)
-	oo_INT_VECTOR (dataPointStatus, numberOfDataPoints)
-	oo_DOUBLE_VECTOR (parameter, numberOfParameters)
-	oo_INT_VECTOR (parameterStatus, numberOfParameters)
+	oo_VEC (x, numberOfDataPoints)
+	oo_VEC (y, numberOfDataPoints)
+	oo_VEC (sigmaY, numberOfDataPoints)
+	oo_INTVEC (dataPointStatus, numberOfDataPoints)
+	oo_VEC (parameter, numberOfParameters)
+	oo_INTVEC (parameterStatus, numberOfParameters)
 	oo_DOUBLE (tolerance)
 	oo_INT (useSigmaY)
 	oo_OBJECT (Strings, 0, parameterNames)
 	oo_OBJECT (Covariance, 0, parameterCovariances)
 
 	#if oo_DECLARING
-		double (*f_evaluate) (DataModeler me, double x, double p[]);
-		void (*f_evaluateBasisFunctions) (DataModeler me, double x, double term[]);
+		double (*f_evaluate) (DataModeler me, double x, VEC p);
+		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term);
 
 		void v_info ()
 			override;
