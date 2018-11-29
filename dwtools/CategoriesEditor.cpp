@@ -49,7 +49,8 @@ static autoINTVEC getGuiList_getSelectedPositions (GuiList me) {
 	integer numberOfElements;
 	integer *vec = GuiList_getSelectedPositions (me, & numberOfElements);
 	autoINTVEC result;
-	result.at = & vec [0]; result.size = numberOfElements;
+	result.at = & vec [0];
+	result.size = numberOfElements;
 	return result;
 }
 

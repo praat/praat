@@ -69,7 +69,7 @@ static void VECfromMAT_inplace (VEC v, MAT m) {
 			v [k ++] = m [irow] [icol];
 }
 
-static void MATfromVEC_inplace (MAT m, VEC v, integer numberOfColumns) {
+static void MATfromVEC_inplace (MAT m, VEC v) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer irow = 1; irow <= m.nrow; irow ++)
@@ -1382,7 +1382,6 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) 
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, integer numberOfIterations, bool showProgress, double *out_stress) {
 	try {
 		integer nPoints = conf -> numberOfRows;
-		integer nDimensions = conf -> numberOfColumns;
 		double tol = 1e-6, stressp = 1e308, stress = 0.0;
 
 		Melder_require (my numberOfRows == nPoints && t -> numberOfPoints == nPoints ||
@@ -1648,7 +1647,7 @@ static double func (Daata object, VEC p) {
 	// Substitute results of minimizer into configuration and
 	// normalize the configuration
 
-	MATfromVEC_inplace (x, p, numberOfDimensions);
+	MATfromVEC_inplace (x, p);
 	MATcentreEachColumn_inplace (x);
 	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
 
@@ -1927,7 +1926,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		solution.all() <<= xc -> data.column (h); // initial guess
 		// largest eigenvalue of wsih (nonsymmetric matrix!!) is optimal solution for this dimension
-		double lambda = VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
+		(void) VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
 
 		// normalize the solution: centre and x'x = 1
 		
@@ -2103,7 +2102,6 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandling) {
 	try {
-		integer nDimensions = conf -> numberOfColumns;
 		autoVEC w = newVECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {

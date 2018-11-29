@@ -50,16 +50,17 @@ Thing_define (HMMBaumWelch, Daata) {
 	integer numberOfSymbols;
 	double lnProb;
 	double minProb;
-	double **alpha;
-	double **beta;
-	double *scale;
-	double **gamma;
-	double ***xi;
-	double **aij_num, **aij_denom;
-	double **bik_num, **bik_denom;
-
-	void v_destroy () noexcept
-		override;
+	autoMAT alpha;
+	autoMAT beta;
+	autoVEC scale;
+	autoMAT gamma;
+	autoTEN3 xi;
+	autoVEC aij_num_p0;
+	autoMAT aij_num;
+	autoVEC aij_denom_p0;
+	autoMAT aij_denom;
+	autoMAT bik_num;
+	autoMAT bik_denom;
 };
 
 Thing_define (HMMStateSequence, Strings) {

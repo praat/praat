@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -982,7 +982,7 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinterior */, Vertices thee, bool /* use_thyinterior */) {
 	try {
 		autoVertices him = Vertices_create ();
-		DoublyLinkedNode prevPoly;
+		DoublyLinkedNode prevPoly = nullptr;
 		integer poly_npoints = 0;
 		for (DoublyLinkedNode ni = my front; ni != 0; ni = ni -> next) {
 			if ( (VERTEX (ni) -> intersect == 0) || VERTEX (ni) -> processed) {

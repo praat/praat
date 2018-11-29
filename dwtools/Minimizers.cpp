@@ -351,7 +351,6 @@ void structVDSmagtMinimizer :: v_minimize () {
 				gr2s = (grc - gropt) / dalpha;
 				temp = (fch + fch) / dalpha - grc - gropt;
 				if ((fc < minimum) || ((fc == minimum) && (grc / gropt > -1))) {
-					double *tmp;
 					gopt_sq = gsq;
 					history [this -> iteration] = minimum = fc;
 					std::swap (p.at, pc.at);

@@ -422,12 +422,11 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 	}
 }
 
-void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
+void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer /* nbins */, int garnish) {
 	Melder_require (d > 0 && d <= my dimension, U"The chosen dimension needs to be larger than 0 and smaller than ", my dimension, U".");
 	
-	if (npoints <= 1) {
+	if (npoints <= 1)
 		npoints = 1000;
-	}
 
 	double nsigmas = 2.0;
 	if (xmax <= xmin) 

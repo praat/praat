@@ -164,20 +164,18 @@ autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, conststring32 chan
 
 autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 	try {
-		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
+		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues)
 			numberOfComponents = thy numberOfEigenvalues;
-		}
-		numberOfComponents = ( numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents );
+		numberOfComponents = std::min (numberOfComponents, my numberOfChannels);
 
 		Melder_assert (thy labels.size == thy dimension);
 		autoINTVEC channelNumbers = EEG_channelNames_to_channelNumbers (me, thy labels.get());
 
 		autoEEG him = Data_copy (me);
 		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
-		for (integer i = 1; i <= channelNumbers.size; i ++) {
-			integer ichannel = channelNumbers [i];
-			NUMvector_copyElements<double> (& white -> z [i] [0], & his sound -> z [ichannel] [0], 1, his sound -> nx);
-		}
+		for (integer i = 1; i <= channelNumbers.size; i ++)
+			his sound -> z.row (channelNumbers [i]) <<= white -> z.row (i);
+
 		EEG_setChannelNames_selected (him.get(), U"wh", channelNumbers.get());
 		return him;
 	} catch(MelderError) {
@@ -187,19 +185,17 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 
 autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents) {
 	try {
-		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
+		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues)
 			numberOfComponents = thy numberOfEigenvalues;
-		}
-		numberOfComponents = numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents;
+		numberOfComponents = std::min (numberOfComponents, my numberOfChannels);
 
 		Melder_assert (thy labels.size == thy dimension);
 		autoINTVEC channelNumbers = EEG_channelNames_to_channelNumbers (me, thy labels.get());
 		autoEEG him = Data_copy (me);
 		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
-		for (integer i = 1; i <= channelNumbers.size; i ++) {
-			integer ichannel = channelNumbers [i];
-			NUMvector_copyElements<double> (& pc -> z [i] [0], & his sound -> z [ichannel] [0], 1, his sound -> nx);
-		}
+		for (integer i = 1; i <= channelNumbers.size; i ++)
+			his sound -> z.row (channelNumbers [i]) <<= pc -> z.row (i);
+		
 		EEG_setChannelNames_selected (him.get(), U"pc", channelNumbers.get());
 		return him;
 	} catch (MelderError) {

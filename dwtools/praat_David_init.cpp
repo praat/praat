@@ -3229,9 +3229,27 @@ FORM (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviat
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getMedianAbsoluteDeviation (me, icol);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getMedianAbsoluteDeviation (me, columnNumber);
 	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_Table_reportRobustStatistics, U"Table: Report robust statistics", U"Table: Report robust statistics...") {
+	SENTENCE (columnLabel, U"Column label", U"F1")
+	POSITIVE (k_stdev, U"Number of standard deviations", U"1.5")
+	POSITIVE (tolerance, U"Tolerance", U"1e-6")
+	NATURAL (maximumNumberOfiterations, U"Maximum number of iterations", U"30")
+	OK
+DO
+	INFO_ONE (Table)
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double location, scale;
+		Table_reportHuberMStatistics (me, columnNumber, k_stdev, tolerance, & location, & scale, maximumNumberOfiterations);
+		MelderInfo_open ();
+			MelderInfo_writeLine (U"Location: ", location);
+			MelderInfo_writeLine (U"Scale: ", scale);
+		MelderInfo_close();
+	INFO_ONE_END
 }
 
 static void print_means (Table me);
@@ -8420,6 +8438,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,	INFO_Table_reportOneWayAnova);
 	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportOneWayKruskalWallis);
 	praat_addAction1 (classTable, 1, U"Report two-way anova...", U"Report one-way Kruskal-Wallis...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportTwoWayAnova);
+	praat_addAction1 (classTable, 1, U"Report robust statistics...", U"Report two-way anova...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportRobustStatistics);
 	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", praat_DEPTH_1, NEW_Table_extractRowsWhere);
 	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN, NEW_Table_extractRowsMahalanobisWhere);
 	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1| praat_HIDDEN, 0);

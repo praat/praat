@@ -691,7 +691,6 @@ double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableLis
 		end = my size;
 	}
 	integer ntables = end - start + 1;
-	integer dimension = my at [1] -> numberOfColumns;
 	double dmsq = 0;
 	for (integer k = start; k <= end; k ++) {
 		CrossCorrelationTable thee = my at [k];

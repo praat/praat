@@ -1259,8 +1259,7 @@ void VocalTractGrid_setNames (VocalTractGrid me) {
 	//Thing_setName (my nasal_formants_amplitudes.get(), U"nasal_formants_amplitudes");
 }
 
-autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, integer numberOfFormants,
-                                      integer numberOfNasalFormants,	integer numberOfNasalAntiFormants) {
+autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, integer numberOfFormants, integer numberOfNasalFormants, integer numberOfNasalAntiFormants) {
 	try {
 		autoVocalTractGrid me = Thing_new (VocalTractGrid);
 		Function_init (me.get(), tmin, tmax);
@@ -1277,7 +1276,7 @@ autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, integer numb
 	}
 }
 
-static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *out_yin, double *out_yout) {
 	integer numberOfOralFormants = my oral_formants -> formants.size;
 	integer numberOfNasalFormants = my nasal_formants -> formants.size;
 	integer numberOfNasalAntiFormants = my nasal_antiformants -> formants.size;
@@ -1331,13 +1330,11 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, 
 		}
 	}
 end:
-	if (yin)
-		*yin = ymid;
-	if (yout)
-		*yout = ymid;
+	if (out_yin) *out_yin = ymid;
+	if (out_yout) *out_yout = ymid;
 }
 
-static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *out_yin, double *out_yout) {
 	// (0: filler) (1: hor. line to split) (2: split to diff) (3: diff) (4: diff to split)
 	// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
 	double xw [9] = { 0.0, 0.3, 0.2, 1.5, 0.5, 0.5, 1.0, 0.5, 0.5 }, xws [9];
@@ -1359,10 +1356,8 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 	if (numberOfFormants == 0) {
 		y1 = y2 = (ymin + ymax) / 2.0;
 		Graphics_line (g, xmin, y1, xmax, y1);
-		if (yin)
-			*yin = y1;
-		if (yout)
-			*yout = y2;
+		if (out_yin) *out_yin = y1;
+		if (out_yout) *out_yout = y2;
 		return;
 	}
 
@@ -1435,18 +1430,14 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 	connections_free (local_out);
 	connections_free (local_in);
 
-	if (yin) {
-		*yin = y1;
-	}
-	if (yout) {
-		*yout = y2;
-	}
+	if (out_yin) *out_yin = y1;
+	if (out_yout) *out_yout = y2;
 }
 
-static void VocalTractGrid_CouplingGrid_draw_inside (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_draw_inside (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel, double xmin, double xmax, double ymin, double ymax, double dy, double *out_yin, double *out_yout) {
 	filterModel == KlattGrid_FILTER_CASCADE ?
-	VocalTractGrid_CouplingGrid_drawCascade_inplace (me, thee, g, xmin, xmax, ymin, ymax, yin, yout) :
-	VocalTractGrid_CouplingGrid_drawParallel_inplace (me, thee, g, xmin, xmax, ymin, ymax, dy, yin, yout);
+	VocalTractGrid_CouplingGrid_drawCascade_inplace (me, thee, g, xmin, xmax, ymin, ymax, out_yin, out_yout) :
+	VocalTractGrid_CouplingGrid_drawParallel_inplace (me, thee, g, xmin, xmax, ymin, ymax, dy, out_yin, out_yout);
 }
 
 static void VocalTractGrid_CouplingGrid_draw (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel) {

@@ -305,7 +305,7 @@ double NUMmultivariateKurtosis (constMAT x, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad, VEC *work);
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -313,20 +313,14 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 	makes the returned value "equal" to the standard deviation if the data is normally distributed.
 	You either GIVE the median location (if wantlocation = 0) or it
 	will be calculated (if wantlocation = 1);
-
-	work is a working array (1..n) that can be used for efficiency reasons.
-	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
 void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
-	double *inout_scale, bool wantscale, double k_stdev, double tol, VEC *work);
+	double *inout_scale, bool wantscale, double k_stdev, double tol, integer maximumNumberOfiterations);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.
-	k Winsorizes at `k' standard deviations.
-
-	work is a working array (1..n) that can be used for efficiency reasons.
-	If work == NULL, the routine allocates (and destroys) its own memory.
+	k_stdev Winsorizes at `k_stdev' standard deviations.
 */
 
 autoVEC VECmonotoneRegression (constVEC x);

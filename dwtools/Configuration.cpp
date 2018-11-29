@@ -216,13 +216,13 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 				double b = NUMinner (u.get(), u.get()) - NUMinner (v.get(), v.get());
 				
 				double c = sqrt (a * a + b * b);
-				double v = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
-				if (a > 0.0) v = -v;
+				double vc = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
+				if (a > 0.0) vc = -vc;
 				
 				// Get the rotation matrix T
 				
-				double cost = sqrt (0.5 + 0.5 * v);
-				double sint = sqrt (0.5 - 0.5 * v);
+				double cost = sqrt (0.5 + 0.5 * vc);
+				double sint = sqrt (0.5 - 0.5 * vc);
 				double t11 = cost;
 				double t12 = sint;
 				double t21 = -sint;
@@ -230,7 +230,7 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 
 				// Prevent permutations: when v < 0, i.e., a > 0, swap columns of T:/
 
-				if (v < 0.0) {
+				if (vc < 0.0) {
 					t11 = sint;
 					t12 = t21 = cost;
 					t22 = -sint;
@@ -253,10 +253,9 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 	} while (fabs (varianceSq_old - varianceSq) / varianceSq_old > tolerance &&
 	         numberOfIterations < maximumNumberOfIterations);
 
-	if (normalizeRows) {
+	if (normalizeRows)
 		for (integer i = 1; i <= xm.nrow; i ++)
 			ym.row (i) *= norm [i];
-	}
 }
 
 autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {

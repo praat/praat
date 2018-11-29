@@ -174,8 +174,6 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 }
 
 void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
-	Graphics_Colour colour = Graphics_inqColour (g);
-
 	if (xmax <= xmin) {
 		xmin = my xmin;
 		xmax = my xmax;
@@ -617,7 +615,6 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 		autoVEC eigenvalues_re, eigenvalues_im;
 		autoMAT right_eigenvectors;
 		MAT_getEigenSystemFromGeneralMatrix (my z.get(), nullptr, & right_eigenvectors, & eigenvalues_re, & eigenvalues_im);
-		autoMatrix eigenvalues = Matrix_createSimple (my ny, 2);
 		autoMAT eigenvectors_reim;
 		MAT_eigenvectors_decompress (right_eigenvectors.get(), eigenvalues_re.get(), eigenvalues_im.get(), & eigenvectors_reim);
 		if (out_eigenvectors) {
