@@ -101,7 +101,7 @@ void Configuration_setSqWeights (Configuration me, const double weight[]) {
 void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
-		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);
+		sumsq = ( sumsq <= 0.0 ? 1.0 : sqrt (sumsq) );
 		MATnormalizeColumns_inplace (my data.get(), 2.0, sumsq);
 	} else {
 		if (sumsq <= 0.0)
@@ -301,7 +301,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	autoVEC y = newVECraw (nPoints);
 	for (integer i = 1; i <= nPoints; i ++) {
 		x [i] = my data [i] [xCoordinate] * my w [xCoordinate];
-		y [i] = numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0;
+		y [i] = ( numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0 );
 	}
 	if (xmax <= xmin) {
 		xmin = NUMmin (x.get());
@@ -325,7 +325,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setFontSize (g, labelSize);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
-			conststring32 plotLabel = (useRowLabels ? my rowLabels [i].get() : label);
+			conststring32 plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
 			if (Melder_findInk (plotLabel)) {
 				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {

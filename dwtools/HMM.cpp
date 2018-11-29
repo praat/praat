@@ -489,7 +489,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 }
 
 void HMM_setDefaultObservations (HMM me) {
-	conststring32 def = my notHidden ? U"S" : U"s";
+	conststring32 def = ( my notHidden ? U"S" : U"s" );
 	for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
 		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, 0);
 		HMM_addObservation_move (me, hmms.move());
@@ -733,7 +733,7 @@ void HMM_unExpandPCA (HMM me) {
 autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startState, integer numberOfItems) {
 	try {
 		autoHMMObservationSequence thee = HMMObservationSequence_create (numberOfItems, my componentDimension);
-		integer istate = startState == 0 ? NUMgetIndexFromProbability (my initialStateProbs.get(), NUMrandomUniform (0.0, 1.0)) : startState;
+		integer istate = ( startState == 0 ? NUMgetIndexFromProbability (my initialStateProbs.get(), NUMrandomUniform (0.0, 1.0)) : startState );
 		if (my componentDimension > 0) {
 			autoVEC obs (my componentDimension, kTensorInitializationType::RAW);
 			autoVEC buf (my componentDimension, kTensorInitializationType::RAW);
@@ -875,9 +875,9 @@ void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee
 		} while (fabs ((lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
 		if (info) {
 			MelderInfo_writeLine (U"******** Learning summary *********");
-			MelderInfo_writeLine (U"  Processed ", thy size, U" sequence", (thy size > 1 ? U"s," : U","));
+			MelderInfo_writeLine (U"  Processed ", thy size, U" sequence", ( thy size > 1 ? U"s," : U"," ));
 			MelderInfo_writeLine (U"  consisting of ", bw -> totalNumberOfSequences, U" observation sequence",
-			(bw -> totalNumberOfSequences > 1 ? U"s." : U"."));
+			( bw -> totalNumberOfSequences > 1 ? U"s." : U"." ));
 			MelderInfo_writeLine (U"  Longest observation sequence had ", capacity, U" items.");
 			MelderInfo_close();
 		}
@@ -896,7 +896,7 @@ void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	double r = 0.2 / (numberOfTimes > my numberOfStates ? numberOfTimes : my numberOfStates);
+	double r = 0.2 / ( numberOfTimes > my numberOfStates ? numberOfTimes : my numberOfStates );
 
 	for (integer it = 1; it <= numberOfTimes; it ++) {
 		for (integer js = 1; js <= my numberOfStates; js ++) {
@@ -905,8 +905,8 @@ void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g
 			if (it > 1) {
 				for (integer is = 1; is <= my numberOfStates; is ++) {
 					bool indexedConnection = si -> classIndex [it - 1] == is && si -> classIndex [it] == js;
-					Graphics_setLineWidth (g, indexedConnection ? 2.0 : 1.0);
-					Graphics_setLineType (g, indexedConnection ? Graphics_DRAWN : Graphics_DOTTED);
+					Graphics_setLineWidth (g, ( indexedConnection ? 2.0 : 1.0 ));
+					Graphics_setLineType (g, ( indexedConnection ? Graphics_DRAWN : Graphics_DOTTED ));
 					double x1 = it - 1, y1 = is;
 					if (connect || indexedConnection) {
 						double a = (y1 - y2) / (x1 - x2), b = y1 - a * x1;
@@ -1181,25 +1181,25 @@ void HMM_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee) {
 		*/
 		if (my initialStateProbs [is] > 0.0) {
 			p = thy aij_num_p0 [is] / thy aij_denom_p0 [is];
-			my initialStateProbs [is] = p > 0.0 ? p : thy minProb;
+			my initialStateProbs [is] = ( p > 0.0 ? p : thy minProb );
 		}
 		for (integer js = 1; js <= my numberOfStates; js ++) {
 			if (my transitionProbs [is] [js] > 0.0) {
 				p = thy aij_num [is] [js] / thy aij_denom [is] [js];
-				my transitionProbs [is] [js] = p > 0.0 ? p : thy minProb;
+				my transitionProbs [is] [js] = ( p > 0.0 ? p : thy minProb );
 			}
 		}
 		if (! my notHidden) {
 			for (integer k = 1; k <= my numberOfObservationSymbols; k ++) {
 				if (my emissionProbs [is] [k] > 0.0) {
 					p = thy bik_num [is] [k] / thy bik_denom [is] [k];
-					my emissionProbs [is] [k] = p > 0.0 ? p : thy minProb;
+					my emissionProbs [is] [k] = ( p > 0.0 ? p : thy minProb );
 				}
 			}
 		}
 		if (my leftToRight && my transitionProbs [is] [my numberOfStates + 1] > 0.0) {
 			p = thy aij_num [is] [my numberOfStates + 1] / thy aij_denom [is] [my numberOfStates + 1];
-			my transitionProbs [is] [my numberOfStates + 1] = p > 0.0 ? p : thy minProb;
+			my transitionProbs [is] [my numberOfStates + 1] = ( p > 0.0 ? p : thy minProb );
 		}
 	}
 }
@@ -1370,7 +1370,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 		lnp += log (scale [it]);
 	}
 
-	lnp = alpha_t [istate] > 0 ? lnp + log (alpha_t [istate]) : -INFINITY; // p = 0 -> ln(p)=-infinity  // ppgb FIXME infinity is een laag getal
+	lnp = ( alpha_t [istate] > 0 ? lnp + log (alpha_t [istate]) : -INFINITY ); // p = 0 -> ln(p)=-infinity  // ppgb FIXME infinity is een laag getal
 	return lnp;
 }
 
@@ -1379,7 +1379,7 @@ double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, integer itime
 	if (isymbol < 1 || isymbol > my numberOfObservationSymbols || my emissionProbs [istate] [isymbol] == 0.0)
 		return undefined;
 	double lnp = HMM_getProbabilityAtTimeBeingInState (me, itime, istate);
-	return (isundef (lnp) ? undefined : lnp + log (my emissionProbs [istate] [isymbol]) );
+	return ( isundef (lnp) ? undefined : lnp + log (my emissionProbs [istate] [isymbol]) );
 }
 
 double HMM_getProbabilityOfObservations (HMM me, constINTVEC obs) {
@@ -1435,13 +1435,13 @@ double HMM_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence
 
 double HMM_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
 	double lnp = HMM_HMMObservationSequence_getProbability (me, thee);
-	return isundef (lnp) ? undefined :
-	        -lnp / (NUMln10 * HMMObservationSequence_getNumberOfObservations (thee));
+	return ( isundef (lnp) ? undefined :
+	        -lnp / (NUMln10 * HMMObservationSequence_getNumberOfObservations (thee)) );
 }
 
 double HMM_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee) {
 	double ce = HMM_HMMObservationSequence_getCrossEntropy (me, thee);
-	return isundef (ce) ? undefined : pow (2.0, ce);
+	return ( isundef (ce) ? undefined : pow (2.0, ce) );
 }
 
 autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer numberOfStates, int leftToRight) {
@@ -1452,7 +1452,7 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer
 
 		integer numberOfObservationSymbols = d -> numberOfRows;
 		thy notHidden = numberOfStates < 1;
-		numberOfStates = numberOfStates > 0 ? numberOfStates : numberOfObservationSymbols;
+		numberOfStates = ( numberOfStates > 0 ? numberOfStates : numberOfObservationSymbols );
 
 		HMM_init (thee.get(), numberOfStates, numberOfObservationSymbols, leftToRight);
 

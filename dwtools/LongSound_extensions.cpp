@@ -53,7 +53,7 @@ static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, inte
 	integer n_to_read = 0;
 
 	if (ibuf <= numberOfReads) {
-		n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
+		n_to_read = ( ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf );
 		integer imin = (ibuf - 1) * nbuf + 1;
 		LongSound_readAudioToShort (me, my buffer, imin, n_to_read);
 
@@ -70,8 +70,8 @@ static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, inte
 
 void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audioFileType, MelderFile file) {
 	try {
-		integer nbuf = my nmax < thy nmax ? my nmax : thy nmax;
-		integer nx = my nx > thy nx ? my nx : thy nx;
+		integer nbuf = std::min (my nmax, thy nmax);
+		integer nx = std::max (my nx, thy nx);
 		integer numberOfReads = (nx - 1) / nbuf + 1, numberOfBitsPerSamplePoint = 16;
 		
 		Melder_require (thy numberOfChannels == my numberOfChannels && my numberOfChannels == 1, U"The two LongSounds should be mono.");
@@ -91,7 +91,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (integer i = 1; i <= numberOfReads; i ++) {
-			integer n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf;
+			integer n_to_write = ( i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf );
 			_LongSound_to_multichannel_buffer (me, buffer.peek(), nbuf, nchannels, 1, i);
 			_LongSound_to_multichannel_buffer (thee, buffer.peek(), nbuf, nchannels, 2, i);
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
@@ -153,7 +153,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, integer imin
 	integer numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
 	if (file -> filePointer) {
 		for (integer ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
-			integer numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
+			integer numberOfSamplesToCopy = ( ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer );
 			LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
 			offset += numberOfSamplesToCopy;
 			MelderFile_writeShortToAudio (file, my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);

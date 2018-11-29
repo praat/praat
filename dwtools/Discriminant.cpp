@@ -130,7 +130,7 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 		U"The number of strings should equal the number of groups.");
 	for (integer i = 1; i <= my numberOfGroups; i ++) {
 		conststring32 name = thy strings [i].get();
-		Thing_setName (my groups->at [i], name ? name : U"");
+		Thing_setName ( my groups->at [i], name ? name : U"" );
 	}
 }
 
@@ -177,7 +177,7 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
 			integer numberOfObservationsm1 = Melder_ifloor (sscp -> numberOfObservations) - 1;
 			for (integer j = 1; j <= n; j ++) {
-				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
+				thy data [i] [j] = ( numberOfObservationsm1 > 0.0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
 		thy columnLabels.all() <<= my groups->at [m] -> columnLabels.part (1, n);
@@ -583,7 +583,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++) {
-			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
+			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
 		}
 
 		// Generalized squared distance function:
@@ -707,7 +707,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		double logg = log (g);
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		for (integer j = 1; j <= g; j ++) {
-			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
+			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
 		}
 
 		// Generalized squared distance function:

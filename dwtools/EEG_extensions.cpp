@@ -250,7 +250,7 @@ autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBa
 		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, U"channel", true);
 		double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
 		double samplingFrequency = 2.0 * maxFreq;
-		samplingFrequency = samplingFrequency < 44100.0 ? 44100.0 : samplingFrequency;
+		samplingFrequency = std::max (samplingFrequency, 44100.0);
 		autoSound thee = Sound_createSimple (1, my xmax - my xmin, samplingFrequency);
 		for (integer i = 1; i <= channelNumbers.size; i ++) {
 			integer ichannel = channelNumbers [i];
@@ -260,7 +260,7 @@ autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBa
 			Spectrum_passHannBand (spi.get(), 0.5, channelBandwidth - 0.5, 0.5);
 			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.get(), fbase, samplingFrequency / 2.0, 30);
 			autoSound resampled = Spectrum_to_Sound (spi_shifted.get());
-			integer nx = resampled -> nx < thy nx ? resampled -> nx : thy nx;
+			integer nx = std::min (resampled -> nx, thy nx);
 			for (integer j = 1; j <= nx; j ++) {
 				thy z [1] [j] += resampled -> z [1] [j];
 			}

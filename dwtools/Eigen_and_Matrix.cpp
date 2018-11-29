@@ -40,7 +40,7 @@ autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRo
 		integer i = 1;
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-				thy z [irow] [icol] = i <= my dimension ? my eigenvectors [index] [i ++] : 0.0;
+				thy z [irow] [icol] = ( i <= my dimension ? my eigenvectors [index] [i ++] : 0.0 );
 			}
 		}
 		return thee;
