@@ -23,6 +23,7 @@
  djmw 20121024 Latest modification.
 */
 
+#include <algorithm>
 #include <limits.h>
 #include "melder.h"
 #include "MAT_numerics.h"
@@ -1281,6 +1282,34 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	double inproduct = NUMinner (x, w);
 	double wsum = NUMsum (w);
 	return inproduct / wsum;
+}
+
+inline void VECchainRows_preallocated (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
+	integer k = 1;
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol ++)
+			v [k ++] = m [irow] [icol];
+}
+
+inline autoVEC VECchainRows (MAT m) {
+	autoVEC result = newVECraw (m.nrow * m.ncol);
+	VECchainRows_preallocated (result.get(), m);
+	return result;
+}
+
+inline void VECchainColumns_preallocated (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
+	integer k = 1;
+	for (integer icol = 1; icol <= m.ncol; icol ++)
+		for (integer irow = 1; irow <= m.nrow; irow ++)
+			v [k ++] = m [irow] [icol];
+}
+
+inline autoVEC VECchainColumns (MAT m) {
+	autoVEC result = newVECraw (m.nrow * m.ncol);
+	VECchainColumns_preallocated (result.get(), m);
+	return result;
 }
 
 /* Y += +a X */
