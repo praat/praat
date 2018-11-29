@@ -3360,26 +3360,46 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 	}
 }
 
-double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
+double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber) {
 	try {
-		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		Table_numericize_Assert (me, columnNumber);
-		if (my rows.size < 1)
-			return undefined;
-
-		autoVEC data = newVECraw (my rows.size);
-		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
-			data [irow] = row -> cells [columnNumber].number;
-			Melder_require (isdefined (data [irow]), 
-				U"The cell in row ", irow, U" of column ", Table_messageColumn (me, columnNumber), U" is undefined.");
-		}
+		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double mad, location;
-		NUMmad (data.get(), & location, true, & mad, nullptr);
+		NUMmad (data.get(), & location, true, & mad);
 		return mad;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
 	}
+}
+
+autoVEC Table_getColumnVector (Table me, integer columnNumber) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
+		Table_numericize_Assert (me, columnNumber);
+		Melder_require (my rows.size > 0, U"The table is empty.");
+		autoVEC result = newVECraw (my rows.size);
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
+			TableRow row = my rows.at [irow];
+			result [irow] = row -> cells [columnNumber].number;
+			Melder_require (isdefined (result [irow]), 
+				U"The cell in row ", irow, U" of column ", Table_messageColumn (me, columnNumber), U" is undefined.");
+		}
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot get column vector.");
+	}
+}
+
+void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std, double tol, double *out_location, double *out_scale, integer maximumNumberOfIterations) {
+	try {
+		autoVEC data = Table_getColumnVector (me, columnNumber);
+		double location, scale;
+		NUMstatistics_huber (data.get(), & location, true, & scale, true, k_std, tol, maximumNumberOfIterations);
+		if (out_location) *out_location = location;
+		if (out_scale) *out_scale = scale;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
+	}
+}
 
 autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factorColumn, double *out_prob, double *out_kruskalWallis, double *out_df) {
 	try {
@@ -3834,7 +3854,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Table_setNumericValue (anova.get(), row_B, col_df, dof_B);
 		Table_setNumericValue (anova.get(), row_B, col_ms, ms_B);
 
-		double dof_AB = dof_A * dof_B , ms_AB, dof_E, ms_E;
+		double dof_AB = dof_A * dof_B , ms_AB = 0.0, dof_E, ms_E;
 		if (replications) {
 			ms_AB = ss_AB / dof_AB;
 			dof_E = numberOfData - dof_A - dof_B - dof_AB - 1;

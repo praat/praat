@@ -1061,7 +1061,7 @@ static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, doubl
 		}
 	}
 	if (out_min) *out_min = min;
-	if (out_max) *out_max - max;
+	if (out_max) *out_max = max;
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
@@ -1428,7 +1428,7 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 			autoVEC pnm1 = newVECzero (my numberOfCoefficients);
 			autoVEC pnm2 = newVECzero (my numberOfCoefficients);
 
-			// Start the recursion: T [1] = x; T [0] = 1;
+			// Start the recursion: T [2] = x; T [1] = 1;
 
 			pnm1 [2] = 1.0;
 			pnm2 [1] = 1.0;

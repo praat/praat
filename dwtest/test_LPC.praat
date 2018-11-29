@@ -57,7 +57,7 @@ for imethod to 4
 	call get_formants lpcr 'method$':robust
 	deltaf2 = deltaf
 	deltab2 = deltab
-	assert deltaf2 < 0.005 and deltab2 < 0.2; ('method$':robust)
+	assert deltaf2 < 0.005 and deltab2 < 0.2; ('method$':robust) 'deltaf2' 'deltab2'
 	select lpc
 	plus lpcr
 	Remove

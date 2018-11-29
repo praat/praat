@@ -44,7 +44,7 @@ static void regression (VEC r, CC me, integer frame, integer nr) {
 		longdouble ri = 0.0;
 		for (integer j = -nrd2; j <= nrd2; j ++) {
 			CC_Frame cf = & my frame[frame + j];
-			double c = i == 1 ? cf -> c0 : cf -> c [i];
+			double c = ( i == 1 ? cf -> c0 : cf -> c [i] );
 			ri += c * j;
 		}
 		r [i] = ri / sumsq / my dx;

@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2017 David Weenink
+//  * Copyright (C) 2011-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,94 +90,94 @@ void EspeakVoice_setDefaults (EspeakVoice me) {
 	(void) me;
 }
 
-void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice) {
-	my v_name = Melder_dup (Melder_peek8to32 (voice -> v_name));
+void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voicet) {
+	my v_name = Melder_dup (Melder_peek8to32 (voicet -> v_name));
 
-	my phoneme_tab_ix = voice -> phoneme_tab_ix;
-	my pitch_base = voice -> pitch_base;
-	my pitch_range = voice -> pitch_range;
+	my phoneme_tab_ix = voicet -> phoneme_tab_ix;
+	my pitch_base = voicet -> pitch_base;
+	my pitch_range = voicet -> pitch_range;
 
-	my speedf1 = voice -> speedf1;
-	my speedf2 = voice -> speedf2;
-	my speedf3 = voice -> speedf3;
+	my speedf1 = voicet -> speedf1;
+	my speedf2 = voicet -> speedf2;
+	my speedf3 = voicet -> speedf3;
 
-	my speed_percent = voice -> speed_percent;
-	my flutter = voice -> flutter;
-	my roughness = voice -> roughness;
-	my echo_delay = voice -> echo_delay;
-	my echo_amp = voice -> echo_amp;
-	my n_harmonic_peaks = voice -> n_harmonic_peaks;
-	my peak_shape = voice -> peak_shape;
-	my voicing = voice -> voicing;
-	my formant_factor = voice -> formant_factor;
-	my consonant_amp = voice -> consonant_amp;
-	my consonant_ampv = voice -> consonant_ampv;
-	my samplerate = voice -> samplerate;
+	my speed_percent = voicet -> speed_percent;
+	my flutter = voicet -> flutter;
+	my roughness = voicet -> roughness;
+	my echo_delay = voicet -> echo_delay;
+	my echo_amp = voicet -> echo_amp;
+	my n_harmonic_peaks = voicet -> n_harmonic_peaks;
+	my peak_shape = voicet -> peak_shape;
+	my voicing = voicet -> voicing;
+	my formant_factor = voicet -> formant_factor;
+	my consonant_amp = voicet -> consonant_amp;
+	my consonant_ampv = voicet -> consonant_ampv;
+	my samplerate = voicet -> samplerate;
 	my numberOfKlattParameters = 8;
 	for (integer i = 1; i <= my numberOfKlattParameters; i ++) {
-		my klattv [i] = voice -> klattv [i - 1];
+		my klattv [i] = voicet -> klattv [i - 1];
 	}
 	for (integer i = 1; i <= my numberOfFormants; i ++) {
-		my freq [i] = voice -> freq [i - 1];
-		my height [i] = voice -> height [i - 1];
-		my width [i] = voice -> width [i - 1];
-		my freqadd [i] = voice -> freqadd [i - 1];
-		my freq2 [i] = voice -> freq2 [i - 1];
-		my height2 [i] = voice -> height2 [i - 1];
-		my width2 [i] = voice -> width2 [i - 1];
-		my breath [i] = voice -> breath [i - 1];
-		my breathw [i] = voice -> breathw [i - 1];
+		my freq [i] = voicet -> freq [i - 1];
+		my height [i] = voicet -> height [i - 1];
+		my width [i] = voicet -> width [i - 1];
+		my freqadd [i] = voicet -> freqadd [i - 1];
+		my freq2 [i] = voicet -> freq2 [i - 1];
+		my height2 [i] = voicet -> height2 [i - 1];
+		my width2 [i] = voicet -> width2 [i - 1];
+		my breath [i] = voicet -> breath [i - 1];
+		my breathw [i] = voicet -> breathw [i - 1];
 	}
 	my numberOfToneAdjusts = 1000;
 	for (integer i = 1; i <= my numberOfToneAdjusts; i ++) {
-		my tone_adjust [i] = voice -> tone_adjust [i - 1];
+		my tone_adjust [i] = voicet -> tone_adjust [i - 1];
 	}
 }
 
-void EspeakVoice_into_voice (EspeakVoice me, voice_t *voice) {
+void EspeakVoice_into_voice (EspeakVoice me, voice_t *voicet) {
 
 	if (my v_name) {
-		strncpy (voice -> v_name, Melder_peek32to8 (my v_name.get()), 40);
+		strncpy (voicet -> v_name, Melder_peek32to8 (my v_name.get()), 40);
 	}
 	if (my language_name) {
-		strncpy (voice -> language_name, Melder_peek32to8 (my language_name.get()), 20);
+		strncpy (voicet -> language_name, Melder_peek32to8 (my language_name.get()), 20);
 	}
-	voice -> phoneme_tab_ix = my phoneme_tab_ix;
-	voice -> pitch_base = my pitch_base;
-	voice -> pitch_range = my pitch_range;
+	voicet -> phoneme_tab_ix = my phoneme_tab_ix;
+	voicet -> pitch_base = my pitch_base;
+	voicet -> pitch_range = my pitch_range;
 
-	voice -> speedf1 = my speedf1;
-	voice -> speedf2 = my speedf2;
-	voice -> speedf3 = my speedf3;
+	voicet -> speedf1 = my speedf1;
+	voicet -> speedf2 = my speedf2;
+	voicet -> speedf3 = my speedf3;
 
-	voice -> speed_percent = my speed_percent;
-	voice -> flutter = my flutter;
-	voice -> roughness = my roughness;
-	voice -> echo_delay = my echo_delay;
-	voice -> echo_amp = my echo_amp;
-	voice -> n_harmonic_peaks = my n_harmonic_peaks;
-	voice -> peak_shape = my peak_shape;
-	voice -> voicing = my voicing;
-	voice -> formant_factor = my formant_factor;
-	voice -> consonant_amp = my consonant_amp;
-	voice -> consonant_ampv = my consonant_ampv;
-	voice -> samplerate = my samplerate;
+	voicet -> speed_percent = my speed_percent;
+	voicet -> flutter = my flutter;
+	voicet -> roughness = my roughness;
+	voicet -> echo_delay = my echo_delay;
+	voicet -> echo_amp = my echo_amp;
+	voicet -> n_harmonic_peaks = my n_harmonic_peaks;
+	voicet -> peak_shape = my peak_shape;
+	voicet -> voicing = my voicing;
+	voicet -> formant_factor = my formant_factor;
+	voicet -> consonant_amp = my consonant_amp;
+	voicet -> consonant_ampv = my consonant_ampv;
+	voicet -> samplerate = my samplerate;
 	for (integer i = 1; i <= my numberOfKlattParameters; i ++) {
-		voice -> klattv [i - 1] = my klattv [i];
+		voicet -> klattv [i - 1] = my klattv [i];
 	}
 	for (integer i = 1; i <= my numberOfFormants; i ++) {
-		voice -> freq [i - 1] = my freq [i];
-		voice -> height [i - 1] = my height [i];
-		voice -> width [i - 1] = my width [i];
-		voice -> freqadd [i - 1] = my freqadd [i];
-		voice -> freq2 [i - 1] = my freq2 [i];
-		voice -> height2 [i - 1] = my height2 [i];
-		voice -> width2 [i - 1] = my width2 [i];
-		voice -> breath [i - 1] = my breath [i];
-		voice -> breathw [i - 1] = my breathw [i];
+		voicet -> freq [i - 1] = my freq [i];
+		voicet -> height [i - 1] = my height [i];
+		voicet -> width [i - 1] = my width [i];
+		voicet -> freqadd [i - 1] = my freqadd [i];
+		voicet -> freq2 [i - 1] = my freq2 [i];
+		voicet -> height2 [i - 1] = my height2 [i];
+		voicet -> width2 [i - 1] = my width2 [i];
+		voicet -> breath [i - 1] = my breath [i];
+		voicet -> breathw [i - 1] = my breathw [i];
 	}
 	for (integer i = 1; i <= my numberOfToneAdjusts; i ++) {
-		voice -> tone_adjust [i - 1] = voice -> tone_adjust [i];
+		voicet -> tone_adjust [i - 1] = voicet -> tone_adjust [i];
 	}
 }
 

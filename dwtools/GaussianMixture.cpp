@@ -48,7 +48,7 @@ Thing_implement (GaussianMixture, Daata, 0);
 
 conststring32 GaussianMixture_criterionText (int criterion) {
 	conststring32 criterionText [6] =  { U"(1/n)*LLH", U"(1/n)*MML", U"(1/n)*BIC", U"(1/n)*AIC", U"(1/n)*AICc", U"(1/n)*CD_LLH" };
-	return criterion >= 0 && criterion < 7 ? criterionText [criterion] : U"(1/n)*ln(p)";
+	return ( criterion >= 0 && criterion < 7 ? criterionText [criterion] : U"(1/n)*ln(p)" );
 }
 
 void GaussianMixture_removeComponent (GaussianMixture me, integer component);
@@ -422,12 +422,11 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 	}
 }
 
-void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
+void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer /* nbins */, int garnish) {
 	Melder_require (d > 0 && d <= my dimension, U"The chosen dimension needs to be larger than 0 and smaller than ", my dimension, U".");
 	
-	if (npoints <= 1) {
+	if (npoints <= 1)
 		npoints = 1000;
-	}
 
 	double nsigmas = 2.0;
 	if (xmax <= xmin) 
@@ -441,7 +440,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 	for (integer i = 1; i <= npoints; i++) {
 		double x = xmin + (i - 1) * dx;
 		for (integer k = 1; k <= my dimension; k++) {
-			v [k] = k == d ? 1.0 : 0.0;
+			v [k] = ( k == d ? 1.0 : 0.0 );
 		}
 		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, v.get(), x);
 		if (p [i] > pmax)
@@ -855,7 +854,7 @@ integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 	Covariance thee = my covariances->at [1];
 	// if diagonal) d (means) + d (stdev)
 	// else  n + n(n+1)/2
-	return thy numberOfRows == 1 ? 2 * thy numberOfColumns : thy numberOfColumns * (thy numberOfColumns + 3) / 2;
+	return ( thy numberOfRows == 1 ? 2 * thy numberOfColumns : thy numberOfColumns * (thy numberOfColumns + 3) / 2 );
 }
 
 /*
@@ -997,7 +996,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 							if (support_ic > 0.0)
 								support += support_ic;
 						}
-						my mixingProbabilities [component] = support_im > 0.0 ? support_im : 0.0;
+						my mixingProbabilities [component] = std::max (support_im, 0.0);
 						if (support > 0.0)
 							my mixingProbabilities [component] /= support;
 
@@ -1229,14 +1228,14 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			Covariance cov = my covariances->at [im];
 			double mixingP = my mixingProbabilities [im];
 			double nd = his data [im] [indata], d2 = d / 2.0;
-			double beta = h > 0.0 ? NUMsqrt1_2 / h : NUMsqrt1_2 * pow ( (1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (nd, 1.0 / (d + 4.0));
+			double beta = ( h > 0.0 ? NUMsqrt1_2 / h : NUMsqrt1_2 * pow ( (1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (nd, 1.0 / (d + 4.0)) );
 			double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
 			double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
 			double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
 			double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2.0) * beta4 / (2.0 * gamma2));
 			double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
-			             + 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2  + 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
-			             - 4.0 * pow (delta, -d2) * (1.0 + 3.0 * d * beta4 / (2.0 * delta) + d * (d + 2.0) * beta8 / (2.0 * delta2));
+				+ 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2  + 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
+				- 4.0 * pow (delta, -d2) * (1.0 + 3.0 * d * beta4 / (2.0 * delta) + d * (d + 2.0) * beta8 / (2.0 * delta2));
 			double mu2 = mu * mu;
 
 			double prob = undefined, tnb = undefined, lnmu = undefined, lnvar = undefined;
@@ -1255,10 +1254,10 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 				So d [j] [k]= d [k] [j] and d [j] [j] = 0
 			*/
 			for (integer j = 1; j <= n; j ++) {
-				double wj = p [j] [nocp1] > 0.0 ? mixingP * p [j] [im] / p [j] [nocp1] : 0.0;
+				double wj = ( p [j] [nocp1] > 0.0 ? mixingP * p [j] [im] / p [j] [nocp1] : 0.0 );
 				for (integer k = 1; k < j; k ++) {
 					djk = NUMmahalanobisDistance (cov -> lowerCholeskyInverse.get(), thy data.row (j), thy data.row (k));
-					double w = p [k] [nocp1] > 0.0 ? wj * mixingP * p [k] [im] / p [k] [nocp1] : 0.0;
+					double w = ( p [k] [nocp1] > 0.0 ? wj * mixingP * p [k] [im] / p [k] [nocp1] : 0.0 );
 					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += wj * wj; // for k == j. Is this ok now for probability weighing ????

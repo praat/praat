@@ -56,14 +56,14 @@ static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
 }
 
 void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
-	VEC x = thy z.row (channel);
-	autoNUMvector <double> y ((integer) 0, my nCoefficients);
+	autoVEC y = newVECzero (my nCoefficients);
 	for (integer i = 1; i <= thy nx; i ++) {
-		y [0] = x [i];
+		double y0 = thy z [channel] [i];
 		for (integer j = 1; j <= my nCoefficients; j ++)
-			x [i] += my a [j] * y [j];
-		for (integer j = my nCoefficients; j > 0; j --)
+			thy z [channel] [i] += my a [j] * y [j];
+		for (integer j = my nCoefficients; j > 1; j --)
 			y [j] = y [j - 1];
+		y [1] = y0;
 	}
 }
 

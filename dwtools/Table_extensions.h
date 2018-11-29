@@ -34,6 +34,8 @@ integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter
 
 autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter);
 
+autoVEC Table_getColumnVector (Table me, integer columnNumber);
+
 autoTable Table_create_petersonBarney1952 ();
 
 autoTable Table_create_polsVanNierop1973 ();
@@ -45,6 +47,8 @@ autoTable Table_create_esposito2006 ();
 autoTable Table_create_ganong1980 ();
 
 double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber);
+
+void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std, double tol, double *out_location, double *out_scale, integer maximumNumberOfiterations);
 
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me,

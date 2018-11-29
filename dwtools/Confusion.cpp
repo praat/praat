@@ -252,7 +252,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 		double y1 = thy z [i] [2];
 		double r = rmax * my data [i] [i] / xSum;
 
-		Graphics_circle (g, x1, y1, r > rmin ? r : rmin);
+		Graphics_circle (g, x1, y1, ( r > rmin ? r : rmin ));
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			double x2 = thy z [j] [1], y2 = thy z [j] [2];

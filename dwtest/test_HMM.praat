@@ -35,7 +35,7 @@ procedure mm
  			.p = exp(.p)
 			.psum += .p
 		endfor
-		assert (.psum>0.999 and .psum<1.001)
+		assert (.psum>0.999 and .psum<1.001); '.it' '.psum'
 	endfor
 
 	removeObject: .mm1, .mm2, .os

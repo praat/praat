@@ -61,15 +61,8 @@ Thing_implement (Similarity, Proximity, 0);
 
 /********************** NUMERICAL STUFF **************************************/
 
-static void VECfromMAT_inplace (VEC v, MAT m) {
-	Melder_assert (m.nrow * m.ncol == v.size);
-	integer k = 1;
-	for (integer irow = 1; irow <= m.nrow; irow ++)
-		for (integer icol = 1; icol <= m.ncol; icol ++)
-			v [k ++] = m [irow] [icol];
-}
 
-static void MATfromVEC_inplace (MAT m, VEC v, integer numberOfColumns) {
+static void MATfromVEC_inplace (MAT m, VEC v) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer irow = 1; irow <= m.nrow; irow ++)
@@ -364,7 +357,7 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, int scaling) {
 	try {
 		integer nrow = my numberOfRows, ncol = my numberOfColumns;
-		integer dimmin = nrow < ncol ? nrow : ncol;
+		integer dimmin = std::min (nrow, ncol);
 
 		autoMAT h = newMATcopy (my data.get());
 		autoVEC rowsum = newVECsumPerRow (my data.get());
@@ -603,7 +596,7 @@ void Salience_setDefaults (Salience me) {
 }
 
 void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
-	integer nc2, nc1 = ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy);
+	integer nc2, nc1 = ( ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy) );
 	double xmin = 0.0, xmax = 1.0, ymin = 0.0, ymax = 1.0, wmax = 1.0;
 
 	if (ix < 1 || ix > my numberOfColumns || iy < 1 || iy > my numberOfColumns)
@@ -701,7 +694,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 				for (integer j = i; j <= nxy; j ++) {
 					longdouble tmp = 0;
 					for (integer k = 1; k <= nxy; k ++) {
-						tmp += p [i] [k] < p [j] [k] ? p [i] [k] : p [j] [k];
+						tmp += std::min (p [i] [k], p [j] [k]);
 					}
 					thy data [j] [i] = thy data [i] [j] = (double) tmp;
 				}
@@ -737,7 +730,7 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 		for (integer i = 1; i <= nxy; i ++) {
 			for (integer j = 1; j <= nxy; j ++) {
 				double d = maximumDissimilarity - thy data [i] [j];
-				thy data [i] [j] = d > 0 ? d : 0;
+				thy data [i] [j] = std::max (d, 0.0);
 			}
 		}
 		return thee;
@@ -817,11 +810,11 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
 			for (integer j = i + 1; j <= my numberOfColumns; j ++) {
-				double x = thy data [i] [j] <= thy data [j] [i] ? thy data [i] [j] : thy data [j] [i];
-				double y = thy data [i] [j] > thy data [j] [i] ? thy data [i] [j] : thy data [j] [i];
+				double x = std::min (thy data [i] [j], thy data [j] [i]);
+				double y = std::max (thy data [i] [j], thy data [j] [i]);
 				x = NUMinvGaussQ (x);
 				y = NUMinvGaussQ (y);
-				double d = x + y * exp ( (y * y - x * x) / 2.0);
+				double d = x + y * exp ((y * y - x * x) / 2.0);
 				/* Melder_info ("i, j, x, y, d: %d %d %.17g %.17g %.17g", i, j, x, y, d); */
 				thy data [i] [j] = thy data [j] [i] = d;
 			}
@@ -1179,7 +1172,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 		for (integer i = 1; i <= my size; i ++) {
 			conststring32 name = Thing_getName (my at [i]);
 			autoDissimilarity him = Distance_to_Dissimilarity (my at [i]);
-			Thing_setName (him.get(), name ? name : U"untitled");
+			Thing_setName (him.get(), ( name ? name : U"untitled" ));
 			thy addItem_move (him.move());
 		}
 		return thee;
@@ -1382,7 +1375,6 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) 
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, integer numberOfIterations, bool showProgress, double *out_stress) {
 	try {
 		integer nPoints = conf -> numberOfRows;
-		integer nDimensions = conf -> numberOfColumns;
 		double tol = 1e-6, stressp = 1e308, stress = 0.0;
 
 		Melder_require (my numberOfRows == nPoints && t -> numberOfPoints == nPoints ||
@@ -1629,7 +1621,7 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 		t += tt * tt;
 	}
 
-	if (out_stress) *out_stress = t > 0.0 ? sqrt (s / t) : 0.0;
+	if (out_stress) *out_stress = ( t > 0.0 ? sqrt (s / t) : 0.0 );
 	if (out_s) *out_s = s;
 	if (out_t) *out_t = t;
 	if (out_dbar) *out_dbar = dbar;
@@ -1643,12 +1635,12 @@ static double func (Daata object, VEC p) {
 	double metric = my configuration -> metric;
 	integer numberOfDimensions = my configuration -> numberOfColumns;
 	integer numberOfPoints = my configuration -> numberOfRows;
-	int tiesHandling = my process == MDS_CONTINUOUS ? 1 : 0;
+	int tiesHandling = ( my process == MDS_CONTINUOUS ? 1 : 0 );
 
 	// Substitute results of minimizer into configuration and
 	// normalize the configuration
 
-	MATfromVEC_inplace (x, p, numberOfDimensions);
+	MATfromVEC_inplace (x, p);
 	MATcentreEachColumn_inplace (x);
 	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
 
@@ -1870,7 +1862,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 		thy minimizer = VDSmagtMinimizer_create (numberOfCoordinates, (Daata) thee.get(), func, dfunc);
 
-		VECfromMAT_inplace (thy minimizer -> p.get(), his data.get());
+		VECchainRows_preallocated (thy minimizer -> p.get(), his data.get());
 
 		thy stress_formula = stress_formula;
 		thy process = tiesHandling;
@@ -1927,7 +1919,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		solution.all() <<= xc -> data.column (h); // initial guess
 		// largest eigenvalue of wsih (nonsymmetric matrix!!) is optimal solution for this dimension
-		double lambda = VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
+		(void) VECdominantEigenvector_inplace (solution.get(), wsih.get(), tolerance);
 
 		// normalize the solution: centre and x'x = 1
 		
@@ -2006,9 +1998,9 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 				MelderInfo_writeLine (U"  ", Thing_getName (sp->at [i]));
 
 			if (nZeros > 0)
-				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", (nZeros > 1 ? U"s" : U""), U"!");
+				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", ( nZeros > 1 ? U"s" : U"" ), U"!");
 
-			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", varianceAccountedFor, U"\nThe optimal configuration was reached in ", (iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
+			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", varianceAccountedFor, U"\nThe optimal configuration was reached in ", ( iter > numberOfIterations ? numberOfIterations : iter ), U" iterations.");
 			MelderInfo_drain();
 		}
 		if (showProgress)
@@ -2076,7 +2068,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 			for (integer i = 1; i <= nSources; i ++)
 				MelderInfo_writeLine (U"  ", Thing_getName (dissims->at [i]));
 			if (nZeros > 0)
-				MelderInfo_writeLine (U"WARNING: ", nZeros, U" zero weight", (nZeros > 1 ? U"s" : U""));
+				MelderInfo_writeLine (U"WARNING: ", nZeros, U" zero weight", ( nZeros > 1 ? U"s" : U"" ));
 			MelderInfo_writeLine (U"Variance Accounted For: ", vaf);
 			MelderInfo_writeLine (U"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine (U"number of iterations: ", (iter > numberOfIterations ?	numberOfIterations : iter));
@@ -2103,7 +2095,6 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandling) {
 	try {
-		integer nDimensions = conf -> numberOfColumns;
 		autoVEC w = newVECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
@@ -2316,7 +2307,7 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 			n += vart;
 		}
 
-		if (out_varianceAccountedFor) *out_varianceAccountedFor = (n > 0.0 ? 1.0 - t / n : 0.0);
+		if (out_varianceAccountedFor) *out_varianceAccountedFor = ( n > 0.0 ? 1.0 - t / n : 0.0 );
 		thy w.all() <<= w.all(); // restore weights
 		
 	} catch (MelderError) {
@@ -2421,16 +2412,16 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 				yx = NUMmspline (constVEC (knot, numberOfKnots), order, i, x);
 			else
 				yx = NUMispline (constVEC (knot, numberOfKnots), order, i, x);
-			y [j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
+			y [j] = ( yx < ymin ? ymin : ( yx > ymax ? ymax : yx ) );
 		}
 		Graphics_function (g, y, 1, n, low, high);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
 		static MelderString ts { };
-		integer lastKnot = splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
+		integer lastKnot = ( splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots );
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, false, splineType == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");
+		Graphics_textLeft (g, false, ( splineType == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline" ));
 		Graphics_marksTop (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot [order]) {
@@ -2453,7 +2444,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			if (order == 1)
 				MelderString_copy (&ts, U"t__", lastKnot, U"_");
 			else
-				MelderString_copy (&ts, U"{t__", (order == 2 ? lastKnot - 1 : lastKnot - order + 1), U"_, t__", lastKnot, U"_}");
+				MelderString_copy (&ts, U"{t__", ( order == 2 ? lastKnot - 1 : lastKnot - order + 1 ), U"_, t__", lastKnot, U"_}");
 			Graphics_markBottom (g, high, false, false, false, ts.string);
 		}
 	}

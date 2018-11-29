@@ -312,8 +312,8 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		double distance = dbScale ? 10.0 : 1.0;
-		conststring32 ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
+		double distance = ( dbScale ? 10.0 : 1.0 );
+		conststring32 ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
@@ -407,8 +407,8 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		double distance = dbScale ? 10.0 : 1.0;
-		char32 const *ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
+		double distance = ( dbScale ? 10.0 : 1.0 );
+		char32 const *ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
@@ -538,8 +538,8 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		double distance = dbScale ? 10.0 : 1.0;
-		conststring32 ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
+		double distance = ( dbScale ? 10.0 : 1.0 );
+		conststring32 ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
@@ -687,7 +687,7 @@ autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 		autoVEC y = newVECraw (my ny);
 		
 		//double fmax_mel = my y1 + (my ny - 1) * my dy;
-		numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
+		numberOfCoefficients = ( numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients );
 		Melder_assert (numberOfCoefficients > 0);
 		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
@@ -726,12 +726,11 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 		for (integer frame = 1; frame <= my nx; frame ++) {
 			CC_Frame cf = & my frame [frame];
 			integer iend = std::min (last, cf -> numberOfCoefficients);
-			x [1] = ( first == 0 ? cf -> c0 : 0.0);
+			x [1] = ( first == 0 ? cf -> c0 : 0.0 );
 			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
-				x [i + 1] = i < first || i > iend ? 0 : cf -> c [i];
+				x [i + 1] = ( i < first || i > iend ? 0 : cf -> c [i] );
 			VECinverseCosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
-			for (integer i = 1; i <= nf; i ++)
-				thy z [i] [frame] = y [i];
+			thy z.column (frame) <<= y.get();
 		}
 		return thee;
 	} catch (MelderError) {
