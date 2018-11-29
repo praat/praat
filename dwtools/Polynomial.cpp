@@ -1048,7 +1048,7 @@ static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, doubl
 		}
 	}
 	if (out_min) *out_min = min;
-	if (out_max) *out_max = max;
+	if (out_max) *out_max - max;
 }
 
 static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
