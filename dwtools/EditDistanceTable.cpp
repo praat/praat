@@ -254,7 +254,7 @@ void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCost, dou
 }
 
 double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
-	return costType == ( 1 ? my data [my numberOfRows - 1] [my numberOfColumns] :   //insertion
+	return ( costType == 1 ? my data [my numberOfRows - 1] [my numberOfColumns] :   //insertion
 		( costType == 2 ? my data [my numberOfRows] [my numberOfColumns - 1] :   // deletion
 		( costType == 3 ? my data [my numberOfRows] [my numberOfColumns] :   // equality
 		my data [my numberOfRows - 1] [my numberOfColumns -1] ) ) );   // inequality
@@ -320,8 +320,8 @@ double EditCostsTable_getSubstitutionCost (EditCostsTable me, conststring32 symb
 			 -- icol;
 		}
 	} else {
-		irow = irow == ( 0 ? my numberOfRows - 1 : irow );
-		icol = icol == ( 0 ? my numberOfColumns - 1 : icol );
+		irow = ( irow == 0 ? my numberOfRows - 1 : irow );
+		icol = ( icol == 0 ? my numberOfColumns - 1 : icol );
 	}
 	return my data [irow] [icol];
 }
