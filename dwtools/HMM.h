@@ -134,7 +134,7 @@ void HMM_setDefaultObservations (HMM me);
 
 void HMM_setDefaultTransitionProbs (HMM me);
 
-void HMM_setDefaultStartProbs (HMM me);
+void HMM_setDefaultInitialStateProbs (HMM me);
 
 void HMM_setDefaultEmissionProbs (HMM me);
 
