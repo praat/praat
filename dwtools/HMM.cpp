@@ -490,18 +490,22 @@ void HMM_setDefaultObservations (HMM me) {
 }
 
 void HMM_setDefaultTransitionProbs (HMM me) {
-	for (integer i = 1; i <= my numberOfStates; i ++) {
-		double p = ( my leftToRight ? 1.0 / (my numberOfStates - i + 1.0) : 1.0 / my numberOfStates );
-		for (integer j = 1; j <= my numberOfStates; j ++)
-			my transitionProbs [i] [j] = ( my leftToRight && j < i ? 0.0 : p );
-	}
-	// leftToRight must have end state!
-	if (my leftToRight) my transitionProbs [my numberOfStates] [my numberOfStates] =
+	if (my leftToRight) {
+		for (integer irow = 1; irow <= my numberOfStates; irow ++) {
+			double p = 1.0 / (my numberOfStates - irow + 1.0);
+			my transitionProbs.row (irow).part (irow, my numberOfStates) <<= p;
+		}
+		// leftToRight must have end state!
+		my transitionProbs [my numberOfStates] [my numberOfStates] =
 			my transitionProbs [my numberOfStates] [my numberOfStates + 1] = 0.5;
+	} else {
+		my transitionProbs.part (1, my numberOfStates, 1, my numberOfStates) <<= 1.0 / my numberOfStates;
+		my transitionProbs.column (my numberOfStates + 1) <<= 0.0;
+	}
 }
 
 void HMM_setDefaultInitialStateProbs (HMM me) {
-	my initialStateProbs.get() <<= 1.0 / my numberOfStates;
+	my initialStateProbs.get () <<= 1.0 / my numberOfStates;
 }
 
 void HMM_setDefaultEmissionProbs (HMM me) {
@@ -534,8 +538,7 @@ void HMM_setTransitionProbabilities (HMM me, integer state_number, conststring32
 		Melder_require (state_number <= my states->size,
 			U"State number should not exceed ", my states->size, U".");
 		autoVEC p = NUMwstring_to_probs (state_probs, my numberOfStates);
-		for (integer i = 1; i <= my numberOfStates + 1; i ++)
-			my transitionProbs [state_number] [i] = p [i];
+		my transitionProbs.row (state_number).part (1, my numberOfStates) <<= p.get ();
 	} catch (MelderError) {
 		Melder_throw (me, U": no transition probabilities set.");
 	}
@@ -548,9 +551,7 @@ void HMM_setEmissionProbabilities (HMM me, integer state_number, conststring32 e
 		Melder_require (! my notHidden,
 			U"The emission probabilities of this model are fixed.");
 		autoVEC p = NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols);
-		for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
-			my emissionProbs [state_number] [i] = p [i];
-		}
+		my emissionProbs.row (state_number).part (1, my numberOfObservationSymbols) <<= p.get ();
 	} catch (MelderError) {
 		Melder_throw (me, U": no emission probabilities set.");
 	}
@@ -647,12 +648,12 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	double rstate = 0.3 / xwidth, r = xwidth / 3.0;
 	double xmax = 1.2 * xwidth / 2.0, xmin = -xmax, ymin = xmin, ymax = xmax;
 
-	autoNUMvector<double> xs (1, my numberOfStates);
-	autoNUMvector<double> ys (1, my numberOfStates);
+	autoVEC xs = newVECraw (my numberOfStates);
+	autoVEC ys = newVECraw (my numberOfStates);
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	// heuristic: all states on a circle until we have a better graph drawing algorithm.
-	xs [1] = ys [1] = 0;
+	xs [1] = ys [1] = 0.0;
 	if (my numberOfStates > 1) {
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			double alpha = - NUMpi + NUMpi * 2.0 * (is - 1) / my numberOfStates;
