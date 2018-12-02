@@ -201,7 +201,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 	if (! dimensionsCovered) {
 		// Fill each output channel with its input counterpart, that is the input channel with the same index. 
 		// Channels with no corresponding input channels are left silent.
-		integer lowerDimension = my numberOfRows < my numberOfColumns ? my numberOfRows: my numberOfColumns;
+		integer lowerDimension = std::min (my numberOfRows, my numberOfColumns);
 		for (integer i = 1; i <= lowerDimension; i++) {
 			my data [i][i] = 1.0;
 		}
@@ -216,9 +216,9 @@ void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) 
 		}
 	}
 	// Set all mute channels to 0 and all other channels to 1. To prevent overflow scale by the number of channels that are on.
-	double coefficient = my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0;
+	double coefficient = ( my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0 );
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		double channelScaling = muteChannels [icol] ? 0.0 : coefficient;
+		double channelScaling = ( muteChannels [icol] ? 0.0 : coefficient );
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			my data [irow][icol] = channelScaling;
 		}

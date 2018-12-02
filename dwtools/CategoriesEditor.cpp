@@ -49,7 +49,8 @@ static autoINTVEC getGuiList_getSelectedPositions (GuiList me) {
 	integer numberOfElements;
 	integer *vec = GuiList_getSelectedPositions (me, & numberOfElements);
 	autoINTVEC result;
-	result.at = & vec [0]; result.size = numberOfElements;
+	result.at = & vec [0];
+	result.size = numberOfElements;
 	return result;
 }
 
@@ -133,7 +134,7 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		autoMelderString tmp;
-		MelderString_append (& tmp, posList.size, U" selection", (posList.size > 1 ? U"s." : U"."));
+		MelderString_append (& tmp, posList.size, U" selection", ( posList.size > 1 ? U"s." : U"." ));
 		GuiLabel_setText (my outOfView, tmp.string);
 	} else 
 		GuiLabel_setText (my outOfView, U"");
@@ -240,7 +241,7 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 				GuiList_insertItem (my list, table [itemCount + j - offset].get(), 0);
 		}
 		if (from <= itemCount) {
-			integer n = (to < itemCount ? to : itemCount);
+			integer n = ( to < itemCount ? to : itemCount );
 			for (integer j = from; j <= n; j ++)
 				GuiList_replaceItem (my list, table [j - offset].get(), j);
 		}
@@ -263,7 +264,7 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 			Select, but postpone highlighting.
 		*/
 		for (integer i = 1; i <= nSelect; i ++)
-			GuiList_selectItem (my list, select [i] > size ? size : select [i]);
+			GuiList_selectItem (my list, ( select [i] > size ? size : select [i] ));
 	}
 
 	// VIEWPORT
@@ -631,7 +632,7 @@ static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEve
 	    && posList [1] == my position)   // should be true, but we don't crash if it's false
 	{
 		SimpleString category = data->at [my position];
-		GuiText_setString (my text, category -> string ? category -> string.get() : U"");
+		GuiText_setString (my text, ( category -> string ? category -> string.get() : U"" ));
 	}
 }
 

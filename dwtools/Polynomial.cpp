@@ -266,16 +266,14 @@ dcomplex structFunctionTerms :: v_evaluate_z (dcomplex /* z */) {
 
 void structFunctionTerms :: v_evaluateTerms (double /* x */, VEC terms) {
 	Melder_assert (terms.size == numberOfCoefficients);
-	for (integer i = 1; i <= numberOfCoefficients; i ++) {
-		terms [i] = undefined;
-	}
+	terms <<= undefined;
 }
 
 integer structFunctionTerms :: v_getDegree () {
 	return numberOfCoefficients - 1;
 }
 
-void structFunctionTerms :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) { // David, geen aparte naam hier nodig: ???
+void structFunctionTerms :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) { // David, geen aparte naam hier nodig: ???
 	integer numberOfPoints = 1000;
 
 	// Melder_warning (L"defaultGetExtrema: extrema calculated by sampling the interval");
@@ -286,19 +284,17 @@ void structFunctionTerms :: v_getExtrema (double x1, double x2, double *p_xmin, 
 		x += dx;
 		double y = v_evaluate (x);
 		if (y > ymx) {
-			ymx = y; xmx = x;
+			ymx = y;
+			xmx = x;
 		} else if (y < ymn) {
-			ymn = y; xmn = x;
+			ymn = y;
+			xmn = x;
 		}
 	}
-	if (p_xmin)
-		*p_xmin = xmn;
-	if (p_xmax)
-		*p_xmax = xmx;
-	if (p_ymin)
-		*p_ymin = ymn;
-	if (p_ymax)
-		*p_ymax = ymx;
+	if (out_xmin) *out_xmin = xmn;
+	if (out_xmax) *out_xmax = xmx;
+	if (out_ymin) *out_ymin = ymn;
+	if (out_ymax) *out_ymax = ymx;
 }
 
 static inline void FunctionTerms_extendCapacityIf (FunctionTerms me, integer minimum) {
@@ -367,26 +363,26 @@ void FunctionTerms_getExtrema (FunctionTerms me, double x1, double x2, double *x
 }
 
 double FunctionTerms_getMinimum (FunctionTerms me, double x1, double x2) {
-	double xmin, xmax, ymin, ymax;
-	FunctionTerms_getExtrema (me, x1, x2, &xmin, &ymin, &xmax, &ymax);
+	double ymin;
+	FunctionTerms_getExtrema (me, x1, x2, nullptr, & ymin, nullptr, nullptr);
 	return ymin;
 }
 
 double FunctionTerms_getXOfMinimum (FunctionTerms me, double x1, double x2) {
-	double xmin, xmax, ymin, ymax;
-	FunctionTerms_getExtrema (me, x1, x2, &xmin, &ymin, &xmax, &ymax);
+	double xmin;
+	FunctionTerms_getExtrema (me, x1, x2, & xmin, nullptr, nullptr, nullptr);
 	return xmin;
 }
 
 double FunctionTerms_getMaximum (FunctionTerms me, double x1, double x2) {
-	double xmin, xmax, ymin, ymax;
-	FunctionTerms_getExtrema (me, x1, x2, &xmin, &ymin, &xmax, &ymax);
+	double ymax;
+	FunctionTerms_getExtrema (me, x1, x2, nullptr, nullptr, nullptr, & ymax);
 	return ymax;
 }
 
 double FunctionTerms_getXOfMaximum (FunctionTerms me, double x1, double x2) {
-	double xmin, xmax, ymin, ymax;
-	FunctionTerms_getExtrema (me, x1, x2, &xmin, &ymin, &xmax, &ymax);
+	double xmax;
+	FunctionTerms_getExtrema (me, x1, x2, nullptr, nullptr, & xmax, nullptr);
 	return xmax;
 }
 
@@ -402,7 +398,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 	for (integer i = 2; i < x.size; i ++) {
 		double x2 = x [i], y2 = y [i];
 
-		if (! ( (y1 > ymax && y2 > ymax) || (y1 < ymin && y2 < ymin))) {
+		if (! ((y1 > ymax && y2 > ymax) || (y1 < ymin && y2 < ymin))) {
 			double dxy = (x2 - x1) / (y1 - y2);
 			double xcros_max = x1 - (ymax - y1) * dxy;
 			double xcros_min = x1 - (ymin - y1) * dxy;
@@ -468,8 +464,8 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 void FunctionTerms_draw (FunctionTerms me, Graphics g, double xmin, double xmax, double ymin, double ymax, int extrapolate, int garnish) {
 	integer numberOfPoints = 1000;
 
-	autoVEC y = newVECraw (numberOfPoints);
 	autoVEC x = newVECraw (numberOfPoints);
+	autoVEC y = newVECraw (numberOfPoints);
 
 	if (xmax <= xmin) {
 		xmin = my xmin;
@@ -515,8 +511,7 @@ void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, integer inde
 		return;
 	autoFunctionTerms thee = Data_copy (me);
 
-	for (integer i = 1; i <= my numberOfCoefficients; i ++)
-		thy coefficients [i] = 0.0;
+	thy coefficients.get () <<= 0.0;
 	thy coefficients [index] = 1.0;
 	thy numberOfCoefficients = index;
 	FunctionTerms_draw (thee.get(), g, xmin, xmax, ymin, ymax, extrapolate, garnish);
@@ -559,7 +554,7 @@ void structPolynomial :: v_evaluateTerms (double x, VEC terms) {
 		terms [i] = terms [i - 1] * x;
 }
 
-void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) {
+void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) {
 	try {
 		integer degree = numberOfCoefficients - 1;
 
@@ -588,16 +583,12 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, dou
 				}
 			}
 		}
-		if (p_xmin)
-			*p_xmin = xmn;
-		if (p_xmax)
-			*p_xmax = xmx;
-		if (p_ymin)
-			*p_ymin = ymn;
-		if (p_ymax)
-			*p_ymax = ymx;
+		if (out_xmin) *out_xmin = xmn;
+		if (out_xmax) *out_xmax = xmx;
+		if (out_ymin) *out_ymin = ymn;
+		if (out_ymax) *out_ymax = ymx;
 	} catch (MelderError) {
-		structFunctionTerms :: v_getExtrema (x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
+		structFunctionTerms :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 		Melder_clearError ();
 	}
 }
@@ -615,7 +606,7 @@ autoPolynomial Polynomial_create (double xmin, double xmax, integer degree) {
 autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, 0);
+		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from string.");
@@ -626,8 +617,7 @@ void Polynomial_scaleCoefficients_monic (Polynomial me) {
 	double cn = my coefficients [my numberOfCoefficients];
 	if (cn == 1 || my numberOfCoefficients <= 1)
 		return;
-	for (integer i = 1; i < my numberOfCoefficients; i ++)
-		my coefficients [i] /= cn;
+	my coefficients.get() /= cn;
 	my coefficients [my numberOfCoefficients] = 1.0;
 }
 
@@ -662,14 +652,14 @@ autoPolynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax) {
 		autoVEC pnm1 = newVECzero (my numberOfCoefficients);
 		autoVEC pnm2 = newVECzero (my numberOfCoefficients);
 
-		// Start the recursion: P [1] = a x + b; P [0] = 1;
+		// Start the recursion: P [2] = a x + b; P [1] = 1;
 
 		pnm1 [2] = a;
 		pnm1 [1] = b;
 		pnm2 [1] = 1;
 		for (integer n = 2; n <= my numberOfCoefficients - 1; n ++) {
-			NUMpolynomial_recurrence (pn.part (1, n + 1), a, b, 0, pnm1.get(), pnm2.get());
-			if (my coefficients [n + 1] != 0) {
+			NUMpolynomial_recurrence (pn.part (1, n + 1), a, b, 0.0, pnm1.get(), pnm2.get());
+			if (my coefficients [n + 1] != 0.0) {
 				for (integer j = 1; j <= n + 1; j ++)
 					thy coefficients [j] += my coefficients [n + 1] * pn [j];
 			}
@@ -692,19 +682,21 @@ dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z) {
 	return my v_evaluate_z (z);
 }
 
-static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi, double *re, double *im) {
-	double rn = 1;
+static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi, double *out_re, double *out_im) {
+	longdouble rn = 1.0;
 
-	*re = my coefficients [1];
-	*im = 0.0;
+	longdouble re = my coefficients [1];
+	longdouble im = 0.0;
 	if (r == 0.0)
 		return;
 	for (integer i = 2; i <= my numberOfCoefficients; i ++) {
 		rn *= r;
-		double arg = (i - 1) * phi;
-		*re += my coefficients [i] * rn * cos (arg);
-		*im += my coefficients [i] * rn * sin (arg);
+		longdouble arg = (i - 1) * phi;
+		re += my coefficients [i] * rn * cos (arg);
+		im += my coefficients [i] * rn * sin (arg);
 	}
+	if (out_re) *out_re = (double) re;
+	if (out_im) *out_im = (double) im;
 }
 
 
@@ -737,15 +729,14 @@ autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant) {
 void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
 	try {
 		FunctionTerms_extendCapacityIf (me, roots.size + 1);
-		double *c = & my coefficients [1];
 		integer n = 1;
-		c [0] = - roots [1];
-		c [1] = 1.0;
+		my coefficients [1] = - roots [1];
+		my coefficients [2] = 1.0;
 		for (integer i = 2; i <= roots.size; i ++) {
-			c [n + 1] = c [n];
+			my coefficients [n + 2] = my coefficients [n + 1];
 			for (integer j = n; j >= 1; j --)
-				c [j] = c [j - 1] - c [j] * roots [i];
-			c [0] *= -roots [i];
+				my coefficients [j + 1] = my coefficients [j] - my coefficients [j + 1] * roots [i];
+			my coefficients [1] *= -roots [i];
 			n ++;
 		}
 		my numberOfCoefficients = n + 1;
@@ -907,7 +898,8 @@ double structLegendreSeries :: v_evaluate (double x) {
 			f2 += twox;
 			double pi = (f2 * pim1 - f1 * pim2) / d;
 			p += our coefficients [i] * pi;
-			pim2 = pim1; pim1 = pi;
+			pim2 = pim1; 
+			pim1 = pi;
 		}
 	}
 	return p;
@@ -916,8 +908,7 @@ double structLegendreSeries :: v_evaluate (double x) {
 void structLegendreSeries :: v_evaluateTerms (double x, VEC terms) {
 	Melder_assert (terms.size == numberOfCoefficients);
 	if (x < our xmin || x > our xmax) {
-		for (integer i = 1; i <= numberOfCoefficients; i ++)
-			terms [i] = undefined;
+		terms <<= undefined;
 		return;
 	}
 
@@ -937,12 +928,12 @@ void structLegendreSeries :: v_evaluateTerms (double x, VEC terms) {
 	}
 }
 
-void structLegendreSeries :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) {
+void structLegendreSeries :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) {
 	try {
 		autoPolynomial p = LegendreSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.get(), x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
+		FunctionTerms_getExtrema (p.get(), x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 	} catch (MelderError) {
-		structFunctionTerms :: v_getExtrema (x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
+		structFunctionTerms :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 		Melder_clearError ();
 	}
 }
@@ -960,7 +951,7 @@ autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numb
 autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoLegendreSeries me = Thing_new (LegendreSeries);
-		FunctionTerms_initFromString (me.get(), xmin, xmax, s, 0);
+		FunctionTerms_initFromString (me.get(), xmin, xmax, s, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LegendreSeries not created from string.");
@@ -1047,31 +1038,34 @@ void Roots_fixIntoUnitCircle (Roots me) {
 	}
 }
 
-static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, double *min, double *max) {
-	*min = *max = v [lo].re;
+static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
+	double min = v [lo].re,  max = v [lo].re;
 	for (integer i = lo + 1; i <= hi; i ++) {
-		if (v [i].re < *min) {
-			*min = v [i].re;
-		} else if (v [i].re > *max) {
-			*max = v [i].re;
+		if (v [i].re < min) {
+			min = v [i].re;
+		} else if (v [i].re > max) {
+			max = v [i].re;
 		}
 	}
+	if (out_min) *out_min = min;
+	if (out_max) *out_max - max;
 }
 
-static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, double *min, double *max) {
-	*min = *max = v [lo].im;
+static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
+	double min = v [lo].im, max = v [lo].im;
 	for (integer i = lo + 1; i <= hi; i ++) {
-		if (v [i]. im < *min) {
-			*min = v [i]. im;
-		} else if (v [i]. im > *max) {
-			*max = v [i]. im;
+		if (v [i]. im < min) {
+			min = v [i]. im;
+		} else if (v [i]. im > max) {
+			max = v [i]. im;
 		}
 	}
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	conststring32 symbol, int fontSize, bool garnish)
-{
+	conststring32 symbol, int fontSize, bool garnish) {
 	int oldFontSize = Graphics_inqFontSize (g);
 	double eps = 1e-6;
 
@@ -1194,7 +1188,8 @@ void Roots_Polynomial_polish (Roots me, Polynomial thee) {
 		if (im != 0.0) {
 			Polynomial_polish_complexroot_nr (thee, & my v [i], maxit);
 			if (i < my max && im == -my v [i + 1].im && re == my v [i + 1].re) {
-				my v [i + 1].re = my v [i].re; my v [i + 1].im = -my v [i].im;
+				my v [i + 1].re = my v [i].re;
+				my v [i + 1].im = -my v [i].im;
 				i ++;
 			}
 		} else {
@@ -1247,8 +1242,7 @@ void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *o
 	} else {
 		my coefficients [1] = 0.0;
 	}
-	if (out_remainder)
-		*out_remainder = remainder;
+	if (out_remainder) *out_remainder = remainder;
 }
 
 void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
@@ -1299,7 +1293,8 @@ autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numbe
 			z.re = radius * cos ( (i - 1) * phi);
 			z.im = radius * sin ( (i - 1) * phi);
 			dcomplex s = Roots_evaluate_z (me, z);
-			thy z [1] [i] = s.re; thy z [2] [i] = s.im;
+			thy z [1] [i] = s.re;
+			thy z [2] [i] = s.im;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1327,7 +1322,7 @@ autoSpectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, int
 		double phi = NUMpi / (numberOfFrequencies - 1);
 		for (integer i = 1; i <= numberOfFrequencies; i ++) {
 			double re, im;
-			Polynomial_evaluate_z_cart (me, radius, (i - 1) * phi, &re, &im);
+			Polynomial_evaluate_z_cart (me, radius, (i - 1) * phi, & re, & im);
 			thy z [1] [i] = re;
 			thy z [2] [i] = im;
 		}
@@ -1374,8 +1369,7 @@ double structChebyshevSeries :: v_evaluate (double x) {
 void structChebyshevSeries :: v_evaluateTerms (double x, VEC terms) {
 	Melder_assert (terms.size == numberOfCoefficients);
 	if (x < our xmin || x > our xmax) {
-		for (integer i = 1; i <= our numberOfCoefficients; i ++)
-			terms [i] = undefined;
+		terms <<= undefined;
 		return;
 	}
 	terms [1] = 1.0;
@@ -1389,10 +1383,10 @@ void structChebyshevSeries :: v_evaluateTerms (double x, VEC terms) {
 	}
 }
 
-void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) {
+void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) {
 	try {
 		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.get(), x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
+		FunctionTerms_getExtrema (p.get(), x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 	} catch (MelderError) {
 		Melder_throw (this, U"Extrema cannot be calculated");
 	}
@@ -1411,7 +1405,7 @@ autoChebyshevSeries ChebyshevSeries_create (double lxmin, double lxmax, integer 
 autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, conststring32 s) {
 	try {
 		autoChebyshevSeries me = Thing_new (ChebyshevSeries);
-		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, 0);
+		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ChebyshevSeries not created from string.");
@@ -1420,7 +1414,7 @@ autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 	try {
-		double xmin = -1, xmax = 1;
+		double xmin = -1.0, xmax = 1.0;
 
 		autoPolynomial thee = Polynomial_create (xmin, xmax, my numberOfCoefficients - 1);
 
@@ -1434,14 +1428,14 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 			autoVEC pnm1 = newVECzero (my numberOfCoefficients);
 			autoVEC pnm2 = newVECzero (my numberOfCoefficients);
 
-			// Start the recursion: T [1] = x; T [0] = 1;
+			// Start the recursion: T [2] = x; T [1] = 1;
 
 			pnm1 [2] = 1.0;
 			pnm2 [1] = 1.0;
 			double a = 2.0, b = 0.0, c = -1.0;
 			for (integer n = 2; n <= my numberOfCoefficients - 1; n ++) {
 				NUMpolynomial_recurrence (pn.part (1, n + 1), a, b, c, pnm1.get (), pnm2.get());
-				if (my coefficients [n + 1] != 0) {
+				if (my coefficients [n + 1] != 0.0) {
 					for (integer j = 1; j <= n + 1; j ++)
 						thy coefficients [j] += my coefficients [n + 1] * pn [j];
 				}
@@ -1477,11 +1471,11 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, INTVEC freeze,
 
 		integer k = 1;
 		for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-			if (freeze.size > 0 && freeze [j]) {
+			if (freeze.size > 0 && freeze [j])
 				numberOfFreeParameters--;
-			} else {
+			else {
 				p [k ++] = my coefficients [j];
-				frozen -> coefficients [j] = 0;
+				frozen -> coefficients [j] = 0.0;
 			}
 		}
 		
@@ -1603,20 +1597,20 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 	integer index_b = index - order + 1;
 	index_b = std::max (index_b, (integer) 1);
 	if (x < points [index_b])
-		return 0;
+		return 0.0;
 
 	integer index_e = index_b + std::min (index, order);
 	index_e = std::min (points.size, index_e);
 	if (x > points [index_e])
-		return 0;
+		return 0.0;
 
 	// Calculate M [i](x|1,t) according to eq.2.
 
 	for (integer k = 1; k <= order; k ++) {
 		integer k1 = index - order + k, k2 = k1 + 1;
-		m [k] = 0;
+		m [k] = 0.0;
 		if (k1 > 0 && k2 <= points.size && x >= points [k1] && x < points [k2])
-			m [k] = 1 / (points [k2] - points [k1]);
+			m [k] = 1.0 / (points [k2] - points [k1]);
 	}
 
 	// Iterate to get M [i](x|k,t)
@@ -1624,11 +1618,10 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 	for (integer k = 2; k <= order; k ++) {
 		for (integer j = 1; j <= order - k + 1; j ++) {
 			integer k1 = index - order + j, k2 = k1 + k;
-			if (k2 > 1 && k1 < 1) {
+			if (k2 > 1 && k1 < 1)
 				k1 = 1;
-			} else if (k2 > points.size && k1 < points.size) {
+			else if (k2 > points.size && k1 < points.size)
 				k2 = points.size;
-			}
 			if (k1 > 0 && k2 <= points.size) {
 				double p1 = points [k1], p2 = points [k2];
 				m [j] = k * ((x - p1) * m [j] + (p2 - x) * m [j + 1]) /
@@ -1654,11 +1647,8 @@ static double NUMispline2 (constVEC points, integer order, integer index, double
 	if (x > points [index_e])
 		return 1.0;
 	integer j;
-	for (j = index_e - 1; j >= index_b; j--) {
-		if (x > points [j]) {
-			break;
-		}
-	}
+	for (j = index_e - 1; j >= index_b; j--)
+		if (x > points [j]) break;
 
 	// Equation 5 in Ramsay's article contains some errors!!!
 	// 1. the interval selection must be 'j-k <= i <= j' instead of
@@ -1697,9 +1687,8 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 	autoVEC interiorKnots = VEC_createFromString (interiorKnots_string);
 
 	VECsort_inplace (interiorKnots.get());
-	if (interiorKnots [1] <= my xmin || interiorKnots [interiorKnots.size] > my xmax)
-			Melder_throw (U"Knots should be inside domain.");
-
+	Melder_require (interiorKnots [1] > my xmin && interiorKnots [interiorKnots.size] <= my xmax,
+		U"Knots should be inside domain.");
 
 	my degree = degree;
 	integer order = Spline_getOrder (me); /* depends on spline type !! */
@@ -1708,8 +1697,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 
 	my numberOfKnots = interiorKnots.size + 2;
 	my knots = newVECzero (my numberOfKnots);
-	for (integer i = 1; i <= interiorKnots.size; i ++)
-		my knots [i + 1] = interiorKnots [i];
+	my knots.part (2, interiorKnots.size + 1) <<= interiorKnots;
 	my knots [1] = my xmin;
 	my knots [my numberOfKnots] = my xmax;
 }
@@ -1738,7 +1726,7 @@ void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double y
 
 	if (ymax <= ymin) {
 		double x1, x2;
-		FunctionTerms_getExtrema (me, xmin, xmax, &x1, &ymin, &x2, &ymax);
+		FunctionTerms_getExtrema (me, xmin, xmax, & x1, & ymin, & x2, & ymax);
 	}
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -1839,7 +1827,7 @@ autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree,
 		Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 			U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 		autoMSpline me = Thing_new (MSpline);
-		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, 1);
+		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, true);
 		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {
@@ -1889,7 +1877,7 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree,
 		if (degree > Spline_MAXIMUM_DEGREE)
 			Melder_throw (U"Degree should be <= 20.");
 		autoISpline me = Thing_new (ISpline);
-		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, 1);
+		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, true);
 		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {

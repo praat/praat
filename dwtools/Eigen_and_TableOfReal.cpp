@@ -42,9 +42,9 @@ autoTableOfReal Eigen_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfR
 
 void Eigen_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, integer data_startColumn, TableOfReal to, integer to_startColumn, integer numberOfComponentsToKeep) {
 
-	data_startColumn = data_startColumn <= 0 ? 1 : data_startColumn;
-	to_startColumn = to_startColumn <= 0 ? 1 : to_startColumn;
-	numberOfComponentsToKeep = numberOfComponentsToKeep <= 0 ? my numberOfEigenvalues : numberOfComponentsToKeep;
+	data_startColumn = ( data_startColumn <= 0 ? 1 : data_startColumn );
+	to_startColumn = ( to_startColumn <= 0 ? 1 : to_startColumn );
+	numberOfComponentsToKeep = ( numberOfComponentsToKeep <= 0 ? my numberOfEigenvalues : numberOfComponentsToKeep );
 	
 	Melder_require (data_startColumn + my dimension - 1 <= data -> numberOfColumns,
 		U"Your start column in the table is too large.");

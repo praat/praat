@@ -101,7 +101,7 @@ void Configuration_setSqWeights (Configuration me, const double weight[]) {
 void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
-		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);
+		sumsq = ( sumsq <= 0.0 ? 1.0 : sqrt (sumsq) );
 		MATnormalizeColumns_inplace (my data.get(), 2.0, sumsq);
 	} else {
 		if (sumsq <= 0.0)
@@ -216,13 +216,13 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 				double b = NUMinner (u.get(), u.get()) - NUMinner (v.get(), v.get());
 				
 				double c = sqrt (a * a + b * b);
-				double v = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
-				if (a > 0.0) v = -v;
+				double vc = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
+				if (a > 0.0) vc = -vc;
 				
 				// Get the rotation matrix T
 				
-				double cost = sqrt (0.5 + 0.5 * v);
-				double sint = sqrt (0.5 - 0.5 * v);
+				double cost = sqrt (0.5 + 0.5 * vc);
+				double sint = sqrt (0.5 - 0.5 * vc);
 				double t11 = cost;
 				double t12 = sint;
 				double t21 = -sint;
@@ -230,7 +230,7 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 
 				// Prevent permutations: when v < 0, i.e., a > 0, swap columns of T:/
 
-				if (v < 0.0) {
+				if (vc < 0.0) {
 					t11 = sint;
 					t12 = t21 = cost;
 					t22 = -sint;
@@ -253,10 +253,9 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 	} while (fabs (varianceSq_old - varianceSq) / varianceSq_old > tolerance &&
 	         numberOfIterations < maximumNumberOfIterations);
 
-	if (normalizeRows) {
+	if (normalizeRows)
 		for (integer i = 1; i <= xm.nrow; i ++)
 			ym.row (i) *= norm [i];
-	}
 }
 
 autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
@@ -302,7 +301,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	autoVEC y = newVECraw (nPoints);
 	for (integer i = 1; i <= nPoints; i ++) {
 		x [i] = my data [i] [xCoordinate] * my w [xCoordinate];
-		y [i] = numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0;
+		y [i] = ( numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0 );
 	}
 	if (xmax <= xmin) {
 		xmin = NUMmin (x.get());
@@ -326,7 +325,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setFontSize (g, labelSize);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
-			conststring32 plotLabel = (useRowLabels ? my rowLabels [i].get() : label);
+			conststring32 plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
 			if (Melder_findInk (plotLabel)) {
 				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {

@@ -74,7 +74,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 
 	double sum = NUMsum (my data.get());
 
-	integer nmin = my numberOfColumns < my numberOfRows ? my numberOfColumns : my numberOfRows;
+	integer nmin = std::min (my numberOfColumns, my numberOfRows);
 
 	nmin --;
 	

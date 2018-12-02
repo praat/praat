@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,20 +147,21 @@ void Polygon_reverseY (Polygon me) {
 void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	double min, max, tmp;
 
-	if (my numberOfPoints != thy size) {
+	if (my numberOfPoints != thy size)
 		return;
-	}
 
 	if (xmax == xmin) {
 		NUMextrema (my x.get(), & min, & max);
-		tmp = max - min == 0 ? 0.5 : 0.0;
-		xmin = min - tmp; xmax = max + tmp;
+		tmp = ( max - min == 0 ? 0.5 : 0.0 );
+		xmin = min - tmp;
+		xmax = max + tmp;
 	}
 
 	if (ymax == ymin) {
 		NUMextrema (my y.get(), & min, & max);
-		tmp = max - min == 0 ? 0.5 : 0.0;
-		ymin = min - tmp; ymax = max + tmp;
+		tmp = ( max - min == 0 ? 0.5 : 0.0 );
+		ymin = min - tmp;
+		ymax = max + tmp;
 	}
 
 	Graphics_setInner (graphics);
@@ -175,13 +176,11 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);
 		Graphics_marksLeft (graphics, 2, true, true, false);
-		if (ymin * ymax < 0.0) {
+		if (ymin * ymax < 0.0)
 			Graphics_markLeft (graphics, 0.0, true, true, true, nullptr);
-		}
 		Graphics_marksBottom (graphics, 2, true, true, false);
-		if (xmin * xmax < 0.0) {
+		if (xmin * xmax < 0.0)
 			Graphics_markBottom (graphics, 0.0, true, true, true, nullptr);
-		}
 	}
 }
 
@@ -246,7 +245,8 @@ autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, d
 		if (tmax > my xmax) {
 			tmax = my xmax;
 		}
-		Melder_require (tmin < my xmax && tmax > my xmin, U"Invalid domain.");
+		Melder_require (tmin < my xmax && tmax > my xmin,
+			U"Invalid domain.");
 		
 		integer k = 1, i1 = Sampled_xToHighIndex (me, tmin);
 		integer i2 = Sampled_xToLowIndex (me, tmax);
@@ -265,8 +265,8 @@ autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, d
 		*/
 		double xmin = my x1 - 0.5 * my dx;
 		double xmax = xmin + my nx * my dx;
-		tmin = tmin < xmin ? xmin : tmin;
-		tmax = tmax > xmax ? xmax : tmax;
+		tmin = std::max (tmin, xmin); // yes, looks strange
+		tmax = std::min (tmax, xmax);
 		// End of workaround
 		his x [k] = tmin;
 		his y [k ++] = CLIP_Y (level, ymin, ymax);
@@ -298,8 +298,10 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 		
 		// find overlap in the domains  with xmin workaround as in Sound_to_Polygon
 		double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx ;
-		double xmin = my xmin > thy xmin ? xmin1 : xmin2;
-		double xmax = my xmax < thy xmax ? xmin1 + my nx * my dx : xmin2 + thy nx * thy dx;
+		double xmin = ( my xmin > thy xmin ? xmin1 : xmin2 );
+		double xmax = ( my xmax < thy xmax ? xmin1 + my nx * my dx : xmin2 + thy nx * thy dx );
+		Melder_require (xmax > xmin,
+			U"Domains must overlap.");
 		if (xmax <= xmin) {
 			Melder_throw (U"Domains must overlap.");
 		}
@@ -328,7 +330,7 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 
 		// my starting point at tmin
 
-		double y = Vector_getValueAtX (me, tmin, (my ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
+		double y = Vector_getValueAtX (me, tmin, ( my ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x [k] = tmin;
 		his y [k ++] = CLIP_Y (y, ymin, ymax);
 
@@ -336,14 +338,14 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 
 		for (integer i = ib1; i <= ie1; i ++) {
 			double t = my x1 + (i - 1) * my dx;
-			y = my z [my ny == 1 ? 1 : channel] [i];
+			y = ( my z [my ny == 1 ? 1 : channel] [i] );
 			his x [k] = t;
 			his y [k ++] = CLIP_Y (y, ymin, ymax);
 		}
 
 		// my end point at tmax
 
-		y = Vector_getValueAtX (me, tmax, (my ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (me, tmax, ( my ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x [k] = tmax;
 		his y [k ++] = y;
 
@@ -357,14 +359,14 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 
 		for (integer i = ie2; i >= ib2; i--) {
 			double t = thy x1 + (i - 1) * thy dx;
-			y = thy z [thy ny == 1 ? 1 : channel] [i];
+			y = thy z [( thy ny == 1 ? 1 : channel )] [i];
 			his x [k] = t;
 			his y [k ++] = CLIP_Y (y, ymin, ymax);
 		}
 
 		// thy end point at tmin
 
-		y = Vector_getValueAtX (thee, tmin, (thy ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (thee, tmin, ( thy ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x [k] = tmin;
 		his y [k] = y;
 
@@ -394,7 +396,7 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 				intersection = INTERSECTION_OUTSIDE;
 			} else if (p3inb12) {
 				// 4 can be inside or outside
-				*xs = p4inb12 ? x4 : x2;
+				*xs = ( p4inb12 ? x4 : x2 );
 			} else if (p4inb12) {
 				// 3 is outside
 				*xs = x4;
@@ -424,7 +426,7 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 			if (x1 < x3 || x4 < x2) {
 				intersection = INTERSECTION_OUTSIDE;
 			} else if (p3inb12) {
-				*xs = p4inb12 ? x4 : x3;
+				*xs = ( p4inb12 ? x4 : x3 );
 			} else if (p4inb12) {
 				// 3 outside
 				*xs = x4;
@@ -470,17 +472,17 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 static int LineSegments_getIntersection (double x1, double y1, double x2, double y2, double x3, double y3,
         double x4, double y4, double *mua, double *mub, double eps) {
 	// bounding box pre-selection
-	double min12 = x1 < x2 ? x1 : x2;
-	double max12 = x1 > x2 ? x1 : x2;
-	double min34 = x3 < x4 ? x3 : x4;
-	double max34 = x3 > x4 ? x3 : x4;
+	double min12 = std::min (x1, x2);
+	double max12 = std::max (x1, x2);
+	double min34 = std::min (x3, x4);
+	double max34 = std::max (x3, x4);
 	if (max12 - min34 < -eps or max34 - min12 < -eps) {
 		return INTERSECTION_OUTSIDE;    // eps?
 	}
-	min12 = y1 < y2 ? y1 : y2;
-	max12 = y1 > y2 ? y1 : y2;
-	min34 = y3 < y4 ? y3 : y4;
-	max34 = y3 > y4 ? y3 : y4;
+	min12 = std::min (y1, y2);
+	max12 = std::max (y1, y2);
+	min34 = std::min (y3, y4);
+	max34 = std::max (y3, y4);
 	if (max12 - min34 < -eps or max34 - min12 < -eps) {
 		return INTERSECTION_OUTSIDE;
 	}
@@ -492,9 +494,8 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 	if (fabs (bd) > eps) {
 		*mua = cad / bd;
 		*mub = cab / bd;
-		if (*mua <= eps || *mua > 1.0 + eps || *mub < eps || *mub > 1.0 + eps) {
+		if (*mua <= eps || *mua > 1.0 + eps || *mub < eps || *mub > 1.0 + eps)
 			return INTERSECTION_OUTSIDE;
-		}
 		if (*mua > eps && *mua <= 1.0 - eps && *mub >= eps && *mub < 1.0 - eps) {
 			// This occurs most of the cases (hopefully)
 			return INTERSECTION_PROPER;
@@ -502,22 +503,18 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 		// Now eps < mua,mub <= 1+eps
 		// and at least one of the mu's is near 1,
 		// the other is in [eps,1]
-		if (fabs (*mua - 1.0) < eps) {
+		if (fabs (*mua - 1.0) < eps)
 			*mua = 1.0;
-		}
-		if (fabs (*mub - 1.0) < eps) {
+		if (fabs (*mub - 1.0) < eps)
 			*mub = 1.0;
-		}
 		// is the intersection at an edge or  at vertex
-		if (*mua == 1.0) { // end of ab touches cd
-			return *mub == 1.0 ? INTERSECTION_AT_VERTEX : INTERSECTION_AT_EDGE;
-		} else { // ab crosses a vertex
+		if (*mua == 1.0) // end of ab touches cd
+			return ( *mub == 1.0 ? INTERSECTION_AT_VERTEX : INTERSECTION_AT_EDGE );
+		else // ab crosses a vertex
 			return INTERSECTION_AT_VERTEX;
-		}
 	} else { // ab and cd are parallel or coplanar
-		if (fabs (cad) > eps and fabs (cab) > eps) {
+		if (fabs (cad) > eps and fabs (cab) > eps)
 			return INTERSECTION_OUTSIDE;
-		}
 		if (x1 == x2) {
 			x1 = y1;
 			x2 = y2;
@@ -584,7 +581,7 @@ Thing_implement (Vertices, DoublyLinkedList, 0);
 #define VERTEX(n) ((Vertex) ((n) -> data.get()))
 
 int structVertices :: s_compareHook (DoublyLinkedNode me, DoublyLinkedNode thee) noexcept {
-	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
+	return ( VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : ( VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0 ) );
 }
 
 static void Vertices_addCopyBack (Vertices me, DoublyLinkedNode n) {
@@ -599,7 +596,7 @@ static void Vertices_addCopyBack (Vertices me, DoublyLinkedNode n) {
 static bool pointsInsideInterval (double *x, integer n, integer istart, integer iend, integer *jstart, integer *jend) {
 	double xmax = x [istart], xmin = x [istart];
 	integer imax = istart, imin = istart;
-	integer iendmod = iend > istart ? iend : iend + n;   // circular
+	integer iendmod = ( iend > istart ? iend : iend + n );   // circular
 	for (integer i = istart + 1; i <= iendmod; i ++) {
 		integer index = (i - 1) % n + 1;   // make it circular
 		if (x [index] > xmax) {
@@ -914,14 +911,14 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 #define Polygon_EXEN 4
 
 static void Vertices_markEntryPoints (Vertices me, int firstLocation) {
-	int entry = (firstLocation == Polygon_INSIDE) ? Polygon_EX : (firstLocation == Polygon_OUTSIDE) ? Polygon_EN : Polygon_ENEX; // problematic when on boundary
+	int entry = ( firstLocation == Polygon_INSIDE ? Polygon_EX : ( firstLocation == Polygon_OUTSIDE ? Polygon_EN : Polygon_ENEX ) ); // problematic when on boundary
 	// my back/front can never be an intersection node
 	for (DoublyLinkedNode ni = my front -> next; ni != my back; ni = ni -> next) {
 		if (VERTEX (ni) -> intersect == 0) {
 			continue;
 		}
 		VERTEX (ni) -> entry = entry;
-		entry = (entry == Polygon_EN) ? Polygon_EX : (entry == Polygon_EX) ? Polygon_EN : Polygon_ENEX;
+		entry = ( entry == Polygon_EN ? Polygon_EX : ( entry == Polygon_EX ? Polygon_EN : Polygon_ENEX ) );
 	}
 }
 
@@ -967,7 +964,7 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 			} else {
 				current = current -> prev;
 				if (current == 0) {
-					current = inside ? thy back : my back;
+					current = ( inside ? thy back : my back );
 				}
 			}
 		} while (current != firstOutside and current != 0 and poly_npoints < my numberOfNodes);
@@ -982,7 +979,7 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinterior */, Vertices thee, bool /* use_thyinterior */) {
 	try {
 		autoVertices him = Vertices_create ();
-		DoublyLinkedNode prevPoly;
+		DoublyLinkedNode prevPoly = nullptr;
 		integer poly_npoints = 0;
 		for (DoublyLinkedNode ni = my front; ni != 0; ni = ni -> next) {
 			if ( (VERTEX (ni) -> intersect == 0) || VERTEX (ni) -> processed) {
@@ -1008,7 +1005,7 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 						Vertices_addCopyBack (him.get(), current); poly_npoints ++;
 					}
 					if (current == 0) { // back of list? Goto front
-						current = (jumps % 2 == 0) ? my front : thy front;
+						current = ( jumps % 2 == 0 ? my front : thy front );
 						while ( (current = current -> next) != 0 and VERTEX (current) -> intersect == 0) {
 							Vertices_addCopyBack (him.get(), current); poly_npoints ++;
 						}
@@ -1023,7 +1020,7 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 						Vertices_addCopyBack (him.get(), current); poly_npoints ++;
 					}
 					if (current == 0) { // start of list? Goto end
-						current = (jumps % 2 == 0) ? my back : thy back;
+						current = ( jumps % 2 == 0 ? my back : thy back );
 						while ( (current = current -> prev) != 0 and VERTEX (current) -> intersect == 0) {
 							Vertices_addCopyBack (him.get(), current); poly_npoints ++;
 						}
@@ -1177,7 +1174,7 @@ int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps) {
 	integer nup = 0;
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
 		double a;
-		integer ip1 = i < my numberOfPoints ? i + 1 : 1;
+		integer ip1 = ( i < my numberOfPoints ? i + 1 : 1 );
 		if (my y [ip1] == y0) {
 			if (my x [ip1] == x0) {
 				return Polygon_VERTEX;
@@ -1200,7 +1197,7 @@ int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps) {
 			}
 		}
 	}
-	return nup % 2 == 0 ? Polygon_OUTSIDE : Polygon_INSIDE;
+	return ( nup % 2 == 0 ? Polygon_OUTSIDE : Polygon_INSIDE );
 }
 
 static inline double cross (double x1, double y1, double x2, double y2, double x3, double y3) {

@@ -23,6 +23,7 @@
  djmw 20121024 Latest modification.
 */
 
+#include <algorithm>
 #include <limits.h>
 #include "melder.h"
 #include "MAT_numerics.h"
@@ -305,7 +306,7 @@ double NUMmultivariateKurtosis (constMAT x, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad, VEC *work);
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -313,20 +314,14 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 	makes the returned value "equal" to the standard deviation if the data is normally distributed.
 	You either GIVE the median location (if wantlocation = 0) or it
 	will be calculated (if wantlocation = 1);
-
-	work is a working array (1..n) that can be used for efficiency reasons.
-	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
 void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
-	double *inout_scale, bool wantscale, double k_stdev, double tol, VEC *work);
+	double *inout_scale, bool wantscale, double k_stdev, double tol, integer maximumNumberOfiterations);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.
-	k Winsorizes at `k' standard deviations.
-
-	work is a working array (1..n) that can be used for efficiency reasons.
-	If work == NULL, the routine allocates (and destroys) its own memory.
+	k_stdev Winsorizes at `k_stdev' standard deviations.
 */
 
 autoVEC VECmonotoneRegression (constVEC x);
@@ -1287,6 +1282,34 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	double inproduct = NUMinner (x, w);
 	double wsum = NUMsum (w);
 	return inproduct / wsum;
+}
+
+inline void VECchainRows_preallocated (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
+	integer k = 1;
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol ++)
+			v [k ++] = m [irow] [icol];
+}
+
+inline autoVEC VECchainRows (MAT m) {
+	autoVEC result = newVECraw (m.nrow * m.ncol);
+	VECchainRows_preallocated (result.get(), m);
+	return result;
+}
+
+inline void VECchainColumns_preallocated (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
+	integer k = 1;
+	for (integer icol = 1; icol <= m.ncol; icol ++)
+		for (integer irow = 1; irow <= m.nrow; irow ++)
+			v [k ++] = m [irow] [icol];
+}
+
+inline autoVEC VECchainColumns (MAT m) {
+	autoVEC result = newVECraw (m.nrow * m.ncol);
+	VECchainColumns_preallocated (result.get(), m);
+	return result;
 }
 
 /* Y += +a X */

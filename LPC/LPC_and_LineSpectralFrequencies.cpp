@@ -182,7 +182,7 @@ static integer Roots_fromPolynomial_grid (Roots me, Polynomial thee, double grid
 		//double root = Polynomial_findOneRealRoot_nr (thee, xmin, xmax);
 		double root = Polynomial_findOneSimpleRealRoot_ridders (thee, xmin, xmax);
 		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
-			my v [++numberOfRootsFound].re = root; // root not at border of interval
+			my v [++ numberOfRootsFound].re = root; // root not at border of interval
 			my v [numberOfRootsFound].im = 0.0;
 		}
 		xmin = xmax;

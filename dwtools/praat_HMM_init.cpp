@@ -1,6 +1,6 @@
 /* praat_HMM_init.cpp
  *
- * Copyright (C) 2010-2011,2015-2016 David Weenink
+ * Copyright (C) 2010-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,7 +335,7 @@ FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get st
 DO
 	NUMBER_ONE (HMM)
 		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
-		double result = my transitionProbs[0][stateNumber];
+		double result = my initialStateProbs [stateNumber];
 	NUMBER_ONE_END (U" : [ ", stateNumber, U" ]")
 }
 
@@ -467,7 +467,7 @@ FORM (MODIFY_HMM_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: L
 DO
 	Melder_require (minimumProbability >= 0.0 && minimumProbability < 1.0, U"The minimum probabilty should be in [0, 1).");
 	MODIFY_FIRST_OF_ONE_AND_LIST(HMM, HMMObservationSequence)
-		HMM_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) &list, relativePrecision_log, minimumProbability, showProgress);
+		HMM_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) & list, relativePrecision_log, minimumProbability, showProgress);
 	MODIFY_FIRST_OF_ONE_AND_LIST_END
 }
 

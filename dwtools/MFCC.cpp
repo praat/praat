@@ -64,11 +64,11 @@ void MFCC_lifter (MFCC me, integer lifter) {
 
 autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 	try {
-		integer numberOfColumns = my maximumNumberOfCoefficients + (includeC0 ? 1 : 0);
+		integer numberOfColumns = my maximumNumberOfCoefficients + ( includeC0 ? 1 : 0 );
 		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
 		for (integer i = 1; i <= numberOfColumns; i ++)
-			TableOfReal_setColumnLabel (thee.get(), i, Melder_cat (U"c", includeC0 ? i - 1 : i));
-		integer offset = includeC0 ? 1 : 0;
+			TableOfReal_setColumnLabel (thee.get(), i, Melder_cat (U"c", ( includeC0 ? i - 1 : i )));
+		integer offset = ( includeC0 ? 1 : 0 );
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			CC_Frame cf = & my frame [iframe];
 			for (integer j = 1; j <= cf -> numberOfCoefficients; j ++)

@@ -198,7 +198,7 @@ double CC_getValueInFrame (CC me, integer iframe, integer index) {
 	if (iframe < 1 || iframe > my nx)
 		return undefined;
 	CC_Frame cf = & me -> frame [iframe];
-	return index > cf -> numberOfCoefficients ? undefined : cf -> c [index];
+	return ( index > cf -> numberOfCoefficients ? undefined : cf -> c [index] );
 }
 
 double CC_getValue (CC me, double t, integer index) {
@@ -206,7 +206,7 @@ double CC_getValue (CC me, double t, integer index) {
 	if (iframe < 1 || iframe > my nx)
 		return undefined;
 	CC_Frame cf = & me -> frame [iframe];
-	return index > cf -> numberOfCoefficients ? undefined : cf -> c [index];
+	return ( index > cf -> numberOfCoefficients ? undefined : cf -> c [index] );
 }
 
 double CC_getC0ValueInFrame (CC me, integer iframe) {

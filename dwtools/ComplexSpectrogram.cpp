@@ -122,7 +122,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		Melder_require (my y1 == 0.0, 
 			U"A Fourier-transformable ComplexSpectrogram should have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		
-		integer nsamp_window = 2 * my ny - (originalNumberOfSamplesProbablyOdd ? 1 : 2 );
+		integer nsamp_window = 2 * my ny - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		integer halfnsamp_window = nsamp_window / 2;
 		double synthesisWindowDuration = nsamp_window / samplingFrequency;
 		autoSpectrum spectrum = Spectrum_create (my ymax, my ny);
@@ -236,7 +236,7 @@ autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {
 	try {
 		integer iframe = Sampled_xToLowIndex (me, time);   // ppgb: geen Sampled_xToIndex gebruiken voor integers (afrondingen altijd expliciet maken)
-		iframe = iframe < 1 ? 1 : (iframe > my nx ? my nx : iframe);
+		iframe = ( iframe < 1 ? 1 : ( iframe > my nx ? my nx : iframe ) );
 		autoSpectrum thee = Spectrum_create (my ymax, my ny);
 		for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
 			double a = sqrt (my z [ifreq] [iframe]);

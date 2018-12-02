@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "melder.h"
 #include "NUM2.h"
 #include "Graphics.h"
 #include "Minimizers.h"
@@ -318,7 +319,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 		alplim = -1;
 		again = -1;
 		rtemp = fabs (df / gropt);
-		dalpha = alphamin < rtemp ? alphamin : rtemp;
+		dalpha = std::min (alphamin, (double) rtemp);
 		alphamin = 0;
 		do {
 			do {
@@ -351,7 +352,6 @@ void structVDSmagtMinimizer :: v_minimize () {
 				gr2s = (grc - gropt) / dalpha;
 				temp = (fch + fch) / dalpha - grc - gropt;
 				if ((fc < minimum) || ((fc == minimum) && (grc / gropt > -1))) {
-					double *tmp;
 					gopt_sq = gsq;
 					history [this -> iteration] = minimum = fc;
 					std::swap (p.at, pc.at);

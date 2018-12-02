@@ -252,7 +252,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 		double y1 = thy z [i] [2];
 		double r = rmax * my data [i] [i] / xSum;
 
-		Graphics_circle (g, x1, y1, r > rmin ? r : rmin);
+		Graphics_circle (g, x1, y1, ( r > rmin ? r : rmin ));
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			double x2 = thy z [j] [1], y2 = thy z [j] [2];
@@ -330,7 +330,8 @@ integer Confusion_getNumberOfEntries (Confusion me) {
 	return Melder_ifloor ((double) total);
 }
 
-static void create_index (string32vector s, string32vector ref, integer index []) {
+static autoINTVEC create_index (string32vector s, string32vector ref) {
+	autoINTVEC index = newINTVECraw (s.size);
 	for (integer i = 1; i <= s.size; i ++) {
 		integer indxj = 0;
 		for (integer j = 1; j <= ref.size; j ++) {
@@ -341,6 +342,7 @@ static void create_index (string32vector s, string32vector ref, integer index []
 		}
 		index [i] = indxj;
 	}
+	return index;
 }
 
 autoConfusion Confusion_condense (Confusion me, conststring32 search, conststring32 replace,
@@ -375,10 +377,8 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 		thy rowLabels.all() <<= drow -> rowLabels.all();
 		thy columnLabels.all() <<= dcol -> rowLabels.all();
 
-		autoNUMvector<integer> rowIndex (1, my numberOfRows);
-		create_index (srow -> strings.get(), drow -> rowLabels.get(), rowIndex.peek());
-		autoNUMvector<integer> columnIndex (1, my numberOfColumns);
-		create_index (scol -> strings.get(), dcol -> rowLabels.get(), columnIndex.peek());
+		autoINTVEC rowIndex = create_index (srow -> strings.get(), drow -> rowLabels.get());
+		autoINTVEC columnIndex = create_index (scol -> strings.get(), dcol -> rowLabels.get());
 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -417,7 +417,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 	try {
 		autostring32vector labels = newSTRVECtokenize (labels_string);
 		integer ncondense = labels.size;
-		autoNUMvector<integer> irow (1, my numberOfRows);
+		autoINTVEC irow = newINTVECraw (my numberOfRows);
 
 		for (integer i = 1; i <= my numberOfRows; i ++)
 			irow [i] = i;
@@ -470,7 +470,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_strin
 	try {
 		autostring32vector labels = newSTRVECtokenize (labels_string);
 		integer ncondense = labels.size;
-		autoNUMvector<integer> icol (1, my numberOfColumns);
+		autoINTVEC icol = newINTVECraw (my numberOfColumns);
 
 		for (integer i = 1; i <= my numberOfColumns; i ++)
 			icol [i] = i;

@@ -232,7 +232,7 @@ void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets_
 	autostring32vector targets = newSTRVECtokenize (targets_string);
 	for (integer itarget = 1; itarget <= targets.size; itarget ++) {
 		integer irow = EditCostsTable_getTargetIndex (me, targets [itarget].get());
-		irow = irow > 0 ? irow : my numberOfRows - 1;   // nomatch condition to penultimate row
+		irow = ( irow > 0 ? irow : my numberOfRows - 1 );   // nomatch condition to penultimate row
 		my data [irow] [my numberOfColumns] = cost;
 	}
 }
@@ -241,7 +241,7 @@ void EditCostsTable_setDeletionCosts (EditCostsTable me, conststring32 sources_s
 	autostring32vector sources = newSTRVECtokenize (sources_string);
 	for (integer isource = 1; isource <= sources.size; isource ++) {
 		integer icol = EditCostsTable_getSourceIndex (me, sources [isource].get());
-		icol = icol > 0 ? icol : my numberOfColumns - 1;   // nomatch condition to penultimate column
+		icol = ( icol > 0 ? icol : my numberOfColumns - 1 );   // nomatch condition to penultimate column
 		my data [my numberOfRows] [icol] = cost;
 	}
 }
@@ -254,10 +254,10 @@ void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCost, dou
 }
 
 double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
-	return costType == 1 ? my data [my numberOfRows - 1] [my numberOfColumns] :   //insertion
-		costType == 2 ? my data [my numberOfRows] [my numberOfColumns - 1] :   // deletion
-		costType == 3 ? my data [my numberOfRows] [my numberOfColumns] :   // equality
-		my data [my numberOfRows - 1] [my numberOfColumns -1];   // inequality
+	return ( costType == 1 ? my data [my numberOfRows - 1] [my numberOfColumns] :   //insertion
+		( costType == 2 ? my data [my numberOfRows] [my numberOfColumns - 1] :   // deletion
+		( costType == 3 ? my data [my numberOfRows] [my numberOfColumns] :   // equality
+		my data [my numberOfRows - 1] [my numberOfColumns -1] ) ) );   // inequality
 }
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets_string, conststring32 sources_string, double cost) {
@@ -299,13 +299,13 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targe
 
 double EditCostsTable_getInsertionCost (EditCostsTable me, conststring32 symbol) {
 	integer irow = EditCostsTable_getTargetIndex (me, symbol);
-	irow = irow == 0 ? my numberOfRows - 1 : irow;   // others is penultimate row
+	irow = ( irow == 0 ? my numberOfRows - 1 : irow );   // others is penultimate row
 	return my data [irow] [my numberOfColumns];
 }
 
 double EditCostsTable_getDeletionCost (EditCostsTable me, conststring32 sourceSymbol) {
 	integer icol = EditCostsTable_getSourceIndex (me, sourceSymbol);
-	icol = icol == 0 ? my numberOfColumns - 1 : icol;   // others is penultimate column
+	icol = ( icol == 0 ? my numberOfColumns - 1 : icol );   // others is penultimate column
 	return my data [my numberOfRows] [icol];
 }
 
@@ -320,8 +320,8 @@ double EditCostsTable_getSubstitutionCost (EditCostsTable me, conststring32 symb
 			 -- icol;
 		}
 	} else {
-		irow = irow == 0 ? my numberOfRows - 1 : irow;
-		icol = icol == 0 ? my numberOfColumns - 1 : icol;
+		irow = ( irow == 0 ? my numberOfRows - 1 : irow );
+		icol = ( icol == 0 ? my numberOfColumns - 1 : icol );
 	}
 	return my data [irow] [icol];
 }
@@ -425,7 +425,7 @@ static void print4 (char *buffer, double value, int iformat, int width, int prec
 		else
 			snprintf (buffer, 40, "%.7g", value);
 	} else {
-		snprintf (formatString, 40, "%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
+		snprintf (formatString, 40, "%%%d.%d%c", width, precision, ( iformat == 1 ? 'f' : ( iformat == 2 ? 'e' : 'g' ) ));
 		snprintf (buffer, 40, formatString, value);
 	}
 }
@@ -529,7 +529,7 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 		} else { // substitution ?
 			Graphics_text (graphics, x, ytarget, my rowLabels [p.y].get());
 			Graphics_text (graphics, x, ysource, my columnLabels [p.x].get());
-			Graphics_text (graphics, x, yoper, (Melder_equ (my rowLabels [p.y].get(), my columnLabels [p.x].get()) ? oequal : osubstitution));
+			Graphics_text (graphics, x, yoper, ( Melder_equ (my rowLabels [p.y].get(), my columnLabels [p.x].get()) ? oequal : osubstitution ));
 		}
 		Graphics_line (graphics, x, ysource + lineSpacing, x, ytarget - 0.1 * lineSpacing);
 	}

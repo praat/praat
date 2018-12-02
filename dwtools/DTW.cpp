@@ -151,7 +151,7 @@ void DTW_Path_Query_init (DTW_Path_Query me, integer ny, integer nx) {
 	Melder_assert (ny > 0 && nx > 0);
 	my ny = ny;
 	my nx = nx;
-	my nxy = 2 * (ny > nx ? ny : nx) + 2; // maximum number of points
+	my nxy = 2 * std::max (ny, nx) + 2; // maximum number of points
 	my xfromy = Thing_new (RealTier);
 	my yfromx = Thing_new (RealTier);
 }
@@ -257,7 +257,7 @@ void DTW_Path_recode (DTW me) {
 			xytimes [++ nxy].x = my xmax;
 			xytimes [nxy].y = my ymax;
 		}
-		Melder_assert (nxy <= 2 * (my ny > my nx ? my ny : my nx) + 2);
+		Melder_assert (nxy <= 2 * std::max (my ny, my nx) + 2);
 		
 		thy nxy = nxy;
 		thy yfromx = RealTier_create (my xmin, my xmax);
@@ -557,8 +557,8 @@ void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin, do
 }
 
 static void DTW_drawWarp_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double t, bool garnish, bool inset, bool warpX) {
-	double tx = warpX ? t : DTW_getXTimeFromYTime (me, t);
-	double ty = warpX ? DTW_getYTimeFromXTime (me, t) : t;
+	double tx = ( warpX ? t : DTW_getXTimeFromYTime (me, t) );
+	double ty = ( warpX ? DTW_getYTimeFromXTime (me, t) : t );
 	int lineType = Graphics_inqLineType (g);
 
 	if (xmin >= xmax) {
@@ -870,7 +870,7 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 			by making the other cell's distances very large.
 		*/
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoNUMvector<double> pitchx (1, thy nx);
+		autoVEC pitchx = newVECraw (thy nx);
 		kPitch_unit unit = kPitch_unit::SEMITONES_100;
 		for (integer j = 1; j <= thy nx; j ++)
 			pitchx [j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, (int) unit);
@@ -906,7 +906,7 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 		Melder_require (time_weight >= 0.0, U"Time costs weight should not be negative.");
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoNUMvector<double> pitchx (1, thy nx);
+		autoVEC pitchx = newVECraw (thy nx);
 		kPitch_unit unit = kPitch_unit::SEMITONES_100;
 		for (integer j = 1; j <= thy nx; j ++)
 			pitchx [j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, (int) unit);
@@ -1180,7 +1180,7 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
     try {
         double slopes [5] = { DTW_BIG, DTW_BIG, 3.0, 2.0, 1.5 };
         // if localSlope == 1 start of path is within 10% of minimum duration. Starts farther away
-        integer delta_xy = (my nx < my ny ? my nx : my ny) / 10; // if localSlope == 1 start within 10% of
+        integer delta_xy = std::min (my nx, my ny) / 10; // if localSlope == 1 start within 10% of
 
 		Melder_require (localSlope > 0 && localSlope < 5, 
 			U"Local slope parameter is illegal.");
