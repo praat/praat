@@ -74,7 +74,7 @@ static void MAT_divideRowByRowsum_inplace (MAT m) {
 	for (integer i = 1; i <= m.nrow; i ++) {
 		longdouble rowSum = NUMsum (m.row (i));
 		if (rowSum != 0.0)
-			m.row (i)  *=  1.0 / rowSum;
+			m.row (i)  *=  double (1.0 / rowSum);
 	}
 }
 
@@ -1220,58 +1220,63 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 }
 
 double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int stressMeasure) {
-	double eta_fit, eta_conf, rho, stress = undefined, denum;
+	double stress = undefined;
 
+	double eta_fit, eta_conf, rho;
 	Distance_Weight_rawStressComponents (fit, conf, weight, & eta_fit, & eta_conf, & rho);
 
-	// All formula's for stress, except for raw stress, are independent of the
-	// scale of the configuration, i.e., the distances conf [i] [j].
+	/*
+		All formulas for stress, except for raw stress, are independent of the
+		scale of the configuration, i.e., the distances conf [i] [j].
+	*/
 
 	if (stressMeasure == MDS_NORMALIZED_STRESS) {
-		denum = eta_fit * eta_conf;
+		const double denum = eta_fit * eta_conf;
 		if (denum > 0.0)
 			stress = 1.0 - rho * rho / denum;
 	} else if (stressMeasure == MDS_STRESS_1) {
-		denum = eta_fit * eta_conf;
+		const double denum = eta_fit * eta_conf;
 		if (denum > 0.0) {
-			double tmp = 1.0 - rho * rho / denum;
+			const double tmp = 1.0 - rho * rho / denum;
 			if (tmp > 0.0)
 				stress = sqrt (tmp);
 		}
 	} else if (stressMeasure == MDS_STRESS_2) {
-
-		// Get average distance
-
-		integer nPoints = conf -> numberOfRows;
-		double m = 0.0, wsum = 0.0, var = 0.0;
+		/*
+			Get average distance.
+		*/
+		const integer nPoints = conf -> numberOfRows;
+		longdouble m = 0.0, wsum = 0.0;
 		for (integer i = 1; i <= nPoints - 1; i ++) {
-			m += NUMinner (weight -> data.row (i).part (i + 1, nPoints), conf -> data.row (i).part (i + 1, nPoints));
+			m += NUMinner (weight -> data.row (i).part (i + 1, nPoints),
+					conf -> data.row (i).part (i + 1, nPoints));
 			wsum += NUMsum (weight -> data.row (i).part (i + 1, nPoints));
 		}
 		m /= wsum;
 		if (m > 0.0) {
-			// Get variance
-
+			/*
+				Get variance.
+			*/
+			longdouble var = 0.0;
 			for (integer i = 1; i <= nPoints - 1; i ++) {
 				for (integer j = i + 1; j <= nPoints; j ++) {
-					double tmp = conf -> data [i] [j] - m;
+					const longdouble tmp = conf -> data [i] [j] - m;
 					var += weight -> data [i] [j] * tmp * tmp;
 				}
 			}
-			denum = var * eta_fit;
-			if (denum > 0.0) {
-				stress = sqrt ( (eta_fit * eta_conf - rho * rho) / denum);
-			}
+			const double denum = double (var) * eta_fit;
+			if (denum > 0.0)
+				stress = sqrt ((eta_fit * eta_conf - rho * rho) / denum);
 		}
 	} else if (stressMeasure == MDS_RAW_STRESS) {
-		stress = eta_fit + eta_conf - 2.0 * rho ;
+		stress = eta_fit + eta_conf - 2.0 * rho;
 	}
 	return stress;
 }
 
 void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *out_etafit, double *out_etaconf, double *out_rho)
 {
-	integer nPoints = conf -> numberOfRows;
+	const integer nPoints = conf -> numberOfRows;
 	longdouble etafit = 0.0, etaconf = 0.0, rho = 0.0;
 	for (integer i = 1; i <= nPoints - 1; i ++) {
 		constVEC wi = weight -> data.row (i);
@@ -1292,7 +1297,7 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 }
 
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
-	integer nPoints = d -> numberOfRows;
+	const integer nPoints = d -> numberOfRows;
 	double stress = undefined;
 	Melder_require (nPoints > 0 && nPoints == c -> numberOfRows && nPoints == t -> numberOfPoints ||
 		(w && nPoints == w -> numberOfRows), U"Dimensions should agree.");
