@@ -351,7 +351,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		for (integer i = thy nx; i > 1; i --)
 			thy z [1] [i] -= 0.9 * thy z [1] [i - 1];
 
-		integer nosInWindow = (integer) floorl (analysisWidth * samplingFrequency), numberOfFrames;
+		integer nosInWindow = Melder_ifloor (analysisWidth * samplingFrequency), numberOfFrames;
 		Melder_require (nosInWindow > 7, U"Analysis window too short.");
 
 		double t1;
