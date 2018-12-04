@@ -74,7 +74,7 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 	volatile double myDuration = my dx * my nx;
 	if (windowDuration > myDuration)
 		Melder_throw (me, U": shorter than window length.");
-	*numberOfFrames = (integer) floorl ((myDuration - windowDuration) / timeStep) + 1;
+	*numberOfFrames = Melder_ifloor ((myDuration - windowDuration) / timeStep) + 1;
 	Melder_assert (*numberOfFrames >= 1);
 	double ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
 	double thyDuration = *numberOfFrames * timeStep;
