@@ -375,8 +375,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const double tbegin = std::max (thy xmin, t1 + (iframe - 1) * dt - analysisWidth / 2.0);
 			const integer istart = std::max (integer (1), Sampled_xToLowIndex (thee.get(), tbegin));   // ppgb: afronding naar beneden?
-			fftbuf.part (1, nosInWindow) <<= thy z.row (1).part (istart, istart + nosInWindow - 1) * hamming.all();
-					// ppgb: is the assumption of a fitting upperbound provable?
+			const integer iend = istart + nosInWindow - 1;   // ppgb: crash if not provably iend <= thy nx
+			fftbuf.part (1, nosInWindow) <<= thy z.row (1).part (istart, iend) * hamming.all();
 			fftbuf.part (nosInWindow + 1, nfft) <<= 0.0;
 			
 			NUMfft_forward (& fftTable, fftbuf.get());
