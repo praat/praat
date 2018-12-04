@@ -335,13 +335,12 @@ static void complexfftoutput_to_power (constVEC fft, VEC dbs, bool to_db) {
 autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pitchFloor, double dt) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
-		double analysisWidth = 3.0 / pitchFloor;
-		if (analysisWidth > my dx * my nx)
-			analysisWidth = my dx * my nx;
+		const double physicalDuration = my dx * my nx;
+		const double analysisWidth = std::min (3.0 / pitchFloor, physicalDuration);
 
 		double samplingFrequency = 1.0 / my dx;
 		autoSound thee;
-		if (samplingFrequency > 30000) {
+		if (samplingFrequency > 30000.0) {
 			samplingFrequency = samplingFrequency / 2.0;
 			thee = Sound_resample (me, samplingFrequency, 1);
 		} else {
@@ -352,34 +351,32 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			thy z [1] [i] -= 0.9 * thy z [1] [i - 1];
 
 		integer nosInWindow = Melder_ifloor (analysisWidth * samplingFrequency), numberOfFrames;
-		Melder_require (nosInWindow > 7, U"Analysis window too short.");
+		Melder_require (nosInWindow >= 8, U"Analysis window too short.");
 
 		double t1;
 		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & numberOfFrames, & t1);
 		autoVEC hamming = newVECraw (nosInWindow);
 		for (integer i = 1; i <= nosInWindow; i ++) 
-			hamming [i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
+			hamming [i] = 0.54 - 0.46 * cos (2.0 * NUMpi * (i - 1) / (nosInWindow - 1));
 
 		integer nfft = 8; // minimum possible
 		while (nfft < nosInWindow) { nfft *= 2; }
-		integer nfftdiv2 = nfft / 2;
+		const integer nfftdiv2 = nfft / 2;
 		autoVEC fftbuf = newVECzero (nfft); // "complex" array
 		autoVEC spectrum = newVECzero (nfftdiv2 + 1); // +1 needed 
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (& fftTable, nfft); // sound to spectrum
 		
-		double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
+		const double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
 		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
 		
 		autoMelderProgress progress (U"Cepstrogram analysis");
 		
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			double tbegin = t1 + (iframe - 1) * dt - analysisWidth / 2;
-			tbegin = tbegin < thy xmin ? thy xmin : tbegin;
-			integer istart = Sampled_xToLowIndex (thee.get(), tbegin);   // ppgb: afronding naar beneden?
-			istart = istart < 1 ? 1 : istart;
-			integer iend = istart + nosInWindow - 1;
-			iend = iend > thy nx ? thy nx : iend;
+			const double tbegin = std::max (thy xmin, t1 + (iframe - 1) * dt - analysisWidth / 2.0);
+			const integer istart = std::max (integer (1), Sampled_xToLowIndex (thee.get(), tbegin));   // ppgb: afronding naar beneden?
+			const integer iend = istart + nosInWindow - 1;
+			Melder_assert (iend <= thy nx);   // ppgb: is this assumption provable?
 			for (integer i = 1; i <= nosInWindow; i ++)
 				fftbuf [i] = thy z [1] [istart + i - 1] * hamming [i];
 			fftbuf.part (nosInWindow + 1, nfft) <<= 0.0;
@@ -405,7 +402,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			for (integer i = 1; i <= nfftdiv2 + 1; i ++)
 				his z [i] [iframe] = fftbuf [i] * fftbuf [i];
 
-			if ((iframe % 10) == 1)
+			if (iframe % 10 == 1)
 				Melder_progress ((double) iframe / numberOfFrames, U"Cepstrogram analysis of frame ",
 					 iframe, U" out of ", numberOfFrames, U".");
 		}
