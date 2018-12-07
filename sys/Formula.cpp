@@ -2780,7 +2780,7 @@ static void do_sub () {
 		}
 	}
 	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		int64 length1 = str32len (x->getString()), length2 = str32len (y->getString()), newlength = length1 - length2;
+		integer length1 = str32len (x->getString()), length2 = str32len (y->getString()), newlength = length1 - length2;
 		autostring32 result;
 		if (newlength >= 0 && str32nequ (x->getString() + newlength, y->getString(), length2)) {
 			result = autostring32 (newlength);
