@@ -27,14 +27,42 @@ double NUMcenterOfGravity (constVEC const& x) noexcept {
 	return double (weightedSumOfIndexes / sumOfWeights);
 }
 
-double NUMinner_ (constVEC const& x, constVEC const& y) noexcept {
-	PAIRWISE_SUM (longdouble, sum, integer, x.size,
-		const double *px = & x [1];
-		const double *py = & y [1],
-		longdouble (*px) * longdouble (*py),
-		(px += 1, py += 1)
-	)
-	return double (sum);
+double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept {
+	if (x.stride == 1) {
+		if (y.stride == 1) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.size,
+				const double *px = & x [1];
+				const double *py = & y [1],
+				longdouble (*px) * longdouble (*py),
+				(px += 1, py += 1)
+			)
+			return double (sum);
+		} else {
+			PAIRWISE_SUM (longdouble, sum, integer, x.size,
+				const double *px = & x [1];
+				const double *py = & y [1],
+				longdouble (*px) * longdouble (*py),
+				(px += 1, py += y.stride)
+			)
+			return double (sum);
+		}
+	} else if (y.stride == 1) {
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *px = & x [1];
+			const double *py = & y [1],
+			longdouble (*px) * longdouble (*py),
+			(px += x.stride, py += 1)
+		)
+		return double (sum);
+	} else {
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *px = & x [1];
+			const double *py = & y [1],
+			longdouble (*px) * longdouble (*py),
+			(px += x.stride, py += y.stride)
+		)
+		return double (sum);
+	}
 }
 
 double NUMnorm (constVEC const& x, double power) noexcept {

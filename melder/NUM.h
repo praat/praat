@@ -22,7 +22,7 @@
 	so they have to be declared first.
 */
 
-extern double NUMinner_ (constVEC const& x, constVEC const& y) noexcept;
+extern double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept;
 extern void NUM_sum_mean (constVECVU const& x, double *out_sum, double *out_mean) noexcept;
 extern void NUM_sum_mean_sumsq_variance_stdev (constVECVU const& x,
 		double *out_sum, double *out_mean,
