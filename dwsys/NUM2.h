@@ -1312,6 +1312,20 @@ inline autoVEC VECchainColumns (MAT m) {
 	return result;
 }
 
+inline void VECVUmul_preallocated (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+	Melder_assert (target.size == x.size);
+	Melder_assert (x.size == y.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = x [i] * y [i];	
+}
+
+inline void VECVUmul_preallocated (const VECVU& target, const constVEC& x, const constVECVU& y) noexcept {
+	Melder_assert (target.size == x.size);
+	Melder_assert (x.size == y.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = x [i] * y [i];	
+}
+
 /* Y += +a X */
 inline void MATaxpy (MAT y, constMAT x, double a) {
 	Melder_assert (y.nrow = x.nrow);
