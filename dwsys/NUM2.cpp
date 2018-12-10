@@ -790,7 +790,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 				longdouble productsum = 0.0;
 				for (integer j = 1; j <= x.nrow; j ++)
 					productsum += x [j] [i] - scale * yt [j] [i];
-				translation [i] = productsum / x.nrow;
+				translation [i] = double (productsum / x.nrow);
 			}
 			*out_translation = translation.move();
 		}

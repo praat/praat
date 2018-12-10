@@ -128,7 +128,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	autoVEC column = newVECraw (data.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++) {
 		column.all() <<= data.column (icol);
-		thy centroid [icol] = NUMinner (column.get (), gamma.get()) / p [p.nrow] [component];
+		thy centroid [icol] = NUMinner (column.get(), gamma.get()) / p [p.nrow] [component];
 	}
 
 	// update covariance with the new mean
@@ -150,7 +150,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 }
 
 static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer im, Covariance him, double fraction) {
-	if (im < 1 || im > my numberOfComponents || fraction == 0)
+	if (im < 1 || im > my numberOfComponents || fraction == 0.0)
 		return;
 
 	Covariance thee = my covariances->at [im];
