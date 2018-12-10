@@ -65,27 +65,27 @@ double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept {
 	}
 }
 
-double NUMnorm (constVEC const& x, double power) noexcept {
+double NUMnorm (constVECVU const& x, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size,
 			const double *px = & x [1],
 			longdouble (*px) * longdouble (*px),
-			px += 1
+			px += x.stride
 		)
 		return sqrt (double (sum));
 	} else if (power == 1.0) {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size,
 			const double *px = & x [1],
 			longdouble (fabs (*px)),
-			px += 1
+			px += x.stride
 		)
 		return double (sum);
 	} else {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size,
 			const double *px = & x [1],
 			powl (longdouble (fabs (*px)), power),
-			px += 1
+			px += x.stride
 		)
 		return double (powl (sum, longdouble (1.0) / power));
 	}

@@ -240,7 +240,7 @@ inline double NUMmin (const constVECVU& vec) {
 	return minimum;
 }
 
-double NUMnorm (constVEC const& x, double power) noexcept;
+double NUMnorm (constVECVU const& x, double power) noexcept;
 
 inline double NUMnorm (constMAT const& x, double power) noexcept {
 	return NUMnorm (asvector (x), power);

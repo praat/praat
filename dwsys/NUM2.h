@@ -245,11 +245,8 @@ inline void MATcopy_preallocated (MAT target, constMAT x) {
 
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = newVECraw (x.ncol);
-	autoVEC column = newVECraw (x.nrow);
-	for (integer icol = 1; icol <= norm.size; icol ++) {
-		column.all() <<= x.column (icol);
-		norm [icol] = NUMnorm (column.get(), power);
-	}
+	for (integer icol = 1; icol <= norm.size; icol ++)
+		norm [icol] = NUMnorm (x.column (icol), power);
 	return norm;
 }
 
