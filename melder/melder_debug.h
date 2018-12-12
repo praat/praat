@@ -61,7 +61,7 @@ void Melder_trace (conststring8 sourceCodeFileName, int lineNumber, conststring8
 }
 
 #ifdef NDEBUG
-	#define trace(x)   ((void) 0)
+	#define trace(...)   ((void) 0)
 #else
 	#define trace(...)   (! Melder_isTracing ? (void) 0 : Melder_trace (__FILE__, __LINE__, __FUNCTION__, __VA_ARGS__))
 #endif
