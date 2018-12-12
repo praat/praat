@@ -246,13 +246,8 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 
 void HMMBaumWelch_getGamma (HMMBaumWelch me) {
 	for (integer it = 1; it <= my numberOfTimes; it ++) {
-		double sum = 0.0;
-		for (integer is = 1; is <= my numberOfStates; is ++) {
-			my gamma [is] [it] = my alpha [is] [it] * my beta [is] [it];
-			sum += my gamma [is] [it];
-		}
-		for (integer is = 1; is <= my numberOfStates; is ++)
-			my gamma [is] [it] /= sum;
+		my gamma.column (it) <<= my alpha.column (it) * my beta.column (it);
+		my gamma.column (it) /= NUMsum (my gamma.column (it));
 	}
 }
 
@@ -1193,14 +1188,10 @@ void HMM_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee) {
 
 void HMM_HMMBaumWelch_forward (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 	// initialise at t = 1 & scale
-	thy scale [1] = 0.0;
-	for (integer js = 1; js <= my numberOfStates; js ++) {
+	for (integer js = 1; js <= my numberOfStates; js ++)
 		thy alpha [js] [1] = my initialStateProbs [js] * my emissionProbs [js] [obs [1]];
-		thy scale [1] += thy alpha [js] [1];
-	}
-	for (integer js = 1; js <= my numberOfStates; js ++) {
-		thy alpha [js] [1] /= thy scale [1];
-	}
+	thy scale [1] = NUMsum (thy alpha.column (1));
+	thy alpha.column (1) /= thy scale [1];
 	// recursion
 	for (integer it = 2; it <= thy numberOfTimes; it ++) {
 		thy scale [it] = 0.0;

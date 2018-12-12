@@ -838,7 +838,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 			if (covi -> numberOfRows == 1) {
 				thy data.row (1)  +=  covi -> data.row (1)  *  (covi -> numberOfObservations - 1.0);
 			} else {
-				MATaxpy (thy data.get(), covi -> data.get(), covi -> numberOfObservations - 1.0);
+				thy data.get() <<= covi -> data.get() * (covi -> numberOfObservations - 1.0);
 			}
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
@@ -874,7 +874,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			if (thy numberOfRows == 1) {
 				thy data.row (1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
 			} else
-				MATaxpy (thy data.get(), outer.get(), covi -> numberOfObservations); // Y += aX
+				thy data.get() <<= outer.get() * covi -> numberOfObservations; // Y += aX
 		}
 		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
 		return thee;
