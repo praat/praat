@@ -246,7 +246,7 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 
 void HMMBaumWelch_getGamma (HMMBaumWelch me) {
 	for (integer it = 1; it <= my numberOfTimes; it ++) {
-		VECVUmul_preallocated (my gamma.column (it), my alpha.column (it), my beta.column (it));
+		my gamma.column (it) <<= my alpha.column (it) * my beta.column (it);
 		my gamma.column (it) /= NUMsum (my gamma.column (it));
 	}
 }
