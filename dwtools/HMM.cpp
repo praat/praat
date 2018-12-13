@@ -813,8 +813,49 @@ void HMMBaumWelch_reInit (HMMBaumWelch me) {
 	my bik_denom.get() <<= 0.0;
 }
 
+static integer HMM_getState_notHidden (HMM me, conststring32 stateLabel) {
+	for (integer istate = 1; istate <= my states -> size; istate ++)
+		if (Melder_cmp (my states -> at [istate] -> label.get(), stateLabel) == 0) return istate;
+	return 0;	
+}
+/*
+	For a not hidden markov model there is an analytical solution for the state transition probabilities
+*/
+void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
+	Melder_assert (my notHidden);
+	my transitionProbs.get() <<= 0.0;
+	for (integer ios = 1; ios <= thy size; ios ++) {
+		HMMObservationSequence hmm_os = thy at [ios];
+		autoStrings stateLabels = HMMObservationSequence_to_Strings (hmm_os);
+		integer stateNumber = HMM_getState_notHidden (me, stateLabels -> strings [1].get());
+		for (integer islabel = 2; islabel <= stateLabels -> numberOfStrings; islabel ++) {
+			integer stateNumberTo = HMM_getState_notHidden (me, stateLabels -> strings [islabel].get());
+			my transitionProbs [stateNumber] [stateNumberTo] += 1.0;
+			stateNumber = stateNumberTo;
+		}
+	}
+	/*
+		Assign minimum probabilty to states that have zero probability
+	*/
+	for (integer irow = 1; irow <= my numberOfStates; irow ++)
+		for (integer icol = 1; icol <= my numberOfStates; icol ++)
+			if (my transitionProbs [irow] [icol] <= 0.0) my transitionProbs [irow] [icol] = minProb;
+			
+	/*
+		Normalize as probabilities
+	*/
+	for (integer irow = 1; irow <= my numberOfStates; irow ++)
+		VECnormalize_inplace (my transitionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
+}
+
+
 void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info) {
 	try {
+		if (my notHidden) {
+			// For a not hidden markov model there is an analytical solution for the state transition probabilities
+			HMM_HMMObservationSequenceBag_learn_notHidden (me, thee, minProb);
+			return;
+		}
 		// act as if all observation sequences are in memory
 		integer capacity = HMMObservationSequenceBag_getLongestSequence (thee);
 		autoHMMBaumWelch bw = HMMBaumWelch_create (my numberOfStates, my numberOfObservationSymbols, capacity);
