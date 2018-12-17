@@ -413,7 +413,8 @@ static void Formula_lexan () {
 				newtok (NUMBER_)
 				toknumber (Melder_atof (token.string));
 			}
-		} else if (Melder_isLowerCaseLetter (kar) || (kar == U'.' && Melder_isLowerCaseLetter (theExpression [ikar + 1])
+		} else if (Melder_isLetter (kar) && ! Melder_isUpperCaseLetter (kar) ||
+				(kar == U'.' && Melder_isLetter (theExpression [ikar + 1]) && ! Melder_isUpperCaseLetter (theExpression [ikar + 1])
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIX_ && lexan [itok]. symbol != MATRIXSTR_
 					&& lexan [itok]. symbol != CLOSING_BRACKET_)))) {
 			int tok;
@@ -663,7 +664,7 @@ static void Formula_lexan () {
 		} else if (kar >= U'A' && kar <= U'Z') {
 			bool endsInDollarSign = false;
 			stringtokon;
-			do stringtokchar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
+			do stringtokchar while (Melder_isAlphanumeric (kar) || kar == U'_');
 			if (kar == U'$') { stringtokchar endsInDollarSign = true; }
 			stringtokoff;
 			oldchar;
@@ -684,14 +685,14 @@ static void Formula_lexan () {
 			} else if (! underscore) {
 				Melder_throw (
 					U"Unknown symbol «", token.string, U"» in formula "
-					U"(variables start with lower case; object names contain an underscore).");
+					U"(variables start with nonupper case; object names contain an underscore).");
 			} else if (str32nequ (token.string, U"Object_", 7)) {
 				integer uniqueID = Melder_atoi (token.string + 7);
 				int i = theCurrentPraatObjects -> n;
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;
 				if (i == 0)
-					formulaError (U"No such object (note: variables start with lower case)", ikar);
+					formulaError (U"No such object (note: variables start with nonupper case)", ikar);
 				newtok (endsInDollarSign ? MATRIXSTR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
@@ -701,7 +702,7 @@ static void Formula_lexan () {
 				while (i > 0 && ! str32equ (token.string, theCurrentPraatObjects -> list [i]. name.get()))
 					i --;
 				if (i == 0)
-					formulaError (U"No such object (note: variables start with lower case)", ikar);
+					formulaError (U"No such object (note: variables start with nonupper case)", ikar);
 				newtok (endsInDollarSign ? MATRIXSTR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
