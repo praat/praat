@@ -815,34 +815,78 @@ void HMMBaumWelch_reInit (HMMBaumWelch me) {
 
 static integer HMM_getState_notHidden (HMM me, conststring32 stateLabel) {
 	for (integer istate = 1; istate <= my states -> size; istate ++)
-		if (Melder_cmp (my states -> at [istate] -> label.get(), stateLabel) == 0) return istate;
+		if (Melder_cmp (my states -> at [istate] -> label.get(), stateLabel) == 0)
+			return istate;
 	return 0;	
 }
+
+/*
+	Translate the observation sequences to a number of state sequences for not continuous markov models.
+	A 0 state number signals the start of a new observation sequence.
+*/
+static autoINTVEC HMM_HMMObservationSequenceBag_getStateSequences (HMM me, HMMObservationSequenceBag thee) {
+	/*
+		Calculate storage needed for state sequence numbers.
+	*/
+	integer numberOfElements = 0;
+	for (integer iseq = 1; iseq <= thy size; iseq ++) {
+		HMMObservationSequence hmm_os = thy at [iseq];
+		numberOfElements += hmm_os -> rows.size + 1; // 1 extra for 0 state 
+	}
+	/*
+		Get state sequence numbers.
+	*/
+	autoINTVEC stateSequenceNumbers = newINTVECraw (numberOfElements);
+	integer numberOfElements2 = 0;
+	for (integer iseq = 1; iseq <= thy size; iseq ++) {
+		HMMObservationSequence hmm_os = thy at [iseq];
+		for (integer islabel = 1; islabel <= hmm_os -> rows.size; islabel ++) {
+			conststring32 label = Table_getStringValue_Assert (hmm_os, islabel, 1);
+			integer stateNumber = HMM_getState_notHidden (me, label);
+			Melder_require (stateNumber > 0, 
+				U"The ", islabel, U"th observation of sequence ", iseq, U" labeled", label, U" is not a valid state.");
+			stateSequenceNumbers [++ numberOfElements2] = stateNumber;
+		}
+		stateSequenceNumbers [++ numberOfElements2] = 0; // signal transition to another observation sequence
+	}
+	Melder_assert (numberOfElements == numberOfElements2);
+	return stateSequenceNumbers;
+}
+
 /*
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
 void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
 	Melder_assert (my notHidden);
+	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
+	if (stateSequenceNumbers.size < 2) return;
 	my transitionProbs.get() <<= 0.0;
-	for (integer ios = 1; ios <= thy size; ios ++) {
-		HMMObservationSequence hmm_os = thy at [ios];
-		autoStrings stateLabels = HMMObservationSequence_to_Strings (hmm_os);
-		integer stateNumber = HMM_getState_notHidden (me, stateLabels -> strings [1].get());
-		for (integer islabel = 2; islabel <= stateLabels -> numberOfStrings; islabel ++) {
-			integer stateNumberTo = HMM_getState_notHidden (me, stateLabels -> strings [islabel].get());
+	integer inum = 2;
+	integer stateNumber = stateSequenceNumbers [1];
+	while (inum < stateSequenceNumbers.size) {
+		integer stateNumberTo = stateSequenceNumbers [inum ++];
+		if (stateNumberTo != 0) {
 			my transitionProbs [stateNumber] [stateNumberTo] += 1.0;
 			stateNumber = stateNumberTo;
+		} else {
+			if (inum == stateSequenceNumbers.size)
+				break;
+			stateNumber = stateSequenceNumbers [inum ++];
 		}
 	}
+	/*
+		Normalize as probabilities
+	*/
+	for (integer irow = 1; irow <= my numberOfStates; irow ++)
+		VECnormalize_inplace (my transitionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
 	/*
 		Assign minimum probabilty to states that have zero probability
 	*/
 	for (integer irow = 1; irow <= my numberOfStates; irow ++)
 		for (integer icol = 1; icol <= my numberOfStates; icol ++)
-			if (my transitionProbs [irow] [icol] <= 0.0) my transitionProbs [irow] [icol] = minProb;
-			
+			my transitionProbs [irow] [icol] = std::max (my transitionProbs [irow] [icol], minProb);
 	/*
-		Normalize as probabilities
+		Normalize again as probabilities
 	*/
 	for (integer irow = 1; irow <= my numberOfStates; irow ++)
 		VECnormalize_inplace (my transitionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
@@ -867,8 +911,8 @@ void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee
 		do {
 			lnp = bw -> lnProb;
 			HMMBaumWelch_reInit (bw.get());
-			for (integer ios = 1; ios <= thy size; ios ++) {
-				HMMObservationSequence hmm_os = thy at [ios];
+			for (integer iseq = 1; iseq <= thy size; iseq ++) {
+				HMMObservationSequence hmm_os = thy at [iseq];
 				autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
 				INTVEC obs = si -> classIndex.get();
 				integer nobs = si -> numberOfItems; // convenience
