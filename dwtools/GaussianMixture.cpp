@@ -143,7 +143,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 			thy data.row (1)  +=  row.all()  *  gamma [irow];
 		} else {
 			MATouter_preallocated (outer, row.get(), row.get());
-			thy data.get() <<= outer.get() * gamma [irow];
+			thy data.all()  +=  outer.all()  *  gamma [irow];
 		}
 	}
 	thy numberOfObservations = my mixingProbabilities [component] * data.nrow;
@@ -161,7 +161,7 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer i
 		for (integer j = 1; j <= thy numberOfColumns; j ++)
 			thy data [1] [j] += fraction * his data [j] [j];
 	} else
-		thy data.get() <<= his data.get() * fraction;
+		thy data.all()  +=  his data.all()  *  fraction;
 }
 
 void structGaussianMixture :: v_info () {
