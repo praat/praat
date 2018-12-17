@@ -1919,7 +1919,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 			// the weighted S matrix (eq. 8)
 			
-			wsih.get() <<= sih -> data.get() * weights -> data [i] [h];
+			wsih.all()  +=  sih -> data.all()  *  weights -> data [i] [h];
 		}
 
 		solution.all() <<= xc -> data.column (h); // initial guess
