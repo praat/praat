@@ -161,7 +161,7 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
 			MATouter_preallocated (outer, data.row (irow), data.row (irow));
-			result <<= outer.get() * rowWeights [irow];
+			result  +=  outer.get()  * rowWeights [irow];
 		}
 	} else {
 		autoVEC w = newVECraw (rowWeights.size);

@@ -470,7 +470,6 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 	}
 }
 
-
 autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh) {
 	try {
 		autoCovariance cov = SSCP_to_Covariance (me, 1);
