@@ -834,11 +834,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 			Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
-			if (covi -> numberOfRows == 1) {
-				thy data.row (1)  +=  covi -> data.row (1)  *  (covi -> numberOfObservations - 1.0);
-			} else {
-				thy data.get() <<= covi -> data.get() * (covi -> numberOfObservations - 1.0);
-			}
+			thy data.all() += covi -> data.all() * (covi -> numberOfObservations - 1.0);
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
 		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
