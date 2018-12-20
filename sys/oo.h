@@ -99,7 +99,7 @@
 
 //#define oo_BYTE_VECTOR(x,n)  oo_VECTOR (signed char, i8, x, 1, n)
 #define oo_INT_VECTOR(x,n)  oo_VECTOR (int, i16, x, 1, n)
-#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
+//#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
 //#define oo_UBYTE_VECTOR(x,n)  oo_VECTOR (unsigned char, u8, x, 1, n)
 //#define oo_UINT_VECTOR(x,n)  oo_VECTOR (unsigned int, u16, x, 1, n)
 //#define oo_UINTEGER_VECTOR(x,n)  oo_VECTOR (uinteger, u32, x, 1, n)
@@ -114,7 +114,7 @@
 
 //#define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i8, x, 1, nrow, 1, ncol)
 //#define oo_INT_MATRIX(x,nrow,ncol)  oo_MATRIX (int, i16, x, 1, nrow, 1, ncol)
-#define oo_INTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (integer, integer32BE, x, 1, nrow, 1, ncol)
+//#define oo_INTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (integer, integer32BE, x, 1, nrow, 1, ncol)
 #define oo_UBYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u8, x, 1, nrow, 1, ncol)
 //#define oo_UINT_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned int, u16, x, 1, nrow, 1, ncol)
 //#define oo_UINTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (uinteger, u32, x, 1, nrow, 1, ncol)
