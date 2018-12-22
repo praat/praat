@@ -880,10 +880,10 @@ static void HMM_smoothEmissionProbs_naive (HMM me, double minProb) {
 	for (integer irow = 1; irow <= my numberOfStates; irow ++)
 		VECnormalize_inplace (my emissionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
 }
+
 /*
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
-
 void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
 	Melder_assert (my notHidden);
 	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
