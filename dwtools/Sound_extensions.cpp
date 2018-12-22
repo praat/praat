@@ -515,10 +515,9 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 autoSound Sound_createHamming (double windowDuration, double samplingFrequency) {
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
-		double *s = & my z [1] [0];
 		double p = 2.0 * NUMpi / (my nx - 1);
 		for (integer i = 1; i <= my nx; i ++) {
-			s [i] = 0.54 - 0.46 * cos ((i - 1) * p);
+			my z [1] [i] = 0.54 - 0.46 * cos ((i - 1) * p);
 		}
 		return me;
 	} catch (MelderError) {
@@ -795,7 +794,6 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099
 		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling::INTEGRAL, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 		
-		double response_re, response_im;
 		dcomplex r = gammaToneFilterResponseAtCentreFrequency (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin);
 		
 		double scale = 1.0 / sqrt (r.re * r.re + r.im * r.im);

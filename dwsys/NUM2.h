@@ -23,8 +23,9 @@
  djmw 20121024 Latest modification.
 */
 
+#include <algorithm>
 #include <limits.h>
-#include "../melder/melder.h"
+#include "melder.h"
 #include "MAT_numerics.h"
 
 /* machine precision */
@@ -80,6 +81,54 @@ void MATprintMatlabForm (constMAT m, conststring32 name);
 		7, 8, 9 ];
 */
 
+inline integer NUMmax (const constINTVEC& vec) {
+	if (NUMisEmpty (vec)) return undefined;
+	integer maximum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value > maximum) maximum = value;
+	}
+	return maximum;
+}
+
+inline integer NUMmin (const constINTVEC& vec) {
+	if (NUMisEmpty (vec)) return undefined;
+	integer minimum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value < minimum) minimum = value;
+	}
+	return minimum;
+}
+
+template<typename T>
+inline integer NUMmaxPos (vector<T> v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	T maximum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] > maximum) {
+			maximum = v [i];
+			index = i;
+		}
+	}
+	return index;	
+}
+
+template<typename T>
+inline integer NUMminPos (vector<T> v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	T minimum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] < minimum) {
+			minimum = v [i];
+			index = i;
+		}
+	}
+	return index;	
+}
+
 /*  NUMvector_extrema
  * Function:
  *	 compute minimum and maximum values of array v[lo..hi].
@@ -92,42 +141,63 @@ inline void NUMextrema (constVEC x, double *out_minimum, double *out_maximum) {
 	if (out_maximum) *out_maximum = NUMmax (x);
 }
 
-template <class T>
-void NUMvector_extrema (const T *v, integer lo, integer hi, double *p_min, double *p_max) {
+inline void NUMextrema (constVEC v, integer lo, integer hi, double *out_min, double *out_max) {
 	double min = v [lo];
 	double max = min;
-	for (integer i = lo + 1; i <= hi; i++)
-	{
+	for (integer i = lo + 1; i <= hi; i++) {
 		if (v [i] < min) min = v [i];
 		else if (v [i] > max) max = v [i];
 	}
-	if (p_min) *p_min = min;
-	if (p_max) *p_max = max;
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
 }
 
-template <class T>
-void NUMmatrix_extrema (const T * const *x, integer rb, integer re, integer cb, integer ce, double *p_min, double *p_max) {
-	T min = x[rb][cb], max = min;
-	for (integer i = rb; i <= re; i++) {
-		for (integer j = cb; j <= ce; j++) {
-			T t = x[i] [j];
-			if (t < min) min = t;
-			else if (t > max) max = t;
+inline void NUMextrema (constINTVEC v, integer lo, integer hi, double *out_min, double *out_max) {
+	integer min = v [lo];
+	integer max = min;
+	for (integer i = lo + 1; i <= hi; i++) {
+		if (v [i] < min) min = v [i];
+		else if (v [i] > max) max = v [i];
+	}
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
+}
+
+inline double NUMmax (constMAT x, integer rb, integer re, integer cb, integer ce) {
+	Melder_assert (rb > 0 && rb <= re && re <= x.nrow);
+	Melder_assert (cb > 0 && cb <= ce && ce <= x.ncol);
+	double max = x [rb] [cb];
+	for (integer irow = rb; irow <= re; irow ++)
+		for (integer icol = cb; icol <= ce; icol ++) {
+			const double value = x [irow] [icol];
+			if (value > max) max = value;
 		}
-	}
-	if (p_min) {
-		*p_min = min;
-	}
-	if (p_max) {
-		*p_max = max;
-	}
+	return max;
 }
 
-template <class T>
-double NUMmatrix_extremum (const T * const *x, integer rb, integer re, integer cb, integer ce) {
-	double min, max;
-	NUMmatrix_extrema (x, rb, re, cb, ce, & min, & max);
-	return fabs (max) > fabs (min) ? max : min;
+inline double NUMmin (constMAT x, integer rb, integer re, integer cb, integer ce) {
+	Melder_assert (rb > 0 && rb <= re && re <= x.nrow);
+	Melder_assert (cb > 0 && cb <= ce && ce <= x.ncol);
+	double min = x [rb] [cb];
+	for (integer irow = rb; irow <= re; irow ++)
+		for (integer icol = cb; icol <= ce; icol ++) {
+			const double value = x [irow] [icol];
+			if (value < min) min = value;
+		}
+	return min;
+}
+
+inline void NUMextrema (constMAT x, integer rb, integer re, integer cb, integer ce, double *out_min, double *out_max) {
+	double min = NUMmin (x, rb, re, cb, ce);
+	double max = NUMmax (x, rb, re, cb, ce);
+	if (out_min) *out_min = min;
+	if (out_max) *out_max = max;
+}
+
+inline double NUMextremum (constMAT x, integer rb, integer re, integer cb, integer ce) {
+	double min = NUMmin (x, rb, re, cb, ce);
+	double max = NUMmax (x, rb, re, cb, ce);
+	return std::max (fabs (min), fabs (max));
 }
 
 /* NUMvector_clip
@@ -150,14 +220,6 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 		if (v[i] < min) v[i] = min;
 		else if (v[i] > max) v[i] = max;
 	}
-}
-
-inline void VECsetValues (VEC x, double value) {
-	for (integer i = 1; i <= x.size; i ++) x [i] = value;
-}
-
-inline void MATsetValues (MAT x, double value) {
-	VECsetValues (asvector (x), value);
 }
 
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
@@ -183,11 +245,8 @@ inline void MATcopy_preallocated (MAT target, constMAT x) {
 
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = newVECraw (x.ncol);
-	autoVEC column = newVECraw (x.nrow);
-	for (integer icol = 1; icol <= norm.size; icol ++) {
-		VECcolumn_preallocated (column.get(), x, icol);
-		norm [icol] = NUMnorm (column.get(), power);
-	}
+	for (integer icol = 1; icol <= norm.size; icol ++)
+		norm [icol] = NUMnorm (x.column (icol), power);
 	return norm;
 }
 
@@ -202,7 +261,7 @@ inline void VECnormalize_inplace (VEC v, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	double oldnorm = NUMnorm (v, power);
 	if (oldnorm > 0.0)
-		VECmultiply_inplace (v, norm / oldnorm);
+		v  *=  norm / oldnorm;
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
@@ -244,7 +303,7 @@ double NUMmultivariateKurtosis (constMAT x, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad, VEC *work);
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -252,20 +311,14 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 	makes the returned value "equal" to the standard deviation if the data is normally distributed.
 	You either GIVE the median location (if wantlocation = 0) or it
 	will be calculated (if wantlocation = 1);
-
-	work is a working array (1..n) that can be used for efficiency reasons.
-	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
 void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
-	double *inout_scale, bool wantscale, double k_stdev, double tol, VEC *work);
+	double *inout_scale, bool wantscale, double k_stdev, double tol, integer maximumNumberOfiterations);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.
-	k Winsorizes at `k' standard deviations.
-
-	work is a working array (1..n) that can be used for efficiency reasons.
-	If work == NULL, the routine allocates (and destroys) its own memory.
+	k_stdev Winsorizes at `k_stdev' standard deviations.
 */
 
 autoVEC VECmonotoneRegression (constVEC x);
@@ -1194,28 +1247,26 @@ integer NUMrandomBinomial (double p, integer n);
 double NUMrandomBinomial_real (double p, integer n);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
-
 // lpc[1..n] to rc[1..n]
-void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc);
+void VECrc_from_lpc (VEC rc, constVEC lpc);
 
-// rc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
-void NUMlpc_rc_to_area (double *rc, integer n, double *area);
+// rc[1..n] to area[1..n], implicit: area[n+1] = 0.0001; (1 cm^2)
+void VECarea_from_rc (VEC area, constVEC rc);
 
 // area[1..n] to rc[1..n-1] (modification: LPTRN assumes area[n+1])
-void NUMlpc_area_to_rc (double *area, integer n, double *rc);
+void VECrc_from_area (VEC rc, constVEC area);
 
 // area[1..n] to lpc[1..n-1]! (modification: lptrn gives lpc[1] = 1 we don't)
-void NUMlpc_area_to_lpc (double *area, integer n, double *lpc);
+void VEClpc_from_area (VEC lpc, constVEC area);
 
 // lpc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
-void NUMlpc_lpc_to_area (double *lpc, integer m, double *area);
-
+void VECarea_from_lpc (VEC area, constVEC lpc);
 /*
  Fix indices to be in the range [lowerLimit, upperLimit].
 */
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
-void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
+void NUMgetEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
 
 double NUMfrobeniusnorm (constMAT x);
@@ -1230,20 +1281,32 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	return inproduct / wsum;
 }
 
-/*  scalar a x plus y: y += a x */
-inline void VECaxpy (VEC const& y, constVECVU const& x, double a) {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= y.size; i ++)
-		y [i] += a * x [i];
+inline void VECchainRows_preallocated (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
+	integer k = 1;
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol ++)
+			v [k ++] = m [irow] [icol];
 }
 
-/* Y += +a X */
-inline void MATaxpy (MAT y, constMAT x, double a) {
-	Melder_assert (y.nrow = x.nrow);
-	Melder_assert (y.ncol = x.ncol);
-	for (integer irow = 1; irow <= y.nrow; irow ++)
-		for (integer icol = 1; icol <= y.ncol; icol ++)
-			y [irow] [icol] += a * x [irow] [icol];
+inline autoVEC VECchainRows (MAT m) {
+	autoVEC result = newVECraw (m.nrow * m.ncol);
+	VECchainRows_preallocated (result.get(), m);
+	return result;
+}
+
+inline void VECchainColumns_preallocated (VEC v, MAT m) {
+	Melder_assert (m.nrow * m.ncol == v.size);
+	integer k = 1;
+	for (integer icol = 1; icol <= m.ncol; icol ++)
+		for (integer irow = 1; irow <= m.nrow; irow ++)
+			v [k ++] = m [irow] [icol];
+}
+
+inline autoVEC VECchainColumns (MAT m) {
+	autoVEC result = newVECraw (m.nrow * m.ncol);
+	VECchainColumns_preallocated (result.get(), m);
+	return result;
 }
 
 /* R = X.Y.Z */

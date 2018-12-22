@@ -64,6 +64,10 @@ static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberO
 	}
 }
 
+void Net_initEmpty (Net me) {
+	my layers = LayerList_create ();
+}
+
 autoNet Net_createEmpty (integer numberOfInputNodes) {
 	try {
 		autoNet me = Thing_new (Net);
@@ -75,11 +79,25 @@ autoNet Net_createEmpty (integer numberOfInputNodes) {
 	}
 }
 
+/*
+void Net_addRBMLayer (Net me, integer numberOfOutputNodes) {
+	Melder_require (my layers.size >= 1,
+		U"Cannot add an RBM layer if there is no input layer.");
+	integer layerNumber = my layers.size + 1;
+	autoRBMLayer layer = RBMLayer_create (
+		layerNumber == 1 ? my numberOfInputNodes : Melder_iround (numbersOfNodes [ilayer]),
+		Melder_iround (numbersOfNodes [ilayer + 1]),
+		ilayer == 1 ? inputsAreBinary : true
+	);
+	my layers -> addItem_move (layer.move());
+}
+*/
+
 void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary) {
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
-	my layers = LayerList_create ();
+	Net_initEmpty (me);
 	for (integer ilayer = 1; ilayer <= numberOfLayers; ilayer ++) {
 		autoRBMLayer layer = RBMLayer_create (
 			Melder_iround (numbersOfNodes [ilayer]),
@@ -106,6 +124,16 @@ static void copyOutputsToInputs (Layer me, Layer you) {
 
 inline static double logistic (double excitation) {
 	return 1.0 / (1.0 + exp (- excitation));
+}
+
+inline static double inverseLogistic (double activation) {
+	/*
+		y = 1 / (1 + exp (x))
+		1 + exp (x) = 1 / y
+		exp (x) = 1 / y - 1 = (1 - y) / y
+		x = ln ((1 - y) / y)
+	*/
+	return log ((1.0 - activation) / activation);
 }
 
 static void Layer_sampleOutput (Layer me) {
@@ -236,16 +264,36 @@ void Net_spreadUp_reconstruction (Net me) {
 }
 
 void structRBMLayer :: v_update (double learningRate) {
-	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
 		our outputBiases [jnode] += learningRate * (our outputActivities [jnode] - our outputReconstruction [jnode]);
-	}
 	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
 		our inputBiases [inode] += learningRate * (our inputActivities [inode] - our inputReconstruction [inode]);
-		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
 			our weights [inode] [jnode] += learningRate *
-				(our inputActivities [inode] * our outputActivities [jnode] -
-				 our inputReconstruction [inode] * our outputReconstruction [jnode]);
-		}
+					(our inputActivities [inode] * our outputActivities [jnode] -
+					 our inputReconstruction [inode] * our outputReconstruction [jnode]);
+	}
+}
+
+void structRBMLayer :: v_updateFirstPhase (double learningRate) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+		our outputBiases [jnode] += learningRate * our outputActivities [jnode];
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		our inputBiases [inode] += learningRate * our inputActivities [inode];
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+			our weights [inode] [jnode] += learningRate *
+					our inputActivities [inode] * our outputActivities [jnode];
+	}
+}
+
+void structRBMLayer :: v_updateSecondPhase (double learningRate) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+		our outputBiases [jnode] -= learningRate * our outputActivities [jnode];
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		our inputBiases [inode] -= learningRate * our inputActivities [inode];
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++)
+			our weights [inode] [jnode] -= learningRate *
+					our inputActivities [inode] * our outputActivities [jnode];
 	}
 }
 
@@ -323,6 +371,106 @@ void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate
 	}
 }
 
+void Net_PatternList_learn_twoPhases_old (Net me, PatternList thee, double learningRate) {
+	try {
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			Net_PatternList_applyToInput (me, thee, ipattern);
+			Net_spreadUp (me, kLayer_activationType::STOCHASTIC);   // no contrasts will develop if this is deterministic
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				layer -> v_updateFirstPhase (learningRate);
+			}
+			#if 0
+			for (integer isweep = 1; isweep <= 1; isweep ++) {
+				Net_spreadDown (me, kLayer_activationType::DETERMINISTIC);
+				Net_spreadUp (me, kLayer_activationType::DETERMINISTIC);
+			}
+			#else
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				for (integer isweep = 1; isweep <= 1; isweep ++) {
+					layer -> v_spreadDown (kLayer_activationType::DETERMINISTIC);
+					layer -> v_spreadUp (kLayer_activationType::DETERMINISTIC);
+				}
+			}
+			#endif
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				layer -> v_updateSecondPhase (learningRate);
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": not learned.");
+	}
+}
+void Net_PatternList_learn_twoPhases_old2 (Net me, PatternList thee, double learningRate) {
+	try {
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			Net_PatternList_applyToInput (me, thee, ipattern);
+			Net_spreadUp (me, kLayer_activationType::STOCHASTIC);   // no contrasts will develop if this is deterministic
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				layer -> v_updateFirstPhase (learningRate);
+				for (integer isweep = 1; isweep <= 1; isweep ++) {
+					layer -> v_spreadDown (kLayer_activationType::DETERMINISTIC);
+					layer -> v_spreadUp (kLayer_activationType::DETERMINISTIC);
+				}
+				layer -> v_updateSecondPhase (learningRate);
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": not learned.");
+	}
+}
+
+static void combineOutputsAndInputs (Layer me_any, Layer you_any) {
+	RBMLayer me = static_cast <RBMLayer> (me_any);
+	RBMLayer you = static_cast <RBMLayer> (you_any);
+	integer numberOfNodes = my numberOfOutputNodes;
+	Melder_assert (your numberOfInputNodes == numberOfNodes);
+	for (integer inode = 1; inode <= my numberOfOutputNodes; inode ++) {
+		PAIRWISE_SUM (longdouble, myExcitation, integer, my numberOfInputNodes,
+ 			double *p_inputActivity = & my inputActivities [1];
+ 			double *p_weight = & my weights [1] [inode],
+ 			(longdouble) *p_inputActivity * (longdouble) *p_weight,
+ 			( p_inputActivity += 1, p_weight += numberOfNodes )
+		)
+		PAIRWISE_SUM (longdouble, yourExcitation, integer, your numberOfOutputNodes,
+ 			double *p_weight = & your weights [inode] [1];
+ 			double *p_outputActivity = & your outputActivities [1],
+ 			(longdouble) *p_weight * (longdouble) *p_outputActivity,
+ 			( p_weight += 1, p_outputActivity += 1 )
+		)
+		double totalExcitation = 0.5 * double (myExcitation + yourExcitation);
+		totalExcitation += my outputBiases [inode];
+		my outputActivities [inode] = your inputActivities [inode] = logistic (totalExcitation);
+	}
+}
+
+void Net_PatternList_learn_twoPhases (Net me, PatternList thee, double learningRate) {
+	try {
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			Net_PatternList_applyToInput (me, thee, ipattern);
+			Layer layer1 = my layers->at [1];
+			Layer layer2 = my layers->at [2];
+			Net_spreadUp (me, kLayer_activationType::STOCHASTIC);   // no contrasts will develop if this is deterministic
+			layer1 -> v_updateFirstPhase (learningRate);
+			layer2 -> v_updateFirstPhase (learningRate);
+			for (integer isweep = 1; isweep <= 10; isweep ++) {
+				layer1 -> v_spreadDown (kLayer_activationType::DETERMINISTIC);
+				layer2 -> v_spreadUp (kLayer_activationType::DETERMINISTIC);
+				//layer1 -> v_spreadUp (kLayer_activationType::DETERMINISTIC);
+				//layer2 -> v_spreadDown (kLayer_activationType::DETERMINISTIC);
+				combineOutputsAndInputs (layer1, layer2);
+			}
+			layer1 -> v_updateSecondPhase (learningRate);
+			layer2 -> v_updateSecondPhase (learningRate);
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": not learned.");
+	}
+}
+
 autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kLayer_activationType activationType) {
 	try {
 		Layer outputLayer = my layers->at [my layers->size];
@@ -330,8 +478,7 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 			Net_PatternList_applyToInput (me, thee, ipattern);
 			Net_spreadUp (me, activationType);
-			NUMvector_copyElements <double> (outputLayer -> outputActivities.at,
-					& activations -> z [ipattern] [0], 1, outputLayer -> numberOfOutputNodes);
+			activations -> z.row (ipattern) <<= outputLayer -> outputActivities;
 		}
 		return activations;
 	} catch (MelderError) {
@@ -342,7 +489,7 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 static autoMatrix Layer_extractInputActivities (Layer me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
-		NUMvector_copyElements <double> (my inputActivities.at, & thy z [1] [0], 1, my numberOfInputNodes);
+		thy z.row (1) <<= my inputActivities;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": input activities not extracted.");
@@ -356,7 +503,7 @@ autoMatrix Net_extractInputActivities (Net me) {
 static autoMatrix Layer_extractOutputActivities (Layer me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
-		NUMvector_copyElements <double> (my outputActivities.at, & thy z [1] [0], 1, my numberOfOutputNodes);
+		thy z.row (1) <<= my outputActivities;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": output activities not extracted.");
@@ -370,7 +517,7 @@ autoMatrix Net_extractOutputActivities (Net me) {
 autoMatrix structRBMLayer :: v_extractInputReconstruction () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
-		NUMvector_copyElements <double> (our inputReconstruction.at, & thy z [1] [0], 1, our numberOfInputNodes);
+		thy z.row (1) <<= our inputReconstruction;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input reconstruction not extracted.");
@@ -384,7 +531,7 @@ autoMatrix Net_extractInputReconstruction (Net me) {
 autoMatrix structRBMLayer :: v_extractOutputReconstruction () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
-		NUMvector_copyElements <double> (our outputReconstruction.at, & thy z [1] [0], 1, our numberOfOutputNodes);
+		thy z.row (1) <<= our outputReconstruction;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": output reconstruction not extracted.");
@@ -398,7 +545,7 @@ autoMatrix Net_extractOutputReconstruction (Net me) {
 autoMatrix structRBMLayer :: v_extractInputBiases () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
-		NUMvector_copyElements <double> (our inputBiases.at, & thy z [1] [0], 1, our numberOfInputNodes);
+		thy z.row (1) <<= our inputBiases;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input biases not extracted.");
@@ -424,7 +571,7 @@ autoMatrix Net_extractInputBiases (Net me, integer layerNumber) {
 autoMatrix structRBMLayer :: v_extractOutputBiases () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
-		NUMvector_copyElements <double> (our outputBiases.at, & thy z [1] [0], 1, our numberOfOutputNodes);
+		thy z.row (1) <<= our outputBiases;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input biases not extracted.");
@@ -443,7 +590,7 @@ autoMatrix Net_extractOutputBiases (Net me, integer layerNumber) {
 autoMatrix structRBMLayer :: v_extractWeights () {
 	try {
 		autoMatrix thee = Matrix_createSimple (our numberOfInputNodes, our numberOfOutputNodes);
-		matrixcopy_preallocated (thy z.get(), our weights.get());
+		thy z.all() <<= our weights.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": weights not extracted.");

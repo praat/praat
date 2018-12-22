@@ -167,7 +167,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 		
 		autoPCA thee = Thing_new (PCA);
 		thy centroid = newVECcolumnMeans (mcopy.get());
-		MATsubtract_inplace (mcopy.get(), thy centroid.get());
+		mcopy.all()  -=  thy centroid.all();
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);
 		PCA_setNumberOfObservations (thee.get(), mcopy.nrow);
@@ -176,7 +176,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 			the eigenstructure for A'A. This has no consequences for the
 			eigenvectors, but the eigenvalues have to be divided by (N-1).
 		*/
-		VECmultiply_inplace (thy eigenvalues.get(), 1.0 / (mcopy.nrow - 1));
+		thy eigenvalues.all()  *=  1.0 / (mcopy.nrow - 1);
 		
 		return thee;
 	} catch (MelderError) {
@@ -254,9 +254,9 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 
 autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep) {
 	try {
-		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
+		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
-		}
+
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
 		his rowLabels.all() <<= thy rowLabels.all();
@@ -305,7 +305,6 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 
 autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring) {
 	try {
-		integer npc;
 		autoVEC pc = VEC_createFromString (numstring);
 		autoConfiguration c = Configuration_create (1, pc.size);
 		c -> data.row (1) <<= pc.all();

@@ -30,7 +30,7 @@ oo_END_CLASS (HMMState)
 oo_DEFINE_CLASS (HMMObservation, Daata)
 
 	oo_STRING (label)
-	oo_OBJECT (GaussianMixture, 1, gm)
+	oo_OBJECT (GaussianMixture, 0, gm)
 
 oo_END_CLASS (HMMObservation)
 #undef ooSTRUCT
@@ -46,10 +46,27 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_INTEGER (numberOfMixtureComponents)
 	oo_INTEGER (componentDimension)
 	oo_INT (componentStorage)
-	oo_DOUBLE_MATRIX_FROM (transitionProbs, 0, numberOfStates, 1, numberOfStates + 1) // row 0: initial probabilities
+	oo_FROM (1)
+		oo_VEC (initialStateProbs, numberOfStates)
+	oo_ENDFROM
+	#if oo_READING
+		oo_VERSION_UNTIL (1)
+			autoVEC initialStateProbs;
+			oo_MAT (transitionProbs, numberOfStates + 1, numberOfStates + 1)
+			initialStateProbs = newVECraw (numberOfStates);
+			initialStateProbs <<= transitionProbs.row (1).part (1, numberOfStates);
+			for (integer irow = 1; irow <= numberOfStates; irow ++)
+				transitionProbs.row (irow) <<=  transitionProbs.row (irow + 1);
+			transitionProbs.nrow = numberOfStates;
+		oo_VERSION_ELSE
+			oo_MAT (transitionProbs, numberOfStates, numberOfStates + 1)
+		oo_VERSION_END
+	#else
+		oo_MAT (transitionProbs, numberOfStates, numberOfStates + 1)
+	#endif
 	oo_MAT (emissionProbs, numberOfStates, numberOfObservationSymbols)
-	oo_OBJECT (HMMStateList, 1, states)
-	oo_OBJECT (HMMObservationList, 1, observationSymbols)
+	oo_OBJECT (HMMStateList, 0, states)
+	oo_OBJECT (HMMObservationList, 0, observationSymbols)
 
 	#if oo_DECLARING
 		void v_info ()
@@ -66,9 +83,9 @@ oo_DEFINE_CLASS (HMMViterbi, Daata)
 	oo_INTEGER (numberOfTimes)
 	oo_INTEGER (numberOfStates)
 	oo_DOUBLE (prob)
-	oo_DOUBLE_MATRIX (viterbi, numberOfStates, numberOfTimes)
-	oo_INTEGER_MATRIX (bp, numberOfStates, numberOfTimes)
-	oo_INTEGER_VECTOR (path, numberOfTimes)
+	oo_MAT (viterbi, numberOfStates, numberOfTimes)
+	oo_INTMAT (bp, numberOfStates, numberOfTimes)
+	oo_INTVEC (path, numberOfTimes)
 
 oo_END_CLASS (HMMViterbi)
 #undef ooSTRUCT

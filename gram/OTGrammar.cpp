@@ -167,9 +167,10 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 }
 
 void OTGrammar_checkIndex (OTGrammar me) {
-	if (my index) return;
-	my index = NUMvector <integer> (1, my numberOfConstraints);
-	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+	if (my index.size != 0) return;
+	my index = newINTVECraw (my numberOfConstraints);
+	for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+		my index [icons] = icons;
 	OTGrammar_sort (me);
 }
 
@@ -2424,7 +2425,9 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 		/*
 			Rebuild index.
 		*/
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+		my index. resize (my numberOfConstraints);
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+			my index [icons] = icons;
 		OTGrammar_sort (me);
 	} catch (MelderError) {
 		Melder_throw (me, U": constraint \"", constraintName, U"\" not removed.");

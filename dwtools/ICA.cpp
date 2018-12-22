@@ -35,7 +35,7 @@ static void MATmul_VCVt_preallocated (MAT r, constMAT v, constMAT c, bool csym) 
 	Melder_assert (c.nrow == c.ncol);
 	Melder_assert (v.ncol == c.ncol);
 	for (integer i = 1; i <= r.nrow; i ++) {
-		integer jstart = csym ? i : 1;
+		integer jstart = ( csym ? i : 1 );
 		for (integer j = jstart; j <= r.nrow; j ++) {
 			// V_ik C_kl V'_lj = V_ik C_kl V_jl
 			longdouble vcv = 0.0;
@@ -230,9 +230,10 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		Eigen_initFromSymmetricMatrix (eigen.get(), c0 -> data.get());
 		
 		for (integer i = 1; i <= dimension; i ++) {
-			Melder_require (eigen -> eigenvalues [i] >= 0.0, U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
+			Melder_require (eigen -> eigenvalues [i] >= 0.0,
+				U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
 			double scalef = 1.0 / sqrt (eigen -> eigenvalues [i]);
-			VECmultiply_preallocated (p.row (dimension - i + 1), eigen -> eigenvectors.row (i), scalef);
+			p.row (dimension - i + 1) <<= eigen -> eigenvectors.row (i)  *  scalef;
 		}
 
 		// P*C [i]*P'
@@ -298,9 +299,9 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 						normm += dp * dp;
 					}
 
-					normp = normp < normm ? normp : normm;
+					normp = std::min (normp, normm);
 					normp = sqrt (normp);
-					delta_w = normp > delta_w ? normp : delta_w;
+					delta_w = std::max (normp, delta_w );
 				}
 				iter ++;
 
@@ -690,12 +691,11 @@ double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableLis
 		end = my size;
 	}
 	integer ntables = end - start + 1;
-	integer dimension = my at [1] -> numberOfColumns;
 	double dmsq = 0;
 	for (integer k = start; k <= end; k ++) {
 		CrossCorrelationTable thee = my at [k];
 		double dmksq = diagonalityMeasure (thy data.get());
-		dmsq += (w ? dmksq * w [k] : dmksq / ntables);
+		dmsq += ( w ? dmksq * w [k] : dmksq / ntables );
 	}
 	return dmsq;
 }
@@ -749,7 +749,7 @@ autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTabl
 void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	if (method == 1) {
 		autoVEC cweights = newVECraw (thy size);
-		VECsetValues (cweights.get(), 1.0 / thy size);
+		cweights.all() <<= 1.0 / thy size;
 		Diagonalizer_CrossCorrelationTable_qdiag (me, thee, cweights.get(), maxNumberOfIterations, tol);
 	} else {
 		Diagonalizer_CrossCorrelationTableList_ffdiag (me, thee, maxNumberOfIterations, tol);
@@ -802,7 +802,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 
 		for (integer k = 1; k <= n; k ++) {
 			autoCrossCorrelationTable ct = CrossCorrelationTable_create (dimension);
-			double low = (k == 1 && firstPositiveDefinite ? 0.1 : -1.0);
+			double low = ( k == 1 && firstPositiveDefinite ? 0.1 : -1.0 );
 			for (integer i = 1; i <= dimension; i ++) {
 				d [i] [i] = NUMrandomUniform (low, 1.0);
 			}

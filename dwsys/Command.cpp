@@ -1,6 +1,6 @@
 /* Command.cpp
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,15 +66,15 @@ void CommandHistory_insertItem_move (CommandHistory me, autoCommand command) {
 	my current = my size;
 }
 
-int CommandHistory_empty (CommandHistory me) {
+bool CommandHistory_isEmpty (CommandHistory me) {
 	return my size == 0;
 }
 
-int CommandHistory_offleft (CommandHistory me) {
+bool CommandHistory_isOffleft (CommandHistory me) {
 	return my current == 0;
 }
 
-int CommandHistory_offright (CommandHistory me) {
+bool CommandHistory_isOffright (CommandHistory me) {
 	return my size == 0 || my current == my size + 1;
 }
 

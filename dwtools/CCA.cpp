@@ -214,6 +214,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 			We can only predict when we have the largest dimension as input
 			and the number of coefficients equals the dimension of the smallest.
 		*/
+		
 		Melder_require (ny == nev, U"There are not enough correlations present for prediction.");
 		
 
@@ -226,12 +227,12 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		// ???? dimensions if nx .. ny ??
 
 		autoTableOfReal him = Eigen_TableOfReal_to_TableOfReal_projectRows (my x.get(), thee, from, ny);
-		autoNUMvector<double> buf (1, ny);
+		autoVEC buf = newVECraw (ny);
 
 		// u = V a -> a = V'u
 
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			NUMvector_copyElements (& his data [i] [0], buf.peek(), 1, ny);
+			buf.get() <<= his data.row (i).part (1, ny);
 			for (integer j = 1; j <= ny; j ++) {
 				longdouble t = 0.0;
 				for (integer k = 1; k <= ny; k ++) {

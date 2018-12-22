@@ -23,7 +23,7 @@ oo_DEFINE_CLASS (Procrustes, AffineTransform)
 	oo_DOUBLE (s)
 
 	#if oo_DECLARING
-		void v_transform (double **in, integer nrows, double **out)
+		void v_transform (MAT out, MAT in)
 			override;
 		autoAffineTransform v_invert ()
 			override;

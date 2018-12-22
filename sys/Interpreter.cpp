@@ -663,7 +663,7 @@ static bool isCommand (conststring32 string) {
 		(str32nequ (p + 2, U"warn ", 5) || str32nequ (p + 2, U"progress ", 9) || str32nequ (p + 2, U"check ", 6))) return true;
 	if (str32nequ (p, U"demo ", 5)) return true;
 	/*
-	 * Otherwise, things that start with lower case are formulas.
+	 * Otherwise, things that start with nonupper case are formulas.
 	 */
 	if (! Melder_isUpperCaseLetter (*p)) return false;
 	/*
@@ -757,7 +757,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, cons
 	variableVector  +=  vector;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
-	VECsubtract_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  -=  scalar;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -765,10 +765,10 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 		U"You cannot subtract a vector with size ", vector.size,
 		U" from a vector with a different size (", variableVector.size, U")."
 	);
-	VECsubtract_inplace (variableVector, vector);
+	variableVector  -=  vector;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
-	VECmultiply_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  *=  scalar;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -776,10 +776,10 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 		U"You cannot multiply a vector with size ", variableVector.size,
 		U" with a vector with a different size (", vector.size, U")."
 	);
-	VECmultiply_inplace (variableVector, vector);
+	variableVector  *=  vector;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
-	VECdivide_inplace (variable -> numericVectorValue, scalar);
+	variable -> numericVectorValue  /=  scalar;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -787,7 +787,7 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, c
 		U"You cannot divide a vector with size ", variableVector.size,
 		U" by a vector with a different size (", vector.size, U")."
 	);
-	VECdivide_inplace (variableVector, vector);
+	variableVector  /=  vector;
 }
 inline static void NumericMatrixVariable_add (InterpreterVariable variable, double scalar) {
 	MAT variableMatrix = variable -> numericMatrixValue.get();
@@ -1442,7 +1442,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					/*
 					 * Found a left quote. Search for a matching right quote.
 					 */
-					char32 *q = p + 1, varName [300], *r, *s, *colon;
+					char32 *q = p + 1, varName [300], *r, *s;
 					integer precision = -1;
 					bool percent = false;
 					while (*q != U'\0' && *q != U'\'' && q - p < 299) q ++;
@@ -1454,11 +1454,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					 */
 					for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
 					*s = U'\0';   // trailing null byte
-					colon = str32chr (varName, U':');
+					char32 *colon = str32chr (varName, U':');
 					if (colon) {
 						precision = Melder_atoi (colon + 1);
 						if (str32chr (colon + 1, U'%')) percent = true;
-						*colon = '\0';
+						*colon = U'\0';
 					}
 					InterpreterVariable var = Interpreter_hasVariable (me, varName);
 					if (var) {
@@ -1481,7 +1481,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 				}
 				trace (U"resume");
 				c0 = command2.string [0];   // resume in order to allow things like 'c$' = 5
-				if ((c0 < U'a' || c0 > U'z') && c0 != U'@' && ! (c0 == U'.' && command2.string [1] >= U'a' && command2.string [1] <= U'z')) {
+				if ((! Melder_isLetter (c0) || Melder_isUpperCaseLetter (c0)) && c0 != U'@' &&
+						! (c0 == U'.' && Melder_isLetter (command2.string [1]) && ! Melder_isUpperCaseLetter (command2.string [1]))) {
 					praat_executeCommand (me, command2.string);
 				/*
 				 * Interpret control flow and variables.
@@ -1522,7 +1523,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						} else fail = true;
 						break;
 					case U'e':
-						if (command2.string [1] == 'n' && command2.string [2] == 'd') {
+						if (command2.string [1] == U'n' && command2.string [2] == U'd') {
 							if (str32nequ (command2.string, U"endif", 5) && ! Melder_staysWithinInk (command2.string [5])) {
 								/* Ignore. */
 							} else if (str32nequ (command2.string, U"endfor", 6) && ! Melder_staysWithinInk (command2.string [6])) {
@@ -1815,14 +1816,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					case U'z':
 						fail = true;
 						break;
-					default: break;
+					default:
+						fail = true;
+						break;
 				}
 				if (fail) {
 					/*
-						Found an unknown word starting with a lower-case letter, optionally preceded by a period.
+						Found an unknown word starting with a nonupper-case letter, optionally preceded by a period.
 						See whether the word is a variable name.
 					*/
-					trace (U"found an unknown word starting with a lower-case letter, optionally preceded by a period");
+					trace (U"found an unknown word starting with a nonupper-case letter, optionally preceded by a period");
 					char32 *p = & command2.string [0];
 					/*
 						Variable names consist of a sequence of letters, digits, and underscores,

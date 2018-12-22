@@ -311,7 +311,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 		}
 		if (ymin >= ymax) {
 			double min, max;
-			NUMvector_extrema (& my data [irow] [0], colb, cole, & min, & max);
+			NUMextrema (my data.row (irow), colb, cole, & min, & max);
 			if (i > 1) {
 				if (min < ymin)
 					ymin = min;
@@ -330,7 +330,6 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 	Graphics_setInner (g);
 
 	integer ncols = cole - colb + 1, nrows = irows.size;
-;
 	double bar_width = 1.0 / (ncols * nrows + 2.0 * xoffsetFraction + (ncols - 1) * interbarsFraction + ncols * (nrows - 1) * interbarFraction);
 	double dx = (interbarsFraction + nrows + (nrows - 1) * interbarFraction) * bar_width;
 
@@ -404,13 +403,13 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	}
 
 	if (xmax <= xmin) {
-		NUMvector_extrema (x.at, 1, nPoints, & xmin, & xmax);
+		NUMextrema (x.get(), & xmin, & xmax);
 	}
 	if (xmax <= xmin) {
 		xmax += 1; xmin -= 1;
 	}
 	if (ymax <= ymin) {
-		NUMvector_extrema (y.at, 1, nPoints, & ymin, & ymax);
+		NUMextrema (y.get(), & ymin, & ymax);
 	}
 	if (ymax <= ymin) {
 		ymax += 1.0;
@@ -456,27 +455,23 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax, double ymin, double ymax, bool garnish) {
 	
 	if (rowmax < rowmin || rowmax < 1) {
-		rowmin = 1; rowmax = my numberOfRows;
-	}
-	if (rowmin < 1) {
-		rowmin = 1;
-	}
-	if (rowmax > my numberOfRows) {
+		rowmin = 1; 
 		rowmax = my numberOfRows;
 	}
+	if (rowmin < 1) rowmin = 1;
+
+	if (rowmax > my numberOfRows) rowmax = my numberOfRows;
+
 	integer numberOfRows = rowmax - rowmin + 1;
 	if (colmax < colmin || colmax < 1) {
-		colmin = 1; colmax = my numberOfColumns;
-	}
-	if (colmin < 1) {
-		colmin = 1;
-	}
-	if (colmax > my numberOfColumns) {
+		colmin = 1; 
 		colmax = my numberOfColumns;
 	}
-	if (ymax <= ymin) {
-		NUMmatrix_extrema (my data.at_deprecated, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
-	}
+	if (colmin < 1) colmin = 1;
+	if (colmax > my numberOfColumns) colmax = my numberOfColumns;
+
+	if (ymax <= ymin)
+		NUMextrema (my data.get(), rowmin, rowmax, colmin, colmax, &ymin, &ymax);
 
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
 	Graphics_setInner (g);
@@ -487,9 +482,8 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 		integer ndata = 0;
 
 		for (integer i = 1; i <= numberOfRows; i ++) {
-			if (isdefined (t = my data [rowmin + i - 1] [j])) {
+			if (isdefined (t = my data [rowmin + i - 1] [j]))
 				data [ ++ ndata] = t;
-			}
 		}
 		Graphics_boxAndWhiskerPlot (g, data.get(), x, r, w, ymin, ymax);
 	}
@@ -497,9 +491,8 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		for (integer j = colmin; j <= colmax; j ++) {
-			if (my columnLabels && my columnLabels [j] && my columnLabels [j] [0]) {
+			if (my columnLabels && my columnLabels [j] && my columnLabels [j] [0])
 				Graphics_markBottom (g, j, false, true, false, my columnLabels [j].get());
-			}
 		}
 		Graphics_marksLeft (g, 2, true, true, false);
 	}
@@ -586,14 +579,13 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
 	Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
 		U"Row number not in valid range.");
-	return NUMrowSum (my data.get(), rowNumber);
+	return NUMsum (my data.row (rowNumber));
 }
 
-double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
-	integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
-	Melder_require (columnNumber > 0,
-		U"There is no \"", columnLabel, U"\" column label.");
-	return TableOfReal_getColumnSum (me, columnNumber);
+double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
+	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
+		U"Column number not in valid range.");
+	return NUMsum (my data.column (columnNumber));
 }
 
 double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
@@ -603,10 +595,11 @@ double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
 	return TableOfReal_getRowSum (me, rowNumber);
 }
 
-double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
-	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
-		U"Column number not in valid range.");
-	return NUMcolumnSum (my data.get(), columnNumber);
+double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
+	integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+	Melder_require (columnNumber > 0,
+		U"There is no \"", columnLabel, U"\" column label.");
+	return TableOfReal_getColumnSum (me, columnNumber);
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
@@ -639,7 +632,8 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (my data.get(), icol, nullptr, & mean, nullptr, nullptr, & stdev);
+		NUM_sum_mean_sumsq_variance_stdev (my data.column (icol),
+				nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
 	}
@@ -655,7 +649,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (constVEC (& my data [irow] [0], my numberOfColumns),
+		NUM_sum_mean_sumsq_variance_stdev (my data.row (irow),
 				nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
@@ -680,78 +674,56 @@ bool TableOfReal_checkNonNegativity (TableOfReal me) {
 	return true;
 }
 
-static void NUMdmatrix_getColumnExtrema (double **a, integer rowb, integer rowe, integer icol, double *min, double *max) {
-	*min = *max = a [rowb] [icol];
-	for (integer i = rowb + 1; i <= rowe; i ++) {
-		double t = a [i] [icol];
-		if (t > *max) {
-			*max = t;
-		} else if (t < *min) {
-			*min = t;
-		}
-	}
-}
-
 void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb, integer cole, double fractionWhite) {
-	integer m = my numberOfRows;
 
 	if (colb == 0 && cole == 0) {
-		colb = 1; cole = my numberOfColumns;
-	} else if (cole < colb || colb < 1 || cole > my numberOfColumns) {
+		colb = 1;
+		cole = my numberOfColumns;
+	} else if (cole < colb || colb < 1 || cole > my numberOfColumns) 
 		return;
-	}
 
-	integer n = cole - colb + 1;
-	if (n == 1) {
+	integer numberOfColumns = cole - colb + 1;
+	if (numberOfColumns == 1)
 		return;
-	}
-	autoNUMvector<double> xmin (colb, cole);
-	autoNUMvector<double> xmax (colb, cole);
+	autoVEC colmin = newVECraw (numberOfColumns);
+	autoVEC colmax = newVECraw (numberOfColumns);
 
-	for (integer j = colb; j <= cole; j ++) {
-		xmin [j] = xmax [j] = my data [1] [j];
-	}
-	for (integer i = 2; i <= m; i ++) {
-		for (integer j = colb; j <= cole; j ++) {
-			if (my data [i] [j] > xmax [j]) {
-				xmax [j] = my data [i] [j];
-			} else if (my data [i] [j] < xmin [j]) {
-				xmin [j] = my data [i] [j];
-			}
-		}
-	}
-	for (integer j = colb; j <= cole; j ++) {
-		double extra = fractionWhite * fabs (xmax [j] - xmin [j]);
-		if (extra == 0.0) {
-			extra = 0.5;
-		}
-		xmin [j] -= extra; xmax [j] += extra;
+	for (integer j = 1; j <= numberOfColumns; j ++) {
+		colmin [j] = NUMmin (my data.column (colb + j - 1));
+		colmax [j] = NUMmax (my data.column (colb + j - 1));
 	}
 
-	Graphics_setWindow (g, 0.0, n, 0.0, n);
+	for (integer j = 1; j <= numberOfColumns; j ++) {
+		double extra = fractionWhite * fabs (colmax [j] - colmin [j]);
+		if (extra == 0.0) extra = 0.5;
+		colmin [j] -= extra; 
+		colmax [j] += extra;
+	}
+
+	Graphics_setWindow (g, 0.0, numberOfColumns, 0.0, numberOfColumns);
 	Graphics_setInner (g);
-	Graphics_line (g, 0.0, n, n, n);
-	Graphics_line (g, 0.0, 0.0, 0.0, n);
+	Graphics_line (g, 0.0, numberOfColumns, numberOfColumns, numberOfColumns);
+	Graphics_line (g, 0.0, 0.0, 0.0, numberOfColumns);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
-	for (integer i = 1; i <= n; i ++) {
-		integer xcol, ycol = colb + i - 1;
-		Graphics_line (g, 0.0, n - i, n, n - i);
-		Graphics_line (g, i, n, i, 0.0);
-		for (integer j = 1; j <= n; j ++) {
-			xcol = colb + j - 1;
-			if (i == j) {
+	for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+		integer ycol = colb + icol - 1;
+		Graphics_line (g, 0.0, numberOfColumns - icol, numberOfColumns, numberOfColumns - icol);
+		Graphics_line (g, icol, numberOfColumns, icol, 0.0);
+		for (integer irow = 1; irow <= numberOfColumns; irow ++) {
+			integer xcol = colb + irow - 1;
+			if (icol == irow) {
 				conststring32 mark = my columnLabels [xcol].get();
 				char32 label [40];
 				if (! mark) {
-					Melder_sprint (label,40, U"Column ", xcol);
+					Melder_sprint (label, 40, U"Column ", xcol);
 					mark = label;
 				}
-				Graphics_text (g, j - 0.5, n - i + 0.5, mark);
+				Graphics_text (g, irow - 0.5, numberOfColumns - icol + 0.5, mark);
 			} else {
-				for (integer k = 1; k <= m; k ++) {
-					double x = j - 1 + (my data [k] [xcol] - xmin [xcol]) / (xmax [xcol] - xmin [xcol]);
-					double y = n - i + (my data [k] [ycol] - xmin [ycol]) / (xmax [ycol] - xmin [ycol]);
+				for (integer k = 1; k <= my numberOfRows; k ++) {
+					double x = irow - 1 + (my data [k] [xcol] - colmin [irow]) / (colmax [irow] - colmin [irow]);
+					double y = numberOfColumns - icol + (my data [k] [ycol] - colmin [icol]) / (colmax [icol] - colmin [icol]);
 					conststring32 mark = EMPTY_STRING (my rowLabels [k]) ? U"+" : my rowLabels [k].get();
 					Graphics_text (g, x, y, mark);
 				}
@@ -799,13 +771,13 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 		rowe = Melder_ifloor (m);
 	}
 	if (xmax == xmin) {
-		NUMdmatrix_getColumnExtrema (my data.at_deprecated, rowb, rowe, icx, & xmin, & xmax);
+		NUMextrema (my data.get(), rowb, rowe, icx, icx, & xmin, & xmax);
 		double tmp = ( xmax == xmin ? 0.5 : 0.0 );
 		xmin -= tmp;
 		xmax += tmp;
 	}
 	if (ymax == ymin) {
-		NUMdmatrix_getColumnExtrema (my data.at_deprecated, rowb, rowe, icy, & ymin, & ymax);
+		NUMextrema (my data.get(), rowb, rowe, icy, icy, & ymin, & ymax);
 		double tmp = ( ymax == ymin ? 0.5 : 0.0 );
 		ymin -= tmp;
 		ymax += tmp;
@@ -819,8 +791,7 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 	for (integer i = rowb; i <= rowe; i ++) {
 		double x = my data [i] [icx], y = my data [i] [icy];
 		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
-		    ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax)))
-		{
+		    ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax))) {
 			conststring32 plotLabel = useRowLabels ? my rowLabels [i].get() : label;
 			if (! Melder_findInk (plotLabel)) {
 				noLabel ++;
@@ -836,32 +807,27 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		if (ymin < ymax) {
-			if (my columnLabels [icx]) {
+			if (my columnLabels [icx])
 				Graphics_textBottom (g, true, my columnLabels [icx].get());
-			}
 			Graphics_marksBottom (g, 2, true, true, false);
 		} else {
-			if (my columnLabels [icx]) {
+			if (my columnLabels [icx])
 				Graphics_textTop (g, true, my columnLabels [icx].get());
-			}
 			Graphics_marksTop (g, 2, true, true, false);
 		}
 		if (xmin < xmax) {
-			if (my columnLabels [icy]) {
+			if (my columnLabels [icy])
 				Graphics_textLeft (g, true, my columnLabels [icy].get());
-			}
 			Graphics_marksLeft (g, 2, true, true, false);
 		} else {
-			if (my columnLabels [icy]) {
+			if (my columnLabels [icy])
 				Graphics_textRight (g, true, my columnLabels [icy].get());
-			}
 			Graphics_marksRight (g, 2, true, true, false);
 		}
 	}
-	if (noLabel > 0) {
+	if (noLabel > 0)
 		Melder_warning (noLabel, U" from ", my numberOfRows, U" labels are "
 			U"not visible because they are empty or they contain only spaces or non-printable characters");
-	}
 }
 
 
@@ -1117,11 +1083,7 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 	return nmatches;
 }
 
-void TableOfReal_drawVectors (TableOfReal me, Graphics g,
-		integer colx1, integer coly1, integer colx2, integer coly2,
-		double xmin, double xmax, double ymin, double ymax,
-		int vectype, int labelsize, bool garnish)
-{
+void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer coly1, integer colx2, integer coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, bool garnish) {
 	integer nx = my numberOfColumns, ny = my numberOfRows;
 	int fontsize = Graphics_inqFontSize (g);
 
@@ -1132,29 +1094,19 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 
 	double min, max;
 	if (xmin >= xmax) {
-		NUMmatrix_extrema (my data.at_deprecated, 1, ny, colx1, colx1, & min, &max);
-		NUMmatrix_extrema (my data.at_deprecated, 1, ny, colx2, colx2, & xmin, &xmax);
-		if (min < xmin) {
-			xmin = min;
-		}
-		if (max > xmax) {
-			xmax = max;
-		}
+		NUMextrema (my data.get(), 1, ny, colx1, colx1, & min, & max);
+		NUMextrema (my data.get(), 1, ny, colx2, colx2, & xmin, & xmax);
+		if (min < xmin) xmin = min;
+		if (max > xmax) xmax = max;
 	}
 	if (ymin >= ymax) {
-		NUMmatrix_extrema (my data.at_deprecated, 1, ny, coly1, coly1, & min, & max);
-		NUMmatrix_extrema (my data.at_deprecated, 1, ny, coly2, coly2, & ymin, & ymax);
-		if (min < ymin) {
-			ymin = min;
-		}
-		if (max > ymax) {
-			ymax = max;
-		}
+		NUMextrema (my data.get(), 1, ny, coly1, coly1, & min, & max);
+		NUMextrema (my data.get(), 1, ny, coly2, coly2, & ymin, & ymax);
+		if (min < ymin) ymin = min;
+		if (max > ymax) ymax = max;
 	}
 	if (xmin == xmax) {
-		if (ymin == ymax) {
-			return;
-		}
+		if (ymin == ymax) return;
 		xmin -= 0.5;
 		xmax += 0.5;
 	}
@@ -1167,9 +1119,9 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
-	if (labelsize > 0) {
+	if (labelsize > 0)
 		Graphics_setFontSize (g, labelsize);
-	}
+
 	for (integer i = 1; i <= ny; i ++) {
 		double x1 = my data [i] [colx1];
 		double y1 = my data [i] [coly1];
@@ -1184,13 +1136,12 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 		} else { /*if (vectype == Graphics_ARROW) */
 			Graphics_arrow (g, x1, y1, x2, y2);
 		}
-		if (labelsize > 0) {
+		if (labelsize > 0)
 			Graphics_text (g, x1, y1, mark);
-		}
 	}
-	if (labelsize > 0) {
+	if (labelsize > 0)
 		Graphics_setFontSize (g, fontsize);
-	}
+
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -1200,14 +1151,12 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 }
 
 void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, integer column, double minimum, double maximum, integer nBins, double freqMin, double freqMax, bool cumulative, bool garnish) {
-	if (column < 1 || column > my numberOfColumns) {
+	if (column < 1 || column > my numberOfColumns)
 		return;
-	}
 	autoMatrix thee = TableOfReal_to_Matrix (me);
 	Matrix_drawDistribution (thee.get(), g, column - 0.5, column + 0.5, 0.0, 0.0, minimum, maximum, nBins, freqMin, freqMax, cumulative, garnish);
-	if (garnish && my columnLabels [column]) {
+	if (garnish && my columnLabels [column])
 		Graphics_textBottom (g, true, my columnLabels [column].get());
-	}
 }
 
 autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, bool reverse) {
@@ -1215,7 +1164,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 		Melder_require (my rowLabels,
 			U"No labels to sort");
 		double min, max;
-		NUMvector_extrema (index.at, 1, my numberOfRows, & min, & max);
+		NUMextrema (index, 1, index.size, & min, & max);
 		Melder_require (min > 0 && min <= my numberOfRows && max > 0 && max <= my numberOfRows,
 			U"One or more indices out of range [1, ", my numberOfRows, U"].");
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
@@ -1247,22 +1196,6 @@ autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row labels.");
-	}
-}
-
-static void NUMmedianizeColumns (double **a, integer rb, integer re, integer cb, integer ce) {
-	integer n = re - rb + 1;
-	if (n < 2)
-		return;
-	autoVEC tmp = newVECzero (n);
-	for (integer j = cb; j <= ce; j ++) {
-		integer k = 1;
-		for (integer i = rb; i <= re; i ++, k ++)
-			tmp [k] = a [i] [j];
-		VECsort_inplace (tmp.get());
-		double median = NUMquantile (tmp.get(), 0.5);
-		for (integer i = rb; i <= re; i ++)
-			a [i] [j] = median;
 	}
 }
 

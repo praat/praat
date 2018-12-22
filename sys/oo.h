@@ -92,19 +92,19 @@
 //#define oo_UINT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned int, u16, x, row1, row2, col1, col2)
 //#define oo_UINTEGER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (uinteger, u32, x, row1, row2, col1, col2)
 //#define oo_FLOAT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r32, x, row1, row2, col1, col2)
-#define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r64, x, row1, row2, col1, col2)
+//#define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r64, x, row1, row2, col1, col2)
 //#define oo_COMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, c128, x, row1, row2, col1, col2)
 
 /* The same arrays, with the first index fixed at 1. */
 
 //#define oo_BYTE_VECTOR(x,n)  oo_VECTOR (signed char, i8, x, 1, n)
 #define oo_INT_VECTOR(x,n)  oo_VECTOR (int, i16, x, 1, n)
-#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
+//#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
 //#define oo_UBYTE_VECTOR(x,n)  oo_VECTOR (unsigned char, u8, x, 1, n)
 //#define oo_UINT_VECTOR(x,n)  oo_VECTOR (unsigned int, u16, x, 1, n)
 //#define oo_UINTEGER_VECTOR(x,n)  oo_VECTOR (uinteger, u32, x, 1, n)
-#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
-#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
+//#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
+//#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
 //#define oo_COMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 
 #define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
@@ -114,17 +114,19 @@
 
 //#define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i8, x, 1, nrow, 1, ncol)
 //#define oo_INT_MATRIX(x,nrow,ncol)  oo_MATRIX (int, i16, x, 1, nrow, 1, ncol)
-#define oo_INTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (integer, integer32BE, x, 1, nrow, 1, ncol)
+//#define oo_INTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (integer, integer32BE, x, 1, nrow, 1, ncol)
 #define oo_UBYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u8, x, 1, nrow, 1, ncol)
 //#define oo_UINT_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned int, u16, x, 1, nrow, 1, ncol)
 //#define oo_UINTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (uinteger, u32, x, 1, nrow, 1, ncol)
-#define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r32, x, 1, nrow, 1, ncol)
-#define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r64, x, 1, nrow, 1, ncol)
+//#define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r32, x, 1, nrow, 1, ncol)
+//#define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r64, x, 1, nrow, 1, ncol)
 //#define oo_COMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c128, x, 1, nrow, 1, ncol)
 
 #define oo_MAT(x,nrow,ncol)  oo_ANYMAT (double, r64, x, nrow, ncol)
 #define oo_INTMAT(x,nrow,ncol)  oo_ANYMAT (integer, integer32BE, x, nrow, ncol)
 #define oo_obsoleteMAT32(x,nrow,ncol)  oo_ANYMAT (double, r32, x, nrow, ncol)
+
+#define oo_TEN3(x,ndi1,ndim2,ndim3) oo_ANYTEN3 (double, r64, x, ndim1, ndim2, ndim3)
 
 /*** Enumerated types. ***/
 
@@ -185,6 +187,7 @@
 #define oo_ANYVEC(type,storage,x,size)  autovector <type> x;
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
 #define oo_ANYMAT(type,storage,x,nrow,ncol)  automatrix <type> x;
+#define oo_ANYTEN3(type,storage,x,ndim1,ndim2,ndim3)  autotensor3 <type> x;
 
 #define oo_ENUMx(kType,storage,x)  kType x;
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];

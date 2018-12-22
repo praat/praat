@@ -2,7 +2,7 @@
 #define _Tube_h_
 /* Tube.h
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@
 /*
 	Tube's as a function of time.
 	Tube_frame: c[1] -> mouth
-	            c[nSegments] -> glottis.
+	            c[numberOfSegments] -> glottis.
 */
 
-void Tube_Frame_init (Tube_Frame me, integer nSegments, double length);
+void Tube_Frame_init (Tube_Frame me, integer numberOfSegments, double length);
 
 void Tube_Frame_free (Tube_Frame me);
 
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 
-void Tube_init (Tube me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength);
+void Tube_init (Tube me, double tmin, double tmax, integer nt, double dt, double t1, integer maxNumberOfSegments, double defaultLength);
 
 Thing_define (Area, Tube) {
 };
@@ -44,9 +44,9 @@ Thing_define (Area, Tube) {
 	units in m^2.
 */
 
-void Area_init (Area me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength);
+void Area_init (Area me, double tmin, double tmax, integer nt, double dt, double t1, integer maxNumberOfSegments, double defaultLength);
 
-autoArea Area_create (double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength);
+autoArea Area_create (double tmin, double tmax, integer nt, double dt, double t1, integer maxNumberOfSegments, double defaultLength);
 
 Thing_define (RC, Tube) {
 };

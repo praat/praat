@@ -357,7 +357,12 @@ void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
 void texresetindent (MelderFile file) { file -> indent = 0; }
 
-void texputintro (MelderFile file, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+#define texput_UP_TO_NINE_NULLABLE_STRINGS  \
+	conststring32 s1, conststring32 s2, conststring32 s3, \
+	conststring32 s4, conststring32 s5, conststring32 s6, \
+	conststring32 s7, conststring32 s8, conststring32 s9
+
+void texputintro (MelderFile file, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	if (file -> verbose) {
 		MelderFile_write (file, U"\n");
 		for (int iindent = 1; iindent <= file -> indent; iindent ++) {
@@ -369,7 +374,10 @@ void texputintro (MelderFile file, conststring32 s1, conststring32 s2, conststri
 			s3 && s3 [0] == U'd' && s3 [1] == U'_' ? & s3 [2] : & s3 [0],
 			s4 && s4 [0] == U'd' && s4 [1] == U'_' ? & s4 [2] : & s4 [0],
 			s5 && s5 [0] == U'd' && s5 [1] == U'_' ? & s5 [2] : & s5 [0],
-			s6 && s6 [0] == U'd' && s6 [1] == U'_' ? & s6 [2] : & s6 [0]);
+			s6 && s6 [0] == U'd' && s6 [1] == U'_' ? & s6 [2] : & s6 [0],
+			s7 && s7 [0] == U'd' && s7 [1] == U'_' ? & s7 [2] : & s7 [0],
+			s8 && s8 [0] == U'd' && s8 [1] == U'_' ? & s8 [2] : & s8 [0],
+			s9 && s9 [0] == U'd' && s9 [1] == U'_' ? & s9 [2] : & s9 [0]);
 	}
 	file -> indent += 4;
 }
@@ -386,74 +394,77 @@ void texputintro (MelderFile file, conststring32 s1, conststring32 s2, conststri
 			s3 && s3 [0] == U'd' && s3 [1] == U'_' ? & s3 [2] : & s3 [0], \
 			s4 && s4 [0] == U'd' && s4 [1] == U'_' ? & s4 [2] : & s4 [0], \
 			s5 && s5 [0] == U'd' && s5 [1] == U'_' ? & s5 [2] : & s5 [0], \
-			s6 && s6 [0] == U'd' && s6 [1] == U'_' ? & s6 [2] : & s6 [0]); \
+			s6 && s6 [0] == U'd' && s6 [1] == U'_' ? & s6 [2] : & s6 [0], \
+			s7 && s7 [0] == U'd' && s7 [1] == U'_' ? & s7 [2] : & s7 [0], \
+			s8 && s8 [0] == U'd' && s8 [1] == U'_' ? & s8 [2] : & s8 [0], \
+			s9 && s9 [0] == U'd' && s9 [1] == U'_' ? & s9 [2] : & s9 [0]); \
 	}
 
-void texputi8 (MelderFile file, int i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputi8 (MelderFile file, int i, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputi16 (MelderFile file, int i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputi16 (MelderFile file, int i, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputi32 (MelderFile file, long i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputi32 (MelderFile file, long i, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputinteger (MelderFile file, integer number, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputinteger (MelderFile file, integer number, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, number, file -> verbose ? U" " : nullptr);
 }
-void texputu8 (MelderFile file, unsigned int u, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputu8 (MelderFile file, unsigned int u, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputu16 (MelderFile file, unsigned int u, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputu16 (MelderFile file, unsigned int u, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputu32 (MelderFile file, unsigned long u, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputu32 (MelderFile file, unsigned long u, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputr32 (MelderFile file, double x, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputr32 (MelderFile file, double x, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (x), file -> verbose ? U" " : nullptr);
 }
-void texputr64 (MelderFile file, double x, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputr64 (MelderFile file, double x, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, x, file -> verbose ? U" " : nullptr);
 }
-void texputc64 (MelderFile file, dcomplex z, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputc64 (MelderFile file, dcomplex z, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
-void texputc128 (MelderFile file, dcomplex z, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputc128 (MelderFile file, dcomplex z, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
-void texpute8 (MelderFile file, int i, conststring32 (*getText) (int), conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texpute8 (MelderFile file, int i, conststring32 (*getText) (int), texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
-void texpute16 (MelderFile file, int i, conststring32 (*getText) (int), conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texpute16 (MelderFile file, int i, conststring32 (*getText) (int), texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
-void texputeb (MelderFile file, bool i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputeb (MelderFile file, bool i, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i ? U"<true>" : U"<false>", file -> verbose ? U" " : nullptr);
 }
-void texputeq (MelderFile file, bool i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputeq (MelderFile file, bool i, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<yes>" : U"<no>", file -> verbose ? U" " : nullptr);
 }
-void texputex (MelderFile file, bool i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputex (MelderFile file, bool i, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<exists>" : U"<absent>", file -> verbose ? U" " : nullptr);
 }
-void texputs8 (MelderFile file, const char *s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputs8 (MelderFile file, const char *s, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -465,7 +476,7 @@ void texputs8 (MelderFile file, const char *s, conststring32 s1, conststring32 s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs16 (MelderFile file, const char *s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputs16 (MelderFile file, const char *s, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -477,7 +488,7 @@ void texputs16 (MelderFile file, const char *s, conststring32 s1, conststring32 
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs32 (MelderFile file, const char *s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputs32 (MelderFile file, const char *s, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -489,7 +500,7 @@ void texputs32 (MelderFile file, const char *s, conststring32 s1, conststring32 
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw16 (MelderFile file, conststring32 s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputw16 (MelderFile file, conststring32 s, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -501,7 +512,7 @@ void texputw16 (MelderFile file, conststring32 s, conststring32 s1, conststring3
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw32 (MelderFile file, conststring32 s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
+void texputw32 (MelderFile file, conststring32 s, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {

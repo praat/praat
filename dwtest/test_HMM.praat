@@ -19,7 +19,7 @@ procedure mm
 			.p = exp(.lnp)
 			.psum += .p
 		endfor
- 		assert (.psum>0.999 and .psum<1.001)
+ 		assert (.psum>0.999 and .psum<1.001); '.it' '.psum'
 	endfor
 	.os = To HMMObservationSequence: 0, 2000
 	.mm2 = To HMM: 0, "no"
@@ -35,7 +35,7 @@ procedure mm
  			.p = exp(.p)
 			.psum += .p
 		endfor
-		assert (.psum>0.999 and .psum<1.001)
+		assert (.psum>0.999 and .psum<1.001); '.it' '.psum'
 	endfor
 
 	removeObject: .mm1, .mm2, .os

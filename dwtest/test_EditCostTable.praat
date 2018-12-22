@@ -70,7 +70,7 @@ for i to numberOfTargets
 		source$ = sourceSymbol$[j]
 		cost += 1
 		scost = Get substitution cost... 'target$' 'source$'
-		assert scost = cost
+		assert scost = cost; 'target$' 'source$'
 	endfor
 endfor
 

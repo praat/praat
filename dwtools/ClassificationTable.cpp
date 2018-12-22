@@ -1,6 +1,6 @@
 /* ClassificationTable.cpp
  *
- * Copyright (C) 1993-2011, 2014-2016 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onl
 		autoStrings s2 = TableOfReal_extractRowLabelsAsStrings (me);
 		autoDistributions d2 = Strings_to_Distributions (s2.get());
 		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.get());
-		autoConfusion thee = Confusion_createFromStringses ((onlyClassLabels ? responses.get() : stimuli.get() ), responses.get());
+		autoConfusion thee = Confusion_createFromStringses (( onlyClassLabels ? responses.get() : stimuli.get() ), responses.get());
 		Confusion_ClassificationTable_increase (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
@@ -58,9 +58,8 @@ autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onl
 }
 
 void Confusion_ClassificationTable_increase (Confusion me, ClassificationTable thee) {
-	if (my numberOfColumns != thy numberOfColumns) {
-		Melder_throw (U"The number of columns should be equal.");
-	}
+	Melder_require (my numberOfColumns == thy numberOfColumns, 
+		U"The number of columns should be equal.");
 	for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
 		integer index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
 		Confusion_increase (me, thy rowLabels [irow].get(), my columnLabels [index].get());
@@ -72,17 +71,9 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
 		Melder_assert (my numberOfColumns > 0);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			double max = my data [i] [1];
-			integer col = 1;
-			for (integer j = 2; j <= my numberOfColumns; j ++) {
-				if (my data [i] [j] > max) {
-					max = my data [i] [j];
-					col = j;
-				}
-			}
-			if (my columnLabels [col]) {
+			integer col = NUMmaxPos (my data.row (i));
+			if (my columnLabels [col])
 				Strings_replace (thee.get(), i, my columnLabels [col].get());
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -95,14 +86,7 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 		autoCategories thee = Categories_create ();
 		Melder_assert (my numberOfColumns > 0);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			double max = my data [i] [1];
-			integer col = 1;
-			for (integer j = 2; j <= my numberOfColumns; j ++) {
-				if (my data [i] [j] > max) {
-					max = my data [i] [j];
-					col = j;
-				}
-			}
+			integer col = NUMmaxPos (my data.row (i));
 			OrderedOfString_append (thee.get(), my columnLabels [col].get());
 		}
 		return thee;

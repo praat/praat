@@ -413,7 +413,8 @@ static void Formula_lexan () {
 				newtok (NUMBER_)
 				toknumber (Melder_atof (token.string));
 			}
-		} else if (Melder_isLowerCaseLetter (kar) || (kar == U'.' && Melder_isLowerCaseLetter (theExpression [ikar + 1])
+		} else if (Melder_isLetter (kar) && ! Melder_isUpperCaseLetter (kar) ||
+				(kar == U'.' && Melder_isLetter (theExpression [ikar + 1]) && ! Melder_isUpperCaseLetter (theExpression [ikar + 1])
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIX_ && lexan [itok]. symbol != MATRIXSTR_
 					&& lexan [itok]. symbol != CLOSING_BRACKET_)))) {
 			int tok;
@@ -663,7 +664,7 @@ static void Formula_lexan () {
 		} else if (kar >= U'A' && kar <= U'Z') {
 			bool endsInDollarSign = false;
 			stringtokon;
-			do stringtokchar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
+			do stringtokchar while (Melder_isAlphanumeric (kar) || kar == U'_');
 			if (kar == U'$') { stringtokchar endsInDollarSign = true; }
 			stringtokoff;
 			oldchar;
@@ -684,14 +685,14 @@ static void Formula_lexan () {
 			} else if (! underscore) {
 				Melder_throw (
 					U"Unknown symbol «", token.string, U"» in formula "
-					U"(variables start with lower case; object names contain an underscore).");
+					U"(variables start with nonupper case; object names contain an underscore).");
 			} else if (str32nequ (token.string, U"Object_", 7)) {
 				integer uniqueID = Melder_atoi (token.string + 7);
 				int i = theCurrentPraatObjects -> n;
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;
 				if (i == 0)
-					formulaError (U"No such object (note: variables start with lower case)", ikar);
+					formulaError (U"No such object (note: variables start with nonupper case)", ikar);
 				newtok (endsInDollarSign ? MATRIXSTR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
@@ -701,7 +702,7 @@ static void Formula_lexan () {
 				while (i > 0 && ! str32equ (token.string, theCurrentPraatObjects -> list [i]. name.get()))
 					i --;
 				if (i == 0)
-					formulaError (U"No such object (note: variables start with lower case)", ikar);
+					formulaError (U"No such object (note: variables start with nonupper case)", ikar);
 				newtok (endsInDollarSign ? MATRIXSTR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
@@ -2518,7 +2519,7 @@ static void do_add () {
 				result## = x + y##
 			*/
 			if (y->owned) {
-				MATadd_inplace (y->numericMatrix, x->number);
+				y->numericMatrix  +=  x->number;
 				// x does not have to be cleaned up, because it was a number
 				moveNumericMatrix (y, x);
 			} else {
@@ -2622,9 +2623,9 @@ static void do_add () {
 			if (xncol != yncol)
 				Melder_throw (U"When adding matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
 			if (x->owned) {
-				MATadd_inplace (x->numericMatrix, y->numericMatrix);
+				x->numericMatrix  +=  y->numericMatrix;
 			} else if (y->owned) {
-				MATadd_inplace (y->numericMatrix, x->numericMatrix);
+				y->numericMatrix  +=  x->numericMatrix;
 				// x does not have to be cleaned up, because it was not owned
 				moveNumericMatrix (y, x);
 			} else {
@@ -2642,7 +2643,7 @@ static void do_add () {
 				result## [i, j] = x## [i, j] + y
 			*/
 			if (x->owned) {
-				MATadd_inplace (x->numericMatrix, y->number);
+				x->numericMatrix  +=  y->number;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
 				x->numericMatrix = newMATadd (x->numericMatrix, y->number). releaseToAmbiguousOwner();
@@ -2684,7 +2685,7 @@ static void do_sub () {
 				result# = x - y#
 			*/
 			if (y->owned) {
-				VECsubtractReversed_inplace (y->numericVector, x->number);
+				y->numericVector <<= x->number  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
 				x->numericVector = newVECsubtract (x->number, y->numericVector). releaseToAmbiguousOwner();
@@ -2719,9 +2720,9 @@ static void do_sub () {
 			if (nx != ny)
 				Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 			if (x -> owned) {
-				VECsubtract_inplace (x->numericVector, y->numericVector);
+				x->numericVector  -=  y->numericVector;
 			} else if (y -> owned) {
-				VECsubtractReversed_inplace (y->numericVector, x->numericVector);
+				y->numericVector <<= x->numericVector  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
 				// no clean-up of x required, because x is not owned and has the right type
@@ -2738,7 +2739,7 @@ static void do_sub () {
 				result# [i] = x# [i] - y
 			*/
 			if (x->owned) {
-				VECsubtract_inplace (x->numericVector, y->number);
+				x->numericVector  -=  y->number;
 			} else {
 				x->numericVector = newVECsubtract (x->numericVector, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
@@ -2756,7 +2757,7 @@ static void do_sub () {
 			if (xncol != yncol)
 				Melder_throw (U"When subtracting matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
 			if (x->owned) {
-				MATsubtract_inplace (x->numericMatrix, y->numericMatrix);
+				x->numericMatrix  -=  y->numericMatrix;
 			} else if (y->owned) {
 				MATsubtractReversed_inplace (y->numericMatrix, x->numericMatrix);
 				moveNumericMatrix (y, x);
@@ -2770,7 +2771,7 @@ static void do_sub () {
 		}
 		if (y->which == Stackel_NUMBER) {
 			if (x->owned) {
-				MATsubtract_inplace (x->numericMatrix, y->number);
+				x->numericMatrix  -=  y->number;
 			} else {
 				x->numericMatrix = newMATsubtract (x->numericMatrix, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
@@ -2780,7 +2781,7 @@ static void do_sub () {
 		}
 	}
 	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		int64 length1 = str32len (x->getString()), length2 = str32len (y->getString()), newlength = length1 - length2;
+		integer length1 = str32len (x->getString()), length2 = str32len (y->getString()), newlength = length1 - length2;
 		autostring32 result;
 		if (newlength >= 0 && str32nequ (x->getString() + newlength, y->getString(), length2)) {
 			result = autostring32 (newlength);
@@ -2813,7 +2814,7 @@ static void do_mul () {
 				result# = x * y#
 			*/
 			if (y->owned) {
-				VECmultiply_inplace (y->numericVector, xvalue);
+				y->numericVector  *=  xvalue;
 				x->which = Stackel_NUMERIC_VECTOR;
 				moveNumericVector (y, x);
 				w ++;
@@ -2833,7 +2834,7 @@ static void do_mul () {
 				result## = x * y##
 			*/
 			if (y->owned) {
-				MATmultiply_inplace (y->numericMatrix, xvalue);
+				y->numericMatrix  *=  xvalue;
 				x->which = Stackel_NUMERIC_MATRIX;
 				moveNumericMatrix (y, x);
 				w ++;

@@ -47,16 +47,11 @@
 #include "oo_DESCRIPTION.h"
 #include "AffineTransform_def.h"
 
-void structAffineTransform :: v_transform (double **in, integer nrows, double **out) {
-	for (integer i = 1; i <= nrows; i ++) {
-		for (integer j = 1; j <= dimension; j ++) {
-			longdouble tmp = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
-				tmp += in [i] [k] * r [k] [j];
-			}
-			out [i] [j] = tmp + t [j];
-		}
-	}
+void structAffineTransform :: v_transform (MAT out, MAT in) {
+	Melder_assert (in.nrow == out.nrow);
+	Melder_assert (in.ncol == out.ncol);
+	MATVUmul (out, in, r.get());
+	out += t;
 }
 
 autoAffineTransform structAffineTransform :: v_invert () {
@@ -64,13 +59,8 @@ autoAffineTransform structAffineTransform :: v_invert () {
 	double tolerance = 0.000001;
 
 	thy r = MATpseudoInverse (r.get(), tolerance);
-
-	for (integer i = 1; i <= dimension; i ++) {
-		thy t [i] = 0.0;
-		for (integer j = 1; j <= thy dimension; j ++) {
-			thy t [i] -= thy r [i] [j] * t [j];
-		}
-	}
+	for (integer i = 1; i <= dimension; i ++)
+		thy t[i] = - NUMinner (thy r.row (i), t.get ());
 	return thee;
 }
 
@@ -117,9 +107,7 @@ autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 autoTableOfReal AffineTransform_extractTranslationVector (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my dimension);
-		for (integer i = 1; i <= my dimension; i ++) {
-			thy data [1] [i] = my t [i];
-		}
+		thy data.row (1) <<= my t.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": translation vector not extracted.");

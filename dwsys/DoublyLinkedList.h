@@ -2,7 +2,7 @@
 #define _DoublyLinkedList_h_
 /* DoublyLinkedList.h
  *
- * Copyright (C) 2011 - 2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011 - 2018 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,6 +1,6 @@
 /* ComplexSpectrogram.cpp
  * 
- * Copyright (C) 2014-2015 David Weenink
+ * Copyright (C) 2014-2018 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, inte
 	try {
 		autoComplexSpectrogram me = Thing_new (ComplexSpectrogram);
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
-		my phase = NUMmatrix <double> (1, my ny, 1, my nx);
+		my phase = newMATzero (my ny, my nx);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ComplexSpectrogram not created.");
@@ -93,7 +93,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.get(), false);
 			
 			thy z [1] [iframe] = spec -> z [1] [1] * spec -> z [1] [1];
-			thy phase[1][iframe] = 0.0;
+			thy phase [1] [iframe] = 0.0;
 			for (integer ifreq = 2; ifreq <= numberOfFrequencies - 1; ifreq ++) {
 				double x = spec -> z [1] [ifreq], y = spec -> z [2] [ifreq];
 				thy z [ifreq] [iframe] = x * x + y * y; // power
@@ -116,13 +116,13 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		 */
 		double pi = atan2 (0.0, - 0.5);
 		double samplingFrequency = 2.0 * my ymax;
-		double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase[my ny][1];
+		double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase [my ny] [1];
 		int originalNumberOfSamplesProbablyOdd = (lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi) || 
 			my ymax - lastFrequency > 0.25 * my dx;
 		Melder_require (my y1 == 0.0, 
 			U"A Fourier-transformable ComplexSpectrogram should have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		
-		integer nsamp_window = 2 * my ny - (originalNumberOfSamplesProbablyOdd ? 1 : 2 );
+		integer nsamp_window = 2 * my ny - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		integer halfnsamp_window = nsamp_window / 2;
 		double synthesisWindowDuration = nsamp_window / samplingFrequency;
 		autoSpectrum spectrum = Spectrum_create (my ymax, my ny);
@@ -236,7 +236,7 @@ autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {
 	try {
 		integer iframe = Sampled_xToLowIndex (me, time);   // ppgb: geen Sampled_xToIndex gebruiken voor integers (afrondingen altijd expliciet maken)
-		iframe = iframe < 1 ? 1 : (iframe > my nx ? my nx : iframe);
+		iframe = ( iframe < 1 ? 1 : ( iframe > my nx ? my nx : iframe ) );
 		autoSpectrum thee = Spectrum_create (my ymax, my ny);
 		for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
 			double a = sqrt (my z [ifreq] [iframe]);

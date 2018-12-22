@@ -2,7 +2,7 @@
 #define _Polynomial_h_
 /* Polynomial.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ double FunctionTerms_evaluate (FunctionTerms me, double x);
 
 void FunctionTerms_evaluate_z (FunctionTerms me, dcomplex *z, dcomplex *p);
 
-void FunctionTerms_evaluateTerms (FunctionTerms me, double x, double terms[]);
+void FunctionTerms_evaluateTerms (FunctionTerms me, double x, VEC terms);
 
 void FunctionTerms_getExtrema (FunctionTerms me, double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 
@@ -88,7 +88,7 @@ Thing_define (Polynomial, FunctionTerms) {
 	public:
 		virtual double v_evaluate (double x);
 		virtual dcomplex v_evaluate_z (dcomplex z);
-		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_evaluateTerms (double x, VEC terms);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 		//virtual integer v_getDegree ();   David, is het OK dat deze niet overschreven wordt? Ja
 };
@@ -129,8 +129,8 @@ double Polynomial_evaluate (Polynomial me, double x);
 
 void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *fx, double *dfx);
 
-void Polynomial_evaluateDerivatives (Polynomial me, double x, double *derivatives /*[0.. numberOfDerivatives]*/, integer numberOfDerivatives);
-/* derivatives[0] = Polynomial_evaluate (me, x); */
+autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives);
+/* result[1] is function value at x, result[2..numberOfDerivatives+1] are derivatives at x. */
 
 void Polynomial_evaluateTerms (Polynomial me, double x, double terms[]);
 
@@ -146,7 +146,7 @@ void Polynomial_multiply_secondOrderFactor (Polynomial me, double factor);
  * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 2
  */
 
-void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *q, autoPolynomial *r);
+void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, autoPolynomial *out_r);
 
 void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *p_remainder); // P(x)/(x-a)
 /* Functions: calculate coefficients of new polynomial P(x)/(x-a)
@@ -165,7 +165,7 @@ Thing_define (LegendreSeries, FunctionTerms) {
 	// overridden methods:
 	public:
 		virtual double v_evaluate (double x);
-		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_evaluateTerms (double x, VEC terms);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 };
 
@@ -234,7 +234,7 @@ Thing_define (ChebyshevSeries, FunctionTerms) {
 	// overridden methods:
 	public:
 		virtual double v_evaluate (double x);
-		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_evaluateTerms (double x, VEC terms);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 };
 
@@ -257,7 +257,7 @@ Thing_define (MSpline, Spline) {
 	// overridden methods:
 	public:
 		virtual double v_evaluate (double x);
-		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_evaluateTerms (double x, VEC terms);
 };
 
 autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
@@ -268,7 +268,7 @@ Thing_define (ISpline, Spline) {
 	// overridden methods:
 	public:
 		virtual double v_evaluate (double x);
-		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_evaluateTerms (double x, VEC terms);
 		virtual integer v_getOrder ();
 };
 
@@ -278,7 +278,7 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree,
 
 /****************** fit **********************************************/
 
-void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freezeCoefficients[], double tol, int ic, autoCovariance *c);
+void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, INTVEC freezeCoefficients, double tol, int ic, autoCovariance *c);
 
 autoPolynomial RealTier_to_Polynomial (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm);
 

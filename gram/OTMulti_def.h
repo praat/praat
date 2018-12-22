@@ -69,7 +69,7 @@ oo_DEFINE_CLASS (OTMulti, Daata)
 	oo_ENDFROM
 	oo_INTEGER (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTConstraint, constraints, numberOfConstraints)
-	oo_INTEGER_VECTOR (index, numberOfConstraints)
+	oo_INTVEC (index, numberOfConstraints)
 	oo_INTEGER (numberOfCandidates)
 	oo_STRUCT_VECTOR (OTCandidate, candidates, numberOfCandidates)
 

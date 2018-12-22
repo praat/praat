@@ -28,10 +28,12 @@
 
 void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary);
 
+void Net_initEmpty (Net me);
 autoNet Net_createEmpty (integer numberOfInputNodes);
 
 autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary);
 
+void Net_addInputLayer (Net me, integer numberOfNodes);
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);
 void Net_addFullyConnectedLayer (Net me, integer numberOfOutputNodes);
 
@@ -47,6 +49,7 @@ void Net_PatternList_applyToInput (Net me, PatternList thee, integer rowNumber);
 void Net_PatternList_applyToOutput (Net me, PatternList thee, integer rowNumber);
 void Net_PatternList_learn (Net me, PatternList thee, double learningRate);
 void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate);
+void Net_PatternList_learn_twoPhases (Net me, PatternList thee, double learningRate);
 
 autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kLayer_activationType activationType);
 

@@ -86,17 +86,19 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 		return;
 	}
 	if (fmax <= fmin) {
-		double f1max, f2min; 
-		autoNUMvector<double> f1 (itmin, itmax), f2 (itmin, itmax);
+		double f1max, f2min;
+		integer numberOfSelected = itmax - itmin + 1;
+		autoVEC f1 = newVECraw (numberOfSelected);
+		autoVEC f2 = newVECraw (numberOfSelected);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++) {
-			f1 [iframe] = my d_frames [iframe]. frequencies [1];
-			f2 [iframe] = my d_frames [iframe]. frequencies [my d_frames [iframe] . numberOfFrequencies];
+			f1 [iframe - itmin + 1] = my d_frames [iframe]. frequencies [1];
+			f2 [iframe - itmin + 1] = my d_frames [iframe]. frequencies [my d_frames [iframe] . numberOfFrequencies];
 		}
-		NUMvector_extrema (f1.peek(), itmin, itmax, & fmin, & f1max);
-		NUMvector_extrema (f2.peek(), itmin, itmax, & f2min, & fmax);
+		NUMextrema (f1.get(), & fmin, & f1max);
+		NUMextrema (f2.get(), & f2min, & fmax);
 	}
 	if (fmax == fmin) {
-		fmin = 0;
+		fmin = 0.0;
 		fmax += 0.5;
 	}
 

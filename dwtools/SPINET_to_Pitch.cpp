@@ -62,7 +62,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		// Determine global maximum power in frame
 
 		for (integer j = 1; j <= my nx; j ++) {
-			double p = NUMcolumnSum (my s.get(), j);
+			const double p = NUMsum (my s.column (j));
 			if (p > maxPower)
 				maxPower = p;
 			power [j] = p;
@@ -73,7 +73,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			Pitch_Frame pitchFrame = & thy frame [j];
 
 			pitchFrame -> intensity = power [j] / maxPower;
-			VECcolumn_preallocated (y.get(), my s.get(), j);
+			y.all() <<= my s.column (j);
 			
 			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), y.get(), 1e30, 1e30);
 			for (integer k = 1; k <= nFrequencyPoints; k ++) {

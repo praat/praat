@@ -146,7 +146,7 @@ void DataModeler_setDataPointYSigma (DataModeler me, integer index, double sigma
 double DataModeler_getDataPointYSigma (DataModeler me, integer index);
 double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDataPoints);
 
-void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]);
+autoVEC DataModeler_getZScores (DataModeler me, int useSigmaY);
 
 double DataModeler_getDegreesOfFreedom (DataModeler me);
 
