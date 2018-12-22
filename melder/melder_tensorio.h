@@ -56,36 +56,32 @@ FUNCTION (dcomplex, c128)
 #undef FUNCTION
 
 /*
-void NUMvector_writeBinary_r64 (const double *v, integer lo, integer hi, FILE *f);   // etc
-	write the vector elements v [lo..hi] as machine-independent
-	binary data to the stream f.
+void vector_writeBinary_r64 (constvector <double> const& vec, FILE *f);   // etc
+	write the vector elements as machine-independent binary data to the stream f.
 	Throw an error message if anything went wrong.
-	The vectors need not have been created by NUM...vector.
-double * NUMvector_readText_r64 (integer lo, integer hi, MelderReadText text, const char *name);   // etc
+autovector <double> vector_readText_r64 (integer nrow, MelderReadText text, const char *name);   // etc
 	create and read a vector as text.
 	Throw an error message if anything went wrong.
 	Every element is supposed to be on the beginning of a line.
-double * NUMvector_readBinary_r64 (integer lo, integer hi, FILE *f);   // etc
+autovector <double> vector_readBinary_r64 (integer nrow, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Throw an error message if anything went wrong.
-void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, conststring32 name);   // etc
-	write the vector elements v [lo..hi] as text to the open file,
+void vector_writeText_r64 (constvector <double> const& vec, MelderFile file, conststring32 name);   // etc
+	write the vector elements as text to the open file,
 	each element on its own line, preceded by "name [index]: ".
 	Throw an error message if anything went wrong.
-	The vectors need not have been created by NUMvector.
-void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
+void matrix_writeText_r64 (constmatrix <double> const& mat, MelderFile file, conststring32 name);   // etc
+	write the matrix elements as text to the open file.
 	Throw an error message if anything went wrong.
-	The matrices need not have been created by NUMmatrix.
-void NUMmatrix_writeBinary_r64 (double **m, integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
+void matrix_writeBinary_r64 (constmatrix <double> const& mat, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
 	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
-double ** NUMmatrix_readText_r64 (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name);   // etc
+automatrix <double> matrix_readText_r64 (integer nrow, integer ncol, MelderReadText text, const char *name);   // etc
 	create and read a matrix as text.
 	Throw an error message if anything went wrong.
-double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
+automatrix <double> matrix_readBinary_r64 (integer nrow, integer ncol, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.
 	Throw an error message if anything went wrong.
 */
