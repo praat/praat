@@ -1335,9 +1335,9 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double hotelling_tsq = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
 
 		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
-		double tr_s1sisqr = traceOfSquaredMatrixProduct (constMAT (s1.at_deprecated, p, p), constMAT (si.at_deprecated, p, p));
+		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.get(), si.get());
 		double tr_s1si = NUMtrace2_nn (s1.get(), si.get());
-		double tr_s2sisqr = traceOfSquaredMatrixProduct (constMAT (s2.at_deprecated, p, p), constMAT (si.at_deprecated, p, p));
+		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.get(), si.get());
 		double tr_s2si = NUMtrace2_nn (s2.get(), si.get());
 
 		double nu = (p + p * p) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);
