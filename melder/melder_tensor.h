@@ -94,13 +94,6 @@ void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integ
 		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
-bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
-/*
-	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
-	to the corresponding elements of the matrix m2; otherwise, return 0.
-	The matrices need not have been created by NUM...matrix.
-*/
-
 byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero);
 void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept;
 
@@ -224,11 +217,6 @@ T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer c
 			result [irow] [icol] = ptr [irow] [icol];
 	#endif
 	return result;
-}
-
-template <class T>
-bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, integer col2) {
-	return NUMmatrix_equal_generic (sizeof (T), m1, m2, row1, row2, col1, col2);
 }
 
 template <class T>

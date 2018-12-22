@@ -272,12 +272,4 @@ void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integ
 	}
 }
 
-bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2) {
-	Melder_assert (m1 && m2);
-	integer columnOffset = col1 * elementSize;
-	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-	return memcmp (((char **) m1) [row1] + columnOffset, ((char **) m2) [row1] + columnOffset,
-			(size_t) dataSize) == 0;
-}
-
 /* End of file melder_tensor.cpp */
