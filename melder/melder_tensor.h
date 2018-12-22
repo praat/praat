@@ -86,14 +86,6 @@ void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, intege
 		must have the same value as with the creation of the matrix.
 */
 
-void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
-/*
-	Function:
-		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
-	Preconditions:
-		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
-*/
-
 byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero);
 void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept;
 
@@ -204,19 +196,6 @@ T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero
 template <class T>
 void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
 	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
-}
-
-template <class T>
-T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer col2) {
-	#if 1
-	T** result = static_cast <T**> (NUMmatrix_copy_generic (sizeof (T), ptr, row1, row2, col1, col2));
-	#else
-	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2));
-	for (integer irow = row1; irow <= row2; irow ++)
-		for (integer icol = col1; icol <= col2; icol ++)
-			result [irow] [icol] = ptr [irow] [icol];
-	#endif
-	return result;
 }
 
 template <class T>
