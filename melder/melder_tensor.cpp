@@ -255,36 +255,4 @@ void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, inte
 	theTotalNumberOfArrays -= 1;
 }
 
-void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2) {
-	try {
-		if (! m)
-			return nullptr;
-		char **result = reinterpret_cast <char **>
-				(NUMmatrix_generic (elementSize, row1, row2, col1, col2, false));
-		if (! result)
-			return nullptr;
-		integer columnOffset = col1 * elementSize;
-		integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-		memcpy (result [row1] + columnOffset, ((char **) m) [row1] + columnOffset, (size_t) dataSize);
-		return result;
-	} catch (MelderError) {
-		Melder_throw (U"Matrix of elements not copied.");
-	}
-}
-
-void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2) {
-	Melder_assert (mfrom && mto);
-	integer columnOffset = col1 * elementSize;
-	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-	memcpy (mto [row1] + columnOffset, mfrom [row1] + columnOffset, (size_t) dataSize);
-}
-
-bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2) {
-	Melder_assert (m1 && m2);
-	integer columnOffset = col1 * elementSize;
-	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-	return memcmp (((char **) m1) [row1] + columnOffset, ((char **) m2) [row1] + columnOffset,
-			(size_t) dataSize) == 0;
-}
-
 /* End of file melder_tensor.cpp */

@@ -43,14 +43,6 @@
 		vector_writeText_##storage (our x.get(), _file_, U"" #x); \
 	}
 
-#define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (our x) { \
-			NUMmatrix_writeText_##storage (our x, _row1, _row2, _col1, _col2, _file_, U"" #x); \
-		} \
-	}
-
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
@@ -126,22 +118,6 @@
 		for (integer _i = _min; _i <= _max; _i ++) { \
 			texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
 			our x [_i]. writeText (_file_); \
-			texexdent (_file_); \
-		} \
-		texexdent (_file_); \
-	}
-
-#define oo_STRUCT_MATRIX_FROM(Type, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		texputintro (file, U"" #x U" [] []: ", _row2 >= _row1 ? nullptr : U"(empty)"); \
-		for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-			texputintro (_file_, U"" #x U" [", Melder_integer (_irow), U"]:"); \
-			for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-				texputintro (_file_, U"" #x U" [", Melder_integer (_irow), U"] [", Melder_integer (_icol), U"]:"); \
-				our x [_irow] [_icol]. writeText (file); \
-				texexdent (_file_); \
-			} \
 			texexdent (_file_); \
 		} \
 		texexdent (_file_); \

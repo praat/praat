@@ -35,12 +35,6 @@
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	thy x = newvectorcopy (our x.get());
 
-#define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (our x) thy x = NUMmatrix_copy (our x, _row1, _row2, _col1, _col2); \
-	}
-
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	thy x = newmatrixcopy (our x.get());
 
@@ -94,19 +88,6 @@
 			thy x = NUMvector <struct##Type> (_min, _max); \
 			for (integer _i = _min; _i <= _max; _i ++) { \
 				our x [_i]. copy (& thy x [_i]); \
-			} \
-		} \
-	}
-
-#define oo_STRUCT_MATRIX_FROM(Type, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (our x) { \
-			thy x = NUMmatrix <struct##Type> (_row1, _row2, _col1, _col2); \
-			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					our x [_irow] [_icol]. copy (& thy x [_irow] [_icol]); \
-				} \
 			} \
 		} \
 	}

@@ -86,27 +86,6 @@ void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, intege
 		must have the same value as with the creation of the matrix.
 */
 
-void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
-/*
-	Function:
-		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
-	Preconditions:
-		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
-*/
-
-void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
-/*
-	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
-	These matrices need not have been created by NUMmatrix.
-*/
-
-bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
-/*
-	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
-	to the corresponding elements of the matrix m2; otherwise, return 0.
-	The matrices need not have been created by NUM...matrix.
-*/
-
 byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero);
 void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept;
 
@@ -217,29 +196,6 @@ T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero
 template <class T>
 void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
 	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
-}
-
-template <class T>
-T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer col2) {
-	#if 1
-	T** result = static_cast <T**> (NUMmatrix_copy_generic (sizeof (T), ptr, row1, row2, col1, col2));
-	#else
-	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2));
-	for (integer irow = row1; irow <= row2; irow ++)
-		for (integer icol = col1; icol <= col2; icol ++)
-			result [irow] [icol] = ptr [irow] [icol];
-	#endif
-	return result;
-}
-
-template <class T>
-bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, integer col2) {
-	return NUMmatrix_equal_generic (sizeof (T), m1, m2, row1, row2, col1, col2);
-}
-
-template <class T>
-void NUMmatrix_copyElements (T** mfrom, T** mto, integer row1, integer row2, integer col1, integer col2) {
-	NUMmatrix_copyElements_generic (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
 }
 
 template <class T>
@@ -1535,6 +1491,19 @@ inline autoBOOLMAT newBOOLMATzero (integer nrow, integer ncol) {
 	return newmatrixzero <bool> (nrow, ncol);
 }
 inline autoBOOLMAT newBOOLMATcopy (constBOOLMAT source) {
+	return newmatrixcopy (source);
+}
+
+using BYTEMAT = matrix <byte>;
+using constBYTEMAT = constmatrix <byte>;
+using autoBYTEMAT = automatrix <byte>;
+inline autoBYTEMAT newBYTEMATraw (integer nrow, integer ncol) {
+	return newmatrixraw <byte> (nrow, ncol);
+}
+inline autoBYTEMAT newBYTEMATzero (integer nrow, integer ncol) {
+	return newmatrixzero <byte> (nrow, ncol);
+}
+inline autoBYTEMAT newBYTEMATcopy (constBYTEMAT source) {
 	return newmatrixcopy (source);
 }
 

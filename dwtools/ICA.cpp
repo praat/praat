@@ -827,7 +827,7 @@ static void Sound_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee
 		integer iter = 0;
 		Melder_require (my ny == thy numberOfColumns, U"Dimensions should agree.");
 		
-		autoNUMmatrix<double> x (NUMmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
+		autoMAT x = matrixcopy (my z.get());
 		do {
 			iter ++;
 		} while (/*fabs((dm_old - dm_new) / dm_new) > tol &&*/ iter < maxNumberOfIterations);
