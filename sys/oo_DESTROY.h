@@ -33,12 +33,6 @@
 		our x. reset (); \
 	}
 
-#define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _col1 = (col1); \
-		NUMmatrix_free <type> (our x, _row1, _col1); \
-	}
-
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		our x. reset (); \
@@ -92,19 +86,6 @@
 				our x [_i]. destroy (); \
 			} \
 			NUMvector_free <struct##Type> (our x, _min); \
-		} \
-	}
-
-#define oo_STRUCT_MATRIX_FROM(Type, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (our x) { \
-			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					our x [_irow] [_icol]. destroy (); \
-				} \
-			} \
-			NUMmatrix_free <struct##Type> (our x, _row1, _col1); \
 		} \
 	}
 

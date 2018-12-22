@@ -1538,6 +1538,19 @@ inline autoBOOLMAT newBOOLMATcopy (constBOOLMAT source) {
 	return newmatrixcopy (source);
 }
 
+using BYTEMAT = matrix <byte>;
+using constBYTEMAT = constmatrix <byte>;
+using autoBYTEMAT = automatrix <byte>;
+inline autoBYTEMAT newBYTEMATraw (integer nrow, integer ncol) {
+	return newmatrixraw <byte> (nrow, ncol);
+}
+inline autoBYTEMAT newBYTEMATzero (integer nrow, integer ncol) {
+	return newmatrixzero <byte> (nrow, ncol);
+}
+inline autoBYTEMAT newBYTEMATcopy (constBYTEMAT source) {
+	return newmatrixcopy (source);
+}
+
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
