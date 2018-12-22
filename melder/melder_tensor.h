@@ -94,12 +94,6 @@ void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integ
 		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
-void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
-/*
-	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
-	These matrices need not have been created by NUMmatrix.
-*/
-
 bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
 /*
 	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
@@ -235,11 +229,6 @@ T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer c
 template <class T>
 bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, integer col2) {
 	return NUMmatrix_equal_generic (sizeof (T), m1, m2, row1, row2, col1, col2);
-}
-
-template <class T>
-void NUMmatrix_copyElements (T** mfrom, T** mto, integer row1, integer row2, integer col1, integer col2) {
-	NUMmatrix_copyElements_generic (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
 }
 
 template <class T>
