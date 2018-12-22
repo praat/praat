@@ -86,9 +86,6 @@ void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, intege
 		must have the same value as with the creation of the matrix.
 */
 
-byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero);
-void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept;
-
 integer NUM_getTotalNumberOfArrays ();   // for debugging
 
 template <class T>
