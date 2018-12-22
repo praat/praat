@@ -70,10 +70,8 @@ void matrix_writeText_r64 (constmatrix <double> const& mat, MelderFile file, con
 	write the matrix elements as text to the open file.
 	Throw an error message if anything went wrong.
 void matrix_writeBinary_r64 (constmatrix <double> const& mat, FILE *f);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
-	binary data to the stream f.
+	write the matrix elements as machine-independent binary data to the stream f.
 	Throw an error message if anything went wrong.
-	The matrices need not have been created by NUMmatrix.
 automatrix <double> matrix_readText_r64 (integer nrow, integer ncol, MelderReadText text, const char *name);   // etc
 	create and read a matrix as text.
 	Throw an error message if anything went wrong.
