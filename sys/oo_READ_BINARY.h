@@ -40,14 +40,6 @@
 		our x = vector_readBinary_##storage (_size, _filePointer_); \
 	}
 
-#define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (_row2 >= _row1 && _col2 >= _col1) { \
-	    	our x = NUMmatrix_readBinary_##storage (_row1, _row2, _col1, _col2, _filePointer_); \
-		} \
-	}
-
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
@@ -112,19 +104,6 @@
 			our x = NUMvector <struct##Type> (_min, _max); \
 			for (integer _i = _min; _i <= _max; _i ++) { \
 				our x [_i]. readBinary (_filePointer_, _formatVersion_); \
-			} \
-		} \
-	}
-
-#define oo_STRUCT_MATRIX_FROM(Type, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (_row2 >= _row1 && _col2 >= _col1) { \
-			our x = NUMmatrix <struct##Type> (_row1, _row2, _col1, _col2); \
-			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					our x [_irow] [_icol]. readBinary (_filePointer_, _formatVersion_); \
-				} \
 			} \
 		} \
 	}

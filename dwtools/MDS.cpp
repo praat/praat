@@ -882,7 +882,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 					NUMequal (my columnLabels.get(), thy columnLabels.get()),
 		U"The labels should be the same.");
 	
-	double **x = my data.at_deprecated, **y = thy data.at_deprecated;
+	constMAT x = my data.get(), y = thy data.get();
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
