@@ -79,14 +79,14 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
 
 		checkChannelsWithinRange (channels, 1, my ny);
 		
-        autoNUMmatrix <double> whiten (1, thy dimension, 1, thy dimension);
+        autoMAT whiten = newMATraw (thy dimension, thy dimension);
 		// W = E D^(-1/2) E' from http://cis.legacy.ics.tkk.fi/aapo/papers/IJCNN99_tutorialweb/node26.html
         for (integer i = 1; i <= thy dimension; i ++) {
             for (integer j = i; j <= thy dimension; j ++) {
                 longdouble wij = 0.0;
                 for (integer k = 1; k <= numberOfComponents; k ++)
                     wij += thy eigenvectors [k] [i] * thy eigenvectors [k] [j] / sqrt (thy eigenvalues [k]);
-                whiten [i] [j] = whiten [j] [i] = wij;
+                whiten [i] [j] = whiten [j] [i] = double (wij);
             }
         }
 		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
