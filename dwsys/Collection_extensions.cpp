@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2011,2015-2017 David Weenink, 2018 Paul Boersma
+ * Copyright (C) 1994-2018 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 		if (my size != his numberOfElements) {
 			Melder_throw (me, U"The number of elements are not equal.");
 		}
-		autoNUMvector<integer> pos (1, my size);
+		autoINTVEC pos = newINTVECraw (my size);
 		autoCollection thee = Data_copy (me);
 
-		for (integer i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++)
 			pos [i] = i;
-		}
+
 		/* Dual meaning of array pos: */
 		/* k <  i : position of item 'k' */
 		/* k >= i : the item at position 'k' */
@@ -46,9 +46,9 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 			integer ti = pos [i], which = Permutation_getValueAtIndex (him, i);
 			integer where = pos [which];   // where >= i
 			Daata tmp = static_cast<Daata> (thy at [i]);
-			if (i == where) {
+			if (i == where)
 				continue;
-			}
+
 			thy at [i] = thy at [where];
 			thy at [where] = tmp;
 			/* order is important !! */

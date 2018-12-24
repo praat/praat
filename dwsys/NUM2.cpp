@@ -824,10 +824,10 @@ double NUMmspline (constVEC knot, integer order, integer i, double x) {
 	// Calculate M [i](x|1,t) according to eq.2.
 
 	integer ito = i + order - 1;
-	autoNUMvector<double> m (i, ito);
+	autoVEC m = newVECzero (order); 
 	for (integer j = i; j <= ito; j ++) {
 		if (x >= knot [j] && x < knot [j + 1])
-			m [j] = 1 / (knot [j + 1] - knot [j]);
+			m [j - i + 1] = 1 / (knot [j + 1] - knot [j]);
 	}
 
 	// Iterate to get M [i](x|k,t)
@@ -836,10 +836,10 @@ double NUMmspline (constVEC knot, integer order, integer i, double x) {
 		for (integer j = i; j <= i + order - k; j ++) {
 			double kj = knot [j], kjpk = knot [j + k];
 			if (kjpk > kj)
-				m [j] = k * ((x - kj) * m [j] + (kjpk - x) * m [j + 1]) / ((k - 1) * (kjpk - kj));
+                m [j - i + 1] = k * ((x - kj) * m [j - i + 1] + (kjpk - x) * m [j - i + 1 + 1]) / ((k - 1) * (kjpk - kj));
 		}
 	}
-	y = m [i];
+	y = m [1];
 	return y;
 }
 
@@ -2136,10 +2136,12 @@ void VECarea_from_lpc (VEC area, constVEC lpc) {
 	VECarea_from_rc (area, rc.get());
 }
 
+#if 0
 /*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
-	autoNUMvector<double> b (1, p);
-	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
+	autoVEC b = newVECzero (p);
+	//autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
+	autoVEC a <<= VEC(lpc, p);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
 		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
@@ -2164,7 +2166,7 @@ void NUMlpc_rc_to_area2 (double *rc, integer n, double *area) {
 void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc);
 void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc) {
 	// from area to reflection coefficients
-	autoNUMvector<double> rc (1, n);
+	autoVEC rc =newVECraw (n);
 	// normalisation: area [n+1] = 0.0001
 	for (integer j = n; j > 0; j--) {
 		double ar = area [j+1] / area [j];
@@ -2229,19 +2231,20 @@ void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc) {
 
 void NUMlpc_area_to_lpc (double *area, integer m, double *lpc) {
 	// from area to reflection coefficients
-	autoNUMvector<double> rc (1, m);
+	autoVEC rc = newVECzero (m);
 	// normalisation: area [n+1] = 0.0001
 	NUMlpc_area_to_rc (area, m, rc.peek());
 	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc); // m-1 ???
 }
 
 void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
-	autoNUMvector<double> rc (1, m);
+	autoVEC rc = newVECzero (m);
 	NUMlpc_lpc_to_rc (lpc, m, rc.peek());
 	NUMlpc_rc_to_area (rc.peek(), m, area);
 
 }
 /*********** End deprecated LPC routines ***********************************/
+#endif
 
 #undef SIGN
 
