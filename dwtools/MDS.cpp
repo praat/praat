@@ -1918,7 +1918,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			}
 
 			// the weighted S matrix (eq. 8)
-			
+
 			wsih.all()  +=  sih -> data.all()  *  weights -> data [i] [h];
 		}
 

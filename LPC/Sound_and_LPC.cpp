@@ -71,50 +71,48 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee) {
 	integer i = 1; // For error condition at end
 	integer m = thy nCoefficients;
 
-	autoNUMvector<double> r (1, m + 1);
-	autoNUMvector<double> a (1, m + 1);
-	autoNUMvector<double> rc (1, m);
+	autoVEC r = newVECzero (m + 1);
+	autoVEC a = newVECzero (m + 1);
+	autoVEC rc = newVECzero (m);
 
 	VEC x = my z.row (1);
 	for (i = 1; i <= m + 1; i ++) {
-		for (integer j = 1; j <= my nx - i + 1; j ++) {
+		for (integer j = 1; j <= my nx - i + 1; j ++)
 			r [i] += x [j] * x [j + i - 1];
-		}
 	}
 	if (r [1] == 0.0) {
-		i = 1; /* ! */ goto end;
+		i = 1; /* ! */ 
+		goto end;
 	}
 	a [1] = 1.0;
 	a [2] = rc [1] = - r [2] / r [1];
 	thy gain = r [1] + r [2] * rc [1];
 	for (i = 2; i <= m; i ++) {
 		double s = 0.0;
-		for (integer j = 1; j <= i; j ++) {
+		for (integer j = 1; j <= i; j ++)
 			s += r [i - j + 2] * a [j];
-		}
 		rc [i] = - s / thy gain;
 		for (integer j = 2; j <= i / 2 + 1; j ++) {
 			double at = a [j] + rc [i] * a [i - j + 2];
 			a [i - j + 2] += rc [i] * a [j];
 			a [j] = at;
 		}
-		a [i + 1] = rc [i]; thy gain += rc [i] * s;
-		if (thy gain <= 0) {
+		a [i + 1] = rc [i];
+        thy gain += rc [i] * s;
+		if (thy gain <= 0)
 			goto end;
-		}
 	}
 end:
 	i--;
-	for (integer j = 1; j <= i; j ++) {
+	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
-	}
-	if (i == m) {
+
+	if (i == m)
 		return 1;
-	}
+
 	thy nCoefficients = i;
-	for (integer j = i + 1; j <= m; j ++) {
+	for (integer j = i + 1; j <= m; j ++) 
 		thy a [j] = 0.0;
-	}
 	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
@@ -131,11 +129,11 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee) {
 	integer i = 1, n = my nx, m = thy nCoefficients;
 	constVEC x = my z.row (1);
 
-	autoNUMvector<double> b (1, m * (m + 1) / 2);
-	autoNUMvector<double> grc (1, m);
-	autoNUMvector<double> a (1, m + 1);
-	autoNUMvector<double> beta (1, m);
-	autoNUMvector<double> cc (1, m + 1);
+	autoVEC b = newVECzero (m * (m + 1) / 2);
+	autoVEC grc = newVECzero (m);
+	autoVEC a = newVECzero (m + 1);
+	autoVEC beta = newVECzero (m);
+	autoVEC cc = newVECzero (m + 1);
 
 	thy gain = 0.0;
 	for (i = m + 1; i <= n; i ++) {
@@ -145,7 +143,8 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee) {
 	}
 
 	if (thy gain == 0.0) {
-		i = 1; /* ! */ goto end;
+		i = 1; /* ! */ 
+		goto end;
 	}
 
 	b [1] = 1.0;
@@ -156,67 +155,57 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee) {
 
 	for (i = 2; i <= m; i ++) { /*130*/
 		double s = 0.0; /* 20 */
-		for (integer j = 1; j <= i; j ++) {
+		for (integer j = 1; j <= i; j ++)
 			cc [i - j + 2] = cc [i - j + 1] + x [m - i + 1] * x [m - i + j] - x [n - i + 1] * x [n - i + j];
-		}
+
 		cc [1] = 0.0;
-		for (integer j = m + 1; j <= n; j ++) {
+		for (integer j = m + 1; j <= n; j ++)
 			cc [1] += x [j - i] * x [j]; /* 30 */
-		}
+
 		b [i * (i + 1) / 2] = 1.0;
 		for (integer j = 1; j <= i - 1; j ++) { /* 70 */
 			double gam = 0.0;
-			if (beta [j] < 0.0) {
+			if (beta [j] < 0.0)
 				goto end;
-			} else if (beta [j] == 0.0) {
+			else if (beta [j] == 0.0)
 				continue;
-			}
-			for (integer k = 1; k <= j; k ++) {
+
+			for (integer k = 1; k <= j; k ++)
 				gam += cc [k + 1] * b [j * (j - 1) / 2 + k]; /*50*/
-			}
+
 			gam /= beta [j];
-			for (integer k = 1; k <= j; k ++) {
+			for (integer k = 1; k <= j; k ++)
 				b [i * (i - 1) / 2 + k] -= gam * b [j * (j - 1) / 2 + k]; /*60*/
-			}
 		}
 
 		beta [i] = 0.0;
-		for (integer j = 1; j <= i; j ++) {
+		for (integer j = 1; j <= i; j ++)
 			beta [i] += cc [j + 1] * b [i * (i - 1) / 2 + j]; /*80*/
-		}
-		if (beta [i] <= 0.0) {
+		if (beta [i] <= 0.0)
 			goto end;
-		}
 
-		for (integer j = 1; j <= i; j ++) {
+		for (integer j = 1; j <= i; j ++) 
 			s += cc [j] * a [j]; /*100*/
-		}
 		grc [i] = -s / beta [i];
 
-		for (integer j = 2; j <= i; j ++) {
+		for (integer j = 2; j <= i; j ++)
 			a [j] += grc [i] * b [i * (i - 1) / 2 + j - 1]; /*110*/
-		}
 		a [i + 1] = grc [i];
 		s = grc [i] * grc [i] * beta [i];
 		thy gain -= s;
-		if (thy gain <= 0.0) {
+		if (thy gain <= 0.0)
 			goto end;
-		}
 	}
 end:
 	i--;
 
-	for (integer j = 1; j <= i; j ++) {
+	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
-	}
-	if (i == m) {
+	if (i == m) 
 		return 1;
-	}
 
 	thy nCoefficients = i;
-	for (integer j = i + 1; j <= m; j ++) {
-		thy a [j] = 0.0;
-	}
+    thy a.part (i + 1, m) <<= 0.0;
 	return 0; // Melder_warning ("Less coefficienst than asked for.");
 }
 
