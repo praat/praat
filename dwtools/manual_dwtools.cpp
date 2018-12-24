@@ -1257,16 +1257,16 @@ DEFINITION (U"define the coefficients of each @@Chebyshev polynomials|Chebyshev 
 	"The coefficient of the polynomial with the highest degree comes last.")
 MAN_END
 
-MAN_BEGIN (U"Create ISpline...", U"djmw", 20040407)
+MAN_BEGIN (U"Create ISpline...", U"djmw", 20181224)
 INTRO (U"A command to create an @ISpline from a list of coefficients.")
 ENTRY (U"Settings")
 TAG (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomial @spline.")
-TAG (U"%Degree")
+TAG (U"##Degree")
 DEFINITION (U"defines the degree of the polynomial @spline.")
-TAG (U"%Coefficients")
+TAG (U"##Coefficients")
 DEFINITION (U"define the coefficients of the basis polynomials.")
-TAG (U"%%Interior knots")
+TAG (U"##Interior knots")
 DEFINITION (U"define the positions in the domain where continuity conditions are defined.")
 ENTRY (U"Behaviour")
 NORMAL (U"The number of coefficients and the number of interior knots must satisfy "
