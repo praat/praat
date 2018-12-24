@@ -853,9 +853,37 @@ static autoINTVEC HMM_HMMObservationSequenceBag_getStateSequences (HMM me, HMMOb
 	return stateSequenceNumbers;
 }
 
+static void HMM_smoothInitialStateProbs_naive (HMM me, double minProb) {
+	for (integer is = 1; is <= my numberOfStates; is ++)
+			my initialStateProbs [is] = std::max (my initialStateProbs [is], minProb );
+	/*
+		Normalize again as probabilities
+	*/
+	VECnormalize_inplace (my initialStateProbs.get(), 1.0, 1.0);
+}
+
+static void HMM_smoothTransitionProbs_naive (HMM me, double minProb) {
+	for (integer irow = 1; irow <= my numberOfStates; irow ++)
+		for (integer icol = 1; icol <= my numberOfStates; icol ++)
+			my transitionProbs [irow] [icol] = std::max (my transitionProbs [irow] [icol], minProb);
+	/*
+		Normalize again as probabilities
+	*/
+	for (integer irow = 1; irow <= my numberOfStates; irow ++)
+		VECnormalize_inplace (my transitionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
+}
+
+static void HMM_smoothEmissionProbs_naive (HMM me, double minProb) {
+	for (integer is = 1; is <= my numberOfStates; is ++)
+		for (integer k = 1; k <= my numberOfObservationSymbols; k ++)
+			my emissionProbs [is] [k] = std::max (my emissionProbs [is] [k], minProb);
+	for (integer irow = 1; irow <= my numberOfStates; irow ++)
+		VECnormalize_inplace (my emissionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
+}
 /*
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
+
 void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
 	Melder_assert (my notHidden);
 	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
@@ -879,17 +907,7 @@ void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequen
 	*/
 	for (integer irow = 1; irow <= my numberOfStates; irow ++)
 		VECnormalize_inplace (my transitionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
-	/*
-		Assign minimum probabilty to states that have zero probability
-	*/
-	for (integer irow = 1; irow <= my numberOfStates; irow ++)
-		for (integer icol = 1; icol <= my numberOfStates; icol ++)
-			my transitionProbs [irow] [icol] = std::max (my transitionProbs [irow] [icol], minProb);
-	/*
-		Normalize again as probabilities
-	*/
-	for (integer irow = 1; irow <= my numberOfStates; irow ++)
-		VECnormalize_inplace (my transitionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
+	/* No need to set minimum probabilities */
 }
 
 
@@ -1248,19 +1266,19 @@ void HMM_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee) {
 		*/
 		if (my initialStateProbs [is] > 0.0) {
 			p = thy aij_num_p0 [is] / thy aij_denom_p0 [is];
-			my initialStateProbs [is] = std::max (p, thy minProb);
+			my initialStateProbs [is] = ( p > 0.0 ? p : thy minProb );
 		}
 		for (integer js = 1; js <= my numberOfStates; js ++) {
 			if (my transitionProbs [is] [js] > 0.0) {
 				p = thy aij_num [is] [js] / thy aij_denom [is] [js];
-				my transitionProbs [is] [js] = std::max (p, thy minProb);
+				my transitionProbs [is] [js] = ( p > 0.0 ? p : thy minProb );
 			}
 		}
 		if (! my notHidden) {
 			for (integer k = 1; k <= my numberOfObservationSymbols; k ++) {
 				if (my emissionProbs [is] [k] > 0.0) {
 					p = thy bik_num [is] [k] / thy bik_denom [is] [k];
-					my emissionProbs [is] [k] = std::max (p, thy minProb);
+					my emissionProbs [is] [k] = ( p > 0.0 ? p : thy minProb );
 				}
 			}
 		}
