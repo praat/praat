@@ -884,6 +884,7 @@ static void HMM_smoothEmissionProbs_naive (HMM me, double minProb) {
 /*
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
+
 void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
 	Melder_assert (my notHidden);
 	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
