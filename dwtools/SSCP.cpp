@@ -834,7 +834,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 			Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
-			thy data.all() += covi -> data.all() * (covi -> numberOfObservations - 1.0);
+			thy data.all()  +=  covi -> data.all()  *  (covi -> numberOfObservations - 1.0);
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
 		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
@@ -866,10 +866,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			Covariance covi = my at [i];
 			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
 			MATouter_preallocated (outer.get(), mean.get(), mean.get());
-			if (thy numberOfRows == 1) {
-				thy data.row (1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
-			} else
-				thy data.get() <<= outer.get() * covi -> numberOfObservations; // Y += aX
+			thy data.all()  +=  outer.all()  *  covi -> numberOfObservations; // Y += aX
 		}
 		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
 		return thee;
@@ -1264,7 +1261,7 @@ void Covariance_getMarginalDensityParameters (Covariance me, constVEC v, double 
 		longdouble mu = 0.0;
 		for (integer m = 1; m <= my numberOfColumns; m ++)
 			mu += v [m] * my centroid [m];
-		*out_mu = (double) mu;
+		*out_mu = double (mu);
 	}
 	if (out_stdev) {
 		longdouble stdev = 0.0;
@@ -1276,7 +1273,7 @@ void Covariance_getMarginalDensityParameters (Covariance me, constVEC v, double 
 				for (integer m = 1; m <= my numberOfColumns; m ++)
 					stdev += v [k] * my data [k] [m] * v [m];
 		}
-		*out_stdev = sqrt (stdev);
+		*out_stdev = sqrt (double (stdev));
 	}
 }
 
@@ -1337,9 +1334,9 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double hotelling_tsq = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
 
 		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
-		double tr_s1sisqr = traceOfSquaredMatrixProduct (constMAT (s1.at_deprecated, p, p), constMAT (si.at_deprecated, p, p));
+		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.get(), si.get());
 		double tr_s1si = NUMtrace2_nn (s1.get(), si.get());
-		double tr_s2sisqr = traceOfSquaredMatrixProduct (constMAT (s2.at_deprecated, p, p), constMAT (si.at_deprecated, p, p));
+		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.get(), si.get());
 		double tr_s2si = NUMtrace2_nn (s2.get(), si.get());
 
 		double nu = (p + p * p) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);

@@ -2589,7 +2589,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			Test learnability of every possible ranked pair.
 		*/
 		my numberOfFixedRankings ++;
-		autoNUMmatrix <bool> obligatory (1, my numberOfConstraints, 1, my numberOfConstraints);
+		autoBOOLMAT obligatory = newBOOLMATzero (my numberOfConstraints, my numberOfConstraints);
 		MelderInfo_open ();
 		autoMelderProgress progress (U"Finding obligatory rankings.");
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {

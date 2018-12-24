@@ -93,20 +93,6 @@
 		} \
 		return result; \
 	} \
-	void NUMmatrix_writeText_##storage (T **m, integer row1, integer row2, integer col1, integer col2, MelderFile file, conststring32 name) { \
-		texputintro (file, name, U" [] []: ", row2 >= row1 ? nullptr : U"(empty)", 0,0,0); \
-		if (row2 >= row1) { \
-			for (integer irow = row1; irow <= row2; irow ++) { \
-				texputintro (file, name, U" [", Melder_integer (irow), U"]:", 0,0); \
-				for (integer icol = col1; icol <= col2; icol ++) { \
-					texput##storage (file, m [irow] [icol], name, U" [", Melder_integer (irow), U"] [", Melder_integer (icol), U"]"); \
-				} \
-				texexdent (file); \
-			} \
-		} \
-		texexdent (file); \
-		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
-	} \
 	void matrix_writeText_##storage (const constmatrix<T>& mat, MelderFile file, conststring32 name) { \
 		texputintro (file, name, U" [] []: ", mat.nrow >= 1 ? nullptr : U"(empty)", 0,0,0); \
 		for (integer irow = 1; irow <= mat.nrow; irow ++) { \
@@ -119,38 +105,12 @@
 		texexdent (file); \
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
 	} \
-	void NUMmatrix_writeBinary_##storage (T **m, integer row1, integer row2, integer col1, integer col2, FILE *f) { \
-		if (row2 >= row1) { \
-			for (integer irow = row1; irow <= row2; irow ++) { \
-				for (integer icol = col1; icol <= col2; icol ++) \
-					binput##storage (m [irow] [icol], f); \
-			} \
-		} \
-		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
-	} \
 	void matrix_writeBinary_##storage (const constmatrix<T>& mat, FILE *f) { \
 		for (integer irow = 1; irow <= mat.nrow; irow ++) { \
 			for (integer icol = 1; icol <= mat.ncol; icol ++) \
 				binput##storage (mat [irow] [icol], f); \
 		} \
 		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
-	} \
-	T ** NUMmatrix_readText_##storage (integer row1, integer row2, integer col1, integer col2, MelderReadText text, const char *name) { \
-		T **result = nullptr; \
-		try { \
-			result = NUMmatrix <T> (row1, row2, col1, col2); \
-			for (integer irow = row1; irow <= row2; irow ++) for (integer icol = col1; icol <= col2; icol ++) { \
-				try { \
-					result [irow] [icol] = texget##storage (text); \
-				} catch (MelderError) { \
-					Melder_throw (U"Could not read ", Melder_peek8to32 (name), U" [", irow, U"] [", icol, U"]."); \
-				} \
-			} \
-			return result; \
-		} catch (MelderError) { \
-			NUMmatrix_free (result, row1, col1); \
-			throw; \
-		} \
 	} \
 	automatrix<T> matrix_readText_##storage (integer nrow, integer ncol, MelderReadText text, const char *name) { \
 		automatrix<T> result = newmatrixzero<T> (nrow, ncol); \
@@ -162,18 +122,6 @@
 			} \
 		} \
 		return result; \
-	} \
-	T ** NUMmatrix_readBinary_##storage (integer row1, integer row2, integer col1, integer col2, FILE *f) { \
-		T **result = nullptr; \
-		try { \
-			result = NUMmatrix <T> (row1, row2, col1, col2); \
-			for (integer irow = row1; irow <= row2; irow ++) for (integer icol = col1; icol <= col2; icol ++) \
-				result [irow] [icol] = binget##storage (f); \
-			return result; \
-		} catch (MelderError) { \
-			NUMmatrix_free (result, row1, col1); \
-			throw; \
-		} \
 	} \
 	automatrix<T> matrix_readBinary_##storage (integer nrow, integer ncol, FILE *f) { \
 		automatrix<T> result = newmatrixzero<T> (nrow, ncol); \

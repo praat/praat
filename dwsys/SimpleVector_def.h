@@ -20,16 +20,6 @@
  djmw 20020606 GPL header
 */
 
-#define ooSTRUCT DoubleVector
-oo_DEFINE_CLASS (DoubleVector, Daata)
-
-	oo_INTEGER (min)
-	oo_INTEGER (max)
-	oo_DOUBLE_VECTOR_FROM (v, min, max)
-	
-oo_END_CLASS (DoubleVector)	
-#undef ooSTRUCT
-
 #define ooSTRUCT ComplexVector
 oo_DEFINE_CLASS (ComplexVector, Daata)
 

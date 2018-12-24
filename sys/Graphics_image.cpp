@@ -786,7 +786,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 				height = width * (double) photo -> ny / (double) photo -> nx;
 				y2DC -= height / 2, y1DC = y2DC + height;
 			}
-			autoNUMmatrix <double_rgbt> z (1, photo -> ny, 1, photo -> nx);
+			automatrix <double_rgbt> z = newmatrixraw <double_rgbt> (photo -> ny, photo -> nx);
 			for (integer iy = 1; iy <= photo -> ny; iy ++) {
 				for (integer ix = 1; ix <= photo -> nx; ix ++) {
 					z [iy] [ix]. red          = photo -> d_red          -> z [iy] [ix];

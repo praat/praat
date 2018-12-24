@@ -40,13 +40,6 @@
 		if (! NUMequal (our x.get(), thy x.get())) return false; \
 	}
 
-#define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (! our x != ! thy x || \
-			(our x && ! NUMmatrix_equal <type> (our x, thy x, _row1, _row2, _col1, _col2))) return false; \
-	}
-
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	{ \
 		integer _nrow = (nrowExpression); \
@@ -114,19 +107,6 @@
 		if (our x) { \
 			for (integer _i = _min; _i <= _max; _i ++) { \
 				if (! our x [_i]. equal (& thy x [_i])) return false; \
-			} \
-		} \
-	}
-
-#define oo_STRUCT_MATRIX_FROM(Type, x, row1, row2, col1, col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (! our x != ! thy x) return false; \
-		if (our x) { \
-			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					if (! our x [_irow] [_icol]. equal (& thy x [_irow] [_icol])) return false; \
-				} \
 			} \
 		} \
 	}

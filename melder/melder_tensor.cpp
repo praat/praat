@@ -170,71 +170,6 @@ void * NUMmatrix_generic (integer elementSize, integer row1, integer row2, integ
 	}
 }
 
-byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
-	try {
-		Melder_require (pla2 >= pla1,
-			U"The requested highest plane number (", pla2, U") should be at least as great as the requested lowest plane number (", pla1, U").");
-		int64 numberOfPlanes = pla2 - pla1 + 1;
-		Melder_require (row2 >= row1,
-			U"The requested highest row number (", row2, U") should be at least as great as the requested lowest row number (", row1, U").");
-		int64 numberOfRows = row2 - row1 + 1;
-		Melder_require (col2 >= col1,
-			U"The requested highest column number (", col2, U") should be at least as great as the requested lowest column number (", col1, U").");
-		int64 numberOfColumns = col2 - col1 + 1;
-		int64 numberOfCells = numberOfPlanes * numberOfRows * numberOfColumns;
-
-		/*
-			Allocate room for the plane pointers.
-		*/
-		byte ***result, ***planes;
-		for (;;) {
-			planes = reinterpret_cast <byte ***> (_Melder_malloc (numberOfPlanes * (int64) sizeof (byte **)));   // assume that all pointers have the same size
-			result = planes - pla1;
-			if (result != nullptr)   // it would be quite a coincidence if this failed
-				break;
-			(void) Melder_realloc_f (planes, 1);   // make "sure" that the second try will succeed
-		}
-		/*
-			Allocate room for the row pointers.
-		*/
-		try {
-			byte **rows =
-				reinterpret_cast <byte **> (_Melder_malloc (numberOfPlanes * numberOfRows * (int64) sizeof (byte *)));   // assume that all pointers have the same size
-			byte **p_row = rows - row1;
-			for (integer ipla = pla1; ipla <= pla2; ipla ++) {
-				result [ipla] = p_row;
-				p_row += numberOfRows;
-			}
-			/*
-				Allocate room for the cells.
-			*/
-			try {
-				byte *cells = initializeToZero ?
-					reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, elementSize)) :
-					reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * elementSize));
-				byte *p_cell = cells - col1 * elementSize;
-				int64 rowSize = numberOfColumns * elementSize;
-				for (integer ipla = pla1; ipla <= pla2; ipla ++) {
-					for (integer irow = row1; irow <= row2; irow ++) {
-						result [ipla] [irow] = p_cell;
-						p_cell += rowSize;
-					}
-				}
-			} catch (MelderError) {
-				Melder_free (rows);
-				throw;
-			}
-		} catch (MelderError) {
-			Melder_free (planes);
-			throw;
-		}
-		theTotalNumberOfArrays += 1;
-		return result;
-	} catch (MelderError) {
-		Melder_throw (U"Three-rank tensor of elements not created.");
-	}
-}
-
 void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, integer col1) noexcept {
 	if (! m) return;
 	byte *cells = & m [row1] [col1 * elementSize];
@@ -242,49 +177,6 @@ void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, intege
 	byte **rowPointers = & m [row1];
 	Melder_free (rowPointers);
 	theTotalNumberOfArrays -= 1;
-}
-
-void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept {
-	if (! t) return;
-	byte *cells = & t [pla1] [row1] [col1 * elementSize];
-	Melder_free (cells);
-	byte **rowPointers = & t [pla1] [row1];
-	Melder_free (rowPointers);
-	byte ***planePointers = & t [pla1];
-	Melder_free (planePointers);
-	theTotalNumberOfArrays -= 1;
-}
-
-void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2) {
-	try {
-		if (! m)
-			return nullptr;
-		char **result = reinterpret_cast <char **>
-				(NUMmatrix_generic (elementSize, row1, row2, col1, col2, false));
-		if (! result)
-			return nullptr;
-		integer columnOffset = col1 * elementSize;
-		integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-		memcpy (result [row1] + columnOffset, ((char **) m) [row1] + columnOffset, (size_t) dataSize);
-		return result;
-	} catch (MelderError) {
-		Melder_throw (U"Matrix of elements not copied.");
-	}
-}
-
-void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2) {
-	Melder_assert (mfrom && mto);
-	integer columnOffset = col1 * elementSize;
-	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-	memcpy (mto [row1] + columnOffset, mfrom [row1] + columnOffset, (size_t) dataSize);
-}
-
-bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2) {
-	Melder_assert (m1 && m2);
-	integer columnOffset = col1 * elementSize;
-	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
-	return memcmp (((char **) m1) [row1] + columnOffset, ((char **) m2) [row1] + columnOffset,
-			(size_t) dataSize) == 0;
 }
 
 /* End of file melder_tensor.cpp */

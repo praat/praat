@@ -425,7 +425,7 @@ void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 }
 
 autoPitch Pitch_create (double tmin, double tmax, integer nt, double dt, double t1,
-	double ceiling, int maxnCandidates)
+	double ceiling, integer maxnCandidates)
 {
 	try {
 		autoPitch me = Thing_new (Pitch);
@@ -449,10 +449,10 @@ void Pitch_setCeiling (Pitch me, double ceiling) {
 	my ceiling = ceiling;
 }
 
-int Pitch_getMaxnCandidates (Pitch me) {
-	int result = 0;
+integer Pitch_getMaxnCandidates (Pitch me) {
+	integer result = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		int nCandidates = my frame [i]. nCandidates;
+		integer nCandidates = my frame [i]. nCandidates;
 		if (nCandidates > result) result = nCandidates;
 	}
 	return result;
@@ -482,8 +482,8 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 		voicedUnvoicedCost *= timeStepCorrection;
 
 		my ceiling = ceiling;
-		autoNUMmatrix <double> delta (1, my nx, 1, maxnCandidates);
-		autoNUMmatrix <integer> psi (1, my nx, 1, maxnCandidates);
+		autoMAT delta = newMATzero (my nx, maxnCandidates);
+		autoINTMAT psi = newINTMATzero (my nx, maxnCandidates);
 
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & my frame [iframe];
@@ -504,8 +504,9 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 		for (integer iframe = 2; iframe <= my nx; iframe ++) {
 			Pitch_Frame prevFrame = & my frame [iframe - 1], curFrame = & my frame [iframe];
-			double *prevDelta = delta [iframe - 1], *curDelta = delta [iframe];
-			integer *curPsi = psi [iframe];
+			constVEC prevDelta = delta [iframe - 1];
+			VEC curDelta = delta [iframe];
+			INTVEC curPsi = psi [iframe];
 			for (integer icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
 				double f2 = curFrame -> candidate [icand2]. frequency;
 				maximum = -1e30;

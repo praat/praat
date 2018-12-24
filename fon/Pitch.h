@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Thing_declare (Interpreter);
 #include "Pitch_def.h"
 
 autoPitch Pitch_create (double tmin, double tmax, integer nt, double dt, double t1,
-	double ceiling, int maxnCandidates);
+	double ceiling, integer maxnCandidates);
 /*
 	Function:
 		create an empty pitch contour (voiceless).
@@ -111,7 +111,7 @@ void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, kPitch_unit un
 double Pitch_getMinimum (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate);
 double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate);
 
-int Pitch_getMaxnCandidates (Pitch me);
+integer Pitch_getMaxnCandidates (Pitch me);
 /*
 	Returns the largest number of candidates actually attested in a frame.
 */

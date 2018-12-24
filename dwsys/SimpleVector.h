@@ -22,10 +22,6 @@
 
 #include "SimpleVector_def.h"
 
-void DoubleVector_init (DoubleVector me, integer min, integer max);
-
-autoDoubleVector DoubleVector_create (integer min, integer max);
-
 void ComplexVector_init (ComplexVector me, integer min, integer max);
 
 autoComplexVector ComplexVector_create (integer min, integer max);

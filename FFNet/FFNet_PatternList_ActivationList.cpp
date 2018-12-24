@@ -100,12 +100,12 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 		// Unlink
 
 		my nPatterns = 0;
-		my inputPattern.at_deprecated = nullptr;
-		my targetActivation.at_deprecated = nullptr;
+		my inputPattern = MAT();
+		my targetActivation = MAT();
 	} catch (MelderError) {
 		my nPatterns = 0;
-		my inputPattern.at_deprecated = nullptr;
-		my targetActivation.at_deprecated = nullptr;
+		my inputPattern = MAT();
+		my targetActivation = MAT();
 	}
 }
 

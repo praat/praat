@@ -102,6 +102,24 @@ inline autoMAT newMATsubtract (constMATVU const& x, double number) {
 	return result;
 }
 
+struct TypeMATsubtract_NUM_MAT          { double number; constMATVU const& x; };
+inline TypeMATsubtract_NUM_MAT operator- (double number, constMATVU const& x) { return { number, x }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATsubtract_NUM_MAT const& expr) noexcept { \
+		Melder_assert (expr.x.nrow == target.nrow); \
+		Melder_assert (expr.x.ncol == target.ncol); \
+		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
+			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
+				target [irow] [icol] op expr.number - expr.x [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATsubtract (double number, constMATVU const& x) {
+	autoMAT result = newMATraw (x.nrow, x.ncol);
+	result.all() <<= number  -  x;
+	return result;
+}
+
 struct TypeMATmultiply_MAT_NUM          { constMATVU const& x; double number; };
 inline TypeMATmultiply_MAT_NUM operator* (constMATVU const& x, double number) { return { x, number }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
@@ -120,14 +138,43 @@ inline autoMAT newMATmultiply (constMATVU const& x, double number) {
 	return result;
 }
 
-inline void MATadd_preallocated (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
-	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
-	asvector (target) <<= asvector (x)  +  asvector (y);
-}
-inline autoMAT newMATadd (const constMAT& x, const constMAT& y) noexcept {
+struct TypeMATadd_MAT_MAT          { constMATVU const& x; constMATVU const& y; };
+inline TypeMATadd_MAT_MAT operator+ (constMATVU const& x, constMATVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATadd_MAT_MAT const& expr) noexcept { \
+		Melder_assert (expr.x.nrow == target.nrow); \
+		Melder_assert (expr.x.ncol == target.ncol); \
+		Melder_assert (expr.x.nrow == expr.y.nrow); \
+		Melder_assert (expr.x.ncol == expr.y.ncol); \
+		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
+			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] [icol] + expr.y [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATadd (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	MATadd_preallocated (result.get(), x, y);
+	result.all() <<= x  +  y;
+	return result;
+}
+
+struct TypeMATsubtract_MAT_MAT          { constMATVU const& x; constMATVU const& y; };
+inline TypeMATsubtract_MAT_MAT operator- (constMATVU const& x, constMATVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATsubtract_MAT_MAT const& expr) noexcept { \
+		Melder_assert (expr.x.nrow == target.nrow); \
+		Melder_assert (expr.x.ncol == target.ncol); \
+		Melder_assert (expr.x.nrow == expr.y.nrow); \
+		Melder_assert (expr.x.ncol == expr.y.ncol); \
+		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
+			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] [icol] - expr.y [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (x.nrow, x.ncol);
+	result.all() <<= x  -  y;
 	return result;
 }
 
@@ -214,21 +261,6 @@ inline void MATsubtractReversed_inplace (const MAT& x, const constMAT& y) noexce
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
-}
-inline autoMAT newMATsubtract (double x, const constMAT& y) {
-	auto result = newMATraw (y.nrow, y.ncol);
-	for (integer irow = 1; irow <= y.nrow; irow ++)
-		for (integer icol = 1; icol <= y.ncol; icol ++)
-			result [irow] [icol] = x - y [irow] [icol];
-	return result;
-}
-inline autoMAT newMATsubtract (const constMAT& x, const constMAT& y) {
-	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
-	auto result = newMATraw (x.nrow, x.ncol);
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			result [irow] [icol] = x [irow] [icol] - y [irow] [icol];
-	return result;
 }
 
 inline void MATtranspose_inplace_mustBeSquare (const MAT& x) noexcept {

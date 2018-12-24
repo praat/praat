@@ -238,10 +238,10 @@ static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& tar
 	}
 }
 void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
-	#ifdef macintoshXXX
+	#ifdef macintosh
 		static bool gpuInited = false;
 		id<MTLDevice> gpuDevice;
-		if (! gpuInited) {
+		if (MTLCreateSystemDefaultDevice && ! gpuInited) {
 			gpuDevice = MTLCreateSystemDefaultDevice ();
 			Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
 			gpuInited = true;
@@ -394,7 +394,7 @@ autoMAT newMATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool
 	if (sortByHeight) {
 		for (integer i = 1; i <= numberOfPeaks; i ++)
 			result [2] [i] *= -1.0;
-		NUMsortTogether (result.row (1), result.row (2));
+		NUMsortTogether (result.row (2), result.row (1));
 
 		for (integer i = 1; i <= numberOfPeaks; i ++)
 			result [2] [i] *= -1.0;

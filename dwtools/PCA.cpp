@@ -140,8 +140,8 @@ void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conserv
 autoEigen PCA_to_Eigen (PCA me) {
 	try {
 		autoEigen thee = Eigen_create (my numberOfEigenvalues, my dimension);
-		NUMmatrix_copyElements <double> (my eigenvectors.at_deprecated, thy eigenvectors.at_deprecated, 1, my numberOfEigenvalues, 1, my dimension);
-		NUMvector_copyElements <double> (my eigenvalues.at, thy eigenvalues.at, 1, my numberOfEigenvalues);
+		thy eigenvectors.all() <<= my eigenvectors.all();
+		thy eigenvalues.all() <<= my eigenvalues.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Eigen created.");
