@@ -27,24 +27,32 @@
 oo_DEFINE_CLASS (FFNet, Daata)
 
 	oo_INTEGER (nLayers)	/* number of layers */
-	
-	oo_INTEGER_VECTOR_FROM (nUnitsInLayer, 0, nLayers)
-
+	oo_FROM (1)
+		oo_INTEGER (nInputs)
+	oo_ENDFROM
+	#if oo_READING
+		oo_VERSION_UNTIL (1)
+			oo_INTVEC (nUnitsInLayer, nLayers + 1)
+			nInputs = nUnitsInLayer [1];
+			for (integer ilayer = 1; ilayer <= nLayers; ilayer ++)
+				nUnitsInLayer [ilayer] = nUnitsInLayer [ilayer + 1];
+			nUnitsInLayer.resize (nLayers);
+		oo_VERSION_ELSE
+			oo_INTVEC (nUnitsInLayer, nLayers)
+		oo_VERSION_END
+	#else
+		oo_INTVEC (nUnitsInLayer, nLayers)
+	#endif
 	oo_INT (outputsAreLinear)
-
 	oo_INT (nonLinearityType)
-
 	oo_INT (costFunctionType)
-
 	oo_COLLECTION (Categories, outputCategories, SimpleString, 0)
-
 	oo_INTEGER (nWeights)	/* number of weights */
-
 	oo_VEC (w, nWeights)
 	
 	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_INTEGER (nNodes)
-		oo_INTEGER (nInputs)
+		//oo_INTEGER (nInputs)
 		oo_INTEGER (nOutputs)
 		oo_INTEGER (dimension)
 

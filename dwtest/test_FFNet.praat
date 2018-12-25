@@ -99,7 +99,7 @@ procedure testInterface: .numberOfHiddenLayers
 	appendInfoLine: tab$, tab$, "Query & Modify"
 
 	.numberOfLayers = Get number of layers
-	appendInfoLine: .numberOfLayers
+	appendInfoLine: tab$, tab$, "number of layer(s): ",  .numberOfLayers
 	.numberOfOutputs = Get number of outputs
 	.numberOfUnitsInPreviousLayer = Get number of inputs
 	for .ilayer to .numberOfLayers - 1

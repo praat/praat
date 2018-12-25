@@ -190,7 +190,7 @@ DO
 
 DIRECT (INTEGER_FFNet_getNumberOfInputs) {
 	INTEGER_ONE (FFNet)
-		integer result = my nUnitsInLayer[0];
+		integer result = my nInputs;
 	INTEGER_ONE_END (U" units")
 }
 
@@ -199,13 +199,18 @@ FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weig
 	OK
 DO
 	INTEGER_ONE (FFNet)
-		integer result = (layer > 0 && layer <= my nLayers - 1) ? (my nUnitsInLayer[layer] * (my nUnitsInLayer[layer - 1] + 1)) : 0;
+		integer result = 0;
+		if (layer <= my nLayers - 1) {
+			integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my nInputs : my nUnitsInLayer[layer - 1] );
+			result = my nUnitsInLayer[layer] * (numberOfUnitsInPreviousLayer + 1);
+		}
 	INTEGER_ONE_END (U" weights (including biases)")
 }
 	
 DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
 	INTEGER_ONE (FFNet)
-		integer result = my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1] + 1);
+		integer numberOfUnitsInPreviousLayer = ( my nLayers == 1 ? my nInputs : my nUnitsInLayer[my nLayers - 1] );
+		integer result = my nUnitsInLayer[my nLayers] * (numberOfUnitsInPreviousLayer + 1);
 	INTEGER_ONE_END (U" weights");
 }
 
