@@ -26,11 +26,12 @@
 autoMatrix FFNet_weightsToMatrix (FFNet me, integer layer, bool deltaWeights) {
 	try {
 		Melder_require (layer > 0 && layer <= my nLayers, U"Layer should be in [1, ", my nLayers, U"].");
+		integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my nInputs : my nUnitsInLayer [layer - 1] );
 
 		autoMatrix thee = Matrix_create (0.5, my nUnitsInLayer [layer] + 0.5, my nUnitsInLayer [layer], 1.0, 1.0,
-		    0.5, my nUnitsInLayer [layer - 1] + 1 + 0.5, my nUnitsInLayer  [layer - 1] + 1, 1.0, 1.0);
-		integer node = 1;
-		for (integer i = 0; i < layer; i ++)
+		    0.5, numberOfUnitsInPreviousLayer + 1 + 0.5, numberOfUnitsInPreviousLayer + 1, 1.0, 1.0);
+		integer node = my nInputs + 1 + 1;
+		for (integer i = 1; i < layer; i ++)
 			node += my nUnitsInLayer [i] + 1;
 
 		for (integer i = 1; i <= my nUnitsInLayer [layer]; i ++, node ++) {
@@ -51,13 +52,13 @@ autoFFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, integer layer) {
 		Melder_require (my nUnitsInLayer [layer] == his nx, 
 			U"The number of columns (", his nx, U") should equal the number of units (", my nUnitsInLayer [layer], U") in layer ", layer, U".");
 		
-		integer nunits = my nUnitsInLayer [layer - 1] + 1;
+		integer nunits = ( layer == 1 ? my nInputs + 1 : my nUnitsInLayer [layer - 1] + 1 );
 		Melder_require (nunits == his ny, 
 			U"The number of rows (", his ny, U")  should equal the number of units (", nunits , U") in layer ", layer - 1, U".");
 		
 		autoFFNet thee = Data_copy (me);
-		integer node = 1;
-		for (integer i = 0; i < layer; i ++)
+		integer node = my nInputs + 1 + 1;
+		for (integer i = 1; i < layer; i ++)
 			node += thy nUnitsInLayer [i] + 1;
 
 		for (integer i = 1; i <= thy nUnitsInLayer [layer]; i ++, node ++) {

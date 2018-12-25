@@ -344,10 +344,9 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 	}
 	double peakdB, quefrency;
 	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, & peakdB, & quefrency);   // FIXME cast
-	if (out_peakdB)
-		*out_peakdB = peakdB;
-	if (out_quefrency)
-		*out_quefrency = quefrency;
+    
+	if (out_peakdB) *out_peakdB = peakdB;
+	if (out_quefrency) *out_quefrency = quefrency;
 }
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
@@ -355,19 +354,19 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, &peakdB, &qpeak);
 	integer imin, imax;
-	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax))
 		return rnr;
-	}
+
 	integer ndata = imax - imin + 1;
-	if (ndata < 2) {
-		return rnr;
-	}	
+	if (ndata < 2)
+		return rnr;	
 	// how many peaks in interval ?
 	integer npeaks = 2;
-	while (qpeak > 0 && qpeak * npeaks <= qmax) { npeaks++; }
+	while (qpeak > 0 && qpeak * npeaks <= qmax)
+        npeaks++;
 	npeaks--;
 	
-	double sum = 0, sumr = 0;
+	double sum = 0.0, sumr = 0.0;
 	for (integer i = imin; i <= imax; i ++) {
 		double val = my v_getValueAtSample (i, 0, 0);
 		double qx = my x1 + (i - 1) * my dx;
@@ -385,13 +384,13 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 			}
 		}
 	}
-	rnr = sumr >= sum ? 1000000 : sumr / (sum - sumr);
+	rnr = sumr >= sum ? 1000000.0 : sumr / (sum - sumr);
 	return rnr;
 }
 
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *out_qpeak) {
 	double slope, intercept, quefrency, peakdB;
-	PowerCepstrum_fitTiltLine (me, 0.001, 0, &slope, &intercept, 1, 1);
+	PowerCepstrum_fitTiltLine (me, 0.001, 0, & slope, & intercept, 1, 1);
 	autoPowerCepstrum thee = Data_copy (me);
 	PowerCepstrum_subtractTiltLine_inplace (thee.get(), slope, intercept, 1);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);

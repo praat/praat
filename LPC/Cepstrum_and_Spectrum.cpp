@@ -29,32 +29,6 @@
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
 
-#if 0
-static autoCepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
-	try {
-		autoMatrix unwrap = Spectrum_unwrap (me);
-		autoSpectrum sx = Data_copy (me);
-
-		// Copy magnitude-squared and unwrapped phase.
-
-		for (integer i = 1; i <= my nx; i ++) {
-			double xa = unwrap -> z[1][i];
-			sx -> z[1][i] = xa > 0.0 ? 0.5 * log (xa) : -300.0;
-			sx -> z[2][i] = unwrap -> z[2][i];
-		}
-
-		// Compute complex cepstrum x.
-
-		autoSound x = Spectrum_to_Sound (sx.get());
-		autoCepstrum thee = Cepstrum_create (x -> xmax - x -> xmin, x -> nx);
-		NUMvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no Cepstrum created.");
-	}
-}
-#endif
-
 autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);

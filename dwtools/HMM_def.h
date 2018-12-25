@@ -1,6 +1,6 @@
 /* HMM_def.h
  *
- * Copyright (C) 2010-2011,2015 David Weenink
+ * Copyright (C) 2010-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

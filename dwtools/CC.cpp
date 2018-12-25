@@ -53,9 +53,7 @@ static integer CC_getMaximumNumberOfCoefficientsUsed (CC me) {
 	integer numberOfCoefficients = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		CC_Frame cf = & my frame [iframe];
-		integer numberOfCoefficients_iframe = cf -> numberOfCoefficients;
-		if (numberOfCoefficients_iframe > numberOfCoefficients)
-			numberOfCoefficients = numberOfCoefficients_iframe;
+		numberOfCoefficients = std::max (cf -> numberOfCoefficients, numberOfCoefficients);
 	}
 	return numberOfCoefficients;
 }
