@@ -206,7 +206,7 @@ end:
 
 	thy nCoefficients = i;
     thy a.part (i + 1, m) <<= 0.0;
-	return 0; // Melder_warning ("Less coefficienst than asked for.");
+	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee) {
@@ -448,24 +448,26 @@ autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth
 
 autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 	try {
-		Melder_require (my samplingPeriod == thy dx, U"Sampling frequencies should be equal.");
-		Melder_require (my xmin == thy xmin && thy xmax == my xmax, U"Domains of LPC and Sound should be equal.");
+		Melder_require (my samplingPeriod == thy dx,
+			U"The sampling frequencies should be equal.");
+		Melder_require (my xmin == thy xmin && thy xmax == my xmax,
+			U"The domains of LPC and Sound should be equal.");
 		
 		autoSound him = Data_copy (thee);
 
-		VEC e = his z.row (1), x = thy z.row (1);   // ppgb: what do e and x mean?
-		for (integer i = 1; i <= his nx; i ++) {
-			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
-			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
-			VEC a = my d_frames [iFrame]. a.get();   // ppgb: what does a mean?
-			if (iFrame < 1 || iFrame > my nx) {
-				e [i] = 0.0;
+		for (integer isamp = 1; isamp <= his nx; isamp ++) {
+			double sampleTime = Sampled_indexToX (him.get(), isamp);
+			integer frameNumber = Sampled_xToNearestIndex (me, sampleTime);
+			if (frameNumber < 1 || frameNumber > my nx) {
+				his z [1] [isamp] = 0.0;
 				continue;
 			}
-			integer m = i > my d_frames[iFrame].nCoefficients ? my d_frames [iFrame].nCoefficients : i - 1;
-			for (integer j = 1; j <= m; j ++) {
-				e [i] += a [j] * x [i - j];
-			}
+			LPC_Frame frame = & my d_frames [frameNumber];
+			integer maximumFilterDepth = frame -> nCoefficients;
+			integer maximumSourceDepth = isamp - 1;
+			integer depth = std::min (maximumFilterDepth, maximumSourceDepth);
+			for (integer icoef = 1; icoef <= depth; icoef ++)
+				his z [1] [isamp] += frame -> a [icoef] * thy z [1] [isamp - icoef];
 		}
 		return him;
 	} catch (MelderError) {
