@@ -456,17 +456,17 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 		autoSound him = Data_copy (thee);
 
 		for (integer isamp = 1; isamp <= his nx; isamp ++) {
-			double sampleTime = Sampled_indexToX (him.get(), isamp);
-			integer frameNumber = Sampled_xToNearestIndex (me, sampleTime);
+			const double sampleTime = Sampled_indexToX (him.get(), isamp);
+			const integer frameNumber = Sampled_xToNearestIndex (me, sampleTime);
 			if (frameNumber < 1 || frameNumber > my nx) {
 				his z [1] [isamp] = 0.0;
 				continue;
 			}
 			LPC_Frame frame = & my d_frames [frameNumber];
-			integer maximumFilterDepth = frame -> nCoefficients;
-			integer maximumSourceDepth = isamp - 1;
-			integer depth = std::min (maximumFilterDepth, maximumSourceDepth);
-			for (integer icoef = 1; icoef <= depth; icoef ++)
+			const integer maximumFilterDepth = frame -> nCoefficients;
+			const integer maximumSoundDepth = isamp - 1;
+			const integer usableDepth = std::min (maximumFilterDepth, maximumSoundDepth);
+			for (integer icoef = 1; icoef <= usableDepth; icoef ++)
 				his z [1] [isamp] += frame -> a [icoef] * thy z [1] [isamp - icoef];
 		}
 		return him;
@@ -476,17 +476,21 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 }
 
 /*
-	gain used as a constant amplitude multiplyer within a frame of duration my dx.
-	future alternative: convolve gain with a  smoother.
+	gain used as a constant amplitude multiplier within a frame of duration my dx.
+	future alternative: convolve gain with a smoother.
 */
 autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 	try {
-		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
-		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
-		Melder_require (xmin < xmax, U"Domains of Sound [", thy xmin, U",", thy xmax, U"] and LPC [",
-			my xmin, U",", my xmax, U"] should overlap.");
+		const double xmin = std::max (my xmin, thy xmin);
+		const double xmax = std::min (my xmax, thy xmax);
+		Melder_require (xmin < xmax,
+			U"Domains of Sound [", thy xmin, U",", thy xmax, U"] and LPC [",
+			my xmin, U",", my xmax, U"] should overlap."
+		);
 
-		// resample sound if samplings don't match
+		/*
+			Resample the sound if the sampling frequencies do not match.
+		*/
 		autoSound source;
 		if (my samplingPeriod != thy dx) {
 			source = Sound_resample (thee, 1.0 / my samplingPeriod, 50);
@@ -495,43 +499,48 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 
 		autoSound him = Data_copy (thee);
 
-		VEC x = his z.row (1);
-		integer ifirst = Sampled_xToHighIndex (thee, xmin);
-		integer ilast = Sampled_xToLowIndex (thee, xmax);
-		for (integer i = ifirst; i <= ilast; i ++) {
-			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
-			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
-			if (iFrame < 1)
+		const integer ifirst = std::max (integer (1), Sampled_xToHighIndex (thee, xmin));
+		const integer ilast = std::min (Sampled_xToLowIndex (thee, xmax), thy nx);
+		for (integer isamp = ifirst; isamp <= ilast; isamp ++) {
+			const double sampleTime = Sampled_indexToX (him.get(), isamp);
+			const integer frameNumber = Sampled_xToNearestIndex (me, sampleTime);
+			if (frameNumber < 1 || frameNumber > my nx) {
+				his z [1] [isamp] = 0.0;
 				continue;
-			if (iFrame > my nx)
-				break;
-			double *a = my d_frames [iFrame].a.at;
-			integer m = i > my d_frames [iFrame].nCoefficients ? my d_frames [iFrame].nCoefficients : i - 1;
-			for (integer j = 1; j <= m; j ++)
-				x [i] -= a [j] * x [i - j];
+			}
+			LPC_Frame const frame = & my d_frames [frameNumber];
+			const integer maximumFilterDepth = frame -> nCoefficients;
+			const integer maximumSourceDepth = isamp - 1;
+			const integer usableDepth = std::min (maximumFilterDepth, maximumSourceDepth);
+			for (integer icoef = 1; icoef <= usableDepth; icoef ++)
+				his z [1] [isamp] -= frame -> a [icoef] * his z [1] [isamp - icoef];
 		}
 
-		// Make samples before first frame and after last frame zero.
+		/*
+			Make samples before first frame and after last frame zero.
+		*/
+		for (integer isamp = 1; isamp < ifirst; isamp ++)
+			his z [1] [isamp] = 0.0;
+		for (integer isamp = ilast + 1; isamp <= his nx; isamp ++)
+			his z [1] [isamp] = 0.0;
 
-		for (integer i = 1; i < ifirst; i ++)
-			x [i] = 0.0;
-		for (integer i = ilast + 1; i <= his nx; i ++)
-			x [i] = 0.0;
 		if (useGain) {
-			for (integer i = ifirst; i <= ilast; i ++) {
-				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
-				double riFrame = (t - my x1) / my dx + 1; /* Sampled_xToIndex (me, t); */
-				integer iFrame = Melder_ifloor (riFrame);
-				double phase = riFrame - iFrame;
-				if (iFrame < 0 || iFrame > my nx) {
-					x [i] = 0.0;
-				} else if (iFrame == 0) {
-					x [i] *= sqrt (my d_frames [1].gain) * phase;
-				} else if (iFrame == my nx) {
-					x [i] *= sqrt (my d_frames [my nx].gain) * (1.0 - phase);
+			for (integer isamp = ifirst; isamp <= ilast; isamp ++) {
+				const double sampleTime = Sampled_indexToX (him.get(), isamp);
+				const double realFrameNumber = Sampled_xToIndex (me, sampleTime);
+				const integer leftFrameNumber = Melder_ifloor (realFrameNumber);
+				const integer rightFrameNumber = leftFrameNumber + 1;
+				const double phase = realFrameNumber - leftFrameNumber;
+				if (rightFrameNumber < 1 || leftFrameNumber > my nx) {
+					his z [1] [isamp] = 0.0;
+				} else if (rightFrameNumber == 1) {
+					his z [1] [isamp] *= sqrt (my d_frames [1]. gain) * phase;
+				} else if (leftFrameNumber == my nx) {
+					his z [1] [isamp] *= sqrt (my d_frames [my nx]. gain) * (1.0 - phase);
 				} else {
-					x [i] *= phase * sqrt (my d_frames [iFrame + 1].gain) +
-							(1.0 - phase) * sqrt (my d_frames [iFrame].gain);
+					his z [1] [isamp] *=
+							phase * sqrt (my d_frames [rightFrameNumber]. gain) +
+							(1.0 - phase) * sqrt (my d_frames [leftFrameNumber]. gain);
 				}
 			}
 		}
@@ -552,13 +561,14 @@ void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer chann
 	if (channel > thy ny) {
 		channel = 1;
 	}
-	Melder_require (frameIndex > 0 && frameIndex <= my nx, U"Frame should be in the range [1, ", my nx, U"].");
+	Melder_require (frameIndex > 0 && frameIndex <= my nx,
+		U"Frame should be in the range [1, ", my nx, U"].");
 
 	if (channel > 0) {
-		LPC_Frame_Sound_filter (& (my d_frames [frameIndex]), thee, channel);
+		LPC_Frame_Sound_filter (& my d_frames [frameIndex], thee, channel);
 	} else {
 		for (integer ichan = 1; ichan <= thy ny; ichan ++) {
-			LPC_Frame_Sound_filter (& (my d_frames [frameIndex]), thee, ichan);
+			LPC_Frame_Sound_filter (& my d_frames [frameIndex], thee, ichan);
 		}
 	}
 }
