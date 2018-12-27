@@ -28,7 +28,7 @@
 static integer winnerTakesAll (FFNet me, constVEC activation) {
 	integer pos = 1;
 	double max = activation[1];
-	for (integer i = 2; i <= my nOutputs; i ++) {
+	for (integer i = 2; i <= my numberOfOutputs; i ++) {
 		if (activation [i] > max)
 			max = activation [pos = i]; 
 	}
@@ -38,10 +38,10 @@ static integer winnerTakesAll (FFNet me, constVEC activation) {
 static integer stochastic (FFNet me, constVEC activation) {
 	integer i;
 	double range = 0.0, lower = 0.0;
-	for (i = 1; i <= my nOutputs; i ++)
+	for (i = 1; i <= my numberOfOutputs; i ++)
 		range += activation [i];
 	double number = NUMrandomUniform (0.0, range);
-	for (i = 1; i <= my nOutputs; i ++) {
+	for (i = 1; i <= my numberOfOutputs; i ++) {
 		lower += activation [i];
 		if (number < lower) break;
 	}
@@ -53,7 +53,7 @@ autoCategories FFNet_ActivationList_to_Categories (FFNet me, ActivationList acti
 		integer (*labelingFunction) (FFNet me, constVEC act);
 		Melder_require (my outputCategories,
 			U"No Categories (has the FFNet been trained yet?).");
-		Melder_require (my nOutputs == activation -> nx,
+		Melder_require (my numberOfOutputs == activation -> nx,
 			U"Number of columns and number of outputs should be equal.");
 
 		autoCategories thee = Categories_create ();
@@ -79,7 +79,7 @@ autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee
 		Melder_require (nl > 0,
 			U"The Categories should match the categories of the FFNet.");
 
-		autoActivationList him = ActivationList_create (thy size, my nOutputs);
+		autoActivationList him = ActivationList_create (thy size, my numberOfOutputs);
 		for (integer i = 1; i <= thy size; i ++) {
 			SimpleString category = thy at [i];
 			integer pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), category -> string.get());

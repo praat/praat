@@ -28,7 +28,7 @@
 #include "FFNet_PatternList_ActivationList.h"
 
 static void _FFNet_PatternList_Categories_checkDimensions (FFNet me, PatternList p, Categories c) {
-	Melder_require (my nInputs == p -> nx,
+	Melder_require (my numberOfInputs == p -> nx,
 		U"The PatternList and the FFNet do not match.\nThe number of colums in the PatternList should equal the number of inputs in the FFNet.");
 	Melder_require (p -> ny == c->size, 
 		U"The PatternList and the categories do not match.\nThe number of rows in the PatternList should equal the number of categories.");
@@ -71,8 +71,8 @@ autoCategories FFNet_PatternList_to_Categories (FFNet me, PatternList thee, int 
 	try {
 		Melder_require (my outputCategories, 
 			U"The FFNet has no output categories.");
-		Melder_require (my nInputs == thy nx, 
-			U"The number of colums in the PatternList (", thy nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
+		Melder_require (my numberOfInputs == thy nx, 
+			U"The number of colums in the PatternList (", thy nx, U") should equal the number of inputs in the FFNet (", my numberOfInputs, U").");
 		Melder_require (_PatternList_checkElements (thee),
 			U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 
