@@ -43,6 +43,6 @@ double FFNet_PatternList_ActivationList_getCosts_average (FFNet me, PatternList 
 
 autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, integer layer);
 /* Calculate the activations at a layer */
-/* if (layer<1 || layer > my nLayers) layer = my nLayers; */
+/* if (layer<1 || layer > my numberOfLayers) layer = my numberOfLayers; */
 
 #endif /* _FFNet_PatternList_ActivationList_h_ */
