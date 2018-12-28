@@ -213,15 +213,6 @@ inline void VECclip_inplace (VEC x, double min, double max) {
 			x [i] = max;
 }
 
-template <class T>
-void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
-	for (integer i = lo; i <= hi; i++)
-	{
-		if (v[i] < min) v[i] = min;
-		else if (v[i] > max) v[i] = max;
-	}
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
