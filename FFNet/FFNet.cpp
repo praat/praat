@@ -203,7 +203,7 @@ void FFNet_init (FFNet me, integer numberOfInputs, integer nodesInLayer1, intege
 	if (nodesInLayer2 < 1)
 		numberOfLayers --;
 	my numberOfLayers = numberOfLayers;
-	my numberOfUnitsInLayer = newINTVECzero (numberOfLayers); // NUMvector<integer> (0, numberOfLayers);
+	my numberOfUnitsInLayer = newINTVECzero (numberOfLayers);
 
 	my numberOfUnitsInLayer [numberOfLayers --] = numberOfOutputs;
 	if (nodesInLayer2 > 0)
