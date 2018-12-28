@@ -61,12 +61,12 @@
  *    *dwi		   		: array[1..numberOfWeights] derivative per pattern
  *  integer dimension		: dimension of minimizer space (<= my numberOfWeights)
  *  integer numberOfPatterns	    : the #patterns to be learned
- * double **inputPattern: matrix[1..numberOfPatterns][1..numberOfInputs]
- * double **targetActivation: matrix[1..numberOfPatterns][1..numberOfOutputs]
- * double accumulatedCost : accumulated costs of testing/training with patterns
+ *  MAT inputPattern: matrix[1..numberOfPatterns][1..numberOfInputs]
+ *  MAT targetActivation: matrix[1..numberOfPatterns][1..numberOfOutputs]
+ *  double accumulatedCost : accumulated costs of testing/training with patterns
  *
- * A network consists of numberOfLayers layers. Layer numbering is from 0...numberOfLayers.
- * Layer 0 is the input layer,  the highest numbered layer is the output layer
+ * A network consists of numberOfLayers layers. Layer numbering is from 1...numberOfLayers.
+ * The highest numbered layer is the output layer
  *   (numberOfLayers <= 4)
  * Each layer consists of a number of units. The biases of all the units in a layer
  * are modelled with connections to an extra unit in the lower layer (with constant
