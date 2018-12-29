@@ -86,148 +86,87 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 	/*
 		Precise matrix multiplication, using pairwise summation.
 	*/
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
-				const double *px = & x [irow] [1];
-				const double *py = & y [1] [icol],
-				longdouble (*px) * longdouble (*py),
-				(px += x.colStride, py += y.rowStride)
-			)
-			target [irow] [icol] = double (sum);
+	if (x.colStride == 1) {
+		if (y.rowStride == 1) {
+			/*
+				Appropriate for Target := X.Y',
+				if X and Y are packed row-major matrices.
+				The speed is 0.111, 1.11, 1.94, 1.90, 1.66, 1.57, 1.39 Gflop/s
+				for size =       1,   10,  100, 1000, 2000, 3000, 5000.
+			*/
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += 1, py += 1)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		} else {
+			/*
+				Appropriate for Target := X.Y,
+				if X and Y are packed row-major matrices.
+				The speed is 0.131, 1.16, 1.98, 0.57, 0.112 Gflop/s
+				for size =       1,   10,  100, 1000,  2000.
+			*/
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += 1, py += y.rowStride)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		}
+	} else if (y.rowStride == 1) {
+		/*
+			Appropriate for Target := X'.Y',
+			if X and Y are packed row-major matrices.
+			The speed is 0.113, 1.10, 1.81, 0.61, 0.112 Gflop/s
+			for size =       1,   10,  100, 1000,  2000.
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+					const double *px = & x [irow] [1];
+					const double *py = & y [1] [icol],
+					longdouble (*px) * longdouble (*py),
+					(px += x.colStride, py += 1)
+				)
+				target [irow] [icol] = double (sum);
+			}
+		}
+	} else {
+		/*
+			Appropriate for Target := X'.Y,
+			if X and Y are packed row-major matrices.
+			The speed is 0.130, 1.06, 1.70, 0.57, 0.068 Gflop/s
+			for size =       1,   10,  100, 1000,  2000.
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+					const double *px = & x [irow] [1];
+					const double *py = & y [1] [icol],
+					longdouble (*px) * longdouble (*py),
+					(px += x.colStride, py += y.rowStride)
+				)
+				target [irow] [icol] = double (sum);
+			}
 		}
 	}
-}
-
-inline constVEC VECrow_nocheck (constMAT const& mat, integer rowNumber) {
-	return constVEC (mat.at_deprecated [rowNumber], mat.ncol);
-}
-inline void MATmul_fast_preallocated_ (MAT const& target, constMAT const& x, constMAT const& y) noexcept {
-	#if USE_CBLAS_GEMM
-		/*
-			This version is 49,0.75,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
-		*/
-		double alpha = 1.0, beta = 0.0;
-		NUMblas_dgemm ("N", "N", & target.nrow, & target.ncol, & x.ncol, & alpha,
-				(double *) & x [1] [1], & x.nrow, (double *) & y [1] [1], & y.nrow, & beta, & target [1] [1], & target.nrow);
-	#elif USE_GSL_GEMM
-		/*
-			This version is 34,0.72,0.31,0.41(NoTrans;1.34Trans) ns per multiply-add for size = 1,10,100,1000.
-		*/
-		gsl_matrix gslx { (size_t) x.nrow, (size_t) x.ncol, (size_t) x.nrow, (double *) & x [1] [1], nullptr, false };
-		gsl_matrix gsly { (size_t) y.nrow, (size_t) y.ncol, (size_t) y.nrow, (double *) & y [1] [1], nullptr, false };
-		gsl_matrix gsltarget { (size_t) target.nrow, (size_t) target.ncol, (size_t) target.nrow, (double *) & target [1] [1], nullptr, false };
-		gsl_blas_dgemm (CblasTrans, CblasTrans, 1.0, & gslx, & gsly, 0.0, & gsltarget);
-	#elif USE_APPLE_GEMM
-		cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, target.nrow, target.ncol, x.ncol,
-				1.0, & x [1] [1], x.nrow, & y [1] [1], y.nrow, 0.0, & target [1] [1], target.nrow);   // 24,0.71,0.31,0.45
-	#elif 0
-		/*
-			This version is 10,0.76,0.32,0.34 ns per multiply-add for size = 1,10,100,1000.
-
-			The trick is to have the inner loop run along two final indices.
-			Note that the multiplication factor within the inner loop is constant,
-			so it will be moved out of the loop by the compiler.
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			for (integer icol = 1; icol <= target.ncol; icol ++)
-				target [irow] [icol] = 0.0;
-			for (integer i = 1; i <= x.ncol; i ++)
-				for (integer icol = 1; icol <= target.ncol; icol ++)
-					target [irow] [icol] += x [irow] [i] * y [i] [icol];
-		}
-	#elif 0
-		/*
-			This version is 20,0.80,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
-		*/
-		double *ptarget = & asvector (target) [1];
-		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
-		for (integer irow = 0; irow < target.nrow; irow ++) {
-			for (integer icol = 0; icol < target.ncol; icol ++)
-				ptarget [irow * target.ncol + icol] = 0.0;
-			for (integer i = 0; i < x.ncol; i ++)
-				for (integer icol = 0; icol < target.ncol; icol ++)
-					ptarget [irow * target.ncol + icol] += px [irow * x.ncol + i] * py [i * y.ncol + icol];
-		}
-	#elif 0
-		/*
-			Naive slow implementation, via stored row pointers.
-			This version is 7.5,0.69,0.87,1.87 ns per multiply-add for size = 1,10,100,1000.
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			for (integer icol = 1; icol <= target.ncol; icol ++) {
-				target [irow] [icol] = 0.0;
-				for (integer i = 1; i <= x.ncol; i ++)
-					target [irow] [icol] += x [irow] [i] * y [i] [icol];
-			}
-		}
-	#elif 0
-		/*
-			Naive slow implementation, via computed row pointers.
-			This version is not slower than the version with stored pointers,
-			although the inner loop contains the multiplication i * y.ncol,
-			which the compiler cannot get rid of
-			(some compilers may replace it with a y.ncol stride addition).
-			It anything, this version is slightly faster than the one with stored pointers:
-			the speed is 9.1,0.63,0.83,1.83 ns per multiply-add for size = 1,10,100,1000.
-		*/
-		double *ptarget = & asvector (target) [1];
-		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
-		for (integer irow = 0; irow < target.nrow; irow ++) {
-			for (integer icol = 0; icol < target.ncol; icol ++) {
-				ptarget [irow * target.ncol + icol] = 0.0;
-				for (integer i = 0; i < x.ncol; i ++)
-					ptarget [irow * target.ncol + icol] += px [irow * x.ncol + i] * py [i * y.ncol + icol];
-			}
-		}
-	#elif 0
-		/*
-			Another attempt to slow down the computation,
-			namely by making matrix indexing compute a vector, with size information and all.
-			This version is 8.4,1.00,0.95,2.38 ns per multiply-add for size = 1,10,100,1000.
-			That is really somewhat slower, but is that because of the size computation
-			or because of the range check?
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			for (integer icol = 1; icol <= target.ncol; icol ++) {
-				target [irow] [icol] = 0.0;
-				for (integer i = 1; i <= x.ncol; i ++)
-					target [irow] [icol] += x.row (irow) [i] * y.row (i) [icol];
-			}
-		}
-	#elif 0
-		/*
-			Here we get rid of the row number check, but we still compute
-			a whole vector with size information. Programmingwise, this would be our ideal.
-			This version is 7.5,0.70,0.87,2.04 ns per multiply-add for size = 1,10,100,1000.
-			It seems to be slightly slower for large matrices than the first stored-row-pointer version.
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			for (integer icol = 1; icol <= target.ncol; icol ++) {
-				target [irow] [icol] = 0.0;
-				for (integer i = 1; i <= x.ncol; i ++)
-					target [irow] [icol] += VECrow_nocheck (x, irow) [i] * VECrow_nocheck (y, i) [icol];
-			}
-		}
-	#else
-		/*
-			The smart version, with whole-vector computation. Still programmatically ideal.
-			This version is 14.6,0.66,0.31,0.36 ns per multiply-add for size = 1,10,100,1000.
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			for (integer icol = 1; icol <= target.ncol; icol ++)
-				target [irow] [icol] = 0.0;
-			for (integer i = 1; i <= x.ncol; i ++)
-				for (integer icol = 1; icol <= target.ncol; icol ++)
-					target [irow] [icol] += VECrow_nocheck (x, irow) [i] * VECrow_nocheck (y, i) [icol];
-		}
-	#endif
 }
 
 static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	/*
 		If x.colStride == size and y.colStride == 1,
-		this version is 0.073, 1.32, 1.17, 0.58 Gflops for size = 1,10,100,1000.
+		this version is 0.073, 1.32, 1.17, 0.58 Gflop/s for size = 1,10,100,1000.
 	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -239,12 +178,105 @@ static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& tar
 }
 void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	#ifdef macintosh
-		static bool gpuInited = false;
-		id<MTLDevice> gpuDevice;
-		if (MTLCreateSystemDefaultDevice && ! gpuInited) {
-			gpuDevice = MTLCreateSystemDefaultDevice ();
-			Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
-			gpuInited = true;
+		if (@available (macOS 10.13, *) &&false) {
+			/*
+				The speed is 0.000'003, 0.003, 0.59,  8.4,    77 Gflop/s
+				for size =           1,    10,  100, 1000, 10000.
+			*/
+			static bool gpuInited = false;
+			static id <MTLDevice> gpuDevice;
+			static id <MTLCommandQueue> gpuQueue;
+			if (! gpuInited) {
+				gpuDevice = MTLCreateSystemDefaultDevice ();
+				Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
+				gpuInited = true;
+				gpuQueue = [gpuDevice newCommandQueue];
+			}
+			MPSMatrixMultiplication *matrixMultiplication = [[MPSMatrixMultiplication alloc]
+				initWithDevice: gpuDevice
+				resultRows: integer_to_uinteger (target.nrow)
+				resultColumns: integer_to_uinteger (target.ncol)
+				interiorColumns: integer_to_uinteger (x.ncol)
+			];
+			Melder_assert (matrixMultiplication != nil);
+			automatrix <float> x32 = newmatrixraw <float> (x.nrow, x.ncol);
+			for (integer irow = 1; irow <= x.nrow; irow ++)
+				for (integer icol = 1; icol <= x.ncol; icol ++)
+					x32 [irow] [icol] = float (x [irow] [icol]);
+			automatrix <float> y32 = newmatrixraw <float> (y.nrow, y.ncol);
+			for (integer irow = 1; irow <= y.nrow; irow ++)
+				for (integer icol = 1; icol <= y.ncol; icol ++)
+					y32 [irow] [icol] = float (y [irow] [icol]);
+			automatrix <float> target32 = newmatrixraw <float> (target.nrow, target.ncol);
+			id <MTLBuffer> bufferX = [gpuDevice
+					newBufferWithBytes: & x32 [1] [1]
+					length: integer_to_uinteger (x32.nrow) * integer_to_uinteger (x32.ncol) * sizeof (float)
+					options: MTLResourceStorageModeShared];
+			id <MTLBuffer> bufferY = [gpuDevice
+					newBufferWithBytes: & y32 [1] [1]
+					length: integer_to_uinteger (y32.nrow) * integer_to_uinteger (y32.ncol) * sizeof (float)
+					options: MTLResourceStorageModeShared];
+			id <MTLBuffer> bufferTarget = [gpuDevice
+					newBufferWithBytes: & target32 [1] [1]
+					length: integer_to_uinteger (target32.nrow) * integer_to_uinteger (target32.ncol) * sizeof (float)
+					options: MTLResourceStorageModeShared];
+			MPSMatrixDescriptor *descriptorX =
+				[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (x.nrow)
+					columns: integer_to_uinteger (x.ncol)
+					rowBytes: integer_to_uinteger (x.ncol) * sizeof (float)
+					dataType: MPSDataTypeFloat32];
+			MPSMatrixDescriptor *descriptorY =
+				[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (y.nrow)
+					columns: integer_to_uinteger (y.ncol)
+					rowBytes: integer_to_uinteger (y.ncol) * sizeof (float)
+					dataType: MPSDataTypeFloat32];
+			MPSMatrixDescriptor *descriptorTarget =
+				[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (target.nrow)
+					columns: integer_to_uinteger (target.ncol)
+					rowBytes: integer_to_uinteger (target.ncol) * sizeof (float)
+					dataType: MPSDataTypeFloat32];
+			MPSMatrix *mpsX = [[MPSMatrix alloc] initWithBuffer: bufferX descriptor: descriptorX];
+			Melder_assert (mpsX != nil);
+			MPSMatrix *mpsY = [[MPSMatrix alloc] initWithBuffer: bufferY descriptor: descriptorY];
+			Melder_assert (mpsY != nil);
+			MPSMatrix *mpsTarget = [[MPSMatrix alloc] initWithBuffer: bufferTarget descriptor: descriptorTarget];
+			Melder_assert (mpsTarget != nil);
+			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+      		id <MTLCommandBuffer> commandBuffer = [gpuQueue commandBuffer];   // autoreleased
+      		[matrixMultiplication encodeToCommandBuffer: commandBuffer
+      			leftMatrix: mpsX
+      			rightMatrix: mpsY
+      			resultMatrix: mpsTarget];
+			[commandBuffer commit];
+			[commandBuffer waitUntilCompleted];
+			NSError *error = [commandBuffer error];
+			if (error)
+				Melder_casual (U"Error during execution: ",
+					Melder_peek8to32 ([[error localizedDescription] UTF8String]),
+					Melder_peek8to32 ([[error localizedFailureReason] UTF8String]),
+					Melder_peek8to32 ([[error localizedRecoverySuggestion] UTF8String])
+				);
+			[error release];
+			float *rawPointer = (float *) [bufferTarget contents];
+			//float *rawPointer = (float *) [[bufferTarget data] contents];
+			for (integer irow = 1; irow <= target.nrow; irow ++)
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					double value = double (*rawPointer ++);
+					//Melder_casual (value);
+					target [irow] [icol] = value;
+				}
+			[bufferX release];
+			[bufferY release];
+			[bufferTarget release];
+			[matrixMultiplication release];
+			[mpsX release];
+			[mpsY release];
+			[mpsTarget release];
+			//[descriptorX release];   // apparently the MPSMatrix objects have become owners?
+			//[descriptorY release];
+			//[descriptorTarget release];
+			[pool release];   // this releases `commandBuffer`
+			return;
 		}
 	#endif
 	if ((false)) {
@@ -256,8 +288,9 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 			or
 				X'.Y
 
-			The speed for X.Y is 0.063, 1.37, 3.12, 2.93 Gflops for size = 1,10,100,1000.
-			The speed for X'.Y is 0.063, 1.37, 3.11, 2.72 Gflops for size = 1,10,100,1000.
+			The speed for X.Y is 0.053, 1.37, 3.14, 2.99, 2.38, 2.06, 1.70 Gflop/s
+			for size =               1,   10,  100, 1000, 2000, 3000, 5000.
+			The speed for X'.Y is 0.063, 1.37, 3.11, 2.72 Gflop/s for size = 1,10,100,1000.
 
 			The trick is to have the inner loop run along two fastest indices;
 			for target as well as y, this fastest index is the last index.
@@ -276,13 +309,29 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 					targetrow [icol] += xcell * yrow [icol];
 			}
 		}
+		#elif 0
+			/*
+				Using 64-bit BLAS from Apple's Accelerate framework.
+				The speed for X.Y is 0.037, 1.51, 3.40, 2.40, 1.82, 1.64, 1.04 Gflop/s
+				for size =               1,   10,  100, 1000, 2000, 3000, 5000.
+				This is not really faster than our own simple implementation
+				(perhaps 32-bit BLAS is faster, because it can use more flops per cycle).
+			*/
+			cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans,
+				target.nrow, target.ncol, x.ncol,
+				1.0,
+				& x [1] [1], x.rowStride,
+				& y [1] [1], y.rowStride,
+				0.0,
+				& target [1] [1], target.rowStride
+			);
 		#else
 		/*
 			An implementation that is notationally ideal.
 			Does the compiler manage to move the constant parts
 			of the expression outside the loop?
 
-			The speed for X.Y is 0.056, 1.08, 2.99, 2.87 Gflops for size = 1,10,100,1000.
+			The speed for X.Y is 0.056, 1.08, 2.99, 2.87 Gflop/s for size = 1,10,100,1000.
 		*/
 		for (integer irow = 1; irow <= target.nrow; irow ++) {
 			for (integer icol = 1; icol <= target.ncol; icol ++)
@@ -297,7 +346,7 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 			/*
 				This case will be appropriate for the multiplication of full matrices
 					X.Y'
-				The speed is 0.064, 1.18, 1.67, 1.69 Gflops for size = 1,10,100,1000.
+				The speed is 0.064, 1.18, 1.67, 1.69 Gflop/s for size = 1,10,100,1000.
 			*/
 			MATVUmul_ (target, x, y);
 		} else {
@@ -306,12 +355,12 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 					X'.Y'
 
 				So we will make this fast by making the target matrix column-major.
-				The speed will be 0.065, 1.27, 1.45, 1.21 Gflops for size = 1,10,100,1000.
+				The speed will be 0.065, 1.27, 1.45, 1.21 Gflop/s for size = 1,10,100,1000.
 				However, this will work only once an automatrix has row and column strides;
 				until that time we cannot really modify the structure of `target`.
 
 				For the moment, the target has to stay row-major.
-				The speed is 0.064, 1.21, 1.41, 0.43 Gflops for size = 1,10,100,1000.
+				The speed is 0.064, 1.21, 1.41, 0.43 Gflop/s for size = 1,10,100,1000.
 
 				The trick is to have the inner loop run along two fastest indices;
 				for both target (in future) and y, this fastest index is the first index.
