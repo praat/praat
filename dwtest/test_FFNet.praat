@@ -1,7 +1,7 @@
 # test_FFNet.praat
 # djmw 20110512, 20180918
 
-printline test FFNet
+appendInfoLine: "test_FFNet.praat"
 
 Create iris example... 0 0
 ffnet = selected ("FFNet")
@@ -56,7 +56,7 @@ Remove
 
 @test_openSave
 
-printline FFNet ok
+appendInfoLine: "test_FFNet.praat OK"
 
 procedure test_openSave
 	.ffnet_read= Read from file: "iris_4-2-3-3.FFNet"

@@ -30,7 +30,7 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 	integer numberOfEigenvalues = eigen -> numberOfEigenvalues;
 	integer dimension = eigen -> dimension;
 
-	if (ix > numberOfEigenvalues || iy > numberOfEigenvalues || my nInputs != dimension)
+	if (ix > numberOfEigenvalues || iy > numberOfEigenvalues || my numberOfInputs != dimension)
 		return;
 
 	Melder_assert (ix > 0 && iy > 0);
@@ -48,12 +48,12 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	for (integer i = 1; i <= my nUnitsInLayer [1]; i ++) {
-		integer unitOffset = my nInputs + 1;
+	for (integer i = 1; i <= my numberOfUnitsInLayer [1]; i ++) {
+		integer unitOffset = my numberOfInputs + 1;
 		double c1 = 0.0, c2 = 0.0, bias = my w [my wLast [unitOffset + i]];
 		double x [6], y [6], xs [3], ys [3]; 
 		integer ns = 0;
-		for (integer j = 1; j <= my nInputs; j ++) {
+		for (integer j = 1; j <= my numberOfInputs; j ++) {
 			c1 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [ix] [j];
 			c2 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [iy] [j];
 		}
@@ -86,11 +86,11 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, integer unit, integer layer,
 	integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax)
 {
-	if (layer < 1 || layer > my nLayers) return;
-	if (unit < 1 || unit > my nUnitsInLayer [layer]) return;
+	if (layer < 1 || layer > my numberOfLayers) return;
+	if (unit < 1 || unit > my numberOfUnitsInLayer [layer]) return;
 	if (pcx > thy numberOfEigenvalues || pcy > thy numberOfEigenvalues) return;
-	integer nUnitsInLayer_m1 = ( layer == 1 ? my nInputs : my nUnitsInLayer [layer - 1] );
-	if (nUnitsInLayer_m1 != thy dimension) return;
+	integer numberOfUnitsInLayer_m1 = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer [layer - 1] );
+	if (numberOfUnitsInLayer_m1 != thy dimension) return;
 
 
 	double x1, x2, y1, y2;
@@ -137,7 +137,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 
 	integer iw = my wFirst [node] - 1;
 	double we1 = 0.0, we2 = 0.0;
-	for (integer i = 1; i <= nUnitsInLayer_m1; i ++) {
+	for (integer i = 1; i <= numberOfUnitsInLayer_m1; i ++) {
 		we1 += my w [iw + i] * thy eigenvectors [pcx] [i];
 		we2 += my w [iw + i] * thy eigenvectors [pcy] [i];
 	}

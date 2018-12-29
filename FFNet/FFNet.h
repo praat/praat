@@ -39,44 +39,43 @@
 #include "FFNet_def.h"
 
 /* Parameters:
- *  integer nLayers	    : the #layers in the net (exclusive the inputs)
- *    nUnitsInLayer	    : array[0..nLayers] the #units in each layer
- *						  nUnitsInLayer[0] : #inputs
- *						  nUnitsInLayer[nLayers] :#outputs
- *    nWeights		    : the total #weights in the net (inclusive bias)
- *  double *w		    : array[1..nWeights] with the connection strengths
- *    *activity		    : array[1..nNodes] with activities
+ *  integer numberOfLayers	    : the #layers in the net (exclusive the inputs)
+ *    numberOfUnitsInLayer	    : array[1..numberOfLayers] the #units in each layer
+ *						  numberOfUnitsInLayer[numberOfLayers] :#outputs
+ *    numberOfWeights		    : the total #weights in the net (inclusive bias)
+ *  double *w		    : array[1..numberOfWeights] with the connection strengths
+ *    *activity		    : array[1..numberOfNodes] with activities
  *  outputLabels	    : labels belonging to the outputs
  *  BOOKKEEPING:
- *  integer nNodes		    : total #nodes: bias modelled as unit with constant activity)
- *    *isbias		    : array[1..nNodes] set 1 if node is bias else 0
- *    *nodeFirst	    : array[1..nNodes] first node connected to this unit
- *    *nodeLast:	    : array[1..nNodes] last node connected to this unit
- *    *wFirst		    : array[1..nNodes] first index in *w for this unit
- *    *wLast		    : array[1..nNodes] last (inclusive the bias)
+ *  integer numberOfNodes		    : total #nodes: bias modelled as unit with constant activity)
+ *    *isbias		    : array[1..numberOfNodes] set 1 if node is bias else 0
+ *    *nodeFirst	    : array[1..numberOfNodes] first node connected to this unit
+ *    *nodeLast:	    : array[1..numberOfNodes] last node connected to this unit
+ *    *wFirst		    : array[1..numberOfNodes] first index in *w for this unit
+ *    *wLast		    : array[1..numberOfNodes] last (inclusive the bias)
  *  LEARNING:
- *  int *wSelected		: array[1..nWeights] weights selected for minimization
- *  double *deriv	    : array[1..nNodes] derivative of nonlinearity at node
- *    *error		    : array[1..nNodes] the error at node
- *    *dw		    	: array[1..nWeights] total derivative for weights
- *    *dwi		   		: array[1..nWeights] derivative per pattern
- *  integer dimension		: dimension of minimizer space (<= my nWeights)
- *  integer nPatterns	    : the #patterns to be learned
- * double **inputPattern: matrix[1..nPatterns][1..nInputs]
- * double **targetActivation: matrix[1..nPatterns][1..nOutputs]
- * double accumulatedCost : accumulated costs of testing/training with patterns
+ *  int *wSelected		: array[1..numberOfWeights] weights selected for minimization
+ *  double *deriv	    : array[1..numberOfNodes] derivative of nonlinearity at node
+ *    *error		    : array[1..numberOfNodes] the error at node
+ *    *dw		    	: array[1..numberOfWeights] total derivative for weights
+ *    *dwi		   		: array[1..numberOfWeights] derivative per pattern
+ *  integer dimension		: dimension of minimizer space (<= my numberOfWeights)
+ *  integer numberOfPatterns	    : the #patterns to be learned
+ *  MAT inputPattern: matrix[1..numberOfPatterns][1..numberOfInputs]
+ *  MAT targetActivation: matrix[1..numberOfPatterns][1..numberOfOutputs]
+ *  double accumulatedCost : accumulated costs of testing/training with patterns
  *
- * A network consists of nLayers layers. Layer numbering is from 0...nLayers.
- * Layer 0 is the input layer,  the highest numbered layer is the output layer
- *   (nLayers <= 4)
+ * A network consists of numberOfLayers layers. Layer numbering is from 1...numberOfLayers.
+ * The highest numbered layer is the output layer
+ *   (numberOfLayers <= 4)
  * Each layer consists of a number of units. The biases of all the units in a layer
  * are modelled with connections to an extra unit in the lower layer (with constant
  * activity 1.0). Nodes refers to 'units' + 'bias units'.
- * The variable 'nNodes' is the total number of nodes (inclusive bias nodes).
+ * The variable 'numberOfNodes' is the total number of nodes (inclusive bias nodes).
  * E.g. the topology (2,3,4), i.e., 2 inputs, 3 units in the first layer
  * and 4 units in the second layer (outputs) is modelled
  * with (2+1)+ (3+1)+ (4) = 11 nodes.
- * The numbering of the weights is as follows (indices 1..nWeights):
+ * The numbering of the weights is as follows (indices 1..numberOfWeights):
  * E.g., topology (I,H,O) (I inputs, H hidden units and O output units)
  * There are a total of H* (I+1) + O* (H+1) weights in this net.
  * w[1] - w[I]                        : I (1)->H (1), I (2)->H (1) ... I (I)->H (1)
@@ -99,17 +98,17 @@
  *
  * A number of auxiliary arrays for efficient calculations have been setup.
  * For a node k we need to know:
- * 1. isbias[1..nNodes]        : usage: if (isbias[k]) ...
- *      true if node k is a bias node. There are nLayers bias nodes
- * 2. nodeFirst[1..nNodes]       : usage is j=nodeFirst[k];
+ * 1. isbias[1..numberOfNodes]        : usage: if (isbias[k]) ...
+ *      true if node k is a bias node. There are numberOfLayers bias nodes
+ * 2. nodeFirst[1..numberOfNodes]       : usage is j=nodeFirst[k];
  *      j is the first node that is connected to k .
- * 3. nodeLast[1..nNodes]        : usage is j=nodeLast[k]
+ * 3. nodeLast[1..numberOfNodes]        : usage is j=nodeLast[k]
  *      j is the  last node that is connected to k (bias included).
  * For the calculation of the errors,  during learning,  in unit k we need to
  * know which weights from the preceeding layer connect to it.
- * 4. wFirst[1..nNodes] : usage j=wFirst[k]
+ * 4. wFirst[1..numberOfNodes] : usage j=wFirst[k]
  *      w[j] is first weight to node k.
- * 5. wLast[1..nNodes]  : usage j=wLast[k]
+ * 5. wLast[1..numberOfNodes]  : usage j=wLast[k]
  *      w[j] is last weight to node k.
  */
 
@@ -187,7 +186,7 @@ integer FFNet_dimensionOfSearchSpace (FFNet me);
 /* count the selected weights */
 
 integer FFNet_getNumberOfWeights (FFNet me);
-/* return my nWeights */
+/* return my numberOfWeights */
 
 void FFNet_weightConnectsUnits (FFNet me, integer index, integer *out_fromUnit, integer *out_toUnit, integer *out_layer);
 /*
@@ -204,7 +203,7 @@ integer FFNet_getNumberOfLayers (FFNet me);
 
 integer FFNet_getNumberOfUnits (FFNet me);
 
-integer FFNet_getNumberOfHiddenLayers (FFNet me);
+integer FFNet_getNumberOfHiddenumberOfLayers (FFNet me);
 
 integer FFNet_getNumberOfUnitsInLayer (FFNet me, int layer);
 

@@ -203,32 +203,25 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	return elements;
 }
 
-static void NUMlvector_getUniqueNumbers (integer numbers[], integer *inout_numberOfElements) {
-	Melder_assert (inout_numberOfElements);
-	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *inout_numberOfElements), 1);
-	NUMsort_integer (*inout_numberOfElements, sorted.peek());
-	integer numberOfMultiples = 0;
+static autoINTVEC INTVEC_getUniqueNumbers (INTVEC & inout_numbers) {
+	autoINTVEC sorted = newINTVECraw (inout_numbers.size);
+	sorted.get () <<= inout_numbers;
+	
+	NUMsort_integer (inout_numbers.size, sorted.at); // TODO INTVEC_sortInplace
 
-	numbers [1] = sorted [1];
 	integer numberOfUniques = 1;
-	for (integer i = 2; i <= *inout_numberOfElements; i ++) {
-		if (sorted [i] != sorted [i - 1]) {
-			numbers [++ numberOfUniques] = sorted [i];
-		} else {
-			numberOfMultiples ++;
-		}
+	for (integer i = 2; i <= inout_numbers.size; i ++) {
+		if (sorted [i] != sorted [i - 1])
+			sorted [++ numberOfUniques] = sorted [i];
 	}
-	*inout_numberOfElements = numberOfUniques;
+	sorted.resize (numberOfUniques);
+	return sorted;
 }
 
 autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques)
 {
 	autoINTVEC elements = getElementsOfRanges (ranges, maximumElement, elementType);
-	if (sortedUniques) {
-		integer size = elements.size;
-		NUMlvector_getUniqueNumbers (elements.at, & size);
-		elements.resize (size);
-	}
+	if (sortedUniques) elements = INTVEC_getUniqueNumbers (elements);
 	return elements;
 }
 
