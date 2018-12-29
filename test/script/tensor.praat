@@ -172,6 +172,11 @@ a## = {{ 2, 3, 5 }, { 7, 3, 2 }}
 b## = {{ 11, 1, 5, 2 }, { 8, 2, 3, 6 }, { 1, 3, 4, 9 }}
 product## = mul## (a##, b##)
 assert product## = {{ 51, 23, 39, 67 }, { 103, 19, 52, 50 }}
+product_fast## = mul_fast## (a##, b##)
+appendInfoLine: product_fast##
+assert numberOfRows (product_fast##) = 2
+assert numberOfColumns (product_fast##) = 4
+assert product## = product_fast##
 at## = transpose## (a##)
 bt## = transpose## (b##)
 assert at## = {{ 2, 7 }, { 3, 3 }, { 5, 2 }}

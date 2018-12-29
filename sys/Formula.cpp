@@ -113,7 +113,8 @@ enum { NO_SYMBOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
-		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_TN_, MAT_MUL_NT_, MAT_MUL_TT_, VEC_REPEAT_,
+		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_FAST_,
+		MAT_MUL_TN_, MAT_MUL_NT_, MAT_MUL_TT_, VEC_REPEAT_,
 	#define HIGH_FUNCTION_2  VEC_REPEAT_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
@@ -236,7 +237,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
-	U"inner", U"outer##", U"mul#", U"mul##", U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
+	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##",
+	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -5087,6 +5089,25 @@ static void do_MATmul () {
 		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
+static void do_MATmul_fast () {
+	/*
+		result## = mul_fast## (x.., y..)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		/*
+			result# = mul_fast## (x##, y##)
+		*/
+		integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
+		Melder_require (yNrow == xNcol,
+			U"In the function \"mul_fast##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
+			U"not ", xNcol, U" and ", yNrow, U".");
+		autoMAT result = newMATmul_fast (x->numericMatrix, y->numericMatrix);
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
 static void do_MATmul_tn () {
 	/*
 		result## = mul_tn## (x.., y..)
@@ -6439,6 +6460,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAT_OUTER_: { do_MATouter ();
 } break; case VEC_MUL_: { do_VECmul ();
 } break; case MAT_MUL_: { do_MATmul ();
+} break; case MAT_MUL_FAST_: { do_MATmul_fast ();
 } break; case MAT_MUL_TN_: { do_MATmul_tn ();
 } break; case MAT_MUL_NT_: { do_MATmul_nt ();
 } break; case MAT_MUL_TT_: { do_MATmul_tt ();
