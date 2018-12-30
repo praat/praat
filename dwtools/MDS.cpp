@@ -761,14 +761,16 @@ autoWeight Dissimilarity_to_Weight (Dissimilarity me) {
 
 autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfusionLevel) {
 	try {
-		Melder_require (my numberOfColumns == my numberOfRows, U"Confusion should be a square table.");
-		
-		Melder_assert (minimumConfusionLevel > 0.0);
+		Melder_require (my numberOfColumns == my numberOfRows, 
+			U"Confusion should be a square table.");
+		Melder_require (minimumConfusionLevel > 0.0 && minimumConfusionLevel < 1.0, 
+			U"The minimum confusion level should be positive and smaller than 1.0.");
+
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		thy data.all() <<= my data.all();
 
-		// Correct "zero" responses.
+		// Set all zero responses to the minimumConfusionLevel.
 
 		for (integer i = 1; i <= my numberOfColumns; i ++)
 			for (integer j = 1; j <= my numberOfColumns; j ++)
