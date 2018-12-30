@@ -219,11 +219,39 @@ inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
 	return result;
 }
 /*
-	Faster matrix multiplication, which is allowed to allocate new matrices
-	to make x.colStride and y.rowStride 1.
+	Faster multiplication of large matrices,
+	which allocates new matrices to make x.colStride and y.rowStride 1
+	(unless they are already 1).
 	Because of the use of malloc, this function may not be thread-safe.
 */
-void MATVUmul_allowAllocation (MATVU const& target, constMATVU x, constMATVU y);
+extern void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
+inline void MATVUmul_forceAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	MATVUmul_forceAllocation_ (target, x, y);
+}
+inline autoMAT newMATmul_forceAllocation (constMATVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (x.nrow, y.ncol);
+	MATVUmul_forceAllocation (result.all(), x, y);
+	return result;
+}
+/*
+	The faster of MATVUmul_forceAllocation and MATVUmul.
+	Because of the use of malloc, this function may not be thread-safe.
+*/
+extern void MATVUmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
+inline void MATVUmul_allowAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	MATVUmul_allowAllocation_ (target, x, y);
+}
+inline autoMAT newMATmul_allowAllocation (constMATVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (x.nrow, y.ncol);
+	MATVUmul_allowAllocation (result.all(), x, y);
+	return result;
+}
 /*
 	Rough matrix multiplication, using an in-cache inner loop if that is faster.
 */
