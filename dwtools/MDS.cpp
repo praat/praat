@@ -676,7 +676,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 
 		if (normalize) MAT_divideRowByRowsum_inplace (thy data.get());
 
@@ -711,7 +711,7 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 		integer nxy = my numberOfColumns;
 		autoDissimilarity thee = Dissimilarity_create (nxy);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 
 		double max = 0.0;
 		for (integer i = 1; i <= nxy; i ++) {
@@ -722,7 +722,7 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 			}
 		}
 
-		if (maximumDissimilarity <= 0) maximumDissimilarity = max;
+		if (maximumDissimilarity <= 0.0) maximumDissimilarity = max;
 
 		if (maximumDissimilarity < max) Melder_warning
 			(U"Your maximumDissimilarity is smaller than the maximum similarity. Some data may be lost.");
@@ -766,7 +766,7 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 		Melder_assert (minimumConfusionLevel > 0.0);
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 
 		// Correct "zero" responses.
 
@@ -1438,24 +1438,20 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 
 			// Make Z = X
 
-			matrixcopy_preallocated (z -> data.get(), conf -> data.get());
+			z -> data.all() <<= conf -> data.all();
 
 			stressp = stress;
-			if (showProgress) {
+			if (showProgress)
 				Melder_progress ((double) iter / (numberOfIterations + 1), U"kruskal: stress ", stress);
-			}
 		}
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
-		if (out_stress) {
+		if (out_stress)
 			*out_stress = stress;
-		}
 		return z;
 	} catch (MelderError) {
-		if (showProgress) {
+		if (showProgress)
 			Melder_progress (1.0);
-		}
 		Melder_throw (me, U": no improved Configuration created (smacof method).");
 	}
 }

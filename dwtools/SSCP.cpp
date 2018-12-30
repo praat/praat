@@ -1753,7 +1753,7 @@ void SSCP_expandLowerCholeskyInverse (SSCP me) {
 			my lnd += log (my data [1] [j]);   // diagonal elmnt is variance
 		}
 	} else {
-		MATcopy_preallocated (my lowerCholeskyInverse.get(), my data.get());
+		my lowerCholeskyInverse.all() <<= my data.all();
 		try {
 			MATlowerCholeskyInverse_inplace (my lowerCholeskyInverse.get(), & (my lnd));
 		} catch (MelderError) {

@@ -47,7 +47,7 @@ autoDissimilarity Distance_to_Dissimilarity (Distance me) {
 		autoDissimilarity thee = Dissimilarity_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		Melder_assert (thy data.ncol == my numberOfColumns);
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Dissimilarity not created from Distance.");

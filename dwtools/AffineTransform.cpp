@@ -91,7 +91,7 @@ autoAffineTransform AffineTransform_invert (AffineTransform me) {
 autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my dimension, my dimension);
-		matrixcopy_preallocated (thy data.get(), my r.get());
+		thy data.all() <<= my r.all();
 		for (integer i = 1; i <= my dimension; i ++) {
 			char32 label [40];
 			Melder_sprint (label,40, i);

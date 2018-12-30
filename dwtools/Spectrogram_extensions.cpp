@@ -519,7 +519,7 @@ autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
 	try {
 		autoBarkSpectrogram thee = BarkSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to BarkSpectrogram.");
@@ -529,7 +529,7 @@ autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
 autoMelSpectrogram Matrix_to_MelSpectrogram (Matrix me) {
 	try {
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MelSpectrogram.");

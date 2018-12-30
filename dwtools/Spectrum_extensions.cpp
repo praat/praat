@@ -312,7 +312,7 @@ autoSpectrum Spectrum_resample (Spectrum me, integer numberOfFrequencies) {
 		// resample real and imaginary part !
 		autoSound thee = Sound_resample ((Sound) me, newSamplingFrequency, 50);
 		autoSpectrum him = Spectrum_create (my xmax, numberOfFrequencies);
-		matrixcopy_preallocated (his z.get(), thy z.get());
+		his z.all() <<= thy z.all();
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not resampled.");

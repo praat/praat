@@ -333,7 +333,7 @@ autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 			thy columnLabels [j] = Melder_dup (my columnLabels [j].get());
 		for (integer i = 1; i <= my numberOfRows; i ++)
 			thy rowLabels [i] = Melder_dup (my rowLabels [i].get());
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
@@ -617,7 +617,7 @@ autoTableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		thy columnLabels.all() <<= my columnLabels.all();
 		thy rowLabels.all() <<= my rowLabels.all();
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal created.");

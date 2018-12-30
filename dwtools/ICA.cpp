@@ -161,12 +161,12 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 								w [i] [j] *= scalef;
 				}
 				// update V
-				matrixcopy_preallocated (vnew.get(), my data.get());
+				vnew.all() <<= my data.all();
 				MATVUmul (my data.get(), w.get(), vnew.get());
 				for (integer k = 1; k <= ccts -> size; k ++) {
 					CrossCorrelationTable ct = ccts -> at [k];
 					Melder_assert (ct -> data.nrow == dimension && ct -> data.ncol == dimension);   // ppgb 20180913
-					matrixcopy_preallocated (cc.get(), ct -> data.get());
+					cc.all() <<= ct -> data.all();
 					MATmul_VCVt_preallocated (ct -> data.get(), w.get(), cc.get(), true);
 				}
 				dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
@@ -313,7 +313,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		// Revert the sphering W = P'*W;
 		// Take transpose to make W*C [i]W' diagonal instead of W'*C [i]*W => (P'*W)'=W'*P
-		MATcopy_preallocated (wc.get(), my data.get());
+		wc.all() <<= my data.all();
 		MATVUmul (my data.get(), wc.transpose(), p.get()); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure

@@ -121,7 +121,7 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
@@ -131,7 +131,7 @@ autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
 autoMatrix Spectrogram_to_Matrix (Spectrogram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

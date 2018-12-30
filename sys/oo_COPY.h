@@ -36,7 +36,7 @@
 	thy x = newvectorcopy (our x.get());
 
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
-	thy x = newmatrixcopy (our x.get());
+	thy x = newmatrixcopy (our x.all());
 
 #define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
 	thy x = newtensor3copy (our x.get());

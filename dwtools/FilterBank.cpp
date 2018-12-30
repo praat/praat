@@ -455,7 +455,7 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, integer from, integer to,
 autoMatrix FilterBank_to_Matrix (FilterBank me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -465,7 +465,7 @@ autoMatrix FilterBank_to_Matrix (FilterBank me) {
 autoBarkFilter Matrix_to_BarkFilter (Matrix me) {
 	try {
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to BarkFilter.");
@@ -475,7 +475,7 @@ autoBarkFilter Matrix_to_BarkFilter (Matrix me) {
 autoMelFilter Matrix_to_MelFilter (Matrix me) {
 	try {
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MelFilter.");
@@ -552,7 +552,7 @@ autoFormantFilter Matrix_to_FormantFilter (Matrix me) {
 	try {
 		autoFormantFilter thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                         my ymin, my ymax, my ny, my dy, my y1);
-		matrixcopy_preallocated (thy z.get(), my z.get());
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FormantFilter.");

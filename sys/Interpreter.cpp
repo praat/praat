@@ -735,7 +735,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			/*
 				Statement like: a## = b##   // with matching sizes
 			*/
-			matrixcopy_preallocated (variable -> numericMatrixValue.get(), movedMatrix);
+			variable -> numericMatrixValue.all() <<= movedMatrix;
 		}
 	} else {
 		/*

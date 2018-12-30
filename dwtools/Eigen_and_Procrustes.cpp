@@ -41,7 +41,7 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 		autoProcrustes him = Procrustes_create (nvectors);
 		autoMAT rotation; 
 		NUMprocrustes (x.get(), y.get(), & rotation, nullptr, nullptr);
-		matrixcopy_preallocated (his r.get(), rotation.get());
+		his r.all() <<= rotation.all();
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes not created from Eigens.");
