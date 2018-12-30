@@ -593,7 +593,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 						cov -> data [1] [ic] = cov_t -> data [ic] [ic];
 					}
 				} else {
-					MATcopy_preallocated (cov -> data.get(), cov_t -> data.get());
+					cov -> data.all() <<= cov_t -> data.all();
 				}
 			}
 		}

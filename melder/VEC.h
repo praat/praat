@@ -204,7 +204,7 @@ inline void VECVUadd (const VECVU& target, const constVECVU& x, const constVECVU
 		target [i] = x [i] + y [i];
 }
 
-inline void VECcentre_inplace (const VEC& x, double *out_mean = nullptr) noexcept {
+inline void VECcentre_inplace (VECVU const& x, double *out_mean = nullptr) noexcept {
 	double xmean = NUMmean (x);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= xmean;

@@ -281,7 +281,7 @@ autoConfiguration Configuration_congruenceRotation (Configuration me, Configurat
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {
 		autoMAT pc = MAT_asPrincipalComponents (my data.get(), my data.ncol);
-		MATcopy_preallocated (my data.get(), pc.get());
+		my data.all() <<= pc.all();
 	} catch (MelderError) {
 		Melder_throw (me, U": not rotated to principal directions.");
 	}

@@ -376,7 +376,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	autoSVD svd = SVD_create (nr, nc);
 
-	matrixcopy_preallocated (svd -> u.get(), my data.get());
+	svd -> u.all() <<= my data.all();
 	MATcentreEachColumn_inplace (svd -> u.get());
 
 	SVD_compute (svd.get());
@@ -1306,7 +1306,7 @@ void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer t
 autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		matrixcopy_preallocated (thy data.get(), my data.get());
+		thy data.all() <<= my data.all();
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {

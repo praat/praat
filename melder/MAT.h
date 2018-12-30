@@ -182,22 +182,22 @@ inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
 	Make the average of each column zero.
 		a[i][j] -= a[.][j]
 */
-extern void MATcentreEachColumn_inplace (const MAT& x) noexcept;
+extern void MATcentreEachColumn_inplace (MATVU const& x) noexcept;
 
 /*
 	Make the average of each row zero.
 		a[i][j] -= a[i][.]
 */
-extern void MATcentreEachRow_inplace (const MAT& x) noexcept;
+extern void MATcentreEachRow_inplace (MATVU const& x) noexcept;
 
 /*
 	Make the average of every column and every row zero.
 		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
 */
-extern void MATdoubleCentre_inplace (const MAT& x) noexcept;
+extern void MATdoubleCentre_inplace (MATVU const& x) noexcept;
 
-extern void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept;
-inline autoMAT newMATmtm (const constMAT& x) {
+extern void MATmtm_preallocated (MATVU const& target, constMATVU const& x) noexcept;
+inline autoMAT newMATmtm (constMATVU const& x) {
 	autoMAT result = newMATraw (x.ncol, x.ncol);
 	MATmtm_preallocated (result.get(), x);
 	return result;
@@ -206,38 +206,44 @@ inline autoMAT newMATmtm (const constMAT& x) {
 /*
 	Precise matrix multiplication, using pairwise summation.
 */
-extern void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept;
-inline void MATVUmul  (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+extern void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
+inline void MATVUmul  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
 	MATVUmul_ (target, x, y);
 }
-inline autoMAT newMATmul (const constMATVU& x, const constMATVU& y) {
+inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
 	MATVUmul (result.all(), x, y);
 	return result;
 }
 /*
+	Faster matrix multiplication, which is allowed to allocate new matrices
+	to make x.colStride and y.rowStride 1.
+	Because of the use of malloc, this function may not be thread-safe.
+*/
+void MATVUmul_allowAllocation (MATVU const& target, constMATVU x, constMATVU y);
+/*
 	Rough matrix multiplication, using an in-cache inner loop if that is faster.
 */
-extern void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept;
-inline void MATVUmul_fast  (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+extern void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
+inline void MATVUmul_fast  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
 	MATVUmul_fast_ (target, x, y);
 }
-inline autoMAT newMATmul_fast (const constMAT& x, const constMAT& y) {
+inline autoMAT newMATmul_fast (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
 	MATVUmul_fast (result.all(), x, y);
 	return result;
 }
 
-void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y);
-extern autoMAT newMATouter (const constVEC& x, const constVEC& y);
+void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y);
+extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);
 
-extern autoMAT newMATpeaks (const constVEC& x, bool includeEdges, int interpolate, bool sortByHeight);
+extern autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight);
 
 inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
 	autoMAT result = newMATraw (nrow, ncol);
@@ -247,36 +253,36 @@ inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double 
 	return result;
 }
 
-inline void MATsin_inplace (const MAT& x) noexcept {
+inline void MATsin_inplace (MAT const& x) noexcept {
 	VECsin_inplace (asvector (x));
 }
 
-inline void MATsubtractReversed_inplace (const MAT& x, double number) noexcept {
+inline void MATsubtractReversed_inplace (MATVU const& x, double number) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = number - x [irow] [icol];
 }
-inline void MATsubtractReversed_inplace (const MAT& x, const constMAT& y) noexcept {
+inline void MATsubtractReversed_inplace (MATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
 }
 
-inline void MATtranspose_inplace_mustBeSquare (const MAT& x) noexcept {
+inline void MATtranspose_inplace_mustBeSquare (MATVU const& x) noexcept {
 	Melder_assert (x.nrow == x.ncol);
 	integer n = x.nrow;
 	for (integer i = 1; i < n; i ++)
 		for (integer j = i + 1; j <= n; j ++)
 			std::swap (x [i] [j], x [j] [i]);
 }
-inline void MATtranspose_preallocated (const MAT& target, const constMAT& x) noexcept {
+inline void MATtranspose_preallocated (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (x.nrow == target.ncol && x.ncol == target.nrow);
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = x [icol] [irow];
 }
-inline autoMAT newMATtranspose (const constMAT& x) {
+inline autoMAT newMATtranspose (constMATVU const& x) {
 	autoMAT result = newMATraw (x.ncol, x.nrow);
 	MATtranspose_preallocated (result.get(), x);
 	return result;

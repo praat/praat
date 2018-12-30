@@ -617,7 +617,7 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 		MAT_eigenvectors_decompress (right_eigenvectors.get(), eigenvalues_re.get(), eigenvalues_im.get(), & eigenvectors_reim);
 		if (out_eigenvectors) {
 			autoMatrix eigenvectors = Matrix_createSimple (my ny, 2 * my ny);
-			matrixcopy_preallocated (eigenvectors -> z.get(), eigenvectors_reim.get());
+			eigenvectors -> z.all() <<= eigenvectors_reim.all();
 			*out_eigenvectors = eigenvectors.move();
 		}
 		if (out_eigenvalues) {

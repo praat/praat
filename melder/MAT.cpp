@@ -26,7 +26,7 @@
 	#import <MetalPerformanceShaders/MetalPerformanceShaders.h>
 #endif
 
-void MATcentreEachColumn_inplace (MAT const& x) noexcept {
+void MATcentreEachColumn_inplace (MATVU const& x) noexcept {
 	for (integer icol = 1; icol <= x.ncol; icol ++) {
 		const double columnMean = NUMmean (x.column (icol));
 		for (integer irow = 1; irow <= x.nrow; irow ++)
@@ -34,17 +34,17 @@ void MATcentreEachColumn_inplace (MAT const& x) noexcept {
 	}
 }
 
-void MATcentreEachRow_inplace (MAT const& x) noexcept {
+void MATcentreEachRow_inplace (MATVU const& x) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		VECcentre_inplace (x.row (irow));
+		VECcentre_inplace (x [irow]);
 }
 
-void MATdoubleCentre_inplace (MAT const& x) noexcept {
+void MATdoubleCentre_inplace (MATVU const& x) noexcept {
 	MATcentreEachRow_inplace (x);
 	MATcentreEachColumn_inplace (x);
 }
 
-void MATmtm_preallocated (MAT const& target, constMAT const& x) noexcept {
+void MATmtm_preallocated (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (target.nrow == x.ncol);
 	Melder_assert (target.ncol == x.ncol);
 	#if 0
@@ -63,7 +63,7 @@ void MATmtm_preallocated (MAT const& target, constMAT const& x) noexcept {
 				const double *px1 = & x [1] [irow];
 				const double *px2 = & x [1] [icol],
 				longdouble (*px1) * longdouble (*px2),
-				(px1 += x.ncol, px2 += x.ncol)
+				(px1 += x.rowStride, px2 += x.rowStride)
 			)
 			target [irow] [icol] = target [icol] [irow] = double (sum);
 		}
@@ -159,6 +159,37 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 				)
 				target [irow] [icol] = double (sum);
 			}
+		}
+	}
+}
+
+void MATVUmul_allowAllocation (MATVU const& target, constMATVU x, constMATVU y) {
+	autoMAT tmpX, tmpY;
+	if (x.colStride != 1) {
+		tmpX = newMATcopy (x);
+		x = tmpX.all();
+		Melder_assert (x.colStride == 1);
+	}
+	if (y.rowStride != 1) {
+		tmpY = newMATtranspose (y);
+		y = tmpY.transpose();
+		Melder_assert (y.rowStride == 1);
+	}
+	/*
+		Appropriate for Target := X.Y',
+		if X and Y are packed row-major matrices.
+		The speed is 0.111, 1.11, 1.94,    , 1.90, 1.66, 1.57, 1.39 Gflop/s
+		for size =       1,   10,  100, 300, 1000, 2000, 3000, 5000.
+	*/
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+				const double *px = & x [irow] [1];
+				const double *py = & y [1] [icol],
+				longdouble (*px) * longdouble (*py),
+				(px += 1, py += 1)
+			)
+			target [irow] [icol] = double (sum);
 		}
 	}
 }
@@ -387,18 +418,18 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 	}
 }
 
-void MATouter_preallocated (MAT const& target, constVEC const& x, constVEC const& y) {
+void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
 			target [irow] [icol] = x [irow] * y [icol];
 }
-autoMAT newMATouter (constVEC const& x, constVEC const& y) {
+autoMAT newMATouter (constVECVU const& x, constVECVU const& y) {
 	autoMAT result = newMATraw (x.size, y.size);
 	MATouter_preallocated (result.get(), x, y);
 	return result;
 }
 
-autoMAT newMATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) includeEdges = false;
 	integer numberOfPeaks = 0;
 	for (integer i = 2; i < x.size; i ++)

@@ -230,10 +230,6 @@ inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
 	return (double) result;
 }	
 
-inline void MATcopy_preallocated (MAT target, constMAT x) {
-	return matrixcopy_preallocated (target, x);
-}
-
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = newVECraw (x.ncol);
 	for (integer icol = 1; icol <= norm.size; icol ++)

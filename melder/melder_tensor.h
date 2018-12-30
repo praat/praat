@@ -657,7 +657,12 @@ public:
 	vectorview<T> operator[] (integer rowNumber) const {
 		return vectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
 	}
+	vectorview<T> row (integer rowNumber) const {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		return vectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
+	}
 	vectorview<T> column (integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
 		return vectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
 	}
 	vectorview<T> diagonal () const {
@@ -936,25 +941,25 @@ constvector<T> asvector (constmatrix<T> const& x) {
 	return constvector<T> (& x [1] [0], x.nrow * x.ncol);
 }
 template <typename T>
-void matrixcopy_preallocated (matrix<T> const& target, constmatrix<T> const& source) {
+void matrixcopy_preallocated (matrixview<T> const& target, constmatrixview<T> const& source) {
 	Melder_assert (source.nrow == target.nrow && source.ncol == target.ncol);
 	for (integer irow = 1; irow <= source.nrow; irow ++)
 		for (integer icol = 1; icol <= source.ncol; icol ++)
 			target [irow] [icol] = source [irow] [icol];
 }
 template <typename T>
-void matrixcopy_preallocated (matrix<T> const& target, matrix<T> const& source) {
-	matrixcopy_preallocated (target, constmatrix<T> (source));
+void matrixcopy_preallocated (matrixview<T> const& target, matrixview<T> const& source) {
+	matrixcopy_preallocated (target, constmatrixview<T> (source));
 }
 template <typename T>
-automatrix<T> newmatrixcopy (constmatrix<T> const& source) {
+automatrix<T> newmatrixcopy (constmatrixview<T> const& source) {
 	automatrix<T> result = newmatrixraw<T> (source.nrow, source.ncol);
-	matrixcopy_preallocated (result.get(), source);
+	matrixcopy_preallocated (result.all(), source);
 	return result;
 }
 template <typename T>
-automatrix<T> newmatrixcopy (matrix<T> const& source) {
-	return newmatrixcopy<T> (constmatrix<T> (source));
+automatrix<T> newmatrixcopy (matrixview<T> const& source) {
+	return newmatrixcopy<T> (constmatrixview<T> (source));
 }
 
 template <typename T>
@@ -1435,7 +1440,7 @@ inline autoMAT newMATraw (integer nrow, integer ncol) {
 inline autoMAT newMATzero (integer nrow, integer ncol) {
 	return newmatrixzero <double> (nrow, ncol);
 }
-inline autoMAT newMATcopy (constMAT source) {
+inline autoMAT newMATcopy (constMATVU source) {
 	return newmatrixcopy (source);
 }
 inline autoMAT newMATpart (const constMAT& source,
@@ -1466,7 +1471,9 @@ inline autoTEN3 newTEN3part (const constTEN3& source,
 }
 
 using INTMAT = matrix <integer>;
+using INTMATVU = matrixview <integer>;
 using constINTMAT = constmatrix <integer>;
+using constINTMATVU = constmatrixview <integer>;
 using autoINTMAT = automatrix <integer>;
 inline autoINTMAT newINTMATraw (integer nrow, integer ncol) {
 	return newmatrixraw <integer> (nrow, ncol);
@@ -1474,12 +1481,14 @@ inline autoINTMAT newINTMATraw (integer nrow, integer ncol) {
 inline autoINTMAT newINTMATzero (integer nrow, integer ncol) {
 	return newmatrixzero <integer> (nrow, ncol);
 }
-inline autoINTMAT newINTMATcopy (constINTMAT source) {
+inline autoINTMAT newINTMATcopy (constINTMATVU source) {
 	return newmatrixcopy (source);
 }
 
 using BOOLMAT = matrix <bool>;
+using BOOLMATVU = matrixview <bool>;
 using constBOOLMAT = constmatrix <bool>;
+using constBOOLMATVU = constmatrixview <bool>;
 using autoBOOLMAT = automatrix <bool>;
 inline autoBOOLMAT newBOOLMATraw (integer nrow, integer ncol) {
 	return newmatrixraw <bool> (nrow, ncol);
@@ -1487,12 +1496,14 @@ inline autoBOOLMAT newBOOLMATraw (integer nrow, integer ncol) {
 inline autoBOOLMAT newBOOLMATzero (integer nrow, integer ncol) {
 	return newmatrixzero <bool> (nrow, ncol);
 }
-inline autoBOOLMAT newBOOLMATcopy (constBOOLMAT source) {
+inline autoBOOLMAT newBOOLMATcopy (constBOOLMATVU source) {
 	return newmatrixcopy (source);
 }
 
 using BYTEMAT = matrix <byte>;
+using BYTEMATVU = matrixview <byte>;
 using constBYTEMAT = constmatrix <byte>;
+using constBYTEMATVU = constmatrixview <byte>;
 using autoBYTEMAT = automatrix <byte>;
 inline autoBYTEMAT newBYTEMATraw (integer nrow, integer ncol) {
 	return newmatrixraw <byte> (nrow, ncol);
@@ -1500,7 +1511,7 @@ inline autoBYTEMAT newBYTEMATraw (integer nrow, integer ncol) {
 inline autoBYTEMAT newBYTEMATzero (integer nrow, integer ncol) {
 	return newmatrixzero <byte> (nrow, ncol);
 }
-inline autoBYTEMAT newBYTEMATcopy (constBYTEMAT source) {
+inline autoBYTEMAT newBYTEMATcopy (constBYTEMATVU source) {
 	return newmatrixcopy (source);
 }
 

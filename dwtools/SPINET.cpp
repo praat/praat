@@ -114,7 +114,7 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
 
 	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-	MATcopy_preallocated (thy z.get(), enhanced ? my s.get() : my y.get());
+	thy z.all() <<= enhanced ? my s.all() : my y.all();
 
 	Matrix_paintCells (thee.get(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
 	if (garnish) {

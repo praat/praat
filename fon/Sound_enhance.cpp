@@ -82,7 +82,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1.0);
 				if (fmax > fhigh) fmax = fhigh;
 				Melder_progress (fmin / fhigh, U"Band: ", Melder_fixed (fmin, 0), U" ... ", Melder_fixed (fmax, 0), U" Hz");
-				matrixcopy_preallocated (spec -> z.get(), orgspec -> z.get());
+				spec -> z.all() <<= orgspec -> z.all();
 				Spectrum_passHannBand (spec.get(), fmin, fmax, bandSmoothing);
 				autoSound band = Spectrum_to_Sound (spec.get());
 				/*
