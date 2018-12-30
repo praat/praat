@@ -91,8 +91,8 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 			/*
 				Appropriate for Target := X.Y',
 				if X and Y are packed row-major matrices.
-				The speed is 0.111, 1.11, 1.94, 1.90, 1.66, 1.57, 1.39 Gflop/s
-				for size =       1,   10,  100, 1000, 2000, 3000, 5000.
+				The speed is 0.142, 0.716, 1.32, 1.64, 2.33, 2.22, 2.08, 2.31, 2.18, 1.89, 1.77, 1.53 Gflop/s
+				for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
 			*/
 			for (integer irow = 1; irow <= target.nrow; irow ++) {
 				for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -109,8 +109,8 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 			/*
 				Appropriate for Target := X.Y,
 				if X and Y are packed row-major matrices.
-				The speed is 0.131, 1.16, 1.98, 0.57, 0.112 Gflop/s
-				for size =       1,   10,  100, 1000,  2000.
+				The speed is 0.143, 0.684, 1.20, 1.64, 2.24, 2.04, 1.44, 1.22, 0.56, 0.114 Gflop/s
+				for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000,  2000.
 			*/
 			for (integer irow = 1; irow <= target.nrow; irow ++) {
 				for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -128,8 +128,8 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 		/*
 			Appropriate for Target := X'.Y',
 			if X and Y are packed row-major matrices.
-			The speed is 0.113, 1.10, 1.81, 0.61, 0.112 Gflop/s
-			for size =       1,   10,  100, 1000,  2000.
+			The speed is 0.136, 0.666, 1.22, 1.65, 2.36, 1.96, 1.62, 1.24, 0.69, 0.118 Gflop/s
+			for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000,  2000.
 		*/
 		for (integer irow = 1; irow <= target.nrow; irow ++) {
 			for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -146,8 +146,8 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 		/*
 			Appropriate for Target := X'.Y,
 			if X and Y are packed row-major matrices.
-			The speed is 0.130, 1.06, 1.70, 0.57, 0.068 Gflop/s
-			for size =       1,   10,  100, 1000,  2000.
+			The speed is 0.143, 0.572, 1.10, 1.43, 1.71, 1.70, 1.29, 0.71, 0.067 Gflop/s
+			for size =       1,     3,   10,   20,   50,  100,  200,  500,  1000.
 		*/
 		for (integer irow = 1; irow <= target.nrow; irow ++) {
 			for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -163,8 +163,32 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 	}
 }
 
-void MATVUmul_allowAllocation (MATVU const& target, constMATVU x, constMATVU y) {
-	autoMAT tmpX, tmpY;
+void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
+	/*
+		As seen above, the only multiplication that stays fast for large sizes,
+		if X and Y are packed row-major matrices, is X.Y';
+		this is because both x.colStride and y.rowStride are 1 in that case.
+		It may therefore be useful to convert any matrix X that has
+		a column stride unequal to 1, and any matrix Y that has a row stride
+		unequal to 1, to matrices that do have these desirable properties.
+
+		For the X.Y case, where X and Y are packed row-major matrices,
+		the speed is 0.084, 0.124, 0.91, 1.56, 2.26, 2.18, 2.12, 2.25, 2.23, 1.85, 1.78, 1.57 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+
+		For the X.Y' case, where X and Y are packed row-major matrices,
+		the speed is 0.084, 0.610, 1.26, 1.69, 2.32, 2.20, 2.12, 2.28, 2.24, 1.91, 1.76, 1.53 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+
+		For the X'.Y case, where X and Y are packed row-major matrices,
+		the speed is 0.082, 0.068, 0.73, 1.42, 2.20, 2.14, 2.09, 2.27, 2.21, 1.84, 1.77, 1.53 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+
+		For the X'.Y' case, where X and Y are packed row-major matrices,
+		the speed is 0.082, 0.117, 0.90, 1.57, 2.25, 2.19, 2.12, 2.23, 2.09, 1.92, 1.69, 1.48 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+	*/
+	autoMAT tmpX, tmpY;   // the scope shall extend to the end of the function
 	if (x.colStride != 1) {
 		tmpX = newMATcopy (x);
 		x = tmpX.all();
@@ -175,12 +199,6 @@ void MATVUmul_allowAllocation (MATVU const& target, constMATVU x, constMATVU y) 
 		y = tmpY.transpose();
 		Melder_assert (y.rowStride == 1);
 	}
-	/*
-		Appropriate for Target := X.Y',
-		if X and Y are packed row-major matrices.
-		The speed is 0.111, 1.11, 1.94,    , 1.90, 1.66, 1.57, 1.39 Gflop/s
-		for size =       1,   10,  100, 300, 1000, 2000, 3000, 5000.
-	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
@@ -190,6 +208,133 @@ void MATVUmul_allowAllocation (MATVU const& target, constMATVU x, constMATVU y) 
 				(px += 1, py += 1)
 			)
 			target [irow] [icol] = double (sum);
+		}
+	}
+}
+
+void MATVUmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
+	/*
+		The faster of MATVUmul_ and MATVUmul_forceAllocation.
+
+		For the X.Y case, where X and Y are packed row-major matrices,
+		the speed is 0.087, 0.574, 1.18, 1.61, 2.25, 2.14, 2.11, 2.23, 2.23, 1.88, 1.74, 1.53 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+
+		For the X.Y' case, where X and Y are packed row-major matrices,
+		the speed is 0.088, 0.577, 1.28, 1.67, 2.27, 2.18, 2.12, 2.28, 2.20, 1.96, 1.78, 1.57 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+
+		For the X'.Y case, where X and Y are packed row-major matrices,
+		the speed is 0.084, 0.547, 1.12, 1.44, 2.20, 2.15, 2.04, 2.25, 2.18, 1.92, 1.74, 1.48 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+
+		For the X'.Y' case, where X and Y are packed row-major matrices,
+		the speed is 0.084, 0.553, 1.18, 1.63, 2.31, 2.12, 2.12, 2.25, 2.16, 1.90, 1.79, 1.50 Gflop/s
+		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
+	*/
+	if (x.colStride == 1) {
+		if (y.rowStride == 1) {
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += 1, py += 1)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		} else {
+			if (double (target.nrow) * double (target.ncol) * double (x.ncol) > 1e5) {
+				autoMAT tmpY = newMATtranspose (y);
+				y = tmpY.transpose();
+				Melder_assert (y.rowStride == 1);
+				for (integer irow = 1; irow <= target.nrow; irow ++) {
+					for (integer icol = 1; icol <= target.ncol; icol ++) {
+						PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+							const double *px = & x [irow] [1];
+							const double *py = & y [1] [icol],
+							longdouble (*px) * longdouble (*py),
+							(px += 1, py += 1)
+						)
+						target [irow] [icol] = double (sum);
+					}
+				}
+			} else {
+				for (integer irow = 1; irow <= target.nrow; irow ++) {
+					for (integer icol = 1; icol <= target.ncol; icol ++) {
+						PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+							const double *px = & x [irow] [1];
+							const double *py = & y [1] [icol],
+							longdouble (*px) * longdouble (*py),
+							(px += 1, py += y.rowStride)
+						)
+						target [irow] [icol] = double (sum);
+					}
+				}
+			}
+		}
+	} else if (y.rowStride == 1) {
+		if (double (target.nrow) * double (target.ncol) * double (x.ncol) > 1e5) {
+			autoMAT tmpX = newMATcopy (x);
+			x = tmpX.all();
+			Melder_assert (x.colStride == 1);
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += 1, py += 1)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		} else {
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += x.colStride, py += 1)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		}
+	} else {
+		if (double (target.nrow) * double (target.ncol) * double (x.ncol) > 1e5) {
+			autoMAT tmpX = newMATcopy (x);
+			x = tmpX.all();
+			Melder_assert (x.colStride == 1);
+			autoMAT tmpY = newMATtranspose (y);
+			y = tmpY.transpose();
+			Melder_assert (y.rowStride == 1);
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += 1, py += 1)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		} else {
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [1] [icol],
+						longdouble (*px) * longdouble (*py),
+						(px += x.colStride, py += y.rowStride)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
 		}
 	}
 }
