@@ -38,8 +38,8 @@ autoTextGrid SpeechSynthesizer_Sound_TextGrid_align (SpeechSynthesizer me, Sound
 	integer tierNumber, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration);
 autoTextGrid SpeechSynthesizer_Sound_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, integer tierNumber, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration);
 
-autoTable IntervalTiers__to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
-autoTable TextGrids_to_Table_textAlignmentment (TextGrid target, integer ttier, TextGrid source, integer stier, EditCostsTable costs);
+autoTable IntervalTiers__to_Table_textAlignment (IntervalTier target, IntervalTier source, EditCostsTable costs);
+autoTable TextGrids_to_Table_textAlignment (TextGrid target, integer ttier, TextGrid source, integer stier, EditCostsTable costs);
 
 /* For testing purposes only */
 autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, conststring32 patchLabel, double precision);

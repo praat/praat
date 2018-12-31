@@ -7275,7 +7275,6 @@ DO
 }
 
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
-	LABEL (U"")
 	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
 	RADIO (position, U"At", 1)
 		RADIOBUTTON (U"End")
@@ -7287,13 +7286,12 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval text", U"TextGrid: Replace interval text...") {
-	LABEL (U"")
+FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts", U"TextGrid: Replace interval texts...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	INTEGER (fromInterval, U"left Interval range", U"0")
-	INTEGER (toInterval, U"right Interval range", U"0")
+	INTEGER (fromInterval, U"left Interval range", U"1")
+	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
-	SENTENCE (replace_string, U"Replace", U"a")
+	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
@@ -7305,13 +7303,12 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point text", U"TextGrid: Replace point text...") {
-	LABEL (U"")
+FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"TextGrid: Replace point texts...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	INTEGER (fromInterval, U"left Interval range", U"0")
-	INTEGER (toInterval, U"right Interval range", U"0")
+	INTEGER (fromInterval, U"left Interval range", U"1")
+	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
-	SENTENCE (replace_string, U"Replace", U"a")
+	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
@@ -7329,7 +7326,7 @@ FORM (NEW1_TextGrids_to_Table_textAlignment, U"TextGrids: To Table (text alignme
 	OK
 DO
 	CONVERT_COUPLE (TextGrid)
- 		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, nullptr);
+ 		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, nullptr);
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
 }
 
@@ -7355,13 +7352,13 @@ DIRECT (NEW_TextGrid_DurationTier_to_TextGrid) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
-FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignmentment, U"TextGrids & EditCostsTable: To Table(text alignmentment)", nullptr) {
+FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignment, U"TextGrids & EditCostsTable: To Table (text alignment)", nullptr) {
 	NATURAL (targetTierNumber, U"Target tier", U"1")
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
-		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, him);
+		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, him);
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -8500,7 +8497,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
-	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignmentment);
+	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

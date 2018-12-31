@@ -773,7 +773,7 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 	}
 }
 
-autoTable TextGrids_to_Table_textAlignmentment (TextGrid target, integer ttier, TextGrid source, integer stier, EditCostsTable costs) {
+autoTable TextGrids_to_Table_textAlignment (TextGrid target, integer ttier, TextGrid source, integer stier, EditCostsTable costs) {
 	try {
 		IntervalTier targetTier = TextGrid_checkSpecifiedTierIsIntervalTier (target, ttier);
 		IntervalTier sourceTier = TextGrid_checkSpecifiedTierIsIntervalTier (source, stier);
