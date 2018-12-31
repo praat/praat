@@ -7112,7 +7112,7 @@ FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)",
 	INTEGER (toRow, U"End row", U"0")
 	INTEGER (fromColumn, U"Begin column", U"0")
 	INTEGER (toColumn, U"End column", U"0")
-	INTEGER (rowWeights, U"Weights column number", 0)
+	INTEGER (rowWeights, U"Weights column number", U"0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
