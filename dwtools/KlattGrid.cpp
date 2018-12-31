@@ -344,7 +344,7 @@ static void connections_free (connections me) {
 static connections connections_create (integer numberOfConnections) {
 	connections me = 0;
 	try {
-		me = (connections) Melder_malloc (structconnections, 1);
+		me = (connections) Melder_calloc (structconnections, 1);
 		my numberOfConnections = numberOfConnections;
 		my x = newVECzero (numberOfConnections);
 		my y = newVECzero (numberOfConnections);
