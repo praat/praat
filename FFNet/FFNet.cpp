@@ -479,13 +479,12 @@ void FFNet_weightConnectsUnits (FFNet me, integer index, integer *out_fromUnit, 
 }
 
 integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer) {
-	if (layer < 0 || layer > my numberOfLayers || (layer > 0 && unit > my numberOfUnitsInLayer [layer]))
+	if (layer < 0 || layer > my numberOfLayers || layer == 0 && unit > my numberOfInputs || layer > 0 && unit > my numberOfUnitsInLayer [layer])
 		return -1;
-
 	integer node = unit;
 	if (layer > 0) {
 		node += my numberOfInputs + 1;
-		for (integer i = 1; i < layer; i ++) 
+		for (integer i = 1; i < layer; i ++)
 			node += my numberOfUnitsInLayer [i] + 1;
 	}
 	if (node > my numberOfNodes) node = -1;
