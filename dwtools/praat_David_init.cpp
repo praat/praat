@@ -7120,8 +7120,6 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
-
-
 /* For the inheritors */
 DIRECT (NEW_TableOfReal_to_TableOfReal) {
 	CONVERT_EACH (TableOfReal)
@@ -8461,7 +8459,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, NEW_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, NEW_TableOfReal_meansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, NEW_TableOfReal_mediansByRowLabels);
-	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_TableOfReal_rankColumns);
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_TableOfReal_rankColumns);
 
 	praat_addAction1 (classTableOfReal, 0, U"-- configurations --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, NEW_TableOfReal_to_Configuration_pca);
