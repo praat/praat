@@ -119,7 +119,7 @@ void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfCol
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
 	my rowLabels = autostring32vector (numberOfRows);
-	Melder_assert (my rowLabels. size == numberOfRows);   // probably captured by test script
+	Melder_assert (my rowLabels.size == numberOfRows);   // probably captured by test script
 	my columnLabels = autostring32vector (numberOfColumns);
 	my data = newMATzero (my numberOfRows, my numberOfColumns);
 }
