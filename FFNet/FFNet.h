@@ -47,7 +47,7 @@
  *    *activity		    : array[1..numberOfNodes] with activities
  *  outputLabels	    : labels belonging to the outputs
  *  BOOKKEEPING:
- *  integer numberOfNodes		    : total #nodes: bias modelled as unit with constant activity)
+ *  integer numberOfNodes: total #nodes: bias modelled as unit with constant activity)
  *    *isbias		    : array[1..numberOfNodes] set 1 if node is bias else 0
  *    *nodeFirst	    : array[1..numberOfNodes] first node connected to this unit
  *    *nodeLast:	    : array[1..numberOfNodes] last node connected to this unit
@@ -195,9 +195,6 @@ void FFNet_weightConnectsUnits (FFNet me, integer index, integer *out_fromUnit, 
  */
 
 integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer);
-
-void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *out_unit, integer *out_layer);
-/* translate node index to unit "unit" in layer "layer" */
 
 integer FFNet_getNumberOfLayers (FFNet me);
 

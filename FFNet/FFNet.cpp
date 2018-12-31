@@ -262,6 +262,7 @@ double FFNet_getBias (FFNet me, integer layer, integer unit) {
 		return my w [bias_unit];
 	} catch (MelderError) {
 		return undefined;
+		Melder_clearError ();
 	}
 }
 
@@ -422,6 +423,7 @@ integer FFNet_getWinningUnit (FFNet me, int labeling) {
 }
 
 void FFNet_propagateToLayer (FFNet me, constVEC input, VEC activity, integer layer) {
+	Melder_require (layer > 0, U"Layer must be greater than zero.");
 	Melder_assert (my numberOfUnitsInLayer [layer] == activity.size);
 	FFNet_propagate (me, input, nullptr);
 	integer k = my numberOfInputs + 1;
@@ -477,7 +479,7 @@ void FFNet_weightConnectsUnits (FFNet me, integer index, integer *out_fromUnit, 
 }
 
 integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer) {
-	if (layer < 0 || layer > my numberOfLayers || unit > my numberOfUnitsInLayer [layer])
+	if (layer < 0 || layer > my numberOfLayers || (layer > 0 && unit > my numberOfUnitsInLayer [layer]))
 		return -1;
 
 	integer node = unit;
@@ -486,22 +488,10 @@ integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer
 		for (integer i = 1; i < layer; i ++) 
 			node += my numberOfUnitsInLayer [i] + 1;
 	}
+	if (node > my numberOfNodes) node = -1;
 	return node;
 }
 
-void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *out_unit, integer *out_layer) {
-	Melder_assert (node > 0 && node <= my numberOfNodes);
-
-	integer i = 0, nn = my numberOfInputs + 1;
-	while (node > nn)
-		nn += my numberOfUnitsInLayer [ ++i] + 1;
-
-	if (i > 0)
-		node -= nn - (my numberOfUnitsInLayer [i] + 1);
-
-	if (out_unit) *out_unit = node % (my numberOfUnitsInLayer [i] + 1);
-	if (out_layer) *out_layer = i;
-}
 
 integer FFNet_getNumberOfWeights (FFNet me) {
 	return my numberOfWeights;
@@ -520,10 +510,8 @@ integer FFNet_getNumberOfHiddenumberOfLayers (FFNet me) {
 }
 
 integer FFNet_getNumberOfUnitsInLayer (FFNet me, int layer) {
-	if (layer > my numberOfLayers || layer < 0) {
-		return 0;
-	}
-	return my numberOfUnitsInLayer [layer];
+	return ( layer < 0 || layer > my numberOfLayers ? 0 : 
+		layer == 0 ? my numberOfInputs : my numberOfUnitsInLayer [layer] );
 }
 
 double FFNet_getMinimum (FFNet me) {
