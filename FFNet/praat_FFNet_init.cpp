@@ -252,7 +252,7 @@ FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 DO
 	NUMBER_ONE (FFNet)
 		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
-	NUMBER_ONE_END (U"(weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U"in layer ", layer - 1, U")")
+	NUMBER_ONE_END (U"(weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
 DIRECT (REAL_FFNet_getMinimum) {
