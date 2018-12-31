@@ -8492,8 +8492,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 1, U"Get total duration of intervals where...", U"Count intervals where...", 2, REAL_TextGrid_getTotalDurationOfIntervalsWhere);
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1, MODIFY_TextGrid_setTierName);
-	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
-	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace interval texts...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"*Replace interval texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replaceIntervalTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace point texts...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);

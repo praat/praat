@@ -68,17 +68,17 @@ autoWarpingPath WarpingPath_create (integer length) {
 }
 
 static void WarpingPath_reset (WarpingPath me) {
-	for (integer i = 1; i <= my _capacity; i ++) {
-		my path [i].x = my path [i].y = 0;
-	}
+	for (integer i = 1; i <= my _capacity; i ++)
+		my path [i]. x = my path [i]. y = 0;
 	my pathLength = my _capacity;
 }
 
 static void WarpingPath_getPath (WarpingPath me, constINTMAT const& psi, integer iy, integer ix) { // psi [1..nrows] [1..ncols]
 	integer index = my pathLength;
-	my path [index].x = ix;
-	my path [index].y = iy;
-	while (!(ix == 0 && iy == 0)) {
+	my path [index]. x = ix;
+	my path [index]. y = iy;
+	while (! (ix == 0 && iy == 0)) {
+		Melder_assert (ix >= 0 && iy >= 0);
 		if (psi [1+iy] [1+ix] == WARPING_fromLeft) {
 			ix --;
 		} else if (psi [1+iy] [1+ix] == WARPING_fromBelow) {
@@ -87,14 +87,14 @@ static void WarpingPath_getPath (WarpingPath me, constINTMAT const& psi, integer
 			ix --;
 			iy --;
 		}
-		my path [-- index].x = ix;
-		my path [index].y = iy;
+		my path [-- index]. x = ix;
+		my path [index]. y = iy;
 	}
 	if (index > 1) {
 		integer k = 1;
 		for (integer i = index; i <= my pathLength; i ++) {
 			my path [k ++] = my path [i];
-			my path [i].x = my path [i].y = 0;
+			my path [i]. x = my path [i]. y = 0;
 		}
 		my pathLength = k - 1;
 	}
@@ -102,7 +102,8 @@ static void WarpingPath_getPath (WarpingPath me, constINTMAT const& psi, integer
 
 static void WarpingPath_shiftPathByOne (WarpingPath me) {
 	for (integer i = 1; i <= my pathLength; i ++) {
-		(my path [i].x) ++; (my path [i].y) ++;
+		my path [i]. x ++;
+		my path [i]. y ++;
 	}
 }
 
@@ -110,54 +111,48 @@ integer WarpingPath_getColumnsFromRowIndex (WarpingPath me, integer iy, integer 
 	integer ix1 = 0, ix2 = 0, numberOfColumns = 0;
 	if (iy > 0) {
 		for (integer i = 1; i <= my pathLength; i ++) {
-			if (my path [i].y < iy) {
+			if (my path [i]. y < iy) {
 				continue;
-			} else if (my path [i].y == iy) {
+			} else if (my path [i]. y == iy) {
 				if (ix1 == 0) {
-					ix1 = my path [i].x;
+					ix1 = my path [i]. x;
 				}
-				ix2 = my path [i].x;
+				ix2 = my path [i]. x;
 			} else {
 				break;
 			}
 		}
 		numberOfColumns = ix2 - ix1 + 1;
 	}
-	if (p_ix1) {
+	if (p_ix1)
 		*p_ix1 = ix1;
-	}
-	if (p_ix2) {
+	if (p_ix2)
 		*p_ix2 = ix2;
-	}
 	return numberOfColumns;
 }
 
 integer WarpingPath_getRowsFromColumnIndex (WarpingPath me, integer ix, integer *p_iy1, integer *p_iy2) {
-	if (ix <= 0) {
+	if (ix <= 0)
 		return 0;
-	}
 	integer iy1 = 0, iy2 = 0, numberOfRows = 0;
 	if (ix > 0) {
 		for (integer i = 1; i <= my pathLength; i ++) {
-			if (my path [i].x < ix) {
+			if (my path [i]. x < ix) {
 				continue;
-			} else if (my path [i].x == ix) {
-				if (iy1 == 0) {
-					iy1 = my path [i].y;
-				}
-				iy2 = my path [i].y;
+			} else if (my path [i]. x == ix) {
+				if (iy1 == 0)
+					iy1 = my path [i]. y;
+				iy2 = my path [i]. y;
 			} else {
 				break;
 			}
 		}
 		numberOfRows = iy2 - iy1 + 1;
 	}
-	if (p_iy1) {
+	if (p_iy1)
 		*p_iy1 = iy1;
-	}
-	if (p_iy2) {
+	if (p_iy2)
 		*p_iy2 = iy2;
-	}
 	return numberOfRows;
 }
 
@@ -254,7 +249,7 @@ double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 	return ( costType == 1 ? my data [my numberOfRows - 1] [my numberOfColumns] :   //insertion
 		( costType == 2 ? my data [my numberOfRows] [my numberOfColumns - 1] :   // deletion
 		( costType == 3 ? my data [my numberOfRows] [my numberOfColumns] :   // equality
-		my data [my numberOfRows - 1] [my numberOfColumns -1] ) ) );   // inequality
+		my data [my numberOfRows - 1] [my numberOfColumns - 1] ) ) );   // inequality
 }
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets_string, conststring32 sources_string, double cost) {
@@ -267,19 +262,18 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targe
 		for (integer itarget = 1; itarget <= targets.size; itarget ++) {
 			integer index = EditCostsTable_getTargetIndex (me, targets [itarget].get());
 			if (index > 0)
-				targetIndex [ ++numberOfTargetSymbols] = index;
+				targetIndex [++ numberOfTargetSymbols] = index;
 		}
-		if (numberOfTargetSymbols == 0) {
-			targetIndex [ ++numberOfTargetSymbols] = my numberOfRows - 1;
-		}
+		if (numberOfTargetSymbols == 0)
+			targetIndex [++ numberOfTargetSymbols] = my numberOfRows - 1;
 		integer numberOfSourceSymbols = 0;
 		for (integer isource = 1; isource <= sources.size; isource ++) {
 			integer index = EditCostsTable_getSourceIndex (me, sources [isource].get());
 			if (index > 0)
-				sourceIndex [ ++numberOfSourceSymbols] = index;
+				sourceIndex [++ numberOfSourceSymbols] = index;
 		}
 		if (numberOfSourceSymbols == 0)
-			sourceIndex [ ++numberOfSourceSymbols] = my numberOfColumns - 1;
+			sourceIndex [++ numberOfSourceSymbols] = my numberOfColumns - 1;
 		for (integer i = 1; i <= numberOfTargetSymbols; i ++) {
 			integer irow = targetIndex [i];
 			for (integer j = 1; j <= numberOfSourceSymbols; j ++)
@@ -345,13 +339,11 @@ autoEditDistanceTable EditDistanceTable_create (Strings target, Strings source) 
 		integer numberOfSourceSymbols = source -> numberOfStrings, numberOfTargetSymbols = target -> numberOfStrings;
 		TableOfReal_init (me.get(), numberOfTargetSymbols + 1, numberOfSourceSymbols + 1);
 		TableOfReal_setColumnLabel (me.get(), 1, U"");
-		for (integer j = 1; j <= numberOfSourceSymbols; j ++) {
+		for (integer j = 1; j <= numberOfSourceSymbols; j ++)
 			my columnLabels [j + 1] = Melder_dup (source -> strings [j].get());
-		}
 		TableOfReal_setRowLabel (me.get(), 1, U"");
-		for (integer i = 1; i <= numberOfTargetSymbols; i ++) {
+		for (integer i = 1; i <= numberOfTargetSymbols; i ++)
 			my rowLabels [i + 1] = Melder_dup (target -> strings [i].get());
-		}
 		my warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
 		my editCostsTable = EditCostsTable_createDefault ();
 		EditDistanceTable_findPath (me.get(), 0);
@@ -555,13 +547,15 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_dire
 			delta [irow] [1] = delta [irow - 1] [1] + EditCostsTable_getInsertionCost (my editCostsTable.get(), my rowLabels [irow].get());
 			psi [irow] [1] = WARPING_fromBelow;
 		}
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
+			for (integer irow = 2; irow <= my numberOfRows; irow ++) {
 				// the substitution, deletion and insertion costs.
-				double left = delta [irow] [icol - 1] + EditCostsTable_getInsertionCost (my editCostsTable.get(), my rowLabels [irow].get());
-				double bottom = delta [irow - 1] [icol] + EditCostsTable_getDeletionCost (my editCostsTable.get(), my columnLabels [icol].get());
+				double left = delta [irow] [icol - 1] +
+						EditCostsTable_getInsertionCost (my editCostsTable.get(), my rowLabels [irow].get());
+				double bottom = delta [irow - 1] [icol] +
+						EditCostsTable_getDeletionCost (my editCostsTable.get(), my columnLabels [icol].get());
 				double mindist = delta [irow - 1] [icol - 1] +
-					EditCostsTable_getSubstitutionCost (my editCostsTable.get(), my rowLabels [irow].get(), my columnLabels [icol].get()); // diag
+						EditCostsTable_getSubstitutionCost (my editCostsTable.get(), my rowLabels [irow].get(), my columnLabels [icol].get()); // diag
 				psi [irow] [icol] = WARPING_fromDiag;
 				if (bottom < mindist) {
 					mindist = bottom;
