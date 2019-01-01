@@ -33,14 +33,14 @@ oo_DEFINE_CLASS (Index, Daata)
 			override;
 	#endif
 
-oo_END_CLASS(Index)	
+oo_END_CLASS (Index)	
 #undef ooSTRUCT
 
 
 #define ooSTRUCT StringsIndex
 oo_DEFINE_CLASS (StringsIndex, Index)
 
-oo_END_CLASS(StringsIndex)
+oo_END_CLASS (StringsIndex)
 #undef ooSTRUCT
 
 
