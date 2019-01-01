@@ -138,22 +138,22 @@ inline static double inverseLogistic (double activation) {
 
 static void Layer_sampleOutput (Layer me) {
 	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		double probability = my outputActivities [jnode];
-		my outputActivities [jnode] = (double) NUMrandomBernoulli (probability);
+		const double probability = my outputActivities [jnode];
+		my outputActivities [jnode] = double (NUMrandomBernoulli (probability));
 	}
 }
 
 void structRBMLayer :: v_spreadUp (kLayer_activationType activationType) {
-	integer numberOfOutputNodes = our numberOfOutputNodes;
-	for (integer jnode = 1; jnode <= numberOfOutputNodes; jnode ++) {
+	const integer _numberOfOutputNodes = our numberOfOutputNodes;
+	for (integer jnode = 1; jnode <= _numberOfOutputNodes; jnode ++) {
 		PAIRWISE_SUM (longdouble, excitation, integer, our numberOfInputNodes,
- 			double *p_inputActivity = & our inputActivities [1];
- 			double *p_weight = & our weights [1] [jnode],
- 			(longdouble) *p_inputActivity * (longdouble) *p_weight,
- 			( p_inputActivity += 1, p_weight += numberOfOutputNodes )
+ 			const double *p_inputActivity = & our inputActivities [1];
+ 			const double *p_weight = & our weights [1] [jnode],
+ 			longdouble (*p_inputActivity) * longdouble (*p_weight),
+ 			( p_inputActivity += 1, p_weight += _numberOfOutputNodes )
 		)
 		excitation += our outputBiases [jnode];
-		our outputActivities [jnode] = logistic ((double) excitation);
+		our outputActivities [jnode] = logistic (double (excitation));
 	}
 	if (activationType == kLayer_activationType::STOCHASTIC)
 		Layer_sampleOutput (this);
@@ -161,7 +161,7 @@ void structRBMLayer :: v_spreadUp (kLayer_activationType activationType) {
 
 void Net_spreadUp (Net me, kLayer_activationType activationType) {
 	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
-		Layer layer = my layers->at [ilayer];
+		Layer const layer = my layers->at [ilayer];
 		if (ilayer > 1)
 			copyOutputsToInputs (my layers->at [ilayer - 1], layer);
 		layer -> v_spreadUp (activationType);
@@ -171,10 +171,10 @@ void Net_spreadUp (Net me, kLayer_activationType activationType) {
 void structRBMLayer :: v_sampleInput () {
 	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
 		if (our inputsAreBinary) {
-			double probability = our inputActivities [inode];
-			our inputActivities [inode] = (double) NUMrandomBernoulli (probability);
+			const double probability = our inputActivities [inode];
+			our inputActivities [inode] = double (NUMrandomBernoulli (probability));
 		} else {   // Gaussian
-			double excitation = our inputActivities [inode];
+			const double excitation = our inputActivities [inode];
 			our inputActivities [inode] = NUMrandomGauss (excitation, 1.0);
 		}
 	}
@@ -195,16 +195,16 @@ static void copyInputsToOutputs (Layer me, Layer you) {
 void structRBMLayer :: v_spreadDown (kLayer_activationType activationType) {
 	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
 		PAIRWISE_SUM (longdouble, excitation, integer, our numberOfOutputNodes,
- 			double *p_weight = & our weights [inode] [1];
- 			double *p_outputActivity = & our outputActivities [1],
- 			(longdouble) *p_weight * (longdouble) *p_outputActivity,
+ 			const double *p_weight = & our weights [inode] [1];
+ 			const double *p_outputActivity = & our outputActivities [1],
+ 			longdouble (*p_weight) * longdouble (*p_outputActivity),
  			( p_weight += 1, p_outputActivity += 1 )
 		)
 		excitation += our inputBiases [inode];
 		if (our inputsAreBinary) {
-			our inputActivities [inode] = logistic ((double) excitation);
+			our inputActivities [inode] = logistic (double (excitation));
 		} else {   // linear
-			our inputActivities [inode] = (double) excitation;
+			our inputActivities [inode] = double (excitation);
 		}
 	}
 	if (activationType == kLayer_activationType::STOCHASTIC)
@@ -213,7 +213,7 @@ void structRBMLayer :: v_spreadDown (kLayer_activationType activationType) {
 
 void Net_spreadDown (Net me, kLayer_activationType activationType) {
 	for (integer ilayer = my layers->size; ilayer > 0; ilayer --) {
-		Layer layer = my layers->at [ilayer];
+		Layer const layer = my layers->at [ilayer];
 		if (ilayer < my layers->size)
 			copyInputsToOutputs (my layers->at [ilayer + 1], layer);
 		layer -> v_spreadDown (activationType);
@@ -238,9 +238,8 @@ void structRBMLayer :: v_spreadDown_reconstruction () {
 }
 
 void Net_spreadDown_reconstruction (Net me) {
-	for (integer ilayer = my layers->size; ilayer > 0; ilayer --) {
+	for (integer ilayer = my layers->size; ilayer > 0; ilayer --)
 		my layers->at [ilayer] -> v_spreadDown_reconstruction ();
-	}
 }
 
 void structRBMLayer :: v_spreadUp_reconstruction () {
@@ -258,9 +257,8 @@ void structRBMLayer :: v_spreadUp_reconstruction () {
 }
 
 void Net_spreadUp_reconstruction (Net me) {
-	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++)
 		my layers->at [ilayer] -> v_spreadUp_reconstruction ();
-	}
 }
 
 void structRBMLayer :: v_update (double learningRate) {
@@ -298,9 +296,8 @@ void structRBMLayer :: v_updateSecondPhase (double learningRate) {
 }
 
 void Net_update (Net me, double learningRate) {
-	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++)
 		my layers->at [ilayer] -> v_update (learningRate);
-	}
 }
 
 static void Layer_PatternList_applyToInput (Layer me, PatternList thee, integer rowNumber) {
