@@ -51,13 +51,9 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_ENDFROM
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
-			autoVEC initialStateProbs;
 			oo_MAT (transitionProbs, numberOfStates + 1, numberOfStates + 1)
-			initialStateProbs = newVECraw (numberOfStates);
-			initialStateProbs <<= transitionProbs.row (1).part (1, numberOfStates);
-			for (integer irow = 1; irow <= numberOfStates; irow ++)
-				transitionProbs.row (irow) <<=  transitionProbs.row (irow + 1);
-			transitionProbs.nrow = numberOfStates;
+			our initialStateProbs = newVECcopy (our transitionProbs.row (1).part (1, our numberOfStates));
+			our transitionProbs = newMATcopy (our transitionProbs.horizontalBand (2, our numberOfStates + 1));
 		oo_VERSION_ELSE
 			oo_MAT (transitionProbs, numberOfStates, numberOfStates + 1)
 		oo_VERSION_END
