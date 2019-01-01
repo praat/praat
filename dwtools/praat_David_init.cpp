@@ -7112,15 +7112,13 @@ FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)",
 	INTEGER (toRow, U"End row", U"0")
 	INTEGER (fromColumn, U"Begin column", U"0")
 	INTEGER (toColumn, U"End column", U"0")
-	INTEGER (rowWeights, U"Weights column number", 0)
+	INTEGER (rowWeights, U"Weights column number", U"0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
 		autoSSCP result = TableOfReal_to_SSCP_rowWeights (me, fromRow, toRow, fromColumn, toColumn, rowWeights);
 	CONVERT_EACH_END (my name.get())
 }
-
-
 
 /* For the inheritors */
 DIRECT (NEW_TableOfReal_to_TableOfReal) {
@@ -7277,7 +7275,6 @@ DO
 }
 
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
-	LABEL (U"")
 	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
 	RADIO (position, U"At", 1)
 		RADIOBUTTON (U"End")
@@ -7289,13 +7286,12 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval text", U"TextGrid: Replace interval text...") {
-	LABEL (U"")
+FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts", U"TextGrid: Replace interval texts...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	INTEGER (fromInterval, U"left Interval range", U"0")
-	INTEGER (toInterval, U"right Interval range", U"0")
+	INTEGER (fromInterval, U"left Interval range", U"1")
+	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
-	SENTENCE (replace_string, U"Replace", U"a")
+	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
@@ -7307,13 +7303,12 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point text", U"TextGrid: Replace point text...") {
-	LABEL (U"")
+FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"TextGrid: Replace point texts...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	INTEGER (fromInterval, U"left Interval range", U"0")
-	INTEGER (toInterval, U"right Interval range", U"0")
+	INTEGER (fromInterval, U"left Interval range", U"1")
+	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
-	SENTENCE (replace_string, U"Replace", U"a")
+	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
@@ -7325,13 +7320,13 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW1_TextGrids_to_Table_textAlignmentment, U"TextGrids: To Table (text alignment)", nullptr) {
+FORM (NEW1_TextGrids_to_Table_textAlignment, U"TextGrids: To Table (text alignment)", nullptr) {
 	NATURAL (targetTierNumber, U"Target tier", U"1")
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE (TextGrid)
- 		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, nullptr);
+ 		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, nullptr);
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
 }
 
@@ -7357,13 +7352,13 @@ DIRECT (NEW_TextGrid_DurationTier_to_TextGrid) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
-FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignmentment, U"TextGrids & EditCostsTable: To Table(text alignmentment)", nullptr) {
+FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignment, U"TextGrids & EditCostsTable: To Table (text alignment)", nullptr) {
 	NATURAL (targetTierNumber, U"Target tier", U"1")
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
-		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, him);
+		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, him);
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -8461,12 +8456,11 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, NEW_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, NEW_TableOfReal_meansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, NEW_TableOfReal_mediansByRowLabels);
-	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_TableOfReal_rankColumns);
-
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_TableOfReal_rankColumns);
 	praat_addAction1 (classTableOfReal, 0, U"-- configurations --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, NEW_TableOfReal_to_Configuration_pca);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (lda)...", nullptr, 1, NEW_TableOfReal_to_Configuration_lda);
-	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", U"To Configuration (lda)...", 1, 0);
+	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_TableOfReal_TableOfReal_crossCorrelations);
 
 	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1, NEWMANY_TableOfReal_to_PatternList_and_Categories);
@@ -8498,12 +8492,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 1, U"Get total duration of intervals where...", U"Count intervals where...", 2, REAL_TextGrid_getTotalDurationOfIntervalsWhere);
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1, MODIFY_TextGrid_setTierName);
-	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
-	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
-	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignmentment);
+	praat_addAction1 (classTextGrid, 0, U"Replace interval texts...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"*Replace interval texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replaceIntervalTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace point texts...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
-	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignmentment);
+	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

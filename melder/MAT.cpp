@@ -176,7 +176,7 @@ void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y)
 		the speed is 0.084, 0.124, 0.91, 1.56, 2.26, 2.18, 2.12, 2.25, 2.23, 1.85, 1.78, 1.57 Gflop/s
 		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
 
-		For the X.Y' case, where X and Y are packed row-major matrices,
+		For the X.Y' case, where X and Y are packed row-major matrices, there is no allocation, and
 		the speed is 0.084, 0.610, 1.26, 1.69, 2.32, 2.20, 2.12, 2.28, 2.24, 1.91, 1.76, 1.53 Gflop/s
 		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
 
@@ -215,12 +215,14 @@ void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y)
 void MATVUmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 	/*
 		The faster of MATVUmul_ and MATVUmul_forceAllocation.
+		Allocation takes place only for larger matrices, e.g. from size 47 on
+		(100,000 flops).
 
 		For the X.Y case, where X and Y are packed row-major matrices,
 		the speed is 0.087, 0.574, 1.18, 1.61, 2.25, 2.14, 2.11, 2.23, 2.23, 1.88, 1.74, 1.53 Gflop/s
 		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
 
-		For the X.Y' case, where X and Y are packed row-major matrices,
+		For the X.Y' case, where X and Y are packed row-major matrices, there is never allocation, and
 		the speed is 0.088, 0.577, 1.28, 1.67, 2.27, 2.18, 2.12, 2.28, 2.20, 1.96, 1.78, 1.57 Gflop/s
 		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
 
@@ -548,9 +550,9 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 				for (integer irow = 1; irow <= target.nrow; irow ++)
 					targetcolumn [irow] = 0.0;
 				for (integer i = 1; i <= x.ncol; i ++) {
-					constVECVU const ycol = y.column (i);
+					constVECVU const ycolumn = y.column (i);
 					for (integer irow = 1; irow <= target.nrow; irow ++)
-						targetcolumn [irow] += x [irow] [i] * ycol [irow];
+						targetcolumn [irow] += x [irow] [i] * ycolumn [irow];
 				}
 			}
 		}
