@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20181231)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190101)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+NORMAL (U"##6.0.45# (1 January 2019)")
+LIST_ITEM (U"• Removed a crashing bug in EditDistanceTable introduced in 6.0.44.")
+LIST_ITEM (U"• Removed a crashing bug in KlattGrid drawing introduced in 6.0.44.")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby old HMM files were read incorrectly.")
 NORMAL (U"##6.0.44# (31 December 2018)")
 LIST_ITEM (U"• Bug fixes and speed.")
 NORMAL (U"##6.0.43# (8 September 2018)")
