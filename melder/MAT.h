@@ -267,6 +267,8 @@ inline autoMAT newMATmul_fast (constMATVU const& x, constMATVU const& y) {
 	MATVUmul_fast (result.all(), x, y);
 	return result;
 }
+void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
+void MATVUmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 
 void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y);
 extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);
