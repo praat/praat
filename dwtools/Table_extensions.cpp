@@ -4095,17 +4095,18 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 }
 
 void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string, integer factorColumn, double ymin, double ymax,
-	bool garnish, conststring32 formula, Interpreter interpreter) {
+	bool garnish, conststring32 formula, Interpreter interpreter)
+{
 	try {
-		auto dataColumns = Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string);
+		autoINTVEC dataColumns = Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string);
 		if (factorColumn < 1 || factorColumn > my numberOfColumns)
 			return;
 		const integer numberOfSelectedColumns = dataColumns.size;
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
-		integer numberOfData = my rows.size;
+		const integer numberOfData = my rows.size;
 		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
-		integer numberOfLevels = si -> classes->size;
+		const integer numberOfLevels = si -> classes->size;
 		if (ymin == ymax) {
 			ymin = 1e308, ymax = - ymin;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
@@ -4289,15 +4290,15 @@ void Table_barPlotWhere (Table me, Graphics g,
 				if (cmin < ymin) { ymin = cmin; }
 				if (cmax > ymax) { ymax = cmax; }
 			}
-			ymin = ymin > 0 ? 0 : ymin;
-			ymax = ymax < 0 ? 0 : ymax;
+			ymin = ymin > 0.0 ? 0.0 : ymin;
+			ymax = ymax < 0.0 ? 0.0 : ymax;
 		}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, 1, ymin, ymax);
 
 		integer numberOfGroups = selectedRows.size;
 		integer groupSize = columnIndexes.size;
-		double bar_width = 1 / (numberOfGroups * groupSize + 2 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
+		double bar_width = 1.0 / (numberOfGroups * groupSize + 2.0 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
 		double dx = (interbarsFraction + groupSize + (groupSize - 1) * interbarFraction) * bar_width;
 
 		for (integer icol = 1; icol <= groupSize; icol ++) {
@@ -4307,8 +4308,8 @@ void Table_barPlotWhere (Table me, Graphics g,
 			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				double x2 = x1 + bar_width;
 				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]);
-				y2 = y2 > ymax ? ymax : (y2 < ymin ? ymin : y2);
-				double y1 = ymin < 0 ? 0 : ymin;
+				y2 = y2 > ymax ? ymax : y2 < ymin ? ymin : y2;
+				double y1 = ymin < 0.0 ? 0.0 : ymin;
 				
 				Graphics_setColour (g, colour);
 				Graphics_fillRectangle (g, x1, x2, y1, y2);

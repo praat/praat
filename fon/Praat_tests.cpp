@@ -455,20 +455,20 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::TIME_MATMUL: {
-			integer size = Melder_atoi (arg2);
-			autoMAT x = newMATrandomGauss (size, size, 0.0, 1.0);
-			autoMAT y = newMATrandomGauss (size, size, 0.0, 1.0);
-			autoMAT result = newMATraw (size, size);
+			const integer size = Melder_atoi (arg2);
+			autoMAT const x = newMATrandomGauss (size, size, 0.0, 1.0);
+			autoMAT const y = newMATrandomGauss (size, size, 0.0, 1.0);
+			autoMAT const result = newMATraw (size, size);
 			//MAT resultget = result.get();
 			//constMAT xget = x.get(), yget = y.get();
-			MATVU result_all = result.all();
-			constMATVU x_all = x.transpose();
-			constMATVU y_all = y.all();
+			MATVU const result_all = result.all();
+			constMATVU const x_all = x.all();
+			constMATVU const y_all = y.all();
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				MATVUmul_allowAllocation_ (result_all, x_all, y_all);
+				MATVUmul_forceMetal_ (result_all, x_all, y_all);
 			t = Melder_stopwatch () / size / size / size;
-			double sum = NUMsum (result.get());
+			const double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::THING_AUTO: {

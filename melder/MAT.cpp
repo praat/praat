@@ -355,108 +355,6 @@ static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& tar
 	}
 }
 void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
-	#ifdef macintosh
-		if (@available (macOS 10.13, *) &&false) {
-			/*
-				The speed is 0.000'003, 0.003, 0.59,  8.4,    77 Gflop/s
-				for size =           1,    10,  100, 1000, 10000.
-			*/
-			static bool gpuInited = false;
-			static id <MTLDevice> gpuDevice;
-			static id <MTLCommandQueue> gpuQueue;
-			if (! gpuInited) {
-				gpuDevice = MTLCreateSystemDefaultDevice ();
-				Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
-				gpuInited = true;
-				gpuQueue = [gpuDevice newCommandQueue];
-			}
-			MPSMatrixMultiplication *matrixMultiplication = [[MPSMatrixMultiplication alloc]
-				initWithDevice: gpuDevice
-				resultRows: integer_to_uinteger (target.nrow)
-				resultColumns: integer_to_uinteger (target.ncol)
-				interiorColumns: integer_to_uinteger (x.ncol)
-			];
-			Melder_assert (matrixMultiplication != nil);
-			automatrix <float> x32 = newmatrixraw <float> (x.nrow, x.ncol);
-			for (integer irow = 1; irow <= x.nrow; irow ++)
-				for (integer icol = 1; icol <= x.ncol; icol ++)
-					x32 [irow] [icol] = float (x [irow] [icol]);
-			automatrix <float> y32 = newmatrixraw <float> (y.nrow, y.ncol);
-			for (integer irow = 1; irow <= y.nrow; irow ++)
-				for (integer icol = 1; icol <= y.ncol; icol ++)
-					y32 [irow] [icol] = float (y [irow] [icol]);
-			automatrix <float> target32 = newmatrixraw <float> (target.nrow, target.ncol);
-			id <MTLBuffer> bufferX = [gpuDevice
-					newBufferWithBytes: & x32 [1] [1]
-					length: integer_to_uinteger (x32.nrow) * integer_to_uinteger (x32.ncol) * sizeof (float)
-					options: MTLResourceStorageModeShared];
-			id <MTLBuffer> bufferY = [gpuDevice
-					newBufferWithBytes: & y32 [1] [1]
-					length: integer_to_uinteger (y32.nrow) * integer_to_uinteger (y32.ncol) * sizeof (float)
-					options: MTLResourceStorageModeShared];
-			id <MTLBuffer> bufferTarget = [gpuDevice
-					newBufferWithBytes: & target32 [1] [1]
-					length: integer_to_uinteger (target32.nrow) * integer_to_uinteger (target32.ncol) * sizeof (float)
-					options: MTLResourceStorageModeShared];
-			MPSMatrixDescriptor *descriptorX =
-				[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (x.nrow)
-					columns: integer_to_uinteger (x.ncol)
-					rowBytes: integer_to_uinteger (x.ncol) * sizeof (float)
-					dataType: MPSDataTypeFloat32];
-			MPSMatrixDescriptor *descriptorY =
-				[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (y.nrow)
-					columns: integer_to_uinteger (y.ncol)
-					rowBytes: integer_to_uinteger (y.ncol) * sizeof (float)
-					dataType: MPSDataTypeFloat32];
-			MPSMatrixDescriptor *descriptorTarget =
-				[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (target.nrow)
-					columns: integer_to_uinteger (target.ncol)
-					rowBytes: integer_to_uinteger (target.ncol) * sizeof (float)
-					dataType: MPSDataTypeFloat32];
-			MPSMatrix *mpsX = [[MPSMatrix alloc] initWithBuffer: bufferX descriptor: descriptorX];
-			Melder_assert (mpsX != nil);
-			MPSMatrix *mpsY = [[MPSMatrix alloc] initWithBuffer: bufferY descriptor: descriptorY];
-			Melder_assert (mpsY != nil);
-			MPSMatrix *mpsTarget = [[MPSMatrix alloc] initWithBuffer: bufferTarget descriptor: descriptorTarget];
-			Melder_assert (mpsTarget != nil);
-			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-      		id <MTLCommandBuffer> commandBuffer = [gpuQueue commandBuffer];   // autoreleased
-      		[matrixMultiplication encodeToCommandBuffer: commandBuffer
-      			leftMatrix: mpsX
-      			rightMatrix: mpsY
-      			resultMatrix: mpsTarget];
-			[commandBuffer commit];
-			[commandBuffer waitUntilCompleted];
-			NSError *error = [commandBuffer error];
-			if (error)
-				Melder_casual (U"Error during execution: ",
-					Melder_peek8to32 ([[error localizedDescription] UTF8String]),
-					Melder_peek8to32 ([[error localizedFailureReason] UTF8String]),
-					Melder_peek8to32 ([[error localizedRecoverySuggestion] UTF8String])
-				);
-			[error release];
-			float *rawPointer = (float *) [bufferTarget contents];
-			//float *rawPointer = (float *) [[bufferTarget data] contents];
-			for (integer irow = 1; irow <= target.nrow; irow ++)
-				for (integer icol = 1; icol <= target.ncol; icol ++) {
-					double value = double (*rawPointer ++);
-					//Melder_casual (value);
-					target [irow] [icol] = value;
-				}
-			[bufferX release];
-			[bufferY release];
-			[bufferTarget release];
-			[matrixMultiplication release];
-			[mpsX release];
-			[mpsY release];
-			[mpsTarget release];
-			//[descriptorX release];   // apparently the MPSMatrix objects have become owners?
-			//[descriptorY release];
-			//[descriptorTarget release];
-			[pool release];   // this releases `commandBuffer`
-			return;
-		}
-	#endif
 	if ((false)) {
 		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
 	} else if (y.colStride == 1) {
@@ -564,6 +462,123 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
 	}
 }
+
+#ifdef macintosh
+void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y) {
+	if (@available (macOS 10.13, *)) {
+		/*
+			The speed is 0.000'003, 0.003, 0.66, 2.24, 3.46,  9.6, 13.0, 20.1, 20.0, 21.0, 27.5, 34.2, 77 Gflop/s
+			for size =           1,    10,  100,  200,  500, 1000, 2000, 3000, 5000, 6000, 7000, 8000, 10000.
+		*/
+		static bool gpuInited = false;
+		static id <MTLDevice> gpuDevice;
+		static id <MTLCommandQueue> gpuQueue;
+		if (! gpuInited) {
+			gpuDevice = MTLCreateSystemDefaultDevice ();
+			Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
+			gpuInited = true;
+			gpuQueue = [gpuDevice newCommandQueue];
+		}
+		MPSMatrixMultiplication *matrixMultiplication = [[MPSMatrixMultiplication alloc]
+			initWithDevice: gpuDevice
+			resultRows: integer_to_uinteger (target.nrow)
+			resultColumns: integer_to_uinteger (target.ncol)
+			interiorColumns: integer_to_uinteger (x.ncol)
+		];
+		Melder_assert (matrixMultiplication != nil);
+		automatrix <float> x32 = newmatrixraw <float> (x.nrow, x.ncol);
+		for (integer irow = 1; irow <= x.nrow; irow ++)
+			for (integer icol = 1; icol <= x.ncol; icol ++)
+				x32 [irow] [icol] = float (x [irow] [icol]);
+		automatrix <float> y32 = newmatrixraw <float> (y.nrow, y.ncol);
+		for (integer irow = 1; irow <= y.nrow; irow ++)
+			for (integer icol = 1; icol <= y.ncol; icol ++)
+				y32 [irow] [icol] = float (y [irow] [icol]);
+		automatrix <float> target32 = newmatrixraw <float> (target.nrow, target.ncol);
+		id <MTLBuffer> bufferX = [gpuDevice
+				newBufferWithBytes: & x32 [1] [1]
+				length: integer_to_uinteger (x32.nrow) * integer_to_uinteger (x32.ncol) * sizeof (float)
+				options: MTLResourceStorageModeShared];
+		Melder_assert (bufferX != nil);
+		id <MTLBuffer> bufferY = [gpuDevice
+				newBufferWithBytes: & y32 [1] [1]
+				length: integer_to_uinteger (y32.nrow) * integer_to_uinteger (y32.ncol) * sizeof (float)
+				options: MTLResourceStorageModeShared];
+		Melder_assert (bufferY != nil);
+		id <MTLBuffer> bufferTarget = [gpuDevice
+				newBufferWithBytes: & target32 [1] [1]
+				length: integer_to_uinteger (target32.nrow) * integer_to_uinteger (target32.ncol) * sizeof (float)
+				options: MTLResourceStorageModeShared];
+		Melder_assert (bufferTarget != nil);
+		MPSMatrixDescriptor *descriptorX =
+			[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (x.nrow)
+				columns: integer_to_uinteger (x.ncol)
+				rowBytes: integer_to_uinteger (x.ncol) * sizeof (float)
+				dataType: MPSDataTypeFloat32];
+		MPSMatrixDescriptor *descriptorY =
+			[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (y.nrow)
+				columns: integer_to_uinteger (y.ncol)
+				rowBytes: integer_to_uinteger (y.ncol) * sizeof (float)
+				dataType: MPSDataTypeFloat32];
+		MPSMatrixDescriptor *descriptorTarget =
+			[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (target.nrow)
+				columns: integer_to_uinteger (target.ncol)
+				rowBytes: integer_to_uinteger (target.ncol) * sizeof (float)
+				dataType: MPSDataTypeFloat32];
+		MPSMatrix *mpsX = [[MPSMatrix alloc] initWithBuffer: bufferX descriptor: descriptorX];
+		Melder_assert (mpsX != nil);
+		MPSMatrix *mpsY = [[MPSMatrix alloc] initWithBuffer: bufferY descriptor: descriptorY];
+		Melder_assert (mpsY != nil);
+		MPSMatrix *mpsTarget = [[MPSMatrix alloc] initWithBuffer: bufferTarget descriptor: descriptorTarget];
+		Melder_assert (mpsTarget != nil);
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		id <MTLCommandBuffer> commandBuffer = [gpuQueue commandBuffer];   // autoreleased
+		[matrixMultiplication encodeToCommandBuffer: commandBuffer
+			leftMatrix: mpsX
+			rightMatrix: mpsY
+			resultMatrix: mpsTarget];
+		[commandBuffer commit];
+		[commandBuffer waitUntilCompleted];
+		NSError *error = [commandBuffer error];
+		if (error) {
+			[bufferX release];
+			[bufferY release];
+			[bufferTarget release];
+			[matrixMultiplication release];
+			[mpsX release];
+			[mpsY release];
+			[mpsTarget release];
+			[pool release];   // this releases `commandBuffer`
+			Melder_throw (U"Matrix multiplication in Metal: Error during execution: ",
+				Melder_peek8to32 ([[error localizedDescription] UTF8String]),
+				Melder_peek8to32 ([[error localizedFailureReason] UTF8String]),
+				Melder_peek8to32 ([[error localizedRecoverySuggestion] UTF8String])
+			);
+		}
+		[error release];
+		float *rawPointer = (float *) [bufferTarget contents];
+		//float *rawPointer = (float *) [[bufferTarget data] contents];
+		for (integer irow = 1; irow <= target.nrow; irow ++)
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				double value = double (*rawPointer ++);
+				//Melder_casual (value);
+				target [irow] [icol] = value;
+			}
+		[bufferX release];
+		[bufferY release];
+		[bufferTarget release];
+		[matrixMultiplication release];
+		[mpsX release];
+		[mpsY release];
+		[mpsTarget release];
+		//[descriptorX release];   // apparently the MPSMatrix objects have become owners?
+		//[descriptorY release];
+		//[descriptorTarget release];
+		[pool release];   // this releases `commandBuffer`
+		return;
+	}
+}
+#endif
 
 void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
