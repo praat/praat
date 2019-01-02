@@ -839,7 +839,7 @@ public:
 		#endif
 	}
 	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	const matrix<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	matrixview<T> all () const {
 		#if PACKED_TENSORS
 		return matrixview<T> (our cells, our nrow, our ncol, our ncol, 1);
@@ -1239,7 +1239,7 @@ public:
 		if (our cells) NUMvector_free (our cells, 0);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
-	const tensor3<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
+	const tensor3<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	void adoptFromAmbiguousOwner (tensor3<T> const& given) {   // buy the payload from a non-automatrix
 		our reset();
 		our cells = given.cells;
