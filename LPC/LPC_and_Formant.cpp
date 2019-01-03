@@ -73,23 +73,24 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 
 void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin) {
 	thy intensity = my gain;
-	if (my nCoefficients == 0) {
+	if (my nCoefficients == 0)
 		return;
-	}
-
 	autoPolynomial p = LPC_Frame_to_Polynomial (me);
 	autoRoots r = Polynomial_to_Roots (p.get());
 	Roots_fixIntoUnitCircle (r.get());
-	Roots_into_Formant_Frame (r.get(), thee, 1 / samplingPeriod, margin);
+	Roots_into_Formant_Frame (r.get(), thee, 1.0 / samplingPeriod, margin);
 }
 
 autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
-		double samplingFrequency = 1.0 / my samplingPeriod;
-		integer nmax = my maxnCoefficients, err = 0;
-		integer interval = nmax > 20 ? 1 : 10;
-		Melder_require (nmax < 100, U"We cannot find the roots of a polynomial of order > 99.");
-		Melder_require (margin < samplingFrequency / 4, U"Margin should be smaller than ", samplingFrequency / 4, U".");
+		const double samplingFrequency = 1.0 / my samplingPeriod;
+		integer nmax = my maxnCoefficients;
+		integer numberOfSuspectFrames = 0;
+		integer interval = ( nmax > 20 ? 1 : 10 );
+		Melder_require (nmax < 100,
+			U"We cannot find the roots of a polynomial of order > 99.");
+		Melder_require (margin < samplingFrequency / 4.0,
+			U"Margin should be smaller than ", samplingFrequency / 4.0, U".");
 
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, (nmax + 1) / 2);
 
@@ -105,18 +106,14 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 				LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin);
 			} catch (MelderError) {
 				Melder_clearError();
-				err ++;
+				numberOfSuspectFrames ++;
 			}
-
-			if ((interval == 1 || (i % interval) == 1)) {
-				Melder_progress ( (double) i / my nx, U"LPC to Formant: frame ", i, U" out of ", my nx, U".");
-			}
+			if (interval == 1 || i % interval == 1)
+				Melder_progress ((double) i / my nx, U"LPC to Formant: frame ", i, U" out of ", my nx, U".");
 		}
-
 		Formant_sort (thee.get());
-		if (err > 0) {
-			Melder_warning (err, U" formant frames out of ", my nx, U" are suspect.");
-		}
+		if (numberOfSuspectFrames > 0)
+			Melder_warning (numberOfSuspectFrames, U" formant frames out of ", my nx, U" are suspect.");
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Formant created.");
