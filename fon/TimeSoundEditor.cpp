@@ -633,7 +633,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		} else {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics.get(),
-				longSound -> buffer - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels - 1, first, last,
+				longSound -> buffer - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels, first, last,
 				Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
 		}
 		Graphics_resetViewport (my graphics.get(), vp);
