@@ -124,43 +124,35 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 }
 
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod) {
-	double nyquist = 2.0 / samplingPeriod;
-	integer n = 2 * my nFormants;
-
-	if (my nFormants < 1) {
+	const double nyquistFrequency = 0.5 / samplingPeriod;
+	integer numberOfPoles = 2 * my nFormants;
+	if (my nFormants < 1)
 		return;
-	}
-	
-	autoVEC lpc = newVECraw (n + 2);
-	lpc [1] = 0;
-	lpc [2] = 1;
+	autoVEC lpc = newVECzero (numberOfPoles + 2);   // all odd coefficients have to be initialized to zero
+	lpc [2] = 1.0;
 	integer m = 2;
-	for (integer i = 1; i <= my nFormants; i ++) {
-		double f = my formant [i].frequency;
-
-		if (f > nyquist) continue;
-
-		// D(z): 1 + p z^-1 + q z^-2
-
-		double r = exp (- NUMpi * my formant [i].bandwidth * samplingPeriod);
-		double p = - 2 * r * cos (2 * NUMpi * f * samplingPeriod);
-		double q = r * r;
-		
-		// By defining the two extra elements (0,1) in the lpc vector we can avoid testing 
-		//	lpc[3..n+2] will store the coefficients
-		
-		for (integer j = m + 2; j > 2; j --) {
+	for (integer iformant = 1; iformant <= my nFormants; iformant ++) {
+		const double formantFrequency = my formant [iformant]. frequency;
+		if (formantFrequency > nyquistFrequency)
+			continue;
+		/*
+			D(z): 1 + p z^-1 + q z^-2
+		*/
+		const double r = exp (- NUMpi * my formant [iformant]. bandwidth * samplingPeriod);
+		const double p = - 2.0 * r * cos (2.0 * NUMpi * formantFrequency * samplingPeriod);
+		const double q = r * r;
+		/*
+			By setting the two extra elements (0, 1) in the lpc vector we can avoid boundary testing;
+			lpc [3..n+2] come to contain the coefficients.
+		*/
+		for (integer j = m + 2; j > 2; j --)
 			lpc [j] += p * lpc [j - 1] + q * lpc [j - 2];
-		}
 		m += 2;
 	}
-
-	n = thy nCoefficients < n ? thy nCoefficients : n;
-
-	for (integer i = 1; i <= n ; i ++) {
+	if (thy nCoefficients < numberOfPoles)
+		numberOfPoles = thy nCoefficients;
+	for (integer i = 1; i <= numberOfPoles; i ++)
 		thy a [i] = lpc [i + 2];
-	}
-
 	thy gain = my intensity;
 }
 

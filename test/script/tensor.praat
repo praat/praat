@@ -166,7 +166,9 @@ a## = zero## (20, 50)
 b## = zero## (50, 17)
 a## ~ row ^ 2 + col ^ 3
 b## ~ row ^ 5 + col ^ 7
-appendInfoLine: mul## (a##, b##)
+appendInfoLine: "mul##:", newline$, mul## (a##, b##)
+appendInfoLine: "mul_fast##", newline$, mul_fast## (a##, b##)
+appendInfoLine: "mul_metal##", newline$, mul_metal## (a##, b##)
 
 a## = {{ 2, 3, 5 }, { 7, 3, 2 }}
 b## = {{ 11, 1, 5, 2 }, { 8, 2, 3, 6 }, { 1, 3, 4, 9 }}
@@ -177,6 +179,11 @@ appendInfoLine: product_fast##
 assert numberOfRows (product_fast##) = 2
 assert numberOfColumns (product_fast##) = 4
 assert product## = product_fast##
+product_metal## = mul_metal## (a##, b##)
+appendInfoLine: product_metal##
+assert numberOfRows (product_metal##) = 2
+assert numberOfColumns (product_metal##) = 4
+assert product## = product_metal##
 at## = transpose## (a##)
 bt## = transpose## (b##)
 assert at## = {{ 2, 7 }, { 3, 3 }, { 5, 2 }}
