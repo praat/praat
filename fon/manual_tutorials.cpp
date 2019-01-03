@@ -22,9 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190101)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190103)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+NORMAL (U"##6.0.46# (3 January 2019)")
+LIST_ITEM (U"• Removed a crashing bug in the LongSound window introduced in 6.0.44.")
+LIST_ITEM (U"• Removed a bug causing incorrect conversion from Formant to LPC introduced in 6.0.44.")
+LIST_ITEM (U"• More space for actions in buttons window.")
 NORMAL (U"##6.0.45# (1 January 2019)")
 LIST_ITEM (U"• Removed a crashing bug in EditDistanceTable introduced in 6.0.44.")
 LIST_ITEM (U"• Removed a crashing bug in KlattGrid drawing introduced in 6.0.44.")
