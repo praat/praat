@@ -113,7 +113,7 @@ enum { NO_SYMBOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
-		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_FAST_,
+		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_FAST_, MAT_MUL_METAL_,
 		MAT_MUL_TN_, MAT_MUL_NT_, MAT_MUL_TT_, VEC_REPEAT_,
 	#define HIGH_FUNCTION_2  VEC_REPEAT_
 
@@ -237,7 +237,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
-	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##",
+	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
@@ -5083,7 +5083,28 @@ static void do_MATmul () {
 		Melder_require (yNrow == xNcol,
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U".");
-		autoMAT result = newMATmul_allowAllocation (x->numericMatrix, y->numericMatrix);
+		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
+		MATVUmul_allowAllocation_ (result.get(), x->numericMatrix, y->numericMatrix);
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+static void do_MATmul_metal () {
+	/*
+		result## = mul## (x.., y..)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		/*
+			result# = mul## (x##, y##)
+		*/
+		integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
+		Melder_require (yNrow == xNcol,
+			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
+			U"not ", xNcol, U" and ", yNrow, U".");
+		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
+		MATVUmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -6461,6 +6482,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case VEC_MUL_: { do_VECmul ();
 } break; case MAT_MUL_: { do_MATmul ();
 } break; case MAT_MUL_FAST_: { do_MATmul_fast ();
+} break; case MAT_MUL_METAL_: { do_MATmul_metal ();
 } break; case MAT_MUL_TN_: { do_MATmul_tn ();
 } break; case MAT_MUL_NT_: { do_MATmul_nt ();
 } break; case MAT_MUL_TT_: { do_MATmul_tt ();
