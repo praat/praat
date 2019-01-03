@@ -486,51 +486,64 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 			interiorColumns: integer_to_uinteger (x.ncol)
 		];
 		Melder_assert (matrixMultiplication != nil);
-		automatrix <float> x32 = newmatrixraw <float> (x.nrow, x.ncol);
-		for (integer irow = 1; irow <= x.nrow; irow ++)
+
+		uinteger xRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (x.ncol)  dataType:MPSDataTypeFloat32];
+		uinteger xRowStrideInFloats = xRowStrideInBytes / sizeof (float);
+		autovector <float> x32 = newvectorzero <float> (integer (uinteger (x.nrow) * xRowStrideInFloats));
+		for (integer irow = 1; irow <= x.nrow; irow ++) {
+			float *prow = & x32 [1] + uinteger (irow - 1) * xRowStrideInFloats;
 			for (integer icol = 1; icol <= x.ncol; icol ++)
-				x32 [irow] [icol] = float (x [irow] [icol]);
-		automatrix <float> y32 = newmatrixraw <float> (y.nrow, y.ncol);
-		for (integer irow = 1; irow <= y.nrow; irow ++)
+				*prow ++ = float (x [irow] [icol]);
+		}
+
+		uinteger yRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (y.ncol)  dataType:MPSDataTypeFloat32];
+		uinteger yRowStrideInFloats = yRowStrideInBytes / sizeof (float);
+		autovector <float> y32 = newvectorzero <float> (integer (uinteger (y.nrow) * yRowStrideInFloats));
+		for (integer irow = 1; irow <= y.nrow; irow ++) {
+			float *prow = & y32 [1] + uinteger (irow - 1) * yRowStrideInFloats;
 			for (integer icol = 1; icol <= y.ncol; icol ++)
-				y32 [irow] [icol] = float (y [irow] [icol]);
-		automatrix <float> target32 = newmatrixraw <float> (target.nrow, target.ncol);
-		id <MTLBuffer> bufferX = [gpuDevice
-				newBufferWithBytes: & x32 [1] [1]
-				length: integer_to_uinteger (x32.nrow) * integer_to_uinteger (x32.ncol) * sizeof (float)
-				options: MTLResourceStorageModeShared];
+				*prow ++ = float (y [irow] [icol]);
+		}
+
+		uinteger targetRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (y.ncol)  dataType:MPSDataTypeFloat32];
+		uinteger targetRowStrideInFloats = targetRowStrideInBytes / sizeof (float);
+		autovector <float> target32 = newvectorzero <float> (integer (uinteger (target.nrow) * targetRowStrideInFloats));
+
+		uinteger x32length = (uinteger (x.nrow) * xRowStrideInBytes);
+		id <MTLBuffer> bufferX = [gpuDevice newBufferWithBytes: & x32 [1]  length: x32length  options: MTLResourceStorageModeShared];
 		Melder_assert (bufferX != nil);
-		id <MTLBuffer> bufferY = [gpuDevice
-				newBufferWithBytes: & y32 [1] [1]
-				length: integer_to_uinteger (y32.nrow) * integer_to_uinteger (y32.ncol) * sizeof (float)
-				options: MTLResourceStorageModeShared];
+
+		uinteger y32length = (uinteger (y.nrow) * yRowStrideInBytes);
+		id <MTLBuffer> bufferY = [gpuDevice newBufferWithBytes: & y32 [1]  length: y32length  options: MTLResourceStorageModeShared];
 		Melder_assert (bufferY != nil);
-		id <MTLBuffer> bufferTarget = [gpuDevice
-				newBufferWithBytes: & target32 [1] [1]
-				length: integer_to_uinteger (target32.nrow) * integer_to_uinteger (target32.ncol) * sizeof (float)
-				options: MTLResourceStorageModeShared];
+
+		uinteger target32length = (uinteger (target.nrow) * targetRowStrideInBytes);
+		id <MTLBuffer> bufferTarget = [gpuDevice newBufferWithBytes: & target32 [1]  length: target32length  options: MTLResourceStorageModeShared];
 		Melder_assert (bufferTarget != nil);
+
 		MPSMatrixDescriptor *descriptorX =
-			[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (x.nrow)
-				columns: integer_to_uinteger (x.ncol)
-				rowBytes: integer_to_uinteger (x.ncol) * sizeof (float)
+			[MPSMatrixDescriptor matrixDescriptorWithRows: uinteger (x.nrow)
+				columns: uinteger (x.ncol)
+				rowBytes: xRowStrideInBytes
 				dataType: MPSDataTypeFloat32];
 		MPSMatrixDescriptor *descriptorY =
-			[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (y.nrow)
-				columns: integer_to_uinteger (y.ncol)
-				rowBytes: integer_to_uinteger (y.ncol) * sizeof (float)
+			[MPSMatrixDescriptor matrixDescriptorWithRows: uinteger (y.nrow)
+				columns: uinteger (y.ncol)
+				rowBytes: yRowStrideInBytes
 				dataType: MPSDataTypeFloat32];
 		MPSMatrixDescriptor *descriptorTarget =
-			[MPSMatrixDescriptor matrixDescriptorWithRows: integer_to_uinteger (target.nrow)
-				columns: integer_to_uinteger (target.ncol)
-				rowBytes: integer_to_uinteger (target.ncol) * sizeof (float)
+			[MPSMatrixDescriptor matrixDescriptorWithRows: uinteger (target.nrow)
+				columns: uinteger (target.ncol)
+				rowBytes: targetRowStrideInBytes
 				dataType: MPSDataTypeFloat32];
+
 		MPSMatrix *mpsX = [[MPSMatrix alloc] initWithBuffer: bufferX descriptor: descriptorX];
 		Melder_assert (mpsX != nil);
 		MPSMatrix *mpsY = [[MPSMatrix alloc] initWithBuffer: bufferY descriptor: descriptorY];
 		Melder_assert (mpsY != nil);
 		MPSMatrix *mpsTarget = [[MPSMatrix alloc] initWithBuffer: bufferTarget descriptor: descriptorTarget];
 		Melder_assert (mpsTarget != nil);
+
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		id <MTLCommandBuffer> commandBuffer = [gpuQueue commandBuffer];   // autoreleased
 		[matrixMultiplication encodeToCommandBuffer: commandBuffer
@@ -541,6 +554,12 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 		[commandBuffer waitUntilCompleted];
 		NSError *error = [commandBuffer error];
 		if (error) {
+			/*
+				Save the error messages before the release of `commandBuffer` invalidates `error`.
+			*/
+			autostring32 localizedDescription = Melder_8to32 ([[error localizedDescription] UTF8String]);
+			autostring32 localizedFailureReason = Melder_8to32 ([[error localizedFailureReason] UTF8String]);
+			autostring32 localizedRecoverySuggestion = Melder_8to32 ([[error localizedRecoverySuggestion] UTF8String]);
 			[bufferX release];
 			[bufferY release];
 			[bufferTarget release];
@@ -550,20 +569,17 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 			[mpsTarget release];
 			[pool release];   // this releases `commandBuffer`
 			Melder_throw (U"Matrix multiplication in Metal: Error during execution: ",
-				Melder_peek8to32 ([[error localizedDescription] UTF8String]),
-				Melder_peek8to32 ([[error localizedFailureReason] UTF8String]),
-				Melder_peek8to32 ([[error localizedRecoverySuggestion] UTF8String])
-			);
+				localizedDescription.get(), localizedFailureReason.get(), localizedRecoverySuggestion.get());
 		}
 		[error release];
 		float *rawPointer = (float *) [bufferTarget contents];
-		//float *rawPointer = (float *) [[bufferTarget data] contents];
-		for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			float *prow = rawPointer + uinteger (irow - 1) * targetRowStrideInFloats;
 			for (integer icol = 1; icol <= target.ncol; icol ++) {
-				double value = double (*rawPointer ++);
-				//Melder_casual (value);
+				double value = double (*prow ++);
 				target [irow] [icol] = value;
 			}
+		}
 		[bufferX release];
 		[bufferY release];
 		[bufferTarget release];
