@@ -463,8 +463,8 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 	}
 }
 
-#ifdef macintosh
 void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y) {
+#ifdef macintosh
 	if (@available (macOS 10.13, *)) {
 		/*
 			The speed is 0.000'003, 0.003, 0.66, 2.24, 3.46,  9.6, 13.0, 20.1, 20.0, 21.0, 27.5, 34.2, 77 Gflop/s
@@ -593,8 +593,10 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 		[pool release];   // this releases `commandBuffer`
 		return;
 	}
-}
+#else
+	MATVUmul(target, x, y);
 #endif
+}
 
 void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
