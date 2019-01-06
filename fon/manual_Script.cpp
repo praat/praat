@@ -1770,7 +1770,7 @@ MAN_END
 MAN_BEGIN (U"Scripting 3. Simple language elements", U"ppgb", 20130421)
 INTRO (U"The Praat scripting language doesn't only call the menu commands "
 	"discussed in the @@Scripting 1. Your first scripts|first@ and @@Scripting 2. How to script settings windows|second@ chapters of this tutorial, "
-	"it is only a general procedural programming language that allows you to compute numbers, handle texts, and make custom analyses.")
+	"it is also a general procedural programming language that allows you to compute numbers, handle texts, and make custom analyses.")
 NORMAL (U"This chapter focuses on the things you need most. It is designed in such a way that you can work through it even if you haven't written computer programs before.")
 LIST_ITEM (U"@@Scripting 3.1. Hello world@ (writeInfoLine, appendInfoLine)")
 LIST_ITEM (U"@@Scripting 3.2. Numeric variables@ (assignments)")
