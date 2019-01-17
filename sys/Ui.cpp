@@ -1226,7 +1226,10 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
-				my integerValue = Melder_iround (arg -> number);
+				double realValue = arg -> number;
+				my integerValue = Melder_iround (realValue);
+				Melder_require (my integerValue == realValue,
+					U"Argument \"", my name.get(), U"\" should be a whole number.");
 				if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
 					Melder_throw (U"Argument \"", my name.get(), U"\" should be a positive whole number.");
 			} else {
