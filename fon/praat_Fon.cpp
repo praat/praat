@@ -1550,7 +1550,16 @@ DO
 	MODIFY_EACH_WEAK_END
 }
 
-FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
+FORM (NUMMAT_Pitch_getAllCandidatesInFrame, U"Pitch: Get all candidates in frame", nullptr) {
+	NATURAL (frameNumber, U"Frame number", U"1")
+	OK
+DO
+	NUMMAT_ONE (Pitch)
+		autoMAT result = Pitch_getAllCandidatesInFrame (me, frameNumber);
+	NUMMAT_ONE_END
+}
+
+FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
@@ -3200,6 +3209,9 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 1, U"Get slope without octave jumps", nullptr, 1, REAL_Pitch_getMeanAbsSlope_noOctave);
 		praat_addAction1 (classPitch, 2, U"-- query two --", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 2, U"Count differences", nullptr, 1, INFO_Pitch_difference);
+		praat_addAction1 (classPitch, 2, U"-- hack --", nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 1, U"Internal", nullptr, 1, nullptr);
+			praat_addAction1 (classPitch, 1, U"Get all candidates in frame...", nullptr, 2, NUMMAT_Pitch_getAllCandidatesInFrame);
 	praat_addAction1 (classPitch, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPitch);
 		praat_addAction1 (classPitch, 0, U"Formula...", nullptr, 1, MODIFY_Pitch_formula);

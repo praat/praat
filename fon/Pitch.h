@@ -122,6 +122,9 @@ void Pitch_setCeiling (Pitch me, double ceiling);
 		my ceiling = ceiling;
 */
 
+autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me);
+autoMAT Pitch_getAllCandidatesInFrame (Pitch me, integer frameNumber);
+
 void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost,
 	double ceiling, int pullFormants);
