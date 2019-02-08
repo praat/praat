@@ -458,6 +458,33 @@ integer Pitch_getMaxnCandidates (Pitch me) {
 	return result;
 }
 
+static void Pitch_checkFrameNumber (Pitch me, integer frameNumber) {
+    Melder_require (frameNumber >= 1,
+    	U"The frame number should be at least 1, but is ", frameNumber, U" instead.");
+    Melder_require (frameNumber <= my nx,
+    	U"The frame number should at most the number of frames (", my nx, U"), but is ", frameNumber, U" instead.");
+}
+
+autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
+	integer numberOfCandidates = my nCandidates;
+	autoMAT candidates = newMATraw (2, numberOfCandidates);
+	for (integer icand = 1; icand <= numberOfCandidates; icand ++) {
+		candidates [1] [icand] = my candidate [icand]. frequency;
+		candidates [2] [icand] = my candidate [icand]. strength;
+	}
+	return candidates;
+}
+
+autoMAT Pitch_getAllCandidatesInFrame (Pitch me, integer frameNumber) {
+	try {
+    	Pitch_checkFrameNumber (me, frameNumber);
+    	Pitch_Frame frame = & my frame [frameNumber];
+    	return Pitch_Frame_getAllCandidates (frame);
+	} catch (MelderError) {
+		Melder_throw (U"Candidate matrix not created.");
+	}
+}
+
 void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost,
 	double ceiling, int pullFormants)
