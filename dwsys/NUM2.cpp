@@ -2032,7 +2032,7 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 			}
 			VECsort_inplace (mbs.part (1, numberOfCombinations));
-			m = NUMquantile (mbs.get(), 0.5);
+			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
 			for (integer i = 1; i <= x.size; i ++)
 				mbs [i] = y [i] - m * x [i];
 			VECsort_inplace (mbs.part (1, x.size));
