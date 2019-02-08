@@ -640,8 +640,8 @@ void praat_addMenus (GuiWindow window) {
 	}
 	
 	MelderString_append (& itemTitle_about, U"About ", praatP.title.get(), U"...");
+	praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 	#ifdef macintosh
-		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 		#if cocoa
 			/*
 			 * HACK: give the following command weird names,
