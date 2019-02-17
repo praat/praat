@@ -22,9 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190208)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190217)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+NORMAL (U"##6.0.48# (17 February 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby Praat could crash when drawing a function without any points.")
+LIST_ITEM (U"• Removed a bug whereby Praat would not start up on macOS 10.10 (because of required GPU libraries).")
 NORMAL (U"##6.0.47# (8 February 2019)")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby a cepstral peak prominence would be computed incorrectly.")
 NORMAL (U"##6.0.46# (3 January 2019)")
