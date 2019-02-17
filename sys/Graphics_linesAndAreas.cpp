@@ -752,7 +752,7 @@ void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double 
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
 void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
-	if (numberOfPoints == 0) return;
+	if (numberOfPoints < 2) return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
@@ -778,7 +778,7 @@ void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double
 }
 
 void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
-	if (numberOfPoints == 0) return;
+	if (numberOfPoints < 1) return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
@@ -815,6 +815,7 @@ void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y
 }
 
 void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *xWC, double const *yWC) {
+	if (numberOfPoints < 3) return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
