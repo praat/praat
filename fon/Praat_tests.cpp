@@ -55,6 +55,12 @@ static int length (conststring32 s) {
 	return result;
 }
 
+static autoMAT constantHH (integer nrow, integer ncol, double value) {
+	autoMAT result = newMATraw (nrow, ncol);
+	result.all() <<= value;
+	return result;
+}
+
 int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, conststring32 arg3, conststring32 arg4) {
 	int64 n = Melder_atoi (arg1);
 	double t = 0.0;
@@ -455,10 +461,15 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::TIME_MATMUL: {
-			const integer size = Melder_atoi (arg2);
-			autoMAT const x = newMATrandomGauss (size, size, 0.0, 1.0);
-			autoMAT const y = newMATrandomGauss (size, size, 0.0, 1.0);
-			autoMAT const result = newMATraw (size, size);
+			const integer size1 = Melder_atoi (arg2);
+			integer size2 = Melder_atoi (arg3);
+			integer size3 = Melder_atoi (arg4);
+			if (size2 == 0 || size3 == 0) size3 = size2 = size1;
+			//autoMAT const x = newMATrandomGauss (size1, size2, 0.0, 1.0);
+			//autoMAT const y = newMATrandomGauss (size2, size3, 0.0, 1.0);
+			autoMAT x = constantHH (size1, size2, 10.0);
+			autoMAT y = constantHH (size2, size3, 3.0);
+			autoMAT const result = newMATraw (size1, size3);
 			//MAT resultget = result.get();
 			//constMAT xget = x.get(), yget = y.get();
 			MATVU const result_all = result.all();
@@ -467,9 +478,13 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				MATVUmul_forceMetal_ (result_all, x_all, y_all);
-			t = Melder_stopwatch () / size / size / size;
+			const integer numberOfComputations = size1 * size2 * size3 * 2;
+			t = Melder_stopwatch () / numberOfComputations;
 			const double sum = NUMsum (result.get());
-			MelderInfo_writeLine (sum);
+			const integer numberOfStores = size1 * size2 + size2 * size3 + size1 * size3 + 10000;
+			MelderInfo_writeLine (double (numberOfComputations) / double (numberOfStores), U" computations per store");
+			MelderInfo_writeLine (sum, U" should be ", size1 * size2 * size3 * 30.0);
+			//Melder_require (NUMequal (result.get(), constantHH (size, size, size * 30.0).get()), U"...");
 		} break;
 		case kPraatTests::THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;

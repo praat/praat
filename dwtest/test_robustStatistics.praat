@@ -27,6 +27,7 @@ procedure location_scale
 	endfor
 	.report$ = Report robust statistics: "chem", 1.5, 1e-8, 30
 	appendInfoLine: .report$
+	removeObject: .tab
 endproc
 
 appendInfoLine: "test_robustStatistics.praat OK"

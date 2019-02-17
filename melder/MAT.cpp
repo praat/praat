@@ -467,18 +467,20 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 #ifdef macintosh
 	if (@available (macOS 10.13, *)) {
 		/*
-			The speed is 0.000'003, 0.003, 0.66, 2.24, 3.46,  9.6, 13.0, 20.1, 20.0, 21.0, 27.5, 34.2, 77 Gflop/s
-			for size =           1,    10,  100,  200,  500, 1000, 2000, 3000, 5000, 6000, 7000, 8000, 10000.
+			The speed is 0.000'002, 0.002, 1.00, 8.0, 16.1,  21, 14.3,  35, 16.3,  51,  22,   62,   58,   60,   58,   57,   135,   223,   360,   465,   519,   580,   577,   579,  1125,  1108,  1087,  1175,  1194 Gflop/s
+			for size =           1,    10,  100, 200,  300, 400,  500, 600,  700, 800, 900, 1000, 2000, 3000, 5000, 7000, 10000, 12000, 15000, 17000, 18000, 18500, 18700, 18800, 18900, 19000, 20000, 21000, 22000.
 		*/
 		static bool gpuInited = false;
 		static id <MTLDevice> gpuDevice;
 		static id <MTLCommandQueue> gpuQueue;
 		if (! gpuInited) {
 			gpuDevice = MTLCreateSystemDefaultDevice ();
-			Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
+			autostring32 deviceName = Melder_8to32 ([[gpuDevice name] UTF8String]);
+			Melder_casual (U"GPU device for computing: ", deviceName.get());
 			gpuInited = true;
 			gpuQueue = [gpuDevice newCommandQueue];
 		}
+//Melder_casual (U"start ", Melder_stopwatch ());
 		MPSMatrixMultiplication *matrixMultiplication = [[MPSMatrixMultiplication alloc]
 			initWithDevice: gpuDevice
 			resultRows: integer_to_uinteger (target.nrow)
@@ -487,7 +489,7 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 		];
 		Melder_assert (matrixMultiplication != nil);
 
-		uinteger xRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (x.ncol)  dataType:MPSDataTypeFloat32];
+		uinteger xRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (x.ncol)  dataType: MPSDataTypeFloat32];
 		uinteger xRowStrideInFloats = xRowStrideInBytes / sizeof (float);
 		autovector <float> x32 = newvectorzero <float> (integer (uinteger (x.nrow) * xRowStrideInFloats));
 		for (integer irow = 1; irow <= x.nrow; irow ++) {
@@ -496,7 +498,7 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 				*prow ++ = float (x [irow] [icol]);
 		}
 
-		uinteger yRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (y.ncol)  dataType:MPSDataTypeFloat32];
+		uinteger yRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (y.ncol)  dataType: MPSDataTypeFloat32];
 		uinteger yRowStrideInFloats = yRowStrideInBytes / sizeof (float);
 		autovector <float> y32 = newvectorzero <float> (integer (uinteger (y.nrow) * yRowStrideInFloats));
 		for (integer irow = 1; irow <= y.nrow; irow ++) {
@@ -505,21 +507,22 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 				*prow ++ = float (y [irow] [icol]);
 		}
 
-		uinteger targetRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (y.ncol)  dataType:MPSDataTypeFloat32];
+		uinteger targetRowStrideInBytes = [MPSMatrixDescriptor rowBytesForColumns: uinteger (y.ncol)  dataType: MPSDataTypeFloat32];
 		uinteger targetRowStrideInFloats = targetRowStrideInBytes / sizeof (float);
 		autovector <float> target32 = newvectorzero <float> (integer (uinteger (target.nrow) * targetRowStrideInFloats));
 
-		uinteger x32length = (uinteger (x.nrow) * xRowStrideInBytes);
-		id <MTLBuffer> bufferX = [gpuDevice newBufferWithBytes: & x32 [1]  length: x32length  options: MTLResourceStorageModeShared];
+		uinteger x32length = uinteger (x.nrow) * xRowStrideInBytes;
+		id <MTLBuffer> bufferX = [gpuDevice newBufferWithBytes: & x32 [1]  length: x32length  options: MTLResourceStorageModeManaged];
 		Melder_assert (bufferX != nil);
 
-		uinteger y32length = (uinteger (y.nrow) * yRowStrideInBytes);
-		id <MTLBuffer> bufferY = [gpuDevice newBufferWithBytes: & y32 [1]  length: y32length  options: MTLResourceStorageModeShared];
+		uinteger y32length = uinteger (y.nrow) * yRowStrideInBytes;
+		id <MTLBuffer> bufferY = [gpuDevice newBufferWithBytes: & y32 [1]  length: y32length  options: MTLResourceStorageModeManaged];
 		Melder_assert (bufferY != nil);
 
-		uinteger target32length = (uinteger (target.nrow) * targetRowStrideInBytes);
+		uinteger target32length = uinteger (target.nrow) * targetRowStrideInBytes;
 		id <MTLBuffer> bufferTarget = [gpuDevice newBufferWithBytes: & target32 [1]  length: target32length  options: MTLResourceStorageModeShared];
 		Melder_assert (bufferTarget != nil);
+//Melder_casual (U"to GPU ", Melder_stopwatch ());
 
 		MPSMatrixDescriptor *descriptorX =
 			[MPSMatrixDescriptor matrixDescriptorWithRows: uinteger (x.nrow)
@@ -551,7 +554,28 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 			rightMatrix: mpsY
 			resultMatrix: mpsTarget];
 		[commandBuffer commit];
+		/*
+			For testing.
+		*/
+		constexpr integer numberOfTimes = 0;
+		id <MTLCommandBuffer> commandBuffers [numberOfTimes];
+		for (integer itime = 0; itime < numberOfTimes; itime ++) {
+			commandBuffers [itime] = [gpuQueue commandBuffer];
+			[matrixMultiplication encodeToCommandBuffer: commandBuffers [itime]
+				leftMatrix: mpsX
+				rightMatrix: mpsTarget
+				resultMatrix: mpsY];
+			[matrixMultiplication encodeToCommandBuffer: commandBuffers [itime]
+				leftMatrix: mpsX
+				rightMatrix: mpsY
+				resultMatrix: mpsTarget];
+			[commandBuffers [itime] commit];
+		}
 		[commandBuffer waitUntilCompleted];
+		for (integer itime = 0; itime < numberOfTimes; itime ++) {
+			[commandBuffers [itime] waitUntilCompleted];
+		}
+//Melder_casual (U"in GPU ", Melder_stopwatch ());
 		NSError *error = [commandBuffer error];
 		if (error) {
 			/*
@@ -572,14 +596,15 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 				localizedDescription.get(), localizedFailureReason.get(), localizedRecoverySuggestion.get());
 		}
 		[error release];
-		float *rawPointer = (float *) [bufferTarget contents];
+		const float * const rawPointer = (const float *) [bufferTarget contents];
 		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			float *prow = rawPointer + uinteger (irow - 1) * targetRowStrideInFloats;
+			const float * prow = rawPointer + uinteger (irow - 1) * targetRowStrideInFloats;
 			for (integer icol = 1; icol <= target.ncol; icol ++) {
-				double value = double (*prow ++);
+				const double value = double (*prow ++);
 				target [irow] [icol] = value;
 			}
 		}
+//Melder_casual (U"from GPU ", Melder_stopwatch ());
 		[bufferX release];
 		[bufferY release];
 		[bufferTarget release];
@@ -591,6 +616,33 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 		//[descriptorY release];
 		//[descriptorTarget release];
 		[pool release];   // this releases `commandBuffer`
+		/*
+			Check the result.
+		*/
+		//return;
+		const integer numberOfChecks = Melder_iround (pow (target.nrow * target.ncol, 0.33333));
+		integer numberOfUnexpectedZeroes = 0;
+		for (integer icheck = 1; icheck <= numberOfChecks; icheck ++) {
+			const integer rowNumber = NUMrandomInteger (1, target.nrow);
+			const integer columnNumber = NUMrandomInteger (1, target.ncol);
+			const double targetValue = target [rowNumber] [columnNumber];
+			double checkedValue = 0.0;
+			for (integer i = 1; i <= x.ncol; i ++)
+				checkedValue += x [rowNumber] [i] * y [i] [columnNumber];
+			if (checkedValue != 0.0) {
+				//Melder_require (targetValue != 0.0,
+				//	U"GPU matrix multiplication incorrect: unexpected zero at row ", rowNumber, U" and column ", columnNumber, U": value should be ", checkedValue, U".");
+				if (targetValue == 0.0) {
+					numberOfUnexpectedZeroes ++;
+				} else {
+					const double relativeError = fabs (checkedValue / targetValue - 1.0);
+					Melder_require (relativeError < 0.1,
+						U"GPU matrix multiplication incorrect: unexpected imprecision of ", relativeError, U".");
+				}
+			}
+		}
+		Melder_require (numberOfUnexpectedZeroes == 0,
+			U"GPU matrix multiplication incorrect: found ", numberOfUnexpectedZeroes, U" unexpected zeroes.");
 		return;
 	}
 #else
