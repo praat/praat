@@ -44,7 +44,7 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 	{// scope
 		/*
 			This `scope` comment refers to the idea that an autoThing (here, `list`)
-			is created in the beginning of the scope and invalidated at the end of the scope (by `move`).
+			is created at the beginning of the scope and invalidated at the end of the scope (by `move`).
 		*/
 		FIND_TYPED_LIST (ExperimentMFC, ExperimentMFCList)
 		Melder_assert (list->size >= 1);

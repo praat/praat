@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -451,8 +451,6 @@ autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, inte
 		Melder_throw (me, U" & ", sound, U": intervals not extracted.");
 	}
 }
-
-Thing_implement (SoundList, Ordered, 0);
 
 autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, integer tierNumber, bool preserveTimes) {
 	try {

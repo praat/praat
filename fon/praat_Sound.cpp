@@ -355,6 +355,14 @@ DIRECT (NEW1_Sounds_combineToStereo) {
 	CONVERT_LIST_END (U"combined_", numberOfChannels)
 }
 
+DIRECT (NEW1_Sounds_combineIntoSoundList) {
+	CONVERT_LIST (Sound)
+		autoSoundList result = SoundList_create ();
+		for (integer iobject = 1; iobject <= list.size; iobject ++)
+			result -> addItem_move (Data_copy (list.at [iobject]));
+	CONVERT_LIST_END (U"ensemble")
+}
+
 DIRECT (NEW1_Sounds_concatenate) {
 	CONVERT_LIST (Sound)
 		autoSound result = Sounds_concatenate (list, 0.0);
@@ -1990,6 +1998,15 @@ FORM_SAVE (SAVE_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 	SAVE_TYPED_LIST_END
 }
 
+/***** SOUNDLIST *****/
+
+DIRECT (NEWMANY_Extract_all_Sounds) {
+	CONVERT_EACH (SoundList)
+		autoSoundList result = Data_copy (me);
+		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
+	CONVERT_EACH_END (U"dummy")
+}
+
 /***** STOP *****/
 
 DIRECT (PLAY_stopPlayingSound) {
@@ -2095,7 +2112,7 @@ static int publishPlayedProc () {
 /***** buttons *****/
 
 void praat_Sound_init () {
-	Thing_recognizeClassesByName (classSound, classLongSound, nullptr);
+	Thing_recognizeClassesByName (classSound, classLongSound, classSoundList, nullptr);
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);
@@ -2389,6 +2406,7 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Filter (de-emphasis)...", nullptr, 1, NEW_Sound_filter_deemphasis);
 	praat_addAction1 (classSound, 0, U"Combine -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Combine to stereo", nullptr, 1, NEW1_Sounds_combineToStereo);
+		praat_addAction1 (classSound, 0, U"Combine into SoundList", nullptr, 1, NEW1_Sounds_combineIntoSoundList);
 		praat_addAction1 (classSound, 0, U"Concatenate", nullptr, 1, NEW1_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, U"Concatenate recoverably", nullptr, 1, NEW2_Sounds_concatenateRecoverably);
 		praat_addAction1 (classSound, 0, U"Concatenate with overlap...", nullptr, 1, NEW1_Sounds_concatenateWithOverlap);
@@ -2409,6 +2427,8 @@ void praat_Sound_init () {
 	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to NIST file...", U"*Save as NIST file...", praat_DEPRECATED_2011, SAVE_LongSound_Sound_saveAsNistFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as FLAC file...", nullptr, 0, SAVE_LongSound_Sound_saveAsFlacFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to FLAC file...", U"*Save as FLAC file...", praat_DEPRECATED_2011, SAVE_LongSound_Sound_saveAsFlacFile);
+
+	praat_addAction1 (classSoundList, 1, U"Extract all Sounds", nullptr, 0, NEWMANY_Extract_all_Sounds);
 }
 
 /* End of file praat_Sound.cpp */

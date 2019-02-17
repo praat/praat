@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1268,6 +1268,38 @@ autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not cross-correlated.");
+	}
+}
+
+Thing_implement (SoundList, Ordered, 0);
+
+integer SoundList_getMinimumNumberOfSamples (SoundList me) {
+	integer result = INTEGER_MAX;
+	for (integer isound = 1; isound <= my size; isound ++)
+		if (my at [isound] -> nx < result)
+			result = my at [isound] -> nx;
+	return result;
+}
+
+autoMAT SoundList_getRandomizedPatterns (SoundList me, integer numberOfPatterns, integer patternSize) {
+	try {
+		integer minimumNumberOfSamples = SoundList_getMinimumNumberOfSamples (me);
+		Melder_require (patternSize <= minimumNumberOfSamples,
+			U"The pattern size cannot be ", patternSize, U", because there is a Sound that is only ", minimumNumberOfSamples, U" samples long.");
+		autoMAT result = newMATzero (numberOfPatterns, patternSize);
+		for (integer ipattern = 1; ipattern <= numberOfPatterns; ipattern ++) {
+			integer soundNumber = NUMrandomInteger (1, my size);
+			Sound sound = my at [soundNumber];
+			integer numberOfSamples = sound -> nx;
+			integer endSample = NUMrandomInteger (patternSize, numberOfSamples);
+			integer startSample = endSample - (patternSize - 1);
+			Melder_assert (startSample >= 1);
+			constVEC const samples = sound -> z.row (1);
+			result.row (ipattern) <<= samples. part (startSample, endSample);
+		}
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": no randomize patterns gotten.");
 	}
 }
 
