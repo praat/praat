@@ -769,7 +769,8 @@ void Sound_draw (Sound me, Graphics g,
 		Domain expressed in sample numbers.
 	*/
 	integer ixmin, ixmax;
-	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
+	integer n = Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
+	if (n < 1) return;
 	/*
 		Automatic vertical range.
 	*/

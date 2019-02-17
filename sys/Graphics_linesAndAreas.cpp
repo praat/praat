@@ -939,7 +939,7 @@ integer Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, inte
 
 void Graphics_function (Graphics me, const double yWC [], integer ix1, integer ix2, double x1WC, double x2WC) {
 	integer n = Graphics_function_ <double> (me, yWC, 1, ix1, ix2, x1WC, x2WC);
-	if (my recording) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
+	if (my recording && n >= 2) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
 }
 
 void Graphics_function16 (Graphics me, const int16 yWC [], int stride, integer ix1, integer ix2, double x1WC, double x2WC) {

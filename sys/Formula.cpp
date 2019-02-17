@@ -5126,7 +5126,7 @@ static void do_MATmul_fast () {
 		autoMAT result = newMATmul_fast (x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function \"mul_fast##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_MATmul_tn () {

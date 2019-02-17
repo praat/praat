@@ -374,7 +374,8 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		Domain expressed in sample numbers.
 	*/
 	integer ixmin, ixmax;
-	Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
+	integer n = Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
+	if (n < 1) return;
 	/*
 		Automatic vertical range.
 	*/

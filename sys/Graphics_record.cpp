@@ -21,6 +21,7 @@
 #define RECORDING_HEADER_LENGTH 2
 
 double * _Graphics_check (Graphics me, integer number) {
+	Melder_assert (number >= 0);
 	static bool messageHasAlreadyBeenShownOnce = false;
 	double *result = nullptr;
 	double *record = my record;
@@ -39,7 +40,8 @@ double * _Graphics_check (Graphics me, integer number) {
 			}
 			return nullptr;
 		}
-		my record = record; my nrecord = nrecord;
+		my record = record;
+		my nrecord = nrecord;
 	}
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
 		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
@@ -55,7 +57,8 @@ double * _Graphics_check (Graphics me, integer number) {
 			}
 			return nullptr;
 		}
-		my record = record; my nrecord = nrecord;
+		my record = record;
+		my nrecord = nrecord;
 	}
 	result = my record + my irecord;
 	my irecord += number + RECORDING_HEADER_LENGTH;
