@@ -2,7 +2,7 @@
 #define _CC_h_
 /* CC.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@
 void CC_init (CC me, double tmin, double tmax, integer nt, double dt, double t1, integer maximumNumberOfCoefficients, double fmin, double fmax);
 
 void CC_getNumberOfCoefficients_extrema (CC me, integer startframe, integer endframe, integer *min, integer *max);
+
+integer CC_getMaximumNumberOfCoefficientsUsed (CC me);
 
 integer CC_getMinimumNumberOfCoefficients (CC me, integer startframe, integer endframe);
 

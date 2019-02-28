@@ -56,7 +56,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 		integer nr = Melder_ifloor (regressionWindowLength / my dx);
 		
 		Melder_require (my maximumNumberOfCoefficients == thy maximumNumberOfCoefficients,
-			U"CC orders should be equal.");
+			U"The maximum number of coefficients should be equal.");
 		Melder_require (! (coefficientRegressionWeight != 0.0 && nr < 2), 
 			U"Time window for regression is too small.");
 
