@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "Sound_to_PointProcess.h"
 #include "SoundEditor.h"
 #include "SoundRecorder.h"
+#include "SoundSet.h"
 #include "SpectrumEditor.h"
 #include "TextGrid_Sound.h"
 #include "mp3.h"
@@ -358,6 +359,14 @@ DIRECT (NEW1_Sounds_combineToStereo) {
 DIRECT (NEW1_Sounds_combineIntoSoundList) {
 	CONVERT_LIST (Sound)
 		autoSoundList result = SoundList_create ();
+		for (integer iobject = 1; iobject <= list.size; iobject ++)
+			result -> addItem_move (Data_copy (list.at [iobject]));
+	CONVERT_LIST_END (U"list")
+}
+
+DIRECT (NEW1_Sounds_combineIntoSoundSet) {
+	CONVERT_LIST (Sound)
+		autoSoundSet result = SoundSet_create ();
 		for (integer iobject = 1; iobject <= list.size; iobject ++)
 			result -> addItem_move (Data_copy (list.at [iobject]));
 	CONVERT_LIST_END (U"ensemble")
@@ -2000,11 +2009,36 @@ FORM_SAVE (SAVE_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 
 /***** SOUNDLIST *****/
 
-DIRECT (NEWMANY_Extract_all_Sounds) {
+DIRECT (NEWMANY_SoundList_extractAllSounds) {
 	CONVERT_EACH (SoundList)
 		autoSoundList result = Data_copy (me);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
 	CONVERT_EACH_END (U"dummy")
+}
+
+/***** SOUNDSET *****/
+
+DIRECT (NEWMANY_SoundSet_extractAllSounds) {
+	CONVERT_EACH (SoundSet)
+		autoSoundSet result = Data_copy (me);
+		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
+	CONVERT_EACH_END (U"dummy")
+}
+
+FORM (NEW2_SoundSet_Table_getRandomizedPatterns, U"SoundSet & Table: Get randomized patterns", nullptr) {
+	SENTENCE (columnName, U"Column name", U"")
+	NATURAL (numberOfPatterns, U"Number of patterns", U"1000")
+	NATURAL (inputSize, U"Input size (number of samples)", U"8000")
+	NATURAL (outputSize, U"Output size (number of classes)", U"5")
+	OK
+DO
+	FIND_TWO (SoundSet, Table)
+		autoPatternList inputs, outputs;
+		SoundSet_Table_getRandomizedPatterns (me, you, columnName, numberOfPatterns, inputSize, outputSize,
+			& inputs, & outputs);
+		praat_new (inputs.move(), U"inputs");
+		praat_new (outputs.move(), U"outputs");
+	END
 }
 
 /***** STOP *****/
@@ -2112,7 +2146,7 @@ static int publishPlayedProc () {
 /***** buttons *****/
 
 void praat_Sound_init () {
-	Thing_recognizeClassesByName (classSound, classLongSound, classSoundList, nullptr);
+	Thing_recognizeClassesByName (classSound, classLongSound, classSoundList, classSoundSet, nullptr);
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);
@@ -2407,6 +2441,7 @@ void praat_Sound_init () {
 	praat_addAction1 (classSound, 0, U"Combine -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Combine to stereo", nullptr, 1, NEW1_Sounds_combineToStereo);
 		praat_addAction1 (classSound, 0, U"Combine into SoundList", nullptr, 1, NEW1_Sounds_combineIntoSoundList);
+		praat_addAction1 (classSound, 0, U"Combine into SoundSet", nullptr, 1, NEW1_Sounds_combineIntoSoundSet);
 		praat_addAction1 (classSound, 0, U"Concatenate", nullptr, 1, NEW1_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, U"Concatenate recoverably", nullptr, 1, NEW2_Sounds_concatenateRecoverably);
 		praat_addAction1 (classSound, 0, U"Concatenate with overlap...", nullptr, 1, NEW1_Sounds_concatenateWithOverlap);
@@ -2428,7 +2463,10 @@ void praat_Sound_init () {
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as FLAC file...", nullptr, 0, SAVE_LongSound_Sound_saveAsFlacFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to FLAC file...", U"*Save as FLAC file...", praat_DEPRECATED_2011, SAVE_LongSound_Sound_saveAsFlacFile);
 
-	praat_addAction1 (classSoundList, 1, U"Extract all Sounds", nullptr, 0, NEWMANY_Extract_all_Sounds);
+	praat_addAction1 (classSoundList, 1, U"Extract all Sounds", nullptr, 0, NEWMANY_SoundList_extractAllSounds);
+
+	praat_addAction1 (classSoundSet, 1, U"Extract all Sounds", nullptr, 0, NEWMANY_SoundSet_extractAllSounds);
+	praat_addAction2 (classSoundSet, 1, classTable, 1, U"Get randomized patterns...", nullptr, 0, NEW2_SoundSet_Table_getRandomizedPatterns);
 }
 
 /* End of file praat_Sound.cpp */

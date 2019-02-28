@@ -346,8 +346,5 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 Collection_define (SoundList, OrderedOf, Sound) {
 };
 
-integer SoundList_getMinimumNumberOfSamples (SoundList me);
-autoMAT SoundList_getRandomizedPatterns (SoundList me, integer numberOfPatterns, integer patternSize);
-
 /* End of file Sound.h */
 #endif

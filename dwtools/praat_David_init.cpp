@@ -4072,6 +4072,12 @@ DO
 	NUMBER_ONE_END (U"")
 }
 
+DIRECT (NUMMAT_PatternList_getAllValues) {
+	NUMMAT_ONE (PatternList)
+		autoMAT result = newMATcopy (my z.all());
+	NUMMAT_ONE_END
+}
+
 FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	LABEL (U"# `col` is the node number, `row` is the pattern number")
 	LABEL (U"for row from 1 to nrow   ; for all patterns")
@@ -8159,6 +8165,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPatternList, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, MODIFY_PatternList_formula);
 	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, MODIFY_PatternList_setValue);
+	praat_addAction1 (classPatternList, 0, U"Get all values", nullptr, 0, NUMMAT_PatternList_getAllValues);
 	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0, NEW_PatternList_to_Matrix);
 
 	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
