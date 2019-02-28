@@ -195,8 +195,10 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 
 		if (fmax_mel <= 0.0 || fmax_mel > fceiling)
 			fmax_mel = fceiling;
-		if (fmax_mel <= f1_mel)
-			f1_mel = fbottom; fmax_mel = fceiling;
+		if (fmax_mel <= f1_mel) {
+			f1_mel = fbottom;
+			fmax_mel = fceiling;
+		}
 		if (f1_mel <= 0.0)
 			f1_mel = fbottom;
 		if (df_mel <= 0.0)
