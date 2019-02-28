@@ -89,14 +89,15 @@ enum { NO_SYMBOL_,
 	/* Functions of 1 variable; if you add, update the #defines. */
 	#define LOW_FUNCTION_1  ABS_
 		ABS_, ROUND_, FLOOR_, CEILING_,
-		RECTIFY_, VEC_RECTIFY_,
+		RECTIFY_, RECTIFY_H_, RECTIFY_HH_,
 		SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_, SINC_, SINCPI_,
 		EXP_, VEC_EXP_, MAT_EXP_,
 		SINH_, COSH_, TANH_, ARCSINH_, ARCCOSH_, ARCTANH_,
-		SIGMOID_, VEC_SIGMOID_, VEC_SOFTMAX_,
+		SIGMOID_, VEC_SIGMOID_, SOFTMAX_H_, SOFTMAX_PER_ROW_HH_,
 		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, VEC_RANDOM_BERNOULLI_,
 		RANDOM_POISSON_, MAT_TRANSPOSE_,
+		SUM_PER_ROW_H_, SUM_PER_COLUMN_H_,
 		LOG2_, LN_, LOG10_, LN_GAMMA_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
@@ -218,14 +219,15 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"self", U"self$", U"object", U"object$", U"_matrix", U"_matrix$",
 	U"stopwatch",
 	U"abs", U"round", U"floor", U"ceiling",
-	U"rectify", U"rectify#",
+	U"rectify", U"rectify#", U"rectify##",
 	U"sqrt", U"sin", U"cos", U"tan", U"arcsin", U"arccos", U"arctan", U"sinc", U"sincpi",
 	U"exp", U"exp#", U"exp##",
 	U"sinh", U"cosh", U"tanh", U"arcsinh", U"arccosh", U"arctanh",
-	U"sigmoid", U"sigmoid#", U"softmax#",
+	U"sigmoid", U"sigmoid#", U"softmax#", U"softmaxPerRow##",
 	U"invSigmoid", U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
 	U"randomBernoulli", U"randomBernoulli#",
 	U"randomPoisson", U"transpose##",
+	U"sumPerRow#", U"sumPerColumn#",
 	U"log2", U"ln", U"log10", U"lnGamma",
 	U"hertzToBark", U"barkToHertz", U"phonToDifferenceLimens", U"differenceLimensToPhon",
 	U"hertzToMel", U"melToHertz", U"hertzToSemitones", U"semitonesToHertz",
@@ -2638,6 +2640,26 @@ static void do_add () {
 			//x->which = Stackel_NUMERIC_MATRIX;
 			return;
 		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
+			/*
+				result## = x## + y#
+				i.e.
+				result## [i, j] = x## [i, j] + y# [j]
+			*/
+			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+			integer ysize = y->numericVector.size;
+			if (xncol != ysize)
+				Melder_throw (U"When adding a vector to a matrix, its size should be equal to the number of columns, instead of ", ysize, U" and ", xncol, U".");
+			if (x->owned) {
+				x->numericMatrix  +=  y->numericVector;
+			} else {
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = newMATadd (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_MATRIX;
+			return;
+		}
 		if (y->which == Stackel_NUMBER) {
 			/*
 				result## = x## + y
@@ -2800,15 +2822,20 @@ static void do_mul () {
 	/*
 		result.. = x.. * y..
 	*/
-	Stackel y = pop, x = pop;
+	Stackel y = pop, x = topOfStack;
 	if (x->which == Stackel_NUMBER) {
-		double xvalue = x->number;
 		if (y->which == Stackel_NUMBER) {
-			/*
+			/*@praat
+				#
+				# result = x * y
+				#
+				x = 5
+				y = 6
 				result = x * y
-			*/
-			double yvalue = y->number;
-			pushNumber (xvalue * yvalue);
+				assert result = 30
+			@*/
+			x->number *= y->number;
+			//x->which = Stackel_NUMBER;   // superfluous, as is cleaning up
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_VECTOR) {
@@ -2816,19 +2843,30 @@ static void do_mul () {
 				result# = x * y#
 			*/
 			if (y->owned) {
-				y->numericVector  *=  xvalue;
-				x->which = Stackel_NUMERIC_VECTOR;
+				/*@praat
+					#
+					# result# = x * owned y#
+					#
+					result# = 5 * { 11, 13, 31 }   ; numeric vector literals are owned
+					assert result# = { 55, 65, 155 }
+				@*/
+				y->numericVector  *=  x->number;
+				// x does not have to be cleaned up, because it was a number
 				moveNumericVector (y, x);
-				w ++;
 			} else {
-				integer ny = y->numericVector.size;
-				autoVEC result { ny, kTensorInitializationType::RAW };
-				for (integer i = 1; i <= ny; i ++) {
-					double yvalue = y->numericVector [i];
-					result [i] = xvalue * yvalue;
-				}
-				pushNumericVector (result.move());
+				/*@praat
+					#
+					# result# = x * unowned y#
+					#
+					y# = { 17, -11, 29 }
+					result# = 30 * y#   ; numeric vector variables are not owned
+					assert result# = { 510, -330, 870 }
+				@*/
+				// x does not have to be cleaned up, because it was a number
+				x->numericVector = newVECmultiply (y->numericVector, x->number). releaseToAmbiguousOwner();
+				x->owned = true;
 			}
+			x->which = Stackel_NUMERIC_VECTOR;
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_MATRIX) {
@@ -2836,39 +2874,159 @@ static void do_mul () {
 				result## = x * y##
 			*/
 			if (y->owned) {
-				y->numericMatrix  *=  xvalue;
-				x->which = Stackel_NUMERIC_MATRIX;
+				y->numericMatrix  *=  x->number;
+				// x does not have to be cleaned up, because it was a number
 				moveNumericMatrix (y, x);
-				w ++;
 			} else {
-				integer nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
-				autoMAT result (nrow, ncol, kTensorInitializationType::RAW);
-				for (integer irow = 1; irow <= nrow; irow ++) {
-					for (integer icol = 1; icol <= ncol; icol ++) {
-						double yvalue = y->numericMatrix [irow] [icol];
-						result [irow] [icol] = xvalue * yvalue;
-					}
-				}
-				pushNumericMatrix (result.move());
+				// x does not have to be cleaned up, because it was a number
+				x->numericMatrix = newMATmultiply (y->numericMatrix, x->number). releaseToAmbiguousOwner();
+				x->owned = true;
 			}
+			x->which = Stackel_NUMERIC_MATRIX;
 			return;
 		}
 	}
-	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		/*
-			result# = x# * y#
-		*/
-		integer nx = x->numericVector.size, ny = y->numericVector.size;
-		if (nx != ny)
-			Melder_throw (U"When multiplying vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
-		autoVEC result { nx, kTensorInitializationType::RAW };
-		for (integer i = 1; i <= nx; i ++) {
-			double xvalue = x->numericVector [i];
-			double yvalue = y->numericVector [i];
-			result [i] = xvalue * yvalue;
+	if (x->which == Stackel_NUMERIC_VECTOR) {
+		if (y->which == Stackel_NUMERIC_VECTOR) {
+			/*
+				result# = x# * y#
+				i.e.
+				result# [i] = x# [i] * y# [i]
+			*/
+			integer nx = x->numericVector.size, ny = y->numericVector.size;
+			if (nx != ny) {
+				/*@praat
+					#
+					# Error: unequal sizes.
+					#
+					x# = { 11, 13, 17 }
+					y# = { 8, 90 }
+					asserterror When multiplying vectors, their numbers of elements should be equal, instead of 3 and 2.
+					result# = x# + y#
+				@*/
+				Melder_throw (U"When multiplying vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
+			}
+			if (x -> owned) {
+				/*@praat
+					#
+					# result# = owned x# * y#
+					#
+					result# = { 11, 13, 17 } * { 44, 56, 67 }   ; owned + owned
+					assert result# = { 484, 728, 1139 }
+					y# = { 3, 2, 89.5 }
+					result# = { 11, 13, 17 } * y#   ; owned * unowned
+					assert result# = { 33, 26, 1521.5 }
+				@*/
+				x->numericVector  *=  y->numericVector;
+			} else if (y -> owned) {
+				/*@praat
+					#
+					# result# = unowned x# * owned y#
+					#
+					x# = { 14, -3, 6.25 }
+					result# = x# * { 55, 1, -89 }
+					assert result# = { 770, -3, -556.25 }
+				@*/
+				y->numericVector  *=  x->numericVector;
+				// x does not have to be cleaned up, because it was not owned
+				moveNumericVector (y, x);
+			} else {
+				/*@praat
+					#
+					# result# = unowned x# * unowned y#
+					#
+					x# = { 14, -33, 6.25 }
+					y# = { -33, 17, 9 }
+					result# = x# * y#
+					assert result# = { -462, -561, 56.25 }
+				@*/
+				// x does not have to be cleaned up, because it was not owned
+				x->numericVector = newVECmultiply (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
+			return;
 		}
-		pushNumericVector (result.move());
-		return;
+		if (y->which == Stackel_NUMBER) {
+			/*
+				result# = x# * y
+				i.e.
+				result# [i] = x# [i] * y
+			*/
+			if (x->owned) {
+				x->numericVector  *=  y->number;
+			} else {
+				// x does not have to be cleaned up, because it was not owned
+				x->numericVector = newVECmultiply (x->numericVector, y->number). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
+			return;
+		}
+	}
+	if (x->which == Stackel_NUMERIC_MATRIX) {
+		if (y->which == Stackel_NUMERIC_MATRIX) {
+			/*
+				result## = x## * y##
+				i.e.
+				result## [i, j] = x## [i, j] * y## [i, j]
+			*/
+			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+			integer ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
+			if (xnrow != ynrow)
+				Melder_throw (U"When multiplying matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
+			if (xncol != yncol)
+				Melder_throw (U"When multiplying matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
+			if (x->owned) {
+				x->numericMatrix  *=  y->numericMatrix;
+			} else if (y->owned) {
+				y->numericMatrix  *=  x->numericMatrix;
+				// x does not have to be cleaned up, because it was not owned
+				moveNumericMatrix (y, x);
+			} else {
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = newMATmultiply (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_MATRIX;
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
+			/*
+				result## = x## * y#
+				i.e.
+				result## [i, j] = x## [i, j] * y# [j]
+			*/
+			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+			integer ysize = y->numericVector.size;
+			if (xncol != ysize)
+				Melder_throw (U"When multiplying a matrix with a vector, the vector’s size should be equal to the matrix’s number of columns, instead of ", ysize, U" and ", xncol, U".");
+			if (x->owned) {
+				x->numericMatrix  *=  y->numericVector;
+			} else {
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = newMATmultiply (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_MATRIX;
+			return;
+		}
+		if (y->which == Stackel_NUMBER) {
+			/*
+				result## = x## * y
+				i.e.
+				result## [i, j] = x## [i, j] * y
+			*/
+			if (x->owned) {
+				x->numericMatrix  *=  y->number;
+			} else {
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = newMATmultiply (x->numericMatrix, y->number). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_MATRIX;   // superfluous
+			return;
+		}
 	}
 	Melder_throw (U"Cannot multiply (*) ", x->whichText(), U" by ", y->whichText(), U".");
 }
@@ -2979,7 +3137,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 			U" requires a numeric vector argument, not ", x->whichText(), U".");
 	}
 }
-static void do_softmax () {
+static void do_softmaxH () {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (! x->owned) {
@@ -3004,6 +3162,35 @@ static void do_softmax () {
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires a numeric vector argument, not ", x->whichText(), U".");
+	}
+}
+static void do_softmaxPerRowHH () {
+	Stackel x = topOfStack;
+	if (x->which == Stackel_NUMERIC_MATRIX) {
+		if (! x->owned) {
+			x->numericMatrix = newMATcopy (x->numericMatrix). releaseToAmbiguousOwner();   // TODO: no need to copy
+			x->owned = true;
+		}
+		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
+		for (integer irow = 1; irow <= nrow; irow ++) {
+			double maximum = -1e308;
+			for (integer icol = 1; icol <= ncol; icol ++) {
+				if (x->numericMatrix [irow] [icol] > maximum)
+					maximum = x->numericMatrix [irow] [icol];
+			}
+			for (integer icol = 1; icol <= ncol; icol ++)
+				x->numericMatrix [irow] [icol] -= maximum;
+			longdouble sum = 0.0;
+			for (integer icol = 1; icol <= ncol; icol ++) {
+				x->numericMatrix [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
+				sum += x->numericMatrix [irow] [icol];
+			}
+			for (integer icol = 1; icol <= ncol; icol ++)
+				x->numericMatrix [irow] [icol] /= (double) sum;
+		}
+	} else {
+		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			U" requires a numeric matrix argument, not ", x->whichText(), U".");
 	}
 }
 static void do_abs () {
@@ -3046,7 +3233,7 @@ static void do_rectify () {
 		Melder_throw (U"Cannot rectify ", x->whichText(), U".");
 	}
 }
-static void do_VECrectify () {
+static void do_rectifyH () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
@@ -3056,6 +3243,33 @@ static void do_VECrectify () {
 			result [i] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
 		}
 		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"Cannot rectify ", x->whichText(), U".");
+	}
+}
+static void do_rectifyHH () {
+	Stackel x = topOfStack;
+	if (x->which == Stackel_NUMERIC_MATRIX) {
+		if (x->owned) {
+			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
+			for (integer irow = 1; irow <= nrow; irow ++) {
+				for (integer icol = 1; icol <= ncol; icol ++) {
+					double xvalue = x->numericMatrix [irow] [icol];
+					x->numericMatrix [irow] [icol] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
+				}
+			}
+		} else {
+			pop;
+			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
+			autoMAT result = newMATraw (nrow, ncol);
+			for (integer irow = 1; irow <= nrow; irow ++) {
+				for (integer icol = 1; icol <= ncol; icol ++) {
+					double xvalue = x->numericMatrix [irow] [icol];
+					result [irow] [icol] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
+				}
+			}
+			pushNumericMatrix (result.move());
+		}
 	} else {
 		Melder_throw (U"Cannot rectify ", x->whichText(), U".");
 	}
@@ -3210,6 +3424,8 @@ static void do_sum () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (NUMsum (x->numericVector));
+	} else if (x->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (NUMsum (x->numericMatrix));
 	} else {
 		Melder_throw (U"Cannot compute the sum of ", x->whichText(), U".");
 	}
@@ -3218,6 +3434,8 @@ static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (NUMmean (x->numericVector));
+	//} else if (x->which == Stackel_NUMERIC_MATRIX) {
+	//	pushNumber (NUMmean (x->numericMatrix));
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", x->whichText(), U".");
 	}
@@ -5107,7 +5325,7 @@ static void do_MATmul_metal () {
 		MATVUmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function \"mul_metal##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_MATmul_fast () {
@@ -5198,6 +5416,24 @@ static void do_MATtranspose () {
 		}
 	} else {
 		Melder_throw (U"The function \"transpose##\" requires a matrix, not ", x->whichText(), U".");
+	}
+}
+static void do_sumPerRowH () {
+	Stackel x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX) {
+		autoVEC result = newVECsumPerRow (x->numericMatrix);
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"sumPerRow#\" requires a matrix, not ", x->whichText(), U".");
+	}
+}
+static void do_sumPerColumnH () {
+	Stackel x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX) {
+		autoVEC result = newVECsumPerColumn (x->numericMatrix);
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"sumPerColumn#\" requires a matrix, not ", x->whichText(), U".");
 	}
 }
 static void do_VECrepeat () {
@@ -6299,7 +6535,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case FLOOR_: { do_floor ();
 } break; case CEILING_: { do_ceiling ();
 } break; case RECTIFY_: { do_rectify ();
-} break; case VEC_RECTIFY_: { do_VECrectify ();
+} break; case RECTIFY_H_: { do_rectifyH ();
+} break; case RECTIFY_HH_: { do_rectifyHH ();
 } break; case SQRT_: { do_sqrt ();
 } break; case SIN_: { do_sin ();
 } break; case COS_: { do_cos ();
@@ -6320,7 +6557,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case ARCTANH_: { do_function_n_n (NUMarctanh);
 } break; case SIGMOID_: { do_function_n_n (NUMsigmoid);
 } break; case VEC_SIGMOID_: { do_functionvec_n_n (NUMsigmoid);
-} break; case VEC_SOFTMAX_: { do_softmax ();
+} break; case SOFTMAX_H_: { do_softmaxH ();
+} break; case SOFTMAX_PER_ROW_HH_: { do_softmaxPerRowHH ();
 } break; case INV_SIGMOID_: { do_function_n_n (NUMinvSigmoid);
 } break; case ERF_: { do_function_n_n (NUMerf);
 } break; case ERFC_: { do_function_n_n (NUMerfcc);
@@ -6331,6 +6569,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case VEC_RANDOM_BERNOULLI_: { do_functionvec_n_n (NUMrandomBernoulli_real);
 } break; case RANDOM_POISSON_: { do_function_n_n (NUMrandomPoisson);
 } break; case MAT_TRANSPOSE_: { do_MATtranspose ();
+} break; case SUM_PER_ROW_H_: { do_sumPerRowH ();
+} break; case SUM_PER_COLUMN_H_: { do_sumPerColumnH ();
 } break; case LOG2_: { do_log2 ();
 } break; case LN_: { do_ln ();
 } break; case LOG10_: { do_log10 ();

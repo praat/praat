@@ -166,7 +166,7 @@ static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, inte
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 
 	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
-		double power = 0;
+		longdouble power = 0.0;
 		double fc_mel = thy y1 + (ifilter - 1) * thy dy;
 		double fc_hz = thy v_frequencyToHertz (fc_mel);
 		double fl_hz = thy v_frequencyToHertz (fc_mel - thy dy);
@@ -180,7 +180,7 @@ static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, inte
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
 			power += a * his z [1] [i];
 		}
-		thy z [ifilter] [frame] = power;
+		thy z [ifilter] [frame] = double (power);
 	}
 }
 

@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 10 August 2018
+# Paul Boersma, 28 February 2019
 
 include ../makefile.defs
 
@@ -8,7 +8,7 @@ CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools
 OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o SampledXY.o Matrix.o Vector.o Polygon.o PointProcess.o \
    Matrix_and_PointProcess.o Matrix_and_Polygon.o AnyTier.o RealTier.o \
-   Sound.o LongSound.o Sound_files.o Sound_audio.o PointProcess_and_Sound.o Sound_PointProcess.o ParamCurve.o \
+   Sound.o LongSound.o SoundSet.o Sound_files.o Sound_audio.o PointProcess_and_Sound.o Sound_PointProcess.o ParamCurve.o \
    Pitch.o Harmonicity.o Intensity.o Matrix_and_Pitch.o Sound_to_Pitch.o \
    Sound_to_Intensity.o Sound_to_Harmonicity.o Sound_to_Harmonicity_GNE.o Sound_to_PointProcess.o \
    Pitch_to_PointProcess.o Pitch_to_Sound.o Pitch_Intensity.o \
