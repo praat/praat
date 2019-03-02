@@ -2,7 +2,7 @@
 #define _melder_string_h_
 /* MelderString.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********** STRINGS **********/
-
-/* These are functions for never having to check string boundaries again. */
+/*
+	Strings that:
+		- are null-terminated
+		- have O(1) access to their length
+		- grow as needed
+		- can be appended to without scanning for the final null character
+		- automatically convert numbers, objects, file names, vectors, and matrices to strings
+*/
 
 typedef struct {
 	int64 length;
@@ -30,7 +35,7 @@ typedef struct {
 typedef struct {
 	int64 length;
 	int64 bufferSize;
-	char32 *string;   // a growing buffer, rarely shrunk (can only be freed by MelderString32_free)
+	char32 *string;   // a growing buffer, rarely shrunk (can only be freed by MelderString_free)
 } MelderString;
 
 void MelderString16_free (MelderString16 *me);   // frees the buffer (and sets other attributes to zero)
@@ -42,8 +47,14 @@ void MelderString_ncopy (MelderString *me, conststring32 source, int64 n);
 
 inline static void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& arg) {
 	if (arg._arg) {
-		const char32 *newEndOfStringLocation = stp32cpy (& my string [my length], arg._arg);
+		const char32 *newEndOfStringLocation = stp32cpy (& my string [my length], arg._arg);   // this will append a null character
 		my length = newEndOfStringLocation - & my string [0];
+	} else {
+		/*
+			Append a null string: do nothing.
+			The result will be null-terminated if `me` was null-terminated to start with,
+			which is a required invariant.
+		*/
 	}
 }
 template <typename... Args>
@@ -70,6 +81,7 @@ void MelderString_copy (MelderString *me, const MelderArg& first, Args... rest) 
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand (me, sizeNeeded);
 	my length = 0;
+	my string [0] = U'\0';   // maintain invariant
 	_recursiveTemplate_MelderString_append (me, first, rest...);
 }
 

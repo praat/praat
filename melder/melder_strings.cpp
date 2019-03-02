@@ -111,7 +111,7 @@ void MelderString_empty (MelderString *me) {
 	}
 	int64 sizeNeeded = 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
-	my string [0] = '\0';
+	my string [0] = U'\0';
 	my length = 0;
 }
 
@@ -124,7 +124,7 @@ void MelderString_ncopy (MelderString *me, conststring32 source, int64 n) {
 	int64 sizeNeeded = length + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32ncpy (my string, source, length);
-	my string [length] = '\0';
+	my string [length] = U'\0';
 	my length = length;
 }
 
