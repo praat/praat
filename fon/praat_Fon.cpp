@@ -1559,6 +1559,21 @@ DO
 	NUMMAT_ONE_END
 }
 
+FORM (NEW_Pitch_tabulateCandidatesInFrame, U"Pitch: Tabulate candidates in frame", nullptr) {
+	NATURAL (frameNumber, U"Frame number", U"1")
+	OK
+DO
+	CONVERT_EACH (Pitch)
+		autoTable result = Pitch_tabulateCandidatesInFrame (me, frameNumber);
+	CONVERT_EACH_END (my name.get(), U"_", frameNumber)
+}
+
+DIRECT (NEW_Pitch_tabulateCandidates) {
+	CONVERT_EACH (Pitch)
+		autoTable result = Pitch_tabulateCandidates (me);
+	CONVERT_EACH_END (my name.get())
+}
+
 FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
@@ -3211,6 +3226,8 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 2, U"Count differences", nullptr, 1, INFO_Pitch_difference);
 		praat_addAction1 (classPitch, 2, U"-- hack --", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 1, U"Internal", nullptr, 1, nullptr);
+			praat_addAction1 (classPitch, 0, U"Tabulate candidates", nullptr, 2, NEW_Pitch_tabulateCandidates);
+			praat_addAction1 (classPitch, 0, U"Tabulate candidates in frame...", nullptr, 2, NEW_Pitch_tabulateCandidatesInFrame);
 			praat_addAction1 (classPitch, 1, U"Get all candidates in frame...", nullptr, 2, NUMMAT_Pitch_getAllCandidatesInFrame);
 	praat_addAction1 (classPitch, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPitch);

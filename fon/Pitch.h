@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "Sampled.h"
 #include "Graphics.h"
+#include "Table.h"
 Thing_declare (Interpreter);
 
 #include "Pitch_enums.h"
@@ -202,6 +203,9 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 */
 
 void Pitch_formula (Pitch me, conststring32 formula, Interpreter interpreter);
+
+autoTable Pitch_tabulateCandidatesInFrame (Pitch me, integer frameNumber);
+autoTable Pitch_tabulateCandidates (Pitch me);
 
 /* End of file Pitch.h */
 #endif
