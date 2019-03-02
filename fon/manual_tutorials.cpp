@@ -22,9 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190217)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190302)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+NORMAL (U"##6.0.49# (2 March 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.")
+LIST_ITEM (U"• Pitch: Tabulate candidates.")
+LIST_ITEM (U"• SoundSet.")
 NORMAL (U"##6.0.48# (17 February 2019)")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby Praat could crash when drawing a function without any points.")
 LIST_ITEM (U"• Removed a bug whereby Praat would not start up on macOS 10.10 (because of required GPU libraries).")
