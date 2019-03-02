@@ -926,4 +926,40 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 	}
 }
 
+static autoTable Pitch_Frame_tabulateCandidates (Pitch_Frame me) {
+	autoTable you = Table_createWithColumnNames (my nCandidates, U"frequency strength");
+	for (integer icand = 1; icand <= my nCandidates; icand ++) {
+		Pitch_Candidate candidate = & my candidate [icand];
+		Table_setNumericValue (you.get(), icand, 1, candidate -> frequency);
+		Table_setNumericValue (you.get(), icand, 2, candidate -> strength);
+	}
+	return you;
+}
+
+autoTable Pitch_tabulateCandidatesInFrame (Pitch me, integer frameNumber) {
+	Pitch_checkFrameNumber (me, frameNumber);
+	Pitch_Frame frame = & my frame [frameNumber];
+	return Pitch_Frame_tabulateCandidates (frame);
+}
+
+autoTable Pitch_tabulateCandidates (Pitch me) {
+	integer totalNumberOfCandidates = 0;
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		Pitch_Frame frame = & my frame [iframe];
+		totalNumberOfCandidates += frame -> nCandidates;
+	}
+	autoTable result = Table_createWithColumnNames(totalNumberOfCandidates, U"frame frequency strength");
+	integer rowNumber = 0;
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		Pitch_Frame frame = & my frame [iframe];
+		for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
+			Pitch_Candidate candidate = & frame -> candidate [icand];
+			Table_setNumericValue (result.get(), ++ rowNumber, 1, double (iframe));
+			Table_setNumericValue (result.get(), rowNumber, 2, candidate -> frequency);
+			Table_setNumericValue (result.get(), rowNumber, 3, candidate -> strength);
+		}
+	}
+	return result;
+}
+
 /* End of file Pitch.cpp */
