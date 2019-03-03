@@ -1634,13 +1634,13 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 	if (dx2 * dy3 > dy2 * dx3)
 		orientation = 1;
 	else if (dx2 * dy3 < dy2 * dx3)
-		orientation = -1;
+		orientation = 1;
 	else {
 		if ((dx2 * dx3 < 0) || (dy2 * dy3 < 0))
 			orientation = -1;
 		else if ((dx2 * dx2 + dy2 * dy2) >= (dx3 * dx3 + dy3 * dy3))
 			orientation = 0;
-		else 
+		else
 			orientation = 1;
 	}
 	return orientation;
@@ -1684,23 +1684,24 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 
 	for (integer i = 1; i <= 4; i ++) {
 		double denom = (x [i + 1] - x [i]) * (y2 - y1) - (y [i + 1] - y [i]) * (x2 - x1);
-		double s, t, x3, y3;
 		if (denom == 0.0)
 			continue;
-		/* We have an intersection. */
-		t = ((y [i] - y1) * (x2 - x1) - (x [i] - x1) * (y2 - y1)) / denom;
-		if (t < 0 || t >= 1)
+		
+		// We have an intersection.
+		
+		double t = ((y [i] - y1) * (x2 - x1) - (x [i] - x1) * (y2 - y1)) / denom;
+		if (t < 0.0 || t >= 1.0)
 			continue;
-		/* Intersection is within rectangle side. */
-		x3 = x [i] + t * (x [i + 1] - x [i]);
-		y3 = y [i] + t * (y [i + 1] - y [i]);
-		/* s must also be valid */
-		if (x1 != x2)
-			s = (x3 - x1) / (x2 - x1);
-		else
-			s = (y3 - y1) / (y2 - y1);
-
-		if (s < 0 || s >= 1)
+		
+		// Intersection is within rectangle side.
+		
+		double x3 = x [i] + t * (x [i + 1] - x [i]);
+		double y3 = y [i] + t * (y [i + 1] - y [i]);
+		
+		// s must also be valid
+		
+		double s = ( x1 != x2 ? (x3 - x1) / (x2 - x1) : (y3 - y1) / (y2 - y1) );
+		if (s < 0.0 || s >= 1.0)
 			continue;
 
 		ni ++;
@@ -1713,19 +1714,19 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 }
 
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *out_xo1, double *out_yo1, double *out_xo2, double *out_yo2) {
-	int ncrossings = 0;
-	bool xswap, yswap;
+	integer ncrossings = 0;
+	double x, y, a, b;
 	double xc [5], yc [5], xmin, xmax, ymin, ymax;
-
 	double xo1 = xl1, yo1 = yl1, xo2 = xl2, yo2 = yl2;
 
-	// This test first because we expect the majority of the tested segments to be
-	// within the rectangle
+	// This test first because we expect the majority of the tested segments to be within the rectangle
+	
 	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 &&
 			xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2)
-		return true;
+		goto end;
 
 	// All lines that are completely outside the rectangle
+	
 	if ( (xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
 			(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2))
 		return false;
@@ -1733,6 +1734,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 
 	// At least line spans (part of) the rectangle.
 	// Get extremes in x and y of the line for easy testing further on.
+	bool xswap, yswap;
 	if (xl1 < xl2) {
 		xmin = xl1;
 		xmax = xl2;
@@ -1751,25 +1753,31 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 		ymax = yl1;
 		yswap = true;
 	}
-	bool hline = yl1 == yl2, vline = xl1 == xl2;
-	if (hline) {
-		if (xmin < xr1) xo1 = xr1;
-		if (xmax > xr2) xo2 = xr2;
-		if (xswap) std::swap (xo1, xo2);
-		return true;
+	
+	if (yl1 == yl2) {
+		if (xmin < xr1)
+			xo1 = xr1;
+		if (xmax > xr2)
+			xo2 = xr2;
+		if (xswap)
+			std::swap (xo1, xo2);
+		goto end;
 	}
-	if (vline) {
-		if (ymin < yr1) yo1 = yr1;
-		if (ymax > yr2) yo2 = yr2;
-		if (yswap) std::swap (yo1, yo2);
-		return true;
+	if (xl1 == xl2) {
+		if (ymin < yr1)
+			yo1 = yr1;
+		if (ymax > yr2)
+			yo2 = yr2;
+		if (yswap)
+			std::swap (yo1, yo2);
+		goto end;
 	}
 
 	// Now we know that the line from (x1,y1) to (x2,y2) is neither horizontal nor vertical.
 	// Parametrize it as y = ax + b
 
-	double a = (yl1 - yl2) / (xl1 - xl2);
-	double b = yl1 - a * xl1;
+	a = (yl1 - yl2) / (xl1 - xl2);
+	b = yl1 - a * xl1;
 
 
 	//	To determine the crossings we have to avoid counting the crossings in a corner twice.
@@ -1777,7 +1785,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	//	and exclusive (..<..<) at the horizontal borders.
 
 
-	double y = a * xr1 + b; // Crossing at y with left border: x = xr1
+	y = a * xr1 + b; // Crossing at y with left border: x = xr1
 
 	if (y >= yr1 && y <= yr2 && xmin < xr1) { // Within vertical range?
 		xc [++ ncrossings] = xr1;
@@ -1786,7 +1794,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 		yc [2] = xl1 > xl2 ? yl1 : yl2;
 	}
 
-	double x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
+	x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
 
 	if (x > xr1 && x < xr2 && ymax > yr2) { // Within horizontal range?
 		xc [++ ncrossings] = x;
@@ -1827,16 +1835,23 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	*/
 	if (ncrossings == 1 && (xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
 		(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2))
-		return true;
+		goto end;
 
 	if ((xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
 		std::swap (xc [1], xc [2]);
 		std::swap (yc [1], yc [2]);
 	}
-	if (out_xo1) *out_xo1 = xc [1]; 
-	if (out_yo1) *out_yo1 = yc [1]; 
-	if (out_xo2) *out_xo2 = xc [2]; 
-	if (out_yo2) *out_yo2 = yc [2]; 
+	xo1 = xc [1];
+	yo1 = yc [1];
+	xo2 = xc [2];
+	yo2 = yc [2];
+	
+end:
+	
+	if (out_xo1) *out_xo1 = xo1;
+	if (out_yo1) *out_yo1 = yo1;
+	if (out_xo2) *out_xo2 = xo2;
+	if (out_yo2) *out_yo2 = yo2;
 	return true;
 }
 
