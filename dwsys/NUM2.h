@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2018 David Weenink
+ * Copyright (C) 1997-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -956,6 +956,7 @@ double NUMsinc (const double x);
 int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3);
 /* Traverse points 1, 2 and 3. If we travel counter-clockwise the result will be 1,
 	if we travel clockwise the result will be -1 and the result will be 0 if 3 is on the line segment between 1 and 2.
+	J. O'Rourke: Computational Geometry, 2nd Edition, Code 1.5
 */
 
 int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, double x3, double y3,

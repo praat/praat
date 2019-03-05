@@ -1632,7 +1632,7 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 	longdouble dx2 = x2 - x1, dy2 = y2 - y1;
 	longdouble dx3 = x3 - x1, dy3 = y3 - y1;
 	if (dx2 * dy3 > dy2 * dx3)
-		orientation = 1;
+		orientation = -1;
 	else if (dx2 * dy3 < dy2 * dx3)
 		orientation = 1;
 	else {
