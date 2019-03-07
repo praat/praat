@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@
 void structSVD :: v_info () {
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
-	MelderInfo_writeLine (U"This matrix is", (isTransposed ? U"" : U"not "), U" transposed.");
+	MelderInfo_writeLine (U"This matrix is", (isTransposed ? U"" : U" not "), U" transposed.");
 }
 
 Thing_implement (SVD, Daata, 1);
