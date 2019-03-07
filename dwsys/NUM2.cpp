@@ -1671,7 +1671,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 			x1 y21 - y1 x21 = x3 y21 - y3 x21 +t (x43 y21 - y43 x21)
 		Combining:
 			y31 x21 - x31 y21 = t (x43 y21 - y43 x21)
-		Therefor at the intersection we have:
+		Therefore at the intersection we have:
 
 			t = (y31 x21 - x31 y21) / (x43 y21 - y43 x21)
 
