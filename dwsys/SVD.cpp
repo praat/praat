@@ -298,33 +298,8 @@ integer SVD_getRank (SVD me) {
 	SVD of A = U D V'.
 	This can be written as A = sum_{r=1}^n d[i] u[i]v[i]', where u[i] and [v[i] are columnvectors
 	(Golub & van Loan, 3rd ed, p 71).
-	If (internally) the matrix was transposed we rewrite this as A=sum_{r=1}^n d[i] u[i]'v[i].
+	If (internally) the matrix was transposed we can rewrite this as A=sum_{r=1}^n d[i] u[i]'v[i].
 */
-autoMAT SVD_synthesize2 (SVD me, integer sv_from, integer sv_to) {
-	if (sv_to == 0)
-		sv_to = my numberOfColumns;
-	try {
-		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns, U"Indices must be in range [1, ", my numberOfColumns, U"].");
-		long nrow = my numberOfRows;
-		long ncol = my numberOfColumns;
-		if (my isTransposed) std::swap (nrow, ncol);
-		autoMAT result = newMATzero (nrow, ncol);
-		for (integer k = sv_from; k <= sv_to; k ++) {
-			for (integer i = 1; i <= my numberOfRows; i ++)
-				for (integer j = 1; j <= my numberOfColumns; j ++) {
-					double value = my d [k] * my u [i] [k] * my v [j] [k];
-					if (my isTransposed)
-						result [j] [i] += value;
-					else
-						result [i] [j] += value;
-				}
-		}
-		return result;
-	} catch (MelderError) {
-		Melder_throw (me, U": no synthesis.");
-	}
-}
-
 autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 	if (sv_to == 0)
 		sv_to = my numberOfColumns;
@@ -340,7 +315,7 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 			if (my isTransposed)
 				MATouter_preallocated (outer.get(), my v.column(k), my u.column(k));
 			else
-				MATouter_preallocated (outer.get(), my u.column(k), my v.row(k));
+				MATouter_preallocated (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
 			result.get() += outer.get() * my d [k];
 		}
 		return result;
