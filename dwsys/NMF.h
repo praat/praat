@@ -27,7 +27,10 @@
 
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer dimensionOfApproximation);
 
-autoNMF NMF_createFromGeneralMatrix (constMAT m, integer dimensionOfApproximation);
+autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer dimensionOfApproximation, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, int initialisationMethod);
 
+void NMF_initialize (NMF me, constMAT m, int initialisationMethod);
+
+void NMF_improveApproximation_mu (NMF me, constMAT m, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
 
 #endif /* _NMF_h_ */

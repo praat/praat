@@ -23,8 +23,8 @@ oo_DEFINE_CLASS (NMF, Daata)
 	oo_INTEGER (numberOfColumns)
 	oo_INTEGER (dimensionOfApproximation)
 	
-	oo_MAT (u, numberOfRows, dimensionOfApproximation)
-	oo_MAT (v, dimensionOfApproximation, numberOfColumns)
+	oo_MAT (w, numberOfRows, dimensionOfApproximation)
+	oo_MAT (h, dimensionOfApproximation, numberOfColumns)
 
 	#if oo_DECLARING
 		void v_info ()
