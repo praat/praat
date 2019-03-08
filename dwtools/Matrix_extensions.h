@@ -2,7 +2,7 @@
 #define _Matrix_extensions_h_
 /* Matrix_extensions.h
  *
- * Copyright (C) 1993-2011, 2015-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "Eigen.h"
 #include "Graphics.h"
 #include "Matrix_extensions_enums.h"
+#include "SVD.h"
 
 autoMatrix Matrix_readFromIDXFormatFile (MelderFile file);
 autoDaata IDXFormattedMatrixFileRecognizer (integer numberOfBytesRead, const char *header, MelderFile file);
@@ -70,6 +71,8 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 
 autoEigen Matrix_to_Eigen (Matrix me);
 /* Symmetric matrix */
+
+autoMatrix SVD_to_Matrix (SVD me, integer from, integer to);
 
 void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues);
 /* General square matrix */
