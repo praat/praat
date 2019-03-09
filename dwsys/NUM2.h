@@ -101,6 +101,12 @@ inline integer NUMmin (const constINTVEC& vec) {
 	return minimum;
 }
 
+inline integer NUMcheckNonNegativity (constVEC v) {
+	integer i;
+	for (i = 1; i <= v.size && v [i] >= 0.0; i ++);
+	return i <= v.size ? i : 0;
+}
+
 template<typename T>
 inline integer NUMmaxPos (vector<T> v) {
 	if (NUMisEmpty (v)) return 0;

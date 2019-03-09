@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -665,13 +665,8 @@ double TableOfReal_getTableNorm (TableOfReal me) {
 }
 
 bool TableOfReal_checkNonNegativity (TableOfReal me) {
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			if (my data [i] [j] < 0.0)
-				return false;
-		}
-	}
-	return true;
+	integer index = NUMcheckNonNegativity (asvector(my data.get()));
+	return index == 0;
 }
 
 void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb, integer cole, double fractionWhite) {
