@@ -20,6 +20,25 @@
 #include "NUMmachar.h"
 #include "NUM2.h"
 
+#include "oo_DESTROY.h"
+#include "NMF_def.h"
+#include "oo_COPY.h"
+#include "NMF_def.h"
+#include "oo_EQUAL.h"
+#include "NMF_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "NMF_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "NMF_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "NMF_def.h"
+#include "oo_READ_TEXT.h"
+#include "NMF_def.h"
+#include "oo_READ_BINARY.h"
+#include "NMF_def.h"
+#include "oo_DESCRIPTION.h"
+#include "NMF_def.h"
+
 #define DIV_BY_ZERO_AVOIDANCE 1E-09
 
 void structNMF :: v_info () {
@@ -45,21 +64,35 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer dimen
 	}
 }
 
-void NMF_initializeApproximation (NMF me, constMAT m, int initialisationMethod) {
-	
+void NMF_initialize (NMF me, constMAT m, int initialisationMethod) {
+	if (initialisationMethod != 0) {
+		double min = NUMmin (asvector (m));
+		double max = NUMmax (asvector (m));
+		Melder_require (min >= 0.0, U"The matrix should be non-negative.");
+		min = sqrt (min) / my dimensionOfApproximation;
+		max = sqrt (max) / my dimensionOfApproximation;
+		VEC h = asvector (my h.get()), w = asvector (my w.get());
+		for (long i = 1; i <= my numberOfRows * my dimensionOfApproximation; i ++)
+			h [i] = NUMrandomUniform (min, max);
+		for (long i = 1; i <= my dimensionOfApproximation * my numberOfColumns; i ++)
+			w [i] = NUMrandomUniform (min, max);
+	} else {
+	}
 }
 
-autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer dimensionOfApproximation, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, int initialisationMethod) {
+autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer dimensionOfApproximation) {
 	try {
-		autoNMF me = Thing_new (NMF);
-		NMF_initializeApproximation (me.get(), m, initialisationMethod);
-		NMF_improveApproximation_mu (me.get(), m, maximumNumberOfIterations, changeTolerance, approximationTolerance);
+		Melder_require (NUMcheckNonNegativity (asvector (m)) == 0, U"The matrix elements should not be negative.");
+		Melder_require (m.ncol <= m.nrow, U"The number of rows should exceed the number of columns.");
+		Melder_require (dimensionOfApproximation <= m.ncol, U"The dimension of approximation should not exceed the number of columns.");
+		autoNMF me = NMF_create (m.nrow, m.ncol, dimensionOfApproximation);
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NMF cannot be created.");
 	}
 }
 
-static double getNorm (constMAT a, constMAT w, constMAT h, MAT d) {
+static double getNorm (MAT d, constMAT a, constMAT w, constMAT h) {
 	Melder_assert (a.nrow == d.nrow && a.ncol == d.ncol);
 	MATVUmul_fast (d, w, h);
 	d *= -1.0;
@@ -83,14 +116,18 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 
 void NMF_improveApproximation_mu (NMF me, constMAT a, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
+		Melder_require (my numberOfColumns == a.ncol, U"The number of columns should be equal.");
+		Melder_require (my numberOfRows == a.nrow, U"The number of rowss should be equal.");
 		autoMAT numerh = newMATzero (my dimensionOfApproximation, my numberOfColumns); // k x n
 		autoMAT work1 = newMATzero (my dimensionOfApproximation, my dimensionOfApproximation); // used for calculation of h & w
 		autoMAT work2 = newMATzero (my dimensionOfApproximation, my numberOfColumns);
-		autoMAT h0, h = newMATzero (my dimensionOfApproximation, my numberOfColumns); // k*n;
+		autoMAT h0 = newMATzero (my dimensionOfApproximation, my numberOfColumns); // k*n;
+		autoMAT h = newMATzero (my dimensionOfApproximation, my numberOfColumns); // k*n;
 
 		autoMAT numerw = newMATzero (my numberOfRows, my dimensionOfApproximation); // m*k
 		autoMAT work2w = newMATzero (my numberOfRows, my dimensionOfApproximation); // m*k;
-		autoMAT w0, w = newMATzero (my numberOfRows, my dimensionOfApproximation); // m*k;
+		autoMAT w0 = newMATzero (my numberOfRows, my dimensionOfApproximation); // m*k;
+		autoMAT w = newMATzero (my numberOfRows, my dimensionOfApproximation); // m*k;
 		
 		autoMAT d = newMATzero (my numberOfRows, my numberOfColumns);	//d = a - w*h
 		
@@ -109,7 +146,7 @@ void NMF_improveApproximation_mu (NMF me, constMAT a, integer maximumNumberOfIte
 		
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			MATVUmul_fast (numerh.get(), w0.transpose(), a); // numerh = w0'*a
-			MATmtm_preallocated (work1.get(), w0.transpose()); // work1 = w0'*w0
+			MATmtm_preallocated (work1.get(), w0.get()); // work1 = w0'*w0
 			MATVUmul_fast  (work2.get(), work1.get(), h0.get()); // work2 = work1 * h0
 
 
