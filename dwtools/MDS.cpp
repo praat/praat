@@ -360,8 +360,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		integer dimmin = std::min (nrow, ncol);
 
 		autoMAT h = newMATcopy (my data.get());
-		autoVEC rowsum = newVECsumPerRow (my data.get());
-		autoVEC colsum = newVECsumPerColumn (my data.get());
+		autoVEC rowsum = newVECrowSums (my data.get());
+		autoVEC colsum = newVECcolumnSums (my data.get());
 		autoConfiguration thee = Configuration_create (nrow + ncol, numberOfDimensions);
 
 		if (numberOfDimensions == 0)

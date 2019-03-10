@@ -227,7 +227,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"invSigmoid", U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
 	U"randomBernoulli", U"randomBernoulli#",
 	U"randomPoisson", U"transpose##",
-	U"sumPerRow#", U"sumPerColumn#",
+	U"rowSums#", U"columnSums#",
 	U"log2", U"ln", U"log10", U"lnGamma",
 	U"hertzToBark", U"barkToHertz", U"phonToDifferenceLimens", U"differenceLimensToPhon",
 	U"hertzToMel", U"melToHertz", U"hertzToSemitones", U"semitonesToHertz",
@@ -2651,8 +2651,25 @@ static void do_add () {
 			if (xncol != ysize)
 				Melder_throw (U"When adding a vector to a matrix, its size should be equal to the number of columns, instead of ", ysize, U" and ", xncol, U".");
 			if (x->owned) {
+				/*@praat
+					#
+					# result## = owned x## + y#
+					#
+					y# = { -5, 6, -19 }
+					result## = { { 14, -33, 6.25 }, { -33, 17, 9 } } + y#
+					assert result## = { { 9, -27, -12.75 }, { -38, 23, -10 } }
+				@*/
 				x->numericMatrix  +=  y->numericVector;
 			} else {
+				/*@praat
+					#
+					# result## = unowned x## + y#
+					#
+					x## = { { 14, -33, 6.25 }, { -33, 17, 9 } }
+					y# = { -5, 6, -19 }
+					result## = x## + y#
+					assert result## = { { 9, -27, -12.75 }, { -38, 23, -10 } }
+				@*/
 				// x does not have to be cleaned up, because it was not owned
 				x->numericMatrix = newMATadd (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
@@ -2902,7 +2919,7 @@ static void do_mul () {
 					x# = { 11, 13, 17 }
 					y# = { 8, 90 }
 					asserterror When multiplying vectors, their numbers of elements should be equal, instead of 3 and 2.
-					result# = x# + y#
+					result# = x# * y#
 				@*/
 				Melder_throw (U"When multiplying vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 			}
@@ -2911,7 +2928,7 @@ static void do_mul () {
 					#
 					# result# = owned x# * y#
 					#
-					result# = { 11, 13, 17 } * { 44, 56, 67 }   ; owned + owned
+					result# = { 11, 13, 17 } * { 44, 56, 67 }   ; owned * owned
 					assert result# = { 484, 728, 1139 }
 					y# = { 3, 2, 89.5 }
 					result# = { 11, 13, 17 } * y#   ; owned * unowned
@@ -3434,8 +3451,8 @@ static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (NUMmean (x->numericVector));
-	//} else if (x->which == Stackel_NUMERIC_MATRIX) {
-	//	pushNumber (NUMmean (x->numericMatrix));
+	} else if (x->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (NUMmean (x->numericMatrix));
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", x->whichText(), U".");
 	}
@@ -3444,8 +3461,10 @@ static void do_stdev () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (NUMstdev (x->numericVector));
+	} else if (x->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (NUMstdev (x->numericMatrix));
 	} else {
-		Melder_throw (U"Cannot compute the mean of ", x->whichText(), U".");
+		Melder_throw (U"Cannot compute the standard deviation of ", x->whichText(), U".");
 	}
 }
 static void do_center () {
@@ -5418,22 +5437,27 @@ static void do_MATtranspose () {
 		Melder_throw (U"The function \"transpose##\" requires a matrix, not ", x->whichText(), U".");
 	}
 }
-static void do_sumPerRowH () {
+static void do_rowSumsH () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		autoVEC result = newVECsumPerRow (x->numericMatrix);
+		autoVEC result = newVECrowSums (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"sumPerRow#\" requires a matrix, not ", x->whichText(), U".");
+		Melder_throw (U"The function \"rowSums#\" requires a matrix, not ", x->whichText(), U".");
 	}
 }
-static void do_sumPerColumnH () {
+static void do_columnSumsH () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		autoVEC result = newVECsumPerColumn (x->numericMatrix);
+		/*@praat
+			a## = { { 4, 7, -10 }, { 16, 0, 88 } }
+			result# = columnSums# (a##)
+			assert result# = { 20, 7, 78 }
+		@*/
+		autoVEC result = newVECcolumnSums (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"sumPerColumn#\" requires a matrix, not ", x->whichText(), U".");
+		Melder_throw (U"The function \"columnSums#\" requires a matrix, not ", x->whichText(), U".");
 	}
 }
 static void do_VECrepeat () {
@@ -6569,8 +6593,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case VEC_RANDOM_BERNOULLI_: { do_functionvec_n_n (NUMrandomBernoulli_real);
 } break; case RANDOM_POISSON_: { do_function_n_n (NUMrandomPoisson);
 } break; case MAT_TRANSPOSE_: { do_MATtranspose ();
-} break; case SUM_PER_ROW_H_: { do_sumPerRowH ();
-} break; case SUM_PER_COLUMN_H_: { do_sumPerColumnH ();
+} break; case SUM_PER_ROW_H_: { do_rowSumsH ();
+} break; case SUM_PER_COLUMN_H_: { do_columnSumsH ();
 } break; case LOG2_: { do_log2 ();
 } break; case LN_: { do_ln ();
 } break; case LOG10_: { do_log10 ();
