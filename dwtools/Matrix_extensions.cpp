@@ -1,6 +1,6 @@
 /* Matrix_extensions.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -630,6 +630,18 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 		}
 	}catch (MelderError) {
 		Melder_throw (U"Cannot create Eigenvalues from Matrix.");
+	}
+}
+
+autoMatrix SVD_to_Matrix (SVD me, integer from, integer to) {
+	try {
+		autoMAT synthesis = SVD_synthesize (me, from, to);
+		autoMatrix thee = Matrix_create (0.5, 0.5 + synthesis.ncol, synthesis.ncol, 1.0, 1.0,
+										 0.5, 0.5 + synthesis.nrow, synthesis.nrow, 1.0, 1.0);
+		thy z.get() <<= synthesis.get();
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": no Matrix synthesized.");
 	}
 }
 

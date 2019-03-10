@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2013, 2015-2016 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ void structDTW :: v_info () {
 		for (integer i = 1; i <= nx; i ++) {
 			dd += z [i] [i];
 		}
-		MelderInfo_writeLine (U"Distance ilong diagonal: ", dd / nx);
+		MelderInfo_writeLine (U"Distance along diagonal: ", dd / nx);
 	}
 }
 

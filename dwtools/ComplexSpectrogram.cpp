@@ -1,6 +1,6 @@
 /* ComplexSpectrogram.cpp
  * 
- * Copyright (C) 2014-2018 David Weenink
+ * Copyright (C) 2014-2019 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,6 +231,11 @@ autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
 	}
+}
+
+void ComplexSpectrogram_Spectrogram_replaceAmplitudes (ComplexSpectrogram me, Spectrogram thee) {
+	Melder_require (my nx == thy nx && my ny == thy ny, U"The number of cells must be equal.");
+	my z.all() <<= thy z.all();
 }
 
 autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {

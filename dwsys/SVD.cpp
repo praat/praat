@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
 #include "../melder/melder.h"
 #include "NUMclapack.h"
 #include "NUMcblas.h"
+#include "NUM2.h"
 
 #include "oo_DESTROY.h"
 #include "SVD_def.h"
@@ -63,7 +64,7 @@
 void structSVD :: v_info () {
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
-	MelderInfo_writeLine (U"This matrix is", (isTransposed ? U"" : U"not "), U" transposed.");
+	MelderInfo_writeLine (U"This matrix is", (isTransposed ? U"" : U" not "), U" transposed.");
 }
 
 Thing_implement (SVD, Daata, 1);
@@ -295,27 +296,27 @@ integer SVD_getRank (SVD me) {
 
 /*
 	SVD of A = U D V'.
-	If u [i] is the i-th column vector of U and v [i] the i-th column vector of V and s [i] the i-th singular value,
-	we can write the svd expansion  A = sum_{i=1}^n {d [i] u [i] v [i]'}.
-	Golub & van Loan, 3rd ed, p 71.
+	This can be written as A = sum_{r=1}^n d[i] u[i]v[i]', where u[i] and [v[i] are columnvectors
+	(Golub & van Loan, 3rd ed, p 71).
+	If (internally) the matrix was transposed we can rewrite this as A=sum_{r=1}^n d[i] u[i]'v[i].
 */
 autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
-	if (sv_to == 0) sv_to = my numberOfColumns;
+	if (sv_to == 0)
+		sv_to = my numberOfColumns;
 	try {
 		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns, U"Indices must be in range [1, ", my numberOfColumns, U"].");
 		long nrow = my numberOfRows;
 		long ncol = my numberOfColumns;
 		if (my isTransposed) std::swap (nrow, ncol);
 		autoMAT result = newMATzero (nrow, ncol);
+		autoMAT outer = newMATzero (nrow, ncol);
+
 		for (integer k = sv_from; k <= sv_to; k ++) {
-			for (integer i = 1; i <= my numberOfRows; i ++)
-				for (integer j = 1; j <= my numberOfColumns; j ++) {
-					double value = my d [k] * my u [i] [k] * my v [j] [k];
-					if (my isTransposed)
-						result [j] [i] += value;
-					else
-						result [i] [j] += value;
-				}
+			if (my isTransposed)
+				MATouter_preallocated (outer.get(), my v.column(k), my u.column(k));
+			else
+				MATouter_preallocated (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
+			result.get() += outer.get() * my d [k];
 		}
 		return result;
 	} catch (MelderError) {

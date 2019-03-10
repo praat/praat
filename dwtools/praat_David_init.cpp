@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -876,6 +876,12 @@ DO
 	CONVERT_EACH (ComplexSpectrogram)
 		autoSpectrum result = ComplexSpectrogram_to_Spectrum (me, time);
 	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes) {
+	MODIFY_FIRST_OF_TWO (ComplexSpectrogram, Spectrogram)
+		ComplexSpectrogram_Spectrogram_replaceAmplitudes (me, you);
+	MODIFY_FIRST_OF_TWO_END
 }
 
 /********************** Correlation *******************************************/
@@ -3605,6 +3611,12 @@ DIRECT (NEW_Matrix_to_Eigen) {
 	CONVERT_EACH_END (my name.get())
 }
 
+DIRECT (NEW_Matrix_to_SVD) {
+	CONVERT_EACH (Matrix)
+		autoSVD result = SVD_createFromGeneralMatrix (my z.get());
+	CONVERT_EACH_END (my name.get())
+}
+
 DIRECT (NEWTIMES2_Matrix_eigen_complex) {
 	LOOP {
 		iam_LOOP (Matrix);
@@ -6313,6 +6325,16 @@ DO
 	INTEGER_ONE_END (U" (= number of singular values needed)")
 }
 
+FORM (NEW_SVD_to_Matrix, U"SVD: To Matrix", U"SVD: To Matrix...") {
+	NATURAL (fromComponent, U"First component", U"1")
+	INTEGER (toComponent, U"Last component", U"0 (= all)")
+	OK
+DO
+	CONVERT_EACH (SVD)
+		autoMatrix result = SVD_to_Matrix (me, fromComponent, toComponent);
+	CONVERT_EACH_END (my name.get())
+}
+
 FORM (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
 	NATURAL (fromComponent, U"First component", U"1")
 	INTEGER (toComponent, U"Last component", U"0 (= all)")
@@ -7769,6 +7791,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0, NEW_ComplexSpectrogram_downto_Spectrogram);
 	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 0, NEW_ComplexSpectrogram_to_Spectrum_slice);
 	//praat_addAction1 (classComplexSpectrogram, 0, U"Paint...", 0, 1, DO_Spectrogram_paint);
+	praat_addAction2 (classComplexSpectrogram, 1, classSpectrogram, 1, U"Replace amplitudes", nullptr, 0, MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes);
 
 	praat_addAction1 (classConfusion, 0, U"Confusion help", nullptr, 0, HELP_Confusion_help);
 	praat_TableOfReal_init2 (classConfusion);
@@ -8118,6 +8141,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, NEW_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 0, U"To Activation", U"*To ActivationList", praat_DEPRECATED_2016, NEW_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 0, U"To Eigen", U"Eigen", praat_HIDDEN, NEW_Matrix_to_Eigen);
+	praat_addAction1 (classMatrix, 0, U"To SVD", U"To Eigen", praat_HIDDEN, NEW_Matrix_to_SVD);
 	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
@@ -8410,6 +8434,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1, INTEGER_SVD_getMinimumNumberOfSingularValues);
 	
 	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, NEW_SVD_to_TableOfReal);
+	praat_addAction1 (classSVD, 0, U"To Matrix...", nullptr, 0, NEW_SVD_to_Matrix);
 	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0, NEW_SVD_extractLeftSingularVectors);
 	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0, NEW_SVD_extractRightSingularVectors);
 	praat_addAction1 (classSVD, 0, U"Extract singular values", nullptr, 0, NEW_SVD_extractSingularValues);
