@@ -3831,6 +3831,28 @@ static void do_appendInfoLine () {
 	MelderInfo_drain ();
 	pushNumber (1);
 }
+static void shared_do_writeFile (autoMelderString *text, integer numberOfArguments) {
+	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER) {
+			MelderString_append (text, arg->number);
+		} else if (arg->which == Stackel_STRING) {
+			MelderString_append (text, arg->getString());
+		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
+			for (integer i = 1; i <= arg->numericVector.size; i ++)
+				MelderString_append (text, arg->numericVector [i],
+						i == arg->numericVector.size ? U"" : U" ");
+		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
+			for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++) {
+				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++) {
+					MelderString_append (text, arg->numericMatrix [irow] [icol],
+							icol == arg->numericMatrix.ncol ? U"" : U" ");
+				}
+				MelderString_append (text, irow == arg->numericMatrix.nrow ? U"" : U"\n");
+			}
+		}
+	}
+}
 static void do_writeFile () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
@@ -3843,13 +3865,7 @@ static void do_writeFile () {
 		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
-	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
-		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
-			MelderString_append (& text, arg->number);
-		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->getString());
-	}
+	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName -> getString(), & file);
 	MelderFile_writeText (& file, text.string, Melder_getOutputEncoding ());
@@ -3867,13 +3883,7 @@ static void do_writeFileLine () {
 		Melder_throw (U"The first argument of \"writeFileLine\" has to be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
-	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
-		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
-			MelderString_append (& text, arg->number);
-		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->getString());
-	}
+	shared_do_writeFile (& text, numberOfArguments);
 	MelderString_appendCharacter (& text, U'\n');
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName -> getString(), & file);
@@ -3892,13 +3902,7 @@ static void do_appendFile () {
 		Melder_throw (U"The first argument of \"appendFile\" has to be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
-	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
-		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
-			MelderString_append (& text, arg->number);
-		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->getString());
-	}
+	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName -> getString(), & file);
 	MelderFile_appendText (& file, text.string);
@@ -3916,13 +3920,7 @@ static void do_appendFileLine () {
 		Melder_throw (U"The first argument of \"appendFileLine\" has to be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
-	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
-		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
-			MelderString_append (& text, arg->number);
-		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->getString());
-	}
+	shared_do_writeFile (& text, numberOfArguments);
 	MelderString_appendCharacter (& text, '\n');
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName -> getString(), & file);
