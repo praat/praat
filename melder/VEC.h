@@ -254,14 +254,14 @@ inline void VECsin_inplace (VEC const& x) noexcept {
 
 extern void VECsort_inplace (VEC const& x) noexcept;
 
-inline autoVEC newVECsumPerRow (const constMAT& x) {
+inline autoVEC newVECrowSums (const constMAT& x) {
 	autoVEC result = newVECraw (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		result [irow] = NUMsum (x.row (irow));
 	return result;
 }
 
-inline autoVEC newVECsumPerColumn (const constMAT& x) {
+inline autoVEC newVECcolumnSums (const constMAT& x) {
 	autoVEC result = newVECraw (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		result [icol] = NUMsum (x.column (icol));

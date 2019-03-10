@@ -16,7 +16,7 @@ numberOfTestFiles = 0
 totalNumberOfTests = 0
 
 @createAllPraatTestsInFolder: "kar"
-@createAllPraatTestsInFolder: "num"
+@createAllPraatTestsInFolder: "melder"
 @createAllPraatTestsInFolder: "sys"
 @createAllPraatTestsInFolder: "stat"
 @createAllPraatTestsInFolder: "fon"
