@@ -230,6 +230,10 @@ inline double NUMmean (constVECVU const& x) noexcept {
 	return mean;
 }
 
+inline double NUMmean (constMAT const& x) noexcept {
+	return NUMmean (asvector (x));
+}
+
 inline double NUMmin (const constVECVU& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double minimum = vec [1];
@@ -263,6 +267,10 @@ inline double NUMsqrt (double x) {
 }
 
 extern double NUMstdev (constVECVU const& x) noexcept;
+
+inline double NUMstdev (constMAT const& x) noexcept {
+	return NUMstdev (asvector (x));
+}
 
 inline double NUMsum (constMAT const& x) noexcept {
 	return NUMsum (asvector (x));
