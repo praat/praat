@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 7 September 2018
+# 9 March 2019
 
 include ../makefile.defs
 
@@ -32,7 +32,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
 	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o MixingMatrix.o \
-	Matrix_extensions.o \
+	Matrix_and_NMF.o Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
 	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
