@@ -637,13 +637,13 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 					numberOfUnexpectedZeroes ++;
 				} else {
 					const double relativeError = fabs (checkedValue / targetValue - 1.0);
-					if (relativeError > 10.0) Melder_warning
-							(U"GPU matrix multiplication incorrect: unexpected imprecision of ", relativeError, U".");
+					if (relativeError > 10.0) Melder_casual
+							(U"GPU matrix multiplication warning: unexpected imprecision of ", relativeError, U".");
 				}
 			}
 		}
-		if (numberOfUnexpectedZeroes > 0) Melder_warning
-				(U"GPU matrix multiplication incorrect: found ", numberOfUnexpectedZeroes, U" unexpected zeroes.");
+		if (numberOfUnexpectedZeroes > 0) Melder_casual
+				(U"GPU matrix multiplication warning: found ", numberOfUnexpectedZeroes, U" unexpected zeroes, out of ", numberOfChecks, U".");
 		return;
 	}
 #else
