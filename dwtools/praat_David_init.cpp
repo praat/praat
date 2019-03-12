@@ -122,6 +122,7 @@
 #include "CCs_to_DTW.h"
 #include "Discriminant_PatternList_Categories.h"
 #include "DTW_and_TextGrid.h"
+#include "Matrix_and_NMF.h"
 #include "Permutation_and_Index.h"
 #include "Pitch_extensions.h"
 #include "Sound_and_Spectrogram_extensions.h"
@@ -3627,6 +3628,20 @@ DIRECT (NEWTIMES2_Matrix_eigen_complex) {
 	}
 END }
 
+FORM (NEW_Matrix_to_NMF, U"Matrix: To NMF", U"Matrix: To NMF...") {
+	NATURAL (dimensionOfApproximation, U"Dimension of approximation", U"2")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	OPTIONMENU (initialisationMethod, U"Initialisation method", 1)
+		OPTION (U"RandomUniform")
+	OK
+DO
+	CONVERT_EACH (Matrix)
+		autoNMF result = Matrix_to_NMF (me, dimensionOfApproximation, maximumNumberOfIterations, tolx, told, initialisationMethod);
+	CONVERT_EACH_END (my name.get())
+}
+
 FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	LABEL (U"Distance  between cepstral coefficients")
 	REAL (distanceMetric, U"Distance metric", U"2.0")
@@ -4040,6 +4055,16 @@ DIRECT (HELP_MSpline_help) {
 	HELP (U"MSpline")
 }
 
+DIRECT (HELP_NMF_help) {
+	HELP (U"NMF")
+}
+
+DIRECT (NEW_NMF_to_Matrix) {
+	CONVERT_EACH (NMF)
+		autoMatrix result = NMF_to_Matrix (me);
+	CONVERT_EACH_END (my name.get())
+}
+	
 /********************** PatternList *******************************************/
 
 DIRECT (NEW1_PatternList_Categories_to_Discriminant) {
@@ -7654,7 +7679,7 @@ void praat_uvafon_David_init () {
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
-		classIndex, classKlattTable,
+		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
@@ -8142,6 +8167,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To Activation", U"*To ActivationList", praat_DEPRECATED_2016, NEW_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 0, U"To Eigen", U"Eigen", praat_HIDDEN, NEW_Matrix_to_Eigen);
 	praat_addAction1 (classMatrix, 0, U"To SVD", U"To Eigen", praat_HIDDEN, NEW_Matrix_to_SVD);
+	praat_addAction1 (classMatrix, 0, U"To NMF...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF);
 	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
@@ -8183,6 +8209,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, HELP_MSpline_help);
 	praat_Spline_init (classMSpline);
 
+	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
+	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
+	
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, GRAPHICS_PatternList_draw);
 	praat_PatternList_query_init (classPatternList);
