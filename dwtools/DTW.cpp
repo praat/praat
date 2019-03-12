@@ -1183,7 +1183,7 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
         integer delta_xy = std::min (my nx, my ny) / 10; // if localSlope == 1 start within 10% of
 
 		Melder_require (localSlope > 0 && localSlope < 5, 
-			U"Local slope parameter is illegal.");
+			U"Local slope parameter ", localSlope, U" not supported.");
 
         autoNUMmatrix<double> delta (-2, my ny, -2, my nx);
         autoNUMmatrix<integer> psi (-2, my ny, -2, my nx);
