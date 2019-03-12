@@ -2656,6 +2656,24 @@ NORMAL (U"An object of type MSpline represents a linear combination of basis "
 FORMULA (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
 MAN_END
 
+MAN_BEGIN (U"NMF", U"djmw", 20190312)
+INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factorization@ of a matrix.")
+MAN_END
+
+MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190312)
+INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a matrix ##A#, whose elements are all non-negative, into two matrices ##W# and ##H# such that ##A \\~~ W\\.cH#, where the elements of ##W# and ##H# are also all non-negative.")
+ENTRY (U"Algorithms for computing NMF")
+NORMAL (U"The algorithms fall into three general classes:")
+TAG (U"##1. Multiplicative updates#,")
+TAG (U"##2. Alternating Least squares#,")
+TAG (U"##3. Projected Gradient.#")
+ENTRY (U"Multiplicative Update Algorithms")
+NORMAL (U"The update steps in this algorithm from @@Lee & Seung (2001)@ are")
+FORMULA (U"H^^(t+1)^= H^^(t)^\\.c (W^^(t)T^*A) / (W^^(t)T^*W^^(t)^*H^^(t)^ + \\ep)")
+FORMULA (U"W^^(t+1)^= W^^(t)^\\.c (A*H^^(t+1)T^) / (W^^(t)T^*(H^^(t+1)^*H^^(t+1)T^) + \\ep),")
+NORMAL (U"where T means transposition and the divisions have to be performed %%element-wise%.")
+MAN_END
+
 MAN_BEGIN (U"pairwise algorithm for computing sample variances", U"djmw", 20170806)
 INTRO (U"An algorithm to compute the mean and the variance of an array of numbers. By pairwise combining array elements, the total number of arithmetic operations is reduced and therefore also the noise due to finite precision arithmetic. The algorithm is described in @@Chan, Golub & LeVeque (1979)@ and a comparison with other algorithms is presented in @@Chan, Golub & LeVeque (1983)@.")
 MAN_END
@@ -5464,6 +5482,12 @@ NORMAL (U"T. Irino & R.D. Patterson (1997): \"A time-domain, level-dependent "
 	"auditory filter: The gammachirp.\" %%Journal of the Acoustical Society of America% #101: 412\\--419.")
 MAN_END
 
+MAN_BEGIN (U"Janecek et al. (2011)", U"djmw", 20190312)
+	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011)"
+		"\"LIBNMF \\-- A library for nonnegative matrix factorization.\""
+		"%%Computing and informatics% #30: 205\\--224")
+MAN_END
+
 MAN_BEGIN (U"Johannesma (1972)", U"djmw", 19980123)
 NORMAL (U"P.I.M. Johannesma (1972): \"The pre-response stimulus ensemble of "
 	"neurons in the cochlear nucleus.\" In %%Symposium on Hearing Theory% "
@@ -5501,6 +5525,11 @@ NORMAL (U"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
 	"Development: Design and Analysis of the Acoustic-Phonetic Corpus.\" "
 	"%%Proc. DARPA Speech Recognition Workshop%, Report No. SAIC-86/1546, "
 	"100\\--119.")
+MAN_END
+
+MAN_BEGIN (U"Lee & Seung (2001)", U"djmw", 20190312)
+	NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
+	"%%Advances in in neural information processing systems% #13: 556\\--562.")
 MAN_END
 
 MAN_BEGIN (U"Morrison (1990)", U"djmw", 19980123)
