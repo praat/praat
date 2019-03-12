@@ -32,22 +32,22 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWith
 		autoPermutation classes = Permutation_create (numberOfClasses);
 		Permutation_permuteRandomly_inplace (classes.get(), 0, 0);
 		autoPermutation classesinv = Permutation_invert (classes.get());
-		autoNUMmatrix<integer> indices (0, numberOfClasses, 1, 4);
+		autoINTMAT indices = newINTMATzero (numberOfClasses, 4);
 
 		for (integer i = 1; i <= my numberOfItems; i ++)
-			indices [my classIndex [i]] [2] ++; /* col 2: number of elements in class */
+			indices [my classIndex [i]] [2] ++;   // column 2: number of elements in class
 
 		/* Get some other indices ready */
 		for (integer i = 1; i <= numberOfClasses; i ++) {
 			integer klass = classes -> p [i];
 			indices [i] [1] = klass;
-			indices [i] [3] = indices [i - 1] [3] + indices [i - 1] [2]; /* col 3: index at start of class */
+			indices [i] [3] = ( i == 1 ? 0 : indices [i - 1] [3] + indices [i - 1] [2] );   // column 3: index at start of class
 		}
 
 		for (integer i = 1; i <= my numberOfItems; i ++) {
 			integer klass = my classIndex [i];
 			integer newindex = classesinv -> p [klass];
-			indices [newindex] [4] ++; /* col 4: number of elements processed for class */
+			indices [newindex] [4] ++;   // column 4: number of elements processed for class
 			integer newpos = indices [newindex] [3] + indices [newindex] [4];
 			thy p [newpos] = i;
 		}
@@ -55,9 +55,8 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWith
 			for (integer i = 1; i <= numberOfClasses; i ++) {
 				integer from = indices [i] [3] + 1;
 				integer to = from + indices [i] [2] - 1;
-				if (to > from) {
+				if (to > from)
 					Permutation_permuteRandomly_inplace (thee.get(), from, to);
-				}
 			}
 		}
 		return thee;
