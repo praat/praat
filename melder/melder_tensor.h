@@ -527,20 +527,15 @@ class matrixview;
 template <typename T>
 class constmatrixview;
 
-#define PACKED_TENSORS  0
-
 template <typename T>
 class matrix {
 public:
-	T **at_deprecated = nullptr;   // deprecated; WATCH OUT: when removed, change MatrixEditor
+	T *cells = nullptr;
 	integer nrow = 0, ncol = 0;
-	T *cells = nullptr;   // the future
 public:
 	matrix () = default;
-	//matrix (T *givenCells, integer givenNrow, integer givenNcol) :
-	//		cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	explicit matrix (T **givenAt, integer givenNrow, integer givenNcol) :
-			cells (givenAt ? & givenAt [1] [1] : nullptr), at_deprecated (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	explicit matrix (T *givenCells, integer givenNrow, integer givenNcol) :
+			cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
@@ -550,7 +545,6 @@ public:
 	}
 	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
-		Melder_assert (our at_deprecated);
 		Melder_assert (our cells);
 		return vector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
 	}
@@ -647,21 +641,17 @@ template <typename T>
 class constmatrix {
 public:
 	const T *cells = nullptr;
-	const T * const * at_deprecated = nullptr;
 	integer nrow = 0, ncol = 0;
 	constmatrix () = default;
-	//constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	//explicit constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol) :
-	//		cells (givenAt ? & givenAt [1] [1] : nullptr), at_deprecated (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	//explicit constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat) :
-			cells (mat.cells), at_deprecated (mat.at_deprecated), nrow (mat.nrow), ncol (mat.ncol) { }
+			cells (mat.cells), nrow (mat.nrow), ncol (mat.ncol) { }
 
 	constvector<T> operator[] (integer rowNumber) const {
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
 	}
 	constvector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
-		Melder_assert (our at_deprecated);
 		Melder_assert (our cells);
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
 	}
@@ -770,45 +760,29 @@ public:
 	explicit automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
-		#if PACKED_TENSORS
 		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
 				: NUMvector<T> (0, givenNrow * givenNcol - 1, initializationType == kTensorInitializationType::ZERO));
-		#else
-		our at_deprecated = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: NUMmatrix<T> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO));
-		our cells = our at_deprecated ? & our at_deprecated [1] [1] : nullptr;
-		#endif
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
-		#if PACKED_TENSORS
-		if (our cells) NUMvector_free (our cells, 1);
-		#else
-		if (our at_deprecated) NUMmatrix_free (our at_deprecated, 1, 1);
-		#endif
+		if (our cells) NUMvector_free (our cells, 0);
 	}
 	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	matrixview<T> all () const {
-		#if PACKED_TENSORS
 		return matrixview<T> (our cells, our nrow, our ncol, our ncol, 1);
-		#else
-		return matrixview<T> (& our at_deprecated [1] [1], our nrow, our ncol, our ncol, 1);
-		#endif
 	}
 	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
 		our reset();
 		our cells = given.cells;
-		our at_deprecated = given.at_deprecated;
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
 	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-automatrix
-		T **oldAt = our at_deprecated;
-		our at_deprecated = nullptr;   // disown ourselves, preventing automatic destruction of the payload
-		our cells = nullptr;
-		return matrix<T> (oldAt, our nrow, our ncol);
+		T *oldCells = our cells;
+		our cells = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		return matrix<T> (oldCells, our nrow, our ncol);
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
@@ -821,14 +795,12 @@ public:
 	*/
 	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor
 		other.cells = nullptr;   // disown source
-		other.at_deprecated = nullptr;   // disown source
 		other.nrow = 0;   // to keep the source in a valid state
 		other.ncol = 0;   // to keep the source in a valid state
 	}
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
-		#if PACKED_TENSORS
 		if (other.cells != our cells) {
-			if (our cells) NUMvector_free (our cells, 1);
+			if (our cells) NUMvector_free (our cells, 0);
 			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -836,34 +808,13 @@ public:
 			other.nrow = 0;   // to keep the source in a valid state
 			other.ncol = 0;   // to keep the source in a valid state
 		}
-		#else
-		if (other.at_deprecated != our at_deprecated) {
-			if (our at_deprecated) NUMmatrix_free (our at_deprecated, 1, 1);
-			our at_deprecated = other.at_deprecated;
-			our cells = other.cells;
-			our nrow = other.nrow;
-			our ncol = other.ncol;
-			other.at_deprecated = nullptr;   // disown source
-			other.cells = nullptr;   // disown source
-			other.nrow = 0;   // to keep the source in a valid state
-			other.ncol = 0;   // to keep the source in a valid state
-		}
-		#endif
 		return *this;
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
-		#if PACKED_TENSORS
 		if (our cells) {
-			NUMvector_free (our cells, 1);
+			NUMvector_free (our cells, 0);
 			our cells = nullptr;
 		}
-		#else
-		if (our at_deprecated) {
-			NUMmatrix_free (our at_deprecated, 1, 1);
-			our at_deprecated = nullptr;
-			our cells = nullptr;
-		}
-		#endif
 		our nrow = 0;
 		our ncol = 0;
 	}
@@ -880,11 +831,7 @@ automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 }
 template <typename T>
 vector<T> asvector (matrix<T> const& x) {
-	#if PACKED_TENSORS
 	return vector<T> (x.cells - 1, x.nrow * x.ncol);
-	#else
-	return vector<T> (& x [1] [0], x.nrow * x.ncol);
-	#endif
 }
 template <typename T>
 constvector<T> asvector (constmatrix<T> const& x) {
