@@ -212,7 +212,7 @@ inline void VECcentre_inplace (VECVU const& x, double *out_mean = nullptr) noexc
 		*out_mean = xmean;
 }
 
-inline autoVEC newVECcolumn (const constMAT& source, integer columnNumber) {
+inline autoVEC newVECcolumn (constMATVU const& source, integer columnNumber) {
 	autoVEC target = newVECraw (source.nrow);
 	target.all() <<= source.column (columnNumber);
 	return target;

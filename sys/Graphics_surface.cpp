@@ -1,6 +1,6 @@
 /* Graphics_surface.cpp
  *
- * Copyright (C) 1992-2005,2008,2011,2016-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011,2016-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,21 @@
 
 #include "Graphics.h"
 
-void Graphics_surface (Graphics me, double const * const *z,
-	integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2,
+void Graphics_surface (Graphics me, constMATVU const& z,
+	double x1, double x2, double y1, double y2,
 	double minimum, double maximum,
 	double /* elevation */, double /* azimuth */)
 {
 	/*
 		`sum` is the running sum of the x and y indices of the back corner of each tetragon.
-		The x and y indices of the back corner of the backmost tetragon are ix2 and iy2,
-		and the x and y indices of the front corner of the frontmost tetragon are ix1 and iy1,
-		so that the x and y indices of its back corner are ix1 + 1 and iy1 + 1.
+		The x and y indices of the back corner of the backmost tetragon are z.ncol and z.nrow,
+		and the x and y indices of the front corner of the frontmost tetragon are 1 and 1,
+		so that the x and y indices of its back corner are 1 + 1 and 1 + 1.
 	*/
-	integer const maxsum = ix2 + iy2, minsum = (ix1 + 1) + (iy1 + 1);
-	if (ix2 <= ix1 || iy2 <= iy1) return;
-	double const dx = (x2 - x1) / (ix2 - ix1);
-	double const dy = (y2 - y1) / (iy2 - iy1);
+	integer const maxsum = z.ncol + z.nrow, minsum = (1 + 1) + (1 + 1);
+	if (z.ncol <= 1 || z.nrow <= 1) return;
+	double const dx = (x2 - x1) / (z.ncol - 1);
+	double const dy = (y2 - y1) / (z.nrow - 1);
 
 	/*
 		We start at the back of the surface plot.
@@ -45,9 +44,9 @@ void Graphics_surface (Graphics me, double const * const *z,
 			We are going to cycle over a diagonal sequence of points.
 			Compute the row boundaries of this sequence.
 		*/
-		integer iymin = iy1 + 1, iymax = iy2;
-		if (iymin < sum - ix2) iymin = sum - ix2;
-		if (iymax > sum - (ix1 + 1)) iymax = sum - (ix1 + 1);
+		integer iymin = 1 + 1, iymax = z.nrow;
+		if (iymin < sum - z.nrow) iymin = sum - z.nrow;
+		if (iymax > sum - (1 + 1)) iymax = sum - (1 + 1);
 		for (integer iy = iymin; iy <= iymax; iy ++) {
 
 			/*
@@ -60,10 +59,10 @@ void Graphics_surface (Graphics me, double const * const *z,
 			/*
 				Compute the world coordinates of all four points.
 			*/
-			double const xback = x1 + (ixback - ix1) * dx, xright = xback;
-			double const xfront = x1 + (ixfront - ix1) * dx, xleft = xfront;
-			double const yback = y1 + (iyback - iy1) * dy, yleft = yback;
-			double const yfront = y1 + (iyfront - iy1) * dy, yright = yfront;
+			double const xback = x1 + (ixback - 1) * dx, xright = xback;
+			double const xfront = x1 + (ixfront - 1) * dx, xleft = xfront;
+			double const yback = y1 + (iyback - 1) * dy, yleft = yback;
+			double const yfront = y1 + (iyfront - 1) * dy, yright = yfront;
 			double const zback = z [iyback] [ixback], zfront = z [iyfront] [ixfront];
 			double const zleft = z [iyleft] [ixleft], zright = z [iyright] [ixright];
 

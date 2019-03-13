@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2008,2010-2018 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2008,2010-2019 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1367,7 +1367,7 @@ void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, in
 	}
 }
 
-void MelderFile_writeFloatToAudio (MelderFile file, constMAT buffer, int encoding, bool warnIfClipped) {
+void MelderFile_writeFloatToAudio (MelderFile file, constMATVU const& buffer, int encoding, bool warnIfClipped) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) Melder_throw (U"File not open.");

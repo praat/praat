@@ -195,56 +195,6 @@ void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
 	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
 }
 
-template <class T>
-class autoNUMmatrix {
-	T** d_ptr;
-	integer d_row1, d_col1;
-public:
-	autoNUMmatrix (integer row1, integer row2, integer col1, integer col2) : d_row1 (row1), d_col1 (col1) {
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
-	}
-	autoNUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) : d_row1 (row1), d_col1 (col1) {
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
-	}
-	autoNUMmatrix (T **ptr, integer row1, integer col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
-	}
-	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
-	}
-	~autoNUMmatrix () {
-		if (d_ptr)
-			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
-	}
-	T*& operator[] (integer row) {
-		return d_ptr [row];
-	}
-	T** peek () const {
-		return d_ptr;
-	}
-	T** transfer () {
-		T** temp = d_ptr;
-		d_ptr = nullptr;
-		return temp;
-	}
-	void reset (integer row1, integer row2, integer col1, integer col2) {
-		if (d_ptr) {
-			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
-			d_ptr = nullptr;
-		}
-		d_row1 = row1;
-		d_col1 = col1;
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
-	}
-	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
-		if (d_ptr) {
-			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
-			d_ptr = nullptr;
-		}
-		d_row1 = row1;
-		d_col1 = col1;
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
-	}
-};
-
 #pragma mark - TENSOR
 /*
 	Base-1 tensors, for parallellism with the scripting language.
@@ -611,12 +561,12 @@ public:
 	vectorview<T> diagonal () const {
 		return vectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
-	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
+	matrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
-		if (newNrow <= 0) return matrix<T> ();
-		return matrix<T> (& our at_deprecated [firstRow - 1], newNrow, our ncol);
+		if (newNrow <= 0) return matrixview<T> ();
+		return matrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
@@ -701,8 +651,8 @@ public:
 	integer nrow = 0, ncol = 0;
 	constmatrix () = default;
 	//constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	explicit constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol) :
-			cells (givenAt ? & givenAt [1] [1] : nullptr), at_deprecated (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	//explicit constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol) :
+	//		cells (givenAt ? & givenAt [1] [1] : nullptr), at_deprecated (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat) :
 			cells (mat.cells), at_deprecated (mat.at_deprecated), nrow (mat.nrow), ncol (mat.ncol) { }
 
@@ -722,12 +672,12 @@ public:
 	constvectorview<T> diagonal () const {
 		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
-	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) const {
+	constmatrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
-		if (newNrow <= 0) return constmatrix<T> ();
-		return constmatrix<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol);
+		if (newNrow <= 0) return constmatrixview<T> ();
+		return constmatrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
@@ -931,7 +881,7 @@ automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 template <typename T>
 vector<T> asvector (matrix<T> const& x) {
 	#if PACKED_TENSORS
-	return vector<T> (x.cells, x.nrow * x.ncol);
+	return vector<T> (x.cells - 1, x.nrow * x.ncol);
 	#else
 	return vector<T> (& x [1] [0], x.nrow * x.ncol);
 	#endif

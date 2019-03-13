@@ -347,7 +347,7 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 
 	Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
 	*/
-void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors) {
+void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMATVU const& data, integer fromColumn, constMATVU const& eigenvectors) {
 	Melder_assert (projection.nrow = data.nrow);
 	fromColumn = fromColumn <= 0 ? 1 : fromColumn;
 	toColumn = toColumn <= 0 ? 1 : toColumn;
@@ -363,7 +363,7 @@ void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, 
 		}
 }
 
-void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, constMAT eigenvectors) {
+void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU const& data, constMATVU const& eigenvectors) {
 	Melder_assert (data.nrow == eigenvectors.ncol && projection.nrow == eigenvectors.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++)
 		for (integer irow = 1; irow <= eigenvectors.nrow; irow ++) {
