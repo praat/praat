@@ -195,56 +195,6 @@ void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
 	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
 }
 
-template <class T>
-class autoNUMmatrix {
-	T** d_ptr;
-	integer d_row1, d_col1;
-public:
-	autoNUMmatrix (integer row1, integer row2, integer col1, integer col2) : d_row1 (row1), d_col1 (col1) {
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
-	}
-	autoNUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) : d_row1 (row1), d_col1 (col1) {
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
-	}
-	autoNUMmatrix (T **ptr, integer row1, integer col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
-	}
-	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
-	}
-	~autoNUMmatrix () {
-		if (d_ptr)
-			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
-	}
-	T*& operator[] (integer row) {
-		return d_ptr [row];
-	}
-	T** peek () const {
-		return d_ptr;
-	}
-	T** transfer () {
-		T** temp = d_ptr;
-		d_ptr = nullptr;
-		return temp;
-	}
-	void reset (integer row1, integer row2, integer col1, integer col2) {
-		if (d_ptr) {
-			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
-			d_ptr = nullptr;
-		}
-		d_row1 = row1;
-		d_col1 = col1;
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
-	}
-	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
-		if (d_ptr) {
-			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
-			d_ptr = nullptr;
-		}
-		d_row1 = row1;
-		d_col1 = col1;
-		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
-	}
-};
-
 #pragma mark - TENSOR
 /*
 	Base-1 tensors, for parallellism with the scripting language.
