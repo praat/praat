@@ -493,7 +493,7 @@ double NUMtrace2_tt (const constMAT& x, const constMAT& y);
 	_tt : trace (X'.Y') = trace ((Y.X)') = trace (Y.X)
 */
 
-void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors);
+void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMATVU const& data, integer fromColumn, constMATVU const& eigenvectors);
 /* Input:
 	data[numberOfRows, from_col - 1 + my dimension] 
 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
