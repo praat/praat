@@ -561,12 +561,12 @@ public:
 	vectorview<T> diagonal () const {
 		return vectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
-	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
+	matrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
-		if (newNrow <= 0) return matrix<T> ();
-		return matrix<T> (& our at_deprecated [firstRow - 1], newNrow, our ncol);
+		if (newNrow <= 0) return matrixview<T> ();
+		return matrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
@@ -672,12 +672,12 @@ public:
 	constvectorview<T> diagonal () const {
 		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
-	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) const {
+	constmatrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
-		if (newNrow <= 0) return constmatrix<T> ();
-		return constmatrix<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol);
+		if (newNrow <= 0) return constmatrixview<T> ();
+		return constmatrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
