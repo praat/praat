@@ -73,7 +73,7 @@ autoMatrix Eigen_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer
 		Melder_require (thy nx == my dimension, U"The number of rows (", thy ny, U") should equal the size of the eigenvectors (", my dimension, U").");
 		
 		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0);
-		MATprojectColumnsOnEigenspace_preallocated (his z.get(), thy z.get(), my eigenvectors.horizontalBand (1,numberOfDimensionsToKeep));
+		MATprojectColumnsOnEigenspace_preallocated (his z.get(), thy z.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep));
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Projection Matrix from ", me, U" and ", thee, U" not created.");

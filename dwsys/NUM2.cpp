@@ -363,7 +363,7 @@ void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, 
 		}
 }
 
-void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, constMAT eigenvectors) {
+void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU const& data, constMATVU const& eigenvectors) {
 	Melder_assert (data.nrow == eigenvectors.ncol && projection.nrow == eigenvectors.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++)
 		for (integer irow = 1; irow <= eigenvectors.nrow; irow ++) {
