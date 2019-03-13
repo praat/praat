@@ -318,8 +318,10 @@ void Graphics_altitude (Graphics me, constMATVU const& z,
 void Graphics_grey (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC, int numberOfBorders, double borders []);
 #define Graphics_gray Graphics_grey
-void Graphics_surface (Graphics me, double const * const *z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum, double elevation, double azimuth);
+void Graphics_surface (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC,
+	double minimum, double maximum, double elevation, double azimuth
+);
 
 void Graphics_setInner (Graphics me);
 void Graphics_unsetInner (Graphics me);
