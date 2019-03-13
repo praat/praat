@@ -66,28 +66,6 @@ void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, intege
 	On failure, *v and *hi are not changed.
 */
 
-/********** Arrays with two indices **********/
-
-void * NUMmatrix_generic (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
-/*
-	Function:
-		create a matrix [row1...row2] [col1...col2]; if `zero`, then all values are initialized to 0.
-	Preconditions:
-		row2 >= row1;
-		col2 >= col1;
-*/
-
-void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, integer col1) noexcept;
-/*
-	Function:
-		destroy a matrix m created with NUM...matrix.
-	Preconditions:
-		if m != nullptr: row1 and col1
-		must have the same value as with the creation of the matrix.
-*/
-
-integer NUM_getTotalNumberOfArrays ();   // for debugging
-
 template <class T>
 T* NUMvector (integer from, integer to) {
 	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, true));
@@ -130,6 +108,8 @@ template <class T>
 void NUMvector_insert (T** v, integer lo, integer *hi, integer position) {
 	NUMvector_insert_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi, position);
 }
+
+integer NUM_getTotalNumberOfArrays ();   // for debugging
 
 template <class T>
 class autoNUMvector {
@@ -177,23 +157,6 @@ public:
 		d_ptr = NUMvector<T> (from, to, zero);
 	}
 };
-
-template <class T>
-T** NUMmatrix (integer row1, integer row2, integer col1, integer col2) {
-	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2, true));
-	return result;
-}
-
-template <class T>
-T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) {
-	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2, zero));
-	return result;
-}
-
-template <class T>
-void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
-	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
-}
 
 #pragma mark - TENSOR
 /*
