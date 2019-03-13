@@ -4,3 +4,4 @@ a$ = Get value: 1, "speaker"
 assert a$ = ""   ; <<'a$'>>
 a = Get value: 1, "speaker"
 assert a = undefined   ; 'a'
+Remove

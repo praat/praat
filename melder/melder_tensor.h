@@ -651,8 +651,8 @@ public:
 	integer nrow = 0, ncol = 0;
 	constmatrix () = default;
 	//constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	explicit constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol) :
-			cells (givenAt ? & givenAt [1] [1] : nullptr), at_deprecated (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	//explicit constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol) :
+	//		cells (givenAt ? & givenAt [1] [1] : nullptr), at_deprecated (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat) :
 			cells (mat.cells), at_deprecated (mat.at_deprecated), nrow (mat.nrow), ncol (mat.ncol) { }
 
@@ -881,7 +881,7 @@ automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 template <typename T>
 vector<T> asvector (matrix<T> const& x) {
 	#if PACKED_TENSORS
-	return vector<T> (x.cells, x.nrow * x.ncol);
+	return vector<T> (x.cells - 1, x.nrow * x.ncol);
 	#else
 	return vector<T> (& x [1] [0], x.nrow * x.ncol);
 	#endif
