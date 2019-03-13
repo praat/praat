@@ -2081,7 +2081,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								matrixObject -> nx = mat.ncol;
 								matrixObject -> ymax = mat.nrow + 0.5;
 								matrixObject -> ny = mat.nrow;
-								matrixObject -> z.at_deprecated = mat.at_deprecated;   // just a reference (YUCK)
 								matrixObject -> z.cells = mat.cells;   // just a reference (YUCK)
 								matrixObject -> z.nrow = mat.nrow;
 								matrixObject -> z.ncol = mat.ncol;
@@ -2197,8 +2196,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								//vectorObject -> xmin = 0.5;
 								vectorObject -> xmax = vec.size + 0.5;
 								vectorObject -> nx = vec.size;
-								vectorObject -> z.at_deprecated [1] = vec.at;
-								vectorObject -> z.cells = & vectorObject -> z.at_deprecated [1] [1];
+								vectorObject -> z.cells = & vec [1];
 								//vectorObject -> z.nrow = 1;
 								vectorObject -> z.ncol = vec.size;
 								Matrix_formula (vectorObject, p, me, nullptr);
