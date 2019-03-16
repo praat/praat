@@ -250,12 +250,12 @@ inline double NUMmax (const constVECVU& vec) {
 
 inline double NUMmax (constMATVU const& mat) {
 	if (NUMisEmpty (mat)) return undefined;
-	double minimum = NUMmax (mat [1]);
+	double maximum = NUMmax (mat [1]);
 	for (integer irow = 2; irow <= mat.nrow; irow ++) {
 		const double value = NUMmax (mat [irow]);
-		if (value > minimum) minimum = value;
+		if (value > maximum) maximum = value;
 	}
-	return minimum;
+	return maximum;
 }
 
 inline double NUMmean (constVECVU const& x) noexcept {
