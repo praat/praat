@@ -160,7 +160,7 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo
 	if (itmin < 1) itmin = 1;
 	if (itmax > my iteration) itmax = my iteration;
 	if (hmax <= hmin)
-		NUMextrema (my history.get(), itmin, itmax, & hmin, & hmax);
+		NUMextrema (my history.part (itmin, itmax), & hmin, & hmax);
 
 	if (hmax <= hmin) {
 		hmin -= 0.5 * fabs (hmin);
