@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,8 +151,6 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "PAIRWISE_SUM.h"
 
 #include "NUM.h"
-#include "MelderIntegerRange.h"
-#include "MelderRealRange.h"
 #include "STR.h"
 #include "VEC.h"
 #include "MAT.h"

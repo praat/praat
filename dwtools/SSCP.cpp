@@ -91,8 +91,8 @@ Thing_implement (Correlation, SSCP, 0);
 
 void structSSCP :: v_info () {
 	structTableOfReal :: v_info ();
-	double zmin = NUMmin (asvector (data.get()));
-	double zmax = NUMmax (asvector (data.get()));
+	double zmin = NUMmin (our data.all());
+	double zmax = NUMmax (our data.all());
 	MelderInfo_writeLine (U"Minimum value: ", zmin);
 	MelderInfo_writeLine (U"Maximum value: ", zmax);
 }
