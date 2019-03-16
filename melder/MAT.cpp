@@ -475,7 +475,32 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 		static id <MTLDevice> gpuDevice;
 		static id <MTLCommandQueue> gpuQueue;
 		if (! gpuInited) {
-			gpuDevice = MTLCreateSystemDefaultDevice ();
+			NSArray <id<MTLDevice>> *gpuDeviceList = MTLCopyAllDevices ();
+			NSUInteger numberOfGpuDevices = [gpuDeviceList count];
+			Melder_casual (U"Found ", numberOfGpuDevices, U" GPU devices.");
+			if (numberOfGpuDevices < 2) {
+				/*
+					Easy choice.
+				*/
+				gpuDevice = MTLCreateSystemDefaultDevice ();
+			} else {
+				int externalGpuDeviceNumber = -1, discreteGpuDeviceNumber = -1;
+				for (NSUInteger idevice = 0; idevice < numberOfGpuDevices; idevice ++) {
+					id <MTLDevice> device = [gpuDeviceList objectAtIndex: idevice];
+					autostring32 deviceName = Melder_8to32 ([[device name] UTF8String]);
+					Melder_casual (U"GPU device ", idevice, U": ", deviceName.get());
+					if (device. removable)
+						externalGpuDeviceNumber = int (idevice);
+					else if (! device. lowPower)
+						discreteGpuDeviceNumber = int (idevice);
+				}
+				if (externalGpuDeviceNumber != -1)
+					gpuDevice = [gpuDeviceList objectAtIndex: NSUInteger (externalGpuDeviceNumber)];
+				else if (discreteGpuDeviceNumber != -1)
+					gpuDevice = [gpuDeviceList objectAtIndex: NSUInteger (discreteGpuDeviceNumber)];
+				else
+					gpuDevice = MTLCreateSystemDefaultDevice ();   // unlikely fallback
+			}
 			autostring32 deviceName = Melder_8to32 ([[gpuDevice name] UTF8String]);
 			Melder_casual (U"GPU device for computing: ", deviceName.get());
 			gpuInited = true;
