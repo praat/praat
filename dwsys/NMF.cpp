@@ -54,7 +54,7 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer dimen
 		my numberOfRows = numberOfRows;
 		my numberOfColumns = numberOfColumns;
 		my dimensionOfApproximation = dimensionOfApproximation;
-		my w = newMATzero (numberOfRows,  dimensionOfApproximation);
+		my w = newMATzero (numberOfRows, dimensionOfApproximation);
 		my h = newMATzero (dimensionOfApproximation, numberOfColumns);
 		return me;
 	} catch (MelderError) {
@@ -76,8 +76,10 @@ void NMF_initialize (NMF me, constMAT m, int initialisationMethod) {
 
 autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer dimensionOfApproximation) {
 	try {
-		Melder_require (NUMcheckNonNegativity (asvector (m)) == 0, U"The matrix elements should not be negative.");
-		Melder_require (dimensionOfApproximation <= m.ncol, U"The dimension of approximation should not exceed the number of columns.");
+		Melder_require (NUMcheckNonNegativity (asvector (m)) == 0,
+			U"The matrix elements should not be negative.");
+		Melder_require (dimensionOfApproximation <= m.ncol,
+			U"The dimension of approximation should not exceed the number of columns.");
 		autoNMF me = NMF_create (m.nrow, m.ncol, dimensionOfApproximation);
 		return me;
 	} catch (MelderError) {
@@ -90,21 +92,21 @@ static double getNorm (MAT d, constMAT a, constMAT w, constMAT h) {
 	Melder_assert (w.nrow == a.nrow && w.ncol == h.nrow);
 	Melder_assert (a.ncol == h.ncol);
 	MATVUmul_fast (d, w, h);
-	d *= -1.0;
-	d += a;
-	double dnorm = NUMnorm (asvector (d), 2.0) / sqrt(d.nrow * d.ncol);
+	d  *=  -1.0;
+	d  +=  a;
+	double dnorm = NUMnorm (asvector (d), 2.0) / sqrt (d.nrow * d.ncol);
 	return dnorm;
 }
 
 static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
-	double min = NUMmin (asvector (m0));
-	double max = NUMmax (asvector (m0));
+	double min = NUMmin (m0);
+	double max = NUMmax (m0);
 	double extremum1 = std::max (fabs (min), fabs (max));
-	m0 -= m;
-	min = NUMmin (asvector (m0));
-	max = NUMmax (asvector (m0));
+	m0  -=  m;
+	min = NUMmin (m0);
+	max = NUMmax (m0);
 	double extremum2 = std::max (fabs (min), fabs (max));
-	double dmat =  extremum2 / (sqrteps + extremum1);
+	double dmat = extremum2 / (sqrteps + extremum1);
 	return dmat;
 }
 
@@ -112,11 +114,11 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 	Calculating elementwise matrix multiplication, division and addition m = m0 .* (numerm ./(work2 + eps))
 	Set elements < zero_threshold to zero
 */
-const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, double eps) {
+static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, double eps) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
 	Melder_assert (m.nrow == work.nrow && m.ncol == work.ncol);
-	const double DIV_BY_ZERO_AVOIDANCE = 1E-09;
+	const double DIV_BY_ZERO_AVOIDANCE = 1e-09;
 	const double ZERO_THRESHOLD = eps;
 	for (integer irow = 1; irow <= m.nrow; irow ++) 
 		for (integer icol = 1; icol <= m.ncol; icol++) {
@@ -159,7 +161,7 @@ void NMF_improveApproximation_mu (NMF me, constMAT a, integer maximumNumberOfIte
 		
 		if (! NUMfpp) NUMmachar ();
 		const double eps = NUMfpp -> eps;
-		const double sqrteps = sqrt(eps);
+		const double sqrteps = sqrt (eps);
 		double dnorm0 = 0.0;
 		bool convergence = false;		
 		integer iter = 1;

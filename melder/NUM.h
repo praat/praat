@@ -211,6 +211,16 @@ inline double NUMmax (const constVECVU& vec) {
 	return maximum;
 }
 
+inline double NUMmax (constMATVU const& mat) {
+	if (NUMisEmpty (mat)) return undefined;
+	double minimum = NUMmax (mat [1]);
+	for (integer irow = 2; irow <= mat.nrow; irow ++) {
+		const double value = NUMmax (mat [irow]);
+		if (value > minimum) minimum = value;
+	}
+	return minimum;
+}
+
 inline double NUMmean (constVECVU const& x) noexcept {
 	const integer n = x.size;
 	if (n <= 8) {
@@ -234,11 +244,21 @@ inline double NUMmean (constMAT const& x) noexcept {
 	return NUMmean (asvector (x));
 }
 
-inline double NUMmin (const constVECVU& vec) {
+inline double NUMmin (constVECVU const& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
+		if (value < minimum) minimum = value;
+	}
+	return minimum;
+}
+
+inline double NUMmin (constMATVU const& mat) {
+	if (NUMisEmpty (mat)) return undefined;
+	double minimum = NUMmin (mat [1]);
+	for (integer irow = 2; irow <= mat.nrow; irow ++) {
+		const double value = NUMmin (mat [irow]);
 		if (value < minimum) minimum = value;
 	}
 	return minimum;
