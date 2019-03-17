@@ -94,7 +94,7 @@ static double getNorm (MAT d, constMAT a, constMAT w, constMAT h) {
 	MATVUmul_fast (d, w, h);
 	d  *=  -1.0;
 	d  +=  a;
-	double dnorm = NUMnorm (asvector (d), 2.0) / sqrt (d.nrow * d.ncol);
+	double dnorm = NUMnorm (d, 2.0) / sqrt (d.nrow * d.ncol);
 	return dnorm;
 }
 

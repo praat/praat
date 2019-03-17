@@ -61,29 +61,10 @@ bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
 }
 
 extern double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept;
-extern void NUM_sum_mean (constVECVU const& x, double *out_sum, double *out_mean) noexcept;
+
 extern void NUM_sum_mean_sumsq_variance_stdev (constVECVU const& x,
 		double *out_sum, double *out_mean,
 		double *out_sumsq, double *out_variance, double *out_stdev) noexcept;
-
-inline double NUMsum (constVECVU const& x) noexcept {
-	const integer n = x.size;
-	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
-		if (n <= 4) return n == 3 ?
-			double (longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) :
-			double ((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4])));
-		if (n <= 6) return n == 5 ?
-			double ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5]))) :
-			double ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5]) + longdouble (x [6])));
-		return n == 7 ?
-			double (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + (longdouble (x [5]) + longdouble (x [6]) + longdouble (x [7]))) :
-			double (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + ((longdouble (x [5]) + longdouble (x [6])) + (longdouble (x [7]) + longdouble (x [8]))));
-	}
-	double sum;
-	NUM_sum_mean (x, & sum, nullptr);
-	return sum;
-}
 
 inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	if (NUMisEmpty (vec)) return { undefined, undefined };
@@ -258,28 +239,8 @@ inline double NUMmax (constMATVU const& mat) {
 	return maximum;
 }
 
-inline double NUMmean (constVECVU const& x) noexcept {
-	const integer n = x.size;
-	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (double) (0.5 * ((longdouble) x [1] + (longdouble) x [2]));
-		if (n <= 4) return n == 3 ?
-			double ((1.0 / 3.0L) * (longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3]))) :
-			double (0.25 * ((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))));
-		if (n <= 6) return n == 5 ?
-			double ((1.0 / 5.0L) * ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5])))) :
-			double ((1.0 / 6.0L) * ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5]) + longdouble (x [6]))));
-		return n == 7 ?
-			double ((1.0 / 7.0L) * (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + (longdouble (x [5]) + longdouble (x [6]) + longdouble (x [7])))) :
-			double (0.125 * (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + ((longdouble (x [5]) + longdouble (x [6])) + (longdouble (x [7]) + longdouble (x [8])))));
-	}
-	double mean;
-	NUM_sum_mean (x, nullptr, & mean);
-	return mean;
-}
-
-inline double NUMmean (constMAT const& x) noexcept {
-	return NUMmean (asvector (x));
-}
+extern double NUMmean (constVECVU const& x) noexcept;
+extern double NUMmean (constMATVU const& x) noexcept;
 
 inline double NUMmin (constVECVU const& vec) {
 	if (NUMisEmpty (vec)) return undefined;
@@ -329,9 +290,8 @@ inline double NUMstdev (constMAT const& x) noexcept {
 	return NUMstdev (asvector (x));
 }
 
-inline double NUMsum (constMAT const& x) noexcept {
-	return NUMsum (asvector (x));
-}
+extern double NUMsum (constVECVU const& x) noexcept;
+extern double NUMsum (constMATVU const& x) noexcept;
 
 extern double NUMsumsq (constVECVU const& x) noexcept;
 

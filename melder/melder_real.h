@@ -32,5 +32,9 @@ struct MelderRealRange {
 	}
 };
 
+struct MelderGaussianStats {
+	double mean, stdev;
+};
+
 /* End of file melder_real.h */
 #endif
