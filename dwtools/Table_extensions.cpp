@@ -3905,14 +3905,13 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 
-		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (data.get(), nullptr, & mean, nullptr, nullptr, & stdev);
+		MelderGaussianStats stats = NUMmeanStdev (data.all());
 		double xmin = 100.0, xmax = -xmin, ymin = 1e308, ymax = -ymin;
 		if (numberOfSigmas != 0) {
 			xmin = -numberOfSigmas; 
 			xmax =  numberOfSigmas;
-			ymin = mean - numberOfSigmas * stdev;
-			ymax = mean + numberOfSigmas * stdev;
+			ymin = stats.mean - numberOfSigmas * stats.stdev;
+			ymax = stats.mean + numberOfSigmas * stats.stdev;
 		}
 		VECsort_inplace (data.get());
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;

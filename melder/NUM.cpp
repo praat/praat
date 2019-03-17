@@ -43,7 +43,6 @@ static longdouble NUMsum_longdouble (constVECVU const& vec) {
 		return sum;
 	}
 }
-
 static longdouble NUMsum_longdouble (constMATVU const& mat) {
 	if (mat.nrow <= mat.ncol) {
 		PAIRWISE_SUM (
@@ -64,6 +63,76 @@ static longdouble NUMsum_longdouble (constMATVU const& mat) {
 		)
 		return sum;
 	}
+}
+
+struct MelderMeanSumsq_longdouble {
+	longdouble mean, sumsq;
+};
+
+static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept {
+	MelderMeanSumsq_longdouble result;
+	result.mean = NUMsum_longdouble (vec) / vec.size;
+	double mean = double (result.mean);
+	if (vec.stride == 1) {
+		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p - mean) * longdouble (*p - mean),
+			p += 1
+		)
+		result.sumsq = sumsq;
+	} else {
+		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p - mean) * longdouble (*p - mean),
+			p += vec.stride
+		)
+		result.sumsq = sumsq;
+	}
+	return result;
+}
+static longdouble NUMsumOfDifferences_longdouble (constVECVU const& vec, double mean) {
+	if (vec.stride == 1) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p - mean),
+			p += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p - mean),
+			p += vec.stride
+		)
+		return sum;
+	}
+}
+static MelderMeanSumsq_longdouble NUMmeanSumsq (constMATVU const& mat) noexcept {
+	MelderMeanSumsq_longdouble result;
+	result.mean = NUMsum_longdouble (mat) / (mat.nrow * mat.ncol);
+	double mean = double (result.mean);
+	if (mat.nrow <= mat.ncol) {
+		longdouble rowSum;
+		PAIRWISE_SUM (longdouble, sumsq, integer, mat.nrow,
+			integer irow = 1,
+			(rowSum = NUMsumOfDifferences_longdouble (mat [irow], mean), rowSum * rowSum),
+			irow += 1
+		)
+		result.sumsq = sumsq;
+	} else {
+		longdouble columnSum;
+		PAIRWISE_SUM (longdouble, sumsq, integer, mat.ncol,
+			integer icol = 1,
+			(columnSum = NUMsumOfDifferences_longdouble (mat.column (icol), mean), columnSum * columnSum),
+			icol += 1
+		)
+		result.sumsq = sumsq;
+	}
+	return result;
 }
 
 /*
@@ -121,10 +190,18 @@ double NUMmean (constVECVU const& vec) noexcept {
 	longdouble sum = NUMsum_longdouble (vec);
 	return double (sum / vec.size);
 }
-
 double NUMmean (constMATVU const& mat) noexcept {
 	longdouble sum = NUMsum_longdouble (mat);
 	return double (sum / (mat.nrow * mat.ncol));
+}
+
+MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
+	const longdouble variance = stats.sumsq / (vec.size - 1);
+	MelderGaussianStats result;
+	result.mean = double (stats.mean);
+	result.stdev = sqrt (double (variance));
+	return result;
 }
 
 double NUMnorm (constVECVU const& x, double power) noexcept {
@@ -167,9 +244,16 @@ integer NUMnumberOfTokens (conststring32 string) noexcept {
 	return numberOfTokens;
 }
 
-double NUMstdev (constVECVU const& x) noexcept {
-	double stdev;
-	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, nullptr, & stdev);
+double NUMstdev (constVECVU const& vec) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
+	const longdouble variance = stats.sumsq / (vec.size - 1);
+	double stdev = sqrt (double (variance));
+	return stdev;
+}
+double NUMstdev (constMATVU const& mat) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
+	const longdouble variance = stats.sumsq / (mat.nrow * mat.ncol - 1);
+	double stdev = sqrt (double (variance));
 	return stdev;
 }
 
@@ -177,59 +261,29 @@ double NUMsum (constVECVU const& vec) noexcept {
 	longdouble sum = NUMsum_longdouble (vec);
 	return double (sum);
 }
-
 double NUMsum (constMATVU const& mat) noexcept {
 	longdouble sum = NUMsum_longdouble (mat);
 	return double (sum);
 }
 
-static void NUM_sum_mean (constVECVU const& vec, double *out_sum, double *out_mean) noexcept {
-	longdouble sum = NUMsum_longdouble (vec);
-	if (out_sum) *out_sum = double (sum);
-	if (out_mean) *out_mean = double (sum / vec.size);   // it helps a bit to perform the division while still in longdouble
+double NUMsumsq (const constVECVU& vec) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
+	return double (stats.sumsq);
+}
+double NUMsumsq (const constMATVU& mat) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
+	return double (stats.sumsq);
 }
 
-void NUM_sum_mean_sumsq_variance_stdev (constVECVU const& x,
-	double *out_sum, double *out_mean, double *out_sumsq, double *out_variance, double *out_stdev) noexcept
-{
-	double sum, mean;
-	NUM_sum_mean (x, & sum, & mean);
-	if (out_sum) *out_sum = sum;
-	if (out_mean) *out_mean = mean;
-	if (! out_sumsq && ! out_variance && ! out_stdev) return;
-	if (x.stride == 1) {
-		PAIRWISE_SUM (longdouble, sumsq, integer, x.size,
-			const double *px = & x [1],
-			longdouble (*px - mean) * longdouble (*px - mean),
-			px += 1
-		)
-		const longdouble variance = sumsq / (x.size - 1);
-		if (out_sumsq) *out_sumsq = double (sumsq);
-		if (out_variance) *out_variance = double (variance);
-		if (out_stdev) *out_stdev = sqrt (double (variance));
-	} else {
-		PAIRWISE_SUM (longdouble, sumsq, integer, x.size,
-			const double *px = & x [1],
-			longdouble (*px - mean) * longdouble (*px - mean),
-			px += x.stride
-		)
-		const longdouble variance = sumsq / (x.size - 1);
-		if (out_sumsq) *out_sumsq = double (sumsq);
-		if (out_variance) *out_variance = double (variance);
-		if (out_stdev) *out_stdev = sqrt (double (variance));
-	}
+double NUMvariance (const constVECVU& vec) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
+	const longdouble variance = stats.sumsq / (vec.size - 1);
+	return double (variance);
 }
-
-double NUMsumsq (const constVECVU& x) noexcept {
-	double sumsq;
-	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, & sumsq, nullptr, nullptr);
-	return sumsq;
-}
-
-double NUMvariance (const constVECVU& x) noexcept {
-	double variance;
-	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, & variance, nullptr);
-	return variance;
+double NUMvariance (const constMATVU& mat) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
+	const longdouble variance = stats.sumsq / (mat.nrow * mat.ncol - 1);
+	return double (variance);
 }
 
 /* End of file NUM.cpp */

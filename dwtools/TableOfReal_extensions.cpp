@@ -638,11 +638,9 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (my data.column (icol),
-				nullptr, & mean, nullptr, nullptr, & stdev);
+		MelderGaussianStats stats = NUMmeanStdev (my data.column (icol));
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
+			my data [irow] [icol] = (my data [irow] [icol] - stats.mean) / stats.stdev;
 	}
 }
 
@@ -655,11 +653,9 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 		return;
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (my data.row (irow),
-				nullptr, & mean, nullptr, nullptr, & stdev);
+		MelderGaussianStats stats = NUMmeanStdev (my data.row (irow));
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
+			my data [irow] [icol] = (my data [irow] [icol] - stats.mean) / stats.stdev;
 	}
 }
 

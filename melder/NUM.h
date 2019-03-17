@@ -62,10 +62,6 @@ bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
 
 extern double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept;
 
-extern void NUM_sum_mean_sumsq_variance_stdev (constVECVU const& x,
-		double *out_sum, double *out_mean,
-		double *out_sumsq, double *out_variance, double *out_stdev) noexcept;
-
 inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	if (NUMisEmpty (vec)) return { undefined, undefined };
 	double minimum = vec [1], maximum = minimum;
@@ -76,7 +72,6 @@ inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	}
 	return { minimum, maximum };
 }
-
 inline MelderRealRange NUMextrema (const constMATVU& mat) {
 	if (NUMisEmpty (mat)) return { undefined, undefined };
 	double minimum = mat [1] [1], maximum = minimum;
@@ -89,7 +84,6 @@ inline MelderRealRange NUMextrema (const constMATVU& mat) {
 	}
 	return { minimum, maximum };
 }
-
 inline MelderIntegerRange NUMextrema (const constINTVECVU& vec) {
 	if (NUMisEmpty (vec)) return { INTEGER_MIN, INTEGER_MAX };
 	integer minimum = vec [1], maximum = minimum;
@@ -108,10 +102,16 @@ inline MelderIntegerRange NUMextrema (const constINTVECVU& vec) {
 
 extern double NUMcenterOfGravity (constVEC const& x) noexcept;
 
-inline bool NUMdefined (constMAT const& x) noexcept {
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			if (isundef (x [irow] [icol]))
+inline bool NUMdefined (constVEC const& vec) noexcept {
+	for (integer i = 1; i <= vec.size; i ++)
+		if (isundef (vec [i]))
+			return false;
+	return true;
+}
+inline bool NUMdefined (constMAT const& mat) noexcept {
+	for (integer irow = 1; irow <= mat.nrow; irow ++)
+		for (integer icol = 1; icol <= mat.ncol; icol ++)
+			if (isundef (mat [irow] [icol]))
 				return false;
 	return true;
 }
@@ -173,9 +173,8 @@ inline double NUMextremum (constVEC const& vec) noexcept {
 			extremum = fabs (vec [i]);
 	return extremum;
 }
-
-inline double NUMextremum (constMATVU const& x) {
-	MelderRealRange range = NUMextrema (x);
+inline double NUMextremum (constMATVU const& mat) {
+	MelderRealRange range = NUMextrema (mat);
 	return std::max (fabs (range.min), fabs (range.max));
 }
 
@@ -219,7 +218,7 @@ inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline double NUMmax (const constVECVU& vec) {
+inline double NUMmax (constVECVU const& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double maximum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
@@ -228,7 +227,6 @@ inline double NUMmax (const constVECVU& vec) {
 	}
 	return maximum;
 }
-
 inline double NUMmax (constMATVU const& mat) {
 	if (NUMisEmpty (mat)) return undefined;
 	double maximum = NUMmax (mat [1]);
@@ -239,8 +237,11 @@ inline double NUMmax (constMATVU const& mat) {
 	return maximum;
 }
 
-extern double NUMmean (constVECVU const& x) noexcept;
-extern double NUMmean (constMATVU const& x) noexcept;
+extern double NUMmean (constVECVU const& vec) noexcept;
+extern double NUMmean (constMATVU const& mat) noexcept;
+
+extern MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept;
+extern MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept;
 
 inline double NUMmin (constVECVU const& vec) {
 	if (NUMisEmpty (vec)) return undefined;
@@ -251,7 +252,6 @@ inline double NUMmin (constVECVU const& vec) {
 	}
 	return minimum;
 }
-
 inline double NUMmin (constMATVU const& mat) {
 	if (NUMisEmpty (mat)) return undefined;
 	double minimum = NUMmin (mat [1]);
@@ -284,18 +284,16 @@ inline double NUMsqrt (double x) {
 	return sqrt (x);
 }
 
-extern double NUMstdev (constVECVU const& x) noexcept;
+extern double NUMstdev (constVECVU const& vec) noexcept;
+extern double NUMstdev (constMATVU const& mat) noexcept;
 
-inline double NUMstdev (constMAT const& x) noexcept {
-	return NUMstdev (asvector (x));
-}
+extern double NUMsum (constVECVU const& vec) noexcept;
+extern double NUMsum (constMATVU const& mat) noexcept;
 
-extern double NUMsum (constVECVU const& x) noexcept;
-extern double NUMsum (constMATVU const& x) noexcept;
+extern double NUMsumsq (constVECVU const& vec) noexcept;
+extern double NUMsumsq (constMATVU const& mat) noexcept;
 
-extern double NUMsumsq (constVECVU const& x) noexcept;
-
-extern double NUMvariance (constVECVU const& x) noexcept;
+extern double NUMvariance (constVECVU const& vec) noexcept;
+extern double NUMvariance (constMATVU const& mat) noexcept;
 
 /* End of file NUM.h */
-
