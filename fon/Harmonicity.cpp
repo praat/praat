@@ -77,11 +77,10 @@ void structHarmonicity :: v_info () {
 				Melder_single (NUMquantile (soundingValues.get(), 0.75)), U" dB");
 		MelderInfo_writeLine (U"Minimum: ", Melder_single (soundingValues [1]), U" dB");
 		MelderInfo_writeLine (U"Maximum: ", Melder_single (soundingValues [soundingValues.size]), U" dB");
-		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (soundingValues.get(), nullptr, & mean, nullptr, nullptr, & stdev);
-		MelderInfo_writeLine (U"Average: ", Melder_single (mean), U" dB");
+		MelderGaussianStats stats = NUMmeanStdev (soundingValues.all());
+		MelderInfo_writeLine (U"Average: ", Melder_single (stats.mean), U" dB");
 		if (soundingValues.size > 1)
-			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (stdev), U" dB");
+			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (stats.stdev), U" dB");
 	}
 }
 
