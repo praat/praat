@@ -1,5 +1,8 @@
 a# = zero# (1000000)
 writeInfoLine: stdev (randomGauss# (a#, 0, 1))
+assert stdev ({ 40, 50, 60 }) = 10
+assert stdev ({ { 40, 50, 60 } }) = 10
+assert stdev ({ { 40 }, { 50 }, { 60 } }) = 10
 
 for power from 1 to 18
 	a# = 10 ^ power - randomUniform (0, 1) +
@@ -8,13 +11,8 @@ for power from 1 to 18
 endfor
 
 for power from 1 to 18
-	a# = randomGauss# (a#, 1, 10 ^ - power)
-	stdev1 = stdev (a#)
-	Debug: "no", 48
-	stdev2 = stdev (a#)
-	Debug: "no", 49
-	stdev3 = stdev (a#)
-	Debug: "no", 0
-	appendInfoLine: stdev1, " ", stdev2, " ", stdev3
-	appendInfoLine: "... ", abs (stdev2 - stdev1), " ", abs (stdev3 - stdev1)
+	sigma = 10 ^ - power
+	a# = randomGauss# (a#, 1, sigma)
+	stdev = stdev (a#)
+	appendInfoLine: sigma, " ", stdev
 endfor
