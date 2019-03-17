@@ -90,13 +90,13 @@ static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept 
 	}
 	return result;
 }
-static longdouble NUMsumOfDifferences_longdouble (constVECVU const& vec, double mean) {
+static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, double mean) {
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
 			const double *p = & vec [1],
-			longdouble (*p - mean),
+			longdouble (*p - mean) * longdouble (*p - mean),
 			p += 1
 		)
 		return sum;
@@ -105,7 +105,7 @@ static longdouble NUMsumOfDifferences_longdouble (constVECVU const& vec, double 
 			longdouble, sum,
 			integer, vec.size,
 			const double *p = & vec [1],
-			longdouble (*p - mean),
+			longdouble (*p - mean) * longdouble (*p - mean),
 			p += vec.stride
 		)
 		return sum;
@@ -116,18 +116,16 @@ static MelderMeanSumsq_longdouble NUMmeanSumsq (constMATVU const& mat) noexcept 
 	result.mean = NUMsum_longdouble (mat) / (mat.nrow * mat.ncol);
 	double mean = double (result.mean);
 	if (mat.nrow <= mat.ncol) {
-		longdouble rowSum;
 		PAIRWISE_SUM (longdouble, sumsq, integer, mat.nrow,
 			integer irow = 1,
-			(rowSum = NUMsumOfDifferences_longdouble (mat [irow], mean), rowSum * rowSum),
+			NUMsumOfSquaredDifferences_longdouble (mat [irow], mean),
 			irow += 1
 		)
 		result.sumsq = sumsq;
 	} else {
-		longdouble columnSum;
 		PAIRWISE_SUM (longdouble, sumsq, integer, mat.ncol,
 			integer icol = 1,
-			(columnSum = NUMsumOfDifferences_longdouble (mat.column (icol), mean), columnSum * columnSum),
+			NUMsumOfSquaredDifferences_longdouble (mat.column (icol), mean),
 			icol += 1
 		)
 		result.sumsq = sumsq;
