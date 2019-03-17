@@ -1429,7 +1429,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 	autoVEC  alpha_tm1 = newVECzero (my numberOfStates);
 
 	alpha_t.get() <<= my initialStateProbs.get();
-	scale [1] = NUMsum (alpha_t.get());
+	scale [1] = NUMsum (alpha_t.all());
 	alpha_t /= scale [1];
 	
 	// recursion

@@ -610,7 +610,7 @@ double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabe
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
-	return NUMsum (my data.get());
+	return NUMsum (my data.all());
 }
 
 void TableOfReal_centreRows (TableOfReal me) {

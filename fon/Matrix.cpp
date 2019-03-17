@@ -235,7 +235,7 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 }
 
 double Matrix_getSum (Matrix me) {
-	return NUMsum (my z.get());
+	return NUMsum (my z.all());
 }
 
 double Matrix_getNorm (Matrix me) {

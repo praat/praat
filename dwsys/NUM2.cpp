@@ -758,7 +758,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 	// 2. Decompose C by SVD: C = UDV' (our SVD has eigenvectors stored row-wise V!)
 
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
-	double trace = NUMsum (svd -> d.get());
+	double trace = NUMsum (svd -> d.all());
 	Melder_require (trace > 0.0, U"NUMprocrustes: degenerate configuration(s).");
 
 	// 3. T = VU'
