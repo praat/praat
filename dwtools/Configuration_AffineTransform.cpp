@@ -80,8 +80,8 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 
 	autoMAT c = newMATmtm (a);
 	autoMAT w = newMATmul (a.transpose(), b);
-	double checkc = NUMsum (c.get());
-	double checkw = NUMsum (w.get());
+	double checkc = NUMsum (c.all());
+	double checkw = NUMsum (w.all());
 	
 	Melder_require (checkc != 0.0 && checkw != 0.0, U"NUMmaximizeCongruence: the matrix should not be zero.");
 

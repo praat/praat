@@ -366,7 +366,7 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
 	if (ymax == ymin) {
-		NUMextrema (vec, first, last, & ymin, & ymax);
+		NUMextrema (vec.part (first, last), & ymin, & ymax);
 		ymax *= w;
 		ymin *= w;
 	}

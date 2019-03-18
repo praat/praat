@@ -22,30 +22,79 @@
 	so they have to be declared first.
 */
 
-extern double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept;
-extern void NUM_sum_mean (constVECVU const& x, double *out_sum, double *out_mean) noexcept;
-extern void NUM_sum_mean_sumsq_variance_stdev (constVECVU const& x,
-		double *out_sum, double *out_mean,
-		double *out_sumsq, double *out_variance, double *out_stdev) noexcept;
-
-inline double NUMsum (constVECVU const& x) noexcept {
-	const integer n = x.size;
-	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
-		if (n <= 4) return n == 3 ?
-			double (longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) :
-			double ((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4])));
-		if (n <= 6) return n == 5 ?
-			double ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5]))) :
-			double ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5]) + longdouble (x [6])));
-		return n == 7 ?
-			double (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + (longdouble (x [5]) + longdouble (x [6]) + longdouble (x [7]))) :
-			double (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + ((longdouble (x [5]) + longdouble (x [6])) + (longdouble (x [7]) + longdouble (x [8]))));
-	}
-	double sum;
-	NUM_sum_mean (x, & sum, nullptr);
-	return sum;
+template <typename T>
+bool NUMisEmpty (vector<T> const& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
 }
+template <typename T>
+bool NUMisEmpty (vectorview<T> const& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+template <typename T>
+bool NUMisEmpty (constvector<T> const& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+template <typename T>
+bool NUMisEmpty (constvectorview<T> const& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+
+template <typename T>
+bool NUMisEmpty (matrix<T> const& x) noexcept {
+	const integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+template <typename T>
+bool NUMisEmpty (constmatrix<T> const& x) noexcept {
+	const integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+template <typename T>
+bool NUMisEmpty (matrixview<T> const& x) noexcept {
+	const integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+template <typename T>
+bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
+	const integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+
+extern double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept;
+
+inline MelderRealRange NUMextrema (const constVECVU& vec) {
+	if (NUMisEmpty (vec)) return { undefined, undefined };
+	double minimum = vec [1], maximum = minimum;
+	for (integer i = 2; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (value < minimum) minimum = value;
+		if (value > maximum) maximum = value;
+	}
+	return { minimum, maximum };
+}
+inline MelderRealRange NUMextrema (const constMATVU& mat) {
+	if (NUMisEmpty (mat)) return { undefined, undefined };
+	double minimum = mat [1] [1], maximum = minimum;
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (value < minimum) minimum = value;
+			if (value > maximum) maximum = value;
+		}
+	}
+	return { minimum, maximum };
+}
+inline MelderIntegerRange NUMextrema (const constINTVECVU& vec) {
+	if (NUMisEmpty (vec)) return { INTEGER_MIN, INTEGER_MAX };
+	integer minimum = vec [1], maximum = minimum;
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value < minimum) minimum = value;
+		if (value > maximum) maximum = value;
+	}
+	return { minimum, maximum };
+}
+
 
 /*
 	From here on, the functions appear in alphabetical order.
@@ -53,10 +102,16 @@ inline double NUMsum (constVECVU const& x) noexcept {
 
 extern double NUMcenterOfGravity (constVEC const& x) noexcept;
 
-inline bool NUMdefined (constMAT const& x) noexcept {
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			if (isundef (x [irow] [icol]))
+inline bool NUMdefined (constVEC const& vec) noexcept {
+	for (integer i = 1; i <= vec.size; i ++)
+		if (isundef (vec [i]))
+			return false;
+	return true;
+}
+inline bool NUMdefined (constMAT const& mat) noexcept {
+	for (integer irow = 1; irow <= mat.nrow; irow ++)
+		for (integer icol = 1; icol <= mat.ncol; icol ++)
+			if (isundef (mat [irow] [icol]))
 				return false;
 	return true;
 }
@@ -118,9 +173,9 @@ inline double NUMextremum (constVEC const& vec) noexcept {
 			extremum = fabs (vec [i]);
 	return extremum;
 }
-
-inline double NUMextremum (constMAT const& mat) noexcept {
-	return NUMextremum (asvector (mat));
+inline double NUMextremum (constMATVU const& mat) {
+	MelderRealRange range = NUMextrema (mat);
+	return std::max (fabs (range.min), fabs (range.max));
 }
 
 inline double NUMinner (constVEC const& x, constVEC const& y) noexcept {
@@ -145,44 +200,6 @@ inline double NUMinner (constVEC const& x, constVEC const& y) noexcept {
 	return NUMinner_ (x, y);
 }
 
-template <typename T>
-bool NUMisEmpty (vector<T> const& x) noexcept {
-	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
-}
-template <typename T>
-bool NUMisEmpty (vectorview<T> const& x) noexcept {
-	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
-}
-template <typename T>
-bool NUMisEmpty (constvector<T> const& x) noexcept {
-	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
-}
-template <typename T>
-bool NUMisEmpty (constvectorview<T> const& x) noexcept {
-	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
-}
-
-template <typename T>
-bool NUMisEmpty (matrix<T> const& x) noexcept {
-	const integer numberOfCells = x.nrow * x.ncol;
-	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
-}
-template <typename T>
-bool NUMisEmpty (constmatrix<T> const& x) noexcept {
-	const integer numberOfCells = x.nrow * x.ncol;
-	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
-}
-template <typename T>
-bool NUMisEmpty (matrixview<T> const& x) noexcept {
-	const integer numberOfCells = x.nrow * x.ncol;
-	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
-}
-template <typename T>
-bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
-	const integer numberOfCells = x.nrow * x.ncol;
-	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
-}
-
 inline bool NUMisSymmetric (constMAT const& x) noexcept {
 	if (x.nrow != x.ncol) return false;
 	const integer n = x.nrow;
@@ -201,7 +218,7 @@ inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline double NUMmax (const constVECVU& vec) {
+inline double NUMmax (constVECVU const& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double maximum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
@@ -210,35 +227,36 @@ inline double NUMmax (const constVECVU& vec) {
 	}
 	return maximum;
 }
-
-inline double NUMmean (constVECVU const& x) noexcept {
-	const integer n = x.size;
-	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (double) (0.5 * ((longdouble) x [1] + (longdouble) x [2]));
-		if (n <= 4) return n == 3 ?
-			double ((1.0 / 3.0L) * (longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3]))) :
-			double (0.25 * ((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))));
-		if (n <= 6) return n == 5 ?
-			double ((1.0 / 5.0L) * ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5])))) :
-			double ((1.0 / 6.0L) * ((longdouble (x [1]) + longdouble (x [2]) + longdouble (x [3])) + (longdouble (x [4]) + longdouble (x [5]) + longdouble (x [6]))));
-		return n == 7 ?
-			double ((1.0 / 7.0L) * (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + (longdouble (x [5]) + longdouble (x [6]) + longdouble (x [7])))) :
-			double (0.125 * (((longdouble (x [1]) + longdouble (x [2])) + (longdouble (x [3]) + longdouble (x [4]))) + ((longdouble (x [5]) + longdouble (x [6])) + (longdouble (x [7]) + longdouble (x [8])))));
+inline double NUMmax (constMATVU const& mat) {
+	if (NUMisEmpty (mat)) return undefined;
+	double maximum = NUMmax (mat [1]);
+	for (integer irow = 2; irow <= mat.nrow; irow ++) {
+		const double value = NUMmax (mat [irow]);
+		if (value > maximum) maximum = value;
 	}
-	double mean;
-	NUM_sum_mean (x, nullptr, & mean);
-	return mean;
+	return maximum;
 }
 
-inline double NUMmean (constMAT const& x) noexcept {
-	return NUMmean (asvector (x));
-}
+extern double NUMmean (constVECVU const& vec) noexcept;
+extern double NUMmean (constMATVU const& mat) noexcept;
 
-inline double NUMmin (const constVECVU& vec) {
+extern MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept;
+extern MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept;
+
+inline double NUMmin (constVECVU const& vec) {
 	if (NUMisEmpty (vec)) return undefined;
 	double minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
+		if (value < minimum) minimum = value;
+	}
+	return minimum;
+}
+inline double NUMmin (constMATVU const& mat) {
+	if (NUMisEmpty (mat)) return undefined;
+	double minimum = NUMmin (mat [1]);
+	for (integer irow = 2; irow <= mat.nrow; irow ++) {
+		const double value = NUMmin (mat [irow]);
 		if (value < minimum) minimum = value;
 	}
 	return minimum;
@@ -266,19 +284,16 @@ inline double NUMsqrt (double x) {
 	return sqrt (x);
 }
 
-extern double NUMstdev (constVECVU const& x) noexcept;
+extern double NUMstdev (constVECVU const& vec) noexcept;
+extern double NUMstdev (constMATVU const& mat) noexcept;
 
-inline double NUMstdev (constMAT const& x) noexcept {
-	return NUMstdev (asvector (x));
-}
+extern double NUMsum (constVECVU const& vec) noexcept;
+extern double NUMsum (constMATVU const& mat) noexcept;
 
-inline double NUMsum (constMAT const& x) noexcept {
-	return NUMsum (asvector (x));
-}
+extern double NUMsumsq (constVECVU const& vec) noexcept;
+extern double NUMsumsq (constMATVU const& mat) noexcept;
 
-extern double NUMsumsq (constVECVU const& x) noexcept;
-
-extern double NUMvariance (constVECVU const& x) noexcept;
+extern double NUMvariance (constVECVU const& vec) noexcept;
+extern double NUMvariance (constMATVU const& mat) noexcept;
 
 /* End of file NUM.h */
-

@@ -72,7 +72,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 		return 0.0;
 	}
 
-	double sum = NUMsum (my data.get());
+	double sum = NUMsum (my data.all());
 
 	integer nmin = std::min (my numberOfColumns, my numberOfRows);
 
@@ -88,7 +88,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	
-	double chisq, df, sum = NUMsum (my data.get());
+	double chisq, df, sum = NUMsum (my data.all());
 	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
@@ -100,7 +100,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 	
 	autoVEC rowSums = newVECrowSums (my data.get());
 	autoVEC columnSums = newVECcolumnSums (my data.get());
-	double totalSum = NUMsum (my data.get());
+	double totalSum = NUMsum (my data.all());
 	
 	integer nrow = my numberOfRows, ncol = my numberOfColumns;
 	

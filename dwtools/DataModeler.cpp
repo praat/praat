@@ -880,7 +880,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			}
 		}
 		if (xmax <= xmin)
-			NUMextrema (x.get(), 1, numberOfData, & xmin, & xmax);
+			NUMextrema (x.part (1, numberOfData), & xmin, & xmax);
 		Melder_require (xmin < xmax, U"The range of the x-values is too small.");
 		
 		integer numberOfDataPoints = 0, validData = 0;
@@ -1199,7 +1199,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 				var [i] -= varShifted [i];
 		}
 		if (ymax <= ymin)
-			NUMextrema (var.get(), ixmin, ixmax, & ymin, & ymax);
+			NUMextrema (var.part (ixmin, ixmax), & ymin, & ymax);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];
@@ -1236,7 +1236,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 		autoVEC chisq = newVECzero (numberOfDataPoints);
 		FormantModeler_getCumulativeChiScores (me, useSigmaY, chisq.get());
 		if (ymax <= ymin)
-			NUMextrema (chisq.get(), ixmin, ixmax, & ymin, & ymax);
+			NUMextrema (chisq.part (ixmin, ixmax), & ymin, & ymax);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];

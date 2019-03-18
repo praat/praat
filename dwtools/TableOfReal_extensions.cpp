@@ -311,7 +311,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 		}
 		if (ymin >= ymax) {
 			double min, max;
-			NUMextrema (my data.row (irow), colb, cole, & min, & max);
+			NUMextrema (my data.row (irow).part (colb, cole), & min, & max);
 			if (i > 1) {
 				if (min < ymin)
 					ymin = min;
@@ -406,7 +406,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		NUMextrema (x.get(), & xmin, & xmax);
 	}
 	if (xmax <= xmin) {
-		xmax += 1; xmin -= 1;
+		xmax += 1.0;
+		xmin -= 1.0;
 	}
 	if (ymax <= ymin) {
 		NUMextrema (y.get(), & ymin, & ymax);
@@ -458,20 +459,26 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 		rowmin = 1; 
 		rowmax = my numberOfRows;
 	}
-	if (rowmin < 1) rowmin = 1;
-
-	if (rowmax > my numberOfRows) rowmax = my numberOfRows;
+	if (rowmin < 1)
+		rowmin = 1;
+	if (rowmax > my numberOfRows)
+		rowmax = my numberOfRows;
 
 	integer numberOfRows = rowmax - rowmin + 1;
 	if (colmax < colmin || colmax < 1) {
 		colmin = 1; 
 		colmax = my numberOfColumns;
 	}
-	if (colmin < 1) colmin = 1;
-	if (colmax > my numberOfColumns) colmax = my numberOfColumns;
+	if (colmin < 1)
+		colmin = 1;
+	if (colmax > my numberOfColumns)
+		colmax = my numberOfColumns;
 
-	if (ymax <= ymin)
-		NUMextrema (my data.get(), rowmin, rowmax, colmin, colmax, &ymin, &ymax);
+	if (ymax <= ymin) {
+		MelderRealRange yrange = NUMextrema (my data.part (rowmin, rowmax, colmin, colmax));
+		ymin = yrange.min;
+		ymax = yrange.max;
+	}
 
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
 	Graphics_setInner (g);
@@ -603,7 +610,7 @@ double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabe
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
-	return NUMsum (my data.get());
+	return NUMsum (my data.all());
 }
 
 void TableOfReal_centreRows (TableOfReal me) {
@@ -631,11 +638,9 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (my data.column (icol),
-				nullptr, & mean, nullptr, nullptr, & stdev);
+		MelderGaussianStats stats = NUMmeanStdev (my data.column (icol));
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
+			my data [irow] [icol] = (my data [irow] [icol] - stats.mean) / stats.stdev;
 	}
 }
 
@@ -648,11 +653,9 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 		return;
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (my data.row (irow),
-				nullptr, & mean, nullptr, nullptr, & stdev);
+		MelderGaussianStats stats = NUMmeanStdev (my data.row (irow));
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
+			my data [irow] [icol] = (my data [irow] [icol] - stats.mean) / stats.stdev;
 	}
 }
 
@@ -766,14 +769,14 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 		rowe = Melder_ifloor (m);
 	}
 	if (xmax == xmin) {
-		NUMextrema (my data.get(), rowb, rowe, icx, icx, & xmin, & xmax);
-		double tmp = ( xmax == xmin ? 0.5 : 0.0 );
-		xmin -= tmp;
-		xmax += tmp;
+		MelderRealRange xrange = NUMextrema (my data.part (rowb, rowe, icx, icx));
+		double tmp = ( xrange.max == xrange.min ? 0.5 : 0.0 );
+		xmin = xrange.min - tmp;
+		xmax = xrange.max + tmp;
 	}
 	if (ymax == ymin) {
-		NUMextrema (my data.get(), rowb, rowe, icy, icy, & ymin, & ymax);
-		double tmp = ( ymax == ymin ? 0.5 : 0.0 );
+		MelderRealRange yrange = NUMextrema (my data.part (rowb, rowe, icy, icy));
+		double tmp = ( yrange.max == yrange.min ? 0.5 : 0.0 );
 		ymin -= tmp;
 		ymax += tmp;
 	}
@@ -1083,22 +1086,21 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer
 	int fontsize = Graphics_inqFontSize (g);
 
 	Melder_require (colx1 > 0 && colx1 <= nx && coly1 > 0 && coly1 <= nx,
-			U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");
+		U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");
 	Melder_require (colx2 > 0 && colx2 <= nx && coly2 > 0 && coly2 <= nx,
-			U"The index in the \"To\" column(s) should be in range [1, ", nx, U"].");
+		U"The index in the \"To\" column(s) should be in range [1, ", nx, U"].");
 
-	double min, max;
 	if (xmin >= xmax) {
-		NUMextrema (my data.get(), 1, ny, colx1, colx1, & min, & max);
-		NUMextrema (my data.get(), 1, ny, colx2, colx2, & xmin, & xmax);
-		if (min < xmin) xmin = min;
-		if (max > xmax) xmax = max;
+		MelderRealRange x1 = NUMextrema (my data.column (colx1));
+		MelderRealRange x2 = NUMextrema (my data.column (colx2));
+		xmin = std::min (x1.min, x2.min);
+		xmax = std::max (x1.max, x2.max);
 	}
 	if (ymin >= ymax) {
-		NUMextrema (my data.get(), 1, ny, coly1, coly1, & min, & max);
-		NUMextrema (my data.get(), 1, ny, coly2, coly2, & ymin, & ymax);
-		if (min < ymin) ymin = min;
-		if (max > ymax) ymax = max;
+		MelderRealRange y1 = NUMextrema (my data.column (coly1));
+		MelderRealRange y2 = NUMextrema (my data.column (coly2));
+		ymin = std::min (y1.min, y2.min);
+		ymax = std::max (y1.max, y2.max);
 	}
 	if (xmin == xmax) {
 		if (ymin == ymax) return;
@@ -1158,9 +1160,8 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 	try {
 		Melder_require (my rowLabels,
 			U"No labels to sort");
-		double min, max;
-		NUMextrema (index, 1, index.size, & min, & max);
-		Melder_require (min > 0 && min <= my numberOfRows && max > 0 && max <= my numberOfRows,
+		MelderIntegerRange range = NUMextrema (index);
+		Melder_require (range.first > 0 && range.first <= my numberOfRows && range.last > 0 && range.last <= my numberOfRows,
 			U"One or more indices out of range [1, ", my numberOfRows, U"].");
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
