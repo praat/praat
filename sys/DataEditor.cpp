@@ -646,16 +646,20 @@ integer structMatrixEditor :: v_countFields () {
 }
 
 void structMatrixEditor :: v_showMembers () {
-	int type = d_description -> type, isSingleType = type <= maxsingletypewa;
-	int elementSize = type == structwa ?
-		Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1 : 1;
+	int type = d_description -> type;
+	bool isSingleType = ( type <= maxsingletypewa );
+	int elementSize = ( type == structwa ?
+		Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1 : 1 );
+	Melder_casual (elementSize);
 	int rowSize = elementSize * (d_max2 - d_min2 + 1);
 	integer firstRow = d_minimum + (d_topField - 1) / rowSize;
 	integer firstColumn = d_min2 + (d_topField - 1 - (firstRow - d_minimum) * rowSize) / elementSize;
 
 	for (integer irow = firstRow; irow <= d_maximum; irow ++)
 	for (integer icolumn = irow == firstRow ? firstColumn : d_min2; icolumn <= d_max2; icolumn ++) {
-		unsigned char *elementAddress = * ((unsigned char **) d_address + irow) + icolumn * d_description -> size;
+		//constMAT *mat = (constMAT *) d_address;
+		//Melder_casual (mat -> nrow, U" ", mat -> ncol);
+		unsigned char *elementAddress = (unsigned char *) d_address + ((irow - 1) * rowSize + (icolumn - 1)) * d_description -> size;
 
 		if (++ d_irow > kDataSubEditor_MAXNUM_ROWS) return;
 		DataSubEditor_FieldData fieldData = & d_fieldData [d_irow];
