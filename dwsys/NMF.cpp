@@ -132,19 +132,24 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 	Set elements < zero_threshold to zero
 */
 
-static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT denom, double eps) {
+static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT denom, double zeroThreshold, double maximum) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
 	Melder_assert (m.nrow == denom.nrow && m.ncol == denom.ncol);
-	const double DIV_BY_ZERO_AVOIDANCE = 1e-09;
-	const double ZERO_THRESHOLD = eps;
+	/*
+		The value 1e-9 is OK for matrices with values that are larger than 1.
+		For matrices with very small values we have to scale the divByZeroAvoidance value
+		otherwise the precision would suffer. 
+		A scaling with the maximum value seems reasonable.
+	*/
+	const double divByZeroAvoidance = 1e-09 * (maximum < 1 ? maximum : 1.0);
 	for (integer irow = 1; irow <= m.nrow; irow ++) 
 		for (integer icol = 1; icol <= m.ncol; icol++) {
 			if ( m0 [irow] [icol] == 0.0 || numer [irow] [icol]  == 0.0)
 				m [irow] [icol] = 0.0;
 			else {
-				double update = m0 [irow] [icol] * (numer [irow] [icol] / (denom [irow] [icol] + DIV_BY_ZERO_AVOIDANCE));
-				m [irow] [icol] = ( update < ZERO_THRESHOLD ? 0.0 : update );
+				double update = m0 [irow] [icol] * (numer [irow] [icol] / (denom [irow] [icol] + divByZeroAvoidance));
+				m [irow] [icol] = ( update < zeroThreshold ? 0.0 : update );
 			}
 		}
 }
@@ -180,8 +185,9 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 		const double eps = NUMfpp -> eps;
 		const double sqrteps = sqrt (eps);
 		double dnorm0 = 0.0;
-		bool convergence = false;		
+		double maximum = NUMmax (data);
 		integer iter = 1;
+		bool convergence = false;		
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
 				Lee & Seung (2001) update formulas (4)
@@ -193,13 +199,13 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 			MATVUmul (work1.get(), features0.transpose(), features0.get()); // work1 = features0'*features0
 			MATVUmul  (denomw.get(), work1.get(), weights0.get()); // denomw = work1 * weights0
 
-			MATupdate (my weights.get(), weights0.get(), numerw.get(), denomw.get(), eps);
+			MATupdate (my weights.get(), weights0.get(), numerw.get(), denomw.get(), eps, maximum);
 
 			MATVUmul  (numerf.get(), data, my weights.transpose()); // numerf = data*weights'
 			MATVUmul (work1.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
 			MATVUmul  (denomf.get(), features0.get(), work1.get()); // denomf = features0 * work1
 			
-			MATupdate (my features.get(), features0.get(), numerf.get(), denomf.get(), eps);
+			MATupdate (my features.get(), features0.get(), numerf.get(), denomf.get(), eps, maximum);
 			
 			double distance = _NMF_getEuclideanDistance_preallocated (me, data, approximation.get());
 			double dnorm = distance / (my numberOfRows * my numberOfColumns);
