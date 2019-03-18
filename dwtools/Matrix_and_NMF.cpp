@@ -33,7 +33,8 @@ autoNMF Matrix_to_NMF (Matrix me, integer numberOfFeatures, integer maximumNumbe
 autoMatrix NMF_to_Matrix (NMF me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
-		MATVUmul_fast (thy z.get(), my features.get(), my weights.get()); // Z = W*H
+		autoMAT result = NMF_synthesize (me);
+		thy z.get() <<= result.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Matrix not created.");

@@ -90,15 +90,29 @@ autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer numberOfFeatures) {
 	}
 }
 
-static double getNorm (MAT approximation, constMAT a, constMAT features, constMAT weights) {
-	Melder_assert (a.nrow == approximation.nrow && a.ncol == approximation.ncol);
-	Melder_assert (features.nrow == a.nrow && features.ncol == weights.nrow);
-	Melder_assert (a.ncol == weights.ncol);
-	MATVUmul_fast (approximation, features, weights);
-	approximation  *=  -1.0;
-	approximation  +=  a;
-	double dnorm = NUMnorm (asvector (approximation), 2.0) / sqrt(approximation.nrow * approximation.ncol);
-	return dnorm;
+static double NUMdistance (constMATVU m1, constMATVU m2) {
+	Melder_assert (m1.nrow == m2.nrow && m1.ncol == m2.ncol);
+	longdouble sumsq = 0.0;
+	for (long irow = 1; irow <= m1.nrow; irow ++)
+		for (long icol = 1; icol <= m1.ncol; icol ++) {
+			double dif = m1 [irow][icol] - m2 [irow][icol];
+			sumsq += dif * dif;
+		}
+	return sqrt (sumsq);
+}
+
+static double _NMF_getEuclideanDistance_preallocated (NMF me, constMATVU data, MAT buffer) {
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns, U"Dimension of NMF and data should match.");
+	Melder_require (data.nrow == buffer.nrow && data.ncol == buffer.ncol, U"Buffer has wrong dimensions.");
+	MATVUmul (buffer, my features.get(), my weights.get());
+	double dist = NUMdistance (buffer, data);
+	return dist;
+}
+
+double NMF_getEuclideanDistance (NMF me, constMATVU data) {
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns, U"Dimensions should match.");
+	autoMAT buffer = newMATraw (my numberOfRows, my numberOfColumns);
+	return _NMF_getEuclideanDistance_preallocated (me, data, buffer.get());
 }
 
 static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
@@ -114,13 +128,13 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 }
 
 /*
-	Calculating elementwise matrix multiplication, division and addition m = m0 .* (numerm ./(work2 + eps))
+	Calculating elementwise matrix multiplication, division and addition m = m0 .* (numerm ./(denom + eps))
 	Set elements < zero_threshold to zero
 */
-const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, double eps) {
+const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT denom, double eps) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
-	Melder_assert (m.nrow == work.nrow && m.ncol == work.ncol);
+	Melder_assert (m.nrow == denom.nrow && m.ncol == denom.ncol);
 	const double DIV_BY_ZERO_AVOIDANCE = 1E-09;
 	const double ZERO_THRESHOLD = eps;
 	for (integer irow = 1; irow <= m.nrow; irow ++) 
@@ -128,8 +142,8 @@ const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, double 
 			if ( m0 [irow] [icol] == 0.0 || numer [irow] [icol]  == 0.0)
 				m [irow] [icol] = 0.0;
 			else {
-				double tmp = m0 [irow] [icol] * (numer [irow] [icol] / (work [irow] [icol] + DIV_BY_ZERO_AVOIDANCE));
-				m [irow] [icol] = ( tmp < ZERO_THRESHOLD ? 0.0 : tmp );
+				double update = m0 [irow] [icol] * (numer [irow] [icol] / (denom [irow] [icol] + DIV_BY_ZERO_AVOIDANCE));
+				m [irow] [icol] = ( update < ZERO_THRESHOLD ? 0.0 : update );
 			}
 		}
 }
@@ -147,17 +161,16 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		
-		autoMAT work1 = newMATzero (my numberOfFeatures, my numberOfFeatures); // used for calculation of h & w
-		
-		autoMAT numerh = newMATzero (my numberOfFeatures, my numberOfColumns); // k x n
-		autoMAT work2h = newMATzero (my numberOfFeatures, my numberOfColumns);
+		autoMAT numerw = newMATzero (my numberOfFeatures, my numberOfColumns);
+		autoMAT denomw = newMATzero (my numberOfFeatures, my numberOfColumns);
 		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
 		
-		autoMAT numerw = newMATzero (my numberOfRows, my numberOfFeatures); // m*k
-		autoMAT work2w = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT numerf = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT denomf = newMATzero (my numberOfRows, my numberOfFeatures);
 		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
 		
-		autoMAT difference = newMATzero (my numberOfRows, my numberOfColumns); // difference = data - w*h
+		autoMAT work1 = newMATzero (my numberOfFeatures, my numberOfFeatures); // used for intermediate calculations
+		autoMAT approximation = newMATzero (my numberOfRows, my numberOfColumns); // approximation = features * weights
 		
 		features0.get() <<= my features.get();
 		weights0.get() <<= my weights.get();
@@ -169,22 +182,29 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 		bool convergence = false;		
 		integer iter = 1;
 		while (iter <= maximumNumberOfIterations && not convergence) {
-			MATVUmul (numerh.get(), features0.transpose(), data); // numerh = w0'*data
-			MATVUmul (work1.get(), features0.transpose(), features0.get()); // work1 = w0'*w0
-			MATVUmul  (work2h.get(), work1.get(), weights0.get()); // work2 = work1 * h0
+			/*
+				Lee & Seung (2001) update formulas (4)
+				W[i,j] <- W[i,j] ((F'D)[i,j] / ((F'FW)[i,j])
+				F[i,j] <- F[i,j] ((DW')[i,j]) / (FWW')[i,j]),
+				where W, F, D are the weight matrix, the feature matrix and the data matrix, respectively.
+			*/
+			MATVUmul (numerw.get(), features0.transpose(), data); // numerw = features0'*data
+			MATVUmul (work1.get(), features0.transpose(), features0.get()); // work1 = features0'*features0
+			MATVUmul  (denomw.get(), work1.get(), weights0.get()); // denomw = work1 * weights0
 
-			MATupdate (my weights.get(), weights0.get(), numerh.get(), work2h.get(), eps);
+			MATupdate (my weights.get(), weights0.get(), numerw.get(), denomw.get(), eps);
 
-			MATVUmul  (numerw.get(), data, my weights.transpose()); // numerw = data*h'
-			MATVUmul (work1.get(), my weights.get(), my weights.transpose()); // work1 = h*h'
-			MATVUmul  (work2w.get(), features0.get(), work1.get()); // work2w = w0 * work1
+			MATVUmul  (numerf.get(), data, my weights.transpose()); // numerf = data*weights'
+			MATVUmul (work1.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
+			MATVUmul  (denomf.get(), features0.get(), work1.get()); // denomf = features0 * work1
 			
-			MATupdate (my features.get(), features0.get(), numerw.get(), work2w.get(), eps);
-		
-			double dnorm = getNorm (difference.get(), data, my features.get(), my weights.get());
-			double dw = getMaximumChange (my features.get(), features0.get(), sqrteps);
-			double dh = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
-			double delta = std::max (dw, dh);
+			MATupdate (my features.get(), features0.get(), numerf.get(), denomf.get(), eps);
+			
+			double distance = _NMF_getEuclideanDistance_preallocated (me, data, approximation.get());
+			double dnorm = distance / (my numberOfRows * my numberOfColumns);
+			double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
+			double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
+			double delta = std::max (df, dw);
 			
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
 			
@@ -195,9 +215,17 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 
 			++ iter;
 		}
-
 	} catch (MelderError) {
 		Melder_throw (me, U" cannot be improved.");
+	}
+}
+
+autoMAT NMF_synthesize (NMF me) {
+	try {
+		autoMAT result = newMATmul (my features.get(), my weights.get());
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": No matrix created.");
 	}
 }
 

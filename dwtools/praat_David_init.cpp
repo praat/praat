@@ -3639,7 +3639,7 @@ END }
 
 FORM (NEW_Matrix_to_NMF, U"Matrix: To NMF", U"Matrix: To NMF...") {
 	NATURAL (numberOfFeatures, U"Number of features", U"2")
-	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
@@ -3650,6 +3650,12 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
+	NUMBER_TWO (NMF, Matrix)
+		double result = NMF_getEuclideanDistance (me, your z.get());
+	NUMBER_TWO_END (U"")
+}
+
 FORM (MODIFY_NMF_Matrix_improveFactorization, U"NMF & Matrix: Improve factorization", nullptr) {
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
 	REAL (tolx, U"Change tolerance", U"1e-9")
@@ -3657,7 +3663,7 @@ FORM (MODIFY_NMF_Matrix_improveFactorization, U"NMF & Matrix: Improve factorizat
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NMF, Matrix)
-		
+		NMF_improveFactorization_mu (me, your z.get(), maximumNumberOfIterations, tolx, told);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -8233,6 +8239,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
 	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
 	
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, REAL_NMF_Matrix_getEuclideanDistance);
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization);
 	
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);

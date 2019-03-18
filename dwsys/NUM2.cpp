@@ -2709,7 +2709,7 @@ double NUMfrobeniusnorm (constMAT x) {
 				longdouble absxi = fabs (x [i] [j]);
 				if (scale < absxi) {
 					longdouble t = scale / absxi;
-					ssq = 1 + ssq * t * t;
+					ssq = 1.0 + ssq * t * t;
 					scale = absxi;
 				} else {
 					longdouble t = absxi / scale;

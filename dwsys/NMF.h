@@ -44,4 +44,8 @@ void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMe
 */
 void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
 
+autoMAT NMF_synthesize (NMF me); // result = features * weights
+
+double NMF_getEuclideanDistance (NMF me, constMATVU data); // sqrt (||data - features*weights||²)
+
 #endif /* _NMF_h_ */
