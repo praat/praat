@@ -132,10 +132,10 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 	Set elements < zero_threshold to zero
 */
 
-static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, double eps) {
+static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT denom, double eps) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
-	Melder_assert (m.nrow == work.nrow && m.ncol == work.ncol);
+	Melder_assert (m.nrow == denom.nrow && m.ncol == denom.ncol);
 	const double DIV_BY_ZERO_AVOIDANCE = 1e-09;
 	const double ZERO_THRESHOLD = eps;
 	for (integer irow = 1; irow <= m.nrow; irow ++) 
