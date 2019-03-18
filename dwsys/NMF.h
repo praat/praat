@@ -21,6 +21,8 @@
 
 #include "NUM2.h"
 #include "Data.h"
+#include "NMF_enums.h"
+
 #include "NMF_def.h"
 
 /*
@@ -28,11 +30,11 @@
 	where H and W are non-negative nrow x k and k x ncol matrices, respectively. 
 */
 
-autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer dimensionOfApproximation);
+autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures);
 
-autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer dimensionOfApproximation);
+autoNMF NMF_createFromGeneralMatrix_mu (constMAT data, integer numberOfFeatures);
 
-void NMF_initialize (NMF me, constMAT m, int initialisationMethod);
+void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMethod);
 
 /*
 	The matrix update equations are:
@@ -40,6 +42,10 @@ void NMF_initialize (NMF me, constMAT m, int initialisationMethod);
 	W(n+1) = W(n).(A*H(n+1)') / (W(n)*(H(n+1)*H(n+1)') + eps)
 
 */
-void NMF_improveApproximation_mu (NMF me, constMAT m, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+
+autoMAT NMF_synthesize (NMF me); // result = features * weights
+
+double NMF_getEuclideanDistance (NMF me, constMATVU data); // sqrt (||data - features*weights||²)
 
 #endif /* _NMF_h_ */

@@ -39,63 +39,80 @@
 #include "oo_DESCRIPTION.h"
 #include "NMF_def.h"
 
+#include "enums_getText.h"
+#include "NMF_enums.h"
+#include "enums_getValue.h"
+#include "NMF_enums.h"
+
 void structNMF :: v_info () {
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
-	MelderInfo_writeLine (U"Dimension of approximation", dimensionOfApproximation);
+	MelderInfo_writeLine (U"Number of features: ", numberOfFeatures);
 }
 
 Thing_implement (NMF, Daata, 0);
 
 
-autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer dimensionOfApproximation) {
+autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures) {
 	try {
 		autoNMF me = Thing_new (NMF);
 		my numberOfRows = numberOfRows;
 		my numberOfColumns = numberOfColumns;
-		my dimensionOfApproximation = dimensionOfApproximation;
-		my w = newMATzero (numberOfRows, dimensionOfApproximation);
-		my h = newMATzero (dimensionOfApproximation, numberOfColumns);
+		my numberOfFeatures = numberOfFeatures;
+		my features = newMATzero (numberOfRows,  numberOfFeatures);
+		my weights = newMATzero (numberOfFeatures, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NMF not created.");
 	}
 }
 
-void NMF_initialize (NMF me, constMAT m, int initialisationMethod) {
-	if (initialisationMethod != 0) {
+void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMethod) {
+	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
-		VEC h = asvector (my h.get()), w = asvector (my w.get());
-		for (long i = 1; i <= my numberOfRows * my dimensionOfApproximation; i ++)
-			w [i] = NUMrandomUniform (rmin, rmax);
-		for (long i = 1; i <= my dimensionOfApproximation * my numberOfColumns; i ++)
-			h [i] = NUMrandomUniform (rmin, rmax);
+		VEC weights = asvector (my weights.get()), features = asvector (my features.get());
+		for (long i = 1; i <= my numberOfRows * my numberOfFeatures; i ++)
+			features [i] = NUMrandomUniform (rmin, rmax);
+		for (long i = 1; i <= my numberOfFeatures * my numberOfColumns; i ++)
+			weights [i] = NUMrandomUniform (rmin, rmax);
 	} else {
 	}
 }
 
-autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer dimensionOfApproximation) {
+autoNMF NMF_createFromGeneralMatrix_mu (constMAT m, integer numberOfFeatures) {
 	try {
-		Melder_require (NUMcheckNonNegativity (asvector (m)) == 0,
-			U"The matrix elements should not be negative.");
-		Melder_require (dimensionOfApproximation <= m.ncol,
-			U"The dimension of approximation should not exceed the number of columns.");
-		autoNMF me = NMF_create (m.nrow, m.ncol, dimensionOfApproximation);
+		Melder_require (NUMcheckNonNegativity (asvector (m)) == 0, U"The matrix elements should not be negative.");
+		Melder_require (numberOfFeatures <= m.ncol, U"The number of features should not exceed the number of columns.");
+		autoNMF me = NMF_create (m.nrow, m.ncol, numberOfFeatures);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NMF cannot be created.");
 	}
 }
 
-static double getNorm (MAT d, constMAT a, constMAT w, constMAT h) {
-	Melder_assert (a.nrow == d.nrow && a.ncol == d.ncol);
-	Melder_assert (w.nrow == a.nrow && w.ncol == h.nrow);
-	Melder_assert (a.ncol == h.ncol);
-	MATVUmul_fast (d, w, h);
-	d  *=  -1.0;
-	d  +=  a;
-	double dnorm = NUMnorm (d, 2.0) / sqrt (d.nrow * d.ncol);
-	return dnorm;
+static double NUMdistance (constMATVU m1, constMATVU m2) {
+	Melder_assert (m1.nrow == m2.nrow && m1.ncol == m2.ncol);
+	longdouble sumsq = 0.0;
+	for (long irow = 1; irow <= m1.nrow; irow ++)
+		for (long icol = 1; icol <= m1.ncol; icol ++) {
+			double dif = m1 [irow][icol] - m2 [irow][icol];
+			sumsq += dif * dif;
+		}
+	return sqrt (sumsq);
+}
+
+static double _NMF_getEuclideanDistance_preallocated (NMF me, constMATVU data, MAT buffer) {
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns, U"Dimension of NMF and data should match.");
+	Melder_require (data.nrow == buffer.nrow && data.ncol == buffer.ncol, U"Buffer has wrong dimensions.");
+	MATVUmul (buffer, my features.get(), my weights.get());
+	double dist = NUMdistance (buffer, data);
+	return dist;
+}
+
+double NMF_getEuclideanDistance (NMF me, constMATVU data) {
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns, U"Dimensions should match.");
+	autoMAT buffer = newMATraw (my numberOfRows, my numberOfColumns);
+	return _NMF_getEuclideanDistance_preallocated (me, data, buffer.get());
 }
 
 static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
@@ -111,13 +128,14 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 }
 
 /*
-	Calculating elementwise matrix multiplication, division and addition m = m0 .* (numerm ./(work2 + eps))
+	Calculating elementwise matrix multiplication, division and addition m = m0 .* (numerm ./(denom + eps))
 	Set elements < zero_threshold to zero
 */
-static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, double eps) {
+
+static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT denom, double eps) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
-	Melder_assert (m.nrow == work.nrow && m.ncol == work.ncol);
+	Melder_assert (m.nrow == denom.nrow && m.ncol == denom.ncol);
 	const double DIV_BY_ZERO_AVOIDANCE = 1e-09;
 	const double ZERO_THRESHOLD = eps;
 	for (integer irow = 1; irow <= m.nrow; irow ++) 
@@ -125,8 +143,8 @@ static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, 
 			if ( m0 [irow] [icol] == 0.0 || numer [irow] [icol]  == 0.0)
 				m [irow] [icol] = 0.0;
 			else {
-				double tmp = m0 [irow] [icol] * (numer [irow] [icol] / (work [irow] [icol] + DIV_BY_ZERO_AVOIDANCE));
-				m [irow] [icol] = ( tmp < ZERO_THRESHOLD ? 0.0 : tmp );
+				double update = m0 [irow] [icol] * (numer [irow] [icol] / (denom [irow] [icol] + DIV_BY_ZERO_AVOIDANCE));
+				m [irow] [icol] = ( update < ZERO_THRESHOLD ? 0.0 : update );
 			}
 		}
 }
@@ -139,25 +157,24 @@ static const void MATupdate (MAT m, constMAT m0, constMAT numer, constMAT work, 
 		Computing and informatics% #30: 205--224.
 
 */
-void NMF_improveApproximation_mu (NMF me, constMAT a, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
-		Melder_require (my numberOfColumns == a.ncol, U"The number of columns should be equal.");
-		Melder_require (my numberOfRows == a.nrow, U"The number of rows should be equal.");
+		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
+		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		
-		autoMAT work1 = newMATzero (my dimensionOfApproximation, my dimensionOfApproximation); // used for calculation of h & w
+		autoMAT numerw = newMATzero (my numberOfFeatures, my numberOfColumns);
+		autoMAT denomw = newMATzero (my numberOfFeatures, my numberOfColumns);
+		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
 		
-		autoMAT numerh = newMATzero (my dimensionOfApproximation, my numberOfColumns); // k x n
-		autoMAT work2h = newMATzero (my dimensionOfApproximation, my numberOfColumns);
-		autoMAT h0 = newMATzero (my dimensionOfApproximation, my numberOfColumns);
+		autoMAT numerf = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT denomf = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
 		
-		autoMAT numerw = newMATzero (my numberOfRows, my dimensionOfApproximation); // m*k
-		autoMAT work2w = newMATzero (my numberOfRows, my dimensionOfApproximation);
-		autoMAT w0 = newMATzero (my numberOfRows, my dimensionOfApproximation);
+		autoMAT work1 = newMATzero (my numberOfFeatures, my numberOfFeatures); // used for intermediate calculations
+		autoMAT approximation = newMATzero (my numberOfRows, my numberOfColumns); // approximation = features * weights
 		
-		autoMAT d = newMATzero (my numberOfRows, my numberOfColumns); // d = a - w*h
-		
-		w0.get() <<= my w.get();
-		h0.get() <<= my h.get();
+		features0.get() <<= my features.get();
+		weights0.get() <<= my weights.get();
 		
 		if (! NUMfpp) NUMmachar ();
 		const double eps = NUMfpp -> eps;
@@ -166,35 +183,50 @@ void NMF_improveApproximation_mu (NMF me, constMAT a, integer maximumNumberOfIte
 		bool convergence = false;		
 		integer iter = 1;
 		while (iter <= maximumNumberOfIterations && not convergence) {
-			MATVUmul (numerh.get(), w0.transpose(), a); // numerh = w0'*a
-			MATVUmul (work1.get(), w0.transpose(), w0.get()); // work1 = w0'*w0
-			MATVUmul  (work2h.get(), work1.get(), h0.get()); // work2 = work1 * h0
+			/*
+				Lee & Seung (2001) update formulas (4)
+				W[i,j] <- W[i,j] ((F'D)[i,j] / ((F'FW)[i,j])
+				F[i,j] <- F[i,j] ((DW')[i,j]) / (FWW')[i,j]),
+				where W, F, D are the weight matrix, the feature matrix and the data matrix, respectively.
+			*/
+			MATVUmul (numerw.get(), features0.transpose(), data); // numerw = features0'*data
+			MATVUmul (work1.get(), features0.transpose(), features0.get()); // work1 = features0'*features0
+			MATVUmul  (denomw.get(), work1.get(), weights0.get()); // denomw = work1 * weights0
 
-			MATupdate (my h.get(), h0.get(), numerh.get(), work2h.get(), eps);
+			MATupdate (my weights.get(), weights0.get(), numerw.get(), denomw.get(), eps);
 
-			MATVUmul  (numerw.get(), a, my h.transpose()); // numerw = a*h'
-			MATVUmul (work1.get(), my h.get(), my h.transpose()); // work1 = h*h'
-			MATVUmul  (work2w.get(), w0.get(), work1.get()); // work2w = w0 * work1
+			MATVUmul  (numerf.get(), data, my weights.transpose()); // numerf = data*weights'
+			MATVUmul (work1.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
+			MATVUmul  (denomf.get(), features0.get(), work1.get()); // denomf = features0 * work1
 			
-			MATupdate (my w.get(), w0.get(), numerw.get(), work2w.get(), eps);
-		
-			double dnorm = getNorm (d.get(), a, my w.get(), my h.get());
-			double dw = getMaximumChange (my w.get(), w0.get(), sqrteps);
-			double dh = getMaximumChange (my h.get(), h0.get(), sqrteps);
-			double delta = std::max (dw, dh);
+			MATupdate (my features.get(), features0.get(), numerf.get(), denomf.get(), eps);
+			
+			double distance = _NMF_getEuclideanDistance_preallocated (me, data, approximation.get());
+			double dnorm = distance / (my numberOfRows * my numberOfColumns);
+			double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
+			double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
+			double delta = std::max (df, dw);
 			
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
 			
 			dnorm0 = dnorm;
 			
-			w0.get() <<= my w.get();
-			h0.get() <<= my h.get();
+			features0.get() <<= my features.get();
+			weights0.get() <<= my weights.get();
 
 			++ iter;
 		}
-
 	} catch (MelderError) {
 		Melder_throw (me, U" cannot be improved.");
+	}
+}
+
+autoMAT NMF_synthesize (NMF me) {
+	try {
+		autoMAT result = newMATmul (my features.get(), my weights.get());
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": No matrix created.");
 	}
 }
 

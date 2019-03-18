@@ -1,4 +1,4 @@
-/* NMF_def.h
+/* NMF_enums.h
  *
  * Copyright (C) 2019 David Weenink
  *
@@ -9,30 +9,15 @@
  *
  * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT NMF
-oo_DEFINE_CLASS (NMF, Daata)
+enums_begin (kNMF_Initialization, 1)
+	enums_add (kNMF_Initialization, 1, RandomUniform, U"RandomUniform")
+enums_end (kNMF_Initialization, 1, RandomUniform)
 
-	oo_INTEGER (numberOfRows)
-	oo_INTEGER (numberOfColumns)
-	oo_INTEGER (numberOfFeatures)
-	
-	oo_MAT (features, numberOfRows, numberOfFeatures)
-	oo_MAT (weights, numberOfFeatures, numberOfColumns)
-
-	#if oo_DECLARING
-		void v_info ()
-			override;
-	#endif
-
-oo_END_CLASS (NMF)
-#undef ooSTRUCT
-
-
-/* End of file NMF_def.h */
+/* End of file NMF_enums.h */

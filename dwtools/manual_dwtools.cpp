@@ -2660,8 +2660,8 @@ MAN_BEGIN (U"NMF", U"djmw", 20190312)
 INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factorization@ of a matrix.")
 MAN_END
 
-MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190312)
-INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a matrix ##A#, whose elements are all non-negative, into two matrices ##W# and ##H# such that ##A \\~~ W\\.cH#, where the elements of ##W# and ##H# are also all non-negative.")
+MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190317)
+INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a matrix ##A#, whose elements are all non-negative, into a feature matrix ##W# and a weights matrix ##H# such that ##A \\~~ W\\.cH#, where the elements of ##W# and ##H# are also all non-negative.")
 ENTRY (U"Algorithms for computing NMF")
 NORMAL (U"The algorithms fall into three general classes:")
 TAG (U"##1. Multiplicative updates#,")

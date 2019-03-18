@@ -21,9 +21,9 @@
 #include "Matrix.h"
 #include "NMF.h"
 
-autoNMF Matrix_to_NMF (Matrix me, integer dimensionOfApproximation, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, int initialisationMethod);
+autoNMF Matrix_to_NMF (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod);
 
-void Matrix_NMF_improveApproximation_mu (Matrix me, NMF thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+void NMF_Matrix_improveFactorization_mu (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
 
 autoMatrix NMF_to_Matrix (NMF me);
 
