@@ -19,11 +19,22 @@
 #include "Matrix_and_NMF.h"
 #include "NUM2.h"
 
-autoNMF Matrix_to_NMF (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
+autoNMF Matrix_to_NMF_mu (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
 	try {
-		autoNMF thee = NMF_createFromGeneralMatrix_mu (my z.get(), numberOfFeatures);
+		autoNMF thee = NMF_createFromGeneralMatrix (my z.get(), numberOfFeatures);
 		NMF_initialize (thee.get(), my z.get(), initializationMethod);
 		NMF_improveFactorization_mu (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": NMF cannot be created.");
+	}
+}
+
+autoNMF Matrix_to_NMF_als (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
+	try {
+		autoNMF thee = NMF_createFromGeneralMatrix (my z.get(), numberOfFeatures);
+		NMF_initialize (thee.get(), my z.get(), initializationMethod);
+		NMF_improveFactorization_als (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": NMF cannot be created.");

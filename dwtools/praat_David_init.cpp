@@ -3637,16 +3637,31 @@ DIRECT (NEWTIMES2_Matrix_eigen_complex) {
 	}
 END }
 
-FORM (NEW_Matrix_to_NMF, U"Matrix: To NMF", U"Matrix: To NMF...") {
+FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...") {
 	NATURAL (numberOfFeatures, U"Number of features", U"2")
-	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
 	OK
 DO
+	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
 	CONVERT_EACH (Matrix)
-		autoNMF result = Matrix_to_NMF (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod);
+		autoNMF result = Matrix_to_NMF_mu (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)...") {
+	NATURAL (numberOfFeatures, U"Number of features", U"2")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	OK
+DO
+	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	CONVERT_EACH (Matrix)
+		autoNMF result = Matrix_to_NMF_als (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -3656,7 +3671,7 @@ DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
 	NUMBER_TWO_END (U"")
 }
 
-FORM (MODIFY_NMF_Matrix_improveFactorization, U"NMF & Matrix: Improve factorization", nullptr) {
+FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factorization (m.u.)", nullptr) {
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
@@ -3664,6 +3679,17 @@ FORM (MODIFY_NMF_Matrix_improveFactorization, U"NMF & Matrix: Improve factorizat
 DO
 	MODIFY_FIRST_OF_TWO (NMF, Matrix)
 		NMF_improveFactorization_mu (me, your z.get(), maximumNumberOfIterations, tolx, told);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factorization (ALS)", nullptr) {
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+		NMF_improveFactorization_als (me, your z.get(), maximumNumberOfIterations, tolx, told);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -8194,7 +8220,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To Activation", U"*To ActivationList", praat_DEPRECATED_2016, NEW_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 0, U"To Eigen", U"Eigen", praat_HIDDEN, NEW_Matrix_to_Eigen);
 	praat_addAction1 (classMatrix, 0, U"To SVD", U"To Eigen", praat_HIDDEN, NEW_Matrix_to_SVD);
-	praat_addAction1 (classMatrix, 0, U"To NMF...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF);
+	praat_addAction1 (classMatrix, 0, U"To NMF (m.u.)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_mu);
+	praat_addAction1 (classMatrix, 0, U"To NMF (ALS)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_als);
 	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
@@ -8240,7 +8267,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
 	
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, REAL_NMF_Matrix_getEuclideanDistance);
-	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (m.u.)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_mu);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (ALS)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_als);
 	
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, GRAPHICS_PatternList_draw);
