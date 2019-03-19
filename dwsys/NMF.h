@@ -32,17 +32,33 @@
 
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures);
 
-autoNMF NMF_createFromGeneralMatrix_mu (constMAT data, integer numberOfFeatures);
+autoNMF NMF_createFromGeneralMatrix (constMAT data, integer numberOfFeatures);
 
 void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMethod);
 
 /*
-	The matrix update equations are:
-	H(n+1) = H(n).(W(n)'*M) / ((W(n)'*W(n))*H(n) + eps)
-	W(n+1) = W(n).(A*H(n+1)') / (W(n)*(H(n+1)*H(n+1)') + eps)
-
+	Factorize D as F*W, where D, F and W >= 0
+	
+	initiaze F and W;
+	for iter to maxiter
+		W(n+1) = W(n).(F(n)'*D) / (F(n)'*F(n))*W(n) + eps)
+		F(n+1) = F(n).(D*W(n+1)') / (F(n)*(W(n+1)*W(n+1)') + eps)
+	endfor
 */
 void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+
+/*
+	Factorize D as F*W, where D, F and W >= 0
+	
+	inialize F;
+	for iter to maxiter
+		W is solution of F´*F*W = F'*D.
+		Set all negative elements in W to 0.
+		F is solution of W*W'*F' = W*D' .
+		Set all negative elements in F to 0.
+	endfor
+*/
+void NMF_improveFactorization_als (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
 
 autoMAT NMF_synthesize (NMF me); // result = features * weights
 
