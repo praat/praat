@@ -3653,7 +3653,7 @@ DO
 
 FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)...") {
 	NATURAL (numberOfFeatures, U"Number of features", U"2")
-	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"20")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
@@ -3672,7 +3672,7 @@ DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factorization (m.u.)", nullptr) {
-	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OK
@@ -3683,7 +3683,7 @@ DO
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factorization (ALS)", nullptr) {
-	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"40")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"10")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OK
@@ -8267,8 +8267,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
 	
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, REAL_NMF_Matrix_getEuclideanDistance);
-	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (m.u.)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_mu);
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (ALS)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_als);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (m.u.)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_mu);
 	
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, GRAPHICS_PatternList_draw);
