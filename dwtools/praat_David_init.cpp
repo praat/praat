@@ -3571,12 +3571,21 @@ DIRECT (NEW_Matrix_to_PCA_byRows) {
 }
 
 FORM (NEW_Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation...") {
-	REAL (tolerance, U"Tolerance", U"1.19e-7")
+	REAL (tolerance, U"Tolerance", U"1.0e-7")
 	OK
 DO
 	CONVERT_EACH (Matrix)
 		autoMatrix result = Matrix_solveEquation (me, tolerance);
 	CONVERT_EACH_END (my name.get(), U"_solution")
+}
+
+FORM (NEW_Matrix_solveMatrixEquation, U"Matrix: Solve matrix equation", U"Matrix: Solve matrix equation...") {
+	REAL (tolerance, U"Tolerance", U"1.0e-7")
+	OK
+DO
+	CONVERT_COUPLE (Matrix)
+		autoMatrix result = Matrix_solveEquation (me, you, tolerance);
+	CONVERT_COUPLE_END (U"solution")
 }
 
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
@@ -8212,7 +8221,8 @@ void praat_uvafon_David_init () {
 	
 	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, NEW_Matrix_transpose);
 	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, NEW_Matrix_solveEquation);
-	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve equation...", 0, NEW_Matrix_to_PCA_byRows);
+	praat_addAction1 (classMatrix, 2, U"Solve matrix equation...", U"Solve equation...", 0, NEW_Matrix_solveMatrixEquation);
+	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve matrix equation...", 0, NEW_Matrix_to_PCA_byRows);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, NEW_Matrix_to_PCA_byColumns);
 	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, NEW_Matrix_to_PatternList);
 	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"*To PatternList...", praat_DEPRECATED_2016, NEW_Matrix_to_PatternList);

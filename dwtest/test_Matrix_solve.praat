@@ -3,6 +3,8 @@
 
 appendInfoLine: "test_Matrix_solve.praat"
 
+@solve3x3
+
 procedure matrix_solve: .ncol
   for .i to 4
     .nrow = .i * .ncol
@@ -48,5 +50,47 @@ procedure solve2by3
 	assert .s1-.eps < 1 and .s1+.eps > 1; '.s1'
 	assert .s2-.eps < 1 and .s2+.eps > 1; '.s2'
 	removeObject: .m, .solution		
+endproc
+
+procedure solve3x3
+; a * x = b
+	.a## = {{1,2,3}, {1,5,7},{2,3,5}}
+	.x## = {{1,12},{2,20},{3,30}}
+	.b## ={{14,142},{32,322},{23,234}}
+	.a = Create simple Matrix: "1", 3, 4, "0"
+	for .irow to 3
+		for .icol to 3
+			Set value: .irow, .icol,  .a## [.irow, .icol]
+		endfor
+		Set value: .irow, 4, .b## [.irow, 1]
+	endfor
+	.xx = Solve equation: 0
+        .eps = 1e-9
+	for .irow to 3
+		.dif = abs (object [.xx, 1, .irow] - .x## [.irow, 1])
+		assert .dif < .eps; '.dif'< '.eps'
+	endfor
+  	appendInfoLine: tab$, "A[3x]X[3x2]=B[3x2]"
+	removeObject: .a, .xx
+	.a = Create simple Matrix: "1", 3, 3, "0"
+	for .irow to 3
+		for .icol to 3
+			Set value: .irow, .icol,  .a## [.irow, .icol]
+		endfor
+	endfor
+	.b = Create simple Matrix: "1", 3, 2, "0"
+	for .irow to 3
+		for .icol to 2
+			Set value: .irow, .icol,  .b## [.irow, .icol]
+		endfor
+	endfor
+	selectObject: .a, .b
+	.xx = Solve matrix equation: 1e-7
+	for .irow to 3
+		for .icol to 2
+		.dif = abs (object [.xx, .irow, .icol] - .x## [.irow, .icol])
+		assert .dif < .eps; '.dif'< '.eps'
+	endfor
+	removeObject: .b, .xx, .a
 endproc
 appendInfoLine: "test_Matrix_solve.praat OK"

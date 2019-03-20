@@ -65,6 +65,8 @@ int Matrix_fitPolynomial (Matrix me, integer maxDegree);
 
 autoMatrix Matrix_solveEquation (Matrix me, double tolerance);
 
+autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance); // Me * X = Thee
+
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax);
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax);

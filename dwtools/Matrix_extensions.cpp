@@ -402,6 +402,24 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 	}
 }
 
+autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance) {
+	try {
+		Melder_require (my ny == thy ny, U"The number of rows must be equal.");
+		
+		if (my ny < my nx) {
+			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
+		}
+
+		autoMatrix him = Matrix_create (0.5, 0.5 + thy nx, thy nx, 1, 1, 0.5, 0.5 + my nx, my nx, 1, 1);
+		autoSVD svd = SVD_createFromGeneralMatrix (my z.get());
+		SVD_zeroSmallSingularValues (svd.get(), tolerance);
+		SVD_solve_preallocated (svd.get(), thy z.get(), his z.get());
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": matrix equation not solved.");
+	}
+}
+
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	if (xmax <= xmin) {
 		xmin = my xmin;
