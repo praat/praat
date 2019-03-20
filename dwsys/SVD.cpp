@@ -196,28 +196,49 @@ autoMAT SVD_getSquared (SVD me, bool inverse) {
 	return result;
 }
 
-autoVEC SVD_solve (SVD me, constVEC b) {
+void SVD_solve_preallocated (SVD me, constVEC b, VEC result) {
 	try {
 		/*
 			Solve UDV' x = b.
 			Solution: x = V D^-1 U' b
 		*/
 		Melder_assert (my numberOfRows == b.size);
+		Melder_assert (result.size == my numberOfColumns);
 		autoVEC t = newVECzero (my numberOfColumns);
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			longdouble tmp = 0.0;
+			longdouble sum = 0.0;
 			if (my d [j] > 0.0) {
 				for (integer i = 1; i <= my numberOfRows; i ++)
-					tmp += my u [i] [j] * b [i];
-				tmp /= my d [j];
+					sum += my u [i] [j] * b [i];
+				sum /= my d [j];
 			}
-			t [j] = (double) tmp;
+			t [j] = (double) sum;
 		}
-
-		autoVEC x = newVECmul (my v.get(), t.get());
-		return x;
+		VECmul_preallocated (result, my v.get(), t.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
+	}
+}
+
+autoVEC SVD_solve (SVD me, constVEC b) {
+	Melder_assert (my numberOfRows == b.size);
+	autoVEC result = newVECzero (my numberOfColumns);
+	SVD_solve_preallocated (me, b, result.get());
+	return result;
+}
+
+/*
+	Solve UDV' X = B.
+*/
+void SVD_solve_preallocated (SVD me, constMAT b, MAT result) {
+	Melder_assert (b.nrow == my numberOfRows && b.ncol == result.ncol);
+	Melder_assert (result.nrow == my numberOfColumns);
+	autoVEC bcol = newVECraw (b.nrow);
+	autoVEC resultcol = newVECraw (result.nrow);
+	for (integer icol = 1; icol <= b.ncol; icol ++) {
+		bcol.get() <<= b.column(icol);
+		SVD_solve_preallocated (me, bcol.get(), resultcol.get());
+		result.column(icol) <<= resultcol.get();
 	}
 }
 

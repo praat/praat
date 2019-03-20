@@ -19,11 +19,22 @@
 #include "Matrix_and_NMF.h"
 #include "NUM2.h"
 
-autoNMF Matrix_to_NMF (Matrix me, integer dimensionOfApproximation, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, int initialisationMethod) {
+autoNMF Matrix_to_NMF_mu (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
 	try {
-		autoNMF thee = NMF_createFromGeneralMatrix_mu (my z.get(), dimensionOfApproximation);
-		NMF_initialize (thee.get(), my z.get(), initialisationMethod);
-		NMF_improveApproximation_mu (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
+		autoNMF thee = NMF_createFromGeneralMatrix (my z.get(), numberOfFeatures);
+		NMF_initialize (thee.get(), my z.get(), initializationMethod);
+		NMF_improveFactorization_mu (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": NMF cannot be created.");
+	}
+}
+
+autoNMF Matrix_to_NMF_als (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
+	try {
+		autoNMF thee = NMF_createFromGeneralMatrix (my z.get(), numberOfFeatures);
+		NMF_initialize (thee.get(), my z.get(), initializationMethod);
+		NMF_improveFactorization_als (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": NMF cannot be created.");
@@ -33,10 +44,17 @@ autoNMF Matrix_to_NMF (Matrix me, integer dimensionOfApproximation, integer maxi
 autoMatrix NMF_to_Matrix (NMF me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
-		MATVUmul_fast (thy z.get(), my w.get(), my h.get()); // Z = W*H
+		autoMAT result = NMF_synthesize (me);
+		thy z.get() <<= result.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Matrix not created.");
 	}
 }
+
+void NMF_Matrix_improveFactorization_mu (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx, U"The dimensions of the NMF and the Matrix must match.");
+	NMF_improveFactorization_mu (me, thy z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
+}
+
 /* End of file Matrix_and_NMF.cpp */
