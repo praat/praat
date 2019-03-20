@@ -112,7 +112,7 @@ autoSVD SVD_createFromGeneralMatrix (constMAT m) {
 }
 
 
-void SVD_svd_d (SVD me, constMAT m) {
+void SVD_svd_d (SVD me, constMATVU const& m) {
 	Melder_assert ((my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
 		(my isTransposed && my numberOfRows == m.ncol && my numberOfColumns == m.nrow));
 	for (integer i = 1; i <= my numberOfRows; i ++) {

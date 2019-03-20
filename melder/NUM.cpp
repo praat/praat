@@ -137,7 +137,7 @@ static MelderMeanSumsq_longdouble NUMmeanSumsq (constMATVU const& mat) noexcept 
 	Global functions in alphabetic order.
 */
 
-double NUMcenterOfGravity (constVEC const& x) noexcept {
+double NUMcenterOfGravity (constVECVU const& x) noexcept {
 	longdouble weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
 	for (integer i = 1; i <= x.size; i ++) {
 		weightedSumOfIndexes += i * x [i];
@@ -146,7 +146,7 @@ double NUMcenterOfGravity (constVEC const& x) noexcept {
 	return double (weightedSumOfIndexes / sumOfWeights);
 }
 
-double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept {
+double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 	if (x.stride == 1) {
 		if (y.stride == 1) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.size,
@@ -202,29 +202,157 @@ MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept {
 	return result;
 }
 
-double NUMnorm (constVECVU const& x, double power) noexcept {
+static longdouble NUMsum2_longdouble (constVECVU const& vec) {
+	if (vec.stride == 1) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p) * longdouble (*p),
+			p += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p) * longdouble (*p),
+			p += vec.stride
+		)
+		return sum;
+	}
+}
+static longdouble NUMsum2_longdouble (constMATVU const& mat) {
+	if (mat.nrow <= mat.ncol) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, mat.nrow,
+			integer irow = 1,
+			NUMsum2_longdouble (mat [irow]),
+			irow += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, mat.ncol,
+			integer icol = 1,
+			NUMsum2_longdouble (mat.column (icol)),
+			icol += 1
+		)
+		return sum;
+	}
+}
+static longdouble NUMsumAbs_longdouble (constVECVU const& vec) {
+	if (vec.stride == 1) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (fabs (*p)),
+			p += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (fabs (*p)),
+			p += vec.stride
+		)
+		return sum;
+	}
+}
+static longdouble NUMsumAbs_longdouble (constMATVU const& mat) {
+	if (mat.nrow <= mat.ncol) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, mat.nrow,
+			integer irow = 1,
+			NUMsumAbs_longdouble (mat [irow]),
+			irow += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, mat.ncol,
+			integer icol = 1,
+			NUMsumAbs_longdouble (mat.column (icol)),
+			icol += 1
+		)
+		return sum;
+	}
+}
+static longdouble NUMsumPower_longdouble (constVECVU const& vec, longdouble power) {
+	if (vec.stride == 1) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			powl (longdouble (fabs (*p)), power),
+			p += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, vec.size,
+			const double *p = & vec [1],
+			powl (longdouble (fabs (*p)), power),
+			p += vec.stride
+		)
+		return sum;
+	}
+}
+static longdouble NUMsumPower_longdouble (constMATVU const& mat, longdouble power) {
+	if (mat.nrow <= mat.ncol) {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, mat.nrow,
+			integer irow = 1,
+			NUMsumPower_longdouble (mat [irow], power),
+			irow += 1
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (
+			longdouble, sum,
+			integer, mat.ncol,
+			integer icol = 1,
+			NUMsumPower_longdouble (mat.column (icol), power),
+			icol += 1
+		)
+		return sum;
+	}
+}
+
+double NUMnorm (constVECVU const& vec, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1],
-			longdouble (*px) * longdouble (*px),
-			px += x.stride
-		)
-		return sqrt (double (sum));
+		double sum2 = double (NUMsum2_longdouble (vec));
+		return sqrt (sum2);
 	} else if (power == 1.0) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1],
-			longdouble (fabs (*px)),
-			px += x.stride
-		)
-		return double (sum);
+		double sumAbs = double (NUMsumAbs_longdouble (vec));
+		return sumAbs;
 	} else {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1],
-			powl (longdouble (fabs (*px)), power),
-			px += x.stride
-		)
-		return double (powl (sum, longdouble (1.0) / power));
+		longdouble sumPower = NUMsumPower_longdouble (vec, power);
+		return double (powl (sumPower, longdouble (1.0) / power));
+	}
+}
+double NUMnorm (constMATVU const& mat, double power) noexcept {
+	if (power < 0.0) return undefined;
+	if (power == 2.0) {
+		double sum2 = double (NUMsum2_longdouble (mat));
+		return sqrt (sum2);
+	} else if (power == 1.0) {
+		double sumAbs = double (NUMsumAbs_longdouble (mat));
+		return sumAbs;
+	} else {
+		longdouble sumPower = NUMsumPower_longdouble (mat, power);
+		return double (powl (sumPower, longdouble (1.0) / power));
 	}
 }
 

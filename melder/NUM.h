@@ -60,8 +60,6 @@ bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
 	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
 }
 
-extern double NUMinner_ (constVECVU const& x, constVECVU const& y) noexcept;
-
 inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	if (NUMisEmpty (vec)) return { undefined, undefined };
 	double minimum = vec [1], maximum = minimum;
@@ -95,20 +93,19 @@ inline MelderIntegerRange NUMextrema (const constINTVECVU& vec) {
 	return { minimum, maximum };
 }
 
-
 /*
 	From here on, the functions appear in alphabetical order.
 */
 
-extern double NUMcenterOfGravity (constVEC const& x) noexcept;
+extern double NUMcenterOfGravity (constVECVU const& x) noexcept;
 
-inline bool NUMdefined (constVEC const& vec) noexcept {
+inline bool NUMdefined (constVECVU const& vec) noexcept {
 	for (integer i = 1; i <= vec.size; i ++)
 		if (isundef (vec [i]))
 			return false;
 	return true;
 }
-inline bool NUMdefined (constMAT const& mat) noexcept {
+inline bool NUMdefined (constMATVU const& mat) noexcept {
 	for (integer irow = 1; irow <= mat.nrow; irow ++)
 		for (integer icol = 1; icol <= mat.ncol; icol ++)
 			if (isundef (mat [irow] [icol]))
@@ -178,27 +175,7 @@ inline double NUMextremum (constMATVU const& mat) {
 	return std::max (fabs (range.min), fabs (range.max));
 }
 
-inline double NUMinner (constVEC const& x, constVEC const& y) noexcept {
-	const integer n = x.size;
-	Melder_assert (y.size == n);
-	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : double (longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2]));
-		if (n <= 4) return n == 3 ?
-			double (longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2]) + longdouble (x [3]) * longdouble (y [3])) :
-			double ((longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2])) + (longdouble (x [3]) * longdouble (y [3]) + longdouble (x [4]) * longdouble (y [4])));
-		if (n <= 6) return n == 5 ?
-			double ((longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2]) + longdouble (x [3]) * longdouble (y [3])) +
-					(longdouble (x [4]) * longdouble (y [4]) + longdouble (x [5]) * longdouble (y [5]))) :
-			double ((longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2]) + longdouble (x [3]) * longdouble (y [3])) +
-					(longdouble (x [4]) * longdouble (y [4]) + longdouble (x [5]) * longdouble (y [5]) + longdouble (x [6]) * longdouble (y [6])));
-		return n == 7 ?
-			double (((longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2])) + (longdouble (x [3]) * longdouble (y [3]) + longdouble (x [4]) * longdouble (y [4]))) +
-					(longdouble (x [5]) * longdouble (y [5]) + longdouble (x [6]) * longdouble (y [6]) + longdouble (x [7]) * longdouble (y [7]))) :
-			double (((longdouble (x [1]) * longdouble (y [1]) + longdouble (x [2]) * longdouble (y [2])) + (longdouble (x [3]) * longdouble (y [3]) + longdouble (x [4]) * longdouble (y [4]))) +
-					((longdouble (x [5]) * longdouble (y [5]) + longdouble (x [6]) * longdouble (y [6])) + (longdouble (x [7]) * longdouble (y [7]) + longdouble (x [8]) * longdouble (y [8]))));
-	}
-	return NUMinner_ (x, y);
-}
+extern double NUMinner (constVECVU const& x, constVECVU const& y) noexcept;
 
 inline bool NUMisSymmetric (constMAT const& x) noexcept {
 	if (x.nrow != x.ncol) return false;
@@ -263,10 +240,7 @@ inline double NUMmin (constMATVU const& mat) {
 }
 
 double NUMnorm (constVECVU const& x, double power) noexcept;
-
-inline double NUMnorm (constMAT const& x, double power) noexcept {
-	return NUMnorm (asvector (x), power);
-}
+double NUMnorm (constMATVU const& x, double power) noexcept;
 
 integer NUMnumberOfTokens (conststring32 str) noexcept;
 
