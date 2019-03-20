@@ -1,6 +1,6 @@
 /* Sound_to_Formant.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "Sound.h"
 #include "Formant.h"
 
-autoFormant Sound_to_Formant_any (Sound me, double timeStep, int numberOfPoles, double maximumFrequency,
+autoFormant Sound_to_Formant_any (Sound me, double timeStep, integer numberOfPoles, double maximumFrequency,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin);
 /*
 	Which = 1: Burg.

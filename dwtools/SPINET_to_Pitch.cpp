@@ -116,7 +116,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 		for (integer j = 1; j <= my nx; j ++) {
 			double f0, localStrength;
-			Pitch_Frame_getPitch (& thy frame [j], &f0, &localStrength);
+			Pitch_Frame_getPitch (& thy frame [j], & f0, & localStrength);
 			Pitch_Frame_resizeStrengths (& thy frame [j], localStrength / maxStrength, unvoicedCriterium);
 		}
 		return thee;

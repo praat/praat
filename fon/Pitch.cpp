@@ -411,7 +411,7 @@ void structPitch :: v_info () {
 	}
 }
 
-void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
+void Pitch_Frame_init (Pitch_Frame me, integer nCandidates) {
 	/*
 	 * Create without change.
 	 */
