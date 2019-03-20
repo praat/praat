@@ -793,14 +793,6 @@ automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
 }
 template <typename T>
-vector<T> asvector (matrix<T> const& x) {
-	return vector<T> (x.cells - 1, x.nrow * x.ncol);
-}
-template <typename T>
-constvector<T> asvector (constmatrix<T> const& x) {
-	return constvector<T> (& x [1] [0], x.nrow * x.ncol);
-}
-template <typename T>
 void matrixcopy_preallocated (matrixview<T> const& target, constmatrixview<T> const& source) {
 	Melder_assert (source.nrow == target.nrow && source.ncol == target.ncol);
 	for (integer irow = 1; irow <= source.nrow; irow ++)
