@@ -254,8 +254,9 @@ inline autoVEC newVECrandomUniform (integer size, double lowest, double highest)
 	return result;
 }
 
-inline void VECsin_inplace (VEC const& x) noexcept {
-	for (double& element : x) element = sin (element);
+inline void VECsin_inplace (VEC const& vec) noexcept {
+	for (integer i = 1; i <= vec.size; i ++)
+		vec [i] = sin (vec [i]);
 }
 
 extern void VECsort_inplace (VEC const& x) noexcept;

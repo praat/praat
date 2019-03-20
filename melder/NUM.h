@@ -138,7 +138,14 @@ bool NUMequal (vector<T> const& x, vector<T> const& y) noexcept {
 
 template <typename T>
 bool NUMequal (constmatrix<T> const& x, constmatrix<T> const& y) noexcept {
-	return NUMequal (asvector (x), asvector (y));
+	const integer nrow = x.nrow, ncol = x.ncol;
+	if (y.nrow != nrow || y.ncol != ncol)
+		return false;
+	for (integer irow = 1; irow <= nrow; irow ++)
+		for (integer icol = 1; icol <= ncol; icol ++)
+			if (x [irow] [icol] != y [irow] [icol])
+				return false;
+	return true;
 }
 template <typename T>
 bool NUMequal (matrix<T> const& x, constmatrix<T> const& y) noexcept {
