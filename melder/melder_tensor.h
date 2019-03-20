@@ -675,7 +675,12 @@ public:
 	constvectorview<T> operator[] (integer i) const {
 		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
 	}
+	constvectorview<T> row (integer rowNumber) const {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		return constvectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
+	}
 	constvectorview<T> column (integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
 		return constvectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
 	}
 	constvectorview<T> diagonal () const {
