@@ -25,21 +25,15 @@
 #include "Procrustes.h"
 #include "SVD.h"
 
-#undef your
-#define your ((AffineTransform_Table) thy methods) ->
-
-static void do_steps45 (const constMAT& w, const MAT& t, const constMAT& c, double *out_f) {
+static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c, double *out_f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 	for (integer i = 1; i <= w.ncol; i ++) {
 		longdouble d = 0.0;
-		for (integer k = 1; k <= w.ncol; k++) {
+		for (integer k = 1; k <= w.ncol; k++)
 			d += w [k] [i] * t [k] [i];
-		}
-		if (d < 0.0) {
-			for (integer k = 1; k <= w.ncol; k++) {
-				t [k] [i] = -t [k] [i];
-			}
-		}
+		if (d < 0.0)
+			for (integer k = 1; k <= w.ncol; k++)
+				t [k] [i] = - t [k] [i];
 	}
 
 	// Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
@@ -49,21 +43,19 @@ static void do_steps45 (const constMAT& w, const MAT& t, const constMAT& c, doub
 		longdouble d = 0.0, tct = 0.0;
 		for (integer k = 1; k <= w.ncol; k ++) {
 			d += w [k] [i] * t [k] [i];
-			for (integer j = 1; j <= w.ncol; j ++) {
+			for (integer j = 1; j <= w.ncol; j ++)
 				tct += t [k] [i] * c [k] [j] * t [j] [i];
-			}
 		}
-		if (tct > 0.0) {
+		if (tct > 0.0)
 			*out_f += d / sqrt (tct);
-		}
 	}
 }
 
 /*
-	Using: Kiers & Groenen (1996), A monotonically convergent congruence algorithm for orthogona congruence rotation,
+	Using: Kiers & Groenen (1996), A monotonically convergent congruence algorithm for orthogonal congruence rotation,
 	Psychometrika (61), 375-389.
 */
-static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maximumNumberOfIterations, double tolerance) {
+static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, constMATVU const& a, integer maximumNumberOfIterations, double tolerance) {
 	Melder_assert (t.ncol == b.ncol && b.nrow == a.nrow && b.ncol == a.ncol);
 	integer numberOfIterations = 0;
 
@@ -83,7 +75,8 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 	double checkc = NUMsum (c.all());
 	double checkw = NUMsum (w.all());
 	
-	Melder_require (checkc != 0.0 && checkw != 0.0, U"NUMmaximizeCongruence: the matrix should not be zero.");
+	Melder_require (checkc != 0.0 && checkw != 0.0,
+		U"NUMmaximizeCongruence: the matrix should not be zero.");
 
 	// Scale W by (diag(B'B))^-1/2
 
@@ -109,18 +102,15 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 			// Step 7.a
 
 			longdouble p = 0.0; 
-			for (integer k = 1; k <= nc; k ++) {
-				for (integer i = 1; i <= nc; i ++) {
+			for (integer k = 1; k <= nc; k ++)
+				for (integer i = 1; i <= nc; i ++)
 					p += t [k] [j] * c [k] [i] * t [i] [j];
-				}
-			}
 
 			// Step 7.b
 
 			longdouble q = 0.0; // TODO NUMinner (w.column (j), t.column (j) if argument of NUMinner wer VECVU type
-			for (integer k = 1; k <= nc; k ++) {
+			for (integer k = 1; k <= nc; k ++)
 				q += w [k] [j] * t [k] [j];
-			}
 
 			// Step 7.c
 
@@ -128,25 +118,23 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 				u.column (j) <<= 0.0;
 			} else {
 				longdouble ww = 0.0;
-				for (integer k = 1; k <= nc; k ++) {
+				for (integer k = 1; k <= nc; k ++)
 					ww += w [k] [j] * w [k] [j];
-				}
 				for (integer i = 1; i <= nc; i ++) {
 					longdouble ct = 0.0;
-					for (integer k = 1; k <= nc; k ++) {
+					for (integer k = 1; k <= nc; k ++)
 						ct += c [i] [k] * t [k] [j];
-					}
-					u [i] [j] = (q * (ct - rho * t [i] [j]) / p - 2.0 * ww * t [i] [j] / q - w [i] [j]) / sqrt (p);
+					u [i] [j] = double ((q * (ct - rho * t [i] [j]) / p - 2.0 * ww * t [i] [j] / q - w [i] [j]) / sqrt (p));
 				}
 			}
 		}
 
 		// Step 8
 
-		SVD_svd_d (svd.get(), u.get());
+		SVD_svd_d (svd.get(), u.all());
 
 		// Step 9
-		MATVUmul (t, svd -> u.get(), svd -> v.transpose ());
+		MATVUmul (t, svd -> u.all(), svd -> v.transpose ());
 		t *= -1.0;
 
 		numberOfIterations++;
@@ -154,7 +142,7 @@ static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, intege
 
 		// Steps 10 & 11 equal steps 4 & 5
 
-		do_steps45 (w.get(), t, c.get(), & f);
+		do_steps45 (w.all(), t, c.all(), & f);
 
 	} while (fabs (f_old - f) / f_old > tolerance && numberOfIterations < maximumNumberOfIterations);
 }
@@ -177,7 +165,8 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 
 autoConfiguration Configuration_AffineTransform_to_Configuration (Configuration me, AffineTransform thee) {
 	try {
-		Melder_require (my numberOfColumns == thy dimension, U"The number of columns in the Configuration should equal the dimension of the transform.");
+		Melder_require (my numberOfColumns == thy dimension,
+			U"The number of columns in the Configuration should equal the dimension of the transform.");
 		
 		autoConfiguration him = Data_copy (me);
 

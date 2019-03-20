@@ -544,7 +544,7 @@ public:
 			newNrow, newNcol, our ncol, 1
 		);
 	}
-	matrixview<T> transpose () {
+	matrixview<T> transpose () const {
 		return matrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
 };
@@ -595,7 +595,7 @@ public:
 			newNrow, newNcol, our rowStride, our colStride
 		);
 	}
-	matrixview<T> transpose () {
+	matrixview<T> transpose () const {
 		return matrixview<T> (our firstCell, our ncol, our nrow, our colStride, our rowStride);
 	}
 };
@@ -651,7 +651,7 @@ public:
 			newNrow, newNcol, our ncol, 1
 		);
 	}
-	constmatrixview<T> transpose () {
+	constmatrixview<T> transpose () const {
 		return constmatrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
 };
@@ -704,7 +704,7 @@ public:
 			our rowStride, our colStride
 		);
 	}
-	constmatrixview<T> transpose () {
+	constmatrixview<T> transpose () const {
 		return constmatrixview<T> (our firstCell, our ncol, our nrow, our colStride, our rowStride);
 	}
 };
