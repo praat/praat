@@ -355,7 +355,7 @@ inline autoMAT newMATrandomUniform (integer nrow, integer ncol, double lowest, d
 	return result;
 }
 
-inline void MATsin_inplace (MAT const& mat) noexcept {
+inline void MATsin_inplace (MATVU const& mat) noexcept {
 	for (integer irow = 1; irow <= mat.nrow; irow ++)
 		for (integer icol = 1; icol <= mat.ncol; icol ++)
 			mat [irow] [icol] = sin (mat [irow] [icol]);
