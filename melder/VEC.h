@@ -234,17 +234,23 @@ extern void VECmul_preallocated (const VEC& target, const constMAT& mat, const c
 extern autoVEC newVECmul (const constVEC& vec, const constMAT& mat) noexcept;
 extern autoVEC newVECmul (const constMAT& mat, const constVEC& vec) noexcept;
 
+inline void VECrandomGauss_preallocated (VECVU const& target, double mu, double sigma) noexcept {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = NUMrandomGauss (mu, sigma);
+}
 inline autoVEC newVECrandomGauss (integer size, double mu, double sigma) {
 	autoVEC result = newVECraw (size);
-	for (integer i = 1; i <= size; i ++)
-		result [i] = NUMrandomGauss (mu, sigma);
+	VECrandomGauss_preallocated (result.all(), mu, sigma);
 	return result;
 }
 
+inline void VECrandomUniform_preallocated (VECVU const& target, double lowest, double highest) noexcept {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = NUMrandomUniform (lowest, highest);
+}
 inline autoVEC newVECrandomUniform (integer size, double lowest, double highest) {
 	autoVEC result = newVECraw (size);
-	for (integer i = 1; i <= size; i ++)
-		result [i] = NUMrandomUniform (lowest, highest);
+	VECrandomUniform_preallocated (result.all(), lowest, highest);
 	return result;
 }
 
