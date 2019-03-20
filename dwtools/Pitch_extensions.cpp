@@ -25,7 +25,7 @@
 
 #include "Pitch_extensions.h"
 
-void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates) {
+void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer maxnCandidates) {
 	integer pos = 0;
 	double weakest = 1e308;
 	if (my nCandidates < maxnCandidates) {
