@@ -70,11 +70,8 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
-		VEC weights = asvector (my weights.get()), features = asvector (my features.get());
-		for (long i = 1; i <= my numberOfRows * my numberOfFeatures; i ++)
-			features [i] = NUMrandomUniform (rmin, rmax);
-		for (long i = 1; i <= my numberOfFeatures * my numberOfColumns; i ++)
-			weights [i] = NUMrandomUniform (rmin, rmax);
+		MATrandomUniform_preallocated (my features.all(), rmin, rmax);
+		MATrandomUniform_preallocated (my weights.all(), rmin, rmax);
 	} else {
 	}
 }
