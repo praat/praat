@@ -667,9 +667,8 @@ double TableOfReal_getTableNorm (TableOfReal me) {
 	return NUMnorm (my data.get(), 2.0);
 }
 
-bool TableOfReal_checkNonNegativity (TableOfReal me) {
-	integer index = NUMcheckNonNegativity (asvector(my data.get()));
-	return index == 0;
+bool TableOfReal_isNonNegative (TableOfReal me) {
+	return NUMisNonNegative (my data.all());
 }
 
 void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb, integer cole, double fractionWhite) {

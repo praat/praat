@@ -153,7 +153,7 @@ void TableOfReal_centreRows (TableOfReal me);
 
 void TableOfReal_doubleCentre (TableOfReal me);
 
-bool TableOfReal_checkNonNegativity (TableOfReal me);
+bool TableOfReal_isNonNegative (TableOfReal me);
 
 double TableOfReal_getTableNorm (TableOfReal me);
 

@@ -101,10 +101,18 @@ inline integer NUMmin (const constINTVEC& vec) {
 	return minimum;
 }
 
-inline integer NUMcheckNonNegativity (constVEC v) {
-	integer i;
-	for (i = 1; i <= v.size && v [i] >= 0.0; i ++);
-	return i <= v.size ? i : 0;
+inline bool NUMisNonNegative (constVECVU vec) {
+	for (integer i = 1; i <= vec.size; i ++)
+		if (vec [i] < 0.0)
+			return false;
+	return true;
+}
+inline bool NUMisNonNegative (constMATVU mat) {
+	for (integer irow = 1; irow <= mat.nrow; irow ++)
+		for (integer icol = 1; icol <= mat.ncol; icol ++)
+			if (mat [irow] [icol] < 0.0)
+				return false;
+	return true;
 }
 
 template<typename T>
