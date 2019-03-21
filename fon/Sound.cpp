@@ -246,7 +246,7 @@ autoSound Sound_extractChannel (Sound me, integer ichan) {
 	}
 }
 
-autoSound Sound_extractChannels (Sound me, constVEC channelNumbers) {
+autoSound Sound_extractChannels (Sound me, constVECVU const& channelNumbers) {
 	try {
 		integer numberOfChannels = channelNumbers.size;
 		Melder_require (numberOfChannels > 0,

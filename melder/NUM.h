@@ -170,7 +170,7 @@ inline bool NUMequal (constSTRVEC x, constSTRVEC y) noexcept {
 	return true;
 }
 
-inline double NUMextremum (constVEC const& vec) noexcept {
+inline double NUMextremum (constVECVU const& vec) noexcept {
 	double extremum = 0.0;
 	for (integer i = 1; i <= vec.size; i ++)
 		if (fabs (vec [i]) > extremum)
@@ -184,7 +184,7 @@ inline double NUMextremum (constMATVU const& mat) {
 
 extern double NUMinner (constVECVU const& x, constVECVU const& y) noexcept;
 
-inline bool NUMisSymmetric (constMAT const& x) noexcept {
+inline bool NUMisSymmetric (constMATVU const& x) noexcept {
 	if (x.nrow != x.ncol) return false;
 	const integer n = x.nrow;
 	for (integer irow = 1; irow <= n; irow ++)

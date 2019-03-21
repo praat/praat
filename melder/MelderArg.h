@@ -41,8 +41,8 @@ struct MelderArg {
 	/*
 		The types of arguments that sometimes involve memory allocation:
 	*/
-	MelderArg (constVEC                  arg) : _arg (Melder_VEC             (arg)) { }
-	MelderArg (constMAT                  arg) : _arg (Melder_MAT             (arg)) { }
+	MelderArg (constVECVU const&         arg) : _arg (Melder_VEC             (arg)) { }
+	MelderArg (constMATVU const&         arg) : _arg (Melder_MAT             (arg)) { }
 	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
 	/*

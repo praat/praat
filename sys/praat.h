@@ -2,7 +2,7 @@
 #define _praat_h_
 /* praat.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -714,10 +714,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
 
 #define NUMVEC_ONE(klas)  FIND_ONE (klas)
-#define NUMVEC_ONE_END  if (interpreter) theInterpreterNumvec = result.move(); else Melder_information (constVEC (result.get())); END_NO_NEW_DATA
+#define NUMVEC_ONE_END  if (interpreter) theInterpreterNumvec = result.move(); else Melder_information (constVECVU (result.all())); END_NO_NEW_DATA
 
 #define NUMMAT_ONE(klas)  FIND_ONE (klas)
-#define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (constMAT (result.get())); END_NO_NEW_DATA
+#define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (constMATVU (result.all())); END_NO_NEW_DATA
 
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA

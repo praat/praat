@@ -472,15 +472,15 @@ autovector<T> newvectorzero (integer size) {
 	return autovector<T> (size, kTensorInitializationType::ZERO);
 }
 template <typename T>
-autovector<T> newvectorcopy (constvector<T> source) {
+autovector<T> newvectorcopy (constvectorview<T> source) {
 	autovector<T> result = newvectorraw<T> (source.size);
 	for (integer i = 1; i <= source.size; i ++)
 		result [i] = source [i];
 	return result;
 }
 template <typename T>
-autovector<T> newvectorcopy (vector<T> source) {
-	return newvectorcopy (constvector<T> (source));
+autovector<T> newvectorcopy (vectorview<T> source) {
+	return newvectorcopy (constvectorview<T> (source));
 }
 
 template <typename T>
@@ -1246,7 +1246,7 @@ inline autoVEC newVECraw (integer size) {
 inline autoVEC newVECzero (integer size) {
 	return newvectorzero <double> (size);
 }
-inline autoVEC newVECcopy (constVEC source) {
+inline autoVEC newVECcopy (constVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1269,12 +1269,14 @@ inline autoINTVEC newINTVECraw (integer size) {
 inline autoINTVEC newINTVECzero (integer size) {
 	return newvectorzero <integer> (size);
 }
-inline autoINTVEC newINTVECcopy (constINTVEC source) {
+inline autoINTVEC newINTVECcopy (constINTVECVU const& source) {
 	return newvectorcopy (source);
 }
 
 using BOOLVEC = vector <bool>;
+using BOOLVECVU = vectorview <bool>;
 using constBOOLVEC = constvector <bool>;
+using constBOOLVECVU = constvectorview <bool>;
 using autoBOOLVEC = autovector <bool>;
 inline autoBOOLVEC newBOOLVECraw (integer size) {
 	return newvectorraw <bool> (size);
@@ -1282,7 +1284,7 @@ inline autoBOOLVEC newBOOLVECraw (integer size) {
 inline autoBOOLVEC newBOOLVECzero (integer size) {
 	return newvectorzero <bool> (size);
 }
-inline autoBOOLVEC newBOOLVECcopy (constBOOLVEC source) {
+inline autoBOOLVEC newBOOLVECcopy (constBOOLVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1372,8 +1374,8 @@ inline autoBYTEMAT newBYTEMATcopy (constBYTEMATVU source) {
 	return newmatrixcopy (source);
 }
 
-conststring32 Melder_VEC (constVEC value);
-conststring32 Melder_MAT (constMAT value);
+conststring32 Melder_VEC (constVECVU const& value);
+conststring32 Melder_MAT (constMATVU const& value);
 
 inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	Melder_assert (target.size == source.size);

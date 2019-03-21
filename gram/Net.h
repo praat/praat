@@ -2,7 +2,7 @@
 #define _Net_h_
 /* Net.h
  *
- * Copyright (C) 2017,2018 Paul Boersma
+ * Copyright (C) 2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@
 
 #include "Net_def.h"
 
-void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary);
+void Net_initAsDeepBeliefNet (Net me, constVECVU const& numbersOfNodes, bool inputsAreBinary);
 
 void Net_initEmpty (Net me);
 autoNet Net_createEmpty (integer numberOfInputNodes);
 
-autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary);
+autoNet Net_createAsDeepBeliefNet (constVECVU const& numbersOfNodes, bool inputsAreBinary);
 
 void Net_addInputLayer (Net me, integer numberOfNodes);
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);

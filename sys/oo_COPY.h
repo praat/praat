@@ -33,7 +33,7 @@
 	}
 
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
-	thy x = newvectorcopy (our x.get());
+	thy x = newvectorcopy (our x.all());
 
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	thy x = newmatrixcopy (our x.all());
