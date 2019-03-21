@@ -51,7 +51,7 @@ autoVEC SVD_solve (SVD me, constVEC b);
 /* Solve Ax = b */
 
 /* Solve A*X = B */
-void SVD_solve_preallocated (SVD me, constMAT b, MAT result);
+void SVD_solve_preallocated (SVD me, constMATVU b, MATVU result);
 autoMAT SVD_solve (SVD me, constMAT b);
 
 void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfSingularValues);

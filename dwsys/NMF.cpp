@@ -19,6 +19,7 @@
 #include "NMF.h"
 #include "NUMmachar.h"
 #include "NUM2.h"
+#include "SVD.h"
 
 #include "oo_DESTROY.h"
 #include "NMF_def.h"
@@ -67,7 +68,7 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 	}
 }
 
-void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMethod) {
+void NMF_initialize (NMF me, constMATVU data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
 		MATrandomUniform_preallocated (my features.all(), rmin, rmax);
@@ -76,7 +77,7 @@ void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMe
 	}
 }
 
-autoNMF NMF_createFromGeneralMatrix (constMAT m, integer numberOfFeatures) {
+autoNMF NMF_createFromGeneralMatrix (constMATVU m, integer numberOfFeatures) {
 	try {
 		Melder_require (NUMisNonNegative (m),
 			U"No matrix elements should be negative.");
@@ -145,7 +146,7 @@ static const void update (MAT m, constMAT m0, constMAT numer, constMAT denom, do
 		Computing and informatics% #30: 205--224.
 
 */
-void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_mu (NMF me, constMATVU data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
@@ -174,24 +175,28 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 		bool convergence = false;		
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
-				Lee & Seung (2001) update formulas (4)
-				W[i,j] <- W[i,j] ((F'D)[i,j] / ((F'FW)[i,j])
-				F[i,j] <- F[i,j] ((DW')[i,j]) / (FWW')[i,j]),
-				where W, F, D are the weight matrix, the feature matrix and the data matrix, respectively.
+				while iter < maxinter and not convergence
+					(1) W = W .* (F'*D) ./ (F'*F*W + 10^^−9^)
+					(2) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)
+					(3) test for convergence
+				endwhile
 			*/
-			MATVUmul (productFtD.get(), features0.transpose(), data); // productFtD = features0'*data
-			MATVUmul (productFtF.get(), features0.transpose(), features0.get()); // work1 = features0'*features0
-			MATVUmul  (productFtFW.get(), productFtF.get(), weights0.get()); // productFtFW = work1 * weights0
-
+			
+			// 1. Update W matrix
+			features0.get() <<= my features.get();
+			weights0.get() <<= my weights.get();
+			MATVUmul (productFtD.get(), features0.transpose(), data);
+			MATVUmul (productFtF.get(), features0.transpose(), features0.get());
+			MATVUmul  (productFtFW.get(), productFtF.get(), weights0.get());
 			update (my weights.get(), weights0.get(), productFtD.get(), productFtFW.get(), eps, maximum);
 
+			// 2. Update F matrix
 			MATVUmul  (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
 			MATVUmul (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
 			MATVUmul  (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
-			
 			update (my features.get(), features0.get(), productDWt.get(), productFWWt.get(), eps, maximum);
 			
-			/*
+			/* 3. Convergence test:
 				The Frobenius norm ||D-FW|| of a matrix can be written as
 				||D-FW||=trace(D'D) − 2trace(W'F'D) + trace(W'F'FW)
 						=trace(D'D) - 2trace(W'(F'D))+trace((F'F)(WW'))
@@ -210,10 +215,6 @@ void NMF_improveFactorization_mu (NMF me, constMAT data, integer maximumNumberOf
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
 			
 			dnorm0 = dnorm;
-			
-			features0.get() <<= my features.get();
-			weights0.get() <<= my weights.get();
-
 			++ iter;
 		}
 	} catch (MelderError) {
@@ -235,7 +236,7 @@ void NMF_makeFeaturesNonnegative (NMF me, int /* strategy */) {
 					my features [irow] [icol] = 0.0;
 }
 
-void NMF_improveFactorization_als (NMF me, constMAT data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_als (NMF me, constMATVU data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
@@ -246,9 +247,11 @@ void NMF_improveFactorization_als (NMF me, constMAT data, integer maximumNumberO
 		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
 		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
 
-		
 		autoMAT productFtF = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
 		autoMAT productWWt = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
+		
+		autoSVD svd_WWt = SVD_create (my numberOfFeatures, my numberOfFeatures); // solving W*W'*F' = W*D'
+		autoSVD svd_FtF = SVD_create (my numberOfFeatures, my numberOfFeatures); // solving F´*F*W = F'*D
 				
 		double traceDtD = NUMtrace2 (data.transpose(), data); // for distance calculation
 		
@@ -262,28 +265,34 @@ void NMF_improveFactorization_als (NMF me, constMAT data, integer maximumNumberO
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
 				for iter to maxiter
-					W is solution of F´*F*W = F'*D.
-					Set all negative elements in W to 0.
-					F is solution of W*W'*F' = W*D' .
-					Set all negative elements in F to 0.
+					(1) W is solution of F´*F*W = F'*D.
+					    Set all negative elements in W to 0.
+					(2) F is solution of W*W'*F' = W*D' .
+					    Set all negative elements in F to 0.
+					(3) test for convergence
 				endfor
 			*/
-			weights0.get() <<= my weights.get(); // save previous weigts
-			MATVUmul (productFtD.get(), my features.transpose(), data); // productFtD = features'*data
-			MATVUmul (productFtF.get(), my features.transpose(), my features.get()); // work1 = features0'*features0
-			// solve equations for new W
-			// TODO more efficient
-			autoMAT newweights = NUMsolveEquations (productFtF.get(), productFtD.get(), eps);
-			my weights.get() <<= newweights.get();
+			
+			// 1. Solve equations for new W:  F´*F*W = F'*D.
+			weights0.get() <<= my weights.get(); // save previous weigts for convergence test
+			MATVUmul (productFtD.get(), my features.transpose(), data);
+			MATVUmul (productFtF.get(), my features.transpose(), my features.get());
+
+			svd_FtF -> u.get() <<= productFtF.get();
+			SVD_compute (svd_FtF.get());
+			SVD_solve_preallocated (svd_FtF.get(), productFtD.get(), my weights.get());
 			NMF_makeWeightsNonnegative (me, 0);
 			
-			features0.get() <<= my features.get(); // save previous features
-			MATVUmul  (productWDt.get(), my weights.get(), data.transpose()); // productWDt = weights*data'
-			MATVUmul (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
-			// solve equations for new F 
-			autoMAT newfeatures = NUMsolveEquations (productWWt.get(), productWDt.get(), eps);
-			my features.get() <<= newfeatures.transpose();
-			
+			// 2. Solve equations for new F:  W*W'*F' = W*D'
+			features0.get() <<= my features.get(); // save previous features for convergence test
+			MATVUmul  (productWDt.get(), my weights.get(), data.transpose());
+			MATVUmul (productWWt.get(), my weights.get(), my weights.transpose());
+
+			svd_WWt -> u.get() <<= productWWt.get();
+			SVD_compute (svd_WWt.get());
+			SVD_solve_preallocated (svd_WWt.get(), productWDt.get(), my features.transpose());
+
+			// 3. Convergence test
 			double traceWtFtD  = NUMtrace2 (my weights.transpose(), productFtD.get());
 			double traceWtFtFW = NUMtrace2 (productFtF.get(), productWWt.get());
 			double distance = traceDtD -2.0 * traceWtFtD + traceWtFtFW;

@@ -70,7 +70,7 @@ procedure solve3x3
 		.dif = abs (object [.xx, 1, .irow] - .x## [.irow, 1])
 		assert .dif < .eps; '.dif'< '.eps'
 	endfor
-  	appendInfoLine: tab$, "A[3x]X[3x2]=B[3x2]"
+  	appendInfoLine: tab$, "A[3x3] * X[3x2] = B[3x2]"
 	removeObject: .a, .xx
 	.a = Create simple Matrix: "1", 3, 3, "0"
 	for .irow to 3

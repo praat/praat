@@ -230,7 +230,7 @@ autoVEC SVD_solve (SVD me, constVEC b) {
 /*
 	Solve UDV' X = B.
 */
-void SVD_solve_preallocated (SVD me, constMAT b, MAT result) {
+void SVD_solve_preallocated (SVD me, constMATVU b, MATVU result) {
 	Melder_assert (b.nrow == my numberOfRows && b.ncol == result.ncol);
 	Melder_assert (result.nrow == my numberOfColumns);
 	autoVEC bcol = newVECraw (b.nrow);
