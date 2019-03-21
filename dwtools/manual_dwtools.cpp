@@ -2660,18 +2660,34 @@ MAN_BEGIN (U"NMF", U"djmw", 20190312)
 INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factorization@ of a matrix.")
 MAN_END
 
-MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190317)
-INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a matrix ##A#, whose elements are all non-negative, into a feature matrix ##W# and a weights matrix ##H# such that ##A \\~~ W\\.cH#, where the elements of ##W# and ##H# are also all non-negative.")
+MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190321)
+INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a data matrix ##D#, whose elements are all non-negative, into a feature matrix ##F# and a weights matrix ##W# such that ##D \\~~ F*W#, where the elements of ##F# and ##W# are also all non-negative.")
 ENTRY (U"Algorithms for computing NMF")
+NORMAL (U"More backgroud on the algorithms used can be found in @@Berry et al. (2007)@")
 NORMAL (U"The algorithms fall into three general classes:")
 TAG (U"##1. Multiplicative updates#,")
 TAG (U"##2. Alternating Least squares#,")
 TAG (U"##3. Projected Gradient.#")
-ENTRY (U"Multiplicative Update Algorithms")
-NORMAL (U"The update steps in this algorithm from @@Lee & Seung (2001)@ are")
-FORMULA (U"H^^(t+1)^= H^^(t)^\\.c (W^^(t)T^*A) / (W^^(t)T^*W^^(t)^*H^^(t)^ + \\ep)")
-FORMULA (U"W^^(t+1)^= W^^(t)^\\.c (A*H^^(t+1)T^) / (W^^(t)T^*(H^^(t+1)^*H^^(t+1)T^) + \\ep),")
-NORMAL (U"where T means transposition and the divisions have to be performed %%element-wise%.")
+ENTRY (U"Multiplicative Updates")
+CODE (U"initialize F and W")
+CODE (U"while iter < maxinter and not convergence")
+CODE (U"    (MU) W = W .* (F'*D) ./ (F'*F*W + 10^^−9^)")
+CODE (U"    (MU) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)")
+CODE (U"    test for convergence")
+CODE (U"endwhile")
+NORMAL (U"In the mutiplicative update (MU) steps above \"*\" means ordinary matrix multiplication while \".*\" and \"./\" mean elementwise matrix operations. The factors 10^^-9^ guard against division by zero.")
+ENTRY (U"Alternating Least Squares")
+NORMAL (U"The optimization of ##D \\~~ F*W# is not convex in both ##F# and ##W# it is convex in either ##F# or ##W#. Therefor given one, the other can be found by a simple least squares (LS) algorithm. This can be done in an alternating fashion.")
+NORMAL (U"The Aternating Least Squares (ALS) algorithm is as follows:")
+CODE (U"initialize F")
+CODE (U"while iter < maxinter and not convergence")
+CODE (U"    (LS) Solve for W in matrix equation F'*F*W = F'*D")
+CODE (U"    (NONNEG) Set all negative elements in W to 0")
+CODE (U"    (LS) Solve for F in matrix equation W*W'*F' = W*D'")
+CODE (U"    (NONNEG) Set all negative elements in F to 0")
+CODE (U"    test for convergence")
+CODE (U"endwhile")
+NORMAL (U"")
 MAN_END
 
 MAN_BEGIN (U"pairwise algorithm for computing sample variances", U"djmw", 20170806)
@@ -5386,7 +5402,13 @@ MAN_END
 MAN_BEGIN (U"Bartlett (1954)", U"djmw", 20011111)
 NORMAL (U"M.S. Bartlett (1954): \"A note on multiplying factors for various "
 	"chi-squared approximations.\", %%Joural of the Royal Statistical Society, "
-	"Series B% #16: 296\\--298")
+	"Series B% #16: 296\\--298.")
+MAN_END
+
+MAN_BEGIN (U"Berry et al. (2007)", U"djmw", 20190321)
+NORMAL (U"M.W. Berry, M. Browne, A.N. Langville, V.P. Pauca & R.J. Plemmons (2007): "
+	"\"Algorithms and applications for approximate nonnegative matrix factorization.\", "
+	"Computational Statistics & Data Analysis ##52#: 155\\--173.")
 MAN_END
 
 MAN_BEGIN (U"Boll (1979)", U"djmw", 20121021)
