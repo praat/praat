@@ -193,7 +193,7 @@ void PointProcess_addPoint (PointProcess me, double t) {
 	}
 }
 
-void PointProcess_addPoints (PointProcess me, constVEC times) {
+void PointProcess_addPoints (PointProcess me, constVECVU const& times) {
 	try {
 		integer newNumberOfPoints = my nt + times.size;
 		my t.resize (newNumberOfPoints, & my maxnt);

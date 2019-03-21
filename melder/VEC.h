@@ -51,7 +51,7 @@ inline TypeVECadd_VEC_NUM operator+ (constVECVU const& x, double number) { retur
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECadd (constVEC const& x, double number) {
+inline autoVEC newVECadd (constVECVU const& x, double number) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= x  +  number;
 	return result;
@@ -83,7 +83,7 @@ inline TypeVECmultiply_VEC_NUM operator* (constVECVU const& x, double number) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECmultiply (constVEC const& x, double factor) {
+inline autoVEC newVECmultiply (constVECVU const& x, double factor) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= x  *  factor;
 	return result;
@@ -99,7 +99,7 @@ inline TypeVECadd_NUM_VEC operator+ (double number, constVECVU const& x) { retur
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECadd (double number, constVEC const& x) {
+inline autoVEC newVECadd (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= number  +  x;
 	return result;
@@ -115,7 +115,7 @@ inline TypeVECsubtract_NUM_VEC operator- (double number, constVECVU const& x) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECsubtract (double number, constVEC const& x) {
+inline autoVEC newVECsubtract (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= number  -  x;
 	return result;
@@ -131,7 +131,7 @@ inline TypeVECmultiply_NUM_VEC operator* (double number, constVECVU const& x) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECmultiply (double number, constVEC const& x) {
+inline autoVEC newVECmultiply (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= number  *  x;
 	return result;
@@ -218,50 +218,57 @@ inline autoVEC newVECcolumn (constMATVU const& source, integer columnNumber) {
 	return target;
 }
 
-inline void VECcolumnMeans_preallocated (const VEC& target, const constMAT& x) noexcept {
+inline void VECcolumnMeans_preallocated (VECVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (target.size == x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		target [icol] = NUMmean (x.column (icol));
 }
-inline autoVEC newVECcolumnMeans (const constMAT& x) {
+inline autoVEC newVECcolumnMeans (constMATVU const& x) {
 	autoVEC result = newVECraw (x.ncol);
 	VECcolumnMeans_preallocated (result.get(), x);
 	return result;
 }
 
-extern void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT& mat) noexcept;
-extern void VECmul_preallocated (const VEC& target, const constMAT& mat, const constVEC& vec) noexcept;
-extern autoVEC newVECmul (const constVEC& vec, const constMAT& mat) noexcept;
-extern autoVEC newVECmul (const constMAT& mat, const constVEC& vec) noexcept;
+extern void VECmul_preallocated (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept;
+extern void VECmul_preallocated (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept;
+extern autoVEC newVECmul (constVECVU const& vec, constMATVU const& mat);
+extern autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec);
 
+inline void VECrandomGauss_preallocated (VECVU const& target, double mu, double sigma) noexcept {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = NUMrandomGauss (mu, sigma);
+}
 inline autoVEC newVECrandomGauss (integer size, double mu, double sigma) {
 	autoVEC result = newVECraw (size);
-	for (integer i = 1; i <= size; i ++)
-		result [i] = NUMrandomGauss (mu, sigma);
+	VECrandomGauss_preallocated (result.all(), mu, sigma);
 	return result;
 }
 
+inline void VECrandomUniform_preallocated (VECVU const& target, double lowest, double highest) noexcept {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = NUMrandomUniform (lowest, highest);
+}
 inline autoVEC newVECrandomUniform (integer size, double lowest, double highest) {
 	autoVEC result = newVECraw (size);
-	for (integer i = 1; i <= size; i ++)
-		result [i] = NUMrandomUniform (lowest, highest);
+	VECrandomUniform_preallocated (result.all(), lowest, highest);
 	return result;
 }
 
-inline void VECsin_inplace (VEC const& x) noexcept {
-	for (double& element : x) element = sin (element);
+inline void VECsin_inplace (VECVU const& vec) noexcept {
+	for (integer i = 1; i <= vec.size; i ++)
+		vec [i] = sin (vec [i]);
 }
 
-extern void VECsort_inplace (VEC const& x) noexcept;
+extern void VECsort_inplace (VECVU const& x) noexcept;
 
-inline autoVEC newVECrowSums (const constMAT& x) {
+inline autoVEC newVECrowSums (constMATVU const& x) {
 	autoVEC result = newVECraw (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		result [irow] = NUMsum (x.row (irow));
 	return result;
 }
 
-inline autoVEC newVECcolumnSums (const constMAT& x) {
+inline autoVEC newVECcolumnSums (constMATVU const& x) {
 	autoVEC result = newVECraw (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		result [icol] = NUMsum (x.column (icol));

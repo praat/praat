@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ autoPitch Sound_to_Pitch (Sound me, double timeStep,
 /* Calls Sound_to_Pitch_ac with default arguments. */
 
 autoPitch Sound_to_Pitch_ac (Sound me, double timeStep, double minimumPitch,
-	double periodsPerWindow, int maxnCandidates, int accurate,
+	double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
 	double octaveJumpCost, double voicedUnvoicedCost, double maximumPitch);
 /* Calls Sound_to_Pitch_any with AC method. */
 
 autoPitch Sound_to_Pitch_cc (Sound me, double timeStep, double minimumPitch,
-	double periodsPerWindow, int maxnCandidates, int accurate,
+	double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
 	double octaveJumpCost, double voicedUnvoicedCost, double maximumPitch);
 /* Calls Sound_to_Pitch_any with FCC method. */
@@ -40,7 +40,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 	double dt,                 /* time step (seconds); 0.0 = automatic = periodsPerWindow / minimumPitch / 4 */
 	double minimumPitch,       /* (Hz) */
 	double periodsPerWindow,   /* ac3 for pitch analysis, 6 or 4.5 for HNR, 1 for FCC */
-	int maxnCandidates,        /* maximum number of candidates per frame */
+	integer maxnCandidates,    /* maximum number of candidates per frame */
 	int method,                /* 0 or 1 = AC, 2 or 3 = FCC, 0 or 2 = fast, 1 or 3 = accurate */
 
 	double silenceThreshold,   /* relative to purely periodic; default 0.03 */

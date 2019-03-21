@@ -26,19 +26,7 @@
 #endif
 
 #if defined (macintosh)
-void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y) noexcept {
-	integer n = target.size;
-	vDSP_vaddD (& x [1], 1, & y [1], 1, & target [1], 1, integer_to_uinteger (n));
-	/*
-		Speed if always vDSP_vaddD:
-			//9.3,1.26,0.21, 0.10,0.42,0.70, 1.17,1.97,5.32
-		Speed if always explicit loop:
-			//1.7,0.40,0.23, 0.22,0.37,0.64, 1.11,1.93,5.11
-		Combined:
-			2.4,0.50,0.20, 0.13,0.44,0.71, 1.17,2.02,2.40
-	*/
-}
-void VECVUadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+static void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
 	integer n = target.size;
 	vDSP_vaddD (& x [1], x.stride, & y [1], y.stride, & target [1], target.stride, integer_to_uinteger (n));
 	/*
@@ -52,7 +40,7 @@ void VECVUadd_macfast_ (const VECVU& target, const constVECVU& x, const constVEC
 }
 #endif
 
-void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT& mat) noexcept {
+void VECmul_preallocated (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
 	Melder_assert (mat.nrow == vec.size);
 	Melder_assert (target.size == mat.ncol);
 	if ((true)) {
@@ -67,20 +55,20 @@ void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT
 				const double *px = & vec [1];
 				const double *py = & mat [1] [icol],
 				(longdouble) *px * (longdouble) *py,
-				(px += 1, py += mat.ncol)   // this goes way beyond the confines of mat
+				(px += vec.stride, py += mat.rowStride)   // this goes way beyond the confines of mat
 			)
 			target [icol] = double (sum);
 		}
 	}
 }
 
-autoVEC newVECmul (const constVEC& vec, const constMAT& mat) noexcept {
+autoVEC newVECmul (constVECVU const& vec, constMATVU const& mat) {
 	autoVEC result = newVECraw (mat.ncol);
 	VECmul_preallocated (result.get(), vec, mat);
 	return result;
 }
 
-void VECmul_preallocated (const VEC& target, const constMAT& mat, const constVEC& vec) noexcept {
+void VECmul_preallocated (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept {
 	Melder_assert (vec.size == mat.ncol);
 	Melder_assert (target.size == mat.nrow);
 	for (integer i = 1; i <= mat.nrow; i ++) {
@@ -94,9 +82,9 @@ void VECmul_preallocated (const VEC& target, const constMAT& mat, const constVEC
 	}
 }
 
-autoVEC newVECmul (const constMAT& mat, const constVEC& vec) noexcept {
+autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec) {
 	autoVEC result = newVECraw (mat.nrow);
-	VECmul_preallocated (result.get(), mat, vec);
+	VECmul_preallocated (result.all(), mat, vec);
 	return result;
 }
 

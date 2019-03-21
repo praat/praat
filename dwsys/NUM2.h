@@ -101,10 +101,18 @@ inline integer NUMmin (const constINTVEC& vec) {
 	return minimum;
 }
 
-inline integer NUMcheckNonNegativity (constVEC v) {
-	integer i;
-	for (i = 1; i <= v.size && v [i] >= 0.0; i ++);
-	return i <= v.size ? i : 0;
+inline bool NUMisNonNegative (constVECVU vec) {
+	for (integer i = 1; i <= vec.size; i ++)
+		if (vec [i] < 0.0)
+			return false;
+	return true;
+}
+inline bool NUMisNonNegative (constMATVU mat) {
+	for (integer irow = 1; irow <= mat.nrow; irow ++)
+		for (integer icol = 1; icol <= mat.ncol; icol ++)
+			if (mat [irow] [icol] < 0.0)
+				return false;
+	return true;
 }
 
 template<typename T>
@@ -191,22 +199,23 @@ inline autoVEC VECnorm_rows (constMAT x, double power) {
 	return norm;
 }
 
-inline void VECnormalize_inplace (VEC v, double power, double norm) {
-	Melder_assert (norm > 0.0);
-	double oldnorm = NUMnorm (v, power);
+inline void VECnormalize_inplace (VECVU const& vec, double power, double newNorm) {
+	Melder_assert (newNorm > 0.0);
+	double oldnorm = NUMnorm (vec, power);
 	if (oldnorm > 0.0)
-		v  *=  norm / oldnorm;
+		vec  *=  newNorm / oldnorm;
+}
+inline void MATnormalize_inplace (MATVU const& mat, double power, double newNorm) {
+	Melder_assert (newNorm > 0.0);
+	double oldnorm = NUMnorm (mat, power);
+	if (oldnorm > 0.0)
+		mat  *=  newNorm / oldnorm;
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	for (integer irow = 1; irow <= a.nrow; irow ++)
 		VECnormalize_inplace (a.row (irow), power, norm);
-}
-
-inline void MATnormalize_inplace (MAT a, double power, double norm) {
-	Melder_assert (norm > 0.0);
-	VECnormalize_inplace (asvector (a), power, norm); 
 }
 
 void MATnormalizeColumns_inplace (MAT a, double power, double norm);

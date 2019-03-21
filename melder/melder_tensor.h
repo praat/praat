@@ -472,15 +472,15 @@ autovector<T> newvectorzero (integer size) {
 	return autovector<T> (size, kTensorInitializationType::ZERO);
 }
 template <typename T>
-autovector<T> newvectorcopy (constvector<T> source) {
+autovector<T> newvectorcopy (constvectorview<T> source) {
 	autovector<T> result = newvectorraw<T> (source.size);
 	for (integer i = 1; i <= source.size; i ++)
 		result [i] = source [i];
 	return result;
 }
 template <typename T>
-autovector<T> newvectorcopy (vector<T> source) {
-	return newvectorcopy (constvector<T> (source));
+autovector<T> newvectorcopy (vectorview<T> source) {
+	return newvectorcopy (constvectorview<T> (source));
 }
 
 template <typename T>
@@ -544,7 +544,7 @@ public:
 			newNrow, newNcol, our ncol, 1
 		);
 	}
-	matrixview<T> transpose () {
+	matrixview<T> transpose () const {
 		return matrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
 };
@@ -595,7 +595,7 @@ public:
 			newNrow, newNcol, our rowStride, our colStride
 		);
 	}
-	matrixview<T> transpose () {
+	matrixview<T> transpose () const {
 		return matrixview<T> (our firstCell, our ncol, our nrow, our colStride, our rowStride);
 	}
 };
@@ -651,7 +651,7 @@ public:
 			newNrow, newNcol, our ncol, 1
 		);
 	}
-	constmatrixview<T> transpose () {
+	constmatrixview<T> transpose () const {
 		return constmatrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
 };
@@ -675,7 +675,12 @@ public:
 	constvectorview<T> operator[] (integer i) const {
 		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
 	}
+	constvectorview<T> row (integer rowNumber) const {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		return constvectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
+	}
 	constvectorview<T> column (integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
 		return constvectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
 	}
 	constvectorview<T> diagonal () const {
@@ -704,7 +709,7 @@ public:
 			our rowStride, our colStride
 		);
 	}
-	constmatrixview<T> transpose () {
+	constmatrixview<T> transpose () const {
 		return constmatrixview<T> (our firstCell, our ncol, our nrow, our colStride, our rowStride);
 	}
 };
@@ -791,14 +796,6 @@ automatrix<T> newmatrixraw (integer nrow, integer ncol) {
 template <typename T>
 automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
-}
-template <typename T>
-vector<T> asvector (matrix<T> const& x) {
-	return vector<T> (x.cells - 1, x.nrow * x.ncol);
-}
-template <typename T>
-constvector<T> asvector (constmatrix<T> const& x) {
-	return constvector<T> (& x [1] [0], x.nrow * x.ncol);
 }
 template <typename T>
 void matrixcopy_preallocated (matrixview<T> const& target, constmatrixview<T> const& source) {
@@ -1249,7 +1246,7 @@ inline autoVEC newVECraw (integer size) {
 inline autoVEC newVECzero (integer size) {
 	return newvectorzero <double> (size);
 }
-inline autoVEC newVECcopy (constVEC source) {
+inline autoVEC newVECcopy (constVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1272,12 +1269,14 @@ inline autoINTVEC newINTVECraw (integer size) {
 inline autoINTVEC newINTVECzero (integer size) {
 	return newvectorzero <integer> (size);
 }
-inline autoINTVEC newINTVECcopy (constINTVEC source) {
+inline autoINTVEC newINTVECcopy (constINTVECVU const& source) {
 	return newvectorcopy (source);
 }
 
 using BOOLVEC = vector <bool>;
+using BOOLVECVU = vectorview <bool>;
 using constBOOLVEC = constvector <bool>;
+using constBOOLVECVU = constvectorview <bool>;
 using autoBOOLVEC = autovector <bool>;
 inline autoBOOLVEC newBOOLVECraw (integer size) {
 	return newvectorraw <bool> (size);
@@ -1285,7 +1284,7 @@ inline autoBOOLVEC newBOOLVECraw (integer size) {
 inline autoBOOLVEC newBOOLVECzero (integer size) {
 	return newvectorzero <bool> (size);
 }
-inline autoBOOLVEC newBOOLVECcopy (constBOOLVEC source) {
+inline autoBOOLVEC newBOOLVECcopy (constBOOLVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1375,8 +1374,8 @@ inline autoBYTEMAT newBYTEMATcopy (constBYTEMATVU source) {
 	return newmatrixcopy (source);
 }
 
-conststring32 Melder_VEC (constVEC value);
-conststring32 Melder_MAT (constMAT value);
+conststring32 Melder_VEC (constVECVU const& value);
+conststring32 Melder_MAT (constMATVU const& value);
 
 inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	Melder_assert (target.size == source.size);

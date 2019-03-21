@@ -1,6 +1,6 @@
 /* NUMsort.cpp
  *
- * Copyright (C) 1992-2011,2015,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,8 +81,8 @@
 		} \
 	}
 
-void VECsort_inplace (const VEC& x) noexcept {
-	MACRO_NUMsort (double, x.at, integer, x.size)
+void VECsort_inplace (VECVU const& x) noexcept {
+	MACRO_NUMsort (double, & x [0], integer, x.size)
 }
 
 void NUMsort_integer (integer n, integer a []) {
@@ -160,7 +160,7 @@ double NUMquantile (integer n, double a [], double factor) {
 	return a [left] + (place - left) * (a [left + 1] - a [left]);
 }
 
-double NUMquantile (const constVECVU& a, double factor) noexcept {
+double NUMquantile (constVECVU const& a, double factor) noexcept {
 	double place = factor * a.size + 0.5;
 	integer left = (integer) floor (place);
 	if (a.size < 1) return 0.0;

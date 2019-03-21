@@ -344,7 +344,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 }
 
 autoPitch Sound_to_Pitch_any (Sound me,
-	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates,
+	double dt, double minimumPitch, double periodsPerWindow, integer maxnCandidates,
 	int method,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)
@@ -361,7 +361,8 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		Melder_assert (maxnCandidates >= 2);
 		Melder_assert (method >= AC_HANNING && method <= FCC_ACCURATE);
 
-		if (maxnCandidates < ceiling / minimumPitch) maxnCandidates = Melder_ifloor (ceiling / minimumPitch);
+		if (maxnCandidates < ceiling / minimumPitch)
+			maxnCandidates = Melder_ifloor (ceiling / minimumPitch);
 
 		if (dt <= 0.0) dt = periodsPerWindow / minimumPitch / 4.0;   // e.g. 3 periods, 75 Hz: 10 milliseconds
 
@@ -569,7 +570,7 @@ autoPitch Sound_to_Pitch (Sound me, double timeStep, double minimumPitch, double
 }
 
 autoPitch Sound_to_Pitch_ac (Sound me,
-	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates, int accurate,
+	double dt, double minimumPitch, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)
 {
@@ -578,7 +579,7 @@ autoPitch Sound_to_Pitch_ac (Sound me,
 }
 
 autoPitch Sound_to_Pitch_cc (Sound me,
-	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates, int accurate,
+	double dt, double minimumPitch, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)
 {

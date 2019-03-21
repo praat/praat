@@ -109,7 +109,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		MelderInfo_writeLine (U"Formant show: ", p_formant_show);
 		/* Formant settings: */
 		MelderInfo_writeLine (U"Formant maximum formant: ", p_formant_maximumFormant, U" Hz");
-		MelderInfo_writeLine (U"Formant number of poles: ", Melder_integer (2 * p_formant_numberOfFormants));   // should be a whole number
+		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * p_formant_numberOfFormants));   // should be a whole number
 		MelderInfo_writeLine (U"Formant window length: ", p_formant_windowLength, U" seconds");
 		MelderInfo_writeLine (U"Formant dynamic range: ", p_formant_dynamicRange, U" dB");
 		MelderInfo_writeLine (U"Formant dot size: ", p_formant_dotSize, U" mm");
@@ -231,7 +231,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		 * Found a left quote. Search for a matching right quote.
 		 */
 		char32 *q = p + 1, varName [300], *r, *s, *colon;
-		int precision = -1;
+		integer precision = -1;
 		double value = undefined;
 		conststring32 stringValue = nullptr;
 		while (*q != U'\0' && *q != U'\'') q ++;
@@ -311,21 +311,21 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			value = Matrix_getValueAtXY (my d_spectrogram.get(), tmin, my d_spectrogram_cursor);
 		}
 		if (isdefined (value)) {
-			int varlen = (q - p) - 1, headlen = p - format;
+			integer varlen = (q - p) - 1, headlen = p - format;
 			char32 formattedNumber [400];
 			if (precision >= 0) {
 				Melder_sprint (formattedNumber,400, Melder_fixed (value, precision));
 			} else {
 				Melder_sprint (formattedNumber,400, value);
 			}
-			int arglen = str32len (formattedNumber);
+			integer arglen = str32len (formattedNumber);
 			static MelderString buffer { };
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			str32cpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue) {
-			int varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
+			integer varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
 			static MelderString buffer { };
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, stringValue, p + varlen + 2);
@@ -449,6 +449,8 @@ static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS
 			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
+		Melder_require (viewFrom < viewTo,
+			U"The ceiling of the spectrogram view range should be greater than the floor.");
 		my pref_spectrogram_viewFrom     () = my p_spectrogram_viewFrom     = viewFrom;
 		my pref_spectrogram_viewTo       () = my p_spectrogram_viewTo       = viewTo;
 		my pref_spectrogram_windowLength () = my p_spectrogram_windowLength = windowLength;
@@ -654,6 +656,10 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
+		Melder_require (pitchCeiling > pitchFloor,
+			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
+			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		);
 		my pref_pitch_floor         () = my p_pitch_floor         = pitchFloor;
 		my pref_pitch_ceiling       () = my p_pitch_ceiling       = pitchCeiling;
 		my pref_pitch_unit          () = my p_pitch_unit          = unit;
@@ -907,6 +913,8 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
+		Melder_require (viewTo > viewFrom,
+			U"The ceiling of the view range has to be greater than the floor.");
 		my pref_intensity_viewFrom             () = my p_intensity_viewFrom             = viewFrom;
 		my pref_intensity_viewTo               () = my p_intensity_viewTo               = viewTo;
 		my pref_intensity_averagingMethod      () = my p_intensity_averagingMethod      = averagingMethod;
@@ -1161,7 +1169,7 @@ static void menu_cb_formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 	MelderInfo_close ();
 }
 
-static void do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
+static void do_getFormant (TimeSoundAnalysisEditor me, integer iformant) {
 	double tmin, tmax;
 	int part = makeQueriable (me, true, & tmin, & tmax);
 	if (! my p_formant_show)
@@ -1178,7 +1186,7 @@ static void do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 			U" Hz (mean F", iformant, U" ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 	}
 }
-static void do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
+static void do_getBandwidth (TimeSoundAnalysisEditor me, integer iformant) {
 	double tmin, tmax;
 	int part = makeQueriable (me, true, & tmin, & tmax);
 	if (! my p_formant_show)
@@ -1648,7 +1656,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 				0.0;   // the default: determined by analysis window length
 			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
-				Melder_iround (my p_formant_numberOfFormants * 2), my p_formant_maximumFormant,
+				Melder_iround (my p_formant_numberOfFormants * 2.0), my p_formant_maximumFormant,
 				my p_formant_windowLength, (int) my p_formant_method, my p_formant_preemphasisFrom, 50.0);
 			my d_formant -> xmin = my startWindow;
 			my d_formant -> xmax = my endWindow;
@@ -1812,9 +1820,19 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_Colour textColour;
 		kGraphics_horizontalAlignment alignment;
 		double y;
-		if (! my p_pitch_show) textColour = Graphics_GREEN, alignment = Graphics_LEFT, y = my endWindow;
-		else if (! my p_spectrogram_show && ! my p_formant_show) textColour = Graphics_GREEN, alignment = Graphics_RIGHT, y = my startWindow;
-		else textColour = my p_spectrogram_show ? Graphics_LIME : Graphics_GREEN, alignment = Graphics_RIGHT, y = my endWindow;
+		if (! my p_pitch_show) {
+			textColour = Graphics_GREEN;
+			alignment = Graphics_LEFT;
+			y = my endWindow;
+		} else if (! my p_spectrogram_show && ! my p_formant_show) {
+			textColour = Graphics_GREEN;
+			alignment = Graphics_RIGHT;
+			y = my startWindow;
+		} else {
+			textColour = ( my p_spectrogram_show ? Graphics_LIME : Graphics_GREEN );
+			alignment = Graphics_RIGHT;
+			y = my endWindow;
+		}
 		if (my p_intensity_viewTo > my p_intensity_viewFrom) {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
 			if (my d_intensity) {
@@ -1931,6 +1949,22 @@ bool structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, boo
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
+	/*
+		Repair preferences.
+	*/
+	if (my p_pitch_floor >= my p_pitch_ceiling) {
+		my p_pitch_floor = Melder_atoi (my default_pitch_floor());
+		my p_pitch_ceiling = Melder_atoi (my default_pitch_ceiling());
+		my p_pitch_unit = kPitch_unit::HERTZ;
+	}
+	if (my p_spectrogram_viewFrom >= my p_spectrogram_viewTo) {
+		my p_spectrogram_viewFrom = Melder_atoi (my default_spectrogram_viewFrom());
+		my p_spectrogram_viewTo = Melder_atoi (my default_spectrogram_viewTo());
+	}
+	if (my p_intensity_viewFrom >= my p_intensity_viewTo) {
+		my p_intensity_viewFrom = Melder_atoi (my default_intensity_viewFrom());
+		my p_intensity_viewTo = Melder_atoi (my default_intensity_viewTo());
+	}
 	if (my v_hasAnalysis ()) {
 		if (my p_log1_toLogFile == false && my p_log1_toInfoWindow == false) {
 			my pref_log1_toLogFile    () = my p_log1_toLogFile    = true;

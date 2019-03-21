@@ -70,19 +70,18 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 void NMF_initialize (NMF me, constMAT data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
-		VEC weights = asvector (my weights.get()), features = asvector (my features.get());
-		for (long i = 1; i <= my numberOfRows * my numberOfFeatures; i ++)
-			features [i] = NUMrandomUniform (rmin, rmax);
-		for (long i = 1; i <= my numberOfFeatures * my numberOfColumns; i ++)
-			weights [i] = NUMrandomUniform (rmin, rmax);
+		MATrandomUniform_preallocated (my features.all(), rmin, rmax);
+		MATrandomUniform_preallocated (my weights.all(), rmin, rmax);
 	} else {
 	}
 }
 
 autoNMF NMF_createFromGeneralMatrix (constMAT m, integer numberOfFeatures) {
 	try {
-		Melder_require (NUMcheckNonNegativity (asvector (m)) == 0, U"The matrix elements should not be negative.");
-		Melder_require (numberOfFeatures <= m.ncol, U"The number of features should not exceed the number of columns.");
+		Melder_require (NUMisNonNegative (m),
+			U"No matrix elements should be negative.");
+		Melder_require (numberOfFeatures <= m.ncol,
+			U"The number of features should not exceed the number of columns.");
 		autoNMF me = NMF_create (m.nrow, m.ncol, numberOfFeatures);
 		return me;
 	} catch (MelderError) {
@@ -91,7 +90,8 @@ autoNMF NMF_createFromGeneralMatrix (constMAT m, integer numberOfFeatures) {
 }
 
 double NMF_getEuclideanDistance (NMF me, constMATVU data) {
-	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns, U"Dimensions should match.");
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns,
+		U"Dimensions should match.");
 	autoMAT synthesis = NMF_synthesize (me);
 	synthesis.get()  -=  data;
 	double dist = NUMnorm (synthesis.get(), 2.0);

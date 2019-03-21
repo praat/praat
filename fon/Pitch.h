@@ -50,7 +50,7 @@ autoPitch Pitch_create (double tmin, double tmax, integer nt, double dt, double 
 		my frame [1..nt]. intensity == 0.0; // silent
 */
 
-void Pitch_Frame_init (Pitch_Frame me, int nCandidates);
+void Pitch_Frame_init (Pitch_Frame me, integer nCandidates);
 /*
 	Function:
 		create space for a number of candidates; space already there is disposed of.

@@ -3535,7 +3535,7 @@ FORM (REAL_Matrix_getNorm, U"Matrix: Get norm", U"Matrix: Get norm...") {
 	OK
 DO
 	NUMBER_ONE (Matrix)
-		double result = NUMnorm (asvector (my z), power);
+		double result = NUMnorm (my z.all(), power);
 	NUMBER_ONE_END (U" (norm with power = ", power, U")")
 }
 	

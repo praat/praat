@@ -333,16 +333,32 @@ extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);
 
 extern autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight);
 
+inline void MATrandomGauss_preallocated (MATVU const& target, double mu, double sigma) noexcept {
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = 1; icol <= target.ncol; icol ++)
+			target [irow] [icol] = NUMrandomGauss (mu, sigma);
+}
 inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
 	autoMAT result = newMATraw (nrow, ncol);
-	for (integer irow = 1; irow <= nrow; irow ++)
-		for (integer icol = 1; icol <= ncol; icol ++)
-			result [irow] [icol] = NUMrandomGauss (mu, sigma);
+	MATrandomGauss_preallocated (result.all(), mu, sigma);
 	return result;
 }
 
-inline void MATsin_inplace (MAT const& x) noexcept {
-	VECsin_inplace (asvector (x));
+inline void MATrandomUniform_preallocated (MATVU const& target, double lowest, double highest) noexcept {
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = 1; icol <= target.ncol; icol ++)
+			target [irow] [icol] = NUMrandomUniform (lowest, highest);
+}
+inline autoMAT newMATrandomUniform (integer nrow, integer ncol, double lowest, double highest) {
+	autoMAT result = newMATraw (nrow, ncol);
+	MATrandomUniform_preallocated (result.all(), lowest, highest);
+	return result;
+}
+
+inline void MATsin_inplace (MATVU const& mat) noexcept {
+	for (integer irow = 1; irow <= mat.nrow; irow ++)
+		for (integer icol = 1; icol <= mat.ncol; icol ++)
+			mat [irow] [icol] = sin (mat [irow] [icol]);
 }
 
 inline void MATsubtractReversed_inplace (MATVU const& x, double number) noexcept {

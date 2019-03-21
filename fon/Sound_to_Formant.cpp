@@ -1,6 +1,6 @@
 /* Sound_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ static void burg (constVEC samples, VEC coefficients,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
 	double a0 =	NUMburg_preallocated (coefficients, samples);
+	(void) a0;
 	/*
 		Convert LP coefficients to polynomial.
 	 */
@@ -56,7 +57,7 @@ static void burg (constVEC samples, VEC coefficients,
 		First pass: count the formants.
 		The roots come in conjugate pairs, so we need only count those above the real axis.
 	 */
-	for (int i = roots -> min; i <= roots -> max; i ++)
+	for (integer i = roots -> min; i <= roots -> max; i ++)
 		if (roots -> v [i]. im >= 0) {
 			double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
@@ -73,7 +74,7 @@ static void burg (constVEC samples, VEC coefficients,
 		Second pass: fill in the formants.
 	 */
 	int iformant = 0;
-	for (int i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0.0) {
+	for (integer i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0.0) {
 		double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
 		if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin) {
 			Formant_Formant formant = & frame -> formant [++ iformant];
@@ -154,7 +155,7 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 
 static int splitLevinson (
 	constVEC samples,   // the windowed signal xw [1..nx]
-	int ncof,   // the coefficients cof [1..ncof]
+	integer ncof,   // the coefficients cof [1..ncof]
 	Formant_Frame frame, double nyquistFrequency)   // put the results here
 {
 	int result = 1;
@@ -263,7 +264,7 @@ void Formant_sort (Formant me) {
 	}
 }
 
-static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int numberOfPoles,
+static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer numberOfPoles,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
@@ -339,7 +340,7 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int num
 	return thee;
 }
 
-autoFormant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double maximumFrequency,
+autoFormant Sound_to_Formant_any (Sound me, double dt, integer numberOfPoles, double maximumFrequency,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	double nyquist = 0.5 / my dx;
@@ -354,7 +355,7 @@ autoFormant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double
 
 autoFormant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
-		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0);
+		return Sound_to_Formant_any (me, dt, Melder_iround (2.0 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0);
 	} catch (MelderError) {
 		Melder_throw (me, U": formant analysis (Burg) not performed.");
 	}
@@ -362,7 +363,7 @@ autoFormant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double
 
 autoFormant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
-		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0);
+		return Sound_to_Formant_any (me, dt, Melder_iround (2.0 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0);
 	} catch (MelderError) {
 		Melder_throw (me, U": formant analysis (keep all) not performed.");
 	}
@@ -370,7 +371,7 @@ autoFormant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, dou
 
 autoFormant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
-		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0);
+		return Sound_to_Formant_any (me, dt, Melder_iround (2.0 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0);
 	} catch (MelderError) {
 		Melder_throw (me, U": formant analysis (Burg) not performed.");
 	}
