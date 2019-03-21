@@ -1,6 +1,6 @@
 /* Net.cpp
  *
- * Copyright (C) 2017,2018 Paul Boersma
+ * Copyright (C) 2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ void Net_addRBMLayer (Net me, integer numberOfOutputNodes) {
 }
 */
 
-void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary) {
+void Net_initAsDeepBeliefNet (Net me, constVECVU const& numbersOfNodes, bool inputsAreBinary) {
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
@@ -108,7 +108,7 @@ void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBin
 	}
 }
 
-autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary) {
+autoNet Net_createAsDeepBeliefNet (constVECVU const& numbersOfNodes, bool inputsAreBinary) {
 	try {
 		autoNet me = Thing_new (Net);
 		Net_initAsDeepBeliefNet (me.get(), numbersOfNodes, inputsAreBinary);

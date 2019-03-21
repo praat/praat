@@ -280,10 +280,10 @@ DO
 			Melder_information (result. stringResult.get());
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
-			Melder_information (constVEC (result. numericVectorResult));
+			Melder_information (constVECVU (result. numericVectorResult));
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
-			Melder_information (constMAT (result. numericMatrixResult));
+			Melder_information (constMATVU (result. numericMatrixResult));
 		}
 	}
 END }

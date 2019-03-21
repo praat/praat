@@ -51,7 +51,7 @@ inline TypeVECadd_VEC_NUM operator+ (constVECVU const& x, double number) { retur
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECadd (constVEC const& x, double number) {
+inline autoVEC newVECadd (constVECVU const& x, double number) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= x  +  number;
 	return result;
@@ -83,7 +83,7 @@ inline TypeVECmultiply_VEC_NUM operator* (constVECVU const& x, double number) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECmultiply (constVEC const& x, double factor) {
+inline autoVEC newVECmultiply (constVECVU const& x, double factor) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= x  *  factor;
 	return result;
@@ -99,7 +99,7 @@ inline TypeVECadd_NUM_VEC operator+ (double number, constVECVU const& x) { retur
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECadd (double number, constVEC const& x) {
+inline autoVEC newVECadd (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= number  +  x;
 	return result;
@@ -115,7 +115,7 @@ inline TypeVECsubtract_NUM_VEC operator- (double number, constVECVU const& x) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECsubtract (double number, constVEC const& x) {
+inline autoVEC newVECsubtract (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= number  -  x;
 	return result;
@@ -131,7 +131,7 @@ inline TypeVECmultiply_NUM_VEC operator* (double number, constVECVU const& x) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoVEC newVECmultiply (double number, constVEC const& x) {
+inline autoVEC newVECmultiply (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
 	result.all() <<= number  *  x;
 	return result;
