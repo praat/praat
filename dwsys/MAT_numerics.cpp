@@ -20,21 +20,21 @@
 #include "MAT_numerics.h"
 #include "SVD.h"
 
-void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMAT m, bool sortAscending) {
+void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMATVU const& m, bool sortAscending) {
 	Melder_assert (m.nrow == m.ncol);
 	Melder_assert (eigenvalues.size == m.ncol);
 	Melder_assert (eigenvectors.nrow == eigenvectors.ncol);
 	Melder_assert (m.nrow == eigenvectors.nrow);
 
 	char jobz = 'V', uplo = 'U';
-	integer workSize = -1, info;
+	integer workSize = -1, info, ncol = m.ncol;
 	double wt [1];
 	
 	eigenvectors <<= m;
 	// 0. No need to transpose a because it is a symmetric matrix
 	// 1. Query for the size of the work array
 	
-	(void) NUMlapack_dsyev (& jobz, & uplo, & m.ncol, & eigenvectors [1] [1], & m.ncol, eigenvalues.begin(), wt, & workSize, & info);
+	(void) NUMlapack_dsyev (& jobz, & uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), wt, & workSize, & info);
 	Melder_require (info == 0, U"dsyev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt [0]);
@@ -42,7 +42,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 
 	// 2. Calculate the eigenvalues and eigenvectors (row-wise)
 	
-	(void) NUMlapack_dsyev (& jobz, & uplo, & m.ncol, & eigenvectors [1] [1], & m.ncol, eigenvalues.begin(), work.begin(), & workSize, & info);
+	(void) NUMlapack_dsyev (& jobz, & uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), work.begin(), & workSize, & info);
 	Melder_require (info == 0, U"dsyev code = ", info, U").");
 
 	// 3. Eigenvalues are returned in ascending order
@@ -129,7 +129,7 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
 }
 
-void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m) {
+void MAT_asPrincipalComponents_preallocated (MAT pc, constMATVU const& m) {
 	Melder_assert (pc.nrow == m.nrow && pc.ncol <= m.ncol);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
 	MATVUmul (pc, m, svd -> v.verticalBand (1, pc.ncol));
@@ -142,7 +142,7 @@ autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
 	return result;
 }
 
-void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
+void MATpseudoInverse_preallocated (MAT target, constMATVU const& m, double tolerance) {
 	Melder_assert (target.nrow == m.ncol && target.ncol == m.nrow);
 	autoSVD me = SVD_createFromGeneralMatrix (m);
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
