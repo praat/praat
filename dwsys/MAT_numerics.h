@@ -31,7 +31,7 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 		if (out_eigenvectors) eigenvectors corresponding to the eigenvalues, stored as row-wise vectors.
 */
 
-void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMAT a, bool sortAscending);
+void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMATVU const& a, bool sortAscending);
 /*
 	Input:
 		a, a symmetric a.ncol x a.ncol matrix
@@ -66,10 +66,10 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 	Decompresses each eigenvector row into two consecutive columns (real and imaginary part)
 */
 
-void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m);
+void MAT_asPrincipalComponents_preallocated (MAT pc, constMATVU const& m);
 autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents);
 
-void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance);
+void MATpseudoInverse_preallocated (MAT target, constMATVU const& m, double tolerance);
 autoMAT MATpseudoInverse (constMAT m, double tolerance);
 /*
 	Determines the pseudo-inverse Y^-1 of Y[1..nrow][1..ncol] via s.v.d.

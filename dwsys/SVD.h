@@ -36,7 +36,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 	where eps is the floating point precision, approximately 2.2e-16
 */
 
-autoSVD SVD_createFromGeneralMatrix (constMAT m);
+autoSVD SVD_createFromGeneralMatrix (constMATVU const& m);
 
 void SVD_svd_d (SVD me, constMATVU const& m);
 /*
@@ -46,13 +46,13 @@ void SVD_svd_d (SVD me, constMATVU const& m);
 
 void SVD_compute (SVD me);
 
-void SVD_solve_preallocated (SVD me, constVEC b, VEC result);
-autoVEC SVD_solve (SVD me, constVEC b);
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result);
+autoVEC SVD_solve (SVD me, constVECVU const& b);
 /* Solve Ax = b */
 
 /* Solve A*X = B */
-void SVD_solve_preallocated (SVD me, constMAT b, MAT result);
-autoMAT SVD_solve (SVD me, constMAT b);
+void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result);
+autoMAT SVD_solve (SVD me, constMATVU const& b);
 
 void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfSingularValues);
 

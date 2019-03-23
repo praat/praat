@@ -97,7 +97,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 	}
 }
 
-autoSVD SVD_createFromGeneralMatrix (constMAT m) {
+autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
@@ -196,7 +196,7 @@ autoMAT SVD_getSquared (SVD me, bool inverse) {
 	return result;
 }
 
-void SVD_solve_preallocated (SVD me, constVEC b, VEC result) {
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VEC result) {
 	try {
 		/*
 			Solve UDV' x = b.
@@ -220,7 +220,7 @@ void SVD_solve_preallocated (SVD me, constVEC b, VEC result) {
 	}
 }
 
-autoVEC SVD_solve (SVD me, constVEC b) {
+autoVEC SVD_solve (SVD me, constVECVU const& b) {
 	Melder_assert (my numberOfRows == b.size);
 	autoVEC result = newVECzero (my numberOfColumns);
 	SVD_solve_preallocated (me, b, result.get());
@@ -230,7 +230,7 @@ autoVEC SVD_solve (SVD me, constVEC b) {
 /*
 	Solve UDV' X = B.
 */
-void SVD_solve_preallocated (SVD me, constMAT b, MAT result) {
+void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result) {
 	Melder_assert (b.nrow == my numberOfRows && b.ncol == result.ncol);
 	Melder_assert (result.nrow == my numberOfColumns);
 	autoVEC bcol = newVECraw (b.nrow);

@@ -16,10 +16,10 @@ procedure test_simple
 		.nrow = randomInteger (1, 100)
 		.nfeatures = randomInteger(1,5)
 		.mat = Create simple Matrix: "xy", .nrow, .ncol, "randomUniform (1,10)"
-		.nmf = To NMF: .nfeatures, 500, 1e-09, 1e-09, "RandomUniform"
+		.nmf = To NMF (m.u.): .nfeatures, 500, 1e-09, 1e-09, "RandomUniform"
 		plusObject: .mat
 		.dist = Get Euclidean distance
-		Improve factorization: 10, 1e-09, 1e-09
+		Improve factorization (m.u.): 10, 1e-09, 1e-09
 		.dist2 = Get Euclidean distance
 		assert .dist2 <= .dist
 		appendInfoLine: tab$, tab$, .nrow, "x", .ncol, ", aprox = ", .nfeatures, " 2-norm=", .dist2
@@ -33,7 +33,7 @@ procedure test_diagonal
 		.nrow = .ncol
 		.nfeatures = .ncol - 1 
 		.mat = Create simple Matrix: string$(.nrow)+"x"+string$(.ncol), .nrow, .ncol, "if row = col then randomUniform(0,10) else 0 fi"
-		.nmf = To NMF: .nfeatures, 1000, 1e-09, 1e-09, "RandomUniform"
+		.nmf = To NMF (ALS): .nfeatures, 1000, 1e-09, 1e-09, "RandomUniform"
 		plusObject: .mat
 		.dist = Get Euclidean distance
 		appendInfoLine: tab$, tab$, .nrow, "x", .ncol, ", aprox = ", .nfeatures, " 2-norm=", .dist

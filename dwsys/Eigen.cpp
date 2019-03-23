@@ -1,6 +1,6 @@
 /* Eigen.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	Eigenvectors: the columns of the matrix V
 	Eigenvalues: D_i^2
 */
-void Eigen_initFromSquareRoot (Eigen me, constMAT a) {
+void Eigen_initFromSquareRoot (Eigen me, constMATVU const& a) {
 	Melder_assert (a.nrow >= 1);
 	integer nsv = std::min (a.nrow, a.ncol);
 	my dimension = a.ncol;
@@ -205,7 +205,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	MATnormalizeRows_inplace (my eigenvectors.get(), 2.0, 1.0);
 }
 
-void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
+void Eigen_initFromSymmetricMatrix (Eigen me, constMATVU const& a) {
 	Melder_assert (a.ncol == a.nrow);
 	if (NUMisEmpty (my eigenvectors))   // ppgb: BUG dubious logic
 		Eigen_init (me, a.ncol, a.ncol);
@@ -435,10 +435,8 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 
 	autoVEC angles_degrees = newVECraw (numberOfVectors);
 
-	autoMAT c = newMATmul (
-			my eigenvectors.horizontalBand (ivec_from, ivec_to),
-			thy eigenvectors. horizontalBand (ivec_from, ivec_to). transpose()
-	);
+	autoMAT c = newMATmul (my eigenvectors.horizontalBand (ivec_from, ivec_to),
+			thy eigenvectors. horizontalBand (ivec_from, ivec_to). transpose());
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= numberOfVectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * (180.0 / NUMpi);
