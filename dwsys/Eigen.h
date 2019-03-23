@@ -2,7 +2,7 @@
 #define _Eigen_h_
 /* Eigen.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension);
 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension);
 
-void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a);
+void Eigen_initFromSymmetricMatrix (Eigen me, constMATVU const& a);
 
-void Eigen_initFromSquareRoot (Eigen me, constMAT a);
+void Eigen_initFromSquareRoot (Eigen me, constMATVU const& a);
 /*
 	Calculate eigenstructure for symmetric matrix A'A (e.g. covariance matrix),
 	when only A is given.

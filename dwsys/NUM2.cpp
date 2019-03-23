@@ -380,7 +380,7 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
 
-autoVEC NUMsolveEquation (constMAT a, constVEC b, double tolerance) {
+autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double tolerance) {
 	Melder_assert (a.nrow == b.size);
 	autoSVD me = SVD_createFromGeneralMatrix (a);
 	SVD_zeroSmallSingularValues (me.get(), tolerance);

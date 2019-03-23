@@ -1,6 +1,6 @@
 /* Spectrum_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -408,6 +408,23 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer
 	} catch (MelderError) {
 		Melder_throw (me, U": not compressed.");
 	}
+}
+
+void Spectrum_getMaximumInInterval (Spectrum me, double fromFrequency, double toFrequency, double *frequency, double *amplitude_dB) {
+	if (fromFrequency == 0.0 && fromFrequency == 0.0) {
+		fromFrequency = my xmin;
+		toFrequency = my xmax;
+	}
+	Melder_require (fromFrequency < toFrequency, 
+		U"The \"The From frequency\" should not be larger than the \"To frequency\".");
+	Melder_require (fromFrequency >= my xmin && toFrequency <= my xmax, 
+		U"The frequencies must be lie between ", my xmin, U" and ", my xmax, U".");
+	integer fromIndex = Sampled_xToHighIndex (me, fromFrequency);
+	fromIndex = std::max (1L, fromIndex);
+	integer toIndex = Sampled_xToLowIndex (me, toFrequency);
+	toIndex = std::min (my nx, toIndex);
+	//Sampled_getValueAtSample (me, iband, 0, 2);
+	
 }
 
 #if 0

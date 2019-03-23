@@ -491,14 +491,14 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	If no roots found then x1 and x2 will not be changed.
 */
 
-autoVEC NUMsolveEquation (constMAT a, constVEC b, double tol);
+autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double tol);
 /*
 	Solve the equation: A.x = b for x;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
 	Algorithm: s.v.d.
 */
 
-autoMAT NUMsolveEquations (constMAT a, constMAT b, double tol);
+autoMAT NUMsolveEquations (constMATVU& a, constMATVU& b, double tol);
 /*
 	Solve the equations: A.X = B;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
