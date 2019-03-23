@@ -64,32 +64,6 @@ static longdouble NUMsum_longdouble (constMATVU const& mat) {
 		return sum;
 	}
 }
-
-struct MelderMeanSumsq_longdouble {
-	longdouble mean, sumsq;
-};
-
-static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept {
-	MelderMeanSumsq_longdouble result;
-	result.mean = NUMsum_longdouble (vec) / vec.size;
-	double mean = double (result.mean);
-	if (vec.stride == 1) {
-		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
-			const double *p = & vec [1],
-			longdouble (*p - mean) * longdouble (*p - mean),
-			p += 1
-		)
-		result.sumsq = sumsq;
-	} else {
-		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
-			const double *p = & vec [1],
-			longdouble (*p - mean) * longdouble (*p - mean),
-			p += vec.stride
-		)
-		result.sumsq = sumsq;
-	}
-	return result;
-}
 static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, double mean) {
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (
@@ -111,97 +85,6 @@ static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, 
 		return sum;
 	}
 }
-static MelderMeanSumsq_longdouble NUMmeanSumsq (constMATVU const& mat) noexcept {
-	MelderMeanSumsq_longdouble result;
-	result.mean = NUMsum_longdouble (mat) / (mat.nrow * mat.ncol);
-	double mean = double (result.mean);
-	if (mat.nrow <= mat.ncol) {
-		PAIRWISE_SUM (longdouble, sumsq, integer, mat.nrow,
-			integer irow = 1,
-			NUMsumOfSquaredDifferences_longdouble (mat [irow], mean),
-			irow += 1
-		)
-		result.sumsq = sumsq;
-	} else {
-		PAIRWISE_SUM (longdouble, sumsq, integer, mat.ncol,
-			integer icol = 1,
-			NUMsumOfSquaredDifferences_longdouble (mat.column (icol), mean),
-			icol += 1
-		)
-		result.sumsq = sumsq;
-	}
-	return result;
-}
-
-/*
-	Global functions in alphabetic order.
-*/
-
-double NUMcenterOfGravity (constVECVU const& x) noexcept {
-	longdouble weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
-	for (integer i = 1; i <= x.size; i ++) {
-		weightedSumOfIndexes += i * x [i];
-		sumOfWeights += x [i];
-	}
-	return double (weightedSumOfIndexes / sumOfWeights);
-}
-
-double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
-	if (x.stride == 1) {
-		if (y.stride == 1) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.size,
-				const double *px = & x [1];
-				const double *py = & y [1],
-				longdouble (*px) * longdouble (*py),
-				(px += 1, py += 1)
-			)
-			return double (sum);
-		} else {
-			PAIRWISE_SUM (longdouble, sum, integer, x.size,
-				const double *px = & x [1];
-				const double *py = & y [1],
-				longdouble (*px) * longdouble (*py),
-				(px += 1, py += y.stride)
-			)
-			return double (sum);
-		}
-	} else if (y.stride == 1) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1];
-			const double *py = & y [1],
-			longdouble (*px) * longdouble (*py),
-			(px += x.stride, py += 1)
-		)
-		return double (sum);
-	} else {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1];
-			const double *py = & y [1],
-			longdouble (*px) * longdouble (*py),
-			(px += x.stride, py += y.stride)
-		)
-		return double (sum);
-	}
-}
-
-double NUMmean (constVECVU const& vec) noexcept {
-	longdouble sum = NUMsum_longdouble (vec);
-	return double (sum / vec.size);
-}
-double NUMmean (constMATVU const& mat) noexcept {
-	longdouble sum = NUMsum_longdouble (mat);
-	return double (sum / (mat.nrow * mat.ncol));
-}
-
-MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept {
-	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
-	const longdouble variance = stats.sumsq / (vec.size - 1);
-	MelderGaussianStats result;
-	result.mean = double (stats.mean);
-	result.stdev = sqrt (double (variance));
-	return result;
-}
-
 static longdouble NUMsum2_longdouble (constVECVU const& vec) {
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (
@@ -329,6 +212,123 @@ static longdouble NUMsumPower_longdouble (constMATVU const& mat, longdouble powe
 	}
 }
 
+struct MelderMeanSumsq_longdouble {
+	longdouble mean, sumsq;
+};
+
+static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept {
+	MelderMeanSumsq_longdouble result;
+	result.mean = NUMsum_longdouble (vec) / vec.size;
+	double mean = double (result.mean);
+	if (vec.stride == 1) {
+		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p - mean) * longdouble (*p - mean),
+			p += 1
+		)
+		result.sumsq = sumsq;
+	} else {
+		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
+			const double *p = & vec [1],
+			longdouble (*p - mean) * longdouble (*p - mean),
+			p += vec.stride
+		)
+		result.sumsq = sumsq;
+	}
+	return result;
+}
+static MelderMeanSumsq_longdouble NUMmeanSumsq (constMATVU const& mat) noexcept {
+	MelderMeanSumsq_longdouble result;
+	result.mean = NUMsum_longdouble (mat) / (mat.nrow * mat.ncol);
+	double mean = double (result.mean);
+	if (mat.nrow <= mat.ncol) {
+		PAIRWISE_SUM (longdouble, sumsq, integer, mat.nrow,
+			integer irow = 1,
+			NUMsumOfSquaredDifferences_longdouble (mat [irow], mean),
+			irow += 1
+		)
+		result.sumsq = sumsq;
+	} else {
+		PAIRWISE_SUM (longdouble, sumsq, integer, mat.ncol,
+			integer icol = 1,
+			NUMsumOfSquaredDifferences_longdouble (mat.column (icol), mean),
+			icol += 1
+		)
+		result.sumsq = sumsq;
+	}
+	return result;
+}
+
+/*
+	Global functions in alphabetic order.
+*/
+
+double NUMcenterOfGravity (constVECVU const& x) noexcept {
+	longdouble weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
+	for (integer i = 1; i <= x.size; i ++) {
+		weightedSumOfIndexes += i * x [i];
+		sumOfWeights += x [i];
+	}
+	return double (weightedSumOfIndexes / sumOfWeights);
+}
+
+double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
+	if (x.stride == 1) {
+		if (y.stride == 1) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.size,
+				const double *px = & x [1];
+				const double *py = & y [1],
+				longdouble (*px) * longdouble (*py),
+				(px += 1, py += 1)
+			)
+			return double (sum);
+		} else {
+			PAIRWISE_SUM (longdouble, sum, integer, x.size,
+				const double *px = & x [1];
+				const double *py = & y [1],
+				longdouble (*px) * longdouble (*py),
+				(px += 1, py += y.stride)
+			)
+			return double (sum);
+		}
+	} else if (y.stride == 1) {
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *px = & x [1];
+			const double *py = & y [1],
+			longdouble (*px) * longdouble (*py),
+			(px += x.stride, py += 1)
+		)
+		return double (sum);
+	} else {
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *px = & x [1];
+			const double *py = & y [1],
+			longdouble (*px) * longdouble (*py),
+			(px += x.stride, py += y.stride)
+		)
+		return double (sum);
+	}
+}
+
+double NUMmean (constVECVU const& vec) noexcept {
+	longdouble sum = NUMsum_longdouble (vec);
+	return double (sum / vec.size);
+}
+double NUMmean (constMATVU const& mat) noexcept {
+	longdouble sum = NUMsum_longdouble (mat);
+	return double (sum / (mat.nrow * mat.ncol));
+}
+
+MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
+	const longdouble variance = stats.sumsq / (vec.size - 1);
+	MelderGaussianStats result;
+	result.mean = double (stats.mean);
+	result.stdev = sqrt (double (variance));
+	return result;
+}
+
+
 double NUMnorm (constVECVU const& vec, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
@@ -390,6 +390,17 @@ double NUMsum (constVECVU const& vec) noexcept {
 double NUMsum (constMATVU const& mat) noexcept {
 	longdouble sum = NUMsum_longdouble (mat);
 	return double (sum);
+}
+
+double NUMsum2 (constVECVU const& vec) {
+	return double (NUMsum2_longdouble (vec));
+}
+double NUMsum2 (constMATVU const& mat) {
+	return double (NUMsum2_longdouble (mat));
+}
+
+double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean) {
+	return double (NUMsumOfSquaredDifferences_longdouble (vec, mean));
 }
 
 double NUMsumsq (const constVECVU& vec) noexcept {

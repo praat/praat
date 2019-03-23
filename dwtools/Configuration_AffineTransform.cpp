@@ -56,6 +56,7 @@ static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c
 	Psychometrika (61), 375-389.
 */
 static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, constMATVU const& a, integer maximumNumberOfIterations, double tolerance) {
+	Melder_assert (t.nrow == t.ncol);
 	Melder_assert (t.ncol == b.ncol && b.nrow == a.nrow && b.ncol == a.ncol);
 	integer numberOfIterations = 0;
 
@@ -94,7 +95,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 	evec [1] = 1.0;
 	double f, f_old;
-	double rho = VECdominantEigenvector_inplace (evec.get(),c.get(), 1.0e-6);
+	double rho = VECdominantEigenvector_inplace (evec.get(), c.get(), 1.0e-6);
 
 	do_steps45 (w.get(), t, c.get(), & f);
 	do {
@@ -108,23 +109,17 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 			// Step 7.b
 
-			longdouble q = 0.0; // TODO NUMinner (w.column (j), t.column (j) if argument of NUMinner wer VECVU type
-			for (integer k = 1; k <= nc; k ++)
-				q += w [k] [j] * t [k] [j];
+			const double q = NUMinner (w.column (j), t.column (j));
 
 			// Step 7.c
 
 			if (q == 0.0) {
 				u.column (j) <<= 0.0;
 			} else {
-				longdouble ww = 0.0;
-				for (integer k = 1; k <= nc; k ++)
-					ww += w [k] [j] * w [k] [j];
+				const double ww = NUMsum2 (w.column (j));
 				for (integer i = 1; i <= nc; i ++) {
-					longdouble ct = 0.0;
-					for (integer k = 1; k <= nc; k ++)
-						ct += c [i] [k] * t [k] [j];
-					u [i] [j] = double ((q * (ct - rho * t [i] [j]) / p - 2.0 * ww * t [i] [j] / q - w [i] [j]) / sqrt (p));
+					const double ct = NUMinner (c.row (i), t.column (j));
+					u [i] [j] = (q * (ct - rho * t [i] [j]) / double (p) - 2.0 * ww * t [i] [j] / q - w [i] [j]) / sqrt (double (p));
 				}
 			}
 		}
@@ -134,8 +129,8 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 		SVD_svd_d (svd.get(), u.all());
 
 		// Step 9
-		MATVUmul (t, svd -> u.all(), svd -> v.transpose ());
-		t *= -1.0;
+		MATVUmul (t, svd -> u.all(), svd -> v.transpose());
+		t  *=  -1.0;
 
 		numberOfIterations++;
 		f_old = f;
