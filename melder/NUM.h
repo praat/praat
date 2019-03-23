@@ -271,6 +271,11 @@ extern double NUMstdev (constMATVU const& mat) noexcept;
 extern double NUMsum (constVECVU const& vec) noexcept;
 extern double NUMsum (constMATVU const& mat) noexcept;
 
+extern double NUMsum2 (constVECVU const& vec);
+extern double NUMsum2 (constMATVU const& mat);
+
+extern double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean);
+
 extern double NUMsumsq (constVECVU const& vec) noexcept;
 extern double NUMsumsq (constMATVU const& mat) noexcept;
 
