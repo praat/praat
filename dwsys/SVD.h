@@ -54,8 +54,6 @@ autoVEC SVD_solve (SVD me, constVECVU const& b);
 void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result);
 autoMAT SVD_solve (SVD me, constMATVU const& b);
 
-void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfSingularValues);
-
 void SVD_sort (SVD me);
 /*
 	Sort singular values (and corresponding column vectors of U and V) in decreasing order.
@@ -97,7 +95,7 @@ integer SVD_getRank (SVD me);
 
 autoGSVD GSVD_create (integer numberOfColumns);
 
-autoGSVD GSVD_create_d (constMAT m1, constMAT m2);
+autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2);
 
 void GSVD_setTolerance (GSVD me, double tolerance);
 

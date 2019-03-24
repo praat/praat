@@ -1,6 +1,6 @@
 /* TableOfReal_and_SVD.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ autoGSVD TablesOfReal_to_GSVD (TableOfReal me, TableOfReal thee) {
 	try {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
 			U"Both tables should have the same number of columns.");
-		autoGSVD him = GSVD_create_d (my data.get(), thy data.get());
+		autoGSVD him = GSVD_create (my data.get(), thy data.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not constructed from TablesOfReal.");

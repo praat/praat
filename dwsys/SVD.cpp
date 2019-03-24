@@ -366,7 +366,7 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 	}
 }
 
-autoGSVD GSVD_create_d (constMAT m1, constMAT m2) {
+autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 	try {
 		integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
 		integer lwork = std::max (std::max (3 * n, m), p) + n;

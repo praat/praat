@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -740,7 +740,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		autoMAT a = newMATmul (sxx.transpose(), syx.transpose());
 		Melder_assert (a.nrow == nx && a.ncol == ny);
 
-		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
+		autoGSVD gsvd = GSVD_create (a.get(), syy.get());
 		autoMAT ri = newMATcopy (gsvd -> r.get());
 		
 		autoCCA thee = Thing_new (CCA);
