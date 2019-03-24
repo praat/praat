@@ -1,6 +1,6 @@
 /* MAT_numerics.cpp
  *
- * Copyright (C) 2018 David Weenink
+ * Copyright (C) 2018-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,16 +129,17 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
 }
 
-void MAT_asPrincipalComponents_preallocated (MAT pc, constMATVU const& m) {
-	Melder_assert (pc.nrow == m.nrow && pc.ncol <= m.ncol);
+void MAT_asPrincipalComponents_preallocated (MATVU result, constMATVU const& m, integer numberOfComponents) {
+	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
+	Melder_assert (result.nrow == m.nrow && result.ncol == numberOfComponents);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
-	MATVUmul (pc, m, svd -> v.verticalBand (1, pc.ncol));
+	MATVUmul (result, m, svd -> v.verticalBand (1, result.ncol));
 }
 
-autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
+autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents) {
 	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
 	autoMAT result = newMATraw (m.nrow, numberOfComponents);
-	MAT_asPrincipalComponents_preallocated (result.get(), m);
+	MAT_asPrincipalComponents_preallocated (result.get(), m, numberOfComponents);
 	return result;
 }
 

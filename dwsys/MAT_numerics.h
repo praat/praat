@@ -1,7 +1,7 @@
 #pragma once
 /* MAT_numerics.h
  *
- * Copyright (C) 2018 David Weenink
+ * Copyright (C) 2018-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,8 +66,8 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 	Decompresses each eigenvector row into two consecutive columns (real and imaginary part)
 */
 
-void MAT_asPrincipalComponents_preallocated (MAT pc, constMATVU const& m);
-autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents);
+void MAT_asPrincipalComponents_preallocated (MATVU pc, constMATVU const& m, integer numberOfComponents);
+autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents);
 
 void MATpseudoInverse_preallocated (MAT target, constMATVU const& m, double tolerance);
 autoMAT MATpseudoInverse (constMAT m, double tolerance);

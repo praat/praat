@@ -181,11 +181,11 @@ void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse) {
 			for (integer k = 1; k <= my numberOfColumns; k ++) {
 				if (my d [k] > 0.0) {
 					longdouble dsq = my d [k] * my d [k];
-					longdouble factor = inverse ? 1.0 / dsq : dsq;
+					longdouble factor = ( inverse ? 1.0 / dsq : dsq );
 					val += my v [i] [k] * my v [j] [k] * factor;
 				}
 			}
-			m [i] [j] = (double) val;
+			m [i] [j] = double (val);
 		}
 	}
 }
@@ -196,7 +196,7 @@ autoMAT SVD_getSquared (SVD me, bool inverse) {
 	return result;
 }
 
-void SVD_solve_preallocated (SVD me, constVECVU const& b, VEC result) {
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result) {
 	try {
 		/*
 			Solve UDV' x = b.
@@ -236,9 +236,9 @@ void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result) {
 	autoVEC bcol = newVECraw (b.nrow);
 	autoVEC resultcol = newVECraw (result.nrow);
 	for (integer icol = 1; icol <= b.ncol; icol ++) {
-		bcol.get() <<= b.column(icol);
+		bcol.get() <<= b.column (icol);
 		SVD_solve_preallocated (me, bcol.get(), resultcol.get());
-		result.column(icol) <<= resultcol.get();
+		result.column (icol) <<= resultcol.get();
 	}
 }
 
@@ -366,7 +366,7 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 	}
 }
 
-autoGSVD GSVD_create_d (constMAT m1, constMAT m2) {
+autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 	try {
 		integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
 		integer lwork = std::max (std::max (3 * n, m), p) + n;
