@@ -133,7 +133,7 @@ void MAT_asPrincipalComponents_preallocated (MATVU result, constMATVU const& m, 
 	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
 	Melder_assert (result.nrow == m.nrow && result.ncol == numberOfComponents);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
-	MATVUmul (result, m, svd -> v.verticalBand (1, result.ncol));
+	MATmul (result, m, svd -> v.verticalBand (1, result.ncol));
 }
 
 autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents) {

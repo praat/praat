@@ -264,16 +264,16 @@ inline autoMAT newMATmtm (constMATVU const& x) {
 /*
 	Precise matrix multiplication, using pairwise summation.
 */
-extern void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
-inline void MATVUmul  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+extern void MATmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
+inline void MATmul  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATVUmul_ (target, x, y);
+	MATmul_ (target, x, y);
 }
 inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
-	MATVUmul (result.all(), x, y);
+	MATmul (result.all(), x, y);
 	return result;
 }
 /*
@@ -282,51 +282,51 @@ inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
 	(unless they are already 1).
 	Because of the use of malloc, this function may not be thread-safe.
 */
-extern void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
-inline void MATVUmul_forceAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
+extern void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
+inline void MATmul_forceAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATVUmul_forceAllocation_ (target, x, y);
+	MATmul_forceAllocation_ (target, x, y);
 }
 inline autoMAT newMATmul_forceAllocation (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
-	MATVUmul_forceAllocation (result.all(), x, y);
+	MATmul_forceAllocation (result.all(), x, y);
 	return result;
 }
 /*
-	The faster of MATVUmul_forceAllocation and MATVUmul.
+	The faster of MATmul_forceAllocation and MATmul.
 	Because of the use of malloc, this function may not be thread-safe.
 */
-extern void MATVUmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
-inline void MATVUmul_allowAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
+extern void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
+inline void MATmul_allowAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATVUmul_allowAllocation_ (target, x, y);
+	MATmul_allowAllocation_ (target, x, y);
 }
 inline autoMAT newMATmul_allowAllocation (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
-	MATVUmul_allowAllocation (result.all(), x, y);
+	MATmul_allowAllocation (result.all(), x, y);
 	return result;
 }
 /*
 	Rough matrix multiplication, using an in-cache inner loop if that is faster.
 */
-extern void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
-inline void MATVUmul_fast  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+extern void MATmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
+inline void MATmul_fast  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATVUmul_fast_ (target, x, y);
+	MATmul_fast_ (target, x, y);
 }
 inline autoMAT newMATmul_fast (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, y.ncol);
-	MATVUmul_fast (result.all(), x, y);
+	MATmul_fast (result.all(), x, y);
 	return result;
 }
-void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
-void MATVUmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
+void MATmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
+void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 
 void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y);
 extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);

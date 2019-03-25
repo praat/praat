@@ -50,7 +50,7 @@
 void structAffineTransform :: v_transform (MAT out, MAT in) {
 	Melder_assert (in.nrow == out.nrow);
 	Melder_assert (in.ncol == out.ncol);
-	MATVUmul (out, in, r.get());
+	MATmul (out, in, r.get());
 	out += t;
 }
 

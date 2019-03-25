@@ -1145,7 +1145,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		autoMAT K;
 		MAT_getEigenSystemFromSymmetricMatrix (cl.get(), & K, nullptr, false);
 
-		MATVUmul (thy data.get(), y.get(), K.get()); // Y.K
+		MATmul (thy data.get(), y.get(), K.get()); // Y.K
 
 		Configuration_normalize (thee.get(), 0, true);
 

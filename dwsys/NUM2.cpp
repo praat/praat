@@ -110,7 +110,7 @@ void MATprintMatlabForm (constMAT m, conststring32 name) {
 	MelderInfo_close ();
 }
 
-void VECsmoothByMovingAverage_preallocated (VECVU out, constVECVU const& in, integer window) {
+void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& in, integer window) {
 	Melder_assert (out.size == in.size);
 	for (integer i = 1; i <= out.size; i ++) {
 		integer jfrom = i - window / 2, jto = i + window / 2;
@@ -134,13 +134,13 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) 
 	return covar;
 }
 
-static void MATweighRows (MAT x, constVEC y) {
+static void MATweighRows (MATVU const& x, constVECVU const& y) {
 	Melder_assert (x.nrow == y.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		x.row (irow)  *=  y [irow];
 }
 
-void MATmtm_weighRows_preallocated (MATVU result, constMATVU const& data, constVECVU const& rowWeights) {
+void MATmtm_weighRows_preallocated (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights) {
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol == result.ncol);
 	Melder_assert (result.nrow == result.ncol);
@@ -161,7 +161,7 @@ void MATmtm_weighRows_preallocated (MATVU result, constMATVU const& data, constV
 	}
 }
 
-inline void MATmul_rows_inplace (MAT x, constVEC v) { // TODO better name??
+inline void MATmul_rows_inplace (MATVU const& x, constVECVU const& v) { // TODO better name??
 	Melder_assert (x.nrow == v.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		x.row (irow)  *=  v [irow];
