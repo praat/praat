@@ -68,7 +68,7 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 	}
 }
 
-void NMF_initialize (NMF me, constMATVU data, kNMF_Initialization initializationMethod) {
+void NMF_initialize (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
 		MATrandomUniform_preallocated (my features.all(), rmin, rmax);
@@ -77,7 +77,7 @@ void NMF_initialize (NMF me, constMATVU data, kNMF_Initialization initialization
 	}
 }
 
-autoNMF NMF_createFromGeneralMatrix (constMATVU m, integer numberOfFeatures) {
+autoNMF NMF_createFromGeneralMatrix (constMATVU const& m, integer numberOfFeatures) {
 	try {
 		Melder_require (NUMisNonNegative (m),
 			U"No matrix elements should be negative.");
@@ -90,7 +90,7 @@ autoNMF NMF_createFromGeneralMatrix (constMATVU m, integer numberOfFeatures) {
 	}
 }
 
-double NMF_getEuclideanDistance (NMF me, constMATVU data) {
+double NMF_getEuclideanDistance (NMF me, constMATVU const& data) {
 	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns,
 		U"Dimensions should match.");
 	autoMAT synthesis = NMF_synthesize (me);
@@ -99,7 +99,7 @@ double NMF_getEuclideanDistance (NMF me, constMATVU data) {
 	return dist;
 }
 
-static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
+static double getMaximumChange (constMATVU const& m, MAT m0, const double sqrteps) {
 	double min = NUMmin (m0);
 	double max = NUMmax (m0);
 	double extremum1 = std::max (fabs (min), fabs (max));
@@ -116,7 +116,7 @@ static double getMaximumChange (constMAT m, MAT m0, const double sqrteps) {
 	Set elements < zero_threshold to zero
 */
 
-static const void update (MAT m, constMAT m0, constMAT numer, constMAT denom, double zeroThreshold, double maximum) {
+static const void update (MATVU m, constMATVU const& m0, constMATVU const& numer, constMATVU const& denom, double zeroThreshold, double maximum) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
 	Melder_assert (m.nrow == denom.nrow && m.ncol == denom.ncol);
@@ -146,7 +146,7 @@ static const void update (MAT m, constMAT m0, constMAT numer, constMAT denom, do
 		Computing and informatics% #30: 205--224.
 
 */
-void NMF_improveFactorization_mu (NMF me, constMATVU data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
@@ -236,7 +236,7 @@ void NMF_makeFeaturesNonnegative (NMF me, int /* strategy */) {
 					my features [irow] [icol] = 0.0;
 }
 
-void NMF_improveFactorization_als (NMF me, constMATVU data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");

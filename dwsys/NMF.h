@@ -32,9 +32,9 @@
 
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures);
 
-autoNMF NMF_createFromGeneralMatrix (constMATVU data, integer numberOfFeatures);
+autoNMF NMF_createFromGeneralMatrix (constMATVU const& data, integer numberOfFeatures);
 
-void NMF_initialize (NMF me, constMATVU data, kNMF_Initialization initializationMethod);
+void NMF_initialize (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod);
 
 /*
 	Factorize D as F*W, where D, F and W >= 0
@@ -45,7 +45,7 @@ void NMF_initialize (NMF me, constMATVU data, kNMF_Initialization initialization
 		F(n+1) = F(n).(D*W(n+1)') / (F(n)*(W(n+1)*W(n+1)') + eps)
 	endfor
 */
-void NMF_improveFactorization_mu (NMF me, constMATVU data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
 
 /*
 	Factorize D as F*W, where D, F and W >= 0
@@ -58,10 +58,10 @@ void NMF_improveFactorization_mu (NMF me, constMATVU data, integer maximumNumber
 		Set all negative elements in F to 0.
 	endfor
 */
-void NMF_improveFactorization_als (NMF me, constMATVU data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+void NMF_improveFactorization_als (NMF me, constMATVU const & data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
 
 autoMAT NMF_synthesize (NMF me); // result = features * weights
 
-double NMF_getEuclideanDistance (NMF me, constMATVU data); // sqrt (||data - features*weights||²)
+double NMF_getEuclideanDistance (NMF me, constMATVU const& data); // sqrt (||data - features*weights||²)
 
 #endif /* _NMF_h_ */

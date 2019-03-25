@@ -2,7 +2,7 @@
 #define _GaussianMixture_h_
 /* GaussianMixture.h
  *
- * Copyright (C) 2010-2018 David Weenink
+ * Copyright (C) 2010-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC v)
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 pos);
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVEC pos, double x);
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVECVU const& pos, double x);
 
 autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee);
 /* Correlation between components based on the data in the table */

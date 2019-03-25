@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2018 David Weenink
+ * Copyright (C) 2011-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1113,7 +1113,7 @@ double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, cons
 	return p;
 }
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVEC pos, double x) {
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVECVU const& pos, double x) {
 	longdouble p = 0.0;
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		double pim = Covariance_getMarginalProbabilityAtPosition (my covariances->at [im], pos, x);

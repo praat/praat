@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +220,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 	}
 }
 
-autoSSCP SSCP_toTwoDimensions (SSCP me, constVEC v1, constVEC v2) {
+autoSSCP SSCP_toTwoDimensions (SSCP me, constVECVU const& v1, constVECVU const& v2) {
 	try {
 		Melder_assert (v1.size == v2.size && v1.size == my numberOfColumns);
 		autoSSCP thee = SSCP_create (2);
@@ -376,7 +376,7 @@ double SSCP_getCumulativeContributionOfComponents (SSCP me, integer from, intege
 }
 
 /* For nxn matrix only ! */
-void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VEC vec, VEC buf) {
+void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VECVU vec, VEC buf) {
 	// Generate the multi-normal vector elements N(0,sigma)
 	Melder_require (thy dimension == my numberOfRows, 
 		U"The PCA must have the same dimension as the Covariance.");
@@ -740,7 +740,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		autoMAT a = newMATmul (sxx.transpose(), syx.transpose());
 		Melder_assert (a.nrow == nx && a.ncol == ny);
 
-		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
+		autoGSVD gsvd = GSVD_create (a.get(), syy.get());
 		autoMAT ri = newMATcopy (gsvd -> r.get());
 		
 		autoCCA thee = Thing_new (CCA);
@@ -930,7 +930,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *out_prob, do
 	if (out_df) *out_df = df;
 }
 
-autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVEC v1, constVEC v2) {
+autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVECVU const& v1, constVECVU const& v2) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
 		for (integer i = 1; i <= my size; i ++) {
@@ -1246,23 +1246,19 @@ double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 	return p;
 }
 
-double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVEC vector, double x) {
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVECVU const& vector, double x) {
 	double mu, stdev;
-	Covariance_getMarginalDensityParameters (me, vector, &mu, &stdev);
+	Covariance_getMarginalDensityParameters (me, vector, & mu, & stdev);
 	double dx = (x - mu) / stdev;
 	double p = (NUM1_sqrt2pi / stdev) * exp (- 0.5 * dx * dx);
 	return p;
 }
 
 /* Precondition ||v|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, constVEC v, double *out_mu, double *out_stdev) {
+void Covariance_getMarginalDensityParameters (Covariance me, constVECVU const& v, double *out_mu, double *out_stdev) {
 	Melder_assert (v.size == my numberOfColumns);
-	if (out_mu) {
-		longdouble mu = 0.0;
-		for (integer m = 1; m <= my numberOfColumns; m ++)
-			mu += v [m] * my centroid [m];
-		*out_mu = double (mu);
-	}
+	if (out_mu)
+		*out_mu = NUMinner (v, my centroid.get());
 	if (out_stdev) {
 		longdouble stdev = 0.0;
 		if (my numberOfRows == 1) { // 1xn diagonal matrix
