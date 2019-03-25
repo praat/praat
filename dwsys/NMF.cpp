@@ -99,7 +99,7 @@ double NMF_getEuclideanDistance (NMF me, constMATVU const& data) {
 	return dist;
 }
 
-static double getMaximumChange (constMATVU const& m, MAT m0, const double sqrteps) {
+static double getMaximumChange (constMATVU const& m, MATVU const& m0, const double sqrteps) {
 	double min = NUMmin (m0);
 	double max = NUMmax (m0);
 	double extremum1 = std::max (fabs (min), fabs (max));
@@ -116,7 +116,7 @@ static double getMaximumChange (constMATVU const& m, MAT m0, const double sqrtep
 	Set elements < zero_threshold to zero
 */
 
-static const void update (MATVU m, constMATVU const& m0, constMATVU const& numer, constMATVU const& denom, double zeroThreshold, double maximum) {
+static const void update (MATVU const& m, constMATVU const& m0, constMATVU const& numer, constMATVU const& denom, double zeroThreshold, double maximum) {
 	Melder_assert (m.nrow == m0.nrow && m.ncol == m0.ncol);
 	Melder_assert (m.nrow == numer.nrow && m.ncol == numer.ncol);
 	Melder_assert (m.nrow == denom.nrow && m.ncol == denom.ncol);
@@ -126,12 +126,12 @@ static const void update (MATVU m, constMATVU const& m0, constMATVU const& numer
 		otherwise the precision would suffer. 
 		A scaling with the maximum value seems reasonable.
 	*/
-	const double divByZeroAvoidance = 1e-09 * (maximum < 1 ? maximum : 1.0);
+	const double divByZeroAvoidance = 1e-09 * ( maximum < 1.0 ? maximum : 1.0 );
 	for (integer irow = 1; irow <= m.nrow; irow ++) 
 		for (integer icol = 1; icol <= m.ncol; icol++) {
-			if ( m0 [irow] [icol] == 0.0 || numer [irow] [icol]  == 0.0)
+			if (m0 [irow] [icol] == 0.0 || numer [irow] [icol]  == 0.0) {
 				m [irow] [icol] = 0.0;
-			else {
+			} else {
 				double update = m0 [irow] [icol] * (numer [irow] [icol] / (denom [irow] [icol] + divByZeroAvoidance));
 				m [irow] [icol] = ( update < zeroThreshold ? 0.0 : update );
 			}
@@ -187,13 +187,13 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			weights0.get() <<= my weights.get();
 			MATVUmul (productFtD.get(), features0.transpose(), data);
 			MATVUmul (productFtF.get(), features0.transpose(), features0.get());
-			MATVUmul  (productFtFW.get(), productFtF.get(), weights0.get());
+			MATVUmul (productFtFW.get(), productFtF.get(), weights0.get());
 			update (my weights.get(), weights0.get(), productFtD.get(), productFtFW.get(), eps, maximum);
 
 			// 2. Update F matrix
-			MATVUmul  (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
+			MATVUmul (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
 			MATVUmul (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
-			MATVUmul  (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
+			MATVUmul (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
 			update (my features.get(), features0.get(), productDWt.get(), productFWWt.get(), eps, maximum);
 			
 			/* 3. Convergence test:
@@ -206,7 +206,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			
 			double traceWtFtD  = NUMtrace2 (my weights.transpose(), productFtD.get());
 			double traceWtFtFW = NUMtrace2 (productFtF.get(), productWWt.get());
-			double distance = traceDtD -2.0 * traceWtFtD + traceWtFtFW;
+			double distance = traceDtD - 2.0 * traceWtFtD + traceWtFtFW;
 			double dnorm = distance / (my numberOfRows * my numberOfColumns);
 			double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
 			double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);

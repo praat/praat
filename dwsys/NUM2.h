@@ -212,14 +212,14 @@ inline void MATnormalizeRows_inplace (MATVU a, double power, double norm) {
 		VECnormalize_inplace (a.row (irow), power, norm);
 }
 
-inline void MATnormalizeColumns_inplace (MATVU a, double power, double norm) {
-	MATnormalizeRows_inplace (a.transpose (), power, norm);
+inline void MATnormalizeColumns_inplace (MATVU const& a, double power, double norm) {
+	MATnormalizeRows_inplace (a.transpose(), power, norm);
 }
 /*
 	Scale a[.][j] such that sqrt (Sum(a[i][j]^2, i=1..nPoints)) = norm.
 */
 
-void VECsmoothByMovingAverage_preallocated (VECVU out, constVECVU const& in, integer window);
+void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& in, integer window);
 
 autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 /*
@@ -228,7 +228,7 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-void MATmtm_weighRows_preallocated (MATVU result, constMATVU const& data, constVECVU const& rowWeights);
+void MATmtm_weighRows_preallocated (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights);
 
 inline autoMAT MATmtm_weighRows (constMATVU const& data, constVECVU const& rowWeights) {
 	autoMAT result = newMATraw (data.ncol, data.ncol);

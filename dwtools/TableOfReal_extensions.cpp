@@ -622,7 +622,7 @@ void TableOfReal_doubleCentre (TableOfReal me) {
 }
 
 void TableOfReal_normalizeColumns (TableOfReal me, double norm) {
-		MATnormalizeColumns_inplace (my data.transpose(), 2.0, norm);
+	MATnormalizeColumns_inplace (my data.transpose(), 2.0, norm);
 }
 
 void TableOfReal_normalizeRows (TableOfReal me, double norm) {
