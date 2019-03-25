@@ -132,10 +132,9 @@ static void menu_cb_stopBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_moveCursorToPeak (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
-	double frequencyOfMaximum, heightOfMaximum;
-	Spectrum_getNearestMaximum ((Spectrum) my data, 0.5 * (my startSelection + my endSelection), & frequencyOfMaximum, & heightOfMaximum);
-	my startSelection = my endSelection = frequencyOfMaximum;
-	my cursorHeight = heightOfMaximum;
+	MelderPoint peak = Spectrum_getNearestMaximum ((Spectrum) my data, 0.5 * (my startSelection + my endSelection));
+	my startSelection = my endSelection = peak. x;
+	my cursorHeight = peak. y;
 	FunctionEditor_marksChanged (me, true);
 }
 
