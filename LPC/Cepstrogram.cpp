@@ -184,22 +184,18 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
 			autoVEC qin = newVECraw (my nx);
-			autoVEC qout = newVECraw (my nx);
 			for (integer iq = 1; iq <= my ny; iq ++) {
 				qin.all() <<= thy z.row (iq);   // ppgb: why this extra copying?
-				VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfFrames);
-				thy z.row (iq) <<= qout.all();
+				VECsmoothByMovingAverage_preallocated (thy z.row (iq), qin.get(), numberOfFrames);
 			}
 		}
 		// 2. average across quefrencies
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
 			autoVEC qin = newVECraw (thy ny);
-			autoVEC qout = newVECraw (thy ny);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				qin.get() <<= thy z.column (iframe);
-				VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
-				thy z.column (iframe) <<= qout.get();
+				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), qin.get(), numberOfQuefrencyBins);
 			}
 		}
 		return thee;

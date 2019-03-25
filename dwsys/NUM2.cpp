@@ -110,19 +110,7 @@ void MATprintMatlabForm (constMAT m, conststring32 name) {
 	MelderInfo_close ();
 }
 
-void MATnormalizeColumns_inplace (MAT a, double power, double norm) {
-	Melder_assert (norm > 0.0);
-	autoVEC column = newVECraw (a.nrow);
-	for (integer icol = 1; icol <= a.ncol; icol ++) {
-		for (integer irow = 1; irow <= column.size; irow ++)
-			column [irow] = a [irow] [icol];
-		VECnormalize_inplace (column.get(), power, norm);
-		for (integer irow = 1; irow <= column.size; irow ++)
-			a [irow] [icol] = column [irow];
-	}
-}
-
-void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window) {
+void VECsmoothByMovingAverage_preallocated (VECVU out, constVECVU const& in, integer window) {
 	Melder_assert (out.size == in.size);
 	for (integer i = 1; i <= out.size; i ++) {
 		integer jfrom = i - window / 2, jto = i + window / 2;
@@ -139,7 +127,7 @@ void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window
 	}
 }
 
-autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
+autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) {
 	Melder_require (ndf >= 0 && x.nrow - ndf > 0, U"Invalid arguments.");
 	autoMAT covar = newMATmtm (x);
 	covar.all()  *=  1.0 / (x.nrow - ndf);
@@ -152,9 +140,9 @@ static void MATweighRows (MAT x, constVEC y) {
 		x.row (irow)  *=  y [irow];
 }
 
-void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeights) {
+void MATmtm_weighRows_preallocated (MATVU result, constMATVU const& data, constVECVU const& rowWeights) {
 	Melder_assert (data.nrow == rowWeights.size);
-	Melder_assert (data.ncol = result.ncol);
+	Melder_assert (data.ncol == result.ncol);
 	Melder_assert (result.nrow == result.ncol);
 	result <<= 0.0;
 	if (true) {
@@ -179,7 +167,7 @@ inline void MATmul_rows_inplace (MAT x, constVEC v) { // TODO better name??
 		x.row (irow)  *=  v [irow];
 }
 
-double NUMmultivariateKurtosis (constMAT m, int method) {
+double NUMmultivariateKurtosis (constMATVU const& m, int method) {
 	double kurt = undefined;
 	if (m.nrow < 5) {
 		return kurt;
