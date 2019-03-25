@@ -185,15 +185,15 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			// 1. Update W matrix
 			features0.get() <<= my features.get();
 			weights0.get() <<= my weights.get();
-			MATVUmul (productFtD.get(), features0.transpose(), data);
-			MATVUmul (productFtF.get(), features0.transpose(), features0.get());
-			MATVUmul (productFtFW.get(), productFtF.get(), weights0.get());
+			MATmul (productFtD.get(), features0.transpose(), data);
+			MATmul (productFtF.get(), features0.transpose(), features0.get());
+			MATmul (productFtFW.get(), productFtF.get(), weights0.get());
 			update (my weights.get(), weights0.get(), productFtD.get(), productFtFW.get(), eps, maximum);
 
 			// 2. Update F matrix
-			MATVUmul (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
-			MATVUmul (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
-			MATVUmul (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
+			MATmul (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
+			MATmul (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
+			MATmul (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
 			update (my features.get(), features0.get(), productDWt.get(), productFWWt.get(), eps, maximum);
 			
 			/* 3. Convergence test:
@@ -275,8 +275,8 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			
 			// 1. Solve equations for new W:  F´*F*W = F'*D.
 			weights0.get() <<= my weights.get(); // save previous weigts for convergence test
-			MATVUmul (productFtD.get(), my features.transpose(), data);
-			MATVUmul (productFtF.get(), my features.transpose(), my features.get());
+			MATmul (productFtD.get(), my features.transpose(), data);
+			MATmul (productFtF.get(), my features.transpose(), my features.get());
 
 			svd_FtF -> u.get() <<= productFtF.get();
 			SVD_compute (svd_FtF.get());
@@ -285,8 +285,8 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			
 			// 2. Solve equations for new F:  W*W'*F' = W*D'
 			features0.get() <<= my features.get(); // save previous features for convergence test
-			MATVUmul  (productWDt.get(), my weights.get(), data.transpose());
-			MATVUmul (productWWt.get(), my weights.get(), my weights.transpose());
+			MATmul  (productWDt.get(), my weights.get(), data.transpose());
+			MATmul (productWWt.get(), my weights.get(), my weights.transpose());
 
 			svd_WWt -> u.get() <<= productWWt.get();
 			SVD_compute (svd_WWt.get());

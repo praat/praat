@@ -5288,7 +5288,8 @@ static void do_VECmul () {
 		integer xSize = x->numericVector.size, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xSize,
 			U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
-			U"not ", xSize, U" and ", yNrow);
+			U"not ", xSize, U" and ", yNrow
+		);
 		autoVEC result = newVECmul (x->numericVector, y->numericMatrix);
 		pushNumericVector (result.move());
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
@@ -5298,7 +5299,8 @@ static void do_VECmul () {
 		integer xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
 		Melder_require (ySize == xNcol,
 			U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
-			U"not ", xNcol, U" and ", ySize, U".");
+			U"not ", xNcol, U" and ", ySize, U"."
+		);
 		autoVEC result = newVECmul (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
@@ -5317,9 +5319,10 @@ static void do_MATmul () {
 		integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNcol,
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
-			U"not ", xNcol, U" and ", yNrow, U".");
+			U"not ", xNcol, U" and ", yNrow, U"."
+		);
 		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
-		MATVUmul_allowAllocation_ (result.get(), x->numericMatrix, y->numericMatrix);
+		MATmul_allowAllocation_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5337,9 +5340,10 @@ static void do_MATmul_metal () {
 		integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNcol,
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
-			U"not ", xNcol, U" and ", yNrow, U".");
+			U"not ", xNcol, U" and ", yNrow, U"."
+		);
 		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
-		MATVUmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
+		MATmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_metal##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5357,7 +5361,8 @@ static void do_MATmul_fast () {
 		integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNcol,
 			U"In the function \"mul_fast##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
-			U"not ", xNcol, U" and ", yNrow, U".");
+			U"not ", xNcol, U" and ", yNrow, U"."
+		);
 		autoMAT result = newMATmul_fast (x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
@@ -5376,7 +5381,8 @@ static void do_MATmul_tn () {
 		integer xNrow = x->numericMatrix.nrow, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNrow,
 			U"In the function \"mul_tn##\", the number of rows of the first matrix and the number of rows of the second matrix should be equal, "
-			U"not ", xNrow, U" and ", yNrow, U".");
+			U"not ", xNrow, U" and ", yNrow, U"."
+		);
 		autoMAT result = newMATmul_allowAllocation (x->numericMatrix.transpose(), y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
@@ -5395,7 +5401,8 @@ static void do_MATmul_nt () {
 		integer xNcol = x->numericMatrix.ncol, yNcol = y->numericMatrix.ncol;
 		Melder_require (yNcol == xNcol,
 			U"In the function \"mul_tn##\", the number of columns of the first matrix and the number of columns of the second matrix should be equal, "
-			U"not ", xNcol, U" and ", yNcol, U".");
+			U"not ", xNcol, U" and ", yNcol, U"."
+		);
 		autoMAT result = newMATmul_allowAllocation (x->numericMatrix, y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
@@ -5414,7 +5421,8 @@ static void do_MATmul_tt () {
 		integer xNrow = x->numericMatrix.nrow, yNcol = y->numericMatrix.ncol;
 		Melder_require (yNcol == xNrow,
 			U"In the function \"mul_tt##\", the number of rows of the first matrix and the number of columns of the second matrix should be equal, "
-			U"not ", xNrow, U" and ", yNcol, U".");
+			U"not ", xNrow, U" and ", yNcol, U"."
+		);
 		autoMAT result = newMATmul_allowAllocation (x->numericMatrix.transpose(), y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
@@ -5464,10 +5472,9 @@ static void do_VECrepeat () {
 		integer n_old = x->numericVector.size;
 		integer times = Melder_iround (n->number);
 		autoVEC result { n_old * times, kTensorInitializationType::RAW };
-		for (integer i = 1; i <= times; i ++) {
+		for (integer i = 1; i <= times; i ++)
 			for (integer j = 1; j <= n_old; j ++)
 				result [(i - 1) * n_old + j] = x->numericVector [j];
-		}
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"repeat#\" requires a vector and a number, not ", x->whichText(), U" and ", n->whichText(), U".");

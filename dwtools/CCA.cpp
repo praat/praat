@@ -130,7 +130,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		// Form the matrix C = ux' uy (use svd-object storage)
 
 		autoSVD svdc = SVD_create (numberOfIndependents, numberOfDependents);
-		MATVUmul_fast (svdc -> u.get(), svdx -> u.transpose(), svdy -> u.get());
+		MATmul_fast (svdc -> u.get(), svdx -> u.transpose(), svdy -> u.get());
 		SVD_compute (svdc.get());
 		integer numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.get(), 0.0);
 		integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;

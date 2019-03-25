@@ -162,7 +162,7 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 				}
 				// update V
 				vnew.all() <<= my data.all();
-				MATVUmul (my data.get(), w.get(), vnew.get());
+				MATmul (my data.get(), w.get(), vnew.get());
 				for (integer k = 1; k <= ccts -> size; k ++) {
 					CrossCorrelationTable ct = ccts -> at [k];
 					Melder_assert (ct -> data.nrow == dimension && ct -> data.ncol == dimension);   // ppgb 20180913
@@ -247,14 +247,14 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// W = P'\W == inv(P') * W
 
 		MATpseudoInverse_preallocated (pinv.get (), p.get(), 0.0);
-		MATVUmul (my data.get(), pinv.transpose(), wc.get());
+		MATmul (my data.get(), pinv.transpose(), wc.get());
 
 		// initialisation for order KN^3
 
 		for (integer ic = 2; ic <= thy size; ic ++) {
 			CrossCorrelationTable cov = ccts -> at [ic];
 			// C * W
-			MATVUmul (m1.get(), cov -> data.get(), my data.get());
+			MATmul (m1.get(), cov -> data.get(), my data.get());
 			// D += scalef * M1*M1'
 			multiplyScaleAdd_preallocated (d.get(), m1.get(), 2.0 * cweights [ic]);
 		}
@@ -314,7 +314,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// Revert the sphering W = P'*W;
 		// Take transpose to make W*C [i]W' diagonal instead of W'*C [i]*W => (P'*W)'=W'*P
 		wc.all() <<= my data.all();
-		MATVUmul (my data.get(), wc.transpose(), p.get()); // W = W'*P: final result
+		MATmul (my data.get(), wc.transpose(), p.get()); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure
 	//	double dm = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);

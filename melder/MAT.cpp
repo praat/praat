@@ -83,7 +83,7 @@ void MATmtm_preallocated (MATVU const& target, constMATVU const& x) noexcept {
 	#endif
 }
 
-void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+void MATmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	/*
 		Precise matrix multiplication, using pairwise summation.
 	*/
@@ -164,7 +164,7 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 	}
 }
 
-void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
+void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 	/*
 		As seen above, the only multiplication that stays fast for large sizes,
 		if X and Y are packed row-major matrices, is X.Y';
@@ -213,9 +213,9 @@ void MATVUmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y)
 	}
 }
 
-void MATVUmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
+void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 	/*
-		The faster of MATVUmul_ and MATVUmul_forceAllocation.
+		The faster of MATmul_ and MATmul_forceAllocation.
 		Allocation takes place only for larger matrices, e.g. from size 47 on
 		(100,000 flops).
 
@@ -342,7 +342,7 @@ void MATVUmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y)
 	}
 }
 
-static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+static inline void MATmul_rough_naiveReferenceImplementation (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	/*
 		If x.colStride == size and y.colStride == 1,
 		this version is 0.073, 1.32, 1.17, 0.58 Gflop/s for size = 1,10,100,1000.
@@ -355,9 +355,9 @@ static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& tar
 		}
 	}
 }
-void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+void MATmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	if ((false)) {
-		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
+		MATmul_rough_naiveReferenceImplementation (target, x, y);
 	} else if (y.colStride == 1) {
 		/*
 			This case is appropriate for the multiplication of full matrices
@@ -425,7 +425,7 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 					X.Y'
 				The speed is 0.064, 1.18, 1.67, 1.69 Gflop/s for size = 1,10,100,1000.
 			*/
-			MATVUmul_ (target, x, y);
+			MATmul_ (target, x, y);
 		} else {
 			/*
 				This case will be appropriate for the multiplication of full matrices
@@ -460,11 +460,11 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 			A rare case: the strides of y are both greater than 1.
 			We do not bother to optimize these cases yet.
 		*/
-		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
+		MATmul_rough_naiveReferenceImplementation (target, x, y);
 	}
 }
 
-void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y) {
+void MATmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y) {
 #ifdef macintosh
 	if (@available (macOS 10.13, *)) {
 		/*
@@ -672,11 +672,11 @@ void MATVUmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU 
 		return;
 	}
 #else
-	MATVUmul(target, x, y);
+	MATmul(target, x, y);
 #endif
 }
 
-void MATVUmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y) {
+void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y) {
 #ifdef macintosh
 	static bool gpuInited = false;
 	static cl_context openclContext = nullptr;
@@ -748,7 +748,7 @@ void MATVUmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU
     free(C);
     #endif
 #else
-	MATVUmul(target, x, y);
+	MATmul(target, x, y);
 #endif
 }
 

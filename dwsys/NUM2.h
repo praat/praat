@@ -206,7 +206,7 @@ inline void MATnormalize_inplace (MATVU const& mat, double power, double newNorm
 		mat  *=  newNorm / oldnorm;
 }
 
-inline void MATnormalizeRows_inplace (MATVU a, double power, double norm) {
+inline void MATnormalizeRows_inplace (MATVU const& a, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	for (integer irow = 1; irow <= a.nrow; irow ++)
 		VECnormalize_inplace (a.row (irow), power, norm);

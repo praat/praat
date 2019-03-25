@@ -53,7 +53,7 @@ Thing_implement (Procrustes, AffineTransform, 0);
 void structProcrustes :: v_transform (MAT out, MAT in) {
 	Melder_assert (in.nrow == out.nrow && in.ncol == out.ncol);
 	Melder_assert (in.ncol == dimension);
-	MATVUmul (out, in, r.get());
+	MATmul (out, in, r.get());
 	out *= s;
 	out += t;
 }
