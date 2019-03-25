@@ -410,31 +410,4 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer
 	}
 }
 
-void Spectrum_getMaximumInInterval (Spectrum me, double fromFrequency, double toFrequency, double *frequency, double *amplitude_dB) {
-	if (fromFrequency == 0.0 && fromFrequency == 0.0) {
-		fromFrequency = my xmin;
-		toFrequency = my xmax;
-	}
-	Melder_require (fromFrequency < toFrequency, 
-		U"The \"The From frequency\" should not be larger than the \"To frequency\".");
-	Melder_require (fromFrequency >= my xmin && toFrequency <= my xmax, 
-		U"The frequencies must be lie between ", my xmin, U" and ", my xmax, U".");
-	integer fromIndex = Sampled_xToHighIndex (me, fromFrequency);
-	fromIndex = std::max (1L, fromIndex);
-	integer toIndex = Sampled_xToLowIndex (me, toFrequency);
-	toIndex = std::min (my nx, toIndex);
-	//Sampled_getValueAtSample (me, iband, 0, 2);
-	
-}
-
-#if 0
-static void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
-	(void) me; (void) fmin; (void) fmax; (void) logf; (void) bandwidth; (void) a; (void) intercept; (void) method;
-	try {
-	} catch (MelderError) {
-		Melder_throw (U"Tilt line not fitted.");
-	}
-}
-#endif
-
 /* End of file Spectrum_extensions.cpp */

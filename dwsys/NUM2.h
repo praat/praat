@@ -150,7 +150,7 @@ inline integer NUMminPos (vector<T> v) {
  *	 lo and hi should be valid indices in the array.
 */
 
-inline void NUMextrema (constVEC x, double *out_minimum, double *out_maximum) {
+inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_maximum) {
 	if (out_minimum) *out_minimum = NUMmin (x);
 	if (out_maximum) *out_maximum = NUMmax (x);
 }
@@ -168,7 +168,7 @@ inline void VECclip_inplace (VEC x, double min, double max) {
 			x [i] = max;
 }
 
-inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
+inline double NUMvtmv (constVECVU const& x, constMATVU const& m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
 	for (integer k = 1; k <= x.size; k ++)
@@ -176,23 +176,16 @@ inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	return (double) result;
 }	
 
-inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
+inline double NUMmul_vtmv (constVECVU const& x, constMATVU const& m, constVECVU const& y) { // x'. M . y
 	Melder_assert (x.size == m.nrow);
-	Melder_assert (y.size = m.ncol);
+	Melder_assert (y.size == m.ncol);
 	longdouble result = 0.0;
 	for (integer k = 1; k <= x.size; k ++)
 		result += x [k] * NUMinner (m.row (k), y); 
 	return (double) result;
 }	
 
-inline autoVEC VECnorm_columns (constMAT x, double power) {
-	autoVEC norm = newVECraw (x.ncol);
-	for (integer icol = 1; icol <= norm.size; icol ++)
-		norm [icol] = NUMnorm (x.column (icol), power);
-	return norm;
-}
-
-inline autoVEC VECnorm_rows (constMAT x, double power) {
+inline autoVEC VECnorm_rows (constMATVU const& x, double power) {
 	autoVEC norm = newVECraw (x.nrow);
 	for (integer irow = 1; irow <= norm.size; irow ++)
 		norm [irow] = NUMnorm (x.row (irow), power);
@@ -205,6 +198,7 @@ inline void VECnormalize_inplace (VECVU const& vec, double power, double newNorm
 	if (oldnorm > 0.0)
 		vec  *=  newNorm / oldnorm;
 }
+
 inline void MATnormalize_inplace (MATVU const& mat, double power, double newNorm) {
 	Melder_assert (newNorm > 0.0);
 	double oldnorm = NUMnorm (mat, power);
@@ -212,35 +206,37 @@ inline void MATnormalize_inplace (MATVU const& mat, double power, double newNorm
 		mat  *=  newNorm / oldnorm;
 }
 
-inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
+inline void MATnormalizeRows_inplace (MATVU a, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	for (integer irow = 1; irow <= a.nrow; irow ++)
 		VECnormalize_inplace (a.row (irow), power, norm);
 }
 
-void MATnormalizeColumns_inplace (MAT a, double power, double norm);
+inline void MATnormalizeColumns_inplace (MATVU a, double power, double norm) {
+	MATnormalizeRows_inplace (a.transpose (), power, norm);
+}
 /*
 	Scale a[.][j] such that sqrt (Sum(a[i][j]^2, i=1..nPoints)) = norm.
 */
 
-void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window);
+void VECsmoothByMovingAverage_preallocated (VECVU out, constVECVU const& in, integer window);
 
-autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
+autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 /*
 	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
 	The matrix x must be column centered.
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeights);
+void MATmtm_weighRows_preallocated (MATVU result, constMATVU const& data, constVECVU const& rowWeights);
 
-inline autoMAT MATmtm_weighRows (constMAT data, constVEC rowWeights) {
+inline autoMAT MATmtm_weighRows (constMATVU const& data, constVECVU const& rowWeights) {
 	autoMAT result = newMATraw (data.ncol, data.ncol);
 	MATmtm_weighRows_preallocated (result.get(), data, rowWeights);
 	return result;
 }
 
-double NUMmultivariateKurtosis (constMAT x, int method);
+double NUMmultivariateKurtosis (constMATVU const& x, int method);
 /*
 	calculate multivariate kurtosis.
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
