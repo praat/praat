@@ -2438,6 +2438,26 @@ DO
 	NUMBER_ONE_END (U" (kurtosis)")
 }
 
+FORM (REAL_Spectrum_getSoundPressureLevelOfNearestMaximum, U"Spectrum: Get sound pressure level of nearest maximum", U"Spectrum: Get sound pressure level of nearest maximum...") {
+	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
+	OK
+DO
+	NUMBER_ONE (Spectrum)
+		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
+		double result = maximum. y;
+	NUMBER_ONE_END (U" \"dB/Hz\"")
+}
+
+FORM (REAL_Spectrum_getFrequencyOfNearestMaximum, U"Spectrum: Get frequency of nearest maximum", U"Spectrum: Get frequency of nearest maximum...") {
+	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
+	OK
+DO
+	NUMBER_ONE (Spectrum)
+		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
+		double result = maximum. x;
+	NUMBER_ONE_END (U" Hz")
+}
+
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
 	NUMBER_ONE (Spectrum)
 		integer result = my nx;
@@ -3317,6 +3337,9 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 1, U"Get skewness...", nullptr, 1, REAL_Spectrum_getSkewness);
 		praat_addAction1 (classSpectrum, 1, U"Get kurtosis...", nullptr, 1, REAL_Spectrum_getKurtosis);
 		praat_addAction1 (classSpectrum, 1, U"Get central moment...", nullptr, 1, REAL_Spectrum_getCentralMoment);
+		praat_addAction1 (classSpectrum, 1, U"-- search --", nullptr, 1, nullptr);
+		praat_addAction1 (classSpectrum, 1, U"Get frequency of nearest maximum...", nullptr, 1, REAL_Spectrum_getFrequencyOfNearestMaximum);
+		praat_addAction1 (classSpectrum, 1, U"Get sound pressure level of nearest maximum...", nullptr, 1, REAL_Spectrum_getSoundPressureLevelOfNearestMaximum);
 	praat_addAction1 (classSpectrum, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Formula...", nullptr, 1, MODIFY_Spectrum_formula);
 		praat_addAction1 (classSpectrum, 0, U"Filter (pass Hann band)...", nullptr, 1, MODIFY_Spectrum_passHannBand);
