@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2026,7 +2026,7 @@ autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 }
 
 /* After a script by Ton Wempe */
-static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength) {
+static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength, double noiseReduction_dB) {
 	try {
 		Melder_require (my dx == noise -> dx,
 			U"The sound and the noise should have the same sampling frequency.");
@@ -2043,7 +2043,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
 		autoVEC noiseAmplitudes = newVECraw (noiseLtas -> nx);
 		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++)
-			noiseAmplitudes [iband] = pow (10.0, (noiseLtas -> z [1] [iband] - 94.0) / 20.0);
+			noiseAmplitudes [iband] = pow (10.0, (noiseLtas -> z [1] [iband] + noiseReduction_dB - 94.0) / 20.0);
 		
 		autoMelderProgress progress (U"Remove noise");
 		
@@ -2066,7 +2066,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			VEC const re = analysisSpectrum -> z.row (1), im = analysisSpectrum -> z.row (2);
 			for (integer ifreq = 1; ifreq <= analysisSpectrum -> nx; ifreq ++) {
 				double const amp = sqrt (re [ifreq] * re [ifreq] + im [ifreq] * im [ifreq]);
-				double const factor = std::max (1.0 - 1.5 * noiseAmplitudes [ifreq] / amp, 1e-6);
+				double const factor = std::max (1.0 - noiseAmplitudes [ifreq] / amp, 1e-6);
 				re [ifreq] *= factor;
 				im [ifreq] *= factor;
 			}
@@ -2109,6 +2109,10 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 }
 
 autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method) {
+	return Sound_reduceNoise (me, noiseStart, noiseEnd, windowLength, minBandFilterFrequency, maxBandFilterFrequency, smoothing, 0.0, method);
+}
+
+autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, int method) {
 	try {
 		autoSound filtered = Sound_filter_passHannBand (me, minBandFilterFrequency, maxBandFilterFrequency, smoothing);
 		autoSound denoised = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
@@ -2121,9 +2125,9 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			}
 			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape::RECTANGULAR, 1.0, false);
 			if (method == 1) { // spectral subtraction
-				denoisedi = Sound_removeNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength);
+				denoisedi = Sound_reduceNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength, noiseReduction_dB);
 			}
-			NUMvector_copyElements<double> (& denoisedi -> z [1] [0], & denoised -> z [ichannel] [0], 1, my nx);
+			denoised -> z.row (ichannel)  <<=  denoisedi -> z.row (1);
 		}
 		return denoised;
 	} catch (MelderError) {
