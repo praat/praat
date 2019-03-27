@@ -444,15 +444,17 @@ double Spectrum_getKurtosis (Spectrum me, double power) {
 	return m4 / (m2 * m2) - 3;
 }
 
-void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequencyOfMaximum, double *heightOfMaximum) {
+MelderPoint Spectrum_getNearestMaximum (Spectrum me, double frequency) {
 	try {
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
 		integer index = AnyTier_timeToNearestIndex (thee.get()->asAnyTier(), frequency);
 		if (index == 0)
 			Melder_throw (U"No peak.");
 		RealPoint point = thy points.at [index];
-		*frequencyOfMaximum = point -> number;
-		*heightOfMaximum = point -> value;
+		MelderPoint result;
+		result. x = point -> number;
+		result. y = point -> value;
+		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": no nearest maximum found.");
 	}

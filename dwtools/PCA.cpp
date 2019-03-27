@@ -281,7 +281,7 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		his columnLabels.all() <<= my labels.all();
 		his rowLabels.all() <<= thy rowLabels.all();
 
-		MATVUmul (his data.get(), thy data.get(), my eigenvectors.get());
+		MATmul (his data.get(), thy data.get(), my eigenvectors.get());
 		
 		return him;
 	} catch (MelderError) {
