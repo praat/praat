@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2026,7 +2026,7 @@ autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 }
 
 /* After a script by Ton Wempe */
-static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength) {
+static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength, double noiseReduction_dB) {
 	try {
 		Melder_require (my dx == noise -> dx,
 			U"The sound and the noise should have the same sampling frequency.");
@@ -2042,11 +2042,14 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		double const bandwidth = samplingFrequency / windowSamples;
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
 		autoVEC noiseAmplitudes = newVECraw (noiseLtas -> nx);
-		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++)
-			noiseAmplitudes [iband] = pow (10.0, (noiseLtas -> z [1] [iband] - 94.0) / 20.0);
+		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++) {
+			double powerDensity = 4e-10 * pow (10.0, noiseLtas -> z [1] [iband] / 10.0);
+			noiseAmplitudes [iband] = sqrt (0.5 * powerDensity);
+		}
 		
 		autoMelderProgress progress (U"Remove noise");
 		
+		double noiseAmplitudeSubtractionScaleFactor = 1.0 - pow (10, noiseReduction_dB / 20.0);
 		integer const stepSizeSamples = windowSamples / 4;
 		integer const numberOfSteps = my nx / stepSizeSamples;
 		for (integer istep = 1; istep <= numberOfSteps; istep ++) {
@@ -2055,25 +2058,27 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			if (istart >= my nx)
 				break;   // finished
 			integer const nsamples = ( istart + windowSamples - 1 > my nx ? my nx - istart + 1 : windowSamples );
-			for (integer isamp = 1; isamp <= nsamples; isamp ++)
-				analysisWindow -> z [1] [isamp] = my z [1] [istart - 1 + isamp];
-			for (integer isamp = nsamples + 1; isamp <= windowSamples; isamp ++)
-				analysisWindow -> z [1] [isamp] = 0.0;
+			
+			analysisWindow -> z.row(1).part(1, nsamples)  <<=  my z.row(1).part(istart, istart + nsamples - 1);
+			if (nsamples < windowSamples)
+				analysisWindow -> z.row(1).part(nsamples + 1, windowSamples)  <<= 0.0;
+			
 			autoSpectrum const analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), false);
 
-			// Suppress noise in the analysisSpectrum by subtracting the noise spectrum
-
+			/*
+				Suppress noise in the analysisSpectrum by subtracting the noise spectrum
+			*/
+			
 			VEC const re = analysisSpectrum -> z.row (1), im = analysisSpectrum -> z.row (2);
 			for (integer ifreq = 1; ifreq <= analysisSpectrum -> nx; ifreq ++) {
 				double const amp = sqrt (re [ifreq] * re [ifreq] + im [ifreq] * im [ifreq]);
-				double const factor = std::max (1.0 - 1.5 * noiseAmplitudes [ifreq] / amp, 1e-6);
+				double const factor = std::max (1.0 - noiseAmplitudeSubtractionScaleFactor * noiseAmplitudes [ifreq] / amp, 1e-6);
 				re [ifreq] *= factor;
 				im [ifreq] *= factor;
 			}
 			autoSound const suppressed = Spectrum_to_Sound (analysisSpectrum.get());
 			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape::HANNING);
-			for (integer isamp = 1; isamp <= nsamples; isamp ++)
-				denoised -> z [1] [istart - 1 + isamp] += 0.5 * suppressed -> z [1] [isamp];   // 0.5 because of 2-fold oversampling
+			denoised -> z.row(1).part(istart, istart + nsamples - 1)  +=  0.5 * suppressed -> z.row(1).part(1, nsamples); // 0.5 because of 2-fold 
 			if (istep % 10 == 1)
 				Melder_progress (double (istep) / numberOfSteps,
 					U"Remove noise: frame ", istep, U" out of ", numberOfSteps, U".");
@@ -2084,6 +2089,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 	}
 }
 
+//TODO improve?
 static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *noiseStart, double *noiseEnd) {
 	try {
 		*noiseStart = undefined;
@@ -2109,6 +2115,10 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 }
 
 autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method) {
+	return Sound_reduceNoise (me, noiseStart, noiseEnd, windowLength, minBandFilterFrequency, maxBandFilterFrequency, smoothing, 0.0, method);
+}
+
+autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, int method) {
 	try {
 		autoSound filtered = Sound_filter_passHannBand (me, minBandFilterFrequency, maxBandFilterFrequency, smoothing);
 		autoSound denoised = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
@@ -2121,9 +2131,9 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			}
 			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape::RECTANGULAR, 1.0, false);
 			if (method == 1) { // spectral subtraction
-				denoisedi = Sound_removeNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength);
+				denoisedi = Sound_reduceNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength, noiseReduction_dB);
 			}
-			NUMvector_copyElements<double> (& denoisedi -> z [1] [0], & denoised -> z [ichannel] [0], 1, my nx);
+			denoised -> z.row (ichannel)  <<=  denoisedi -> z.row (1);
 		}
 		return denoised;
 	} catch (MelderError) {
