@@ -2,7 +2,7 @@
 #define _PAIRWISE_SUM_h_
 /* PAIRWISE_SUM.h
  *
- * Copyright (C) 2017,2018 Paul Boersma <paul.boersma@uva.nl>
+ * Copyright (C) 2017-2019 Paul Boersma <paul.boersma@uva.nl>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -159,7 +159,7 @@
 
 	## 4. PRECISION OF SEQUENTIAL SUMMATION
 	
-	The worst case floating-point rounding error for sequential summation is N * epsilon,
+	The worst-case floating-point rounding error for sequential summation is N * epsilon,
 	where N is the number of numbers to add, and epsilon is the precision of one number.
 	The expected random-walk rounding error is epsilon * sqrt (N).
 
@@ -300,7 +300,7 @@
 			(long double) *xx * (long double) *filter,
 			(xx += 1, filter -= 1)
 		)
-		result [i] = conv;
+		result [i] = (double) conv;
 	}
 
 	... and matrix multiplication, and computing norms.
