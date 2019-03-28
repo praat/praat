@@ -2059,9 +2059,9 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 				break;   // finished
 			integer const nsamples = ( istart + windowSamples - 1 > my nx ? my nx - istart + 1 : windowSamples );
 			
-			analysisWindow -> z.row(1).part(1, nsamples)  <<=  my z.row(1).part(istart, istart + nsamples - 1);
+			analysisWindow -> z.row(1).part(1, nsamples) <<= my z.row(1).part(istart, istart + nsamples - 1);
 			if (nsamples < windowSamples)
-				analysisWindow -> z.row(1).part(nsamples + 1, windowSamples)  <<= 0.0;
+				analysisWindow -> z.row(1).part(nsamples + 1, windowSamples) <<= 0.0;
 			
 			autoSpectrum const analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), false);
 
@@ -2133,7 +2133,7 @@ autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			if (method == 1) { // spectral subtraction
 				denoisedi = Sound_reduceNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength, noiseReduction_dB);
 			}
-			denoised -> z.row (ichannel)  <<=  denoisedi -> z.row (1);
+			denoised -> z.row (ichannel) <<= denoisedi -> z.row (1);
 		}
 		return denoised;
 	} catch (MelderError) {
