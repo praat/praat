@@ -5662,8 +5662,7 @@ FORM (NEW_Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: Reduce noise...") 
 	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
 	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
 	REAL (noiseReduction_dB, U"Noise reduction (dB)", U"-20.0")
-	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
-		OPTION (U"Spectral subtraction")
+	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5679,8 +5678,7 @@ FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") 
 	REAL (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
 	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
 	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
-	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
-		OPTION (U"Spectral subtraction")
+	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Sound)
