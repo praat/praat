@@ -5640,7 +5640,25 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_filtered")
 }
 
-FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Remove noise...") {
+FORM (NEW_Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: Reduce noise...") {
+	REAL (fromTime, U"left Noise time range (s)", U"0.0")
+	REAL (toTime, U"right Noise time range (s)", U"0.0")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	LABEL (U"Filter")
+	REAL (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
+	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
+	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
+	REAL (noiseReduction_dB, U"Noise reduction (dB)", U"-20.0")
+	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
+		OPTION (U"Spectral subtraction")
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoSound result = Sound_reduceNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, smoothingBandwidth, noiseReduction_dB, noiseReductionMethod);
+	CONVERT_EACH_END (my name.get(), U"_denoised")
+}
+
+FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") {
 	REAL (fromTime, U"left Noise time range (s)", U"0.0")
 	REAL (toTime, U"right Noise time range (s)", U"0.0")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
@@ -8448,7 +8466,8 @@ void praat_uvafon_David_init () {
     praat_addAction1 (classSound, 2, U"To DTW...", U"Cross-correlate...", praat_DEPTH_1, NEW1_Sounds_to_DTW);
 
 	praat_addAction1 (classSound, 1, U"Filter (gammatone)...", U"Filter (de-emphasis)...", 1, NEW_Sound_filterByGammaToneFilter4);
-	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", 1, NEW_Sound_removeNoise);
+	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_removeNoise);
+	praat_addAction1 (classSound, 0, U"Reduce noise...", U"Filter (formula)...", praat_DEPTH_1, NEW_Sound_reduceNoise);
 
 	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, NEW_Sound_changeGender);
 

@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,6 +201,8 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges);
 
 autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
+
+autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, int method);
 
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision);
 
