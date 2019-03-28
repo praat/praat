@@ -102,7 +102,7 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, double t, double fmin, double fmax,
 	double min, double max, conststring32 xlabel, bool garnish);
 
-void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter,
+void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, integer fromFilter, integer toFilter,
 	double zmin, double zmax, bool yscale_dB, double ymin, double ymax, bool garnish);
 
 void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g,
@@ -129,7 +129,7 @@ autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, integer nt, 
 
 autoMelSpectrogram Matrix_to_MelSpectrogram (Matrix me);
 
-void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter,
+void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g, bool xIsHertz, integer fromFilter, integer toFilter,
 	double zmin, double zmax, bool yscale_dB, double ymin, double ymax, bool garnish);
 
 autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, integer numberOfCoefficients);
