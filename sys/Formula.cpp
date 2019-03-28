@@ -3492,7 +3492,7 @@ static void do_function_VECdd_d (double (*f) (double, double)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		integer numberOfElements = ( a->which == Stackel_NUMBER ? a->number : a->numericVector.size );
+		integer numberOfElements = ( a->which == Stackel_NUMBER ? Melder_iround (a->number) : a->numericVector.size );
 		autoVEC newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (x->number, y->number);
@@ -3507,24 +3507,38 @@ static void do_function_VECdd_d (double (*f) (double, double)) {
 static void do_function_MATdd_d (double (*f) (double, double)) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	if (n -> number != 3)
-		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
-	Stackel y = pop, x = pop, a = pop;
-	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		integer numberOfRows = a->numericMatrix.nrow;
-		integer numberOfColumns = a->numericMatrix.ncol;
-		autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
-		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-				newData [irow] [icol] = f (x->number, y->number);
-			}
+	if (n -> number == 3) {
+		Stackel y = pop, x = pop, model = pop;
+		if (model->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
+			integer numberOfRows = model->numericMatrix.nrow;
+			integer numberOfColumns = model->numericMatrix.ncol;
+			autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
+			for (integer irow = 1; irow <= numberOfRows; irow ++)
+				for (integer icol = 1; icol <= numberOfColumns; icol ++)
+					newData [irow] [icol] = f (x->number, y->number);
+			pushNumericMatrix (newData.move());
+		} else {
+			Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+				U" requires one matrix argument and two numeric arguments, not ",
+				model->whichText(), U", ", x->whichText(), U" and ", y->whichText(), U".");
 		}
-		pushNumericMatrix (newData.move());
-	} else {
-		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
-			U" requires one matrix argument and two numeric arguments, not ",
-			a->whichText(), U", ", x->whichText(), U" and ", y->whichText(), U".");
-	}
+	} else if (n -> number == 4) {
+		Stackel y = pop, x = pop, ncol = pop, nrow = pop;
+		if (nrow->which == Stackel_NUMBER && ncol->which == Stackel_NUMBER && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
+			integer numberOfRows = Melder_iround (nrow->number);
+			integer numberOfColumns = Melder_iround (ncol->number);
+			autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
+			for (integer irow = 1; irow <= numberOfRows; irow ++)
+				for (integer icol = 1; icol <= numberOfColumns; icol ++)
+					newData [irow] [icol] = f (x->number, y->number);
+			pushNumericMatrix (newData.move());
+		} else {
+			Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+				U" requires four numeric arguments, not ",
+				nrow->whichText(), U", ", ncol->whichText(), U", ", x->whichText(), U" and ", y->whichText(), U".");
+		}
+	} else
+		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three or four arguments.");
 }
 static void do_function_VECll_l (integer (*f) (integer, integer)) {
 	Stackel n = pop;
@@ -3642,7 +3656,7 @@ static void do_do () {
 		stack [iarg] = std::move (*arg);
 	}
 	if (stack [0]. which != Stackel_STRING)
-		Melder_throw (U"The first argument of the function \"do\" has to be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
+		Melder_throw (U"The first argument of the function \"do\" should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
 	conststring32 command = stack [0]. getString();
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		autoMelderString valueString;
@@ -3738,7 +3752,7 @@ static void do_doStr () {
 		stack [iarg] = std::move (*arg);
 	}
 	if (stack [0]. which != Stackel_STRING)
-		Melder_throw (U"The first argument of the function \"do$\" has to be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
+		Melder_throw (U"The first argument of the function \"do$\" should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
 	conststring32 command = stack [0]. getString();
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		static MelderString info;
@@ -3862,7 +3876,7 @@ static void do_writeFile () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", fileName->whichText(), U".");
+		Melder_throw (U"The first argument of \"writeFile\" should be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
@@ -3880,7 +3894,7 @@ static void do_writeFileLine () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFileLine\" has to be a string (a file name), not ", fileName->whichText(), U".");
+		Melder_throw (U"The first argument of \"writeFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
@@ -3899,7 +3913,7 @@ static void do_appendFile () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"appendFile\" has to be a string (a file name), not ", fileName->whichText(), U".");
+		Melder_throw (U"The first argument of \"appendFile\" should be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
@@ -3917,7 +3931,7 @@ static void do_appendFileLine () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"appendFileLine\" has to be a string (a file name), not ", fileName->whichText(), U".");
+		Melder_throw (U"The first argument of \"appendFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
 	}
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
@@ -3972,7 +3986,7 @@ static void do_runScript () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName->which != Stackel_STRING)
-		Melder_throw (U"The first argument to \"runScript\" has to be a string (the file name), not ", fileName->whichText());
+		Melder_throw (U"The first argument to \"runScript\" should be a string (the file name), not ", fileName->whichText());
 	theLevel += 1;
 	try {
 		praat_executeScriptFromFileName (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
@@ -4037,7 +4051,7 @@ static void do_runSubprocess () {
 	w -= numberOfArguments;
 	Stackel commandFile = & theStack [w + 1];
 	if (commandFile->which != Stackel_STRING)
-		Melder_throw (U"The first argument to \"runSubprocess\" has to be a command name.");
+		Melder_throw (U"The first argument to \"runSubprocess\" should be a command name.");
 	autostring32vector arguments (numberOfArguments - 1);
 	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + 1 + iarg];
@@ -4188,7 +4202,7 @@ static void do_VECzero () {
 	}
 	Stackel nelem = pop;
 	if (nelem -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"zero#\", the number of elements has to be a number, not ", nelem->whichText(), U".");
+		Melder_throw (U"In the function \"zero#\", the number of elements should be a number, not ", nelem->whichText(), U".");
 	double numberOfElements = nelem -> number;
 	if (isundef (numberOfElements))
 		Melder_throw (U"In the function \"zero#\", the number of elements is undefined.");
@@ -4204,11 +4218,11 @@ static void do_MATzero () {
 		Melder_throw (U"The function \"zero##\" requires two arguments.");
 	Stackel ncol = pop;
 	if (ncol -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"zero##\", the number of columns has to be a number, not ", ncol->whichText(), U".");
+		Melder_throw (U"In the function \"zero##\", the number of columns should be a number, not ", ncol->whichText(), U".");
 	double numberOfColumns = ncol -> number;
 	Stackel nrow = pop;
 	if (nrow -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"zero##\", the number of rows has to be a number, not ", nrow->whichText(), U".");
+		Melder_throw (U"In the function \"zero##\", the number of rows should be a number, not ", nrow->whichText(), U".");
 	double numberOfRows = nrow -> number;
 	if (isundef (numberOfRows))
 		Melder_throw (U"In the function \"zero##\", the number of rows is undefined.");
@@ -4231,29 +4245,29 @@ static void do_VEClinear () {
 	if (narg == 4) {
 		Stackel stack_excludeEdges = pop;
 		if (stack_excludeEdges -> which != Stackel_NUMBER)
-			Melder_throw (U"In the function \"linear#\", the edge exclusion flag (fourth argument) has to be a number, not ", stack_excludeEdges->whichText(), U".");
+			Melder_throw (U"In the function \"linear#\", the edge exclusion flag (fourth argument) should be a number, not ", stack_excludeEdges->whichText(), U".");
 		excludeEdges = Melder_iround (stack_excludeEdges -> number);
 	}
 	Stackel stack_numberOfSteps = pop, stack_maximum = pop, stack_minimum = pop;
 	if (stack_minimum -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"linear#\", the minimum (first argument) has to be a number, not ", stack_minimum->whichText(), U".");
+		Melder_throw (U"In the function \"linear#\", the minimum (first argument) should be a number, not ", stack_minimum->whichText(), U".");
 	double minimum = stack_minimum -> number;
 	if (isundef (minimum))
 		Melder_throw (U"Undefined minimum in the function \"linear#\" (first argument).");
 	if (stack_maximum -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"linear#\", the maximum (second argument) has to be a number, not ", stack_maximum->whichText(), U".");
+		Melder_throw (U"In the function \"linear#\", the maximum (second argument) should be a number, not ", stack_maximum->whichText(), U".");
 	double maximum = stack_maximum -> number;
 	if (isundef (maximum))
 		Melder_throw (U"Undefined maximum in the function \"linear#\" (second argument).");
 	if (maximum < minimum)
 		Melder_throw (U"Maximum (", maximum, U") smaller than minimum (", minimum, U") in function \"linear#\".");
 	if (stack_numberOfSteps -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be a number, not ", stack_numberOfSteps->whichText(), U".");
+		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) should be a number, not ", stack_numberOfSteps->whichText(), U".");
 	if (isundef (stack_numberOfSteps -> number))
 		Melder_throw (U"Undefined number of steps in the function \"linear#\" (third argument).");
 	integer numberOfSteps = Melder_iround (stack_numberOfSteps -> number);
 	if (numberOfSteps <= 0)
-		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be positive, not ", numberOfSteps, U".");
+		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) should be positive, not ", numberOfSteps, U".");
 	autoVEC result = newVECraw (numberOfSteps);
 	for (integer ielem = 1; ielem <= numberOfSteps; ielem ++) {
 		result [ielem] = excludeEdges ?
@@ -4271,7 +4285,7 @@ static void do_VECto () {
 		Melder_throw (U"The function to#() requires one argument.");
 	Stackel stack_to = pop;
 	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"to#\", the argument has to be a number, not ", stack_to->whichText(), U".");
+		Melder_throw (U"In the function \"to#\", the argument should be a number, not ", stack_to->whichText(), U".");
 	integer to = Melder_iround (stack_to -> number);
 	autoVEC result = newVECto (to);
 	pushNumericVector (result.move());
@@ -4283,19 +4297,19 @@ static void do_MATpeaks () {
 		Melder_throw (U"The function peaks## requires four arguments (vector, edges, interpolation, sortByHeight).");
 	Stackel s = pop;
 	if (s->which != Stackel_NUMBER)
-		Melder_throw (U"The fourth argument to peaks## has to be a number, not ", s->whichText(), U".");
+		Melder_throw (U"The fourth argument to peaks## should be a number, not ", s->whichText(), U".");
 	bool sortByHeight = s->number != 0.0;
 	Stackel i = pop;
 	if (i->which != Stackel_NUMBER)
-		Melder_throw (U"The third argument to peaks## has to be a number, not ", i->whichText(), U".");
+		Melder_throw (U"The third argument to peaks## should be a number, not ", i->whichText(), U".");
 	integer interpolation = Melder_iround (i->number);
 	Stackel e = pop;
 	if (e->which != Stackel_NUMBER)
-		Melder_throw (U"The second argument to peaks## has to be a number, not ", e->whichText(), U".");
+		Melder_throw (U"The second argument to peaks## should be a number, not ", e->whichText(), U".");
 	bool includeEdges = e->number != 0.0;
 	Stackel vec = pop;
 	if (vec->which != Stackel_NUMERIC_VECTOR)
-		Melder_throw (U"The first argument to peaks## has to be a numeric vector, not ", vec->whichText(), U".");
+		Melder_throw (U"The first argument to peaks## should be a numeric vector, not ", vec->whichText(), U".");
 	autoMAT result = newMATpeaks (vec->numericVector, includeEdges, interpolation, sortByHeight);
 	pushNumericMatrix (result.move());
 }
@@ -4382,12 +4396,12 @@ static void do_numericVectorElement () {
 	integer element = 1;   // default
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
-		Melder_throw (U"In vector indexing, the index has to be a number, not ", r->whichText(), U".");
+		Melder_throw (U"In vector indexing, the index should be a number, not ", r->whichText(), U".");
 	if (isundef (r -> number))
 		Melder_throw (U"The element index is undefined.");
 	element = Melder_iround (r -> number);
 	if (element <= 0)
-		Melder_throw (U"In vector indexing, the element index has to be positive.");
+		Melder_throw (U"In vector indexing, the element index should be positive.");
 	if (element > vector -> numericVectorValue.size)
 		Melder_throw (U"Element index out of bounds.");
 	pushNumber (vector -> numericVectorValue [element]);
@@ -4397,22 +4411,22 @@ static void do_numericMatrixElement () {
 	integer row = 1, column = 1;   // default
 	Stackel c = pop;
 	if (c -> which != Stackel_NUMBER)
-		Melder_throw (U"In matrix indexing, the column index has to be a number, not ", c->whichText(), U".");
+		Melder_throw (U"In matrix indexing, the column index should be a number, not ", c->whichText(), U".");
 	if (isundef (c -> number))
 		Melder_throw (U"The column index is undefined.");
 	column = Melder_iround (c -> number);
 	if (column <= 0)
-		Melder_throw (U"In matrix indexing, the column index has to be positive.");
+		Melder_throw (U"In matrix indexing, the column index should be positive.");
 	if (column > matrix -> numericMatrixValue. ncol)
 		Melder_throw (U"Column index out of bounds.");
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
-		Melder_throw (U"In matrix indexing, the row index has to be a number, not ", r->whichText(), U".");
+		Melder_throw (U"In matrix indexing, the row index should be a number, not ", r->whichText(), U".");
 	if (isundef (r -> number))
 		Melder_throw (U"The row index is undefined.");
 	row = Melder_iround (r -> number);
 	if (row <= 0)
-		Melder_throw (U"In matrix indexing, the row index has to be positive.");
+		Melder_throw (U"In matrix indexing, the row index should be positive.");
 	if (row > matrix -> numericMatrixValue. nrow)
 		Melder_throw (U"Row index out of bounds.");
 	pushNumber (matrix -> numericMatrixValue [row] [column]);
@@ -4434,7 +4448,7 @@ static void do_indexedNumericVariable () {
 		} else if (index -> which == Stackel_STRING) {
 			MelderString_append (& totalVariableName, U"\"", index -> getString(), U"\"", iindex == nindex ? U"]" : U",");
 		} else {
-			Melder_throw (U"In indexed variables, the index has to be a number or a string, not ", index->whichText(), U".");
+			Melder_throw (U"In indexed variables, the index should be a number or a string, not ", index->whichText(), U".");
 		}
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
@@ -4459,7 +4473,7 @@ static void do_indexedStringVariable () {
 		} else if (index -> which == Stackel_STRING) {
 			MelderString_append (& totalVariableName, U"\"", index -> getString(), U"\"", iindex == nindex ? U"]" : U",");
 		} else {
-			Melder_throw (U"In indexed variables, the index has to be a number or a string, not ", index->whichText(), U".");
+			Melder_throw (U"In indexed variables, the index should be a number or a string, not ", index->whichText(), U".");
 		}
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
@@ -5752,7 +5766,7 @@ static void do_endPauseForm () {
 		Melder_throw (U"The function \"endPause\" requires 2 to 12 arguments, not ", n->number, U".");
 	Stackel d = pop;
 	if (d->which != Stackel_NUMBER)
-		Melder_throw (U"The last argument of \"endPause\" has to be a number (the default or cancel continue button), not ", d->whichText(), U".");
+		Melder_throw (U"The last argument of \"endPause\" should be a number (the default or cancel continue button), not ", d->whichText(), U".");
 	integer numberOfContinueButtons = Melder_iround (n->number) - 1;
 	integer cancelContinueButton = 0, defaultContinueButton = Melder_iround (d->number);
 	Stackel ca = pop;
@@ -5762,14 +5776,14 @@ static void do_endPauseForm () {
 		numberOfContinueButtons --;
 		if (cancelContinueButton < 1 || cancelContinueButton > numberOfContinueButtons)
 			Melder_throw (U"Your last argument of \"endPause\" is the number of the cancel button; it cannot be ", cancelContinueButton,
-				U" but has to lie between 1 and ", numberOfContinueButtons, U".");
+				U" but should lie between 1 and ", numberOfContinueButtons, U".");
 	}
 	Stackel co [1+10] = { 0 };
 	for (integer i = numberOfContinueButtons; i >= 1; i --) {
 		co [i] = cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca;
 		if (co[i]->which != Stackel_STRING)
 			Melder_throw (U"Each of the first ", numberOfContinueButtons,
-				U" argument(s) of \"endPause\" has to be a string (a button text), not ", co[i]->whichText(), U".");
+				U" argument(s) of \"endPause\" should be a string (a button text), not ", co[i]->whichText(), U".");
 	}
 	int buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
 		! co [1] ? nullptr : co[1]->getString(), ! co [2] ? nullptr : co[2]->getString(),
@@ -6804,7 +6818,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
-		Melder_throw (U"A condition between \"if\" and \"then\" has to be a number, not ", condition->whichText(), U".");
+		Melder_throw (U"A condition between \"if\" and \"then\" should be a number, not ", condition->whichText(), U".");
 	}
 } break; case IFFALSE_: {
 	Stackel condition = pop;
@@ -6813,7 +6827,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
-		Melder_throw (U"A condition between \"if\" and \"then\" has to be a number, not ", condition->whichText(), U".");
+		Melder_throw (U"A condition between \"if\" and \"then\" should be a number, not ", condition->whichText(), U".");
 	}
 } break; case GOTO_: {
 	programPointer = f [programPointer]. content.label - theOptimize;
