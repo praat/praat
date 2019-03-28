@@ -5351,6 +5351,19 @@ DO
 	}
 END }
 
+FORM (REAL_Sound_getNearestLevelCrossing, U"Sound: Get nearest level crossing", U"Sound: Get nearest level crossing...") {
+	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (level, U"Level", U"0.1")
+	OPTIONMENU_ENUM (kSoundSearchDirection, searchDirection, U"Search direction", kSoundSearchDirection::DEFAULT)
+	OK
+DO
+	NUMBER_ONE (Sound)
+		if (channel > my ny) channel = 1;
+		double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
+	NUMBER_ONE_END (U" seconds")
+}
+
 FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
     POSITIVE (windowLength, U"Window length (s)", U"0.015")
     POSITIVE (timeStep, U"Time step (s)", U"0.005")
@@ -5649,8 +5662,7 @@ FORM (NEW_Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: Reduce noise...") 
 	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
 	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
 	REAL (noiseReduction_dB, U"Noise reduction (dB)", U"-20.0")
-	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
-		OPTION (U"Spectral subtraction")
+	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5666,8 +5678,7 @@ FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") 
 	REAL (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
 	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
 	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
-	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
-		OPTION (U"Spectral subtraction")
+	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -8445,6 +8456,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", 1, GRAPHICS_Sound_paintWhere);
 	//	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_paintEnclosed);
 	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", 1, GRAPHICS_Sounds_paintEnclosed);
+
+	praat_addAction1 (classSound, 1, U"Get nearest level crossing...", U"Get nearest zero crossing...", 1, REAL_Sound_getNearestLevelCrossing);
 
 	praat_addAction1 (classSound, 0, U"To Pitch (shs)...", U"To Pitch (cc)...", 1, NEW_Sound_to_Pitch_shs);
 	praat_addAction1 (classSound, 0, U"Fade in...", U"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, MODIFY_Sound_fadeIn);
