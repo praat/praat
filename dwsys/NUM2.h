@@ -494,7 +494,7 @@ autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double tol);
 	Algorithm: s.v.d.
 */
 
-autoMAT NUMsolveEquations (constMATVU& a, constMATVU& b, double tol);
+autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tol);
 /*
 	Solve the equations: A.X = B;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
