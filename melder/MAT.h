@@ -343,6 +343,11 @@ inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double 
 	MATrandomGauss_preallocated (result.all(), mu, sigma);
 	return result;
 }
+inline autoMAT newMATrandomGauss (constMATVU const& model, double mu, double sigma) {
+	autoMAT result = newMATraw (model.nrow, model.ncol);
+	MATrandomGauss_preallocated (result.all(), mu, sigma);
+	return result;
+}
 
 inline void MATrandomUniform_preallocated (MATVU const& target, double lowest, double highest) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
@@ -351,6 +356,11 @@ inline void MATrandomUniform_preallocated (MATVU const& target, double lowest, d
 }
 inline autoMAT newMATrandomUniform (integer nrow, integer ncol, double lowest, double highest) {
 	autoMAT result = newMATraw (nrow, ncol);
+	MATrandomUniform_preallocated (result.all(), lowest, highest);
+	return result;
+}
+inline autoMAT newMATrandomUniform (constMATVU const& model, double lowest, double highest) {
+	autoMAT result = newMATraw (model.nrow, model.ncol);
 	MATrandomUniform_preallocated (result.all(), lowest, highest);
 	return result;
 }

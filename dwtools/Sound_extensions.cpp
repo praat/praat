@@ -1781,7 +1781,7 @@ static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, doub
 	}
 }
 
-static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, integer *ixmin, integer *ixmax) {
+static void autowindowAndGetWindowSamplesAndAutoscale (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, integer *ixmin, integer *ixmax) {
 	if (*tmin == *tmax) {
 		*tmin = my xmin;
 		*tmax = my xmax;
@@ -1873,7 +1873,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	Formula_Result result;
 
 	integer ixmin, ixmax;
-	_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
+	autowindowAndGetWindowSamplesAndAutoscale (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
 
 	// Set coordinates for drawing.
 
@@ -1907,13 +1907,11 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 				if (result. numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					double y = my z [channel] [ix];
-					if (y > maximum) {
+					if (y > maximum)
 						y = maximum;
-					}
-					if (y < minimum) {
+					if (y < minimum)
 						y = minimum;
-					}
-					Graphics_line (g, x, 0, x, y);
+					Graphics_line (g, x, 0.0, x, y);
 				}
 			}
 		} else if (str32str (method, U"speckles") || str32str (method, U"Speckles")) {
@@ -1975,14 +1973,12 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	}
 
 	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
-	if (garnish && my ny == 2) {
+	if (garnish && my ny == 2)
 		Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
-	}
 	Graphics_unsetInner (g);
 
-	if (garnish) {
+	if (garnish)
 		_Sound_garnish (me, g, tmin, tmax, minimum, maximum);
-	}
 }
 
 void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
@@ -1994,7 +1990,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 		Formula_Result result;
 
 		integer ixmin, ixmax;
-		_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
+		autowindowAndGetWindowSamplesAndAutoscale (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
@@ -2006,9 +2002,8 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 			do {
 				Formula_run (channel, ix, & result);
 				current = ( result. numericResult != 0.0 );
-				if (ix == ixmin) {
+				if (ix == ixmin)
 					previous = current;
-				}
 				if (previous != current) {
 					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, numberOfBisections, & xe, & ye);
 					if (current) { // entering painting area
@@ -2032,13 +2027,11 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 			} while ( ++ix <= ixmax);
 		}
 		Graphics_setWindow (g, tmin, tmax, minimum, maximum);
-		if (garnish && my ny == 2) {
+		if (garnish && my ny == 2)
 			Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
-		}
 		Graphics_unsetInner (g);
-		if (garnish) {
+		if (garnish)
 			_Sound_garnish (me, g, tmin, tmax, minimum, maximum);
-		}
 	} catch (MelderError) {
 		Melder_clearError ();
 	}
@@ -2046,22 +2039,21 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, bool garnish) {
 	try {
-		integer ixmin, ixmax, numberOfChannels = my ny > thy ny ? my ny : thy ny;
+		integer ixmin, ixmax, numberOfChannels = std::max (my ny, thy ny);
 		double min1 = minimum, max1 = maximum, tmin1 = tmin, tmax1 = tmax;
 		double min2 = min1, max2 = max1, tmin2 = tmin1, tmax2 = tmax1;
-		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
-		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
-		if (xmax <= xmin) {
+		double xmin = std::max (my xmin, thy xmin);
+		double xmax = std::min (my xmax, thy xmax);
+		if (xmax <= xmin)
 			return;
-		}
-		if (tmin >= tmax) {
+		if (tmin >= tmax) {   // ppgb: why this, if autoscaling occurs anyway?
 			tmin = xmin;
 			tmax = xmax;
 		}
-		_Sound_getWindowExtrema (thee, & tmin1, & tmax1, & min1, & max1, & ixmin, & ixmax);
-		_Sound_getWindowExtrema (me,   & tmin2, & tmax2, & min2, & max2, & ixmin, & ixmax);
-		minimum = min1 < min2 ? min1 : min2;
-		maximum = max1 > max2 ? max1 : max2;
+		autowindowAndGetWindowSamplesAndAutoscale (thee, & tmin1, & tmax1, & min1, & max1, & ixmin, & ixmax);
+		autowindowAndGetWindowSamplesAndAutoscale (me,   & tmin2, & tmax2, & min2, & max2, & ixmin, & ixmax);
+		minimum = std::min (min1, min2);
+		maximum = std::max (max1, max2);
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
@@ -2101,35 +2093,35 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		Melder_require (noise -> ny == 1 && noise -> ny == 1,
 			U"The number of channels in the noise and the sound should equal 1.");
 
-		double const samplingFrequency = 1.0 / my dx;
+		const double samplingFrequency = 1.0 / my dx;
 		autoSound denoised = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		autoSound const analysisWindow = Sound_createSimple (1, windowLength, samplingFrequency);
-		integer const windowSamples = analysisWindow -> nx;
+		const integer windowSamples = analysisWindow -> nx;
 		autoSound const noise_copy = Data_copy (noise);
 		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape::HANNING);
-		double const bandwidth = samplingFrequency / windowSamples;
+		const double bandwidth = samplingFrequency / windowSamples;
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
-		autoVEC noiseAmplitudes = newVECraw (noiseLtas -> nx);
+		autoVEC const noiseAmplitudes = newVECraw (noiseLtas -> nx);
 		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++) {
-			double powerDensity = 4e-10 * pow (10.0, noiseLtas -> z [1] [iband] / 10.0);
+			const double powerDensity = 4e-10 * pow (10.0, noiseLtas -> z [1] [iband] / 10.0);
 			noiseAmplitudes [iband] = sqrt (0.5 * powerDensity);
 		}
 		
 		autoMelderProgress progress (U"Remove noise");
 		
-		double noiseAmplitudeSubtractionScaleFactor = 1.0 - pow (10, noiseReduction_dB / 20.0);
-		integer const stepSizeSamples = windowSamples / 4;
-		integer const numberOfSteps = my nx / stepSizeSamples;
+		const double noiseAmplitudeSubtractionScaleFactor = 1.0 - pow (10.0, noiseReduction_dB / 20.0);
+		const integer stepSizeSamples = windowSamples / 4;
+		const integer numberOfSteps = my nx / stepSizeSamples;
 		for (integer istep = 1; istep <= numberOfSteps; istep ++) {
-			integer const istart = (istep - 1) * stepSizeSamples + 1;
+			const integer istart = (istep - 1) * stepSizeSamples + 1;
 
 			if (istart >= my nx)
 				break;   // finished
-			integer const nsamples = ( istart + windowSamples - 1 > my nx ? my nx - istart + 1 : windowSamples );
+			const integer nsamples = std::min (my nx - istart + 1, windowSamples);
 			
-			analysisWindow -> z.row(1).part(1, nsamples)  <<=  my z.row(1).part(istart, istart + nsamples - 1);
+			analysisWindow -> z.row (1).part (1, nsamples) <<= my z.row (1).part (istart, istart + nsamples - 1);
 			if (nsamples < windowSamples)
-				analysisWindow -> z.row(1).part(nsamples + 1, windowSamples)  <<= 0.0;
+				analysisWindow -> z.row (1).part (nsamples + 1, windowSamples) <<= 0.0;
 			
 			autoSpectrum const analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), false);
 
@@ -2139,14 +2131,14 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			
 			VEC const re = analysisSpectrum -> z.row (1), im = analysisSpectrum -> z.row (2);
 			for (integer ifreq = 1; ifreq <= analysisSpectrum -> nx; ifreq ++) {
-				double const amp = sqrt (re [ifreq] * re [ifreq] + im [ifreq] * im [ifreq]);
-				double const factor = std::max (1.0 - noiseAmplitudeSubtractionScaleFactor * noiseAmplitudes [ifreq] / amp, 1e-6);
+				const double amp = sqrt (re [ifreq] * re [ifreq] + im [ifreq] * im [ifreq]);
+				const double factor = std::max (1.0 - noiseAmplitudeSubtractionScaleFactor * noiseAmplitudes [ifreq] / amp, 1e-6);
 				re [ifreq] *= factor;
 				im [ifreq] *= factor;
 			}
 			autoSound const suppressed = Spectrum_to_Sound (analysisSpectrum.get());
 			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape::HANNING);
-			denoised -> z.row(1).part(istart, istart + nsamples - 1)  +=  0.5 * suppressed -> z.row(1).part(1, nsamples); // 0.5 because of 2-fold 
+			denoised -> z.row (1).part (istart, istart + nsamples - 1)  +=  0.5 * suppressed -> z.row (1).part (1, nsamples); // 0.5 because of 2-fold
 			if (istep % 10 == 1)
 				Melder_progress (double (istep) / numberOfSteps,
 					U"Remove noise: frame ", istep, U" out of ", numberOfSteps, U".");
@@ -2162,7 +2154,7 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 	try {
 		*noiseStart = undefined;
 		*noiseEnd = undefined;
-		autoIntensity intensity = Sound_to_Intensity (me, 20.0, 0.005, true);
+		autoIntensity const intensity = Sound_to_Intensity (me, 20.0, 0.005, true);
 		double tmin = Vector_getXOfMinimum (intensity.get(), intensity -> xmin, intensity ->  xmax, 1) - minimumNoiseDuration / 2.0;
 		double tmax = tmin + minimumNoiseDuration;
 		if (tmin < my xmin) {
@@ -2188,20 +2180,21 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 
 autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, int method) {
 	try {
-		autoSound filtered = Sound_filter_passHannBand (me, minBandFilterFrequency, maxBandFilterFrequency, smoothing);
+		autoSound const filtered = Sound_filter_passHannBand (me, minBandFilterFrequency, maxBandFilterFrequency, smoothing);
 		autoSound denoised = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-		bool findNoise = noiseEnd <= noiseStart;
-		double minimumNoiseDuration = 2.0 * windowLength;
+		const bool findNoise = ( noiseEnd <= noiseStart );
+		const double minimumNoiseDuration = 2.0 * windowLength;
 		for (integer ichannel = 1; ichannel <= my ny; ichannel ++) {
 			autoSound denoisedi, channeli = Sound_extractChannel (filtered.get(), ichannel);
-			if (findNoise) {
+			if (findNoise)
 				Sound_findNoise (channeli.get(), minimumNoiseDuration, & noiseStart, & noiseEnd);
-			}
 			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape::RECTANGULAR, 1.0, false);
-			if (method == 1) { // spectral subtraction
+			if (method == 1) {   // spectral subtraction
 				denoisedi = Sound_reduceNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength, noiseReduction_dB);
+			} else {
+				Melder_fatal (U"Unknown method ", method, U" in Sound_reduceNoise.");
 			}
-			denoised -> z.row (ichannel)  <<=  denoisedi -> z.row (1);
+			denoised -> z.row (ichannel) <<= denoisedi -> z.row (1);
 		}
 		return denoised;
 	} catch (MelderError) {
@@ -2211,9 +2204,9 @@ autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, doubl
 
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision) {
 	try {
-		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
-		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.get(), shiftBy, newSamplingFrequency / 2, precision);
-		autoSound thee = Spectrum_to_Sound (shifted.get());
+		autoSpectrum const spectrum = Sound_to_Spectrum (me, true);
+		autoSpectrum const shifted = Spectrum_shiftFrequencies (spectrum.get(), shiftBy, newSamplingFrequency / 2, precision);
+		autoSound const thee = Spectrum_to_Sound (shifted.get());
 		Sound_playPart (thee.get(), my xmin, my xmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U" not played with frequencies shifted.");

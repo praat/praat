@@ -243,6 +243,11 @@ inline autoVEC newVECrandomGauss (integer size, double mu, double sigma) {
 	VECrandomGauss_preallocated (result.all(), mu, sigma);
 	return result;
 }
+inline autoVEC newVECrandomGauss (constVECVU const& model, double mu, double sigma) {
+	autoVEC result = newVECraw (model.size);
+	VECrandomGauss_preallocated (result.all(), mu, sigma);
+	return result;
+}
 
 inline void VECrandomUniform_preallocated (VECVU const& target, double lowest, double highest) noexcept {
 	for (integer i = 1; i <= target.size; i ++)
@@ -250,6 +255,11 @@ inline void VECrandomUniform_preallocated (VECVU const& target, double lowest, d
 }
 inline autoVEC newVECrandomUniform (integer size, double lowest, double highest) {
 	autoVEC result = newVECraw (size);
+	VECrandomUniform_preallocated (result.all(), lowest, highest);
+	return result;
+}
+inline autoVEC newVECrandomUniform (constVECVU const& model, double lowest, double highest) {
+	autoVEC result = newVECraw (model.size);
 	VECrandomUniform_preallocated (result.all(), lowest, highest);
 	return result;
 }

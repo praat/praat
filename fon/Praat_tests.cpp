@@ -306,7 +306,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++)
 				z += NUMinner (x.get(), y.get());
-			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
+			t = Melder_stopwatch () / size;   // 2.9 Gops = 5.8 Gflops (multiplication-addition pair)
 			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests::TIME_OUTER_NUMMAT: {
@@ -315,7 +315,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoVEC y = newVECrandomGauss (ncol, 0.0, 1.0);
 			for (int64 i = 1; i <= n; i ++)
 				const autoMAT mat = newMATouter (x.get(), y.get());
-			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
+			t = Melder_stopwatch () / nrow / ncol;   // 6.1 Gops, i.e. less than one clock cycle per cell
 		} break;
 		case kPraatTests::CHECK_INVFISHERQ: {
 			MelderInfo_writeLine (NUMinvFisherQ (0.003, 1, 100000));

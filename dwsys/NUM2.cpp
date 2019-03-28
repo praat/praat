@@ -376,26 +376,18 @@ autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double toler
 	return x;
 }
 
-autoMAT NUMsolveEquations (constMAT a, constMAT b, double tolerance) {
+autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tolerance) {
 	Melder_assert (a.nrow == b.nrow);
-	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * a.nrow;
+	double tol = ( tolerance > 0.0 ? tolerance : NUMfpp -> eps * a.nrow );
 	
 	autoSVD me = SVD_createFromGeneralMatrix (a);
 	autoMAT x = newMATraw (b.nrow, b.ncol);
-	autoVEC bt = newVECraw (b.nrow);
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
 	for (integer k = 1; k <= b.ncol; k ++) {
-		for (integer j = 1; j <= b.nrow; j ++) { // copy b[.][k]
-			bt [j] = b [j] [k];
-		}
-
-		autoVEC xt = SVD_solve (me.get(), bt.get());
-
-		for (integer j = 1; j <= b.nrow; j ++) {
-			x [j] [k] = xt [j];
-		}
+		autoVEC xt = SVD_solve (me.get(), b.column (k));
+		x.column (k) <<= xt.all();
 	}
 	return x;
 }
