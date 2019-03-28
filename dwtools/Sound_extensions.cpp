@@ -1713,7 +1713,7 @@ static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, doub
 	}
 }
 
-static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, integer *ixmin, integer *ixmax) {
+static void autowindowAndGetWindowSamplesAndAutoscale (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, integer *ixmin, integer *ixmax) {
 	if (*tmin == *tmax) {
 		*tmin = my xmin;
 		*tmax = my xmax;
@@ -1805,7 +1805,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	Formula_Result result;
 
 	integer ixmin, ixmax;
-	_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
+	autowindowAndGetWindowSamplesAndAutoscale (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
 
 	// Set coordinates for drawing.
 
@@ -1926,7 +1926,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 		Formula_Result result;
 
 		integer ixmin, ixmax;
-		_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
+		autowindowAndGetWindowSamplesAndAutoscale (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
@@ -1990,8 +1990,8 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 			tmin = xmin;
 			tmax = xmax;
 		}
-		_Sound_getWindowExtrema (thee, & tmin1, & tmax1, & min1, & max1, & ixmin, & ixmax);
-		_Sound_getWindowExtrema (me,   & tmin2, & tmax2, & min2, & max2, & ixmin, & ixmax);
+		autowindowAndGetWindowSamplesAndAutoscale (thee, & tmin1, & tmax1, & min1, & max1, & ixmin, & ixmax);
+		autowindowAndGetWindowSamplesAndAutoscale (me,   & tmin2, & tmax2, & min2, & max2, & ixmin, & ixmax);
 		minimum = min1 < min2 ? min1 : min2;
 		maximum = max1 > max2 ? max1 : max2;
 
