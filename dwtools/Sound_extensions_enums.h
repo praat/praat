@@ -25,7 +25,7 @@ enums_end (kSoundDrawingDirection, 4, LeftToRight)
 
 enums_begin (kSoundNoiseReductionMethod, 1)
 	enums_add (kSoundNoiseReductionMethod, 1, SpectralSubtraction, U"spectral-subtraction")
-enums_end (kSoundNoiseReductionMethod, 1, spectral-subtraction)
+enums_end (kSoundNoiseReductionMethod, 1, SpectralSubtraction)
 
 enums_begin (kSoundSearchDirection, 1)
 	enums_add (kSoundSearchDirection, 1, Left, U"left")
