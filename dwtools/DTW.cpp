@@ -660,7 +660,7 @@ void DTW_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double 
 	// Sound y
 
 	vp = Graphics_insetViewport (g, 0.0, 1.0 - dtw_part_x, 1.0 - dtw_part_y, 1.0);
-	Sound_draw_btlr (y, g, ymin, ymax, -1.0, 1.0, FROM_BOTTOM_TO_TOP, 0);
+	Sound_draw_btlr (y, g, ymin, ymax, -1.0, 1.0, kSoundDrawingDirection::BottomToTop, 0);
 	if (garnish)
 		drawBox (g);
 	Graphics_resetViewport (g, vp);
@@ -668,7 +668,7 @@ void DTW_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double 
 	// Sound x
 
 	vp = Graphics_insetViewport (g, 1 - dtw_part_x, 1, 0, 1 - dtw_part_y);
-	Sound_draw_btlr (x, g, xmin, xmax, -1.0, 1.0, FROM_LEFT_TO_RIGHT, 0);
+	Sound_draw_btlr (x, g, xmin, xmax, -1.0, 1.0, kSoundDrawingDirection::LeftToRight, 0);
 	if (garnish)
 		drawBox (g);
 	Graphics_resetViewport (g, vp);

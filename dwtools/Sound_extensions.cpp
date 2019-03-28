@@ -68,6 +68,10 @@
 #include "Manipulation.h"
 #include "NUMcomplex.h"
 
+#include "enums_getText.h"
+#include "Sound_extensions_enums.h"
+#include "enums_getValue.h"
+#include "Sound_extensions_enums.h"
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
@@ -997,11 +1001,8 @@ autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double 
 }
 
 void Sounds_multiply (Sound me, Sound thee) {
-	integer n = my nx < thy nx ? my nx : thy nx;
-	double *s1 = & my z [1] [0], *s2 = & thy z [1] [0];
-	for (integer i = 1; i <= n; i ++) {
-		s1 [i] *= s2 [i];
-	}
+	integer n = std::min (my nx, thy nx );
+	my z.row(1).part(1, n)  *=  thy z.row(1).part(1, n);
 }
 
 
@@ -1063,6 +1064,61 @@ double Sound_localMean (Sound me, double fromTime, double toTime) {
 		mean = NUMmean (constVEC (& my z [1] [n1], n2 - n1 + 1));
 	}
 	return mean;
+}
+
+static double interpolate (Sound me, integer i1, integer channel, double level)
+/* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
+{
+	integer i2 = i1 + 1;
+	double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
+	double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
+	return x1 + (x2 - x1) * (y1 - level) / (y1 - y2);   // linear
+}
+
+double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection) {
+	double *amplitude = & my z [channel] [0];
+	integer leftSample = Sampled_xToLowIndex (me, position);
+	if (leftSample > my nx)
+		return undefined;
+	integer rightSample = leftSample + 1;
+	integer ileft, iright;
+	double leftCrossing, rightCrossing;
+	/*
+		Are we already at a level crossing?
+	*/
+	if (leftSample >= 1 && rightSample <= my nx &&
+		(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level)) {
+		double crossing = interpolate (me, leftSample, channel, level);
+		return searchDirection == kSoundSearchDirection::Left ?
+			( crossing <= position ? crossing : undefined ) :
+			( crossing >= position ? crossing : undefined );
+	}
+	
+	if (searchDirection == kSoundSearchDirection::Left || 
+		searchDirection == kSoundSearchDirection::Nearest) {
+		for (ileft = leftSample - 1; ileft >= 1; ileft --)
+			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level))
+				break;
+		leftCrossing = interpolate (me, ileft, channel, level);
+		if (searchDirection == kSoundSearchDirection::Left)
+			return ileft < 1 ? undefined: leftCrossing;
+	}
+	
+	if (rightSample < 1)
+		return undefined;
+	if (searchDirection == kSoundSearchDirection::Right || 
+		searchDirection == kSoundSearchDirection::Nearest) {
+		for (iright = rightSample + 1; iright <= my nx; iright ++)
+			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level))
+				break;
+		rightCrossing = interpolate (me, iright - 1, channel, level);
+		if (searchDirection == kSoundSearchDirection::Right)
+			return iright > my nx ? undefined : rightCrossing;
+	}
+	
+	if (ileft < 1 && iright > my nx) return undefined;
+	return ileft < 1 ? rightCrossing : ( iright > my nx ? leftCrossing :
+		( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing ) );
 }
 
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
@@ -1476,29 +1532,43 @@ autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double for
 /*  End of compatibility with Sound_changeGender and Sound_Pitch_changeGender ***********************************/
 
 /* Draw a sound vertically, from bottom to top */
-void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, bool garnish) {
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, kSoundDrawingDirection drawingDirection, bool garnish) {
 	double xmin, xmax, ymin, ymax;
 
 	if (tmin == tmax) {
-		tmin = my xmin; tmax = my xmax;
+		tmin = my xmin;
+		tmax = my xmax;
 	}
 	integer itmin, itmax;
-	Matrix_getWindowSamplesX (me, tmin, tmax, &itmin, &itmax);
+	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 	if (amin == amax) {
-		Matrix_getWindowExtrema (me, itmin, itmax, 1, my ny, &amin, &amax);
+		Matrix_getWindowExtrema (me, itmin, itmax, 1, my ny, & amin, & amax);
 		if (amin == amax) {
-			amin -= 1.0; amax += 1.0;
+			amin -= 1.0;
+			amax += 1.0;
 		}
 	}
 	/* In bottom-to-top-drawing the maximum amplitude is on the left, minimum on the right */
-	if (direction == FROM_BOTTOM_TO_TOP) {
-		xmin = amax; xmax = amin; ymin = tmin; ymax = tmax;
-	} else if (direction == FROM_TOP_TO_BOTTOM) {
-		xmin = amin; xmax = amax; ymin = tmax; ymax = tmin;
-	} else if (direction == FROM_RIGHT_TO_LEFT) {
-		xmin = tmax; xmax = tmin; ymin = amin; ymax = amax;
-	} else { //if (direction == FROM_LEFT_TO_RIGHT)
-		xmin = tmin; xmax = tmax; ymin = amin; ymax = amax;
+	if (drawingDirection == kSoundDrawingDirection::BottomToTop) {
+		xmin = amax;
+		xmax = amin;
+		ymin = tmin;
+		ymax = tmax;
+	} else if (drawingDirection == kSoundDrawingDirection::TopToBottom) {
+		xmin = amin;
+		xmax = amax;
+		ymin = tmax;
+		ymax = tmin;
+	} else if (drawingDirection == kSoundDrawingDirection::RightToLeft) {
+		xmin = tmax;
+		xmax = tmin;
+		ymin = amin;
+		ymax = amax;
+	} else { //if (drawingDirection == kSoundDrawingDirection::LeftToRight)
+		xmin = tmin;
+		xmax = tmax;
+		ymin = amin;
+		ymax = amax;
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	double a1 = my z [1] [itmin];
@@ -1506,30 +1576,28 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	for (integer it = itmin + 1; it <= itmax; it ++) {
 		double t2 = Sampled_indexToX (me, it);
 		double a2 = my z [1] [it];
-		if (direction == FROM_BOTTOM_TO_TOP || direction == FROM_TOP_TO_BOTTOM) {
+		if (drawingDirection == kSoundDrawingDirection::BottomToTop ||
+			drawingDirection == kSoundDrawingDirection::TopToBottom) {
 			Graphics_line (g, a1, t1, a2, t2);
 		} else {
 			Graphics_line (g, t1, a1, t2, a2);
 		}
-		a1 = a2; t1 = t2;
+		a1 = a2;
+		t1 = t2;
 	}
 	if (garnish) {
-		if (direction == FROM_BOTTOM_TO_TOP) {
-			if (amin * amax < 0.0) {
+		if (drawingDirection == kSoundDrawingDirection::BottomToTop) {
+			if (amin * amax < 0.0)
 				Graphics_markBottom (g, 0.0, false, true, true, nullptr);
-			}
-		} else if (direction == FROM_TOP_TO_BOTTOM) {
-			if (amin * amax < 0.0) {
+		} else if (drawingDirection == kSoundDrawingDirection::TopToBottom) {
+			if (amin * amax < 0.0)
 				Graphics_markTop (g, 0.0, false, true, true, nullptr);
-			}
-		} else if (direction == FROM_RIGHT_TO_LEFT) {
-			if (amin * amax < 0.0) {
+		} else if (drawingDirection == kSoundDrawingDirection::RightToLeft) {
+			if (amin * amax < 0.0)
 				Graphics_markRight (g, 0.0, false, true, true, nullptr);
-			}
-		} else { //if (direction == FROM_LEFT_TO_RIGHT)
-			if (amin * amax < 0.0) {
+		} else { //if (drawingDirection == kSoundDrawingDirection::LeftToRight)
+			if (amin * amax < 0.0)
 				Graphics_markLeft (g, 0.0, false, true, true, nullptr);
-			}
 		}
 		Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	}
