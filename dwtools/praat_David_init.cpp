@@ -67,6 +67,7 @@
 #include "NUMmachar.h"
 
 #include "ActivationList.h"
+#include "AmplitudeTier.h"
 #include "Categories.h"
 #include "CategoriesEditor.h"
 #include "ClassificationTable.h"
@@ -198,6 +199,25 @@ DIRECT (NEW_ActivationList_to_PatternList) {
 		autoPatternList result = ActivationList_to_PatternList (me);
 	CONVERT_EACH_END (my name.get())
 }
+
+FORM (REAL_AmplitudeTier_getValueAtTime, U"AmplitudeTier: Get value at time", nullptr) {
+	REAL (time, U"Time (s)", U"0.5")
+	OK
+DO
+	NUMBER_ONE (AmplitudeTier)
+		double result = RealTier_getValueAtTime (me, time);
+	NUMBER_ONE_END (U" Hz")
+}
+	
+FORM (REAL_AmplitudeTier_getValueAtIndex, U"AmplitudeTier: Get value at index", nullptr) {
+	INTEGER (pointNumber, U"Point number", U"10")
+	OK
+DO
+	NUMBER_ONE (AmplitudeTier)
+		double result = RealTier_getValueAtIndex (me, pointNumber);
+	NUMBER_ONE_END (U" Hz")
+}
+
 
 /********************** BandFilterSpectrogram *******************************************/
 
@@ -7840,6 +7860,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classActivationList, 0, U"To PatternList", nullptr, 0, NEW_ActivationList_to_PatternList);
 
 	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_ActivationList_Categories_to_TableOfReal);
+	
+	praat_addAction1 (classAmplitudeTier, 0, U"Get value at time...", U"Get time from index...", 1, REAL_AmplitudeTier_getValueAtTime);
+	praat_addAction1 (classAmplitudeTier, 0, U"Get value at index...", U"Get value at time...", 1, REAL_AmplitudeTier_getValueAtIndex);
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, HELP_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
