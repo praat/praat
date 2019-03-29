@@ -4,8 +4,12 @@
 appendInfoLine: "test_Sound_levelCrossings.praat"
 
 frequency = 100
-sine = Create Sound from formula: "sine", 2, 0, 0.1, 44100, "sin(2*pi*frequency*x)"
+# exactly 10 periods
+endTime = 10 / frequency
+sine = Create Sound from formula: "sine", 2, 0, endTime, 44100, "sin(2*pi*frequency*x)"
 level = 0
+
+# Corner cases
 # time is outside left
 time = Get nearest level crossing: 1, -1, level, "left"
 assert time = undefined
@@ -17,6 +21,12 @@ time = Get nearest level crossing: 1, 0.05, 1.1, "left"
 assert time = undefined
 # level to low
 time = Get nearest level crossing: 1, 0.05, -1.1, "left"
+assert time = undefined
+# no crossing to the left
+time = Get nearest level crossing: 1, 1 / (4 * frequency), level, "left"
+assert time = undefined
+# no crossing to the right
+time = Get nearest level crossing: 1, endTime - 1 / (4 * frequency), level, "right"
 assert time = undefined
 
 delta = 1e-5
