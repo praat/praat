@@ -681,7 +681,8 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 
 void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U"].");
+		Melder_require (component > 0 && component <= my numberOfComponents,
+			U"The component should be in [1, ", my numberOfComponents, U"].");
 		
 		Covariance thee = my covariances->at [component];
 		// Always new PCA because we cannot be sure of data unchanged.
@@ -771,7 +772,8 @@ void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRe
 void GaussianMixture_expandPCA (GaussianMixture me) {
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		Covariance him = my covariances->at [im];
-		Melder_require (his numberOfRows > 1, U"Nothing to expand.");
+		Melder_require (his numberOfRows > 1,
+			U"Nothing to expand.");
 		his pca = SSCP_to_PCA (him);
 	}
 }
@@ -1133,8 +1135,10 @@ double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC xp
 
 autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny) {
 	try {
-		Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
-		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues, U"Direction index too high.");
+		Melder_require (my dimension == thy dimension,
+			U"Dimensions should be equal.");
+		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues,
+			U"Direction index too high.");
 		
 		autoVEC v (my dimension, kTensorInitializationType::ZERO);
 		if (xmax == xmin || ymax == ymin) {
@@ -1197,7 +1201,8 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 	try {
 		integer n = thy numberOfRows, d = thy numberOfColumns, nocp1 = my numberOfComponents + 1;
 		
-		Melder_require (d == my dimension, U"Dimensions should agree.");
+		Melder_require (d == my dimension,
+			U"Dimensions should agree.");
 		
 		// We cannot use a classification table because this could weigh a far-off data point with high probability
 
