@@ -19,6 +19,7 @@
 #include "NUMclapack.h"
 #include "MAT_numerics.h"
 #include "SVD.h"
+#include "PAIRWISE_SUM.h"
 
 void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMATVU const& m, bool sortAscending) {
 	Melder_assert (m.nrow == m.ncol);
@@ -142,26 +143,27 @@ autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents) {
 	return result;
 }
 
-void MATpseudoInverse_preallocated (MAT target, constMATVU const& m, double tolerance) {
-	Melder_assert (target.nrow == m.ncol && target.ncol == m.nrow);
-	autoSVD me = SVD_createFromGeneralMatrix (m);
+void MATpseudoInverse (MATVU const& target, constMATVU const& mat, double tolerance) {
+	Melder_assert (target.nrow == mat.ncol && target.ncol == mat.nrow);
+	autoSVD me = SVD_createFromGeneralMatrix (mat);
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
-	for (integer i = 1; i <= m.ncol; i ++) {
-		for (integer j = 1; j <= m.nrow; j ++) {
-			longdouble s = 0.0;
-			for (integer k = 1; k <= m.ncol; k ++) {
-				if (my d [k] != 0.0) {
-					s += my v [i] [k] * my u [j] [k] / my d [k];
-				}
-			}
-			target [i] [j] = (double) s;
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (
+				longdouble, sum,
+				integer, mat.ncol,
+				integer k = 1,
+				my d [k] == 0.0 ? 0.0 : my v [irow] [k] * my u [icol] [k] / my d [k],
+				k += 1
+			)
+			target [irow] [icol] = double (sum);
 		}
 	}
 }
 
-autoMAT MATpseudoInverse (constMAT m, double tolerance) {
-	autoMAT result = newMATraw (m.ncol, m.nrow);
-	MATpseudoInverse_preallocated (result.get(), m, tolerance);
+autoMAT newMATpseudoInverse (constMATVU const& mat, double tolerance) {
+	autoMAT result = newMATraw (mat.ncol, mat.nrow);
+	MATpseudoInverse (result.all(), mat, tolerance);
 	return result;
 }
 

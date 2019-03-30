@@ -1101,7 +1101,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			from the P [i] by: C [i] = (y'.y)^-1 . y' . P [i] . y . (y'.y)^-1 == yinv P [i] yinv'
 		*/
 		
-		autoMAT yinv = MATpseudoInverse (y.get(), 1e-14);
+		autoMAT yinv = newMATpseudoInverse (y.get(), 1e-14);
 		autoTEN3 ci = newTEN3raw (numberOfSources, numberOfDimensions, numberOfDimensions);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
@@ -1424,7 +1424,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			V^-1 does not exist -> get Moore-Penrose inverse.
 		*/
 
-		autoMAT vplus = MATpseudoInverse (v.get(), tol);
+		autoMAT vplus = newMATpseudoInverse (v.get(), tol);
 		for (integer iter = 1; iter <= numberOfIterations; iter ++) {
 			autoDistance dist = Configuration_to_Distance (conf);
 
