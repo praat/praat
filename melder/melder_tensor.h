@@ -798,20 +798,20 @@ automatrix<T> newmatrixzero (integer nrow, integer ncol) {
 	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
 }
 template <typename T>
-void matrixcopy_preallocated (matrixview<T> const& target, constmatrixview<T> const& source) {
+void matrixcopy (matrixview<T> const& target, constmatrixview<T> const& source) {
 	Melder_assert (source.nrow == target.nrow && source.ncol == target.ncol);
 	for (integer irow = 1; irow <= source.nrow; irow ++)
 		for (integer icol = 1; icol <= source.ncol; icol ++)
 			target [irow] [icol] = source [irow] [icol];
 }
 template <typename T>
-void matrixcopy_preallocated (matrixview<T> const& target, matrixview<T> const& source) {
-	matrixcopy_preallocated (target, constmatrixview<T> (source));
+void matrixcopy (matrixview<T> const& target, matrixview<T> const& source) {
+	matrixcopy (target, constmatrixview<T> (source));
 }
 template <typename T>
 automatrix<T> newmatrixcopy (constmatrixview<T> const& source) {
 	automatrix<T> result = newmatrixraw<T> (source.nrow, source.ncol);
-	matrixcopy_preallocated (result.all(), source);
+	matrixcopy (result.all(), source);
 	return result;
 }
 template <typename T>
@@ -1161,7 +1161,7 @@ autotensor3<T> newtensor3zero (integer ndim1, integer ndim2, integer ndim3) {
 	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::ZERO);
 }
 template <typename T>
-void tensor3copy_preallocated (tensor3<T> const& target, consttensor3<T> const& source) {
+void tensor3copy (tensor3<T> const& target, consttensor3<T> const& source) {
 	Melder_assert (source.ndim1 == target.ndim1 && source.ndim2 == target.ndim2 && source.ndim3 == target.ndim3);
 	for (integer idim1 = 1; idim1 <= source.ndim1; idim1 ++)
 		for (integer idim2 = 1; idim2 <= source.ndim2; idim2 ++)
@@ -1169,13 +1169,13 @@ void tensor3copy_preallocated (tensor3<T> const& target, consttensor3<T> const& 
 				target [idim1] [idim2] [idim3] = source [idim1] [idim2] [idim3];
 }
 template <typename T>
-void tensor3copy_preallocated (tensor3<T> const& target, tensor3<T> const& source) {
-	tensor3copy_preallocated (target, consttensor3<T> (source));
+void tensor3copy (tensor3<T> const& target, tensor3<T> const& source) {
+	tensor3copy (target, consttensor3<T> (source));
 }
 template <typename T>
 autotensor3<T> newtensor3copy (consttensor3<T> const& source) {
 	autotensor3<T> result = newtensor3raw<T> (source.ndim1, source.ndim2, source.ndim3);
-	tensor3copy_preallocated (result.get(), source);
+	tensor3copy (result.get(), source);
 	return result;
 }
 template <typename T>

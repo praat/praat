@@ -254,10 +254,10 @@ extern void MATcentreEachRow_inplace (MATVU const& x) noexcept;
 */
 extern void MATdoubleCentre_inplace (MATVU const& x) noexcept;
 
-extern void MATmtm_preallocated (MATVU const& target, constMATVU const& x) noexcept;
+extern void MATmtm (MATVU const& target, constMATVU const& x) noexcept;
 inline autoMAT newMATmtm (constMATVU const& x) {
 	autoMAT result = newMATraw (x.ncol, x.ncol);
-	MATmtm_preallocated (result.get(), x);
+	MATmtm (result.get(), x);
 	return result;
 }
 
@@ -328,40 +328,40 @@ inline autoMAT newMATmul_fast (constMATVU const& x, constMATVU const& y) {
 void MATmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 
-void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y);
+void MATouter (MATVU const& target, constVECVU const& x, constVECVU const& y);
 extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);
 
 extern autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight);
 
-inline void MATrandomGauss_preallocated (MATVU const& target, double mu, double sigma) noexcept {
+inline void MATrandomGauss (MATVU const& target, double mu, double sigma) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = NUMrandomGauss (mu, sigma);
 }
 inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
 	autoMAT result = newMATraw (nrow, ncol);
-	MATrandomGauss_preallocated (result.all(), mu, sigma);
+	MATrandomGauss (result.all(), mu, sigma);
 	return result;
 }
 inline autoMAT newMATrandomGauss (constMATVU const& model, double mu, double sigma) {
 	autoMAT result = newMATraw (model.nrow, model.ncol);
-	MATrandomGauss_preallocated (result.all(), mu, sigma);
+	MATrandomGauss (result.all(), mu, sigma);
 	return result;
 }
 
-inline void MATrandomUniform_preallocated (MATVU const& target, double lowest, double highest) noexcept {
+inline void MATrandomUniform (MATVU const& target, double lowest, double highest) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = NUMrandomUniform (lowest, highest);
 }
 inline autoMAT newMATrandomUniform (integer nrow, integer ncol, double lowest, double highest) {
 	autoMAT result = newMATraw (nrow, ncol);
-	MATrandomUniform_preallocated (result.all(), lowest, highest);
+	MATrandomUniform (result.all(), lowest, highest);
 	return result;
 }
 inline autoMAT newMATrandomUniform (constMATVU const& model, double lowest, double highest) {
 	autoMAT result = newMATraw (model.nrow, model.ncol);
-	MATrandomUniform_preallocated (result.all(), lowest, highest);
+	MATrandomUniform (result.all(), lowest, highest);
 	return result;
 }
 
@@ -390,7 +390,7 @@ inline void MATtranspose_inplace_mustBeSquare (MATVU const& x) noexcept {
 		for (integer j = i + 1; j <= n; j ++)
 			std::swap (x [i] [j], x [j] [i]);
 }
-inline void MATtranspose_preallocated (MATVU const& target, constMATVU const& x) noexcept {
+inline void MATtranspose (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (x.nrow == target.ncol && x.ncol == target.nrow);
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
@@ -398,7 +398,7 @@ inline void MATtranspose_preallocated (MATVU const& target, constMATVU const& x)
 }
 inline autoMAT newMATtranspose (constMATVU const& x) {
 	autoMAT result = newMATraw (x.ncol, x.nrow);
-	MATtranspose_preallocated (result.get(), x);
+	MATtranspose (result.get(), x);
 	return result;
 }
 

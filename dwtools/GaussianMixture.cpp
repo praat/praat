@@ -142,7 +142,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 			row.all()  *=  row.all();
 			thy data.row (1)  +=  row.all()  *  gamma [irow];
 		} else {
-			MATouter_preallocated (outer.all(), row.get(), row.get());
+			MATouter (outer.all(), row.get(), row.get());
 			thy data.all()  +=  outer.all()  *  gamma [irow];
 		}
 	}

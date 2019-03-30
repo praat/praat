@@ -192,7 +192,7 @@ static void update_one_column (CrossCorrelationTableList me, MAT d, constVEC wp,
 	for (integer ic = 2; ic <= my size; ic ++) { // exclude C0
 		SSCP cov = my at [ic];
 		// m1 = C * wvec
-		VECmul_preallocated (work, cov -> data.get(), wvec);
+		VECmul (work, cov -> data.get(), wvec);
 		// D = D +/- 2*p(t)*(m1*m1');
 		for (integer i = 1; i <= dimension; i ++) {
 			for (integer j = 1; j <= dimension; j ++) {
@@ -827,7 +827,7 @@ static void Sound_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee
 		integer iter = 0;
 		Melder_require (my ny == thy numberOfColumns, U"Dimensions should agree.");
 		
-		autoMAT x = matrixcopy (my z.get());
+		autoMAT x = newmatrixcopy (my z.get());
 		do {
 			iter ++;
 		} while (/*fabs((dm_old - dm_new) / dm_new) > tol &&*/ iter < maxNumberOfIterations);

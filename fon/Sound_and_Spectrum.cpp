@@ -133,7 +133,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 		autoSound sound = Spectrum_to_Sound (me);
 		NUMpreemphasize_f (sound -> z.row (1), sound -> dx, preemphasisFrequency);
 		autoVEC a = newVECraw (numberOfCoefficients);
-		double gain = NUMburg_preallocated (a.get(), sound -> z.row(1));
+		double gain = VECburg (a.get(), sound -> z.row(1));
 		for (integer i = 1; i <= numberOfCoefficients; i ++) a [i] = - a [i];
 		autoSpectrum thee = Data_copy (me);
 

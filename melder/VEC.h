@@ -191,14 +191,14 @@ inline autoVEC newVECmultiply (constVECVU const& x, constVECVU const& y) {
 	return result;
 }
 
-extern void VECVUadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept;
-inline void VECVUadd (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+extern void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept;
+inline void VECadd (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
 	integer n = target.size;
 	Melder_assert (x.size == n);
 	Melder_assert (y.size == n);
 	#if defined (macintoshXXX)
 		if (n >= 64)
-			return VECVUadd_macfast_ (target, x, y);
+			return VECadd_macfast_ (target, x, y);
 	#endif
 	for (integer i = 1; i <= n; i ++)
 		target [i] = x [i] + y [i];
@@ -218,49 +218,56 @@ inline autoVEC newVECcolumn (constMATVU const& source, integer columnNumber) {
 	return target;
 }
 
-inline void VECcolumnMeans_preallocated (VECVU const& target, constMATVU const& x) noexcept {
+inline void VECcolumnMeans (VECVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (target.size == x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		target [icol] = NUMmean (x.column (icol));
 }
 inline autoVEC newVECcolumnMeans (constMATVU const& x) {
 	autoVEC result = newVECraw (x.ncol);
-	VECcolumnMeans_preallocated (result.get(), x);
+	VECcolumnMeans (result.get(), x);
 	return result;
 }
 
-extern void VECmul_preallocated (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept;
-extern void VECmul_preallocated (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept;
+extern void VECmul (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept;
+extern void VECmul (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept;
 extern autoVEC newVECmul (constVECVU const& vec, constMATVU const& mat);
 extern autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec);
 
-inline void VECrandomGauss_preallocated (VECVU const& target, double mu, double sigma) noexcept {
+extern void VECpower (VECVU const& target, constVECVU const& vec, double power);
+inline autoVEC newVECpower (constVECVU const& vec, double power) {
+	autoVEC result = newVECraw (vec.size);
+	VECpower (result.all(), vec, power);
+	return result;
+}
+
+inline void VECrandomGauss (VECVU const& target, double mu, double sigma) noexcept {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = NUMrandomGauss (mu, sigma);
 }
 inline autoVEC newVECrandomGauss (integer size, double mu, double sigma) {
 	autoVEC result = newVECraw (size);
-	VECrandomGauss_preallocated (result.all(), mu, sigma);
+	VECrandomGauss (result.all(), mu, sigma);
 	return result;
 }
 inline autoVEC newVECrandomGauss (constVECVU const& model, double mu, double sigma) {
 	autoVEC result = newVECraw (model.size);
-	VECrandomGauss_preallocated (result.all(), mu, sigma);
+	VECrandomGauss (result.all(), mu, sigma);
 	return result;
 }
 
-inline void VECrandomUniform_preallocated (VECVU const& target, double lowest, double highest) noexcept {
+inline void VECrandomUniform (VECVU const& target, double lowest, double highest) noexcept {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = NUMrandomUniform (lowest, highest);
 }
 inline autoVEC newVECrandomUniform (integer size, double lowest, double highest) {
 	autoVEC result = newVECraw (size);
-	VECrandomUniform_preallocated (result.all(), lowest, highest);
+	VECrandomUniform (result.all(), lowest, highest);
 	return result;
 }
 inline autoVEC newVECrandomUniform (constVECVU const& model, double lowest, double highest) {
 	autoVEC result = newVECraw (model.size);
-	VECrandomUniform_preallocated (result.all(), lowest, highest);
+	VECrandomUniform (result.all(), lowest, highest);
 	return result;
 }
 

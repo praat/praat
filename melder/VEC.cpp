@@ -26,7 +26,7 @@
 #endif
 
 #if defined (macintosh)
-static void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
 	integer n = target.size;
 	vDSP_vaddD (& x [1], x.stride, & y [1], y.stride, & target [1], target.stride, integer_to_uinteger (n));
 	/*
@@ -40,7 +40,7 @@ static void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const con
 }
 #endif
 
-void VECmul_preallocated (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
+void VECmul (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
 	Melder_assert (mat.nrow == vec.size);
 	Melder_assert (target.size == mat.ncol);
 	if ((true)) {
@@ -64,11 +64,11 @@ void VECmul_preallocated (VECVU const& target, constVECVU const& vec, constMATVU
 
 autoVEC newVECmul (constVECVU const& vec, constMATVU const& mat) {
 	autoVEC result = newVECraw (mat.ncol);
-	VECmul_preallocated (result.get(), vec, mat);
+	VECmul (result.get(), vec, mat);
 	return result;
 }
 
-void VECmul_preallocated (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept {
+void VECmul (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept {
 	Melder_assert (vec.size == mat.ncol);
 	Melder_assert (target.size == mat.nrow);
 	for (integer i = 1; i <= mat.nrow; i ++) {
@@ -84,8 +84,38 @@ void VECmul_preallocated (VECVU const& target, constMATVU const& mat, constVECVU
 
 autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec) {
 	autoVEC result = newVECraw (mat.nrow);
-	VECmul_preallocated (result.all(), mat, vec);
+	VECmul (result.all(), mat, vec);
 	return result;
+}
+
+void VECpower (VECVU const& target, constVECVU const& vec, double power) {
+	if (power == 2.0) {
+		for (integer i = 1; i <= target.size; i ++)
+			target [i] = vec [i] * vec [i];
+	} else if (power < 0.0) {
+		if (power == -1.0) {
+			for (integer i = 1; i <= target.size; i ++) {
+				Melder_require (vec [i] != 0.0,
+					U"Cannot raise zero to a negative power.");
+				target [i] = 1.0 / vec [i];
+			}
+		} else if (power == -2.0) {
+			for (integer i = 1; i <= target.size; i ++) {
+				Melder_require (vec [i] != 0.0,
+					U"Cannot raise zero to a negative power.");
+				target [i] = 1.0 / (vec [i] * vec [i]);
+			}
+		} else {
+			for (integer i = 1; i <= target.size; i ++) {
+				Melder_require (vec [i] != 0.0,
+					U"Cannot raise zero to a negative power.");
+				target [i] = pow (vec [i], power);
+			}
+		}
+	} else {
+		for (integer i = 1; i <= target.size; i ++)
+			target [i] = pow (vec [i], power);
+	}
 }
 
 /* End of file VEC.cpp */

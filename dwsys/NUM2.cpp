@@ -140,7 +140,7 @@ static void MATweighRows (MATVU const& x, constVECVU const& y) {
 		x.row (irow)  *=  y [irow];
 }
 
-void MATmtm_weighRows_preallocated (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights) {
+void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights) {
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol == result.ncol);
 	Melder_assert (result.nrow == result.ncol);
@@ -148,7 +148,7 @@ void MATmtm_weighRows_preallocated (MATVU const& result, constMATVU const& data,
 	if (true) {
 		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			MATouter_preallocated (outer.all(), data.row (irow), data.row (irow));
+			MATouter (outer.all(), data.row (irow), data.row (irow));
 			result  +=  outer.all()  *  rowWeights [irow];
 		}
 	} else {
@@ -157,7 +157,7 @@ void MATmtm_weighRows_preallocated (MATVU const& result, constMATVU const& data,
 		for (integer irow = 1; irow <= w.size; irow ++) 
 			w [irow] = sqrt (rowWeights [irow]);
 		MATweighRows (d.get(), w.get());
-		MATmtm_preallocated (result, d.get());
+		MATmtm (result, d.get());
 	}
 }
 
@@ -317,7 +317,7 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 	integer numberOfIterations = 0;
 	do {
 		lambda0 = lambda;
-		VECmul_preallocated (z.get(), m, inout_q);
+		VECmul (z.get(), m, inout_q);
 		VECnormalize_inplace (z.get(), 2.0, 1.0);
 		lambda = NUMvtmv (z.get(), m); // z'. M . z
 	} while (fabs (lambda - lambda0) > tolerance || ++ numberOfIterations < 30);
@@ -413,7 +413,7 @@ autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, doubl
 				mjr += mij * ri;
 				mjmj += mij * mij;
 			}
-			b [j] = mjr / mjmj;
+			b [j] = double (mjr / mjmj);
 			if (b [j] < 0.0) {
 				b [j] = 0.0;
 			}
@@ -1396,7 +1396,7 @@ b2 = & work [n+1];
 aa = & work [n+n+1];
 for (i=1; i<=n+n+n; i ++) work [i]=0;
 */
-double NUMburg_preallocated (VEC a, constVEC x) {
+double VECburg (VEC a, constVEC x) {
 	integer n = x.size, m = a.size;
 	for (integer j = 1; j <= m; j ++) {
 		a [j] = 0.0;
@@ -1465,9 +1465,9 @@ double NUMburg_preallocated (VEC a, constVEC x) {
 	return xms;
 }
 
-autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms) {
+autoVEC newVECburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms) {
 	autoVEC a = newVECraw (numberOfPredictionCoefficients);
-	double xms = NUMburg_preallocated (a.get(), x);
+	double xms = VECburg (a.get(), x);
 	if (out_xms) *out_xms = xms;
 	return a;
 }
