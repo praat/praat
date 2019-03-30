@@ -246,7 +246,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		// W = P'\W == inv(P') * W
 
-		MATpseudoInverse_preallocated (pinv.get (), p.get(), 0.0);
+		MATpseudoInverse (pinv.get (), p.get(), 0.0);
 		MATmul (my data.get(), pinv.transpose(), wc.get());
 
 		// initialisation for order KN^3
@@ -327,7 +327,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	autoDiagonalizer him = MixingMatrix_to_Diagonalizer (me);
 	Diagonalizer_CrossCorrelationTableList_improveDiagonality (him.get(), thee, maxNumberOfIterations, tol, method);
-	MATpseudoInverse_preallocated (my data.get(), his data.get(), 0);
+	MATpseudoInverse (my data.get(), his data.get(), 0);
 }
 
 
@@ -526,7 +526,7 @@ autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me) {
 			U"The number of channels and the number of components should be equal.");
 		
 		autoDiagonalizer thee = Diagonalizer_create (my numberOfRows);
-		MATpseudoInverse_preallocated (thy data.get(), my data.get(), 0.0);
+		MATpseudoInverse (thy data.get(), my data.get(), 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Diagonalizer created.");
@@ -537,7 +537,7 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	try {
 		autoMixingMatrix thee = MixingMatrix_create (my numberOfRows, my numberOfColumns);
 		MixingMatrix_setRandomGauss (thee.get(), 0.0, 1.0);
-		MATpseudoInverse_preallocated (thy data.get(), my data.get(), 0.0);
+		MATpseudoInverse (thy data.get(), my data.get(), 0.0);
 
 		return thee;
 	} catch (MelderError) {

@@ -69,8 +69,8 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 void MAT_asPrincipalComponents_preallocated (MATVU pc, constMATVU const& m, integer numberOfComponents);
 autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents);
 
-void MATpseudoInverse_preallocated (MAT target, constMATVU const& m, double tolerance);
-autoMAT MATpseudoInverse (constMAT m, double tolerance);
+void MATpseudoInverse (MATVU const& target, constMATVU const& mat, double tolerance);
+autoMAT newMATpseudoInverse (constMATVU const& mat, double tolerance);
 /*
 	Determines the pseudo-inverse Y^-1 of Y[1..nrow][1..ncol] via s.v.d.
 	Alternative notation for pseudo-inverse: (Y'.Y)^-1.Y'
