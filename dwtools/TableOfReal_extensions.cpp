@@ -750,22 +750,23 @@ void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowm
 	}
 }
 
-void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
-	integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax,
+void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
 	double m = my numberOfRows, n = my numberOfColumns;
 	int fontSize = Graphics_inqFontSize (g);
 
-	if (icx < 1 || icx > n || icy < 1 || icy > n)
-		return;
+	Melder_require (icx >= 1 && icx <= my numberOfColumns,
+		U"The horizontal column number should be in the range from 1 to ", my numberOfColumns, U".");
+	Melder_require (icy >= 1 && icy <= my numberOfColumns,
+		U"The vertical column number should be in the range from 1 to ", my numberOfColumns, U".");
 	if (rowb < 1)
 		rowb = 1;
-	if (rowe > m)
-		rowe = Melder_ifloor (m);
+	if (rowe > my numberOfRows)
+		rowe = my numberOfRows;
 	if (rowe <= rowb) {
 		rowb = 1;
-		rowe = Melder_ifloor (m);
+		rowe = my numberOfRows;
 	}
 	if (xmax == xmin) {
 		MelderRealRange xrange = NUMextrema (my data.part (rowb, rowe, icx, icx));
@@ -776,25 +777,21 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 	if (ymax == ymin) {
 		MelderRealRange yrange = NUMextrema (my data.part (rowb, rowe, icy, icy));
 		double tmp = ( yrange.max == yrange.min ? 0.5 : 0.0 );
-		ymin -= tmp;
-		ymax += tmp;
+		ymin = yrange.min - tmp;
+		ymax = yrange.max + tmp;
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
 
-	integer noLabel = 0;
 	for (integer i = rowb; i <= rowe; i ++) {
 		double x = my data [i] [icx], y = my data [i] [icy];
 		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
 		    ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax))) {
-			conststring32 plotLabel = useRowLabels ? my rowLabels [i].get() : label;
-			if (! Melder_findInk (plotLabel)) {
-				noLabel ++;
-				continue;
-			}
-			Graphics_text (g, x, y, plotLabel);
+			conststring32 mark = useRowLabels ? my rowLabels [i].get() : label;
+			if (mark)
+				Graphics_text (g, x, y, mark);
 		}
 	}
 
@@ -822,9 +819,6 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 			Graphics_marksRight (g, 2, true, true, false);
 		}
 	}
-	if (noLabel > 0)
-		Melder_warning (noLabel, U" from ", my numberOfRows, U" labels are "
-			U"not visible because they are empty or they contain only spaces or non-printable characters");
 }
 
 
