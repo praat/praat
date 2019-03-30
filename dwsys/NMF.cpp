@@ -71,8 +71,8 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 void NMF_initialize (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
-		MATrandomUniform_preallocated (my features.all(), rmin, rmax);
-		MATrandomUniform_preallocated (my weights.all(), rmin, rmax);
+		MATrandomUniform (my features.all(), rmin, rmax);
+		MATrandomUniform (my weights.all(), rmin, rmax);
 	} else {
 	}
 }

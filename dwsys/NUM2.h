@@ -228,11 +228,11 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-void MATmtm_weighRows_preallocated (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights);
+void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights);
 
-inline autoMAT MATmtm_weighRows (constMATVU const& data, constVECVU const& rowWeights) {
+inline autoMAT newMATmtm_weighRows (constMATVU const& data, constVECVU const& rowWeights) {
 	autoMAT result = newMATraw (data.ncol, data.ncol);
-	MATmtm_weighRows_preallocated (result.get(), data, rowWeights);
+	MATmtm_weighRows (result.get(), data, rowWeights);
 	return result;
 }
 
@@ -817,7 +817,7 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-double NUMburg_preallocated (VEC a, constVEC x);
+double VECburg (VEC a, constVEC x);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
@@ -825,7 +825,7 @@ double NUMburg_preallocated (VEC a, constVEC x);
 	Returns the sum of squared sample values or 0.0 if failure
 */
 
-autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
+autoVEC newVECburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
 
 void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor);
 /*

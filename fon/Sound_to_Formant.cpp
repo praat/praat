@@ -35,7 +35,7 @@
 static void burg (constVEC samples, VEC coefficients,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
-	double a0 =	NUMburg_preallocated (coefficients, samples);
+	double a0 = VECburg (coefficients, samples);
 	(void) a0;
 	/*
 		Convert LP coefficients to polynomial.

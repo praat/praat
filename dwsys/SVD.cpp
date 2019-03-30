@@ -214,7 +214,7 @@ void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result) {
 			}
 			t [j] = (double) sum;
 		}
-		VECmul_preallocated (result, my v.get(), t.get());
+		VECmul (result, my v.get(), t.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
 	}
@@ -334,9 +334,9 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			if (my isTransposed)
-				MATouter_preallocated (outer.get(), my v.column(k), my u.column(k));
+				MATouter (outer.get(), my v.column(k), my u.column(k));
 			else
-				MATouter_preallocated (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
+				MATouter (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
 			result.get() += outer.get() * my d [k];
 		}
 		return result;
@@ -398,7 +398,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 
 		// Transpose q
 
-		MATtranspose_preallocated (my q.get(), q.get());
+		MATtranspose (my q.get(), q.get());
 
 		// Get R from a(1:k+l,n-k-l+1:n)
 

@@ -100,13 +100,12 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	Melder_assert (a.nrow == a.ncol);
 	integer n = a.nrow, info, workSize = -1;
 	char jobvl = out_lefteigenvectors ? 'V' : 'N';
-	integer left_nvecs = out_lefteigenvectors ? n : 1; // 1x1 if not wanted
+	integer left_nvecs = out_lefteigenvectors ? n : 1;   // 1x1 if not wanted
 	char jobvr = out_righteigenvectors ? 'V' : 'N';
 	integer right_nvecs = out_righteigenvectors ? n : 1;
 	double wt;
 	
-	autoMAT data = newMATraw (n, n);
-	MATtranspose_preallocated (data.get(), a); // lapack is fortran storage
+	autoMAT data = newMATtranspose (a);   // lapack is fortran storage
 	autoVEC eigenvalues_re = newVECraw (n);
 	autoVEC eigenvalues_im = newVECraw (n);
 	autoMAT righteigenvectors = newMATraw (right_nvecs, right_nvecs); // 1x1 if not needed

@@ -210,7 +210,7 @@ end:
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee) {
-	thy gain = NUMburg_preallocated (thy a.get(), my z.row(1));
+	thy gain = VECburg (thy a.get(), my z.row(1));
 	thy gain *= my nx;
 	for (integer i = 1; i <= thy nCoefficients; i ++) {
 		thy a [i] = -thy a [i];

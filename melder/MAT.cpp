@@ -45,7 +45,7 @@ void MATdoubleCentre_inplace (MATVU const& x) noexcept {
 	MATcentreEachColumn_inplace (x);
 }
 
-void MATmtm_preallocated (MATVU const& target, constMATVU const& x) noexcept {
+void MATmtm (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (target.nrow == x.ncol);
 	Melder_assert (target.ncol == x.ncol);
 	#if 0
@@ -752,14 +752,14 @@ void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU c
 #endif
 }
 
-void MATouter_preallocated (MATVU const& target, constVECVU const& x, constVECVU const& y) {
+void MATouter (MATVU const& target, constVECVU const& x, constVECVU const& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
 			target [irow] [icol] = x [irow] * y [icol];
 }
 autoMAT newMATouter (constVECVU const& x, constVECVU const& y) {
 	autoMAT result = newMATraw (x.size, y.size);
-	MATouter_preallocated (result.get(), x, y);
+	MATouter (result.get(), x, y);
 	return result;
 }
 

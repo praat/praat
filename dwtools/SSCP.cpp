@@ -387,7 +387,7 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VECVU vec
 
 	// Rotate back
 	
-	VECmul_preallocated (vec, buf, thy eigenvectors.get());
+	VECmul (vec, buf, thy eigenvectors.get());
 	vec  +=  my centroid.get();
 }
 
@@ -420,10 +420,10 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
 			);
 		autoSSCP thee = SSCP_create (part.ncol);
-		VECcolumnMeans_preallocated (thy centroid.get(), part.get());
+		VECcolumnMeans (thy centroid.get(), part.get());
 		part.all()  -=  thy centroid.all();
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
-		MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
+		MATmtm (thy data.get(), part.get());   // sum of squares and cross products = T'T
 		for (integer j = 1; j <= part.ncol; j ++) {
 			conststring32 label = my columnLabels [colb - 1 + j].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
@@ -451,14 +451,14 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
 			);
 		autoSSCP thee = SSCP_create (part.ncol);
-		VECcolumnMeans_preallocated (thy centroid.get(), part.get());
+		VECcolumnMeans (thy centroid.get(), part.get());
 		part.all()  -=  thy centroid.all();
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
 		if (weightColumnNumber != 0) {
 			autoVEC rowWeights = newVECcolumn (my data.horizontalBand (rowb, rowe), weightColumnNumber);
-			MATmtm_weighRows_preallocated (thy data.get(), part.get(), rowWeights.get());
+			MATmtm_weighRows (thy data.get(), part.get(), rowWeights.get());
 		} else
-			MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
+			MATmtm (thy data.get(), part.get());   // sum of squares and cross products = T'T
 		for (integer j = 1; j <= part.ncol; j ++) {
 			conststring32 label = my columnLabels [colb - 1 + j].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
@@ -502,7 +502,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		MATlowerCholeskyInverse_inplace (covari.get(), nullptr);
 
 		if (useTableCentroid)
-			VECcolumnMeans_preallocated (centroid.get(), thy data.get());
+			VECcolumnMeans (centroid.get(), thy data.get());
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
 			his data [k] [1] = sqrt (NUMmahalanobisDistance (covari.get(), thy data.row (k), centroid.get()));
 			if (thy rowLabels [k])
@@ -865,7 +865,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
 			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
-			MATouter_preallocated (outer.get(), mean.get(), mean.get());
+			MATouter (outer.get(), mean.get(), mean.get());
 			thy data.all()  +=  outer.all()  *  covi -> numberOfObservations; // Y += aX
 		}
 		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
