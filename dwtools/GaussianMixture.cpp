@@ -300,7 +300,7 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer component) {
 	try {
 		Melder_require (component > 0 && component <= my numberOfComponents,
-			U"The component should be in [1, ", my numberOfComponents, U".");
+			U"The component should be should be in the range from 1 to ", my numberOfComponents, U".");
 		autoCovariance thee = Data_copy (my covariances->at [component]);
 		return thee;
 	} catch (MelderError) {
@@ -359,7 +359,8 @@ autoPCA GaussianMixture_to_PCA (GaussianMixture me) {
 
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
 	*xmin = *xmax = *ymin = *ymax = undefined;
-	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, U"Incorrect directions.");
+	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, 
+		U"The directions should be in the range from 1 to ", my dimension, U".");
 	
 	autoSSCPList sscps = SSCPList_extractTwoDimensions (my covariances->asSSCPList(), d1, d2);
 	SSCPList_getEllipsesBoundingBoxCoordinates (sscps.get(), -nsigmas, 0, xmin, xmax, ymin, ymax);
@@ -372,9 +373,9 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 
 void GaussianMixture_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
 	Melder_require (my dimension == thy dimension, 
-		U"Dimensions should be equal.");
-	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, 
-		U"Incorrect directions.");
+		U"The dimensions should agree.");
+	Melder_require (d1 >= 1 && d1 <= my dimension && d2 >= 1 && d2 <= my dimension, 
+		U"The dimensions should be in the range from 1 to ", my dimension, U".");
 	
 	autoSSCPList sscps = SSCPList_toTwoDimensions (my covariances->asSSCPList(), thy eigenvectors.row (d1), thy eigenvectors.row (d2));
 	SSCPList_getEllipsesBoundingBoxCoordinates (sscps.get(), -nsigmas, 0, xmin, xmax, ymin, ymax);
@@ -386,10 +387,10 @@ void GaussianMixture_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee
 }
 
 void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
-	if (my dimension != thy dimension || d < 1 || d > my dimension) {
-		Melder_warning (U"Dimensions don't agree.");
-		return;
-	}
+	Melder_require (my dimension == thy dimension,
+		U"The dimensions should agree.");
+	Melder_require (d >= 1 && d <= my dimension, 
+		U"The dimension must be in the range from 1 to ", my dimension, U".");
 	if (npoints <= 1)
 		npoints = 1000;
 	double nsigmas = 2;
@@ -423,7 +424,8 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 }
 
 void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer /* nbins */, int garnish) {
-	Melder_require (d > 0 && d <= my dimension, U"The chosen dimension needs to be larger than 0 and smaller than ", my dimension, U".");
+	Melder_require (d >= 1 && d <= my dimension,
+		U"The dimension should be in the range from 1 to ", my dimension, U".");
 	
 	if (npoints <= 1)
 		npoints = 1000;
@@ -466,10 +468,11 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 }
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale, int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
-	if (my dimension != his dimension) {
-		Melder_warning (U"Dimensions don't agree.");
-		return;
-	}
+	Melder_require (my dimension == his dimension, 
+		U"The dimensions should agree.");
+	Melder_require (labs(d1) >= 1 && labs (d1) <= my dimension && labs(d2) >= 1 && labs (d2) <= my dimension,
+		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for "
+		"a reversed axis).");
 	bool d1_inverted = d1 < 0, d2_inverted = d2 < 0;
 	d1 = labs (d1);
 	d2 = labs (d2);
@@ -499,12 +502,9 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 }
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label, int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
-	if (d1 == 0 && d2 == 0) {
-		d1 = 1;
-		d2 = 2;
-	}
-	if (labs (d1) > my dimension || labs (d2) > my dimension)
-		return;
+	Melder_require (labs(d1) >= 1 && labs (d1) <= my dimension && labs(d2) >= 1 && labs (d2) <= my dimension,
+		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for "
+		"a reversed axis).");
 
 	if (! pcaDirections) {
 		SSCPList_drawConcentrationEllipses (my covariances->asSSCPList(), g, -scale, confidence, label,
@@ -681,7 +681,8 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 
 void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U"].");
+		Melder_require (component > 0 && component <= my numberOfComponents,
+			U"The component should be in [1, ", my numberOfComponents, U"].");
 		
 		Covariance thee = my covariances->at [component];
 		// Always new PCA because we cannot be sure of data unchanged.
@@ -771,7 +772,8 @@ void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRe
 void GaussianMixture_expandPCA (GaussianMixture me) {
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		Covariance him = my covariances->at [im];
-		Melder_require (his numberOfRows > 1, U"Nothing to expand.");
+		Melder_require (his numberOfRows > 1,
+			U"Nothing to expand.");
 		his pca = SSCP_to_PCA (him);
 	}
 }
@@ -1133,8 +1135,10 @@ double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC xp
 
 autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny) {
 	try {
-		Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
-		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues, U"Direction index too high.");
+		Melder_require (my dimension == thy dimension,
+			U"Dimensions should be equal.");
+		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues,
+			U"Direction index too high.");
 		
 		autoVEC v (my dimension, kTensorInitializationType::ZERO);
 		if (xmax == xmin || ymax == ymin) {
@@ -1197,7 +1201,8 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 	try {
 		integer n = thy numberOfRows, d = thy numberOfColumns, nocp1 = my numberOfComponents + 1;
 		
-		Melder_require (d == my dimension, U"Dimensions should agree.");
+		Melder_require (d == my dimension,
+			U"Dimensions should agree.");
 		
 		// We cannot use a classification table because this could weigh a far-off data point with high probability
 

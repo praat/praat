@@ -23,6 +23,8 @@
 #include "Collection.h"
 #include "PointProcess.h"
 #include "TextGrid.h"
+#include "Sound_extensions_enums.h"
+
 Thing_declare (Interpreter);
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
@@ -109,6 +111,8 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 double Sound_localMean (Sound me, double fromTime, double toTime);
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference);
 
+double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection);
+
 autoSound Sound_localAverage (Sound me, double averaginginterval, int windowType);
 /* y[n] = sum(i=-n, i=n, x[n+i])/(2*n+1) */
 
@@ -128,12 +132,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 	channel = 0 (all), 1 (left), 2 (right).
 */
 
-#define FROM_LEFT_TO_RIGHT 0
-#define FROM_RIGHT_TO_LEFT 1
-#define FROM_BOTTOM_TO_TOP 2
-#define FROM_TOP_TO_BOTTOM 3
-
-void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, bool garnish);
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, kSoundDrawingDirection drawingDirection, bool garnish);
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
@@ -200,9 +199,9 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 
 autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges);
 
-autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
+autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, kSoundNoiseReductionMethod method);
 
-autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, int method);
+autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, kSoundNoiseReductionMethod method);
 
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision);
 
