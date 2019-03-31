@@ -1,6 +1,6 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	longdouble sum = 0.0;
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;
+	longdouble sum = 0.0;
 	for (integer i = imin + 1; i < imax; i ++) {
-		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
-		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
+		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
+		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			sum += fabs (p1 - p2);
 		} else {
@@ -43,14 +43,14 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;
 	longdouble sum = 0.0;
 	for (integer i = imin + 1; i < imax; i ++) {
-		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
-		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
+		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
+		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			sum += fabs (p1 - p2);
 		} else {
@@ -64,14 +64,14 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 3) return undefined;
 	longdouble sum = 0.0;
 	for (integer i = imin + 2; i < imax; i ++) {
-		double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
-		double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
+		const double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
+		const double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
 		    && intervalFactor1 <= maximumPeriodFactor && intervalFactor2 <= maximumPeriodFactor))
 		{
@@ -87,19 +87,19 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 5) return undefined;
 	longdouble sum = 0.0;
 	for (integer i = imin + 5; i <= imax; i ++) {
-		double
+		const double
 			p1 = my t [i - 4] - my t [i - 5],
 			p2 = my t [i - 3] - my t [i - 4],
 			p3 = my t [i - 2] - my t [i - 3],
 			p4 = my t [i - 1] - my t [i - 2],
 			p5 = my t [i] - my t [i - 1];
-		double
+		const double
 			f1 = p1 > p2 ? p1 / p2 : p2 / p1,
 			f2 = p2 > p3 ? p2 / p3 : p3 / p2,
 			f3 = p3 > p4 ? p3 / p4 : p4 / p3,
@@ -128,7 +128,7 @@ double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double 
 	double pmin, double pmax, double maximumPeriodFactor, double maximumAmplitudeFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_local (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
@@ -145,7 +145,7 @@ double PointProcess_Sound_getShimmer_local_dB (PointProcess me, Sound thee, doub
 	double pmin, double pmax, double maximumPeriodFactor, double maximumAmplitudeFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_local_dB (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
@@ -162,7 +162,7 @@ double PointProcess_Sound_getShimmer_apq3 (PointProcess me, Sound thee, double t
 	double pmin, double pmax, double maximumPeriodFactor, double maximumAmplitudeFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
@@ -179,7 +179,7 @@ double PointProcess_Sound_getShimmer_apq5 (PointProcess me, Sound thee, double t
 	double pmin, double pmax, double maximumPeriodFactor, double maximumAmplitudeFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq5 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
@@ -196,7 +196,7 @@ double PointProcess_Sound_getShimmer_apq11 (PointProcess me, Sound thee, double 
 	double pmin, double pmax, double maximumPeriodFactor, double maximumAmplitudeFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq11 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
@@ -213,7 +213,7 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 	double pmin, double pmax, double maximumPeriodFactor, double maximumAmplitudeFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 		return
@@ -233,10 +233,7 @@ void PointProcess_Sound_getShimmer_multi (PointProcess me, Sound thee, double tm
 	double *local, double *local_dB, double *apq3, double *apq5, double *apq11, double *dda)
 {
 	try {
-		if (tmax <= tmin) {
-			tmin = my xmin;
-			tmax = my xmax;   // autowindowing
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		if (local)    *local    =       AmplitudeTier_getShimmer_local    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 		if (local_dB) *local_dB =       AmplitudeTier_getShimmer_local_dB (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
@@ -263,7 +260,7 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	double floor, double ceiling, double maximumPeriodFactor, double maximumAmplitudeFactor, double silenceThreshold, double voicingThreshold)
 {
 	try {
-		if (tmin >= tmax) tmin = sound -> xmin, tmax = sound -> xmax;
+		Function_unidirectionalAutowindow (sound, & tmin, & tmax);
 		/*
 			Time domain. Should be preceded by something like "Time range of SELECTION:" or so.
 		*/

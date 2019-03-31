@@ -322,8 +322,8 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) 
 
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period) {
 	try {
-		if (tmax <= tmin) void (tmin = my xmin), tmax = my xmax;   // autowindowing
-		integer n = Melder_ifloor ((tmax - tmin) / period);
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
+		const integer n = Melder_ifloor ((tmax - tmin) / period);
 		double t = 0.5 * (tmin + tmax - n * period);
 		for (integer i = 1; i <= n; i ++, t += period)
 			PointProcess_addPoint (me, t);
@@ -415,10 +415,7 @@ static bool PointProcess_isPeriod (PointProcess me, integer ileft, double minimu
 integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) {   // autowindowing
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return 0;
@@ -435,10 +432,7 @@ integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tm
 double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) {   // autowindowing
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return undefined;
@@ -456,10 +450,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) {   // autowindowing
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;

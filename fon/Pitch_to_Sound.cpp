@@ -47,8 +47,8 @@ autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, bool hum) {
 
 void Pitch_play (Pitch me, double tmin, double tmax) {
 	try {
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoSound sound = Pitch_to_Sound (me, tmin, tmax, false);
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
@@ -57,8 +57,8 @@ void Pitch_play (Pitch me, double tmin, double tmax) {
 
 void Pitch_hum (Pitch me, double tmin, double tmax) {
 	try {
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoSound sound = Pitch_to_Sound (me, tmin, tmax, true);
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");

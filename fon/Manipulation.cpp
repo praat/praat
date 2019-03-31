@@ -549,7 +549,7 @@ static autoSound synthesize_pulses_pitch_hum (Manipulation me) {
 void Sound_Formant_Intensity_filter (Sound me, FormantTier formantTier, IntensityTier intensity) {
 	Sound_FormantTier_filter_inplace (me, formantTier);
 	if (intensity) Sound_IntensityTier_multiply_inplace (me, intensity);
-	NUMdeemphasize_f (my z.row (1), my dx, 50.0);
+	VECdeemphasize_f_inplace (my z.row (1), my dx, 50.0);
 	Vector_scale (me, 0.99);
 }
 
@@ -608,7 +608,7 @@ static autoSound synthesize_pulses_lpc (Manipulation me) {
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
 		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
-		NUMdeemphasize_f (result -> z.row (1), result -> dx, 50.0);
+		VECdeemphasize_f_inplace (result -> z.row (1), result -> dx, 50.0);
 		Vector_scale (result.get(), 0.99);
 		return result;
 	} catch (MelderError) {
@@ -630,7 +630,7 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
 		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
-		NUMdeemphasize_f (result -> z.row (1), result -> dx, 50.0);
+		VECdeemphasize_f_inplace (result -> z.row (1), result -> dx, 50.0);
 		Vector_scale (result.get(), 0.99);
 		return result;
 	} catch (MelderError) {
