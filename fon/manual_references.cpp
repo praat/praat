@@ -26,11 +26,11 @@ NORMAL (U"Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded phonology%. 
 	"Cambridge, MA: MIT Press.")
 MAN_END
 
-MAN_BEGIN (U"Boersma (1993)", U"ppgb", 20030312)
+MAN_BEGIN (U"Boersma (1993)", U"ppgb", 20190331)
 NORMAL (U"Paul Boersma (1993): \"Accurate short-term analysis of the fundamental frequency "
 	"and the harmonics-to-noise ratio of a sampled sound.\" "
 	"%%Proceedings of the Institute of Phonetic Sciences% #17: 97\\--110. University of Amsterdam.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (U"Boersma (1997)", U"ppgb", 19981219)
@@ -56,43 +56,44 @@ NORMAL (U"Paul Boersma (2000): \"Learning a grammar in Functional Phonology.\" "
 NORMAL (U"An extended version is chapter 14 of @@Boersma (1998)@.")
 MAN_END
 
-MAN_BEGIN (U"Boersma (2009a)", U"ppgb", 20100330)
+MAN_BEGIN (U"Boersma (2009a)", U"ppgb", 20190331)
 NORMAL (U"Paul Boersma (2009): \"Should jitter be measured by peak picking or by waveform matching?\" "
 	"%%Folia Phoniatrica et Logopaedica% #61: 305\\--308.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
-MAN_BEGIN (U"Boersma (2009b)", U"ppgb", 20100330)
+MAN_BEGIN (U"Boersma (2009b)", U"ppgb", 20190331)
 NORMAL (U"Paul Boersma (2009b): \"Some correct error-driven versions of the Constraint Demotion algorithm.\" "
 	"%%Linguistic Inquiry% #40: 667\\--686.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
-MAN_BEGIN (U"Boersma & Escudero (2008)", U"ppgb", 20100331)
+MAN_BEGIN (U"Boersma & Escudero (2008)", U"ppgb", 20190331)
 NORMAL (U"Paul Boersma & Paola Escudero (2008): \"Learning to perceive a smaller L2 vowel inventory: "
-	"an Optimality Theory account.\" In Peter Avery, Elan Dresher & Keren Rice (eds.), "
+	"an Optimality Theory account.\" In: Peter Avery, Elan Dresher & Keren Rice (eds.), "
 	"%%Contrast in phonology: theory, perception, acquisition%. Berlin: Mouton De Gruyter. 271\\--301.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
-MAN_BEGIN (U"Boersma & Hayes (2001)", U"ppgb", 20020511)
+MAN_BEGIN (U"Boersma & Hayes (2001)", U"ppgb", 20190331)
 NORMAL (U"Paul Boersma & Bruce Hayes (2001): \"Empirical tests of the Gradual Learning Algorithm.\" "
 	"%%Linguistic Inquiry% #32: 45\\--86.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
-MAN_BEGIN (U"Boersma & Kovacic (2006)", U"ppgb", 20061203)
+MAN_BEGIN (U"Boersma & Kovacic (2006)", U"ppgb", 20190331)
 NORMAL (U"Paul Boersma & Gordana Kovacic (2006): "
 	"\"Spectral characteristics of three styles of Croatian folk singing.\" "
 	"%%Journal of the Acoustical Society of America% #119: 1805\\--1816.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
-MAN_BEGIN (U"Boersma & Pater (2008)", U"ppgb", 20100331)
-NORMAL (U"Paul Boersma & Joe Pater (2008): "
+MAN_BEGIN (U"Boersma & Pater (2016)", U"ppgb", 20190331)
+NORMAL (U"Paul Boersma & Joe Pater (2016): "
 	"\"Convergence properties of a gradual learning algorithm for Harmonic Grammar.\" "
-	"%%Rutgers Optimality Archive% #970, http://ruccs.rutgers.edu/roa.html.")
-NORMAL (U"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
+	"In John J. McCarthy & Joe Pater (eds.), "
+	"%%Harmonic Serialism and Harmonic Grammar%. Sheffield: Equinox. 389\\--434.")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (U"Childers (1978)", U"ppgb", 20030515)
@@ -108,6 +109,13 @@ MAN_END
 MAN_BEGIN (U"Escudero & Boersma (2004)", U"ppgb", 20050427)
 NORMAL (U"Paola Escudero & Paul Boersma (2004): \"Bridging the gap between L2 speech perception "
 	"and phonological theory.\" %%Studies in Second Language Acquisition% #26: 551\\--585.")
+MAN_END
+
+MAN_BEGIN (U"Escudero, Boersma, Rauber & Bion (2009)", U"ppgb", 20190331)
+NORMAL (U"Paola Escudero, Paul Boersma, Andréia Schurt Rauber & Ricardo A.H. Bion (2009): "
+	"\"A cross-dialect acoustic description of vowels: Brazilian and European Portuguese.\" "
+	"%%Journal of the Acoustical Society of America% #126: 1379\\--1393.")
+NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (U"Fant (1960)", U"ppgb", 19980201)
