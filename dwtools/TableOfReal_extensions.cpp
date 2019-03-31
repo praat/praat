@@ -753,7 +753,6 @@ void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowm
 void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
-	double m = my numberOfRows, n = my numberOfColumns;
 	int fontSize = Graphics_inqFontSize (g);
 
 	Melder_require (icx >= 1 && icx <= my numberOfColumns,
