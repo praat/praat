@@ -513,7 +513,7 @@ NORMAL (U"If you want to remove all formant points in F2 between 0.5 and 0.7 sec
 	"you set ##Formant number# to 2, ##From time# to 0.5 s, and ##To time# to 0.7.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Formant (burg)...", U"ppgb", 20101007)
+MAN_BEGIN (U"Sound: To Formant (burg)...", U"ppgb", 20190331)
 INTRO (U"A command that creates a @Formant object from every selected @Sound object. "
 	"It performs a short-term spectral analysis, approximating the spectrum of each "
 	"analysis frame by a number of formants.")
@@ -533,10 +533,16 @@ DEFINITION (U"for most analyses of human speech, you will want to extract 5 form
 	"you can choose 4, 4.5, 5, 5.5, 6, and so on (see below).")
 TAG (U"##Maximum formant (Hz)")
 DEFINITION (U"the ceiling of the formant search range, in hertz. It is crucial that you set this to a value suitable for your speaker. "
-	"The standard value of 5500 Hz is suitable for an average adult female. For a male, use 5000 Hz; "
-	"if you use 5500 Hz for an adult male, you may end up with too few formants in the low frequency region, "
+	"An average adult female speaker has a vocal tract length that requires an average ceiling of 5500 Hz (which is Praat's standard value), "
+	"an average adult male speaker has a vocal tract length that requires an average ceiling of 5000 Hz, "
+	"and a young child may have a vocal tract length that requires an average ceiling of 8000 Hz. "
+	"These are just examples; there is large variation between speakers, "
+	"and @@Escudero, Boersma, Rauber & Bion (2009)@ showed that the vocal tract length difference "
+	"between a person's front vowels and their back vowels may be greater "
+	"than the average vocal tract length difference between males and females. "
+	"If you choose a too high ceiling, you may end up with too few formants in the low frequency region, "
 	"e.g. analysing an [u] as having a single formant near 500 Hz whereas you want two formants at 300 and 600 Hz. "
-	"For a young child, use a value much higher than 5500 Hz, for instance 8000 Hz (experiment with it on steady vowels).")
+	"You may like to experiment with this setting on steady vowels.")
 TAG (U"##Window length (s)")
 DEFINITION (U"the effective duration of the analysis window, in seconds. The actual length is twice this value, "
 	"because Praat uses a Gaussian-like analysis window with sidelobes below -120 dB. "

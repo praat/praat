@@ -22,9 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190302)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190331)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+NORMAL (U"##6.0.50# (31 March 2019)")
+LIST_ITEM (U"• Manual updates, speed, more tests.")
+LIST_ITEM (U"• Scripting: rowSums\\# , columnSums\\# ; randomGauss\\# \\#  finally with four arguments.")
 NORMAL (U"##6.0.49# (2 March 2019)")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.")
@@ -2755,7 +2758,7 @@ NORMAL (U"To the right of the window, you may see three pitch values, written wi
 	"at the cursor, or the average pitch in the selection.")
 MAN_END
 
-MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20050830)
+MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20190331)
 NORMAL (U"With @@Pitch settings...@ from the #Pitch menu, "
 	"you can determine how the pitch contour is displayed and how it is computed. "
 	"These settings will be remembered across Praat sessions. "
@@ -2765,9 +2768,13 @@ ENTRY (U"The %%pitch range% setting")
 NORMAL (U"This is the most important setting for pitch analysis. The standard range is from 75 to 500 hertz, "
 	"which means that the pitch analysis method will only find values between 75 and 500 Hz. "
 	"The range that you set here will be shown to the right of the analysis window.")
-NORMAL (U"For a male voice, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
-	"for a female voice, set the range to 100-500 Hz instead. For creaky voice you will want to set it much "
-	"lower than 75 Hz.")
+NORMAL (U"You should set the range to values appropriate for your speaker, "
+	"but a problem is that speakers vary enormously in their pitch ranges. "
+	"For many low-pitched (e.g. average male) voices, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
+	"for many high-pitched (e.g. average female) voices, a range of 100-500 Hz may instead be appropriate. "
+	"On the high side, some children can reach almost 2000 Hz when yelling; "
+	"on the low side, creaky voice can go as low as 40 Hz; "
+	"for the speakers you are investigating, you may therefore want to experiment with this setting.")
 NORMAL (U"Here is why you have to supply these settings. If the pitch floor is 75 Hz, "
 	"the pitch analysis method requires a 40-millisecond analysis window, "
 	"i.e., in order to measure the F0 at a time of, say, 0.850 seconds, "
@@ -2779,7 +2786,7 @@ NORMAL (U"Here is why you have to supply these settings. If the pitch floor is 7
 NORMAL (U"So setting the floor of the pitch range is a technical requirement for the pitch analysis. "
 	"If you set it too low, you will miss very fast F0 changes, and if you set it too high, "
 	"you will miss very low F0 values. For children's voices you can often use 200 Hz, "
-	"although 75 Hz will still give you the same time resolution as you get for the males.")
+	"although 75 Hz will still give you the same time resolution as you get for low-pitched voices.")
 ENTRY (U"The %units setting")
 NORMAL (U"This setting determines the units of the vertical pitch scale. Most people like to see the pitch range "
 	"in hertz, but there are several other possibilities.")
