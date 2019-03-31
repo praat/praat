@@ -1032,43 +1032,47 @@ void Sound_overrideSamplingFrequency (Sound me, double rate) {
 	my xmax = my xmin + my nx * my dx;
 }
 
-autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
+autoSound Sound_extractPart (Sound me, double tmin, double tmax, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
 	try {
 		/*
 			We do not clip to the Sound's time domain.
 			Any samples outside it are taken to be zero.
 		*/
 
-		/*
-			Autowindow.
-		*/
-		if (t1 == t2) { t1 = my xmin; t2 = my xmax; };
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		/*
 			Allow window tails outside specified domain.
 		*/
 		if (relativeWidth != 1.0) {
-			double margin = 0.5 * (relativeWidth - 1) * (t2 - t1);
-			t1 -= margin;
-			t2 += margin;
+			const double margin = 0.5 * (relativeWidth - 1) * (tmax - tmin);
+			tmin -= margin;
+			tmax += margin;
 		}
 		/*
 			Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		*/
-		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
-		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
-		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
+		const integer itmin = 1 + Melder_iceiling ((tmin - my x1) / my dx);
+		const integer itmax = 1 + Melder_ifloor   ((tmax - my x1) / my dx);
+		Melder_require (itmax >= itmin,
+			U"Extracted Sound would contain no samples.");
 		/*
 			Create sound, optionally shifted to [0..t2-t1].
 		*/
-		autoSound thee = Sound_create (my ny, t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
-		if (! preserveTimes) { thy xmin = 0.0; thy xmax -= t1; thy x1 -= t1; }
+		autoSound thee = Sound_create (my ny, tmin, tmax, itmax - itmin + 1, my dx, my x1 + (itmin - 1) * my dx);
+		if (! preserveTimes) {
+			thy xmin = 0.0;
+			thy xmax -= tmin;
+			thy x1 -= tmin;
+		}
 		/*
 			Copy only *real* samples into the new sound.
 			The *virtual* samples will remain at zero.
 		*/
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMvector_copyElements (& my z [channel] [0], & thy z [channel] [0] + 1 - ix1,
-					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
+			const integer itmin_clipped = std::max (integer (1), itmin);
+			const integer itmax_clipped = std::min (itmax, my nx);
+			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
+					<<= my z.row (ichan). part (itmin_clipped, itmax_clipped);
 		}
 		/*
 			Multiply by a window that extends throughout the target domain.
@@ -1080,36 +1084,39 @@ autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape 
 	}
 }
 
-autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap) {
+autoSound Sound_extractPartForOverlap (Sound me, double tmin, double tmax, double overlap) {
 	try {
-		if (t1 == t2) { t1 = my xmin; t2 = my xmax; };   // autowindow
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		if (overlap > 0.0) {
 			double margin = 0.5 * overlap;
-			t1 -= margin;
-			t2 += margin;
+			tmin -= margin;
+			tmax += margin;
 		}
-		if (t1 < my xmin) t1 = my xmin;   // clip to my time domain
-		if (t2 > my xmax) t2 = my xmax;
+		if (tmin < my xmin) tmin = my xmin;   // clip to my time domain
+		if (tmax > my xmax) tmax = my xmax;
 		/*
 			Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		*/
-		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
-		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
-		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
+		integer itmin = 1 + Melder_iceiling ((tmin - my x1) / my dx);
+		integer itmax = 1 + Melder_ifloor   ((tmax - my x1) / my dx);
+		Melder_require (itmax >= itmin,
+			U"Extracted Sound would contain no samples.");
 		/*
 			Create sound.
 		*/
-		autoSound thee = Sound_create (my ny, t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
+		autoSound thee = Sound_create (my ny, tmin, tmax, itmax - itmin + 1, my dx, my x1 + (itmin - 1) * my dx);
 		thy xmin = 0.0;
-		thy xmax -= t1;
-		thy x1 -= t1;
+		thy xmax -= tmin;
+		thy x1 -= tmin;
 		/*
 			Copy only *real* samples into the new sound.
 			The *virtual* samples will remain at zero.
 		*/
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMvector_copyElements (& my z [channel] [0], & thy z [channel] [0] + 1 - ix1,
-					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
+			const integer itmin_clipped = std::max (integer (1), itmin);
+			const integer itmax_clipped = std::min (itmax, my nx);
+			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
+					<<= my z.row (ichan). part (itmin_clipped, itmax_clipped);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1121,18 +1128,17 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth [])
 {
 	try {
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
+		integer itmin, itmax;
+		integer n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
+		Melder_require (n >= 3,
+			U"Sound too short.");
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			Function_unidirectionalAutowindow (me, & tmin, & tmax);
-			integer itmin, itmax;
-			integer n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
-			if (n <= 2)
-				Melder_throw (U"Sound too short.");
-			VEC channel = my z.row (ichan);
-			VEC window = channel.part (itmin, itmax);
-			NUMdeemphasize_f (window, my dx, 50.0);
-			for (int iformant = 1; iformant <= numberOfFormants; iformant ++) {
-				NUMfilterSecondOrderSection_fb (window, my dx, formant [iformant], bandwidth [iformant]);
-			}
+			VECVU const& channel = my z.row (ichan);
+			VECVU const& window = channel.part (itmin, itmax);
+			VECdeemphasize_f_inplace (window, my dx, 50.0);
+			for (int iformant = 1; iformant <= numberOfFormants; iformant ++)
+				VECfilterSecondOrderSection_fb_inplace (window, my dx, formant [iformant], bandwidth [iformant]);
 		}
 		Matrix_scaleAbsoluteExtremum (me, 0.99);
 	} catch (MelderError) {
@@ -1153,7 +1159,7 @@ autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth)
 void Sound_filterWithOneFormantInplace (Sound me, double frequency, double bandwidth) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
 		VEC channel = my z.row (ichan);
-		NUMfilterSecondOrderSection_fb (channel, my dx, frequency, bandwidth);
+		VECfilterSecondOrderSection_fb_inplace (channel, my dx, frequency, bandwidth);
 	}
 	Matrix_scaleAbsoluteExtremum (me, 0.99);
 }

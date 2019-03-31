@@ -207,20 +207,20 @@ double RealTier_getArea (RealTier me, double tmin, double tmax) {
 }
 
 double RealTier_getMean_curve (RealTier me, double tmin, double tmax) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
-	double area = RealTier_getArea (me, tmin, tmax);
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
+	const double area = RealTier_getArea (me, tmin, tmax);
 	if (isundef (area)) return undefined;
 	return area / (tmax - tmin);
 }
 
 double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tmax) {
-	integer n = my points.size, imin, imax;
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
+	const integer n = my points.size;
 	if (n == 0) return undefined;
 	if (n == 1) return 0.0;
-	imin = AnyTier_timeToLowIndex (me->asAnyTier(), tmin);
+	integer imin = AnyTier_timeToLowIndex (me->asAnyTier(), tmin);
 	if (imin == n) return 0.0;
-	imax = AnyTier_timeToHighIndex (me->asAnyTier(), tmax);
+	integer imax = AnyTier_timeToHighIndex (me->asAnyTier(), tmax);
 	if (imax == 1) return 0.0;
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
@@ -264,7 +264,7 @@ double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tma
 }
 
 double RealTier_getMean_points (RealTier me, double tmin, double tmax) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer n = AnyTier_getWindowPoints (me->asAnyTier(), tmin, tmax, & imin, & imax);
 	if (n == 0) return undefined;
@@ -275,7 +275,7 @@ double RealTier_getMean_points (RealTier me, double tmin, double tmax) {
 }
 
 double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tmax) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer n = AnyTier_getWindowPoints (me->asAnyTier(), tmin, tmax, & imin, & imax);
 	if (n < 2) return undefined;
@@ -301,22 +301,22 @@ void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fmin, double fmax,
 	int garnish, conststring32 method, conststring32 quantity)
 {
-	bool drawLines = str32str (method, U"lines") || str32str (method, U"Lines");
-	bool drawSpeckles = str32str (method, U"speckles") || str32str (method, U"Speckles");
-	integer n = my points.size, imin, imax, i;
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
+	const bool drawLines = str32str (method, U"lines") || str32str (method, U"Lines");
+	const bool drawSpeckles = str32str (method, U"speckles") || str32str (method, U"Speckles");
+	const integer n = my points.size;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setInner (g);
-	imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
-	imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
+	integer imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	integer imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
 	if (n == 0) {
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (me, tmin);
 		double fright = RealTier_getValueAtTime (me, tmax);
 		if (drawLines) Graphics_line (g, tmin, fleft, tmax, fright);
-	} else for (i = imin; i <= imax; i ++) {
+	} else for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
-		double t = point -> number, f = point -> value;
+		const double t = point -> number, f = point -> value;
 		if (drawSpeckles) Graphics_speckle (g, t, f);
 		if (drawLines) {
 			if (i == 1)

@@ -85,10 +85,7 @@ autoIntensity Matrix_to_Intensity (Matrix me) {
 }
 
 void Intensity_drawInside (Intensity me, Graphics g, double tmin, double tmax, double minimum, double maximum) {
-	if (tmax <= tmin) {
-		tmin = my xmin;   // autowindow
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 	if (maximum <= minimum)

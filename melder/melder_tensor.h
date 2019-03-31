@@ -243,6 +243,7 @@ public:
 	T * firstCell = nullptr;
 	integer size = 0;
 	integer stride = 1;
+	vectorview () = default;
 	vectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
 	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_) :
@@ -294,6 +295,7 @@ public:
 	const T * firstCell = nullptr;
 	integer size = 0;
 	integer stride = 1;
+	constvectorview () = default;
 	constvectorview (const constvector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
 	constvectorview (const vector<T>& other) :
