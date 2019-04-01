@@ -106,10 +106,10 @@ autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks,
 			for (integer ipoint = 2; ipoint <= peaks -> points. size - 1; ipoint ++) {
 				double peakAmplitudeRight = RealTier_getValueAtIndex (peaks, ipoint);
 				double timePeakRight = peaks -> points.at [ipoint] -> number;
-				integer index = AnyTier_timeToNearestIndex ((AnyTier) valleys, timePeakRight);
-				double timeValley = valleys -> points.at [index] -> number;
+				integer indexValley = AnyTier_timeToNearestIndex ((AnyTier) valleys, timePeakRight);
+				double timeValley = valleys -> points.at [indexValley] -> number;
 				if (timeValley > peakTimeLeft && timeValley < timePeakRight) {
-					double valleyAmplitude = RealTier_getValueAtIndex (valleys, index);
+					double valleyAmplitude = RealTier_getValueAtIndex (valleys, indexValley);
 					double amplitudeRange = peakAmplitudeLeft - valleyAmplitude;
 					double level = valleyAmplitude + amplitudeRange * closingThreshold;
 					RealTier_addPoint (thee.get(), peakTimeLeft, level);
@@ -138,25 +138,25 @@ autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchC
 		autoAmplitudeTier levels = EGG_and_AmplitudeTiers_getLevels (me, peaks.get(), valleys.get(), closingThreshold);
 		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
 		double previousOpeningTime = my xmin;
-		bool closing = false, opening = false;
 		for (integer ipoint = 1; ipoint <= peaks -> points. size; ipoint ++) {
 			RealPoint peak = peaks -> points.at [ipoint];
 			double peakPosition = peak -> number;
 			double peakAmplitude = peak -> value;
 			double closingTime = undefined, openingTime = undefined;
 			if (peakAmplitude > minimumPeakAmplitude) {
-				double level = RealTier_getValueAtIndex (levels.get(), peakPosition);
+				double level = RealTier_getValueAtTime (levels.get(), peakPosition);
 				closingTime = Sound_getNearestLevelCrossing ((Sound) me, 1, peakPosition, level, kSoundSearchDirection::Left);
 				openingTime = Sound_getNearestLevelCrossing ((Sound) me, 1, peakPosition, level, kSoundSearchDirection::Right);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
 					integer intervalNumberc = IntervalTier_timeToIndex (intervalTier.get(), closingTime);
 					TextInterval intervalc = intervalTier -> intervals.at [intervalNumberc];
-					autoTextInterval newIntervalc = TextInterval_create (closingTime, intervalc -> xmax, U"");
+					autoTextInterval newIntervalc = TextInterval_create (closingTime, intervalc -> xmax, U"c");
 					intervalc -> xmax = closingTime;
 					intervalTier -> intervals. addItem_move (newIntervalc.move());
+					
 					integer intervalNumbero = IntervalTier_timeToIndex (intervalTier.get(), openingTime);
 					TextInterval intervalo = intervalTier -> intervals.at [intervalNumbero];
-					autoTextInterval newIntervalo = TextInterval_create (openingTime, intervalo -> xmax, U"c");
+					autoTextInterval newIntervalo = TextInterval_create (openingTime, intervalo -> xmax, U"");
 					intervalo -> xmax = openingTime;
 					intervalTier -> intervals. addItem_move (newIntervalo.move());
 					previousOpeningTime = openingTime;
