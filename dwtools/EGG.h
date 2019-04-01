@@ -53,9 +53,12 @@ Thing_define (DEGG, Vector) {
 
 autoDEGG DEGG_create (double xmin, double xmax, integer nx, double dx, double x1);
 
-autoTextTier EGG_to_TextTier (EGG me, double pitchFloor, double PitchCeiling, double closingLevelPercentage, double voicingThresholdPercentage, kEGG_findClosedIntervalMethod method);
+// TODO better name
+autoTextTier EGG_to_TextTier_closedGlottis (EGG me, double pitchFloor, double PitchCeiling, double closingThreshold, double silenceThreshold, kEGG_findClosedIntervalMethod method);
 
-autoTextTier EGG_and_DEGG_to_TextTier (EGG me, DEGG thee, double pitchFloor, double PitchCeiling, double closingLevelPercentage, double voicingThresholdPercentage);
+autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
+
+autoTextTier EGG_and_DEGG_to_TextTier (EGG me, DEGG thee, double pitchFloor, double PitchCeiling, double closingThreshold, double silenceThreshold);
 
 autoDEGG EGG_to_DEGG (EGG me, double fromFrequency, double toFrequency, double smoothing);
 

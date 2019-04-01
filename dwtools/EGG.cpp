@@ -89,9 +89,10 @@ autoDEGG DEGG_create (double xmin, double xmax, integer nx, double dx, double x1
 		Melder_throw (U"EGG not created.");
 	}
 }
-autoTextTier EGG_to_TextTier (EGG me, double pitchFloor, double PitchCeiling, double closingLevelPercentage, kEGG_findClosedIntervalMethod method);
 
-autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks, AmplitudeTier valleys, double closingLevelPercentage) {
+//autoTextTier EGG_to_TextTier (EGG me, double pitchFloor, double PitchCeiling, double closingThreshold, kEGG_findClosedIntervalMethod method);
+
+autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks, AmplitudeTier valleys, double closingThreshold) {
 		try {
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
 				U"The domain of the EGG and the peaks should be equal.");
@@ -106,11 +107,11 @@ autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks,
 				double peakAmplitudeRight = RealTier_getValueAtIndex (peaks, ipoint);
 				double timePeakRight = peaks -> points.at [ipoint] -> number;
 				integer index = AnyTier_timeToNearestIndex ((AnyTier) valleys, timePeakRight);
-				double timeValley = RealTier_getValueAtIndex (valleys, index);
+				double timeValley = valleys -> points.at [index] -> number;
 				if (timeValley > peakTimeLeft && timeValley < timePeakRight) {
 					double valleyAmplitude = RealTier_getValueAtIndex (valleys, index);
 					double amplitudeRange = peakAmplitudeLeft - valleyAmplitude;
-					double level = valleyAmplitude + amplitudeRange * 0.01 * closingLevelPercentage;
+					double level = valleyAmplitude + amplitudeRange * closingThreshold;
 					RealTier_addPoint (thee.get(), peakTimeLeft, level);
 				}
 			}
@@ -120,23 +121,23 @@ autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks,
 		}
 }
 
-autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchCeiling, double closingLevelPercentage, double voicingThresholdPercentage) {
+autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
 	try {
 		bool maximumIsClosedGlottis = false; // because we might multiply the EGG by -1
-		autoPointProcess maxima = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, true, false);
-		autoPointProcess minima = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, false, true);
+		autoPointProcess peakPositions = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, true, false);
+		autoPointProcess valleyPositions = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, false, true);
 		/*
 			Get the values of the peaks and valleys
 		*/
-		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_point (maxima.get(), (Sound) me);
-		autoAmplitudeTier valleys = PointProcess_Sound_to_AmplitudeTier_point (minima.get(), (Sound) me);
+		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_point (peakPositions.get(), (Sound) me);
+		autoAmplitudeTier valleys = PointProcess_Sound_to_AmplitudeTier_point (valleyPositions.get(), (Sound) me);
 		double minimum = RealTier_getMinimumValue (valleys.get());
 		double maximum = RealTier_getMaximumValue (peaks.get());
-		double minimumPeakAmplitude = maximum * 0.01 * voicingThresholdPercentage;
+		double minimumPeakAmplitude = maximum * silenceThreshold;
 		maximumIsClosedGlottis = maximum > minimum;
-		autoAmplitudeTier levels = EGG_and_AmplitudeTiers_getLevels (me, peaks.get(), valleys.get(), closingLevelPercentage);
-		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
-		double previousBoundary = my xmin;
+		autoAmplitudeTier levels = EGG_and_AmplitudeTiers_getLevels (me, peaks.get(), valleys.get(), closingThreshold);
+		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
+		double previousOpeningTime = my xmin;
 		bool closing = false, opening = false;
 		for (integer ipoint = 1; ipoint <= peaks -> points. size; ipoint ++) {
 			RealPoint peak = peaks -> points.at [ipoint];
@@ -147,16 +148,24 @@ autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchC
 				double level = RealTier_getValueAtIndex (levels.get(), peakPosition);
 				closingTime = Sound_getNearestLevelCrossing ((Sound) me, 1, peakPosition, level, kSoundSearchDirection::Left);
 				openingTime = Sound_getNearestLevelCrossing ((Sound) me, 1, peakPosition, level, kSoundSearchDirection::Right);
-				if (closingTime != undefined && openingTime != undefined && closingTime != previousBoundary) {
-					autoTextInterval cloedGlottis = TextInterval_create (closingTime, openingTime, U"c");
-					
+				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
+					integer intervalNumberc = IntervalTier_timeToIndex (intervalTier.get(), closingTime);
+					TextInterval intervalc = intervalTier -> intervals.at [intervalNumberc];
+					autoTextInterval newIntervalc = TextInterval_create (closingTime, intervalc -> xmax, U"");
+					intervalc -> xmax = closingTime;
+					intervalTier -> intervals. addItem_move (newIntervalc.move());
+					integer intervalNumbero = IntervalTier_timeToIndex (intervalTier.get(), openingTime);
+					TextInterval intervalo = intervalTier -> intervals.at [intervalNumbero];
+					autoTextInterval newIntervalo = TextInterval_create (openingTime, intervalo -> xmax, U"c");
+					intervalo -> xmax = openingTime;
+					intervalTier -> intervals. addItem_move (newIntervalo.move());
+					previousOpeningTime = openingTime;
+					Melder_assert (intervalNumbero == intervalNumberc + 1);
 				}
 			}
-			
 		}
-		if (! maximumIsClosedGlottis)
-			my z.row(1)  *=  -1.0;
-		return thee;
+		
+		return intervalTier;
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": TextTier not created.");
@@ -164,10 +173,12 @@ autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchC
 	
 }
 
-autoIntervalTier EGG_and_DEGG_to_TextTier (EGG me, DEGG thee, double pitchFloor, double PitchCeiling, double closingLevelPercentage) {
+autoIntervalTier EGG_and_DEGG_to_TextTier (EGG me, DEGG thee, double pitchFloor, double PitchCeiling, double closingThreshold) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 			U"The domains should be equal.");
+		autoIntervalTier intervalTier = IntervalTier_create (my xmin, thy xmin);
+		return intervalTier;
 	} catch (MelderError) {
 		Melder_throw (me, thee, U"No IntervalTier created.");
 	}
