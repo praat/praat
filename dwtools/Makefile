@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 9 March 2019
+# 1 April 2019
 
 include ../makefile.defs
 
@@ -16,7 +16,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Configuration_and_Procrustes.o  DataModeler.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_PatternList_Categories.o \
-	EditDistanceTable.o EEG_extensions.o \
+	EGG.o EditDistanceTable.o EEG_extensions.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \

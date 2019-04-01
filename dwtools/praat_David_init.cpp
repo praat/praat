@@ -78,6 +78,7 @@
 #include "EditDistanceTable.h"
 #include "Editor.h"
 #include "EditDistanceTable.h"
+#include "EGG.h"
 #include "Eigen_and_Matrix.h"
 #include "Eigen_and_Procrustes.h"
 #include "Eigen_and_SSCP.h"
@@ -7786,6 +7787,7 @@ void praat_uvafon_David_init () {
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
+		classEGG, classDEGG,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
