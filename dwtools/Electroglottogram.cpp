@@ -1,4 +1,4 @@
-/* EGG.cpp
+/* Electroglottogram.cpp
  *
  * Copyright (C) 2019 David Weenink
  *
@@ -17,19 +17,19 @@
  */
 
 #include "AmplitudeTier.h"
-#include "EGG.h"
+#include "Electroglottogram.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_extensions.h"
 #include "Sound_to_PointProcess.h"
 
 #include "enums_getText.h"
-#include "EGG_enums.h"
+#include "Electroglottogram_enums.h"
 #include "enums_getValue.h"
-#include "EGG_enums.h"
+#include "Electroglottogram_enums.h"
 
-Thing_implement (EGG, Vector, 2);
+Thing_implement (Electroglottogram, Vector, 2);
 
-void structEGG :: v_info () {
+void structElectroglottogram :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
@@ -42,21 +42,21 @@ void structEGG :: v_info () {
 	MelderInfo_writeLine (U"   First sample centred at: ", our x1, U" seconds");
 }
 
-autoEGG EGG_create (double xmin, double xmax, integer nx, double dx, double x1) {
+autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1) {
 	try {
-		autoEGG me = Thing_new (EGG);
+		autoElectroglottogram me = Thing_new (Electroglottogram);
 		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1, 1, 1, 1, 1);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"EGG not created.");
+		Melder_throw (U"Electroglottogram not created.");
 	}
 }
 
-autoEGG Sound_extractEGG (Sound me, integer channelNumber) {
+autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channelNumber) {
 	try {
 		Melder_require (channelNumber >= 1 && channelNumber <= my ny,
 			U"There is no channel ", channelNumber, U".");
-		autoEGG thee = EGG_create (my xmin, my xmax, my nx, my dx, my x1);
+		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
 		thy z.row (1) <<= my z.row (channelNumber);
 		return thee;
 	} catch (MelderError) {
@@ -64,9 +64,9 @@ autoEGG Sound_extractEGG (Sound me, integer channelNumber) {
 	}
 }
 
-Thing_implement (DEGG, Vector, 2);
+Thing_implement (DElectroglottogram, Vector, 2);
 
-void structDEGG :: v_info () {
+void structDElectroglottogram :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
@@ -80,24 +80,24 @@ void structDEGG :: v_info () {
 }
 
 
-autoDEGG DEGG_create (double xmin, double xmax, integer nx, double dx, double x1) {
+autoDElectroglottogram DElectroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1) {
 	try {
-		autoDEGG me = Thing_new (DEGG);
+		autoDElectroglottogram me = Thing_new (DElectroglottogram);
 		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1, 1, 1, 1, 1);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"EGG not created.");
+		Melder_throw (U"Electroglottogram not created.");
 	}
 }
 
-//autoTextTier EGG_to_TextTier (EGG me, double pitchFloor, double PitchCeiling, double closingThreshold, kEGG_findClosedIntervalMethod method);
+//autoTextTier Electroglottogram_to_TextTier (Electroglottogram me, double pitchFloor, double PitchCeiling, double closingThreshold, kElectroglottogram_findClosedIntervalMethod method);
 
-autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks, AmplitudeTier valleys, double closingThreshold) {
+autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingThreshold) {
 		try {
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
-				U"The domain of the EGG and the peaks should be equal.");
+				U"The domain of the Electroglottogram and the peaks should be equal.");
 			Melder_require (my xmin == valleys -> xmin && my xmax == valleys -> xmax,
-				U"The domain of the EGG and the peaks should be equal.");
+				U"The domain of the Electroglottogram and the peaks should be equal.");
 			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
 				U"The AmplitudeTiers cannot be empty.");
 			autoAmplitudeTier thee = AmplitudeTier_create (my xmin, my xmax);
@@ -121,9 +121,9 @@ autoAmplitudeTier EGG_and_AmplitudeTiers_getLevels (EGG me, AmplitudeTier peaks,
 		}
 }
 
-autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
+autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
 	try {
-		bool maximumIsClosedGlottis = false; // because we might multiply the EGG by -1
+		bool maximumIsClosedGlottis = false; // because we might multiply the Electroglottogram by -1
 		autoPointProcess peakPositions = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, true, false);
 		autoPointProcess valleyPositions = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, false, true);
 		/*
@@ -135,7 +135,7 @@ autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchC
 		double maximum = RealTier_getMaximumValue (peaks.get());
 		double minimumPeakAmplitude = maximum * silenceThreshold;
 		maximumIsClosedGlottis = maximum > minimum;
-		autoAmplitudeTier levels = EGG_and_AmplitudeTiers_getLevels (me, peaks.get(), valleys.get(), closingThreshold);
+		autoAmplitudeTier levels = Electroglottogram_and_AmplitudeTiers_getLevels (me, peaks.get(), valleys.get(), closingThreshold);
 		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
 		double previousOpeningTime = my xmin;
 		for (integer ipoint = 1; ipoint <= peaks -> points. size; ipoint ++) {
@@ -173,7 +173,7 @@ autoIntervalTier EGG_to_TextTier_peaks (EGG me, double pitchFloor, double pitchC
 	
 }
 
-autoIntervalTier EGG_and_DEGG_to_TextTier (EGG me, DEGG thee, double pitchFloor, double PitchCeiling, double closingThreshold) {
+autoIntervalTier Electroglottogram_and_DElectroglottogram_to_TextTier (Electroglottogram me, DElectroglottogram thee, double pitchFloor, double PitchCeiling, double closingThreshold) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 			U"The domains should be equal.");
@@ -184,7 +184,7 @@ autoIntervalTier EGG_and_DEGG_to_TextTier (EGG me, DEGG thee, double pitchFloor,
 	}
 }
 
-autoDEGG EGG_to_DEGG (EGG me, double fromFrequency, double toFrequency, double smoothing) {
+autoDElectroglottogram Electroglottogram_to_DElectroglottogram (Electroglottogram me, double fromFrequency, double toFrequency, double smoothing) {
 		try {
 			autoSpectrum thee = Sound_to_Spectrum ((Sound) me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
@@ -195,10 +195,10 @@ autoDEGG EGG_to_DEGG (EGG me, double fromFrequency, double toFrequency, double s
 			Spectrum_passHannBand (thee.get(), fromFrequency, toFrequency, smoothing);
 			autoSound sound = Spectrum_to_Sound (thee.get());
 			Vector_scale (sound.get(), 0.99);
-			autoDEGG him = DEGG_create (sound -> xmin, sound -> xmax, sound -> nx, sound -> dx, sound -> x1);
+			autoDElectroglottogram him = DElectroglottogram_create (sound -> xmin, sound -> xmax, sound -> nx, sound -> dx, sound -> x1);
 			his z.get() <<= sound -> z.get();
 			return him;
 		} catch (MelderError) {
-			Melder_throw (me, U": cannot create DEGG.");
+			Melder_throw (me, U": cannot create DElectroglottogram.");
 		}
 }

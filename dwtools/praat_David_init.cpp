@@ -78,7 +78,7 @@
 #include "EditDistanceTable.h"
 #include "Editor.h"
 #include "EditDistanceTable.h"
-#include "EGG.h"
+#include "Electroglottogram.h"
 #include "Eigen_and_Matrix.h"
 #include "Eigen_and_Procrustes.h"
 #include "Eigen_and_SSCP.h"
@@ -2333,9 +2333,9 @@ DIRECT (NEW1_Eigen_Covariance_project) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
-/******************** EGG ********************************************/
+/******************** Electroglottogram ********************************************/
 
-FORM (NEW_EGG_to_IntervalTier, U"EGG: To IntervalTier", U"") {
+FORM (NEW_Electroglottogram_to_IntervalTier, U"Electroglottogram: To IntervalTier", U"") {
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
 	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
@@ -2343,8 +2343,8 @@ FORM (NEW_EGG_to_IntervalTier, U"EGG: To IntervalTier", U"") {
 	OK
 DO
 	Melder_require (closingThreshold < 1.0, U"The closing threshold has to be smaller than 1.");
-	CONVERT_EACH (EGG)
-		autoIntervalTier result = EGG_to_TextTier_peaks (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
+	CONVERT_EACH (Electroglottogram)
+		autoIntervalTier result = Electroglottogram_to_TextTier_peaks (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
 	CONVERT_EACH_END (my name.get())
 
 }
@@ -5654,12 +5654,12 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (NEW_Sound_extractEGG, U"Sound: Extract EGG", U"") {
+FORM (NEW_Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U"") {
 	CHANNEL (channel, U"Channel", U"1")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoEGG result = Sound_extractEGG (me, channel);
+		autoElectroglottogram result = Sound_extractElectroglottogram (me, channel);
 	CONVERT_EACH_END (my name.get())
 }
 	
@@ -7812,7 +7812,7 @@ void praat_uvafon_David_init () {
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
-		classEGG, classDEGG,
+		classElectroglottogram, classDElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
@@ -8182,7 +8182,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setCosts_others);
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
-	praat_addAction1 (classEGG, 1, U"To IntervalTier", nullptr, 0, NEW_EGG_to_IntervalTier);
+	praat_addAction1 (classElectroglottogram, 1, U"To IntervalTier...", nullptr, 0, NEW_Electroglottogram_to_IntervalTier);
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
 	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, INFO_StringsIndex_getClassLabelFromClassIndex);
@@ -8524,7 +8524,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"To MelFilter...", U"To BarkFilter...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_MelFilter);
 	praat_addAction1 (classSound, 0, U"To MelSpectrogram...", U"To BarkSpectrogram...", praat_DEPTH_1, NEW_Sound_to_MelSpectrogram);
 	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, NEW_Sound_to_ComplexSpectrogram);
-    praat_addAction1 (classSound, 0, U"Extract EGG...", U"Extract part for overlap...", 1, NEW_Sound_extractEGG);
+    praat_addAction1 (classSound, 0, U"Extract Electroglottogram...", U"Extract part for overlap...", 1, NEW_Sound_extractElectroglottogram);
 
 	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_to_Polygon);
     praat_addAction1 (classSound, 2, U"To Polygon (enclosed)...", U"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, NEW1_Sounds_to_Polygon_enclosed);

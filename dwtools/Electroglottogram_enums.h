@@ -1,4 +1,4 @@
-/* EGG_enums.h
+/* Electroglottogram_enums.h
  *
  * Copyright (C) 2019 David Weenink
  *
@@ -16,9 +16,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kEGG_findClosedIntervalMethod, 1)
-	enums_add (kEGG_findClosedIntervalMethod, 1, Peaks, U"Peaks")
-	enums_add (kEGG_findClosedIntervalMethod, 2, Derivative, U"Derivative")
-enums_end (kEGG_findClosedIntervalMethod, 2, Derivative)
+enums_begin (kElectroglottogram_findClosedIntervalMethod, 1)
+	enums_add (kElectroglottogram_findClosedIntervalMethod, 1, Peaks, U"Peaks")
+	enums_add (kElectroglottogram_findClosedIntervalMethod, 2, Derivative, U"Derivative")
+enums_end (kElectroglottogram_findClosedIntervalMethod, 2, Derivative)
 
-/* End of file EGG_enums.h */
+/* End of file Electroglottogram_enums.h */
