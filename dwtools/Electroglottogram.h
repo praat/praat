@@ -44,23 +44,14 @@ autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channelN
 
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingLevelPercentage);
 
-Thing_define (DElectroglottogram, Vector) {
-	void v_info ()
-		override;
-	int v_domainQuantity ()
-		override { return MelderQuantity_TIME_SECONDS; }
-};
-
-autoDElectroglottogram DElectroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1);
-
 // TODO better name
 autoTextTier Electroglottogram_to_TextTier_closedGlottis (Electroglottogram me, double pitchFloor, double PitchCeiling, double closingThreshold, double silenceThreshold, kElectroglottogram_findClosedIntervalMethod method);
 
+autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, autoAmplitudeTier *out_peaks, autoAmplitudeTier *out_valleys);
+
 autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
 
-autoTextTier Electroglottogram_and_DElectroglottogram_to_TextTier (Electroglottogram me, DElectroglottogram thee, double pitchFloor, double PitchCeiling, double closingThreshold, double silenceThreshold);
-
-autoDElectroglottogram Electroglottogram_to_DElectroglottogram (Electroglottogram me, double fromFrequency, double toFrequency, double smoothing);
+autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
 
 /* End of file Electroglottogram.h */
 

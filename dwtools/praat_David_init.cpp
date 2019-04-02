@@ -2346,7 +2346,35 @@ DO
 	CONVERT_EACH (Electroglottogram)
 		autoIntervalTier result = Electroglottogram_to_TextTier_peaks (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
 	CONVERT_EACH_END (my name.get())
+}
 
+FORM (NEW_Electroglottogram_to_AmplitudeTier_levels, U"Electroglottogram: To AmplitudeTier (levels)", U"") {
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
+	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
+	BOOLEAN (wantPeaks, U"Peaks", 0)
+	BOOLEAN (wantValleys, U"Valleys", 0)
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoAmplitudeTier peaks, valleys;
+		autoAmplitudeTier result = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks, & valleys);
+		if (wantPeaks)
+			praat_new (peaks.move(), my name.get(), U"_peaks");
+		if (wantValleys)
+			praat_new (valleys.move(), my name.get(), U"_valleys");
+	CONVERT_EACH_END (my name.get())
+
+}
+
+FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"") {
+	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoElectroglottogram result = Electroglottogram_derivative (me, lowPassFrequency, smoothing);
+	CONVERT_EACH_END (my name.get(), U"_derivative")
 }
 
 /******************** Index ********************************************/
@@ -7812,7 +7840,7 @@ void praat_uvafon_David_init () {
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
-		classElectroglottogram, classDElectroglottogram,
+		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
@@ -8183,6 +8211,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
 	praat_addAction1 (classElectroglottogram, 1, U"To IntervalTier...", nullptr, 0, NEW_Electroglottogram_to_IntervalTier);
+	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
+	praat_addAction1 (classElectroglottogram, 1, U"To Electroglottogram (derivative)...", nullptr, 0, NEW_Electroglottogram_derivative);
+	
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
 	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, INFO_StringsIndex_getClassLabelFromClassIndex);
