@@ -1,6 +1,6 @@
 /* AffineTransform.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 #include "oo_DESCRIPTION.h"
 #include "AffineTransform_def.h"
 
-void structAffineTransform :: v_transform (MAT out, MAT in) {
+void structAffineTransform :: v_transform (MATVU const& out, constMATVU const& in) {
 	Melder_assert (in.nrow == out.nrow);
 	Melder_assert (in.ncol == out.ncol);
 	MATmul (out, in, r.get());
