@@ -1,6 +1,6 @@
 /* Procrustes_def.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ oo_DEFINE_CLASS (Procrustes, AffineTransform)
 	oo_DOUBLE (s)
 
 	#if oo_DECLARING
-		void v_transform (MAT out, MAT in)
+		void v_transform (MATVU const& out, constMATVU const& in)
 			override;
 		autoAffineTransform v_invert ()
 			override;
