@@ -207,3 +207,32 @@ autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double
 			Melder_throw (me, U": cannot create derivative of Electroglottogram.");
 		}
 }
+
+// Very simple and strict
+autoSound Sound_Electroglottograms_combine (Sound me, OrderedOf<structElectroglottogram>* thee) {
+	try {
+		integer numberOfChannels = my ny + thy size;
+		for (integer iegg = 1; iegg <= thy size; iegg ++) {
+			Electroglottogram egg = thy at [iegg];
+			Melder_require (egg -> xmin == my xmin && egg -> xmax == my xmax,
+				U"The Electroglottograms should have the same domain as the Sound");
+			Melder_require (egg -> nx == my nx, 
+				U"The Electroglottograms should have the same number of samples as the Sound.");
+			Melder_require (egg -> dx == my dx,
+				U"The Electroglottograms should have the same sampling frequency as the Sound.");
+		}
+		autoSound him = Sound_create (numberOfChannels,my xmin, my xmax, my nx, my dx, my x1);
+		for (integer ichan = 1; ichan <= my ny; ichan ++)
+			his z.row (ichan) <<= my z.row(ichan);
+	
+		for (integer ichan = my ny + 1; ichan <= numberOfChannels; ichan ++) {
+			Electroglottogram egg = thy at [ichan - my ny];
+			his z.row (ichan) <<= egg -> z.row (1);
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, thee, U" not combined.");
+	}
+}
+
+/* End of file Electroglottogram.cpp */

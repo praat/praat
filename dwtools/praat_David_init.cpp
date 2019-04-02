@@ -2377,6 +2377,12 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_derivative")
 }
 
+DIRECT (NEW_Sound_Electroglottograms_combine) {
+	CONVERT_ONE_AND_LIST(Sound, Electroglottogram)
+		autoSound result = Sound_Electroglottograms_combine (me, & list);
+		integer numberOfChannels = result -> ny;
+	CONVERT_ONE_AND_LIST_END (U"combined_", numberOfChannels)
+}
 /******************** Index ********************************************/
 
 DIRECT (HELP_Index_help) {
@@ -8213,6 +8219,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classElectroglottogram, 1, U"To IntervalTier...", nullptr, 0, NEW_Electroglottogram_to_IntervalTier);
 	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
 	praat_addAction1 (classElectroglottogram, 1, U"To Electroglottogram (derivative)...", nullptr, 0, NEW_Electroglottogram_derivative);
+	praat_addAction2 (classSound, 1, classElectroglottogram, 0, U"Combine to multi-channel", nullptr, 0, NEW_Sound_Electroglottograms_combine);
 	
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
