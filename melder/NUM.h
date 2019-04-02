@@ -1,7 +1,7 @@
 #pragma once
 /* NUM.h
  *
- * Copyright (C) 2017,2018 Paul Boersma
+ * Copyright (C) 2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ bool NUMequal (constvector<T> const& x, constvector<T> const& y) noexcept {
 	if (y.size != n)
 		return false;
 	for (integer i = 1; i <= n; i ++)
-		if (x [i] != y [i])
+		if (x [i] != y [i] && (isdefined (x [i]) || isdefined (y [i])))
 			return false;
 	return true;
 }
@@ -143,7 +143,7 @@ bool NUMequal (constmatrix<T> const& x, constmatrix<T> const& y) noexcept {
 		return false;
 	for (integer irow = 1; irow <= nrow; irow ++)
 		for (integer icol = 1; icol <= ncol; icol ++)
-			if (x [irow] [icol] != y [irow] [icol])
+			if (x [irow] [icol] != y [irow] [icol] && (isdefined (x [irow] [icol]) || isdefined (y [irow] [icol])))
 				return false;
 	return true;
 }
