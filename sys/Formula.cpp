@@ -116,7 +116,8 @@ enum { NO_SYMBOL_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
 		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_FAST_, MAT_MUL_METAL_,
 		MAT_MUL_TN_, MAT_MUL_NT_, MAT_MUL_TT_, VEC_REPEAT_,
-	#define HIGH_FUNCTION_2  VEC_REPEAT_
+		VEC_ROW_INNERS_,
+	#define HIGH_FUNCTION_2  VEC_ROW_INNERS_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_3  FISHER_P_
@@ -241,6 +242,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"soundPressureToPhon", U"objectsAreIdentical",
 	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
+	U"rowInners#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -2596,6 +2598,37 @@ static void do_add () {
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
 			return;
 		}
+		if (y->which == Stackel_NUMERIC_MATRIX) {
+			/*
+				result## = x# + y##
+				i.e.
+				result## [i, j] = x# [i] + y## [i, j]
+			*/
+			integer xsize = x->numericVector.size;
+			integer ynrow = y->numericMatrix.nrow;
+			Melder_require (ynrow == xsize,
+				U"When adding a matrix to a vector, the matrix’s number of rows should be equal to the vector’s size, "
+				"instead of ", ynrow, U" and ", xsize, U"."
+			);
+			if (x->owned) {
+				/*@praat
+					assert { 1, 2, 3 } + { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 2, 3 }, { 5, 6 }, { 8, 9 } }
+				@*/
+				autoMAT newMatrix = newMATadd (x->numericVector, y->numericMatrix);
+				x->reset();
+				x->numericMatrix = newMatrix. releaseToAmbiguousOwner();
+			} else {
+				/*@praat
+					a# = { 1, 2, 3 }
+					assert a# + { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 2, 3 }, { 5, 6 }, { 8, 9 } }
+				@*/
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = newMATadd (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			x->which = Stackel_NUMERIC_MATRIX;
+			return;
+		}
 		if (y->which == Stackel_NUMBER) {
 			/*
 				result# = x# + y
@@ -2646,10 +2679,11 @@ static void do_add () {
 				i.e.
 				result## [i, j] = x## [i, j] + y# [j]
 			*/
-			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
-			integer ysize = y->numericVector.size;
-			if (xncol != ysize)
-				Melder_throw (U"When adding a vector to a matrix, its size should be equal to the number of columns, instead of ", ysize, U" and ", xncol, U".");
+			Melder_require (y->numericVector.size == x->numericMatrix.ncol,
+				U"Cannot add a vector with ", y->numericVector.size, U" elements "
+				"to a matrix with ", x->numericMatrix.ncol, U" columns. "
+				"These numbers should be equal."
+			);
 			if (x->owned) {
 				/*@praat
 					#
@@ -2964,6 +2998,37 @@ static void do_mul () {
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
 			return;
 		}
+		if (y->which == Stackel_NUMERIC_MATRIX) {
+			/*
+				result## = x# * y##
+				i.e.
+				result## [i, j] = x# [i] * y## [i, j]
+			*/
+			integer xsize = x->numericVector.size;
+			integer ynrow = y->numericMatrix.nrow;
+			Melder_require (ynrow == xsize,
+				U"When multiplying a vector with a matrix, the matrix’s number of rows should be equal to the vector’s size, "
+				"instead of ", ynrow, U" and ", xsize, U"."
+			);
+			if (x->owned) {
+				/*@praat
+					assert { 1, 2, 3 } * { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 1, 2 }, { 6, 8 }, { 15, 18 } }
+				@*/
+				autoMAT newMatrix = newMATmultiply (x->numericVector, y->numericMatrix);
+				x->reset();
+				x->numericMatrix = newMatrix. releaseToAmbiguousOwner();
+			} else {
+				/*@praat
+					a# = { 1, 2, 3 }
+					assert a# * { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 1, 2 }, { 6, 8 }, { 15, 18 } }
+				@*/
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = newMATmultiply (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			x->which = Stackel_NUMERIC_MATRIX;
+			return;
+		}
 		if (y->which == Stackel_NUMBER) {
 			/*
 				result# = x# * y
@@ -3014,10 +3079,12 @@ static void do_mul () {
 				i.e.
 				result## [i, j] = x## [i, j] * y# [j]
 			*/
-			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+			integer xncol = x->numericMatrix.ncol;
 			integer ysize = y->numericVector.size;
-			if (xncol != ysize)
-				Melder_throw (U"When multiplying a matrix with a vector, the vector’s size should be equal to the matrix’s number of columns, instead of ", ysize, U" and ", xncol, U".");
+			Melder_require (xncol == ysize,
+				U"When multiplying a matrix with a vector, the vector’s size should be equal to the matrix’s number of columns, "
+				"instead of ", ysize, U" and ", xncol, U"."
+			);
 			if (x->owned) {
 				x->numericMatrix  *=  y->numericVector;
 			} else {
@@ -3113,6 +3180,15 @@ static void do_power () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined : pow (x->number, y->number));
+	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMBER) {
+		/*@praat
+			assert { 3, 4 } ^ 3 = { 27, 64 }
+			assert { 3, -4 } ^ 3 = { 27, -64 }
+			assert { -4 } ^ 2.3 = { undefined }
+		@*/
+		pushNumericVector (newVECpower (x->numericVector, y->number));
+	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMBER) {
+		pushNumericMatrix (newMATpower (x->numericMatrix, y->number));
 	} else {
 		Melder_throw (U"Cannot exponentiate (^) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
@@ -3121,6 +3197,17 @@ static void do_sqr () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) ? undefined : x->number * x->number);
+	} else if (x->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			a# = zero# (10)
+			a# ~ sum ({ 3, 4 } ^ 2)
+			assert sum (a#) = 250
+			a# ~ sum ({ col } ^ 2)
+			assert sum (a#) = 385
+		@*/
+		pushNumericVector (newVECpower (x->numericVector, 2.0));
+	} else if (x->which == Stackel_NUMERIC_MATRIX) {
+		pushNumericMatrix (newMATpower (x->numericMatrix, 2.0));
 	} else {
 		Melder_throw (U"Cannot take the square (^ 2) of ", x->whichText(), U".");
 	}
@@ -5446,10 +5533,26 @@ static void do_MATmul_tt () {
 static void do_MATtranspose () {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		if (x->owned && NUMisSymmetric (x->numericMatrix)) {
-			MATtranspose_inplace_mustBeSquare (x->numericMatrix);
+		if (x->owned) {
+			if (NUMisSymmetric (x->numericMatrix)) {
+				/*@praat
+					assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } }) = { { 1, 4, 7 }, { 2, 5, 8 }, { 3, 6, 9 } }
+				@*/
+				MATtranspose_inplace_mustBeSquare (x->numericMatrix);
+			} else {
+				/*@praat
+					assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 } }) = { { 1, 4 }, { 2, 5 }, { 3, 6 } }
+				@*/
+				autoMAT newMatrix = newMATtranspose (x->numericMatrix);
+				x->reset();
+				x->numericMatrix = newMatrix.releaseToAmbiguousOwner();
+			}
 		} else {
-			x->reset();
+			/*@praat
+				a## = { { 1, 2, 3 }, { 4, 5, 6 } }
+				assert transpose## (a##) = { { 1, 4 }, { 2, 5 }, { 3, 6 } }
+				assert transpose## (transpose## (a##)) = a##
+			@*/
 			x->numericMatrix = newMATtranspose (x->numericMatrix). releaseToAmbiguousOwner();
 			x->owned = true;
 		}
@@ -5492,6 +5595,18 @@ static void do_VECrepeat () {
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"repeat#\" requires a vector and a number, not ", x->whichText(), U" and ", n->whichText(), U".");
+	}
+}
+static void do_VECrowInners () {
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		Melder_require (x->numericMatrix.nrow == y->numericMatrix.nrow && x->numericMatrix.ncol == y->numericMatrix.ncol,
+			U"In the function rowInners#, the two matrices should have the same shape, not ",
+			x->numericMatrix.nrow, U"x", x->numericMatrix.ncol, U" and ", y->numericMatrix.nrow, U"x", y->numericMatrix.ncol
+		);
+		pushNumericVector (newVECrowInners (x->numericMatrix, y->numericMatrix));
+	} else {
+		Melder_throw (U"The function \"rowInners#\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_beginPauseForm () {
@@ -6770,6 +6885,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAT_MUL_NT_: { do_MATmul_nt ();
 } break; case MAT_MUL_TT_: { do_MATmul_tt ();
 } break; case VEC_REPEAT_: { do_VECrepeat ();
+} break; case VEC_ROW_INNERS_: { do_VECrowInners ();
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();
