@@ -816,4 +816,9 @@ autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bo
 	return result;
 }
 
+void MATpower (MATVU const& target, constMATVU const& mat, double power) {
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		VECpower (target.row (irow), mat.row (irow), power);
+}
+
 /* End of file MAT.cpp */
