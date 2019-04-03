@@ -387,31 +387,27 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		U"There should be at least two (independent) columns in the table.");
 
 	autoVEC x = newVECraw (nPoints);
-	autoVEC y = newVECraw ( nPoints);
+	autoVEC y = newVECraw (nPoints);
 
 	double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	double lambda2 = pow (svd -> d [2], sv_splitfactor);
-	for (integer i = 1; i <= nr; i ++) {
-		x [i] = svd -> u [i] [1] * lambda1;
-		y [i] = svd -> u [i] [2] * lambda2;
-	}
-	lambda1 = svd -> d [1] / lambda1;
-	lambda2 = svd -> d [2] / lambda2;
-	for (integer i = 1; i <= nc; i ++) {
-		x [nr + i] = svd -> v [i] [1] * lambda1;
-		y [nr + i] = svd -> v [i] [2] * lambda2;
-	}
-
-	if (xmax <= xmin) {
+	x.part (1, nr) <<= svd -> u.column(1) * lambda1;
+	y.part (1, nr) <<= svd -> u.column(2) * lambda2;
+	
+	double lambda3 = svd -> d [1] / lambda1;
+	double lambda4 = svd -> d [2] / lambda2;
+	x.part (nr + 1, nPoints) <<= svd -> v.column(1) * lambda3;
+	y.part (nr + 1, nPoints) <<= svd -> v.column(2) * lambda4;
+	
+	if (xmax <= xmin)
 		NUMextrema (x.get(), & xmin, & xmax);
-	}
+
 	if (xmax <= xmin) {
 		xmax += 1.0;
 		xmin -= 1.0;
 	}
-	if (ymax <= ymin) {
+	if (ymax <= ymin)
 		NUMextrema (y.get(), & ymin, & ymax);
-	}
 	if (ymax <= ymin) {
 		ymax += 1.0;
 		ymin -= 1.0;
@@ -419,23 +415,20 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
-	if (labelsize > 0) {
+	if (labelsize > 0)
 		Graphics_setFontSize (g, labelsize);
-	}
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= nPoints; i ++) {
 		char32 const *label;
 		if (i <= nr) {
 			label = my rowLabels [i].get();
-			if (! label) {
+			if (! label)
 				label = U"?__r_";
-			}
 		} else {
 			label = my columnLabels [i - nr].get();
-			if (! label) {
+			if (! label)
 				label = U"?__c_";
-			}
 		}
 		Graphics_text (g, x [i], y [i], label);
 	}
@@ -448,9 +441,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		Graphics_marksBottom (g, 2, true, true, false);
 	}
 
-	if (labelsize > 0) {
+	if (labelsize > 0)
 		Graphics_setFontSize (g, fontsize);
-	}
 }
 
 void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax, double ymin, double ymax, bool garnish) {
@@ -1549,15 +1541,8 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 	try {
 		if (my numberOfColumns < 3 || my numberOfRows < 3)
 			Melder_throw (U"There should be at least three colums and three rows.");
-		autoVEC x = newVECraw (my numberOfRows);
-		autoVEC y = newVECraw (my numberOfRows);
-		autoVEC z = newVECraw (my numberOfRows);
-		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			x [irow] = my data [irow] [1];
-			y [irow] = my data [irow] [2];
-			z [irow] = my data [irow] [3];
-		}
-		autoVEC weights = NUMbiharmonic2DSplineInterpolation_getWeights (x.get(), y.get(), z.get());
+		
+		autoVEC weights = NUMbiharmonic2DSplineInterpolation_getWeights (my data.column (1), my data.column (2), my data.column (3));
 		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
 		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx,
 			ymin, ymax, ny, dy, ymin + 0.5 * dy);
@@ -1565,7 +1550,7 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 			double yp = thy y1 + (irow - 1) * dy;
 			for (integer icol = 1; icol <= nx; icol ++) {
 				double xp = thy x1 + (icol - 1) * dx;
-				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (x.get(), y.get(), weights.get(), xp, yp);
+				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (my data.column (1), my data.column (2), weights.get(), xp, yp);
 			}
 		}
 		return thee;
