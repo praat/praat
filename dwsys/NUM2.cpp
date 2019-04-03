@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1993-2019 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2565,7 +2565,7 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 	if (out_arg) *out_arg = ln_arg;
 }
 
-autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC z) {
+autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
 	autoMAT g = newMATraw (x.size, x.size);
 	/*
@@ -2584,7 +2584,7 @@ autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, c
 	return w;
 }
 
-double NUMbiharmonic2DSplineInterpolation (constVEC x, constVEC y, constVEC w, double xp, double yp) {
+double NUMbiharmonic2DSplineInterpolation (constVECVU const& x, constVECVU const& y, constVECVU const& w, double xp, double yp) {
 	Melder_assert (x.size == y.size && x.size == w.size);
 	longdouble result = 0.0;
 	for (integer i = 1; i <= x.size; i ++) {
