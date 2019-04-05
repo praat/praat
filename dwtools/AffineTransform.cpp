@@ -58,9 +58,9 @@ autoAffineTransform structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
 	double tolerance = 0.000001;
 
-	thy r = newMATpseudoInverse (r.get(), tolerance);
-	for (integer i = 1; i <= dimension; i ++)
-		thy t[i] = - NUMinner (thy r.row (i), t.get ());
+	MATpseudoInverse (thy r.get(), r.get(), tolerance);
+	VECmul (thy t.get(), thy r.get(), t.get());
+	thy t.get() *= -1.0;
 	return thee;
 }
 

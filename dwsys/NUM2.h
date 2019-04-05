@@ -69,7 +69,7 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	'nstringmatches'.
 */
 
-void MATprintMatlabForm (constMAT m, conststring32 name);
+void MATprintMatlabForm (constMATVU const& m, conststring32 name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 							1 2 3
@@ -101,13 +101,13 @@ inline integer NUMmin (const constINTVEC& vec) {
 	return minimum;
 }
 
-inline bool NUMisNonNegative (constVECVU vec) {
+inline bool NUMisNonNegative (constVECVU const&  vec) {
 	for (integer i = 1; i <= vec.size; i ++)
 		if (vec [i] < 0.0)
 			return false;
 	return true;
 }
-inline bool NUMisNonNegative (constMATVU mat) {
+inline bool NUMisNonNegative (constMATVU const& mat) {
 	for (integer irow = 1; irow <= mat.nrow; irow ++)
 		for (integer icol = 1; icol <= mat.ncol; icol ++)
 			if (mat [irow] [icol] < 0.0)
@@ -427,16 +427,8 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
 
 double NUMtrace (const constMATVU& a);
 double NUMtrace2 (const constMATVU& x, const constMATVU& y);
-double NUMtrace2_nn (const constMAT& x, const constMAT& y);
-double NUMtrace2_nt (const constMAT& x, const constMAT& y);
-double NUMtrace2_tn (const constMAT& x, const constMAT& y);
-double NUMtrace2_tt (const constMAT& x, const constMAT& y);
 /*
-	Calculates the trace from a product matrix
-	_nn : trace (X.Y)
-	_nt : trace (X.Y')
-	_tn : trace (X'.Y) = trace (Y'.X)
-	_tt : trace (X'.Y') = trace ((Y.X)') = trace (Y.X)
+	Calculates the trace from a product matrix x*y
 */
 
 void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMATVU const& data, integer fromColumn, constMATVU const& eigenvectors);
@@ -539,7 +531,7 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 		alpha >= 0
 */
 
-void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale);
+void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling

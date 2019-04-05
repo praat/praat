@@ -88,7 +88,7 @@ struct pdf2_struct {
 	double df2;
 };
 
-void MATprintMatlabForm (constMAT m, conststring32 name) {
+void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
 	integer npc = 5;
 	ldiv_t n = ldiv (m.ncol, npc);
 
@@ -114,16 +114,12 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 	Melder_assert (out.size == in.size);
 	for (integer i = 1; i <= out.size; i ++) {
 		integer jfrom = i - window / 2, jto = i + window / 2;
-		if (window % 2 == 0) {
+		if (window % 2 == 0)
 			jto --;
-		}
+
 		jfrom = jfrom < 1 ? 1 : jfrom;
 		jto = jto > out.size ? out.size : jto;
-		out [i] = 0.0;
-		for (integer j = jfrom; j <= jto; j ++) {
-			out [i] += in [j];
-		}
-		out [i] /= jto - jfrom + 1;
+		out [i] = NUMsum (in.part (jfrom, jto)) / (jto - jfrom + 1);
 	}
 }
 
@@ -355,11 +351,7 @@ void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU cons
 	Melder_assert (data.nrow == eigenvectors.ncol && projection.nrow == eigenvectors.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++)
 		for (integer irow = 1; irow <= eigenvectors.nrow; irow ++) {
-			longdouble r = 0.0;
-			for (integer k = 1; k <= eigenvectors.ncol; k ++) {
-				r += eigenvectors [irow] [k] * data [k] [icol];
-			}
-			projection [irow] [icol] = (double) r;
+			projection [irow] [icol] = NUMinner (eigenvectors.row (irow), data.column (icol));
 		}
 	// MATmul_tt (data.get(), eigenvectors.get()) ??
 }
@@ -413,10 +405,7 @@ autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, doubl
 				mjr += mij * ri;
 				mjmj += mij * mij;
 			}
-			b [j] = double (mjr / mjmj);
-			if (b [j] < 0.0) {
-				b [j] = 0.0;
-			}
+			b [j] = std::max (0.0, double (mjr / mjmj));
 		}
 
 		// Calculate t(b) and compare with previous result.
@@ -717,7 +706,7 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 }
 
 
-void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale) {
+void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale) {
 	Melder_assert (x.nrow == y.nrow && x.ncol == y.ncol);
 	Melder_assert (x.nrow >= x.ncol);
 	bool orthogonal = ! out_translation || ! out_scale; // else similarity transform
@@ -759,8 +748,8 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 
 		// tr X'J YT == tr xc' yt
 
-		double traceXtJYT = NUMtrace2_tn (xc.get(), yt.get()); // trace (Xc'.(YT))
-		double traceYtJY = NUMtrace2_tn (y, yc.get()); // trace (Y'.Yc)
+		double traceXtJYT = NUMtrace2 (xc.transpose(), yt.get()); // trace (Xc'.(YT))
+		double traceYtJY = NUMtrace2 (y.transpose(), yc.get()); // trace (Y'.Yc)
 		longdouble scale = traceXtJYT / traceYtJY;
 
 		// 5. Translation vector tr = (X - sYT)'1 / x.nrow
@@ -2716,32 +2705,6 @@ double NUMtrace2 (const constMATVU& x, const constMATVU& y) {
 		for (integer k = 1; k <= x.ncol; k ++)
 			trace += x [irow] [k] * y [k] [irow];
 	return (double) trace;
-}
-
-double NUMtrace2_nn (const constMAT& x, const constMAT& y) {
-	Melder_assert (x.ncol == y.nrow && x.nrow == y.ncol);
-	longdouble trace = 0.0;
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer k = 1; k <= x.ncol; k ++)
-			trace += x [irow] [k] * y [k] [irow];
-	return (double) trace;
-}
-
-double NUMtrace2_tn (const constMAT& x, const constMAT& y) {
-	Melder_assert (x.ncol == y.ncol && x.nrow == y.nrow);
-	longdouble trace = 0.0;
-	for (integer irow = 1; irow <= x.ncol; irow ++)
-		for (integer k = 1; k <= x.nrow; k ++)
-			trace += x [k] [irow] * y [k] [irow];
-	return (double) trace;
-}
-
-double NUMtrace2_nt (const constMAT& x, const constMAT& y) {
-	return NUMtrace2_tn (y, x);
-}
-
-double NUMtrace2_tt (const constMAT& x, const constMAT& y) {
-	return NUMtrace2_nn (y, x);
 }
 
 void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1) {

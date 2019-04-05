@@ -66,14 +66,12 @@ autoAffineTransform structProcrustes :: v_invert () {
 	*/
 
 	thy s = s == 0.0 ? 1.0 : 1.0 / s;
-	
-	for (integer i = 1; i <= dimension; i ++) {
-		for (integer j = i + 1; j <= dimension; j ++) {
-			thy r [i] [j] = r [j] [i];
-			thy r [j] [i] = r [i] [j];
-		}
+	thy r.all() <<= r.transpose();
+	VECmul (thy t.get(), r.get(), t.get());
+	thy t.get() *= -thy s;
+	/*for (integer i = 1; i <= dimension; i ++) {
 		thy t [i] = -thy s * NUMinner (thy r.column (i), t);
-	}
+	}*/
 	return thee.move();   // explicit move() seems to be needed because of the type difference
 }
 
