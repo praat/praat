@@ -174,15 +174,12 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 
 autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
 	try {
-		bool maximumIsClosedGlottis = false; // because we might multiply the Electroglottogram by -1
-		
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks,  & valleys);
 		
 		double minimum = RealTier_getMinimumValue (valleys.get());
 		double maximum = RealTier_getMaximumValue (peaks.get());
 		double minimumPeakAmplitude = maximum * silenceThreshold;
-		maximumIsClosedGlottis = maximum > minimum;
 
 		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
 		double previousOpeningTime = my xmin;
@@ -257,6 +254,21 @@ autoSound Sound_Electroglottograms_combine (Sound me, OrderedOf<structElectroglo
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, thee, U" not combined.");
+	}
+}
+
+autoSound Electroglottogram_extract (Electroglottogram me, kElectroglottogram_extract extract) {
+	try {
+		autoSound thee;
+		if (extract == kElectroglottogram_extract::Electroglottogram) {
+			thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
+			thy z.get() <<= my z.get();
+		} else { // extract == kElectroglottogram_extract::Sound
+			thee = Data_copy (my sound.get());
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": extraction unsuccesful.");
 	}
 }
 

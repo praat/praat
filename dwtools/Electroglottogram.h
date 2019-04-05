@@ -47,6 +47,7 @@ autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, doub
 
 autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
 
+autoSound Electroglottogram_extract (Electroglottogram me, kElectroglottogram_extract extract);
 
 /* End of file Electroglottogram.h */
 

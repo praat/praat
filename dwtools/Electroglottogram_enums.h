@@ -21,4 +21,9 @@ enums_begin (kElectroglottogram_findClosedIntervalMethod, 1)
 	enums_add (kElectroglottogram_findClosedIntervalMethod, 2, Derivative, U"Derivative")
 enums_end (kElectroglottogram_findClosedIntervalMethod, 2, Derivative)
 
+enums_begin (kElectroglottogram_extract, 1)
+	enums_add (kElectroglottogram_extract, 1, Electroglottogram, U"Electroglottogram")
+	enums_add (kElectroglottogram_extract, 2, Sound, U"Sound")
+enums_end (kElectroglottogram_extract, 2, Sound)
+
 /* End of file Electroglottogram_enums.h */
