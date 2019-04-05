@@ -23,24 +23,18 @@
 
 #include "Electroglottogram_enums.h"
 
-Thing_define (Electroglottogram, Vector) {
-	void v_info ()
-		override;
-	/*bool v_hasGetMatrix ()
-		override { return true; }
-	double v_getMatrix (integer irow, integer icol)
-		override;
-	bool v_hasGetFunction2 ()
-		override { return true; }
-	double v_getFunction2 (double x, double y)
-		override;*/
-	int v_domainQuantity ()
-		override { return MelderQuantity_TIME_SECONDS; }
-};
+#include "Electroglottogram_def.h"
+
+/* 
+	An Electroglottogram represets the degree of contact between the vibrating vocal folds during voice production.
+	It is measured at the throat.
+	It will be represented as a one channel Sound.
+	There might be an accompanying sound. They are both sampled at the same sampling frequency.
+*/
 
 autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1);
 
-autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channelNumber);
+autoElectroglottogram Sound_to_Electroglottogram (Sound me);
 
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingLevelPercentage);
 
@@ -54,8 +48,6 @@ autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, doub
 autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
 
 
-// Very simple and strict
-autoSound Sound_Electroglottograms_combine (Sound me, OrderedOf<structElectroglottogram>* thee);
 /* End of file Electroglottogram.h */
 
 #endif

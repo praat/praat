@@ -27,6 +27,25 @@
 #include "enums_getValue.h"
 #include "Electroglottogram_enums.h"
 
+#include "oo_DESTROY.h"
+#include "Electroglottogram_def.h"
+#include "oo_COPY.h"
+#include "Electroglottogram_def.h"
+#include "oo_EQUAL.h"
+#include "Electroglottogram_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Electroglottogram_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "Electroglottogram_def.h"
+#include "oo_READ_TEXT.h"
+#include "Electroglottogram_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "Electroglottogram_def.h"
+#include "oo_READ_BINARY.h"
+#include "Electroglottogram_def.h"
+#include "oo_DESCRIPTION.h"
+#include "Electroglottogram_def.h"
+
 Thing_implement (Electroglottogram, Vector, 2);
 
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
@@ -76,28 +95,34 @@ autoElectroglottogram Electroglottogram_create (double xmin, double xmax, intege
 	try {
 		autoElectroglottogram me = Thing_new (Electroglottogram);
 		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1, 1, 1, 1, 1);
+		// Don't create the sound because it is optional
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Electroglottogram not created.");
 	}
 }
 
-autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channelNumber) {
+autoElectroglottogram Sound_to_Electroglottogram (Sound me) {
 	try {
-		Melder_require (channelNumber >= 1 && channelNumber <= my ny,
-			U"There is no channel ", channelNumber, U".");
+		Melder_require (my ny <= 2,
+			U"There should be no more than two channels in the sound");
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
-		thy z.row (1) <<= my z.row (channelNumber);
+		thy z.all() <<= my z.row(1);
+		if (my ny == 2) {
+			autoSound sound = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
+			sound -> z.all() <<= my z.row(2);
+			thy sound = sound.move();
+		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": channel ", channelNumber, U" not extracted.");
+		Melder_throw (me, U": not converted to Electroglottogram.");
 	}
 }
 
 autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, autoAmplitudeTier *out_peaks, autoAmplitudeTier *out_valleys) {
 	try {
-		autoPointProcess peakPositions = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, true, false);
-		autoPointProcess valleyPositions = Sound_to_PointProcess_periodic_peaks ((Sound) me, pitchFloor, pitchCeiling, false, true);
+		autoPointProcess peakPositions = Sound_to_PointProcess_periodic_peaks (me, pitchFloor, pitchCeiling, true, false);
+		autoPointProcess valleyPositions = Sound_to_PointProcess_periodic_peaks (me, pitchFloor, pitchCeiling, false, true);
 		/*
 			Get the values of the peaks and valleys
 		*/
@@ -191,7 +216,7 @@ autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, doub
 
 autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing) {
 		try {
-			autoSpectrum thee = Sound_to_Spectrum ((Sound) me, false);
+			autoSpectrum thee = Sound_to_Spectrum (me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 				double f = Sampled_indexToX (thee.get(), ifreq);
 				thy z [1] [ifreq] *= f;
@@ -201,7 +226,7 @@ autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double
 			autoSound sound = Spectrum_to_Sound (thee.get());
 			Vector_scale (sound.get(), 0.99);
 			autoElectroglottogram him = Electroglottogram_create (sound -> xmin, sound -> xmax, sound -> nx, sound -> dx, sound -> x1);
-			his z.get() <<= sound -> z.get();
+			his z.all() <<= sound -> z.row(1);
 			return him;
 		} catch (MelderError) {
 			Melder_throw (me, U": cannot create derivative of Electroglottogram.");

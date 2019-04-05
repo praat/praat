@@ -1,6 +1,6 @@
-/* SampledXY_def.h
+/* Electroglottogram_def.h
  *
- * Copyright (C) 1992-2005,2008,2011-2018 Paul Boersma
+ * Copyright (C) 2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,52 +17,17 @@
  */
 
 
-#define ooSTRUCT SampledXY
-oo_DEFINE_CLASS (SampledXY, Sampled)
+#define ooSTRUCT Electroglottogram
+oo_DEFINE_CLASS (Electroglottogram, Sound)
 
-	oo_DOUBLE (ymin)
-	oo_DOUBLE (ymax)
-	oo_INTEGER (ny)
-	oo_DOUBLE (dy)
-	oo_DOUBLE (y1)
-
-	#if oo_READING
-		if (ymin > ymax) {
-			Melder_throw (U"ymax should be at least as great as ymin.");
-		}
-		if (ny < 1) {
-			Melder_throw (U"ny should be at least 1.");
-		}
-		if (dy <= 0.0) {
-			Melder_throw (U"dy should be positive.");
-		}
-	#endif
-
+	oo_OBJECT (Sound, 0, sound)
+	
 	#if oo_DECLARING
-		bool v_hasGetYmin ()
-			override { return true; }
-		double v_getYmin ()
-			override { return ymin; }
-		bool v_hasGetYmax ()
-			override { return true; }
-		double v_getYmax ()
-			override { return ymax; }
-		bool v_hasGetNy ()
-			override { return true; }
-		double v_getNy ()
-			override { return ny; }
-		bool v_hasGetDy ()
-			override { return true; }
-		double v_getDy ()
-			override { return dy; }
-		bool v_hasGetY ()
-			override { return true; }
-		double v_getY (integer iy)
-			override { return y1 + (iy - 1) * dy; }
+		void v_info ()
+			override;
 	#endif
 
-oo_END_CLASS (SampledXY)
+oo_END_CLASS (Electroglottogram)
 #undef ooSTRUCT
 
-
-/* End of file SampledXY_def.h */
+/* End of file Electroglottogram_def.h */
