@@ -1218,7 +1218,7 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s2) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
 	autoMAT m = newMATmul (s1, s2);
-	double trace2 = NUMtrace2_nn (m.get(), m.get());
+	double trace2 = NUMtrace2 (m.get(), m.get());
 	return trace2;
 }
 
@@ -1331,9 +1331,9 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 
 		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
 		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.get(), si.get());
-		double tr_s1si = NUMtrace2_nn (s1.get(), si.get());
+		double tr_s1si = NUMtrace2 (s1.get(), si.get());
 		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.get(), si.get());
-		double tr_s2si = NUMtrace2_nn (s2.get(), si.get());
+		double tr_s2si = NUMtrace2 (s2.get(), si.get());
 
 		double nu = (p + p * p) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);
 		df2 = nu - p + 1;
@@ -1414,13 +1414,13 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
 				autoMAT s1 = newMATmul (ci -> data.get(), si.get());
-				double trace_ii = NUMtrace2_nn (s1.get(), s1.get());
+				double trace_ii = NUMtrace2 (s1.get(), s1.get());
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (integer j = i + 1; j <= numberOfMatrices; j ++) {
 					Covariance cj = my at [j];
 					double nj = cj -> numberOfObservations - 1;
 					autoMAT s2 = newMATmul (cj -> data.get(), si.get());
-					double trace_ij = NUMtrace2_nn (s1.get(), s2.get());
+					double trace_ij = NUMtrace2 (s1.get(), s2.get());
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
 			}
