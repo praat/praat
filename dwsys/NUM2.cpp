@@ -116,10 +116,11 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 		integer jfrom = i - window / 2, jto = i + window / 2;
 		if (window % 2 == 0)
 			jto --;
-
-		jfrom = jfrom < 1 ? 1 : jfrom;
-		jto = jto > out.size ? out.size : jto;
-		out [i] = NUMsum (in.part (jfrom, jto)) / (jto - jfrom + 1);
+		if (jfrom < 1)
+			jfrom = 1;
+		if (jto > out.size)
+			jto = out.size;
+		out [i] = NUMmean (in.part (jfrom, jto));
 	}
 }
 

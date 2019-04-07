@@ -391,13 +391,13 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	double lambda2 = pow (svd -> d [2], sv_splitfactor);
-	x.part (1, nr) <<= svd -> u.column(1) * lambda1;
-	y.part (1, nr) <<= svd -> u.column(2) * lambda2;
+	x.part (1, nr) <<= svd -> u.column (1)  *  lambda1;
+	y.part (1, nr) <<= svd -> u.column (2)  *  lambda2;
 	
 	double lambda3 = svd -> d [1] / lambda1;
 	double lambda4 = svd -> d [2] / lambda2;
-	x.part (nr + 1, nPoints) <<= svd -> v.column(1) * lambda3;
-	y.part (nr + 1, nPoints) <<= svd -> v.column(2) * lambda4;
+	x.part (nr + 1, nPoints) <<= svd -> v.column (1)  *  lambda3;
+	y.part (nr + 1, nPoints) <<= svd -> v.column (2)  *  lambda4;
 	
 	if (xmax <= xmin)
 		NUMextrema (x.get(), & xmin, & xmax);

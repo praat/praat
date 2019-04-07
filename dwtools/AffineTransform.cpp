@@ -56,11 +56,11 @@ void structAffineTransform :: v_transform (MATVU const& out, constMATVU const& i
 
 autoAffineTransform structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
-	double tolerance = 0.000001;
+	constexpr double tolerance = 0.000001;
 
-	MATpseudoInverse (thy r.get(), r.get(), tolerance);
-	VECmul (thy t.get(), thy r.get(), t.get());
-	thy t.get() *= -1.0;
+	MATpseudoInverse (thy r.get(), our r.get(), tolerance);
+	VECmul (thy t.get(), thy r.get(), our t.get());
+	thy t.get()  *=  -1.0;
 	return thee;
 }
 
