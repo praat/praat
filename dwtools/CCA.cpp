@@ -195,8 +195,10 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		his rowLabels.all() <<= thy rowLabels.all();
-		Eigen_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
-		Eigen_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
+		
+		MATmul (his data.verticalBand (1, numberOfFactors), thy data.verticalBand (1, nx), my y -> eigenvectors.horizontalBand(1, numberOfFactors).transpose ());
+		MATmul (his data.verticalBand (numberOfFactors + 1, 2 * numberOfFactors), thy data.verticalBand (nx + 1, nx + ny), my x -> eigenvectors.horizontalBand(1, numberOfFactors).transpose());
+		
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);
 		TableOfReal_setSequentialColumnLabels (him.get(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
 		return him;
@@ -224,9 +226,10 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		integer ncols = thy numberOfColumns - from + 1;
 		Melder_require (from > 0 && ncols == nx, U"The number of columns to analyze should be equal to ", nx, U".");
 
-		// ???? dimensions if nx .. ny ??
-
-		autoTableOfReal him = Eigen_TableOfReal_to_TableOfReal_projectRows (my x.get(), thee, from, ny);
+		autoTableOfReal him = TableOfReal_create (thy numberOfRows, ny);
+		MATmul (his data.get(), thy data.verticalBand (from, thy numberOfColumns), my x -> eigenvectors.transpose());
+		his rowLabels.all() <<= thy rowLabels.all();
+		
 		autoVEC buf = newVECraw (ny);
 
 		// u = V a -> a = V'u

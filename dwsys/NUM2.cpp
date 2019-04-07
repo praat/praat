@@ -322,32 +322,6 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 	return lambda;
 }
 
-/* Input:
-		data [numberOfRows, from_col - 1 + my dimension] 
-		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
-		eigenvectors [numberOfEigenvectors] [dimension] the eigenvectors stored as rows
-	Input/Output
-		projection [numberOfRows, to_colbegin - 1 + numberOfEigenvectors] 
-		the projected vectors from 'data'
-
-	Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
-	*/
-void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMATVU const& data, integer fromColumn, constMATVU const& eigenvectors) {
-	Melder_assert (projection.nrow = data.nrow);
-	fromColumn = fromColumn <= 0 ? 1 : fromColumn;
-	toColumn = toColumn <= 0 ? 1 : toColumn;
-	Melder_assert (fromColumn + eigenvectors.ncol - 1 <= data.ncol);
-	Melder_assert (toColumn + eigenvectors.nrow - 1 <= projection.ncol);
-	for (integer irow = 1; irow <= data.nrow; irow ++)
-		for (integer icol = 1; icol <= eigenvectors.nrow; icol ++) {
-			longdouble r = 0.0;
-			for (integer k = 1; k <= eigenvectors.ncol; k ++) {
-				r += eigenvectors [icol] [k] * data [irow] [fromColumn + k - 1];
-			}
-			projection [irow] [toColumn + icol - 1] = (double) r;
-		}
-}
-
 void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU const& data, constMATVU const& eigenvectors) {
 	Melder_assert (data.nrow == eigenvectors.ncol && projection.nrow == eigenvectors.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++)
@@ -2788,7 +2762,7 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	if (out_sn1) *out_sn1 = (double) sn1;
 }
 
-void MATmul3_VMVt (MATVU target, constMAT x, constMAT y) { // X.Y.X'
+void MATmul3_XYXt (MATVU const& target, constMAT const& x, constMAT const& y) { // X.Y.X'
 	Melder_assert (x.ncol == y.nrow && y.ncol == x.ncol);
 	Melder_assert (target.nrow == target.ncol && target.nrow == x.nrow);
 	for (integer irow = 1; irow <= target.nrow; irow ++)
@@ -2800,10 +2774,19 @@ void MATmul3_VMVt (MATVU target, constMAT x, constMAT y) { // X.Y.X'
 		}
 }
 
-void MATmul3_VtMV (MATVU target, constMAT x, constMAT y) { // X'.Y.X'
-	Melder_assert (x.nrow == y.nrow && y.ncol == x.nrow);
-	Melder_assert (target.nrow == target.ncol && target.nrow == x.ncol);
-	autoMAT xTranspose = newMATtranspose (x);
-	MATmul3_VMVt (target, xTranspose.get(), y);
+void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) { // X.Y.X'
+	Melder_assert (x.ncol == y.nrow && y.ncol == x.ncol);
+	Melder_assert (target.nrow == target.ncol && target.nrow == x.nrow);
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = irow; icol <= target.ncol; icol ++) {
+			longdouble sum = 0.0;
+			for (integer k = 1; k <= x.ncol; k ++)
+				sum += x [irow] [k] * NUMinner (y.row (k), x.row (icol));
+			target [irow] [icol] = sum;
+		}
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = irow + 1; icol <= target.ncol; icol ++)
+			target [icol] [irow] = target [irow] [icol];
 }
+
 /* End of file NUM2.cpp */
