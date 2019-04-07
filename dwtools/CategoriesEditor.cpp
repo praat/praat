@@ -68,6 +68,8 @@ static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
 /*	1 <= (position  [i], newpos) <= size; */
 /*	newpos <= position  [1] || newpos >= position  [npos] */
 static void Ordered_moveItems (Ordered me, constINTVEC position, integer newpos) {
+	if (position.size < 1)
+		return;
 	integer pos, min = NUMmin (position), max = NUMmax (position);
 
 	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));

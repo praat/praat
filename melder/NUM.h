@@ -226,6 +226,15 @@ inline double NUMmax (constVECVU const& vec) {
 	}
 	return maximum;
 }
+inline integer NUMmax (const constINTVECVU& vec) {
+	if (NUMisEmpty (vec)) return INTEGER_MIN;
+	integer maximum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value > maximum) maximum = value;
+	}
+	return maximum;
+}
 inline double NUMmax (constMATVU const& mat) {
 	if (NUMisEmpty (mat)) return undefined;
 	double maximum = NUMmax (mat [1]);
@@ -247,6 +256,15 @@ inline double NUMmin (constVECVU const& vec) {
 	double minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
+		if (value < minimum) minimum = value;
+	}
+	return minimum;
+}
+inline integer NUMmin (const constINTVECVU& vec) {
+	if (NUMisEmpty (vec)) return INTEGER_MAX;
+	integer minimum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
 		if (value < minimum) minimum = value;
 	}
 	return minimum;

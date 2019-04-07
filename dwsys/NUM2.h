@@ -81,26 +81,6 @@ void MATprintMatlabForm (constMATVU const& m, conststring32 name);
 	    7, 8, 9];
 */
 
-inline integer NUMmax (const constINTVEC& vec) {
-	if (NUMisEmpty (vec)) return undefined;
-	integer maximum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value > maximum) maximum = value;
-	}
-	return maximum;
-}
-
-inline integer NUMmin (const constINTVEC& vec) {
-	if (NUMisEmpty (vec)) return undefined;
-	integer minimum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value < minimum) minimum = value;
-	}
-	return minimum;
-}
-
 inline bool NUMisNonNegative (constVECVU const&  vec) {
 	for (integer i = 1; i <= vec.size; i ++)
 		if (vec [i] < 0.0)
