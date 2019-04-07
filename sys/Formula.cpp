@@ -2306,27 +2306,13 @@ static void do_eq () {
 			but any undefined value (inf or NaN) *is* equal to --undefined--.
 			Note that this is different from how "==" works in C.
 		*/
-		double xvalue = x->number, yvalue = y->number;
-		if (isdefined (xvalue)) {
-			if (isdefined (yvalue)) {
-				pushNumber (x->number == y->number ? 1.0 : 0.0);
-			} else {
-				pushNumber (0.0);   // defined is not equal to undefined
-			}
-		} else {
-			if (isdefined (yvalue)) {
-				pushNumber (0.0);   // undefined is not equal to defined
-			} else {
-				pushNumber (1.0);   // undefined is equal to undefined
-			}
-		}
+		pushNumber (NUMequal (x->number, y->number) ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32equ (x->getString(), y->getString()) ? 1.0 : 0.0;
-		pushNumber (result);
+		pushNumber (str32equ (x->getString(), y->getString()) ? 1.0 : 0.0);
 	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (NUMequal (x->numericVector, y->numericVector));
+		pushNumber (NUMequal (x->numericVector, y->numericVector) ? 1.0 : 0.0);
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
-		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix));
+		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix) ? 1.0 : 0.0);
 	} else {
 		Melder_throw (U"Cannot compare (=) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
@@ -2337,23 +2323,13 @@ static void do_ne () {
 		/*
 			Unequal is defined as the opposite of equal.
 		*/
-		double xvalue = x->number, yvalue = y->number;
-		if (isdefined (xvalue)) {
-			if (isdefined (yvalue)) {
-				pushNumber (x->number != y->number ? 1.0 : 0.0);
-			} else {
-				pushNumber (1.0);   // defined is unequal to undefined
-			}
-		} else {
-			if (isdefined (yvalue)) {
-				pushNumber (1.0);   // undefined is unequal to defined
-			} else {
-				pushNumber (0.0);   // undefined is not unequal to undefined
-			}
-		}
+		pushNumber (NUMequal (x->number, y->number) ? 0.0 : 1.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32equ (x->getString(), y->getString()) ? 0.0 : 1.0;
-		pushNumber (result);
+		pushNumber (str32equ (x->getString(), y->getString()) ? 0.0 : 1.0);
+	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+		pushNumber (NUMequal (x->numericVector, y->numericVector) ? 0.0 : 1.0);
+	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix) ? 0.0 : 1.0);
 	} else {
 		Melder_throw (U"Cannot compare (<>) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
