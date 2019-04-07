@@ -75,10 +75,10 @@ void MATprintMatlabForm (constMATVU const& m, conststring32 name);
 							1 2 3
 	Let A be the matrix:	4 5 6
 							7 8 9
-	The output from NUMdmatrix_printAsOctaveForm (A, 3, 3, "M") will be
-	M=[	1, 2, 3;
-		4, 5, 6;
-		7, 8, 9 ];
+	The output from MATprintMatlabForm (A, "M") will be
+	M= [1, 2, 3;
+	    4, 5, 6;
+	    7, 8, 9];
 */
 
 inline integer NUMmax (const constINTVEC& vec) {
