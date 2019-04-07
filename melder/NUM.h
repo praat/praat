@@ -113,13 +113,28 @@ inline bool NUMdefined (constMATVU const& mat) noexcept {
 	return true;
 }
 
+inline bool NUMequal (double x, double y) {
+	/*
+		Any defined value is unequal to --undefined--,
+		but any undefined value (inf or NaN) *is* equal to --undefined--.
+		This is different from how "==" works in C, hence the following complication.
+	*/
+	return x == y || isundef (x) && isundef (y);
+}
+inline bool NUMequal (integer x, integer y) {
+	return x == y;
+}
+inline bool NUMequal (byte x, byte y) {
+	return x == y;
+}
+
 template <typename T>
 bool NUMequal (constvector<T> const& x, constvector<T> const& y) noexcept {
 	const integer n = x.size;
 	if (y.size != n)
 		return false;
 	for (integer i = 1; i <= n; i ++)
-		if (x [i] != y [i] && (isdefined (x [i]) || isdefined (y [i])))
+		if (! NUMequal (x [i], y [i]))
 			return false;
 	return true;
 }
@@ -143,7 +158,7 @@ bool NUMequal (constmatrix<T> const& x, constmatrix<T> const& y) noexcept {
 		return false;
 	for (integer irow = 1; irow <= nrow; irow ++)
 		for (integer icol = 1; icol <= ncol; icol ++)
-			if (x [irow] [icol] != y [irow] [icol] && (isdefined (x [irow] [icol]) || isdefined (y [irow] [icol])))
+			if (! NUMequal (x [irow] [icol], y [irow] [icol]))
 				return false;
 	return true;
 }
