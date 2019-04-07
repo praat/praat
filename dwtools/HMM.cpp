@@ -63,7 +63,7 @@ Thing_implement (HMMStateSequence, Strings, 0);
 */
 
 // helpers
-int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
+static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
 autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, integer storage);
 
 integer HMM_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber);
@@ -87,7 +87,7 @@ autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence 
 
 
 autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes);
-autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
+static autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
 
 // evaluate the numbers given to probabilities
 static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
@@ -107,7 +107,7 @@ static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
 	return numbers;
 }
 
-int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2) {
+static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2) {
 	double ca = a * a + 1.0, bmyc = (b - yc);
 	double cb = 2.0 * (a * bmyc - xc);
 	double cc = bmyc * bmyc + xc * xc - r * r;
@@ -785,7 +785,7 @@ autoHMMBaumWelch HMM_forward (HMM me, constINTVEC obs) {
 	}
 }
 
-autoHMMViterbi HMM_to_HMMViterbi (HMM me, constINTVEC obs) {
+static autoHMMViterbi HMM_to_HMMViterbi (HMM me, constINTVEC obs) {
 	try {
 		autoHMMViterbi thee = HMMViterbi_create (my numberOfStates, obs.size);
 		HMM_HMMViterbi_decode (me, thee.get(), obs);
@@ -885,7 +885,7 @@ static void HMM_smoothEmissionProbs_naive (HMM me, double minProb) {
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
 
-void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
+static void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
 	Melder_assert (my notHidden);
 	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
 	if (stateSequenceNumbers.size < 2) return;
@@ -1182,7 +1182,7 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 void HMM_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 	Melder_assert (obs.size == thy numberOfTimes);
 	for (integer it = 1; it <= thy numberOfTimes - 1; it ++) {
-		double sum = 0.0;
+		longdouble sum = 0.0;
 		MATVU xi_it = thy xi [it];
 		for (integer is = 1; is <= thy numberOfStates; is ++) {
 			for (integer js = 1; js <= thy numberOfStates; js ++) {
@@ -1191,7 +1191,7 @@ void HMM_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 				sum += xi_it [is] [js];
 			}
 		}
-		xi_it /= sum;
+		xi_it  /=  double (sum);
 	}
 }
 
@@ -1209,13 +1209,12 @@ void HMM_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 		double gammasum = NUMsum (thy gamma.row (is).part (1, thy numberOfTimes - 1));
 
 		for (integer js = 1; js <= my numberOfStates; js ++) {
-			double xisum = 0.0;
-			for (integer it = 1; it <= thy numberOfTimes - 1; it ++) {
+			longdouble xisum = 0.0;
+			for (integer it = 1; it <= thy numberOfTimes - 1; it ++)
 				xisum += thy xi [it] [is] [js];
-			}
 			// zero probs signal invalid connections, don't reestimate
 			if (my transitionProbs [is] [js] > 0.0) {
-				thy aij_num [is] [js] += xisum;
+				thy aij_num [is] [js] += double (xisum);
 				thy aij_denom [is] [js] += gammasum;
 			}
 		}
@@ -1227,15 +1226,13 @@ void HMM_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 		if (! my notHidden) {
 			gammasum += thy gamma [is] [thy numberOfTimes];   // now sum all, add last term
 			for (integer k = 1; k <= my numberOfObservationSymbols; k ++) {
-				double gammasum_k = 0.0;
-				for (integer it = 1; it <= thy numberOfTimes; it ++) {
-					if (obs [it] == k) {
+				longdouble gammasum_k = 0.0;
+				for (integer it = 1; it <= thy numberOfTimes; it ++)
+					if (obs [it] == k)
 						gammasum_k += thy gamma [is] [it];
-					}
-				}
 				// only reestimate probs > 0 !
 				if (my emissionProbs [is] [k] > 0.0) {
-					thy bik_num [is] [k] += gammasum_k;
+					thy bik_num [is] [k] += double (gammasum_k);
 					thy bik_denom [is] [k] += gammasum;
 				}
 			}
@@ -1330,7 +1327,7 @@ void HMM_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 			for (integer js = 1; js <= my numberOfStates; js ++) {
 				sum += thy beta [js] [it + 1] * my transitionProbs [is] [js] * my emissionProbs [js] [obs [it + 1]];
 			}
-			thy beta [is] [it] = sum / thy scale [it];
+			thy beta [is] [it] = double (sum) / thy scale [it];
 		}
 	}
 }
@@ -1441,19 +1438,18 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 			for (integer is = 1; is <= my numberOfStates; is ++) {
 				sum += alpha_tm1 [is] * my transitionProbs [is] [js];
 			}
-			alpha_t [js] = sum;
+			alpha_t [js] = double (sum);
 			scale [it] += alpha_t [js];
 		}
 		alpha_t /= scale [it];
 	}
 
 	longdouble lnp = 0.0;
-	for (integer it = 1; it <= itime; it ++) {
+	for (integer it = 1; it <= itime; it ++)
 		lnp += log (scale [it]);
-	}
 
-	lnp = ( alpha_t [istate] > 0 ? lnp + log (alpha_t [istate]) : -INFINITY ); // p = 0 -> ln(p)=-infinity  // ppgb FIXME infinity is een laag getal
-	return lnp;
+	lnp = ( alpha_t [istate] > 0 ? lnp + log (alpha_t [istate]) : -INFINITY ); // p = 0 -> ln(p)=-infinity  // ppgb INFINITY is a small number
+	return double (lnp);
 }
 
 double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, integer itime, integer istate, integer isymbol) {
