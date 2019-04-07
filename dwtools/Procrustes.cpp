@@ -54,8 +54,8 @@ void structProcrustes :: v_transform (MATVU const& out, constMATVU const& in) {
 	Melder_assert (in.nrow == out.nrow && in.ncol == out.ncol);
 	Melder_assert (in.ncol == dimension);
 	MATmul (out, in, r.get());
-	out *= s;
-	out += t;
+	out  *=  s;
+	out  +=  t;
 }
 
 autoAffineTransform structProcrustes :: v_invert () {
@@ -65,10 +65,10 @@ autoAffineTransform structProcrustes :: v_invert () {
 		inverse is transpose!
 	*/
 
-	thy s = s == 0.0 ? 1.0 : 1.0 / s;
-	thy r.all() <<= r.transpose();
-	VECmul (thy t.get(), r.get(), t.get());
-	thy t.get() *= -thy s;
+	thy s = ( our s == 0.0 ? 1.0 : 1.0 / our s );
+	thy r.all() <<= our r.transpose();
+	VECmul (thy t.get(), our r.get(), our t.get());
+	thy t.get()  *=  -thy s;
 	/*for (integer i = 1; i <= dimension; i ++) {
 		thy t [i] = -thy s * NUMinner (thy r.column (i), t);
 	}*/

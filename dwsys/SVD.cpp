@@ -100,7 +100,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);
-		my u.get() <<= my isTransposed ? m.transpose() : m;
+		my u.get() <<= ( my isTransposed ? m.transpose() : m );
 		SVD_compute (me.get());
 		return me;
 	} catch (MelderError) {
@@ -112,7 +112,7 @@ autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 void SVD_update (SVD me, constMATVU const& m) {
 	Melder_assert ((my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
 		(my isTransposed && my numberOfRows == m.ncol && my numberOfColumns == m.nrow));
-	my u.get() <<= my isTransposed ? m.transpose() : m;
+	my u.get() <<= ( my isTransposed ? m.transpose() : m );
 	SVD_compute (me);
 }
 
