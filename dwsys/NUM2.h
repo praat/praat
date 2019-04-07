@@ -431,19 +431,6 @@ double NUMtrace2 (const constMATVU& x, const constMATVU& y);
 	Calculates the trace from a product matrix x*y
 */
 
-void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMATVU const& data, integer fromColumn, constMATVU const& eigenvectors);
-/* Input:
-	data[numberOfRows, from_col - 1 + my dimension] 
-		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
-	eigenvectors [numberOfEigenvectors][dimension] 
-		the eigenvectors stored as rows
-   Input/Output
-		projection [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] 
-		the projected vectors from 'data'
-
-   Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
- */
-
 void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU const& data, constMATVU const& eigenvectors);
 /* Input:
  	data[dimension, numberOfColumns]
@@ -1245,10 +1232,11 @@ inline autoVEC VECchainColumns (MAT m) {
 void MATmul3 (MATVU const & target, constMATVU& X, constMATVU& Y, constMATVU& Z);
 
 /* Z = X.Y.X' */
-void MATmul3_VMVt (MATVU target, constMAT X, constMAT Y);
+void MATmul3_XYXt (MATVU const& target, constMAT const& X, constMAT const& Y);
 
-/* Z = X'.Y.X */
-void MATmul3_VtMV (MATVU target, constMAT x, constMAT y);	
+/* Z = X.Y.X where Y is a symmetric matrix */
+void MATmul3_XYsXt (MATVU const& target, constMAT const& X, constMAT const& Y);
+
 /*
 	First row (n elements) is at v[1]..v[n],
 	second row (n-1 elements) is at v[n+1],..,v[n+n-1],

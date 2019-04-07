@@ -58,7 +58,7 @@ autoMatrix Eigen_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer nu
 			U"The number of columns (", thy nx, U") should equal the size of the eigenvectors (", my dimension, U").");
 		
 		autoMatrix him = Matrix_create (0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0, thy ymin, thy ymax, thy ny, thy dy, thy y1);
-		MATprojectRowsOnEigenspace_preallocated (his z.get(), 1, thy z.get(), 1, my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep));		
+		MATmul (his z.get(), thy z.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep).transpose());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Projection Matrix from ", me, U" and ", thee, U" not created.");
