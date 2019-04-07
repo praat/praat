@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2018 David Weenink
+ * Copyright (C) 2005-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
 	my p = newINTVECraw (numberOfElements);
-	Permutation_sort (me);
+	Permutation_sort (me);  // performs: p [i] = i
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {

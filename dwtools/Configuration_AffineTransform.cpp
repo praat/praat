@@ -126,7 +126,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 		// Step 8
 
-		SVD_svd_d (svd.get(), u.all());
+		SVD_update (svd.get(), u.all());
 
 		// Step 9
 		MATmul (t, svd -> u.all(), svd -> v.transpose());

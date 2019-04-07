@@ -4174,7 +4174,16 @@ void Table_distributionPlotWhere (Table me, Graphics g, integer dataColumn, doub
 				thy z [1] [++ mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
 			}
 		}
-		Matrix_drawDistribution (thee.get(), g, 0, 1, 0.5, mrow + 0.5, minimum, maximum, nBins, freqMin, freqMax, false, garnish);
+		Matrix_drawDistribution (thee.get(), g, 0, 1, 0.5, mrow + 0.5, minimum, maximum, nBins, freqMin, freqMax, false, false);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksBottom (g, 2, true, true, false);
+			if (my columnHeaders [dataColumn]. label)
+				Graphics_textBottom (g, true, my columnHeaders [dataColumn]. label.get());
+			Graphics_marksLeft (g, 2, true, true, false);
+			Graphics_textLeft (g, true, U"Number / bin");
+		}
+
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
 	}
