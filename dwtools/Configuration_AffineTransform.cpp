@@ -82,13 +82,10 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 	// Scale W by (diag(B'B))^-1/2
 
 	for (integer j = 1; j <= nc; j ++) {
-		longdouble scale = 0.0;
-		for (integer k = 1; k <= nr; k ++)
-			scale += b [k] [j] * b [k] [j];
+		double scale = NUMinner (b.column (j), b.row (j));
 		if (scale > 0.0)
 			scale = 1.0 / sqrt (scale);
-		for (integer i = 1; i <= nc; i++)
-			w [i] [j] *= scale;
+		w.column (j)  *=  scale;
 	}
 
 	// Step 3: largest eigenvalue of C

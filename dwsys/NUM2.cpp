@@ -112,6 +112,7 @@ void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
 
 void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& in, integer window) {
 	Melder_assert (out.size == in.size);
+	Melder_require (window > 0, U"The averaging window should be larger than 0.");
 	for (integer i = 1; i <= out.size; i ++) {
 		integer jfrom = i - window / 2, jto = i + window / 2;
 		if (window % 2 == 0)
@@ -308,7 +309,7 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
 double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance) {
 	Melder_assert (m.nrow == m.ncol && inout_q.size == m.nrow);
 
-	double lambda0, lambda = NUMvtmv (inout_q, m); //  q'. M . q
+	double lambda0, lambda = NUMmul (inout_q, m, inout_q); //  q'. M . q
 	//Melder_require (lambda > 0.0, U"Zero matrices ??");
 	autoVEC z = newVECraw (m.nrow);
 	integer numberOfIterations = 0;
@@ -316,7 +317,7 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 		lambda0 = lambda;
 		VECmul (z.get(), m, inout_q);
 		VECnormalize_inplace (z.get(), 2.0, 1.0);
-		lambda = NUMvtmv (z.get(), m); // z'. M . z
+		lambda = NUMmul (z.get(), m, z.get()); // z'. M . z
 	} while (fabs (lambda - lambda0) > tolerance || ++ numberOfIterations < 30);
 	inout_q <<= z.all();
 	return lambda;
