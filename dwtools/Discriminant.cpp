@@ -1,6 +1,6 @@
 /* Discriminant.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -448,14 +448,10 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 			Costs.
 		*/
 		thy costs = newMATraw (thy numberOfGroups, thy numberOfGroups);
-		for (integer igroup = 1; igroup <= thy numberOfGroups; igroup ++) {
-			for (integer jgroup = igroup + 1; jgroup <= thy numberOfGroups; jgroup ++)
-				thy costs [igroup] [jgroup] = thy costs [jgroup] [igroup] = 1.0;
-			/*
-				As the costs have been raw-initialized, set the diagonal to zero.
-			*/
-			thy costs [igroup] [igroup] = 0.0;
-		}
+		
+		thy costs.get() <<= 1.0;
+		thy costs.diagonal() <<= 0.0;
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Discriminant not created.");
@@ -513,13 +509,10 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, numberOfGroups);
 		his rowLabels.all() <<= thy rowLabels.all();
 
-		// Scale the sscp to become a covariance matrix.
-
-		for (integer i = 1; i <= dimension; i ++) {
-			for (integer k = i; k <= dimension; k ++)
-				pool -> data [k] [i] = pool -> data [i] [k] /= pool -> numberOfObservations - numberOfGroups;
-		}
-
+		// Scale the sscp to become a covariance matrix
+		
+		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - numberOfGroups);
+		
 		double lnd;
 		autoSSCPList agroups; SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
 		if (poolCovarianceMatrices) {
@@ -545,10 +538,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
 				integer no = Melder_ifloor (SSCP_getNumberOfObservations (t));
-				for (integer i = 1; i <= dimension; i ++) {
-					for (integer k = i; k <= dimension; k ++)
-						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
-				}
+				t -> data.get()  *=  1.0 / (no - 1);
+				
 				sscpvec [j] = groups->at [j];
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
@@ -635,12 +626,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoTableOfReal adisplacements = Data_copy (thee);
 
 		// Scale the sscp to become a covariance matrix.
-
-		for (integer i = 1; i <= p; i ++) {
-			for (integer k = i; k <= p; k ++) {
-				pool -> data [k] [i] = pool -> data [i] [k] /= pool -> numberOfObservations - g;
-			}
-		}
+		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - g);
 
 		double lnd;
 		autoSSCPList agroups;
@@ -666,11 +652,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
 				integer no = Melder_ifloor (SSCP_getNumberOfObservations (t));
-				for (integer i = 1; i <= p; i ++) {
-					for (integer k = i; k <= p; k ++) {
-						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
-					}
-				}
+				t -> data.get()  *=  1.0 / (no - 1);
+				
 				sscpvec [j] = groups->at [j];
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
