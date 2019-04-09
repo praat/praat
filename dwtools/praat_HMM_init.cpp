@@ -44,7 +44,7 @@ FORM (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Dra
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -61,12 +61,13 @@ FORM (GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses, U"GaussianMixture 
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (GaussianMixture, PCA)
-		GaussianMixture_PCA_drawConcentrationEllipses (me, you, GRAPHICS, numberOfSigmas, 0, nullptr, xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
+		GaussianMixture_PCA_drawConcentrationEllipses (me, you, GRAPHICS, numberOfSigmas, 0, nullptr,
+				xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
 	GRAPHICS_TWO_END	
 }
 

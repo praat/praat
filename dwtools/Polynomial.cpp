@@ -1065,9 +1065,10 @@ static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, doubl
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	conststring32 symbol, int fontSize, bool garnish) {
-	int oldFontSize = Graphics_inqFontSize (g);
-	double eps = 1e-6;
+	conststring32 symbol, double fontSize, bool garnish)
+{
+	const double oldFontSize = Graphics_inqFontSize (g);
+	const double eps = 1e-6;
 
 	if (rmax <= rmin) {
 		NUMdcvector_extrema_re (my v, 1, my max, & rmin, & rmax);

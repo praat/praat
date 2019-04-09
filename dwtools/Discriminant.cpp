@@ -343,14 +343,18 @@ autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 	}
 }
 
-void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discriminantDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool poolCovarianceMatrices, bool garnish) {
+void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discriminantDirections,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool poolCovarianceMatrices, bool garnish)
+{
 	(void) me; (void) g; (void) discriminantDirections; (void) d1; (void) d2;
 	(void) xmin; (void) xmax; (void) ymin;
 	(void) ymax; (void) fontSize; (void) poolCovarianceMatrices; (void) garnish;
 
 }
 
-void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, bool confidence, conststring32 label, bool discriminantDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish)
+void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, bool confidence,
+	conststring32 label, bool discriminantDirections,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
 {
 	integer numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 

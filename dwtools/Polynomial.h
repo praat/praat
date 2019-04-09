@@ -194,7 +194,7 @@ autoRoots Polynomial_to_Roots_ev (Polynomial me);
 integer Roots_getNumberOfRoots (Roots me);
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	conststring32 symbol, int fontSize, bool garnish);
+	conststring32 symbol, double fontSize, bool garnish);
 
 dcomplex Roots_getRoot (Roots me, integer index);
 

@@ -135,7 +135,8 @@ static struct {
 	double f1min, f1max, f2min, f2max;
 	double f3, b3, f4, b4;
 	double markTraceEvery, extendDuration;
-	int speakerType, marksDataset, numberOfMarks, marksFontSize;
+	int speakerType, marksDataset, numberOfMarks;
+	double marksFontSize;
 	char32 mark [VowelEditor_MAXIMUM_MARKERS] [Preferences_STRING_BUFFER_SIZE];
 } prefs;
 
@@ -155,7 +156,7 @@ void VowelEditor_prefs () {
 	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
 	Preferences_addInt (U"VowelEditor.speakerType", & prefs.speakerType, 1);   // TODO: replace with enum
 	Preferences_addInt (U"VowelEditor.marksDataset", & prefs.marksDataset, 2);   // TODO: replace with enum
-	Preferences_addInt (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14);
+	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
 	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
 	/*
 	 * We don't know how many markers there will be, so the prefs file needs to have the maximum number.
@@ -615,7 +616,7 @@ static void copyVowelMarksInPreferences_volatile (Table me) {
 	}
 }
 
-static void Table_addColumn_size (Table me, int size) {
+static void Table_addColumn_size (Table me, double size) {
 	integer col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
@@ -625,7 +626,7 @@ static void Table_addColumn_size (Table me, int size) {
 	}
 }
 
-static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerType, int fontSize) {
+static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerType, double fontSize) {
 	autoTable te;
 	conststring32 Type [4] = { U"", U"m", U"w", U"c" };
 	conststring32 Sex [3] = { U"", U"m", U"f"};
@@ -736,7 +737,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 	Graphics_rectangle (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineWidth (g, 1.0);
 	Graphics_setGrey (g, 0.5);
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 	// draw the marks
 	if (my marks) {
 		integer col_vowel = Table_getColumnIndexFromColumnLabel (my marks.get(), U"Vowel");
@@ -954,12 +955,12 @@ static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 			OPTION (U"Man")
 			OPTION (U"Woman")
 			OPTION (U"Child")
-		NATURAL (fontSize, U"Font size (points)", U"14")
+		POSITIVE (fontSize, U"Font size (points)", U"14")
 	EDITOR_OK
 		if (my marksDataset == 9999) SET_STRING (note, U"(Warning: the current vowel marks are not from one of these data sets.)")
 		SET_OPTION (dataSet, my marksDataset)
 		SET_OPTION (speaker, my speakerType)
-		SET_INTEGER (fontSize, my marksFontSize)
+		SET_REAL (fontSize, my marksFontSize)
 	EDITOR_DO
 		my marksDataset = prefs.marksDataset = dataSet;
 		my speakerType = prefs.speakerType = speaker;

@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs () {
 	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font::DEFAULT);
-	Preferences_addInt (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
+	Preferences_addDouble (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10.0);
 	Preferences_addBool (U"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
 }
 
@@ -72,14 +72,14 @@ DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END }
 static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
-		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12);
-		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14);
-		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18);
-		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24);
+		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10.0);
+		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12.0);
+		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14.0);
+		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18.0);
+		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24.0);
 	}
 }
-static void setFontSize (int fontSize) {
+static void setFontSize (double fontSize) {
 	//Melder_casual("Praat picture: set font size %d", (int) fontSize);
 	{// scope
 		autoPraatPicture picture;
@@ -91,15 +91,15 @@ static void setFontSize (int fontSize) {
 	}
 }
 
-DIRECT (GRAPHICS_10) { setFontSize (10); END }
-DIRECT (GRAPHICS_12) { setFontSize (12); END }
-DIRECT (GRAPHICS_14) { setFontSize (14); END }
-DIRECT (GRAPHICS_18) { setFontSize (18); END }
-DIRECT (GRAPHICS_24) { setFontSize (24); END }
+DIRECT (GRAPHICS_10) { setFontSize (10.0); END }
+DIRECT (GRAPHICS_12) { setFontSize (12.0); END }
+DIRECT (GRAPHICS_14) { setFontSize (14.0); END }
+DIRECT (GRAPHICS_18) { setFontSize (18.0); END }
+DIRECT (GRAPHICS_24) { setFontSize (24.0); END }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
-	NATURAL (fontSize, U"Font size (points)", U"10")
+	POSITIVE (fontSize, U"Font size (points)", U"10")
 OK
-	SET_INTEGER (fontSize, (integer) theCurrentPraatPicture -> fontSize);
+	SET_REAL (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (fontSize);
 END }
@@ -632,13 +632,13 @@ FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
 		OPTION (U"Half")
 		OPTION (U"Top")
 	OPTIONMENU_ENUM (kGraphics_font, font, U"Font", kGraphics_font::DEFAULT)
-	NATURAL (fontSize, U"Font size", U"10")
+	POSITIVE (fontSize, U"Font size", U"10")
 	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
 	TEXTFIELD (text, U"Text:", U"")
 OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
-	int currentSize = Graphics_inqFontSize (GRAPHICS);
+	const double currentSize = Graphics_inqFontSize (GRAPHICS);
 	GRAPHICS_NONE
 		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
@@ -1493,7 +1493,7 @@ static void cb_selectionChanged (Picture p, void * /* closure */,
 	theCurrentPraatPicture -> y1NDC = sely1;
 	theCurrentPraatPicture -> y2NDC = sely2;
 	if (praat_mouseSelectsInnerViewport) {
-		int fontSize = Graphics_inqFontSize (GRAPHICS);
+		const double fontSize = Graphics_inqFontSize (GRAPHICS);
 		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);

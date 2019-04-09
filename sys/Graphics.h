@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2005,2007-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,8 @@ Thing_define (Graphics, Thing) {
 	int horizontalTextAlignment, verticalTextAlignment;
 	double textRotation, wrapWidth, secondIndent, textX, textY;
 	kGraphics_font font;
-	int fontSize, fontStyle;
+	double fontSize;
+	int fontStyle;
 	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
 	int dollarSignIsCode, atSignIsLink;
 	bool recording, duringXor;
@@ -260,7 +261,7 @@ void Graphics_unhighlight2 (Graphics me, double x1, double x2, double y1, double
 void Graphics_setTextAlignment (Graphics me, enum kGraphics_horizontalAlignment horizontal, int vertical);
 
 void Graphics_setFont (Graphics me, enum kGraphics_font font);
-void Graphics_setFontSize (Graphics me, int height);
+void Graphics_setFontSize (Graphics me, double height);
 
 #define Graphics_NORMAL  0
 #define Graphics_BOLD  1
@@ -302,7 +303,7 @@ void Graphics_setColourScale (Graphics me, enum kGraphics_colourScale colourScal
 void Graphics_inqViewport (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
 enum kGraphics_font Graphics_inqFont (Graphics me);
-int Graphics_inqFontSize (Graphics me);
+double Graphics_inqFontSize (Graphics me);
 int Graphics_inqFontStyle (Graphics me);
 int Graphics_inqLineType (Graphics me);
 double Graphics_inqLineWidth (Graphics me);

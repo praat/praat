@@ -513,7 +513,7 @@ static integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, do
 }
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, int useSigmaY, conststring32 mark, int marksFontSize, double horizontalOffset_mm)
+	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm)
 {
 	integer ixmin, ixmax;
 	if (DataModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1) return;
@@ -523,7 +523,7 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setFontSize (g, marksFontSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	int currentFontSize = Graphics_inqFontSize (g);
+	double currentFontSize = Graphics_inqFontSize (g);
 	for (integer idata = 1; idata <= my numberOfDataPoints; idata ++) {
 		if (my dataPointStatus [idata] != DataModeler_DATA_INVALID) {
 			double x = my x [idata], y = my y [idata];
@@ -672,7 +672,7 @@ autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 }
 
 static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g,
-	int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish)
+	int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish)
 {
 	try {
 		autoTable thee = DataModeler_to_Table_zscores (me, useSigmaY);
@@ -1254,18 +1254,22 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 }
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, int useSigmaY, conststring32 mark, int marksFontSize, double horizontalOffset_mm, bool garnish)
+	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish)
 {
-	if (tmax <= tmin)
-		tmin = my xmin, tmax = my xmax;
+	if (tmax <= tmin) {
+		tmin = my xmin;
+		tmax = my xmax;
+	}
 	integer maxTrack = my trackmodelers.size;
-	if (toTrack == 0 && fromTrack == 0)
-		fromTrack = 1, toTrack = maxTrack;
+	if (toTrack == 0 && fromTrack == 0) {
+		fromTrack = 1;
+		toTrack = maxTrack;
+	}
 	if (fromTrack > maxTrack) return;
 	if (toTrack > maxTrack)
 		toTrack = maxTrack;
 	Graphics_setInner (g);
-	int currectFontSize = Graphics_inqFontSize (g);
+	double currectFontSize = Graphics_inqFontSize (g);
 	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
 		DataModeler ffi = my trackmodelers.at [iformant];
 		double xOffset_mm = ( iformant % 2 == 1 ? horizontalOffset_mm : -horizontalOffset_mm );
@@ -1282,7 +1286,9 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	}
 }
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish) {
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY,
+	integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish)
+{
 	if (iformant > 0 || iformant <= my trackmodelers.size) {
 		DataModeler ff = my trackmodelers.at [iformant];
 		DataModeler_normalProbabilityPlot (ff, g, useSigmaY, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
@@ -1290,7 +1296,8 @@ void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, intege
 }
 
 static void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, double horizontalOffset_mm) {
+	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, double horizontalOffset_mm)
+{
 	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
 		DataModeler ffi = my trackmodelers.at [iformant];
 		double xOffset_mm = ( iformant % 2 == 1 ? horizontalOffset_mm : -horizontalOffset_mm );
@@ -1299,7 +1306,8 @@ static void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, dou
 }
 
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish) {
+	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish)
+{
 	if (tmax <= tmin)
 		tmin = my xmin, tmax = my xmax;
 	integer maxTrack = my trackmodelers.size;

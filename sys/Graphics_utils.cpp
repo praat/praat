@@ -1,6 +1,6 @@
 /* Graphics_utils.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -796,7 +796,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
 	}
 	for (integer i = first; i <= last; i ++) {
-		double xWC = i * distance;
+		const double xWC = i * distance;
 		if (haveNumbers) Graphics_text (me, xWC, 1.0 + my vertTick, Melder_float (Melder_half (xWC / units)));
 		if (haveTicks) Graphics_line (me, xWC, 1.0, xWC, 1.0 + my vertTick);
 	}
@@ -805,7 +805,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
 		for (integer i = first; i <= last; i ++) {
-			double xWC = i * distance;
+			const double xWC = i * distance;
 			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}
 		Graphics_setLineWidth (me, lineWidth);
@@ -827,9 +827,9 @@ void Graphics_mark (Graphics me, double x, double y, double size_mm, conststring
 		else mark = -1;
 	} else mark = -1;
 	if (mark == -1) {
-		int oldSize = my fontSize;
-		int oldHorizontalAlignment = my horizontalTextAlignment;
-		int oldVerticalAlignment = my verticalTextAlignment;
+		const double oldSize = my fontSize;
+		const int oldHorizontalAlignment = my horizontalTextAlignment;
+		const int oldVerticalAlignment = my verticalTextAlignment;
 		Graphics_setFontSize (me, size_mm * 72.0 / 25.4);
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (me, x, y, markString);
@@ -838,13 +838,13 @@ void Graphics_mark (Graphics me, double x, double y, double size_mm, conststring
 	} else if (mark == 0) {
 		Graphics_fillCircle_mm (me, x, y, size_mm);
 	} else if (mark == 1) {
-		double dx = 0.5 * Graphics_dxMMtoWC (me, size_mm);
-		double dy = 0.5 * Graphics_dyMMtoWC (me, size_mm);
+		const double dx = 0.5 * Graphics_dxMMtoWC (me, size_mm);
+		const double dy = 0.5 * Graphics_dyMMtoWC (me, size_mm);
 		Graphics_line (me, x - dx, y, x + dx, y);
 		Graphics_line (me, x, y - dy, x, y + dy);
 	} else if (mark == 2) {
-		double dx = 0.4 * Graphics_dxMMtoWC (me, size_mm);
-		double dy = 0.4 * Graphics_dyMMtoWC (me, size_mm);
+		const double dx = 0.4 * Graphics_dxMMtoWC (me, size_mm);
+		const double dy = 0.4 * Graphics_dyMMtoWC (me, size_mm);
 		Graphics_line (me, x - dx, y - dy, x + dx, y + dy);
 		Graphics_line (me, x + dx, y - dy, x - dx, y + dy);
 	} else {

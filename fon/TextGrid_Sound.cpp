@@ -622,9 +622,12 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 {
 	try {
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
-		double oldFontSize = Graphics_inqFontSize (g);
+		const double oldFontSize = Graphics_inqFontSize (g);
 		Pitch_draw (pitch, g, tmin, tmax, fmin, fmax, garnish, speckle, unit);
-		if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
+		if (tmax <= tmin) {
+			tmin = grid -> xmin;
+			tmax = grid -> xmax;
+		}
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
 		if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 			fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);

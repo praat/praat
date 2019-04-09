@@ -51,7 +51,7 @@ Thing_define (VowelEditor, Editor) {
 	int frequencyScale;   // 0: lin, 1: log, 2: bark, 3: mel
 	int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
 	int marksDataset, speakerType;   // 1 = male, 2 = female, 3 = child
-	int marksFontSize;
+	double marksFontSize;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour...

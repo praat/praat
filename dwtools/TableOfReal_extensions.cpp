@@ -372,7 +372,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 
 void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xmax, double ymin, double ymax, double sv_splitfactor, int labelsize, bool garnish) {
 	integer nr = my numberOfRows, nc = my numberOfColumns, nPoints = nr + nc;
-	int fontsize = Graphics_inqFontSize (g);
+	const double fontsize = Graphics_inqFontSize (g);
 
 	autoSVD svd = SVD_create (nr, nc);
 
@@ -745,7 +745,7 @@ void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowm
 void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 
 	Melder_require (icx >= 1 && icx <= my numberOfColumns,
 		U"The horizontal column number should be in the range from 1 to ", my numberOfColumns, U".");
@@ -1066,8 +1066,8 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 }
 
 void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer coly1, integer colx2, integer coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, bool garnish) {
-	integer nx = my numberOfColumns, ny = my numberOfRows;
-	int fontsize = Graphics_inqFontSize (g);
+	const integer nx = my numberOfColumns, ny = my numberOfRows;
+	const double fontsize = Graphics_inqFontSize (g);
 
 	Melder_require (colx1 > 0 && colx1 <= nx && coly1 > 0 && coly1 <= nx,
 		U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");

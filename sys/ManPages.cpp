@@ -512,7 +512,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				autoGraphics graphics = Graphics_create_pngfile (& pngFile, 300, 0.0, paragraph -> width, 0.0, paragraph -> height);
 				Graphics_setFont (graphics.get(), kGraphics_font::TIMES);
 				Graphics_setFontStyle (graphics.get(), 0);
-				Graphics_setFontSize (graphics.get(), 12);
+				Graphics_setFontSize (graphics.get(), 12.0);
 				Graphics_setWrapWidth (graphics.get(), 0);
 				static structPraatApplication praatApplication;
 				static structPraatObjects praatObjects;
@@ -524,7 +524,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				theCurrentPraatPicture = (PraatPicture) & praatPicture;
 				theCurrentPraatPicture -> graphics = graphics.get();   // FIXME: should be move()?
 				theCurrentPraatPicture -> font = (int) kGraphics_font::TIMES;
-				theCurrentPraatPicture -> fontSize = 12;
+				theCurrentPraatPicture -> fontSize = 12.0;
 				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 				theCurrentPraatPicture -> colour = Graphics_BLACK;
 				theCurrentPraatPicture -> lineWidth = 1.0;

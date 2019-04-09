@@ -88,7 +88,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 	double scale, bool confidence, conststring32 label, integer d1, integer d2, double xmin, double xmax,
-	double ymin, double ymax, int fontSize, bool garnish);
+	double ymin, double ymax, double fontSize, bool garnish);
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me);
 

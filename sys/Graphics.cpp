@@ -105,7 +105,7 @@ void Graphics_init (Graphics me, int resolution) {
 	my arrowSize = 1.0;
 	my speckleSize = 1.0;
 	my font = kGraphics_font::HELVETICA;
-	my fontSize = 10;
+	my fontSize = 10.0;
 	my fontStyle = Graphics_NORMAL;
 	my record = nullptr;
 	my irecord = my nrecord = 0;

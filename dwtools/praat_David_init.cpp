@@ -1421,7 +1421,7 @@ FORM (GRAPHICS_Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellips
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1440,7 +1440,7 @@ FORM (GRAPHICS_Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma 
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1458,7 +1458,7 @@ FORM (GRAPHICS_Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confide
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1477,7 +1477,7 @@ FORM (GRAPHICS_Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one c
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -5057,7 +5057,7 @@ FORM (GRAPHICS_Roots_draw, U"Roots: Draw", nullptr) {
 	REAL (ymin, U"Minimum of imaginary axis", U"0.0")
 	REAL (ymax, U"Maximum of imaginary axis", U"0.0")
 	SENTENCE (mark_string, U"Mark string (+x0...)", U"o")
-	NATURAL (markSize, U"Mark size", U"12")
+	POSITIVE (markSize, U"Mark size", U"12")
 	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
@@ -6525,7 +6525,7 @@ FORM (GRAPHICS_Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	WORD (markColumn_string, U"Column with marks", U"")
-	NATURAL (fontSize, U"Font size", U"12")
+	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -6658,7 +6658,7 @@ FORM (GRAPHICS_Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	WORD (factorColumn_string, U"Factor column", U"Vowel")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
+	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -6679,7 +6679,7 @@ FORM (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) 
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	WORD (factorColumn_string, U"Factor column", U"Vowel")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
+	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
 	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
 	OK

@@ -913,7 +913,7 @@ void GuiText_remove (GuiText me);
 void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring32 value);
 void GuiText_scrollToSelection (GuiText me);
 void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCallback, Thing changedBoss);
-void GuiText_setFontSize (GuiText me, int size);
+void GuiText_setFontSize (GuiText me, double size);
 void GuiText_setRedoItem (GuiText me, GuiMenuItem item);
 void GuiText_setSelection (GuiText me, integer first, integer last);
 void GuiText_setString (GuiText me, conststring32 text);
