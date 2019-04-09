@@ -163,9 +163,9 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 }
 
 void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, constVEC x, constVEC y, 
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel)
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel)
 {
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
@@ -200,11 +200,11 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 	Graphics_setFontSize (g, fontSize);
 }
 
-void Graphics_lagPlot (Graphics g, constVEC data, double xmin, double xmax, integer lag, int labelSize, conststring32 plotLabel)
+void Graphics_lagPlot (Graphics g, constVEC data, double xmin, double xmax, integer lag, double labelSize, conststring32 plotLabel)
 {
 	if (lag < 0 || lag >= data.size)
 		return;
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 	Graphics_setFontSize (g, labelSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	// plot x[i] vertically and x[i-lag] horizontally

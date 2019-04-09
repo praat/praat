@@ -467,7 +467,9 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 	}
 }
 
-void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale, int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
+void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale,
+	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish)
+{
 	Melder_require (my dimension == his dimension, 
 		U"The dimensions should agree.");
 	Melder_require (labs(d1) >= 1 && labs (d1) <= my dimension && labs(d2) >= 1 && labs (d2) <= my dimension,
@@ -501,7 +503,9 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	}
 }
 
-void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label, int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
+void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label,
+	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish)
+{
 	Melder_require (labs(d1) >= 1 && labs (d1) <= my dimension && labs(d2) >= 1 && labs (d2) <= my dimension,
 		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for "
 		"a reversed axis).");

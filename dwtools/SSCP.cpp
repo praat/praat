@@ -181,7 +181,7 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2)
 	}
 }
 
-void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, int fontSize) {
+void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, double fontSize) {
 	try {
 		integer nsteps = 100;
 		autoVEC x = newVECraw (nsteps + 1);
@@ -209,7 +209,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 		}
 		Graphics_polyline (g, nsteps + 1, & x [1], & y [1]);
 		if (label && fontSize > 0) {
-			int oldFontSize = Graphics_inqFontSize (g);
+			const double oldFontSize = Graphics_inqFontSize (g);
 			Graphics_setFontSize (g, fontSize);
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 			Graphics_text (g, my centroid [1], my centroid [2], label);
@@ -309,8 +309,9 @@ double SSCP_getFractionVariation (SSCP me, integer from, integer to) {
 	return trace > 0.0 ? sum / trace : undefined;
 }
 
-void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int garnish) {
-
+void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int garnish)
+{
 	Melder_require (d1 > 0 && d1 <= my numberOfRows && d2 > 0 && d2 <= my numberOfRows && d1 != d2, U"Incorrect axes.");
 
 	autoSSCP thee = _SSCP_extractTwoDimensions (me, d1, d2);
@@ -948,7 +949,7 @@ autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVECVU const& v1, constV
 void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g,
 	double scale, bool confidence, conststring32 label,
 	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax,
-	int fontSize, bool garnish)
+	double fontSize, bool garnish)
 {
 	SSCP t = my at [1];
 

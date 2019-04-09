@@ -1739,9 +1739,9 @@ void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycol
 }
 
 void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
-	double xmin, double xmax, double ymin, double ymax, integer markColumn, int fontSize, bool garnish)
+	double xmin, double xmax, double ymin, double ymax, integer markColumn, double fontSize, bool garnish)
 {
-	int saveFontSize = Graphics_inqFontSize (g);
+	const double saveFontSize = Graphics_inqFontSize (g);
 	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
 	Table_numericize_Assert (me, xcolumn);
 	Table_numericize_Assert (me, ycolumn);

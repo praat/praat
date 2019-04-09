@@ -3895,7 +3895,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 	}
 }
 
-void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish) {
+void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer numberOfQuantiles,
+	double numberOfSigmas, double labelSize, conststring32 label, bool garnish)
+{
 	try {
 		if (column < 1 || column > my numberOfColumns)
 			return;
@@ -3948,7 +3950,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 
 void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 	integer dataColumn, integer factorColumn, conststring32 xlevel, conststring32 ylevel, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel, bool garnish)
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel, bool garnish)
 {
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
@@ -4004,7 +4006,7 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 }
 
 void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer ycolumn, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel, bool garnish)
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel, bool garnish)
 {
 	try {
 		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
@@ -4333,18 +4335,18 @@ void Table_barPlotWhere (Table me, Graphics g,
 		if (garnish) {
 			if (labelIndex > 0) {
 				double y = ymin, xb = (xoffsetFraction + 0.5 * (groupSize + (groupSize - 1) * interbarFraction)) * bar_width;
-				double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
-				int currentFontSize = Graphics_inqFontSize (g);
+				const double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
+				const double currentFontSize = Graphics_inqFontSize (g);
 				Graphics_setTextRotation (g, angle);
 				if (angle < 0.0) {
 					y -= 0.3 * lineSpacing;
 					xb -= 0.5 * bar_width;
-					Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
+					Graphics_setFontSize (g, currentFontSize - ( currentFontSize > 12.0 ? 2.0 : 1.0 ));
 					Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_TOP);
 				} else if (angle > 0.0) {
 					y -= 0.3*lineSpacing;
 					xb += 0.5 * bar_width;
-					Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
+					Graphics_setFontSize (g, currentFontSize - ( currentFontSize > 12.0 ? 2.0 : 1.0 ));
 					Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_TOP);
 				} else {
 					Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
@@ -4377,7 +4379,7 @@ static bool Graphics_getConnectingLine (Graphics g, conststring32 text1, double 
 	bool drawLine = false;
 	double width1 = Graphics_textWidth (g, text1);
 	double width2 = Graphics_textWidth (g, text2);
-	double h = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72) / 1.5;
+	double h = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0) / 1.5;
 	double xi [3], yi [3], xleft = x1 < x2 ? x1 : x2, xright = x2 > x1 ? x2 : x1;
 	int numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xleft - width1 / 2.0, y1 - h/2, xleft + width1 / 2.0, y1 + h/2, xi, yi);
 	if (numberOfIntersections == 1) {
@@ -4438,9 +4440,8 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 		}
 		
 		if (garnish && ! xIsNumeric && xcolumn > 0) {
-			double y = ymin, dx = 0;
-			
-			int currentFontSize = Graphics_inqFontSize (g);
+			double y = ymin, dx = 0.0;
+			double currentFontSize = Graphics_inqFontSize (g);
 			Graphics_setTextRotation (g, angle);
 			if (angle < 0.0) {
 				y -= 0.3 * lineSpacing;
@@ -4479,8 +4480,10 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 	}
 }
 
-void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, double xmin, double xmax, conststring32 symbol, int labelSize,
- bool garnish, conststring32 formula, Interpreter interpreter) {
+void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, double xmin, double xmax,
+	conststring32 symbol, double labelSize,
+	bool garnish, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		if (column < 1 || column > my rows.size)
 			return;
@@ -4633,7 +4636,10 @@ autoTable Table_extractMahalanobisWhere (Table me,
 	}
 }
 
-void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer ycolumn, integer factorColumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, integer labelSize, bool garnish, conststring32 formula, Interpreter interpreter) {
+void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer ycolumn, integer factorColumn,
+	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, double labelSize, bool garnish,
+	conststring32 formula, Interpreter interpreter)
+{
 	try {
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		autoTableOfReal thee = TableOfReal_create (selectedRows.size, 2);

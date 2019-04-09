@@ -324,7 +324,7 @@ FORM (GRAPHICS_Table_scatterPlot, U"Scatter plot", nullptr) {
 	REAL (fromVertical, U"left Vertical range", U"0.0")
 	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
 	SENTENCE (columnWithMarks, U"Column with marks", U"")
-	NATURAL (fontSize, U"Font size", U"12")
+	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO

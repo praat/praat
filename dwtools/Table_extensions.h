@@ -67,16 +67,16 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 	double ymin, double ymax, integer xci_min, integer xci_max, double bar_mm, bool garnish, conststring32 formula, Interpreter interpreter);
 
 void Table_normalProbabilityPlot (Table me, Graphics g,
-	integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish);
+	integer column, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 
 void Table_quantileQuantilePlot (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 label, bool garnish
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 label, bool garnish
 );
 
 void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 	integer dataColumn, integer factorColumn, conststring32 xlevel, conststring32 ylevel, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 label, bool garnish
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 label, bool garnish
 );
 
 void Table_boxPlots (Table me, Graphics g,
@@ -114,12 +114,12 @@ void Table_lineGraphWhere (Table me, Graphics g,
 
 void Table_lagPlotWhere (Table me, Graphics g,
 	integer column, integer lag, double xmin, double xmax,
-	conststring32 symbol, int labelSize, bool garnish, conststring32 formula, Interpreter interpreter
+	conststring32 symbol, double labelSize, bool garnish, conststring32 formula, Interpreter interpreter
 );
 
 void Table_drawEllipsesWhere (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, integer labelcolumn, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, integer labelSize, bool garnish, conststring32 formula, Interpreter interpreter);
+	double numberOfSigmas, double labelSize, bool garnish, conststring32 formula, Interpreter interpreter);
 
 void Table_printAsAnovaTable (Table me);
 

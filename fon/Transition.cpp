@@ -111,11 +111,11 @@ static void print4 (char *buffer, double value, int iformat, int width, int prec
 }
 
 void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int precision) {
-	double maxTextWidth = 0, maxTextHeight = 0;
+	double maxTextWidth = 0.0, maxTextHeight = 0.0;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.5, my numberOfStates + 0.5, 0.0, 1.0);
-	double leftMargin = Graphics_dxMMtoWC (g, 1.0);
-	double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
+	const double leftMargin = Graphics_dxMMtoWC (g, 1.0);
+	const double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 	for (integer col = 1; col <= my numberOfStates; col ++) {
 		if (my stateLabels && my stateLabels [col] && my stateLabels [col] [0]) {

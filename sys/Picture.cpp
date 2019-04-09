@@ -162,7 +162,7 @@ static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent even
 			if (iy < iystart) { iy1 = iy; iy2 = iystart; }
 			else              { iy1 = iystart; iy2 = iy; }
 			if (my mouseSelectsInnerViewport) {
-				int fontSize = Graphics_inqFontSize (my graphics.get());
+				const double fontSize = Graphics_inqFontSize (my graphics.get());
 				double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 				if (xmargin > ix2 - ix1 + 1) xmargin = ix2 - ix1 + 1;
 				if (ymargin > iy2 - iy1 + 1) ymargin = iy2 - iy1 + 1;

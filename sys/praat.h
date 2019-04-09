@@ -180,9 +180,10 @@ typedef struct {   /* Readonly */
 	int totalBeingCreated;
 	integer uniqueId;
 } structPraatObjects, *PraatObjects;
-typedef struct {   // readonly
+typedef struct {   // read-only
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
-	int font, fontSize, lineType;
+	int font, lineType;
+	double fontSize;
 	Graphics_Colour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;

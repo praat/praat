@@ -1509,11 +1509,11 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 void structTextGridEditor :: v_draw () {
 	TextGrid grid = (TextGrid) data;
 	Graphics_Viewport vp1, vp2;
-	integer itier, ntier = grid -> tiers->size;
-	enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
-	int oldFontSize = Graphics_inqFontSize (our graphics.get());
-	bool showAnalysis = v_hasAnalysis () && (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && (d_longSound.data || d_sound.data);
-	double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
+	integer ntier = grid -> tiers->size;
+	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
+	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
+	const bool showAnalysis = v_hasAnalysis () && (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && (d_longSound.data || d_sound.data);
+	const double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
 
 	/*
 	 * Draw optional sound.
@@ -1538,7 +1538,7 @@ void structTextGridEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	for (itier = 1; itier <= ntier; itier ++) {
+	for (integer itier = 1; itier <= ntier; itier ++) {
 		Function anyTier = grid -> tiers->at [itier];
 		bool tierIsSelected = itier == selectedTier;
 		bool isIntervalTier = anyTier -> classInfo == classIntervalTier;
@@ -2183,7 +2183,7 @@ void structTextGridEditor :: v_updateText () {
 	}
 }
 
-NATURAL_VARIABLE (v_prefs_addFields_fontSize)
+POSITIVE_VARIABLE (v_prefs_addFields_fontSize)
 OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals)
 OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
 OPTIONMENU_VARIABLE (v_prefs_addFields_shiftDragMultiple)
@@ -2192,7 +2192,7 @@ OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenW
 SENTENCE_VARIABLE (v_prefs_addFields_theText)
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
-	NATURAL_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
+	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
 	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals,
 			U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
 	OPTIONMENU_FIELD (v_prefs_addFields_useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles () + 1)
@@ -2209,7 +2209,7 @@ void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
-	SET_INTEGER (v_prefs_addFields_fontSize, our p_fontSize)
+	SET_REAL (v_prefs_addFields_fontSize, our p_fontSize)
 	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
 	SET_OPTION (v_prefs_addFields_shiftDragMultiple, our p_shiftDragMultiple + 1)
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)

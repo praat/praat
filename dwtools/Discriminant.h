@@ -51,13 +51,13 @@ double Discriminant_getLnDeterminant_group (Discriminant me, integer group);
 double Discriminant_getLnDeterminant_total (Discriminant me);
 
 void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discriminantDirections,
-	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize,
 	bool poolCovarianceMatrices, bool garnish);
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	double scale, bool confidence, conststring32 label, bool discriminantDirections,
 	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax,
-	int fontSize, bool garnish);
+	double fontSize, bool garnish);
 
 autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice);
 

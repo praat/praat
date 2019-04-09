@@ -134,21 +134,26 @@ static void drawBoxPlot (Graphics g) {
 }
 
 static void drawPartionedMatrix (Graphics g) {
-	double min = 0, max = 10, x1, x2, y1, y2;
+	double min = 0.0, max = 10.0, x1, x2, y1, y2;
 	Graphics_setWindow (g, min, max, min, max);
-	x1 = 0; x2 = max; y1 = y2 = 7;
+	x1 = 0.0;
+	x2 = max;
+	y1 = y2 = 7.0;
 	Graphics_setLineType (g, Graphics_DOTTED);
 	Graphics_line (g, x1, y1, x2, y2);
-	x1 = x2 = 3; y1 = 0; y2 = max;
+	x1 = x2 = 3.0;
+	y1 = 0.0;
+	y2 = max;
 	Graphics_line (g, x1, y1, x2, y2);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	x1 = 1.5; y1 = 7+3/2;
-	Graphics_setFontSize (g, 14);
+	x1 = 1.5;
+	y1 = 7.0 + 3.0 / 2.0;
+	Graphics_setFontSize (g, 14.0);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_text (g, x1, y1, U"##S__yy_#");
-	x1 = 3 + 7/2;
+	x1 = 3.0 + 7.0 / 2.0;
 	Graphics_text (g, x1, y1, U"##S__yx_#");
-	y1 = 7/2;
+	y1 = 7.0 / 2.0;
 	Graphics_text (g, x1, y1, U"##S__xx_#");
 	x1 = 1.5;
 	Graphics_text (g, x1, y1, U"##S__xy_#");

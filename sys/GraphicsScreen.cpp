@@ -765,8 +765,11 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 						Melder_systemVersion < 101400 ?
 							(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
 							[[NSGraphicsContext currentContext] CGContext];
+							//[[NSGraphicsContext graphicsContextWithWindow: [my d_macView window]] CGContext];
 			//}
 			//Melder_assert (my d_macGraphicsContext);
+			//Melder_casual (U"GraphicsQuartz_initDraw: 1 ", Melder_pointer (my d_macGraphicsContext));
+			//Melder_casual (U"GraphicsQuartz_initDraw: 2 ", Melder_pointer ([[NSGraphicsContext currentContext] graphicsPort]));
 			if (my printer) {
 				//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
 				//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);

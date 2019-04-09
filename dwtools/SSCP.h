@@ -49,7 +49,7 @@ autoSSCP SSCP_create (integer dimension);
 
 void SSCP_reset (SSCP me);
 
-void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, int fontSize);
+void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, double fontSize);
 
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
 
@@ -230,7 +230,7 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2)
 
 void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale,
 	bool confidence, conststring32 label, integer d1, integer d2, double xmin, double xmax,
-	double ymin, double ymax, int fontSize, bool garnish);
+	double ymin, double ymax, double fontSize, bool garnish);
 
 void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool confidence,
 	double *xmin, double *xmax, double *ymin, double *ymax);

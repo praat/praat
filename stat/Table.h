@@ -98,7 +98,7 @@ void Table_randomizeRows (Table me) noexcept;
 void Table_reflectRows (Table me) noexcept;
 
 void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
-	double xmin, double xmax, double ymin, double ymax, integer markColumn, int fontSize, bool garnish);
+	double xmin, double xmax, double ymin, double ymax, integer markColumn, double fontSize, bool garnish);
 void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, conststring32 mark, bool garnish);
 void Table_drawEllipse_e (Table me, Graphics g, integer xcolumn, integer ycolumn,

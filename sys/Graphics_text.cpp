@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
+ * Copyright (C) 1992-2019 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1063,15 +1063,15 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 	_Graphics_widechar *plc, *lastlc;
 	bool inLink = false;
 	switch (my horizontalTextAlignment) {
-		case (int) Graphics_LEFT:      dx = 1 + (0.1/72) * my fontSize * my resolution; break;
+		case (int) Graphics_LEFT:      dx = 1 + (0.1/72.0) * my fontSize * my resolution; break;
 		case (int) Graphics_CENTRE:    dx = - width / 2; break;
-		case (int) Graphics_RIGHT:     dx = width != 0.0 ? - width - (0.1/72) * my fontSize * my resolution : 0; break;   // if width is zero, do not step left
-		default:                 dx = 1 + (0.1/72) * my fontSize * my resolution; break;
+		case (int) Graphics_RIGHT:     dx = width != 0.0 ? - width - (0.1/72.0) * my fontSize * my resolution : 0; break;   // if width is zero, do not step left
+		default:                 dx = 1 + (0.1/72.0) * my fontSize * my resolution; break;
 	}
 	switch (my verticalTextAlignment) {
-		case Graphics_BOTTOM:    dy = (0.4/72) * my fontSize * my resolution; break;
-		case Graphics_HALF:      dy = (-0.3/72) * my fontSize * my resolution; break;
-		case Graphics_TOP:       dy = (-1.0/72) * my fontSize * my resolution; break;
+		case Graphics_BOTTOM:    dy = (0.4/72.0) * my fontSize * my resolution; break;
+		case Graphics_HALF:      dy = (-0.3/72.0) * my fontSize * my resolution; break;
+		case Graphics_TOP:       dy = (-1.0/72.0) * my fontSize * my resolution; break;
 		case Graphics_BASELINE:  dy = 0; break;
 		default:                 dy = 0; break;
 	}
@@ -1730,7 +1730,7 @@ void Graphics_setFont (Graphics me, enum kGraphics_font font) {
 	if (my recording) { op (SET_FONT, 1); put (font); }
 }
 
-void Graphics_setFontSize (Graphics me, int size) {
+void Graphics_setFontSize (Graphics me, double size) {
 	my fontSize = size;
 	if (my recording) { op (SET_FONT_SIZE, 1); put (size); }
 }
@@ -1800,7 +1800,7 @@ void Graphics_setAtSignIsLink (Graphics me, bool isLink) {
 /* Inquiries. */
 
 enum kGraphics_font Graphics_inqFont (Graphics me) { return my font; }
-int Graphics_inqFontSize (Graphics me) { return my fontSize; }
+double Graphics_inqFontSize (Graphics me) { return my fontSize; }
 int Graphics_inqFontStyle (Graphics me) { return my fontStyle; }
 
 /* End of file Graphics_text.cpp */

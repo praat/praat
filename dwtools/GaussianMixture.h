@@ -44,11 +44,11 @@ void GaussianMixture_unExpandPCA (GaussianMixture me);
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g,
 	double scale, int confidence, char32 *label, int pcaDirections, integer d1, integer d2,
-	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
+	double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish);
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g,
 	double scale, int confidence, char32 *label, integer d1, integer d2,
-	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
+	double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish);
 
 void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, 
 	double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);

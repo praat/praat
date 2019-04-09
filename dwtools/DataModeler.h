@@ -89,7 +89,7 @@ void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, doub
 	int estimated, integer numberOfParameters, double horizontalOffset_mm);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, int useSigmaY, conststring32 mark, int marksFontSize, double horizontalOffset_mm);
+	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm);
 
 /* Get the y-value of the fitted function at x */
 
@@ -189,7 +189,7 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	int estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, int useSigmaY, conststring32 mark, int marksFontSize, double horizontalOffset_mm, bool garnish);
+	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	int useSigmaY, bool garnish);
@@ -198,7 +198,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 	int shiftDirection, integer fromFormant, integer toFormant, bool garnish);
 
 void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant,
-	int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish);
+	int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 
 autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY);
 

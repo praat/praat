@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2018 Paul Boersma
+ * Copyright (C) 1997-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -880,11 +880,11 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 			Graphics_text (g, x + candWidth - margin, y + descent, tableau -> candidates [icand]. output.get());
 			if (candidateIsOptimal) {
 				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
-				Graphics_setFontSize (g, (int) (1.5 * fontSize));
+				Graphics_setFontSize (g, 1.5 * fontSize);
 				if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
 				Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, U"☞");
 				Graphics_setColour (g, colour);
-				Graphics_setFontSize (g, (int) fontSize);
+				Graphics_setFontSize (g, fontSize);
 			}
 			Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
 			/*

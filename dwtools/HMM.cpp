@@ -659,7 +659,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	// if > 5 may be one in the middle with the most connections
 	// ...
 	// find fontsize
-	int fontSize = Graphics_inqFontSize (g);
+	double fontSize = Graphics_inqFontSize (g);
 	conststring32 widest_label = U"";
 	double max_width = 0.0;
 	for (integer is = 1; is <= my numberOfStates; is ++) {
@@ -670,7 +670,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 			max_width = w;
 		}
 	}
-	int new_fontSize = fontSize;
+	double new_fontSize = fontSize;
 	while (max_width > 2.0 * rstate && new_fontSize > 4) {
 		new_fontSize --;
 		Graphics_setFontSize (g, new_fontSize);

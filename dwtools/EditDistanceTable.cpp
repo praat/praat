@@ -433,7 +433,7 @@ static double getLeftMargin (Graphics graphics) {
 }
 
 static double getLineSpacing (Graphics graphics) {
-	return Graphics_dyMMtoWC (graphics, 1.5 * Graphics_inqFontSize (graphics) * 25.4 / 72);
+	return Graphics_dyMMtoWC (graphics, 1.5 * Graphics_inqFontSize (graphics) * 25.4 / 72.0);
 }
 
 void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iformat, int precision, double angle) {

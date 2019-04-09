@@ -294,7 +294,8 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		return;
 	if (numberOfDimensions == 1)
 		xCoordinate = 1;
-	int fontSize = Graphics_inqFontSize (g), noLabel = 0;
+	double fontSize = Graphics_inqFontSize (g);
+	int noLabel = 0;
 	if (labelSize == 0)
 		labelSize = fontSize;
 	autoVEC x = newVECraw (nPoints);
@@ -354,7 +355,9 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	}
 }
 
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, conststring32 label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, conststring32 label,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
+{
 	autoSSCPList sscps = TableOfReal_to_SSCPList_byLabel (me);
 	SSCPList_drawConcentrationEllipses (sscps.get(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }

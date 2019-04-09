@@ -125,7 +125,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 void LPC_drawPoles (LPC me, Graphics g, double time, bool garnish) {
 	autoPolynomial p = LPC_to_Polynomial (me, time);
 	autoRoots r = Polynomial_to_Roots (p.get());
-	Roots_draw (r.get(), g, -1.0, 1.0, -1.0, 1.0, U"+", 12, garnish);
+	Roots_draw (r.get(), g, -1.0, 1.0, -1.0, 1.0, U"+", 12.0, garnish);
 }
 
 autoMatrix LPC_downto_Matrix_lpc (LPC me) {
