@@ -68,12 +68,34 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 	}
 }
 
-void NMF_initialize (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
+static void MATmakeElementsNonNegative (MATVU const& m, int strategy) {
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol ++)
+			if (m [irow][icol] < 0.0)
+				m [irow] [icol] = strategy == 0 ? 0.0 : fabs (m [irow] [icol]);	
+}
+
+static void NMF_initializeFactorization_svd (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
+	try {
+		autoSVD thee = SVD_createFromGeneralMatrix (data);
+		MATmakeElementsNonNegative (thy u.get(), 1);
+		MATmakeElementsNonNegative (thy v.get(), 1);
+		my features.get() <<= thy u.verticalBand (1, my numberOfFeatures);
+		for (integer irow = 1; irow <= my numberOfFeatures; irow ++)
+			my weights.row (irow) <<= thy d [irow]  *  thy v.row (irow);
+		
+	} catch (MelderError) {
+		Melder_throw (me, U": cpuld not initialize by svd method.");
+	}	
+}
+
+void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RandomUniform) {
 		double rmin = 0.0, rmax = 1.0;
 		MATrandomUniform (my features.all(), rmin, rmax);
 		MATrandomUniform (my weights.all(), rmin, rmax);
 	} else {
+		NMF_initializeFactorization_svd (me, data, initializationMethod);
 	}
 }
 
@@ -222,20 +244,6 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 	}
 }
 
-void NMF_makeWeightsNonnegative (NMF me, int /* strategy */) {
-		for (integer irow = 1; irow <= my numberOfFeatures; irow++)
-			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-				if (my weights [irow] [icol] < 0.0)
-					my weights [irow] [icol] = 0.0;
-}
-
-void NMF_makeFeaturesNonnegative (NMF me, int /* strategy */) {
-		for (integer irow = 1; irow <= my numberOfRows; irow++)
-			for (integer icol = 1; icol <= my numberOfFeatures; icol ++)
-				if (my features [irow] [icol] < 0.0)
-					my features [irow] [icol] = 0.0;
-}
-
 void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
@@ -281,7 +289,7 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			svd_FtF -> u.get() <<= productFtF.get();
 			SVD_compute (svd_FtF.get());
 			SVD_solve_preallocated (svd_FtF.get(), productFtD.get(), my weights.get());
-			NMF_makeWeightsNonnegative (me, 0);
+			MATmakeElementsNonNegative (my weights.get(), 0);
 			
 			// 2. Solve equations for new F:  W*W'*F' = W*D'
 			features0.get() <<= my features.get(); // save previous features for convergence test
