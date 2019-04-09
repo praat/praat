@@ -238,9 +238,9 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, constVECVU const& v1, constVECVU const& 
 			}
 			thy data [2] [1] = thy data [1] [2];
 		} else {
-			thy data [1] [1] = NUMmul_vtmv (v1, my data.get(), v1);
-			thy data [2] [2] = NUMmul_vtmv (v2, my data.get(), v2);
-			thy data [1] [2] = thy data [2] [1] = NUMmul_vtmv (v1, my data.get(), v2);
+			thy data [1] [1] = NUMmul (v1, my data.get(), v1);
+			thy data [2] [2] = NUMmul (v2, my data.get(), v2);
+			thy data [1] [2] = thy data [2] [1] = NUMmul (v1, my data.get(), v2);
 		}
 
 		thy centroid [1] = NUMinner (v1, my centroid.get());

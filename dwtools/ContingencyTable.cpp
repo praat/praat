@@ -1,6 +1,6 @@
 /* ContingencyTable.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,16 +61,14 @@ autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numb
 double ContingencyTable_chisqProbability (ContingencyTable me) {
 	double chisq, df;
 	ContingencyTable_chisq (me, & chisq, & df);
-	if (chisq == 0.0 && df == 0.0) {
+	if (chisq == 0.0 && df == 0.0)
 		return 0.0;
-	}
 	return NUMchiSquareQ (chisq, df);
 }
 
 double ContingencyTable_cramersStatistic (ContingencyTable me) {
-	if (my numberOfRows == 1 || my numberOfColumns == 1) {
+	if (my numberOfRows == 1 || my numberOfColumns == 1)
 		return 0.0;
-	}
 
 	double sum = NUMsum (my data.all());
 
@@ -80,9 +78,8 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 	
 	double chisq, df;
 	ContingencyTable_chisq (me, & chisq, & df);
-	if (chisq == 0.0 && df == 0.0) {
+	if (chisq == 0.0 && df == 0.0)
 		return 0.0;
-	}
 	return sqrt (chisq / (sum * nmin));
 }
 
@@ -90,9 +87,9 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	
 	double chisq, df, sum = NUMsum (my data.all());
 	ContingencyTable_chisq (me, & chisq, & df);
-	if (chisq == 0.0 && df == 0.0) {
+	if (chisq == 0.0 && df == 0.0)
 		return 0.0;
-	}
+
 	return sqrt (chisq / (chisq + (double) sum));
 }
 

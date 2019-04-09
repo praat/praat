@@ -22,7 +22,7 @@
 autoNMF Matrix_to_NMF_mu (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
 	try {
 		autoNMF thee = NMF_createFromGeneralMatrix (my z.get(), numberOfFeatures);
-		NMF_initialize (thee.get(), my z.get(), initializationMethod);
+		NMF_initializeFactorization (thee.get(), my z.get(), initializationMethod);
 		NMF_improveFactorization_mu (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
 		return thee;
 	} catch (MelderError) {
@@ -33,7 +33,7 @@ autoNMF Matrix_to_NMF_mu (Matrix me, integer numberOfFeatures, integer maximumNu
 autoNMF Matrix_to_NMF_als (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod) {
 	try {
 		autoNMF thee = NMF_createFromGeneralMatrix (my z.get(), numberOfFeatures);
-		NMF_initialize (thee.get(), my z.get(), initializationMethod);
+		NMF_initializeFactorization (thee.get(), my z.get(), initializationMethod);
 		NMF_improveFactorization_als (thee.get(), my z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance);
 		return thee;
 	} catch (MelderError) {

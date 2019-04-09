@@ -148,15 +148,7 @@ inline void VECclip_inplace (VEC x, double min, double max) {
 			x [i] = max;
 }
 
-inline double NUMvtmv (constVECVU const& x, constMATVU const& m) { // x'. M . x
-	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
-	longdouble result = 0.0;
-	for (integer k = 1; k <= x.size; k ++)
-		result += x [k] * NUMinner (m.row (k), x); 
-	return (double) result;
-}	
-
-inline double NUMmul_vtmv (constVECVU const& x, constMATVU const& m, constVECVU const& y) { // x'. M . y
+inline double NUMmul (constVECVU const& x, constMATVU const& m, constVECVU const& y) { // x'. M . y
 	Melder_assert (x.size == m.nrow);
 	Melder_assert (y.size == m.ncol);
 	longdouble result = 0.0;

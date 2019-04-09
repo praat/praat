@@ -28,24 +28,19 @@
 static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c, double *out_f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 	for (integer i = 1; i <= w.ncol; i ++) {
-		longdouble d = 0.0;
-		for (integer k = 1; k <= w.ncol; k++)
-			d += w [k] [i] * t [k] [i];
+		double d = NUMinner (w.column (i), t.column (i));
 		if (d < 0.0)
-			for (integer k = 1; k <= w.ncol; k++)
-				t [k] [i] = - t [k] [i];
+			t.column (i)  *=  -1.0;
 	}
 
 	// Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
 
 	*out_f = 0.0;
 	for (integer i = 1; i <= w.ncol; i ++) {
-		longdouble d = 0.0, tct = 0.0;
-		for (integer k = 1; k <= w.ncol; k ++) {
-			d += w [k] [i] * t [k] [i];
-			for (integer j = 1; j <= w.ncol; j ++)
-				tct += t [k] [i] * c [k] [j] * t [j] [i];
-		}
+		longdouble d = NUMinner (w.column (i), t.column (i));
+		double tct = 0.0;
+		for (integer k = 1; k <= w.ncol; k ++)
+			tct += t [k] [i] * NUMinner (c.row (k), t.column (i));
 		if (tct > 0.0)
 			*out_f += d / sqrt (tct);
 	}
@@ -82,13 +77,10 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 	// Scale W by (diag(B'B))^-1/2
 
 	for (integer j = 1; j <= nc; j ++) {
-		longdouble scale = 0.0;
-		for (integer k = 1; k <= nr; k ++)
-			scale += b [k] [j] * b [k] [j];
+		double scale = NUMinner (b.column (j), b.row (j));
 		if (scale > 0.0)
 			scale = 1.0 / sqrt (scale);
-		for (integer i = 1; i <= nc; i++)
-			w [i] [j] *= scale;
+		w.column (j)  *=  scale;
 	}
 
 	// Step 3: largest eigenvalue of C
