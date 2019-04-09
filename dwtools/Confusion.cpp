@@ -314,8 +314,8 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 }
 
 integer Confusion_getNumberOfEntries (Confusion me) {
-	longdouble total = NUMsum (my data.get());
-	return Melder_ifloor ((double) total);
+	double total = NUMsum (my data.get());
+	return Melder_ifloor (total);
 }
 
 static autoINTVEC create_index (string32vector s, string32vector ref) {
