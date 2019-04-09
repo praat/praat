@@ -1,6 +1,6 @@
 /* ClassificationTable.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,12 +106,9 @@ autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable 
 		for (integer irow = 1; irow <= thy numberOfColumns; irow ++) {
 			thy data [irow] [irow] = 1.0;
 			for (integer icol = irow + 1; icol <= thy numberOfColumns; icol ++) {
-				double n11 = 0.0, n22 = 0.0, n12 = 0.0;
-				for (integer i = 1; i <= my numberOfRows; i ++) {
-					n12 += my data [i] [irow] * my data [i] [icol];
-					n11 += my data [i] [irow] * my data [i] [irow];
-					n22 += my data [i] [icol] * my data [i] [icol];
-				}
+				double n12 = NUMinner (my data.column (irow), my data.column (icol));
+				double n11 = NUMinner (my data.column (irow), my data.column (irow));
+				double n22 = NUMinner (my data.column (icol), my data.column (icol));
 				// probabilities might be very low!
 				if (n12 > 0.0 && n22 > 0.0) {
 					thy data [irow] [icol] = thy data [icol] [irow] = n12 / sqrt (n11 * n22);

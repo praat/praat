@@ -34,7 +34,7 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 
 autoNMF NMF_createFromGeneralMatrix (constMATVU const& data, integer numberOfFeatures);
 
-void NMF_initialize (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod);
+void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod);
 
 /*
 	Factorize D as F*W, where D, F and W >= 0

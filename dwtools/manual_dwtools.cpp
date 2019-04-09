@@ -2598,6 +2598,14 @@ NORMAL (U"Singular value decomposition with backsubstitution. "
 NORMAL (U"See for more details: @@Golub & van Loan (1996)@ chapters 2 and 3.")
 MAN_END
 
+MAN_BEGIN (U"Matrix: To NMF (m.u.)...", U"djmw", 20190409)
+INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix by means of a multiplicative update algorithm.")
+MAN_END
+
+MAN_BEGIN (U"Matrix: To NMF (ALS)...", U"djmw", 20190409)
+INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix by means of an Alternating Least Squares algorithm.")
+MAN_END
+
 MAN_BEGIN (U"MelFilter", U"djmw", 20141022)
 INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by the @@MelSpectrogram@.")
 NORMAL (U"An object of type MelFilter represents an acoustic time-frequency "
