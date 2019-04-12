@@ -45,7 +45,7 @@ void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initializ
 		F(n+1) = F(n).(D*W(n+1)') / (F(n)*(W(n+1)*W(n+1)') + eps)
 	endfor
 */
-void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
 
 /*
 	Factorize D as F*W, where D, F and W >= 0
@@ -58,7 +58,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		Set all negative elements in F to 0.
 	endfor
 */
-void NMF_improveFactorization_als (NMF me, constMATVU const & data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance);
+void NMF_improveFactorization_als (NMF me, constMATVU const & data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
 
 autoMAT NMF_synthesize (NMF me); // result = features * weights
 

@@ -3672,12 +3672,13 @@ FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	BOOLEAN (info, U"Info", 0)
 	OK
 DO
 	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
 	CONVERT_EACH (Matrix)
-		autoNMF result = Matrix_to_NMF_mu (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod);
-	CONVERT_EACH_END (my name.get())
+		autoNMF result = Matrix_to_NMF_mu (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
+	CONVERT_EACH_END (my name.get(), U"_mu")
 }
 
 FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)...") {
@@ -3686,28 +3687,30 @@ FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)..."
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
 	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	BOOLEAN (info, U"Info", 0)
 	OK
 DO
 	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
 	CONVERT_EACH (Matrix)
-		autoNMF result = Matrix_to_NMF_als (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod);
-	CONVERT_EACH_END (my name.get())
+		autoNMF result = Matrix_to_NMF_als (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
+	CONVERT_EACH_END (my name.get(), U"_als")
 }
 
 DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
 	NUMBER_TWO (NMF, Matrix)
 		double result = NMF_getEuclideanDistance (me, your z.get());
-	NUMBER_TWO_END (U"")
+	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factorization (m.u.)", nullptr) {
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
+	BOOLEAN (info, U"Info", 0)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NMF, Matrix)
-		NMF_improveFactorization_mu (me, your z.get(), maximumNumberOfIterations, tolx, told);
+		NMF_improveFactorization_mu (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -3715,10 +3718,11 @@ FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factor
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"10")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
+	BOOLEAN (info, U"Info", 0)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NMF, Matrix)
-		NMF_improveFactorization_als (me, your z.get(), maximumNumberOfIterations, tolx, told);
+		NMF_improveFactorization_als (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
 	MODIFY_FIRST_OF_TWO_END
 }
 
