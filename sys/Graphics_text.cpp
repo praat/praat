@@ -768,11 +768,10 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             CFRelease (color);
 
 			if (my d_macView) {
-				[my d_macView   lockFocus];
-				my d_macGraphicsContext =
-						Melder_systemVersion < 101400 ?
-							(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
-							[[NSGraphicsContext currentContext] CGContext];
+				if (SUPPORT_DIRECT_DRAWING) {
+					[my d_macView   lockFocus];
+					my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				}
 			}
             CGContextSaveGState (my d_macGraphicsContext);
             CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
@@ -798,7 +797,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			CFRelease (s);
 			//CFRelease (ctFont);
 			if (my d_macView) {
-				[my d_macView   unlockFocus];
+				if (SUPPORT_DIRECT_DRAWING)
+					[my d_macView   unlockFocus];
 				if (! my duringXor) {
 					//[my d_macView   setNeedsDisplay: YES];   // otherwise, CoreText text may not be drawn
 				}
