@@ -1,6 +1,6 @@
 /* Proximity.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,14 +117,9 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		// Calculate the B matrix according to eq. 6
 		
 		autoMAT b = newMATzero (nPoints2, nPoints2);
-
-		for (integer i = 1; i <= nPoints; i ++) {
-			for (integer j = 1; j <= nPoints; j ++) {
-				b [i] [nPoints + j] = 2.0 * wd [i] [j];
-				b [nPoints + i] [nPoints + j] = -4.0 * wdsqrt [i] [j];
-				b [nPoints + i] [i] = -1.0;
-			}
-		}
+		b.part (1, nPoints, nPoints + 1, nPoints2) <<= 2.0  *  wd.get();
+		b.part (nPoints + 1, nPoints2, 1, nPoints).diagonal() <<= - 1.0;
+		b.part (nPoints + 1, nPoints2, nPoints + 1, nPoints2) <<= -4.0  *  wdsqrt.get();
 
 		// Get eigenvalues
 		
