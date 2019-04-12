@@ -168,7 +168,7 @@ static const void update (MATVU const& m, constMATVU const& m0, constMATVU const
 		Computing and informatics% #30: 205--224.
 
 */
-void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
@@ -195,6 +195,8 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		double maximum = NUMmax (data);
 		integer iter = 1;
 		bool convergence = false;		
+		if (info)
+			MelderInfo_open();
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
 				while iter < maxinter and not convergence
@@ -228,23 +230,27 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			
 			double traceWtFtD  = NUMtrace2 (my weights.transpose(), productFtD.get());
 			double traceWtFtFW = NUMtrace2 (productFtF.get(), productWWt.get());
-			double distance = traceDtD - 2.0 * traceWtFtD + traceWtFtFW;
+			double distance = sqrt (std::max (traceDtD - 2.0 * traceWtFtD + traceWtFtFW, 0.0)); // just in case
 			double dnorm = distance / (my numberOfRows * my numberOfColumns);
 			double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
 			double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
 			double delta = std::max (df, dw);
 			
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
+			if (info)
+				MelderInfo_writeLine (U"Iteration: ", iter, U", dnorm: ", dnorm, U", delta: ", delta);
 			
 			dnorm0 = dnorm;
 			++ iter;
 		}
+		if (info)
+			MelderInfo_close();
 	} catch (MelderError) {
 		Melder_throw (me, U" factorization cannot be improved.");
 	}
 }
 
-void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance) {
+void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
 	try {
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
@@ -269,7 +275,9 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 		double dnorm0 = 0.0;
 		double maximum = NUMmax (data);
 		integer iter = 1;
-		bool convergence = false;		
+		bool convergence = false;
+		if (info)
+			MelderInfo_open();
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
 				for iter to maxiter
@@ -303,17 +311,20 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			// 3. Convergence test
 			double traceWtFtD  = NUMtrace2 (my weights.transpose(), productFtD.get());
 			double traceWtFtFW = NUMtrace2 (productFtF.get(), productWWt.get());
-			double distance = traceDtD -2.0 * traceWtFtD + traceWtFtFW;
+			double distance = sqrt (std::max (traceDtD - 2.0 * traceWtFtD + traceWtFtFW, 0.0)); // just in case
 			double dnorm = distance / (my numberOfRows * my numberOfColumns);
 			double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
 			double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
 			double delta = std::max (df, dw);
 			
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
-			
+			if (info)
+				MelderInfo_writeLine (U"Iteration: ", iter, U", dnorm: ", dnorm, U", delta: ", delta);
 			dnorm0 = dnorm;
 			++ iter;
 		}
+		if (info)
+			MelderInfo_close();
 	} catch (MelderError) {
 		Melder_throw (me, U" ALS factorization cannot be improved.");
 	}
