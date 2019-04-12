@@ -1,6 +1,6 @@
 /* Sound_and_MixingMatrix.cpp
  *
- * Copyright (C) 2010-2017 David Weenink
+ * Copyright (C) 2010-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,14 +112,7 @@ autoSound Sound_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 
 		autoMAT minv = newMATpseudoInverse (thy data.get(), 0.0);
 		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer irow = 1; irow <= thy numberOfColumns; irow ++) {
-			for (integer icol = 1; icol <= my nx; icol ++) {
-				longdouble s = 0.0;
-				for (integer k = 1; k <= my ny; k ++)
-					s += minv [irow] [k] * my z [k] [icol];
-				his z [irow] [icol] = (double) s;
-			}
-		}
+		MATmul (his z.get(), minv.get(), my z.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not unmixed.");

@@ -310,7 +310,7 @@ procedure test_additiveConstant
 	.dissimilarity = To Dissimilarity
 	.additiveConstant = Get additive constant
 	.additiveConstant_rounded = number (fixed$ (.additiveConstant, 3))
-	assert .additiveConstant_rounded  = 1.291
+	assert .additiveConstant_rounded  = 1.291; '.additiveConstant_rounded'
 	removeObject: .dissimilarity, .distance
 endproc
 
