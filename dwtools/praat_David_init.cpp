@@ -4380,7 +4380,7 @@ FORM (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract 
 	INTEGER (numberOfColumns, U"Number of columns", U"0")
 	OK
 DO
-	Melder_require (numberOfRows >= 0, U"The number of rows should beat least 0.");
+	Melder_require (numberOfRows >= 0, U"The number of rows should be at least 0.");
 	Melder_require (numberOfColumns >= 0, U"The number of columns should be at least 0.");
 	CONVERT_EACH (PCA);
 		autoMatrix result = Eigen_extractEigenvector (me, eigenvectorNumber, numberOfRows, numberOfColumns);
