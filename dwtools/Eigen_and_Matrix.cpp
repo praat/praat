@@ -29,20 +29,15 @@
 autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRows, integer numberOfColumns) {
 	try {
 		if (numberOfRows == 0 && numberOfColumns == 0) {
-			numberOfRows = 1; numberOfColumns = my dimension;
+			numberOfRows = 1;
+			numberOfColumns = my dimension;
 		}
-		if (numberOfRows == 0) {
-			numberOfRows = Melder_iceiling ((double) my dimension / numberOfColumns);
-		} else if (numberOfColumns == 0) {
-			numberOfColumns = Melder_iceiling ((double) my dimension / numberOfRows);
-		}
+		Melder_require (numberOfRows * numberOfColumns == my dimension,
+			U"The number of rows times the number of columns should be equal to the dimension of the eigenvectors.");
 		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
 		integer i = 1;
-		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-				thy z [irow] [icol] = ( i <= my dimension ? my eigenvectors [index] [i ++] : 0.0 );
-			}
-		}
+		for (integer irow = 1; irow <= numberOfRows; irow ++)
+			thy z.row (irow) <<= my eigenvectors [index].part ((irow - 1) * numberOfColumns + 1, irow * numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"No eigenvector extracted.");
