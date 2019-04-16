@@ -113,7 +113,8 @@ integer Discriminant_getNumberOfObservations (Discriminant me, integer group) {
 }
 
 void Discriminant_setAprioriProbability (Discriminant me, integer group, double p) {
-	Melder_require (group > 0 && group <= my numberOfGroups, U"The group number (", group, U") should be in the interval [1, ", my numberOfGroups, U"]; the supplied value (", group, U") falls outside it.");
+	Melder_require (group > 0 && group <= my numberOfGroups,
+		U"The group number (", group, U") should be in the interval [1, ", my numberOfGroups, U"]; the supplied value (", group, U") falls outside it.");
 	Melder_require (p >= 0.0 && p <= 1.0, U"The probability should be in the interval [0, 1]");
 
 	my aprioriProbabilities [group] = p;
@@ -151,16 +152,15 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 	try {
-		integer m = my groups -> size, n = my eigen -> dimension;
-		autoTableOfReal thee = TableOfReal_create (m, n);
+		autoTableOfReal thee = TableOfReal_create (my groups -> size, my eigen -> dimension);
 
-		for (integer i = 1; i <= m; i ++) {
+		for (integer i = 1; i <= my groups -> size; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
 			thy data.row (i) <<= sscp -> centroid.all();
 		}
-		thy columnLabels.all() <<= my groups->at [m] -> columnLabels.part (1, n);
-			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
+		thy columnLabels.all() <<= my groups->at [my groups -> size] -> columnLabels.part (1, my eigen -> dimension);
+		// The elements in my groups always have my eigen -> dimension columns
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group centroids not extracted.");
@@ -169,19 +169,19 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 	try {
-		integer m = my groups->size, n = my eigen -> dimension;
-		autoTableOfReal thee = TableOfReal_create (m, n);
+		autoTableOfReal thee = TableOfReal_create (my groups->size, my eigen -> dimension);
 
-		for (integer i = 1; i <= m; i ++) {
+		for (integer i = 1; i <= my groups->size; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
 			integer numberOfObservationsm1 = Melder_ifloor (sscp -> numberOfObservations) - 1;
-			for (integer j = 1; j <= n; j ++) {
+			for (integer j = 1; j <= my eigen -> dimension; j ++) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0.0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
-		thy columnLabels.all() <<= my groups->at [m] -> columnLabels.part (1, n);
-			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
+		thy columnLabels.all() <<= my groups->at [my groups->size] -> columnLabels.part (1, my eigen -> dimension);
+		// The elements in my groups always have my eigen -> dimension columns
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group standard deviations not extracted.");
@@ -212,7 +212,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		SSCP total = my total.get();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
 		thy columnLabels.part (1, nx) <<= my total -> columnLabels.part (1, nx);
-			// ppgb FIXME: that other number of columns should be at least nx (is it nx?), but that is not documented; if so, add an assert above
+		// The elements in my groups always have my eigen -> dimension columns
 
 		autoSSCP within;
 		if (standardized) {
@@ -263,30 +263,24 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me, integer 
 		if (lambda != 1.0) {
 			chisq = - (degreesOfFreedom + (numberOfGroups - eigendimension) / 2.0 - 1.0) * log (lambda);
 			df = (eigendimension - numberOfWantedDimensions) * (numberOfGroups - numberOfWantedDimensions - 1);
-			if (out_prob) {
+			if (out_prob)
 				prob =  NUMchiSquareQ (chisq, df);
-			}
 		}
 	}
-	if (out_prob) {
+	if (out_prob)
 		*out_prob = prob;
-	}
-	if (out_chisq) {
+	if (out_chisq)
 		*out_chisq = chisq;
-	}
-	if (out_df) {
+	if (out_df)
 		*out_df = df;
-	}
 }
 
-double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group,
-        double scale, bool confidence, bool discriminantDirections, integer d1, integer d2)
-{
+double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group, double scale, bool confidence, bool discriminantDirections, integer d1, integer d2) {
 	double area = undefined;
 
-	if (group < 1 || group > my numberOfGroups) {
+	if (group < 1 || group > my numberOfGroups)
 		return area;
-	}
+
 
 	if (discriminantDirections) {
 		autoSSCP thee = Eigen_SSCP_project (my eigen.get(), my groups->at [group]);
@@ -298,9 +292,9 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group,
 }
 
 double Discriminant_getLnDeterminant_group (Discriminant me, integer group) {
-	if (group < 1 || group > my numberOfGroups) {
+	if (group < 1 || group > my numberOfGroups)
 		return undefined;
-	}
+
 	autoCovariance c = SSCP_to_Covariance (my groups->at [group], 1);
 	double ln_d = SSCP_getLnDeterminant (c.get());
 	return ln_d;
@@ -318,7 +312,8 @@ autoSSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
 
 autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, integer index) {
 	try {
-		Melder_require (index > 0 && index <= my numberOfGroups, U"Index should be in interval [1,", my numberOfGroups, U"].");
+		Melder_require (index > 0 && index <= my numberOfGroups,
+			U"Index should be in interval [1,", my numberOfGroups, U"].");
 		
 		autoSSCP thee = Data_copy (my groups->at [index]);
 		return thee;
@@ -330,14 +325,10 @@ autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, integer index) {
 autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 	try {
 		integer n = my total -> numberOfRows;
-		autoSSCP b = Data_copy (my total.get());
-		autoSSCP w = SSCPList_to_SSCP_pool (my groups.get());
-		for (integer i = 1; i <= n; i ++) {
-			for (integer j = i; j <= n; j ++) {
-				b -> data [j] [i] = (b -> data [i] [j] -= w -> data [i] [j]);
-			}
-		}
-		return b;
+		autoSSCP between = Data_copy (my total.get());
+		autoSSCP within = SSCPList_to_SSCP_pool (my groups.get());
+		between -> data.get()  -=  within -> data.get();
+		return between;
 	} catch (MelderError) {
 		Melder_throw (me, U": between group SSCP not created.");
 	}
@@ -363,10 +354,8 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 		return;
 	}
 
-	if (numberOfFunctions <= 1) {
-		Melder_warning (U"Discriminant_drawConcentrationEllipses: Nothing drawn because there is only one dimension in the discriminant space.");
-		return;
-	}
+	Melder_require (numberOfFunctions > 1, 
+		U"Nothing drawn because there is only one dimension in the discriminant space.");
 
 	// Project SSCPs on eigenvectors.
 
@@ -425,20 +414,17 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
 			SSCP m = thy groups->at [k];
 			double scale = SSCP_getNumberOfObservations (m);
+			centroid  += scale  *  m -> centroid;
 			sum += scale;
-			for (integer j = 1; j <= dimension; j ++)
-				centroid [j] += scale * m -> centroid [j];
 		}
-
-		for	(integer j = 1; j <= dimension; j ++)
-			centroid [j] /= sum;
+		centroid  /=  sum;
 
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
 			SSCP m = thy groups->at [k];
 			double scale = SSCP_getNumberOfObservations (m);
 			thy aprioriProbabilities [k] = scale / my numberOfRows;
-			for (integer j = 1; j <= dimension; j ++)
-				between [k] [j] = sqrt (scale) * (m -> centroid [j] - centroid [j]);
+			between.row (k) <<= (m -> centroid - centroid);
+			between.row (k)  *=  sqrt (scale);
 		}
 
 		// We need to solve B'B.x = lambda W'W.x, where B'B and W'W are the between and within covariance matrices.
