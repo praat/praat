@@ -4398,13 +4398,15 @@ static bool Graphics_getConnectingLine (Graphics g, conststring32 text1, double 
 // take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
 void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax, conststring32 symbol, double angle, bool garnish, conststring32 formula, Interpreter interpreter) {
 	try {
-		if (ycolumn < 1 || ycolumn > my numberOfColumns)
-			return;
+		Melder_require (ycolumn >= 1 && ycolumn <= my numberOfColumns,
+			U"The column for the vertical axis should exist.");
+		Melder_require (xcolumn >= 1 && xcolumn <= my numberOfColumns,
+			U"The column for the horizontal axis should exist.");
+		
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (ymax <= ymin)
 			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 
-		// the following also catches xcolumn = 0 !
 		bool xIsNumeric = Table_selectedColumnPartIsNumeric (me, xcolumn, selectedRows.get());
 		if (xmin >= xmax) {
 			if (xIsNumeric)
@@ -4476,7 +4478,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 				Graphics_marksBottom (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
-		Melder_clearError ();   // drawing errors shall be ignored
+		//Melder_clearError ();   // drawing errors shall be ignored
 	}
 }
 

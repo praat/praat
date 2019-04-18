@@ -71,18 +71,8 @@ static autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal m
 static autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
 
 integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNumber) {
-	integer columnNumber = 0;
-	if (rowNumber > 0 && rowNumber <= my numberOfRows) {
-		double max = my data [rowNumber] [1];
-		columnNumber = 1;
-		for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
-			if (my data [rowNumber] [icol] > max) {
-				max = my data [rowNumber] [icol];
-				columnNumber = icol;
-			}
-		}
-	}
-	return columnNumber;
+	return ( rowNumber > 0 && rowNumber <= my numberOfRows ?
+		NUMmaxPos (my data.row (rowNumber)) : 0 );
 }
 
 conststring32 TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber) {
@@ -97,12 +87,9 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 		}
 		Melder_require (myrow > 0 && myrow <= my numberOfRows && thyrow > 0 && thyrow <= thy numberOfRows && my numberOfColumns == thy numberOfColumns,
 			U"The dimensions do not fit.");
-
+		
 		thy rowLabels [thyrow] = Melder_dup (my rowLabels [myrow].get());
-
-		if (& my data [myrow] [0] != & thy data [thyrow] [0]) {
-			NUMvector_copyElements (& my data [myrow] [0], & thy data [thyrow] [0], 1, my numberOfColumns);
-		}
+		thy data.row (thyrow) <<= my data.row (myrow); 
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", myrow, U" not copied to ", thee);
 	}
@@ -1227,12 +1214,8 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 		NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
 		if (expand) {
-			// Now invert the table.
-
-			autostring32vector tmp = std::move (sorted -> rowLabels);
-			sorted -> rowLabels = std::move (my rowLabels);
+			// Now revert the sorting
 			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.get(), true);
-			sorted -> rowLabels = std::move (tmp);
 		} else {
 			indexr ++;
 			TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);

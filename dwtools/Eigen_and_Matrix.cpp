@@ -1,6 +1,6 @@
 /* Eigen_and_Matrix.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "Matrix_extensions.h"
 #include "NUM2.h"
 
-
+// TODO: two step proces 1. Extract 2. Reshape ??
 autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRows, integer numberOfColumns) {
 	try {
 		if (numberOfRows == 0 && numberOfColumns == 0) {
@@ -65,7 +65,8 @@ autoMatrix Eigen_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 		}
-		Melder_require (thy nx == my dimension, U"The number of rows (", thy ny, U") should equal the size of the eigenvectors (", my dimension, U").");
+		Melder_require (thy nx == my dimension, 
+			U"The number of rows (", thy ny, U") should equal the size of the eigenvectors (", my dimension, U").");
 		
 		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0);
 		MATprojectColumnsOnEigenspace_preallocated (his z.get(), thy z.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep));
