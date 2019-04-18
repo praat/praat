@@ -95,11 +95,10 @@ inline bool NUMisNonNegative (constMATVU const& mat) {
 	return true;
 }
 
-template<typename T>
-inline integer NUMmaxPos (vector<T> v) {
+inline integer NUMmaxPos (constVECVU const& v) {
 	if (NUMisEmpty (v)) return 0;
 	integer index = 1;
-	T maximum = v [1];
+	double maximum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] > maximum) {
 			maximum = v [i];
@@ -109,11 +108,36 @@ inline integer NUMmaxPos (vector<T> v) {
 	return index;	
 }
 
-template<typename T>
-inline integer NUMminPos (vector<T> v) {
+inline integer NUMmaxPos (constINTVECVU const& v) {
 	if (NUMisEmpty (v)) return 0;
 	integer index = 1;
-	T minimum = v [1];
+	integer maximum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] > maximum) {
+			maximum = v [i];
+			index = i;
+		}
+	}
+	return index;	
+}
+
+inline integer NUMminPos (constVECVU const& v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	double minimum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] < minimum) {
+			minimum = v [i];
+			index = i;
+		}
+	}
+	return index;	
+}
+
+inline integer NUMminPos (constINTVECVU const& v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	integer minimum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] < minimum) {
 			minimum = v [i];
