@@ -88,7 +88,7 @@ integer PCA_getNumberOfObservations (PCA me) {
 	return my numberOfObservations;
 }
 
-void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conservative, double *p_prob, double *p_chisq, double *p_df) {
+void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conservative, double *out_prob, double *out_chisq, double *out_df) {
 	double sum = 0.0, sumln = 0.0;
 
 	double prob = undefined, df = undefined, chisq = undefined;
@@ -119,15 +119,12 @@ void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conserv
 		chisq = n * (r * log (sum / r) - sumln);
 		prob = NUMchiSquareQ (chisq, df);
 	}
-	if (p_prob) {
-		*p_prob = prob;
-	}
-	if (p_chisq) {
-		*p_chisq = chisq;
-	}
-	if (p_df) {
-		*p_df = df;
-	}
+	if (out_prob)
+		*out_prob = prob;
+	if (out_chisq)
+		*out_chisq = chisq;
+	if (out_df)
+		*out_df = df;
 }
 
 /* the low level routines 
