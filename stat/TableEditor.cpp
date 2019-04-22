@@ -250,7 +250,7 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 	integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
-		#if cocoa || gtk || motif
+		#if cocoa || gtk || motif || ! SUPPORT_DIRECT_DRAWING
 			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
 			Graphics_clearWs (my graphics.get());
@@ -263,7 +263,7 @@ static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 	integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
-		#if cocoa || gtk || motif
+		#if cocoa || gtk || motif || ! SUPPORT_DIRECT_DRAWING
 			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
 			Graphics_clearWs (my graphics.get());

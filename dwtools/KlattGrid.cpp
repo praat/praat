@@ -1298,7 +1298,7 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, 
 
 	for (integer isection = 1; isection <= numberOfXSections; isection ++) if (nf [isection] > 0)
 		nsx ++;
-	dx = (xmax - xmin) / (numberOfFilters  + (nsx - 1) * ddx);
+	dx = (xmax - xmin) / (numberOfFilters + (nsx - 1) * ddx);
 
 	x1 = xmin;
 	for (integer isection = 1; isection <= numberOfXSections; isection ++) {

@@ -163,6 +163,26 @@ void Graphics_setGrey (Graphics me, double grey) {
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
+#if quartz
+static GuiDrawingArea_ExposeCallback saveExposeCallback;
+static Thing saveExposeBoss;
+static NSRect theRect;
+static void highlightExposeCallback (Graphics me, GuiDrawingArea_ExposeEvent event) {
+	CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+	Melder_assert (context);
+	CGContextSaveGState (context);
+	//CGContextSetBlendMode (context, kCGBlendModeDifference);
+	CGContextSetBlendMode (context, kCGBlendModeDarken);
+	CGContextSetShouldAntialias (context, false);
+	NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
+	double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
+	//CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
+	CGContextSetRGBFillColor (context, red, green, blue, 1.0);
+	CGContextFillRect (context, theRect);
+	CGContextRestoreGState (context);
+}
+#endif
+
 static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC, int direction) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
@@ -225,10 +245,37 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 							[drawingArea unlockFocus];
 							//GuiShell_drain (nullptr);
 						} else {
+							CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+							if (context) {
+								CGContextSaveGState (context);
+								//CGContextSetBlendMode (context, kCGBlendModeDifference);
+								CGContextSetBlendMode (context, kCGBlendModeDarken);
+								CGContextSetShouldAntialias (context, false);
+								NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
+								double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
+								//CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
+								CGContextSetRGBFillColor (context, red, green, blue, 1.0);
+								CGContextFillRect (context, rect);
+								CGContextRestoreGState (context);
+							} else {
+								theRect = rect;
+								saveExposeCallback = my d_drawingArea -> d_exposeCallback;
+								saveExposeBoss = my d_drawingArea -> d_exposeBoss;
+								//[drawingArea displayRect: rect];
+								GuiDrawingArea_setExposeCallback (my d_drawingArea, highlightExposeCallback, graphics);
+								[drawingArea display];
+								GuiDrawingArea_setExposeCallback (my d_drawingArea, saveExposeCallback, saveExposeBoss);
+								//[drawingArea setNeedsDisplayInRect: rect];
+								Graphics_updateWs (graphics);
+							}
 						}
 					} else {   // backward
 						//[drawingArea lockFocus];
 						[[nsView window] restoreCachedImage];
+						if (! SUPPORT_DIRECT_DRAWING) {
+							//CGContextFlush ((CGContextRef) [[NSGraphicsContext currentContext] graphicsPort]);
+							//[[nsView window] flushWindow];
+						}
 						//[[nsView window] discardCachedImage];
 						//[drawingArea unlockFocus];
 						//[[nsView window] flushWindow];

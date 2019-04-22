@@ -1207,7 +1207,8 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 					indexr ++;
 					TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
 				}
-				label = li; indexi = i;
+				label = li;
+				indexi = i;
 			}
 		}
 

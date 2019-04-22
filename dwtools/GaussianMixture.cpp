@@ -673,7 +673,7 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 			gamma.row (i)  *=  1.0 / rowsum;
 			gamma.row (gamma.nrow)  +=  gamma.row (i);  // eq. Bishop 9.18
 			for (integer im = 1; im <= my numberOfComponents; im ++)
-				lnp += gamma [i] [im] * (log (my mixingProbabilities [im])  + lnN [im]); // eq. Bishop 9.40
+				lnp += gamma [i] [im] * (log (my mixingProbabilities [im]) + lnN [im]); // eq. Bishop 9.40
 		}
 		if (out_lnp)
 			*out_lnp = double (lnp);
