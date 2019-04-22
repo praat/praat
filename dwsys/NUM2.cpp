@@ -418,7 +418,7 @@ static void nr_func (double x, double *f, double *df, void *data) {
 		double t1 = (my delta [i] - x);
 		double t2 = my y [i] / t1;
 		double t3 = t2 * t2 * my delta [i];
-		*f  += t3;
+		*f += t3;
 		*df += t3 * 2.0 / t1;
 	}
 }

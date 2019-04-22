@@ -414,7 +414,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
 			SSCP m = thy groups->at [k];
 			double scale = SSCP_getNumberOfObservations (m);
-			centroid  += scale  *  m -> centroid;
+			centroid  +=  scale  *  m -> centroid;
 			sum += scale;
 		}
 		centroid  /=  sum;
@@ -423,7 +423,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 			SSCP m = thy groups->at [k];
 			double scale = SSCP_getNumberOfObservations (m);
 			thy aprioriProbabilities [k] = scale / my numberOfRows;
-			between.row (k) <<= (m -> centroid - centroid);
+			between.row (k) <<= m -> centroid  -  centroid;
 			between.row (k)  *=  sqrt (scale);
 		}
 

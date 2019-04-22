@@ -120,7 +120,7 @@ void Polygon_rotate (Polygon me, double alpha, double xc, double yc) {
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
 		double x = my x [i];
 		my x [i] = cosa * my x [i] - sina * my y [i];
-		my y [i] = sina * x       + cosa * my y [i];
+		my y [i] = sina * x + cosa * my y [i];
 	}
 	Polygon_translate (me, xc, yc);
 }
