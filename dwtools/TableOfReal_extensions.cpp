@@ -71,18 +71,8 @@ static autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal m
 static autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
 
 integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNumber) {
-	integer columnNumber = 0;
-	if (rowNumber > 0 && rowNumber <= my numberOfRows) {
-		double max = my data [rowNumber] [1];
-		columnNumber = 1;
-		for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
-			if (my data [rowNumber] [icol] > max) {
-				max = my data [rowNumber] [icol];
-				columnNumber = icol;
-			}
-		}
-	}
-	return columnNumber;
+	return ( rowNumber > 0 && rowNumber <= my numberOfRows ?
+		NUMmaxPos (my data.row (rowNumber)) : 0 );
 }
 
 conststring32 TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber) {
@@ -97,12 +87,9 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 		}
 		Melder_require (myrow > 0 && myrow <= my numberOfRows && thyrow > 0 && thyrow <= thy numberOfRows && my numberOfColumns == thy numberOfColumns,
 			U"The dimensions do not fit.");
-
+		
 		thy rowLabels [thyrow] = Melder_dup (my rowLabels [myrow].get());
-
-		if (& my data [myrow] [0] != & thy data [thyrow] [0]) {
-			NUMvector_copyElements (& my data [myrow] [0], & thy data [thyrow] [0], 1, my numberOfColumns);
-		}
+		thy data.row (thyrow) <<= my data.row (myrow); 
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", myrow, U" not copied to ", thee);
 	}
@@ -1227,12 +1214,8 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 		NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
 		if (expand) {
-			// Now invert the table.
-
-			autostring32vector tmp = std::move (sorted -> rowLabels);
-			sorted -> rowLabels = std::move (my rowLabels);
+			// Now revert the sorting
 			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.get(), true);
-			sorted -> rowLabels = std::move (tmp);
 		} else {
 			indexr ++;
 			TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
@@ -1375,28 +1358,25 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 		}
 		autoTableOfReal him = TableOfReal_create (nrows, ncols);
 		/* Unsafe: new attributes not initialized. */
-		for (integer irow = 1; irow <= nrows; irow ++) {
-			TableOfReal_setRowLabel (him.get(), irow, thy rowLabels [irow].get());
-		}
-		ncols = 0;
+		his rowLabels.all() <<= thy rowLabels.all();
+		
+		integer hisColumnIndex = 0;
 		for (integer itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-				ncols ++;
-				TableOfReal_setColumnLabel (him.get(), ncols, thy columnLabels [icol].get());
-				for (integer irow = 1; irow <= nrows; irow ++) {
-					his data [irow] [ncols] = thy data [irow] [icol];
-				}
+				hisColumnIndex ++;
+				TableOfReal_setColumnLabel (him.get(), hisColumnIndex, thy columnLabels [icol].get());
+				his data.column (hisColumnIndex) <<= thy data.column (icol);
 			}
 		}
-		Melder_assert (ncols == his numberOfColumns);
+		Melder_assert (hisColumnIndex == his numberOfColumns);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with appended columns not created.");
 	}
 }
 
-double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb, double *p_lnmu, double *p_lnvar) {
+double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tnb, double *out_lnmu, double *out_lnvar) {
 	try {
 		/* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, 
 		 *  Journal of Multivariate Analysis 62, 1-23.
@@ -1410,15 +1390,13 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 		double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
 		double prob = undefined;
 
-		if (*h <= 0.0) {
+		if (*h <= 0.0)
 			*h = NUMsqrt1_2 / beta;
-		}
 
 		double tnb = undefined, lnmu = undefined, lnvar = undefined;
 
-		if (n < 2 || p < 1) {
+		if (n < 2 || p < 1)
 			return undefined;
-		}
 
 		autoCovariance thee = TableOfReal_to_Covariance (me);
 		try {
@@ -1452,15 +1430,12 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		lnvar = sqrt (log ( (mu2 + var) / mu2));
 		prob = NUMlogNormalQ (tnb, lnmu, lnvar);
-		if (p_tnb) {
-			*p_tnb = tnb;
-		}
-		if (p_lnmu) {
-			*p_lnmu = lnmu;
-		}
-		if (p_lnvar) {
-			*p_lnvar = lnvar;
-		}
+		if (out_tnb)
+			*out_tnb = tnb;
+		if (out_lnmu)
+			*out_lnmu = lnmu;
+		if (out_lnvar)
+			*out_lnvar = lnvar;
 		return prob;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot determine normality.");
@@ -1490,14 +1465,7 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 		}
 		his rowLabels.all() <<= my rowLabels.all();
 		his columnLabels.all() <<= thy rowLabels.all();
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer k = 1; k <= thy numberOfRows; k ++) {
-				longdouble ctmp = 0.0;
-				for (integer j = 1; j <= my numberOfColumns; j ++)
-					ctmp += my_data [i] [j] * thy_data [k] [j];
-				his data [i] [k] = (double) ctmp;
-			}
-		}
+		MATmul (his data.get(), my_data.get(), thy_data.transpose());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with row correlations not created.");
@@ -1522,15 +1490,7 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 		}
 		his rowLabels.all() <<= my columnLabels.all();
 		his columnLabels.all() <<= thy columnLabels.all();
-
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			for (integer k = 1; k <= thy numberOfColumns; k ++) {
-				longdouble sum = 0.0;
-				for (integer i = 1; i <= my numberOfRows; i ++)
-					sum += my_data [i] [j] * thy_data [i] [k];
-				his data [j] [k] = (double) sum;
-			}
-		}
+		MATmul (his data.get(), my_data.transpose(), thy_data.get()); 
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with column correlations not created.");
