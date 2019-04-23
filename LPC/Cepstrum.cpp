@@ -110,7 +110,7 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 	if (autoscaling)
 		NUMextrema (y.get(), & minimum, & maximum);
 	else
-		VECclip (y.get(), minimum, maximum);
+		VECclip_inline (y.get(), minimum, maximum);
 
 	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
 	Graphics_function (g, y.at, 1, numberOfSelected, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
