@@ -493,7 +493,11 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endWindow = my tmax;
 		my v_updateText ();
 		updateScrollBar (me);
-		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -503,7 +507,11 @@ static void do_showAll (FunctionEditor me) {
 	my endWindow = my tmax;
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (my pref_synchronizedZoomAndScroll ()) {
 		updateGroup (me);
 	}
@@ -519,7 +527,11 @@ static void do_zoomIn (FunctionEditor me) {
 	my endWindow -= shift;
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (my pref_synchronizedZoomAndScroll ()) {
 		updateGroup (me);
 	}
@@ -540,7 +552,11 @@ static void do_zoomOut (FunctionEditor me) {
 		my endWindow = my tmax;
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (my pref_synchronizedZoomAndScroll ()) {
 		updateGroup (me);
 	}
@@ -562,7 +578,11 @@ static void do_zoomToSelection (FunctionEditor me) {
 		trace (U"Zoomed in to ", my startWindow, U" ~ ", my endWindow, U" seconds (2).");
 		updateScrollBar (me);
 		trace (U"Zoomed in to ", my startWindow, U" ~ ", my endWindow, U" seconds (3).");
-		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		if (my pref_synchronizedZoomAndScroll ()) {
 			updateGroup (me);
 		}
@@ -580,7 +600,11 @@ static void do_zoomBack (FunctionEditor me) {
 		my endWindow = my endZoomHistory;
 		my v_updateText ();
 		updateScrollBar (me);
-		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		if (my pref_synchronizedZoomAndScroll ()) {
 			updateGroup (me);
 		}
@@ -671,7 +695,11 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endSelection = dummy;
 		}
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -679,14 +707,22 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_moveCursorToB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my endSelection = my startSelection;
 	my v_updateText ();
-	/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	updateGroup (me);
 }
 
 static void menu_cb_moveCursorToE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my startSelection = my endSelection;
 	my v_updateText ();
-	/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	updateGroup (me);
 }
 
@@ -700,7 +736,11 @@ static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (position > my tmax - 1e-12) position = my tmax;
 		my startSelection = my endSelection = position;
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -715,7 +755,11 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (position > my tmax) position = my tmax;
 		my startSelection = my endSelection = position;
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -735,7 +779,11 @@ static void menu_cb_moveBby (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endSelection = dummy;
 		}
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics,get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -755,7 +803,11 @@ static void menu_cb_moveEby (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endSelection = dummy;
 		}
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -913,7 +965,10 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 	if (my group) {
 		FunctionEditor thee;
 		i = 1; while (theGroup [i]) i ++; theGroup [i] = me;
-		if (++ nGroup == 1) { Graphics_updateWs (my graphics.get()); return; }
+		if (++ nGroup == 1) {
+			Graphics_updateWs (my graphics.get());
+			return;
+		}
 		i = 1; while (! theGroup [i] || theGroup [i] == me) i ++; thee = theGroup [i];
 		if (my pref_synchronizedZoomAndScroll ()) {
 			my startWindow = thy startWindow;
@@ -1439,8 +1494,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (our graphics.get(), & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	Graphics_setViewport (our graphics.get(),
-		our functionViewerLeft + MARGIN, our functionViewerRight - MARGIN,
-		BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
+			our functionViewerLeft + MARGIN, our functionViewerRight - MARGIN,
+			BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	Graphics_xorOn (our graphics.get(), Graphics_MAROON);
 	/*
@@ -1463,8 +1518,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	Graphics_xorOff (our graphics.get());
 	if (our p_showSelectionViewer) {
 		Graphics_setViewport (our graphics.get(),
-			our selectionViewerLeft + MARGIN, our selectionViewerRight - MARGIN,
-			BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
+				our selectionViewerLeft + MARGIN, our selectionViewerRight - MARGIN,
+				BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
 		our v_drawRealTimeSelectionViewer (phase, t);
 	}
 	/*
@@ -1537,7 +1592,11 @@ gui_drawingarea_cb_resize (me, & event);
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (needsUpdateGroup)
 		updateGroup (me);
 }
@@ -1547,8 +1606,11 @@ void FunctionEditor_updateText (FunctionEditor me) {
 }
 
 void FunctionEditor_redraw (FunctionEditor me) {
-	//Graphics_updateWs (my graphics);
-	drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 }
 
 void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {

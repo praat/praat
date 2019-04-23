@@ -310,9 +310,11 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 	}
 }
 
-double NUMmean (constVECVU const& vec) noexcept {
-	longdouble sum = NUMsum_longdouble (vec);
-	return double (sum / vec.size);
+double NUMmean (constVECVU const& vec) {
+		//Melder_require (vec.size >= 1,
+		//	U"mean(vector#): the size of the vector should be greater than 0.");
+		longdouble sum = NUMsum_longdouble (vec);
+		return double (sum / vec.size);
 }
 double NUMmean (constMATVU const& mat) noexcept {
 	longdouble sum = NUMsum_longdouble (mat);

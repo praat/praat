@@ -245,7 +245,7 @@ inline double NUMmax (constMATVU const& mat) {
 	return maximum;
 }
 
-extern double NUMmean (constVECVU const& vec) noexcept;
+extern double NUMmean (constVECVU const& vec);
 extern double NUMmean (constMATVU const& mat) noexcept;
 
 extern MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept;
