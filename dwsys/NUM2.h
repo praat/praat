@@ -164,7 +164,7 @@ inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_ma
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
 
-inline void VECclip (VEC x, double min, double max) {
+inline void VECclip_inline (VEC x, double min, double max) {
 	for (integer i = 1; i <= x.size; i ++)
 		if (x [i] < min)
 			x [i] = min;

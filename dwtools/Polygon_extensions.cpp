@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 #include "Vector.h"
 #include "DoublyLinkedList.h"
 
-// not for self-intesecting polygons!
+// not for self-intersecting polygons!
 static double Polygon_area (Polygon me) {
-	double area = 0;
+	longdouble area = 0.0;
 	integer j = my numberOfPoints;
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
 		area += (my x [j] + my x [i]) * (my y [j] - my y [i]);
@@ -41,33 +41,19 @@ static double Polygon_area (Polygon me) {
 	return fabs (area); // area my have negative sign in counter clockwise evaluation of area
 }
 
-void Polygon_getExtrema (Polygon me, double *p_xmin, double *p_xmax, double *p_ymin, double *p_ymax) {
-    double xmin = my x [1], xmax = my x [1];
-    double ymin = my y [1], ymax = my y [1];
-    for (integer i = 2; i <= my numberOfPoints; i ++) {
-        if (my x [i] < xmin) {
-            xmin = my x [i];
-        } else if (my x [i] > xmax) {
-            xmax = my x [i];
-        }
-        if (my y [i] < ymin) {
-            ymin = my y [i];
-        } else if (my y [i] > ymax) {
-            ymax = my y [i];
-        }
-    }
-    if (p_xmin) {
-		*p_xmin = xmin;
-	}
-    if (p_xmax) {
-		*p_xmax = xmax;
-	}
-    if (p_ymin) {
-		*p_ymin = ymin;
-	}
-    if (p_ymax) {
-		*p_ymax = ymax;
-	}
+void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax) {
+    double xmin = NUMmin (my x.get());
+	double xmax = NUMmax (my x.get());;
+    double ymin = NUMmin (my y.get());
+	double ymax = NUMmax (my y.get());;
+    if (out_xmin)
+		*out_xmin = xmin;
+    if (out_xmax)
+		*out_xmax = xmax;
+    if (out_ymin)
+		*out_ymin = ymin;
+    if (out_ymax)
+		*out_ymax = ymax;
 }
 
 autoPolygon Polygon_createSimple (conststring32 xystring) {
@@ -106,10 +92,8 @@ autoPolygon Polygon_createFromRandomPoints (integer numberOfVertices, double xmi
 }
 
 void Polygon_translate (Polygon me, double xt, double yt) {
-	for (integer i = 1; i <= my numberOfPoints; i ++) {
-		my x [i] += xt;
-		my y [i] += yt;
-	}
+	my x.get()  +=  xt;
+	my y.get()  +=  yt;
 }
 
 /* rotate counterclockwise w.r.t. (xc,yc) */
@@ -126,22 +110,16 @@ void Polygon_rotate (Polygon me, double alpha, double xc, double yc) {
 }
 
 void Polygon_scale (Polygon me, double xs, double ys) {
-	for (integer i = 1; i <= my numberOfPoints; i ++) {
-		my x [i] *= xs;
-		my y [i] *= ys;
-	}
+	my x.get()  *=  xs;
+	my y.get()  *=  ys;
 }
 
 void Polygon_reverseX (Polygon me) {
-	for (integer i = 1; i <= my numberOfPoints; i ++) {
-		my x [i] = -my x [i];
-	}
+	my x.get()  *=  -1.0;
 }
 
 void Polygon_reverseY (Polygon me) {
-	for (integer i = 1; i <= my numberOfPoints; i ++) {
-		my y [i] = -my y [i];
-	}
+	my y.get()  *=  -1.0;
 }
 
 void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish) {
@@ -188,30 +166,16 @@ static void setWindow (Polygon me, Graphics graphics, double xmin, double xmax, 
 	Melder_assert (me);
 
 	if (xmax <= xmin) { /* Autoscaling along x axis. */
-		xmax = xmin = my x [1];
-		for (integer i = 2; i <= my numberOfPoints; i ++) {
-			if (my x [i] < xmin) {
-				xmin = my x [i];
-			}
-			if (my x [i] > xmax) {
-				xmax = my x [i];
-			}
-		}
+		xmax = NUMmax (my x.get());
+		xmin = NUMmin (my x.get());
 		if (xmin == xmax) {
 			xmin -= 1.0;
 			xmax += 1.0;
 		}
 	}
 	if (ymax <= ymin) { /* Autoscaling along y axis. */
-		ymax = ymin = my y [1];
-		for (integer i = 2; i <= my numberOfPoints; i ++) {
-			if (my y [i] < ymin) {
-				ymin = my y [i];
-			}
-			if (my y [i] > ymax) {
-				ymax = my y [i];
-			}
-		}
+		ymax = NUMmax (my y.get());
+		ymin = NUMmin (my y.get());
 		if (ymin == ymax) {
 			ymin -= 1.0;
 			ymax += 1.0;

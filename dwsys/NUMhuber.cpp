@@ -74,7 +74,7 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 		double high = location0 + k_stdev * scale0;
 		
 		work.get ()  <<=  x;
-		VECclip (work.get (), low, high); // windsorize
+		VECclip_inline (work.get (), low, high); // windsorize
 		
 		if (wantlocation)
 			location1 = NUMmean (work.get());
