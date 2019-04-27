@@ -38,9 +38,8 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 				pos = i;
 			}
 		}
-		if (strength < weakest) {
+		if (strength < weakest)
 			pos = 0;
-		}
 	}
 	if (pos > 0) {
 		my candidate [pos].frequency = f;
@@ -48,7 +47,7 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 	}
 }
 
-void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
+void Pitch_Frame_getPitch (Pitch_Frame me, double *out_f, double *out_strength) {
 	integer pos = 1;
 	double strength = -1.0;
 	for (integer i = 1; i <= my nCandidates; i ++) {
@@ -57,12 +56,10 @@ void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
 			pos = i;
 		}
 	}
-	if (f) {
-		*f = my candidate [pos].frequency;
-	}
-	if (p_strength) {
-		*p_strength = strength;
-	}
+	if (out_f)
+		*out_f = my candidate [pos].frequency;
+	if (out_strength)
+		*out_strength = strength;
 }
 
 void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
@@ -74,11 +71,10 @@ void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unv
 			pos = i;
 		}
 	}
-	if (strongest != 0) {
-		for (integer i = 1; i <= my nCandidates; i ++) {
+	if (strongest != 0)
+		for (integer i = 1; i <= my nCandidates; i ++)
 			my candidate [i].strength *= maxStrength / strongest;
-		}
-	}
+
 	if (maxStrength < unvoicedCriterium) {
 		for (integer i = 1; i <= my nCandidates; i ++) {
 			if (my candidate [i].frequency == 0) {
