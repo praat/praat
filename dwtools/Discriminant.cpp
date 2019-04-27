@@ -275,27 +275,26 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me, integer 
 		*out_df = df;
 }
 
-double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group, double scale, bool confidence, bool discriminantDirections, integer d1, integer d2) {
+double Discriminant_getConcentrationEllipseArea (Discriminant me, integer groupNumber, double scale, bool confidence, bool discriminantDirections, integer d1, integer d2) {
 	double area = undefined;
 
-	if (group < 1 || group > my numberOfGroups)
+	if (groupNumber < 1 || groupNumber > my numberOfGroups)
 		return area;
 
-
 	if (discriminantDirections) {
-		autoSSCP thee = Eigen_SSCP_project (my eigen.get(), my groups->at [group]);
+		autoSSCP thee = Eigen_SSCP_project (my eigen.get(), my groups->at [groupNumber]);
 		area = SSCP_getConcentrationEllipseArea (thee.get(), scale, confidence, d1, d2);
 	} else {
-		area = SSCP_getConcentrationEllipseArea (my groups->at [group], scale, confidence, d1, d2);
+		area = SSCP_getConcentrationEllipseArea (my groups->at [groupNumber], scale, confidence, d1, d2);
 	}
 	return area;
 }
 
-double Discriminant_getLnDeterminant_group (Discriminant me, integer group) {
-	if (group < 1 || group > my numberOfGroups)
+double Discriminant_getLnDeterminant_group (Discriminant me, integer groupNumber) {
+	if (groupNumber < 1 || groupNumber > my numberOfGroups)
 		return undefined;
 
-	autoCovariance c = SSCP_to_Covariance (my groups->at [group], 1);
+	autoCovariance c = SSCP_to_Covariance (my groups->at [groupNumber], 1);
 	double ln_d = SSCP_getLnDeterminant (c.get());
 	return ln_d;
 }
@@ -310,27 +309,25 @@ autoSSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
 	return SSCPList_to_SSCP_pool (my groups.get());
 }
 
-autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, integer index) {
+autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, integer groupNumber) {
 	try {
-		Melder_require (index > 0 && index <= my numberOfGroups,
-			U"Index should be in interval [1,", my numberOfGroups, U"].");
-		
-		autoSSCP thee = Data_copy (my groups->at [index]);
+		Melder_require (groupNumber >= 1 && groupNumber <= my numberOfGroups,
+			U"The group number should be between 1 and ", my numberOfGroups, U".");
+		autoSSCP thee = Data_copy (my groups->at [groupNumber]);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": within group SSCP not created.");
+		Melder_throw (me, U": within-group SSCP not created.");
 	}
 }
 
 autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 	try {
-		integer n = my total -> numberOfRows;
-		autoSSCP between = Data_copy (my total.get());
+		autoSSCP between = Data_copy (my total.get());   // for the moment, `between` contains the total sums of squares
 		autoSSCP within = SSCPList_to_SSCP_pool (my groups.get());
-		between -> data.get()  -=  within -> data.get();
+		between -> data.get()  -=  within -> data.get();   // now, `between` does contain the between-groups sums of squares
 		return between;
 	} catch (MelderError) {
-		Melder_throw (me, U": between group SSCP not created.");
+		Melder_throw (me, U": between-groups SSCP not created.");
 	}
 }
 
@@ -417,7 +414,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 			centroid  +=  scale  *  m -> centroid;
 			sum += scale;
 		}
-		centroid  /=  sum;
+		centroid  /=  double (sum);
 
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
 			SSCP m = thy groups->at [k];

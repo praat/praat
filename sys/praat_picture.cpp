@@ -219,6 +219,9 @@ DO
 		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = top + ymargin;
+		Graphics_setViewport (GRAPHICS,
+			theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
+			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);   // to ensure that Demo_x() updates
 	}
 	trace (U"3:"
 		U" x1NDC ", theCurrentPraatPicture -> x1NDC,
@@ -254,22 +257,28 @@ DO
 	theCurrentPraatPicture -> x1NDC = left;
 	theCurrentPraatPicture -> x2NDC = right;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		if (top > bottom)
+			std::swap (top, bottom);
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
 		Graphics_updateWs (GRAPHICS);   // BUG: needed on Cocoa, but why?
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
-		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		if (top > bottom)
+			std::swap (top, bottom);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
 		double height_NDC = y2wNDC - y1wNDC;
 		theCurrentPraatPicture -> y1NDC = height_NDC-bottom;
 		theCurrentPraatPicture -> y2NDC = height_NDC-top;
 	} else {
-		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		if (top > bottom)
+			std::swap (top, bottom);
 		theCurrentPraatPicture -> y1NDC = bottom;
 		theCurrentPraatPicture -> y2NDC = top;
+		Graphics_setViewport (GRAPHICS,
+			theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
+			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);   // to ensure that Demo_x() updates
 	}
 END }
 
