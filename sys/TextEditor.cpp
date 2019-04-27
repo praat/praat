@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2018 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2019 Paul Boersma, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -477,12 +477,26 @@ static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 		if (theFindString) SET_STRING (findString, theFindString.get());
 	EDITOR_DO
 		theFindString = Melder_dup (findString);
+		#ifdef macintosh
+			/*
+				Perhaps don't use the system-wide Find pasteboard,
+				by which other applications can see what you are searching for in Praat's text windows.
+				Remember ever showing your app in Xcode to somebody,
+				revealing to your onlooker the name of the person you last looked up in your email?
+			*/
+			// NSPasteboard * theFindPasteBoard = [NSPasteboard pasteboardWithName: NSPasteboardNameFind   create: NO];
+			// [theFindPasteBoard ...]
+		#endif
 		do_find (me);
 	EDITOR_END
 }
 
 static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 	do_find (me);
+}
+
+static void menu_cb_useSelectionForFind (TextEditor me, EDITOR_ARGS_DIRECT) {
+	theFindString = GuiText_getSelection (my textWidget);
 }
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
@@ -659,6 +673,7 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Search", U"Find again", 'G', menu_cb_findAgain);
 	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT | 'F', menu_cb_replace);
 	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT | 'G', menu_cb_replaceAgain);
+	Editor_addCommand (this, U"Search", U"Use selection for find", 'E', menu_cb_useSelectionForFind);
 	Editor_addCommand (this, U"Search", U"-- line --", 0, nullptr);
 	Editor_addCommand (this, U"Search", U"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (this, U"Search", U"Go to line...", 'L', menu_cb_goToLine);
