@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,6 +192,7 @@ void TableOfReal_removeRow (TableOfReal me, integer rowNumber) {
 		for (integer irow = rowNumber; irow < my numberOfRows; irow ++)
 			my rowLabels [irow] = my rowLabels [irow + 1]. move();
 		my rowLabels [my numberOfRows]. reset();
+		my rowLabels.size -= 1;
 		my data = newData.move();
 		my numberOfRows --;
 	} catch (MelderError) {
@@ -251,10 +252,11 @@ void TableOfReal_removeColumn (TableOfReal me, integer columnNumber) {
 		for (integer icol = columnNumber; icol < my numberOfColumns; icol ++)
 			my columnLabels [icol] = my columnLabels [icol + 1]. move();
 		my columnLabels [my numberOfColumns]. reset();
+		my columnLabels.size -= 1;
 		my data = newData.move();
 		my numberOfColumns --;
 	} catch (MelderError) {
-		Melder_throw (me, U": column at position ", columnNumber, U" not inserted.");
+		Melder_throw (me, U": column ", columnNumber, U" not removed.");
 	}
 }
 

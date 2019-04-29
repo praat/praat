@@ -68,8 +68,16 @@ static void openDocument (TextEditor me, MelderFile file) {
 		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
 		if (editor != me && MelderFile_equal (file, & editor -> file)) {
 			Editor_raise (editor);
+			/*
+				Destruction alarm!
+				When we combine the destruction of an object with the presentation of a message,
+				we shall always follow the "build message -- destroy -- show message" paradigm.
+				Actually, in this case this is not only safe, but also crucial,
+				because at the time of writing (2019-04-28) the owner of `file` is owned by `me`,
+				so that destroying `me` would dangle `file`.
+			*/
 			Melder_appendError (U"Text file ", file, U" is already open.");
-			forget (me);   // don't forget me before Melder_appendError, because "file" is owned by one of my dialogs
+			forget (me);
 			Melder_flushError ();
 			return;
 		}
