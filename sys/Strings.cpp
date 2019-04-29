@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2008,2011-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -322,6 +322,7 @@ void Strings_remove (Strings me, integer position) {
 	for (integer i = position; i < my numberOfStrings; i ++)
 		my strings [i] = my strings [i + 1]. move();
 	my strings [my numberOfStrings]. reset();
+	my strings.size -= 1;
 	my numberOfStrings --;
 }
 
