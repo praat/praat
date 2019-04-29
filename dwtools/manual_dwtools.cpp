@@ -50,22 +50,22 @@ static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) 
 }
 
 static void drawPolsF1F2_log (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	Graphics_setWindow (g, -2.9, 2.9, -2.9, 2.9);
-	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, 1, U"+", 1);
+	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, true, U"+", true);
 }
 
 static void drawPolsF1F2ConcentrationEllipses (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
-	Discriminant_drawConcentrationEllipses (d.get(), g, 1, 0, nullptr, 0, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, 1);
+	Discriminant_drawConcentrationEllipses (d.get(), g, 1, false, nullptr, false, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, true);
 }
 
 static void drawPolsDiscriminantConfiguration (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
 	autoConfiguration c = Discriminant_TableOfReal_to_Configuration (d.get(), me.get(), 2);
-	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, U"", 1);
+	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, true, U"", true);
 }
 
 static void drawBoxPlot (Graphics g) {
@@ -1242,13 +1242,13 @@ CODE (U"selectObject: c, t0")
 CODE (U"ts = To TableOfReal (mahalanobis): \"no\"")
 CODE (U"")
 CODE (U"for nsigma to 5")
-CODE1 (U"  selectObject: ts")
-CODE1 (U"  extraction = Extract rows where:  ~ self < nsigma")
-CODE1 (U"  nr = Get number of rows")
-CODE1 (U"  nrp = nr / n * 100")
-CODE1 (U"  expect = (1 - 2 * gaussQ (nsigma)) * 100")
-CODE1 (U"  writeInfoLine: nsigma, \"-sigma: \", nrp, \"%, \", expect, \"%\"")
-CODE1 (U"  removeObject: extraction")
+	CODE1 (U"selectObject: ts")
+	CODE1 (U"extraction = Extract rows where:  ~ self < nsigma")
+	CODE1 (U"nr = Get number of rows")
+	CODE1 (U"nrp = nr / n * 100")
+	CODE1 (U"expect = (1 - 2 * gaussQ (nsigma)) * 100")
+	CODE1 (U"writeInfoLine: nsigma, \"-sigma: \", nrp, \"%, \", expect, \"%\"")
+	CODE1 (U"removeObject: extraction")
 CODE (U"endfor")
 MAN_END
 
@@ -1412,10 +1412,10 @@ NORMAL (U"The following script generates 12 static Shepard tone complexes, 1 sem
 	"with a cosine window to temper the abrupt start and finish.")
 CODE (U"fadeTime = 0.010")
 CODE (U"for i to 12")
-CODE1 (U"fraction = (i-1)/12")
-CODE1 (U"Create Sound as Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
-CODE1 (U"Fade in: 0, 0, fadeTime, \"no\"")
-CODE1 (U"Fade out: 0, 0.1, -fadeTime, \"no\"")
+	CODE1 (U"fraction = (i-1)/12")
+	CODE1 (U"Create Sound as Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
+	CODE1 (U"Fade in: 0, 0, fadeTime, \"no\"")
+	CODE1 (U"Fade out: 0, 0.1, -fadeTime, \"no\"")
 CODE (U"endfor")
 MAN_END
 
@@ -1686,10 +1686,10 @@ CODE (U"for irow to numberOfRows")
 	CODE1 (U"if irow = 1")
 		CODE2 (U"confusion = To Confusion: \"yes\"")
 	CODE1 (U"else")
-CODE2 (U"    plusObject: confusion")
-CODE2 (U"    Increase confusion count")
-CODE (U"  endif")
-CODE (U"  removeObject: rowi, rest, discriminant, classification")
+		CODE2 (U"plusObject: confusion")
+		CODE2 (U"Increase confusion count")
+	CODE1 (U"endif")
+	CODE1 (U"removeObject: rowi, rest, discriminant, classification")
 CODE (U"endfor")
 CODE (U"selectObject: confusion")
 CODE (U"fractionCorrect = Get fraction correct")
@@ -1699,15 +1699,15 @@ ENTRY (U"5.2 Bootstrap classification")
 NORMAL (U"The following script summarizes bootstrap classification.")
 CODE (U"fractionCorrect = 0")
 CODE (U"for i to numberOfBootstraps")
-CODE (U"  selectObject: table")
-CODE (U"  resampled = To TableOfReal (bootstrap)")
-CODE (U"  discriminant = To Discriminant")
-CODE (U"  plusObject: resampled")
-CODE (U"  classification = To ClassificationTable: \"yes\", \"yes\"")
-CODE (U"  confusion = To Confusion: \"yes\"")
-CODE (U"  fc = Get fraction correct")
-CODE (U"  fractionCorrect += fc")
-CODE (U"  removeObject: resampled, discriminant, classification, confusion")
+	CODE1 (U"selectObject: table")
+	CODE1 (U"resampled = To TableOfReal (bootstrap)")
+	CODE1 (U"discriminant = To Discriminant")
+	CODE1 (U"plusObject: resampled")
+	CODE1 (U"classification = To ClassificationTable: \"yes\", \"yes\"")
+	CODE1 (U"confusion = To Confusion: \"yes\"")
+	CODE1 (U"fc = Get fraction correct")
+	CODE1 (U"fractionCorrect += fc")
+	CODE1 (U"removeObject: resampled, discriminant, classification, confusion")
 CODE (U"endfor")
 CODE (U"fractionCorrect /= numberOfBootstraps")
 CODE (U"appendInfoLine: fractionCorrect, \" (= fraction correct, bootstrapped \", numberOfBootstraps, \" times).\"")
@@ -2684,9 +2684,9 @@ TAG (U"##3. Projected Gradient.#")
 ENTRY (U"Multiplicative Updates")
 CODE (U"initialize F and W")
 CODE (U"while iter < maxinter and not convergence")
-CODE (U"    (MU) W = W .* (F'*D) ./ (F'*F*W + 10^^−9^)")
-CODE (U"    (MU) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)")
-CODE (U"    test for convergence")
+	CODE1 (U"(MU) W = W .* (F'*D) ./ (F'*F*W + 10^^−9^)")
+	CODE1 (U"(MU) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)")
+	CODE1 (U"test for convergence")
 CODE (U"endwhile")
 NORMAL (U"In the mutiplicative update (MU) steps above \"*\" means ordinary matrix multiplication while \".*\" and \"./\" mean elementwise matrix operations. The factors 10^^-9^ guard against division by zero.")
 ENTRY (U"Alternating Least Squares")
@@ -2694,11 +2694,11 @@ NORMAL (U"The optimization of ##D \\~~ F*W# is not convex in both ##F# and ##W# 
 NORMAL (U"The Aternating Least Squares (ALS) algorithm is as follows:")
 CODE (U"initialize F")
 CODE (U"while iter < maxinter and not convergence")
-CODE (U"    (LS) Solve for W in matrix equation F'*F*W = F'*D")
-CODE (U"    (NONNEG) Set all negative elements in W to 0")
-CODE (U"    (LS) Solve for F in matrix equation W*W'*F' = W*D'")
-CODE (U"    (NONNEG) Set all negative elements in F to 0")
-CODE (U"    test for convergence")
+	CODE1 (U"(LS) Solve for W in matrix equation F'*F*W = F'*D")
+	CODE1 (U"(NONNEG) Set all negative elements in W to 0")
+	CODE1 (U"(LS) Solve for F in matrix equation W*W'*F' = W*D'")
+	CODE1 (U"(NONNEG) Set all negative elements in F to 0")
+	CODE1 (U"test for convergence")
 CODE (U"endwhile")
 NORMAL (U"")
 MAN_END
