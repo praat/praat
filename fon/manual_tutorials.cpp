@@ -22,9 +22,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190331)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190429)
 INTRO (UR"~(
 Latest changes in Praat.
+)~") NORMAL (UR"~(
+##6.0.51# (29 April 2019)
+)~") LIST_ITEM (UR"~(
+• Script window: Use Selection for Find.
+)~") LIST_ITEM (UR"~(
+• Corrected a bug that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.
 )~") NORMAL (UR"~(
 ##6.0.50# (31 March 2019)
 )~") LIST_ITEM (UR"~(
