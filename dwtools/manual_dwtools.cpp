@@ -50,22 +50,22 @@ static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) 
 }
 
 static void drawPolsF1F2_log (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	Graphics_setWindow (g, -2.9, 2.9, -2.9, 2.9);
-	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, 1, U"+", 1);
+	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, true, U"+", true);
 }
 
 static void drawPolsF1F2ConcentrationEllipses (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
-	Discriminant_drawConcentrationEllipses (d.get(), g, 1, 0, nullptr, 0, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, 1);
+	Discriminant_drawConcentrationEllipses (d.get(), g, 1, false, nullptr, false, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, true);
 }
 
 static void drawPolsDiscriminantConfiguration (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
 	autoConfiguration c = Discriminant_TableOfReal_to_Configuration (d.get(), me.get(), 2);
-	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, U"", 1);
+	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, true, U"", true);
 }
 
 static void drawBoxPlot (Graphics g) {

@@ -450,7 +450,7 @@ autoConfiguration Discriminant_TableOfReal_to_Configuration (Discriminant me, Ta
 		if (numberOfDimensions == 0)
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		MATmul (his data.get(), thy data.get(), my eigen -> eigenvectors.transpose ());
+		MATmul (his data.get(), thy data.get(), my eigen -> eigenvectors.horizontalBand (1, numberOfDimensions).transpose ());
 		TableOfReal_copyLabels (thee, him.get(), 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"Eigenvector ", 1, 1);
 		return him;
