@@ -183,13 +183,12 @@ static autoTextTier TextTier_IntervalTier_cutPartsMatchingLabel (TextTier me, In
 // Cut parts from me marked by labels in thee
 autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, conststring32 label, double precision) {
     try {
-        if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains should be equal.");
-        }
-        autoNUMvector<double> durations (1, my intervals.size);
+        Melder_require (my xmin == thy xmin && my xmax != thy xmax,
+            U"Domains should be identical.");
+        autoVEC durations = newVECraw (my intervals.size);
         for (integer i = 1; i <= my intervals.size; i ++) {
             TextInterval ti = my intervals.at [i];
-            durations[i] = ti -> xmax - ti -> xmin;
+            durations [i] = ti -> xmax - ti -> xmin;
         }
         integer myInterval = 1;
         for (integer j = 1; j <= thy intervals.size; j ++) {
@@ -199,45 +198,46 @@ autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier m
                     TextInterval ti = my intervals.at [myInterval];
                     if (ti -> xmin > cut -> xmin - precision && ti -> xmax < cut -> xmax + precision) {
                         // 1. interval completely within cut
-                        durations[myInterval] = 0;
-                        myInterval++;
+                        durations [myInterval] = 0.0;
+                        myInterval ++;
                     } else if (ti -> xmin < cut -> xmin + precision && cut -> xmin < ti -> xmax + precision) {
                         // 2. cut start is within interval
                         if (cut -> xmax > ti -> xmax - precision) {
                             // interval end is in cut, interval start before
-                            durations[myInterval] -= ti -> xmax - cut -> xmin;
-                            myInterval++;
+                            durations [myInterval] -= ti -> xmax - cut -> xmin;
+                            myInterval ++;
                         } else {
                             // 3. cut completely within interval
-                            durations[myInterval] -= cut -> xmax - cut -> xmin;
+                            durations [myInterval] -= cut -> xmax - cut -> xmin;
                             break;
                         }
                     } else if (cut -> xmax > ti -> xmin - precision && cut -> xmin < ti -> xmax + precision) {
                         // +1+2 : cut end is within interval, cut start before
-                        durations[myInterval] -= cut -> xmax - ti -> xmin;
+                        durations [myInterval] -= cut -> xmax - ti -> xmin;
                         break;
                     } else if (ti -> xmax < cut -> xmin + precision) {
-                        myInterval++;
+                        myInterval ++;
                     }
                 }
             }
         }
-        double totalDuration = 0;
+        longdouble totalDuration = 0.0;
         for (integer i = 1; i <= my intervals.size; i ++) {
-            if (durations[i] < precision) {
-                durations[i] = 0;
-            }
-            totalDuration += durations[i];
+            if (durations [i] < precision)
+                durations [i] = 0.0;
+            totalDuration += durations [i];
         }
-        autoIntervalTier him = IntervalTier_create (0, totalDuration);
-        double time = 0; integer hisInterval = 1;
+        autoIntervalTier him = IntervalTier_create (0, double (totalDuration));
+        double time = 0.0;
+        integer hisInterval = 1;
         for (integer i = 1; i <= my intervals.size; i ++) {
-            if (durations[i] <= 0) continue;
+            if (durations [i] <= 0.0)
+            	continue;
             TextInterval ti = my intervals.at [i];
-            time += durations[i];
+            time += durations [i];
             if (fabs (time - totalDuration) > precision) {
                 IntervalTier_splitInterval (him.get(), time, ti -> text.get(), hisInterval, precision);
-                hisInterval++;
+                hisInterval ++;
             } else { // last interval
                 TextInterval histi = his intervals.at [hisInterval];
                 TextInterval_setText (histi, ti -> text.get());
