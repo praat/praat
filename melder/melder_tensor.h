@@ -326,7 +326,7 @@ public:
 */
 template <typename T>
 class autovector : public vector<T> {
-	integer capacity = 0;
+	integer _capacity = 0;
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
 	explicit autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
@@ -334,11 +334,11 @@ public:
 		our at = ( givenSize == 0 ? nullptr
 				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
 		our size = givenSize;
-		our capacity = givenSize;
+		our _capacity = givenSize;
 	}
 	~autovector () {   // destroy the payload (if any)
 		our reset ();
-		our capacity = 0;
+		our _capacity = 0;
 	}
 	vector<T> get () const { return vector<T> (our at, our size); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	vectorview<T> all () const { return vectorview<T> (& our at [1], our size, 1); }
@@ -346,13 +346,13 @@ public:
 		our reset();
 		our at = given.at;
 		our size = given.size;
-		our capacity = given.size;
+		our _capacity = given.size;
 	}
 	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
 		T *oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		integer oldSize = our size;
-		our capacity = 0;
+		our _capacity = 0;
 		return vector<T> (oldAt, oldSize);
 	}
 	/*
@@ -367,17 +367,17 @@ public:
 	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
 		other.at = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
-		other.capacity = 0;
+		other._capacity = 0;
 	}
 	autovector& operator= (autovector&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
 			our reset ();
 			our at = other.at;
 			our size = other.size;
-			our capacity = other.capacity;
+			our _capacity = other._capacity;
 			other.at = nullptr;   // disown source
 			other.size = 0;   // to keep the source in a valid state
-			other.capacity = 0;
+			other._capacity = 0;
 		}
 		return *this;
 	}
@@ -390,21 +390,14 @@ public:
 	}
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 	/*
-		Unlike std::vector, our vector is not really designed for dynamic resizing,
-		i.e. it has no `capacity` member. This is because our vectors should mainly feel happy
-		in an environment with matrixes, tensor3s and tensor4s, for which dynamic resizing
-		makes little sense.
-		The following functions, however, do support dynamic resizing,
-		but the capacity should be kept in an external integer.
-
-		Some of these functions are capable of keeping a valid `at` pointer
+		Some of the following functions are capable of keeping a valid `at` pointer
 		while `size` can at the same time be zero.
 	*/
-	void initWithCapacity (integer *inout_capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
-		if (*inout_capacity > 0)
-			our at = NUMvector<T> (1, *inout_capacity, initializationType == kTensorInitializationType::ZERO);
+	void initWithCapacity (integer capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+		if (capacity > 0)
+			our at = NUMvector<T> (1, capacity, initializationType == kTensorInitializationType::ZERO);
 		our size = 0;
-		our capacity = *inout_capacity;
+		our _capacity = capacity;
 	}
 	/*
 		If the new size N is less than the current size S,
@@ -421,18 +414,15 @@ public:
 		elsewhere than at the head of the vector,
 		you should shift the elements after resizing.
 	*/
-	void resize (integer newSize, integer *inout_capacity = nullptr,
-		kTensorInitializationType initializationType = kTensorInitializationType::ZERO)
-	{
-		const integer currentCapacity = ( inout_capacity ? *inout_capacity : our size );
-		if (newSize > currentCapacity) {
+	void resize (integer newSize, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+		if (newSize > our _capacity) {
 			/*
 				The new capacity is at least twice the old capacity.
 				When starting at a capacity of 0, and continually upsizing by one,
 				the capacity sequence will be: 0, 11, 33, 77, 165, 341, 693, 1397,
 				2805, 5621, 11253, 22517, 45045, 90101, 180213, 360437, 720885...
 			*/
-			integer newCapacity = ( inout_capacity ? newSize + our size + 10 : newSize );
+			integer newCapacity = newSize + our size + 10;
 			/*
 				Create without change.
 			*/
@@ -444,14 +434,12 @@ public:
 				newAt [i] = our at [i];
 			if (our at) NUMvector_free (our at, 1);
 			our at = newAt;
-			if (inout_capacity)
-				*inout_capacity = newCapacity;
-			our capacity = newCapacity;
+			our _capacity = newCapacity;
 		}
 		our size = newSize;
 	}
-	void insert (integer position, const T& value, integer *inout_capacity = nullptr) {
-		resize (our size + 1, inout_capacity, kTensorInitializationType::RAW);
+	void insert (integer position, const T& value) {
+		resize (our size + 1, kTensorInitializationType::RAW);
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = our size; i > position; i --)
 			our at [i] = our at [i - 1];
