@@ -184,7 +184,6 @@ void Table_removeColumn (Table me, integer columnNumber) {
 		for (integer icol = columnNumber; icol < my numberOfColumns; icol ++)
 			my columnHeaders [icol] = std::move (my columnHeaders [icol + 1]);
 		my columnHeaders [my numberOfColumns]. destroy ();
-		my columnHeaders -= 1;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			for (integer icol = columnNumber; icol < row -> numberOfColumns; icol ++)
