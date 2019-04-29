@@ -300,10 +300,10 @@ CODE (U"0 fixed rankings")
 CODE (U" ")
 CODE (U"2 tableaus")
 CODE (U"input [1]: \"pat\" 2")
-CODE1 (U"candidate [1]: \"pa\" 0 1")
-CODE1 (U"candidate [2]: \"pat\" 1 0")
+	CODE1 (U"candidate [1]: \"pa\" 0 1")
+	CODE1 (U"candidate [2]: \"pat\" 1 0")
 CODE (U"input [2]: \"pa\" 1")
-CODE1 (U"candidate [1]: \"pa\" 0 0")
+	CODE1 (U"candidate [1]: \"pa\" 0 0")
 NORMAL (U"To understand more about this data structure, consult the @OTGrammar class description "
 	"or click #Inspect after selecting the OTGrammar object. The $$\"\\bss{...}\"$ braces ensure that "
 	"the constraint names show up with their traditional small capitals (see @@Text styles@).")
@@ -326,10 +326,10 @@ CODE (U"\"P\\bss{ARSE}\"       90  90  1")
 CODE (U"0   ! number of fixed rankings")
 CODE (U"2   ! number of accepted inputs")
 CODE (U"\"pat\" 2      ! input form with number of output candidates")
-CODE1 (U"\"pa\"  0 1   ! first candidate with violations")
-CODE1 (U"\"pat\" 1 0   ! second candidate with violations")
+	CODE1 (U"\"pa\"  0 1   ! first candidate with violations")
+	CODE1 (U"\"pat\" 1 0   ! second candidate with violations")
 CODE (U"\"pa\" 1       ! input form with number of candidates")
-CODE1 (U"\"pa\"  0 0")
+	CODE1 (U"\"pa\"  0 0")
 NORMAL (U"To define your own grammar, you just provide a number of constraints and their rankings, "
 	"and all the possible input forms with all their output candidates, and all the constraint violations "
 	"for each candidate. The order in which you specify the constraints is free (you don't have to specify "
@@ -346,10 +346,10 @@ CODE (U"\"N\\bss{O}C\\bss{ODA}\" 100 100 1.0")
 CODE (U"0")
 CODE (U"2")
 CODE (U"\"pa\" 1")
-CODE1 (U"\"pa\"  0 0")
+	CODE1 (U"\"pa\"  0 0")
 CODE (U"\"pat\" 2")
-CODE1 (U"\"pat\" 0 1")
-CODE1 (U"\"pa\"  1 0")
+	CODE1 (U"\"pat\" 0 1")
+	CODE1 (U"\"pa\"  1 0")
 NORMAL (U"The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
 	"In this tutorial I mostly assume OT's strict ranking, "
 	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint disharmonies represent addable, "
