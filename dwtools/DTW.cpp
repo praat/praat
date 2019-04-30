@@ -760,7 +760,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 	if (dmin >= dmax)
 		NUMextrema (d.get(), & dmin, & dmax);
 	else 
-		VECclip_inline (d.get(), dmin, dmax);
+		VECclip_inplace_inline (d.get(), dmin, dmax);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, dmin, dmax);
