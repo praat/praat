@@ -139,7 +139,7 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 			ymax += 1.0;
 		}
 	} else
-		VECclip_inline (c.get(), ymin, ymax);
+		VECclip_inplace_inline (c.get(), ymin, ymax);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
