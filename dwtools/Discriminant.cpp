@@ -447,8 +447,12 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 autoConfiguration Discriminant_TableOfReal_to_Configuration (Discriminant me, TableOfReal thee, integer numberOfDimensions) {
 	try {
+		Melder_require (thy numberOfColumns == my eigen -> dimension,
+			U"The number of columns in the TableOfReal (", thy numberOfColumns, U") should be equal to the dimension of the eigenvectors of the Discriminant (", my eigen -> dimension, U").");
 		if (numberOfDimensions == 0)
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
+		Melder_require (numberOfDimensions <= my eigen -> numberOfEigenvalues,
+			U"The number of dimensions should not exceed the number of eigenvectors in the Discriminant (", my eigen -> numberOfEigenvalues, U").");
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
 		MATmul (his data.get(), thy data.get(), my eigen -> eigenvectors.horizontalBand (1, numberOfDimensions).transpose ());
 		TableOfReal_copyLabels (thee, him.get(), 1, 0);

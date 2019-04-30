@@ -1176,10 +1176,10 @@ DO
 }
 
 FORM (NEW1_Discriminant_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...") {
-	INTEGER (numberOfDimensions, U"Number of dimensions", U"0")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (=all)")
 	OK
 DO
-	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
+	Melder_require (numberOfDimensions >= 0, U"\"Number of dimensions\" should not be less than zero.");
 	CONVERT_TWO (Discriminant, TableOfReal)
 		autoConfiguration result = Discriminant_TableOfReal_to_Configuration (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
