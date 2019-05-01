@@ -265,15 +265,16 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 	integer iminTarget = Sampled_xToHighIndex (thee, tminTarget);
 	if (iminTarget < 1) iminTarget = 1;
 	trace (tmin, U" ", tmax, U" ", tminTarget, U" ", imin, U" ", imax, U" ", iminTarget);
-	Melder_assert (iminTarget + imax - imin <= thy nx);
-	NUMvector_copyElements (& my z [1] [0] + imin, & thy z [1] [0] + iminTarget, 0, imax - imin);
+	const integer imaxTarget = iminTarget + (imax - imin);
+	Melder_assert (imaxTarget <= thy nx);
+	thy z.row (1).part (iminTarget, imaxTarget) <<= my z.row (1).part (imin, imax);
 }
 
 autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (source -> nt < 2 || target -> nt < 2) {   // almost completely voiceless?
-			NUMvector_copyElements (& my z [1] [0], & thy z [1] [0], 1, my nx);
+			thy z.all() <<= my z.all();
 			return thee;
 		}
 		for (integer i = 1; i <= target -> nt; i ++) {

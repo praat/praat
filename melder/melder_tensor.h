@@ -95,11 +95,6 @@ bool NUMvector_equal (const T* v1, const T* v2, integer lo, integer hi) {
 }
 
 template <class T>
-void NUMvector_copyElements (const T* vfrom, T* vto, integer lo, integer hi) {
-	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <const byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
-}
-
-template <class T>
 void NUMvector_append (T** v, integer lo, integer *hi) {
 	NUMvector_append_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi);
 }
