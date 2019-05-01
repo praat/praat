@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2018 Paul Boersma
+ * Copyright (C) 2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,11 +457,10 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 			autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
 			Spectrum_passHannBand (spec.get(), lowFrequency, 0.0, lowWidth);
 			Spectrum_passHannBand (spec.get(), 0.0, highFrequency, highWidth);
-			if (doNotch50Hz) {
+			if (doNotch50Hz)
 				Spectrum_stopHannBand (spec.get(), 48.0, 52.0, 1.0);
-			}
 			autoSound him = Spectrum_to_Sound (spec.get());
-			NUMvector_copyElements (& his z [1] [0], & my sound -> z [ichan] [0], 1, my sound -> nx);
+			my sound -> z.row (ichan) <<= his z.row (1).part (1, my sound -> nx);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered.");
@@ -603,7 +602,7 @@ static void Sound_removeChannel (Sound me, integer channelNumber) {
 		Melder_require (my ny > 1,
 			U"Cannot remove last remaining channel.");
 		for (integer ichan = channelNumber; ichan < my ny; ichan ++)
-			NUMvector_copyElements (& my z [ichan + 1] [0], & my z [ichan] [0], 1, my nx);
+			my z.row (ichan) <<= my z.row (ichan + 1);
 		my ymax -= 1.0;
 		my ny -= 1;
 	} catch (MelderError) {
