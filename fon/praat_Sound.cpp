@@ -411,13 +411,10 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	LOOP {
 		iam (Sound);
 		double tmax = tmin + my nx * dx;
-		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			NUMvector_copyElements (& my z [channel] [0], & thy z [channel] [nx], 1, my nx);
-		}
+		thy z.verticalBand (nx + 1, nx + my nx) <<= my z.all();
 		iinterval ++;
-		if (iinterval > 1) {
+		if (iinterval > 1)
 			TextGrid_insertBoundary (him.get(), 1, tmin);
-		}
 		TextGrid_setIntervalText (him.get(), 1, iinterval, my name.get());
 		nx += my nx;
 		tmin = tmax;
