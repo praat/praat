@@ -43,7 +43,7 @@ oo_DEFINE_CLASS (EspeakVoice, Daata)
 	oo_INT32 (consonant_ampv)    // amplitude of the noise component of voiced consonants
 	oo_INT32 (samplerate)			// sampling frequency as integer Hz
 	oo_INT32 (numberOfKlattParameters) // default 8 
-	oo_INT_VECTOR_FROM (klattv, 1, numberOfKlattParameters)
+	oo_INT_VECTOR (klattv, numberOfKlattParameters)
 
 	// parameters used by Wavegen
 	oo_INT32 (numberOfFormants) // 9

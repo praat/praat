@@ -76,8 +76,8 @@
 /* if the pointer does not change, 'min' cannot change, but 'max' may become lower than the original value. */
 
 //#define oo_BYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (signed char, i8, x, min, max)
-#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
-#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
+//#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
+//#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
 #define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
 //#define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, u16, x, min, max)
 //#define oo_UINTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (uinteger, u32, x, min, max)
