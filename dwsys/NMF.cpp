@@ -195,8 +195,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		double maximum = NUMmax (data);
 		integer iter = 1;
 		bool convergence = false;		
-		if (info)
-			MelderInfo_open();
+		
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
 				while iter < maxinter and not convergence
@@ -244,7 +243,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			++ iter;
 		}
 		if (info)
-			MelderInfo_close();
+			MelderInfo_drain();
 	} catch (MelderError) {
 		Melder_throw (me, U" factorization cannot be improved.");
 	}
@@ -276,8 +275,7 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 		double maximum = NUMmax (data);
 		integer iter = 1;
 		bool convergence = false;
-		if (info)
-			MelderInfo_open();
+		
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
 				for iter to maxiter
@@ -324,7 +322,7 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			++ iter;
 		}
 		if (info)
-			MelderInfo_close();
+			MelderInfo_drain();
 	} catch (MelderError) {
 		Melder_throw (me, U" ALS factorization cannot be improved.");
 	}
