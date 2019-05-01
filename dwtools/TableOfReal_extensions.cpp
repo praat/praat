@@ -966,27 +966,17 @@ autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-
-		// Copy column labels.
-
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			if (my columnLabels [i]) {
-				TableOfReal_setColumnLabel (thee.get(), i, my columnLabels [i].get());
-			}
-		}
-
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			TableOfReal_setColumnLabel (thee.get(), icol, my columnLabels [icol].get());
 		/*
 			Select randomly from table with replacement. Because of replacement
 			you do not get back the original data set. A random fraction,
-			typically 1/e (37%) are replaced by duplicates.
+			typically 1/e (37%), are replaced by duplicates.
 		*/
-
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			integer p = NUMrandomInteger (1, my numberOfRows);
-			NUMvector_copyElements (& my data [p] [0], & thy data [i] [0], 1, my numberOfColumns);
-			if (my rowLabels [p]) {
-				TableOfReal_setRowLabel (thee.get(), i, my rowLabels [p].get());
-			}
+		for (integer thyRow = 1; thyRow <= thy numberOfRows; thyRow ++) {
+			integer myRow = NUMrandomInteger (1, my numberOfRows);
+			thy data.row (thyRow) <<= my data.row (myRow);
+			TableOfReal_setRowLabel (thee.get(), thyRow, my rowLabels [myRow].get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1000,7 +990,7 @@ void TableOfReal_changeRowLabels (TableOfReal me,
 {
 	try {
 		autostring32vector rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
-			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my rowLabels = std::move (rowLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not changed.");
@@ -1013,7 +1003,7 @@ void TableOfReal_changeColumnLabels (TableOfReal me,
 {
 	try {
 		autostring32vector columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
-			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my columnLabels = std::move (columnLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": column labels not changed.");
@@ -1025,24 +1015,20 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 	char32 **labels = my rowLabels.peek2();
 	regexp *compiled_regexp = nullptr;
 
-	if (! search || search [0] == U'\0') {
+	if (! search || search [0] == U'\0')
 		return 0;
-	}
 	if (columnLabels) {
 		numberOfLabels = my numberOfColumns;
 		labels = my columnLabels.peek2();
 	}
-	if (use_regexp) {
+	if (use_regexp)
 		compiled_regexp = CompileRE_throwable (search, 0);
-	}
 	for (integer i = 1; i <= numberOfLabels; i ++) {
-		if (! labels [i]) {
+		if (! labels [i])
 			continue;
-		}
 		if (use_regexp) {
-			if (ExecRE (compiled_regexp, nullptr, labels [i], nullptr, false, U'\0', U'\0', nullptr, nullptr)) {
+			if (ExecRE (compiled_regexp, nullptr, labels [i], nullptr, false, U'\0', U'\0', nullptr, nullptr))
 				nmatches ++;
-			}
 		} else if (str32equ (labels [i], search)) {
 			nmatches ++;
 		}

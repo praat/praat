@@ -522,7 +522,7 @@ MAN_BEGIN (U"ExperimentMFC 4.2. The OK button", U"ppgb", 20051205)
 INTRO (U"The @@ExperimentMFC 2.1. The experiment file|example experiment@ contained the following lines:")
 CODE (U"okButton = 0 0 0 0 \"\" \"\"")
 NORMAL (U"This means that that experiment did not have an OK button. "
-	"To add an OK button in the lower right corner of the screen, you do something likw")
+	"To add an OK button in the lower right corner of the screen, you do something like")
 CODE (U"okButton = 0.8 0.95 0.05 0.15 \"OK\" \"\"")
 NORMAL (U"If you supply a right edge (here 0.95) that is greater than the left edge (here 0.8), "
 	"Praat will know that you want to show an OK button.")
@@ -543,7 +543,7 @@ MAN_BEGIN (U"ExperimentMFC 4.3. The oops button", U"ppgb", 20051205)
 INTRO (U"The @@ExperimentMFC 2.1. The experiment file|example experiment@ contained the following lines:")
 CODE (U"oopsButton = 0 0 0 0 \"\" \"\"")
 NORMAL (U"This means that that experiment did not have an oops button. "
-	"To add an oops button in the lower left corner of the screen, you do something likw")
+	"To add an oops button in the lower left corner of the screen, you do something like")
 CODE (U"oopsButton = 0.05 0.2 0.05 0.15 \"oops\" \"\"")
 NORMAL (U"If you supply a right edge (here 0.2) that is greater than the left edge (here 0.05), "
 	"Praat will know that you want to show an oops button.")
