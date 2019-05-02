@@ -510,7 +510,9 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 					thy z [channel] [thySample] += sound -> z [channel] [mySample] * smoother [j];   // add
 				}
 				thy z.row (channel).part (nx + 1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
-						nx + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound) <<= sound -> z.row (channel);
+						nx + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound) <<=
+						sound -> z.row (channel).part (1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
+						sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
 				for (integer j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + nx;
 					 j <= numberOfSmoothingSamplesAtTheEndOfThisSound;
 					 j ++, mySample ++, thySample ++)

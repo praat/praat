@@ -395,12 +395,12 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 		if (numberOfChannels == 0) {
 			numberOfChannels = my ny;
 		} else if (my ny != numberOfChannels) {
-			Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+			Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) should be equal.");
 		}
 		if (dx == 0.0) {
 			dx = my dx;
 		} else if (my dx != dx) {
-			Melder_throw (U"To concatenate sounds, their sampling frequencies must be equal.\n"
+			Melder_throw (U"To concatenate sounds, their sampling frequencies should be equal.\n"
 				"You could resample one or more of the sounds before concatenating.");
 		}
 		nx += my nx;
