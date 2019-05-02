@@ -22,26 +22,19 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190429)
-INTRO (UR"~(
-Latest changes in Praat.
-)~") NORMAL (UR"~(
-##6.0.51# (29 April 2019)
-)~") LIST_ITEM (UR"~(
-• Script window: Use Selection for Find.
-)~") LIST_ITEM (UR"~(
-• Corrected a bug that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.
-)~") NORMAL (UR"~(
-##6.0.50# (31 March 2019)
-)~") LIST_ITEM (UR"~(
-• Manual updates, speed, more tests.
-)~") LIST_ITEM (UR"~(
-• Scripting: rowSums\# , columnSums\# ; randomGauss\# \#  finally with four arguments.
-)~") NORMAL (UR"~(
-##6.0.49# (2 March 2019)
-)~") LIST_ITEM (UR"~(
-• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.
-)~")
+MAN_BEGIN (U"What's new?", U"ppgb", 20190502)
+INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.0.52# (2 May 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause turning a Discriminant into a Configuration to crash.")
+LIST_ITEM (U"• Removed a bug introduced in contour grey drawing in August 2017.")
+NORMAL (U"##6.0.51# (29 April 2019)")
+LIST_ITEM (U"• Script window: Use Selection for Find.")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.41 that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.")
+NORMAL (U"##6.0.50# (31 March 2019)")
+LIST_ITEM (U"• Manual updates, speed, more tests.")
+LIST_ITEM (U"• Scripting: rowSums\# , columnSums\# ; randomGauss\# \#  finally with four arguments.")
+NORMAL (U"##6.0.49# (2 March 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.")
 LIST_ITEM (U"• Pitch: Tabulate candidates.")
 LIST_ITEM (U"• SoundSet.")
