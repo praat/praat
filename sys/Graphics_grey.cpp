@@ -418,8 +418,9 @@ static void smallGrey () {
 	 * Those that are not enclosed by any other contour, are filled first.
 	 */
 	{
-		bool found = false;
+		bool found;
 		do {
+			found = false;
 			for (integer i = 1; i <= numberOfClosedContours; i ++) {
 				ClosedContour ci = closedContours [i];
 				if (! ci -> drawn) {

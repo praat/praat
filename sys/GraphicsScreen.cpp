@@ -312,6 +312,7 @@ void structGraphicsScreen :: v_clearWs () {
 				//CGContextSynchronize (context);
 				CGContextRestoreGState (context);
 				[cocoaDrawingArea unlockFocus];
+				[cocoaDrawingArea setNeedsDisplay: YES];
 			} else {
 				/*
 					Just redraw, and hope that the redraw method erases.
