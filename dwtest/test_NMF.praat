@@ -21,7 +21,9 @@ procedure test_simple
 		.dist = Get Euclidean distance
 		Improve factorization (m.u.): 10, 1e-09, 1e-09, "yes"
 		.dist2 = Get Euclidean distance
-		assert .dist2 <= .dist
+		# if we are very near the minimum assert .dist2 <= .dist  is not always true
+		# abs (.dist2 - .dist) <= 1e-09 makes sure that we are within tolerace to the minimum.
+		assert .dist2 <= .dist || abs (.dist2 - .dist) <= 1e-09
 		appendInfoLine: tab$, tab$, .nrow, "x", .ncol, ", aprox = ", .nfeatures, " 2-norm=", .dist2
 		removeObject: .mat, .nmf
 	endfor
