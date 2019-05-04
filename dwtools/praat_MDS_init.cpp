@@ -1352,9 +1352,9 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classConfiguration, 0, U"Configuration help", nullptr, 0, HELP_Configuration_help);
 	praat_TableOfReal_init2 (classConfiguration);
 	praat_TableOfReal_extras (classConfiguration);
-	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Insert column (index)...");
-	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Remove column (index)...");
-	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Append");
+	praat_removeAction (classConfiguration, nullptr, nullptr, U"Insert column (index)...");
+	praat_removeAction (classConfiguration, nullptr, nullptr, U"Remove column (index)...");
+	praat_removeAction (classConfiguration, nullptr, nullptr, U"Append");
 	praat_addAction1 (classConfiguration, 0, U"Draw...", DRAW_BUTTON, 1, GRAPHICS_Configuration_draw);
 	praat_addAction1 (classConfiguration, 0, U"Draw sigma ellipses...", U"Draw...", 1, GRAPHICS_Configuration_drawSigmaEllipses);
 	praat_addAction1 (classConfiguration, 0, U"Draw one sigma ellipse...", U"Draw...", 1, GRAPHICS_Configuration_drawOneSigmaEllipse);

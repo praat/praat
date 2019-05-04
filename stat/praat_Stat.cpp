@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,8 @@ DO
 		LogisticRegression_drawBoundary (me, GRAPHICS,
 			xfactor, fromHorizontal, toHorizontal,
 			yfactor, fromVertical, toVertical,
-			garnish);
+			garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -210,7 +211,7 @@ FORM (REAL_PairDistribution_Distributions_getFractionCorrect, U"PairDistribution
 	OK
 DO
 	NUMBER_TWO (PairDistribution, Distributions)
-		double result = PairDistribution_Distributions_getFractionCorrect (me, you, columnNumber);
+		const double result = PairDistribution_Distributions_getFractionCorrect (me, you, columnNumber);
 	NUMBER_TWO_END (U" (fraction correct)")
 }
 
@@ -329,11 +330,11 @@ FORM (GRAPHICS_Table_scatterPlot, U"Scatter plot", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
-		integer markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		const integer markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
-			fromHorizontal, toHorizontal, fromVertical, toVertical, markColumn, fontSize, garnish);
+				fromHorizontal, toHorizontal, fromVertical, toVertical, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -350,11 +351,12 @@ FORM (GRAPHICS_Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical,
-			markSize, markString, garnish);
+			markSize, markString, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -370,10 +372,10 @@ FORM (GRAPHICS_Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr)
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
-			fromHorizontal, toHorizontal, fromVertical, toVertical, numberOfSigmas, garnish);
+				fromHorizontal, toHorizontal, fromVertical, toVertical, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -384,8 +386,8 @@ FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
-		integer result = Table_drawRowFromDistribution (me, columnNumber);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
+		const integer result = Table_drawRowFromDistribution (me, columnNumber);
 	NUMBER_ONE_END (U" (random row number)")
 }
 
@@ -394,7 +396,7 @@ FORM (INTEGER_Table_getColumnIndex, U"Table: Get column index", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+		const integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
 	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
 }
 
@@ -416,9 +418,9 @@ FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
-		double result = Table_getGroupMean (me, column, groupColumn, group);
+		const integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
+		const double result = Table_getGroupMean (me, column, groupColumn, group);
 	NUMBER_ONE_END (U" (mean of ", columnLabel, U" in group ", group, U")")
 }
 
@@ -427,8 +429,8 @@ FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getMaximum (me, columnNumber);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const double result = Table_getMaximum (me, columnNumber);
 	NUMBER_ONE_END (U" (maximum of ", columnLabel, U")")
 }
 
@@ -437,8 +439,8 @@ FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getMean (me, columnNumber);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const double result = Table_getMean (me, columnNumber);
 	NUMBER_ONE_END (U" (mean of ", columnLabel, U")")
 }
 
@@ -447,8 +449,8 @@ FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getMinimum (me, columnNumber);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const double result = Table_getMinimum (me, columnNumber);
 	NUMBER_ONE_END (U" (minimum of ", columnLabel, U")")
 }
 
@@ -458,8 +460,8 @@ FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getQuantile (me, columnNumber, quantile);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const double result = Table_getQuantile (me, columnNumber, quantile);
 	NUMBER_ONE_END (U" (", quantile, U" quantile of ", columnLabel, U")")
 }
 
@@ -468,20 +470,20 @@ FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getStdev (me, columnNumber);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const double result = Table_getStdev (me, columnNumber);
 	NUMBER_ONE_END (U" (standard deviation of ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_Table_getNumberOfColumns) {
 	NUMBER_ONE (Table)
-		integer result = my numberOfColumns;
+		const integer result = my numberOfColumns;
 	NUMBER_ONE_END (U" columns")
 }
 
 DIRECT (INTEGER_Table_getNumberOfRows) {
 	NUMBER_ONE (Table)
-		integer result = my rows.size;
+		const integer result = my rows.size;
 	NUMBER_ONE_END (U" rows")
 }
 
@@ -521,17 +523,17 @@ DO
 		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
-			& significance, & lowerLimit, & upperLimit);
+				& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, columnNumber1),
-			U" and column ", Table_messageColumn (me, columnNumber2), U":");
+				U" and column ", Table_messageColumn (me, columnNumber2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Kendall's tau-b)");
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -547,18 +549,18 @@ DO
 		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
-			& significance, & lowerLimit, & upperLimit);
+				& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, columnNumber1),
-			U" and column ", Table_messageColumn (me, columnNumber2), U":");
+				U" and column ", Table_messageColumn (me, columnNumber2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Pearson's r)");
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows.size - 2);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -574,19 +576,19 @@ DO
 		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 		difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
-			& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
+				& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Difference between column ", Table_messageColumn (me, columnNumber1),
-			U" and column ", Table_messageColumn (me, columnNumber2), U":");
+				U" and column ", Table_messageColumn (me, columnNumber2), U":");
 		MelderInfo_writeLine (U"Difference = ", difference);
 		MelderInfo_writeLine (U"Student's t = ", t);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -604,7 +606,7 @@ DO
 		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
-			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
+				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, columnNumber), U" between groups ", group1);
 		MelderInfo_writeLine (U" and ", group2, U" of column ", Table_messageColumn (me, groupColumnNumber), U":");
@@ -614,9 +616,9 @@ DO
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -633,7 +635,7 @@ DO
 		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double areaUnderCurve, rankSum, significanceFromZero;
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, columnNumber, groupColumnNumber, group1, group2,
-			& rankSum, & significanceFromZero);
+				& rankSum, & significanceFromZero);
 		MelderInfo_open ();
 		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, columnNumber), U" between groups ", group1);
 		MelderInfo_writeLine (U" and ", group2, U" of column ", Table_messageColumn (me, groupColumnNumber), U":");
@@ -657,7 +659,7 @@ DO
 		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
-			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
+				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_write (U"Mean in column ", Table_messageColumn (me, columnNumber), U" of group ", group);
 		MelderInfo_writeLine (U" of column ", Table_messageColumn (me, groupColumnNumber), U":");
@@ -667,9 +669,9 @@ DO
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -683,7 +685,7 @@ DO
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
-			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
+				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Mean of column ", Table_messageColumn (me, columnNumber), U":");
 		MelderInfo_writeLine (U"Mean = ", mean);
@@ -692,9 +694,9 @@ DO
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
+				U" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -930,7 +932,7 @@ DO
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_EACH_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
-		isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
+			isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {
@@ -1010,24 +1012,30 @@ FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfRe
 
 static bool isTabSeparated_8bit (integer nread, const char *header) {
 	for (integer i = 0; i < nread; i ++) {
-		if (header [i] == '\t') return true;
-		if (header [i] == '\n' || header [i] == '\r') return false;
+		if (header [i] == '\t')
+			return true;
+		if (header [i] == '\n' || header [i] == '\r')
+			return false;
 	}
 	return false;
 }
 
 static bool isTabSeparated_utf16be (integer nread, const char *header) {
 	for (integer i = 2; i < nread; i += 2) {
-		if (header [i] == '\0' && header [i + 1] == '\t') return true;
-		if (header [i] == '\0' && (header [i + 1] == '\n' || header [i + 1] == '\r')) return false;
+		if (header [i] == '\0' && header [i + 1] == '\t')
+			return true;
+		if (header [i] == '\0' && (header [i + 1] == '\n' || header [i + 1] == '\r'))
+			return false;
 	}
 	return false;
 }
 
 static bool isTabSeparated_utf16le (integer nread, const char *header) {
 	for (integer i = 2; i < nread; i += 2) {
-		if (header [i + 1] == '\0' && header [i] == '\t') return true;
-		if (header [i + 1] == '\0' && (header [i] == '\n' || header [i] == '\r')) return false;
+		if (header [i + 1] == '\0' && header [i] == '\t')
+			return true;
+		if (header [i + 1] == '\0' && (header [i] == '\n' || header [i] == '\r'))
+			return false;
 	}
 	return false;
 }
@@ -1041,8 +1049,10 @@ static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, 
 	bool isTabSeparated =
 		uheader [0] == 0xef && uheader [1] == 0xff ? isTabSeparated_utf16be (nread, header) :
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
-		isTabSeparated_8bit (nread, header);
-	if (! isTabSeparated) return autoDaata ();
+		isTabSeparated_8bit (nread, header)
+	;
+	if (! isTabSeparated)
+		return autoDaata ();
 	return Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 }
 
@@ -1050,7 +1060,7 @@ void praat_uvafon_stat_init ();
 void praat_uvafon_stat_init () {
 
 	Thing_recognizeClassesByName (classTableOfReal, classDistributions, classPairDistribution,
-		classTable, classLinearRegression, classLogisticRegression, nullptr);
+			classTable, classLinearRegression, classLogisticRegression, nullptr);
 
 	Data_recognizeFileType (tabSeparatedFileRecognizer);
 
