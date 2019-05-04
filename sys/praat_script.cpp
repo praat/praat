@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2018 Paul Boersma
+ * Copyright (C) 1993-2019 Paul Boersma
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 			/*
 			 * No object with that name. Perhaps the class name was wrong?
 			 */
-			ClassInfo klas = Thing_classFromClassName (className, NULL);
+			ClassInfo klas = Thing_classFromClassName (className, nullptr);
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
 				if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
@@ -288,7 +288,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 				return 1;   // in batch we ignore pause statements
 			UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", interpreter);
 			UiPause_comment (str32equ (command, U"pause") ? U"..." : command + 6);
-			UiPause_end (1, 1, 0, U"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter);
+			UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, interpreter);
 		} else if (str32nequ (command, U"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (str32nequ (command, U"editor", 6)) {
@@ -308,7 +308,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"endeditor", 9)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"endeditor\" is not available inside manuals.");
-			praatP. editor = NULL;
+			praatP. editor = nullptr;
 		} else if (str32nequ (command, U"sendpraat ", 10)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"sendpraat\" is not available inside manuals.");
@@ -449,9 +449,9 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		}
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor) {
 			if (hasColon) {
-				Editor_doMenuCommand (praatP. editor, command2, narg, args, NULL, interpreter);
+				Editor_doMenuCommand (praatP. editor, command2, narg, args, nullptr, interpreter);
 			} else {
-				Editor_doMenuCommand (praatP. editor, command, 0, NULL, arguments, interpreter);
+				Editor_doMenuCommand (praatP. editor, command, 0, nullptr, arguments, interpreter);
 			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (str32nequ (command, U"Save ", 5) ||
@@ -509,6 +509,9 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 					} else if (command [0] != U'\0' && command [str32len (command) - 1] == U' ') {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the trailing spaces.");
+					} else if (str32nequ (command, U"\"ooTextFile\"", 12)) {
+						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
+							U"It is possible that this file is not a Praat script but a Praat data file that you can open with \"Read from file...\".");
 					} else {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection.");
 					}
@@ -655,7 +658,8 @@ static void firstPassThroughScript (MelderFile file) {
 		if (Interpreter_readParameters (interpreter.get(), text.get()) > 0) {
 			autoUiForm form = Interpreter_createForm (interpreter.get(),
 				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
-				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
+				Melder_fileToPath (file), secondPassThroughScript, nullptr, false
+			);
 			UiForm_destroyWhenUnmanaged (form.get());
 			UiForm_do (form.get(), false);
 			form. releaseToUser();
