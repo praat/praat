@@ -63,7 +63,7 @@ void Pitch_Frame_getPitch (Pitch_Frame me, double *out_f, double *out_strength) 
 }
 
 void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
-	int pos = 1;
+	integer pos = 1;
 	double strongest = my candidate [1].strength;
 	for (integer i = 2; i <= my nCandidates; i ++) {
 		if (my candidate [i].strength > strongest) {

@@ -1144,7 +1144,7 @@ void Sound_into_Sound (Sound me, Sound to, double startTime) {
 	integer index = Sampled_xToNearestIndex (me, startTime);
 	for (integer i = 1; i <= to -> nx; i ++) {
 		integer j = index - 1 + i;
-		to -> z [1] [i] = j < 1 || j > my nx ? 0 : my z [1] [j];
+		to -> z [1] [i] = j < 1 || j > my nx ? 0.0 : my z [1] [j];
 	}
 }
 
