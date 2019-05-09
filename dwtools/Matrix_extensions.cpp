@@ -90,22 +90,12 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 	}
 }
 
-static autoVEC nummat_vectorize (constMAT m, integer rowmin, integer rowmax, integer colmin, integer colmax, bool byColumns) {
-	integer numberOfElements = (rowmax - rowmin + 1) * (colmax - colmin + 1), index = 0;
-	autoVEC result (numberOfElements, kTensorInitializationType::RAW);   // TODO: this does two things, namely making a window and vectorizing
-	if (byColumns) {
-		for (integer icol = colmin; icol <= colmax; icol ++) {
-			for (integer irow = rowmin; irow <= rowmax; irow ++) {
-				result [++ index] = m [irow] [icol];
-			}
-		}
-	} else {
-		for (integer irow = rowmin; irow <= rowmax; irow ++) {
-			for (integer icol = colmin; icol <= colmax; icol ++) {
-				result [++ index] = m [irow] [icol];
-			}
-		}
-	}
+static autoVEC nummat_vectorize (constMATVU const& m, integer rowmin, integer rowmax, integer colmin, integer colmax) {
+	integer numberOfElements = (rowmax - rowmin + 1) * (colmax - colmin + 1);
+	autoVEC result = newVECraw (numberOfElements);
+	for (integer irow = rowmin, index = 1; irow <= rowmax; irow ++)
+		for (integer icol = colmin; icol <= colmax; icol ++)
+			result [index ++] = m [irow] [icol];
 	return result;
 }
 
@@ -122,7 +112,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Random) {
 		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
-		autoVEC v = nummat_vectorize (my z.get(), rowmin, rowmax, colmin, colmax, false);
+		autoVEC v = nummat_vectorize (my z.get(), rowmin, rowmax, colmin, colmax);
 		NUMsortTogether (v.get(), p -> p.get());
 		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
 			Permutation_reverse_inline (p.get(), 1, numberOfCells);
@@ -131,9 +121,8 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
 	}
 	
-	double extremum = NUMextremum (my z.get());
+	double extremum = fabs (NUMextremum (my z.get()));
 
-	extremum = fabs (extremum);
 	Graphics_Colour colour = Graphics_inqColour (g);
 	double scaleFactor = sqrt (cellAreaScaleFactor);
 	for (integer i = 1; i <= numberOfCells; i++) {
