@@ -500,7 +500,9 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, numberOfGroups);
 		his rowLabels.all() <<= thy rowLabels.all();
 
-		// Scale the sscp to become a covariance matrix
+		/*
+			Scale the sscp to become a covariance matrix.
+		*/
 		
 		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - numberOfGroups);
 		
@@ -508,6 +510,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoSSCPList agroups;
 		SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
 		if (poolCovarianceMatrices) {
+			
 			/*
 				Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 				L^-1 will be used later in the Mahalanobis distance calculation:
@@ -521,8 +524,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			}
 			groups = my groups.get();
 		} else {
-			// Calculate the inverses of all group covariance matrices.
-			// In case of a singular matrix, substitute inverse of pooled.
+			
+			/*
+				Calculate the inverses of all group covariance matrices.
+				In case of a singular matrix, substitute inverse of pooled.
+			*/
 
 			agroups = Data_copy (my groups.get());
 			groups = agroups.get();
@@ -536,8 +542,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
-					// Try the alternative: the pooled covariance matrix.
-					// Clear the error.
+					
+					/*
+						Clear the error.
+						Try the alternative: the pooled covariance matrix.
+					*/
 
 					Melder_clearError ();
 					if (npool == 0)
@@ -551,7 +560,9 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				Melder_warning (npool, U" groups use pooled covariance matrix.");
 		}
 
-		// Labels for columns in ClassificationTable
+		/*
+			Labels for columns in ClassificationTable
+		*/
 
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			conststring32 name = Thing_getName (my groups->at [j]);
@@ -560,23 +571,26 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			TableOfReal_setColumnLabel (him.get(), j, name);
 		}
 
-		// Normalize the sum of the apriori probabilities to 1.
-		// Next take ln (p) because otherwise probabilities might be too small to represent.
+		/*
+			Normalize the sum of the apriori probabilities to 1.
+			Next take ln (p) because otherwise probabilities might be too small to represent.
+		*/
 
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++)
 			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
 
-		// Generalized squared distance function:
-		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
+		/*
+			Generalized squared distance function:
+			D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
+		*/
 
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row (i),t -> centroid.get());
-				//double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row (i), t -> centroid.get());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max)
 					pt_max = pt;
@@ -615,16 +629,23 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		his rowLabels.all() <<= thy rowLabels.all();
 		autoTableOfReal adisplacements = Data_copy (thee);
 
-		// Scale the sscp to become a covariance matrix.
+		/*
+			Scale the sscp to become a covariance matrix.
+		*/
+		
 		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - g);
 
 		double lnd;
 		autoSSCPList agroups;
 		SSCPList groups;
 		if (poolCovarianceMatrices) {
-			// Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
-			// L^-1 will be used later in the Mahalanobis distance calculation:
-			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
+			
+			/*
+				Covariance matrix S can be Cholesky decomposed as S = L.L'. 
+				Calculate L^-1.
+				L^-1 will be used later in the Mahalanobis distance calculation:
+				v'.S^-1.v = v'.L^-1'.L^-1.v = (L^-1.v)'.(L^-1.v).
+			*/
 
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= g; j ++) {
@@ -633,8 +654,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			}
 			groups = my groups.get();
 		} else {
-			//Calculate the inverses of all group covariance matrices.
-			// In case of a singular matrix, substitute inverse of pooled.
+			
+			/*
+				Calculate the inverses of all group covariance matrices.
+				In case of a singular matrix, substitute inverse of pooled.
+			*/
 
 			agroups = Data_copy (my groups.get()); 
 			groups = agroups.get();
@@ -648,24 +672,27 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
-					// Try the alternative: the pooled covariance matrix.
-					// Clear the error.
+					
+					/*
+						Clear the error.
+						Try the alternative: the pooled covariance matrix.
+					*/
 
 					Melder_clearError ();
-					if (npool == 0) {
+					if (npool == 0)
 						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
-					}
 					npool ++;
 					sscpvec [j] = pool.get();
 					ln_determinant [j] = lnd;
 				}
 			}
-			if (npool > 0) {
+			if (npool > 0)
 				Melder_warning (npool, U" groups use pooled covariance matrix.");
-			}
 		}
 
-		// Labels for columns in ClassificationTable
+		/*
+			Labels for columns in ClassificationTable
+		*/
 
 		for (integer j = 1; j <= g; j ++) {
 			conststring32 name = Thing_getName (my groups->at [j]);
@@ -674,8 +701,10 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			TableOfReal_setColumnLabel (him.get(), j, name);
 		}
 
-		// Normalize the sum of the apriori probabilities to 1.
-		// Next take ln (p) because otherwise probabilities might be too small to represent.
+		/*
+			Normalize the sum of the apriori probabilities to 1.
+			Next take ln (p) because otherwise probabilities might be too small to represent.
+		*/
 
 		double logg = log (g);
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
@@ -683,9 +712,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
 		}
 
-		// Generalized squared distance function:
-		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
-
+		/*
+			Generalized squared distance function:
+			D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
+		*/
+		
 		for (integer i = 1; i <= m; i ++) {
 			SSCP winner;
 			double norm = 0, pt_max = -1e308;
@@ -695,7 +726,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
 				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), x.get(), t -> centroid.get());
-//				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
@@ -709,7 +739,9 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			for (integer j = 1; j <= g; j ++)
 				his data [i] [j] = log_p [j] / norm;
 
-			// Save old displacement, calculate new displacement
+			/*
+				Save old displacement, calculate new displacement
+			*/
 
 			winner = groups->at [iwinner];
 			for (integer k = 1; k <= p; k ++) {
