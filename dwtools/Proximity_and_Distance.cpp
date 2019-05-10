@@ -26,9 +26,9 @@ autoDistance Dissimilarity_to_Distance (Dissimilarity me, kMDS_AnalysisScale sca
 		autoDistance thee = Distance_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		if (scale == kMDS_AnalysisScale::Ordinal) {
-			if (isundef (additiveConstant = Dissimilarity_getAdditiveConstant (me))) { //TODO can it be undef?
-				Melder_warning (U"Dissimilarity_to_Distance: could not determine \"additive constant\", the average dissimilarity was used as its value.");
-			}
+			additiveConstant = Dissimilarity_getAdditiveConstant (me);
+			Melder_require (additiveConstant != undefined,
+				U"The additive constant could not be determined. Something is wrong with your Dissimilarity.");
 		}
 		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= my numberOfColumns; j ++) {

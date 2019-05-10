@@ -43,7 +43,7 @@ static double Dissimilarity_getAverage (Dissimilarity me) {
 	integer numberOfPositives = 0;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
 		for (integer j = i + 1; j <= my numberOfRows; j ++) {
-			double proximity = 0.5 * (my data [i] [j] + my data [j] [i]);
+			longdouble proximity = 0.5 * (my data [i] [j] + my data [j] [i]);
 			if (proximity > 0.0) {
 				numberOfPositives ++;
 				sum += proximity;
@@ -91,12 +91,14 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 	double additiveConstant = undefined;
 	try {
 		integer nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
-		Melder_require (nPoints > 0, U"Matrix part should not be empty.");
+		Melder_require (nPoints > 0,
+			U"Matrix part should not be empty.");
 
 		// Return c = average dissimilarity in case of failure
 
 		additiveConstant = Dissimilarity_getAverage (me);
-		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
+		Melder_require (isdefined (additiveConstant),
+			U"There are no positive dissimilarities.");
 		
 		autoMAT wd = newMATzero (nPoints, nPoints);
 		autoMAT wdsqrt = newMATzero (nPoints, nPoints);
@@ -137,7 +139,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			}
 		}
 		
-		Melder_require (largestEigenvalue >= 0, U"The largest eigenvalue should be positive.");
+		Melder_require (largestEigenvalue >= 0,
+			U"The largest eigenvalue should be positive.");
 		
 		additiveConstant = largestEigenvalue;
 		return additiveConstant;

@@ -25,8 +25,6 @@
  djmw 20110306 Latest modification.
 */
 
-#define KRUSKAL_MAXDIMENSION 10
-
 #include "Graphics.h"
 #include "Minimizers.h"
 #include "Confusion.h"
@@ -38,6 +36,7 @@
 #include "Configuration.h"
 #include "SSCP.h"
 #include "MDS_enums.h"
+
 /************************** class Weight **************************************/
 
 Thing_define (Weight, TableOfReal) {
@@ -70,18 +69,12 @@ Collection_define (ConfusionList, OrderedOf, Confusion) {
 
 autoConfusion ConfusionList_sum (ConfusionList me);
 
-
-#pragma mark - class DistanceList
-
-
-
 #pragma mark - class ScalarProduct
 
 Thing_define (ScalarProduct, TableOfReal) {
 };
 
 autoScalarProduct ScalarProduct_create (integer numberOfPoints);
-
 
 #pragma mark - class ScalarProductList
 

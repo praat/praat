@@ -61,7 +61,6 @@ Thing_implement (ConfusionList, TableOfRealList, 0);
 Thing_implement (ProximityList, TableOfRealList, 0);
 Thing_implement (ScalarProductList, TableOfRealList, 0);
 
-Thing_implement (DistanceList, ProximityList, 0);
 Thing_implement (DissimilarityList, ProximityList, 0);
 Thing_implement (Similarity, Proximity, 0);
 
