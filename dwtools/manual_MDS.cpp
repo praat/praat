@@ -1,6 +1,6 @@
 /* manual_MDS.cpp
  *
- * Copyright (C) 1993-2014, 2015 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ static void drawLetterRRegression (Graphics g)
 {
 	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
 	autoConfiguration c = Configuration_createLetterRExample (2);
-	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, MDS_PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, U"+", 1);
+	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, kMDS_TiesHandling::PrimaryApproach, 0, 200, 0, 2.2, 1, U"+", 1);
 }
 
 static void drawCarrollWishConfigurationExample (Graphics g)
@@ -72,12 +72,12 @@ static void drawCarrollWishSalienceExample (Graphics g)
 
 static void drawMsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 10, 1, 3, U"0.3 0.5 0.6", 1);
+	drawSplines (g, 0, 1, 0, 10, kMDS_splineType::MSpline, 3, U"0.3 0.5 0.6", 1);
 }
 
 static void drawIsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 1.5, 2, 3, U"0.3 0.5 0.6", 1);
+	drawSplines (g, 0, 1, 0, 1.5, kMDS_splineType::ISpline, 3, U"0.3 0.5 0.6", 1);
 }
 
 void manual_MDS_init (ManPages me);
@@ -745,7 +745,7 @@ NORMAL (U"In the limit when %order = 0 and %numberOfInteriorKnots = "
 	"%numberOfDissimilarities, monotone regression is performed.")
 MAN_END
 
-MAN_BEGIN (U"Dissimilarity: To Configuration (kruskal)...", U"djmw", 20040407)
+MAN_BEGIN (U"Dissimilarity: To Configuration (kruskal)...", U"djmw", 20190510)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 ENTRY (U"Settings")
@@ -756,22 +756,22 @@ DEFINITION (U"the general distance between points #x__%i_ and #x__%j_ (%i,%j "
 	"= 1..%numberOfPoints) is:")
 DEFINITION (U"(\\su__%k=1..%numberOfDimensions_ |%x__%ik_ \\--%x__%jk_|"
 	"^^%metric^)^^1/%metric^")
-TAG (U"##Sort distances")
-DEFINITION (U"determines the handling of ties in the data. When off, whenever "
+TAG (U"##Handling of ties")
+DEFINITION (U"determines the handling of ties in the data. In the %%primary approach%, whenever "
 	"two or more dissimilarities are equal we do not care whether the fitted "
 	"distances are equal or not. "
 	"Consequently, no constraints are imposed on the fitted distances. "
-	"When on, however, we impose the constaint that the fitted distances be "
+	"For the %%secondary approach%, however, we impose the constaint that the fitted distances be "
 	"equal whenever the dissimilarities are equal.")
 NORMAL (U"For the calculation of stress:")
-TAG (U"##Formula1 (default)")   // ??
+TAG (U"##Kruskal's stress-1 (Formula1, the default)")   // ??
 FORMULA (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su %distance__%k_^2)")
-TAG (U"##Formula2")
+TAG (U"##Kruskal's stress-2 (Formula2)")
 FORMULA (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su (%distance__%k_ \\-- %averageDistance)^2)")
-DEFINITION (U"Note that values of stress 2 are generally more than double those "
-	"of stress 1 for the same degree of fit.")
+DEFINITION (U"Note that values of stress-2 are generally more than double those "
+	"of stress-1 for the same degree of fit.")
 NORMAL (U"Finding the optimal Configuration involves a minimization process:")
 TAG (U"##Tolerance")
 DEFINITION (U"When successive values for the stress differ less than %Tolerance "
@@ -825,7 +825,7 @@ NORMAL (U"The optimization process is ccontrolledby a conjugate gradient "
 	"algorithm is used wwhichis less efficient. ")
 MAN_END
 
-MAN_BEGIN (U"Dissimilarity: To Configuration (monotone mds)...", U"djmw", 20040407)
+MAN_BEGIN (U"Dissimilarity: To Configuration (monotone mds)...", U"djmw", 20190510)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 NORMAL (U"Dissimilarities %\\de__%ij_ and @disparities %d\\'p__%ij_ are "
@@ -834,7 +834,7 @@ FORMULA (U"%d\\'p__%ij_ \\<_ %d\\'p__%kl_ if %\\de__%ij_ \\<_ %\\de__%kl_")
 ENTRY (U"Settings")
 TAG (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the configuration.")
-TAG (U"##Primary or secondary approach to ties")
+TAG (U"##Handling of ties")
 DEFINITION (U"When dissimilarities are equal, i.e., %\\de__%ij_ = %\\de__%kl_, "
 	"the primary approach imposes no conditions on the corresponding "
 	"@disparities %d\\'p__%ij_ and %d\\'p__%kl_, while the %secondary "
@@ -935,13 +935,13 @@ TAG (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
-MAN_BEGIN (U"Dissimilarity & Configuration: Draw regression (monotone mds)...", U"djmw", 20040407)
+MAN_BEGIN (U"Dissimilarity & Configuration: Draw regression (monotone mds)...", U"djmw", 20190510)
 INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"selected @Dissimilarity versus @disparities %d\\'p__%ij_ obtained "
 	"from the monotone regression of distances %d__%ij_ "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
 ENTRY (U"Settings")
-TAG (U"##Primary or secondary approach to ties")
+TAG (U"##Handling of ties")
 DEFINITION (U"When dissimilarities are equal, i.e., %\\de__%ij_ = %\\de__%kl_ "
 	"the primary approach imposes no conditions on the corresponding distances "
 	"%d__%ij_ and %d__%kl_, while the %secondary approach demands that also "
@@ -1085,7 +1085,7 @@ INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"configuration for the minimization process.")
 MAN_END
 
-MAN_BEGIN (U"Dissimilarity & Configuration & Weight: Get stress...", U"djmw", 20040407)
+MAN_BEGIN (U"Dissimilarity & Configuration & Weight: Get stress...", U"djmw", 20190509)
 INTRO (U"A command that calculates the @stress between distances %d__%ij_ "
 	"derived from the selected @Configuration object and @disparities "
 	"%d\\'p__%ij_ derived from the selected @Dissimilarity object. "
@@ -1095,7 +1095,7 @@ ENTRY (U"Settings")
 LIST_ITEM (U"%%Normalized stress%, %%Kruskal's stress-1%, %%Kruskal's "
 	"stress-2% or %Raw stress%")
 ENTRY (U"Behaviour")
-NORMAL (U"Except for %absolute %mds, we us stress formula's that are "
+NORMAL (U"Except for %absolute %mds, we use stress formula's that are "
 	"independent of the scale of the Configuration (see @stress): you would "
 	"have got the same stress value if you had pre-multiplied the selected "
 	"Configuration with any number greater than zero.")

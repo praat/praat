@@ -164,7 +164,7 @@ procedure testDissimilarityInterface
 	.mdsCommand$ [5] = "To Configuration (absolute mds): "
 	.extraParameters$ [5] = ""
 	.mdsCommand$ [6] = "To Configuration (kruskal): "
-	.extraParameters$ [6] = """Primary approach"", ""Formula1"", "
+	.extraParameters$ [6] = """Primary approach"", ""Kruskal's stress-1"", "
 	
 	# Create a random configuration
 	.command$ = .mdsCommand$ [1] + .numberOfDimensions$ [1] + .extraParameters$ [1] + .minimizationParameters$
@@ -196,8 +196,10 @@ procedure testDissimilarityInterface
 	.stressMeasure$ [4] = "Raw"
 	.tiesHandling$ [1] = "Primary approach"
 	.tiesHandling$ [2] = "Secondary approach"
-	.stressCalculation$ [1] = "Formula1"
-	.stressCalculation$ [2] = "Formula2"
+	;.stressCalculation$ [1] = "Formula1"
+	;.stressCalculation$ [2] = "Formula2"
+	.stressCalculation$ [1] = "Kruskal's stress-1"
+	.stressCalculation$ [2] = "Kruskal's stress-1"
 
 	# test kruskal's stress-1 and stress-2
 
