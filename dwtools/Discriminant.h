@@ -2,7 +2,7 @@
 #define _Discriminant_h_
 /* Discriminant.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax,
 	double fontSize, bool garnish);
 
-autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice);
+autoTableOfReal Discriminant_extractCoefficients (Discriminant me, integer choice);
 
 autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me);
 

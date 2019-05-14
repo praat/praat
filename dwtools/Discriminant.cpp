@@ -115,7 +115,8 @@ integer Discriminant_getNumberOfObservations (Discriminant me, integer group) {
 void Discriminant_setAprioriProbability (Discriminant me, integer group, double p) {
 	Melder_require (group > 0 && group <= my numberOfGroups,
 		U"The group number (", group, U") should be in the interval [1, ", my numberOfGroups, U"]; the supplied value (", group, U") falls outside it.");
-	Melder_require (p >= 0.0 && p <= 1.0, U"The probability should be in the interval [0, 1]");
+	Melder_require (p >= 0.0 && p <= 1.0,
+		U"The probability should be in the interval [0, 1]");
 
 	my aprioriProbabilities [group] = p;
 }
@@ -204,7 +205,7 @@ double Discriminant_getWilksLambda (Discriminant me, integer from) {
 	unstandardized u [j]: sqrt(N-g) * r [j]
 	standardized s [j]: u [j] sqrt (w [i] [i] / (N-g))
 */
-autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
+autoTableOfReal Discriminant_extractCoefficients (Discriminant me, integer choice) {
 	try {
 		bool raw = choice == 0, standardized = choice == 2;
 		integer nx = my eigen -> dimension, ny = my eigen -> numberOfEigenvalues;
@@ -215,24 +216,22 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		// The elements in my groups always have my eigen -> dimension columns
 
 		autoSSCP within;
-		if (standardized) {
+		if (standardized)
 			within = Discriminant_extractPooledWithinGroupsSSCP (me);
-		}
 
 		TableOfReal_setColumnLabel (thee.get(), nx + 1, U"constant");
 		TableOfReal_setSequentialRowLabels (thee.get(), 1, ny, U"function_", 1, 1);
 
 		double scale = sqrt (total -> numberOfObservations - my numberOfGroups);
-		double *centroid = my total -> centroid.at;
+		//double *centroid = my total -> centroid.at;
 		for (integer i = 1; i <= ny; i ++) {
 			longdouble u0 = 0.0;
 			for (integer j = 1; j <= nx; j ++) {
-				if (standardized) {
+				if (standardized)
 					scale = sqrt (within -> data [j] [j]);
-				}
 				double ui = scale * my eigen -> eigenvectors [i] [j];
 				thy data [i] [j] = ui;
-				u0 += ui * centroid [j];
+				u0 += ui * my total -> centroid [j];
 			}
 			thy data [i] [nx + 1] = ( raw ? 0.0 : - (double) u0 );
 		}
@@ -488,25 +487,30 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		integer numberOfGroups = Discriminant_getNumberOfGroups (me);
 		integer dimension = Eigen_getDimensionOfComponents (my eigen.get());
 
-		Melder_require (dimension == thy numberOfColumns, U"The number of columns should agree with the dimension of the discriminant.");
+		Melder_require (dimension == thy numberOfColumns,
+			U"The number of columns should agree with the dimension of the discriminant.");
 		
-		autoVEC log_p (numberOfGroups, kTensorInitializationType::RAW);
-		autoVEC log_apriori (numberOfGroups, kTensorInitializationType::RAW);
-		autoVEC ln_determinant (numberOfGroups, kTensorInitializationType::RAW);
-		autoVEC buf (dimension, kTensorInitializationType::RAW);
+		autoVEC log_p = newVECraw (numberOfGroups);
+		autoVEC log_apriori = newVECraw (numberOfGroups);
+		autoVEC ln_determinant = newVECraw (numberOfGroups);
+		autoVEC buf = newVECraw (dimension);
 		
 		autoNUMvector<SSCP> sscpvec (1, numberOfGroups);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, numberOfGroups);
 		his rowLabels.all() <<= thy rowLabels.all();
 
-		// Scale the sscp to become a covariance matrix
+		/*
+			Scale the sscp to become a covariance matrix.
+		*/
 		
 		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - numberOfGroups);
 		
 		double lnd;
-		autoSSCPList agroups; SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
+		autoSSCPList agroups;
+		SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
 		if (poolCovarianceMatrices) {
+			
 			/*
 				Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 				L^-1 will be used later in the Mahalanobis distance calculation:
@@ -520,8 +524,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			}
 			groups = my groups.get();
 		} else {
-			// Calculate the inverses of all group covariance matrices.
-			// In case of a singular matrix, substitute inverse of pooled.
+			
+			/*
+				Calculate the inverses of all group covariance matrices.
+				In case of a singular matrix, substitute inverse of pooled.
+			*/
 
 			agroups = Data_copy (my groups.get());
 			groups = agroups.get();
@@ -535,8 +542,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
-					// Try the alternative: the pooled covariance matrix.
-					// Clear the error.
+					
+					/*
+						Clear the error.
+						Try the alternative: the pooled covariance matrix.
+					*/
 
 					Melder_clearError ();
 					if (npool == 0)
@@ -550,7 +560,9 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				Melder_warning (npool, U" groups use pooled covariance matrix.");
 		}
 
-		// Labels for columns in ClassificationTable
+		/*
+			Labels for columns in ClassificationTable
+		*/
 
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			conststring32 name = Thing_getName (my groups->at [j]);
@@ -559,36 +571,36 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			TableOfReal_setColumnLabel (him.get(), j, name);
 		}
 
-		// Normalize the sum of the apriori probabilities to 1.
-		// Next take ln (p) because otherwise probabilities might be too small to represent.
+		/*
+			Normalize the sum of the apriori probabilities to 1.
+			Next take ln (p) because otherwise probabilities might be too small to represent.
+		*/
 
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		double logg = log (numberOfGroups);
-		for (integer j = 1; j <= numberOfGroups; j ++) {
+		for (integer j = 1; j <= numberOfGroups; j ++)
 			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
-		}
 
-		// Generalized squared distance function:
-		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
+		/*
+			Generalized squared distance function:
+			D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
+		*/
 
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row (i),t -> centroid.get());
-				//double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row (i), t -> centroid.get());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
-				if (pt > pt_max) {
+				if (pt > pt_max)
 					pt_max = pt;
-				}
 				log_p [j] = pt;
 			}
-			for (integer j = 1; j <= numberOfGroups; j ++) {
+			for (integer j = 1; j <= numberOfGroups; j ++)
 				norm += log_p [j] = exp (log_p [j] - pt_max);
-			}
-			for (integer j = 1; j <= numberOfGroups; j ++) {
+
+			for (integer j = 1; j <= numberOfGroups; j ++)
 				his data [i] [j] = log_p [j] / norm;
-			}
 		}
 		return him;
 	} catch (MelderError) {
@@ -602,13 +614,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		integer p = Eigen_getDimensionOfComponents (my eigen.get());
 		integer m = thy numberOfRows;
 
-		Melder_require (p == thy numberOfColumns, U"The number of columns does not agree with the dimension of the discriminant.");
+		Melder_require (p == thy numberOfColumns,
+			U"The number of columns does not agree with the dimension of the discriminant.");
 
-		autoNUMvector<double> log_p (1, g);
-		autoNUMvector<double> log_apriori (1, g);
-		autoNUMvector<double> ln_determinant (1, g);
-		autoNUMvector<double> buf (1, p);
-		autoNUMvector<double> displacement (1, p);
+		autoVEC log_p = newVECraw (g);
+		autoVEC log_apriori = newVECraw (g);
+		autoVEC ln_determinant = newVECraw (g);
+		autoVEC buf = newVECraw (p);
+		autoVEC displacement = newVECraw (p);
 		autoVEC x = newVECzero (p);
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
@@ -616,16 +629,23 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		his rowLabels.all() <<= thy rowLabels.all();
 		autoTableOfReal adisplacements = Data_copy (thee);
 
-		// Scale the sscp to become a covariance matrix.
+		/*
+			Scale the sscp to become a covariance matrix.
+		*/
+		
 		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - g);
 
 		double lnd;
 		autoSSCPList agroups;
 		SSCPList groups;
 		if (poolCovarianceMatrices) {
-			// Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
-			// L^-1 will be used later in the Mahalanobis distance calculation:
-			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
+			
+			/*
+				Covariance matrix S can be Cholesky decomposed as S = L.L'. 
+				Calculate L^-1.
+				L^-1 will be used later in the Mahalanobis distance calculation:
+				v'.S^-1.v = v'.L^-1'.L^-1.v = (L^-1.v)'.(L^-1.v).
+			*/
 
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= g; j ++) {
@@ -634,8 +654,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			}
 			groups = my groups.get();
 		} else {
-			//Calculate the inverses of all group covariance matrices.
-			// In case of a singular matrix, substitute inverse of pooled.
+			
+			/*
+				Calculate the inverses of all group covariance matrices.
+				In case of a singular matrix, substitute inverse of pooled.
+			*/
 
 			agroups = Data_copy (my groups.get()); 
 			groups = agroups.get();
@@ -649,24 +672,27 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
-					// Try the alternative: the pooled covariance matrix.
-					// Clear the error.
+					
+					/*
+						Clear the error.
+						Try the alternative: the pooled covariance matrix.
+					*/
 
 					Melder_clearError ();
-					if (npool == 0) {
+					if (npool == 0)
 						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
-					}
 					npool ++;
 					sscpvec [j] = pool.get();
 					ln_determinant [j] = lnd;
 				}
 			}
-			if (npool > 0) {
+			if (npool > 0)
 				Melder_warning (npool, U" groups use pooled covariance matrix.");
-			}
 		}
 
-		// Labels for columns in ClassificationTable
+		/*
+			Labels for columns in ClassificationTable
+		*/
 
 		for (integer j = 1; j <= g; j ++) {
 			conststring32 name = Thing_getName (my groups->at [j]);
@@ -675,8 +701,10 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			TableOfReal_setColumnLabel (him.get(), j, name);
 		}
 
-		// Normalize the sum of the apriori probabilities to 1.
-		// Next take ln (p) because otherwise probabilities might be too small to represent.
+		/*
+			Normalize the sum of the apriori probabilities to 1.
+			Next take ln (p) because otherwise probabilities might be too small to represent.
+		*/
 
 		double logg = log (g);
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
@@ -684,20 +712,20 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
 		}
 
-		// Generalized squared distance function:
-		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
-
+		/*
+			Generalized squared distance function:
+			D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
+		*/
+		
 		for (integer i = 1; i <= m; i ++) {
 			SSCP winner;
 			double norm = 0, pt_max = -1e308;
 			integer iwinner = 1;
-			for (integer k = 1; k <= p; k ++) {
+			for (integer k = 1; k <= p; k ++)
 				x [k] = thy data [i] [k] + displacement [k];
-			}
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
 				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), x.get(), t -> centroid.get());
-//				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
@@ -705,15 +733,15 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				}
 				log_p [j] = pt;
 			}
-			for (integer j = 1; j <= g; j ++) {
+			for (integer j = 1; j <= g; j ++)
 				norm += log_p [j] = exp (log_p [j] - pt_max);
-			}
 
-			for (integer j = 1; j <= g; j ++) {
+			for (integer j = 1; j <= g; j ++)
 				his data [i] [j] = log_p [j] / norm;
-			}
 
-			// Save old displacement, calculate new displacement
+			/*
+				Save old displacement, calculate new displacement
+			*/
 
 			winner = groups->at [iwinner];
 			for (integer k = 1; k <= p; k ++) {

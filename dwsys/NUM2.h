@@ -1196,7 +1196,7 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	return inproduct / wsum;
 }
 
-inline void VECchainRows_preallocated (VEC v, MAT m) {
+inline void VECchainRows_preallocated (VECVU const& v, constMATVU const& m) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer irow = 1; irow <= m.nrow; irow ++)
@@ -1204,13 +1204,13 @@ inline void VECchainRows_preallocated (VEC v, MAT m) {
 			v [k ++] = m [irow] [icol];
 }
 
-inline autoVEC VECchainRows (MAT m) {
+inline autoVEC VECchainRows (constMATVU const& m) {
 	autoVEC result = newVECraw (m.nrow * m.ncol);
 	VECchainRows_preallocated (result.get(), m);
 	return result;
 }
 
-inline void VECchainColumns_preallocated (VEC v, MAT m) {
+inline void VECchainColumns_preallocated (VEC const& v, constMATVU const& m) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer icol = 1; icol <= m.ncol; icol ++)
@@ -1218,7 +1218,7 @@ inline void VECchainColumns_preallocated (VEC v, MAT m) {
 			v [k ++] = m [irow] [icol];
 }
 
-inline autoVEC VECchainColumns (MAT m) {
+inline autoVEC VECchainColumns (constMATVU const& m) {
 	autoVEC result = newVECraw (m.nrow * m.ncol);
 	VECchainColumns_preallocated (result.get(), m);
 	return result;

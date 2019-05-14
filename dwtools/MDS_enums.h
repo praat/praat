@@ -1,6 +1,9 @@
+#ifndef _MDS_enums_h_
+#define _MDS_enums_h_
+
 /* MDS_enums.h
  *
- * Copyright (C) 2018 David Weenink
+ * Copyright (C) 2018-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,4 +28,27 @@ enums_begin (kMDS_AnalysisScale, 0)
 	enums_add (kMDS_AnalysisScale, 5, Nominal, U"Nominal")
 enums_end (kMDS_AnalysisScale, 5, Nominal)
 
-/* End of file MDS_enums.h */
+enums_begin (kMDS_TiesHandling, 0)
+	enums_add (kMDS_TiesHandling, 0, None, U"None")
+	enums_add (kMDS_TiesHandling, 1, PrimaryApproach, U"Primary approach")
+	enums_add (kMDS_TiesHandling, 2, SecondaryApproach, U"Secondary approach")
+enums_end (kMDS_TiesHandling, 2, PrimaryApproach)
+
+enums_begin (kMDS_stressMeasure, 1)
+	enums_add (kMDS_stressMeasure, 1, Normalized, U"Normalized")
+	enums_add (kMDS_stressMeasure, 2, Kruskal_1, U"Kruskal's stress-1")
+	enums_add (kMDS_stressMeasure, 3, Kruskal_2, U"Kruskal's stress-2")
+	enums_add (kMDS_stressMeasure, 4, Raw, U"Raw")
+enums_end (kMDS_stressMeasure, 4, Normalized)
+
+enums_begin (kMDS_KruskalStress, 2)
+	enums_add (kMDS_KruskalStress, 2, Kruskal_1, U"Kruskal's stress-1")
+	enums_add (kMDS_KruskalStress, 3, Kruskal_2, U"Kruskal's stress-2")
+enums_end (kMDS_KruskalStress, 3, Kruskal_1)
+
+enums_begin (kMDS_splineType, 1)
+	enums_add (kMDS_splineType, 1, MSpline, U"M-spline")
+	enums_add (kMDS_splineType, 2, ISpline , U"I-spline")
+enums_end (kMDS_splineType, 2, MSpline)
+
+#endif /* _MDS-enums_h_ */

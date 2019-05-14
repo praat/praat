@@ -26,6 +26,8 @@
 
 Thing_implement (Distance, Proximity, 0);
 
+Thing_implement (DistanceList, ProximityList, 0);
+
 autoDistance Distance_create (integer numberOfPoints) {
 	try {
 		autoDistance me = Thing_new (Distance);
@@ -74,7 +76,6 @@ autoDistance Configuration_to_Distance (Configuration me) {
 		Melder_throw (me, U": no Distance created.");
 	}
 }
-
 
 void Distance_drawDendogram (Distance me, Graphics g, int method) {
 	(void) me;
