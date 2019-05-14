@@ -78,11 +78,10 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		*/
 		integer numberOfSamples = Melder_iround (windowDuration * newSamplingFrequency);
 		double frameDuration = numberOfSamples / newSamplingFrequency;
-		/*
-			The minimum number of points for the FFT is 256.
-		*/
-		integer nfft = 128;
-		while ((nfft *= 2) < numberOfSamples || nfft <= 128);
+		
+		integer nfft = 256; // the minimum number of points for the FFT
+		while (nfft < numberOfSamples)
+			nfft *= 2;
 		integer nfft2 = nfft / 2 + 1;
 		double fftframeDuration = nfft / newSamplingFrequency;
 		double df = newSamplingFrequency / nfft;
