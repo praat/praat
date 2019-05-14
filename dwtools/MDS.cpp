@@ -1414,7 +1414,8 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
-		if (showProgress) Melder_progress (0.0, U"MDS analysis");
+		if (showProgress)
+			Melder_progress (0.0, U"MDS analysis");
 
 		// Get V (eq. 8.19).
 
@@ -1652,75 +1653,6 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 		*out_dbar = dbar;
 }
 
-static double func (Daata object, VEC p) {
-	Kruskal me = (Kruskal) object;
-	MDSVec him = my vec.get();
-	MAT x = my configuration -> data.get();
-	double s, t, dbar, stress;
-	double metric = my configuration -> metric;
-	integer numberOfDimensions = my configuration -> numberOfColumns;
-	integer numberOfPoints = my configuration -> numberOfRows;
-
-	// Substitute results of minimizer into configuration and
-	// normalize the configuration
-
-	MATfromVEC_inplace (x, p);
-	MATcentreEachColumn_inplace (x);
-	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
-
-	// Calculate interpoint distances from the configuration
-
-	autoDistance dist = Configuration_to_Distance (my configuration.get());
-
-	// Monotone regression
-
-	autoDistance fit = MDSVec_Distance_monotoneRegression (my vec.get(), dist.get(), my tiesHandling);
-
-	// Get numerator and denominator of stress
-
-	MDSVec_Distances_getStressValues (my vec.get(), dist.get(), fit.get(), my stress_formula, & stress, & s, & t, & dbar);
-
-	// Gradient calculation.
-
-	my dx.get() <<= 0.0;
-
-	// Prevent overflow when stress is small
-
-	if (stress < 1e-6) {
-		return stress;
-	}
-
-	for (integer i = 1; i <= his numberOfProximities; i ++) {
-		integer ii = my vec -> rowIndex [i], jj = my vec -> columnIndex [i];
-		double g1 = stress * ((dist->data [ii] [jj] - fit->data [ii] [jj]) / s - (dist->data [ii] [jj] - dbar) / t);
-		for (integer j = 1; j <= numberOfDimensions; j ++) {
-			double dj = x [ii] [j] - x [jj] [j];
-			double g2 = g1 * pow (fabs (dj) / dist->data [ii] [jj], metric - 1.0);
-			if (dj < 0.0)
-				g2 = -g2;
-			my dx [ii] [j] += g2; 
-			my dx [jj] [j] -= g2;
-		}
-	}
-
-	// Increment the number of times this function has been called
-
-	(my minimizer -> funcCalls) ++;
-	return stress;
-}
-
-/* Precondition: configuration was not changed since previous call to func */
-static void dfunc (Daata object, VEC /* p */, VEC dp) {
-	Kruskal me = (Kruskal) object;
-	Configuration thee = my configuration.get();
-
-	integer k = 1;
-	for (integer i = 1; i <= thy numberOfRows; i ++) {
-		for (integer j = 1; j <= thy numberOfColumns; j ++)
-			dp [k ++] = my dx [i] [j];
-	}
-}
-
 autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) {
 	try {
 		autoKruskal me = Thing_new (Kruskal);
@@ -1737,7 +1669,8 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 
 autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, integer numberOfDimensions, integer /* metric */, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
+		//autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
 		autoConfiguration c = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		Configuration_normalize (c.get(), 1.0, false);
 		autoConfiguration thee = Dissimilarity_Configuration_kruskal (me, c.get(), tiesHandling, stress_formula, tolerance, numberOfIterations, numberOfRepetitions);
@@ -1858,21 +1791,83 @@ double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration hi
 	autoDistance dist = Configuration_to_Distance (him);
 	autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 	autoDistance fit = MDSVec_Distance_monotoneRegression (vec.get(), dist.get(), tiesHandling);
-	double s, t, dbar, stress;
-	MDSVec_Distances_getStressValues (vec.get(), dist.get(), fit.get(), stress_formula, & stress, & s, & t, & dbar);
+	double stress;
+	MDSVec_Distances_getStressValues (vec.get(), dist.get(), fit.get(), stress_formula, & stress, nullptr, nullptr, nullptr);
 	return stress;
+}
+
+static double func (Daata object, VEC const& p) {
+	Kruskal me = (Kruskal) object;
+	MDSVec him = my vec.get();
+	MAT x = my configuration -> data.get();
+	double s, t, dbar, stress;
+	integer numberOfDimensions = my configuration -> numberOfColumns;
+	integer numberOfPoints = my configuration -> numberOfRows;
+
+	// Substitute results of minimizer into configuration and
+	// normalize the configuration
+
+	MATfromVEC_inplace (x, p);
+	MATcentreEachColumn_inplace (x);
+	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
+
+	// Calculate interpoint distances from the configuration
+
+	autoDistance dist = Configuration_to_Distance (my configuration.get());
+
+	// Monotone regression
+
+	autoDistance fit = MDSVec_Distance_monotoneRegression (my vec.get(), dist.get(), my tiesHandling);
+
+	// Get numerator and denominator of stress
+
+	MDSVec_Distances_getStressValues (my vec.get(), dist.get(), fit.get(), my stress_formula, & stress, & s, & t, & dbar);
+
+	// Prevent overflow when stress is small
+
+	if (stress >= 1e-6) {
+		
+		my dx.get() <<= 0.0;
+
+		for (integer i = 1; i <= his numberOfProximities; i ++) {
+			integer ii = my vec -> rowIndex [i], jj = my vec -> columnIndex [i];
+			double g1 = stress * ((dist -> data [ii] [jj] - fit -> data [ii] [jj]) / s - (dist -> data [ii] [jj] - dbar) / t);
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
+				double dj = x [ii] [j] - x [jj] [j];
+				double g2 = g1 * pow (fabs (dj) / dist -> data [ii] [jj], my configuration -> metric - 1.0);
+				if (dj < 0.0)
+					g2 = -g2;
+				my dx [ii] [j] += g2;
+				my dx [jj] [j] -= g2;
+			}
+		}
+	}
+	(my minimizer -> numberOfFunctionCalls) ++;
+	return stress;
+}
+
+/* Precondition: configuration was not changed since previous call to func */
+static void dfunc (Daata object, VEC const& /* p */, VEC const& dp) {
+	Kruskal me = (Kruskal) object;
+	Configuration thee = my configuration.get();
+
+	integer k = 1;
+	for (integer i = 1; i <= thy numberOfRows; i ++) {
+		for (integer j = 1; j <= thy numberOfColumns; j ++)
+			dp [k ++] = my dx [i] [j];
+	}
 }
 
 autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
 		// The Configuration is normalized: each dimension centred +
-		//	total variance set
+		//	total variance set to 1.0
 
 		integer numberOfCoordinates = my numberOfRows * his numberOfColumns;
 		integer numberOfParameters = numberOfCoordinates - his numberOfColumns - 1;
 		integer numberOfData = my numberOfRows * (my numberOfRows - 1) / 2;
 
-		Melder_require (numberOfParameters <= numberOfData, 
+		Melder_require (numberOfParameters <= numberOfData,
 			U"The number of parameters should not exceed the number of data.");
 
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
@@ -1889,14 +1884,12 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 		thy tiesHandling = tiesHandling;
 		Configuration_setMetric (thy configuration.get(), his metric);
 
-		Minimizer_minimizeManyTimes (thy minimizer.get(), numberOfRepetitions, numberOfIterations, tolerance);
+		Minimizer_minimizeManyTimes (thy minimizer.get(), numberOfIterations, numberOfRepetitions, tolerance);
 
 		// call the function to get the best configuration
 
-		(void) func ((Daata) thee.get(), thy minimizer -> p.get()); 
-
-		autoConfiguration result = Data_copy (thy configuration.get()); // TODO move from its autoConfiguration
-		return result;
+		(void) func ((Daata) thee.get(), thy minimizer -> p.get());
+		return thy configuration.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");
 	}
@@ -2206,9 +2199,12 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 				Melder_progress ( (double) iter / (numberOfRepetitions + 1), iter, U" from ", numberOfRepetitions);
 		}
 
-		if (out_conf) *out_conf = conf.move();
-		if (out_sal) *out_sal = sal.move();
-		if (showMulti) Melder_progress (1.0);
+		if (out_conf)
+			*out_conf = conf.move();
+		if (out_sal)
+			*out_sal = sal.move();
+		if (showMulti)
+			Melder_progress (1.0);
 		
 	} catch (MelderError) {
 		if (showMulti) {

@@ -149,17 +149,15 @@ Thing_define (Kruskal, Thing) {
 	autoMinimizer minimizer;
 };
 
-autoKruskal Kruskal_create (integer numberOfpoints, integer numberOfDimensions);
+autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions);
 
 autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me,
 	integer numberOfDimensions, integer metric, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula,
-	double tolerance, integer numberOfIterations, integer numberOfRepetitions
-);
+	double tolerance, integer numberOfIterations, integer numberOfRepetitions);
 
 autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him,
 	kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula,
-	double tolerance, integer numberOfIterations, integer numberOfRepetitions
-);
+	double tolerance, integer numberOfIterations, integer numberOfRepetitions);
 
 double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula);
 
