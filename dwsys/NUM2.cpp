@@ -1536,14 +1536,14 @@ double NUMcubicSplineInterpolation (constVEC x, constVEC y, constVEC y2, double 
 	integer klo = 1, khi = x.size;
 	while (khi - klo > 1) {
 		integer k = (khi + klo) >> 1;
-		if (x [k] > xin) {
+		if (x [k] > xin)
 			khi = k;
-		} else {
+		else
 			klo = k;
-		}
 	}
 	double h = x [khi] - x [klo];
-	Melder_require (h != 0.0, U"NUMcubicSplineInterpolation: bad input value.");
+	Melder_require (h != 0.0,
+		U"NUMcubicSplineInterpolation: bad input value.");
 	
 	double a = (x [khi] - xin) / h;
 	double b = (xin - x [klo]) / h;
