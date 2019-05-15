@@ -282,21 +282,18 @@ autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding, bool littleEndian, bool unSigned, integer skipNBytes, double samplingFrequency) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-		if (! format) {
+		if (! format)
 			format = "integer";
-		}
-		if (nBitsCoding <= 0) {
+		if (nBitsCoding <= 0)
 			nBitsCoding = 16;
-		}
 		integer nBytesPerSample = (nBitsCoding + 7) / 8;
-		if (strequ (format, "float")) {
+		if (strequ (format, "float"))
 			nBytesPerSample = 4;
-		}
-		Melder_require (! (nBytesPerSample == 3), U"Number of bytes per sample should be 1, 2 or 4.");
+		Melder_require (! (nBytesPerSample == 3),
+			U"Number of bytes per sample should be 1, 2 or 4.");
 		
-		if (skipNBytes <= 0) {
+		if (skipNBytes <= 0)
 			skipNBytes = 0;
-		}
 		integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
 		Melder_require (nSamples > 0, U"No samples left to read.");
 		
@@ -328,16 +325,13 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool l
 	try {
 		integer nClip = 0;
 		autofile f = Melder_fopen (file, "wb");
-		if (! format) {
+		if (! format)
 			format = "integer";
-		}
-		if (nBitsCoding <= 0) {
+		if (nBitsCoding <= 0)
 			nBitsCoding = 16;
-		}
 		integer nBytesPerSample = (nBitsCoding + 7) / 8;
-		if (strequ (format, "float")) {
+		if (strequ (format, "float"))
 			nBytesPerSample = 4;
-		}
 		Melder_require (! (nBytesPerSample == 3), U"number of bytes per sample should be 1, 2 or 4.");
 		
 		if (nBytesPerSample == 1 && unSigned) {
@@ -355,11 +349,11 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool l
 		} else if (nBytesPerSample == 4 && strequ (format, "float")) {
 			r4write (me, f);
 		}
-		if (nClip > 0) {
+		if (nClip > 0)
 			Melder_warning (nClip, U" from ", my nx, U" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
-		}
 		
-		Melder_require (feof ((FILE *) f) == 0 && ferror ((FILE *) f) == 0, U"Sound_writeToRawFile: not completed");
+		Melder_require (feof ((FILE *) f) == 0 && ferror ((FILE *) f) == 0,
+			U"Sound_writeToRawFile: not completed");
 		
 		f.close (file);
 	} catch (MelderError) {
@@ -386,12 +380,10 @@ static void dialogic_adpcm_init (struct dialogic_adpcm *adpcm) {
 
 	adpcm -> last = 0;
 	adpcm -> index = 0;
-	for (integer i = 0; i < 49; i ++) {
+	for (integer i = 0; i < 49; i ++)
 		adpcm -> step_size [i] = step_size [i];
-	}
-	for (integer i = 0; i <  8; i ++) {
+	for (integer i = 0; i <  8; i ++)
 		adpcm -> adjust [i] = adjust [i];
-	}
 }
 
 /*
@@ -408,15 +400,12 @@ static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm) {
 
 	short ss = adpcm -> step_size [adpcm -> index];
 	short e = ss / 8;
-	if (adpcm -> code & 0x01) {
+	if (adpcm -> code & 0x01)
 		e += ss / 4;
-	}
-	if (adpcm -> code & 0x02) {
+	if (adpcm -> code & 0x02)
 		e += ss / 2;
-	}
-	if (adpcm -> code & 0x04) {
+	if (adpcm -> code & 0x04)
 		e += ss;
-	}
 
 	// If B3==1 then d(n) = -d(n);
 
@@ -425,23 +414,19 @@ static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm) {
 	// x(n) = x(n-1)+d(n)
 
 	short s = adpcm -> last + diff;
-	if (s > 2048) {
+	if (s > 2048)
 		s = 2048;
-	}
-	if (s < -2048) {
+	if (s < -2048)
 		s = -2048;
-	}
 	adpcm -> last = s;
 
 	// ss(n+1) = ss(n) * 1.1*M(L(n)) via lookup table
 
 	adpcm -> index += adpcm -> adjust [adpcm -> code & 0x07];
-	if (adpcm -> index <  0) {
+	if (adpcm -> index <  0)
 		adpcm -> index = 0;
-	}
-	if (adpcm -> index > 48) {
+	if (adpcm -> index > 48)
 		adpcm -> index = 48;
-	}
 	return scale * s;
 }
 
@@ -496,9 +481,8 @@ void Sound_deEmphasis (Sound me, double deEmphasisFrequency) {
 	double deEmphasis = exp (- 2.0 * NUMpi * deEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		VEC s = my z.row (channel);
-		for (integer i = 2; i <= my nx; i ++) {
+		for (integer i = 2; i <= my nx; i ++)
 			s [i] += deEmphasis * s [i - 1];
-		}
 	}
 }
 
@@ -507,9 +491,8 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 		VEC s = my z.row (1);
 		double imid = 0.5 * (my nx + 1), edge = exp (-12.0);
-		for (integer i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++)
 			s [i] = (exp (-48.0 * (i - imid) * (i - imid) / (my nx + 1) / (my nx + 1)) - edge) / (1 - edge);
-		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Gaussian function.");
@@ -520,9 +503,8 @@ autoSound Sound_createHamming (double windowDuration, double samplingFrequency) 
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 		double p = 2.0 * NUMpi / (my nx - 1);
-		for (integer i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++)
 			my z [1] [i] = 0.54 - 0.46 * cos ((i - 1) * p);
-		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Hamming function.");
@@ -549,10 +531,10 @@ static autoSound Sound_createToneComplex (double minimumTime, double maximumTime
 	try {
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (integer j = 1; j <= numberOfComponents; j ++) {
-			double fraction = j == mistunedComponent ? mistuningFraction : 0;
-			double w = 2 * NUMpi * (firstFrequency + (j - 1 + fraction) * frequencyDistance);
+			double fraction = j == mistunedComponent ? mistuningFraction : 0.0;
+			double w = 2.0 * NUMpi * (firstFrequency + (j - 1 + fraction) * frequencyDistance);
 			double delta = w * my dx;
-			double alpha = 2 * sin (delta / 2) * sin (delta / 2);
+			double alpha = 2.0 * sin (delta / 2.0) * sin (delta / 2.0);
 			double beta = sin (delta);
 			double sint = sin (w * my x1);
 			double cost = cos (w * my x1);
@@ -561,12 +543,12 @@ static autoSound Sound_createToneComplex (double minimumTime, double maximumTime
 				double costd = cost - (alpha * cost + beta * sint);
 				double sintd = sint - (alpha * sint - beta * cost);
 				my z [1] [i] += sintd;
-				cost = costd; sint = sintd;
+				cost = costd;
+				sint = sintd;
 			}
 		}
-		if (scaleAmplitudes) {
+		if (scaleAmplitudes)
 			Vector_scale (me.get(), 0.99996948);
-		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from tone complex.");
@@ -580,7 +562,7 @@ autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime,
 		numberOfComponents = Melder_ifloor (1.0 + (0.5 * samplingFrequency - firstFrequency) / frequencyDistance);
 	}
 	return Sound_createToneComplex (minimumTime, maximumTime, samplingFrequency,
-	                                firstFrequency, numberOfComponents, frequencyDistance, 0, 0, scaleAmplitudes);
+		firstFrequency, numberOfComponents, frequencyDistance, 0, 0, scaleAmplitudes);
 }
 
 autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, integer numberOfComponents, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes) {
@@ -608,14 +590,12 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 		for (integer i = 1; i <= my nx; i ++) {
 			double t = (i - 0.5) * my dx;
 			double f = frequency + addition / (NUM2pi * t);
-			if (f > 0 && f < samplingFrequency / 2) {
-				my z [1] [i] = pow (t, gamma - 1.0) * exp (- NUM2pi * bandwidth * t) * 
+			if (f > 0 && f < samplingFrequency / 2)
+				my z [1] [i] = pow (t, gamma - 1.0) * exp (- NUM2pi * bandwidth * t) *
 					cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
-			}
 		}
-		if (scaleAmplitudes) {
+		if (scaleAmplitudes)
 			Vector_scale (me.get(), 0.99996948);
-		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from gammatone function.");
@@ -842,10 +822,12 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 		double highestFrequency = lowestFrequency * pow (2, numberOfComponents);
 		double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange);
 
-		Melder_require (highestFrequency <= samplingFrequency / 2.0,U"The highest frequency you want to generate is "
-				U"above the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
-				U"\"Number of components\" or \"Lowest frequency\".");
-		Melder_require (octaveShiftFraction >= 0.0 && octaveShiftFraction < 1.0, U"Octave offset fraction should be greater or equal zero and smaller than one.");
+		Melder_require (highestFrequency <= samplingFrequency / 2.0,
+			U"The highest frequency you want to generate is "
+			U"above the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
+			U"\"Number of components\" or \"Lowest frequency\".");
+		Melder_require (octaveShiftFraction >= 0.0 && octaveShiftFraction < 1.0,
+			U"Octave offset fraction should be greater or equal zero and smaller than one.");
 	
 		double octaveTime, sweeptime;
 		if (frequencyChange_st != 0.0) {
@@ -899,9 +881,8 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 				double level = pow (10, (lmin_db + (lmax_db - lmin_db) * (1 - cos (theta)) / 2) / 20);
 				double phasej = phasejm1 + 2 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
 
-				if (j == 1) {
+				if (j == 1)
 					phase1 = phasej;    // phase1 = j == 1 ? phasej : phase1;
-				}
 				my z [1] [j] += level * sin (phasej - phase1); // si
 				phasejm1 = phasej;
 			}
@@ -924,8 +905,10 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 		double lnf1 = log (lowestFrequency + 1.0);
 		double amplarg = twoPi / log ((maximumFrequency + 1.0) / (lowestFrequency + 1.0));
 
-		Melder_require (lowestFrequency <= 0.5 * samplingFrequency, U"Sound_createShepardTone: lowest frequency too high.");
-		Melder_require (maximumFrequency <= 0.5 * samplingFrequency, U"Sound_createShepardTone: frequency of highest component too high.");
+		Melder_require (lowestFrequency <= 0.5 * samplingFrequency,
+			U"Sound_createShepardTone: lowest frequency too high.");
+		Melder_require (maximumFrequency <= 0.5 * samplingFrequency,
+			U"Sound_createShepardTone: frequency of highest component too high.");
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 
 		for (integer i = 1; i <= my nx; i ++) {
@@ -945,7 +928,8 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 				//amplitude = lmin + (1 - lmin) * (1 - cos (twoPi * log (ft + 1) / log (maximumFrequency + 1))) / 2;
 				double amplitude = lmin + (1 - lmin) * (1 - cos (amplarg * (log (ft + 1) - lnf1))) / 2.0;
 				my z [1] [i] += amplitude * sin (argt);
-				ft *= 2.0; argt *= 2.0;
+				ft *= 2.0;
+				argt *= 2.0;
 			}
 		}
 		Vector_scale (me.get(), 0.99996948);
@@ -962,10 +946,9 @@ autoSound Sound_createPattersonWightmanTone (double minimumTime, double maximumT
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		double w0 = NUM2pi * baseFrequency;
 		for (integer i = 1; i <= my nx; i ++) {
-			double a = 0, t = (i - 0.5) * my dx;
-			for (integer j = 1; j <= numberOfComponents; j ++) {
+			double a = 0.0, t = (i - 0.5) * my dx;
+			for (integer j = 1; j <= numberOfComponents; j ++)
 				a += sin ( (j + frequencyShiftRatio) * w0 * t);
-			}
 			my z [1] [i] = a;
 		}
 		Vector_scale (me.get(), 0.99996948);
@@ -984,13 +967,11 @@ autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double 
 		double w2 = NUM2pi * (1.0 + frequencyFraction) * baseFrequency;
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (integer i = 1; i <= my nx; i ++) {
-			double a = 0, t = (i - 0.5) * my dx;
-			for (integer j = 1; j <= m; j ++) {
+			double a = 0.0, t = (i - 0.5) * my dx;
+			for (integer j = 1; j <= m; j ++)
 				a += sin (j * w1 * t);
-			}
-			for (integer j  = m + 1; j <= 12; j ++) {
+			for (integer j  = m + 1; j <= 12; j ++)
 				a += sin (j * w2 * t);
-			}
 			my z [1] [i] = a;
 		}
 		Vector_scale (me.get(), 0.99996948);
@@ -1004,7 +985,6 @@ void Sounds_multiply (Sound me, Sound thee) {
 	integer n = std::min (my nx, thy nx );
 	my z.row(1).part(1, n)  *=  thy z.row(1).part(1, n);
 }
-
 
 double Sound_power (Sound me) {
 	double e = 0.0;
@@ -1116,7 +1096,8 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 			return iright > my nx ? undefined : rightCrossing;
 	}
 	
-	if (ileft < 1 && iright > my nx) return undefined;
+	if (ileft < 1 && iright > my nx)
+		return undefined;
 	return ileft < 1 ? rightCrossing : ( iright > my nx ? leftCrossing :
 		( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing ) );
 }
@@ -1132,9 +1113,8 @@ double Sound_localPeak (Sound me, double fromTime, double toTime, double referen
 			n2 = my nx;
 		for (integer i = n1; i <= n2; i ++) {
 			double ds = fabs (s [i] - reference);
-			if (ds > peak) {
+			if (ds > peak)
 				peak = ds;
-			}
 		}
 	}
 	return peak;
@@ -1221,7 +1201,8 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultipli
 	try {
 		double samplingFrequency_old = 1.0 / my dx;
 
-		Melder_require (my xmin == his xmin && my xmax == his xmax, U"The Pitch and the Sound object should have the same domain.");
+		Melder_require (my xmin == his xmin && my xmax == his xmax,
+			U"The Pitch and the Sound object should have the same domain.");
 		
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
