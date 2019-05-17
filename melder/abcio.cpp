@@ -1484,11 +1484,10 @@ void binputr64 (double x, FILE *f) {
 		} else if (binario_doubleIEEE8lsb && Melder_debug != 18) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
-			uint8 tmp;
-			tmp = bytes [0], bytes [0] = bytes [7], bytes [7] = tmp;
-			tmp = bytes [1], bytes [1] = bytes [6], bytes [6] = tmp;
-			tmp = bytes [2], bytes [2] = bytes [5], bytes [5] = tmp;
-			tmp = bytes [3], bytes [3] = bytes [4], bytes [4] = tmp;
+			std::swap (bytes [0], bytes [7]);
+			std::swap (bytes [1], bytes [6]);
+			std::swap (bytes [2], bytes [5]);
+			std::swap (bytes [3], bytes [4]);
 			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
 		} else {
 			uint8 bytes [8];
@@ -1539,11 +1538,10 @@ void binputr64LE (double x, FILE *f) {
 		} else if (binario_doubleIEEE8msb && Melder_debug != 18) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
-			uint8 tmp;
-			tmp = bytes [0], bytes [0] = bytes [7], bytes [7] = tmp;
-			tmp = bytes [1], bytes [1] = bytes [6], bytes [6] = tmp;
-			tmp = bytes [2], bytes [2] = bytes [5], bytes [5] = tmp;
-			tmp = bytes [3], bytes [3] = bytes [4], bytes [4] = tmp;
+			std::swap (bytes [0], bytes [7]);
+			std::swap (bytes [1], bytes [6]);
+			std::swap (bytes [2], bytes [5]);
+			std::swap (bytes [3], bytes [4]);
 			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
 		} else {
 			uint8 bytes [8];
