@@ -42,7 +42,8 @@ Thing_implement (ComplexSpectrogram, Matrix, 2);
 
 
 autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, integer nt, double dt,
-	double t1, double fmin, double fmax, integer nf, double df, double f1) {
+	double t1, double fmin, double fmax, integer nf, double df, double f1)
+{
 	try {
 		autoComplexSpectrogram me = Thing_new (ComplexSpectrogram);
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
@@ -55,34 +56,35 @@ autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, inte
 
 autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep) {
 	try {
-		double samplingFrequency = 1.0 / my dx, myDuration = my xmax - my xmin, t1;
+		const double samplingFrequency = 1.0 / my dx, myDuration = my xmax - my xmin;
 		Melder_require (windowLength <= myDuration,
 			U"Your sound is too short:\nit should be at least as long as one window length.");
 		
 		integer nsamp_window = Melder_ifloor (windowLength / my dx);
-		integer halfnsamp_window = nsamp_window / 2 - 1;
+		const integer halfnsamp_window = nsamp_window / 2 - 1;
 		nsamp_window = halfnsamp_window * 2;
 		
 		Melder_require (nsamp_window > 1,
 			U"There should be atleast two samples in the window.");
 		
 		integer numberOfFrames;
+		double t1;
 		Sampled_shortTermAnalysis (me, windowLength, timeStep, & numberOfFrames, & t1);
 
 		// Compute sampling of the spectrum
 
-		integer numberOfFrequencies = halfnsamp_window + 1;
-		double df = samplingFrequency / (numberOfFrequencies - 1);
+		const integer numberOfFrequencies = halfnsamp_window + 1;
+		const double df = samplingFrequency / (numberOfFrequencies - 1);
 		
 		autoComplexSpectrogram thee = ComplexSpectrogram_create (my xmin, my xmax, numberOfFrames, timeStep, t1, 0.0, 0.5 * samplingFrequency, numberOfFrequencies, df, 0.0);
 		// 
 		autoSound analysisWindow = Sound_create (1, 0.0, nsamp_window * my dx, nsamp_window, my dx, 0.5 * my dx);
 		
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			double t = Sampled_indexToX (thee.get(), iframe);
-			integer leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
-			integer startSample = rightSample - halfnsamp_window;
-			integer endSample = leftSample + halfnsamp_window;
+			const double t = Sampled_indexToX (thee.get(), iframe);
+			const integer leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
+			const integer startSample = rightSample - halfnsamp_window;
+			const integer endSample = leftSample + halfnsamp_window;
 			Melder_assert (startSample >= 1);
 			Melder_assert (endSample <= my nx);
 			
@@ -95,7 +97,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			thy z [1] [iframe] = spec -> z [1] [1] * spec -> z [1] [1];
 			thy phase [1] [iframe] = 0.0;
 			for (integer ifreq = 2; ifreq <= numberOfFrequencies - 1; ifreq ++) {
-				double x = spec -> z [1] [ifreq], y = spec -> z [2] [ifreq];
+				const double x = spec -> z [1] [ifreq], y = spec -> z [2] [ifreq];
 				thy z [ifreq] [iframe] = x * x + y * y; // power
 				thy phase [ifreq] [iframe] = atan2 (y, x); // phase [-pi,+pi]
 			}
@@ -114,62 +116,59 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or +/-pi
 		 */
-		double pi = atan2 (0.0, - 0.5);
-		double samplingFrequency = 2.0 * my ymax;
-		double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase [my ny] [1];
-		int originalNumberOfSamplesProbablyOdd = (lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi) || 
-			my ymax - lastFrequency > 0.25 * my dx;
+		const double pi = atan2 (0.0, - 0.5);
+		const double samplingFrequency = 2.0 * my ymax;
+		const double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase [my ny] [1];
+		const bool originalNumberOfSamplesProbablyOdd = ( lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi ||
+				my ymax - lastFrequency > 0.25 * my dx );
 		Melder_require (my y1 == 0.0, 
 			U"A Fourier-transformable ComplexSpectrogram should have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		
-		integer nsamp_window = 2 * my ny - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
-		integer halfnsamp_window = nsamp_window / 2;
-		double synthesisWindowDuration = nsamp_window / samplingFrequency;
+		const integer nsamp_window = 2 * my ny - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
+		const integer halfnsamp_window = nsamp_window / 2;
+		const double synthesisWindowDuration = nsamp_window / samplingFrequency;
 		autoSpectrum spectrum = Spectrum_create (my ymax, my ny);
 		autoSound synthesisWindow = Sound_createSimple (1, synthesisWindowDuration, samplingFrequency);
-		double newDuration = (my xmax - my xmin) * stretchFactor;
+		const double newDuration = (my xmax - my xmin) * stretchFactor;
 		autoSound thee = Sound_createSimple (1, newDuration, samplingFrequency); //TODO
 		double thyStartTime;
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			// "original" sound :
-			double tmid = Sampled_indexToX (me, iframe);
-			integer leftSample = Sampled_xToLowIndex (thee.get(), tmid);
-			integer rightSample = leftSample + 1;
-			integer startSample = rightSample - halfnsamp_window;
-			double startTime = Sampled_indexToX (thee.get(), startSample);
-			if (iframe == 1) {
+			const double tmid = Sampled_indexToX (me, iframe);
+			const integer leftSample = Sampled_xToLowIndex (thee.get(), tmid);
+			const integer rightSample = leftSample + 1;
+			const integer startSample = rightSample - halfnsamp_window;
+			const double startTime = Sampled_indexToX (thee.get(), startSample);
+			if (iframe == 1)
 				thyStartTime = Sampled_indexToX (thee.get(), startSample);
-			}
 			//integer endSample = leftSample + halfnsamp_window;
 			// New Sound with stretch
-			integer thyStartSample = Sampled_xToLowIndex (thee.get(),thyStartTime);
-			double thyEndTime = thyStartTime + my dx * stretchFactor;
-			integer thyEndSample = Sampled_xToLowIndex (thee.get(), thyEndTime);
-			integer stretchedStepSizeSamples = thyEndSample - thyStartSample + 1;
+			const integer thyStartSample = Sampled_xToLowIndex (thee.get(), thyStartTime);
+			const double thyEndTime = thyStartTime + my dx * stretchFactor;
+			const integer thyEndSample = Sampled_xToLowIndex (thee.get(), thyEndTime);
+			const integer stretchedStepSizeSamples = thyEndSample - thyStartSample + 1;
 			//double extraTime = (thyStartSample - startSample + 1) * thy dx;
-			double extraTime = (thyStartTime - startTime);
-			spectrum -> z[1][1] = sqrt (my z[1][iframe]);
+			const double extraTime = thyStartTime - startTime;
+			spectrum -> z [1] [1] = sqrt (my z [1] [iframe]);
 			for (integer ifreq = 2; ifreq <= my ny; ifreq ++) {
-				double f = my y1 + (ifreq - 1) * my dy;
-				double a = sqrt (my z [ifreq] [iframe]);
-				double phi = my phase [ifreq] [iframe], intPart;
-				double extraPhase = 2.0 * pi * modf (extraTime * f, & intPart); // fractional part
-				phi += extraPhase;
+				const double f = my y1 + (ifreq - 1) * my dy;
+				const double a = sqrt (my z [ifreq] [iframe]);
+				double intPart;
+				const double extraPhase = 2.0 * pi * modf (extraTime * f, & intPart); // fractional part
+				const double phi = my phase [ifreq] [iframe] + extraPhase;
 				spectrum -> z [1] [ifreq] = a * cos (phi);
 				spectrum -> z [2] [ifreq] = a * sin (phi);
 			}
-
 			autoSound synthesis = Spectrum_to_Sound (spectrum.get());
 
 			// Where should the sound be placed?
 
-			integer thyEndSampleP = Melder_ifloor (fmin (thyStartSample + synthesis -> nx - 1, thyStartSample + stretchedStepSizeSamples - 1)); // guard against extreme stretches
-			if (iframe == my nx) {
-				thyEndSampleP = Melder_ifloor (fmin (thy nx, thyStartSample + synthesis -> nx - 1));   // ppgb: waarom naar beneden afgerond?
-			}
-			for (integer j = thyStartSample; j <= thyEndSampleP; j++) {
+			integer thyEndSampleP = ( iframe == my nx ?
+				std::min (thy nx, thyStartSample + synthesis -> nx - 1) :
+				std::min (thyStartSample + synthesis -> nx - 1, thyStartSample + stretchedStepSizeSamples - 1)
+			);   // guard against extreme stretches
+			for (integer j = thyStartSample; j <= thyEndSampleP; j ++)
 				thy z [1] [j] = synthesis -> z [1] [j - thyStartSample + 1];
-			}
 			thyStartTime += my dx * stretchFactor;
 		}
 		return thee;
@@ -200,21 +199,20 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 		autoSound thee = Sound_createSimple (1, newDuration, samplingFrequency); //TODO
 		integer istart = 1, iend = istart + stepSizeSamples - 1;
 		for (integer iframe = 1; iframe <= my nx; iframe++) {
-			spectrum -> z[1][1] = sqrt (my z[1][iframe]);
-			for (integer ifreq = 2; ifreq <= my ny; ifreq++) {
-				double f = my y1 + (ifreq - 1) * my dy;
-				double a = sqrt (my z[ifreq][iframe]);
-				double phi = my phase[ifreq][iframe];
-				double extraPhase = 2.0 * pi * (stretchFactor - 1.0) * my dx * f;
-				phi += extraPhase;
-				spectrum -> z[1][ifreq] = a * cos (phi);
-				spectrum -> z[2][ifreq] = a * sin (phi);
+			spectrum -> z [1] [1] = sqrt (my z [1] [iframe]);
+			for (integer ifreq = 2; ifreq <= my ny; ifreq ++) {
+				const double f = my y1 + (ifreq - 1) * my dy;
+				const double a = sqrt (my z [ifreq] [iframe]);
+				const double extraPhase = 2.0 * pi * (stretchFactor - 1.0) * my dx * f;
+				const double phi = my phase [ifreq] [iframe] + extraPhase;
+				spectrum -> z [1] [ifreq] = a * cos (phi);
+				spectrum -> z [2] [ifreq] = a * sin (phi);
 			}
 			autoSound synthesis = Spectrum_to_Sound (spectrum.get());
-			for (integer j = istart; j <= iend; j++) {
-				thy z[1][j] = synthesis -> z[1][j - istart + 1];
-			}
-			istart = iend + 1; iend = istart + stepSizeSamples - 1;
+			for (integer j = istart; j <= iend; j ++)
+				thy z [1] [j] = synthesis -> z [1] [j - istart + 1];
+			istart = iend + 1;
+			iend = istart + stepSizeSamples - 1;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -234,18 +232,22 @@ autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 }
 
 void ComplexSpectrogram_Spectrogram_replaceAmplitudes (ComplexSpectrogram me, Spectrogram thee) {
-	Melder_require (my nx == thy nx && my ny == thy ny, U"The number of cells must be equal.");
+	Melder_require (my nx == thy nx && my ny == thy ny,
+		U"The numbers of cells in the ComplexSpectrogram and Spectrogram should be equal.");
 	my z.all() <<= thy z.all();
 }
 
 autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {
 	try {
-		integer iframe = Sampled_xToLowIndex (me, time);   // ppgb: geen Sampled_xToIndex gebruiken voor integers (afrondingen altijd expliciet maken)
-		iframe = ( iframe < 1 ? 1 : ( iframe > my nx ? my nx : iframe ) );
+		integer iframe = Sampled_xToLowIndex (me, time);
+		if (iframe < 1)
+			iframe = 1;
+		if (iframe > my nx)
+			iframe = my nx;
 		autoSpectrum thee = Spectrum_create (my ymax, my ny);
 		for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
-			double a = sqrt (my z [ifreq] [iframe]);
-			double phi = my phase [ifreq] [iframe];
+			const double a = sqrt (my z [ifreq] [iframe]);
+			const double phi = my phase [ifreq] [iframe];
 			thy z [1] [ifreq] = a * cos (phi);
 			thy z [2] [ifreq] = a * sin (phi);
 		}
