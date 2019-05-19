@@ -30,7 +30,7 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
 		integer ny = my y -> dimension, nx = my x -> dimension;
 		Melder_require (ny + nx == thy numberOfColumns,
-			U"The number of columns in the Correlation should equal the sum of the dimensions in the CCA object");
+			U"The number of columns in the Correlation should equal the sum of the dimensions in the CCA object.");
 		
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 		his columnLabels.all() <<= thy columnLabels.all();
@@ -53,7 +53,7 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 
 static void _CCA_Correlation_check (CCA me, Correlation thee, integer canonicalVariate_from, integer canonicalVariate_to) {
 	Melder_require (my y -> dimension + my x -> dimension == thy numberOfColumns, 
-		U"The number of columns in the Correlation object should equal the sum of the dimensions in the CCA object");
+		U"The number of columns in the Correlation object should equal the sum of the dimensions in the CCA object.");
 	Melder_require (canonicalVariate_to >= canonicalVariate_from,
 		U"The second value in the \"Canonical variate range\" should be equal or larger than the first.");
 	Melder_require (canonicalVariate_from > 0 && canonicalVariate_to <= my numberOfCoefficients, 

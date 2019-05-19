@@ -269,6 +269,7 @@ int Melder_bytesPerSamplePoint (int encoding) {
 		encoding == Melder_LINEAR_24_BIG_ENDIAN || encoding == Melder_LINEAR_24_LITTLE_ENDIAN ? 3 :
 		encoding == Melder_LINEAR_32_BIG_ENDIAN || encoding == Melder_LINEAR_32_LITTLE_ENDIAN ||
 		encoding == Melder_IEEE_FLOAT_32_BIG_ENDIAN || encoding == Melder_IEEE_FLOAT_32_LITTLE_ENDIAN ? 4 :
+		encoding == Melder_IEEE_FLOAT_64_BIG_ENDIAN || encoding == Melder_IEEE_FLOAT_64_LITTLE_ENDIAN ? 8 :
 		1;
 }
 
@@ -470,8 +471,8 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 				numberOfBitsPerSamplePoint = 16;   // the default
 			else if (numberOfBitsPerSamplePoint < 4)
 				Melder_throw (U"Too few bits per sample (", numberOfBitsPerSamplePoint, U"; the minimum is 4).");
-			else if (numberOfBitsPerSamplePoint > 32)
-				Melder_throw (U"Too few bits per sample (", numberOfBitsPerSamplePoint, U"; the maximum is 32).");
+			else if (numberOfBitsPerSamplePoint > 64)
+				Melder_throw (U"Too many bits per sample (", numberOfBitsPerSamplePoint, U"; the maximum is 32).");
 			switch (winEncoding) {
 				case WAVE_FORMAT_PCM:
 					*encoding =
@@ -481,7 +482,9 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 						Melder_LINEAR_8_UNSIGNED;
 					break;
 				case WAVE_FORMAT_IEEE_FLOAT:
-					*encoding = Melder_IEEE_FLOAT_32_LITTLE_ENDIAN;
+					*encoding =
+						numberOfBitsPerSamplePoint == 64 ? Melder_IEEE_FLOAT_64_LITTLE_ENDIAN :
+						Melder_IEEE_FLOAT_32_LITTLE_ENDIAN;
 					break;
 				case WAVE_FORMAT_ALAW:
 					*encoding = Melder_ALAW;
@@ -510,7 +513,9 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 								Melder_LINEAR_8_UNSIGNED;
 							break;
 						case WAVE_FORMAT_IEEE_FLOAT:
-							*encoding = Melder_IEEE_FLOAT_32_LITTLE_ENDIAN;
+							*encoding =
+								numberOfBitsPerSamplePoint == 64 ? Melder_IEEE_FLOAT_64_LITTLE_ENDIAN :
+								Melder_IEEE_FLOAT_32_LITTLE_ENDIAN;
 							break;
 						case WAVE_FORMAT_ALAW:
 							*encoding = Melder_ALAW;
@@ -1176,6 +1181,30 @@ void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
 					Melder_warning (U"File too small (", numberOfChannels, U"-channel 32-bit floating point).\nMissing samples set to zero.");
 				}
 				break;
+			case Melder_IEEE_FLOAT_64_BIG_ENDIAN:
+				try {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							buffer [ichan] [isamp] = bingetr64 (f);
+						}
+					}
+				} catch (MelderError) {
+					Melder_clearError ();
+					Melder_warning (U"File too small (", numberOfChannels, U"-channel 64-bit floating point).\nMissing samples set to zero.");
+				}
+				break;
+			case Melder_IEEE_FLOAT_64_LITTLE_ENDIAN:
+				try {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							buffer [ichan] [isamp] = bingetr64LE (f);
+						}
+					}
+				} catch (MelderError) {
+					Melder_clearError ();
+					Melder_warning (U"File too small (", numberOfChannels, U"-channel 64-bit floating point).\nMissing samples set to zero.");
+				}
+				break;
 			case Melder_MULAW:
 				try {
 					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
@@ -1283,6 +1312,16 @@ void Melder_readAudioToShort (FILE *f, integer numberOfChannels, int encoding, s
 					buffer [i] = bingetr32LE (f) * 32768;   // BUG: truncation; not ideal
 				}
 				break;
+			case Melder_IEEE_FLOAT_64_BIG_ENDIAN:
+				for (i = 0; i < n; i ++) {
+					buffer [i] = bingetr64 (f) * 32768;   // BUG: truncation; not ideal
+				}
+				break;
+			case Melder_IEEE_FLOAT_64_LITTLE_ENDIAN:
+				for (i = 0; i < n; i ++) {
+					buffer [i] = bingetr64LE (f) * 32768;   // BUG: truncation; not ideal
+				}
+				break;
 			case Melder_MULAW:
 				for (i = 0; i < n; i ++) {
 					buffer [i] = ulaw2linear [bingetu8 (f)];
@@ -1346,6 +1385,12 @@ void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, in
 			break; case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
 				for (i = start; i < n; i += step)
 					binputr32LE (buffer [i] / 32768.0, f);
+			break; case Melder_IEEE_FLOAT_64_BIG_ENDIAN:
+				for (i = start; i < n; i += step)
+					binputr64 (buffer [i] / 32768.0, f);
+			break; case Melder_IEEE_FLOAT_64_LITTLE_ENDIAN:
+				for (i = start; i < n; i += step)
+					binputr64LE (buffer [i] / 32768.0, f);
 			break;
 			case Melder_FLAC_COMPRESSION_16:
 			case Melder_FLAC_COMPRESSION_24:
@@ -1467,6 +1512,22 @@ void MelderFile_writeFloatToAudio (MelderFile file, constMATVU const& buffer, in
 					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = buffer [ichan] [isamp];
 						binputr32LE (value, f);
+					}
+				}
+				break;
+			case Melder_IEEE_FLOAT_64_BIG_ENDIAN:
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+						double value = buffer [ichan] [isamp];
+						binputr64 (value, f);
+					}
+				}
+				break;
+			case Melder_IEEE_FLOAT_64_LITTLE_ENDIAN:
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+						double value = buffer [ichan] [isamp];
+						binputr64LE (value, f);
 					}
 				}
 				break;
