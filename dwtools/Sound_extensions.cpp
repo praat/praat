@@ -1170,25 +1170,26 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 	The underlying analog signal still could have jumps undetected by this algorithm.
 	We could get a better approximation by first upsampling the signal.
 */
-autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt) {
+autoPointProcess Sound_to_PointProcess_getJumps (Sound me, integer channel, double minimumJump, double maximumDuration) {
 	try {
+		Melder_require (channel >= 1 && channel <= my ny, 
+			U"The channel number should be in the interval from 1 to ", my ny, U".");
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		integer i = 1, dtn = Melder_ifloor (dt / my dx);   // ppgb: what does dtn mean?
-		if (dtn < 1)
-			dtn = 1;
-		constVEC s = my z.row (1);   // ppgb: what does s mean?
-		while (i < my nx) {   // ppgb: what does i mean?
-			integer j = i + 1, step = 1;
-			while (j <= i + dtn && j <= my nx) {
-				if (fabs (s [i] - s [j]) > minimumJump) {
-					double t = Sampled_indexToX (me, i);
+		integer index = 1, intervalSize_samples = Melder_ifloor (maximumDuration / my dx);
+		intervalSize_samples = std::max (1L, intervalSize_samples);
+		constVEC samples = my z.row (channel);
+		while (index < my nx) {
+			integer nextIndex = index + 1, step = 1;
+			while (nextIndex <= index + intervalSize_samples && nextIndex <= my nx) {
+				if (fabs (samples [index] - samples [nextIndex]) > minimumJump) {
+					double t = Sampled_indexToX (me, index);
 					PointProcess_addPoint (thee.get(), t);
-					step = j - i + 1;
+					step = nextIndex - index + 1;
 					break;
 				}
-				j ++;
+				nextIndex ++;
 			}
-			i += step;
+			index += step;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1207,10 +1208,8 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultipli
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
 
-		if (formantMultiplier != 1.0) {
-			// Shift all frequencies (inclusive pitch!) */
+		if (formantMultiplier != 1.0) // Shift all frequencies (inclusive pitch!)
 			Sound_overrideSamplingFrequency (sound.get(), samplingFrequency_old * formantMultiplier);
-		}
 
 		autoPitch pitch = Data_copy (him);
 		Pitch_scaleDuration (pitch.get(), 1.0 / formantMultiplier); //
@@ -1234,9 +1233,9 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultipli
 
 		// Resample to the original sampling frequency
 
-		if (formantMultiplier != 1.0) {
+		if (formantMultiplier != 1.0)
 			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
-		}
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Pitch & Sound.");
@@ -1276,16 +1275,14 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 		TextInterval interval = tier -> intervals.at [1];
 		if (t1) {
 			*t1 = my xmin;
-			if (Melder_equ (interval -> text.get(), silentLabel)) {
+			if (Melder_equ (interval -> text.get(), silentLabel))
 				*t1 = interval -> xmax;
-			}
 		}
 		if (t2) {
 			*t2 = my xmax;
 			interval = tier -> intervals.at [tier -> intervals.size];
-			if (Melder_equ (interval -> text.get(), silentLabel)) {
+			if (Melder_equ (interval -> text.get(), silentLabel))
 				*t2 = interval -> xmin;
-			}
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Sounding times not found.");
@@ -1303,14 +1300,12 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
                 numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
                 // if two contiguous intervals have to be copied then the last sample of previous interval
                 // and first sample of current interval might sometimes be equal
-				if (ixmin == previous_ixmax) {
+				if (ixmin == previous_ixmax)
 					-- numberOfSamples;
-				}
 				previous_ixmax = ixmax;
 			} else { // matches label
-				if (iint == 1) { // Start time of output sound is end time of first interval
+				if (iint == 1) // Start time of output sound is end time of first interval
 					xmin = interval -> xmax;
-				}
             }
         }
         // Now copy the parts. The output sound starts at xmin
@@ -1321,9 +1316,8 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
             TextInterval interval = thy intervals.at [iint];
             if (! Melder_equ (interval -> text.get(), match)) {
                 Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
-				if (ixmin == previous_ixmax) {
+				if (ixmin == previous_ixmax)
 					ixmin ++;
-				}
 				integer ipos = 0; // to prevent compiler warning -Wmaybe-uninitialized
 				previous_ixmax = ixmax;
                 for (integer ichan = 1; ichan <= my ny; ichan ++) {
