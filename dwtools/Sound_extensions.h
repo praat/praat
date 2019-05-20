@@ -101,7 +101,7 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, double gamma, double initialPhase);
 
 void Sounds_multiply (Sound me, Sound thee);
-/* precondition: my nx = thy nx */
+/* precondition: my nx == thy nx */
 
 double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 /*

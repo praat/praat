@@ -71,10 +71,26 @@ NORMAL (U"where %t__0_ is the time after which sampling begins. "
 NORMAL (U"Quantization is handled in the next section (@@Sound files 1.2. Quantization|§1.2@).")
 MAN_END
 
-MAN_BEGIN (U"Sound files 1.2. Quantization", U"ppgb", 20000126)
+MAN_BEGIN (U"Sound files 1.2. Quantization", U"ppgb", 20190517)
 NORMAL (U"Apart from sampling (@@Sound files 1.1. Sampling|§1.1@), "
 	"digitization also involves quantization, which is the conversion of a sample value "
-	"into a number that fits into 8 or 16 bits.")
+	"into a number that fits into 8, 16, 24 or 32 bits.")
+ENTRY (U"Saving")
+NORMAL (U"When exporting a @Sound object as a 16-bit audio file on disk, "
+	"Praat multiplies the samples of the Sound by 32768, and then rounds them to integer numbers, "
+	"so that air pressure values between -1.0 and +1.0 Pa will end up being coded as integers between -32768 and +32767. "
+	"Sample values below -1.0 will be coded as -32768, and sample values above +1.0 will be coded as +32767. "
+	"To avoid such \"clipping\", keep the absolute amplitude in your @Sound object below 1.000, "
+	"perhaps by using @@Sound: Scale peak...@ before you save.")
+NORMAL (U"When exporting a @Sound object as a 24-bit audio file on disk, "
+	"Praat multiplies the samples of the Sound by 8388608 instead.")
+ENTRY (U"Opening")
+NORMAL (U"For a 16-bit sound file, the sample values on disk are integers between -32768 and +32767. "
+	"When turning the file into a @Sound object, Praat converts these integers into real values between -1.0 and +1.0, "
+	"by dividing the sample values by 32768.0 (i.e. 2^^(16 – 1)^). "
+	"Praat subsequently regards these real values as air pressures in pascal (see @@sound pressure calibration@). "
+	"For a 24-bit AIFF file, the sample values on disk are integers between -8388608 and +8388607, "
+	"and Praat divides these by 8388608.0 to get values between -1.0 and +1.0 Pa in the @Sound object.")
 MAN_END
 
 MAN_BEGIN (U"Sound files 1.3. Channels", U"ppgb", 20000126)
@@ -127,17 +143,26 @@ MAN_BEGIN (U"Sound files 2.1. WAV files", U"ppgb", 20040223)
 NORMAL (U"The audio file type most commonly used on Windows computers, also very common on the Internet.")
 MAN_END
 
-MAN_BEGIN (U"Sound files 2.2. AIFF files", U"ppgb", 20040223)
+MAN_BEGIN (U"Sound files 2.2. AIFF files", U"ppgb", 20190517)
 NORMAL (U"AIFF stands for: Audio Interchange File Format.")
 NORMAL (U"This standard format for sound files was defined by Apple. "
 	"It is also the format of the sound files on the Iris Indigo, "
 	"where each sample is quantized into 16 bits.")
+ENTRY (U"Reading")
+NORMAL (U"To open an AIFF file from disk, choose @@Read from file...@ from the Open menu. "
+	"Praat recognizes AIFF and AIFC files with plain 8-bit, 16-bit, 24-bit or 32-bit encoding, "
+	"but not compressed AIFC files. Praat recognizes any sampling frequency, and any number of channels.")
+NORMAL (U"The resulting Sound will appear in the List of Objects. "
+	"Its name will be identical to the file name, without extension.")
+ENTRY (U"Saving")
+NORMAL (U"To export a @Sound object to a 16-bit AIFF file, select the @Sound and choose @@Save as AIFF file...@ from the Save menu.")
 MAN_END
 
-MAN_BEGIN (U"Sound files 2.3. AIFC files", U"ppgb", 20040223)
+MAN_BEGIN (U"Sound files 2.3. AIFC files", U"ppgb", 20190517)
 NORMAL (U"AIFC is short for AIFF(C) or AIFF-C, i.e. the Audio Interchange File Format "
 	"(@@Sound files 2.2. AIFF files|§2.2@) with optional compression.")
-NORMAL (U"Praat reads and write uncompressed AIFC files, but does not support compressed AIFC files.")
+NORMAL (U"Praat reads uncompressed AIFC files with plain 8-bit, 16-bit, 24-bit or 32-bit encoding, "
+	"but does not support compressed AIFC files.")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.4. NeXT/Sun (.au) files", U"ppgb", 20110131)
@@ -224,29 +249,6 @@ LIST_ITEM (U"• @@Save as AIFC file...@ (16-bit big-endian)")
 LIST_ITEM (U"• @@Save as NeXT/Sun file...@ (16-bit big-endian)")
 LIST_ITEM (U"• @@Save as NIST file...@ (16-bit little-endian)")
 LIST_ITEM (U"• @@Save as FLAC file...@ (16-bit)")
-MAN_END
-
-MAN_BEGIN (U"AIFF and AIFC files", U"ppgb", 20110131)
-INTRO (U"Ways for storing a @Sound object on disk.")
-ENTRY (U"File format")
-ENTRY (U"Reading")
-NORMAL (U"@@Read from file...@ recognizes AIFF and AIFC files with 8-bit and 16-bit encoding, "
-	"but not compressed AIFC files. It recognizes any sampling frequency. The two channels of stereo files "
-	"are averaged. ##Read two Sounds from AIFF file...# reads both channels separately and names "
-	"them %left and %right.")
-NORMAL (U"The sample values are divided by 2^^(%numberOfBitsPerSample – 1)^, "
-	"so that the amplitude of the resulting Sound is between –1.0 and +1.0; "
-	"the maximum sound pressure level for a sine wave is therefore: "
-	"20 · ^^10^log (√2 / 2·10^^–5^) = 91 dB.")
-NORMAL (U"The resulting Sound will appear in the List of Objects; "
-	"its name will be equal to the file name, without extension.")
-ENTRY (U"Saving")
-NORMAL (U"With @@Save as AIFF file...@.")
-NORMAL (U"The samples of the Sound are multiplied by 32768 "
-	"and quantized between –32768 and 32767.")
-NORMAL (U"To avoid clipping, keep the absolute amplitude below 1.000. "
-	"If the maximum sound pressure level is 91 dB (top = 32767), "
-	"the quantization threshold is (top = 1/2) –5 dB.")
 MAN_END
 
 MAN_BEGIN (U"Save as WAV file...", U"ppgb", 20110129)

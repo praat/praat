@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2011,2015,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,7 @@ double bingetr64 (FILE *f);   void binputr64 (double x, FILE *f);
 	Denormalized: from 4.9e-324.
 	This is the native format of a `double` on Silicon Graphics Iris and PowerMac.
 */
+double bingetr64LE (FILE *f);   void binputr64LE (double x, FILE *f);   // least significant bit first
 
 double bingetr80 (FILE *f);   void binputr80 (double x, FILE *f);
 /*

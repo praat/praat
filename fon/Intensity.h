@@ -2,7 +2,7 @@
 #define _Intensity_h_
 /* Intensity.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 /*
 	class Intensity = Vector;
 
-	x = time (seconds)
-	nx = number of frames
-	dx = distance between frames (seconds)
-	x1 = centre of first frame (seconds)
-	z = intensity (dB relative to 2e-5 N/m2 or 1e-12 W/m2)
+	x == time (seconds)
+	nx == number of frames
+	dx == distance between frames (seconds)
+	x1 == centre of first frame (seconds)
+	z == intensity (dB relative to 2e-5 N/m2 or 1e-12 W/m2)
 */
 
 #include "Vector.h"

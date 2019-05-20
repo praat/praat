@@ -455,6 +455,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		if (fabs (thy xmax - my xmax) < 1e-12) thy xmax = my xmax;   // common situation
 		thy nx = Sampled_xToLowIndex (thee.get(), thy xmax);
 		if (thy nx > 3 * my nx) thy nx = 3 * my nx;
+		thy z.ncol = thy nx;   // maintain invariant
 
 		return thee;
 	} catch (MelderError) {

@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2008,2010-2018 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2019 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,13 +90,14 @@ void structLongSound :: v_destroy () noexcept {
 }
 
 void structLongSound :: v_info () {
-	static const conststring32 encodingStrings [1+20] = { U"none",
+	static const conststring32 encodingStrings [1+22] = { U"none",
 		U"linear 8 bit signed", U"linear 8 bit unsigned",
 		U"linear 16 bit big-endian", U"linear 16 bit little-endian",
 		U"linear 24 bit big-endian", U"linear 24 bit little-endian",
 		U"linear 32 bit big-endian", U"linear 32 bit little-endian",
 		U"mu-law", U"A-law", U"shorten", U"polyphone",
 		U"IEEE float 32 bit big-endian", U"IEEE float 32 bit little-endian",
+		U"IEEE float 64 bit big-endian", U"IEEE float 64 bit little-endian",
 		U"FLAC", U"FLAC", U"FLAC", U"MP3", U"MP3", U"MP3" };
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Duration: ", xmax - xmin, U" seconds");
