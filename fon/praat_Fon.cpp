@@ -3453,4 +3453,17 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_ExperimentMFC_init ();
 }
 
+#include "praat.h"
+
+DIRECT (HelloFromJane)
+    Melder_information (U"Hello, I am Jane.");
+END
+
+int main (int argc, char **argv) {
+    praat_init (U"Praat_Jane", argc, argv);
+    INCLUDE_LIBRARY (praat_uvafon_init)
+    praat_addMenuCommand (U"Objects", U"New", U"Hello from Jane...", nullptr, 0, DO_HelloFromJane);
+    praat_run ();
+    return 0;
+}
 /* End of file praat_Fon.cpp */
