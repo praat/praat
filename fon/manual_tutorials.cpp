@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190502)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190526)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.0.53# (26 May 2019)")
+LIST_ITEM (U"• Much faster playing of short parts of long sounds that need resampling.")
+LIST_ITEM (U"• Better handling of broken CSV files.")
+LIST_ITEM (U"• 64-bit floating-point WAV files.")
 NORMAL (U"##6.0.52# (2 May 2019)")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause turning a Discriminant into a Configuration to crash.")
 LIST_ITEM (U"• Removed a bug introduced in contour grey drawing in August 2017.")
