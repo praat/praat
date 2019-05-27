@@ -46,12 +46,12 @@ static void spec_enhance_SHS (VEC const & a) {
 		posmax [++ nmax] = a.size;
 
 	if (nmax == 1) {
-		a.part (1, std::max (posmax [1] - 3, 1L)) <<= 0.0;
+		a.part (1, std::max (posmax [1] - 3, integer (1))) <<= 0.0;
 		a.part (std::min (posmax [1] + 3, a.size), a.size) <<= 0.0;
 	} else {
 		for (integer i = 2; i <= nmax; i ++) {
 			integer from = std::min (posmax [i - 1] + 3, a.size);
-			integer to = std::max (posmax [i] - 3, 1L);
+			integer to = std::max (posmax [i] - 3, integer (1));
 			if (from <= to)
 				a.part (from, to) <<= 0.0;
 		}

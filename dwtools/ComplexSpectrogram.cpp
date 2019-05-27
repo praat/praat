@@ -58,14 +58,14 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 	try {
 		const double samplingFrequency = 1.0 / my dx, myDuration = my xmax - my xmin;
 		Melder_require (windowLength <= myDuration,
-			U"Your sound is too short:\nit should be at least as long as one window length.");
+			U"Your sound is too short: it should be at least as long as one window length.");
 		
 		integer nsamp_window = Melder_ifloor (windowLength / my dx);
 		const integer halfnsamp_window = nsamp_window / 2 - 1;
 		nsamp_window = halfnsamp_window * 2;
 		
 		Melder_require (nsamp_window > 1,
-			U"There should be atleast two samples in the window.");
+			U"There should be at least two samples in the window.");
 		
 		integer numberOfFrames;
 		double t1;
@@ -256,4 +256,5 @@ autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time)
 		Melder_throw (me, U": no Spectrum created.");
 	}
 }
+
 /* End of file ComplexSpectrogram.cpp */
