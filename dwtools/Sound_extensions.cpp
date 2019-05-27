@@ -1318,15 +1318,9 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
                 Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
 				if (ixmin == previous_ixmax)
 					ixmin ++;
-				integer ipos = 0; // to prevent compiler warning -Wmaybe-uninitialized
-				previous_ixmax = ixmax;
-                for (integer ichan = 1; ichan <= my ny; ichan ++) {
-                    ipos = numberOfSamples + 1;
-                    for (integer i = ixmin; i <= ixmax; i ++, ipos ++) {
-                        his z [ichan] [ipos] = my z [ichan] [i];
-                    }
-                }
-                numberOfSamples = -- ipos;
+				integer numberOfSamplesToCopy = ixmax - ixmin + 1;
+				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy) <<= my z.part (1, my ny, ixmin, ixmax);
+                numberOfSamples += numberOfSamplesToCopy;
             }
         }
         Melder_assert (numberOfSamples == his nx);
@@ -1449,9 +1443,12 @@ autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	try {
 		double samplingFrequency_old = 1 / my dx;
 
-		Melder_require (my ny == 1, U"Change Gender works only on mono sounds.");
-		Melder_require (my xmin == his xmin && my xmax == his xmax, U"The Pitch and the Sound object should have the same domain.");
-		Melder_require (new_pitch >= 0, U"The new pitch median should not be negative."); 
+		Melder_require (my ny == 1,
+			U"Change Gender works only on mono sounds.");
+		Melder_require (my xmin == his xmin && my xmax == his xmax,
+			U"The Pitch and the Sound object should have the same domain.");
+		Melder_require (new_pitch >= 0,
+			U"The new pitch median should not be negative."); 
 
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
@@ -1468,9 +1465,8 @@ autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit::HERTZ);
 		if (isdefined (median) && median != 0.0) {
 			// Incorporate pitch shift from overriding the sampling frequency
-			if (new_pitch == 0.0) {
+			if (new_pitch == 0.0)
 				new_pitch = median / formantRatio;
-			}
 			double factor = new_pitch / median;
 			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax, factor);
 			PitchTier_modifyRange_old (pitchTier.get(), sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
@@ -1480,14 +1476,12 @@ autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
 		RealTier_addPoint (duration.get(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
 
-		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(),
-			duration.get(), 1.25 / Pitch_getMinimum (pitch.get(), 0.0, 0.0, kPitch_unit::HERTZ, false));
+		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(), duration.get(), 1.25 / Pitch_getMinimum (pitch.get(), 0.0, 0.0, kPitch_unit::HERTZ, false));
 
 		// Resample to the original sampling frequency
 
-		if (formantRatio != 1.0) {
+		if (formantRatio != 1.0)
 			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Pitch & Sound.");
@@ -1578,12 +1572,82 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	}
 }
 
+void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {
+	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
+	
+	Melder_require (channel >= 0 && channel <= my ny,
+		U"Invalid channel number: ", channel, U".");
+	integer channelFrom = channel == 0 ? 1 : channel;
+	integer channelTo = channel == 0 ? my ny : channel;
+	
+	integer startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
+	integer endTime = startTime + fadeTime;
+	if (startTime > endTime)
+		std::swap (startTime, endTime);
+	
+	Melder_require (startTime < my xmax,
+		U"The start time for fade-in should earlier than the end time of the sound.");
+	
+	autoVEC fadeWindow = newVECraw (numberOfSamplesFade);
+	
+	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
+		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*(1.0 + (isamp - 1.0)/ (numberOfSamplesFade - 1))));
+	
+	integer startSample = Sampled_xToNearestIndex (me, startTime);
+	integer endSample = startSample + numberOfSamplesFade - 1;
+	endSample = std::min (endSample, my nx);
+	
+	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
+		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
+		if (fromStart && startSample > 1)
+			my z [channel].part (1, startSample - 1) <<= 0.0;
+	}
+}
+
+void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
+	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
+	
+	Melder_require (channel >= 0 && channel <= my ny,
+		U"Invalid channel number: ", channel, U".");
+	integer channelFrom = channel == 0 ? 1 : channel;
+	integer channelTo = channel == 0 ? my ny : channel;
+	
+	integer startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
+	integer endTime = startTime + fadeTime;
+	if (startTime > endTime)
+		std::swap (startTime, endTime);
+	
+	Melder_require (endTime > my xmin,
+		U"The end time for fade-out should not be earlier than the start time of the sound."); 
+	
+	autoVEC fadeWindow = newVECraw (numberOfSamplesFade);
+	
+	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
+		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*((isamp - 1.0)/ (numberOfSamplesFade - 1))));
+	
+	integer startSample = Sampled_xToNearestIndex (me, startTime);
+	integer endSample = startSample + numberOfSamplesFade - 1;
+	endSample = std::min (endSample, my nx);
+	Melder_require (endSample > 0, 
+		U"The fade-out interval should not be located before the start time of the sound.");
+	
+	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
+		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
+		if (toEnd && endSample < my nx)
+			my z [channel].part (endSample + 1, my nx) <<= 0.0;
+	}
+}
+
+
+
+
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal) {
 	integer numberOfSamples = Melder_ifloor (fabs (fadeTime) / my dx);
 	double t1 = t, t2 = t1 + fadeTime;
 	conststring32 fade_inout = inout > 0 ? U"out" : U"in";
 	
-	Melder_require (channel >= 0 && channel <= my ny, U"Invalid channel number: ", channel, U".");
+	Melder_require (channel >= 0 && channel <= my ny,
+		U"Invalid channel number: ", channel, U".");
 	
 	if (t > my xmax) {
 		t = my xmax;
@@ -1610,15 +1674,15 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 	}
 	integer i0 = 0, iystart, iyend;
 	if (channel == 0) { // all
-		iystart = 1; iyend = my ny;
+		iystart = 1;
+		iyend = my ny;
 	} else {
 		iystart = iyend = channel;
 	}
 
 	integer istart = Sampled_xToNearestIndex (me, t1);
-	if (istart < 1) {
+	if (istart < 1)
 		istart = 1;
-	}
 	if (istart >= my nx) {
 		Melder_warning (U"The part to fade ", fade_inout, U" lies after the end time of the sound. The fade-",  fade_inout, U" will not happen.");
 		return;
@@ -1628,36 +1692,31 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 		Melder_warning (U"The part to fade ", fade_inout, U" lies before the start time of the sound. Fade-", fade_inout, U" will be incomplete.");
 		return;
 	}
-	if (iend > my nx) {
+	if (iend > my nx)
 		iend = my nx;
-	}
 	if (iend - istart + 1 >= numberOfSamples) {
 		numberOfSamples = iend - istart + 1;
 	} else {
 		// If the start of the fade is before xmin, arrange starting phase.
 		// The end of the fade after xmax presents no problems (i0 = 0).
-		if (fadeTime < 0) {
+		if (fadeTime < 0)
 			i0 = numberOfSamples - (iend - istart + 1);
-		}
 		Melder_warning (U"The fade time is larger than the part of the sound to fade ", fade_inout, U". Fade-", fade_inout, U" will be incomplete.");
 	}
 	for (integer ichannel = iystart; ichannel <= iyend; ichannel ++) {
 		for (integer i = istart; i <= iend; i ++) {
 			double cosp = cos (NUMpi * (i0 + i - istart) / (numberOfSamples - 1));
-			if (inout <= 0) {
+			if (inout <= 0)
 				cosp = -cosp;    // fade-in
-			}
 			my z [ichannel] [i] *= 0.5 * (1.0 + cosp);
 		}
 		if (fadeGlobal) {
 			if (inout <= 0) {
-				for (integer i = 1; i < istart; i ++) {
-					my z [ichannel] [i] = 0.0;
-				}
+				if (istart > 1)
+					my z [ichannel].part (1, istart - 1) <<= 0.0;
 			} else {
-				for (integer i = iend; i < my nx; i ++) {
-					my z [ichannel] [i] = 0.0;
-				}
+				if (iend < my nx)
+					my z [ichannel].part (iend, my nx) <<= 0.0;
 			}
 		}
 	}
