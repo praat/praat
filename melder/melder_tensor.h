@@ -221,11 +221,20 @@ public:
 	T& operator[] (integer i) const {
 		return our at [i];
 	}
+	/*
+		part (first, last) should crash under the exact
+		same conditions as a rising for-loop over the elements
+		from first to last (or a falling for-loop over
+		the elements from last to first) should crash.
+	*/
 	vector<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
+		/*
+			for-loops don't crash if the number of elements is zero.
+		*/
 		if (newSize <= 0) return vector<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return vector<T> (& our at [first - 1], newSize);
 	}
 	T *begin () const { return & our at [1]; }
@@ -247,10 +256,10 @@ public:
 		return our firstCell [(i - 1) * our stride];
 	}
 	vectorview<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return vectorview<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return vectorview<T> (& our operator[] (first), newSize, our stride);
 	}
 	T *begin () const { return & our operator[] (1); }
@@ -274,10 +283,10 @@ public:
 		return our at [i];
 	}
 	constvector<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return constvector<T> (nullptr, 0);
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return constvector<T> (& our at [first - 1], newSize);
 	}
 	const T *begin () const { return & our at [1]; }
@@ -302,10 +311,10 @@ public:
 		return our firstCell [(i - 1) * our stride];
 	}
 	constvectorview<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return constvectorview<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return constvectorview<T> (& our operator[] (first), newSize, our stride);
 	}
 	const T *begin () const { return & our operator[] (1); }
@@ -504,26 +513,26 @@ public:
 		return vectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
 	matrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
 		if (newNrow <= 0) return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
 		return matrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
 	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (
 			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
 			newNrow, newNcol, our ncol, 1
@@ -561,20 +570,20 @@ public:
 		return vectorview<T> (our firstCell, std::min (our nrow, our ncol), our rowStride + our colStride);
 	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
 				our nrow, newNcol, our rowStride, our colStride);
 	}
 	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (
 			our firstCell + (firstRow - 1) * our rowStride + (firstColumn - 1) * our colStride,
 			newNrow, newNcol, our rowStride, our colStride
@@ -611,26 +620,26 @@ public:
 		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
 	constmatrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
 		if (newNrow <= 0) return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
 		return constmatrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
 	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (
 			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
 			newNrow, newNcol, our ncol, 1
@@ -672,20 +681,20 @@ public:
 		return constvectorview<T> (our firstCell, std::min (our nrow, our ncol), our rowStride + our colStride);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
 				our nrow, newNcol, our rowStride, our colStride);
 	}
 	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (
 			our firstCell
 			+ (firstRow - 1) * our rowStride
@@ -927,17 +936,17 @@ public:
 		integer firstDim2, integer lastDim2,
 		integer firstDim3, integer lastDim3
 	) const {
+		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
+		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
+		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
+		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
+			return tensor3<T> ();
 		Melder_assert (firstDim1 >= 1 && firstDim1 <= our ndim1);
 		Melder_assert (lastDim1 >= 1 && lastDim1 <= our ndim1);
 		Melder_assert (firstDim2 >= 1 && firstDim2 <= our ndim2);
 		Melder_assert (lastDim2 >= 1 && lastDim2 <= our ndim2);
 		Melder_assert (firstDim3 >= 1 && firstDim3 <= our ndim3);
 		Melder_assert (lastDim3 >= 1 && lastDim3 <= our ndim3);
-		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
-		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
-		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
-		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
-			return tensor3<T> ();
 		return tensor3<T> (
 			our cells
 			+ (firstDim1 - 1) * our stride1
@@ -1038,17 +1047,17 @@ public:
 		integer firstDim2, integer lastDim2,
 		integer firstDim3, integer lastDim3
 	) const {
+		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
+		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
+		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
+		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
+			return consttensor3<T> ();
 		Melder_assert (firstDim1 >= 1 && firstDim1 <= our ndim1);
 		Melder_assert (lastDim1 >= 1 && lastDim1 <= our ndim1);
 		Melder_assert (firstDim2 >= 1 && firstDim2 <= our ndim2);
 		Melder_assert (lastDim2 >= 1 && lastDim2 <= our ndim2);
 		Melder_assert (firstDim3 >= 1 && firstDim3 <= our ndim3);
 		Melder_assert (lastDim3 >= 1 && lastDim3 <= our ndim3);
-		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
-		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
-		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
-		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
-			return consttensor3<T> ();
 		return consttensor3<T> (
 			our cells
 			+ (firstDim1 - 1) * our stride1
