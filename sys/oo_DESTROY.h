@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2007,2009-2018 Paul Boersma
+ * Copyright (C) 1994-2007,2009-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,14 +78,14 @@
 		our x [_i]. destroy (); \
 	}
 
-#define oo_STRUCT_VECTOR_FROM(Type, x, min, max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
+		integer _size = (n); \
 		if (our x) { \
-			for (integer _i = _min; _i <= _max; _i ++) { \
+			for (integer _i = 1; _i <= _size; _i ++) { \
 				our x [_i]. destroy (); \
 			} \
-			NUMvector_free <struct##Type> (our x, _min); \
+			NUMvector_free <struct##Type> (our x, 1); \
 		} \
 	}
 
