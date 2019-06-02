@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2005,2007-2009,2011-2018 Paul Boersma
+ * Copyright (C) 1994-2005,2007-2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,11 +111,11 @@
 	} \
 	texexdent (_file_);
 
-#define oo_STRUCT_VECTOR_FROM(Type, x, min, max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		texputintro (_file_, U"" #x U" []: ", _max >= _min ? nullptr : U"(empty)"); \
-		for (integer _i = _min; _i <= _max; _i ++) { \
+		integer _size = (n); \
+		texputintro (_file_, U"" #x U" []: ", _size >= 1 ? nullptr : U"(empty)"); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
 			texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
 			our x [_i]. writeText (_file_); \
 			texexdent (_file_); \
