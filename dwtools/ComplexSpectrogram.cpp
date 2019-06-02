@@ -121,7 +121,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		const double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase [my ny] [1];
 		const bool originalNumberOfSamplesProbablyOdd = ( lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi ||
 				my ymax - lastFrequency > 0.25 * my dx );
-		Melder_require (my y1 == 0.0, 
+		Melder_require (my y1 == 0.0,
 			U"A Fourier-transformable ComplexSpectrogram should have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		
 		const integer nsamp_window = 2 * my ny - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
