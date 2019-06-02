@@ -1335,10 +1335,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				const char32 *from = in;   // start with first character after "@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
-				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
-				while (*from && (isalnum ((int) *from) || *from == U'_') && to < max)   // until end-of-word...
+				to = links [numberOfLinks]. name;
+				max = to + MAX_LINK_LENGTH;
+				while (*from && (Melder_isWordCharacter (*from) || *from == U'_') && to < max)   // until end-of-word...
 					*to ++ = *from++;   // ... copy one character
-				*to = '\0';   // close saved link info
+				*to = U'\0';   // close saved link info
 				/*
 				 * Second step: collect the link text that is to be drawn.
 				 * Its characters will be collected during the normal cycles of the loop.
@@ -1402,7 +1403,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			kar = U' ';
 		}
 		if (wordItalic | wordBold | wordCode | wordLink) {
-			if (! isalnum ((int) kar) && kar != U'_')   // FIXME: this test could be more precise.
+			if (! Melder_isWordCharacter (kar) && kar != U'_')
 				wordItalic = wordBold = wordCode = wordLink = false;
 		}
 		out -> style =
