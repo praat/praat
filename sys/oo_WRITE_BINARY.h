@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2009,2011-2018 Paul Boersma
+ * Copyright (C) 1994-2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,10 +95,10 @@
 		our x [_i]. writeBinary (_filePointer_); \
 	}
 
-#define oo_STRUCT_VECTOR_FROM(Type, x, min, max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		for (integer _i = _min; _i <= _max; _i ++) { \
+		integer _size = (n); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
 			our x [_i]. writeBinary (_filePointer_); \
 		} \
 	}

@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2018 Paul Boersma
+ * Copyright (C) 1996-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@ Thing_implement (ManPages, Daata, 0);
 #define LONGEST_FILE_NAME  55
 
 static bool isAllowedFileNameCharacter (char32 c) {
-	return isalnum ((int) c) || c == U'_' || c == U'-' || c == U'+';
+	return Melder_isWordCharacter (c) || c == U'_' || c == U'-' || c == U'+';
 }
 static bool isSingleWordCharacter (char32 c) {
-	return isalnum ((int) c) || c == U'_';
+	return Melder_isWordCharacter (c) || c == U'_';
 }
 
 static integer lookUp_unsorted (ManPages me, conststring32 title);
@@ -257,7 +257,8 @@ static int pageCompare (const void *first, const void *second) {
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
 		if (plower == U'\0') return str32cmp (my title.get(), thy title.get());
-		p ++, q ++;
+		p ++;
+		q ++;
 	}
 	return 0;   // should not occur
 }
@@ -469,7 +470,6 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
 	for (ManPage_Paragraph paragraph = paragraphs; (int) paragraph -> type != 0; paragraph ++) {
 		const char32 *p = & paragraph -> text [0];
-		bool inTable, inPromptedTable;
 		bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
 		bool isTag = paragraph -> type == kManPage_type::TAG ||
@@ -591,12 +591,11 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			}
 			MelderString_append (buffer, stylesInfo [(int) paragraph -> type]. htmlIn, U"\n");
 		}
-		inTable = !! str32chr (p, U'\t');
+		bool inTable = !! str32chr (p, U'\t'), inPromptedTable = false;
 		if (inTable) {
 			if (*p == U'\t') {
 				MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>");
 				p ++;
-				inPromptedTable = false;
 			} else {
 				MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=left>");
 				inPromptedTable = true;
