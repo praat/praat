@@ -272,7 +272,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = height_NDC-bottom;
 		theCurrentPraatPicture -> y2NDC = height_NDC-top;
 	} else {
-		if (top > bottom)
+		if (top < bottom)
 			std::swap (top, bottom);
 		theCurrentPraatPicture -> y1NDC = bottom;
 		theCurrentPraatPicture -> y2NDC = top;
