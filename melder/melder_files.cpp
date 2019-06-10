@@ -537,6 +537,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	/*
 	 * On the Unix-like systems (including MacOS), the path has to be converted to 8-bit characters in UTF-8 encoding.
 	 * On MacOS, the characters also have to be decomposed.
+	 * On Windows, the characters have to be precomposed.
 	 */
 	char utf8path [kMelder_MAXPATH+1];
 	Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
@@ -587,7 +588,10 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	#endif
 	} else {
 		#if defined (_WIN32) && ! defined (__CYGWIN__)
-			f = _wfopen (Melder_peek32toW (file -> path), Melder_peek32toW (Melder_peek8to32 (type)));
+			wchar_t buffer [1 + kMelder_MAXPATH];
+			//NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (file -> path), 1 + kMelder_MAXPATH, buffer);
+			FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (file -> path), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
+			f = _wfopen (buffer, Melder_peek32toW (Melder_peek8to32 (type)));
 		#else
 			f = fopen ((char *) utf8path, type);
 		#endif
