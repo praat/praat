@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013-2018 Paul Boersma
+ * Copyright (C) 2013-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			return me;
 		#elif defined (macintosh)
 			autoPhoto me;
-			char utf8 [500];
+			char utf8 [kMelder_MAXPATH+1];
 			Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8);
 			CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
 			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
