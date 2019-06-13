@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190606)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190613)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.0.55# (13 June 2019)")
+LIST_ITEM (U"• Unicode normalization in file names.")
 NORMAL (U"##6.0.54# (6 June 2019)")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause incorrect axes in Demo window.")
 NORMAL (U"##6.0.53# (26 May 2019)")

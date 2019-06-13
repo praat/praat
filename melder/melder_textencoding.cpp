@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2017 Paul Boersma
+ * Copyright (C) 2007-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ void Melder_textEncoding_prefs () {
 }
 
 bool Melder_isValidAscii (conststring32 text) {
-	for (; *text != '\0'; text ++) {
+	for (; *text != U'\0'; text ++) {
 		if (*text > 127)
 			return false;
 	}
@@ -53,14 +53,14 @@ bool Melder_isValidAscii (conststring32 text) {
 bool Melder_isEncodable (conststring32 text, int outputEncoding) {
 	switch (outputEncoding) {
 		case kMelder_textOutputEncoding_ASCII: {
-			for (; *text != '\0'; text ++) {
+			for (; *text != U'\0'; text ++) {
 				if (*text > 127)
 					return false;
 			}
 			return true;
 		} break;
 		case kMelder_textOutputEncoding_ISO_LATIN1: {
-			for (; *text != '\0'; text ++) {
+			for (; *text != U'\0'; text ++) {
 				if (*text > 255)
 					return false;
 			}
@@ -383,32 +383,32 @@ void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMeld
 		while (*p != '\0') {
 			char32 kar1 = * p ++;   // convert up without sign extension
 			if (kar1 <= 0x00'007F) {
-				* q ++ = kar1;
+				*q ++ = kar1;
 			} else if (kar1 <= 0x00'00DF) {
 				char32 kar2 = * p ++;   // convert up without sign extension
-				* q ++ = ((kar1 & 0x00'001F) << 6) | (kar2 & 0x00'003F);
+				*q ++ = ((kar1 & 0x00'001F) << 6) | (kar2 & 0x00'003F);
 			} else if (kar1 <= 0x00'00EF) {
 				char32 kar2 = * p ++, kar3 = * p ++;   // convert up without sign extension
-				* q ++ = ((kar1 & 0x00'000F) << 12) | ((kar2 & 0x00'003F) << 6) | (kar3 & 0x00'003F);
+				*q ++ = ((kar1 & 0x00'000F) << 12) | ((kar2 & 0x00'003F) << 6) | (kar3 & 0x00'003F);
 			} else if (kar1 <= 0x00'00F4) {
-				char32 kar2 = * p ++, kar3 = * p ++, kar4 = * p ++;   // convert up without sign extension
+				char32 kar2 = *p ++, kar3 = *p ++, kar4 = *p ++;   // convert up without sign extension
 				char32 kar = ((kar1 & 0x00'0007) << 18) | ((kar2 & 0x00'003F) << 12) | ((kar3 & 0x00'003F) << 6) | (kar4 & 0x00'003F);
-				* q ++ = kar;
+				*q ++ = kar;
 			}
 		}
 	} else if (inputEncoding == kMelder_textInputEncoding::ISO_LATIN1) {
 		while (*p != '\0')
-			* q ++ = * p ++;
+			*q ++ = *p ++;
 	} else if (inputEncoding == kMelder_textInputEncoding::WINDOWS_LATIN1) {
 		while (*p != '\0')
-			* q ++ = Melder_decodeWindowsLatin1 [* p ++];
+			*q ++ = Melder_decodeWindowsLatin1 [*p ++];
 	} else if (inputEncoding == kMelder_textInputEncoding::MACROMAN) {
 		while (*p != '\0')
-			* q ++ = Melder_decodeMacRoman [* p ++];
+			*q ++ = Melder_decodeMacRoman [*p ++];
 	} else if (inputEncoding != kMelder_textInputEncoding::UTF8) {
 		Melder_fatal (U"Unknown text input encoding ", (int) inputEncoding, U".");
 	}
-	* q = U'\0';   // closing null character
+	*q = U'\0';   // closing null character
 	(void) Melder_killReturns_inplaceCHAR <char32> (string32);
 }
 
@@ -431,29 +431,29 @@ autostring32 Melder_8to32 (const char *string) {
 conststring32 Melder_peek16to32 (conststring16 text) {
 	if (! text) return nullptr;
 	static MelderString buffers [19] { };
-	static int ibuffer = 0;
-	if (++ ibuffer == 19)
-		ibuffer = 0;
-	MelderString_empty (& buffers [ibuffer]);
+	static int bufferNumber = 0;
+	if (++ bufferNumber == 19)
+		bufferNumber = 0;
+	MelderString_empty (& buffers [bufferNumber]);
 	for (;;) {
-		char16 kar1 = * text ++;
-		if (kar1 == u'\0') return buffers [ibuffer]. string;
+		char16 kar1 = *text ++;
+		if (kar1 == u'\0') return buffers [bufferNumber]. string;
 		if (kar1 < 0xD800) {
-			MelderString_appendCharacter (& buffers [ibuffer], (char32) kar1);   // convert up without sign extension
+			MelderString_appendCharacter (& buffers [bufferNumber], (char32) kar1);   // convert up without sign extension
 		} else if (kar1 < 0xDC00) {
-			char16 kar2 = * text ++;
+			char16 kar2 = *text ++;
 			if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-				MelderString_appendCharacter (& buffers [ibuffer],
+				MelderString_appendCharacter (& buffers [bufferNumber],
 					(char32) (0x01'0000 +
 						(char32) (((char32) kar1 & 0x00'03FF) << 10) +
 						(char32)  ((char32) kar2 & 0x00'03FF)));
 			} else {
-				MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
+				MelderString_appendCharacter (& buffers [bufferNumber], UNICODE_REPLACEMENT_CHARACTER);
 			}
 		} else if (kar1 < 0xE000) {
-			MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
+			MelderString_appendCharacter (& buffers [bufferNumber], UNICODE_REPLACEMENT_CHARACTER);
 		} else {
-			MelderString_appendCharacter (& buffers [ibuffer], (char32) kar1);   // convert up without sign extension
+			MelderString_appendCharacter (& buffers [bufferNumber], (char32) kar1);   // convert up without sign extension
 		}
 	}
 }
@@ -462,30 +462,35 @@ autostring32 Melder_16to32 (conststring16 text) {
 	return Melder_dup (Melder_peek16to32 (text));
 }
 
-void Melder_32to8_inplace (conststring32 string, mutablestring8 utf8) {
-	int64 n = str32len (string), i, j;
-	for (i = 0, j = 0; i < n; i ++) {
-		char32 kar = string [i];
-		if (kar <= 0x00'007F) {   // 7 bits
-			#ifdef _WIN32
-				if (kar == U'\n') utf8 [j ++] = 13;
-			#endif
-			utf8 [j ++] = (char) (char8) kar;   // guarded truncation
-		} else if (kar <= 0x00'07FF) {   // 11 bits
-			utf8 [j ++] = (char) (char8) (0x00'00C0 | (kar >> 6));   // the upper 5 bits yield a number between 0xC4 and 0xDF
-			utf8 [j ++] = (char) (char8) (0x00'0080 | (kar & 0x00'003F));   // the lower 6 bits yield a number between 0x80 and 0xBF
-		} else if (kar <= 0x00'FFFF) {   // 16 bits
-			utf8 [j ++] = (char) (char8) (0x00'00E0 | (kar >> 12));   // the upper 4 bits yield a number between 0xE0 and 0xEF
-			utf8 [j ++] = (char) (char8) (0x00'0080 | ((kar >> 6) & 0x00'003F));
-			utf8 [j ++] = (char) (char8) (0x00'0080 | (kar & 0x00'003F));
-		} else {   // 21 bits
-			utf8 [j ++] = (char) (char8) (0x00'00F0 | (kar >> 18));   // the upper 3 bits yield a number between 0xF0 and 0xF4 (0x10FFFF >> 18 == 4)
-			utf8 [j ++] = (char) (char8) (0x00'0080 | ((kar >> 12) & 0x00'003F));   // the next 6 bits
-			utf8 [j ++] = (char) (char8) (0x00'0080 | ((kar >> 6) & 0x00'003F));   // the third 6 bits
-			utf8 [j ++] = (char) (char8) (0x00'0080 | (kar & 0x00'003F));   // the lower 6 bits
+void Melder_32to8_inplace (conststring32 string, mutablestring8 utf8) {;
+	Melder_assert (utf8);   // and unassertable: utf8 should be a long enough buffer
+	char8 *to = (char8 *) & utf8 [0];
+	if (string) {
+		const char32 *p = & string [0];
+		while (*p != U'\0') {
+			const char32 kar = *p ++;
+			if (kar <= 0x00'007F) {   // 7 bits
+				#ifdef _WIN32
+					if (kar == U'\n')
+						*to ++ = 13;
+				#endif
+				*to ++ = (char8) kar;   // guarded truncation
+			} else if (kar <= 0x00'07FF) {   // 11 bits
+				*to ++ = (char8) (0x00'00C0 | (kar >> 6));   // the upper 5 bits yield a number between 0xC4 and 0xDF
+				*to ++ = (char8) (0x00'0080 | (kar & 0x00'003F));   // the lower 6 bits yield a number between 0x80 and 0xBF
+			} else if (kar <= 0x00'FFFF) {   // 16 bits
+				*to ++ = (char8) (0x00'00E0 | (kar >> 12));   // the upper 4 bits yield a number between 0xE0 and 0xEF
+				*to ++ = (char8) (0x00'0080 | ((kar >> 6) & 0x00'003F));
+				*to ++ = (char8) (0x00'0080 | (kar & 0x00'003F));
+			} else {   // unguarded truncation to 21 bits
+				*to ++ = (char8) (0x00'00F0 | (kar >> 18));   // the upper 3 bits yield a number between 0xF0 and 0xF4 (0x10FFFF >> 18 == 4)
+				*to ++ = (char8) (0x00'0080 | ((kar >> 12) & 0x00'003F));   // the next 6 bits
+				*to ++ = (char8) (0x00'0080 | ((kar >> 6) & 0x00'003F));   // the third 6 bits
+				*to ++ = (char8) (0x00'0080 | (kar & 0x00'003F));   // the lower 6 bits
+			}
 		}
 	}
-	utf8 [j] = '\0';
+	*to = '\0';
 }
 
 autostring8 Melder_32to8 (conststring32 string) {
@@ -499,47 +504,49 @@ autostring8 Melder_32to8 (conststring32 string) {
 conststring8 Melder_peek32to8 (conststring32 text) {
 	if (! text)
 		return nullptr;
-	static char *buffer [19] { nullptr };
-	static int64 bufferSize [19] { 0 };
-	static int ibuffer = 0;
-	if (++ ibuffer == 19)
-		ibuffer = 0;
-	int64 sizeNeeded = str32len (text) * 4 + 1;
-	if ((bufferSize [ibuffer] - sizeNeeded) * (int64) sizeof (char) >= 10'000) {
-		Melder_free (buffer [ibuffer]);
-		bufferSize [ibuffer] = 0;
+	static mutablestring8 buffers [19] { nullptr };
+	static int64 bufferSizes [19] { 0 };
+	static int bufferNumber = 0;
+	if (++ bufferNumber == 19)
+		bufferNumber = 0;
+	constexpr int64 maximumNumberOfUTF8bytesPerUTF32point = 4;   // becausse we use only the lower 21 bits
+	const int64 numberOfUTF32points = str32len (text);
+	const int64 maximumNumberOfBytesNeeded = numberOfUTF32points * maximumNumberOfUTF8bytesPerUTF32point + 1;
+	if ((bufferSizes [bufferNumber] - maximumNumberOfBytesNeeded) * (int64) sizeof (char) >= 10'000) {
+		Melder_free (buffers [bufferNumber]);
+		bufferSizes [bufferNumber] = 0;
 	}
-	if (sizeNeeded > bufferSize [ibuffer]) {
-		sizeNeeded = (int64) floor (sizeNeeded * 1.61803) + 100;
-		buffer [ibuffer] = (char *) Melder_realloc_f (buffer [ibuffer], (int64) sizeNeeded * (int64) sizeof (char));
-		bufferSize [ibuffer] = sizeNeeded;
+	if (maximumNumberOfBytesNeeded > bufferSizes [bufferNumber]) {
+		const int64 newBufferSize = (int64) floor (maximumNumberOfBytesNeeded * 1.61803) + 100;
+		buffers [bufferNumber] = (char *) Melder_realloc_f (buffers [bufferNumber], newBufferSize * (int64) sizeof (char));
+		bufferSizes [bufferNumber] = newBufferSize;
 	}
-	Melder_32to8_inplace (text, buffer [ibuffer]);
-	return buffer [ibuffer];
+	Melder_32to8_inplace (text, buffers [bufferNumber]);
+	return buffers [bufferNumber];
 }
 
 conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines) {
 	if (! text)
 		return nullptr;
 	static MelderString16 buffers [19] { };
-	static int ibuffer = 0;
-	if (++ ibuffer == 19)
-		ibuffer = 0;
-	MelderString16_empty (& buffers [ibuffer]);
+	static int bufferNumber = 0;
+	if (++ bufferNumber == 19)
+		bufferNumber = 0;
+	MelderString16_empty (& buffers [bufferNumber]);
 	int64 n = str32len (text);
 	if (nativizeNewlines) {
 		for (int64 i = 0; i <= n; i ++) {
 			#ifdef _WIN32
 				if (text [i] == U'\n')
-					MelderString16_appendCharacter (& buffers [ibuffer], (char32) 13);
+					MelderString16_appendCharacter (& buffers [bufferNumber], (char32) 13);
 			#endif
-			MelderString16_appendCharacter (& buffers [ibuffer], text [i]);
+			MelderString16_appendCharacter (& buffers [bufferNumber], text [i]);
 		}
 	} else {
 		for (int64 i = 0; i <= n; i ++)
-			MelderString16_appendCharacter (& buffers [ibuffer], text [i]);
+			MelderString16_appendCharacter (& buffers [bufferNumber], text [i]);
 	}
-	return buffers [ibuffer]. string;
+	return buffers [bufferNumber]. string;
 }
 conststring16 Melder_peek32to16 (conststring32 text) {
 	return Melder_peek32to16 (text, false);
