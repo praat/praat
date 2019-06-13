@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -365,7 +365,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_line (g, tmin, 0.0, tmax, 0.0);
 		Graphics_setLineType (g, Graphics_DRAWN);      
-		Graphics_function (g, sound -> z [1], first, last,
+		Graphics_function (g, & sound -> z [1] [0], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
@@ -451,8 +451,6 @@ autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, inte
 		Melder_throw (me, U" & ", sound, U": intervals not extracted.");
 	}
 }
-
-Thing_implement (SoundList, Ordered, 0);
 
 autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, integer tierNumber, bool preserveTimes) {
 	try {
@@ -624,9 +622,12 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 {
 	try {
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
-		double oldFontSize = Graphics_inqFontSize (g);
+		const double oldFontSize = Graphics_inqFontSize (g);
 		Pitch_draw (pitch, g, tmin, tmax, fmin, fmax, garnish, speckle, unit);
-		if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
+		if (tmax <= tmin) {
+			tmin = grid -> xmin;
+			tmax = grid -> xmax;
+		}
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
 		if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 			fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);

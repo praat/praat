@@ -19,7 +19,7 @@
 #include "NUM2.h"
 #include "TimeSoundEditor.h"
 #include "EditorM.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #include "enums_getText.h"
 #include "TimeSoundEditor_enums.h"
@@ -150,7 +150,7 @@ static void menu_cb_ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDIT
 static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
 		WORD (name, U"Name", U"slice")
-		OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_windowShape, my default_extract_windowShape ())
+		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape ())
 		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth ())
 		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes ())
 	EDITOR_OK
@@ -375,7 +375,8 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
-		OPTIONMENU_ENUM (scalingStrategy, U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my default_sound_scalingStrategy ())
+		OPTIONMENU_ENUM (kTimeSoundEditor_scalingStrategy, scalingStrategy,
+				U"Scaling strategy", my default_sound_scalingStrategy ())
 		LABEL (U"For \"fixed height\":")
 		POSITIVE (height, U"Height", my default_sound_scaling_height ())
 		LABEL (U"For \"fixed range\":")
@@ -401,14 +402,12 @@ static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		integer numberOfChannels = my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny;
-		integer numberOfElements;
-		autoNUMvector<integer> channelNumber (NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, & numberOfElements, nullptr, U"channel", false), 1);
-		bool *muteChannels = my d_sound.muteChannels;
+		autoINTVEC channelNumber = NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, U"channel", false);
 		for (integer i = 1; i <= numberOfChannels; i ++)
-			muteChannels [i] = false;
-		for (integer i = 1; i <= numberOfElements; i++) {
+			my d_sound.muteChannels [i] = false;
+		for (integer i = 1; i <= channelNumber.size; i++) {
 			if (channelNumber [i] > 0 && channelNumber [i] <= numberOfChannels)
-				muteChannels [channelNumber [i]] = true;
+				my d_sound.muteChannels [channelNumber [i]] = true;
 		}
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -629,12 +628,12 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			if (cursorVisible && isdefined (cursorFunctionValue))
 				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
 			Graphics_setColour (my graphics.get(), Graphics_BLACK);
-			Graphics_function (my graphics.get(), sound -> z [ichan], first, last,
+			Graphics_function (my graphics.get(), & sound -> z [ichan] [0], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		} else {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics.get(),
-				longSound -> buffer - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels - 1, first, last,
+				longSound -> buffer - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels, first, last,
 				Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
 		}
 		Graphics_resetViewport (my graphics.get(), vp);

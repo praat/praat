@@ -44,7 +44,7 @@ void Table_insertColumn (Table me, integer column, conststring32 label /* cattab
 void Table_setColumnLabel (Table me, integer column, conststring32 label /* cattable */);
 integer Table_findColumnIndexFromColumnLabel (Table me, conststring32 label) noexcept;
 integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel);
-integer * Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 string, integer *numberOfTokens);
+autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 string);
 integer Table_searchColumn (Table me, integer column, conststring32 value) noexcept;
 
 /*
@@ -92,13 +92,13 @@ bool Table_getExtrema (Table me, integer icol, double *minimum, double *maximum)
 void Table_formula (Table me, integer column, conststring32 formula, Interpreter interpreter);
 void Table_formula_columnRange (Table me, integer column1, integer column2, conststring32 expression, Interpreter interpreter);
 
-void Table_sortRows_Assert (Table me, integer *columns, integer numberOfColumns);
+void Table_sortRows_Assert (Table me, constINTVEC columns);
 void Table_sortRows_string (Table me, conststring32 columns_string);
 void Table_randomizeRows (Table me) noexcept;
 void Table_reflectRows (Table me) noexcept;
 
 void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
-	double xmin, double xmax, double ymin, double ymax, integer markColumn, int fontSize, bool garnish);
+	double xmin, double xmax, double ymin, double ymax, integer markColumn, double fontSize, bool garnish);
 void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, conststring32 mark, bool garnish);
 void Table_drawEllipse_e (Table me, Graphics g, integer xcolumn, integer ycolumn,

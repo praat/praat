@@ -2,7 +2,7 @@
 #define _LineSpectralFrequencies_h_
 /* LineSpectralFrequencies.h
  *
- * Copyright (C) 2016-2017 David Weenink
+ * Copyright (C) 2016-2018 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -21,10 +21,11 @@
 void praat_addActionScript (conststring32 className1, integer n1, conststring32 className2, integer n2, conststring32 className3, integer n3,
 	conststring32 title, conststring32 after, integer depth, conststring32 script);
 /* No strings may be null; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
+
 void praat_removeAction_classNames (conststring32 className1, conststring32 className2,
 	conststring32 className3, conststring32 title);
 /* No arguments may be null; unspecify them by giving an empty string. */
-/* 'title' is deep-copied. */
+
 void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title);
 void praat_hideAction_classNames (conststring32 className1, conststring32 className2,
 	conststring32 className3, conststring32 title);
@@ -36,6 +37,7 @@ void praat_sortActions ();
 void praat_addMenuCommandScript (conststring32 window, conststring32 menu, conststring32 title,
 	conststring32 after, integer depth, conststring32 script);
 /* All strings are deep-copied and may not be null; unspecify them by giving an empty string. */
+
 /*
 	For the Praat objects window:
 	'window' is "Objects", 'menu' is "Praat", "New", "Open", "Help", "Preferences", "Goodies", or "Technical".
@@ -94,7 +96,7 @@ Thing_define (Praat_Command, Thing) {
 
 integer praat_numberOfSelected (ClassInfo klas);
 integer praat_idOfSelected (ClassInfo klas, integer inplace);
-autonumvec praat_idsOfAllSelected (ClassInfo klas);
+autoVEC praat_idsOfAllSelected (ClassInfo klas);
 char32 * praat_nameOfSelected (ClassInfo klas, integer inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
@@ -131,7 +133,7 @@ void praat_showLogo (bool autoPopDown);
 
 /* Communication with praat_menuCommands.cpp: */
 void praat_menuCommands_init ();
-void praat_menuCommands_exit ();
+void praat_menuCommands_exit_optimizeByLeaking ();
 int praat_doMenuCommand (conststring32 command, conststring32 arguments, Interpreter interpreter);   // 0 = not found
 int praat_doMenuCommand (conststring32 command, integer narg, Stackel args, Interpreter interpreter);   // 0 = not found
 integer praat_getNumberOfMenuCommands ();
@@ -141,6 +143,7 @@ Praat_Command praat_getMenuCommand (integer i);
 void praat_actions_show ();
 void praat_actions_createWriteMenu (GuiWindow window);
 void praat_actions_init ();   // creates space for action commands
+void praat_actions_exit_optimizeByLeaking ();
 void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
 void praat_saveToggledActions (MelderString *buffer);

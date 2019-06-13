@@ -3,6 +3,8 @@ writeInfoLine: "vectors and matrices..."
 a# = zero#(16)
 a#[3] = 4
 assert a#[3] = 4
+a# ~ col ^ 2
+assert a# = { 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256 }
 
 asserterror Vector b# does not exist.
 b# [5] = 3
@@ -48,7 +50,7 @@ c = d# [100]
 appendInfoLine: a, " ", b, " ", c
 
 e# = a# + a#
-assert e# [3] = 8
+assert e# [3] = 18
 
 asserterror numbers of elements should be equal
 e# = a# + d#
@@ -71,9 +73,9 @@ n# = zero# (100)
 x# = randomInteger# (n#, 1, 1e7)
 y# = randomInteger# (n#, 1, 1e7)
 mat## = outer## (x#, y#)
-for row to 100
-	for col to 100
-		assert mat## [row, col] = x# [row] * y# [col]
+for irow to 100
+	for icol to 100
+		assert mat## [irow, icol] = x# [irow] * y# [icol]
 	endfor
 endfor
 
@@ -88,6 +90,9 @@ assert abs (center (squares#) - sumOver (i to 5, i * squares# [i]) / sum (square
 other# = { 2, 1.5, 1, 0.5, 0 }
 assert inner (squares#, other#) = 25
 assert sumOver (i to 5, squares# [i] * other# [i]) = 25
+
+combi## = { squares#, other# }
+assert combi## = { { 1, 4, 9, 16, 25 }, { 2, 1.5, 1, 0.5, 0 } }
 
 a# = squares# + 5
 assert a# = { 6, 9, 14, 21, 30 }
@@ -156,5 +161,35 @@ for i to iterations
 endfor
 t = stopwatch / 10 * 1e9 / iterations / n^2
 appendInfoLine: t, " ns"
+
+a## = zero## (20, 50)
+b## = zero## (50, 17)
+a## ~ row ^ 2 + col ^ 3
+b## ~ row ^ 5 + col ^ 7
+appendInfoLine: "mul##:", newline$, mul## (a##, b##)
+appendInfoLine: "mul_fast##", newline$, mul_fast## (a##, b##)
+appendInfoLine: "mul_metal##", newline$, mul_metal## (a##, b##)
+
+a## = {{ 2, 3, 5 }, { 7, 3, 2 }}
+b## = {{ 11, 1, 5, 2 }, { 8, 2, 3, 6 }, { 1, 3, 4, 9 }}
+product## = mul## (a##, b##)
+assert product## = {{ 51, 23, 39, 67 }, { 103, 19, 52, 50 }}
+product_fast## = mul_fast## (a##, b##)
+appendInfoLine: product_fast##
+assert numberOfRows (product_fast##) = 2
+assert numberOfColumns (product_fast##) = 4
+assert product## = product_fast##
+product_metal## = mul_metal## (a##, b##)
+appendInfoLine: product_metal##
+assert numberOfRows (product_metal##) = 2
+assert numberOfColumns (product_metal##) = 4
+assert product## = product_metal##
+at## = transpose## (a##)
+bt## = transpose## (b##)
+assert at## = {{ 2, 7 }, { 3, 3 }, { 5, 2 }}
+assert transpose## (bt##) = b##
+assert mul_tn## (at##, b##) = product##
+assert mul_nt## (a##, bt##) = product##
+assert mul_tt## (at##, bt##) = product##
 
 appendInfoLine: "OK"

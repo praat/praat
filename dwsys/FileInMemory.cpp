@@ -84,8 +84,8 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 			my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // ... just a link
 		} else {
 			my _dontOwnData = false;
-			my d_data =  NUMvector <unsigned char> ((integer) 0, numberOfBytes);
-			NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0, numberOfBytes);
+			my d_data = NUMvector <unsigned char> ((integer) 0, numberOfBytes);
+			memcpy (my d_data, data, (size_t) numberOfBytes + 1);
 		} 
 		return me;
 	} catch (MelderError) {
@@ -106,7 +106,7 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	for (integer i = 0; i < my d_numberOfBytes; i++) {
 		unsigned char number = my d_data [i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
-			i % numberOfBytesPerLine == numberOfBytesPerLine - 1 ? U"\n" : U" ");
+				i % numberOfBytesPerLine == numberOfBytesPerLine - 1 ? U"\n" : U" ");
 	}
 	MelderInfo_writeLine ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? U"\t\t\t0};" : U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");

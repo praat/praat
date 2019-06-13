@@ -229,27 +229,30 @@ END }
 /********** Callbacks of the Preferences menu. **********/
 
 FORM (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
-	RADIO_ENUM (encodingOf8BitTextFiles, U"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
+	RADIO_ENUM (kMelder_textInputEncoding, encodingOf8BitTextFiles,
+			U"Encoding of 8-bit text files", kMelder_textInputEncoding::DEFAULT)
 OK
 	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
-	Melder_setInputEncoding ((kMelder_textInputEncoding) encodingOf8BitTextFiles);
+	Melder_setInputEncoding (encodingOf8BitTextFiles);
 END }
 
 FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
-	RADIO_ENUM (outputEncoding, U"Output encoding", kMelder_textOutputEncoding, DEFAULT)
+	RADIO_ENUM (kMelder_textOutputEncoding, outputEncoding,
+			U"Output encoding", kMelder_textOutputEncoding::DEFAULT)
 OK
 	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
-	Melder_setOutputEncoding ((kMelder_textOutputEncoding) outputEncoding);
+	Melder_setOutputEncoding (outputEncoding);
 END }
 
 FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
-	OPTIONMENU_ENUM (cjkFontStyle, U"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
+	OPTIONMENU_ENUM (kGraphics_cjkFontStyle, cjkFontStyle,
+			U"CJK font style", kGraphics_cjkFontStyle::DEFAULT)
 OK
 	SET_ENUM (cjkFontStyle, kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
-	theGraphicsCjkFontStyle = (kGraphics_cjkFontStyle) cjkFontStyle;
+	theGraphicsCjkFontStyle = cjkFontStyle;
 END }
 
 /********** Callbacks of the Goodies menu. **********/
@@ -275,15 +278,12 @@ DO
 		} break;
 		case kFormula_EXPRESSION_TYPE_STRING: {
 			Melder_information (result. stringResult.get());
-			result. stringResult. reset();   // TODO: this should be superfluous
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
-			Melder_information (result. numericVectorResult);
-			if (result. owned) result. numericVectorResult. reset();
+			Melder_information (constVECVU (result. numericVectorResult));
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
-			Melder_information (result. numericMatrixResult);
-			if (result. owned) result. numericMatrixResult. reset();
+			Melder_information (constMATVU (result. numericMatrixResult));
 		}
 	}
 END }
@@ -518,9 +518,9 @@ DO
 END }
 
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
-	static integer numberOfPages;
-	static char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
-	LIST (pageNumber, U"Page", numberOfPages, pages, 1)
+	static conststring32vector pages;
+	pages = ManPages_getTitles (theCurrentPraatApplication -> manPages);
+	LIST (pageNumber, U"Page", pages, 1)
 	OK
 DO
 	if (theCurrentPraatApplication -> batch)
@@ -640,8 +640,8 @@ void praat_addMenus (GuiWindow window) {
 	}
 	
 	MelderString_append (& itemTitle_about, U"About ", praatP.title.get(), U"...");
+	praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 	#ifdef macintosh
-		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 		#if cocoa
 			/*
 			 * HACK: give the following command weird names,
@@ -655,9 +655,6 @@ void praat_addMenus (GuiWindow window) {
 			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE | praat_NO_API, PRAAT_zoom);
 			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W' | praat_NO_API, PRAAT_close);
 		#endif
-	#endif
-	#ifdef UNIX
-		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 	#endif
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- script --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat script", nullptr, praat_NO_API, WINDOW_praat_newScript);
@@ -715,10 +712,8 @@ void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp",
 		Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
 		nullptr, 'M' | praat_NO_API, HELP_SearchManual);
-	#ifdef _WIN32
-		praat_addMenuCommand (U"Objects", U"Help", U"-- about --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Help", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
-	#endif
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- about --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 
 	#if defined (macintosh) || defined (_WIN32)
 		Gui_setOpenDocumentCallback (cb_openDocument);

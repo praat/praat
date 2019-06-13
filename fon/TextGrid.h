@@ -124,7 +124,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
 autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 
 autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
-autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive);
+autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive);
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);

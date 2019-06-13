@@ -28,11 +28,8 @@
 Thing_define (InterpreterVariable, SimpleString) {
 	autostring32 stringValue;
 	double numericValue;
-	numvec numericVectorValue;
-	nummat numericMatrixValue;
-
-	void v_destroy () noexcept
-		override;
+	autoVEC numericVectorValue;
+	autoMAT numericMatrixValue;
 };
 
 #define Interpreter_MAXNUM_PARAMETERS  400
@@ -66,7 +63,7 @@ autoInterpreter Interpreter_createFromEnvironment (Editor editor);
 void Melder_includeIncludeFiles (autostring32 *text);
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text);
 Thing_declare (UiForm);
-UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 fileName,
+autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 fileName,
 	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *closure), void *okClosure,
 	bool selectionOnly);
 void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
@@ -77,16 +74,16 @@ void Interpreter_stop (Interpreter me);   // can be called from any procedure ca
 
 void Interpreter_voidExpression (Interpreter me, conststring32 expression);
 void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *p_value);
-void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned);
-void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned);
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *p_value, bool *p_owned);
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *p_value, bool *p_owned);
 autostring32 Interpreter_stringExpression (Interpreter me, conststring32 expression);
 void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
 
-extern autonumvec theInterpreterNumvec;
-extern autonummat theInterpreterNummat;
+extern autoVEC theInterpreterNumvec;
+extern autoMAT theInterpreterNummat;
 
 /* End of file Interpreter.h */
 #endif

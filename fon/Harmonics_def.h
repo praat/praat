@@ -1,6 +1,6 @@
 /* Harmonics_def.h
  *
- * Copyright (C) 2011,2015 Paul Boersma
+ * Copyright (C) 2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (Harmonics, Daata)
 
 	oo_INTEGER (numberOfHarmonics)
 
-	oo_DOUBLE_VECTOR (harmonics, numberOfHarmonics)
+	oo_VEC (harmonics, numberOfHarmonics)
 
 	#if oo_DECLARING
 		void v_info ()

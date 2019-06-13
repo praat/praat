@@ -408,7 +408,7 @@ static double DBtoLIN (integer dB) {
 		5104.0, 5751.0, 6488.0, 7291.0, 8192.0, 9093.0, 10207.0, 11502.0, 12976.0, 14582.0,
 		16384.0, 18350.0, 20644.0, 23429.0, 26214.0, 29491.0, 32767
 	};
-	return (dB < 0) || (dB > 87) ? 0 : amptable [dB] * .001;
+	return ( (dB < 0) || (dB > 87) ? 0 : amptable [dB] * .001 );
 }
 
 /* Structure for Klatt Globals */
@@ -669,7 +669,7 @@ static double KlattGlobal_impulsive_source (KlattGlobal me) {   // ppgb: dit was
 	static double doublet [] = {0.0, 13000000.0, -13000000.0};
 	static double vwave;
 
-	vwave = my nper < 3 ? doublet [my nper] : 0;
+	vwave = ( my nper < 3 ? doublet [my nper] : 0.0 );
 
 	return Filter_getOutput (my rgl.get(), vwave);
 }
@@ -875,7 +875,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 		/* Set one-pole low-pass filter that tilts glottal source */
 
 		my decay = (0.033 * my TLTdb);
-		my onemd = my decay > 0.0 ? 1.0 - my decay : 1;
+		my onemd = ( my decay > 0.0 ? 1.0 - my decay : 1.0 );
 	}
 }
 

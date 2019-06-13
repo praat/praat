@@ -293,24 +293,32 @@ void structGraphicsScreen :: v_clearWs () {
                 rect.origin.y = our d_y2DC;
                 rect.size.height = our d_y1DC - our d_y2DC;
             }
-			[cocoaDrawingArea lockFocus];
-            CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-            CGContextSaveGState (context);
-            CGContextSetAlpha (context, 1.0);
-            CGContextSetBlendMode (context, kCGBlendModeNormal);
-            CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
-			//rect.origin.x -= 1000;
-			//rect.origin.y -= 1000;
-			//rect.size.width += 2000;
-			//rect.size.height += 2000;
-			trace (U"clearing ", rect.origin.x, U" ", rect.origin.y, U" ", rect.size.width, U" ", rect.size.height);
-                //CGContextTranslateCTM (context, 0, cocoaDrawingArea.bounds.size.height);
-                //CGContextScaleCTM (context, 1.0, -1.0);
-            CGContextFillRect (context, rect);
-            //CGContextSynchronize (context);
-            CGContextRestoreGState (context);
-			[cocoaDrawingArea unlockFocus];
-			//[cocoaDrawingArea setNeedsDisplay: YES];
+			if (SUPPORT_DIRECT_DRAWING) {
+				[cocoaDrawingArea lockFocus];
+				CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				Melder_assert (context);
+				CGContextSaveGState (context);
+				CGContextSetAlpha (context, 1.0);
+				CGContextSetBlendMode (context, kCGBlendModeNormal);
+				CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
+				//rect.origin.x -= 1000;
+				//rect.origin.y -= 1000;
+				//rect.size.width += 2000;
+				//rect.size.height += 2000;
+				trace (U"clearing ", rect.origin.x, U" ", rect.origin.y, U" ", rect.size.width, U" ", rect.size.height);
+				//CGContextTranslateCTM (context, 0, cocoaDrawingArea.bounds.size.height);
+				//CGContextScaleCTM (context, 1.0, -1.0);
+				CGContextFillRect (context, rect);
+				//CGContextSynchronize (context);
+				CGContextRestoreGState (context);
+				[cocoaDrawingArea unlockFocus];
+				[cocoaDrawingArea setNeedsDisplay: YES];
+			} else {
+				/*
+					Just redraw, and hope that the redraw method erases.
+				*/
+				[cocoaDrawingArea setNeedsDisplay: YES];
+			}
 			//[cocoaDrawingArea display];
         }
 	#endif
@@ -756,11 +764,16 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 #if quartz
 	void GraphicsQuartz_initDraw (GraphicsScreen me) {
 		if (my d_macView) {
-			[my d_macView lockFocus];
+			if (SUPPORT_DIRECT_DRAWING)
+				[my d_macView lockFocus];
 			//if (! my printer) {
-				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+			my d_macGraphicsContext = Melder_systemVersion < 101400 ?
+					(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+					[[NSGraphicsContext currentContext] CGContext];
 			//}
-			Melder_assert (my d_macGraphicsContext);
+			//Melder_assert (my d_macGraphicsContext);
+			//Melder_casual (U"GraphicsQuartz_initDraw: 1 ", Melder_pointer (my d_macGraphicsContext));
+			//Melder_casual (U"GraphicsQuartz_initDraw: 2 ", Melder_pointer ([[NSGraphicsContext currentContext] graphicsPort]));
 			if (my printer) {
 				//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
 				//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
@@ -770,7 +783,8 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 	void GraphicsQuartz_exitDraw (GraphicsScreen me) {
 		if (my d_macView) {
 			//CGContextSynchronize (my d_macGraphicsContext);   // BUG: should not be needed
-			[my d_macView unlockFocus];
+			if (SUPPORT_DIRECT_DRAWING)
+				[my d_macView unlockFocus];
 		}
 	}
 #endif

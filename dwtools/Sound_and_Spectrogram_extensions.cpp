@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,6 @@
 #include "Vector.h"
 #include "NUM2.h"
 
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-// prototypes
 autoSound BandFilterSpectrogram_as_Sound (BandFilterSpectrogram me, int to_dB);
 
 /*
@@ -57,9 +55,8 @@ static void _Spectrogram_windowCorrection (Spectrogram me, integer numberOfSampl
 		windowFactor =  (p2 - p1 + 24 * (numberOfSamples_window - 1) * e12 * e12) / denum;
 	}
 	for (integer i = 1; i <= my ny; i ++) {
-		for (integer j = 1; j <= my nx; j ++) {
+		for (integer j = 1; j <= my nx; j ++)
 			my z [i] [j] /= windowFactor;
-		}
 	}
 }
 
@@ -72,15 +69,17 @@ static autoSpectrum Sound_to_Spectrum_power (Sound me) {
 		// thy dx : width of frequency bin
 		// my xmax - my xmin : duration of sound
 
-		double *re = thy z [1], *im = thy z [2];
+		VEC re = thy z.row (1), im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
 			double power = scale * (re [i] * re [i] + im [i] * im [i]);
-			re [i] = power; im [i] = 0;
+			re [i] = power;
+			im [i] = 0.0;
 		}
 
 		// Correction of frequency bins at 0 Hz and nyquist: don't count for two.
 
-		re [1] *= 0.5; re [thy nx] *= 0.5;
+		re [1] *= 0.5;
+		re [thy nx] *= 0.5;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum with spectral power created.");
@@ -100,7 +99,7 @@ static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, in
 	for (integer i = 1; i <= thy ny; i ++) {
 		double p = 0;
 		double z0 = thy y1 + (i - 1) * thy dy;
-		double *pow = his z [1]; // TODO ??
+		constVEC pow = his z.row (1); // TODO ??
 		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 			// Sekey & Hanson filter is defined in the power domain.
 			// We therefore multiply the power with a (and not a^2).
@@ -122,21 +121,17 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 
 		// Check defaults.
 
-		if (f1_bark <= 0.0) {
+		if (f1_bark <= 0.0)
 			f1_bark = 1.0;
-		}
-		if (fmax_bark <= 0.0) {
+		if (fmax_bark <= 0.0)
 			fmax_bark = zmax;
-		}
-		if (df_bark <= 0) {
+		if (df_bark <= 0)
 			df_bark = 1.0;
-		}
 
-		fmax_bark = MIN (fmax_bark, zmax);
+		fmax_bark = std::min (fmax_bark, zmax);
 		integer numberOfFilters = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
-		if (numberOfFilters <= 0) {
-			Melder_throw (U"The combination of filter parameters is not valid.");
-		}
+		Melder_require (numberOfFilters > 0,
+			U"The combination of filter parameters is not valid.");
 
 		integer numberOfFrames;
 		double t1;
@@ -154,10 +149,9 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 			Sounds_multiply (sframe.get(), window.get());
 			Sound_into_BarkSpectrogram_frame (sframe.get(), thee.get(), iframe);
 
-			if (iframe % 10 == 1) {
+			if (iframe % 10 == 1)
 				Melder_progress ( (double) iframe / numberOfFrames,  U"BarkSpectrogram analysis: frame ",
 					iframe, U" from ", numberOfFrames, U".");
-			}
 		}
 		
 		_Spectrogram_windowCorrection ((Spectrogram) thee.get(), window -> nx);
@@ -172,7 +166,7 @@ static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, inte
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 
 	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
-		double power = 0;
+		longdouble power = 0.0;
 		double fc_mel = thy y1 + (ifilter - 1) * thy dy;
 		double fc_hz = thy v_frequencyToHertz (fc_mel);
 		double fl_hz = thy v_frequencyToHertz (fc_mel - thy dy);
@@ -186,7 +180,7 @@ static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, inte
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
 			power += a * his z [1] [i];
 		}
-		thy z [ifilter] [frame] = power;
+		thy z [ifilter] [frame] = double (power);
 	}
 }
 
@@ -199,18 +193,16 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 
 		// Check defaults.
 
-		if (fmax_mel <= 0.0 || fmax_mel > fceiling) {
+		if (fmax_mel <= 0.0 || fmax_mel > fceiling)
+			fmax_mel = fceiling;
+		if (fmax_mel <= f1_mel) {
+			f1_mel = fbottom;
 			fmax_mel = fceiling;
 		}
-		if (fmax_mel <= f1_mel) {
-			f1_mel = fbottom; fmax_mel = fceiling;
-		}
-		if (f1_mel <= 0.0) {
+		if (f1_mel <= 0.0)
 			f1_mel = fbottom;
-		}
-		if (df_mel <= 0.0) {
+		if (df_mel <= 0.0)
 			df_mel = 100.0;
-		}
 
 		// Determine the number of filters.
 
@@ -232,9 +224,8 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 			Sounds_multiply (sframe.get(), window.get());
 			Sound_into_MelSpectrogram_frame (sframe.get(), thee.get(), iframe);
 			
-			if (iframe % 10 == 1) {
+			if (iframe % 10 == 1)
 				Melder_progress ((double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ", numberOfFrames, U".");
-			}
 		}
 		
 		_Spectrogram_windowCorrection ((Spectrogram) thee.get(), window -> nx);
@@ -256,7 +247,7 @@ static int Sound_into_Spectrogram_frame (Sound me, Spectrogram thee, integer fra
 	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
 		double p = 0;
 		double fc = thy y1 + (ifilter - 1) * thy dy;
-		double *pow = his z [1];
+		constVEC pow = his z.row (1);
 		for (integer ifreq = 1; ifreq <= his nx; ifreq ++) {
 			/*
 				H(f) = ifB / (fc^2 - f^2 + ifB)
@@ -280,12 +271,10 @@ autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWi
 			minimumPitch = floor;
 			maximumPitch = ceiling;
 		}
-		if (minimumPitch <= 0.0) {
+		if (minimumPitch <= 0.0)
 			minimumPitch = floor;
-		}
-		if (maximumPitch <= 0.0) {
+		if (maximumPitch <= 0.0)
 			maximumPitch = ceiling;
-		}
 
 		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
 		autoSpectrogram ff = Sound_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
@@ -311,20 +300,16 @@ autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 			Melder_warning (U"Pitch values undefined. Bandwith fixed to 100 Hz. ");
 		}
 
-		if (f1_hz <= 0.0) {
+		if (f1_hz <= 0.0)
 			f1_hz = 100.0;
-		}
-		if (fmax_hz <= 0.0) {
+		if (fmax_hz <= 0.0)
 			fmax_hz = nyquist;
-		}
-		if (df_hz <= 0.0) {
+		if (df_hz <= 0.0)
 			df_hz = f0_median / 2.0;
-		}
-		if (relative_bw <= 0.0) {
+		if (relative_bw <= 0.0)
 			relative_bw = 1.1;
-		}
 
-		fmax_hz = MIN (fmax_hz, nyquist);
+		fmax_hz = std::min (fmax_hz, nyquist);
 		integer numberOfFilters = Melder_iround ( (fmax_hz - f1_hz) / df_hz);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
@@ -349,10 +334,9 @@ autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 
 			Sound_into_Spectrogram_frame (sframe.get(), him.get(), iframe, b);
 
-			if (iframe % 10 == 1) {
+			if (iframe % 10 == 1)
 				Melder_progress ((double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ",
 					numberOfFrames, U".");
-			}
 		}
 		
 		_Spectrogram_windowCorrection (him.get(), window -> nx);

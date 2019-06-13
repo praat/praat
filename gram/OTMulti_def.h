@@ -34,8 +34,8 @@ oo_DEFINE_STRUCT (OTConstraint)
 	#endif
 
 	#if ! oo_READING && ! oo_WRITING
-		oo_INT16 (tiedToTheLeft)
-		oo_INT16 (tiedToTheRight)
+		oo_BOOLEAN (tiedToTheLeft)
+		oo_BOOLEAN (tiedToTheRight)
 	#endif
 
 oo_END_STRUCT (OTConstraint)
@@ -47,7 +47,7 @@ oo_DEFINE_STRUCT (OTCandidate)
 
 	oo_STRING (string)
 	oo_INTEGER (numberOfConstraints)
-	oo_INT_VECTOR (marks, numberOfConstraints)
+	oo_INTVEC16 (marks, numberOfConstraints)
 
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (harmony)
@@ -69,7 +69,7 @@ oo_DEFINE_CLASS (OTMulti, Daata)
 	oo_ENDFROM
 	oo_INTEGER (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTConstraint, constraints, numberOfConstraints)
-	oo_INTEGER_VECTOR (index, numberOfConstraints)
+	oo_INTVEC (index, numberOfConstraints)
 	oo_INTEGER (numberOfCandidates)
 	oo_STRUCT_VECTOR (OTCandidate, candidates, numberOfCandidates)
 

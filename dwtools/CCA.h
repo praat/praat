@@ -2,7 +2,7 @@
 #define _CCA_h_
 /* CCA.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ autoTableOfReal CCA_TableOfReal_factorLoadings (CCA me, TableOfReal thee);
 
 double CCA_getCorrelationCoefficient (CCA me, integer index);
 
-void CCA_getZeroCorrelationProbability (CCA me, integer index, double *prob, double *chisq, double *df);
+void CCA_getZeroCorrelationProbability (CCA me, integer index, double *out_prob, double *out_chisq, double *out_df);
 
 autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from);
 /*

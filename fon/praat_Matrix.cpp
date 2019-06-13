@@ -317,8 +317,8 @@ FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Matrix)
-		if (rowNumber > my ny) Melder_throw (U"Row number must not exceed number of rows.");
-		if (columnNumber > my nx) Melder_throw (U"Column number must not exceed number of columns.");
+		if (rowNumber > my ny) Melder_throw (U"Row number should not exceed number of rows.");
+		if (columnNumber > my nx) Melder_throw (U"Column number should not exceed number of columns.");
 		double result = my z [rowNumber] [columnNumber];
 	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
@@ -353,6 +353,23 @@ DIRECT (REAL_Matrix_getSum) {
 	NUMBER_ONE (Matrix)
 		double result = Matrix_getSum (me);
 	NUMBER_ONE_END (U" (sum)");
+}
+
+DIRECT (NUMMAT_Matrix_getAllValues) {
+	NUMMAT_ONE (Matrix)
+		autoMAT result = newMATcopy (my z.all());
+	NUMMAT_ONE_END
+}
+
+FORM (NUMVEC_Matrix_getAllValuesInRow, U"Get all values in row", nullptr) {
+	NATURAL (rowNumber, U"Row number", U"1")
+	OK
+DO
+	NUMVEC_ONE (Matrix)
+		Melder_require (rowNumber <= my ny,
+			U"The row number (", rowNumber, U") should not be greater than the number of rows (", my ny, U").");
+		autoVEC result = newVECcopy (my z.row (rowNumber));
+	NUMVEC_ONE_END
 }
 
 // MARK: Modify
@@ -829,6 +846,8 @@ void praat_Matrix_init () {
 		praat_addAction1 (classMatrix, 1, U"-- get value --", nullptr, 1, nullptr);
 		praat_addAction1 (classMatrix, 1, U"Get value in cell...", nullptr, 1, REAL_Matrix_getValueInCell);
 		praat_addAction1 (classMatrix, 1, U"Get value at xy...", nullptr, 1, REAL_Matrix_getValueAtXY);
+		praat_addAction1 (classMatrix, 1, U"Get all values", nullptr, 1, NUMMAT_Matrix_getAllValues);
+		praat_addAction1 (classMatrix, 1, U"Get all values in row...", nullptr, 1, NUMVEC_Matrix_getAllValuesInRow);
 		praat_addAction1 (classMatrix, 1, U"Get minimum", nullptr, 1, REAL_Matrix_getMinimum);
 		praat_addAction1 (classMatrix, 1, U"Get maximum", nullptr, 1, REAL_Matrix_getMaximum);
 		praat_addAction1 (classMatrix, 1, U"Get sum", nullptr, 1, REAL_Matrix_getSum);

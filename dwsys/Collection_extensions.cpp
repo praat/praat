@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2011,2015-2017 David Weenink, 2018 Paul Boersma
+ * Copyright (C) 1994-2018 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 		if (my size != his numberOfElements) {
 			Melder_throw (me, U"The number of elements are not equal.");
 		}
-		autoNUMvector<integer> pos (1, my size);
+		autoINTVEC pos = newINTVECraw (my size);
 		autoCollection thee = Data_copy (me);
 
-		for (integer i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++)
 			pos [i] = i;
-		}
+
 		/* Dual meaning of array pos: */
 		/* k <  i : position of item 'k' */
 		/* k >= i : the item at position 'k' */
@@ -46,9 +46,9 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 			integer ti = pos [i], which = Permutation_getValueAtIndex (him, i);
 			integer where = pos [which];   // where >= i
 			Daata tmp = static_cast<Daata> (thy at [i]);
-			if (i == where) {
+			if (i == where)
 				continue;
-			}
+
 			thy at [i] = thy at [where];
 			thy at [where] = tmp;
 			/* order is important !! */
@@ -77,9 +77,8 @@ autoCollection Collection_permuteItems (Collection me) {
 
 int OrderedOfString_append (StringList me, conststring32 append) {
 	try {
-		if (! append) {
+		if (! append)
 			return 1;    // BUG: lege string appenden??
-		}
 		autoSimpleString item = SimpleString_create (append);
 		my addItem_move (item.move());
 		return 1;
@@ -124,13 +123,11 @@ autoStringSet StringList_to_StringSet (StringList me) {
 
 integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee) {
 	integer numberOfDifferences = 0;
-	if (my size != thy size) {
+	if (my size != thy size)
 		return -1;   // FIXME: this is arbitrary and unexpected
-	}
 	for (integer i = 1; i <= my size; i ++) {
-		if (! Data_equal (my at [i], thy at [i])) {   // FIXME: this compares all the data, instead of just the strings
+		if (! Data_equal (my at [i], thy at [i]))   // FIXME: this compares all the data, instead of just the strings
 			numberOfDifferences ++;
-		}
 	}
 	return numberOfDifferences;
 }
@@ -157,9 +154,8 @@ integer OrderedOfString_indexOfItem_c (StringList me, conststring32 str) {
 }
 
 void OrderedOfString_initWithSequentialNumbers (StringList me, integer n) {
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= n; i ++)
 		my addItem_move (SimpleString_create (Melder_integer (i)));
-	}
 }
 
 void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
@@ -168,15 +164,14 @@ void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *repla
 		Melder_require (search, U"The search string should not be empty.");
 		Melder_require (replace, U"The replace string should not be empty.");
 
-		if (use_regexp) {
+		if (use_regexp)
 			compiled_search = CompileRE_throwable (search, 0);
-		}
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString ss = my at [i];
 			integer nmatches_sub;
 			autostring32 r = use_regexp ?
-				str_replace_regexp (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) :
-				str_replace_literal (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
+					newSTRreplace_regex (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) :
+					newSTRreplace (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
 
 			/*
 				Change without error.
@@ -188,13 +183,11 @@ void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *repla
 				(*nstringmatches) ++;
 			}
 		}
-		if (use_regexp) {
+		if (use_regexp)
 			free (compiled_search);
-		}
 	} catch (MelderError) {
-		if (use_regexp) {
+		if (use_regexp)
 			free (compiled_search);
-		}
 		Melder_throw (U"Replace not completed.");
 	}
 }
@@ -203,28 +196,27 @@ integer OrderedOfString_isSubsetOf (StringList me, StringList thee, integer *tra
 	integer nStrings = 0;
 
 	for (integer i = 1; i <= my size; i ++) {
-		if (translation) {
+		if (translation)
 			translation [i] = 0;
-		}
 		for (integer j = 1; j <= thy size; j ++)
 			if (Data_equal (my at [i], thy at [j])) {
-				if (translation) {
+				if (translation)
 					translation [i] = j;
-				}
-				nStrings++; break;
+				nStrings ++;
+				break;
 			}
 	}
 	return nStrings;
 }
 
 void OrderedOfString_removeOccurrences (StringList me, conststring32 search, bool use_regexp) {
-	if (! search) {
+	if (! search)
 		return;
-	}
 	for (integer i = my size; i >= 1; i --) {
 		SimpleString ss = my at [i];
-		if ( (use_regexp && strstr_regexp (ss -> string.get(), search)) ||
-		        (!use_regexp && str32str (ss -> string.get(), search))) {
+		if ((use_regexp && strstr_regexp (ss -> string.get(), search)) ||
+		        (! use_regexp && str32str (ss -> string.get(), search)))
+		{
 			my removeItem (i);
 		}
 	}

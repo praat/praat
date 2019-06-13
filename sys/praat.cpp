@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "NUMmachar.h"
 #include <ctype.h>
 #include <stdarg.h>
 #if defined (UNIX) || defined (macintosh)
@@ -43,7 +42,8 @@
 #include "Printer.h"
 #include "ScriptEditor.h"
 #include "Strings_.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
+#include "InfoEditor.h"
 
 #if gtk
 	#include <gdk/gdkx.h>
@@ -136,8 +136,8 @@ integer praat_idOfSelected (ClassInfo klas, integer inplace) {
 	return 0;
 }
 
-autonumvec praat_idsOfAllSelected (ClassInfo klas) {
-	autonumvec result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
+autoVEC praat_idsOfAllSelected (ClassInfo klas) {
+	autoVEC result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
 	integer selectedObjectNumber = 0, IOBJECT;
 	WHERE (SELECTED && (! klas || CLASS == klas)) {
 		result.at [++ selectedObjectNumber] = ID;
@@ -264,10 +264,12 @@ static void removeAllReferencesToMoribundEditor (Editor editor) {
 	 * Remove all references to this editor.
 	 * It may be editing multiple objects.
 	 */
-	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++)
-		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
+		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == editor)
 				theCurrentPraatObjects -> list [iobject]. editors [ieditor] = nullptr;
+		}
+	}
 	if (praatP. editor == editor)
 		praatP. editor = nullptr;
 }
@@ -315,7 +317,8 @@ void praat_cleanUpName (char32 *name) {
 	 * Replaces spaces and special characters by underscores.
 	 */
 	for (; *name; name ++) {
-		if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = U'_';
+		if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name))
+			*name = U'_';
 	}
 }
 
@@ -323,7 +326,8 @@ void praat_cleanUpName (char32 *name) {
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
 	for (integer idata = 1; idata <= my size; idata ++) {
-		autoDaata object = autoDaata ((Daata) my at [idata]);
+		autoDaata object;
+		object. adoptFromAmbiguousOwner ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		conststring32 name = object -> name ? object -> name.get() : myName;
 		Melder_assert (name);
@@ -486,15 +490,6 @@ void praat_removeObject (int i) {
 static void praat_exit (int exit_code) {
 //Melder_setTracing (true);
 	int IOBJECT;
-	#ifdef _WIN32
-		if (! theCurrentPraatApplication -> batch) {
-			Melder_assert (theCurrentPraatApplication);
-			Melder_assert (theCurrentPraatApplication -> topShell);
-			Melder_assert (theCurrentPraatApplication -> topShell -> d_xmShell);
-			trace (U"destroy the object window");
-			XtDestroyWidget (theCurrentPraatApplication -> topShell -> d_xmShell);
-		}
-	#endif
 	trace (U"destroy the picture window");
 	praat_picture_exit ();
 	praat_statistics_exit ();   // record total memory use across sessions
@@ -558,7 +553,62 @@ static void praat_exit (int exit_code) {
 	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
-	exit (exit_code);
+	praat_menuCommands_exit_optimizeByLeaking ();   // these calls are superflous if subsequently _Exit() is called instead of exit()
+	praat_actions_exit_optimizeByLeaking ();
+	Preferences_exit_optimizeByLeaking ();
+	/*
+		OPTIMIZE with an exercise in self-documenting code
+	*/
+	constexpr bool weWouldLikeToOptimizeExitingSpeed = ((true));
+	constexpr bool callingExitTimeDestructorsIsSlow = (true);
+	constexpr bool notCallingExitTimeDestructorsCausesCorrectBehaviour = (true);
+	constexpr bool weAreReallySureAboutThat = (true);
+	constexpr bool weWillUseUnderscoreExitInsteadOfExit =
+			weWouldLikeToOptimizeExitingSpeed &&
+			callingExitTimeDestructorsIsSlow &&
+			notCallingExitTimeDestructorsCausesCorrectBehaviour &&
+			weAreReallySureAboutThat;
+	if ((weWillUseUnderscoreExitInsteadOfExit)) {
+		constexpr bool underscoreExitHasMoreSideEffectsThanJustNotCallingExitTimeDestructors = (true);
+		constexpr bool avoidOtherSideEffectsOfUnderscoreExit =
+				underscoreExitHasMoreSideEffectsThanJustNotCallingExitTimeDestructors;
+		if ((avoidOtherSideEffectsOfUnderscoreExit)) {
+			constexpr bool oneSideEffectIsThatOpenOutputFilesAreNotFlushed = true;
+			constexpr bool weShouldFlushAllOpenOutputFilesWhoseNonflushingWouldCauseIncorrectBehaviour =
+					oneSideEffectIsThatOpenOutputFilesAreNotFlushed;
+			if ((weShouldFlushAllOpenOutputFilesWhoseNonflushingWouldCauseIncorrectBehaviour)) {
+				constexpr bool stdoutIsOpen = (true);
+				constexpr bool stderrIsOpen = (true);
+				constexpr bool stdoutIsBufferedByDefault = true;
+				constexpr bool stderrIsBufferedByDefault = false;
+				constexpr bool weKnowThatSetbufHasNotBeenCalledOnStdout = (false);
+				constexpr bool weKnowThatSetbufHasNotBeenCalledOnStderr = (false);
+				constexpr bool stdoutHasCertainlyBeenFlushed =
+						! stdoutIsBufferedByDefault && weKnowThatSetbufHasNotBeenCalledOnStdout;
+				constexpr bool stderrHasCertainlyBeenFlushed =
+						! stderrIsBufferedByDefault && weKnowThatSetbufHasNotBeenCalledOnStderr;
+				constexpr bool notFlushingStdoutCouldCauseIncorrectBehaviour =
+						stdoutIsOpen && ! stdoutHasCertainlyBeenFlushed;
+				constexpr bool notFlushingStderrCouldCauseIncorrectBehaviour =
+						stderrIsOpen && ! stderrHasCertainlyBeenFlushed;
+				constexpr bool shouldFlushStdout = notFlushingStdoutCouldCauseIncorrectBehaviour;
+				constexpr bool shouldFlushStderr = notFlushingStderrCouldCauseIncorrectBehaviour;
+				if ((shouldFlushStdout))
+					fflush (stdout);
+				if ((shouldFlushStderr))
+					fflush (stderr);
+				constexpr bool thereAreOtherOpenFiles = (false);
+				constexpr bool thereAreOtherOpenFilesWhoseNonflushingCouldCauseIncorrectBehaviour =
+						thereAreOtherOpenFiles;
+				if ((! thereAreOtherOpenFilesWhoseNonflushingCouldCauseIncorrectBehaviour)) {}
+			}
+			constexpr bool thereAreNoOtherSideEffectsBesideNotCallingExitDestructorsAndNotFlushingOpenFiles = (true);
+			if ((thereAreNoOtherSideEffectsBesideNotCallingExitDestructorsAndNotFlushingOpenFiles)) {}
+		}
+		_Exit (exit_code);
+	} else {
+		exit (exit_code);
+	}
 }
 
 static void cb_Editor_destruction (Editor me) {
@@ -983,23 +1033,6 @@ static void setThePraatLocale () {
 	#endif
 }
 
-static void getSystemVersion () {
-	#ifdef macintosh
-		SInt32 sys1, sys2, sys3;
-		Gestalt ('sys1', & sys1);
-		Gestalt ('sys2', & sys2);
-		Gestalt ('sys3', & sys3);
-		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
-	#endif
-}
-
-static void initializeNumericalLibraries () {
-	NUMmachar ();
-	NUMinit ();
-	Melder_alloc_init ();
-	Melder_message_init ();
-}
-
 static void installPraatShellPreferences () {
 	praat_statistics_prefs ();   // number of sessions, memory used...
 	praat_picture_prefs ();   // font...
@@ -1015,8 +1048,7 @@ static void installPraatShellPreferences () {
 
 extern "C" void praatlib_init () {
 	setThePraatLocale ();   // FIXME: don't use the global locale
-	getSystemVersion ();
-	initializeNumericalLibraries ();
+	Melder_init ();
 	Melder_rememberShellDirectory ();
 	installPraatShellPreferences ();   // needed in the library, because this sets the defaults
 	praatP.argc = 0;
@@ -1037,6 +1069,11 @@ extern "C" void praatlib_init () {
 	praat_addMenus2 ();
 }
 
+static void injectMessageAndInformationProcs (GuiWindow parent) {
+	Gui_injectMessageProcs (parent);
+	InfoEditor_injectInformationProc ();
+}
+
 void praat_init (conststring32 title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
@@ -1045,8 +1082,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	}
 	setThePraatLocale ();
-	getSystemVersion ();
-	initializeNumericalLibraries ();
+	Melder_init ();
 
 	/*
 		Remember the current directory. Useful only for scripts run from batch.
@@ -1099,12 +1135,20 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
 			MelderInfo_writeLine (U"  --version        print the Praat version");
 			MelderInfo_writeLine (U"  --help           print this list of command line options");
-			MelderInfo_writeLine (U"  -a, --ansi       Windows only: use ISO Latin-1 encoding instead of UTF-16LE");
-			MelderInfo_writeLine (U"                   (this option is needed when you redirect to a pipe or file)");
+			MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
+			MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
+			MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
+			MelderInfo_writeLine (U"                   (on Windows, use -0 or -a when you redirect to a pipe or file)");
 			MelderInfo_close ();
 			exit (0);
+		} else if (strequ (argv [praatP.argumentNumber], "-8") || strequ (argv [praatP.argumentNumber], "--utf8")) {
+			MelderConsole::setEncoding (MelderConsole::Encoding::UTF8);
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "-u") || strequ (argv [praatP.argumentNumber], "--utf16")) {
+			MelderConsole::setEncoding (MelderConsole::Encoding::UTF16);
+			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "-a") || strequ (argv [praatP.argumentNumber], "--ansi")) {
-			Melder_consoleIsAnsi = true;
+			MelderConsole::setEncoding (MelderConsole::Encoding::ANSI);
 			praatP.argumentNumber += 1;
 		#if defined (macintosh)
 		} else if (strequ (argv [praatP.argumentNumber], "-NSDocumentRevisionsDebugMode")) {
@@ -1149,7 +1193,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	 */
 	Melder_batch |= praatP.hasCommandLineInput;
 
-	praatP.title = Melder_dup (title && title [0] ? title : U"Praat");
+	praatP.title = Melder_dup (title && title [0] != U'\0' ? title : U"Praat");
 
 	theCurrentPraatApplication -> batch = Melder_batch;
 
@@ -1335,7 +1379,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#ifdef macintosh
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
 			AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
-			MelderGui_create (raam);   // BUG: default Melder_assert would call printf recursively!!!
+			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
 		trace (U"creating the menu bar in the Objects window");
 		GuiWindow_addMenuBar (raam);
@@ -1374,7 +1418,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#endif
 		#if ! defined (macintosh)
 			trace (U"initializing the Gui late");
-			MelderGui_create (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
+			injectMessageAndInformationProcs (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
 		#endif
 		Melder_setHelpProc (helpProc);
 	}
@@ -1648,7 +1692,7 @@ void praat_run () {
 	{
 		double x = sqrt (-10.0);
 		//if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);   // -10.0 on Windows
-		x = sqrt_scalar (-10.0);
+		x = NUMsqrt (-10.0);
 		Melder_assert (isundef (x));
 	}
 	Melder_assert (isdefined (0.0));
@@ -1657,6 +1701,10 @@ void praat_run () {
 	Melder_assert (isundef (pow (10.0, 330)));
 	Melder_assert (isundef (0.0 / 0.0));
 	Melder_assert (isundef (1.0 / 0.0));
+	Melder_assert (undefined != undefined);
+	Melder_assert (undefined - undefined != 0.0);
+	Melder_assert ((1.0/0.0) == (1.0/0.0));
+	Melder_assert ((1.0/0.0) - (1.0/0.0) != 0.0);
 	{
 		/*
 			Assumptions made in abcio.cpp:
@@ -1680,30 +1728,47 @@ void praat_run () {
 		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
 	}
 	{
-		numvec x { };
+		VEC xn;   // uninitialized
+		Melder_assert (! xn.at);
+		Melder_assert (xn.size == 0);
+		VEC x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);
-		nummat y { };
-		Melder_assert (! y.at);
+		constVEC xnc;   // zero-initialized
+		Melder_assert (! xnc.at);
+		Melder_assert (xnc.size == 0);
+		constVEC xc { };
+		Melder_assert (! xc.at);
+		Melder_assert (xc.size == 0);
+		MAT yn;
+		Melder_assert (! yn.cells);
+		Melder_assert (yn.nrow == 0);
+		Melder_assert (yn.ncol == 0);
+		MAT y { };
+		Melder_assert (! y.cells);
 		Melder_assert (y.nrow == 0);
 		Melder_assert (y.ncol == 0);
-		//autonummat z {y.at,y.nrow,y.ncol};   // explicit construction not OK
-		autonummat a = autonummat { };
-		Melder_assert (! a.at);
+		//autoMAT z {y.at,y.nrow,y.ncol};   // explicit construction not OK
+		autoMAT a = autoMAT { };
+		Melder_assert (! a.cells);
 		Melder_assert (a.nrow == 0);
 		Melder_assert (a.ncol == 0);
 		//a = z.move();
 		//double q [11];
-		//autonumvec s { & q [1], 10 };
-		//autonumvec b { x };   // explicit construction not OK
-		//autonumvec c = x;   // implicit construction not OK
+		//autoVEC s { & q [1], 10 };
+		//autoVEC b { x };   // explicit construction not OK
+		//autoVEC c = x;   // implicit construction not OK
 	}
-	Melder_assert (sizeof (float) == 4);
-	Melder_assert (sizeof (double) == 8);
-	Melder_assert (sizeof (longdouble) >= 8);   // this can be 8, 12 or 16
-	Melder_assert (sizeof (integer) == sizeof (void *));
-	if (sizeof (off_t) < 8)
-		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
+	static_assert (sizeof (float) == 4,
+		"sizeof(float) should be 4");
+	static_assert (sizeof (double) == 8,
+		"sizeof(double) should be 8");
+	static_assert (sizeof (longdouble) >= 8,
+		"sizeof(longdouble) should be at least 8");   // this can be 8, 12 or 16
+	static_assert (sizeof (integer) == sizeof (void *),
+		"sizeof(integer) should equal the size of a pointer");
+	static_assert (sizeof (off_t) >= 8,
+		"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
 
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText) {

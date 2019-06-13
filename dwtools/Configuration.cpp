@@ -1,6 +1,6 @@
 /* Configuration.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ autoConfiguration Configuration_create (integer numberOfPoints, integer numberOf
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfDimensions);
-		my w = NUMvector<double> (1, numberOfDimensions);
+		my w = newVECraw (numberOfDimensions);
 		TableOfReal_setSequentialRowLabels (me.get(), 0, 0, nullptr, 1, 1);
 		TableOfReal_setSequentialColumnLabels (me.get(), 0, 0, U"dimension ", 1, 1);
 
@@ -89,9 +89,7 @@ void Configuration_setMetric (Configuration me, integer metric) {
 }
 
 void Configuration_setDefaultWeights (Configuration me) {
-	for (integer i = 1; i <= my numberOfColumns; i ++) {
-		my w [i] = 1;
-	}
+	my w.get() <<= 1.0;
 }
 
 void Configuration_setSqWeights (Configuration me, const double weight[]) {
@@ -103,73 +101,60 @@ void Configuration_setSqWeights (Configuration me, const double weight[]) {
 void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
-		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);
-		NUMnormalizeColumns (my data, my numberOfRows, my numberOfColumns, sumsq);
+		sumsq = ( sumsq <= 0.0 ? 1.0 : sqrt (sumsq) );
+		MATnormalizeColumns_inplace (my data.get(), 2.0, sumsq);
 	} else {
-		if (sumsq <= 0.0) {
+		if (sumsq <= 0.0)
 			sumsq = my numberOfRows;
-		}
-		NUMnormalize (my data, my numberOfRows, my numberOfColumns, sqrt (sumsq));
+		MATnormalize_inplace (my data.get(), 2.0, sumsq);
 	}
 }
 
 void Configuration_randomize (Configuration me) {
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+	for (integer i = 1; i <= my numberOfRows; i ++)
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			my data [i] [j] = NUMrandomUniform (-1.0, 1.0);
-		}
-	}
 }
 
 void Configuration_rotate (Configuration me, integer dimension1, integer dimension2, double angle_degrees) {
-	double f = NUMpi * (2.0 - angle_degrees / 180.0);
-	double cosa = cos (f), sina = sin (f);
-
-	if (dimension1 == dimension2 || angle_degrees == 0) {
+	if (dimension1 == dimension2 || angle_degrees == 0)
 		return;
-	}
-
-	if (dimension1 > dimension2) {
-		integer dt = dimension1; dimension1 = dimension2; dimension2 = dt;
-	}
-	if (dimension1 < 1 || dimension2 > my numberOfColumns) {
+	if (dimension1 > dimension2)
+		std::swap (dimension1, dimension2);
+	if (dimension1 < 1 || dimension2 > my numberOfColumns)
 		return;
-	}
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		double x1 = my data [i] [dimension1];
-		double x2 = my data [i] [dimension2];
-		my data [i] [dimension1] =   cosa * x1 + sina * x2;
-		my data [i] [dimension2] = - sina * x1 + cosa * x2;
+	const double phi = NUMpi * (2.0 - angle_degrees / 180.0);
+	const double cosa = cos (phi), sina = sin (phi);
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		double x1 = my data [irow] [dimension1];
+		double x2 = my data [irow] [dimension2];
+		my data [irow] [dimension1] =   cosa * x1 + sina * x2;
+		my data [irow] [dimension2] = - sina * x1 + cosa * x2;
 	}
 }
 
 void Configuration_invertDimension (Configuration me, int dimension) {
-	if (dimension < 1 || dimension > my numberOfColumns) {
+	if (dimension < 1 || dimension > my numberOfColumns)
 		return;
-	}
-
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		my data [i] [dimension] = - my data [i] [dimension];
-	}
+	for (integer irow = 1; irow <= my numberOfRows; irow ++)
+		my data [irow] [dimension] = - my data [irow] [dimension];
 }
 
-
-static double NUMsquaredVariance (double **a, integer nr, integer nc, bool rawPowers) {
-	double v4 = 0.0;
-
-	for (integer j = 1; j <= nc; j ++) {
-		double sum4 = 0.0, mean = 0.0;
-		for (integer i = 1; i <= nr; i ++) {
-			double sq = a [i] [j] * a [i] [j];
+static double NUMsquaredVariance (MAT a, bool rawPowers) {
+	longdouble v4 = 0.0;
+	for (integer icol = 1; icol <= a.ncol; icol ++) {
+		longdouble sum4 = 0.0, mean = 0.0;
+		for (integer irow = 1; irow <= a.nrow; irow ++) {
+			double sq = a [irow] [icol] * a [irow] [icol];
 			sum4 += sq * sq;
 			mean += sq;
 		}
 		v4 += sum4;
 		if (! rawPowers) {
-			v4 -= mean * mean / nr;
+			v4 -= mean * mean / a.nrow;
 		}
 	}
-	return v4;
+	return (double) v4;
 }
 
 /*
@@ -178,131 +163,105 @@ static double NUMsquaredVariance (double **a, integer nr, integer nc, bool rawPo
 		planar rotations: a remedy against nonoptimal varimax rotations",
 		Psychometrika 60, 437-446.
 */
-static void NUMvarimax (double **xm, double **ym, integer nr, integer nc, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
-	Melder_assert (nr > 0 && nc > 0);
+static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
+	Melder_assert (xm.ncol == ym.ncol && xm.nrow == ym.nrow);
 
-	NUMmatrix_copyElements (xm, ym, 1, nr, 1, nc);
+	ym <<= xm;
 
-	if (nc == 1) {
-		return;
-	}
-	if (nc == 2) {
-		maximumNumberOfIterations = 1;
-	}
+	if (xm.ncol == 1) return;
+	if (xm.ncol == 2) maximumNumberOfIterations = 1;
 
-	autoNUMvector<double> u (1, nr);
-	autoNUMvector<double> v (1, nr);
-	autoNUMvector<double> norm;
+
+	autoVEC u = newVECraw (xm.nrow);
+	autoVEC v = newVECraw (xm.nrow);
+	autoVEC norm = newVECraw (xm.nrow);
 
 	// Normalize sum of squares of each row to one.
 	// After rotation we have to rescale.
 
 	if (normalizeRows) {
-		norm.reset (1, nr);
-		for (integer i = 1; i <= nr; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				norm [i] += ym [i] [j] * ym [i] [j];
-			}
-			if (norm [i] <= 0.0) {
-				continue;
-			}
-			norm [i] = sqrt (norm [i]);
-			for (integer j = 1; j <= nc; j ++) {
-				ym [i] [j] /= norm [i];
-			}
+		for (long irow = 1; irow <= ym.nrow; irow ++) {
+			norm [irow] = NUMnorm (ym.row (irow), 2.0);
+			ym.row (irow) /= norm [irow];
 		}
 	}
 
+
 	// Initial squared "variance".
 
-	double varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
-	if (varianceSq == 0.0) {
-		return;
-	}
+	double varianceSq = NUMsquaredVariance (ym, quartimax);
+
+	if (varianceSq == 0.0) return;
 
 	// Treat columns pairwise.
 
 	double varianceSq_old;
 	integer numberOfIterations = 0;
 	do {
-		for (integer c1 = 1; c1 <= nc; c1 ++) {
-			for (integer c2 = c1 + 1; c2 <= nc; c2 ++) {
-				double um = 0.0, vm = 0.0;
-				for (integer i = 1; i <= nr; i ++) {
+		for (integer c1 = 1; c1 <= xm.ncol; c1 ++) {
+			for (integer c2 = c1 + 1; c2 <= xm.ncol; c2 ++) {
+				for (integer i = 1; i <= xm.nrow; i ++) {
 					double x = ym [i] [c1];
 					double y = ym [i] [c2];
 					u [i] = x * x - y * y;
-					um += u [i];
 					v [i] = 2.0 * x * y;
-					vm += v [i];
 				}
-				um /= nr; vm /= nr;
-				if (quartimax || nr == 1) {
-					um = vm = 0.0;
+				
+				if (! quartimax && xm.nrow != 1) {
+					VECcentre_inplace (u.get());
+					VECcentre_inplace (v.get());
 				}
 
-				/*
-					In the paper just before equation (1):
-					a = 2n u'v, b = n(u'u-v'v), c = sqrt(a^2+b^2)
-					w = -sign(a) sqrt((b+c) / 2c)
-					Tricks: multiplication with n drops out!
-						a's multiplication by 2 outside the loop.
-				*/
-				double a = 0.0, b = 0.0;
-				for (integer i = 1; i <= nr; i ++) {
-					double ui = u [i] - um;
-					double vi = v [i] - vm;
-					a += ui * vi;
-					b += ui * ui - vi * vi;
-				}
-				double c = sqrt (4.0 * a * a + b * b);
-				double w = sqrt ( (c + b) / (2.0 * c));
-				if (a > 0.0) {
-					w = -w;
-				}
-				double cost = sqrt (0.5 + 0.5 * w);
-				double sint = sqrt (0.5 - 0.5 * w);
-				double t22 = cost;
+				double a = 2.0 * NUMinner (u.get(), v.get());
+				double b = NUMinner (u.get(), u.get()) - NUMinner (v.get(), v.get());
+				
+				double c = sqrt (a * a + b * b);
+				double vc = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
+				if (a > 0.0) vc = -vc;
+				
+				// Get the rotation matrix T
+				
+				double cost = sqrt (0.5 + 0.5 * vc);
+				double sint = sqrt (0.5 - 0.5 * vc);
 				double t11 = cost;
 				double t12 = sint;
 				double t21 = -sint;
+				double t22 = cost;
 
-				// Prevent permutations: when w < 0, i.e., a > 0, swap columns of T:/
+				// Prevent permutations: when v < 0, i.e., a > 0, swap columns of T:/
 
-				if (w < 0.0) {
-					t11 = sint; t12 = t21 = cost; t22 = -sint;
+				if (vc < 0.0) {
+					t11 = sint;
+					t12 = t21 = cost;
+					t22 = -sint;
 				}
 
 				// Rotate in the plane spanned by c1 and c2.
 
-				for (integer i = 1; i <= nr; i ++) {
-					double *xt = ym [i], xtc1 = xt [c1];
-					xt [c1] = xtc1 * t11 + xt [c2] * t21;
-					xt [c2] = xtc1 * t12 + xt [c2] * t22;
+				for (integer i = 1; i <= xm.nrow; i ++) {
+					double x = ym [i] [c1], y = ym [i] [c2];
+					ym [i] [c1] = x * t11 + y * t21;
+					ym [i] [c2] = x * t12 + y * t22;
 				}
 			}
 		}
 
 		numberOfIterations++;
 		varianceSq_old = varianceSq;
-		varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
+		varianceSq = NUMsquaredVariance (ym, quartimax);
 
 	} while (fabs (varianceSq_old - varianceSq) / varianceSq_old > tolerance &&
 	         numberOfIterations < maximumNumberOfIterations);
 
-	if (normalizeRows) {
-		for (integer i = 1; i <= nr; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				ym [i] [j] *= norm [i];
-			}
-		}
-	}
+	if (normalizeRows)
+		for (integer i = 1; i <= xm.nrow; i ++)
+			ym.row (i) *= norm [i];
 }
 
 autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		autoConfiguration thee = Data_copy (me);
-		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
+		NUMvarimax (my data.get(), thy data.get(), normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": varimax rotation not performed.");
@@ -319,15 +278,10 @@ autoConfiguration Configuration_congruenceRotation (Configuration me, Configurat
 	}
 }
 
-/* Replace by TableOfReal_to_Configuration_pca ??? */
-
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {
-		autoNUMmatrix<double> m (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-
-		NUMdmatrix_into_principalComponents (my data, my numberOfRows, my numberOfColumns, my numberOfColumns, m.peek());
-		NUMvector_free (my data, 1);
-		my data = m.transfer();
+		autoMAT pc = MAT_asPrincipalComponents (my data.get(), my data.ncol);
+		my data.all() <<= pc.all();
 	} catch (MelderError) {
 		Melder_throw (me, U": not rotated to principal directions.");
 	}
@@ -336,33 +290,31 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
 	integer nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
-
-	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions)) {
+	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions))
 		return;
-	}
-	if (numberOfDimensions == 1) {
+	if (numberOfDimensions == 1)
 		xCoordinate = 1;
-	}
-	int fontSize = Graphics_inqFontSize (g), noLabel = 0;
-	if (labelSize == 0) {
+	double fontSize = Graphics_inqFontSize (g);
+	int noLabel = 0;
+	if (labelSize == 0)
 		labelSize = fontSize;
-	}
-	autoNUMvector<double> x (1, nPoints);
-	autoNUMvector<double> y (1, nPoints);
-
+	autoVEC x = newVECraw (nPoints);
+	autoVEC y = newVECraw (nPoints);
 	for (integer i = 1; i <= nPoints; i ++) {
 		x [i] = my data [i] [xCoordinate] * my w [xCoordinate];
-		y [i] = numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0;
+		y [i] = ( numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0 );
 	}
 	if (xmax <= xmin) {
-		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
+		xmin = NUMmin (x.get());
+		xmax = NUMmax (x.get());
 	}
 	if (xmax <= xmin) {
 		xmax += 1.0;
 		xmin -= 1.0;
 	}
 	if (ymax <= ymin) {
-		NUMvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
+		ymin = NUMmin (y.get());
+		ymax = NUMmax (y.get());
 	}
 	if (ymax <= ymin) {
 		ymax += 1.0;
@@ -375,7 +327,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
 			conststring32 plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
-			if (NUMstring_containsPrintableCharacter (plotLabel)) {
+			if (Melder_findInk (plotLabel)) {
 				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {
 				noLabel ++;
@@ -390,21 +342,22 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (numberOfDimensions > 1) {
 			Graphics_marksLeft (g, 2, true, true, false);
-			if (my columnLabels[xCoordinate]) {
+			if (my columnLabels [xCoordinate]) {
 				Graphics_textBottom (g, true, my columnLabels [xCoordinate].get());
 			}
-			if (my columnLabels[yCoordinate]) {
+			if (my columnLabels [yCoordinate]) {
 				Graphics_textLeft (g, true, my columnLabels [yCoordinate].get());
 			}
 		}
 	}
-
 	if (noLabel > 0) {
 		Melder_warning (U"Configuration_draw: ", noLabel, U" from ", my numberOfRows, U" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
 	}
 }
 
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, conststring32 label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, conststring32 label,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
+{
 	autoSSCPList sscps = TableOfReal_to_SSCPList_byLabel (me);
 	SSCPList_drawConcentrationEllipses (sscps.get(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
@@ -412,8 +365,7 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, doub
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
-
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		thy data.get() <<= my data.get();
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {
@@ -423,10 +375,8 @@ autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 
 autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numberOfDimensions) {
 	try {
-		if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns) {
+		if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns)
 			numberOfDimensions = my numberOfColumns;
-		}
-
 		autoPCA pca = TableOfReal_to_PCA_byRows (me);
 		autoConfiguration thee = PCA_TableOfReal_to_Configuration (pca.get(), me, numberOfDimensions);
 		return thee;
@@ -494,8 +444,8 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 }
 
 autoConfiguration Configuration_createCarrollWishExample () {
-	double  x [10] = {0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0};
-	double  y [10] = {0.0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0};
+	double x [10] = {0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0 };
+	double y [10] = {0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0 };
 	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
 		integer nObjects = 9;

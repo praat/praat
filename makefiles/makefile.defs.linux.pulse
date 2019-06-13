@@ -1,11 +1,11 @@
 # File: makefile.defs.linux.pulse
 
 # System: Linux
-# David Weenink and Paul Boersma, 2 July 2018
+# David Weenink and Paul Boersma, 23 September 2018
 
 CC = gcc -std=gnu99
 
-CXX = g++ -std=c++14
+CXX = g++ -std=c++17
 
 CFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
 

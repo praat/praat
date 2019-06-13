@@ -444,7 +444,7 @@ static void showStructMember (
 		/*
 		 * This represents an in-line set.
 		 */
-		fieldData -> address = memberAddress;   /* Direct. */
+		fieldData -> address = memberAddress;   // direct
 		fieldData -> description = memberDescription;
 		fieldData -> minimum = str32equ (((conststring32 (*) (int)) memberDescription -> min1) (0), U"_") ? 1 : 0;
 		fieldData -> maximum = ((int (*) (conststring32)) memberDescription -> max1) (U"\n");
@@ -452,9 +452,10 @@ static void showStructMember (
 		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (rank == 2) {
-		void *arrayAddress = * (void **) memberAddress;
+		constMAT mat = * (constMAT *) memberAddress;
+		//Melder_casual (U"Showing matrix member with ", mat.nrow, U" rows and ", mat.ncol, U" columns.");
+		if (NUMisEmpty (mat)) return;   // no button for empty fields
 		integer min1, max1, min2, max2;
-		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1,  & min1);
 		Data_Description_evaluateInteger (structAddress, structDescription,
@@ -464,7 +465,7 @@ static void showStructMember (
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> max2, & max2);
 		if (max1 < min1 || max2 < min2) return;   // no button if no elements
-		fieldData -> address = arrayAddress;   // indirect
+		fieldData -> address = memberAddress;   // direct
 		fieldData -> description = memberDescription;
 		fieldData -> minimum = min1;   // normally 1
 		fieldData -> maximum = max1;
@@ -646,16 +647,19 @@ integer structMatrixEditor :: v_countFields () {
 }
 
 void structMatrixEditor :: v_showMembers () {
-	int type = d_description -> type, isSingleType = type <= maxsingletypewa;
-	int elementSize = type == structwa ?
-		Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1 : 1;
-	int rowSize = elementSize * (d_max2 - d_min2 + 1);
+	int type = d_description -> type;
+	bool isSingleType = ( type <= maxsingletypewa );
+	Melder_assert (isSingleType);   // allow no struct matrices
+	integer rowSize = d_max2 - d_min2 + 1;
+	constMAT mat = * (constMAT *) d_address;   // HACK: this could be a MAT or an INTMAT
+	Melder_assert (rowSize == mat.ncol);   // HACK: this should work correctly even for an INTMAT
 	integer firstRow = d_minimum + (d_topField - 1) / rowSize;
-	integer firstColumn = d_min2 + (d_topField - 1 - (firstRow - d_minimum) * rowSize) / elementSize;
+	integer firstColumn = d_min2 + (d_topField - 1 - (firstRow - d_minimum) * rowSize);
 
 	for (integer irow = firstRow; irow <= d_maximum; irow ++)
 	for (integer icolumn = irow == firstRow ? firstColumn : d_min2; icolumn <= d_max2; icolumn ++) {
-		unsigned char *elementAddress = * ((unsigned char **) d_address + irow) + icolumn * d_description -> size;
+		unsigned char *elementAddress = (unsigned char *) mat.cells + ((irow - 1) * rowSize + (icolumn - 1)) * d_description -> size;
+			// not & mat [irow] [icol], because that HACK would not work for an INTMAT
 
 		if (++ d_irow > kDataSubEditor_MAXNUM_ROWS) return;
 		DataSubEditor_FieldData fieldData = & d_fieldData [d_irow];

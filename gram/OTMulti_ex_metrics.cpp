@@ -58,20 +58,24 @@ static void addCandidate (OTMulti me, conststring32 underlyingForm, integer numb
 	static const conststring32 syllableWithoutSecondaryStress [] { U"L", U"L1", U"L", U"H", U"H1", U"H", U"K", U"K1", U"K", U"J", U"J1", U"J" };
 	char32 string [150];
 	str32cpy (string, underlyingForm);
-	str32cpy (string + str32len (string), U" /");
+	str32cat (string, U" /");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		if (isyll > 1) str32cpy (string + str32len (string), U" ");
-		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0)) str32cpy (string + str32len (string), U"(");
-		str32cpy (string + str32len (string), syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
-		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0)) str32cpy (string + str32len (string), U")");
+		if (isyll > 1)
+			str32cat (string, U" ");
+		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0))
+			str32cat (string, U"(");
+		str32cat (string, syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
+		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0))
+			str32cat (string, U")");
 	}
-	str32cpy (string + str32len (string), U"/ [");
+	str32cat (string, U"/ [");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		if (isyll > 1) str32cpy (string + str32len (string), U" ");
-		str32cpy (string + str32len (string), ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
+		if (isyll > 1)
+			str32cat (string, U" ");
+		str32cat (string, ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
 				[stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
 	}
-	str32cpy (string + str32len (string), U"]");
+	str32cat (string, U"]");
 	my candidates [++ my numberOfCandidates]. string = Melder_dup (string);
 }
 
@@ -168,10 +172,11 @@ static void fillTableau (OTMulti me, integer numberOfSyllables, int underlyingWe
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		static const conststring32 syllable_noCodas [] = { U"", U"L", U"H" };
 		static const conststring32 syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
-		if (isyll > 1) str32cpy (underlyingForm + str32len (underlyingForm), includeCodas ? U"." : U" ");
-		str32cpy (underlyingForm + str32len (underlyingForm), ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
+		if (isyll > 1)
+			str32cat (underlyingForm, includeCodas ? U"." : U" ");
+		str32cat (underlyingForm, ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
 	}
-	str32cpy (underlyingForm + str32len (underlyingForm), U"|");
+	str32cat (underlyingForm, U"|");
 	for (integer mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
 		int stress [10];
 		stress [mainStressed] = 1;
@@ -214,7 +219,7 @@ static void computeViolationMarks (OTCandidate me) {
 	#define isStress(s)  ((s) == U'1' || (s) == U'2')
 	const char32 * const firstSlash = str32chr (my string.get(), U'/');
 	const char32 * const lastSlash = str32chr (firstSlash + 1, U'/');
-	my marks = NUMvector <int> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
+	my marks = newINTVECzero (my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
 	/* Violations of WSP: count all H not followed by 1 or 2. */
 	for (const char32 *p = firstSlash + 1; p != lastSlash; p ++) {
 		if (isHeavy (p [0]) && ! isStress (p [1]))

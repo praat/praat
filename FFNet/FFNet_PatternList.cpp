@@ -1,6 +1,6 @@
 /* FFNet_PatternList.cpp
  *
- * Copyright (C) 1997-2011, 2016 David Weenink
+ * Copyright (C) 1997-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,9 @@
 #include "FFNet_PatternList.h"
 
 void FFNet_PatternList_drawActivation (FFNet me, PatternList pattern, Graphics g, integer index) {
-	if (index < 1 || index > pattern->ny) {
+	if (index < 1 || index > pattern->ny) 
 		return;
-	}
-	FFNet_propagate (me, pattern->z[index], nullptr);
+	FFNet_propagate (me, pattern -> z.row (index), nullptr);
 	FFNet_drawActivation (me, g);
 }
 

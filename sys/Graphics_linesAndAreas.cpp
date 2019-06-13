@@ -131,18 +131,20 @@ static void psRevertLine (GraphicsPostscript me) {
 		CGContextSetLineWidth (my d_macGraphicsContext, lineWidth_pixels);
 
 		CGFloat lengths [4];
-		if (my lineType == Graphics_DOTTED)
-			lengths [0] = my resolution > 192 ? my resolution / 100.0 : 2,
+		if (my lineType == Graphics_DOTTED) {
+			lengths [0] = my resolution > 192 ? my resolution / 100.0 : 2;
 			lengths [1] = my resolution > 192 ? my resolution / 75.0 + lineWidth_pixels : 2;
-		if (my lineType == Graphics_DASHED)
-			lengths [0] = my resolution > 192 ? my resolution / 25 : 6,
+		} else if (my lineType == Graphics_DASHED) {
+			lengths [0] = my resolution > 192 ? my resolution / 25 : 6;
 			lengths [1] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
-		if (my lineType == Graphics_DASHED_DOTTED)
-			lengths [0] = my resolution > 192 ? my resolution / 25 : 6,
+		} else if (my lineType == Graphics_DASHED_DOTTED) {
+			lengths [0] = my resolution > 192 ? my resolution / 25 : 6;
 			lengths [1] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
 			lengths [2] = my resolution > 192 ? my resolution / 100.0 : 2;
 			lengths [3] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
-		CGContextSetLineDash (my d_macGraphicsContext, 0.0, my lineType == Graphics_DRAWN ? nullptr : lengths, my lineType == 0 ? 0 : my lineType == Graphics_DASHED_DOTTED ? 4 : 2);
+		}
+		CGContextSetLineDash (my d_macGraphicsContext, 0.0, my lineType == Graphics_DRAWN ? nullptr : lengths,
+				my lineType == 0 ? 0 : my lineType == Graphics_DASHED_DOTTED ? 4 : 2);
 	}
 	static void quartzRevertLine (GraphicsScreen me) {
 		if (my duringXor) {
@@ -750,7 +752,7 @@ void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double 
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
 void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
-	if (numberOfPoints == 0) return;
+	if (numberOfPoints < 2) return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
@@ -776,7 +778,7 @@ void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double
 }
 
 void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
-	if (numberOfPoints == 0) return;
+	if (numberOfPoints < 1) return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
@@ -812,7 +814,8 @@ void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y
 	if (my recording) { op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 
-void Graphics_fillArea (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {
+void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *xWC, double const *yWC) {
+	if (numberOfPoints < 3) return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
@@ -837,126 +840,111 @@ void Graphics_fillArea (Graphics me, integer numberOfPoints, double *xWC, double
 	}
 }
 
-#define MACRO_Graphics_function(TYPE) \
-	integer x1DC, x2DC; \
-	integer clipy1 = wdy (my d_y1WC), clipy2 = wdy (my d_y2WC); \
-	double dx, offsetX, translation, scale; \
-	integer n = ix2 - ix1 + 1; \
- \
-	if (ix2 <= ix1 || my scaleX == 0.0) return; \
- \
-	dx = (x2WC - x1WC) / (n - 1); \
-	offsetX = x1WC - ix1 * dx; \
-	/* xDC = wdx (offsetX + i * dx) */ \
-	translation = wdx (offsetX); \
-	scale = dx * my scaleX; \
-	x1DC = translation + ix1 * scale; \
-	x2DC = translation + ix2 * scale; \
-	if (n > (x2DC - x1DC + 1) * 2) {  /* Optimize: draw one vertical line for each device x coordinate. */ \
-		integer numberOfPixels = x2DC - x1DC + 1, k = 0; \
-		integer numberOfPointsActuallyDrawn = numberOfPixels * 2; \
-		double *xyDC; \
-		TYPE lastMini; \
-		if (numberOfPointsActuallyDrawn < 1) return; \
-		xyDC = Melder_malloc_f (double, 2 * numberOfPointsActuallyDrawn); \
-		for (integer i = 0; i < numberOfPixels; i ++) { \
-			integer j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
-			TYPE mini, maxi; \
-			integer minDC, maxDC; \
-			if (jmin > ix2) jmin = ix2; \
-			if (jmax > ix2) jmax = ix2; \
-			mini = yWC [STAGGER (jmin)], maxi = mini; \
-			for (j = jmin + 1; j <= jmax; j ++) {   /* One point overlap. */ \
-				TYPE value = yWC [STAGGER (j)]; \
-				if (value > maxi) maxi = value; \
-				else if (value < mini) mini = value; \
-			} \
-			minDC = wdy (mini); \
-			maxDC = wdy (maxi); \
-			if (my yIsZeroAtTheTop) { \
-				if (minDC > clipy1) minDC = clipy1; \
-				if (maxDC > clipy1) maxDC = clipy1; \
-				if (maxDC < clipy2) maxDC = clipy2; \
-				if (minDC < clipy2) minDC = clipy2; \
-			} else { \
-				if (minDC < clipy1) minDC = clipy1; \
-				if (maxDC < clipy1) maxDC = clipy1; \
-				if (maxDC > clipy2) maxDC = clipy2; \
-				if (minDC > clipy2) minDC = clipy2; \
-			} \
-			if (i == 0) { \
-				if (yWC [STAGGER (jmin)] < yWC [STAGGER (jmax)]) { \
-					xyDC [k ++] = x1DC; \
-					xyDC [k ++] = minDC; \
-					xyDC [k ++] = x1DC; \
-					xyDC [k ++] = maxDC; \
-				} else { \
-					xyDC [k ++] = x1DC; \
-					xyDC [k ++] = maxDC; \
-					xyDC [k ++] = x1DC; \
-					xyDC [k ++] = minDC; \
-				} \
-			} else if (minDC == xyDC [k - 1]) { \
-				xyDC [k ++] = x1DC + i; \
-				xyDC [k ++] = maxDC; \
-			} else if (maxDC == xyDC [k - 1]) { \
-				xyDC [k ++] = x1DC + i; \
-				xyDC [k ++] = minDC; \
-			} else if (mini > lastMini) { \
-				xyDC [k ++] = x1DC + i; \
-				xyDC [k ++] = minDC; \
-				xyDC [k ++] = x1DC + i; \
-				xyDC [k ++] = maxDC; \
-			} else { \
-				xyDC [k ++] = x1DC + i; \
-				xyDC [k ++] = maxDC; \
-				xyDC [k ++] = x1DC + i; \
-				xyDC [k ++] = minDC; \
-			} \
-			lastMini = mini; \
-		} \
-		if (k > 1) my v_polyline (k / 2, xyDC, false); \
-		Melder_free (xyDC); \
-	} else {  /* Normal. */  \
-		double *xyDC = Melder_malloc_f (double, 2 * n); \
-		for (integer i = 0; i < n; i ++) { \
-			integer ix = ix1 + i; \
-			integer value = wdy (yWC [STAGGER (ix)]); \
-			xyDC [i + i] = translation + ix * scale; \
-			if (my yIsZeroAtTheTop) { \
-				if (FUNCTIONS_ARE_CLIPPED && value > clipy1) value = clipy1; \
-				if (FUNCTIONS_ARE_CLIPPED && value < clipy2) value = clipy2; \
-			} else { \
-				if (FUNCTIONS_ARE_CLIPPED && value < clipy1) value = clipy1; \
-				if (FUNCTIONS_ARE_CLIPPED && value > clipy2) value = clipy2; \
-			} \
-			xyDC [i + i + 1] = value; \
-		} \
-		my v_polyline (n, xyDC, false); \
-		Melder_free (xyDC); \
-	}
+template <typename TYPE>
+integer Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, integer ix1, integer ix2, double x1WC, double x2WC) {
+	const integer clipy1 = wdy (my d_y1WC), clipy2 = wdy (my d_y2WC);
+	const integer n = ix2 - ix1 + 1;
 
-void Graphics_function (Graphics me, double yWC [], integer ix1, integer ix2, double x1WC, double x2WC) {
-	#define STAGGER(i)  (i)
-	MACRO_Graphics_function (double)
-	#undef STAGGER
-	if (my recording) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
+	if (n <= 1 || my scaleX == 0.0) return n;
+
+	const double dx = (x2WC - x1WC) / (n - 1);
+	const double offsetX = x1WC - ix1 * dx;
+	/* xDC = wdx (offsetX + i * dx) */
+	const double translation = wdx (offsetX);
+	const double scale = dx * my scaleX;
+	const integer x1DC = translation + ix1 * scale;
+	const integer x2DC = translation + ix2 * scale;
+	if (n > (x2DC - x1DC + 1) * 2) {   // optimize: draw one vertical line for each device x coordinate
+		const integer numberOfPixels = x2DC - x1DC + 1;
+		integer k = 0;
+		const integer numberOfPointsActuallyDrawn = numberOfPixels * 2;
+		TYPE lastMini;
+		if (numberOfPointsActuallyDrawn < 1) return n;
+		double *xyDC = Melder_malloc_f (double, 2 * numberOfPointsActuallyDrawn);
+		for (integer i = 0; i < numberOfPixels; i ++) {
+			integer jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale;
+			if (jmin > ix2) jmin = ix2;
+			if (jmax > ix2) jmax = ix2;
+			TYPE mini = yWC [stride * jmin], maxi = mini;
+			for (integer j = jmin + 1; j <= jmax; j ++) {   // one point overlap
+				TYPE value = yWC [stride * j];
+				if (value > maxi) maxi = value;
+				else if (value < mini) mini = value;
+			}
+			integer minDC = wdy (mini);
+			integer maxDC = wdy (maxi);
+			if (my yIsZeroAtTheTop) {
+				if (minDC > clipy1) minDC = clipy1;
+				if (maxDC > clipy1) maxDC = clipy1;
+				if (maxDC < clipy2) maxDC = clipy2;
+				if (minDC < clipy2) minDC = clipy2;
+			} else {
+				if (minDC < clipy1) minDC = clipy1;
+				if (maxDC < clipy1) maxDC = clipy1;
+				if (maxDC > clipy2) maxDC = clipy2;
+				if (minDC > clipy2) minDC = clipy2;
+			}
+			if (i == 0) {
+				if (yWC [stride * jmin] < yWC [stride * jmax]) {
+					xyDC [k ++] = x1DC;
+					xyDC [k ++] = minDC;
+					xyDC [k ++] = x1DC;
+					xyDC [k ++] = maxDC;
+				} else {
+					xyDC [k ++] = x1DC;
+					xyDC [k ++] = maxDC;
+					xyDC [k ++] = x1DC;
+					xyDC [k ++] = minDC;
+				}
+			} else if (minDC == xyDC [k - 1]) {
+				xyDC [k ++] = x1DC + i;
+				xyDC [k ++] = maxDC;
+			} else if (maxDC == xyDC [k - 1]) {
+				xyDC [k ++] = x1DC + i;
+				xyDC [k ++] = minDC;
+			} else if (mini > lastMini) {
+				xyDC [k ++] = x1DC + i;
+				xyDC [k ++] = minDC;
+				xyDC [k ++] = x1DC + i;
+				xyDC [k ++] = maxDC;
+			} else {
+				xyDC [k ++] = x1DC + i;
+				xyDC [k ++] = maxDC;
+				xyDC [k ++] = x1DC + i;
+				xyDC [k ++] = minDC;
+			}
+			lastMini = mini;
+		}
+		if (k > 1) my v_polyline (k / 2, xyDC, false);
+		Melder_free (xyDC);
+	} else {   // normal
+		double *xyDC = Melder_malloc_f (double, 2 * n);
+		for (integer i = 0; i < n; i ++) {
+			integer ix = ix1 + i;
+			integer value = wdy (yWC [stride * ix]);
+			xyDC [i + i] = translation + ix * scale;
+			if (my yIsZeroAtTheTop) {
+				if (FUNCTIONS_ARE_CLIPPED && value > clipy1) value = clipy1;
+				if (FUNCTIONS_ARE_CLIPPED && value < clipy2) value = clipy2;
+			} else {
+				if (FUNCTIONS_ARE_CLIPPED && value < clipy1) value = clipy1;
+				if (FUNCTIONS_ARE_CLIPPED && value > clipy2) value = clipy2;
+			}
+			xyDC [i + i + 1] = value;
+		}
+		my v_polyline (n, xyDC, false);
+		Melder_free (xyDC);
+	}
+	return n;
 }
 
-void Graphics_function16 (Graphics me, int16 yWC [], int stagger, integer ix1, integer ix2, double x1WC, double x2WC) {
-	if (stagger == 1) {
-		#define STAGGER(i)  ((i) + (i))
-		MACRO_Graphics_function (int16)
-		#undef STAGGER
-	} else if (stagger > 1) {
-		#define STAGGER(i)  ((stagger + 1) * (i))
-		MACRO_Graphics_function (int16)
-		#undef STAGGER
-	} else {
-		#define STAGGER(i)  (i)
-		MACRO_Graphics_function (int16)
-		#undef STAGGER
-	}
+void Graphics_function (Graphics me, const double yWC [], integer ix1, integer ix2, double x1WC, double x2WC) {
+	integer n = Graphics_function_ <double> (me, yWC, 1, ix1, ix2, x1WC, x2WC);
+	if (my recording && n >= 2) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
+}
+
+void Graphics_function16 (Graphics me, const int16 yWC [], int stride, integer ix1, integer ix2, double x1WC, double x2WC) {
+	(void) Graphics_function_ <int16> (me, yWC, stride, ix1, ix2, x1WC, x2WC);
 }
 
 void Graphics_rectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {

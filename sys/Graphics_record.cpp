@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define RECORDING_HEADER_LENGTH 2
 
 double * _Graphics_check (Graphics me, integer number) {
+	Melder_assert (number >= 0);
 	static bool messageHasAlreadyBeenShownOnce = false;
 	double *result = nullptr;
 	double *record = my record;
@@ -39,7 +40,8 @@ double * _Graphics_check (Graphics me, integer number) {
 			}
 			return nullptr;
 		}
-		my record = record; my nrecord = nrecord;
+		my record = record;
+		my nrecord = nrecord;
 	}
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
 		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
@@ -55,7 +57,8 @@ double * _Graphics_check (Graphics me, integer number) {
 			}
 			return nullptr;
 		}
-		my record = record; my nrecord = nrecord;
+		my record = record;
+		my nrecord = nrecord;
 	}
 	result = my record + my irecord;
 	my irecord += number + RECORDING_HEADER_LENGTH;
@@ -177,19 +180,22 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
 				 * This works because the data is a packed array of double, just as Graphics_cellArray expects.
 				 */
-				double **z = Melder_malloc_f (double *, nrow);
-				z [0] = p + 1;
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				#if 0
+				autoMAT z = newMATraw (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++)
+						z [irow] [icol] = get;
+				Graphics_cellArray (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
+				#else
+				Graphics_cellArray (thee, constMATVU (p + 1, nrow, ncol, ncol, 1), x1, x2, y1, y2, minimum, maximum);
 				p += nrow * ncol;
-				Graphics_cellArray (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				#endif
 			}  break;
 			case SET_FONT: {
 				Graphics_setFont (thee, (enum kGraphics_font) get);
 			} break;
 			case SET_FONT_SIZE: {
-				Graphics_setFontSize (thee, (int) get);
+				Graphics_setFontSize (thee, get);
 			} break;
 			case SET_FONT_STYLE: {
 				Graphics_setFontStyle (thee, (int) get);
@@ -256,12 +262,11 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
 				integer nrow = iget, ncol = iget;
-				uint8 **z = NUMmatrix <uint8> (1, nrow, 1, ncol);   // BUG memory
+				automatrix <uint8> z = newmatrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = (uint8) iget;
-				Graphics_image8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
-				NUMmatrix_free (z, 1, 1);
+				Graphics_image8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			} break;
 			case UNHIGHLIGHT: {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
@@ -336,28 +341,20 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
 				integer nrow = iget, ncol = iget;
-				uint8 **z = NUMmatrix <uint8> (1, nrow, 1, ncol);   // BUG memory
+				automatrix <uint8> z = newmatrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = (uint8) iget;
-				Graphics_cellArray8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
-				NUMmatrix_free (z, 1, 1);
+				Graphics_cellArray8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case IMAGE: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double, just as Graphics_image expects.
-				 */
-				double **z = Melder_malloc_f (double *, nrow);
-				z [0] = p + 1;
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
-				p += nrow * ncol;
-				Graphics_image (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				autoMAT z = newMATraw (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++)
+						z [irow] [icol] = get;
+				Graphics_image (thee, z.all(), x1, x2, y1, y2, minimum, maximum);   // or with constMATVU construction
 			}  break;
 			case HIGHLIGHT2: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
@@ -393,34 +390,28 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case CELL_ARRAY_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double_rgbt, just as Graphics_cellArray_colour expects.
-				 */
-				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
-				z [0] = (double_rgbt *) (p + 1);
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
-				p += nrow * ncol * 4;
-				Graphics_cellArray_colour (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				automatrix <double_rgbt> z = newmatrixzero <double_rgbt> (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++) {
+						z [irow] [icol]. red = get;
+						z [irow] [icol]. green = get;
+						z [irow] [icol]. blue = get;
+						z [irow] [icol]. transparency = get;
+					}
+				Graphics_cellArray_colour (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case IMAGE_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double_rgbt, just as Graphics_image_colour expects.
-				 */
-				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
-				z [0] = (double_rgbt *) (p + 1);
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
-				p += nrow * ncol * 4;
-				Graphics_image_colour (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				automatrix <double_rgbt> z = newmatrixzero <double_rgbt> (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++) {
+						z [irow] [icol]. red = get;
+						z [irow] [icol]. green = get;
+						z [irow] [icol]. blue = get;
+						z [irow] [icol]. transparency = get;
+					}
+				Graphics_image_colour (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case SET_COLOUR_SCALE: {
 				Graphics_setColourScale (thee, (enum kGraphics_colourScale) get);

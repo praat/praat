@@ -1,6 +1,6 @@
 /* Resonator.cpp
  *
- * Copyright (C) 2008-2011, 2015 David Weenink
+ * Copyright (C) 2008-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,10 +70,12 @@ Thing_implement (AntiResonator, Filter, 0);
 
 void structAntiResonator :: v_setFB (double f, double bw) {
 	if (f <= 0 && bw <= 0) {
-		a = 1; b = -2; c = 1; // all-pass except dc
+		a = 1.0;
+		b = -2.0;
+		c = 1.0; // all-pass except dc
 	} else {
 		SETBC (f, bw)
-		a = 1 / (1.0 - b - c);
+		a = 1.0 / (1.0 - b - c);
 		// The next equations are incorporated in the getOutput function
 		//c *= - a; b *= - a;
 	}
@@ -90,12 +92,12 @@ double structAntiResonator :: v_getOutput (double input) {
 Thing_implement (ConstantGainResonator, Filter, 0);
 
 void structConstantGainResonator :: v_resetMemory () {
-	p1 = p2 = p3 = p4 = 0;
+	p1 = p2 = p3 = p4 = 0.0;
 }
 
 void structConstantGainResonator :: v_setFB (double f, double bw) {
 	SETBC (f, bw)
-	a = 1 - r;
+	a = 1.0 - r;
 	d = -r;
 }
 
@@ -112,7 +114,7 @@ double structConstantGainResonator :: v_getOutput (double input) {
 autoConstantGainResonator ConstantGainResonator_create (double dT) {
 	try {
 		autoConstantGainResonator me = Thing_new (ConstantGainResonator);
-		my a = 1; // all-pass
+		my a = 1.0; // all-pass
 		my dT = dT;
 		return me;
 	} catch (MelderError) {
@@ -123,7 +125,7 @@ autoConstantGainResonator ConstantGainResonator_create (double dT) {
 autoAntiResonator AntiResonator_create (double dT) {
 	try {
 		autoAntiResonator me = Thing_new (AntiResonator);
-		my a = 1; // all-pass
+		my a = 1.0; // all-pass
 		my dT = dT;
 		return me;
 	} catch (MelderError) {

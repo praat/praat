@@ -28,7 +28,7 @@ autoSound PointProcess_to_Sound_pulseTrain
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 		autoSound thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
-		double *sound = thy z [1];
+		VEC sound = thy z.row (1);
 		for (integer it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = 0.9, angle, halfampsinangle;
 			integer mid = Sampled_xToNearestIndex (thee.get(), t);
@@ -98,7 +98,7 @@ autoSound PointProcess_to_Sound_phonation
 		/*
 		 * Cycle through the points. Each will become a period.
 		 */
-		double *sound = thy z [1];
+		VEC sound = thy z.row (1);
 		for (integer it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = a;
 			double period = undefined, te, phase, flow;

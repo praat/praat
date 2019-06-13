@@ -2,7 +2,7 @@
 #define _Net_h_
 /* Net.h
  *
- * Copyright (C) 2017 Paul Boersma
+ * Copyright (C) 2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,14 @@
 
 #include "Net_def.h"
 
-void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinary);
+void Net_initAsDeepBeliefNet (Net me, constVECVU const& numbersOfNodes, bool inputsAreBinary);
 
+void Net_initEmpty (Net me);
 autoNet Net_createEmpty (integer numberOfInputNodes);
 
-autoNet Net_createAsDeepBeliefNet (numvec numbersOfNodes, bool inputsAreBinary);
+autoNet Net_createAsDeepBeliefNet (constVECVU const& numbersOfNodes, bool inputsAreBinary);
 
+void Net_addInputLayer (Net me, integer numberOfNodes);
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);
 void Net_addFullyConnectedLayer (Net me, integer numberOfOutputNodes);
 
@@ -47,6 +49,7 @@ void Net_PatternList_applyToInput (Net me, PatternList thee, integer rowNumber);
 void Net_PatternList_applyToOutput (Net me, PatternList thee, integer rowNumber);
 void Net_PatternList_learn (Net me, PatternList thee, double learningRate);
 void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate);
+void Net_PatternList_learn_twoPhases (Net me, PatternList thee, double learningRate);
 
 autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kLayer_activationType activationType);
 
@@ -59,7 +62,7 @@ autoMatrix Net_extractInputBiases (Net me, integer layerNumber);
 autoMatrix Net_extractOutputBiases (Net me, integer layerNumber);
 autoMatrix Net_extractWeights (Net me, integer layerNumber);
 
-autonummat Net_getWeights_nummat (Net me, integer layerNumber);
+autoMAT Net_getWeights (Net me, integer layerNumber);
 
 /* End of file Net.h */
 #endif

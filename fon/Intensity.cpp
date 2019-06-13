@@ -85,17 +85,14 @@ autoIntensity Matrix_to_Intensity (Matrix me) {
 }
 
 void Intensity_drawInside (Intensity me, Graphics g, double tmin, double tmax, double minimum, double maximum) {
-	if (tmax <= tmin) {
-		tmin = my xmin;   // autowindow
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, itmin, itmax, 1, 1, & minimum, & maximum);   // autoscale
 	if (maximum <= minimum) { minimum -= 10; maximum += 10; }
 	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
-	Graphics_function (g, my z [1], itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax));
+	Graphics_function (g, & my z [1] [0], itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax));
 }
 
 void Intensity_draw (Intensity me, Graphics g, double tmin, double tmax,

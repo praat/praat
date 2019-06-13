@@ -42,24 +42,6 @@
 #include "oo_DESCRIPTION.h"
 #include "SimpleVector_def.h"
 
-Thing_implement (DoubleVector, Daata, 0);
-
-void DoubleVector_init (DoubleVector me, integer min, integer max) {
-	my min = min;
-	my max = max;
-	my v = NUMvector<double> (min, max);
-}
-
-autoDoubleVector DoubleVector_create (integer min, integer max) {
-	try {
-		autoDoubleVector me = Thing_new (DoubleVector);
-		DoubleVector_init (me.get(), min, max);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"DoubleVector not created.");
-	}
-}
-
 Thing_implement (ComplexVector, Daata, 0);
 
 void ComplexVector_init (ComplexVector me, integer min, integer max) {

@@ -223,7 +223,7 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 	if (! pulses) Melder_throw (U"There are no pulses.");
 	if (! ana -> pitch) return;
 	integer ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
-	double *t = pulses -> t;
+	double *t = pulses -> t.at;
 	double f = my pitchTier.cursor;   // default
 	Editor_save (me, U"Add pitch point");
 	if (nt <= 1) {
@@ -392,7 +392,8 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch units", nullptr)
-		RADIO_ENUM (pitchUnits, U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
+		RADIO_ENUM (kManipulationEditor_pitchUnits, pitchUnits,
+				U"Pitch units", my default_pitch_units ())
 	EDITOR_OK
 		SET_ENUM (pitchUnits, kManipulationEditor_pitchUnits, my p_pitch_units)
 	EDITOR_DO
@@ -444,7 +445,8 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDraggingStrategy (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dragging strategy", U"ManipulationEditor")
-		RADIO_ENUM (draggingStrategy, U"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
+		RADIO_ENUM (kManipulationEditor_draggingStrategy, draggingStrategy,
+				U"Dragging strategy", my default_pitch_draggingStrategy ())
 	EDITOR_OK
 		SET_ENUM (draggingStrategy, kManipulationEditor_draggingStrategy, my p_pitch_draggingStrategy)
 	EDITOR_DO
@@ -654,7 +656,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 * Draw samples.
 		 */    
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
-		Graphics_function (my graphics.get(), sound -> z [1], first, last,
+		Graphics_function (my graphics.get(), & sound -> z [1] [0], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
@@ -978,9 +980,12 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 		Graphics_getMouseLocation (my graphics.get(), & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-			if (dragHorizontal) dt += xWC_new - xWC;
-			if (dragVertical) df += yWC_new - yWC;
-			xWC = xWC_new, yWC = yWC_new;
+			if (dragHorizontal)
+				dt += xWC_new - xWC;
+			if (dragVertical)
+				df += yWC_new - yWC;
+			xWC = xWC_new;
+			yWC = yWC_new;
 			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
@@ -989,7 +994,8 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	/*
 	 * Dragged inside window?
 	 */
-	if (xWC < my startWindow || xWC > my endWindow) return 1;
+	if (xWC < my startWindow || xWC > my endWindow)
+		return 1;
 
 	/*
 	 * Points not dragged past neighbours?
@@ -1012,15 +1018,20 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 		RealPoint point = pitch -> points.at [i];
 		point -> number += dt;
 		point -> value = YLININV (YLIN (point -> value) + df);
-		if (point -> value < 50.0) point -> value = 50.0;
-		if (point -> value > YLININV (my p_pitch_maximum)) point -> value = YLININV (my p_pitch_maximum);
+		if (point -> value < 50.0)
+			point -> value = 50.0;
+		if (point -> value > YLININV (my p_pitch_maximum))
+			point -> value = YLININV (my p_pitch_maximum);
 	}
 
 	/*
 	 * Make sure that the same pitch points are still selected (a problem with Undo...).
 	 */
 
-	if (draggingSelection) my startSelection += dt, my endSelection += dt;
+	if (draggingSelection) {
+		my startSelection += dt;
+		my endSelection += dt;
+	}
 	if (my startSelection == my endSelection) {
 		RealPoint point = pitch -> points.at [ifirstSelected];
 		my startSelection = my endSelection = point -> number;

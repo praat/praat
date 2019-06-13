@@ -28,77 +28,80 @@
 #define MAXGREYEDGEPOINTS  (4 * MAXGREYSIDE)
 
 typedef struct {
-	int numberOfPoints;
-	int beginRow, beginCol, beginOri;
-	int endRow, endCol, endOri;
-	int lowerGrey, upperGrey;
-	double *x, *y;
+	integer numberOfPoints;
+	integer beginRow, beginCol, beginOri;
+	integer endRow, endCol, endOri;
+	integer lowerGrey, upperGrey;
+	autoVEC x, y;
 } structEdgeContour, *EdgeContour;
 
-static EdgeContour EdgeContour_create (int numberOfPoints) {
+static EdgeContour EdgeContour_create (integer numberOfPoints) {
 	EdgeContour result = Melder_calloc (structEdgeContour, 1);
 	result -> numberOfPoints = numberOfPoints;
-	result -> x = NUMvector <double> (1, 2 * numberOfPoints);
-	result -> y = result -> x + numberOfPoints;
+	result -> x = newVECzero (numberOfPoints);
+	result -> y = newVECzero (numberOfPoints);
 	return result;   // LEAK
 }
 static void EdgeContour_delete (EdgeContour e) {
-	NUMvector_free <double> (e -> x, 1);
+	e -> x. reset();
 	Melder_free (e);
 }
 
 typedef struct {
-	int numberOfPoints;
+	integer numberOfPoints;
 	int grey, drawn;
-	double xmin, xmax, ymin, ymax, *x, *y;
+	double xmin, xmax, ymin, ymax;
+	autoVEC x, y;
 } structClosedContour, *ClosedContour;
 
-static ClosedContour ClosedContour_create (int numberOfPoints) {
+static ClosedContour ClosedContour_create (integer numberOfPoints) {
 	ClosedContour result = Melder_calloc (structClosedContour, 1);
 	result -> numberOfPoints = numberOfPoints;
-	result -> x = NUMvector <double> (1, 2 * numberOfPoints);
-	result -> y = result -> x + numberOfPoints;
+	result -> x = newVECzero (numberOfPoints);
+	result -> y = newVECzero (numberOfPoints);
 	return result;   // LEAK
 }
 static void ClosedContour_delete (ClosedContour c) {
-	NUMvector_free <double> (c -> x, 1);
+	c -> x. reset();
 	Melder_free (c);
 }
 
 typedef struct {
-	int ori, iContour, start, usedAsEntry, grey;
+	integer ori, iContour, start, usedAsEntry, grey;
 	double val;
 } structEdgePoint, *EdgePoint;
 
 static Graphics theGraphics;
-static int numberOfEdgeContours;
+static integer numberOfEdgeContours;
 static EdgeContour *edgeContours;
-static int numberOfEdgePoints;
+static integer numberOfEdgePoints;
 static structEdgePoint *edgePoints;
-static int numberOfClosedContours;
+static integer numberOfClosedContours;
 static ClosedContour *closedContours;
 
-static int numberOfPoints;
+static integer numberOfPoints;
 static integer row1, row2, col1, col2;
-static int iBorder, numberOfBorders;
-static int **right, **below;
-static double **data, *border, *x, *y;
+static integer iBorder, numberOfBorders;
+static autoBOOLMAT right, below;
+static constMATVU data;
+static double *border;
+static autoVEC x, y;
 static double dx, dy, xoff, yoff;
 
-static int empty (int row, int col, int ori)
+static int empty (integer row, integer col, integer ori)
 {
 	if (ori == 3) { row ++; ori = 1; }
 	if (ori == 2) { col ++; ori = 4; }
 	if (ori == 1)
 		return (data [row] [col] < border [iBorder]) !=
 				 (data [row] [col + 1] < border [iBorder]) &&
-				 ! right [row - row1] [col - col1];
+				 ! right [row - row1 + 1] [col - col1 + 1];
 	else /* ori == 4 */
 		return (data [row] [col] < border [iBorder]) !=
 				 (data [row + 1] [col] < border [iBorder]) &&
-				 ! below [row - row1] [col - col1];
+				 ! below [row - row1 + 1] [col - col1 + 1];
 }
-static int note (int row, int col, int ori)
+static integer note (integer row, integer col, integer ori)
 {
 	++ numberOfPoints;
 	Melder_assert (numberOfPoints <= MAXGREYPATH);
@@ -106,14 +109,14 @@ static int note (int row, int col, int ori)
 	if (ori == 2) { col ++; ori = 4; }
 	if (ori == 1)
 	{
-		right [row - row1] [col - col1] = 1;
+		right [row - row1 + 1] [col - col1 + 1] = true;
 		x [numberOfPoints] = xoff + (col + (border [iBorder] - data [row] [col]) /
 			 (data [row] [col + 1] - data [row] [col])) * dx;
 		y [numberOfPoints] = yoff + row * dy;
 	}
 	else /* ori == 4 */
 	{
-		below [row - row1] [col - col1] = 1;
+		below [row - row1 + 1] [col - col1 + 1] = true;
 		x [numberOfPoints] = xoff + col * dx;
 		y [numberOfPoints] = yoff + (row + (border [iBorder] - data [row] [col]) /
 			 (data [row + 1] [col] - data [row] [col])) * dy;
@@ -121,16 +124,16 @@ static int note (int row, int col, int ori)
 	return 1;
 }
 
-static void fillGrey (int numberOfPoints, double *x, double *y, int igrey)
+static void fillGrey (integer numberOfPoints, constVECVU const& x, constVECVU const& y, int igrey)
 /* "igrey" is in between 1 and numberOfBorders + 1. */
 {
 	Graphics_setGrey (theGraphics, 1.0 - (igrey - 1.0) / numberOfBorders);
 	Graphics_fillArea (theGraphics, numberOfPoints, & x [1], & y [1]);
 }
 
-static void makeEdgeContour (int row0, int col0, int ori0) {
+static void makeEdgeContour (integer row0, integer col0, integer ori0) {
 	numberOfPoints = 0;
-	int row = row0, col = col0, ori = ori0;
+	integer row = row0, col = col0, ori = ori0;
 	note (row0, col0, ori0);
 
 	bool edge = false;
@@ -182,12 +185,12 @@ static void makeEdgeContour (int row0, int col0, int ori0) {
 	}
 }
 
-static void makeClosedContour (int row0, int col0, int ori0) {
+static void makeClosedContour (integer row0, integer col0, integer ori0) {
 	double x1, y1;
 	ClosedContour c;
 
 	numberOfPoints = 0;
-	int row = row0, col = col0, ori = ori0;
+	integer row = row0, col = col0, ori = ori0;
 	do {
 		bool clockwise = ! (ori & 1);
 		do {   /* Preference for contours perpendicular to x == y. */
@@ -232,7 +235,7 @@ static void makeClosedContour (int row0, int col0, int ori0) {
 
 	/* Find out whether the point is inside or outside the contour. */
 
-	if (! NUMrotationsPointInPolygon (x1, y1, numberOfPoints, x, y)) up = ! up;
+	if (! NUMrotationsPointInPolygon (x1, y1, numberOfPoints, x.at, y.at)) up = ! up;
 
 	double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
 	c -> grey = up ? iBorder + 1 : iBorder;
@@ -254,31 +257,32 @@ static void smallGrey () {
 	numberOfEdgeContours = 0;
 	numberOfClosedContours = 0;
 	for (iBorder = 1; iBorder <= numberOfBorders; iBorder ++) {
-		for (int row = 0; row < MAXGREYSIDE; row ++) for (int col = 0; col < MAXGREYSIDE; col ++)
-			right [row] [col] = below [row] [col] = 0;
+		for (integer row = 1; row <= MAXGREYSIDE; row ++)
+			for (integer col = 1; col <= MAXGREYSIDE; col ++)
+				right [row] [col] = below [row] [col] = false;
 
 		/* Find all the edge contours of this border value. */
 
-		for (int col = col1; col < col2; col ++)
+		for (integer col = col1; col < col2; col ++)
 			if (empty (row1, col, 1))
 				makeEdgeContour (row1, col, 1);
-		for (int row = row1; row < row2; row ++)
+		for (integer row = row1; row < row2; row ++)
 			if (empty (row, col2 - 1, 2))
 				makeEdgeContour (row, col2 - 1, 2);
-		for (int col = col2 - 1; col >= col1; col --)
+		for (integer col = col2 - 1; col >= col1; col --)
 			if (empty (row2 - 1, col, 3))
 				makeEdgeContour (row2 - 1, col, 3);
-		for (int row = row2 - 1; row >= row1; row --)
+		for (integer row = row2 - 1; row >= row1; row --)
 			if (empty (row, col1, 4))
 				makeEdgeContour (row, col1, 4);
 
 		/* Find all the closed contours of this border value. */
 
-		for (int row = row1 + 1; row < row2; row ++)
-			for (int col = col1; col < col2; col ++)
+		for (integer row = row1 + 1; row < row2; row ++)
+			for (integer col = col1; col < col2; col ++)
 				if (empty (row, col, 1)) makeClosedContour (row, col, 1);
-		for (int col = col1 + 1; col < col2; col ++)
-			for (int row = row1; row < row2; row ++)
+		for (integer col = col1 + 1; col < col2; col ++)
+			for (integer row = row1; row < row2; row ++)
 				if (empty (row, col, 4)) makeClosedContour (row, col, 4);
 	}
 	numberOfEdgePoints = 2 * numberOfEdgeContours + 4;
@@ -355,7 +359,7 @@ static void smallGrey () {
 				/* Follow one edge contour.
 				 */
 				EdgePoint p = & edgePoints [edge1];
-				int iContour = p -> iContour;
+				integer iContour = p -> iContour;
 				EdgeContour c = edgeContours [iContour];
 				Melder_assert (iContour > 0);
 				darkness = p -> grey;
@@ -371,7 +375,7 @@ static void smallGrey () {
 							edge1 = i;
 				} else {
 					int edge1dummy = edge1;
-					for (int i = c -> numberOfPoints; i >= 1; i --) {
+					for (integer i = c -> numberOfPoints; i >= 1; i --) {
 						Melder_assert (iPoint < MAXGREYPATH);
 						x [++ iPoint] = c -> x [i];
 						y [iPoint] = c -> y [i];
@@ -414,20 +418,21 @@ static void smallGrey () {
 	 * Those that are not enclosed by any other contour, are filled first.
 	 */
 	{
-		bool found = false;
+		bool found;
 		do {
-			for (int i = 1; i <= numberOfClosedContours; i ++) {
+			found = false;
+			for (integer i = 1; i <= numberOfClosedContours; i ++) {
 				ClosedContour ci = closedContours [i];
 				if (! ci -> drawn) {
 					bool enclosed = false;
-					int j = 1;
+					integer j = 1;
 					while (j <= numberOfClosedContours && ! enclosed) {
 						ClosedContour cj = closedContours [j];
-						if ((! cj -> drawn) && j != i &&
+						if (! cj -> drawn && j != i &&
 							 ci -> xmin > cj -> xmin && ci -> xmax < cj -> xmax && 
 							 ci -> ymin > cj -> ymin && ci -> ymax < cj -> ymax)
 							enclosed = NUMrotationsPointInPolygon (ci -> x [1], ci -> y [1],
-										cj -> numberOfPoints, cj -> x, cj -> y);
+										cj -> numberOfPoints, cj -> x.at, cj -> y.at);
 						j ++;
 					}
 					if (! enclosed) {
@@ -446,12 +451,11 @@ static void smallGrey () {
 		ClosedContour_delete (closedContours [i]);
 }
 
-void Graphics_grey (Graphics me, double **z,
-	integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC,
+void Graphics_grey (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC,
 	int _numberOfBorders, double borders [])
 {
-	if (ix2 <= ix1 || iy2 <= iy1) return;
+	if (z.nrow <= 1 || z.ncol <= 1) return;
 
 	/* Static variables. */
 
@@ -459,15 +463,15 @@ void Graphics_grey (Graphics me, double **z,
 	numberOfBorders = _numberOfBorders;
 	data = z;
 	border = borders;
-	dx = (x2WC - x1WC) / (ix2 - ix1);
-	dy = (y2WC - y1WC) / (iy2 - iy1);
-	xoff = x1WC - ix1 * dx;
-	yoff = y1WC - iy1 * dy;
-	if (! right) {
-		right = NUMmatrix <int> (0, MAXGREYSIDE - 1, 0, MAXGREYSIDE - 1);   // BUG memory
-		below = NUMmatrix <int> (0, MAXGREYSIDE - 1, 0, MAXGREYSIDE - 1);
-		x = NUMvector <double> (1, MAXGREYPATH);
-		y = NUMvector <double> (1, MAXGREYPATH);
+	dx = (x2WC - x1WC) / (z.ncol - 1);
+	dy = (y2WC - y1WC) / (z.nrow - 1);
+	xoff = x1WC - dx;
+	yoff = y1WC - dy;
+	if (NUMisEmpty (right.get())) {
+		right = newBOOLMATzero (MAXGREYSIDE, MAXGREYSIDE);   // BUG memory
+		below = newBOOLMATzero (MAXGREYSIDE, MAXGREYSIDE);
+		x = newVECzero (MAXGREYPATH);
+		y = newVECzero (MAXGREYPATH);
 		edgeContours = Melder_calloc (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;
 		closedContours = Melder_calloc (ClosedContour, MAXGREYCLOSEDCONTOURS * numberOfBorders) - 1;
 		edgePoints = Melder_calloc (structEdgePoint, MAXGREYEDGEPOINTS * numberOfBorders);
@@ -477,12 +481,12 @@ void Graphics_grey (Graphics me, double **z,
 	 * 1. All the paths will fit into our memory (we have to remember them all).
 	 * 2. The path for filling fits into the PostScript path, which may be max. 1500 points long.
 	 */
-	for (row1 = iy1; row1 < iy2; row1 += MAXGREYSIDE - 1) {
+	for (row1 = 1; row1 < z.nrow; row1 += MAXGREYSIDE - 1) {
 		row2 = row1 + (MAXGREYSIDE - 1);
-		if (row2 > iy2) row2 = iy2;
-		for (col1 = ix1; col1 < ix2; col1 += MAXGREYSIDE - 1) {
+		if (row2 > z.nrow) row2 = z.nrow;
+		for (col1 = 1; col1 < z.ncol; col1 += MAXGREYSIDE - 1) {
 			col2 = col1 + (MAXGREYSIDE - 1);
-			if (col2 > ix2) col2 = ix2;
+			if (col2 > z.ncol) col2 = z.ncol;
 			smallGrey ();
 		}
 	}

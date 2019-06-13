@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2007,2009-2018 Paul Boersma
+ * Copyright (C) 1994-2007,2009-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,89 +18,85 @@
 
 #include "oo_undef.h"
 
-#define oo_SIMPLE(type,storage,x)
+#define oo_SIMPLE(type, storage, x)
 
-#define oo_SET(type,storage,x,setType)
+#define oo_SET(type, storage, x, setType)
 
-#define oo_VECTOR(type,storage,x,min,max)  \
+#define oo_VECTOR(type, storage, x, min, max)  \
 	{ \
 		integer _min = (min); \
 		NUMvector_free <type> (our x, _min); \
 	}
 
-#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	{ \
-		integer _row1 = (row1), _col1 = (col1); \
-		NUMmatrix_free <type> (our x, _row1, _col1); \
+#define oo_ANYVEC(type, storage, x, sizeExpression)  \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
 	}
 
-#define oo_ENUMx(kType,storage,x)
+#define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
+	}
 
-//#define oo_ENUMx_SET(kType,storage,x,setType)
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
+	}
 
-//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+#define oo_ENUMx(kType, storage, x)
+
+//#define oo_ENUMx_SET(kType, storage, x, setType)
+
+//#define oo_ENUMx_VECTOR(kType, storage, x, min, max)  \
 //	{ \
 //		integer _min = (min); \
 //		NUMvector_free <type> (our x, _min); \
 //	}
 
-#define oo_STRINGx(storage,x)  \
+#define oo_STRINGx(storage, x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		our x. reset (); \
 	}
 
-#define oo_STRINGx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage, x, setType)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		for (int _i = 0; _i <= setType::MAX; _i ++) { \
 			our x [_i]. reset (); \
 		} \
 	}
 
-#define oo_STRINGx_VECTOR(storage,x,size)  \
+#define oo_STRINGx_VECTOR(storage, x, n)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		our x. reset (); \
 	}
 
-#define oo_STRUCT(Type,x)  \
+#define oo_STRUCT(Type, x)  \
 	our x. destroy ();
 
-#define oo_STRUCT_SET(Type,x,setType)  \
+#define oo_STRUCT_SET(Type, x, setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		our x [_i]. destroy (); \
 	}
 
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
+		integer _size = (n); \
 		if (our x) { \
-			for (integer _i = _min; _i <= _max; _i ++) { \
+			for (integer _i = 1; _i <= _size; _i ++) { \
 				our x [_i]. destroy (); \
 			} \
-			NUMvector_free <struct##Type> (our x, _min); \
+			NUMvector_free <struct##Type> (our x, 1); \
 		} \
 	}
 
-#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (our x) { \
-			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					our x [_irow] [_icol]. destroy (); \
-				} \
-			} \
-			NUMmatrix_free <struct##Type> (our x, _row1, _col1); \
-		} \
-	}
-
-#define oo_OBJECT(Class,version,x)  \
+#define oo_OBJECT(Class, version, x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		x. reset (); \
 	}
 
-#define oo_COLLECTION_OF(Class,x,ItemClass,version)
+#define oo_COLLECTION_OF(Class, x, ItemClass, version)
 
-#define oo_COLLECTION(Class,x,ItemClass,version)
+#define oo_COLLECTION(Class, x, ItemClass, version)
 
 #define oo_FILE(x)
 
@@ -114,7 +110,7 @@
 #define oo_END_STRUCT(Type)  \
 	}
 
-#define oo_DEFINE_CLASS(Class,Parent)  \
+#define oo_DEFINE_CLASS(Class, Parent)  \
 	void struct##Class :: v_destroy () noexcept { \
 		constexpr bool _thisStructCanAutodestroyItsMembers_ = true; \
 		(void) _thisStructCanAutodestroyItsMembers_;

@@ -1,6 +1,6 @@
 /* Eigen_def.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ oo_DEFINE_CLASS (Eigen, Daata)
 
 	oo_INTEGER (numberOfEigenvalues)
 	oo_INTEGER (dimension)
-	oo_DOUBLE_VECTOR (eigenvalues, numberOfEigenvalues)
-	oo_DOUBLE_MATRIX (eigenvectors, numberOfEigenvalues, dimension)
+	oo_VEC (eigenvalues, numberOfEigenvalues)
+	oo_MAT (eigenvectors, numberOfEigenvalues, dimension) // eigenvectors stored in the rows
 
 oo_END_CLASS (Eigen)
 #undef ooSTRUCT

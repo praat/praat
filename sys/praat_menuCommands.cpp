@@ -22,6 +22,7 @@
 #include "GuiP.h"
 
 static OrderedOf <structPraat_Command> theCommands;
+void praat_menuCommands_exit_optimizeByLeaking () { theCommands. _ownItems = false; }
 
 void praat_menuCommands_init () {
 }
@@ -233,7 +234,7 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 {
 	try {
 		Melder_assert (window && menu && title && after && script);
-		if (str32len (script) && ! str32len (title))
+		if (script [0] != U'\0' && title [0] == U'\0')
 			Melder_throw (U"Command with script has no title. Window \"", window, U"\", menu \"", menu, U"\".");
 
 		/*
@@ -260,19 +261,19 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 		autoPraat_Command command = Thing_new (Praat_Command);
 		command -> window = Melder_dup_f (window);
 		command -> menu = Melder_dup_f (menu);
-		command -> title = str32len (title) ? Melder_dup_f (title) : autostring32();   // allow old-fashioned untitled separators
+		command -> title = ( title [0] != U'\0' ? Melder_dup_f (title) : autostring32() );   // allow old-fashioned untitled separators
 		command -> depth = depth;
-		command -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator or cascade button
-		command -> executable = str32len (script) != 0;
+		command -> callback = ( script [0] != U'\0' ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr );   // null for a separator or cascade button
+		command -> executable = ( script [0] != U'\0' );
 		command -> noApi = true;
-		if (str32len (script) == 0) {
+		if (script [0] == U'\0') {
 			command -> script = Melder_dup_f (U"");   // empty string, which will be needed to signal origin
 		} else {
 			structMelderFile file { };
 			Melder_relativePathToFile (script, & file);
 			command -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}
-		command -> after = str32len (after) ? Melder_dup_f (after) : autostring32();
+		command -> after = ( after [0] != U'\0' ? Melder_dup_f (after) : autostring32() );
 		if (praatP.phase >= praat_READING_BUTTONS) {
 			static integer uniqueID = 0;
 			command -> uniqueID = ++ uniqueID;

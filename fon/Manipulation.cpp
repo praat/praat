@@ -159,7 +159,7 @@ void Manipulation_playPart (Manipulation me, double tmin, double tmax, int metho
 				Melder_throw (U"Cannot synthesize overlap-add without a sound.");
 			autoSound part = Data_copy (my sound.get());
 			integer imin = Sampled_xToLowIndex (part.get(), tmin), imax = Sampled_xToHighIndex (part.get(), tmax);
-			double *amp = part -> z [1];
+			VEC amp = part -> z.row (1);
 			for (integer i = 1; i <= imin; i ++) amp [i] = 0.0;
 			for (integer i = imax; i <= part -> nx; i ++) amp [i] = 0.0;
 			autoSound saved = my sound.move();
@@ -167,7 +167,7 @@ void Manipulation_playPart (Manipulation me, double tmin, double tmax, int metho
 			try {
 				autoSound played = Manipulation_to_Sound (me, Manipulation_OVERLAPADD);
 				my sound = saved.move();
-				amp = played -> z [1];
+				amp = played -> z.row (1);
 				for (imin = 1; imin <= played -> nx; imin ++)
 					if (amp [imin] != 0.0) break;
 				for (imax = played -> nx; imax >= 1; imax --)
@@ -265,15 +265,16 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 	integer iminTarget = Sampled_xToHighIndex (thee, tminTarget);
 	if (iminTarget < 1) iminTarget = 1;
 	trace (tmin, U" ", tmax, U" ", tminTarget, U" ", imin, U" ", imax, U" ", iminTarget);
-	Melder_assert (iminTarget + imax - imin <= thy nx);
-	NUMvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
+	const integer imaxTarget = iminTarget + (imax - imin);
+	Melder_assert (imaxTarget <= thy nx);
+	thy z.row (1).part (iminTarget, imaxTarget) <<= my z.row (1).part (imin, imax);
 }
 
 autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (source -> nt < 2 || target -> nt < 2) {   // almost completely voiceless?
-			NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
+			thy z.all() <<= my z.all();
 			return thee;
 		}
 		for (integer i = 1; i <= target -> nt; i ++) {
@@ -454,6 +455,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		if (fabs (thy xmax - my xmax) < 1e-12) thy xmax = my xmax;   // common situation
 		thy nx = Sampled_xToLowIndex (thee.get(), thy xmax);
 		if (thy nx > 3 * my nx) thy nx = 3 * my nx;
+		thy z.ncol = thy nx;   // maintain invariant
 
 		return thee;
 	} catch (MelderError) {
@@ -549,7 +551,7 @@ static autoSound synthesize_pulses_pitch_hum (Manipulation me) {
 void Sound_Formant_Intensity_filter (Sound me, FormantTier formantTier, IntensityTier intensity) {
 	Sound_FormantTier_filter_inplace (me, formantTier);
 	if (intensity) Sound_IntensityTier_multiply_inplace (me, intensity);
-	NUMdeemphasize_f (my z [1], my nx, my dx, 50.0);
+	VECdeemphasize_f_inplace (my z.row (1), my dx, 50.0);
 	Vector_scale (me, 0.99);
 }
 
@@ -608,7 +610,7 @@ static autoSound synthesize_pulses_lpc (Manipulation me) {
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
 		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
-		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
+		VECdeemphasize_f_inplace (result -> z.row (1), result -> dx, 50.0);
 		Vector_scale (result.get(), 0.99);
 		return result;
 	} catch (MelderError) {
@@ -630,7 +632,7 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
 		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
-		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
+		VECdeemphasize_f_inplace (result -> z.row (1), result -> dx, 50.0);
 		Vector_scale (result.get(), 0.99);
 		return result;
 	} catch (MelderError) {

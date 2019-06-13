@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,24 +79,20 @@ void structPointProcess :: v_info () {
 
 void structPointProcess :: v_shiftX (double xfrom, double xto) {
 	PointProcess_Parent :: v_shiftX (xfrom, xto);
-	for (integer i = 1; i <= nt; i ++) {
+	for (integer i = 1; i <= nt; i ++)
 		NUMshift (& t [i], xfrom, xto);
-	}
 }
 
 void structPointProcess :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	PointProcess_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	for (integer i = 1; i <= nt; i ++) {
+	for (integer i = 1; i <= nt; i ++)
 		NUMscale (& t [i], xminfrom, xmaxfrom, xminto, xmaxto);
-	}
 }
 
 void PointProcess_init (PointProcess me, double tmin, double tmax, integer initialMaxnt) {
 	Function_init (me, tmin, tmax);
-	if (initialMaxnt < 1) initialMaxnt = 1;
-	my maxnt = initialMaxnt;
-	my nt = 0;
-	my t = NUMvector <double> (1, my maxnt);
+	my t.initWithCapacity (initialMaxnt);
+	my nt = 0;   // maintain invariant
 }
 
 autoPointProcess PointProcess_create (double tmin, double tmax, integer initialMaxnt) {
@@ -111,12 +107,11 @@ autoPointProcess PointProcess_create (double tmin, double tmax, integer initialM
 
 autoPointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density) {
 	try {
-		integer nt = (integer) NUMrandomPoisson ((finishingTime - startingTime) * density);
-		autoPointProcess me = PointProcess_create (startingTime, finishingTime, nt);
-		my nt = nt;
-		for (integer i = 1; i <= nt; i ++)
-			my t [i] = NUMrandomUniform (startingTime, finishingTime);
-		NUMsort_d (my nt, my t);
+		autoPointProcess me = PointProcess_create (startingTime, finishingTime, 0);
+		integer numberOfPoints = (integer) NUMrandomPoisson ((finishingTime - startingTime) * density);
+		my t = newVECrandomUniform (numberOfPoints, startingTime, finishingTime);
+		my nt = numberOfPoints;   // maintain invariant
+		VECsort_inplace (my t.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess (Poisson process) not created.");
@@ -175,28 +170,19 @@ integer PointProcess_getNearestIndex (PointProcess me, double t) {
 
 void PointProcess_addPoint (PointProcess me, double t) {
 	try {
-		if (isundef (t))
-			Melder_throw (U"Cannot add a point at an undefined time.");
-		if (my nt >= my maxnt) {
-			/*
-			 * Create without change.
-			 */
-			autoNUMvector <double> dum (1, 2 * my maxnt);
-			NUMvector_copyElements (my t, dum.peek(), 1, my nt);
-			/*
-			 * Change without error.
-			 */
-			NUMvector_free (my t, 1);
-			my t = dum.transfer();
-			my maxnt *= 2;
-		}
+		Melder_require (isdefined (t),
+			U"Cannot add a point at an undefined time.");
+		integer newNumberOfPoints = my nt + 1;
+		my t.resize (newNumberOfPoints);
 		if (my nt == 0 || t >= my t [my nt]) {   // special case that often occurs in practice
-			my t [++ my nt] = t;
+			my nt = newNumberOfPoints;   // maintain invariant
+			my t [newNumberOfPoints] = t;
 		} else {
 			integer left = PointProcess_getLowIndex (me, t);
 			if (left == 0 || my t [left] != t) {
-				for (integer i = my nt; i > left; i --) my t [i + 1] = my t [i];
-				my nt ++;
+				for (integer i = my nt; i > left; i --)
+					my t [i + 1] = my t [i];
+				my nt = newNumberOfPoints;   // maintain invariant
 				my t [left + 1] = t;
 			}
 		}
@@ -205,26 +191,13 @@ void PointProcess_addPoint (PointProcess me, double t) {
 	}
 }
 
-void PointProcess_addPoints (PointProcess me, numvec times) {
+void PointProcess_addPoints (PointProcess me, constVECVU const& times) {
 	try {
 		integer newNumberOfPoints = my nt + times.size;
-		if (newNumberOfPoints > my maxnt) {
-			integer newMaxnt = newNumberOfPoints + my maxnt;   // this is at least a doubling
-			/*
-				Create without change.
-			*/
-			autoNUMvector <double> newTimes (1, newMaxnt);
-			NUMvector_copyElements (my t, newTimes.peek(), 1, my nt);
-			/*
-				Change without error.
-			*/
-			NUMvector_free (my t, 1);
-			my t = newTimes.transfer();
-			my maxnt = newMaxnt;
-		}
-		NUMvector_copyElements (times.at, & my t [my nt], 1, times.size);
-		my nt += times.size;
-		NUMsort_d (newNumberOfPoints, my t);
+		my t.resize (newNumberOfPoints);
+		my t.part (my nt + 1, newNumberOfPoints) <<= times;
+		my nt = newNumberOfPoints;   // maintain invariant
+		VECsort_inplace (my t.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": points not added.");
 	}
@@ -232,9 +205,14 @@ void PointProcess_addPoints (PointProcess me, numvec times) {
 
 void PointProcess_removePoint (PointProcess me, integer pointNumber) {
 	if (pointNumber < 1 || pointNumber > my nt) return;
+	/*
+		First shift, then resize.
+	*/
 	for (integer i = pointNumber; i < my nt; i ++)
 		my t [i] = my t [i + 1];
-	my nt --;
+	integer newNumberOfPoints = my nt - 1;
+	my t.resize (newNumberOfPoints);
+	my nt = newNumberOfPoints;   // maintain invariant
 }
 
 void PointProcess_removePointNear (PointProcess me, double time) {
@@ -248,7 +226,9 @@ void PointProcess_removePoints (PointProcess me, integer first, integer last) {
 	if (distance <= 0) return;
 	for (integer i = first + distance; i <= my nt; i ++)
 		my t [i - distance] = my t [i];
-	my nt -= distance;
+	integer newNumberOfPoints = my nt - distance;
+	my t.resize (newNumberOfPoints);
+	my nt = newNumberOfPoints;   // maintain invariant
 }
 
 void PointProcess_removePointsBetween (PointProcess me, double tmin, double tmax) {
@@ -264,9 +244,8 @@ void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, b
 		int lineType = Graphics_inqLineType (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_setInner (g);
-		for (integer i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_line (g, my t [i], -1.0, my t [i], 1.0);
-		}
 		Graphics_setLineType (g, lineType);
 		Graphics_unsetInner (g);
 	}
@@ -288,9 +267,8 @@ autoPointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		autoPointProcess him = Data_copy (me);
 		if (thy xmin < my xmin) his xmin = thy xmin;
 		if (thy xmax > my xmax) his xmax = thy xmax;
-		for (integer i = 1; i <= thy nt; i ++) {
+		for (integer i = 1; i <= thy nt; i ++)
 			PointProcess_addPoint (him.get(), thy t [i]);
-		}
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": union not computed.");
@@ -342,12 +320,11 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) 
 
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period) {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
-		integer n = Melder_ifloor ((tmax - tmin) / period);
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
+		const integer n = Melder_ifloor ((tmax - tmin) / period);
 		double t = 0.5 * (tmin + tmax - n * period);
-		for (integer i = 1; i <= n; i ++, t += period) {
+		for (integer i = 1; i <= n; i ++, t += period)
 			PointProcess_addPoint (me, t);
-		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filled.");
 	}
@@ -436,7 +413,7 @@ static bool PointProcess_isPeriod (PointProcess me, integer ileft, double minimu
 integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return 0;
@@ -453,7 +430,7 @@ integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tm
 double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return undefined;
@@ -471,7 +448,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;

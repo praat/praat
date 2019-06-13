@@ -19,7 +19,7 @@
 #include "Formant_extensions.h"
 #include "NUM2.h"
 
-void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, char32 *expression) {
+void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression) {
 	try {
 		integer numberOfPossibleFormants = my maxnFormants;
 		if (tmax <= tmin) {

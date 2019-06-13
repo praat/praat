@@ -1,6 +1,6 @@
 /* PointProcess_def.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,8 @@
 #define ooSTRUCT PointProcess
 oo_DEFINE_CLASS (PointProcess, Function)
 
-	#if oo_DECLARING || oo_COPYING
-		oo_INTEGER (maxnt)
-	#endif
-
 	oo_INTEGER (nt)
-
-	#if oo_COPYING
-		oo_DOUBLE_VECTOR (t, maxnt)
-	#elif oo_READING
-		if (our nt) {
-			our maxnt = our nt;
-			oo_DOUBLE_VECTOR (t, nt)
-		} else {
-			our maxnt = 1;
-			our t = NUMvector <double> (1, 1);
-		}
-	#else
-		oo_DOUBLE_VECTOR (t, nt)
-	#endif
+	oo_VEC (t, nt)
 
 	#if oo_DECLARING
 		void v_info ()

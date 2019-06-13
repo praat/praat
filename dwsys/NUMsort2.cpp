@@ -35,23 +35,21 @@
 	    Floyd's optimization (page 642) is used.
 */
 
-void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce) {
-	integer nr = re - rb + 1;
-	autoNUMvector <double> v (1, nr);
-	autoNUMvector <integer> index (1, nr);
+void NUMrankColumns (MAT m, integer cb, integer ce) {
+	Melder_assert (cb > 0 && cb <= m.ncol);
+	Melder_assert (ce > 0 && ce <= m.ncol);
+	Melder_assert (cb <= ce);
+	autoVEC v = newVECraw (m.nrow);
+	autoINTVEC index = newINTVECraw (m.nrow);
 
 	for (integer j = cb; j <= ce; j ++) {
-		for (integer i = 1; i <= nr; i ++) {
-			v [i] = m [rb + i - 1] [j];
-		}
-		for (integer i = 1; i <= nr; i ++) {
+		v.all() <<= m.column (j);
+		for (integer i = 1; i <= m.nrow; i ++)
 			index [i] = i;
-		}
-		NUMsort2 (nr, v.peek(), index.peek());
-		NUMrank (nr, v.peek());
-		for (integer i = 1; i <= nr; i ++) {
-			m [rb + index [i] - 1] [j] = v [i];
-		}
+		NUMsortTogether (v.get(), index.get());
+		NUMrank (v.get());
+		for (integer i = 1; i <= m.nrow; i ++)
+			m [index [i]] [j] = v [i];
 	}
 }
 
@@ -125,29 +123,30 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 }
 
 
-#define MACRO_NUMindex(TYPE) \
-{ \
+#define MACRO_NUMindex(TYPE,n) \
+{\
 	integer l, r, j, i, ii, k, imin; \
 	TYPE min; \
+	autoINTVEC index = newINTVECraw (n); \
 	for (j = 1; j <= n; j ++) index[j] = j;	\
-	if (n < 2) return;   /* Already sorted. */ \
+	if (n < 2) return index;   /* Already sorted. */ \
 	if (n == 2) \
 	{ \
 		if (COMPARELT (a [2], a [1])) \
 		{\
 			index [1] = 2; index [2] = 1; \
 		} \
-		return; \
+		return index; \
 	} \
 	if (n <= 12) \
 	{ \
 		for (i = 1; i < n; i ++) \
 		{ \
 			imin = i; \
-			min = a[index [imin]]; \
+			min = a [index [imin]]; \
 			for (j = i + 1; j <= n; j ++) \
 			{\
-				if (COMPARELT (a[ index [j]], min))\
+				if (COMPARELT (a [index [j]], min))\
 				{ \
 					imin = j; \
 					min = a [index [j]]; \
@@ -155,7 +154,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			} \
 			ii = index [imin]; index [imin] = index [i]; index [i] = ii; \
 		} \
-		return; \
+		return index; \
 	} \
 	/* H1 */\
 	l = n / 2 + 1; \
@@ -200,96 +199,50 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			index [j] = index [i]; \
 		}\
 	} \
+	return index; \
 }
 
 #define COMPARELT(x,y) ((x) < (y))
 
-void NUMindexx (const double a[], integer n, integer index[])
-MACRO_NUMindex (double)
+autoINTVEC NUMindexx (constVEC a)
+MACRO_NUMindex (double, a.size)
+
+//void NUMindexx (const double a[], integer n, integer index[])
+//MACRO_NUMindex (double, n)
+
 
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
-void NUMindexx_s (char32 **a, integer n, integer index[])
-MACRO_NUMindex (char32 *)
+//void NUMindexx_s (char32 **a, integer n, integer index[])
+autoINTVEC NUMindexx_s (constSTRVEC a)
+MACRO_NUMindex (const char32_t *, a.size)
+
 
 #undef COMPARELT
 #undef MACRO_INDEXX
 
-template <class T>
-void NUMsort1 (integer n, T a[]) {
-/*
-	Knuth's heapsort algorithm (vol. 3, page 145),
-	modified with Floyd's optimization (vol. 3, page 642).
-*/
-	T min;
-	if (n < 2) return;   // Already sorted. 
-	/*	
-		This n<2 step is absent from Press et al.'s implementation,
-		which will therefore not terminate on if(--ir==1).
-		Knuth's initial assumption is now fulfilled: n >= 2.
-	*/
-	if (n == 2) {
-		if (a [1] > a [2]) {
-			min = a [2]; a [2] = a [1]; a [1] = min;
-		}
+void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
+	Melder_assert (a.size == iv1.size && a.size == iv2.size);
+	if (a.size == 1)
 		return;
-	}
-	if (n <= 12) {
-		integer imin;
-		for (integer i = 1; i < n; i ++) {
-			min = a [i];
-			imin = i;
-			for (integer j = i + 1; j <= n; j ++) {
-				if (a [j] < min) {
-					min = a [j];
-					imin = j;
-				}
-			}
-			a [imin] = a [i];
-			a [i] = min;
-		}
-		return;
-	}
-	// H1
-	integer l = (n >> 1) + 1, r = n;
-	for (;;) { // H2
-		T ak;
-		if (l > 1) {
-			l --;
-			ak = a [l];
-		} else { // l == 1
-			ak = a [r];
-			a [r] = a [1];
-			r --;
-			if (r == 1) {
-				a [1] = ak; return;
-			}
-		}
-		// H3
-		integer i, j = l;
-		for (;;) { // H4
-			i = j;
-			j = j << 1;
-			if (j > r) {
-				break;
-			}
-			if (j < r && a [j] < a [j + 1]) {
-				j ++; // H5
-			}
-			// if (k >= a[j]) break;
-			a [i] = a [j]; // H7 
-		}
-		//	a[i] = k; H8 
-		for (;;) { // H8'
-			j = i;
-			i = j >> 1;
-			// H9'
-			if (j == l || ak <= a [i]) {
-				a [j] = ak; break;
-			}
-			a [j] = a [i];
+	autoVEC atmp = newVECcopy (a);
+	autoINTVEC index = NUMindexx (atmp.get());
+	if (descending) {
+		for (integer j = 1; j <= a.size / 2; j ++) {
+			integer tmp = index [j];
+			index [j] = index [a.size - j + 1];
+			index [a.size - j + 1] = tmp;
 		}
 	}
+	for (integer j = 1; j <= a.size; j ++)
+		a [j] = atmp [index [j]];
+	autoINTVEC itmp = newINTVECraw (a.size);
+	itmp.all() <<= iv1;
+	for (integer j = 1; j <= a.size; j ++)
+		iv1 [j] = itmp [index [j]];
+	itmp.all() <<= iv2;
+	for (integer j = 1; j <= a.size; j ++)
+		iv2 [j] = itmp [index [j]];
 }
 
 /* End of file NUMsort.cpp */

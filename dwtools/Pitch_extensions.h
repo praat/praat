@@ -27,7 +27,7 @@
 #include "Pitch.h"
 #include "PitchTier.h"
 
-void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates);
+void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer maxnCandidates);
 
 void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *strength);
 

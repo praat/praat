@@ -1,6 +1,6 @@
 /* LineSpectralFrequencies_def.h
  *
- * Copyright (C) 2016 David Weenink
+ * Copyright (C) 2016-2018 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 oo_DEFINE_STRUCT (LineSpectralFrequencies_Frame)
 
 	oo_INT (numberOfFrequencies)
-	oo_DOUBLE_VECTOR (frequencies, numberOfFrequencies)
+	oo_VEC (frequencies, numberOfFrequencies)
 	
 oo_END_STRUCT (LineSpectralFrequencies_Frame)
 #undef ooSTRUCT

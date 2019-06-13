@@ -22,7 +22,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1214,7 +1214,7 @@ static int LoadWavefile(FILE *f, const char *fname)
 
 		failed = 0;
 
-#ifdef HAVE_MKSTEMP
+#if 1
 		int fd_temp;
 		strcpy(fname_temp, "/tmp/espeakXXXXXX");
 		if ((fd_temp = mkstemp(fname_temp)) >= 0)

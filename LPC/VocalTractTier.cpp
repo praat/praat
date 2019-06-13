@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012-2017 David Weenink
+ * Copyright (C) 2012-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,9 +105,8 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 		if (my d_vocalTracts.size > 0) {
 			VocalTractPoint vtp = my d_vocalTracts.at [1];
 			integer numberOfSections = vtp -> d_vocalTract -> nx;
-			if (numberOfSections != vocaltract -> nx) {
-				Melder_throw (U"The number of sections should be equal to ", numberOfSections, U".");
-			}
+			Melder_require (numberOfSections == vocaltract -> nx,
+				U"The number of sections should be equal to ", numberOfSections, U".");
 		}
 		my d_vocalTracts. addItem_move (thee.move());
 	} catch (MelderError) {
@@ -145,8 +144,9 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		VocalTractPoint vtp = my d_vocalTracts.at [1];
 		integer numberOfSections = vtp -> d_vocalTract -> nx;
 		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
-		autoNUMmatrix<double> area (1, numberOfFrames, 1, numberOfSections + 1);
-		autoNUMvector<double> areavec (1, numberOfSections + 1);
+		
+		autoMAT area = newMATzero (numberOfFrames, numberOfSections);
+		autoVEC areavec = newVECraw (numberOfSections);
 		autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, timeStep / 2.0, numberOfSections, samplingPeriod);
 		// interpolate each section
 		for (integer isection = 1; isection <= numberOfSections; isection ++) {
@@ -159,16 +159,15 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 			for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 				double time = thy x1 + (iframe - 1) * thy dx;
 				area [iframe] [isection] = RealTier_getValueAtTime (sectioni.get(), time);
-				area [iframe] [numberOfSections + 1] = 0.0001;   // normalisation is area[n+1] = 0.0001
 			}
 		}
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			LPC_Frame frame = & thy d_frames [iframe];
 			LPC_Frame_init (frame, numberOfSections);
-			for (integer i = 1; i <= numberOfSections + 1; i ++) {
-				areavec [i] = area [iframe] [numberOfSections + 1 - i];
+			for (integer i = 1; i <= numberOfSections; i ++) {
+				areavec [i] = area [iframe] [numberOfSections + 1 - i]; // reverse
 			}
-			NUMlpc_area_to_lpc (areavec.peek(), numberOfSections + 1, frame -> a);
+			VEClpc_from_area (frame -> a.get(), areavec.get());
 			frame -> gain = 1e-6;   // something
 		}
 		return thee;

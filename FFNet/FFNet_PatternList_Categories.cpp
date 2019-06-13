@@ -1,6 +1,6 @@
 /* FFNet_PatternList_Categories.cpp
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,12 @@
 #include "FFNet_PatternList_ActivationList.h"
 
 static void _FFNet_PatternList_Categories_checkDimensions (FFNet me, PatternList p, Categories c) {
-	Melder_require (my nInputs == p -> nx, U"The PatternList and the FFNet do not match.\nThe number of colums in the PatternList should equal the number of inputs in the FFNet.");
-	Melder_require (p -> ny == c->size, U"The PatternList and the categories do not match.\nThe number of rows in the PatternList should equal the number of categories.");
-	Melder_require (_PatternList_checkElements (p), U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
+	Melder_require (my numberOfInputs == p -> nx,
+		U"The PatternList and the FFNet do not match.\nThe number of colums in the PatternList should equal the number of inputs in the FFNet.");
+	Melder_require (p -> ny == c->size, 
+		U"The PatternList and the categories do not match.\nThe number of rows in the PatternList should equal the number of categories.");
+	Melder_require (_PatternList_checkElements (p), 
+		U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 }
 
 double FFNet_PatternList_Categories_getCosts_total (FFNet me, PatternList p, Categories c, int costFunctionType) {
@@ -66,14 +69,17 @@ void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c
 
 autoCategories FFNet_PatternList_to_Categories (FFNet me, PatternList thee, int labeling) {
 	try {
-		Melder_require (my outputCategories, U"The FFNet has no output categories.");
-		Melder_require (my nInputs == thy nx, U"The number of colums in the PatternList (", thy nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
-		Melder_require (_PatternList_checkElements (thee), U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
+		Melder_require (my outputCategories, 
+			U"The FFNet has no output categories.");
+		Melder_require (my numberOfInputs == thy nx, 
+			U"The number of colums in the PatternList (", thy nx, U") should equal the number of inputs in the FFNet (", my numberOfInputs, U").");
+		Melder_require (_PatternList_checkElements (thee),
+			U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 
 		autoCategories him = Categories_create ();
 
 		for (integer k = 1; k <= thy ny; k ++) {
-			FFNet_propagate (me, thy z [k], nullptr);
+			FFNet_propagate (me, thy z.row (k), nullptr);
 			integer index = FFNet_getWinningUnit (me, labeling);
 			autoSimpleString item = Data_copy (my outputCategories->at [index]);
 			his addItem_move (item.move());

@@ -22,7 +22,7 @@
 void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 {
 	double f = speaker -> relativeSize * 1e-3;
-	double xe [30], ye [30], xi [30], yi [30], xmm [30], ymm [30], dx, dy;
+	double xe [30], ye [30], xi [30], yi [30], xmm [30], ymm [30];
 
 	/* Lungs. */
 
@@ -64,8 +64,12 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 	for (integer itube = 38; itube <= 64; itube ++) {
 		Delta_Tube t = delta -> tube + itube;
 		integer i = itube - 37;
-		t -> Dxeq = sqrt (( dx = xmm [i] - xmm [i + 1], dx * dx ) + ( dy = ymm [i] - ymm [i + 1], dy * dy ));
-		t -> Dyeq = sqrt (( dx = xe [i] - xi [i], dx * dx ) + ( dy = ye [i] - yi [i], dy * dy ));
+		double dx = xmm [i] - xmm [i + 1];
+		double dy = ymm [i] - ymm [i + 1];
+		t -> Dxeq = sqrt (dx * dx + dy * dy);
+		dx = xe [i] - xi [i];
+		dy = ye [i] - yi [i];
+		t -> Dyeq = sqrt (dx * dx + dy * dy);
 		if (closed [i]) t -> Dyeq = - t -> Dyeq;
 	}
 	delta -> tube [65]. Dxeq = delta -> tube [51]. Dxeq = delta -> tube [50]. Dxeq;

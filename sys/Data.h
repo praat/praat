@@ -78,7 +78,7 @@ Thing_define (Daata, Thing) {
 	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (conststring32 /* colLabel */)           { return undefined; }
 };
 
-template <class T> _Thing_auto<T> Data_copy (T* data) {
+template <class T> autoSomeThing<T> Data_copy (T* data) {
 	return _Data_copy (data).template static_cast_move <T> ();
 }
 autoDaata _Data_copy (Daata me);

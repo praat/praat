@@ -47,9 +47,8 @@ Thing_implement (ERPTier, AnyTier, 0);
 
 integer ERPTier_getChannelNumber (ERPTier me, conststring32 channelName) {
 	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
+		if (Melder_equ (my channelNames [ichan].get(), channelName))
 			return ichan;
-		}
 	}
 	return 0;
 }
@@ -71,7 +70,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 		Function_init (thee.get(), fromTime, toTime);
 		thy numberOfChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 		Melder_assert (thy numberOfChannels > 0);
-		thy channelNames. copyFrom (my channelNames);
+		thy channelNames = newSTRVECcopy (my channelNames.get());
 		integer numberOfEvents = events -> nt;
 		double soundDuration = toTime - fromTime;
 		double samplingPeriod = my sound -> dx;
@@ -192,7 +191,7 @@ void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax) {
 		ERPPoint event = my points.at [ievent];
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			double mean = Vector_getMean (event -> erp.get(), tmin, tmax, ichannel);
-			double *channel = event -> erp -> z [ichannel];
+			VEC channel = event -> erp -> z.row (ichannel);
 			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
 				channel [isample] -= mean;
 			}
@@ -214,7 +213,7 @@ void ERPTier_rejectArtefacts (ERPTier me, double threshold) {
 		double minimum = event -> erp -> z [1] [1];
 		double maximum = minimum;
 		for (integer ichannel = 1; ichannel <= (numberOfChannels & ~ 15); ichannel ++) {
-			double *channel = event -> erp -> z [ichannel];
+			constVEC channel = event -> erp -> z.row (ichannel);
 			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
 				double value = channel [isample];
 				if (value < minimum) minimum = value;
@@ -234,19 +233,10 @@ autoERP ERPTier_extractERP (ERPTier me, integer eventNumber) {
 			Melder_throw (U"No events.");
 		ERPTier_checkEventNumber (me, eventNumber);
 		ERPPoint event = my points.at [eventNumber];
-		integer numberOfChannels = event -> erp -> ny;
-		Melder_assert (numberOfChannels == my numberOfChannels);
-		integer numberOfSamples = event -> erp -> nx;
+		Melder_assert (event -> erp -> ny == my numberOfChannels);
 		autoERP thee = Thing_new (ERP);
 		event -> erp -> structSound :: v_copy (thee.get());
-		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double *oldChannel = event -> erp -> z [ichannel];
-			double *newChannel = thy z [ichannel];
-			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-				newChannel [isample] = oldChannel [isample];
-			}
-		}
-		thy channelNames. copyFrom (my channelNames);
+		thy channelNames = newSTRVECcopy (my channelNames.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERP not extracted.");
@@ -259,29 +249,17 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 		if (numberOfEvents < 1)
 			Melder_throw (U"No events.");
 		ERPPoint firstEvent = my points.at [1];
-		integer numberOfChannels = firstEvent -> erp -> ny;
-		integer numberOfSamples = firstEvent -> erp -> nx;
+		Melder_assert (firstEvent -> erp -> ny == my numberOfChannels);
 		autoERP mean = Thing_new (ERP);
 		firstEvent -> erp -> structSound :: v_copy (mean.get());
+		Melder_assert (mean -> ny == my numberOfChannels);
 		for (integer ievent = 2; ievent <= numberOfEvents; ievent ++) {
 			ERPPoint event = my points.at [ievent];
-			for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-				double *erpChannel = event -> erp -> z [ichannel];
-				double *meanChannel = mean -> z [ichannel];
-				for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-					meanChannel [isample] += erpChannel [isample];
-				}
-			}
+			Melder_assert (event -> erp -> ny == my numberOfChannels);
+			mean -> z.all()  +=  event -> erp -> z.all();
 		}
-		double factor = 1.0 / numberOfEvents;
-		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double *meanChannel = mean -> z [ichannel];
-			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-				meanChannel [isample] *= factor;
-			}
-		}
-		Melder_assert (mean -> ny == my numberOfChannels);
-		mean -> channelNames. copyFrom (my channelNames);
+		mean -> z.all()  *=  1.0 / numberOfEvents;
+		mean -> channelNames = newSTRVECcopy (my channelNames.get());
 		return mean;
 	} catch (MelderError) {
 		Melder_throw (me, U": mean not computed.");
@@ -298,13 +276,13 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, in
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.get(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames. copyFrom (my channelNames);
+		thy channelNames = newSTRVECcopy (my channelNames.get());
 		for (integer ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				thy points. addItem_move (newEvent.move());
+				thy points. addItem_move (std::move (newEvent));
 			}
 		}
 		if (thy points.size == 0) {
@@ -327,13 +305,13 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.get(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames. copyFrom (my channelNames);
+		thy channelNames = newSTRVECcopy (my channelNames.get());
 		for (integer ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				thy points. addItem_move (newEvent.move());
+				thy points. addItem_move (std::move (newEvent));
 			}
 		}
 		if (thy points.size == 0) {

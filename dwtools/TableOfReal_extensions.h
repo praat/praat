@@ -41,9 +41,9 @@ void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee);
 
 autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
 
-integer *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
+autoINTVEC TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index[], bool reverse);
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, bool reverse);
 // thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
 
 autoTableOfReal TableOfReal_createIrisDataset ();
@@ -94,9 +94,6 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 /*
 	Find number of labels that match search description.
 */
-
-bool TableOfReal_equalLabels (TableOfReal me, TableOfReal thee, bool rowLabels, bool columnLabels);
-/* return 1 when labels are equal else 0 */
 
 void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, int columnOrigin);
 /*
@@ -156,7 +153,7 @@ void TableOfReal_centreRows (TableOfReal me);
 
 void TableOfReal_doubleCentre (TableOfReal me);
 
-bool TableOfReal_checkPositive (TableOfReal me);
+bool TableOfReal_isNonNegative (TableOfReal me);
 
 double TableOfReal_getTableNorm (TableOfReal me);
 
@@ -170,7 +167,7 @@ void TableOfReal_standardizeColumns (TableOfReal me);
 
 void TableOfReal_standardizeRows (TableOfReal me);
 
-autoTableOfReal TableOfReal_rankColumns (TableOfReal me);
+autoTableOfReal TableOfReal_rankColumns (TableOfReal me, integer fromColumn, integer toColumn);
 
 autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians);
 /*

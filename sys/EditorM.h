@@ -132,7 +132,7 @@ _form_inited_: \
 
 
 #define WORD_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define WORD_FIELD(stringVariable, labelText, defaultStringValue) \
 	UiForm_addWord (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
@@ -143,7 +143,7 @@ _form_inited_: \
 
 
 #define SENTENCE_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define SENTENCE_FIELD(stringVariable, labelText, defaultStringValue) \
 	UiForm_addSentence (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
@@ -191,7 +191,7 @@ _form_inited_: \
 
 
 #define MUTABLE_LABEL_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define MUTABLE_LABEL_FIELD(stringVariable, labelText) \
 	UiForm_addLabel (cmd -> d_uiform.get(), & stringVariable, labelText);
@@ -202,7 +202,7 @@ _form_inited_: \
 
 
 #define TEXTFIELD_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue) \
 	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
@@ -225,7 +225,7 @@ _form_inited_: \
 
 
 #define RADIOSTR(stringVariable, labelText, defaultValue) \
-	static char32 *stringVariable; \
+	static conststring32 stringVariable; \
 	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
@@ -245,7 +245,7 @@ _form_inited_: \
 
 
 #define OPTIONMENUSTR(stringVariable, labelText, defaultValue) \
-	static char32 *stringVariable; \
+	static conststring32 stringVariable; \
 	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
@@ -256,10 +256,11 @@ _form_inited_: \
 #define RADIO_ENUM_VARIABLE(EnumeratedType, enumeratedVariable) \
 	static enum EnumeratedType enumeratedVariable; \
 
-#define RADIO_ENUM_FIELD(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define RADIO_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	{/* type checks */ \
 		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
+		(void) _compilerTypeCheckDummy; \
 	} \
 	{/* scope */ \
 		UiField _radio = UiForm_addRadio (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
@@ -268,18 +269,19 @@ _form_inited_: \
 			UiRadio_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 	}
 
-#define RADIO_ENUM(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define RADIO_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	RADIO_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
-	RADIO_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
+	RADIO_ENUM_FIELD (EnumeratedType, enumeratedVariable, labelText, defaultValue)
 
 
 #define OPTIONMENU_ENUM_VARIABLE(EnumeratedType, enumeratedVariable) \
 	static enum EnumeratedType enumeratedVariable; \
 
-#define OPTIONMENU_ENUM_FIELD(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define OPTIONMENU_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	{/* type checks */ \
 		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
+		(void) _compilerTypeCheckDummy; \
 	} \
 	{/* scope */ \
 		UiField _radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
@@ -288,14 +290,14 @@ _form_inited_: \
 			UiOptionMenu_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 	}
 
-#define OPTIONMENU_ENUM(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define OPTIONMENU_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	OPTIONMENU_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
-	OPTIONMENU_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
+	OPTIONMENU_ENUM_FIELD (EnumeratedType, enumeratedVariable, labelText, defaultValue)
 
 
-#define LIST(integerVariable, labelText, numberOfStrings, strings, defaultValue) \
+#define LIST(integerVariable, labelText, strings, defaultValue) \
 	static integer integerVariable; \
-	UiForm_addList (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, numberOfStrings, strings, defaultValue);
+	UiForm_addList (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, strings, defaultValue);
 
 /*
 	Seven optional functions to change the content of a field on the basis of the current
@@ -330,7 +332,7 @@ _form_inited_: \
 
 #define EDITOR_FORM_SAVE(title, helpTitle) \
 	if (! cmd -> d_uiform) { \
-		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle)); \
+		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
 	(void) interpreter; \
@@ -339,8 +341,8 @@ _form_inited_: \
 		Melder_require (_narg_ == 1, \
 			U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
 		Melder_require (_args_ [1]. which == Stackel_STRING, \
-			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
-		Melder_relativePathToFile (_args_ [1]. string.get(), & _file2); \
+			U"The file name argument should be a string, not ", _args_ [1]. whichText(), U"."); \
+		Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 		file = & _file2; \
 	} else if (_sendingString_) { \
 		Melder_relativePathToFile (_sendingString_, & _file2); \
@@ -351,7 +353,7 @@ _form_inited_: \
 
 #define EDITOR_FORM_READ(title, helpTitle) \
 	if (! cmd -> d_uiform) { \
-		cmd -> d_uiform = autoUiForm (UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle)); \
+		cmd -> d_uiform = UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 #define EDITOR_DO_READ \
 	(void) interpreter; \
@@ -360,8 +362,8 @@ _form_inited_: \
 		Melder_require (_narg_ == 1, \
 			U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
 		Melder_require (_args_ [1]. which == Stackel_STRING, \
-			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
-		Melder_relativePathToFile (_args_ [1]. string.get(), & _file2); \
+			U"The file name argument should be a string, not ", _args_ [1]. whichText(), U"."); \
+		Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 		file = & _file2; \
 	} else if (_sendingString_) { \
 		Melder_relativePathToFile (_sendingString_, & _file2); \

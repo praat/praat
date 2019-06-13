@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011, 2015-2017 David Weenink
+ * Copyright (C) 2005-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,25 +60,22 @@ void Index_init (Index me, integer numberOfItems) {
 	
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;
-	my classIndex = NUMvector<integer> (1, numberOfItems);
+	my classIndex = newINTVECzero (numberOfItems);
 }
 
 autoIndex Index_extractPart (Index me, integer from, integer to) {
 	try {
-		if (from == 0) {
+		if (from == 0)
 			from = 1;
-		}
-		if (to == 0) {
+		if (to == 0)
 			to = my numberOfItems;
-		}
 		Melder_require (from <= to && from > 0 && to <= my numberOfItems, U"Range should be in interval [1,", my numberOfItems, U"].");
 		
 		autoIndex thee = Data_copy (me);
 		thy numberOfItems = to - from + 1;
 		
-		for (integer i = 1; i <= thy numberOfItems; i ++) {
+		for (integer i = 1; i <= thy numberOfItems; i ++)
 			thy classIndex [i] = my classIndex [from + i - 1];
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
@@ -99,18 +96,16 @@ autoStringsIndex StringsIndex_create (integer numberOfItems) {
 
 integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex) {
 	integer result = 0;
-	if (itemIndex >= 0 && itemIndex <= my numberOfItems) {
+	if (itemIndex >= 0 && itemIndex <= my numberOfItems)
 		result = my classIndex [itemIndex];
-	}
 	return result;
 }
 
-int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *klasLabel) {
+int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 klasLabel) {
 	for (integer i = 1; i <= my classes->size; i ++) {
 		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
-		if (Melder_equ (ss -> string.get(), klasLabel)) {
+		if (Melder_equ (ss -> string.get(), klasLabel))
 			return i;
-		}
 	}
 	return 0;
 }
@@ -137,9 +132,8 @@ conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer i
 integer StringsIndex_countItems (StringsIndex me, int iclass) {
 	integer sum = 0;
 	for (integer i = 1; i <= my numberOfItems; i ++) {
-		if (my classIndex [i] == iclass) {
+		if (my classIndex [i] == iclass)
 			sum ++;
-		}
 	}
 	return sum;
 }

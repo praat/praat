@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2006-2008,2010-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ autoSound Sound_createSimple (integer numberOfChannels, double duration, double 
 autoSound Sound_convertToMono (Sound me);
 autoSound Sound_convertToStereo (Sound me);
 autoSound Sound_extractChannel (Sound me, integer ichannel);
-autoSound Sound_extractChannels (Sound me, numvec channelNumbers);
+autoSound Sound_extractChannels (Sound me, constVECVU const& channelNumbers);
 autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
@@ -339,6 +339,12 @@ void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding);
 autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
 autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing);
+
+/*
+	Abstract.
+*/
+Collection_define (SoundList, OrderedOf, Sound) {
+};
 
 /* End of file Sound.h */
 #endif

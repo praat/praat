@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@ double structVector :: v_getVector (integer irow, integer icol) {
 	if (irow == 0) {
 		if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 		longdouble sum = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++) {
+		for (integer channel = 1; channel <= ny; channel ++)
 			sum += z [channel] [icol];
-		}
 		return double (sum / ny);
 	}
 	Melder_assert (irow > 0 && irow <= ny);
@@ -53,9 +52,8 @@ double structVector :: v_getFunction1 (integer irow, double x) {
 			z1 = 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 		} else {
 			longdouble sum = 0.0;
-			for (integer channel = 1; channel <= ny; channel ++) {
+			for (integer channel = 1; channel <= ny; channel ++)
 				sum += z [channel] [icol];
-			}
 			z1 = double (sum / ny);
 		}
 	} else {
@@ -72,9 +70,8 @@ double structVector :: v_getFunction1 (integer irow, double x) {
 			z2 = 0.5 * (z [1] [icol + 1] + z [2] [icol + 1]);   // optimization
 		} else {
 			longdouble sum = 0.0;
-			for (integer channel = 1; channel <= ny; channel ++) {
+			for (integer channel = 1; channel <= ny; channel ++)
 				sum += z [channel] [icol + 1];
-			}
 			z2 = double (sum / ny);
 		}
 	} else {
@@ -97,9 +94,8 @@ double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int un
 		value = 0.5 * (z [1] [isamp] + z [2] [isamp]);   // optimization
 	} else {
 		longdouble sum = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++) {
+		for (integer channel = 1; channel <= ny; channel ++)
 			sum += z [channel] [isamp];
-		}
 		value = double (sum / ny);
 	}
 	return isdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
@@ -117,62 +113,69 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 	if (x <  leftEdge || x > rightEdge) return undefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		return NUM_interpolate_sinc (my z [ilevel], my nx, Sampled_xToIndex (me, x),
+		return NUM_interpolate_sinc (my z.row (ilevel), Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
-	double sum = 0.0;
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		sum += NUM_interpolate_sinc (my z [channel], my nx, Sampled_xToIndex (me, x),
+	longdouble sum = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++) {
+		sum += NUM_interpolate_sinc (my z.row (ichan), Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
-	return sum / my ny;
+	return double (sum / my ny);
 }
 
 /***** Get shape. *****/
 
-void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
-	double *return_minimum, double *return_xOfMinimum)
+void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channelNumber, int interpolation,
+	double *out_minimum, double *out_xOfMinimum)
 {
-	integer imin, imax, n = my nx;
-	Melder_assert (channel >= 1 && channel <= my ny);
-	double *y = my z [channel];
+	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
+	constVEC y = my z.row (channelNumber);
 	double minimum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	integer imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 			No samples between xmin and xmax.
 			Try to return the lesser of the values at these two points.
 		*/
-		double yleft = Vector_getValueAtX (me, xmin, channel,
+		double yleft = Vector_getValueAtX (me, xmin, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		double yright = Vector_getValueAtX (me, xmax, channel,
+		double yright = Vector_getValueAtX (me, xmax, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
 		minimum = yleft < yright ? yleft : yright;
 		x = yleft == yright ? (xmin + xmax) / 2 : yleft < yright ? xmin : xmax;
 	} else {
-		minimum = y [imin], x = imin;
-		if (y [imax] < minimum) minimum = y [imax], x = imax;
+		minimum = y [imin];
+		x = imin;
+		if (y [imax] < minimum) {
+			minimum = y [imax];
+			x = imax;
+		}
 		if (imin == 1) imin ++;
 		if (imax == my nx) imax --;
 		for (integer i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
-				double i_real, localMinimum = NUMimproveMinimum (y, n, i, interpolation, & i_real);
-				if (localMinimum < minimum) minimum = localMinimum, x = i_real;
+				double i_real, localMinimum = NUMimproveMinimum (y, i, interpolation, & i_real);
+				if (localMinimum < minimum) {
+					minimum = localMinimum;
+					x = i_real;
+				}
 			}
 		}
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
 		if (x < xmin) x = xmin; else if (x > xmax) x = xmax;
 	}
-	if (return_minimum) *return_minimum = minimum;
-	if (return_xOfMinimum) *return_xOfMinimum = x;
+	if (out_minimum) *out_minimum = minimum;
+	if (out_xOfMinimum) *out_xOfMinimum = x;
 }
 
 void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
-	double *return_minimum, double *return_xOfMinimum, integer *return_channelOfMinimum)
+	double *out_minimum, double *out_xOfMinimum, integer *out_channelOfMinimum)
 {
 	double minimum, xOfMinimum;
 	integer channelOfMinimum = 1;
@@ -186,9 +189,9 @@ void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int i
 			channelOfMinimum = channel;
 		}
 	}
-	if (return_minimum) *return_minimum = minimum;
-	if (return_xOfMinimum) *return_xOfMinimum = xOfMinimum;
-	if (return_channelOfMinimum) *return_channelOfMinimum = channelOfMinimum;
+	if (out_minimum) *out_minimum = minimum;
+	if (out_xOfMinimum) *out_xOfMinimum = xOfMinimum;
+	if (out_channelOfMinimum) *out_channelOfMinimum = channelOfMinimum;
 }
 
 double Vector_getMinimum (Vector me, double xmin, double xmax, int interpolation) {
@@ -209,45 +212,52 @@ integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int int
 	return channelOfMinimum;
 }
 
-void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
-	double *return_maximum, double *return_xOfMaximum)
+void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channelNumber, int interpolation,
+	double *out_maximum, double *out_xOfMaximum)
 {
-	integer imin, imax, i, n = my nx;
-	Melder_assert (channel >= 1 && channel <= my ny);
-	double *y = my z [channel];
+	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
+	constVEC y = my z.row (channelNumber);
 	double maximum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	integer imin, imax, i;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 			No samples between xmin and xmax.
 			Try to return the greater of the values at these two points.
 		*/
-		double yleft = Vector_getValueAtX (me, xmin, channel,
+		double yleft = Vector_getValueAtX (me, xmin, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		double yright = Vector_getValueAtX (me, xmax, channel,
+		double yright = Vector_getValueAtX (me, xmax, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
 		maximum = yleft > yright ? yleft : yright;
 		x = yleft == yright ? (xmin + xmax) / 2 : yleft > yright ? xmin : xmax;
 	} else {
-		maximum = y [imin], x = imin;
-		if (y [imax] > maximum) maximum = y [imax], x = imax;
+		maximum = y [imin];
+		x = imin;
+		if (y [imax] > maximum) {
+			maximum = y [imax];
+			x = imax;
+		}
 		if (imin == 1) imin ++;
 		if (imax == my nx) imax --;
 		for (i = imin; i <= imax; i ++) {
 			if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-				double i_real, localMaximum = NUMimproveMaximum (y, n, i, interpolation, & i_real);
-				if (localMaximum > maximum) maximum = localMaximum, x = i_real;
+				double i_real, localMaximum = NUMimproveMaximum (y, i, interpolation, & i_real);
+				if (localMaximum > maximum) {
+					maximum = localMaximum;
+					x = i_real;
+				}
 			}
 		}
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
 		if (x < xmin) x = xmin; else if (x > xmax) x = xmax;
 	}
-	if (return_maximum) *return_maximum = maximum;
-	if (return_xOfMaximum) *return_xOfMaximum = x;
+	if (out_maximum) *out_maximum = maximum;
+	if (out_xOfMaximum) *out_xOfMaximum = x;
 }
 
 void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
-	double *return_maximum, double *return_xOfMaximum, integer *return_channelOfMaximum)
+	double *out_maximum, double *out_xOfMaximum, integer *out_channelOfMaximum)
 {
 	double maximum, xOfMaximum;
 	integer channelOfMaximum = 1;
@@ -261,9 +271,9 @@ void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int i
 			channelOfMaximum = channel;
 		}
 	}
-	if (return_maximum) *return_maximum = maximum;
-	if (return_xOfMaximum) *return_xOfMaximum = xOfMaximum;
-	if (return_channelOfMaximum) *return_channelOfMaximum = channelOfMaximum;
+	if (out_maximum) *out_maximum = maximum;
+	if (out_xOfMaximum) *out_xOfMaximum = xOfMaximum;
+	if (out_channelOfMaximum) *out_channelOfMaximum = channelOfMaximum;
 }
 
 double Vector_getMaximum (Vector me, double xmin, double xmax, int interpolation) {
@@ -325,44 +335,24 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 /***** Modify. *****/
 
 void Vector_addScalar (Vector me, double scalar) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			my z [channel] [i] += scalar;
-		}
-	}
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		my channel (ichan)  +=  scalar;
 }
 
 void Vector_subtractMean (Vector me) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		double sum = 0.0;
-		for (integer i = 1; i <= my nx; i ++) {
-			sum += my z [channel] [i];
-		}
-		double mean = sum / my nx;
-		for (integer i = 1; i <= my nx; i ++) {
-			my z [channel] [i] -= mean;
-		}
-	}
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		VECcentre_inplace (my channel (ichan));
 }
 
 void Vector_multiplyByScalar (Vector me, double scalar) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			my z [channel] [i] *= scalar;
-		}
-	}
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		my channel (ichan)  *=  scalar;
 }
 
 void Vector_scale (Vector me, double scale) {
-	double extremum = 0.0;
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			if (fabs (my z [channel] [i]) > extremum) extremum = fabs (my z [channel] [i]);
-		}
-	}
-	if (extremum != 0.0) {
+	double extremum = NUMextremum (my z.get());
+	if (extremum != 0.0)
 		Vector_multiplyByScalar (me, scale / extremum);
-	}
 }
 
 /***** Graphics. *****/
@@ -384,7 +374,8 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		Domain expressed in sample numbers.
 	*/
 	integer ixmin, ixmax;
-	Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
+	integer n = Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
+	if (n < 1) return;
 	/*
 		Automatic vertical range.
 	*/
@@ -428,7 +419,7 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		/*
 		 * The default: draw as a curve.
 		 */
-		Graphics_function (g, my z [1], ixmin, ixmax,
+		Graphics_function (g, & my z [1] [0], ixmin, ixmax,
 			Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
 	Graphics_unsetInner (g);

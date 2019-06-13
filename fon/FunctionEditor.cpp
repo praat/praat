@@ -106,7 +106,7 @@ static void drawNow (FunctionEditor me) {
 	if (endVisible && my endSelection != my startSelection)
 		my marker [++ my numberOfMarkers] = my endSelection;
 	my marker [++ my numberOfMarkers] = my endWindow;
-	NUMsort_d (my numberOfMarkers, my marker);
+	VECsort_inplace (VEC (my marker, my numberOfMarkers));
 
 	/* Update rectangles. */
 
@@ -220,11 +220,15 @@ static void drawNow (FunctionEditor me) {
 			const char *format = my v_format_long ();
 			double value = undefined, inverseValue = 0.0;
 			switch (i) {
-				case 0: format = my v_format_totalDuration (), value = my tmax - my tmin; break;
-				case 1: format = my v_format_window (), value = my endWindow - my startWindow;
+				case 0: {
+					format = my v_format_totalDuration ();
+					value = my tmax - my tmin;
+				} break; case 1: {
+					format = my v_format_window ();
+					value = my endWindow - my startWindow;
 					/*
-					 * Window domain text.
-					 */	
+						Window domain text.
+					*/	
 					Graphics_setColour (my graphics.get(), Graphics_BLUE);
 					Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 					Graphics_text (my graphics.get(), left, 0.5 * (bottom + top) - verticalCorrection,
@@ -234,13 +238,21 @@ static void drawNow (FunctionEditor me) {
 						Melder_fixed (my endWindow, my v_fixedPrecision_long ()));
 					Graphics_setColour (my graphics.get(), Graphics_BLACK);
 					Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-				break;
-				case 2: value = my startWindow - my tmin; break;
-				case 3: value = my tmax - my endWindow; break;
-				case 4: value = my marker [1] - my startWindow; break;
-				case 5: value = my marker [2] - my marker [1]; break;
-				case 6: value = my marker [3] - my marker [2]; break;
-				case 7: format = my v_format_selection (), value = my endSelection - my startSelection, inverseValue = 1.0 / value; break;
+				} break; case 2: {
+					value = my startWindow - my tmin;
+				} break; case 3: {
+					value = my tmax - my endWindow;
+				} break; case 4: {
+					value = my marker [1] - my startWindow;
+				} break; case 5: {
+					value = my marker [2] - my marker [1];
+				} break; case 6: {
+					value = my marker [3] - my marker [2];
+				} break; case 7: {
+					format = my v_format_selection ();
+					value = my endSelection - my startSelection;
+					inverseValue = 1.0 / value;
+				}
 			}
 			char text8 [100];
 			snprintf (text8, 100, format, value, inverseValue);
@@ -481,7 +493,11 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endWindow = my tmax;
 		my v_updateText ();
 		updateScrollBar (me);
-		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -491,7 +507,11 @@ static void do_showAll (FunctionEditor me) {
 	my endWindow = my tmax;
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (my pref_synchronizedZoomAndScroll ()) {
 		updateGroup (me);
 	}
@@ -507,7 +527,11 @@ static void do_zoomIn (FunctionEditor me) {
 	my endWindow -= shift;
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (my pref_synchronizedZoomAndScroll ()) {
 		updateGroup (me);
 	}
@@ -528,7 +552,11 @@ static void do_zoomOut (FunctionEditor me) {
 		my endWindow = my tmax;
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (my pref_synchronizedZoomAndScroll ()) {
 		updateGroup (me);
 	}
@@ -550,7 +578,11 @@ static void do_zoomToSelection (FunctionEditor me) {
 		trace (U"Zoomed in to ", my startWindow, U" ~ ", my endWindow, U" seconds (2).");
 		updateScrollBar (me);
 		trace (U"Zoomed in to ", my startWindow, U" ~ ", my endWindow, U" seconds (3).");
-		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		if (my pref_synchronizedZoomAndScroll ()) {
 			updateGroup (me);
 		}
@@ -568,7 +600,11 @@ static void do_zoomBack (FunctionEditor me) {
 		my endWindow = my endZoomHistory;
 		my v_updateText ();
 		updateScrollBar (me);
-		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		if (my pref_synchronizedZoomAndScroll ()) {
 			updateGroup (me);
 		}
@@ -659,7 +695,11 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endSelection = dummy;
 		}
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -667,14 +707,22 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_moveCursorToB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my endSelection = my startSelection;
 	my v_updateText ();
-	/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	updateGroup (me);
 }
 
 static void menu_cb_moveCursorToE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my startSelection = my endSelection;
 	my v_updateText ();
-	/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	updateGroup (me);
 }
 
@@ -688,7 +736,11 @@ static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (position > my tmax - 1e-12) position = my tmax;
 		my startSelection = my endSelection = position;
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -703,7 +755,11 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (position > my tmax) position = my tmax;
 		my startSelection = my endSelection = position;
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -723,7 +779,11 @@ static void menu_cb_moveBby (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endSelection = dummy;
 		}
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics,get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -743,7 +803,11 @@ static void menu_cb_moveEby (FunctionEditor me, EDITOR_ARGS_FORM) {
 			my endSelection = dummy;
 		}
 		my v_updateText ();
-		/*Graphics_updateWs (my graphics.get());*/ drawNow (me);
+		#if SUPPORT_DIRECT_DRAWING
+			drawNow (me);
+		#else
+			Graphics_updateWs (my graphics.get());
+		#endif
 		updateGroup (me);
 	EDITOR_END
 }
@@ -901,7 +965,10 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 	if (my group) {
 		FunctionEditor thee;
 		i = 1; while (theGroup [i]) i ++; theGroup [i] = me;
-		if (++ nGroup == 1) { Graphics_updateWs (my graphics.get()); return; }
+		if (++ nGroup == 1) {
+			Graphics_updateWs (my graphics.get());
+			return;
+		}
 		i = 1; while (! theGroup [i] || theGroup [i] == me) i ++; thee = theGroup [i];
 		if (my pref_synchronizedZoomAndScroll ()) {
 			my startWindow = thy startWindow;
@@ -1427,8 +1494,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (our graphics.get(), & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	Graphics_setViewport (our graphics.get(),
-		our functionViewerLeft + MARGIN, our functionViewerRight - MARGIN,
-		BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
+			our functionViewerLeft + MARGIN, our functionViewerRight - MARGIN,
+			BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	Graphics_xorOn (our graphics.get(), Graphics_MAROON);
 	/*
@@ -1451,8 +1518,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	Graphics_xorOff (our graphics.get());
 	if (our p_showSelectionViewer) {
 		Graphics_setViewport (our graphics.get(),
-			our selectionViewerLeft + MARGIN, our selectionViewerRight - MARGIN,
-			BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
+				our selectionViewerLeft + MARGIN, our selectionViewerRight - MARGIN,
+				BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
 		our v_drawRealTimeSelectionViewer (phase, t);
 	}
 	/*
@@ -1525,7 +1592,11 @@ gui_drawingarea_cb_resize (me, & event);
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {
 	my v_updateText ();
 	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 	if (needsUpdateGroup)
 		updateGroup (me);
 }
@@ -1535,8 +1606,11 @@ void FunctionEditor_updateText (FunctionEditor me) {
 }
 
 void FunctionEditor_redraw (FunctionEditor me) {
-	//Graphics_updateWs (my graphics);
-	drawNow (me);
+	#if SUPPORT_DIRECT_DRAWING
+		drawNow (me);
+	#else
+		Graphics_updateWs (my graphics.get());
+	#endif
 }
 
 void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
@@ -1562,7 +1636,8 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 
 	Graphics_setColour (my graphics.get(), Graphics_BLUE);
 	Graphics_line (my graphics.get(), my endWindow, yWC, my endWindow + textWidth, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, verticalAlignment);
-	if (verticalAlignment == Graphics_BOTTOM) yWC -= Graphics_dyMMtoWC (my graphics.get(), 0.5);
+	if (verticalAlignment == Graphics_BOTTOM)
+		yWC -= Graphics_dyMMtoWC (my graphics.get(), 0.5);
 	Graphics_text (my graphics.get(), my endWindow, yWC, text.string);
 }
 

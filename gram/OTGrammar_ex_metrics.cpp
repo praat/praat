@@ -74,18 +74,22 @@ static void addCandidate (OTGrammarTableau me, integer numberOfSyllables, int st
 	char32 output [100];
 	str32cpy (output, U"[");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		if (isyll > 1) str32cpy (output + str32len (output), U" ");
-		str32cpy (output + str32len (output), ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
+		if (isyll > 1)
+			str32cat (output, U" ");
+		str32cat (output, ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
 				[stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
 	}
-	str32cpy (output + str32len (output), U"] \\-> /");
+	str32cat (output, U"] \\-> /");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		if (isyll > 1) str32cpy (output + str32len (output), U" ");
-		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0)) str32cpy (output + str32len (output), U"(");
-		str32cpy (output + str32len (output), syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
-		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0)) str32cpy (output + str32len (output), U")");
+		if (isyll > 1)
+			str32cat (output, U" ");
+		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0))
+			str32cat (output, U"(");
+		str32cat (output, syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
+		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0))
+			str32cat (output, U")");
 	}
-	str32cpy (output + str32len (output), U"/");
+	str32cat (output, U"/");
 	my candidates [++ my numberOfCandidates]. output = Melder_dup (output);
 }
 
@@ -99,7 +103,8 @@ static void fillSurfaceWeightPattern (OTGrammarTableau me, integer numberOfSylla
 		if (underlyingWeightPattern [isyll] < 3) {
 			minSurfaceWeight [isyll] = maxSurfaceWeight [isyll] = underlyingWeightPattern [isyll];   // L -> L; H -> H
 		} else {
-			minSurfaceWeight [isyll] = 3, maxSurfaceWeight [isyll] = 4;   // C -> { J, K }
+			minSurfaceWeight [isyll] = 3;
+			maxSurfaceWeight [isyll] = 4;   // C -> { J, K }
 		}
 	}
 	surfaceWeightPattern [6] = surfaceWeightPattern [7] = 1;   // constant L
@@ -180,10 +185,11 @@ static void fillTableau (OTGrammarTableau me, integer numberOfSyllables, int und
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		static const conststring32 syllable_noCodas [] = { U"", U"L", U"H" };
 		static const conststring32 syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
-		if (isyll > 1) str32cpy (input + str32len (input), includeCodas ? U"." : U" ");
-		str32cpy (input + str32len (input), ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
+		if (isyll > 1)
+			str32cat (input, includeCodas ? U"." : U" ");
+		str32cat (input, ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
 	}
-	str32cpy (input + str32len (input), U"|");
+	str32cat (input, U"|");
 	my input = Melder_dup (input);
 	my candidates = NUMvector <structOTGrammarCandidate> (1, ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables]);
 	for (integer mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
@@ -228,7 +234,7 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 	#define isStress(s)  ((s) == '1' || (s) == '2')
 	const char32 *firstSlash = str32chr (my output.get(), U'/');
 	const char32 *lastSlash = & my output [str32len (my output.get()) - 1];
-	my marks = NUMvector <int> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
+	my marks = newINTVECzero (my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
 	/* Violations of WSP: count all H not followed by 1 or 2. */
 	for (const char32 *p = firstSlash + 1; p != lastSlash; p ++) {
 		if (isHeavy (p [0]) && ! isStress (p [1]))
@@ -355,9 +361,8 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 		if (isStress (p [0])) {
 			for (const char32 *q = p + 1; q != lastSlash; q ++) {
 				if (isSyllable (q [0])) {
-					if (isStress (q [1])) {
+					if (isStress (q [1]))
 						my marks [Clash] ++;
-					}
 					break;
 				}
 			}
@@ -370,9 +375,8 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 			if (isStress (p [1])) {
 				depth = 0;
 			} else {
-				if (++ depth > 2) {
+				if (++ depth > 2)
 					my marks [Lapse] ++;
-				}
 			}
 		}
 	}
@@ -394,14 +398,13 @@ static void replaceOutput (OTGrammarCandidate me) {
 	char32 newOutput [100], *q = & newOutput [0];
 	for (const char32 *p = & my output [0]; *p != U'\0'; p ++) {
 		if (p [0] == U' ') {
-			*q ++ = p [-1] == U']' || p [1] == U'/' ? U' ' : U'.';
+			*q ++ = ( p [-1] == U']' || p [1] == U'/' ? U' ' : U'.' );
 		} else if (isSyllable (p [0])) {
 			*q ++ = U'c';
 			if (abstract) {
 				*q ++ = U'V';
-				if (isStress (p [1])) {
+				if (isStress (p [1]))
 					*q ++ = p [1];
-				}
 				if (p [0] == U'L') {
 					;
 				} else if (p [0] == U'H') {
@@ -462,9 +465,8 @@ autoOTGrammar OTGrammar_create_metrics (
 		my tableaus = NUMvector <structOTGrammarTableau> (1, numberOfTableaus);
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
 			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
-			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-				underlyingWeightPattern [isyll] = 1;   /* L or cv */
-			}
+			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++)
+				underlyingWeightPattern [isyll] = 1;   // L or cv
 			for (integer iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
 				fillTableau (& my tableaus [++ my numberOfTableaus], numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
 				/*
@@ -482,9 +484,8 @@ autoOTGrammar OTGrammar_create_metrics (
 		/* Compute violation marks. */
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++)
 				computeViolationMarks (& tableau -> candidates [icand]);
-			}
 		}
 		OTGrammar_checkIndex (me.get());
 		OTGrammar_newDisharmonies (me.get(), 0.0);
@@ -493,9 +494,12 @@ autoOTGrammar OTGrammar_create_metrics (
 		} else {
 			OTGrammar_removeConstraint (me.get(), U"FtNonfinal");
 		}
-		if (! includeFootBimoraic) OTGrammar_removeConstraint (me.get(), U"FtBimor");
-		if (! includeFootBisyllabic) OTGrammar_removeConstraint (me.get(), U"FtBisyl");
-		if (! includePeripheral) OTGrammar_removeConstraint (me.get(), U"Peripheral");
+		if (! includeFootBimoraic)
+			OTGrammar_removeConstraint (me.get(), U"FtBimor");
+		if (! includeFootBisyllabic)
+			OTGrammar_removeConstraint (me.get(), U"FtBisyl");
+		if (! includePeripheral)
+			OTGrammar_removeConstraint (me.get(), U"Peripheral");
 		if (nonfinalityConstraint == 1) {
 			OTGrammar_removeConstraint (me.get(), U"MainNonfinal");
 			OTGrammar_removeConstraint (me.get(), U"HeadNonfinal");
@@ -517,9 +521,8 @@ autoOTGrammar OTGrammar_create_metrics (
 		if (includeCodas) {
 			for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 				OTGrammarTableau tableau = & my tableaus [itab];
-				for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+				for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++)
 					replaceOutput (& tableau -> candidates [icand]);
-				}
 			}
 		}
 		return me;

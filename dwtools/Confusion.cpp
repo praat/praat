@@ -1,6 +1,6 @@
 /* Confusion.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,14 +86,15 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 	}
 }
 
-autoConfusion Confusion_createSimple (conststring32 labels) {
+autoConfusion Confusion_createSimple (conststring32 labels_string) {
 	try {
-		integer numberOfLabels = Melder_countTokens (labels);
-		Melder_require (numberOfLabels > 0, U"There should be at least one label.");
+		autostring32vector labels = newSTRVECtokenize (labels_string);
+		Melder_require (labels.size > 0, U"There should be at least one label.");
 		
-		autoConfusion me = Confusion_create (numberOfLabels, numberOfLabels);
+		autoConfusion me = Confusion_create (labels.size, labels.size);
 		integer ilabel = 1;
-		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
+			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= ilabel - 1; i ++) {
 				if (Melder_equ (token, my rowLabels [i].get())) {
 					Melder_throw (U"Label ", i, U" and ", ilabel, U" should not be equal.");
@@ -101,7 +102,7 @@ autoConfusion Confusion_createSimple (conststring32 labels) {
 			}
 			TableOfReal_setRowLabel (me.get(), ilabel, token);
 			TableOfReal_setColumnLabel (me.get(), ilabel, token);
-			ilabel++;
+			ilabel ++;
 		}
 		return me;
 	} catch (MelderError) {
@@ -135,57 +136,11 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 	}
 }
 
-#define TINY 1.0e-30
-
-void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy,
-	double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy)
+void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double *out_hy,
+	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy)
 {
-	autonumvec rowSum (my numberOfRows, kTensorInitializationType::ZERO);
-	autonumvec colSum (my numberOfColumns, kTensorInitializationType::ZERO);
-	double totalSum = 0.0;
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			double cellValue = my data [irow] [icol];
-			rowSum [irow] += cellValue;
-			colSum [icol] += cellValue;
-			totalSum += cellValue;
-		}
-	}
-	double h = 0.0, hx = 0.0, hy = 0.0;
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		if (rowSum [irow] > 0.0) {
-			double prob = rowSum [irow] / totalSum;
-			hy -= prob * NUMlog2 (prob);
-		}
-	}
-	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (colSum [icol] > 0.0) {
-			double prob = colSum [icol] / totalSum;
-			hx -= prob * NUMlog2 (prob);
-		}
-	}
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (my data [irow] [icol] > 0.0) {
-				double prob = my data [irow] [icol] / totalSum;
-				h -= prob * NUMlog2 (prob);
-			}
-		}
-	}
-	double hygx = h - hx;
-	double hxgy = h - hy;
-	double uygx = (hy - hygx) / (hy + TINY);
-	double uxgy = (hx - hxgy) / (hx + TINY);
-	double uxy = 2.0 * (hx + hy - h) / (hx + hy + TINY);
-
-	if (p_h)    *p_h = h;
-	if (p_hx)   *p_hx = hx;
-	if (p_hy)   *p_hy = hy;
-	if (p_hygx) *p_hygx = hygx;
-	if (p_hxgy) *p_hxgy = hxgy;
-	if (p_uygx) *p_uygx = uygx;
-	if (p_uxgy) *p_uxgy = uxgy;
-	if (p_uxy)  *p_uxy = uxy;
+	NUMgetEntropies (my data.get(), out_h, out_hx,
+			out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);
 }
 
 void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 response) {
@@ -286,18 +241,14 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 		Graphics_text (g, thy z [i] [1], thy z [i] [2], my rowLabels [i].get());
 	}
 	for (integer i = ib; i <= ie; i ++) {
-		double xSum = 0.0;
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			xSum += my data [i] [j];
-		}
-		if (xSum <= 0.0) {
+		double xSum = NUMsum (my data.row (i));
+		if (xSum <= 0.0)
 			continue;    /* no confusions */
-		}
 		double x1 = thy z [i] [1];
 		double y1 = thy z [i] [2];
 		double r = rmax * my data [i] [i] / xSum;
 
-		Graphics_circle (g, x1, y1, r > rmin ? r : rmin);
+		Graphics_circle (g, x1, y1, ( r > rmin ? r : rmin ));
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			double x2 = thy z [j] [1], y2 = thy z [j] [2];
@@ -308,12 +259,18 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 			if (perc == 0.0 || perc < lowerPercentage || j == i) {
 				continue;
 			}
-			xmin = x1, xmax = x2;
-			if (x2 < x1)
-				xmin = x2, xmax = x1;
-			ymin = y1, xmax = y2;
-			if (y2 < y1)
-				ymin = y2, ymax = y1;
+			xmin = x1;
+			xmax = x2;
+			if (x2 < x1) {
+				xmin = x2;
+				xmax = x1;
+			}
+			ymin = y1;
+			xmax = y2;
+			if (y2 < y1) {
+				ymin = y2;
+				ymax = y1;
+			}
 			autoPolygon p = Polygon_createPointer();
 			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
 			if (xs < 0.0)
@@ -348,11 +305,8 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 
 		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0, 0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
 
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				his z [i] [j] = my data [i] [j] - thy data [i] [j];
-			}
-		}
+		his z.get() <<= my data.get()  -  thy data.get();
+		
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix not created from two Confusions.");
@@ -360,16 +314,12 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 }
 
 integer Confusion_getNumberOfEntries (Confusion me) {
-	longdouble total = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			total += my data [i] [j];
-		}
-	}
-	return Melder_ifloor ((double) total);
+	double total = NUMsum (my data.get());
+	return Melder_ifloor (total);
 }
 
-static void create_index (string32vector s, string32vector ref, integer index []) {
+static autoINTVEC create_index (string32vector s, string32vector ref) {
+	autoINTVEC index = newINTVECraw (s.size);
 	for (integer i = 1; i <= s.size; i ++) {
 		integer indxj = 0;
 		for (integer j = 1; j <= ref.size; j ++) {
@@ -380,6 +330,7 @@ static void create_index (string32vector s, string32vector ref, integer index []
 		}
 		index [i] = indxj;
 	}
+	return index;
 }
 
 autoConfusion Confusion_condense (Confusion me, conststring32 search, conststring32 replace,
@@ -411,13 +362,11 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 
 		autoConfusion thee = Confusion_create (nstim, nresp);
 
-		thy rowLabels. copyElementsFrom (drow -> rowLabels);
-		thy columnLabels. copyElementsFrom (dcol -> rowLabels);
+		thy rowLabels.all() <<= drow -> rowLabels.all();
+		thy columnLabels.all() <<= dcol -> rowLabels.all();
 
-		autoNUMvector<integer> rowIndex (1, my numberOfRows);
-		create_index (srow -> strings.get(), drow -> rowLabels.get(), rowIndex.peek());
-		autoNUMvector<integer> columnIndex (1, my numberOfColumns);
-		create_index (scol -> strings.get(), dcol -> rowLabels.get(), columnIndex.peek());
+		autoINTVEC rowIndex = create_index (srow -> strings.get(), drow -> rowLabels.get());
+		autoINTVEC columnIndex = create_index (scol -> strings.get(), dcol -> rowLabels.get());
 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -432,8 +381,8 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 
 autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Elements should not be negative.");
-		
+		Melder_require (TableOfReal_isNonNegative (me),
+			U"No cell in the table should be negative.");
 		autoConfusion thee = Thing_new (Confusion);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -452,14 +401,16 @@ autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32
 	}
 }
 
-autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
+autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		integer ncondense = Melder_countTokens (labels);
-		autoNUMvector<integer> irow (1, my numberOfRows);
+		autostring32vector labels = newSTRVECtokenize (labels_string);
+		integer ncondense = labels.size;
+		autoINTVEC irow = newINTVECraw (my numberOfRows);
 
 		for (integer i = 1; i <= my numberOfRows; i ++)
 			irow [i] = i;
-		for (char32 *token = Melder_firstToken (labels); token != nullptr; token = Melder_nextToken ()) {
+		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
+			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				if (Melder_equ (token, my rowLabels [i].get())) {
 					irow [i] = 0;
@@ -482,8 +433,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, consts
 		if (newpos > newnstim)
 			newpos = newnstim;
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
-		thy columnLabels. copyElementsFrom (my columnLabels);
-
+		thy columnLabels.all() <<= my columnLabels.all();
 		TableOfReal_setRowLabel (thee.get(), newpos, newLabel);
 		integer inewrow = 1;
 		for (integer i = 1; i <= my numberOfRows; i ++) {
@@ -504,14 +454,16 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, consts
 	}
 }
 
-autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
+autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		integer ncondense = Melder_countTokens (labels);
-		autoNUMvector<integer> icol (1, my numberOfColumns);
+		autostring32vector labels = newSTRVECtokenize (labels_string);
+		integer ncondense = labels.size;
+		autoINTVEC icol = newINTVECraw (my numberOfColumns);
 
 		for (integer i = 1; i <= my numberOfColumns; i ++)
 			icol [i] = i;
-		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
+			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
 				if (Melder_equ (token, my columnLabels [i].get())) {
 					icol [i] = 0;
@@ -534,7 +486,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels, cons
 		if (newpos > newnresp)
 			newpos = newnresp;
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
-		thy rowLabels. copyElementsFrom (my rowLabels);
+		thy rowLabels.all() <<= my rowLabels.all();
 		TableOfReal_setColumnLabel (thee.get(), newpos, newLabel);
 		integer inewcol = 1;
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
@@ -546,8 +498,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels, cons
 				inewcol ++;
 				TableOfReal_setColumnLabel (thee.get(), colpos, my columnLabels [i].get());
 			}
-			for (integer j = 1; j <= my numberOfRows; j ++)
-				thy data [j] [colpos] += my data [j] [i];
+			thy data.column (colpos)  +=  my data.column (i);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -559,28 +510,16 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
-		longdouble total = 0.0;
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			longdouble rowSum = 0.0;
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				thy data [i] [j] = my data [i] [j];
-				rowSum += my data [i] [j];
-			}
-			thy data [i] [my numberOfColumns + 1] = (double) rowSum;
-			total += rowSum;
-		}
-
-		thy data [my numberOfRows + 1] [my numberOfColumns + 1] = (double) total;
-
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			longdouble columnSum = 0.0;
-			for (integer i = 1; i <= my numberOfRows; i ++)
-				columnSum += my data [i] [j];
-			thy data [my numberOfRows + 1] [j] = (double) columnSum;
-		}
-
-		thy rowLabels. copyElementsFrom_upTo (my rowLabels, my numberOfRows);
-		thy columnLabels. copyElementsFrom_upTo (my columnLabels, my numberOfColumns);
+		thy data.part(1, my numberOfRows, 1, my numberOfColumns) <<= my data.get();
+		autoVEC columnSums = newVECcolumnSums (my data.get());
+		thy data.row (my numberOfRows + 1).part (1, my numberOfColumns) <<= columnSums.get();
+		autoVEC rowSums = newVECrowSums (my data.get());
+		thy data.column (my numberOfColumns + 1).part (1, my numberOfRows) <<= rowSums.get();
+		
+		thy data [my numberOfRows + 1] [my numberOfColumns + 1] = NUMsum (rowSums.get());
+		
+		thy rowLabels.part (1, my numberOfRows) <<= my rowLabels.all();
+		thy columnLabels.part (1, my numberOfColumns) <<= my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": table with marginals not created.");

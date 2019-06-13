@@ -47,20 +47,20 @@ void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 res
 double Confusion_getValue (Confusion me, conststring32 stimulus, conststring32 response);
 /* data['stim']['resp'] ; */
 
-void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
-    double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
+void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double *out_hy,
+    double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
 /*  x is column variable, y is row variable
-	*h	    entropy of whole table;
-	*hx	    entropy of x variable
-	*hy	    entropy of y variable
-	*hygx   entropy of y given x
-	*hxgy   entropy of x given y
-	*uygx   dependency of y on x
-	*uxgy   dependency of x on y
-	*uxy    symmetrical dependency
+	*out_h	    entropy of whole table;
+	*out_hx	    entropy of x variable
+	*out_hy	    entropy of y variable
+	*out_hygx   entropy of y given x
+	*out_hxgy   entropy of x given y
+	*out_uygx   dependency of y on x
+	*out_uxgy   dependency of x on y
+	*out_uxy    symmetrical dependency
  */
 
-void Confusion_getFractionCorrect (Confusion me, double *fraction, integer *numberOfCorrect);
+void Confusion_getFractionCorrect (Confusion me, double *out_fraction, integer *out_numberOfCorrect);
 
 void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, int garnish);
 /* 1. Draw my rowLabels centered at ( matrix->z[i][1], matrix->z[i][2]).

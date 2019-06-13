@@ -1,6 +1,6 @@
 /* TableOfReal_and_SVD.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 
 autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 	try {
-		autoTableOfReal thee = TableOfReal_create (my isTransposed ? my numberOfColumns : my numberOfRows, 
-												   my isTransposed ? my numberOfRows : my numberOfColumns);
-		SVD_synthesize (me, from, to, thy data);
+		autoMAT synthesis = SVD_synthesize (me, from, to);
+		autoTableOfReal thee = TableOfReal_create (synthesis.nrow, synthesis.ncol);
+		thy data.get() <<= synthesis.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal synthesized.");
@@ -37,7 +37,7 @@ autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 
 autoSVD TableOfReal_to_SVD (TableOfReal me) {
 	try {
-		autoSVD thee = SVD_create_d (my data, my numberOfRows, my numberOfColumns);
+		autoSVD thee = SVD_createFromGeneralMatrix (my data.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no SVD created.");
@@ -47,7 +47,7 @@ autoSVD TableOfReal_to_SVD (TableOfReal me) {
 autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		NUMmatrix_copyElements (my u, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		thy data.all() <<= my u.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": left singular vector not extracted.");
@@ -57,7 +57,7 @@ autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfColumns);
-		NUMmatrix_copyElements (my v, thy data, 1, my numberOfColumns, 1, my numberOfColumns);
+		thy data.all() <<= my v.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": right singular vector not extracted.");
@@ -67,7 +67,7 @@ autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 autoTableOfReal SVD_extractSingularValues (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		NUMvector_copyElements (my d, thy data[1], 1, my numberOfColumns);
+		thy data.row (1) <<= my d.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": singular values not extracted.");
@@ -77,9 +77,8 @@ autoTableOfReal SVD_extractSingularValues (SVD me) {
 autoGSVD TablesOfReal_to_GSVD (TableOfReal me, TableOfReal thee) {
 	try {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
-			U"Both tables must have the same number of columns.");
-
-		autoGSVD him = GSVD_create_d (my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
+			U"Both tables should have the same number of columns.");
+		autoGSVD him = GSVD_create (my data.get(), thy data.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not constructed from TablesOfReal.");

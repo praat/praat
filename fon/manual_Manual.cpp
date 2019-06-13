@@ -183,11 +183,11 @@ NORMAL (U"Please note that the script is enclosed within double quotes. "
 NORMAL (U"If needed, a script like this can create objects in the object list of the manual. "
 	"However, you have to make sure that you remove them after use:")
 CODE (U"<script> 6 3 \"")
-CODE1 (U"Create Sound from formula: \"sineWithNoise\", 1, 0.0, 1.0, 44100, ~1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
-CODE1 (U"To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
-CODE1 (U"Paint: 0, 0, 0, 0, 100.0, \"yes\", 50.0, 6.0, 0.0, \"yes\"")
-CODE1 (U"plusObject: \"Sound sineWithNoise\"")
-CODE1 (U"Remove")
+	CODE1 (U"Create Sound from formula: \"sineWithNoise\", 1, 0.0, 1.0, 44100, ~1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
+	CODE1 (U"To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
+	CODE1 (U"Paint: 0, 0, 0, 0, 100.0, \"yes\", 50.0, 6.0, 0.0, \"yes\"")
+	CODE1 (U"plusObject: \"Sound sineWithNoise\"")
+	CODE1 (U"Remove")
 CODE (U"\\\"r")
 NORMAL (U"Note that unlike the previous script, this script does not set the font and font size. "
 	"This means that the drawing will use the font and font size of the manual page, "
@@ -204,12 +204,12 @@ NORMAL (U"The commands ##Set outer viewport...# and ##Set inner viewport...# are
 	"as in the Picture window, so that you can test your picture with a normal Praat script; "
 	"for instance, the following script draws a cross in the upper half of the picture and a rectangle in the lower half:")
 CODE (U"<script> 4.5 4 \"")
-CODE1 (U"Axes: 0, 100, 0, 100")
-CODE1 (U"Select inner viewport: 0, 4.5, 0, 2")
-CODE1 (U"Draw line: 0, 0, 100, 100")
-CODE1 (U"Draw line: 0, 100, 100, 0")
-CODE1 (U"Select inner viewport: 0, 4.5, 2, 4")
-CODE1 (U"Draw rectangle: 0, 100, 0, 100")
+	CODE1 (U"Axes: 0, 100, 0, 100")
+	CODE1 (U"Select inner viewport: 0, 4.5, 0, 2")
+	CODE1 (U"Draw line: 0, 0, 100, 100")
+	CODE1 (U"Draw line: 0, 100, 100, 0")
+	CODE1 (U"Select inner viewport: 0, 4.5, 2, 4")
+	CODE1 (U"Draw rectangle: 0, 100, 0, 100")
 CODE (U"\\\"r")
 SCRIPT (4.5, 4, U""
 	"Axes: 0, 100, 0, 100\n"

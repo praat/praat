@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 21 September 2017
+# 9 March 2019
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
+CPPFLAGS = -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
 
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -20,6 +20,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
+	espeakdata_FileInMemory.o \
 	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o  \
 	HMM.o \
@@ -27,25 +28,25 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	LFCC.o LongSound_extensions.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \
 	Ltas_extensions.o \
-	MFCC.o \
+	MDSVec.o MFCC.o \
 	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
 	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o MixingMatrix.o \
-	Matrix_extensions.o \
+	Matrix_and_NMF.o Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
 	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
 	Pitch_extensions.o Polynomial.o \
 	Polygon_extensions.o Procrustes.o \
-	Proximity.o \
+	Proximity.o Proximity_and_Distance.o \
 	Resonator.o \
 	Sound_and_MixingMatrix.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrogram_extensions.o Spectrum_extensions.o SSCP.o Strings_extensions.o \
-	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o\
-	Table_extensions.o TableOfReal_and_SVD.o\
+	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
+	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
@@ -67,5 +68,5 @@ libdwtools.a: $(OBJECTS)
 	$(AR) cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
-$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
+$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
 

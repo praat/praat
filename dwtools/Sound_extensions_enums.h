@@ -27,4 +27,10 @@ enums_begin (kSoundNoiseReductionMethod, 1)
 	enums_add (kSoundNoiseReductionMethod, 1, SpectralSubtraction, U"spectral-subtraction")
 enums_end (kSoundNoiseReductionMethod, 1, SpectralSubtraction)
 
+enums_begin (kSoundSearchDirection, 1)
+	enums_add (kSoundSearchDirection, 1, Left, U"left")
+	enums_add (kSoundSearchDirection, 2, Right, U"right")
+	enums_add (kSoundSearchDirection, 3, Nearest, U"nearest")
+enums_end (kSoundSearchDirection, 3, Nearest)
+
 /* End of file Sound_extensions_enums.h */

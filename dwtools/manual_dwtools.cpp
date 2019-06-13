@@ -50,22 +50,22 @@ static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) 
 }
 
 static void drawPolsF1F2_log (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	Graphics_setWindow (g, -2.9, 2.9, -2.9, 2.9);
-	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, 1, U"+", 1);
+	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, true, U"+", true);
 }
 
 static void drawPolsF1F2ConcentrationEllipses (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
-	Discriminant_drawConcentrationEllipses (d.get(), g, 1, 0, nullptr, 0, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, 1);
+	Discriminant_drawConcentrationEllipses (d.get(), g, 1, false, nullptr, false, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, true);
 }
 
 static void drawPolsDiscriminantConfiguration (Graphics g) {
-	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
+	autoTableOfReal me = getStandardizedLogFrequencyPolsData (false);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
 	autoConfiguration c = Discriminant_TableOfReal_to_Configuration (d.get(), me.get(), 2);
-	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, U"", 1);
+	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, true, U"", true);
 }
 
 static void drawBoxPlot (Graphics g) {
@@ -134,21 +134,26 @@ static void drawBoxPlot (Graphics g) {
 }
 
 static void drawPartionedMatrix (Graphics g) {
-	double min = 0, max = 10, x1, x2, y1, y2;
+	double min = 0.0, max = 10.0, x1, x2, y1, y2;
 	Graphics_setWindow (g, min, max, min, max);
-	x1 = 0; x2 = max; y1 = y2 = 7;
+	x1 = 0.0;
+	x2 = max;
+	y1 = y2 = 7.0;
 	Graphics_setLineType (g, Graphics_DOTTED);
 	Graphics_line (g, x1, y1, x2, y2);
-	x1 = x2 = 3; y1 = 0; y2 = max;
+	x1 = x2 = 3.0;
+	y1 = 0.0;
+	y2 = max;
 	Graphics_line (g, x1, y1, x2, y2);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	x1 = 1.5; y1 = 7+3/2;
-	Graphics_setFontSize (g, 14);
+	x1 = 1.5;
+	y1 = 7.0 + 3.0 / 2.0;
+	Graphics_setFontSize (g, 14.0);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_text (g, x1, y1, U"##S__yy_#");
-	x1 = 3 + 7/2;
+	x1 = 3.0 + 7.0 / 2.0;
 	Graphics_text (g, x1, y1, U"##S__yx_#");
-	y1 = 7/2;
+	y1 = 7.0 / 2.0;
 	Graphics_text (g, x1, y1, U"##S__xx_#");
 	x1 = 1.5;
 	Graphics_text (g, x1, y1, U"##S__xy_#");
@@ -441,7 +446,7 @@ INTRO (U"Determine from the selected @CCA and @Correlation objects the correlati
 	"coefficients%.")
 MAN_END
 
-MAN_BEGIN (U"CCA & Correlation: Get variance fraction...", U"djmw", 20060323)
+MAN_BEGIN (U"CCA & Correlation: Get variance fraction...", U"djmw", 20181112)
 INTRO (U"Determine from the selected @CCA and @Correlation objects the fraction of the variance "
 	"explained by the selected @@canonical variate@ range.")
 ENTRY (U"Settings")
@@ -452,7 +457,7 @@ DEFINITION (U"determines the canonical variates (or canonical variables).")
 ENTRY (U"Remarks")
 NORMAL (U"1. In general the variance fractions for a particular canonical variate in the "
 	"dependent and in the independent set are not the same.")
-NORMAL (U"2. In general, the variance fractions for all canonical variates do not sum to 1.")
+NORMAL (U"2. In general, the variance fractions for all canonical variates do not sum to 1. \n(The technical reason is that for canonical correlation analysis in general the eigenvectors are not orthogonal, i.e. they overlap and therefore, necessarily, also the variance fractions overlap.) ")
 ENTRY (U"Algorithm")
 NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
 NORMAL (U"For example, the fraction of the variance explained by the %i^^th^ canonical "
@@ -515,7 +520,7 @@ NORMAL (U"The scores for the dependent data will be in the lower numbered column
 MAN_END
 
 
-MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20170829)
+MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20181118)
 INTRO (U"This tutorial will show you how to perform canonical correlation "
        "analysis with Praat.")
 ENTRY (U"1. Objective of canonical correlation analysis")
@@ -608,7 +613,7 @@ CODE (U"u1     1      .      .     0.860   .      .")
 CODE (U"u2     .      1      .      .     0.531   .")
 CODE (U"u3     .      .      1      .      .     0.070")
 CODE (U"v1    0.860   .      .      1      .      .")
-CODE (U"v2     .     0.1     .      .      1      .")
+CODE (U"v2     .     0.531     .      .      1      .")
 CODE (U"v3     .      .     0.070   .      .      1")
 NORMAL (U"The scores with a dot are zero to numerical precision. In this table the "
 	"only correlations that differ from zero are the canonical correlations. "
@@ -1237,13 +1242,13 @@ CODE (U"selectObject: c, t0")
 CODE (U"ts = To TableOfReal (mahalanobis): \"no\"")
 CODE (U"")
 CODE (U"for nsigma to 5")
-CODE1 (U"  selectObject: ts")
-CODE1 (U"  extraction = Extract rows where:  ~ self < nsigma")
-CODE1 (U"  nr = Get number of rows")
-CODE1 (U"  nrp = nr / n * 100")
-CODE1 (U"  expect = (1 - 2 * gaussQ (nsigma)) * 100")
-CODE1 (U"  writeInfoLine: nsigma, \"-sigma: \", nrp, \"%, \", expect, \"%\"")
-CODE1 (U"  removeObject: extraction")
+	CODE1 (U"selectObject: ts")
+	CODE1 (U"extraction = Extract rows where:  ~ self < nsigma")
+	CODE1 (U"nr = Get number of rows")
+	CODE1 (U"nrp = nr / n * 100")
+	CODE1 (U"expect = (1 - 2 * gaussQ (nsigma)) * 100")
+	CODE1 (U"writeInfoLine: nsigma, \"-sigma: \", nrp, \"%, \", expect, \"%\"")
+	CODE1 (U"removeObject: extraction")
 CODE (U"endfor")
 MAN_END
 
@@ -1257,16 +1262,16 @@ DEFINITION (U"define the coefficients of each @@Chebyshev polynomials|Chebyshev 
 	"The coefficient of the polynomial with the highest degree comes last.")
 MAN_END
 
-MAN_BEGIN (U"Create ISpline...", U"djmw", 20040407)
+MAN_BEGIN (U"Create ISpline...", U"djmw", 20181224)
 INTRO (U"A command to create an @ISpline from a list of coefficients.")
 ENTRY (U"Settings")
 TAG (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomial @spline.")
-TAG (U"%Degree")
+TAG (U"##Degree")
 DEFINITION (U"defines the degree of the polynomial @spline.")
-TAG (U"%Coefficients")
+TAG (U"##Coefficients")
 DEFINITION (U"define the coefficients of the basis polynomials.")
-TAG (U"%%Interior knots")
+TAG (U"##Interior knots")
 DEFINITION (U"define the positions in the domain where continuity conditions are defined.")
 ENTRY (U"Behaviour")
 NORMAL (U"The number of coefficients and the number of interior knots must satisfy "
@@ -1407,10 +1412,10 @@ NORMAL (U"The following script generates 12 static Shepard tone complexes, 1 sem
 	"with a cosine window to temper the abrupt start and finish.")
 CODE (U"fadeTime = 0.010")
 CODE (U"for i to 12")
-CODE1 (U"fraction = (i-1)/12")
-CODE1 (U"Create Sound as Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
-CODE1 (U"Fade in: 0, 0, fadeTime, \"no\"")
-CODE1 (U"Fade out: 0, 0.1, -fadeTime, \"no\"")
+	CODE1 (U"fraction = (i-1)/12")
+	CODE1 (U"Create Sound as Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
+	CODE1 (U"Fade in: 0, 0, fadeTime, \"no\"")
+	CODE1 (U"Fade out: 0, 0.1, -fadeTime, \"no\"")
 CODE (U"endfor")
 MAN_END
 
@@ -1681,10 +1686,10 @@ CODE (U"for irow to numberOfRows")
 	CODE1 (U"if irow = 1")
 		CODE2 (U"confusion = To Confusion: \"yes\"")
 	CODE1 (U"else")
-CODE2 (U"    plusObject: confusion")
-CODE2 (U"    Increase confusion count")
-CODE (U"  endif")
-CODE (U"  removeObject: rowi, rest, discriminant, classification")
+		CODE2 (U"plusObject: confusion")
+		CODE2 (U"Increase confusion count")
+	CODE1 (U"endif")
+	CODE1 (U"removeObject: rowi, rest, discriminant, classification")
 CODE (U"endfor")
 CODE (U"selectObject: confusion")
 CODE (U"fractionCorrect = Get fraction correct")
@@ -1694,15 +1699,15 @@ ENTRY (U"5.2 Bootstrap classification")
 NORMAL (U"The following script summarizes bootstrap classification.")
 CODE (U"fractionCorrect = 0")
 CODE (U"for i to numberOfBootstraps")
-CODE (U"  selectObject: table")
-CODE (U"  resampled = To TableOfReal (bootstrap)")
-CODE (U"  discriminant = To Discriminant")
-CODE (U"  plusObject: resampled")
-CODE (U"  classification = To ClassificationTable: \"yes\", \"yes\"")
-CODE (U"  confusion = To Confusion: \"yes\"")
-CODE (U"  fc = Get fraction correct")
-CODE (U"  fractionCorrect += fc")
-CODE (U"  removeObject: resampled, discriminant, classification, confusion")
+	CODE1 (U"selectObject: table")
+	CODE1 (U"resampled = To TableOfReal (bootstrap)")
+	CODE1 (U"discriminant = To Discriminant")
+	CODE1 (U"plusObject: resampled")
+	CODE1 (U"classification = To ClassificationTable: \"yes\", \"yes\"")
+	CODE1 (U"confusion = To Confusion: \"yes\"")
+	CODE1 (U"fc = Get fraction correct")
+	CODE1 (U"fractionCorrect += fc")
+	CODE1 (U"removeObject: resampled, discriminant, classification, confusion")
 CODE (U"endfor")
 CODE (U"fractionCorrect /= numberOfBootstraps")
 CODE (U"appendInfoLine: fractionCorrect, \" (= fraction correct, bootstrapped \", numberOfBootstraps, \" times).\"")
@@ -2598,6 +2603,14 @@ NORMAL (U"Singular value decomposition with backsubstitution. "
 NORMAL (U"See for more details: @@Golub & van Loan (1996)@ chapters 2 and 3.")
 MAN_END
 
+MAN_BEGIN (U"Matrix: To NMF (m.u.)...", U"djmw", 20190409)
+INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix by means of a multiplicative update algorithm.")
+MAN_END
+
+MAN_BEGIN (U"Matrix: To NMF (ALS)...", U"djmw", 20190409)
+INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix by means of an Alternating Least Squares algorithm.")
+MAN_END
+
 MAN_BEGIN (U"MelFilter", U"djmw", 20141022)
 INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by the @@MelSpectrogram@.")
 NORMAL (U"An object of type MelFilter represents an acoustic time-frequency "
@@ -2654,6 +2667,40 @@ NORMAL (U"An object of type MSpline represents a linear combination of basis "
 	"m@spline functions. Each basis %mspline is a positive polynomial function "
 	"of degree %p.")
 FORMULA (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
+MAN_END
+
+MAN_BEGIN (U"NMF", U"djmw", 20190312)
+INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factorization@ of a matrix.")
+MAN_END
+
+MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190321)
+INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a data matrix ##D#, whose elements are all non-negative, into a feature matrix ##F# and a weights matrix ##W# such that ##D \\~~ F*W#, where the elements of ##F# and ##W# are also all non-negative.")
+ENTRY (U"Algorithms for computing NMF")
+NORMAL (U"More backgroud on the algorithms used can be found in @@Berry et al. (2007)@")
+NORMAL (U"The algorithms fall into three general classes:")
+TAG (U"##1. Multiplicative updates#,")
+TAG (U"##2. Alternating Least squares#,")
+TAG (U"##3. Projected Gradient.#")
+ENTRY (U"Multiplicative Updates")
+CODE (U"initialize F and W")
+CODE (U"while iter < maxinter and not convergence")
+	CODE1 (U"(MU) W = W .* (F'*D) ./ (F'*F*W + 10^^−9^)")
+	CODE1 (U"(MU) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)")
+	CODE1 (U"test for convergence")
+CODE (U"endwhile")
+NORMAL (U"In the mutiplicative update (MU) steps above \"*\" means ordinary matrix multiplication while \".*\" and \"./\" mean elementwise matrix operations. The factors 10^^-9^ guard against division by zero.")
+ENTRY (U"Alternating Least Squares")
+NORMAL (U"The optimization of ##D \\~~ F*W# is not convex in both ##F# and ##W# it is convex in either ##F# or ##W#. Therefor given one, the other can be found by a simple least squares (LS) algorithm. This can be done in an alternating fashion.")
+NORMAL (U"The Aternating Least Squares (ALS) algorithm is as follows:")
+CODE (U"initialize F")
+CODE (U"while iter < maxinter and not convergence")
+	CODE1 (U"(LS) Solve for W in matrix equation F'*F*W = F'*D")
+	CODE1 (U"(NONNEG) Set all negative elements in W to 0")
+	CODE1 (U"(LS) Solve for F in matrix equation W*W'*F' = W*D'")
+	CODE1 (U"(NONNEG) Set all negative elements in F to 0")
+	CODE1 (U"test for convergence")
+CODE (U"endwhile")
+NORMAL (U"")
 MAN_END
 
 MAN_BEGIN (U"pairwise algorithm for computing sample variances", U"djmw", 20170806)
@@ -5368,7 +5415,13 @@ MAN_END
 MAN_BEGIN (U"Bartlett (1954)", U"djmw", 20011111)
 NORMAL (U"M.S. Bartlett (1954): \"A note on multiplying factors for various "
 	"chi-squared approximations.\", %%Joural of the Royal Statistical Society, "
-	"Series B% #16: 296\\--298")
+	"Series B% #16: 296\\--298.")
+MAN_END
+
+MAN_BEGIN (U"Berry et al. (2007)", U"djmw", 20190321)
+NORMAL (U"M.W. Berry, M. Browne, A.N. Langville, V.P. Pauca & R.J. Plemmons (2007): "
+	"\"Algorithms and applications for approximate nonnegative matrix factorization.\", "
+	"Computational Statistics & Data Analysis ##52#: 155\\--173.")
 MAN_END
 
 MAN_BEGIN (U"Boll (1979)", U"djmw", 20121021)
@@ -5464,6 +5517,12 @@ NORMAL (U"T. Irino & R.D. Patterson (1997): \"A time-domain, level-dependent "
 	"auditory filter: The gammachirp.\" %%Journal of the Acoustical Society of America% #101: 412\\--419.")
 MAN_END
 
+MAN_BEGIN (U"Janecek et al. (2011)", U"djmw", 20190312)
+	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011)"
+		"\"LIBNMF \\-- A library for nonnegative matrix factorization.\""
+		"%%Computing and informatics% #30: 205\\--224")
+MAN_END
+
 MAN_BEGIN (U"Johannesma (1972)", U"djmw", 19980123)
 NORMAL (U"P.I.M. Johannesma (1972): \"The pre-response stimulus ensemble of "
 	"neurons in the cochlear nucleus.\" In %%Symposium on Hearing Theory% "
@@ -5501,6 +5560,11 @@ NORMAL (U"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
 	"Development: Design and Analysis of the Acoustic-Phonetic Corpus.\" "
 	"%%Proc. DARPA Speech Recognition Workshop%, Report No. SAIC-86/1546, "
 	"100\\--119.")
+MAN_END
+
+MAN_BEGIN (U"Lee & Seung (2001)", U"djmw", 20190312)
+	NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
+	"%%Advances in in neural information processing systems% #13: 556\\--562.")
 MAN_END
 
 MAN_BEGIN (U"Morrison (1990)", U"djmw", 19980123)

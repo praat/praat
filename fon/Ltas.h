@@ -43,7 +43,7 @@ Thing_define (Ltas, Vector) {
 		x1				// Centre of first band (Hz).
 		ymin, ymax, dy, y1 = 1.0
 		ny = 1
-		z [1] [1..nx]		// The intensity per band, in db/Hz.
+		z [1] [1..nx]		// The intensity per band, in dB/Hz.
 */
 
 autoLtas Ltas_create (integer nx, double dx);

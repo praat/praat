@@ -1,6 +1,6 @@
 /* praat_TableOfReal.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,23 +384,24 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
-	OPTIONMENU_ENUM (extractAllColumnsWhoseLabel, U"Extract all columns whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, extractAllColumnsWhoseLabel,
+			U"Extract all columns whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, (kMelder_string) extractAllColumnsWhoseLabel, ___theText);
+		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, extractAllColumnsWhoseLabel, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
 	NATURAL (extractAllColumnsWhereRow, U"Extract all columns where row...", U"1")
-	OPTIONMENU_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
 	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, (kMelder_number) ___is___, ___theValue);
+		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, ___is___, ___theValue);
 	CONVERT_EACH_END (my name.get(), U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
 }
 
@@ -431,22 +432,23 @@ DO
 
 FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
 	NATURAL (extractAllRowsWhereColumn, U"Extract all rows where column...", U"1")
-	OPTIONMENU_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
 	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, (kMelder_number) ___is___, ___theValue);
+		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, ___is___, ___theValue);
 	CONVERT_EACH_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
-	OPTIONMENU_ENUM (extractAllRowsWhoseLabel, U"Extract all rows whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, extractAllRowsWhoseLabel,
+			U"Extract all rows whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, (kMelder_string) extractAllRowsWhoseLabel, ___theText);
+		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, extractAllRowsWhoseLabel, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 

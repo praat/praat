@@ -1,6 +1,6 @@
 /* Eigen.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,13 +32,13 @@
  djmw 20040622 Less horizontal labels in Eigen_drawEigenvector.
  djmw 20050706 Shortened horizontal offsets in Eigen_drawEigenvalues from 1 to 0.5
  djmw 20051204 Eigen_initFromSquareRoot adapted for nrows < ncols
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20110304 Thing_new
 */
 
 #include "Eigen.h"
+#include "MAT_numerics.h"
 #include "NUMmachar.h"
-#include "NUMlapack.h"
 #include "NUMclapack.h"
 #include "NUM2.h"
 #include "SVD.h"
@@ -63,10 +63,6 @@
 #include "Eigen_def.h"
 
 Thing_implement (Eigen, Daata, 0);
-
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-#define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
 static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, bool hasTick, bool hasDottedLine, bool integers) {
 	double range = max - min, scale = 1.0, tick = min, dtick = 1.0;
@@ -103,8 +99,8 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
-	my eigenvalues = NUMvector<double> (1, numberOfEigenvalues);
-	my eigenvectors = NUMmatrix<double> (1, numberOfEigenvalues, 1, dimension);
+	my eigenvalues = newVECzero (numberOfEigenvalues);
+	my eigenvectors = newMATzero (numberOfEigenvalues, dimension);
 }
 
 /*
@@ -114,63 +110,64 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	Eigenvectors: the columns of the matrix V
 	Eigenvalues: D_i^2
 */
-void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integer numberOfColumns) {
-	integer numberOfZeroed, numberOfEigenvalues;
-	integer nsv = MIN (numberOfRows, numberOfColumns);
-
-	my dimension = numberOfColumns;
-	autoSVD svd = SVD_create_d (a, numberOfRows, numberOfColumns);
-
+void Eigen_initFromSquareRoot (Eigen me, constMATVU const& a) {
+	Melder_require (a.nrow >= 1,
+		U"The matrix must at least have one row.");
+	integer nsv = std::min (a.nrow, a.ncol);
+	my dimension = a.ncol;
+	autoSVD svd = SVD_createFromGeneralMatrix (a);
 	/*
 		Make sv's that are too small zero. These values occur automatically
-		when the rank of A'A < numberOfColumns. This could occur when for
-		example numberOfRows <= numberOfColumns.
+		when the rank of A'A < a.ncol. This could occur when for
+		example numberOfRows <= a.ncol.
 		(n points in  an n-dimensional space define maximally an n-1
 		dimensional surface for which we maximally need an n-1 dimensional
 		basis.)
 	*/
 
-	numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
+	integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
+	integer numberOfEigenvalues = nsv - numberOfZeroed;
 
-	numberOfEigenvalues = nsv - numberOfZeroed;
-
-	Eigen_init (me, numberOfEigenvalues, numberOfColumns);
+	Eigen_init (me, numberOfEigenvalues, a.ncol);
 	integer k = 0;
 	for (integer i = 1; i <= nsv; i ++) {
-		double t = svd -> d [i];
-		if (t > 0.0) {
-			my eigenvalues [++ k] = t * t;
-			for (integer j = 1; j <= numberOfColumns; j ++) {
+		if (svd -> d [i] > 0.0) {
+			my eigenvalues [++ k] = svd -> d [i] * svd -> d [i];
+			for (integer j = 1; j <= a.ncol; j ++)
 				my eigenvectors [k] [j] = svd -> v [j] [i];
-			}
 		}
 	}
-	Eigen_sort (me);
+	// We don't need to sort the eigenvalues/eigenvectors because they were sorted already by the svd
 }
 
-void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, integer numberOfColumns, double **b, integer numberOfRows_b) {
+
+void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
+	Melder_require (a.ncol == b.ncol,
+		U"The numbers of columns should be equal, not ", a.ncol, U" and ", b.ncol, U".");
+	// Eigen has not been inited yet.
 	double *u = nullptr, *v = nullptr, maxsv2 = -10.0;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
-	integer k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
+	integer k, ll, m = a.nrow, n = a.ncol, p = b.nrow;
 	integer lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
-	integer lwork = MAX (MAX (3 * n, m), p) + n, info;
+	integer lwork = std::max (std::max (3 * n, m), p) + n, info;
 
 	/*	Melder_assert (numberOfRows >= numberOfColumns || numberOfRows_b >= numberOfColumns);*/
 
-	my dimension = numberOfColumns;
+	my dimension = a.ncol;
 
-	autoNUMvector<double> alpha (1, n);
-	autoNUMvector<double> beta (1, n);
-	autoNUMvector<double> work (1, lwork);
-	autoNUMvector<integer> iwork (1, n);
-	autoNUMmatrix<double> q (1, n, 1, n);
-	autoNUMmatrix<double> ac (NUMmatrix_transpose (a, numberOfRows, numberOfColumns), 1, 1);
-	autoNUMmatrix<double> bc (NUMmatrix_transpose (b, numberOfRows_b, numberOfColumns), 1, 1);
+	autoVEC alpha = newVECraw (n);
+	autoVEC beta = newVECraw (n);
+	autoVEC work = newVECraw (lwork);
+	autoINTVEC iwork = newINTVECzero (n);
+	autoMAT q = newMATraw (n, n);
+	autoMAT ac = newMATtranspose (a);
+	autoMAT bc = newMATtranspose (b);
 
-	(void) NUMlapack_dggsvd (&jobu, &jobv, &jobq, &m, &n, &p, &k, &ll,
-	    &ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
-	    v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
-	Melder_require (info == 0, U"dggsvd fails.");
+	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
+		& ac [1][1], & lda, & bc [1][1], & ldb, alpha.begin(), beta.begin(), u, & ldu,
+		v, & ldv, & q [1][1], & ldq, work.begin(), iwork.begin(), & info);
+	Melder_require (info == 0,
+		U"dggsvd fails with code ", info, U".");
 
 	// Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
 
@@ -178,76 +175,45 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, i
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		double t = alpha [i] / beta [i];
 		alpha [i] = t * t;
-		if (alpha [i] > maxsv2) {
+		if (alpha [i] > maxsv2)
 			maxsv2 = alpha [i];
-		}
 	}
 
-	// Deselect the eigenvalues < eps * max_eigenvalue.
+	// Deselect the eigenvalues < eps * max_eigenvalue by making them -1.0
 
-	n = 0;
+	integer numberOfDeselected = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		if (alpha [i] < NUMfpp -> eps * maxsv2) {
-			n ++; alpha [i] = -1.0;
+			numberOfDeselected ++; 
+			alpha [i] = -1.0;
 		}
 	}
 
-	Melder_require (ll - n > 0, U"No eigenvectors can be found. Matrix too singular.");
+	Melder_require (ll - numberOfDeselected > 0,
+		U"No eigenvectors can be found. Matrix too singular.");
 
-	Eigen_init (me, ll - n, numberOfColumns);
+	Eigen_init (me, ll - numberOfDeselected, a.ncol);
 
-	integer ii = 0;
+	integer numberOfEigenvalues = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
-		if (alpha [i] == -1.0) {
-			continue;
-		}
-
-		my eigenvalues [++ ii] = alpha [i];
-		for (integer j = 1; j <= numberOfColumns; j ++) {
-			my eigenvectors [ii] [j] = q [i] [j];
-		}
+		if (alpha [i] == -1.0) continue;
+		my eigenvalues [++ numberOfEigenvalues] = alpha [i];
+		for (integer j = 1; j <= a.ncol; j ++)
+			my eigenvectors [numberOfEigenvalues] [j] = q [i] [j];
 	}
 
 	Eigen_sort (me);
 
-	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
+	MATnormalizeRows_inplace (my eigenvectors.get(), 2.0, 1.0);
 }
 
-void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n) {
-	double wt[1], temp;
-	char jobz = 'V', uplo = 'U';
-	integer lwork = -1, info;
-
-	my dimension = my numberOfEigenvalues = n;
-
-	if (! my eigenvectors) {
-		Eigen_init (me, n, n);
-	}
-
-	NUMmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
-
-	// Get size of work array
-
-	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & my eigenvectors [1] [1], & n, & my eigenvalues [1], wt, & lwork, & info);
-	Melder_require (info == 0, U"dsyev initialization fails");
-	
-
-	lwork = Melder_ifloor (wt [0]);
-	autoNUMvector <double> work ((integer) 0, lwork);
-
-	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), & lwork, & info);
-	Melder_require (info == 0, U"dsyev fails");
-
-	// We want descending order instead of ascending.
-
-	for (integer i = 1; i <= n / 2; i ++) {
-		integer ilast = n - i + 1;
-
-		SWAP (my eigenvalues [i], my eigenvalues [ilast])
-		for (integer j = 1; j <= n; j ++) {
-			SWAP (my eigenvectors [i] [j], my eigenvectors [ilast] [j])
-		}
-	}
+void Eigen_initFromSymmetricMatrix (Eigen me, constMATVU const& a) {
+	Melder_assert (a.ncol == a.nrow);
+	if (NUMisEmpty (my eigenvectors))   // ppgb: BUG dubious logic
+		Eigen_init (me, a.ncol, a.ncol);
+	else
+		Melder_assert (my eigenvectors.nrow == my eigenvectors.ncol && a.ncol == my eigenvectors.ncol);
+	MAT_getEigenSystemFromSymmetricMatrix_preallocated (my eigenvectors.get(), my eigenvalues.get(), a, false);
 }
 
 autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension) {
@@ -276,38 +242,25 @@ integer Eigen_getDimensionOfComponents (Eigen me) {
 }
 
 double Eigen_getSumOfEigenvalues (Eigen me, integer from, integer to) {
-	if (from < 1) {
-		from = 1;
-	}
-	if (to < 1) {
-		to = my numberOfEigenvalues;
-	}
-	if (to > my numberOfEigenvalues || from > to) {
-		return undefined;
-	}
-	longdouble sum = 0.0;
-	for (integer i = from; i <= to; i++) {
-		sum += my eigenvalues[i];
-	}
-	return (double) sum;
+	if (from < 1) from = 1;
+	if (to < 1) to = my numberOfEigenvalues;
+	if (to > my numberOfEigenvalues || from > to)
+		return undefined;	
+	return NUMsum (my eigenvalues.part (from, to));
 }
 
 double Eigen_getCumulativeContributionOfComponents (Eigen me, integer from, integer to) {
 	longdouble partial = 0.0, sum = 0.0;
-
-	if (to == 0) {
+	if (to == 0)
 		to = my numberOfEigenvalues;
-	}
 	if (from > 0 && to <= my numberOfEigenvalues && from <= to) {
 		for (integer i = 1; i <= my numberOfEigenvalues; i ++) {
 			sum += my eigenvalues [i];
-			if (i >= from && i <= to) {
+			if (i >= from && i <= to)
 				partial += my eigenvalues [i];
-			}
 		}
 	}
-	return sum > 0.0 ? partial / sum : 0.0;
-
+	return sum > 0.0 ? double (partial / sum) : 0.0;
 }
 
 integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
@@ -326,34 +279,25 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 }
 
 void Eigen_sort (Eigen me) {
-	double temp, *e = my eigenvalues, **v = my eigenvectors;
-
 	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
-		integer k;
-		double emax = e [k = i];
+		integer k = i;
+		double evmax = my eigenvalues [k];
 		for (integer j = i + 1; j <= my numberOfEigenvalues; j ++) {
-			if (e [j] > emax) {
-				emax = e [k = j];
-			}
+			if (my eigenvalues [j] > evmax)
+				evmax = my eigenvalues [k = j];
 		}
-		if (k != i) {
-
-			// Swap eigenvalues and eigenvectors
-
-			SWAP (e [i], e [k])
-			for (integer j = 1; j <= my dimension; j ++) {
-				SWAP (v [i] [j], v [k] [j])
-			}
+		if (k != i) { // Swap eigenvalues and eigenvectors
+			std::swap (my eigenvalues [i], my eigenvalues [k]);
+			for (integer j = 1; j <= my dimension; j ++)
+				std::swap (my eigenvectors [i] [j], my eigenvectors [k] [j]);
 		}
 	}
 }
 
 void Eigen_invertEigenvector (Eigen me, integer ivec) {
-
-	if (ivec < 1 || ivec > my numberOfEigenvalues) {
-		return;
-	}
-
+	Melder_require (ivec >= 1 and ivec <= my numberOfEigenvalues,
+		U"The eigenvector number should be in the interval from 1 to ", my numberOfEigenvalues, U".");
+	
 	for (integer j = 1; j <= my dimension; j ++) {
 		my eigenvectors [ivec] [j] = - my eigenvectors [ivec] [j];
 	}
@@ -362,31 +306,28 @@ void Eigen_invertEigenvector (Eigen me, integer ivec) {
 void Eigen_drawEigenvalues (Eigen me, Graphics g, integer first, integer last, double ymin, double ymax, bool fractionOfTotal, bool cumulative, double size_mm, conststring32 mark, bool garnish) {
 	double xmin = first, xmax = last, scale = 1.0, sumOfEigenvalues = 0.0;
 
-	if (first < 1) {
-		first = 1;
-	}
-	if (last < 1 || last > my numberOfEigenvalues) {
+	if (first < 1) first = 1;
+	if (last < 1 || last > my numberOfEigenvalues) last = my numberOfEigenvalues;
+	if (last <= first) {
+		first = 1; 
 		last = my numberOfEigenvalues;
 	}
-	if (last <= first) {
-		first = 1; last = my numberOfEigenvalues;
-	}
-	xmin = first - 0.5; xmax = last + 0.5;
+	xmin = first - 0.5;
+	xmax = last + 0.5;
 	if (fractionOfTotal || cumulative) {
 		sumOfEigenvalues = Eigen_getSumOfEigenvalues (me, 0, 0);
-		if (sumOfEigenvalues <= 0.0) {
+		if (sumOfEigenvalues <= 0.0)
 			sumOfEigenvalues = 1.0;
-		}
 		scale = sumOfEigenvalues;
 	}
 	if (ymax <= ymin) {
 		ymax = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : first ), first) / scale;
 		ymin = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : last ), last) / scale;
-		if (ymin > ymax) {
-			double tmp = ymin; ymin = ymax; ymax = tmp;
-		}
+		if (ymin > ymax)
+			std::swap (ymin, ymax);
 		if (ymin == ymax) { // only one eigenvalue
-			ymin -= 0.1 * ymin; ymax += 0.1 * ymax;
+			ymin -= 0.1 * ymin;
+			ymax += 0.1 * ymax;
 		}
 	}
 	Graphics_setInner (g);
@@ -411,63 +352,55 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 {
 	double xmin = first, xmax = last;
 
-	if (ivec < 1 || ivec > my numberOfEigenvalues) {
-		return;
-	}
+	if (ivec < 1 || ivec > my numberOfEigenvalues) return;
 
 	if (last <= first) {
-		first = 1; last = my dimension;
-		xmin = 0.5; xmax = last + 0.5;
+		first = 1;
+		last = my dimension;
+		xmin = 0.5;
+		xmax = last + 0.5;
 	}
-	double *vec = my eigenvectors [ivec];
+	constVEC vec = my eigenvectors.row (ivec);
 	double w = weigh ? sqrt (my eigenvalues [ivec]) : 1.0;
 
 	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
 	if (ymax == ymin) {
-		NUMvector_extrema (vec, first, last, & ymin, & ymax);
-		ymax *= w; ymin *= w;
+		NUMextrema (vec.part (first, last), & ymin, & ymax);
+		ymax *= w;
+		ymin *= w;
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	for (integer i = first; i <= last; i ++) {
 		Graphics_mark (g, i, w * vec [i], size_mm, mark);
-		if (connect && i > first) {
+		if (connect && i > first)
 			Graphics_line (g, i - 1.0, w * vec [i - 1], i, w * vec [i]);
-		}
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_markBottom (g, first, false, true, false, rowLabels ? rowLabels [first] : Melder_integer (first));
 		Graphics_markBottom (g, last, false, true, false, rowLabels ? rowLabels [last] : Melder_integer (last));
 		Graphics_drawInnerBox (g);
-		if (ymin * ymax < 0.0) {
+		if (ymin * ymax < 0.0)
 			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
-		}
 		Graphics_marksLeft (g, 2, true, true, false);
-		if (! rowLabels) {
+		if (! rowLabels)
 			Graphics_textBottom (g, true, U"Element number");
-		}
 	}
 }
 
 void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
-	if (my size < 2) {
-		return;
-	}
+	if (my size < 2) return;
 
 	Eigen e1 = my at [1];
-	double **evec1 = e1 -> eigenvectors;
 	integer nev1 = e1 -> numberOfEigenvalues;
 	integer dimension = e1 -> dimension;
 
-	for (integer i = 2; i <= my size; i ++) {
-		Eigen e2 = my at [i];
-		if (e2 -> dimension != dimension) {
-			Melder_throw (U"The dimension of the eigenvectors should be equal (offending object is ",  i, U").");
-		}
-	}
+	for (integer i = 2; i <= my size; i ++)
+		Melder_require (my at [i] -> dimension == dimension,
+			U"The dimension of the eigenvectors should be equal (offending object is ",  i, U").");
 
 	/*
 		Correlate eigenvectors.
@@ -476,33 +409,24 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
-		double **evec2 = e2 -> eigenvectors;
-
-		for (integer j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j ++) {
-			double ip = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
-				ip += evec1 [j] [k] * evec2 [j] [k];
-			}
-			if (ip < 0.0) {
-				for (integer k = 1; k <= dimension; k ++) {
-					evec2 [j] [k] = - evec2 [j] [k];
-				}
-			}
+		for (integer j = 1; j <= std::min (nev1, e2 -> numberOfEigenvalues); j ++) {
+			const double ip = NUMinner (e1 -> eigenvectors.row (j), e2 -> eigenvectors.row (j));
+			if (ip < 0.0)
+				for (integer k = 1; k <= dimension; k ++)
+					e2 -> eigenvectors [j] [k] = - e2 -> eigenvectors [j] [k];
 		}
 	}
 }
 
-static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec_from, integer ivec_to, double *angles_degrees) {
-	integer nvectors = ivec_to - ivec_from + 1;
-	for (integer i = 1; i <= nvectors; i++) {
-		angles_degrees[i] = undefined;
-	}
-	integer nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
+static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec_from, integer ivec_to) {
+	integer numberOfVectors = ivec_to - ivec_from + 1;
 
-	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
-	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin, U"Eigenvector range too large.");
+	integer nmin = std::min (my numberOfEigenvalues, thy numberOfEigenvalues);
 
-	autoNUMmatrix<double> c (1, nvectors, 1, nvectors);
+	Melder_require (my dimension == thy dimension,
+		U"The eigenvectors should have equal dimensions.");
+	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin,
+		U"Eigenvector range too large.");
 
 	/*
 		Algorithm 12.4.3 Golub & van Loan
@@ -511,55 +435,20 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 		Compute C.
 	*/
 
-	for (integer i = 1; i <= nvectors; i ++) {
-		for (integer j = 1; j <= nvectors; j ++) {
-			for (integer k = 1; k <= my dimension; k++) {
-				c [i] [j] += my eigenvectors [ivec_from + i - 1] [k] * thy eigenvectors [ivec_from + j - 1] [k];
-			}
-		}
+	autoVEC angles_degrees = newVECraw (numberOfVectors);
+
+	autoMAT c = newMATmul (my eigenvectors.horizontalBand (ivec_from, ivec_to),
+			thy eigenvectors. horizontalBand (ivec_from, ivec_to). transpose());
+	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
+	for (integer i = 1; i <= numberOfVectors; i ++) {
+		angles_degrees [i] = acos (svd -> d [i]) * (180.0 / NUMpi);
 	}
-	autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
-	for (integer i = 1; i <= nvectors; i ++) {
-		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
-	}
+	return angles_degrees;
 }
 
 double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee) {
-	double angles_degrees[3];
-
-	Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2, angles_degrees);
-	return angles_degrees[2];
+	autoVEC angles_degrees = Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2);
+	return angles_degrees [2];
 }
-
-/* Very low level */
-
-void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin) {
-	/*
-	 * Preconditions:
-	 * 
-	 * 	from[numberOfRows, from_colbegin - 1 + my dimension] exists
-	 * 	to [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] exists
-	 * 
-	 * Project/rotate the vectors in matrix 'from' along the 'numberOfDimensionsToKeep' eigenvectors into the matrix 'to'.
-	 */
-	from_colbegin = from_colbegin <= 0 ? 1 : from_colbegin;
-	to_colbegin = to_colbegin <= 0 ? 1 : to_colbegin;
-	Melder_require (numberOfDimensionsToKeep <= my numberOfEigenvalues, U"The number of dimensions to keep should not be larger than the number of eigenvalues.");
-	
-	for (integer irow = 1; irow <= numberOfRows; irow ++) {
-		for (integer icol = 1; icol <= numberOfDimensionsToKeep; icol ++) {
-			longdouble r = 0.0;
-			for (integer k = 1; k <= my dimension; k ++) {
-				// eigenvector[icol] is in row[icol] of my eigenvectors
-				r += my eigenvectors  [icol] [k] * from [irow] [from_colbegin + k - 1];
-			}
-			to [irow] [to_colbegin + icol - 1] = (double) r;
-		}
-	}
-}
-
-#undef MAX
-#undef MIN
-#undef SWAP
 
 /* End of file Eigen.cpp */

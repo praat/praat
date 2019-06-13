@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,9 @@ static void computeTrafo (Graphics me) {
 
 void Graphics_init (Graphics me, int resolution) {
 	my resolution = resolution;
-	if (resolution == 96) {
+	if (resolution == 90) {
+		my resolutionNumber = kGraphics_resolution::DPI_90;
+	} else if (resolution == 96) {
 		my resolutionNumber = kGraphics_resolution::DPI_96;
 	} else if (resolution == 100) {
 		my resolutionNumber = kGraphics_resolution::DPI_100;
@@ -103,7 +105,7 @@ void Graphics_init (Graphics me, int resolution) {
 	my arrowSize = 1.0;
 	my speckleSize = 1.0;
 	my font = kGraphics_font::HELVETICA;
-	my fontSize = 10;
+	my fontSize = 10.0;
 	my fontStyle = Graphics_NORMAL;
 	my record = nullptr;
 	my irecord = my nrecord = 0;
@@ -216,7 +218,7 @@ void Graphics_WCtoDC (Graphics me, double xWC, double yWC, integer *xDC, integer
 /***** OUTPUT PRIMITIVES, RECORDABLE *****/
 
 void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	trace (U"enter ", x1NDC, U_SPACE, x2NDC, U_SPACE, y1NDC, U_SPACE, y2NDC);
+	trace (U"enter ", x1NDC, U" ", x2NDC, U" ", y1NDC, U" ", y2NDC);
 	my d_x1NDC = x1NDC;
 	my d_x2NDC = x2NDC;
 	my d_y1NDC = y1NDC;

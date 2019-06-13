@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@
 
 integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
 
-integer *Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter, integer *numberOfMatches);
+autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter);
+
+autoVEC Table_getColumnVector (Table me, integer columnNumber);
 
 autoTable Table_create_petersonBarney1952 ();
 
@@ -45,6 +47,8 @@ autoTable Table_create_esposito2006 ();
 autoTable Table_create_ganong1980 ();
 
 double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber);
+
+void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std, double tol, double *out_location, double *out_scale, integer maximumNumberOfiterations);
 
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me,
@@ -63,16 +67,16 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 	double ymin, double ymax, integer xci_min, integer xci_max, double bar_mm, bool garnish, conststring32 formula, Interpreter interpreter);
 
 void Table_normalProbabilityPlot (Table me, Graphics g,
-	integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish);
+	integer column, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 
 void Table_quantileQuantilePlot (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 label, bool garnish
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 label, bool garnish
 );
 
 void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 	integer dataColumn, integer factorColumn, conststring32 xlevel, conststring32 ylevel, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 label, bool garnish
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 label, bool garnish
 );
 
 void Table_boxPlots (Table me, Graphics g,
@@ -110,12 +114,12 @@ void Table_lineGraphWhere (Table me, Graphics g,
 
 void Table_lagPlotWhere (Table me, Graphics g,
 	integer column, integer lag, double xmin, double xmax,
-	conststring32 symbol, int labelSize, bool garnish, conststring32 formula, Interpreter interpreter
+	conststring32 symbol, double labelSize, bool garnish, conststring32 formula, Interpreter interpreter
 );
 
 void Table_drawEllipsesWhere (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, integer labelcolumn, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, integer labelSize, bool garnish, conststring32 formula, Interpreter interpreter);
+	double numberOfSigmas, double labelSize, bool garnish, conststring32 formula, Interpreter interpreter);
 
 void Table_printAsAnovaTable (Table me);
 

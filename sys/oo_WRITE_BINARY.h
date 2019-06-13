@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2009,2011-2018 Paul Boersma
+ * Copyright (C) 1994-2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,107 +18,110 @@
 
 #include "oo_undef.h"
 
-#define oo_SIMPLE(type,storage,x)  \
-	binput##storage (our x, f);
+#define oo_SIMPLE(type, storage, x)  \
+	binput##storage (our x, _filePointer_);
 
-#define oo_SET(type,storage,x,setType)  \
+#define oo_SET(type, storage, x, setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
-		binput##storage (our x [_i], f); \
+		binput##storage (our x [_i], _filePointer_); \
 	}
 
-#define oo_VECTOR(type,storage,x,min,max)  \
+#define oo_VECTOR(type, storage, x, min, max)  \
 	{ \
 		integer _min = (min), _max = (max); \
 		if (our x) { \
-			NUMvector_writeBinary_##storage (our x, _min, _max, f); \
+			NUMvector_writeBinary_##storage (our x, _min, _max, _filePointer_); \
 		} \
 	}
 
-#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
+#define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (our x) { \
-			NUMmatrix_writeBinary_##storage (our x, _row1, _row2, _col1, _col2, f); \
-		} \
+		integer _size = (sizeExpression); \
+		Melder_assert (our x.size == _size); \
+		vector_writeBinary_##storage (our x.get(), _filePointer_); \
 	}
 
-#define oo_ENUMx(kType,storage,x)  \
-	binput##storage ((int) our x, f);
+#define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
+	{ \
+		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
+		Melder_assert (our x.nrow == _nrow && our x.ncol == _ncol); \
+		matrix_writeBinary_##storage (our x.get(), _filePointer_); \
+	}
 
-//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	{ \
+		integer _ndim1 = (ndim1Expression), _ndim2 = (ndim2Expression), _ndim3 = (ndim3Expression); \
+		tensor3_writeBinary_##storage (our x.get(), _filePointer_); \
+	}
+
+#define oo_ENUMx(kType, storage, x)  \
+	binput##storage ((int) our x, _filePointer_);
+
+//#define oo_ENUMx_SET(kType, storage, x, setType)  \
 //	for (int _i = 0; _i <= setType::MAX; _i ++) { \
-//		binput##storage ((int) our x [_i], f); \
+//		binput##storage ((int) our x [_i], _filePointer_); \
 //	}
 
-//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//#define oo_ENUMx_VECTOR(kType, storage, x, min, max)  \
 //	{ \
 //		integer _min = (min), _max = (max); \
 //		if (our x) { \
-//			NUMvector_writeBinary_##storage ((int) our x, _min, _max, f); \
+//			NUMvector_writeBinary_##storage ((int) our x, _min, _max, _filePointer_); \
 //		} \
 //	{
 
 #define oo_STRINGx(storage,x)  \
-	binput##storage (our x.get(), f);
+	binput##storage (our x.get(), _filePointer_);
 
-#define oo_STRINGx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage, x, setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
-		binput##storage (our x [_i].get(), f); \
+		binput##storage (our x [_i].get(), _filePointer_); \
 	}
 
-#define oo_STRINGx_VECTOR(storage,x,size)  \
+#define oo_STRINGx_VECTOR(storage, x, n)  \
 	{ \
-		integer _size = (size); \
-		for (integer _i = 1; _i <= _size; _i ++) { \
-			binput##storage (our x [_i].get(), f); \
+		integer _size = (n); \
+		Melder_assert (_size == our x.size); \
+		for (integer _i = 1; _i <= _size; _i ++) \
+			binput##storage (our x [_i].get(), _filePointer_); { \
 		} \
 	}
 
-#define oo_STRUCT(Type,x)  \
-	our x. writeBinary (f);
+#define oo_STRUCT(Type, x)  \
+	our x. writeBinary (_filePointer_);
 
-#define oo_STRUCT_SET(Type,x,setType)  \
+#define oo_STRUCT_SET(Type, x, setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
-		our x [_i]. writeBinary (f); \
+		our x [_i]. writeBinary (_filePointer_); \
 	}
 
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		for (integer _i = _min; _i <= _max; _i ++) { \
-			our x [_i]. writeBinary (f); \
+		integer _size = (n); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
+			our x [_i]. writeBinary (_filePointer_); \
 		} \
 	}
 
-#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-			for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-				our x [_irow] [_icol]. writeBinary (f); \
-			} \
-		} \
-	}
-
-#define oo_OBJECT(Class,version,x)  \
-	binputex ((bool) our x, f); \
+#define oo_OBJECT(Class, version, x)  \
+	binputex ((bool) our x, _filePointer_); \
 	if (our x) { \
-		Data_writeBinary (our x.get(), f); \
+		Data_writeBinary (our x.get(), _filePointer_); \
 	}
 
-#define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	binputinteger32BE (our x.size, f); \
+#define oo_COLLECTION_OF(Class, x, ItemClass, version)  \
+	binputinteger32BE (our x.size, _filePointer_); \
 	for (integer _i = 1; _i <= our x.size; _i ++) { \
 		ItemClass data = our x.at [_i]; \
-		data -> struct##ItemClass :: v_writeBinary (f); \
+		data -> struct##ItemClass :: v_writeBinary (_filePointer_); \
 	}
 
-#define oo_COLLECTION(Class,x,ItemClass,version)  \
-	binputinteger32BE (our x ? our x->size : 0, f); \
+#define oo_COLLECTION(Class, x, ItemClass, version)  \
+	binputinteger32BE (our x ? our x->size : 0, _filePointer_); \
 	if (our x) { \
 		for (integer _i = 1; _i <= our x->size; _i ++) { \
 			ItemClass data = our x->at [_i]; \
-			data -> struct##ItemClass :: v_writeBinary (f); \
+			data -> struct##ItemClass :: v_writeBinary (_filePointer_); \
 		} \
 	}
 
@@ -127,14 +130,14 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	void struct##Type :: writeBinary (FILE *f) {
+	void struct##Type :: writeBinary (FILE *_filePointer_) {
 
 #define oo_END_STRUCT(Type)  \
 	}
 
-#define oo_DEFINE_CLASS(Class,Parent)  \
-	void struct##Class :: v_writeBinary (FILE *f) { \
-		Class##_Parent :: v_writeBinary (f);
+#define oo_DEFINE_CLASS(Class, Parent)  \
+	void struct##Class :: v_writeBinary (FILE *_filePointer_) { \
+		Class##_Parent :: v_writeBinary (_filePointer_);
 
 #define oo_END_CLASS(Class)  \
 	}

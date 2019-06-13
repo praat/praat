@@ -1,6 +1,6 @@
 /* Harmonicity.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,100 +21,66 @@
 
 Thing_implement (Harmonicity, Vector, 2);
 
-double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
+static autoVEC Harmonicity_getSoundingValues (Harmonicity me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	integer imin, imax;
-	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (n < 1) return undefined;
-	longdouble sum = 0.0;
-	integer nSounding = 0;
-	for (integer i = imin; i <= imax; i ++) {
-		if (my z [1] [i] != -200.0) {
-			nSounding ++;
-			sum += (longdouble) my z [1] [i];
-		}
-	}
-	if (nSounding < 1) return undefined;
-	return (double) sum / nSounding;
+	integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	if (numberOfFrames < 1)
+		return autoVEC();
+	autoVEC soundingValues = newVECraw (numberOfFrames);
+	integer numberOfSoundingFrames = 0;
+	for (integer iframe = imin; iframe <= imax; iframe ++)
+		if (my z [1] [iframe] != -200.0)
+			soundingValues [++ numberOfSoundingFrames] = my z [1] [iframe];
+	if (numberOfSoundingFrames < 1)
+		return autoVEC();
+	soundingValues.size = numberOfSoundingFrames;   // shrink (without reallocation)
+	return soundingValues;
+}
+
+double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
+	autoVEC soundingValues = Harmonicity_getSoundingValues (me, tmin, tmax);
+	return NUMmean (soundingValues.get());
 }
 
 double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tmax) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-	integer imin, imax;
-	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (n < 1) return undefined;
-	longdouble sum = 0.0;
-	integer nSounding = 0;
-	for (integer i = imin; i <= imax; i ++) {
-		if (my z [1] [i] != -200.0) {
-			nSounding ++;
-			sum += (longdouble) my z [1] [i];
-		}
-	}
-	if (nSounding < 2) return undefined;
-	longdouble mean = sum / nSounding;
-	longdouble sumOfSquares = 0.0;
-	for (integer i = imin; i <= imax; i ++) {
-		if (my z [1] [i] != -200.0) {
-			longdouble d = (longdouble) my z [1] [i] - mean;
-			sumOfSquares += d * d;
-		}
-	}
-	return sqrt ((double) sumOfSquares / (nSounding - 1));
+	autoVEC soundingValues = Harmonicity_getSoundingValues (me, tmin, tmax);
+	return NUMstdev (soundingValues.get());
 }
 
 double Harmonicity_getQuantile (Harmonicity me, double quantile) {
-	autoNUMvector <double> strengths (1, my nx);
-	integer nSounding = 0;
-	for (integer ix = 1; ix <= my nx; ix ++)
-		if (my z [1] [ix] != -200.0)
-			strengths [++ nSounding] = my z [1] [ix];
-	double result = -200.0;
-	if (nSounding >= 1) {
-		NUMsort_d (nSounding, strengths.peek());
-		result = NUMquantile (nSounding, strengths.peek(), quantile);
-	}
-	return result;
+	autoVEC soundingValues = Harmonicity_getSoundingValues (me, 0.0, 0.0);
+	VECsort_inplace (soundingValues.get());
+	return NUMquantile (soundingValues.get(), quantile);
 }
 
 void structHarmonicity :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
-	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
-	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
-	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
-	autoNUMvector <double> strengths (1, nx);
-	integer nSounding = 0;
-	for (integer ix = 1; ix <= nx; ix ++)
-		if (z [1] [ix] != -200.0)
-			strengths [++ nSounding] = z [1] [ix];
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
+	autoVEC soundingValues = Harmonicity_getSoundingValues (this, 0.0, 0.0);
 	MelderInfo_writeLine (U"Time sampling:");
-	MelderInfo_writeLine (U"   Number of frames: ", nx, U" (", nSounding, U" sounding)");
-	MelderInfo_writeLine (U"   Time step: ", dx, U" seconds");
-	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
-	if (nSounding) {
+	MelderInfo_writeLine (U"   Number of frames: ", our nx, U" (", soundingValues.size, U" sounding)");
+	MelderInfo_writeLine (U"   Time step: ", our dx, U" seconds");
+	MelderInfo_writeLine (U"   First frame centred at: ", our x1, U" seconds");
+	if (soundingValues.size > 0) {
 		MelderInfo_writeLine (U"Periodicity-to-noise ratios of sounding frames:");
-		NUMsort_d (nSounding, strengths.peek());
-		MelderInfo_writeLine (U"   Median ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.50)), U" dB");
-		MelderInfo_writeLine (U"   10 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.10)), U" dB   90 %% = ",
-			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.90)), U" dB");
-		MelderInfo_writeLine (U"   16 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.16)), U" dB   84 %% = ",
-			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.84)), U" dB");
-		MelderInfo_writeLine (U"   25 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.25)), U" dB   75 %% = ",
-			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.75)), U" dB");
-		MelderInfo_writeLine (U"Minimum: ", Melder_single (strengths [1]), U" dB");
-		MelderInfo_writeLine (U"Maximum: ", Melder_single (strengths [nSounding]), U" dB");
-		longdouble sum = 0.0, sumOfSquares = 0.0;
-		for (integer i = 1; i <= nSounding; i ++) {
-			double f = strengths [i];
-			sum += f;
-			sumOfSquares += f * f;
-		}
-		MelderInfo_writeLine (U"Average: ", Melder_single ((double) sum / nSounding), U" dB");
-		if (nSounding > 1) {
-			longdouble var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
-			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt ((double) var)), U" dB");
-		}
+		VECsort_inplace (soundingValues.get());
+		MelderInfo_writeLine (U"   Median ", Melder_single (NUMquantile (soundingValues.get(), 0.50)), U" dB");
+		MelderInfo_writeLine (U"   10 % = ", Melder_single (NUMquantile (soundingValues.get(), 0.10)), U" dB   90 %% = ",
+				Melder_single (NUMquantile (soundingValues.get(), 0.90)), U" dB");
+		MelderInfo_writeLine (U"   16 % = ", Melder_single (NUMquantile (soundingValues.get(), 0.16)), U" dB   84 %% = ",
+				Melder_single (NUMquantile (soundingValues.get(), 0.84)), U" dB");
+		MelderInfo_writeLine (U"   25 % = ", Melder_single (NUMquantile (soundingValues.get(), 0.25)), U" dB   75 %% = ",
+				Melder_single (NUMquantile (soundingValues.get(), 0.75)), U" dB");
+		MelderInfo_writeLine (U"Minimum: ", Melder_single (soundingValues [1]), U" dB");
+		MelderInfo_writeLine (U"Maximum: ", Melder_single (soundingValues [soundingValues.size]), U" dB");
+		MelderGaussianStats stats = NUMmeanStdev (soundingValues.all());
+		MelderInfo_writeLine (U"Average: ", Melder_single (stats.mean), U" dB");
+		if (soundingValues.size > 1)
+			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (stats.stdev), U" dB");
 	}
 }
 
@@ -131,7 +97,7 @@ autoHarmonicity Harmonicity_create (double tmin, double tmax, integer nt, double
 autoMatrix Harmonicity_to_Matrix (Harmonicity me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"not converted to Matrix.");
@@ -141,7 +107,7 @@ autoMatrix Harmonicity_to_Matrix (Harmonicity me) {
 autoHarmonicity Matrix_to_Harmonicity (Matrix me) {
 	try {
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, my nx, my dx, my x1);
-		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
+		thy z.all() <<= my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"not converted to Harmonicity.");

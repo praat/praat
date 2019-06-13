@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2011,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1996-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
 	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
-	int n1 = cmd -> n1;
+	integer n1 = cmd -> n1;
 	MelderString_empty (& text);
 	if (cmd -> class4) {
 		MelderString_append (& text, U"#unhidable ");
@@ -86,21 +86,21 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 		MelderString_append (& text, U" (", n1, U")");
 	}
 	if (cmd -> class2) {
-		int n2 = cmd -> n2;
+		integer n2 = cmd -> n2;
 		MelderString_append (& text, U" & ", cmd -> class2 -> className);
 		if (n2) {
 			MelderString_append (& text, U" (", n2, U")");
 		}
 	}
 	if (cmd -> class3) {
-		int n3 = cmd -> n3;
+		integer n3 = cmd -> n3;
 		MelderString_append (& text, U" & ", cmd -> class3 -> className);
 		if (n3) {
 			MelderString_append (& text, U" (", n3, U")");
 		}
 	}
 	if (cmd -> class4) {
-		int n4 = cmd -> n4;
+		integer n4 = cmd -> n4;
 		MelderString_append (& text, U" & ", cmd -> class4 -> className);
 		if (n4) {
 			MelderString_append (& text, U" (", n4, U")");
@@ -154,7 +154,7 @@ void structButtonEditor :: v_draw () {
 			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				Praat_Command cmd = praat_getAction (i);
 				conststring32 klas = cmd -> class1 -> className;
-				if (str32cmp (klas, U"N") < 0)
+				if (klas [0] >= U'A' && klas [0] <= U'D')
 					drawAction (this, praat_getAction (i), i);
 			}
 			break;
@@ -162,7 +162,39 @@ void structButtonEditor :: v_draw () {
 			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				Praat_Command cmd = praat_getAction (i);
 				conststring32 klas = cmd -> class1 -> className;
-				if (str32cmp (klas, U"N") >= 0)
+				if (klas [0] >= U'E' && klas [0] <= U'H')
+					drawAction (this, praat_getAction (i), i);
+			}
+			break;
+		case 6:
+			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
+				Praat_Command cmd = praat_getAction (i);
+				conststring32 klas = cmd -> class1 -> className;
+				if (klas [0] >= U'I' && klas [0] <= U'L')
+					drawAction (this, praat_getAction (i), i);
+			}
+			break;
+		case 7:
+			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
+				Praat_Command cmd = praat_getAction (i);
+				conststring32 klas = cmd -> class1 -> className;
+				if (klas [0] >= U'M' && klas [0] <= U'O')
+					drawAction (this, praat_getAction (i), i);
+			}
+			break;
+		case 8:
+			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
+				Praat_Command cmd = praat_getAction (i);
+				conststring32 klas = cmd -> class1 -> className;
+				if (klas [0] >= U'P' && klas [0] <= U'S')
+					drawAction (this, praat_getAction (i), i);
+			}
+			break;
+		case 9:
+			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
+				Praat_Command cmd = praat_getAction (i);
+				conststring32 klas = cmd -> class1 -> className;
+				if (klas [0] >= U'T' && klas [0] <= U'Z')
 					drawAction (this, praat_getAction (i), i);
 			}
 			break;
@@ -244,20 +276,27 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 
 static void which (ButtonEditor me, int show) {
 	my show = show;
-	GuiRadioButton_set (show == 1 ? my button1 : show == 2 ? my button2 : show == 3 ? my button3 : show == 4 ? my button4 : my button5);
+	GuiRadioButton_set (show == 1 ? my button1 : show == 2 ? my button2 : show == 3 ? my button3 :
+			show == 4 ? my buttonAD : show == 5 ? my buttonEH : show == 6 ? my buttonIL :
+			show == 7 ? my buttonMO : show == 8 ? my buttonPS : my buttonTZ);
 	HyperPage_goToPage (me, U"Buttons");
 }
 
 static void gui_radiobutton_cb_objects (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 1); }
 static void gui_radiobutton_cb_picture (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 2); }
 static void gui_radiobutton_cb_editors (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 3); }
-static void gui_radiobutton_cb_actionsAM (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 4); }
-static void gui_radiobutton_cb_actionsNZ (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 5); }
+static void gui_radiobutton_cb_actionsAD (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 4); }
+static void gui_radiobutton_cb_actionsEH (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 5); }
+static void gui_radiobutton_cb_actionsIL (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 6); }
+static void gui_radiobutton_cb_actionsMO (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 7); }
+static void gui_radiobutton_cb_actionsPS (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 8); }
+static void gui_radiobutton_cb_actionsTZ (ButtonEditor me, GuiRadioButtonEvent /* event */) { which (me, 9); }
 
 void structButtonEditor :: v_createChildren () {
 	ButtonEditor_Parent :: v_createChildren ();
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
 	GuiRadioGroup_begin ();
+	constexpr int LETTER_BUTTON_WIDTH = BUTTON_WIDTH * 2 / 3;
 	button1 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Objects", gui_radiobutton_cb_objects, this, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
@@ -267,11 +306,23 @@ void structButtonEditor :: v_createChildren () {
 	button3 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Editors", gui_radiobutton_cb_editors, this, 0);
 	x += BUTTON_WIDTH + 5;
-	button4 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
-		U"Actions A-M", gui_radiobutton_cb_actionsAM, this, 0);
+	buttonAD = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
+		U"Actions: A–D", gui_radiobutton_cb_actionsAD, this, 0);
 	x += BUTTON_WIDTH + 35;
-	button5 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
-		U"Actions N-Z", gui_radiobutton_cb_actionsNZ, this, 0);
+	buttonEH = GuiRadioButton_createShown (our windowForm, x, x + LETTER_BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+		U"E–H", gui_radiobutton_cb_actionsEH, this, 0);
+	x += LETTER_BUTTON_WIDTH + 5;
+	buttonIL = GuiRadioButton_createShown (our windowForm, x, x + LETTER_BUTTON_WIDTH - 5, y, y + Gui_RADIOBUTTON_HEIGHT,
+		U"I–L", gui_radiobutton_cb_actionsIL, this, 0);
+	x += LETTER_BUTTON_WIDTH - 5 + 5;
+	buttonMO = GuiRadioButton_createShown (our windowForm, x, x + LETTER_BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+		U"M–O", gui_radiobutton_cb_actionsMO, this, 0);
+	x += LETTER_BUTTON_WIDTH + 5;
+	buttonPS = GuiRadioButton_createShown (our windowForm, x, x + LETTER_BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+		U"P–S", gui_radiobutton_cb_actionsPS, this, 0);
+	x += LETTER_BUTTON_WIDTH + 5;
+	buttonTZ = GuiRadioButton_createShown (our windowForm, x, x + LETTER_BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+		U"T–Z", gui_radiobutton_cb_actionsTZ, this, 0);
 	GuiRadioGroup_end ();
 }
 

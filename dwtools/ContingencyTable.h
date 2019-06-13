@@ -2,7 +2,7 @@
 #define _ContingencyTable_h_
 /* ContingencyTable.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Thing_define (ContingencyTable, TableOfReal) {
 		override;
 };
 
-// entries must be nonnegative numbers
+// Precondition: All entries in a ContingencyTable are nonnegative numbers
 
 autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns);
 
@@ -36,9 +36,9 @@ double ContingencyTable_cramersStatistic (ContingencyTable me);
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me);
 
-void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df);
+void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out_df);
 
-void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
+void ContingencyTable_getEntropies (ContingencyTable me, double *out_h, double *out_hx, double *out_hy, double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
 
 autoContingencyTable Confusion_to_ContingencyTable (Confusion me);
 

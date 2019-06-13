@@ -1770,7 +1770,7 @@ MAN_END
 MAN_BEGIN (U"Scripting 3. Simple language elements", U"ppgb", 20130421)
 INTRO (U"The Praat scripting language doesn't only call the menu commands "
 	"discussed in the @@Scripting 1. Your first scripts|first@ and @@Scripting 2. How to script settings windows|second@ chapters of this tutorial, "
-	"it is only a general procedural programming language that allows you to compute numbers, handle texts, and make custom analyses.")
+	"it is also a general procedural programming language that allows you to compute numbers, handle texts, and make custom analyses.")
 NORMAL (U"This chapter focuses on the things you need most. It is designed in such a way that you can work through it even if you haven't written computer programs before.")
 LIST_ITEM (U"@@Scripting 3.1. Hello world@ (writeInfoLine, appendInfoLine)")
 LIST_ITEM (U"@@Scripting 3.2. Numeric variables@ (assignments)")
@@ -2490,7 +2490,7 @@ if left$ (fileName$) <> "/"
 endif
 */
 
-MAN_BEGIN (U"Scripting 5.2. Expressions", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 5.2. Expressions", U"ppgb", 20180721)
 INTRO (U"In a Praat script, you can use numeric expressions as well as string expressions.")
 ENTRY (U"Numeric expressions")
 NORMAL (U"You can use a large variety of @@Formulas@ in your script:")
@@ -2513,10 +2513,6 @@ CODE (U"Draw line: 0, if answer\\$  = \"yes\" then 20 else 30 fi, 0, 100")
 NORMAL (U"You can use numeric and string variables and formulas in string arguments to commands:")
 CODE (U"Text top: \"yes\", \"Hi \" + addressee\\$  + \"!\"")
 CODE (U"Text top: \"yes\", left\\$  (fileName\\$ , index (fileName\\$ , \".\") - 1)")
-NORMAL (U"The two examples from the end of @@Scripting 3.5. String queries|\\SS3.5@ could be abbreviated as the one-liners")
-CODE (U"writeInfoLine: do\\$  (\"Get power...\", 0.0, 0.0)")
-NORMAL (U"and")
-CODE (U"writeInfoLine: do (\"Get power...\", 0.0, 0.0)")
 ENTRY (U"Assignments from query commands")
 NORMAL (U"On how to get information from commands that normally write to the Info window, "
 	"see @@Scripting 6.3. Query commands@.")
@@ -3608,6 +3604,8 @@ ENTRY (U"9. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
 CODE (U"system ('/users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla')")
+NORMAL (U"On Windows, you will often want to specify ##--utf8# as well, because otherwise "
+	"Praat will write its output to BOM-less UTF-16 files, which many programs do not understand.")
 
 ENTRY (U"10. All command line options")
 TAG (U"##--open")
@@ -3625,10 +3623,22 @@ TAG (U"##--version")
 DEFINITION (U"Print the Praat version.")
 TAG (U"##--help")
 DEFINITION (U"Print this list of command line options.")
+TAG (U"##-8#, ##--utf8#")
+DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-8 encoding. This is the default encoding on MacOS and Linux, "
+	"but on Windows the default is the Console's native UTF-16 Little Endian (i.e. the Console understands UTF-16 always, "
+	"whereas it understands UTF-8 only if you type $$chcp 65001$ first). "
+	"If you pipe to Windows programs that understand UTF-8 rather than UTF-16, "
+	"or if you want to redirect the output to a UTF-8 file, use this option.")
 TAG (U"##-a#, ##--ansi#")
-DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
-	"This is not recommended, but might be necessary if you want to use Praat in a pipe "
-	"or with redirection to a file.")
+DEFINITION (U"Write the output (e.g. of $writeInfo$) in ISO-Latin 1 (\"ANSI\") encoding. "
+	"This is not recommended, because it potentially loses information (characters above U+00FF will show up as \"?\"), "
+	"but it might be necessary if you want to use Praat in a pipe with programs "
+	"that do understand ANSI but do not understand UTF-8 or UTF-16, "
+	"or if you want to redirect the output to an ANSI-encoded file.")
+TAG (U"##-u#, ##--utf16#")
+DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-16 Little Endian encoding, without Byte Order Mark. "
+	"This format is the default on Windows, "
+	"but you can use it to write the output to a UTF-16LE-encoded file on any platform.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)
@@ -3807,7 +3817,7 @@ NORMAL (U"You can download the source code of the sendpraat subroutine and progr
 	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
 ENTRY (U"Instead")
 NORMAL (U"Instead of using sendpraat, you can also just take the following simple steps in your program:")
-LIST_ITEM (U"1. on Linux, write the script that you want to run, and save it as ##~/.praat-dir/message#;")
+LIST_ITEM (U"1. on Linux, write the Praat script that you want to run, and save it as ##~/.praat-dir/message#;")
 LIST_ITEM (U"2. get Praat's process id from ##~/.praat-dir/pid#;")
 LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
 NORMAL (U"If the first line of your script is the comment \"\\#  999\", where 999 stands for the process id of your program, "

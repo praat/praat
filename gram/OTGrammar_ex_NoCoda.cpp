@@ -1,6 +1,6 @@
 /* OTGrammar_ex_NoCoda.cpp
  *
- * Copyright (C) 1997-2005,2007,2009,2011,2012,2015-2017 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,18 +39,18 @@ autoOTGrammar OTGrammar_create_NoCoda_grammar () {
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  2);
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_dup (U"pa");
-				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
+				candidate -> marks = newINTVECzero (candidate -> numberOfConstraints = 2);
 				candidate -> marks [2] = 1;
 			candidate = & tableau -> candidates [2];
 				candidate -> output = Melder_dup (U"pat");
-				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
+				candidate -> marks = newINTVECzero (candidate -> numberOfConstraints = 2);
 				candidate -> marks [1] = 1;
 		tableau = & my tableaus [2];
 			tableau -> input = Melder_dup (U"pa");
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  1);
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_dup (U"pa");
-				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
+				candidate -> marks = newINTVECzero (candidate -> numberOfConstraints = 2);
 		OTGrammar_checkIndex (me.get());
 		OTGrammar_newDisharmonies (me.get(), 0.0);
 		return me;

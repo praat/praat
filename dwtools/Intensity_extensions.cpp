@@ -1,6 +1,6 @@
 /* Intensity_extensions.cpp
  *
- * Copyright (C) 2007-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2007-2018 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,8 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval
 	/*
 		Find interval to split.
 	*/
-	if (iinterval <= 0) {
+	if (iinterval <= 0)
 		iinterval = IntervalTier_timeToLowIndex (me, time);
-	}
 
 	/*
 		Modify end time of left label.
@@ -60,23 +59,21 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me,
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"silences", U"");
 		IntervalTier it = (IntervalTier) thy tiers->at [1];
 		TextInterval_setText (it -> intervals.at [1], soundingLabel);
-		if (minSilenceDuration > duration) {
+		if (minSilenceDuration > duration)
 			return thee;
-		}
 
 		double intensity_max_db, intensity_min_db, xOfMaximum, xOfMinimum;
 		Vector_getMaximumAndX (me, 0.0, 0.0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, & intensity_max_db, & xOfMaximum);
 		Vector_getMinimumAndX (me, 0.0, 0.0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, & intensity_min_db, & xOfMinimum);
 		double intensity_dbRange = intensity_max_db - intensity_min_db;
 
-		if (intensity_dbRange < 10.0) {
+		if (intensity_dbRange < 10.0)
 			Melder_warning (U"The loudest and softest part in your sound differ by only ", intensity_dbRange, U" dB.");
-		}
+
 		double intensityThreshold = intensity_max_db - fabs (silenceThreshold_dB);
 
-		if (minSilenceDuration > duration || intensityThreshold < intensity_min_db) {
+		if (minSilenceDuration > duration || intensityThreshold < intensity_min_db)
 			return thee;
-		}
 
 		bool inSilenceInterval = my z [1] [1] < intensityThreshold;
 		integer iinterval = 1;

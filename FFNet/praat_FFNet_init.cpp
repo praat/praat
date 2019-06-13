@@ -168,13 +168,13 @@ DO
 
 DIRECT (INTEGER_FFNet_getNumberOfLayers) {
 	INTEGER_ONE (FFNet)
-		integer result = my nLayers;
-	INTEGER_ONE_END (U" layer", (my nLayers > 1 ? U"s" : U""))
+		integer result = my numberOfLayers;
+	INTEGER_ONE_END (U" layer", (my numberOfLayers > 1 ? U"s" : U""))
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
 	INTEGER_ONE (FFNet)
-		integer result = my nUnitsInLayer[my nLayers];
+		integer result = my numberOfUnitsInLayer[my numberOfLayers];
 	INTEGER_ONE_END (U" units")
 }
 
@@ -184,13 +184,13 @@ FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units"
 	OK
 DO
 	INTEGER_ONE (FFNet)
-		integer result = layer > 0 && layer <= my nLayers - 1 ? my nUnitsInLayer[layer] : 0;
+		integer result = layer > 0 && layer <= my numberOfLayers - 1 ? my numberOfUnitsInLayer[layer] : 0;
 	INTEGER_ONE_END (U" units")
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfInputs) {
 	INTEGER_ONE (FFNet)
-		integer result = my nUnitsInLayer[0];
+		integer result = my numberOfInputs;
 	INTEGER_ONE_END (U" units")
 }
 
@@ -199,13 +199,18 @@ FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weig
 	OK
 DO
 	INTEGER_ONE (FFNet)
-		integer result = (layer > 0 && layer <= my nLayers - 1) ? (my nUnitsInLayer[layer] * (my nUnitsInLayer[layer - 1] + 1)) : 0;
+		integer result = 0;
+		if (layer <= my numberOfLayers - 1) {
+			integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer[layer - 1] );
+			result = my numberOfUnitsInLayer[layer] * (numberOfUnitsInPreviousLayer + 1);
+		}
 	INTEGER_ONE_END (U" weights (including biases)")
 }
 	
 DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
 	INTEGER_ONE (FFNet)
-		integer result = my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1] + 1);
+		integer numberOfUnitsInPreviousLayer = ( my numberOfLayers == 1 ? my numberOfInputs : my numberOfUnitsInLayer[my numberOfLayers - 1] );
+		integer result = my numberOfUnitsInLayer[my numberOfLayers] * (numberOfUnitsInPreviousLayer + 1);
 	INTEGER_ONE_END (U" weights");
 }
 
@@ -247,7 +252,7 @@ FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 DO
 	NUMBER_ONE (FFNet)
 		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
-	NUMBER_ONE_END (U"(weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U"in layer ", layer - 1, U")")
+	NUMBER_ONE_END (U"(weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
 DIRECT (REAL_FFNet_getMinimum) {

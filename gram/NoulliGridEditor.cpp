@@ -225,8 +225,8 @@ void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (int /* phase */, d
 
 OPTIONMENU_ENUM_VARIABLE (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs)
 void structNoulliGridEditor :: v_prefs_addFields (EditorCommand cmd) {
-	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_showCategoryInSelectionViewerAs, U"Show category in selection viewer as",
-		kNoulliGridEditor_showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs,
+			U"Show category in selection viewer as", kNoulliGridEditor_showCategoryInSelectionViewerAs::DEFAULT)
 }
 void structNoulliGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_ENUM (v_prefs_addFields_showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs, our p_showCategoryInSelectionViewerAs)

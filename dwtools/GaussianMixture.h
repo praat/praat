@@ -2,7 +2,7 @@
 #define _GaussianMixture_h_
 /* GaussianMixture.h
  *
- * Copyright (C) 2010-2017 David Weenink
+ * Copyright (C) 2010-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,9 @@
 #include "GaussianMixture_def.h"
 
 /*
-	Constraints for a Gaussian mixture:
+	Invariants for a Gaussian mixture:
 	 all covariances have the same 'dimension' parameter
+	 All mixingProbabilities are >= 0 and sum to 1.0
 */
 autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer dimension, integer storage);
 /* Start each function with expand and end with unExpand */
@@ -43,15 +44,17 @@ void GaussianMixture_unExpandPCA (GaussianMixture me);
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g,
 	double scale, int confidence, char32 *label, int pcaDirections, integer d1, integer d2,
-	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
+	double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish);
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g,
 	double scale, int confidence, char32 *label, integer d1, integer d2,
-	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
+	double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish);
 
-void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
+void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, 
+	double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
 
-void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
+void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, integer d, 
+	double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
 
 autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, integer storage);
 
@@ -89,11 +92,11 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion);
 
-double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *vector);
+double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC v);
 
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector);
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 pos);
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVECVU const& pos, double x);
 
 autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee);
 /* Correlation between components based on the data in the table */
@@ -124,7 +127,7 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
 
 /* with on demand expand of pca ! */
-int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **covname, double *buf);
+int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC c, char32 **covname, VEC buf);
 
 autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, integer numberOfPoints);
 

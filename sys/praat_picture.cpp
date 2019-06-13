@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs () {
 	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font::DEFAULT);
-	Preferences_addInt (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
+	Preferences_addDouble (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10.0);
 	Preferences_addBool (U"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
 }
 
@@ -72,14 +72,14 @@ DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END }
 static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
-		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12);
-		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14);
-		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18);
-		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24);
+		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10.0);
+		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12.0);
+		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14.0);
+		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18.0);
+		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24.0);
 	}
 }
-static void setFontSize (int fontSize) {
+static void setFontSize (double fontSize) {
 	//Melder_casual("Praat picture: set font size %d", (int) fontSize);
 	{// scope
 		autoPraatPicture picture;
@@ -91,15 +91,15 @@ static void setFontSize (int fontSize) {
 	}
 }
 
-DIRECT (GRAPHICS_10) { setFontSize (10); END }
-DIRECT (GRAPHICS_12) { setFontSize (12); END }
-DIRECT (GRAPHICS_14) { setFontSize (14); END }
-DIRECT (GRAPHICS_18) { setFontSize (18); END }
-DIRECT (GRAPHICS_24) { setFontSize (24); END }
+DIRECT (GRAPHICS_10) { setFontSize (10.0); END }
+DIRECT (GRAPHICS_12) { setFontSize (12.0); END }
+DIRECT (GRAPHICS_14) { setFontSize (14.0); END }
+DIRECT (GRAPHICS_18) { setFontSize (18.0); END }
+DIRECT (GRAPHICS_24) { setFontSize (24.0); END }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
-	NATURAL (fontSize, U"Font size (points)", U"10")
+	POSITIVE (fontSize, U"Font size (points)", U"10")
 OK
-	SET_INTEGER (fontSize, (integer) theCurrentPraatPicture -> fontSize);
+	SET_REAL (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (fontSize);
 END }
@@ -219,6 +219,9 @@ DO
 		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = top + ymargin;
+		Graphics_setViewport (GRAPHICS,
+			theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
+			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);   // to ensure that Demo_x() updates
 	}
 	trace (U"3:"
 		U" x1NDC ", theCurrentPraatPicture -> x1NDC,
@@ -254,22 +257,28 @@ DO
 	theCurrentPraatPicture -> x1NDC = left;
 	theCurrentPraatPicture -> x2NDC = right;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		if (top > bottom)
+			std::swap (top, bottom);
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
 		Graphics_updateWs (GRAPHICS);   // BUG: needed on Cocoa, but why?
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
-		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		if (top > bottom)
+			std::swap (top, bottom);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
 		double height_NDC = y2wNDC - y1wNDC;
 		theCurrentPraatPicture -> y1NDC = height_NDC-bottom;
 		theCurrentPraatPicture -> y2NDC = height_NDC-top;
 	} else {
-		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		if (top < bottom)
+			std::swap (top, bottom);
 		theCurrentPraatPicture -> y1NDC = bottom;
 		theCurrentPraatPicture -> y2NDC = top;
+		Graphics_setViewport (GRAPHICS,
+			theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
+			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);   // to ensure that Demo_x() updates
 	}
 END }
 
@@ -497,10 +506,13 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 	#if defined (_WIN32)
 		BOOLEAN (allowDirectPostscript, U"Allow direct PostScript", true);
 	#endif
-	RADIO_ENUM (greyResolution, U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
+	RADIO_ENUM (kGraphicsPostscript_spots, greyResolution,
+			U"Grey resolution", kGraphicsPostscript_spots::DEFAULT)
 	#if defined (UNIX)
-		RADIO_ENUM (paperSize, U"Paper size", kGraphicsPostscript_paperSize, DEFAULT)
-		RADIO_ENUM (orientation, U"Orientation", kGraphicsPostscript_orientation, DEFAULT)
+		RADIO_ENUM (kGraphicsPostscript_paperSize, paperSize,
+				U"Paper size", kGraphicsPostscript_paperSize::DEFAULT)
+		RADIO_ENUM (kGraphicsPostscript_orientation, orientation,
+				U"Orientation", kGraphicsPostscript_orientation::DEFAULT)
 		POSITIVE (magnification, U"Magnification", U"1.0");
 		#if defined (linux)
 			TEXTFIELD (printCommand, U"Print command:", U"lpr %s")
@@ -508,7 +520,8 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 			TEXTFIELD (printCommand, U"Print command:", U"lp -c %s")
 		#endif
 	#endif
-	RADIO_ENUM (fontChoiceStrategy, U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT)
+	RADIO_ENUM (kGraphicsPostscript_fontChoiceStrategy, fontChoiceStrategy,
+			U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy::DEFAULT)
 OK
 	#if defined (_WIN32)
 		SET_BOOLEAN (allowDirectPostscript, thePrinter. allowDirectPostScript)
@@ -598,7 +611,8 @@ END }
 
 FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 	REAL (horizontalPosition, U"Horizontal position", U"0.0")
-	OPTIONMENU_ENUM (horizontalAlignment, U"Horizontal alignment", kGraphics_horizontalAlignment, LEFT)
+	OPTIONMENU_ENUM (kGraphics_horizontalAlignment, horizontalAlignment,
+			U"Horizontal alignment", kGraphics_horizontalAlignment::LEFT)
 	REAL (verticalPosition, U"Vertical position", U"0.0")
 	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
 		OPTION (U"Bottom")
@@ -626,14 +640,14 @@ FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
 		OPTION (U"Bottom")
 		OPTION (U"Half")
 		OPTION (U"Top")
-	OPTIONMENU_ENUM (font, U"Font", kGraphics_font, DEFAULT)
-	NATURAL (fontSize, U"Font size", U"10")
+	OPTIONMENU_ENUM (kGraphics_font, font, U"Font", kGraphics_font::DEFAULT)
+	POSITIVE (fontSize, U"Font size", U"10")
 	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
 	TEXTFIELD (text, U"Text:", U"")
 OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
-	int currentSize = Graphics_inqFontSize (GRAPHICS);
+	const double currentSize = Graphics_inqFontSize (GRAPHICS);
 	GRAPHICS_NONE
 		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
@@ -731,8 +745,8 @@ DO
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (numberOfHorizontalSteps - 1);
 	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+	Formula_Result result;
 	for (integer i = 1; i <= numberOfHorizontalSteps; i ++) {
-		Formula_Result result;
 		Formula_run (1, i, & result);
 		y [i] = result. numericResult;
 	}
@@ -1488,7 +1502,7 @@ static void cb_selectionChanged (Picture p, void * /* closure */,
 	theCurrentPraatPicture -> y1NDC = sely1;
 	theCurrentPraatPicture -> y2NDC = sely2;
 	if (praat_mouseSelectsInnerViewport) {
-		int fontSize = Graphics_inqFontSize (GRAPHICS);
+		const double fontSize = Graphics_inqFontSize (GRAPHICS);
 		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);

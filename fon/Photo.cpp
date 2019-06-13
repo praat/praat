@@ -272,7 +272,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 				Gdiplus::EncoderParameters encoderParameters;
 				if (str32equ (mimeType, U"image/jpeg")) {
 					encoderParameters. Count = 1;
-					GUID guid = { 0x1D5BE4B5, 0xFA4A, 0x452D, { 0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB }};  // EncoderQuality
+					GUID guid = { 0x1D5B'E4B5, 0xFA4A, 0x452D, { 0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB }};  // EncoderQuality
 					encoderParameters. Parameter [0]. Guid = guid;
 					encoderParameters. Parameter [0]. Type = Gdiplus::EncoderParameterValueTypeLong;
 					encoderParameters. Parameter [0]. NumberOfValues = 1;
@@ -448,23 +448,24 @@ static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double x
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	autoNUMmatrix <double_rgbt> z (iymin, iymax, ixmin, ixmax);
+	automatrix <double_rgbt> z (iymax - (iymin - 1), ixmax - (ixmin - 1), kTensorInitializationType::RAW);
 	for (integer iy = iymin; iy <= iymax; iy ++) {
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
-			z [iy] [ix]. red          = my d_red          -> z [iy] [ix];
-			z [iy] [ix]. green        = my d_green        -> z [iy] [ix];
-			z [iy] [ix]. blue         = my d_blue         -> z [iy] [ix];
-			z [iy] [ix]. transparency = my d_transparency -> z [iy] [ix];
+			double_rgbt& cell = z [iy - (iymin - 1)] [ix - (ixmin - 1)];
+			cell. red          = my d_red          -> z [iy] [ix];
+			cell. green        = my d_green        -> z [iy] [ix];
+			cell. blue         = my d_blue         -> z [iy] [ix];
+			cell. transparency = my d_transparency -> z [iy] [ix];
 		}
 	}
 	if (interpolate)
-		Graphics_image_colour (g, z.peek(),
-			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
-			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5), 0.0, 1.0);
+		Graphics_image_colour (g, z.all(),
+			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
+			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5), 0.0, 1.0);
 	else
-		Graphics_cellArray_colour (g, z.peek(),
-			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
-			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5), 0.0, 1.0);
+		Graphics_cellArray_colour (g, z.all(),
+			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
+			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5), 0.0, 1.0);
 	//Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
 }

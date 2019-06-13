@@ -112,7 +112,7 @@ autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCord
 
 	my nose.Dx = 0.007 * scaling;
 	my nose.Dz = 0.014 * scaling;
-	my nose.weq = NUMvector <double> (1, 14);
+	my nose.weq = newVECraw (14);
 	my nose.weq [1] = 0.018 * scaling;
 	my nose.weq [2] = 0.016 * scaling;
 	my nose.weq [3] = 0.014 * scaling;

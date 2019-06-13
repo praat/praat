@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2018 Paul Boersma
+ * Copyright (C) 1993-2019 Paul Boersma
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 			/*
 			 * No object with that name. Perhaps the class name was wrong?
 			 */
-			ClassInfo klas = Thing_classFromClassName (className, NULL);
+			ClassInfo klas = Thing_classFromClassName (className, nullptr);
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
 				if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
@@ -111,7 +111,7 @@ Editor praat_findEditorById (integer id) {
 	Melder_throw (U"Editor ", id, U" does not exist.");
 }
 
-static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *arguments, structStackel args []) {
+static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *arguments, structStackel *args) {
 	int narg = 0, depth = 0;
 	for (char32 *p = arguments; ; p ++) {
 		bool endOfArguments = *p == U'\0';
@@ -125,20 +125,10 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			/*
 				First remove the old contents.
 			*/
-			switch (args [narg]. which) {
-				case Stackel_NUMBER: {
-					// do nothing
-				} break;
-				case Stackel_STRING: {
-					args [narg]. string. reset();   // TODO: explain why we own this
-				} break;
-				case Stackel_NUMERIC_VECTOR: {
-					//if (args [narg]. owned) args [narg].numericVector.reset();   // we don't own this; the form's autonumvec does, after UiField_argToValue()
-				} break;
-				case Stackel_NUMERIC_MATRIX: {
-					//if (args [narg]. owned) args [narg].numericMatrix.reset();   // we don't own this; the form's autonummat does, after UiField_argToValue()
-				} break;
-			}
+			args [narg]. reset();
+			#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+				memset (& args [narg], 0, sizeof (structStackel));
+			#endif
 			/*
 				Then copy in the new contents.
 			*/
@@ -148,19 +138,19 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 					args [narg]. number = result. numericResult;
 				} break;
 				case kFormula_EXPRESSION_TYPE_STRING: {
-					args [narg]. which = Stackel_STRING;
-					//args [narg]. string = result. stringResult.move();   // TODO: explain why this is allowed
-					args [narg]. string = Melder_dup (result. stringResult.get());   // TODO: or why this is needed
+					args [narg]. setString (result. stringResult.move());
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 					args [narg]. which = Stackel_NUMERIC_VECTOR;
 					args [narg]. numericVector = result. numericVectorResult;
-					args [narg]. owned = result. owned;   // 
+					args [narg]. owned = result. owned;
+					result. owned = false;
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 					args [narg]. which = Stackel_NUMERIC_MATRIX;
 					args [narg]. numericMatrix = result. numericMatrixResult;
 					args [narg]. owned = result. owned;
+					result. owned = false;
 				} break;
 			}
 			arguments = p + 1;
@@ -199,7 +189,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		else
 			praat_select (IOBJECT); 
 		praat_show ();
-	} else if (Melder_isAsciiLowerCaseLetter (command [0])) {   // all directives start with an ASCII lower-case letter
+	} else if (Melder_isLetter (command [0]) && ! Melder_isUpperCaseLetter (command [0])) {   // all directives start with an ASCII lower-case letter
 		if (str32nequ (command, U"select ", 7)) {
 			if (str32nequ (command + 7, U"all", 3) && (command [10] == U'\0' || command [10] == U' ' || command [10] == U'\t')) {
 				praat_selectAll ();
@@ -298,7 +288,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 				return 1;   // in batch we ignore pause statements
 			UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", interpreter);
 			UiPause_comment (str32equ (command, U"pause") ? U"..." : command + 6);
-			UiPause_end (1, 1, 0, U"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter);
+			UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, interpreter);
 		} else if (str32nequ (command, U"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (str32nequ (command, U"editor", 6)) {
@@ -318,7 +308,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"endeditor", 9)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"endeditor\" is not available inside manuals.");
-			praatP. editor = NULL;
+			praatP. editor = nullptr;
 		} else if (str32nequ (command, U"sendpraat ", 10)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"sendpraat\" is not available inside manuals.");
@@ -332,8 +322,8 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			while (*p == U' ' || *p == U'\t') p ++;
 			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39)
 				*q ++ = *p ++;
-			*q = '\0';
-			if (q == programName)
+			*q = U'\0';
+			if (q == & programName [0])
 				Melder_throw (U"Missing program name after `sendpraat'.");
 			while (*p == U' ' || *p == U'\t') p ++;
 			if (*p == U'\0')
@@ -459,9 +449,9 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		}
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor) {
 			if (hasColon) {
-				Editor_doMenuCommand (praatP. editor, command2, narg, args, NULL, interpreter);
+				Editor_doMenuCommand (praatP. editor, command2, narg, args, nullptr, interpreter);
 			} else {
-				Editor_doMenuCommand (praatP. editor, command, 0, NULL, arguments, interpreter);
+				Editor_doMenuCommand (praatP. editor, command, 0, nullptr, arguments, interpreter);
 			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (str32nequ (command, U"Save ", 5) ||
@@ -519,6 +509,9 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 					} else if (command [0] != U'\0' && command [str32len (command) - 1] == U' ') {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the trailing spaces.");
+					} else if (str32nequ (command, U"\"ooTextFile\"", 12)) {
+						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
+							U"It is possible that this file is not a Praat script but a Praat data file that you can open with \"Read from file...\".");
 					} else {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection.");
 					}
@@ -663,11 +656,13 @@ static void firstPassThroughScript (MelderFile file) {
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.get(), text.get()) > 0) {
-			UiForm form = Interpreter_createForm (interpreter.get(),
+			autoUiForm form = Interpreter_createForm (interpreter.get(),
 				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
-				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
-			UiForm_destroyWhenUnmanaged (form);
-			UiForm_do (form, false);
+				Melder_fileToPath (file), secondPassThroughScript, nullptr, false
+			);
+			UiForm_destroyWhenUnmanaged (form.get());
+			UiForm_do (form.get(), false);
+			form. releaseToUser();
 		} else {
 			autoPraatBackground background;
 			praat_executeScriptFromFile (file, nullptr);

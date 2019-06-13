@@ -2,7 +2,7 @@
 #define _ButtonEditor_h_
 /* ButtonEditor.h
  *
- * Copyright (C) 1996-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1996-2005,2009-2012,2015,2016,2018,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 Thing_define (ButtonEditor, HyperPage) {
 	int show;
-	GuiRadioButton button1, button2, button3, button4, button5;
+	GuiRadioButton button1, button2, button3, buttonAD, buttonEH, buttonIL, buttonMO, buttonPS, buttonTZ;
 
 	bool v_scriptable ()
 		override { return false; }

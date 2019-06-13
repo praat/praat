@@ -1,6 +1,6 @@
 /* Artword.cpp
  *
- * Copyright (C) 1992-2009,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,10 +49,8 @@ autoArtword Artword_create (double totalTime) {
 
 void Artword_setDefault (Artword me, kArt_muscle muscle) {
 	ArtwordData f = & my data [(int) muscle];
-	NUMvector_free <double> (f -> times, 1);
-	NUMvector_free <double> (f -> targets, 1);
-	f -> times = NUMvector <double> (1, 2);
-	f -> targets = NUMvector <double> (1, 2);
+	f -> times = newVECzero (2);
+	f -> targets = newVECzero (2);
 	f -> numberOfTargets = 2;
 	f -> times [1] = 0.0;
 	f -> targets [1] = 0.0;
@@ -61,49 +59,52 @@ void Artword_setDefault (Artword me, kArt_muscle muscle) {
 	f -> _iTarget = 1;
 }
 
+static void ArtwordData_setTarget (ArtwordData me, double time, double target) {
+	Melder_assert (my numberOfTargets >= 2);
+	int32 insertionPosition = 1;   // should be able to go up to 32768
+	while (insertionPosition <= my numberOfTargets && my times [insertionPosition] < time)
+		insertionPosition ++;
+	Melder_assert (insertionPosition <= my numberOfTargets);   // can never insert past totalTime
+	if (my times [insertionPosition] == time) {
+		my targets [insertionPosition] = target;
+		return;
+	}
+	if (my numberOfTargets == INT16_MAX)
+		Melder_throw (U"An Artword cannot have more than ", INT16_MAX, U" targets.");
+	my times.insert (insertionPosition, time);
+	my targets.insert (insertionPosition, target);
+	my numberOfTargets ++;   // maintain invariant
+}
+
 void Artword_setTarget (Artword me, kArt_muscle muscle, double time, double target) {
 	try {
 		Melder_assert ((int) muscle >= 1);
 		Melder_assert ((int) muscle <= (int) kArt_muscle::MAX);
 		Melder_assert (muscle <= kArt_muscle::MAX);
-		ArtwordData f = & my data [(int) muscle];
-		Melder_assert (f -> numberOfTargets >= 2);
-		int32 insertionPosition = 1;   // should be able to go up to 32768
 		if (time < 0.0) time = 0.0;
 		if (time > my totalTime) time = my totalTime;
-		while (insertionPosition <= f -> numberOfTargets && f -> times [insertionPosition] < time)
-			insertionPosition ++;
-		Melder_assert (insertionPosition <= f -> numberOfTargets);   // can never insert past totalTime
-		if (f -> times [insertionPosition] != time) {
-			if (f -> numberOfTargets == INT16_MAX)
-				Melder_throw (U"An Artword cannot have more than ", INT16_MAX, U" targets.");
-			integer numberOfTargets = f -> numberOfTargets;
-			NUMvector_insert <double> (& f -> times, 1, & numberOfTargets, insertionPosition);
-			numberOfTargets = f -> numberOfTargets;
-			NUMvector_insert <double> (& f -> targets, 1, & numberOfTargets, insertionPosition);
-			f -> numberOfTargets ++;
-		}
-		f -> targets [insertionPosition] = target;
-		f -> times [insertionPosition] = time;
+		ArtwordData_setTarget (& my data [(int) muscle], time, target);
 	} catch (MelderError) {
 		Melder_throw (me, U": target not set.");
 	}
 }
 
-double Artword_getTarget (Artword me, kArt_muscle muscle, double time) {
-	ArtwordData f = & my data [(int) muscle];
-	double *times = f -> times, *targets = f -> targets;
-	int16 targetNumber = f -> _iTarget;
+static double ArtwordData_getTarget (ArtwordData me, double time) {
+	int16 targetNumber = my _iTarget;
 	if (! targetNumber) targetNumber = 1;
-	while (time > times [targetNumber + 1] && targetNumber < f -> numberOfTargets - 1)
+	while (time > my times [targetNumber + 1] && targetNumber < my numberOfTargets - 1)
 		targetNumber ++;
-	while (time < times [targetNumber] && targetNumber > 1)
+	while (time < my times [targetNumber] && targetNumber > 1)
 		targetNumber --;
-	f -> _iTarget = targetNumber;
-	Melder_assert (targetNumber > 0 && targetNumber < f -> numberOfTargets);
-	return targets [targetNumber] + (time - times [targetNumber]) *
-		(targets [targetNumber + 1] - targets [targetNumber]) /
-		(times [targetNumber + 1] - times [targetNumber]);
+	my _iTarget = targetNumber;
+	Melder_assert (targetNumber > 0 && targetNumber < my numberOfTargets);
+	return my targets [targetNumber] + (time - my times [targetNumber]) *
+		(my targets [targetNumber + 1] - my targets [targetNumber]) /
+		(my times [targetNumber + 1] - my times [targetNumber]);
+}
+
+double Artword_getTarget (Artword me, kArt_muscle muscle, double time) {
+	return ArtwordData_getTarget (& my data [(int) muscle], time);
 }
 
 void Artword_removeTarget (Artword me, kArt_muscle muscle, int16 targetNumber) {
@@ -115,33 +116,29 @@ void Artword_removeTarget (Artword me, kArt_muscle muscle, int16 targetNumber) {
 	} else if (targetNumber == f -> numberOfTargets) {
 		f -> targets [f -> numberOfTargets] = 0.0;
 	} else {
-		for (int16 i = targetNumber; i < f -> numberOfTargets; i ++) {
-			f -> times [i] = f -> times [i + 1];
-			f -> targets [i] = f -> targets [i + 1];
-		}
-		f -> numberOfTargets --;
+		f -> times. remove (targetNumber);
+		f -> targets. remove (targetNumber);
+		f -> numberOfTargets --;   // maintain invariant
 	}
 	f -> _iTarget = 1;
 }
 
 void Artword_intoArt (Artword me, Art art, double time) {
-	for (int muscle = 1; muscle <= (int) kArt_muscle::MAX; muscle ++) {
+	for (int muscle = 1; muscle <= (int) kArt_muscle::MAX; muscle ++)
 		art -> art [muscle] = Artword_getTarget (me, (kArt_muscle) muscle, time);
-	}
 }
 
 void Artword_draw (Artword me, Graphics g, kArt_muscle muscle, bool garnish) {
 	int16 numberOfTargets = my data [(int) muscle]. numberOfTargets;
 	if (numberOfTargets > 0) {
-		autoNUMvector <double> x (1, numberOfTargets);
-		autoNUMvector <double> y (1, numberOfTargets);
+		autoVEC x = newVECraw (numberOfTargets), y = newVECraw (numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int16 i = 1; i <= numberOfTargets; i ++) {
 			x [i] = my data [(int) muscle]. times [i];
 			y [i] = my data [(int) muscle]. targets [i];
 		}
-		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
+		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);
 		Graphics_unsetInner (g);
 	}
 

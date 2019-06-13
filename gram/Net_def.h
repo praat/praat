@@ -1,6 +1,6 @@
 /* Net_def.h
  *
- * Copyright (C) 2017 Paul Boersma
+ * Copyright (C) 2017-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@
 oo_DEFINE_CLASS (RBMLayer, Layer)
 
 	oo_QUESTION (inputsAreBinary)
-	oo_DOUBLE_MATRIX (weights, numberOfInputNodes, numberOfOutputNodes)
-	oo_DOUBLE_VECTOR (inputBiases, numberOfInputNodes)
-	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)
+	oo_MAT (weights, numberOfInputNodes, numberOfOutputNodes)
+	oo_VEC (inputBiases, numberOfInputNodes)
+	oo_VEC (outputBiases, numberOfOutputNodes)
 
-	oo_DOUBLE_VECTOR (inputReconstruction, numberOfInputNodes)
-	oo_DOUBLE_VECTOR (outputReconstruction, numberOfOutputNodes)
+	oo_VEC (inputReconstruction, numberOfInputNodes)
+	oo_VEC (outputReconstruction, numberOfOutputNodes)
 
 	#if oo_DECLARING
 		void v_spreadUp (kLayer_activationType)
@@ -41,6 +41,10 @@ oo_DEFINE_CLASS (RBMLayer, Layer)
 			override;
 		void v_update (double learningRate)
 			override;
+		void v_updateFirstPhase (double learningRate)
+			override;
+		void v_updateSecondPhase (double learningRate)
+			override;
 		autoMatrix v_extractInputReconstruction ()
 			override;
 		autoMatrix v_extractOutputReconstruction ()
@@ -51,7 +55,7 @@ oo_DEFINE_CLASS (RBMLayer, Layer)
 			override;
 		autoMatrix v_extractWeights ()
 			override;
-		autonummat v_getWeights_nummat ()
+		autoMAT v_getWeights ()
 			override;
 	#endif
 
@@ -60,11 +64,19 @@ oo_END_CLASS (RBMLayer)
 
 
 
+#define ooSTRUCT InputLayer
+oo_DEFINE_CLASS (InputLayer, Layer)
+
+oo_END_CLASS (InputLayer)
+#undef ooSTRUCT
+
+
+
 #define ooSTRUCT FullyConnectedLayer
 oo_DEFINE_CLASS (FullyConnectedLayer, Layer)
 
-	oo_DOUBLE_MATRIX (weights, numberOfInputNodes, numberOfOutputNodes)
-	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)
+	oo_MAT (weights, numberOfInputNodes, numberOfOutputNodes)
+	oo_VEC (outputBiases, numberOfOutputNodes)
 
 	#if oo_DECLARING &&0
 		void v_spreadUp (kLayer_activationType)
@@ -75,7 +87,7 @@ oo_DEFINE_CLASS (FullyConnectedLayer, Layer)
 			override;
 		autoMatrix v_extractWeights ()
 			override;
-		autonummat v_getWeights_nummat ()
+		autoMAT v_getWeights ()
 			override;
 	#endif
 

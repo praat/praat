@@ -9,6 +9,9 @@ for i from 1 to 10
 	assert sum (linear# (1, i, i, 0)) = i * mean (linear# (1, i, i, 0))   ; 'i'
 endfor
 
+sum = sum ({ { 1, 3, 6 }, { -5, 18, 99 } })
+assert sum = 122   ; 'sum'
+
 numberOfChecks = 100
 durations# = zero# (numberOfChecks)
 for n from 1 to numberOfChecks

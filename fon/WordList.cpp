@@ -17,7 +17,7 @@
  */
 
 #include "WordList.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "oo_DESTROY.h"
 #include "WordList_def.h"
@@ -49,7 +49,8 @@ static integer WordList_count (WordList me) {
 void structWordList :: v_info () {
 	structDaata :: v_info ();
 	integer n = WordList_count (this);
-	if (! our length) our length = str32len (our string.get());
+	if (our length == 0)
+		our length = str32len (our string.get());
 	MelderInfo_writeLine (U"Number of words: ", n);
 	MelderInfo_writeLine (U"Number of characters: ", length - n);
 }
@@ -103,7 +104,8 @@ void structWordList :: v_readBinary (FILE *f, int /*formatVersion*/) {
 
 void structWordList :: v_writeBinary (FILE *f) {
 	integer currentLength, previousLength;
-	if (! our length) our length = str32len (our string.get());
+	if (our length == 0)
+		our length = str32len (our string.get());
 	binputi32 (our length, f);
 	if (our length > 0) {
 		char32 *current = & our string [0], *kar = current;
@@ -232,9 +234,11 @@ static int compare (conststring32 word, conststring32 p) {
 static char32 buffer [3333+1];
 
 bool WordList_hasWord (WordList me, conststring32 word) {
-	if (str32len (word) > 3333) return false;
+	if (str32len (word) > 3333)
+		return false;
 	Longchar_genericize32 (word, buffer);
-	if (! my length) my length = str32len (my string.get());
+	if (! my length)
+		my length = str32len (my string.get());
 	integer p = my length / 2, d = p / 2;
 	while (d > 20) {
 		p = gotoStart (me, p);

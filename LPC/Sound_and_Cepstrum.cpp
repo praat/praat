@@ -1,6 +1,6 @@
 /* Sound_and_Cepstrum.cpp
  *
- * Copyright (C) 1994-2011,2015 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +36,13 @@
 autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 	try {
 		integer nfft = 2;
-		while (nfft < my nx) {
-			nfft *= 2;
-		}
+		while (nfft < my nx) nfft *= 2;
 
 		double qmax = (my xmax - my xmin) * nfft / my nx;
 		autoCepstrum thee = Cepstrum_create (qmax, nfft);
 
-		autoNUMvector<double> x (1, nfft);
-		autoNUMvector<double> nx (1, nfft);
+		autoVEC x = newVECraw (nfft);
+		autoVEC nx = newVECraw (nfft);
 
 		for (integer i = 1; i <= my nx; i ++) {
 			x [i] = my z [1] [i];
@@ -54,8 +52,8 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		// Step 1: Fourier transform x(n) -> X(f)
 		// and n*x(n) -> NX(f)
 
-		NUMforwardRealFastFourierTransform (x.peek() , nfft);
-		NUMforwardRealFastFourierTransform (nx.peek(), nfft);
+		NUMforwardRealFastFourierTransform (x.get());
+		NUMforwardRealFastFourierTransform (nx.get());
 
 		// Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
 		// Compute Avg (ln |X(f)|) as Avg (ln |X(f)|^2) / 2.
@@ -89,7 +87,7 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		// Step 4: Inverse transform of complex array x
 		//	results in: n * xhat (n)
 
-		NUMreverseRealFastFourierTransform (x.peek(), nfft);
+		NUMreverseRealFastFourierTransform (x.get());
 
 		// Step 5: Inverse fft-correction factor: 1/nfftd2
 		// Divide n * xhat (n) by n

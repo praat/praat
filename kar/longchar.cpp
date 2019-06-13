@@ -36,7 +36,6 @@
  */
 
 #include "longchar.h"
-#include <stdio.h>   /* For error message. */
 #include "UnicodeData.h"
 
 static struct structLongchar_Info Longchar_database [] = {
@@ -626,9 +625,13 @@ void Longchar_init () {
 	for (; data -> first != '\0'; i ++, data ++) {
 		short *location = & where [data -> first - 32] [data -> second - 32];
 		if (*location) {
-			/* Doubly defined symbol; an error! */
-			/* We may not be able to use Melder_error yet, so just write a warning to stderr. */
-			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n", data -> first, data -> second);
+			/*
+				Doubly defined symbol; an error!
+				We may not be able to use Melder_error yet,
+				so just write a warning to stderr.
+			*/
+			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n",
+					data -> first, data -> second);
 		}
 		*location = i;
 		if (data -> unicode <= kUCD_TOP_OF_LIST) {

@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,24 +213,24 @@
 	/*
 	 * Xm widget classes.
 	 */
-	#define xmBulletinBoardWidgetClass  0x00000001
-	#define xmDrawingAreaWidgetClass  0x00000002
-	#define xmFormWidgetClass  0x00000004
-	#define xmFrameWidgetClass  0x00000008
-	#define xmLabelWidgetClass  0x00000010
-	#define xmListWidgetClass  0x00000020
-	#define xmMenuBarWidgetClass  0x00000040
-	#define xmPulldownMenuWidgetClass  0x00000100
-	#define xmPushButtonWidgetClass  0x00000200
-	#define xmRowColumnWidgetClass  0x00000400
-	#define xmScaleWidgetClass  0x00000800
-	#define xmScrollBarWidgetClass  0x00001000
-	#define xmScrolledWindowWidgetClass  0x00002000
-	#define xmSeparatorWidgetClass  0x00004000
-	#define xmShellWidgetClass  0x00008000
-	#define xmTextWidgetClass  0x00010000
-	#define xmToggleButtonWidgetClass  0x00020000
-	#define xmCascadeButtonWidgetClass  0x00040000
+	#define xmBulletinBoardWidgetClass  0x0000'0001
+	#define xmDrawingAreaWidgetClass  0x0000'0002
+	#define xmFormWidgetClass  0x0000'0004
+	#define xmFrameWidgetClass  0x0000'0008
+	#define xmLabelWidgetClass  0x0000'0010
+	#define xmListWidgetClass  0x0000'0020
+	#define xmMenuBarWidgetClass  0x0000'0040
+	#define xmPulldownMenuWidgetClass  0x0000'0100
+	#define xmPushButtonWidgetClass  0x0000'0200
+	#define xmRowColumnWidgetClass  0x0000'0400
+	#define xmScaleWidgetClass  0x0000'0800
+	#define xmScrollBarWidgetClass  0x0000'1000
+	#define xmScrolledWindowWidgetClass  0x0000'2000
+	#define xmSeparatorWidgetClass  0x0000'4000
+	#define xmShellWidgetClass  0x0000'8000
+	#define xmTextWidgetClass  0x0001'0000
+	#define xmToggleButtonWidgetClass  0x0002'0000
+	#define xmCascadeButtonWidgetClass  0x0004'0000
 	#define xmPushButtonGadgetClass  xmPushButtonWidgetClass
 	#define xmCascadeButtonGadgetClass  xmCascadeButtonWidgetClass
 	#define xmSeparatorGadgetClass  xmSeparatorWidgetClass
@@ -913,7 +913,7 @@ void GuiText_remove (GuiText me);
 void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring32 value);
 void GuiText_scrollToSelection (GuiText me);
 void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCallback, Thing changedBoss);
-void GuiText_setFontSize (GuiText me, int size);
+void GuiText_setFontSize (GuiText me, double size);
 void GuiText_setRedoItem (GuiText me, GuiMenuItem item);
 void GuiText_setSelection (GuiText me, integer first, integer last);
 void GuiText_setString (GuiText me, conststring32 text);
@@ -967,6 +967,11 @@ void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 
 extern uinteger theGuiTopLowAccelerators [8];
+
+/*
+	'parent' is the top-level widget returned by GuiAppInitialize.
+*/
+void Gui_injectMessageProcs (GuiWindow parent);
 
 /* End of file Gui.h */
 #endif

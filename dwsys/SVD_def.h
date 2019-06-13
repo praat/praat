@@ -1,6 +1,6 @@
 /* SVD_def.h
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,22 +32,22 @@ oo_DEFINE_CLASS (SVD, Daata)
 				our numberOfRows = our numberOfColumns;
 				our numberOfColumns = tmp;
 				our isTransposed = true;
-				oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
-				oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
+				oo_MAT (v, numberOfColumns, numberOfColumns)
+				oo_MAT (u, numberOfRows, numberOfColumns)
 			} else {
 				our isTransposed = false;
-				oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
-				oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+				oo_MAT (u, numberOfRows, numberOfColumns)
+				oo_MAT (v, numberOfColumns, numberOfColumns)
 			}
 		oo_VERSION_ELSE
-			oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
-			oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+			oo_MAT (u, numberOfRows, numberOfColumns)
+			oo_MAT (v, numberOfColumns, numberOfColumns)
 		oo_VERSION_END
 	#else
-		oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
-		oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+		oo_MAT (u, numberOfRows, numberOfColumns)
+		oo_MAT (v, numberOfColumns, numberOfColumns)
 	#endif
-	oo_DOUBLE_VECTOR (d, numberOfColumns)
+	oo_VEC (d, numberOfColumns)
 
 	#if oo_DECLARING
 		void v_info ()
@@ -63,10 +63,10 @@ oo_DEFINE_CLASS (GSVD, Daata)
 
 	oo_DOUBLE (tolerance)
 	oo_INTEGER (numberOfColumns)
-	oo_DOUBLE_MATRIX ( q, numberOfColumns, numberOfColumns)
-	oo_DOUBLE_MATRIX ( r, numberOfColumns, numberOfColumns)
-	oo_DOUBLE_VECTOR (d1, numberOfColumns)
-	oo_DOUBLE_VECTOR (d2, numberOfColumns)
+	oo_MAT ( q, numberOfColumns, numberOfColumns)
+	oo_MAT ( r, numberOfColumns, numberOfColumns)
+	oo_VEC (d1, numberOfColumns)
+	oo_VEC (d2, numberOfColumns)
 
 	#if oo_DECLARING
 		void v_info ()

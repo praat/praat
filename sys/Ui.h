@@ -27,7 +27,7 @@ Thing_declare (EditorCommand);
 
 /* Example of usage:
 {
-	static UiForm dia = nullptr;
+	static autoUiForm dia;
 	if (! dia) {
 		UiField radio;
 		dia = UiForm_create
@@ -38,26 +38,26 @@ Thing_declare (EditorCommand);
 			U"Create person...",   // the invoking button title
 			U"Create person...");   // the help string; may be nullptr
 		static integer age;
-		UiForm_addNatural (dia, & age, U"age", U"Age (years)", U"18");
+		UiForm_addNatural (dia.get(), & age, U"age", U"Age (years)", U"18");
 		static double length;
-		UiForm_addPositive (dia, & length, U"length", U"Length (metres)", U"1.68 (= average)");
+		UiForm_addPositive (dia.get(), & length, U"length", U"Length (metres)", U"1.68 (= average)");
 		static bool beard;
-		UiForm_addBoolean (dia, & beard, U"beard", U"Beard", false);
+		UiForm_addBoolean (dia.get(), & beard, U"beard", U"Beard", false);
 		static int sex;
-		radio = UiForm_addRadio (dia, & sex, U"sex", U"Sex", 1);
+		radio = UiForm_addRadio (dia.get(), & sex, U"sex", U"Sex", 1);
 			UiRadio_addButton (radio, U"Female");
 			UiRadio_addButton (radio, U"Male");
-		UiForm_addWord (dia, colour, U"colour", U"Colour", U"black");
-		UiForm_addLabel (dia, U"features", U"Some less conspicuous features:");
+		UiForm_addWord (dia.get(), colour, U"colour", U"Colour", U"black");
+		UiForm_addLabel (dia.get(), U"features", U"Some less conspicuous features:");
 		static integer numberOfBirthMarks;
-		UiForm_addNatural (dia, & numberOfBirthMarks, U"numberOfBirthMarks", U"Number of birth marks", U"28");
+		UiForm_addNatural (dia.get(), & numberOfBirthMarks, U"numberOfBirthMarks", U"Number of birth marks", U"28");
 		static char *favouriteGreeting;
-		UiForm_addSentence (dia, & favouriteGreeting, U"favouriteGreeting", U"Favourite greeting", U"Good morning");
-		UiForm_finish (dia);
+		UiForm_addSentence (dia.get(), & favouriteGreeting, U"favouriteGreeting", U"Favourite greeting", U"Good morning");
+		UiForm_finish (dia.get());
 	}
-	UiForm_setReal (dia, & length, myLength);
-	UiForm_setInteger (dia, & numberOfBirthMarks, 30);
-	UiForm_do (dia, false);   // show dialog box
+	UiForm_setReal (dia.get(), & length, myLength);
+	UiForm_setInteger (dia.get(), & numberOfBirthMarks, 30);
+	UiForm_do (dia.get(), false);   // show dialog box
 }
 	Real, Positive, Integer, Natural, Channel, Word, and Sentence show a label and an editable text field.
 	Radio shows a label and has Button children stacked below it.
@@ -108,12 +108,11 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
-	autonumvec numericVectorValue;
-	autonummat numericMatrixValue;
+	autoVEC numericVectorValue;
+	autoMAT numericMatrixValue;
 	Graphics_Colour colourValue;
 	OrderedOf<structUiOption> options;
-	integer numberOfStrings;
-	char32 **strings;
+	conststring32vector strings;
 	GuiLabel label;
 	GuiText text;
 	GuiCheckButton checkButton;
@@ -127,12 +126,10 @@ Thing_define (UiField, Thing) {
 	integer *integerVariable;
 	int *intVariable;
 	bool *boolVariable;
-	char32 **stringVariable;
+	conststring32 *stringVariable;
 	Graphics_Colour *colourVariable;
-
-	numvec *numericVectorVariable;
-	nummat *numericMatrixVariable;
-	bool owned;
+	constVEC *numericVectorVariable;
+	constMAT *numericMatrixVariable;
 
 	int subtract;
 
@@ -169,7 +166,7 @@ Thing_define (UiForm, Thing) {
 	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
 	conststring32 continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];   // references to strings owned by a script
 	int numberOfFields;
-	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
+	autoUiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
 	GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	bool destroyWhenUnmanaged, isPauseForm;
 
@@ -185,7 +182,7 @@ Thing_define (UiForm, Thing) {
 };
 
 /* The following functions work on the screen and from batch. */
-UiForm UiForm_create (GuiWindow parent, conststring32 title,
+autoUiForm UiForm_create (GuiWindow parent, conststring32 title,
 	UiCallback okCallback, void *buttonClosure,
 	conststring32 invokingButtonTitle, conststring32 helpTitle);
 UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
@@ -193,18 +190,18 @@ UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 va
 UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
-UiField UiForm_addWord (UiForm me, char32 **variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
-UiField UiForm_addSentence (UiForm me, char32 **variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
-UiField UiForm_addLabel (UiForm me, char32 **variable, conststring32 label);
+UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
+UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
+UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label);
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 label, bool defaultValue);
-UiField UiForm_addText (UiForm me, char32 **variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addNummat (UiForm me, nummat *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
+UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);
-UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
+UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, conststring32 label);
-UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, integer numberOfStrings, char32 **strings, integer defaultValue);
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, conststring32vector strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 void UiForm_finish (UiForm me);
@@ -230,7 +227,7 @@ void UiForm_setPauseForm (UiForm me,
 	void UiForm_setInteger (UiForm me, integer *p_variable, integer value);
 	void UiForm_setIntegerAsString (UiForm me, integer *p_variable, conststring32 stringValue /* cattable */);
 /* Word, Sentence, Text, and Label fields: */
-	void UiForm_setString (UiForm me, char32 **p_variable, conststring32 text /* cattable */);
+	void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 text /* cattable */);
 /* Boolean fields: */
 	void UiForm_setBoolean (UiForm me, bool *p_variable, bool value);
 /* Radio and OptionMenu fields: */
@@ -287,11 +284,11 @@ Graphics_Colour UiForm_getColour_check (UiForm me, conststring32 fieldName);
 void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpreter);
 
-UiForm UiInfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiInfile_create (GuiWindow parent, conststring32 title,
   UiCallback okCallback, void *okClosure,
   conststring32 invokingButtonTitle, conststring32 helpTitle, bool allowMultipleFiles);
 
-UiForm UiOutfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
   UiCallback okCallback, void *okClosure,
   conststring32 invokingButtonTitle, conststring32 helpTitle);
 

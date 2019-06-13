@@ -29,12 +29,12 @@
 
 /* The Matrix organization is as follows:									*/
 /*																			*/
-/* nx = nUnitsInLayer[layer]												*/
-/* ny = nUnitsInLayer[layer-1]+1											*/
-/* xmin = 1 xmax = nx														*/
-/* ymin = 1 ymax = ny														*/
-/* dx = dy = 1																*/
-/* x1 = y1 = 1																*/
+/* nx == numberOfUnitsInLayer[layer]										*/
+/* ny == numberOfUnitsInLayer[layer-1]+1									*/
+/* xmin == 1, xmax == nx													*/
+/* ymin == 1, ymax == ny													*/
+/* dx == dy == 1															*/
+/* x1 == y1 == 1															*/
 /*																			*/
 
 autoMatrix FFNet_weightsToMatrix (FFNet me, integer layer, bool deltaWeights);

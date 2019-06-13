@@ -115,7 +115,7 @@ static double Sound_findExtremum (Sound me, double tmin, double tmax, int includ
 	Melder_assert (isdefined (tmax));
 	if (imin < 1) imin = 1;
 	if (imax > my nx) imax = my nx;
-	double iextremum = findExtremum_3 (my z [1], my ny > 1 ? my z [2] : nullptr, imin - 1, imax - imin + 1, includeMaxima, includeMinima);
+	double iextremum = findExtremum_3 (& my z [1] [0], my ny > 1 ? & my z [2] [0] : nullptr, imin - 1, imax - imin + 1, includeMaxima, includeMinima);
 	if (iextremum != 0.0)
 		return my x1 + (imin - 1 + iextremum - 1) * my dx;
 	else

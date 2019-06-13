@@ -1,6 +1,6 @@
 /* FFNet_PatternList_ActivationList.cpp
  *
- * Copyright (C) 1994-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1994-2019 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,52 +27,45 @@
 #include "Graphics.h"
 #include "FFNet_PatternList_ActivationList.h"
 
-static double func (Daata object, const double p []) {
+static double func (Daata object, VEC const& p) {
 	FFNet me = (FFNet) object;
 	Minimizer thee = my minimizer.get();
-	double fp = 0.0;
+	longdouble fp = 0.0;
 
-	for (integer j = 1, k = 1; k <= my nWeights; k ++) {
+	for (integer j = 1, k = 1; k <= my numberOfWeights; k ++) {
 		my dw [k] = 0.0;
-		if (my wSelected [k]) {
+		if (my wSelected [k])
 			my w [k] = p [j ++];
-		}
 	}
-	for (integer i = 1; i <= my nPatterns; i ++) {
-		FFNet_propagate (me, my inputPattern [i], nullptr);
-		fp += FFNet_computeError (me, my targetActivation [i]);
+	for (integer i = 1; i <= my numberOfPatterns; i ++) {
+		FFNet_propagate (me, my inputPattern.row (i), nullptr);
+		fp += FFNet_computeError (me, my targetActivation.row (i));
 		FFNet_computeDerivative (me);
 		/* derivative (cumulative) */
-		for (integer k = 1; k <= my nWeights; k ++) {
+		for (integer k = 1; k <= my numberOfWeights; k ++)
 			my dw [k] += my dwi [k];
-		}
 	}
-	thy funcCalls ++;
-	return fp;
+	thy numberOfFunctionCalls ++;
+	return (double) fp;
 }
 
-static void dfunc_optimized (Daata object, const double p [], double dp []) {
+static void dfunc_optimized (Daata object, VEC const& /* p */, VEC const& dp) {
 	FFNet me = (FFNet) object;
-	(void) p;
 
 	integer j = 1;
-	for (integer k = 1; k <= my nWeights; k ++) {
-		if (my wSelected [k]) {
+	for (integer k = 1; k <= my numberOfWeights; k ++) {
+		if (my wSelected [k])
 			dp [j ++] = my dw [k];
-		}
 	}
 }
 
 static void _FFNet_PatternList_ActivationList_checkDimensions (FFNet me, PatternList p, ActivationList a) {
-	if (my nInputs != p -> nx) {
-		Melder_throw (U"The PatternList and the FFNet do not match.\nThe number of columns in the PatternList must equal the number of inputs in the FFNet.");
-	}
-	if (my nOutputs != a -> nx) {
-		Melder_throw (U"The Activation and the FFNet do not match.\nThe number of columns in the Activation must equal the number of outputs in the FFNet.");
-	}
-	if (p -> ny != a -> ny) {
-		Melder_throw (U"The PatternList and the ActivationList do not match.\nThe number of rows in the PatternList must equal the number of rows in the Activation.");
-	}
+	Melder_require (my numberOfInputs == p -> nx,
+		U"The PatternList and the FFNet do not match.\nThe number of columns in the PatternList must equal the number of inputs in the FFNet.");
+	Melder_require (my numberOfOutputs == a -> nx,
+		U"The Activation and the FFNet do not match.\nThe number of columns in the Activation must equal the number of outputs in the FFNet.");
+	Melder_require (p -> ny == a -> ny,
+		U"The PatternList and the ActivationList do not match.\nThe number of rows in the PatternList must equal the number of rows in the Activation.");
 	if (! _PatternList_checkElements (p)) {
 		Melder_throw (U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");	}
 	if (! _ActivationList_checkElements (a)) {
@@ -86,33 +79,33 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 
 		// Link the things to be learned
 
-		my nPatterns = pattern -> ny;
-		my inputPattern = pattern -> z;
-		my targetActivation = activation -> z;
+		my numberOfPatterns = pattern -> ny;
+		my inputPattern = pattern -> z.get();
+		my targetActivation = activation -> z.get();
 		FFNet_setCostFunction (me, costFunctionType);
 
 		if (reset) {
-			autoNUMvector<double> wbuf (1, my dimension);
+			autoVEC wbuf = newVECzero (my dimension);
 			integer k = 1;
-			for (integer i = 1; i <= my nWeights; i ++) {
+			for (integer i = 1; i <= my numberOfWeights; i ++) {
 				if (my wSelected [i]) {
 					wbuf [k ++] = my w [i];
 				}
 			}
-			Minimizer_reset (my minimizer.get(), wbuf.peek());
+			Minimizer_reset (my minimizer.get(), wbuf.get());
 		}
 
 		Minimizer_minimize (my minimizer.get(), maxNumOfEpochs, tolerance, 1);
 
 		// Unlink
 
-		my nPatterns = 0;
-		my inputPattern = nullptr;
-		my targetActivation = nullptr;
+		my numberOfPatterns = 0;
+		my inputPattern = MAT();
+		my targetActivation = MAT();
 	} catch (MelderError) {
-		my nPatterns = 0;
-		my inputPattern = nullptr;
-		my targetActivation = nullptr;
+		my numberOfPatterns = 0;
+		my inputPattern = MAT();
+		my targetActivation = MAT();
 	}
 }
 
@@ -158,8 +151,8 @@ double FFNet_PatternList_ActivationList_getCosts_total (FFNet me, PatternList p,
 
 		double cost = 0.0;
 		for (integer i = 1; i <= p -> ny; i ++) {
-			FFNet_propagate (me, p -> z [i], nullptr);
-			cost += FFNet_computeError (me, a -> z [i]);
+			FFNet_propagate (me, p -> z.row (i), nullptr);
+			cost += FFNet_computeError (me, a -> z.row (i));
 		}
 		return cost;
 	} catch (MelderError) {
@@ -174,17 +167,19 @@ double FFNet_PatternList_ActivationList_getCosts_average (FFNet me, PatternList 
 
 autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, integer layer) {
 	try {
-		if (layer < 1 || layer > my nLayers) {
-			layer = my nLayers;
+		if (layer < 1 || layer > my numberOfLayers) {
+			layer = my numberOfLayers;
 		}
-		Melder_require (my nInputs == p -> nx, U"The number of colums in the PatternList (", p -> nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
-		Melder_require (_PatternList_checkElements (p), U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
+		Melder_require (my numberOfInputs == p -> nx, 
+			U"The number of colums in the PatternList (", p -> nx, U") should equal the number of inputs in the FFNet (", my numberOfInputs, U").");
+		Melder_require (_PatternList_checkElements (p),
+			U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 		
-		integer nPatterns = p -> ny;
-		autoActivationList thee = ActivationList_create (nPatterns, my nUnitsInLayer [layer]);
+		integer numberOfPatterns = p -> ny;
+		autoActivationList thee = ActivationList_create (numberOfPatterns, my numberOfUnitsInLayer [layer]);
 
-		for (integer i = 1; i <= nPatterns; i ++) {
-			FFNet_propagateToLayer (me, p -> z [i], thy z [i], layer);
+		for (integer i = 1; i <= numberOfPatterns; i ++) {
+			FFNet_propagateToLayer (me, p -> z.row (i), thy z.row (i), layer);
 		}
 		return thee;
 	} catch (MelderError) {

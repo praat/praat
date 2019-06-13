@@ -1,6 +1,6 @@
 /* Tube_def.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 #define ooSTRUCT Tube_Frame
 oo_DEFINE_STRUCT (Tube_Frame)
 
-	oo_INT16 (nSegments)
+	oo_INT16 (numberOfSegments)
 	oo_DOUBLE (length)
-	oo_DOUBLE_VECTOR (c, nSegments)
+	oo_VEC (c, numberOfSegments)
 	
 oo_END_STRUCT (Tube_Frame)
 #undef ooSTRUCT
@@ -31,7 +31,7 @@ oo_END_STRUCT (Tube_Frame)
 #define ooSTRUCT Tube
 oo_DEFINE_CLASS (Tube, Sampled)
 	
-	oo_INT16 (maxnSegments)
+	oo_INT16 (maxNumberOfSegments)
 	oo_STRUCT_VECTOR (Tube_Frame, frame, nx)
 
 	#if oo_DECLARING

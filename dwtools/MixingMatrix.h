@@ -25,7 +25,7 @@ Thing_define (MixingMatrix, TableOfReal) {
 
 autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer numberOfInputChannels);
 
-autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, char32 *elements);
+autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements);
 
 void MixingMatrix_multiplyInputChannel (MixingMatrix me, integer inputChannel, double value);
 

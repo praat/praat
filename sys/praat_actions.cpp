@@ -19,7 +19,7 @@
 #include "praatP.h"
 #include "praat_script.h"
 #include "praat_version.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "machine.h"
 #include "GuiP.h"
 
@@ -27,6 +27,7 @@
 #define BUTTON_RIGHT -5
 
 static OrderedOf <structPraat_Command> theActions;
+void praat_actions_exit_optimizeByLeaking () { theActions. _ownItems = false; }
 static GuiMenu praat_writeMenu;
 static GuiMenuItem praat_writeMenuSeparator;
 static GuiForm praat_form;
@@ -225,21 +226,18 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title && after && script);
-		if (str32len (className1)) {
+		if (className1 [0] != U'\0')
 			class1 = Thing_classFromClassName (className1, nullptr);
-		}
-		if (str32len (className2)) {
+		if (className2 [0] != U'\0')
 			class2 = Thing_classFromClassName (className2, nullptr);
-		}
-		if (str32len (className3)) {
+		if (className3 [0] != U'\0')
 			class3 = Thing_classFromClassName (className3, nullptr);
-		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
-		if (str32len (script) && ! str32len (title))
+		if (script [0] != U'\0' && title [0] == U'\0')
 			Melder_throw (U"Command with callback has no title. Classes: ", className1, U" ", className2, U" ", className3, U".");
 
-		if (! str32len (className1))
+		if (className1 [0] == U'\0')
 			Melder_throw (U"Command \"", title, U"\" has no first class.");
 
 		/*
@@ -247,16 +245,15 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		 */
 		{// scope
 			integer found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
-			if (found) {
+			if (found)
 				theActions. removeItem (found);
-			}
 		}
 
 		/*
 		 * Determine the position of the new command.
 		 */
 		integer position;
-		if (str32len (after)) {   // search for existing command with same selection
+		if (after [0] != U'\0') {   // search for existing command with same selection
 			integer found = lookUpMatchingAction (class1, class2, class3, nullptr, after);
 			if (found) {
 				position = found + 1;   // after 'after'
@@ -277,18 +274,18 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		action -> n2 = n2;
 		action -> class3 = class3;
 		action -> n3 = n3;
-		action -> title = str32len (title) ? Melder_dup_f (title) : autostring32();   // allow old-fashioned untitled separators
+		action -> title = title [0] != U'\0' ? Melder_dup_f (title) : autostring32();   // allow old-fashioned untitled separators
 		action -> depth = depth;
-		action -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
+		action -> callback = script [0] != U'\0' ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
 		action -> button = nullptr;
-		if (str32len (script) == 0) {
+		if (script [0] == U'\0') {
 			action -> script = autostring32();
 		} else {
 			structMelderFile file { };
 			Melder_relativePathToFile (script, & file);
 			action -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}
-		action -> after = str32len (after) ? Melder_dup_f (after) : autostring32();
+		action -> after = after [0] != U'\0' ? Melder_dup_f (after) : autostring32();
 		action -> phase = praatP.phase;
 		if (praatP.phase >= praat_READING_BUTTONS) {
 			static integer uniqueID = 0;
@@ -328,15 +325,12 @@ void praat_removeAction_classNames (conststring32 className1, conststring32 clas
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title);
-		if (str32len (className1)) {
+		if (className1 [0] != U'\0')
 			class1 = Thing_classFromClassName (className1, nullptr);
-		}
-		if (str32len (className2)) {
+		if (className2 [0] != U'\0')
 			class2 = Thing_classFromClassName (className2, nullptr);
-		}
-		if (str32len (className3)) {
+		if (className3 [0] != U'\0')
 			class3 = Thing_classFromClassName (className3, nullptr);
-		}
 		praat_removeAction (class1, class2, class3, title);
 		updateDynamicMenu ();
 	} catch (MelderError) {
@@ -372,15 +366,12 @@ void praat_hideAction_classNames (conststring32 className1, conststring32 classN
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title);
-		if (str32len (className1)) {
+		if (className1 [0] != U'\0')
 			class1 = Thing_classFromClassName (className1, nullptr);
-		}
-		if (str32len (className2)) {
+		if (className2 [0] != U'\0')
 			class2 = Thing_classFromClassName (className2, nullptr);
-		}
-		if (str32len (className3)) {
+		if (className3 [0] != U'\0')
 			class3 = Thing_classFromClassName (className3, nullptr);
-		}
 		praat_hideAction (class1, class2, class3, title);
 	} catch (MelderError) {
 		Melder_throw (U"Praat: action not hidden.");
@@ -415,15 +406,12 @@ void praat_showAction_classNames (conststring32 className1, conststring32 classN
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
 		Melder_assert (className1 && className2 && className3 && title);
-		if (str32len (className1)) {
+		if (className1 [0] != U'\0')
 			class1 = Thing_classFromClassName (className1, nullptr);
-		}
-		if (str32len (className2)) {
+		if (className2 [0] != U'\0')
 			class2 = Thing_classFromClassName (className2, nullptr);
-		}
-		if (str32len (className3)) {
+		if (className3 [0] != U'\0')
 			class3 = Thing_classFromClassName (className3, nullptr);
-		}
 		praat_showAction (class1, class2, class3, title);
 	} catch (MelderError) {
 		Melder_throw (U"Praat: action not shown.");

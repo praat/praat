@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2009,2011-2018 Paul Boersma
+ * Copyright (C) 1994-2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 
 #include "oo_undef.h"
 
-#define oo_SIMPLE(type,storage,x)  \
+#define oo_SIMPLE(type, storage, x)  \
 	try { \
 		our x = texget##storage (_textSource_); \
 	} catch (MelderError) { \
 		Melder_throw (U"\"" #x U"\" not read."); \
 	}
 
-#define oo_SET(type,storage,x,setType)  \
+#define oo_SET(type, storage, x, setType)  \
 	for (integer _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		try { \
 			our x [_i] = texget##storage (_textSource_); \
@@ -34,7 +34,7 @@
 		} \
 	}
 
-#define oo_VECTOR(type,storage,x,min,max)  \
+#define oo_VECTOR(type, storage, x, min, max)  \
 	{ \
 		integer _min = (min), _max = (max); \
 		if (_max >= _min) { \
@@ -42,23 +42,33 @@
 		} \
 	}
 
-#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
+#define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (_row2 >= _row1 && _col2 >= _col1) { \
-	    	our x = NUMmatrix_readText_##storage (_row1, _row2, _col1, _col2, _textSource_, #x); \
-		} \
+		integer _size = (sizeExpression); \
+		our x = vector_readText_##storage (_size, _textSource_, #x); \
 	}
 
-#define oo_ENUMx(kType,storage,x)  \
+#define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
+	{ \
+		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
+		our x = matrix_readText_##storage (_nrow, _ncol, _textSource_, #x); \
+	}
+
+#define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
+	{ \
+		integer _ndim1 = (ndim1Expression), _ndim2 = (ndim2Expression), _ndim3 = (ndim3Expression); \
+		our x = tensor3_readText_##storage (_ndim1, _ndim2, _ndim3, _textSource_, #x); \
+	}
+
+#define oo_ENUMx(kType, storage, x)  \
 	our x = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue);
 
-//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//#define oo_ENUMx_SET(kType, storage, x, setType)  \
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 //		our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
 //	}
 
-//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//#define oo_ENUMx_VECTOR(kType, storage, x, min, max)  \
 //	{ \
 //		integer _min = (min), _max = (max); \
 //		if (_max >= _min) { \
@@ -69,21 +79,21 @@
 //		} \
 //	}
 
-#define oo_STRINGx(storage,x)  \
+#define oo_STRINGx(storage, x)  \
 	try { \
 		our x = texget##storage (_textSource_); \
 	} catch (MelderError) { \
 		Melder_throw (U"String \"" #x U"\" not read."); \
 	}
 
-#define oo_STRINGx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage, x, setType)  \
 	for (integer _i = 0; _i <= setType::MAX; _i ++) { \
 		our x [_i] = texget##storage (_textSource_); \
 	}
 
-#define oo_STRINGx_VECTOR(storage,x,size)  \
+#define oo_STRINGx_VECTOR(storage, x, n)  \
 	{ \
-		integer _size = (size); \
+		integer _size = (n); \
 		if (_size >= 1) { \
 			our x = autostring32vector (_size); \
 			for (integer _i = 1; _i <= _size; _i ++) { \
@@ -96,39 +106,26 @@
 		} \
 	}
 
-#define oo_STRUCT(Type,x)  \
+#define oo_STRUCT(Type, x)  \
 	our x. readText (_textSource_, _formatVersion_);
 
-#define oo_STRUCT_SET(Type,x,setType) \
+#define oo_STRUCT_SET(Type, x, setType) \
 	for (integer _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		our x [_i]. readText (_textSource_, _formatVersion_); \
 	}
 
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		if (_max >= _min) { \
-			our x = NUMvector <struct##Type> (_min, _max); \
-			for (integer _i = _min; _i <= _max; _i ++) { \
+		integer _size = (n); \
+		if (_size >= 1) { \
+			our x = NUMvector <struct##Type> (1, _size); \
+			for (integer _i = 1; _i <= _size; _i ++) { \
 				our x [_i]. readText (_textSource_, _formatVersion_); \
 			} \
 		} \
 	}
 
-#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	{ \
-		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
-		if (_row2 >= _row1 && _col2 >= _col1) { \
-			our x = NUMmatrix <struct##Type> (_row1, _row2, _col1, _col2); \
-			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
-				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					our x [_irow] [_icol]. readText (_textSource_, _formatVersion_); \
-				} \
-			} \
-		} \
-	}
-
-#define oo_OBJECT(Class,formatVersion,x)  \
+#define oo_OBJECT(Class, formatVersion, x)  \
 	{ \
 		int _formatVersion = (formatVersion); \
 		if (texgetex (_textSource_) == 1) { \
@@ -137,7 +134,7 @@
 		} \
 	}
 
-#define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
+#define oo_COLLECTION_OF(Class, x, ItemClass, formatVersion)  \
 	{ \
 		int _formatVersion = (formatVersion); \
 		integer _n = texgetinteger (_textSource_); \
@@ -148,7 +145,7 @@
 		} \
 	}
 
-#define oo_COLLECTION(Class,x,ItemClass,formatVersion)  \
+#define oo_COLLECTION(Class, x, ItemClass, formatVersion)  \
 	{ \
 		int _formatVersion = (formatVersion); \
 		integer _n = texgetinteger (_textSource_); \
@@ -171,7 +168,7 @@
 #define oo_END_STRUCT(Type)  \
 	}
 
-#define oo_DEFINE_CLASS(Class,Parent)  \
+#define oo_DEFINE_CLASS(Class, Parent)  \
 	void struct##Class :: v_readText (MelderReadText _textSource_, int _formatVersion_) { \
 		Melder_require (_formatVersion_ <= our classInfo -> version, \
 			U"The format of this file is too new. Download a newer version of Praat."); \

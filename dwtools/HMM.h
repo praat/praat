@@ -50,16 +50,17 @@ Thing_define (HMMBaumWelch, Daata) {
 	integer numberOfSymbols;
 	double lnProb;
 	double minProb;
-	double **alpha;
-	double **beta;
-	double *scale;
-	double **gamma;
-	double ***xi;
-	double **aij_num, **aij_denom;
-	double **bik_num, **bik_denom;
-
-	void v_destroy () noexcept
-		override;
+	autoMAT alpha;
+	autoMAT beta;
+	autoVEC scale;
+	autoMAT gamma;
+	autoTEN3 xi;
+	autoVEC aij_num_p0;
+	autoMAT aij_num;
+	autoVEC aij_denom_p0;
+	autoMAT aij_denom;
+	autoMAT bik_num;
+	autoMAT bik_denom;
 };
 
 Thing_define (HMMStateSequence, Strings) {
@@ -133,7 +134,7 @@ void HMM_setDefaultObservations (HMM me);
 
 void HMM_setDefaultTransitionProbs (HMM me);
 
-void HMM_setDefaultStartProbs (HMM me);
+void HMM_setDefaultInitialStateProbs (HMM me);
 
 void HMM_setDefaultEmissionProbs (HMM me);
 
@@ -147,11 +148,11 @@ void HMM_unExpandPCA (HMM me);
 /*
 	Set the probabilities. A probability zero value indicates that this p cannot be changed during training/learning.
 */
-void HMM_setTransitionProbabilities (HMM me, integer state_number, char32 *state_probs);
+void HMM_setTransitionProbabilities (HMM me, integer state_number, conststring32 state_probs);
 
-void HMM_setEmissionProbabilities (HMM me, integer state_number, char32 *emission_probs);
+void HMM_setEmissionProbabilities (HMM me, integer state_number, conststring32 emission_probs);
 
-void HMM_setStartProbabilities (HMM me, char32 *probs);
+void HMM_setStartProbabilities (HMM me, conststring32 probs);
 
 
 double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer istate);

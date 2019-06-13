@@ -529,7 +529,7 @@ NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Ma
 	"##Window length (s)# and ##Pre emphasis from (Hz)# are as in @@Sound: To Formant (burg)...@. "
 	" The following settings determine aspects of the iterative formant frequency refinement.")
 TAG (U"%%Number of std. dev.%,")
-DEFINITION (U"determines the number of standard deviation from where selective weighing of samples starts. ")
+DEFINITION (U"determines the number of standard deviations from where selective weighing of samples starts. ")
 TAG (U"%%Maximum number of iterations%,")
 DEFINITION (U"determines the maximum number of iterations allowed in the refinement step.")
 TAG (U"%%Tolerance%,")

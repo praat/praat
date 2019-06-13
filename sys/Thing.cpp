@@ -47,12 +47,13 @@ ClassInfo classThing = & theClassInfo_Thing;
 conststring32 Thing_className (Thing me) { return my classInfo -> className; }
 
 autoThing Thing_newFromClass (ClassInfo classInfo) {
-	autoThing me (classInfo -> _new ());
+	autoThing me { classInfo };
 	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
 	Melder_assert (! my name);   // confirm that _new called calloc, so that we see null pointers
-	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me.get(), U")");
+	if (Melder_debug == 40)
+		Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me.get(), U")");
 	return me;
 }
 
@@ -163,9 +164,10 @@ void _Thing_forget (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual (U"destroying ", my classInfo -> className);
 	my v_destroy ();
-	trace (U"destroying ", my classInfo -> className);
+	trace (U"destroyed ", my classInfo -> className, U" ", Melder_pointer (me));
 	//Melder_free (me);
 	delete me;
+	trace (U"deleted");
 	theTotalNumberOfThings -= 1;
 }
 
@@ -177,27 +179,6 @@ bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor) {
 bool Thing_isa (Thing me, ClassInfo klas) {
 	if (! me) Melder_fatal (U"(Thing_isa:) Found null object.");
 	return Thing_isSubclass (my classInfo, klas);
-}
-
-void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
-	if (! me)
-		Melder_fatal (U"(_Thing_check:)"
-			U" null object passed to a function\n"
-			U"in file ", Melder_peek8to32 (fileName),
-			U" at line ", line,
-			U"."
-		);
-	ClassInfo classInfo = my classInfo;
-	while (classInfo != klas && classInfo) classInfo = classInfo -> semanticParent;
-	if (! classInfo)
-		Melder_fatal (U"(_Thing_check:)"
-			U" Object of wrong class (", my classInfo -> className,
-			U") passed to a function\n"
-			U"in file ", Melder_peek8to32 (fileName),
-			U" at line ", line,
-			U"."
-		);
-	return me;
 }
 
 void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
@@ -229,7 +210,7 @@ conststring32 Thing_messageName (Thing me) {
 }
 
 void Thing_setName (Thing me, conststring32 name /* cattable */) {
-	my name = Melder_dup_f (name);   // BUG: that's no checking
+	my name = Melder_dup (name);
 	my v_nameChanged ();
 }
 

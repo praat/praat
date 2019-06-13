@@ -17,7 +17,7 @@
  */
 
 #include "TextGrid.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "oo_DESTROY.h"
 #include "TextGrid_def.h"
@@ -309,35 +309,29 @@ autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	}
 }
 
-autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames, conststring32 pointTiers) {
+autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames_string, conststring32 pointTiers_string) {
 	try {
+		autostring32vector tierNames = newSTRVECtokenize (tierNames_string), pointTiers = newSTRVECtokenize (pointTiers_string);
 		autoTextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
-		char32 nameBuffer [400];
 
 		/*
-		 * Create a number of IntervalTier objects.
-		 */
-		if (tierNames && tierNames [0]) {
-			str32cpy (nameBuffer, tierNames);
-			for (conststring32 tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
-				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
-				Thing_setName (tier.get(), tierName);
-				my tiers -> addItem_move (tier.move());
-			}
+			Create a number of IntervalTier objects.
+		*/
+		for (integer itoken = 1; itoken <= tierNames.size; itoken ++) {
+			autoIntervalTier tier = IntervalTier_create (tmin, tmax);
+			Thing_setName (tier.get(), tierNames [itoken].get());
+			my tiers -> addItem_move (tier.move());
 		}
 
 		/*
-		 * Replace some IntervalTier objects with TextTier objects.
-		 */
-		if (pointTiers && pointTiers [0]) {
-			str32cpy (nameBuffer, pointTiers);
-			for (conststring32 tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
-				for (integer itier = 1; itier <= my tiers->size; itier ++) {
-					if (str32equ (tierName, Thing_getName (my tiers->at [itier]))) {
-						autoTextTier tier = TextTier_create (tmin, tmax);
-						Thing_setName (tier.get(), tierName);
-						my tiers -> replaceItem_move (tier.move(), itier);
-					}
+			Replace some IntervalTier objects with TextTier objects.
+		*/
+		for (integer itoken = 1; itoken <= pointTiers.size; itoken ++) {
+			for (integer itier = 1; itier <= my tiers->size; itier ++) {
+				if (str32equ (pointTiers [itoken].get(), Thing_getName (my tiers->at [itier]))) {
+					autoTextTier tier = TextTier_create (tmin, tmax);
+					Thing_setName (tier.get(), pointTiers [itoken].get());
+					my tiers -> replaceItem_move (tier.move(), itier);
 				}
 			}
 		}
@@ -351,7 +345,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames,
 
 autoTextTier TextTier_readFromXwaves (MelderFile file) {
 	try {
-		char *line;
+		conststring8 line;
 
 		autoTextTier me = TextTier_create (0, 100);
 		autoMelderFile mfile = MelderFile_open (file);
@@ -1693,11 +1687,11 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 		}
 	}
 	integer columns [1+2] = { 0, 1 + includeLineNumbers, 3 + includeLineNumbers + includeTierNames };   // sort by tmin and tmax
-	Table_sortRows_Assert (thee.get(), columns, 2);
+	Table_sortRows_Assert (thee.get(), constINTVEC (columns, 2));
 	return thee;
 }
 
-autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive) {
+autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive) {
 	const int timeDecimals = 6;
 	integer numberOfRows = 0;
 	for (integer itier = 1; itier <= searchTiers.size; itier ++) {
@@ -1756,7 +1750,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, kMelder
 		}
 	}
 	integer columns [1+1] = { 0, 1 };   // sort by time
-	Table_sortRows_Assert (thee.get(), columns, 1);
+	Table_sortRows_Assert (thee.get(), constINTVEC (columns, 1));
 	return thee;
 }
 

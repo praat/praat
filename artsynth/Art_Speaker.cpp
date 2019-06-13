@@ -22,7 +22,7 @@
 
 void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	double intX [], double intY [], double extX [], double extY [],
-	double *bodyX, double *bodyY)
+	double *out_bodyX, double *out_bodyY)
 {
 	double *art = _art -> art;
 	double f = speaker -> relativeSize * 1e-3;
@@ -82,7 +82,8 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 
 	/* Tongue root. */
 
-	jaw.x = -75.0 * f, jaw.y = 53.0 * f;   // position of the condyle
+	jaw.x = -75.0 * f;   // position of the condyle
+	jaw.y = 53.0 * f;
 	jaw.da = art [(int) kArt_muscle::MASSETER] * 0.15
 		- art [(int) kArt_muscle::MYLOHYOID] * 0.20;
 	body.x = jaw.x + 81.0 * f * cos (-0.60 + jaw.da)
@@ -91,8 +92,8 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	body.y = jaw.y + 81.0 * f * sin (-0.60 + jaw.da)
 		- art [(int) kArt_muscle::HYOGLOSSUS] * (10.0 * f)
 		+ art [(int) kArt_muscle::STYLOGLOSSUS] * (5.0 * f);
-	*bodyX = body.x;
-	*bodyY = body.y;
+	*out_bodyX = body.x;
+	*out_bodyY = body.y;
 	body.r = sqrt ((jaw.x - body.x) * (jaw.x - body.x) + (jaw.y - body.y) * (jaw.y - body.y));
 	body.radius = 20.0 * f;
 	HBody_x = body.x - intX [4];

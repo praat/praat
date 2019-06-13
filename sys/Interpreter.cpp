@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2018 Paul Boersma
+ * Copyright (C) 1993-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
 #include "praat_version.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #include "../fon/Vector.h"
 
@@ -41,16 +41,10 @@ extern structMelderDir praatDir;
 #define Interpreter_OPTION 12
 #define Interpreter_COMMENT 13
 
-autonumvec theInterpreterNumvec;
-autonummat theInterpreterNummat;
+autoVEC theInterpreterNumvec;
+autoMAT theInterpreterNummat;
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
-
-void structInterpreterVariable :: v_destroy () noexcept {
-	NUMvector_free (our numericVectorValue.at, 1);
-	NUMmatrix_free (our numericMatrixValue.at, 1, 1);
-	InterpreterVariable_Parent :: v_destroy ();
-}
 
 static autoInterpreterVariable InterpreterVariable_create (conststring32 key) {
 	try {
@@ -284,15 +278,16 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	return npar;
 }
 
-UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 path,
+autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 path,
 	void (*okCallback) (UiForm, integer, Stackel, conststring32, Interpreter, conststring32, bool, void *), void *okClosure,
 	bool selectionOnly)
 {
-	UiForm form = UiForm_create (parent,
+	autoUiForm form = UiForm_create (parent,
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle),
 		okCallback, okClosure, nullptr, nullptr);
 	UiField radio = nullptr;
-	if (path) UiForm_addText (form, nullptr, nullptr, U"$file", path);
+	if (path)
+		UiForm_addText (form.get(), nullptr, nullptr, U"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
 		 * Convert underscores to spaces.
@@ -302,35 +297,35 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 p
 		while (*p) { if (*p == U'_') *p = U' '; p ++; }
 		switch (my types [ipar]) {
 			case Interpreter_WORD:
-				UiForm_addWord (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_REAL:
-				UiForm_addReal (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;   // TODO: an address of a real variable
+				UiForm_addReal (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;   // TODO: an address of a real variable
 			case Interpreter_POSITIVE:
-				UiForm_addPositive (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addPositive (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_INTEGER:
-				UiForm_addInteger (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addInteger (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_NATURAL:
-				UiForm_addNatural (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addNatural (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_BOOLEAN:
-				UiForm_addBoolean (form, nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
+				UiForm_addBoolean (form.get(), nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
 					my arguments [ipar] [0] == U'y' || my arguments [ipar] [0] == U'Y' ||
 					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n')); break;
 			case Interpreter_SENTENCE:
-				UiForm_addSentence (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_TEXT:
-				UiForm_addText (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_CHOICE:
-				radio = UiForm_addRadio (form, nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
+				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
 			case Interpreter_OPTIONMENU:
-				radio = UiForm_addOptionMenu (form, nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
+				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
 			case Interpreter_BUTTON:
 				if (radio) UiRadio_addButton (radio, my arguments [ipar].get()); break;
 			case Interpreter_OPTION:
 				if (radio) UiOptionMenu_addButton (radio, my arguments [ipar].get()); break;
 			case Interpreter_COMMENT:
-				UiForm_addLabel (form, nullptr, my arguments [ipar].get()); break;
+				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get()); break;
 			default:
-				UiForm_addWord (form, nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 		}
 		/*
 		 * Strip parentheses and colon off parameter name.
@@ -342,7 +337,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 p
 		p = my parameters [ipar];
 		if (*p != U'\0' && p [str32len (p) - 1] == U':') p [str32len (p) - 1] = U'\0';
 	}
-	UiForm_finish (form);
+	UiForm_finish (form.get());
 	return form;
 }
 
@@ -521,7 +516,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	trace (narg, U" arguments");
 	int size = my numberOfParameters;
-	while (size >= 1 && my parameters [size] [0] == '\0')
+	while (size >= 1 && my parameters [size] [0] == U'\0')
 		size --;   // ignore trailing fields without a variable name (button, comment)
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		mutablestring32 p = my parameters [ipar];
@@ -557,7 +552,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		*/
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
-			arg -> which == Stackel_STRING ? Melder_dup (arg -> string.get()) : autostring32();
+			arg -> which == Stackel_STRING ? Melder_dup (arg -> getString()) : autostring32();
 		Melder_assert (my arguments [ipar]);
 	}
 	if (iarg < narg)
@@ -668,7 +663,7 @@ static bool isCommand (conststring32 string) {
 		(str32nequ (p + 2, U"warn ", 5) || str32nequ (p + 2, U"progress ", 9) || str32nequ (p + 2, U"check ", 6))) return true;
 	if (str32nequ (p, U"demo ", 5)) return true;
 	/*
-	 * Otherwise, things that start with lower case are formulas.
+	 * Otherwise, things that start with nonupper case are formulas.
 	 */
 	if (! Melder_isUpperCaseLetter (*p)) return false;
 	/*
@@ -688,26 +683,24 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
 	} else if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU) {
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
-		str32cpy (parameter + str32len (parameter), U"$");
+		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
 		/* Do not add a variable. */
 	} else {
-		str32cpy (parameter + str32len (parameter), U"$");
+		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my arguments [ipar].get());
 	}
 }
 
-inline static void NumericVectorVariable_move (InterpreterVariable variable, numvec movedVector, bool owned) {
-	numvec variableVector = variable -> numericVectorValue;
-	if (owned) {
+inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC movedVector, bool rightHandSideOwned) {
+	if (rightHandSideOwned) {
 		/*
 			Statement like: a# = b# + c#
 		*/
-		NUMvector_free (variableVector.at, 1);
-		variable -> numericVectorValue = movedVector;
-	} else if (variableVector.size == movedVector.size) {
-		if (variableVector.at == movedVector.at) {
+		variable -> numericVectorValue. adoptFromAmbiguousOwner (movedVector);
+	} else if (variable -> numericVectorValue.size == movedVector.size) {
+		if (variable -> numericVectorValue.at == movedVector.at) {
 			/*
 				Statement like: a# = a#
 			*/
@@ -716,28 +709,24 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, num
 			/*
 				Statement like: a# = b#   // with matching sizes
 			*/
-			numvec_copyElements_nocheck (movedVector, variableVector);
+			variable -> numericVectorValue.all() <<= movedVector;
 		}
 	} else {
 		/*
 			Statement like: a# = b#   // with non-matching sizes
 		*/
-		autonumvec copiedVector = copy_numvec (movedVector);
-		NUMvector_free (variableVector.at, 1);
-		variable -> numericVectorValue = copiedVector. releaseToAmbiguousOwner();
+		variable -> numericVectorValue = newVECcopy (movedVector);
 	}
 }
 
-inline static void NumericMatrixVariable_move (InterpreterVariable variable, nummat movedMatrix, bool owned) {
-	nummat variableMatrix = variable -> numericMatrixValue;
-	if (owned) {
+inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT movedMatrix, bool rightHandSideOwned) {
+	if (rightHandSideOwned) {
 		/*
 			Statement like: a## = b## + c##
 		*/
-		NUMmatrix_free (variableMatrix.at, 1, 1);
-		variable -> numericMatrixValue = movedMatrix;
-	} else if (variableMatrix.nrow == movedMatrix.nrow && variableMatrix.ncol == movedMatrix.ncol) {
-		if (variableMatrix.at == movedMatrix.at) {
+		variable -> numericMatrixValue. adoptFromAmbiguousOwner (movedMatrix);
+	} else if (variable -> numericMatrixValue.nrow == movedMatrix.nrow && variable -> numericMatrixValue.ncol == movedMatrix.ncol) {
+		if (variable -> numericMatrixValue.cells == movedMatrix.cells) {
 			/*
 				Statement like: a## = a##
 			*/
@@ -746,181 +735,119 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, num
 			/*
 				Statement like: a## = b##   // with matching sizes
 			*/
-			nummat_copyElements_nocheck (movedMatrix, variableMatrix);
+			variable -> numericMatrixValue.all() <<= movedMatrix;
 		}
 	} else {
 		/*
 			Statement like: a## = b##   // with non-matching sizes
 		*/
-		autonummat copiedMatrix = copy_nummat (movedMatrix);
-		NUMmatrix_free (variableMatrix.at, 1, 1);
-		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();
+		variable -> numericMatrixValue = newMATcopy (movedMatrix);
 	}
 }
 
 inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] += scalar;
+	variable -> numericVectorValue  +=  scalar;
 }
-inline static void NumericVectorVariable_add (InterpreterVariable variable, numvec vector, bool owned) {
-	numvec variableVector = variable -> numericVectorValue;
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot add a vector with size ", vector.size,
-		              U" to a vector with a different size (", variableVector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] += vector [i];
-	if (owned) {
-		/*
-			Statement like: a# += b# + c#
-		*/
-		NUMvector_free (vector.at, 1);
-	} else {
-		/*
-			Statement like: a# += b#
-		*/
-		(void) 0;
-	}
+inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size == variableVector.size,
+		U"You cannot add a vector with size ", vector.size,
+		U" to a vector with a different size (", variableVector.size, U")."
+	);
+	variableVector  +=  vector;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] -= scalar;
+	variable -> numericVectorValue  -=  scalar;
 }
-inline static void NumericVectorVariable_subtract (InterpreterVariable variable, numvec vector, bool owned) {
-	numvec variableVector = variable -> numericVectorValue;
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot subtract a vector with size ", vector.size,
-		              U" from a vector with a different size (", variableVector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] -= vector [i];
-	if (owned) {
-		/*
-			Statement like: a# -= b# + c#
-		*/
-		NUMvector_free (vector.at, 1);
-	} else {
-		/*
-			Statement like: a# -= b#
-		*/
-		(void) 0;
-	}
+inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size == variable -> numericVectorValue.size,
+		U"You cannot subtract a vector with size ", vector.size,
+		U" from a vector with a different size (", variableVector.size, U")."
+	);
+	variableVector  -=  vector;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] *= scalar;
+	variable -> numericVectorValue  *=  scalar;
 }
-inline static void NumericVectorVariable_multiply (InterpreterVariable variable, numvec vector, bool owned) {
-	numvec variableVector = variable -> numericVectorValue;
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot multiply a vector with size ", variableVector.size,
-		              U" with a vector with a different size (", vector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] *= vector [i];
-	if (owned) {
-		/*
-			Statement like: a# *= b# + c#
-		*/
-		NUMvector_free (vector.at, 1);
-	} else {
-		/*
-			Statement like: a# *= b#
-		*/
-		(void) 0;
-	}
+inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size != variableVector.size,
+		U"You cannot multiply a vector with size ", variableVector.size,
+		U" with a vector with a different size (", vector.size, U")."
+	);
+	variableVector  *=  vector;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] /= scalar;
+	variable -> numericVectorValue  /=  scalar;
 }
-inline static void NumericVectorVariable_divide (InterpreterVariable variable, numvec vector, bool owned) {
-	numvec variableVector = variable -> numericVectorValue;
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot divide a vector with size ", variableVector.size,
-		              U" by a vector with a different size (", vector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] /= vector [i];
-	if (owned) {
-		/*
-			Statement like: a# /= b# + c#
-		*/
-		NUMvector_free (vector.at, 1);
-	} else {
-		/*
-			Statement like: a# /= b#
-		*/
-		(void) 0;
-	}
+inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size != variableVector.size,
+		U"You cannot divide a vector with size ", variableVector.size,
+		U" by a vector with a different size (", vector.size, U")."
+	);
+	variableVector  /=  vector;
 }
 inline static void NumericMatrixVariable_add (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] += scalar;
 }
-inline static void NumericMatrixVariable_add (InterpreterVariable variable, nummat matrix, bool owned) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_add (InterpreterVariable variable, constMAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot add a matrix with size ", matrix.nrow, U"x", matrix.ncol,
 		              U" to a matrix with a different size (", variableMatrix.nrow, U"x", variableMatrix.ncol, U").");
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] += matrix [irow] [icol];
-	if (owned)
-		NUMmatrix_free (matrix.at, 1, 1);
 }
 inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] -= scalar;
 }
-inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, nummat matrix, bool owned) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, constMAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot subtract a matrix with size ", matrix.nrow, U"x", matrix.ncol,
 		              U" from a matrix with a different size (", variableMatrix.nrow, U"x", variableMatrix.ncol, U").");
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] -= matrix [irow] [icol];
-	if (owned)
-		NUMmatrix_free (matrix.at, 1, 1);
 }
 inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] *= scalar;
 }
-inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, nummat matrix, bool owned) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, constMAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot multiply a matrix with size ", variableMatrix.nrow, U"x", variableMatrix.ncol,
 		              U" from a matrix with a different size (", matrix.nrow, U"x", matrix.ncol, U").");
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] *= matrix [irow] [icol];
-	if (owned)
-		NUMmatrix_free (matrix.at, 1, 1);
 }
 inline static void NumericMatrixVariable_divide (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] /= scalar;
 }
-inline static void NumericMatrixVariable_divide (InterpreterVariable variable, nummat matrix, bool owned) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_divide (InterpreterVariable variable, constMAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue.get();
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot divide a matrix with size ", variableMatrix.nrow, U"x", variableMatrix.ncol,
 		              U" by a matrix with a different size (", matrix.nrow, U"x", matrix.ncol, U").");
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] /= matrix [irow] [icol];
-	if (owned)
-		NUMmatrix_free (matrix.at, 1, 1);
 }
 
 static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
@@ -1016,33 +943,43 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 						MelderString_appendCharacter (& argument, *p);
 					}
 				}
-				if (q == parameterName) break;
-				if (*p) { *p = U'\0'; p ++; }
+				if (q == parameterName)
+					break;
+				if (*p) {
+					*p = U'\0';
+					p ++;
+				}
 				if (q [-1] == U'$') {
 					my callDepth --;
 					autostring32 value = Interpreter_stringExpression (me, argument.string);
 					my callDepth ++;
-					char32 save = *q; *q = U'\0';
-					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+					char32 save = *q;
+					*q = U'\0';
+					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
+					*q = save;
 					var -> stringValue = value.move();
 				} else if (q [-1] == U'#') {
 					if (q [-2] == U'#') {
-						nummat value;
+						MAT value;
 						bool owned;
 						my callDepth --;
 						Interpreter_numericMatrixExpression (me, argument.string, & value, & owned);
 						my callDepth ++;
-						char32 save = *q; *q = U'\0';
-						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+						char32 save = *q;
+						*q = U'\0';
+						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
+						*q = save;
 						NumericMatrixVariable_move (var, value, owned);
 					} else {
-						numvec value;
+						VEC value;
 						bool owned;
 						my callDepth --;
 						Interpreter_numericVectorExpression (me, argument.string, & value, & owned);
 						my callDepth ++;
-						char32 save = *q; *q = U'\0';
-						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+						char32 save = *q;
+						*q = U'\0';
+						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
+						*q = save;
 						NumericVectorVariable_move (var, value, owned);
 					}
 				} else {
@@ -1050,11 +987,14 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					my callDepth --;
 					Interpreter_numericExpression (me, argument.string, & value);
 					my callDepth ++;
-					char32 save = *q; *q = U'\0';
-					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+					char32 save = *q;
+					*q = U'\0';
+					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
+					*q = save;
 					var -> numericValue = value;
 				}
-				if (*q) q ++;   // skip comma
+				if (*q)
+					q ++;   // skip comma
 			}
 			if (callDepth == Interpreter_MAX_CALL_DEPTH)
 				Melder_throw (U"Call depth greater than ", Interpreter_MAX_CALL_DEPTH, U".");
@@ -1209,13 +1149,11 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 		} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
 			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
 			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
-			if (numberOfSelectedObjects > 1) {
+			if (numberOfSelectedObjects > 1)
 				Melder_throw (U"Multiple objects selected. Cannot assign object ID to vector element.");
-			} else if (numberOfSelectedObjects == 0) {
+			if (numberOfSelectedObjects == 0)
 				Melder_throw (U"No objects selected. Cannot assign object ID to vector element.");
-			} else {
-				value = theCurrentPraatObjects -> list [selectedObject]. id;
-			}
+			value = theCurrentPraatObjects -> list [selectedObject]. id;
 		} else {
 			value = Melder_atof (valueString.string);   // including --undefined--
 		}
@@ -1233,7 +1171,7 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	if (indexValue > var -> numericVectorValue.size)
 		Melder_throw (U"A vector index cannot be greater than the number of elements (here ",
 			var -> numericVectorValue.size, U"). The index you supplied is ", indexValue, U".");
-	var -> numericVectorValue.at [indexValue] = value;
+	var -> numericVectorValue [indexValue] = value;
 }
 
 static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const char32* matrixName, MelderString& valueString) {
@@ -1341,7 +1279,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	if (columnNumber > var -> numericMatrixValue. ncol)
 		Melder_throw (U"A column number cannot be greater than the number of columns (here ",
 			var -> numericMatrixValue. ncol, U"). The column number you supplied is ", columnNumber, U".");
-	var -> numericMatrixValue.at [rowNumber] [columnNumber] = value;
+	var -> numericMatrixValue [rowNumber] [columnNumber] = value;
 }
 
 void Interpreter_run (Interpreter me, char32 *text) {
@@ -1504,7 +1442,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					/*
 					 * Found a left quote. Search for a matching right quote.
 					 */
-					char32 *q = p + 1, varName [300], *r, *s, *colon;
+					char32 *q = p + 1, varName [300], *r, *s;
 					integer precision = -1;
 					bool percent = false;
 					while (*q != U'\0' && *q != U'\'' && q - p < 299) q ++;
@@ -1516,11 +1454,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					 */
 					for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
 					*s = U'\0';   // trailing null byte
-					colon = str32chr (varName, U':');
+					char32 *colon = str32chr (varName, U':');
 					if (colon) {
 						precision = Melder_atoi (colon + 1);
 						if (str32chr (colon + 1, U'%')) percent = true;
-						*colon = '\0';
+						*colon = U'\0';
 					}
 					InterpreterVariable var = Interpreter_hasVariable (me, varName);
 					if (var) {
@@ -1543,7 +1481,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 				}
 				trace (U"resume");
 				c0 = command2.string [0];   // resume in order to allow things like 'c$' = 5
-				if ((c0 < U'a' || c0 > U'z') && c0 != U'@' && ! (c0 == U'.' && command2.string [1] >= U'a' && command2.string [1] <= U'z')) {
+				if ((! Melder_isLetter (c0) || Melder_isUpperCaseLetter (c0)) && c0 != U'@' &&
+						! (c0 == U'.' && Melder_isLetter (command2.string [1]) && ! Melder_isUpperCaseLetter (command2.string [1]))) {
 					praat_executeCommand (me, command2.string);
 				/*
 				 * Interpret control flow and variables.
@@ -1584,7 +1523,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						} else fail = true;
 						break;
 					case U'e':
-						if (command2.string [1] == 'n' && command2.string [2] == 'd') {
+						if (command2.string [1] == U'n' && command2.string [2] == U'd') {
 							if (str32nequ (command2.string, U"endif", 5) && ! Melder_staysWithinInk (command2.string [5])) {
 								/* Ignore. */
 							} else if (str32nequ (command2.string, U"endfor", 6) && ! Melder_staysWithinInk (command2.string [6])) {
@@ -1877,14 +1816,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					case U'z':
 						fail = true;
 						break;
-					default: break;
+					default:
+						fail = true;
+						break;
 				}
 				if (fail) {
 					/*
-						Found an unknown word starting with a lower-case letter, optionally preceded by a period.
+						Found an unknown word starting with a nonupper-case letter, optionally preceded by a period.
 						See whether the word is a variable name.
 					*/
-					trace (U"found an unknown word starting with a lower-case letter, optionally preceded by a period");
+					trace (U"found an unknown word starting with a nonupper-case letter, optionally preceded by a period");
 					char32 *p = & command2.string [0];
 					/*
 						Variable names consist of a sequence of letters, digits, and underscores,
@@ -1935,7 +1876,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
-									result. stringResult. reset();
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == U']') {
@@ -2055,10 +1995,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									*/
 									praat_executeCommand (me, p);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
-									var -> numericMatrixValue.reset();
-									var -> numericMatrixValue = theInterpreterNummat.releaseToAmbiguousOwner();
+									var -> numericMatrixValue = theInterpreterNummat.move();
 								} else {
-									nummat value;
+									MAT value;
 									bool owned;
 									Interpreter_numericMatrixExpression (me, p, & value, & owned);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
@@ -2074,7 +2013,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
-									NumericMatrixVariable_add (var, result. numericMatrixResult, result. owned);
+									NumericMatrixVariable_add (var, result. numericMatrixResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericMatrixVariable_add (var, result. numericResult);
 								} else {
@@ -2088,7 +2027,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
-									NumericMatrixVariable_subtract (var, result. numericMatrixResult, result. owned);
+									NumericMatrixVariable_subtract (var, result. numericMatrixResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericMatrixVariable_subtract (var, result. numericResult);
 								} else {
@@ -2102,7 +2041,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
-									NumericMatrixVariable_multiply (var, result. numericMatrixResult, result. owned);
+									NumericMatrixVariable_multiply (var, result. numericMatrixResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericMatrixVariable_multiply (var, result. numericResult);
 								} else {
@@ -2116,7 +2055,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
-									NumericMatrixVariable_divide (var, result. numericMatrixResult, result. owned);
+									NumericMatrixVariable_divide (var, result. numericMatrixResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericMatrixVariable_divide (var, result. numericResult);
 								} else {
@@ -2135,15 +2074,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"The matrix ", matrixName.string, U" does not exist.\n"
 										"You can assign a formula only to an existing matrix.");
 								static Matrix matrixObject;
-								if (! matrixObject) {
-									matrixObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
-								}
-								nummat mat = var -> numericMatrixValue;
+								if (! matrixObject)
+									matrixObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent exit-time destruction
+								MAT mat = var -> numericMatrixValue.get();
 								matrixObject -> xmax = mat.ncol + 0.5;
 								matrixObject -> nx = mat.ncol;
 								matrixObject -> ymax = mat.nrow + 0.5;
 								matrixObject -> ny = mat.nrow;
-								matrixObject -> z = mat.at;
+								matrixObject -> z.cells = mat.cells;   // just a reference (YUCK)
+								matrixObject -> z.nrow = mat.nrow;
+								matrixObject -> z.ncol = mat.ncol;
 								Matrix_formula (matrixObject, p, me, nullptr);
 							} else Melder_throw (U"Missing '=' after matrix variable ", matrixName.string, U".");
 						} else {
@@ -2170,10 +2110,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									*/
 									praat_executeCommand (me, p);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
-									var -> numericVectorValue.reset();
-									var -> numericVectorValue = theInterpreterNumvec.releaseToAmbiguousOwner();
+									var -> numericVectorValue = theInterpreterNumvec.move();
 								} else {
-									numvec value;
+									VEC value;
 									bool owned;
 									Interpreter_numericVectorExpression (me, p, & value, & owned);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
@@ -2189,7 +2128,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
-									NumericVectorVariable_add (var, result. numericVectorResult, result. owned);
+									NumericVectorVariable_add (var, result. numericVectorResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericVectorVariable_add (var, result. numericResult);
 								} else {
@@ -2203,7 +2142,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
-									NumericVectorVariable_subtract (var, result. numericVectorResult, result. owned);
+									NumericVectorVariable_subtract (var, result. numericVectorResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericVectorVariable_subtract (var, result. numericResult);
 								} else {
@@ -2217,7 +2156,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
-									NumericVectorVariable_multiply (var, result. numericVectorResult, result. owned);
+									NumericVectorVariable_multiply (var, result. numericVectorResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericVectorVariable_multiply (var, result. numericResult);
 								} else {
@@ -2231,7 +2170,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
-									NumericVectorVariable_divide (var, result. numericVectorResult, result. owned);
+									NumericVectorVariable_divide (var, result. numericVectorResult);
 								} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									NumericVectorVariable_divide (var, result. numericResult);
 								} else {
@@ -2253,10 +2192,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (! vectorObject) {
 									vectorObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
 								}
-								numvec vec = var -> numericVectorValue;
+								VEC vec = var -> numericVectorValue.get();
+								//vectorObject -> xmin = 0.5;
 								vectorObject -> xmax = vec.size + 0.5;
 								vectorObject -> nx = vec.size;
-								vectorObject -> z [1] = vec.at;
+								vectorObject -> z.cells = & vec [1];
+								//vectorObject -> z.nrow = 1;
+								vectorObject -> z.ncol = vec.size;
 								Matrix_formula (vectorObject, p, me, nullptr);
 							} else Melder_throw (U"Missing '=' or '+=' or '[' or '~' after vector variable ", vectorName.string, U".");
 						}
@@ -2311,13 +2253,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (! Melder_staysWithinLine (*p))
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
 								Formula_Result result;
+								Melder_assert (! result. stringResult);
 								Interpreter_anyExpression (me, index.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									double numericIndexValue = result. numericResult;
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
-									Melder_free (result. stringResult);
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == U']')
@@ -2487,20 +2429,22 @@ void Interpreter_numericExpression (Interpreter me, conststring32 expression, do
 	}
 }
 
-void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned) {
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *p_value, bool *p_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
 	*p_value = result. numericVectorResult;
 	*p_owned = result. owned;
+	result. owned = false;
 }
 
-void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned) {
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *p_value, bool *p_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
 	*p_value = result. numericMatrixResult;
 	*p_owned = result. owned;
+	result. owned = false;
 }
 
 autostring32 Interpreter_stringExpression (Interpreter me, conststring32 expression) {

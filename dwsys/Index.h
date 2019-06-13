@@ -40,7 +40,7 @@ integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex);
 
 autoStringsIndex StringsIndex_create (integer numberOfItems);
 
-int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *classLabel);
+int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 classLabel);
 
 conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer classNumber);
 

@@ -121,16 +121,16 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 			autoEditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> d_editor = me;
 			cmd -> menu = menu;
-			cmd -> itemTitle = Melder_dup_f (itemTitle);
+			cmd -> itemTitle = Melder_dup (itemTitle);
 			cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (menu -> menuWidget) :
 				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
 			cmd -> commandCallback = Editor_scriptCallback;
-			if (str32len (script) == 0) {
-				cmd -> script = Melder_dup_f (U"");
+			if (script [0] == U'\0') {
+				cmd -> script = Melder_dup (U"");
 			} else {
 				structMelderFile file { };
 				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
+				cmd -> script = Melder_dup (Melder_fileToPath (& file));
 			}
 			GuiMenuItem result = cmd -> itemWidget;
 			menu -> commands. addItem_move (cmd.move());
@@ -358,7 +358,8 @@ void structEditor :: v_do_pictureWindow (EditorCommand /* cmd */) {
 OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop)
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	LABEL (U"Margins:")
-	OPTIONMENU_ENUM_FIELD (v_form_pictureMargins_writeNameAtTop, U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop,
+			U"Write name at top", kEditor_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
 	SET_ENUM (v_form_pictureMargins_writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop ())

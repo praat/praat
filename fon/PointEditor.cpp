@@ -162,7 +162,10 @@ void structPointEditor :: v_draw () {
 		integer first, last;
 		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
-			if (minimum == maximum) minimum -= 1.0, maximum += 1.0;
+			if (minimum == maximum) {
+				minimum -= 1.0;
+				maximum += 1.0;
+			}
 		}
 	}
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, minimum, maximum);
@@ -173,7 +176,7 @@ void structPointEditor :: v_draw () {
 			Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 			Graphics_line (our graphics.get(), our startWindow, 0.0, our endWindow, 0.0);
 			Graphics_setLineType (our graphics.get(), Graphics_DRAWN);
-			Graphics_function (our graphics.get(), sound -> z [1], first, last,
+			Graphics_function (our graphics.get(), & sound -> z [1] [0], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		}
 	}

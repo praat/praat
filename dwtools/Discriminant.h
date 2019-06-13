@@ -2,7 +2,7 @@
 #define _Discriminant_h_
 /* Discriminant.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ integer Discriminant_getNumberOfFunctions (Discriminant me);
 double Discriminant_getWilksLambda (Discriminant me, integer numberOfDimensions);
 
 void Discriminant_getPartialDiscriminationProbability (Discriminant me,
-	integer numberOfDimensions, double *probability, double *chisq, double *df);
+	integer numberOfDimensions, double *out_probability, double *out_chisq, double *out_df);
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group,
 	double scale, bool confidence, bool discriminantDirections, integer d1, integer d2);
@@ -51,15 +51,15 @@ double Discriminant_getLnDeterminant_group (Discriminant me, integer group);
 double Discriminant_getLnDeterminant_total (Discriminant me);
 
 void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discriminantDirections,
-	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize,
 	bool poolCovarianceMatrices, bool garnish);
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
-	double scale, bool confidence, char32 *label, bool discriminantDirections,
+	double scale, bool confidence, conststring32 label, bool discriminantDirections,
 	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax,
-	int fontSize, bool garnish);
+	double fontSize, bool garnish);
 
-autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice);
+autoTableOfReal Discriminant_extractCoefficients (Discriminant me, integer choice);
 
 autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me);
 

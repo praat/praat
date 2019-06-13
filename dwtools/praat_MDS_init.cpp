@@ -1,6 +1,6 @@
 /* praat_MDS_init.cpp
  *
- * Copyright (C) 1992-2012, 2015-2016 David Weenink
+ * Copyright (C) 1992-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
 #include "TableOfReal_extensions.h"
 #include "Configuration_and_Procrustes.h"
 #include "Configuration_AffineTransform.h"
+#include "Proximity_and_Distance.h"
 #include "Confusion.h"
 #include "Formula.h"
 
@@ -52,44 +53,8 @@ static const conststring32 CONFIGURATION_BUTTON = U"To Configuration -";
 
 /* Tests */
 
-/*
-	Sort row 1 ascending and store in row 3
-	Sort row 1 and move row 2 along and store in rows 4 and 5 respectively
-	Make an index for row 1 and store in row 6
-*/
-static void TabelOfReal_testSorting (TableOfReal me) {
-	try {
-		integer rowtoindex = 1;
-		
-		Melder_require (my numberOfRows >= 6, U"TabelOfReal_sort2: we want at least 6 rows!!");
-		
-		autoNUMvector <integer> index (1, my numberOfColumns);
-		// Copy 1->3 and sort 3 inplace
-		NUMvector_copyElements (my data [1], my data [3], 1, my numberOfColumns);
-		NUMsort_d (my numberOfColumns, my data [3]);
-
-		// Copy 1->4 and 2->5, sort 4+5 in parallel
-		NUMvector_copyElements (my data [1], my data [4], 1, my numberOfColumns);
-		NUMvector_copyElements (my data [2], my data [5], 1, my numberOfColumns);
-		NUMsort2 (my numberOfColumns, my data [4], my data [5]);
-
-		NUMindexx (my data [rowtoindex], my numberOfColumns, index.peek());
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			my data [6] [i] = index [i];
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": sorting test not ok.");
-	}
-}
-
 #undef iam
 #define iam iam_LOOP
-
-DIRECT(MODIFY_TabelOfReal_testSorting) {
-	MODIFY_EACH (TableOfReal)
-		TabelOfReal_testSorting (me);
-	MODIFY_EACH_END
-}
 
 /************************* examples ***************************************/
 
@@ -128,9 +93,7 @@ FORM (GRAPHICS_drawSplines, U"Draw splines", U"spline") {
 	REAL (xmax, U"right Horizontal range", U"1.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"20.0")
-	RADIO (splineType, U"Spline type", 1)
-		RADIOBUTTON (U"M-spline")
-		RADIOBUTTON (U"I-spline")
+	OPTIONMENU_ENUM (kMDS_splineType, splineType, U"Spline type", kMDS_splineType::DEFAULT)
 	INTEGER (order, U"Order", U"3")
 	SENTENCE (interiorKnots_string, U"Interior knots", U"0.3 0.5 0.6")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -165,19 +128,15 @@ DIRECT (NEW_AffineTransform_invert) {
 }
 
 FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get transformation element", U"Procrustes") {
-	NATURAL (row, U"Row number", U"1")
-	NATURAL (column, U"Column number", U"1")
+	NATURAL (irow, U"Row number", U"1")
+	NATURAL (icol, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		if (row > my n) {
-			Melder_throw (U"Row number must not exceed number of rows.");
-		}
-		if (column > my n) {
-			Melder_throw (U"Column number must not exceed number of columns.");
-		}
-		double result = my r [row] [column];
-	NUMBER_ONE_END (U"")
+		Melder_require (irow <= my dimension, U"Row number should not exceed the dimension of the transform.");
+		Melder_require (icol <= my dimension, U"Column number should not exceed the dimension of the transform.");
+		double result = my r [irow] [icol];
+	NUMBER_ONE_END (U" r [", irow, U"] [", icol, U"]")
 }
 
 FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get translation element", U"Procrustes") {
@@ -185,9 +144,7 @@ FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get transla
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		if (index > my n) {
-			Melder_throw (U"Index must not exceed number of elements.");
-		}
+		Melder_require (index <= my dimension, U"Index should not exceed the dimension of the transform.");
 		double result = my t [index];
 	NUMBER_ONE_END (U"")
 }
@@ -234,7 +191,7 @@ DO
 FORM (GRAPHICS_Configuration_drawSigmaEllipses, U"Configuration: Draw sigma ellipses", U"Configuration: Draw sigma ellipses...") {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -247,7 +204,7 @@ FORM (GRAPHICS_Configuration_drawOneSigmaEllipse, U"Configuration: Draw one sigm
 	SENTENCE (label, U"Label", U"")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -260,7 +217,7 @@ DO
 FORM (GRAPHICS_Configuration_drawConfidenceEllipses, U"Configuration: Draw confidence ellipses", nullptr) {
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -273,7 +230,7 @@ FORM (GRAPHICS_Configuration_drawOneConfidenceEllipse, U"Configuration: Draw one
 	SENTENCE (label, U"Label", U"")
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -497,14 +454,6 @@ DO
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"50 (= each repetition)") \
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
 
-
-#define Dissimilarity_Configuration_getStress_addCommonFields(stressMeasure) \
-	RADIO (stressMeasure, U"Stress measure", 1) \
-		RADIOBUTTON (U"Normalized") \
-		RADIOBUTTON (U"Kruskal's stress-1") \
-		RADIOBUTTON (U"Kruskal's stress-2") \
-		RADIOBUTTON (U"Raw")
-
 #define praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish) \
 	REAL (fromProximity, U"left Proximity range", U"0.0") \
 	REAL (toProximity, U"right Proximity range", U"0.0") \
@@ -527,17 +476,13 @@ DIRECT (REAL_Dissimilarity_getAdditiveConstant) {
 END }
 
 FORM (NEW1_Dissimilarity_Configuration_kruskal, U"Dissimilarity & Configuration: To Configuration (kruskal)", U"Dissimilarity & Configuration: To Configuration (kruskal)...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
-	RADIO (stressFormula, U"Stress calculation", 1)
-		RADIOBUTTON (U"Formula1")
-		RADIOBUTTON (U"Formula2")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
+	OPTIONMENU_ENUM (kMDS_KruskalStress, stressMeasure, U"Stress measure", kMDS_KruskalStress::Kruskal_1)
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Configuration)
-		autoConfiguration result = Dissimilarity_Configuration_kruskal (me, you, tiesHandling, stressFormula, tolerance, maximumNumberOfIterations, numberOfRepetitions);
+		autoConfiguration result = Dissimilarity_Configuration_kruskal (me, you, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions);
 	CONVERT_TWO_END (my name.get(), U"_kruskal")
 }
 
@@ -572,9 +517,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Configuration_monotone_mds, U"Dissimilarity & Configuration: To Configuration (monotone mds)", U"Dissimilarity & Configuration: To Configuration (monotone mds)...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
@@ -628,9 +571,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Configuration & Weight: To Configuration (monotone mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
@@ -654,117 +595,109 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",  U"Dissimilarity & Configuration: get stress") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
-	RADIO (stressFormula, U"Stress calculation", 1)
-		RADIOBUTTON (U"Formula1")
-		RADIOBUTTON (U"Formula2")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
+	OPTIONMENU_ENUM (kMDS_KruskalStress, stressMeasure, U"Stress measure", kMDS_KruskalStress::Kruskal_1)
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressFormula);
-	NUMBER_TWO_END (U"(stress)")
+		double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressMeasure);
+	NUMBER_TWO_END (U" (stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, nullptr,stressMeasure);
-	NUMBER_TWO_END (U"(absolute mds stress)")
+	NUMBER_TWO_END (U" (absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, nullptr, stressMeasure);
-	NUMBER_TWO_END (U"(ratio mds stress)")
+	NUMBER_TWO_END (U" (ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, nullptr, stressMeasure);
-	NUMBER_TWO_END (U"(interval mds stress)")
+	NUMBER_TWO_END (U" (interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Configuration: Get stress (monotone mds)", U"Dissimilarity & Configuration: Get stress (monotone mds)...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, nullptr, tiesHandling,stressMeasure);
-	NUMBER_TWO_END (U"(monotone mds stress)")
+	NUMBER_TWO_END (U" (monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, nullptr, numberOfInteriorKnots, order, stressMeasure);
-	NUMBER_TWO_END (U"(i-spline mds stress)")
+	NUMBER_TWO_END (U" (i-spline mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U"(absolute mds stress)")
+	NUMBER_THREE_END (U" (absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U"(ratio mds stress)")
+	NUMBER_THREE_END (U" (ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U"(interval mds stress)")
+	NUMBER_THREE_END (U" (interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)", U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach)")
-		RADIOBUTTON (U"Secondary approach")
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, him, tiesHandling, stressMeasure);
-	NUMBER_THREE_END (U"(monotone mds stress)")
+	NUMBER_THREE_END (U" (monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
-	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
+	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, him, numberOfInteriorKnots, order, stressMeasure);
-	NUMBER_THREE_END (U"(i-spline mds stress)")
+	NUMBER_THREE_END (U" (i-spline mds stress)")
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
@@ -800,9 +733,7 @@ DO
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawMonotoneRegression, U"Dissimilarity & Configuration: Draw regression (monotone mds)", U"Dissimilarity & Configuration: Draw regression (monotone mds)...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach)")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_TWO (Dissimilarity, Configuration)
@@ -824,17 +755,13 @@ FORM (NEW_Dissimilarity_to_Configuration_kruskal, U"Dissimilarity: To Configurat
 	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	NATURAL (distanceMetric, U"Distance metric", U"2 (= Euclidean)")
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
-	RADIO (stressFormula, U"Stress calculation", 1)
-		RADIOBUTTON (U"Formula1")
-		RADIOBUTTON (U"Formula2")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
+	OPTIONMENU_ENUM (kMDS_KruskalStress, stressMeasure, U"Stress measure", kMDS_KruskalStress::Kruskal_1)
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
 	CONVERT_EACH (Dissimilarity)
-		autoConfiguration result = Dissimilarity_to_Configuration_kruskal (me, numberOfDimensions, distanceMetric, tiesHandling, stressFormula, tolerance, maximumNumberOfIterations, numberOfRepetitions);
+		autoConfiguration result = Dissimilarity_to_Configuration_kruskal (me, numberOfDimensions, distanceMetric, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -877,9 +804,7 @@ DO
 FORM (NEW_Dissimilarity_to_Configuration_monotone_mds, U"Dissimilarity: To Configuration (monotone mds)", U"Dissimilarity: To Configuration (monotone mds)...") {
 	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance, maximumNumberOfIterations, numberOfRepetitions)	
 	OK
 DO
@@ -964,9 +889,7 @@ DO
 FORM (NEW1_Dissimilarity_Weight_monotone_mds, U"Dissimilarity & Weight: To Configuration (monotone mds)", U"Dissimilarity & Weight: To Configuration (monotone mds)...") {
 	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
@@ -981,13 +904,19 @@ FORM (NEW_Dissimilarity_to_Distance, U"Dissimilarity: To Distance", U"Dissimilar
 	OK
 DO
 	CONVERT_EACH (Dissimilarity)
-		autoDistance result = Dissimilarity_to_Distance (me, scale);
+		autoDistance result = Dissimilarity_to_Distance (me, scale ? kMDS_AnalysisScale::Ordinal : kMDS_AnalysisScale::Absolute);
 	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Dissimilarity_to_Weight) {
 	CONVERT_EACH (Dissimilarity)
 		autoWeight result = Dissimilarity_to_Weight (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_Dissimilarity_to_MDSVec) {
+	CONVERT_EACH (Dissimilarity)
+		autoMDSVec result = Dissimilarity_to_MDSVec (me);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1100,9 +1029,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF", U"Dissimilarity & Configuration & Salience: Get VAF...") {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
@@ -1137,6 +1064,7 @@ DO
 	FIND_LIST (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
+		Melder_require (list.size > 1, U"There should me more than one Distance selected.");
 		DistanceList_to_Configuration_ytl ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"ytl");
 		if (wantSalienceObject) {
@@ -1145,10 +1073,17 @@ DO
 	END
 }
 
+FORM (NEW_Distance_to_Configuration_torsca, U"Distance: To Configuration (torsca)", U"") {
+	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
+	OK
+DO
+	CONVERT_EACH (Distance)
+		autoConfiguration result = Distance_to_Configuration_torsca (me, numberOfDimensions);
+	CONVERT_EACH_END (my name.get(), U"_torsca")
+}
+
 FORM (NEW1_Dissimilarity_Distance_monotoneRegression, U"Dissimilarity & Distance: Monotone regression", nullptr) {
-	RADIO (tiesHandling, U"Handling of ties", 1)
-		RADIOBUTTON (U"Primary approach")
-		RADIOBUTTON (U"Secondary approach")
+	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Distance)
@@ -1351,12 +1286,11 @@ void praat_TableOfReal_extras (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Normalize table...", U"Normalize columns...", 1, MODIFY_TableOfReal_normalizeTable);
 	praat_addAction1 (klas, 0, U"Standardize rows", U"Normalize table...", 1, MODIFY_TableOfReal_standardizeRows);
 	praat_addAction1 (klas, 0, U"Standardize columns", U"Standardize rows", 1, MODIFY_TableOfReal_standardizeColumns);
-	praat_addAction1 (klas, 0, U"Test sorting...", U"Standardize columns", praat_DEPTH_1 + praat_HIDDEN + praat_NO_API, MODIFY_TabelOfReal_testSorting);
 }
 
 void praat_uvafon_MDS_init ();
 void praat_uvafon_MDS_init () {
-	Thing_recognizeClassesByName (classAffineTransform, classProcrustes, classContingencyTable, classDissimilarity,
+	Thing_recognizeClassesByName (classAffineTransform, classProcrustes, classContingencyTable, classDissimilarity, classMDSVec,
 		classSimilarity, classConfiguration, classDistance, classSalience, classScalarProduct, classWeight, nullptr);
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
@@ -1378,9 +1312,9 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classConfiguration, 0, U"Configuration help", nullptr, 0, HELP_Configuration_help);
 	praat_TableOfReal_init2 (classConfiguration);
 	praat_TableOfReal_extras (classConfiguration);
-	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Insert column (index)...");
-	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Remove column (index)...");
-	(void) praat_removeAction (classConfiguration, nullptr, nullptr, U"Append");
+	praat_removeAction (classConfiguration, nullptr, nullptr, U"Insert column (index)...");
+	praat_removeAction (classConfiguration, nullptr, nullptr, U"Remove column (index)...");
+	praat_removeAction (classConfiguration, nullptr, nullptr, U"Append");
 	praat_addAction1 (classConfiguration, 0, U"Draw...", DRAW_BUTTON, 1, GRAPHICS_Configuration_draw);
 	praat_addAction1 (classConfiguration, 0, U"Draw sigma ellipses...", U"Draw...", 1, GRAPHICS_Configuration_drawSigmaEllipses);
 	praat_addAction1 (classConfiguration, 0, U"Draw one sigma ellipse...", U"Draw...", 1, GRAPHICS_Configuration_drawOneSigmaEllipse);
@@ -1435,6 +1369,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classDissimilarity, 1, U"To Configuration (kruskal)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_kruskal);
 	praat_addAction1 (classDissimilarity, 0, U"To Distance...", nullptr, 0, NEW_Dissimilarity_to_Distance);
 	praat_addAction1 (classDissimilarity, 0, U"To Weight", nullptr, 0, NEW_Dissimilarity_to_Weight);
+	praat_addAction1 (classDissimilarity, 0, U"To MDSVec", nullptr, praat_HIDDEN, NEW_Dissimilarity_to_MDSVec);
 
 
 	praat_addAction1 (classCovariance, 0, U"To Configuration...", nullptr, 0, NEW_Covariance_to_Configuration);
@@ -1447,6 +1382,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1, NEWMANY_Distances_to_Configuration_indscal);
 	praat_addAction1 (classDistance, 0, U"-- linear scaling --", nullptr, 1, nullptr);
 	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1, NEWMANY_Distances_to_Configuration_ytl);
+	praat_addAction1 (classDistance, 0, U"To Configuration (torsca)...", nullptr, 1, NEW_Distance_to_Configuration_torsca);
 	praat_addAction1 (classDistance, 0, U"To Dissimilarity", nullptr, 0, NEW_Distance_to_Dissimilarity);
 	praat_addAction1 (classDistance, 0, U"To ScalarProduct...", nullptr, 0, NEW_Distance_to_ScalarProduct);
 

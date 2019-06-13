@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,53 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20180511)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190606)
 INTRO (U"Latest changes in Praat.")
-//LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
-
+NORMAL (U"##6.0.54# (6 June 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause incorrect axes in Demo window.")
+NORMAL (U"##6.0.53# (26 May 2019)")
+LIST_ITEM (U"• Much faster playing of short parts of long sounds that need resampling.")
+LIST_ITEM (U"• Better handling of broken CSV files.")
+LIST_ITEM (U"• 64-bit floating-point WAV files.")
+NORMAL (U"##6.0.52# (2 May 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause turning a Discriminant into a Configuration to crash.")
+LIST_ITEM (U"• Removed a bug introduced in contour grey drawing in August 2017.")
+NORMAL (U"##6.0.51# (29 April 2019)")
+LIST_ITEM (U"• Script window: Use Selection for Find.")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.41 that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.")
+NORMAL (U"##6.0.50# (31 March 2019)")
+LIST_ITEM (U"• Manual updates, speed, more tests.")
+LIST_ITEM (U"• Scripting: rowSums\\# , columnSums\\# ; randomGauss\\# \\#  finally with four arguments.")
+NORMAL (U"##6.0.49# (2 March 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.")
+LIST_ITEM (U"• Pitch: Tabulate candidates.")
+LIST_ITEM (U"• SoundSet.")
+NORMAL (U"##6.0.48# (17 February 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby Praat could crash when drawing a function without any points.")
+LIST_ITEM (U"• Removed a bug whereby Praat would not start up on macOS 10.10 (because of required GPU libraries).")
+NORMAL (U"##6.0.47# (8 February 2019)")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby a cepstral peak prominence would be computed incorrectly.")
+NORMAL (U"##6.0.46# (3 January 2019)")
+LIST_ITEM (U"• Removed a crashing bug in the LongSound window introduced in 6.0.44.")
+LIST_ITEM (U"• Removed a bug causing incorrect conversion from Formant to LPC introduced in 6.0.44.")
+LIST_ITEM (U"• More space for actions in buttons window.")
+NORMAL (U"##6.0.45# (1 January 2019)")
+LIST_ITEM (U"• Removed a crashing bug in EditDistanceTable introduced in 6.0.44.")
+LIST_ITEM (U"• Removed a crashing bug in KlattGrid drawing introduced in 6.0.44.")
+LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby old HMM files were read incorrectly.")
+NORMAL (U"##6.0.44# (31 December 2018)")
+LIST_ITEM (U"• Bug fixes and speed.")
+NORMAL (U"##6.0.43# (8 September 2018)")
+LIST_ITEM (U"• Removed a very old bug that could create invalid TextGrids during forced alignment.")
+LIST_ITEM (U"• Windows: repaired a bug introduced in 6.0.41 "
+	"that caused a crash in several places (such as when changing the sample rate in the SoundRecorder) "
+	"when Praat had been started with a double click.")
+LIST_ITEM (U"• Windows: repaired a bug introduced in 6.0.41 that caused Praat to crash when exiting.")
+NORMAL (U"##6.0.42# (15 August 2018)")
+LIST_ITEM (U"• Repaired a bug introduced in 6.0.41 that caused a crash in pause windows.")
+NORMAL (U"##6.0.41# (6 August 2018)")
+LIST_ITEM (U"• Interoperability: the Windows edition can now communicate with other software in UTF-8.")
 NORMAL (U"##6.0.40# (11 May 2018)")
 LIST_ITEM (U"• Scripting: @@Scripting 4.3. Querying objects|selected\\#  ()@.")
 LIST_ITEM (U"• Table window: cell selection.")
@@ -2726,7 +2769,7 @@ NORMAL (U"To the right of the window, you may see three pitch values, written wi
 	"at the cursor, or the average pitch in the selection.")
 MAN_END
 
-MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20050830)
+MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20190331)
 NORMAL (U"With @@Pitch settings...@ from the #Pitch menu, "
 	"you can determine how the pitch contour is displayed and how it is computed. "
 	"These settings will be remembered across Praat sessions. "
@@ -2736,9 +2779,13 @@ ENTRY (U"The %%pitch range% setting")
 NORMAL (U"This is the most important setting for pitch analysis. The standard range is from 75 to 500 hertz, "
 	"which means that the pitch analysis method will only find values between 75 and 500 Hz. "
 	"The range that you set here will be shown to the right of the analysis window.")
-NORMAL (U"For a male voice, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
-	"for a female voice, set the range to 100-500 Hz instead. For creaky voice you will want to set it much "
-	"lower than 75 Hz.")
+NORMAL (U"You should set the range to values appropriate for your speaker, "
+	"but a problem is that speakers vary enormously in their pitch ranges. "
+	"For many low-pitched (e.g. average male) voices, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
+	"for many high-pitched (e.g. average female) voices, a range of 100-500 Hz may instead be appropriate. "
+	"On the high side, some children can reach almost 2000 Hz when yelling; "
+	"on the low side, creaky voice can go as low as 40 Hz; "
+	"for the speakers you are investigating, you may therefore want to experiment with this setting.")
 NORMAL (U"Here is why you have to supply these settings. If the pitch floor is 75 Hz, "
 	"the pitch analysis method requires a 40-millisecond analysis window, "
 	"i.e., in order to measure the F0 at a time of, say, 0.850 seconds, "
@@ -2750,7 +2797,7 @@ NORMAL (U"Here is why you have to supply these settings. If the pitch floor is 7
 NORMAL (U"So setting the floor of the pitch range is a technical requirement for the pitch analysis. "
 	"If you set it too low, you will miss very fast F0 changes, and if you set it too high, "
 	"you will miss very low F0 values. For children's voices you can often use 200 Hz, "
-	"although 75 Hz will still give you the same time resolution as you get for the males.")
+	"although 75 Hz will still give you the same time resolution as you get for low-pitched voices.")
 ENTRY (U"The %units setting")
 NORMAL (U"This setting determines the units of the vertical pitch scale. Most people like to see the pitch range "
 	"in hertz, but there are several other possibilities.")

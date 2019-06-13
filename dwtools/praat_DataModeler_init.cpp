@@ -527,7 +527,7 @@ FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outlier
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	WORD (mark_string, U"Mark", U"o")
-	NATURAL (fontSize, U"Mark font size", U"12")
+	POSITIVE (fontSize, U"Mark font size", U"12")
 	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", false)
 	OK
@@ -584,7 +584,7 @@ FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal pr
 		OPTION (U"Sqrt bandwidth")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
 	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
-	NATURAL (fontSize, U"Label size", U"12")
+	POSITIVE (fontSize, U"Label size", U"12")
 	WORD (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
 	OK

@@ -92,7 +92,7 @@ inline static int MelderThread_getNumberOfProcessors () {
 }
 
 #if USE_WINTHREADS
-	template <class T> void MelderThread_run (DWORD (WINAPI *func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
+	template <class T> void MelderThread_run (DWORD (WINAPI *func) (T *), autoSomeThing <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
 			func (args [0].get());
 		} else {
@@ -117,7 +117,7 @@ inline static int MelderThread_getNumberOfProcessors () {
 		}
 	}
 #elif USE_PTHREADS
-	template <class T> void MelderThread_run (void * (*func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
+	template <class T> void MelderThread_run (void * (*func) (T *), autoSomeThing <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
 			func (args [0].get());
 		} else {
@@ -140,7 +140,7 @@ inline static int MelderThread_getNumberOfProcessors () {
 		}
 	}
 #elif USE_CPPTHREADS
-	template <class T> void MelderThread_run (void * (*func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
+	template <class T> void MelderThread_run (void * (*func) (T *), autoSomeThing <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
 			func (args [0].get());
 		} else {
@@ -163,7 +163,7 @@ inline static int MelderThread_getNumberOfProcessors () {
 		}
 	}
 #else
-	template <class T> void MelderThread_run (void (*func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
+	template <class T> void MelderThread_run (void (*func) (T *), autoSomeThing <T> *args, int numberOfThreads) {
 		func (args [0].get());
 	}
 #endif

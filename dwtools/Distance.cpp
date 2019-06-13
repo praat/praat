@@ -1,6 +1,6 @@
 /* Distance.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,11 @@
 */
 
 #include "Distance.h"
+#include "TableOfReal_extensions.h"
 
 Thing_implement (Distance, Proximity, 0);
+
+Thing_implement (DistanceList, ProximityList, 0);
 
 autoDistance Distance_create (integer numberOfPoints) {
 	try {
@@ -36,15 +39,42 @@ autoDistance Distance_create (integer numberOfPoints) {
 }
 
 double Distance_getMaximumDistance (Distance me) {
-	double dmax = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) { // symmetric matrix
-		for (integer j = i + 1; j <= my numberOfColumns; j ++) {
-			if (my data [i] [j] > dmax) {
-				dmax = my data [i] [j];
+	return NUMmax (my data.get());
+}
+
+static void VECabs (VECVU const& v) {
+	for (integer i = 1; i <= v.size; i++)
+		v [i] = fabs (v [i]);
+}
+
+static void VECpow (VECVU const& v, double power) {
+	for (integer i = 1; i <= v.size; i++)
+		v [i] = pow (v [i], power);
+}
+
+autoDistance Configuration_to_Distance (Configuration me) {
+	try {
+		autoDistance thee = Distance_create (my numberOfRows);
+		TableOfReal_copyLabels (me, thee.get(), 1, -1);
+		autoVEC dist = newVECraw (my numberOfColumns);
+		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
+			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
+				dist <<= my data.row (i)  -  my data.row (j);
+				VECabs (dist.get());
+				double dmax = NUMmax (dist.get()), d = 0.0;
+				if (dmax > 0.0) {
+					dist  /=  dmax; // prevent overflow
+					VECpow (dist.get(), my metric);
+					d = NUMinner (my w, dist.get());
+					d = dmax * pow (d, 1.0 / my metric); // scale back
+				}
+				thy data [i] [j] = thy data [j] [i] = d;
 			}
 		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": no Distance created.");
 	}
-	return dmax;
 }
 
 void Distance_drawDendogram (Distance me, Graphics g, int method) {

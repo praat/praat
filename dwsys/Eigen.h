@@ -2,7 +2,7 @@
 #define _Eigen_h_
 /* Eigen.h
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension);
 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension);
 
-void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n);
+void Eigen_initFromSymmetricMatrix (Eigen me, constMATVU const& a);
 
-void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integer numberOfColumns);
+void Eigen_initFromSquareRoot (Eigen me, constMATVU const& a);
 /*
 	Calculate eigenstructure for symmetric matrix A'A (e.g. covariance matrix),
 	when only A is given.
@@ -38,7 +38,7 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 	Method: SVD.
 */
 
-void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, integer numberOfColumns, double **b, integer numberOfRows_b);
+void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b);
 /*
 	Calculate eigenstructure for A'Ax - lambda B'Bx = 0
 	Preconditions: numberOfRows >= numberOfColumns &&
@@ -85,17 +85,6 @@ double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 /*
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */
-
-void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin);
-/*
- * Preconditions:
- * 
- * 	from[numberOfRows, from_colbegin - 1 + my dimension] exists
- * 	to [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] exists
- * 
- * Project the vectors in matrix 'from' along the 'numberOfDimensionsToKeep' eigenvectors into the matrix 'to'.
- */
-
 
 #endif /* _Eigen_h_ */
 

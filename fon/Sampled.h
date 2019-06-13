@@ -35,8 +35,8 @@ static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return Me
 static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return Melder_iceiling ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return Melder_iround   ((x - my x1) / my dx + 1.0); }
 
-static inline autonumvec Sampled_getX_numvec (Sampled me) {
-	autonumvec result (my nx, kTensorInitializationType::RAW);
+static inline autoVEC Sampled_getAllXValues (Sampled me) {
+	autoVEC result (my nx, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= my nx; i ++)
 		result [i] = my x1 + (i - 1) * my dx;
 	return result;
@@ -80,8 +80,11 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 
 double Sampled_getValueAtSample (Sampled me, integer sampleNumber, integer level, int unit);
 double Sampled_getValueAtX (Sampled me, double x, integer level, int unit, bool interpolate);
-integer Sampled_countDefinedSamples (Sampled me, integer level, int unit);
-double * Sampled_getSortedValues (Sampled me, integer level, int unit, integer *numberOfValues);
+
+integer Sampled_countDefinedSamples
+	(Sampled me, double xmin, double xmax, integer level, int unit);
+autoVEC Sampled_getSortedValues
+	(Sampled me, double xmin, double xmax, integer level, int unit);
 
 double Sampled_getQuantile
 	(Sampled me, double xmin, double xmax, double quantile, integer level, int unit);
@@ -98,14 +101,20 @@ double Sampled_getStandardDeviation
 double Sampled_getStandardDeviation_standardUnit
 	(Sampled me, double xmin, double xmax, integer level, int averagingUnit, bool interpolate);
 
-void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate,
-	double *return_minimum, double *return_xOfMinimum);
-double Sampled_getMinimum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
-double Sampled_getXOfMinimum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
-void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate,
-	double *return_maximum, double *return_xOfMaximum);
-double Sampled_getMaximum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
-double Sampled_getXOfMaximum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+void Sampled_getMinimumAndX
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate,
+	 double *return_minimum, double *return_xOfMinimum);
+double Sampled_getMinimum
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+double Sampled_getXOfMinimum
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+void Sampled_getMaximumAndX
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate,
+	 double *return_maximum, double *return_xOfMaximum);
+double Sampled_getMaximum
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+double Sampled_getXOfMaximum
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
 
 void Sampled_drawInside
 	(Sampled me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool speckle, integer level, int unit);

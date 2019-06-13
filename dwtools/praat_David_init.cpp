@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@
 */
 
 #include "NUMcomplex.h"
-#include "NUMlapack.h"
 #include "NUMmachar.h"
 
 #include "ActivationList.h"
+#include "AmplitudeTier.h"
 #include "Categories.h"
 #include "CategoriesEditor.h"
 #include "ClassificationTable.h"
@@ -123,6 +123,7 @@
 #include "CCs_to_DTW.h"
 #include "Discriminant_PatternList_Categories.h"
 #include "DTW_and_TextGrid.h"
+#include "Matrix_and_NMF.h"
 #include "Permutation_and_Index.h"
 #include "Pitch_extensions.h"
 #include "Sound_and_Spectrogram_extensions.h"
@@ -198,6 +199,25 @@ DIRECT (NEW_ActivationList_to_PatternList) {
 		autoPatternList result = ActivationList_to_PatternList (me);
 	CONVERT_EACH_END (my name.get())
 }
+
+FORM (REAL_AmplitudeTier_getValueAtTime, U"AmplitudeTier: Get value at time", nullptr) {
+	REAL (time, U"Time (s)", U"0.5")
+	OK
+DO
+	NUMBER_ONE (AmplitudeTier)
+		double result = RealTier_getValueAtTime (me, time);
+	NUMBER_ONE_END (U" Hz")
+}
+	
+FORM (REAL_AmplitudeTier_getValueAtIndex, U"AmplitudeTier: Get value at index", nullptr) {
+	INTEGER (pointNumber, U"Point number", U"10")
+	OK
+DO
+	NUMBER_ONE (AmplitudeTier)
+		double result = RealTier_getValueAtIndex (me, pointNumber);
+	NUMBER_ONE_END (U" Hz")
+}
+
 
 /********************** BandFilterSpectrogram *******************************************/
 
@@ -879,6 +899,12 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+DIRECT (MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes) {
+	MODIFY_FIRST_OF_TWO (ComplexSpectrogram, Spectrogram)
+		ComplexSpectrogram_Spectrogram_replaceAmplitudes (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
+
 /********************** Correlation *******************************************/
 
 FORM (NEW1_Correlation_createSimple, U"Create simple Correlation", U"Create simple Correlation...") {
@@ -1095,6 +1121,29 @@ DIRECT (NEW1_Covariances_pool) {
 	CONVERT_TYPED_LIST_END (U"pool")
 }
 
+DIRECT (NEW1_Covariances_to_Covariance_between) {
+	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+		autoCovariance result = CovarianceList_to_Covariance_between (list.get());
+	CONVERT_TYPED_LIST_END (U"between")	
+}
+
+DIRECT (NEW1_Covariances_to_Covariance_within) {
+	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+		autoCovariance result = CovarianceList_to_Covariance_within (list.get());
+	CONVERT_TYPED_LIST_END (U"within")
+}
+
+DIRECT (NEW1_Covariances_to_CovarianceList) {
+	autoCovarianceList result = CovarianceList_create ();
+	CREATE_ONE
+	LOOP {
+		iam (Covariance);
+		autoCovariance cov = Data_copy (me);
+		result -> addItem_move (cov.move());
+	}
+	CREATE_ONE_END (U"List_of_", Melder_integer (result -> size))
+}
+
 FORM (NEW1_Covariance_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
 	BOOLEAN (centroidFromTable, U"Centroid from table", false)
 	OK
@@ -1127,10 +1176,10 @@ DO
 }
 
 FORM (NEW1_Discriminant_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...") {
-	INTEGER (numberOfDimensions, U"Number of dimensions", U"0")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (=all)")
 	OK
 DO
-	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
+	Melder_require (numberOfDimensions >= 0, U"\"Number of dimensions\" should not be less than zero.");
 	CONVERT_TWO (Discriminant, TableOfReal)
 		autoConfiguration result = Discriminant_TableOfReal_to_Configuration (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
@@ -1372,7 +1421,7 @@ FORM (GRAPHICS_Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellips
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1391,7 +1440,7 @@ FORM (GRAPHICS_Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma 
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1409,7 +1458,7 @@ FORM (GRAPHICS_Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confide
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1428,7 +1477,7 @@ FORM (GRAPHICS_Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one c
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	INTEGER (labelSize, U"Label size", U"12")
+	POSITIVE (labelSize, U"Label size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -2503,7 +2552,7 @@ DO
 
 FORM (NEW1_FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract files", nullptr) {
 	LABEL (U"Extract all files where the file name ")
-	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	OPTIONMENU_ENUM (kMelder_string, which, U"...", kMelder_string::CONTAINS)
 	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
@@ -2534,7 +2583,7 @@ DO
 
 FORM (NEW1_FileInMemorySet_extractFiles, U"FileInMemorySet: Extract files", nullptr) {
 	LABEL (U"Extract all files where the file name ")
-	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	OPTIONMENU_ENUM (kMelder_string, which, U"...", kMelder_string::CONTAINS)
 	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
@@ -2808,8 +2857,10 @@ DO
 }
 
 FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
@@ -2818,8 +2869,10 @@ DO
 }
 
 FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
@@ -2828,8 +2881,10 @@ DO
 }
 
 FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
@@ -2838,8 +2893,10 @@ DO
 }
 
 FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
@@ -3199,9 +3256,27 @@ FORM (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviat
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		double result = Table_getMedianAbsoluteDeviation (me, icol);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getMedianAbsoluteDeviation (me, columnNumber);
 	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_Table_reportRobustStatistics, U"Table: Report robust statistics", U"Table: Report robust statistics...") {
+	SENTENCE (columnLabel, U"Column label", U"F1")
+	POSITIVE (k_stdev, U"Number of standard deviations", U"1.5")
+	POSITIVE (tolerance, U"Tolerance", U"1e-6")
+	NATURAL (maximumNumberOfiterations, U"Maximum number of iterations", U"30")
+	OK
+DO
+	INFO_ONE (Table)
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double location, scale;
+		Table_reportHuberMStatistics (me, columnNumber, k_stdev, tolerance, & location, & scale, maximumNumberOfiterations);
+		MelderInfo_open ();
+			MelderInfo_writeLine (U"Location: ", location);
+			MelderInfo_writeLine (U"Scale: ", scale);
+		MelderInfo_close();
+	INFO_ONE_END
 }
 
 static void print_means (Table me);
@@ -3475,6 +3550,15 @@ DO
 	NUMBER_ONE_END (U" (std dev)")
 }
 
+FORM (REAL_Matrix_getNorm, U"Matrix: Get norm", U"Matrix: Get norm...") {
+	REAL (power, U"Power", U"2.0")
+	OK
+DO
+	NUMBER_ONE (Matrix)
+		double result = NUMnorm (my z.all(), power);
+	NUMBER_ONE_END (U" (norm with power = ", power, U")")
+}
+	
 FORM (MODIFY_Matrix_scale, U"Matrix: Scale", nullptr) {
 	LABEL (U"self[row, col] := self[row, col] / `Scale factor'")
 	RADIO (scaleMethod, U"Scale factor", 1)
@@ -3507,12 +3591,21 @@ DIRECT (NEW_Matrix_to_PCA_byRows) {
 }
 
 FORM (NEW_Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation...") {
-	REAL (tolerance, U"Tolerance", U"1.19e-7")
+	REAL (tolerance, U"Tolerance", U"1.0e-7")
 	OK
 DO
 	CONVERT_EACH (Matrix)
 		autoMatrix result = Matrix_solveEquation (me, tolerance);
 	CONVERT_EACH_END (my name.get(), U"_solution")
+}
+
+FORM (NEW_Matrix_solveMatrixEquation, U"Matrix: Solve matrix equation", U"Matrix: Solve matrix equation...") {
+	REAL (tolerance, U"Tolerance", U"1.0e-7")
+	OK
+DO
+	CONVERT_COUPLE (Matrix)
+		autoMatrix result = Matrix_solveEquation (me, you, tolerance);
+	CONVERT_COUPLE_END (U"solution")
 }
 
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
@@ -3549,6 +3642,88 @@ DIRECT (NEW_Matrix_to_ActivationList) {
 	CONVERT_EACH (Matrix)
 		autoActivationList result = Matrix_to_ActivationList (me);
 	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_Matrix_to_Eigen) {
+	CONVERT_EACH (Matrix)
+		autoEigen result = Matrix_to_Eigen (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_Matrix_to_SVD) {
+	CONVERT_EACH (Matrix)
+		autoSVD result = SVD_createFromGeneralMatrix (my z.get());
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEWTIMES2_Matrix_eigen_complex) {
+	LOOP {
+		iam_LOOP (Matrix);
+		autoMatrix vectors, values;
+		Matrix_Eigen_complex (me, & vectors, & values);
+		praat_new (vectors.move(), U"eigenvectors");
+		praat_new (values.move(), U"eigenvalues");
+	}
+END }
+
+FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...") {
+	NATURAL (numberOfFeatures, U"Number of features", U"2")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	BOOLEAN (info, U"Info", 0)
+	OK
+DO
+	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	CONVERT_EACH (Matrix)
+		autoNMF result = Matrix_to_NMF_mu (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
+	CONVERT_EACH_END (my name.get(), U"_mu")
+}
+
+FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)...") {
+	NATURAL (numberOfFeatures, U"Number of features", U"2")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"20")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	BOOLEAN (info, U"Info", 0)
+	OK
+DO
+	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	CONVERT_EACH (Matrix)
+		autoNMF result = Matrix_to_NMF_als (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
+	CONVERT_EACH_END (my name.get(), U"_als")
+}
+
+DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
+	NUMBER_TWO (NMF, Matrix)
+		double result = NMF_getEuclideanDistance (me, your z.get());
+	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
+}
+
+FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factorization (m.u.)", nullptr) {
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	BOOLEAN (info, U"Info", 0)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+		NMF_improveFactorization_mu (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factorization (ALS)", nullptr) {
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"10")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	BOOLEAN (info, U"Info", 0)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+		NMF_improveFactorization_als (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
+	MODIFY_FIRST_OF_TWO_END
 }
 
 FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
@@ -3838,7 +4013,7 @@ DO
 
 /**************** Ltas *******************************************/
 
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 FORM (INFO_Ltas_reportSpectralTilt, U"Ltas: Report spectral tilt", nullptr) {
 	POSITIVE (fromFrequency, U"left Frequency range (Hz)", U"100.0")
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"5000.0")
@@ -3910,8 +4085,10 @@ DO
 }
 
 FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
@@ -3920,8 +4097,10 @@ DO
 }
 
 FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
@@ -3960,6 +4139,15 @@ DIRECT (HELP_MSpline_help) {
 	HELP (U"MSpline")
 }
 
+DIRECT (HELP_NMF_help) {
+	HELP (U"NMF")
+}
+
+DIRECT (NEW_NMF_to_Matrix) {
+	CONVERT_EACH (NMF)
+		autoMatrix result = NMF_to_Matrix (me);
+	CONVERT_EACH_END (my name.get())
+}
 /********************** PatternList *******************************************/
 
 DIRECT (NEW1_PatternList_Categories_to_Discriminant) {
@@ -4002,6 +4190,12 @@ DO
 	NUMBER_ONE (PatternList)
 		double result = ( patternNumber <= my ny && nodeNumber <= my nx ? my z [patternNumber] [nodeNumber] : undefined );
 	NUMBER_ONE_END (U"")
+}
+
+DIRECT (NUMMAT_PatternList_getAllValues) {
+	NUMMAT_ONE (PatternList)
+		autoMAT result = newMATcopy (my z.all());
+	NUMMAT_ONE_END
 }
 
 FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
@@ -4144,8 +4338,8 @@ FORM (REAL_PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"
 DO
 	NUMBER_ONE (PCA)
 		double result, chisq, df;
-		PCA_getEqualityOfEigenvalues (me, fromEigenvalue,
-		toEigenvalue, conservativeTest, & result, & chisq, & df);
+		PCA_getEqualityOfEigenvalues (me, fromEigenvalue, toEigenvalue,
+				conservativeTest, & result, & chisq, & df);
 	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and df = ", df)
 }
 
@@ -4186,7 +4380,7 @@ FORM (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract 
 	INTEGER (numberOfColumns, U"Number of columns", U"0")
 	OK
 DO
-	Melder_require (numberOfRows >= 0, U"The number of rows should beat least 0.");
+	Melder_require (numberOfRows >= 0, U"The number of rows should be at least 0.");
 	Melder_require (numberOfColumns >= 0, U"The number of columns should be at least 0.");
 	CONVERT_EACH (PCA);
 		autoMatrix result = Eigen_extractEigenvector (me, eigenvectorNumber, numberOfRows, numberOfColumns);
@@ -4221,8 +4415,16 @@ DO
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 	NUMBER_COUPLE (PCA)
+		Melder_require (my numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the first PCA.");
+		Melder_require (your numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the second PCA.");
 		double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
 	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
+}
+
+DIRECT (NEW1_PCA_SSCP_project) {
+	CONVERT_TWO (PCA, SSCP)
+		autoSSCP result = Eigen_SSCP_project (me, you);
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 /******************* Permutation **************************************/
@@ -4738,12 +4940,12 @@ FORM (INFO_Polynomial_getDerivativesAtX, U"Polynomial: Get derivatives at X", nu
 	INTEGER (numberOfDerivatives, U"Number of derivatives", U"2")
 	OK
 DO
-	autoNUMvector <double> derivatives ((integer) 0, numberOfDerivatives);
 	INFO_ONE (Polynomial)
-		Polynomial_evaluateDerivatives (me, x, derivatives.peek(), numberOfDerivatives);
+		autoVEC derivatives = Polynomial_evaluateDerivatives (me, x, numberOfDerivatives);
 		MelderInfo_open ();
-			for (integer i = 0; i <= numberOfDerivatives; i ++) {
-				MelderInfo_writeLine (i, U": ", i < my numberOfCoefficients ? derivatives [i] : undefined);
+			MelderInfo_writeLine (U"Function value: ", derivatives [1]);
+			for (integer i = 2; i <= numberOfDerivatives + 1; i ++) {
+				MelderInfo_writeLine (U"Derivative ", i - 1, U": ", i < my numberOfCoefficients ? derivatives [i] : undefined, U"");
 			}
 		MelderInfo_close ();
 	INFO_ONE_END
@@ -4859,7 +5061,7 @@ FORM (GRAPHICS_Roots_draw, U"Roots: Draw", nullptr) {
 	REAL (ymin, U"Minimum of imaginary axis", U"0.0")
 	REAL (ymax, U"Maximum of imaginary axis", U"0.0")
 	SENTENCE (mark_string, U"Mark string (+x0...)", U"o")
-	NATURAL (markSize, U"Mark size", U"12")
+	POSITIVE (markSize, U"Mark size", U"12")
 	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
@@ -5173,6 +5375,19 @@ DO
 	}
 END }
 
+FORM (REAL_Sound_getNearestLevelCrossing, U"Sound: Get nearest level crossing", U"Sound: Get nearest level crossing...") {
+	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (level, U"Level", U"0.1")
+	OPTIONMENU_ENUM (kSoundSearchDirection, searchDirection, U"Search direction", kSoundSearchDirection::DEFAULT)
+	OK
+DO
+	NUMBER_ONE (Sound)
+		if (channel > my ny) channel = 1;
+		double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
+	NUMBER_ONE_END (U" seconds")
+}
+
 FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
     POSITIVE (windowLength, U"Window length (s)", U"0.015")
     POSITIVE (timeStep, U"Time step (s)", U"0.005")
@@ -5462,7 +5677,7 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_filtered")
 }
 
-FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Remove noise...") {
+FORM (NEW_Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: Reduce noise...") {
 	REAL (fromTime, U"left Noise time range (s)", U"0.0")
 	REAL (toTime, U"right Noise time range (s)", U"0.0")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
@@ -5470,8 +5685,24 @@ FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Remove noise...") 
 	REAL (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
 	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
 	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
-	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
-		OPTION (U"Spectral subtraction")
+	REAL (noiseReduction_dB, U"Noise reduction (dB)", U"-20.0")
+	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoSound result = Sound_reduceNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, smoothingBandwidth, noiseReduction_dB, noiseReductionMethod);
+	CONVERT_EACH_END (my name.get(), U"_denoised")
+}
+
+FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") {
+	REAL (fromTime, U"left Noise time range (s)", U"0.0")
+	REAL (toTime, U"right Noise time range (s)", U"0.0")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	LABEL (U"Filter")
+	REAL (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
+	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
+	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
+	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5730,7 +5961,7 @@ FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify pho
 	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
 DO
 	MODIFY_EACH (SpeechSynthesizer)
-		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phoneneSetIndex].get());
+		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phoneneSetIndex].get());
 	MODIFY_EACH_END
 }
 
@@ -6231,6 +6462,16 @@ DO
 	INTEGER_ONE_END (U" (= number of singular values needed)")
 }
 
+FORM (NEW_SVD_to_Matrix, U"SVD: To Matrix", U"SVD: To Matrix...") {
+	NATURAL (fromComponent, U"First component", U"1")
+	INTEGER (toComponent, U"Last component", U"0 (= all)")
+	OK
+DO
+	CONVERT_EACH (SVD)
+		autoMatrix result = SVD_to_Matrix (me, fromComponent, toComponent);
+	CONVERT_EACH_END (my name.get())
+}
+
 FORM (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
 	NATURAL (fromComponent, U"First component", U"1")
 	INTEGER (toComponent, U"Last component", U"0 (= all)")
@@ -6288,7 +6529,7 @@ FORM (GRAPHICS_Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	WORD (markColumn_string, U"Column with marks", U"")
-	NATURAL (fontSize, U"Font size", U"12")
+	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -6364,7 +6605,7 @@ DO
 }
 
 FORM (GRAPHICS_Table_boxPlots, U"Table: Box plots", nullptr) {
-	WORD (dataColumns_string, U"Data columns", U"F1 F2")
+	SENTENCE (dataColumns_string, U"Data columns", U"F1 F2")
 	WORD (factorColumn_string, U"Factor column", U"Sex")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
@@ -6421,7 +6662,7 @@ FORM (GRAPHICS_Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	WORD (factorColumn_string, U"Factor column", U"Vowel")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
+	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -6442,7 +6683,7 @@ FORM (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) 
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	WORD (factorColumn_string, U"Factor column", U"Vowel")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
+	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
 	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
 	OK
@@ -6700,7 +6941,8 @@ DO
 
 FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	SENTENCE (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
-	RADIO_ENUM (haveAMahalanobisDistance, U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
+	RADIO_ENUM (kMelder_number, haveAMahalanobisDistance,
+			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	WORD (factorColumn_string, U"Factor column", U"")
 	TEXTFIELD (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
@@ -6820,14 +7062,17 @@ FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalabl
 	INTEGER (rowmax, U"To row", U"0 (=all)");
 	NATURAL (colmin, U"From column", U"1");
 	INTEGER (colmax, U"To column", U"0 (=all)");
-	OPTIONMENU_ENUM (origin, U"Origin", kGraphicsMatrixOrigin, DEFAULT)
+	OPTIONMENU_ENUM (kGraphicsMatrixOrigin, origin,
+			U"Origin", kGraphicsMatrixOrigin::DEFAULT)
 	POSITIVE (scaleFactor, U"Cell area scale factor", U"0.95")
-	OPTIONMENU_ENUM (drawingOrder, U"Filling order", kGraphicsMatrixCellDrawingOrder, DEFAULT)
+	OPTIONMENU_ENUM (kGraphicsMatrixCellDrawingOrder, drawingOrder,
+			U"Filling order", kGraphicsMatrixCellDrawingOrder::DEFAULT)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawAsScalableSquares (me, GRAPHICS, rowmin, rowmax, colmin, colmax, origin, scaleFactor, drawingOrder, garnish);
+		TableOfReal_drawAsScalableSquares (me, GRAPHICS, rowmin, rowmax, colmin, colmax,
+				origin, scaleFactor, drawingOrder, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7027,6 +7272,19 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)", U"TableOfReal: To SSCP (row weights)...") {
+	INTEGER (fromRow, U"Begin row", U"0")
+	INTEGER (toRow, U"End row", U"0")
+	INTEGER (fromColumn, U"Begin column", U"0")
+	INTEGER (toColumn, U"End column", U"0")
+	INTEGER (rowWeights, U"Weights column number", U"0")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoSSCP result = TableOfReal_to_SSCP_rowWeights (me, fromRow, toRow, fromColumn, toColumn, rowWeights);
+	CONVERT_EACH_END (my name.get())
+}
+
 /* For the inheritors */
 DIRECT (NEW_TableOfReal_to_TableOfReal) {
 	CONVERT_EACH (TableOfReal)
@@ -7157,10 +7415,31 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
 }
 
+FORM (NEW_TableOfReal_to_TableOfReal_rankColumns, U"TableOfReal: Rank columns", U"TableOfReal: To TableOfReal (rank columns)...") {
+	INTEGER (fromColumn, U"left Column range", U"0")
+	INTEGER (toColumn, U"right Column range", U"0 (=all)")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_rankColumns (me, fromColumn, toColumn);
+	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
+}
+
 /***** TableOfReal and FilterBank  *****/
 
+FORM (REAL_TextGrid_getTotalDurationOfIntervalsWhere, U"Total duration of intervals where", nullptr) {
+	INTEGER (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kMelder_string, countIntervalsWhoseLabel___,
+			U"Intervals whose label...", kMelder_string::DEFAULT)
+	SENTENCE (___theText, U"...the text", U"hi")
+	OK
+DO
+	NUMBER_ONE (TextGrid)
+		double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
+	NUMBER_ONE_END (U" s (duration of intervals containing \"", ___theText, U"\")");
+}
+
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
-	LABEL (U"")
 	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
 	RADIO (position, U"At", 1)
 		RADIOBUTTON (U"End")
@@ -7172,13 +7451,12 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval text", U"TextGrid: Replace interval text...") {
-	LABEL (U"")
+FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts", U"TextGrid: Replace interval texts...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	INTEGER (fromInterval, U"left Interval range", U"0")
-	INTEGER (toInterval, U"right Interval range", U"0")
+	INTEGER (fromInterval, U"left Interval range", U"1")
+	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
-	SENTENCE (replace_string, U"Replace", U"a")
+	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
@@ -7190,13 +7468,12 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point text", U"TextGrid: Replace point text...") {
-	LABEL (U"")
+FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"TextGrid: Replace point texts...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	INTEGER (fromInterval, U"left Interval range", U"0")
-	INTEGER (toInterval, U"right Interval range", U"0")
+	INTEGER (fromInterval, U"left Interval range", U"1")
+	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
-	SENTENCE (replace_string, U"Replace", U"a")
+	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
@@ -7208,13 +7485,13 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW1_TextGrids_to_Table_textAlignmentment, U"TextGrids: To Table (text alignment)", nullptr) {
+FORM (NEW1_TextGrids_to_Table_textAlignment, U"TextGrids: To Table (text alignment)", nullptr) {
 	NATURAL (targetTierNumber, U"Target tier", U"1")
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE (TextGrid)
- 		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, nullptr);
+ 		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, nullptr);
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
 }
 
@@ -7223,13 +7500,14 @@ FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To
 	POSITIVE (timeScaleFactor, U"Time scale factor", U"2.0")
 	POSITIVE (leftTransitionDuration, U"Left transition duration (s)", U"1e-10")
 	POSITIVE (rightTransitionDuration, U"Right transition duration (s)", U"1e-10")
-	OPTIONMENU_ENUM (scaleIntervalsWhoseLabel___, U"Scale intervals whose label... ", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, scaleIntervalsWhoseLabel___,
+			U"Scale intervals whose label... ", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
 		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor,
-			leftTransitionDuration, rightTransitionDuration, (kMelder_string) scaleIntervalsWhoseLabel___, ___theText);
+			leftTransitionDuration, rightTransitionDuration, scaleIntervalsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -7239,13 +7517,13 @@ DIRECT (NEW_TextGrid_DurationTier_to_TextGrid) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
-FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignmentment, U"TextGrids & EditCostsTable: To Table(text alignmentment)", nullptr) {
+FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignment, U"TextGrids & EditCostsTable: To Table (text alignment)", nullptr) {
 	NATURAL (targetTierNumber, U"Target tier", U"1")
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
-		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, him);
+		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, him);
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -7513,7 +7791,7 @@ void praat_uvafon_David_init () {
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
-		classIndex, classKlattTable,
+		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
@@ -7586,6 +7864,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classActivationList, 0, U"To PatternList", nullptr, 0, NEW_ActivationList_to_PatternList);
 
 	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_ActivationList_Categories_to_TableOfReal);
+	
+	praat_addAction1 (classAmplitudeTier, 0, U"Get value at time...", U"Get time from index...", 1, REAL_AmplitudeTier_getValueAtTime);
+	praat_addAction1 (classAmplitudeTier, 0, U"Get value at index...", U"Get value at time...", 1, REAL_AmplitudeTier_getValueAtIndex);
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, HELP_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
@@ -7650,6 +7931,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0, NEW_ComplexSpectrogram_downto_Spectrogram);
 	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 0, NEW_ComplexSpectrogram_to_Spectrum_slice);
 	//praat_addAction1 (classComplexSpectrogram, 0, U"Paint...", 0, 1, DO_Spectrogram_paint);
+	praat_addAction2 (classComplexSpectrogram, 1, classSpectrogram, 1, U"Replace amplitudes", nullptr, 0, MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes);
 
 	praat_addAction1 (classConfusion, 0, U"Confusion help", nullptr, 0, HELP_Confusion_help);
 	praat_TableOfReal_init2 (classConfusion);
@@ -7697,6 +7979,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, NEW_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, NEW_Covariance_to_PCA);
 	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, NEW1_Covariances_pool);
+	praat_addAction1 (classCovariance, 0, U"To Covariance (between)", nullptr, 0, NEW1_Covariances_to_Covariance_between);
+	praat_addAction1 (classCovariance, 0, U"To Covariance (within)", nullptr, 0, NEW1_Covariances_to_Covariance_within);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_TableOfReal_mahalanobis);
 
@@ -7988,14 +8272,23 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1, GRAPHICS_Matrix_drawCumulativeDistribution);
 	praat_addAction1 (classMatrix, 0, U"Get mean...", U"Get sum", 1, REAL_Matrix_getMean);
 	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, REAL_Matrix_getStandardDeviation);
+	praat_addAction1 (classMatrix, 0, U"Mathematical -", U"Get standard deviation...", 1, nullptr);
+	praat_addAction1 (classMatrix, 0, U"Get norm...", U"Mathematical -", 2, REAL_Matrix_getNorm);
+	
 	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, NEW_Matrix_transpose);
 	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, NEW_Matrix_solveEquation);
-	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve equation...", 0, NEW_Matrix_to_PCA_byRows);
+	praat_addAction1 (classMatrix, 2, U"Solve matrix equation...", U"Solve equation...", 0, NEW_Matrix_solveMatrixEquation);
+	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve matrix equation...", 0, NEW_Matrix_to_PCA_byRows);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, NEW_Matrix_to_PCA_byColumns);
 	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, NEW_Matrix_to_PatternList);
 	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"*To PatternList...", praat_DEPRECATED_2016, NEW_Matrix_to_PatternList);
 	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, NEW_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 0, U"To Activation", U"*To ActivationList", praat_DEPRECATED_2016, NEW_Matrix_to_ActivationList);
+	praat_addAction1 (classMatrix, 0, U"To Eigen", U"Eigen", praat_HIDDEN, NEW_Matrix_to_Eigen);
+	praat_addAction1 (classMatrix, 0, U"To SVD", U"To Eigen", praat_HIDDEN, NEW_Matrix_to_SVD);
+	praat_addAction1 (classMatrix, 0, U"To NMF (m.u.)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_mu);
+	praat_addAction1 (classMatrix, 0, U"To NMF (ALS)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_als);
+	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
@@ -8036,12 +8329,20 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, HELP_MSpline_help);
 	praat_Spline_init (classMSpline);
 
+	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
+	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
+	
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, REAL_NMF_Matrix_getEuclideanDistance);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (ALS)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_als);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (m.u.)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_mu);
+	
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, GRAPHICS_PatternList_draw);
 	praat_PatternList_query_init (classPatternList);
 	praat_addAction1 (classPatternList, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, MODIFY_PatternList_formula);
 	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, MODIFY_PatternList_setValue);
+	praat_addAction1 (classPatternList, 0, U"Get all values", nullptr, 0, NUMMAT_PatternList_getAllValues);
 	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0, NEW_PatternList_to_Matrix);
 
 	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
@@ -8075,7 +8376,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectRows);
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project columns)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectColumns);
 	praat_addAction2 (classPCA, 1, classPatternList, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectRows);
-	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_Eigen_SSCP_project);
+	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_PCA_SSCP_project);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (project rows)...", nullptr, 0, NEW1_PCA_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal...", U"*To TableOfReal (project rows)...", praat_DEPRECATED_2016, NEW1_PCA_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_PCA_TableOfReal_to_Configuration);
@@ -8183,6 +8484,8 @@ void praat_uvafon_David_init () {
 	//	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_paintEnclosed);
 	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", 1, GRAPHICS_Sounds_paintEnclosed);
 
+	praat_addAction1 (classSound, 1, U"Get nearest level crossing...", U"Get nearest zero crossing...", 1, REAL_Sound_getNearestLevelCrossing);
+
 	praat_addAction1 (classSound, 0, U"To Pitch (shs)...", U"To Pitch (cc)...", 1, NEW_Sound_to_Pitch_shs);
 	praat_addAction1 (classSound, 0, U"Fade in...", U"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, MODIFY_Sound_fadeIn);
 	praat_addAction1 (classSound, 0, U"Fade out...", U"Fade in...", praat_HIDDEN + praat_DEPTH_1, MODIFY_Sound_fadeOut);
@@ -8203,7 +8506,8 @@ void praat_uvafon_David_init () {
     praat_addAction1 (classSound, 2, U"To DTW...", U"Cross-correlate...", praat_DEPTH_1, NEW1_Sounds_to_DTW);
 
 	praat_addAction1 (classSound, 1, U"Filter (gammatone)...", U"Filter (de-emphasis)...", 1, NEW_Sound_filterByGammaToneFilter4);
-	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", 1, NEW_Sound_removeNoise);
+	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_removeNoise);
+	praat_addAction1 (classSound, 0, U"Reduce noise...", U"Filter (formula)...", praat_DEPTH_1, NEW_Sound_reduceNoise);
 
 	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, NEW_Sound_changeGender);
 
@@ -8286,6 +8590,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1, INTEGER_SVD_getMinimumNumberOfSingularValues);
 	
 	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, NEW_SVD_to_TableOfReal);
+	praat_addAction1 (classSVD, 0, U"To Matrix...", nullptr, 0, NEW_SVD_to_Matrix);
 	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0, NEW_SVD_extractLeftSingularVectors);
 	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0, NEW_SVD_extractRightSingularVectors);
 	praat_addAction1 (classSVD, 0, U"Extract singular values", nullptr, 0, NEW_SVD_extractSingularValues);
@@ -8316,6 +8621,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,	INFO_Table_reportOneWayAnova);
 	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportOneWayKruskalWallis);
 	praat_addAction1 (classTable, 1, U"Report two-way anova...", U"Report one-way Kruskal-Wallis...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportTwoWayAnova);
+	praat_addAction1 (classTable, 1, U"Report robust statistics...", U"Report two-way anova...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportRobustStatistics);
 	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", praat_DEPTH_1, NEW_Table_extractRowsWhere);
 	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN, NEW_Table_extractRowsMahalanobisWhere);
 	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1| praat_HIDDEN, 0);
@@ -8331,17 +8637,18 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1, NEW_TableOfReal_to_Discriminant);
 	praat_addAction1 (classTableOfReal, 0, U"To PCA", nullptr, 1, NEW_TableOfReal_to_PCA_byRows);
 	praat_addAction1 (classTableOfReal, 0, U"To SSCP...", nullptr, 1, NEW_TableOfReal_to_SSCP);
+	praat_addAction1 (classTableOfReal, 0, U"To SSCP (row weights)...", nullptr, 1, NEW_TableOfReal_to_SSCP_rowWeights);
 	praat_addAction1 (classTableOfReal, 0, U"To Covariance", nullptr, 1, NEW_TableOfReal_to_Covariance);
 	praat_addAction1 (classTableOfReal, 0, U"To Correlation", nullptr, 1, NEW_TableOfReal_to_Correlation);
 	praat_addAction1 (classTableOfReal, 0, U"To Correlation (rank)", nullptr, 1, NEW_TableOfReal_to_Correlation_rank);
 	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, NEW_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, NEW_TableOfReal_meansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, NEW_TableOfReal_mediansByRowLabels);
-
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_TableOfReal_rankColumns);
 	praat_addAction1 (classTableOfReal, 0, U"-- configurations --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, NEW_TableOfReal_to_Configuration_pca);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (lda)...", nullptr, 1, NEW_TableOfReal_to_Configuration_lda);
-	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", U"To Configuration (lda)...", 1, 0);
+	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_TableOfReal_TableOfReal_crossCorrelations);
 
 	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1, NEWMANY_TableOfReal_to_PatternList_and_Categories);
@@ -8370,14 +8677,17 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows", nullptr, 0, NEW1_TableOfReal_Permutation_permuteRows);
 
+	praat_addAction1 (classTextGrid, 1, U"Get total duration of intervals where...", U"Count intervals where...", 2, REAL_TextGrid_getTotalDurationOfIntervalsWhere);
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1, MODIFY_TextGrid_setTierName);
-	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
-	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
-	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignmentment);
+	praat_addAction1 (classTextGrid, 0, U"Replace interval texts...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"*Replace interval texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replaceIntervalTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace point texts...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
-	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignmentment);
+	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

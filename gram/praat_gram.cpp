@@ -36,7 +36,8 @@
 #define UiForm_addNetworkFields  \
 	LABEL (U"Activity spreading settings:") \
 	REAL (spreadingRate, U"Spreading rate", U"0.01") \
-	OPTIONMENU_ENUM (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT) \
+	OPTIONMENU_ENUM (kNetwork_activityClippingRule, activityClippingRule, \
+			U"Activity clipping rule", kNetwork_activityClippingRule::DEFAULT) \
 	REAL (minimumActivity, U"left Activity range", U"0.0") \
 	REAL (maximumActivity, U"right Activity range", U"1.0") \
 	REAL (activityLeak, U"Activity leak", U"1.0") \
@@ -57,10 +58,10 @@ FORM (NEW1_Create_empty_Network, U"Create empty Network", nullptr) {
 	OK
 DO
 	CREATE_ONE
-		autoNetwork result = Network_create (spreadingRate,
-			(kNetwork_activityClippingRule) activityClippingRule,
+		autoNetwork result = Network_create (spreadingRate, activityClippingRule,
 			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
-			fromX, toX, fromY, toY, 0, 0);
+			fromX, toX, fromY, toY, 0, 0
+		);
 	CREATE_ONE_END (name)
 }
 
@@ -76,10 +77,10 @@ FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", nullptr) {
 	OK
 DO
 	CREATE_ONE
-		autoNetwork result = Network_create_rectangle (spreadingRate,
-			(kNetwork_activityClippingRule) activityClippingRule,
+		autoNetwork result = Network_create_rectangle (spreadingRate, activityClippingRule,
 			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
-			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight);
+			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight
+		);
 	CREATE_ONE_END (U"rectangle_", numberOfRows, U"_", numberOfColumns)
 }
 
@@ -98,7 +99,8 @@ DO
 		autoNetwork result = Network_create_rectangle_vertical (spreadingRate,
 			(kNetwork_activityClippingRule) activityClippingRule,
 			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
-			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight);
+			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight
+		);
 	CREATE_ONE_END (U"rectangle_", numberOfRows, U"_", numberOfColumns)
 }
 
@@ -131,7 +133,8 @@ DO
 	INFO_ONE (Network)
 		Network_listNodes (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
-			includeClamped, includeActivity, includeExcitation, activityDecimals);
+			includeClamped, includeActivity, includeExcitation, activityDecimals
+		);
 	INFO_ONE_END
 }
 
@@ -151,7 +154,8 @@ DO
 	CONVERT_EACH (Network)
 		autoTable result = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
-			includeClamped, includeActivity, includeExcitation, activityDecimals);
+			includeClamped, includeActivity, includeExcitation, activityDecimals
+		);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -235,7 +239,8 @@ DO
 }
 
 FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", nullptr) {
-	RADIO_ENUM (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
+	RADIO_ENUM (kNetwork_activityClippingRule, activityClippingRule,
+			U"Activity clipping rule", kNetwork_activityClippingRule::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -360,8 +365,10 @@ DIRECT (NEW1_Create_NPA_distribution) {
 }
 
 FORM (NEW1_Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
-	RADIO_ENUM (constraintSet, U"Constraint set", kOTGrammar_createTongueRootGrammar_constraintSet, DEFAULT)
-	RADIO_ENUM (ranking, U"Ranking", kOTGrammar_createTongueRootGrammar_ranking, DEFAULT)
+	RADIO_ENUM (kOTGrammar_createTongueRootGrammar_constraintSet, constraintSet,
+			U"Constraint set", kOTGrammar_createTongueRootGrammar_constraintSet::DEFAULT)
+	RADIO_ENUM (kOTGrammar_createTongueRootGrammar_ranking, ranking,
+			U"Ranking", kOTGrammar_createTongueRootGrammar_ranking::DEFAULT)
 	OK
 DO
 	CREATE_ONE
@@ -370,7 +377,8 @@ DO
 }
 
 FORM (NEW1_Create_metrics_grammar, U"Create metrics grammar", nullptr) {
-	OPTIONMENU_ENUM (initialRanking, U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking, DEFAULT)
+	OPTIONMENU_ENUM (kOTGrammar_createMetricsGrammar_initialRanking, initialRanking,
+			U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking::DEFAULT)
 	OPTIONMENU (trochaicityConstraint, U"Trochaicity constraint", 1)
 		OPTION (U"FtNonfinal")
 		OPTION (U"Trochaic")
@@ -663,7 +671,7 @@ DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
 	LOOP try {
 		iam (OTGrammar);
 		autoDistributions thee = OTGrammar_measureTypology_WEAK (me);
-		praat_new (thee.move(), my name.get(), U"_out");
+		praat_new (std::move (thee), my name.get(), U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
@@ -787,15 +795,15 @@ FORM (MODIFY_OTGrammar_learnOne, U"OTGrammar: Learn one", U"OTGrammar: Learn one
 	SENTENCE (inputString, U"Input string", U"")
 	SENTENCE (outputString, U"Output string", U"")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (plasticity, U"Plasticity", U"0.1")
 	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
 	OK
 DO
 	MODIFY_EACH_WEAK (OTGrammar)
-		OTGrammar_learnOne (me, inputString, outputString, evaluationNoise,
-			(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+		OTGrammar_learnOne (me, inputString, outputString, evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, true, true, nullptr);
 	MODIFY_EACH_WEAK_END
 }
@@ -804,7 +812,8 @@ FORM (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from pa
 	LABEL (U"Partial adult surface form (e.g. overt form):")
 	SENTENCE (partialOutput, U"Partial output", U"")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (plasticity, U"Plasticity", U"0.1")
 	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
@@ -812,8 +821,7 @@ FORM (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from pa
 	OK
 DO
 	MODIFY_EACH_WEAK (OTGrammar)
-		OTGrammar_learnOneFromPartialOutput (me, partialOutput, evaluationNoise,
-			(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+		OTGrammar_learnOneFromPartialOutput (me, partialOutput, evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, numberOfChews, true);
 	MODIFY_EACH_WEAK_END
 }
@@ -821,7 +829,8 @@ DO
 // MARK: Modify behaviour
 
 FORM (MODIFY_OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy", nullptr) {
-	RADIO_ENUM (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
+	RADIO_ENUM (kOTGrammar_decisionStrategy, decisionStrategy,
+			U"Decision strategy", kOTGrammar_decisionStrategy::DEFAULT)
 OK
 	FIND_ONE (OTGrammar)
 		SET_ENUM (decisionStrategy, kOTGrammar_decisionStrategy, my decisionStrategy);
@@ -899,7 +908,8 @@ DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
 
 FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (plasticity, U"Plasticity", U"0.1")
 	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
@@ -907,14 +917,15 @@ FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Str
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK (OTGrammar, Strings)
-		OTGrammar_learn (me, you, him, evaluationNoise, (enum kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+		OTGrammar_learn (me, you, him, evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, numberOfChews);
 	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END
 }
 
 FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial adult outputs", nullptr) {
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (plasticity, U"Plasticity", U"0.1")
 	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
@@ -925,8 +936,7 @@ DO
 	FIND_TWO (OTGrammar, Strings)
 		autoOTHistory history;
 		try {
-			OTGrammar_learnFromPartialOutputs (me, you, evaluationNoise,
-				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+			OTGrammar_learnFromPartialOutputs (me, you, evaluationNoise, updateRule, honourLocalRankings,
 				plasticity, relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history);
 			praat_dataChanged (me);
 		} catch (MelderError) {
@@ -957,7 +967,8 @@ DO
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (columnNumber, U"Column number", U"1")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
 	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
 	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
@@ -972,22 +983,25 @@ DO
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
-				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+				updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, false, false, 0);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, false, false, 0
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (columnNumber, U"Column number", U"1")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
 	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
 	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
@@ -1002,22 +1016,25 @@ DO
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
-				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+				updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 0);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 0
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (columnNumber, U"Column number", U"1")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
 	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
 	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
@@ -1032,22 +1049,25 @@ DO
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
-				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+				updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1000);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1000
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (columnNumber, U"Column number", U"1")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
 	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
 	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
@@ -1062,15 +1082,17 @@ DO
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
-				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+				updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1091,7 +1113,7 @@ FORM (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairD
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (OTGrammar, PairDistribution)
-		OTGrammar_PairDistribution_findPositiveWeights_e (me, you, weightFloor, marginOfSeparation);
+		OTGrammar_PairDistribution_findPositiveWeights (me, you, weightFloor, marginOfSeparation);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -1134,7 +1156,8 @@ DO
 
 FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	POSITIVE (initialPlasticity, U"Initial plasticity", U"1.0")
 	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
 	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
@@ -1146,7 +1169,7 @@ FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: L
 DO
 	MODIFY_FIRST_OF_TWO_WEAK (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_learn (me, you,
-			evaluationNoise, (enum kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
+			evaluationNoise, updateRule, honourLocalRankings,
 			initialPlasticity, replicationsPerPlasticity,
 			plasticityDecrement, numberOfPlasticities, relativePlasticitySpreading, numberOfChews);
 	MODIFY_FIRST_OF_TWO_WEAK_END
@@ -1163,7 +1186,8 @@ DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
 // MARK: New
 
 FORM (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar", nullptr) {
-	OPTIONMENU_ENUM (initialRanking, U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking, DEFAULT)
+	OPTIONMENU_ENUM (kOTGrammar_createMetricsGrammar_initialRanking, initialRanking,
+			U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking::DEFAULT)
 	OPTIONMENU (trochaicityConstraint, U"Trochaicity constraint", 1)
 		OPTION (U"FtNonfinal")
 		OPTION (U"Trochaic")
@@ -1397,7 +1421,8 @@ DO
 FORM (MODIFY_OTMulti_learnOne, U"OTMulti: Learn one", nullptr) {
 	SENTENCE (partialForm1, U"Partial form 1", U"")
 	SENTENCE (partialForm2, U"Partial form 2", U"")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	OPTIONMENU (direction, U"Direction", 3)
 		OPTION (U"forward")
 		OPTION (U"backward")
@@ -1415,7 +1440,8 @@ DO
 // MARK: Modify behaviour
 
 FORM (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
-	RADIO_ENUM (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
+	RADIO_ENUM (kOTGrammar_decisionStrategy, decisionStrategy,
+			U"Decision strategy", kOTGrammar_decisionStrategy::DEFAULT)
 OK
 	FIND_ONE (OTMulti)
 		SET_ENUM (decisionStrategy, kOTGrammar_decisionStrategy, my decisionStrategy);
@@ -1461,7 +1487,8 @@ DO
 
 FORM (DANGEROUS_MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+			U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 	OPTIONMENU (direction, U"Direction", 3)
 		OPTION (U"forward")
 		OPTION (U"backward")
@@ -1522,7 +1549,8 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Net_spreadUp, U"Net: Spread up", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kLayer_activationType, STOCHASTIC)
+	RADIO_ENUM (kLayer_activationType, activationType,
+			U"Activation type", kLayer_activationType::STOCHASTIC)
 	OK
 DO
 	MODIFY_EACH (Net)
@@ -1531,7 +1559,8 @@ DO
 }
 
 FORM (MODIFY_Net_spreadDown, U"Net: Spread down", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kLayer_activationType, DETERMINISTIC)
+	RADIO_ENUM (kLayer_activationType, activationType,
+			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
 	MODIFY_EACH (Net)
@@ -1630,7 +1659,7 @@ FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
 	OK
 DO
 	NUMMAT_ONE (Net)
-		autonummat result = Net_getWeights_nummat (me, layerNumber);
+		autoMAT result = Net_getWeights (me, layerNumber);
 	NUMMAT_ONE_END
 }
 
@@ -1672,8 +1701,18 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
+FORM (MODIFY_Net_PatternList_learn_twoPhases, U"Net & PatternList: Learn (two phases)", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (Net, PatternList)
+		Net_PatternList_learn_twoPhases (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
 FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kLayer_activationType, DETERMINISTIC)
+	RADIO_ENUM (kLayer_activationType, activationType,
+			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
 	CONVERT_TWO (Net, PatternList)
@@ -1879,6 +1918,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_Net_PatternList_applyToOutput);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_Net_PatternList_learn);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_Net_PatternList_learnByLayer);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn (two phases)...", nullptr, 0, MODIFY_Net_PatternList_learn_twoPhases);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_Net_PatternList_to_ActivationList);
 
 	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);

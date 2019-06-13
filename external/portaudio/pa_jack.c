@@ -1,3 +1,4 @@
+#ifdef UNIX
 /*
  * $Id: pa_jack.c 1912 2013-11-15 12:27:07Z gineera $
  * PortAudio Portable Real-Time Audio Library
@@ -70,6 +71,8 @@
 #include "pa_cpuload.h"
 #include "pa_ringbuffer.h"
 #include "pa_debugprint.h"
+
+#include "pa_jack.h"
 
 static pthread_t mainThread_;
 static char *jackErr_ = NULL;
@@ -1767,3 +1770,4 @@ PaError PaJack_GetClientName(const char** clientName)
 error:
     return result;
 }
+#endif

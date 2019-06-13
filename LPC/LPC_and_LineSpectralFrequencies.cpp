@@ -1,6 +1,6 @@
 /* LPC_and_LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016-2017 David Weenink
+ * Copyright (C) 2016-2018 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,11 @@
 #include "Polynomial.h"
 
 
-/* Conversion from Y(w) to a polynomial in x (= 2 cos (w))
- * From: Joseph Rothweiler (1999), "On Polynomial Reduction in the Computation of LSP Frequencies." 
- * 	IEEE Trans. on ASSP 7, 592--594.
- */
+/*
+	Conversion from Y(w) to a polynomial in x (= 2 cos (w))
+	From: Joseph Rothweiler (1999), "On Polynomial Reduction in the Computation of LSP Frequencies." 
+	IEEE Trans. on ASSP 7, 592--594.
+*/
 static void cos2x (double *g, integer order) {
 	for (integer i = 2; i <= order; i ++) {
 		for (integer j = order; j > i; j --) {
@@ -40,7 +41,7 @@ static void cos2x (double *g, integer order) {
 }
 
 static void Polynomial_fromLPC_Frame_lspsum (Polynomial me, LPC_Frame lpc) {
-	/* Fs (z) = A(z) + z^-(p+1) A(1/z) */
+	// Fs (z) = A(z) + z^-(p+1) A(1/z)
 	
 	integer order = lpc -> nCoefficients, g_order = (order + 1) / 2; // orders
 	my coefficients [order + 2] = 1.0;
@@ -53,17 +54,19 @@ static void Polynomial_fromLPC_Frame_lspsum (Polynomial me, LPC_Frame lpc) {
 	if (order % 2 == 0) { // order even
 		Polynomial_divide_firstOrderFactor (me, -1.0, nullptr);
 	}
-	/* transform to cos(w) terms */
+	
+	// transform to cos(w) terms
 	for (integer i = 1; i <= g_order + 1; i ++) {
 		my coefficients [i] = my coefficients [g_order + i];
 	}
 	my numberOfCoefficients = g_order + 1;
-	/* to Chebychev */
+	
+	// to Chebychev
 	cos2x (& my coefficients [1], g_order);
 }
 
 static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
-	/* Fa (z) = A(z) - z^-(p+1)A(1/z) */
+	// Fa (z) = A(z) - z^-(p+1)A(1/z)
 	integer order = lpc -> nCoefficients;
 	my coefficients [order + 2] = -1.0;
 	for (integer i = 1; i <= order; i ++) {
@@ -77,13 +80,14 @@ static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
 	} else { // Fa(z) / (z^2 - 1)
 		Polynomial_divide_secondOrderFactor (me, 1.0);
 	}
-	/* transform to cos(w) terms */
+	
+	// transform to cos(w) terms
 	integer g_order = my numberOfCoefficients / 2;
 	for (integer i = 1; i <= g_order + 1; i ++) {
 		my coefficients [i] = my coefficients [g_order + i];
 	}
 	my numberOfCoefficients = g_order + 1;
-	/* to Chebychev */
+	// to Chebychev
 	cos2x (& my coefficients [1], g_order);
 }
 
@@ -178,7 +182,7 @@ static integer Roots_fromPolynomial_grid (Roots me, Polynomial thee, double grid
 		//double root = Polynomial_findOneRealRoot_nr (thee, xmin, xmax);
 		double root = Polynomial_findOneSimpleRealRoot_ridders (thee, xmin, xmax);
 		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
-			my v [++numberOfRootsFound].re = root; // root not at border of interval
+			my v [++ numberOfRootsFound].re = root; // root not at border of interval
 			my v [numberOfRootsFound].im = 0.0;
 		}
 		xmin = xmax;
@@ -207,10 +211,13 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 	Melder_require (numberOfBisections < 10, U"Too many bisections.");
 	
 	// [g1-> xmin, g1 -> xmax] <==> [nyquistFrequency, 0] i.e. highest root corresponds to lowest frequency
+	
 	for (integer i = 1; i <= half_order_g1; i ++) {
 		my frequencies [2 * i - 1] = acos (roots -> v [half_order_g1 + 1 - i].re / 2.0) / NUMpi * maximumFrequency; 
 	}
+	
 	// the roots of g2 lie inbetween the roots of g1
+	
 	for (integer i = 1; i <= half_order_g2; i ++) {
 		double xmax = roots -> v [half_order_g1 + 1 - i].re;
 		double xmin = i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].re;
@@ -235,14 +242,14 @@ autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridS
 		autoRoots roots = Roots_create ((my maxnCoefficients + 1) / 2);
 		
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			LPC_Frame lpf = & my d_frames [iframe];
-			LineSpectralFrequencies_Frame lsf = & thy d_frames [iframe];
+			LPC_Frame lpc_frame = & my d_frames [iframe];
+			LineSpectralFrequencies_Frame lsf_frame = & thy d_frames [iframe];
 			/* Construct Fs and Fa
 				divide out the zeros
 				transform to polynomial equations g1 and g2 of half the order
 				find zeros
 			 */
-			LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (lsf, lpf, g1.get(), g2.get(), roots.get(), gridSize, nyquistFrequency);
+			LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (lsf_frame, lpc_frame, g1.get(), g2.get(), roots.get(), gridSize, nyquistFrequency);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -250,18 +257,22 @@ autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridS
 	}
 }
 
+/*
+	Polynomials fs & fs are buffering intermediate results
+*/
 static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineSpectralFrequencies_Frame thee, Polynomial fs, Polynomial fa, double maximumFrequency) {
 	LPC_Frame_init (me, thy numberOfFrequencies);
 
 	/*
 		Reconstruct Fs (z)
+		Use my a as a buffer whose size changes!!!
 	*/
 	integer numberOfOmegas = (thy numberOfFrequencies + 1) / 2;
 	for (integer i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i -1] / maximumFrequency * NUMpi;
-		my a[i] = -2.0 * cos (omega);
+		my a [i] = -2.0 * cos (omega);
 	}
-	Polynomial_initFromProductOfSecondOrderTerms (fs, my a, numberOfOmegas);
+	Polynomial_initFromProductOfSecondOrderTerms (fs, constVEC (my a.at, numberOfOmegas));
 
 	/*
 		Reconstruct Fa (z)
@@ -271,7 +282,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 		double omega = thy frequencies [2 * i] / maximumFrequency * NUMpi;
 		my a [i] = -2.0 * cos (omega);
 	}
-	Polynomial_initFromProductOfSecondOrderTerms (fa, my a, numberOfOmegas);
+	Polynomial_initFromProductOfSecondOrderTerms (fa, constVEC (my a.at, numberOfOmegas));
 	
 	if (thy numberOfFrequencies % 2 == 0) {
 		Polynomial_multiply_firstOrderFactor (fs, -1.0);   // * (z + 1)
@@ -284,23 +295,23 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 		A(z) = (Fs(z) + Fa(z) / 2
 	*/
 	for (integer i = 1; i <= fs -> numberOfCoefficients - 2; i ++) {
-		my a [thy numberOfFrequencies - i + 1] = 0.5 * (fs -> coefficients [i+1] + fa -> coefficients [i+1]);
+		my a [thy numberOfFrequencies - i + 1] = 0.5 * (fs -> coefficients [i + 1] + fa -> coefficients [i + 1]);
 	}
 }
 
 autoLPC LineSpectralFrequencies_to_LPC (LineSpectralFrequencies me) {
 	try {
-		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, my maximumNumberOfFrequencies,0.5 / my maximumFrequency);
+		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, my maximumNumberOfFrequencies, 0.5 / my maximumFrequency);
 		autoPolynomial fs = Polynomial_create (-1.0, 1.0, my maximumNumberOfFrequencies + 2);
 		autoPolynomial fa = Polynomial_create (-1.0, 1.0, my maximumNumberOfFrequencies + 2);
 		
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			LineSpectralFrequencies_Frame lsf = & my d_frames [iframe];
-			LPC_Frame lpf = & thy d_frames [iframe];
+			LineSpectralFrequencies_Frame lsf_frame = & my d_frames [iframe];
+			LPC_Frame lpc_frame = & thy d_frames [iframe];
 			/* Construct Fs and Fa
 				A(z) = (Fs(z) + Fa(z))/2
 			 */
-			LPC_Frame_initFromLineSpectralFrequencies_Frame (lpf, lsf, fs.get(), fa.get(), my maximumFrequency);
+			LPC_Frame_initFromLineSpectralFrequencies_Frame (lpc_frame, lsf_frame, fs.get(), fa.get(), my maximumFrequency);
 		}
 		return thee;
 	} catch (MelderError) {

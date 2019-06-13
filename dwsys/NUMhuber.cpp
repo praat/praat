@@ -1,6 +1,6 @@
 /* NUMhuber.cpp
  *
- * Copyright (C) 1994-2008, 2015-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,109 +22,70 @@
 */
 
 #include "NUM2.h"
+#include "melder.h"
 
-void NUMmad (double *x, integer n, double *location, bool wantlocation, double *mad, double *work) {
-	double *tmp = work;
-
-	*mad = undefined;
-	Melder_require (n > 0, U"The dimension should be larger than zero.");
-	
-	if (n == 1) {
-		*location = x[1];
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad) {
+	Melder_assert (inout_location);
+	if (x.size == 1) {
+		if (wantlocation)  *inout_location= x [1];
+		if (out_mad) *out_mad = undefined;
 		return;
 	}
-	autoNUMvector<double> atmp;
-	if (! work)  {
-		atmp.reset (1, n);
-		tmp = atmp.peek();
-	}
-
-	for (integer i = 1; i <= n; i ++) {
-		tmp [i] = x [i];
-	}
-
+	autoVEC work = newVECcopy (x);
+	
 	if (wantlocation) {
-		NUMsort_d (n, tmp);
-		*location = NUMquantile (n, tmp, 0.5);
+		VECsort_inplace (work.get());
+		*inout_location = NUMquantile (work.get(), 0.5);
 	}
-
-	for (integer i = 1; i <= n; i++) {
-		tmp [i] = fabs (tmp [i] - *location);
+	if (out_mad) {
+		for (integer i = 1; i <= x.size; i ++)
+			work [i] = fabs (work [i] - *inout_location);
+		VECsort_inplace (work.get());
+		*out_mad = 1.4826 * NUMquantile (work.get(), 0.5);
 	}
-
-	NUMsort_d (n, tmp);
-	*mad = 1.4826 * NUMquantile (n, tmp, 0.5);
 }
 
 static double NUMgauss (double x) {
 	return NUM1_sqrt2pi * exp (- 0.5 * x * x);
 }
 
-void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocation,
-                          double *scale, bool wantscale, double k, double tol, double *work) {
-	double *tmp = work;
-	double theta = 2.0 * NUMgaussP (k) - 1.0;
-	double beta = theta + k * k * (1.0 - theta) - 2.0 * k * NUMgauss (k);
-	integer n1 = n;
+void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation, double *inout_scale, bool wantscale, double k_stdev, double tol, integer maximumNumberOfiterations) {
+	Melder_assert (inout_location && inout_scale);
+	double theta = 2.0 * NUMgaussP (k_stdev) - 1.0;
+	double beta = theta + k_stdev * k_stdev * (1.0 - theta) - 2.0 * k_stdev * NUMgauss (k_stdev);
+	double scale;
+	
+	NUMmad (x, inout_location, wantlocation, & scale);
+	Melder_require (scale != 0, U"All your data points are equal.");
+	
+	if (wantscale) *inout_scale = scale;
 
-	autoNUMvector<double> atmp;
-	if (work == 0)  {
-		atmp.reset (1, n);
-		tmp = atmp.peek();
-	}
-	double mad;
-	NUMmad (x, n, location, wantlocation, & mad, tmp);
-	if (wantscale) {
-		*scale = mad;
-	}
-	if (*scale == 0) {
-		Melder_throw (U"Scale is zero.");
-	}
+	double location0, location1 = *inout_location;
+	double scale0, scale1 = *inout_scale;
 
-	double mu0, mu1 = *location;
-	double s0, s1 = *scale;
-
-	if (wantlocation) {
-		n1 = n - 1;
-	}
-
+	integer n1 = wantlocation ? x.size - 1 : x.size, iter = 0;
+	bool locationCriterion, scaleCriterion;
+	autoVEC work = newVECraw (x.size);
 	do {
-		mu0 = mu1;
-		s0 = s1;
+		location0 = location1;
+		scale0 = scale1;
 
-		double low  = mu0 - k * s0;
-		double high = mu0 + k * s0;
+		double low  = location0 - k_stdev * scale0;
+		double high = location0 + k_stdev * scale0;
+		
+		work.get ()  <<=  x;
+		VECclip_inplace_inline (work.get (), low, high); // windsorize
+		
+		if (wantlocation)
+			location1 = NUMmean (work.get());
 
-		for (integer i = 1; i <= n; i ++) {
-			if (x [i] < low) {
-				tmp [i] = low;
-			} else if (x [i] > high) {
-				tmp [i] = high;
-			} else {
-				tmp [i] =  x [i];
-			}
-		}
-		if (wantlocation) {
-			mu1 = 0.0;
-			for (integer i = 1; i <= n; i ++) {
-				mu1 += tmp [i];
-			}
-			mu1 /= n;
-		}
-		if (wantscale) {
-			s1 = 0.0;
-			for (integer i = 1; i <= n; i ++) {
-				double dx = tmp [i] - mu1;
-				s1 += dx * dx;
-			}
-			s1 = sqrt (s1 / (n1 * beta));
-		}
-	} while (fabs (mu0 - mu1) > tol * s0 || fabs (s0 - s1) > tol * s0); //TODO fabs (mu0 - mu1) > tol * s0 ??
+		work.get() -= location1;
+		double sumsq = NUMsumsq (work.get());
+		scale1 = sqrt (sumsq / (n1 * beta));
+		locationCriterion = wantlocation ? fabs (location0 - location1) > tol * location0 : true;
+		scaleCriterion = fabs (scale0 - scale1) > tol * scale0;
+	} while (++ iter < maximumNumberOfiterations && (scaleCriterion || locationCriterion));
 
-	if (wantlocation) {
-		*location = mu1;
-	}
-	if (wantscale) {
-		*scale = s1;
-	}
+	if (wantlocation) *inout_location = location1;
+	if (wantscale) *inout_scale = scale1;
 }

@@ -34,8 +34,8 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 	#endif
 
 	#if ! oo_READING && ! oo_WRITING
-		oo_INT16 (tiedToTheLeft)
-		oo_INT16 (tiedToTheRight)
+		oo_BOOLEAN (tiedToTheLeft)
+		oo_BOOLEAN (tiedToTheRight)
 	#endif
 
 oo_END_STRUCT (OTGrammarConstraint)
@@ -57,7 +57,7 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 
 	oo_STRING (output)
 	oo_INTEGER (numberOfConstraints)
-	oo_INT_VECTOR (marks, numberOfConstraints)
+	oo_INTVEC16 (marks, numberOfConstraints)
 
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (harmony)
@@ -92,7 +92,7 @@ oo_DEFINE_CLASS (OTGrammar, Daata)
 	oo_ENDFROM
 	oo_INTEGER (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, numberOfConstraints)
-	oo_INTEGER_VECTOR (index, numberOfConstraints)   // not read or written in text files
+	oo_INTVEC (index, numberOfConstraints)   // not read or written in text files
 	oo_INTEGER (numberOfFixedRankings)
 	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, numberOfFixedRankings)
 	oo_INTEGER (numberOfTableaus)

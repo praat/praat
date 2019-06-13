@@ -31,33 +31,26 @@ autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer nu
 	}
 }
 
-autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, char32 *elements) {
+autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements_string) {
 	try {
-		integer inum = 1, ntokens = Melder_countTokens (elements);
-		if (ntokens == 0) {
-			Melder_throw (U"No matrix elements.");
-		}
+		autostring32vector elements = newSTRVECtokenize (elements_string);
+		
 		integer numberOfCells = numberOfInputChannels * numberOfOutputChannels;
-
+		
+		Melder_require (elements.size == numberOfCells,
+			U"The number of mixing coefficients (", elements.size, U") should equal the number of cells (", numberOfCells, U") in the mixing matrix.");
+		
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
 
 		/*
 			Construct the full matrix from the elements
 		*/
-		double number;
-		for (char32 *token = Melder_firstToken (elements); token && inum <= ntokens; token = Melder_nextToken (), inum ++) {
+		for (integer inum = 1; inum <= numberOfCells; inum ++) {
+			double number;
+			Interpreter_numericExpression (0, elements [inum].get(), & number);
 			integer irow = (inum - 1) / numberOfInputChannels + 1;
 			integer icol = (inum - 1) % numberOfInputChannels + 1;
-			Interpreter_numericExpression (0, token, & number);
-
 			my data [irow] [icol] = number;
-		}
-		if (ntokens < numberOfCells) {
-			for (integer i = inum; i <= numberOfCells; i ++) {
-				integer irow = (inum - 1) / numberOfInputChannels + 1;
-				integer icol = (inum - 1) % numberOfInputChannels + 1;
-				my data [irow] [icol] = number; // repeat the last number given!
-			}
 		}
 		return me;
 	} catch (MelderError) {
@@ -208,7 +201,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 	if (! dimensionsCovered) {
 		// Fill each output channel with its input counterpart, that is the input channel with the same index. 
 		// Channels with no corresponding input channels are left silent.
-		integer lowerDimension = my numberOfRows < my numberOfColumns ? my numberOfRows: my numberOfColumns;
+		integer lowerDimension = std::min (my numberOfRows, my numberOfColumns);
 		for (integer i = 1; i <= lowerDimension; i++) {
 			my data [i][i] = 1.0;
 		}
@@ -223,9 +216,9 @@ void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) 
 		}
 	}
 	// Set all mute channels to 0 and all other channels to 1. To prevent overflow scale by the number of channels that are on.
-	double coefficient = my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0;
+	double coefficient = ( my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0 );
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		double channelScaling = muteChannels [icol] ? 0.0 : coefficient;
+		double channelScaling = ( muteChannels [icol] ? 0.0 : coefficient );
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			my data [irow][icol] = channelScaling;
 		}

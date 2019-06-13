@@ -1,6 +1,6 @@
 /* TextGridEditor_prefs.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2013,2015,2016,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ prefs_begin (TextGridEditor)
 	prefs_override_bool        (TextGridEditor, picture_garnish,        1, true)
 
 	prefs_add_bool_with_data   (TextGridEditor, useTextStyles,          1, false)
-	prefs_add_int_with_data    (TextGridEditor, fontSize,               1, U"18")
+	prefs_add_double_with_data (TextGridEditor, fontSize,               1, U"18")
 	prefs_add_enum_with_data   (TextGridEditor, alignment,              1, kGraphics_horizontalAlignment, DEFAULT)
 	prefs_add_bool_with_data   (TextGridEditor, shiftDragMultiple,      1, true)
 	prefs_add_enum_with_data   (TextGridEditor, showNumberOf,           1, kTextGridEditor_showNumberOf, DEFAULT)

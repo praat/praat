@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2016 David Weenink
+ * Copyright (C) 2014-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, doub
 	int estimated, integer numberOfParameters, double horizontalOffset_mm);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, int useSigmaY, conststring32 mark, int marksFontSize, double horizontalOffset_mm);
+	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm);
 
 /* Get the y-value of the fitted function at x */
 
@@ -146,11 +146,11 @@ void DataModeler_setDataPointYSigma (DataModeler me, integer index, double sigma
 double DataModeler_getDataPointYSigma (DataModeler me, integer index);
 double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDataPoints);
 
-void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]);
+autoVEC DataModeler_getZScores (DataModeler me, int useSigmaY);
 
 double DataModeler_getDegreesOfFreedom (DataModeler me);
 
-double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probability, double *ndf);
+double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *out_probability, double *out_ndf);
 
 double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg, double *sstot);
 
@@ -189,7 +189,7 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	int estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, int useSigmaY, conststring32 mark, int marksFontSize, double horizontalOffset_mm, bool garnish);
+	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	int useSigmaY, bool garnish);
@@ -198,7 +198,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 	int shiftDirection, integer fromFormant, integer toFormant, bool garnish);
 
 void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant,
-	int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish);
+	int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 
 autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY);
 
@@ -288,14 +288,14 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
 	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
-	double *optimalCeiling
+	double *out_optimalCeiling
 );
 
 autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
 	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
-	double *optimalCeiling
+	double *out_optimalCeiling
 );
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime,

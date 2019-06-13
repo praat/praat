@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2013,2015-2018 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,6 @@
 //#define oo_UBYTE_SET(x,setType)  oo_SET (unsigned char, u8, x, setType)
 //#define oo_UINT_SET(x,setType)  oo_SET (unsigned int, u16, x, setType)
 //#define oo_UINTEGER_SET(x,setType)  oo_SET (uinteger, u32, x, setType)
-//#define oo_BOOL_SET(x,setType)  oo_SET (unsigned char, u8, x, setType)
 //#define oo_FLOAT_SET(x,setType)  oo_SET (double, r32, x, setType)
 #define oo_DOUBLE_SET(x,setType)  oo_SET (double, r64, x, setType)
 //#define oo_COMPLEX_SET(x,setType)  oo_SET (dcomplex, c128, x, setType)
@@ -77,51 +76,38 @@
 /* if the pointer does not change, 'min' cannot change, but 'max' may become lower than the original value. */
 
 //#define oo_BYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (signed char, i8, x, min, max)
-#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
-#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
+//#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
+//#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
 #define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
 //#define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, u16, x, min, max)
 //#define oo_UINTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (uinteger, u32, x, min, max)
-//#define oo_BOOL_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
 #define oo_FLOAT_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r32, x, min, max)
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r64, x, min, max)
 #define oo_COMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, c128, x, min, max)
-
-//#define oo_BYTE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (signed char, i8, x, row1, row2, col1, col2)
-//#define oo_INT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (int, i16, x, row1, row2, col1, col2)
-//#define oo_INTEGER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (integer, integer32BE, x, row1, row2, col1, col2)
-//#define oo_UBYTE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned char, u8, x, row1, row2, col1, col2)
-//#define oo_UINT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned int, u16, x, row1, row2, col1, col2)
-//#define oo_UINTEGER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (uinteger, u32, x, row1, row2, col1, col2)
-//#define oo_BOOL_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned char, u8, x, row1, row2, col1, col2)
-//#define oo_FLOAT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r32, x, row1, row2, col1, col2)
-#define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r64, x, row1, row2, col1, col2)
-//#define oo_COMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, c128, x, row1, row2, col1, col2)
 
 /* The same arrays, with the first index fixed at 1. */
 
 //#define oo_BYTE_VECTOR(x,n)  oo_VECTOR (signed char, i8, x, 1, n)
 #define oo_INT_VECTOR(x,n)  oo_VECTOR (int, i16, x, 1, n)
-#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
+//#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
 //#define oo_UBYTE_VECTOR(x,n)  oo_VECTOR (unsigned char, u8, x, 1, n)
 //#define oo_UINT_VECTOR(x,n)  oo_VECTOR (unsigned int, u16, x, 1, n)
 //#define oo_UINTEGER_VECTOR(x,n)  oo_VECTOR (uinteger, u32, x, 1, n)
-//#define oo_BOOL_VECTOR(x,n)  oo_VECTOR (unsigned char, u8, x, 1, n)
-#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
-#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
+//#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
+//#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
 //#define oo_COMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 
-//#define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i8, x, 1, nrow, 1, ncol)
-//#define oo_INT_MATRIX(x,nrow,ncol)  oo_MATRIX (int, i16, x, 1, nrow, 1, ncol)
-#define oo_INTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (integer, integer32BE, x, 1, nrow, 1, ncol)
-#define oo_UBYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u8, x, 1, nrow, 1, ncol)
-//#define oo_UINT_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned int, u16, x, 1, nrow, 1, ncol)
-//#define oo_UINTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (uinteger, u32, x, 1, nrow, 1, ncol)
-//#define oo_BOOL_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u8, x, 1, nrow, 1, ncol)
-#define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r32, x, 1, nrow, 1, ncol)
-#define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r64, x, 1, nrow, 1, ncol)
-//#define oo_COMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c128, x, 1, nrow, 1, ncol)
+#define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
+#define oo_INTVEC(x,size)  oo_ANYVEC (integer, integer32BE, x, size)
+#define oo_INTVEC16(x,size)  oo_ANYVEC (integer, integer16BE, x, size)
+#define oo_obsoleteVEC32(x,size)  oo_ANYVEC (double, r32, x, size)
 
+#define oo_MAT(x,nrow,ncol)  oo_ANYMAT (double, r64, x, nrow, ncol)
+#define oo_INTMAT(x,nrow,ncol)  oo_ANYMAT (integer, integer32BE, x, nrow, ncol)
+#define oo_obsoleteMAT32(x,nrow,ncol)  oo_ANYMAT (double, r32, x, nrow, ncol)
+#define oo_BYTEMAT(x,nrow,ncol)  oo_ANYMAT (byte, u8, x, nrow, ncol)
+
+#define oo_TEN3(x,ndi1,ndim2,ndim3)  oo_ANYTEN3 (double, r64, x, ndim1, ndim2, ndim3)
 
 /*** Enumerated types. ***/
 
@@ -165,11 +151,6 @@
 #define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w16, x, n)
 //#define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w32, x, n)
 
-/*** Structs. ***/
-
-#define oo_STRUCT_VECTOR(Type,x,n)  oo_STRUCT_VECTOR_FROM (Type, x, 1, n)
-#define oo_STRUCT_MATRIX(Type,x,nrow,ncol)  oo_STRUCT_MATRIX_FROM (Type, x, 1, nrow, 1, ncol)
-
 /********** Definitions for header files only. **********/
 /* These are undef'ed and redefined in the header files that implement methods, */
 /* such as oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_TEXT.h, etc. */
@@ -179,7 +160,9 @@
 #define oo_SIMPLE(type,storage,x)  type x;
 #define oo_SET(type,storage,x,setType)  type x [1 + (int) setType::MAX];
 #define oo_VECTOR(type,storage,x,min,max)  type *x;
-#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
+#define oo_ANYVEC(type,storage,x,size)  autovector <type> x;
+#define oo_ANYMAT(type,storage,x,nrow,ncol)  automatrix <type> x;
+#define oo_ANYTEN3(type,storage,x,ndim1,ndim2,ndim3)  autotensor3 <type> x;
 
 #define oo_ENUMx(kType,storage,x)  kType x;
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];
@@ -191,8 +174,7 @@
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + (int) setType::MAX];
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
-#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;
+#define oo_STRUCT_VECTOR(Type,x,size)  Type x;
 
 #define oo_OBJECT(Class,version,x)  auto##Class x;
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  Class<struct##ItemClass> x;
@@ -220,7 +202,7 @@
 
 #define oo_DEFINE_CLASS(klas,parent) \
 	typedef struct struct##klas *klas; \
-	typedef _Thing_auto <struct##klas> auto##klas; \
+	typedef autoSomeThing <struct##klas> auto##klas; \
 	typedef struct##parent klas##_Parent; \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas; \

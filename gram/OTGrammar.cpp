@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2018 Paul Boersma
+ * Copyright (C) 1997-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,16 +118,21 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 		OTGrammarConstraint constraint = & constraints [icons];
 		MelderFile_write (file, U"\nconstraint [", icons, U"]: \"");
 		for (const char32 *p = & constraint -> name [0]; *p; p ++) {
-			if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
+			if (*p == U'\"')
+				MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
 		MelderFile_write (file, U"\" ", constraint -> ranking,
 			U" ", constraint -> disharmony, U" ", constraint -> plasticity, U" ! ");
 		for (const char32 *p = & constraint -> name [0]; *p; p ++) {
-			if (*p == U'\n') MelderFile_writeCharacter (file, U' ');
-			else if (*p == U'\\' && p [1] == U's' && p [2] == U'{') p += 2;
-			else if (*p == U'}') { }
-			else MelderFile_writeCharacter (file, *p);
+			if (*p == U'\n')
+				MelderFile_writeCharacter (file, U' ');
+			else if (*p == U'\\' && p [1] == U's' && p [2] == U'{')
+				p += 2;
+			else if (*p == U'}')
+				{ }
+			else
+				MelderFile_writeCharacter (file, *p);
 		}
 	}
 	MelderFile_write (file, U"\n\n", numberOfFixedRankings, U" fixed rankings");
@@ -140,7 +145,8 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 		OTGrammarTableau tableau = & tableaus [itab];
 		MelderFile_write (file, U"\ninput [", itab, U"]: \"");
 		for (const char32 *p = & tableau -> input [0]; *p; p ++) {
-			if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
+			if (*p == U'\"')
+				MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
 		MelderFile_write (file, U"\" ", tableau -> numberOfCandidates);
@@ -148,7 +154,8 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
 			MelderFile_write (file, U"\n   candidate [", icand, U"]: \"");
 			for (const char32 *p = & candidate -> output [0]; *p; p ++) {
-				if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
+				if (*p == U'\"')
+					MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 				MelderFile_writeCharacter (file, *p);
 			}
 			MelderFile_writeCharacter (file, U'\"');
@@ -160,9 +167,10 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 }
 
 void OTGrammar_checkIndex (OTGrammar me) {
-	if (my index) return;
-	my index = NUMvector <integer> (1, my numberOfConstraints);
-	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+	if (my index.size != 0) return;
+	my index = newINTVECraw (my numberOfConstraints);
+	for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+		my index [icons] = icons;
 	OTGrammar_sort (me);
 }
 
@@ -260,9 +268,9 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 			U"No candidates in tableau ", itab,
 			U" (input: ", tableau -> input.get(), U")"
 			U" in line ", MelderReadText_getLineNumber (text),
-			itab == 1 ? U"." : U", or perhaps wrong number of candidates for input " U_LEFT_GUILLEMET,
+			itab == 1 ? U"." : U", or perhaps wrong number of candidates for input «",
 			itab == 1 ? nullptr : tableaus [itab - 1]. input.get(),
-			itab == 1 ? nullptr : U_RIGHT_GUILLEMET U"."
+			itab == 1 ? nullptr : U"»."
 		);
 		tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates);
 		for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -274,7 +282,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 					U" (input: ", tableau -> input.get(), U") in line ", MelderReadText_getLineNumber (text), U".");
 			}
 			candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
-			candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
+			candidate -> marks = newINTVECzero (candidate -> numberOfConstraints);
 			for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
 				try {
 					candidate -> marks [icons] = texgeti16 (text);
@@ -305,13 +313,13 @@ static int constraintCompare (const void *first, const void *second) {
 	integer icons = * (integer *) first, jcons = * (integer *) second;
 	OTGrammarConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
 	/*
-	 * Sort primarily by disharmony.
-	 */
+		Sort primarily by disharmony.
+	*/
 	if (ci -> disharmony > cj -> disharmony) return -1;
 	if (ci -> disharmony < cj -> disharmony) return +1;
 	/*
-	 * Tied constraints are sorted alphabetically.
-	 */
+		Tied constraints are sorted alphabetically.
+	*/
 	return str32cmp (my constraints [icons]. name.get(), my constraints [jcons]. name.get());
 }
 
@@ -320,10 +328,10 @@ void OTGrammar_sort (OTGrammar me) {
 	qsort (& my index [1], my numberOfConstraints, sizeof (integer), constraintCompare);
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		constraint -> tiedToTheLeft = icons > 1 &&
-			my constraints [my index [icons - 1]]. disharmony == constraint -> disharmony;
-		constraint -> tiedToTheRight = icons < my numberOfConstraints &&
-			my constraints [my index [icons + 1]]. disharmony == constraint -> disharmony;
+		constraint -> tiedToTheLeft = ( icons > 1 &&
+			my constraints [my index [icons - 1]]. disharmony == constraint -> disharmony );
+		constraint -> tiedToTheRight = ( icons < my numberOfConstraints &&
+			my constraints [my index [icons + 1]]. disharmony == constraint -> disharmony );
 	}
 }
 
@@ -349,26 +357,22 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) noexcept {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 		OTGrammarCandidate candidate = & tableau -> candidates [icand];
-		int *marks = candidate -> marks;
-		double disharmony = 0.0;
+		INTVEC marks = candidate -> marks.get();
+		longdouble disharmony = 0.0;
 		if (my decisionStrategy == kOTGrammar_decisionStrategy::HARMONIC_GRAMMAR ||
 			my decisionStrategy == kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY)
 		{
-			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 				disharmony += my constraints [icons]. disharmony * marks [icons];
-			}
 		} else if (my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
 			my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
-			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 				disharmony += exp (my constraints [icons]. disharmony) * marks [icons];
-			}
 		} else if (my decisionStrategy == kOTGrammar_decisionStrategy::LINEAR_OT) {
-			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				if (my constraints [icons]. disharmony > 0.0) {
+			for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+				if (my constraints [icons]. disharmony > 0.0)
 					disharmony += my constraints [icons]. disharmony * marks [icons];
-				}
-			}
 		} else if (my decisionStrategy == kOTGrammar_decisionStrategy::POSITIVE_HG) {
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 				double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
@@ -377,20 +381,20 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) noexcept {
 		} else {
 			Melder_fatal (U"_OTGrammar_fillInHarmonies: unimplemented decision strategy.");
 		}
-		candidate -> harmony = - disharmony;
+		candidate -> harmony = - (double) disharmony;
 	}
 }
 
 int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2) noexcept {
-	int *marks1 = my tableaus [itab1]. candidates [icand1]. marks;
-	int *marks2 = my tableaus [itab2]. candidates [icand2]. marks;
+	INTVEC marks1 = my tableaus [itab1]. candidates [icand1]. marks.get();
+	INTVEC marks2 = my tableaus [itab2]. candidates [icand2]. marks.get();
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int numberOfMarks1 = marks1 [my index [icons]];
-			int numberOfMarks2 = marks2 [my index [icons]];
+			integer numberOfMarks1 = marks1 [my index [icons]];
+			integer numberOfMarks2 = marks2 [my index [icons]];
 			/*
-			 * Count tied constraints as one.
-			 */
+				Count tied constraints as one.
+			*/
 			while (my constraints [my index [icons]]. tiedToTheRight) {
 				icons ++;
 				numberOfMarks1 += marks1 [my index [icons]];
@@ -449,9 +453,8 @@ static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) noexcept
 	double maximumHarmony = tableau -> candidates [1]. harmony;
 	for (integer icand = 2; icand <= tableau -> numberOfCandidates; icand ++) {
 		OTGrammarCandidate candidate = & tableau -> candidates [icand];
-		if (candidate -> harmony > maximumHarmony) {
+		if (candidate -> harmony > maximumHarmony)
 			maximumHarmony = candidate -> harmony;
-		}
 	}
 	for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 		OTGrammarCandidate candidate = & tableau -> candidates [icand];
@@ -514,8 +517,8 @@ integer OTGrammar_getWinner (OTGrammar me, integer itab) noexcept {
 integer OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, integer itab) {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY ||
 		my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY) return 1;
-	integer icand_best = 1, icand, numberOfBestCandidates = 1;
-	for (icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
+	integer icand_best = 1, numberOfBestCandidates = 1;
+	for (integer icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
 		int comparison = OTGrammar_compareCandidates (me, itab, icand, itab, icand_best);
 		if (comparison == -1) {
 			icand_best = icand;   // the current candidate is the best candidate found so far
@@ -528,22 +531,20 @@ integer OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, integer itab) {
 }
 
 bool OTGrammar_isCandidateGrammatical (OTGrammar me, integer itab, integer icand) {
-	for (integer jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++) {
+	for (integer jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++)
 		if (jcand != icand && OTGrammar_compareCandidates (me, itab, jcand, itab, icand) < 0)
 			return false;
-	}
 	return true;
 }
 
 bool OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, integer itab, integer icand) {
-	for (integer jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++) {
+	for (integer jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++)
 		if (jcand != icand && OTGrammar_compareCandidates (me, itab, jcand, itab, icand) <= 0)
 			return false;
-	}
 	return true;
 }
 
-void OTGrammar_getInterpretiveParse (OTGrammar me, conststring32 partialOutput, integer *bestTableau, integer *bestCandidate) {
+void OTGrammar_getInterpretiveParse (OTGrammar me, conststring32 partialOutput, integer *out_bestTableau, integer *out_bestCandidate) {
 	try {
 		integer itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
@@ -581,15 +582,18 @@ void OTGrammar_getInterpretiveParse (OTGrammar me, conststring32 partialOutput, 
 				}
 			}
 		}
-		if (itab_best == 0) Melder_throw (U"The partial output \"", partialOutput, U"\" does not match any candidate for any input form.");
-		if (bestTableau) *bestTableau = itab_best;
-		if (bestCandidate) *bestCandidate = icand_best;
+		if (itab_best == 0)
+			Melder_throw (U"The partial output \"", partialOutput, U"\" does not match any candidate for any input form.");
+		if (out_bestTableau)
+			*out_bestTableau = itab_best;
+		if (out_bestCandidate)
+			*out_bestCandidate = icand_best;
 	} catch (MelderError) {
 		Melder_throw (U"Interpretive parse not computed.");
 	}
 }
 
-static void OTGrammar_getInterpretiveParse_opt (OTGrammar me, integer ipartialOutput, integer *bestTableau, integer *bestCandidate) {
+static void OTGrammar_getInterpretiveParse_opt (OTGrammar me, integer ipartialOutput, integer *out_bestTableau, integer *out_bestCandidate) {
 	try {
 		integer itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
@@ -629,8 +633,10 @@ static void OTGrammar_getInterpretiveParse_opt (OTGrammar me, integer ipartialOu
 			}
 		}
 		Melder_assert (itab_best != 0);
-		if (bestTableau) *bestTableau = itab_best;
-		if (bestCandidate) *bestCandidate = icand_best;
+		if (out_bestTableau)
+			*out_bestTableau = itab_best;
+		if (out_bestCandidate)
+			*out_bestCandidate = icand_best;
 	} catch (MelderError) {
 		Melder_throw (U"Interpretive parse not computed.");
 	}
@@ -640,11 +646,9 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, conststring32 partialOu
 	for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			if (str32str (tableau -> candidates [icand]. output.get(), partialOutput)) {
-				if (OTGrammar_isCandidateGrammatical (me, itab, icand)) {
+			if (str32str (tableau -> candidates [icand]. output.get(), partialOutput))
+				if (OTGrammar_isCandidateGrammatical (me, itab, icand))
 					return true;
-				}
-			}
 		}
 	}
 	return false;
@@ -653,9 +657,8 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, conststring32 partialOu
 bool OTGrammar_areAllPartialOutputsGrammatical (OTGrammar me, Strings thee) {
 	for (integer ioutput = 1; ioutput <= thy numberOfStrings; ioutput ++) {
 		conststring32 partialOutput = thy strings [ioutput].get();
-		if (! OTGrammar_isPartialOutputGrammatical (me, partialOutput)) {
+		if (! OTGrammar_isPartialOutputGrammatical (me, partialOutput))
 			return false;
-		}
 	}
 	return true;
 }
@@ -669,14 +672,12 @@ bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, conststring32 par
 				if (OTGrammar_isCandidateGrammatical (me, itab, icand)) {
 					found = true;
 					/*
-					 * All other grammatical candidates should match.
-					 */
+						All other grammatical candidates should match.
+					*/
 					for (integer jcand = 1; jcand <= tableau -> numberOfCandidates; jcand ++) {
-						if (OTGrammar_compareCandidates (me, itab, jcand, itab, icand) == 0) {
-							if (! str32str (tableau -> candidates [jcand]. output.get(), partialOutput)) {
+						if (OTGrammar_compareCandidates (me, itab, jcand, itab, icand) == 0)
+							if (! str32str (tableau -> candidates [jcand]. output.get(), partialOutput))
 								return false;   // partial output is multiply optimal
-							}
-						}
 					}
 				}
 			}
@@ -716,13 +717,12 @@ static integer OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand,
 			return OTGrammar_crucialCell (me, itab, secondBest, iwinner, 1);
 		}
 	} else {
-		int *candidateMarks = tableau -> candidates [icand]. marks;
-		int *winnerMarks = tableau -> candidates [iwinner]. marks;
+		const constINTVEC candidateMarks = tableau -> candidates [icand]. marks.get();
+		const constINTVEC winnerMarks = tableau -> candidates [iwinner]. marks.get();
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int numberOfCandidateMarks = candidateMarks [my index [icons]];
-			int numberOfWinnerMarks = winnerMarks [my index [icons]];
-			while (my constraints [my index [icons]]. tiedToTheRight)
-			{
+			integer numberOfCandidateMarks = candidateMarks [my index [icons]];
+			integer numberOfWinnerMarks = winnerMarks [my index [icons]];
+			while (my constraints [my index [icons]]. tiedToTheRight) {
 				icons ++;
 				numberOfCandidateMarks += candidateMarks [my index [icons]];
 				numberOfWinnerMarks += winnerMarks [my index [icons]];
@@ -735,12 +735,12 @@ static integer OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand,
 }
 
 static double OTGrammar_constraintWidth (Graphics g, conststring32 name) {
-	char32 text [100], *newLine;
+	char32 text [100];
 	str32cpy (text, name);
-	newLine = str32chr (text, U'\n');
+	char32 *newLine = str32chr (text, U'\n');
 	if (newLine) {
 		double firstWidth, secondWidth;
-		*newLine = '\0';
+		*newLine = U'\0';
 		firstWidth = Graphics_textWidth (g, text);
 		secondWidth = Graphics_textWidth (g, newLine + 1);
 		return firstWidth > secondWidth ? firstWidth : secondWidth;
@@ -750,7 +750,6 @@ static double OTGrammar_constraintWidth (Graphics g, conststring32 name) {
 
 void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring32 input) {
 	try {
-		double x, y;
 		const double fontSize = Graphics_inqFontSize (g);
 		Graphics_Colour colour = Graphics_inqColour (g);
 		const integer itab = OTGrammar_getTableau (me, input);
@@ -766,8 +765,8 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 		const double descent = rowHeight * 0.5;
 		const double worldAspectRatio = Graphics_dyMMtoWC (g, 1.0) / Graphics_dxMMtoWC (g, 1.0);   // because Graphics_textWidth measures in the x direction only
 		/*
-		 * Compute the height of the header row.
-		 */
+			Compute the height of the header row.
+		*/
 		double headerHeight;
 		if (vertical) {
 			headerHeight = 0.0;
@@ -790,9 +789,9 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 			}
 		}
 		/*
-		 * Compute longest candidate string.
-		 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
-		 */
+			Compute longest candidate string.
+			Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
+		*/
 		double candWidth = Graphics_textWidth (g, input);
 		OTGrammarTableau tableau = & my tableaus [itab];
 		integer numberOfOptimalCandidates = 0;
@@ -806,8 +805,8 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 		}
 		candWidth += margin * 3;
 		/*
-		 * Compute tableau width.
-		 */
+			Compute tableau width.
+		*/
 		double tableauWidth = candWidth + doubleLineDx;
 		if (vertical) {
 			tableauWidth += rowHeight * my numberOfConstraints / worldAspectRatio;
@@ -819,24 +818,25 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 			tableauWidth += margin * 2 * my numberOfConstraints;
 		}
 		/*
-		 * Draw box.
-		 */
-		x = doubleLineDx;   // left side of tableau
-		y = 1.0 - doubleLineDy;
+			Draw box.
+		*/
+		double x = doubleLineDx;   // left side of tableau
+		double y = 1.0 - doubleLineDy;
 		Graphics_rectangle (g, x, x + tableauWidth,
-			y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
+				y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
 		/*
-		 * Draw input.
-		 */
+			Draw input.
+		*/
 		y -= headerHeight;
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, input);
 		Graphics_rectangle (g, x, x + candWidth, y, y + headerHeight);
 		/*
-		 * Draw constraint names.
-		 */
+			Draw constraint names.
+		*/
 		x += candWidth + doubleLineDx;
-		if (vertical) Graphics_setTextRotation (g, 90.0);
+		if (vertical)
+			Graphics_setTextRotation (g, 90.0);
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
 			double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name.get()) + margin * 2;
@@ -865,45 +865,46 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 		}
 		if (vertical) Graphics_setTextRotation (g, 0.0);
 		/*
-		 * Draw candidates.
-		 */
+			Draw candidates.
+		*/
 		y -= doubleLineDy;
 		for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			integer crucialCell = OTGrammar_crucialCell (me, itab, icand, winner, numberOfOptimalCandidates);
 			bool candidateIsOptimal = OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0;
 			/*
-			 * Draw candidate transcription.
-			 */
+				Draw candidate transcription.
+			*/
 			x = doubleLineDx;
 			y -= rowHeight;
 			Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 			Graphics_text (g, x + candWidth - margin, y + descent, tableau -> candidates [icand]. output.get());
 			if (candidateIsOptimal) {
 				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
-				Graphics_setFontSize (g, (int) (1.5 * fontSize));
+				Graphics_setFontSize (g, 1.5 * fontSize);
 				if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
 				Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, U"☞");
 				Graphics_setColour (g, colour);
-				Graphics_setFontSize (g, (int) fontSize);
+				Graphics_setFontSize (g, fontSize);
 			}
 			Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
 			/*
-			 * Draw grey cell backgrounds.
-			 */
+				Draw grey cell backgrounds.
+			*/
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setGrey (g, 0.9);
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 				const integer index = my index [icons];
 				OTGrammarConstraint constraint = & my constraints [index];
-				const double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name.get()) + margin * 2;
+				const double width = ( vertical ? rowHeight / worldAspectRatio :
+						OTGrammar_constraintWidth (g, constraint -> name.get()) + margin * 2 );
 				if (icons > crucialCell)
 					Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
 				x += width;
 			}
 			Graphics_setColour (g, colour);
 			/*
-			 * Draw cell marks.
-			 */
+				Draw cell marks.
+			*/
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -914,13 +915,13 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 				MelderString_empty (& markString);
 				if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 					/*
-					 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
-					 * 1. the candidate is not optimal;
-					 * 2. the constraint is not tied;
-					 * 3. this is the crucial cell, i.e. the cells after it are drawn in grey.
-					 */
+						An exclamation mark can be drawn in this cell only if all of the following conditions are met:
+						1. the candidate is not optimal;
+						2. the constraint is not tied;
+						3. this is the crucial cell, i.e. the cells after it are drawn in grey.
+					*/
 					if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
-						int winnerMarks = tableau -> candidates [winner]. marks [index];
+						const integer winnerMarks = tableau -> candidates [winner]. marks [index];
 						for (integer imark = 1; imark <= winnerMarks + 1; imark ++)
 							MelderString_appendCharacter (& markString, U'*');
 						for (integer imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
@@ -955,8 +956,8 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 				x += width;
 			}
 			/*
-			 * Draw harmony.
-			 */
+				Draw harmony.
+			*/
 			if (my decisionStrategy != kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 				const double value = tableau -> candidates [icand]. harmony;
@@ -971,8 +972,8 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 			}
 		}
 		/*
-		 * Draw box.
-		 */
+			Draw box.
+		*/
 		x = doubleLineDx;   // left side of tableau
 		y = 1.0 - doubleLineDy;
 		Graphics_rectangle (g, x, x + tableauWidth,
@@ -1052,38 +1053,38 @@ autoDistributions OTGrammar_to_Distribution (OTGrammar me, integer trialsPerInpu
 	try {
 		integer totalNumberOfOutputs = 0, nout = 0;
 		/*
-		 * Count the total number of outputs.
-		 */
+			Count the total number of outputs.
+		*/
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++)
 			totalNumberOfOutputs += my tableaus [itab]. numberOfCandidates;
 		/*
-		 * Create the distribution. One row for every output form.
-		 */
+			Create the distribution. One row for every output form.
+		*/
 		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1);
 		/*
-		 * Measure every input form.
-		 */
+			Measure every input form.
+		*/
 		autoMelderProgress progress (U"OTGrammar: compute output distribution.");
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
 			Melder_progress ((itab - 0.5) / my numberOfTableaus, U"Measuring input \"", tableau -> input.get(), U"\"");
 			/*
-			 * Set the row labels to the output strings.
-			 */
+				Set the row labels to the output strings.
+			*/
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				thy rowLabels [nout + icand] = Melder_dup (Melder_cat (tableau -> input.get(), U" \\-> ", tableau -> candidates [icand]. output.get()));
 			}
 			/*
-			 * Compute a number of outputs and store the results.
-			 */
+				Compute a number of outputs and store the results.
+			*/
 			for (integer itrial = 1; itrial <= trialsPerInput; itrial ++) {
 				OTGrammar_newDisharmonies (me, noise);
 				integer iwinner = OTGrammar_getWinner (me, itab);
 				thy data [nout + iwinner] [1] += 1;
 			}
 			/*
-			 * Update the offset.
-			 */
+				Update the offset.
+			*/
 			nout += tableau -> numberOfCandidates;
 		}
 		return thee;
@@ -1096,33 +1097,33 @@ autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, integer trials
 	try {
 		integer nout = 0;
 		/*
-		 * Create the distribution. One row for every output form.
-		 */
+			Create the distribution. One row for every output form.
+		*/
 		autoPairDistribution thee = PairDistribution_create ();
 		/*
-		 * Measure every input form.
-		 */
+			Measure every input form.
+		*/
 		autoMelderProgress progress (U"OTGrammar: compute output distribution.");
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
 			Melder_progress ((itab - 0.5) / my numberOfTableaus, U"Measuring input \"", tableau -> input.get(), U"\"");
 			/*
-			 * Copy the input and output strings to the target object.
-			 */
+				Copy the input and output strings to the target object.
+			*/
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				PairDistribution_add (thee.get(), tableau -> input.get(), tableau -> candidates [icand]. output.get(), 0.0);
 			}
 			/*
-			 * Compute a number of outputs and store the results.
-			 */
+				Compute a number of outputs and store the results.
+			*/
 			for (integer itrial = 1; itrial <= trialsPerInput; itrial ++) {
 				OTGrammar_newDisharmonies (me, noise);
 				integer iwinner = OTGrammar_getWinner (me, itab);
 				thy pairs.at [nout + iwinner] -> weight += 1.0;
 			}
 			/*
-			 * Update the offset.
-			 */
+				Update the offset.
+			*/
 			nout += tableau -> numberOfCandidates;
 		}
 		return thee;
@@ -1148,46 +1149,44 @@ autoDistributions OTGrammar_measureTypology_WEAK (OTGrammar me) {
 		if (ncons > 12)
 			Melder_throw (U"Cannot handle more than 12 constraints.");
 		factorial [0] = 1;
-		for (integer icons = 1; icons <= ncons; icons ++) {
+		for (integer icons = 1; icons <= ncons; icons ++)
 			factorial [icons] = factorial [icons - 1] * icons;
-		}
 		nperm = factorial [ncons];
 		/*
-		 * Count the total number of outputs.
-		 */
+			Count the total number of outputs.
+		*/
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++)
 			totalNumberOfOutputs += my tableaus [itab]. numberOfCandidates;
 		/*
-		 * Create the distribution. One row for every output form.
-		 */
+			Create the distribution. One row for every output form.
+		*/
 		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1);
 		/*
-		 * Measure every input form.
-		 */
+			Measure every input form.
+		*/
 		autoMelderProgress progress (U"Measuring typology...");
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
 			Melder_progress ((itab - 0.5) / my numberOfTableaus, U"Measuring input \"", tableau -> input.get(), U"\"");
 			/*
-			 * Set the row labels to the output strings.
-			 */
+				Set the row labels to the output strings.
+			*/
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				thy rowLabels [nout + icand] = Melder_dup (Melder_cat (tableau -> input.get(), U" \\-> ", tableau -> candidates [icand]. output.get()));
 			}
 			/*
-			 * Compute a number of outputs and store the results.
-			 */
+				Compute a number of outputs and store the results.
+			*/
 			for (integer iperm = 0; iperm < nperm; iperm ++) {
 				integer permleft = iperm, iwinner;
 				/* Initialize to 12345 before permuting. */
-				for (integer icons = 1; icons <= ncons; icons ++) {
+				for (integer icons = 1; icons <= ncons; icons ++)
 					my index [icons] = icons;
-				}
 				for (integer icons = 1; icons < ncons; icons ++) {
 					integer fac = factorial [ncons - icons], shift = permleft / fac, dummy;
 					/*
-					 * Swap constraint with the one at a distance 'shift'.
-					 */
+						Swap constraint with the one at a distance 'shift'.
+					*/
 					dummy = my index [icons];
 					my index [icons] = my index [icons + shift];
 					my index [icons + shift] = dummy;
@@ -1199,8 +1198,8 @@ autoDistributions OTGrammar_measureTypology_WEAK (OTGrammar me) {
 				}
 			}
 			/*
-			 * Update the offset.
-			 */
+				Update the offset.
+			*/
 			nout += tableau -> numberOfCandidates;
 		}
 		return thee;
@@ -1222,7 +1221,8 @@ static void OTGrammar_honourLocalRankings (OTGrammar me, double plasticity, doub
 			OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
 			while (higher -> ranking <= lower -> ranking) {
 				lower -> ranking -= learningStep (plasticity, relativePlasticityNoise);
-				if (grammarHasChanged) *grammarHasChanged = true;
+				if (grammarHasChanged)
+					*grammarHasChanged = true;
 				improved = true;
 			}
 		}
@@ -1230,8 +1230,8 @@ static void OTGrammar_honourLocalRankings (OTGrammar me, double plasticity, doub
 }
 
 static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinner, integer iadult,
-	kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
-	double plasticity, double relativePlasticityNoise, int warnIfStalled, bool *out_grammarHasChanged)
+	kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
+	double plasticity, double relativePlasticityNoise, bool warnIfStalled, bool *out_grammarHasChanged)
 {
 	try {
 		OTGrammarTableau tableau = & my tableaus [itab];
@@ -1252,150 +1252,169 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 			else if (Melder_debug == 27) multiplyStepByNumberOfViolations = true;   // HG-GLA
 		}
 		if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ONE) {
-			integer icons = NUMrandomInteger (1, my numberOfConstraints);
-			OTGrammarConstraint constraint = & my constraints [icons];
+			const integer icons = NUMrandomInteger (1, my numberOfConstraints);
+			const OTGrammarConstraint constraint = & my constraints [icons];
 			double constraintStep = step * constraint -> plasticity;
-			int winnerMarks = winner -> marks [icons];
-			int adultMarks = adult -> marks [icons];
+			const integer winnerMarks = winner -> marks [icons];
+			const integer adultMarks = adult -> marks [icons];
 			if (adultMarks > winnerMarks) {
-				if (multiplyStepByNumberOfViolations) constraintStep *= adultMarks - winnerMarks;
+				if (multiplyStepByNumberOfViolations)
+					constraintStep *= adultMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
-				if (out_grammarHasChanged) *out_grammarHasChanged = true;
+				if (out_grammarHasChanged)
+					*out_grammarHasChanged = true;
 			}
 			if (winnerMarks > adultMarks) {
-				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
+				if (multiplyStepByNumberOfViolations)
+					constraintStep *= winnerMarks - adultMarks;
 				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
-				if (out_grammarHasChanged) *out_grammarHasChanged = true;
+				if (out_grammarHasChanged)
+					*out_grammarHasChanged = true;
 			}
 		} else if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ALL) {
 			bool changed = false;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				OTGrammarConstraint constraint = & my constraints [icons];
+				const OTGrammarConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
 				if (adultMarks > winnerMarks) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= adultMarks - winnerMarks;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= adultMarks - winnerMarks;
 					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
 					changed = true;
 				}
 				if (winnerMarks > adultMarks) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= winnerMarks - adultMarks;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
 					changed = true;
 				}
 			}
 			if (changed && my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG)
 			{
-				double sumOfWeights = 0.0;
-				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+				longdouble sumOfWeights = 0.0;
+				for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 					sumOfWeights += my constraints [icons]. ranking;
-				}
-				double averageWeight = sumOfWeights / my numberOfConstraints;
-				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+				const double averageWeight = (double) sumOfWeights / my numberOfConstraints;
+				for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 					my constraints [icons]. ranking -= averageWeight;
-				}
 			}
 			if (out_grammarHasChanged) *out_grammarHasChanged = changed;
 		} else if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ALL_SKIPPABLE) {
 			bool changed = false;
-			int winningConstraints = 0, adultConstraints = 0;
+			integer winningConstraints = 0, adultConstraints = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
-				if (adultMarks > winnerMarks) adultConstraints ++;
-				if (winnerMarks > adultMarks) winningConstraints ++;
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
+				if (adultMarks > winnerMarks)
+					adultConstraints ++;
+				if (winnerMarks > adultMarks)
+					winningConstraints ++;
 			}
 			if (winningConstraints != 0) for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				OTGrammarConstraint constraint = & my constraints [icons];
+				const OTGrammarConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
 				if (adultMarks > winnerMarks) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= adultMarks - winnerMarks;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= adultMarks - winnerMarks;
 					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
 					changed = true;
 				}
 				if (winnerMarks > adultMarks) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= winnerMarks - adultMarks;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
 					changed = true;
 				}
 			}
-			if (changed && my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG)
-			{
-				double sumOfWeights = 0.0;
-				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+			if (changed && my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG) {
+				longdouble sumOfWeights = 0.0;
+				for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 					sumOfWeights += my constraints [icons]. ranking;
-				}
-				double averageWeight = sumOfWeights / my numberOfConstraints;
-				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+				const double averageWeight = (double) sumOfWeights / my numberOfConstraints;
+				for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 					my constraints [icons]. ranking -= averageWeight;
-				}
 			}
 			if (out_grammarHasChanged) *out_grammarHasChanged = changed;
 		} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_UNCANCELLED) {
-			int winningConstraints = 0, adultConstraints = 0;
+			integer winningConstraints = 0, adultConstraints = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
-				if (adultMarks > winnerMarks) adultConstraints ++;
-				if (winnerMarks > adultMarks) winningConstraints ++;
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
+				if (adultMarks > winnerMarks)
+					adultConstraints ++;
+				if (winnerMarks > adultMarks)
+					winningConstraints ++;
 			}
 			if (winningConstraints != 0) for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				OTGrammarConstraint constraint = & my constraints [icons];
+				const OTGrammarConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
 				if (adultMarks > winnerMarks) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= adultMarks - winnerMarks;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= adultMarks - winnerMarks;
 					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / adultConstraints;
 					//constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) * winningConstraints;
-					if (out_grammarHasChanged) *out_grammarHasChanged = true;
+					if (out_grammarHasChanged)
+						*out_grammarHasChanged = true;
 				}
 				if (winnerMarks > adultMarks) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= winnerMarks - adultMarks;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
 					//constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * adultConstraints;
-					if (out_grammarHasChanged) *out_grammarHasChanged = true;
+					if (out_grammarHasChanged)
+						*out_grammarHasChanged = true;
 				}
 			}
 		} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL) {
-			int winningConstraints = 0, adultConstraints = 0;
+			integer winningConstraints = 0, adultConstraints = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
-				if (adultMarks > 0) adultConstraints ++;
-				if (winnerMarks > 0) winningConstraints ++;
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
+				if (adultMarks > 0)
+					adultConstraints ++;
+				if (winnerMarks > 0)
+					winningConstraints ++;
 			}
 			if (winningConstraints != 0) for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				OTGrammarConstraint constraint = & my constraints [icons];
+				const OTGrammarConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
 				if (adultMarks > 0) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= adultMarks /*- winnerMarks*/;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= adultMarks /*- winnerMarks*/;
 					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / adultConstraints;
-					if (out_grammarHasChanged) *out_grammarHasChanged = true;
+					if (out_grammarHasChanged)
+						*out_grammarHasChanged = true;
 				}
 				if (winnerMarks > 0) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks /*- adultMarks*/;
+					if (multiplyStepByNumberOfViolations)
+						constraintStep *= winnerMarks /*- adultMarks*/;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
-					if (out_grammarHasChanged) *out_grammarHasChanged = true;
+					if (out_grammarHasChanged)
+						*out_grammarHasChanged = true;
 				}
 			}
 		} else if (updateRule == kOTGrammar_rerankingStrategy::EDCD || updateRule == kOTGrammar_rerankingStrategy::EDCD_WITH_VACATION) {
 			/*
-			 * Determine the crucial winner mark.
-			 */
+				Determine the crucial winner mark.
+			*/
 			double pivotRanking;
 			bool equivalent = true;
 			integer icons = 1;
 			for (; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
-				int adultMarks = adult -> marks [my index [icons]];
-				if (adultMarks < winnerMarks) break;
-				if (adultMarks > winnerMarks) equivalent = false;
+				const integer winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+				const integer adultMarks = adult -> marks [my index [icons]];
+				if (adultMarks < winnerMarks)
+					break;
+				if (adultMarks > winnerMarks)
+					equivalent = false;
 			}
 			if (icons > my numberOfConstraints) {   // completed the loop?
 				if (warnIfStalled && ! equivalent)
@@ -1404,98 +1423,101 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 				return;   // Tesar & Smolensky (2000: 67): "stopped dead in its tracks"
 			}
 			/*
-			 * Determine the stratum into which some constraints will be demoted.
-			 */
+				Determine the stratum into which some constraints will be demoted.
+			*/
 			pivotRanking = my constraints [my index [icons]]. ranking;
 			if (updateRule == kOTGrammar_rerankingStrategy::EDCD_WITH_VACATION) {
 				integer numberOfConstraintsToDemote = 0;
 				for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-					int winnerMarks = winner -> marks [icons];
-					int adultMarks = adult -> marks [icons];
+					const integer winnerMarks = winner -> marks [icons];
+					const integer adultMarks = adult -> marks [icons];
 					if (adultMarks > winnerMarks) {
-						OTGrammarConstraint constraint = & my constraints [icons];
-						if (constraint -> ranking >= pivotRanking) {
+						const OTGrammarConstraint constraint = & my constraints [icons];
+						if (constraint -> ranking >= pivotRanking)
 							numberOfConstraintsToDemote += 1;
-						}
 					}
 				}
 				if (numberOfConstraintsToDemote > 0) {
 					for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-						OTGrammarConstraint constraint = & my constraints [icons];
+						const OTGrammarConstraint constraint = & my constraints [icons];
 						if (constraint -> ranking < pivotRanking) {
 							constraint -> ranking -= numberOfConstraintsToDemote * step * constraint -> plasticity;
-							if (out_grammarHasChanged) *out_grammarHasChanged = true;
+							if (out_grammarHasChanged)
+								*out_grammarHasChanged = true;
 						}
 					}
 				}
 			}
 			/*
-			 * Demote all the uniquely violated constraints in the adult form
-			 * that have rankings not lower than the pivot.
-			 */
+				Demote all the uniquely violated constraints in the adult form
+				that have rankings not lower than the pivot.
+			*/
 			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 				integer numberOfConstraintsDemoted = 0;
-				int winnerMarks = winner -> marks [my index [icons]];   // for the vacation version, the order is important, therefore indirect
-				int adultMarks = adult -> marks [my index [icons]];
+				const integer winnerMarks = winner -> marks [my index [icons]];   // for the vacation version, the order is important, therefore indirect
+				const integer adultMarks = adult -> marks [my index [icons]];
 				if (adultMarks > winnerMarks) {
-					OTGrammarConstraint constraint = & my constraints [my index [icons]];
-					double constraintStep = step * constraint -> plasticity;
+					const OTGrammarConstraint constraint = & my constraints [my index [icons]];
+					const double constraintStep = step * constraint -> plasticity;
 					if (constraint -> ranking >= pivotRanking) {
 						numberOfConstraintsDemoted += 1;
 						constraint -> ranking = pivotRanking - numberOfConstraintsDemoted * constraintStep;   // this preserves the order of the demotees
-						if (out_grammarHasChanged) *out_grammarHasChanged = true;
+						if (out_grammarHasChanged)
+							*out_grammarHasChanged = true;
 					}
 				}
 			}
 		} else if (updateRule == kOTGrammar_rerankingStrategy::DEMOTION_ONLY) {
 			/*
-			 * Determine the crucial adult mark.
-			 */
+				Determine the crucial adult mark.
+			*/
 			integer crucialAdultMark;
 			OTGrammarConstraint offendingConstraint;
 			integer icons = 1;
 			for (; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [my index [icons]];   // the order is important, so we indirect
-				int adultMarks = adult -> marks [my index [icons]];
+				const integer winnerMarks = winner -> marks [my index [icons]];   // the order is important, so we indirect
+				const integer adultMarks = adult -> marks [my index [icons]];
 				if (my constraints [my index [icons]]. tiedToTheRight)
 					Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 				if (adultMarks < winnerMarks)
 					Melder_throw (U"Demotion-only learning step: Adult form wins! Should never happen.");
-				if (adultMarks > winnerMarks) break;
+				if (adultMarks > winnerMarks)
+					break;
 			}
 			if (icons > my numberOfConstraints)   // completed the loop?
 				Melder_throw (U"Adult form equals correct candidate.");
 			crucialAdultMark = icons;
 			/*
-			 * Demote the highest uniquely violated constraint in the adult form.
-			 */
+				Demote the highest uniquely violated constraint in the adult form.
+			*/
 			offendingConstraint = & my constraints [my index [crucialAdultMark]];
 			double constraintStep = step * offendingConstraint -> plasticity;
 			offendingConstraint -> ranking -= constraintStep;
-			if (out_grammarHasChanged) *out_grammarHasChanged = true;
+			if (out_grammarHasChanged)
+				*out_grammarHasChanged = true;
 		} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGHEST_DOWN) {
 			integer numberOfUp = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
-				if (winnerMarks > adultMarks) {
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
+				if (winnerMarks > adultMarks)
 					numberOfUp ++;
-				}
 			}
 			if (numberOfUp > 0) {
 				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-					OTGrammarConstraint constraint = & my constraints [icons];
+					const OTGrammarConstraint constraint = & my constraints [icons];
 					double constraintStep = step * constraint -> plasticity;
-					int winnerMarks = winner -> marks [icons];
-					int adultMarks = adult -> marks [icons];
+					const integer winnerMarks = winner -> marks [icons];
+					const integer adultMarks = adult -> marks [icons];
 					if (winnerMarks > adultMarks) {
-						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
+						if (multiplyStepByNumberOfViolations)
+							constraintStep *= winnerMarks - adultMarks;
 						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / numberOfUp;
-						if (out_grammarHasChanged) *out_grammarHasChanged = true;
+						if (out_grammarHasChanged)
+							*out_grammarHasChanged = true;
 					}
 				}
-				integer crucialAdultMark, winnerMarks = 0, adultMarks = 0;
-				OTGrammarConstraint offendingConstraint;
+				integer winnerMarks = 0, adultMarks = 0;
 				integer icons = 1;
 				for (; icons <= my numberOfConstraints; icons ++) {
 					winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
@@ -1508,11 +1530,11 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 				}
 				if (icons > my numberOfConstraints)   // completed the loop?
 					Melder_throw (U"Adult form equals correct candidate.");
-				crucialAdultMark = icons;
+				const integer crucialAdultMark = icons;
 				/*
-				 * Demote the highest uniquely violated constraint in the adult form.
-				 */
-				offendingConstraint = & my constraints [my index [crucialAdultMark]];
+					Demote the highest uniquely violated constraint in the adult form.
+				*/
+				const OTGrammarConstraint offendingConstraint = & my constraints [my index [crucialAdultMark]];
 				double constraintStep = step * offendingConstraint -> plasticity;
 				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
 				offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
@@ -1521,26 +1543,26 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 		} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGHEST_DOWN_2012) {
 			integer numberOfUp = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int adultMarks = adult -> marks [icons];
-				if (winnerMarks > adultMarks) {
+				const integer winnerMarks = winner -> marks [icons];
+				const integer adultMarks = adult -> marks [icons];
+				if (winnerMarks > adultMarks)
 					numberOfUp ++;
-				}
 			}
 			if (numberOfUp > 0) {
 				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-					OTGrammarConstraint constraint = & my constraints [icons];
+					const OTGrammarConstraint constraint = & my constraints [icons];
 					double constraintStep = step * constraint -> plasticity;
-					int winnerMarks = winner -> marks [icons];
-					int adultMarks = adult -> marks [icons];
+					const integer winnerMarks = winner -> marks [icons];
+					const integer adultMarks = adult -> marks [icons];
 					if (winnerMarks > adultMarks) {
-						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
+						if (multiplyStepByNumberOfViolations)
+							constraintStep *= winnerMarks - adultMarks;
 						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / (numberOfUp + 1);
-						if (out_grammarHasChanged) *out_grammarHasChanged = true;
+						if (out_grammarHasChanged)
+							*out_grammarHasChanged = true;
 					}
 				}
-				integer crucialAdultMark, winnerMarks = 0, adultMarks = 0;
-				OTGrammarConstraint offendingConstraint;
+				integer winnerMarks = 0, adultMarks = 0;
 				integer icons = 1;
 				for (; icons <= my numberOfConstraints; icons ++) {
 					winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
@@ -1553,11 +1575,11 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 				}
 				if (icons > my numberOfConstraints)   // completed the loop?
 					Melder_throw (U"Adult form equals correct candidate.");
-				crucialAdultMark = icons;
+				const integer crucialAdultMark = icons;
 				/*
-				 * Demote the highest uniquely violated constraint in the adult form.
-				 */
-				offendingConstraint = & my constraints [my index [crucialAdultMark]];
+					Demote the highest uniquely violated constraint in the adult form.
+				*/
+				const OTGrammarConstraint offendingConstraint = & my constraints [my index [crucialAdultMark]];
 				double constraintStep = step * offendingConstraint -> plasticity;
 				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
 				offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
@@ -1566,8 +1588,8 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 		} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGH_DOWN) {
 			integer numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
-				int adultMarks = adult -> marks [my index [icons]];
+				const integer winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+				const integer adultMarks = adult -> marks [my index [icons]];
 				if (adultMarks < winnerMarks) {
 					numberOfUp ++;
 				} else if (adultMarks > winnerMarks) {
@@ -1584,13 +1606,13 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 			}
 			if (numberOfUp > 0) {
 				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-					integer constraintIndex = my index [icons];
-					OTGrammarConstraint constraint = & my constraints [constraintIndex];
-					double constraintStep = step * constraint -> plasticity;
-					int winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
-					int adultMarks = adult -> marks [constraintIndex];
+					const integer constraintIndex = my index [icons];
 					if (my constraints [constraintIndex]. tiedToTheRight)
 						Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
+					const OTGrammarConstraint constraint = & my constraints [constraintIndex];
+					double constraintStep = step * constraint -> plasticity;
+					const integer winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
+					const integer adultMarks = adult -> marks [constraintIndex];
 					if (adultMarks < winnerMarks) {
 						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
 						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * numberOfDown / (numberOfUp + 0.0);
@@ -1606,8 +1628,8 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 		} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGH_DOWN_2012) {
 			integer numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
-				int adultMarks = adult -> marks [my index [icons]];
+				const integer winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+				const integer adultMarks = adult -> marks [my index [icons]];
 				if (adultMarks < winnerMarks) {
 					numberOfUp ++;
 				} else if (adultMarks > winnerMarks) {
@@ -1624,13 +1646,13 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 			}
 			if (numberOfUp > 0) {
 				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-					integer constraintIndex = my index [icons];
-					OTGrammarConstraint constraint = & my constraints [constraintIndex];
-					double constraintStep = step * constraint -> plasticity;
-					int winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
-					int adultMarks = adult -> marks [constraintIndex];
+					const integer constraintIndex = my index [icons];
 					if (my constraints [constraintIndex]. tiedToTheRight)
 						Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
+					const OTGrammarConstraint constraint = & my constraints [constraintIndex];
+					double constraintStep = step * constraint -> plasticity;
+					const integer winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
+					const integer adultMarks = adult -> marks [constraintIndex];
 					if (adultMarks < winnerMarks) {
 						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - adultMarks;
 						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * numberOfDown / (numberOfUp + 1.0);
@@ -1641,12 +1663,12 @@ static void OTGrammar_modifyRankings (OTGrammar me, integer itab, integer iwinne
 						}
 					}
 				}
-				if (out_grammarHasChanged) *out_grammarHasChanged = true;
+				if (out_grammarHasChanged)
+					*out_grammarHasChanged = true;
 			}
 		}
-		if (honourLocalRankings && my numberOfFixedRankings) {
+		if (honourLocalRankings && my numberOfFixedRankings)
 			OTGrammar_honourLocalRankings (me, plasticity, relativePlasticityNoise, out_grammarHasChanged);
-		}
 	} catch (MelderError) {
 		Melder_throw (me, U": rankings not modified.");
 	}
@@ -1661,27 +1683,27 @@ void OTGrammar_learnOne (OTGrammar me, conststring32 input, conststring32 adultO
 		if (out_grammarHasChanged) *out_grammarHasChanged = false;
 
 		/*
-		 * Evaluate the input in the learner's hypothesis.
-		 */
+			Evaluate the input in the learner's hypothesis.
+		*/
 		integer itab = OTGrammar_getTableau (me, input);
 		OTGrammarTableau tableau = & my tableaus [itab];
 
 		/*
-		 * Determine the "winner", i.e. the candidate that wins in the learner's grammar
-		 * (Tesar & Smolensky call this the "loser").
-		 */
+			Determine the "winner", i.e. the candidate that wins in the learner's grammar
+			(Tesar & Smolensky call this the "loser").
+		*/
 		integer iwinner = OTGrammar_getWinner (me, itab);
 		OTGrammarCandidate winner = & tableau -> candidates [iwinner];
 
 		/*
-		 * Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
-		 */
+			Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
+		*/
 		if (str32equ (winner -> output.get(), adultOutput)) return;   // as far as we know, the grammar is already correct: don't update rankings
 
 		/*
-		 * Find (perhaps the learner's interpretation of) the adult output in the learner's own tableau
-		 * (Tesar & Smolensky call this the "winner").
-		 */
+			Find (perhaps the learner's interpretation of) the adult output in the learner's own tableau
+			(Tesar & Smolensky call this the "winner").
+		*/
 		integer iadult = 1;
 		for (; iadult <= tableau -> numberOfCandidates; iadult ++) {
 			OTGrammarCandidate cand = & tableau -> candidates [iadult];
@@ -1691,9 +1713,9 @@ void OTGrammar_learnOne (OTGrammar me, conststring32 input, conststring32 adultO
 			Melder_throw (U"Cannot generate adult output \"", adultOutput, U"\".");
 
 		/*
-		 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
-		 * The grammar will have to change.
-		 */
+			Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
+			The grammar will have to change.
+		*/
 		OTGrammar_modifyRankings (me, itab, iwinner, iadult, updateRule, honourLocalRankings,
 			plasticity, relativePlasticityNoise, warnIfStalled, out_grammarHasChanged);
 	} catch (MelderError) {
@@ -1779,7 +1801,7 @@ static integer PairDistribution_getNumberOfAttestedOutputs (PairDistribution me,
 	return result;
 }
 
-bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation) {
+bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation) {
 	NUMlinprog linprog = nullptr;
 	try {
 		bool result = false;
@@ -1790,13 +1812,13 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 		{
 			Melder_throw (U"To find positive weights, the decision strategy has to be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
 		}
-		autoNUMvector <integer> optimalCandidates (1, my numberOfTableaus);
+		autoINTVEC optimalCandidates = newINTVECraw (my numberOfTableaus);
 		/*
-		 * Check that there is exactly one optimal output for each input.
-		 */
+			Check that there is exactly one optimal output for each input.
+		*/
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
-			conststring32 attestedOutput;
+			conststring32 attestedOutput = nullptr;
 			integer numberOfAttestedOutputs = PairDistribution_getNumberOfAttestedOutputs (thee, tab -> input.get(), & attestedOutput);
 			if (numberOfAttestedOutputs == 0) {
 				Melder_throw (U"Input \"", tab -> input.get(), U"\" has no attested output.");
@@ -1806,20 +1828,18 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 				Melder_assert (attestedOutput);
 				for (integer icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 					OTGrammarCandidate cand = & tab -> candidates [icand];
-					if (str32equ (attestedOutput, cand -> output.get())) {
+					if (str32equ (attestedOutput, cand -> output.get()))
 						optimalCandidates [itab] = icand;
-					}
 				}
 			}
 			Melder_assert (optimalCandidates [itab] != 0);
 		}
 		/*
-		 * Create linear programming problem.
-		 */
+			Create linear programming problem.
+		*/
 		linprog = NUMlinprog_new (false);
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 			NUMlinprog_addVariable (linprog, weightFloor, undefined, 1.0);
-		}
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
 			integer ioptimalCandidate = optimalCandidates [itab];
@@ -1829,9 +1849,8 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 			for (integer icand = 1; icand <= tab -> numberOfCandidates; icand ++) if (icand != ioptimalCandidate) {
 				OTGrammarCandidate cand = & tab -> candidates [icand];
 				NUMlinprog_addConstraint (linprog, marginOfSeparation, undefined);
-				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+				for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 					NUMlinprog_addConstraintCoefficient (linprog, cand -> marks [icons] - optimalCandidate -> marks [icons]);
-				}
 			}
 		}
 		NUMlinprog_run (linprog);
@@ -1867,16 +1886,16 @@ void OTGrammar_resetToRandomRanking (OTGrammar me, double mean, double standardD
 
 void OTGrammar_resetToRandomTotalRanking (OTGrammar me, double maximumRanking, double rankingDistance) {
 	/*
-	 * First put the constraints in a random order and build a random index.
-	 */
+		First put the constraints in a random order and build a random index.
+	*/
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
 		constraint -> ranking = 0.0;
 	}
 	OTGrammar_newDisharmonies (me, 1.0);
 	/*
-	 * Then use the random index to yield a cascade of rankings.
-	 */
+		Then use the random index to yield a cascade of rankings.
+	*/
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
 		constraint -> disharmony = constraint -> ranking = maximumRanking - (icons - 1) * rankingDistance;
@@ -1906,23 +1925,19 @@ void OTGrammar_setConstraintPlasticity (OTGrammar me, integer constraint, double
 	}
 }
 
-integer theSaveNumberOfConstraints, *theSaveIndex;
-double *theSaveRankings, *theSaveDisharmonies;
-int *theSaveTiedToTheLeft, *theSaveTiedToTheRight;
+integer theSaveNumberOfConstraints;
+autoINTVEC theSaveIndex;
+autoVEC theSaveRankings, theSaveDisharmonies;
+autoBOOLVEC theSaveTiedToTheLeft, theSaveTiedToTheRight;
 static void OTGrammar_save (OTGrammar me) {
 	if (my numberOfConstraints != theSaveNumberOfConstraints) {
-		NUMvector_free (theSaveIndex, 1); theSaveIndex = nullptr;
-		NUMvector_free (theSaveRankings, 1); theSaveRankings = nullptr;
-		NUMvector_free (theSaveDisharmonies, 1); theSaveDisharmonies = nullptr;
-		NUMvector_free (theSaveTiedToTheLeft, 1); theSaveTiedToTheLeft = nullptr;
-		NUMvector_free (theSaveTiedToTheRight, 1); theSaveTiedToTheRight = nullptr;
+		theSaveIndex = newINTVECraw (my numberOfConstraints);
+		theSaveRankings = newVECraw (my numberOfConstraints);
+		theSaveDisharmonies = newVECraw (my numberOfConstraints);
+		theSaveTiedToTheLeft = newBOOLVECraw (my numberOfConstraints);
+		theSaveTiedToTheRight = newBOOLVECraw (my numberOfConstraints);
 		theSaveNumberOfConstraints = my numberOfConstraints;
 	}
-	if (! theSaveIndex) theSaveIndex = NUMvector <integer> (1, my numberOfConstraints);
-	if (! theSaveRankings) theSaveRankings = NUMvector <double> (1, my numberOfConstraints);
-	if (! theSaveDisharmonies) theSaveDisharmonies = NUMvector <double> (1, my numberOfConstraints);
-	if (! theSaveTiedToTheLeft) theSaveTiedToTheLeft = NUMvector <int> (1, my numberOfConstraints);
-	if (! theSaveTiedToTheRight) theSaveTiedToTheRight = NUMvector <int> (1, my numberOfConstraints);
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		theSaveIndex [icons] = my index [icons];
 		theSaveRankings [icons] = my constraints [icons]. ranking;
@@ -1947,9 +1962,8 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, conststring32 partialAdu
 {
 	try {
 		OTGrammar_newDisharmonies (me, evaluationNoise);
-		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy::EDCD) {
+		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy::EDCD)
 			OTGrammar_save (me);
-		}
 		integer ichew = 1;
 		for (; ichew <= numberOfChews; ichew ++) {
 			integer assumedAdultInputTableau, assumedAdultCandidate;
@@ -1959,13 +1973,15 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, conststring32 partialAdu
 				my tableaus [assumedAdultInputTableau]. input.get(),
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output.get(),
 				evaluationNoise, updateRule, honourLocalRankings,
-				plasticity, relativePlasticityNoise, Melder_debug == 47, warnIfStalled, & grammarHasChanged);
-			if (! grammarHasChanged) return;
+				plasticity, relativePlasticityNoise, Melder_debug == 47, warnIfStalled, & grammarHasChanged
+			);
+			if (! grammarHasChanged)
+				return;
 		}
 		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy::EDCD && ichew > numberOfChews) {
 			/*
-			 * Is the partial output form grammatical by now?
-			 */
+				Is the partial output form grammatical by now?
+			*/
 			integer assumedAdultInputTableau, assumedAdultCandidate;
 			OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			OTGrammarCandidate learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
@@ -1973,8 +1989,8 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, conststring32 partialAdu
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output.get()))
 			{   /* Still ungrammatical? */
 				/*
-				 * Backtrack as in Tesar & Smolensky 2000:69.
-				 */
+					Backtrack as in Tesar & Smolensky 2000:69.
+				*/
 				OTGrammar_restore (me);
 			}
 		}
@@ -1990,9 +2006,8 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, conststring32
 {
 	try {
 		OTGrammar_newDisharmonies (me, evaluationNoise);
-		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy::EDCD) {
+		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy::EDCD)
 			OTGrammar_save (me);
-		}
 		integer ichew = 1;
 		for (; ichew <= numberOfChews; ichew ++) {
 			integer assumedAdultInputTableau, assumedAdultCandidate;
@@ -2001,16 +2016,16 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, conststring32
 			OTGrammarCandidate assumedCorrect = & tableau -> candidates [assumedAdultCandidate];
 
 			/*
-			 * Determine the "winner", i.e. the candidate that wins in the learner's grammar
-			 * (Tesar & Smolensky call this the "loser").
-			 */
+				Determine the "winner", i.e. the candidate that wins in the learner's grammar
+				(Tesar & Smolensky call this the "loser").
+			*/
 			if (resampleForVirtualProduction) OTGrammar_newDisharmonies (me, evaluationNoise);
 			integer iwinner = OTGrammar_getWinner (me, assumedAdultInputTableau);
 			OTGrammarCandidate winner = & tableau -> candidates [iwinner];
 
 			/*
-			 * Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
-			 */
+				Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
+			*/
 			if (compareOnlyPartialOutput) {
 				if (str32str (winner -> output.get(), partialAdultOutput)) return;   // as far as we know, the grammar is already correct: don't update rankings
 			} else {
@@ -2032,18 +2047,19 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, conststring32
 			}
 
 			/*
-			 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
-			 * The grammar will have to change.
-			 */
+				Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
+				The grammar will have to change.
+			*/
 			bool grammarHasChanged = false;
 			OTGrammar_modifyRankings (me, assumedAdultInputTableau, iwinner, assumedAdultCandidate, updateRule, honourLocalRankings,
 				plasticity, relativePlasticityNoise, warnIfStalled, & grammarHasChanged);
-			if (! grammarHasChanged) return;
+			if (! grammarHasChanged)
+				return;
 		}
 		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy::EDCD && ichew > numberOfChews) {
 			/*
-			 * Is the partial output form grammatical by now?
-			 */
+				Is the partial output form grammatical by now?
+			*/
 			integer assumedAdultInputTableau, assumedAdultCandidate;
 			OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			OTGrammarCandidate learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
@@ -2051,8 +2067,8 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, conststring32
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output.get()))
 			{   /* Still ungrammatical? */
 				/*
-				 * Backtrack as in Tesar & Smolensky 2000:69.
-				 */
+					Backtrack as in Tesar & Smolensky 2000:69.
+				*/
 				OTGrammar_restore (me);
 			}
 		}
@@ -2243,14 +2259,12 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 							plasticity, relativePlasticityNoise, numberOfChews, false,
 							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
-						if (history) {
+						if (history)
 							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput].get());
-						}
 						throw;
 					}
-					if (history) {
+					if (history)
 						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput].get());
-					}
 				}
 				plasticity *= plasticityDecrement;
 			}
@@ -2346,8 +2360,8 @@ double OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions t
 void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 	try {
 		integer removed = 0;
-
-		Melder_require (my numberOfConstraints > 1, U"Cannot remove last remaining constraint.");
+		Melder_require (my numberOfConstraints > 1,
+			U"Cannot remove last remaining constraint.");
 
 		/*
 			Look for the constraint to be removed.
@@ -2383,15 +2397,16 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 					NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);
 					my fixedRankings = nullptr;
 				}
-				for (integer jfixed = ifixed; jfixed <= my numberOfFixedRankings; jfixed ++) {
+				for (integer jfixed = ifixed; jfixed <= my numberOfFixedRankings; jfixed ++)
 					my fixedRankings [jfixed] = my fixedRankings [jfixed + 1];
-				}
 			} else {
 				/*
 					Shift fixed ranking.
 				*/
-				if (fixed -> higher > removed) fixed -> higher -= 1;
-				if (fixed -> lower > removed) fixed -> lower -= 1;
+				if (fixed -> higher > removed)
+					fixed -> higher -= 1;
+				if (fixed -> lower > removed)
+					fixed -> lower -= 1;
 			}
 		}
 		/*
@@ -2402,15 +2417,17 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				OTGrammarCandidate candidate = & tableau -> candidates [icand];
 				candidate -> numberOfConstraints -= 1;
-				for (integer icons = removed; icons <= my numberOfConstraints; icons ++) {
+				for (integer icons = removed; icons <= my numberOfConstraints; icons ++)
 					candidate -> marks [icons] = candidate -> marks [icons + 1];
-				}
+				candidate -> marks. size -= 1;   // maintain invariant
 			}
 		}
 		/*
 			Rebuild index.
 		*/
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+		my index. resize (my numberOfConstraints);
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+			my index [icons] = icons;
 		OTGrammar_sort (me);
 	} catch (MelderError) {
 		Melder_throw (me, U": constraint \"", constraintName, U"\" not removed.");
@@ -2419,27 +2436,30 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 
 static void OTGrammarTableau_removeCandidate_unstripped (OTGrammarTableau me, integer candidateNumber) {
 	Melder_assert (candidateNumber >= 1);
-	if (candidateNumber > my numberOfCandidates) Melder_fatal (U"icand ", candidateNumber, U", ncand ", my numberOfCandidates);
-
-	NUMvector_free (my candidates [candidateNumber]. marks, 1);   // dangle
+	if (candidateNumber > my numberOfCandidates)
+		Melder_fatal (U"icand ", candidateNumber, U", ncand ", my numberOfCandidates);
 
 	for (integer jcand = candidateNumber; jcand < my numberOfCandidates; jcand ++) {
 		OTGrammarCandidate candj = & my candidates [jcand];
 		OTGrammarCandidate candj1 = & my candidates [jcand + 1];
 		candj -> output = candj1 -> output. move();
-		candj -> marks = candj1 -> marks;   // undangle
+		candj -> marks = candj1 -> marks. move();
 	}
 	my candidates [my numberOfCandidates]. output. reset();
+	my candidates [my numberOfCandidates]. marks. reset();
 	my numberOfCandidates -= 1;
 }
 
 static bool OTGrammarTableau_isHarmonicallyBounded (OTGrammarTableau me, integer icand, integer jcand) {
 	OTGrammarCandidate candi = & my candidates [icand], candj = & my candidates [jcand];
 	bool equal = true;
-	if (icand == jcand) return false;
+	if (icand == jcand)
+		return false;
 	for (integer icons = 1; icons <= candi -> numberOfConstraints; icons ++) {
-		if (candi -> marks [icons] < candj -> marks [icons]) return false;
-		if (candi -> marks [icons] > candj -> marks [icons]) equal = false;
+		if (candi -> marks [icons] < candj -> marks [icons])
+			return false;
+		if (candi -> marks [icons] > candj -> marks [icons])
+			equal = false;
 	}
 	return ! equal;
 }
@@ -2481,9 +2501,9 @@ static bool OTGrammarTableau_candidateIsPossibleWinner (OTGrammar me, integer it
 void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, bool singly) {
 	try {
 		/*
-		 * First, the candidates that are harmonically bounded by one or more single other candidates have to be removed;
-		 * otherwise, EDCD will stall.
-		 */
+			First, the candidates that are harmonically bounded by one or more single other candidates have to be removed;
+			otherwise, EDCD will stall.
+		*/
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
 			for (integer icand = tab -> numberOfCandidates; icand >= 1; icand --) {
@@ -2500,9 +2520,8 @@ void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, bool singly) {
 			for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 				OTGrammarTableau tab = & my tableaus [itab];
 				for (integer icand = tab -> numberOfCandidates; icand >= 1; icand --) {
-					if (! OTGrammarTableau_candidateIsPossibleWinner (me, itab, icand)) {
+					if (! OTGrammarTableau_candidateIsPossibleWinner (me, itab, icand))
 						OTGrammarTableau_removeCandidate_unstripped (tab, icand);
-					}
 				}
 				tab -> candidates = (OTGrammarCandidate) realloc (& tab -> candidates [1], sizeof (struct structOTGrammarCandidate) * tab -> numberOfCandidates) - 1;
 			}	
@@ -2521,8 +2540,8 @@ Thing_implement (OTGrammar_List4, Daata, 0);
 
 void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee) {
 	/*
-	 * Save.
-	 */
+		Save.
+	*/
 	OTGrammarFixedRanking savedFixedRankings = my fixedRankings;   // dangle...
 	my fixedRankings = nullptr;   // ...undangle
 	integer savedNumberOfFixedRankings = my numberOfFixedRankings;
@@ -2532,16 +2551,16 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		integer itrial;
 		const double evaluationNoise = 1e-9;
 		/*
-		 * Add room for two more fixed rankings.
-		 */
+			Add room for two more fixed rankings.
+		*/
 		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings + 2);
 		for (integer ifixedRanking = 1; ifixedRanking <= my numberOfFixedRankings; ifixedRanking ++) {
 			my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
 			my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
 		}
 		/*
-		 * Test whether there are rankings at all for these output data.
-		 */
+			Test whether there are rankings at all for these output data.
+		*/
 		OTGrammar_reset (me, 100.0);
 		for (itrial = 1; itrial <= 40; itrial ++) {
 			bool grammarHasChangedDuringCycle = false;
@@ -2553,10 +2572,10 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					bool grammarHasChanged = false;
 					OTGrammar_learnOne (me, prob -> string1.get(), prob -> string2.get(),
 						evaluationNoise, kOTGrammar_rerankingStrategy::EDCD, true /* honour fixed rankings; very important */,
-						1.0, 0.0, false, true, & grammarHasChanged);
-					if (grammarHasChanged) {
+						1.0, 0.0, false, true, & grammarHasChanged
+					);
+					if (grammarHasChanged)
 						OTGrammar_newDisharmonies (me, evaluationNoise);
-					}
 					grammarHasChangedDuringCycle |= grammarHasChanged;
 				}
 			}
@@ -2567,10 +2586,10 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			throw MelderError ();
 		}
 		/*
-		 * Test learnability of every possible ranked pair.
-		 */
+			Test learnability of every possible ranked pair.
+		*/
 		my numberOfFixedRankings ++;
-		autoNUMmatrix <bool> obligatory (1, my numberOfConstraints, 1, my numberOfConstraints);
+		autoBOOLMAT obligatory = newBOOLMATzero (my numberOfConstraints, my numberOfConstraints);
 		MelderInfo_open ();
 		autoMelderProgress progress (U"Finding obligatory rankings.");
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -2592,13 +2611,13 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							OTGrammar_learnOne (me, prob -> string1.get(), prob -> string2.get(),
 								evaluationNoise, kOTGrammar_rerankingStrategy::EDCD, true /* honour fixed rankings; very important */,
 								1.0, 0.0, false, true, & grammarHasChanged);
-							if (grammarHasChanged) {
+							if (grammarHasChanged)
 								OTGrammar_newDisharmonies (me, evaluationNoise);
-							}
 							grammarHasChangedDuringCycle |= grammarHasChanged;
 						}
 					}
-					if (! grammarHasChangedDuringCycle) break;
+					if (! grammarHasChangedDuringCycle)
+						break;
 				}
 				if (itrial > 40) {
 					obligatory [jcons] [icons] = true;
@@ -2638,9 +2657,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 									OTGrammar_learnOne (me, prob -> string1.get(), prob -> string2.get(),
 										evaluationNoise, kOTGrammar_rerankingStrategy::EDCD, true /* honour fixed rankings; very important */,
 										1.0, 0.0, false, true, & grammarHasChanged);
-									if (grammarHasChanged) {
+									if (grammarHasChanged)
 										OTGrammar_newDisharmonies (me, evaluationNoise);
-									}
 									grammarHasChangedDuringCycle |= grammarHasChanged;
 								}
 							}
@@ -2660,8 +2678,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		}
 		Melder_progress (1.0);
 		/*
-		 * Improve list.
-		 */
+			Improve list.
+		*/
 		bool improved = true;
 		while (improved) {
 			improved = false;
@@ -2712,24 +2730,24 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		}
 		MelderInfo_close ();
 		/*
-		 * Remove room.
-		 */
+			Remove room.
+		*/
 		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
 		/*
-		 * Restore.
-		 */
+			Restore.
+		*/
 		my numberOfFixedRankings = savedNumberOfFixedRankings;
 		my fixedRankings = savedFixedRankings;   // undangle
 		OTGrammar_restore (me);
 	} catch (MelderError) {
 		MelderInfo_close ();
 		/*
-		 * Remove room.
-		 */
+			Remove room.
+		*/
 		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
 		/*
-		 * Restore.
-		 */
+			Restore.
+		*/
 		my numberOfFixedRankings = savedNumberOfFixedRankings;
 		my fixedRankings = savedFixedRankings;   // undangle
 		OTGrammar_restore (me);
@@ -2739,16 +2757,16 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 
 void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, integer columnNumber) {
 	/*
-	 * Save.
-	 */
+		Save.
+	*/
 	OTGrammarFixedRanking savedFixedRankings = my fixedRankings;
 	my fixedRankings = nullptr;
 	OTGrammar_save (me);
 	try {
 		integer ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
 		/*
-		 * Add room for one more fixed ranking.
-		 */
+			Add room for one more fixed ranking.
+		*/
 		my numberOfFixedRankings ++;
 		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings);
 		for (integer ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
@@ -2756,8 +2774,8 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 			my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
 		}
 		/*
-		 * Test learnability of every possible ranked pair.
-		 */
+			Test learnability of every possible ranked pair.
+		*/
 		MelderInfo_open ();
 		autoMelderProgress progress (U"Finding obligatory rankings.");
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -2783,8 +2801,8 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 		}
 		MelderInfo_close ();
 		/*
-		 * Remove room.
-		 */
+			Remove room.
+		*/
 		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
 		/*
 		 * Restore.
@@ -2795,12 +2813,12 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 	} catch (MelderError) {
 		MelderInfo_close ();
 		/*
-		 * Remove room.
-		 */
+			Remove room.
+		*/
 		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
 		/*
-		 * Restore.
-		 */
+			Restore.
+		*/
 		my numberOfFixedRankings --;
 		my fixedRankings = savedFixedRankings;   // undangle
 		OTGrammar_restore (me);
@@ -2817,7 +2835,7 @@ static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 			char32 *newLine;
 			str32cpy (text, constraint -> name.get());
 			newLine = str32chr (text, U'\n');
-			*newLine = '\0';
+			*newLine = U'\0';
 			MelderString_append (buffer, U"\t", text);
 			secondLine = true;
 		} else {
@@ -2855,15 +2873,13 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
 			integer winner = OTGrammar_getWinner (me, itab), numberOfOptimalCandidates = 0;
-			for (integer icons = 1; icons <= my numberOfConstraints + 1; icons ++) {
+			for (integer icons = 1; icons <= my numberOfConstraints + 1; icons ++)
 				MelderString_appendCharacter (& buffer, U'\t');
-			}
 			MelderString_append (& buffer, U"\nINPUT\t", tableau -> input.get());
 			printConstraintNames (me, & buffer);
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-				if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
+				if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0)
 					numberOfOptimalCandidates ++;
-				}
 			}
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				OTGrammarCandidate candidate = & tableau -> candidates [icand];
@@ -2879,13 +2895,13 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 					static MelderString markString;
 					MelderString_empty (& markString);
 					/*
-					 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
-					 * 1. the candidate is not optimal;
-					 * 2. the constraint is not tied;
-					 * 3. this is the crucial cell, i.e. the cells after it are drawn in grey.
-					 */
+						An exclamation mark can be drawn in this cell only if all of the following conditions are met:
+						1. the candidate is not optimal;
+						2. the constraint is not tied;
+						3. this is the crucial cell, i.e. the cells after it are drawn in grey.
+					*/
 					if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
-						int winnerMarks = tableau -> candidates [winner]. marks [index];
+						const integer winnerMarks = tableau -> candidates [winner]. marks [index];
 						for (integer imark = 1; imark <= winnerMarks + 1; imark ++)
 							MelderString_appendCharacter (& markString, U'*');
 						MelderString_appendCharacter (& markString, U'!');

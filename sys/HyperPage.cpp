@@ -102,10 +102,10 @@ static void initScreen (HyperPage me) {
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
 	int reflect = my mirror && (my d_printingPageNumber & 1) == 0;
-	char32 *leftHeader = reflect ? my outsideHeader : my insideHeader;
-	char32 *rightHeader = reflect ? my insideHeader : my outsideHeader;
-	char32 *leftFooter = reflect ? my outsideFooter : my insideFooter;
-	char32 *rightFooter = reflect ? my insideFooter : my outsideFooter;
+	conststring32 leftHeader = reflect ? my outsideHeader : my insideHeader;
+	conststring32 rightHeader = reflect ? my insideHeader : my outsideHeader;
+	conststring32 leftFooter = reflect ? my outsideFooter : my insideFooter;
+	conststring32 rightFooter = reflect ? my insideFooter : my outsideFooter;
 
 	my d_y = PAPER_TOP - TOP_MARGIN;
 	my d_x = 0;
@@ -380,7 +380,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
-	int size = my p_fontSize;
+	double size = my p_fontSize;
 	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
 	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
 if (! my printing) {
@@ -680,23 +680,23 @@ static void updateSizeMenu (HyperPage me) {
 	GuiMenuItem_check (my fontSizeButton_18, my p_fontSize == 18);
 	GuiMenuItem_check (my fontSizeButton_24, my p_fontSize == 24);
 }
-static void setFontSize (HyperPage me, int fontSize) {
+static void setFontSize (HyperPage me, double fontSize) {
 	my pref_fontSize () = my p_fontSize = fontSize;
 	if (my graphics) Graphics_updateWs (my graphics.get());
 	updateSizeMenu (me);
 }
 
-static void menu_cb_10 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10); }
-static void menu_cb_12 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12); }
-static void menu_cb_14 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14); }
-static void menu_cb_18 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18); }
-static void menu_cb_24 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24); }
+static void menu_cb_10 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10.0); }
+static void menu_cb_12 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12.0); }
+static void menu_cb_14 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14.0); }
+static void menu_cb_18 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18.0); }
+static void menu_cb_24 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24.0); }
 
 static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Font size", nullptr)
-		NATURAL (fontSize, U"Font size (points)", my default_fontSize ())
+		POSITIVE (fontSize, U"Font size (points)", my default_fontSize ())
 	EDITOR_OK
-		SET_INTEGER (fontSize, my p_fontSize)
+		SET_REAL (fontSize, my p_fontSize)
 	EDITOR_DO
 		setFontSize (me, fontSize);
 	EDITOR_END

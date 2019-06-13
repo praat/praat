@@ -2,7 +2,7 @@
 #define _Proximity_h_
 /* Proximity.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,5 +29,39 @@ Thing_define (Proximity, TableOfReal) {
 };
 
 void Proximity_init (Proximity me, integer numberOfPoints);
+
+Thing_define (Dissimilarity, Proximity) {
+};
+
+autoDissimilarity Dissimilarity_create (integer numberOfPoints);
+
+autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd);
+
+double Dissimilarity_getAdditiveConstant (Dissimilarity me);
+/*
+	Get the best estimate for the additive constant:
+		"distance = dissimilarity + constant"
+	F. Cailliez (1983), The analytical solution of the additive constant problem, Psychometrika 48, 305-308.
+*/
+
+Thing_define (Similarity, Proximity) {
+};
+
+autoSimilarity Similarity_create (integer numberOfPoints);
+
+Collection_define (ProximityList, OrderedOf, Proximity) {
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
+};
+
+Collection_define (DissimilarityList, OrderedOf, Dissimilarity) {
+	ProximityList asProximityList () {
+		return reinterpret_cast<ProximityList> (this);
+	}
+	TableOfRealList asTableOfRealList () {
+		return reinterpret_cast<TableOfRealList> (this);
+	}
+};
 
 #endif /* _Proximity_h_ */

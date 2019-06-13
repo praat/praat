@@ -4,7 +4,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2012, 2015-2016 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ autoPCA Matrix_to_PCA_byRows (Matrix me);
 autoPCA Matrix_to_PCA_byColumns (Matrix me);
 /* Calculate PCA of M'M */
 
-void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conservative, double *prob, double *chisq, double *df);
+void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conservative, double *out_prob, double *out_chisq, double *out_df);
 /* Morrison, Multivariate statistical methods, page 336 */
 
 autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep);
@@ -66,7 +66,7 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee);
 /* Reconstruct the original TableOfReal from the PCA and the Configuration */
 
-autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring);
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring);
 
 #endif /* _PCA_h_ */
 

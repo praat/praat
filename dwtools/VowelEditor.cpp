@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2017 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 2008-2019 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,9 +91,6 @@ Thing_implement (VowelEditor, Editor, 0);
 #define BUFFER_SIZE_SEC 4
 #define SAMPLING_FREQUENCY 44100
 
-#define STATUSINFO_STARTINTR0 U"Start (F1,F2,F0) = ("
-#define STATUSINFO_ENDINTR0 U"End (F1,F2,F0) = ("
-#define STATUSINFO_ENDING U")"
 #define MICROSECPRECISION(x) (round((x)*1000000)/1000000)
 
 // To prevent the generation of inaudible short Sounds we set a minimum duration
@@ -138,7 +135,8 @@ static struct {
 	double f1min, f1max, f2min, f2max;
 	double f3, b3, f4, b4;
 	double markTraceEvery, extendDuration;
-	int speakerType, marksDataset, numberOfMarks, marksFontSize;
+	int speakerType, marksDataset, numberOfMarks;
+	double marksFontSize;
 	char32 mark [VowelEditor_MAXIMUM_MARKERS] [Preferences_STRING_BUFFER_SIZE];
 } prefs;
 
@@ -158,7 +156,7 @@ void VowelEditor_prefs () {
 	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
 	Preferences_addInt (U"VowelEditor.speakerType", & prefs.speakerType, 1);   // TODO: replace with enum
 	Preferences_addInt (U"VowelEditor.marksDataset", & prefs.marksDataset, 2);   // TODO: replace with enum
-	Preferences_addInt (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14);
+	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
 	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
 	/*
 	 * We don't know how many markers there will be, so the prefs file needs to have the maximum number.
@@ -618,7 +616,7 @@ static void copyVowelMarksInPreferences_volatile (Table me) {
 	}
 }
 
-static void Table_addColumn_size (Table me, int size) {
+static void Table_addColumn_size (Table me, double size) {
 	integer col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
@@ -628,7 +626,7 @@ static void Table_addColumn_size (Table me, int size) {
 	}
 }
 
-static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerType, int fontSize) {
+static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerType, double fontSize) {
 	autoTable te;
 	conststring32 Type [4] = { U"", U"m", U"w", U"c" };
 	conststring32 Sex [3] = { U"", U"m", U"f"};
@@ -664,13 +662,13 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
 		integer nmarksFound = 0;
 		for (integer i = 1; i <= numberOfRows; i ++) {
-			autoMelderTokens rowi (prefs.mark [i - 1]);
-			integer numberOfTokens = rowi.count();
+			autostring32vector rowi = newSTRVECtokenize (prefs.mark [i - 1]);
+			integer numberOfTokens = rowi.size;
 			if (numberOfTokens < 4)
 				break;
 			Table_appendRow (newMarks.get());
 			for (integer j = 1; j <= 4; j ++)
-				Table_setStringValue (newMarks.get(), i, j, rowi [j]);
+				Table_setStringValue (newMarks.get(), i, j, rowi [j].get());
 			nmarksFound ++;
 		}
 		if (nmarksFound == 0) {
@@ -739,7 +737,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 	Graphics_rectangle (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineWidth (g, 1.0);
 	Graphics_setGrey (g, 0.5);
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 	// draw the marks
 	if (my marks) {
 		integer col_vowel = Table_getColumnIndexFromColumnLabel (my marks.get(), U"Vowel");
@@ -957,12 +955,12 @@ static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 			OPTION (U"Man")
 			OPTION (U"Woman")
 			OPTION (U"Child")
-		NATURAL (fontSize, U"Font size (points)", U"14")
+		POSITIVE (fontSize, U"Font size (points)", U"14")
 	EDITOR_OK
 		if (my marksDataset == 9999) SET_STRING (note, U"(Warning: the current vowel marks are not from one of these data sets.)")
 		SET_OPTION (dataSet, my marksDataset)
 		SET_OPTION (speaker, my speakerType)
-		SET_INTEGER (fontSize, my marksFontSize)
+		SET_REAL (fontSize, my marksFontSize)
 	EDITOR_DO
 		my marksDataset = prefs.marksDataset = dataSet;
 		my speakerType = prefs.speakerType = speaker;
@@ -981,8 +979,8 @@ static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FOR
 }
 
 static void menu_cb_setF0 (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Set F0", nullptr);
-		POSITIVE (startF0, U"Start F0 (Hz)", U"150.0")
+	EDITOR_FORM (U"Set f0", nullptr);
+		POSITIVE (startF0, U"Start f0 (Hz)", U"150.0")
 		REAL (slope, U"Slope (oct/s)", U"0.0")
 	EDITOR_OK
 	EDITOR_DO
@@ -1139,13 +1137,13 @@ static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEven
 		return;   // could be the case in the very beginning
 	Graphics_clearWs (my graphics.get());
 
-	appendF1F2F0 (& statusInfo, STATUSINFO_STARTINTR0, FormantTier_getValueAtTime (ft, 1, ts),
-		FormantTier_getValueAtTime (ft, 2, ts), getF0 (& my f0, ts), STATUSINFO_ENDING);
+	appendF1F2F0 (& statusInfo, U"Start (F1,F2,f0) = (", FormantTier_getValueAtTime (ft, 1, ts),
+		FormantTier_getValueAtTime (ft, 2, ts), getF0 (& my f0, ts), U")");
 	GuiLabel_setText (my startInfo, statusInfo.string);
 	MelderString_empty (& statusInfo);
 
-	appendF1F2F0 (& statusInfo, STATUSINFO_ENDINTR0, FormantTier_getValueAtTime (ft, 1, te),
-		FormantTier_getValueAtTime (ft, 2, te), getF0 (& my f0, te), STATUSINFO_ENDING);
+	appendF1F2F0 (& statusInfo, U"End (F1,F2,f0) = (", FormantTier_getValueAtTime (ft, 1, te),
+		FormantTier_getValueAtTime (ft, 2, te), getF0 (& my f0, te), U")");
 	GuiLabel_setText (my endInfo, statusInfo.string);
 	MelderString_empty (& statusInfo);
 
@@ -1313,7 +1311,7 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Draw trajectory...", 0, menu_cb_drawTrajectory);
 	Editor_addCommand (this, U"File", U"-- scripting --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"-- f0 --", 0, nullptr);
-	Editor_addCommand (this, U"Edit", U"Set F0...", 0, menu_cb_setF0);
+	Editor_addCommand (this, U"Edit", U"Set f0...", 0, menu_cb_setF0);
 	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", 0, menu_cb_setF3F4);
 	Editor_addCommand (this, U"Edit", U"-- trajectory commands --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Reverse trajectory", 0, menu_cb_reverseTrajectory);
@@ -1338,7 +1336,7 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structVowelEditor :: v_createChildren ()
 {
-	const int button_width = 90, text_width = 95, status_info_width = 290;
+	const int button_width = 90, text_width = 95, status_info_width = 330;
 	int top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
 	// Three buttons on a row: Play, Reverse, Publish
@@ -1349,8 +1347,8 @@ void structVowelEditor :: v_createChildren ()
 	reverseButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Reverse", gui_button_cb_reverse, this, 0);
 	left = right + 10; right = left + button_width;
 	publishButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Publish", gui_button_cb_publish, this, 0);
-	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
-	// Make the F0 slope button 10 wider to accomodate the text
+	// Four Text widgets with the label on top: Duration, Extend, f0, Slope
+	// Make the f0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing
 	// of the text. Better to have all editing done and then query the widget for its value!
 	left = right + 10; right = left + text_width; bottom_widgets_halfway = bottom = (top + bottom) / 2; top = bottom_widgets_top;
@@ -1364,21 +1362,25 @@ void structVowelEditor :: v_createChildren ()
 	extendTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Start F0 (Hz):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Start f0 (Hz):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
 	f0TextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width + 10; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"F0 slope (oct/s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Slope f0 (oct/s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
 	f0SlopeTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	// The status startInfo and endInfo widget at the bottom:
 
-	bottom = - (STATUS_INFO - Gui_LABEL_HEIGHT) / 2; top = bottom - Gui_LABEL_HEIGHT; left = MARGIN_LEFT; right = left + status_info_width;
+	bottom = - (STATUS_INFO - Gui_LABEL_HEIGHT) / 2;
+	top = bottom - Gui_LABEL_HEIGHT;
+	left = MARGIN_LEFT;
+	right = left + status_info_width;
 	startInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
-	left = right; right = left + status_info_width;
+	left = right;
+	right = left + status_info_width;
 	endInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
 	/***** Create drawing area. *****/

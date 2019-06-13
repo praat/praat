@@ -38,6 +38,8 @@ Thing_define (Vector, Matrix) {
 		override { return false; }
 	double v_getValueAtSample (integer isamp, integer ilevel, int unit)
 		override;
+
+	VEC channel (integer channelNumber) { return z.row (channelNumber); }
 };
 
 #define Vector_CHANNEL_AVERAGE  0

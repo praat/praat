@@ -63,26 +63,23 @@ autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tm
 		NoulliTier tier = my tiers.at [tierNumber];
 		autoNoulliPoint you = Thing_new (NoulliPoint);
 		your numberOfCategories = my numberOfCategories;
-		your probabilities = NUMvector <double> (1, my numberOfCategories);
+		your probabilities = newVECzero (my numberOfCategories);
 		double numberOfSeconds = 0.0;
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			NoulliPoint inpoint = tier -> points.at [ipoint];
 			if (inpoint -> xmax > tmin && inpoint -> xmin < tmax) {
 				double duration = inpoint -> xmax - inpoint -> xmin;
-				for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+				for (integer icat = 1; icat <= my numberOfCategories; icat ++)
 					your probabilities [icat] += inpoint -> probabilities [icat] * duration;
-				}
 				numberOfSeconds += duration;
 			}
 		}
 		if (numberOfSeconds == 0.0) {
-			for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+			for (integer icat = 1; icat <= my numberOfCategories; icat ++)
 				your probabilities [icat] = undefined;
-			}
 		} else {
-			for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+			for (integer icat = 1; icat <= my numberOfCategories; icat ++)
 				your probabilities [icat] /= numberOfSeconds;
-			}
 		}
 		return you;
 	} catch (MelderError) {

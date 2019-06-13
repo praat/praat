@@ -48,7 +48,7 @@ void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file);
 void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath);
 
 integer ManPages_uniqueLinksHither (ManPages me, integer ipage);
-char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles);
+conststring32vector ManPages_getTitles (ManPages me);
 
 /* End of file ManPages.h */
 #endif

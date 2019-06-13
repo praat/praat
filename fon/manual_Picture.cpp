@@ -1,6 +1,6 @@
 /* manual_Picture.cpp
  *
- * Copyright (C) 1992-2017 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
  */
 
 #include "ManPagesM.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 static void drawOneIpaSymbol (Graphics g, double x, double y, conststring32 symbol) {
 	char32 buffer [30], *p = & buffer [0];
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 	Graphics_rectangle (g, x - 0.5, x + 0.5, y - 0.5, y + 0.5);
 	if (! symbol) return;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (g, kGraphics_font::TIMES);
-	Graphics_setFontSize (g, fontSize * 3 / 2);
+	Graphics_setFontSize (g, fontSize * 3.0 / 2.0);
 	Graphics_text (g, x, y + 0.25, symbol);
 	while (*symbol) {
 		if (*symbol == '\\') { *p++ = '\\'; *p++ = 'b'; *p++ = 's'; }   // visualize backslash (\bs)
@@ -35,15 +35,15 @@ static void drawOneIpaSymbol (Graphics g, double x, double y, conststring32 symb
 	}
 	*p = '\0';   // trailing null byte
 	Graphics_setFont (g, kGraphics_font::HELVETICA);
-	Graphics_setFontSize (g, fontSize * 5 / 6);
+	Graphics_setFontSize (g, fontSize * 5.0 / 6.0);
 	Graphics_text (g, x, y - 0.25, buffer);
 	Graphics_setFontSize (g, fontSize);
 }
 
 static void draw_IPA_consonant_chart (Graphics graphics) {
-	Graphics_setWindow (graphics, -0.8, 20, 6, 19.5);
+	Graphics_setWindow (graphics, -0.8, 20.0, 6.0, 19.5);
 	Graphics_setFontStyle (graphics, Graphics_ITALIC);
-	Graphics_setTextRotation (graphics, 60);
+	Graphics_setTextRotation (graphics, 60.0);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 	Graphics_text (graphics, 4, 17.6, U"bilabial");
 	Graphics_text (graphics, 5, 17.6, U"labiodental");
@@ -61,7 +61,7 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 	Graphics_text (graphics, 17, 17.6, U"pharyngeal");
 	Graphics_text (graphics, 18, 17.6, U"epiglottal");
 	Graphics_text (graphics, 19, 17.6, U"glottal");
-	Graphics_setTextRotation (graphics, 0);
+	Graphics_setTextRotation (graphics, 0.0);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (graphics, 3.3, 17, U"voiceless plosive");
 	Graphics_text (graphics, 3.3, 16, U"voiced plosive");
@@ -100,9 +100,9 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 }
 
 static void draw_IPA_vowel_chart (Graphics graphics) {
-	Graphics_setWindow (graphics, -0.7, 19, -0.5, 7.5);
+	Graphics_setWindow (graphics, -0.7, 19.0, -0.5, 7.5);
 	Graphics_setFontStyle (graphics, Graphics_ITALIC);
-	Graphics_setTextRotation (graphics, 60);
+	Graphics_setTextRotation (graphics, 60.0);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 	Graphics_text (graphics, 4.5, 6.6, U"front");
 	Graphics_text (graphics, 7, 6.6, U"central");

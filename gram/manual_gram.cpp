@@ -189,7 +189,7 @@ LIST_ITEM (U"6. @@OT learning 6. Shortcut to grammar learning|Shortcut to gramma
 LIST_ITEM (U"7. @@OT learning 7. Learning from overt forms|Learning from overt forms@")
 MAN_END
 
-MAN_BEGIN (U"OT learning 1. Kinds of grammars", U"ppgb", 20100330)
+MAN_BEGIN (U"OT learning 1. Kinds of grammars", U"ppgb", 20190331)
 INTRO (U"This is chapter 1 of the @@OT learning@ tutorial.")
 NORMAL (U"According to @@Prince & Smolensky (1993)@, an @@Optimality Theory|Optimality-Theoretic@ (@OT) grammar "
 	"consists of a number of ranked @constraints. "
@@ -236,10 +236,10 @@ NORMAL (U"@@Jäger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ devised 
 ENTRY (U"4. Stochastic Harmonic Grammars")
 NORMAL (U"There are two kinds of stochastic models of HG, namely MaxEnt (= Maximum Entropy) grammars "
 	"(@@Smolensky (1986)@, @@Jäger (2003)@), in which the probablity of a candidate winning depends on its harmony, "
-	"and Noisy HG (@@Boersma & Escudero (2008)@, @@Boersma & Pater (2008)@), in which noise is added to constraint weights "
+	"and Noisy HG (@@Boersma & Escudero (2008)@, @@Boersma & Pater (2016)@), in which noise is added to constraint weights "
 	"at evaluation time, as in Stochastic OT.")
 NORMAL (U"The algorithm by @@Jäger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ "
-	"can learn languages with optionality and variation (@@Boersma & Pater (2008)@).")
+	"can learn languages with optionality and variation (@@Boersma & Pater (2016)@).")
 ENTRY (U"The OTGrammar object")
 NORMAL (U"An OT grammar is implemented as an @OTGrammar object. "
 	"In an OTGrammar object, you specify all the constraints, all the possible inputs and all their possible outputs.")
@@ -300,10 +300,10 @@ CODE (U"0 fixed rankings")
 CODE (U" ")
 CODE (U"2 tableaus")
 CODE (U"input [1]: \"pat\" 2")
-CODE1 (U"candidate [1]: \"pa\" 0 1")
-CODE1 (U"candidate [2]: \"pat\" 1 0")
+	CODE1 (U"candidate [1]: \"pa\" 0 1")
+	CODE1 (U"candidate [2]: \"pat\" 1 0")
 CODE (U"input [2]: \"pa\" 1")
-CODE1 (U"candidate [1]: \"pa\" 0 0")
+	CODE1 (U"candidate [1]: \"pa\" 0 0")
 NORMAL (U"To understand more about this data structure, consult the @OTGrammar class description "
 	"or click #Inspect after selecting the OTGrammar object. The $$\"\\bss{...}\"$ braces ensure that "
 	"the constraint names show up with their traditional small capitals (see @@Text styles@).")
@@ -326,10 +326,10 @@ CODE (U"\"P\\bss{ARSE}\"       90  90  1")
 CODE (U"0   ! number of fixed rankings")
 CODE (U"2   ! number of accepted inputs")
 CODE (U"\"pat\" 2      ! input form with number of output candidates")
-CODE1 (U"\"pa\"  0 1   ! first candidate with violations")
-CODE1 (U"\"pat\" 1 0   ! second candidate with violations")
+	CODE1 (U"\"pa\"  0 1   ! first candidate with violations")
+	CODE1 (U"\"pat\" 1 0   ! second candidate with violations")
 CODE (U"\"pa\" 1       ! input form with number of candidates")
-CODE1 (U"\"pa\"  0 0")
+	CODE1 (U"\"pa\"  0 0")
 NORMAL (U"To define your own grammar, you just provide a number of constraints and their rankings, "
 	"and all the possible input forms with all their output candidates, and all the constraint violations "
 	"for each candidate. The order in which you specify the constraints is free (you don't have to specify "
@@ -346,10 +346,10 @@ CODE (U"\"N\\bss{O}C\\bss{ODA}\" 100 100 1.0")
 CODE (U"0")
 CODE (U"2")
 CODE (U"\"pa\" 1")
-CODE1 (U"\"pa\"  0 0")
+	CODE1 (U"\"pa\"  0 0")
 CODE (U"\"pat\" 2")
-CODE1 (U"\"pat\" 0 1")
-CODE1 (U"\"pa\"  1 0")
+	CODE1 (U"\"pat\" 0 1")
+	CODE1 (U"\"pa\"  1 0")
 NORMAL (U"The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
 	"In this tutorial I mostly assume OT's strict ranking, "
 	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint disharmonies represent addable, "
@@ -691,7 +691,7 @@ NORMAL (U"In this way, we have created two Strings objects, which together form 
 	"needed for learning a grammar that contains faithfulness constraints.")
 MAN_END
 
-MAN_BEGIN (U"OT learning 4. Learning an ordinal grammar", U"ppgb", 20100331)
+MAN_BEGIN (U"OT learning 4. Learning an ordinal grammar", U"ppgb", 20190331)
 NORMAL (U"With the data from a tongue-root-harmony language with five completely ranked constraints, "
 	"we can have a throw at learning this language, starting with a grammar in which all the constraints "
 	"are ranked at the same height, or randomly ranked, or with articulatory constraints outranking "
@@ -809,7 +809,7 @@ NORMAL (U"If we have three constraints obligatorily ranked as A >> B >> C in the
 	"to be reversed at evaluation time. This relativity of error rates is an empirical prediction of our stochastic OT grammar model.")
 NORMAL (U"Our Harmonic Grammars with constraint noise (Noisy HG) are slightly different in that respect, "
 	"but are capable of learning a constraint ranking for any language that can be generated from an ordinal ranking. "
-	"As proved by @@Boersma & Pater (2008)@, the same learning rule as was devised for MaxEnt grammars by @@Jäger (2003)@ "
+	"As proved by @@Boersma & Pater (2016)@, the same learning rule as was devised for MaxEnt grammars by @@Jäger (2003)@ "
 	"is able to learn all languages generated by %nonnoisy HG grammars as well; "
 	"the GLA, by contrast, failed to converge on 0.4 percent of randomly generated OT languages "
 	"(failures of the GLA on ordinal grammars were discovered first by @@Pater (2008)@). "

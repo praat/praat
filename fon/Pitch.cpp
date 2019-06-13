@@ -160,7 +160,7 @@ double Pitch_getStrengthAtTime (Pitch me, double time, kPitch_unit unit, bool in
 }
 
 integer Pitch_countVoicedFrames (Pitch me) {
-	return Sampled_countDefinedSamples (me, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
+	return Sampled_countDefinedSamples (me, 0.0, 0.0, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
 }
 
 double Pitch_getMean (Pitch me, double tmin, double tmax, kPitch_unit unit) {
@@ -173,9 +173,8 @@ double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int strengthUn
 
 double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, kPitch_unit unit) {
 	double value = Sampled_getQuantile (me, tmin, tmax, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
-	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit)) {
+	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit))
 		value = undefined;
-	}
 	return value;
 }
 
@@ -231,7 +230,7 @@ static integer Pitch_getMeanAbsoluteSlope (Pitch me,
 	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
 {
 	integer firstVoicedFrame = 0, lastVoicedFrame = 0, numberOfVoicedFrames = 0;
-	autoNUMvector <double> frequencies (1, my nx);
+	autoVEC frequencies = newVECraw (my nx);
 	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		if (Pitch_util_frequencyIsVoiced (frequency, my ceiling)) {
@@ -242,36 +241,55 @@ static integer Pitch_getMeanAbsoluteSlope (Pitch me,
 		}
 	}
 	for (integer i = 1; i <= my nx; i ++)   // look for first voiced frame
-		if (frequencies [i] != 0.0) { firstVoicedFrame = i; break; }
+		if (frequencies [i] != 0.0) {
+			firstVoicedFrame = i;
+			break;
+		}
 	for (integer i = my nx; i >= 1; i --)   // look for last voiced frame
-		if (frequencies [i] != 0.0) { lastVoicedFrame = i; break; }
+		if (frequencies [i] != 0.0) {
+			lastVoicedFrame = i;
+			break;
+		}
 	if (numberOfVoicedFrames > 1) {
 		integer ilast = firstVoicedFrame;
-		double span = (lastVoicedFrame - firstVoicedFrame) * my dx, flast = frequencies [ilast];
-		double slopeHz = 0.0, slopeMel = 0.0, slopeSemitones = 0.0, slopeErb = 0.0, slopeRobust = 0.0;
+		double flast = frequencies [ilast];
+		const double span = (lastVoicedFrame - firstVoicedFrame) * my dx;
+		longdouble slopeHz = 0.0, slopeMel = 0.0, slopeSemitones = 0.0, slopeErb = 0.0, slopeRobust = 0.0;
 		for (integer i = firstVoicedFrame + 1; i <= lastVoicedFrame; i ++) if (frequencies [i] != 0.0) {
 			double localStepSemitones = fabs (NUMhertzToSemitones (frequencies [i]) - NUMhertzToSemitones (flast));
 			slopeHz += fabs (frequencies [i] - flast);
 			slopeMel += fabs (NUMhertzToMel (frequencies [i]) - NUMhertzToMel (flast));
 			slopeSemitones += localStepSemitones;
 			slopeErb += fabs (NUMhertzToErb (frequencies [i]) - NUMhertzToErb (flast));
-			while (localStepSemitones >= 12.0) localStepSemitones -= 12.0;   // kill octave jumps
-			if (localStepSemitones > 6.0) localStepSemitones = 12.0 - localStepSemitones;
+			while (localStepSemitones >= 12.0)
+				localStepSemitones -= 12.0;   // kill octave jumps
+			if (localStepSemitones > 6.0)
+				localStepSemitones = 12.0 - localStepSemitones;
 			slopeRobust += localStepSemitones;
 			ilast = i;
 			flast = frequencies [ilast];
 		}
-		if (out_hertz) *out_hertz = slopeHz / span;
-		if (out_mel) *out_mel = slopeMel / span;
-		if (out_semitones) *out_semitones = slopeSemitones / span;
-		if (out_erb) *out_erb = slopeErb / span;
-		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = slopeRobust / span;
+		if (out_hertz)
+			*out_hertz = double (slopeHz / span);
+		if (out_mel)
+			*out_mel = double (slopeMel / span);
+		if (out_semitones)
+			*out_semitones = double (slopeSemitones / span);
+		if (out_erb)
+			*out_erb = double (slopeErb / span);
+		if (out_withoutOctaveJumps)
+			*out_withoutOctaveJumps = double (slopeRobust / span);
 	} else {
-		if (out_hertz) *out_hertz = undefined;
-		if (out_mel) *out_mel = undefined;
-		if (out_semitones) *out_semitones = undefined;
-		if (out_erb) *out_erb = undefined;
-		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = undefined;
+		if (out_hertz)
+			*out_hertz = undefined;
+		if (out_mel)
+			*out_mel = undefined;
+		if (out_semitones)
+			*out_semitones = undefined;
+		if (out_erb)
+			*out_erb = undefined;
+		if (out_withoutOctaveJumps)
+			*out_withoutOctaveJumps = undefined;
 	}
 	return numberOfVoicedFrames;
 }
@@ -297,83 +315,122 @@ integer Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
 }
 
 void structPitch :: v_info () {
-	integer nVoiced;
-	autoNUMvector <double> frequencies (Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, & nVoiced), 1);
+	autoVEC frequencies = Sampled_getSortedValues (this, 0.0, 0.0, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
-	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
-	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
-	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
 	MelderInfo_writeLine (U"Time sampling:");
-	MelderInfo_writeLine (U"   Number of frames: ", nx, U" (", nVoiced, U" voiced)");
-	MelderInfo_writeLine (U"   Time step: ", dx, U" seconds");
-	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
-	MelderInfo_writeLine (U"Ceiling at: ", ceiling, U" Hz");
+	MelderInfo_writeLine (U"   Number of frames: ", our nx, U" (", frequencies.size, U" voiced)");
+	MelderInfo_writeLine (U"   Time step: ", our dx, U" seconds");
+	MelderInfo_writeLine (U"   First frame centred at: ", our x1, U" seconds");
+	MelderInfo_writeLine (U"Ceiling at: ", our ceiling, U" Hz");
 
-	if (nVoiced >= 1) {   // quantiles
-		double quantile10, quantile16, quantile50, quantile84, quantile90;
-		quantile10 = NUMquantile (nVoiced, frequencies.peek(), 0.10);
-		quantile16 = NUMquantile (nVoiced, frequencies.peek(), 0.16);
-		quantile50 = NUMquantile (nVoiced, frequencies.peek(), 0.50);   // median
-		quantile84 = NUMquantile (nVoiced, frequencies.peek(), 0.84);
-		quantile90 = NUMquantile (nVoiced, frequencies.peek(), 0.90);
+	if (frequencies.size > 0) {   // quantiles
+		double quantile10 = NUMquantile (frequencies.get(), 0.10);
+		double quantile16 = NUMquantile (frequencies.get(), 0.16);
+		double quantile50 = NUMquantile (frequencies.get(), 0.50);   // median
+		double quantile84 = NUMquantile (frequencies.get(), 0.84);
+		double quantile90 = NUMquantile (frequencies.get(), 0.90);
 		MelderInfo_writeLine (U"\nEstimated quantiles:");
-		MelderInfo_write (U"   10% = ", Melder_single (quantile10), U" Hz = ", Melder_single (NUMhertzToMel (quantile10)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile10)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile10)), U" ERB");
-		MelderInfo_write (U"   16% = ", Melder_single (quantile16), U" Hz = ", Melder_single (NUMhertzToMel (quantile16)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile16)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile16)), U" ERB");
-		MelderInfo_write (U"   50% = ", Melder_single (quantile50), U" Hz = ", Melder_single (NUMhertzToMel (quantile50)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile50)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile50)), U" ERB");
-		MelderInfo_write (U"   84% = ", Melder_single (quantile84), U" Hz = ", Melder_single (NUMhertzToMel (quantile84)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile84)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile84)), U" ERB");
-		MelderInfo_write (U"   90% = ", Melder_single (quantile90), U" Hz = ", Melder_single (NUMhertzToMel (quantile90)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile90)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile90)), U" ERB");
-		if (nVoiced > 1) {
-			double corr = sqrt (nVoiced / (nVoiced - 1.0));
+		MelderInfo_writeLine (U"   10% = ",
+				Melder_single (quantile10), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile10)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile10)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile10)), U" ERB");
+		MelderInfo_writeLine (U"   16% = ",
+				Melder_single (quantile16), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile16)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile16)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile16)), U" ERB");
+		MelderInfo_writeLine (U"   50% = ",
+				Melder_single (quantile50), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile50)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile50)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile50)), U" ERB");
+		MelderInfo_writeLine (U"   84% = ",
+				Melder_single (quantile84), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile84)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile84)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile84)), U" ERB");
+		MelderInfo_write (U"   90% = ",
+				Melder_single (quantile90), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile90)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile90)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile90)), U" ERB");
+		if (frequencies.size > 1) {
+			double correction = sqrt (frequencies.size / (frequencies.size - 1.0));
 			MelderInfo_writeLine (U"\nEstimated spreading:");
-			MelderInfo_write (U"   84%-median = ", Melder_half ((quantile84 - quantile50) * corr), U" Hz = ", Melder_half ((NUMhertzToMel (quantile84) - NUMhertzToMel (quantile50)) * corr), U" Mel = ");
-			MelderInfo_writeLine (Melder_half ((NUMhertzToSemitones (quantile84) - NUMhertzToSemitones (quantile50)) * corr), U" semitones = ", Melder_half ((NUMhertzToErb (quantile84) - NUMhertzToErb (quantile50)) * corr), U" ERB");
-			MelderInfo_write (U"   median-16% = ", Melder_half ((quantile50 - quantile16) * corr), U" Hz = ", Melder_half ((NUMhertzToMel (quantile50) - NUMhertzToMel (quantile16)) * corr), U" Mel = ");
-			MelderInfo_writeLine (Melder_half ((NUMhertzToSemitones (quantile50) - NUMhertzToSemitones (quantile16)) * corr), U" semitones = ", Melder_half ((NUMhertzToErb (quantile50) - NUMhertzToErb (quantile16)) * corr), U" ERB");
-			MelderInfo_write (U"   90%-10% = ", Melder_half ((quantile90 - quantile10) * corr), U" Hz = ", Melder_half ((NUMhertzToMel (quantile90) - NUMhertzToMel (quantile10)) * corr), U" Mel = ");
-			MelderInfo_writeLine (Melder_half ((NUMhertzToSemitones (quantile90) - NUMhertzToSemitones (quantile10)) * corr), U" semitones = ", Melder_half ((NUMhertzToErb (quantile90) - NUMhertzToErb (quantile10)) * corr), U" ERB");
+			MelderInfo_writeLine (U"   84%-median = ",
+					Melder_half ((quantile84 - quantile50) * correction), U" Hz = ",
+					Melder_half ((NUMhertzToMel (quantile84) - NUMhertzToMel (quantile50)) * correction), U" Mel = ",
+					Melder_half ((NUMhertzToSemitones (quantile84) - NUMhertzToSemitones (quantile50)) * correction), U" semitones = ",
+					Melder_half ((NUMhertzToErb (quantile84) - NUMhertzToErb (quantile50)) * correction), U" ERB");
+			MelderInfo_writeLine (U"   median-16% = ",
+					Melder_half ((quantile50 - quantile16) * correction), U" Hz = ",
+					Melder_half ((NUMhertzToMel (quantile50) - NUMhertzToMel (quantile16)) * correction), U" Mel = ",
+					Melder_half ((NUMhertzToSemitones (quantile50) - NUMhertzToSemitones (quantile16)) * correction), U" semitones = ",
+					Melder_half ((NUMhertzToErb (quantile50) - NUMhertzToErb (quantile16)) * correction), U" ERB");
+			MelderInfo_writeLine (U"   90%-10% = ",
+					Melder_half ((quantile90 - quantile10) * correction), U" Hz = ",
+					Melder_half ((NUMhertzToMel (quantile90) - NUMhertzToMel (quantile10)) * correction), U" Mel = ",
+					Melder_half ((NUMhertzToSemitones (quantile90) - NUMhertzToSemitones (quantile10)) * correction), U" semitones = ",
+					Melder_half ((NUMhertzToErb (quantile90) - NUMhertzToErb (quantile10)) * correction), U" ERB");
 		}
 	}
-	if (nVoiced >= 1) {   // extrema, range, mean and standard deviation
+	if (frequencies.size > 0) {   // extrema, range, mean and standard deviation
 		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit::HERTZ, false);
 		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit::HERTZ, false);
-		double meanHertz, meanMel, meanSemitones, meanErb;
-		MelderInfo_write (U"\nMinimum ", Melder_single (minimum), U" Hz = ", Melder_single (NUMhertzToMel (minimum)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (minimum)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (minimum)), U" ERB");
-		MelderInfo_write (U"Maximum ", Melder_single (maximum), U" Hz = ", Melder_single (NUMhertzToMel (maximum)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (maximum)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (maximum)), U" ERB");
-		MelderInfo_write (U"Range ", Melder_half (maximum - minimum), U" Hz = ", Melder_single (NUMhertzToMel (maximum) - NUMhertzToMel (minimum)), U" Mel = ");
-		MelderInfo_writeLine (Melder_half (NUMhertzToSemitones (maximum) - NUMhertzToSemitones (minimum)), U" semitones = ", Melder_half (NUMhertzToErb (maximum) - NUMhertzToErb (minimum)), U" ERB");
-		meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
-		meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
-		meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
-		meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
-		MelderInfo_write (U"Average: ", Melder_single (meanHertz), U" Hz = ", Melder_single (meanMel), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (meanSemitones), U" semitones above 100 Hz = ", Melder_single (meanErb), U" ERB");
-		if (nVoiced >= 2) {
+		MelderInfo_writeLine (U"\nMinimum ",
+				Melder_single (minimum), U" Hz = ",
+				Melder_single (NUMhertzToMel (minimum)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (minimum)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (minimum)), U" ERB");
+		MelderInfo_writeLine (U"Maximum ",
+				Melder_single (maximum), U" Hz = ",
+				Melder_single (NUMhertzToMel (maximum)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (maximum)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (maximum)), U" ERB");
+		MelderInfo_writeLine (U"Range ",
+				Melder_half (maximum - minimum), U" Hz = ",
+				Melder_single (NUMhertzToMel (maximum) - NUMhertzToMel (minimum)), U" Mel = ",
+				Melder_half (NUMhertzToSemitones (maximum) - NUMhertzToSemitones (minimum)), U" semitones = ",
+				Melder_half (NUMhertzToErb (maximum) - NUMhertzToErb (minimum)), U" ERB");
+		double meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
+		double meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
+		double meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
+		double meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
+		MelderInfo_writeLine (U"Average: ",
+				Melder_single (meanHertz), U" Hz = ",
+				Melder_single (meanMel), U" Mel = ",
+				Melder_single (meanSemitones), U" semitones above 100 Hz = ",
+				Melder_single (meanErb), U" ERB");
+		if (frequencies.size > 1) {
 			double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::HERTZ);
 			double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::MEL);
 			double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::SEMITONES_100);
 			double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::ERB);
-			MelderInfo_write (U"Standard deviation: ", Melder_half (stdevHertz), U" Hz = ", Melder_half (stdevMel), U" Mel = ");
-			MelderInfo_writeLine (Melder_half (stdevSemitones), U" semitones = ", Melder_half (stdevErb), U" ERB");
+			MelderInfo_writeLine (U"Standard deviation: ",
+					Melder_half (stdevHertz), U" Hz = ",
+					Melder_half (stdevMel), U" Mel = ",
+					Melder_half (stdevSemitones), U" semitones = ",
+					Melder_half (stdevErb), U" ERB");
 		}
 	}
-	if (nVoiced > 1) {   // variability: mean absolute slope
+	if (frequencies.size > 0) {   // variability: mean absolute slope
 		double slopeHertz, slopeMel, slopeSemitones, slopeErb, slopeWithoutOctaveJumps;
 		Pitch_getMeanAbsoluteSlope (this, & slopeHertz, & slopeMel, & slopeSemitones, & slopeErb, & slopeWithoutOctaveJumps);
-		MelderInfo_write (U"\nMean absolute slope: ", Melder_half (slopeHertz), U" Hz/s = ", Melder_half (slopeMel), U" Mel/s = ");
-		MelderInfo_writeLine (Melder_half (slopeSemitones), U" semitones/s = ", Melder_half (slopeErb), U" ERB/s");
+		MelderInfo_writeLine (U"\nMean absolute slope: ",
+				Melder_half (slopeHertz), U" Hz/s = ",
+				Melder_half (slopeMel), U" Mel/s = ",
+				Melder_half (slopeSemitones), U" semitones/s = ",
+				Melder_half (slopeErb), U" ERB/s");
 		MelderInfo_writeLine (U"Mean absolute slope without octave jumps: ", Melder_half (slopeWithoutOctaveJumps), U" semitones/s");
 	}
 }
 
-void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
+void Pitch_Frame_init (Pitch_Frame me, integer nCandidates) {
 	/*
 	 * Create without change.
 	 */
@@ -387,7 +444,7 @@ void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 }
 
 autoPitch Pitch_create (double tmin, double tmax, integer nt, double dt, double t1,
-	double ceiling, int maxnCandidates)
+	double ceiling, integer maxnCandidates)
 {
 	try {
 		autoPitch me = Thing_new (Pitch);
@@ -411,13 +468,40 @@ void Pitch_setCeiling (Pitch me, double ceiling) {
 	my ceiling = ceiling;
 }
 
-int Pitch_getMaxnCandidates (Pitch me) {
-	int result = 0;
+integer Pitch_getMaxnCandidates (Pitch me) {
+	integer result = 0;
 	for (integer i = 1; i <= my nx; i ++) {
-		int nCandidates = my frame [i]. nCandidates;
+		integer nCandidates = my frame [i]. nCandidates;
 		if (nCandidates > result) result = nCandidates;
 	}
 	return result;
+}
+
+static void Pitch_checkFrameNumber (Pitch me, integer frameNumber) {
+    Melder_require (frameNumber >= 1,
+    	U"The frame number should be at least 1, but is ", frameNumber, U" instead.");
+    Melder_require (frameNumber <= my nx,
+    	U"The frame number should at most the number of frames (", my nx, U"), but is ", frameNumber, U" instead.");
+}
+
+autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
+	integer numberOfCandidates = my nCandidates;
+	autoMAT candidates = newMATraw (2, numberOfCandidates);
+	for (integer icand = 1; icand <= numberOfCandidates; icand ++) {
+		candidates [1] [icand] = my candidate [icand]. frequency;
+		candidates [2] [icand] = my candidate [icand]. strength;
+	}
+	return candidates;
+}
+
+autoMAT Pitch_getAllCandidatesInFrame (Pitch me, integer frameNumber) {
+	try {
+    	Pitch_checkFrameNumber (me, frameNumber);
+    	Pitch_Frame frame = & my frame [frameNumber];
+    	return Pitch_Frame_getAllCandidates (frame);
+	} catch (MelderError) {
+		Melder_throw (U"Pitch candidate matrix not created.");
+	}
 }
 
 void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshold,
@@ -434,29 +518,29 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 			U"\nCeiling = ", ceiling,
 			U"\nPull formants = ", pullFormants);
 	try {
-		integer maxnCandidates = Pitch_getMaxnCandidates (me);
+		const integer maxnCandidates = Pitch_getMaxnCandidates (me);
 		integer place;
 		volatile double maximum, value;
-		double ceiling2 = pullFormants ? 2.0 * ceiling : ceiling;
+		const double ceiling2 = ( pullFormants ? 2.0 * ceiling : ceiling );
 		/* Next three lines 20011015 */
-		double timeStepCorrection = 0.01 / my dx;
+		const double timeStepCorrection = 0.01 / my dx;
 		octaveJumpCost *= timeStepCorrection;
 		voicedUnvoicedCost *= timeStepCorrection;
 
 		my ceiling = ceiling;
-		autoNUMmatrix <double> delta (1, my nx, 1, maxnCandidates);
-		autoNUMmatrix <integer> psi (1, my nx, 1, maxnCandidates);
+		autoMAT delta = newMATzero (my nx, maxnCandidates);
+		autoINTMAT psi = newINTMATzero (my nx, maxnCandidates);
 
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & my frame [iframe];
-			double unvoicedStrength = silenceThreshold <= 0 ? 0.0 :
-				2.0 - frame -> intensity / (silenceThreshold / (1.0 + voicingThreshold));
-			unvoicedStrength = voicingThreshold + (unvoicedStrength > 0.0 ? unvoicedStrength : 0.0);
+			double unvoicedStrength = ( silenceThreshold <= 0 ? 0.0 :
+				2.0 - frame -> intensity / (silenceThreshold / (1.0 + voicingThreshold)) );
+			unvoicedStrength = voicingThreshold + std::max (0.0, unvoicedStrength);
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
 				Pitch_Candidate candidate = & frame -> candidate [icand];
-				bool voiceless = ! Pitch_util_frequencyIsVoiced (candidate -> frequency, ceiling2);
-				delta [iframe] [icand] = voiceless ? unvoicedStrength :
-					candidate -> strength - octaveCost * NUMlog2 (ceiling / candidate -> frequency);
+				const bool voiceless = ! Pitch_util_frequencyIsVoiced (candidate -> frequency, ceiling2);
+				delta [iframe] [icand] = ( voiceless ? unvoicedStrength :
+					candidate -> strength - octaveCost * NUMlog2 (ceiling / candidate -> frequency) );
 			}
 		}
 
@@ -466,10 +550,11 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 		for (integer iframe = 2; iframe <= my nx; iframe ++) {
 			Pitch_Frame prevFrame = & my frame [iframe - 1], curFrame = & my frame [iframe];
-			double *prevDelta = delta [iframe - 1], *curDelta = delta [iframe];
-			integer *curPsi = psi [iframe];
+			constVEC prevDelta = delta [iframe - 1];
+			VEC curDelta = delta [iframe];
+			INTVEC curPsi = psi [iframe];
 			for (integer icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
-				double f2 = curFrame -> candidate [icand2]. frequency;
+				const double f2 = curFrame -> candidate [icand2]. frequency;
 				maximum = -1e30;
 				place = 0;
 				for (integer icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
@@ -858,6 +943,42 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 			}
 		}
 	}
+}
+
+static autoTable Pitch_Frame_tabulateCandidates (Pitch_Frame me) {
+	autoTable you = Table_createWithColumnNames (my nCandidates, U"frequency strength");
+	for (integer icand = 1; icand <= my nCandidates; icand ++) {
+		Pitch_Candidate candidate = & my candidate [icand];
+		Table_setNumericValue (you.get(), icand, 1, candidate -> frequency);
+		Table_setNumericValue (you.get(), icand, 2, candidate -> strength);
+	}
+	return you;
+}
+
+autoTable Pitch_tabulateCandidatesInFrame (Pitch me, integer frameNumber) {
+	Pitch_checkFrameNumber (me, frameNumber);
+	Pitch_Frame frame = & my frame [frameNumber];
+	return Pitch_Frame_tabulateCandidates (frame);
+}
+
+autoTable Pitch_tabulateCandidates (Pitch me) {
+	integer totalNumberOfCandidates = 0;
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		Pitch_Frame frame = & my frame [iframe];
+		totalNumberOfCandidates += frame -> nCandidates;
+	}
+	autoTable result = Table_createWithColumnNames(totalNumberOfCandidates, U"frame frequency strength");
+	integer rowNumber = 0;
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		Pitch_Frame frame = & my frame [iframe];
+		for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
+			Pitch_Candidate candidate = & frame -> candidate [icand];
+			Table_setNumericValue (result.get(), ++ rowNumber, 1, double (iframe));
+			Table_setNumericValue (result.get(), rowNumber, 2, candidate -> frequency);
+			Table_setNumericValue (result.get(), rowNumber, 3, candidate -> strength);
+		}
+	}
+	return result;
 }
 
 /* End of file Pitch.cpp */

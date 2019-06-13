@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2011,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1990-2005,2007,2008,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 #include "Data.h"
-#include "tensor.h"
+#include <new>
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
@@ -43,23 +43,120 @@ typedef struct structStackel {
 	#define Stackel_VARIABLE  -1
 	#define Stackel_OBJECT  -2
 	int which;   // 0 or negative = no clean-up required, positive = requires clean-up
-	double number;
-	autostring32 string;
-	Daata object;
-	numvec numericVector;
-	nummat numericMatrix;
-	InterpreterVariable variable;
-	bool owned;
+	bool owned;   // relevant only to numeric vector/matrix/tensor3/tensor4
+	/*
+		The following member of structStackel can either be a struct or a union.
+		The struct option is the easy option: no special care will have to be taken when assigning to its members.
+		The union option attempts to optimize for space and perhaps speed by putting the variants into a smaller space,
+		but it requires special logic for initialization, deletion, and assignment.
+		The special logic is partly implemented by encapsulating _string as a "private" member.
+	*/
+	#define STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION  1
+	#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+		union
+	#else
+		struct
+	#endif
+	{
+		double number;
+		autostring32 _string;
+		Daata object;
+		VEC numericVector;
+		MAT numericMatrix;
+		InterpreterVariable variable;
+	};
+	structStackel () {
+		memset (this, 0, sizeof (structStackel));   // union-safe zeroing of all members of structStackel
+		Melder_assert (our which == Stackel_NUMBER);   // check that on this computer, 0 is represented with zero bits only
+		Melder_assert (our number == 0.0);   // check that on this computer, 0.0 is represented with zero bits only
+		Melder_assert (! our _string);   // check that on this computer, a plain-old-data null pointer is represented with zero bits only
+		Melder_assert (! our object);   // check that on this computer, a class null pointer is represented with zero bits only
+		Melder_assert (! our owned);   // check that on this computer, false is represented with zero bits only
+	}
+	void reset () {   // union-safe destruction: test which variant we have
+		if (our which <= Stackel_NUMBER)
+			return;
+		if (our which == Stackel_STRING) {
+			our _string. reset();
+		} else if (our which == Stackel_NUMERIC_VECTOR) {
+			if (our owned) {
+				{// scope
+					autoVEC removable;
+					removable. adoptFromAmbiguousOwner (our numericVector);
+				}
+				our numericVector = VEC ();   // undangle
+			}
+		} else if (our which == Stackel_NUMERIC_MATRIX) {
+			if (our owned) {
+				{// scope
+					autoMAT removable;
+					removable. adoptFromAmbiguousOwner (our numericMatrix);
+				}
+				our numericMatrix = MAT ();   // undangle
+			}
+		}
+	}
+	~structStackel () {   // union-safe destruction: test which variant we have
+		our reset();
+	}
+	structStackel& operator= (structStackel&& other) noexcept {   // generalized move assignment
+		if (& other != this) {
+			our reset();
+			memmove (this, & other, sizeof (structStackel));   // union-safe: even our biggest variant is bit-copied entirely
+			memset (& other, 0, sizeof (structStackel));   // union-safe: even the biggest variant in `other` is erased
+		}
+		return *this;
+	}
+	conststring32 getString () {
+		return our _string.get();
+	}
+	autostring32 moveString () {
+		return our _string.move();
+	}
+	void setString (autostring32 newString) {
+		our reset();
+		#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+			::new (& our _string) autostring32();   // a convoluted and type-unsafe, but portable, way to null those 32 or 64 bits
+		#endif
+		our which = Stackel_STRING;
+		our _string = newString.move();
+	}
+	conststring32 whichText ();
 } *Stackel;
-conststring32 Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;
 	double numericResult;
 	autostring32 stringResult;
-	numvec numericVectorResult;
-	nummat numericMatrixResult;
+	VEC numericVectorResult;
+	MAT numericMatrixResult;
 	bool owned;
+	Formula_Result () {
+		our expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
+		our numericResult = 0.0;
+		our stringResult = autostring32();
+		our numericVectorResult = VEC ();
+		our numericMatrixResult = MAT ();
+		our owned = false;
+	}
+	void reset () {
+		our stringResult. reset();
+		if (our owned) {
+			{// scope
+				autoVEC removable;
+				removable. adoptFromAmbiguousOwner (our numericVectorResult);
+			}
+			our numericVectorResult = VEC ();   // undangle
+			{// scope
+				autoMAT mat;
+				mat. adoptFromAmbiguousOwner (our numericMatrixResult);
+			}
+			our numericMatrixResult = MAT ();   // undangle
+		}
+	}
+	~ Formula_Result () {
+		our reset();
+	}
 };
 
 Thing_declare (Interpreter);
