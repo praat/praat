@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -827,7 +827,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 	#elif quartz
 		structMelderFile file { };
 		Melder_relativePathToFile (relativeFileName, & file);
-		char utf8 [500];
+		char utf8 [kMelder_MAXPATH+1];
 		Melder_str32To8bitFileRepresentation_inplace (file. path, utf8);
 		CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
