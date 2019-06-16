@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1025,8 +1025,8 @@ static void genericize (autostring32& stringRef, mutablestring32 buffer) {
 	if (stringRef) {
 		const char32 *p = & stringRef [0];
 		while (*p) {
-			if (*p > 126) {   // only if necessary
-				Longchar_genericize32 (stringRef.get(), buffer);
+			if (*p > 126) {   // OPTIMIZE: allocate a new string only if necessary
+				Longchar_genericize (stringRef.get(), buffer);
 				stringRef = Melder_dup (buffer);
 				break;
 			}
@@ -1037,7 +1037,7 @@ static void genericize (autostring32& stringRef, mutablestring32 buffer) {
 
 void TextGrid_convertToBackslashTrigraphs (TextGrid me) {
 	try {
-		autostring32 buffer (TextGrid_maximumLabelLength (me) * 3);
+		autostring32 buffer (TextGrid_maximumLabelLength (me) * 3);   // OPTIMIZE: use only one allocation if more are not necessary
 		for (integer itier = 1; itier <= my tiers->size; itier ++) {
 			Function anyTier = my tiers->at [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
@@ -1069,7 +1069,7 @@ void TextGrid_convertToUnicode (TextGrid me) {
 				for (integer i = 1; i <= tier -> intervals.size; i ++) {
 					TextInterval interval = tier -> intervals.at [i];
 					if (interval -> text) {
-						Longchar_nativize32 (interval -> text.get(), buffer.get(), false);
+						Longchar_nativize (interval -> text.get(), buffer.get(), false);
 						str32cpy (interval -> text.get(), buffer.get());
 					}
 				}
@@ -1078,7 +1078,7 @@ void TextGrid_convertToUnicode (TextGrid me) {
 				for (integer i = 1; i <= tier -> points.size; i ++) {
 					TextPoint point = tier -> points.at [i];
 					if (point -> mark) {
-						Longchar_nativize32 (point -> mark.get(), buffer.get(), false);
+						Longchar_nativize (point -> mark.get(), buffer.get(), false);
 						str32cpy (point -> mark.get(), buffer.get());
 					}
 				}

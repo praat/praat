@@ -1,6 +1,6 @@
 /* longchar.cpp
  *
- * Copyright (C) 1992-2009,2011-2018 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -642,9 +642,9 @@ void Longchar_init () {
 	inited = 1;
 }
 
-char32 * Longchar_nativize32 (conststring32 generic, char32 *native, int educateQuotes) {
+char32 * Longchar_nativize (conststring32 generic, char32 *native, bool educateQuotes) {
 	integer nquote = 0;
-	char32_t kar, kar1, kar2;
+	char32 kar, kar1, kar2;
 	if (! inited) Longchar_init ();
 	while ((kar = *generic++) != U'\0') {
 		if (educateQuotes) {
@@ -678,8 +678,8 @@ char32 * Longchar_nativize32 (conststring32 generic, char32 *native, int educate
 	return native;
 }
 
-char32_t *Longchar_genericize32 (conststring32 native, char32 *g) {
-	char32_t kar;
+char32 *Longchar_genericize (conststring32 native, char32 *g) {
+	char32 kar;
 	if (! inited) Longchar_init ();
 	while ((kar = *native++) != U'\0') {
 		if (kar > 128 && kar <= kUCD_TOP_OF_LIST && theUnicodeDatabase [kar]. first != U'\0') {

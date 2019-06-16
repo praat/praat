@@ -1,6 +1,6 @@
 /* SpellingChecker.cpp
  *
- * Copyright (C) 1999-2007,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1999-2007,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +178,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 	if (my userDictionary->size > 0) {
 		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
-		Longchar_genericize32 (word, buffer);
+		Longchar_genericize (word, buffer);
 		if (my userDictionary -> lookUp (buffer) != 0)
 			return true;
 	}
@@ -188,7 +188,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 void SpellingChecker_addNewWord (SpellingChecker me, conststring32 word) {
 	try {
 		autostring32 generic (3 * str32len (word));
-		Longchar_genericize32 (word, generic.get());
+		Longchar_genericize (word, generic.get());
 		my userDictionary -> addString_copy (generic.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": word \"", word, U"\" not added.");

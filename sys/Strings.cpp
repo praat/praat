@@ -295,7 +295,7 @@ void Strings_genericize (Strings me) {
 		const char32 *p = & string [0];
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
-				Longchar_genericize32 (string, buffer.get());
+				Longchar_genericize (string, buffer.get());
 				my strings [i] = Melder_dup (buffer.get());
 				break;
 			}
@@ -305,9 +305,9 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
-	autostring32 buffer = (Strings_maximumLength (me));
+	autostring32 buffer = Strings_maximumLength (me);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		Longchar_nativize32 (my strings [i].get(), buffer.get(), false);
+		Longchar_nativize (my strings [i].get(), buffer.get(), false);
 		my strings [i] = Melder_dup (buffer.get());
 	}
 }

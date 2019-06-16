@@ -1,6 +1,6 @@
 /* WordList.cpp
  *
- * Copyright (C) 1999-2012,2015,2017 Paul Boersma
+ * Copyright (C) 1999-2007,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ static char32 buffer [3333+1];
 bool WordList_hasWord (WordList me, conststring32 word) {
 	if (str32len (word) > 3333)
 		return false;
-	Longchar_genericize32 (word, buffer);
+	Longchar_genericize (word, buffer);
 	if (! my length)
 		my length = str32len (my string.get());
 	integer p = my length / 2, d = p / 2;
