@@ -695,7 +695,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		conststring32 languageCode = SpeechSynthesizer_getLanguageCode (me);
 		conststring32 voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
-		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
+		espeak_ng_SetVoiceByName (Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
 		int wordgap_10ms = my d_wordgap * 100; // espeak wordgap is in units of 10 ms
 		espeak_ng_SetParameter (espeakWORDGAP, wordgap_10ms, 0);
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
