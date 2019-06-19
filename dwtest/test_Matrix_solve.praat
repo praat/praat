@@ -3,7 +3,29 @@
 
 appendInfoLine: "test_Matrix_solve.praat"
 
+@solve_sparse_system
+
 @solve3x3
+
+procedure solve_sparse_system
+	.nrow = 100
+	.ncol = 1000
+	.yy = Create simple Matrix: "y", .nrow, 1, "0.0"
+	.xx = Create simple Matrix: "x", .ncol, 1, "0.0"
+	Formula: "if randomUniform (0,1) < 0.005 then 1.23456 else 0.0 fi"
+	.phi = Create simple Matrix: "phi", .nrow, .ncol, "0.0"
+	Formula: "randomGauss (0.0, 1.0 / .nrow)"
+	for .irow to .nrow
+		.val = 0.0
+		for .icol to .ncol
+			.val += object [.phi, .irow, .icol] * object [.xx, .icol, 1]
+		endfor
+		selectObject: .yy
+		Set value: .irow, 1, .val
+	endfor
+	selectObject: .yy, .phi
+	.x = Solve matrix equation (sparse): 10, 50, 1e-7, "yes"
+endproc
 
 procedure matrix_solve: .ncol
   for .i to 4

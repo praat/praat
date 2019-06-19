@@ -67,6 +67,10 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance);
 
 autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance); // Me * X = Thee
 
+autoMatrix Matrix_solveEquation_sparse (Matrix me, Matrix thee, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+
+void Matrix_improveSparseSolution (OrderedOf<structMatrix>* me, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax);
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax);

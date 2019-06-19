@@ -54,6 +54,20 @@ void structNMF :: v_info () {
 Thing_implement (NMF, Daata, 0);
 
 
+double MATdivergence_ItakuraSaito (constMATVU const& ref, constMATVU const& x) {
+	Melder_assert (ref.nrow == x.nrow);
+	Melder_assert (ref.ncol == x.ncol);
+	double divergence = 0.0;
+	for (integer irow = 1; irow <= ref.nrow; irow ++)
+		for (integer icol = 1; icol <= ref.ncol; icol ++) {
+			double refval = ref [irow] [icol];
+			if (refval == 0.0)
+				return undefined;
+			divergence += x [irow] [icol] / refval - log (x [irow] [icol] / refval) - 1.0;
+		}
+	return divergence;
+}
+
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures) {
 	try {
 		autoNMF me = Thing_new (NMF);
@@ -117,8 +131,14 @@ double NMF_getEuclideanDistance (NMF me, constMATVU const& data) {
 		U"Dimensions should match.");
 	autoMAT synthesis = NMF_synthesize (me);
 	synthesis.get()  -=  data;
-	double dist = NUMnorm (synthesis.get(), 2.0);
-	return dist;
+	return NUMnorm (synthesis.get(), 2.0);
+}
+
+double NMF_getItakuraSaitoDivergence (NMF me, constMATVU const& data) {
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns,
+		U"Dimensions should match.");
+	autoMAT synthesis = NMF_synthesize (me);
+	return MATdivergence_ItakuraSaito (data, synthesis.get());
 }
 
 static double getMaximumChange (constMATVU const& m, MATVU const& m0, const double sqrteps) {
@@ -325,6 +345,67 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			MelderInfo_drain();
 	} catch (MelderError) {
 		Melder_throw (me, U" ALS factorization cannot be improved.");
+	}
+}
+
+static void VECinvertAndScale (VECVU const& target, constVECVU const& source, double scaleFactor) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = scaleFactor / source [i];
+}
+
+void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
+	try {
+		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
+		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
+		Melder_require (NUMhasZeroElement (data) == false,
+			U"The data matrix should not have cells that are zero.");
+		autoMAT vk = newMATraw (data.nrow, data.ncol);
+		autoMAT wh = newMATraw (data.nrow, data.ncol);
+		autoMAT wkhk = newMATraw (data.nrow, data.ncol);
+		autoVEC wk_inv = newVECraw (data.nrow);
+		autoVEC hk_inv = newVECraw (data.ncol);
+		MATmul (wh.get(), my features.get(), my weights.get());
+		double divergence = MATdivergence_ItakuraSaito (data, wh.get());
+		double divergence0 = divergence;
+		if (info)
+			MelderInfo_writeLine (U"Iteration: 0", U" divergence: ", divergence, U" delta: ", divergence);
+		integer iter = 1;
+		bool convergence = false;
+		while (iter <= maximumNumberOfIterations && not convergence) {
+			for (integer kf = 1; kf <= my numberOfFeatures; kf ++) {
+				MATouter (wkhk.get(), my features.column (kf), my weights [kf]);
+				for (integer irow = 1; irow <= data.nrow; irow ++)
+					for (integer icol = 1; icol <= data.ncol; icol ++) {
+						double gk = wkhk [irow] [icol] / wh [irow] [icol];
+						vk [irow] [icol] = gk * gk * data [irow] [icol] + (1.0 - gk) * wkhk [irow] [icol];
+					}
+				VECinvertAndScale (wk_inv.get(), my features.column (kf), 1.0 / my numberOfRows);	
+				VECmul (my weights [kf], wk_inv.get(), vk.get());
+				VECinvertAndScale (hk_inv.get(), my weights [kf], 1.0 / my numberOfColumns);
+				VECmul (my features.column (kf), vk.get(), hk_inv);
+				// update
+				double wknorm = NUMnorm (my features.column (kf), 2.0);
+				my features.column (kf)  /=  wknorm;
+				my weights [kf]  *=  wknorm;
+				wh.get()  -=  wkhk.get();
+				MATouter (wkhk.get(), my features.column (kf), my weights [kf]);
+				wh.get()  +=  wkhk.get();
+				
+			}
+			double divergence_update = MATdivergence_ItakuraSaito (data, wh.get());
+			double delta = divergence - divergence_update;
+			convergence = ( iter > 1 && (fabs (delta) < changeTolerance || divergence_update < divergence0 * approximationTolerance) );
+			if (info)
+				MelderInfo_writeLine (U"Iteration: ", iter, U" divergence: ", divergence_update, U" delta: ", delta);
+			++ iter;
+			divergence = divergence_update;
+		}
+		if (info)
+			MelderInfo_drain();
+		
+	} catch (MelderError) {
+		Melder_throw (me, U" SAGE factorization cannot be improved.");
 	}
 }
 

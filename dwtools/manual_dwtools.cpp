@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5424,6 +5424,11 @@ NORMAL (U"M.W. Berry, M. Browne, A.N. Langville, V.P. Pauca & R.J. Plemmons (200
 	"Computational Statistics & Data Analysis ##52#: 155\\--173.")
 MAN_END
 
+MAN_BEGIN (U"Blumensath & Davies (2010)", U"djmw", 20190601)
+NORMAL (U"T. Blumensath & M.E. Davies: \"Normalised iterative hard thresholding;"
+	" guaranteed stability and performance\", %%IEEE Journal of Selected Topics in Signal Processing% #4: 298\\--309.")
+MAN_END
+
 MAN_BEGIN (U"Boll (1979)", U"djmw", 20121021)
 NORMAL (U"S.F. Boll (1979): \"Suppression of acoustic noise in speech using spectral subtraction.\""
 	"%%IEEE Transactions on ASSP% #27: 113\\--120.")
@@ -5471,6 +5476,11 @@ NORMAL (U"Espeak is a free text to speech synthesizer. It was developed by Jonat
 	"In 2015 Reece Dunn has taken a copy of espeak and together with a group of developers they maintain and actualize their version of espeak which they call \"eSpeak NG\". eSpeak NG uses formant synthesis. "
 	"Currently it supports 100 languages with varying quality of the voices. The current version of eSpeakNG incorporated in Praat is " xstr(ESPEAK_NG_VERSIONX) ".")
 NORMAL (U"The wikipedia page https://en.wikipedia.org/wiki/ESpeakNG gives more details.")
+MAN_END
+
+MAN_BEGIN (U"Févotte, Bertin & Durrieu (2009)", U"djmw", 20190618)
+NORMAL (U"C. Févotte, N. Bertin & J.-L. Durrieu (2009): \"Nonnegative matrix factorization with the Itakura-Saito divergene: "
+	"with applications to music analysis\", %%Neural Computation% #21: 793\\--830.")
 MAN_END
 
 MAN_BEGIN (U"Flanagan (1960)", U"djmw", 19980713)

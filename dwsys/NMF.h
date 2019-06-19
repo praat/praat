@@ -60,8 +60,19 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 */
 void NMF_improveFactorization_als (NMF me, constMATVU const & data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
 
+
+/*
+	Factorize D as F*W, where D, F and W >= 0.
+	
+	C. Févotte, N. Berin & J.-L. Durrieu (2009), Nonnegative matrix facorization with the Itakura-Saito divergene: with 
+	applications to music analysis, Neural Computation 21, 793--830.
+*/
+void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
+
 autoMAT NMF_synthesize (NMF me); // result = features * weights
 
 double NMF_getEuclideanDistance (NMF me, constMATVU const& data); // sqrt (||data - features*weights||²)
+
+double NMF_getItakuraSaitoDivergence (NMF me, constMATVU const& data);
 
 #endif /* _NMF_h_ */

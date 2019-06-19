@@ -88,9 +88,8 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			Melder_assert (startSample >= 1);
 			Melder_assert (endSample <= my nx);
 			
-			for (integer j = 1; j <= nsamp_window; j ++) {
-				analysisWindow -> z [1] [j] = my z [1] [startSample - 1 + j];
-			}
+			analysisWindow -> z [1] <<= my z [1].part (startSample, startSample + nsamp_window - 1);
+			
 			// window ?
 			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.get(), false);
 			
@@ -116,7 +115,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or +/-pi
 		 */
-		const double pi = atan2 (0.0, - 0.5);
+		const double pi = NUMpi; //atan2 (0.0, - 0.5);
 		const double samplingFrequency = 2.0 * my ymax;
 		const double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase [my ny] [1];
 		const bool originalNumberOfSamplesProbablyOdd = ( lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi ||
@@ -153,22 +152,21 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 			for (integer ifreq = 2; ifreq <= my ny; ifreq ++) {
 				const double f = my y1 + (ifreq - 1) * my dy;
 				const double a = sqrt (my z [ifreq] [iframe]);
-				double intPart;
-				const double extraPhase = 2.0 * pi * modf (extraTime * f, & intPart); // fractional part
+				double dummy;
+				const double extraPhase = 2.0 * pi * modf (extraTime * f, & dummy); // fractional part
 				const double phi = my phase [ifreq] [iframe] + extraPhase;
 				spectrum -> z [1] [ifreq] = a * cos (phi);
 				spectrum -> z [2] [ifreq] = a * sin (phi);
 			}
 			autoSound synthesis = Spectrum_to_Sound (spectrum.get());
 
-			// Where should the sound be placed?
+			// Where should the sound be placed? 
 
-			integer thyEndSampleP = ( iframe == my nx ?
+			integer thyEndSampleP = ( iframe == my nx ? // TODO better/simpler guess?
 				std::min (thy nx, thyStartSample + synthesis -> nx - 1) :
 				std::min (thyStartSample + synthesis -> nx - 1, thyStartSample + stretchedStepSizeSamples - 1)
 			);   // guard against extreme stretches
-			for (integer j = thyStartSample; j <= thyEndSampleP; j ++)
-				thy z [1] [j] = synthesis -> z [1] [j - thyStartSample + 1];
+			thy z [1].part (thyStartSample, thyEndSampleP) <<= synthesis -> z [1].part (1, thyEndSampleP - thyStartSample + 1);
 			thyStartTime += my dx * stretchFactor;
 		}
 		return thee;
