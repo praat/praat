@@ -292,7 +292,6 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 		const double eps = NUMfpp -> eps;
 		const double sqrteps = sqrt (eps);
 		double dnorm0 = 0.0;
-		double maximum = NUMmax (data);
 		integer iter = 1;
 		bool convergence = false;
 		
@@ -361,39 +360,57 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		Melder_require (NUMhasZeroElement (data) == false,
 			U"The data matrix should not have cells that are zero.");
 		autoMAT vk = newMATraw (data.nrow, data.ncol);
-		autoMAT wh = newMATraw (data.nrow, data.ncol);
-		autoMAT wkhk = newMATraw (data.nrow, data.ncol);
-		autoVEC wk_inv = newVECraw (data.nrow);
-		autoVEC hk_inv = newVECraw (data.ncol);
-		MATmul (wh.get(), my features.get(), my weights.get());
-		double divergence = MATdivergence_ItakuraSaito (data, wh.get());
+		autoMAT fw = newMATraw (data.nrow, data.ncol);
+		autoMAT fcol_x_wrow = newMATraw (data.nrow, data.ncol);
+		autoVEC fcolumn_inv = newVECraw (data.nrow); // feature column
+		autoVEC wrow_inv = newVECraw (data.ncol); // weight row
+		MATmul (fw.get(), my features.get(), my weights.get());
+		double divergence = MATdivergence_ItakuraSaito (data, fw.get());
 		double divergence0 = divergence;
 		if (info)
 			MelderInfo_writeLine (U"Iteration: 0", U" divergence: ", divergence, U" delta: ", divergence);
 		integer iter = 1;
 		bool convergence = false;
 		while (iter <= maximumNumberOfIterations && not convergence) {
+			/*
+				algorithm 2, page 806
+				until convergence {
+					for k to numberOfFeateres {
+						G(k) = fcol(k) x wrow(k) / F.H                           (1)
+						V(k) = G(k)^(.2).V+(1-G(k)).(fcol(k) x wrow(k))          (2)
+						wrow(k) <-- (1/fcol(k))' . V(k) / numberOfRows           (3)
+						fcol(k) <-- V(k).(1/wrow(k))' / numberOfColumns          (4)
+						Normalize fcol(k) and wrow(k)                            (5)
+						F.H - old(fcol(k) x wrow(k)) + new(fcol(k) x wrow(k))    (6)
+					}
+				}
+				There is no need to calculate G(k) explicitly as in (1).
+				We can calculate the elements of G(k) while we are in (2).
+			*/
 			for (integer kf = 1; kf <= my numberOfFeatures; kf ++) {
-				MATouter (wkhk.get(), my features.column (kf), my weights [kf]);
+				// (1) and (2)
+				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
 				for (integer irow = 1; irow <= data.nrow; irow ++)
 					for (integer icol = 1; icol <= data.ncol; icol ++) {
-						double gk = wkhk [irow] [icol] / wh [irow] [icol];
-						vk [irow] [icol] = gk * gk * data [irow] [icol] + (1.0 - gk) * wkhk [irow] [icol];
+						double gk = fcol_x_wrow [irow] [icol] / fw [irow] [icol];
+						vk [irow] [icol] = gk * gk * data [irow] [icol] + (1.0 - gk) * fcol_x_wrow [irow] [icol];
 					}
-				VECinvertAndScale (wk_inv.get(), my features.column (kf), 1.0 / my numberOfRows);	
-				VECmul (my weights [kf], wk_inv.get(), vk.get());
-				VECinvertAndScale (hk_inv.get(), my weights [kf], 1.0 / my numberOfColumns);
-				VECmul (my features.column (kf), vk.get(), hk_inv);
-				// update
-				double wknorm = NUMnorm (my features.column (kf), 2.0);
-				my features.column (kf)  /=  wknorm;
-				my weights [kf]  *=  wknorm;
-				wh.get()  -=  wkhk.get();
-				MATouter (wkhk.get(), my features.column (kf), my weights [kf]);
-				wh.get()  +=  wkhk.get();
-				
+				// (3)
+				VECinvertAndScale (fcolumn_inv.get(), my features.column (kf), 1.0 / my numberOfRows);	
+				VECmul (my weights.row (kf), fcolumn_inv.get(), vk.get());
+				// (4)
+				VECinvertAndScale (wrow_inv.get(), my weights.row (kf), 1.0 / my numberOfColumns);
+				VECmul (my features.column (kf), vk.get(), wrow_inv.get());
+				// (5)
+				double fcolumn_norm = NUMnorm (my features.column (kf), 2.0);
+				my features.column (kf)  /=  fcolumn_norm;
+				my weights.row (kf)  *=  fcolumn_norm;
+				// (6)
+				fw.get()  -=  fcol_x_wrow.get();
+				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
+				fw.get()  +=  fcol_x_wrow.get();
 			}
-			double divergence_update = MATdivergence_ItakuraSaito (data, wh.get());
+			double divergence_update = MATdivergence_ItakuraSaito (data, fw.get());
 			double delta = divergence - divergence_update;
 			convergence = ( iter > 1 && (fabs (delta) < changeTolerance || divergence_update < divergence0 * approximationTolerance) );
 			if (info)
