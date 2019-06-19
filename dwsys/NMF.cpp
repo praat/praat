@@ -422,7 +422,7 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 			MelderInfo_drain();
 		
 	} catch (MelderError) {
-		Melder_throw (me, U" SAGE factorization cannot be improved.");
+		Melder_throw (me, U" IS factorization cannot be improved.");
 	}
 }
 

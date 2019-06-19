@@ -2505,6 +2505,14 @@ NORMAL (U"An object of type ISpline represents a linear combination of basis "
 FORMULA (U"ISpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %ispline__%k_(%x)")
 MAN_END
 
+MAN_BEGIN (U"Itakura-Saito divergence", U"djmw", 20190619)
+INTRO (U"The ##Itakura-Saito divergence# is one of the many measures used to measure the similarity between an object %x and a reference %y.")
+NORMAL (U"It is defined as %d(%x|%y)= %x/%y - log(%x/%y) - 1. Only if %x = %y the divergence is zero.")
+NORMAL (U"It is called a divergence and not a distance, technically speaking, because it is not symmetric: %d(%x|%y) is not the same as %d(%y|%x).")
+NORMAL (U"One of the advantages of the Itakura-Saito divergence is its scale invariance which means that %d(%\\lax|%\\lay)=%d(%x|%y), "
+"for any number \\la. This makes it a very suitable measure for the comparison of audio spectra.")
+MAN_END
+
 MAN_BEGIN (U"jackknife", U"djmw", 20141101)
 INTRO (U"A technique for estimating the bias and standard deviation of an estimate.")
 NORMAL (U"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to estimate "
@@ -5527,8 +5535,13 @@ NORMAL (U"T. Irino & R.D. Patterson (1997): \"A time-domain, level-dependent "
 	"auditory filter: The gammachirp.\" %%Journal of the Acoustical Society of America% #101: 412\\--419.")
 MAN_END
 
+MAN_BEGIN (U"Itakura & Saito (1968)", U"djmw", 20190617)
+NORMAL (U"F. Itakura & S. Saito (1968): \"Analysis synthesis telephony based on the maximum likelihood method.\""
+	"In %%Proc. 6th International Congress on Acoustics%, Los Alamitos, CA: IEEE: C-17\\--20.")
+MAN_END
+
 MAN_BEGIN (U"Janecek et al. (2011)", U"djmw", 20190312)
-	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011)"
+	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011): "
 		"\"LIBNMF \\-- A library for nonnegative matrix factorization.\""
 		"%%Computing and informatics% #30: 205\\--224")
 MAN_END
