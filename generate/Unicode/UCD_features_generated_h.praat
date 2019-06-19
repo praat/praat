@@ -1,5 +1,5 @@
 # UCD_features_generated_h.praat
-# Paul Boersma 20180805
+# Paul Boersma 20190617
 
 Text writing preferences: "UTF-8"
 
@@ -21,12 +21,12 @@ for irow from 1 to numberOfRows
 			line$ = "/* " + hexadecimal$ (previousLineCodePoint, 4) + " " + (name$ - "First>" + "Next>") + " */" + newline$
 			line$ += tab$ + "{ " + categoryFeature$ +
 			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", 0x" + hexadecimal$ (previousLineCodePoint, 4) +
-			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", '\0', '\0' }," + newline$
+			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", nullptr, '\0', '\0' }," + newline$
 		else
 			line$ = "/* " + hexadecimal$ (previousLineCodePoint, 4) + " UNASSIGNED */" + newline$
 			line$ += tab$ + "{ kUCD_UNASSIGNED " +
 			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", 0x" + hexadecimal$ (previousLineCodePoint, 4) +
-			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", '\0', '\0' }," + newline$
+			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", nullptr, '\0', '\0' }," + newline$
 		endif
 		appendFile: outfile$, line$
 	endwhile
@@ -37,6 +37,7 @@ for irow from 1 to numberOfRows
 	upper$ = Get value: irow, "upper"
 	lower$ = Get value: irow, "lower"
 	title$ = Get value: irow, "title"
+	decomp$ = Get value: irow, "decomp"
 	symbol$ = if lineCodePoint >= 0xD800 and lineCodePoint <= 0xDFFF
 	... then " SURROGATE " else unicode$ (lineCodePoint) fi
 	line$ = "/* " + code$ + " " +
@@ -157,8 +158,17 @@ for irow from 1 to numberOfRows
 	lower$ = if lower$ = "" then code$ else lower$ fi
 	upper$ = if upper$ = "" then code$ else upper$ fi
 	title$ = if title$ = "" then code$ else title$ fi
+	if decomp$ = ""
+		decomp$ = "nullptr"
+	elsif index (decomp$, "<")
+		decomp$ = "nullptr"
+	elsif index (decomp$, " ") = 0
+		decomp$ = "nullptr"
+	else
+		decomp$ = "U""\u" + replace$ (decomp$, " ", "\u", 0) + """"
+	endif
 	line$ += tab$ + "{ " + categoryFeature$ +
-	... ", 0x" + upper$ + ", 0x" + lower$ + ", 0x" + title$ + ", '\0', '\0' }," + newline$
+	... ", 0x" + upper$ + ", 0x" + lower$ + ", 0x" + title$ + ", " + decomp$ + ", '\0', '\0' }," + newline$
 	appendFile: outfile$, line$
 	previousLineCodePoint = lineCodePoint
 endfor
