@@ -911,18 +911,13 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		return 0;
 	}
 	extern "C" char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
-	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static void cb_openDocument (MelderFile file) {
 		char32 text [kMelder_MAXPATH+25];
 		/*
 		 * The user dropped a file on the Praat icon, while Praat is already running.
 		 */
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
-		#ifdef __CYGWIN__
-			sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
-		#else
-			sendpraatW (nullptr, Melder_peek32toW (praatP.title.get()), 0, Melder_peek32toW (text));
-		#endif
+		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
 	}
 #elif macintosh
 	static int (*theUserMessageCallback) (char32 *message);
@@ -1378,7 +1373,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 
 		#ifdef macintosh
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
-			AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
 			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
 		trace (U"creating the menu bar in the Objects window");

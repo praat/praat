@@ -1677,12 +1677,11 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 		if (window != NULL) {
 			/*
 			 * We are in the second instance of Praat.
-			 * The user double-clicked Praat while it was running,
-			 * or she dropped a file on the Praat icon,
-			 * or she double-clicked a Praat file.
+			 * The user dropped a file on the Praat icon.
 			 */
 			if (IsIconic (window)) ShowWindow (window, SW_RESTORE);
 			SetForegroundWindow (window);
+			#if 1
 			if (theOpenDocumentCallback) {
 				for (unsigned int iarg = 1; iarg < argc; iarg ++) {
 					if (argv [iarg] [0] != '-') {
@@ -1695,6 +1694,7 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 					}
 				}
 			}
+			#endif
 			exit (0);   // possible problem
 		}
 
