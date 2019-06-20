@@ -54,7 +54,7 @@ void structNMF :: v_info () {
 Thing_implement (NMF, Daata, 0);
 
 
-double MATdivergence_ItakuraSaito (constMATVU const& ref, constMATVU const& x) {
+double MATgetDivergence_ItakuraSaito (constMATVU const& ref, constMATVU const& x) {
 	Melder_assert (ref.nrow == x.nrow);
 	Melder_assert (ref.ncol == x.ncol);
 	double divergence = 0.0;
@@ -138,7 +138,7 @@ double NMF_getItakuraSaitoDivergence (NMF me, constMATVU const& data) {
 	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns,
 		U"Dimensions should match.");
 	autoMAT synthesis = NMF_synthesize (me);
-	return MATdivergence_ItakuraSaito (data, synthesis.get());
+	return MATgetDivergence_ItakuraSaito (data, synthesis.get());
 }
 
 static double getMaximumChange (constMATVU const& m, MATVU const& m0, const double sqrteps) {
@@ -365,7 +365,7 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		autoVEC fcolumn_inv = newVECraw (data.nrow); // feature column
 		autoVEC wrow_inv = newVECraw (data.ncol); // weight row
 		MATmul (fw.get(), my features.get(), my weights.get());
-		double divergence = MATdivergence_ItakuraSaito (data, fw.get());
+		double divergence = MATgetDivergence_ItakuraSaito (data, fw.get());
 		double divergence0 = divergence;
 		if (info)
 			MelderInfo_writeLine (U"Iteration: 0", U" divergence: ", divergence, U" delta: ", divergence);
@@ -385,7 +385,7 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 					}
 				}
 				There is no need to calculate G(k) explicitly as in (1).
-				We can calculate the elements of G(k) while we are in (2).
+				We can calculate the elements of G(k) while we are doing (2).
 			*/
 			for (integer kf = 1; kf <= my numberOfFeatures; kf ++) {
 				// (1) and (2)
@@ -410,7 +410,7 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
 				fw.get()  +=  fcol_x_wrow.get();
 			}
-			double divergence_update = MATdivergence_ItakuraSaito (data, fw.get());
+			double divergence_update = MATgetDivergence_ItakuraSaito (data, fw.get());
 			double delta = divergence - divergence_update;
 			convergence = ( iter > 1 && (fabs (delta) < changeTolerance || divergence_update < divergence0 * approximationTolerance) );
 			if (info)
