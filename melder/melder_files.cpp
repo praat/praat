@@ -588,7 +588,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	#endif
 	} else {
 		#if defined (_WIN32) && ! defined (__CYGWIN__)
-			f = _wfopen (buffer, Melder_peek32toW_fileSystem (Melder_peek8to32 (type)));
+			f = _wfopen (Melder_peek32toW_fileSystem (file -> path), Melder_peek32toW (Melder_peek8to32 (type)));
 		#else
 			f = fopen ((char *) utf8path, type);
 		#endif

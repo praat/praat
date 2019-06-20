@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190613)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190620)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.0.56# (20 June 2019)")
+LIST_ITEM (U"• Windows: file dropping on the Praat icon works for higher-Unicode file names.")
+LIST_ITEM (U"• SpellingChecker: Unicode support.")
 NORMAL (U"##6.0.55# (13 June 2019)")
 LIST_ITEM (U"• Unicode normalization in file names.")
 NORMAL (U"##6.0.54# (6 June 2019)")
