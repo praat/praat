@@ -20,6 +20,9 @@
 #include "../sys/Preferences.h"
 #include "../kar/UnicodeData.h"
 
+#ifdef _WIN32
+	#include <windows.h>
+#endif
 #if defined (macintosh)
 	#include "macport_on.h"
 	#include <CoreFoundation/CoreFoundation.h>
