@@ -142,7 +142,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			cairo_surface_destroy (surface);
 			return me;
 		#elif defined (_WIN32)
-			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW (file -> path));
+			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW_fileSystem (file -> path));
 			integer width = gdiplusBitmap. GetWidth ();
 			integer height = gdiplusBitmap. GetHeight ();
 			if (width == 0 || height == 0)
@@ -280,7 +280,8 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 					encoderParameters. Parameter [0]. Value = & quality;
 					p = & encoderParameters;
 				}
-				gdiplusBitmap. Save (Melder_peek32toW (file -> path), & imageEncoderInfos [iencoder]. Clsid, p);
+				gdiplusBitmap. Save (Melder_peek32toW_fileSystem (file -> path),
+						& imageEncoderInfos [iencoder]. Clsid, p);
 				Melder_free (imageEncoderInfos);
 				return;
 			}

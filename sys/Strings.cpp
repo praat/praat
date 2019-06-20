@@ -205,7 +205,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 			autoStrings me = Thing_new (Strings);
 			Melder_sprint (searchPath, kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
 			WIN32_FIND_DATAW findData;
-			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW (searchPath), & findData);
+			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW_fileSystem (searchPath), & findData);
 			if (searchHandle != INVALID_HANDLE_VALUE) {
 				do {
 					if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE &&

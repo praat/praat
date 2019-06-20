@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2011,2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1993-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1676,15 +1676,22 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 		window = FindWindow (Melder_peek32toW (theWindowClassName), NULL);
 		if (window != NULL) {
 			/*
-			 * We are in the second instance of Praat.
-			 * The user dropped a file on the Praat icon.
-			 */
+				We are in the second instance of Praat.
+				The user double-clicked the Praat icon,
+				or dropped a file on the Praat icon,
+				or double-clicked a Praat file,
+				while Praat was already running.
+			*/
 			if (IsIconic (window)) ShowWindow (window, SW_RESTORE);
 			SetForegroundWindow (window);
-			#if 1
 			if (theOpenDocumentCallback) {
 				for (unsigned int iarg = 1; iarg < argc; iarg ++) {
 					if (argv [iarg] [0] != '-') {
+						/*
+							The user dropped a file on the Praat icon,
+							or double-clicked a Praat file,
+							while Praat was already running.
+						*/
 						structMelderDir dir { };
 						Melder_sprint (dir. path,kMelder_MAXPATH+1, Melder_getShellDirectory ());
 						Melder_setDefaultDir (& dir);
@@ -1694,7 +1701,6 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 					}
 				}
 			}
-			#endif
 			exit (0);   // possible problem
 		}
 

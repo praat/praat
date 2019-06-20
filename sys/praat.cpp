@@ -914,8 +914,10 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	static void cb_openDocument (MelderFile file) {
 		char32 text [kMelder_MAXPATH+25];
 		/*
-		 * The user dropped a file on the Praat icon, while Praat is already running.
-		 */
+			The user dropped a file on the Praat icon,
+			or double-clicked a Praat file,
+			while Praat is already running.
+		*/
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
 		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
 	}
@@ -1832,6 +1834,11 @@ void praat_run () {
 		if (praatP.userWantsToOpen) {
 			for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
 				//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
+				/*
+					The use double-clicked a Praat file,
+					or dropped a file on the Praat icon,
+					while Praat was not yet running.
+				*/
 				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
 															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
 				try {
