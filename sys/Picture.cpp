@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2019 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,7 +399,7 @@ void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 	try {
 		HENHMETAFILE metafile = copyToMetafile (me);
 		MelderFile_delete (file);   // overwrite any existing file with the same name
-		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, Melder_peek32toW (file -> path)));
+		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, Melder_peek32toW_fileSystem (file -> path)));
 		DeleteEnhMetaFile (metafile);
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to Windows metafile ", file);

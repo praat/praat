@@ -561,8 +561,21 @@ autostring16 Melder_32to16 (conststring32 text) {
 }
 
 #if defined (_WIN32)
+conststringW Melder_peek32toW_fileSystem (conststring32 string) {
+	static wchar_t buffer [1 + kMelder_MAXPATH];
+	//NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (string), 1 + kMelder_MAXPATH, buffer);
+	FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
+	return buffer;
+}
 autostringW Melder_32toW (conststring32 text) {
 	conststringW textW = Melder_peek32toW (text);
+	int64 length = str16len ((conststring16) textW);
+	autostringW result (length);
+	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
+	return result;
+}
+autostringW Melder_32toW_fileSystem (conststring32 text) {
+	conststringW textW = Melder_peek32toW_fileSystem (text);
 	int64 length = str16len ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);

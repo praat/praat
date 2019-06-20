@@ -79,6 +79,7 @@ enum {
 struct UCD_CodePointInfo {
 	uint32 features;
 	char32 upperCase, lowerCase, titleCase;
+	conststring32 decomposed;
 	char first, second;
 };
 extern UCD_CodePointInfo theUnicodeDatabase [1+kUCD_TOP_OF_LIST];
@@ -300,6 +301,15 @@ inline static const char32 * Melder_findInk (conststring32 str) noexcept {
 		if (*p == U'\0')
 			return nullptr;   // not found
 	}
+	return p;
+}
+inline static const char32 * Melder_findHorizontalOrVerticalSpace (conststring32 str) noexcept {
+	if (! str)
+		return nullptr;
+	const char32 *p = & str [0];
+	for (; ! Melder_isHorizontalOrVerticalSpace (*p); p ++)
+		if (*p == U'\0')
+			return nullptr;   // not found
 	return p;
 }
 

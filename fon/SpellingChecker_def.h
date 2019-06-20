@@ -1,6 +1,6 @@
 /* SpellingChecker_def.h
  *
- * Copyright (C) 1999-2007,2015 Paul Boersma
+ * Copyright (C) 1999-2007,2001,2015,2016,2018,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,26 @@ oo_DEFINE_CLASS (SpellingChecker, Daata)           // CGN:
 	oo_STRING (allowAllWordsContaining)       // * xxx
 	oo_STRING (allowAllWordsStartingWith)
 	oo_STRING (allowAllWordsEndingIn)         // -
-	oo_OBJECT (WordList, 0, wordList)
+	#if oo_READING
+		oo_VERSION_UNTIL (1)
+			oo_OBJECT (WordList, 0, wordList)
+		oo_VERSION_ELSE
+			oo_OBJECT (WordList, 1, wordList)
+		oo_VERSION_END
+	#else
+		oo_OBJECT (WordList, 1, wordList)
+	#endif
 	oo_COLLECTION (StringSet, userDictionary, SimpleString, 0)
+
+	#if oo_READING
+	{
+		autoStrings strings = WordList_to_Strings (our wordList.get());
+		oo_VERSION_UNTIL (1)
+			Strings_nativize (strings.get());
+		oo_VERSION_END
+		our wordList = Strings_to_WordList (strings.get());
+	}
+	#endif
 
 oo_END_CLASS (SpellingChecker)
 #undef ooSTRUCT

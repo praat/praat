@@ -4478,7 +4478,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 				Graphics_marksBottom (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
-		//Melder_clearError ();   // drawing errors shall be ignored
+		Melder_clearError ();   // drawing errors shall be ignored
 	}
 }
 

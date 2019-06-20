@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2018 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -588,10 +588,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	#endif
 	} else {
 		#if defined (_WIN32) && ! defined (__CYGWIN__)
-			wchar_t buffer [1 + kMelder_MAXPATH];
-			//NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (file -> path), 1 + kMelder_MAXPATH, buffer);
-			FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (file -> path), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
-			f = _wfopen (buffer, Melder_peek32toW (Melder_peek8to32 (type)));
+			f = _wfopen (buffer, Melder_peek32toW_fileSystem (Melder_peek8to32 (type)));
 		#else
 			f = fopen ((char *) utf8path, type);
 		#endif
@@ -735,7 +732,7 @@ void MelderFile_delete (MelderFile file) {
 		Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
 		remove ((char *) utf8path);
 	#elif defined (_WIN32)
-		DeleteFile (Melder_peek32toW (file -> path));
+		DeleteFile (Melder_peek32toW_fileSystem (file -> path));
 	#endif
 }
 
@@ -772,7 +769,7 @@ void Melder_setDefaultDir (MelderDir dir) {
 	#if defined (UNIX)
 		chdir (Melder_peek32to8 (dir -> path));
 	#elif defined (_WIN32)
-		SetCurrentDirectory (Melder_peek32toW (dir -> path));
+		SetCurrentDirectory (Melder_peek32toW_fileSystem (dir -> path));
 	#endif
 }
 
@@ -808,7 +805,7 @@ void Melder_createDirectory (MelderDir parent, conststring32 dirName, int mode) 
 	} else {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", dirName);   // relative path
 	}
-	if (! CreateDirectoryW (Melder_peek32toW (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
+	if (! CreateDirectoryW (Melder_peek32toW_fileSystem (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #else
 	//#error Unsupported operating system.

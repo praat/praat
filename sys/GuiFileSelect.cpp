@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		openFileName. lpstrFileTitle = nullptr;
 		openFileName. nMaxFileTitle = 0;
 		openFileName. lpstrInitialDir = nullptr;
-		openFileName. lpstrTitle = Melder_peek32toW (title);
+		openFileName. lpstrTitle = Melder_peek32toW_fileSystem (title);
 		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 			| (allowMultipleFiles ? OFN_ALLOWMULTISELECT : 0);
 		openFileName. lpstrDefExt = nullptr;
@@ -148,7 +148,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 		OPENFILENAMEW openFileName;
 		static WCHAR customFilter [100+2];
 		static WCHAR fullFileNameW [300+2];
-		wcsncpy (fullFileNameW, Melder_peek32toW (defaultName), 300+2);
+		wcsncpy (fullFileNameW, Melder_peek32toW_fileSystem (defaultName), 300+2);
 		fullFileNameW [300+1] = L'\0';
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
 		openFileName. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : nullptr;
@@ -159,7 +159,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 		openFileName. nMaxFile = 300;
 		openFileName. lpstrFileTitle = nullptr;
 		openFileName. lpstrInitialDir = nullptr;
-		openFileName. lpstrTitle = Melder_peek32toW (title);
+		openFileName. lpstrTitle = Melder_peek32toW_fileSystem (title);
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = nullptr;
 		if (GetSaveFileNameW (& openFileName))
@@ -219,7 +219,7 @@ autostring32 GuiFileSelect_getDirectoryName (GuiWindow parent, conststring32 tit
 		info. ulFlags = BIF_USENEWUI;
 		info. pidlRoot = nullptr;   // everything on the computer should be browsable
 		info. pszDisplayName = nullptr;   // this would only give the bare directory name, not the full path
-		info. lpszTitle = Melder_peek32toW (title);
+		info. lpszTitle = Melder_peek32toW_fileSystem (title);
 		LPITEMIDLIST idList = SHBrowseForFolder (& info);
 		SHGetPathFromIDList (idList, fullFileNameW);
 		CoTaskMemFree (idList);

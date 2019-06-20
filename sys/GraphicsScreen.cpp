@@ -145,7 +145,8 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
 			for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
 				if (! wcscmp (imageEncoderInfos [iencoder]. MimeType, L"image/png")) {
-					gdiplusBitmap. Save (Melder_peek32toW (our d_file. path), & imageEncoderInfos [iencoder]. Clsid, nullptr);
+					gdiplusBitmap. Save (Melder_peek32toW_fileSystem (our d_file. path),
+							& imageEncoderInfos [iencoder]. Clsid, nullptr);
 				}
 			}
 
