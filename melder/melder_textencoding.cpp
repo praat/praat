@@ -496,14 +496,6 @@ void Melder_32to8_inplace (conststring32 string, mutablestring8 utf8) {;
 	*to = '\0';
 }
 
-autostring8 Melder_32to8 (conststring32 string) {
-	if (! string)
-		return autostring8();
-	autostring8 result (str32len_utf8 (string, true));
-	Melder_32to8_inplace (string, result.get());
-	return result;
-}
-
 conststring8 Melder_peek32to8 (conststring32 text) {
 	if (! text)
 		return nullptr;
@@ -526,6 +518,14 @@ conststring8 Melder_peek32to8 (conststring32 text) {
 	}
 	Melder_32to8_inplace (text, buffers [bufferNumber]);
 	return buffers [bufferNumber];
+}
+
+autostring8 Melder_32to8 (conststring32 string) {
+	if (! string)
+		return autostring8();
+	autostring8 result (str32len_utf8 (string, true));
+	Melder_32to8_inplace (string, result.get());
+	return result;
 }
 
 conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines) {
@@ -564,18 +564,18 @@ autostring16 Melder_32to16 (conststring32 text) {
 }
 
 #if defined (_WIN32)
-conststringW Melder_peek32toW_fileSystem (conststring32 string) {
-	static wchar_t buffer [1 + kMelder_MAXPATH];
-	//NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (string), 1 + kMelder_MAXPATH, buffer);
-	FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
-	return buffer;
-}
 autostringW Melder_32toW (conststring32 text) {
 	conststringW textW = Melder_peek32toW (text);
 	int64 length = str16len ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;
+}
+conststringW Melder_peek32toW_fileSystem (conststring32 string) {
+	static wchar_t buffer [1 + kMelder_MAXPATH];
+	//NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (string), 1 + kMelder_MAXPATH, buffer);
+	FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
+	return buffer;
 }
 autostringW Melder_32toW_fileSystem (conststring32 text) {
 	conststringW textW = Melder_peek32toW_fileSystem (text);
@@ -585,6 +585,52 @@ autostringW Melder_32toW_fileSystem (conststring32 text) {
 	return result;
 }
 #endif
+
+void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
+	#if defined (macintosh)
+		/*
+			On the Mac, the POSIX path name is stored in canonically decomposed UTF-8 encoding.
+			The path is probably in precomposed UTF-32.
+			So we first convert to UTF-16, then turn into CFString, then decompose, then convert to UTF-8.
+		*/
+		UniChar unipath [kMelder_MAXPATH+1];
+		int64 n = str32len (string), n_utf16 = 0;
+		for (int64 i = 0; i < n; i ++) {
+			char32 kar = (char32) string [i];   // change sign (bit 32 is never used)
+			if (kar <= 0x00'FFFF) {
+				unipath [n_utf16 ++] = (UniChar) kar;   // including null byte; guarded truncation
+			} else if (kar <= 0x10'FFFF) {
+				kar -= 0x01'0000;
+				unipath [n_utf16 ++] = (UniChar) (0x00'D800 | (kar >> 10));   // correct truncation, because UTF-32 has fewer than 27 bits (in fact it has 21 bits)
+				unipath [n_utf16 ++] = (UniChar) (0x00'DC00 | (kar & 0x00'03FF));
+			} else {
+				unipath [n_utf16 ++] = UNICODE_REPLACEMENT_CHARACTER;
+			}
+		}
+		unipath [n_utf16] = u'\0';
+		CFStringRef cfpath = CFStringCreateWithCharacters (nullptr, unipath, n_utf16);
+		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
+		CFRelease (cfpath);
+		CFStringNormalize (cfpath2, kCFStringNormalizationFormD);   // Mac requires decomposed characters
+		CFStringGetCString (cfpath2, (char *) utf8, kMelder_MAXPATH+1, kCFStringEncodingUTF8);   // Mac POSIX requires UTF-8
+		CFRelease (cfpath2);
+	#elif defined (UNIX) || defined (__CYGWIN__)
+		Melder_32to8_inplace (string, utf8);
+	#elif defined (_WIN32)
+		int n = str32len (string), i, j;
+		for (i = 0, j = 0; i < n; i ++) {
+			utf8 [j ++] = string [i] <= 255 ? string [i] : '?';   // the usual replacement on Windows
+		}
+		utf8 [j] = '\0';
+	#else
+		//#error Unsupported platform.
+	#endif
+}
+conststring8 Melder_peek32to8_fileSystem (conststring32 string) {
+	static char buffer [1 + kMelder_MAXPATH];
+	Melder_32to8_fileSystem_inplace (string, buffer);
+	return buffer;
+}
 
 #if defined (macintosh)
 const void * Melder_peek32toCfstring (conststring32 text) {

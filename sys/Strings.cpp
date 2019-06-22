@@ -137,7 +137,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 				*/
 			}
 			char buffer8 [kMelder_MAXPATH+1];
-			Melder_str32To8bitFileRepresentation_inplace (searchDirectory. string, buffer8);
+			Melder_32to8_fileSystem_inplace (searchDirectory. string, buffer8);
 			d = opendir (buffer8 [0] ? buffer8 : ".");
 			if (! d)
 				Melder_throw (U"Cannot open directory ", searchDirectory. string, U".");
@@ -151,7 +151,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 				Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
 				MelderString_append (& filePath, buffer32);
 				//Melder_casual (U"read ", filePath. string);
-				Melder_str32To8bitFileRepresentation_inplace (filePath. string, buffer8);
+				Melder_32to8_fileSystem_inplace (filePath. string, buffer8);
 				struct stat stats;
 				if (stat (buffer8, & stats) != 0) {
 					//Melder_throw (U"Cannot look at file ", filePath. string, U".");
