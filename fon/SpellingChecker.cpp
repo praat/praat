@@ -1,6 +1,6 @@
 /* SpellingChecker.cpp
  *
- * Copyright (C) 1999-2007,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1999-2007,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@
 
 #include "../kar/longchar.h"
 
-Thing_implement (SpellingChecker, Daata, 0);
+Thing_implement (SpellingChecker, Daata, 1);
 
 autoSpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	try {
@@ -85,11 +85,11 @@ void SpellingChecker_replaceUserDictionary (SpellingChecker me, StringSet userDi
 }
 
 static int startsWithCapital (conststring32 word) {
-	return iswupper ((int) word [0]) || (word [0] == '\\' && iswupper ((int) word [1]));
+	return Melder_isUpperCaseLetter (word [0]);
 }
 
 bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
-	int wordLength = str32len (word);
+	integer wordLength = str32len (word);
 	if (my allowAllWordsContaining && my allowAllWordsContaining [0]) {
 		char32 *p = & my allowAllWordsContaining [0];
 		while (*p) {
@@ -97,21 +97,18 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 			 * Find next token in list of allowed string parts.
 			 */
 			char32 token [100], *q = & token [0];
-			/*
-			 * Skip spaces in list.
-			 */
-			while (*p == U' ') p ++;
+			Melder_skipHorizontalOrVerticalSpace (& p);
 			/*
 			 * Collect one token string from list.
 			 */
-			while (*p != U'\0' && *p != U' ') {
+			while (*p != U'\0' && *p != U' ')
 				*q ++ = *p ++;
-			}
 			*q = U'\0';   // trailing null character
 			/*
 			 * Allow word if it contains this token.
 			 */
-			if (str32str (word, token)) return true;
+			if (str32str (word, token))
+				return true;
 		}
 	}
 	if (my allowAllNames) {
@@ -125,23 +122,24 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 			char32 *p = & my namePrefixes [0];
 			while (*p) {
 				char32 token [100], *q = & token [0];
-				while (*p == U' ') p ++;
+				Melder_skipHorizontalOrVerticalSpace (& p);
 				while (*p != U'\0' && *p != U' ') *q ++ = *p ++;
 				*q = U'\0';   // trailing null character
 				/*
 				 * Allow word if starts with this prefix
 				 * and this prefix is followed by a capital.
 				 */
-				if (str32str (word, token) == word && startsWithCapital (word + str32len (token))) {
+				if (str32str (word, token) == word && startsWithCapital (word + str32len (token)))
 					return true;
-				}
 			}
 		}
 	} else if (my allowAllAbbreviations && startsWithCapital (word)) {
 		const char32 *p = & word [0];
 		for (;;) {
-			if (*p == '\0') return true;
-			if (iswlower ((int) *p)) break;
+			if (*p == U'\0')
+				return true;
+			if (Melder_isLowerCaseLetter (*p))
+				break;
 			p ++;
 		}
 	}
@@ -149,28 +147,26 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 		const char32 *p = & my allowAllWordsStartingWith [0];
 		while (*p) {
 			char32 token [100], *q = & token [0];
-			int tokenLength;
-			while (*p == U' ') p ++;
-			while (*p != U'\0' && *p != U' ') *q ++ = *p ++;
+			Melder_skipHorizontalOrVerticalSpace (& p);
+			while (*p != U'\0' && *p != U' ')
+				*q ++ = *p ++;
 			*q = U'\0';   // trailing null character
-			tokenLength = str32len (token);
-			if (wordLength >= tokenLength && str32nequ (token, word, tokenLength)) {
+			integer tokenLength = str32len (token);
+			if (wordLength >= tokenLength && str32nequ (token, word, tokenLength))
 				return true;
-			}
 		}
 	}
 	if (my allowAllWordsEndingIn && my allowAllWordsEndingIn [0]) {
 		const char32 *p = & my allowAllWordsEndingIn [0];
 		while (*p) {
 			char32 token [100], *q = & token [0];
-			int tokenLength;
-			while (*p == U' ') p ++;
-			while (*p != U'\0' && *p != U' ') *q ++ = *p ++;
+			Melder_skipHorizontalOrVerticalSpace (& p);
+			while (*p != U'\0' && *p != U' ')
+				*q ++ = *p ++;
 			*q = U'\0';   // trailing null character
-			tokenLength = str32len (token);
-			if (wordLength >= tokenLength && str32nequ (token, word + wordLength - tokenLength, tokenLength)) {
+			integer tokenLength = str32len (token);
+			if (wordLength >= tokenLength && str32nequ (token, word + wordLength - tokenLength, tokenLength))
 				return true;
-			}
 		}
 	}
 	if (WordList_hasWord (my wordList.get(), word))
@@ -178,7 +174,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 	if (my userDictionary->size > 0) {
 		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
-		Longchar_genericize32 (word, buffer);
+		Longchar_nativize (word, buffer, false);
 		if (my userDictionary -> lookUp (buffer) != 0)
 			return true;
 	}
@@ -187,9 +183,9 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 
 void SpellingChecker_addNewWord (SpellingChecker me, conststring32 word) {
 	try {
-		autostring32 generic (3 * str32len (word));
-		Longchar_genericize32 (word, generic.get());
-		my userDictionary -> addString_copy (generic.get());
+		Melder_require (word && word [0] != U'\0',
+			U"Cannot add empty word.");
+		my userDictionary -> addString_copy (word);
 	} catch (MelderError) {
 		Melder_throw (me, U": word \"", word, U"\" not added.");
 	}

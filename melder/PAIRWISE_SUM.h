@@ -279,7 +279,7 @@
 
 	Note for the seventh argument: you can see here that you can do the two increments simultaneously
 	by using parentheses and a comma; fortunately, the C macro preprocessor understands enough
-	about parentheses to see that you mean the sixth argument to be a single argument.
+	about parentheses to see that you mean the seventh argument to be a single argument.
 
 	If you find the tricks with the semicolon and the parentheses too arcane, you can also just do
 

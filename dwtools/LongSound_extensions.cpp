@@ -123,7 +123,8 @@ static void MelderFile_truncate (MelderFile me, integer size)
 
 	MelderFile_close (me);
 
-	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate, FILE_ATTRIBUTE_NORMAL, nullptr);
+	hFile = CreateFileW (Melder_peek32toW_fileSystem (my path),
+			fdwAccess, fdwShareMode, lpsa, fdwCreate, FILE_ATTRIBUTE_NORMAL, nullptr);
 	
 	Melder_require (hFile != INVALID_HANDLE_VALUE, U"Cannot open file ", me, U".");
 

@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2008,2011,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@
 
 /********** Conversion of Roman native and generic string encodings. **********/
 
-char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes);
+char32 * Longchar_nativize (const char32 *generic, char32 *native, bool educateQuotes);
 
-char32_t *Longchar_genericize32 (const char32_t *native, char32_t *generic);
+char32 * Longchar_genericize (const char32 *native, char32 *generic);
 /*
 	Function:
 		Copies the string 'native' to the string 'generic',
@@ -83,8 +83,8 @@ typedef struct structLongchar_Info {
 }
 	*Longchar_Info;
 
-Longchar_Info Longchar_getInfo (char32_t kar1, char32_t kar2);
-Longchar_Info Longchar_getInfoFromNative (char32_t kar);
+Longchar_Info Longchar_getInfo (char32 kar1, char32 kar2);
+Longchar_Info Longchar_getInfoFromNative (char32 kar);
 /* If no info found, these two routines return the info for a space. */
 
 /*

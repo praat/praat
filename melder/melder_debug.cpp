@@ -201,7 +201,7 @@ FILE * MelderTrace::_open (conststring8 sourceCodeFileName, int lineNumber, cons
 		f = _wfopen ((const wchar_t *) MelderTrace::_peek32to16 (MelderTrace::_file. path), L"a");
 	#else
 		char utf8path [kMelder_MAXPATH+1];
-		Melder_str32To8bitFileRepresentation_inplace (MelderTrace::_file. path, utf8path);   // this Melder_xxx() function is OK to call
+		Melder_32to8_fileSystem_inplace (MelderTrace::_file. path, utf8path);   // this Melder_xxx() function is OK to call
 		f = fopen ((char *) utf8path, "a");
 	#endif
 	if (! f)

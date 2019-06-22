@@ -1,5 +1,5 @@
 File generate/unicode/README.TXT
-Paul Boersma, 20180405
+Paul Boersma, 20190618
 
 Steps to generate the source file UnicodeData.cpp,
 which is to be put in the sys folder:
@@ -27,8 +27,8 @@ The details of the process are discussed in UnicodeData.cpp.praat.
 Step 3 is computationally intensive, and therefore a good test of the speed of the
 Praat scripting language.
 
-The measured time on my Late-2013 MacBook Pro with 2.3 GHz Intel Core i7:
+The measured time on my 2018 MacBook Pro with 2.9 GHz Intel Core i9:
 
-Praat 6.0.40: XX seconds.
+Praat 6.0.55: 21 seconds.
 
 
