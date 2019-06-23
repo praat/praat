@@ -5592,7 +5592,7 @@ MAN_END
 
 MAN_BEGIN (U"Marsaglia & Tsang (2000)", U"djmw", 20190620)
 NORMAL (U"G. Marsaglia & W.W. Tsang (2000): \"A simple method for generating gamma variables.\""
-	" %%ACM Transactions on Mathematical Software% #26: 363\\-–372.")
+	" %%ACM Transactions on Mathematical Software% #26: 363\\--372.")
 MAN_END
 
 MAN_BEGIN (U"Morrison (1990)", U"djmw", 19980123)
