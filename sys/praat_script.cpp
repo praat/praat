@@ -506,7 +506,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 					} else if (str32chr (command, U'=')) {
 						Melder_throw (U"Command \"", command, U"\" not recognized.\n"
 							U"Probable cause: you are trying to use a variable name that starts with a capital.");
-					} else if (command [0] != U'\0' && command [str32len (command) - 1] == U' ') {
+					} else if (command [0] != U'\0' && Melder_isHorizontalSpace (command [str32len (command) - 1])) {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the trailing spaces.");
 					} else if (str32nequ (command, U"\"ooTextFile\"", 12)) {
