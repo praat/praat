@@ -1324,7 +1324,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		 */
 		lines.reset (1, numberOfLines);
 		for (lineNumber = 1, command = text; lineNumber <= numberOfLines; lineNumber ++, command += str32len (command) + 1 + chopped) {
-			while (Melder_isHorizontalSpace (*command) || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
+			while (Melder_isHorizontalSpace (*command)) command ++;   // nbsp can occur for scripts copied from the manual
 			/*
 			 * Chop trailing spaces?
 			 */
@@ -1524,9 +1524,19 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						break;
 					case U'e':
 						if (command2.string [1] == U'n' && command2.string [2] == U'd') {
-							if (str32nequ (command2.string, U"endif", 5) && ! Melder_staysWithinInk (command2.string [5])) {
+							if (str32nequ (command2.string, U"endif", 5) &&
+									(! Melder_staysWithinInk (command2.string [5]) || command2.string [5] == U';'))
+							{
+								const char32 *startOfInk = Melder_findInk (command2.string + 5);
+								if (startOfInk && *startOfInk != U';')
+									Melder_throw (U"Stray text after 'endif'.");
 								/* Ignore. */
-							} else if (str32nequ (command2.string, U"endfor", 6) && ! Melder_staysWithinInk (command2.string [6])) {
+							} else if (str32nequ (command2.string, U"endfor", 6) &&
+									(! Melder_staysWithinInk (command2.string [6]) || command2.string [6] == U';'))
+							{
+								const char32 *startOfInk = Melder_findInk (command2.string + 6);
+								if (startOfInk && *startOfInk != U';')
+									Melder_throw (U"Stray text after 'endfor'.");
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber - 1; iline > 0; iline --) {
@@ -1534,40 +1544,67 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									if (line [0] == U'f' && line [1] == U'o' && line [2] == U'r' && line [3] == U' ') {
 										if (depth == 0) { lineNumber = iline - 1; fromendfor = true; break; }   // go before 'for'
 										else depth --;
-									} else if (str32nequ (lines [iline], U"endfor", 6) && ! Melder_staysWithinInk (lines [iline] [6])) {
+									} else if (str32nequ (lines [iline], U"endfor", 6) &&
+											(! Melder_staysWithinInk (lines [iline] [6]) || lines [iline] [6] == U';'))
+									{
 										depth ++;
 									}
 								}
 								if (iline <= 0) Melder_throw (U"Unmatched 'endfor'.");
-							} else if (str32nequ (command2.string, U"endwhile", 8) && ! Melder_staysWithinInk (command2.string [8])) {
+							} else if (str32nequ (command2.string, U"endwhile", 8) &&
+									(! Melder_staysWithinInk (command2.string [8]) || command2.string [8] == U';'))
+							{
+								const char32 *startOfInk = Melder_findInk (command2.string + 8);
+								if (startOfInk && *startOfInk != U';')
+									Melder_throw (U"Stray text after 'endwhile'.");
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber - 1; iline > 0; iline --) {
 									if (str32nequ (lines [iline], U"while ", 6)) {
 										if (depth == 0) { lineNumber = iline - 1; break; }   // go before 'while'
 										else depth --;
-									} else if (str32nequ (lines [iline], U"endwhile", 8) && ! Melder_staysWithinInk (lines [iline] [8])) {
+									} else if (str32nequ (lines [iline], U"endwhile", 8) &&
+											(! Melder_staysWithinInk (lines [iline] [8]) || lines [iline] [8] == U';'))
+									{
 										depth ++;
 									}
 								}
 								if (iline <= 0) Melder_throw (U"Unmatched 'endwhile'.");
-							} else if (str32nequ (command2.string, U"endproc", 7) && ! Melder_staysWithinInk (command2.string [7])) {
+							} else if (str32nequ (command2.string, U"endproc", 7) &&
+									(! Melder_staysWithinInk (command2.string [7]) || command2.string [7] == U';'))
+							{
+								const char32 *startOfInk = Melder_findInk (command2.string + 7);
+								if (startOfInk && *startOfInk != U';')
+									Melder_throw (U"Stray text after 'endproc'.");
 								if (callDepth == 0) Melder_throw (U"Unmatched 'endproc'.");
 								lineNumber = callStack [callDepth --];
 								-- my callDepth;
 							} else fail = true;
-						} else if (str32nequ (command2.string, U"else", 4) && ! Melder_staysWithinInk (command2.string [4])) {
+						} else if (str32nequ (command2.string, U"else", 4) &&
+								(! Melder_staysWithinInk (command2.string [4]) || command2.string [4] == U';'))
+						{
+							const char32 *startOfInk = Melder_findInk (command2.string + 4);
+							if (startOfInk && *startOfInk != U';')
+								Melder_throw (U"Stray text after 'else'.");
 							int depth = 0;
 							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-								if (str32nequ (lines [iline], U"endif", 5) && ! Melder_staysWithinInk (lines [iline] [5])) {
+								if (str32nequ (lines [iline], U"endif", 5) &&
+										(! Melder_staysWithinInk (lines [iline] [5]) || lines [iline] [5] == U';'))
+								{
+									startOfInk = Melder_findInk (lines [iline] + 5);
+									if (startOfInk && *startOfInk != U';') {
+										lineNumber = iline;   // on behalf of the error message
+										Melder_throw (U"Stray text after 'endif'.");
+									}
 									if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 									else depth --;
 								} else if (str32nequ (lines [iline], U"if ", 3)) {
 									depth ++;
 								}
 							}
-							if (iline > numberOfLines) Melder_throw (U"Unmatched 'else'.");
+							if (iline > numberOfLines)
+								Melder_throw (U"Unmatched 'else'.");
 						} else if (str32nequ (command2.string, U"elsif ", 6) || str32nequ (command2.string, U"elif ", 5)) {
 							if (fromif) {
 								double value;
@@ -1577,10 +1614,24 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									int depth = 0;
 									integer iline;
 									for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-										if (str32nequ (lines [iline], U"endif", 5) && ! Melder_staysWithinInk (lines [iline] [5])) {
+										if (str32nequ (lines [iline], U"endif", 5) &&
+												(! Melder_staysWithinInk (lines [iline] [5]) || lines [iline] [5] == U';'))
+										{
+											const char32 *startOfInk = Melder_findInk (lines [iline] + 5);
+											if (startOfInk && *startOfInk != U';') {
+												lineNumber = iline;   // on behalf of error message
+												Melder_throw (U"Stray text after 'endif'.");
+											}
 											if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 											else depth --;
-										} else if (str32nequ (lines [iline], U"else", 4) && ! Melder_staysWithinInk (lines [iline] [4])) {
+										} else if (str32nequ (lines [iline], U"else", 4) &&
+												(! Melder_staysWithinInk (lines [iline] [4]) || lines [iline] [4] == U';'))
+										{
+											const char32 *startOfInk = Melder_findInk (lines [iline] + 4);
+											if (startOfInk && *startOfInk != U';') {
+												lineNumber = iline;   // on behalf of error message
+												Melder_throw (U"Stray text after 'else'.");
+											}
 											if (depth == 0) { lineNumber = iline; break; }   // go after `else`
 										} else if ((str32nequ (lines [iline], U"elsif", 5) && ! Melder_staysWithinInk (lines [iline] [5]))
 											|| (str32nequ (lines [iline], U"elif", 4) && ! Melder_staysWithinInk (lines [iline] [4]))) {
@@ -1595,7 +1646,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-									if (str32nequ (lines [iline], U"endif", 5) && ! Melder_staysWithinInk (lines [iline] [5])) {
+									if (str32nequ (lines [iline], U"endif", 5) &&
+											(! Melder_staysWithinInk (lines [iline] [5]) || lines [iline] [5] == U';'))
+									{
+										const char32 *startOfInk = Melder_findInk (lines [iline] + 5);
+										if (startOfInk && *startOfInk != U';') {
+											lineNumber = iline;   // on behalf of error message
+											Melder_throw (U"Stray text after 'endif'.");
+										}
 										if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"if ", 3)) {
@@ -1624,7 +1682,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							char32 *varpos = command2.string + 4, *endvar = frompos;
 							if (! topos) Melder_throw (U"Missing \'to\' in \'for\' loop.");
 							if (! endvar) endvar = topos;
-							while (*endvar == U' ') { *endvar = '\0'; endvar --; }
+							while (*endvar == U' ') { *endvar = U'\0'; endvar --; }
 							while (*varpos == U' ') varpos ++;
 							if (endvar - varpos < 0) Melder_throw (U"Missing loop variable after \'for\'.");
 							InterpreterVariable var = Interpreter_lookUpVariable (me, varpos);
@@ -1633,7 +1691,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								fromendfor = false;
 								loopVariable = var -> numericValue + 1.0;
 							} else if (frompos) {
-								*topos = '\0';
+								*topos = U'\0';
 								Interpreter_numericExpression (me, frompos + 6, & loopVariable);
 							} else {
 								loopVariable = 1.0;
@@ -1643,7 +1701,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-									if (str32nequ (lines [iline], U"endfor", 6)) {
+									if (str32nequ (lines [iline], U"endfor", 6) &&
+											(! Melder_staysWithinInk (lines [iline] [6]) || lines [iline] [6] == U';'))
+									{
+										const char32 *startOfInk = Melder_findInk (lines [iline] + 6);
+										if (startOfInk && *startOfInk != U';') {
+											lineNumber = iline;   // on behalf of error message
+											Melder_throw (U"Stray text after 'endfor'.");
+										}
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'endfor'
 										else depth --;
 									} else if (str32nequ (lines [iline], U"for ", 4)) {
@@ -1684,17 +1749,31 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						fail = true;
 						break;
 					case U'i':
-						if (command2.string [1] == U'f' && command2.string [2] == U' ') {   // if_
+						if (command2.string [1] == U'f' && Melder_isHorizontalSpace (command2.string [2])) {   // if_
 							double value;
 							Interpreter_numericExpression (me, command2.string + 3, & value);
 							if (value == 0.0) {
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-									if (str32nequ (lines [iline], U"endif", 5)) {
+									if (str32nequ (lines [iline], U"endif", 5) &&
+											(! Melder_staysWithinInk (lines [iline] [5]) || lines [iline] [5] == U';'))
+									{
+										const char32 *startOfInk = Melder_findInk (lines [iline] + 5);
+										if (startOfInk && *startOfInk != U';') {
+											lineNumber = iline;   // on behalf of error message
+											Melder_throw (U"Stray text after 'endif'.");
+										}
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'endif'
 										else depth --;
-									} else if (str32nequ (lines [iline], U"else", 4)) {
+									} else if (str32nequ (lines [iline], U"else", 4) &&
+											(! Melder_staysWithinInk (lines [iline] [4]) || lines [iline] [4] == U';'))
+									{
+										const char32 *startOfInk = Melder_findInk (lines [iline] + 4);
+										if (startOfInk && *startOfInk != U';') {
+											lineNumber = iline;   // on behalf of error message
+											Melder_throw (U"Stray text after 'else'.");
+										}
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'else'
 									} else if (str32nequ (lines [iline], U"elsif ", 6) || str32nequ (lines [iline], U"elif ", 5)) {
 										if (depth == 0) { lineNumber = iline - 1; fromif = true; break; }   // go at 'elsif'
@@ -1735,7 +1814,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						if (str32nequ (command2.string, U"procedure ", 10)) {
 							integer iline = lineNumber + 1;
 							for (; iline <= numberOfLines; iline ++) {
-								if (str32nequ (lines [iline], U"endproc", 7) && ! Melder_staysWithinInk (lines [iline] [7])) {
+								if (str32nequ (lines [iline], U"endproc", 7) &&
+										(! Melder_staysWithinInk (lines [iline] [7]) || lines [iline] [7] == U';'))
+								{
+									const char32 *startOfInk = Melder_findInk (lines [iline] + 7);
+									if (startOfInk && *startOfInk != U';') {
+										lineNumber = iline;   // on behalf of error message
+										Melder_throw (U"Stray text after 'endproc'.");
+									}
 									lineNumber = iline;
 									break;
 								}   // go after `endproc`
@@ -1754,7 +1840,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						fail = true;
 						break;
 					case U'r':
-						if (str32nequ (command2.string, U"repeat", 6) && ! Melder_staysWithinInk (command2.string [6])) {
+						if (str32nequ (command2.string, U"repeat", 6) &&
+								(! Melder_staysWithinInk (command2.string [6]) || command2.string [6] == U';'))
+						{
+							const char32 *startOfInk = Melder_findInk (command2.string + 6);
+							if (startOfInk && *startOfInk != U';')
+								Melder_throw (U"Stray text after 'repeat'.");
 							/* Ignore. */
 						} else fail = true;
 						break;
@@ -1774,7 +1865,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline = lineNumber - 1;
 								for (; iline > 0; iline --) {
-									if (str32nequ (lines [iline], U"repeat", 6) && ! Melder_staysWithinInk (lines [iline] [6])) {
+									if (str32nequ (lines [iline], U"repeat", 6) &&
+											(! Melder_staysWithinInk (lines [iline] [6]) || lines [iline] [6] == U';'))
+									{
 										if (depth == 0) { lineNumber = iline; break; }   // go after `repeat`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"until ", 6)) {
@@ -1796,7 +1889,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline = lineNumber + 1;
 								for (; iline <= numberOfLines; iline ++) {
-									if (str32nequ (lines [iline], U"endwhile", 8) && ! Melder_staysWithinInk (lines [iline] [8])) {
+									if (str32nequ (lines [iline], U"endwhile", 8) &&
+											(! Melder_staysWithinInk (lines [iline] [8]) || lines [iline] [8] == U';'))
+									{
+										const char32 *startOfInk = Melder_findInk (lines [iline] + 8);
+										if (startOfInk && *startOfInk != U';') {
+											lineNumber = iline;
+											Melder_throw (U"Stray text after 'endwhile'.");
+										}
 										if (depth == 0) { lineNumber = iline; break; }   // go after `endwhile`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"while ", 6)) {
