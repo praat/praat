@@ -2,7 +2,7 @@
 #define _Photo_h_
 /* Photo.h
  *
- * Copyright (C) 2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2013-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ void Photo_paintCells (Photo me, Graphics g, double xmin, double xmax, double ym
 	Every sample is drawn as a rectangle.
 */
 
-void Photo_movie (Photo me, Graphics g);
+void Photo_playMovie (Photo me, Graphics g);
 void Photo_saveAsPNG               (Photo me, MelderFile file);
 void Photo_saveAsTIFF              (Photo me, MelderFile file);
 void Photo_saveAsGIF               (Photo me, MelderFile file);

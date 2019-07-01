@@ -138,9 +138,9 @@ extern "C" Graphics Movie_create (conststring32 title, int width, int height) {
 	return theMovieGraphics.get();
 }
 
-DIRECT (MOVIE_Matrix_movie) {
+DIRECT (MOVIE_Matrix_playMovie) {
 	MOVIE_ONE (Matrix, U"Matrix movie", 300, 300)
-		Matrix_movie (me, graphics);
+		Matrix_playMovie (me, graphics);
 	MOVIE_ONE_END
 }
 
@@ -822,7 +822,7 @@ void praat_Matrix_init () {
 	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, SAVE_Matrix_writeToMatrixTextFile);
 	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, MOVIE_Matrix_movie);
+	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, MOVIE_Matrix_playMovie);
 	praat_addAction1 (classMatrix, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"Draw rows...", nullptr, 1, GRAPHICS_Matrix_drawRows);
 		praat_addAction1 (classMatrix, 0, U"Draw one contour...", nullptr, 1, GRAPHICS_Matrix_drawOneContour);
