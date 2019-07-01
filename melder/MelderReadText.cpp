@@ -135,7 +135,6 @@ conststring32 MelderReadText_getLineNumber (MelderReadText me) {
 				result ++;
 			p ++;
 		}
-		return Melder_integer (result);
 	}
 	return Melder_integer (result);
 }

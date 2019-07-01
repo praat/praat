@@ -696,7 +696,10 @@ char32 * Melder_peekExpandBackslashes (conststring32 message) {
 	char32 *to = & names [index] [0];
 	for (const char32 *from = & message [0]; *from != '\0'; from ++, to ++) {
 		*to = *from;
-		if (*from == U'\\') { * ++ to = U'b'; * ++ to = U's'; }
+		if (*from == U'\\') {
+			* ++ to = U'b';
+			* ++ to = U's';
+		}
 	}
 	*to = U'\0';
 	return & names [index] [0];

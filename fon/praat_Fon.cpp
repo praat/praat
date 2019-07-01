@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,9 +92,9 @@ DIRECT (HELP_Cochleagram_help) {
 
 // MARK: Movie
 
-DIRECT (MOVIE_Cochleagram_movie) {
+DIRECT (MOVIE_Cochleagram_playMovie) {
 	MOVIE_ONE (Cochleagram, U"Cochleagram movie", 300, 300)
-		Matrix_movie (me, graphics);
+		Matrix_playMovie (me, graphics);
 	MOVIE_ONE_END
 }
 
@@ -2203,9 +2203,9 @@ DIRECT (HELP_Spectrogram_help) {
 	HELP (U"Spectrogram")
 }
 
-DIRECT (MOVIE_Spectrogram_movie) {
+DIRECT (MOVIE_Spectrogram_playMovie) {
 	MOVIE_ONE (Spectrogram, U"Spectrogram movie", 300, 300)
-		Matrix_movie (me, graphics);
+		Matrix_playMovie (me, graphics);
 	MOVIE_ONE_END
 }
 
@@ -3012,7 +3012,8 @@ void praat_uvafon_init () {
 	#endif
 
 	praat_addAction1 (classCochleagram, 0, U"Cochleagram help", nullptr, 0, HELP_Cochleagram_help);
-	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, 0, MOVIE_Cochleagram_movie);
+	praat_addAction1 (classCochleagram, 1, U"Play movie", nullptr, 0, MOVIE_Cochleagram_playMovie);
+	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Cochleagram_playMovie);
 praat_addAction1 (classCochleagram, 0, U"Info", nullptr, 0, nullptr);
 	praat_addAction1 (classCochleagram, 2, U"Difference...", nullptr, 0, REAL_Cochleagram_difference);
 praat_addAction1 (classCochleagram, 0, U"Draw", nullptr, 0, nullptr);
@@ -3285,7 +3286,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 
 	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help", nullptr, 0, HELP_Spectrogram_help);
 	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, WINDOW_Spectrogram_view);
-	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, 0, MOVIE_Spectrogram_movie);
+	praat_addAction1 (classSpectrogram, 1, U"Play movie", nullptr, 0, MOVIE_Spectrogram_playMovie);
+	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classSpectrogram);
 		praat_addAction1 (classSpectrogram, 1, U"Get power at...", nullptr, 1, REAL_Spectrogram_getPowerAt);

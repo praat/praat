@@ -16,22 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2003/05/19 accept percent signs in getReal
- * pb 2004/10/01 Melder_double instead of %.17g
- * pb 2006/02/17 support for Intel-based Macs
- * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
- * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
- * pb 2007/07/21 MelderReadString
- * pb 2007/08/14 check for null pointer before Melder_isValidAscii
- * pb 2009/03/18 modern enums
- * fb 2010/02/26 UTF-16 via bin(get|put)utf16()
- * pb 2010/03/09 more support for Unicode values above 0xFFFF
- * pb 2010/12/23 corrected bingeti3 and bingeti3LE for 64-bit systems
- * pb 2011/03/30 C++
- */
-
 #include "melder.h"
 #include <ctype.h>
 #ifdef macintosh
@@ -157,9 +141,8 @@ static double getReal (MelderReadText me) {
 	buffer [i + 1] = '\0';
 	slash = strchr (buffer, '/');
 	if (slash) {
-		double numerator, denominator;
 		*slash = '\0';
-		numerator = Melder_a8tof (buffer), denominator = Melder_a8tof (slash + 1);
+		double numerator = Melder_a8tof (buffer), denominator = Melder_a8tof (slash + 1);
 		if (isundef (numerator) || isundef (denominator) || denominator == 0.0)
 			return undefined;
 		return numerator / denominator;
@@ -251,9 +234,6 @@ static char32 * peekString (MelderReadText me) {
 	}
 	return buffer. string;
 }
-
-#undef false
-#undef true
 
 #include "enums_getText.h"
 #include "abcio_enums.h"

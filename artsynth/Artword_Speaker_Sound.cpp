@@ -1,6 +1,6 @@
 /* Artword_Speaker_Sound.cpp
  *
- * Copyright (C) 1992-2005,2006,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2006,2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, dou
 	return 1;
 }
 
-void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound, Graphics graphics) {
+void Artword_Speaker_Sound_playMovie (Artword artword, Speaker speaker, Sound sound, Graphics graphics) {
 	try {
 		static autoArtword_Speaker_Sound_PlayInfo info;
 		if (! info)

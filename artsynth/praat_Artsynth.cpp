@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,17 +198,17 @@ DO
 	END
 }
 
-DIRECT (MOVIE_Artword_Speaker_movie) {
+DIRECT (MOVIE_Artword_Speaker_playMovie) {
 	MOVIE_TWO (Artword, Speaker, U"Artword & Speaker movie", 300, 300)
-		Artword_Speaker_movie (me, you, graphics);
+		Artword_Speaker_playMovie (me, you, graphics);
 	MOVIE_TWO_END
 }
 
 // MARK: - ARTWORD & SPEAKER & SOUND
 
-DIRECT (MOVIE_Artword_Speaker_Sound_movie) {
+DIRECT (MOVIE_Artword_Speaker_Sound_playMovie) {
 	MOVIE_THREE (Artword, Speaker, Sound, U"Artword & Speaker & Sound movie", 300, 300)
-		Artword_Speaker_Sound_movie (me, you, him, graphics);
+		Artword_Speaker_Sound_playMovie (me, you, him, graphics);
 	MOVIE_THREE_END
 }
 
@@ -353,13 +353,15 @@ void praat_uvafon_Artsynth_init () {
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, NEW1_Art_Speaker_to_VocalTract);
 
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, 0, MOVIE_Artword_Speaker_movie);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_playMovie);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Artword_Speaker_playMovie);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw...", nullptr, 0, GRAPHICS_Artword_Speaker_draw);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...", nullptr, 0, NEW1_Artword_Speaker_to_Sound);
 
-	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, 0, MOVIE_Artword_Speaker_Sound_movie);
+	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_Sound_playMovie);
+	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Artword_Speaker_Sound_playMovie);
 
 	praat_addAction1 (classSpeaker, 0, U"Speaker help", nullptr, 0, HELP_Speaker_help);
 
