@@ -160,8 +160,10 @@ void Manipulation_playPart (Manipulation me, double tmin, double tmax, int metho
 			autoSound part = Data_copy (my sound.get());
 			integer imin = Sampled_xToLowIndex (part.get(), tmin), imax = Sampled_xToHighIndex (part.get(), tmax);
 			VEC amp = part -> z.row (1);
-			for (integer i = 1; i <= imin; i ++) amp [i] = 0.0;
-			for (integer i = imax; i <= part -> nx; i ++) amp [i] = 0.0;
+			for (integer i = 1; i <= imin; i ++)
+				amp [i] = 0.0;
+			for (integer i = imax; i <= part -> nx; i ++)
+				amp [i] = 0.0;
 			autoSound saved = my sound.move();
 			my sound = part.move();
 			try {
@@ -169,9 +171,11 @@ void Manipulation_playPart (Manipulation me, double tmin, double tmax, int metho
 				my sound = saved.move();
 				amp = played -> z.row (1);
 				for (imin = 1; imin <= played -> nx; imin ++)
-					if (amp [imin] != 0.0) break;
+					if (amp [imin] != 0.0)
+						break;
 				for (imax = played -> nx; imax >= 1; imax --)
-					if (amp [imax] != 0.0) break;
+					if (amp [imax] != 0.0)
+						break;
 				Sound_playPart (played.get(), played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, nullptr, nullptr);
 			} catch (MelderError) {
 				my sound = saved.move();
@@ -196,16 +200,21 @@ void Manipulation_play (Manipulation me, int method) {
 }
 
 static integer PointProcess_getFirstVoicedPoint (PointProcess me, double maxT) {
-	for (integer i = 1; i < my nt; i ++) if (my t [i + 1] - my t [i] <= maxT) return i;
+	for (integer i = 1; i < my nt; i ++)
+		if (my t [i + 1] - my t [i] <= maxT)
+			return i;
 	return 0;
 }
 
 static void copyRise (Sound me, double tmin, double tmax, Sound thee, double tmaxTarget) {
 	integer imin = Sampled_xToHighIndex (me, tmin);
-	if (imin < 1) imin = 1;
+	if (imin < 1)
+		imin = 1;
 	integer imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
-	if (imax > my nx) imax = my nx;
-	if (imax < imin) return;
+	if (imax > my nx)
+		imax = my nx;
+	if (imax < imin)
+		return;
 	integer imaxTarget = Sampled_xToHighIndex (thee, tmaxTarget) - 1;
 	integer distance = imaxTarget - imax;
 	double dphase = NUMpi / (imax - imin + 1);
@@ -218,10 +227,13 @@ static void copyRise (Sound me, double tmin, double tmax, Sound thee, double tma
 
 static void copyFall (Sound me, double tmin, double tmax, Sound thee, double tminTarget) {
 	integer imin = Sampled_xToHighIndex (me, tmin);
-	if (imin < 1) imin = 1;
+	if (imin < 1)
+		imin = 1;
 	integer imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
-	if (imax > my nx) imax = my nx;
-	if (imax < imin) return;
+	if (imax > my nx)
+		imax = my nx;
+	if (imax < imin)
+		return;
 	integer iminTarget = Sampled_xToHighIndex (thee, tminTarget);
 	integer distance = iminTarget - imin;
 	double dphase = NUMpi / (imax - imin + 1);
@@ -241,17 +253,19 @@ static void copyBell2 (Sound me, PointProcess source, integer isource, double le
 	Sound thee, double tmidTarget, double maxT)
 {
 	/*
-	 * Replace 'leftWidth' and 'rightWidth' by the lengths of the intervals in the source (instead of target),
-	 * if these are shorter.
-	 */
-	double tmid = source -> t [isource];
+		Replace 'leftWidth' and 'rightWidth' by the lengths of the intervals in the source (instead of target),
+		if these are shorter.
+	*/
+	const double tmid = source -> t [isource];
 	if (isource > 1 && tmid - source -> t [isource - 1] <= maxT) {
-		double sourceLeftWidth = tmid - source -> t [isource - 1];
-		if (sourceLeftWidth < leftWidth) leftWidth = sourceLeftWidth;
+		const double sourceLeftWidth = tmid - source -> t [isource - 1];
+		if (sourceLeftWidth < leftWidth)
+			leftWidth = sourceLeftWidth;
 	}
 	if (isource < source -> nt && source -> t [isource + 1] - tmid <= maxT) {
-		double sourceRightWidth = source -> t [isource + 1] - tmid;
-		if (sourceRightWidth < rightWidth) rightWidth = sourceRightWidth;
+		const double sourceRightWidth = source -> t [isource + 1] - tmid;
+		if (sourceRightWidth < rightWidth)
+			rightWidth = sourceRightWidth;
 	}
 	copyBell (me, tmid, leftWidth, rightWidth, thee, tmidTarget);
 }
@@ -317,7 +331,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 {
 	try {
 		integer ipointleft, ipointright;
-		double deltat = 0, handledTime = my xmin;
+		double deltat = 0.0, handledTime = my xmin;
 		double startOfSourceNoise, endOfSourceNoise, startOfTargetNoise, endOfTargetNoise;
 		double durationOfSourceNoise, durationOfTargetNoise;
 		double startOfSourceVoice, endOfSourceVoice, startOfTargetVoice, endOfTargetVoice;
@@ -358,16 +372,16 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 			voicelessPeriod = NUMrandomUniform (0.008, 0.012);
 			ttarget = startOfTargetNoise + 0.5 * voicelessPeriod;
 			while (ttarget < endOfTargetNoise) {
-				double tsource;
 				double tleft = startOfSourceNoise, tright = endOfSourceNoise;
-				int i;
-				for (i = 1; i <= 15; i ++) {
-					double tsourcemid = 0.5 * (tleft + tright);
-					double ttargetmid = startOfTargetNoise + RealTier_getArea (duration,
-						startOfSourceNoise, tsourcemid);
-					if (ttargetmid < ttarget) tleft = tsourcemid; else tright = tsourcemid;
+				for (int i = 1; i <= 15; i ++) {
+					const double tsourcemid = 0.5 * (tleft + tright);
+					const double ttargetmid = startOfTargetNoise + RealTier_getArea (duration, startOfSourceNoise, tsourcemid);
+					if (ttargetmid < ttarget)
+						tleft = tsourcemid;
+					else
+						tright = tsourcemid;
 				}
-				tsource = 0.5 * (tleft + tright);
+				const double tsource = 0.5 * (tleft + tright);
 				copyBell (me, tsource, voicelessPeriod, voicelessPeriod, thee.get(), ttarget);
 				voicelessPeriod = NUMrandomUniform (0.008, 0.012);
 				ttarget += voicelessPeriod;
@@ -394,7 +408,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 			 */
 			startOfTargetVoice = startOfSourceVoice + deltat;
 			endOfTargetVoice = startOfTargetVoice +
-				RealTier_getArea (duration, startOfSourceVoice, endOfSourceVoice);
+					RealTier_getArea (duration, startOfSourceVoice, endOfSourceVoice);
 			durationOfTargetVoice = endOfTargetVoice - startOfTargetVoice;
 
 			/*
@@ -402,19 +416,19 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 			 */
 			ttarget = startOfTargetVoice + 0.5 * startingPeriod;
 			while (ttarget < endOfTargetVoice) {
-				double tsource, period;
-				integer isourcepulse;
 				double tleft = startOfSourceVoice, tright = endOfSourceVoice;
-				int i;
-				for (i = 1; i <= 15; i ++) {
-					double tsourcemid = 0.5 * (tleft + tright);
-					double ttargetmid = startOfTargetVoice + RealTier_getArea (duration,
-						startOfSourceVoice, tsourcemid);
-					if (ttargetmid < ttarget) tleft = tsourcemid; else tright = tsourcemid;
+				for (int i = 1; i <= 15; i ++) {
+					const double tsourcemid = 0.5 * (tleft + tright);
+					const double ttargetmid = startOfTargetVoice +
+							RealTier_getArea (duration, startOfSourceVoice, tsourcemid);
+					if (ttargetmid < ttarget)
+						tleft = tsourcemid;
+					else
+						tright = tsourcemid;
 				}
-				tsource = 0.5 * (tleft + tright);
-				period = 1.0 / RealTier_getValueAtTime (pitch, tsource);
-				isourcepulse = PointProcess_getNearestIndex (pulses, tsource);
+				const double tsource = 0.5 * (tleft + tright);
+				const double period = 1.0 / RealTier_getValueAtTime (pitch, tsource);
+				const integer isourcepulse = PointProcess_getNearestIndex (pulses, tsource);
 				copyBell2 (me, pulses, isourcepulse, period, period, thee.get(), ttarget, maxT);
 				ttarget += period;
 			}
@@ -434,15 +448,17 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		voicelessPeriod = NUMrandomUniform (0.008, 0.012);
 		ttarget = startOfTargetNoise + 0.5 * voicelessPeriod;
 		while (ttarget < endOfTargetNoise) {
-			double tsource;
 			double tleft = startOfSourceNoise, tright = endOfSourceNoise;
 			for (int i = 1; i <= 15; i ++) {
-				double tsourcemid = 0.5 * (tleft + tright);
-				double ttargetmid = startOfTargetNoise + RealTier_getArea (duration,
-					startOfSourceNoise, tsourcemid);
-				if (ttargetmid < ttarget) tleft = tsourcemid; else tright = tsourcemid;
+				const double tsourcemid = 0.5 * (tleft + tright);
+				const double ttargetmid = startOfTargetNoise +
+						RealTier_getArea (duration, startOfSourceNoise, tsourcemid);
+				if (ttargetmid < ttarget)
+					tleft = tsourcemid;
+				else
+					tright = tsourcemid;
 			}
-			tsource = 0.5 * (tleft + tright);
+			const double tsource = 0.5 * (tleft + tright);
 			copyBell (me, tsource, voicelessPeriod, voicelessPeriod, thee.get(), ttarget);
 			voicelessPeriod = NUMrandomUniform (0.008, 0.012);
 			ttarget += voicelessPeriod;
@@ -452,9 +468,11 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		 * Find the number of trailing zeroes and hack the sound's time domain.
 		 */
 		thy xmax = thy xmin + RealTier_getArea (duration, my xmin, my xmax);
-		if (fabs (thy xmax - my xmax) < 1e-12) thy xmax = my xmax;   // common situation
+		if (fabs (thy xmax - my xmax) < 1e-12)   // common situation
+			thy xmax = my xmax;
 		thy nx = Sampled_xToLowIndex (thee.get(), thy xmax);
-		if (thy nx > 3 * my nx) thy nx = 3 * my nx;
+		if (thy nx > 3 * my nx)
+			thy nx = 3 * my nx;
 		thy z.ncol = thy nx;   // maintain invariant
 
 		return thee;
