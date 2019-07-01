@@ -485,12 +485,16 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (from, my startWindow)
 		SET_REAL (to,   my endWindow)
 	EDITOR_DO
+		Melder_require (to > from,
+			U"“to” should be greater than “from”.");
+		if (from < my tmin + 1e-12)
+			from = my tmin;
+		if (to > my tmax - 1e-12)
+			to = my tmax;
+		Melder_require (to > from,
+			U"“to” should be greater than “from”.");
 		my startWindow = from;
-		if (my startWindow < my tmin + 1e-12)
-			my startWindow = my tmin;
 		my endWindow = to;
-		if (my endWindow > my tmax - 1e-12)
-			my endWindow = my tmax;
 		my v_updateText ();
 		updateScrollBar (me);
 		#if SUPPORT_DIRECT_DRAWING
