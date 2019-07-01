@@ -1,6 +1,6 @@
 /* Artword_Speaker.cpp
  *
- * Copyright (C) 1992-2005,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics g, int num
 	Graphics_setLineWidth (g, oldLineWidth);
 }
 
-void Artword_Speaker_movie (Artword artword, Speaker speaker, Graphics graphics) {
+void Artword_Speaker_playMovie (Artword artword, Speaker speaker, Graphics graphics) {
 	constexpr double timeStep = 0.03;
 	autoArt art = Art_create ();
 	for (double tim = 0.0; tim < artword -> totalTime; tim += timeStep) {
