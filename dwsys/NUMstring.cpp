@@ -31,7 +31,7 @@ autoVEC VEC_createFromString (conststring32 s) {
 		Melder_throw (U"Empty string.");
 	autoVEC numbers = newVECraw (tokens.size);
 	for (integer inum = 1; inum <= tokens.size; inum ++)
-		Interpreter_numericExpression (0, tokens [inum].get(), & numbers [inum]);
+		Interpreter_numericExpression (nullptr, tokens [inum].get(), & numbers [inum]);
 	return numbers;
 }
 
