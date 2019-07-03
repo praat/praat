@@ -525,7 +525,7 @@ autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tol)
 	Solve y = D.x + e for x, where x is sparse and e is observation noise.
 	Minimize the 2-norm (y - D.x), where maximally K elements of x may be non-zero, by an iterative hard thresholding algorithm.
 	D is a MxN real matrix with (many) more columns than rows, i.e. N > M. We need to find a vector x
-	with maximally K elements non-zero (sparse)
+	with maximally K non-zero elements (sparse).
 	The algorithm is described in T. Blumensath & M.E. Davies, "Normalised iterative hard thresholding;
 	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4, 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
