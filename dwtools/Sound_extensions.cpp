@@ -817,10 +817,10 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 }
 */
 
-autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double lowestFrequency, integer numberOfComponents, double frequencyChange_st, double amplitudeRange, double octaveShiftFraction) {
+autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double lowestFrequency, integer numberOfComponents, double frequencyChange_st, double amplitudeRange_dB, double octaveShiftFraction) {
 	try {
 		double highestFrequency = lowestFrequency * pow (2, numberOfComponents);
-		double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange);
+		double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange_dB);
 
 		Melder_require (highestFrequency <= samplingFrequency / 2.0,
 			U"The highest frequency you want to generate is "
@@ -2157,6 +2157,7 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			if (nsamples < windowSamples)
 				analysisWindow -> z.row (1).part (nsamples + 1, windowSamples) <<= 0.0;
 			
+	//		Sound_multiplyByWindow (analysisWindow.get(), kSound_windowShape::HANNING);
 			autoSpectrum const analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), false);
 
 			/*
