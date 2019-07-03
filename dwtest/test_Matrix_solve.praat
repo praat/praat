@@ -4,7 +4,7 @@
 appendInfoLine: "test_Matrix_solve.praat"
 
 @solve_sparse_system
-
+@solve_undetermined: 10, 100
 @solve3x3
 
 procedure solve_sparse_system
@@ -12,7 +12,7 @@ procedure solve_sparse_system
 	.ncol = 1000
 	.yy = Create simple Matrix: "y", .nrow, 1, "0.0"
 	.xx = Create simple Matrix: "x", .ncol, 1, "0.0"
-	Formula: "if randomUniform (0,1) < 0.005 then 1.23456 else 0.0 fi"
+	Formula: "if randomUniform (0,1) < 0.005 then 0.1 else 0.0 fi"
 	.phi = Create simple Matrix: "phi", .nrow, .ncol, "0.0"
 	Formula: "randomGauss (0.0, 1.0 / .nrow)"
 	for .irow to .nrow
@@ -45,6 +45,21 @@ procedure matrix_solve: .ncol
     endfor
     removeObject: .m, .ms
   endfor
+endproc
+
+procedure solve_undetermined: .nrow, .ncol
+	appendInfoLine: tab$, "underdetermined system"
+	 .m = Create simple Matrix: "u", .nrow, .ncol, "if row==col then 1 else 0 fi"
+	Formula: "if col==row+1 then 1 else self fi"
+	Formula: "if col == .ncol then if row == .nrow then 1 else 2 fi  else self fi"
+	.ms = Solve equation: 1e-7
+	 .ncols = Get number of columns
+	assert .ncols == .ncol - 1
+	for .irow to .nrow
+		.c = Get value in cell: 1, .irow
+		assert .c > 1-1e-7 and .c < 1+1e-7
+	endfor
+	;removeObject: .m, .ms
 endproc
 
 # test for several dimensions
