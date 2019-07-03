@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Graphics.h"
 #include "NMF.h"
 #include "NUMmachar.h"
 #include "NUM2.h"
@@ -66,6 +67,50 @@ double MATgetDivergence_ItakuraSaito (constMATVU const& ref, constMATVU const& x
 			divergence += x [irow] [icol] / refval - log (x [irow] [icol] / refval) - 1.0;
 		}
 	return divergence;
+}
+
+void NMF_paintFeatures (NMF me, Graphics g, integer fromFeature, integer toFeature, integer fromRow, integer toRow, double minimum, double maximum, int amplitudeScale, int scaling, bool garnish) {
+	fixUnspecifiedColumnRange (& fromFeature, & toFeature, my features.get());
+	fixUnspecifiedRowRange (& fromRow, & toRow, my features.get());
+	
+	autoMAT part = newMATcopy (my features.part (fromRow, toRow, fromFeature, toFeature));
+	
+	if (minimum == 0.0 && maximum == 0.0) {
+		minimum = NUMmin (part.get());
+		maximum = NUMmax (part.get());
+	}
+	
+	Graphics_setInner (g);
+	Graphics_setWindow (g, fromFeature, toFeature, fromRow, toRow);
+	
+
+	Graphics_cellArray (g, my features.part (fromRow, toRow, fromFeature, toFeature), 
+	fromFeature, toFeature, fromRow, toRow, minimum, maximum);
+	Graphics_unsetInner (g);
+	if (garnish)
+		Graphics_drawInnerBox (g);
+}
+
+void NMF_paintWeights (NMF me, Graphics g, integer fromWeight, integer toWeight, integer fromRow, integer toRow, double minimum, double maximum, int amplitudeScale, int scaling, bool garnish) {
+	fixUnspecifiedColumnRange (& fromWeight, & toWeight, my weights.get());
+	fixUnspecifiedRowRange (& fromRow, & toRow, my weights.get());
+	
+	autoMAT part = newMATcopy (my weights.part (fromRow, toRow, fromWeight, toWeight));
+	
+	if (minimum == 0.0 && maximum == 0.0) {
+		minimum = NUMmin (part.get());
+		maximum = NUMmax (part.get());
+	}
+	
+	Graphics_setInner (g);
+	Graphics_setWindow (g, fromWeight, toWeight, fromRow, toRow);
+	
+
+	Graphics_cellArray (g, my weights.part (fromRow, toRow, fromWeight, toWeight), 
+	fromWeight, toWeight, fromRow, toRow, minimum, maximum);
+	Graphics_unsetInner (g);
+	if (garnish)
+		Graphics_drawInnerBox (g);
 }
 
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures) {

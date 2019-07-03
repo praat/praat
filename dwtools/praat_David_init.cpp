@@ -3608,30 +3608,6 @@ DO
 	CONVERT_COUPLE_END (U"solution")
 }
 
-FORM (NEW_Matrix_solveMatrixEquation_sparse, U"Matrices: Solve sparse equation", nullptr) {
-	NATURAL (numberOfNonZeros, U"Number of non-zeros", U"10")
-	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"50")
-	REAL (tolerance, U"Tolerance", U"1.0e-7")
-	BOOLEAN (info, U"Show info", false)
-	OK
-DO
-	CONVERT_COUPLE (Matrix)
-		autoMatrix result = Matrix_solveEquation_sparse (me, you, numberOfNonZeros, maximumNumberOfIterations, tolerance, info);
-	CONVERT_COUPLE_END (U"solution")
-}
-
-FORM (INFO_Matrix_improveSparseSolution, U"Matrices: Improve sparse solution", nullptr) {
-	NATURAL (numberOfNonZeros, U"Number of non-zeros", U"10")
-	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"50")
-	REAL (tolerance, U"Tolerance", U"1.0e-7")
-	BOOLEAN (info, U"Show info", true)
-	OK
-DO
-	FIND_LIST (Matrix)
-		Matrix_improveSparseSolution (& list, numberOfNonZeros, maximumNumberOfIterations, tolerance, info);
-	END
-}
-
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
 	CONVERT_ONE_AND_GENERIC (Categories, Matrix)
 		autoTableOfReal result = Matrix_Categories_to_TableOfReal (you, me);
@@ -4199,6 +4175,38 @@ DIRECT (HELP_MSpline_help) {
 DIRECT (HELP_NMF_help) {
 	HELP (U"NMF")
 }
+
+FORM (GRAPHICS_NMF_paintFeatures, U"NMF: Paint features", U"") {
+	NATURAL (fromFeature, U"From feature", U"1")
+	INTEGER (toFeature, U"To feature", U"0 (=all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (=all)")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"maximum", U"0.0")
+	BOOLEAN (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (NMF)
+	NMF_paintFeatures (me, GRAPHICS, fromFeature, toFeature, fromRow, toRow, minimum,  maximum, 0, 0, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_NMF_paintWeights, U"NMF: Paint weights", U"") {
+	NATURAL (fromWeight, U"From weight", U"1")
+	INTEGER (toWeight, U"To weight", U"0 (=all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (=all)")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"maximum", U"0.0")
+	
+	BOOLEAN (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (NMF)
+	NMF_paintWeights (me, GRAPHICS, fromWeight, toWeight, fromRow, toRow, minimum,  maximum, 0, 0, garnish);
+	GRAPHICS_EACH_END
+}
+
 
 DIRECT (NEW_NMF_to_Matrix) {
 	CONVERT_EACH (NMF)
@@ -5610,11 +5618,11 @@ DO
 
 FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
-	POSITIVE (timeStep, U"Time step", U"0.005")
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"8000.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, timeStep);
+		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, maximumFrequency);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -8335,8 +8343,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, NEW_Matrix_transpose);
 	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, NEW_Matrix_solveEquation);
 	praat_addAction1 (classMatrix, 2, U"Solve matrix equation...", U"Solve equation...", 0, NEW_Matrix_solveMatrixEquation);
-	praat_addAction1 (classMatrix, 2, U"Solve matrix equation (sparse)...", U"Solve equation...", praat_HIDDEN, NEW_Matrix_solveMatrixEquation_sparse);
-	praat_addAction1 (classMatrix, 3, U"Improve sparse solution...", U"Solve equation...", praat_HIDDEN, INFO_Matrix_improveSparseSolution);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve matrix equation...", 0, NEW_Matrix_to_PCA_byRows);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, NEW_Matrix_to_PCA_byColumns);
 	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, NEW_Matrix_to_PatternList);
@@ -8390,6 +8396,8 @@ void praat_uvafon_David_init () {
 	praat_Spline_init (classMSpline);
 
 	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
+	praat_addAction1 (classNMF, 0, U"Paint features...", nullptr, 0, GRAPHICS_NMF_paintFeatures);
+	praat_addAction1 (classNMF, 0, U"Paint weights...", nullptr, 0, GRAPHICS_NMF_paintWeights);
 	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
 	
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, REAL_NMF_Matrix_getEuclideanDistance);

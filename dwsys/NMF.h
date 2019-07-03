@@ -30,6 +30,10 @@
 	where H and W are non-negative nrow x k and k x ncol matrices, respectively. 
 */
 
+void NMF_paintFeatures (NMF me, Graphics g, integer fromFeature, integer toFeature, integer fromRow, integer toRow, double minimum, double maximum, int amplitudeScale, int scaling, bool garnish);
+
+void NMF_paintWeights (NMF me, Graphics g, integer fromWeight, integer toWeight, integer fromRow, integer toRow, double minimum, double maximum, int amplitudeScale, int scaling, bool garnish);
+
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures);
 
 autoNMF NMF_createFromGeneralMatrix (constMATVU const& data, integer numberOfFeatures);
