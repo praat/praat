@@ -1,6 +1,6 @@
 /* Sound_and_PCA.cpp
  *
- * Copyright (C) 2012-2018 David Weenink
+ * Copyright (C) 2012-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,10 @@
 #include "Sound_extensions.h"
 #include "NUM2.h"
 
-static void checkChannelsWithinRange (constINTVEC channels, integer min, integer max) {
-	for (integer i = 1; i <= channels.size; i ++) {
-		if (channels [i] < min || channels [i] > max)
-			Melder_throw (U"Channel ", channels [i], U" is not within range [", min, U", ", max, U"].");
-	}
+static void checkChannelsWithinRange (constINTVEC const& channels, integer min, integer max) {
+	for (integer i = 1; i <= channels.size; i ++)
+		Melder_require (channels [i] >= min && channels [i] <= max,
+			U"Channel number ", i, U" has the value ", channels [i], U" which is not in the valid range from ", min, U" to ", max, U".");
 }
 
 autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
@@ -43,7 +42,7 @@ autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	}
 }
 
-autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC channels) {
+autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC const& channels) {
 	try {
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues)
 			numberOfComponents = thy numberOfEigenvalues;
@@ -72,7 +71,7 @@ autoSound Sound_PCA_principalComponents (Sound me, PCA thee, integer numberOfCom
 	return Sound_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, channels.get());
 }
 
-autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC channels) {
+autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC const& channels) {
 	try {
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues)
             numberOfComponents = thy numberOfEigenvalues;

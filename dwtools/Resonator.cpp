@@ -1,6 +1,6 @@
 /* Resonator.cpp
  *
- * Copyright (C) 2008-2018 David Weenink
+ * Copyright (C) 2008-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Thing_implement (Filter, Daata, 0);
 	b = 2.0 * r * cos (2.0 * NUMpi * f * dT);
 
 void structFilter :: v_resetMemory () {
-	p1 = p2 = 0;
+	p1 = p2 = 0.0;
 }
 
 void structFilter :: v_setFB (double f, double bw) {
@@ -51,7 +51,7 @@ Thing_implement (Resonator, Filter, 0);
 
 void structResonator :: v_setFB (double f, double bw) {
 	SETBC (f, bw)
-	a = normalisation == Resonator_NORMALISATION_H0 ? (1.0 - b - c) : (1 + c) * sin (2.0 * NUMpi * f * dT);
+	a = normalisation == Resonator_NORMALISATION_H0 ? (1.0 - b - c) : (1.0 + c) * sin (2.0 * NUMpi * f * dT);
 }
 
 autoResonator Resonator_create (double dT, int normalisation) {
@@ -69,7 +69,7 @@ autoResonator Resonator_create (double dT, int normalisation) {
 Thing_implement (AntiResonator, Filter, 0);
 
 void structAntiResonator :: v_setFB (double f, double bw) {
-	if (f <= 0 && bw <= 0) {
+	if (f <= 0.0 && bw <= 0.0) {
 		a = 1.0;
 		b = -2.0;
 		c = 1.0; // all-pass except dc

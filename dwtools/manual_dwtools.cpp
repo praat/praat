@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2503,6 +2503,14 @@ NORMAL (U"An object of type ISpline represents a linear combination of basis "
 	"i@spline functions. Each basis %ispline is a monotonically increasing "
 	"polynomial function of degree %p.")
 FORMULA (U"ISpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %ispline__%k_(%x)")
+MAN_END
+
+MAN_BEGIN (U"Itakura-Saito divergence", U"djmw", 20190619)
+INTRO (U"The ##Itakura-Saito divergence# is one of the many measures used to measure the similarity between an object %x and a reference %y.")
+NORMAL (U"It is defined as %d(%x|%y)= %x/%y - log(%x/%y) - 1. Only if %x = %y the divergence is zero.")
+NORMAL (U"It is called a divergence and not a distance, technically speaking, because it is not symmetric: %d(%x|%y) is not the same as %d(%y|%x).")
+NORMAL (U"One of the advantages of the Itakura-Saito divergence is its scale invariance which means that %d(%\\lax|%\\lay)=%d(%x|%y), "
+"for any number \\la. This makes it a very suitable measure for the comparison of audio spectra.")
 MAN_END
 
 MAN_BEGIN (U"jackknife", U"djmw", 20141101)
@@ -5424,6 +5432,11 @@ NORMAL (U"M.W. Berry, M. Browne, A.N. Langville, V.P. Pauca & R.J. Plemmons (200
 	"Computational Statistics & Data Analysis ##52#: 155\\--173.")
 MAN_END
 
+MAN_BEGIN (U"Blumensath & Davies (2010)", U"djmw", 20190601)
+NORMAL (U"T. Blumensath & M.E. Davies: \"Normalised iterative hard thresholding;"
+	" guaranteed stability and performance\", %%IEEE Journal of Selected Topics in Signal Processing% #4: 298\\--309.")
+MAN_END
+
 MAN_BEGIN (U"Boll (1979)", U"djmw", 20121021)
 NORMAL (U"S.F. Boll (1979): \"Suppression of acoustic noise in speech using spectral subtraction.\""
 	"%%IEEE Transactions on ASSP% #27: 113\\--120.")
@@ -5473,6 +5486,11 @@ NORMAL (U"Espeak is a free text to speech synthesizer. It was developed by Jonat
 NORMAL (U"The wikipedia page https://en.wikipedia.org/wiki/ESpeakNG gives more details.")
 MAN_END
 
+MAN_BEGIN (U"Févotte, Bertin & Durrieu (2009)", U"djmw", 20190618)
+NORMAL (U"C. Févotte, N. Bertin & J.-L. Durrieu (2009): \"Nonnegative matrix factorization with the Itakura-Saito divergene: "
+	"with applications to music analysis\", %%Neural Computation% #21: 793\\--830.")
+MAN_END
+
 MAN_BEGIN (U"Flanagan (1960)", U"djmw", 19980713)
 NORMAL (U"J.L. Flanagan (1960): \"Models for approximating basilar membrane "
 	"displacement.\" %%Bell System Technical Journal% #39: 1163\\--1191.")
@@ -5517,8 +5535,13 @@ NORMAL (U"T. Irino & R.D. Patterson (1997): \"A time-domain, level-dependent "
 	"auditory filter: The gammachirp.\" %%Journal of the Acoustical Society of America% #101: 412\\--419.")
 MAN_END
 
+MAN_BEGIN (U"Itakura & Saito (1968)", U"djmw", 20190617)
+NORMAL (U"F. Itakura & S. Saito (1968): \"Analysis synthesis telephony based on the maximum likelihood method.\""
+	"In %%Proc. 6th International Congress on Acoustics%, Los Alamitos, CA: IEEE: C-17\\--20.")
+MAN_END
+
 MAN_BEGIN (U"Janecek et al. (2011)", U"djmw", 20190312)
-	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011)"
+	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011): "
 		"\"LIBNMF \\-- A library for nonnegative matrix factorization.\""
 		"%%Computing and informatics% #30: 205\\--224")
 MAN_END
@@ -5565,6 +5588,11 @@ MAN_END
 MAN_BEGIN (U"Lee & Seung (2001)", U"djmw", 20190312)
 	NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
 	"%%Advances in in neural information processing systems% #13: 556\\--562.")
+MAN_END
+
+MAN_BEGIN (U"Marsaglia & Tsang (2000)", U"djmw", 20190620)
+NORMAL (U"G. Marsaglia & W.W. Tsang (2000): \"A simple method for generating gamma variables.\""
+	" %%ACM Transactions on Mathematical Software% #26: 363\\--372.")
 MAN_END
 
 MAN_BEGIN (U"Morrison (1990)", U"djmw", 19980123)

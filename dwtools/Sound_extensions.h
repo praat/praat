@@ -154,10 +154,10 @@ autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double for
 
 autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor);
 
-autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
+autoPointProcess Sound_to_PointProcess_getJumps (Sound me, integer channel, double minimumJump, double maximumDuration);
 /*
 	Marks jumps in the signal where the amplitude changes more than 'minimumJump'
-	within time dt
+	within a time interval of maximumDuration
 */
 
 autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,

@@ -3696,9 +3696,30 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_als")
 }
 
+FORM (NEW_Matrix_to_NMF_is, U"Matrix: To NMF (IS)", U"Matrix: To NMF (IS)...") {
+	NATURAL (numberOfFeatures, U"Number of features", U"2")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"20")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	BOOLEAN (info, U"Info", 0)
+	OK
+DO
+	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	CONVERT_EACH (Matrix)
+		autoNMF result = Matrix_to_NMF_is (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
+	CONVERT_EACH_END (my name.get(), U"_als")
+}
+
 DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
 	NUMBER_TWO (NMF, Matrix)
 		double result = NMF_getEuclideanDistance (me, your z.get());
+	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
+}
+
+DIRECT (REAL_NMF_Matrix_getItakuraSaitoDivergence) {
+	NUMBER_TWO (NMF, Matrix)
+		double result = NMF_getItakuraSaitoDivergence (me, your z.get());
 	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
@@ -3723,6 +3744,18 @@ FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factor
 DO
 	MODIFY_FIRST_OF_TWO (NMF, Matrix)
 		NMF_improveFactorization_als (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_NMF_Matrix_improveFactorization_is, U"NMF & Matrix: Improve factorization (IS)", nullptr) {
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"10")
+	REAL (tolx, U"Change tolerance", U"1e-9")
+	REAL (told, U"Approximation tolerance", U"1e-9")
+	BOOLEAN (info, U"Info", 0)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+		NMF_improveFactorization_is (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -4142,6 +4175,38 @@ DIRECT (HELP_MSpline_help) {
 DIRECT (HELP_NMF_help) {
 	HELP (U"NMF")
 }
+
+FORM (GRAPHICS_NMF_paintFeatures, U"NMF: Paint features", U"") {
+	NATURAL (fromFeature, U"From feature", U"1")
+	INTEGER (toFeature, U"To feature", U"0 (=all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (=all)")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"maximum", U"0.0")
+	BOOLEAN (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (NMF)
+	NMF_paintFeatures (me, GRAPHICS, fromFeature, toFeature, fromRow, toRow, minimum,  maximum, 0, 0, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_NMF_paintWeights, U"NMF: Paint weights", U"") {
+	NATURAL (fromWeight, U"From weight", U"1")
+	INTEGER (toWeight, U"To weight", U"0 (=all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (=all)")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"maximum", U"0.0")
+	
+	BOOLEAN (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (NMF)
+	NMF_paintWeights (me, GRAPHICS, fromWeight, toWeight, fromRow, toRow, minimum,  maximum, 0, 0, garnish);
+	GRAPHICS_EACH_END
+}
+
 
 DIRECT (NEW_NMF_to_Matrix) {
 	CONVERT_EACH (NMF)
@@ -5553,11 +5618,11 @@ DO
 
 FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
-	POSITIVE (timeStep, U"Time step", U"0.005")
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"8000.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, timeStep);
+		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, maximumFrequency);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -8288,6 +8353,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To SVD", U"To Eigen", praat_HIDDEN, NEW_Matrix_to_SVD);
 	praat_addAction1 (classMatrix, 0, U"To NMF (m.u.)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_mu);
 	praat_addAction1 (classMatrix, 0, U"To NMF (ALS)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_als);
+	praat_addAction1 (classMatrix, 0, U"To NMF (IS)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_is);
 	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
@@ -8330,11 +8396,15 @@ void praat_uvafon_David_init () {
 	praat_Spline_init (classMSpline);
 
 	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
+	praat_addAction1 (classNMF, 0, U"Paint features...", nullptr, 0, GRAPHICS_NMF_paintFeatures);
+	praat_addAction1 (classNMF, 0, U"Paint weights...", nullptr, 0, GRAPHICS_NMF_paintWeights);
 	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, NEW_NMF_to_Matrix);
 	
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, REAL_NMF_Matrix_getEuclideanDistance);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Itakura-Saito distance", nullptr, 0, REAL_NMF_Matrix_getItakuraSaitoDivergence);
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (ALS)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_als);
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (m.u.)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_mu);
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (IS)...", nullptr, 0, MODIFY_NMF_Matrix_improveFactorization_is);
 	
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, GRAPHICS_PatternList_draw);

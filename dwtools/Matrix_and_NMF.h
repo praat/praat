@@ -23,9 +23,11 @@
 
 autoNMF Matrix_to_NMF_mu (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod, bool info);
 autoNMF Matrix_to_NMF_als (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod, bool info);
+autoNMF Matrix_to_NMF_is (Matrix me, integer numberOfFeatures, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, kNMF_Initialization initializationMethod, bool info);
 
 void NMF_Matrix_improveFactorization_mu (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
 void NMF_Matrix_improveFactorization_als (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
+void NMF_Matrix_improveFactorization_is (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
 
 autoMatrix NMF_to_Matrix (NMF me);
 

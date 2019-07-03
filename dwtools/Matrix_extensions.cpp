@@ -393,7 +393,8 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 
 autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance) {
 	try {
-		Melder_require (my ny == thy ny, U"The number of rows must be equal.");
+		Melder_require (my ny == thy ny,
+			U"The number of rows must be equal.");
 		
 		if (my ny < my nx) {
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");

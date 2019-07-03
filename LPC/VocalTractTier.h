@@ -2,7 +2,7 @@
 #define _VocalTractTier_h_
 /* VocalTractTier.h
  *
- * Copyright (C) 2012, 2015 David Weenink
+ * Copyright (C) 2012-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ autoVocalTractTier VocalTractTier_create (double fromTime, double toTime);
 
 autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time);
 
-void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTract thee);
+void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract thee);
 
 autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep);
 

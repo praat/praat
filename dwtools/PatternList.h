@@ -2,7 +2,7 @@
 #define _PatternList_h_
 /* Pattern.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,6 @@ Thing_define (PatternList, Matrix) {
    y1				:1.
    z[iy][ix]		:the inputs. All elements in interval [0,1].
 */
-
-void PatternList_init (PatternList me, integer ny, integer nx);
 
 autoPatternList PatternList_create (integer ny, integer nx);
 
