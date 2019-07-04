@@ -1144,7 +1144,7 @@ autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, 
 		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues,
 			U"Direction index too high.");
 		
-		autoVEC v (my dimension, kTensorInitializationType::ZERO);
+		autoVEC v = newVECzero (my dimension);
 		if (xmax == xmin || ymax == ymin) {
 			double xmind, xmaxd, ymind, ymaxd, nsigmas = 2.0;
 
@@ -1185,7 +1185,7 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 	try {
 		Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
-		autoVEC buf (my dimension, kTensorInitializationType::RAW);
+		autoVEC buf = newVECraw (my dimension);
 		thy columnLabels.all() <<= cov -> columnLabels.part (1, my dimension);
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
 		for (integer i = 1; i <= numberOfPoints; i ++) {

@@ -300,7 +300,7 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 	k_stdev Winsorizes at `k_stdev' standard deviations.
 */
 
-autoVEC VECmonotoneRegression (constVEC x);
+autoVEC newVECmonotoneRegression (constVEC x);
 /*
 	Find numbers xs[1..n] that have a monotone relationship with
 	the numbers in x[1..n].
@@ -553,7 +553,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y, double *o
 	Psychometrika 48, 631-638.
 */
 
-autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta);
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta);
 /*
 	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
 	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
@@ -906,7 +906,7 @@ double NUMcubicSplineInterpolation (constVEC xa, constVEC ya, constVEC y2a, doub
 	a value of x, this routine returns an interpolated value y.
 */
 
-autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& w);
+autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& w);
 /*
 	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
 	Output: interpolated result
@@ -916,7 +916,7 @@ double NUMbiharmonic2DSplineInterpolation (constVECVU const& x, constVECVU const
 /* Biharmonic spline interpolation based on Green's function.
 	. Given z[i] values at points (x[i],y[i]) for i=1..n, 
 	Get value at new point (px,py).
-	1. Calculate weights w once: NUMbiharmonic2DSplineInterpolation_getWeights
+	1. Calculate weights w once: newVECbiharmonic2DSplineInterpolation_getWeights
 	2. Interpolate at (xp,yp): NUMbiharmonic2DSplineInterpolation
 	Input: x[1..numberOfPoints], y[1..numberOfPoints], z[1..numberOfPoints], weights[1..numberOfPoints]
 	Output: weights[1..numberOfPoints]

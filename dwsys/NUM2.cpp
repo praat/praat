@@ -197,7 +197,7 @@ double NUMmultivariateKurtosis (constMATVU const& m, int method) {
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-autoVEC VECmonotoneRegression (constVEC x) {
+autoVEC newVECmonotoneRegression (constVEC x) {
 	autoVEC fit = newVECcopy (x);
 	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
 	for (integer i = 2; i <= x.size; i ++) {
@@ -458,8 +458,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)	(page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
 	
-	autoVEC otd (n3, kTensorInitializationType::ZERO);
-	autoMAT ftinvp (n3, n3, kTensorInitializationType::ZERO);
+	autoVEC otd = newVECzero (n3);
+	autoMAT ftinvp =newMATzero (n3, n3);
 	for (integer i = 1; i <= 3; i ++) {
 		for (integer j = 1; j <= 3; j ++) {
 			if (ftinv [i] [j] != 0.0)
@@ -470,7 +470,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 			otd [i] += o [k] [i] * d [k];
 	}
 	
-	autoMAT ptfinvc (n3, n3, kTensorInitializationType::ZERO);
+	autoMAT ptfinvc = newMATzero (n3, n3);
 
 	for (integer i = 1; i <= 3; i ++)
 		for (integer j = 1; j <= 3; j ++)
@@ -479,9 +479,9 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	autoVEC y = newVECsolve (ftinvp.get(), otd.get(), 1e-6);
 
 	// The solution (3 cases)
-	autoVEC w (n3, kTensorInitializationType::ZERO);
+	autoVEC w = newVECzero (n3);
 	autoVEC chi;
-	autoVEC diag (n3, kTensorInitializationType::ZERO);
+	autoVEC diag = newVECzero (n3);
 
 	if (fabs (y [1]) < eps) {
 		// Case 1: page 633
@@ -565,7 +565,7 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 	}
 }
 
-autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta) {
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta) {
 	// n = f.nrow m=f.ncol
 	autoMAT u = newMATzero (f.ncol, f.ncol);
 	autoVEC c = newVECzero (f.ncol);
@@ -2540,11 +2540,13 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 		ln_re = gsl_lnr.val;
 		ln_arg = gsl_arg.val;
 	}
-	if (out_lnr) *out_lnr = ln_re;
-	if (out_arg) *out_arg = ln_arg;
+	if (out_lnr)
+		*out_lnr = ln_re;
+	if (out_arg)
+		*out_arg = ln_arg;
 }
 
-autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& z) {
+autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
 	autoMAT g = newMATraw (x.size, x.size);
 	/*
