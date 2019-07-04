@@ -127,7 +127,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 			u [icell] [numberOfParameters] = 1.0;   // for the intercept
 			b [icell] = Table_getNumericValue_Assert (me, icell, my numberOfColumns);   // the dependent variable
 		}
-		autoVEC x = NUMsolveEquation (u.get(), b.get(), NUMeps * numberOfCells);
+		autoVEC x = newVECsolve (u.get(), b.get(), NUMeps * numberOfCells);
 		thy intercept = x [numberOfParameters];
 		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			RegressionParameter parm = thy parameters.at [ivar];

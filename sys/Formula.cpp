@@ -117,8 +117,8 @@ enum { NO_SYMBOL_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
 		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_FAST_, MAT_MUL_METAL_,
 		MAT_MUL_TN_, MAT_MUL_NT_, MAT_MUL_TT_, VEC_REPEAT_,
-		VEC_ROW_INNERS_,
-	#define HIGH_FUNCTION_2  VEC_ROW_INNERS_
+		VEC_ROW_INNERS_, VEC_SOLVE_, MAT_SOLVE_,
+	#define HIGH_FUNCTION_2  MAT_SOLVE_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_3  FISHER_P_
@@ -244,7 +244,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"soundPressureToPhon", U"objectsAreIdentical",
 	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
-	U"rowInners#",
+	U"rowInners#", U"solve#", U"solve##",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -5617,6 +5617,29 @@ static void do_VECrowInners () {
 		Melder_throw (U"The function \"rowInners#\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
+static void do_VECsolve () {
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
+			U"In the function solve#, the number of rows of the matrix, ", x->numericMatrix.nrow, U", should equal the size of the vector, ",
+			y->numericVector.size);
+		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
+	} else {
+		Melder_throw (U"The function \"solve#\" requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+static void do_MATsolve () {
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		Melder_require (x->numericMatrix.nrow == y->numericMatrix.nrow,
+			U"In the function MATsolve##, the two matrices should have the same number of rows, not ",
+			x->numericMatrix.nrow, U" and ", y->numericMatrix.nrow);
+		pushNumericMatrix (newMATsolve (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
+	} else {
+		Melder_throw (U"The function \"solve##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+
 static void do_beginPauseForm () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw (U"The function \"beginPauseForm\" is not available inside manuals.");
@@ -6899,6 +6922,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAT_MUL_TT_: { do_MATmul_tt ();
 } break; case VEC_REPEAT_: { do_VECrepeat ();
 } break; case VEC_ROW_INNERS_: { do_VECrowInners ();
+} break; case VEC_SOLVE_: { do_VECsolve ();	
+} break; case MAT_SOLVE_: { do_MATsolve ();	
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();
