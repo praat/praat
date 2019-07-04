@@ -2932,7 +2932,7 @@ NORMAL (U"A vector can also be given to a ##menu command# that returns another v
 CODE (U"selectObject: myPitch")
 CODE (U"tmin = Get start time")
 CODE (U"tmax = Get end time")
-CODE (U"times\\#  = sequence_by_centre\\#  (tmin, tmax, 0.01)")
+CODE (U"times\\#  = from_to_by_centred\\#  (tmin, tmax, 0.01)")
 CODE (U"pitches\\#  = Get values at times: times\\# , \"hertz\", \"linear\"")
 MAN_END
 
