@@ -172,6 +172,50 @@ inline void VECclip_inplace_inline (VEC x, double min, double max) {
 			x [i] = max;
 }
 
+inline void VECabs (VECVU const& result, constVECVU const& v) {
+	Melder_assert (result.size == v.size);
+	for (integer i = 1; i <= result.size; i ++)
+		result [i] = fabs (v [i]);
+}
+
+inline autoVEC newVECabs (constVECVU const& v) {
+	autoVEC result = newVECraw (v.size);
+	VECabs (result.get(), v);
+	return result;
+}
+
+inline void VECabs_inplace (VECVU const& v) {
+	for (integer i = 1; i <= v.size; i ++)
+		v [i] = fabs (v [i]);
+}
+
+inline void INTVEClinear (INTVEC const& v, integer start, integer step) {
+	for (integer i = 1; i <= v.size; i ++)
+		v [i] = start + (i - 1) * step;
+}
+
+inline autoINTVEC newINTVEClinear (integer size, integer start, integer step) {
+	autoINTVEC result = newINTVECraw (size);
+	INTVEClinear (result, start, step);
+	return result;
+}
+
+inline bool NUMhasZeroElement (constMATVU const m) {
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol++)
+			if (m [irow][icol] == 0.0)
+				return true;
+	return false;
+}
+
+inline integer NUMcountNumberOfNonZeroElements (constVECVU const& v) {
+	integer count = 0;
+	for (integer i = 1; i <= v.size; i ++)
+		if (v [i] != 0.0)
+			++ count;
+	return count;
+}
+
 inline double NUMmul (constVECVU const& x, constMATVU const& m, constVECVU const& y) { // x'. M . y
 	Melder_assert (x.size == m.nrow);
 	Melder_assert (y.size == m.ncol);
@@ -475,6 +519,18 @@ autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tol)
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
 	Algorithm: s.v.d.
 */
+
+
+/*
+	Solve y = D.x + e for x, where x is sparse and e is observation noise.
+	Minimize the 2-norm (y - D.x), where maximally K elements of x may be non-zero, by an iterative hard thresholding algorithm.
+	D is a MxN real matrix with (many) more columns than rows, i.e. N > M. We need to find a vector x
+	with maximally K non-zero elements (sparse).
+	The algorithm is described in T. Blumensath & M.E. Davies, "Normalised iterative hard thresholding;
+	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4, 298-309.
+	x in/out: the start value (you typically would start the iteration with all zeros).
+*/
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
 autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
 /*
@@ -1160,6 +1216,21 @@ void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept
 */
 integer NUMrandomBinomial (double p, integer n);
 double NUMrandomBinomial_real (double p, integer n);
+
+/*
+	Generates random numbers according to a Gamma distribution with shape parameter "alpha"
+	and rate parameter "beta".
+	
+	The Gamma distribution of order (shape) parameter alpha and rate (beta) is defined as:
+
+		f(x; alpha, beta) = (1 / Gamma (alpha)) beta^alpha x^(alpha-1) e^(-beta.x),
+		for x > 0, alpha > 0 && beta > 0.
+
+	The method is described in
+		G. Marsaglia & W. Tsang (2000): A simple method for generating gamma variables. ACM Transactions on Mathematical Software, 26(3):363-372.
+	Preconditions: alpha > 0 && beta > 0.
+*/
+double NUMrandomGamma (const double alpha, const double beta);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 // lpc[1..n] to rc[1..n]

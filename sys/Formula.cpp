@@ -110,6 +110,7 @@ enum { NO_SYMBOL_,
 	/* Functions of 2 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_2  ARCTAN2_
 		ARCTAN2_, RANDOM_UNIFORM_, RANDOM_INTEGER_, RANDOM_GAUSS_, RANDOM_BINOMIAL_,
+		RANDOM_GAMMA_,
 		CHI_SQUARE_P_, CHI_SQUARE_Q_, INCOMPLETE_GAMMAP_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
@@ -148,6 +149,7 @@ enum { NO_SYMBOL_,
 		VEC_RANDOM_UNIFORM_, MAT_RANDOM_UNIFORM_,
 		VEC_RANDOM_INTEGER_, MAT_RANDOM_INTEGER_,
 		VEC_RANDOM_GAUSS_, MAT_RANDOM_GAUSS_,
+		VEC_RANDOM_GAMMA_, MAT_RANDOM_GAMMA_,
 		MAT_PEAKS_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_, HASH_,
 	#define HIGH_FUNCTION_N  HASH_
@@ -236,7 +238,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"sum", U"mean", U"stdev", U"center",
 	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
 	U"string$", U"sleep", U"unicode", U"unicode$",
-	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial",
+	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial", U"randomGamma",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
@@ -267,6 +269,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
+	U"randomGamma#", U"randomGamma##",
 	U"peaks##",
 	U"size", U"numberOfRows", U"numberOfColumns", U"editor", U"hash",
 
@@ -6763,6 +6766,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_INTEGER_: { do_function_ll_l (NUMrandomInteger);
 } break; case RANDOM_GAUSS_: { do_function_dd_d (NUMrandomGauss);
 } break; case RANDOM_BINOMIAL_: { do_function_dl_d (NUMrandomBinomial_real);
+} break; case RANDOM_GAMMA_: { do_function_dd_d (NUMrandomGamma);
 } break; case CHI_SQUARE_P_: { do_function_dd_d (NUMchiSquareP);
 } break; case CHI_SQUARE_Q_: { do_function_dd_d (NUMchiSquareQ);
 } break; case INCOMPLETE_GAMMAP_: { do_function_dd_d (NUMincompleteGammaP);
@@ -6820,6 +6824,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAT_RANDOM_INTEGER_: { do_function_MATll_l (NUMrandomInteger);
 } break; case VEC_RANDOM_GAUSS_: { do_function_VECdd_d (NUMrandomGauss);
 } break; case MAT_RANDOM_GAUSS_: { do_function_MATdd_d (NUMrandomGauss);
+} break; case VEC_RANDOM_GAMMA_: { do_function_VECdd_d (NUMrandomGamma);
+} break; case MAT_RANDOM_GAMMA_: { do_function_MATdd_d (NUMrandomGamma);
 } break; case MAT_PEAKS_: { do_MATpeaks ();
 } break; case SIZE_: { do_size ();
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();

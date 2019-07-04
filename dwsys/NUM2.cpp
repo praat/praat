@@ -2519,6 +2519,33 @@ double NUMrandomBinomial_real (double p, integer n) {
 	}
 }
 
+double NUMrandomGamma (const double alpha, const double beta) {
+	Melder_require (alpha > 0 && beta > 0,
+		U"Both arguments should be positive.");
+	double result;
+	if (alpha >= 1.0) {
+		double x, v, d = alpha - 1.0 / 3.0;
+		double c = (1.0 / 3.0) / sqrt (d);
+		while (1) {
+			do {
+				x = NUMrandomGauss (0.0, 1.0);
+				v = 1.0 + c * x;
+			} while (v <= 0.0);
+			v = v * v * v;
+			double u = NUMrandomUniform (0.0, 1.0);
+			if (u < 1.0 - 0.0331 * (x * x) * (x * x))
+				break;
+			if (log(u) < 0.5 * x * x + d * (1.0 - v + log(v)))
+				break;
+		}
+		result = d * v / beta;
+	} else {
+		double u = NUMrandomUniform (0.0, 1.0);
+		result = NUMrandomGamma (alpha + 1.0, beta) * pow (u, 1.0 / alpha);
+	}
+	return result;
+}
+
 void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg) {
 	double ln_re = undefined, ln_arg = undefined;
 	gsl_sf_result gsl_lnr, gsl_arg;
@@ -2788,6 +2815,151 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = irow + 1; icol <= target.ncol; icol ++)
 			target [icol] [irow] = target [irow] [icol];
+}
+
+/*
+	1. Take absolute value of v.
+	2. Sort abs(v) and its index together.
+	3. Make all elements of v zero, except the numberOfNonZeros largest elements.
+	4. Set the support of these largest elements to 1 and the rest to zero.
+*/
+static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
+	Melder_assert (v.size == support.size);
+	Melder_assert (numberOfNonZeros < v.size);
+	autoVEC abs = newVECabs (v);
+	autoINTVEC linear = newINTVEClinear (v.size, 1, 1);
+	NUMsortTogether <double, integer> (abs.get(), linear.get()); // sort is always increasing
+	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
+		v [linear [i]] = 0.0;
+		support [linear [i]] = 0;
+	}
+	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++) {
+		support [linear [i]] = 1;
+	}
+}
+
+bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
+	for (integer i = 1; i <= a.size; i ++)
+		if (a [i] != b [i])
+			return false;
+	return true;
+}
+
+static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
+	Melder_assert (x_new.size == xn.size && buffer.size == x_new.size);
+	Melder_assert (gradient.size == support_new.size && gradient.size == x_new.size);
+	Melder_assert (y_new.size == yn.size);
+	Melder_assert (dictionary.nrow == yn.size && dictionary.ncol == xn.size);
+	
+	buffer <<=  stepSize * gradient;
+	x_new <<= xn + buffer; // x(n) + stepSize * gradient
+	VECsetThresholdAndSupport (x_new, support_new, numberOfNonZeros);
+	buffer <<= x_new  -  xn; // x(n+1) - x (n)
+	double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
+	
+	VECmul (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
+	buffer.part (1, yn.size) <<= y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
+	double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
+	return xdifsq / ydifsq;
+}
+
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
+	try {
+		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
+		Melder_assert (dictionary.ncol == x.size); // we calculate D.x
+		Melder_assert (dictionary.nrow == y.size); // y = D.x + e
+		
+		autoVEC gradient = newVECraw (x.size);
+		autoVEC x_new = newVECraw (x.size); // x(n+1), x == x(n)
+		autoVEC yfromx = newVECraw (y.size); // D.x(n)
+		autoVEC yfromx_new = newVECraw (y.size); // D.x(n+1)
+		autoVEC ydif = newVECraw (y.size); // y - D.x(n)
+		autoVEC buffer = newVECraw (x.size);
+		autoINTVEC support = newINTVECraw (x.size);
+		autoINTVEC support_new = newINTVECraw (x.size);
+		
+		double xnormSq = NUMsum2 (x);
+		double rms_y = NUMsum2 (y) / y.size;
+		double rms = rms_y;
+		
+		if (xnormSq == 0.0) {
+			/*
+				Start with x == 0.
+				Get initial support supp (Hard_K (D'y))
+				Hard_K (v) is a hard thresholder which only keeps the largest K elements from the vector v
+			*/
+			VECmul (buffer.get(), dictionary.transpose(), y); // 
+			VECsetThresholdAndSupport (buffer.get(), support.get(), numberOfNonZeros);
+			yfromx <<= 0.0;
+			ydif <<= y;
+		} else {
+			/*
+				We improve a current solution x
+			*/
+			VECsetThresholdAndSupport (x, support.get(), numberOfNonZeros);
+			VECmul (yfromx.get(), dictionary, x); // D.x(n)
+			ydif <<= y  -  yfromx; // y - D.x(n)
+			rms = NUMsum2 (ydif.get()) / y.size; // ||y - D.x(n)||^2
+		}
+		
+		bool convergence = false;
+		integer iter = 1;
+		while (iter <= maximumNumberOfIterations && not convergence) {			
+			
+			VECmul (gradient.get(), dictionary.transpose(), ydif.get()); // D'.(y - D.x(n))
+			/*
+				Calculate stepSize mu according to Eq. (13)
+				mu = || g_sparse ||^2 / || D_sparse * g_sparse ||^2
+				where g_sparse only contains the supported elements from the gradient and D_sparse only the supported columns from the dictionary.
+			*/
+			
+			// 1. the norm of the sparse gradient
+			double normsq_gs = 0.0;
+			for (integer ig = 1; ig <= gradient.size; ig ++) {
+				if (support [ig] != 0) {
+					normsq_gs += gradient [ig] * gradient [ig];
+				}
+			}
+			// 2. the norm of the transformed sparse gradient
+			double normsq_dgs = 0.0;
+			for (integer icol = 1; icol <= dictionary.ncol; icol ++) {
+				if (support [icol] != 0) {
+					double dgs = NUMsum (dictionary.column (icol)) * gradient [icol];
+					normsq_dgs += dgs * dgs;
+				}	
+			}
+			double stepSize = normsq_gs / normsq_dgs;
+			
+			double normsq_ratio = update (x_new.get(), yfromx_new.get(), support_new.get(), x, stepSize, gradient.get(), dictionary, yfromx.get(), numberOfNonZeros, buffer.get());
+			
+			if (! haveEqualSupport (support.get(), support_new.get())) {
+				double omega;
+				const double kappa = 2.0, c = 0.0;
+				while (stepSize > (omega = (1.0 - c) * normsq_ratio)) { // stepSize > omega, from Eq. 14
+					stepSize *= 1.0 / (kappa * (1.0 - c));
+					normsq_ratio = update (x_new.get(), yfromx_new.get(), support_new.get(), x, stepSize, gradient.get(), dictionary, yfromx.get(), numberOfNonZeros, buffer.get());
+				}
+			}
+
+			ydif <<= y  -  yfromx_new; // y - D.x(n+1)
+
+			double rms_new = NUMsum2 (ydif.get()) / y.size;
+			double relativeError = fabs (rms - rms_new) / rms_y;
+			convergence = relativeError < tolerance;
+			if (info)
+				MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
+			
+			x <<= x_new;
+			support <<= support_new;
+			yfromx <<= yfromx_new;
+			rms = rms_new;
+			iter ++;
+		}
+		if (info)
+			MelderInfo_drain();
+	} catch (MelderError) {
+		Melder_throw (U"Solution of sparse problem not found.");
+	}
 }
 
 /* End of file NUM2.cpp */

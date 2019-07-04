@@ -266,28 +266,16 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee) {
 	try {
-		integer npc = thy numberOfColumns;
 		Melder_require (thy numberOfColumns <= my dimension,
 			U"The dimension of the Configuration should be less than or equal to the dimension of the PCA.");
-
-		if (npc > my numberOfEigenvalues)
-			npc = my numberOfEigenvalues;
+		integer numberOfEigenvectorsToUse = std::min (thy numberOfColumns, my numberOfEigenvalues);
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		Melder_assert (my labels.size == my dimension);
 		his columnLabels.all() <<= my labels.all();
 		his rowLabels.all() <<= thy rowLabels.all();
 
-		//MATmul (his data.get(), thy data.get(), my eigenvectors.get());
-		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			VEC hisdata = his data.row (i);
-			for (integer k = 1; k <= npc; k ++) {
-				VEC evec = my eigenvectors.row (k);
-				double pc = thy data [i] [k];
-				for (integer j = 1; j <= my dimension; j ++)
-					hisdata [j] += pc * evec [j];   // ppgb: this looks like a normal matrix multiplication; if it isn't, please document
-			}
-		}
+		MATmul (his data.get(), thy data.get (), my eigenvectors.horizontalBand (1, numberOfEigenvectorsToUse));
 
 		return him;
 	} catch (MelderError) {

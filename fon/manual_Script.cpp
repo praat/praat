@@ -862,6 +862,13 @@ TAG (U"##randomGauss (%\\mu, %\\si)")
 DEFINITION (U"Gaussian random real number with mean %\\mu and standard deviation %\\si")
 TAG (U"##randomPoisson (%mean)")
 DEFINITION (U"Poisson random real number")
+TAG (U"##randomGamma (%%shape%, %%rate%)")
+DEFINITION (U"Generates a random numbers drawn from a Gamma distribution with shape parameter \\al "
+	"and rate parameter \\be."
+	"The Gamma distribution with shape parameter %\\al and rate parameter %\\be is defined as:"
+	" %f(%x; %\\al, %\\be) = (1 / \\Ga (%\\al)) %\\be%^^%\\al^ %x^^%\\al\\-m1^ %e^^\\-m%\\be %x^),"
+	" for %x > 0, %\\al > 0 and %\\be > 0. "
+	" The method to generate these numbers is described in @@Marsaglia & Tsang (2000)@.")
 TAG (U"##lnGamma (%x)")
 DEFINITION (U"logarithm of the \\Ga function")
 TAG (U"##gaussP (%z)")

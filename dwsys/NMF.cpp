@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Graphics.h"
 #include "NMF.h"
 #include "NUMmachar.h"
 #include "NUM2.h"
@@ -53,6 +54,64 @@ void structNMF :: v_info () {
 
 Thing_implement (NMF, Daata, 0);
 
+
+double MATgetDivergence_ItakuraSaito (constMATVU const& ref, constMATVU const& x) {
+	Melder_assert (ref.nrow == x.nrow);
+	Melder_assert (ref.ncol == x.ncol);
+	double divergence = 0.0;
+	for (integer irow = 1; irow <= ref.nrow; irow ++)
+		for (integer icol = 1; icol <= ref.ncol; icol ++) {
+			double refval = ref [irow] [icol];
+			if (refval == 0.0)
+				return undefined;
+			divergence += x [irow] [icol] / refval - log (x [irow] [icol] / refval) - 1.0;
+		}
+	return divergence;
+}
+
+void NMF_paintFeatures (NMF me, Graphics g, integer fromFeature, integer toFeature, integer fromRow, integer toRow, double minimum, double maximum, int amplitudeScale, int scaling, bool garnish) {
+	fixUnspecifiedColumnRange (& fromFeature, & toFeature, my features.get());
+	fixUnspecifiedRowRange (& fromRow, & toRow, my features.get());
+	
+	autoMAT part = newMATcopy (my features.part (fromRow, toRow, fromFeature, toFeature));
+	
+	if (minimum == 0.0 && maximum == 0.0) {
+		minimum = NUMmin (part.get());
+		maximum = NUMmax (part.get());
+	}
+	
+	Graphics_setInner (g);
+	Graphics_setWindow (g, fromFeature, toFeature, fromRow, toRow);
+	
+
+	Graphics_cellArray (g, my features.part (fromRow, toRow, fromFeature, toFeature), 
+	fromFeature, toFeature, fromRow, toRow, minimum, maximum);
+	Graphics_unsetInner (g);
+	if (garnish)
+		Graphics_drawInnerBox (g);
+}
+
+void NMF_paintWeights (NMF me, Graphics g, integer fromWeight, integer toWeight, integer fromRow, integer toRow, double minimum, double maximum, int amplitudeScale, int scaling, bool garnish) {
+	fixUnspecifiedColumnRange (& fromWeight, & toWeight, my weights.get());
+	fixUnspecifiedRowRange (& fromRow, & toRow, my weights.get());
+	
+	autoMAT part = newMATcopy (my weights.part (fromRow, toRow, fromWeight, toWeight));
+	
+	if (minimum == 0.0 && maximum == 0.0) {
+		minimum = NUMmin (part.get());
+		maximum = NUMmax (part.get());
+	}
+	
+	Graphics_setInner (g);
+	Graphics_setWindow (g, fromWeight, toWeight, fromRow, toRow);
+	
+
+	Graphics_cellArray (g, my weights.part (fromRow, toRow, fromWeight, toWeight), 
+	fromWeight, toWeight, fromRow, toRow, minimum, maximum);
+	Graphics_unsetInner (g);
+	if (garnish)
+		Graphics_drawInnerBox (g);
+}
 
 autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numberOfFeatures) {
 	try {
@@ -117,8 +176,14 @@ double NMF_getEuclideanDistance (NMF me, constMATVU const& data) {
 		U"Dimensions should match.");
 	autoMAT synthesis = NMF_synthesize (me);
 	synthesis.get()  -=  data;
-	double dist = NUMnorm (synthesis.get(), 2.0);
-	return dist;
+	return NUMnorm (synthesis.get(), 2.0);
+}
+
+double NMF_getItakuraSaitoDivergence (NMF me, constMATVU const& data) {
+	Melder_require (data.nrow == my numberOfRows && data.ncol == my numberOfColumns,
+		U"Dimensions should match.");
+	autoMAT synthesis = NMF_synthesize (me);
+	return MATgetDivergence_ItakuraSaito (data, synthesis.get());
 }
 
 static double getMaximumChange (constMATVU const& m, MATVU const& m0, const double sqrteps) {
@@ -272,7 +337,6 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 		const double eps = NUMfpp -> eps;
 		const double sqrteps = sqrt (eps);
 		double dnorm0 = 0.0;
-		double maximum = NUMmax (data);
 		integer iter = 1;
 		bool convergence = false;
 		
@@ -325,6 +389,85 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			MelderInfo_drain();
 	} catch (MelderError) {
 		Melder_throw (me, U" ALS factorization cannot be improved.");
+	}
+}
+
+static void VECinvertAndScale (VECVU const& target, constVECVU const& source, double scaleFactor) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = scaleFactor / source [i];
+}
+
+void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
+	try {
+		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
+		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
+		Melder_require (NUMhasZeroElement (data) == false,
+			U"The data matrix should not have cells that are zero.");
+		autoMAT vk = newMATraw (data.nrow, data.ncol);
+		autoMAT fw = newMATraw (data.nrow, data.ncol);
+		autoMAT fcol_x_wrow = newMATraw (data.nrow, data.ncol);
+		autoVEC fcolumn_inv = newVECraw (data.nrow); // feature column
+		autoVEC wrow_inv = newVECraw (data.ncol); // weight row
+		MATmul (fw.get(), my features.get(), my weights.get());
+		double divergence = MATgetDivergence_ItakuraSaito (data, fw.get());
+		double divergence0 = divergence;
+		if (info)
+			MelderInfo_writeLine (U"Iteration: 0", U" divergence: ", divergence, U" delta: ", divergence);
+		integer iter = 1;
+		bool convergence = false;
+		while (iter <= maximumNumberOfIterations && not convergence) {
+			/*
+				algorithm 2, page 806
+				until convergence {
+					for k to numberOfFeateres {
+						G(k) = fcol(k) x wrow(k) / F.H                           (1)
+						V(k) = G(k)^(.2).V+(1-G(k)).(fcol(k) x wrow(k))          (2)
+						wrow(k) <-- (1/fcol(k))' . V(k) / numberOfRows           (3)
+						fcol(k) <-- V(k).(1/wrow(k))' / numberOfColumns          (4)
+						Normalize fcol(k) and wrow(k)                            (5)
+						F.H - old(fcol(k) x wrow(k)) + new(fcol(k) x wrow(k))    (6)
+					}
+				}
+				There is no need to calculate G(k) explicitly as in (1).
+				We can calculate the elements of G(k) while we are doing (2).
+			*/
+			for (integer kf = 1; kf <= my numberOfFeatures; kf ++) {
+				// (1) and (2)
+				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
+				for (integer irow = 1; irow <= data.nrow; irow ++)
+					for (integer icol = 1; icol <= data.ncol; icol ++) {
+						double gk = fcol_x_wrow [irow] [icol] / fw [irow] [icol];
+						vk [irow] [icol] = gk * gk * data [irow] [icol] + (1.0 - gk) * fcol_x_wrow [irow] [icol];
+					}
+				// (3)
+				VECinvertAndScale (fcolumn_inv.get(), my features.column (kf), 1.0 / my numberOfRows);	
+				VECmul (my weights.row (kf), fcolumn_inv.get(), vk.get());
+				// (4)
+				VECinvertAndScale (wrow_inv.get(), my weights.row (kf), 1.0 / my numberOfColumns);
+				VECmul (my features.column (kf), vk.get(), wrow_inv.get());
+				// (5)
+				double fcolumn_norm = NUMnorm (my features.column (kf), 2.0);
+				my features.column (kf)  /=  fcolumn_norm;
+				my weights.row (kf)  *=  fcolumn_norm;
+				// (6)
+				fw.get()  -=  fcol_x_wrow.get();
+				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
+				fw.get()  +=  fcol_x_wrow.get();
+			}
+			double divergence_update = MATgetDivergence_ItakuraSaito (data, fw.get());
+			double delta = divergence - divergence_update;
+			convergence = ( iter > 1 && (fabs (delta) < changeTolerance || divergence_update < divergence0 * approximationTolerance) );
+			if (info)
+				MelderInfo_writeLine (U"Iteration: ", iter, U" divergence: ", divergence_update, U" delta: ", delta);
+			++ iter;
+			divergence = divergence_update;
+		}
+		if (info)
+			MelderInfo_drain();
+		
+	} catch (MelderError) {
+		Melder_throw (me, U" IS factorization cannot be improved.");
 	}
 }
 
