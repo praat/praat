@@ -909,7 +909,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *out_prob, do
 	for (integer i = 1; i <= g; i ++) {
 		SSCP t = my at [i];
 		double ni = t -> numberOfObservations - 1.0;
-		ln_determinant = MATdeterminant_fromSymmetricMatrix (t -> data.get());
+		ln_determinant = NUMdeterminant_fromSymmetricMatrix (t -> data.get());
 
 		// Box-test is for covariance matrices -> scale determinant.
 
@@ -919,7 +919,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *out_prob, do
 		chisq -= ni * ln_determinant;
 	}
 
-	ln_determinant = MATdeterminant_fromSymmetricMatrix (pooled -> data.get());
+	ln_determinant = NUMdeterminant_fromSymmetricMatrix (pooled -> data.get());
 	ln_determinant -= p * log (pooled -> numberOfObservations - g);
 	chisq += sum * ln_determinant;
 
@@ -1193,7 +1193,7 @@ autoCorrelation SSCP_to_Correlation (SSCP me) {
 
 double SSCP_getLnDeterminant (SSCP me) {
 	try {
-		return MATdeterminant_fromSymmetricMatrix (my data.get());
+		return NUMdeterminant_fromSymmetricMatrix (my data.get());
 	} catch (MelderError) {
 		return undefined;
 	}
@@ -1330,7 +1330,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		// Krishan... formula 2, page 162
 		double hotelling_tsq = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
 
-		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
+		autoMAT si = newMATinverse_fromLowerCholeskyInverse (s.get());
 		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.get(), si.get());
 		double tr_s1si = NUMtrace2 (s1.get(), si.get());
 		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.get(), si.get());
@@ -1380,7 +1380,7 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 			 */
 			double lnd;
 			try {
-				lnd = MATdeterminant_fromSymmetricMatrix (pool -> data.get());
+				lnd = NUMdeterminant_fromSymmetricMatrix (pool -> data.get());
 			} catch (MelderError) {
 				Melder_throw (U"Pooled covariance matrix is singular.");
 			}
@@ -1390,7 +1390,7 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				try {
-					lnd = MATdeterminant_fromSymmetricMatrix (ci -> data.get());
+					lnd = NUMdeterminant_fromSymmetricMatrix (ci -> data.get());
 				} catch (MelderError) {
 					Melder_throw (U"Covariance matrix ", i, U" is singular.");
 				}
@@ -1410,7 +1410,7 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 
 			double trace = 0.0;
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), nullptr);
-			autoMAT si = MATinverse_fromLowerCholeskyInverse (pool -> data.get());
+			autoMAT si = newMATinverse_fromLowerCholeskyInverse (pool -> data.get());
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
@@ -1457,7 +1457,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	Melder_assert (thy data.ncol == p);
 	autoMAT linv = newMATcopy (thy data.get());
 	MATlowerCholeskyInverse_inplace (linv.get(), & ln_thee);
-	ln_me = MATdeterminant_fromSymmetricMatrix (my data.get());
+	ln_me = NUMdeterminant_fromSymmetricMatrix (my data.get());
 
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the
@@ -1691,7 +1691,7 @@ void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContr
 		return;
 	}
 	if (my numberOfObservations >= numberOfContraints) {
-		double ln_determinant = MATdeterminant_fromSymmetricMatrix (my data.get());
+		double ln_determinant = NUMdeterminant_fromSymmetricMatrix (my data.get());
 		chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2.0 * p + 5.0) / 6.0);
 		if (out_prob) {
 			prob = NUMchiSquareQ (chisq, df);

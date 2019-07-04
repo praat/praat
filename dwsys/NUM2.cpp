@@ -96,15 +96,13 @@ void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
 	MelderInfo_write (name, U"= [");
 	for (integer i = 1; i <= m.nrow; i ++) {
 		for (integer j = 1; j <= n.quot; j ++) {
-			for (integer k = 1; k <= npc; k ++) {
+			for (integer k = 1; k <= npc; k ++)
 				MelderInfo_write (m [i] [(j - 1) * npc + k], (k < npc ? U", " : U""));
-			}
 			MelderInfo_write (j < n.quot ? U",\n" : U"");
 		}
 
-		for (integer k = 1; k <= n.rem; k ++) {
+		for (integer k = 1; k <= n.rem; k ++)
 			MelderInfo_write (m [i] [n.quot * npc + k], (k < n.rem ? U", " : U""));
-		}
 		MelderInfo_write (i < m.nrow ? U";\n" : U"];\n");
 	}
 	MelderInfo_close ();
@@ -112,7 +110,8 @@ void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
 
 void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& in, integer window) {
 	Melder_assert (out.size == in.size);
-	Melder_require (window > 0, U"The averaging window should be larger than 0.");
+	Melder_require (window > 0,
+		U"The averaging window should be larger than 0.");
 	for (integer i = 1; i <= out.size; i ++) {
 		integer jfrom = i - window / 2, jto = i + window / 2;
 		if (window % 2 == 0)
@@ -221,7 +220,7 @@ autoVEC VECmonotoneRegression (constVEC x) {
 
 #undef TINY
 
-double MATdeterminant_fromSymmetricMatrix (constMAT m) {
+double NUMdeterminant_fromSymmetricMatrix (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
 	autoMAT a = newMATcopy (m);
 	
@@ -254,9 +253,8 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 
 	if (out_lnd) {
 		longdouble lnd = 0.0;
-		for (integer i = 1; i <= a.nrow; i ++) {
+		for (integer i = 1; i <= a.nrow; i ++)
 			lnd += log (a [i] [i]);
-		}
 		*out_lnd *= 2.0 * lnd; /* because A = L . L' */
 	}
 
@@ -266,15 +264,14 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 	Melder_require (info == 0, U"dtrtri fails with code ", info, U".");
 }
 
-autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m) {
+autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
 	autoMAT result = newMATraw (m.nrow, m.nrow);
 	for (integer irow = 1; irow <= m.nrow; irow ++) {
 		for (integer icol = 1; icol <= irow; icol ++) {
 			longdouble sum = 0.0;
-			for (integer k = irow; k <= m.nrow; k ++) {
+			for (integer k = irow; k <= m.nrow; k ++)
 				sum += m [k] [irow] * m [k] [icol];
-			}
 			result [irow] [icol] = result [icol] [irow] = (double) sum;
 		}
 	}
@@ -292,9 +289,8 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
 	} else { // square matrix
 		for (integer irow = v.size; irow > 0; irow --) {
 			longdouble t = 0.0;
-			for (integer icol = 1; icol <= irow; icol ++) {
+			for (integer icol = 1; icol <= irow; icol ++)
 				t += lowerInverse [irow] [icol] * (v [icol] - m [icol]);
-			}
 			chisq += t * t;
 		}
 	}
@@ -326,9 +322,8 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU const& data, constMATVU const& eigenvectors) {
 	Melder_assert (data.nrow == eigenvectors.ncol && projection.nrow == eigenvectors.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++)
-		for (integer irow = 1; irow <= eigenvectors.nrow; irow ++) {
+		for (integer irow = 1; irow <= eigenvectors.nrow; irow ++)
 			projection [irow] [icol] = NUMinner (eigenvectors.row (irow), data.column (icol));
-		}
 	// MATmul_tt (data.get(), eigenvectors.get()) ??
 }
 
@@ -360,8 +355,7 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	return x;
 }
 
-
-autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax) {
+autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax) {
 	Melder_assert (m.nrow == d.size);
 	long nr = m.nrow, nc = m.ncol;
 	autoVEC b = newVECzero (nc);
@@ -373,11 +367,9 @@ autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, doubl
 			longdouble mjr = 0.0, mjmj = 0.0;
 			for (integer i = 1; i <= nr; i ++) {
 				double ri = d [i], mij = m [i] [j];
-				for (integer l = 1; l <= nc; l ++) {
-					if (l != j) {
+				for (integer l = 1; l <= nc; l ++)
+					if (l != j)
 						ri -= b [l] * m [i] [l];
-					}
-				}
 				mjr += mij * ri;
 				mjmj += mij * mij;
 			}
@@ -389,14 +381,12 @@ autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, doubl
 		longdouble difsq = 0.0, difsqp = 0.0;
 		for (integer i = 1; i <= nr; i ++) {
 			double dmb = d [i];
-			for (integer j = 1; j <= nc; j ++) {
+			for (integer j = 1; j <= nc; j ++)
 				dmb -= m [i] [j] * b [j];
-			}
 			difsq += dmb * dmb;
 		}
-		if (fabs (difsq - difsqp) / difsq < tol) {
+		if (fabs (difsq - difsqp) / difsq < tol)
 			break;
-		}
 		difsqp = difsq;
 	}
 	return b;
@@ -453,18 +443,13 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 
 	// G = F^-1 B (F')^-1 (eq. 4)
 
-	for (integer i = 1; i <= 3; i ++) {
-		for (integer j = 1; j <= 3; j ++) {
-			for (integer k = 1; k <= 3; k ++) {
-				if (ftinv [k] [i] != 0.0) {
-					for (integer l = 1; l <= 3; l ++) {
+	for (integer i = 1; i <= 3; i ++)
+		for (integer j = 1; j <= 3; j ++)
+			for (integer k = 1; k <= 3; k ++)
+				if (ftinv [k] [i] != 0.0)
+					for (integer l = 1; l <= 3; l ++)
 						g [i] [j] += ftinv [k] [i] * b [k] [l] * ftinv [l] [j];
-					}
-				}
-			}
-		}
-	}
-
+					
 	// G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
 	autoMAT p;
 	autoVEC delta;
@@ -477,24 +462,19 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	autoMAT ftinvp (n3, n3, kTensorInitializationType::ZERO);
 	for (integer i = 1; i <= 3; i ++) {
 		for (integer j = 1; j <= 3; j ++) {
-			if (ftinv [i] [j] != 0.0) {
-				for (integer k = 1; k <= 3; k ++) {
+			if (ftinv [i] [j] != 0.0)
+				for (integer k = 1; k <= 3; k ++)
 					ftinvp [i] [k] += ftinv [i] [j] * p [j] [k];
-				}
-			}
 		}
-		for (integer k = 1; k <= n3; k ++) {
+		for (integer k = 1; k <= n3; k ++)
 			otd [i] += o [k] [i] * d [k];
-		}
 	}
 	
 	autoMAT ptfinvc (n3, n3, kTensorInitializationType::ZERO);
 
-	for (integer i = 1; i <= 3; i ++) {
-		for (integer j = 1; j <= 3; j ++) {
+	for (integer i = 1; i <= 3; i ++)
+		for (integer j = 1; j <= 3; j ++)
 			ptfinvc [j] [i] = ptfinv [j] [i] = ftinvp [i] [j];
-		}
-	}
 
 	autoVEC y = newVECsolve (ftinvp.get(), otd.get(), 1e-6);
 
@@ -516,7 +496,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 		chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 
 		w [1] = -w [1];
-		if (fabs (chi [3] / chi [1]) < eps) chi = newVECsolve (ptfinvc.get(), w.get(), 1e-6);
+		if (fabs (chi [3] / chi [1]) < eps)
+			chi = newVECsolve (ptfinvc.get(), w.get(), 1e-6);
 		
 	} else if (fabs (y [2]) < eps) {
 		// Case 2: page 633
@@ -529,7 +510,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 			w [3] = t3 * delta [3];
 			chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 			w [2] = -w [2];
-			if (fabs (chi [3] / chi [1]) < eps) chi = newVECsolve (ptfinvc.get(), w.get(), 1e-6);
+			if (fabs (chi [3] / chi [1]) < eps)
+				chi = newVECsolve (ptfinvc.get(), w.get(), 1e-6);
 
 		} else if (((delta [2] < delta [3] + eps) || (delta [2] > delta [3] - eps)) && fabs (y [3]) < eps) {
 			// choose one value for w [2] from an infinite number
@@ -549,14 +531,15 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 
 		NUMnrbis (nr_func, delta [1] + eps, delta [2] - eps2, & me, & xlambda);
 
-		for (integer i = 1; i <= 3; i++) {
+		for (integer i = 1; i <= 3; i++)
 			w [i] = y [i] / (1.0 - xlambda / delta [i]);
-		}
 		chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 	}
 
-	if (out_alpha) *out_alpha = chi [1];
-	if (out_gamma) *out_gamma = chi [3];
+	if (out_alpha)
+		*out_alpha = chi [1];
+	if (out_gamma)
+		*out_gamma = chi [3];
 }
 
 /*
@@ -591,9 +574,8 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 	
 	autoSVD svd = SVD_createFromGeneralMatrix (f);
 
-	if (alpha == 0.0) {
+	if (alpha == 0.0)
 		t = SVD_solve (svd.get(), phi);	// standard least squares
-	}
 
 
 	// Step 1: Compute U and C from the eigendecomposition F'F = UCU'
@@ -604,26 +586,21 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 	for (integer j = f.ncol; j > 0; j --) {
 		double tmp = svd -> d [indx [j]];
 		c [f.ncol - j + 1] = tmp * tmp;
-		for (integer k = 1; k <= f.ncol; k ++) {
+		for (integer k = 1; k <= f.ncol; k ++)
 			u [f.ncol - j + 1] [k] = svd -> v [indx [j]] [k];
-		}
 	}
 
 	integer q = 1;
 	double tol = 1e-6;
-	while (q < f.ncol && (c [f.ncol - q] - c [f.ncol]) < tol) {
+	while (q < f.ncol && (c [f.ncol - q] - c [f.ncol]) < tol)
 		q ++;
-	}
 
 	// step 2: x = U'F'phi
 
-	for (integer i = 1; i <= f.ncol; i ++) {
-		for (integer j = 1; j <= f.ncol; j ++) {
-			for (integer k = 1; k <= f.nrow; k ++) {
+	for (integer i = 1; i <= f.ncol; i ++)
+		for (integer j = 1; j <= f.ncol; j ++)
+			for (integer k = 1; k <= f.nrow; k ++)
 				x [i] += u [j] [i] * f [k] [j] * phi [k];
-			}
-		}
-	}
 
 	// step 3:
 
@@ -635,9 +612,8 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 	me.c = c.at;
 
 	double xqsq = 0.0;
-	for (integer j = f.ncol - q + 1; j <= f.ncol; j ++) {
+	for (integer j = f.ncol - q + 1; j <= f.ncol; j ++)
 		xqsq += x [j] * x [j];
-	}
 
 	integer r = f.ncol;
 	if (xqsq < tol) { /* xqsq == 0 */
@@ -647,13 +623,11 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 		nr2_func (c [f.ncol], &fm, &df, & me);
 		if (fm >= 0.0) { /* step 3.b1 */
 			x [r + 1] = sqrt (fm);
-			for (integer j = 1; j <= r; j ++) {
+			for (integer j = 1; j <= r; j ++)
 				x [j] /= c [j] - c [f.ncol];
-			}
 			for (integer j = 1; j <= r + 1; j ++) {
-				for (integer k = 1; k <= r + 1; k ++) {
+				for (integer k = 1; k <= r + 1; k ++)
 					t [j] += u [j] [k] * x [k];
-				}
 			}
 			return t;
 		}
@@ -663,9 +637,9 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 	// step 3a & 3b2, determine interval lower bound for Newton-Raphson root finder
 
 	double xCx = 0.0;
-	for (integer j = 1; j <= r; j ++) {
+	for (integer j = 1; j <= r; j ++)
 		xCx += x [j] * x [j] / c [j];
-	}
+
 	double b0, bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
 	double eps = (c [f.ncol] - bmin) * tol;
 
@@ -674,9 +648,8 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 	NUMnrbis (nr2_func, bmin + eps, c [f.ncol] - eps, & me, & b0);
 
 	for (integer j = 1; j <= r; j ++) {
-		for (integer k = 1; k <= r; k ++) {
+		for (integer k = 1; k <= r; k ++)
 			t [j] += u [j] [k] * x [k] / (c [k] - b0);
-		}
 	}
 	return t;
 }
@@ -744,13 +717,14 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 	if (out_rotation) *out_rotation = rotation.move();
 }
 
-
 double NUMmspline (constVEC knot, integer order, integer i, double x) {
 	integer jj, nSplines = knot.size - order;
 	
 	double y = 0.0;
-	Melder_require (nSplines > 0, U"No splines.");
-	Melder_require (order > 0 && i <= nSplines, U"Combination of order and index not correct.");
+	Melder_require (nSplines > 0,
+		U"No splines.");
+	Melder_require (order > 0 && i <= nSplines,
+		U"Combination of order and index not correct.");
 	/*
 		Find the interval where x is located.
 		M-splines of order k have degree k-1.
@@ -759,9 +733,10 @@ double NUMmspline (constVEC knot, integer order, integer i, double x) {
 		knot [1] = ... = knot [order] && knot [knot.size-order+1] = ... knot [knot.size].
 	*/
 	
-	for (jj = order; jj <= knot.size - order + 1; jj ++) {
-		if (x < knot [jj]) break;
-	}
+	for (jj = order; jj <= knot.size - order + 1; jj ++)
+		if (x < knot [jj])
+			break;
+
 	if (jj < i || (jj > i + order) || jj == order || jj > (knot.size - order + 1))
 		return y;
 
@@ -770,10 +745,9 @@ double NUMmspline (constVEC knot, integer order, integer i, double x) {
 
 	integer ito = i + order - 1;
 	autoVEC m = newVECzero (order); 
-	for (integer j = i; j <= ito; j ++) {
+	for (integer j = i; j <= ito; j ++)
 		if (x >= knot [j] && x < knot [j + 1])
 			m [j - i + 1] = 1 / (knot [j + 1] - knot [j]);
-	}
 
 	// Iterate to get M [i](x|k,t)
 
@@ -793,9 +767,10 @@ double NUMispline (constVEC aknot, integer order, integer i, double x) {
 
 	double y = 0.0;
 
-	for (j = orderp1; j <= aknot.size - order; j ++) {
-		if (x < aknot [j]) break;
-	}
+	for (j = orderp1; j <= aknot.size - order; j ++)
+		if (x < aknot [j])
+			break;
+
 	if (-- j < i)
 		return y;
 
@@ -826,8 +801,10 @@ double NUMwilksLambda (constVEC lambda, integer from, integer to) {
 
 double NUMfactln (int n) {
 	static double table [101];
-	if (n < 0) return undefined;
-	if (n <= 1) return 0.0;
+	if (n < 0)
+		return undefined;
+	if (n <= 1)
+		return 0.0;
 	return n > 100 ? NUMlnGamma (n + 1.0) : table [n] != 0.0 ? table [n] : (table [n] = NUMlnGamma (n + 1.0));
 }
 
@@ -870,30 +847,26 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 			dxold = dx;
 			dx = 0.5 * (xh - xl);
 			*root = xl + dx;
-			if (xl == *root) {
+			if (xl == *root)
 				return;
-			}
 		} else {
 			dxold = dx;
 			dx = fx / df;
 			tmp = *root;
 			*root -= dx;
-			if (tmp == *root) {
+			if (tmp == *root)
 				return;
-			}
 		}
 		tol = NUMfpp -> eps	* (*root == 0.0 ? 1.0 : fabs (*root));
-		if (fabs (dx) < tol) {
+		if (fabs (dx) < tol)
 			return;
-		}
 
 		(*f) (*root, &fx, &df, closure);
 
-		if (fx < 0.0) {
+		if (fx < 0.0)
 			xl = *root;
-		} else {
+		else
 			xh = *root;
-		}
 	}
 	Melder_warning (U"NUMnrbis: maximum number of iterations (", itermax, U") exceeded.");
 }
@@ -906,19 +879,26 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	integer itermax = 100;
 
 	double f1 = f (x1, closure);
-	if (f1 == 0.0) return x1;
-	if (isundef (f1)) return undefined;
+	if (f1 == 0.0)
+		return x1;
+	if (isundef (f1))
+		return undefined;
 
 	double f2 = f (x2, closure);
-	if (f2 == 0.0) return x2;
-	if (isundef (f2)) return undefined;
-	if ((f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) return undefined;
+	if (f2 == 0.0)
+		return x2;
+	if (isundef (f2))
+		return undefined;
+	if ((f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0))
+		return undefined;
 
 	for (integer iter = 1; iter <= itermax; iter ++) {
 		x3 = 0.5 * (x1 + x2);
 		double f3 = f (x3, closure);
-		if (f3 == 0.0) return x3;
-		if (isundef (f3)) return undefined;
+		if (f3 == 0.0)
+			return x3;
+		if (isundef (f3))
+			return undefined;
 
 		// New guess: x4 = x3 + (x3 - x1) * sign(f1 - f2) * f3 / sqrt(f3^2 - f1*f2)
 
@@ -937,14 +917,14 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 
 			// Perform bisection.
 
-			if (f1 > 0.0) { 
+			if (f1 > 0.0) {
 				// falling curve: f1 > 0, f2 < 0 
 				if (f3 > 0.0) {
-					x1 = x3; 
+					x1 = x3;
 					f1 = f3; // retain invariant: f1 > 0, f2 < 0
 				} else {
 					// f3 <= 0.0
-					x2 = x3; 
+					x2 = x3;
 					f2 = f3; // retain invariant: f1 > 0, f2 < 0
 				}
 			} else {
@@ -963,7 +943,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			if (isnan (d)) {
 				// pb: square root of denormalized small number fails on some computers
 				tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
-				if (iter > 1 && fabs (x3 - root) < tol) 
+				if (iter > 1 && fabs (x3 - root) < tol)
 					return root;
 				root = x3;
 
@@ -972,21 +952,21 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				if (f1 > 0.0) {
 					// falling curve: f1 > 0, f2 < 0
 					if (f3 > 0.0) {
-						x1 = x3; 
+						x1 = x3;
 						f1 = f3; // retain invariant: f1 > 0, f2 < 0
 					} else {
 						// f3 <= 0.0
-						x2 = x3; 
+						x2 = x3;
 						f2 = f3; // retain invariant: f1 > 0, f2 < 0
 					}
 				} else {
 					// rising curve: f1 < 0, f2 > 0
 					if (f3 > 0.0) {
-						x2 = x3; 
+						x2 = x3;
 						f2 = f3; // retain invariant: f1 < 0, f2 > 0
 					} else {
 						// f3 < 0.0
-						x1 = x3; 
+						x1 = x3;
 						f1 = f3; // retain invariant: f1 < 0, f2 > 0 */
 					}
 				}
@@ -994,36 +974,39 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				d = (x3 - x1) * f3 / d;
 				x4 = f1 - f2 < 0 ? x3 - d : x3 + d;
 				tol = NUMfpp -> eps * (x4 == 0.0 ? 1.0 : fabs (x4));
-				if (iter > 1 && fabs (x4 - root) < tol) 
+				if (iter > 1 && fabs (x4 - root) < tol)
 					return root;
 				root = x4;
 				double f4 = f (x4, closure);
-				if (f4 == 0.0) return root;
-				if (isundef (f4)) return undefined;
+				if (f4 == 0.0)
+					return root;
+				if (isundef (f4))
+					return undefined;
 				if ((f1 > f2) == (d > 0.0) /* pb: instead of x3 < x4 */) {
 					if (SIGN (f3, f4) != f3) {
-						x1 = x3; 
+						x1 = x3;
 						f1 = f3;
-						x2 = x4; 
+						x2 = x4;
 						f2 = f4;
 					} else {
-						x1 = x4; 
+						x1 = x4;
 						f1 = f4;
 					}
 				} else {
 					if (SIGN (f3, f4) != f3) {
-						x1 = x4; 
+						x1 = x4;
 						f1 = f4;
-						x2 = x3; 
+						x2 = x3;
 						f2 = f3;
 					} else {
-						x2 = x4; 
+						x2 = x4;
 						f2 = f4;
 					}
 				}
 			}
 		}
-		if (fabs (x1 - x2) < tol) return root;
+		if (fabs (x1 - x2) < tol)
+			return root;
 	}
 
 	{
@@ -1045,40 +1028,48 @@ double NUMlogNormalQ (double x, double zeta, double sigma) {
 double NUMstudentP (double t, double df) {
 	if (df < 1.0) return undefined;
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (isundef (ib)) return undefined;
+	if (isundef (ib))
+		return undefined;
 	ib *= 0.5;
 	return t < 0.0 ? ib : 1.0 - ib;
 }
 
 double NUMstudentQ (double t, double df) {
-	if (df < 1) return undefined;
+	if (df < 1)
+		return undefined;
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (isundef (ib)) return undefined;
+	if (isundef (ib))
+		return undefined;
 	ib *= 0.5;
 	return t > 0.0 ? ib : 1.0 - ib;
 }
 
 double NUMfisherP (double f, double df1, double df2) {
-	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) return undefined;
+	if (f < 0.0 || df1 < 1.0 || df2 < 1.0)
+		return undefined;
 	double ib = NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
-	if (isundef (ib)) return undefined;
+	if (isundef (ib))
+		return undefined;
 	return 1.0 - ib;
 }
 
 double NUMfisherQ (double f, double df1, double df2) {
-	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) return undefined;
+	if (f < 0.0 || df1 < 1.0 || df2 < 1.0)
+		return undefined;
 	if (Melder_debug == 28) {
 		return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
 	} else {
 		double result = gsl_cdf_fdist_Q (f, df1, df2);
-		if (isnan (result)) return undefined;
+		if (isnan (result))
+			return undefined;
 		return result;
 	}
 }
 
 double NUMinvGaussQ (double p) {
 	double pc = p;
-	if (p <= 0.0 || p >= 1.0) return undefined;
+	if (p <= 0.0 || p >= 1.0)
+		return undefined;
 	if (p > 0.5)
 		pc = 1.0 - p;
 	double t = sqrt (- 2.0 * log (pc));
@@ -1097,15 +1088,18 @@ double NUMinvStudentQ (double p, double df) {
 	struct pdf1_struct params;
 	double pc = ( p > 0.5 ? 1.0 - p : p );
 
-	if (p < 0.0 || p >= 1.0) return undefined;
+	if (p < 0.0 || p >= 1.0)
+		return undefined;
 
 	// Bracket the function f(x) = NUMstudentQ (x, df) - p.
 	
 	double xmax = 1.0;
 	for (;;) {
 		double q = NUMstudentQ (xmax, df);
-		if (isundef (q)) return undefined;
-		if (q < pc)  break;
+		if (isundef (q))
+			return undefined;
+		if (q < pc)
+			break;
 		xmax *= 2.0;
 	}
 
@@ -1116,7 +1110,8 @@ double NUMinvStudentQ (double p, double df) {
 	params. df = df;
 	params. p = pc;
 	double x = NUMridders (studentQ_func, xmin, xmax, & params);
-	if (isundef (x)) return undefined;
+	if (isundef (x))
+		return undefined;
 	return p > 0.5 ? -x : x;
 }
 
@@ -1129,15 +1124,18 @@ static double chiSquareQ_func (double x, void *voidParams) {
 double NUMinvChiSquareQ (double p, double df) {
 	struct pdf1_struct params;
 
-	if (p < 0.0 || p >= 1.0) return undefined;
+	if (p < 0.0 || p >= 1.0)
+		return undefined;
 
 	// Bracket the function f(x) = NUMchiSquareQ (x, df) - p.
 
 	double xmax = 1.0;
 	for (;;) {
 		double q = NUMchiSquareQ (xmax, df);
-		if (isundef (q)) return undefined;
-		if (q < p) break;
+		if (isundef (q))
+			return undefined;
+		if (q < p)
+			break;
 		xmax *= 2.0;
 	}
 	double xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
@@ -1156,22 +1154,27 @@ static double fisherQ_func (double x, void *voidParams) {
 }
 
 double NUMinvFisherQ (double p, double df1, double df2) {
-	if (p <= 0.0 || p > 1.0 || df1 < 1.0 || df2 < 1.0) return undefined;
+	if (p <= 0.0 || p > 1.0 || df1 < 1.0 || df2 < 1.0)
+		return undefined;
 	if (Melder_debug == 29) {
 		//if (p == 1.0) return 0.0;
 		return gsl_cdf_fdist_Qinv (p, df1, df2);
 	} else {
 		struct pdf2_struct params;
-		if (p == 1.0) return 0.0;
+		if (p == 1.0)
+			return 0.0;
 		params. p = p;
 		params. df1 = df1;
 		params. df2 = df2;
 		double top = 1000.0;
 		for (;;) {
 			double q = NUMfisherQ (top, df1, df2);
-			if (isundef (q)) return undefined;
-			if (q < p) break;
-			if (top > 0.9e300) return undefined;
+			if (isundef (q))
+				return undefined;
+			if (q < p)
+				break;
+			if (top > 0.9e300)
+				return undefined;
 			top *= 1e9;
 		}
 		return NUMridders (fisherQ_func, 0.0, p > 0.5 ? 2.2 : top, & params);
@@ -1242,9 +1245,12 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double 
 	double mu2 = mu * mu;
 	lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
 	lnvar = sqrt (log ((mu2 + var) / mu2));
-	if (out_lnmu) *out_lnmu = lnmu;
-	if (out_lnvar) *out_lnvar = lnvar;
-	if (out_tnb) *out_tnb = tnb;
+	if (out_lnmu)
+		*out_lnmu = lnmu;
+	if (out_lnvar)
+		*out_lnvar = lnvar;
+	if (out_tnb)
+		*out_tnb = tnb;
 	prob = NUMlogNormalQ (tnb, lnmu, lnvar);
 	return prob;
 }
@@ -1252,44 +1258,38 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double 
 /*************** Hz <--> other freq reps *********************/
 
 double NUMmelToHertz3 (double mel) {
-	if (mel < 0.0) {
+	if (mel < 0.0)
 		return undefined;
-	}
 	return mel < 1000.0 ? mel : 1000.0 * (exp (mel * log10 (2.0) / 1000.0) - 1.0);
 }
 
 double NUMhertzToMel3 (double hz) {
-	if (hz < 0.0) {
+	if (hz < 0.0)
 		return undefined;
-	}
 	return hz < 1000.0 ? hz : 1000.0 * log10 (1.0 + hz / 1000.0) / log10 (2.0);
 }
 
 double NUMmelToHertz2 (double mel) {
-	if (mel < 0.0) {
+	if (mel < 0.0)
 		return undefined;
-	}
 	return 700.0 * (pow (10.0, mel / 2595.0) - 1.0);
 }
 
 double NUMhertzToMel2 (double hz) {
-	if (hz < 0.0) {
+	if (hz < 0.0)
 		return undefined;
-	}
 	return 2595.0 * log10 (1.0 + hz / 700.0);
 }
 
 double NUMhertzToBark_traunmueller (double hz) {
-	if (hz < 0.0) {
+	if (hz < 0.0)
 		return undefined;
-	}
 	return 26.81 * hz / (1960.0 + hz) - 0.53;
 }
 
 double NUMbarkToHertz_traunmueller (double bark) {
-	if (bark < 0.0 || bark > 26.28) {
+	if (bark < 0.0 || bark > 26.28)
 		return undefined;
-	}
 	return 1960.0 * (bark + 0.53) / (26.28 - bark);
 }
 
@@ -1298,31 +1298,27 @@ double NUMbarkToHertz_schroeder (double bark) {
 }
 
 double NUMbarkToHertz_zwickerterhardt (double hz) {
-	if (hz < 0.0) {
+	if (hz < 0.0)
 		return undefined;
-	}
 	return 13.0 * atan (0.00076 * hz) + 3.5 * atan (hz / 7500.0);
 }
 
 double NUMhertzToBark_schroeder (double hz) {
-	if (hz < 0.0) {
+	if (hz < 0.0)
 		return undefined;
-	}
 	double h650 = hz / 650.0;
 	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
 }
 
 double NUMbarkToHertz2 (double bark) {
-	if (bark < 0.0) {
+	if (bark < 0.0)
 		return undefined;
-	}
 	return 650.0 * sinh (bark / 7.0);
 }
 
 double NUMhertzToBark2 (double hz) {
-	if (hz < 0) {
+	if (hz < 0)
 		return undefined;
-	}
 	double h650 = hz / 650.0;
 	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
 }
@@ -1363,31 +1359,27 @@ for (i=1; i<=n+n+n; i ++) work [i]=0;
 */
 double VECburg (VEC a, constVEC x) {
 	integer n = x.size, m = a.size;
-	for (integer j = 1; j <= m; j ++) {
+	for (integer j = 1; j <= m; j ++)
 		a [j] = 0.0;
-	}
 
 	autoVEC b1 = newVECzero (n), b2 = newVECzero (n), aa = newVECzero (m);
 
 	// (3)
 
 	longdouble p = 0.0;
-	for (integer j = 1; j <= n; j ++) {
+	for (integer j = 1; j <= n; j ++)
 		p += x [j] * x [j];
-	}
 
 	longdouble xms = p / n;
-	if (xms <= 0.0) {
+	if (xms <= 0.0)
 		return xms;	// warning empty
-	}
 
 	// (9)
 
 	b1 [1] = x [1];
 	b2 [n - 1] = x [n];
-	for (integer j = 2; j <= n - 1; j ++) {
+	for (integer j = 2; j <= n - 1; j ++)
 		b1 [j] = b2 [j - 1] = x [j];
-	}
 
 	for (integer i = 1; i <= m; i ++) {
 		// (7)
@@ -1398,9 +1390,8 @@ double VECburg (VEC a, constVEC x) {
 			denum += b1 [j] * b1 [j] + b2 [j] * b2 [j];
 		}
 
-		if (denum <= 0.0) {
+		if (denum <= 0.0)
 			return 0.0;	// warning ill-conditioned
-		}
 
 		a [i] = 2.0 * num / denum;
 
@@ -1410,17 +1401,15 @@ double VECburg (VEC a, constVEC x) {
 
 		// (5)
 
-		for (integer j = 1; j <= i - 1; j ++) {
+		for (integer j = 1; j <= i - 1; j ++)
 			a [j] = aa [j] - a [i] * aa [i - j];
-		}
 
 		if (i < m) {
 
 			// (8) Watch out: i -> i+1
 
-			for (integer j = 1; j <= i; j ++) {
+			for (integer j = 1; j <= i; j ++)
 				aa [j] = a [j];
-			}
 			for (integer j = 1; j <= n - i - 1; j ++) {
 				b1 [j] -= aa [i] * b2 [j];
 				b2 [j] = b2 [j + 1] - aa [i] * b1 [j + 1];
@@ -1445,15 +1434,15 @@ void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor) {
 
 	for (integer irow = 1; irow <= m.nrow; irow ++) {
 		for (integer icol = 1; icol <= m.ncol; icol ++) {
-			if (m [irow] [icol] > max) {
+			if (m [irow] [icol] > max)
 				max = m [irow] [icol];
-			} else if (m [irow] [icol] < min) {
+			else if (m [irow] [icol] < min)
 				min = m [irow] [icol];
-			}
 		}
 	}
 	
-	Melder_require (min >= 0.0 && max >= 0.0, U"All matrix elements should be positive.");
+	Melder_require (min >= 0.0 && max >= 0.0,
+		U"All matrix elements should be positive.");
 	
 	ref_db = factor10 * log10 (ref);
 
@@ -1462,21 +1451,19 @@ void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor) {
 			double mij = floor;
 			if (m [irow] [icol] > 0.0) {
 				mij = factor10 * log10 (m [irow] [icol]) - ref_db;
-				if (mij < floor) {
+				if (mij < floor)
 					mij = floor;
-				}
 			}
 			m [irow] [icol] = mij;
 		}
 	}
 }
 
-autoMAT MATcosinesTable (integer  n) {
+autoMAT MATcosinesTable (integer n) {
 	autoMAT result = newMATraw (n, n);
-	for (integer irow = 1; irow <= n; irow ++) {
+	for (integer irow = 1; irow <= n; irow ++)
 		for (integer icol = 1; icol <= n; icol ++)
 			result [irow] [icol] = cos (NUMpi * (irow - 1) * (icol - 0.5) / n);
-	}
 	return result;
 }
 
@@ -2595,12 +2582,10 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 		Melder_require (*lowIndex >= lowerLimit && *highIndex <= upperLimit, U"Both lower and upper indices are out of range.");
 	} else { // low < high
 		Melder_require (*lowIndex < upperLimit && *highIndex > lowerLimit, U"Both lower and upper indices are out of range.");
-		if (*lowIndex < lowerLimit) {
+		if (*lowIndex < lowerLimit)
 			*lowIndex = lowerLimit;
-		}
-		if (*highIndex > upperLimit) {
+		if (*highIndex > upperLimit)
 			*highIndex = upperLimit;
-		}
 	}
 }
 
@@ -2660,15 +2645,23 @@ void NUMgetEntropies (constMAT m, double *out_h, double *out_hx,
 		uxgy = (hx - hxgy) / hx;
 		uxy = 2.0 * (hx + hy - h) / (hx + hy);
 	}
-	if (out_h) *out_h = h;
-	if (out_hx) *out_hx = hx;
-	if (out_hy) *out_hy = hy;
+	if (out_h)
+		*out_h = h;
+	if (out_hx)
+		*out_hx = hx;
+	if (out_hy)
+		*out_hy = hy;
 	// Conditional entropies
-	if (out_hygx) *out_hygx = hygx;
-	if (out_hxgy) *out_hxgy = hxgy;
-	if (out_uygx) *out_uygx = uygx;
-	if (out_uxgy) *out_uxgy = uxgy;
-	if (out_uxy) *out_uxy = uxy;
+	if (out_hygx)
+		*out_hygx = hygx;
+	if (out_hxgy)
+		*out_hxgy = hxgy;
+	if (out_uygx)
+		*out_uygx = uygx;
+	if (out_uxgy)
+		*out_uxgy = uxgy;
+	if (out_uxy)
+		*out_uxy = uxy;
 }
 #undef TINY
 
@@ -2784,10 +2777,14 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 		cs1 = -sn1;
 		sn1 = tn;
 	}
-	if (out_rt1) *out_rt1 = (double) rt1;
-	if (out_rt2) *out_rt2 = (double) rt2;
-	if (out_cs1) *out_cs1 = (double) cs1;
-	if (out_sn1) *out_sn1 = (double) sn1;
+	if (out_rt1)
+		*out_rt1 = (double) rt1;
+	if (out_rt2)
+		*out_rt2 = (double) rt2;
+	if (out_cs1)
+		*out_cs1 = (double) cs1;
+	if (out_sn1)
+		*out_sn1 = (double) sn1;
 }
 
 void MATmul3_XYXt (MATVU const& target, constMAT const& x, constMAT const& y) { // X.Y.X'
@@ -2833,9 +2830,8 @@ static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, 
 		v [linear [i]] = 0.0;
 		support [linear [i]] = 0;
 	}
-	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++) {
+	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++)
 		support [linear [i]] = 1;
-	}
 }
 
 bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
@@ -2916,9 +2912,8 @@ void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constV
 			// 1. the norm of the sparse gradient
 			double normsq_gs = 0.0;
 			for (integer ig = 1; ig <= gradient.size; ig ++) {
-				if (support [ig] != 0) {
+				if (support [ig] != 0)
 					normsq_gs += gradient [ig] * gradient [ig];
-				}
 			}
 			// 2. the norm of the transformed sparse gradient
 			double normsq_dgs = 0.0;
