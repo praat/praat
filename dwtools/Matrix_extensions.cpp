@@ -381,7 +381,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 			b [i] = my z [i] [my nx];
 		}
 
-		autoVEC x = NUMsolveEquation (u.get(), b.get(), tolerance);
+		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
 		for (integer j = 1; j <= nc; j ++) {
 			thy z [1] [j] = x [j];
 		}

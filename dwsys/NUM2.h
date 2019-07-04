@@ -506,14 +506,14 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	If no roots found then x1 and x2 will not be changed.
 */
 
-autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double tol);
+autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tol);
 /*
 	Solve the equation: A.x = b for x;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
 	Algorithm: s.v.d.
 */
 
-autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tol);
+autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 /*
 	Solve the equations: A.X = B;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
@@ -530,7 +530,7 @@ autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tol)
 	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4, 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
 */
-void VECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
 autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
 /*

@@ -336,7 +336,7 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
 
-autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double tolerance) {
+autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tolerance) {
 	Melder_assert (a.nrow == b.size);
 	autoSVD me = SVD_createFromGeneralMatrix (a);
 	SVD_zeroSmallSingularValues (me.get(), tolerance);
@@ -344,7 +344,7 @@ autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double toler
 	return x;
 }
 
-autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tolerance) {
+autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance) {
 	Melder_assert (a.nrow == b.nrow);
 	double tol = ( tolerance > 0.0 ? tolerance : NUMfpp -> eps * a.nrow );
 	
@@ -496,7 +496,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 		}
 	}
 
-	autoVEC y = NUMsolveEquation (ftinvp.get(), otd.get(), 1e-6);
+	autoVEC y = newVECsolve (ftinvp.get(), otd.get(), 1e-6);
 
 	// The solution (3 cases)
 	autoVEC w (n3, kTensorInitializationType::ZERO);
@@ -513,10 +513,10 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 		w [2] = t2 * delta [2];
 		w [3] = t3 * delta [3];
 
-		chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
+		chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 
 		w [1] = -w [1];
-		if (fabs (chi [3] / chi [1]) < eps) chi = NUMsolveEquation (ptfinvc.get(), w.get(), 1e-6);
+		if (fabs (chi [3] / chi [1]) < eps) chi = newVECsolve (ptfinvc.get(), w.get(), 1e-6);
 		
 	} else if (fabs (y [2]) < eps) {
 		// Case 2: page 633
@@ -527,16 +527,16 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 		if ( (delta [2] < delta [3] && (t2 = (t1 * t1 * delta [1] + t3 * t3 * delta [3])) < eps)) {
 			w [2] = sqrt (- delta [2] * t2); /* +- */
 			w [3] = t3 * delta [3];
-			chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
+			chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 			w [2] = -w [2];
-			if (fabs (chi [3] / chi [1]) < eps) chi = NUMsolveEquation (ptfinvc.get(), w.get(), 1e-6);
+			if (fabs (chi [3] / chi [1]) < eps) chi = newVECsolve (ptfinvc.get(), w.get(), 1e-6);
 
 		} else if (((delta [2] < delta [3] + eps) || (delta [2] > delta [3] - eps)) && fabs (y [3]) < eps) {
 			// choose one value for w [2] from an infinite number
 
 			w [2] = w [1];
 			w [3] = sqrt (- t1 * t1 * delta [1] * delta [2] - w [2] * w [2]);
-			chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
+			chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 		}
 	} else {
 		// Case 3: page 634 use Newton-Raphson root finder
@@ -552,7 +552,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 		for (integer i = 1; i <= 3; i++) {
 			w [i] = y [i] / (1.0 - xlambda / delta [i]);
 		}
-		chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
+		chi = newVECsolve (ptfinv.get(), w.get(), 1e-6);
 	}
 
 	if (out_alpha) *out_alpha = chi [1];
@@ -2572,7 +2572,7 @@ autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, cons
 		}
 		g [i] [i] = 0.0;
 	}
-	autoVEC w = NUMsolveEquation (g.get(), z, 0.0);
+	autoVEC w = newVECsolve (g.get(), z, 0.0);
 	return w;
 }
 
@@ -2863,7 +2863,7 @@ static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECV
 	return xdifsq / ydifsq;
 }
 
-void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
+void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
 	try {
 		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
 		Melder_assert (dictionary.ncol == x.size); // we calculate D.x
