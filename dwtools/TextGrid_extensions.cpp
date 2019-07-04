@@ -41,7 +41,8 @@ struct TIMIT_key {
 	/* Vowels */
 	{"iy", "i"},			/* beet: bcl b IY tcl t */
 	{"ih", "\\ic"}, 		/* bit: bcl b IH tcl t */
-	{"eh", "\\ep"}, 		/* bet: bcl b EH tcl t */
+	/* 20190704 wgmichener "\\ep" -> "\\ef" */
+	{"eh", "\\ef"}, 		/* bet: bcl b EH tcl t */
 	{"ey", "e"},  			/* bait: bcl b EY tcl t */
 	{"ae", "\\ae"},  		/* bat: bcl b AE tcl t */
 	{"aa", "\\as"}, 		/* bott: bcl b AA tcl t */
@@ -49,26 +50,30 @@ struct TIMIT_key {
 	{"ay", "a\\ic"},  		/* bite: bcl b AY tcl t */
 	{"ah", "\\vt"}, 		/* but: bcl b AH tcl t */
 	{"ao", "\\ct"},  		/* bought: bcl b AO tcl t */
-	{"oy", "\\ct\\ic"},  	/* boy: bcl b OY */
+	{"oy", "\\ct\\ic"},		/* boy: bcl b OY */
 	{"ow", "o"}, 			/* boat: bcl b OW tcl t */
 	{"uh", "\\hs"}, 		/* book: bcl b UH tcl t */
 	{"uw", "u"},  			/* boot: bcl b UW tcl t */
-	/* fronted allophone of uw (alveolair contexts) */
-	{"ux", "\\u\""}, 		/* toot: tcl t UX tcl t */
-	{"er", "\\er\\hr"},  	/* bird: bcl b ER dcl d */
+	/* fronted allophone of uw (alveolar contexts) */
+	/* 20190704 wgmichener "\\u\"" -> "\\u\\:^" */
+	{"ux", "\\u\\:^"}, 		/* toot: tcl t UX tcl t */
+	{"er", "\\er\\hr"},		/* bird: bcl b ER dcl d */
 	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
 	{"axr", "\\sr"}, 		/* butter: bcl ah dx AXR */
 	/* devoiced schwa, very short */
-	{"ax-h", "\\sw\\ov"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
+	/* 20190704 wgmichener "\\sw\\ov"" -> "\\sw\\0v" */
+	{"ax-h", "\\sw\\0v"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
 	/* Semivowels and glides */
 	{"l", "l"},				/* lay:	L ey */
-	{"r", "r"},				/* ray:	R ey */
+	/* 20190704 wgmichener "r" -> "\\rt" */
+	{"r", "\\rt"},			/* ray:	R ey */
 	{"w", "w"},				/* way:	w ey */
 	{"y", "j"},				/* yacht: Y aa tcl t */
-	{"hh", "h" },			/* hay: HH ey*/
+	{"hh", "h" },		/* hay: HH ey*/
 	/* voiced allophone of h */
-	{"hv", "\\hh"},			/* ahead: ax HV eh dcl d */
+	/* 20190704 wgmichener "\\hv" -> "\\h^" */
+	{"hv", "\\h^"},			/* ahead: ax HV eh dcl d */
 	{"el", "l\\|v"},		/* bottle: bcl b aa tcl t EL */
 	/* Nasals */
 	{"m", "m"},				/* mom:	M aa M */
@@ -78,14 +83,16 @@ struct TIMIT_key {
 	{"en", "n\\|v"},		/* button:	b ah q EN */
 	{"eng", "\\ng\\|v"},	/* washington: w aa sh ENG tcl t ax n */
 	/* nasal flap */
-	{"nx", "n^\\fh"},		/* winner: wih NX axr */
+	/* 20190704 wgmichener "n^\\fh" -> "\\fh\\~^" */
+	{"nx", "\\fh\\~^"},		/* winner: wih NX axr */
 	/* Fricatives */
 	{"s", "s"},				/* sea: S iy */
 	{"sh", "\\sh"},			/* she: SH iy */
 	{"z", "z"},				/* zone: Z ow n */
 	{"zh", "\\zh"},			/* azure: ae ZH er */
 	{"f", "f"},				/* fin: F ih n */
-	{"th", "\\te"},			/* thin: TH ih n */
+	/* 20190704 wgmichener "\\te" -> "\\tf" */
+	{"th", "\\tf"},			/* thin: TH ih n */
 	{"v", "v"},				/* van: v ae n */
 	{"dh", "\\dh"},			/* then: DH en */
 	/* Affricates */
@@ -99,23 +106,27 @@ struct TIMIT_key {
 	{"t", "t"},				/* tea: TCL T iy */
 	{"k", "k"},				/* key: KCL K iy */
 	/* 20140315: Added silences before the burst */
-	{"bcl", ""},
-	{"dcl", ""},
-	{"gcl", ""},
-	{"pcl", ""},
-	{"tcl", ""},
-	{"kcl", ""},
+	/* 20190704 wgmichener "" -> "x\\cn" */
+	{"bcl", "b\\cn"},
+	{"dcl", "d\\cn"},
+	{"gcl", "g\\cn"},
+	{"pcl", "p\\cn"},
+	{"tcl", "t\\cn"},
+	{"kcl", "k\\cn"},
 	/* flap */
 	{"dx", "\\fh"},			/* muddy: m ah DX iy & dirty: dcl d er DX iy */
 	/* glottal stop */
-	{"q", "?"},
+	/* 20190704 wgmichener "?" -> "\\?g" */
+	{"q", "\\?g"},
 	/* Others */
 	{"pau", ""},	/* pause */
 	{"epi", ""},	/* epenthetic silence */
 	{"h#", ""}, 	/* marks start and end piece of sentence */
 	/* the following markers only occur in the dictionary */
-	{"1", "1"},		/* primary stress marker */
-	{"2", "2"}		/* secondary stress marker */
+	/* 20190704 wgmichener "1" -> "\\'1" */
+	{"1", "\\'1"},		/* primary stress marker */
+	/* 20190704 wgmichener "2" -> "\\'2" */
+	{"2", "\\'2"}		/* secondary stress marker */
 };
 
 #define TIMIT_NLABELS (sizeof TIMIT_toIpaTable / sizeof TIMIT_toIpaTable[1] - 1)
@@ -216,7 +227,8 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 			linesRead++;
 			Melder_require (sscanf (line, "%ld%ld%199s", &it1, &it2, label) == 3, 
 				U"Incorrect number of items.");
-			Melder_require (it1 >= 0 && it1 < it2, U"Incorrect time at line ", linesRead);
+			Melder_require (it1 >= 0 && it1 < it2,
+				U"Incorrect time at line ", linesRead);
 			
 			xmax = it2 * dt;
 			double xmin = it1 * dt;
