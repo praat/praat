@@ -40,6 +40,31 @@ void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU
 }
 #endif
 
+autoVEC newVECfrom_to (double from, double to) {
+	const integer numberOfElements = Melder_ifloor (to - from + 1.0);
+	if (numberOfElements < 1)
+		return autoVEC ();
+	autoVEC result = newVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = from + (double) (i - 1);
+	return result;
+}
+
+autoVEC newVECfrom_to_by_left (double from, double to, double by) {
+	Melder_require (by != 0.0,
+		U"from_to_by#: cannot have a step (“by”) of zero.");
+	/*
+		The following algorithm works for both positive and negative `by`.
+	*/
+	const integer numberOfElements = Melder_ifloor ((to - from) / by + 1.0);
+	if (numberOfElements < 1)
+		return autoVEC ();
+	autoVEC result = newVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = from + (double) (i - 1) * by;
+	return result;
+}
+
 void VECmul (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
 	Melder_assert (mat.nrow == vec.size);
 	Melder_assert (target.size == mat.ncol);
@@ -116,6 +141,14 @@ void VECpower (VECVU const& target, constVECVU const& vec, double power) {
 		for (integer i = 1; i <= target.size; i ++)
 			target [i] = pow (vec [i], power);
 	}
+}
+
+autoVEC newVECto (double to) {
+	const integer numberOfElements = Melder_ifloor (to);
+	autoVEC result = newVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = (double) i;
+	return result;
 }
 
 /* End of file VEC.cpp */
