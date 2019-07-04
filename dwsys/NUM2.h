@@ -444,13 +444,13 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 	and ln(determinant). L^-1 in lower, leave upper part intact.
 */
 
-autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
+autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m);
 /*
 	Return the complete matrix inverse when only the inverse of the lower Cholesky part is given.
 	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
-double MATdeterminant_fromSymmetricMatrix (constMAT m);
+double NUMdeterminant_fromSymmetricMatrix (constMAT m);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */
@@ -532,7 +532,7 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 */
 void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
-autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
+autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
 /*
 	Solve the equation: M.b = d for b under the constraint: all b[i] >= 0;
 	m[1..nr][1..nc], d[1..nr] and b[1..nc].

@@ -3,7 +3,7 @@
 
 appendInfoLine: "test_Matrix_solve.praat"
 
-@solve_sparse_system
+;@solve_sparse_system
 @solve_undetermined: 10, 100
 @solve3x3
 
