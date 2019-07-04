@@ -1005,7 +1005,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, kMDS_
 			}
 		}
 
-		autoVEC fit = VECmonotoneRegression (distances.get());
+		autoVEC fit = newVECmonotoneRegression (distances.get());
 
 		// Fill Distance with monotone regressed distances
 

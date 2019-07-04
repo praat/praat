@@ -1489,7 +1489,7 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 		if (my numberOfColumns < 3 || my numberOfRows < 3)
 			Melder_throw (U"There should be at least three colums and three rows.");
 		
-		autoVEC weights = NUMbiharmonic2DSplineInterpolation_getWeights (my data.column (1), my data.column (2), my data.column (3));
+		autoVEC weights = newVECbiharmonic2DSplineInterpolation_getWeights (my data.column (1), my data.column (2), my data.column (3));
 		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
 		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx,
 			ymin, ymax, ny, dy, ymin + 0.5 * dy);

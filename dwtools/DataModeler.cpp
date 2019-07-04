@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2018 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -959,7 +959,7 @@ void DataModeler_reportChiSquared (DataModeler me, int weighDataType) {
 double DataModeler_estimateSigmaY (DataModeler me) {
 	try {
 		integer numberOfDataPoints = 0;
-		autoVEC y (my numberOfDataPoints, kTensorInitializationType::RAW);
+		autoVEC y = newVECraw (my numberOfDataPoints);
 		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
 			if (my dataPointStatus [i] != DataModeler_DATA_INVALID)
 				y [++ numberOfDataPoints] = my y [i];
