@@ -204,7 +204,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	}
 }
 
-autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+autoTable Spectrum_tabulate (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity)
 {
 	try {
@@ -229,18 +229,6 @@ autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool inclu
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Table.");
-	}
-}
-
-void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
-	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity)
-{
-	try {
-		autoTable table = Spectrum_downto_Table (me, includeBinNumbers, includeFrequency,
-			includeRealPart, includeImaginaryPart, includeEnergyDensity, includePowerDensity);
-		Table_list (table.get(), false);
-	} catch (MelderError) {
-		Melder_throw (me, U": not listed.");
 	}
 }
 
