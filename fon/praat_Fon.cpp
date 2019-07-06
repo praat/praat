@@ -2291,7 +2291,7 @@ DO
 
 // MARK: Tabulate
 
-FORM (LIST_Spectrum_list, U"Spectrum: List", 0) {
+FORM (NEW_Spectrum_tabulate, U"Spectrum: Tabulate", 0) {
 	BOOLEAN (includeBinNumber, U"Include bin number", false)
 	BOOLEAN (includeFrequency, U"Include frequency", true)
 	BOOLEAN (includeRealPart, U"Include real part", false)
@@ -2300,10 +2300,10 @@ FORM (LIST_Spectrum_list, U"Spectrum: List", 0) {
 	BOOLEAN (includePowerDensity, U"Include power density", true)
 	OK
 DO
-	INFO_ONE (Spectrum)
-		Spectrum_list (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
+	CONVERT_EACH (Spectrum)
+		autoTable result = Spectrum_tabulate (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
 			includeEnergyDensity, includePowerDensity);
-	INFO_ONE_END
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: Query
@@ -3312,8 +3312,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classSpectrum, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Draw...", nullptr, 1, GRAPHICS_Spectrum_draw);
 		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...", nullptr, 1, GRAPHICS_Spectrum_drawLogFreq);
-	praat_addAction1 (classSpectrum, 1, U"Tabulate -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"List...", nullptr, 1, LIST_Spectrum_list);
+	praat_addAction1 (classSpectrum, 1, U"Tabulate...", nullptr, 0, NEW_Spectrum_tabulate);
 	praat_addAction1 (classSpectrum, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 1, U"Frequency domain", nullptr, 1, nullptr);
 			praat_addAction1 (classSpectrum, 1, U"Get lowest frequency", nullptr, 2, REAL_Spectrum_getLowestFrequency);

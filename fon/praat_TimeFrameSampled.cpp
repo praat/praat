@@ -50,6 +50,12 @@ DO
 	NUMBER_ONE_END (U" seconds")
 }
 
+DIRECT (NUMVEC_TimeFrameSampled_listTimesOfAllFrames) {
+	NUMVEC_ONE (Sampled)
+		autoVEC result = Sampled_listAllXValues (me);
+	NUMVEC_ONE_END
+}
+
 // MARK: - buttons
 
 void praat_TimeFrameSampled_query_init (ClassInfo klas) {
@@ -61,6 +67,7 @@ void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1,   U"Get frame duration", U"*Get time step", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameLength);
 	praat_addAction1 (klas, 1, U"Get time from frame number...", nullptr, 2, REAL_TimeFrameSampled_getTimeFromFrame);
 	praat_addAction1 (klas, 1,   U"Get time from frame...", U"*Get time from frame number...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getTimeFromFrame);
+	praat_addAction1 (klas, 1, U"List times of all frames...", nullptr, 2, NUMVEC_TimeFrameSampled_listTimesOfAllFrames);
 	praat_addAction1 (klas, 1, U"Get frame number from time...", nullptr, 2, REAL_TimeFrameSampled_getFrameFromTime);
 	praat_addAction1 (klas, 1,   U"Get frame from time...", U"*Get frame number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameFromTime);
 }
