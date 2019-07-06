@@ -71,12 +71,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 	where a and b are the axes of the ellipse and 0<= alpha <= 2pi.
 */
 
-#define GaussianMixture_LIKELIHOOD 0
-#define GaussianMixture_MML 1
-#define GaussianMixture_BIC 2
-#define GaussianMixture_AIC 3
-#define GaussianMixture_AICC 4
-#define GaussianMixture_CD_LIKELIHOOD 5
+void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, MAT const& p);
 
 conststring32 GaussianMixture_criterionText (kGaussianMixtureCriterion criterion);
 
@@ -88,13 +83,15 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 
 void GaussianMixture_splitComponent (GaussianMixture me, integer component);
 
+void GaussianMixture_removeComponent (GaussianMixture me, integer component);
+
 autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee);
 
 autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, kGaussianMixtureCriterion criterion);
 
-double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC v);
+double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC const& v);
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 pos);
 
@@ -129,7 +126,7 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
 
 /* with on demand expand of pca ! */
-int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC c, char32 **covname, VEC buf);
+int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, char32 **covname, VEC const& buf);
 
 autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, integer numberOfPoints);
 
