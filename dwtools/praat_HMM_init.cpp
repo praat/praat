@@ -22,15 +22,6 @@
 #include "Strings_extensions.h"
 #include "TableOfReal.h"
 
-#define GaussianMixture_OPTION_MENU_CRITERIA \
-	OPTIONMENU (criterion, U"Criterion based on", 1) \
-		OPTION (U"Likelihood") \
-		OPTION (U"Message length") \
-		OPTION (U"Bayes information") \
-		OPTION (U"Akaike information") \
-		OPTION (U"Akaike corrected") \
-		OPTION (U"Complete-data ML")
-
 DIRECT (HELP_GaussianMixture_help) {
 	HELP (U"GaussianMixture")
 }
@@ -205,12 +196,11 @@ DIRECT (NEW_GaussianMixture_to_Covariance_total) {
 
 FORM (REAL_GaussianMixture_TableOfReal_getLikelihoodValue, U"GaussianMixture & TableOfReal: Get likelihood value",
       U"GaussianMixture & TableOfReal: Get likelihood value...") {
-	GaussianMixture_OPTION_MENU_CRITERIA
-	OK
+	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)	OK
 DO
 	NUMBER_TWO (GaussianMixture, TableOfReal)
 		conststring32 criterionText = GaussianMixture_criterionText (criterion);
-		double lnpdn = GaussianMixture_TableOfReal_getLikelihoodValue (me, you, criterion - 1);
+		double lnpdn = GaussianMixture_TableOfReal_getLikelihoodValue (me, you, criterion);
 		double result = lnpdn / you -> numberOfRows;
 	NUMBER_TWO_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
 }
@@ -251,14 +241,12 @@ FORM (NEW1_HMM_createContinuousModel, U"HMM: Create continuous model", nullptr) 
 	LABEL (U"For the Gaussian mixtures:")
 	NATURAL (numberOfComponents, U"Number of components", U"3")
 	NATURAL (componentDimension, U"Dimension of component", U"39")
-	OPTIONMENU (matricesType, U"Covariance matrices are", 1)
-		OPTION (U"Complete")
-		OPTION (U"Diagonal")
+	RADIO_ENUM (kHMMstorage, storage,
+			U"Covariance matrices are", kHMMstorage::DEFAULT)
 	OK
 DO
-	Melder_require (matricesType >= 0 && matricesType <= componentDimension, U"Not a valid covariance matrix type");
 	CREATE_ONE
-		autoHMM result = HMM_createContinuousModel (leftToRightModel, numberOfStates, numberOfSymbols, numberOfComponents, componentDimension, matricesType - 1);
+		autoHMM result = HMM_createContinuousModel (leftToRightModel, numberOfStates, numberOfSymbols, numberOfComponents, componentDimension, storage);
 	CREATE_ONE_END (name)
 }
 
@@ -320,14 +308,14 @@ DO
 
 FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
 	NATURAL (fromState, U"From state number", U"1")
-	NATURAL (toState, U"To state number", U"1")
+	NATURAL (symbolIndex, U"Symbol index", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
 		Melder_require (fromState <= my numberOfStates, U"State number too high.");
-		Melder_require (toState <= my numberOfObservationSymbols, U"Symbol number too high.");
-		double result = my emissionProbs[fromState][toState];
-	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
+		Melder_require (symbolIndex <= my numberOfObservationSymbols, U"Symbol number too high.");
+		double result = my emissionProbs[fromState][symbolIndex];
+	NUMBER_ONE_END (U" : [ ", fromState, U", ", symbolIndex, U" ]")
 }
 
 FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
@@ -568,13 +556,12 @@ DIRECT (NEW_HMMStateSequence_to_Strings) {
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture_rowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
-	OPTIONMENU (matricesType, U"Covariance matrices are", 1)
-		OPTION (U"Complete")
-		OPTION (U"Diagonal")
+	RADIO_ENUM (kGaussianMixtureStorage, storage,
+		U"Covariance matrices are", kGaussianMixtureStorage::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoGaussianMixture result = TableOfReal_to_GaussianMixture_fromRowLabels (me, matricesType - 1);
+		autoGaussianMixture result = TableOfReal_to_GaussianMixture_fromRowLabels (me, storage);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -583,15 +570,14 @@ FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no 
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
 	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
 	REAL (lambda, U"Stability coefficient lambda", U"0.001")
-	OPTIONMENU (matricesType, U"Covariance matrices are", 1)
-		OPTION (U"Complete")
-		OPTION (U"Diagonal")
-	GaussianMixture_OPTION_MENU_CRITERIA
+	RADIO_ENUM (kGaussianMixtureStorage, storage,
+			U"Covariance matrices are", kGaussianMixtureStorage::DEFAULT)
+	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	CONVERT_EACH (TableOfReal)
-		autoGaussianMixture result = TableOfReal_to_GaussianMixture (me, numberOfComponents, tolerance, maximumNumberOfIterations, lambda, matricesType - 1, criterion - 1);
+		autoGaussianMixture result = TableOfReal_to_GaussianMixture (me, numberOfComponents, tolerance, maximumNumberOfIterations, lambda, storage, criterion);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -599,14 +585,12 @@ FORM (MODIFY_GaussianMixture_TableOfReal_improveLikelihood, U"GaussianMixture & 
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
 	REAL (lambda, U"Stability coefficient lambda", U"0.001")
-	GaussianMixture_OPTION_MENU_CRITERIA
+	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	MODIFY_FIRST_OF_TWO (GaussianMixture, TableOfReal)
-		Melder_require (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
-		Melder_require (my numberOfComponents < your numberOfRows / 2, U"Not enough data points.");
-		GaussianMixture_TableOfReal_improveLikelihood (me, you, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
+		GaussianMixture_TableOfReal_improveLikelihood (me, you, tolerance, maximumNumberOfIterations, lambda, criterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -615,14 +599,12 @@ FORM (NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixtur
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
 	REAL (lambda, U"Stability coefficient lambda (0-1)", U"0.001")
-	GaussianMixture_OPTION_MENU_CRITERIA
+	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	CONVERT_TWO (GaussianMixture, TableOfReal)
-		Melder_require (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
-		Melder_require (my numberOfComponents < your numberOfRows / 2, U"Not enough data points.");
-		autoGaussianMixture result = GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
+		autoGaussianMixture result = GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, tolerance, maximumNumberOfIterations, lambda, criterion);
 	CONVERT_TWO_END (my name.get())
 }
 

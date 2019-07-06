@@ -1,6 +1,6 @@
 /* ICA.cpp
  *
- * Copyright (C) 2010-2018 David Weenink
+ * Copyright (C) 2010-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -590,7 +590,7 @@ void structCrossCorrelationTable :: v_info () {
 autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 	try {
 		autoCrossCorrelationTable me = Thing_new (CrossCorrelationTable);
-		SSCP_init (me.get(), dimension, dimension);
+		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTable not created.");

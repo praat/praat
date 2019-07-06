@@ -30,12 +30,14 @@
 
 #include "GaussianMixture_def.h"
 
+#include "GaussianMixture_enums.h"
+
 /*
 	Invariants for a Gaussian mixture:
 	 all covariances have the same 'dimension' parameter
 	 All mixingProbabilities are >= 0 and sum to 1.0
 */
-autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer dimension, integer storage);
+autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer dimension, kGaussianMixtureStorage storage);
 /* Start each function with expand and end with unExpand */
 
 void GaussianMixture_expandPCA (GaussianMixture me);
@@ -56,7 +58,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, integer d, 
 	double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
 
-autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, integer storage);
+autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, kGaussianMixtureStorage storage);
 
 void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double nSigmas, double ru_range);
 /*
@@ -76,13 +78,13 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 #define GaussianMixture_AICC 4
 #define GaussianMixture_CD_LIKELIHOOD 5
 
-conststring32 GaussianMixture_criterionText (int criterion);
+conststring32 GaussianMixture_criterionText (kGaussianMixtureCriterion criterion);
 
-autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, int storage, int criterion);
+autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, kGaussianMixtureStorage storage, kGaussianMixtureCriterion criterion);
 
-void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, int criterion);
+void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion);
 
-autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, int criterion);
+autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion);
 
 void GaussianMixture_splitComponent (GaussianMixture me, integer component);
 
@@ -90,7 +92,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 
 autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
 
-double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion);
+double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, kGaussianMixtureCriterion criterion);
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC v);
 
