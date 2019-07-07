@@ -5621,8 +5621,9 @@ static void do_VECsolve () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
-			U"In the function solve#, the number of rows of the matrix, ", x->numericMatrix.nrow, U", should equal the size of the vector, ",
-			y->numericVector.size);
+			U"In the function solve#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
+			x->numericMatrix.nrow, U" and ", y->numericVector.size
+		);
 		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
 	} else {
 		Melder_throw (U"The function \"solve#\" requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
