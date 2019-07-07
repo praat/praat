@@ -247,7 +247,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 	}
 }
 
-int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, char32 **covname, VEC const& buf) {
+void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, char32 **covname, VEC const& buf) {
 	try {
 		double p = NUMrandomUniform (0.0, 1.0);
 		integer im = NUMgetIndexFromProbability (my mixingProbabilities.get(), p);
@@ -261,7 +261,6 @@ int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, 
 				SSCP_expandPCA (thee);    // on demand expanding
 			Covariance_PCA_generateOneVector_inline (thee, thy pca.get(), c, buf);
 		}
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": vector not generated.");
 	}

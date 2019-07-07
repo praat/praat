@@ -21,7 +21,17 @@ selectObject: gm
 total= To Covariance (total)
 selectObject: gm
 pca= To PCA
-removeObject: within, between, total, pca
+selectObject: gm
+cov = Extract component: 1
+numberOfObservations = Get number of observations
+assert numberOfObservations == 50
+selectObject: gm
+mp = Extract mixing probabilities
+nrow = Get number of rows
+assert nrow == 12
+selectObject: gm
+centroids = Extract centroids
+removeObject: centroids, mp, cov, pca, total, between, within
 
 appendInfoLine: tab$, "Drawing"
 selectObject: gm
@@ -48,8 +58,7 @@ selectObject: pols, gm
 tor = To TableOfReal (BHEP normality tests): 1.41
 removeObject:  tor, correlation, ct, cemm
 
-
-removeObject: pols, gm
+;removeObject: pols, gm
 
 appendInfoLine: "test_GaussianMixture.praat OK"
 

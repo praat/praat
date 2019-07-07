@@ -126,7 +126,7 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
 
 /* with on demand expand of pca ! */
-int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, char32 **covname, VEC const& buf);
+void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, char32 **covname, VEC const& buf);
 
 autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, integer numberOfPoints);
 
