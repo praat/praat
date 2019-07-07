@@ -45,7 +45,7 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_INTEGER (numberOfObservationSymbols)
 	oo_INTEGER (numberOfMixtureComponents)
 	oo_INTEGER (componentDimension)
-	oo_INT (componentStorage)
+	oo_ENUM (kHMMstorage, componentStorage)
 	oo_FROM (1)
 		oo_VEC (initialStateProbs, numberOfStates)
 	oo_ENDFROM

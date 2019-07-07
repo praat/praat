@@ -81,6 +81,11 @@
 #include "oo_DESCRIPTION.h"
 #include "SSCP_def.h"
 
+#include "enums_getText.h"
+#include "SSCP_enums.h"
+#include "enums_getValue.h"
+#include "SSCP_enums.h"
+
 #define TOVEC(x) (&(x) - 1)
 
 Thing_implement (SSCP, TableOfReal, 0);
@@ -254,15 +259,16 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, constVECVU const& v1, constVECVU const& 
 	}
 }
 
-void SSCP_init (SSCP me, integer dimension, integer storage) {
-	TableOfReal_init (me, storage, dimension);
+void SSCP_init (SSCP me, integer dimension, kSSCPstorage storage) {
+	integer numberOfRows = storage == kSSCPstorage::Diagonal ? 1 : dimension;
+	TableOfReal_init (me, numberOfRows, dimension);
 	my centroid = newVECzero (dimension);
 }
 
 autoSSCP SSCP_create (integer dimension) {
 	try {
 		autoSSCP me = Thing_new (SSCP);
-		SSCP_init (me.get(), dimension, dimension);
+		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SSCP not created.");
@@ -1022,18 +1028,16 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 autoCovariance Covariance_create (integer dimension) {
 	try {
 		autoCovariance me = Thing_new (Covariance);
-		SSCP_init (me.get(), dimension, dimension);
+		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
 	}
 }
 
-autoCovariance Covariance_create_reduceStorage (integer dimension, integer storage) {
+autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage storage) {
 	try {
 		autoCovariance me = Thing_new (Covariance);
-		if (storage <= 0 || storage >= dimension)
-			storage = dimension;
 		SSCP_init (me.get(), dimension, storage);
 		return me;
 	} catch (MelderError) {
@@ -1140,7 +1144,7 @@ autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststr
 autoCorrelation Correlation_create (integer dimension) {
 	try {
 		autoCorrelation me = Thing_new (Correlation);
-		SSCP_init (me.get(), dimension, dimension);
+		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Correlation not created.");
@@ -1704,14 +1708,14 @@ void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContr
 
 void SSCP_expand (SSCP me) {
 
-	// A reduced matrix has my numberOfRows < my numberOfColumns.
-	// After expansion:
-	// my numberOfRows == my numberOfColumns
-	// my storageNumberOfRows = my numberOfRows (before)
-	// my data (after) = my expansion;
-	// my expansion = my data (before)
-	// No expansion for a standard matrix or if already expanded and data has not changed!
-
+	/* A reduced matrix has my numberOfRows < my numberOfColumns.
+		After expansion:
+		my numberOfRows == my numberOfColumns
+		my storageNumberOfRows = my numberOfRows (before)
+		 my data (after) = my expansion;
+		my expansion = my data (before)
+		 No expansion for a standard matrix or if already expanded and data has not changed!
+	*/
 	if ((my expansionNumberOfRows == 0 && my numberOfRows == my numberOfColumns) ||
 	        (my expansionNumberOfRows > 0 && ! my dataChanged))
 		return;

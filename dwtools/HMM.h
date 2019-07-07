@@ -2,7 +2,7 @@
 #define _HMM_h_
 /* HMM.h
  *
- * Copyright (C) 2010-2017 David Weenink
+ * Copyright (C) 2010-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,11 @@
 #include "SSCP.h"
 #include "Index.h"
 
+
 Thing_declare (HMMStateList);
 Thing_declare (HMMObservationList);
+
+#include "HMM_enums.h"
 
 #include "HMM_def.h"
 
@@ -109,7 +112,7 @@ autoHMM HMM_create (int leftToRight, integer numberOfStates, integer numberOfObs
 autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string);
 
 autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols,
-	integer numberOfMixtureComponentsPerSymbol, integer componentDimension, integer componentStorage);
+	integer numberOfMixtureComponentsPerSymbol, integer componentDimension, kHMMstorage componentStorage);
 
 autoHMM HMM_createFullContinuousModel (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols,
 	integer numberOfFeatureStreams, integer *dimensionOfStream, integer *numberOfGaussiansforStream);

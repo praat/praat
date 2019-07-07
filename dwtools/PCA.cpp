@@ -151,6 +151,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 			U"All matrix elements should be defined.");
 		Melder_require (NUMfrobeniusnorm (m) > 0.0,
 			U"Not all values in your table should be zero.");
+		Melder_require (m.nrow > 1, U"The number of rows should be larger then 1.");
 		autoMAT mcopy;
 		if (byColumns) {
 			if (m.ncol < m.nrow)
@@ -266,10 +267,9 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee) {
 	try {
-		Melder_require (thy numberOfColumns <= my dimension,
-			U"The dimension of the Configuration should be less than or equal to the dimension of the PCA.");
+		Melder_require (thy numberOfColumns <= my numberOfEigenvalues,
+			U"The number of columns in the configuration should not exceed the number of eigenvectors (", my numberOfEigenvalues, U").");
 		integer numberOfEigenvectorsToUse = std::min (thy numberOfColumns, my numberOfEigenvalues);
-
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		Melder_assert (my labels.size == my dimension);
 		his columnLabels.all() <<= my labels.all();
@@ -297,9 +297,11 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 	}
 }
 
-autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring) {
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 coefficients) {
 	try {
-		autoVEC pc = VEC_createFromString (numstring);
+		autoVEC pc = VEC_createFromString (coefficients);
+		Melder_require (pc.size == my numberOfEigenvalues,
+			U"The number of coefficients should equal the number of eigenvectors (", my numberOfEigenvalues, U").");
 		autoConfiguration c = Configuration_create (1, pc.size);
 		c -> data.row (1) <<= pc.all();
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());

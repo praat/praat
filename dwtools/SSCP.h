@@ -18,11 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TableOfReal_extensions.h"
-#include "PCA.h"
 #include "CCA.h"
+#include "PCA.h"
+#include "TableOfReal_extensions.h"
 
 #include "SSCP_def.h"
+
+#include "SSCP_enums.h"
 
 Thing_define (Covariance, SSCP) {
 };
@@ -43,7 +45,7 @@ Collection_define (CovarianceList, OrderedOf, Covariance) {
 	}
 };
 
-void SSCP_init (SSCP me, integer dimension, integer storage);
+void SSCP_init (SSCP me, integer dimension, kSSCPstorage storage);
 
 autoSSCP SSCP_create (integer dimension);
 
@@ -133,14 +135,11 @@ autoCovariance Covariance_create (integer dimension);
 
 autoCovariance Covariance_createSimple (conststring32 covars, conststring32 centroid, integer numberOfObservations);
 
-autoCovariance Covariance_create_reduceStorage (integer dimension, integer storage);
+autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage storage);
 /*
-	storage 0 or >= dimension: complete matrix
-	storage 1: only diagonal
-	storage 2: diagonal + 1 off-diagonal [i,i+1]
-	storage 3: diagonal + off-diagonal [i,i+1] + off-diagonal [i,i+2]
-    ....
-    storage dimension : complete matrix
+	storage full: complete matrix
+	storage diagonal: only diagonal
+	
     See also SSCP_expand () for usage.
 */
 
@@ -242,7 +241,7 @@ void SSCP_expand (SSCP me);
 	Before using one of the Covariance functions defined here on a reduced matrix we
 	first have to expand it to normal size.
 
-	Covariance me = Covariance_create_reduceStorage (dimension, 1); // diagonal only
+	Covariance me = Covariance_create_reduceStorage (dimension, kSSCPstorage::Diagonal); // diagonal only
 	...
 	SSCP_expand (me);
 	PCA thee = SSCP_to_PCA (me);
