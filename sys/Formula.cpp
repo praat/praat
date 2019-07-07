@@ -145,7 +145,7 @@ enum { NO_SYMBOL_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
 		VEC_ZERO_, MAT_ZERO_,
-		VEC_LINEAR_, MAT_LINEAR_, VEC_TO_,
+		VEC_LINEAR_, MAT_LINEAR_, VEC_TO_, VEC_FROM_TO_, VEC_FROM_TO_BY_,
 		VEC_RANDOM_UNIFORM_, MAT_RANDOM_UNIFORM_,
 		VEC_RANDOM_INTEGER_, MAT_RANDOM_INTEGER_,
 		VEC_RANDOM_GAUSS_, MAT_RANDOM_GAUSS_,
@@ -265,7 +265,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed", U"demoExtraControlKeyPressed",
 	U"zero#", U"zero##",
-	U"linear#", U"linear##", U"to#",
+	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
@@ -4352,8 +4352,37 @@ static void do_VECto () {
 	Stackel stack_to = pop;
 	if (stack_to -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"to#\", the argument should be a number, not ", stack_to->whichText(), U".");
-	integer to = Melder_iround (stack_to -> number);
-	autoVEC result = newVECto (to);
+	autoVEC result = newVECto (stack_to -> number);
+	pushNumericVector (result.move());
+}
+static void do_VECfrom_to () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 2)
+		Melder_throw (U"The function from_to#() requires two arguments.");
+	Stackel stack_to = pop, stack_from = pop;
+	if (stack_from -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	if (stack_to -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	autoVEC result = newVECfrom_to (stack_from -> number, stack_to -> number);
+	pushNumericVector (result.move());
+}
+static void do_VECfrom_to_by () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 3)
+		Melder_throw (U"The function from_to_by#() requires three arguments.");
+	Stackel stack_by = pop, stack_to = pop, stack_from = pop;
+	if (stack_from -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to_by#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	if (stack_to -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	if (stack_by -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to_by#\", the third argument should be a number, not ", stack_by->whichText(), U".");
+	autoVEC result = newVECfrom_to_by_left (stack_from -> number, stack_to -> number, stack_by -> number);
 	pushNumericVector (result.move());
 }
 static void do_MATpeaks () {
@@ -6810,6 +6839,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAT_ZERO_: { do_MATzero ();
 } break; case VEC_LINEAR_: { do_VEClinear ();
 } break; case VEC_TO_: { do_VECto ();
+} break; case VEC_FROM_TO_: { do_VECfrom_to ();
+} break; case VEC_FROM_TO_BY_: { do_VECfrom_to_by ();
 } break; case VEC_RANDOM_UNIFORM_: { do_function_VECdd_d (NUMrandomUniform);
 } break; case MAT_RANDOM_UNIFORM_: { do_function_MATdd_d (NUMrandomUniform);
 } break; case VEC_RANDOM_INTEGER_: { do_function_VECll_l (NUMrandomInteger);

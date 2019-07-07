@@ -1053,9 +1053,9 @@ DO
 	NUMBER_ONE_END (U" seconds")
 }
 
-DIRECT (NUMVEC_Sound_getSampleTimes) {
+DIRECT (NUMVEC_Sound_listAllSampleTimes) {
 	NUMVEC_ONE (Sound)
-		autoVEC result = Sampled_getAllXValues (me);
+		autoVEC result = Sampled_listAllXValues (me);
 	NUMVEC_ONE_END
 }
 
@@ -2313,7 +2313,8 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 1, U"-- get time discretization --", nullptr, 2, nullptr);
 		praat_addAction1 (classSound, 1, U"Get time from sample number...", nullptr, 2, REAL_Sound_getTimeFromIndex);
 		praat_addAction1 (classSound, 1,   U"Get time from index...", U"*Get time from sample number...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_Sound_getTimeFromIndex);
-		praat_addAction1 (classSound, 1, U"Get sample times", nullptr, 2, NUMVEC_Sound_getSampleTimes);
+		praat_addAction1 (classSound, 1, U"List all sample times", nullptr, 2, NUMVEC_Sound_listAllSampleTimes);
+		praat_addAction1 (classSound, 1,   U"Get sample times", U"*List all sample times", praat_DEPTH_2 | praat_DEPRECATED_2019, NUMVEC_Sound_listAllSampleTimes);
 		praat_addAction1 (classSound, 1, U"Get sample number from time...", nullptr, 2, REAL_Sound_getIndexFromTime);
 		praat_addAction1 (classSound, 1,   U"Get index from time...", U"*Get sample number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_Sound_getIndexFromTime);
 		praat_addAction1 (classSound, 1, U"-- get content --", nullptr, 1, nullptr);

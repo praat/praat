@@ -2853,7 +2853,7 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20180426)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20190706)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
@@ -2922,7 +2922,7 @@ NORMAL (U"which gives 4.090909090909091 (for a vector with five elements, the re
 CODE (U"other\\#  = { 2, 1.5, 1, 0.5, 0 }")
 CODE (U"result = inner (squares\\# , other\\# )")
 NORMAL (U"which gives 1*2 + 4*1.5 + 9*1 + 16*0.5 + 25*0 = 25. "
-	"The formula for this is \\su__%i=1_^5 squares[i] * other[i], so that an alternative piece of code could be")
+	"The formula for this is \\su__%i=1_^5 %squares[%i] * %other[%i], so that an alternative piece of code could be")
 CODE (U"result = sumOver (i to 5, squares\\#  [i] * other\\#  [i])")
 ENTRY (U"4. Converting vectors to vectors")
 CODE (U"a\\#  = squares\\#  + 5   ; adding a number to each element of a vector")
@@ -2939,7 +2939,7 @@ NORMAL (U"A vector can also be given to a ##menu command# that returns another v
 CODE (U"selectObject: myPitch")
 CODE (U"tmin = Get start time")
 CODE (U"tmax = Get end time")
-CODE (U"times\\#  = sequence_by_centre\\#  (tmin, tmax, 0.01)")
+CODE (U"times\\#  = from_to_by_centred\\#  (tmin, tmax, 0.01)")
 CODE (U"pitches\\#  = Get values at times: times\\# , \"hertz\", \"linear\"")
 MAN_END
 
