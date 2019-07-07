@@ -967,7 +967,7 @@ autoTable Pitch_tabulateCandidates (Pitch me) {
 		Pitch_Frame frame = & my frame [iframe];
 		totalNumberOfCandidates += frame -> nCandidates;
 	}
-	autoTable result = Table_createWithColumnNames(totalNumberOfCandidates, U"frame frequency strength");
+	autoTable result = Table_createWithColumnNames (totalNumberOfCandidates, U"frame frequency strength");
 	integer rowNumber = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & my frame [iframe];

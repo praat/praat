@@ -1754,6 +1754,17 @@ DIRECT (NEW_Pitch_killOctaveJumps) {
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NUMVEC_Pitch_listValuesInAllFrames, U"Pitch: List values in all frames", U"Pitch: List values in all frames...") {
+	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
+	OK
+DO
+	NUMVEC_ONE (Pitch)
+		autoVEC result = Sampled_listValuesOfAllSamples (me, Pitch_LEVEL_FREQUENCY, (int) unit);
+		for (integer iframe = 1; iframe <= result.size; iframe ++)
+			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMVEC_ONE_END
+}
+
 DIRECT (PLAY_Pitch_play) {
 	PLAY_EACH (Pitch)
 		Pitch_play (me, 0.0, 0.0);
@@ -3230,6 +3241,7 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 1, U"Count voiced frames", nullptr, 1, INTEGER_Pitch_getNumberOfVoicedFrames);
 		praat_addAction1 (classPitch, 1, U"Get value at time...", nullptr, 1, REAL_Pitch_getValueAtTime);
 		praat_addAction1 (classPitch, 1, U"Get value in frame...", nullptr, 1, REAL_Pitch_getValueInFrame);
+		praat_addAction1 (classPitch, 1, U"List values in all frames...", nullptr, 1, NUMVEC_Pitch_listValuesInAllFrames);
 		praat_addAction1 (classPitch, 1, U"-- get extreme --", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 1, U"Get minimum...", nullptr, 1, REAL_Pitch_getMinimum);
 		praat_addAction1 (classPitch, 1, U"Get time of minimum...", nullptr, 1, REAL_Pitch_getTimeOfMinimum);
