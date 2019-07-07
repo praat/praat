@@ -204,6 +204,8 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 
 void Pitch_formula (Pitch me, conststring32 formula, Interpreter interpreter);
 
+autoVEC Pitch_listValuesInAllFrames (Pitch me);
+
 autoTable Pitch_tabulateCandidatesInFrame (Pitch me, integer frameNumber);
 autoTable Pitch_tabulateCandidates (Pitch me);
 
