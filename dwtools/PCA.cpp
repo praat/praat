@@ -151,7 +151,8 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 			U"All matrix elements should be defined.");
 		Melder_require (NUMfrobeniusnorm (m) > 0.0,
 			U"Not all values in your table should be zero.");
-		Melder_require (m.nrow > 1, U"The number of rows should be larger then 1.");
+		Melder_require (m.nrow > 1,
+			U"The number of rows should be larger than 1.");
 		autoMAT mcopy;
 		if (byColumns) {
 			if (m.ncol < m.nrow)

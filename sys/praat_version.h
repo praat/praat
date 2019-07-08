@@ -2,4 +2,4 @@
 #define PRAAT_VERSION_NUM 6100
 #define PRAAT_YEAR 2019
 #define PRAAT_MONTH July
-#define PRAAT_DAY 1
+#define PRAAT_DAY 7
