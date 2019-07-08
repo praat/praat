@@ -1760,7 +1760,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	}
 	if (ncrossings == 0)
 		return false;
-	Melder_require (ncrossings <= 2, U"Too many crossings found.");
+	Melder_require (ncrossings <= 2,
+		U"Too many crossings found.");
 
 	/*
 		if start and endpoint of line are outside rectangle and ncrossings == 1, than the line only touches.
@@ -1788,7 +1789,8 @@ end:
 }
 
 void NUMgetEllipseBoundingBox (double a, double b, double cospsi, double *out_width, double *out_height) {
-	Melder_assert (cospsi >= -1.0 && cospsi <= 1.0);
+	Melder_require (cospsi >= -1.0 && cospsi <= 1.0,
+		U"NUMgetEllipseBoundingBox: abs (cospi) should not exceed 1.", cospsi);
 	double width, height;
 	if (cospsi == 1.0) { // a-axis along x-axis
 		width = a;
@@ -2762,15 +2764,15 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	longdouble acs = fabs (cs), cs1, sn1;
 	if (acs > ab) {
 		longdouble ct = -tb / cs;
-		sn1 = 1 / sqrt (1 + ct * ct);
+		sn1 = 1.0 / sqrt (1.0 + ct * ct);
 		cs1 = ct * sn1;
 	} else {
 		if (ab == 0) {
-			cs1 = 1;
-			sn1 = 0;
+			cs1 = 1.0;
+			sn1 = 0.0;
 		} else {
 			tn = -cs / tb;
-			cs1 = 1 / sqrt (1 + tn * tn);
+			cs1 = 1.0 / sqrt (1.0 + tn * tn);
 			sn1 = tn * cs1;
 		}
 	}
@@ -2779,6 +2781,10 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 		cs1 = -sn1;
 		sn1 = tn;
 	}
+	if (fabs (cs1) > 1.0)
+		cs1 = copysign (1.0, cs1);
+	if (fabs (sn1) > 1.0)
+		sn1 = copysign (1.0, sn1);
 	if (out_rt1)
 		*out_rt1 = (double) rt1;
 	if (out_rt2)

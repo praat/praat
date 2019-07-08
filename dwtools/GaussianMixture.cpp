@@ -51,6 +51,16 @@
 
 Thing_implement (GaussianMixture, Daata, 0);
 
+void structGaussianMixture :: v_info () {
+	our structDaata :: v_info ();
+	MelderInfo_writeLine (U"Number of components: ", our numberOfComponents);
+	MelderInfo_writeLine (U"Dimension of component: ", our dimension);
+	MelderInfo_writeLine (U"Mixing probabilities:");
+	for (integer im = 1; im <= numberOfComponents; im ++) {
+		MelderInfo_writeLine (U"  ", im, U": p = ", our mixingProbabilities [im], U"  Name =  \"", Thing_getName (our covariances->at [im]), U"\"");
+	}
+}
+
 conststring32 GaussianMixture_criterionText (kGaussianMixtureCriterion criterion) {
 	if (criterion == kGaussianMixtureCriterion::Likelihood)
 		return U"(1/n)*Likelihood";
@@ -65,32 +75,38 @@ conststring32 GaussianMixture_criterionText (kGaussianMixtureCriterion criterion
 	else if (criterion == kGaussianMixtureCriterion::CompleteDataML)
 		return U"(1/n)*CompleteDataML";
 	else
-	 return U"???";
+		return U"???";
 }
 
 autoMAT GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer component, constMAT const & p);
 
 autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double *out_lnp);
-double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& p, kGaussianMixtureCriterion onlyLikelyhood);
-void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT const& p);
+double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& pam, kGaussianMixtureCriterion onlyLikelyhood);
+void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT const& pam);
 integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me);
 
-static void GaussianMixture_updateCovariance (GaussianMixture me, integer component, MAT const& data, MAT const& p) {
-	integer numberOfRows = data.nrow;
-	if (component < 1 || component > my numberOfComponents) {
-		return;
-	}
+static void GaussianMixture_updateCovariance (GaussianMixture me, integer component, MAT const& data, MAT const& pam) {
+	Melder_require (my dimension == data.ncol,
+		U"The number of columns in the data and the dimension of the GaussianMixture should be equal.");
+	Melder_require (my numberOfComponents + 1 == pam.ncol,
+		U"The number of components and the number of columns in the probabilities should conform.");
+	Melder_require (pam.nrow == data.nrow + 1,
+		U"The number of rows in the data and the probabilities should conform.");
+	Melder_require (component > 0 && component <= my numberOfComponents,
+		U"The component number should be in the range from 1 to ", my numberOfComponents, U".");
+	
+	integer numberOfData = data.nrow;
 	Covariance thee = my covariances->at [component];
 
 	double mixprob = my mixingProbabilities [component];
-	double gsum = p [numberOfRows + 1] [component];
+	double gsum = pam [numberOfData + 1] [component];
 	// update the means
 
 	for (integer j = 1; j <= thy numberOfColumns; j ++) {
 		thy centroid [j] = 0.0;
-		for (integer i = 1; i <= numberOfRows; i ++) {
-			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
-			thy centroid [j] += gamma * data [i] [j] ; // eq. Bishop 9.17
+		for (integer irow = 1; irow <= numberOfData; irow ++) {
+			double gamma = mixprob * pam [irow] [component] / pam [irow] [pam.ncol];
+			thy centroid [j] += gamma * data [irow] [j] ; // eq. Bishop 9.17
 		}
 		thy centroid [j] /= gsum;
 	}
@@ -98,34 +114,29 @@ static void GaussianMixture_updateCovariance (GaussianMixture me, integer compon
 	// update covariance with the new mean
 
 	if (thy numberOfRows == 1) { // 1xn covariance
-		for (integer j = 1; j <= thy numberOfColumns; j ++) {
-			thy data [1] [j] = 0.0;
-		}
-		for (integer i = 1; i <= numberOfRows; i ++) {
-			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
+		thy data.row (1) <<= 0.0;
+		for (integer irow = 1; irow <= numberOfData; irow ++) {
+			double gamma = mixprob * pam [irow] [component] / pam [irow] [pam.ncol];
 			double gdn = gamma / gsum;
 			for (integer j = 1; j <= thy numberOfColumns; j ++) {
-				double xj = thy centroid [j] - data [i] [j];
+				double xj = thy centroid [j] - data [irow] [j];
 				thy data [1] [j] += gdn * xj * xj;
 			}
 		}
 	} else { // nxn covariance
-		for (integer j = 1; j <= thy numberOfRows; j ++)
-			for (integer k = j; k <= thy numberOfColumns; k ++) {
-				thy data [k] [j] = thy data [j] [k] = 0;
-			}
-		for (integer i = 1; i <= numberOfRows; i ++) {
-			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
+		thy data.get() <<= 0.0;
+		for (integer irow = 1; irow <= numberOfData; irow ++) {
+			double gamma = mixprob * pam [irow] [component] / pam [irow] [pam.ncol];
 			double gdn = gamma / gsum; // we cannot divide by nk - 1, this could cause instability
 			for (integer j = 1; j <= thy numberOfColumns; j ++) {
-				double xj = thy centroid [j] - data [i] [j];
+				double xj = thy centroid [j] - data [irow] [j];
 				for (integer k = j; k <= thy numberOfColumns; k ++) {
-					thy data [j] [k] = thy data [k] [j] += gdn * xj * (thy centroid [k] - data [i] [k]);
+					thy data [j] [k] = thy data [k] [j] += gdn * xj * (thy centroid [k] - data [irow] [k]);
 				}
 			}
 		}
 	}
-	thy numberOfObservations = my mixingProbabilities [component] * numberOfRows;
+	thy numberOfObservations = my mixingProbabilities [component] * numberOfData;
 }
 
 static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer component, constMAT const& data, constMAT const& p) {
@@ -165,34 +176,30 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 	thy numberOfObservations = my mixingProbabilities [component] * data.nrow;
 }
 
-static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer im, Covariance him, double fraction) {
-	if (im < 1 || im > my numberOfComponents || fraction == 0.0)
-		return;
-
-	Covariance thee = my covariances->at [im];
+static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer component, Covariance him, double fraction) {
+	Melder_require (component > 0 && component <= my numberOfComponents,
+		U"The component number should be in the range from 1 to ", my numberOfComponents, U".");
+	Covariance thee = my covariances->at [component];
+	Melder_require (thy numberOfColumns == his numberOfColumns,
+		U"The dimension of the Covariance should equal the dimension of the covariances in the GaussianMixture.");
 
 	// prevent instability: add lambda fraction of global covariances
 
-	if (thy numberOfRows == 1) {
-		for (integer j = 1; j <= thy numberOfColumns; j ++)
-			thy data [1] [j] += fraction * his data [j] [j];
-	} else
-		thy data.all()  +=  his data.all()  *  fraction;
+	if (thy numberOfRows == 1)
+		if (his numberOfRows == 1)
+			thy data.row (1)  +=  fraction * his data.row (1);
+		else
+			thy data.row (1)  +=  fraction * his data.diagonal();
+	else
+		if (his numberOfRows == 1)
+			thy data.diagonal()  +=  his data.row (1);
+		else
+			thy data.get()  +=  his data.get()  *  fraction;
 }
 
-void structGaussianMixture :: v_info () {
-	our structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of components: ", our numberOfComponents);
-	MelderInfo_writeLine (U"Dimension of component: ", our dimension);
-	MelderInfo_writeLine (U"Mixing probabilities:");
-	for (integer im = 1; im <= numberOfComponents; im ++) {
-		MelderInfo_writeLine (U"  ", im, U": p = ", our mixingProbabilities [im], U"  Name =  \"", Thing_getName (our covariances->at [im]), U"\"");
-	}
-}
-
-static void GaussianMixture_setLabelsFromTableOfReal (GaussianMixture me, TableOfReal thee) {
-	for (integer im = 1; im <= my numberOfComponents; im ++) {
-		Covariance cov = my covariances->at [im];
+static void GaussianMixture_setColumnLabelsFromTableOfReal (GaussianMixture me, TableOfReal thee) {
+	for (integer component = 1; component <= my numberOfComponents; component ++) {
+		Covariance cov = my covariances->at [component];
 		for (integer j = 1; j <= my dimension; j ++)
 			TableOfReal_setColumnLabel (cov, j, thy columnLabels [j].get());
 	}
@@ -221,9 +228,9 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 }
 
 static void GaussianMixture_setDefaultMixtureNames (GaussianMixture me) {
-	for (integer im = 1; im <= my numberOfComponents; im ++) {
-		Covariance cov = my covariances->at [im];
-		Thing_setName (cov, Melder_cat (U"m", im));
+	for (integer component = 1; component <= my numberOfComponents; component ++) {
+		Covariance cov = my covariances->at [component];
+		Thing_setName (cov, Melder_cat (U"m", component));
 	}
 }
 
@@ -236,9 +243,9 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 		my mixingProbabilities.all() <<= 1.0 / numberOfComponents;
 		my covariances = CovarianceList_create ();
 		kSSCPstorage sscpStorage = storage == kGaussianMixtureStorage::Diagonals ? kSSCPstorage::Diagonal : kSSCPstorage::Complete;
-		for (integer im = 1; im <= numberOfComponents; im ++) {
+		for (integer component = 1; component <= numberOfComponents; component ++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, sscpStorage);
-			my covariances -> addItemAtPosition_move (cov.move(), im);
+			my covariances -> addItemAtPosition_move (cov.move(), component);
 		}
 		GaussianMixture_setDefaultMixtureNames (me.get());
 		return me;
@@ -274,16 +281,16 @@ autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me
 
 		autoGaussianMixture thee = GaussianMixture_create (numberOfComponents, my numberOfColumns, storage);
 
-		GaussianMixture_setLabelsFromTableOfReal (thee.get(), me);
+		GaussianMixture_setColumnLabelsFromTableOfReal (thee.get(), me);
 
-		for (integer i = 1; i <= numberOfComponents; i ++) {
-			autoTableOfReal tab = TableOfReal_extractRowsWhereLabel (me, kMelder_string::EQUAL_TO, dist -> rowLabels [i].get());
+		for (integer component = 1; component <= numberOfComponents; component ++) {
+			autoTableOfReal tab = TableOfReal_extractRowsWhereLabel (me, kMelder_string::EQUAL_TO, dist -> rowLabels [component].get());
 			autoCovariance cov = TableOfReal_to_Covariance (tab.get());
-			Covariance_into_Covariance (cov.get(), thy covariances->at [i]);
-			Thing_setName (thy covariances->at [i], dist -> rowLabels [i].get());
+			Covariance_into_Covariance (cov.get(), thy covariances->at [component]);
+			Thing_setName (thy covariances->at [component], dist -> rowLabels [component].get());
 		}
-		for (integer im = 1; im <= numberOfComponents; im ++)
-			thy mixingProbabilities [im] = dist -> data [im] [1] / my numberOfRows;
+		for (integer component = 1; component <= numberOfComponents; component ++)
+			thy mixingProbabilities [component] = dist -> data [component] [1] / my numberOfRows;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no GaussianMixture created.");
@@ -311,7 +318,7 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer component) {
 	try {
 		Melder_require (component > 0 && component <= my numberOfComponents,
-			U"The component should be should be in the range from 1 to ", my numberOfComponents, U".");
+			U"The component should be in the range from 1 to ", my numberOfComponents, U".");
 		autoCovariance thee = Data_copy (my covariances->at [component]);
 		return thee;
 	} catch (MelderError) {
@@ -322,8 +329,8 @@ autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer com
 autoTableOfReal GaussianMixture_extractMixingProbabilities (GaussianMixture me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfComponents, 2);
-		TableOfReal_setColumnLabel (thee.get(), 1, U"p");
-		TableOfReal_setColumnLabel (thee.get(), 2, U"n");
+		TableOfReal_setColumnLabel (thee.get(), 1, U"componentProbability");
+		TableOfReal_setColumnLabel (thee.get(), 2, U"numberOfObservations");
 		for (integer im = 1; im <= my numberOfComponents; im ++) {
 			Covariance cov = my covariances->at [im];
 			thy data [im] [1] = my mixingProbabilities [im];
@@ -748,29 +755,32 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 	}
 }
 
-void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, MAT const& p) {
+void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer componentToUpdate, MAT const& pam) {
 	try {
-		Melder_assert (p.nrow == thy numberOfRows + 1);
-		Melder_assert (p.ncol == my numberOfComponents + 1);
-		Melder_assert (my dimension == thy numberOfColumns);
-		
+		Melder_require (pam.nrow == thy numberOfRows + 1,
+			U"The number of rows should confrom.");
+		Melder_require (pam.ncol == my numberOfComponents + 1,
+			U"The number of columns should conform.");
+		Melder_require (my dimension == thy numberOfColumns,
+			U"The number of columns in the TableOfReal and the dimension of the GaussianMixture should be equal.");
+		Melder_require (componentToUpdate >= 0 && componentToUpdate <= my numberOfComponents,
+			U"The component number should be in the interval from 0 to ", my numberOfComponents);
 		double ln2pid = my dimension * log (NUM2pi);
 
-		integer icb = 1, ice = my numberOfComponents;
-		if (component > 0 && component <= my numberOfComponents) // if component == 0 update all probabilities
-			icb = ice = component;
+		integer icb = componentToUpdate == 0 ? 1 : componentToUpdate; 
+		integer ice = componentToUpdate == 0 ? my numberOfComponents : componentToUpdate;
 		
-		for (integer ic = icb; ic <= ice; ic ++) {
-			Covariance covi = my covariances->at [ic];
+		for (integer component = icb; component <= ice; component ++) {
+			Covariance covi = my covariances->at [component];
 			SSCP_expandLowerCholeskyInverse (covi);
 
-			for (integer i = 1; i <= thy numberOfRows; i++) {
-				double dsq = NUMmahalanobisDistance (covi -> lowerCholeskyInverse.get(), thy data.row (i), covi -> centroid.get());
-				p [i] [ic] = std::max (1e-300, exp (- 0.5 * (ln2pid + covi -> lnd + dsq))); // prevent p from being zero
+			for (integer irow = 1; irow <= thy numberOfRows; irow++) {
+				double dsq = NUMmahalanobisDistance (covi -> lowerCholeskyInverse.get(), thy data.row (irow), covi -> centroid.get());
+				pam [irow] [component] = std::max (1e-300, exp (- 0.5 * (ln2pid + covi -> lnd + dsq))); // prevent pam from being zero
 			}
 		}
 
-		GaussianMixture_updateProbabilityMarginals (me, p);
+		GaussianMixture_updateProbabilityMarginals (me, pam);
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no probabilies could be calculated.");
 	}
@@ -793,8 +803,10 @@ void GaussianMixture_unExpandPCA (GaussianMixture me) {
 
 void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion) {
 	try {
-		Melder_require (thy numberOfColumns == my dimension, U"The number of columns and the dimension of the model should agree.");
-		Melder_require (my numberOfComponents < thy numberOfRows / 2, U"Not enough data points.");
+		Melder_require (thy numberOfColumns == my dimension,
+			U"The number of columns and the dimension of the model should agree.");
+		Melder_require (my numberOfComponents < thy numberOfRows / 2,
+			U"Not enough data points.");
 
 		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 
@@ -802,12 +814,12 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 		// mixture covariances to prevent numerical instabilities.
 
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
-		// p's last row has the column marginals n(k)
-		autoMAT p = newMATraw (thy numberOfRows + 1, my numberOfComponents + 1);
+		// pam's last row has the column marginals n(k)
+		autoMAT pam = newMATraw (thy numberOfRows + 1, my numberOfComponents + 1);
 		
-		GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get()); // get initial p's
+		GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, pam.get()); // get initial pam's
 
-		double lnp = GaussianMixture_getLikelihoodValue (me, p.get(), criterion);
+		double lnp = GaussianMixture_getLikelihoodValue (me, pam.get(), criterion);
 		integer iter = 0;
 		autoMelderProgress progress (U"Improve likelihood...");
 		try {
@@ -821,18 +833,18 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				iter ++;
 				// M-step: 1. new means & covariances
 
-				for (integer im = 1; im <= my numberOfComponents; im ++) {
-					GaussianMixture_updateCovariance (me, im, thy data.get(), p.get());
-					GaussianMixture_addCovarianceFraction (me, im, covg.get(), lambda);
+				for (integer component = 1; component <= my numberOfComponents; component ++) {
+					GaussianMixture_updateCovariance (me, component, thy data.get(), pam.get());
+					GaussianMixture_addCovarianceFraction (me, component, covg.get(), lambda);
 				}
 
 				// M-step: 2. new mixingProbabilities
-				my mixingProbabilities.all() <<= p.row (p.nrow).part (1, p.ncol - 1);
+				my mixingProbabilities.all() <<= pam.row (pam.nrow).part (1, my numberOfComponents);
 				my mixingProbabilities.all()  *=  1.0 / thy numberOfRows;
 				
-				GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
+				GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, pam.get());
 				
-				lnp = GaussianMixture_getLikelihoodValue (me, p.get(), criterion);
+				lnp = GaussianMixture_getLikelihoodValue (me, pam.get(), criterion);
 				Melder_progress ((double) iter / (double) maxNumberOfIterations, criterionText, U": ", lnp / thy numberOfRows, U", L0: ", lnp_start);
 			} while (fabs ((lnp - lnp_prev) / lnp_prev) > delta_lnp && iter < maxNumberOfIterations);
 		} catch (MelderError) {
@@ -841,18 +853,10 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 
 		// During EM, covariances were underestimated by a factor of (n-1)/n. Correction now.
 
-		for (integer im = 1; im <= my numberOfComponents; im ++) {
-			Covariance cov = my covariances->at [im];
-			if (cov -> numberOfObservations > 1.5) {
-				if (cov -> numberOfRows == 1) {
-					for (integer j = 1; j <= thy numberOfColumns; j ++)
-						cov -> data [1] [j] *= cov -> numberOfObservations / (cov -> numberOfObservations - 1);
-				} else {
-					for (integer j = 1; j <= thy numberOfColumns; j ++)
-						for (integer k = j; k <= thy numberOfColumns; k ++)
-							cov -> data [j] [k] = cov -> data [k] [j] *= cov -> numberOfObservations / (cov -> numberOfObservations - 1.0);
-				}
-			}
+		for (integer component = 1; component <= my numberOfComponents; component ++) {
+			Covariance cov = my covariances->at [component];
+			if (cov -> numberOfObservations > 1.5)
+				cov -> data.row (1)  *=  cov -> numberOfObservations / (cov -> numberOfObservations - 1.0);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": likelihood cannot be improved.");
@@ -871,14 +875,16 @@ integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 	The marginals may be numbers larger than 1.0
 	Each column is weighted with its mixingProbability
 */
-void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT const& p) {
-	Melder_assert (p.ncol == my numberOfComponents + 1);
-	Melder_assert (p.nrow > 1);
-	p.row (p.nrow) <<= 0.0;
-	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
-		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
+void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT const& pam) {
+	Melder_require (pam.ncol == my numberOfComponents + 1,
+		U"The number of columns in the probabilities should conform to the number of components.");
+	Melder_require (pam.nrow > 1,
+		U"There should me more than one row in the probabilities.");
+	pam.row (pam.nrow) <<= 0.0;
+	for (integer irow = 1; irow <= pam.nrow - 1; irow ++) {
+		pam [irow] [pam.ncol] = NUMinner (my mixingProbabilities.get(), pam.row (irow).part (1, my numberOfComponents));
 		for (integer icol = 1; icol <= my numberOfComponents; icol ++)
-			p [p.nrow] [icol] += my mixingProbabilities [icol] * p [irow] [icol] / p [irow] [p.ncol];
+			pam [pam.nrow] [icol] += my mixingProbabilities [icol] * pam [irow] [icol] / pam [irow] [pam.ncol];
 	}
 }
 
@@ -902,15 +908,17 @@ double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, Table
 	return GaussianMixture_getLikelihoodValue (me, p.get(), criterion);;
 }
 
-double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& p, kGaussianMixtureCriterion criterion) {
-	Melder_assert (p.ncol == my numberOfComponents + 1);
-
+double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& pam, kGaussianMixtureCriterion criterion) {
+	Melder_require (pam.ncol == my numberOfComponents + 1,
+		U"The number of columns in the probabilities should conform with the number of components.");
+	integer numberOfData = pam.nrow - 1;
+	
 	if (criterion == kGaussianMixtureCriterion::CompleteDataML) {
 		longdouble lnpcd = 0.0;
-		for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
+		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			longdouble psum = 0.0, lnsum = 0.0;
 			for (integer icol = 1; icol <= my numberOfComponents; icol ++) {
-				longdouble pp = my mixingProbabilities [icol] * p [irow] [icol];
+				longdouble pp = my mixingProbabilities [icol] * pam [irow] [icol];
 				psum += pp;
 				lnsum += pp * log (pp);
 			}
@@ -923,8 +931,8 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& p
 	// The common factor for all other criteria is the log(likelihood)
 
 	longdouble lnp = 0.0;
-	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
-		double psum = NUMinner (my mixingProbabilities.get(), p.row (irow).part (1, p.ncol - 1));
+	for (integer irow = 1; irow <= numberOfData; irow ++) {
+		double psum = NUMinner (my mixingProbabilities.get(), pam.row (irow).part (1, my numberOfComponents));
 		if (psum > 0.0)
 			lnp += (longdouble) log (psum);
 	}
@@ -932,7 +940,8 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& p
 	if (criterion == kGaussianMixtureCriterion::Likelihood)
 		return lnp;
 
-	double npars = GaussianMixture_getNumberOfParametersInComponent (me), np = npars * my numberOfComponents;
+	double npars = GaussianMixture_getNumberOfParametersInComponent (me);
+	double np = npars * my numberOfComponents;
 	if (criterion == kGaussianMixtureCriterion::MessageLength) {
 		/* Equation (15) in
 			Mario A.T. Figueiredo, and Anil K. Jain, Unsupervised Learning of Finite Mixture Models :
@@ -947,38 +956,39 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& p
 
 		// a rewritten L(theta,Y) is
 
-		return lnp - 0.5 * my numberOfComponents * (npars + 1) * (log ((p.nrow - 1) / 12.0) + 1.0)
+		return lnp - 0.5 * my numberOfComponents * (npars + 1) * (log (numberOfData / 12.0) + 1.0)
 		       + 0.5 * npars * logmpn;
 	} else if (criterion == kGaussianMixtureCriterion::BayesInformation)
-		return 2.0 * lnp - np * log (p.nrow - 1.0);
+		return 2.0 * lnp - np * log (numberOfData);
 	else if (criterion == kGaussianMixtureCriterion::AkaikeInformation)
 		return 2.0 * (lnp - np);
 	else if (criterion == kGaussianMixtureCriterion::AkaikeCorrected) {
-		np = npars * my numberOfComponents;
-		return 2.0 * (lnp - np * ((p.nrow - 1.0) / (p.nrow - 1.0 - np - 1.0)));
+		return 2.0 * (lnp - np * (numberOfData / (numberOfData - np - 1.0)));
 	}
 	return lnp;
 }
 
-autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture gm, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion) {
+autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion) {
 	try {
-		Melder_require (thy numberOfColumns == gm -> dimension, U"The number of columns and the dimension of the model should agree.");
-		Melder_require (gm -> numberOfComponents < thy numberOfRows / 2, U"Not enough data points.");
+		Melder_require (thy numberOfColumns == my dimension,
+			U"The number of columns and the dimension of the model should agree.");
+		Melder_require (my numberOfComponents < thy numberOfRows / 2,
+			U"Not enough data points.");
 		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		bool deleteWeakComponents = minNumberOfComponents > 0;
-		autoGaussianMixture me = Data_copy (gm);
-		autoMAT p = newMATzero (thy numberOfRows + 1, my numberOfComponents + 1);
+		autoGaussianMixture him = Data_copy (me);
+		autoMAT pam = newMATzero (thy numberOfRows + 1, his numberOfComponents + 1);
 
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
 
-		double npars = GaussianMixture_getNumberOfParametersInComponent (me.get());
+		double npars = GaussianMixture_getNumberOfParametersInComponent (him.get());
 		double nparsd2 = ( deleteWeakComponents ? npars / 2.0 : 0.0 );
 
-		// Initial E-step: Update all p's.
+		// Initial E-step: Update all component probabilities.
 
-		GaussianMixture_TableOfReal_getProbabilities (me.get(), thee, 0, p.get());
+		GaussianMixture_TableOfReal_getProbabilities (him.get(), thee, 0, pam.get());
 
-		double lnew = GaussianMixture_getLikelihoodValue (me.get(), p.get(), criterion);
+		double lnew = GaussianMixture_getLikelihoodValue (him.get(), pam.get(), criterion);
 
 		autoMelderProgress progress (U"Gaussian mixture...");
 		autoGaussianMixture best;
@@ -986,41 +996,41 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 			double lstart = lnew / thy numberOfRows;
 			integer iter = 0, component;
 			double lmax = -1e308, lprev;
-			while (my numberOfComponents >= minNumberOfComponents) {
+			while (his numberOfComponents >= minNumberOfComponents) {
 				do {
 					iter ++;
 					component = 1;
 					lprev = lnew;
-					while (component <= my numberOfComponents) {
+					while (component <= his numberOfComponents) {
 						// M-step for means and covariances
 
-						GaussianMixture_updateProbabilityMarginals (me.get(), p.get());
-						GaussianMixture_updateCovariance (me.get(), component, thy data.get(), p.get());
+						GaussianMixture_updateProbabilityMarginals (him.get(), pam.get());
+						GaussianMixture_updateCovariance (him.get(), component, thy data.get(), pam.get());
 						if (lambda > 0)
-							GaussianMixture_addCovarianceFraction (me.get(), component, covg.get(), lambda);
+							GaussianMixture_addCovarianceFraction (him.get(), component, covg.get(), lambda);
 
 						// Now check if enough support for a component exists
 						
-						double support_im = p [p.nrow] [component] - nparsd2, support = 0.0;
-						for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
-							double support_ic = p [p.nrow] [ic] - nparsd2;
+						double support_im = pam [pam.nrow] [component] - nparsd2, support = 0.0;
+						for (integer ic = 1; ic <= his numberOfComponents; ic ++) {
+							double support_ic = pam [pam.nrow] [ic] - nparsd2;
 							if (support_ic > 0.0)
 								support += support_ic;
 						}
-						my mixingProbabilities [component] = std::max (support_im, 0.0);
+						his mixingProbabilities [component] = std::max (support_im, 0.0);
 						if (support > 0.0)
-							my mixingProbabilities [component] /= support;
+							his mixingProbabilities [component] /= support;
 
-						VECnormalize_inplace (my mixingProbabilities.get(), 1.0, 1.0);
+						VECnormalize_inplace (his mixingProbabilities.get(), 1.0, 1.0);
 
-						if (my mixingProbabilities [component] > 0.0) { // update p for component
-							GaussianMixture_TableOfReal_getProbabilities (me.get(), thee, component, p.get());
+						if (his mixingProbabilities [component] > 0.0) { // update pam for component
+							GaussianMixture_TableOfReal_getProbabilities (him.get(), thee, component, pam.get());
 							component ++;
 						} else {
-							// "Remove" the component column from p by shifting column values
+							// "Remove" the component column from pam by shifting column values
 
-							autoMAT pc = GaussianMixture_removeComponent_bookkeeping (me.get(), component, p.get());
-							p = pc.move();
+							autoMAT pc = GaussianMixture_removeComponent_bookkeeping (him.get(), component, pam.get());
+							pam = pc.move();
 							// Now numberOfComponents is one less!
 							// MelderInfo_writeLine (U"Removed component ", component);
 						}
@@ -1029,30 +1039,30 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 					// L(theta,Y)=N/2 sum(m=1..k, log(n*mixingP [m]/12))+k/2log(n/12)+k/2(N+1)-loglikelihood reduces to:
 					// k/2 (N+1){log(n/12)+1}+N/2sum(m=1..k,mixingP [m]) - loglikelihood
 
-					lnew = GaussianMixture_getLikelihoodValue (me.get(), p.get(), criterion);
+					lnew = GaussianMixture_getLikelihoodValue (him.get(), pam.get(), criterion);
 
 					Melder_progress ((double) iter / (double) maxNumberOfIterations, U", ", criterionText, U": ",
-						lnew / thy numberOfRows, U"\nComponents: ", my numberOfComponents, U"\nL0: ", lstart);
+						lnew / thy numberOfRows, U"\nComponents: ", his numberOfComponents, U"\nL0: ", lstart);
 				} while (lnew > lprev && fabs ((lprev - lnew) / lnew) > delta_l && iter < maxNumberOfIterations);
 				if (lnew > lmax) {
-					best = Data_copy (me.get());
+					best = Data_copy (him.get());
 					lmax = lnew;
 					if (! deleteWeakComponents) {
 						break;    // TODO was goto end; is dat hetzelfde?
 					}
 				}
-				if (my numberOfComponents > 1) { // remove smallest component
+				if (his numberOfComponents > 1) { // remove smallest component
 					component = 1;
-					double mpmin = my mixingProbabilities [component];
-					for (integer ic = 2; ic <= my numberOfComponents; ic ++) {
-						if (my mixingProbabilities [ic] < mpmin) {
-							mpmin = my mixingProbabilities [ic];
+					double mpmin = his mixingProbabilities [component];
+					for (integer ic = 2; ic <= his numberOfComponents; ic ++) {
+						if (his mixingProbabilities [ic] < mpmin) {
+							mpmin = his mixingProbabilities [ic];
 							component = ic;
 						}
 					}
 
-					autoMAT pc = GaussianMixture_removeComponent_bookkeeping (me.get(), component, p.get());
-					p = pc.move();
+					autoMAT pc = GaussianMixture_removeComponent_bookkeeping (him.get(), component, pam.get());
+					pam = pc.move();
 				} else {
 					break;
 				}
@@ -1068,8 +1078,10 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 
 // The numberOfElements per covariance needs to be updated later
 void GaussianMixture_removeComponent (GaussianMixture me, integer component) {
-	if (component < 1 || component > my numberOfComponents || my numberOfComponents == 1)
+	if (my numberOfComponents == 1)
 		return;
+	Melder_require (component > 0 && component <= my numberOfComponents,
+		U"The component number should be in the range from 1 to ", my numberOfComponents, U".");
 
 	my covariances -> removeItem (component);
 	my numberOfComponents --;
@@ -1087,7 +1099,7 @@ autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numb
 		Melder_require (my numberOfRows >= 2 * numberOfComponents,
 			U"The number of rows should at least be twice the number of components.");
 		autoGaussianMixture thee = GaussianMixture_create (numberOfComponents, my numberOfColumns, storage);
-		GaussianMixture_setLabelsFromTableOfReal (thee.get(), me);
+		GaussianMixture_setColumnLabelsFromTableOfReal (thee.get(), me);
 		GaussianMixture_initialGuess (thee.get(), me, 1.0, 0.05);
 		if (maxNumberOfIterations <= 0)
 			return thee;

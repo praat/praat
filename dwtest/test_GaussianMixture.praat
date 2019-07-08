@@ -4,7 +4,7 @@
 appendInfoLine: "test_GaussianMixture.praat"
 appendInfoLine: tab$, "Interface"
 pols = Create TableOfReal (Pols 1973): "no"
-gm = To GaussianMixture (row labels): "Complete"
+gm = To GaussianMixture (row labels): "Diagonals"
 numberOfComponents = Get number of components
 assert numberOfComponents == 12
 dimension = Get dimension of component
