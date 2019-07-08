@@ -862,20 +862,24 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
-			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
+			thy centroid.get()  +=  covi -> centroid.get()  *  covi -> numberOfObservations;
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
-		thy centroid.all()  *=  1.0 / thy numberOfObservations;
+		thy centroid.get()  *=  1.0 / thy numberOfObservations;
 		
 		autoVEC mean = newVECraw (thy numberOfColumns);
 		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
-			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
+			mean.get() <<= covi -> centroid.get()  -  thy centroid.get();
 			MATouter (outer.get(), mean.get(), mean.get());
-			thy data.all()  +=  outer.all()  *  covi -> numberOfObservations; // Y += aX
+			outer.get()  *=  covi -> numberOfObservations;
+			if (thy numberOfRows == 1) 
+				thy data.row(1)  +=  outer.diagonal();
+			else
+				thy data.get()  +=  outer.get(); // Y += aX
 		}
-		thy data.all()  *=  1.0 / (thy numberOfObservations - 1.0);
+		thy data.get()  *=  1.0 / (thy numberOfObservations - 1.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (between) created.");
