@@ -95,6 +95,13 @@ autoVEC Sampled_listValuesOfAllSamples (Sampled me, integer levelNumber, int uni
 	return result;
 }
 
+autoVEC Sampled_listValuesAtXes (Sampled me, constVECVU const& xes, integer levelNumber, int unit, bool interpolate) {
+	autoVEC result (xes.size, kTensorInitializationType::RAW);
+	for (integer ix = 1; ix <= xes.size; ix ++)
+		result [ix] = Sampled_getValueAtX (me, xes [ix], levelNumber, unit, interpolate);
+	return result;
+}
+
 double Sampled_getValueAtX (Sampled me, double x, integer levelNumber, int unit, bool interpolate) {
 	if (x < my xmin || x > my xmax)
 		return undefined;

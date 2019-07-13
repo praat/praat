@@ -50,7 +50,25 @@ autoVEC newVECfrom_to (double from, double to) {
 	return result;
 }
 
-autoVEC newVECfrom_to_by_left (double from, double to, double by) {
+autoVEC newVECbetween_by (double from, double to, double by) {
+	Melder_require (by != 0.0,
+		U"between_by#: cannot have a step (“by”) of zero.");
+	/*
+		The following algorithm works for both positive and negative `by`.
+	*/
+	const integer numberOfElements = Melder_ifloor ((to - from) / by + 1.0);
+	if (numberOfElements < 1)
+		return autoVEC ();
+	const double spaceNeeded = (numberOfElements - 1) * by;
+	const double spaceOnEdges = (to - from) - spaceNeeded;
+	const double first = from + 0.5 * spaceOnEdges;
+	autoVEC result = newVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = first + (double) (i - 1) * by;
+	return result;
+}
+
+autoVEC newVECfrom_to_by (double from, double to, double by) {
 	Melder_require (by != 0.0,
 		U"from_to_by#: cannot have a step (“by”) of zero.");
 	/*

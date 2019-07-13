@@ -2939,7 +2939,7 @@ NORMAL (U"A vector can also be given to a ##menu command# that returns another v
 CODE (U"selectObject: myPitch")
 CODE (U"tmin = Get start time")
 CODE (U"tmax = Get end time")
-CODE (U"times\\#  = from_to_by_centred\\#  (tmin, tmax, 0.01)")
+CODE (U"times\\#  = between_by\\#  (tmin, tmax, 0.01)")
 CODE (U"pitches\\#  = List values at times: times\\# , \"hertz\", \"linear\"")
 MAN_END
 
@@ -2965,16 +2965,16 @@ NORMAL (U"You can \"nest\" include files, i.e., included scripts can include oth
 NORMAL (U"The #include statement can only be at the start of a line: you cannot put any spaces in front of it.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.9. Quitting", U"ppgb", 20170718)
+MAN_BEGIN (U"Scripting 5.9. Quitting", U"ppgb", 20190713)
 NORMAL (U"Usually, the execution of your script ends when the interpreter has executed the last line "
 	"that is not within a procedure definition. However, you can also explicitly stop the script:")
 TAG (U"#exitScript ( )")
 DEFINITION (U"stops the execution of the script in the normal way, i.e. without any messages to the user. "
-	"Any settings window is removed from the screen.")
+	"Any settings (form) window is removed from the screen (unless Apply was clicked instead of OK).")
 TAG (U"#exitScript: %%error-message%")
 DEFINITION (U"stops the execution of the script while sending an error message to the user. "
 	"You can use the same argument list as with #writeInfoLine. "
-	"Any settings window will stay on the screen.")
+	"Any settings (form) window will stay on the screen.")
 NORMAL (U"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
