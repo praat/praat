@@ -22,9 +22,9 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190707)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190713)
 INTRO (U"Latest changes in Praat.")
-NORMAL (U"##6.1# (7 July 2019)")
+NORMAL (U"##6.1# (13 July 2019)")
 NORMAL (U"##6.0.57# (1 July 2019)")
 LIST_ITEM (U"• Repaired a crash when an editor window zoomed in to a zero time range.")
 LIST_ITEM (U"• Repaired a crash when playing a matrix movie with one row or a constant value.")
