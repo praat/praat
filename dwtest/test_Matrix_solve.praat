@@ -30,7 +30,7 @@ endproc
 procedure matrix_solve: .ncol
   for .i to 4
     .nrow = .i * .ncol
-   appendInfoLine: tab$, "nrow = ", .nrow, ", ncol = ", .ncol
+    appendInfoLine: tab$, "nrow = ", .nrow, ", ncol = ", .ncol
     .eps = .nrow * 1e-7
     .m = Create simple Matrix: string$(.i), .nrow, .ncol+1, "0.0"
     Formula: "if (col <= ((row - 1) mod .ncol)+1) then 1 else 0 fi"
@@ -52,7 +52,7 @@ procedure solve_undetermined: .nrow, .ncol
 	 .m = Create simple Matrix: "u", .nrow, .ncol, "if row==col then 1 else 0 fi"
 	Formula: "if col==row+1 then 1 else self fi"
 	Formula: "if col == .ncol then if row == .nrow then 1 else 2 fi  else self fi"
-	.ms = Solve equation: 1e-7
+	.ms = nowarn Solve equation: 1e-7
 	 .ncols = Get number of columns
 	assert .ncols == .ncol - 1
 	for .irow to .nrow

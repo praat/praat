@@ -1176,7 +1176,8 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, integer channel, doub
 			U"The channel number should be in the interval from 1 to ", my ny, U".");
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		integer index = 1, intervalSize_samples = Melder_ifloor (maximumDuration / my dx);
-		intervalSize_samples = std::max (1L, intervalSize_samples);
+		if (intervalSize_samples < 1)
+			intervalSize_samples = 1;
 		constVEC samples = my z.row (channel);
 		while (index < my nx) {
 			integer nextIndex = index + 1, step = 1;
