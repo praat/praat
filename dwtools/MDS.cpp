@@ -1955,8 +1955,9 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 				for (integer l = 1; l <= nPoints; l ++)
 					wih += xc -> data [k] [h] * spr -> data [k] [l] * xc -> data [l] [h];
 			}
-			wih = std::max (0.0, (double) wih);
-			weights -> data [i] [h] = wih;
+			if (wih < 0.0)
+				wih = 0.0;
+			weights -> data [i] [h] = double (wih);
 
 		}
 	}
