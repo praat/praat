@@ -1754,6 +1754,21 @@ DIRECT (NEW_Pitch_killOctaveJumps) {
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: List values at times...") {
+	NUMVEC (times, U"Times (s)", U"{ 0.5, 0.7, 2.0 }")
+	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
+		RADIOBUTTON (U"Nearest")
+		RADIOBUTTON (U"Linear")
+	OK
+DO
+	NUMVEC_ONE (Pitch)
+		autoVEC result = Sampled_listValuesAtXes (me, times, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
+		for (integer iframe = 1; iframe <= result.size; iframe ++)
+			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMVEC_ONE_END
+}
+
 FORM (NUMVEC_Pitch_listValuesInAllFrames, U"Pitch: List values in all frames", U"Pitch: List values in all frames...") {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
@@ -3240,6 +3255,7 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 1, U"-- get content --", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 1, U"Count voiced frames", nullptr, 1, INTEGER_Pitch_getNumberOfVoicedFrames);
 		praat_addAction1 (classPitch, 1, U"Get value at time...", nullptr, 1, REAL_Pitch_getValueAtTime);
+		praat_addAction1 (classPitch, 1, U"List values at times...", nullptr, 1, NUMVEC_Pitch_listValuesAtTimes);
 		praat_addAction1 (classPitch, 1, U"Get value in frame...", nullptr, 1, REAL_Pitch_getValueInFrame);
 		praat_addAction1 (classPitch, 1, U"List values in all frames...", nullptr, 1, NUMVEC_Pitch_listValuesInAllFrames);
 		praat_addAction1 (classPitch, 1, U"-- get extreme --", nullptr, 1, nullptr);

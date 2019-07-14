@@ -81,6 +81,7 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 double Sampled_getValueAtSample (Sampled me, integer sampleNumber, integer levelNumber, int unit);
 autoVEC Sampled_listValuesOfAllSamples (Sampled me, integer levelNumber, int unit);
 double Sampled_getValueAtX (Sampled me, double x, integer levelNumber, int unit, bool interpolate);
+autoVEC Sampled_listValuesAtXes (Sampled me, constVECVU const& xes, integer levelNumber, int unit, bool interpolate);
 
 integer Sampled_countDefinedSamples
 	(Sampled me, double xmin, double xmax, integer levelNumber, int unit);
