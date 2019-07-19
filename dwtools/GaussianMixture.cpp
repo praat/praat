@@ -711,7 +711,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 			longdouble psum = 0.0;
 			for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
 				Covariance cov = my covariances->at [ic];
-				double dsq = NUMmahalanobisDistance (cov -> lowerCholeskyInverse.get(), thy data.row (irow), cov -> centroid.get());
+				double dsq = NUMmahalanobisDistanceSquared (cov -> lowerCholeskyInverse.get(), thy data.row (irow), cov -> centroid.get());
 				lnN [ic] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				psum += his data [irow] [ic] = my mixingProbabilities [ic] * exp (lnN [ic]);
 			}
@@ -818,7 +818,7 @@ void GaussianMixture_TableOfReal_getComponentProbabilities (GaussianMixture me, 
 			SSCP_expandLowerCholeskyInverse (covi);
 
 			for (integer irow = 1; irow <= thy numberOfRows; irow++) {
-				double dsq = NUMmahalanobisDistance (covi -> lowerCholeskyInverse.get(), thy data.row (irow), covi -> centroid.get());
+				double dsq = NUMmahalanobisDistanceSquared (covi -> lowerCholeskyInverse.get(), thy data.row (irow), covi -> centroid.get());
 				probabilities [irow] [component] = std::max (1e-300, exp (- 0.5 * (ln2pid + covi -> lnd + dsq))); // prevent probabilities from being zero
 			}
 		}
@@ -1281,11 +1281,11 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 				for (integer j = 1; j <= thy numberOfRows; j ++) {
 					double partialSum = 0.0;
 					for (integer k = 1; k < j; k ++) {
-						double djk_sq = NUMmahalanobisDistance (lowerCholeskyInverse, thy data.row (j), thy data.row (k));
+						double djk_sq = NUMmahalanobisDistanceSquared (lowerCholeskyInverse, thy data.row (j), thy data.row (k));
 						partialSum += 2.0 * responsibilities [k] [component] * exp (-0.5 * beta2 * djk_sq);
 					}
 					doubleSum += responsibilities [j] [component] * partialSum;
-					double djj_sq = NUMmahalanobisDistance (lowerCholeskyInverse, thy data.row(j), cov -> centroid.get());
+					double djj_sq = NUMmahalanobisDistanceSquared (lowerCholeskyInverse, thy data.row(j), cov -> centroid.get());
 					singleSum += responsibilities [j] [component] * exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 				}
 				

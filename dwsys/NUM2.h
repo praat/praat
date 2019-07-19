@@ -455,7 +455,7 @@ double NUMdeterminant_fromSymmetricMatrix (constMAT m);
 	ln(determinant) of a symmetric p.s.d. matrix
 */
 
-double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
+double NUMmahalanobisDistanceSquared (constMAT lowerInverse, constVEC v, constVEC m);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'

@@ -34,7 +34,7 @@
  	invStudentQ, invChiSquareQ: modifications for 'undefined' return values.
  djmw 20030830 Corrected a bug in NUMtriangularfilter_amplitude
  djmw 20031111 Added NUMdmatrix_transpose, NUMdmatrix_printMatlabForm
- djmw 20040105 Added NUMmahalanobisDistance_chi
+ djmw 20040105 Added NUMmahalanobisDistanceSquared_chi
  djmw 20040303 Added NUMstring_containsPrintableCharacter.
  djmw 20050406 NUMprocrutus->NUMprocrustes
  djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional
@@ -278,7 +278,7 @@ autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m) {
 	return result;
 }
 
-double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
+double NUMmahalanobisDistanceSquared (constMAT lowerInverse, constVEC v, constVEC m) {
 	Melder_assert (lowerInverse.ncol == v.size && v.size == m.size);
 	longdouble chisq = 0.0;
 	if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
@@ -1225,11 +1225,11 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double 
 		*/
 		for (integer j = 1; j <= n; j ++) {
 			for (integer k = 1; k < j; k ++) {
-				const double djk = NUMmahalanobisDistance (covar.get(), x.row (j), x.row(k));
+				const double djk = NUMmahalanobisDistanceSquared (covar.get(), x.row (j), x.row(k));
 				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 			}
 			sumjk += 1.0; // for k == j
-			const double djj = NUMmahalanobisDistance (covar.get(), x.row (j), zero.get());
+			const double djj = NUMmahalanobisDistanceSquared (covar.get(), x.row (j), zero.get());
 			sumj += exp (-b2 * djj);
 		}
 		tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *

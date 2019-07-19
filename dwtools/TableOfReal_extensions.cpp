@@ -1396,10 +1396,10 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 			double doubleSum = 0.0, singleSum = 0.0;
 			for (integer j = 1; j <= n; j ++) {
 				for (integer k = 1; k < j; k ++) {
-					double djk_sq = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
+					double djk_sq = NUMmahalanobisDistanceSquared (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
 					doubleSum += 2.0 * exp (-0.5 * beta2 * djk_sq); // factor 2 because d [j] [k] == d [k] [j]
 				}
-				double djj_sq = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
+				double djj_sq = NUMmahalanobisDistanceSquared (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
 				singleSum += exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 			}
 			doubleSum += n; // the contribution of all the j==k terms in the doubleSum calculation

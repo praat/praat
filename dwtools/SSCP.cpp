@@ -511,7 +511,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		if (useTableCentroid)
 			VECcolumnMeans (centroid.get(), thy data.get());
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
-			his data [k] [1] = sqrt (NUMmahalanobisDistance (covari.get(), thy data.row (k), centroid.get()));
+			his data [k] [1] = sqrt (NUMmahalanobisDistanceSquared (covari.get(), thy data.row (k), centroid.get()));
 			if (thy rowLabels [k])
 				TableOfReal_setRowLabel (him.get(), k, thy rowLabels [k].get());
 		}
@@ -1248,7 +1248,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
 		SSCP_expandLowerCholeskyInverse (me);
 	double ln2pid = my numberOfColumns * log (NUM2pi);
-	double dsq = NUMmahalanobisDistance (my lowerCholeskyInverse.get(), x, my centroid.get());
+	double dsq = NUMmahalanobisDistanceSquared (my lowerCholeskyInverse.get(), x, my centroid.get());
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
 	double p = exp (lnN);
 	return p;
@@ -1309,7 +1309,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 
-		double mahalanobis = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
+		double mahalanobis = NUMmahalanobisDistanceSquared (s.get(), my centroid.get(), thy centroid.get());
 		double hotelling_tsq = mahalanobis * N1 * N2 / N;
 		fisher = hotelling_tsq * df2 / ( (N - 2) * df1);
 	} else {
@@ -1335,7 +1335,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 		// Krishan... formula 2, page 162
-		double hotelling_tsq = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
+		double hotelling_tsq = NUMmahalanobisDistanceSquared (s.get(), my centroid.get(), thy centroid.get());
 
 		autoMAT si = newMATinverse_fromLowerCholeskyInverse (s.get());
 		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.get(), si.get());
