@@ -55,10 +55,10 @@ ct = To ClassificationTable
 selectObject: pols, gm
 correlation = To Correlation
 selectObject: pols, gm
-tor = To TableOfReal (BHEP normality tests): 1.41
-removeObject:  tor, correlation, ct, cemm
+table = To Table (BHEP normality tests): 1.41
+removeObject:  table, correlation, ct, cemm
 
-;removeObject: pols, gm
+;removeObject: pols, gm, table
 
 appendInfoLine: "test_GaussianMixture.praat OK"
 

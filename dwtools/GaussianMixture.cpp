@@ -856,9 +856,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_probabilities (Gaussi
 autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_responsibilities (GaussianMixture me, TableOfReal thee) {
 	try {
 		autoTableOfReal him = GaussianMixture_TableOfReal_to_TableOfReal_probabilities (me, thee);
-		autoMAT responsibilities = newMATraw (his numberOfRows, his numberOfColumns);
-		GaussianMixture_getResponsibilities (me, his data.get(), 0, responsibilities.get());
-		his data = responsibilities.move();
+		GaussianMixture_getResponsibilities (me, his data.get(), 0, his data.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no responsibilities could be calculated.");
@@ -1262,10 +1260,12 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 				Calculate the expectation and the variance according to theorem 2.3 (page 14)
 			*/
 			double mu = 1.0 - pow (gamma, -d_half) * (1.0 + d * beta2 / gamma + d * (d + 2.0) * beta4 / (2.0 * gamma2));
-			double var = 2.0 * pow (1.0 + 4.0 * beta2, -d_half)
-				+ 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2  + 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
-				- 4.0 * pow (delta, -d_half) * (1.0 + 3.0 * d * beta4 / (2.0 * delta) + d * (d + 2.0) * beta8 / (2.0 * delta2));
 			double mu2 = mu * mu;
+			double var = 2.0 * pow (1.0 + 4.0 * beta2, -d_half)
+				+ 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2
+				+ 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
+				- 4.0 * pow (delta, -d_half) * (1.0 + 3.0 * d * beta4 / (2.0 * delta)
+				+ d * (d + 2.0) * beta8 / (2.0 * delta2));
 			double tnb;
 			Covariance cov = my covariances->at [component];
 			try {
@@ -1289,7 +1289,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 					singleSum += responsibilities [j] [component] * exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 				}
 				
-				doubleSum += n; // contribution of all the j==k terms in the partialSum
+				doubleSum += n; // contribution of all the j==k terms
 				double scaleFactor = 2.0 * pow (1.0 + beta2, - d_half);
 				tnb = (1.0 / n) * ((1.0 / n) * doubleSum - scaleFactor * singleSum) + pow (gamma, - d_half);
 				Table_setStringValue (him.get(), component, 9, U"no");
@@ -1300,7 +1300,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 			}
 
 			double lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
-			double lnvar = sqrt (log ( (mu2 + var) / mu2));
+			double lnvar = sqrt (log ((mu2 + var) / mu2));
 			double probability = NUMlogNormalQ (tnb, lnmu, lnvar);
 			
 			Table_setNumericValue (him.get(), component, 2, probability);

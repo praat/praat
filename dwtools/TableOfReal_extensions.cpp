@@ -1408,10 +1408,12 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 			tnb = 4.0 * n;
 		}
 		double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2) * beta4 / (2.0 * gamma2));
-		double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
-			+ 2.0 * pow (gamma,  -d) * (1.0 + 2 * d * beta4 / gamma2  + 3 * d * (d + 2) * beta8 / (4.0 * gamma4))
-			- 4.0 * pow (delta, -d2) * (1.0 + 3 * d * beta4 / (2.0 * delta) + d * (d + 2) * beta8 / (2.0 * delta2));
 		double mu2 = mu * mu;
+		double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
+			+ 2.0 * pow (gamma,  -d) * (1.0 + 2 * d * beta4 / gamma2
+			+ 3 * d * (d + 2) * beta8 / (4.0 * gamma4))
+			- 4.0 * pow (delta, -d2) * (1.0 + 3 * d * beta4 / (2.0 * delta)
+			+ d * (d + 2) * beta8 / (2.0 * delta2));
 		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		lnvar = sqrt (log ( (mu2 + var) / mu2));
 		prob = NUMlogNormalQ (tnb, lnmu, lnvar);
