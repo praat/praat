@@ -1369,9 +1369,9 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 		 *  Journal of Multivariate Analysis 62, 1-23.
 		 */
 
-		integer n = my numberOfRows, p = my numberOfColumns;
-		double beta = *h > 0.0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ((1.0 + 2 * p) / 4, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
-		double p2 = p / 2.0;
+		integer n = my numberOfRows, d = my numberOfColumns;
+		double beta = *h > 0.0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ((1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (n, 1.0 / (d + 4.0));
+		double d2 = d / 2.0;
 		double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
 		double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
 		double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
@@ -1382,37 +1382,35 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 
 		double tnb = undefined, lnmu = undefined, lnvar = undefined;
 
-		if (n < 2 || p < 1)
+		if (n < 2 || d < 1)
 			return undefined;
 
 		autoCovariance thee = TableOfReal_to_Covariance (me);
 		try {
 			SSCP_expandLowerCholeskyInverse (thee.get());
-		} catch (MelderError) {
-			tnb = 4.0 * n;
-		}
-		{
-			double djk, djj, sumjk = 0.0, sumj = 0.0;
-			double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
+
 			/* Heinze & Wagner (1997), page 3
 				We use d [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
 				So d [j] [k]= d [k] [j] and d [j] [j] = 0
 			*/
+			double doubleSum = 0.0, singleSum = 0.0;
 			for (integer j = 1; j <= n; j ++) {
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
-					sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
+					double djk_sq = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
+					doubleSum += 2.0 * exp (-0.5 * beta2 * djk_sq); // factor 2 because d [j] [k] == d [k] [j]
 				}
-				sumjk += 1; // for k == j
-				djj = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
-				sumj += exp (-b2 * djj);
+				double djj_sq = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
+				singleSum += exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 			}
-			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+			doubleSum += n; // the contribution of all the j==k terms in the doubleSum calculation
+			tnb = (1.0 / n) * ((1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d2) * singleSum) + pow (gamma, - d2);
+		} catch (MelderError) {
+			tnb = 4.0 * n;
 		}
-		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
-		double var = 2.0 * pow (1.0 + 4.0 * beta2, -p2)
-			+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
-			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
+		double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2) * beta4 / (2.0 * gamma2));
+		double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
+			+ 2.0 * pow (gamma,  -d) * (1.0 + 2 * d * beta4 / gamma2  + 3 * d * (d + 2) * beta8 / (4.0 * gamma4))
+			- 4.0 * pow (delta, -d2) * (1.0 + 3 * d * beta4 / (2.0 * delta) + d * (d + 2) * beta8 / (2.0 * delta2));
 		double mu2 = mu * mu;
 		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		lnvar = sqrt (log ( (mu2 + var) / mu2));

@@ -45,11 +45,11 @@ Draw marginal pdf: 1, 0, 0, 0, 0, 500, 0, "yes"
 Select outer viewport: 3, 6, 3, 6
 Draw marginal pdf: 2, 0, 0, 0, 0, 500, 0, "yes"
 
-appendInfoLine: tab$, "GaussinaMixture and TableOfReal"
+appendInfoLine: tab$, "GaussianMixture and TableOfReal"
 
 selectObject: pols, gm
 p = Get likelihood value: "Likelihood"
-cemm = To GaussianMixture (CEMM): 1, 0.001, 200, 0.001, "MessageLength"
+cemm = To GaussianMixture (CEMM): 1, 0.001, 200, "yes"
 selectObject: pols, gm
 ct = To ClassificationTable
 selectObject: pols, gm

@@ -40,6 +40,8 @@
 autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer dimension, kGaussianMixtureStorage storage);
 /* Start each function with expand and end with unExpand */
 
+void GaussianMixture_removeUnsupportedComponents (GaussianMixture me);
+
 void GaussianMixture_expandPCA (GaussianMixture me);
 
 void GaussianMixture_unExpandPCA (GaussianMixture me);
@@ -60,7 +62,6 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics 
 
 autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, kGaussianMixtureStorage storage);
 
-void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double nSigmas, double ru_range);
 /*
 	Give an initial guess for the centroids and covariances of the GaussianMixture based on the data in the table.
 	Position centroids on the nSigma-ellips in the pc1-pc2 plane with some random variation and the covariances as
@@ -70,8 +71,24 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 		y = b * (1 + randomUniform (-ru_range, ru_range)) * sin (alpha).
 	where a and b are the axes of the ellipse and 0<= alpha <= 2pi.
 */
+void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double nSigmas, double ru_range);
+void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee);
 
-void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, MAT const& p);
+/*
+	Get the component probabilities N(x|mu(k),Sigma(k)).
+	Bishop (2007): Pattern recognition and machine learning, Springer page 25: Eq. 1.52
+*/
+void GaussianMixture_TableOfReal_getComponentProbabilities (GaussianMixture me, TableOfReal thee, integer componentToUpdate, MAT const& probabilities);
+autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_probabilities (GaussianMixture me, TableOfReal thee);
+
+/*
+	Calculate the responsibities: mixingProbability(k) * N(x(n)|mu(k),Sigma(k)) / Normalization.
+	Bishop (2007): Pattern recognition and machine learning, Springer page 438: Eq. 9.23
+	Invariant:
+	The row sum always equals 1.
+*/
+void GaussianMixture_TableOfReal_getComponentResponsibilities (GaussianMixture me, TableOfReal thee, integer componentToUpdate, MAT const& responsibilities);
+autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_responsibilities (GaussianMixture me, TableOfReal thee);
 
 conststring32 GaussianMixture_criterionText (kGaussianMixtureCriterion criterion);
 
@@ -79,7 +96,18 @@ autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numb
 
 void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion);
 
-autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, kGaussianMixtureCriterion criterion);
+/*
+	Learn a GaussiamMixture from multivariate data (unsupervised).
+	1) it is capable of selecting the number of components and 
+	2) unlike the standard expectation-maximization (EM) algorithm, it does not require careful initialization. 
+	3) It avoids the possibility of convergence toward a singular estimate at the boundary of the parameter space.
+	The Component-wise Expectation Maximization for Mixures algorithm (CEMM) is described at page 387 of:
+	M.A.T. Figueiredo & A.K. Jain (2002): "Unsupervised learning of finite mixture models",
+	IEEETransactions on pattern analysis and machine intelligence 24: 381--396.
+*/
+autoGaussianMixture TableOfReal_to_GaussianMixture_CEMM (TableOfReal me, integer minimumNumberOfComponents, integer maximumNumberOfComponents, kGaussianMixtureStorage storage, integer maximumNumberOfIterations, double tolerance, bool info);
+
+autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture me, TableOfReal thee, integer minimumNumberOfComponents, integer maxNumberOfIterations, double tolerance, bool info);
 
 void GaussianMixture_splitComponent (GaussianMixture me, integer component);
 
@@ -87,7 +115,7 @@ void GaussianMixture_removeComponent (GaussianMixture me, integer component);
 
 autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee);
 
-autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
+autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h);
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, kGaussianMixtureCriterion criterion);
 
