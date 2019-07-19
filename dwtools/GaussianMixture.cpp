@@ -1266,7 +1266,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 				+ 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
 				- 4.0 * pow (delta, -d_half) * (1.0 + 3.0 * d * beta4 / (2.0 * delta)
 				+ d * (d + 2.0) * beta8 / (2.0 * delta2));
-			double tnb;
+			double testStatistic;
 			Covariance cov = my covariances->at [component];
 			try {
 				SSCP_expandLowerCholeskyInverse (cov);
@@ -1277,7 +1277,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 					We use D [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
 					So D [j] [k]= D [k] [j] and D [j] [j] = 0
 				*/
-				double doubleSum = 0.0, singleSum = 0.0;
+				double doubleSum = 0.0;
 				for (integer j = 1; j <= thy numberOfRows; j ++) {
 					double partialSum = 0.0;
 					for (integer k = 1; k < j; k ++) {
@@ -1285,27 +1285,28 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 						partialSum += 2.0 * responsibilities [k] [component] * exp (-0.5 * beta2 * djk_sq);
 					}
 					doubleSum += responsibilities [j] [component] * partialSum;
+				}
+				doubleSum += n; // contribution of all the j==k terms
+				double singleSum = 0.0;
+				for (integer j = 1; j <= thy numberOfRows; j ++) {
 					double djj_sq = NUMmahalanobisDistanceSquared (lowerCholeskyInverse, thy data.row(j), cov -> centroid.get());
 					singleSum += responsibilities [j] [component] * exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 				}
-				
-				doubleSum += n; // contribution of all the j==k terms
-				double scaleFactor = 2.0 * pow (1.0 + beta2, - d_half);
-				tnb = (1.0 / n) * ((1.0 / n) * doubleSum - scaleFactor * singleSum) + pow (gamma, - d_half);
+				testStatistic = (1.0 / n) * ((1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d_half) * singleSum) + pow (gamma, - d_half);
 				Table_setStringValue (him.get(), component, 9, U"no");
 			} catch (MelderError) {
 				Melder_clearError ();
-				tnb = 4.0 * n;
+				testStatistic = 4.0 * n;
 				Table_setStringValue (him.get(), component, 9, U"yes");
 			}
 
 			double lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 			double lnvar = sqrt (log ((mu2 + var) / mu2));
-			double probability = NUMlogNormalQ (tnb, lnmu, lnvar);
+			double probability = NUMlogNormalQ (testStatistic, lnmu, lnvar);
 			
 			Table_setNumericValue (him.get(), component, 2, probability);
 			Table_setNumericValue (him.get(), component, 3, NUMsqrt1_2 / beta);
-			Table_setNumericValue (him.get(), component, 4, tnb);
+			Table_setNumericValue (him.get(), component, 4, testStatistic);
 			Table_setNumericValue (him.get(), component, 5, lnmu);
 			Table_setNumericValue (him.get(), component, 6, lnvar);
 			Table_setNumericValue (him.get(), component, 7, n);

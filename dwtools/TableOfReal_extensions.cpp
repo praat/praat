@@ -1380,9 +1380,9 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 		if (*h <= 0.0)
 			*h = NUMsqrt1_2 / beta;
 
-		double tnb = undefined, lnmu = undefined, lnvar = undefined;
+		double testStatistic = undefined, lnmu = undefined, lnvar = undefined;
 
-		if (n < 2 || d < 1)
+		if (d < 1 || n < d + 1)
 			return undefined;
 
 		autoCovariance thee = TableOfReal_to_Covariance (me);
@@ -1393,19 +1393,22 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 				We use d [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
 				So d [j] [k]= d [k] [j] and d [j] [j] = 0
 			*/
-			double doubleSum = 0.0, singleSum = 0.0;
+			double doubleSum = 0.0;
 			for (integer j = 1; j <= n; j ++) {
 				for (integer k = 1; k < j; k ++) {
 					double djk_sq = NUMmahalanobisDistanceSquared (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
-					doubleSum += 2.0 * exp (-0.5 * beta2 * djk_sq); // factor 2 because d [j] [k] == d [k] [j]
+					doubleSum += 2.0 * exp (-0.5 * beta2 * djk_sq); // factor 2, d [j] [k] == d [k] [j]
 				}
+			}
+			doubleSum += n; // the contribution of all the j==k terms in the doubleSum calculation
+			double singleSum = 0.0;
+			for (integer j = 1; j <= n; j ++) {
 				double djj_sq = NUMmahalanobisDistanceSquared (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
 				singleSum += exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 			}
-			doubleSum += n; // the contribution of all the j==k terms in the doubleSum calculation
-			tnb = (1.0 / n) * ((1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d2) * singleSum) + pow (gamma, - d2);
+			testStatistic = (1.0 / n) * ((1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d2) * singleSum) + pow (gamma, - d2);
 		} catch (MelderError) {
-			tnb = 4.0 * n;
+			testStatistic = 4.0 * n;
 		}
 		double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2) * beta4 / (2.0 * gamma2));
 		double mu2 = mu * mu;
@@ -1416,9 +1419,9 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 			+ d * (d + 2) * beta8 / (2.0 * delta2));
 		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		lnvar = sqrt (log ( (mu2 + var) / mu2));
-		prob = NUMlogNormalQ (tnb, lnmu, lnvar);
+		prob = NUMlogNormalQ (testStatistic, lnmu, lnvar);
 		if (out_tnb)
-			*out_tnb = tnb;
+			*out_tnb = testStatistic;
 		if (out_lnmu)
 			*out_lnmu = lnmu;
 		if (out_lnvar)
