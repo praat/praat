@@ -489,12 +489,9 @@ autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfR
 
 autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid) {
 	try {
+		Melder_require (my numberOfColumns == thy numberOfColumns,
+			U"The dimension of the Covariance and the TableOfReal shoiuld be equal.");
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
-		/*
-			ppgb
-			ik kom er niet achter of onderstaande de hele vector kopieert of niet;
-			in elk geval zijn hier enkele asserts nodig
-		*/
 		autoVEC centroid = newVECcopy (my centroid.get());
 		autoMAT covari = newMATcopy (my data.get());
 
@@ -1443,6 +1440,94 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 
 	} catch (MelderError) {
 		Melder_throw (U"Equality coud not be tested.");
+	}
+}
+
+double Covariance_normalityTest_BHEP (Covariance me, constMAT const& data, constVEC const& responsibilities, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_covarianceIsSingular) {
+	try {
+		Melder_require (data.nrow > data.ncol,
+			U"The number of data should be larger than the dimension of the data.");
+		Melder_require (my numberOfColumns == data.ncol,
+			U"The the number of columns of the covariance and the data should be equal.");
+
+		bool weighting = responsibilities.size > 0, covarianceIsSingular = false;
+		double n = data.nrow, d = data.ncol, testStatistic;
+		if (weighting) {
+			Melder_require (responsibilities.size == data.nrow,
+				U"The size of the responsibilities vector should equal the number of data.");
+			n = NUMsum (responsibilities);
+		}
+
+		*inout_beta = ( *inout_beta > 0.0 ? NUMsqrt1_2 / *inout_beta : NUMsqrt1_2 * pow ( (1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (n, 1.0 / (d + 4.0)) );
+		const double d2 = d / 2.0;
+		const double beta2 = *inout_beta * *inout_beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+		const double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2; // page 15
+		const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta; // page 15
+		
+		autoVEC buf = newVECraw (data.nrow);
+
+		try { // in case the covariance matrix is singular and its inverse cannot be determined
+			SSCP_expandLowerCholeskyInverse (me);
+			MAT lowerInverse = my lowerCholeskyInverse.get();
+
+			/*
+				Heinze & Wagner (1997), on page 3 in the formula for W(n,beta) the residuals 
+				y(i)=S^(-1/2)*(x(i)-mean) are used.
+				However, we can work with the original data and use squared Mahalanobis distances in this calculation because
+				||y(j)-y(k)||^2 = (x(j)-x(k))'S^-1((x(j)-x(k)).
+				This expression is symmetric in j and k, so we can do with half the amount of work
+			*/
+			double doubleSum = 0.0;
+			for (integer j = 1; j <= data.nrow - 1; j ++) {
+				for (integer k = j + 1; k <= data.nrow; k ++) {
+					double djk_sq = NUMmahalanobisDistanceSquared (lowerInverse, data.row (j), data.row (k));
+					buf [k] = exp (-0.5 * beta2 * djk_sq);
+				}
+				if (weighting)
+					doubleSum += 2.0 * responsibilities [j] * NUMinner (buf.part (j + 1, data.nrow), responsibilities.part (j + 1, data.nrow));
+				else
+					doubleSum += 2.0 * NUMsum (buf.part (j + 1, data.nrow));
+			}
+			doubleSum += n; // contribution of all the terms in the double sum where j == k
+			
+			double singleSum = 0.0;	
+			for (integer j = 1; j <= data.nrow; j ++) {
+				double djj_sq = NUMmahalanobisDistanceSquared (lowerInverse, data.row(j), my centroid.get());
+				buf [j] = exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
+			}
+			if (weighting)
+				singleSum += NUMinner (buf.get(), responsibilities);
+			else
+				singleSum += NUMsum (buf.get());
+			/*
+				The test statistic is n times the W(n,beta) of page 3.
+			*/
+			testStatistic = (1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d2) * singleSum + n * pow (gamma, - d2);
+		} catch (MelderError) {
+			Melder_clearError ();
+			testStatistic = 4.0 * n;
+			covarianceIsSingular = true;
+		}
+
+		double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2.0) * beta4 / (2.0 * gamma2));
+		double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
+			+ 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2  + 3.0 * d * (d + 2) * beta8 / (4.0 * gamma4))
+			- 4.0 * pow (delta, -d2) * (1.0 + 3.0 * d * beta4 / (2.0 * delta) + d * (d + 2) * beta8 / (2.0 * delta2));
+		double mu2 = mu * mu;
+		double lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
+		double lnvar = sqrt (log ((mu2 + var) / mu2));
+		if (out_lnmu)
+			*out_lnmu = lnmu;
+		if (out_lnvar)
+			*out_lnvar = lnvar;
+		if (out_tnb)
+			*out_tnb = testStatistic;
+		if (out_covarianceIsSingular)
+			*out_covarianceIsSingular = covarianceIsSingular;
+		double prob = NUMlogNormalQ (testStatistic, lnmu, lnvar);
+		return prob;
+	} catch (MelderError) {
+		Melder_throw (me, U": Could not determine BHEP statistic.");
 	}
 }
 

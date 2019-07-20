@@ -94,6 +94,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 	Calculate the Mahalanobis distance: sqrt ((x-m)'S**-1 (x-m))
 	use the m-vector (centroid) from the covariance unless useTableColumnMeans is true.
 */
+autoTableOfReal Covariance_TableOfReal_scaledResiduals (Covariance me, TableOfReal thee, bool useTableCentroid);
 
 autoCovariance TableOfReal_to_Covariance (TableOfReal me);
 
@@ -206,6 +207,17 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 	method = 1 : Bartlett (Morrison, 1990)
 	method = 2 : Wald (Schott, 2001)
 */
+
+double Covariance_normalityTest_BHEP (Covariance me, constMAT const& data, constVEC const& responsibilities, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_covarianceIsSingular);
+/*
+	Multivariate normality test of nxp data matrix according to the method described in 
+		Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, 
+		Journal of Multivariate Analysis 62, 1-23.
+	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.
+*/
+
+
+
 
 autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me);
 autoCovariance CovarianceList_to_Covariance_between (CovarianceList me);

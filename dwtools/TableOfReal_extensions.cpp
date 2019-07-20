@@ -1363,70 +1363,15 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 	}
 }
 
-double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tnb, double *out_lnmu, double *out_lnvar) {
+double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_singularCovariance) {
 	try {
 		/* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, 
 		 *  Journal of Multivariate Analysis 62, 1-23.
 		 */
-
-		integer n = my numberOfRows, d = my numberOfColumns;
-		double beta = *h > 0.0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ((1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (n, 1.0 / (d + 4.0));
-		double d2 = d / 2.0;
-		double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-		double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-		double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
-		double prob = undefined;
-
-		if (*h <= 0.0)
-			*h = NUMsqrt1_2 / beta;
-
-		double testStatistic = undefined, lnmu = undefined, lnvar = undefined;
-
-		if (d < 1 || n < d + 1)
-			return undefined;
-
 		autoCovariance thee = TableOfReal_to_Covariance (me);
-		try {
-			SSCP_expandLowerCholeskyInverse (thee.get());
-
-			/* Heinze & Wagner (1997), page 3
-				We use d [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
-				So d [j] [k]= d [k] [j] and d [j] [j] = 0
-			*/
-			double doubleSum = 0.0;
-			for (integer j = 1; j <= n; j ++) {
-				for (integer k = 1; k < j; k ++) {
-					double djk_sq = NUMmahalanobisDistanceSquared (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
-					doubleSum += 2.0 * exp (-0.5 * beta2 * djk_sq); // factor 2, d [j] [k] == d [k] [j]
-				}
-			}
-			doubleSum += n; // the contribution of all the j==k terms in the doubleSum calculation
-			double singleSum = 0.0;
-			for (integer j = 1; j <= n; j ++) {
-				double djj_sq = NUMmahalanobisDistanceSquared (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
-				singleSum += exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
-			}
-			testStatistic = (1.0 / n) * ((1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d2) * singleSum) + pow (gamma, - d2);
-		} catch (MelderError) {
-			testStatistic = 4.0 * n;
-		}
-		double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2) * beta4 / (2.0 * gamma2));
-		double mu2 = mu * mu;
-		double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)
-			+ 2.0 * pow (gamma,  -d) * (1.0 + 2 * d * beta4 / gamma2
-			+ 3 * d * (d + 2) * beta8 / (4.0 * gamma4))
-			- 4.0 * pow (delta, -d2) * (1.0 + 3 * d * beta4 / (2.0 * delta)
-			+ d * (d + 2) * beta8 / (2.0 * delta2));
-		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
-		lnvar = sqrt (log ( (mu2 + var) / mu2));
-		prob = NUMlogNormalQ (testStatistic, lnmu, lnvar);
-		if (out_tnb)
-			*out_tnb = testStatistic;
-		if (out_lnmu)
-			*out_lnmu = lnmu;
-		if (out_lnvar)
-			*out_lnvar = lnvar;
-		return prob;
+		autoVEC weights;
+		double probability = Covariance_normalityTest_BHEP (thee.get(), my data.get(), weights.get(), h, out_tnb, out_lnmu, out_lnvar, out_singularCovariance);
+		return probability;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot determine normality.");
 	}

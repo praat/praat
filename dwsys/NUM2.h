@@ -439,6 +439,11 @@ void NUMrank (vector<T> a) {
 }
 
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
+inline autoMAT newMATlowerCholeskyInverse (constMAT const& a) {
+	autoMAT result = newMATcopy (a);
+	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
+	return result;
+}
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
@@ -730,11 +735,6 @@ double NUMinvTukeyQ (double p, double cc, double df, double rr);
  *  df = degrees of freedom of error term
  */
 
-double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar);
-/*
-	Multivariate normality test of nxp data matrix according to the method described in Henze & Wagner (1997).
-	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.
-*/
 
 /******  Frequency in Hz to other frequency reps ****/
 

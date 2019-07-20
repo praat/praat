@@ -1193,66 +1193,28 @@ double NUMlnBeta (double a, double b) {
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
-double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar) {
-	const integer n = data.nrow, p = data.ncol;
-	if (*inout_beta <= 0)
-		*inout_beta = (1.0 / sqrt (2.0)) * pow ((1.0 + 2 * p) / 4.0, 1.0 / (p + 4.0)) * pow (n, 1.0 / (p + 4.0));
-	const double p2 = p / 2.0;
-	const double beta2 = *inout_beta * *inout_beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-	const double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-	const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
-	double prob = undefined;
-
-	double tnb = undefined, lnmu = undefined, lnvar = undefined;
-
-	if (n < 2 || p < 1)
-		return prob;
-
-	autoVEC zero = newVECzero (p);
-	autoMAT x = newMATcopy (data);
-
-	MATcentreEachColumn_inplace (x.get()); // x - xmean
-
-	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 0);
-
+void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT const& covariance, constVEC const& means) {
 	try {
-		MATlowerCholeskyInverse_inplace (covar.get(), nullptr);
-		longdouble sumjk = 0.0, sumj = 0.0;
-		const double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
-		/* Heinze & Wagner (1997), page 3
-			We use d [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
-			So d [j] [k]= d [k] [j] and d [j] [j] = 0
-		*/
-		for (integer j = 1; j <= n; j ++) {
-			for (integer k = 1; k < j; k ++) {
-				const double djk = NUMmahalanobisDistanceSquared (covar.get(), x.row (j), x.row(k));
-				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
+		Melder_require (residuals.nrow == data.nrow && residuals.ncol == data.ncol,
+			U"The data and the residuals should have the same dimensions.");
+		Melder_require (covariance.ncol == means.size && data.ncol == means.size,
+			U"The dimensions of the means and the covariance have to conform with the data.");
+		autoVEC dif = newVECraw (data.ncol);
+		autoMAT lowerInverse = newMATcopy (covariance);
+		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
+		for (integer irow = 1; irow <= data.nrow; irow ++) {
+			dif <<= data.row (irow)  -  means;
+			residuals.row(irow) <<= 0.0;
+			if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
+				residuals.row(irow) <<= lowerInverse.row(1)  *  dif.get();
+			} else {// square matrix
+				for (integer icol = 1; icol <= data.ncol; icol ++)
+					residuals [irow] [icol] = NUMinner (lowerInverse.row(icol).part (1, icol), dif.part (1, icol));
 			}
-			sumjk += 1.0; // for k == j
-			const double djj = NUMmahalanobisDistanceSquared (covar.get(), x.row (j), zero.get());
-			sumj += exp (-b2 * djj);
 		}
-		tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *
 	} catch (MelderError) {
-		Melder_clearError ();
-		tnb = 4.0 * n;
+		Melder_throw (U"MATscaleResiduals: not performed.");
 	}
-
-	double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
-	double var = 2.0 * pow (1.0 + 4.0 * beta2, -p2)
-		 + 2.0 * pow (gamma,  -p) * (1.0 + 2.0 * p * beta4 / gamma2  + 3.0 * p * (p + 2) * beta8 / (4.0 * gamma4))
-		 - 4.0 * pow (delta, -p2) * (1.0 + 3.0 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
-	double mu2 = mu * mu;
-	lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
-	lnvar = sqrt (log ((mu2 + var) / mu2));
-	if (out_lnmu)
-		*out_lnmu = lnmu;
-	if (out_lnvar)
-		*out_lnvar = lnvar;
-	if (out_tnb)
-		*out_tnb = tnb;
-	prob = NUMlogNormalQ (tnb, lnmu, lnvar);
-	return prob;
 }
 
 /*************** Hz <--> other freq reps *********************/

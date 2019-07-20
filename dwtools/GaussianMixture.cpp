@@ -1249,68 +1249,20 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 			Table_setStringValue (him.get(), component, 1, Thing_getName (cov));
 		}
 
-		double d = thy numberOfColumns, d_half = 0.5 * d;
 		for (integer component = 1; component <= my numberOfComponents; component ++) {
-			double n = numberOfData [component];
-			double beta = ( h > 0.0 ? NUMsqrt1_2 / h : NUMsqrt1_2 * pow ( (1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (n, 1.0 / (d + 4.0)) );
-			double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-			double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2; // page 15
-			double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta; // page 15
-			/*
-				Calculate the expectation and the variance according to theorem 2.3 (page 14)
-			*/
-			double mu = 1.0 - pow (gamma, -d_half) * (1.0 + d * beta2 / gamma + d * (d + 2.0) * beta4 / (2.0 * gamma2));
-			double mu2 = mu * mu;
-			double var = 2.0 * pow (1.0 + 4.0 * beta2, -d_half)
-				+ 2.0 * pow (gamma,  -d) * (1.0 + 2.0 * d * beta4 / gamma2
-				+ 3.0 * d * (d + 2.0) * beta8 / (4.0 * gamma4))
-				- 4.0 * pow (delta, -d_half) * (1.0 + 3.0 * d * beta4 / (2.0 * delta)
-				+ d * (d + 2.0) * beta8 / (2.0 * delta2));
-			double testStatistic;
 			Covariance cov = my covariances->at [component];
-			try {
-				SSCP_expandLowerCholeskyInverse (cov);
-				MAT lowerCholeskyInverse = cov -> lowerCholeskyInverse.get();
-
-				/*
-					Heinze & Wagner (1997), page 3
-					We use D [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
-					So D [j] [k]= D [k] [j] and D [j] [j] = 0
-				*/
-				double doubleSum = 0.0;
-				for (integer j = 1; j <= thy numberOfRows; j ++) {
-					double partialSum = 0.0;
-					for (integer k = 1; k < j; k ++) {
-						double djk_sq = NUMmahalanobisDistanceSquared (lowerCholeskyInverse, thy data.row (j), thy data.row (k));
-						partialSum += 2.0 * responsibilities [k] [component] * exp (-0.5 * beta2 * djk_sq);
-					}
-					doubleSum += responsibilities [j] [component] * partialSum;
-				}
-				doubleSum += n; // contribution of all the j==k terms
-				double singleSum = 0.0;
-				for (integer j = 1; j <= thy numberOfRows; j ++) {
-					double djj_sq = NUMmahalanobisDistanceSquared (lowerCholeskyInverse, thy data.row(j), cov -> centroid.get());
-					singleSum += responsibilities [j] [component] * exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
-				}
-				testStatistic = (1.0 / n) * ((1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d_half) * singleSum) + pow (gamma, - d_half);
-				Table_setStringValue (him.get(), component, 9, U"no");
-			} catch (MelderError) {
-				Melder_clearError ();
-				testStatistic = 4.0 * n;
-				Table_setStringValue (him.get(), component, 9, U"yes");
-			}
-
-			double lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
-			double lnvar = sqrt (log ((mu2 + var) / mu2));
-			double probability = NUMlogNormalQ (testStatistic, lnmu, lnvar);
-			
+			autoVEC componentResponsibilities = newVECcopy (responsibilities.column (component));
+			double testStatistic, lnmu, lnvar;
+			bool isSingular;
+			double probability = Covariance_normalityTest_BHEP (cov, thy data.get(), componentResponsibilities.get(), & h, & testStatistic, & lnmu, & lnvar, & isSingular);
+		
 			Table_setNumericValue (him.get(), component, 2, probability);
-			Table_setNumericValue (him.get(), component, 3, NUMsqrt1_2 / beta);
+			Table_setNumericValue (him.get(), component, 3, h);
 			Table_setNumericValue (him.get(), component, 4, testStatistic);
 			Table_setNumericValue (him.get(), component, 5, lnmu);
 			Table_setNumericValue (him.get(), component, 6, lnvar);
-			Table_setNumericValue (him.get(), component, 7, n);
-			Table_setNumericValue (him.get(), component, 8, d);
+			Table_setNumericValue (him.get(), component, 7, numberOfData [component]);
+			Table_setNumericValue (him.get(), component, 8, my dimension);
 		}
 		return him;
 	} catch (MelderError) {
