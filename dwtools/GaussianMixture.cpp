@@ -72,27 +72,33 @@ static integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture
 static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT const& probabilities, kGaussianMixtureCriterion criterion) {
 	Melder_require (probabilities.ncol == my numberOfComponents,
 		U"The number of columns in the probabilities should equal the number of components.");
-	
+	integer numberOfData = probabilities.nrow;
+	Melder_require (numberOfData > my numberOfComponents,
+		U"The number of rows in the probabilities should be larger than the number of components.");
 	if (criterion == kGaussianMixtureCriterion::CompleteDataML) {
+		/*
+			Bishop eq. 9.40 (we rewrote ln(a)+ln(b) = ln (a*b)):
+			ln(p(X,Z|μ,S,π)= sum(n=1...N, sum (k=1...K, gamma [n][k])*ln (π [k]*N(x [n]|μ [k],S [k])),
+			where gamma[n][k] = mixingProbablities[k]*probabilities[n][k]/sum(1...K, mixingProbablities[k]*probabilities[n][k])
+		*/
 		longdouble lnpcd = 0.0;
-		for (integer irow = 1; irow <= probabilities.nrow; irow ++) {
+		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			longdouble psum = 0.0, lnsum = 0.0;
 			for (integer icol = 1; icol <= my numberOfComponents; icol ++) {
 				longdouble pp = my mixingProbabilities [icol] * probabilities [irow] [icol];
 				psum += pp;
-				lnsum += pp * log (pp);
+				lnsum += pp * log (pp); // scaling outside the loop
 			}
 			if (psum > 0)
-				lnpcd += lnsum / psum;
+				lnpcd += lnsum / psum; // scaling: to reponsibilities
 		}
-		
 		return lnpcd;
 	}
 
-	// The common factor for all other criteria is the log(likelihood)
+	// The common factor for the following criteria is the log(likelihood), Bishop eq. 9.28
 
 	longdouble lnp = 0.0;
-	for (integer irow = 1; irow <= probabilities.nrow; irow ++) {
+	for (integer irow = 1; irow <= numberOfData; irow ++) {
 		double psum = NUMinner (my mixingProbabilities.get(), probabilities.row (irow));
 		if (psum > 0.0)
 			lnp += (longdouble) log (psum);
@@ -101,8 +107,8 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 	if (criterion == kGaussianMixtureCriterion::Likelihood)
 		return lnp;
 
-	double npars = GaussianMixture_getNumberOfParametersInComponent (me);
-	double np = npars * my numberOfComponents;
+	double numberOfParametersPerComponent = GaussianMixture_getNumberOfParametersInComponent (me);
+	double numberOfParametersTotal = numberOfParametersPerComponent * my numberOfComponents;
 	if (criterion == kGaussianMixtureCriterion::MessageLength) {
 		/* Equation (15) in
 			Figueiredo & Jain, Unsupervised Learning of Finite Mixture Models :
@@ -110,7 +116,6 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 
 			L(theta,Y)= N/2*sum(m=1..k, log(n*alpha [m]/12)) +k/2*ln(n/12) +k(N+1)/2
 				- log (sum(i=1..n, sum(m=1..k, alpha [k]*p(k))))
-				=
 		*/
 		longdouble logmpn = 0.0;
 		integer numberOfNonZeroComponents = 0;
@@ -122,14 +127,14 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 
 		// a rewritten L(theta,Y) is
 
-		return lnp - 0.5 * numberOfNonZeroComponents * (npars + 1) * (log (probabilities.nrow / 12.0) + 1.0)
-		       - 0.5 * npars * logmpn;
+		return lnp - 0.5 * numberOfNonZeroComponents * (numberOfParametersPerComponent + 1) * (log (numberOfData / 12.0) + 1.0)
+		       - 0.5 * numberOfParametersPerComponent * logmpn;
 	} else if (criterion == kGaussianMixtureCriterion::BayesInformation)
-		return 2.0 * lnp - np * log (probabilities.nrow);
+		return 2.0 * lnp - numberOfParametersTotal * log (numberOfData);
 	else if (criterion == kGaussianMixtureCriterion::AkaikeInformation)
-		return 2.0 * (lnp - np);
+		return 2.0 * (lnp - numberOfParametersTotal);
 	else if (criterion == kGaussianMixtureCriterion::AkaikeCorrected) {
-		return 2.0 * (lnp - np * (probabilities.nrow / (probabilities.nrow - np - 1.0)));
+		return 2.0 * (lnp - numberOfParametersTotal * (numberOfData / (numberOfData - numberOfParametersTotal - 1.0)));
 	}
 	return lnp;
 }
@@ -186,7 +191,7 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			dif.get() <<= data.row (irow)  -  thy centroid.get();
 			variance.get() <<= dif.get()  *  dif.get();
-			thy data.row (1)  +=  responsibilities [irow] [component] *  variance.get();
+			thy data.row (1)  +=  responsibilities [irow] [component]  *  variance.get();
 		}
 	} else { // nxn covariance
 		autoMAT covar = newMATraw (thy numberOfColumns, thy numberOfColumns);
@@ -308,12 +313,11 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 	}
 }
 
-void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, char32 **covname, VEC const& buf) {
+void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, autostring32 *out_covname, VEC const& buf) {
 	try {
 		double p = NUMrandomUniform (0.0, 1.0);
 		integer component = NUMgetIndexFromProbability (my mixingProbabilities.get(), p);
 		Covariance thee = my covariances->at [component];
-		*covname = thy name.get();   // BUG dangle
 		if (thy numberOfRows == 1) { // 1xn reduced form
 			for (integer i = 1; i <= my dimension; i ++)
 				c [i] = NUMrandomGauss (thy centroid [i], sqrt (thy data [1] [i]));
@@ -321,6 +325,10 @@ void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c,
 			if (! thy pca)
 				SSCP_expandPCA (thee);    // on demand expanding
 			Covariance_PCA_generateOneVector_inline (thee, thy pca.get(), c, buf);
+		}
+		if (out_covname) {
+			autostring32 name = Melder_dup (thy name.get()); 
+			*out_covname = name.move();
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": vector not generated.");
@@ -1219,11 +1227,10 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
 		autoVEC buf = newVECraw (my dimension);
 		thy columnLabels.all() <<= cov -> columnLabels.part (1, my dimension);
-			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
 		for (integer i = 1; i <= numberOfPoints; i ++) {
-			char32 *covname;
+			autostring32 covname;
 			GaussianMixture_generateOneVector_inline (me, thy data.row (i), & covname, buf.get());
-			TableOfReal_setRowLabel (thee.get(), i, covname);
+			TableOfReal_setRowLabel (thee.get(), i, covname.get());
 		}
 		GaussianMixture_unExpandPCA (me);
 		return thee;
