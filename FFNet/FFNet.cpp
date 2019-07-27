@@ -261,8 +261,8 @@ double FFNet_getBias (FFNet me, integer layer, integer unit) {
 		integer bias_unit = my wLast [node];
 		return my w [bias_unit];
 	} catch (MelderError) {
-		return undefined;
 		Melder_clearError ();
+		return undefined;
 	}
 }
 
