@@ -59,7 +59,7 @@ procedure solve_undetermined: .nrow, .ncol
 		.c = Get value in cell: 1, .irow
 		assert .c > 1-1e-7 and .c < 1+1e-7
 	endfor
-	;removeObject: .m, .ms
+	removeObject: .m, .ms
 endproc
 
 # test for several dimensions

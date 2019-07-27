@@ -581,6 +581,21 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW1_TableOfReal_to_GaussianMixture_CEMM, U"TableOfReal: To GaussianMixture (CEMM)", U"TableOfReal: To GaussianMixture (CEMM)...") {
+	INTEGER (minimumNumberOfComponents, U"Minimum number of components", U"1")
+	INTEGER (maximumNumberOfComponents, U"Maximum number of components", U"10")
+	RADIO_ENUM (kGaussianMixtureStorage, storage,
+			U"Covariance matrices are", kGaussianMixtureStorage::DEFAULT)
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
+	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.00001")
+	BOOLEAN (info, U"Info", false)
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoGaussianMixture result = TableOfReal_to_GaussianMixture_CEMM (me, minimumNumberOfComponents, maximumNumberOfComponents, storage, maximumNumberOfIterations, tolerance, info);
+	CONVERT_EACH_END (my name.get())
+}
+
 FORM (MODIFY_GaussianMixture_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
@@ -598,13 +613,11 @@ FORM (NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixtur
 	INTEGER (minimumNumberOfComponents, U"Minimum number of components", U"1")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
-	REAL (lambda, U"Stability coefficient lambda (0-1)", U"0.001")
-	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)
+	BOOLEAN (info, U"Info", false)
 	OK
 DO
-	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	CONVERT_TWO (GaussianMixture, TableOfReal)
-		autoGaussianMixture result = GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, tolerance, maximumNumberOfIterations, lambda, criterion);
+		autoGaussianMixture result = GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, maximumNumberOfIterations, tolerance, info);
 	CONVERT_TWO_END (my name.get())
 }
 
@@ -614,18 +627,30 @@ DIRECT (NEW1_GaussianMixture_TableOfReal_to_ClassificationTable) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
+DIRECT (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_probabilities) {
+	CONVERT_TWO (GaussianMixture, TableOfReal)
+		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_probabilities (me, you);
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+}
+
+DIRECT (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_responsibilities) {
+	CONVERT_TWO (GaussianMixture, TableOfReal)
+		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_responsibilities (me, you);
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+}
+
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_Correlation) {
 	CONVERT_TWO (GaussianMixture, TableOfReal)
 		autoCorrelation result = GaussianMixture_TableOfReal_to_Correlation (me, you);
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
-FORM (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
+FORM (NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
 	REAL (smoothingParameter, U"Smoothing parameter", U"1.41")
 	OK
 DO
 	CONVERT_TWO (GaussianMixture, TableOfReal)
-		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (me, you, smoothingParameter);
+		autoTable result = GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (me, you, smoothingParameter);
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
@@ -664,9 +689,11 @@ void praat_HMM_init () {
 	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Get likelihood value...", nullptr, 0, REAL_GaussianMixture_TableOfReal_getLikelihoodValue);
 	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Improve likelihood...", nullptr, 0, MODIFY_GaussianMixture_TableOfReal_improveLikelihood);
 	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To GaussianMixture (CEMM)...", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (probabilities)", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_TableOfReal_probabilities);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (responsibilities)", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_TableOfReal_responsibilities);
 	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To ClassificationTable", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_ClassificationTable);
 	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Correlation", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_Correlation);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (BHEP normality tests)...", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Table (BHEP normality tests)...", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests);
 
 	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw concentration ellipses...", nullptr, 0, GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses);
 	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw marginal pdf...", nullptr, 0, GRAPHICS_GaussianMixture_PCA_drawMarginalPdf);
@@ -721,7 +748,7 @@ void praat_HMM_init () {
 	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, praat_HIDDEN, NEW_Strings_to_HMMObservationSequence);
 	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_GaussianMixture_rowlabels);
 	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_GaussianMixture);
-
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (CEMM)...", U"To GaussianMixture...", praat_HIDDEN + praat_DEPTH_1, NEW1_TableOfReal_to_GaussianMixture_CEMM);
 	INCLUDE_MANPAGES (manual_HMM)
 }
 

@@ -4,7 +4,7 @@
 appendInfoLine: "test_GaussianMixture.praat"
 appendInfoLine: tab$, "Interface"
 pols = Create TableOfReal (Pols 1973): "no"
-gm = To GaussianMixture (row labels): "Complete"
+gm = To GaussianMixture (row labels): "Diagonals"
 numberOfComponents = Get number of components
 assert numberOfComponents == 12
 dimension = Get dimension of component
@@ -45,20 +45,20 @@ Draw marginal pdf: 1, 0, 0, 0, 0, 500, 0, "yes"
 Select outer viewport: 3, 6, 3, 6
 Draw marginal pdf: 2, 0, 0, 0, 0, 500, 0, "yes"
 
-appendInfoLine: tab$, "GaussinaMixture and TableOfReal"
+appendInfoLine: tab$, "GaussianMixture and TableOfReal"
 
 selectObject: pols, gm
 p = Get likelihood value: "Likelihood"
-cemm = To GaussianMixture (CEMM): 1, 0.001, 200, 0.001, "MessageLength"
+cemm = To GaussianMixture (CEMM): 1, 0.001, 200, "yes"
 selectObject: pols, gm
 ct = To ClassificationTable
 selectObject: pols, gm
 correlation = To Correlation
 selectObject: pols, gm
-tor = To TableOfReal (BHEP normality tests): 1.41
-removeObject:  tor, correlation, ct, cemm
+table = To Table (BHEP normality tests): 1.41
+removeObject:  table, correlation, ct, cemm
 
-;removeObject: pols, gm
+removeObject: pols, gm
 
 appendInfoLine: "test_GaussianMixture.praat OK"
 

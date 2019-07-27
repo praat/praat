@@ -35,7 +35,6 @@ autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRo
 		Melder_require (numberOfRows * numberOfColumns == my dimension,
 			U"The number of rows times the number of columns should be equal to the dimension of the eigenvectors.");
 		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
-		integer i = 1;
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			thy z.row (irow) <<= my eigenvectors [index].part ((irow - 1) * numberOfColumns + 1, irow * numberOfColumns);
 		return thee;
