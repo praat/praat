@@ -737,8 +737,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 
 				integer isymbol = NUMgetIndexFromProbability (my emissionProbs.row (istate), NUMrandomUniform (0.0, 1.0));
 				HMMObservation s = my observationSymbols->at [isymbol];
-				char32 *name;
-				GaussianMixture_generateOneVector_inline (s -> gm.get(), obs.get(), &name, buf.get());
+				GaussianMixture_generateOneVector_inline (s -> gm.get(), obs.get(), nullptr, buf.get());
 				for (integer j = 1; j <= my componentDimension; j ++)
 						Table_setNumericValue (thee.get(), i, 1 + j, obs [j]);
 
