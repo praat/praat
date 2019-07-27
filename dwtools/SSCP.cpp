@@ -1443,12 +1443,13 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 	}
 }
 
-double Covariance_normalityTest_BHEP (Covariance me, constMAT const& data, constVEC const& responsibilities, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_covarianceIsSingular) {
+double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal thee, constVEC const& responsibilities, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_covarianceIsSingular) {
 	try {
+		MAT data = thy data.get();
 		Melder_require (data.nrow > data.ncol,
 			U"The number of data should be larger than the dimension of the data.");
 		Melder_require (my numberOfColumns == data.ncol,
-			U"The the number of columns of the covariance and the data should be equal.");
+			U"The number of columns of the covariance and the data should be equal.");
 
 		bool weighting = responsibilities.size > 0, covarianceIsSingular = false;
 		double n = data.nrow, d = data.ncol, testStatistic;

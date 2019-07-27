@@ -1254,7 +1254,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 			autoVEC componentResponsibilities = newVECcopy (responsibilities.column (component));
 			double testStatistic, lnmu, lnvar;
 			bool isSingular;
-			double probability = Covariance_normalityTest_BHEP (cov, thy data.get(), componentResponsibilities.get(), & h, & testStatistic, & lnmu, & lnvar, & isSingular);
+			double probability = Covariance_TableOfReal_normalityTest_BHEP (cov, thee, componentResponsibilities.get(), & h, & testStatistic, & lnmu, & lnvar, & isSingular);
 		
 			Table_setNumericValue (him.get(), component, 2, probability);
 			Table_setNumericValue (him.get(), component, 3, h);

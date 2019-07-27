@@ -208,7 +208,7 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 	method = 2 : Wald (Schott, 2001)
 */
 
-double Covariance_normalityTest_BHEP (Covariance me, constMAT const& data, constVEC const& responsibilities, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_covarianceIsSingular);
+double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal data, constVEC const& responsibilities, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_covarianceIsSingular);
 /*
 	Multivariate normality test of nxp data matrix according to the method described in 
 		Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, 

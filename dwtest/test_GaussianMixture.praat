@@ -58,7 +58,7 @@ selectObject: pols, gm
 table = To Table (BHEP normality tests): 1.41
 removeObject:  table, correlation, ct, cemm
 
-;removeObject: pols, gm, table
+removeObject: pols, gm
 
 appendInfoLine: "test_GaussianMixture.praat OK"
 

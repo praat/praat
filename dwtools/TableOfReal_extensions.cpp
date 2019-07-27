@@ -1370,7 +1370,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 		 */
 		autoCovariance thee = TableOfReal_to_Covariance (me);
 		autoVEC weights;
-		double probability = Covariance_normalityTest_BHEP (thee.get(), my data.get(), weights.get(), h, out_tnb, out_lnmu, out_lnvar, out_singularCovariance);
+		double probability = Covariance_TableOfReal_normalityTest_BHEP (thee.get(), me, weights.get(), h, out_tnb, out_lnmu, out_lnvar, out_singularCovariance);
 		return probability;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot determine normality.");
