@@ -590,7 +590,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row (i), t -> centroid.get());
+				double md = NUMmahalanobisDistanceSquared (sscpvec [j] -> data.get(), thy data.row (i), t -> centroid.get());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max)
 					pt_max = pt;
@@ -725,7 +725,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				x [k] = thy data [i] [k] + displacement [k];
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), x.get(), t -> centroid.get());
+				double md = NUMmahalanobisDistanceSquared (sscpvec [j] -> data.get(), x.get(), t -> centroid.get());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;

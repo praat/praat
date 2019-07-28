@@ -7037,21 +7037,24 @@ DIRECT (NEW1_CreateIrisDataset) {
 }
 
 FORM (INFO_TableOfReal_reportMultivariateNormality, U"TableOfReal: Report multivariate normality (BHEP)", U"TableOfReal: Report multivariate normality (BHEP)...") {
-	REAL (h, U"Smoothing parameter", U"0.0")
+	REAL (smoothing, U"Smoothing parameter", U"0.0")
 	OK
 DO
 	INFO_ONE (TableOfReal)
+		bool singular;
 		double tnb, lnmu, lnvar;
-		double prob = TableOfReal_normalityTest_BHEP (me, &h, &tnb, &lnmu, &lnvar);
+		double prob = TableOfReal_normalityTest_BHEP (me, & smoothing, & tnb, & lnmu, & lnvar, & singular);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Baringhaus–Henze–Epps–Pulley normality test:");
 		MelderInfo_writeLine (U"Significance of normality: ", prob);
 		MelderInfo_writeLine (U"BHEP statistic: ", tnb);
 		MelderInfo_writeLine (U"Lognormal mean: ", lnmu);
 		MelderInfo_writeLine (U"Lognormal variance: ", lnvar);
-		MelderInfo_writeLine (U"Smoothing: ", h);
+		MelderInfo_writeLine (U"Smoothing: ", smoothing);
 		MelderInfo_writeLine (U"Sample size: ", my numberOfRows);
 		MelderInfo_writeLine (U"Number of variables: ", my numberOfColumns);
+		if (singular)
+			MelderInfo_writeLine (U"(Attention: the covariance matrix was singular!)");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -8048,7 +8051,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCovariance, 0, U"To Covariance (within)", nullptr, 0, NEW1_Covariances_to_Covariance_within);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_TableOfReal_mahalanobis);
-
 	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", nullptr, 0, HELP_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
 	praat_addAction1 (classClassificationTable, 0, U"Get class index at maximum in row...", U"Get column index...", 1, INTEGER_ClassificationTable_getClassIndexAtMaximumInRow);

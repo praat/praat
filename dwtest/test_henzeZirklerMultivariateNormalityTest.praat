@@ -16,7 +16,7 @@ lvariance = extractNumber (report$, " variance:")
 assert abs (lvariance - 0.13790691675095398)<tol
 beta = extractNumber (report$, "Smoothing:")
 printline 'beta'
-assert abs (beta -0.5541226910830553)<tol
+assert abs (beta -1.27608342442082)<tol
 sampleSize = extractNumber (report$, " size:")
 assert sampleSize = 50
 nvars = extractNumber (report$, " variables:")
