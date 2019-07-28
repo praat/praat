@@ -92,7 +92,8 @@ enum { NO_SYMBOL_,
 		RECTIFY_, RECTIFY_H_, RECTIFY_HH_,
 		SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_, SINC_, SINCPI_,
 		EXP_, VEC_EXP_, MAT_EXP_,
-		SINH_, COSH_, TANH_, ARCSINH_, ARCCOSH_, ARCTANH_,
+		SINH_, COSH_, TANH_, VEC_TANH_,
+		ARCSINH_, ARCCOSH_, ARCTANH_,
 		SIGMOID_, VEC_SIGMOID_, SOFTMAX_H_, SOFTMAX_PER_ROW_HH_,
 		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, VEC_RANDOM_BERNOULLI_,
@@ -225,7 +226,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"rectify", U"rectify#", U"rectify##",
 	U"sqrt", U"sin", U"cos", U"tan", U"arcsin", U"arccos", U"arctan", U"sinc", U"sincpi",
 	U"exp", U"exp#", U"exp##",
-	U"sinh", U"cosh", U"tanh", U"arcsinh", U"arccosh", U"arctanh",
+	U"sinh", U"cosh", U"tanh", U"tanh#",
+	U"arcsinh", U"arccosh", U"arctanh",
 	U"sigmoid", U"sigmoid#", U"softmax#", U"softmaxPerRow##",
 	U"invSigmoid", U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
 	U"randomBernoulli", U"randomBernoulli#",
@@ -6758,6 +6760,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SINH_: { do_sinh ();
 } break; case COSH_: { do_cosh ();
 } break; case TANH_: { do_tanh ();
+} break; case VEC_TANH_: { do_functionvec_n_n (tanh);
 } break; case ARCSINH_: { do_function_n_n (NUMarcsinh);
 } break; case ARCCOSH_: { do_function_n_n (NUMarccosh);
 } break; case ARCTANH_: { do_function_n_n (NUMarctanh);
