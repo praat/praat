@@ -1252,13 +1252,8 @@ void VECarea_from_lpc (VEC area, constVEC lpc);
 */
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
-void NUMgetEntropies (constMAT m, double *out_h, double *out_hx, 
+void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
-
-double NUMfrobeniusnorm (constMAT x);
-/*
-	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
-*/
 
 inline double NUMmean_weighted (constVEC x, constVEC w) {
 	Melder_assert (x.size == w.size);
