@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2019 David Weenink, Paul Boersma 2019
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -585,7 +585,7 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to,
 			from = 1;
 		if (to == 0)
 			to = my intervals.size;
-		Melder_require (to <= from && from >= 1 && to <= my intervals.size,
+		Melder_require (to >= from && from >= 1 && to <= my intervals.size,
 			U"Incorrect specification of where to act.");
 		Melder_require (! (use_regexp && search [0] == U'\0'),
 			U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
@@ -614,7 +614,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 			from = 1;
 		if (to == 0)
 			to = my points.size;
-		Melder_require (to <= from && from >= 1 && to <= my points.size,
+		Melder_require (to >= from && from >= 1 && to <= my points.size,
 			U"Incorrect specification of where to act.");
 		Melder_require (! (use_regexp && search [0] == U'\0'),
 			U"The regex search string cannot be empty.\nTo search for an empty string, use the expression \"^$\" instead.");
@@ -643,7 +643,7 @@ void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to,
 		Melder_require (tier > 0 && tier <= ntiers,
 			U"The tier number (", tier, U") should not be larger than the number of tiers (", ntiers, U").");
 		Melder_require (! (use_regexp && search [0] == U'\0'), 
-			U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
+			U"The regex search string should not be empty.\nTo search for an empty string, use the expression \"^$\"");
 
 		Function anyTier = my tiers->at [tier];
 		if (anyTier -> classInfo == classIntervalTier) {

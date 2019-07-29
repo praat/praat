@@ -645,7 +645,7 @@ DIRECT (NEW1_GaussianMixture_TableOfReal_to_Correlation) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
-FORM (NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
+FORM (NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)", U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)...") {
 	REAL (smoothingParameter, U"Smoothing parameter", U"1.41")
 	OK
 DO
