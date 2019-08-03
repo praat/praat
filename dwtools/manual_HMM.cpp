@@ -268,7 +268,7 @@ INTRO (U"A HMM is a Hidden Markov Model. Markov models are often used to model o
 	"The following picture shows a HMM with two states, labeled \"Rainy\" and \"Sunny\". "
 	"Each state can emit three symbols (these are not visible in the graph).")
 SCRIPT (5, 5,
-	U"Create simple HMM: \"wheather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\"\n"
+	U"Create simple HMM: \"weather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\"\n"
 	"Draw: \"no\"\n"
 	"Remove\n")
 INTRO (U"For an introduction into HMM's see @@Rabiner (1989)@.")
