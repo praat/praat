@@ -6103,7 +6103,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
+FORM (MODIFY_SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Speech output settings", U"SpeechSynthesizer: Speech output settings...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	REAL (wordGap, U"Gap between words (s)", U"0.01")
 	POSITIVE (pitchAdjustment, U"Pitch multiplier (0.5-2.0)", U"1.0")
@@ -6122,7 +6122,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
+FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Speech output settings...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	REAL (wordGap, U"Gap between words (s)", U"0.01")
 	INTEGER (pitchAdjustment_0_99, U"Pitch adjustment (0-99)", U"50")
