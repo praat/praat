@@ -4197,7 +4197,7 @@ DEFINITION (U"the number of neighbouring frequency points that are used in the c
 	"The precision relates linearly to the amount of computing time needed to get the new shifted spectrum.")
 MAN_END
 
-MAN_BEGIN (U"SpeechSynthesizer", U"djmw", 20120413)
+MAN_BEGIN (U"SpeechSynthesizer", U"djmw", 20190811)
 INTRO (U"The SpeechSynthesizer is one of the @@types of objects@ in Praat. It creates a speech sound from text. The actual text-to-speech synthesis is performed by the @@Espeak|eSpeak NG@ speech synthsizer and therefore our SpeechSynthsizer is merely an interface to Espeak.")
 ENTRY (U"Commands")
 NORMAL (U"Creation:")
@@ -4207,7 +4207,7 @@ LIST_ITEM (U"\\bu @@SpeechSynthesizer: Play text...|Play text...@")
 LIST_ITEM (U"\\bu @@SpeechSynthesizer: To Sound...|To Sound...@")
 NORMAL (U"Modification:")
 LIST_ITEM (U"\\bu @@SpeechSynthesizer: Set text input settings...|Set text input settings...@")
-LIST_ITEM (U"\\bu @@SpeechSynthesizer: Set speech output settings...|Set speech output settings...@")
+LIST_ITEM (U"\\bu @@SpeechSynthesizer: Speech output settings...|Speech output settings...@")
 MAN_END
 
 MAN_BEGIN (U"Create SpeechSynthesizer...", U"djmw", 20171101)
@@ -4244,7 +4244,7 @@ TAG (U"##Input phoneme codes are#")
 DEFINITION (U"currently only @@Kirshenbaum phonetic encoding@ is available.")
 MAN_END
 
-MAN_BEGIN (U"SpeechSynthesizer: Set speech output settings...", U"djmw", 20171102)
+MAN_BEGIN (U"SpeechSynthesizer: Speech output settings...", U"djmw", 20190811)
 INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
 ENTRY (U"Settings")
 TAG (U"##Sampling frequency#")
