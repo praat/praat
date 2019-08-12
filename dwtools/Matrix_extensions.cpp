@@ -40,7 +40,7 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 	double xmin, double xmax, double ymin, double ymax,
 	double size_mm, conststring32 mark, bool garnish)
 {
-	integer ix = labs (icx), iy = labs (icy);
+	integer ix = integer_abs (icx), iy = integer_abs (icy);
 
 	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) {
 		return;
