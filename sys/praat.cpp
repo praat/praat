@@ -1634,6 +1634,7 @@ void praat_run () {
 	{ unsigned char dummy = 200;
 		Melder_assert ((int) dummy == 200);
 	}
+	Melder_assert (integer_abs (-1000) == integer (1000));
 	{ int dummy = 200;
 		Melder_assert ((int) (signed char) dummy == -56);   // bingeti8 relies on this
 		Melder_assert ((int) (unsigned char) dummy == 200);
