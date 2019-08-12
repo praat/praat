@@ -231,7 +231,7 @@ void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC
 void Graphics_setInner (Graphics me) {
 	double margin = 2.8 * my fontSize * my resolution / 72.0;
 	double wDC = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC) * (my d_x2NDC - my d_x1NDC);
-	double hDC = labs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
+	double hDC = integer_abs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
 	double dx = 1.5 * margin / wDC;
 	double dy = margin / hDC;
 	my horTick = 0.06 * dx, my vertTick = 0.09 * dy;

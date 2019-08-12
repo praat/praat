@@ -1813,8 +1813,8 @@ void SSCP_expand (SSCP me) {
 		my expansion = newMATzero (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++)
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
-			integer dij = labs (ir - ic);
-			my expansion [ir] [ic] = my expansion [ic] [ir] = dij < my numberOfRows ? my data [dij + 1] [ic] : 0.0;
+			integer dij = integer_abs (ir - ic);
+			my expansion [ir] [ic] = ( my expansion [ic] [ir] = dij < my numberOfRows ? my data [dij + 1] [ic] : 0.0 );
 		}
 
 	// Now make 'my data' point to 'my expansion'

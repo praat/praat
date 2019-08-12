@@ -545,11 +545,11 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 {
 	Melder_require (my dimension == his dimension,
 		U"The dimensions should agree.");
-	Melder_require (labs(d1) >= 1 && labs (d1) <= my dimension && labs(d2) >= 1 && labs (d2) <= my dimension,
+	Melder_require (integer_abs (d1) >= 1 && integer_abs (d1) <= my dimension && integer_abs (d2) >= 1 && integer_abs (d2) <= my dimension,
 		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");
 	bool d1_inverted = d1 < 0, d2_inverted = d2 < 0;
-	d1 = labs (d1);
-	d2 = labs (d2);
+	d1 = integer_abs (d1);
+	d2 = integer_abs (d2);
 
 	if (d1_inverted)
 		Eigen_invertEigenvector (him, d1);
@@ -582,13 +582,13 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label,
 	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish)
 {
-	Melder_require (labs(d1) >= 1 && labs (d1) <= my dimension && labs(d2) >= 1 && labs (d2) <= my dimension,
+	Melder_require (integer_abs (d1) >= 1 && integer_abs (d1) <= my dimension && integer_abs (d2) >= 1 && integer_abs (d2) <= my dimension,
 		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for "
 		"a reversed axis).");
 
 	if (! pcaDirections) {
 		SSCPList_drawConcentrationEllipses (my covariances->asSSCPList(), g, -scale, confidence, label,
-			labs (d1), labs (d2), xmin, xmax, ymin, ymax, fontSize, garnish);
+			integer_abs (d1), integer_abs (d2), xmin, xmax, ymin, ymax, fontSize, garnish);
 		return;
 	}
 

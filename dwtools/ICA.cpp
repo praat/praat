@@ -339,7 +339,7 @@ void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, Cr
  */
 static void NUMcrossCorrelate_rows (constMAT x, integer icol1, integer icol2, integer lag, MAT inout_cc, VEC inout_centroid, double scale) {
 	Melder_assert (inout_cc.nrow == inout_cc.ncol && inout_cc.nrow == x.nrow);
-	lag = labs (lag);
+	lag = integer_abs (lag);
 	integer nsamples = icol2 - icol1 + 1 + lag;
 	Melder_require (nsamples > 0, U"Not enough samples to perform crosscorrealtions."); 
 	for (integer i = 1; i <= x.nrow; i ++) {

@@ -2348,7 +2348,7 @@ TryAgain:
 			More efficient determination of whether v < f(x)/f(M)
 		 */
 
-		integer k = labs (ix - m);
+		integer k = integer_abs (ix - m);
 
 		if (k <= FAR_FROM_MEAN) {
 			/*

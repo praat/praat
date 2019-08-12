@@ -148,7 +148,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		 */	
 		for (integer row = 2; row <= nenvelopes; row ++) {
 			for (integer col = 1; col <= row - 1; col ++) {
-				if (labs (row - col) < bandwidth / 2.0 / step) {
+				if (integer_abs (row - col) < bandwidth / 2.0 / step) {
 					cc -> z [row] [col] = 0.0;
 				}
 			}

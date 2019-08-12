@@ -26,7 +26,7 @@
 #include "NUM2.h"
 
 void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax) {
-	integer ix = labs (pcx), iy = labs (pcy);
+	integer ix = integer_abs (pcx), iy = integer_abs (pcy);
 	integer numberOfEigenvalues = eigen -> numberOfEigenvalues;
 	integer dimension = eigen -> dimension;
 
