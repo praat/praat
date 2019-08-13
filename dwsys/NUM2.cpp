@@ -1885,33 +1885,24 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 }
 
 /*
-	probs is probability vector, i.e. all 0 <= probs [i] <= 1 and sum(i=1;i=nprobs, probs [i])= 1
-	p is a probability
+	probs is probability vector, i.e. all 0 <= probs [i] <= 1 and sum(i=1...probs.size, probs [i])= 1
 */
-integer NUMgetIndexFromProbability (constVEC probs, double p) { //TODO HMM zero start matrices
+integer NUMgetIndexFromProbability (constVEC probs, double p) {
 	integer index = 1;
 	double psum = probs [index];
-	while (p > psum && index < probs.size) {
+	while (p > psum && index < probs.size)
 		psum += probs [++ index];
-	}
-	return index;
-}
-integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) { //TODO HMM zero start matrices
-	integer index = 1;
-	double psum = probs [index];
-	while (p > psum && index < nprobs) {
-		psum += probs [++ index];
-	}
 	return index;
 }
 
 // straight line fitting
 
-void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod)
-{
+void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod) {
 	try {
-		Melder_assert (x.size == y.size);
-		/* Theil's incomplete method:
+		Melder_require (x.size == y.size,
+			U"NUMlineFit_theil: the sizes of the two vectors should be equal.");
+		/*
+			Theil's incomplete method:
 			Split (x [i],y [i]) as
 			(x [i],y [i]), (x [N+i],y [N=i], i=1..numberOfPoints/2
 			m [i] = (y [N+i]-y [i])/(x [N+i]-x [i])
@@ -1949,15 +1940,18 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 			VECsort_inplace (mbs.part (1, x.size));
 			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
 		}
-		if (out_m) *out_m = m;
-		if (out_intercept) *out_intercept = intercept;
+		if (out_m)
+			*out_m = m;
+		if (out_intercept)
+			*out_intercept = intercept;
 	} catch (MelderError) {
 		Melder_throw (U"No line fit (Theil's method).");
 	}
 }
 
 void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept) {
-	Melder_assert (x.size == y.size);
+	Melder_require (x.size == y.size,
+		U"NUMlineFit_LS: the sizes of the two vectors should be equal.");
 	double sx = NUMsum (x);
 	double sy = NUMsum (y);
 	double xmean = sx / x.size;
@@ -1969,18 +1963,19 @@ void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept
 	}
 	// y = m*x + b
 	m /= st2;
-	if (out_intercept) *out_intercept = (sy - m * sx) / x.size;
-	if (out_m) *out_m = m;
+	if (out_intercept)
+		*out_intercept = (sy - m * sx) / x.size;
+	if (out_m)
+		*out_m = m;
 }
 
 void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, int method) {
-	if (method == 1) {
+	if (method == 1)
 		NUMlineFit_LS (x, y, out_m, out_intercept);
-	} else if (method == 3) {
+	else if (method == 3)
 		NUMlineFit_theil (x, y, out_m, out_intercept, false);
-	} else {
+	else
 		NUMlineFit_theil (x, y, out_m, out_intercept, true);
-	}
 }
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
@@ -1995,9 +1990,8 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 		rc [m] = a [m];
 		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
 		b.part (1, m) <<= a.part (1, m);
-		for (integer i = 1; i < m; i ++) {
+		for (integer i = 1; i < m; i ++)
 			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
-		}
 	}
 }
 
@@ -2190,7 +2184,8 @@ integer NUMrandomBinomial (double p, integer n) {
 	integer ix;			// return value
 	bool flipped = false;
 
-	if (n == 0) return 0;
+	if (n == 0)
+		return 0;
 	if (p > 0.5) {
 		p = 1.0 - p;	// work with small p
 		flipped = true;
@@ -2200,7 +2195,7 @@ integer NUMrandomBinomial (double p, integer n) {
 	double s = p / q;
 	double np = n * p;
 
-	/* 
+	/*
 		Inverse cdf logic for small mean (BINV in K+S)
 	*/
 
@@ -2208,7 +2203,7 @@ integer NUMrandomBinomial (double p, integer n) {
 		double f0 = pow (q, n); // djmw gsl_pow_int (q, n); f(x), starting with x=0
 
 		while (1) {
-			/* 
+			/*
 				This while(1) loop will almost certainly only loop once; but
 				if u=1 to within a few epsilons of machine precision, then it
 				is possible for roundoff to prevent the main loop over ix to
@@ -2221,15 +2216,14 @@ integer NUMrandomBinomial (double p, integer n) {
 			double u = NUMrandomUniform (0.0, 1.0); // djmw gsl_rng_uniform (rng);
 
 			for (ix = 0; ix <= BINV_CUTOFF; ++ ix) {
-				if (u < f) {
+				if (u < f)
 					goto Finish;
-				}
 				u -= f;
 				// Use recursion f(x+1) = f(x)* [(n-x)/(x+1)]* [p/(1-p)]
 				f *= s * (n - ix) / (ix + 1.0);
 			}
 
-			/* 
+			/*
 				It should be the case that the 'goto Finish' was encountered
 				before this point was ever reached. But if we have reached
 				this point, then roundoff has prevented u from decreasing
@@ -2252,7 +2246,7 @@ integer NUMrandomBinomial (double p, integer n) {
 		}
 	} else {
 		
-		/* 
+		/*
 			For n >= SMALL_MEAN, we invoke the BTPE algorithm
 		*/
 
@@ -2262,7 +2256,7 @@ integer NUMrandomBinomial (double p, integer n) {
 		double xm = fm + 0.5;	 	// xm = half integer mean (tip of triangle)
 		double npq = np * q;		// npq = n*p*q
 
-		/* 
+		/*
 			Compute cumulative area of tri, para, exp tails
 
 			p1: radius of triangle region; since height=1, also: area of region
@@ -2281,7 +2275,7 @@ integer NUMrandomBinomial (double p, integer n) {
 		double xl = xm - p1;
 		double xr = xm + p1;
 
-		/* 
+		/*
 			Parameter of exponential tails
 			Left tail:  t(x) = c*exp(-lambda_l* [xl - (x+0.5)])
 			Right tail: t(x) = c*exp(-lambda_r* [(x+0.5) - xr])
@@ -2316,27 +2310,24 @@ TryAgain:
 			// Parallelogram region
 			double x = xl + (u - p1) / c;
 			v = v * c + 1.0 - fabs (x - xm) / p1;
-			if (v > 1.0 || v <= 0.0) {
+			if (v > 1.0 || v <= 0.0)
 				goto TryAgain;
-			}
 			ix = (integer) x;
 		} else if (u <= p3) {
 			// Left tail
 			ix = (integer) (xl + log (v) / lambda_l);
-			if (ix < 0) {
+			if (ix < 0)
 				goto TryAgain;
-			}
 			v *= ((u - p2) * lambda_l);
 		} else {
 			// Right tail
 			ix = (integer) (xr - log (v) / lambda_r);
-			if (ix > (double) n) {
+			if (ix > (double) n)
 				goto TryAgain;
-			}
 			v *= ((u - p3) * lambda_r);
 		}
 
-		/* 
+		/*
 			At this point, the goal is to test whether v <= f(x)/f(m)
 			v <= f(x)/f(m) = (m!(n-m)! / (x!(n-x)!)) * (p/q)^{x-m}
 
@@ -2353,7 +2344,7 @@ TryAgain:
 
 		#else // SQUEEZE METHOD
 
-		/* 
+		/*
 			More efficient determination of whether v < f(x)/f(M)
 		 */
 
@@ -2370,13 +2361,11 @@ TryAgain:
 			var = v;
 
 			if (m < ix) {
-				for (integer i = m + 1; i <= ix; i ++) {
+				for (integer i = m + 1; i <= ix; i ++)
 					f *= (g / i - s);
-				}
 			} else if (m > ix) {
-				for (integer i = ix + 1; i <= m; i ++) {
+				for (integer i = ix + 1; i <= m; i ++)
 					f /= (g / i - s);
-				}
 			}
 
 			accept = f;
@@ -2393,12 +2382,10 @@ TryAgain:
 				*/
 				double amaxp = k / npq * ((k * (k / 3.0 + 0.625) + (1.0 / 6.0)) / npq + 0.5);
 				double ynorm = -(k * k / (2.0 * npq));
-				if (var < ynorm - amaxp) {
+				if (var < ynorm - amaxp)
 					goto Finish;
-				}
-				if (var > ynorm + amaxp) {
+				if (var > ynorm + amaxp)
 					goto TryAgain;
-				}
 			}
 
 			/* 
@@ -2450,11 +2437,10 @@ TryAgain:
 		}
 
 
-		if (var <= accept) {
+		if (var <= accept)
 			goto Finish;
-		} else {
+		else
 			goto TryAgain;
-		}
 	}
 
 Finish:
@@ -2463,11 +2449,10 @@ Finish:
 }
 
 double NUMrandomBinomial_real (double p, integer n) {
-	if (p < 0.0 || p > 1.0 || n < 0) {
+	if (p < 0.0 || p > 1.0 || n < 0)
 		return undefined;
-	} else {
+	else
 		return (double) NUMrandomBinomial (p, n);
-	}
 }
 
 double NUMrandomGamma (const double alpha, const double beta) {
@@ -2555,8 +2540,7 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 	}
 }
 
-void NUMgetEntropies (constMAT m, double *out_h, double *out_hx, 
-	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {
+void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double *out_hy, double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {
 	
 	double h = undefined, hx = undefined, hy = undefined;
 	double hxgy = undefined, hygx = undefined, uygx = undefined, uxgy = undefined, uxy = undefined;
@@ -2585,8 +2569,7 @@ void NUMgetEntropies (constMAT m, double *out_h, double *out_hx,
 		
 		longdouble hx_t = 0.0;
 		for (integer j = 1; j <= m.ncol; j ++) {
-			longdouble colsum = 0.0;
-			for (integer i = 1; i <= m.nrow; i++) colsum += m [i] [j];
+			double colsum = NUMsum (m.column (j));
 			if (colsum > 0.0) {
 				longdouble p = colsum / totalSum;
 				hx_t -= p * NUMlog2 (p);
@@ -2630,27 +2613,6 @@ void NUMgetEntropies (constMAT m, double *out_h, double *out_hx,
 		*out_uxy = uxy;
 }
 #undef TINY
-
-double NUMfrobeniusnorm (constMAT x) {
-	longdouble scale = 0.0;
-	longdouble ssq = 1.0;
-	for (integer i = 1; i <= x.nrow; i ++) {
-		for (integer j = 1; j <= x.ncol; j ++) {
-			if (x [i] [j] != 0.0) {
-				longdouble absxi = fabs (x [i] [j]);
-				if (scale < absxi) {
-					longdouble t = scale / absxi;
-					ssq = 1.0 + ssq * t * t;
-					scale = absxi;
-				} else {
-					longdouble t = absxi / scale;
-					ssq += t * t;
-				}
-			}
-		}
-	}
-	return scale * sqrt ((double) ssq);
-}
 
 double NUMtrace (const constMATVU& a) {
 	Melder_assert (a.nrow == a.ncol);

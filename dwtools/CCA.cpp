@@ -110,8 +110,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		autoSVD svdx = SVD_create (numberOfObservations, numberOfIndependents);	 // numberOfObservations >= numberOfIndependents, hence no transposition
 		svdy -> u.all() <<= my data.verticalBand (1, numberOfDependents);
 		svdx -> u.all() <<= my data.verticalBand (numberOfDependents + 1, my numberOfColumns);
-		double fnormy = NUMfrobeniusnorm (svdy -> u.get());
-		double fnormx = NUMfrobeniusnorm (svdx -> u.get());
+		double fnormy = NUMnorm (svdy -> u.get(), 2.0);
+		double fnormx = NUMnorm (svdx -> u.get(), 2.0);
 		
 		Melder_require (fnormy > 0.0 && fnormx > 0.0,
 			U"One of the parts of the table contains only zeros.");
