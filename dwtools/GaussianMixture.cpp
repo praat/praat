@@ -544,7 +544,7 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish)
 {
 	Melder_require (my dimension == his dimension,
-		U"The number of dimensions should agree.");
+		U"The numbers of dimensions should agree.");
 	Melder_require (integer_abs (d1) >= 1 && integer_abs (d1) <= my dimension && integer_abs (d2) >= 1 && integer_abs (d2) <= my dimension,
 		U"The dimension numbers should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");
 	bool d1_inverted = d1 < 0, d2_inverted = d2 < 0;

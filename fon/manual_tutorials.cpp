@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190713)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190814)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.01# (14 August 2019)")
+LIST_ITEM (U"• Repaired ##TextGrid: Replace interval texts...#.")
 NORMAL (U"##6.1# (13 July 2019)")
 NORMAL (U"##6.0.57# (1 July 2019)")
 LIST_ITEM (U"• Repaired a crash when an editor window zoomed in to a zero time range.")
