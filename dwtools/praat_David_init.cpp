@@ -6115,8 +6115,10 @@ FORM (MODIFY_SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Speech
 	OK
 DO
 	if (wordGap < 0.0) wordGap = 0.0;
-	Melder_require (pitchAdjustment >= 0.5 && pitchAdjustment <= 2.0, U"The pitch adjustment should be between 0.5 and 2.0.");
-	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0, U"The pitch range multiplier should be between 0.0 and 2.0.");
+	Melder_require (pitchAdjustment >= 0.5 && pitchAdjustment <= 2.0,
+		U"The pitch adjustment should be between 0.5 and 2.0.");
+	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0,
+		U"The pitch range multiplier should be between 0.0 and 2.0.");
 	MODIFY_EACH (SpeechSynthesizer)
 		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes);
 	MODIFY_EACH_END
@@ -6134,7 +6136,7 @@ FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set
 		OPTION (U"IPA")
 	OK
 DO
-	if (wordGap < 0) wordGap = 0;
+	if (wordGap < 0.0) wordGap = 0.0;
 	if (pitchAdjustment_0_99 < 0) pitchAdjustment_0_99 = 0;
 	if (pitchAdjustment_0_99 > 99) pitchAdjustment_0_99 = 99;
 	if (pitchRange_0_99 < 0) pitchRange_0_99 = 0;
@@ -6142,7 +6144,7 @@ DO
 	double pitchAdjustment = (1.5/99.0 * pitchAdjustment_0_99 + 0.5);
 	double pitchRange = (pitchRange_0_99 / 49.5);
 	MODIFY_EACH (SpeechSynthesizer)
-		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute,  outputPhonemeCodes);
+		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes);
 		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me, estimateWordsPerMinute);
 	MODIFY_EACH_END
 }
@@ -6158,9 +6160,8 @@ DO
 	CONVERT_TWO (SpeechSynthesizer, TextGrid)
 		autoTextGrid annotations;
 		autoSound result = SpeechSynthesizer_TextGrid_to_Sound (me, you, tierNumber, intervalNumber, (createAnnotations ? & annotations : nullptr ));
-		if (createAnnotations) {
+		if (createAnnotations)
 			praat_new (annotations.move(), my name.get());
-		}
 	CONVERT_TWO_END (my name.get())
 }
 
@@ -6188,7 +6189,8 @@ FORM (NEW1_SpeechSynthesizer_Sound_TextGrid_align2, U"SpeechSynthesizer & Sound 
     REAL (trimDuration, U"Silence trim duration (s)", U"0.08")
     OK
 DO
-   trimDuration = trimDuration < 0.0 ? 0.0 : trimDuration;
+	if (trimDuration < 0.0)
+		trimDuration = 0.0;
     CONVERT_THREE (SpeechSynthesizer, Sound, TextGrid)
 		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align2 (me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, minimumSilenceDuration, minimumSoundingDuration, trimDuration);
     CONVERT_THREE_END (his name.get(), U"_aligned")

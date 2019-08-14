@@ -9,7 +9,8 @@ synth = Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 s1 = To Sound: "This is some text.", "no"
 selectObject: synth
 Set speech output settings: 44100, 0.01, 80, 50, 145, "no", "IPA"
-Speech output settings: 44100, 0.01, 1.2, 1.0, 145, "no", "IPA"
+Speech output settings: 44100, 0.01, 1.2, 1.0, 145, "IPA"
+Estimate speech rate from speech: "no"
 
 s2 =To Sound: "abracadabra, abra", "no"
 plusObject: s1
