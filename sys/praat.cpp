@@ -1342,7 +1342,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 			GuiAppInitialize ("Praatwulg", argc, argv);
 		#elif cocoa
 			//[NSApplication sharedApplication];
-			[GuiCocoaApplication sharedApplication];
+			NSApplication *theApp = [GuiCocoaApplication sharedApplication];
+			/*
+				We want to get rid of the Search field in the help menu.
+				By default, such a Search field will come up automatically when we create a menu with the title "Help".
+				By changing this title to "SomeFakeTitleOfAMenuThatWillNeverBeInstantiated",
+				we trick macOS into thinking that our help menu is called "SomeFakeTitleOfAMenuThatWillNeverBeInstantiated".
+				As a result, the Search field will come up only when we create a menu
+				titled "SomeFakeTitleOfAMenuThatWillNeverBeInstantiated", which is never.
+			*/
+			theApp.helpMenu = [[NSMenu alloc] initWithTitle:@"SomeFakeTitleOfAMenuThatWillNeverBeInstantiated"];
 		#endif
 
 		trace (U"creating and installing the Objects window");

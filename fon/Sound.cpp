@@ -465,66 +465,66 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 
 autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) {
 	try {
-		integer numberOfChannels = 0, nx = 0, numberOfSmoothingSamples;
-		double dx = 0.0;
+		integer sharedNumberOfChannels = 0, totalNumberOfSamples = 0;
+		double sharedTimeStep = 0.0;
 		for (integer i = 1; i <= list.size; i ++) {
-			Sound sound = list.at [i];
-			if (numberOfChannels == 0) {
-				numberOfChannels = sound -> ny;
-			} else if (sound -> ny != numberOfChannels) {
+			const Sound sound = list.at [i];
+			if (sharedNumberOfChannels == 0) {
+				sharedNumberOfChannels = sound -> ny;
+			} else if (sound -> ny != sharedNumberOfChannels) {
 				Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) should be equal.");
 			}
-			if (dx == 0.0) {
-				dx = sound -> dx;
-			} else if (sound -> dx != dx) {
+			if (sharedTimeStep == 0.0) {
+				sharedTimeStep = sound -> dx;
+			} else if (sound -> dx != sharedTimeStep) {
 				Melder_throw (U"To concatenate sounds, their sampling frequencies should be equal.\n"
 						U"You could resample one or more of the sounds before concatenating.");
 			}
-			nx += sound -> nx;
+			totalNumberOfSamples += sound -> nx;
 		}
-		numberOfSmoothingSamples = Melder_iround (overlapTime / dx);
-		autoSound thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
+		const integer numberOfSmoothingSamples = Melder_iround (overlapTime / sharedTimeStep);
+		totalNumberOfSamples -= numberOfSmoothingSamples * (list.size - 1);
+		autoSound thee = Sound_create (sharedNumberOfChannels, 0.0, totalNumberOfSamples * sharedTimeStep,
+				totalNumberOfSamples, sharedTimeStep, 0.5 * sharedTimeStep);
 		autoVEC smoother;
 		if (numberOfSmoothingSamples > 0) {
 			smoother = autoVEC (numberOfSmoothingSamples, kTensorInitializationType::RAW);
-			double factor = NUMpi / numberOfSmoothingSamples;
+			const double factor = NUMpi / numberOfSmoothingSamples;
 			for (integer i = 1; i <= numberOfSmoothingSamples; i ++)
 				smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
 		}
-		nx = 0;
+		integer sampleOffset = 0;
 		for (integer i = 1; i <= list.size; i ++) {
-			Sound sound = list.at [i];
+			const Sound sound = list.at [i];
 			if (numberOfSmoothingSamples > 2 * sound -> nx)
 				Melder_throw (U"At least one of the sounds is shorter than twice the overlap time.\nChoose a shorter overlap time.");
-			bool thisIsTheFirstSound = ( i == 1 );
-			bool thisIsTheLastSound = ( i == list.size );
-			bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
-			bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
-			integer numberOfSmoothingSamplesAtTheStartOfThisSound = ( weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0 );
-			integer numberOfSmoothingSamplesAtTheEndOfThisSound = ( weNeedSmoothingAtTheEndOfThisSound ? numberOfSmoothingSamples : 0 );
-			for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-				for (integer j = 1, mySample = 1, thySample = mySample + nx;
+			const bool thisIsTheFirstSound = ( i == 1 );
+			const bool thisIsTheLastSound = ( i == list.size );
+			const bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
+			const bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
+			const integer numberOfSmoothingSamplesAtTheStartOfThisSound = ( weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0 );
+			const integer numberOfSmoothingSamplesAtTheEndOfThisSound = ( weNeedSmoothingAtTheEndOfThisSound ? numberOfSmoothingSamples : 0 );
+			for (integer channel = 1; channel <= sharedNumberOfChannels; channel ++) {
+				for (integer j = 1, mySample = 1, thySample = mySample + sampleOffset;
 					 j <= numberOfSmoothingSamplesAtTheStartOfThisSound;
 					 j ++, mySample ++, thySample ++)
 				{
 					thy z [channel] [thySample] += sound -> z [channel] [mySample] * smoother [j];   // add
 				}
-				thy z.row (channel).part (nx + 1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
-						nx + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound) <<=
+				thy z.row (channel).part (sampleOffset + 1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
+						sampleOffset + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound) <<=
 						sound -> z.row (channel).part (1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
 						sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
-				for (integer j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + nx;
+				for (integer j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + sampleOffset;
 					 j <= numberOfSmoothingSamplesAtTheEndOfThisSound;
 					 j ++, mySample ++, thySample ++)
 				{
 					thy z [channel] [thySample] = sound -> z [channel] [mySample] * smoother [numberOfSmoothingSamplesAtTheEndOfThisSound + 1 - j];   // replace (or add, which is the same since it's all zeroes to start with)
 				}
 			}
-			nx += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
+			sampleOffset += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
 		}
-		thy nx -= numberOfSmoothingSamples * (list.size - 1);
-		Melder_assert (thy nx == nx);
-		thy xmax = thy nx * dx;
+		Melder_assert (sampleOffset == totalNumberOfSamples);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sounds not concatenated.");
