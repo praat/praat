@@ -2335,7 +2335,7 @@ DIRECT (NEW1_Eigen_Covariance_project) {
 
 /******************** Electroglottogram ********************************************/
 
-FORM (NEW_Electroglottogram_to_IntervalTier, U"Electroglottogram: To IntervalTier", U"") {
+FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To IntervalTier", U"") {
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
 	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
@@ -2344,7 +2344,7 @@ FORM (NEW_Electroglottogram_to_IntervalTier, U"Electroglottogram: To IntervalTie
 DO
 	Melder_require (closingThreshold < 1.0, U"The closing threshold has to be smaller than 1.");
 	CONVERT_EACH (Electroglottogram)
-		autoIntervalTier result = Electroglottogram_to_TextTier_peaks (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
+		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -8280,7 +8280,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setCosts_others);
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
-	praat_addAction1 (classElectroglottogram, 1, U"To IntervalTier...", nullptr, 0, NEW_Electroglottogram_to_IntervalTier);
+	praat_addAction1 (classElectroglottogram, 1, U"Get closed glottis intervals...", nullptr, 0, NEW_Electroglottogram_getClosedGlottisIntervals);
 	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
 	praat_addAction1 (classElectroglottogram, 1, U"To Electroglottogram (derivative)...", nullptr, 0, NEW_Electroglottogram_derivative);
 	

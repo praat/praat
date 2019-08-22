@@ -25,8 +25,8 @@
 
 #include "Electroglottogram_def.h"
 
-/* 
-	An Electroglottogram represets the degree of contact between the vibrating vocal folds during voice production.
+/*
+	An Electroglottogram represets the degree of contact between the (vibrating) vocal folds during voice production.
 	It is measured at the throat.
 	It will be represented as a one channel Sound.
 	There might be an accompanying sound. They are both sampled at the same sampling frequency.
@@ -43,7 +43,7 @@ autoTextTier Electroglottogram_to_TextTier_closedGlottis (Electroglottogram me, 
 
 autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, autoAmplitudeTier *out_peaks, autoAmplitudeTier *out_valleys);
 
-autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
+autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
 
 autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
 

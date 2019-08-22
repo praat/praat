@@ -46,15 +46,15 @@
 #include "oo_DESCRIPTION.h"
 #include "Electroglottogram_def.h"
 
-Thing_implement (Electroglottogram, Vector, 2);
+Thing_implement (Electroglottogram, Sound, 0);
 
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {
-		if (IntervalTier_hasTime (me, t))
-			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because there is already a boundary there.");
+		Melder_require (! IntervalTier_hasTime (me, t),
+			U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because there is already a boundary there.");
 		integer intervalNumber = IntervalTier_timeToIndex (me, t);
-		if (intervalNumber == 0)
-			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because this is outside the time domain of the intervals.");
+		Melder_require (intervalNumber != 0,
+			U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because this is outside the time domain of the intervals.");
 		TextInterval interval = my intervals.at [intervalNumber];
 		/*
 			Move the text to the left of the boundary.
@@ -69,8 +69,8 @@ void IntervalTier_insertBoundary (IntervalTier me, double t) {
 
 void IntervalTier_setIntervalText (IntervalTier me, integer intervalNumber, conststring32 text) {
 	try {
-		if (intervalNumber < 1 || intervalNumber > my intervals.size)
-			Melder_throw (U"Interval ", intervalNumber, U" does not exist.");
+		Melder_require (intervalNumber >= 1 && intervalNumber <= my intervals.size,
+			U"Interval ", intervalNumber, U" does not exist.");
 		TextInterval interval = my intervals.at [intervalNumber];
 		TextInterval_setText (interval, text);
 	} catch (MelderError) {
@@ -94,7 +94,7 @@ void structElectroglottogram :: v_info () {
 autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1) {
 	try {
 		autoElectroglottogram me = Thing_new (Electroglottogram);
-		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1, 1, 1, 1, 1);
+		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1.0, 1.0, 1.0, 1, 1.0);
 		// Don't create the sound because it is optional
 		return me;
 	} catch (MelderError) {
@@ -139,8 +139,6 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 	}
 }
 
-//autoTextTier Electroglottogram_to_TextTier (Electroglottogram me, double pitchFloor, double PitchCeiling, double closingThreshold, kElectroglottogram_findClosedIntervalMethod method);
-
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingThreshold) {
 		try {
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
@@ -172,7 +170,7 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 		}
 }
 
-autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
+autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
 	try {
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks,  & valleys);
@@ -190,8 +188,8 @@ autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, doub
 			double closingTime = undefined, openingTime = undefined;
 			if (peakAmplitude > minimumPeakAmplitude) {
 				double level = RealTier_getValueAtTime (levels.get(), peakPosition);
-				closingTime = Sound_getNearestLevelCrossing ((Sound) me, 1, peakPosition, level, kSoundSearchDirection::Left);
-				openingTime = Sound_getNearestLevelCrossing ((Sound) me, 1, peakPosition, level, kSoundSearchDirection::Right);
+				closingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::Left);
+				openingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::Right);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
 					IntervalTier_insertBoundary (intervalTier.get(), closingTime);
 					IntervalTier_insertBoundary (intervalTier.get(), openingTime);
@@ -202,9 +200,7 @@ autoIntervalTier Electroglottogram_to_TextTier_peaks (Electroglottogram me, doub
 				}
 			}
 		}
-		
 		return intervalTier;
-		
 	} catch (MelderError) {
 		Melder_throw (me, U": TextTier not created.");
 	}
@@ -243,7 +239,7 @@ autoSound Sound_Electroglottograms_combine (Sound me, OrderedOf<structElectroglo
 			Melder_require (egg -> dx == my dx,
 				U"The Electroglottograms should have the same sampling frequency as the Sound.");
 		}
-		autoSound him = Sound_create (numberOfChannels,my xmin, my xmax, my nx, my dx, my x1);
+		autoSound him = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer ichan = 1; ichan <= my ny; ichan ++)
 			his z.row (ichan) <<= my z.row(ichan);
 	
