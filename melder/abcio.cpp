@@ -1,6 +1,6 @@
 /* abcio.cpp
  *
- * Copyright (C) 1992-2011,2015,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,22 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2003/05/19 accept percent signs in getReal
- * pb 2004/10/01 Melder_double instead of %.17g
- * pb 2006/02/17 support for Intel-based Macs
- * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
- * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
- * pb 2007/07/21 MelderReadString
- * pb 2007/08/14 check for null pointer before Melder_isValidAscii
- * pb 2009/03/18 modern enums
- * fb 2010/02/26 UTF-16 via bin(get|put)utf16()
- * pb 2010/03/09 more support for Unicode values above 0xFFFF
- * pb 2010/12/23 corrected bingeti3 and bingeti3LE for 64-bit systems
- * pb 2011/03/30 C++
  */
 
 #include "melder.h"
@@ -157,9 +141,8 @@ static double getReal (MelderReadText me) {
 	buffer [i + 1] = '\0';
 	slash = strchr (buffer, '/');
 	if (slash) {
-		double numerator, denominator;
 		*slash = '\0';
-		numerator = Melder_a8tof (buffer), denominator = Melder_a8tof (slash + 1);
+		double numerator = Melder_a8tof (buffer), denominator = Melder_a8tof (slash + 1);
 		if (isundef (numerator) || isundef (denominator) || denominator == 0.0)
 			return undefined;
 		return numerator / denominator;
@@ -251,9 +234,6 @@ static char32 * peekString (MelderReadText me) {
 	}
 	return buffer. string;
 }
-
-#undef false
-#undef true
 
 #include "enums_getText.h"
 #include "abcio_enums.h"
@@ -1105,6 +1085,44 @@ double bingetr64 (FILE *f) {
 	}
 }
 
+double bingetr64LE (FILE *f) {
+	try {
+		if (binario_doubleIEEE8lsb && Melder_debug != 18 || Melder_debug == 181) {
+			double x;
+			if (fread (& x, sizeof (double), 1, f) != 1) readError (f, U"a 64-bit floating-point number.");
+			return x;
+		} else {
+			uint8 bytes [8];
+			if (fread (bytes, sizeof (uint8), 8, f) != 8) readError (f, U"eight bytes.");
+			int32 exponent = (int32)
+				((uint32) ((uint32) ((uint32) bytes [7] & 0x0000'007F) << 4) |
+				 (uint32) ((uint32) ((uint32) bytes [6] & 0x0000'00F0) >> 4));
+			uint32 highMantissa =
+				(uint32) ((uint32) ((uint32) bytes [6] & 0x0000'000F) << 16) |
+						  (uint32) ((uint32) bytes [5] << 8) |
+									(uint32) bytes [4];
+			uint32 lowMantissa =
+				(uint32) ((uint32) bytes [3] << 24) |
+				(uint32) ((uint32) bytes [2] << 16) |
+				(uint32) ((uint32) bytes [1] << 8) |
+						  (uint32) bytes [0];
+			double x;
+			if (exponent == 0)
+				if (highMantissa == 0 && lowMantissa == 0) x = 0.0;
+				else x = ldexp ((double) highMantissa, exponent - 1042) +
+					ldexp ((double) lowMantissa, exponent - 1074);   // denormalized
+			else if (exponent == 0x0000'07FF)   // Infinity or Not-a-Number
+				return undefined;
+			else
+				x = ldexp ((double) (highMantissa | 0x0010'0000), exponent - 1043) +
+					ldexp ((double) lowMantissa, exponent - 1075);
+			return bytes [7] & 0x80 ? - x : x;
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Floating-point number not read from 8 bytes in binary file.");
+	}
+}
+
 double bingetr80 (FILE *f) {
 	try {
 		uint8 bytes [10];
@@ -1446,11 +1464,10 @@ void binputr64 (double x, FILE *f) {
 		} else if (binario_doubleIEEE8lsb && Melder_debug != 18) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
-			uint8 tmp;
-			tmp = bytes [0], bytes [0] = bytes [7], bytes [7] = tmp;
-			tmp = bytes [1], bytes [1] = bytes [6], bytes [6] = tmp;
-			tmp = bytes [2], bytes [2] = bytes [5], bytes [5] = tmp;
-			tmp = bytes [3], bytes [3] = bytes [4], bytes [4] = tmp;
+			std::swap (bytes [0], bytes [7]);
+			std::swap (bytes [1], bytes [6]);
+			std::swap (bytes [2], bytes [5]);
+			std::swap (bytes [3], bytes [4]);
 			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
 		} else {
 			uint8 bytes [8];
@@ -1487,6 +1504,60 @@ void binputr64 (double x, FILE *f) {
 			bytes [5] = (uint8) (lowMantissa >> 16);
 			bytes [6] = (uint8) (lowMantissa >> 8);
 			bytes [7] = (uint8) lowMantissa;
+			if (fwrite (bytes, sizeof (uint8), 8, f) != 8) writeError (U"eight bytes.");
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Floating-point number not written to 8 bytes in binary file.");
+	}
+}
+
+void binputr64LE (double x, FILE *f) {
+	try {
+		if (binario_doubleIEEE8lsb && Melder_debug != 18 || Melder_debug == 181) {
+			if (fwrite (& x, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+		} else if (binario_doubleIEEE8msb && Melder_debug != 18) {
+			union { double xx; uint8 bytes [8]; };
+			xx = x;
+			std::swap (bytes [0], bytes [7]);
+			std::swap (bytes [1], bytes [6]);
+			std::swap (bytes [2], bytes [5]);
+			std::swap (bytes [3], bytes [4]);
+			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+		} else {
+			uint8 bytes [8];
+			int sign, exponent;
+			double fMantissa, fsMantissa;
+			uint32 highMantissa, lowMantissa;
+			if (x < 0.0) { sign = 0x0800; x *= -1.0; }
+			else sign = 0;
+			if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
+			else {
+				fMantissa = frexp (x, & exponent);
+				if (/*(exponent > 1024) ||*/ ! (fMantissa < 1.0))   // Infinity or Not-a-Number
+					{ exponent = sign | 0x07FF; highMantissa = 0; lowMantissa = 0; }   // Infinity
+				else { // finite
+					exponent += 1022;   // add bias
+					if (exponent <= 0) {   // denormalized
+						fMantissa = ldexp (fMantissa, exponent - 1);
+						exponent = 0;
+					}
+					exponent |= sign;
+					fMantissa = ldexp (fMantissa, 21);
+					fsMantissa = floor (fMantissa);
+					highMantissa = (uint32) fsMantissa & 0x000F'FFFF;
+					fMantissa = ldexp (fMantissa - fsMantissa, 32);
+					fsMantissa = floor (fMantissa);
+					lowMantissa = (uint32) fsMantissa;
+				}
+			}
+			bytes [7] = (uint8) (exponent >> 4);
+			bytes [6] = (uint8) ((exponent << 4) | (highMantissa >> 16));
+			bytes [5] = (uint8) (highMantissa >> 8);
+			bytes [4] = (uint8) highMantissa;
+			bytes [3] = (uint8) (lowMantissa >> 24);
+			bytes [2] = (uint8) (lowMantissa >> 16);
+			bytes [1] = (uint8) (lowMantissa >> 8);
+			bytes [0] = (uint8) lowMantissa;
 			if (fwrite (bytes, sizeof (uint8), 8, f) != 8) writeError (U"eight bytes.");
 		}
 	} catch (MelderError) {

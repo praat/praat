@@ -1,6 +1,6 @@
 /* MDS.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,13 @@
 #include "SSCP.h"
 #include "PCA.h"
 
+#include "enums_getText.h"
+#undef _MDS_enums_h_
+#include "MDS_enums.h"
+#include "enums_getValue.h"
+#undef _MDS_enums_h_
+#include "MDS_enums.h"
+
 #define TINY 1e-30
 
 Thing_implement (Kruskal, Thing, 0);
@@ -54,7 +61,6 @@ Thing_implement (ConfusionList, TableOfRealList, 0);
 Thing_implement (ProximityList, TableOfRealList, 0);
 Thing_implement (ScalarProductList, TableOfRealList, 0);
 
-Thing_implement (DistanceList, ProximityList, 0);
 Thing_implement (DissimilarityList, ProximityList, 0);
 Thing_implement (Similarity, Proximity, 0);
 
@@ -62,7 +68,7 @@ Thing_implement (Similarity, Proximity, 0);
 /********************** NUMERICAL STUFF **************************************/
 
 
-static void MATfromVEC_inplace (MAT m, VEC v) {
+static void MATfromVEC_inplace (MATVU const& m, VECVU v) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer irow = 1; irow <= m.nrow; irow ++)
@@ -70,7 +76,7 @@ static void MATfromVEC_inplace (MAT m, VEC v) {
 			m [irow] [icol] = v [k ++];
 }
 
-static void MAT_divideRowByRowsum_inplace (MAT m) {
+static void MAT_divideRowByRowsum_inplace (MATVU const& m) {
 	for (integer i = 1; i <= m.nrow; i ++) {
 		longdouble rowSum = NUMsum (m.row (i));
 		if (rowSum != 0.0)
@@ -78,13 +84,13 @@ static void MAT_divideRowByRowsum_inplace (MAT m) {
 	}
 }
 
-static integer NUMcountZeros (constMAT m) {
-	integer nZeros = 0;
+static integer NUMcountZeros (constMATVU const& m) {
+	integer numberOfZeros = 0;
 	for (integer i = 1; i <= m.nrow; i ++)
 		for (integer j = 1; j <= m.ncol; j ++)
-			if (m [i] [j] == 0)
-				nZeros ++;
-	return nZeros;
+			if (m [i] [j] == 0.0)
+				numberOfZeros ++;
+	return numberOfZeros;
 }
 
 /************ ConfigurationList & Similarity **************************/
@@ -116,8 +122,10 @@ autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight 
 
 autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 	try {
-		Melder_require (my size > 0, U"DistanceList should not be empty.");
-		Melder_require (TableOfRealList_haveIdenticalDimensions (my asTableOfRealList()), U"All matrices should have the same dimensions.");
+		Melder_require (my size > 0,
+			U"DistanceList should not be empty.");
+		Melder_require (TableOfRealList_haveIdenticalDimensions (my asTableOfRealList()),
+			U"All matrices should have the same dimensions.");
 
 		autoWeight aw;
 		if (! w) {
@@ -201,7 +209,8 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 	for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
 		integer ii = vec -> rowIndex [i];
 		integer jj = vec -> columnIndex [i];
-		double delta_ij = vec -> proximity [i], d_ij = d -> data [ii] [jj];
+		double delta_ij = vec -> proximity [i];
+		double d_ij = d -> data [ii] [jj];
 		double tmp = w -> data [ii] [jj] * delta_ij * delta_ij;
 		etaSq += tmp;
 		rho += tmp * d_ij * d_ij;
@@ -209,7 +218,8 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 
 	// transform
 
-	Melder_require (etaSq > 0.0, U"Eta squared should not be zero.");
+	Melder_require (etaSq > 0.0,
+		U"Eta squared should not be zero.");
 	
 	our ratio = rho / etaSq;
 	for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
@@ -218,9 +228,8 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 		thy data [ii] [jj] = thy data [jj] [ii] = our ratio * vec -> proximity [i];
 	}
 
-	if (our normalization) {
+	if (our normalization)
 		Distance_Weight_smacofNormalize (thee.get(), w);
-	}
 	return thee;
 }
 
@@ -249,14 +258,14 @@ autoMonotoneTransformator MonotoneTransformator_create (integer numberOfPoints) 
 	try {
 		autoMonotoneTransformator me = Thing_new (MonotoneTransformator);
 		Transformator_init (me.get(), numberOfPoints);
-		my tiesHandling = MDS_PRIMARY_APPROACH;
+		my tiesHandling = kMDS_TiesHandling::PrimaryApproach;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MonotoneTransformator not created.");
 	}
 }
 
-void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me, int tiesHandling) {
+void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me, kMDS_TiesHandling tiesHandling) {
 	my tiesHandling = tiesHandling;
 }
 
@@ -302,7 +311,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		}
 	}
 
-	b = NUMsolveNonNegativeLeastSquaresRegression (m.get(), d.get(), tol, itermax);
+	b = newVECsolveNonNegativeLeastSquaresRegression (m.get(), d.get(), tol, itermax);
 
 	for (integer i = 1; i <= nx; i ++) {
 		integer ii = vec->rowIndex [i];
@@ -937,7 +946,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	}
 }
 
-autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance thee, int tiesHandling) {
+autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance thee, kMDS_TiesHandling tiesHandling) {
 	try {
 		autoDistanceList him = DistanceList_create ();
 		for (integer i = 1; i <= my size; i ++) {
@@ -952,11 +961,13 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 	}
 }
 
-autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesHandling) {
+autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, kMDS_TiesHandling tiesHandling) {
 	try {
-		Melder_require (my numberOfPoints == thy numberOfColumns, U"");
+		Melder_require (my numberOfPoints == thy numberOfColumns,
+			U"The dimensions of the Distance and the MDSVec should agree.");
 		integer numberOfProximities = my numberOfProximities;
-		Melder_require (thy numberOfRows == my numberOfPoints, U"Distance and MDSVVec dimensions should agreee.");
+		Melder_require (thy numberOfRows == my numberOfPoints,
+			U"Distance and MDSVVec dimensions should agreee.");
 		autoVEC distances = newVECraw (numberOfProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
 		TableOfReal_copyLabels (thee, him.get(), 1, 1);
@@ -964,7 +975,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 		for (integer i = 1; i <= numberOfProximities; i ++)
 			distances [i] = thy data [my rowIndex [i]] [my columnIndex [i]];
 
-		if (tiesHandling == MDS_PRIMARY_APPROACH || tiesHandling == MDS_SECONDARY_APPROACH) {
+		if (tiesHandling == kMDS_TiesHandling::PrimaryApproach || tiesHandling == kMDS_TiesHandling::SecondaryApproach) {
 			/*
 				Kruskal's primary approach to tie-blocks:
 					Sort corresponding distances, with rowIndex, and columnIndex.
@@ -977,9 +988,9 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 					continue;
 				}
 				if (i - ib > 1) {
-					if (tiesHandling == MDS_PRIMARY_APPROACH) {
+					if (tiesHandling == kMDS_TiesHandling::PrimaryApproach) {
 						// all equal
-					} else if (tiesHandling == MDS_SECONDARY_APPROACH) {
+					} else if (tiesHandling == kMDS_TiesHandling::SecondaryApproach) {
 						longdouble mean = 0.0;
 						for (integer j = ib; j <= i - 1; j ++) {
 							mean += distances [j];
@@ -994,7 +1005,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 			}
 		}
 
-		autoVEC fit = VECmonotoneRegression (distances.get());
+		autoVEC fit = newVECmonotoneRegression (distances.get());
 
 		// Fill Distance with monotone regressed distances
 
@@ -1018,7 +1029,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 }
 
 
-autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int tiesHandling) {
+autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, kMDS_TiesHandling tiesHandling) {
 	try {
 		Melder_require (thy numberOfRows == my numberOfRows, U"Dimensions should agree.");
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
@@ -1106,7 +1117,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			MATmul3_VMVt (ci [i], yinv.get(), sp -> data.get()); //yinv.Data.yinv'
+			MATmul3_XYXt (ci [i], yinv.get(), sp -> data.get()); //yinv.Data.yinv'
 		}
 
 		/*
@@ -1229,7 +1240,7 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 	}
 }
 
-double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int stressMeasure) {
+double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, kMDS_stressMeasure stressMeasure) {
 	double stress = undefined;
 
 	double eta_fit, eta_conf, rho;
@@ -1240,18 +1251,18 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 		scale of the configuration, i.e., the distances conf [i] [j].
 	*/
 
-	if (stressMeasure == MDS_NORMALIZED_STRESS) {
+	if (stressMeasure == kMDS_stressMeasure::Normalized) {
 		const double denum = eta_fit * eta_conf;
 		if (denum > 0.0)
 			stress = 1.0 - rho * rho / denum;
-	} else if (stressMeasure == MDS_STRESS_1) {
+	} else if (stressMeasure == kMDS_stressMeasure::Kruskal_1) {
 		const double denum = eta_fit * eta_conf;
 		if (denum > 0.0) {
 			const double tmp = 1.0 - rho * rho / denum;
 			if (tmp > 0.0)
 				stress = sqrt (tmp);
 		}
-	} else if (stressMeasure == MDS_STRESS_2) {
+	} else if (stressMeasure == kMDS_stressMeasure::Kruskal_2) {
 		/*
 			Get average distance.
 		*/
@@ -1278,7 +1289,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 			if (denum > 0.0)
 				stress = sqrt ((eta_fit * eta_conf - rho * rho) / denum);
 		}
-	} else if (stressMeasure == MDS_RAW_STRESS) {
+	} else if (stressMeasure == kMDS_stressMeasure::Raw) {
 		stress = eta_fit + eta_conf - 2.0 * rho;
 	}
 	return stress;
@@ -1306,7 +1317,7 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 		*out_rho = (double) rho;
 }
 
-double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
+double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, kMDS_stressMeasure stressMeasure) {
 	const integer nPoints = d -> numberOfRows;
 	double stress = undefined;
 	Melder_require (nPoints > 0 && nPoints == c -> numberOfRows && nPoints == t -> numberOfPoints ||
@@ -1325,32 +1336,32 @@ double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d,
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure) {
+double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, kMDS_stressMeasure stressMeasure) {
 	autoTransformator t = Transformator_create (d -> numberOfRows);
 	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure) {
+double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, kMDS_stressMeasure stressMeasure) {
 	autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
 	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure) {
+double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, kMDS_stressMeasure stressMeasure) {
 	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, 0, 1);
 	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesHandling, int stressMeasure) {
+double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, kMDS_TiesHandling tiesHandling, kMDS_stressMeasure stressMeasure) {
 	autoMonotoneTransformator t = MonotoneTransformator_create (d -> numberOfRows);
 	MonotoneTransformator_setTiesProcessing (t.get(), tiesHandling);
 	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, integer numberOfInteriorKnots, integer order, int stressMeasure) {
+double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, integer numberOfInteriorKnots, integer order, kMDS_stressMeasure stressMeasure) {
 	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, numberOfInteriorKnots, order);
 	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
@@ -1359,9 +1370,8 @@ double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Confi
 void Distance_Weight_smacofNormalize (Distance me, Weight w) {
 	longdouble sumsq = 0.0;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-		for (integer j = i + 1; j <= my numberOfRows; j ++) {
+		for (integer j = i + 1; j <= my numberOfRows; j ++)
 			sumsq += w -> data [i] [j] * my data [i] [j] * my data [i] [j];
-		}
 	}
 	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / double (2.0 * sumsq));
 	my data.all()  *=  scale;
@@ -1404,7 +1414,8 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
-		if (showProgress) Melder_progress (0.0, U"MDS analysis");
+		if (showProgress)
+			Melder_progress (0.0, U"MDS analysis");
 
 		// Get V (eq. 8.19).
 
@@ -1440,7 +1451,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 
 			autoDistance cdist = Configuration_to_Distance (conf);
 
-			stress = Distance_Weight_stress (fit.get(), cdist.get(), weight, MDS_NORMALIZED_STRESS);
+			stress = Distance_Weight_stress (fit.get(), cdist.get(), weight, kMDS_stressMeasure::Normalized);
 
 			// Check stop criterium
 
@@ -1533,7 +1544,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, int tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, kMDS_TiesHandling tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoMonotoneTransformator t = MonotoneTransformator_create (my numberOfRows);
 		MonotoneTransformator_setTiesProcessing (t.get(), tiesHandling);
@@ -1576,7 +1587,7 @@ autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, integer numberOfDimensions, int tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, integer numberOfDimensions, kMDS_TiesHandling tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
@@ -1613,11 +1624,11 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 
 /***** classical **/
 
-static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *out_stress, double *out_s, double *out_t, double *out_dbar) {
+static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, kMDS_KruskalStress stress_formula, double *out_stress, double *out_s, double *out_t, double *out_dbar) {
 	
 	longdouble s = 0.0, t = 0.0, dbar = 0.0;
 
-	if (stress_formula == 2) {
+	if (stress_formula == kMDS_KruskalStress::Kruskal_1) {
 		for (integer i = 1; i <= my numberOfProximities; i ++) {
 			dbar += ddist -> data [my rowIndex [i]] [my columnIndex [i]];
 		}
@@ -1632,82 +1643,14 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 		t += tt * tt;
 	}
 
-	if (out_stress) *out_stress = ( t > 0.0 ? sqrt (s / t) : 0.0 );
-	if (out_s) *out_s = s;
-	if (out_t) *out_t = t;
-	if (out_dbar) *out_dbar = dbar;
-}
-
-static double func (Daata object, VEC p) {
-	Kruskal me = (Kruskal) object;
-	MDSVec him = my vec.get();
-	MAT x = my configuration -> data.get();
-	double s, t, dbar, stress;
-	double metric = my configuration -> metric;
-	integer numberOfDimensions = my configuration -> numberOfColumns;
-	integer numberOfPoints = my configuration -> numberOfRows;
-	int tiesHandling = ( my process == MDS_CONTINUOUS ? 1 : 0 );
-
-	// Substitute results of minimizer into configuration and
-	// normalize the configuration
-
-	MATfromVEC_inplace (x, p);
-	MATcentreEachColumn_inplace (x);
-	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
-
-	// Calculate interpoint distances from the configuration
-
-	autoDistance dist = Configuration_to_Distance (my configuration.get());
-
-	// Monotone regression
-
-	autoDistance fit = MDSVec_Distance_monotoneRegression (my vec.get(), dist.get(), tiesHandling);
-
-	// Get numerator and denominator of stress
-
-	MDSVec_Distances_getStressValues (my vec.get(), dist.get(), fit.get(), my stress_formula, &stress, &s, &t, &dbar);
-
-	// Gradient calculation.
-
-	my dx.get() <<= 0.0;
-
-	// Prevent overflow when stress is small
-
-	if (stress < 1e-6) {
-		return stress;
-	}
-
-	for (integer i = 1; i <= his numberOfProximities; i ++) {
-		integer ii = my vec -> rowIndex [i], jj = my vec -> columnIndex [i];
-		double g1 = stress * ((dist->data [ii] [jj] - fit->data [ii] [jj]) / s - (dist->data [ii] [jj] - dbar) / t);
-		for (integer j = 1; j <= numberOfDimensions; j ++) {
-			double dj = x [ii] [j] - x [jj] [j];
-			double g2 = g1 * pow (fabs (dj) / dist->data [ii] [jj], metric - 1.0);
-			if (dj < 0.0) {
-				g2 = -g2;
-			}
-			my dx [ii] [j] += g2; 
-			my dx [jj] [j] -= g2;
-		}
-	}
-
-	// Increment the number of times this function has been called
-
-	(my minimizer -> funcCalls) ++;
-	return stress;
-}
-
-/* Precondition: configuration was not changed since previous call to func */
-static void dfunc (Daata object, VEC /* p */, VEC dp) {
-	Kruskal me = (Kruskal) object;
-	Configuration thee = my configuration.get();
-
-	integer k = 1;
-	for (integer i = 1; i <= thy numberOfRows; i ++) {
-		for (integer j = 1; j <= thy numberOfColumns; j ++) {
-			dp [k ++] = my dx [i] [j];
-		}
-	}
+	if (out_stress)
+		*out_stress = ( t > 0.0 ? sqrt (s / t) : 0.0 );
+	if (out_s)
+		*out_s = s;
+	if (out_t)
+		*out_t = t;
+	if (out_dbar)
+		*out_dbar = dbar;
 }
 
 autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) {
@@ -1716,15 +1659,18 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
 		my proximities = ProximityList_create ();
 		my dx = newMATraw (numberOfPoints, numberOfDimensions);
+		my tiesHandling = kMDS_TiesHandling::PrimaryApproach;
+		my stress_formula = kMDS_KruskalStress::Kruskal_1;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Kruskal not created.");
 	}
 }
 
-autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, integer numberOfDimensions, integer /* metric */, int tiesHandling, int stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
+autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, integer numberOfDimensions, integer /* metric */, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
+		//autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
 		autoConfiguration c = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		Configuration_normalize (c.get(), 1.0, false);
 		autoConfiguration thee = Dissimilarity_Configuration_kruskal (me, c.get(), tiesHandling, stress_formula, tolerance, numberOfIterations, numberOfRepetitions);
@@ -1742,7 +1688,7 @@ void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configura
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-autoDistance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dissimilarity, Configuration configuration, int tiesHandling) {
+autoDistance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dissimilarity, Configuration configuration, kMDS_TiesHandling tiesHandling) {
 	try {
 		autoDistance dist = Configuration_to_Distance (configuration);
 		autoDistance result = Dissimilarity_Distance_monotoneRegression (dissimilarity, dist.get(), tiesHandling);
@@ -1752,7 +1698,7 @@ autoDistance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dissi
 	}
 }
 
-autoDistanceList DissimilarityList_Configuration_monotoneRegression (DissimilarityList me, Configuration configuration, int tiesHandling) {
+autoDistanceList DissimilarityList_Configuration_monotoneRegression (DissimilarityList me, Configuration configuration, kMDS_TiesHandling tiesHandling) {
 	try {
 		autoDistanceList thee = DistanceList_create ();
 		autoDistance dist = Configuration_to_Distance (configuration);
@@ -1766,9 +1712,7 @@ autoDistanceList DissimilarityList_Configuration_monotoneRegression (Dissimilari
 	}
 }
 
-void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g,
-	int tiesHandling, double xmin, double xmax, double ymin, double ymax,
-	double size_mm, conststring32 mark, bool garnish)
+void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g, kMDS_TiesHandling tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark, bool garnish)
 {
 	/* obsolete replace by transformator */
 	autoDistance fit = Dissimilarity_Configuration_monotoneRegression (me, him, tiesHandling);
@@ -1801,7 +1745,7 @@ void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d,
 }
 
 void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
-	int tiesHandling, double xmin, double xmax, double ymin, double ymax,
+	kMDS_TiesHandling tiesHandling, double xmin, double xmax, double ymin, double ymax,
 	double size_mm, conststring32 mark, bool garnish)
 {
 	autoMonotoneTransformator t = MonotoneTransformator_create (d->numberOfRows);
@@ -1839,31 +1783,92 @@ double Dissimilarity_Configuration_Weight_Transformator_normalizedStress (Dissim
 	autoDistance cdist = Configuration_to_Distance (conf);
 	autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 	autoDistance fdist = Transformator_transform (t, vec.get(), cdist.get(), weight);
-	double stress = Distance_Weight_stress (fdist.get(), cdist.get(), weight, MDS_NORMALIZED_STRESS);
+	double stress = Distance_Weight_stress (fdist.get(), cdist.get(), weight, kMDS_stressMeasure::Normalized);
 	return stress;
 }
 
-double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, int tiesHandling, int stress_formula) {
+double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula) {
 	autoDistance dist = Configuration_to_Distance (him);
 	autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 	autoDistance fit = MDSVec_Distance_monotoneRegression (vec.get(), dist.get(), tiesHandling);
-	double s, t, dbar, stress;
-	MDSVec_Distances_getStressValues (vec.get(), dist.get(), fit.get(), stress_formula, &stress, &s, &t, &dbar);
+	double stress;
+	MDSVec_Distances_getStressValues (vec.get(), dist.get(), fit.get(), stress_formula, & stress, nullptr, nullptr, nullptr);
 	return stress;
 }
 
-autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int tiesHandling, int stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
+static double func (Daata object, VEC const& p) {
+	Kruskal me = (Kruskal) object;
+	MDSVec him = my vec.get();
+	MAT x = my configuration -> data.get();
+	double s, t, dbar, stress;
+	integer numberOfDimensions = my configuration -> numberOfColumns;
+	integer numberOfPoints = my configuration -> numberOfRows;
+
+	// Substitute results of minimizer into configuration and
+	// normalize the configuration
+
+	MATfromVEC_inplace (x, p);
+	MATcentreEachColumn_inplace (x);
+	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
+
+	// Calculate interpoint distances from the configuration
+
+	autoDistance dist = Configuration_to_Distance (my configuration.get());
+
+	// Monotone regression
+
+	autoDistance fit = MDSVec_Distance_monotoneRegression (my vec.get(), dist.get(), my tiesHandling);
+
+	// Get numerator and denominator of stress
+
+	MDSVec_Distances_getStressValues (my vec.get(), dist.get(), fit.get(), my stress_formula, & stress, & s, & t, & dbar);
+
+	// Prevent overflow when stress is small
+
+	if (stress >= 1e-6) {
+		
+		my dx.get() <<= 0.0;
+
+		for (integer i = 1; i <= his numberOfProximities; i ++) {
+			integer ii = my vec -> rowIndex [i], jj = my vec -> columnIndex [i];
+			double g1 = stress * ((dist -> data [ii] [jj] - fit -> data [ii] [jj]) / s - (dist -> data [ii] [jj] - dbar) / t);
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
+				double dj = x [ii] [j] - x [jj] [j];
+				double g2 = g1 * pow (fabs (dj) / dist -> data [ii] [jj], my configuration -> metric - 1.0);
+				if (dj < 0.0)
+					g2 = -g2;
+				my dx [ii] [j] += g2;
+				my dx [jj] [j] -= g2;
+			}
+		}
+	}
+	(my minimizer -> numberOfFunctionCalls) ++;
+	return stress;
+}
+
+/* Precondition: configuration was not changed since previous call to func */
+static void dfunc (Daata object, VEC const& /* p */, VEC const& dp) {
+	Kruskal me = (Kruskal) object;
+	Configuration thee = my configuration.get();
+
+	integer k = 1;
+	for (integer i = 1; i <= thy numberOfRows; i ++) {
+		for (integer j = 1; j <= thy numberOfColumns; j ++)
+			dp [k ++] = my dx [i] [j];
+	}
+}
+
+autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
 		// The Configuration is normalized: each dimension centred +
-		//	total variance set
+		//	total variance set to 1.0
 
 		integer numberOfCoordinates = my numberOfRows * his numberOfColumns;
 		integer numberOfParameters = numberOfCoordinates - his numberOfColumns - 1;
 		integer numberOfData = my numberOfRows * (my numberOfRows - 1) / 2;
 
-		Melder_require (numberOfParameters <= numberOfData, 
+		Melder_require (numberOfParameters <= numberOfData,
 			U"The number of parameters should not exceed the number of data.");
-		
 
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
 		TableOfReal_copyLabels (me, thy configuration.get(), 1, 0);
@@ -1876,17 +1881,15 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 		VECchainRows_preallocated (thy minimizer -> p.get(), his data.get());
 
 		thy stress_formula = stress_formula;
-		thy process = tiesHandling;
+		thy tiesHandling = tiesHandling;
 		Configuration_setMetric (thy configuration.get(), his metric);
 
-		Minimizer_minimizeManyTimes (thy minimizer.get(), numberOfRepetitions, numberOfIterations, tolerance);
+		Minimizer_minimizeManyTimes (thy minimizer.get(), numberOfIterations, numberOfRepetitions, tolerance);
 
 		// call the function to get the best configuration
 
-		(void) func ((Daata) thee.get(), thy minimizer -> p.get()); 
-
-		autoConfiguration result = Data_copy (thy configuration.get()); // TODO move from its autoConfiguration
-		return result;
+		(void) func ((Daata) thee.get(), thy minimizer -> p.get());
+		return thy configuration.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");
 	}
@@ -1952,8 +1955,9 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 				for (integer l = 1; l <= nPoints; l ++)
 					wih += xc -> data [k] [h] * spr -> data [k] [l] * xc -> data [l] [h];
 			}
-			wih = std::max (0.0, (double) wih);
-			weights -> data [i] [h] = wih;
+			if (wih < 0.0)
+				wih = 0.0;
+			weights -> data [i] [h] = double (wih);
 
 		}
 	}
@@ -1990,7 +1994,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 		// Count number of zero weights
 
-		integer nZeros = NUMcountZeros (sal -> data.get());
+		integer numberOfZeros = NUMcountZeros (sal -> data.get());
 
 		if (out_conf) {
 			Thing_setName (conf.get(), U"indscal");
@@ -2008,8 +2012,8 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 			for (integer i = 1; i <= nSources; i ++) 
 				MelderInfo_writeLine (U"  ", Thing_getName (sp->at [i]));
 
-			if (nZeros > 0)
-				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", ( nZeros > 1 ? U"s" : U"" ), U"!");
+			if (numberOfZeros > 0)
+				MelderInfo_writeLine (U"WARNING: ", numberOfZeros,  U" zero weight", ( numberOfZeros > 1 ? U"s" : U"" ), U"!");
 
 			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", varianceAccountedFor, U"\nThe optimal configuration was reached in ", ( iter > numberOfIterations ? numberOfIterations : iter ), U" iterations.");
 			MelderInfo_drain();
@@ -2033,7 +2037,7 @@ void DistanceList_Configuration_Salience_indscal (DistanceList distances, Config
 	}
 }
 
-void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience weights, int tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out_configuration, autoSalience *out_salience, double *out_varianceAccountedFor) {
+void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience weights, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out_configuration, autoSalience *out_salience, double *out_varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, vaf;
 		integer iter, nSources = dissims->size;
@@ -2060,7 +2064,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		// Count number of zero weights
 
-		integer nZeros = NUMcountZeros (salience -> data.get());
+		integer numberOfZeros = NUMcountZeros (salience -> data.get());
 
 		// Set labels & names.
 
@@ -2078,8 +2082,8 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 			MelderInfo_writeLine (U"Number of objects: ", nSources);
 			for (integer i = 1; i <= nSources; i ++)
 				MelderInfo_writeLine (U"  ", Thing_getName (dissims->at [i]));
-			if (nZeros > 0)
-				MelderInfo_writeLine (U"WARNING: ", nZeros, U" zero weight", ( nZeros > 1 ? U"s" : U"" ));
+			if (numberOfZeros > 0)
+				MelderInfo_writeLine (U"WARNING: ", numberOfZeros, U" zero weight", ( numberOfZeros > 1 ? U"s" : U"" ));
 			MelderInfo_writeLine (U"Variance Accounted For: ", vaf);
 			MelderInfo_writeLine (U"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine (U"number of iterations: ", (iter > numberOfIterations ?	numberOfIterations : iter));
@@ -2104,7 +2108,7 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 	}
 }
 
-autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandling) {
+autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, kMDS_TiesHandling tiesHandling) {
 	try {
 		autoVEC w = newVECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
@@ -2142,7 +2146,7 @@ autoSalience ScalarProductList_Configuration_to_Salience (ScalarProductList me, 
 	}
 }
 
-autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, Configuration him, int tiesHandling, bool normalizeScalarProducts) {
+autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, Configuration him, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts) {
 	try {
 		autoDistanceList distances = DissimilarityList_Configuration_monotoneRegression (me, him, tiesHandling);
 		autoSalience w = DistanceList_Configuration_to_Salience (distances.get(), him, normalizeScalarProducts);
@@ -2152,7 +2156,7 @@ autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, 
 	}
 }
 
-void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configuration conf, int tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
+void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configuration conf, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoDistanceList distances = DissimilarityList_Configuration_monotoneRegression (dissims, conf, tiesHandling);
 		autoSalience weights = DistanceList_Configuration_to_Salience (distances.get(), conf, normalizeScalarProducts);
@@ -2163,7 +2167,7 @@ void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configu
 	}
 }
 
-void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions, int tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal) {
+void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		bool showSingle = (showProgress && numberOfRepetitions == 1);
@@ -2192,14 +2196,16 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 			Configuration_normalize (cstart.get(), 1.0, true);
 			Salience_setDefaults (wstart.get());
 
-			if (showMulti) {
+			if (showMulti)
 				Melder_progress ( (double) iter / (numberOfRepetitions + 1), iter, U" from ", numberOfRepetitions);
-			}
 		}
 
-		if (out_conf) *out_conf = conf.move();
-		if (out_sal) *out_sal = sal.move();
-		if (showMulti) Melder_progress (1.0);
+		if (out_conf)
+			*out_conf = conf.move();
+		if (out_sal)
+			*out_sal = sal.move();
+		if (showMulti)
+			Melder_progress (1.0);
 		
 	} catch (MelderError) {
 		if (showMulti) {
@@ -2252,7 +2258,7 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, integer numb
 	}
 }
 
-void DissimilarityList_Configuration_Salience_vaf (DissimilarityList me, Configuration thee, Salience him, int tiesHandling, bool normalizeScalarProducts, double *out_varianceAccountedFor) {
+void DissimilarityList_Configuration_Salience_vaf (DissimilarityList me, Configuration thee, Salience him, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts, double *out_varianceAccountedFor) {
 	autoDistanceList distances = DissimilarityList_Configuration_monotoneRegression (me, thee, tiesHandling);
 	DistanceList_Configuration_Salience_vaf (distances.get(), thee, him, normalizeScalarProducts, out_varianceAccountedFor);
 }
@@ -2262,7 +2268,7 @@ void DistanceList_Configuration_vaf (DistanceList me, Configuration thee, bool n
 	DistanceList_Configuration_Salience_vaf (me, thee, w.get(), normalizeScalarProducts, out_varianceAccountedFor);
 }
 
-void DissimilarityList_Configuration_vaf (DissimilarityList me, Configuration thee, int tiesHandling, bool normalizeScalarProducts, double *out_varianceAccountedFor) {
+void DissimilarityList_Configuration_vaf (DissimilarityList me, Configuration thee, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts, double *out_varianceAccountedFor) {
 	autoSalience w = DissimilarityList_Configuration_to_Salience (me, thee, tiesHandling, normalizeScalarProducts);
 	DissimilarityList_Configuration_Salience_vaf (me, thee, w.get(), tiesHandling, normalizeScalarProducts, out_varianceAccountedFor);
 }
@@ -2374,13 +2380,13 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 }
 
 void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
-	int splineType, integer order, conststring32 interiorKnots, bool garnish)
+	kMDS_splineType splineType, integer order, conststring32 interiorKnots, bool garnish)
 {
 	integer k = order, numberOfKnots, numberOfInteriorKnots = 0;
 	integer nSplines, n = 1000;
 	double knot [101], y [1001];
 	if (k > 100) return; // 
-	if (splineType == MDS_ISPLINE)
+	if (splineType == kMDS_splineType::ISpline)
 		k ++;
 	for (integer i = 1; i <= k; i ++)
 		knot [i] = low;
@@ -2419,7 +2425,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	for (integer i = 1; i <= nSplines; i ++) {
 		for (integer j = 1; j <= n; j ++) {
 			double yx, x = low + dx * (j - 1);
-			if (splineType == MDS_MSPLINE)
+			if (splineType == kMDS_splineType::MSpline)
 				yx = NUMmspline (constVEC (knot, numberOfKnots), order, i, x);
 			else
 				yx = NUMispline (constVEC (knot, numberOfKnots), order, i, x);
@@ -2430,9 +2436,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		static MelderString ts { };
-		integer lastKnot = ( splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots );
+		integer lastKnot = ( splineType == kMDS_splineType::ISpline ? numberOfKnots - 2 : numberOfKnots );
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, false, ( splineType == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline" ));
+		Graphics_textLeft (g, false, ( splineType == kMDS_splineType::MSpline ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline" ));
 		Graphics_marksTop (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot [order]) {

@@ -1111,7 +1111,7 @@ L10:
 			}
 
 		} else if (ngpmin == gpmin && ngnmin == gnmin) {
-			if ( (i__1 = ngpmin - ngnmin, labs (i__1)) == 1) {
+			if ( (i__1 = ngpmin - ngnmin, integer_abs (i__1)) == 1) {
 				lemin = MAX (ngpmin, ngnmin);
 				/* ( Twos-complement machines, no gradual underflow; e.g.,
 				   CYBER 205 ) */
@@ -1121,7 +1121,7 @@ L10:
 				iwarn = true;
 			}
 
-		} else if ( (i__1 = ngpmin - ngnmin, labs (i__1)) == 1 && gpmin == gnmin) {
+		} else if ( (i__1 = ngpmin - ngnmin, integer_abs (i__1)) == 1 && gpmin == gnmin) {
 			if (gpmin - MIN (ngpmin, ngnmin) == 3) {
 				lemin = MAX (ngpmin, ngnmin) - 1 + lt;
 				/* ( Twos-complement machines with gradual underflow; no

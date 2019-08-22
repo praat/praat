@@ -271,6 +271,19 @@ inline autoVEC newVECrandomUniform (constVECVU const& model, double lowest, doub
 	return result;
 }
 
+inline void VECrowInners (VECVU const& target, constMATVU const& x, constMATVU const& y) {
+	Melder_assert (y.nrow == x.nrow);
+	Melder_assert (y.ncol == x.ncol);
+	Melder_assert (target.size == x.nrow);
+	for (integer irow = 1; irow <= target.size; irow ++)
+		target [irow] = NUMinner (x.row (irow), y.row (irow));
+}
+inline autoVEC newVECrowInners (constMATVU const& x, constMATVU const& y) {
+	autoVEC result = newVECraw (x.nrow);
+	VECrowInners (result.all(), x, y);
+	return result;
+}
+
 inline void VECsin_inplace (VECVU const& vec) noexcept {
 	for (integer i = 1; i <= vec.size; i ++)
 		vec [i] = sin (vec [i]);
@@ -292,11 +305,9 @@ inline autoVEC newVECcolumnSums (constMATVU const& x) {
 	return result;
 }
 
-inline autoVEC newVECto (integer to) {
-	autoVEC result = newVECraw (to);
-	for (integer i = 1; i <= to; i ++)
-		result [i] = (double) i;
-	return result;
-}
+extern autoVEC newVECfrom_to (double from, double to);
+extern autoVEC newVECfrom_to_by (double from, double to, double by);
+extern autoVEC newVECbetween_by (double from, double to, double by);
+extern autoVEC newVECto (double to);
 
 /* End of file VEC.h */

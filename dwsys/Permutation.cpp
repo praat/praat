@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2018 David Weenink
+ * Copyright (C) 2005-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 
 #include <time.h>
 #include "Permutation.h"
+#include "NUM2.h"
 
 #include "oo_DESTROY.h"
 #include "Permutation_def.h"
@@ -82,8 +83,7 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
-	my p = newINTVECraw (numberOfElements);
-	Permutation_sort (me);
+	my p = newINTVEClinear (numberOfElements, 1, 1);
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
@@ -116,8 +116,7 @@ autoPermutation Permutation_create (integer numberOfElements) {
 }
 
 void Permutation_sort (Permutation me) {
-	for (integer i = 1; i <= my numberOfElements; i ++)
-		my p [i] = i;
+	INTVEClinear (my p.get(), 1, 1);
 }
 
 void Permutation_swapPositions (Permutation me, integer i1, integer i2) {
@@ -419,7 +418,8 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee) {
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
 	try {
-	Melder_require (my size > 1, U"There should be at least two Permutations to multiply.");
+	Melder_require (my size > 1,
+		U"There should be at least two Permutations to multiply.");
 		autoPermutation thee = Permutations_multiply2 (my at [1], my at [2]);
 		for (integer i = 3; i <= my size; i ++) {
 			autoPermutation him = Permutations_multiply2 (thee.get(), my at [i]);

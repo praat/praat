@@ -1,6 +1,6 @@
 /* Pitch_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,8 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 				pos = i;
 			}
 		}
-		if (strength < weakest) {
+		if (strength < weakest)
 			pos = 0;
-		}
 	}
 	if (pos > 0) {
 		my candidate [pos].frequency = f;
@@ -48,7 +47,7 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 	}
 }
 
-void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
+void Pitch_Frame_getPitch (Pitch_Frame me, double *out_f, double *out_strength) {
 	integer pos = 1;
 	double strength = -1.0;
 	for (integer i = 1; i <= my nCandidates; i ++) {
@@ -57,16 +56,14 @@ void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
 			pos = i;
 		}
 	}
-	if (f) {
-		*f = my candidate [pos].frequency;
-	}
-	if (p_strength) {
-		*p_strength = strength;
-	}
+	if (out_f)
+		*out_f = my candidate [pos].frequency;
+	if (out_strength)
+		*out_strength = strength;
 }
 
 void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
-	int pos = 1;
+	integer pos = 1;
 	double strongest = my candidate [1].strength;
 	for (integer i = 2; i <= my nCandidates; i ++) {
 		if (my candidate [i].strength > strongest) {
@@ -74,11 +71,10 @@ void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unv
 			pos = i;
 		}
 	}
-	if (strongest != 0) {
-		for (integer i = 1; i <= my nCandidates; i ++) {
+	if (strongest != 0)
+		for (integer i = 1; i <= my nCandidates; i ++)
 			my candidate [i].strength *= maxStrength / strongest;
-		}
-	}
+
 	if (maxStrength < unvoicedCriterium) {
 		for (integer i = 1; i <= my nCandidates; i ++) {
 			if (my candidate [i].frequency == 0) {
@@ -100,7 +96,7 @@ void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unv
 autoPitch Pitch_scaleTime (Pitch me, double scaleFactor) {
 	try {
 		double dx = my dx, x1 = my x1, xmax = my xmax;
-		if (scaleFactor != 1) {
+		if (scaleFactor != 1.0) {
 			dx = my dx * scaleFactor;
 			x1 = my xmin + 0.5 * dx;
 			xmax = my xmin + my nx * dx;
@@ -152,13 +148,12 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 		double fmin = HertzToSpecial (pitchMin_Hz, pitchUnit);
 		double fmax = HertzToSpecial (pitchMax_Hz, pitchUnit);
 
-		if (isundef (fminr) || isundef (fmaxr) || isundef (fmin) || isundef (fmax)) {
-			Melder_throw (U"The conversion of a pitch value is not defined. ");
-		}
+		Melder_require (! (isundef (fminr) || isundef (fmaxr) || isundef (fmin) || isundef (fmax)), 
+			U"The conversion of a pitch value is not defined.");
 		double ranger = fmaxr - fminr, range = fmax - fmin;
-		if (ranger < 0.01 || range < 0.01) {
-			Melder_throw (U"Pitch range too small.");
-		}
+		Melder_require (ranger >= 0.01 && range >= 0.01,
+			U"Pitch range too small.");
+		
 		double fmidr = fminr + ranger / 2.0;
 		double factor = ranger / range;
 		autoPitchTier thee = Data_copy (me);
@@ -183,9 +178,8 @@ autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double
 		
 		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
 		integer nt = Melder_ifloor ((tmax - tmin - t1) / dt);
-		if (t1 + nt * dt < tmax) {
+		if (t1 + nt * dt < tmax)
 			nt ++;
-		}
 		Melder_require (nt > 0, U"Duration is too short.");
 		
 		autoPitch thee = Pitch_create (tmin, tmax, nt, dt, t1, pitchCeiling, 1);
@@ -194,9 +188,8 @@ autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double
 			Pitch_Candidate candidate = (Pitch_Candidate) & frame -> candidate [1];
 			double t = t1 + (i - 1) * dt;
 			double f = RealTier_getValueAtTime (me, t);
-			if (f < pitchFloor || f > pitchCeiling) {
+			if (f < pitchFloor || f > pitchCeiling)
 				f = 0;
-			}
 			candidate -> frequency = f;
 		}
 		return thee;

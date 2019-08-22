@@ -1,6 +1,6 @@
 /* AffineTransform.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 #include "oo_DESCRIPTION.h"
 #include "AffineTransform_def.h"
 
-void structAffineTransform :: v_transform (MAT out, MAT in) {
+void structAffineTransform :: v_transform (MATVU const& out, constMATVU const& in) {
 	Melder_assert (in.nrow == out.nrow);
 	Melder_assert (in.ncol == out.ncol);
 	MATmul (out, in, r.get());
@@ -56,11 +56,11 @@ void structAffineTransform :: v_transform (MAT out, MAT in) {
 
 autoAffineTransform structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
-	double tolerance = 0.000001;
+	constexpr double tolerance = 0.000001;
 
-	thy r = newMATpseudoInverse (r.get(), tolerance);
-	for (integer i = 1; i <= dimension; i ++)
-		thy t[i] = - NUMinner (thy r.row (i), t.get ());
+	MATpseudoInverse (thy r.get(), our r.get(), tolerance);
+	VECmul (thy t.get(), thy r.get(), our t.get());
+	thy t.get()  *=  -1.0;
 	return thee;
 }
 

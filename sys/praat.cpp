@@ -911,18 +911,15 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		return 0;
 	}
 	extern "C" char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
-	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static void cb_openDocument (MelderFile file) {
 		char32 text [kMelder_MAXPATH+25];
 		/*
-		 * The user dropped a file on the Praat icon, while Praat is already running.
-		 */
+			The user dropped a file on the Praat icon,
+			or double-clicked a Praat file,
+			while Praat is already running.
+		*/
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
-		#ifdef __CYGWIN__
-			sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
-		#else
-			sendpraatW (nullptr, Melder_peek32toW (praatP.title.get()), 0, Melder_peek32toW (text));
-		#endif
+		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
 	}
 #elif macintosh
 	static int (*theUserMessageCallback) (char32 *message);
@@ -1345,7 +1342,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 			GuiAppInitialize ("Praatwulg", argc, argv);
 		#elif cocoa
 			//[NSApplication sharedApplication];
-			[GuiCocoaApplication sharedApplication];
+			NSApplication *theApp = [GuiCocoaApplication sharedApplication];
+			/*
+				We want to get rid of the Search field in the help menu.
+				By default, such a Search field will come up automatically when we create a menu with the title "Help".
+				By changing this title to "SomeFakeTitleOfAMenuThatWillNeverBeInstantiated",
+				we trick macOS into thinking that our help menu is called "SomeFakeTitleOfAMenuThatWillNeverBeInstantiated".
+				As a result, the Search field will come up only when we create a menu
+				titled "SomeFakeTitleOfAMenuThatWillNeverBeInstantiated", which is never.
+			*/
+			theApp.helpMenu = [[NSMenu alloc] initWithTitle:@"SomeFakeTitleOfAMenuThatWillNeverBeInstantiated"];
 		#endif
 
 		trace (U"creating and installing the Objects window");
@@ -1378,7 +1384,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 
 		#ifdef macintosh
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
-			AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
 			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
 		trace (U"creating the menu bar in the Objects window");
@@ -1638,6 +1643,7 @@ void praat_run () {
 	{ unsigned char dummy = 200;
 		Melder_assert ((int) dummy == 200);
 	}
+	Melder_assert (integer_abs (-1000) == integer (1000));
 	{ int dummy = 200;
 		Melder_assert ((int) (signed char) dummy == -56);   // bingeti8 relies on this
 		Melder_assert ((int) (unsigned char) dummy == 200);
@@ -1838,6 +1844,11 @@ void praat_run () {
 		if (praatP.userWantsToOpen) {
 			for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
 				//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
+				/*
+					The use double-clicked a Praat file,
+					or dropped a file on the Praat icon,
+					while Praat was not yet running.
+				*/
 				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
 															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
 				try {

@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2007,2009,2011-2018 Paul Boersma
+ * Copyright (C) 1994-2007,2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,12 +100,12 @@
 		if (! our x [_i]. equal (& thy x [_i])) return false; \
 	}
 
-#define oo_STRUCT_VECTOR_FROM(Type, x, min, max)  \
+#define oo_STRUCT_VECTOR(Type, x, n)  \
 	{ \
-		integer _min = (min), _max = (max); \
+		integer _size = (n); \
 		if (! our x != ! thy x) return false; \
 		if (our x) { \
-			for (integer _i = _min; _i <= _max; _i ++) { \
+			for (integer _i = 1; _i <= _size; _i ++) { \
 				if (! our x [_i]. equal (& thy x [_i])) return false; \
 			} \
 		} \

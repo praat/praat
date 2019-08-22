@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2018 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2019 Paul Boersma, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,16 @@ static void openDocument (TextEditor me, MelderFile file) {
 		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
 		if (editor != me && MelderFile_equal (file, & editor -> file)) {
 			Editor_raise (editor);
+			/*
+				Destruction alarm!
+				When we combine the destruction of an object with the presentation of a message,
+				we shall always follow the "build message -- destroy -- show message" paradigm.
+				Actually, in this case this is not only safe, but also crucial,
+				because at the time of writing (2019-04-28) the owner of `file` is owned by `me`,
+				so that destroying `me` would dangle `file`.
+			*/
 			Melder_appendError (U"Text file ", file, U" is already open.");
-			forget (me);   // don't forget me before Melder_appendError, because "file" is owned by one of my dialogs
+			forget (me);
 			Melder_flushError ();
 			return;
 		}
@@ -477,12 +485,26 @@ static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 		if (theFindString) SET_STRING (findString, theFindString.get());
 	EDITOR_DO
 		theFindString = Melder_dup (findString);
+		#ifdef macintosh
+			/*
+				Perhaps don't use the system-wide Find pasteboard,
+				by which other applications can see what you are searching for in Praat's text windows.
+				Remember ever showing your app in Xcode to somebody,
+				revealing to your onlooker the name of the person you last looked up in your email?
+			*/
+			// NSPasteboard * theFindPasteBoard = [NSPasteboard pasteboardWithName: NSPasteboardNameFind   create: NO];
+			// [theFindPasteBoard ...]
+		#endif
 		do_find (me);
 	EDITOR_END
 }
 
 static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 	do_find (me);
+}
+
+static void menu_cb_useSelectionForFind (TextEditor me, EDITOR_ARGS_DIRECT) {
+	theFindString = GuiText_getSelection (my textWidget);
 }
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
@@ -589,28 +611,28 @@ static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS_DIRECT) {
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
-	if (my fontSizeButton_10) GuiMenuItem_check (my fontSizeButton_10, my p_fontSize == 10);
-	if (my fontSizeButton_12) GuiMenuItem_check (my fontSizeButton_12, my p_fontSize == 12);
-	if (my fontSizeButton_14) GuiMenuItem_check (my fontSizeButton_14, my p_fontSize == 14);
-	if (my fontSizeButton_18) GuiMenuItem_check (my fontSizeButton_18, my p_fontSize == 18);
-	if (my fontSizeButton_24) GuiMenuItem_check (my fontSizeButton_24, my p_fontSize == 24);
+	if (my fontSizeButton_10) GuiMenuItem_check (my fontSizeButton_10, my p_fontSize == 10.0);
+	if (my fontSizeButton_12) GuiMenuItem_check (my fontSizeButton_12, my p_fontSize == 12.0);
+	if (my fontSizeButton_14) GuiMenuItem_check (my fontSizeButton_14, my p_fontSize == 14.0);
+	if (my fontSizeButton_18) GuiMenuItem_check (my fontSizeButton_18, my p_fontSize == 18.0);
+	if (my fontSizeButton_24) GuiMenuItem_check (my fontSizeButton_24, my p_fontSize == 24.0);
 }
-static void setFontSize (TextEditor me, int fontSize) {
+static void setFontSize (TextEditor me, double fontSize) {
 	GuiText_setFontSize (my textWidget, fontSize);
 	my pref_fontSize () = my p_fontSize = fontSize;
 	updateSizeMenu (me);
 }
 
-static void menu_cb_10 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10); }
-static void menu_cb_12 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12); }
-static void menu_cb_14 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14); }
-static void menu_cb_18 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18); }
-static void menu_cb_24 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24); }
+static void menu_cb_10 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10.0); }
+static void menu_cb_12 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12.0); }
+static void menu_cb_14 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14.0); }
+static void menu_cb_18 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18.0); }
+static void menu_cb_24 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24.0); }
 static void menu_cb_fontSize (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Text window: Font size", nullptr)
-		NATURAL (fontSize, U"Font size (points)", U"12")
+		POSITIVE (fontSize, U"Font size (points)", U"12")
 	EDITOR_OK
-		SET_INTEGER (fontSize, (integer) my p_fontSize);
+		SET_REAL (fontSize, my p_fontSize);
 	EDITOR_DO
 		setFontSize (me, fontSize);
 	EDITOR_END
@@ -659,6 +681,7 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Search", U"Find again", 'G', menu_cb_findAgain);
 	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT | 'F', menu_cb_replace);
 	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT | 'G', menu_cb_replaceAgain);
+	Editor_addCommand (this, U"Search", U"Use selection for find", 'E', menu_cb_useSelectionForFind);
 	Editor_addCommand (this, U"Search", U"-- line --", 0, nullptr);
 	Editor_addCommand (this, U"Search", U"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (this, U"Search", U"Go to line...", 'L', menu_cb_goToLine);

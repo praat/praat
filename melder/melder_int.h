@@ -2,7 +2,7 @@
 #define _melder_int_h_
 /* melder_int.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  */
 
 /*
- * The following two lines are for obsolete (i.e. C99) versions of stdint.h
- */
+	The following two lines are for obsolete (i.e. C99) versions of stdint.h
+*/
 #define __STDC_LIMIT_MACROS
 #define __STDC_CONSTANT_MACROS
 #include <stdint.h>
@@ -74,6 +74,14 @@ inline static uinteger integer_to_uinteger (integer n) {
 inline static integer uinteger_to_integer (uinteger n) {
 	Melder_assert (n <= INTEGER_MAX);
 	return (integer) n;
+}
+
+inline static integer integer_abs (integer n) {
+	Melder_assert (sizeof (integer) == sizeof (long) || sizeof (integer) == sizeof (long long));
+	if (sizeof (integer) == sizeof (long))
+		return labs (n);
+	else // sizeof (integer) == sizeof (long long)
+		return llabs (n);
 }
 
 struct MelderIntegerRange {

@@ -95,11 +95,6 @@ bool NUMvector_equal (const T* v1, const T* v2, integer lo, integer hi) {
 }
 
 template <class T>
-void NUMvector_copyElements (const T* vfrom, T* vto, integer lo, integer hi) {
-	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <const byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
-}
-
-template <class T>
 void NUMvector_append (T** v, integer lo, integer *hi) {
 	NUMvector_append_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi);
 }
@@ -226,11 +221,20 @@ public:
 	T& operator[] (integer i) const {
 		return our at [i];
 	}
+	/*
+		part (first, last) should crash under the exact
+		same conditions as a rising for-loop over the elements
+		from first to last (or a falling for-loop over
+		the elements from last to first) should crash.
+	*/
 	vector<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
+		/*
+			for-loops don't crash if the number of elements is zero.
+		*/
 		if (newSize <= 0) return vector<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return vector<T> (& our at [first - 1], newSize);
 	}
 	T *begin () const { return & our at [1]; }
@@ -252,10 +256,10 @@ public:
 		return our firstCell [(i - 1) * our stride];
 	}
 	vectorview<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return vectorview<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return vectorview<T> (& our operator[] (first), newSize, our stride);
 	}
 	T *begin () const { return & our operator[] (1); }
@@ -279,10 +283,10 @@ public:
 		return our at [i];
 	}
 	constvector<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return constvector<T> (nullptr, 0);
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return constvector<T> (& our at [first - 1], newSize);
 	}
 	const T *begin () const { return & our at [1]; }
@@ -307,10 +311,10 @@ public:
 		return our firstCell [(i - 1) * our stride];
 	}
 	constvectorview<T> part (integer first, integer last) const {
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 0 && last <= our size);
 		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return constvectorview<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
 		return constvectorview<T> (& our operator[] (first), newSize, our stride);
 	}
 	const T *begin () const { return & our operator[] (1); }
@@ -326,7 +330,7 @@ public:
 */
 template <typename T>
 class autovector : public vector<T> {
-	integer capacity = 0;
+	integer _capacity = 0;
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
 	explicit autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
@@ -334,11 +338,11 @@ public:
 		our at = ( givenSize == 0 ? nullptr
 				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
 		our size = givenSize;
-		our capacity = givenSize;
+		our _capacity = givenSize;
 	}
 	~autovector () {   // destroy the payload (if any)
 		our reset ();
-		our capacity = 0;
+		our _capacity = 0;
 	}
 	vector<T> get () const { return vector<T> (our at, our size); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	vectorview<T> all () const { return vectorview<T> (& our at [1], our size, 1); }
@@ -346,13 +350,13 @@ public:
 		our reset();
 		our at = given.at;
 		our size = given.size;
-		our capacity = given.size;
+		our _capacity = given.size;
 	}
 	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
 		T *oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		integer oldSize = our size;
-		our capacity = 0;
+		our _capacity = 0;
 		return vector<T> (oldAt, oldSize);
 	}
 	/*
@@ -367,17 +371,17 @@ public:
 	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
 		other.at = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
-		other.capacity = 0;
+		other._capacity = 0;
 	}
 	autovector& operator= (autovector&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
 			our reset ();
 			our at = other.at;
 			our size = other.size;
-			our capacity = other.capacity;
+			our _capacity = other._capacity;
 			other.at = nullptr;   // disown source
 			other.size = 0;   // to keep the source in a valid state
-			other.capacity = 0;
+			other._capacity = 0;
 		}
 		return *this;
 	}
@@ -390,21 +394,14 @@ public:
 	}
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 	/*
-		Unlike std::vector, our vector is not really designed for dynamic resizing,
-		i.e. it has no `capacity` member. This is because our vectors should mainly feel happy
-		in an environment with matrixes, tensor3s and tensor4s, for which dynamic resizing
-		makes little sense.
-		The following functions, however, do support dynamic resizing,
-		but the capacity should be kept in an external integer.
-
-		Some of these functions are capable of keeping a valid `at` pointer
+		Some of the following functions are capable of keeping a valid `at` pointer
 		while `size` can at the same time be zero.
 	*/
-	void initWithCapacity (integer *inout_capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
-		if (*inout_capacity > 0)
-			our at = NUMvector<T> (1, *inout_capacity, initializationType == kTensorInitializationType::ZERO);
+	void initWithCapacity (integer capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+		if (capacity > 0)
+			our at = NUMvector<T> (1, capacity, initializationType == kTensorInitializationType::ZERO);
 		our size = 0;
-		our capacity = *inout_capacity;
+		our _capacity = capacity;
 	}
 	/*
 		If the new size N is less than the current size S,
@@ -421,18 +418,15 @@ public:
 		elsewhere than at the head of the vector,
 		you should shift the elements after resizing.
 	*/
-	void resize (integer newSize, integer *inout_capacity = nullptr,
-		kTensorInitializationType initializationType = kTensorInitializationType::ZERO)
-	{
-		const integer currentCapacity = ( inout_capacity ? *inout_capacity : our size );
-		if (newSize > currentCapacity) {
+	void resize (integer newSize, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+		if (newSize > our _capacity) {
 			/*
 				The new capacity is at least twice the old capacity.
 				When starting at a capacity of 0, and continually upsizing by one,
 				the capacity sequence will be: 0, 11, 33, 77, 165, 341, 693, 1397,
 				2805, 5621, 11253, 22517, 45045, 90101, 180213, 360437, 720885...
 			*/
-			integer newCapacity = ( inout_capacity ? newSize + our size + 10 : newSize );
+			integer newCapacity = newSize + our size + 10;
 			/*
 				Create without change.
 			*/
@@ -444,14 +438,12 @@ public:
 				newAt [i] = our at [i];
 			if (our at) NUMvector_free (our at, 1);
 			our at = newAt;
-			if (inout_capacity)
-				*inout_capacity = newCapacity;
-			our capacity = newCapacity;
+			our _capacity = newCapacity;
 		}
 		our size = newSize;
 	}
-	void insert (integer position, const T& value, integer *inout_capacity = nullptr) {
-		resize (our size + 1, inout_capacity, kTensorInitializationType::RAW);
+	void insert (integer position, const T& value) {
+		resize (our size + 1, kTensorInitializationType::RAW);
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = our size; i > position; i --)
 			our at [i] = our at [i - 1];
@@ -521,26 +513,26 @@ public:
 		return vectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
 	matrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
 		if (newNrow <= 0) return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
 		return matrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
 	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (
 			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
 			newNrow, newNcol, our ncol, 1
@@ -578,20 +570,20 @@ public:
 		return vectorview<T> (our firstCell, std::min (our nrow, our ncol), our rowStride + our colStride);
 	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
 				our nrow, newNcol, our rowStride, our colStride);
 	}
 	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return matrixview<T> (
 			our firstCell + (firstRow - 1) * our rowStride + (firstColumn - 1) * our colStride,
 			newNrow, newNcol, our rowStride, our colStride
@@ -628,26 +620,26 @@ public:
 		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
 	constmatrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - (firstRow - 1);
 		if (newNrow <= 0) return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
 		return constmatrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
 	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (
 			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
 			newNrow, newNcol, our ncol, 1
@@ -689,20 +681,20 @@ public:
 		return constvectorview<T> (our firstCell, std::min (our nrow, our ncol), our rowStride + our colStride);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
 				our nrow, newNcol, our rowStride, our colStride);
 	}
 	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
 		if (newNrow <= 0 || newNcol <= 0) return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
 		return constmatrixview<T> (
 			our firstCell
 			+ (firstRow - 1) * our rowStride
@@ -944,17 +936,17 @@ public:
 		integer firstDim2, integer lastDim2,
 		integer firstDim3, integer lastDim3
 	) const {
+		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
+		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
+		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
+		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
+			return tensor3<T> ();
 		Melder_assert (firstDim1 >= 1 && firstDim1 <= our ndim1);
 		Melder_assert (lastDim1 >= 1 && lastDim1 <= our ndim1);
 		Melder_assert (firstDim2 >= 1 && firstDim2 <= our ndim2);
 		Melder_assert (lastDim2 >= 1 && lastDim2 <= our ndim2);
 		Melder_assert (firstDim3 >= 1 && firstDim3 <= our ndim3);
 		Melder_assert (lastDim3 >= 1 && lastDim3 <= our ndim3);
-		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
-		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
-		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
-		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
-			return tensor3<T> ();
 		return tensor3<T> (
 			our cells
 			+ (firstDim1 - 1) * our stride1
@@ -1055,17 +1047,17 @@ public:
 		integer firstDim2, integer lastDim2,
 		integer firstDim3, integer lastDim3
 	) const {
+		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
+		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
+		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
+		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
+			return consttensor3<T> ();
 		Melder_assert (firstDim1 >= 1 && firstDim1 <= our ndim1);
 		Melder_assert (lastDim1 >= 1 && lastDim1 <= our ndim1);
 		Melder_assert (firstDim2 >= 1 && firstDim2 <= our ndim2);
 		Melder_assert (lastDim2 >= 1 && lastDim2 <= our ndim2);
 		Melder_assert (firstDim3 >= 1 && firstDim3 <= our ndim3);
 		Melder_assert (lastDim3 >= 1 && lastDim3 <= our ndim3);
-		const integer newNdim1 = lastDim1 - (firstDim1 - 1);
-		const integer newNdim2 = lastDim2 - (firstDim2 - 1);
-		const integer newNdim3 = lastDim3 - (firstDim3 - 1);
-		if (newNdim1 <= 0 || newNdim2 <= 0 || newNdim3 <= 0)
-			return consttensor3<T> ();
 		return consttensor3<T> (
 			our cells
 			+ (firstDim1 - 1) * our stride1

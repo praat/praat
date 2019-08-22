@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2008,2011-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 				*/
 			}
 			char buffer8 [kMelder_MAXPATH+1];
-			Melder_str32To8bitFileRepresentation_inplace (searchDirectory. string, buffer8);
+			Melder_32to8_fileSystem_inplace (searchDirectory. string, buffer8);
 			d = opendir (buffer8 [0] ? buffer8 : ".");
 			if (! d)
 				Melder_throw (U"Cannot open directory ", searchDirectory. string, U".");
@@ -151,7 +151,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 				Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
 				MelderString_append (& filePath, buffer32);
 				//Melder_casual (U"read ", filePath. string);
-				Melder_str32To8bitFileRepresentation_inplace (filePath. string, buffer8);
+				Melder_32to8_fileSystem_inplace (filePath. string, buffer8);
 				struct stat stats;
 				if (stat (buffer8, & stats) != 0) {
 					//Melder_throw (U"Cannot look at file ", filePath. string, U".");
@@ -205,7 +205,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 			autoStrings me = Thing_new (Strings);
 			Melder_sprint (searchPath, kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
 			WIN32_FIND_DATAW findData;
-			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW (searchPath), & findData);
+			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW_fileSystem (searchPath), & findData);
 			if (searchHandle != INVALID_HANDLE_VALUE) {
 				do {
 					if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE &&
@@ -295,7 +295,7 @@ void Strings_genericize (Strings me) {
 		const char32 *p = & string [0];
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
-				Longchar_genericize32 (string, buffer.get());
+				Longchar_genericize (string, buffer.get());
 				my strings [i] = Melder_dup (buffer.get());
 				break;
 			}
@@ -305,9 +305,9 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
-	autostring32 buffer = (Strings_maximumLength (me));
+	autostring32 buffer = Strings_maximumLength (me);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		Longchar_nativize32 (my strings [i].get(), buffer.get(), false);
+		Longchar_nativize (my strings [i].get(), buffer.get(), false);
 		my strings [i] = Melder_dup (buffer.get());
 	}
 }
@@ -322,6 +322,7 @@ void Strings_remove (Strings me, integer position) {
 	for (integer i = position; i < my numberOfStrings; i ++)
 		my strings [i] = my strings [i + 1]. move();
 	my strings [my numberOfStrings]. reset();
+	my strings.size -= 1;
 	my numberOfStrings --;
 }
 

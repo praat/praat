@@ -1,6 +1,6 @@
 /* Procrustes.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,12 +50,12 @@
 
 Thing_implement (Procrustes, AffineTransform, 0);
 
-void structProcrustes :: v_transform (MAT out, MAT in) {
+void structProcrustes :: v_transform (MATVU const& out, constMATVU const& in) {
 	Melder_assert (in.nrow == out.nrow && in.ncol == out.ncol);
 	Melder_assert (in.ncol == dimension);
 	MATmul (out, in, r.get());
-	out *= s;
-	out += t;
+	out  *=  s;
+	out  +=  t;
 }
 
 autoAffineTransform structProcrustes :: v_invert () {
@@ -65,18 +65,13 @@ autoAffineTransform structProcrustes :: v_invert () {
 		inverse is transpose!
 	*/
 
-	thy s = s == 0.0 ? 1.0 : 1.0 / s;
-
-	for (integer i = 1; i <= dimension; i ++) {
-		for (integer j = i + 1; j <= dimension; j ++) {
-			thy r [i] [j] = r [j] [i];
-			thy r [j] [i] = r [i] [j];
-		}
-		thy t [i] = 0.0;
-		for (integer j = 1; j <= thy dimension; j ++)
-			thy t [i] -= thy r [j] [i] * t [j];
-		thy t [i] *= thy s;
-	}
+	thy s = ( our s == 0.0 ? 1.0 : 1.0 / our s );
+	thy r.all() <<= our r.transpose();
+	VECmul (thy t.get(), our r.get(), our t.get());
+	thy t.get()  *=  -thy s;
+	/*for (integer i = 1; i <= dimension; i ++) {
+		thy t [i] = -thy s * NUMinner (thy r.column (i), t);
+	}*/
 	return thee.move();   // explicit move() seems to be needed because of the type difference
 }
 

@@ -28,8 +28,8 @@
 void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, double w, double ymin, double ymax);
 
 void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, constVEC xdata, constVEC ydata,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel);
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel);
 
-void Graphics_lagPlot (Graphics g, constVEC x, double xmin, double xmax, integer lag, int labelSize, conststring32 plotLabel);
+void Graphics_lagPlot (Graphics g, constVEC x, double xmin, double xmax, integer lag, double labelSize, conststring32 plotLabel);
 
 #endif /* _Graphics_extensions_h_ */

@@ -3,12 +3,34 @@
 
 appendInfoLine: "test_Matrix_solve.praat"
 
+;@solve_sparse_system
+@solve_undetermined: 10, 100
 @solve3x3
+
+procedure solve_sparse_system
+	.nrow = 100
+	.ncol = 1000
+	.yy = Create simple Matrix: "y", .nrow, 1, "0.0"
+	.xx = Create simple Matrix: "x", .ncol, 1, "0.0"
+	Formula: "if randomUniform (0,1) < 0.005 then 0.1 else 0.0 fi"
+	.phi = Create simple Matrix: "phi", .nrow, .ncol, "0.0"
+	Formula: "randomGauss (0.0, 1.0 / .nrow)"
+	for .irow to .nrow
+		.val = 0.0
+		for .icol to .ncol
+			.val += object [.phi, .irow, .icol] * object [.xx, .icol, 1]
+		endfor
+		selectObject: .yy
+		Set value: .irow, 1, .val
+	endfor
+	selectObject: .yy, .phi
+	.x = Solve matrix equation (sparse): 10, 50, 1e-7, "yes"
+endproc
 
 procedure matrix_solve: .ncol
   for .i to 4
     .nrow = .i * .ncol
-   appendInfoLine: tab$, "nrow = ", .nrow, ", ncol = ", .ncol
+    appendInfoLine: tab$, "nrow = ", .nrow, ", ncol = ", .ncol
     .eps = .nrow * 1e-7
     .m = Create simple Matrix: string$(.i), .nrow, .ncol+1, "0.0"
     Formula: "if (col <= ((row - 1) mod .ncol)+1) then 1 else 0 fi"
@@ -23,6 +45,21 @@ procedure matrix_solve: .ncol
     endfor
     removeObject: .m, .ms
   endfor
+endproc
+
+procedure solve_undetermined: .nrow, .ncol
+	appendInfoLine: tab$, "underdetermined system"
+	 .m = Create simple Matrix: "u", .nrow, .ncol, "if row==col then 1 else 0 fi"
+	Formula: "if col==row+1 then 1 else self fi"
+	Formula: "if col == .ncol then if row == .nrow then 1 else 2 fi  else self fi"
+	.ms = nowarn Solve equation: 1e-7
+	 .ncols = Get number of columns
+	assert .ncols == .ncol - 1
+	for .irow to .nrow
+		.c = Get value in cell: 1, .irow
+		assert .c > 1-1e-7 and .c < 1+1e-7
+	endfor
+	removeObject: .m, .ms
 endproc
 
 # test for several dimensions

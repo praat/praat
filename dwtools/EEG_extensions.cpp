@@ -1,6 +1,6 @@
 /* EEG_extensions.cpp
  *
- * Copyright (C) 2012-2017 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 2012-2019 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,8 +249,7 @@ autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBa
 	try {
 		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, U"channel", true);
 		double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
-		double samplingFrequency = 2.0 * maxFreq;
-		samplingFrequency = std::max (samplingFrequency, 44100.0);
+		double samplingFrequency = std::max (2.0 * maxFreq, 44100.0);
 		autoSound thee = Sound_createSimple (1, my xmax - my xmin, samplingFrequency);
 		for (integer i = 1; i <= channelNumbers.size; i ++) {
 			integer ichannel = channelNumbers [i];

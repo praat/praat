@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2009,2011-2013,2015-2018 Paul Boersma
+ * Copyright (C) 2001-2009,2011-2013,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,42 +284,30 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 {
 	integer numberOfSamplesWritten = 0;
 
-	integer initialSilenceSamples = Melder_iround (initialSilenceDuration / my samplePeriod);
-	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		for (integer isamp = 1; isamp <= initialSilenceSamples; isamp ++)
-			my playBuffer -> z [ichan] [isamp] = 0.0;
-	}
+	const integer initialSilenceSamples = Melder_iround (initialSilenceDuration / my samplePeriod);
+	my playBuffer -> z.verticalBand (1, initialSilenceSamples) <<= 0.0;
 	numberOfSamplesWritten += initialSilenceSamples;
 
 	if (carrierBefore) {
-		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			NUMvector_copyElements <double> (& carrierBefore -> z [ichan] [0],
-					& my playBuffer -> z [ichan] [0] + numberOfSamplesWritten, 1, carrierBefore -> nx);
-		}
+		my playBuffer -> z.verticalBand (numberOfSamplesWritten + 1, numberOfSamplesWritten + carrierBefore -> nx)
+				<<= carrierBefore -> z.all();
 		numberOfSamplesWritten += carrierBefore -> nx;
 	}
 
 	if (sound) {
-		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			NUMvector_copyElements <double> (& sound -> z [ichan] [0],
-					& my playBuffer -> z [ichan] [0] + numberOfSamplesWritten, 1, sound -> nx);
-		}
+		my playBuffer -> z.verticalBand (numberOfSamplesWritten + 1, numberOfSamplesWritten + sound -> nx)
+				<<= sound -> z.all();
 		numberOfSamplesWritten += sound -> nx;
 	}
 
 	if (carrierAfter) {
-		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			NUMvector_copyElements <double> (& carrierAfter -> z [ichan] [0],
-					& my playBuffer -> z [ichan] [0] + numberOfSamplesWritten, 1, carrierAfter -> nx);
-		}
+		my playBuffer -> z.verticalBand (numberOfSamplesWritten + 1, numberOfSamplesWritten + carrierAfter -> nx)
+				<<= carrierAfter -> z.all();
 		numberOfSamplesWritten += carrierAfter -> nx;
 	}
 
-	integer finalSilenceSamples = Melder_iround (finalSilenceDuration / my samplePeriod);
-	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		for (integer isamp = 1; isamp <= finalSilenceSamples; isamp ++)
-			my playBuffer -> z [ichan] [isamp + numberOfSamplesWritten] = 0.0;
-	}
+	const integer finalSilenceSamples = Melder_iround (finalSilenceDuration / my samplePeriod);
+	my playBuffer -> z.verticalBand (numberOfSamplesWritten + 1, numberOfSamplesWritten + finalSilenceSamples) <<= 0.0;
 	numberOfSamplesWritten += finalSilenceSamples;
 
 	if (! my blankWhilePlaying)

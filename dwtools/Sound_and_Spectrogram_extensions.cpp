@@ -54,10 +54,7 @@ static void _Spectrogram_windowCorrection (Spectrogram me, integer numberOfSampl
 		double p1 = 4 * NUMsqrtpi * NUMsqrt3 * e12 * (1 - NUMerfcc (arg1)) * (numberOfSamples_window + 1);
 		windowFactor =  (p2 - p1 + 24 * (numberOfSamples_window - 1) * e12 * e12) / denum;
 	}
-	for (integer i = 1; i <= my ny; i ++) {
-		for (integer j = 1; j <= my nx; j ++)
-			my z [i] [j] /= windowFactor;
-	}
+	my z.get()  /=  windowFactor;
 }
 
 static autoSpectrum Sound_to_Spectrum_power (Sound me) {
@@ -97,7 +94,7 @@ static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, in
 	}
 
 	for (integer i = 1; i <= thy ny; i ++) {
-		double p = 0;
+		double p = 0.0;
 		double z0 = thy y1 + (i - 1) * thy dy;
 		constVEC pow = his z.row (1); // TODO ??
 		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
@@ -114,10 +111,10 @@ static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, in
 
 autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double dt, double f1_bark, double fmax_bark, double df_bark) {
 	try {
-		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist;
+		double samplingFrequency = 1.0 / my dx, nyquist = 0.5 * samplingFrequency;
 		double windowDuration = 2.0 * analysisWidth; /* gaussian window */
 		double zmax = NUMhertzToBark2 (nyquist);
-		double fmin_bark = 0;
+		double fmin_bark = 0.0;
 
 		// Check defaults.
 
@@ -125,7 +122,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 			f1_bark = 1.0;
 		if (fmax_bark <= 0.0)
 			fmax_bark = zmax;
-		if (df_bark <= 0)
+		if (df_bark <= 0.0)
 			df_bark = 1.0;
 
 		fmax_bark = std::min (fmax_bark, zmax);
@@ -241,11 +238,11 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 	H(f) = i f B / (f1^2 - f^2 + i f B)
 */
 static int Sound_into_Spectrogram_frame (Sound me, Spectrogram thee, integer frame, double bw) {
-	Melder_assert (bw > 0);
+	Melder_assert (bw > 0.0);
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 
 	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
-		double p = 0;
+		double p = 0.0;
 		double fc = thy y1 + (ifilter - 1) * thy dy;
 		constVEC pow = his z.row (1);
 		for (integer ifreq = 1; ifreq <= his nx; ifreq ++) {
@@ -287,7 +284,7 @@ autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWi
 autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
 	try {
 		double t1, windowDuration = 2.0 * analysisWidth; /* gaussian window */
-		double nyquist = 0.5 / my dx, samplingFrequency = 2.0 * nyquist, fmin_hz = 0.0;
+		double nyquist = 0.5 / my dx, samplingFrequency = 1.0 / my dx, fmin_hz = 0.0;
 		integer numberOfFrames, numberOfUndefinedPitchFrames = 0;
 
 		Melder_require (my xmin >= thy xmin && my xmax <= thy xmax,

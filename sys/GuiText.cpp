@@ -986,7 +986,7 @@ void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCall
 	my d_changedBoss = changedBoss;
 }
 
-void GuiText_setFontSize (GuiText me, int size) {
+void GuiText_setFontSize (GuiText me, double size) {
 	#if gtk
 		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (my d_widget));
 		trace (U"before initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
@@ -1007,13 +1007,13 @@ void GuiText_setFontSize (GuiText me, int size) {
 		autostring32 text = GuiText_getStringAndSelectionPosition (me, & first, & last);
 		GuiText_setString (me, U"");   // erase all
 		UpdateWindow (my d_widget -> window);
-		if (size <= 10) {
+		if (size <= 10.0) {
 			SetWindowFont (my d_widget -> window, font10, false);
-		} else if (size <= 12) {
+		} else if (size <= 12.0) {
 			SetWindowFont (my d_widget -> window, font12, false);
-		} else if (size <= 14) {
+		} else if (size <= 14.0) {
 			SetWindowFont (my d_widget -> window, font14, false);
-		} else if (size <= 18) {
+		} else if (size <= 18.0) {
 			SetWindowFont (my d_widget -> window, font18, false);
 		} else {
 			SetWindowFont (my d_widget -> window, font24, false);

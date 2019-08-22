@@ -87,9 +87,7 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 */
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
 
-autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
-	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
-void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+autoTable Spectrum_tabulate (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
 
 autoSpectrum Matrix_to_Spectrum (Matrix me);

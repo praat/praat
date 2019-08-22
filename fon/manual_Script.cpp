@@ -862,6 +862,13 @@ TAG (U"##randomGauss (%\\mu, %\\si)")
 DEFINITION (U"Gaussian random real number with mean %\\mu and standard deviation %\\si")
 TAG (U"##randomPoisson (%mean)")
 DEFINITION (U"Poisson random real number")
+TAG (U"##randomGamma (%%shape%, %%rate%)")
+DEFINITION (U"Generates a random numbers drawn from a Gamma distribution with shape parameter \\al "
+	"and rate parameter \\be."
+	"The Gamma distribution with shape parameter %\\al and rate parameter %\\be is defined as:"
+	" %f(%x; %\\al, %\\be) = (1 / \\Ga (%\\al)) %\\be%^^%\\al^ %x^^%\\al\\-m1^ %e^^\\-m%\\be %x^),"
+	" for %x > 0, %\\al > 0 and %\\be > 0. "
+	" The method to generate these numbers is described in @@Marsaglia & Tsang (2000)@.")
 TAG (U"##lnGamma (%x)")
 DEFINITION (U"logarithm of the \\Ga function")
 TAG (U"##gaussP (%z)")
@@ -2846,7 +2853,7 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20180426)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20190706)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
@@ -2897,8 +2904,8 @@ CODE (U"randomInteger\\#  (10000, 1, 10)")
 NORMAL (U"Vectors can also be created by some menu commands. For instance, to get vectors representing "
 	"the times and pitch frequencies of the frames in a Pitch object, you can do")
 CODE (U"selectObject: myPitch")
-CODE (U"times\\#  = Get times of frames")
-CODE (U"pitches\\#  = Get values in frames")
+CODE (U"times\\#  = List all frame times")
+CODE (U"pitches\\#  = List values in all frames: \"Hertz\"")
 ENTRY (U"3. Turning a vector into a number")
 NORMAL (U"For the vector defined above, you can compute the #sum of the five values as")
 CODE (U"sum (squares\\# )")
@@ -2915,7 +2922,7 @@ NORMAL (U"which gives 4.090909090909091 (for a vector with five elements, the re
 CODE (U"other\\#  = { 2, 1.5, 1, 0.5, 0 }")
 CODE (U"result = inner (squares\\# , other\\# )")
 NORMAL (U"which gives 1*2 + 4*1.5 + 9*1 + 16*0.5 + 25*0 = 25. "
-	"The formula for this is \\su__%i=1_^5 squares[i] * other[i], so that an alternative piece of code could be")
+	"The formula for this is \\su__%i=1_^5 %squares[%i] * %other[%i], so that an alternative piece of code could be")
 CODE (U"result = sumOver (i to 5, squares\\#  [i] * other\\#  [i])")
 ENTRY (U"4. Converting vectors to vectors")
 CODE (U"a\\#  = squares\\#  + 5   ; adding a number to each element of a vector")
@@ -2932,8 +2939,8 @@ NORMAL (U"A vector can also be given to a ##menu command# that returns another v
 CODE (U"selectObject: myPitch")
 CODE (U"tmin = Get start time")
 CODE (U"tmax = Get end time")
-CODE (U"times\\#  = sequence_by_centre\\#  (tmin, tmax, 0.01)")
-CODE (U"pitches\\#  = Get values at times: times\\# , \"hertz\", \"linear\"")
+CODE (U"times\\#  = between_by\\#  (tmin, tmax, 0.01)")
+CODE (U"pitches\\#  = List values at times: times\\# , \"hertz\", \"linear\"")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5.8. Including other scripts", U"ppgb", 20170718)
@@ -2958,16 +2965,16 @@ NORMAL (U"You can \"nest\" include files, i.e., included scripts can include oth
 NORMAL (U"The #include statement can only be at the start of a line: you cannot put any spaces in front of it.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.9. Quitting", U"ppgb", 20170718)
+MAN_BEGIN (U"Scripting 5.9. Quitting", U"ppgb", 20190713)
 NORMAL (U"Usually, the execution of your script ends when the interpreter has executed the last line "
 	"that is not within a procedure definition. However, you can also explicitly stop the script:")
 TAG (U"#exitScript ( )")
 DEFINITION (U"stops the execution of the script in the normal way, i.e. without any messages to the user. "
-	"Any settings window is removed from the screen.")
+	"Any settings (form) window is removed from the screen (unless Apply was clicked instead of OK).")
 TAG (U"#exitScript: %%error-message%")
 DEFINITION (U"stops the execution of the script while sending an error message to the user. "
 	"You can use the same argument list as with #writeInfoLine. "
-	"Any settings window will stay on the screen.")
+	"Any settings (form) window will stay on the screen.")
 NORMAL (U"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 

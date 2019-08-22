@@ -73,7 +73,7 @@ byte * NUMvector_copy_generic (integer elementSize, const byte *vector, integer 
 void NUMvector_copyElements_generic (integer elementSize, const byte *fromVector, byte *toVector, integer lo, integer hi) {
 	Melder_assert (fromVector && toVector);
 	const byte *p_fromCells = & fromVector [lo * elementSize];
-	byte *p_toCells   = & toVector   [lo * elementSize];
+	byte *p_toCells = & toVector [lo * elementSize];
 	integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
 	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);   // BUG this assumes contiguity
 }

@@ -395,12 +395,12 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 		if (numberOfChannels == 0) {
 			numberOfChannels = my ny;
 		} else if (my ny != numberOfChannels) {
-			Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+			Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) should be equal.");
 		}
 		if (dx == 0.0) {
 			dx = my dx;
 		} else if (my dx != dx) {
-			Melder_throw (U"To concatenate sounds, their sampling frequencies must be equal.\n"
+			Melder_throw (U"To concatenate sounds, their sampling frequencies should be equal.\n"
 				"You could resample one or more of the sounds before concatenating.");
 		}
 		nx += my nx;
@@ -411,13 +411,10 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	LOOP {
 		iam (Sound);
 		double tmax = tmin + my nx * dx;
-		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			NUMvector_copyElements (& my z [channel] [0], & thy z [channel] [nx], 1, my nx);
-		}
+		thy z.verticalBand (nx + 1, nx + my nx) <<= my z.all();
 		iinterval ++;
-		if (iinterval > 1) {
+		if (iinterval > 1)
 			TextGrid_insertBoundary (him.get(), 1, tmin);
-		}
 		TextGrid_setIntervalText (him.get(), 1, iinterval, my name.get());
 		nx += my nx;
 		tmin = tmax;
@@ -1056,9 +1053,9 @@ DO
 	NUMBER_ONE_END (U" seconds")
 }
 
-DIRECT (NUMVEC_Sound_getSampleTimes) {
+DIRECT (NUMVEC_Sound_listAllSampleTimes) {
 	NUMVEC_ONE (Sound)
-		autoVEC result = Sampled_getAllXValues (me);
+		autoVEC result = Sampled_listAllXValues (me);
 	NUMVEC_ONE_END
 }
 
@@ -2316,7 +2313,8 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 1, U"-- get time discretization --", nullptr, 2, nullptr);
 		praat_addAction1 (classSound, 1, U"Get time from sample number...", nullptr, 2, REAL_Sound_getTimeFromIndex);
 		praat_addAction1 (classSound, 1,   U"Get time from index...", U"*Get time from sample number...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_Sound_getTimeFromIndex);
-		praat_addAction1 (classSound, 1, U"Get sample times", nullptr, 2, NUMVEC_Sound_getSampleTimes);
+		praat_addAction1 (classSound, 1, U"List all sample times", nullptr, 2, NUMVEC_Sound_listAllSampleTimes);
+		praat_addAction1 (classSound, 1,   U"Get sample times", U"*List all sample times", praat_DEPTH_2 | praat_DEPRECATED_2019, NUMVEC_Sound_listAllSampleTimes);
 		praat_addAction1 (classSound, 1, U"Get sample number from time...", nullptr, 2, REAL_Sound_getIndexFromTime);
 		praat_addAction1 (classSound, 1,   U"Get index from time...", U"*Get sample number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_Sound_getIndexFromTime);
 		praat_addAction1 (classSound, 1, U"-- get content --", nullptr, 1, nullptr);

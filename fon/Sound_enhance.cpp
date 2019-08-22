@@ -78,7 +78,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				/*
 					Take a one-bark frequency band.
 				*/
-				double fmid_bark = NUMhertzToBark (fmin) + 0.5, ceiling;
+				double fmid_bark = NUMhertzToBark (fmin) + 0.5;
 				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1.0);
 				if (fmax > fhigh) fmax = fhigh;
 				Melder_progress (fmin / fhigh, U"Band: ", Melder_fixed (fmin, 0), U" ... ", Melder_fixed (fmax, 0), U" Hz");
@@ -110,7 +110,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				/*
 					Clip to maximum enhancement.
 				*/
-				ceiling = 1 + (maximumFactor - 1.0) * (0.5 - 0.5 * cos (NUMpi * fmid_bark / 13.0));
+				const double ceiling = 1.0 + (maximumFactor - 1.0) * (0.5 - 0.5 * cos (NUMpi * fmid_bark / 13.0));
 				for (integer i = 1; i <= n; i ++)
 					amp [i] = 1.0 / (1.0 / amp [i] + 1.0 / ceiling);
 
@@ -123,11 +123,6 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			}
 		}
 		Vector_scale (thee.get(), 0.99);
-		/* Truncate. */
-		thy xmin = my xmin;
-		thy xmax = my xmax;
-		thy nx = my nx;
-		thy x1 = my x1;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": band modulation not deepened.");

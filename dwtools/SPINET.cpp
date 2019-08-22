@@ -145,7 +145,7 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 		minimum -= 1;
 		maximum += 1;
 	}
-	VECclip_inplace (spec.part (ifmin, ifmax), minimum, maximum);
+	VECclip_inplace_inline (spec.part (ifmin, ifmax), minimum, maximum);
 	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fromErb, toErb, minimum, maximum);

@@ -1,6 +1,6 @@
 /* EditDistanceTable.c
  *
- * Copyright (C) 2012, 2014-2017 David Weenink
+ * Copyright (C) 2012-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +79,9 @@ static void WarpingPath_getPath (WarpingPath me, constINTMAT const& psi, integer
 	my path [index]. y = iy;
 	while (! (ix == 0 && iy == 0)) {
 		Melder_assert (ix >= 0 && iy >= 0);
-		if (psi [1+iy] [1+ix] == WARPING_fromLeft) {
+		if (psi [1 + iy] [1 + ix] == WARPING_fromLeft) {
 			ix --;
-		} else if (psi [1+iy] [1+ix] == WARPING_fromBelow) {
+		} else if (psi [1 + iy] [1 + ix] == WARPING_fromBelow) {
 			iy --;
 		} else { // WARPING_fromDiag
 			ix --;
@@ -189,10 +189,10 @@ autoEditCostsTable EditCostsTable_create (integer targetAlphabetSize, integer so
 autoEditCostsTable EditCostsTable_createDefault () {
 	try {
 		autoEditCostsTable me = EditCostsTable_create (0, 0);
-		my data [1] [1] = 0; // default substitution cost (nomatch == nomatch)
-		my data [2] [2] = 2; // default substitution cost (nomatch != nomatch)
-		my data [2] [1] = 1; // default insertion cost
-		my data [1] [2] = 1; // default deletion cost
+		my data [1] [1] = 0.0; // default substitution cost (nomatch == nomatch)
+		my data [2] [2] = 2.0; // default substitution cost (nomatch != nomatch)
+		my data [2] [1] = 1.0; // default insertion cost
+		my data [1] [2] = 1.0; // default deletion cost
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Default EditCostsTable not created.");
@@ -200,7 +200,7 @@ autoEditCostsTable EditCostsTable_createDefault () {
 }
 
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
-	my data [my numberOfRows - 1] [my numberOfColumns - 1] = 0;
+	my data [my numberOfRows - 1] [my numberOfColumns - 1] = 0.0;
 	my data [my numberOfRows] [my numberOfColumns] = substitutionCosts;
 	my data [my numberOfRows] [my numberOfColumns - 1] = deletionCosts;
 	my data [my numberOfRows - 1] [my numberOfColumns] = insertionCosts;
@@ -433,7 +433,7 @@ static double getLeftMargin (Graphics graphics) {
 }
 
 static double getLineSpacing (Graphics graphics) {
-	return Graphics_dyMMtoWC (graphics, 1.5 * Graphics_inqFontSize (graphics) * 25.4 / 72);
+	return Graphics_dyMMtoWC (graphics, 1.5 * Graphics_inqFontSize (graphics) * 25.4 / 72.0);
 }
 
 void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iformat, int precision, double angle) {

@@ -169,7 +169,7 @@ INTRO (U"Detemines the @@Covariance|covariances@ between the channels of a selec
 NORMAL (U"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Sound (blind source separation)...", U"djmw", 20151030)
+MAN_BEGIN (U"Sound: To Sound (blind source separation)...", U"djmw", 20190811)
 INTRO (U"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (U"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
 	"@@CrossCorrelationTable@s that are calculated from the multi-channel sound at different lag times.")
@@ -234,20 +234,21 @@ NORMAL (U"Unfortunately the convergence criteria of these two algorithms cannot 
 	"change in the eigenvectors norm during an iteration.")
 ENTRY (U"Example")
 NORMAL (U"We start by creating a speech synthesizer that need to create two sounds. We will mix the two sounds and finally our blind source separation software will try to undo our mixing by extracting the two original sounds as well as possible from the two mixtures.")
-CODE(U"synth = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"")
-CODE(U"s1 = To Sound: \"This is some text\", \"no\"")
+CODE (U"synth = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"")
+CODE (U"s1 = To Sound: \"This is some text\", \"no\"")
 NORMAL (U"The first speech sound was created from the text \"This is some text\" at a speed of 175 words per minute.")
-CODE(U"selectObject: synth")
-CODE(U"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"")
-CODE(U"s2 = To Sound.: \"Abracadabra, abra\", \"no\"")
+CODE (U"selectObject: synth")
+CODE (U"Speech output settings: 44100, 0.01, 1.2, 1.0, 145, \"IPA\"")
+CODE (U"Estimate speech rate from speech: \"no\"")
+CODE (U"s2 = To Sound.: \"Abracadabra, abra\", \"no\"")
 NORMAL (U"The second sound \"Abracadabra, abra\" was synthesized at 145 words per minute with a somewhat larger pitch excursion (80) than the previous sound (50).")
-CODE(U"plusObject: s1")
-CODE(U"stereo = Combine to stereo")
+CODE (U"plusObject: s1")
+CODE (U"stereo = Combine to stereo")
 NORMAL (U"We combine the two separate sounds into one stereo sound because our blind source separation works on multichannel sounds only.")
-CODE(U"mm = Create simple MixingMatrix: \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\"")
+CODE (U"mm = Create simple MixingMatrix: \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\"")
 NORMAL (U"A two by two MixingMatrix is created.")
-CODE(U"plusObject: stereo")
-CODE(U"Mix")
+CODE (U"plusObject: stereo")
+CODE (U"Mix")
 NORMAL (U"The last command, Mix, creates a new two-channel sound where each channel is a linear mixture of the two "
     "channels in the stereo sound, i.e. channel 1 is the sum of s1 and s2 with mixture strengths of 1 and 2, respectively. "
     "The second channel is also the sum of s1 and s2 but now with mixture strengths 2 and 1, respectively.")
@@ -260,7 +261,8 @@ SCRIPT (6, 6, U" "
 	"syn = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"\n"
 	"s1 = To Sound: \"This is some text\", \"no\"\n"
     "selectObject: syn\n"
-	"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"\n"
+	"Speech output settings: 44100, 0.01, 1.2, 1.0, 145, \"IPA\"\n"
+	"Estimate speech rate from speech: \"no\"\n"
 	"s2 = To Sound: \"abracadabra, abra\", \"no\"\n"
     "plusObject: s1\n"
 	"stereo = Combine to stereo\n"
@@ -287,7 +289,8 @@ NORMAL (U"The complete script:")
 CODE (U"syn = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"")
 CODE (U"s1 = To Sound: \"This is some text\", \"no\"")
 CODE (U"selectObject: syn")
-CODE (U"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"")
+CODE (U"Speech output settings: 44100, 0.01, 1.2, 1.0, 145, \"IPA\"")
+CODE (U"Estimate speech rate from speech: \"no\"")
 CODE (U"s2 = To Sound: \"abracadabra, abra\", \"no\"")
 CODE (U"plusObject: s1")
 CODE (U"stereo = Combine to stereo")

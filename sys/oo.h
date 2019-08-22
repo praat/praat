@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2013,2015-2018 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,8 +76,8 @@
 /* if the pointer does not change, 'min' cannot change, but 'max' may become lower than the original value. */
 
 //#define oo_BYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (signed char, i8, x, min, max)
-#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
-#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
+//#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
+//#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
 #define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
 //#define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, u16, x, min, max)
 //#define oo_UINTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (uinteger, u32, x, min, max)
@@ -151,10 +151,6 @@
 #define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w16, x, n)
 //#define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w32, x, n)
 
-/*** Structs. ***/
-
-#define oo_STRUCT_VECTOR(Type,x,n)  oo_STRUCT_VECTOR_FROM (Type, x, 1, n)
-
 /********** Definitions for header files only. **********/
 /* These are undef'ed and redefined in the header files that implement methods, */
 /* such as oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_TEXT.h, etc. */
@@ -178,7 +174,7 @@
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + (int) setType::MAX];
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
+#define oo_STRUCT_VECTOR(Type,x,size)  Type x;
 
 #define oo_OBJECT(Class,version,x)  auto##Class x;
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  Class<struct##ItemClass> x;

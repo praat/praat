@@ -230,7 +230,7 @@ static integer Pitch_getMeanAbsoluteSlope (Pitch me,
 	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
 {
 	integer firstVoicedFrame = 0, lastVoicedFrame = 0, numberOfVoicedFrames = 0;
-	autoNUMvector <double> frequencies (1, my nx);
+	autoVEC frequencies = newVECraw (my nx);
 	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		if (Pitch_util_frequencyIsVoiced (frequency, my ceiling)) {
@@ -241,36 +241,55 @@ static integer Pitch_getMeanAbsoluteSlope (Pitch me,
 		}
 	}
 	for (integer i = 1; i <= my nx; i ++)   // look for first voiced frame
-		if (frequencies [i] != 0.0) { firstVoicedFrame = i; break; }
+		if (frequencies [i] != 0.0) {
+			firstVoicedFrame = i;
+			break;
+		}
 	for (integer i = my nx; i >= 1; i --)   // look for last voiced frame
-		if (frequencies [i] != 0.0) { lastVoicedFrame = i; break; }
+		if (frequencies [i] != 0.0) {
+			lastVoicedFrame = i;
+			break;
+		}
 	if (numberOfVoicedFrames > 1) {
 		integer ilast = firstVoicedFrame;
-		double span = (lastVoicedFrame - firstVoicedFrame) * my dx, flast = frequencies [ilast];
-		double slopeHz = 0.0, slopeMel = 0.0, slopeSemitones = 0.0, slopeErb = 0.0, slopeRobust = 0.0;
+		double flast = frequencies [ilast];
+		const double span = (lastVoicedFrame - firstVoicedFrame) * my dx;
+		longdouble slopeHz = 0.0, slopeMel = 0.0, slopeSemitones = 0.0, slopeErb = 0.0, slopeRobust = 0.0;
 		for (integer i = firstVoicedFrame + 1; i <= lastVoicedFrame; i ++) if (frequencies [i] != 0.0) {
 			double localStepSemitones = fabs (NUMhertzToSemitones (frequencies [i]) - NUMhertzToSemitones (flast));
 			slopeHz += fabs (frequencies [i] - flast);
 			slopeMel += fabs (NUMhertzToMel (frequencies [i]) - NUMhertzToMel (flast));
 			slopeSemitones += localStepSemitones;
 			slopeErb += fabs (NUMhertzToErb (frequencies [i]) - NUMhertzToErb (flast));
-			while (localStepSemitones >= 12.0) localStepSemitones -= 12.0;   // kill octave jumps
-			if (localStepSemitones > 6.0) localStepSemitones = 12.0 - localStepSemitones;
+			while (localStepSemitones >= 12.0)
+				localStepSemitones -= 12.0;   // kill octave jumps
+			if (localStepSemitones > 6.0)
+				localStepSemitones = 12.0 - localStepSemitones;
 			slopeRobust += localStepSemitones;
 			ilast = i;
 			flast = frequencies [ilast];
 		}
-		if (out_hertz) *out_hertz = slopeHz / span;
-		if (out_mel) *out_mel = slopeMel / span;
-		if (out_semitones) *out_semitones = slopeSemitones / span;
-		if (out_erb) *out_erb = slopeErb / span;
-		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = slopeRobust / span;
+		if (out_hertz)
+			*out_hertz = double (slopeHz / span);
+		if (out_mel)
+			*out_mel = double (slopeMel / span);
+		if (out_semitones)
+			*out_semitones = double (slopeSemitones / span);
+		if (out_erb)
+			*out_erb = double (slopeErb / span);
+		if (out_withoutOctaveJumps)
+			*out_withoutOctaveJumps = double (slopeRobust / span);
 	} else {
-		if (out_hertz) *out_hertz = undefined;
-		if (out_mel) *out_mel = undefined;
-		if (out_semitones) *out_semitones = undefined;
-		if (out_erb) *out_erb = undefined;
-		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = undefined;
+		if (out_hertz)
+			*out_hertz = undefined;
+		if (out_mel)
+			*out_mel = undefined;
+		if (out_semitones)
+			*out_semitones = undefined;
+		if (out_erb)
+			*out_erb = undefined;
+		if (out_withoutOctaveJumps)
+			*out_withoutOctaveJumps = undefined;
 	}
 	return numberOfVoicedFrames;
 }
@@ -481,7 +500,7 @@ autoMAT Pitch_getAllCandidatesInFrame (Pitch me, integer frameNumber) {
     	Pitch_Frame frame = & my frame [frameNumber];
     	return Pitch_Frame_getAllCandidates (frame);
 	} catch (MelderError) {
-		Melder_throw (U"Candidate matrix not created.");
+		Melder_throw (U"Pitch candidate matrix not created.");
 	}
 }
 
@@ -499,12 +518,12 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 			U"\nCeiling = ", ceiling,
 			U"\nPull formants = ", pullFormants);
 	try {
-		integer maxnCandidates = Pitch_getMaxnCandidates (me);
+		const integer maxnCandidates = Pitch_getMaxnCandidates (me);
 		integer place;
 		volatile double maximum, value;
-		double ceiling2 = pullFormants ? 2.0 * ceiling : ceiling;
+		const double ceiling2 = ( pullFormants ? 2.0 * ceiling : ceiling );
 		/* Next three lines 20011015 */
-		double timeStepCorrection = 0.01 / my dx;
+		const double timeStepCorrection = 0.01 / my dx;
 		octaveJumpCost *= timeStepCorrection;
 		voicedUnvoicedCost *= timeStepCorrection;
 
@@ -514,14 +533,14 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & my frame [iframe];
-			double unvoicedStrength = silenceThreshold <= 0 ? 0.0 :
-				2.0 - frame -> intensity / (silenceThreshold / (1.0 + voicingThreshold));
-			unvoicedStrength = voicingThreshold + (unvoicedStrength > 0.0 ? unvoicedStrength : 0.0);
+			double unvoicedStrength = ( silenceThreshold <= 0 ? 0.0 :
+				2.0 - frame -> intensity / (silenceThreshold / (1.0 + voicingThreshold)) );
+			unvoicedStrength = voicingThreshold + std::max (0.0, unvoicedStrength);
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
 				Pitch_Candidate candidate = & frame -> candidate [icand];
-				bool voiceless = ! Pitch_util_frequencyIsVoiced (candidate -> frequency, ceiling2);
-				delta [iframe] [icand] = voiceless ? unvoicedStrength :
-					candidate -> strength - octaveCost * NUMlog2 (ceiling / candidate -> frequency);
+				const bool voiceless = ! Pitch_util_frequencyIsVoiced (candidate -> frequency, ceiling2);
+				delta [iframe] [icand] = ( voiceless ? unvoicedStrength :
+					candidate -> strength - octaveCost * NUMlog2 (ceiling / candidate -> frequency) );
 			}
 		}
 
@@ -535,7 +554,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 			VEC curDelta = delta [iframe];
 			INTVEC curPsi = psi [iframe];
 			for (integer icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
-				double f2 = curFrame -> candidate [icand2]. frequency;
+				const double f2 = curFrame -> candidate [icand2]. frequency;
 				maximum = -1e30;
 				place = 0;
 				for (integer icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
@@ -948,7 +967,7 @@ autoTable Pitch_tabulateCandidates (Pitch me) {
 		Pitch_Frame frame = & my frame [iframe];
 		totalNumberOfCandidates += frame -> nCandidates;
 	}
-	autoTable result = Table_createWithColumnNames(totalNumberOfCandidates, U"frame frequency strength");
+	autoTable result = Table_createWithColumnNames (totalNumberOfCandidates, U"frame frequency strength");
 	integer rowNumber = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & my frame [iframe];

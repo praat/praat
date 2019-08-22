@@ -171,7 +171,7 @@ NORMAL (U"Suppose you need a sum of sine waves with frequencies 105, 205, 305, .
 	"the various components, and add them to each other as you go along. Instead of calling 19 "
 	"scripts, however, you can achieve this with the following more general script:")
 CODE (U"form Add waves with decreasing amplitudes")
-CODE1 (U"natural Number_of_components 19")
+	CODE1 (U"natural Number_of_components 19")
 CODE (U"endform")
 CODE (U"\\#  Create a Matrix with frequency and amplitude information in each row:")
 CODE (U"Create simple Matrix: \"freqAndGain\", number_of_components, 2, ~ 0")

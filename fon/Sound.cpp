@@ -352,12 +352,26 @@ autoMatrix Sound_to_Matrix (Sound me) {
 
 autoSound Sound_upsample (Sound me) {
 	try {
+		constexpr integer antiTurnAround = 1000;
+		constexpr integer sampleRateFactor = 2;
+		constexpr integer numberOfPaddingSides = 2;   // namely beginning and end
 		integer nfft = 1;
-		while (nfft < my nx + 2000) nfft *= 2;
-		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * 2, my dx / 2, my x1 - my dx / 4);
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			autoVEC data (2 * nfft, kTensorInitializationType::ZERO);   // zeroing is important...
-			NUMvector_copyElements (& my z [channel] [0], & data [1000], 1, my nx);   // ...because this fills only part of the sound
+		while (nfft < my nx + antiTurnAround * numberOfPaddingSides) nfft *= 2;
+		const double newDx = my dx / sampleRateFactor;
+		/*
+			The computation of the new x1 relies on the idea that the left edge
+			of the old first sample should coincide with the left edge of the new first sample
+			(typically, e.g. if the old first sample starts at zero, which is usual,
+			then the new first sample should also start at zero):
+			old x1 - 0.5 * old dx == new x1 - 0.5 * new dx
+			==>
+			new x1 == old x1 - 0.5 * (old dx - new dx)
+		*/
+		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * sampleRateFactor,
+				newDx, my x1 - 0.5 * (my dx - newDx));
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
+			autoVEC data (sampleRateFactor * nfft, kTensorInitializationType::ZERO);   // zeroing is important...
+			data.part (antiTurnAround + 1, antiTurnAround + my nx) <<= my z.row (ichan);   // ...because this fills only part of the sound
 			NUMrealft (data.part (1, nfft), 1);
 			integer imin = (integer) (nfft * 0.95);
 			for (integer i = imin + 1; i <= nfft; i ++)
@@ -366,7 +380,7 @@ autoSound Sound_upsample (Sound me) {
 			NUMrealft (data.get(), -1);
 			double factor = 1.0 / nfft;
 			for (integer i = 1; i <= thy nx; i ++)
-				thy z [channel] [i] = data [i + 2000] * factor;
+				thy z [ichan] [i] = data [i + sampleRateFactor * antiTurnAround] * factor;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -376,8 +390,8 @@ autoSound Sound_upsample (Sound me) {
 
 autoSound Sound_resample (Sound me, double samplingFrequency, integer precision) {
 	double upfactor = samplingFrequency * my dx;
-	if (fabs (upfactor - 2) < 1e-6) return Sound_upsample (me);
-	if (fabs (upfactor - 1) < 1e-6) return Data_copy (me);
+	if (fabs (upfactor - 2.0) < 1e-6) return Sound_upsample (me);
+	if (fabs (upfactor - 1.0) < 1e-6) return Data_copy (me);
 	try {
 		integer numberOfSamples = Melder_iround ((my xmax - my xmin) * samplingFrequency);
 		if (numberOfSamples < 1)
@@ -385,14 +399,16 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 		autoSound filtered;
 		bool weNeedAnAntiAliasingFilter = ( upfactor < 1.0 );
 		if (weNeedAnAntiAliasingFilter) {
-			integer nfft = 1, antiTurnAround = 1000;
-			while (nfft < my nx + antiTurnAround * 2) nfft *= 2;
+			constexpr integer antiTurnAround = 1000;
+			constexpr integer numberOfPaddingSides = 2;   // namely beginning and end
+			integer nfft = 1;
+			while (nfft < my nx + antiTurnAround * numberOfPaddingSides) nfft *= 2;
 			autoVEC data (nfft, kTensorInitializationType::RAW);   // will be zeroed in every turn of the loop
 			filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				for (integer i = 1; i <= nfft; i ++)
 					data [i] = 0.0;
-				NUMvector_copyElements (& my z [ichan] [0], & data [antiTurnAround], 1, my nx);
+				data.part (antiTurnAround + 1, antiTurnAround + my nx) <<= my z.row (ichan);
 				NUMrealft (data.get(), 1);   // go to the frequency domain
 				for (integer i = Melder_ifloor (upfactor * nfft); i <= nfft; i ++)
 					data [i] = 0.0;   // filter away high frequencies
@@ -439,10 +455,8 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 		if (my dx != thy dx)
 			Melder_throw (U"The sampling frequencies are not equal.");
 		autoSound him = Sound_create (my ny, 0.0, nx * my dx, nx, my dx, 0.5 * my dx);
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMvector_copyElements (& my z [channel] [0], & his z [channel] [0], 1, my nx);
-			NUMvector_copyElements (& thy z [channel] [0], & his z [channel] [0] + my nx + nx_silence, 1, thy nx);
-		}
+		his z.verticalBand (1, my nx) <<= my z.all();
+		his z.verticalBand (my nx + nx_silence + 1, nx) <<= thy z.all();
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not appended.");
@@ -451,64 +465,66 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 
 autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) {
 	try {
-		integer numberOfChannels = 0, nx = 0, numberOfSmoothingSamples;
-		double dx = 0.0;
+		integer sharedNumberOfChannels = 0, totalNumberOfSamples = 0;
+		double sharedTimeStep = 0.0;
 		for (integer i = 1; i <= list.size; i ++) {
-			Sound sound = list.at [i];
-			if (numberOfChannels == 0) {
-				numberOfChannels = sound -> ny;
-			} else if (sound -> ny != numberOfChannels) {
+			const Sound sound = list.at [i];
+			if (sharedNumberOfChannels == 0) {
+				sharedNumberOfChannels = sound -> ny;
+			} else if (sound -> ny != sharedNumberOfChannels) {
 				Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) should be equal.");
 			}
-			if (dx == 0.0) {
-				dx = sound -> dx;
-			} else if (sound -> dx != dx) {
+			if (sharedTimeStep == 0.0) {
+				sharedTimeStep = sound -> dx;
+			} else if (sound -> dx != sharedTimeStep) {
 				Melder_throw (U"To concatenate sounds, their sampling frequencies should be equal.\n"
 						U"You could resample one or more of the sounds before concatenating.");
 			}
-			nx += sound -> nx;
+			totalNumberOfSamples += sound -> nx;
 		}
-		numberOfSmoothingSamples = Melder_iround (overlapTime / dx);
-		autoSound thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
+		const integer numberOfSmoothingSamples = Melder_iround (overlapTime / sharedTimeStep);
+		totalNumberOfSamples -= numberOfSmoothingSamples * (list.size - 1);
+		autoSound thee = Sound_create (sharedNumberOfChannels, 0.0, totalNumberOfSamples * sharedTimeStep,
+				totalNumberOfSamples, sharedTimeStep, 0.5 * sharedTimeStep);
 		autoVEC smoother;
 		if (numberOfSmoothingSamples > 0) {
 			smoother = autoVEC (numberOfSmoothingSamples, kTensorInitializationType::RAW);
-			double factor = NUMpi / numberOfSmoothingSamples;
+			const double factor = NUMpi / numberOfSmoothingSamples;
 			for (integer i = 1; i <= numberOfSmoothingSamples; i ++)
 				smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
 		}
-		nx = 0;
+		integer sampleOffset = 0;
 		for (integer i = 1; i <= list.size; i ++) {
-			Sound sound = list.at [i];
+			const Sound sound = list.at [i];
 			if (numberOfSmoothingSamples > 2 * sound -> nx)
 				Melder_throw (U"At least one of the sounds is shorter than twice the overlap time.\nChoose a shorter overlap time.");
-			bool thisIsTheFirstSound = ( i == 1 );
-			bool thisIsTheLastSound = ( i == list.size );
-			bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
-			bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
-			integer numberOfSmoothingSamplesAtTheStartOfThisSound = weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0;
-			integer numberOfSmoothingSamplesAtTheEndOfThisSound = weNeedSmoothingAtTheEndOfThisSound ? numberOfSmoothingSamples : 0;
-			for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-				for (integer j = 1, mySample = 1, thySample = mySample + nx;
+			const bool thisIsTheFirstSound = ( i == 1 );
+			const bool thisIsTheLastSound = ( i == list.size );
+			const bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
+			const bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
+			const integer numberOfSmoothingSamplesAtTheStartOfThisSound = ( weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0 );
+			const integer numberOfSmoothingSamplesAtTheEndOfThisSound = ( weNeedSmoothingAtTheEndOfThisSound ? numberOfSmoothingSamples : 0 );
+			for (integer channel = 1; channel <= sharedNumberOfChannels; channel ++) {
+				for (integer j = 1, mySample = 1, thySample = mySample + sampleOffset;
 					 j <= numberOfSmoothingSamplesAtTheStartOfThisSound;
 					 j ++, mySample ++, thySample ++)
 				{
 					thy z [channel] [thySample] += sound -> z [channel] [mySample] * smoother [j];   // add
 				}
-				NUMvector_copyElements (& sound -> z [channel] [0], & thy z [channel] [0] + nx,
-					1 + numberOfSmoothingSamplesAtTheStartOfThisSound, sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
-				for (integer j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + nx;
+				thy z.row (channel).part (sampleOffset + 1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
+						sampleOffset + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound) <<=
+						sound -> z.row (channel).part (1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
+						sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
+				for (integer j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + sampleOffset;
 					 j <= numberOfSmoothingSamplesAtTheEndOfThisSound;
 					 j ++, mySample ++, thySample ++)
 				{
 					thy z [channel] [thySample] = sound -> z [channel] [mySample] * smoother [numberOfSmoothingSamplesAtTheEndOfThisSound + 1 - j];   // replace (or add, which is the same since it's all zeroes to start with)
 				}
 			}
-			nx += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
+			sampleOffset += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
 		}
-		thy nx -= numberOfSmoothingSamples * (list.size - 1);
-		Melder_assert (thy nx == nx);
-		thy xmax = thy nx * dx;
+		Melder_assert (sampleOffset == totalNumberOfSamples);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sounds not concatenated.");

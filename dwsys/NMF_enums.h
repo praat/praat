@@ -18,6 +18,7 @@
 
 enums_begin (kNMF_Initialization, 1)
 	enums_add (kNMF_Initialization, 1, RandomUniform, U"RandomUniform")
-enums_end (kNMF_Initialization, 1, RandomUniform)
+	enums_add (kNMF_Initialization, 2, SVDAbsNegatives, U"SVDAbsNegatives")	
+enums_end (kNMF_Initialization, 2, SVDAbsNegatives)
 
 /* End of file NMF_enums.h */

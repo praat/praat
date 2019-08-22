@@ -69,45 +69,25 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	'nstringmatches'.
 */
 
-void MATprintMatlabForm (constMAT m, conststring32 name);
+void MATprintMatlabForm (constMATVU const& m, conststring32 name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 							1 2 3
 	Let A be the matrix:	4 5 6
 							7 8 9
-	The output from NUMdmatrix_printAsOctaveForm (A, 3, 3, "M") will be
-	M=[	1, 2, 3;
-		4, 5, 6;
-		7, 8, 9 ];
+	The output from MATprintMatlabForm (A, "M") will be
+	M= [1, 2, 3;
+	    4, 5, 6;
+	    7, 8, 9];
 */
 
-inline integer NUMmax (const constINTVEC& vec) {
-	if (NUMisEmpty (vec)) return undefined;
-	integer maximum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value > maximum) maximum = value;
-	}
-	return maximum;
-}
-
-inline integer NUMmin (const constINTVEC& vec) {
-	if (NUMisEmpty (vec)) return undefined;
-	integer minimum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value < minimum) minimum = value;
-	}
-	return minimum;
-}
-
-inline bool NUMisNonNegative (constVECVU vec) {
+inline bool NUMisNonNegative (constVECVU const&  vec) {
 	for (integer i = 1; i <= vec.size; i ++)
 		if (vec [i] < 0.0)
 			return false;
 	return true;
 }
-inline bool NUMisNonNegative (constMATVU mat) {
+inline bool NUMisNonNegative (constMATVU const& mat) {
 	for (integer irow = 1; irow <= mat.nrow; irow ++)
 		for (integer icol = 1; icol <= mat.ncol; icol ++)
 			if (mat [irow] [icol] < 0.0)
@@ -115,11 +95,10 @@ inline bool NUMisNonNegative (constMATVU mat) {
 	return true;
 }
 
-template<typename T>
-inline integer NUMmaxPos (vector<T> v) {
+inline integer NUMmaxPos (constVECVU const& v) {
 	if (NUMisEmpty (v)) return 0;
 	integer index = 1;
-	T maximum = v [1];
+	double maximum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] > maximum) {
 			maximum = v [i];
@@ -129,11 +108,36 @@ inline integer NUMmaxPos (vector<T> v) {
 	return index;	
 }
 
-template<typename T>
-inline integer NUMminPos (vector<T> v) {
+inline integer NUMmaxPos (constINTVECVU const& v) {
 	if (NUMisEmpty (v)) return 0;
 	integer index = 1;
-	T minimum = v [1];
+	integer maximum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] > maximum) {
+			maximum = v [i];
+			index = i;
+		}
+	}
+	return index;	
+}
+
+inline integer NUMminPos (constVECVU const& v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	double minimum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] < minimum) {
+			minimum = v [i];
+			index = i;
+		}
+	}
+	return index;	
+}
+
+inline integer NUMminPos (constINTVECVU const& v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	integer minimum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
 		if (v [i] < minimum) {
 			minimum = v [i];
@@ -160,7 +164,7 @@ inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_ma
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
 
-inline void VECclip_inplace (VEC x, double min, double max) {
+inline void VECclip_inplace_inline (VEC x, double min, double max) {
 	for (integer i = 1; i <= x.size; i ++)
 		if (x [i] < min)
 			x [i] = min;
@@ -168,15 +172,51 @@ inline void VECclip_inplace (VEC x, double min, double max) {
 			x [i] = max;
 }
 
-inline double NUMvtmv (constVECVU const& x, constMATVU const& m) { // x'. M . x
-	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
-	longdouble result = 0.0;
-	for (integer k = 1; k <= x.size; k ++)
-		result += x [k] * NUMinner (m.row (k), x); 
-	return (double) result;
-}	
+inline void VECabs (VECVU const& result, constVECVU const& v) {
+	Melder_assert (result.size == v.size);
+	for (integer i = 1; i <= result.size; i ++)
+		result [i] = fabs (v [i]);
+}
 
-inline double NUMmul_vtmv (constVECVU const& x, constMATVU const& m, constVECVU const& y) { // x'. M . y
+inline autoVEC newVECabs (constVECVU const& v) {
+	autoVEC result = newVECraw (v.size);
+	VECabs (result.get(), v);
+	return result;
+}
+
+inline void VECabs_inplace (VECVU const& v) {
+	for (integer i = 1; i <= v.size; i ++)
+		v [i] = fabs (v [i]);
+}
+
+inline void INTVEClinear (INTVEC const& v, integer start, integer step) {
+	for (integer i = 1; i <= v.size; i ++)
+		v [i] = start + (i - 1) * step;
+}
+
+inline autoINTVEC newINTVEClinear (integer size, integer start, integer step) {
+	autoINTVEC result = newINTVECraw (size);
+	INTVEClinear (result, start, step);
+	return result;
+}
+
+inline bool NUMhasZeroElement (constMATVU const m) {
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= m.ncol; icol++)
+			if (m [irow][icol] == 0.0)
+				return true;
+	return false;
+}
+
+inline integer NUMcountNumberOfNonZeroElements (constVECVU const& v) {
+	integer count = 0;
+	for (integer i = 1; i <= v.size; i ++)
+		if (v [i] != 0.0)
+			++ count;
+	return count;
+}
+
+inline double NUMmul (constVECVU const& x, constMATVU const& m, constVECVU const& y) { // x'. M . y
 	Melder_assert (x.size == m.nrow);
 	Melder_assert (y.size == m.ncol);
 	longdouble result = 0.0;
@@ -260,7 +300,7 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 	k_stdev Winsorizes at `k_stdev' standard deviations.
 */
 
-autoVEC VECmonotoneRegression (constVEC x);
+autoVEC newVECmonotoneRegression (constVEC x);
 /*
 	Find numbers xs[1..n] that have a monotone relationship with
 	the numbers in x[1..n].
@@ -399,23 +439,28 @@ void NUMrank (vector<T> a) {
 }
 
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
+inline autoMAT newMATlowerCholeskyInverse (constMAT const& a) {
+	autoMAT result = newMATcopy (a);
+	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
+	return result;
+}
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
 */
 
-autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
+autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m);
 /*
 	Return the complete matrix inverse when only the inverse of the lower Cholesky part is given.
 	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
-double MATdeterminant_fromSymmetricMatrix (constMAT m);
+double NUMdeterminant_fromSymmetricMatrix (constMAT m);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */
 
-double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
+double NUMmahalanobisDistanceSquared (constMAT lowerInverse, constVEC v, constVEC m);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
@@ -427,30 +472,9 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
 
 double NUMtrace (const constMATVU& a);
 double NUMtrace2 (const constMATVU& x, const constMATVU& y);
-double NUMtrace2_nn (const constMAT& x, const constMAT& y);
-double NUMtrace2_nt (const constMAT& x, const constMAT& y);
-double NUMtrace2_tn (const constMAT& x, const constMAT& y);
-double NUMtrace2_tt (const constMAT& x, const constMAT& y);
 /*
-	Calculates the trace from a product matrix
-	_nn : trace (X.Y)
-	_nt : trace (X.Y')
-	_tn : trace (X'.Y) = trace (Y'.X)
-	_tt : trace (X'.Y') = trace ((Y.X)') = trace (Y.X)
+	Calculates the trace from a product matrix x*y
 */
-
-void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMATVU const& data, integer fromColumn, constMATVU const& eigenvectors);
-/* Input:
-	data[numberOfRows, from_col - 1 + my dimension] 
-		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
-	eigenvectors [numberOfEigenvectors][dimension] 
-		the eigenvectors stored as rows
-   Input/Output
-		projection [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] 
-		the projected vectors from 'data'
-
-   Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
- */
 
 void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU const& data, constMATVU const& eigenvectors);
 /* Input:
@@ -487,21 +511,33 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	If no roots found then x1 and x2 will not be changed.
 */
 
-autoVEC NUMsolveEquation (constMATVU const& a, constVECVU const& b, double tol);
+autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tol);
 /*
 	Solve the equation: A.x = b for x;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
 	Algorithm: s.v.d.
 */
 
-autoMAT NUMsolveEquations (constMATVU const& a, constMATVU const& b, double tol);
+autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 /*
 	Solve the equations: A.X = B;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
 	Algorithm: s.v.d.
 */
 
-autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
+
+/*
+	Solve y = D.x + e for x, where x is sparse and e is observation noise.
+	Minimize the 2-norm (y - D.x), where maximally K elements of x may be non-zero, by an iterative hard thresholding algorithm.
+	D is a MxN real matrix with (many) more columns than rows, i.e. N > M. We need to find a vector x
+	with maximally K non-zero elements (sparse).
+	The algorithm is described in T. Blumensath & M.E. Davies, "Normalised iterative hard thresholding;
+	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4, 298-309.
+	x in/out: the start value (you typically would start the iteration with all zeros).
+*/
+void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+
+autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
 /*
 	Solve the equation: M.b = d for b under the constraint: all b[i] >= 0;
 	m[1..nr][1..nc], d[1..nr] and b[1..nc].
@@ -522,7 +558,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y, double *o
 	Psychometrika 48, 631-638.
 */
 
-autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta);
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta);
 /*
 	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
 	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
@@ -539,7 +575,7 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 		alpha >= 0
 */
 
-void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale);
+void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling
@@ -699,11 +735,6 @@ double NUMinvTukeyQ (double p, double cc, double df, double rr);
  *  df = degrees of freedom of error term
  */
 
-double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar);
-/*
-	Multivariate normality test of nxp data matrix according to the method described in Henze & Wagner (1997).
-	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.
-*/
 
 /******  Frequency in Hz to other frequency reps ****/
 
@@ -875,17 +906,17 @@ double NUMcubicSplineInterpolation (constVEC xa, constVEC ya, constVEC y2a, doub
 	a value of x, this routine returns an interpolated value y.
 */
 
-autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC w);
+autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& w);
 /*
 	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
 	Output: interpolated result
 */
 
-double NUMbiharmonic2DSplineInterpolation (constVEC x, constVEC y, constVEC w, double xp, double yp);
+double NUMbiharmonic2DSplineInterpolation (constVECVU const& x, constVECVU const& y, constVECVU const& w, double xp, double yp);
 /* Biharmonic spline interpolation based on Green's function.
 	. Given z[i] values at points (x[i],y[i]) for i=1..n, 
 	Get value at new point (px,py).
-	1. Calculate weights w once: NUMbiharmonic2DSplineInterpolation_getWeights
+	1. Calculate weights w once: newVECbiharmonic2DSplineInterpolation_getWeights
 	2. Interpolate at (xp,yp): NUMbiharmonic2DSplineInterpolation
 	Input: x[1..numberOfPoints], y[1..numberOfPoints], z[1..numberOfPoints], weights[1..numberOfPoints]
 	Output: weights[1..numberOfPoints]
@@ -1186,6 +1217,21 @@ void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept
 integer NUMrandomBinomial (double p, integer n);
 double NUMrandomBinomial_real (double p, integer n);
 
+/*
+	Generates random numbers according to a Gamma distribution with shape parameter "alpha"
+	and rate parameter "beta".
+	
+	The Gamma distribution of order (shape) parameter alpha and rate (beta) is defined as:
+
+		f(x; alpha, beta) = (1 / Gamma (alpha)) beta^alpha x^(alpha-1) e^(-beta.x),
+		for x > 0, alpha > 0 && beta > 0.
+
+	The method is described in
+		G. Marsaglia & W. Tsang (2000): A simple method for generating gamma variables. ACM Transactions on Mathematical Software, 26(3):363-372.
+	Preconditions: alpha > 0 && beta > 0.
+*/
+double NUMrandomGamma (const double alpha, const double beta);
+
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 // lpc[1..n] to rc[1..n]
 void VECrc_from_lpc (VEC rc, constVEC lpc);
@@ -1206,13 +1252,8 @@ void VECarea_from_lpc (VEC area, constVEC lpc);
 */
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
-void NUMgetEntropies (constMAT m, double *out_h, double *out_hx, 
+void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
-
-double NUMfrobeniusnorm (constMAT x);
-/*
-	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
-*/
 
 inline double NUMmean_weighted (constVEC x, constVEC w) {
 	Melder_assert (x.size == w.size);
@@ -1221,7 +1262,7 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	return inproduct / wsum;
 }
 
-inline void VECchainRows_preallocated (VEC v, MAT m) {
+inline void VECchainRows_preallocated (VECVU const& v, constMATVU const& m) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer irow = 1; irow <= m.nrow; irow ++)
@@ -1229,13 +1270,13 @@ inline void VECchainRows_preallocated (VEC v, MAT m) {
 			v [k ++] = m [irow] [icol];
 }
 
-inline autoVEC VECchainRows (MAT m) {
+inline autoVEC VECchainRows (constMATVU const& m) {
 	autoVEC result = newVECraw (m.nrow * m.ncol);
 	VECchainRows_preallocated (result.get(), m);
 	return result;
 }
 
-inline void VECchainColumns_preallocated (VEC v, MAT m) {
+inline void VECchainColumns_preallocated (VEC const& v, constMATVU const& m) {
 	Melder_assert (m.nrow * m.ncol == v.size);
 	integer k = 1;
 	for (integer icol = 1; icol <= m.ncol; icol ++)
@@ -1243,7 +1284,7 @@ inline void VECchainColumns_preallocated (VEC v, MAT m) {
 			v [k ++] = m [irow] [icol];
 }
 
-inline autoVEC VECchainColumns (MAT m) {
+inline autoVEC VECchainColumns (constMATVU const& m) {
 	autoVEC result = newVECraw (m.nrow * m.ncol);
 	VECchainColumns_preallocated (result.get(), m);
 	return result;
@@ -1253,10 +1294,11 @@ inline autoVEC VECchainColumns (MAT m) {
 void MATmul3 (MATVU const & target, constMATVU& X, constMATVU& Y, constMATVU& Z);
 
 /* Z = X.Y.X' */
-void MATmul3_VMVt (MATVU target, constMAT X, constMAT Y);
+void MATmul3_XYXt (MATVU const& target, constMAT const& X, constMAT const& Y);
 
-/* Z = X'.Y.X */
-void MATmul3_VtMV (MATVU target, constMAT x, constMAT y);	
+/* Z = X.Y.X where Y is a symmetric matrix */
+void MATmul3_XYsXt (MATVU const& target, constMAT const& X, constMAT const& Y);
+
 /*
 	First row (n elements) is at v[1]..v[n],
 	second row (n-1 elements) is at v[n+1],..,v[n+n-1],

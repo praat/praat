@@ -1,6 +1,6 @@
 /* SPINET_to_Pitch.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +37,17 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
 		double points = (fmaxl2 - fminl2) * nPointsPerOctave;
 		double dfl2 = (fmaxl2 - fminl2) / (points - 1);
-		integer nFrequencyPoints = Melder_ifloor (points);
+		integer numberOfFrequencyPoints = Melder_ifloor (points);
 		integer maxHarmonic = Melder_ifloor (fmax / fmin);
 		double maxStrength = 0.0, unvoicedCriterium = 0.45, maxPower = 0.0;
 
-		Melder_require (nFrequencyPoints > 1, U"Frequency range too small.");
+		Melder_require (numberOfFrequencyPoints > 1, U"Frequency range too small.");
 		Melder_require (fmin < ceiling, U"The centre frequency of the lowest filter should be smaller than the ceiling.");
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
 		autoVEC power = newVECraw (my nx);
-		autoVEC pitch = newVECraw (nFrequencyPoints);
-		autoVEC sumspec = newVECraw (nFrequencyPoints);
+		autoVEC pitch = newVECraw (numberOfFrequencyPoints);
+		autoVEC sumspec = newVECraw (numberOfFrequencyPoints);
 		autoVEC y = newVECraw (my ny);
 		autoVEC yv2 = newVECraw (my ny);
 		autoVEC fl2 = newVECraw (my ny);
@@ -76,7 +76,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			y.all() <<= my s.column (j);
 			
 			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), y.get(), 1e30, 1e30);
-			for (integer k = 1; k <= nFrequencyPoints; k ++) {
+			for (integer k = 1; k <= numberOfFrequencyPoints; k ++) {
 				double f = fminl2 + (k - 1) * dfl2;
 				pitch [k] = NUMcubicSplineInterpolation (fl2.get(), y.get(), yv2.get(), f);
 				sumspec [k] = 0.0;
@@ -87,7 +87,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			for (integer m = 1; m <= maxHarmonic; m ++) {
 				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
 				integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));
-				for (integer k = kb; k <= nFrequencyPoints; k ++)
+				for (integer k = kb; k <= numberOfFrequencyPoints; k ++)
 					if (pitch [k] > 0.0)
 						sumspec [k - kb + 1] += pitch [k] * hm;
 			}
@@ -98,7 +98,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates); /* unvoiced */
 
-			for (integer k = 2; k <= nFrequencyPoints - 1; k ++) {
+			for (integer k = 2; k <= numberOfFrequencyPoints - 1; k ++) {
 				double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
 				if (y2 > y1 && y2 >= y3) {
 					double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;

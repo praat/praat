@@ -84,6 +84,25 @@ inline autoMAT newMATadd (constMATVU const& x, double number) {
 	return result;
 }
 
+struct TypeMATmultiply_MAT_NUM          { constMATVU const& x; double number; };
+inline TypeMATmultiply_MAT_NUM operator* (constMATVU const& x, double number) { return { x, number }; }
+inline TypeMATmultiply_MAT_NUM operator* (double number, constMATVU const& x) { return { x, number }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATmultiply_MAT_NUM const& expr) noexcept { \
+		Melder_assert (expr.x.nrow == target.nrow); \
+		Melder_assert (expr.x.ncol == target.ncol); \
+		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
+			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] [icol] * expr.number; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATmultiply (constMATVU const& x, double number) {
+	autoMAT result = newMATraw (x.nrow, x.ncol);
+	result.all() <<= x  *  number;
+	return result;
+}
+
 struct TypeMATsubtract_MAT_NUM          { constMATVU const& x; double number; };
 inline TypeMATsubtract_MAT_NUM operator- (constMATVU const& x, double number) { return { x, number }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
@@ -117,24 +136,6 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 inline autoMAT newMATsubtract (double number, constMATVU const& x) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
 	result.all() <<= number  -  x;
-	return result;
-}
-
-struct TypeMATmultiply_MAT_NUM          { constMATVU const& x; double number; };
-inline TypeMATmultiply_MAT_NUM operator* (constMATVU const& x, double number) { return { x, number }; }
-#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
-	inline void operator (MATVU const& target, TypeMATmultiply_MAT_NUM const& expr) noexcept { \
-		Melder_assert (expr.x.nrow == target.nrow); \
-		Melder_assert (expr.x.ncol == target.ncol); \
-		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
-			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
-				target [irow] [icol] op expr.x [irow] [icol] * expr.number; \
-	}
-GENERATE_FIVE_TENSOR_FUNCTIONS
-#undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATmultiply (constMATVU const& x, double number) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  *  number;
 	return result;
 }
 
@@ -176,6 +177,82 @@ inline autoMAT newMATmultiply (constMATVU const& x, constVECVU const& y) {
 	return result;
 }
 
+struct TypeMATsubtract_MAT_VEC          { constMATVU const& x; constVECVU const& y; };
+inline TypeMATsubtract_MAT_VEC operator- (constMATVU const& x, constVECVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATsubtract_MAT_VEC const& expr) noexcept { \
+		Melder_assert (expr.x.nrow == target.nrow); \
+		Melder_assert (expr.x.ncol == target.ncol); \
+		Melder_assert (expr.x.ncol == expr.y.size); \
+		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
+			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] [icol] - expr.y [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATsubtract (constMATVU const& x, constVECVU const& y) {
+	autoMAT result = newMATraw (x.nrow, x.ncol);
+	result.all() <<= x  -  y;
+	return result;
+}
+
+struct TypeMATadd_VEC_MAT          { constVECVU const& x; constMATVU const& y; };
+inline TypeMATadd_VEC_MAT operator+ (constVECVU const& x, constMATVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATadd_VEC_MAT const& expr) noexcept { \
+		Melder_assert (expr.y.nrow == expr.x.size); \
+		Melder_assert (expr.y.nrow == target.nrow); \
+		Melder_assert (expr.y.ncol == target.ncol); \
+		for (integer irow = 1; irow <= target.nrow; irow ++) \
+			for (integer icol = 1; icol <= target.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] + expr.y [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATadd (constVECVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (y.nrow, y.ncol);
+	result.all() <<= x  +  y;
+	return result;
+}
+
+struct TypeMATmultiply_VEC_MAT          { constVECVU const& x; constMATVU const& y; };
+inline TypeMATmultiply_VEC_MAT operator* (constVECVU const& x, constMATVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATmultiply_VEC_MAT const& expr) noexcept { \
+		Melder_assert (expr.y.nrow == expr.x.size); \
+		Melder_assert (expr.y.nrow == target.nrow); \
+		Melder_assert (expr.y.ncol == target.ncol); \
+		for (integer irow = 1; irow <= target.nrow; irow ++) \
+			for (integer icol = 1; icol <= target.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] * expr.y [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATmultiply (constVECVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (y.nrow, y.ncol);
+	result.all() <<= x  *  y;
+	return result;
+}
+
+struct TypeMATsubtract_VEC_MAT          { constVECVU const& x; constMATVU const& y; };
+inline TypeMATsubtract_VEC_MAT operator- (constVECVU const& x, constMATVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATsubtract_VEC_MAT const& expr) noexcept { \
+		Melder_assert (expr.y.nrow == expr.x.size); \
+		Melder_assert (expr.y.nrow == target.nrow); \
+		Melder_assert (expr.y.ncol == target.ncol); \
+		for (integer irow = 1; irow <= target.nrow; irow ++) \
+			for (integer icol = 1; icol <= target.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] - expr.y [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATsubtract (constVECVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (y.nrow, y.ncol);
+	result.all() <<= x  -  y;
+	return result;
+}
+
 struct TypeMATadd_MAT_MAT          { constMATVU const& x; constMATVU const& y; };
 inline TypeMATadd_MAT_MAT operator+ (constMATVU const& x, constMATVU const& y) { return { x, y }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
@@ -196,26 +273,6 @@ inline autoMAT newMATadd (constMATVU const& x, constMATVU const& y) {
 	return result;
 }
 
-struct TypeMATsubtract_MAT_MAT          { constMATVU const& x; constMATVU const& y; };
-inline TypeMATsubtract_MAT_MAT operator- (constMATVU const& x, constMATVU const& y) { return { x, y }; }
-#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
-	inline void operator (MATVU const& target, TypeMATsubtract_MAT_MAT const& expr) noexcept { \
-		Melder_assert (expr.x.nrow == target.nrow); \
-		Melder_assert (expr.x.ncol == target.ncol); \
-		Melder_assert (expr.x.nrow == expr.y.nrow); \
-		Melder_assert (expr.x.ncol == expr.y.ncol); \
-		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
-			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
-				target [irow] [icol] op expr.x [irow] [icol] - expr.y [irow] [icol]; \
-	}
-GENERATE_FIVE_TENSOR_FUNCTIONS
-#undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  -  y;
-	return result;
-}
-
 struct TypeMATmultiply_MAT_MAT          { constMATVU const& x; constMATVU const& y; };
 inline TypeMATmultiply_MAT_MAT operator* (constMATVU const& x, constMATVU const& y) { return { x, y }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
@@ -233,6 +290,26 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 inline autoMAT newMATmultiply (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
 	result.all() <<= x  *  y;
+	return result;
+}
+
+struct TypeMATsubtract_MAT_MAT          { constMATVU const& x; constMATVU const& y; };
+inline TypeMATsubtract_MAT_MAT operator- (constMATVU const& x, constMATVU const& y) { return { x, y }; }
+#define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
+	inline void operator (MATVU const& target, TypeMATsubtract_MAT_MAT const& expr) noexcept { \
+		Melder_assert (expr.x.nrow == target.nrow); \
+		Melder_assert (expr.x.ncol == target.ncol); \
+		Melder_assert (expr.x.nrow == expr.y.nrow); \
+		Melder_assert (expr.x.ncol == expr.y.ncol); \
+		for (integer irow = 1; irow <= expr.x.nrow; irow ++) \
+			for (integer icol = 1; icol <= expr.x.ncol; icol ++) \
+				target [irow] [icol] op expr.x [irow] [icol] - expr.y [irow] [icol]; \
+	}
+GENERATE_FIVE_TENSOR_FUNCTIONS
+#undef GENERATE_ONE_TENSOR_FUNCTION
+inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
+	autoMAT result = newMATraw (x.nrow, x.ncol);
+	result.all() <<= x  -  y;
 	return result;
 }
 
@@ -332,6 +409,13 @@ void MATouter (MATVU const& target, constVECVU const& x, constVECVU const& y);
 extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);
 
 extern autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight);
+
+void MATpower (MATVU const& target, constMATVU const& mat, double power);
+inline autoMAT newMATpower (constMATVU const& mat, double power) {
+	autoMAT result = newMATraw (mat.nrow, mat.ncol);
+	MATpower (result.all(), mat, power);
+	return result;
+}
 
 inline void MATrandomGauss (MATVU const& target, double mu, double sigma) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++)

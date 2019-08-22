@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,10 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 }
 
 bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
-	if (! my structDaata :: v_equal (thee)) return false;
-	if (my size != thy size) return false;
+	if (! my structDaata :: v_equal (thee))
+		return false;
+	if (my size != thy size)
+		return false;
 	for (integer i = 1; i <= my size; i ++) {
 		Melder_require (Thing_isa (my at [i], classDaata),
 			U"Collection::equal: cannot compare items of class ", Thing_className (my at [i]), U".");
@@ -56,7 +58,8 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 		//Melder_casual (U"classCollection_equal: ", equal,
 		//	U", item ", i,
 		//  U", types ", Thing_className (my item [i]), U" and ", Thing_className (thy item [i]));
-		if (! equal) return false;
+		if (! equal)
+			return false;
 	}
 	return true;
 }
@@ -64,8 +67,10 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
 	for (integer i = 1; i <= my size; i ++) {
 		Daata data = my at [i];
-		if (data -> name && ! Melder_isEncodable (data -> name.get(), encoding)) return false;
-		if (! Data_canWriteAsEncoding (data, encoding)) return false;
+		if (data -> name && ! Melder_isEncodable (data -> name.get(), encoding))
+			return false;
+		if (! Data_canWriteAsEncoding (data, encoding))
+			return false;
 	}
 	return true;
 }
@@ -123,7 +128,8 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			Data_readText (my at [i], text, -1);
 			if (stringsRead == 3) {
 				char *location = & line [n];
-				if (*location == ' ') n ++;   // skip space character
+				if (*location == ' ')
+					n ++;   // skip space character
 				integer length = strlen (location);
 				if (length > 0 && location [length - 1] == '\n')
 					location [length - 1] = '\0';

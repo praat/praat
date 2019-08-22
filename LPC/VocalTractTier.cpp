@@ -92,22 +92,16 @@ autoVocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time) {
 	try {
 		autoVocalTractTier thee = VocalTractTier_create (startTime, endTime);
-		VocalTractTier_addVocalTract_copy (thee.get(), time, me);
+		VocalTractTier_addVocalTract (thee.get(), time, me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractTier");
 	}
 }
 
-void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTract vocaltract) {
+void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract vocaltract) {
 	try {
 		autoVocalTractPoint thee = VocalTract_to_VocalTractPoint (vocaltract, time);
-		if (my d_vocalTracts.size > 0) {
-			VocalTractPoint vtp = my d_vocalTracts.at [1];
-			integer numberOfSections = vtp -> d_vocalTract -> nx;
-			Melder_require (numberOfSections == vocaltract -> nx,
-				U"The number of sections should be equal to ", numberOfSections, U".");
-		}
 		my d_vocalTracts. addItem_move (thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract added.");
@@ -127,7 +121,7 @@ autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (section.get(), vtpi -> number, areai);
 			}
-			thy z[1][isection] = RealTier_getValueAtTime (section.get(), time);
+			thy z[1] [isection] = RealTier_getValueAtTime (section.get(), time);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -137,9 +131,8 @@ autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 
 autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 	try {
-		if (my d_vocalTracts.size == 0) {
-			Melder_throw (U"Empty VocalTractTier");
-		}
+		Melder_require (my d_vocalTracts.size > 0.0,
+			U"The VocalTractTier should not be empty.");
 		integer numberOfFrames = Melder_ifloor ((my xmax - my xmin) / timeStep);
 		VocalTractPoint vtp = my d_vocalTracts.at [1];
 		integer numberOfSections = vtp -> d_vocalTract -> nx;

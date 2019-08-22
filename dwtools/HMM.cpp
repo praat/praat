@@ -1,6 +1,6 @@
 /* HMM.cpp
  *
- * Copyright (C) 2010-2018 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2010-2019 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,13 @@
 #include "oo_DESCRIPTION.h"
 #include "HMM_def.h"
 
-Thing_implement (HMM, Daata, 1);
+
+#include "enums_getText.h"
+#include "HMM_enums.h"
+#include "enums_getValue.h"
+#include "HMM_enums.h"
+
+Thing_implement (HMM, Daata, 2);
 Thing_implement (HMMState, Daata, 0);
 Thing_implement (HMMStateList, Ordered, 0);
 Thing_implement (HMMObservation, Daata, 0);
@@ -63,8 +69,8 @@ Thing_implement (HMMStateSequence, Strings, 0);
 */
 
 // helpers
-int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
-autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, integer storage);
+static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
+autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage);
 
 integer HMM_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber);
 integer StringsIndex_getLongestSequence (StringsIndex me, integer index, integer *pos);
@@ -87,7 +93,7 @@ autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence 
 
 
 autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes);
-autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
+static autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
 
 // evaluate the numbers given to probabilities
 static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
@@ -107,7 +113,7 @@ static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
 	return numbers;
 }
 
-int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2) {
+static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2) {
 	double ca = a * a + 1.0, bmyc = (b - yc);
 	double cb = 2.0 * (a * bmyc - xc);
 	double cc = bmyc * bmyc + xc * xc - r * r;
@@ -144,12 +150,13 @@ static double HMM_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observatio
 
 /**************** HMMObservation ******************************/
 
-static void HMMObservation_init (HMMObservation me, conststring32 label, integer numberOfComponents, integer dimension, integer storage) {
+static void HMMObservation_init (HMMObservation me, conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage) {
 	my label = Melder_dup (label);
-	my gm = GaussianMixture_create (numberOfComponents, dimension, storage);
+	my gm = GaussianMixture_create (numberOfComponents, dimension, storage == kHMMstorage::Diagonals ?
+		kGaussianMixtureStorage::Diagonals : kGaussianMixtureStorage::Complete);
 }
 
-autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, integer storage) {
+autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage) {
 	try {
 		autoHMMObservation me = Thing_new (HMMObservation);
 		HMMObservation_init (me.get(), label, numberOfComponents, dimension, storage);
@@ -379,7 +386,7 @@ void structHMM :: v_info () {
 static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservationSymbols, int leftToRight) {
 	my numberOfStates = numberOfStates;
 	my numberOfObservationSymbols = numberOfObservationSymbols;
-	my componentStorage = 1;
+	my componentStorage = kHMMstorage::Diagonals;
 	my leftToRight = leftToRight;
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
@@ -420,7 +427,7 @@ autoHMM HMM_createFullContinuousModel (int leftToRight, integer numberOfStates, 
 	return autoHMM();
 }
 
-autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols, integer numberOfMixtureComponentsPerSymbol, integer componentDimension, integer componentStorage) {
+autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols, integer numberOfMixtureComponentsPerSymbol, integer componentDimension, kHMMstorage componentStorage) {
 	try {
 		autoHMM me = Thing_new (HMM);
 		HMM_init (me.get(), numberOfStates, numberOfObservationSymbols, leftToRight);
@@ -467,7 +474,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 			HMM_addState_move (me.get(), state.move());
 		}
 		for (integer isymbol = 1; isymbol <= symbols.size; isymbol ++) {
-			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, 0);
+			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, kHMMstorage::Diagonals);
 			HMM_addObservation_move (me.get(), symbol.move());
 		}
 		return me;
@@ -479,7 +486,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 void HMM_setDefaultObservations (HMM me) {
 	conststring32 def = ( my notHidden ? U"S" : U"s" );
 	for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
-		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, 0);
+		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, kHMMstorage::Diagonals);
 		HMM_addObservation_move (me, hmms.move());
 	}
 }
@@ -659,7 +666,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	// if > 5 may be one in the middle with the most connections
 	// ...
 	// find fontsize
-	int fontSize = Graphics_inqFontSize (g);
+	double fontSize = Graphics_inqFontSize (g);
 	conststring32 widest_label = U"";
 	double max_width = 0.0;
 	for (integer is = 1; is <= my numberOfStates; is ++) {
@@ -670,7 +677,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 			max_width = w;
 		}
 	}
-	int new_fontSize = fontSize;
+	double new_fontSize = fontSize;
 	while (max_width > 2.0 * rstate && new_fontSize > 4) {
 		new_fontSize --;
 		Graphics_setFontSize (g, new_fontSize);
@@ -730,8 +737,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 
 				integer isymbol = NUMgetIndexFromProbability (my emissionProbs.row (istate), NUMrandomUniform (0.0, 1.0));
 				HMMObservation s = my observationSymbols->at [isymbol];
-				char32 *name;
-				GaussianMixture_generateOneVector_inline (s -> gm.get(), obs.get(), &name, buf.get());
+				GaussianMixture_generateOneVector_inline (s -> gm.get(), obs.get(), nullptr, buf.get());
 				for (integer j = 1; j <= my componentDimension; j ++)
 						Table_setNumericValue (thee.get(), i, 1 + j, obs [j]);
 
@@ -785,7 +791,7 @@ autoHMMBaumWelch HMM_forward (HMM me, constINTVEC obs) {
 	}
 }
 
-autoHMMViterbi HMM_to_HMMViterbi (HMM me, constINTVEC obs) {
+static autoHMMViterbi HMM_to_HMMViterbi (HMM me, constINTVEC obs) {
 	try {
 		autoHMMViterbi thee = HMMViterbi_create (my numberOfStates, obs.size);
 		HMM_HMMViterbi_decode (me, thee.get(), obs);
@@ -885,7 +891,7 @@ static void HMM_smoothEmissionProbs_naive (HMM me, double minProb) {
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
 
-void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
+static void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservationSequenceBag thee, double minProb) {
 	Melder_assert (my notHidden);
 	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
 	if (stateSequenceNumbers.size < 2) return;
@@ -1182,7 +1188,7 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 void HMM_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 	Melder_assert (obs.size == thy numberOfTimes);
 	for (integer it = 1; it <= thy numberOfTimes - 1; it ++) {
-		double sum = 0.0;
+		longdouble sum = 0.0;
 		MATVU xi_it = thy xi [it];
 		for (integer is = 1; is <= thy numberOfStates; is ++) {
 			for (integer js = 1; js <= thy numberOfStates; js ++) {
@@ -1191,7 +1197,7 @@ void HMM_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 				sum += xi_it [is] [js];
 			}
 		}
-		xi_it /= sum;
+		xi_it  /=  double (sum);
 	}
 }
 
@@ -1209,13 +1215,12 @@ void HMM_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 		double gammasum = NUMsum (thy gamma.row (is).part (1, thy numberOfTimes - 1));
 
 		for (integer js = 1; js <= my numberOfStates; js ++) {
-			double xisum = 0.0;
-			for (integer it = 1; it <= thy numberOfTimes - 1; it ++) {
+			longdouble xisum = 0.0;
+			for (integer it = 1; it <= thy numberOfTimes - 1; it ++)
 				xisum += thy xi [it] [is] [js];
-			}
 			// zero probs signal invalid connections, don't reestimate
 			if (my transitionProbs [is] [js] > 0.0) {
-				thy aij_num [is] [js] += xisum;
+				thy aij_num [is] [js] += double (xisum);
 				thy aij_denom [is] [js] += gammasum;
 			}
 		}
@@ -1227,15 +1232,13 @@ void HMM_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 		if (! my notHidden) {
 			gammasum += thy gamma [is] [thy numberOfTimes];   // now sum all, add last term
 			for (integer k = 1; k <= my numberOfObservationSymbols; k ++) {
-				double gammasum_k = 0.0;
-				for (integer it = 1; it <= thy numberOfTimes; it ++) {
-					if (obs [it] == k) {
+				longdouble gammasum_k = 0.0;
+				for (integer it = 1; it <= thy numberOfTimes; it ++)
+					if (obs [it] == k)
 						gammasum_k += thy gamma [is] [it];
-					}
-				}
 				// only reestimate probs > 0 !
 				if (my emissionProbs [is] [k] > 0.0) {
-					thy bik_num [is] [k] += gammasum_k;
+					thy bik_num [is] [k] += double (gammasum_k);
 					thy bik_denom [is] [k] += gammasum;
 				}
 			}
@@ -1330,7 +1333,7 @@ void HMM_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, constINTVEC obs) {
 			for (integer js = 1; js <= my numberOfStates; js ++) {
 				sum += thy beta [js] [it + 1] * my transitionProbs [is] [js] * my emissionProbs [js] [obs [it + 1]];
 			}
-			thy beta [is] [it] = sum / thy scale [it];
+			thy beta [is] [it] = double (sum) / thy scale [it];
 		}
 	}
 }
@@ -1441,19 +1444,18 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 			for (integer is = 1; is <= my numberOfStates; is ++) {
 				sum += alpha_tm1 [is] * my transitionProbs [is] [js];
 			}
-			alpha_t [js] = sum;
+			alpha_t [js] = double (sum);
 			scale [it] += alpha_t [js];
 		}
 		alpha_t /= scale [it];
 	}
 
 	longdouble lnp = 0.0;
-	for (integer it = 1; it <= itime; it ++) {
+	for (integer it = 1; it <= itime; it ++)
 		lnp += log (scale [it]);
-	}
 
-	lnp = ( alpha_t [istate] > 0 ? lnp + log (alpha_t [istate]) : -INFINITY ); // p = 0 -> ln(p)=-infinity  // ppgb FIXME infinity is een laag getal
-	return lnp;
+	lnp = ( alpha_t [istate] > 0 ? lnp + log (alpha_t [istate]) : -INFINITY ); // p = 0 -> ln(p)=-infinity  // ppgb INFINITY is a small number
+	return double (lnp);
 }
 
 double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, integer itime, integer istate, integer isymbol) {
@@ -1540,7 +1542,7 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer
 
 		for (integer i = 1; i <= numberOfObservationSymbols; i ++) {
 			conststring32 label = d -> rowLabels [i].get();
-			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, 0);
+			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, kHMMstorage::Diagonals);
 			HMM_addObservation_move (thee.get(), hmmo.move());
 			if (thy notHidden) {
 				autoHMMState hmms = HMMState_create (label);

@@ -28,8 +28,7 @@
 autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, integer nt, double dt,
 	double t1, double fmin, double fmax, integer nf, double df, double f1);
 
-autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep);
-/* Hann window because we want to reconstruct */
+autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double maximumFrequency);
 
 autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor);
 

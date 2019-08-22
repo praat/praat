@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2019 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent even
 			if (iy < iystart) { iy1 = iy; iy2 = iystart; }
 			else              { iy1 = iystart; iy2 = iy; }
 			if (my mouseSelectsInnerViewport) {
-				int fontSize = Graphics_inqFontSize (my graphics.get());
+				const double fontSize = Graphics_inqFontSize (my graphics.get());
 				double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 				if (xmargin > ix2 - ix1 + 1) xmargin = ix2 - ix1 + 1;
 				if (ymargin > iy2 - iy1 + 1) ymargin = iy2 - iy1 + 1;
@@ -399,7 +399,7 @@ void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 	try {
 		HENHMETAFILE metafile = copyToMetafile (me);
 		MelderFile_delete (file);   // overwrite any existing file with the same name
-		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, Melder_peek32toW (file -> path)));
+		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, Melder_peek32toW_fileSystem (file -> path)));
 		DeleteEnhMetaFile (metafile);
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to Windows metafile ", file);

@@ -1,6 +1,6 @@
 /* praat_LPC_init.cpp
  *
- * Copyright (C) 1994-2016 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -962,7 +962,7 @@ FORM (MODIFY_VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", nu
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (VocalTractTier, VocalTract)
-		VocalTractTier_addVocalTract_copy (me, time, you);
+		VocalTractTier_addVocalTract (me, time, you);
 	MODIFY_FIRST_OF_TWO_END
 }
 

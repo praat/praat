@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 	'elevation' may be 30 degrees, 'azimuth' may be 45 degrees.
 */
 
-void Matrix_movie (Matrix me, Graphics g);
+void Matrix_playMovie (Matrix me, Graphics g);
 
 autoMatrix Matrix_readFromRawTextFile (MelderFile file);
 autoMatrix Matrix_readAP (MelderFile file);

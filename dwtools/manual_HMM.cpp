@@ -35,21 +35,22 @@ NORMAL (U"Expectation-maximization (EM) is an iterative method used to find maxi
 	"estimates of the parameters by maximizing the expected likelihood found in the E step. The "
 	"parameters found on the M step are then used to start another E step, and the process is "
 	"repeated until some criterion is satisfied. EM is frequently used for data clustering like for example in "
-	"@@TableOfReal: To GaussianMixture...|Gaussian mixtures@ or in the @@HMM & HMMObservationSequences: Learn...|Baum-Welch training@ of a Hidden Markov Model.")
+	"@@TableOfReal: To GaussianMixture...|Gaussian mixtures@ or in the "
+	"@@HMM & HMMObservationSequences: Learn...|Baum-Welch training@ of a Hidden Markov Model.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture", U"djmw", 20101026)
 INTRO (U"A Gaussian mixture is a probability density function (p.d.f.). It is a combination of several Gaussian densities.")
 NORMAL (U"The GaussianMixture's p.d.f. is defined as the weighted sum of %K multivariate Gaussian p.d.f's:")
 FORMULA (U"pdf(x) = \\Si__%%i%=1_^^%K^ p__%i_ %N(%x;\\mu__%i_,\\Si__%i_),")
-NORMAL (U"where each %N(%x;\\mu__%i_,\\Si__%i_) is a multivariate p.d.f. with mean  \\mu__%i_ and covariance matrix  \\Si__%i_. The coefficients %p__%i_ sum to 1. ")
+NORMAL (U"where each %N(%x;\\mu__%i_,\\Si__%i_) is a multivariate p.d.f. with mean \\mu__%i_ and covariance matrix \\Si__%i_. The coefficients %p__%i_ sum to 1.")
 NORMAL (U"For an introduction to Gaussian mixtures see for example  @@Bishop (2006)@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: Draw concentration ellipses...", U"djmw", 20101101)
 INTRO (U"Draws the concentration ellipse for each component in the @@GaussianMixture@. ")
 NORMAL (U"The principal component plane will be determined from @@GaussianMixture: To PCA@.")
-NORMAL (U"You might also use another  @PCA and to combine it with a GaussianMixture for drawing  (@@GaussianMixture & PCA: Draw concentration ellipses...@).")
+NORMAL (U"You might also use another @PCA and to combine it with a GaussianMixture for drawing (@@GaussianMixture & PCA: Draw concentration ellipses...@).")
 ENTRY (U"Settings")
 TAG (U"##Number of sigmas")
 DEFINITION (U"determines the @@concentration ellipse|data coverage@.")
@@ -62,21 +63,21 @@ INTRO (U"Evaluate the pdf of the @@GaussianMixture@ at the given position.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & PCA: Draw concentration ellipses...", U"djmw", 20101101)
-INTRO (U"Draws the concentration ellipse for each component in the  @@GaussianMixture@ in the plane spanned by the selected  @PCA.")
+INTRO (U"Draws the concentration ellipse for each component in the @@GaussianMixture@ in the plane spanned by the selected @PCA.")
 ENTRY (U"Settings")
 TAG (U"##Number of sigmas")
 DEFINITION (U"determines the @@concentration ellipse|data coverage@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: Draw marginal pdf...", U"djmw", 20101122)
-INTRO (U"A command to draw the marginal p.d.f. (probability density function) of the selected  @GaussianMixture.")
+INTRO (U"A command to draw the marginal p.d.f. (probability density function) of the selected @GaussianMixture.")
 NORMAL (U"A marginal distribution is the projection of the (multivariate) p.d.f. on one dimension or direction. "
 	"This direction may also be externally defined by selecting a @PCA and a GaussianMixture together.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: Split component...", U"djmw", 20101122)
 INTRO (U"Splits one component of the selected  @GaussianMixture into two components.")
-NORMAL (U"The selected component is split based on a @PCA analysis of its covariance matrix. The new means are situated "
+NORMAL (U"The selected component is split on the basis of a @PCA analysis of its covariance matrix. The new means are situated "
 	"around the old components mean, 1\\si apart in the first principal components direction, and the new covariances are "
 	"constructed with information from the old covariance matrix. ")
 NORMAL (U"The details of the algorith are described in @@Zhang et al. (2003)@.")
@@ -84,7 +85,7 @@ MAN_END
 
 MAN_BEGIN (U"GaussianMixture: To PCA", U"djmw", 20101030)
 INTRO (U"Creates a  @PCA from the selected  @GaussianMixture.")
-NORMAL (U"The PCA is calculated from the  @@GaussianMixture: To Covariance (total)|total covariance matrix@ of the GaussianMixture.")
+NORMAL (U"The PCA is calculated from the @@GaussianMixture: To Covariance (total)|total covariance matrix@ of the GaussianMixture.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & PCA: To Matrix (density)...", U"djmw", 20101101)
@@ -119,7 +120,7 @@ NORMAL (U"2. According to the procedure described in @@Covariance: To TableOfRea
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To GaussianMixture...", U"djmw", 20150930)
-INTRO (U"Creates a  @@GaussianMixture@ from the selected @@TableOfReal@ by an @@expectation-maximization|"
+INTRO (U"Creates a @@GaussianMixture@ from the selected @@TableOfReal@ by an @@expectation-maximization|"
 	"expectation-maximization@ procedure.")
 ENTRY (U"Settings")
 TAG (U"##Number of components")
@@ -143,30 +144,21 @@ NORMAL (U"The Expectation\\--Maximization (EM) algorithm is an iterative procedu
 	"GaussianMixture, the parameters in the model are the centers and the covariances of all components in the mixture "
 	"and their mixing probabilities.")
 NORMAL (U"The number of parameters depends on the number of components in the mixture and the dimension of the data. "
-	"For a full covariance matrix we have to find  %dimension%(%dimension%+1)/2 matrix elements and another "
-	" %dimension vector elements for its center. This makes the total number of parameters that have to be estimated "
+	"For a full covariance matrix we have to find %dimension%(%dimension%+1)/2 matrix elements and another "
+	"%dimension vector elements for its center. This makes the total number of parameters that have to be estimated "
 	"for a mixture with ##Number of components# components equal to "
 	"%numberOfComponents \\.c %dimension%(%dimension%+3)/2 + %numberOfComponents.")
 NORMAL (U"For diagonal covariance matrices the number of parameters reduces considerably.")
 NORMAL (U"The EM iteration has to start with a sensible initial guess for all the parameters. For the initial guess, "
 	"we derive our centers from positions on the 1-\\si ellipse in the plane spanned by the first two principal "
-	"components. We then make all covariance matrices equal to a scaled down version of the total covariance matrix "
+	"components. We then make all covariance matrices equal to a scaled-down version of the total covariance matrix, "
 	"where the scaling factor depends on the number of components and the quotient of the between and within variance. "
-	"Initialy all mixing probabilities will be chosen equal.")
+	"Initially all mixing probabilities will be chosen equal.")
 NORMAL (U"How to proceed from the initial guess with the EM to find the optimal values for all the parameters "
 	"in the Gaussian mixture is explained in great detail by  @@Bishop (2006)@.")
 MAN_END
 
-#define GaussianMixture_OPTION_MENU_CRITERIA \
-	OPTIONMENU (U"Criterion based on", 1) \
-	OPTION (U"Maximum likelihood") \
-	OPTION (U"Minimum message length") \
-	OPTION (U"Bayes information") \
-	OPTION (U"Akaike information") \
-	OPTION (U"Akaike corrected") \
-	OPTION (U"Complete-data ML")
-
-MAN_BEGIN (U"GaussianMixture & TableOfReal: Get likelihood value...", U"djmw", 20181004)
+MAN_BEGIN (U"GaussianMixture & TableOfReal: Get likelihood value...", U"djmw", 20190711)
 INTRO (U"Calculates how well the @GaussianMixture model fits the data according to a criterion.")
 ENTRY (U"Settings")
 TAG (U"##Maximum likelihood")
@@ -181,16 +173,18 @@ TAG (U"##Akaike corrected")
 FORMULA (U"AICc = 2(ML - k\\.cN\\.cn/(n-k\\.cN-1))")
 TAG (U"##Complete-data ML")
 FORMULA (U"\\Si__%i=1..%n_\\Si__%m=1..%k_ \\ga__%%im%_ log (\\ga__%%im%_)")
-NORMAL (U"In the formulas above %n is the number of data points, %k is the number of mixture components, %N is the "
-	"number of parameters in one component, i.e. %d + %d(%d+1)/2 for a full covariance matrix of "
-	"dimension %d with means. The \\al__%k_ are the mixing probabilities, the %p__%%ik%_ are the probabilities for the %i-th data vector in the %k-th component. The \\ga__%%im%_ are defined as ")
+NORMAL (U"In these formulas, %n is the number of data points, %k is the number of mixture components, %N is the "
+	"number of parameters in one component (i.e. %d + %d(%d+1)/2 for a full covariance matrix of "
+	"dimension %d with means), \\al__%k_ are the %%mixing probabilities%, "
+	"and %p__%%ik%_ are the %%multinormal probabilities% for the %i-th data vector in the %k-th component. "
+	"The %%responsibilities% \\ga__%%im%_ are defined as ")
 FORMULA (U"\\ga__%%im%_= \\al__%m_\\.c%p__%%im%_ /(\\Si__%j=1..%k_ \\al__%j_\\.c%p__%%ij%_).")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & TableOfReal: Improve likelihood...", U"djmw", 20111130)
-INTRO (U"Try to improve the likelihood of the parameters in the  @@GaussianMixture@ by an @@expectation-maximization@ algorithm.")
+INTRO (U"Try to improve the likelihood of the parameters in the @@GaussianMixture@ by an @@expectation-maximization@ algorithm.")
 ENTRY (U"Settings & EM Algorithm")
-NORMAL (U"As decribed in  @@TableOfReal: To GaussianMixture...@.")
+NORMAL (U"As decribed in @@TableOfReal: To GaussianMixture...@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & TableOfReal: To Correlation (columns)", U"djmw", 20101111)
@@ -213,18 +207,18 @@ NORMAL (U"The classification table is a matrix with the same number of rows as t
 	"that the data in row %i of the TableOfReal belongs to component %j of the mixture.")
 MAN_END
 
-MAN_BEGIN (U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...", U"djmw", 20101120)
-INTRO (U"Find the best @@GaussianMixture@ from the data according to a iterative component-wise optimization algorithm by which components may be deleted.")
+MAN_BEGIN (U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...", U"djmw", 20190709)
+INTRO (U"Find the best @@GaussianMixture@ from the data according to an iterative Component-wise @@expectation-maximization|Expectation-Maximization@ for Mixtures algorithm by which components may be deleted.")
 ENTRY (U"Settings")
 TAG (U"##Minimum number of components")
-DEFINITION (U"defines the minimum number of components that have to survive the minimization process. If a value of zero is chosen all components will survive and no deletions will take place.")
+DEFINITION (U"defines the minimum number of components that have to survive the minimization process. If a value of zero is chosen, all components will survive and no deletions will take place.")
 TAG (U"##Tolerance of minimizer")
 DEFINITION (U"defines when to stop optimizing. If the relative difference between the likelihoods at two successive "
 	"iteration steps differs by less then the tolerance we stop, i.e. when |(%L(%i-1)-%L(%i))/%L(%i)| < %%tolerance%. ")
 TAG (U"##Maximum number of iterations")
 DEFINITION (U"defines another stop criterion. Iteration stops whenever the number of iterations reaches this value.")
 TAG (U"##Stability coefficient lambda")
-DEFINITION (U"defines the fraction of the totat covariance that is added to the covariance of each component to "
+DEFINITION (U"defines the fraction of the total covariance that is added to the covariance of each component to "
 	"prevent these matrices from becoming singular.")
 TAG (U"##Criterion based on")
 DEFINITION (U"defines whether the function to be optimized is the log likelihood or the related miminum description length.")
@@ -232,26 +226,26 @@ ENTRY (U"Algorithm")
 NORMAL (U"The component-wise optimization algorithm is described in @@Figueiredo & Jain (2002)@ where the function to be optimized "
 	"is the minimum description length defined as:")
 FORMULA (U"%L(\\te,%Y) = %N/2 \\Si__%m=1_^^%k^ ln(%n\\al__%k_/12) + %k/2 ln(%n/12) + %k(%N+1)/2 - ln %p(%Y|\\te),")
-NORMAL (U"where %k is the number of components,  %N is the number of parameters of one component, "
-	"i.e. %d+%d(%d+1)/2 for a full covariance matrix of dimension %d with means and %d+%d for a diagonal "
-	"matrix with means;  %n is the number of data vectors. The term ln %p(%Y|\\te) is the log likelihood of the data "
+NORMAL (U"where %k is the number of components, %N is the number of parameters of one component "
+	"(i.e. %d+%d(%d+1)/2 for a full covariance matrix of dimension %d with means and %d+%d for a diagonal "
+	"matrix with means), and %n is the number of data vectors. The term ln %p(%Y|\\te) is the log likelihood of the data "
 	"given the model.")
 NORMAL (U"For the optimization we either optimize the complete function %L(\\te,%Y) or only the likelihood ln %p(%Y|\\te) term.")
 MAN_END
 
-MAN_BEGIN (U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...", U"djmw", 20101113)
+MAN_BEGIN (U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)...", U"djmw", 20190728)
 INTRO (U"Tests the data in the @TableOfReal that belong to the components of the @GaussianMixture for normality "
 	"according to an adapted version of the @@BHEP multivariate normality test@.")
 ENTRY (U"Setting")
 TAG (U"##Beta")
 DEFINITION (U"determines the smoothing parameter of the data. If %beta equals zero the smoothing is determined "
 	"automatically for each component of the mixture separately as: ")
-FORMULA (U"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ n^^1/(%p+4)^,")
-NORMAL (U"where %n is the effective number of elements in the component and %p the dimension of the data.")
+FORMULA (U"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ %n^^1/(%p+4)^,")
+NORMAL (U"where %n is the effective number of elements in the component, and %p is the dimension of the data.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To GaussianMixture (row labels)...", U"djmw", 20101101)
-INTRO (U"Creates a  @@GaussianMixture@ from the selected  @TableOfReal. The number of mixture components is determined by the number of different row labels.")
+INTRO (U"Creates a @@GaussianMixture@ from the selected @TableOfReal. The number of mixture components is determined by the number of different row labels.")
 ENTRY (U"Setting")
 TAG (U"##Covariance matrices are")
 DEFINITION (U"defines whether the complete covariance matrices in the mixture have to be calculated or only the diagonal.")
@@ -268,11 +262,13 @@ MAN_END
 
 MAN_BEGIN (U"HMM", U"djmw", 20130410)
 INTRO (U"A HMM is a Hidden Markov Model. Markov models are often used to model observation sequences. "
-	"The fundamental assumption in a markov model is that the probability of an observation (event) can only "
+	"The fundamental assumption in a Markov model is that the probability of an observation (event) can only "
 	"depend on the previous observation. "
-	"A HMM can be visualised as a graph with a number of %%states%. If states are connected they have line connecting them. The following picture shows a HMM with two states, labeled \"Rainy\" and \"Sunny\". Each state can emit three symbols (these are not visible in the graph).   ")
+	"A HMM can be visualised as a graph with a number of %%states%. If two states are connected, the graph has a line that connects them. "
+	"The following picture shows a HMM with two states, labeled \"Rainy\" and \"Sunny\". "
+	"Each state can emit three symbols (these are not visible in the graph).")
 SCRIPT (5, 5,
-	U"Create simple HMM: \"wheather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\"\n"
+	U"Create simple HMM: \"weather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\"\n"
 	"Draw: \"no\"\n"
 	"Remove\n")
 INTRO (U"For an introduction into HMM's see @@Rabiner (1989)@.")

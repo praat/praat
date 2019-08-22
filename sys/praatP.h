@@ -21,10 +21,11 @@
 void praat_addActionScript (conststring32 className1, integer n1, conststring32 className2, integer n2, conststring32 className3, integer n3,
 	conststring32 title, conststring32 after, integer depth, conststring32 script);
 /* No strings may be null; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
+
 void praat_removeAction_classNames (conststring32 className1, conststring32 className2,
 	conststring32 className3, conststring32 title);
 /* No arguments may be null; unspecify them by giving an empty string. */
-/* 'title' is deep-copied. */
+
 void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title);
 void praat_hideAction_classNames (conststring32 className1, conststring32 className2,
 	conststring32 className3, conststring32 title);
@@ -36,6 +37,7 @@ void praat_sortActions ();
 void praat_addMenuCommandScript (conststring32 window, conststring32 menu, conststring32 title,
 	conststring32 after, integer depth, conststring32 script);
 /* All strings are deep-copied and may not be null; unspecify them by giving an empty string. */
+
 /*
 	For the Praat objects window:
 	'window' is "Objects", 'menu' is "Praat", "New", "Open", "Help", "Preferences", "Goodies", or "Technical".

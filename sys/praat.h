@@ -78,11 +78,11 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files;
-		this title is reference-copied.
+		this title is deep-copied.
 	'callback' refers to a function prototyped like this:
-		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, conststring32 sendingString, Interpreter interpreter, void *closure);
-		this function should throw an exception if the command failed,
-		and return 1 if the command was executed successfully;
+		static void DO_Class_action (UiForm sendingForm, int narg, Stackel args, conststring32 sendingString,
+				Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *closure);
+		this function should throw an exception if the command failed;
 		this function will be called by 'praat' when the user clicks a menu command,
 		in which case 'sendingForm', 'args' and 'sendingString' and 'closure' will be null;
 		it is also called by scripts,
@@ -180,9 +180,10 @@ typedef struct {   /* Readonly */
 	int totalBeingCreated;
 	integer uniqueId;
 } structPraatObjects, *PraatObjects;
-typedef struct {   // readonly
+typedef struct {   // read-only
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
-	int font, fontSize, lineType;
+	int font, lineType;
+	double fontSize;
 	Graphics_Colour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;

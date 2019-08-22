@@ -100,10 +100,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++)
-				my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
-		}
+		my u.get() <<= ( my isTransposed ? m.transpose() : m );
 		SVD_compute (me.get());
 		return me;
 	} catch (MelderError) {
@@ -112,13 +109,10 @@ autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 }
 
 
-void SVD_svd_d (SVD me, constMATVU const& m) {
-	Melder_assert ((my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
+void SVD_update (SVD me, constMATVU const& m) {
+	Melder_assert ((! my isTransposed && my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
 		(my isTransposed && my numberOfRows == m.ncol && my numberOfColumns == m.nrow));
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++)
-			my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
-	}
+	my u.get() <<= ( my isTransposed ? m.transpose() : m );
 	SVD_compute (me);
 }
 
@@ -202,27 +196,39 @@ void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result) {
 			Solve UDV' x = b.
 			Solution: x = V D^-1 U' b
 		*/
-		Melder_assert (my numberOfRows == b.size);
-		Melder_assert (result.size == my numberOfColumns);
 		autoVEC t = newVECzero (my numberOfColumns);
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			longdouble sum = 0.0;
-			if (my d [j] > 0.0) {
-				for (integer i = 1; i <= my numberOfRows; i ++)
-					sum += my u [i] [j] * b [i];
-				sum /= my d [j];
+		if (! my isTransposed) {
+			Melder_assert (my numberOfRows == b.size);
+			Melder_assert (result.size == my numberOfColumns);
+			for (integer j = 1; j <= my numberOfColumns; j ++) {
+				if (my d [j] > 0.0)
+					t [j] = NUMinner (my u.column (j), b) / my d [j];
 			}
-			t [j] = (double) sum;
+			VECmul (result, my v.get(), t.get());
+		} else {
+			/*
+				Solve (UDV')' x = b or VDU' x = b.
+				Solution: x = UD^(-1)V'b
+			*/
+			Melder_assert (my numberOfColumns == b.size);
+			Melder_assert (result.size == my numberOfRows);
+			for (integer i = 1; i <= my numberOfColumns; i ++)
+				if (my d [i] > 0.0)
+					t [i] = NUMinner (my v.column (i), b) / my d [i];
+			for (integer i = 1; i <= my numberOfColumns; i ++)
+				result [i] = NUMinner (my u.row (i), t.get());
 		}
-		VECmul (result, my v.get(), t.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
 	}
 }
 
 autoVEC SVD_solve (SVD me, constVECVU const& b) {
-	Melder_assert (my numberOfRows == b.size);
-	autoVEC result = newVECzero (my numberOfColumns);
+	integer numberOfRows = my numberOfRows, numberOfColumns = my numberOfColumns;
+	if (my isTransposed)
+		std::swap (numberOfRows, numberOfColumns);
+	Melder_assert (numberOfRows == b.size);
+	autoVEC result = newVECzero (numberOfColumns);
 	SVD_solve_preallocated (me, b, result.get());
 	return result;
 }

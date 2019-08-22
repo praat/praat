@@ -1,6 +1,6 @@
 /* ICA.cpp
  *
- * Copyright (C) 2010-2018 David Weenink
+ * Copyright (C) 2010-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,7 +339,7 @@ void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, Cr
  */
 static void NUMcrossCorrelate_rows (constMAT x, integer icol1, integer icol2, integer lag, MAT inout_cc, VEC inout_centroid, double scale) {
 	Melder_assert (inout_cc.nrow == inout_cc.ncol && inout_cc.nrow == x.nrow);
-	lag = labs (lag);
+	lag = integer_abs (lag);
 	integer nsamples = icol2 - icol1 + 1 + lag;
 	Melder_require (nsamples > 0, U"Not enough samples to perform crosscorrealtions."); 
 	for (integer i = 1; i <= x.nrow; i ++) {
@@ -590,7 +590,7 @@ void structCrossCorrelationTable :: v_info () {
 autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 	try {
 		autoCrossCorrelationTable me = Thing_new (CrossCorrelationTable);
-		SSCP_init (me.get(), dimension, dimension);
+		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTable not created.");

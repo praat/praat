@@ -71,18 +71,8 @@ static autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal m
 static autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
 
 integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNumber) {
-	integer columnNumber = 0;
-	if (rowNumber > 0 && rowNumber <= my numberOfRows) {
-		double max = my data [rowNumber] [1];
-		columnNumber = 1;
-		for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
-			if (my data [rowNumber] [icol] > max) {
-				max = my data [rowNumber] [icol];
-				columnNumber = icol;
-			}
-		}
-	}
-	return columnNumber;
+	return ( rowNumber > 0 && rowNumber <= my numberOfRows ?
+		NUMmaxPos (my data.row (rowNumber)) : 0 );
 }
 
 conststring32 TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber) {
@@ -97,12 +87,9 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 		}
 		Melder_require (myrow > 0 && myrow <= my numberOfRows && thyrow > 0 && thyrow <= thy numberOfRows && my numberOfColumns == thy numberOfColumns,
 			U"The dimensions do not fit.");
-
+		
 		thy rowLabels [thyrow] = Melder_dup (my rowLabels [myrow].get());
-
-		if (& my data [myrow] [0] != & thy data [thyrow] [0]) {
-			NUMvector_copyElements (& my data [myrow] [0], & thy data [thyrow] [0], 1, my numberOfColumns);
-		}
+		thy data.row (thyrow) <<= my data.row (myrow); 
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", myrow, U" not copied to ", thee);
 	}
@@ -372,7 +359,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 
 void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xmax, double ymin, double ymax, double sv_splitfactor, int labelsize, bool garnish) {
 	integer nr = my numberOfRows, nc = my numberOfColumns, nPoints = nr + nc;
-	int fontsize = Graphics_inqFontSize (g);
+	const double fontsize = Graphics_inqFontSize (g);
 
 	autoSVD svd = SVD_create (nr, nc);
 
@@ -387,31 +374,27 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		U"There should be at least two (independent) columns in the table.");
 
 	autoVEC x = newVECraw (nPoints);
-	autoVEC y = newVECraw ( nPoints);
+	autoVEC y = newVECraw (nPoints);
 
 	double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	double lambda2 = pow (svd -> d [2], sv_splitfactor);
-	for (integer i = 1; i <= nr; i ++) {
-		x [i] = svd -> u [i] [1] * lambda1;
-		y [i] = svd -> u [i] [2] * lambda2;
-	}
-	lambda1 = svd -> d [1] / lambda1;
-	lambda2 = svd -> d [2] / lambda2;
-	for (integer i = 1; i <= nc; i ++) {
-		x [nr + i] = svd -> v [i] [1] * lambda1;
-		y [nr + i] = svd -> v [i] [2] * lambda2;
-	}
-
-	if (xmax <= xmin) {
+	x.part (1, nr) <<= svd -> u.column (1)  *  lambda1;
+	y.part (1, nr) <<= svd -> u.column (2)  *  lambda2;
+	
+	double lambda3 = svd -> d [1] / lambda1;
+	double lambda4 = svd -> d [2] / lambda2;
+	x.part (nr + 1, nPoints) <<= svd -> v.column (1)  *  lambda3;
+	y.part (nr + 1, nPoints) <<= svd -> v.column (2)  *  lambda4;
+	
+	if (xmax <= xmin)
 		NUMextrema (x.get(), & xmin, & xmax);
-	}
+
 	if (xmax <= xmin) {
 		xmax += 1.0;
 		xmin -= 1.0;
 	}
-	if (ymax <= ymin) {
+	if (ymax <= ymin)
 		NUMextrema (y.get(), & ymin, & ymax);
-	}
 	if (ymax <= ymin) {
 		ymax += 1.0;
 		ymin -= 1.0;
@@ -419,23 +402,20 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
-	if (labelsize > 0) {
+	if (labelsize > 0)
 		Graphics_setFontSize (g, labelsize);
-	}
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= nPoints; i ++) {
 		char32 const *label;
 		if (i <= nr) {
 			label = my rowLabels [i].get();
-			if (! label) {
+			if (! label)
 				label = U"?__r_";
-			}
 		} else {
 			label = my columnLabels [i - nr].get();
-			if (! label) {
+			if (! label)
 				label = U"?__c_";
-			}
 		}
 		Graphics_text (g, x [i], y [i], label);
 	}
@@ -448,9 +428,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 		Graphics_marksBottom (g, 2, true, true, false);
 	}
 
-	if (labelsize > 0) {
+	if (labelsize > 0)
 		Graphics_setFontSize (g, fontsize);
-	}
 }
 
 void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax, double ymin, double ymax, bool garnish) {
@@ -753,7 +732,7 @@ void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowm
 void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
-	int fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 
 	Melder_require (icx >= 1 && icx <= my numberOfColumns,
 		U"The horizontal column number should be in the range from 1 to ", my numberOfColumns, U".");
@@ -987,27 +966,17 @@ autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-
-		// Copy column labels.
-
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			if (my columnLabels [i]) {
-				TableOfReal_setColumnLabel (thee.get(), i, my columnLabels [i].get());
-			}
-		}
-
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			TableOfReal_setColumnLabel (thee.get(), icol, my columnLabels [icol].get());
 		/*
 			Select randomly from table with replacement. Because of replacement
 			you do not get back the original data set. A random fraction,
-			typically 1/e (37%) are replaced by duplicates.
+			typically 1/e (37%), are replaced by duplicates.
 		*/
-
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			integer p = NUMrandomInteger (1, my numberOfRows);
-			NUMvector_copyElements (& my data [p] [0], & thy data [i] [0], 1, my numberOfColumns);
-			if (my rowLabels [p]) {
-				TableOfReal_setRowLabel (thee.get(), i, my rowLabels [p].get());
-			}
+		for (integer thyRow = 1; thyRow <= thy numberOfRows; thyRow ++) {
+			integer myRow = NUMrandomInteger (1, my numberOfRows);
+			thy data.row (thyRow) <<= my data.row (myRow);
+			TableOfReal_setRowLabel (thee.get(), thyRow, my rowLabels [myRow].get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1021,7 +990,7 @@ void TableOfReal_changeRowLabels (TableOfReal me,
 {
 	try {
 		autostring32vector rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
-			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my rowLabels = std::move (rowLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not changed.");
@@ -1034,7 +1003,7 @@ void TableOfReal_changeColumnLabels (TableOfReal me,
 {
 	try {
 		autostring32vector columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
-			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my columnLabels = std::move (columnLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": column labels not changed.");
@@ -1046,24 +1015,20 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 	char32 **labels = my rowLabels.peek2();
 	regexp *compiled_regexp = nullptr;
 
-	if (! search || search [0] == U'\0') {
+	if (! search || search [0] == U'\0')
 		return 0;
-	}
 	if (columnLabels) {
 		numberOfLabels = my numberOfColumns;
 		labels = my columnLabels.peek2();
 	}
-	if (use_regexp) {
+	if (use_regexp)
 		compiled_regexp = CompileRE_throwable (search, 0);
-	}
 	for (integer i = 1; i <= numberOfLabels; i ++) {
-		if (! labels [i]) {
+		if (! labels [i])
 			continue;
-		}
 		if (use_regexp) {
-			if (ExecRE (compiled_regexp, nullptr, labels [i], nullptr, false, U'\0', U'\0', nullptr, nullptr)) {
+			if (ExecRE (compiled_regexp, nullptr, labels [i], nullptr, false, U'\0', U'\0', nullptr, nullptr))
 				nmatches ++;
-			}
 		} else if (str32equ (labels [i], search)) {
 			nmatches ++;
 		}
@@ -1074,8 +1039,8 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 }
 
 void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer coly1, integer colx2, integer coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, bool garnish) {
-	integer nx = my numberOfColumns, ny = my numberOfRows;
-	int fontsize = Graphics_inqFontSize (g);
+	const integer nx = my numberOfColumns, ny = my numberOfRows;
+	const double fontsize = Graphics_inqFontSize (g);
 
 	Melder_require (colx1 > 0 && colx1 <= nx && coly1 > 0 && coly1 <= nx,
 		U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");
@@ -1228,19 +1193,16 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 					indexr ++;
 					TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
 				}
-				label = li; indexi = i;
+				label = li;
+				indexi = i;
 			}
 		}
 
 		NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
 		if (expand) {
-			// Now invert the table.
-
-			autostring32vector tmp = std::move (sorted -> rowLabels);
-			sorted -> rowLabels = std::move (my rowLabels);
+			// Now revert the sorting
 			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.get(), true);
-			sorted -> rowLabels = std::move (tmp);
 		} else {
 			indexr ++;
 			TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
@@ -1383,93 +1345,33 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 		}
 		autoTableOfReal him = TableOfReal_create (nrows, ncols);
 		/* Unsafe: new attributes not initialized. */
-		for (integer irow = 1; irow <= nrows; irow ++) {
-			TableOfReal_setRowLabel (him.get(), irow, thy rowLabels [irow].get());
-		}
-		ncols = 0;
+		his rowLabels.all() <<= thy rowLabels.all();
+		
+		integer hisColumnIndex = 0;
 		for (integer itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-				ncols ++;
-				TableOfReal_setColumnLabel (him.get(), ncols, thy columnLabels [icol].get());
-				for (integer irow = 1; irow <= nrows; irow ++) {
-					his data [irow] [ncols] = thy data [irow] [icol];
-				}
+				hisColumnIndex ++;
+				TableOfReal_setColumnLabel (him.get(), hisColumnIndex, thy columnLabels [icol].get());
+				his data.column (hisColumnIndex) <<= thy data.column (icol);
 			}
 		}
-		Melder_assert (ncols == his numberOfColumns);
+		Melder_assert (hisColumnIndex == his numberOfColumns);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with appended columns not created.");
 	}
 }
 
-double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb, double *p_lnmu, double *p_lnvar) {
+double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_singularCovariance) {
 	try {
 		/* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, 
 		 *  Journal of Multivariate Analysis 62, 1-23.
 		 */
-
-		integer n = my numberOfRows, p = my numberOfColumns;
-		double beta = *h > 0.0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ((1.0 + 2 * p) / 4, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
-		double p2 = p / 2.0;
-		double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-		double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-		double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
-		double prob = undefined;
-
-		if (*h <= 0.0) {
-			*h = NUMsqrt1_2 / beta;
-		}
-
-		double tnb = undefined, lnmu = undefined, lnvar = undefined;
-
-		if (n < 2 || p < 1) {
-			return undefined;
-		}
-
 		autoCovariance thee = TableOfReal_to_Covariance (me);
-		try {
-			SSCP_expandLowerCholeskyInverse (thee.get());
-		} catch (MelderError) {
-			tnb = 4.0 * n;
-		}
-		{
-			double djk, djj, sumjk = 0.0, sumj = 0.0;
-			double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
-			/* Heinze & Wagner (1997), page 3
-				We use d [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
-				So d [j] [k]= d [k] [j] and d [j] [j] = 0
-			*/
-			for (integer j = 1; j <= n; j ++) {
-				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
-					sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
-				}
-				sumjk += 1; // for k == j
-				djj = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
-				sumj += exp (-b2 * djj);
-			}
-			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
-		}
-		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
-		double var = 2.0 * pow (1.0 + 4.0 * beta2, -p2)
-			+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
-			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
-		double mu2 = mu * mu;
-		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
-		lnvar = sqrt (log ( (mu2 + var) / mu2));
-		prob = NUMlogNormalQ (tnb, lnmu, lnvar);
-		if (p_tnb) {
-			*p_tnb = tnb;
-		}
-		if (p_lnmu) {
-			*p_lnmu = lnmu;
-		}
-		if (p_lnvar) {
-			*p_lnvar = lnvar;
-		}
-		return prob;
+		autoVEC weights;
+		double probability = Covariance_TableOfReal_normalityTest_BHEP (thee.get(), me, weights.get(), h, out_tnb, out_lnmu, out_lnvar, out_singularCovariance);
+		return probability;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot determine normality.");
 	}
@@ -1498,14 +1400,7 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 		}
 		his rowLabels.all() <<= my rowLabels.all();
 		his columnLabels.all() <<= thy rowLabels.all();
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer k = 1; k <= thy numberOfRows; k ++) {
-				longdouble ctmp = 0.0;
-				for (integer j = 1; j <= my numberOfColumns; j ++)
-					ctmp += my_data [i] [j] * thy_data [k] [j];
-				his data [i] [k] = (double) ctmp;
-			}
-		}
+		MATmul (his data.get(), my_data.get(), thy_data.transpose());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with row correlations not created.");
@@ -1530,15 +1425,7 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 		}
 		his rowLabels.all() <<= my columnLabels.all();
 		his columnLabels.all() <<= thy columnLabels.all();
-
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			for (integer k = 1; k <= thy numberOfColumns; k ++) {
-				longdouble sum = 0.0;
-				for (integer i = 1; i <= my numberOfRows; i ++)
-					sum += my_data [i] [j] * thy_data [i] [k];
-				his data [j] [k] = (double) sum;
-			}
-		}
+		MATmul (his data.get(), my_data.transpose(), thy_data.get()); 
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with column correlations not created.");
@@ -1549,15 +1436,8 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 	try {
 		if (my numberOfColumns < 3 || my numberOfRows < 3)
 			Melder_throw (U"There should be at least three colums and three rows.");
-		autoVEC x = newVECraw (my numberOfRows);
-		autoVEC y = newVECraw (my numberOfRows);
-		autoVEC z = newVECraw (my numberOfRows);
-		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			x [irow] = my data [irow] [1];
-			y [irow] = my data [irow] [2];
-			z [irow] = my data [irow] [3];
-		}
-		autoVEC weights = NUMbiharmonic2DSplineInterpolation_getWeights (x.get(), y.get(), z.get());
+		
+		autoVEC weights = newVECbiharmonic2DSplineInterpolation_getWeights (my data.column (1), my data.column (2), my data.column (3));
 		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
 		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx,
 			ymin, ymax, ny, dy, ymin + 0.5 * dy);
@@ -1565,7 +1445,7 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 			double yp = thy y1 + (irow - 1) * dy;
 			for (integer icol = 1; icol <= nx; icol ++) {
 				double xp = thy x1 + (icol - 1) * dx;
-				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (x.get(), y.get(), weights.get(), xp, yp);
+				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (my data.column (1), my data.column (2), weights.get(), xp, yp);
 			}
 		}
 		return thee;

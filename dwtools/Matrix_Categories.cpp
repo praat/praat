@@ -1,6 +1,6 @@
 /* Matrix_Categories.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2018 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 
 autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
-		Melder_require (thy size == my ny, U"Number of rows and number of categories should be equal.");
+		Melder_require (thy size == my ny,
+			U"Number of rows and number of categories should be equal.");
 
 		autoTableOfReal him = TableOfReal_create (my ny, my nx);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, nullptr, 1, 1);
@@ -30,12 +31,9 @@ autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee) {
 			SimpleString category = thy at [i];
 			his rowLabels [i] = Melder_dup (category -> string.get());
 		}
-
-		for (integer i = 1; i <= my ny; i ++) {
-			for (integer j = 1; j <= my nx; j ++) {
-				his data [i] [j] = my z [i] [j];
-			}
-		}
+		
+		his data.get() <<= my z.get();
+		
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created from Matrix & Categories.");

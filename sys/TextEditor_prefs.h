@@ -1,6 +1,6 @@
 /* TextEditor_prefs.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2005,2011,2013,2015,2016,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 prefs_begin (TextEditor)
 
-	prefs_add_int_with_data (TextEditor, fontSize, 1, U"12")
+	prefs_add_double_with_data (TextEditor, fontSize, 1, U"12")
 
 prefs_end (TextEditor)
 

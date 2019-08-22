@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,9 +92,9 @@ DIRECT (HELP_Cochleagram_help) {
 
 // MARK: Movie
 
-DIRECT (MOVIE_Cochleagram_movie) {
+DIRECT (MOVIE_Cochleagram_playMovie) {
 	MOVIE_ONE (Cochleagram, U"Cochleagram movie", 300, 300)
-		Matrix_movie (me, graphics);
+		Matrix_playMovie (me, graphics);
 	MOVIE_ONE_END
 }
 
@@ -1754,6 +1754,32 @@ DIRECT (NEW_Pitch_killOctaveJumps) {
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: List values at times...") {
+	NUMVEC (times, U"Times (s)", U"{ 0.5, 0.7, 2.0 }")
+	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
+		RADIOBUTTON (U"Nearest")
+		RADIOBUTTON (U"Linear")
+	OK
+DO
+	NUMVEC_ONE (Pitch)
+		autoVEC result = Sampled_listValuesAtXes (me, times, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
+		for (integer iframe = 1; iframe <= result.size; iframe ++)
+			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMVEC_ONE_END
+}
+
+FORM (NUMVEC_Pitch_listValuesInAllFrames, U"Pitch: List values in all frames", U"Pitch: List values in all frames...") {
+	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
+	OK
+DO
+	NUMVEC_ONE (Pitch)
+		autoVEC result = Sampled_listValuesOfAllSamples (me, Pitch_LEVEL_FREQUENCY, (int) unit);
+		for (integer iframe = 1; iframe <= result.size; iframe ++)
+			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMVEC_ONE_END
+}
+
 DIRECT (PLAY_Pitch_play) {
 	PLAY_EACH (Pitch)
 		Pitch_play (me, 0.0, 0.0);
@@ -2203,9 +2229,9 @@ DIRECT (HELP_Spectrogram_help) {
 	HELP (U"Spectrogram")
 }
 
-DIRECT (MOVIE_Spectrogram_movie) {
+DIRECT (MOVIE_Spectrogram_playMovie) {
 	MOVIE_ONE (Spectrogram, U"Spectrogram movie", 300, 300)
-		Matrix_movie (me, graphics);
+		Matrix_playMovie (me, graphics);
 	MOVIE_ONE_END
 }
 
@@ -2291,7 +2317,7 @@ DO
 
 // MARK: Tabulate
 
-FORM (LIST_Spectrum_list, U"Spectrum: List", 0) {
+FORM (NEW_Spectrum_tabulate, U"Spectrum: Tabulate", 0) {
 	BOOLEAN (includeBinNumber, U"Include bin number", false)
 	BOOLEAN (includeFrequency, U"Include frequency", true)
 	BOOLEAN (includeRealPart, U"Include real part", false)
@@ -2300,10 +2326,10 @@ FORM (LIST_Spectrum_list, U"Spectrum: List", 0) {
 	BOOLEAN (includePowerDensity, U"Include power density", true)
 	OK
 DO
-	INFO_ONE (Spectrum)
-		Spectrum_list (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
+	CONVERT_EACH (Spectrum)
+		autoTable result = Spectrum_tabulate (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
 			includeEnergyDensity, includePowerDensity);
-	INFO_ONE_END
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: Query
@@ -3012,7 +3038,8 @@ void praat_uvafon_init () {
 	#endif
 
 	praat_addAction1 (classCochleagram, 0, U"Cochleagram help", nullptr, 0, HELP_Cochleagram_help);
-	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, 0, MOVIE_Cochleagram_movie);
+	praat_addAction1 (classCochleagram, 1, U"Play movie", nullptr, 0, MOVIE_Cochleagram_playMovie);
+	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Cochleagram_playMovie);
 praat_addAction1 (classCochleagram, 0, U"Info", nullptr, 0, nullptr);
 	praat_addAction1 (classCochleagram, 2, U"Difference...", nullptr, 0, REAL_Cochleagram_difference);
 praat_addAction1 (classCochleagram, 0, U"Draw", nullptr, 0, nullptr);
@@ -3228,7 +3255,9 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 1, U"-- get content --", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 1, U"Count voiced frames", nullptr, 1, INTEGER_Pitch_getNumberOfVoicedFrames);
 		praat_addAction1 (classPitch, 1, U"Get value at time...", nullptr, 1, REAL_Pitch_getValueAtTime);
+		praat_addAction1 (classPitch, 1, U"List values at times...", nullptr, 1, NUMVEC_Pitch_listValuesAtTimes);
 		praat_addAction1 (classPitch, 1, U"Get value in frame...", nullptr, 1, REAL_Pitch_getValueInFrame);
+		praat_addAction1 (classPitch, 1, U"List values in all frames...", nullptr, 1, NUMVEC_Pitch_listValuesInAllFrames);
 		praat_addAction1 (classPitch, 1, U"-- get extreme --", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 1, U"Get minimum...", nullptr, 1, REAL_Pitch_getMinimum);
 		praat_addAction1 (classPitch, 1, U"Get time of minimum...", nullptr, 1, REAL_Pitch_getTimeOfMinimum);
@@ -3285,7 +3314,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 
 	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help", nullptr, 0, HELP_Spectrogram_help);
 	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, WINDOW_Spectrogram_view);
-	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, 0, MOVIE_Spectrogram_movie);
+	praat_addAction1 (classSpectrogram, 1, U"Play movie", nullptr, 0, MOVIE_Spectrogram_playMovie);
+	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classSpectrogram);
 		praat_addAction1 (classSpectrogram, 1, U"Get power at...", nullptr, 1, REAL_Spectrogram_getPowerAt);
@@ -3310,8 +3340,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classSpectrum, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Draw...", nullptr, 1, GRAPHICS_Spectrum_draw);
 		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...", nullptr, 1, GRAPHICS_Spectrum_drawLogFreq);
-	praat_addAction1 (classSpectrum, 1, U"Tabulate -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"List...", nullptr, 1, LIST_Spectrum_list);
+	praat_addAction1 (classSpectrum, 1, U"Tabulate...", nullptr, 0, NEW_Spectrum_tabulate);
 	praat_addAction1 (classSpectrum, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 1, U"Frequency domain", nullptr, 1, nullptr);
 			praat_addAction1 (classSpectrum, 1, U"Get lowest frequency", nullptr, 2, REAL_Spectrum_getLowestFrequency);

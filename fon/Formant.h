@@ -2,7 +2,7 @@
 #define _Formant_h_
 /* Formant.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2009,2011,2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,11 @@ autoFormant Formant_create (double tmin, double tmax, integer nt, double dt, dou
 		dt > 0.0;
 		maxnFormants >= 1;
 	Postconditions:
-		my xmin = tmin;
-		my xmax = tmax;
-		my nx = nt;
-		my dx = dt;
-		my x1 = t1;
+		my xmin == tmin;
+		my xmax == tmax;
+		my nx == nt;
+		my dx == dt;
+		my x1 == t1;
 		my maximumNumberOfPairs == maxnFormants;
 		my frames [1..nt]. intensity == 0.0;
 		my frames [1..nt]. numberOfPairs == 0;

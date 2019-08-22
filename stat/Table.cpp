@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2018 Paul Boersma
+ * Copyright (C) 2002-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1739,9 +1739,9 @@ void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycol
 }
 
 void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
-	double xmin, double xmax, double ymin, double ymax, integer markColumn, int fontSize, bool garnish)
+	double xmin, double xmax, double ymin, double ymax, integer markColumn, double fontSize, bool garnish)
 {
-	int saveFontSize = Graphics_inqFontSize (g);
+	const double saveFontSize = Graphics_inqFontSize (g);
 	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
 	Table_numericize_Assert (me, xcolumn);
 	Table_numericize_Assert (me, ycolumn);
@@ -2059,7 +2059,7 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				MelderString_empty (& buffer);
 				bool withinQuotes = false;
-				while (*p != separator && *p != U'\n' && *p != U'\0' || withinQuotes) {
+				while (*p != U'\0' && (*p != separator && *p != U'\n' || withinQuotes)) {
 					if (interpretQuotes && *p == U'\"') {
 						withinQuotes = ! withinQuotes;
 					} else {
@@ -2072,6 +2072,16 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 						Melder_fatal (U"irow ", irow, U", nrow ", numberOfRows, U", icol ", icol, U", ncol ", numberOfColumns);
 					if (icol != numberOfColumns)
 						Melder_throw (U"Last row incomplete.");
+					if (withinQuotes) {
+						if (str32chr (buffer.string, U'\n'))
+							Melder_warning (U"The last cell contains an unmatched double-quote (\") and also multiple lines, "
+									"so perhaps multiple lines were unintentionally combined into one cell. "
+									"The problem may be in row ", irow, U".");
+						else
+							Melder_warning (U"The last cell contains an unmatched double-quote (\"), "
+									"so perhaps multiple cells were unintentionally combined. "
+									"The problem is in row ", irow, U".");
+					}
 				} else if (*p == U'\n') {
 					if (icol != numberOfColumns)
 						Melder_throw (U"Row ", irow, U" incomplete.");

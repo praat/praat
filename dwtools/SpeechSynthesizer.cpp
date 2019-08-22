@@ -695,7 +695,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		conststring32 languageCode = SpeechSynthesizer_getLanguageCode (me);
 		conststring32 voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
-		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
+		espeak_ng_SetVoiceByName (Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
 		int wordgap_10ms = my d_wordgap * 100; // espeak wordgap is in units of 10 ms
 		espeak_ng_SetParameter (espeakWORDGAP, wordgap_10ms, 0);
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
@@ -715,10 +715,10 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
 
 		#ifdef _WIN32
-                conststringW textW = Melder_peek32toW (text);
-                espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+			conststringW textW = Melder_peek32toW (text);
+			espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
-                espeak_ng_Synthesize (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+			espeak_ng_Synthesize (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#endif
 				
 		espeak_ng_Terminate ();

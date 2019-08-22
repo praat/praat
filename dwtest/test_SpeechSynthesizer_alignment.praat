@@ -12,7 +12,7 @@ textgrid1 = selected ("TextGrid")
 selectObject: synthesizer
 Speech output settings: 44100, 0.01, 1, 1, 180, "IPA"
 To Sound: "This is some text", "yes"
-sound2 =selected ("Sound")
+sound2 = selected ("Sound")
 textgrid2 = selected ("TextGrid")
 
 asserterror The domains of the Sound and the TextGrid must be equal

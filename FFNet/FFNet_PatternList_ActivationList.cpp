@@ -1,6 +1,6 @@
 /* FFNet_PatternList_ActivationList.cpp
  *
- * Copyright (C) 1994-2018 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1994-2019 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "Graphics.h"
 #include "FFNet_PatternList_ActivationList.h"
 
-static double func (Daata object, VEC p) {
+static double func (Daata object, VEC const& p) {
 	FFNet me = (FFNet) object;
 	Minimizer thee = my minimizer.get();
 	longdouble fp = 0.0;
@@ -45,11 +45,11 @@ static double func (Daata object, VEC p) {
 		for (integer k = 1; k <= my numberOfWeights; k ++)
 			my dw [k] += my dwi [k];
 	}
-	thy funcCalls ++;
+	thy numberOfFunctionCalls ++;
 	return (double) fp;
 }
 
-static void dfunc_optimized (Daata object, VEC /* p */, VEC dp) {
+static void dfunc_optimized (Daata object, VEC const& /* p */, VEC const& dp) {
 	FFNet me = (FFNet) object;
 
 	integer j = 1;

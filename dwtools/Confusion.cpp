@@ -1,6 +1,6 @@
 /* Confusion.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,13 +241,9 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 		Graphics_text (g, thy z [i] [1], thy z [i] [2], my rowLabels [i].get());
 	}
 	for (integer i = ib; i <= ie; i ++) {
-		double xSum = 0.0;
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			xSum += my data [i] [j];
-		}
-		if (xSum <= 0.0) {
+		double xSum = NUMsum (my data.row (i));
+		if (xSum <= 0.0)
 			continue;    /* no confusions */
-		}
 		double x1 = thy z [i] [1];
 		double y1 = thy z [i] [2];
 		double r = rmax * my data [i] [i] / xSum;
@@ -309,11 +305,8 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 
 		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0, 0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
 
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				his z [i] [j] = my data [i] [j] - thy data [i] [j];
-			}
-		}
+		his z.get() <<= my data.get()  -  thy data.get();
+		
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix not created from two Confusions.");
@@ -321,13 +314,8 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 }
 
 integer Confusion_getNumberOfEntries (Confusion me) {
-	longdouble total = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			total += my data [i] [j];
-		}
-	}
-	return Melder_ifloor ((double) total);
+	double total = NUMsum (my data.get());
+	return Melder_ifloor (total);
 }
 
 static autoINTVEC create_index (string32vector s, string32vector ref) {
@@ -510,8 +498,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_strin
 				inewcol ++;
 				TableOfReal_setColumnLabel (thee.get(), colpos, my columnLabels [i].get());
 			}
-			for (integer j = 1; j <= my numberOfRows; j ++)
-				thy data [j] [colpos] += my data [j] [i];
+			thy data.column (colpos)  +=  my data.column (i);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -523,26 +510,14 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
-		longdouble total = 0.0;
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			longdouble rowSum = 0.0;
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				thy data [i] [j] = my data [i] [j];
-				rowSum += my data [i] [j];
-			}
-			thy data [i] [my numberOfColumns + 1] = (double) rowSum;
-			total += rowSum;
-		}
-
-		thy data [my numberOfRows + 1] [my numberOfColumns + 1] = (double) total;
-
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			longdouble columnSum = 0.0;
-			for (integer i = 1; i <= my numberOfRows; i ++)
-				columnSum += my data [i] [j];
-			thy data [my numberOfRows + 1] [j] = (double) columnSum;
-		}
-
+		thy data.part(1, my numberOfRows, 1, my numberOfColumns) <<= my data.get();
+		autoVEC columnSums = newVECcolumnSums (my data.get());
+		thy data.row (my numberOfRows + 1).part (1, my numberOfColumns) <<= columnSums.get();
+		autoVEC rowSums = newVECrowSums (my data.get());
+		thy data.column (my numberOfColumns + 1).part (1, my numberOfRows) <<= rowSums.get();
+		
+		thy data [my numberOfRows + 1] [my numberOfColumns + 1] = NUMsum (rowSums.get());
+		
 		thy rowLabels.part (1, my numberOfRows) <<= my rowLabels.all();
 		thy columnLabels.part (1, my numberOfColumns) <<= my columnLabels.all();
 		return thee;
