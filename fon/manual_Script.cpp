@@ -938,7 +938,7 @@ TAG (U"##besselK (%n, %x)")
 NORMAL (U"For functions with arrays, see @@Scripting 5.7. Vectors and matrices@.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 6. String functions", U"ppgb", 20180318)
+MAN_BEGIN (U"Formulas 6. String functions", U"ppgb", 20180825)
 INTRO (U"String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -1064,6 +1064,10 @@ DEFINITION (U"To write the day of the month into the Info window, you type:")
 		CODE2 (U"date\\$  = date\\$  ()")
 		CODE2 (U"day\\$  = mid\\$  (date\\$ , 9, 2)")
 		CODE2 (U"writeInfoLine: \"The month day is \", day\\$ , \".\"")
+TAG (U"##unicode\\$  (228)")
+DEFINITION (U"gives the 228th Unicode codepoint, i.e. \"ä\".")
+TAG (U"##unicode (\"ä\")")
+DEFINITION (U"gives the Unicode codepoint number of \"ä\", i.e. 228.")
 TAG (U"##extractNumber (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Size:\")")
 DEFINITION (U"looks for a number after the first occurrence of \"Size:\" in the long string. Outcome: 44007. "
 	"This is useful in scripts that try to get information from long reports, as the following script that "
@@ -2853,7 +2857,7 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20190706)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20190825)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
@@ -2869,7 +2873,7 @@ NORMAL (U"Whereas in @@Scripting 3.2. Numeric variables@ we talked about a numer
 	"Their values (the numbers that currently live in these houses) are 1, 4, 9, 16 and 25, respectively.")
 NORMAL (U"To list the five values with a loop, you could do:")
 CODE (U"#writeInfoLine: \"Some squares:\"")
-CODE (U"#for i #from 1 #to 5")
+CODE (U"#for i #from 1 #to size (squares\\# )")
 	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", squares\\#  [i]")
 CODE (U"#endfor")
 NORMAL (U"Instead of the above procedure to get the vector %%squares\\# %, with a pre-computed list of five squares, "
@@ -2880,7 +2884,7 @@ NORMAL (U"Instead of the above procedure to get the vector %%squares\\# %, with 
 CODE (U"squares\\#  = zero\\#  (5)")
 NORMAL (U"After this, %%squares\\# % is the vector { 0, 0, 0, 0, 0 }, i.e., the value of each element is zero. "
 	"Now that the vector (street) exists, we can put values into (populate) the five elements (houses):")
-CODE (U"#for i #from 1 #to 5")
+CODE (U"#for i #from 1 #to size (squares\\# )")
 	CODE1 (U"squares\\#  [i] = i * i")
 CODE (U"#endfor")
 NORMAL (U"After this, the variable $$squares\\# $ has the value { 1, 4, 9, 16, 25 }, as before, "
@@ -2941,6 +2945,64 @@ CODE (U"tmin = Get start time")
 CODE (U"tmax = Get end time")
 CODE (U"times\\#  = between_by\\#  (tmin, tmax, 0.01)")
 CODE (U"pitches\\#  = List values at times: times\\# , \"hertz\", \"linear\"")
+ENTRY (U"5. What is a matrix?")
+NORMAL (U"A ##numeric matrix# is a two-indexed array of numbers, regarded as a single object. "
+	"In a Praat script, you can put a matrix into a variable whose name ends in two number signs (\"\\# \\# \"):")
+CODE (U"confusion\\# \\#  = {{ 3, 6, 2 }, { 8, 2, 1 }}")
+NORMAL (U"After this, the variable %%confusion\\# \\# % contains the value {{ 3, 6, 2 }, { 8, 2, 1 }}. "
+	"We say that the matrix %%confusion\\# % has two %rows and three %columns, i.e. it contains six numbers.")
+NORMAL (U"Whereas a numeric vector with five dimensions could be seen (see above) as a street that contains five houses, "
+	"the matrix %%confusion\\# \\# % can be seen as a city district with two avenues crossed by three streets.")
+ENTRY (U"6. Creating a matrix")
+NORMAL (U"You can create a matrix in many ways. The first way we saw was with a ##matrix literal#, "
+	"i.e. a series of series of numbers (or numeric formulas) between nested braces.")
+NORMAL (U"The second way is as a matrix of #zeroes. To create a matrix consisting of 100 rows of 10,000 zeroes, you do")
+CODE (U"a\\# \\#  = zero\\# \\#  (100, 10000)")
+NORMAL (U"After this,")
+CODE (U"numberOfRows (a\\# \\# )")
+NORMAL (U"is 100, and")
+CODE (U"numberOfColumns (a\\# \\# )")
+NORMAL (U"is 10000.")
+NORMAL (U"Another important type of matrix is one filled with random numbers. "
+	"To create a matrix consisting of 100 rows of 10,000 values drawn from a ##Gaussian distribution# "
+	"with true mean 0.0 and true standard deviation 1.0, you can do")
+CODE (U"noise\\# \\#  = randomGauss\\# \\#  (100, 10000, 0.0, 1.0)")
+NORMAL (U"You can create a matrix as the outer product of two vectors:")
+CODE (U"m\\# \\#  = outer\\# \\#  (u\\# , v\\# )")
+NORMAL (U"which is the same as")
+CODE (U"m\\# \\#  = zeros\\# \\#  (size (u\\# ), size (v\\# ))")
+CODE (U"#for irow #to size (u\\# )")
+	CODE1 (U"#for icol #to size (v\\# )")
+		CODE2 (U"m\\# \\#  [irow, icol] = u\\#  [irow] * v\\#  [icol]")
+	CODE1 (U"#endfor")
+CODE (U"#endfor")
+NORMAL (U"or in mathematical notation")
+FORMULA (U"%m__%ij_ = %u__%i_ %v__%j_   (%i = 1..%M, %j = 1..%N)")
+NORMAL (U"where %M is the number of rows and %N is the number of columns.")
+ENTRY (U"7. Computations with matrices")
+NORMAL (U"You can add matrices:")
+CODE (U"c\\# \\#  = a\\# \\#  + b\\# \\# ")
+NORMAL (U"Elementwise multiplication:")
+CODE (U"c\\# \\#  = a\\# \\#  * b\\# \\# ")
+NORMAL (U"which does")
+FORMULA (U"%c__%ij_ = %a__%ij_ %b__%ij_   (%i = 1..%M, %j = 1..%N)")
+NORMAL (U"Matrix multiplication:")
+CODE (U"c\\# \\#  = mul\\# \\#  (a\\# \\# , b\\# \\# )")
+NORMAL (U"which does")
+FORMULA (U"%m__%ij_ = \\su__%k=1_^K  %a__%ik_ %b__%kj_   (%i = 1..%M, %j = 1..%N)")
+NORMAL (U"where %M is the number of rows of %a, %N is the number of columns of %b, "
+	"and %K is the number of columns of %a, which has to be equal to the number if rows of %b.")
+NORMAL (U"Matrix-by-vector multiplication:")
+CODE (U"v\\#  = mul\\#  (m\\# \\# , u\\# )")
+NORMAL (U"which does")
+FORMULA (U"%v__%i_ = \\su__%j=1_^N  %m__%ij_ %u__%j_   (%i = 1..%M)")
+NORMAL (U"where %M is the number of rows of %m, and %N is the number of columns of %m, "
+	"which has to be equal to the dimension of %u. Also")
+CODE (U"v\\#  = mul\\#  (u\\# , m\\# \\# )")
+NORMAL (U"which does")
+FORMULA (U"%v__%j_ = \\su__%i=1_^M  %u__%i_ %m__%ij_   (%j = 1..%N)")
+NORMAL (U"where %M is the number of rows of %m, which has to be equal to the dimension of %u, "
+	"and %N is the number of columns of %m.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5.8. Including other scripts", U"ppgb", 20170718)
