@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190814)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190825)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.02# (25 August 2019)")
+LIST_ITEM (U"• Repaired ##Sound: Concatenate with overlap...#.")
+LIST_ITEM (U"• Mac: Info and script windows: prevent line breaks caused by tab stops.")
 NORMAL (U"##6.1.01# (14 August 2019)")
 LIST_ITEM (U"• Repaired ##TextGrid: Replace interval texts...#.")
 NORMAL (U"##6.1# (13 July 2019)")

@@ -631,6 +631,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 						probably meaning that the next tab stop has to be sought on the next line.
 					We therefore try to prevent the unwanted line break by setting defaultTabInterval to 28.0.
 				*/
+				//NSMutableParagraphStyle *paragraphStyle = [[my d_cocoaTextView defaultParagraphStyle] mutableCopy];   // this one doesn't work (in 10.14.6)
 				NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 				[paragraphStyle setParagraphStyle: [my d_cocoaTextView defaultParagraphStyle]];   // should be superfluous
 				[paragraphStyle setDefaultTabInterval: 28.0];
