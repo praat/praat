@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -619,6 +619,47 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 				[my d_cocoaTextView setMinSize: NSMakeSize (contentSize. width, contentSize.height)];    // El Capitan Developer Beta 2
 			}
 			[my d_cocoaTextView setMaxSize: NSMakeSize (FLT_MAX, FLT_MAX)];
+			if ((true)) {
+				/*
+					The Info window and the Script window have the problem that if a tab occurs after 336 points,
+					the text breaks to the next line.
+					The probable cause is found in NSParagraphStyle:
+					(1) "The NSTextTab objects, sorted by location, define the tab stops for the paragraph style.
+					     The default value is an array of 12 left-aligned tabs at 28-point intervals."
+					(2) The default value of defaultTabInterval ("Tabs after the last specified in tabStops are
+						placed at integer multiples of this distance (if positive).") is 0.0,
+						probably meaning that the next tab stop has to be sought on the next line.
+					We therefore try to prevent the unwanted line break by setting defaultTabInterval to 28.0.
+				*/
+				//NSMutableParagraphStyle *paragraphStyle = [[my d_cocoaTextView defaultParagraphStyle] mutableCopy];   // this one doesn't work (in 10.14.6)
+				NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+				[paragraphStyle setParagraphStyle: [my d_cocoaTextView defaultParagraphStyle]];   // should be superfluous
+				[paragraphStyle setDefaultTabInterval: 28.0];
+				[my d_cocoaTextView setDefaultParagraphStyle: paragraphStyle];
+				[paragraphStyle release];
+				/*
+					The trick above works only when we insert text by setString, not when we edit the text manually.
+					However, we can correctly edit manually *after* setString has been called with a non-empty string (see below).
+				*/
+				/*
+					We can experiment with setting additional tab stops at 400 and 500 points.
+				*/
+				//[paragraphStyle setTabStops: [NSArray array]];
+				//NSDictionary *emptyDictionary = [[NSDictionary alloc] init];
+				//NSTextTab *tab400 = [[NSTextTab alloc] initWithTextAlignment: NSTextAlignmentLeft   location: 400.0   options: emptyDictionary];
+				//NSTextTab *tab400 = [[NSTextTab alloc] initWithType: NSLeftTabStopType   location: 400.0];
+				//[paragraphStyle addTabStop: tab400];
+				//NSTextTab *tab500 = [[NSTextTab alloc] initWithTextAlignment: NSTextAlignmentLeft   location: 500.0   options: emptyDictionary];
+				//NSTextTab *tab500 = [[NSTextTab alloc] initWithType: NSLeftTabStopType   location: 500.0];
+				//[paragraphStyle addTabStop: tab500];
+				/*
+					We can experiment with attributed strings.
+					This won't work here, perhaps because the length of the string, and hence the "range", will change later.
+				*/
+				//NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
+				//[attributes setObject: paragraphStyle   forKey: NSParagraphStyleAttributeName];
+				//[[my d_cocoaTextView textStorage] addAttributes: attributes   range: NSMakeRange (0, [[[my d_cocoaTextView textStorage] string] length])];
+			}
 			[my d_cocoaTextView setVerticallyResizable: YES];
 			[my d_cocoaTextView setHorizontallyResizable: YES];
 			[my d_cocoaTextView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -640,6 +681,13 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setAutomaticTextReplacementEnabled: NO];
 			[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
 			[my d_cocoaTextView setDelegate: my d_cocoaTextView];
+			/*
+				Regrettably, we have to implement the following HACK
+				to prevent tab-based line breaks even when editing manually.
+			*/
+			[my d_cocoaTextView   setString: @" "];
+			[my d_cocoaTextView   setString: @""];
+
 		} else {
 			my d_widget = [[GuiCocoaTextField alloc] init];
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
@@ -1132,7 +1180,19 @@ void GuiText_setString (GuiText me, conststring32 text) {
 			NSString *nsString = (NSString *) Melder_peek32toCfstring (text);
 			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // to make this action undoable
 			//[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
-			[my d_cocoaTextView   setString: nsString];
+			if (true) {
+				[my d_cocoaTextView   setString: nsString];
+			} else {
+				NSMutableParagraphStyle * aMutableParagraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+				[aMutableParagraphStyle setTabStops: [NSArray array]];
+				NSTextTab *tab400 = [[NSTextTab alloc] initWithType: NSLeftTabStopType location: 400.0];
+				[aMutableParagraphStyle addTabStop: tab400];
+				NSTextTab *tab500 = [[NSTextTab alloc] initWithType: NSLeftTabStopType location: 500.0];
+				[aMutableParagraphStyle addTabStop: tab500];
+				NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc]   initWithString: nsString];
+				[attributedString addAttribute: NSParagraphStyleAttributeName   value: aMutableParagraphStyle   range: NSMakeRange (0, [nsString length])];
+				[[my d_cocoaTextView textStorage] setAttributedString: attributedString];
+			}
 			[my d_cocoaTextView   scrollRangeToVisible: NSMakeRange ([[my d_cocoaTextView   textStorage] length], 0)];   // to the end
 			//[[my d_cocoaTextView   window] setViewsNeedDisplay: YES];
 			//[[my d_cocoaTextView   window] display];
