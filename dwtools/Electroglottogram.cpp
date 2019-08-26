@@ -27,25 +27,6 @@
 #include "enums_getValue.h"
 #include "Electroglottogram_enums.h"
 
-#include "oo_DESTROY.h"
-#include "Electroglottogram_def.h"
-#include "oo_COPY.h"
-#include "Electroglottogram_def.h"
-#include "oo_EQUAL.h"
-#include "Electroglottogram_def.h"
-#include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "Electroglottogram_def.h"
-#include "oo_WRITE_TEXT.h"
-#include "Electroglottogram_def.h"
-#include "oo_READ_TEXT.h"
-#include "Electroglottogram_def.h"
-#include "oo_WRITE_BINARY.h"
-#include "Electroglottogram_def.h"
-#include "oo_READ_BINARY.h"
-#include "Electroglottogram_def.h"
-#include "oo_DESCRIPTION.h"
-#include "Electroglottogram_def.h"
-
 Thing_implement (Electroglottogram, Sound, 0);
 
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
@@ -95,24 +76,18 @@ autoElectroglottogram Electroglottogram_create (double xmin, double xmax, intege
 	try {
 		autoElectroglottogram me = Thing_new (Electroglottogram);
 		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1.0, 1.0, 1.0, 1, 1.0);
-		// Don't create the sound because it is optional
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Electroglottogram not created.");
 	}
 }
 
-autoElectroglottogram Sound_to_Electroglottogram (Sound me) {
+autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel) {
 	try {
-		Melder_require (my ny <= 2,
-			U"There should be no more than two channels in the sound");
+		Melder_require (channel > 0 && channel <= my ny,
+			U"The channel number must be in the interval from 1 to ", my ny);
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
-		thy z.all() <<= my z.row(1);
-		if (my ny == 2) {
-			autoSound sound = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-			sound -> z.all() <<= my z.row(2);
-			thy sound = sound.move();
-		}
+		thy z.all() <<= my z.row (channel);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Electroglottogram.");
@@ -207,65 +182,21 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 	
 }
 
-autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing) {
+autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing) {
 		try {
 			autoSpectrum thee = Sound_to_Spectrum (me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
-				double f = Sampled_indexToX (thee.get(), ifreq);
-				thy z [1] [ifreq] *= f;
-				thy z [2] [ifreq] *= f;
+				double frequency = Sampled_indexToX (thee.get(), ifreq);
+				thy z [1] [ifreq] *= frequency;
+				thy z [2] [ifreq] *= frequency;
 			}
-			Spectrum_passHannBand (thee.get(), - smoothing, lowPassFrequency, smoothing);
-			autoSound sound = Spectrum_to_Sound (thee.get());
-			Vector_scale (sound.get(), 0.99);
-			autoElectroglottogram him = Electroglottogram_create (sound -> xmin, sound -> xmax, sound -> nx, sound -> dx, sound -> x1);
-			his z.all() <<= sound -> z.row(1);
+			Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
+			autoSound him = Spectrum_to_Sound (thee.get());
+			Vector_scale (him.get(), 0.99);
 			return him;
 		} catch (MelderError) {
-			Melder_throw (me, U": cannot create derivative of Electroglottogram.");
+			Melder_throw (me, U": cannot create the derivative of the Electroglottogram.");
 		}
-}
-
-// Very simple and strict
-autoSound Sound_Electroglottograms_combine (Sound me, OrderedOf<structElectroglottogram>* thee) {
-	try {
-		integer numberOfChannels = my ny + thy size;
-		for (integer iegg = 1; iegg <= thy size; iegg ++) {
-			Electroglottogram egg = thy at [iegg];
-			Melder_require (egg -> xmin == my xmin && egg -> xmax == my xmax,
-				U"The Electroglottograms should have the same domain as the Sound");
-			Melder_require (egg -> nx == my nx, 
-				U"The Electroglottograms should have the same number of samples as the Sound.");
-			Melder_require (egg -> dx == my dx,
-				U"The Electroglottograms should have the same sampling frequency as the Sound.");
-		}
-		autoSound him = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer ichan = 1; ichan <= my ny; ichan ++)
-			his z.row (ichan) <<= my z.row(ichan);
-	
-		for (integer ichan = my ny + 1; ichan <= numberOfChannels; ichan ++) {
-			Electroglottogram egg = thy at [ichan - my ny];
-			his z.row (ichan) <<= egg -> z.row (1);
-		}
-		return him;
-	} catch (MelderError) {
-		Melder_throw (me, thee, U" not combined.");
-	}
-}
-
-autoSound Electroglottogram_extract (Electroglottogram me, kElectroglottogram_extract extract) {
-	try {
-		autoSound thee;
-		if (extract == kElectroglottogram_extract::Electroglottogram) {
-			thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-			thy z.get() <<= my z.get();
-		} else { // extract == kElectroglottogram_extract::Sound
-			thee = Data_copy (my sound.get());
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": extraction unsuccesful.");
-	}
 }
 
 /* End of file Electroglottogram.cpp */

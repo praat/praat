@@ -2373,7 +2373,7 @@ FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"") {
 	OK
 DO
 	CONVERT_EACH (Electroglottogram)
-		autoElectroglottogram result = Electroglottogram_derivative (me, lowPassFrequency, smoothing);
+		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing);
 	CONVERT_EACH_END (my name.get(), U"_derivative")
 }
 
@@ -5751,9 +5751,12 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
-DIRECT (NEW_Sound_to_Electroglottogram) {
+FORM (NEW_Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U"Sound: Extract Electroglottogram...") {
+	NATURAL (channelNumber, U"Channel number", U"1")
+	OK
+DO
 	CONVERT_EACH (Sound)
-		autoElectroglottogram result = Sound_to_Electroglottogram (me);
+		autoElectroglottogram result = Sound_extractElectroglottogram (me, channelNumber);
 	CONVERT_EACH_END (my name.get())
 }
 	
@@ -8282,7 +8285,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classElectroglottogram, 1, U"Get closed glottis intervals...", nullptr, 0, NEW_Electroglottogram_getClosedGlottisIntervals);
 	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
-	praat_addAction1 (classElectroglottogram, 1, U"To Electroglottogram (derivative)...", nullptr, 0, NEW_Electroglottogram_derivative);
+	praat_addAction1 (classElectroglottogram, 1, U"To Sound (derivative)...", nullptr, 0, NEW_Electroglottogram_derivative);
 	
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
@@ -8630,7 +8633,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"To MelFilter...", U"To BarkFilter...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_MelFilter);
 	praat_addAction1 (classSound, 0, U"To MelSpectrogram...", U"To BarkSpectrogram...", praat_DEPTH_1, NEW_Sound_to_MelSpectrogram);
 	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, NEW_Sound_to_ComplexSpectrogram);
-    praat_addAction1 (classSound, 0, U"To Electroglottogram", U"Extract part for overlap...", 1, NEW_Sound_to_Electroglottogram);
+    praat_addAction1 (classSound, 0, U"Extract Electroglottogram...", U"Extract part for overlap...", 1, NEW_Sound_extractElectroglottogram);
 
 	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_to_Polygon);
     praat_addAction1 (classSound, 2, U"To Polygon (enclosed)...", U"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, NEW1_Sounds_to_Polygon_enclosed);

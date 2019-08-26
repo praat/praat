@@ -23,7 +23,10 @@
 
 #include "Electroglottogram_enums.h"
 
-#include "Electroglottogram_def.h"
+Thing_define (Electroglottogram, Sound) {
+	void v_info ()
+			override;
+};
 
 /*
 	An Electroglottogram represets the degree of contact between the (vibrating) vocal folds during voice production.
@@ -34,7 +37,7 @@
 
 autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1);
 
-autoElectroglottogram Sound_to_Electroglottogram (Sound me);
+autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel);
 
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingLevelPercentage);
 
@@ -45,9 +48,7 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 
 autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
 
-autoElectroglottogram Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
-
-autoSound Electroglottogram_extract (Electroglottogram me, kElectroglottogram_extract extract);
+autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
 
 /* End of file Electroglottogram.h */
 

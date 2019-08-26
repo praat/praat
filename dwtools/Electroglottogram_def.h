@@ -16,7 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #define ooSTRUCT Electroglottogram
 oo_DEFINE_CLASS (Electroglottogram, Sound)
 
