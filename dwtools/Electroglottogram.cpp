@@ -82,12 +82,14 @@ autoElectroglottogram Electroglottogram_create (double xmin, double xmax, intege
 	}
 }
 
-autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel) {
+autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel, bool invert) {
 	try {
 		Melder_require (channel > 0 && channel <= my ny,
 			U"The channel number must be in the interval from 1 to ", my ny);
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
 		thy z.all() <<= my z.row (channel);
+		if (invert) 
+			thy z.all() *= -1.0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Electroglottogram.");
@@ -182,6 +184,21 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 	
 }
 
+autoSound Electroglottogram_firstCentralDifference (Electroglottogram me) {
+	try {	
+		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
+		thy z [1] [1] = 0.0;
+		for (integer i = 2; i < my nx; i ++)
+			thy z [1] [i] = my z [1] [i + 1] - my z [1] [i - 1]; // / (2.0*my dx)
+		thy z [1] [my nx] = 0.0;
+		Vector_scale (thee.get(), 0.99);
+		return thee;
+	} catch (MelderError) {
+			Melder_throw (me, U": cannot create the simple derivative of the Electroglottogram.");
+	}
+}	
+
+
 autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing) {
 		try {
 			autoSpectrum thee = Sound_to_Spectrum (me, false);
@@ -197,6 +214,29 @@ autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFreq
 		} catch (MelderError) {
 			Melder_throw (me, U": cannot create the derivative of the Electroglottogram.");
 		}
+}
+
+autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, double fromFrequency, double smoothing) {
+	try {
+		autoElectroglottogram thee = Data_copy (me);
+		autoSpectrum spec = Sound_to_Spectrum (me, true);
+		Spectrum_passHannBand (spec.get(), fromFrequency, spec -> xmax, smoothing);
+		autoSound him = Spectrum_to_Sound (spec.get());
+		thy z.row (1) <<= his z.row (1).part (1, thy nx);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not high-pass filered.");
+	}
+}
+
+autoSound Electroglottogram_to_Sound (Electroglottogram me) {
+	try {
+		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
+		thy z.row (1) <<= my z.row (1);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to Sound.");
+	}
 }
 
 /* End of file Electroglottogram.cpp */

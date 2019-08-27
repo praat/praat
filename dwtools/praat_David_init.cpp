@@ -2335,6 +2335,16 @@ DIRECT (NEW1_Eigen_Covariance_project) {
 
 /******************** Electroglottogram ********************************************/
 
+FORM (NEW_Electroglottogram_highPassFilter, U"Electroglottogram: High-pass filter", U"") {
+	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoElectroglottogram result = Electroglottogram_highPassFilter (me, fromFrequency, smoothing);
+	CONVERT_EACH_END (my name.get(), U"_filtered")
+}
+
 FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To IntervalTier", U"") {
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
@@ -2375,6 +2385,18 @@ DO
 	CONVERT_EACH (Electroglottogram)
 		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing);
 	CONVERT_EACH_END (my name.get(), U"_derivative")
+}
+
+DIRECT (NEW_Electroglottogram_firstCentralDifference) {
+	CONVERT_EACH (Electroglottogram)
+		autoSound result = Electroglottogram_firstCentralDifference (me);
+	CONVERT_EACH_END (my name.get(), U"_cdiff")
+}
+
+DIRECT (NEW_Electroglottogram_to_Sound) {
+	CONVERT_EACH (Electroglottogram)
+		autoSound result = Electroglottogram_to_Sound (me);
+	CONVERT_EACH_END (my name.get())
 }
 
 /******************** Index ********************************************/
@@ -5753,10 +5775,11 @@ DO
 
 FORM (NEW_Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U"Sound: Extract Electroglottogram...") {
 	NATURAL (channelNumber, U"Channel number", U"1")
+	BOOLEAN (invert, U"Invert", 0)
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoElectroglottogram result = Sound_extractElectroglottogram (me, channelNumber);
+		autoElectroglottogram result = Sound_extractElectroglottogram (me, channelNumber, invert);
 	CONVERT_EACH_END (my name.get())
 }
 	
@@ -8283,9 +8306,12 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setCosts_others);
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
+	praat_addAction1 (classElectroglottogram, 1, U"High-pass filter...", nullptr, 0, NEW_Electroglottogram_highPassFilter);
 	praat_addAction1 (classElectroglottogram, 1, U"Get closed glottis intervals...", nullptr, 0, NEW_Electroglottogram_getClosedGlottisIntervals);
 	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
-	praat_addAction1 (classElectroglottogram, 1, U"To Sound (derivative)...", nullptr, 0, NEW_Electroglottogram_derivative);
+	praat_addAction1 (classElectroglottogram, 1, U"Derivative...", nullptr, 0, NEW_Electroglottogram_derivative);
+	praat_addAction1 (classElectroglottogram, 1, U"First central difference", nullptr, 0, NEW_Electroglottogram_firstCentralDifference);
+	praat_addAction1 (classElectroglottogram, 1, U"To Sound", nullptr, 0, NEW_Electroglottogram_to_Sound);
 	
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);

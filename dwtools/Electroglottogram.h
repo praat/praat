@@ -37,7 +37,7 @@ Thing_define (Electroglottogram, Sound) {
 
 autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1);
 
-autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel);
+autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel, bool invert);
 
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingLevelPercentage);
 
@@ -49,7 +49,19 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
 
 autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
+/* The real derivative */
+
+autoSound Electroglottogram_firstCentralDifference (Electroglottogram me);
+/* d(EEG)/dt [col] = z[col+1]-z[col-1] */
+
+autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, double fromFrequency, double smoothing);
+/*
+	To remove drift.
+*/
+
+autoSound Electroglottogram_to_Sound (Electroglottogram me);
+
+#endif
 
 /* End of file Electroglottogram.h */
 
-#endif

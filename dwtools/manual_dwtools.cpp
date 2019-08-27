@@ -2329,6 +2329,62 @@ NORMAL (U"%e__%jk_ is the %k-th element of the %j-th eigenvector, %x__%ik_ is "
 	"the %i-th row of the matrix part of the resulting object.")
 MAN_END
 
+MAN_BEGIN (U"Electroglottogram", U"djmw", 20190829)
+INTRO (U"One of the @@types of objects@ in Praat. The ##Electroglottogram# represents changes in vocal fold contact area during vocal fold vibration.")
+ENTRY (U"The Electroglottogram waveform")
+NORMAL (U"The following picture shows part of one cycle of a stereotypical (stylized)  waveform, with landmarks.")
+SCRIPT (5.0, 3.0, U""
+	U"Axes: 0, 3.7, 0, 2.0\n"
+	U"x# = {0.55, 1.0, 1.3, 2.0, 2.75, 3.1}\n"
+	U"y# = {0.10, 0.3, 1.8, 1.8, 1.00, 0.1}\n"
+	U"Font size: 12\n"
+	U"w = Text width (world coordinates): \"a\"\n"
+	U"h = 2 * w\n"
+	U"tx# = x#\n"
+	U"tx# += {0, -w, w, - w/2, w/2, w/2}\n"
+	U"ty# = y#\n"
+	U"ty# += {h, h, -h, -h, h, h}\n"
+	U"text$ = \"abcdef\"\n"
+	U"Line width: 4\n"
+	U"Draw line: 0.2, 0.1, x#[1], y#[1]\n"
+	U"for i from 1 to 5\n"
+	U"	Draw line: x# [i], y# [i], x# [i+1], y# [i+1]\n"
+	U"endfor\n"
+	U"Draw line:  x#[6], y#[6], 3.5, 0.1\n"
+	U"for i to 6\n"
+	U"	Text special: tx#[i], \"centre\", ty#[i], \"Half\", \"Helvetica\", 12, \"0\", mid$(text$, i, 1)\n"
+	U"endfor\n"
+	U"Line width: 1\n"
+	U"Draw inner box\n"
+	U"Text bottom: \"no\", \"norm. cycle progress\"\n"
+	U"Text left: \"no\", \"norm. VFCA\"\n")
+NORMAL (U"The orientation of the signal is in the (now) conventional way where the positive y-direction signals larger VFCA. The landmarks refer to:")
+LIST_ITEM (U"\\bu a \\-- initial contact of the lower vocal fold margins;")
+LIST_ITEM (U"\\bu b \\-- the upper vocal fold margins make initial (but not full) contact;")
+LIST_ITEM (U"\\bu c \\-- maximum vocal fold contact reached;")
+LIST_ITEM (U"\\bu d \\-- de-contacting phase initiated by separation of the lower  vocal fold margins;")
+LIST_ITEM (U"\\bu e \\-- upper margins start to separate;")
+LIST_ITEM (U"\\bu f \\-- glottis isopen, with minimal contact area.")
+ENTRY (U"Glottal opening and closure times")
+NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
+	"instants% (GOI) from the Electroglottogram might be problematic because as @@Herbst (2019)@ "
+	"notes: the vocal folds do not vibrate as a uniform mass. Rather, "
+	"their vibration is characterized by phase differences along both the inferior–superior and "
+	"anterior–posterior dimensions. These phase differences cause time-delayed contacting and "
+	"de-contacting of the vocal folds along the respective axes. There is thus no specific instant "
+	"of glottal closing and opening, but rather an interval during which the closing and opening, "
+	"respectively, occur. ")
+MAN_END
+
+MAN_BEGIN (U"electroglottography", U"djmw", 20190829)
+INTRO (U"Electroglottography (EGG) is a low-cost, noninvasive technology for measuring changes of relative vocal fold contact area during laryngeal voice production @@Herbst (2019)@.")
+NORMAL (U"In electroglottography (EGG) a high-frequency, low-amperage current is passed between two "
+	"electrodes placed on each side of the thyroid cartilage. Changes in vocal fold contact area "
+	"(VFCA) during vocal fold vibration result in admittance variation, and the resulting "
+	"(demodulated) EGG signal is proportional to the relative VFCA.")
+NORMAL (U"In Praat the EEG signal is represented by the @@Electroglottogram@.")
+MAN_END
+
 MAN_BEGIN (U"equivalent rectangular bandwidth", U"djmw", 19980713)
 INTRO (U"The %%equivalent rectangular bandwidth% (ERB) of a filter is defined "
 	"as the width of a rectangular filter whose height equals the peak gain of "
@@ -5523,6 +5579,10 @@ MAN_END
 MAN_BEGIN (U"Henze & Wagner (1997)", U"djmw", 20090630)
 NORMAL (U"N. Henze & T. Wagner (1997): \"A new npproach to the BHEP Tests for Multivariate Normality.\" "
 	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
+MAN_END
+
+MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190836)
+NORMAL (U"C. Herbst (2019): \"Electroglottography - An update.\", %%Journal of Voice%, In press.")
 MAN_END
 
 MAN_BEGIN (U"Hormann & Agathos (2001)", U"djmw", 20110617)
