@@ -2335,7 +2335,7 @@ DIRECT (NEW1_Eigen_Covariance_project) {
 
 /******************** Electroglottogram ********************************************/
 
-FORM (NEW_Electroglottogram_highPassFilter, U"Electroglottogram: High-pass filter", U"") {
+FORM (NEW_Electroglottogram_highPassFilter, U"Electroglottogram: High-pass filter", U"Electroglottogram: High-pass filter...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK
@@ -2377,7 +2377,7 @@ DO
 
 }
 
-FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"") {
+FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {
 	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK

@@ -2358,22 +2358,37 @@ SCRIPT (5.0, 3.0, U""
 	U"Draw inner box\n"
 	U"Text bottom: \"no\", \"norm. cycle progress\"\n"
 	U"Text left: \"no\", \"norm. VFCA\"\n")
-NORMAL (U"The orientation of the signal is in the (now) conventional way where the positive y-direction signals larger VFCA. The landmarks refer to:")
+NORMAL (U"The orientation of the signal is in the (now) conventional way where the positive y-direction signals larger %%vocal fold contact area% (VFCA). The landmarks refer to:")
 LIST_ITEM (U"\\bu a \\-- initial contact of the lower vocal fold margins;")
 LIST_ITEM (U"\\bu b \\-- the upper vocal fold margins make initial (but not full) contact;")
 LIST_ITEM (U"\\bu c \\-- maximum vocal fold contact reached;")
-LIST_ITEM (U"\\bu d \\-- de-contacting phase initiated by separation of the lower  vocal fold margins;")
+LIST_ITEM (U"\\bu d \\-- de-contacting phase initiated by separation of the lower vocal fold margins;")
 LIST_ITEM (U"\\bu e \\-- upper margins start to separate;")
-LIST_ITEM (U"\\bu f \\-- glottis isopen, with minimal contact area.")
+LIST_ITEM (U"\\bu f \\-- glottis is open, with minimal contact area.")
 ENTRY (U"Glottal opening and closure times")
 NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
-	"instants% (GOI) from the Electroglottogram might be problematic because as @@Herbst (2019)@ "
+	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "
 	"notes: the vocal folds do not vibrate as a uniform mass. Rather, "
 	"their vibration is characterized by phase differences along both the inferior–superior and "
 	"anterior–posterior dimensions. These phase differences cause time-delayed contacting and "
 	"de-contacting of the vocal folds along the respective axes. There is thus no specific instant "
 	"of glottal closing and opening, but rather an interval during which the closing and opening, "
 	"respectively, occur. ")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: High-pass filter...", U"djmw", 20190827)
+INTRO (U"Applies a high-pass filter to the Electroglottogram to filter away signal artifacts like baseline and amplitude drifts.")
+ENTRY (U"Settings")
+TAG (U"##From frequency (Hz)#")
+DEFINITION (U"Frequencies lower than this frequency are suppressed.")
+TAG (U"##Smoothing (Hz)")
+DEFINITION (U"defines the width of the transition area between fully suppressed and fully passed "
+	"frequencies. Frequencies below %%fromFrequency% will be fully suppressed, frequencies larger "
+	"than %%fromFrequency%+%%smoothing% will be fully passed.")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190827)
+INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
 MAN_END
 
 MAN_BEGIN (U"electroglottography", U"djmw", 20190829)
@@ -4335,6 +4350,20 @@ NORMAL (U"With @Inspect you will see that this type contains the same "
 	"attributes as a @TableOfReal with the following extras:")
 TAG (U"%numberOfObservations")
 TAG (U"%centroid")
+MAN_END
+
+MAN_BEGIN (U"Sound: Extract Electroglottogram...", U"djmw", 20190827)
+INTRO (U"Extract one of the channels of a @@Sound@ as an @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Channel number#")
+DEFINITION (U"defines the Electroglottogram channel in the sound.")
+TAG (U"##Invert#")
+DEFINITION (U"defines whether the wave in the Elecletroglottogram channel has to be inverted or not. "
+	"The convention is that a positive direction in the Elecletroglottogram wave corresponds to "
+	"an increase in contact area between the vocal folds which occurs if the vocal folds are closing. "
+	"Since closing the vocal folds, in general, happens much faster than opening them, the steepest "
+	"slope in each cycle of the wave should be the %%upward% slope. If this is not the case you "
+	"should invert the wave.")
 MAN_END
 
 MAN_BEGIN (U"SSCP: Draw sigma ellipse...", U"djmw", 19990222)
