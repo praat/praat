@@ -78,6 +78,7 @@
 #include "EditDistanceTable.h"
 #include "Editor.h"
 #include "EditDistanceTable.h"
+#include "Electroglottogram.h"
 #include "Eigen_and_Matrix.h"
 #include "Eigen_and_Procrustes.h"
 #include "Eigen_and_SSCP.h"
@@ -2332,6 +2333,76 @@ DIRECT (NEW1_Eigen_Covariance_project) {
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
+/******************** Electroglottogram ********************************************/
+
+FORM (NEW_Electroglottogram_highPassFilter, U"Electroglottogram: High-pass filter", U"Electroglottogram: High-pass filter...") {
+	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoElectroglottogram result = Electroglottogram_highPassFilter (me, fromFrequency, smoothing);
+	CONVERT_EACH_END (my name.get(), U"_filtered")
+}
+
+FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To IntervalTier", U"") {
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
+	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
+	POSITIVE (silenceThreshold, U"Silence threshold", U"0.03")
+	OK
+DO
+	Melder_require (closingThreshold < 1.0, U"The closing threshold has to be smaller than 1.");
+	CONVERT_EACH (Electroglottogram)
+		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_Electroglottogram_to_AmplitudeTier_levels, U"Electroglottogram: To AmplitudeTier (levels)", U"") {
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
+	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
+	BOOLEAN (wantPeaks, U"Peaks", 0)
+	BOOLEAN (wantValleys, U"Valleys", 0)
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoAmplitudeTier peaks, valleys;
+		autoAmplitudeTier result = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks, & valleys);
+		if (wantPeaks)
+			praat_new (peaks.move(), my name.get(), U"_peaks");
+		if (wantValleys)
+			praat_new (valleys.move(), my name.get(), U"_valleys");
+	CONVERT_EACH_END (my name.get())
+
+}
+
+FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {
+	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
+	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing, peak99);
+	CONVERT_EACH_END (my name.get(), U"_derivative")
+}
+
+FORM (NEW_Electroglottogram_firstCentralDifference, U"Electroglottogram: First central difference", U"Electroglottogram: First central difference...") {
+	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
+	OK
+DO
+	CONVERT_EACH (Electroglottogram)
+		autoSound result = Electroglottogram_firstCentralDifference (me, peak99);
+	CONVERT_EACH_END (my name.get(), U"_cdiff")
+}
+
+DIRECT (NEW_Electroglottogram_to_Sound) {
+	CONVERT_EACH (Electroglottogram)
+		autoSound result = Electroglottogram_to_Sound (me);
+	CONVERT_EACH_END (my name.get())
+}
+
 /******************** Index ********************************************/
 
 DIRECT (HELP_Index_help) {
@@ -2394,7 +2465,7 @@ FORM (NEW_Index_extractPart, U"Index: Extract part", U"Index: Extract part...") 
 	INTEGER (toItem, U"right Item range", U"0")
 	OK
 DO
-	CONVERT_EACH (Index);
+	CONVERT_EACH (Index)
 		autoIndex result = Index_extractPart (me, fromItem, toItem);
 	CONVERT_EACH_END (my name.get(), U"_part")
 }
@@ -2403,7 +2474,7 @@ FORM (NEW_Index_to_Permutation, U"Index: To Permutation", U"Index: To Permutatio
 	BOOLEAN (permuteWithinClasses, U"Permute within classes", true)
 	OK
 DO
-	CONVERT_EACH (Index);
+	CONVERT_EACH (Index)
 		autoPermutation result = Index_to_Permutation_permuteRandomly (me, permuteWithinClasses);
 	CONVERT_EACH_END (my name.get())
 }
@@ -5706,6 +5777,16 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U"Sound: Extract Electroglottogram...") {
+	NATURAL (channelNumber, U"Channel number", U"1")
+	BOOLEAN (invert, U"Invert", 0)
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoElectroglottogram result = Sound_extractElectroglottogram (me, channelNumber, invert);
+	CONVERT_EACH_END (my name.get())
+}
+	
 FORM (NEW_Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	praat_TimeFunction_RANGE(fromTime,toTime)
@@ -7860,6 +7941,7 @@ void praat_uvafon_David_init () {
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
+		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
@@ -8228,6 +8310,13 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setCosts_others);
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
+	praat_addAction1 (classElectroglottogram, 1, U"High-pass filter...", nullptr, 0, NEW_Electroglottogram_highPassFilter);
+	praat_addAction1 (classElectroglottogram, 1, U"Get closed glottis intervals...", nullptr, 0, NEW_Electroglottogram_getClosedGlottisIntervals);
+	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
+	praat_addAction1 (classElectroglottogram, 1, U"Derivative...", nullptr, 0, NEW_Electroglottogram_derivative);
+	praat_addAction1 (classElectroglottogram, 1, U"First central difference...", nullptr, 0, NEW_Electroglottogram_firstCentralDifference);
+	praat_addAction1 (classElectroglottogram, 1, U"To Sound", nullptr, 0, NEW_Electroglottogram_to_Sound);
+	
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
 	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, INFO_StringsIndex_getClassLabelFromClassIndex);
@@ -8574,6 +8663,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"To MelFilter...", U"To BarkFilter...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_MelFilter);
 	praat_addAction1 (classSound, 0, U"To MelSpectrogram...", U"To BarkSpectrogram...", praat_DEPTH_1, NEW_Sound_to_MelSpectrogram);
 	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, NEW_Sound_to_ComplexSpectrogram);
+    praat_addAction1 (classSound, 0, U"Extract Electroglottogram...", U"Extract part for overlap...", 1, NEW_Sound_extractElectroglottogram);
 
 	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_to_Polygon);
     praat_addAction1 (classSound, 2, U"To Polygon (enclosed)...", U"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, NEW1_Sounds_to_Polygon_enclosed);
