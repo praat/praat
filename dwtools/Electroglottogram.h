@@ -48,10 +48,10 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 
 autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
 
-autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing);
+autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing, bool peak99);
 /* The real derivative */
 
-autoSound Electroglottogram_firstCentralDifference (Electroglottogram me);
+autoSound Electroglottogram_firstCentralDifference (Electroglottogram me, bool peak99);
 /* d(EEG)/dt [col] = z[col+1]-z[col-1] */
 
 autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, double fromFrequency, double smoothing);

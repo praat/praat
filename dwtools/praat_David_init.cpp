@@ -2380,16 +2380,20 @@ DO
 FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {
 	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
+	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
 	OK
 DO
 	CONVERT_EACH (Electroglottogram)
-		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing);
+		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing, peak99);
 	CONVERT_EACH_END (my name.get(), U"_derivative")
 }
 
-DIRECT (NEW_Electroglottogram_firstCentralDifference) {
+FORM (NEW_Electroglottogram_firstCentralDifference, U"Electroglottogram: First central difference", U"Electroglottogram: First central difference...") {
+	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
+	OK
+DO
 	CONVERT_EACH (Electroglottogram)
-		autoSound result = Electroglottogram_firstCentralDifference (me);
+		autoSound result = Electroglottogram_firstCentralDifference (me, peak99);
 	CONVERT_EACH_END (my name.get(), U"_cdiff")
 }
 
@@ -8310,7 +8314,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classElectroglottogram, 1, U"Get closed glottis intervals...", nullptr, 0, NEW_Electroglottogram_getClosedGlottisIntervals);
 	praat_addAction1 (classElectroglottogram, 1, U"To AmplitudeTier (levels)...", nullptr, 0, NEW_Electroglottogram_to_AmplitudeTier_levels);
 	praat_addAction1 (classElectroglottogram, 1, U"Derivative...", nullptr, 0, NEW_Electroglottogram_derivative);
-	praat_addAction1 (classElectroglottogram, 1, U"First central difference", nullptr, 0, NEW_Electroglottogram_firstCentralDifference);
+	praat_addAction1 (classElectroglottogram, 1, U"First central difference...", nullptr, 0, NEW_Electroglottogram_firstCentralDifference);
 	praat_addAction1 (classElectroglottogram, 1, U"To Sound", nullptr, 0, NEW_Electroglottogram_to_Sound);
 	
 	praat_Index_init (classStringsIndex);

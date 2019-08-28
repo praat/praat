@@ -2387,8 +2387,40 @@ DEFINITION (U"defines the width of the transition area between fully suppressed 
 	"than %%fromFrequency%+%%smoothing% will be fully passed.")
 MAN_END
 
+MAN_BEGIN (U"Electroglottogram: First central difference...", U"djmw", 20190827)
+INTRO (U"Calculates an approximation of the derivative of the @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Scale absolute peak at 0.99")
+DEFINITION (U"defines whether the \"derivative\" should be scaled or not.")
+ENTRY (U"Algorithm")
+NORMAL (U"We take the first central difference, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
+NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
+MAN_END
+
 MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190827)
 INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Low-pass frequency (Hz)")
+DEFINITION (U"defines the highest frequency to keep in the derivative.")
+TAG (U"##Smoothing (Hz)")
+DEFINITION (U"defines the width of the transition area between fully passed and fully suppressed "
+	"frequencies. Frequencies below %%lowpassFrequency% will be fully passed, frequencies larger "
+	"than %%lowpassFrequency%+%%smoothing% will be fully suppressed.")
+TAG (U"##Scale absolute peak at 0.99")
+DEFINITION (U"defines whether the derivative should be scaled or not.")
+ENTRY (U"Algorithm")
+NORMAL (U"The derivative of a wave form is most easitly calculated in the spectral domain. "
+	"If %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
+	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%.")
+NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and imaginary components and then transform back to the time doain we get the derivative.")
+NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new %%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%))  and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
+ENTRY (U"About dEGG")
+NORMAL (U"In many papers about the Electroglottogram one also uses the derivative of the Electroglottogram, indicated as dEGG or DEGG. "
+	"However, this derivative is often not the exact derivative as calculated in the way explained above. "
+	"Instead they calculate a approximation of the derivative by taking either the first difference, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
 MAN_END
 
 MAN_BEGIN (U"electroglottography", U"djmw", 20190829)

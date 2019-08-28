@@ -184,32 +184,40 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 	
 }
 
-autoSound Electroglottogram_firstCentralDifference (Electroglottogram me) {
+autoSound Electroglottogram_firstCentralDifference (Electroglottogram me, bool peak99) {
 	try {	
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		thy z [1] [1] = 0.0;
 		for (integer i = 2; i < my nx; i ++)
-			thy z [1] [i] = my z [1] [i + 1] - my z [1] [i - 1]; // / (2.0*my dx)
+			thy z [1] [i] = (my z [1] [i + 1] - my z [1] [i - 1]) / (2.0 * my dx);
+			
 		thy z [1] [my nx] = 0.0;
-		Vector_scale (thee.get(), 0.99);
+		if (peak99)
+			Vector_scale (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
 			Melder_throw (me, U": cannot create the simple derivative of the Electroglottogram.");
 	}
 }	
 
-
-autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing) {
+/*
+	Derivative of x(t) = integral (X(f)exp(2*pi*f*t) * df)
+	d(x(t)/dt = integral (X(f)*2*pi*i*exp(2*pi*f*t) * df)
+			  = integral ((-2*pi*f*Im(X(f)), 2*pi*f*Re(X(f))) * exp (2*pi*f*t) * df)
+*/
+autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing, bool peak99) {
 		try {
 			autoSpectrum thee = Sound_to_Spectrum (me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 				double frequency = Sampled_indexToX (thee.get(), ifreq);
-				thy z [1] [ifreq] *= frequency;
-				thy z [2] [ifreq] *= frequency;
+				double im = thy z [2] [ifreq];
+				thy z [2] [ifreq] = 2.0 * NUMpi * frequency * thy z [1] [ifreq];
+				thy z [1] [ifreq] = - 2.0 * NUMpi * frequency * im;
 			}
 			Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
 			autoSound him = Spectrum_to_Sound (thee.get());
-			Vector_scale (him.get(), 0.99);
+			if (peak99)
+				Vector_scale (him.get(), 0.99);
 			return him;
 		} catch (MelderError) {
 			Melder_throw (me, U": cannot create the derivative of the Electroglottogram.");
