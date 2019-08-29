@@ -2409,7 +2409,7 @@ DEFINITION (U"intervals with a lower pitch will not be considered. ")
 TAG (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"intervals with a higher pitch will not be considered.")
 TAG (U"##Closing threshold#")
-DEFINITION (U"the moment of closing the vocal folds will be a taken at a fixed point between the local cycle's the amplitude at peak and valley level.")
+DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between the local cycle's amplitude at peak and valley level.")
 TAG (U"##Silence threshold#")
 DEFINITION (U"")
 MAN_END
