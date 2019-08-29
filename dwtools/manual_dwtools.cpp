@@ -5660,7 +5660,7 @@ NORMAL (U"N. Henze & T. Wagner (1997): \"A new npproach to the BHEP Tests for Mu
 MAN_END
 
 MAN_BEGIN (U"Herbst et al. (2014)", U"djmw", 20190829)
-NORMAL (U"C. Herbst, J. Lohscheller, J. \\S<vec, N. Henrich, G. Weissengruber & W. Tecumseh Fitch (2014): \"Glottal opening and closing events inverstigated by electroglottography and super-high-speed video recordings.\", %%The Journal of Experimental Biology% #217, 955\\--963.")
+NORMAL (U"C. Herbst, J. Lohscheller, J. \\S<vec, N. Henrich, G. Weissengruber & W. Tecumseh Fitch (2014): \"Glottal opening and closing events investigated by electroglottography and super-high-speed video recordings.\", %%The Journal of Experimental Biology% #217, 955\\--963.")
 MAN_END
 
 MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190826)
