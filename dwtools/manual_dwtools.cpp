@@ -2365,6 +2365,9 @@ LIST_ITEM (U"\\bu c \\-- maximum vocal fold contact reached;")
 LIST_ITEM (U"\\bu d \\-- de-contacting phase initiated by separation of the lower vocal fold margins;")
 LIST_ITEM (U"\\bu e \\-- upper margins start to separate;")
 LIST_ITEM (U"\\bu f \\-- glottis is open, with minimal contact area.")
+ENTRY (U"How to get an Electroglottogram?")
+NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other generally the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
+
 ENTRY (U"Glottal opening and closure times")
 NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
 	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "
@@ -2398,6 +2401,19 @@ NORMAL (U"We take the first central difference, "
 NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
 MAN_END
 
+MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190829)
+INTRO (U"Calculates the intervals where the glottis is closed from the @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Pitch floor (Hz)#")
+DEFINITION (U"intervals with a lower pitch will not be considered. ")
+TAG (U"##Pitch ceiling (Hz)#")
+DEFINITION (U"intervals with a higher pitch will not be considered.")
+TAG (U"##Closing threshold#")
+DEFINITION (U"the moment of closing the vocal folds will be a taken at a fixed point between the local cycle's the amplitude at peak and valley level.")
+TAG (U"##Silence threshold#")
+DEFINITION (U"")
+MAN_END
+
 MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190827)
 INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
 ENTRY (U"Settings")
@@ -2419,17 +2435,18 @@ ENTRY (U"About dEGG")
 NORMAL (U"In many papers about the Electroglottogram one also uses the derivative of the Electroglottogram, indicated as dEGG or DEGG. "
 	"However, this derivative is often not the exact derivative as calculated in the way explained above. "
 	"Instead they calculate a approximation of the derivative by taking either the first difference, "
-	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference @@Herbst et al. (2014)|(Herbst et al., 2014)@, "
 	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
 MAN_END
 
 MAN_BEGIN (U"electroglottography", U"djmw", 20190829)
-INTRO (U"Electroglottography (EGG) is a low-cost, noninvasive technology for measuring changes of relative vocal fold contact area during laryngeal voice production @@Herbst (2019)@.")
+INTRO (U"Electroglottography (EGG) is a low-cost, noninvasive technology for measuring changes of relative vocal fold contact area during laryngeal voice production @@Herbst (2019)|(Herbst, 2019)@.")
 NORMAL (U"In electroglottography (EGG) a high-frequency, low-amperage current is passed between two "
 	"electrodes placed on each side of the thyroid cartilage. Changes in vocal fold contact area "
 	"(VFCA) during vocal fold vibration result in admittance variation, and the resulting "
 	"(demodulated) EGG signal is proportional to the relative VFCA.")
 NORMAL (U"In Praat the EEG signal is represented by the @@Electroglottogram@.")
+NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other generally the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
 MAN_END
 
 MAN_BEGIN (U"equivalent rectangular bandwidth", U"djmw", 19980713)
@@ -5642,7 +5659,11 @@ NORMAL (U"N. Henze & T. Wagner (1997): \"A new npproach to the BHEP Tests for Mu
 	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
 MAN_END
 
-MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190836)
+MAN_BEGIN (U"Herbst et al. (2014)", U"djmw", 20190829)
+NORMAL (U"C. Herbst, J. Lohscheller, J. \\S<vec, N. Henrich, G. Weissengruber & W. Tecumseh Fitch (2014): \"Glottal opening and closing events inverstigated by electroglottography and super-high-speed video recordings.\", %%The Journal of Experimental Biology% #217, 955\\--963.")
+MAN_END
+
+MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190826)
 NORMAL (U"C. Herbst (2019): \"Electroglottography - An update.\", %%Journal of Voice%, In press.")
 MAN_END
 
