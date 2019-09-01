@@ -27,7 +27,7 @@
 #include "enums_getValue.h"
 #include "Electroglottogram_enums.h"
 
-Thing_implement (Electroglottogram, Sound, 0);
+Thing_implement (Electroglottogram, Sound, 2);
 
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {

@@ -19,7 +19,7 @@
 #define ooSTRUCT Electroglottogram
 oo_DEFINE_CLASS (Electroglottogram, Sound)
 
-	oo_OBJECT (Sound, 0, sound)
+	oo_OBJECT (Sound, 2, sound)
 	
 	#if oo_DECLARING
 		void v_info ()
