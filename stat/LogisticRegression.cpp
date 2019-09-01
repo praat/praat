@@ -82,7 +82,7 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	integer numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
 	double logLikelihood = 1e307, previousLogLikelihood = 1e308;
 	if (numberOfParameters < 1)   // includes intercept
-		Melder_throw (U"Not enough columns (has to be more than 1).");
+		Melder_throw (U"Not enough columns (should be more than 1).");
 	/*
 		Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
 	*/

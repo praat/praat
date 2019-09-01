@@ -1313,8 +1313,8 @@ extern "C" void* Praat_Sound_resample (void* sound, double newSamplingFrequency,
 #if 0
 void* Praat_Sound_resample (void* sound, double newSamplingFrequency, int precision) {
 	try {
-		if (newSamplingFrequency <= 0.0) Melder_throw (U"`newSamplingFrequency` has to be positive.");
-		if (precision <= 0) Melder_throw (U"`precision` has to be greater than 0.");
+		if (newSamplingFrequency <= 0.0) Melder_throw (U"`newSamplingFrequency` should be positive.");
+		if (precision <= 0) Melder_throw (U"`precision` should be greater than 0.");
 		autoSound thee = Sound_resample ((Sound) sound, newSamplingFrequency, precision);
 		return (void*) thee.releaseToAmbiguousOwner();
 	} catch (MelderError) {

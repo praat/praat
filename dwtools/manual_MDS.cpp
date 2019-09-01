@@ -207,7 +207,7 @@ MAN_BEGIN (U"Configuration: Invert dimension...", U"djmw", 20040407)
 INTRO (U"Inverts one dimension of a @Configuration.")
 NORMAL (U"Setting")
 TAG (U"##Dimension")
-DEFINITION (U"the dimensions that has to be inverted.")
+DEFINITION (U"the dimension that has to be inverted.")
 ENTRY (U"Behaviour")
 NORMAL (U"For all points %i=1..%numberOfPoints: if %j == %dimension then %x__%ij_ "
 	"= \\--%x__%ij_.")

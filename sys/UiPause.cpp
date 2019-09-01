@@ -52,57 +52,57 @@ void UiPause_begin (GuiWindow topShell, conststring32 title, Interpreter interpr
 }
 void UiPause_real (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"real\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"real\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addReal (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_positive (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"positive\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"positive\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addPositive (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_integer (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"integer\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"integer\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addInteger (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_natural (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"natural\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"natural\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addNatural (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_word (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"word\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"word\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addWord (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_sentence (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"sentence\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"sentence\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addSentence (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_text (conststring32 label, conststring32 defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"text\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"text\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addText (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_boolean (conststring32 label, bool defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"boolean\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"boolean\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addBoolean (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
 void UiPause_choice (conststring32 label, int defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"choice\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"choice\" should be between a \"beginPause\" and an \"endPause\".");
 	thePauseFormRadio = UiForm_addRadio (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
 void UiPause_optionMenu (conststring32 label, int defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"optionMenu\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"optionMenu\" should be between a \"beginPause\" and an \"endPause\".");
 	thePauseFormRadio = UiForm_addOptionMenu (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
 void UiPause_option (conststring32 label) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"option\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"option\" should be between a \"beginPause\" and an \"endPause\".");
 	if (! thePauseFormRadio) {
 		thePauseForm. reset();
 		Melder_throw (U"Found the function \"option\" without a preceding \"choice\" or \"optionMenu\".");
@@ -111,7 +111,7 @@ void UiPause_option (conststring32 label) {
 }
 void UiPause_comment (conststring32 label) {
 	if (! thePauseForm)
-		Melder_throw (U"The function \"comment\" has to be between a \"beginPause\" and an \"endPause\".");
+		Melder_throw (U"The function \"comment\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addLabel (thePauseForm.get(), nullptr, label);
 }
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
