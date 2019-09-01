@@ -1003,7 +1003,7 @@ INTRO (U"Create a @@Correlation@ matrix with its centroid.")
 ENTRY (U"Settings")
 TAG (U"##Correlations")
 DEFINITION (U"define the correlations. Because a correlation matrix is a symmetric matrix, only the upper triangular "
-	"part of the matrix has to be input (row-wise). If your correlation matrix is "
+	"part of the matrix needs to be input (row-wise). If your correlation matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the correaltion matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
 TAG (U"##Centroid")
@@ -1017,7 +1017,7 @@ INTRO (U"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (U"Settings")
 TAG (U"##Covariances")
 DEFINITION (U"define the covariances. Because a covariance matrix is a symmetric matrix, only the upper triangular "
-	"part of the matrix has to be input (row-wise). If your covariance matrix is "
+	"part of the matrix needs to be input (row-wise). If your covariance matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the covariance matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
 TAG (U"##Centroid")

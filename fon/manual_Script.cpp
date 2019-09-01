@@ -3328,7 +3328,7 @@ CODE (U"time = stopwatch")
 CODE (U"writeInfoLine: a, \" \", fixed\\$  (time, 3)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20170317)
+MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20190827)
 INTRO (U"You can temporarily halt a Praat script:")
 TAG (U"#pauseScript: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
@@ -3366,7 +3366,7 @@ CODE (U"for i to 5")
 		CODE2 (U"#comment: \"Then click Stop or one of the continuation buttons.\"")
 	CODE1 (U"clicked = #endPause: \"Continue\", \"Next\", \"Proceed\", 2")
 	CODE1 (U"appendInfoLine: number_of_people, \" \", worth, \" \", sampling_frequency, \" \", clicked")
-	CODE1 (U"appendInfoLine: \"Compression: \", compression, \" (\", compression\\$ ")
+	CODE1 (U"appendInfoLine: \"Compression: \", compression, \" (\", compression\\$ , \")\"")
 	CODE1 (U"appendInfoLine: \"Number of channels: \", number_of_channels\\$ ")
 CODE (U"endfor")
 NORMAL (U"This example uses several tricks. A useful one is seen with %number_of_channels: "
@@ -3464,8 +3464,8 @@ CODE (U"#beginPause: \"Learning settings\"")
 CODE (U"clicked = #endPause: \"Cancel\", \"OK\", 2, 1")
 CODE (U"if clicked = 2")
 CODE1 (U"learningRate = learning_rate")
-CODE1 (U"includeForward = directions = 1 or directions = 3")
-CODE1 (U"includeBackward = directions = 2 or directions = 3")
+CODE1 (U"includeForward = ( directions = 1 or directions = 3 )")
+CODE1 (U"includeBackward = ( directions = 2 or directions = 3 )")
 CODE (U"endif")
 NORMAL (U"In this example, the default button is 2 (i.e. #OK), and the cancel button is 1 (i.e. #Cancel). "
 	"The form will now contain no #Stop button, and if the user closes the window, "

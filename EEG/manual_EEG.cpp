@@ -63,7 +63,7 @@ NORMAL (U"##Subtracting a reference signal.# The voltage on the whole scalp may 
 	"and use ##Subtract mean channel...# to subtract this from each electrode channel.")
 NORMAL (U"##Detrending.# With #Detrend, you subtract from each electrode channel a line in such a way that the first sample and the last sample become zero. "
 	"Detrending and reference subtraction can be performed in either order.")
-NORMAL (U"##Filtering.# With ##Filter...#, you band-pass filter each electrode channel. Filtering has to be done after detrending, but "
+NORMAL (U"##Filtering.# With ##Filter...#, you band-pass filter each electrode channel. Filtering should be done after detrending, but "
 	"filtering and reference subtraction can be performed in either order.")
 ENTRY (U"4. How to do an ERP analysis")
 NORMAL (U"An ERP is an Event-Related Potential. Events are marked somewhere in S1, S2, ... S8. In the above example, "

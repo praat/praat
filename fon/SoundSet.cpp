@@ -74,7 +74,7 @@ void SoundSet_Table_getRandomizedPatterns (SoundSet me, Table thee, conststring3
 			inputs -> z.row (ipattern) <<= samples. part (startSample, endSample);
 			integer classNumber = Melder_iround (thy rows.at [soundNumber] -> cells [columnNumber]. number);
 			Melder_require (classNumber >= 1 && classNumber <= outputSize,
-				U"The class number has to be betwene 1 and ", outputSize, U", not ", classNumber, U".");
+				U"The class number should be between 1 and ", outputSize, U", not ", classNumber, U".");
 			outputs -> z [ipattern] [classNumber] = 1.0;
 		}
 		if (out_inputs) *out_inputs = inputs.move();

@@ -1810,7 +1810,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribut
 			my decisionStrategy != kOTGrammar_decisionStrategy::POSITIVE_HG &&
 			my decisionStrategy != kOTGrammar_decisionStrategy::EXPONENTIAL_HG)
 		{
-			Melder_throw (U"To find positive weights, the decision strategy has to be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
+			Melder_throw (U"To find positive weights, the decision strategy should be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
 		}
 		autoINTVEC optimalCandidates = newINTVECraw (my numberOfTableaus);
 		/*

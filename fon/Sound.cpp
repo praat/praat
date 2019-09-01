@@ -903,7 +903,7 @@ autoSound Sound_createAsPureTone (integer numberOfChannels, double startingTime,
 {
 	try {
 		Melder_require (numberOfChannels >= 1,
-			U"The number of channels has to be at least 1.");
+			U"The number of channels should be at least 1.");
 		double numberOfSamples_f = round ((endTime - startingTime) * sampleRate);
 		if (numberOfSamples_f > (double) INT32_MAX)
 			Melder_throw (U"Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), U" samples, because they cannot be saved to disk.");

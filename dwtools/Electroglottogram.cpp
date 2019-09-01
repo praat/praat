@@ -27,7 +27,7 @@
 #include "enums_getValue.h"
 #include "Electroglottogram_enums.h"
 
-Thing_implement (Electroglottogram, Sound, 0);
+Thing_implement (Electroglottogram, Sound, 2);
 
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {
@@ -85,7 +85,7 @@ autoElectroglottogram Electroglottogram_create (double xmin, double xmax, intege
 autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel, bool invert) {
 	try {
 		Melder_require (channel > 0 && channel <= my ny,
-			U"The channel number must be in the interval from 1 to ", my ny);
+			U"The channel number should be in the interval from 1 to ", my ny);
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
 		thy z.all() <<= my z.row (channel);
 		if (invert) 
@@ -119,9 +119,9 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingThreshold) {
 		try {
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
-				U"The domain of the Electroglottogram and the peaks should be equal.");
+				U"The domains of the Electroglottogram and the peaks should be equal.");
 			Melder_require (my xmin == valleys -> xmin && my xmax == valleys -> xmax,
-				U"The domain of the Electroglottogram and the peaks should be equal.");
+				U"The domains of the Electroglottogram and the peaks should be equal.");
 			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
 				U"The AmplitudeTiers cannot be empty.");
 			autoAmplitudeTier thee = AmplitudeTier_create (my xmin, my xmax);
