@@ -2329,6 +2329,126 @@ NORMAL (U"%e__%jk_ is the %k-th element of the %j-th eigenvector, %x__%ik_ is "
 	"the %i-th row of the matrix part of the resulting object.")
 MAN_END
 
+MAN_BEGIN (U"Electroglottogram", U"djmw", 20190829)
+INTRO (U"One of the @@types of objects@ in Praat. The ##Electroglottogram# represents changes in vocal fold contact area during vocal fold vibration.")
+ENTRY (U"The Electroglottogram waveform")
+NORMAL (U"The following picture shows part of one cycle of a stereotypical (stylized)  waveform, with landmarks.")
+SCRIPT (5.0, 3.0, U""
+	U"Axes: 0, 3.7, 0, 2.0\n"
+	U"x# = {0.55, 1.0, 1.3, 2.0, 2.75, 3.1}\n"
+	U"y# = {0.10, 0.3, 1.8, 1.8, 1.00, 0.1}\n"
+	U"Font size: 12\n"
+	U"w = Text width (world coordinates): \"a\"\n"
+	U"h = 2 * w\n"
+	U"tx# = x#\n"
+	U"tx# += {0, -w, w, - w/2, w/2, w/2}\n"
+	U"ty# = y#\n"
+	U"ty# += {h, h, -h, -h, h, h}\n"
+	U"text$ = \"abcdef\"\n"
+	U"Line width: 4\n"
+	U"Draw line: 0.2, 0.1, x#[1], y#[1]\n"
+	U"for i from 1 to 5\n"
+	U"	Draw line: x# [i], y# [i], x# [i+1], y# [i+1]\n"
+	U"endfor\n"
+	U"Draw line:  x#[6], y#[6], 3.5, 0.1\n"
+	U"for i to 6\n"
+	U"	Text special: tx#[i], \"centre\", ty#[i], \"Half\", \"Helvetica\", 12, \"0\", mid$(text$, i, 1)\n"
+	U"endfor\n"
+	U"Line width: 1\n"
+	U"Draw inner box\n"
+	U"Text bottom: \"no\", \"norm. cycle progress\"\n"
+	U"Text left: \"no\", \"norm. VFCA\"\n")
+NORMAL (U"The orientation of the signal is in the (now) conventional way where the positive y-direction signals larger %%vocal fold contact area% (VFCA). The landmarks refer to:")
+LIST_ITEM (U"\\bu a \\-- initial contact of the lower vocal fold margins;")
+LIST_ITEM (U"\\bu b \\-- the upper vocal fold margins make initial (but not full) contact;")
+LIST_ITEM (U"\\bu c \\-- maximum vocal fold contact reached;")
+LIST_ITEM (U"\\bu d \\-- de-contacting phase initiated by separation of the lower vocal fold margins;")
+LIST_ITEM (U"\\bu e \\-- upper margins start to separate;")
+LIST_ITEM (U"\\bu f \\-- glottis is open, with minimal contact area.")
+ENTRY (U"How to get an Electroglottogram?")
+NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other generally the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
+
+ENTRY (U"Glottal opening and closure times")
+NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
+	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "
+	"notes: the vocal folds do not vibrate as a uniform mass. Rather, "
+	"their vibration is characterized by phase differences along both the inferior–superior and "
+	"anterior–posterior dimensions. These phase differences cause time-delayed contacting and "
+	"de-contacting of the vocal folds along the respective axes. There is thus no specific instant "
+	"of glottal closing and opening, but rather an interval during which the closing and opening, "
+	"respectively, occur. ")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: High-pass filter...", U"djmw", 20190827)
+INTRO (U"Applies a high-pass filter to the Electroglottogram to filter away signal artifacts like baseline and amplitude drifts.")
+ENTRY (U"Settings")
+TAG (U"##From frequency (Hz)#")
+DEFINITION (U"Frequencies lower than this frequency are suppressed.")
+TAG (U"##Smoothing (Hz)")
+DEFINITION (U"defines the width of the transition area between fully suppressed and fully passed "
+	"frequencies. Frequencies below %%fromFrequency% will be fully suppressed, frequencies larger "
+	"than %%fromFrequency%+%%smoothing% will be fully passed.")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: First central difference...", U"djmw", 20190827)
+INTRO (U"Calculates an approximation of the derivative of the @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Scale absolute peak at 0.99")
+DEFINITION (U"defines whether the \"derivative\" should be scaled or not.")
+ENTRY (U"Algorithm")
+NORMAL (U"We take the first central difference, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
+NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190829)
+INTRO (U"Calculates the intervals where the glottis is closed from the @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Pitch floor (Hz)#")
+DEFINITION (U"intervals with a lower pitch will not be considered. ")
+TAG (U"##Pitch ceiling (Hz)#")
+DEFINITION (U"intervals with a higher pitch will not be considered.")
+TAG (U"##Closing threshold#")
+DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between the local cycle's amplitude at peak and valley level.")
+TAG (U"##Silence threshold#")
+DEFINITION (U"")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190827)
+INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Low-pass frequency (Hz)")
+DEFINITION (U"defines the highest frequency to keep in the derivative.")
+TAG (U"##Smoothing (Hz)")
+DEFINITION (U"defines the width of the transition area between fully passed and fully suppressed "
+	"frequencies. Frequencies below %%lowpassFrequency% will be fully passed, frequencies larger "
+	"than %%lowpassFrequency%+%%smoothing% will be fully suppressed.")
+TAG (U"##Scale absolute peak at 0.99")
+DEFINITION (U"defines whether the derivative should be scaled or not.")
+ENTRY (U"Algorithm")
+NORMAL (U"The derivative of a wave form is most easitly calculated in the spectral domain. "
+	"If %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
+	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%.")
+NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and imaginary components and then transform back to the time doain we get the derivative.")
+NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new %%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%))  and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
+ENTRY (U"About dEGG")
+NORMAL (U"In many papers about the Electroglottogram one also uses the derivative of the Electroglottogram, indicated as dEGG or DEGG. "
+	"However, this derivative is often not the exact derivative as calculated in the way explained above. "
+	"Instead they calculate a approximation of the derivative by taking either the first difference, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference @@Herbst et al. (2014)|(Herbst et al., 2014)@, "
+	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
+MAN_END
+
+MAN_BEGIN (U"electroglottography", U"djmw", 20190829)
+INTRO (U"Electroglottography (EGG) is a low-cost, noninvasive technology for measuring changes of relative vocal fold contact area during laryngeal voice production @@Herbst (2019)|(Herbst, 2019)@.")
+NORMAL (U"In electroglottography (EGG) a high-frequency, low-amperage current is passed between two "
+	"electrodes placed on each side of the thyroid cartilage. Changes in vocal fold contact area "
+	"(VFCA) during vocal fold vibration result in admittance variation, and the resulting "
+	"(demodulated) EGG signal is proportional to the relative VFCA.")
+NORMAL (U"In Praat the EEG signal is represented by the @@Electroglottogram@.")
+NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other generally the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
+MAN_END
+
 MAN_BEGIN (U"equivalent rectangular bandwidth", U"djmw", 19980713)
 INTRO (U"The %%equivalent rectangular bandwidth% (ERB) of a filter is defined "
 	"as the width of a rectangular filter whose height equals the peak gain of "
@@ -4281,6 +4401,20 @@ TAG (U"%numberOfObservations")
 TAG (U"%centroid")
 MAN_END
 
+MAN_BEGIN (U"Sound: Extract Electroglottogram...", U"djmw", 20190827)
+INTRO (U"Extract one of the channels of a @@Sound@ as an @@Electroglottogram@.")
+ENTRY (U"Settings")
+TAG (U"##Channel number#")
+DEFINITION (U"defines the Electroglottogram channel in the sound.")
+TAG (U"##Invert#")
+DEFINITION (U"defines whether the wave in the Elecletroglottogram channel has to be inverted or not. "
+	"The convention is that a positive direction in the Elecletroglottogram wave corresponds to "
+	"an increase in contact area between the vocal folds which occurs if the vocal folds are closing. "
+	"Since closing the vocal folds, in general, happens much faster than opening them, the steepest "
+	"slope in each cycle of the wave should be the %%upward% slope. If this is not the case you "
+	"should invert the wave.")
+MAN_END
+
 MAN_BEGIN (U"SSCP: Draw sigma ellipse...", U"djmw", 19990222)
 INTRO (U"A command to draw for the selected @SSCP an ellipse that "
 	"covers a part of the multivariate data.")
@@ -5523,6 +5657,14 @@ MAN_END
 MAN_BEGIN (U"Henze & Wagner (1997)", U"djmw", 20090630)
 NORMAL (U"N. Henze & T. Wagner (1997): \"A new npproach to the BHEP Tests for Multivariate Normality.\" "
 	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
+MAN_END
+
+MAN_BEGIN (U"Herbst et al. (2014)", U"djmw", 20190829)
+NORMAL (U"C. Herbst, J. Lohscheller, J. \\S<vec, N. Henrich, G. Weissengruber & W. Tecumseh Fitch (2014): \"Glottal opening and closing events investigated by electroglottography and super-high-speed video recordings.\", %%The Journal of Experimental Biology% #217, 955\\--963.")
+MAN_END
+
+MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190826)
+NORMAL (U"C. Herbst (2019): \"Electroglottography - An update.\", %%Journal of Voice%, In press.")
 MAN_END
 
 MAN_BEGIN (U"Hormann & Agathos (2001)", U"djmw", 20110617)
