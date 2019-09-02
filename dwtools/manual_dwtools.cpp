@@ -2385,17 +2385,30 @@ NORMAL (U"We take the first central difference, "
 NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190829)
-INTRO (U"Calculates the intervals where the glottis is closed from the @@Electroglottogram@.")
+MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190902)
+INTRO (U"Calculates the intervals where the glottis is closed from the selected @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)#")
 DEFINITION (U"intervals with a lower pitch will not be considered. ")
 TAG (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"intervals with a higher pitch will not be considered.")
 TAG (U"##Closing threshold#")
-DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between the local cycle's amplitude at peak and valley level.")
+DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between a cycle's peak and valley amplitude level.")
+PICTURE (4.0, 3.0, Electroglottogram_drawStylizedLevels)
+DEFINITION (U"The picture shows, for a %%closingThreshold% value of 0.3, the Closed Glottis Interval that starts at time %t__1_ and ends at time %t__2_. These times were found by calculating the two level crossings at amplitude %%valley+closingThreshold(peak\\--valley)%.")
 TAG (U"##Peak threshold#")
 DEFINITION (U"cycles with peaks whose relative amplitudes with respect to the maximum peak are lower than this value are not considered.")
+ENTRY (U"Algorithm")
+NORMAL (U"The algorithm first tries to find peaks and valleys, guided by the settings for the pitch floor and ceiling. From the level crossings before and after a peak the times of glottal closing and opening are determined.")
+ENTRY (U"Warning")
+NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
+	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "
+	"notes: the vocal folds do not vibrate as a uniform mass. Rather, "
+	"their vibration is characterized by phase differences along both the inferior–superior and "
+	"anterior–posterior dimensions. These phase differences cause time-delayed contacting and "
+	"de-contacting of the vocal folds along the respective axes. There is thus no specific instant "
+	"of glottal closing and opening, but rather an interval during which the closing and opening, "
+	"respectively, occur. ")
 MAN_END
 
 MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190827)
