@@ -2352,7 +2352,8 @@ FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To I
 	POSITIVE (peakThresholdFraction, U"Peak threshold (0-1)", U"0.05")
 	OK
 DO
-	Melder_require (closingThreshold < 1.0, U"The closing threshold has to be smaller than 1.");
+	Melder_require (closingThreshold < 1.0,
+		U"The closing threshold should be smaller than 1.");
 	CONVERT_EACH (Electroglottogram)
 		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, closingThreshold, peakThresholdFraction);
 	CONVERT_EACH_END (my name.get())

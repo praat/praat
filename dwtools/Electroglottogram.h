@@ -38,7 +38,7 @@ Thing_define (Electroglottogram, Sound) {
 
 autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1);
 
-void Electroglottogram_drawStylized (Graphics g);
+void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels);
 
 autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel, bool invert);
 

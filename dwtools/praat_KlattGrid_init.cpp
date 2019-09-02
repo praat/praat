@@ -880,7 +880,7 @@ FORM (NEW_KlattGrid_to_oralFormantGrid_openPhases, U"KlattGrid: Extract oral for
 	REAL (fadeFraction, U"Fade fraction (0..0.5)", U"0.1")
 	OK
 DO
-	Melder_require (fadeFraction < 0.5, U"The fade fraction has to be less than 0.5.");
+	Melder_require (fadeFraction < 0.5, U"The fade fraction should be less than 0.5.");
 	CONVERT_EACH (KlattGrid)
 		autoFormantGrid result = KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction);
 	CONVERT_EACH_END (U"corrected")

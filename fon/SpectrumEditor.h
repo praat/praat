@@ -2,7 +2,7 @@
 #define _SpectrumEditor_h_
 /* SpectrumEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2013,2015,2016,2018,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override;
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
+	conststring32 v_domainName ()
+		override { return U"frequency"; }
 	conststring32 v_format_domain ()
 		override { return U"Frequency domain:"; }
 	const char * v_format_short ()
@@ -47,8 +49,10 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override { return "%.2f"; }
 	int v_fixedPrecision_long ()
 		override { return 2; }
-	conststring32 v_format_units ()
+	conststring32 v_format_units_long ()
 		override { return U"hertz"; }
+	conststring32 v_format_units_short ()
+		override { return U"Hz"; }
 	const char * v_format_totalDuration ()
 		override { return u8"Total bandwidth %.2f hertz"; }
 	const char * v_format_window ()

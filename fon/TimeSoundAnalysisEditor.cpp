@@ -914,7 +914,7 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 		}
 	EDITOR_DO
 		Melder_require (viewTo > viewFrom,
-			U"The ceiling of the view range has to be greater than the floor.");
+			U"The ceiling of the view range should be greater than the floor.");
 		my pref_intensity_viewFrom             () = my p_intensity_viewFrom             = viewFrom;
 		my pref_intensity_viewTo               () = my p_intensity_viewTo               = viewTo;
 		my pref_intensity_averagingMethod      () = my p_intensity_averagingMethod      = averagingMethod;

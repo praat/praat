@@ -7,5 +7,5 @@ id2 = Copy: "sineWithNoise"
 selectObject: id1, id2
 id = Concatenate with overlap: 0.01
 
-To Formant (burg): 0, 1, 2000, 0.025, 50
-removeObject: id1, id2, id
+formant = To Formant (burg): 0, 1, 2000, 0.025, 50
+removeObject: id1, id2, id, formant

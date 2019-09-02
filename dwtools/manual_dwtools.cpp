@@ -160,6 +160,14 @@ static void drawPartionedMatrix (Graphics g) {
 	Graphics_text (g, x1, y1, U"##S__xy_#");
 }
 
+void Electroglottogram_drawStylized (Graphics g) {
+	Electroglottogram_drawStylized (g, true, false);
+}
+
+void Electroglottogram_drawStylizedLevels (Graphics g) {
+	Electroglottogram_drawStylized (g, false, true);
+}
+
 void manual_dwtools_init (ManPages me);
 void manual_dwtools_init (ManPages me) {
 
@@ -1004,7 +1012,7 @@ INTRO (U"Create a @@Correlation@ matrix with its centroid.")
 ENTRY (U"Settings")
 TAG (U"##Correlations")
 DEFINITION (U"define the correlations. Because a correlation matrix is a symmetric matrix, only the upper triangular "
-	"part of the matrix has to be input (row-wise). If your correlation matrix is "
+	"part of the matrix needs to be input (row-wise). If your correlation matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the correaltion matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
 TAG (U"##Centroid")
@@ -1018,7 +1026,7 @@ INTRO (U"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (U"Settings")
 TAG (U"##Covariances")
 DEFINITION (U"define the covariances. Because a covariance matrix is a symmetric matrix, only the upper triangular "
-	"part of the matrix has to be input (row-wise). If your covariance matrix is "
+	"part of the matrix needs to be input (row-wise). If your covariance matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the covariance matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
 TAG (U"##Centroid")
@@ -2335,31 +2343,6 @@ INTRO (U"One of the @@types of objects@ in Praat. The ##Electroglottogram# repre
 ENTRY (U"The Electroglottogram waveform")
 NORMAL (U"The following picture shows part of one cycle of a stereotypical (stylized)  waveform, with landmarks.")
 PICTURE (5,3, Electroglottogram_drawStylized)
-/*SCRIPT (5.0, 3.0, U""
-	U"Axes: 0, 3.7, 0, 2.0\n"
-	U"x# = {0.55, 1.0, 1.3, 2.0, 2.75, 3.1}\n"
-	U"y# = {0.10, 0.3, 1.8, 1.8, 1.00, 0.1}\n"
-	U"Font size: 12\n"
-	U"w = Text width (world coordinates): \"a\"\n"
-	U"h = 2 * w\n"
-	U"tx# = x#\n"
-	U"tx# += {0, -w, w, - w/2, w/2, w/2}\n"
-	U"ty# = y#\n"
-	U"ty# += {h, h, -h, -h, h, h}\n"
-	U"text$ = \"abcdef\"\n"
-	U"Line width: 4\n"
-	U"Draw line: 0.2, 0.1, x#[1], y#[1]\n"
-	U"for i from 1 to 5\n"
-	U"	Draw line: x# [i], y# [i], x# [i+1], y# [i+1]\n"
-	U"endfor\n"
-	U"Draw line:  x#[6], y#[6], 3.5, 0.1\n"
-	U"for i to 6\n"
-	U"	Text special: tx#[i], \"centre\", ty#[i], \"Half\", \"Helvetica\", 12, \"0\", mid$(text$, i, 1)\n"
-	U"endfor\n"
-	U"Line width: 1\n"
-	U"Draw inner box\n"
-	U"Text bottom: \"no\", \"norm. cycle progress\"\n"
-	U"Text left: \"no\", \"norm. VFCA\"\n")*/
 NORMAL (U"The orientation of the signal is in the (now) conventional way where the positive y-direction signals larger %%vocal fold contact area% (VFCA). The landmarks refer to:")
 LIST_ITEM (U"\\bu a \\-- initial contact of the lower vocal fold margins;")
 LIST_ITEM (U"\\bu b \\-- the upper vocal fold margins make initial (but not full) contact;")
@@ -2369,7 +2352,6 @@ LIST_ITEM (U"\\bu e \\-- upper margins start to separate;")
 LIST_ITEM (U"\\bu f \\-- glottis is open, with minimal contact area.")
 ENTRY (U"How to get an Electroglottogram?")
 NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other generally the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
-
 ENTRY (U"Glottal opening and closure times")
 NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
 	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "

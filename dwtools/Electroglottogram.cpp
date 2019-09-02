@@ -27,39 +27,13 @@
 #include "enums_getValue.h"
 #include "Electroglottogram_enums.h"
 
-Thing_implement (Electroglottogram, Sound, 0);
-/*
-x# = {0.55, 1.0,1.3, 2.0, 2.75, 3.1}
-y# = {0.1, 0.3,1.8, 1.8, 1.0, 0.1}
-w = Text width (world coordinates): "a"
-h = 2 * w
-tx# = x#
-tx# += {0, -w, w,  - w/2, w/2, w/2}
-ty# = y#
-ty# += {h, h, -h, -h, h, h}
-text$ = "abcdef"
-Erase all
-Font size: 10
-Select outer viewport: 0, 4.0, 0, 2.5
-Axes: 0, 3.7, 0, 2.0
+Thing_implement (Electroglottogram, Sound, 2);
 
-Line width: 4
-Draw line: 0.2, 0.1, x#[1], y#[1]
-for i from 1 to 5
-	Draw line: x# [i], y# [i], x# [i+1], y# [i+1]
-endfor
-Draw line:  x#[6], y#[6], 3.5, 0.1
-for i to 6
-	Text special: tx#[i], "centre", ty#[i], "Half", "Helvetica", 12, "0", mid$(text$, i, 1)
-endfor
-Line width: 1
-Draw inner box
-Text bottom: "no", "norm. cycle progress"
-Text left: "no", "norm. VFCA"
-
-*/
-
-static void Electroglottogram_drawStylized_within (Graphics g, bool marks) {
+void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
+	Graphics_setFontSize (g, 10.0);
+	Graphics_setInner (g);
+	double xmax = levels ? 4.0 : 3.7;
+	Graphics_setWindow (g, 0.0, xmax, 0, 2.0);
 	integer numberOfPoints = 6;
 	double x [numberOfPoints] = { 0.55, 1.0, 1.3, 2.0, 2.75, 3.1 };
 	double y [numberOfPoints] = { 0.10, 0.3, 1.8, 1.8, 1.00, 0.1 };
@@ -85,14 +59,10 @@ static void Electroglottogram_drawStylized_within (Graphics g, bool marks) {
 		for (integer i = 0; i < numberOfPoints; i++)
 			Graphics_text (g, tx [i], ty [i], labels [i]);
 	}
+	if (levels) {
+		
+	}
 	Graphics_setLineWidth (g, lineWidth);
-}
-
-void Electroglottogram_drawStylized (Graphics g) {
-	Graphics_setFontSize (g, 10.0);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, 0.0, 3.7, 0, 2.0);
-	Electroglottogram_drawStylized_within (g, true);
 	Graphics_unsetInner (g);
 	Graphics_textLeft (g, false, U"norm. VFCA");
 	Graphics_textBottom (g, false, U"norm. cycle progress");
@@ -155,7 +125,7 @@ autoElectroglottogram Electroglottogram_create (double xmin, double xmax, intege
 autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel, bool invert) {
 	try {
 		Melder_require (channel > 0 && channel <= my ny,
-			U"The channel number must be in the interval from 1 to ", my ny);
+			U"The channel number should be in the interval from 1 to ", my ny);
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
 		thy z.all() <<= my z.row (channel);
 		if (invert) 
@@ -189,9 +159,9 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingThreshold) {
 		try {
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
-				U"The domain of the Electroglottogram and the peaks should be equal.");
+				U"The domains of the Electroglottogram and the peaks should be equal.");
 			Melder_require (my xmin == valleys -> xmin && my xmax == valleys -> xmax,
-				U"The domain of the Electroglottogram and the valleys should be equal.");
+				U"The domains of the Electroglottogram and the valleys should be equal.");
 			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
 				U"The AmplitudeTiers cannot be empty.");
 			Melder_require (closingThreshold > 0 && closingThreshold < 1,
