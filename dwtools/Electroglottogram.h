@@ -19,6 +19,7 @@
  */
 
 #include "Sound.h"
+#include "AmplitudeTier.h"
 #include "TextGrid.h"
 
 #include "Electroglottogram_enums.h"
@@ -37,6 +38,8 @@ Thing_define (Electroglottogram, Sound) {
 
 autoElectroglottogram Electroglottogram_create (double xmin, double xmax, integer nx, double dx, double x1);
 
+void Electroglottogram_drawStylized (Graphics g);
+
 autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel, bool invert);
 
 autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottogram me, AmplitudeTier peaks, AmplitudeTier valleys, double closingLevelPercentage);
@@ -46,7 +49,7 @@ autoTextTier Electroglottogram_to_TextTier_closedGlottis (Electroglottogram me, 
 
 autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, autoAmplitudeTier *out_peaks, autoAmplitudeTier *out_valleys);
 
-autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold);
+autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction);
 
 autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing, bool peak99);
 /* The real derivative */

@@ -2349,12 +2349,12 @@ FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To I
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
 	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
-	POSITIVE (silenceThreshold, U"Silence threshold", U"0.03")
+	POSITIVE (peakThresholdFraction, U"Peak threshold (0-1)", U"0.05")
 	OK
 DO
 	Melder_require (closingThreshold < 1.0, U"The closing threshold has to be smaller than 1.");
 	CONVERT_EACH (Electroglottogram)
-		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, closingThreshold, silenceThreshold);
+		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, closingThreshold, peakThresholdFraction);
 	CONVERT_EACH_END (my name.get())
 }
 

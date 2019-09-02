@@ -28,6 +28,76 @@
 #include "Electroglottogram_enums.h"
 
 Thing_implement (Electroglottogram, Sound, 0);
+/*
+x# = {0.55, 1.0,1.3, 2.0, 2.75, 3.1}
+y# = {0.1, 0.3,1.8, 1.8, 1.0, 0.1}
+w = Text width (world coordinates): "a"
+h = 2 * w
+tx# = x#
+tx# += {0, -w, w,  - w/2, w/2, w/2}
+ty# = y#
+ty# += {h, h, -h, -h, h, h}
+text$ = "abcdef"
+Erase all
+Font size: 10
+Select outer viewport: 0, 4.0, 0, 2.5
+Axes: 0, 3.7, 0, 2.0
+
+Line width: 4
+Draw line: 0.2, 0.1, x#[1], y#[1]
+for i from 1 to 5
+	Draw line: x# [i], y# [i], x# [i+1], y# [i+1]
+endfor
+Draw line:  x#[6], y#[6], 3.5, 0.1
+for i to 6
+	Text special: tx#[i], "centre", ty#[i], "Half", "Helvetica", 12, "0", mid$(text$, i, 1)
+endfor
+Line width: 1
+Draw inner box
+Text bottom: "no", "norm. cycle progress"
+Text left: "no", "norm. VFCA"
+
+*/
+
+static void Electroglottogram_drawStylized_within (Graphics g, bool marks) {
+	integer numberOfPoints = 6;
+	double x [numberOfPoints] = { 0.55, 1.0, 1.3, 2.0, 2.75, 3.1 };
+	double y [numberOfPoints] = { 0.10, 0.3, 1.8, 1.8, 1.00, 0.1 };
+	conststring32 labels [numberOfPoints] = { U"a", U"b", U"c", U"d", U"e", U"f" };
+	double width = Graphics_textWidth (g, U"a");
+	double h = 2.0 * width;
+	double dx [numberOfPoints] = { 0.0, -width, width,  - 0.5 * width, 0.5 * width, 0.5 * width};
+	double dy [numberOfPoints] = { h, h, -h, -h, h, h };
+	double tx [numberOfPoints], ty [numberOfPoints];
+	for (integer i = 0; i < numberOfPoints; i++) {
+		tx [i] = x [i] + dx [i];
+		ty [i] = y [i] + dy [i];
+	}
+	double lineWidth = Graphics_inqLineWidth (g);
+	Graphics_setLineWidth (g, 4.0);
+	Graphics_line (g, 0.2, 0.1, x[0], y[0]);
+	for (integer i = 1; i < numberOfPoints; i ++)
+		Graphics_line (g, x [i-1], y [i-1], x [i], y [i]);
+	Graphics_line (g, x [5], y [5], 3.5, 0.1);
+	if (marks) {
+		Graphics_setFontSize (g, 12.0);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+		for (integer i = 0; i < numberOfPoints; i++)
+			Graphics_text (g, tx [i], ty [i], labels [i]);
+	}
+	Graphics_setLineWidth (g, lineWidth);
+}
+
+void Electroglottogram_drawStylized (Graphics g) {
+	Graphics_setFontSize (g, 10.0);
+	Graphics_setInner (g);
+	Graphics_setWindow (g, 0.0, 3.7, 0, 2.0);
+	Electroglottogram_drawStylized_within (g, true);
+	Graphics_unsetInner (g);
+	Graphics_textLeft (g, false, U"norm. VFCA");
+	Graphics_textBottom (g, false, U"norm. cycle progress");
+	Graphics_drawInnerBox (g);
+}
 
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {
@@ -121,9 +191,11 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
 				U"The domain of the Electroglottogram and the peaks should be equal.");
 			Melder_require (my xmin == valleys -> xmin && my xmax == valleys -> xmax,
-				U"The domain of the Electroglottogram and the peaks should be equal.");
+				U"The domain of the Electroglottogram and the valleys should be equal.");
 			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
 				U"The AmplitudeTiers cannot be empty.");
+			Melder_require (closingThreshold > 0 && closingThreshold < 1,
+				U"The closing threshold should be a number between 0.0 and 1.0");
 			autoAmplitudeTier thee = AmplitudeTier_create (my xmin, my xmax);
 			double peakAmplitudeLeft = RealTier_getValueAtIndex (peaks, 1);
 			double peakTimeLeft = peaks -> points.at [1] -> number;
@@ -147,14 +219,14 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 		}
 }
 
-autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
+autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction) {
 	try {
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks,  & valleys);
 		
 		double minimum = RealTier_getMinimumValue (valleys.get());
 		double maximum = RealTier_getMaximumValue (peaks.get());
-		double minimumPeakAmplitude = maximum * silenceThreshold;
+		double minimumPeakAmplitude = maximum * peakThresholdFraction;
 
 		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
 		double previousOpeningTime = my xmin;
