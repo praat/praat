@@ -28,6 +28,7 @@
 #include "Table_extensions.h"
 #include "Configuration.h"
 #include "Discriminant.h"
+#include "Electroglottogram.h"
 
 
 static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
@@ -157,6 +158,14 @@ static void drawPartionedMatrix (Graphics g) {
 	Graphics_text (g, x1, y1, U"##S__xx_#");
 	x1 = 1.5;
 	Graphics_text (g, x1, y1, U"##S__xy_#");
+}
+
+void Electroglottogram_drawStylized (Graphics g) {
+	Electroglottogram_drawStylized (g, true, false);
+}
+
+void Electroglottogram_drawStylizedLevels (Graphics g) {
+	Electroglottogram_drawStylized (g, false, true);
 }
 
 void manual_dwtools_init (ManPages me);
@@ -2333,31 +2342,7 @@ MAN_BEGIN (U"Electroglottogram", U"djmw", 20190829)
 INTRO (U"One of the @@types of objects@ in Praat. The ##Electroglottogram# represents changes in vocal fold contact area during vocal fold vibration.")
 ENTRY (U"The Electroglottogram waveform")
 NORMAL (U"The following picture shows part of one cycle of a stereotypical (stylized)  waveform, with landmarks.")
-SCRIPT (5.0, 3.0, U""
-	U"Axes: 0, 3.7, 0, 2.0\n"
-	U"x# = {0.55, 1.0, 1.3, 2.0, 2.75, 3.1}\n"
-	U"y# = {0.10, 0.3, 1.8, 1.8, 1.00, 0.1}\n"
-	U"Font size: 12\n"
-	U"w = Text width (world coordinates): \"a\"\n"
-	U"h = 2 * w\n"
-	U"tx# = x#\n"
-	U"tx# += {0, -w, w, - w/2, w/2, w/2}\n"
-	U"ty# = y#\n"
-	U"ty# += {h, h, -h, -h, h, h}\n"
-	U"text$ = \"abcdef\"\n"
-	U"Line width: 4\n"
-	U"Draw line: 0.2, 0.1, x#[1], y#[1]\n"
-	U"for i from 1 to 5\n"
-	U"	Draw line: x# [i], y# [i], x# [i+1], y# [i+1]\n"
-	U"endfor\n"
-	U"Draw line:  x#[6], y#[6], 3.5, 0.1\n"
-	U"for i to 6\n"
-	U"	Text special: tx#[i], \"centre\", ty#[i], \"Half\", \"Helvetica\", 12, \"0\", mid$(text$, i, 1)\n"
-	U"endfor\n"
-	U"Line width: 1\n"
-	U"Draw inner box\n"
-	U"Text bottom: \"no\", \"norm. cycle progress\"\n"
-	U"Text left: \"no\", \"norm. VFCA\"\n")
+PICTURE (5,3, Electroglottogram_drawStylized)
 NORMAL (U"The orientation of the signal is in the (now) conventional way where the positive y-direction signals larger %%vocal fold contact area% (VFCA). The landmarks refer to:")
 LIST_ITEM (U"\\bu a \\-- initial contact of the lower vocal fold margins;")
 LIST_ITEM (U"\\bu b \\-- the upper vocal fold margins make initial (but not full) contact;")
@@ -2367,7 +2352,6 @@ LIST_ITEM (U"\\bu e \\-- upper margins start to separate;")
 LIST_ITEM (U"\\bu f \\-- glottis is open, with minimal contact area.")
 ENTRY (U"How to get an Electroglottogram?")
 NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other generally the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
-
 ENTRY (U"Glottal opening and closure times")
 NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
 	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "
@@ -2401,17 +2385,30 @@ NORMAL (U"We take the first central difference, "
 NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190829)
-INTRO (U"Calculates the intervals where the glottis is closed from the @@Electroglottogram@.")
+MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190902)
+INTRO (U"Calculates the intervals where the glottis is closed from the selected @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)#")
 DEFINITION (U"intervals with a lower pitch will not be considered. ")
 TAG (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"intervals with a higher pitch will not be considered.")
 TAG (U"##Closing threshold#")
-DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between the local cycle's amplitude at peak and valley level.")
-TAG (U"##Silence threshold#")
-DEFINITION (U"")
+DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between a cycle's peak and valley amplitude level.")
+PICTURE (4.0, 3.0, Electroglottogram_drawStylizedLevels)
+DEFINITION (U"The picture shows, for a %%closingThreshold% value of 0.3, the Closed Glottis Interval that starts at time %t__1_ and ends at time %t__2_. These times were found by calculating the two level crossings at amplitude %%valley+closingThreshold(peak\\--valley)%.")
+TAG (U"##Peak threshold#")
+DEFINITION (U"cycles with peaks whose relative amplitudes with respect to the maximum peak are lower than this value are not considered.")
+ENTRY (U"Algorithm")
+NORMAL (U"The algorithm first tries to find peaks and valleys, guided by the settings for the pitch floor and ceiling. From the level crossings before and after a peak the times of glottal closing and opening are determined.")
+ENTRY (U"Warning")
+NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%glottal opening "
+	"instants% (GOI) from the Electroglottogram is problematic because as @@Herbst (2019)@ "
+	"notes: the vocal folds do not vibrate as a uniform mass. Rather, "
+	"their vibration is characterized by phase differences along both the inferior–superior and "
+	"anterior–posterior dimensions. These phase differences cause time-delayed contacting and "
+	"de-contacting of the vocal folds along the respective axes. There is thus no specific instant "
+	"of glottal closing and opening, but rather an interval during which the closing and opening, "
+	"respectively, occur. ")
 MAN_END
 
 MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190827)
@@ -2437,6 +2434,17 @@ NORMAL (U"In many papers about the Electroglottogram one also uses the derivativ
 	"Instead they calculate a approximation of the derivative by taking either the first difference, "
 	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference @@Herbst et al. (2014)|(Herbst et al., 2014)@, "
 	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
+MAN_END
+
+MAN_BEGIN (U"Electroglottogram: To AmplitudeTier (levels)...", U"djmw", 20190831)
+INTRO (U"For the selected @@Electroglottogram@, according to the chosen value of the %%closing threshold%, the amplitude at the moment of glottal closure in each glottal cycle is calculated as a proportion of the difference between the values at the peak and the valley of each cycle.")
+ENTRY (U"Settings")
+TAG (U"##Pitch floor (Hz)#")
+DEFINITION (U"defines the lowest pitch we want to consider.")
+TAG (U"##Pitch ceiling (Hz)#")
+DEFINITION (U"defines the highest pitch we want to consider.")
+TAG (U"##Closing threshold (0-1)#")
+DEFINITION (U"defines the relative amplitude in each glottal cycle where the moment of glottal closure will be chosen. ")
 MAN_END
 
 MAN_BEGIN (U"electroglottography", U"djmw", 20190829)

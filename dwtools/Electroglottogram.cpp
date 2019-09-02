@@ -29,6 +29,73 @@
 
 Thing_implement (Electroglottogram, Sound, 2);
 
+void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
+	Graphics_setFontSize (g, 10.0);
+	Graphics_setInner (g);
+	double xmax = 3.9;
+	Graphics_setWindow (g, 0.0, xmax, 0, 2.0);
+	integer numberOfPoints = 6;
+	double x [numberOfPoints] = { 0.55, 1.0, 1.3, 2.0, 2.75, 3.1 };
+	double y [numberOfPoints] = { 0.10, 0.3, 1.8, 1.8, 1.00, 0.1 };
+	double maximum = y [3], minimum = y [0];
+	double range = maximum - minimum;
+	conststring32 labels [numberOfPoints] = { U"a", U"b", U"c", U"d", U"e", U"f" };
+	double width = Graphics_textWidth (g, U"a");
+	double h = 2.0 * width;
+	double dx [numberOfPoints] = { 0.0, -width, width,  - 0.5 * width, 0.5 * width, 0.5 * width};
+	double dy [numberOfPoints] = { h, h, -h, -h, h, h };
+	double tx [numberOfPoints], ty [numberOfPoints];
+	for (integer i = 0; i < numberOfPoints; i++) {
+		tx [i] = x [i] + dx [i];
+		ty [i] = y [i] + dy [i];
+	}
+	double lineWidth = Graphics_inqLineWidth (g);
+	Graphics_setLineWidth (g, 3.0);
+	Graphics_line (g, 0.2, 0.1, x[0], y[0]);
+	for (integer i = 1; i < numberOfPoints; i ++)
+		Graphics_line (g, x [i - 1], y [i - 1], x [i], y [i]);
+	Graphics_line (g, x [5], y [5], 3.5, 0.1);
+	Graphics_setLineWidth (g, lineWidth);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+	if (marks) {
+		Graphics_setFontSize (g, 12.0);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+		for (integer i = 0; i < numberOfPoints; i++)
+			Graphics_text (g, tx [i], ty [i], labels [i]);
+		Graphics_setFontSize (g, 10.0);
+	}
+	double closingThreshold = 0.3;
+	double at03 = minimum + closingThreshold * range;
+	// Get the two x values of intersection at y = at03 with the EGG
+	double a = (y [1] - y [2]) / (x [1] - x [2]), b = y [1] - a * x [1];
+	double x1 = (at03 - b) / a;
+	a = (y [4] - y [5]) / (x [4] - x [5]), b = y [4] - a * x [4];
+	double x2 = (at03 - b) / a;
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
+	if (levels) {
+		Graphics_setLineType (g, Graphics_DASHED);
+		Graphics_doubleArrow (g, x1, at03, x2, at03);
+		double x3 = x [2] + 0.1;
+		Graphics_doubleArrow (g, x3, minimum, x3, at03);
+		Graphics_setLineType (g, Graphics_DRAWN);
+		double y3 = 0.5 * (at03 + minimum);
+		Graphics_text (g, x3 + width, 0.5 * at03, U"0.3(%%Peak%\\--%%Valley%)");
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
+		Graphics_text (g, 0.5 * (x1 + x2), at03, U"Closed Glottis Interval");
+	}
+	Graphics_unsetInner (g);
+	if (levels) {
+		Graphics_markRight (g, maximum, 0, true, true, U"%Peak");
+		Graphics_markRight (g, minimum, 0, true, true, U"%Valley");
+		Graphics_markRight (g, at03, 0, true, false, U"%%closingThreshold% (0.3)");
+		Graphics_markBottom (g, x1, false, true, true, U"%t__1_");
+		Graphics_markBottom (g, x2, false, true, true, U"%t__2_");
+	}
+	Graphics_textLeft (g, false, U"norm. VFCA");
+	Graphics_textBottom (g, true, U"norm. cycle progress");
+	Graphics_drawInnerBox (g);
+}
+
 void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {
 		Melder_require (! IntervalTier_hasTime (me, t),
@@ -121,9 +188,11 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 			Melder_require (my xmin == peaks -> xmin && my xmax == peaks -> xmax,
 				U"The domains of the Electroglottogram and the peaks should be equal.");
 			Melder_require (my xmin == valleys -> xmin && my xmax == valleys -> xmax,
-				U"The domains of the Electroglottogram and the peaks should be equal.");
+				U"The domains of the Electroglottogram and the valleys should be equal.");
 			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
 				U"The AmplitudeTiers cannot be empty.");
+			Melder_require (closingThreshold > 0 && closingThreshold < 1,
+				U"The closing threshold should be a number between 0.0 and 1.0");
 			autoAmplitudeTier thee = AmplitudeTier_create (my xmin, my xmax);
 			double peakAmplitudeLeft = RealTier_getValueAtIndex (peaks, 1);
 			double peakTimeLeft = peaks -> points.at [1] -> number;
@@ -147,14 +216,14 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 		}
 }
 
-autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double silenceThreshold) {
+autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction) {
 	try {
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks,  & valleys);
 		
 		double minimum = RealTier_getMinimumValue (valleys.get());
 		double maximum = RealTier_getMaximumValue (peaks.get());
-		double minimumPeakAmplitude = maximum * silenceThreshold;
+		double minimumPeakAmplitude = maximum * peakThresholdFraction;
 
 		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
 		double previousOpeningTime = my xmin;
