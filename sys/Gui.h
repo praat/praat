@@ -88,7 +88,7 @@
 #define Gui_LABEL_SPACING  8
 #define Gui_OPTIONMENU_HEIGHT  20
 #if gtk
-	#define Gui_PUSHBUTTON_HEIGHT  25
+	#define Gui_PUSHBUTTON_HEIGHT  30
 #else
 	#define Gui_PUSHBUTTON_HEIGHT  20
 #endif

@@ -1319,6 +1319,7 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
                 Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
 				if (ixmin == previous_ixmax)
 					ixmin ++;
+				previous_ixmax = ixmax;
 				integer numberOfSamplesToCopy = ixmax - ixmin + 1;
 				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy) <<= my z.part (1, my ny, ixmin, ixmax);
                 numberOfSamples += numberOfSamplesToCopy;
