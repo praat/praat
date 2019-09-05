@@ -34,7 +34,7 @@ void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
 	Graphics_setInner (g);
 	double xmax = 3.9;
 	Graphics_setWindow (g, 0.0, xmax, 0, 2.0);
-	integer numberOfPoints = 6;
+	constexpr integer numberOfPoints = 6;
 	double x [numberOfPoints] = { 0.55, 1.0, 1.3, 2.0, 2.75, 3.1 };
 	double y [numberOfPoints] = { 0.10, 0.3, 1.8, 1.8, 1.00, 0.1 };
 	double maximum = y [3], minimum = y [0];
