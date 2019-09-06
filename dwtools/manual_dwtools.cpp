@@ -2385,7 +2385,7 @@ NORMAL (U"We take the first central difference, "
 NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190902)
+MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190906)
 INTRO (U"Calculates the intervals where the glottis is closed from the selected @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)#")
@@ -2393,7 +2393,7 @@ DEFINITION (U"intervals with a lower pitch will not be considered. ")
 TAG (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"intervals with a higher pitch will not be considered.")
 TAG (U"##Closing threshold#")
-DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between a cycle's peak and valley amplitude level.")
+DEFINITION (U"the moment of closing of the vocal folds will be taken at a fixed point between a cycle's peak and valley amplitude level.")
 PICTURE (4.0, 3.0, Electroglottogram_drawStylizedLevels)
 DEFINITION (U"The picture shows, for a %%closingThreshold% value of 0.3, the Closed Glottis Interval that starts at time %t__1_ and ends at time %t__2_. These times were found by calculating the two level crossings at amplitude %%valley+closingThreshold(peak\\--valley)%.")
 TAG (U"##Peak threshold#")
@@ -2429,7 +2429,7 @@ NORMAL (U"The derivative of a wave form is most easitly calculated in the spectr
 NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and imaginary components and then transform back to the time doain we get the derivative.")
 NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new %%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%))  and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
 ENTRY (U"About dEGG")
-NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal glosure instants% and sometimes also the %%glottal opening instants%. "
+NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal closure instants% and sometimes also the %%glottal opening instants%. "
 	"However, in their paper and also in other papers like, for example,  @@Herbst et al. (2014)@, the derivative they use is not the exact derivative as calculated in the way explained above. "
 	"Instead they calculate an approximation of the derivative by taking either the first difference, "
 	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference, "
@@ -5658,7 +5658,7 @@ NORMAL (U"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): \"Computing the 
 MAN_END
 
 MAN_BEGIN (U"Henrich et al. (2004)", U"djmw", 20190903)
-NORMAL (U"N. Henrich, C. d'Alessamdro, B. Doval & M. Castellengo (2004): \"On the use of the derivative of electroglottographic signals for characterization of nonpathological phonation.\" %%Journal of the Acoustical Society of America% #115: 1321\\--1332.")
+NORMAL (U"N. Henrich, C. d'Alessandro, B. Doval & M. Castellengo (2004): \"On the use of the derivative of electroglottographic signals for characterization of nonpathological phonation.\" %%Journal of the Acoustical Society of America% #115: 1321\\--1332.")
 MAN_END
 
 MAN_BEGIN (U"Hermes (1988)", U"djmw", 19980123)
