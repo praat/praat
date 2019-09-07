@@ -86,9 +86,9 @@ void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
 	}
 	Graphics_unsetInner (g);
 	if (levels) {
-		Graphics_markRight (g, maximum, 0, true, true, U"%Peak");
-		Graphics_markRight (g, minimum, 0, true, true, U"%Valley");
-		Graphics_markRight (g, at03, 0, true, false, U"%%closingThreshold% (0.3)");
+		Graphics_markRight (g, maximum, false, true, true, U"%Peak");
+		Graphics_markRight (g, minimum, false, true, true, U"%Valley");
+		Graphics_markRight (g, at03, false, true, false, U"%%closingThreshold% (0.3)");
 		Graphics_markBottom (g, x1, false, true, true, U"%t__1_");
 		Graphics_markBottom (g, x2, false, true, true, U"%t__2_");
 	}
