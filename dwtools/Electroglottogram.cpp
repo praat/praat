@@ -200,7 +200,7 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 			for (integer ipoint = 2; ipoint <= peaks -> points. size - 1; ipoint ++) {
 				double peakAmplitudeRight = RealTier_getValueAtIndex (peaks, ipoint);
 				double peakTimeRight = peaks -> points.at [ipoint] -> number;
-				integer indexValley = AnyTier_timeToNearestIndex ((AnyTier) valleys, peakTimeRight);
+				integer indexValley = AnyTier_timeToNearestIndex (valleys->asAnyTier(), peakTimeRight);
 				double timeValley = valleys -> points.at [indexValley] -> number;
 				if (timeValley > peakTimeLeft && timeValley < peakTimeRight) {
 					double valleyAmplitude = RealTier_getValueAtIndex (valleys, indexValley);
