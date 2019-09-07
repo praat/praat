@@ -69,7 +69,8 @@ void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
 	// Get the two x values of intersection at y = at03 with the EGG
 	double a = (y [1] - y [2]) / (x [1] - x [2]), b = y [1] - a * x [1];
 	double x1 = (at03 - b) / a;
-	a = (y [4] - y [5]) / (x [4] - x [5]), b = y [4] - a * x [4];
+	a = (y [4] - y [5]) / (x [4] - x [5]);
+	b = y [4] - a * x [4];
 	double x2 = (at03 - b) / a;
 	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 	if (levels) {
@@ -219,7 +220,7 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction) {
 	try {
 		autoAmplitudeTier peaks, valleys;
-		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks,  & valleys);
+		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks, & valleys);
 		
 		double minimum = RealTier_getMinimumValue (valleys.get());
 		double maximum = RealTier_getMaximumValue (peaks.get());
