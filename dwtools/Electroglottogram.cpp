@@ -156,7 +156,7 @@ autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel,
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
 		thy z.all() <<= my z.row (channel);
 		if (invert) 
-			thy z.all() *= -1.0;
+			thy z.all()  *=  -1.0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Electroglottogram.");
