@@ -1520,7 +1520,9 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 			amax += 1.0;
 		}
 	}
-	/* In bottom-to-top-drawing the maximum amplitude is on the left, minimum on the right */
+	/*
+		In bottom-to-top-drawing, the maximum amplitude is on the left, the minimum on the right.
+	*/
 	if (drawingDirection == kSoundDrawingDirection::BOTTOM_TO_TOP) {
 		xmin = amax;
 		xmax = amin;
@@ -1575,7 +1577,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	}
 }
 
-void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {
+static void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
 	
 	Melder_require (channel >= 0 && channel <= my ny,
@@ -1607,7 +1609,7 @@ void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, 
 	}
 }
 
-void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
+static void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
 	
 	Melder_require (channel >= 0 && channel <= my ny,
@@ -1640,9 +1642,6 @@ void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime,
 			my z [channel].part (endSample + 1, my nx) <<= 0.0;
 	}
 }
-
-
-
 
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal) {
 	integer numberOfSamples = Melder_ifloor (fabs (fadeTime) / my dx);
