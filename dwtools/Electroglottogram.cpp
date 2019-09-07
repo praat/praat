@@ -235,8 +235,8 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 			double closingTime = undefined, openingTime = undefined;
 			if (peakAmplitude > minimumPeakAmplitude) {
 				double level = RealTier_getValueAtTime (levels.get(), peakPosition);
-				closingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::Left);
-				openingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::Right);
+				closingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::LEFT);
+				openingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::RIGHT);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
 					IntervalTier_insertBoundary (intervalTier.get(), closingTime);
 					IntervalTier_insertBoundary (intervalTier.get(), openingTime);
