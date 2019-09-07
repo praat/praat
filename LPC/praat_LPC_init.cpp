@@ -78,7 +78,7 @@ DIRECT (HELP_PowerCepstrum_help) {
 }
 
 FORM (GRAPHICS_Cepstrum_drawLinear, U"Cepstrum: Draw linear", U"Cepstrum: Draw (linear)...") {
-	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
+	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (ymin, U"Minimum", U"0.0")
 	REAL (ymax, U"Maximum", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -90,7 +90,7 @@ DO
 }
 
 FORM (GRAPHICS_PowerCepstrum_draw, U"PowerCepstrum: Draw", U"PowerCepstrum: Draw...") {
-	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
+	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (ymin, U"Minimum (dB)", U"0.0")
 	REAL (ymax, U"Maximum (dB)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -102,7 +102,7 @@ DO
 }
 
 FORM (GRAPHICS_PowerCepstrum_drawTiltLine, U"PowerCepstrum: Draw tilt line", U"PowerCepstrum: Draw tilt line...") {
-	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
+	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
 	LABEL (U"Parameters for the tilt line fit")
@@ -315,8 +315,8 @@ DIRECT (HELP_PowerCepstrogram_help) {
 }
 
 FORM (GRAPHICS_old_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
-	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (minimum_dB, U"Minimum (dB)", U"0.0")
 	REAL (maximum_dB, U"Maximum (dB)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
@@ -328,8 +328,8 @@ DO
 }
 
 FORM (GRAPHICS_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepstrogram: Paint...") {
-	praat_TimeFunction_RANGE(fromTime,toTime)
-	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (maximum_dB, U"Maximum (dB)", U"80.0")
 	BOOLEAN (autoscaling, U"Autoscaling", false);
 	REAL (dynamicRange_dB, U"Dynamic range (dB)", U"30.0");
@@ -563,7 +563,7 @@ DO
 }
 
 FORM (MODIFY_Formant_formula, U"Formant: Formula", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"5")
 	LABEL (U"Formant frequencies in odd numbered rows")
@@ -610,7 +610,7 @@ DIRECT (HELP_LineSpectralFrequencies_help) {
 }
 
 FORM (GRAPHICS_LineSpectralFrequencies_drawFrequencies, U"LineSpectralFrequencies: Draw frequencies", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (Hz)", U"5000.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -634,7 +634,7 @@ DIRECT (HELP_LPC_help) {
 }
 
 FORM (GRAPHICS_LPC_drawGain, U"LPC: Draw gain", U"LPC: Draw gain...") {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (minimumGain, U"Minimum gain", U"0.0")
 	REAL (maximumGain, U"Maximum gain", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
