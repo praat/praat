@@ -911,13 +911,13 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					if (*p == U',') {
 						if (expressionDepth == 0) break;   // depth-0 comma ends expression
 						MelderString_appendCharacter (& argument, U',');
-					} else if (*p == U')') {
+					} else if (*p == U')' || *p == U']' || *p == U'}') {
 						if (expressionDepth == 0) break;   // depth-0 closing parenthesis ends expression
 						expressionDepth --;
-						MelderString_appendCharacter (& argument, U')');
-					} else if (*p == U'(') {
+						MelderString_appendCharacter (& argument, *p);
+					} else if (*p == U'(' || *p == U'[' || *p == U'{') {
 						expressionDepth ++;
-						MelderString_appendCharacter (& argument, U'(');
+						MelderString_appendCharacter (& argument, *p);
 					} else if (*p == U'\"') {
 						/*
 						 * Enter a string literal.
