@@ -192,8 +192,8 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 				U"The domains of the Electroglottogram and the valleys should be equal.");
 			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
 				U"The AmplitudeTiers cannot be empty.");
-			Melder_require (closingThreshold > 0 && closingThreshold < 1,
-				U"The closing threshold should be a number between 0.0 and 1.0");
+			Melder_require (closingThreshold > 0.0 && closingThreshold < 1.0,
+				U"The closing threshold should be a number between 0.0 and 1.0.");
 			autoAmplitudeTier thee = AmplitudeTier_create (my xmin, my xmax);
 			double peakAmplitudeLeft = RealTier_getValueAtIndex (peaks, 1);
 			double peakTimeLeft = peaks -> points.at [1] -> number;
