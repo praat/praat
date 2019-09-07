@@ -97,7 +97,7 @@ void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
 	Graphics_drawInnerBox (g);
 }
 
-void IntervalTier_insertBoundary (IntervalTier me, double t) {
+static void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {
 		Melder_require (! IntervalTier_hasTime (me, t),
 			U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because there is already a boundary there.");
