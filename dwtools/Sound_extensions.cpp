@@ -1067,32 +1067,33 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 		Are we already at a level crossing?
 	*/
 	if (leftSample >= 1 && rightSample <= my nx &&
-		(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level)) {
+			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level))
+	{
 		double crossing = interpolate (me, leftSample, channel, level);
-		return searchDirection == kSoundSearchDirection::Left ?
+		return searchDirection == kSoundSearchDirection::LEFT ?
 			( crossing <= position ? crossing : undefined ) :
 			( crossing >= position ? crossing : undefined );
 	}
 	
-	if (searchDirection == kSoundSearchDirection::Left || 
-		searchDirection == kSoundSearchDirection::Nearest) {
+	if (searchDirection == kSoundSearchDirection::LEFT ||
+		searchDirection == kSoundSearchDirection::NEAREST) {
 		for (ileft = leftSample - 1; ileft >= 1; ileft --)
 			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level))
 				break;
 		leftCrossing = interpolate (me, ileft, channel, level);
-		if (searchDirection == kSoundSearchDirection::Left)
+		if (searchDirection == kSoundSearchDirection::LEFT)
 			return ileft < 1 ? undefined: leftCrossing;
 	}
 	
 	if (rightSample < 1)
 		return undefined;
-	if (searchDirection == kSoundSearchDirection::Right || 
-		searchDirection == kSoundSearchDirection::Nearest) {
+	if (searchDirection == kSoundSearchDirection::RIGHT ||
+		searchDirection == kSoundSearchDirection::NEAREST) {
 		for (iright = rightSample + 1; iright <= my nx; iright ++)
 			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level))
 				break;
 		rightCrossing = interpolate (me, iright - 1, channel, level);
-		if (searchDirection == kSoundSearchDirection::Right)
+		if (searchDirection == kSoundSearchDirection::RIGHT)
 			return iright > my nx ? undefined : rightCrossing;
 	}
 	
@@ -1519,23 +1520,25 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 			amax += 1.0;
 		}
 	}
-	/* In bottom-to-top-drawing the maximum amplitude is on the left, minimum on the right */
-	if (drawingDirection == kSoundDrawingDirection::BottomToTop) {
+	/*
+		In bottom-to-top-drawing, the maximum amplitude is on the left, the minimum on the right.
+	*/
+	if (drawingDirection == kSoundDrawingDirection::BOTTOM_TO_TOP) {
 		xmin = amax;
 		xmax = amin;
 		ymin = tmin;
 		ymax = tmax;
-	} else if (drawingDirection == kSoundDrawingDirection::TopToBottom) {
+	} else if (drawingDirection == kSoundDrawingDirection::TOP_TO_BOTTOM) {
 		xmin = amin;
 		xmax = amax;
 		ymin = tmax;
 		ymax = tmin;
-	} else if (drawingDirection == kSoundDrawingDirection::RightToLeft) {
+	} else if (drawingDirection == kSoundDrawingDirection::RIGHT_TO_LEFT) {
 		xmin = tmax;
 		xmax = tmin;
 		ymin = amin;
 		ymax = amax;
-	} else { //if (drawingDirection == kSoundDrawingDirection::LeftToRight)
+	} else { //if (drawingDirection == kSoundDrawingDirection::LEFT_TO_RIGHT)
 		xmin = tmin;
 		xmax = tmax;
 		ymin = amin;
@@ -1547,8 +1550,8 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	for (integer it = itmin + 1; it <= itmax; it ++) {
 		double t2 = Sampled_indexToX (me, it);
 		double a2 = my z [1] [it];
-		if (drawingDirection == kSoundDrawingDirection::BottomToTop ||
-			drawingDirection == kSoundDrawingDirection::TopToBottom) {
+		if (drawingDirection == kSoundDrawingDirection::BOTTOM_TO_TOP ||
+			drawingDirection == kSoundDrawingDirection::TOP_TO_BOTTOM) {
 			Graphics_line (g, a1, t1, a2, t2);
 		} else {
 			Graphics_line (g, t1, a1, t2, a2);
@@ -1557,16 +1560,16 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 		t1 = t2;
 	}
 	if (garnish) {
-		if (drawingDirection == kSoundDrawingDirection::BottomToTop) {
+		if (drawingDirection == kSoundDrawingDirection::BOTTOM_TO_TOP) {
 			if (amin * amax < 0.0)
 				Graphics_markBottom (g, 0.0, false, true, true, nullptr);
-		} else if (drawingDirection == kSoundDrawingDirection::TopToBottom) {
+		} else if (drawingDirection == kSoundDrawingDirection::TOP_TO_BOTTOM) {
 			if (amin * amax < 0.0)
 				Graphics_markTop (g, 0.0, false, true, true, nullptr);
-		} else if (drawingDirection == kSoundDrawingDirection::RightToLeft) {
+		} else if (drawingDirection == kSoundDrawingDirection::RIGHT_TO_LEFT) {
 			if (amin * amax < 0.0)
 				Graphics_markRight (g, 0.0, false, true, true, nullptr);
-		} else { //if (drawingDirection == kSoundDrawingDirection::LeftToRight)
+		} else { //if (drawingDirection == kSoundDrawingDirection::LEFT_TO_RIGHT)
 			if (amin * amax < 0.0)
 				Graphics_markLeft (g, 0.0, false, true, true, nullptr);
 		}
@@ -1574,7 +1577,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	}
 }
 
-void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {
+static void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
 	
 	Melder_require (channel >= 0 && channel <= my ny,
@@ -1606,7 +1609,7 @@ void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, 
 	}
 }
 
-void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
+static void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
 	
 	Melder_require (channel >= 0 && channel <= my ny,
@@ -1639,9 +1642,6 @@ void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime,
 			my z [channel].part (endSample + 1, my nx) <<= 0.0;
 	}
 }
-
-
-
 
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal) {
 	integer numberOfSamples = Melder_ifloor (fabs (fadeTime) / my dx);
@@ -2056,7 +2056,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 				}
 				if (fill) {
 					autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
-					Graphics_fillArea (g, his numberOfPoints, &his x [1], &his y [1]);
+					Graphics_fillArea (g, his numberOfPoints, & his x [1], & his y [1]);
 					fill = false;
 				}
 				previous = current;
@@ -2226,7 +2226,7 @@ autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			if (findNoise)
 				Sound_findNoise (channeli.get(), minimumNoiseDuration, & noiseStart, & noiseEnd);
 			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape::RECTANGULAR, 1.0, false);
-			if (method == kSoundNoiseReductionMethod::SpectralSubtraction) {   // spectral subtraction
+			if (method == kSoundNoiseReductionMethod::SPECTRAL_SUBTRACTION) {   // spectral subtraction
 				denoisedi = Sound_reduceNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength, noiseReduction_dB);
 			} else {
 				Melder_fatal (U"Unknown method in Sound_reduceNoise.");

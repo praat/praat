@@ -17,20 +17,20 @@
  */
 
 enums_begin (kSoundDrawingDirection, 1)
-	enums_add (kSoundDrawingDirection, 1, LeftToRight, U"left-to-right")
-	enums_add (kSoundDrawingDirection, 2, RightToLeft, U"right-to-left")
-	enums_add (kSoundDrawingDirection, 3, BottomToTop, U"bottom-to-top")
-	enums_add (kSoundDrawingDirection, 4, TopToBottom, U"top-to-bottom")
-enums_end (kSoundDrawingDirection, 4, LeftToRight)
+	enums_add (kSoundDrawingDirection, 1, LEFT_TO_RIGHT, U"left-to-right")
+	enums_add (kSoundDrawingDirection, 2, RIGHT_TO_LEFT, U"right-to-left")
+	enums_add (kSoundDrawingDirection, 3, BOTTOM_TO_TOP, U"bottom-to-top")
+	enums_add (kSoundDrawingDirection, 4, TOP_TO_BOTTOM, U"top-to-bottom")
+enums_end (kSoundDrawingDirection, 4, LEFT_TO_RIGHT)
 
 enums_begin (kSoundNoiseReductionMethod, 1)
-	enums_add (kSoundNoiseReductionMethod, 1, SpectralSubtraction, U"spectral-subtraction")
-enums_end (kSoundNoiseReductionMethod, 1, SpectralSubtraction)
+	enums_add (kSoundNoiseReductionMethod, 1, SPECTRAL_SUBTRACTION, U"spectral-subtraction")
+enums_end (kSoundNoiseReductionMethod, 1, SPECTRAL_SUBTRACTION)
 
 enums_begin (kSoundSearchDirection, 1)
-	enums_add (kSoundSearchDirection, 1, Left, U"left")
-	enums_add (kSoundSearchDirection, 2, Right, U"right")
-	enums_add (kSoundSearchDirection, 3, Nearest, U"nearest")
-enums_end (kSoundSearchDirection, 3, Nearest)
+	enums_add (kSoundSearchDirection, 1, LEFT, U"left")
+	enums_add (kSoundSearchDirection, 2, RIGHT, U"right")
+	enums_add (kSoundSearchDirection, 3, NEAREST, U"nearest")
+enums_end (kSoundSearchDirection, 3, NEAREST)
 
 /* End of file Sound_extensions_enums.h */
