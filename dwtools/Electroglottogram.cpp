@@ -170,8 +170,8 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 		/*
 			Get the values of the peaks and valleys
 		*/
-		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_point (peakPositions.get(), (Sound) me);
-		autoAmplitudeTier valleys = PointProcess_Sound_to_AmplitudeTier_point (valleyPositions.get(), (Sound) me);
+		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_point (peakPositions.get(), me);
+		autoAmplitudeTier valleys = PointProcess_Sound_to_AmplitudeTier_point (valleyPositions.get(), me);
 		autoAmplitudeTier thee = Electroglottogram_and_AmplitudeTiers_getLevels (me, peaks.get(), valleys.get(), closingThreshold);
 		if (out_peaks)
 			*out_peaks = peaks.move();
