@@ -195,20 +195,19 @@ void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double
 
 #define CLIP_Y(y,ymin,ymax) (clip ? ((y) > (ymax) ? (ymax) : (y) < (ymin) ? (ymin) : (y)) : y)
 
-autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level) {
+autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tmax, double ymin, double ymax, double level) {
 	try {
 		bool clip = ymin < ymax;
-		Melder_require (channel > 0 && channel <= my ny, U"Channel does not exist.");
+		Melder_require (channel > 0 && channel <= my ny,
+			U"Channel does not exist.");
 		if (tmin >= tmax) {
 			tmin = my xmin;
 			tmax = my xmax;
 		}
-		if (tmin < my xmin) {
+		if (tmin < my xmin)
 			tmin = my xmin;
-		}
-		if (tmax > my xmax) {
+		if (tmax > my xmax)
 			tmax = my xmax;
-		}
 		Melder_require (tmin < my xmax && tmax > my xmin,
 			U"Invalid domain.");
 		
@@ -255,20 +254,19 @@ autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, d
 
 /* Area inbetween */
 
-autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax) {
+autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, integer channel, double tmin, double tmax, double ymin, double ymax) {
 	try {
 		bool clip = ymin < ymax;
 		Melder_require (channel > 0 && channel <= my ny && channel <= thy ny, U"Invalid channel."); 
 		
 		// find overlap in the domains  with xmin workaround as in Sound_to_Polygon
-		double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx ;
+		double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx;
 		double xmin = ( my xmin > thy xmin ? xmin1 : xmin2 );
 		double xmax = ( my xmax < thy xmax ? xmin1 + my nx * my dx : xmin2 + thy nx * thy dx );
 		Melder_require (xmax > xmin,
-			U"Domains must overlap.");
-		if (xmax <= xmin) {
-			Melder_throw (U"Domains must overlap.");
-		}
+			U"Domains should overlap.");
+		if (xmax <= xmin)
+			Melder_throw (U"Domains should overlap.");
 		if (tmin >= tmax) {
 			tmin = xmin;
 			tmax = xmax;
@@ -279,7 +277,8 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 		if (tmax > xmax) {
 			tmax = xmax;
 		}
-		Melder_require (tmin < xmax && tmax > xmin, U"Invalid domain.");
+		Melder_require (tmin < xmax && tmax > xmin,
+			U"Invalid domain.");
 		
 		integer k = 1;
 		integer ib1 = Sampled_xToHighIndex (me, tmin);
@@ -315,7 +314,7 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 
 		// thy starting point at tmax
 
-		y = Vector_getValueAtX (thee, tmax, (thy ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (thee, tmax, ( thy ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x [k] = tmax;
 		his y [k ++] = y;
 

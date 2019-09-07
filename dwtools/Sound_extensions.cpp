@@ -2056,7 +2056,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 				}
 				if (fill) {
 					autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
-					Graphics_fillArea (g, his numberOfPoints, &his x [1], &his y [1]);
+					Graphics_fillArea (g, his numberOfPoints, & his x [1], & his y [1]);
 					fill = false;
 				}
 				previous = current;
