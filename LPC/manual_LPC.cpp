@@ -1,6 +1,6 @@
 /* manual_LPC.cpp
  *
- * Copyright (C) 1994-2016 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,14 +145,14 @@ TAG (U"##Garnish")
 DEFINITION (U"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20140117)
+MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190908)
 INTRO (U"Smoothes the selected @PowerCepstrogram by averaging cepstra. The smoothed PowerCepstrogram is the result of two separate steps. "
-	"In the first step, cepsta are averaged across time. In the second step, cepstra are averaged across quefrency.")
+	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
 TAG (U"##Time averaging window (s)")
 DEFINITION (U"determines how many frames will used in the first step, averaging across time. The user-supplied value will be divided "
 	"by the Cepstrograms's time step value (its %dx). If %%numberOfFramesToAverage%, the result of the division, turns out to be one or less, no averaging across time is performed. "
-	"If %%numberOfFramesToAverage% is larger than one and is even, one will be added. "
+	"If %%numberOfFramesToAverage% is even, one will be added. "
 	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. "
 	"For example, if %numberOfFramesToAverage turns out to be 5, then the %j-th new cepstral frame is the result of averaging the 5 frames with indices %j\\--2 , %j\\--1, %j, %j+1 and %j+2 for all frames %j=3..%%numberOfFrames%\\--2, i.e. besides frame %j, the 2 frames on either side are used in the averaging. The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. ")
 TAG (U"##Quefrency averaging window (s)")
@@ -512,14 +512,22 @@ NORMAL (U"where %N represents the number of filters that were used to get the MF
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To PowerCepstrogram...", U"djmw", 20130616)
+MAN_BEGIN (U"Sound: To PowerCepstrogram...", U"djmw", 20190908)
 INTRO (U"A command that creates a @@PowerCepstrogram@ from every selected @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)")
-DEFINITION (U"determines the effective length of the analysis window: it will be 3 longest periods long, i.e. if the pitch floor is 60 Hz, the window will be 3/60 = 0.05 seconds long.")
+DEFINITION (U"determines the effective length of the analysis window as three periods of this pitch, i.e. if the pitch floor is 60 Hz, the analysis window will be 3/60 = 0.05 seconds long.")
 TAG (U"##Time step (s)")
+DEFINITION (U"defines the distance between the centres of subsequent frames. This determines the number of frames in the resulting PowerCepstrogram.")
 TAG (U"##Maximum frequency (Hz)")
+DEFINITION (U"the maximum frequency subject to analysis.")
 TAG (U"##Pre-emphasis from (Hz)")
+ENTRY (U"Algorithm")
+NORMAL (U"The sound will first be resampled to twice the value of the %%Maximum frequency%, with "
+	"the algorithm described at @@Sound: Resample...@. After this, pre-emphasis is applied with the "
+	"algorithm described at @@Sound: Pre-emphasize (in-place)...@. For each analysis window a Gaussian "
+	"window is applied and the ##Spectrum# is calculated. The Spectrum is then transformed to a ##PowerCepstrum# with the procedure described at @@Spectrum: To PowerCepstrum@. Finally the values from the PowerCepstrum are stored in the vertical slice of the PowerCepstrogram.")
+
 MAN_END
 
 MAN_BEGIN (U"Sound: To Formant (robust)...", U"djmw", 20111027)
@@ -625,13 +633,18 @@ LIST_ITEM (U"2.  We convert the melspectrogram values to mel frequency cepstral 
 	"coefficients (see @@MelSpectrogram: To MFCC...@ for details).")
 MAN_END
 
-MAN_BEGIN (U"Spectrum: To PowerCepstrum", U"djmw", 20160909)
+MAN_BEGIN (U"Spectrum: To PowerCepstrum", U"djmw", 20190908)
 INTRO (U"A command to create a @PowerCepstrum from every selected @Spectrum.")
 ENTRY (U"Mathematical procedure")
+NORMAL (U"The spectrum %X(%f) is transformed to a new spectrum %%X%\\'p(%f), where "
+	"Re(%X\\'p(%f)) = ln (Re(%X(%f))^^2^ + Im(%X(%f))^^2^) and Im(%X\\'p(%f)) = 0.")
+NORMAL (U"The new spectrum %X\\'p(%f) is then transformed to a Sound %x(%t) by means of an inverse Fourier "
+	"transform as is described in @@Spectrum: To Sound@. The %%squares% of the transformed "
+	"values, %x(%t)^^2^, are stored in the ##PowerCepstrum#.")
 MAN_END
 
 MAN_BEGIN (U"VocalTractTier", U"djmw", 20120423)
-INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%time, %VocalTract) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
+INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%%time%, %%VocalTract%) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
 MAN_BEGIN (U"theil regression", U"djmw", 20130710)
