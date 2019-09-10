@@ -58,7 +58,7 @@ autoPolygon Polygon_circularPermutation (Polygon me, integer nshift);
 // Is point (x,y) Inside, Outside, Boundary (Edge or Vertex) ?
 int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 
-void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish);
+void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, bool garnish);
 /* reverse axis when min > max */
 
 void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark);

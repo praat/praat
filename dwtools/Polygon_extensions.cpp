@@ -122,7 +122,7 @@ void Polygon_reverseY (Polygon me) {
 	my y.get()  *=  -1.0;
 }
 
-void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish) {
+void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	double min, max, tmp;
 
 	if (my numberOfPoints != thy size)

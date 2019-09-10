@@ -1,6 +1,6 @@
 /* CCA.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ autoCCA CCA_create (integer numberOfCoefficients, integer ny, integer nx) {
 	}
 }
 
-void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, integer ivec, integer first, integer last, double ymin, double ymax, int weigh, double size_mm, conststring32 mark, int connect, int garnish) {
+void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, integer ivec, integer first, integer last, double ymin, double ymax, int weigh, double size_mm, conststring32 mark, int connect, bool garnish) {
 	Eigen e = my x.get();
 	Strings labels = my xLabels.get();
 	if (x_or_y == 1) {

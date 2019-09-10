@@ -2,7 +2,7 @@
 #define _Polynomial_h_
 /* Polynomial.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,14 +74,14 @@ double FunctionTerms_getXOfMaximum (FunctionTerms me, double x1, double x2);
 */
 
 void FunctionTerms_draw (FunctionTerms me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	int extrapolate, int garnish);
+	int extrapolate, bool garnish);
 /*
 	Extrapolate only for functions whose domain is extendable and that can be extrapolated.
 	Polynomials can be extrapolated.
 	LegendreSeries and ChebyshevSeries cannot be extrapolated.
 */
 void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, integer index, double xmin, double xmax,
-	double ymin, double ymax, int extrapolate, int garnish);
+	double ymin, double ymax, int extrapolate, bool garnish);
 
 Thing_define (Polynomial, FunctionTerms) {
 	// overridden methods:
@@ -123,7 +123,7 @@ autoPolynomial Polynomial_getDerivative (Polynomial me);
 
 autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant);
 
-void Polynomial_draw (Polynomial me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
+void Polynomial_draw (Polynomial me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
 
 double Polynomial_evaluate (Polynomial me, double x);
 
@@ -248,7 +248,7 @@ void Spline_init (Spline me, double xmin, double xmax, integer degree, integer n
 
 integer Spline_getOrder (Spline me);
 
-void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
+void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
 
 autoSpline Spline_scaleX (Spline me, double xmin, double xmax);
 /* scale domain and knots to new domain */

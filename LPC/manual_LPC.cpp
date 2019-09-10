@@ -87,13 +87,53 @@ TAG (U"##Bandwidths for smoothing test")
 DEFINITION (U"determines whether for the smoothnes determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the smoothness of a track.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20130616)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
-ENTRY (U"Description")
-NORMAL (U"The PowerCepstrogram shows @@PowerCepstrum|cepstral slices@ as a function of time.")
+#define PowerCepstrum_manual_pitchRange \
+	U"determine the limits of the quefrency range where a peak is searched for. The lower quefrency is determined as " \
+	"1 / %%pitchCeiling% and this value is in general more critical than " \
+	"the value of the upper quefrency which equals 1 / %%pitchFloor%. A %%pitchCeiling% of 300 Hz will correspond to a lower quefrency of 1/300\\~~0.0033 seconds."
+	
+#define PowerCepstrum_manual_tiltRange \
+	U"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. " \
+	"The lower value for this range in the @@Hillenbrand et al. (1994)@ article was chosen as 0.001 s " \
+	"in order to reduce the effect of very low quefrency data on the straight line fit. In our analysis this value is not so critical as we use a more robust fitting procedure."
+
+#define PowerCepstrum_manual_tiltType \
+	U"defines how to model the cepstrum background. We can either model it with a straight line as was " \
+	"done in the @@Hillenbrand et al. (1994)@ article. The slope of this line will generally be negative " \
+	"because the background amplitudes get weaker for higher quefrencies. Or, we could use an exponential " \
+	"model in which the background cepstral amplitudes decay in a non-linear fashion.  "
+
+#define PowerCepstrum_manual_fitMethod \
+	U"defines how the line that models the cepstrum backgroud is calculated. The default method is " \
+	"@@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares line fit can also be chosen."
+
+MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
+INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20130616)
+MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
+ENTRY (U"Settings")
+TAG (U"##Subtract tilt before smoothing#")
+DEFINITION (U"")
+TAG (U"##Time averaging window (s)#")
+DEFINITION (U"")
+TAG (U"##Quefrency averaging window (s)#")
+DEFINITION (U"")
+TAG (U"##Peak search pitch range (Hz)#")
+DEFINITION (PowerCepstrum_manual_pitchRange)
+TAG (U"##Tolerance#")
+DEFINITION (U"")
+TAG (U"##Interpolation#")
+DEFINITION (U"")
+TAG (U"##Tilt line quency range (s)#")
+DEFINITION (U"")
+TAG (U"##Tilt type#")
+DEFINITION (U"")
+TAG (U"##Fit method#")
+DEFINITION (U"")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20190910)
 INTRO (U"A command to create a table with @@PowerCepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (U"Settings")
 SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
@@ -104,6 +144,7 @@ SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Sinc70", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)", U"0.001", U"0.0 (= end)")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Tilt type", U"Exponential decay")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Fit method", U"Robust")
 )
 NORMAL (U"The meaning of these settings is explained @@PowerCepstrum: Get peak prominence...|here@.")
@@ -145,12 +186,12 @@ TAG (U"##Garnish")
 DEFINITION (U"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190908)
-INTRO (U"Smoothes the selected @PowerCepstrogram by averaging cepstra. The smoothed PowerCepstrogram is the result of two separate steps. "
+MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190909)
+INTRO (U"Smoothes the selected @PowerCepstrogram by averaging. The smoothed PowerCepstrogram is the result of two separate steps. "
 	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
 TAG (U"##Time averaging window (s)")
-DEFINITION (U"determines how many frames will used in the first step, averaging across time. The user-supplied value will be divided "
+DEFINITION (U"determines how many frames will be used in the first step, averaging across time. The user-supplied value will be divided "
 	"by the Cepstrograms's time step value (its %dx). If %%numberOfFramesToAverage%, the result of the division, turns out to be one or less, no averaging across time is performed. "
 	"If %%numberOfFramesToAverage% is even, one will be added. "
 	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. "
@@ -178,7 +219,8 @@ MAN_END
 MAN_BEGIN (U"PowerCepstrum", U"djmw", 20130616)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (U"Description")
-NORMAL (U"A PowerCepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds.")
+NORMAL (U"A PowerCepstrum is the log power spectrum of the log power spectrum. The vertical scale "
+	"will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds. It is calculated from the ##Spectrum# by a method described at @@Spectrum: To PowerCepstrum@.")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrum: Get peak prominence...", U"djmw", 20130616)
@@ -198,24 +240,99 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Fit method", U"Robust")
 )
 TAG (U"##Search peak in pitch range")
-DEFINITION (U"determine the limits of the quefrency range where a peak is searched for. The lower quefrency is determined as "
-	"1 / %%pitchCeiling% and this value is in general more critical than "
-	"the value of the upper quefrency which equals 1 / %%pitchFloor%. A %%pitchCeiling% of 300 Hz will correspond to a lower quefrency of 1/300\\~~0.0033 seconds.")
+DEFINITION (PowerCepstrum_manual_pitchRange)
 TAG (U"##Interpolation")
-DEFINITION (U"determines how the @@vector peak interpolation|amplitude of a peak is determined@.")
+DEFINITION (U"determines how the @@vector peak interpolation|amplitude and position of a peak are determined@.")
 TAG (U"##Tilt line quefrency range")
-DEFINITION (U"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. "
-	"The lower value for this range in the Hillenbrand article was chosen as 0.001 s "
-	"in order to reduce the effect of the low quefrency data on the straight line fit. In our analysis this value is not so critical "
-	"as we use a more robust straight line fit.")
+DEFINITION (PowerCepstrum_manual_tiltRange)
+TAG (U"##Tilt type#")
+DEFINITION (PowerCepstrum_manual_tiltType)
 TAG (U"##Fit method")
-DEFINITION (U"the default method is @@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares line fit has also  been implemented.")
+DEFINITION (PowerCepstrum_manual_fitMethod)
 ENTRY (U"Note")
 NORMAL (U"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw tilt line...", U"djmw", 20130616)
-INTRO (U"Draws the line that models the backgound of the power cepstrum.")
+MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190910)
+INTRO (U"A command to draw the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Quefrency range (s)#")
+DEFINITION (U"define the extrema of the horizontal scale of the picture.")
+TAG (U"##Amplitude range (dB)#")
+DEFINITION (U"defines the extrema of the vertical scale of the picture")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Draw tilt line...", U"djmw", 20190909)
+INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Quefrency range (s)#")
+DEFINITION (U"define the extrema of the horizontal scale of the picture.")
+TAG (U"##Amplitude range (dB)#")
+DEFINITION (U"defines the extrema of the vertical scale of the picture")
+TAG (U"##Tilt line quefrency range (s)")
+DEFINITION (PowerCepstrum_manual_tiltRange)
+TAG (U"##Tilt type#")
+DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Fit method")
+DEFINITION (PowerCepstrum_manual_fitMethod)
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Get peak...", U"djmw", 20190910)
+INTRO (U"Get the amplitude of the peak in the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Search peak in pitch range (Hz)#")
+DEFINITION (PowerCepstrum_manual_pitchRange)
+TAG (U"##Interpolation#")
+DEFINITION (U"determines how the @@vector peak interpolation|amplitude and position of a peak are determined@.")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Get quefrency of peak...", U"djmw", 20190910)
+INTRO (U"A command to get the quefrency of the peak in the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Search peak in pitch range (Hz)#")
+DEFINITION (PowerCepstrum_manual_pitchRange)
+TAG (U"##Interpolation#")
+DEFINITION (U"determines how the @@vector peak interpolation|amplitude and position of a peak are determined@.")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Get tilt line slope...", U"djmw", 20190910)
+INTRO (U"A command to calculate the slope of the line that models the cepstrum background of the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Tilt line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_tiltRange)
+TAG (U"##Tilt type#")
+DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Fit method")
+DEFINITION (PowerCepstrum_manual_fitMethod)
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Get tilt line intercept...", U"djmw", 20190910)
+INTRO (U"A command to calculate the intercept of the line that models the cepstrum background of the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Tilt line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_tiltRange)
+TAG (U"##Tilt type#")
+DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Fit method")
+DEFINITION (PowerCepstrum_manual_fitMethod)
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Smooth...", U"djmw", 20190910)
+INTRO (U"")
+ENTRY (U"Settings")
+TAG (U"###")
+DEFINITION (U"")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Subtract tilt...", U"djmw", 20190910)
+INTRO (U"Subtract spectral tilt from the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Tilt line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_tiltRange)
+TAG (U"##Tilt type#")
+DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Fit method#")
+DEFINITION (U"")
 MAN_END
 
 MAN_BEGIN (U"Formant & Spectrogram: To IntensityTier...", U"djmw", 20130109)
@@ -647,7 +764,7 @@ MAN_BEGIN (U"VocalTractTier", U"djmw", 20120423)
 INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%%time%, %%VocalTract%) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
-MAN_BEGIN (U"theil regression", U"djmw", 20130710)
+MAN_BEGIN (U"theil regression", U"djmw", 20190909)
 NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. The slope of the regression line is estimated as "
 	"the median of all pairwise slopes between each pair of points in the data set. Because this number of pairs increases quadratically "
 	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, in two equal sets "
@@ -655,7 +772,7 @@ NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. 
 FORMULA (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
 NORMAL (U"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (U"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
-NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3% of the input data-points without degradation of its accuracy")
+NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3\\% of the input data-points without degradation of its accuracy")
 MAN_END
 
 MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)

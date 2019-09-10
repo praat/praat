@@ -56,7 +56,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
 
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
-	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int garnish);
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, bool garnish);
 
 void SSCP_setNumberOfObservations (SSCP me, double numberOfObservations);
 

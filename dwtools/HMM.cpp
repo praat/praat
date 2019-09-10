@@ -645,7 +645,7 @@ double HMM_HMM_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObse
 	return (ce1 + ce2) / 2.0;
 }
 
-void HMM_draw (HMM me, Graphics g, int garnish) {
+void HMM_draw (HMM me, Graphics g, bool garnish) {
 	double xwidth = sqrt (my numberOfStates);
 	double rstate = 0.3 / xwidth, r = xwidth / 3.0;
 	double xmax = 1.2 * xwidth / 2.0, xmin = -xmax, ymin = xmin, ymax = xmax;
@@ -985,7 +985,7 @@ void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee
 
 
 // xc1 < xc2
-void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish) {
+void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, bool connect, bool garnish) {
 	integer numberOfTimes = thy numberOfStrings;
 	autoStringsIndex si = HMM_HMMStateSequence_to_StringsIndex (me, thee);
 	double xmin = 0.0, xmax = numberOfTimes + 1.0, ymin = 0.5, ymax = my numberOfStates + 0.5;
