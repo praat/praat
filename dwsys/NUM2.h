@@ -1154,7 +1154,7 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
  * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
-void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod);
+void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool completeMethod);
 /*
  * Preconditions:
  *		all x[i] should be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints

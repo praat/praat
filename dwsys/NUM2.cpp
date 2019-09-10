@@ -1897,7 +1897,7 @@ integer NUMgetIndexFromProbability (constVEC probs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod) {
+void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool completeMethod) {
 	try {
 		Melder_require (x.size == y.size,
 			U"NUMlineFit_theil: the sizes of the two vectors should be equal.");
@@ -1919,7 +1919,7 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 		} else {
 			integer numberOfCombinations;
 			autoVEC mbs;
-			if (incompleteMethod) {
+			if (! completeMethod) {
 				numberOfCombinations = x.size / 2;
 				mbs = newVECzero (x.size); // allocate twice the space for convenience later
 				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
@@ -1973,9 +1973,9 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
 	if (method == 1)
 		NUMlineFit_LS (x, y, out_m, out_intercept);
 	else if (method == 3)
-		NUMlineFit_theil (x, y, out_m, out_intercept, false);
-	else
 		NUMlineFit_theil (x, y, out_m, out_intercept, true);
+	else
+		NUMlineFit_theil (x, y, out_m, out_intercept, false);
 }
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
