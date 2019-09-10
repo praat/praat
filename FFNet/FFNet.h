@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-2018 David Weenink
+ * Copyright (C) 1997-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,20 +210,20 @@ void FFNet_drawTopology (FFNet me, Graphics g);
 
 void FFNet_drawActivation (FFNet me, Graphics g);
 
-void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int toLayer, int scaling, int garnish);
+void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int toLayer, int scaling, bool garnish);
 /* Deprecated: the strengths of the weights that connect to the nodes in later 'layer' */
 /* are drawn with boxes. The area of each box corresponds to the strength. */
 /* Black boxes have negative strength? */
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, integer from_iteration, integer to_iteration,
-	double from_cost, double to_cost, int garnish);
+	double from_cost, double to_cost, bool garnish);
 /* draw cost vs epochs */
 
 autoCollection FFNet_createIrisExample (integer numberOfHidden1, integer numberOfHidden2);
 
 autoTableOfReal FFNet_extractWeights (FFNet me, integer layer);
 
-void FFNet_drawWeights (FFNet me, Graphics g, integer layer, int garnish);
+void FFNet_drawWeights (FFNet me, Graphics g, integer layer, bool garnish);
 
 autoFFNet FFNet_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, integer layer);
 

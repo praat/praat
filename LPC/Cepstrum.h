@@ -74,9 +74,9 @@ autoPowerCepstrum PowerCepstrum_create (double qmax, integer nq);
 		my z [1..ny] [1..nx] == 0.0;
 */
 
-void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
+void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, bool garnish);
 
-void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int garnish);
+void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish);
 
 void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTiltType lineType, kCepstrumTiltFit method);
 /*

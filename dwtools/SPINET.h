@@ -2,7 +2,7 @@
 #define _SPINET_h_
 /* SPINET.h
  *
- * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
 	double fromErb, double toErb, double minimum, double maximum, int enhanced,
-	int garnish);
+	bool garnish);
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
-	double minimum, double maximum, int enhanced, int garnish);
+	double minimum, double maximum, int enhanced, bool garnish);
 
 #endif /* _SPINET_h_ */

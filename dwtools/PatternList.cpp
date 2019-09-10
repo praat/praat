@@ -68,7 +68,7 @@ void PatternList_normalize (PatternList me, int choice, double pmin, double pmax
 	}
 }
 
-void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
+void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	Matrix_drawRows (me, g, xmin, xmax, pattern - 0.5, pattern + 0.5, ymin, ymax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

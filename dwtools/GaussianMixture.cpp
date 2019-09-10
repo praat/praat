@@ -462,7 +462,7 @@ void GaussianMixture_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee
 	GaussianMixture_PCA_getIntervalsAlongDirections (me, thee, d, d, nsigmas, xmin, xmax, nullptr, nullptr);
 }
 
-void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
+void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, bool garnish) {
 	Melder_require (my dimension == thy dimension,
 		U"The dimensions should agree.");
 	Melder_require (d >= 1 && d <= my dimension,
@@ -541,7 +541,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 }
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale,
-	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish)
+	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
 {
 	Melder_require (my dimension == his dimension,
 		U"The numbers of dimensions should agree.");
@@ -580,7 +580,7 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 }
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label,
-	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, int garnish)
+	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
 {
 	Melder_require (integer_abs (d1) >= 1 && integer_abs (d1) <= my dimension && integer_abs (d2) >= 1 && integer_abs (d2) <= my dimension,
 		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for "

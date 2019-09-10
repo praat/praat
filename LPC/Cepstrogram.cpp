@@ -64,7 +64,7 @@ autoPowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, integer 
 	}
 }
 
-void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBmaximum, int autoscaling, double dynamicRangedB, double dynamicCompression, int garnish) {
+void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBmaximum, int autoscaling, double dynamicRangedB, double dynamicCompression, bool garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (qmax <= qmin) { qmin = my ymin; qmax = my ymax; }
 	integer itmin, itmax, ifmin, ifmax;
@@ -148,7 +148,7 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer i = 1; i <= my nx; i ++) {
 			his z.row (1) <<= my z.column (i);
-			double qpeak, cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.get(), pitchFloor, pitchCeiling, &qpeak);
+			double qpeak, cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.get(), pitchFloor, pitchCeiling, & qpeak);
 			double time = Sampled_indexToX (me, i);
 			Table_setNumericValue (thee.get(), i, 1, time);
 			Table_setNumericValue (thee.get(), i, 2, qpeak);
@@ -353,7 +353,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			thy z [1] [i] -= 0.9 * thy z [1] [i - 1];
 
 		integer nosInWindow = Melder_ifloor (analysisWidth * samplingFrequency), numberOfFrames;
-		Melder_require (nosInWindow >= 8, U"Analysis window too short.");
+		Melder_require (nosInWindow >= 8,
+			U"Analysis window too short.");
 
 		double t1;
 		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & numberOfFrames, & t1);

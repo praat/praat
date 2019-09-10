@@ -264,7 +264,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 	}
 }
 
-void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, double phase_min, double phase_max, int unwrap, int garnish) {
+void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, double phase_min, double phase_max, int unwrap, bool garnish) {
 	autoMatrix thee;
 	int reverse_sign = my z [1] [1] < 0;
 

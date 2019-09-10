@@ -86,7 +86,7 @@ autoPowerCepstrum PowerCepstrum_create (double qmax, integer nq) {
 	}
 }
 
-static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int power, int garnish) {
+static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int power, bool garnish) {
 	int autoscaling = minimum >= maximum;
 
 	Graphics_setInner (g);
@@ -126,11 +126,11 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 	}
 }
 
-void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int garnish) {
+void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish) {
 	_Cepstrum_draw (me, g, qmin, qmax, minimum, maximum, 0, garnish);
 }
 
-void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish) {
+void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, bool garnish) {
 	_Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, 1, garnish);
 }
 
@@ -207,9 +207,8 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 	Graphics_unsetInner (g);
 }
 
-/* Fit line y = ax+b (lineType ==1) or y = a log(x) + b (lineType == 2) on interval [qmin,qmax]
- * method == 1 : Least squares fit
- * method == 2 : Theil's partial robust fit
+/*
+	Fit line y = ax+b or y = a log(x) + b  on interval [qmin,qmax]
  */
 void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrumTiltType lineType, kCepstrumTiltFit method) {
 	try {

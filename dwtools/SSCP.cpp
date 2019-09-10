@@ -316,9 +316,10 @@ double SSCP_getFractionVariation (SSCP me, integer from, integer to) {
 }
 
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
-	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int garnish)
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, bool garnish)
 {
-	Melder_require (d1 > 0 && d1 <= my numberOfRows && d2 > 0 && d2 <= my numberOfRows && d1 != d2, U"Incorrect axes.");
+	Melder_require (d1 > 0 && d1 <= my numberOfRows && d2 > 0 && d2 <= my numberOfRows && d1 != d2,
+		U"Incorrect axes.");
 
 	autoSSCP thee = _SSCP_extractTwoDimensions (me, d1, d2);
 

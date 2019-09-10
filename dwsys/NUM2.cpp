@@ -125,7 +125,8 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 }
 
 autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) {
-	Melder_require (ndf >= 0 && x.nrow - ndf > 0, U"Invalid arguments.");
+	Melder_require (ndf >= 0 && x.nrow - ndf > 0,
+		U"Invalid arguments.");
 	autoMAT covar = newMATmtm (x);
 	covar.all()  *=  1.0 / (x.nrow - ndf);
 	return covar;
@@ -229,7 +230,8 @@ double NUMdeterminant_fromSymmetricMatrix (constMAT m) {
 	char uplo = 'U';
 	integer lda = m.nrow, info;
 	NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & lda, & info);
-	Melder_require (info == 0, U"dpotf2 cannot determine Cholesky decomposition.");
+	Melder_require (info == 0,
+		U"dpotf2 cannot determine Cholesky decomposition.");
 	longdouble lnd = 0.0;
 	for (integer i = 1; i <= a.nrow; i ++) {
 		lnd += log (a [i] [i]);
@@ -247,7 +249,8 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 	// Fortran storage -> use uplo='U' to get 'L'.
 
 	(void) NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & a.nrow, & info);
-	Melder_require (info == 0, U"dpotf2 fails with code ", info, U".");
+	Melder_require (info == 0,
+		U"dpotf2 fails with code ", info, U".");
 
 	// Determinant from diagonal, diagonal is now sqrt (a [i] [i]) !
 
@@ -261,7 +264,8 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 	// Get the inverse */
 
 	(void) NUMlapack_dtrtri (& uplo, & diag, & a.nrow, & a [1] [1], & a.nrow, & info);
-	Melder_require (info == 0, U"dtrtri fails with code ", info, U".");
+	Melder_require (info == 0,
+		U"dtrtri fails with code ", info, U".");
 }
 
 autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m) {
@@ -430,7 +434,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 
 	char uplo = 'U';
 	(void) NUMlapack_dpotf2 (& uplo, & n3, & ftinv [1] [1], & n3, & info);
-	Melder_require (info == 0, U"dpotf2 fails.");
+	Melder_require (info == 0,
+		U"dpotf2 fails.");
 	
 	ftinv [1] [2] = ftinv [1] [3] = ftinv [2] [3] = 0.0;
 
@@ -677,7 +682,8 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	double trace = NUMsum (svd -> d.all());
-	Melder_require (trace > 0.0, U"NUMprocrustes: degenerate configuration(s).");
+	Melder_require (trace > 0.0,
+		U"NUMprocrustes: degenerate configuration(s).");
 
 	// 3. T = VU'
 
@@ -1599,7 +1605,8 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 			continue;
 
 		ni ++;
-		Melder_require (ni <= 3, U"Too many intersections.");
+		Melder_require (ni <= 3,
+			U"Too many intersections.");
 		
 		xi [ni] = x3;
 		yi [ni] = y3;
@@ -1988,7 +1995,8 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 	a.get() <<= lpc;
 	for (integer m = lpc.size; m > 0; m--) {
 		rc [m] = a [m];
-		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
+		Melder_require (fabs (rc [m]) <= 1.0,
+			U"Relection coefficient [", m, U"] larger than 1.");
 		b.part (1, m) <<= a.part (1, m);
 		for (integer i = 1; i < m; i ++)
 			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
@@ -2049,7 +2057,8 @@ void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoVEC a <<= VEC(lpc, p);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
-		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
+		Melder_require (fabs (rc [m]) <= 1.0,
+			U"Relection coefficient [", m, U"] larger than 1.");
 		for (integer i = 1; i < m; i ++) {
 			b [i] = a [i];
 		}
@@ -2530,9 +2539,11 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 	if (*highIndex < *lowIndex) {
 		*lowIndex = lowerLimit; *highIndex = upperLimit;
 	} else if (*highIndex == *lowIndex) {
-		Melder_require (*lowIndex >= lowerLimit && *highIndex <= upperLimit, U"Both lower and upper indices are out of range.");
+		Melder_require (*lowIndex >= lowerLimit && *highIndex <= upperLimit,
+			U"Both lower and upper indices are out of range.");
 	} else { // low < high
-		Melder_require (*lowIndex < upperLimit && *highIndex > lowerLimit, U"Both lower and upper indices are out of range.");
+		Melder_require (*lowIndex < upperLimit && *highIndex > lowerLimit,
+			U"Both lower and upper indices are out of range.");
 		if (*lowIndex < lowerLimit)
 			*lowIndex = lowerLimit;
 		if (*highIndex > upperLimit)
