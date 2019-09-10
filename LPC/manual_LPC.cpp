@@ -87,10 +87,30 @@ TAG (U"##Bandwidths for smoothing test")
 DEFINITION (U"determines whether for the smoothnes determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the smoothness of a track.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20130616)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
-ENTRY (U"Description")
-NORMAL (U"The PowerCepstrogram shows @@PowerCepstrum|cepstral slices@ as a function of time.")
+MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
+INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
+ENTRY (U"Settings")
+TAG (U"##Subtract tilt before smoothing#")
+DEFINITION (U"")
+TAG (U"##Time averaging window (s)#")
+DEFINITION (U"")
+TAG (U"##Quefrency averaging window (s)#")
+DEFINITION (U"")
+TAG (U"##Peak search pitch range (Hz)#")
+DEFINITION (U"")
+TAG (U"##Tolerance#")
+DEFINITION (U"")
+TAG (U"##Interpolation#")
+DEFINITION (U"")
+TAG (U"##Tilt line quency range (s)#")
+DEFINITION (U"")
+TAG (U"##Line type#")
+DEFINITION (U"")
+TAG (U"##Fit method#")
+DEFINITION (U"")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20130616)
@@ -145,12 +165,12 @@ TAG (U"##Garnish")
 DEFINITION (U"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190908)
-INTRO (U"Smoothes the selected @PowerCepstrogram by averaging cepstra. The smoothed PowerCepstrogram is the result of two separate steps. "
+MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190909)
+INTRO (U"Smoothes the selected @PowerCepstrogram by averaging. The smoothed PowerCepstrogram is the result of two separate steps. "
 	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
 TAG (U"##Time averaging window (s)")
-DEFINITION (U"determines how many frames will used in the first step, averaging across time. The user-supplied value will be divided "
+DEFINITION (U"determines how many frames will be used in the first step, averaging across time. The user-supplied value will be divided "
 	"by the Cepstrograms's time step value (its %dx). If %%numberOfFramesToAverage%, the result of the division, turns out to be one or less, no averaging across time is performed. "
 	"If %%numberOfFramesToAverage% is even, one will be added. "
 	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. "
@@ -214,8 +234,19 @@ ENTRY (U"Note")
 NORMAL (U"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw tilt line...", U"djmw", 20130616)
-INTRO (U"Draws the line that models the backgound of the power cepstrum.")
+MAN_BEGIN (U"PowerCepstrum: Draw tilt line...", U"djmw", 20190909)
+INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Subtract tilt...", U"djmw", 20190910)
+INTRO (U"Subtract spectral tilt from the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Tilt line quefrency range (s)#")
+DEFINITION (U"")
+TAG (U"##Line type#")
+DEFINITION (U"")
+TAG (U"##Fit method#")
+DEFINITION (U"")
 MAN_END
 
 MAN_BEGIN (U"Formant & Spectrogram: To IntensityTier...", U"djmw", 20130109)
@@ -647,7 +678,7 @@ MAN_BEGIN (U"VocalTractTier", U"djmw", 20120423)
 INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%%time%, %%VocalTract%) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
-MAN_BEGIN (U"theil regression", U"djmw", 20130710)
+MAN_BEGIN (U"theil regression", U"djmw", 20190909)
 NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. The slope of the regression line is estimated as "
 	"the median of all pairwise slopes between each pair of points in the data set. Because this number of pairs increases quadratically "
 	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, in two equal sets "
@@ -655,7 +686,7 @@ NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. 
 FORMULA (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
 NORMAL (U"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (U"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
-NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3% of the input data-points without degradation of its accuracy")
+NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3\\% of the input data-points without degradation of its accuracy")
 MAN_END
 
 MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)

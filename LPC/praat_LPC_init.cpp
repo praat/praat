@@ -244,7 +244,7 @@ DO
 	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
-FORM (MODIFY_PowerCepstrum_subtractTilt_inplace, U"PowerCepstrum: Subtract tilt (in-place)", nullptr) {
+FORM (MODIFY_PowerCepstrum_subtractTilt_inplace, U"PowerCepstrum: Subtract tilt (in-place)", U"PowerCepstrum: Subtract tilt...") {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (lineType, U"Line type", 1)
@@ -423,8 +423,8 @@ DO
 	NUMBER_ONE_END (U" dB")
 }
 
-FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", nullptr) {
-	LABEL (U"Smoothing:")
+FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
+	LABEL (U"Smoothing of the Cepstrogram")
 	BOOLEAN (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
 	REAL (smoothingWindowDuration, U"Time averaging window (s)", U"0.02")
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
