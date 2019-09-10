@@ -1,6 +1,6 @@
 /* Cepstrum.cpp
  *
- * Copyright (C) 1994-2016 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax,
 	_Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, 1, garnish);
 }
 
-void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, int lineType, int method) {
+void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTiltType lineType, kCepstrumTiltFit method) {
 
 	Graphics_setInner (g);
 
@@ -168,13 +168,13 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 	qend = qend > my xmax ? my xmax : qend;
 
 	double a, intercept;
-	PowerCepstrum_fitTiltLine (me, qstart, qend, &a, &intercept, lineType, method);
+	PowerCepstrum_fitTiltLine (me, qstart, qend, & a, & intercept, lineType, method);
 	/*
 	 * Don't draw part outside window
 	 */
 	double lineWidth =  Graphics_inqLineWidth (g);
 	Graphics_setLineWidth (g, 2);
-	if (lineType == 2) {
+	if (lineType == kCepstrumTiltType::ExponentialDecay ) {
 		integer n = 500;
 		double dq = (qend - qstart) / (n + 1);
 		double q1 = qstart;
@@ -211,7 +211,7 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
  * method == 1 : Least squares fit
  * method == 2 : Theil's partial robust fit
  */
-void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, int lineType, int method) {
+void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrumTiltType lineType, kCepstrumTiltFit method) {
 	try {
 		double a, intercept;
 		if (qmax <= qmin) {
@@ -222,43 +222,34 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		integer imin, imax;
 		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax))
 			return;
-		imin = (lineType == 2 && imin == 1) ? 2 : imin; // log(0) is undefined!
+		if (imin == 1 && lineType == kCepstrumTiltType::ExponentialDecay)
+			imin = 2; // because log(0) is undefined
 		integer numberOfPoints = imax - imin + 1;
-		Melder_require (numberOfPoints > 1, U"Not enough points for fit.");
+		Melder_require (numberOfPoints > 1,
+			U"Not enough points for fit.");
 
 		autoVEC y = newVECraw (numberOfPoints);
 		autoVEC x = newVECraw (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
-			if (lineType == 2)
+			if (lineType == kCepstrumTiltType::ExponentialDecay)
 				x [i] = log (x [i]);
 			y [i] = my v_getValueAtSample (isamp, 1, 0);
 		}
-		if (method == 3) { // try local maxima first
-			autoVEC ym = newVECraw (numberOfPoints / 2 + 1);
-			autoVEC xm = newVECraw (numberOfPoints / 2 + 1);
-			integer numberOfLocalPeaks = 0;
-			// forget y [1] if y [2]<y [1] and y [n] if y [n-1]<y [n] !
-			for (integer i = 2; i <= numberOfPoints; i ++) {
-				if (y [i - 1] <= y [i] && y [i] > y [i + 1]) {
-					ym [++ numberOfLocalPeaks] = y [i];
-					xm [numberOfLocalPeaks] = x [i];
-				}
-			}
-			if (numberOfLocalPeaks > numberOfPoints / 10) {
-				for (integer i = 1; i <= numberOfLocalPeaks; i ++) {
-					x [i] = xm [i];
-					y [i] = ym [i];
-				}
-				numberOfPoints = numberOfLocalPeaks;
-			}
-			method = 2; // robust fit of peaks
+		if (method == kCepstrumTiltFit::LeastSquares)
+			NUMlineFit_LS (x.get(), y.get(), & a, & intercept);
+		else if (method == kCepstrumTiltFit::RobustFast)
+			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, false);
+		else if (method == kCepstrumTiltFit::RobustSlow)
+			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, true);
+		else {
+			Melder_throw (U"Invalid mehod.");
 		}
-		// fit a straight line through (x,y)'s
-		NUMlineFit (x.get(), y.get(), & a, & intercept, method);
-		if (out_intercept) *out_intercept = intercept;
-		if (out_a) *out_a = a; 
+		if (out_intercept)
+			*out_intercept = intercept;
+		if (out_a)
+			*out_a = a;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't fit a line.");
 	}
@@ -280,11 +271,11 @@ static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slo
 #endif
 
 // clip with tilt line
-static void PowerCepstrum_subtractTiltLine_inplace (PowerCepstrum me, double slope, double intercept, int lineType) {
+static void PowerCepstrum_subtractTiltLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrumTiltType lineType) {
 	for (integer j = 1; j <= my nx; j ++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
-		double xq = lineType == 2 ? log(q) : q;
+		double xq = lineType == kCepstrumTiltType::ExponentialDecay ? log(q) : q;
 		double db_background = slope * xq + intercept;
 		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
 		double diff = db_cepstrum - db_background;
@@ -296,13 +287,13 @@ static void PowerCepstrum_subtractTiltLine_inplace (PowerCepstrum me, double slo
 }
 
 
-void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	double slope, intercept;
-	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, &slope, &intercept, lineType, fitMethod);
+	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
 	PowerCepstrum_subtractTiltLine_inplace (me, slope, intercept, lineType);
 }
 
-autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	try {
 		autoPowerCepstrum thee = Data_copy (me);
 		PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit,  qendFit, lineType, fitMethod);
@@ -390,22 +381,23 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *out_qpeak) {
 	double slope, intercept, quefrency, peakdB;
-	PowerCepstrum_fitTiltLine (me, 0.001, 0, & slope, & intercept, 1, 1);
+	PowerCepstrum_fitTiltLine (me, 0.001, 0, & slope, & intercept, kCepstrumTiltType::Linear, kCepstrumTiltFit::LeastSquares);
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_subtractTiltLine_inplace (thee.get(), slope, intercept, 1);
+	PowerCepstrum_subtractTiltLine_inplace (thee.get(), slope, intercept, kCepstrumTiltType::Linear);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);
 	if (out_qpeak) *out_qpeak = quefrency;
 	return peakdB;
 }
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *out_qpeak) {
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType  lineType, kCepstrumTiltFit fitMethod, double *out_qpeak) {
 	double slope, intercept, qpeak, peakdB;
 	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, &slope, &intercept, lineType, fitMethod);
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, & peakdB, & qpeak);
-	double xq = lineType == 2 ? log(qpeak) : qpeak;
+	double xq = lineType == kCepstrumTiltType::ExponentialDecay ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;
-	if (out_qpeak) *out_qpeak = qpeak;
+	if (out_qpeak)
+		*out_qpeak = qpeak;
 	return cpp;
 }
 

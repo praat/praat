@@ -108,12 +108,8 @@ FORM (GRAPHICS_PowerCepstrum_drawTiltLine, U"PowerCepstrum: Draw tilt line", U"P
 	LABEL (U"Parameters for the tilt line fit")
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 1)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	GRAPHICS_EACH (PowerCepstrum)
@@ -189,30 +185,22 @@ DO
 FORM (REAL_PowerCepstrum_getTiltLineSlope, U"PowerCepstrum: Get tilt line slope", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 1)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTiltLine (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, & result, nullptr, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB / ", lineType == 1 ? U"s" : U"ln (s)");
+	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTiltType::Linear ? U"s" : U"ln (s)");
 }
 
 
 FORM (REAL_PowerCepstrum_getTiltLineIntercept, U"PowerCepstrum: Get tilt line intercept", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 1)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-	OPTION (U"Least squares")
-	OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
@@ -231,12 +219,8 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 		RADIOBUTTON (U"Sinc70")
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 1)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
@@ -247,12 +231,8 @@ DO
 FORM (MODIFY_PowerCepstrum_subtractTilt_inplace, U"PowerCepstrum: Subtract tilt (in-place)", U"PowerCepstrum: Subtract tilt...") {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 1)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (PowerCepstrum)
@@ -283,12 +263,8 @@ DO
 FORM (NEW_PowerCepstrum_subtractTilt, U"PowerCepstrum: Subtract tilt", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 1)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (PowerCepstrum)
@@ -379,12 +355,8 @@ DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
 FORM (NEW_PowerCepstrogram_subtractTilt, U"PowerCepstrogram: Subtract tilt", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 2)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (PowerCepstrogram)
@@ -395,12 +367,8 @@ DO
 FORM (MODIFY_PowerCepstrogram_subtractTilt_inplace, U"PowerCepstrogram: Subtract tilt (in-place)", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 2)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (PowerCepstrogram)
@@ -440,12 +408,8 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 	LABEL (U"Tilt line:")
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 2)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrogram)
@@ -486,12 +450,8 @@ FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prom
 		RADIOBUTTON (U"Sinc70")
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (lineType, U"Line type", 2)
-		OPTION (U"Straight")
-		OPTION (U"Exponential decay")
-	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Line type", kCepstrumTiltType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (PowerCepstrogram)

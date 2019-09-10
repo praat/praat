@@ -1,6 +1,6 @@
 /* Cepstrogram.cpp
  *
- * Copyright (C) 2013 - 2017 David Weenink
+ * Copyright (C) 2013 - 2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,12 @@
 #include "NUM2.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_extensions.h"
+
+
+#include "enums_getText.h"
+#include "Cepstrum_enums.h"
+#include "enums_getValue.h"
+#include "Cepstrum_enums.h"
 
 #define TOLOG(x) ((1 / NUMln10) * log ((x) + 1e-30))
 #define TO10LOG(x) ((10 / NUMln10) * log ((x) + 1e-30))
@@ -112,7 +118,7 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	}
 }
 
-void PowerCepstrogram_subtractTilt_inplace (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+void PowerCepstrogram_subtractTilt_inplace (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		for (integer i = 1; i <= my nx; i ++) {
@@ -125,7 +131,7 @@ void PowerCepstrogram_subtractTilt_inplace (PowerCepstrogram me, double qstartFi
 	}
 }
 
-autoPowerCepstrogram PowerCepstrogram_subtractTilt (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+autoPowerCepstrogram PowerCepstrogram_subtractTilt (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
 		PowerCepstrogram_subtractTilt_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
@@ -155,7 +161,7 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 	}
 }
 
-autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod) {
+autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0 rnr");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
@@ -406,7 +412,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 	}
 }
 
-double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod) {
+double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	try {
 		autoPowerCepstrogram flattened;
 		if (subtractTiltBeforeSmoothing)
@@ -425,7 +431,7 @@ double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractT
 	try {
 		autoPowerCepstrogram him;
 		if (subtractTiltBeforeSmoothing)
-			him = PowerCepstrogram_subtractTilt (me, 0.001, 0, 1, 1);
+			him = PowerCepstrogram_subtractTilt (me, 0.001, 0, kCepstrumTiltType::Linear, kCepstrumTiltFit::LeastSquares);
 
 		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTiltBeforeSmoothing ? him.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
 		autoTable table = PowerCepstrogram_to_Table_hillenbrand (smooth.get(), pitchFloor, pitchCeiling);
