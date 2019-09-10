@@ -119,7 +119,7 @@ autoHMM HMM_createFullContinuousModel (int leftToRight, integer numberOfStates, 
 
 autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer numberOfStates, int leftToRight);
 
-void HMM_draw (HMM me, Graphics g, int garnish);
+void HMM_draw (HMM me, Graphics g, bool garnish);
 
 void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish);
 
@@ -184,7 +184,7 @@ double HMM_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee);
 
 void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info);
 
-void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish);
+void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, bool connect, bool garnish);
 
 double HMM_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee);
 

@@ -33,10 +33,10 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 	 double excitationErbProportion, double inhibitionErbProportion);
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
-	double fromErb, double toErb, double minimum, double maximum, int enhanced,
+	double fromErb, double toErb, double minimum, double maximum, bool enhanced,
 	bool garnish);
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
-	double minimum, double maximum, int enhanced, bool garnish);
+	double minimum, double maximum, bool enhanced, bool garnish);
 
 #endif /* _SPINET_h_ */

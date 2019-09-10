@@ -39,7 +39,7 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 
 void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, kGraphicsMatrixOrigin origin, double cellAreaScaleFactor, kGraphicsMatrixCellDrawingOrder drawingOrder);
 
-void Matrix_drawAsSquares (Matrix me, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnished);
+void Matrix_drawAsSquares (Matrix me, Graphics graphics, double xmin, double xmax, double ymin, double ymax, bool garnished);
 /* Draw a Matrix as small squares whose area correspond to the matrix element */
 /* The square is filled with black if the weights are negative					*/
 

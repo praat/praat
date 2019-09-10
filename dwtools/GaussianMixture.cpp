@@ -498,7 +498,7 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 	}
 }
 
-void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer /* nbins */, int garnish) {
+void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer /* nbins */, bool garnish) {
 	Melder_require (d >= 1 && d <= my dimension,
 		U"The dimension should be in the range from 1 to ", my dimension, U".");
 	
