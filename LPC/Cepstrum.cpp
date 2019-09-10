@@ -244,7 +244,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		else if (method == kCepstrumTiltFit::RobustSlow)
 			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, true);
 		else {
-			Melder_throw (U"Invalid mehod.");
+			Melder_throw (U"Invalid method.");
 		}
 		if (out_intercept)
 			*out_intercept = intercept;
@@ -296,7 +296,7 @@ void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, dou
 autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
 	try {
 		autoPowerCepstrum thee = Data_copy (me);
-		PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit,  qendFit, lineType, fitMethod);
+		PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't subtract tilt line.");
@@ -343,7 +343,7 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
 	double rnr = undefined;
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
-	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, &peakdB, &qpeak);
+	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, & peakdB, & qpeak);
 	integer imin, imax;
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax))
 		return rnr;
@@ -385,13 +385,14 @@ double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pit
 	autoPowerCepstrum thee = Data_copy (me);
 	PowerCepstrum_subtractTiltLine_inplace (thee.get(), slope, intercept, kCepstrumTiltType::Linear);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);
-	if (out_qpeak) *out_qpeak = quefrency;
+	if (out_qpeak)
+		*out_qpeak = quefrency;
 	return peakdB;
 }
 
 double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType  lineType, kCepstrumTiltFit fitMethod, double *out_qpeak) {
 	double slope, intercept, qpeak, peakdB;
-	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, &slope, &intercept, lineType, fitMethod);
+	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, & peakdB, & qpeak);
 	double xq = lineType == kCepstrumTiltType::ExponentialDecay ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
@@ -427,7 +428,7 @@ autoPowerCepstrum Matrix_to_PowerCepstrum (Matrix me) {
 autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, integer row) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my xmax, my nx);
-		Melder_require (row > 0 && row <= my ny, 
+		Melder_require (row > 0 && row <= my ny,
 			U"Row number should be between 1 and ", my ny, U" inclusive.");
 		thy z.row (1) <<= my z.row (row);
 		return thee;
@@ -439,7 +440,7 @@ autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, integer row) {
 autoPowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, integer col) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
-		Melder_require (col > 0 && col <= my nx, 
+		Melder_require (col > 0 && col <= my nx,
 			U"Column number should be between 1 and ", my nx, U" inclusive.");
 		thy z.row (1) <<= my z.column (col);
 		return thee;
