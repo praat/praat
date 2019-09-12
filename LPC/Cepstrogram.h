@@ -63,17 +63,17 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double ana
 
 autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pitchFloor, double pitchCeiling);
 
-autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit method);
+autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit method);
 
 autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time);
 
-autoPowerCepstrogram PowerCepstrogram_subtractTilt (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod);
+autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod);
 
-void PowerCepstrogram_subtractTilt_inplace (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod);
+void PowerCepstrogram_subtractTrend_inplace (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod);
 
 double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling);
 
-double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod);
+double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod);
 
 autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me);
 

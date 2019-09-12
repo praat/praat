@@ -19,7 +19,7 @@
 #include "Ltas_extensions.h"
 #include "NUM2.h"
 
-void Ltas_fitTiltLine (Ltas me, double fmin, double fmax, bool lnf, int method, double *a, double *b) {
+void Ltas_fitTrendLine (Ltas me, double fmin, double fmax, bool lnf, int method, double *a, double *b) {
 	try {
 		if (fmax <= fmin) {
 			fmin = my xmin; fmax = my xmax;

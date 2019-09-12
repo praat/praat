@@ -78,7 +78,7 @@ void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax,
 
 void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish);
 
-void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTiltType lineType, kCepstrumTiltFit method);
+void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTrendType lineType, kCepstrumTrendFit method);
 /*
 	Function:
 		Draw a Cepstrum
@@ -98,13 +98,13 @@ double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pit
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth);
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod, double *qpeak);
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod, double *qpeak);
 
-void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *out_slope, double *out_intercept, kCepstrumTiltType lineType, kCepstrumTiltFit method);
+void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_slope, double *out_intercept, kCepstrumTrendType lineType, kCepstrumTrendFit method);
 
-autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType  lineType, kCepstrumTiltFit fitMethod);
+autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType  lineType, kCepstrumTrendFit fitMethod);
 
-void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod);
+void PowerCepstrum_subtractTrend_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod);
 
 void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations);
 

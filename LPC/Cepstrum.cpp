@@ -134,7 +134,7 @@ void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax,
 	_Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, 1, garnish);
 }
 
-void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTiltType lineType, kCepstrumTiltFit method) {
+void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTrendType lineType, kCepstrumTrendFit method) {
 
 	Graphics_setInner (g);
 
@@ -168,13 +168,13 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 	qend = qend > my xmax ? my xmax : qend;
 
 	double a, intercept;
-	PowerCepstrum_fitTiltLine (me, qstart, qend, & a, & intercept, lineType, method);
+	PowerCepstrum_fitTrendLine (me, qstart, qend, & a, & intercept, lineType, method);
 	/*
 	 * Don't draw part outside window
 	 */
 	double lineWidth =  Graphics_inqLineWidth (g);
 	Graphics_setLineWidth (g, 2);
-	if (lineType == kCepstrumTiltType::ExponentialDecay ) {
+	if (lineType == kCepstrumTrendType::ExponentialDecay ) {
 		integer n = 500;
 		double dq = (qend - qstart) / (n + 1);
 		double q1 = qstart;
@@ -210,7 +210,7 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 /*
 	Fit line y = ax+b or y = a log(x) + b  on interval [qmin,qmax]
  */
-void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrumTiltType lineType, kCepstrumTiltFit method) {
+void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrumTrendType lineType, kCepstrumTrendFit method) {
 	try {
 		double a, intercept;
 		if (qmax <= qmin) {
@@ -221,7 +221,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		integer imin, imax;
 		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax))
 			return;
-		if (imin == 1 && lineType == kCepstrumTiltType::ExponentialDecay)
+		if (imin == 1 && lineType == kCepstrumTrendType::ExponentialDecay)
 			imin = 2; // because log(0) is undefined
 		integer numberOfPoints = imax - imin + 1;
 		Melder_require (numberOfPoints > 1,
@@ -232,15 +232,15 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
-			if (lineType == kCepstrumTiltType::ExponentialDecay)
+			if (lineType == kCepstrumTrendType::ExponentialDecay)
 				x [i] = log (x [i]);
 			y [i] = my v_getValueAtSample (isamp, 1, 0);
 		}
-		if (method == kCepstrumTiltFit::LeastSquares)
+		if (method == kCepstrumTrendFit::LeastSquares)
 			NUMlineFit_LS (x.get(), y.get(), & a, & intercept);
-		else if (method == kCepstrumTiltFit::RobustFast)
+		else if (method == kCepstrumTrendFit::RobustFast)
 			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, false);
-		else if (method == kCepstrumTiltFit::RobustSlow)
+		else if (method == kCepstrumTrendFit::RobustSlow)
 			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, true);
 		else {
 			Melder_throw (U"Invalid method.");
@@ -256,7 +256,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 
 #if 0
 // Hillenbrand subtracts dB values and if the result is negative it is made zero
-static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slope, double intercept, int lineType) {
+static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double slope, double intercept, int lineType) {
 	for (integer j = 1; j <= my nx; j ++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
@@ -270,11 +270,11 @@ static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slo
 #endif
 
 // clip with tilt line
-static void PowerCepstrum_subtractTiltLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrumTiltType lineType) {
+static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrumTrendType lineType) {
 	for (integer j = 1; j <= my nx; j ++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
-		double xq = lineType == kCepstrumTiltType::ExponentialDecay ? log(q) : q;
+		double xq = lineType == kCepstrumTrendType::ExponentialDecay ? log(q) : q;
 		double db_background = slope * xq + intercept;
 		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
 		double diff = db_cepstrum - db_background;
@@ -286,16 +286,16 @@ static void PowerCepstrum_subtractTiltLine_inplace (PowerCepstrum me, double slo
 }
 
 
-void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
+void PowerCepstrum_subtractTrend_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
 	double slope, intercept;
-	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
-	PowerCepstrum_subtractTiltLine_inplace (me, slope, intercept, lineType);
+	PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
+	PowerCepstrum_subtractTrendLine_inplace (me, slope, intercept, lineType);
 }
 
-autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTiltType lineType, kCepstrumTiltFit fitMethod) {
+autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
 	try {
 		autoPowerCepstrum thee = Data_copy (me);
-		PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
+		PowerCepstrum_subtractTrend_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't subtract tilt line.");
@@ -380,20 +380,20 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *out_qpeak) {
 	double slope, intercept, quefrency, peakdB;
-	PowerCepstrum_fitTiltLine (me, 0.001, 0, & slope, & intercept, kCepstrumTiltType::Linear, kCepstrumTiltFit::LeastSquares);
+	PowerCepstrum_fitTrendLine (me, 0.001, 0, & slope, & intercept, kCepstrumTrendType::Linear, kCepstrumTrendFit::LeastSquares);
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_subtractTiltLine_inplace (thee.get(), slope, intercept, kCepstrumTiltType::Linear);
+	PowerCepstrum_subtractTrendLine_inplace (thee.get(), slope, intercept, kCepstrumTrendType::Linear);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);
 	if (out_qpeak)
 		*out_qpeak = quefrency;
 	return peakdB;
 }
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTiltType  lineType, kCepstrumTiltFit fitMethod, double *out_qpeak) {
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType  lineType, kCepstrumTrendFit fitMethod, double *out_qpeak) {
 	double slope, intercept, qpeak, peakdB;
-	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
+	PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, & peakdB, & qpeak);
-	double xq = lineType == kCepstrumTiltType::ExponentialDecay ? log(qpeak) : qpeak;
+	double xq = lineType == kCepstrumTrendType::ExponentialDecay ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;
 	if (out_qpeak)

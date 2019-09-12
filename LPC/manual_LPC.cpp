@@ -92,13 +92,13 @@ MAN_END
 	"1 / %%pitchCeiling% and this value is in general more critical than " \
 	"the value of the upper quefrency which equals 1 / %%pitchFloor%. A %%pitchCeiling% of 300 Hz will correspond to a lower quefrency of 1/300\\~~0.0033 seconds."
 	
-#define PowerCepstrum_manual_tiltRange \
+#define PowerCepstrum_manual_trendRange \
 	U"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. " \
 	"The lower value for this range in the @@Hillenbrand et al. (1994)@ article was chosen as 0.001 s " \
 	"in order to reduce the effect of very low quefrency data on the straight line fit. In our analysis this value is not so critical as we use a more robust fitting procedure."
 
-#define PowerCepstrum_manual_tiltType \
-	U"defines how to model the cepstrum background. We can either model it with a straight line as was " \
+#define PowerCepstrum_manual_trendType \
+	U"defines how to model the cepstrum background. We can model it with a straight line as was " \
 	"done in the @@Hillenbrand et al. (1994)@ article. The slope of this line will generally be negative " \
 	"because the background amplitudes get weaker for higher quefrencies. Or, we could use an exponential " \
 	"model in which the background cepstral amplitudes decay in a non-linear fashion.  "
@@ -113,7 +113,7 @@ MAN_END
 
 MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
 ENTRY (U"Settings")
-TAG (U"##Subtract tilt before smoothing#")
+TAG (U"##Subtract trend before smoothing#")
 DEFINITION (U"")
 TAG (U"##Time averaging window (s)#")
 DEFINITION (U"")
@@ -125,9 +125,9 @@ TAG (U"##Tolerance#")
 DEFINITION (U"")
 TAG (U"##Interpolation#")
 DEFINITION (U"")
-TAG (U"##Tilt line quency range (s)#")
+TAG (U"##Trend line quency range (s)#")
 DEFINITION (U"")
-TAG (U"##Tilt type#")
+TAG (U"##Trend type#")
 DEFINITION (U"")
 TAG (U"##Fit method#")
 DEFINITION (U"")
@@ -143,8 +143,8 @@ SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Sinc70", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)", U"0.001", U"0.0 (= end)")
-	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Tilt type", U"Exponential decay")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Trend line quefrency range (s)", U"0.001", U"0.0 (= end)")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Trend type", U"Exponential decay")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Fit method", U"Robust")
 )
 NORMAL (U"The meaning of these settings is explained @@PowerCepstrum: Get peak prominence...|here@.")
@@ -223,9 +223,9 @@ NORMAL (U"A PowerCepstrum is the log power spectrum of the log power spectrum. T
 	"will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds. It is calculated from the ##Spectrum# by a method described at @@Spectrum: To PowerCepstrum@.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Get peak prominence...", U"djmw", 20130616)
+MAN_BEGIN (U"PowerCepstrum: Get peak prominence...", U"djmw", 20190912)
 INTRO (U"Calculates the cepstral peak prominence measure (CPP) as defined by @@Hillenbrand et al. (1994)@")
-NORMAL (U"The CPP measure is the difference in amplitude between the cepstral peak and the corresponding value on the regression "
+NORMAL (U"The CPP measure is the difference in amplitude between the cepstral peak and the corresponding value on the trend "
 	"line that is directly below the peak (i.e., the predicted magnitude for the quefrency at the cepstral peak). "
 	"The CPP measure represents how far the cepstral peak emerges from the cepstrum background. ")
 ENTRY (U"Settings")
@@ -236,43 +236,46 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Sinc70", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Tilt line quefrency range (s)", U"0.001", U"0.0 (= end)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Trend line quefrency range (s)", U"0.001", U"0.0 (= end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Fit method", U"Robust")
 )
 TAG (U"##Search peak in pitch range")
 DEFINITION (PowerCepstrum_manual_pitchRange)
 TAG (U"##Interpolation")
 DEFINITION (U"determines how the @@vector peak interpolation|amplitude and position of a peak are determined@.")
-TAG (U"##Tilt line quefrency range")
-DEFINITION (PowerCepstrum_manual_tiltRange)
-TAG (U"##Tilt type#")
-DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Trend line quefrency range")
+DEFINITION (PowerCepstrum_manual_trendRange)
+TAG (U"##Trend type#")
+DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 ENTRY (U"Note")
 NORMAL (U"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190910)
+MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190912)
 INTRO (U"A command to draw the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
 TAG (U"##Quefrency range (s)#")
-DEFINITION (U"define the extrema of the horizontal scale of the picture.")
+DEFINITION (U"define the extrema on the horizontal scale of the picture.")
 TAG (U"##Amplitude range (dB)#")
-DEFINITION (U"defines the extrema of the vertical scale of the picture")
+DEFINITION (U"define the extrema on the vertical scale of the picture")
+ENTRY (U"Remark")
+NORMAL (U"Cepstrum values are drawn as 20\\.clog10 (value +\\ep), "
+	"where \\ep is a small number to avoid taking the logarithm of zero if the cepstrum value happens to be zero.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw tilt line...", U"djmw", 20190909)
+MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20190909)
 INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
 TAG (U"##Quefrency range (s)#")
-DEFINITION (U"define the extrema of the horizontal scale of the picture.")
+DEFINITION (U"define the extrema on the horizontal scale of the picture.")
 TAG (U"##Amplitude range (dB)#")
-DEFINITION (U"defines the extrema of the vertical scale of the picture")
-TAG (U"##Tilt line quefrency range (s)")
-DEFINITION (PowerCepstrum_manual_tiltRange)
-TAG (U"##Tilt type#")
-DEFINITION (PowerCepstrum_manual_tiltType)
+DEFINITION (U"define the extrema on the vertical scale of the picture")
+TAG (U"##Trend line quefrency range (s)")
+DEFINITION (PowerCepstrum_manual_trendRange)
+TAG (U"##Trend type#")
+DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
@@ -295,24 +298,24 @@ TAG (U"##Interpolation#")
 DEFINITION (U"determines how the @@vector peak interpolation|amplitude and position of a peak are determined@.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Get tilt line slope...", U"djmw", 20190910)
+MAN_BEGIN (U"PowerCepstrum: Get trend line slope...", U"djmw", 20190910)
 INTRO (U"A command to calculate the slope of the line that models the cepstrum background of the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
-TAG (U"##Tilt line quefrency range (s)#")
-DEFINITION (PowerCepstrum_manual_tiltRange)
-TAG (U"##Tilt type#")
-DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Trend line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_trendRange)
+TAG (U"##Trend type#")
+DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Get tilt line intercept...", U"djmw", 20190910)
+MAN_BEGIN (U"PowerCepstrum: Get trend line intercept...", U"djmw", 20190910)
 INTRO (U"A command to calculate the intercept of the line that models the cepstrum background of the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
-TAG (U"##Tilt line quefrency range (s)#")
-DEFINITION (PowerCepstrum_manual_tiltRange)
-TAG (U"##Tilt type#")
-DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Trend line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_trendRange)
+TAG (U"##Trend type#")
+DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
@@ -324,13 +327,13 @@ TAG (U"###")
 DEFINITION (U"")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Subtract tilt...", U"djmw", 20190910)
-INTRO (U"Subtract spectral tilt from the selected @@PowerCepstrum@.")
+MAN_BEGIN (U"PowerCepstrum: Subtract trend...", U"djmw", 20190910)
+INTRO (U"Subtract the cepstrum trend from the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
-TAG (U"##Tilt line quefrency range (s)#")
-DEFINITION (PowerCepstrum_manual_tiltRange)
-TAG (U"##Tilt type#")
-DEFINITION (PowerCepstrum_manual_tiltType)
+TAG (U"##Trend line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_trendRange)
+TAG (U"##Trend type#")
+DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method#")
 DEFINITION (U"")
 MAN_END
@@ -772,7 +775,7 @@ NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. 
 FORMULA (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
 NORMAL (U"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (U"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
-NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3\\% of the input data-points without degradation of its accuracy")
+NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3\\%  of the input data-points without degradation of its accuracy")
 MAN_END
 
 MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)
