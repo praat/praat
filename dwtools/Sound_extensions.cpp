@@ -264,11 +264,14 @@ autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 		
 		bingeti16LE (f);
 		short nChannels = bingeti16LE (f);
-		Melder_require (nChannels == 1, U"Incorrect number of channels.");
-		Melder_require (bingeti16LE (f) > 0, U"Incorrect sampling frequency.");
+		Melder_require (nChannels == 1,
+			U"Incorrect number of channels.");
+		Melder_require (bingeti16LE (f) > 0,
+			U"Incorrect sampling frequency.");
 		
 		integer nSamples = bingeti32LE (f);
-		Melder_require (nSamples > 0, U"Incorrect number of samples.");
+		Melder_require (nSamples > 0,
+			U"Incorrect number of samples.");
 		
 		autoSound me = Sound_createSimple (1, nSamples / 16000.0, 16000);
 		i2read (me.get(), f, littleEndian);
@@ -295,7 +298,8 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		if (skipNBytes <= 0)
 			skipNBytes = 0;
 		integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
-		Melder_require (nSamples > 0, U"No samples left to read.");
+		Melder_require (nSamples > 0,
+			U"No samples left to read.");
 		
 		autoSound me = Sound_createSimple (1, nSamples / samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
@@ -332,7 +336,8 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool l
 		integer nBytesPerSample = (nBitsCoding + 7) / 8;
 		if (strequ (format, "float"))
 			nBytesPerSample = 4;
-		Melder_require (! (nBytesPerSample == 3), U"number of bytes per sample should be 1, 2 or 4.");
+		Melder_require (! (nBytesPerSample == 3),
+			U"number of bytes per sample should be 1, 2 or 4.");
 		
 		if (nBytesPerSample == 1 && unSigned) {
 			u1write (me, f, & nClip);
@@ -436,7 +441,8 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 
 		integer filelength = MelderFile_length (file);
 		
-		Melder_require (filelength > 0, U"File should not be empty.");
+		Melder_require (filelength > 0,
+			U"File should not be empty.");
 		
 		// Two samples in each byte
 
@@ -453,7 +459,8 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		for (integer i = 1; i <= filelength; i ++) {
 			unsigned char sc;
 			integer nread = fread (& sc, 1, 1, f);
-			Melder_require (nread == 1, U"Error: trying to read byte number ", i, U".");
+			Melder_require (nread == 1,
+				U"Error: trying to read byte number ", i, U".");
 			adpcm.code = (char) ((sc >> 4) & 0x0f);
 			my z [1] [n ++] = dialogic_adpcm_decode (& adpcm);
 			adpcm.code = (char) (sc & 0x0f);
@@ -742,7 +749,8 @@ static void NUMgammatoneFilter4 (double *x, double *y, integer n, double centre_
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
 		Meldr_require (centre_frequency > 0, U"Centre frequency should be positive.");
-		Melder_require (bandwidth > 0, U"Bandwidth should be positive.");
+		Melder_require (bandwidth > 0,
+			U"Bandwidth should be positive.");
 
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 		autoNUMvector<double> y (1, my nx);
@@ -1335,7 +1343,8 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, conststring32 trimLabel) {
     try {
-		Melder_require (my ny == 1, U"The sound should be a mono sound.");
+		Melder_require (my ny == 1,
+			U"The sound should be a mono sound.");
 		
         conststring32 silentLabel = U"silent", soundingLabel = U"sounding";
         conststring32 copyLabel = U"";
@@ -1844,7 +1853,8 @@ static void autowindowAndGetWindowSamplesAndAutoscale (Sound me, double *tmin, d
 static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer ileft, bool left, bool right,
 	conststring32 formula, Interpreter interpreter, integer numberOfBisections, double *x, double *y)
 {
-	Melder_require (left != right, U"Invalid situation.");
+	Melder_require (left != right,
+		U"Invalid situation.");
 	
 	if (left) {
 		*x = Matrix_columnToX (me, ileft);
@@ -2202,7 +2212,8 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 			tmax = my xmax;
 			tmin = tmax - minimumNoiseDuration;
 		}
-		Melder_require (tmin >= my xmin, U"Sound too short, or window length too long.");
+		Melder_require (tmin >= my xmin,
+			U"Sound too short, or window length too long.");
 		
 		*noiseStart = tmin;
 		*noiseEnd = tmax;

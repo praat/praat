@@ -17,15 +17,19 @@ appendInfoLine: tab$, "Prominence: ", peak_prominence, " dB (exponential, robust
 peak_prominence = Get peak prominence: 60, 333, "Parabolic", 0.001, 0, "Straight", "Robust"
 appendInfoLine: tab$, "Prominence: ", peak_prominence, " dB (straight, robust)"
 
-slope = Get tilt line slope: 0.001, 0, "Exponential decay", "Robust"
+# old commands
+slope_old = Get tilt line slope: 0.001, 0, "Exponential decay", "Robust"
+slope = Get trend line slope: 0.001, 0, "Exponential decay", "Robust"
+assert (slope_old = slope)
 appendInfoLine: tab$, "Slope: ", slope, " (exponential, robust)"
-intercept = Get tilt line intercept: 0.001, 0, "Straight", "Robust"
+intercept_old = Get tilt line intercept: 0.001, 0, "Straight", "Robust"
+intercept = Get trend line intercept: 0.001, 0, "Straight", "Robust"
+assert intercept_old = intercept
 appendInfoLine: tab$, "Intercept: ", intercept, " dB (straight, robust)"
 rnr = Get rhamonics to noise ratio: 60, 333, 0.05
 appendInfoLine: tab$, "Rhamonics-to-noise-ratio: ", rnr
 
 @draw_powercepstrum: powercepstrum
-
 
 removeObject: powercepstrum, powercepstrogram, toneComplex
 
@@ -37,8 +41,8 @@ procedure draw_powercepstrum: .pc
 	Select outer viewport: 0, 5, 0, 4
 	Draw: 0, 0, 0, 0, "yes"
 	Colour: "Green"
-	Draw tilt line: 0, 0, 0, 0, 0.001, 0, "Exponential decay", "Robust"
+	Draw trend line: 0, 0, 0, 0, 0.001, 0, "Exponential decay", "Robust"
 	Colour: "Red"
-	Draw tilt line: 0, 0, 0, 0, 0.001, 0, "Straight", "Least squares"
+	Draw trend line: 0, 0, 0, 0, 0.001, 0, "Straight", "Least squares"
 	Colour: "Black"
 endproc

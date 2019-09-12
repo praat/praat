@@ -101,19 +101,19 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_PowerCepstrum_drawTiltLine, U"PowerCepstrum: Draw tilt line", U"PowerCepstrum: Draw tilt line...") {
+FORM (GRAPHICS_PowerCepstrum_drawTrendLine, U"PowerCepstrum: Draw trend line", U"PowerCepstrum: Draw trend line...") {
 	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REAL (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
-	LABEL (U"Parameters for the tilt line fit")
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+	LABEL (U"Parameters for the trend line fit")
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	GRAPHICS_EACH (PowerCepstrum)
-		PowerCepstrum_drawTiltLine (me, GRAPHICS, fromQuefrency, toQuefrency,fromAmplitude_dB,toAmplitude_dB, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		PowerCepstrum_drawTrendLine (me, GRAPHICS, fromQuefrency, toQuefrency,fromAmplitude_dB,toAmplitude_dB, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	GRAPHICS_EACH_END
 }
 
@@ -182,29 +182,29 @@ DO
 	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
 }
 
-FORM (REAL_PowerCepstrum_getTiltLineSlope, U"PowerCepstrum: Get tilt line slope", U"PowerCepstrum: Get tilt line slope...") {
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slope", U"PowerCepstrum: Get trend line slope...") {
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
 		double result;
-		PowerCepstrum_fitTiltLine (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, & result, nullptr, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTiltType::Linear ? U"s" : U"ln (s)");
+		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, & result, nullptr, lineType, fitMethod);
+	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTrendType::Linear ? U"s" : U"ln (s)");
 }
 
-FORM (REAL_PowerCepstrum_getTiltLineIntercept, U"PowerCepstrum: Get tilt line intercept", U"PowerCepstrum: Get tilt line intercept...") {
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
 		double result;
-		PowerCepstrum_fitTiltLine (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, nullptr, & result, lineType, fitMethod);
+		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, nullptr, & result, lineType, fitMethod);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -216,26 +216,26 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
-		double qpeak, result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod, & qpeak);
+		double qpeak, result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
 	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
-FORM (MODIFY_PowerCepstrum_subtractTilt_inplace, U"PowerCepstrum: Subtract tilt (in-place)", U"PowerCepstrum: Subtract tilt...") {
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+FORM (MODIFY_PowerCepstrum_subtractTrend_inplace, U"PowerCepstrum: Subtract trend (in-place)", U"PowerCepstrum: Subtract trend...") {
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (PowerCepstrum)
-		PowerCepstrum_subtractTilt_inplace (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		PowerCepstrum_subtractTrend_inplace (me, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	MODIFY_EACH_END
 }
 
@@ -259,16 +259,16 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_smooth")
 }
 
-FORM (NEW_PowerCepstrum_subtractTilt, U"PowerCepstrum: Subtract tilt", U"PowerCepstrum: Subtract tilt...") {
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+FORM (NEW_PowerCepstrum_subtractTrend, U"PowerCepstrum: Subtract trend", U"PowerCepstrum: Subtract trend...") {
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (PowerCepstrum)
-		autoPowerCepstrum result = PowerCepstrum_subtractTilt (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name.get(), U"_minusTilt")
+		autoPowerCepstrum result = PowerCepstrum_subtractTrend (me, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+	CONVERT_EACH_END (my name.get(), U"_minusTrend")
 }
 
 DIRECT (NEW_Cepstrum_to_Spectrum) {
@@ -351,33 +351,33 @@ DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
 	NUMBER_ONE_END (U" s (quefrency step)")
 }
 
-FORM (NEW_PowerCepstrogram_subtractTilt, U"PowerCepstrogram: Subtract tilt", nullptr) {
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+FORM (NEW_PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", nullptr) {
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (PowerCepstrogram)
-		autoPowerCepstrogram result = PowerCepstrogram_subtractTilt (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name.get(), U"_minusTilt")
+		autoPowerCepstrogram result = PowerCepstrogram_subtractTrend (me, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+	CONVERT_EACH_END (my name.get(), U"_minusTrend")
 }
 
-FORM (MODIFY_PowerCepstrogram_subtractTilt_inplace, U"PowerCepstrogram: Subtract tilt (in-place)", nullptr) {
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+FORM (MODIFY_PowerCepstrogram_subtractTrend_inplace, U"PowerCepstrogram: Subtract trend (in-place)", nullptr) {
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (PowerCepstrogram)
-		PowerCepstrogram_subtractTilt_inplace (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		PowerCepstrogram_subtractTrend_inplace (me, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	MODIFY_EACH_END
 }
 
 FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
 	LABEL (U"Smoothing:")
-	BOOLEAN (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
+	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
 	REAL (smoothinWindowDuration, U"Time averaging window (s)", U"0.001")
 	REAL (quefrencySmoothinWindowDuration, U"Quefrency averaging window (s)", U"0.00005")
 	LABEL (U"Peak search:")
@@ -386,13 +386,13 @@ FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", 
 	OK
 DO
 	NUMBER_ONE (PowerCepstrogram)
-		double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTiltBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
+		double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
 	NUMBER_ONE_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
 	LABEL (U"Smoothing of the Cepstrogram")
-	BOOLEAN (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
+	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
 	REAL (smoothingWindowDuration, U"Time averaging window (s)", U"0.02")
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
 	LABEL (U"Peak search:")
@@ -404,15 +404,15 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
-	LABEL (U"Tilt line:")
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+	LABEL (U"Trend line:")
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (PowerCepstrogram)
-		double result = PowerCepstrogram_getCPPS (me, subtractTiltBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	NUMBER_ONE_END (U" dB");
 }
 
@@ -447,14 +447,14 @@ FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prom
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
-	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU_ENUM (kCepstrumTiltType, lineType, U"Tilt type", kCepstrumTiltType::DEFAULT)
-	OPTIONMENU_ENUM (kCepstrumTiltFit, fitMethod, U"Fit method", kCepstrumTiltFit::DEFAULT)
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (PowerCepstrogram)
-		autoTable result = PowerCepstrogram_to_Table_cpp (me, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		autoTable result = PowerCepstrogram_to_Table_cpp (me, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	CONVERT_EACH_END (my name.get(), U"_cpp");
 }
 
@@ -991,7 +991,8 @@ void praat_uvafon_LPC_init () {
 
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, HELP_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, GRAPHICS_PowerCepstrum_draw);
-	praat_addAction1 (classPowerCepstrum, 0, U"Draw tilt line...", 0, 0, GRAPHICS_PowerCepstrum_drawTiltLine);
+	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line...", 0, 0, GRAPHICS_PowerCepstrum_drawTrendLine);
+	praat_addAction1 (classPowerCepstrum, 0, U"Draw tilt line...", 0, praat_DEPRECATED_2019, GRAPHICS_PowerCepstrum_drawTrendLine);
 	praat_addAction1 (classCepstrum, 0, U"Draw (linear)...", 0, praat_HIDDEN, GRAPHICS_Cepstrum_drawLinear);
 	praat_addAction1 (classCepstrum, 0, U"Down to PowerCepstrum", 0, 0, NEW_Cepstrum_downto_PowerCepstrum);
 	
@@ -1000,17 +1001,20 @@ void praat_uvafon_LPC_init () {
 		praat_addAction1 (classPowerCepstrum, 0, U"Get quefrency of peak...", 0, 1, REAL_PowerCepstrum_getQuefrencyOfPeak);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN, REAL_PowerCepstrum_getPeakProminence_hillenbrand);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence...", 0, 1, REAL_PowerCepstrum_getPeakProminence);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line slope...", 0, 1, REAL_PowerCepstrum_getTiltLineSlope);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line intercept...", 0, 1, REAL_PowerCepstrum_getTiltLineIntercept);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line slope...", 0, 1, REAL_PowerCepstrum_getTrendLineSlope);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line slope...", 0, praat_DEPRECATED_2019, REAL_PowerCepstrum_getTrendLineSlope);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line intercept...", 0, 1, REAL_PowerCepstrum_getTrendLineIntercept);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line intercept...", 0, praat_DEPRECATED_2019, REAL_PowerCepstrum_getTrendLineIntercept);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get rhamonics to noise ratio...", 0, 1, REAL_PowerCepstrum_getRNR);
 	praat_addAction1 (classPowerCepstrum, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classPowerCepstrum, 0, U"Formula...", 0, 1, MODIFY_PowerCepstrum_formula);
-		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-place)...", 0, 1, MODIFY_PowerCepstrum_subtractTilt_inplace);
-		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrum_subtractTilt_inplace);
+		praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend (in-place)...", 0, 1, MODIFY_PowerCepstrum_subtractTrend_inplace);
+		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrum_subtractTrend_inplace);
 		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-place)...", 0, 1, MODIFY_PowerCepstrum_smooth_inplace);
 		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrum_smooth_inplace);
 
-	praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt...", 0, 0, NEW_PowerCepstrum_subtractTilt);
+	praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend...", 0, 0, NEW_PowerCepstrum_subtractTrend);
+	praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt...", 0, praat_DEPRECATED_2019, NEW_PowerCepstrum_subtractTrend);
 	praat_addAction1 (classPowerCepstrum, 0, U"Smooth...", 0, 0, NEW_PowerCepstrum_smooth);
 	praat_addAction1 (classCepstrum, 0, U"To Spectrum", 0, praat_HIDDEN, NEW_Cepstrum_to_Spectrum);
 	praat_addAction1 (classPowerCepstrum, 0, U"To Matrix", 0, 0, NEW_PowerCepstrum_to_Matrix);
@@ -1030,11 +1034,13 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classPowerCepstrogram, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Formula...", 0, 1, MODIFY_PowerCepstrogram_formula);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-place)...", 0, 1, MODIFY_PowerCepstrogram_subtractTilt_inplace);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrogram_subtractTilt_inplace);
+		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract trend (in-place)...", 0, 1, MODIFY_PowerCepstrogram_subtractTrend_inplace);
+		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-place)...", 0, praat_DEPRECATED_2019, MODIFY_PowerCepstrogram_subtractTrend_inplace);
+		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrogram_subtractTrend_inplace);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To PowerCepstrum (slice)...", 0, 0, NEW_PowerCepstrogram_to_PowerCepstrum_slice);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Smooth...", 0, 0, NEW_PowerCepstrogram_smooth);
-	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt...", 0, 0, NEW_PowerCepstrogram_subtractTilt);
+	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract trend...", 0, 0, NEW_PowerCepstrogram_subtractTrend);
+	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt...", 0, praat_DEPRECATED_2019, NEW_PowerCepstrogram_subtractTrend);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (hillenbrand)...", 0, praat_HIDDEN, NEW_PowerCepstrogram_to_Table_hillenbrand);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (peak prominence)...", 0, praat_HIDDEN, NEW_PowerCepstrogram_to_Table_cpp);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To Matrix", 0, 0, NEW_PowerCepstrogram_to_Matrix);
