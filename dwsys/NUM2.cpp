@@ -1904,7 +1904,7 @@ integer NUMgetIndexFromProbability (constVEC probs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool completeMethod) {
+void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod) {
 	try {
 		Melder_require (x.size == y.size,
 			U"NUMlineFit_theil: the sizes of the two vectors should be equal.");
@@ -1928,7 +1928,7 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 			autoVEC mbs;
 			if (! completeMethod) {
 				numberOfCombinations = x.size / 2;
-				mbs = newVECzero (x.size); // allocate twice the space for convenience later
+				mbs = newVECzero (x.size); // allocate twice to get the intercepts
 				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
 				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
@@ -1939,6 +1939,7 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 				for (integer i = 1; i < x.size; i ++)
 					for (integer j = i + 1; j <= x.size; j ++)
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
+				Melder_assert (index == numberOfCombinations);
 			}
 			VECsort_inplace (mbs.part (1, numberOfCombinations));
 			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
@@ -1956,7 +1957,7 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
 	}
 }
 
-void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept) {
+void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept) {
 	Melder_require (x.size == y.size,
 		U"NUMlineFit_LS: the sizes of the two vectors should be equal.");
 	double sx = NUMsum (x);

@@ -107,7 +107,7 @@ FORM (GRAPHICS_PowerCepstrum_drawTrendLine, U"PowerCepstrum: Draw trend line", U
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
 	LABEL (U"Parameters for the trend line fit")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -184,7 +184,7 @@ DO
 
 FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slope", U"PowerCepstrum: Get trend line slope...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -197,7 +197,7 @@ DO
 
 FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -217,7 +217,7 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -229,7 +229,7 @@ DO
 
 FORM (MODIFY_PowerCepstrum_subtractTrend_inplace, U"PowerCepstrum: Subtract trend (in-place)", U"PowerCepstrum: Subtract trend...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -261,7 +261,7 @@ DO
 
 FORM (NEW_PowerCepstrum_subtractTrend, U"PowerCepstrum: Subtract trend", U"PowerCepstrum: Subtract trend...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -353,7 +353,7 @@ DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
 
 FORM (NEW_PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", nullptr) {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -365,7 +365,7 @@ DO
 
 FORM (MODIFY_PowerCepstrogram_subtractTrend_inplace, U"PowerCepstrogram: Subtract trend (in-place)", nullptr) {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -406,7 +406,7 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 		RADIOBUTTON (U"Sinc70")
 	LABEL (U"Trend line:")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -448,7 +448,7 @@ FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prom
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.0 (= end)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
@@ -1002,10 +1002,10 @@ void praat_uvafon_LPC_init () {
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN, REAL_PowerCepstrum_getPeakProminence_hillenbrand);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence...", 0, 1, REAL_PowerCepstrum_getPeakProminence);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line slope...", 0, 1, REAL_PowerCepstrum_getTrendLineSlope);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line slope...", 0, praat_DEPRECATED_2019, REAL_PowerCepstrum_getTrendLineSlope);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line intercept...", 0, 1, REAL_PowerCepstrum_getTrendLineIntercept);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line intercept...", 0, praat_DEPRECATED_2019, REAL_PowerCepstrum_getTrendLineIntercept);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get rhamonics to noise ratio...", 0, 1, REAL_PowerCepstrum_getRNR);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line slope...", 0, praat_DEPRECATED_2019, REAL_PowerCepstrum_getTrendLineSlope);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line intercept...", 0, praat_DEPRECATED_2019, REAL_PowerCepstrum_getTrendLineIntercept);
 	praat_addAction1 (classPowerCepstrum, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classPowerCepstrum, 0, U"Formula...", 0, 1, MODIFY_PowerCepstrum_formula);
 		praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend (in-place)...", 0, 1, MODIFY_PowerCepstrum_subtractTrend_inplace);
