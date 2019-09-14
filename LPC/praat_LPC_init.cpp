@@ -249,7 +249,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW_PowerCepstrum_smooth, U"PowerCepstrum: Smooth", nullptr) {
+FORM (NEW_PowerCepstrum_smooth, U"PowerCepstrum: Smooth", U"PowerCepstrum: Smooth...") {
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
 	NATURAL (numberOfIterations, U"Number of iterations", U"1");
 	OK

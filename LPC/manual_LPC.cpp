@@ -107,6 +107,13 @@ MAN_END
 	U"defines how the line that models the cepstrum backgroud is calculated. The default method is " \
 	"@@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares line fit can also be chosen."
 
+#define PowerCepstrum_manual_quefrencyAveragingWindow \
+	U"determines how many quefrency bins will be used for the averaging across quefrency step. The number of " \
+	"bins used in this step is the result of the division of the user-supplied value by the quefrency step value. " \
+	"If the result turns out to be one or less, no averaging across quefrencies is performed. If the resulting " \
+	"value is even, one will be added. If, for example, the result happens to be 3 then the value in quefrency " \
+	"bin %k will be the average value of the values in quefrency bins %k\\--1, %k and %k+1. "
+
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
@@ -118,7 +125,7 @@ DEFINITION (U"")
 TAG (U"##Time averaging window (s)#")
 DEFINITION (U"")
 TAG (U"##Quefrency averaging window (s)#")
-DEFINITION (U"")
+DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 TAG (U"##Peak search pitch range (Hz)#")
 DEFINITION (PowerCepstrum_manual_pitchRange)
 TAG (U"##Tolerance#")
@@ -197,11 +204,7 @@ DEFINITION (U"determines how many frames will be used in the first step, averagi
 	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. "
 	"For example, if %numberOfFramesToAverage turns out to be 5, then the %j-th new cepstral frame is the result of averaging the 5 frames with indices %j\\--2 , %j\\--1, %j, %j+1 and %j+2 for all frames %j=3..%%numberOfFrames%\\--2, i.e. besides frame %j, the 2 frames on either side are used in the averaging. The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. ")
 TAG (U"##Quefrency averaging window (s)")
-DEFINITION (U"determines how many quefrency bins will be used for the averaging across quefrency step. The number of bins used in this step "
-	"is the result of the division of the user-supplied value by the quefrency step value (the Cepstrogram's %dy). "
-	"If the result turns out to be one or less, no averaging across quefrencies is performed. If the resulting value is even, one will be added. "
-	"If, for example, the result happens to be 3 then the value in quefrency bin %k will be the average value of the values in quefrency bins "
-	"%k\\--1, %k and %k+1. ")
+DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 ENTRY (U"Note")
 NORMAL (U"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
@@ -320,14 +323,17 @@ TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Smooth...", U"djmw", 20190910)
-INTRO (U"")
+MAN_BEGIN (U"PowerCepstrum: Smooth...", U"djmw", 20190914)
+INTRO (U"A command to smooth the selected @@PowerCepstrum@ by averaging values at successive quefrencies.")
 ENTRY (U"Settings")
-TAG (U"###")
-DEFINITION (U"")
+TAG (U"##Quefrency averaging window (s)#")
+DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
+TAG (U"##Number of iterations#")
+DEFINITION (U"determines how often the averaging will take place. If chosen 2, for example, the output PowerCepstrum "
+	"after the first averaging will be averaged once again.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Subtract trend...", U"djmw", 20190910)
+MAN_BEGIN (U"PowerCepstrum: Subtract trend...", U"djmw", 20190914)
 INTRO (U"Subtract the cepstrum trend from the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
 TAG (U"##Trend line quefrency range (s)#")
@@ -335,7 +341,7 @@ DEFINITION (PowerCepstrum_manual_trendRange)
 TAG (U"##Trend type#")
 DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method#")
-DEFINITION (U"")
+DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
 MAN_BEGIN (U"Formant & Spectrogram: To IntensityTier...", U"djmw", 20130109)
