@@ -99,7 +99,7 @@ MAN_END
 
 #define PowerCepstrum_manual_trendType \
 	U"defines how to model the cepstrum background. We can model it with a straight line as was " \
-	"done in the @@Hillenbrand et al. (1994)@ article. The slope of this line will generally be negative " \
+	"done in @@Hillenbrand et al. (1994)@. The slope of this line will generally be negative " \
 	"because the background amplitudes get weaker for higher quefrencies. Or, we could use an exponential " \
 	"model in which the background cepstral amplitudes decay in a non-linear fashion.  "
 
@@ -114,6 +114,17 @@ MAN_END
 	"value is even, one will be added. If, for example, the result happens to be 3 then the value in quefrency " \
 	"bin %k will be the average value of the values in quefrency bins %k\\--1, %k and %k+1. "
 
+#define PowerCepstrogram_manual_timeAveraging \
+	U"determines how many frames will be used in the first step, averaging across time. The user-supplied value " \
+	"will be divided by the Cepstrograms's time step value (its %%dx%). If %%numberOfFramesToAverage%, the result " \
+	"of the division, turns out to be one or less, no averaging across time is performed. " \
+	"If %%numberOfFramesToAverage% is even, one will be added. " \
+	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. " \
+	"For example, if %numberOfFramesToAverage turns out to be 5, then the %j-th new cepstral frame is the result " \
+	"of averaging the 5 frames with indices %j\\--2 , %j\\--1, %j, %j+1 and %j+2 for all frames " \
+	"%j=3..%%numberOfFrames%\\--2, i.e. besides frame %j, the 2 frames on either side are used in the averaging. " \
+	"The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. "
+	
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
@@ -121,9 +132,9 @@ MAN_END
 MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
 ENTRY (U"Settings")
 TAG (U"##Subtract trend before smoothing#")
-DEFINITION (U"")
+DEFINITION (U"defines whether the smoothing should be performed om the Cepstrogram after all trend of each  PowerCepstrum has been removed. ")
 TAG (U"##Time averaging window (s)#")
-DEFINITION (U"")
+DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)#")
 DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 TAG (U"##Peak search pitch range (Hz)#")
@@ -131,13 +142,13 @@ DEFINITION (PowerCepstrum_manual_pitchRange)
 TAG (U"##Tolerance#")
 DEFINITION (U"")
 TAG (U"##Interpolation#")
-DEFINITION (U"")
-TAG (U"##Trend line quency range (s)#")
-DEFINITION (U"")
+DEFINITION (U"determines how the @@vector peak interpolation|amplitude and position of a peak are determined@.")
+TAG (U"##Trend line quefrency range (s)#")
+DEFINITION (PowerCepstrum_manual_trendRange)
 TAG (U"##Trend type#")
-DEFINITION (U"")
+DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method#")
-DEFINITION (U"")
+DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20190910)
@@ -198,11 +209,7 @@ INTRO (U"Smoothes the selected @PowerCepstrogram by averaging. The smoothed Powe
 	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
 TAG (U"##Time averaging window (s)")
-DEFINITION (U"determines how many frames will be used in the first step, averaging across time. The user-supplied value will be divided "
-	"by the Cepstrograms's time step value (its %dx). If %%numberOfFramesToAverage%, the result of the division, turns out to be one or less, no averaging across time is performed. "
-	"If %%numberOfFramesToAverage% is even, one will be added. "
-	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. "
-	"For example, if %numberOfFramesToAverage turns out to be 5, then the %j-th new cepstral frame is the result of averaging the 5 frames with indices %j\\--2 , %j\\--1, %j, %j+1 and %j+2 for all frames %j=3..%%numberOfFrames%\\--2, i.e. besides frame %j, the 2 frames on either side are used in the averaging. The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. ")
+DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)")
 DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 ENTRY (U"Note")
@@ -256,7 +263,7 @@ ENTRY (U"Note")
 NORMAL (U"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190912)
+MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190914)
 INTRO (U"A command to draw the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
 TAG (U"##Quefrency range (s)#")
@@ -265,7 +272,7 @@ TAG (U"##Amplitude range (dB)#")
 DEFINITION (U"define the extrema on the vertical scale of the picture")
 ENTRY (U"Remark")
 NORMAL (U"Cepstrum values are drawn as 20\\.clog10 (value +\\ep), "
-	"where \\ep is a small number to avoid taking the logarithm of zero if the cepstrum value happens to be zero.")
+	"where \\ep is a small number that avoids taking the logarithm of zero if the cepstrum value happens to be zero.")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20190909)
