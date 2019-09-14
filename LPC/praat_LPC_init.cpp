@@ -261,7 +261,7 @@ DO
 
 FORM (NEW_PowerCepstrum_subtractTrend, U"PowerCepstrum: Subtract trend", U"PowerCepstrum: Subtract trend...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
