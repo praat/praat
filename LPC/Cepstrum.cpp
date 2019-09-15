@@ -334,9 +334,10 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 	}
 	double peakdB, quefrency;
 	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, & peakdB, & quefrency);   // FIXME cast
-    
-	if (out_peakdB) *out_peakdB = peakdB;
-	if (out_quefrency) *out_quefrency = quefrency;
+	if (out_peakdB)
+		*out_peakdB = peakdB;
+	if (out_quefrency)
+		*out_quefrency = quefrency;
 }
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
