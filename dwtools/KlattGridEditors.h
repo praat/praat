@@ -340,7 +340,7 @@ Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
 		override { return false; }
 };
 
-autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, int formantType);
+autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType);
 
 /* End of file KlattGridEditors.h */
 #endif

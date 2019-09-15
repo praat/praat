@@ -32,34 +32,12 @@
 
 /******************* KlattGrid  *********************************/
 
-static const conststring32 formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
-
 #define KlattGrid_4formants_addCommonField(formantType) \
-	OPTIONMENU (formantType, U"Formant type", 1) \
-		OPTION (U"Normal formant") \
-		OPTION (U"Nasal formant") \
-		OPTION (U"Frication formant") \
-		OPTION (U"Tracheal formant")
+	OPTIONMENU_ENUM (kKlattGridFormantType, formantType, U"Formant type", kKlattGridFormantType::DEFAULT)
 
 #define KlattGrid_6formants_addCommonField(formantType) \
-	OPTIONMENU (formantType, U"Formant type", 1) \
-		OPTION (U"Normal formant") \
-		OPTION (U"Nasal formant") \
-		OPTION (U"Frication formant") \
-		OPTION (U"Tracheal formant") \
-		OPTION (U"Nasal antiformant") \
-		OPTION (U"Tracheal antiformant") \
-	//	OPTION (U"Delta formant")
+	OPTIONMENU_ENUM (kKlattGridFormantType, formantType, U"Formant type", kKlattGridFormantType::DEFAULT)
 
-#define KlattGrid_7formants_addCommonField(formantType) \
-	OPTIONMENU (formantType, U"Formant type", 1) \
-		OPTION (U"Normal formant") \
-		OPTION (U"Nasal formant") \
-		OPTION (U"Frication formant") \
-		OPTION (U"Tracheal formant") \
-		OPTION (U"Nasal antiformant") \
-		OPTION (U"Tracheal antiformant") \
-		OPTION (U"Delta formant")
 
 #define KlattGrid_PhonationGridPlayOptions_addCommonFields(useVoicing,useFlutter,useDoublePulsing,useCollisionPhase,useSpectralTilt,flowFunctionType,useFlowDerivative,useAspiration,useBreathiness) \
 	BOOLEAN (useVoicing, U"Voicing", true) \
@@ -88,10 +66,8 @@ static void KlattGrid_PhonationGridPlayOptions (KlattGrid me, int useVoicing, in
 	pp -> breathiness = useBreathiness;
 }
 
-#define KlattGrid_formantSelection_vocalTract_commonFields(filtersStructure,fromOralFormant,toOralFormant,fromNasalFormant,toNasalFormant,fromNasalAntiFormant,toNasalAntiFormant) \
-	OPTIONMENU (filtersStructure, U"Filter options", 1) \
-		OPTION (U"Cascade") \
-		OPTION (U"Parallel") \
+#define KlattGrid_formantSelection_vocalTract_commonFields(filterModel,fromOralFormant,toOralFormant,fromNasalFormant,toNasalFormant,fromNasalAntiFormant,toNasalAntiFormant) \
+	OPTIONMENU_ENUM (kKlattGridFilterModel, filterModel, U"Filter model", kKlattGridFilterModel::DEFAULT) \
 	INTEGER (fromOralFormant, U"left Oral formant range", U"1") \
 	INTEGER (toOralFormant, U"right Oral formant range", U"5") \
 	INTEGER (fromNasalFormant, U"left Nasal formant range", U"1") \
@@ -99,9 +75,9 @@ static void KlattGrid_PhonationGridPlayOptions (KlattGrid me, int useVoicing, in
 	INTEGER (fromNasalAntiFormant, U"left Nasal antiformant range", U"1") \
 	INTEGER (toNasalAntiFormant, U"right Nasal antiformant range", U"1")
 	
-static void KlattGrid_formantSelection_vocalTract (KlattGrid me, int filtersStructure, integer fromOralFormant, integer toOralFormant, integer fromNasalFormant, integer toNasalFormant, integer fromNasalAntiFormant, integer toNasalAntiFormant) {
+static void KlattGrid_formantSelection_vocalTract (KlattGrid me, kKlattGridFilterModel filterModel, integer fromOralFormant, integer toOralFormant, integer fromNasalFormant, integer toNasalFormant, integer fromNasalAntiFormant, integer toNasalAntiFormant) {
 	VocalTractGridPlayOptions pv = my vocalTract -> options.get();
-	pv -> filterModel = (filtersStructure == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL);
+	pv -> filterModel = filterModel;
 	pv -> startOralFormant = fromOralFormant;
 	pv -> endOralFormant  = toOralFormant;
 	pv -> startNasalFormant = fromNasalFormant;
@@ -206,20 +182,20 @@ DIRECT (WINDOW_KlattGrid_edit##Name##FormantGrid) { \
 	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
 	LOOP { \
 		iam (KlattGrid); \
-		conststring32 id_and_name = Melder_cat (ID, U". ", formant_names [formantType], U" formant grid"); \
+		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
 	} \
 END }
 
-KlattGRID_EDIT_FORMANTGRID (Oral, KlattGrid_ORAL_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID (Nasal, KlattGrid_NASAL_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID (Tracheal, KlattGrid_TRACHEAL_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID (NasalAnti, KlattGrid_NASAL_ANTIFORMANTS)
-KlattGRID_EDIT_FORMANTGRID (TrachealAnti, KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGRID_EDIT_FORMANTGRID (Delta, KlattGrid_DELTA_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID (Frication, KlattGrid_FRICATION_FORMANTS)
+KlattGRID_EDIT_FORMANTGRID (Oral, kKlattGridFormantType::Oral)
+KlattGRID_EDIT_FORMANTGRID (Nasal, kKlattGridFormantType::Nasal)
+KlattGRID_EDIT_FORMANTGRID (Tracheal, kKlattGridFormantType::Tracheal)
+KlattGRID_EDIT_FORMANTGRID (NasalAnti, kKlattGridFormantType::NasalAnti)
+KlattGRID_EDIT_FORMANTGRID (TrachealAnti, kKlattGridFormantType::TrachealAnti)
+KlattGRID_EDIT_FORMANTGRID (Delta, kKlattGridFormantType::Delta)
+KlattGRID_EDIT_FORMANTGRID (Frication, kKlattGridFormantType::Frication)
 
 #undef KlattGRID_EDIT_FORMANTGRID
 
@@ -234,17 +210,17 @@ DO \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
-		conststring32 id_and_name = Melder_cat (ID, U". ", formant_names [formantType], U" formant amplitude tier"); \
+		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
 		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, amp->at [formantNumber]); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
 	} \
 END }
 
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Tracheal, tracheal, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, KlattGrid_FRICATION_FORMANTS)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, kKlattGridFormantType::Oral)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, kKlattGridFormantType::Nasal)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Tracheal, tracheal, kKlattGridFormantType::Tracheal)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, kKlattGridFormantType::Frication)
 
 #undef KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER
 
@@ -456,13 +432,13 @@ KlattGrid_REMOVE_FORMANT_FREQUENCYANDBANDWIDTHTIERS (Name, namef, formantType) \
 KlattGrid_ADD_FORMANT (Name, namef, formantType) \
 KlattGrid_REMOVE_FORMANT (Name, namef, formantType)
 
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Oral, oral f, KlattGrid_ORAL_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Nasal, nasal f, KlattGrid_NASAL_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB (NasalAnti, nasal antif, KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA (Delta, delta f, KlattGrid_DELTA_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Tracheal, tracheal f, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB (TrachealAnti, tracheal antif, KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, KlattGrid_FRICATION_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Oral, oral f, kKlattGridFormantType::Oral)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Nasal, nasal f, kKlattGridFormantType::Nasal)
+KlattGrid_FORMULA_ADD_REMOVE_FB (NasalAnti, nasal antif, kKlattGridFormantType::NasalAnti)
+KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA (Delta, delta f, kKlattGridFormantType::Delta)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Tracheal, tracheal f, kKlattGridFormantType::Tracheal)
+KlattGrid_FORMULA_ADD_REMOVE_FB (TrachealAnti, tracheal antif, kKlattGridFormantType::TrachealAnti)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, kKlattGridFormantType::Frication)
 
 #undef KlattGrid_FORMULA_ADD_REMOVE_FB
 #undef KlattGrid_FORMULA_ADD_REMOVE
@@ -525,17 +501,17 @@ END }
 KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Frequency, frequency, Formant, formantType) \
 KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Bandwidth, bandwidth, Bandwidth, formantType)
 
-KlattGrid_FORMANT_GET_FB_VALUES (Oral, oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE (Oral, oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal anti, KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES (Tracheal, tracheal f, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE (Tracheal, tracheal f, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta f, KlattGrid_DELTA_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antif, KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES (Frication, frication, KlattGrid_FRICATION_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, KlattGrid_FRICATION_FORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (Oral, oral, kKlattGridFormantType::Oral)
+KlattGrid_FORMANT_GET_A_VALUE (Oral, oral, kKlattGridFormantType::Oral)
+KlattGrid_FORMANT_GET_FB_VALUES (Nasal, nasal, kKlattGridFormantType::Nasal)
+KlattGrid_FORMANT_GET_A_VALUE (Nasal, nasal, kKlattGridFormantType::Nasal)
+KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal anti, kKlattGridFormantType::NasalAnti)
+KlattGrid_FORMANT_GET_FB_VALUES (Tracheal, tracheal f, kKlattGridFormantType::Tracheal)
+KlattGrid_FORMANT_GET_A_VALUE (Tracheal, tracheal f, kKlattGridFormantType::Tracheal)
+KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta f, kKlattGridFormantType::Delta)
+KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antif, kKlattGridFormantType::TrachealAnti)
+KlattGrid_FORMANT_GET_FB_VALUES (Frication, frication, kKlattGridFormantType::Frication)
+KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, kKlattGridFormantType::Frication)
 
 #undef KlattGrid_FORMANT_GET_FB_VALUES
 #undef KlattGrid_FORMANT_GET_A_VALUE
@@ -543,7 +519,7 @@ KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, KlattGrid_FRICATION_FORMANT
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType)  \
 DIRECT (NEW_KlattGrid_extract##Name##FormantGrid) { \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names [gridType]); \
+		praat_new (KlattGrid_extractFormantGrid (me, gridType), KlattGrid_getFormantName (gridType)); \
 	} \
 END }
 
@@ -553,21 +529,21 @@ FORM (NEW_KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " 
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, formantNumber), formant_names [formantType]); \
+		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, formantNumber), KlattGrid_getFormantName (formantType)); \
 	} \
 END }
 
-KlattGrid_EXTRACT_FORMANT_GRID (Oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Oral, oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_GRID (Nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_GRID (Frication, KlattGrid_FRICATION_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Frication, frication, KlattGrid_FRICATION_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_GRID (Tracheal, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Tracheal, tracheal, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_EXTRACT_FORMANT_GRID (NasalAnti, KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_EXTRACT_FORMANT_GRID (TrachealAnti, KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGrid_EXTRACT_FORMANT_GRID (Delta, KlattGrid_DELTA_FORMANTS)
+KlattGrid_EXTRACT_FORMANT_GRID (Oral, kKlattGridFormantType::Oral)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::Oral)
+KlattGrid_EXTRACT_FORMANT_GRID (Nasal, kKlattGridFormantType::Nasal)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Nasal, nasal, kKlattGridFormantType::Nasal)
+KlattGrid_EXTRACT_FORMANT_GRID (Frication, kKlattGridFormantType::Frication)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType::Frication)
+KlattGrid_EXTRACT_FORMANT_GRID (Tracheal, kKlattGridFormantType::Tracheal)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Tracheal, tracheal, kKlattGridFormantType::Tracheal)
+KlattGrid_EXTRACT_FORMANT_GRID (NasalAnti, kKlattGridFormantType::NasalAnti)
+KlattGrid_EXTRACT_FORMANT_GRID (TrachealAnti, kKlattGridFormantType::TrachealAnti)
+KlattGrid_EXTRACT_FORMANT_GRID (Delta, kKlattGridFormantType::Delta)
 
 #undef KlattGrid_EXTRACT_FORMANTGRID
 
@@ -588,17 +564,17 @@ DO \
 	MODIFY_FIRST_OF_TWO_END \
 }
 
-KlattGrid_REPLACE_FORMANT_GRID (Oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Oral, oral, KlattGrid_ORAL_FORMANTS)
-KlattGrid_REPLACE_FORMANT_GRID (Nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
-KlattGrid_REPLACE_FORMANT_GRID (NasalAnti, KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_REPLACE_FORMANT_GRID (Tracheal, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Tracheal, tracheal, KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_REPLACE_FORMANT_GRID (TrachealAnti, KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGrid_REPLACE_FORMANT_GRID (Delta, KlattGrid_DELTA_FORMANTS)
-KlattGrid_REPLACE_FORMANT_GRID (Frication, KlattGrid_FRICATION_FORMANTS)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, KlattGrid_FRICATION_FORMANTS)
+KlattGrid_REPLACE_FORMANT_GRID (Oral, kKlattGridFormantType::Oral)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::Oral)
+KlattGrid_REPLACE_FORMANT_GRID (Nasal, kKlattGridFormantType::Nasal)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Nasal, nasal, kKlattGridFormantType::Nasal)
+KlattGrid_REPLACE_FORMANT_GRID (NasalAnti, kKlattGridFormantType::NasalAnti)
+KlattGrid_REPLACE_FORMANT_GRID (Tracheal, kKlattGridFormantType::Tracheal)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Tracheal, tracheal, kKlattGridFormantType::Tracheal)
+KlattGrid_REPLACE_FORMANT_GRID (TrachealAnti, kKlattGridFormantType::TrachealAnti)
+KlattGrid_REPLACE_FORMANT_GRID (Delta, kKlattGridFormantType::Delta)
+KlattGrid_REPLACE_FORMANT_GRID (Frication, kKlattGridFormantType::Frication)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType::Frication)
 
 #undef KlattGrid_REPLACE_FORMANT_AMPLITUDE
 #undef KlattGrid_REPLACE_FORMANTGRID
@@ -678,7 +654,7 @@ KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (valu
 #undef KlattGrid_FORMANT_GET_ADD_REMOVE
 
 FORM (MODIFY_KlattGrid_addFormantAndBandwidthTier, U"", nullptr) {
-	KlattGrid_7formants_addCommonField (formantType)
+	OPTIONMENU_ENUM (kKlattGridFormantType, formantType, U"Formant type", kKlattGridFormantType::DEFAULT)
 	INTEGER (position, U"Position", U"0 (= at end)")
 	OK
 DO
@@ -693,7 +669,7 @@ FORM (NEW_KlattGrid_extractFormantGrid, U"KlattGrid: Extract formant grid", null
 DO
 	CONVERT_EACH (KlattGrid)
 		autoFormantGrid result = KlattGrid_extractFormantGrid (me, formantType);
-	CONVERT_EACH_END (formant_names[formantType])
+	CONVERT_EACH_END (KlattGrid_getFormantName (formantType))
 }
 
 FORM (MODIFY_KlattGrid_replaceFormantGrid, U"KlattGrid: Replace formant grid", nullptr) {
@@ -747,7 +723,7 @@ FORM (NEW_KlattGrid_extractAmplitudeTier, U"", nullptr) {
 DO
 	CONVERT_EACH (KlattGrid)
 		autoIntensityTier result = KlattGrid_extractAmplitudeTier (me, formantType, formantNumber);
-	CONVERT_EACH_END (formant_names[formantType])
+	CONVERT_EACH_END (KlattGrid_getFormantName (formantType))
 }
 
 FORM (MODIFY_KlattGrid_replaceAmplitudeTier, U"KlattGrid: Replace amplitude tier", nullptr) {
@@ -842,25 +818,21 @@ DIRECT (PLAY_KlattGrid_play) {
 }
 
 FORM (GRAPHICS_KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
-	RADIO (filtersStructure, U"Synthesis filters structure", 1)
-		RADIOBUTTON (U"Cascade")
-		RADIOBUTTON (U"Parallel")
+	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
 	GRAPHICS_EACH (KlattGrid)
-		KlattGrid_draw (me, GRAPHICS, filtersStructure - 1);
+		KlattGrid_draw (me, GRAPHICS, filterModel);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr) {
-	RADIO (filtersStructure, U"Synthesis filters structure", 1)
-		RADIOBUTTON (U"Cascade")
-		RADIOBUTTON (U"Parallel")
+	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	BOOLEAN (includeTrachealFormants, U"Include tracheal formants", true);
 	OK
 DO
 	GRAPHICS_EACH (KlattGrid)
-		KlattGrid_drawVocalTract (me, GRAPHICS, filtersStructure - 1, includeTrachealFormants);
+		KlattGrid_drawVocalTract (me, GRAPHICS, filterModel, includeTrachealFormants);
 	GRAPHICS_EACH_END
 }
 
@@ -887,13 +859,11 @@ DO
 }
 
 FORM (NEW_Sound_KlattGrid_filterByVocalTract, U"Sound & KlattGrid: Filter by vocal tract", U"Sound & KlattGrid: Filter by vocal tract...") {
-	RADIO (filtersStructure, U"Vocal tract filter model", 1)
-		RADIOBUTTON (U"Cascade")
-		RADIOBUTTON (U"Parallel")
+	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Vocal tract filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
 	CONVERT_TWO (Sound, KlattGrid)
-		autoSound result = Sound_KlattGrid_filterByVocalTract (me, you, filtersStructure);
+		autoSound result = Sound_KlattGrid_filterByVocalTract (me, you, filterModel);
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
@@ -936,13 +906,6 @@ void praat_KlattGrid_init () {
 	Replace nasal/tracheal antiformant grid
 	Add oral/nasal/tracheal/frication/delta formant and bandwidth tier
 	Add nasal/tracheal antiformant and bandwidth tier
-	#define KlattGrid_ORAL_FORMANTS 1
-	#define KlattGrid_NASAL_FORMANTS 2
-	#define KlattGrid_FRICATION_FORMANTS 3
-	#define KlattGrid_TRACHEAL_FORMANTS 4
-	#define KlattGrid_NASAL_ANTIFORMANTS 5
-	#define KlattGrid_TRACHEAL_ANTIFORMANTS 6
-	#define KlattGrid_DELTA_FORMANTS 7
 	*/
 	praat_addAction1 (classKlattGrid, 0, U"KlattGrid help", nullptr, 0, HELP_KlattGrid_help);
 	praat_addAction1 (classKlattGrid, 0, U"Edit phonation -", nullptr, 0, nullptr);
