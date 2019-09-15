@@ -1,6 +1,6 @@
 /* KlattGrid_def.h
  *
- * Copyright (C) 2008-2011 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2008-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ oo_END_CLASS (PhonationGrid)
 #define ooSTRUCT VocalTractGridPlayOptions
 oo_DEFINE_CLASS (VocalTractGridPlayOptions, Daata)
 
-	oo_INT (filterModel)
+	oo_ENUM (kKlattGridFilterModel, filterModel)
 	oo_INTEGER (startOralFormant)
 	oo_INTEGER (endOralFormant)
 	oo_INTEGER (startNasalFormant)

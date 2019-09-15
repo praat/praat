@@ -894,7 +894,7 @@ static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.get(), fg -> xmin, 90.0);
 	KlattGrid_replacePitchTier (publish.get(), my vowel -> pt.get());
-	KlattGrid_replaceFormantGrid (publish.get(), KlattGrid_ORAL_FORMANTS, fg.get());
+	KlattGrid_replaceFormantGrid (publish.get(), kKlattGridFormantType::Oral, fg.get());
 	Editor_broadcastPublication (me, publish.move());
 }
 
