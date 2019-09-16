@@ -1,6 +1,6 @@
 /* praat_KlattGrid_init.cpp
  *
- * Copyright (C) 2009-2016 David Weenink
+ * Copyright (C) 2009-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,6 +124,26 @@ DIRECT (NEW1_KlattGrid_createExample) {
 	CREATE_ONE
 		autoKlattGrid result = KlattGrid_createExample();
 	CREATE_ONE_END (U"example")
+}
+
+FORM (NEW1_KlattGrid_createFromVowel, U"Create KlattGrid from vowel", U"Create KlattGrid from vowel...") {
+	WORD (name, U"Name", U"a")
+	POSITIVE (duration, U"Duration (s)", U"0.4")
+	POSITIVE (f0start, U"Pitch (Hz)", U"125.0")
+	POSITIVE (f1, U"F1 (Hz)", U"800.0")
+	POSITIVE (b1, U"B1 (Hz)", U"80.0")
+	POSITIVE (f2, U"F2 (Hz)", U"1200.0")
+	POSITIVE (b2, U"B2 (Hz)", U"80.0")
+	POSITIVE (f3, U"F3 (Hz)", U"2300.0")
+	POSITIVE (b3, U"B3 (Hz)", U"100.0")
+	POSITIVE (f4, U"F4 (Hz)", U"2800.0")
+	POSITIVE (bandWidthFraction, U"Bandwidth fraction", U"0.1")
+	POSITIVE (formantFrequencyInterval, U"Formant frequency interval (Hz) (Hz)", U"1000.0")
+	OK
+DO
+	CREATE_ONE
+		autoKlattGrid result = KlattGrid_createFromVowel (duration, f0start, f1, b1, f2, b2, f3, b3, f4, formantFrequencyInterval, bandWidthFraction);
+	CREATE_ONE_END (name)
 }
 
 FORM (NEW1_KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...") {
@@ -876,6 +896,7 @@ void praat_KlattGrid_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, praat_DEPTH_1 | praat_NO_API, HELP_KlattGrid_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- the synthesizer grid --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid...", nullptr, 1, NEW1_KlattGrid_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid from vowel...", nullptr, 1, NEW1_KlattGrid_createFromVowel);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid example", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattGrid_createExample);
 
 	/*

@@ -102,6 +102,8 @@ autoKlattGrid KlattGrid_create (double tmin, double tmax, integer numberOfForman
 	integer numberOfTrachealFormants, integer numberOfTrachealAntiFormants,
 	integer numberOfFricationFormants, integer numberOfDeltaFormants);
 
+autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double f1, double b1, double f2, double b2, double f3, double b3, double f4, double formantFrequencyInterval, double bandWidthFraction);
+
 autoKlattGrid KlattGrid_createExample ();
 autoKlattGridPlayOptions KlattGridPlayOptions_create ();
 void KlattGrid_setNames (KlattGrid me);
