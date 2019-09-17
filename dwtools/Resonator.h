@@ -26,26 +26,26 @@
 #include "Sound.h"
 
 Thing_define (Filter, Daata) {
-	double dT;
+	double samplingPeriod;
 	double a, b, c;
 	double p1, p2;
 
 	virtual double v_getOutput (double input);
-	virtual void v_setFB (double f, double b);
+	virtual void v_setCoefficients (double frequency, double bandwidth);
 	virtual void v_resetMemory ();
 };
 
 Thing_define (Resonator, Filter) {
 	bool normaliseAtDC;
 
-	void v_setFB (double f, double b)
+	void v_setCoefficients (double frequency, double bandwidth)
 		override;
 };
 
 Thing_define (AntiResonator, Resonator) {
 	double v_getOutput (double input)
 		override;
-	void v_setFB (double f, double b)
+	void v_setCoefficients (double frequency, double bandwidth)
 		override;
 };
 
@@ -55,24 +55,24 @@ Thing_define (ConstantGainResonator, Filter) {
 
 	double v_getOutput (double input)
 		override;
-	void v_setFB (double f, double b)
+	void v_setCoefficients (double frequency, double bandwidth)
 		override;
 	void v_resetMemory ()
 		override;
 };
 
-autoResonator Resonator_create (double dT, bool normaliseAtDC);
+autoResonator Resonator_create (double samplingPeriod, bool normaliseAtDC);
 
-autoConstantGainResonator ConstantGainResonator_create (double dT);
+autoConstantGainResonator ConstantGainResonator_create (double samplingPeriod);
 
-autoAntiResonator AntiResonator_create (double dT);
+autoAntiResonator AntiResonator_create (double samplingPeriod);
 
 /*
 	Set a,b,c
 	normaliseAtDC == true: H(0) = 1 -> a = 1 - b - c
 	normaliseAtDC == false: H(Fmax) = 1 -> a = (1 + c)sin(2*pi*F*T)
 */
-void Filter_setFB (Filter me, double f, double b);
+void Filter_setCoefficients (Filter me, double frequency, double bandwidth);
 
 double Filter_getOutput (Filter me, double input);
 

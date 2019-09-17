@@ -544,7 +544,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 
 	my FLPhz = Melder_ifloor (0.0950 * my samrate); // depends on samplingFrequency ????
 	my BLPhz = Melder_ifloor (0.0630 * my samrate);
-	Filter_setFB (my rlp.get(), my FLPhz, my BLPhz);
+	Filter_setCoefficients (my rlp.get(), my FLPhz, my BLPhz);
 }
 
 static KlattFrame KlattFrame_create () {
@@ -597,28 +597,28 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	for (integer i = 8; i > 0; i--) {
 		if (my nfcascade >= i) {
-			Filter_setFB (my rc [i].get(), thy Fhz [i], thy Bhz [i]);
+			Filter_setCoefficients (my rc [i].get(), thy Fhz [i], thy Bhz [i]);
 		}
 	}
 
 	/* Set coefficients of nasal resonator and zero antiresonator */
 
-	Filter_setFB (my rnpc.get(), thy FNPhz, thy BNPhz);
-	Filter_setFB (my rnz.get(), thy FNZhz, thy BNZhz);
+	Filter_setCoefficients (my rnpc.get(), thy FNPhz, thy BNPhz);
+	Filter_setCoefficients (my rnz.get(), thy FNZhz, thy BNZhz);
 
 	/* Set coefficients of parallel resonators, and amplitude of outputs */
 
 	for (integer i = 1; i <= 6; i ++) {
-		Filter_setFB (my rp [i].get(), thy Fhz [i], thy Bphz [i]);
+		Filter_setCoefficients (my rp [i].get(), thy Fhz [i], thy Bphz [i]);
 		my rp [i] -> a *= amp_parF [i] * DBtoLIN (thy A [i]);
 	}
 
-	Filter_setFB (my rnpp.get(), thy FNPhz, thy BNPhz);
+	Filter_setCoefficients (my rnpp.get(), thy FNPhz, thy BNPhz);
 	my rnpp -> a *= amp_parFNP;
 
 	/* output low-pass filter */
 
-	Filter_setFB (my rout.get(), 0, (integer) (my samrate / 2));
+	Filter_setCoefficients (my rout.get(), 0, (integer) (my samrate / 2));
 }
 
 /*
@@ -835,7 +835,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		integer temp = my samrate / my nopen;
 
-		Filter_setFB (my rgl.get(), 0, temp); // Only used for impulsive source.
+		Filter_setCoefficients (my rgl.get(), 0, temp); // Only used for impulsive source.
 
 		/* Make gain at F1 about constant */
 
