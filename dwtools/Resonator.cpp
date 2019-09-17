@@ -30,13 +30,16 @@ void structFilter :: v_resetMemory () {
 	p1 = p2 = 0.0;
 }
 
-void structFilter :: v_setFB (double f, double bw) {
-	double r = exp (-NUMpi * dT * bw);
+void structFilter :: v_setCoefficients (double frequency, double bandwidth) {
+	double r = exp (-NUMpi * samplingPeriod * bandwidth);
 	c = -(r * r);
-	b = 2.0 * r * cos (2.0 * NUMpi * f * dT);
-	a = 1.0 - b - c; // normalization: amplitude = 0 dB at f = 0 Hz
+	b = 2.0 * r * cos (2.0 * NUMpi * frequency * samplingPeriod);
+	a = 1.0 - b - c; // normalization: H(0) = 0 dB
 }
 
+/*
+	y[n] = a * x[n] + b * y[n-1] + c * y[n-2]
+*/
 double structFilter :: v_getOutput (double input) {
 	double output = a * input + b * p1 + c * p2;
 	p2 = p1;
@@ -46,17 +49,17 @@ double structFilter :: v_getOutput (double input) {
 
 Thing_implement (Resonator, Filter, 0);
 
-void structResonator :: v_setFB (double f, double bw) {
-	structFilter :: v_setFB (f, bw);
+void structResonator :: v_setCoefficients (double frequency, double bandwidth) {
+	structFilter :: v_setCoefficients (frequency, bandwidth);
 	if (! normaliseAtDC)
-		a = (1.0 + c) * sin (2.0 * NUMpi * f * dT); // normalization: amplitude = 0 dB at f Hz
+		a = (1.0 + c) * sin (2.0 * NUMpi * frequency * samplingPeriod); // normalization: H(f) = 0 dB
 }
 
-autoResonator Resonator_create (double dT, bool normaliseAtDC) {
+autoResonator Resonator_create (double samplingPeriod, bool normaliseAtDC) {
 	try {
 		autoResonator me = Thing_new (Resonator);
 		my a = 1.0; // all-pass
-		my dT = dT;
+		my samplingPeriod = samplingPeriod;
 		my normaliseAtDC = normaliseAtDC;
 		return me;
 	} catch (MelderError) {
@@ -66,20 +69,22 @@ autoResonator Resonator_create (double dT, bool normaliseAtDC) {
 
 Thing_implement (AntiResonator, Filter, 0);
 
-void structAntiResonator :: v_setFB (double f, double bw) {
-	if (f <= 0.0 && bw <= 0.0) {
+void structAntiResonator :: v_setCoefficients (double frequency, double bandwidth) {
+	if (frequency <= 0.0 && bandwidth <= 0.0) {
 		a = 1.0;
 		b = -2.0;
 		c = 1.0; // all-pass except dc
 	} else {
-		structFilter :: v_setFB (f, bw);
+		structFilter :: v_setCoefficients (frequency, bandwidth);
 		a = 1.0 / (1.0 - b - c);
 		// The next equations are incorporated in the getOutput function
 		//c *= - a; b *= - a;
 	}
 }
 
-/* y[n] = a * (x[n] - b * x[n-1] - c * x[n-2]) */
+/*
+	y[n] = a * (x[n] - b * x[n-1] - c * x[n-2])
+*/
 double structAntiResonator :: v_getOutput (double input) {
 	double output = a * (input - b * p1 - c * p2);
 	p2 = p1;
@@ -93,14 +98,16 @@ void structConstantGainResonator :: v_resetMemory () {
 	p1 = p2 = p3 = p4 = 0.0;
 }
 
-void structConstantGainResonator :: v_setFB (double f, double bw) {
-	structFilter :: v_setFB (f, bw);
-	double r = exp (-NUMpi * dT * bw);
+void structConstantGainResonator :: v_setCoefficients (double frequency, double bandwidth) {
+	structFilter :: v_setCoefficients (frequency, bandwidth);
+	double r = exp (-NUMpi * samplingPeriod * bandwidth);
 	a = 1.0 - r;
 	d = -r;
 }
 
-/* y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2] */
+/*
+	y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2]
+*/
 double structConstantGainResonator :: v_getOutput (double input) {
 	double output = a * (input + d * p4) + b * p1 + c * p2;
 	p2 = p1;
@@ -110,30 +117,30 @@ double structConstantGainResonator :: v_getOutput (double input) {
 	return output;
 }
 
-autoConstantGainResonator ConstantGainResonator_create (double dT) {
+autoConstantGainResonator ConstantGainResonator_create (double samplingPeriod) {
 	try {
 		autoConstantGainResonator me = Thing_new (ConstantGainResonator);
 		my a = 1.0; // all-pass
-		my dT = dT;
+		my samplingPeriod = samplingPeriod;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ConstantGainResonator not created.");
 	}
 }
 
-autoAntiResonator AntiResonator_create (double dT) {
+autoAntiResonator AntiResonator_create (double samplingPeriod) {
 	try {
 		autoAntiResonator me = Thing_new (AntiResonator);
 		my a = 1.0; // all-pass
-		my dT = dT;
+		my samplingPeriod = samplingPeriod;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AntiResonator not created.");
 	}
 }
 
-void Filter_setFB (Filter me, double f, double b) {
-	my v_setFB (f, b);
+void Filter_setCoefficients (Filter me, double frequency, double bandwidth) {
+	my v_setCoefficients (frequency, bandwidth);
 }
 
 double Filter_getOutput (Filter me, double input) {

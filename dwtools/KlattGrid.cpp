@@ -501,7 +501,7 @@ static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGr
 		double f = RealTier_getValueAtTime (ftier, t);
 		double b = RealTier_getValueAtTime (btier, t);
 		if (f <= nyquist && isdefined (b))
-			Filter_setFB (r.get(), f, b);
+			Filter_setCoefficients (r.get(), f, b);
 		my z [1] [is] = Filter_getOutput (r.get(), my z [1] [is]);
 	}
 }
@@ -533,7 +533,7 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (Sound me, Forma
 			double b = RealTier_getValueAtTime (btier, t);
 			double a;
 			if (f <= nyquist && isdefined (b)) {
-				Filter_setFB (r.get(), f, b);
+				Filter_setCoefficients (r.get(), f, b);
 				a = RealTier_getValueAtTime (atier, t);
 				if (isdefined (a))
 					r -> a *= DB_to_A (a);
