@@ -494,7 +494,7 @@ static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGr
 	if (antiformant != 0)
 		r = AntiResonator_create (my dx);
 	else
-		r = Resonator_create (my dx, Resonator_NORMALISATION_H0);
+		r = Resonator_create (my dx, true);
 
 	for (integer is = 1; is <= my nx; is ++) {
 		double t = my x1 + (is - 1) * my dx;
@@ -526,7 +526,7 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (Sound me, Forma
 
 		if (ftier -> points.size == 0 || btier -> points.size == 0 || atier -> points.size == 0)
 			return;    // nothing to do
-		autoResonator r = Resonator_create (my dx, Resonator_NORMALISATION_HMAX);
+		autoResonator r = Resonator_create (my dx, false);
 		for (integer is = 1; is <= my nx; is ++) {
 			double t = my x1 + (is - 1) * my dx;
 			double f = RealTier_getValueAtTime (ftier, t);
