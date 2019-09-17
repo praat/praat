@@ -26,18 +26,15 @@
 
 Thing_implement (Filter, Daata, 0);
 
-#define SETBC(f,bw) \
-	double r = exp (-NUMpi * dT * bw); \
-	c = -(r * r); \
-	b = 2.0 * r * cos (2.0 * NUMpi * f * dT);
-
 void structFilter :: v_resetMemory () {
 	p1 = p2 = 0.0;
 }
 
 void structFilter :: v_setFB (double f, double bw) {
-	SETBC (f, bw)
-	a = 1.0 - b - c;
+	double r = exp (-NUMpi * dT * bw);
+	c = -(r * r);
+	b = 2.0 * r * cos (2.0 * NUMpi * f * dT);
+	a = 1.0 - b - c; // normalization: amplitude = 0 dB at f = 0 Hz
 }
 
 double structFilter :: v_getOutput (double input) {
@@ -50,16 +47,17 @@ double structFilter :: v_getOutput (double input) {
 Thing_implement (Resonator, Filter, 0);
 
 void structResonator :: v_setFB (double f, double bw) {
-	SETBC (f, bw)
-	a = normalisation == Resonator_NORMALISATION_H0 ? (1.0 - b - c) : (1.0 + c) * sin (2.0 * NUMpi * f * dT);
+	structFilter :: v_setFB (f, bw);
+	if (! normaliseAtDC)
+		a = (1.0 + c) * sin (2.0 * NUMpi * f * dT); // normalization: amplitude = 0 dB at f Hz
 }
 
-autoResonator Resonator_create (double dT, int normalisation) {
+autoResonator Resonator_create (double dT, bool normaliseAtDC) {
 	try {
 		autoResonator me = Thing_new (Resonator);
-		my a = 1; // all-pass
+		my a = 1.0; // all-pass
 		my dT = dT;
-		my normalisation = normalisation;
+		my normaliseAtDC = normaliseAtDC;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Resonator not created.");
@@ -74,7 +72,7 @@ void structAntiResonator :: v_setFB (double f, double bw) {
 		b = -2.0;
 		c = 1.0; // all-pass except dc
 	} else {
-		SETBC (f, bw)
+		structFilter :: v_setFB (f, bw);
 		a = 1.0 / (1.0 - b - c);
 		// The next equations are incorporated in the getOutput function
 		//c *= - a; b *= - a;
@@ -96,7 +94,8 @@ void structConstantGainResonator :: v_resetMemory () {
 }
 
 void structConstantGainResonator :: v_setFB (double f, double bw) {
-	SETBC (f, bw)
+	structFilter :: v_setFB (f, bw);
+	double r = exp (-NUMpi * dT * bw);
 	a = 1.0 - r;
 	d = -r;
 }

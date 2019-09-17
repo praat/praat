@@ -502,16 +502,16 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 		double dT = 1.0 / my samrate;
 
 		for (integer i = 1; i <= 8; i ++) {
-			my rc [i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
+			my rc [i] = Resonator_create (dT, true);
 			if (i <= 6) {
-				my rp [i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
+				my rp [i] = Resonator_create (dT, true);
 			}
 		}
-		my rnpp = Resonator_create (dT, Resonator_NORMALISATION_H0);
-		my rnpc = Resonator_create (dT, Resonator_NORMALISATION_H0);
-		my rgl = Resonator_create (dT, Resonator_NORMALISATION_H0);
-		my rlp = Resonator_create (dT, Resonator_NORMALISATION_H0);
-		my rout = Resonator_create (dT, Resonator_NORMALISATION_H0);
+		my rnpp = Resonator_create (dT, true);
+		my rnpc = Resonator_create (dT, true);
+		my rgl = Resonator_create (dT, true);
+		my rlp = Resonator_create (dT, true);
+		my rout = Resonator_create (dT, true);
 		my rnz = AntiResonator_create (dT);
 		return me;
 	} catch (MelderError) {

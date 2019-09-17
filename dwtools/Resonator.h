@@ -2,7 +2,7 @@
 #define _Resonator_h_
 /* Resonator.h
  *
- * Copyright (C) 2008-2011, 2015 David Weenink
+ * Copyright (C) 2008-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ Thing_define (Filter, Daata) {
 };
 
 Thing_define (Resonator, Filter) {
-	int normalisation;
+	bool normaliseAtDC;
 
 	void v_setFB (double f, double b)
 		override;
@@ -61,11 +61,7 @@ Thing_define (ConstantGainResonator, Filter) {
 		override;
 };
 
-#define Resonator_NORMALISATION_H0 0
-#define Resonator_NORMALISATION_HMAX 1
-
-
-autoResonator Resonator_create (double dT, int normalisation);
+autoResonator Resonator_create (double dT, bool normaliseAtDC);
 
 autoConstantGainResonator ConstantGainResonator_create (double dT);
 
@@ -73,8 +69,8 @@ autoAntiResonator AntiResonator_create (double dT);
 
 /*
 	Set a,b,c
-	normalisation == 0: H(0) = 1 -> a = 1 -b - c
-	normalisation == 1: H(Fmax) = 1 -> a = (1 + c)sin(2*pi*F*T)
+	normaliseAtDC == true: H(0) = 1 -> a = 1 - b - c
+	normaliseAtDC == false: H(Fmax) = 1 -> a = (1 + c)sin(2*pi*F*T)
 */
 void Filter_setFB (Filter me, double f, double b);
 

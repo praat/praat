@@ -21,6 +21,7 @@
  djmw 20101009 Latest modification
 */
 
+#include "KlattGrid.h"
 #include "ManPagesM.h"
 #include "MFCC.h"
 
@@ -338,6 +339,7 @@ DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 TAG (U"##Number of iterations#")
 DEFINITION (U"determines how often the averaging will take place. If chosen 2, for example, the output PowerCepstrum "
 	"after the first averaging will be averaged once again.")
+
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrum: Subtract trend...", U"djmw", 20190914)
