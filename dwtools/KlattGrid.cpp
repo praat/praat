@@ -478,7 +478,7 @@ static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, 
 
 /************************ Sound & FormantGrid *********************************************/
 
-static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, integer iformant, int antiformant) {
+static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, integer iformant, bool antiformant) {
 	if (iformant < 1 || iformant > thy formants.size) {
 		Melder_warning (U"Formant ", iformant, U" does not exist.");
 		return;
@@ -491,7 +491,7 @@ static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGr
 		Melder_throw (U"Empty tier");
 	double nyquist = 0.5 / my dx;
 	autoFilter r;
-	if (antiformant != 0)
+	if (antiformant)
 		r = AntiResonator_create (my dx);
 	else
 		r = Resonator_create (my dx, true);
@@ -507,11 +507,11 @@ static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGr
 }
 
 void Sound_FormantGrid_filterWithOneAntiFormant_inplace (Sound me, FormantGrid thee, integer iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, 1);
+	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, true);
 }
 
 void Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, integer iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, 0);
+	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, false);
 }
 
 void Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, integer iformant) {
@@ -1496,7 +1496,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		FormantGrid tracheal_formants = coupling -> tracheal_formants.get();
 		FormantGrid tracheal_antiformants = coupling -> tracheal_antiformants.get();
 
-		int antiformants = 0;
+		bool antiformant = false;
 		integer numberOfFormants = oral_formants -> formants.size;
 		integer numberOfTrachealFormants = tracheal_formants -> formants.size;
 		integer numberOfTrachealAntiFormants = tracheal_antiformants -> formants.size;
@@ -1518,10 +1518,10 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 
 		integer nasal_formant_warning = 0, any_warning = 0;
 		if (pv -> endNasalFormant > 0) {   // nasal formants
-			antiformants = 0;
+			antiformant = false;
 			for (integer iformant = pv -> startNasalFormant; iformant <= pv -> endNasalFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_formants.get(), iformant, antiformant);
 				} else {
 					// Melder_warning ("Nasal formant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_formant_warning ++; any_warning ++;
@@ -1531,10 +1531,10 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 
 		integer nasal_antiformant_warning = 0;
 		if (pv -> endNasalAntiFormant > 0) {   // nasal antiformants
-			antiformants = 1;
+			antiformant = true;
 			for (integer iformant = pv -> startNasalAntiFormant; iformant <= pv -> endNasalAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_antiformants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_antiformants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_antiformants.get(), iformant, antiformant);
 				} else {
 					// Melder_warning ("Nasal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_antiformant_warning ++; any_warning ++;
@@ -1544,10 +1544,10 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 
 		integer tracheal_formant_warning = 0;
 		if (pc -> endTrachealFormant > 0) {   // tracheal formants
-			antiformants = 0;
+			antiformant = false;
 			for (integer iformant = pc -> startTrachealFormant; iformant <= pc -> endTrachealFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_formants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_formants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_formants, iformant, antiformant);
 				} else {
 					// Melder_warning ("Tracheal formant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_formant_warning ++; any_warning ++;
@@ -1557,10 +1557,10 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 
 		integer tracheal_antiformant_warning = 0;
 		if (pc -> endTrachealAntiFormant > 0) {   // tracheal antiformants
-			antiformants = 1;
+			antiformant = true;
 			for (integer iformant = pc -> startTrachealAntiFormant; iformant <= pc -> endTrachealAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_antiformants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_antiformants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_antiformants, iformant, antiformant);
 				} else {
 					// Melder_warning ("Tracheal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_antiformant_warning ++; any_warning ++;
@@ -1570,13 +1570,13 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 
 		integer oral_formant_warning = 0;
 		if (pv -> endOralFormant > 0) {   // oral formants
-			antiformants = 0;
+			antiformant = false;
 			if (! formants) {
 				formants = Data_copy (thy oral_formants.get());
 			}
 			for (integer iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), formants.get(), iformant, antiformant);
 				} else {
 					// Melder_warning ("Oral formant", iformant, ": frequency and/or bandwidth missing.");
 					oral_formant_warning ++; any_warning ++;
@@ -1586,21 +1586,16 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		if (any_warning > 0)
 		{
 			autoMelderString warning;
-			if (nasal_formant_warning > 0) {
+			if (nasal_formant_warning > 0)
 				MelderString_append (&warning, U"\tNasal formants: one or more are missing.\n");
-			}
-			if (nasal_antiformant_warning) {
+			if (nasal_antiformant_warning)
 				MelderString_append (&warning, U"\tNasal antiformants: one or more are missing.\n");
-			}
-			if (tracheal_formant_warning) {
+			if (tracheal_formant_warning)
 				MelderString_append (&warning, U"\tTracheal formants: one or more are missing.\n");
-			}
-			if (tracheal_antiformant_warning) {
+			if (tracheal_antiformant_warning)
 				MelderString_append (&warning, U"\tTracheal antiformants: one or more are missing.\n");
-			}
-			if (oral_formant_warning) {
+			if (oral_formant_warning)
 				MelderString_append (&warning, U"\tOral formants: one or more are missing.\n");
-			}
 			MelderInfo_write (U"\nWarning:\n", warning.string);
 			MelderInfo_drain ();
 		}
