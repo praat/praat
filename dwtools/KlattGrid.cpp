@@ -2707,9 +2707,8 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 		FricationGridPlayOptions pf = my frication -> options.get();
 		double samplingFrequency = my options -> samplingFrequency;
 
-		if (pp -> voicing) {
+		if (pp -> voicing)
 			KlattGrid_setGlottisCoupling (me);
-		}
 
 		if (pp -> aspiration || pp -> voicing) { // No vocal tract filtering if no glottal source signal present
 			autoSound source = PhonationGrid_to_Sound (my phonation.get(), my coupling.get(), samplingFrequency);
@@ -2718,18 +2717,17 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 
 		if (pf -> endFricationFormant > 0 || pf -> bypass) {
 			autoSound frication = FricationGrid_to_Sound (my frication.get(), samplingFrequency);
-			if (thee) {
+			if (thee)
 				_Sounds_add_inplace (thee.get(), frication.get());
-			} else {
+			else
 				thee = frication.move();
-			}
 		}
 
-		if (thee) {
+		if (thee)
 			Vector_scale (thee.get(), 0.99);
-		} else if (my options -> scalePeak) {
+		else if (my options -> scalePeak)
 			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
-		}
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound created.");

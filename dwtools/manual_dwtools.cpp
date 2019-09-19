@@ -5695,7 +5695,7 @@ NORMAL (U"F. Itakura & S. Saito (1968): \"Analysis synthesis telephony based on 
 MAN_END
 
 MAN_BEGIN (U"Janecek et al. (2011)", U"djmw", 20190312)
-	NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011): "
+NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011): "
 		"\"LIBNMF \\-- A library for nonnegative matrix factorization.\""
 		"%%Computing and informatics% #30: 205\\--224")
 MAN_END
