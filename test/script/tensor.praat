@@ -192,4 +192,10 @@ assert mul_tn## (at##, b##) = product##
 assert mul_nt## (a##, bt##) = product##
 assert mul_tt## (at##, bt##) = product##
 
+@do: { 1, 103, 7 }
+procedure do: v#
+	.result = mean (v#)
+endproc
+assert do.result = 37
+
 appendInfoLine: "OK"

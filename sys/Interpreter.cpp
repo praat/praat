@@ -35,11 +35,13 @@ extern structMelderDir praatDir;
 #define Interpreter_BOOLEAN 6
 #define Interpreter_SENTENCE 7
 #define Interpreter_TEXT 8
-#define Interpreter_CHOICE 9
-#define Interpreter_OPTIONMENU 10
-#define Interpreter_BUTTON 11
-#define Interpreter_OPTION 12
-#define Interpreter_COMMENT 13
+#define Interpreter_VECTOR 9
+#define Interpreter_MATRIX 10
+#define Interpreter_CHOICE 11
+#define Interpreter_OPTIONMENU 12
+#define Interpreter_BUTTON 13
+#define Interpreter_OPTION 14
+#define Interpreter_COMMENT 15
 
 autoVEC theInterpreterNumvec;
 autoMAT theInterpreterNummat;
@@ -215,6 +217,10 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
 			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
+			else if (str32nequ (startOfLine, U"vector", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_VECTOR; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"matrix", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_MATRIX; parameterLocation = startOfLine + 6; }
 			else if (str32nequ (startOfLine, U"choice", 6) && Melder_isEndOfInk (startOfLine [6]))
 				{ type = Interpreter_CHOICE; parameterLocation = startOfLine + 6; }
 			else if (str32nequ (startOfLine, U"optionmenu", 10) && Melder_isEndOfInk (startOfLine [10]))
@@ -314,6 +320,10 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_TEXT:
 				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+			case Interpreter_VECTOR:
+				UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+			case Interpreter_MATRIX:
+				UiForm_addNummat (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_CHOICE:
 				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
 			case Interpreter_OPTIONMENU:
@@ -899,25 +909,25 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 				while (Melder_isHorizontalSpace (*q)) q ++;   // skip more whitespace
 				if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 			}
-			while (*q && *q != U')') {
+			while (*q && *q != U')' && *q != U';') {
 				static MelderString argument { };
 				MelderString_empty (& argument);
 				while (Melder_isHorizontalSpace (*p)) p ++;
 				while (Melder_isHorizontalSpace (*q)) q ++;
 				conststring32 parameterName = q;
-				while (Melder_staysWithinInk (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
+				while (Melder_staysWithinInk (*q) && *q != U',' && *q != U')' && *q != U';') q ++;   // collect parameter name
 				int expressionDepth = 0;
 				for (; *p; p ++) {
 					if (*p == U',') {
 						if (expressionDepth == 0) break;   // depth-0 comma ends expression
 						MelderString_appendCharacter (& argument, U',');
-					} else if (*p == U')') {
+					} else if (*p == U')' || *p == U']' || *p == U'}') {
 						if (expressionDepth == 0) break;   // depth-0 closing parenthesis ends expression
 						expressionDepth --;
-						MelderString_appendCharacter (& argument, U')');
-					} else if (*p == U'(') {
+						MelderString_appendCharacter (& argument, *p);
+					} else if (*p == U'(' || *p == U'[' || *p == U'{') {
 						expressionDepth ++;
-						MelderString_appendCharacter (& argument, U'(');
+						MelderString_appendCharacter (& argument, *p);
 					} else if (*p == U'\"') {
 						/*
 						 * Enter a string literal.

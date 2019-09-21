@@ -300,7 +300,7 @@ DO
 }
 
 FORM (GRAPHICS_BarkFilter_paint, U"FilterBank: Paint", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (bark)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (bark)", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -458,7 +458,7 @@ DO
 }
 
 FORM (GRAPHICS_CC_drawC0, U"CC: Draw c0", U"CC: Draw c0...") {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -2717,7 +2717,7 @@ DIRECT (NEW_FileInMemorySet_to_Strings_id) {
 /************************* FilterBank ***********************************/
 
 FORM (GRAPHICS_FilterBank_drawFilters, U"FilterBank: Draw filters", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -2730,7 +2730,7 @@ DO
 }
 
 FORM (GRAPHICS_FilterBank_drawOneContour, U"FilterBank: Draw one contour", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (height, U"Height (dB)", U"40.0")
@@ -2742,7 +2742,7 @@ DO
 }
 
 FORM (GRAPHICS_FilterBank_drawContours, U"FilterBank: Draw contours", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -2776,7 +2776,7 @@ DO
 }
 
 FORM (GRAPHICS_MelSpectrogram_paintImage, U"MelSpectrogram: Paint image", U"MelSpectrogram: Paint image...") {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (mel)", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
@@ -2790,7 +2790,7 @@ DO
 }
 
 FORM (GRAPHICS_BarkSpectrogram_paintImage, U"BarkSpectrogram: Paint image", U"BarkSpectrogram: Paint image...") {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (bark)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (bark)", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
@@ -2804,7 +2804,7 @@ DO
 }
 
 FORM (GRAPHICS_FilterBank_paintImage, U"FilterBank: Paint image", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -2817,7 +2817,7 @@ DO
 }
 
 FORM (GRAPHICS_FilterBank_paintContours, U"FilterBank: Paint contours", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -2831,7 +2831,7 @@ DO
 
 
 FORM (GRAPHICS_FilterBank_paintCells, U"FilterBank: Paint cells", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -2844,7 +2844,7 @@ DO
 }
 
 FORM (GRAPHICS_FilterBank_paintSurface, U"FilterBank: Paint surface", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -3032,7 +3032,7 @@ DO
 /****************** FormantGrid  *********************************/
 
 FORM (GRAPHICS_old_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= auto)")
 	BOOLEAN (bandwidths, U"Bandwidths", false)
@@ -3045,7 +3045,7 @@ DO
 }
 
 FORM (GRAPHICS_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= auto)")
 	BOOLEAN (bandwidths, U"Bandwidths", false)
@@ -4085,7 +4085,7 @@ DO
 }
 
 FORM (GRAPHICS_MelFilter_paint, U"FilterBank: Paint", nullptr) {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (mel)", U"0.0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -5466,7 +5466,7 @@ DO
 }
 
 FORM (GRAPHICS_Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -5790,7 +5790,7 @@ DO
 	
 FORM (NEW_Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	REAL (connectionY, U"Connection y-value", U"0.0")
@@ -5804,7 +5804,7 @@ DO
 
 FORM (NEW1_Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sounds: To Polygon (enclosed)...") {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
@@ -5893,7 +5893,7 @@ DO
 
 FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...") {
 	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	REAL (level, U"Fill from level", U"0.0")

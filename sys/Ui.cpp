@@ -2045,7 +2045,7 @@ Graphics_Colour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
 		break;
 		default:
 		{
-			Melder_throw (U"Cannot find a real value in field \"", fieldName, U"\" in the form.\n"
+			Melder_throw (U"Cannot find a colour value in field \"", fieldName, U"\" in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
 		}
