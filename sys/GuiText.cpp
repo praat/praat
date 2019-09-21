@@ -868,43 +868,35 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 		(void) Melder_killReturns_inplace (result.get());
 		return result;
 	#elif cocoa
-		if (my d_cocoaTextView) {
-			NSString *nsString = [my d_cocoaTextView   string];
-			autostring32 result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result.get());
-			NSRange nsRange = [my d_cocoaTextView   selectedRange];
-			*first = uinteger_to_integer (nsRange. location);
-			*last = *first + uinteger_to_integer (nsRange. length);
-			for (integer i = 0; i < *first; i ++) {
-				if (result [i] > 0xFFFF) {
-					(*first) --;
-					(*last) --;
-				}
-			}
-			for (integer i = *first; i < *last; i ++) {
-				if (result [i] > 0xFFFF)
-					(*last) --;
-			}
-			return result;
-		} else {
-			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
-			autostring32 result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result.get());
-			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
-			*first = uinteger_to_integer (nsRange. location);
-			*last = *first + uinteger_to_integer (nsRange. length);
-			for (integer i = 0; i < *first; i ++) {
-				if (result [i] > 0xFFFF) {
-					(*first) --;
-					(*last) --;
-				}
-			}
-			for (integer i = *first; i < *last; i ++) {
-				if (result [i] > 0xFFFF)
-					(*last) --;
-			}
-			return result;
-		}
+		NSString *nsString = ( my d_cocoaTextView ?
+				[my d_cocoaTextView   string] :
+				[(NSTextField *) my d_widget   stringValue] );
+		autostring16 buffer16 = Melder_32to16 (Melder_peek8to32 ([nsString UTF8String]));
+		NSText *nsText = ( my d_cocoaTextView ?
+				my d_cocoaTextView :
+				[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] );
+		NSRange nsRange = [nsText   selectedRange];
+		*first = uinteger_to_integer (nsRange. location);
+		*last = *first + uinteger_to_integer (nsRange. length);
+		/*
+			The UTF-16 string may contain sequences of carriage return and newline,
+			for instance whenever a text has been copy-pasted from Microsoft Word,
+			in which case the carriage return has to be deleted and `first` and/or `last`
+			may have to be decremented.
+		*/
+		integer differenceFirst = 0;
+		for (integer i = 0; i < *first; i ++)
+			if (buffer16 [i] == 13 && (buffer16 [i + 1] == L'\n' || buffer16 [i + 1] == 0x0085))
+				differenceFirst ++;
+		integer differenceLast = differenceFirst;
+		for (integer i = *first; i < *last; i ++)
+			if (buffer16 [i] == 13 && (buffer16 [i + 1] == L'\n' || buffer16 [i + 1] == 0x0085))
+				differenceLast ++;
+		*first -= differenceFirst;
+		*last -= differenceLast;
+		autostring32 result = Melder_dup_f (Melder_peek16to32 (buffer16.get()));
+		(void) Melder_killReturns_inplace (result.get());
+		return result;
 	#else
 		return autostring32();
 	#endif
@@ -1120,8 +1112,12 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 			On Windows, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
 		*/
 		integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-		for (integer i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-		for (integer i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+		for (integer i = 0; i < first; i ++)
+			if (text [i] > 0xFFFF)
+				numberOfLeadingHighUnicodeValues ++;
+		for (integer i = first; i < last; i ++)
+			if (text [i] > 0xFFFF)
+				numberOfSelectedHighUnicodeValues ++;
 
 		first += numberOfLeadingLineBreaks;
 		last += numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
@@ -1135,9 +1131,17 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 			On Cocoa, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
 		*/
 		autostring32 text = GuiText_getString (me);
+		/*
+			The following line is needed in case GuiText_getString removed carriage returns.
+		*/
+		GuiText_setString (me, text.get());
 		integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-		for (integer i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-		for (integer i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+		for (integer i = 0; i < first; i ++)
+			if (text [i] > 0xFFFF)
+				numberOfLeadingHighUnicodeValues ++;
+		for (integer i = first; i < last; i ++)
+			if (text [i] > 0xFFFF)
+				numberOfSelectedHighUnicodeValues ++;
 		first += numberOfLeadingHighUnicodeValues;
 		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
 
