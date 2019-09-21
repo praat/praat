@@ -1154,7 +1154,7 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
  * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
-void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod);
+void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod);
 /*
  * Preconditions:
  *		all x[i] should be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
@@ -1174,7 +1174,7 @@ void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_interc
  */
 
 
-void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept);
+void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept);
 
 /* The binomial distribution has the form,
 

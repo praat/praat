@@ -76,7 +76,7 @@ void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double
 
 void Minimizer_minimizeManyTimes (Minimizer me, integer maxIterationsPerTime, integer numberOfTimes, double tolerance);
 
-void Minimizer_drawHistory (Minimizer me, Graphics g, integer itmin, integer itmax, double minimum, double maximum, int garnish);
+void Minimizer_drawHistory (Minimizer me, Graphics g, integer itmin, integer itmax, double minimum, double maximum, bool garnish);
 
 double Minimizer_getMinimum (Minimizer me);
 

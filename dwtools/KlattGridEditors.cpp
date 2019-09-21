@@ -307,12 +307,12 @@ void structKlattGrid_FormantGridEditor :: v_play (double ltmin, double ltmax) {
 	KlattGrid_Editor_defaultPlay (klattgrid, ltmin, ltmax);
 }
 
-autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, int formantType) {
+autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType) {
 	try {
 		Melder_assert (data);
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
-		Melder_require (fg, U"Formant type unknown.");
-		Melder_require (! FormantGrid_isEmpty (fg -> get()), U"Cannot edit an empty formant grid.");
+		Melder_require (! FormantGrid_isEmpty (fg -> get()),
+			U"Cannot edit an empty formant grid.");
 		
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
 		my klattgrid = data;

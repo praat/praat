@@ -34,50 +34,50 @@ static void drawLetterRConfigurationExample (Graphics g)
 {
 	autoConfiguration me = Configuration_createLetterRExample (1);
 	Graphics_setWindow (g, -6, 4, -7, 5);
-	Configuration_draw (me.get(), g, 1, 2, -6, 4, -7, 5, 0, 1, U"", 1);
+	Configuration_draw (me.get(), g, 1, 2, -6, 4, -7, 5, 0, 1, U"", true);
 }
 
 static void drawLetterRConfigurationExample2 (Graphics g)
 {
 	autoConfiguration me = Configuration_createLetterRExample (2);
-	Configuration_draw (me.get(), g, 1, 2, -0.8, 1.2, -0.8, 0.7, 0, 1, U"", 1);
+	Configuration_draw (me.get(), g, 1, 2, -0.8, 1.2, -0.8, 0.7, 0, 1, U"", true);
 }
 
 static void drawLetterRShepard (Graphics g)
 {
 	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
 	autoConfiguration c = Configuration_createLetterRExample (2);
-	Dissimilarity_Configuration_drawShepardDiagram (d.get(), c.get(), g, 0, 200, 0, 2.2, 1, U"+", 1);
+	Dissimilarity_Configuration_drawShepardDiagram (d.get(), c.get(), g, 0, 200, 0, 2.2, 1, U"+", true);
 }
 
 static void drawLetterRRegression (Graphics g)
 {
 	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
 	autoConfiguration c = Configuration_createLetterRExample (2);
-	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, kMDS_TiesHandling::PrimaryApproach, 0, 200, 0, 2.2, 1, U"+", 1);
+	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, kMDS_TiesHandling::PrimaryApproach, 0, 200, 0, 2.2, 1, U"+", true);
 }
 
 static void drawCarrollWishConfigurationExample (Graphics g)
 {
 	autoConfiguration me = Configuration_createCarrollWishExample ();
 	Graphics_setWindow (g, -2, 2, -2, 2);
-	Configuration_draw (me.get(), g, 1, 2, -2, 2, -2, 2, 0, 1, U"", 1);
+	Configuration_draw (me.get(), g, 1, 2, -2, 2, -2, 2, 0, 1, U"", true);
 }
 
 static void drawCarrollWishSalienceExample (Graphics g)
 {
 	autoSalience me = Salience_createCarrollWishExample ();
-	Salience_draw (me.get(), g, 1, 2, 1);
+	Salience_draw (me.get(), g, 1, 2, true);
 }
 
 static void drawMsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 10, kMDS_splineType::MSpline, 3, U"0.3 0.5 0.6", 1);
+	drawSplines (g, 0, 1, 0, 10, kMDS_splineType::MSpline, 3, U"0.3 0.5 0.6", true);
 }
 
 static void drawIsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 1.5, kMDS_splineType::ISpline, 3, U"0.3 0.5 0.6", 1);
+	drawSplines (g, 0, 1, 0, 1.5, kMDS_splineType::ISpline, 3, U"0.3 0.5 0.6", true);
 }
 
 void manual_MDS_init (ManPages me);

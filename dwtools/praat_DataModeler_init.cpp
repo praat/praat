@@ -599,7 +599,7 @@ FORM (GRAPHICS_FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis fu
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (ymin, U"left Amplitude range (Hz)", U"0.0")
 	REAL (ymax, U"right Amplitude range (Hz)", U"5500.0")
-	//integer iterm, bool scaled, integer numberOfPoints, int garnish
+	//integer iterm, bool scaled, integer numberOfPoints, bool garnish
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (basisFunctionIndex, U"Basis function", U"2")
 	BOOLEAN (scale, U"Scale function with parameter value", false)

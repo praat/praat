@@ -1,6 +1,6 @@
 /* SPINET.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 	}
 }
 
-void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
+void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime, double fromErb, double toErb, double minimum, double maximum, bool enhanced, bool garnish) {
 
 	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 	thy z.all() <<= enhanced ? my s.all() : my y.all();
@@ -127,7 +127,7 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 	}
 }
 
-void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
+void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb, double minimum, double maximum, bool enhanced, bool garnish) {
 	integer ifmin, ifmax, icol = Sampled_xToLowIndex (me, time);   // ppgb: don't use Sampled2_xToColumn for integer rounding
 	if (icol < 1 || icol > my nx)
 		return;

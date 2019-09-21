@@ -459,7 +459,7 @@ MAN_BEGIN (U"CCA & Correlation: Get variance fraction...", U"djmw", 20181112)
 INTRO (U"Determine from the selected @CCA and @Correlation objects the fraction of the variance "
 	"explained by the selected @@canonical variate@ range.")
 ENTRY (U"Settings")
-TAG (U"##%X or Y")
+TAG (U"##X or Y#")
 DEFINITION (U"determines whether you select the dependent (y) or the independent (x) set.")
 TAG (U"##Canonical variate range")
 DEFINITION (U"determines the canonical variates (or canonical variables).")
@@ -482,9 +482,9 @@ NORMAL (U"The Stewart-Love redundancy for a single @@canonical variate@ is the f
 	"canonical variate in a set times the fraction of shared variance between the corresponding canonical variates in the two sets.")
 NORMAL (U"The Stewart-Love redundancy for a canonical variate range is the sum of the individual redundancies.")
 ENTRY (U"Settings")
-TAG (U"##X or Y")
+TAG (U"##X or Y#")
 DEFINITION (U"determines whether you select the dependent (y) or the independent (x) set.")
-TAG (U"##Canonical variate range")
+TAG (U"##Canonical variate range#")
 DEFINITION (U"determines the canonical variates (or canonical variables).")
 ENTRY (U"Algorithm")
 NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
@@ -512,7 +512,7 @@ MAN_BEGIN (U"CCA & TableOfReal: To TableOfReal (scores)...", U"djmw", 20040407)
 INTRO (U"Determines the scores on the dependent and the independent canonical "
 	"variates from the selected @CCA and @TableOfReal objects.")
 ENTRY (U"Settings")
-TAG (U"##Number of canonical correlations")
+TAG (U"##Number of canonical correlations#")
 DEFINITION (U"determines the dimension, i.e., the number of elements of the resulting "
 	"canonical score vectors. The newly created table will have twice this number of "
 	"columns because we have calculated score vectors for the dependent and the "
@@ -2385,7 +2385,7 @@ NORMAL (U"We take the first central difference, "
 NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190902)
+MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190906)
 INTRO (U"Calculates the intervals where the glottis is closed from the selected @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)#")
@@ -2393,7 +2393,7 @@ DEFINITION (U"intervals with a lower pitch will not be considered. ")
 TAG (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"intervals with a higher pitch will not be considered.")
 TAG (U"##Closing threshold#")
-DEFINITION (U"the moment of closing of the vocal folds will be a taken at a fixed point between a cycle's peak and valley amplitude level.")
+DEFINITION (U"the moment of closing of the vocal folds will be taken at a fixed point between a cycle's peak and valley amplitude level.")
 PICTURE (4.0, 3.0, Electroglottogram_drawStylizedLevels)
 DEFINITION (U"The picture shows, for a %%closingThreshold% value of 0.3, the Closed Glottis Interval that starts at time %t__1_ and ends at time %t__2_. These times were found by calculating the two level crossings at amplitude %%valley+closingThreshold(peak\\--valley)%.")
 TAG (U"##Peak threshold#")
@@ -2429,7 +2429,7 @@ NORMAL (U"The derivative of a wave form is most easitly calculated in the spectr
 NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and imaginary components and then transform back to the time doain we get the derivative.")
 NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new %%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%))  and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
 ENTRY (U"About dEGG")
-NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal glosure instants% and sometimes also the %%glottal opening instants%. "
+NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal closure instants% and sometimes also the %%glottal opening instants%. "
 	"However, in their paper and also in other papers like, for example,  @@Herbst et al. (2014)@, the derivative they use is not the exact derivative as calculated in the way explained above. "
 	"Instead they calculate an approximation of the derivative by taking either the first difference, "
 	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%] - %%x%[%%i%-1])/\\De%%t%, or by taking the first central difference, "
@@ -3773,7 +3773,7 @@ NORMAL (U"The quality of the @@overlap-add|manipulation@ depends on the pitch me
 NORMAL (U"The arguments that control the pitch measurement are:")
 TAG (U"##Minimum pitch (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"pitch candidates below this frequency will not be considered.")
-TAG (U"##%Maximum pitch (Hz)# (standard value: 600 Hz)")
+TAG (U"##Maximum pitch (Hz)# (standard value: 600 Hz)")
 DEFINITION (U"pitch candidates above this frequency will be ignored.")
 NORMAL (U"The arguments that control the manipulation are:")
 TAG (U"##Formant shift ratio")
@@ -4216,18 +4216,18 @@ NORMAL (U"The effectiveness of the %%Minimum silent interval duration% and %%Min
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20120323)
-INTRO (U"A command that creates from the selected @Sound a new sound in which all silence durations are not longer than a specified value.")
+MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)
+INTRO (U"A command that creates from the selected @Sound a new sound with silence durations not longer than a specified value.")
 ENTRY (U"Settings")
-TAG (U"%%Trim duration (s)%,")
+TAG (U"##Trim duration (s)#")
 DEFINITION (U"specifies the maximum allowed silence duration.")
-TAG (U"%%Minimum pitch (Hz)%, and, %Time step (s)%,")
+TAG (U"##Minimum pitch (Hz)#, and, ##Time step (s)#")
 DEFINITION (U"determine how we measure the intensities on which the determination of silent intervals is based. See @@Sound: To Intensity...@ for more info.")
-TAG (U"%%Silence threshold (dB)%, %%Minimum silent interval duration (s)%, and %%Minimum sounding interval duration%,")
+TAG (U"##Silence threshold (dB)#, ##Minimum silent interval duration (s)#, and ##Minimum sounding interval duration#")
 DEFINITION (U"determine how the silent intervals will be determined. See @@Intensity: To TextGrid (silences)...@ for more info.")
-TAG (U"%%Save trimming info as TextGrid%,")
-DEFINITION (U"determines if a TextGrid with trimming information will also be created. The TextGrid will have one tier where interval of the %%originating% sound that were trimmed have been labeled. ")
-TAG (U"%%Trim label%,")
+TAG (U"##Save trimming info as TextGrid#")
+DEFINITION (U"determines if a TextGrid with trimming information will also be created. The TextGrid will have one tier where intervals of the %%originating% sound that were trimmed have been labeled. ")
+TAG (U"##Trim label#")
 DEFINITION (U"determines the label that the trimmed intervals in the TextGrid will get.")
 MAN_END
 
@@ -4866,22 +4866,22 @@ SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (9), U""
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
 	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula", "1; (= everything)")
 )
-TAG (U"##Horizontal column")
+TAG (U"##Horizontal column#")
 DEFINITION (U"determines the data along the horizontal axis.")
-TAG (U"##Horizontal range")
+TAG (U"##Horizontal range#")
 DEFINITION (U"determines the lower and upper limits of the plot.")
-TAG (U"##Vertical column")
+TAG (U"##Vertical column#")
 DEFINITION (U"determines the data along the horizontal axis.")
-TAG (U"##Vertical range")
+TAG (U"##Vertical range#")
 DEFINITION (U"determines the lower and upper limits of the plot.")
-TAG (U"##Lower error value column, Upper error value column")
+TAG (U"##Lower error value column#, ##Upper error value column#")
 DEFINITION (U"determine the size of the vertical lines that will be drawn. These lines are drawn between the points (%x,%y-%low) and (%x, %y+%up), "
 	"where %x and %y are the values from the %%horizontal column% and the %%vertical column%, respectively, and, %low and %up are the corresponding values "
 	"in the %%lower error value column% and the %%upper error value column%, respectively. If either of these column names is not given the corresponding values (%low and/or %up) will taken as zero. This makes it possible to draw one-sided and two-sided error bars. If your "
 	"errors are symmetric around the y-position, your table only needs one column and you can supply the name of this column in both fields.")
-TAG (U"##Bar size (mm)")
+TAG (U"##Bar size (mm)#")
 DEFINITION (U"determines the width of the horizontal bars or whishers at the lower an postion of the drawn line. ")
-TAG (U"##Garnish")
+TAG (U"##Garnish#")
 DEFINITION (U"determines whether or not some decoration is drawn.")
 TAG (U"##Formula")
 DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
@@ -4904,13 +4904,13 @@ INTRO (U"Performs a one-way analysis of variance on the data in one column of a 
 ENTRY (U"Settings")
 TAG (U"##Column with data#")
 DEFINITION (U"the label of the column who's data will be analyzed.")
-TAG (U"##Factor")
+TAG (U"##Factor#")
 DEFINITION (U"the label of the column with the names of the levels.")
-TAG (U"##Table with means")
+TAG (U"##Table with means#")
 DEFINITION (U"if checked, a Table with the mean values of the levels will be created.")
-TAG (U"##Table with differences between means")
+TAG (U"##Table with differences between means#")
 DEFINITION (U"if checked, a Table with the differences between the mean values of the levels will be created.")
-TAG (U"##Table with Tukey's post-hoc test")
+TAG (U"##Table with Tukey's post-hoc test#")
 DEFINITION (U"if checked, a Table with Tukey's HSD tests will be created. Each value in this Table measures the probability that the corresponding difference between the level means happened by chance. The test compares all possible level means and is based on the studentized range distribution.")
 MAN_END
 
@@ -4967,7 +4967,7 @@ INTRO (U"Performs a one-way Kruskal-Wallis analysis on the data in one column of
 ENTRY (U"Settings")
 TAG (U"##Column with data#")
 DEFINITION (U"the label of the column who's data will be analyzed.")
-TAG (U"##Factor")
+TAG (U"##Factor#")
 DEFINITION (U"the label of the column with the names of the levels.")
 ENTRY (U"Algorithm")
 NORMAL (U"The analysis is done on the ranked data and consists of the following steps:")
@@ -4982,7 +4982,7 @@ MAN_END
 MAN_BEGIN (U"TableOfReal: Report multivariate normality (BHEP)...", U"djmw", 20090701)
 INTRO (U"Report about multivariate normality according to the @@BHEP multivariate normality test@.")
 ENTRY (U"Settings")
-TAG (U"##Smoothing parameter")
+TAG (U"##Smoothing parameter#")
 DEFINITION (U"determines the smoothing parameter %h.")
 MAN_END
 
@@ -5008,7 +5008,7 @@ INTRO (U"A command to draw a biplot for each column in the selected "
 ENTRY (U"Settings")
 TAG (U"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
 DEFINITION (U"determine the drawing boundaries.")
-TAG (U"##Split factor")
+TAG (U"##Split factor#")
 DEFINITION (U"determines the weighing of the row and column structure "
 	"(see below).")
 ENTRY (U"Behaviour")
@@ -5047,7 +5047,7 @@ TAG (U"##From row#, ##To row#")
 DEFINITION (U"determine the rows to be drawn.")
 TAG (U"##From column#, ##To column#")
 DEFINITION (U"determine the columns to be drawn.")
-TAG (U"##Origin")
+TAG (U"##Origin#")
 DEFINITION (U"determines the drawing orientation. For a table with %%nrow% rows and %%ncol% columns:")
 TAG1 (U"%%top-left%: cel [1][1] will be at the top left position in the drawing, cell [%%nrow%][%%ncol%] will be at bottom right position.")
 TAG1 (U"%%top-right%: cel [1][1] will be at the top right position in the drawing, cell [%%nrow%][%%ncol%] will be at bottom left position.")
@@ -5110,11 +5110,11 @@ MAN_BEGIN (U"TableOfReal: Select columns where row...", U"djmw", 20140117)
 INTRO (U"Copy columns from the selected @TableOfReal object to a new "
 	"TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##Columns")
+TAG (U"##Columns#")
 DEFINITION (U"defines the indices of the columns to be selected. Ranges can be "
 	"defined with a colon \":\". Columns will be selected in the specified "
 	"order.")
-TAG (U"##Row condition")
+TAG (U"##Row condition#")
 DEFINITION (U"specifies a condition for the selection of rows. If the "
 	"condition evaluates as %true for a particular row, the selected elements "
 	"in this row will be copied. See @@Matrix: Formula...@ for the kind of "
@@ -5269,7 +5269,7 @@ MAN_BEGIN (U"TableOfReal: To CCA...", U"djmw", 20020424)
 INTRO (U"A command that creates a @CCA object from the selected "
 	"@TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"%%Dimension of dependent variate (ny)")
+TAG (U"##Dimension of dependent variate (ny)#")
 DEFINITION (U"defines the partition of the table into the two parts whose "
 	"correlations will be determined. The first %ny columns should be the "
 	"dependent part, the rest of the columns will be interpreted as the "
@@ -5331,7 +5331,7 @@ MAN_BEGIN (U"TableOfReal: To TableOfReal (means by row labels)...", U"djmw", 201
 INTRO (U"A command that appears in the ##Multivariate statistics# menu if you select a @@TableOfReal@. "
 	"It calculates the multivariate means for the different row labels from the selected TableOfReal.")
 ENTRY (U"Setting")
-TAG (U"##Expand")
+TAG (U"##Expand#")
 DEFINITION (U"when %off, then for a table with %n rows and %m different labels (%m\\<_%n), the resulting table will have %m rows. "
 	"When %on, the dimensions of the resulting table will be the same as the originating, and corresponding means substituded "
 	"in each row.")
@@ -5349,7 +5349,7 @@ MAN_END
 MAN_BEGIN (U"TextGrid: Extend time...", U"djmw", 20020702)
 INTRO (U"Extends the domain of the selected @TextGrid object.")
 ENTRY (U"Settings")
-TAG (U"##Extend domain by")
+TAG (U"##Extend domain by#")
 DEFINITION (U"defines the amount of time by which the domain will be extended.")
 TAG (U"##At")
 DEFINITION (U"defines whether starting times or finishing times will be "
@@ -5381,7 +5381,7 @@ SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 )
 TAG (U"##Tier number#")
 DEFINITION (U"specifies the tier with the intervals.")
-TAG (U"##Time scale factor")
+TAG (U"##Time scale factor#")
 DEFINITION (U"specifies the scale factor by which the duration of a selected interval has to be multiplied.")
 TAG (U"##Left transition duration#")
 DEFINITION (U"specifies how long it takes to go from a time scale factor of 1.0 to the specified one. Default a very small duration is used. ")
@@ -5658,7 +5658,7 @@ NORMAL (U"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): \"Computing the 
 MAN_END
 
 MAN_BEGIN (U"Henrich et al. (2004)", U"djmw", 20190903)
-NORMAL (U"N. Henrich, C. d'Alessamdro, B. Doval & M. Castellengo (2004): \"On the use of the derivative of electroglottographic signals for characterization of nonpathological phonation.\" %%Journal of the Acoustical Society of America% #115: 1321\\--1332.")
+NORMAL (U"N. Henrich, C. d'Alessandro, B. Doval & M. Castellengo (2004): \"On the use of the derivative of electroglottographic signals for characterization of nonpathological phonation.\" %%Journal of the Acoustical Society of America% #115: 1321\\--1332.")
 MAN_END
 
 MAN_BEGIN (U"Hermes (1988)", U"djmw", 19980123)

@@ -133,7 +133,7 @@ void Minimizer_reset (Minimizer me, constVEC const& guess) {
 	my v_reset ();
 }
 
-void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo, double hmin, double hmax, int garnish) {
+void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo, double hmin, double hmax, bool garnish) {
 	if (my history.size == 0)
 		return;
 

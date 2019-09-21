@@ -1,6 +1,6 @@
 /* FFNet.cpp
  *
- * Copyright (C) 1997-2018 David Weenink
+ * Copyright (C) 1997-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -630,7 +630,7 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 }
 
 /* This routine is deprecated since praat-4.2.4 20040422 and will be removed in the future. */
-void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int garnish) {
+void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, bool garnish) {
 	Melder_require (layer > 0 && layer <= my numberOfLayers, U"Layer number should be between 1 and ", my numberOfLayers, U".");
 	
 	autoMatrix weights = FFNet_weightsToMatrix (me, layer, false);
@@ -653,12 +653,12 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 	}
 }
 
-void FFNet_drawWeights (FFNet me, Graphics g, integer layer, int garnish) {
+void FFNet_drawWeights (FFNet me, Graphics g, integer layer, bool garnish) {
 	autoTableOfReal thee = FFNet_extractWeights (me, layer);
 	TableOfReal_drawAsSquares (thee.get(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
 }
 
-void FFNet_drawCostHistory (FFNet me, Graphics g, integer iFrom, integer iTo, double costMin, double costMax, int garnish) {
+void FFNet_drawCostHistory (FFNet me, Graphics g, integer iFrom, integer iTo, double costMin, double costMax, bool garnish) {
 	if (my minimizer)
 		Minimizer_drawHistory (my minimizer.get(), g, iFrom, iTo, costMin, costMax, 0);
 

@@ -2,7 +2,7 @@
 #define _Confusion_h_
 /* Confusion.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double
 
 void Confusion_getFractionCorrect (Confusion me, double *out_fraction, integer *out_numberOfCorrect);
 
-void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, int garnish);
+void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, bool garnish);
 /* 1. Draw my rowLabels centered at ( matrix->z[i][1], matrix->z[i][2]).
 	2. Draw arrows and circles according to:
 	for (i=1; i <= my numberOfRows; i++)

@@ -103,7 +103,7 @@ autoMatrix CC_to_Matrix (CC me) {
 	}
 }
 
-void CC_paint (CC me, Graphics g, double xmin, double xmax, integer cmin, integer cmax, double minimum, double maximum, int garnish) {
+void CC_paint (CC me, Graphics g, double xmin, double xmax, integer cmin, integer cmax, double minimum, double maximum, bool garnish) {
 	autoMatrix thee = CC_to_Matrix (me);
 
 	Matrix_paintCells (thee.get(), g, xmin, xmax, cmin, cmax, minimum, maximum);
@@ -116,7 +116,7 @@ void CC_paint (CC me, Graphics g, double xmin, double xmax, integer cmin, intege
 	}
 }
 
-void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
+void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	(void) garnish;
 
 	if (xmin >= xmax) {
