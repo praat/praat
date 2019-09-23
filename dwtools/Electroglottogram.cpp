@@ -281,8 +281,8 @@ autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFreq
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 				double frequency = Sampled_indexToX (thee.get(), ifreq);
 				double im = thy z [2] [ifreq];
-				thy z [2] [ifreq] = 2.0 * NUMpi * frequency * thy z [1] [ifreq];
-				thy z [1] [ifreq] = - 2.0 * NUMpi * frequency * im;
+				thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq];
+				thy z [1] [ifreq] = - NUM2pi * frequency * im;
 			}
 			Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
 			autoSound him = Spectrum_to_Sound (thee.get());

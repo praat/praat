@@ -136,7 +136,7 @@ void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samp
 			D(z): 1 + p z^-1 + q z^-2
 		*/
 		const double r = exp (- NUMpi * my formant [iformant]. bandwidth * samplingPeriod);
-		const double p = - 2.0 * r * cos (2.0 * NUMpi * formantFrequency * samplingPeriod);
+		const double p = - 2.0 * r * cos (NUM2pi * formantFrequency * samplingPeriod);
 		const double q = r * r;
 		/*
 			By setting the two extra elements (0, 1) in the lpc vector we can avoid boundary testing;

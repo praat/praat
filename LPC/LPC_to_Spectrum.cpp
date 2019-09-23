@@ -56,7 +56,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	if (deEmphasisFrequency < thy xmax) {
 		// Multiply (1, a [1] z^-1, ... a [p] z^-p) by (1 - b z^-1)
 
-		double b = exp (- 2.0 * NUMpi * deEmphasisFrequency / thy xmax);
+		double b = exp (- NUM2pi * deEmphasisFrequency / thy xmax);
 		ndata ++;
 		for (integer i = ndata; i > 1; i--)
 			fftbuffer [i] -= b * fftbuffer [i - 1];
