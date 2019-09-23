@@ -28,6 +28,6 @@ enums_begin (kGaussianMixtureCriterion, 1)
 	enums_add (kGaussianMixtureCriterion, 4, AkaikeInformation, U"Akaike information")
 	enums_add (kGaussianMixtureCriterion, 5, AkaikeCorrected, U"Akaike corrected")
 	enums_add (kGaussianMixtureCriterion, 6, CompleteDataML, U"Complete-data ML")
-enums_end (kGaussianMixtureCriterion, CompleteDataML, 6)
+enums_end (kGaussianMixtureCriterion, 6, CompleteDataML)
 
 /* End of file GaussianMixture_enums.h */
