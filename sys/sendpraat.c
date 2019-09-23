@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 19 June 2019 */
+/* 20 September 2019 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -81,11 +81,10 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
  *    this means that sendpraat will return OK (NULL) without waiting for the receiving program
  *    to handle the message.
  *    On Windows, the time out is ignored.
- * 'text' contains the contents of the Praat script to be sent to the receiving program.
+ * 'text' contains the contents of the Praat script to be sent to the receiving program, encoded as UTF-8.
  */
 
 static char errorMessage [1000];
-static wchar_t errorMessageW [1000];
 #if gtk
 	static long theTimeOut;
 	static void handleCompletion (int message) { (void) message; }
