@@ -911,7 +911,7 @@ autoSound Sound_createAsPureTone (integer numberOfChannels, double startingTime,
 			1.0 / sampleRate, startingTime + 0.5 / sampleRate);
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			double time = my x1 + (isamp - 1) * my dx;
-			double value = amplitude * sin (NUM2pi * frequency * time);
+			double value = amplitude * sin (2.0 * NUMpi * frequency * time);
 			double timeFromStart = time - startingTime;
 			if (timeFromStart < fadeInDuration)
 				value *= 0.5 - 0.5 * cos (NUMpi * timeFromStart / fadeInDuration);

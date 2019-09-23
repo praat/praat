@@ -60,7 +60,7 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 		*/
 		for (integer i = 1; i <= numberOfGammaFilters; i ++) {
 			f [i] = NUMerbToHertz (thy y1 + (i - 1) * thy dy);
-			bw [i] = 2.0 * NUMpi * b * (f [i] * (6.23e-6 * f [i] + 93.39e-3) + 28.52);
+			bw [i] = NUM2pi * b * (f [i] * (6.23e-6 * f [i] + 93.39e-3) + 28.52);
 		}
 
 		autoMelderProgress progress (U"SPINET analysis");

@@ -360,7 +360,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & numberOfFrames, & t1);
 		autoVEC hamming = newVECraw (nosInWindow);
 		for (integer i = 1; i <= nosInWindow; i ++) 
-			hamming [i] = 0.54 - 0.46 * cos (2.0 * NUMpi * (i - 1) / (nosInWindow - 1));
+			hamming [i] = 0.54 - 0.46 * cos (NUM2pi * (i - 1) / (nosInWindow - 1));
 
 		integer nfft = 8; // minimum possible
 		while (nfft < nosInWindow) { nfft *= 2; }

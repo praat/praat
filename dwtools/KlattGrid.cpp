@@ -821,7 +821,7 @@ static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, Real
 				double fltr = RealTier_getValueAtTime (flutter, t);
 				if (isdefined (fltr)) {
 					// newF0 = f0 * (1 + (val / 50) * (sin ... + ...));
-					double newPeriod = period / (1.0 + (fltr / 50.0) * (sin (2.0 * NUMpi * 12.7 * t) + sin (2.0 * NUMpi * 7.1 * t) + sin (2.0 * NUMpi * 4.7 * t)));
+					double newPeriod = period / (1.0 + (fltr / 50.0) * (sin (NUM2pi * 12.7 * t) + sin (NUM2pi * 7.1 * t) + sin (NUM2pi * 4.7 * t)));
 					tsum += newPeriod - period;
 				}
 			}
@@ -870,7 +870,7 @@ static void Sound_PhonationGrid_spectralTilt_inplace (Sound thee, PhonationGrid 
 				then b = q -sqrt(q^2 - 1)
 		*/
 
-		double cosf = cos (2.0 * NUMpi * 3000.0 * thy dx), ynm1 = 0.0;  // samplingFrequency > 6000.0 !
+		double cosf = cos (NUM2pi * 3000.0 * thy dx), ynm1 = 0.0;  // samplingFrequency > 6000.0 !
 
 		for (integer i = 1; i <= thy nx; i ++) {
 			double t = thy x1 + (i - 1) * thy dx;

@@ -476,7 +476,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
 		return;    // above Nyquist?
-	double preEmphasis = exp (- 2.0 * NUMpi * preEmphasisFrequency * my dx);
+	double preEmphasis = exp (- NUM2pi * preEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		VEC s = my z.row (channel);
 		for (integer i = my nx; i >= 2; i --)
@@ -485,7 +485,7 @@ void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 }
 
 void Sound_deEmphasis (Sound me, double deEmphasisFrequency) {
-	double deEmphasis = exp (- 2.0 * NUMpi * deEmphasisFrequency * my dx);
+	double deEmphasis = exp (- NUM2pi * deEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		VEC s = my z.row (channel);
 		for (integer i = 2; i <= my nx; i ++)
@@ -509,7 +509,7 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 autoSound Sound_createHamming (double windowDuration, double samplingFrequency) {
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
-		double p = 2.0 * NUMpi / (my nx - 1);
+		double p = NUM2pi / (my nx - 1);
 		for (integer i = 1; i <= my nx; i ++)
 			my z [1] [i] = 0.54 - 0.46 * cos ((i - 1) * p);
 		return me;
@@ -539,7 +539,7 @@ static autoSound Sound_createToneComplex (double minimumTime, double maximumTime
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (integer j = 1; j <= numberOfComponents; j ++) {
 			double fraction = j == mistunedComponent ? mistuningFraction : 0.0;
-			double w = 2.0 * NUMpi * (firstFrequency + (j - 1 + fraction) * frequencyDistance);
+			double w = NUM2pi * (firstFrequency + (j - 1 + fraction) * frequencyDistance);
 			double delta = w * my dx;
 			double alpha = 2.0 * sin (delta / 2.0) * sin (delta / 2.0);
 			double beta = sin (delta);
@@ -805,7 +805,7 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 {
 	Sound me; integer i, j, nComponents = 1 + log2 (maximumFrequency / 2 / baseFrequency);
 	double lmin = pow (10, - amplitudeRange / 10);
-	double twoPi = 2.0 * NUMpi, f = baseFrequency * (1 + frequencyShiftFraction);
+	double twoPi = NUM2pi, f = baseFrequency * (1 + frequencyShiftFraction);
 	if (nComponents < 2) Melder_warning (U"Sound_createShepardTone: only 1 component.");
 	Melder_casual (U"Sound_createShepardTone: ", nComponents, U" components.");
 	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return nullptr;
@@ -908,7 +908,7 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 	try {
 		double scale = pow (2.0, numberOfComponents);
 		double maximumFrequency = lowestFrequency * scale;
-		double lmin = pow (10.0, - amplitudeRange / 10.0), twoPi = 2.0 * NUMpi;
+		double lmin = pow (10.0, - amplitudeRange / 10.0), twoPi = NUM2pi;
 		double ln2t0 = log (2.0) * frequencyChange_st / 12.0;
 		double lnf1 = log (lowestFrequency + 1.0);
 		double amplarg = twoPi / log ((maximumFrequency + 1.0) / (lowestFrequency + 1.0));
@@ -1746,7 +1746,7 @@ autoSound Sound_createFromWindowFunction (double windowDuration, double sampling
 					value = 1.0;
 					break;
 				case 2: /* Hamming */
-					value = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
+					value = 0.54 - 0.46 * cos (NUM2pi * phase);
 					break;
 				case 3: /* Bartlett */
 					value = 1.0 - fabs ( (2.0 * phase - 1.0));
@@ -1755,7 +1755,7 @@ autoSound Sound_createFromWindowFunction (double windowDuration, double sampling
 					value = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
 					break;
 				case 5: /* Hanning */
-					value = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
+					value = 0.5 * (1.0 - cos (NUM2pi * phase));
 					break;
 				case 6: { /* Gaussian */
 					double edge = exp (-12.0);

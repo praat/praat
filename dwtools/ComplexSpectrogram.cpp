@@ -57,7 +57,7 @@ autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, inte
 autoVEC newVEChanning (integer size) {
 	autoVEC window = newVECraw (size);
 	for (integer i = 1; i <= size; i ++)
-		window [i] = 0.5 * (1.0 - cos (2.0 * NUMpi * i / size));
+		window [i] = 0.5 * (1.0 - cos (NUM2pi * i / size));
 	return window;
 }
 
