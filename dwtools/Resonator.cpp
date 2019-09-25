@@ -77,8 +77,7 @@ void structAntiResonator :: v_setCoefficients (double frequency, double bandwidt
 	} else {
 		structFilter :: v_setCoefficients (frequency, bandwidth);
 		a = 1.0 / (1.0 - b - c);
-		// The next equations are incorporated in the getOutput function
-		//c *= - a; b *= - a;
+		//c *= - a; b *= - a; incorporated in the getOutput function
 	}
 }
 

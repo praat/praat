@@ -24,11 +24,11 @@ enums_begin (kKlattGridFormantType, 1)
 	enums_add (kKlattGridFormantType, 5, NasalAnti, U"Nasal Antiformant")
 	enums_add (kKlattGridFormantType, 6, TrachealAnti, U"Tracheal antiformant")
 	enums_add (kKlattGridFormantType, 7, Delta, U"Delta formant")
-enums_end (kKlattGridFormantType, 1, Delta)
+enums_end (kKlattGridFormantType, 7, Oral)
 
 enums_begin (kKlattGridFilterModel, 1)
 	enums_add (kKlattGridFilterModel, 1, Cascade, U"Cascade")
 	enums_add (kKlattGridFilterModel, 2, Parallel, U"Parallel")
-enums_end (kKlattGridFilterModel, 2, Parallel)
+enums_end (kKlattGridFilterModel, 2, Cascade)
 
 /* End of file KlattGrid_enums.h */
