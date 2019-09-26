@@ -21,6 +21,7 @@ prefs_begin (TextGridEditor)
 	prefs_override_int         (TextGridEditor, shellWidth,             1, U"800")
 	prefs_override_int         (TextGridEditor, shellHeight,            1, U"600")
 	prefs_override_bool        (TextGridEditor, picture_garnish,        1, true)
+	prefs_override_bool        (TextGridEditor, showSelectionViewer,    1, true)
 
 	prefs_add_bool_with_data   (TextGridEditor, useTextStyles,          1, false)
 	prefs_add_double_with_data (TextGridEditor, fontSize,               1, U"18")
