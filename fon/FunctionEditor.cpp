@@ -43,20 +43,20 @@ Thing_implement (FunctionEditor, Editor, 0);
 #include "FunctionEditor_prefs.h"
 
 namespace {
-	constexpr int maxGroup { 100 };
-	int nGroup = 0;
-	FunctionEditor theGroup [1 + maxGroup];
+	constexpr integer THE_MAXIMUM_GROUP_SIZE = 100;
+	integer theGroupSize = 0;
+	FunctionEditor theGroupMembers [1 + THE_MAXIMUM_GROUP_SIZE];
 }
 
 static void drawWhileDragging (FunctionEditor me, double x1, double x2);
 
-static int group_equalDomain (double tmin, double tmax) {
-	if (nGroup == 0)
-		return 1;
-	for (int i = 1; i <= maxGroup; i ++)
-		if (theGroup [i])
-			return tmin == theGroup [i] -> tmin && tmax == theGroup [i] -> tmax;
-	return 0;   // should not occur
+static bool group_equalDomain (double tmin, double tmax) {
+	if (theGroupSize == 0)
+		return true;
+	for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++)
+		if (theGroupMembers [i])
+			return ( tmin == theGroupMembers [i] -> tmin && tmax == theGroupMembers [i] -> tmax );
+	return false;   // should not occur
 }
 
 static void updateScrollBar (FunctionEditor me) {
@@ -69,18 +69,21 @@ static void updateScrollBar (FunctionEditor me) {
 }
 
 static void updateGroup (FunctionEditor me) {
-	if (! my group) return;
-	for (int i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
-		FunctionEditor thee = theGroup [i];
-		if (my pref_synchronizedZoomAndScroll ()) {
-			thy startWindow = my startWindow;
-			thy endWindow = my endWindow;
+	if (! my group)
+		return;
+	for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
+		if (theGroupMembers [i] && theGroupMembers [i] != me) {
+			FunctionEditor thee = theGroupMembers [i];
+			if (my pref_synchronizedZoomAndScroll ()) {
+				thy startWindow = my startWindow;
+				thy endWindow = my endWindow;
+			}
+			thy startSelection = my startSelection;
+			thy endSelection = my endSelection;
+			FunctionEditor_updateText (thee);
+			updateScrollBar (thee);
+			Graphics_updateWs (thy graphics.get());
 		}
-		thy startSelection = my startSelection;
-		thy endSelection = my endSelection;
-		FunctionEditor_updateText (thee);
-		updateScrollBar (thee);
-		Graphics_updateWs (thy graphics.get());
 	}
 }
 
@@ -111,7 +114,7 @@ static void drawNow (FunctionEditor me) {
 		Update rectangles.
 	*/
 
-	for (int i = 0; i < 8; i++)
+	for (integer i = 0; i < 8; i++)
 		my rect [i]. left = my rect [i]. right = 0;
 
 	/*
@@ -155,7 +158,7 @@ static void drawNow (FunctionEditor me) {
 	*/
 	if (my numberOfMarkers > 1) {
 		const double window = my endWindow - my startWindow;
-		for (int i = 1; i <= my numberOfMarkers; i ++) {
+		for (integer i = 1; i <= my numberOfMarkers; i ++) {
 			my rect [3 + i]. left = i == 1 ? my functionViewerLeft + MARGIN : my functionViewerLeft + MARGIN + (my functionViewerRight - my functionViewerLeft - MARGIN * 2) *
 				(my marker [i - 1] - my startWindow) / window;
 			my rect [3 + i]. right = my functionViewerLeft + MARGIN + (my functionViewerRight - my functionViewerLeft - MARGIN * 2) *
@@ -210,7 +213,7 @@ static void drawNow (FunctionEditor me) {
 	Graphics_setViewport (my graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	Graphics_setWindow (my graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-	for (int i = 0; i < 8; i ++) {
+	for (integer i = 0; i < 8; i ++) {
 		const double left = my rect [i]. left, right = my rect [i]. right;
 		if (left < right)
 			Graphics_button (my graphics.get(), left, right, my rect [i]. bottom, my rect [i]. top);
@@ -219,7 +222,7 @@ static void drawNow (FunctionEditor me) {
 	#ifdef _WIN32
 		verticalCorrection *= 1.5;
 	#endif
-	for (int i = 0; i < 8; i ++) {
+	for (integer i = 0; i < 8; i ++) {
 		const double left = my rect [i]. left, right = my rect [i]. right;
 		const double bottom = my rect [i]. bottom, top = my rect [i]. top;
 		if (left < right) {
@@ -371,13 +374,13 @@ static void drawNow (FunctionEditor me) {
 void structFunctionEditor :: v_destroy () noexcept {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	if (our group) {   // undangle
-		int i = 1;
-		while (theGroup [i] != this) {
-			Melder_assert (i < maxGroup);
+		integer i = 1;
+		while (theGroupMembers [i] != this) {
+			Melder_assert (i < THE_MAXIMUM_GROUP_SIZE);
 			i ++;
 		}
-		theGroup [i] = nullptr;
-		nGroup --;
+		theGroupMembers [i] = nullptr;
+		theGroupSize --;
 	}
 	FunctionEditor_Parent :: v_destroy ();
 }
@@ -397,7 +400,8 @@ void structFunctionEditor :: v_info () {
 /********** FILE MENU **********/
 
 static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	Graphics_setWsViewport (my graphics.get(), 0, event -> width, 0, event -> height);
 	int width = event -> width + 21;
 	/*
@@ -860,7 +864,7 @@ static void menu_cb_moveEndOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 }
 
 void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGroup) {
-	double windowLength = my endWindow - my startWindow;
+	const double windowLength = my endWindow - my startWindow;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes
 	trace (U"shifting by ", shift);
 	if (shift < 0.0) {
@@ -960,7 +964,8 @@ static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRE
 /********** GUI CALLBACKS **********/
 
 static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
-	if (! my graphics) return;   // ignore events during creation
+	if (! my graphics)
+		return;   // ignore events during creation
 	const double value = GuiScrollBar_getValue (event -> scrollBar);
 	const double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my startWindow;
 	const bool shifted = ( shift != 0.0 );
@@ -995,38 +1000,55 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 		#endif
 		if (! my group || ! my pref_synchronizedZoomAndScroll ())
 			return;
-		for (int i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
-			theGroup [i] -> startWindow = my startWindow;
-			theGroup [i] -> endWindow = my endWindow;
-			FunctionEditor_updateText (theGroup [i]);
-			updateScrollBar (theGroup [i]);
-			#if cocoa
-				Graphics_updateWs (theGroup [i] -> graphics.get());
-			#else
-				Graphics_clearWs (theGroup [i] -> graphics.get());
-				drawNow (theGroup [i]);
-			#endif
+		for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
+			if (theGroupMembers [i] && theGroupMembers [i] != me) {
+				theGroupMembers [i] -> startWindow = my startWindow;
+				theGroupMembers [i] -> endWindow = my endWindow;
+				FunctionEditor_updateText (theGroupMembers [i]);
+				updateScrollBar (theGroupMembers [i]);
+				#if cocoa
+					Graphics_updateWs (theGroupMembers [i] -> graphics.get());
+				#else
+					Graphics_clearWs (theGroupMembers [i] -> graphics.get());
+					drawNow (theGroupMembers [i]);
+				#endif
+			}
 		}
 	}
 }
 
+static integer findEmptySpotInGroup () {
+	integer emptySpot = 1;
+	while (theGroupMembers [emptySpot])
+		emptySpot ++;
+	return emptySpot;
+}
+
+static integer findMeInGroup (FunctionEditor me) {
+	integer positionInGroup = 1;
+	while (theGroupMembers [positionInGroup] != me)
+		positionInGroup ++;
+	return positionInGroup;
+}
+
+static integer findOtherGroupMember (FunctionEditor me) {
+	integer otherGroupMember = 1;
+	while (! theGroupMembers [otherGroupMember] || theGroupMembers [otherGroupMember] == me)
+		otherGroupMember ++;
+	return otherGroupMember;
+}
+
 static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* event */) {
-	int i;
-	my group = ! my group;
+	my group = ! my group;   // toggle
 	if (my group) {
-		FunctionEditor thee;
-		i = 1;
-		while (theGroup [i])
-			i ++;
-		theGroup [i] = me;
-		if (++ nGroup == 1) {
+		const integer emptySpot = findEmptySpotInGroup ();
+		theGroupMembers [emptySpot] = me;
+		if (++ theGroupSize == 1) {
 			Graphics_updateWs (my graphics.get());
 			return;
 		}
-		i = 1;
-		while (! theGroup [i] || theGroup [i] == me)
-			i ++;
-		thee = theGroup [i];
+		const integer otherGroupMember = findOtherGroupMember (me);
+		const FunctionEditor thee = theGroupMembers [otherGroupMember];
 		if (my pref_synchronizedZoomAndScroll ()) {
 			my startWindow = thy startWindow;
 			my endWindow = thy endWindow;
@@ -1045,27 +1067,29 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 			my v_updateText ();
 			updateScrollBar (me);
 			Graphics_updateWs (my graphics.get());
-			if (my tmin < thy tmin || my tmax > thy tmax)
-				for (i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
-					if (my tmin < thy tmin)
-						theGroup [i] -> tmin = my tmin;
-					if (my tmax > thy tmax)
-						theGroup [i] -> tmax = my tmax;
-					FunctionEditor_updateText (theGroup [i]);
-					updateScrollBar (theGroup [i]);
-					Graphics_updateWs (theGroup [i] -> graphics.get());
+			if (my tmin < thy tmin || my tmax > thy tmax) {
+				for (integer imember = 1; imember <= THE_MAXIMUM_GROUP_SIZE; imember ++) {
+					if (theGroupMembers [imember] && theGroupMembers [imember] != me) {
+						if (my tmin < thy tmin)
+							theGroupMembers [imember] -> tmin = my tmin;
+						if (my tmax > thy tmax)
+							theGroupMembers [imember] -> tmax = my tmax;
+						FunctionEditor_updateText (theGroupMembers [imember]);
+						updateScrollBar (theGroupMembers [imember]);
+						Graphics_updateWs (theGroupMembers [imember] -> graphics.get());
+					}
 				}
+			}
 		}
 	} else {
-		i = 1;
-		while (theGroup [i] != me)
-			i ++;
-		theGroup [i] = nullptr;
-		nGroup --;
+		const integer myLocationInGroup = findMeInGroup (me);
+		theGroupMembers [myLocationInGroup] = nullptr;
+		theGroupSize --;
 		my v_updateText ();
 		Graphics_updateWs (my graphics.get());   // for setting buttons in draw method
 	}
-	if (my group) updateGroup (me);
+	if (my group)
+		updateGroup (me);
 }
 
 static void menu_cb_intro (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
@@ -1149,14 +1173,17 @@ void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	if (my enableUpdates)
 		drawNow (me);
 }
 
 static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	my shiftKeyPressed = event -> shiftKeyPressed;
+	Graphics_setViewport (my graphics.get(), my functionViewerLeft, my selectionViewerRight, 0.0, my height);
 	Graphics_setWindow (my graphics.get(), my functionViewerLeft, my selectionViewerRight, 0.0, my height);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
@@ -1164,7 +1191,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 	if (xWC > my selectionViewerLeft)
 	{
 		Graphics_setViewport (my graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN,
-			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+				BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
 		my v_clickSelectionViewer (xWC, yWC);
@@ -1175,11 +1202,13 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 	else if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
 		bool needsUpdate;
 		Graphics_setViewport (my graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
-			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+				BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
-		if (xWC < my startWindow) xWC = my startWindow;
-		if (xWC > my endWindow) xWC = my endWindow;
+		if (xWC < my startWindow)
+			xWC = my startWindow;
+		if (xWC > my endWindow)
+			xWC = my endWindow;
 		if (Melder_debug == 24) {
 			Melder_casual (U"FunctionEditor::gui_drawingarea_cb_click:"
 				U" button ", event -> button,
@@ -1216,9 +1245,10 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 	else   // clicked outside signal region? Let us hear it
 	{
 		try {
-			for (int i = 0; i < 8; i ++) {
+			for (integer i = 0; i < 8; i ++) {
 				if (xWC > my rect [i]. left && xWC < my rect [i]. right &&
-					 yWC > my rect [i]. bottom && yWC < my rect [i]. top)
+						yWC > my rect [i]. bottom && yWC < my rect [i]. top)
+				{
 					switch (i) {
 						case 0: my v_play (my tmin, my tmax); break;
 						case 1: my v_play (my startWindow, my endWindow); break;
@@ -1229,6 +1259,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 						case 6: my v_play (my marker [2], my marker [3]); break;
 						case 7: my v_play (my startSelection, my endSelection); break;
 					}
+				}
 			}
 		} catch (MelderError) {
 			Melder_flushError ();
@@ -1299,7 +1330,7 @@ void structFunctionEditor :: v_createChildren () {
 }
 
 void structFunctionEditor :: v_dataChanged () {
-	Function function = (Function) our data;
+	const Function function = (Function) our data;
 	Melder_assert (Thing_isa (function, classFunction));
 	our tmin = function -> xmin;
  	our tmax = function -> xmax;
@@ -1324,18 +1355,12 @@ void structFunctionEditor :: v_dataChanged () {
 
 static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	/*
-	 * We must draw this within the window, because the window tends to have a white background.
-	 * We cannot draw this in the margins, because these tend to be grey, so that Graphics_xorOn does not work properly.
-	 * We draw the text twice, because we expect that not ALL of the window is white...
-	 */
-	double xleft, xright;
-	if (x1 > x2) {
-		xleft = x2;
-		xright = x1;
-	} else {
-		xleft = x1;
-		xright = x2;
-	}
+		We must draw this within the window, because the window tends to have a white background.
+		We cannot draw this in the margins, because these tend to be grey, so that Graphics_xorOn does not work properly.
+		We draw the text twice, because we expect that not ALL of the window is white...
+	*/
+	const double xleft  = std::min (x1, x2);
+	const double xright = std::max (x1, x2);
 	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics.get(), xleft, 1.0, Melder_fixed (xleft, 6));
@@ -1357,12 +1382,12 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 	double x = xbegin, y = ybegin;
 
 	/*
-	 * The 'anchor' is the point that will stay fixed during dragging.
-	 * For instance, if she clicks and drags to the right,
-	 * the location at which she originally clicked will be the anchor,
-	 * even if she later chooses to drag the mouse to the left of it.
-	 * Another example: if she shift-clicks near E, B will become (and stay) the anchor.
-	 */
+		The 'anchor' is the point that will stay fixed during dragging.
+		For instance, if the user clicks and drags to the right,
+		the location at which she originally clicked will be the anchor,
+		even if she later chooses to drag the mouse to the left of it.
+		Another example: if she shift-clicks near E, B will become (and stay) the anchor.
+	*/
 
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 
@@ -1571,21 +1596,15 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 
 bool structFunctionEditor :: v_clickB (double xWC, double /* yWC */) {
 	our startSelection = xWC;
-	if (our startSelection > our endSelection) {
-		double dummy = our startSelection;
-		our startSelection = our endSelection;
-		our endSelection = dummy;
-	}
+	if (our startSelection > our endSelection)
+		std::swap (our startSelection, our endSelection);
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
 bool structFunctionEditor :: v_clickE (double xWC, double /* yWC */) {
 	our endSelection = xWC;
-	if (our startSelection > our endSelection) {
-		double dummy = our startSelection;
-		our startSelection = our endSelection;
-		our endSelection = dummy;
-	}
+	if (our startSelection > our endSelection)
+		std::swap (our startSelection, our endSelection);
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
@@ -1726,13 +1745,15 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 }
 
 void FunctionEditor_ungroup (FunctionEditor me) {
-	if (! my group) return;
+	if (! my group)
+		return;
 	my group = false;
 	GuiCheckButton_setValue (my groupButton, false);
-	int i = 1;
-	while (theGroup [i] != me) i ++;
-	theGroup [i] = nullptr;
-	nGroup --;
+	integer i = 1;
+	while (theGroupMembers [i] != me)
+		i ++;
+	theGroupMembers [i] = nullptr;
+	theGroupSize --;
 	my v_updateText ();
 	Graphics_updateWs (my graphics.get());   // for setting buttons in v_draw() method
 }
