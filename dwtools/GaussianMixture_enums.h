@@ -23,7 +23,7 @@ enums_end (kGaussianMixtureStorage, 2, Diagonals)
 
 enums_begin (kGaussianMixtureCriterion, 1)
 	enums_add (kGaussianMixtureCriterion, 1, Likelihood, U"Likelihood")
-	enums_add (kGaussianMixtureCriterion, 2, MessageLength, U"MessageLength")
+	enums_add (kGaussianMixtureCriterion, 2, MessageLength, U"Message length")
 	enums_add (kGaussianMixtureCriterion, 3, BayesInformation, U"Bayes information")
 	enums_add (kGaussianMixtureCriterion, 4, AkaikeInformation, U"Akaike information")
 	enums_add (kGaussianMixtureCriterion, 5, AkaikeCorrected, U"Akaike corrected")
