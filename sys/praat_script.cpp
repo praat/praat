@@ -501,14 +501,18 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 					}
 				}
 				if (! theCommandIsAnExistingMenuCommand) {
+					const integer length = str32len (command);
 					if (str32nequ (command, U"ARGS ", 5)) {
 						Melder_throw (U"Command \"ARGS\" no longer supported. Instead use \"form\" and \"endform\".");
 					} else if (str32chr (command, U'=')) {
 						Melder_throw (U"Command \"", command, U"\" not recognized.\n"
 							U"Probable cause: you are trying to use a variable name that starts with a capital.");
-					} else if (command [0] != U'\0' && Melder_isHorizontalSpace (command [str32len (command) - 1])) {
+					} else if (length >= 1 && Melder_isHorizontalSpace (command [length - 1])) {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the trailing spaces.");
+					} else if (length >= 2 && Melder_isHorizontalSpace (command [length - 2]) && command [length - 1] == U':') {
+						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
+							U"It may be helpful to remove the space before the colon.");
 					} else if (str32nequ (command, U"\"ooTextFile\"", 12)) {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It is possible that this file is not a Praat script but a Praat data file that you can open with \"Read from file...\".");
