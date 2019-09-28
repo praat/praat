@@ -22,8 +22,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190901)
+MAN_BEGIN (U"What's new?", U"ppgb", 20190928)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.04# (28 September 2019)")
+LIST_ITEM (U"• @Electroglottography.")
+LIST_ITEM (U"• Sound and other windows: ##Widen or shrink selection...#.")
+LIST_ITEM (U"• ##KlattGrid: Create from vowel...#.")
+LIST_ITEM (U"• Fix rectangle playing bug when selection viewer is on.")
+LIST_ITEM (U"• Selection viewer separately visible for Sound window and TextGrid window.")
+LIST_ITEM (U"• Scripting: allow comments after parameter list.")
+LIST_ITEM (U"• Scripting: fix CR/LF pasting from Microsoft Word.")
 NORMAL (U"##6.1.03# (1 September 2019)")
 LIST_ITEM (U"• Sound window: ##Widen or shrink selection...#.")
 NORMAL (U"##6.1.02# (25 August 2019)")
@@ -3811,7 +3819,7 @@ MAN_BEGIN (U"Technical", U"ppgb", 20120915)
 INTRO (U"The title of a submenu of the @@Praat menu@.")
 MAN_END
 
-MAN_BEGIN (U"Types of objects", U"ppgb", 20141109)
+MAN_BEGIN (U"Types of objects", U"ppgb", 20190928)
 INTRO (U"Praat contains the following types of objects and @Editors. "
 	"For an introduction and tutorials, see @Intro.")
 NORMAL (U"General purpose:")
@@ -3833,6 +3841,7 @@ LIST_ITEM1 (U"• @Voice (jitter, shimmer, noise)")
 LIST_ITEM (U"• @Pitch: articulatory fundamental frequency, acoustic periodicity, or perceptual pitch (@PitchEditor)")
 LIST_ITEM (U"• @Harmonicity: degree of periodicity")
 LIST_ITEM (U"• @Intensity, @IntensityTier: intensity contour")
+LIST_ITEM (U"• @Electroglottogram")
 NORMAL (U"Spectral analysis:")
 LIST_ITEM (U"• Tutorials:")
 LIST_ITEM1 (U"• @@Intro 3. Spectral analysis")
