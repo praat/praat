@@ -501,14 +501,18 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 					}
 				}
 				if (! theCommandIsAnExistingMenuCommand) {
+					const integer length = str32len (command);
 					if (str32nequ (command, U"ARGS ", 5)) {
 						Melder_throw (U"Command \"ARGS\" no longer supported. Instead use \"form\" and \"endform\".");
 					} else if (str32chr (command, U'=')) {
 						Melder_throw (U"Command \"", command, U"\" not recognized.\n"
 							U"Probable cause: you are trying to use a variable name that starts with a capital.");
-					} else if (command [0] != U'\0' && Melder_isHorizontalSpace (command [str32len (command) - 1])) {
+					} else if (length >= 1 && Melder_isHorizontalSpace (command [length - 1])) {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the trailing spaces.");
+					} else if (length >= 2 && Melder_isHorizontalSpace (command [length - 2]) && command [length - 1] == U':') {
+						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
+							U"It may be helpful to remove the space before the colon.");
 					} else if (str32nequ (command, U"\"ooTextFile\"", 12)) {
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It is possible that this file is not a Praat script but a Praat data file that you can open with \"Read from file...\".");
@@ -526,14 +530,15 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 void praat_executeCommandFromStandardInput (conststring32 programName) {
 	char command8 [1000];   // can be recursive
 	/*
-	 * FIXME: implement for Windows.
-	 */
+		FIXME: implement for Windows.
+	*/
 	for (;;) {
 		printf ("%s > ", Melder_peek32to8 (programName));
 		if (! fgets (command8, 999, stdin))
 			Melder_throw (U"Cannot read input.");
 		char *newLine = strchr (command8, '\n');
-		if (newLine) *newLine = '\0';
+		if (newLine)
+			*newLine = '\0';
 		autostring32 command32 = Melder_8to32 (command8);
 		try {
 			praat_executeCommand (nullptr, command32.get());
@@ -561,8 +566,8 @@ void praat_executeScriptFromFile (MelderFile file, conststring32 arguments) {
 
 void praat_executeScriptFromFileName (conststring32 fileName, integer narg, Stackel args) {
 	/*
-	 * The argument 'fileName' is unsafe. Duplicate its contents.
-	 */
+		The argument 'fileName' is unsafe. Duplicate its contents.
+	*/
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName, & file);
 	try {
@@ -583,24 +588,30 @@ void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArgument
 	const char32 *p, *arguments;
 	structMelderFile file { };
 	/*
-	 * Split into file name and arguments.
-	 */
+		Split into file name and arguments.
+	*/
 	p = nameAndArguments;
-	while (*p == U' ' || *p == U'\t') p ++;
+	while (*p == U' ' || *p == U'\t')
+		p ++;
 	if (*p == U'\"') {
 		char32 *q = path;
 		p ++;   // skip quote
-		while (*p != U'\"' && *p != U'\0') * q ++ = * p ++;
+		while (*p != U'\"' && *p != U'\0')
+			* q ++ = * p ++;
 		*q = U'\0';
 		arguments = p;
-		if (*arguments == U'\"') arguments ++;
-		if (*arguments == U' ') arguments ++;
+		if (*arguments == U'\"')
+			arguments ++;
+		if (*arguments == U' ')
+			arguments ++;
 	} else {
 		char32 *q = path;
-		while (*p != U' ' && *p != U'\0') * q ++ = * p ++;
+		while (*p != U' ' && *p != U'\0')
+			* q ++ = * p ++;
 		*q = U'\0';
 		arguments = p;
-		if (*arguments == U' ') arguments ++;
+		if (*arguments == U' ')
+			arguments ++;
 	}
 	Melder_relativePathToFile (path, & file);
 	praat_executeScriptFromFile (& file, arguments);
