@@ -2447,13 +2447,13 @@ TAG (U"##Closing threshold (0-1)#")
 DEFINITION (U"defines the relative amplitude in each glottal cycle where the moment of glottal closure will be chosen. ")
 MAN_END
 
-MAN_BEGIN (U"electroglottography", U"djmw", 20190903)
+MAN_BEGIN (U"electroglottography", U"djmw", 20190929)
 INTRO (U"Electroglottography (EGG) is a low-cost, noninvasive technology for measuring changes of relative vocal fold contact area during laryngeal voice production @@Herbst (2019)|(Herbst, 2019)@.")
 NORMAL (U"In electroglottography (EGG) a high-frequency, low-amperage current is passed between two "
 	"electrodes placed on each side of the thyroid cartilage. Changes in vocal fold contact area "
 	"(VFCA) during vocal fold vibration result in admittance variation, and the resulting "
 	"(demodulated) EGG signal is proportional to the relative VFCA.")
-NORMAL (U"In Praat the EEG signal is represented by the @@Electroglottogram@.")
+NORMAL (U"In Praat the EGG signal is represented by the @@Electroglottogram@.")
 NORMAL (U"From standard electroglottography measurements generally a multi-channel sound file results. One channel of this file contains the recorded electroglottogram, the other the recorded sound. You can extract the electroglottogram with the @@Sound: Extract Electroglottogram...|Extract Electroglottogram...@ command that you will find under the ##Sound: Convert -# menu.")
 MAN_END
 
