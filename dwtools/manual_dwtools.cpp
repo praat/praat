@@ -4409,14 +4409,14 @@ TAG (U"%numberOfObservations")
 TAG (U"%centroid")
 MAN_END
 
-MAN_BEGIN (U"Sound: Extract Electroglottogram...", U"djmw", 20190827)
+MAN_BEGIN (U"Sound: Extract Electroglottogram...", U"djmw", 20190929)
 INTRO (U"Extract one of the channels of a @@Sound@ as an @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Channel number#")
 DEFINITION (U"defines the Electroglottogram channel in the sound.")
 TAG (U"##Invert#")
 DEFINITION (U"defines whether the wave in the Elecletroglottogram channel has to be inverted or not. "
-	"The convention is that a positive direction in the Elecletroglottogram wave corresponds to "
+	"The convention is that a positive direction in the Electroglottogram wave corresponds to "
 	"an increase in contact area between the vocal folds which occurs if the vocal folds are closing. "
 	"Since closing the vocal folds, in general, happens much faster than opening them, the steepest "
 	"slope in each cycle of the wave should be the %%upward% slope. If this is not the case you "
