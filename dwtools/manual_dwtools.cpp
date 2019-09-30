@@ -2411,7 +2411,7 @@ NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%g
 	"respectively, occur. ")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190903)
+MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190930)
 INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Low-pass frequency (Hz)")
@@ -2423,11 +2423,14 @@ DEFINITION (U"defines the width of the transition area between fully passed and 
 TAG (U"##Scale absolute peak at 0.99")
 DEFINITION (U"defines whether the derivative should be scaled or not.")
 ENTRY (U"Algorithm")
-NORMAL (U"The derivative of a wave form is most easitly calculated in the spectral domain. "
-	"If %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
-	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%.")
-NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and imaginary components and then transform back to the time doain we get the derivative.")
-NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new %%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%))  and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
+NORMAL (U"The derivative of a wave form %%x%(%%t%) is most easily calculated in the spectral domain. According to "
+	"Fourier theory, if %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
+	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%, where %%X%(%%f%) is the spectrum "
+	"of the %%x%(%%t).")
+NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and "
+	"imaginary components and then transform back to the time doain we get the derivative.")
+NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new "
+	"%%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%)) and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
 ENTRY (U"About dEGG")
 NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal closure instants% and sometimes also the %%glottal opening instants%. "
 	"However, in their paper and also in other papers like, for example,  @@Herbst et al. (2014)@, the derivative they use is not the exact derivative as calculated in the way explained above. "
