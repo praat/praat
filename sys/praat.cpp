@@ -896,7 +896,8 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 					Melder_flushError (praatP.title.get(), U": message not completely handled.");
 				}
 			}
-			if (narg && pid) kill (pid, SIGUSR2);
+			if (narg != 0 && pid != 0)
+				kill (pid, SIGUSR2);
 			return true;
 		}
 	#endif
@@ -921,6 +922,9 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
 		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
 	}
+	static void cb_finishedOpeningDocuments () {
+		praat_updateSelection ();
+	}
 #elif macintosh
 	static int (*theUserMessageCallback) (char32 *message);
 	static void mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message)) {
@@ -941,28 +945,6 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, nullptr, & buffer [0], actualSize, nullptr);
 			if (theUserMessageCallback) {
 				autostring32 buffer32 = Melder_8to32 (buffer);
-				theUserMessageCallback (buffer32.get());
-			}
-			free (buffer);
-			duringAppleEvent = false;
-		}
-		return noErr;
-	}
-	static pascal OSErr mac_processSignal16 (const AppleEvent *theAppleEvent, AppleEvent * /* reply */, long /* handlerRefCon */) {
-		static bool duringAppleEvent = false;   // FIXME: may have to be atomic?
-		if (! duringAppleEvent) {
-			char16 *buffer;
-			Size actualSize;
-			duringAppleEvent = true;
-			//AEInteractWithUser (kNoTimeOut, nullptr, nullptr);   // use time out of 0 to execute immediately (without bringing to foreground)
-			ProcessSerialNumber psn;
-			GetCurrentProcess (& psn);
-			SetFrontProcess (& psn);
-			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, nullptr, nullptr, 0, & actualSize);
-			buffer = (char16 *) malloc ((size_t) actualSize);
-			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, nullptr, & buffer [0], actualSize, nullptr);
-			if (theUserMessageCallback) {
-				autostring32 buffer32 = Melder_16to32 (buffer);
 				theUserMessageCallback (buffer32.get());
 			}
 			free (buffer);
@@ -1320,11 +1302,14 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (Melder_batch) {
 		MelderString_empty (& theCurrentPraatApplication -> batchName);
 		for (int i = praatP.argumentNumber - 1; i < argc; i ++) {
-			if (i >= praatP.argumentNumber) MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
+			if (i >= praatP.argumentNumber)
+				MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
 			bool needsQuoting = !! strchr (argv [i], ' ') && (i == praatP.argumentNumber - 1 || i < argc - 1);
-			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
+			if (needsQuoting)
+				MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
 			MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [i]));
-			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
+			if (needsQuoting)
+				MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
 		}
 	} else {
 		trace (U"starting the application");
@@ -1338,7 +1323,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		#elif motif
 			argv [0] = Melder_32to8 (praatP. title.get()).transfer();   // argc == 4
-			Gui_setOpenDocumentCallback (cb_openDocument);
+			Gui_setOpenDocumentCallback (cb_openDocument, cb_finishedOpeningDocuments);
 			GuiAppInitialize ("Praatwulg", argc, argv);
 		#elif cocoa
 			//[NSApplication sharedApplication];

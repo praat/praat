@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -432,11 +432,11 @@ static void readFromFile (MelderFile file) {
 		return;
 	}
 	praat_newWithFile (object.move(), file, MelderFile_name (file));
-	praat_updateSelection ();
 }
 
 FORM_READ (READMANY_Data_readFromFile, U"Read Object(s) from file", 0, true) {
 	readFromFile (file);
+	praat_updateSelection ();
 END }
 
 /********** Callbacks of the Save menu. **********/
@@ -590,6 +590,13 @@ static void cb_openDocument (MelderFile file) {
 		Melder_flushError ();
 	}
 }
+static void cb_finishedOpeningDocuments () {
+	try {
+		praat_updateSelection ();
+	} catch (MelderError) {
+		Melder_flushError ();
+	}
+}
 
 #if cocoa
 DIRECT (PRAAT_cut) {
@@ -716,7 +723,7 @@ void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 
 	#if defined (macintosh) || defined (_WIN32)
-		Gui_setOpenDocumentCallback (cb_openDocument);
+		Gui_setOpenDocumentCallback (cb_openDocument, cb_finishedOpeningDocuments);
 	#endif
 }
 
