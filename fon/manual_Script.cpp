@@ -1582,7 +1582,7 @@ CODE (U"Play")
 CODE (U"Erase all")
 NORMAL (U"When you run this script, you'll see a rectangle appear in the ##Praat Picture# window "
 	"(that's what the command ##Draw inner box# in the #Margins menu does), "
-	"then you'll hear the Sound play tiwce, then you'll see the rectangle disappear from the Picture window "
+	"then you'll hear the Sound play twice, then you'll see the rectangle disappear from the Picture window "
 	"(that's what the command ##Erase all# from the #Edit menu does).")
 NORMAL (U"Here we see that the Praat scripting language is an example of a %%procedural programming language%, "
 	"which means that the five %statements are executed in the order in which they appear in the script, "
