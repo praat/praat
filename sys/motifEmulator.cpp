@@ -27,6 +27,7 @@
 #include "machine.h"
 
 static void (*theOpenDocumentCallback) (MelderFile file);
+static void (*theFinishedOpeningDocumentsCallback) ();
 static int (*theQuitApplicationCallback) ();
 
 #if defined (_WIN32)
@@ -1701,6 +1702,8 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 					}
 				}
 			}
+			if (theFinishedOpeningDocumentsCallback)
+				theFinishedOpeningDocumentsCallback ();
 			exit (0);   // possible problem
 		}
 
@@ -2671,8 +2674,9 @@ void motif_win_setUserMessageCallback (int (*userMessageCallback) (void)) {
 	theUserMessageCallback = userMessageCallback;
 }
 
-void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)) {
+void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file), void (*finishedOpeningDocumentsCallback) ()) {
 	theOpenDocumentCallback = openDocumentCallback;
+	theFinishedOpeningDocumentsCallback = finishedOpeningDocumentsCallback;
 }
 #endif
 

@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2018 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -963,7 +963,7 @@ void GuiObject_destroy (GuiObject me);
 
 /********** EVENTS **********/
 
-void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file));
+void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file), void (*finishedOpeningDocumentsCallback) ());
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 
 extern uinteger theGuiTopLowAccelerators [8];
