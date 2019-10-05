@@ -331,7 +331,7 @@ TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Smooth...", U"djmw", 20190914)
+MAN_BEGIN (U"PowerCepstrum: Smooth...", U"djmw", 20191005)
 INTRO (U"A command to smooth the selected @@PowerCepstrum@ by averaging values at successive quefrencies.")
 ENTRY (U"Settings")
 TAG (U"##Quefrency averaging window (s)#")
@@ -339,7 +339,46 @@ DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 TAG (U"##Number of iterations#")
 DEFINITION (U"determines how often the averaging will take place. If chosen 2, for example, the output PowerCepstrum "
 	"after the first averaging will be averaged once again.")
-
+ENTRY (U"Example")
+NORMAL (U"The figure below is the PowerCepstrum taken from an artificial /a/ vowel synthesized as follows:")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+CODE (U"To Sound")
+CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
+CODE (U"To PowerCepstrum (slice): 0.3")
+CODE (U"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"")
+CODE (U"Draw: 0, 0, 0, 110, \"yes\"")
+CODE (U"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"")
+SCRIPT (5, 3, U""
+	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
+	"vowel = To Sound\n"
+	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
+	"cepstrum = To PowerCepstrum (slice): 0.3\n"
+	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Draw: 0, 0, 0, 110, \"yes\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
+NORMAL (U"After 1 iteration with an averaging window of 0.0005 s the PowerCepstrum is:")
+SCRIPT (5, 3, U""
+	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
+	"vowel = To Sound\n"
+	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
+	"cepstrum = To PowerCepstrum (slice): 0.3\n"
+	"smooth = Smooth: 0.0005, 1\n"
+	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"Draw: 0, 0, 0, 110, \"yes\"\n"
+	"removeObject: kg, vowel, cepstrogram, cepstrum, smooth\n")
+NORMAL (U"After 2 iterations with an averaging window of 0.0005 s the PowerCepstrum is:")
+SCRIPT (5, 3, U""
+	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
+	"vowel = To Sound\n"
+	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
+	"cepstrum = To PowerCepstrum (slice): 0.3\n"
+	"smooth = Smooth: 0.0005, 2\n"
+	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Draw: 0, 0, 0, 110, \"yes\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"removeObject: kg, vowel, cepstrogram, cepstrum, smooth\n")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrum: Subtract trend...", U"djmw", 20190914)
