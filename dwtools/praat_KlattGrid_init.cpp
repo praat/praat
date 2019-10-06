@@ -130,15 +130,15 @@ FORM (NEW1_KlattGrid_createFromVowel, U"Create KlattGrid from vowel", U"Create K
 	WORD (name, U"Name", U"a")
 	POSITIVE (duration, U"Duration (s)", U"0.4")
 	POSITIVE (f0start, U"Pitch (Hz)", U"125.0")
-	POSITIVE (f1, U"F1 (Hz)", U"800.0")
+	REAL (f1, U"F1 (Hz)", U"800.0")
 	POSITIVE (b1, U"B1 (Hz)", U"80.0")
-	POSITIVE (f2, U"F2 (Hz)", U"1200.0")
+	REAL (f2, U"F2 (Hz)", U"1200.0")
 	POSITIVE (b2, U"B2 (Hz)", U"80.0")
-	POSITIVE (f3, U"F3 (Hz)", U"2300.0")
+	REAL (f3, U"F3 (Hz)", U"2300.0")
 	POSITIVE (b3, U"B3 (Hz)", U"100.0")
-	POSITIVE (f4, U"F4 (Hz)", U"2800.0")
+	REAL (f4, U"F4 (Hz)", U"2800.0")
 	POSITIVE (bandWidthFraction, U"Bandwidth fraction", U"0.1")
-	POSITIVE (formantFrequencyInterval, U"Formant frequency interval (Hz) (Hz)", U"1000.0")
+	REAL (formantFrequencyInterval, U"Formant frequency interval (Hz)", U"1000.0")
 	OK
 DO
 	CREATE_ONE

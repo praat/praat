@@ -119,6 +119,37 @@ MAN_BEGIN (U"Create KlattGrid...", U"djmw", 20081224)
 INTRO (U"A command to create a multitier @@KlattGrid@ speech synthesizer.")
 MAN_END
 
+MAN_BEGIN (U"Create KlattGrid from vowel...", U"djmw", 20191006)
+INTRO (U"Create a new @@KlattGrid@ from the specifications for a vowel.")
+ENTRY (U"Settings")
+TAG (U"##Name#")
+DEFINITION (U"defines the name that the newly created KlattGrid will get in the list of objects.")
+TAG (U"##Duration (s)#")
+DEFINITION (U"defines the duration of the KlattGrid. The created KlattGrid will have a start time of 0 seconds "
+	"and an end time of %%duration% seconds. ")
+TAG (U"##Pitch (Hz)#")
+DEFINITION (U"defines the value of the pitch point that will be added at the start of the Klattgrid.")
+TAG (U"##F1 (Hz)#, ##F2 (Hz)#, ##F3 (Hz), F4 (Hz)##")
+DEFINITION (U"define the frequencies in hertz of the first four formants. If a frequency is not positive the formant is not used.")
+TAG (U"##B1 (Hz)#, ##B2 (Hz)#, ##B3 (Hz)#")
+DEFINITION (U"define the bandwidths in hertz of the first three formants")
+TAG (U"##Bandwidth fraction#")
+DEFINITION (U"defines the bandwidths of the fourth and higher formants as a fraction of the formant's frequency. "
+	"For example if F4 equals 2800 Hz and the \"Bandwidth fraction\" was chosen as 0.1 then its "
+	"bandwidth will be 0.1*2800 = 280 Hz.")
+TAG (U"##Formant frequency interval (Hz)#")
+DEFINITION (U"defines the distances between the following formants in hertz. For example, if this values is chosen "
+	"as 1100 Hz and if F4 happens to be 3000 Hz then F5 will be 4100 Hz, F6 will be 5200 Hz, F7 will be 6300 Hz, etc."
+	"If the value is not positive formants F5 and higher will not be created at all." )
+ENTRY (U"Examples")
+NORMAL (U"The following creates a vowel sound wich will sound like the vowel /a/.")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+CODE (U"To Sound")
+NORMAL (U"The following will create a two formant sound which also sounds like an /a/")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.1, 0")
+CODE (U"To Sound")
+MAN_END
+
 #define PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP \
 TAG (U"##Sampling frequency (Hz)") \
 DEFINITION (U"the @@sampling frequency@ of the resulting sound.") \
