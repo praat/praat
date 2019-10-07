@@ -2034,7 +2034,7 @@ void structKlattGrid :: v_info () {
 	vocalTract -> v_info ();
 	MelderInfo_writeLine (U"\n--- CouplingGrid ---\n");
 	coupling -> v_info ();
-	MelderInfo_writeLine (U"\n--- FricationgGrid ---\n");
+	MelderInfo_writeLine (U"\n--- FricationGrid ---\n");
 	frication -> v_info ();
 }
 
