@@ -2974,8 +2974,9 @@ autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double
 		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 4, tstart, f4 * bandWidthFraction);
 	}
 	if (formantFrequencyInterval > 0) {
+		double startFrequency = std::max (std::max (f1, f2), std::max (f3, f4));
 		for (integer iformant = 5; iformant <= numberOfOralFormants; iformant ++) {
-			double frequency =  f4 + (iformant - 4) * formantFrequencyInterval;
+			double frequency =  startFrequency + (iformant - 4) * formantFrequencyInterval;
 			KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, iformant, tstart, frequency);
 			KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, iformant, tstart, frequency * bandWidthFraction);
 		}
