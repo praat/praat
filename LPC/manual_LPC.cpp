@@ -276,7 +276,7 @@ NORMAL (U"Cepstrum values are drawn as 20\\.clog10 (value +\\ep), "
 	"where \\ep is a small number that avoids taking the logarithm of zero if the cepstrum value happens to be zero.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20191006)
+MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20191007)
 INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
 TAG (U"##Quefrency range (s)#")
@@ -290,7 +290,7 @@ DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 ENTRY (U"Examples")
-NORMAL (U"The next picture of a PowerCepstrum with its straight trend line drawn in blue colour was generated with the following script:")
+NORMAL (U"The next picture of a PowerCepstrum with its straight blue trend line drawn was generated with the following script:")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
 CODE (U"To Sound")
 CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
