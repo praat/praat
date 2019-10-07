@@ -2034,7 +2034,7 @@ void structKlattGrid :: v_info () {
 	vocalTract -> v_info ();
 	MelderInfo_writeLine (U"\n--- CouplingGrid ---\n");
 	coupling -> v_info ();
-	MelderInfo_writeLine (U"\n--- FricationgGrid ---\n");
+	MelderInfo_writeLine (U"\n--- FricationGrid ---\n");
 	frication -> v_info ();
 }
 
@@ -2444,6 +2444,8 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, kKlattGridFormantType formant
 autoFormantGrid KlattGrid_extractFormantGrid (KlattGrid me, kKlattGridFormantType formantType) {
 	try {
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
+		Melder_require ((*fg) -> formants . size > 0,
+			KlattGrid_getFormantName (formantType), U"s are not defined.");
 		autoFormantGrid thee = Data_copy (fg->get());
 		return thee;
 	} catch (MelderError) {
@@ -2949,29 +2951,34 @@ autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maxi
 	}
 }
 
-autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double f1, double b1, double f2, double b2, double f3, double b3, double f4, double formantFrequencyInterval, double bandWidthFraction) {
+autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double f1, double b1, double f2, double b2, double f3, double b3, double f4, double bandWidthFraction, double formantFrequencyInterval) {
 	integer numberOfOralFormants = 15;
-	double tmid = duration / 2.0;
+	double tstart = 0.0;
 	autoKlattGrid me = KlattGrid_create (0.0, duration, numberOfOralFormants, 0, 0, 0, 0, 0, 0);
-	KlattGrid_addPitchPoint (me.get(), 0.0, f0start);
-	KlattGrid_addVoicingAmplitudePoint (me.get(), tmid, 90.0);
+	KlattGrid_addPitchPoint (me.get(), tstart, f0start);
+	KlattGrid_addVoicingAmplitudePoint (me.get(), tstart, 90.0);
 	if (f1 > 0.0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 1, tmid, f1);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 1, tmid, b1);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 1, tstart, f1);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 1, tstart, b1);
 	}
 	if (f2 > 0.0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 2, tmid, f2);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 2, tmid, b2);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 2, tstart, f2);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 2, tstart, b2);
 	}
 	if (f3 > 0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 3, tmid, f3);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 3, tmid, b3);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 3, tstart, f3);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 3, tstart, b3);
 	}
 	if (f4 > 0) {
-		for (integer iformant = 4; iformant <= numberOfOralFormants; iformant ++) {
-			double frequency =  f4 + (iformant - 4) * formantFrequencyInterval;
-			KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, iformant, tmid, frequency);
-			KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, iformant, tmid, frequency * bandWidthFraction);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 4, tstart, f4);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 4, tstart, f4 * bandWidthFraction);
+	}
+	if (formantFrequencyInterval > 0) {
+		double startFrequency = std::max (std::max (f1, f2), std::max (f3, f4));
+		for (integer iformant = 5; iformant <= numberOfOralFormants; iformant ++) {
+			double frequency =  startFrequency + (iformant - 4) * formantFrequencyInterval;
+			KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, iformant, tstart, frequency);
+			KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, iformant, tstart, frequency * bandWidthFraction);
 		}
 	}
 	return me;

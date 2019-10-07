@@ -276,7 +276,7 @@ NORMAL (U"Cepstrum values are drawn as 20\\.clog10 (value +\\ep), "
 	"where \\ep is a small number that avoids taking the logarithm of zero if the cepstrum value happens to be zero.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20190909)
+MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20191007)
 INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
 ENTRY (U"Settings")
 TAG (U"##Quefrency range (s)#")
@@ -289,6 +289,46 @@ TAG (U"##Trend type#")
 DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
+ENTRY (U"Examples")
+NORMAL (U"The next picture of a PowerCepstrum with its straight blue trend line drawn was generated with the following script:")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+CODE (U"To Sound")
+CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
+CODE (U"To PowerCepstrum (slice): 0.1")
+CODE (U"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"")
+CODE (U"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"")
+CODE (U"Draw: 0, 0, 0, 110, \"yes\"")
+CODE (U"Colour: \"Blue\"")
+CODE (U"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Straight\", \"Robust slow\"")
+CODE (U"Colour: \"Black\"")
+CODE (U"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"")
+SCRIPT (5, 3, U""
+	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
+	"vowel = To Sound\n"
+	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
+	"cepstrum = To PowerCepstrum (slice): 0.1\n"
+	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"Draw: 0, 0, 0, 110, \"yes\"\n"
+	"Colour: \"Blue\"\n"
+	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Colour: \"Black\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
+NORMAL (U"In the next picture the trend line is of exponential decay type:")
+SCRIPT (5, 3, U""
+	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
+	"vowel = To Sound\n"
+	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
+	"cepstrum = To PowerCepstrum (slice): 0.1\n"
+	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Exponential decay\", \"Robust slow\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"Draw: 0, 0, 0, 110, \"yes\"\n"
+	"Colour: \"Blue\"\n"
+	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Exponential decay\", \"Robust slow\"\n"
+	"Colour: \"Black\"\n"
+	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrum: Get peak...", U"djmw", 20190910)
@@ -339,12 +379,12 @@ DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 TAG (U"##Number of iterations#")
 DEFINITION (U"determines how often the averaging will take place. If chosen 2, for example, the output PowerCepstrum "
 	"after the first averaging will be averaged once again.")
-ENTRY (U"Example")
+ENTRY (U"Examples")
 NORMAL (U"The figure below is the PowerCepstrum taken from an artificial /a/ vowel synthesized as follows:")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
 CODE (U"To Sound")
 CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
-CODE (U"To PowerCepstrum (slice): 0.3")
+CODE (U"To PowerCepstrum (slice): 0.1")
 CODE (U"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"")
 CODE (U"Draw: 0, 0, 0, 110, \"yes\"")
 CODE (U"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"")
