@@ -142,7 +142,7 @@ FORM (NEW1_KlattGrid_createFromVowel, U"Create KlattGrid from vowel", U"Create K
 	OK
 DO
 	CREATE_ONE
-		autoKlattGrid result = KlattGrid_createFromVowel (duration, f0start, f1, b1, f2, b2, f3, b3, f4, formantFrequencyInterval, bandWidthFraction);
+		autoKlattGrid result = KlattGrid_createFromVowel (duration, f0start, f1, b1, f2, b2, f3, b3, f4, bandWidthFraction, formantFrequencyInterval);
 	CREATE_ONE_END (name)
 }
 
