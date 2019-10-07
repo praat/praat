@@ -142,25 +142,30 @@ DEFINITION (U"defines the distances between the following formants in hertz. For
 	"as 1100 Hz and if F4 happens to be 3000 Hz then F5 will be 4100 Hz, F6 will be 5200 Hz, F7 will be 6300 Hz, etc."
 	"If the value is not positive these formants will not be created at all." )
 ENTRY (U"Examples")
-NORMAL (U"The following creates a vowel sound wit many formants wich will sound like the vowel /a/."
-	" The formant frequencies will be 800, 1200, 2300, 2800, 3800, 4800, 5800,... Hz.")
+NORMAL (U"The following script creates a vowel sound with many formants wich will sound like the vowel /a/. "
+	"The formant frequencies will be: F1 = 800 Hz, F2 = 1200 Hz, F3 = 2300 Hz, F4 = 2800 Hz. The frequencies of the higher "
+	"formants will be at intervals of 1000 Hz, starting from F4. Therefore, F5 = 3800 Hz, F6 = 4800 Hz, F7 = 5800 Hz, "
+	"and so on. The bandwidths will be B1 = 80 Hz, B2 = 80 Hz, B3 = 100 Hz. "
+	"The bandwidths of the fourth and higher formants will be 0.1 times their frequency. Therefore, B4 = 280 Hz, "
+	"B5 = 380 Hz, B6 = 480 Hz, B7 = 580 Hz, and so on. ")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
 CODE (U"To Sound")
-NORMAL (U"The following will create a two formant sound which also sounds like an /a/."
-	"The formant frequencies will be 800 and 1200 Hz.")
+NORMAL (U"The following script will create a two formant sound which also sounds like an /a/."
+	"The formant frequencies will be 800 Hz and 1200 Hz.")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.1, 0")
 CODE (U"To Sound")
-NORMAL (U"The following will create a formant sound which also sounds like an /a/."
-	" The formant frequencies will be 800, 1200, 2200, 3200, 4200, 5200, ...")
+NORMAL (U"The following script will create a formant sound which also sounds like an /a/."
+	" The formant frequencies will be 800 Hz, 1200 Hz, 2200 Hz, 3200 Hz, 4200, and so on, with 1000 Hz separation).")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.1, 1000")
 CODE (U"To Sound")
-NORMAL (U"Because all the frequency points in the corresponding tiers are defined at time 0.0 seconds, it is easy "
-	"to change the characteristics of the vowel sound by adding points. For example, given one of the /a/ sounds above "
-	"which were all synthesized with constant pitch we can have a falling pitch by:")
+NORMAL (U"Because all the frequency points of the corresponding tiers in this KlattGrid are defined at "
+	"the start time of the grid, i.e. at time 0.0 seconds, it is easy "
+	"to change the characteristics of the vowel sound by adding new points. For example, given one of the /a/ sounds above "
+	"which were all synthesized with constant pitch we can have a falling pitch with:")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
 CODE (U"Add pitch point: 0.3, 100.0")
 CODE (U"To Sound")
-NORMAL (U"An /au/ diphthong is also easily made by a simple extension:")
+NORMAL (U"An /au/ diphthong is also easily made by a simple extension with two oral formant frequency points:")
 CODE (U"Create KlattGrid from vowel: \"au\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
 CODE (U"Add pitch point: 0.3, 100.0")
 CODE (U"Add oral formant frequncy point: 1, 0.3, 300")
