@@ -134,21 +134,22 @@ DEFINITION (U"define the frequencies in hertz of the first four formants. If a f
 TAG (U"##B1 (Hz)#, ##B2 (Hz)#, ##B3 (Hz)#")
 DEFINITION (U"define the bandwidths in hertz of the first three formants")
 TAG (U"##Bandwidth fraction#")
-DEFINITION (U"defines the bandwidths of the fourth and higher formants as a fraction of the formant's frequency. "
-	"For example if F4 equals 2800 Hz and the \"Bandwidth fraction\" was chosen as 0.1 then its "
-	"bandwidth will be 0.1*2800 = 280 Hz.")
+DEFINITION (U"defines the bandwidths of the fourth and higher formants as a fraction of the formant's frequency (i.e. it is the inverse of the formant's %%quality factor%). "
+	"For example if F4 equals 2800 Hz and the \"Bandwidth fraction\" was chosen as 0.05 then its "
+	"bandwidth will be 0.05*2800 = 140 Hz. The quality factor of this fourth formant is 20.")
 TAG (U"##Formant frequency interval (Hz)#")
 DEFINITION (U"defines the distances between the following formants in hertz. For example, if this values is chosen "
 	"as 1100 Hz and if F4 happens to be 3000 Hz then F5 will be 4100 Hz, F6 will be 5200 Hz, F7 will be 6300 Hz, etc."
-	"If the value is not positive these formants will not be created at all." )
+	"If the value is not positive these formants will not be created at all. You would typically choose this value "
+	"as 1000 / 1100 Hz for a male / female voice." )
 ENTRY (U"Examples")
 NORMAL (U"The following script creates a vowel sound with many formants wich will sound like the vowel /a/. "
 	"The formant frequencies will be: F1 = 800 Hz, F2 = 1200 Hz, F3 = 2300 Hz, F4 = 2800 Hz. The frequencies of the higher "
 	"formants will be at intervals of 1000 Hz, starting from F4. Therefore, F5 = 3800 Hz, F6 = 4800 Hz, F7 = 5800 Hz, "
 	"and so on. The bandwidths will be B1 = 80 Hz, B2 = 80 Hz, B3 = 100 Hz. "
-	"The bandwidths of the fourth and higher formants will be 0.1 times their frequency. Therefore, B4 = 280 Hz, "
-	"B5 = 380 Hz, B6 = 480 Hz, B7 = 580 Hz, and so on. ")
-CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+	"The bandwidths of the fourth and higher formants will be 0.05 times their frequency. Therefore, B4 = 140 Hz, "
+	"B5 = 190 Hz, B6 = 240 Hz, B7 = 290 Hz, and so on. ")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000")
 CODE (U"To Sound")
 NORMAL (U"The following script will create a two formant sound which also sounds like an /a/."
 	"The formant frequencies will be 800 Hz and 1200 Hz.")
@@ -156,21 +157,25 @@ CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 0, 100,
 CODE (U"To Sound")
 NORMAL (U"The following script will create a formant sound which also sounds like an /a/."
 	" The formant frequencies will be 800 Hz, 1200 Hz, 2200 Hz, 3200 Hz, 4200, and so on, with 1000 Hz separation).")
-CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.1, 1000")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.05, 1000")
 CODE (U"To Sound")
 NORMAL (U"Because all the frequency points of the corresponding tiers in this KlattGrid are defined at "
 	"the start time of the grid, i.e. at time 0.0 seconds, it is easy "
 	"to change the characteristics of the vowel sound by adding new points. For example, given one of the /a/ sounds above "
 	"which were all synthesized with constant pitch we can have a falling pitch with:")
-CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000")
 CODE (U"Add pitch point: 0.3, 100.0")
 CODE (U"To Sound")
 NORMAL (U"An /au/ diphthong is also easily made by a simple extension with two oral formant frequency points:")
-CODE (U"Create KlattGrid from vowel: \"au\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+CODE (U"Create KlattGrid from vowel: \"au\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000")
 CODE (U"Add pitch point: 0.3, 100.0")
 CODE (U"Add oral formant frequncy point: 1, 0.3, 300")
 CODE (U"Add oral formant frequncy point: 2, 0.3, 600")
 CODE (U"To Sound")
+NORMAL (U"Formant frequencies and bandwidths for 16 Swedish vowels are presented by "
+	"@@Hawks & Miller (1995)@ in their table 1. They further give equations for bandwidths as a function "
+	"of formant frequency.\n"
+	"@@Fleisher et al. (2015)@ present in their table 1 values for the first 5 formant frequencies and bandwidths of the German vowels /a/, /i/ and /\\hs/ for speech mode and for singing mode. In general their bandwidths are lower than as predicted by the Hawks and Miller equations.")
 MAN_END
 
 #define PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP \
