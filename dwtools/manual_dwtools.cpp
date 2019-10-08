@@ -4234,17 +4234,17 @@ TAG (U"##Trim label#")
 DEFINITION (U"determines the label that the trimmed intervals in the TextGrid will get.")
 MAN_END
 
-MAN_BEGIN (U"Sound & Pitch: To Spectrogram...", U"djmw", 20141024)
+MAN_BEGIN (U"Sound & Pitch: To Spectrogram...", U"djmw", 20191008)
 INTRO (U"A command that creates a @Spectrogram object from the selected "
 	"@Sound and @Pitch objects by @@band filtering in the frequency domain@ with a "
 	"bank of filters whose bandwidths depend on the local pitch.")
 NORMAL (U"The filter functions used are:")
-FORMULA (U"%#H(%f, %F__0_) = 1 / (((%f__%c_^^2^ - %f^2) /%f\\.c%B(%F__0_)))^2 + 1),")
+FORMULA (U"%#H(%f, %f__0_) = 1 / (((%f__%c_^^2^ - %f^2) /%f\\.c%B(%f__0_)))^2 + 1),")
 NORMAL (U"where %f__%c_ is the central (resonance) frequency of the filter. "
-	"%B(%F__0_) is the bandwidth in Hz and determined as")
-FORMULA (U"%B(%F__0_) = %relativeBandwidth\\.c%F__0_, ")
-NORMAL (U"where %F__0_ is the fundamental frequency as determined from the Pitch "
-	"object. Whenever the value of %F__0_ is undefined, a value of 100 Hz is taken.")
+	"%B(%f__0_) is the bandwidth in Hz and determined as")
+FORMULA (U"%B(%f__0_) = %relativeBandwidth\\.c%f__0_, ")
+NORMAL (U"where %f__0_ is the fundamental frequency as determined from the Pitch "
+	"object. Whenever the value of %f__0_ is undefined, a value of 100 Hz is taken.")
 MAN_END
 
 MAN_BEGIN (U"Sound: To MelFilter...", U"djmw", 20141022)
