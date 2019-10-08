@@ -878,6 +878,15 @@ NORMAL (U"N. Anderson (1978): \"On the calculation of filter coefficients for "
 	"IEEE Press: 252\\--255.")
 MAN_END
 
+MAN_BEGIN (U"Fleisher et al. (2015)", U"djmw", 20191008)
+NORMAL (U"M. Fleisher, S. Pinkert, W. Mattheus, A. Mainka & D. Mürbe (2015): \"Formant frequencies and bandwidths of the vocal transfer function are affected by the mechanical impedance of the vocal tract wall.\", %%Biomech Model Mechanobiol% #14: 719\\--733.")
+MAN_END
+
+MAN_BEGIN (U"Hawks & Miller (1995)", U"djmw", 20191008)
+NORMAL (U"J. Hawks &  J. Miller (1995): \"A formant bandwidth estimation procedure for vowel synthesis.\", "
+	"%%Journal of the Acoustical Society of America% #97: 1343\\--1344.")
+MAN_END
+
 MAN_BEGIN (U"Hillenbrand et al. (1994)", U"djmw", 20121017)
 NORMAL (U"J. Hillenbrand, R.A. Cleveland & R.L. Erickson (1994): \"Acoustic correlates of breathy vocal quality\", %%Journal of speech and hearing research% #37: 769\\--778.")
 MAN_END
