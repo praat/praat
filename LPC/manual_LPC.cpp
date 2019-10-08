@@ -96,7 +96,9 @@ MAN_END
 #define PowerCepstrum_manual_trendRange \
 	U"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. " \
 	"The lower value for this range in the @@Hillenbrand et al. (1994)@ article was chosen as 0.001 s " \
-	"in order to reduce the effect of very low quefrency data on the straight line fit. In our analysis this value is not so critical as we use a more robust fitting procedure."
+	"in order to reduce the effect of very low quefrency data on the straight line fit. In our analysis this value " \
+	"is not so critical if we use the robust fitting procedure. If you choose the \"Least squares\" fit method " \
+	"then it matters more."
 
 #define PowerCepstrum_manual_trendType \
 	U"defines how to model the cepstrum background. We can model it with a straight line as was " \
@@ -152,17 +154,17 @@ TAG (U"##Fit method#")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20190910)
+MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20191008)
 INTRO (U"A command to create a table with @@PowerCepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (U"Settings")
 SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (peak prominence)", 7)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search pitch range (Hz)", U"60.0", U"300.0")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"Interpolation", U"None", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Parabolic", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 1)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Parabolic", 1)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Sinc70", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Trend line quefrency range (s)", U"0.001", U"0.0 (= end)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Trend line quefrency range (s)", U"0.001", U"0.05")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Trend type", U"Exponential decay")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Fit method", U"Robust")
 )
@@ -260,37 +262,10 @@ TAG (U"##Trend type#")
 DEFINITION (PowerCepstrum_manual_trendType)
 TAG (U"##Fit method")
 DEFINITION (PowerCepstrum_manual_fitMethod)
-ENTRY (U"Note")
-NORMAL (U"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
-MAN_END
-
-MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190914)
-INTRO (U"A command to draw the selected @@PowerCepstrum@.")
-ENTRY (U"Settings")
-TAG (U"##Quefrency range (s)#")
-DEFINITION (U"define the extrema on the horizontal scale of the picture.")
-TAG (U"##Amplitude range (dB)#")
-DEFINITION (U"define the extrema on the vertical scale of the picture")
-ENTRY (U"Remark")
-NORMAL (U"Cepstrum values are drawn as 20\\.clog10 (value +\\ep), "
-	"where \\ep is a small number that avoids taking the logarithm of zero if the cepstrum value happens to be zero.")
-MAN_END
-
-MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20191007)
-INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
-ENTRY (U"Settings")
-TAG (U"##Quefrency range (s)#")
-DEFINITION (U"define the extrema on the horizontal scale of the picture.")
-TAG (U"##Amplitude range (dB)#")
-DEFINITION (U"define the extrema on the vertical scale of the picture")
-TAG (U"##Trend line quefrency range (s)")
-DEFINITION (PowerCepstrum_manual_trendRange)
-TAG (U"##Trend type#")
-DEFINITION (PowerCepstrum_manual_trendType)
-TAG (U"##Fit method")
-DEFINITION (PowerCepstrum_manual_fitMethod)
 ENTRY (U"Examples")
-NORMAL (U"The next picture of a PowerCepstrum with its straight blue trend line drawn was generated with the following script:")
+NORMAL (U"Next picture of a PowerCepstrum with its straight blue trend line and its corresponding "
+	"peak prominence value was generated with the following script. Note that the first four lines in the "
+	"script are only necessary to generate a PowerCepstrum of a part of a vowel. ")
 CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
 CODE (U"To Sound")
 CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
@@ -315,7 +290,8 @@ SCRIPT (5, 3, U""
 	"Colour: \"Black\"\n"
 	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
 	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
-NORMAL (U"In the next picture the trend line is of exponential decay type:")
+NORMAL (U"In the next picture the trend line is of exponential decay type and consequently the "
+	"peak prominence value has changed a little bit.")
 SCRIPT (5, 3, U""
 	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
 	"vowel = To Sound\n"
@@ -328,6 +304,60 @@ SCRIPT (5, 3, U""
 	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Exponential decay\", \"Robust slow\"\n"
 	"Colour: \"Black\"\n"
 	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
+	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
+
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Draw...", U"djmw", 20190914)
+INTRO (U"A command to draw the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Quefrency range (s)#")
+DEFINITION (U"define the extrema on the horizontal scale of the picture.")
+TAG (U"##Amplitude range (dB)#")
+DEFINITION (U"define the extrema on the vertical scale of the picture")
+ENTRY (U"Remark")
+NORMAL (U"Cepstrum values are drawn as 20\\.clog10 (value +\\ep), "
+	"where \\ep is a small number that avoids taking the logarithm of zero if the cepstrum value happens to be zero.")
+MAN_END
+
+MAN_BEGIN (U"PowerCepstrum: Draw trend line...", U"djmw", 20191008)
+INTRO (U"Draws the line that models the background of the selected @@PowerCepstrum@.")
+ENTRY (U"Settings")
+TAG (U"##Quefrency range (s)#")
+DEFINITION (U"define the extrema on the horizontal scale of the picture.")
+TAG (U"##Amplitude range (dB)#")
+DEFINITION (U"define the extrema on the vertical scale of the picture")
+TAG (U"##Trend line quefrency range (s)")
+DEFINITION (PowerCepstrum_manual_trendRange)
+TAG (U"##Trend type#")
+DEFINITION (PowerCepstrum_manual_trendType)
+TAG (U"##Fit method")
+DEFINITION (PowerCepstrum_manual_fitMethod)
+ENTRY (U"Examples")
+NORMAL (U"The next picture shows a PowerCepstrum with %%two% drawn trend lines, a straight line in blue "
+	"and an exponential decay line in green.  The picture was generated by the following script. "
+	"Note that the first four lines in the script are only necessary to generate a PowerCepstrum of a part of a vowel.")
+CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000")
+CODE (U"To Sound")
+CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
+CODE (U"To PowerCepstrum (slice): 0.1")
+CODE (U"Draw: 0, 0, 0, 110, \"yes\"")
+CODE (U"Colour: \"Blue\"")
+CODE (U"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Straight\", \"Robust slow\"")
+CODE (U"Colour: \"Green\"")
+CODE (U"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Exponential decay\", \"Robust slow\"")
+CODE (U"Colour: \"Black\"")
+SCRIPT (5, 3, U""
+	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
+	"vowel = To Sound\n"
+	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
+	"cepstrum = To PowerCepstrum (slice): 0.1\n"
+	"Draw: 0, 0, 0, 110, \"yes\"\n"
+	"Colour: \"Blue\"\n"
+	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Colour: \"Green\"\n"
+	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Exponential decay\", \"Robust slow\"\n"
+	"Colour: \"Black\"\n"
 	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
 MAN_END
 
