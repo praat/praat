@@ -136,7 +136,7 @@ DEFINITION (U"define the bandwidths in hertz of the first three formants")
 TAG (U"##Bandwidth fraction#")
 DEFINITION (U"defines the bandwidths of the fourth and higher formants as a fraction of the formant's frequency (i.e. it is the inverse of the formant's %%quality factor%). "
 	"For example if F4 equals 2800 Hz and the \"Bandwidth fraction\" was chosen as 0.05 then its "
-	"bandwidth will be 0.05*2800 = 140 Hz. The quality factor of this F4 is 20.")
+	"bandwidth will be 0.05*2800 = 140 Hz. The quality factor of this fourth formant is 20.")
 TAG (U"##Formant frequency interval (Hz)#")
 DEFINITION (U"defines the distances between the following formants in hertz. For example, if this values is chosen "
 	"as 1100 Hz and if F4 happens to be 3000 Hz then F5 will be 4100 Hz, F6 will be 5200 Hz, F7 will be 6300 Hz, etc."
