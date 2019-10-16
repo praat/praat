@@ -140,7 +140,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 		integer nfft = 2 * (thy nx - 1);
 		integer ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
 		double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
-		autoVEC data = newVECraw (nfft);
+		autoVEC data = newVECzero (nfft);
 		data [1] = 1.0;
 		for (integer i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];
