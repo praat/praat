@@ -919,7 +919,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			or double-clicked a Praat file,
 			while Praat is already running.
 		*/
-		Melder_sprint (text,500, U"Read from file... ", file -> path);
+		Melder_sprint (text,500, U"Read from file: ~", file -> path);
 		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
 	}
 	static void cb_finishedOpeningDocuments () {
@@ -1117,7 +1117,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
 			MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
 			MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
-			MelderInfo_writeLine (U"                   (on Windows, use -0 or -a when you redirect to a pipe or file)");
+			MelderInfo_writeLine (U"                   (on Windows, use -8 or -a when you redirect to a pipe or file)");
 			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-8") || strequ (argv [praatP.argumentNumber], "--utf8")) {

@@ -231,17 +231,18 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 						if (SUPPORT_DIRECT_DRAWING) {
 							[drawingArea lockFocus];
 							CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-							Melder_assert (context);
-							CGContextSaveGState (context);
-							//CGContextSetBlendMode (context, kCGBlendModeDifference);
-							CGContextSetBlendMode (context, kCGBlendModeDarken);
-							CGContextSetShouldAntialias (context, false);
-							NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
-							double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
-							//CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
-							CGContextSetRGBFillColor (context, red, green, blue, 1.0);
-							CGContextFillRect (context, rect);
-							CGContextRestoreGState (context);
+							if (context) {
+								CGContextSaveGState (context);
+								//CGContextSetBlendMode (context, kCGBlendModeDifference);
+								CGContextSetBlendMode (context, kCGBlendModeDarken);
+								CGContextSetShouldAntialias (context, false);
+								NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
+								double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
+								//CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
+								CGContextSetRGBFillColor (context, red, green, blue, 1.0);
+								CGContextFillRect (context, rect);
+								CGContextRestoreGState (context);
+							}
 							[drawingArea unlockFocus];
 							//GuiShell_drain (nullptr);
 						} else {
