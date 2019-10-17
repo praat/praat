@@ -159,11 +159,32 @@ void VowelEditor_prefs () {
 	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
 	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
 	/*
-	 * We don't know how many markers there will be, so the prefs file needs to have the maximum number.
+		We don't know how many markers there will be, so the prefs file needs to have the maximum number.
 	 */
 	for (integer i = 1; i <= VowelEditor_MAXIMUM_MARKERS; i ++) {
 		Preferences_addString (Melder_cat (U"VowelEditor.mark", (i < 10 ? U"0" : U""), i), & prefs.mark [i - 1] [0], U"x");
 	}
+}
+
+static Graphics_Colour * Graphics_Colour_fromName (conststring32 name) {
+	return
+		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Graphics_GREY :
+		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Graphics_BLACK :
+		Melder_cmp_caseInsensitive (name, U"red") == 0 ? & Graphics_RED :
+		Melder_cmp_caseInsensitive (name, U"green") == 0 ? & Graphics_GREEN :
+		Melder_cmp_caseInsensitive (name, U"blue") == 0 ? & Graphics_BLUE :
+		Melder_cmp_caseInsensitive (name, U"cyan") == 0 ? & Graphics_CYAN :
+		Melder_cmp_caseInsensitive (name, U"magenta") == 0 ? & Graphics_MAGENTA :
+		Melder_cmp_caseInsensitive (name, U"yellow") == 0 ? & Graphics_YELLOW :
+		Melder_cmp_caseInsensitive (name, U"maroon") == 0 ? & Graphics_MAROON :
+		Melder_cmp_caseInsensitive (name, U"lime") == 0 ? & Graphics_LIME :
+		Melder_cmp_caseInsensitive (name, U"navy") == 0 ? & Graphics_NAVY :
+		Melder_cmp_caseInsensitive (name, U"teal") == 0 ? & Graphics_TEAL :
+		Melder_cmp_caseInsensitive (name, U"purple") == 0 ? & Graphics_PURPLE :
+		Melder_cmp_caseInsensitive (name, U"olive") == 0 ? & Graphics_OLIVE :
+		Melder_cmp_caseInsensitive (name, U"silver") == 0 ? & Graphics_SILVER :
+		Melder_cmp_caseInsensitive (name, U"white") == 0 ? & Graphics_WHITE :
+		& Graphics_GREY; // the default colour
 }
 
 #pragma mark - class Vowel
@@ -743,16 +764,22 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		integer col_vowel = Table_getColumnIndexFromColumnLabel (my marks.get(), U"Vowel");
 		integer col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
 		integer col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
-		integer col_fs = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
-		for (integer i = 1; i <= my marks -> rows.size; i ++) {
-			conststring32 label = Table_getStringValue_Assert (my marks.get(), i, col_vowel);
-			f1 = Table_getNumericValue_Assert (my marks.get(), i, col_f1);
-			f2 = Table_getNumericValue_Assert (my marks.get(), i, col_f2);
+		integer col_size = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
+		integer col_colour = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Colour");
+		for (integer irow = 1; irow <= my marks -> rows.size; irow ++) {
+			conststring32 label = Table_getStringValue_Assert (my marks.get(), irow, col_vowel);
+			f1 = Table_getNumericValue_Assert (my marks.get(), irow, col_f1);
+			f2 = Table_getNumericValue_Assert (my marks.get(), irow, col_f2);
 			if (f1 >= my f1min && f1 <= my f1max && f2 >= my f2min && f2 <= my f2max) {
 				VowelEditor_getXYFromF1F2 (me, f1, f2, & x1, & y1);
 				int size = prefs.marksFontSize;
-				if (col_fs != 0)
-					size = Melder_ifloor (Table_getNumericValue_Assert (my marks.get(), i, col_fs));
+				if (col_size != 0)
+					size = Melder_ifloor (Table_getNumericValue_Assert (my marks.get(), irow, col_size));
+				if (col_colour != 0) {
+					conststring32 colourName = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
+					Graphics_Colour *colour = Graphics_Colour_fromName (colourName);
+					Graphics_setColour (g, *colour);
+				}
 				Graphics_setFontSize (g, size);
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 				Graphics_text (g, x1, y1, label);
@@ -760,6 +787,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		}
 	}
 	Graphics_setFontSize (g, fontSize);
+	Graphics_setGrey (g, 0.0); // black
 	// Draw the line F1=F2
 	//
 	VowelEditor_getXYFromF1F2 (me, my f2min, my f2min, & x1, & y1);
