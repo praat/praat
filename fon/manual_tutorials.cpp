@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20190928)
+MAN_BEGIN (U"What's new?", U"ppgb", 20191016)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.05# (16 October 2019)")
+LIST_ITEM (U"• Repaired a bug introduced in 6.0.44 that could cause rubbish LPC smoothing.")
+LIST_ITEM (U"• Repaired a rare crash when dragging a selection on the Mac.")
 NORMAL (U"##6.1.04# (28 September 2019)")
 LIST_ITEM (U"• @Electroglottography.")
 LIST_ITEM (U"• Sound and other windows: ##Widen or shrink selection...#.")

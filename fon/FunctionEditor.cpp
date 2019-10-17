@@ -425,12 +425,12 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr)
 		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll ())
-		BOOLEAN (showSelectionViewer, U"Show selection viewer", my default_showSelectionViewer ())
+		BOOLEAN (showSelectionViewer, Melder_cat (U"Show ", my v_selectionViewerName ()), my default_showSelectionViewer ())
 		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short (), U")"), my default_arrowScrollStep ())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
 		SET_BOOLEAN (synchronizeZoomAndScroll, my pref_synchronizedZoomAndScroll ())
-		SET_BOOLEAN (showSelectionViewer, my pref_showSelectionViewer())
+		SET_BOOLEAN (showSelectionViewer, my pref_showSelectionViewer ())
 		SET_REAL (arrowScrollStep, my p_arrowScrollStep)
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
