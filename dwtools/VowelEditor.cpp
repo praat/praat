@@ -816,8 +816,10 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 			p -> x [1] = x1;    p -> y [1] = y1;
 			p -> x [2] = x2;    p -> y [2] = y2;
 			p -> x [3] = 1.0;   p -> y [3] = 0.0;
+			Graphics_setGrey (g, 0.6);
 			Graphics_fillArea (g, p -> numberOfPoints, & p -> x [1], & p -> y [1]);
 			// Polygon_paint does not work because of use of Graphics_setInner.
+			Graphics_setGrey (g, 0.0); // black
 			Graphics_line (g, x1, y1, x2, y2);
 		}
 	}
