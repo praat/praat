@@ -75,12 +75,13 @@ trajectory --> path ????
 	#include <signal.h>
 #endif
 
-Thing_implement (VowelEditor, Editor, 0);
 
-// Male, Female, Child speaker
-#define VG_SPEAKER_M 0
-#define VG_SPEAKER_F 1
-#define VG_SPEAKER_C 2
+#include "enums_getText.h"
+#include "VowelEditor_enums.h"
+#include "enums_getValue.h"
+#include "VowelEditor_enums.h"
+
+Thing_implement (VowelEditor, Editor, 0);
 
 // STATUS_INFO >=Gui_LABEL_HEIGHT !!
 #define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)
@@ -135,7 +136,9 @@ static struct {
 	double f1min, f1max, f2min, f2max;
 	double f3, b3, f4, b4;
 	double markTraceEvery, extendDuration;
-	int speakerType, marksDataset, numberOfMarks;
+	kVowelEditor_speakersType speakersType;
+	kVowelEditor_marksDataSet marksDataSet;
+	int numberOfMarks;
 	double marksFontSize;
 	char32 mark [VowelEditor_MAXIMUM_MARKERS] [Preferences_STRING_BUFFER_SIZE];
 } prefs;
@@ -154,8 +157,8 @@ void VowelEditor_prefs () {
 	Preferences_addDouble (U"VowelEditor.b4", & prefs.b4, 350.0);
 	Preferences_addDouble (U"VowelEditor.markTraceEvery", & prefs.markTraceEvery, 0.05);
 	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
-	Preferences_addInt (U"VowelEditor.speakerType", & prefs.speakerType, 1);   // TODO: replace with enum
-	Preferences_addInt (U"VowelEditor.marksDataset", & prefs.marksDataset, 2);   // TODO: replace with enum
+	Preferences_addEnum (U"VowelEditor.speakersType", & prefs.speakersType, kVowelEditor_speakersType, kVowelEditor_speakersType::Man);
+	Preferences_addEnum (U"VowelEditor.marksDataSet", & prefs.marksDataSet, kVowelEditor_marksDataSet, kVowelEditor_marksDataSet::AmericanEnglish);
 	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
 	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
 	/*
@@ -641,28 +644,42 @@ static void Table_addColumn_size (Table me, double size) {
 	integer col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
-		for (integer i = 1; i <= my rows.size; i ++) {
-			Table_setNumericValue (me, i, my numberOfColumns, size);
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
+			Table_setNumericValue (me, irow, my numberOfColumns, size);
 		}
 	}
 }
-
-static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerType, double fontSize) {
-	autoTable te;
-	conststring32 Type [4] = { U"", U"m", U"w", U"c" };
-	conststring32 Sex [3] = { U"", U"m", U"f"};
-	if (marksDataset == 1) {   // American-English
-		autoTable thee = Table_create_petersonBarney1952 ();
-		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Type [speakerType]);
-	} else if (marksDataset == 2) {   // Dutch
-		if (speakerType == 1 || speakerType == 2) {   // male + female from Pols van Nierop
-			autoTable thee = Table_create_polsVanNierop1973 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Sex [speakerType]);
-		} else {
-			autoTable thee = Table_create_weenink1983 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Type [speakerType]);
+/*
+static void Table_addColumn_colour (Table me, Graphics_Colour colour) {
+	integer col_colour = Table_findColumnIndexFromColumnLabel (me, U"Colour");
+	if (col_colour == 0) {
+		Table_appendColumn (me, U"Colour");
+		conststring32 string = Graphics_Colour_asString ();
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
+			Table_setStringValue (me, irow, my numberOfColumns, string);
 		}
-	} else if (marksDataset == 3) {   // none
+	}
+}
+*/
+static void VowelEditor_setMarks (VowelEditor me, kVowelEditor_marksDataSet marksDataSet, kVowelEditor_speakersType speakersType, double fontSize) {
+	autoTable te;
+	const char32 *speaker = ( speakersType == kVowelEditor_speakersType::Man ? U"m" :
+		speakersType == kVowelEditor_speakersType::Woman ? U"w" :
+		speakersType == kVowelEditor_speakersType::Child ? U"c": U"m" );
+	if (marksDataSet == kVowelEditor_marksDataSet::AmericanEnglish) {   // American-English
+		autoTable thee = Table_create_petersonBarney1952 ();
+		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
+	} else if (marksDataSet == kVowelEditor_marksDataSet::Dutch) {
+		if (speakersType == kVowelEditor_speakersType::Child) {
+			autoTable thee = Table_create_weenink1983 ();
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
+		}
+		else {   // male + female from Pols van Nierop
+			autoTable thee = Table_create_polsVanNierop1973 ();
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, 
+				( speakersType == kVowelEditor_speakersType::Man ? U"m" : U"f" ));
+		}
+	} else if (marksDataSet == kVowelEditor_marksDataSet::None) {   // none
 		my marks.reset();
 		return;
 	} else {   // leave as is
@@ -672,6 +689,7 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 	integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 	Table_addColumn_size (newMarks.get(), fontSize);
+	//Table_addColumn_colour (newMarks.get(), Graphics_Grey);
 	my marks = newMarks.move();
 	copyVowelMarksInPreferences_volatile (my marks.get());
 }
@@ -693,17 +711,17 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 			nmarksFound ++;
 		}
 		if (nmarksFound == 0) {
-			my speakerType = prefs.speakerType = 1;
-			my marksDataset = prefs.marksDataset = 1;
-			VowelEditor_setMarks (me, my marksDataset, my speakerType, prefs.marksFontSize);
+			my speakersType = prefs.speakersType = kVowelEditor_speakersType::Man;
+			my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
+			VowelEditor_setMarks (me, my marksDataSet, my speakersType, prefs.marksFontSize);
 		} else {
 			my marks = newMarks.move();
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create Table from preferences. Default marks set.");
-		my speakerType = prefs.speakerType = 1;
-		my marksDataset = prefs.marksDataset = 1;
-		VowelEditor_setMarks (me, my marksDataset, my speakerType, prefs.marksFontSize);
+		my speakersType = prefs.speakersType = kVowelEditor_speakersType::Man;
+		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
+		VowelEditor_setMarks (me, my marksDataSet, my speakersType, prefs.marksFontSize);
 	}
 }
 
@@ -721,7 +739,7 @@ static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile f
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F2");
 		Table_addColumn_size (newMarks.get(), prefs.marksFontSize);
 		my marks = newMarks.move();
-		my marksDataset = prefs.marksDataset = 9999;
+		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::Other;
 		copyVowelMarksInPreferences_volatile (my marks.get());
 		// our marks preferences are dynamic, save each time
 	} catch (MelderError) {
@@ -798,8 +816,10 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 			p -> x [1] = x1;    p -> y [1] = y1;
 			p -> x [2] = x2;    p -> y [2] = y2;
 			p -> x [3] = 1.0;   p -> y [3] = 0.0;
+			Graphics_setGrey (g, 0.6);
 			Graphics_fillArea (g, p -> numberOfPoints, & p -> x [1], & p -> y [1]);
 			// Polygon_paint does not work because of use of Graphics_setInner.
+			Graphics_setGrey (g, 0.0); // black
 			Graphics_line (g, x1, y1, x2, y2);
 		}
 	}
@@ -974,26 +994,19 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Show vowel marks", nullptr);
-		MUTABLE_LABEL (note, U"")
-		OPTIONMENU (dataSet, U"Data set", 1)
-			OPTION (U"American English")
-			OPTION (U"Dutch")
-			OPTION (U"None")
-		OPTIONMENU (speaker, U"Speaker", 1)
-			OPTION (U"Man")
-			OPTION (U"Woman")
-			OPTION (U"Child")
+		OPTIONMENU_ENUM (kVowelEditor_marksDataSet, dataSet, U"Data set", kVowelEditor_marksDataSet::DEFAULT)
+		OPTIONMENU_ENUM (kVowelEditor_speakersType, speaker, U"Speaker", kVowelEditor_speakersType::DEFAULT)
 		POSITIVE (fontSize, U"Font size (points)", U"14")
 	EDITOR_OK
-		if (my marksDataset == 9999) SET_STRING (note, U"(Warning: the current vowel marks are not from one of these data sets.)")
-		SET_OPTION (dataSet, my marksDataset)
-		SET_OPTION (speaker, my speakerType)
-		SET_REAL (fontSize, my marksFontSize)
+//		if (my marksDataSet == 9999) SET_STRING (note, U"(Warning: the current vowel marks are not from one of these data sets.)")
+//		SET_OPTION (dataSet, my marksDataSet)
+//		SET_OPTION (speaker, my speakersType)
+//		SET_REAL (fontSize, my marksFontSize)
 	EDITOR_DO
-		my marksDataset = prefs.marksDataset = dataSet;
-		my speakerType = prefs.speakerType = speaker;
+		my marksDataSet = prefs.marksDataSet = dataSet;
+		my speakersType = prefs.speakersType = speaker;
 		my marksFontSize = prefs.marksFontSize = fontSize;
-		VowelEditor_setMarks (me, my marksDataset, my speakerType, my marksFontSize);
+		VowelEditor_setMarks (me, my marksDataSet, my speakersType, my marksFontSize);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -1439,14 +1452,14 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		my f1max = prefs.f1max;
 		my f2min = prefs.f2min;
 		my f2max = prefs.f2max;
-		my speakerType = prefs.speakerType;
-		my marksDataset = prefs.marksDataset;
+		my speakersType = prefs.speakersType;
+		my marksDataSet = prefs.marksDataSet;
 		my marksFontSize = prefs.marksFontSize;
 		my soundFollowsMouse = prefs.soundFollowsMouse;
-		if (my marksDataset > 3) { // TODO variable??
+		if (my marksDataSet == kVowelEditor_marksDataSet::Other) {
 			VowelEditor_createTableFromVowelMarksInPreferences (me.get());
 		} else {
-			VowelEditor_setMarks (me.get(), my marksDataset, my speakerType, 14);
+			VowelEditor_setMarks (me.get(), my marksDataSet, my speakersType, 14);
 		}
 		VowelEditor_setF3F4 (me.get(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
 		my maximumDuration = BUFFER_SIZE_SEC;
