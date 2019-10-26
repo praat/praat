@@ -418,6 +418,8 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		bool convergence = false;
 		while (iter <= maximumNumberOfIterations && not convergence) {
 			/*
+				C. Févotte, N. Berin & J.-L. Durrieu (2009), Nonnegative matrix facorization with the Itakura-Saito divergene: with
+					applications to music analysis, Neural Computation 21, 793--830.
 				algorithm 2, page 806
 				until convergence {
 					for k to numberOfFeateres {
