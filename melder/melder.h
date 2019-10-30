@@ -37,8 +37,9 @@
 #include "melder_assert.h"   // Melder_assert
 #include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
 #include "melder_pointer.h"   // NULL
-#include "melder_real.h"   // longdouble
+#include "melder_real.h"   // longdouble, MelderPoint, MelderRealRange
 #include "complex.h"   // dcomplex
+#include "melder_colour.h"   // MelderColour
 
 /*
 	Law of Demeter for class functions defined outside class definition.

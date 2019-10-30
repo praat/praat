@@ -2027,7 +2027,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		_Sound_garnish (me, g, tmin, tmax, minimum, maximum);
 }
 
-void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+void Sound_paintWhere (Sound me, Graphics g, MelderColour colour, double tmin, double tmax,
 	double minimum, double maximum, double level, bool garnish,
 	integer numberOfBisections, conststring32 formula, Interpreter interpreter)
 {
@@ -2083,7 +2083,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 	}
 }
 
-void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, bool garnish) {
+void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, MelderColour colour, double tmin, double tmax, double minimum, double maximum, bool garnish) {
 	try {
 		integer ixmin, ixmax, numberOfChannels = std::max (my ny, thy ny);
 		double min1 = minimum, max1 = maximum, tmin1 = tmin, tmax1 = tmax;

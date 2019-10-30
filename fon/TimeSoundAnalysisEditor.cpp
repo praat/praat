@@ -1817,7 +1817,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	}
 	if (my p_intensity_show) {
 		double intensityCursor = undefined;
-		Graphics_Colour textColour;
+		MelderColour textColour;
 		kGraphics_horizontalAlignment alignment;
 		double y;
 		if (! my p_pitch_show) {

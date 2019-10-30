@@ -4200,11 +4200,11 @@ static autoStrings itemizeColourString (conststring32 colourString) {
 	return thee;
 }
 
-static Graphics_Colour Strings_colourToValue  (Strings me, integer index) {
+static MelderColour Strings_colourToValue  (Strings me, integer index) {
 	if (index < 0 || index > my numberOfStrings)
 		return Graphics_GREY;
 
-	Graphics_Colour colourValue;
+	MelderColour colourValue;
 	char32 *p = my strings [index].get();
 	while (*p == U' ' || *p == U'\t') p ++;
 	*p = Melder_toLowerCase (*p);
@@ -4314,7 +4314,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 		for (integer icol = 1; icol <= groupSize; icol ++) {
 			double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
-			Graphics_Colour colour = Strings_colourToValue (colourText.get(), icol);
+			MelderColour colour = Strings_colourToValue (colourText.get(), icol);
 			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				double x2 = x1 + bar_width;
 				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]);

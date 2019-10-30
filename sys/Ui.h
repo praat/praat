@@ -110,7 +110,7 @@ Thing_define (UiField, Thing) {
 	autostring32 stringValue, stringDefaultValue;
 	autoVEC numericVectorValue;
 	autoMAT numericMatrixValue;
-	Graphics_Colour colourValue;
+	MelderColour colourValue;
 	OrderedOf<structUiOption> options;
 	conststring32vector strings;
 	GuiLabel label;
@@ -127,7 +127,7 @@ Thing_define (UiField, Thing) {
 	int *intVariable;
 	bool *boolVariable;
 	conststring32 *stringVariable;
-	Graphics_Colour *colourVariable;
+	MelderColour *colourVariable;
 	constVEC *numericVectorVariable;
 	constMAT *numericMatrixVariable;
 
@@ -202,7 +202,7 @@ UiOption UiRadio_addButton (UiField me, conststring32 label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, conststring32 label);
 UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, conststring32vector strings, integer defaultValue);
-UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
+UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 void UiForm_finish (UiForm me);
 
@@ -234,7 +234,7 @@ void UiForm_setPauseForm (UiForm me,
 	void UiForm_setOption (UiForm me, int *p_variable, int value);
 	void UiForm_setOptionAsString (UiForm me, int *p_variable, conststring32 stringValue /* cattable */);
 /* Colour fields: */
-	void UiForm_setColourAsGreyValue (UiForm me, Graphics_Colour *p_variable, double greyValue);
+	void UiForm_setColourAsGreyValue (UiForm me, MelderColour *p_variable, double greyValue);
 
 void UiForm_do (UiForm me, bool modified);
 /*
@@ -279,7 +279,7 @@ MelderFile UiForm_getFile (UiForm me, conststring32 fieldName);   // FileIn, Fil
 double UiForm_getReal_check (UiForm me, conststring32 fieldName);
 integer UiForm_getInteger_check (UiForm me, conststring32 fieldName);
 char32 * UiForm_getString_check (UiForm me, conststring32 fieldName);
-Graphics_Colour UiForm_getColour_check (UiForm me, conststring32 fieldName);
+MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName);
 
 void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpreter);

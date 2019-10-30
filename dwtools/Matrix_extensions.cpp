@@ -123,7 +123,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	
 	double extremum = fabs (NUMextremum (my z.get()));
 
-	Graphics_Colour colour = Graphics_inqColour (g);
+	MelderColour colour = Graphics_inqColour (g);
 	double scaleFactor = sqrt (cellAreaScaleFactor);
 	for (integer i = 1; i <= numberOfCells; i++) {
 		integer index = Permutation_getValueAtIndex (p.get(), i);

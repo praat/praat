@@ -392,7 +392,7 @@ DO
 	theCurrentPraatPicture -> speckleSize = speckleSize;
 END }
 
-static void setColour (Graphics_Colour colour) {
+static void setColour (MelderColour colour) {
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setColour (GRAPHICS, colour);
@@ -594,7 +594,7 @@ DIRECT (GRAPHICS_Erase_all) {
 		Graphics_clearWs (GRAPHICS);
 		#if 1
 		autoPraatPicture picture;
-		Graphics_Colour colour = GRAPHICS -> colour;
+		MelderColour colour = GRAPHICS -> colour;
 		Graphics_setColour (GRAPHICS, Graphics_WHITE);
 		double x1, y1, x2, y2;
 		//Melder_casual (GRAPHICS -> d_x1DC, U" ", GRAPHICS -> d_y1DC, U" ", GRAPHICS -> d_x2DC, U" ", GRAPHICS -> d_y2DC);

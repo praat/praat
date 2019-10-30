@@ -149,7 +149,6 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 
 		/* Declare system-dependent data structures. */
 
-		static bool paInitialized = false;
 		volatile struct Sound_recordFixedTime_Info info = { 0 };
 		PaStreamParameters streamParameters = { 0 };
 		#if defined (macintosh)
@@ -205,11 +204,11 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		 * On other systems, the info is filled in after the port is opened.
 		 */
 		if (inputUsesPortAudio) {
-			if (! paInitialized) {
+			if (! MelderAudio_hasBeenInitialized) {
 				PaError err = Pa_Initialize ();
 				if (err)
 					Melder_throw (U"Pa_Initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
-				paInitialized = true;
+				MelderAudio_hasBeenInitialized = true;
 			}
 		} else {
 			#if defined (macintosh)

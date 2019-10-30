@@ -1071,12 +1071,11 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		 * Count the number of input devices and sources.
 		 */
 		if (my inputUsesPortAudio) {
-			static bool paInitialized = false;
-			if (! paInitialized) {
+			if (! MelderAudio_hasBeenInitialized) {
 				PaError err = Pa_Initialize ();
 				if (Melder_debug == 20)
 					Melder_casual (U"init ", Melder_peek8to32 (Pa_GetErrorText (err)));
-				paInitialized = true;
+				MelderAudio_hasBeenInitialized = true;
 				if (Melder_debug == 20) {
 					PaHostApiIndex hostApiCount = Pa_GetHostApiCount ();
 					Melder_casual (U"host API count ", hostApiCount);

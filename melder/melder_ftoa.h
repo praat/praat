@@ -108,6 +108,9 @@ conststring8 Melder8_pointer (const void *pointer) noexcept;
 conststring32 Melder_character (char32 kar) noexcept;
 conststring8 Melder8_character (char32 kar) noexcept;
 
+conststring32 Melder_colour (MelderColour colour) noexcept;
+conststring8 Melder8_colour (MelderColour colour) noexcept;
+
 conststring32 Melder_pad (int64 width, conststring32 string);   // will append spaces to the left of 'string' until 'width' is reached; no truncation
 conststring32 Melder_pad (conststring32 string, int64 width);   // will append spaces to the right of 'string' until 'width' is reached; no truncation
 conststring32 Melder_truncate (int64 width, conststring32 string);   // will cut away the left of 'string' until 'width' is reached; no padding

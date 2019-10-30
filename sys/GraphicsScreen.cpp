@@ -401,7 +401,7 @@ void Graphics_updateWs (Graphics me) {
 		my v_updateWs ();
 }
 
-void Graphics_beginMovieFrame (Graphics any, Graphics_Colour *p_colour) {
+void Graphics_beginMovieFrame (Graphics any, MelderColour *p_colour) {
 	if (any -> classInfo == classGraphicsScreen) {
 		GraphicsScreen me = (GraphicsScreen) any;
 		Graphics_clearRecording (me);
