@@ -2750,6 +2750,10 @@ MAN_BEGIN (U"Matrix: To NMF (ALS)...", U"djmw", 20190409)
 INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix by means of an Alternating Least Squares algorithm.")
 MAN_END
 
+MAN_BEGIN (U"Matrix: To NMF (IS)...", U"djmw", 20191025)
+INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix based on the Itakura-Saito distance as was described in @@Magron & Virtanen (2018)@.")
+MAN_END
+
 MAN_BEGIN (U"MelFilter", U"djmw", 20141022)
 INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by the @@MelSpectrogram@.")
 NORMAL (U"An object of type MelFilter represents an acoustic time-frequency "
@@ -2812,7 +2816,7 @@ MAN_BEGIN (U"NMF", U"djmw", 20190312)
 INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factorization@ of a matrix.")
 MAN_END
 
-MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20190321)
+MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20191024)
 INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a data matrix ##D#, whose elements are all non-negative, into a feature matrix ##F# and a weights matrix ##W# such that ##D \\~~ F*W#, where the elements of ##F# and ##W# are also all non-negative.")
 ENTRY (U"Algorithms for computing NMF")
 NORMAL (U"More backgroud on the algorithms used can be found in @@Berry et al. (2007)@")
@@ -2827,7 +2831,7 @@ CODE (U"while iter < maxinter and not convergence")
 	CODE1 (U"(MU) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)")
 	CODE1 (U"test for convergence")
 CODE (U"endwhile")
-NORMAL (U"In the mutiplicative update (MU) steps above \"*\" means ordinary matrix multiplication while \".*\" and \"./\" mean elementwise matrix operations. The factors 10^^-9^ guard against division by zero.")
+NORMAL (U"In the multiplicative update (MU) steps above \"*\" means ordinary matrix multiplication while \".*\" and \"./\" mean elementwise matrix operations. The factors 10^^-9^ guard against division by zero.")
 ENTRY (U"Alternating Least Squares")
 NORMAL (U"The optimization of ##D \\~~ F*W# is not convex in both ##F# and ##W# it is convex in either ##F# or ##W#. Therefor given one, the other can be found by a simple least squares (LS) algorithm. This can be done in an alternating fashion.")
 NORMAL (U"The Aternating Least Squares (ALS) algorithm is as follows:")
@@ -5743,8 +5747,13 @@ NORMAL (U"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
 MAN_END
 
 MAN_BEGIN (U"Lee & Seung (2001)", U"djmw", 20190312)
-	NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
+NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
 	"%%Advances in in neural information processing systems% #13: 556\\--562.")
+MAN_END
+
+MAN_BEGIN (U"Magron & Virtanen (2018)", U"djmw", 20191024)
+NORMAL (U"P. Magron & T. Virtanen (2018): \"Expectation-maximization algorithms for Itakura-Saito "
+	"nonnegative matrix factorization.\" HAL-01632082v2.")
 MAN_END
 
 MAN_BEGIN (U"Marsaglia & Tsang (2000)", U"djmw", 20190620)
