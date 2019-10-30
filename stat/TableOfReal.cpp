@@ -905,7 +905,7 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, integer rowmi
 	integer colmin, integer colmax, bool garnish)
 {
 	double dx = 1.0, dy = 1.0;
-	Graphics_Colour colour = Graphics_inqColour (graphics);
+	MelderColour colour = Graphics_inqColour (graphics);
 	fixRows (me, & rowmin, & rowmax);
 	fixColumns (me, & colmin, & colmax);
 	

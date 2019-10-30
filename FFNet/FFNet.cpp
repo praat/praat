@@ -595,7 +595,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 void FFNet_drawActivation (FFNet me, Graphics g) {
 	integer node = 1, maxNumOfUnits = my numberOfInputs;
 	int dxIsFixed = 1;
-	Graphics_Colour colour = Graphics_inqColour (g);
+	MelderColour colour = Graphics_inqColour (g);
 	double dy = 1.0 / (my numberOfLayers + 1);
 
 	Graphics_setInner (g);

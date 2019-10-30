@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2005,2007-2018 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2005,2007-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,8 @@
  */
 
 #include "GraphicsP.h"
-#include <stdint.h>
 
-Graphics_Colour
+MelderColour
 	Graphics_BLACK = { 0.0, 0.0, 0.0 },
 	Graphics_WHITE = { 1.0, 1.0, 1.0 },
 	Graphics_RED = { 0.865, 0.034, 0.026 },
@@ -39,7 +38,7 @@ Graphics_Colour
 	Graphics_GREY = { 0.5, 0.5, 0.5 },
 	Graphics_WINDOW_BACKGROUND_COLOUR = { 0.90, 0.90, 0.85 };
 
-inline static conststring32 rgbColourName (Graphics_Colour colour) {
+inline static conststring32 rgbColourName (MelderColour colour) {
 	static MelderString buffer { };
 	MelderString_copy (& buffer,
 		U"{", Melder_fixed (colour. red, 6),
@@ -49,7 +48,7 @@ inline static conststring32 rgbColourName (Graphics_Colour colour) {
 	);
 	return buffer.string;
 }
-conststring32 Graphics_Colour_name (Graphics_Colour colour) {
+conststring32 Graphics_Colour_name (MelderColour colour) {
 	return
 		Graphics_Colour_equal (colour, Graphics_BLACK) ? U"black" :
 		Graphics_Colour_equal (colour, Graphics_WHITE) ? U"white" :
@@ -71,18 +70,18 @@ conststring32 Graphics_Colour_name (Graphics_Colour colour) {
 }
 
 constexpr int theNumberOfCyclingColours = 10;
-static Graphics_Colour theCyclingBackgroundColours [theNumberOfCyclingColours] = {
+static MelderColour theCyclingBackgroundColours [theNumberOfCyclingColours] = {
 	Graphics_GREEN, Graphics_SILVER, Graphics_BLUE, Graphics_YELLOW, Graphics_RED,
 	Graphics_CYAN, Graphics_MAROON, Graphics_LIME, Graphics_TEAL, Graphics_MAGENTA
 };
-static Graphics_Colour theCyclingTextColours [theNumberOfCyclingColours] = {
+static MelderColour theCyclingTextColours [theNumberOfCyclingColours] = {
 	Graphics_WHITE, Graphics_BLACK, Graphics_WHITE, Graphics_BLACK, Graphics_WHITE,
 	Graphics_BLACK, Graphics_WHITE, Graphics_BLACK, Graphics_WHITE, Graphics_BLACK
 };
-Graphics_Colour Graphics_cyclingBackgroundColour (integer category) {
+MelderColour Graphics_cyclingBackgroundColour (integer category) {
 	return theCyclingBackgroundColours [(category - 1) % theNumberOfCyclingColours];
 }
-Graphics_Colour Graphics_cyclingTextColour (integer category) {
+MelderColour Graphics_cyclingTextColour (integer category) {
 	return theCyclingTextColours [(category - 1) % theNumberOfCyclingColours];
 }
 
@@ -93,11 +92,12 @@ Graphics_Colour Graphics_cyclingTextColour (integer category) {
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void _Graphics_setColour (Graphics graphics, Graphics_Colour colour) {
+void _Graphics_setColour (Graphics graphics, MelderColour colour) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (! my d_cairoGraphicsContext) return;
+			if (! my d_cairoGraphicsContext)
+				return;
 			cairo_set_source_rgb (my d_cairoGraphicsContext, colour. red, colour. green, colour. blue);
 		#elif gdi
 			my d_winForegroundColour = RGB (colour. red * 255, colour. green * 255, colour. blue * 255);
@@ -119,7 +119,7 @@ void _Graphics_setColour (Graphics graphics, Graphics_Colour colour) {
 	}
 }
 
-void Graphics_setColour (Graphics me, Graphics_Colour colour) {
+void Graphics_setColour (Graphics me, MelderColour colour) {
 	my colour = colour;
 	_Graphics_setColour (me, colour);
 	if (my recording) { op (SET_RGB_COLOUR, 3); put (colour. red); put (colour. green); put (colour. blue); }
@@ -134,11 +134,15 @@ void _Graphics_setGrey (Graphics graphics, double fgrey) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (! my d_cairoGraphicsContext) return;
-			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
+			if (! my d_cairoGraphicsContext)
+				return;
+			if (fgrey < 0.0)
+				fgrey = 0.0;
+			else if (fgrey > 1.0)
+				fgrey = 1.0;
 			cairo_set_source_rgb (my d_cairoGraphicsContext, fgrey, fgrey, fgrey);
 		#elif gdi
-			int lightness = fgrey <= 0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255;
+			int lightness = ( fgrey <= 0.0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255 );
 			my d_winForegroundColour = RGB (lightness, lightness, lightness);
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 			DeleteObject (my d_winPen);
@@ -147,12 +151,18 @@ void _Graphics_setGrey (Graphics graphics, double fgrey) {
 			DeleteObject (my d_winBrush);
 			my d_winBrush = CreateSolidBrush (my d_winForegroundColour);
 		#elif quartz
-			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
+			if (fgrey < 0.0)
+				fgrey = 0.0;
+			else if (fgrey > 1.0)
+				fgrey = 1.0;
 			my d_macColour. red = my d_macColour. green = my d_macColour. blue = fgrey * 65535;
 		#endif
 	} else if (graphics -> postScript) {
 		GraphicsPostscript me = static_cast <GraphicsPostscript> (graphics);
-		if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
+		if (fgrey < 0.0)
+			fgrey = 0.0;
+		else if (fgrey > 1.0)
+			fgrey = 1.0;
 		my d_printf (my d_file, "%.6g setgray\n", fgrey);
 	}
 }
@@ -189,7 +199,8 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 		#if cairo
 			if (! my d_cairoGraphicsContext) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
-			if (width <= 0 || height <= 0) return;
+			if (width <= 0 || height <= 0)
+				return;
 			#if ALLOW_GDK_DRAWING
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
 				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
@@ -214,7 +225,8 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   // superfluous?
 		#elif quartz
 			int width = x2DC - x1DC, height = y1DC - y2DC;
-			if (width <= 0 || height <= 0) return;
+			if (width <= 0 || height <= 0)
+				return;
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
 				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101106 );
@@ -459,7 +471,7 @@ void Graphics_unhighlight2 (Graphics me, double x1WC, double x2WC, double y1WC, 
 		{ op (UNHIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
-void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
+void Graphics_xorOn (Graphics graphics, MelderColour colour) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
@@ -512,7 +524,7 @@ void Graphics_xorOff (Graphics graphics) {
 	}
 }
 
-Graphics_Colour Graphics_inqColour (Graphics me) {
+MelderColour Graphics_inqColour (Graphics me) {
 	return my colour;
 }
 
