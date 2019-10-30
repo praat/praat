@@ -135,6 +135,7 @@ integer MelderAudio_getOutputBestSampleRate (integer fsamp) {
 }
 
 bool MelderAudio_isPlaying;
+bool MelderAudio_hasBeenInitialized;
 
 static double theStartingTime = 0.0;
 
@@ -1043,11 +1044,13 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 	MelderAudio_isPlaying = true;
 	if (my usePortAudio) {
 		PaError err;
-		static bool paInitialized = false;
-		if (! paInitialized) {
+		integer numberOfTries = 0;
+	restart_device:
+		if (! MelderAudio_hasBeenInitialized) {
 			err = Pa_Initialize ();
-			if (err) Melder_fatal (U"PortAudio does not initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
-			paInitialized = true;
+			if (err)
+				Melder_fatal (U"PortAudio does not initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
+			MelderAudio_hasBeenInitialized = true;
 		}
 		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&false;
 		PaStreamParameters outputParameters = { 0 };
@@ -1090,7 +1093,18 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 		outputParameters. hostApiSpecificStreamInfo = nullptr;
 		err = Pa_OpenStream (& my stream, nullptr, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 			paDitherOff, thePaStreamCallback, me);
-		if (err) Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
+		if (err) {
+			if (numberOfTries < 1) {
+				/*
+					Restart PortAudio and try again, once.
+				*/
+				numberOfTries += 1;
+				Pa_Terminate ();
+				MelderAudio_hasBeenInitialized = false;
+				goto restart_device;
+			} else
+				Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
+		}
 		theStartingTime = Melder_clock ();
 		err = Pa_StartStream (my stream);
 		if (err) Melder_throw (U"PortAudio cannot start sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
