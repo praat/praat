@@ -53,7 +53,7 @@
 #define her  she ->
 #define iam(klas)  klas me = (klas) void_me
 
-#include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free, Melder_strdup
+#include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free
 #include "melder_string32.h"   // char32, conststring32, autostring32 (requires Melder_malloc, our), Melder_dup
 #include "melder_kar.h"   // Melder_hasInk (requires char32), Melder_toLowerCase
 #include "melder_str32.h"   // str32len, str32cpy, str32cmp_caseInsensitive (requires Melder_toLowerCase)
