@@ -2273,10 +2273,10 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket)
+void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set in time
-	my callbackSocket = Melder_strdup (callbackSocket);
+	my callbackSocket = Melder_dup (callbackSocket);
 
 	TimeSoundAnalysisEditor_init (me, title, grid, sound, ownSound);
 
@@ -2298,7 +2298,7 @@ void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid,
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		TextGridEditor_init (me.get(), title, grid, sound, ownSound, spellingChecker, callbackSocket);

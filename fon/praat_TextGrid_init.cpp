@@ -716,7 +716,7 @@ FORM (WINDOW_TextGrid_viewAndEditWithCallback, U"TextGrid: View & Edit with call
 DO
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	FIND_TWO_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, Melder_peek32to8 (callbackText));
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, callbackText);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
