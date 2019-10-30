@@ -1718,6 +1718,9 @@ void praat_run () {
 		Melder_assert (! (frexp (0.0/0.0, & exponent) < 1.0));
 		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
 	}
+	Melder_assert (str32equ (Melder_integer (1234567), U"1234567"));
+	Melder_assert (str32equ (Melder_integer (-1234567), U"-1234567"));
+	Melder_assert (str32equ (Melder_colour ({ 0.25, 0.50, 0.875 }), U"{0.25,0.5,0.875}"));
 	{
 		VEC xn;   // uninitialized
 		Melder_assert (! xn.at);

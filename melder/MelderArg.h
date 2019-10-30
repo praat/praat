@@ -38,6 +38,7 @@ struct MelderArg {
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex        (arg)) { }
 	MelderArg (const char32              arg) : _arg (Melder_character       (arg)) { }
+	MelderArg (const MelderColour        arg) : _arg (Melder_colour          (arg)) { }
 	/*
 		The types of arguments that sometimes involve memory allocation:
 	*/

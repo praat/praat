@@ -280,7 +280,7 @@ const char * Melder8_dcomplex (dcomplex value) noexcept {
 			sprintf (buffers8 [ibuffer], "%.17g", value.re);
 	}
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
-	*p = value.im < 0.0 ? '-' : '+';
+	*p = ( value.im < 0.0 ? '-' : '+' );
 	value.im = fabs (value.im);
 	++ p;
 	sprintf (p, "%.15g", value.im);
@@ -304,7 +304,7 @@ const char * Melder8_scomplex (dcomplex value) noexcept {
 		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value.re);
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
-	*p = value.im < 0.0 ? '-' : '+';
+	*p = ( value.im < 0.0 ? '-' : '+' );
 	sprintf (++ p, "%.9g", fabs (value.im));
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
@@ -395,6 +395,47 @@ conststring32 Melder_character (char32 kar) noexcept {
 	buffers32 [ibuffer] [0] = kar;
 	buffers32 [ibuffer] [1] = U'\0';
 	return buffers32 [ibuffer];
+}
+
+const char * Melder8_colour (MelderColour colour) noexcept {
+	if (isundef (colour.red) || isundef (colour.green) || isundef (colour.blue))
+		return "{--undefined--,--undefined--,--undefined--}";
+	if (++ ibuffer == NUMBER_OF_BUFFERS)
+		ibuffer = 0;
+	char *p = & buffers8 [ibuffer] [0];
+	strcpy (p, "{");
+	p ++;
+	sprintf (p, "%.15g", colour.red);
+	if (strtod (p, nullptr) != colour.red) {
+		sprintf (p, "%.16g", colour.red);
+		if (strtod (p, nullptr) != colour.red)
+			sprintf (p, "%.17g", colour.red);
+	}
+	p += strlen (p);
+	strcpy (p, ",");
+	p ++;
+	sprintf (p, "%.15g", colour.green);
+	if (strtod (p, nullptr) != colour.green) {
+		sprintf (p, "%.16g", colour.green);
+		if (strtod (p, nullptr) != colour.green)
+			sprintf (p, "%.17g", colour.green);
+	}
+	p += strlen (p);
+	strcpy (p, ",");
+	p ++;
+	sprintf (p, "%.15g", colour.blue);
+	if (strtod (p, nullptr) != colour.blue) {
+		sprintf (p, "%.16g", colour.blue);
+		if (strtod (p, nullptr) != colour.blue)
+			sprintf (p, "%.17g", colour.blue);
+	}
+	p += strlen (p);
+	strcpy (p, "}");
+	return buffers8 [ibuffer];
+}
+conststring32 Melder_colour (MelderColour colour) noexcept {
+	const char *p = Melder8_colour (colour);
+	CONVERT_BUFFER_TO_CHAR32
 }
 
 /********** TENSOR TO STRING CONVERSION **********/
