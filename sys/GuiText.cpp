@@ -720,7 +720,8 @@ void GuiText_copy (GuiText me) {
 			gtk_text_buffer_copy_clipboard (buffer, cb);
 		}
 	#elif motif
-		if (! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
+		if (! NativeText_getSelectionRange (my d_widget, nullptr, nullptr))
+			return;
 		SendMessage (my d_widget -> window, WM_COPY, 0, 0);
 	#elif cocoa
 		if (my d_cocoaTextView) {
@@ -741,7 +742,8 @@ void GuiText_cut (GuiText me) {
 			gtk_text_buffer_cut_clipboard (buffer, cb, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif motif
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr))
+			return;
 		SendMessage (my d_widget -> window, WM_CUT, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
@@ -1152,7 +1154,7 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 	}
 }
 
-void GuiText_setString (GuiText me, conststring32 text) {
+void GuiText_setString (GuiText me, conststring32 text, bool undoable) {
 	#if gtk
 		if (G_OBJECT_TYPE (my d_widget) == GTK_TYPE_ENTRY) {
 			gtk_entry_set_text (GTK_ENTRY (my d_widget), Melder_peek32to8 (text));
@@ -1182,7 +1184,8 @@ void GuiText_setString (GuiText me, conststring32 text) {
 		if (my d_cocoaTextView) {
 			NSRange nsRange = NSMakeRange (0, [[my d_cocoaTextView   textStorage] length]);
 			NSString *nsString = (NSString *) Melder_peek32toCfstring (text);
-			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // to make this action undoable
+			if (undoable)
+				[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // to make this action undoable
 			//[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
 			if (true) {
 				[my d_cocoaTextView   setString: nsString];
