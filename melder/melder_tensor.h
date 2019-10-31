@@ -1282,6 +1282,21 @@ inline autoBOOLVEC newBOOLVECcopy (constBOOLVECVU const& source) {
 	return newvectorcopy (source);
 }
 
+using COMPVEC = vector <dcomplex>;
+using COMPVECVU = vectorview <dcomplex>;
+using constCOMPVEC = constvector <dcomplex>;
+using constCOMPVECVU = constvectorview <dcomplex>;
+using autoCOMPVEC = autovector <dcomplex>;
+inline autoCOMPVEC newCOMPVECraw (integer size) {
+	return newvectorraw <dcomplex> (size);
+}
+inline autoCOMPVEC newCOMPVECzero (integer size) {
+	return newvectorzero <dcomplex> (size);
+}
+inline autoCOMPVEC newCOMPVECcopy (constCOMPVECVU const& source) {
+	return newvectorcopy (source);
+}
+
 using MAT = matrix <double>;
 using MATVU = matrixview <double>;
 using constMAT = constmatrix <double>;
