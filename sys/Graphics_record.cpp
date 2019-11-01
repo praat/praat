@@ -216,7 +216,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 			case SET_STANDARD_COLOUR: {   // only used in old Praat picture files
 				int standardColour = (int) get;
-				Graphics_Colour colour =
+				MelderColour colour =
 					standardColour == 0 ? Graphics_BLACK :
 					standardColour == 1 ? Graphics_WHITE :
 					standardColour == 2 ? Graphics_RED :
@@ -274,7 +274,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 #if motif
 			case XOR_ON: {
-				Graphics_Colour colour; colour. red = get, colour. green = get, colour. blue = get;
+				MelderColour colour; colour. red = get, colour. green = get, colour. blue = get;
 				Graphics_xorOn (thee, colour);
 			} break;
 			case XOR_OFF: {
@@ -372,7 +372,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
 			case SET_RGB_COLOUR: {
-				Graphics_Colour colour;
+				MelderColour colour;
 				colour. red = get, colour. green = get, colour. blue = get;
 				Graphics_setColour (thee, colour);
 			} break;

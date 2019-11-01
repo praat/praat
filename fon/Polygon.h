@@ -2,7 +2,7 @@
 #define _Polygon_h_
 /* Polygon.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2009,2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations);
 void Polygon_draw (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
 void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
 
-void Polygon_paint (Polygon me, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax);
+void Polygon_paint (Polygon me, Graphics g, MelderColour colour, double xmin, double xmax, double ymin, double ymax);
 
 void Polygon_drawCircles (Polygon me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter_mm);

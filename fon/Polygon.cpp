@@ -305,7 +305,7 @@ void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, doubl
 	Graphics_unsetInner (g);
 }
 
-void Polygon_paint (Polygon me, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax) {
+void Polygon_paint (Polygon me, Graphics g, MelderColour colour, double xmin, double xmax, double ymin, double ymax) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_setColour (g, colour);

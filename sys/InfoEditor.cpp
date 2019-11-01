@@ -44,7 +44,25 @@ InfoEditor InfoEditor_getTheReferenceToTheOnlyInstance () {
 
 static void gui_information (conststring32 message) {
 	InfoEditor editor = InfoEditor_getTheReferenceToTheOnlyInstance ();
-	GuiText_setString (editor -> textWidget, message);
+	#if cocoa
+		/*
+			REPAIRED MEMORY LEAK
+				2019-10-31
+			As we may be called in long sequences outside of the event loop,
+			we may need to clean up. Without the autorelease pool,
+			the retainCount of the cocaTextView will quickly rise,
+			as shown by running the following script:
+				for i to 1e6
+					writeInfoLine: i
+				endfor
+			and waiting for Praat to crash after taking 3 GB of memory (macOS 10.15).
+			Also, if you stop before crashing (e.g. have the loop run to only 1e5),
+			then much of the memory will not be released at all.
+		*/
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		//Melder_casual (U"cocoaTextView retain count before: ", [editor -> textWidget -> d_cocoaTextView  retainCount]);
+	#endif
+	GuiText_setString (editor -> textWidget, message, false);
 	GuiThing_show (editor -> windowForm);
 	/*
 		Try to make sure that the invalidated text widget and the elements of the fronted window are
@@ -88,6 +106,8 @@ static void gui_information (conststring32 message) {
 			[editor -> windowForm -> d_cocoaShell   flushWindow];
 			[NSApp  updateWindows];   // called automatically?
 		#endif
+		//Melder_casual (U"cocoaTextView retain count after: ", [editor -> textWidget -> d_cocoaTextView  retainCount]);
+		[pool release];
 	#elif defined (macintosh)
 		GuiShell_drain (editor -> windowForm);
 	#endif

@@ -2,7 +2,7 @@
 #define _melder_alloc_h_
 /* melder_alloc.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,6 @@ void * _Melder_calloc (int64 numberOfElements, int64 elementSize);
 #define Melder_calloc(type,numberOfElements)  (type *) _Melder_calloc (numberOfElements, sizeof (type))
 void * _Melder_calloc_f (int64 numberOfElements, int64 elementSize);
 #define Melder_calloc_f(type,numberOfElements)  (type *) _Melder_calloc_f (numberOfElements, sizeof (type))
-char * Melder_strdup (const char *string);
-char * Melder_strdup_f (const char *string);
 
 #define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
 void _Melder_free (void **pointer) noexcept;
@@ -50,7 +48,7 @@ void _Melder_free (void **pointer) noexcept;
 int64 Melder_allocationCount ();
 /*
 	Returns the total number of successful calls to
-	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
+	Melder_malloc, Melder_realloc (if 'ptr' is null), and Melder_calloc,
 	since the start of the process. Mainly for debugging purposes.
 */
 
@@ -63,7 +61,7 @@ int64 Melder_deallocationCount ();
 int64 Melder_allocationSize ();
 /*
 	Returns the total number of bytes allocated in calls to
-	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
+	Melder_malloc, Melder_realloc (if moved), and Melder_calloc,
 	since the start of the process. Mainly for debugging purposes.
 */
 

@@ -722,7 +722,7 @@ UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stri
 	return thee;
 }
 
-UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::COLOUR_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy colourVariable = colourVariable;
@@ -1860,7 +1860,7 @@ void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value
 	Melder_fatal (U"Text field not found in command window \"", my name.get(), U"\".");
 }
 
-void UiForm_setColourAsGreyValue (UiForm me, Graphics_Colour *p_variable, double greyValue) {
+void UiForm_setColourAsGreyValue (UiForm me, MelderColour *p_variable, double greyValue) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield].get();
 		if (field -> colourVariable == p_variable) {
@@ -2035,7 +2035,7 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 	return nullptr;
 }
 
-Graphics_Colour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
+MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type)
 	{

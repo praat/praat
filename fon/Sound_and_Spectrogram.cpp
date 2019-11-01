@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2011,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/07/02 checks on NUMrealft
- * pb 2003/11/30 Sound_to_Spectrogram_windowShapeText
- * pb 2004/03/13 bins are a fixed number of frequency samples wide;
- *               this improves the positioning of peaks; thanks to Gabriel Beckers for his persistence
- * pb 2004/10/18 use of FFT tables speeds everything up by a factor of 2.5
- * pb 2004/10/20 progress bar
- * pb 2006/12/30 new Sound_create API
- * pb 2007/01/01 compatible with stereo sounds
- * pb 2007/12/06 enums
- * pb 2008/01/19 double
- * pb 2010/02/26 fixed a message
- * pb 2011/06/06 C++
- */
-
 #include "Sound_and_Spectrogram.h"
 #include "NUM2.h"
 
@@ -45,108 +29,124 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 	double maximumTimeOversampling, double maximumFreqOversampling)
 {
 	try {
-		double nyquist = 0.5 / my dx;
-		double physicalAnalysisWidth =
-			windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? 2.0 * effectiveAnalysisWidth : effectiveAnalysisWidth;
-		double effectiveTimeWidth = effectiveAnalysisWidth / sqrt (NUMpi);
-		double effectiveFreqWidth = 1.0 / effectiveTimeWidth;
-		double minimumTimeStep2 = effectiveTimeWidth / maximumTimeOversampling;
-		double minimumFreqStep2 = effectiveFreqWidth / maximumFreqOversampling;
-		double timeStep = minimumTimeStep1 > minimumTimeStep2 ? minimumTimeStep1 : minimumTimeStep2;
-		double freqStep = minimumFreqStep1 > minimumFreqStep2 ? minimumFreqStep1 : minimumFreqStep2;
-		double physicalDuration = my dx * my nx, windowssq = 0.0;
+		const double nyquist = 0.5 / my dx;
+		const double physicalAnalysisWidth =
+			( windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? 2.0 * effectiveAnalysisWidth : effectiveAnalysisWidth );
+		const double effectiveTimeWidth = effectiveAnalysisWidth / sqrt (NUMpi);
+		const double effectiveFreqWidth = 1.0 / effectiveTimeWidth;
+		const double minimumTimeStep2 = effectiveTimeWidth / maximumTimeOversampling;
+		const double minimumFreqStep2 = effectiveFreqWidth / maximumFreqOversampling;
+		const double timeStep = std::max (minimumTimeStep1, minimumTimeStep2);
+		double freqStep = std::max (minimumFreqStep1, minimumFreqStep2);
+		const double physicalDuration = my dx * my nx;
 
 		/*
 			Compute the time sampling.
 		*/
-		integer nsamp_window = Melder_ifloor (physicalAnalysisWidth / my dx);
-		integer halfnsamp_window = nsamp_window / 2 - 1;
-		nsamp_window = halfnsamp_window * 2;
+		const integer approximateNumberOfSamplesPerWindow = Melder_ifloor (physicalAnalysisWidth / my dx);
+		const integer halfnsamp_window = approximateNumberOfSamplesPerWindow / 2 - 1;
+		const integer nsamp_window = halfnsamp_window * 2;
 		if (nsamp_window < 1)
 			Melder_throw (U"Your analysis window is too short: less than two samples.");
 		if (physicalAnalysisWidth > physicalDuration)
 			Melder_throw (U"Your sound is too short:\n"
 				U"it should be at least as long as ",
 				windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? U"two window lengths." : U"one window length.");
-		integer numberOfTimes = 1 + Melder_ifloor ((physicalDuration - physicalAnalysisWidth) / timeStep);   // >= 1
-		double t1 = my x1 + 0.5 * ((my nx - 1) * my dx - (numberOfTimes - 1) * timeStep);   // centre of first frame
+		const integer numberOfTimes = 1 + Melder_ifloor ((physicalDuration - physicalAnalysisWidth) / timeStep);   // >= 1
+		const double t1 = my x1 + 0.5 * ((my nx - 1) * my dx - (numberOfTimes - 1) * timeStep);   // centre of first frame
 
 		/*
 			Compute the frequency sampling of the FFT spectrum.
 		*/
-		if (fmax <= 0.0 || fmax > nyquist) fmax = nyquist;
+		if (fmax <= 0.0 || fmax > nyquist)
+			fmax = nyquist;
 		integer numberOfFreqs = Melder_ifloor (fmax / freqStep);
-		if (numberOfFreqs < 1) return autoSpectrogram ();
+		if (numberOfFreqs < 1)
+			return autoSpectrogram ();
 		integer nsampFFT = 1;
 		while (nsampFFT < nsamp_window || nsampFFT < 2 * numberOfFreqs * (nyquist / fmax))
 			nsampFFT *= 2;
-		integer half_nsampFFT = nsampFFT / 2;
+		const integer half_nsampFFT = nsampFFT / 2;
 
 		/*
 			Compute the frequency sampling of the spectrogram.
 		*/
-		integer binWidth_samples = Melder_ifloor (freqStep * my dx * nsampFFT);
-		if (binWidth_samples < 1) binWidth_samples = 1;
+		const integer binWidth_samples = std::max (integer (1), Melder_ifloor (freqStep * my dx * nsampFFT));
 		double binWidth_hertz = 1.0 / (my dx * nsampFFT);
 		freqStep = binWidth_samples * binWidth_hertz;
 		numberOfFreqs = Melder_ifloor (fmax / freqStep);
-		if (numberOfFreqs < 1) return autoSpectrogram ();
+		if (numberOfFreqs < 1)
+			return autoSpectrogram ();
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 				0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz));
 
-		autoVEC frame = newVECzero (nsampFFT);
-		autoNUMvector <double> spec (1, nsampFFT);
-		autoNUMvector <double> window (1, nsamp_window);
+		autoVEC window = newVECzero (nsamp_window);
+		longdouble windowssq = 0.0;
+		for (integer i = 1; i <= nsamp_window; i ++) {
+			const double nSamplesPerWindow_f = physicalAnalysisWidth / my dx;
+			switch (windowType) {
+				case kSound_to_Spectrogram_windowShape::SQUARE: {
+					window [i] = 1.0;
+				} break;
+				case kSound_to_Spectrogram_windowShape::HAMMING: {
+					const double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
+					window [i] = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
+				} break;
+				case kSound_to_Spectrogram_windowShape::BARTLETT: {
+					const double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
+					window [i] = 1.0 - fabs ((2.0 * phase - 1.0));
+				} break;
+				case kSound_to_Spectrogram_windowShape::WELCH: {
+					const double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
+					window [i] = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
+				} break;
+				case kSound_to_Spectrogram_windowShape::HANNING: {
+					const double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
+					window [i] = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
+				} break;
+				case kSound_to_Spectrogram_windowShape::GAUSSIAN: {
+					const double imid = 0.5 * (double) (nsamp_window + 1), edge = exp (-12.0);
+					const double phase = ((double) i - imid) / nSamplesPerWindow_f;   // -0.5 .. +0.5
+					window [i] = (exp (-48.0 * phase * phase) - edge) / (1.0 - edge);
+					break;
+				}
+				break; default:
+					window [i] = 1.0;
+			}
+			windowssq += window [i] * window [i];
+		}
+		const double oneByBinWidth = 1.0 / double (windowssq) / binWidth_samples;
+
+		autoVEC data = newVECzero (nsampFFT);
+		autoVEC spectrum = newVECzero (half_nsampFFT + 1);
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (& fftTable, nsampFFT);
 
 		autoMelderProgress progress (U"Sound to Spectrogram...");
-		for (integer i = 1; i <= nsamp_window; i ++) {
-			double nSamplesPerWindow_f = physicalAnalysisWidth / my dx;
-			double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
-			double value;
-			switch (windowType) {
-				case kSound_to_Spectrogram_windowShape::SQUARE:
-					value = 1.0;
-				break; case kSound_to_Spectrogram_windowShape::HAMMING:
-					value = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
-				break; case kSound_to_Spectrogram_windowShape::BARTLETT:
-					value = 1.0 - fabs ((2.0 * phase - 1.0));
-				break; case kSound_to_Spectrogram_windowShape::WELCH:
-					value = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
-				break; case kSound_to_Spectrogram_windowShape::HANNING:
-					value = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
-				break; case kSound_to_Spectrogram_windowShape::GAUSSIAN:
-				{
-					double imid = 0.5 * (double) (nsamp_window + 1), edge = exp (-12.0);
-					phase = ((double) i - imid) / nSamplesPerWindow_f;   // -0.5 .. +0.5
-					value = (exp (-48.0 * phase * phase) - edge) / (1.0 - edge);
-					break;
-				}
-				break; default:
-					value = 1.0;
-			}
-			window [i] = value;
-			windowssq += value * value;
-		}
-		double oneByBinWidth = 1.0 / windowssq / binWidth_samples;
 
 		for (integer iframe = 1; iframe <= numberOfTimes; iframe ++) {
-			double t = Sampled_indexToX (thee.get(), iframe);
-			integer leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
-			integer startSample = rightSample - halfnsamp_window;
-			integer endSample = leftSample + halfnsamp_window;
+			const double t = Sampled_indexToX (thee.get(), iframe);
+			const integer leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
+			const integer startSample = rightSample - halfnsamp_window;
+			const integer endSample = leftSample + halfnsamp_window;
 			Melder_assert (startSample >= 1);
 			Melder_assert (endSample <= my nx);
-			for (integer i = 1; i <= half_nsampFFT; i ++) {
-				spec [i] = 0.0;
-			}
+
+			spectrum <<= 0.0;
+			/*
+				For multichannel sounds, the power spectrogram should represent the
+				average power in the channels,
+				so that the result for a stereo sound in which the
+				left channel has the same waveform as the right channel,
+				is identical to the result for the corresponding mono (= averaged) sound.
+				Averaging starts by adding up the powers of the channels.
+			*/
 			for (integer channel = 1; channel <= my ny; channel ++) {
-				for (integer j = 1, i = startSample; j <= nsamp_window; j ++) {
-					frame [j] = my z [channel] [i ++] * window [j];
-				}
-				for (integer j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
+				for (integer j = 1, i = startSample; j <= nsamp_window; j ++)
+					data [j] = my z [channel] [i ++] * window [j];
+				for (integer j = nsamp_window + 1; j <= nsampFFT; j ++)
+					data [j] = 0.0f;
 
 				Melder_progress (iframe / (numberOfTimes + 1.0),
 					U"Sound to Spectrogram: analysis of frame ", iframe, U" out of ", numberOfTimes);
@@ -154,28 +154,31 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				/*
 					Compute the Fast Fourier Transform of the frame.
 				*/
-				NUMfft_forward (& fftTable, frame.get());   // complex spectrum
+				NUMfft_forward (& fftTable, data.get());   // data := complex spectrum
 
 				/*
-					Put the power spectrum in frame [1..half_nsampFFT + 1].
+					Convert from complex to power spectrum,
+					accumulating the power spectra of the channels.
 				*/
-				spec [1] += frame [1] * frame [1];   // DC component
+				spectrum [1] += data [1] * data [1];   // DC component
 				for (integer i = 2; i <= half_nsampFFT; i ++)
-					spec [i] += frame [i + i - 2] * frame [i + i - 2] + frame [i + i - 1] * frame [i + i - 1];
-				spec [half_nsampFFT + 1] += frame [nsampFFT] * frame [nsampFFT];   // Nyquist frequency. Correct??
+					spectrum [i] += data [i + i - 2] * data [i + i - 2] + data [i + i - 1] * data [i + i - 1];
+				spectrum [half_nsampFFT + 1] += data [nsampFFT] * data [nsampFFT];   // Nyquist frequency. Correct??
 			}
-			if (my ny > 1 ) for (integer i = 1; i <= half_nsampFFT; i ++) {
-				spec [i] /= my ny;
-			}
+			/*
+				Power averaging ends by dividing the summed power by the number of channels,
+			*/
+			if (my ny > 1 )
+				spectrum  /=  my ny;
 
 			/*
-				Bin into frame [1..nBands].
+				Binning.
 			*/
 			for (integer iband = 1; iband <= numberOfFreqs; iband ++) {
-				integer leftsample = (iband - 1) * binWidth_samples + 1, rightsample = leftsample + binWidth_samples;
-				long double power = 0.0;
-				for (integer i = leftsample; i < rightsample; i ++) power += spec [i];
-				thy z [iband] [iframe] = (double) power * oneByBinWidth;
+				const integer lowerSample = (iband - 1) * binWidth_samples + 1;
+				const integer higherSample = lowerSample + binWidth_samples;
+				const double power = NUMsum (spectrum.part (lowerSample, higherSample - 1));
+				thy z [iband] [iframe] = power * oneByBinWidth;
 			}
 		}
 		return thee;
@@ -186,24 +189,26 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 
 autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 	try {
-		double dt = 1.0 / fsamp;
-		integer n = Melder_ifloor ((my xmax - my xmin) / dt);
-		if (n < 0) return autoSound ();
+		const double dt = 1.0 / fsamp;
+		const integer n = Melder_ifloor ((my xmax - my xmin) / dt);
+		if (n < 0)
+			return autoSound ();
 		autoSound you = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (integer i = 1; i <= n; i ++) {
-			double t = Sampled_indexToX (you.get(), i);
-			double rframe = Sampled_xToIndex (me, t);
-			if (rframe < 1 || rframe >= my nx) continue;
-			integer leftFrame = Melder_ifloor (rframe);
-			integer rightFrame = leftFrame + 1;
-			double phase = rframe - leftFrame;
-			long double value = 0.0;
+			const double t = Sampled_indexToX (you.get(), i);
+			const double rframe = Sampled_xToIndex (me, t);
+			if (rframe < 1 || rframe >= my nx)
+				continue;
+			const integer leftFrame = Melder_ifloor (rframe);
+			const integer rightFrame = leftFrame + 1;
+			const double phase = rframe - leftFrame;
+			longdouble value = 0.0;
 			for (integer j = 1; j <= my ny; j ++) {
-				double f = Matrix_rowToY (me, j);
-				double power = my z [j] [leftFrame] * (1 - phase) + my z [j] [rightFrame] * phase;
+				const double f = Matrix_rowToY (me, j);
+				const double power = my z [j] [leftFrame] * (1.0 - phase) + my z [j] [rightFrame] * phase;
 				value += sqrt (power) * sin (2 * NUMpi * f * t);
 			}
-			your z [1] [i] = (double) value;
+			your z [1] [i] = double (value);
 		}
 		return you;
 	} catch (MelderError) {

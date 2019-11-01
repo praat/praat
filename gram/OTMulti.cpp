@@ -1009,7 +1009,7 @@ static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, bool
 void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststring32 form2, bool vertical, bool showDisharmonies) {
 	integer winner, winner1 = 0, winner2 = 0;
 	double x, y, fontSize = Graphics_inqFontSize (g);
-	Graphics_Colour colour = Graphics_inqColour (g);
+	MelderColour colour = Graphics_inqColour (g);
 	char32 text [200];
 	bool bidirectional = form1 [0] != U'\0' && form2 [0] != U'\0';
 	try {

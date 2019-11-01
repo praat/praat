@@ -218,8 +218,8 @@ void structEditor :: v_destroy () noexcept {
 			}
 		#endif
 	}
-	if (our ownData) forget (our data);
-	Melder_free (our callbackSocket);
+	if (our ownData)
+		forget (our data);
 	Editor_Parent :: v_destroy ();
 }
 
@@ -255,7 +255,7 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 		structMelderFile file { };
 		MelderDir_getFile (& praatDir, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data, & file);
-		sendsocket (my callbackSocket, Melder_peek32to8 (my data -> name.get()));
+		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data -> name.get()));
 	}
 	my v_goAway ();
 }

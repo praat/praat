@@ -184,7 +184,7 @@ typedef struct {   // read-only
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
 	int font, lineType;
 	double fontSize;
-	Graphics_Colour colour;
+	MelderColour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;
 extern structPraatApplication theForegroundPraatApplication;
@@ -404,7 +404,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		UiForm_addFileOut (_dia_.get(), labelText, defaultStringValue);
 
 #define COLOUR(colourVariable, labelText, defaultStringValue)  \
-		static Graphics_Colour colourVariable; \
+		static MelderColour colourVariable; \
 		UiForm_addColour (_dia_.get(), & colourVariable, U"" #colourVariable, labelText, defaultStringValue);
 
 #define CHANNEL(integerVariable, labelText, defaultStringValue)  \

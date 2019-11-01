@@ -51,6 +51,7 @@ bool MelderAudio_getUseInternalSpeaker ();
 integer MelderAudio_getOutputBestSampleRate (integer fsamp);
 
 extern bool MelderAudio_isPlaying;
+extern bool MelderAudio_hasBeenInitialized;
 void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed),   // return true to continue, false to stop
 	void *playClosure);

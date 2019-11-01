@@ -138,12 +138,12 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
 	bool garnish, conststring32 method, integer numberOfBisections, conststring32 formula, Interpreter interpreter);
 
-void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+void Sound_paintWhere (Sound me, Graphics g, MelderColour colour, double tmin, double tmax,
 	double minimum, double maximum, double level, bool garnish,
 	integer numberOfBisections, conststring32 formula, Interpreter interpreter
 );
 
-void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, MelderColour colour, double tmin, double tmax,
 	double minimum, double maximum, bool garnish);
 
 autoSound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, double formantFrequenciesRatio, double durationRatio);

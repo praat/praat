@@ -1,6 +1,6 @@
 /* Preferences.cpp
  *
- * Copyright (C) 1996-2013,2015-2018 Paul Boersma
+ * Copyright (C) 1996-2013,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ static void Preferences_add (conststring32 string, int type, void *value, int mi
 {
 	autoPreference me = Thing_new (Preference);
 	my string = Melder_dup (string);
-	for (char32 *p = & my string [0]; *p != U'\0'; p ++) if (*p == U'_') *p = U'.';
+	for (char32 *p = & my string [0]; *p != U'\0'; p ++)
+		if (*p == U'_') *p = U'.';
 	my type = type;
 	my value = value;
 	my min = min;
@@ -106,7 +107,8 @@ void Preferences_read (MelderFile file) {
 			char32 *value = str32str (line, U": ");
 			if (! value)
 				return;   // OK: we have read past the last key-value pair
-			*value = U'\0', value += 2;
+			*value = U'\0';
+			value += 2;
 			integer ipref = thePreferences. lookUp (line);
 			if (ipref == 0) {
 				/*
@@ -119,35 +121,46 @@ void Preferences_read (MelderFile file) {
 			Preference pref = thePreferences.at [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =
-					(int8) strtol (Melder_peek32to8 (value), nullptr, 10); break;
+						(int8) strtol (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case int16wa: * (int16 *) pref -> value =
-					(int16) strtol (Melder_peek32to8 (value), nullptr, 10); break;
+						(int16) strtol (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case intwa: * (int *) pref -> value =
-					strtol (Melder_peek32to8 (value), nullptr, 10); break;
+						strtol (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case integerwa: * (integer *) pref -> value =
-					strtol (Melder_peek32to8 (value), nullptr, 10); break;
+						strtol (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case ubytewa: * (unsigned char *) pref -> value =
-					(uint8) strtoul (Melder_peek32to8 (value), nullptr, 10); break;
+						(uint8) strtoul (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case uintwa: * (unsigned int *) pref -> value =
-					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
+						strtoul (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case uintegerwa: * (uinteger *) pref -> value =
-					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
+						strtoul (Melder_peek32to8 (value), nullptr, 10);
+				break;
 				case doublewa: * (double *) pref -> value =
-					Melder_a8tof (Melder_peek32to8 (value)); break;
+						Melder_a8tof (Melder_peek32to8 (value));
+				break;
 				case stringwa: {
 					str32ncpy ((char32 *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
-					((char32 *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = U'\0'; break;
+					((char32 *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = U'\0';
 				}
+				break;
 				case enumwa: {
 					int intValue = pref -> getValue (value);
 					if (intValue < 0)
 						intValue = pref -> getValue (U"\t");   // look for the default
-					* (int *) pref -> value = intValue; break;
+					* (int *) pref -> value = intValue;
 				}
+				break;
 				case questionwa: * (bool *) pref -> value =
-					str32nequ (value, U"yes", 3) ? true :
-					str32nequ (value, U"no", 2) ? false :
-					strtol (Melder_peek32to8 (value), nullptr, 10) != 0; break;
+						( str32nequ (value, U"yes", 3) ? true :
+						  str32nequ (value, U"no", 2) ? false :
+						  strtol (Melder_peek32to8 (value), nullptr, 10) != 0 );
+				break;
 			}
 		}
 	} catch (MelderError) {

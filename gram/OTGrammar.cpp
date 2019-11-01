@@ -751,7 +751,7 @@ static double OTGrammar_constraintWidth (Graphics g, conststring32 name) {
 void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring32 input) {
 	try {
 		const double fontSize = Graphics_inqFontSize (g);
-		Graphics_Colour colour = Graphics_inqColour (g);
+		MelderColour colour = Graphics_inqColour (g);
 		const integer itab = OTGrammar_getTableau (me, input);
 		_OTGrammar_fillInHarmonies (me, itab);
 		const integer winner = OTGrammar_getWinner (me, itab);

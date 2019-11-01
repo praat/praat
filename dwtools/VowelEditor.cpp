@@ -169,7 +169,7 @@ void VowelEditor_prefs () {
 	}
 }
 
-static Graphics_Colour * Graphics_Colour_fromName (conststring32 name) {
+static MelderColour * Graphics_Colour_fromName (conststring32 name) {
 	return
 		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Graphics_GREY :
 		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Graphics_BLACK :
@@ -526,7 +526,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 
 	int it, imark = 1, glt = Graphics_inqLineType (g);
 	double glw = Graphics_inqLineWidth (g), x1, x1p, y1, y1p, t1;
-	Graphics_Colour colour = Graphics_inqColour (g);
+	MelderColour colour = Graphics_inqColour (g);
 	integer nfp = my points.size;
 	trace (U"number of points ", nfp);
 	FormantPoint fp = my points.at [1];
@@ -650,7 +650,7 @@ static void Table_addColumn_size (Table me, double size) {
 	}
 }
 /*
-static void Table_addColumn_colour (Table me, Graphics_Colour colour) {
+static void Table_addColumn_colour (Table me, MelderColour colour) {
 	integer col_colour = Table_findColumnIndexFromColumnLabel (me, U"Colour");
 	if (col_colour == 0) {
 		Table_appendColumn (me, U"Colour");
@@ -795,7 +795,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 					size = Melder_ifloor (Table_getNumericValue_Assert (my marks.get(), irow, col_size));
 				if (col_colour != 0) {
 					conststring32 colourName = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
-					Graphics_Colour *colour = Graphics_Colour_fromName (colourName);
+					MelderColour *colour = Graphics_Colour_fromName (colourName);
 					Graphics_setColour (g, *colour);
 				}
 				Graphics_setFontSize (g, size);

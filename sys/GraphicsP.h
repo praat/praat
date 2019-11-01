@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2018 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 
 void _GraphicsScreen_text_init (GraphicsScreen me);
 void _Graphics_fillRectangle (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
-void _Graphics_setColour (Graphics me, Graphics_Colour colour);
+void _Graphics_setColour (Graphics me, MelderColour colour);
 void _Graphics_setGrey (Graphics me, double grey);
 void _Graphics_colour_init (Graphics me);
 bool _GraphicsMac_tryToInitializeFonts ();

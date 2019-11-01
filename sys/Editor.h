@@ -64,7 +64,7 @@ Thing_define (Editor, Thing) {
 	Editor_DataChangedCallback d_dataChangedCallback;
 	Editor_DestructionCallback d_destructionCallback;
 	Editor_PublicationCallback d_publicationCallback;
-	const char *callbackSocket;
+	autostring32 callbackSocket;
 
 	void v_destroy () noexcept
 		override;
