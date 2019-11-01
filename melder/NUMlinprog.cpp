@@ -1,6 +1,6 @@
 /* NUMlinprog.cpp
  *
- * Copyright (C) 2008-2011,2012,2015,2017 Paul Boersma
+ * Copyright (C) 2008,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,18 @@
 struct structNUMlinprog {
 	glp_prob *linearProgram;
 	integer numberOfConstraints, ivar, numberOfVariables;
-	int *ind;
-	double *val;
+	autovector<int> ind;
+	autoVEC val;
 	int status;
 };
 
 void NUMlinprog_delete (NUMlinprog me) {
-	if (! me) return;
-	if (my linearProgram) glp_delete_prob (my linearProgram);
-	NUMvector_free <int> (my ind, 1);
-	NUMvector_free <double> (my val, 1);
+	if (! me)
+		return;
+	if (my linearProgram)
+		glp_delete_prob (my linearProgram);
+	my ind.reset();
+	my val.reset();
 	Melder_free (me);
 }
 
@@ -50,29 +52,22 @@ NUMlinprog NUMlinprog_new (bool maximize) {
 
 void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff) {
 	glp_add_cols (my linearProgram, 1);
-	glp_set_col_bnds (my linearProgram, ++ my numberOfVariables,
+	glp_set_col_bnds (my linearProgram, (int) ++ my numberOfVariables,
 		isundef (lowerBound) ? ( isundef (upperBound) ? GLP_FR : GLP_UP ) :
 		isundef (upperBound) ? GLP_LO :
-		lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
-	glp_set_obj_coef (my linearProgram, my ivar, coeff);
+		lowerBound == upperBound ? GLP_FX : GLP_DB,
+		lowerBound, upperBound);
+	glp_set_obj_coef (my linearProgram, (int) my ivar, coeff);
 }
 
 void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound) {
 	try {
-		if (my ind == NULL) {
-			/*
-			 * Check without change.
-			 */
-			autoNUMvector <int> ind (1, my numberOfVariables);
-			autoNUMvector <double> val (1, my numberOfVariables);
-			/*
-			 * Change without error.
-			 */
-			my ind = ind.transfer();
-			my val = val.transfer();
+		if (NUMisEmpty (my ind)) {
+			my ind = newvectorzero<int> (my numberOfVariables);
+			my val = newVECzero (my numberOfVariables);
 		}
 		glp_add_rows (my linearProgram, 1);   // TODO: check
-		glp_set_row_bnds (my linearProgram, ++ my numberOfConstraints,
+		glp_set_row_bnds (my linearProgram, (int) ++ my numberOfConstraints,
 			isundef (lowerBound) ? ( isundef (upperBound) ? GLP_FR : GLP_UP ) :
 			isundef (upperBound) ? GLP_LO :
 			lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
@@ -84,11 +79,12 @@ void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBou
 
 void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient) {
 	++ my ivar;
-	my ind [my ivar] = my ivar;
+	my ind [my ivar] = (int) my ivar;
 	my val [my ivar] = coefficient;
-	if (my ivar == my numberOfVariables) {
-		glp_set_mat_row (my linearProgram, my numberOfConstraints, my numberOfVariables, my ind, my val);
-	}
+	if (my ivar == my numberOfVariables)
+		glp_set_mat_row (my linearProgram, (int) my numberOfConstraints, (int) my numberOfVariables,
+				my ind.asArgumentToFunctionThatExpectsOneBasedArray(),
+				my val.asArgumentToFunctionThatExpectsOneBasedArray());
 }
 
 void NUMlinprog_run (NUMlinprog me) {
@@ -119,9 +115,8 @@ void NUMlinprog_run (NUMlinprog me) {
 			case GLP_UNDEF: Melder_throw (U"Solution is undefined.");
 			default: break;
 		}
-		if (my status == GLP_FEAS) {
+		if (my status == GLP_FEAS)
 			Melder_warning (U"Linear programming solution is feasible but not optimal.");
-		}
 	} catch (MelderError) {
 		Melder_throw (U"Linear programming: not run.");
 	}
