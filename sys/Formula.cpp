@@ -320,30 +320,24 @@ static void formulaError (conststring32 message, int position) {
 static conststring32 languageNameCompare_searchString;
 
 static int languageNameCompare (const void *first, const void *second) {
-	int i = * (int *) first, j = * (int *) second;
+	integer i = * (integer *) first, j = * (integer *) second;
 	return str32cmp (i == 0 ? languageNameCompare_searchString : Formula_instructionNames [i],
 		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]);
 }
 
-static int Formula_hasLanguageName (conststring32 f) {
-	static int *index;
-	if (! index) {
-		index = NUMvector <int> (1, highestInputSymbol);
-		for (int tok = 1; tok <= highestInputSymbol; tok ++) {
+static integer Formula_hasLanguageName (conststring32 f) {
+	static autoINTVEC index;
+	if (NUMisEmpty (index)) {
+		index = newINTVECraw (highestInputSymbol);
+		for (int tok = 1; tok <= highestInputSymbol; tok ++)
 			index [tok] = tok;
-		}
-		qsort (& index [1], highestInputSymbol, sizeof (int), languageNameCompare);
+		qsort (& index [1], highestInputSymbol, sizeof (integer), languageNameCompare);
 	}
-	if (! index) {   // linear search
-		for (int tok = 1; tok <= highestInputSymbol; tok ++) {
-			if (str32equ (f, Formula_instructionNames [tok])) return tok;
-		}
-	} else {   // binary search
-		int dummy = 0, *found;
-		languageNameCompare_searchString = f;
-		found = (int *) bsearch (& dummy, & index [1], highestInputSymbol, sizeof (int), languageNameCompare);
-		if (found) return *found;
-	}
+	integer dummy = 0, *found;
+	languageNameCompare_searchString = f;
+	found = (integer *) bsearch (& dummy, & index [1], highestInputSymbol, sizeof (integer), languageNameCompare);
+	if (found)
+		return *found;
 	return 0;
 }
 

@@ -733,11 +733,15 @@ FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", nullptr) {
 	TEXTFIELD (formula, U"Formula:", U"x^2 - x^4")
 	OK
 DO
+	if (numberOfHorizontalSteps < 2)
+		return;
 	double x1WC, x2WC, y1WC, y2WC;
-	if (numberOfHorizontalSteps < 2) return;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	if (fromX == toX) fromX = x1WC, toX = x2WC;
-	autoNUMvector <double> y (1, numberOfHorizontalSteps);
+	if (fromX == toX) {
+		fromX = x1WC;
+		toX = x2WC;
+	}
+	autoVEC y = newVECraw (numberOfHorizontalSteps);
 	autoPraatPictureFunction function = Thing_new (PraatPictureFunction);
 	function -> xmin = x1WC;
 	function -> xmax = x2WC;
@@ -752,7 +756,7 @@ DO
 	}
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_function (GRAPHICS, y.peek(), 1, numberOfHorizontalSteps, fromX, toX);
+		Graphics_function (GRAPHICS, & y [0], 1, numberOfHorizontalSteps, fromX, toX);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }
@@ -948,8 +952,10 @@ OK
 	SET_REAL (top, y1WC)
 	SET_REAL (bottom, y2WC)
 DO
-	if (left == right) Melder_throw (U"Left and right should not be equal.");
-	if (top == bottom) Melder_throw (U"Top and bottom should not be equal.");
+	if (left == right)
+		Melder_throw (U"Left and right should not be equal.");
+	if (top == bottom)
+		Melder_throw (U"Top and bottom should not be equal.");
 	GRAPHICS_NONE
 		Graphics_setWindow (GRAPHICS, left, right, bottom, top);
 	GRAPHICS_NONE_END
