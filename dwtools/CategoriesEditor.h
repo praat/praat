@@ -24,7 +24,7 @@
 
 Thing_define (CategoriesEditor, Editor) {
 	autoCommandHistory history;
-	int position;
+	integer position;
 	GuiList list;
 	GuiText text;
 	GuiButton undo, redo;

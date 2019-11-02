@@ -592,7 +592,7 @@ void GuiList_deselectAllItems (GuiList me);
 void GuiList_deselectItem (GuiList me, integer position);
 integer GuiList_getBottomPosition (GuiList me);
 integer GuiList_getNumberOfItems (GuiList me);
-integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelected);
+autoINTVEC GuiList_getSelectedPositions (GuiList me);
 integer GuiList_getTopPosition (GuiList me);
 
 /**

@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2013,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,16 +39,12 @@ static void updateList (ArtwordEditor me) {
 
 static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* event */) {
 	Artword artword = (Artword) my data;
-	integer numberOfSelectedPositions;
-	integer *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
-	if (selectedPositions) {
-		for (integer ipos = numberOfSelectedPositions; ipos > 0; ipos --) {
-			integer position = selectedPositions [ipos];
-			Melder_assert (position >= 1 && position <= INT16_MAX);
-			Artword_removeTarget (artword, my muscle, (int16) position);   // guarded conversion
-		}
+	autoINTVEC selectedPositions = GuiList_getSelectedPositions (my list);
+	for (integer ipos = selectedPositions.size; ipos > 0; ipos --) {
+		integer position = selectedPositions [ipos];
+		Melder_assert (position >= 1 && position <= INT16_MAX);
+		Artword_removeTarget (artword, my muscle, (int16) position);   // guarded conversion
 	}
-	NUMvector_free (selectedPositions, 1);
 	updateList (me);
 	Editor_broadcastDataChanged (me);
 }

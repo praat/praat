@@ -347,9 +347,8 @@ void GuiList_deselectItem (GuiList me, integer position) {
 	#endif
 }
 
-integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelectedPositions) {
-	*numberOfSelectedPositions = 0;
-	integer *selectedPositions = nullptr;
+autoINTVEC GuiList_getSelectedPositions (GuiList me) {
+	autoINTVEC selectedPositions;
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
@@ -357,9 +356,7 @@ integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelectedPos
 		if (n > 0) {
 			GList *list = gtk_tree_selection_get_selected_rows (selection, (GtkTreeModel **) & list_store);
 			integer ipos = 1;
-			*numberOfSelectedPositions = n;
-			selectedPositions = NUMvector <integer> (1, *numberOfSelectedPositions);
-			Melder_assert (selectedPositions);
+			selectedPositions = newINTVECzero (n);
 			for (GList *l = g_list_first (list); l != nullptr; l = g_list_next (l)) {
 				gint *index = gtk_tree_path_get_indices ((GtkTreePath *) l -> data);
 				selectedPositions [ipos] = index [0] + 1;
@@ -371,12 +368,12 @@ integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelectedPos
 		return selectedPositions;
 	#elif motif
 		int n = ListBox_GetSelCount (my d_widget -> window), *indices;
-		if (n == 0) {
+		if (n == 0)
 			return selectedPositions;
-		}
 		if (n == -1) {   // single selection
 			int selection = ListBox_GetCurSel (my d_widget -> window);
-			if (selection == -1) return False;
+			if (selection == -1)
+				return False;
 			n = 1;
 			indices = Melder_calloc_f (int, n);
 			indices [0] = selection;
@@ -384,23 +381,21 @@ integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelectedPos
 			indices = Melder_calloc_f (int, n);
 			ListBox_GetSelItems (my d_widget -> window, n, indices);
 		}
-		*numberOfSelectedPositions = n;
-		selectedPositions = NUMvector <integer> (1, *numberOfSelectedPositions);
-		Melder_assert (selectedPositions);
-		for (integer ipos = 1; ipos <= *numberOfSelectedPositions; ipos ++) {
+		selectedPositions = newINTVECzero (n);
+		for (integer ipos = 1; ipos <= n; ipos ++)
 			selectedPositions [ipos] = indices [ipos - 1] + 1;   // convert from zero-based list of zero-based indices
-		}
 		Melder_free (indices);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
-		*numberOfSelectedPositions = 0;
-		selectedPositions = NUMvector <integer> (1, [indexSet count]);
+		selectedPositions = newINTVECzero (uinteger_to_integer ([indexSet count]));
 		NSUInteger currentIndex = [indexSet firstIndex];
+		integer ipos = 0;
 		while (currentIndex != NSNotFound) {
-			selectedPositions [++ *numberOfSelectedPositions] = currentIndex + 1;
+			selectedPositions [++ ipos] = uinteger_to_integer (currentIndex + 1);
 			currentIndex = [indexSet   indexGreaterThanIndex: currentIndex];
 		}
+		Melder_assert (ipos == selectedPositions.size);
 	#endif
 	return selectedPositions;
 }

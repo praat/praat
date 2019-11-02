@@ -1,6 +1,6 @@
 /* StringsEditor.cpp
  *
- * Copyright (C) 2007-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2007-2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,10 @@ static void updateList (StringsEditor me) {
 static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) {
 	Strings strings = (Strings) my data;
 	/*
-	 * Find the first selected item.
-	 */
-	integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
-	integer position = selected ? selected [1] : strings -> numberOfStrings + 1;
-	NUMvector_free (selected, 1);
+		Find the first selected item.
+	*/
+	autoINTVEC selected = GuiList_getSelectedPositions (my list);
+	integer position = selected.size >= 1 ? selected [1] : strings -> numberOfStrings + 1;
 	autostring32 text = GuiText_getString (my text);
 	/*
 		Change the data.
@@ -87,20 +86,18 @@ static void gui_button_cb_append (StringsEditor me, GuiButtonEvent /* event */) 
 }
 
 static void gui_button_cb_remove (StringsEditor me, GuiButtonEvent /* event */) {
-	integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
-	for (integer iselected = numberOfSelected; iselected >= 1; iselected --) {
+	autoINTVEC selected = GuiList_getSelectedPositions (my list);
+	for (integer iselected = selected.size; iselected >= 1; iselected --)
 		Strings_remove ((Strings) my data, selected [iselected]);
-	}
-	NUMvector_free (selected, 1);
 	updateList (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void gui_button_cb_replace (StringsEditor me, GuiButtonEvent /* event */) {
 	Strings strings = (Strings) my data;
-	integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
+	autoINTVEC selected = GuiList_getSelectedPositions (my list);
 	autostring32 text = GuiText_getString (my text);
-	for (integer iselected = 1; iselected <= numberOfSelected; iselected ++) {
+	for (integer iselected = 1; iselected <= selected.size; iselected ++) {
 		Strings_replace (strings, selected [iselected], text.get());
 		GuiList_replaceItem (my list, text.get(), selected [iselected]);
 	}
