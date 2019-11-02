@@ -208,20 +208,21 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 	}
 }
 
-void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) {
+void MixingMatrix_muteAndActivateChannels (MixingMatrix me, constBOOLVEC const& muteChannels) {
+	Melder_assert (muteChannels.size == my numberOfColumns);
 	integer numberOfMuteChannels = 0;
-	for (integer icol = 1; icol <= my numberOfColumns; icol++) {
-		if (muteChannels [icol]) {
+	for (integer ichan = 1; ichan <= muteChannels.size; ichan ++)
+		if (muteChannels [ichan])
 			numberOfMuteChannels ++;
-		}
-	}
-	// Set all mute channels to 0 and all other channels to 1. To prevent overflow scale by the number of channels that are on.
-	double coefficient = ( my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0 );
-	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		double channelScaling = ( muteChannels [icol] ? 0.0 : coefficient );
-		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			my data [irow][icol] = channelScaling;
-		}
+	/*
+		Set all mute channels to 0 and all other channels to 1.
+		To prevent overflow, scale by the number of channels that are on.
+	*/
+	const double coefficient = ( my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0 );
+	for (integer ichan = 1; ichan <= my numberOfColumns; ichan ++) {
+		const double channelScaling = ( muteChannels [ichan] ? 0.0 : coefficient );
+		for (integer irow = 1; irow <= my numberOfRows; irow ++)
+			my data [irow] [ichan] = channelScaling;
 	}
 }
 

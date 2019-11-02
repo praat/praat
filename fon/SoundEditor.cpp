@@ -380,21 +380,20 @@ void structSoundEditor :: v_draw () {
 }
 
 void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
-	integer numberOfChannels = our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny;
+	integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
 	integer numberOfMuteChannels = 0;
-	bool *muteChannels = our d_sound. muteChannels;
-	for (integer i = 1; i <= numberOfChannels; i ++) {
-		if (muteChannels [i]) {
+	Melder_assert (our d_sound.muteChannels.size == numberOfChannels);
+	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
+		if (our d_sound.muteChannels [ichan])
 			numberOfMuteChannels ++;
-		}
-	}
 	integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
-	Melder_require (numberOfChannelsToPlay > 0, U"Please select at least one channel to play.");
+	Melder_require (numberOfChannelsToPlay > 0,
+		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
 			autoSound part = LongSound_extractPart (our d_longSound.data, a_tmin, a_tmax, 1);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
 			Sound_MixingMatrix_playPart (part.get(), thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		} else {
 			LongSound_playPart (our d_longSound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
@@ -402,7 +401,7 @@ void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
 			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		} else {
 			Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
@@ -411,10 +410,9 @@ void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 }
 
 bool structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
-	if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 && xWC > our startWindow && xWC < our endWindow) {
+	if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 && xWC > our startWindow && xWC < our endWindow)
 		our d_spectrogram_cursor = our p_spectrogram_viewFrom +
-			2.0 * yWC * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
-	}
+				2.0 * yWC * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
 	return SoundEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // drag & update
 }
 

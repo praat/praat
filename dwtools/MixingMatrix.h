@@ -29,7 +29,7 @@ autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, inte
 
 void MixingMatrix_multiplyInputChannel (MixingMatrix me, integer inputChannel, double value);
 
-void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels);
+void MixingMatrix_muteAndActivateChannels (MixingMatrix me, constBOOLVEC const& muteChannels);
 
 void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me);
 
