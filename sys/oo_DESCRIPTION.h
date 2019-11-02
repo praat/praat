@@ -163,6 +163,7 @@
 #define oo_STRUCT(Type,x)  { U"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), U"" #Type, & struct##Type :: s_description, 0, nullptr, nullptr, nullptr, nullptr },
 #define oo_STRUCT_SET(Type,x,setType)  { U"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), U"" #Type, & struct##Type :: s_description, 3, (conststring32) setType##_getText, (conststring32) setType##_getValue, nullptr, nullptr },
 #define oo_STRUCT_VECTOR(Type,x,n)  { U"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), U"" #Type, & struct##Type :: s_description, 1, nullptr, U"" #n, nullptr, nullptr },
+#define oo_STRUCTVEC(Type,x,n)  { U"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), U"" #Type, & struct##Type :: s_description, 1, nullptr, U"" #n, nullptr, nullptr },
 
 #define oo_OBJECT(Type,version,x)  { U"" #x, objectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), U"" #Type, & theClassInfo_##Type, 0, nullptr, nullptr, nullptr, nullptr },
 #define oo_COLLECTION_OF(Type,x,ItemType,version)  { U"" #x, collectionofwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_Collection, 0, (conststring32) & theClassInfo_##ItemType, nullptr, nullptr, nullptr },
