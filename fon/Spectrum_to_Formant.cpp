@@ -1,6 +1,6 @@
 /* Spectrum_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,30 +21,46 @@
 autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 	try {
 		integer nfreq = my nx, nform = 0;
-		autoNUMvector <double> p (1, nfreq);   // power
-		autoFormant thee = Formant_create (0, 1, 1, 1, 0.5, maxnFormants);
+		autoVEC power = newVECzero (nfreq);
+		constexpr double fakeDuration = 1.0;
+		constexpr double fakeTimeStep = 1.0;
+		autoFormant thee = Formant_create (0.0, fakeDuration, 1, fakeTimeStep, 0.5 * fakeDuration, maxnFormants);
 		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
 		for (integer i = 1; i <= nfreq; i ++)
-			p [i] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
+			power [i] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		for (integer i = 2; i < nfreq; i ++)
-			if (p [i] > p [i - 1] && p [i] >= p [i + 1]) {
-				double firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
-				Formant_Formant formant = & thy d_frames [1]. formant [++ nform];
+			if (power [i] > power [i - 1] && power [i] >= power [i + 1]) {
+				const double firstDerivative = power [i + 1] - power [i - 1];
+				const double secondDerivative = 2.0 * power [i] - power [i - 1] - power [i + 1];
+				const Formant_Formant formant = & thy d_frames [1]. formant [++ nform];
 				formant -> frequency = my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative);
-				double min3dB = 0.5 * (p [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative);
-				/* Search left. */
-				integer j = i - 1; while (p [j] > min3dB && j > 1) j --;
-				if (p [j] > min3dB)
+				const double min3dB = 0.5 * (power [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative);
+				/*
+					Search to the left.
+				*/
+				integer j = i - 1;
+				while (power [j] > min3dB && j > 1)
+					j --;
+				if (power [j] > min3dB)
 					formant -> bandwidth = formant -> frequency;
 				else
-					formant -> bandwidth = formant -> frequency - my dx * (j - 1 + (min3dB - p [j]) / (p [j + 1] - p [j]));
-				 /* Search right. */
-				j = i + 1; while (p [j] > min3dB && j < nfreq) j ++;
-				if (p [j] > min3dB)
+					formant -> bandwidth =
+							formant -> frequency -
+							my dx * (j - 1 + (min3dB - power [j]) / (power [j + 1] - power [j]));
+				/*
+					Search to the right.
+				*/
+				j = i + 1;
+				while (power [j] > min3dB && j < nfreq)
+					j ++;
+				if (power [j] > min3dB)
 					formant -> bandwidth += my xmax - formant -> frequency;
 				else
-					formant -> bandwidth += my dx * (j - 1 - (min3dB - p [j]) / (p [j - 1] - p [j])) - formant -> frequency;
-				if (nform == maxnFormants) break;
+					formant -> bandwidth +=
+							my dx * (j - 1 - (min3dB - power [j]) / (power [j - 1] - power [j])) -
+							formant -> frequency;
+				if (nform == maxnFormants)
+					break;
 			}
 		thy d_frames [1]. nFormants = nform;
 		return thee;
