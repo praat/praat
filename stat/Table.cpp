@@ -147,10 +147,10 @@ void Table_appendColumn (Table me, conststring32 label) {
 }
 
 void Table_checkSpecifiedRowNumberWithinRange (Table me, integer rowNumber) {
-	if (rowNumber < 1)
-		Melder_throw (me, U": the specified row number is ", rowNumber, U", but should be at least 1.");
-	if (rowNumber > my rows.size)
-		Melder_throw (me, U": the specified row number (", rowNumber, U") exceeds my number of rows (", my rows.size, U").");
+	Melder_require (rowNumber >= 1,
+		me, U": the requested row number is ", rowNumber, U", but should be at least 1.");
+	Melder_require (rowNumber <= my rows.size,
+		me, U": the requested row number (", rowNumber, U") exceeds my number of rows (", my rows.size, U").");
 }
 
 void Table_removeRow (Table me, integer rowNumber) {
@@ -167,16 +167,16 @@ void Table_removeRow (Table me, integer rowNumber) {
 }
 
 void Table_checkSpecifiedColumnNumberWithinRange (Table me, integer columnNumber) {
-	if (columnNumber < 1)
-		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at least 1.");
-	if (columnNumber > my numberOfColumns)
-		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U").");
+	Melder_require (columnNumber >= 1,
+		me, U": the requested column number is ", columnNumber, U", but should be at least 1.");
+	Melder_require (columnNumber <= my numberOfColumns,
+		me, U": the requested column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U").");
 }
 
 void Table_removeColumn (Table me, integer columnNumber) {
 	try {
-		if (my numberOfColumns == 1)
-			Melder_throw (me, U": cannot remove my only column.");
+		Melder_require (my numberOfColumns > 1,
+			me, U": cannot remove my only column.");
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		/*
 			Changes without error.
@@ -200,19 +200,22 @@ void Table_removeColumn (Table me, integer columnNumber) {
 void Table_insertRow (Table me, integer rowNumber) {
 	try {
 		/*
-			Check without changes.
+			Strong exception safety, step 1: check and create without changing me.
 		*/
-		if (rowNumber < 1)
-			Melder_throw (me, U": the specified row number is ", rowNumber, U", but should be at least 1.");
-		if (rowNumber > my rows.size + 1)
-			Melder_throw (me, U": the specified row number is ", rowNumber, U", but should be at most my number of rows (", my rows.size, U") plus 1.");
+		Melder_require (rowNumber >= 1,
+			me, U": the requested row number is ", rowNumber, U", but should be at least 1.");
+		Melder_require (rowNumber <= my rows.size + 1,
+			me, U": the requested row number is ", rowNumber, U", but should be at most my number of rows (", my rows.size, U") plus 1.");
 		autoTableRow row = TableRow_create (my numberOfColumns);
 		/*
-			Safe change (on error, me is not changed).
+			Strong exception safety, recursive intermediate step:
+			call at most one function that has strong exception safety itself.
+			The following function call is indeed a safe change,
+			i.e., in case of an error, me is not changed.
 		*/
 		my rows. addItemAtPosition_move (row.move(), rowNumber);
 		/*
-			Changes without error.
+			Strong exception safety, step 2: perform changes to me without any risk of error.
 		*/
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			my columnHeaders [icol]. numericized = false;
@@ -224,12 +227,12 @@ void Table_insertRow (Table me, integer rowNumber) {
 void Table_insertColumn (Table me, integer columnNumber, conststring32 label /* cattable */) {
 	try {
 		/*
-			Check without changes.
+			Strong exception safety, step 1: check and create without changing me.
 		*/
-		if (columnNumber < 1)
-			Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at least 1.");
-		if (columnNumber > my numberOfColumns + 1)
-			Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U") plus 1.");
+		Melder_require (columnNumber >= 1,
+			me, U": the requested column number is ", columnNumber, U", but should be at least 1.");
+		Melder_require (columnNumber <= my numberOfColumns + 1,
+			me, U": the requested column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U") plus 1.");
 		autostring32 newLabel = Melder_dup (label);
 		autoTable thee = Table_createWithoutColumnNames (my rows.size, my numberOfColumns + 1);
 		/*
@@ -258,14 +261,12 @@ void Table_insertColumn (Table me, integer columnNumber, conststring32 label /* 
 				thyRow -> cells [icol] = std::move (myRow -> cells [icol - 1]);
 		}
 		/*
-			Transfer larger structure with column headers to me.
+			Strong exception safety, step 2: perform changes to me without any risk of error:
+			transfer column headers and rows from the larger structure to me.
 		*/
 		NUMvector_free <structTableColumnHeader> (my columnHeaders, 1);   // make room...
 		my columnHeaders = thy columnHeaders;   // ...fill in and dangle...
 		thy columnHeaders = nullptr;   // ...undangle
-		/*
-			Transfer larger structure with rows to me.
-		*/
 		my rows = thy rows.move();
 		/*
 			Update my state.
@@ -358,8 +359,10 @@ void Table_setNumericValue (Table me, integer rowNumber, integer columnNumber, d
 }
 
 bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer columnNumber) {
-	if (rowNumber < 1 || rowNumber > my rows.size) return false;
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return false;
+	if (rowNumber < 1 || rowNumber > my rows.size)
+		return false;
+	if (columnNumber < 1 || columnNumber > my numberOfColumns)
+		return false;
 	TableRow row = my rows.at [rowNumber];
 	conststring32 cell = row -> cells [columnNumber]. string.get();
 	if (! cell)
@@ -367,7 +370,7 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 	/*
 		Skip leading white space, in order to separately detect "?" and "--undefined--".
 	*/
-	while (*cell == U' ' || *cell == U'\t' || *cell == U'\n' || *cell == U'\r') cell ++;
+	Melder_skipHorizontalOrVerticalSpace (& cell);
 	if (cell [0] == U'\0')
 		return true;   // only white space: the value --undefined--
 	if (cell [0] == U'?' || str32nequ (cell, U"--undefined--", 13)) {
@@ -375,7 +378,7 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 			See whether there is anything else besides "?" or "--undefined--" and white space.
 		*/
 		cell += ( cell [0] == U'?' ) ? 1 : 13;
-		while (*cell == U' ' || *cell == U'\t' || *cell == U'\n' || *cell == U'\r') cell ++;
+		Melder_skipHorizontalOrVerticalSpace (& cell);
 		return *cell == U'\0';   // only white space after the "?" or "--undefined--"
 	}
 	return Melder_isStringNumeric (cell);
@@ -384,10 +387,9 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber) {
 	if (columnNumber < 1 || columnNumber > my numberOfColumns)
 		return false;
-	for (integer irow = 1; irow <= my rows.size; irow ++) {
+	for (integer irow = 1; irow <= my rows.size; irow ++)
 		if (! Table_isCellNumeric_ErrorFalse (me, irow, columnNumber))
 			return false;
-	}
 	return true;
 }
 
@@ -408,8 +410,10 @@ static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
 
 static int indexCompare_NoError (const void *first, const void *second) {
 	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	if (my sortingIndex < thy sortingIndex) return -1;
-	if (my sortingIndex > thy sortingIndex) return +1;
+	if (my sortingIndex < thy sortingIndex)
+		return -1;
+	if (my sortingIndex > thy sortingIndex)
+		return +1;
 	return 0;
 }
 
@@ -1700,18 +1704,21 @@ bool Table_getExtrema (Table me, integer icol, double *minimum, double *maximum)
 void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, conststring32 mark, bool garnish)
 {
-	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
+		return;
 	Table_numericize_Assert (me, xcolumn);
 	Table_numericize_Assert (me, ycolumn);
 	if (xmin == xmax) {
-		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax)) return;
+		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax))
+			return;
 		if (xmin == xmax) {
 			xmin -= 0.5;
 			xmax += 0.5;
 		}
 	}
 	if (ymin == ymax) {
-		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax)) return;
+		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax))
+			return;
 		if (ymin == ymax) {
 			ymin -= 0.5;
 			ymax += 0.5;
@@ -1742,18 +1749,21 @@ void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	double xmin, double xmax, double ymin, double ymax, integer markColumn, double fontSize, bool garnish)
 {
 	const double saveFontSize = Graphics_inqFontSize (g);
-	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
+		return;
 	Table_numericize_Assert (me, xcolumn);
 	Table_numericize_Assert (me, ycolumn);
 	if (xmin == xmax) {
-		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax)) return;
+		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax))
+			return;
 		if (xmin == xmax) {
 			xmin -= 0.5;
 			xmax += 0.5;
 		}
 	}
 	if (ymin == ymax) {
-		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax)) return;
+		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax))
+			return;
 		if (ymin == ymax) {
 			ymin -= 0.5;
 			ymax += 0.5;
@@ -1788,18 +1798,21 @@ void Table_drawEllipse_e (Table me, Graphics g, integer xcolumn, integer ycolumn
 	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, bool garnish)
 {
 	try {
-		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
+			return;
 		Table_numericize_Assert (me, xcolumn);
 		Table_numericize_Assert (me, ycolumn);
 		if (xmin == xmax) {
-			if (! Table_getExtrema (me, xcolumn, & xmin, & xmax)) return;
+			if (! Table_getExtrema (me, xcolumn, & xmin, & xmax))
+				return;
 			if (xmin == xmax) {
 				xmin -= 0.5;
 				xmax += 0.5;
 			}
 		}
 		if (ymin == ymax) {
-			if (! Table_getExtrema (me, ycolumn, & ymin, & ymax)) return;
+			if (! Table_getExtrema (me, ycolumn, & ymin, & ymax))
+				return;
 			if (ymin == ymax) {
 				ymin -= 0.5;
 				ymax += 0.5;
@@ -1825,21 +1838,25 @@ void Table_list (Table me, bool includeRowNumbers) {
 	MelderInfo_open ();
 	if (includeRowNumbers) {
 		MelderInfo_write (U"row");
-		if (my numberOfColumns > 0) MelderInfo_write (U"\t");
+		if (my numberOfColumns > 0)
+			MelderInfo_write (U"\t");
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (icol > 1) MelderInfo_write (U"\t");
+		if (icol > 1)
+			MelderInfo_write (U"\t");
 		MelderInfo_write (visibleString (my columnHeaders [icol]. label.get()));
 	}
 	MelderInfo_write (U"\n");
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		if (includeRowNumbers) {
 			MelderInfo_write (irow);
-			if (my numberOfColumns > 0) MelderInfo_write (U"\t");
+			if (my numberOfColumns > 0)
+				MelderInfo_write (U"\t");
 		}
 		TableRow row = my rows.at [irow];
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (icol > 1) MelderInfo_write (U"\t");
+			if (icol > 1)
+				MelderInfo_write (U"\t");
 			MelderInfo_write (visibleString (row -> cells [icol]. string.get()));
 		}
 		MelderInfo_write (U"\n");
@@ -1850,7 +1867,8 @@ void Table_list (Table me, bool includeRowNumbers) {
 static void writeToCharacterSeparatedFile (Table me, MelderFile file, char32 separator, bool interpretQuotes) {
 	autoMelderString buffer;
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (icol != 1) MelderString_appendCharacter (& buffer, separator);
+		if (icol != 1)
+			MelderString_appendCharacter (& buffer, separator);
 		conststring32 s = my columnHeaders [icol]. label.get();
 		MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 	}
@@ -1858,9 +1876,11 @@ static void writeToCharacterSeparatedFile (Table me, MelderFile file, char32 sep
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (icol != 1) MelderString_appendCharacter (& buffer, separator);
+			if (icol != 1)
+				MelderString_appendCharacter (& buffer, separator);
 			conststring32 s = row -> cells [icol]. string.get();
-			if (! s) s = U"";
+			if (! s)
+				s = U"";
 			if (s [0] == U'\0') {
 				bool separatorIsInvisible = ( separator == U'\t' );
 				bool emptyStringsWillBeVisibleEnough = ! separatorIsInvisible;   // it's fine to have ",,,,,," in a comma environment
@@ -1924,13 +1944,17 @@ autoTable Table_readFromTableFile (MelderFile file) {
 		char32 *p = & string [0];
 		for (;;) {
 			char32 kar = *p++;
-			if (kar == U'\n' || kar == U'\0') break;
-			if (kar == U' ' || kar == U'\t') continue;
+			if (kar == U'\n' || kar == U'\0')
+				break;
+			if (kar == U' ' || kar == U'\t')
+				continue;
 			numberOfColumns ++;
 			do { kar = *p++; } while (kar != U' ' && kar != U'\t' && kar != U'\n' && kar != U'\0');
-			if (kar == U'\n' || kar == U'\0') break;
+			if (kar == U'\n' || kar == U'\0')
+				break;
 		}
-		if (numberOfColumns < 1) Melder_throw (U"No columns.");
+		if (numberOfColumns < 1)
+			Melder_throw (U"No columns.");
 
 		/*
 			Count elements.
@@ -1939,11 +1963,14 @@ autoTable Table_readFromTableFile (MelderFile file) {
 		integer numberOfElements = 0;
 		for (;;) {
 			char32 kar = *p++;
-			if (kar == U'\0') break;
-			if (kar == U' ' || kar == U'\t' || kar == U'\n') continue;
+			if (kar == U'\0')
+				break;
+			if (kar == U' ' || kar == U'\t' || kar == U'\n')
+				continue;
 			numberOfElements ++;
 			do { kar = *p++; } while (kar != U' ' && kar != U'\t' && kar != U'\n' && kar != U'\0');
-			if (kar == U'\0') break;
+			if (kar == U'\0')
+				break;
 		}
 
 		/*

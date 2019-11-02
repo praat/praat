@@ -202,15 +202,12 @@ integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, intege
 		iymax = my ny;
 	if (ixmin > ixmax || iymin > iymax)
 		return 0;
-	*minimum = *maximum = my z [iymin] [ixmin];
-	for (integer iy = iymin; iy <= iymax; iy ++) {
-		for (integer ix = ixmin; ix <= ixmax; ix ++) {
-			if (my z [iy] [ix] < *minimum)
-				*minimum = my z [iy] [ix];
-			if (my z [iy] [ix] > *maximum)
-				*maximum = my z [iy] [ix];
-		}
-	}
+	MelderExtremaWithInit extrema;
+	for (integer iy = iymin; iy <= iymax; iy ++)
+		for (integer ix = ixmin; ix <= ixmax; ix ++)
+			extrema.update (my z [iy] [ix]);
+	*minimum = extrema.min;
+	*maximum = extrema.max;
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
 }
 
