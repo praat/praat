@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,15 +293,14 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::LIST_:
 		{
-			integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
-			if (! selected) {
+			autoINTVEC selected = GuiList_getSelectedPositions (my list);
+			if (selected.size == 0) {
 				Melder_warning (U"No items selected.");
 				my integerValue = 1;
 			} else {
-				if (numberOfSelected > 1)
+				if (selected.size > 1)
 					Melder_warning (U"More than one item selected.");
 				my integerValue = selected [1];
-				NUMvector_free <integer> (selected, 1);
 			}
 			if (my integerVariable)
 				*my integerVariable = my integerValue;

@@ -40,20 +40,6 @@
 #include "EditorM.h"
 #include "NUM2.h"
 
-/*
-  temporary routine. Once 'integer *GUIList_getSelectedPositions (GuiList me, integer *numberOfElements)'
-  has been vectorized as autoINVEC GUIList_getSelectedPositions (GuiList me) 
-  we can remove the 'get' part off the calls
-*/
-static autoINTVEC getGuiList_getSelectedPositions (GuiList me) {
-	integer numberOfElements;
-	integer *vec = GuiList_getSelectedPositions (me, & numberOfElements);
-	autoINTVEC result;
-	result.at = & vec [0];
-	result.size = numberOfElements;
-	return result;
-}
-
 Thing_implement (CategoriesEditor, Editor, 0);
 
 static const conststring32 CategoriesEditor_EMPTYLABEL = U"(empty)";
@@ -133,7 +119,7 @@ static void Ordered_moveItem (Ordered me, integer from, integer to) {
 #pragma mark - Widget updates
 
 static void notifyNumberOfSelected (CategoriesEditor me) {
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		autoMelderString tmp;
 		MelderString_append (& tmp, posList.size, U" selection", ( posList.size > 1 ? U"s." : U"." ));
@@ -143,13 +129,12 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 }
 
 static void updateUndoAndRedoMenuItems (CategoriesEditor me) {
-	conststring32 commandName;
-
 	/*
 		Menu item `Undo`.
 	 */
 	bool undoItemIsSensitive = true;
-	if (commandName = CommandHistory_commandName (my history.get(), 0), ! commandName) {
+	conststring32 commandName = CommandHistory_commandName (my history.get(), 0);
+	if (! commandName) {
 		commandName = U"nothing";
 		undoItemIsSensitive = false;
 	}
@@ -160,7 +145,8 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me) {
 		Menu item `Redo`.
 	 */
 	bool redoItemIsSensitive = true;
-	if (commandName = CommandHistory_commandName (my history.get(), 1), ! commandName) {
+	commandName = CommandHistory_commandName (my history.get(), 1);
+	if (! commandName) {
 		commandName = U"nothing";
 		redoItemIsSensitive = false;
 	}
@@ -173,7 +159,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	integer size = data->size;
 	bool insert = false, insertAtEnd = true, replace = false, remove = false;
 	bool moveUp = false, moveDown = false;
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		integer firstPos = posList[1], lastPos = posList[posList.size];
 		bool contiguous = ( lastPos - firstPos + 1 == posList.size );
@@ -212,8 +198,10 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 		update (me, 0, 0, select, 0); // was nullptr
 		return;
 	}
-	if (from == 0 && to == 0)
-		from = 1, to = size;
+	if (from == 0 && to == 0) {
+		from = 1;
+		to = size;
+	}
 	if (from < 1 || from > size)
 		from = size;
 	if (to < 1 || to > size)
@@ -356,7 +344,7 @@ static int CategoriesEditorInsert_undo (CategoriesEditorInsert me) {
 	return 1;
 }
 
-static autoCategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, autoSimpleString str, int position) {
+static autoCategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, autoSimpleString str, integer position) {
 	try {
 		autoCategoriesEditorInsert me = Thing_new (CategoriesEditorInsert);
 		CategoriesEditorCommand_init (me.get(), U"Insert", boss, CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1);
@@ -547,7 +535,7 @@ static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss,
 #pragma mark - Callbacks
 
 static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event */) {
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		autoCategoriesEditorRemove command = CategoriesEditorRemove_create (me, posList.get());
 		if (! Command_do (command.get()))
@@ -558,7 +546,7 @@ static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event *
 	}
 }
 
-static void insert (CategoriesEditor me, int position) {
+static void insert (CategoriesEditor me, integer position) {
 	autostring32 text = GuiText_getString (my text);
 	if (text && text [0] != U'\0') {
 		autoSimpleString str = SimpleString_create (text.get());
@@ -581,7 +569,7 @@ static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* ev
 }
 
 static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		autostring32 text = GuiText_getString (my text);
 		if (text && text [0] != U'\0') {
@@ -597,7 +585,7 @@ static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event 
 
 /* Precondition: contiguous selection */
 static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event */) {
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create (me, posList.get(), posList [1] - 1);
 		Command_do (command.get());
@@ -609,7 +597,7 @@ static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event *
 
 /* Precondition: contiguous selection */
 static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event */) {
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.get(), posList[posList.size] + 1);
 		Command_do (command.get());
@@ -629,7 +617,7 @@ static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEve
 
 	//  `my position` should just have been updated by the selectionChanged callback.
 
-	autoINTVEC posList = getGuiList_getSelectedPositions (my list);
+	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size == 1   // often or even usually true when double-clicking?
 	    && posList [1] == my position)   // should be true, but we don't crash if it's false
 	{

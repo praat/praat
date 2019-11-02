@@ -491,18 +491,17 @@ static struct SoundPlay {
 	double tmin, tmax, dt, t1;
 	Sound_PlayCallback callback;
 	Thing boss;
-	int16 *buffer;
+	autovector <int16> outputBuffer;
 } thePlayingSound;
 
 static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct SoundPlay *me = (struct SoundPlay *) closure;
 	int phase = 2;
-	double t = samplesPlayed <= my silenceBefore ? my tmin :
-		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
-		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
+	double t = ( samplesPlayed <= my silenceBefore ? my tmin :
+			samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
+			my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt );
 	if (! MelderAudio_isPlaying) {
-		NUMvector_free (my buffer, 1);
-		my buffer = nullptr;
+		my outputBuffer.reset();   // get a bit of privacy
 		phase = 3;
 	}
 	if (my callback)
@@ -519,7 +518,8 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 			double *fromLeft = & my z [1] [0], *fromRight = ( my ny > 1 ? & my z [2] [0] : nullptr );
 			MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 			integer i1, i2;
-			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;
+			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1)
+				return;
 			thy tmin = tmin;
 			thy tmax = tmax;
 			thy dt = my dx;
@@ -529,33 +529,33 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 			thy silenceBefore = Melder_iroundTowardsZero (ifsamp * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = Melder_iroundTowardsZero (ifsamp * MelderAudio_getOutputSilenceAfter ());
 			integer numberOfChannels = my ny;
-			NUMvector_free (thy buffer, 1);   // just in case
-			thy buffer = NUMvector <short> (1, (i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels);
+			thy outputBuffer = newvectorzero <int16> ((i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels);
 			thy i1 = i1;
 			thy i2 = i2;
-			short *to = thy buffer + thy silenceBefore * numberOfChannels;
+			int16 *to = & thy outputBuffer [0] + thy silenceBefore * numberOfChannels;
 			if (numberOfChannels > 2) {
 				for (integer i = i1; i <= i2; i ++) {
 					for (integer chan = 1; chan <= my ny; chan ++) {
 						integer value = Melder_iround_tieDown (my z [chan] [i] * 32768.0);
-						* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+						* ++ to = (int16) Melder_clipped (integer (-32768), value, integer (+32767));
 					}
 				}
 			} else if (numberOfChannels == 2) {
 				for (integer i = i1; i <= i2; i ++) {
 					integer valueLeft = Melder_iround_tieDown (fromLeft [i] * 32768.0);
-					* ++ to = valueLeft < -32768 ? -32768 : valueLeft > 32767 ? 32767 : valueLeft;
+					* ++ to = (int16) Melder_clipped (integer (-32768), valueLeft, integer (+32767));
 					integer valueRight = Melder_iround_tieDown (fromRight [i] * 32768.0);
-					* ++ to = valueRight < -32768 ? -32768 : valueRight > 32767 ? 32767 : valueRight;
+					* ++ to = (int16) Melder_clipped (integer (-32768), valueRight, integer (+32767));
 				}
 			} else {
 				for (integer i = i1; i <= i2; i ++) {
 					integer value = Melder_iround_tieDown (fromLeft [i] * 32768.0);
-					* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+					* ++ to = (int16) Melder_clipped (integer (-32768), value, integer (+32767));
 				}
 			}
-			if (thy callback) thy callback (thy boss, 1, tmin, tmax, tmin);
-			MelderAudio_play16 (thy buffer + 1, ifsamp,
+			if (thy callback)
+				thy callback (thy boss, 1, tmin, tmax, tmin);
+			MelderAudio_play16 (thy outputBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), ifsamp,
 				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound part = Sound_extractPart (me, tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, true);
