@@ -43,23 +43,25 @@
 #include "Table_extensions.h"
 
 static bool Table_selectedColumnPartIsNumeric (Table me, integer column, constINTVEC selectedRows) {
-	if (column < 1 || column > my numberOfColumns) return false;
-	for (integer irow = 1; irow <= selectedRows.size; irow ++) {
-		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows [irow], column)) return false;
-	}
+	if (column < 1 || column > my numberOfColumns)
+		return false;
+	for (integer irow = 1; irow <= selectedRows.size; irow ++)
+		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows [irow], column))
+			return false;
 	return true;
 }
 
-// column and selectedRows are valid; *min & *max must have been initialized
-static void Table_columnExtremesFromSelectedRows (Table me, integer column, constINTVEC selectedRows, double *out_min, double *out_max) {
-	double cmin = 1e308, cmax = - cmin;
+// column and selectedRows must be valid
+static void Table_columnExtremaFromSelectedRows (Table me, integer column, constINTVEC selectedRows, double *out_min, double *out_max) {
+	MelderExtremaWithInit extrema;
 	for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 		double val = Table_getNumericValue_Assert (me, selectedRows [irow], column);
-		if (val < cmin) cmin = val; 
-		if (val > cmax) cmax = val;
+		extrema.update (val);
 	}
-	if (out_min) *out_min = cmin;
-	if (out_max) *out_max = cmax;
+	if (out_min)
+		*out_min = extrema.min;
+	if (out_max)
+		*out_max = extrema.max;
 }
 
 /*
@@ -3225,7 +3227,7 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 		integer numberOfSelectedRows = 0;
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (ymin >= ymax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
+			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (ymin >= ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
@@ -3233,13 +3235,13 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 		}
 		double x1min, x1max;
 		if (xmin >= xmax) {
-			Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.get(), & xmin, & xmax);
+			Table_columnExtremaFromSelectedRows (me, xcolumn, selectedRows.get(), & xmin, & xmax);
 			if (xci_min > 0) {
-				Table_columnExtremesFromSelectedRows (me, xci_min, selectedRows.get(), & x1min, & x1max);
+				Table_columnExtremaFromSelectedRows (me, xci_min, selectedRows.get(), & x1min, & x1max);
 				xmin -= x1max;
 			}
 			if (xci_max > 0) {
-				Table_columnExtremesFromSelectedRows (me, xci_max, selectedRows.get(), & x1min, & x1max);
+				Table_columnExtremaFromSelectedRows (me, xci_max, selectedRows.get(), & x1min, & x1max);
 				xmax += x1max;
 			}
 			if (xmin >= xmax) {
@@ -3299,7 +3301,7 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		}
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (xmin >= xmax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
+			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (xmin >= xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
@@ -3307,13 +3309,13 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		}
 		double y1min, y1max;
 		if (ymin >= ymax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
+			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (yci_min > 0) {
-				Table_columnExtremesFromSelectedRows (me, yci_min, selectedRows.get(), & y1min, & y1max);
+				Table_columnExtremaFromSelectedRows (me, yci_min, selectedRows.get(), & y1min, & y1max);
 				ymin -= y1max;
 			}
 			if (yci_max > 0) {
-				Table_columnExtremesFromSelectedRows (me, yci_max, selectedRows.get(), & y1min, & y1max);
+				Table_columnExtremaFromSelectedRows (me, yci_max, selectedRows.get(), & y1min, & y1max);
 				ymax += y1max;
 			}
 			if (ymin >= ymax) {
@@ -4296,7 +4298,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 			ymax = - ymin;
 			for (integer icol = 1; icol <= columnIndexes.size; icol ++) {
 				double cmin, cmax;
-				Table_columnExtremesFromSelectedRows (me, columnIndexes [icol], selectedRows.get(), & cmin, & cmax);
+				Table_columnExtremaFromSelectedRows (me, columnIndexes [icol], selectedRows.get(), & cmin, & cmax);
 				if (cmin < ymin) { ymin = cmin; }
 				if (cmax > ymax) { ymax = cmax; }
 			}
@@ -4405,12 +4407,12 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 		
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (ymax <= ymin)
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
+			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 
 		bool xIsNumeric = Table_selectedColumnPartIsNumeric (me, xcolumn, selectedRows.get());
 		if (xmin >= xmax) {
 			if (xIsNumeric)
-				Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.get(), & xmin, & xmax);
+				Table_columnExtremaFromSelectedRows (me, xcolumn, selectedRows.get(), & xmin, & xmax);
 			else {
 				xmin = 0.0;
 				xmax = selectedRows.size + 1;
@@ -4490,9 +4492,8 @@ void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, doub
 		if (column < 1 || column > my rows.size)
 			return;
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
-		if (xmax <= xmin) { // autoscaling
-			Table_columnExtremesFromSelectedRows (me, column, selectedRows.get(), & xmin, & xmax);
-		}
+		if (xmax <= xmin)   // autoscaling
+			Table_columnExtremaFromSelectedRows (me, column, selectedRows.get(), & xmin, & xmax);
 		autoVEC x = newVECraw (selectedRows.size);
 		for (integer i = 1; i <= selectedRows.size; i ++)
 			x [i] = Table_getNumericValue_Assert (me, selectedRows [i], column);
