@@ -708,15 +708,15 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 		autoStrings targets = IntervalTier_to_Strings_withOriginData (target, targetOrigin.peek());
 		autoStrings sources = IntervalTier_to_Strings_withOriginData (source, sourceOrigin.peek());
 		autoEditDistanceTable edit = EditDistanceTable_create (targets.get(), sources.get());
-		if (costs != 0) {
+		if (costs) {
 			EditDistanceTable_setEditCosts (edit.get(), costs);
 			EditDistanceTable_findPath (edit.get(), nullptr);
 		}
 		integer pathLength = edit -> warpingPath -> pathLength;
 		autoTable thee = Table_createWithColumnNames (pathLength - 1, U"targetInterval targetText targetStart targetEnd sourceInterval sourceText sourceStart sourceEnd operation");
 		for (integer i = 2; i <= pathLength; i++) {
-			structPairOfInteger p = edit -> warpingPath -> path[i];
-			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
+			structPairOfInteger p = edit -> warpingPath -> path [i];
+			structPairOfInteger p1 = edit -> warpingPath -> path [i - 1];
 			double targetStart = undefined, targetEnd = undefined;
 			double sourceStart = undefined, sourceEnd = undefined;
 			conststring32 targetText = U"", sourceText = U"";
