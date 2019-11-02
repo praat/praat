@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2007,2009,2011-2018 Paul Boersma
+ * Copyright (C) 1994-2007,2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +91,17 @@
 			} \
 		} \
 	}
+#define oo_STRUCTVEC(Type, x, n)  \
+{ \
+	integer _size = (n); \
+	Melder_assert (_size == our x.size); \
+	if (_size > 0) { \
+		thy x = newvectorzero <struct##Type> (_size); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
+			our x [_i]. copy (& thy x [_i]); \
+		} \
+	} \
+}
 
 #define oo_OBJECT(Class, version, x)  \
 	if (our x) thy x = Data_copy (our x.get());

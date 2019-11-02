@@ -110,6 +110,15 @@
 			} \
 		} \
 	}
+#define oo_STRUCTVEC(Type, x, n)  \
+{ \
+	integer _size = (n); \
+	Melder_assert (_size == our x.size); \
+	if (thy x.size != _size) return false; \
+	for (integer _i = 1; _i <= _size; _i ++) { \
+		if (! our x [_i]. equal (& thy x [_i])) return false; \
+	} \
+}
 
 #define oo_OBJECT(Class, version, x)  \
 	if (! our x != ! thy x || (our x && ! Data_equal (our x.get(), thy x.get()))) return false;

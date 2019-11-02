@@ -71,6 +71,15 @@
 			} \
 		} \
 	}
+#define oo_STRUCTVEC(Type, x, n)  \
+	{ \
+		integer _size = (n); \
+		Melder_assert (_size == our x.size); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
+			if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
+		} \
+	} \
+}
 
 #define oo_OBJECT(Class, version, x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;

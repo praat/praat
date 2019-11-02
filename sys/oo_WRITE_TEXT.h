@@ -112,16 +112,28 @@
 	texexdent (_file_);
 
 #define oo_STRUCT_VECTOR(Type, x, n)  \
-	{ \
-		integer _size = (n); \
-		texputintro (_file_, U"" #x U" []: ", _size >= 1 ? nullptr : U"(empty)"); \
-		for (integer _i = 1; _i <= _size; _i ++) { \
-			texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
-			our x [_i]. writeText (_file_); \
-			texexdent (_file_); \
-		} \
+{ \
+	integer _size = (n); \
+	texputintro (_file_, U"" #x U" []: ", _size >= 1 ? nullptr : U"(empty)"); \
+	for (integer _i = 1; _i <= _size; _i ++) { \
+		texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
+		our x [_i]. writeText (_file_); \
 		texexdent (_file_); \
-	}
+	} \
+	texexdent (_file_); \
+}
+#define oo_STRUCTVEC(Type, x, n)  \
+{ \
+	integer _size = (n); \
+	Melder_assert (our x.size == _size); \
+	texputintro (_file_, U"" #x U" []: ", _size >= 1 ? nullptr : U"(empty)"); \
+	for (integer _i = 1; _i <= _size; _i ++) { \
+		texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
+		our x [_i]. writeText (_file_); \
+		texexdent (_file_); \
+	} \
+	texexdent (_file_); \
+}
 
 #define oo_OBJECT(Class, version, x)  \
 	texputex (_file_, !! our x, U"" #x); \
