@@ -199,7 +199,7 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 			if (sound -> xmax > sharedMaximumTime)
 				sharedMaximumTime = sound -> xmax;
 		}
-		autoNUMvector <integer> numberOfInitialZeroes (1, my size);
+		autoINTVEC numberOfInitialZeroes = newINTVECzero (my size);
 		integer sharedNumberOfSamples = 0;
 		double sumOfFirstTimes = 0.0;
 		for (integer isound = 1; isound <= my size; isound ++) {
