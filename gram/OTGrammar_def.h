@@ -1,6 +1,6 @@
 /* OTGrammar_def.h
  *
- * Copyright (C) 1997-2011,2015-2018 Paul Boersma
+ * Copyright (C) 1997-2011,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ oo_DEFINE_STRUCT (OTGrammarTableau)
 
 	oo_STRING (input)
 	oo_INTEGER (numberOfCandidates)
-	oo_STRUCT_VECTOR (OTGrammarCandidate, candidates, numberOfCandidates)
+	oo_STRUCTVEC (OTGrammarCandidate, candidates, numberOfCandidates)
 
 oo_END_STRUCT (OTGrammarTableau)
 #undef ooSTRUCT
@@ -91,12 +91,12 @@ oo_DEFINE_CLASS (OTGrammar, Daata)
 		oo_DOUBLE (leak)
 	oo_ENDFROM
 	oo_INTEGER (numberOfConstraints)
-	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, numberOfConstraints)
+	oo_STRUCTVEC (OTGrammarConstraint, constraints, numberOfConstraints)
 	oo_INTVEC (index, numberOfConstraints)   // not read or written in text files
 	oo_INTEGER (numberOfFixedRankings)
-	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, numberOfFixedRankings)
+	oo_STRUCTVEC (OTGrammarFixedRanking, fixedRankings, numberOfFixedRankings)
 	oo_INTEGER (numberOfTableaus)
-	oo_STRUCT_VECTOR (OTGrammarTableau, tableaus, numberOfTableaus)
+	oo_STRUCTVEC (OTGrammarTableau, tableaus, numberOfTableaus)
 
 	#if oo_READING
 		OTGrammar_sort (this);
