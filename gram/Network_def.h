@@ -1,6 +1,6 @@
 /* Network_def.h
  *
- * Copyright (C) 2009-2018 Paul Boersma
+ * Copyright (C) 2009-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,10 +81,20 @@ oo_DEFINE_CLASS (Network, Daata)
 
 	#if oo_READING
 		oo_VERSION_UNTIL (5)
-			if (our learningRate != 0.0) our weightLeak /= our learningRate;
-			if (our dummyWeightUpdateRule == 1) our instar = 1.0, our outstar = 0.0;
-			if (our dummyWeightUpdateRule == 2) our instar = 0.0, our outstar = 1.0;
-			if (our dummyWeightUpdateRule == 3) our instar = 0.5, our outstar = 0.5;
+			if (our learningRate != 0.0)
+				our weightLeak /= our learningRate;
+			if (our dummyWeightUpdateRule == 1) {
+				our instar = 1.0;
+				our outstar = 0.0;
+			}
+			if (our dummyWeightUpdateRule == 2) {
+				our instar = 0.0;
+				our outstar = 1.0;
+			}
+			if (our dummyWeightUpdateRule == 3) {
+				our instar = 0.5;
+				our outstar = 0.5;
+			}
 		oo_VERSION_END
 		oo_VERSION_UNTIL (6)
 			our activityLeak = - our activityLeak;   // convert self-excitation to activity leak
@@ -96,9 +106,9 @@ oo_DEFINE_CLASS (Network, Daata)
 	oo_DOUBLE (ymin)
 	oo_DOUBLE (ymax)
 	oo_INTEGER (numberOfNodes)
-	oo_STRUCT_VECTOR (NetworkNode, nodes, numberOfNodes)
+	oo_STRUCTVEC (NetworkNode, nodes, numberOfNodes)
 	oo_INTEGER (numberOfConnections)
-	oo_STRUCT_VECTOR (NetworkConnection, connections, numberOfConnections)
+	oo_STRUCTVEC (NetworkConnection, connections, numberOfConnections)
 
 	#if oo_DECLARING
 		void v_info ()

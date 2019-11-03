@@ -43,8 +43,7 @@ void structManPages :: v_destroy () noexcept {
 		for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
 			ManPage page = our pages.at [ipage];
 			if (page -> paragraphs) {
-				ManPage_Paragraph par;
-				for (par = page -> paragraphs; (int) par -> type != 0; par ++)
+				for (ManPage_Paragraph par = page -> paragraphs; (int) par -> type != 0; par ++)
 					Melder_free (par -> text);   // not an autostring32, because it can be a string literal (if not dynamic)
 				NUMvector_free <struct structManPage_Paragraph> (page -> paragraphs, 0);
 			}
