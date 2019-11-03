@@ -667,11 +667,9 @@ autoBarkSpectrogram BarkFilter_to_BarkSpectrogram (BarkFilter me) {
 autoSpectrogram FormantFilter_to_Spectrogram (FormantFilter me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		for (integer i = 1; i <= my ny; i ++) {
-			for (integer j = 1; j <= my nx; j ++) {
+		for (integer i = 1; i <= my ny; i ++)
+			for (integer j = 1; j <= my nx; j ++)
 				thy z [i] [j] = 4e-10 * pow (10, my z [i] [j] / 10);
-			}
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrogram not created.");
@@ -691,14 +689,14 @@ autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 		Melder_assert (numberOfCoefficients > 0);
 		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
-		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = & thy frame [frame];
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			CC_Frame cf = & thy frame [iframe];
 			for (integer i = 1; i <= my ny; i ++)
-				x [i] = my z [i] [frame];
+				x [i] = my z [i] [iframe];
 			VECcosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
 			CC_Frame_init (cf, numberOfCoefficients);
-			for (integer i = 1; i <= numberOfCoefficients; i ++)
-				cf -> c [i] = y [i + 1];
+			for (integer icoef = 1; icoef <= numberOfCoefficients; icoef ++)
+				cf -> c [icoef] = y [icoef + 1];
 			cf -> c0 = y [1];
 		}
 		return thee;
@@ -718,19 +716,20 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 			first = 0;
 			last = nf - 1;
 		}
-		Melder_require (first >= 0 && last <= nf, U"MFCC_to_MelFilter: coefficients should be in interval [0,", my maximumNumberOfCoefficients, U"].");
+		Melder_require (first >= 0 && last <= nf,
+			U"MFCC_to_MelFilter: coefficients should be in interval [0,", my maximumNumberOfCoefficients, U"].");
 		
-		double df = (my fmax - my fmin) / (nf + 1);
+		const double df = (my fmax - my fmin) / (nf + 1);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, my fmin, my fmax, nf, df, df);
 
-		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = & my frame [frame];
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			CC_Frame cf = & my frame [iframe];
 			integer iend = std::min (last, cf -> numberOfCoefficients);
 			x [1] = ( first == 0 ? cf -> c0 : 0.0 );
-			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
-				x [i + 1] = ( i < first || i > iend ? 0 : cf -> c [i] );
+			for (integer icoef = 1; icoef <= my maximumNumberOfCoefficients; icoef ++)
+				x [icoef + 1] = ( icoef < first || icoef > iend ? 0.0 : cf -> c [icoef] );   // zero extrapolation
 			VECinverseCosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
-			thy z.column (frame) <<= y.get();
+			thy z.column (iframe) <<= y.get();
 		}
 		return thee;
 	} catch (MelderError) {

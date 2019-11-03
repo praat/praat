@@ -49,13 +49,13 @@ autoMFCC MFCC_create (double tmin, double tmax, integer nt, double dt, double t1
 void MFCC_lifter (MFCC me, integer lifter) {
 	try {
 		Melder_assert (lifter > 0);
-		autoNUMvector<double> c (1, my maximumNumberOfCoefficients);
-		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
-			c [i] = (1 + lifter / 2 * sin (NUMpi * i / lifter));
-		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = & my frame [frame];
-			for (integer i = 1; i <= cf -> numberOfCoefficients; i ++)
-				cf -> c [i] *= c [i];
+		autoNUMvector <double> c (1, my maximumNumberOfCoefficients);
+		for (integer icoef = 1; icoef <= my maximumNumberOfCoefficients; icoef ++)
+			c [icoef] = (1 + lifter / 2 * sin (NUMpi * icoef / lifter));   // BUG ?
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			CC_Frame cf = & my frame [iframe];
+			for (integer icoef = 1; icoef <= cf -> numberOfCoefficients; icoef ++)
+				cf -> c [icoef] *= c [icoef];
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not lifted.");
