@@ -101,8 +101,8 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 
 			double fscale = plength / length;
 			for (integer i = 1; i <= f -> nFormants; i ++) {
-				f -> formant [i].frequency *= fscale;
-				f -> formant [i].bandwidth *= fscale;
+				f -> formant___ [i]. frequency *= fscale;
+				f -> formant___ [i]. bandwidth *= fscale;
 			}
 
 			/*

@@ -51,14 +51,14 @@ static void burg (constVEC samples, VEC coefficients,
 	autoRoots roots = Polynomial_to_Roots (polynomial.get());
 	Roots_fixIntoUnitCircle (roots.get());
 
-	Melder_assert (frame -> nFormants == 0 && ! frame -> formant);
+	Melder_assert (frame -> nFormants == 0 && NUMisEmpty (frame -> formant.get()));
 
 	/*
 		First pass: count the formants.
 		The roots come in conjugate pairs, so we need only count those above the real axis.
 	 */
 	for (integer i = roots -> min; i <= roots -> max; i ++)
-		if (roots -> v [i]. im >= 0) {
+		if (roots -> v [i]. im >= 0.0) {
 			double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
 				frame -> nFormants ++;
@@ -68,7 +68,7 @@ static void burg (constVEC samples, VEC coefficients,
 		Create space for formant data.
 	 */
 	if (frame -> nFormants > 0)
-		frame -> formant = NUMvector <structFormant_Formant> (1, frame -> nFormants);
+		frame -> formant = newvectorzero <structFormant_Formant> (frame -> nFormants);
 
 	/*
 		Second pass: fill in the formants.
@@ -213,20 +213,22 @@ static int splitLevinson (
 loopEnd:
 	/* First pass: count the poles. */
 	for (int i = 1; i <= ncof / 2; i ++) {
-		if (zeroes [i] == 0.0 || zeroes [i] == -1.0) break;
+		if (zeroes [i] == 0.0 || zeroes [i] == -1.0)
+			break;
 		frame -> nFormants ++;
 	}
 
 	/* Create space for formant data. */
 	if (frame -> nFormants > 0)
-	    frame -> formant = NUMvector <structFormant_Formant> (1, frame -> nFormants);
+	    frame -> formant = newvectorzero <structFormant_Formant> (frame -> nFormants);
 
 	/* Second pass: fill in the poles. */
 	int iformant = 0;
 	for (int i = 1; i <= ncof / 2; i ++) {
 		Formant_Formant formant = & frame -> formant [++ iformant];
-		if (zeroes [i] == 0.0 || zeroes [i] == -1.0) break;
-		formant -> frequency =  acos (zeroes [i]) * nyquistFrequency / NUMpi;
+		if (zeroes [i] == 0.0 || zeroes [i] == -1.0)
+			break;
+		formant -> frequency = acos (zeroes [i]) * nyquistFrequency / NUMpi;
 		formant -> bandwidth = 50.0;
 	}
 
@@ -234,16 +236,15 @@ loopEnd:
 }
 
 static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
-	double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		double *s = & my z [channel] [0]; 
-		for (integer i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
-	}
+	const double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
+	for (integer channel = 1; channel <= my ny; channel ++)
+		for (integer i = my nx; i >= 2; i --)
+			my z [channel] [i] -= preEmphasis * my z [channel] [i - 1];
 }
 
 void Formant_sort (Formant me) {
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my d_frames [iframe];
+		Formant_Frame frame = & my frames [iframe];
 		integer n = frame -> nFormants;
 		for (integer i = 1; i < n; i ++) {
 			double min = frame -> formant [i]. frequency;
@@ -254,7 +255,7 @@ void Formant_sort (Formant me) {
 					imin = j;
 				}
 			if (imin != i) {
-				double min_bandwidth = frame -> formant [imin]. bandwidth;
+				const double min_bandwidth = frame -> formant [imin]. bandwidth;
 				frame -> formant [imin]. frequency = frame -> formant [i]. frequency;
 				frame -> formant [imin]. bandwidth = frame -> formant [i]. bandwidth;
 				frame -> formant [i]. frequency = min;
@@ -267,15 +268,15 @@ void Formant_sort (Formant me) {
 static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer numberOfPoles,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
-	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
-	double physicalDuration = my nx * my dx, t1;
+	const double dt = ( dt_in > 0.0 ? dt_in : halfdt_window / 4.0 );
+	const double physicalDuration = my nx * my dx;
 	double dt_window = 2.0 * halfdt_window;
 	integer nFrames = 1 + Melder_ifloor ((physicalDuration - dt_window) / dt);
 	integer nsamp_window = Melder_ifloor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
 	if (nsamp_window < numberOfPoles + 1)
 		Melder_throw (U"Window too short.");
-	t1 = my x1 + 0.5 * (physicalDuration - my dx - (nFrames - 1) * dt);   // centre of first frame
+	double t1 = my x1 + 0.5 * (physicalDuration - my dx - (nFrames - 1) * dt);   // centre of first frame
 	if (nFrames < 1) {
 		nFrames = 1;
 		t1 = my x1 + 0.5 * physicalDuration;
@@ -290,9 +291,9 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 	Sound_preEmphasis (me, preemphasisFrequency);
 
 	/* Gaussian window. */
-	auto window = newVECraw (nsamp_window);
+	autoVEC window = newVECraw (nsamp_window);
 	for (integer i = 1; i <= nsamp_window; i ++) {
-		double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
+		const double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
 		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
 	}
 
@@ -300,21 +301,22 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 	auto frameBuffer = newVECraw (maximumFrameLength);
 	auto coefficients = newVECraw (numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
 	for (integer iframe = 1; iframe <= nFrames; iframe ++) {
-		double t = Sampled_indexToX (thee.get(), iframe);
-		integer leftSample = Sampled_xToLowIndex (me, t);
-		integer rightSample = leftSample + 1;
+		const double t = Sampled_indexToX (thee.get(), iframe);
+		const integer leftSample = Sampled_xToLowIndex (me, t);
+		const integer rightSample = leftSample + 1;
 		integer startSample = rightSample - halfnsamp_window;
 		integer endSample = leftSample + halfnsamp_window;
 		double maximumIntensity = 0.0;
-		if (startSample < 1) startSample = 1;   // this should not be more than a rounding problem
-		if (endSample > my nx) endSample = my nx;   // this should not be more than a rounding problem
+		Melder_clipLeft (integer (1), & startSample);   // this should not be more than a rounding problem
+		Melder_clipRight (& endSample, my nx);   // this should not be more than a rounding problem
 		for (integer i = startSample; i <= endSample; i ++) {
-			double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
+			const double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
 			if (value * value > maximumIntensity)
 				maximumIntensity = value * value;
 		}
-		thy d_frames [iframe]. intensity = maximumIntensity;
-		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
+		thy frames [iframe]. intensity = maximumIntensity;
+		if (maximumIntensity == 0.0)
+			continue;   // Burg cannot stand all zeroes
 
 		/* Copy a pre-emphasized window to a frame. */
 		const integer actualFrameLength = endSample - startSample + 1;   // should rarely be less than nsamp_window
@@ -324,9 +326,9 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 			frame [isamp] = Sampled_getValueAtSample (me, offset + isamp, Sound_LEVEL_MONO, 0) * window [isamp];
 
 		if (which == 1) {
-			burg (frame, coefficients.get(), & thy d_frames [iframe], 0.5 / my dx, safetyMargin);
+			burg (frame, coefficients.get(), & thy frames [iframe], 0.5 / my dx, safetyMargin);
 		} else if (which == 2) {
-			if (! splitLevinson (frame, numberOfPoles, & thy d_frames [iframe], 0.5 / my dx)) {
+			if (! splitLevinson (frame, numberOfPoles, & thy frames [iframe], 0.5 / my dx)) {
 				Melder_clearError ();
 				Melder_casual (U"(Sound_to_Formant:)"
 					U" Analysis results of frame ", iframe,
@@ -343,7 +345,7 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 autoFormant Sound_to_Formant_any (Sound me, double dt, integer numberOfPoles, double maximumFrequency,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
-	double nyquist = 0.5 / my dx;
+	const double nyquist = 0.5 / my dx;
 	autoSound sound;
 	if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
 		sound = Data_copy (me);   // will be modified

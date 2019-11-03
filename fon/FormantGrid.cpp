@@ -256,7 +256,7 @@ void FormantGrid_formula_bandwidths (FormantGrid me, conststring32 expression, I
 		if (! thee)
 			thee = me;
 		for (integer irow = 1; irow <= my formants.size; irow ++) {
-			RealTier bandwidth = thy bandwidths.at [irow];
+			const RealTier bandwidth = thy bandwidths.at [irow];
 			for (integer icol = 1; icol <= bandwidth -> points.size; icol ++) {
 				Formula_run (irow, icol, & result);
 				if (isundef (result. numericResult))
@@ -276,7 +276,7 @@ void FormantGrid_formula_frequencies (FormantGrid me, conststring32 expression, 
 		if (! thee)
 			thee = me;
 		for (integer irow = 1; irow <= my formants.size; irow ++) {
-			RealTier formant = thy formants.at [irow];
+			const RealTier formant = thy formants.at [irow];
 			for (integer icol = 1; icol <= formant -> points.size; icol ++) {
 				Formula_run (irow, icol, & result);
 				if (isundef (result. numericResult))
@@ -293,8 +293,8 @@ autoFormantGrid Formant_downto_FormantGrid (Formant me) {
 	try {
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, my maxnFormants);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			Formant_Frame frame = & my d_frames [iframe];
-			double t = Sampled_indexToX (me, iframe);
+			const Formant_Frame frame = & my frames [iframe];
+			const double t = Sampled_indexToX (me, iframe);
 			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant pair = & frame -> formant [iformant];
 				FormantGrid_addFormantPoint (thee.get(), iformant, t, pair -> frequency);
@@ -311,17 +311,17 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 	try {
 		Melder_assert (dt > 0.0);
 		Melder_assert (intensity >= 0.0);
-		integer nt = Melder_ifloor ((my xmax - my xmin) / dt) + 1;
-		double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
+		const integer nt = Melder_ifloor ((my xmax - my xmin) / dt) + 1;
+		const double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
 		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants.size);
 		for (integer iframe = 1; iframe <= nt; iframe ++) {
-			Formant_Frame frame = & thy d_frames [iframe];
+			const Formant_Frame frame = & thy frames [iframe];
 			frame -> intensity = intensity;
 			frame -> nFormants = my formants.size;
-			frame -> formant = NUMvector <structFormant_Formant> (1, my formants.size);
-			double t = t1 + (iframe - 1) * dt;
+			frame -> formant = newvectorzero <structFormant_Formant> (my formants.size);
+			const double t = t1 + (iframe - 1) * dt;
 			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
-				Formant_Formant formant = & frame -> formant [iformant];
+				const Formant_Formant formant = & frame -> formant [iformant];
 				formant -> frequency = RealTier_getValueAtTime (my formants.at [iformant], t);
 				formant -> bandwidth = RealTier_getValueAtTime (my bandwidths.at [iformant], t);
 			}

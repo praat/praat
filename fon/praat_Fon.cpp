@@ -395,7 +395,7 @@ FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value a
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getValueAtTime (me, formantNumber, time, unit);
+		const double result = Formant_getValueAtTime (me, formantNumber, time, unit);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
@@ -408,7 +408,7 @@ FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getBandwidthAtTime (me, formantNumber, time, unit);
+		const double result = Formant_getBandwidthAtTime (me, formantNumber, time, unit);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
@@ -422,7 +422,7 @@ FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum..
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
+		const double result = Formant_getMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
@@ -436,7 +436,7 @@ FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum..
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
+		const double result = Formant_getMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
@@ -450,7 +450,7 @@ FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant:
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getTimeOfMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
+		const double result = Formant_getTimeOfMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -464,13 +464,13 @@ FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant:
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getTimeOfMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
+		const double result = Formant_getTimeOfMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
 	NUMBER_ONE (Formant)
-		integer result = Formant_getMaxNumFormants (me);
+		const integer result = Formant_getMaxNumFormants (me);
 	NUMBER_ONE_END (U" (there are at most this many formants in every frame)")
 }
 
@@ -481,13 +481,13 @@ FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getMean (me, formantNumber, fromTime, toTime, unit);
+		const double result = Formant_getMean (me, formantNumber, fromTime, toTime, unit);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
 	NUMBER_ONE (Formant)
-		integer result = Formant_getMinNumFormants (me);
+		const integer result = Formant_getMinNumFormants (me);
 	NUMBER_ONE_END (U" (there are at least this many formants in every frame)");
 }
 
@@ -498,7 +498,7 @@ DO
 	NUMBER_ONE (Formant)
 		if (frameNumber > my nx)
 			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
-		integer result = my d_frames [frameNumber]. nFormants;
+		const integer result = my frames [frameNumber]. nFormants;
 	NUMBER_ONE_END (U" formants")
 }
 
@@ -510,7 +510,7 @@ FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit);
+		const double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
@@ -522,7 +522,7 @@ FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth"
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit);
+		const double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
@@ -533,7 +533,7 @@ FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nul
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit);
+		const double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit);
 	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
