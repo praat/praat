@@ -84,7 +84,7 @@ static void drawNow (RunnerMFC me) {
 			);
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		conststring32 visibleText = experiment -> stimulus___ [experiment -> stimuli [experiment -> trial]]. visibleText.get();
+		conststring32 visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText.get();
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
 		conststring32 visibleText_p = visibleText_dup.get();
 		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
@@ -111,7 +111,7 @@ static void drawNow (RunnerMFC me) {
 		}
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-			const ResponseMFC response = & experiment -> response___ [iresponse];
+			const ResponseMFC response = & experiment -> response [iresponse];
 			conststring32 textToDraw = response -> label.get();   // can be overridden
 			if (visibleText_p [0] != U'\0') {
 				char32 *visibleText_q = str32chr (visibleText_p, U'|');
@@ -141,7 +141,7 @@ static void drawNow (RunnerMFC me) {
 			Graphics_setFontSize (my graphics.get(), 24);
 		}
 		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-			const GoodnessMFC goodness = & experiment -> goodness___ [iresponse];
+			const GoodnessMFC goodness = & experiment -> goodness [iresponse];
 			Graphics_setColour (my graphics.get(), experiment -> responses [experiment -> trial] == 0 ? Graphics_SILVER :
 				experiment -> goodnesses [experiment -> trial] == iresponse ? Graphics_RED : Graphics_YELLOW);
 			Graphics_setLineWidth (my graphics.get(), 3.0);
@@ -356,7 +356,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
 			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-				const ResponseMFC response = & experiment -> response___ [iresponse];
+				const ResponseMFC response = & experiment -> response [iresponse];
 				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
 					experiment -> responses [experiment -> trial] = iresponse;
 					experiment -> reactionTimes [experiment -> trial] = reactionTime;
@@ -373,7 +373,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			}
 			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
 				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-					const GoodnessMFC cat = & experiment -> goodness___ [iresponse];
+					const GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
 						Editor_broadcastDataChanged (me);
@@ -384,7 +384,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 		} else if (experiment -> responses [experiment -> trial] != 0) {
 			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
 			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-				const GoodnessMFC cat = & experiment -> goodness___ [iresponse];
+				const GoodnessMFC cat = & experiment -> goodness [iresponse];
 				if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 					experiment -> goodnesses [experiment -> trial] = iresponse;
 					do_ok (me);
@@ -436,7 +436,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
 			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-				const ResponseMFC response = & experiment -> response___ [iresponse];
+				const ResponseMFC response = & experiment -> response [iresponse];
 				if (response -> key && response -> key [0] == event -> key) {
 					experiment -> responses [experiment -> trial] = iresponse;
 					experiment -> reactionTimes [experiment -> trial] = reactionTime;
@@ -453,7 +453,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 			}
 			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
 				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-					const GoodnessMFC cat = & experiment -> goodness___ [iresponse];
+					const GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (cat -> key && cat -> key [0] == event -> key) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
 						Editor_broadcastDataChanged (me);
@@ -464,7 +464,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 		} else if (experiment -> responses [experiment -> trial] != 0) {
 			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
 			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-				const GoodnessMFC cat = & experiment -> goodness___ [iresponse];
+				const GoodnessMFC cat = & experiment -> goodness [iresponse];
 				if (cat -> key && cat -> key [0] == event -> key) {
 					experiment -> goodnesses [experiment -> trial] = iresponse;
 					do_ok (me);

@@ -86,7 +86,7 @@ DO
 	STRING_ONE (ResultsMFC)
 		if (trial > my numberOfTrials)
 			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
-		conststring32 result = my result___ [trial]. response.get();
+		conststring32 result = my result [trial]. response.get();
 	STRING_ONE_END
 }
 
@@ -97,7 +97,7 @@ DO
 	STRING_ONE (ResultsMFC)
 		if (trial > my numberOfTrials)
 			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
-		conststring32 result = my result___ [trial]. stimulus.get();
+		conststring32 result = my result [trial]. stimulus.get();
 	STRING_ONE_END
 }
 

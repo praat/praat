@@ -124,7 +124,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_DOUBLE (stimulusFinalSilenceDuration)
 	oo_ENDFROM
 	oo_INTEGER (numberOfDifferentStimuli)
-	oo_STRUCTVEC (StimulusMFC, stimulus___, numberOfDifferentStimuli)
+	oo_STRUCTVEC (StimulusMFC, stimulus, numberOfDifferentStimuli)
 	oo_INTEGER (numberOfReplicationsPerStimulus)
 	oo_INTEGER (breakAfterEvery)
 	oo_ENUM (kExperiment_randomize, randomize)
@@ -166,10 +166,10 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_DOUBLE (responseFinalSilenceDuration)
 	oo_ENDFROM
 	oo_INTEGER (numberOfDifferentResponses)
-	oo_STRUCTVEC (ResponseMFC, response___, numberOfDifferentResponses)
+	oo_STRUCTVEC (ResponseMFC, response, numberOfDifferentResponses)
 	oo_FROM (1)
 		oo_INTEGER (numberOfGoodnessCategories)
-		oo_STRUCTVEC (GoodnessMFC, goodness___, numberOfGoodnessCategories)
+		oo_STRUCTVEC (GoodnessMFC, goodness, numberOfGoodnessCategories)
 	oo_ENDFROM
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (samplePeriod)
@@ -218,7 +218,7 @@ oo_END_STRUCT (TrialMFC)
 oo_DEFINE_CLASS (ResultsMFC, Daata)
 
 	oo_INTEGER (numberOfTrials)
-	oo_STRUCTVEC (TrialMFC, result___, numberOfTrials)
+	oo_STRUCTVEC (TrialMFC, result, numberOfTrials)
 
 oo_END_CLASS (ResultsMFC)
 #undef ooSTRUCT
