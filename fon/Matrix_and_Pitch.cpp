@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.cpp
  *
- * Copyright (C) 1992-2005,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@ autoMatrix Pitch_to_Matrix (Pitch me) {
 	try {
 		autoMatrix you = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (integer i = 1; i <= my nx; i ++) {
-			double value = my frame [i]. candidate [1]. frequency;
+			const double value = my frames [i]. candidates [1]. frequency;
 			your z [1] [i] =
-				Pitch_util_frequencyIsVoiced (value, my ceiling) ? my frame [i]. candidate [1]. frequency : 0.0;
+				Pitch_util_frequencyIsVoiced (value, my ceiling) ? my frames [i]. candidates [1]. frequency : 0.0;
 		}
 		return you;
 	} catch (MelderError) {
@@ -36,18 +36,18 @@ autoPitch Matrix_to_Pitch (Matrix me) {
 	try {
 		autoPitch you = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, 5000.0, 2);
 		for (integer i = 1; i <= my nx; i ++) {
-			Pitch_Frame frame = & your frame [i];
+			const Pitch_Frame frame = & your frames [i];
 			if (my z [1] [i] == 0.0) {
 				Pitch_Frame_init (frame, 1);
-				frame -> candidate [1]. frequency = 0.0;   // voiceless candidate always present
-				frame -> candidate [1]. strength = 0.4;
+				frame -> candidates [1]. frequency = 0.0;   // voiceless candidate always present
+				frame -> candidates [1]. strength = 0.4;
 			} else {
 				Pitch_Frame_init (frame, 2);
 				frame -> intensity = 1;
-				frame -> candidate [1]. frequency = my z [1] [i];
-				frame -> candidate [1]. strength = 0.9;
-				frame -> candidate [2]. frequency = 0.0;   // voiceless candidate always present
-				frame -> candidate [2]. strength = 0.4;
+				frame -> candidates [1]. frequency = my z [1] [i];
+				frame -> candidates [1]. strength = 0.9;
+				frame -> candidates [2]. frequency = 0.0;   // voiceless candidate always present
+				frame -> candidates [2]. strength = 0.4;
 			}
 		}
 		return you;
@@ -60,15 +60,15 @@ void Pitch_formula (Pitch me, conststring32 formula, Interpreter interpreter) {
 	try {
 		autoMatrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, my maxnCandidates, my maxnCandidates, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			Pitch_Frame frame = & my frame [iframe];
+			const Pitch_Frame frame = & my frames [iframe];
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++)
-				m -> z [icand] [iframe] = frame -> candidate [icand]. frequency;
+				m -> z [icand] [iframe] = frame -> candidates [icand]. frequency;
 		}
 		Matrix_formula (m.get(), formula, interpreter, nullptr);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			Pitch_Frame frame = & my frame [iframe];
+			const Pitch_Frame frame = & my frames [iframe];
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++)
-				frame -> candidate [icand]. frequency = m -> z [icand] [iframe];
+				frame -> candidates [icand]. frequency = m -> z [icand] [iframe];
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": formula not completed.");

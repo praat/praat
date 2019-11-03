@@ -21,7 +21,7 @@
 static void Pitch_getExtrema (Pitch me, double *minimum, double *maximum) {
 	MelderExtremaWithInit extrema;
 	for (integer i = 1; i <= my nx; i ++) {
-		const double frequency = my frame [i]. candidate [1]. frequency;
+		const double frequency = my frames [i]. candidates [1]. frequency;
 		if (frequency == 0.0)
 			continue;   // voiceless
 		extrema.update (frequency);
@@ -63,9 +63,9 @@ void Pitch_Intensity_draw (Pitch pitchObject, Intensity intensityObject, Graphic
 		const bool pitchMeasurementWillBeValid = Pitch_isVoiced_i (pitchObject, ipitchFrame);
 		if (! pitchMeasurementWillBeValid)
 			continue;   // voiceless -> don't draw
-		Pitch_Frame pitchFrame = & pitchObject -> frame [ipitchFrame];
+		const Pitch_Frame pitchFrame = & pitchObject -> frames [ipitchFrame];
 		constexpr integer winningPitchCandidateNumber = 1;
-		const double pitchValue = pitchFrame -> candidate [winningPitchCandidateNumber]. frequency;
+		const double pitchValue = pitchFrame -> candidates [winningPitchCandidateNumber]. frequency;
 		/*
 			Get the corresponding intensity value.
 			"Corresponding" means: measure the intensity at the same time as the pitch.
