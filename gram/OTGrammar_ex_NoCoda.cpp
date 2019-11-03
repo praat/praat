@@ -1,6 +1,6 @@
 /* OTGrammar_ex_NoCoda.cpp
  *
- * Copyright (C) 1997-2005,2007,2009,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009,2011,2012,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ autoOTGrammar OTGrammar_create_NoCoda_grammar () {
 		OTGrammarTableau tableau;
 		OTGrammarConstraint constraint;
 		autoOTGrammar me = Thing_new (OTGrammar);
-		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = 2);
+		my constraints = newvectorzero <structOTGrammarConstraint> (my numberOfConstraints = 2);
 		constraint = & my constraints [1];
 			constraint -> name = Melder_dup (U"N\\s{O}C\\s{ODA}");
 			constraint -> ranking = 100.0;
@@ -33,10 +33,10 @@ autoOTGrammar OTGrammar_create_NoCoda_grammar () {
 			constraint -> name = Melder_dup (U"P\\s{ARSE}");
 			constraint -> ranking = 90.0;
 			constraint -> plasticity = 1.0;
-		my tableaus = NUMvector <structOTGrammarTableau> (1, my numberOfTableaus = 2);
+		my tableaus = newvectorzero <structOTGrammarTableau> (my numberOfTableaus = 2);
 		tableau = & my tableaus [1];
 			tableau -> input = Melder_dup (U"pat");
-			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  2);
+			tableau -> candidates = newvectorzero <structOTGrammarCandidate> (tableau -> numberOfCandidates =  2);
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_dup (U"pa");
 				candidate -> marks = newINTVECzero (candidate -> numberOfConstraints = 2);
@@ -47,7 +47,7 @@ autoOTGrammar OTGrammar_create_NoCoda_grammar () {
 				candidate -> marks [1] = 1;
 		tableau = & my tableaus [2];
 			tableau -> input = Melder_dup (U"pa");
-			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  1);
+			tableau -> candidates = newvectorzero <structOTGrammarCandidate> (tableau -> numberOfCandidates =  1);
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_dup (U"pa");
 				candidate -> marks = newINTVECzero (candidate -> numberOfConstraints = 2);

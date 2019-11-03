@@ -443,8 +443,9 @@ public:
 				Change without error.
 			*/
 			for (integer i = 1; i <= our size; i ++)
-				newAt [i] = our at [i];
-			if (our at) NUMvector_free (our at, 1);
+				newAt [i] = std::move (our at [i]);
+			if (our at)
+				NUMvector_free (our at, 1);
 			our at = newAt;
 			our _capacity = newCapacity;
 		}
@@ -460,7 +461,7 @@ public:
 	void remove (integer position) {
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = position; i < our size; i ++)
-			our at [i] = our at [i + 1];
+			our at [i] = std::move (our at [i + 1]);
 		resize (our size - 1);
 	}
 };
