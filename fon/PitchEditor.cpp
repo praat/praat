@@ -107,21 +107,15 @@ static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
-	Pitch pitch = (Pitch) my data;
-	integer ileft = Sampled_xToHighIndex (pitch, my startSelection);
-	integer iright = Sampled_xToLowIndex (pitch, my endSelection);
-	if (ileft < 1) ileft = 1;
-	if (iright > pitch -> nx) iright = pitch -> nx;
+	const Pitch pitch = (Pitch) my data;
+	const integer ileft = std::max (integer (1), Sampled_xToHighIndex (pitch, my startSelection));
+	const integer iright = std::min (Sampled_xToLowIndex (pitch, my endSelection), pitch -> nx);
 	Editor_save (me, U"Unvoice");
 	for (integer iframe = ileft; iframe <= iright; iframe ++) {
-		Pitch_Frame frame = & pitch -> frame [iframe];
-		for (integer cand = 1; cand <= frame -> nCandidates; cand ++) {
-			if (frame -> candidate [cand]. frequency == 0.0) {
-				struct structPitch_Candidate help = frame -> candidate [1];
-				frame -> candidate [1] = frame -> candidate [cand];
-				frame -> candidate [cand] = help;
-			}
-		}
+		const Pitch_Frame frame = & pitch -> frames [iframe];
+		for (integer cand = 1; cand <= frame -> nCandidates; cand ++)
+			if (frame -> candidates [cand]. frequency == 0.0)
+				std::swap (frame -> candidates [1], frame -> candidates [cand]);
 	}
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -214,9 +208,9 @@ void structPitchEditor :: v_draw () {
 		/* Show candidates. */
 
 		for (integer it = it1; it <= it2; it ++) {
-			Pitch_Frame frame = & pitch -> frame [it];
-			double time = Sampled_indexToX (pitch, it);
-			double frequency = frame -> candidate [1]. frequency;
+			const Pitch_Frame frame = & pitch -> frames [it];
+			const double time = Sampled_indexToX (pitch, it);
+			double frequency = frame -> candidates [1]. frequency;
 			if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling)) {
 				Graphics_setColour (our graphics.get(), Graphics_MAGENTA);
 				Graphics_fillCircle_mm (our graphics.get(), time, frequency, RADIUS * 2.0);
@@ -224,10 +218,10 @@ void structPitchEditor :: v_draw () {
 			Graphics_setColour (our graphics.get(), Graphics_BLACK);
 			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
-				frequency = frame -> candidate [icand]. frequency;
+				frequency = frame -> candidates [icand]. frequency;
 				if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling)) {
-					integer strength = Melder_iround (10.0 * frame -> candidate [icand]. strength);
-					if (strength > 9) strength = 9;
+					const integer strength = std::min (Melder_iround (10.0 * frame -> candidates [icand]. strength),
+							integer (9));
 					Graphics_text (our graphics.get(), time, frequency,   strength);
 				}
 			}
@@ -248,17 +242,19 @@ void structPitchEditor :: v_draw () {
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"intens");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (integer it = it1; it <= it2; it ++) {
-			Pitch_Frame frame = & pitch -> frame [it];
-			double time = Sampled_indexToX (pitch, it);
-			integer strength = Melder_iround (10.0 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
-			if (strength > 9) strength = 9;
+			const Pitch_Frame frame = & pitch -> frames [it];
+			const double time = Sampled_indexToX (pitch, it);
+			const integer strength = std::min (Melder_iround (10.0 * frame -> intensity + 0.5),
+					integer (9));   // map 0.0-1.0 to 0-9
 			Graphics_text (our graphics.get(), time, 0.5,   strength);
 		}
 		Graphics_resetViewport (our graphics.get(), previous);
 	}
 
-	if (it1 > 1) it1 -= 1;
-	if (it2 < pitch -> nx) it2 += 1;
+	if (it1 > 1)
+		it1 -= 1;
+	if (it2 < pitch -> nx)
+		it2 += 1;
 
 	/*
 		Show voicelessness.
@@ -272,12 +268,14 @@ void structPitchEditor :: v_draw () {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"Unv");
 		for (integer it = it1; it <= it2; it ++) {
-			Pitch_Frame frame = & pitch -> frame [it];
-			double time = Sampled_indexToX (pitch, it), tleft = time - 0.5 * pitch -> dx, tright = time + 0.5 * pitch -> dx;
-			double frequency = frame -> candidate [1]. frequency;
-			if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling) || tright <= our startWindow || tleft >= our endWindow) continue;
-			if (tleft < our startWindow) tleft = our startWindow;
-			if (tright > our endWindow) tright = our endWindow;
+			const Pitch_Frame frame = & pitch -> frames [it];
+			const double time = Sampled_indexToX (pitch, it);
+			double tleft = time - 0.5 * pitch -> dx, tright = time + 0.5 * pitch -> dx;
+			double frequency = frame -> candidates [1]. frequency;
+			if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling) || tright <= our startWindow || tleft >= our endWindow)
+				continue;
+			Melder_clipLeft (our startWindow, & tleft);
+			Melder_clipRight (& tright, our endWindow);
 			Graphics_fillRectangle (our graphics.get(), tleft, tright, 0.0, 1.0);
 		}
 		Graphics_setColour (our graphics.get(), Graphics_BLACK);
@@ -290,39 +288,36 @@ void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
 }
 
 bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
-	Pitch pitch = (Pitch) our data;
-	double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
-	double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
-	double clickedFrequency = (yWC - dyUnv) / (1.0 - dyIntens - dyUnv) * pitch -> ceiling;
+	const Pitch pitch = (Pitch) our data;
+	const double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
+	const double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
+	const double clickedFrequency = (yWC - dyUnv) / (1.0 - dyIntens - dyUnv) * pitch -> ceiling;
 	double minimumDf = 1e30;
 	integer bestCandidate = -1;
 
 	integer ibestFrame = Sampled_xToNearestIndex (pitch, xWC);
-	if (ibestFrame < 1) ibestFrame = 1;
-	if (ibestFrame > pitch -> nx) ibestFrame = pitch -> nx;
-	Pitch_Frame bestFrame = & pitch -> frame [ibestFrame];
+	Melder_clip (integer (1), & ibestFrame, pitch -> nx);
+	const Pitch_Frame bestFrame = & pitch -> frames [ibestFrame];
 
-	double tmid = Sampled_indexToX (pitch, ibestFrame);
+	const double tmid = Sampled_indexToX (pitch, ibestFrame);
 	for (integer icand = 1; icand <= bestFrame -> nCandidates; icand ++) {
-		Pitch_Candidate candidate = & bestFrame -> candidate [icand];
-		double df = clickedFrequency - candidate -> frequency;
+		const Pitch_Candidate candidate = & bestFrame -> candidates [icand];
+		const double df = clickedFrequency - candidate -> frequency;
 		if (fabs (df) < minimumDf) {
 			minimumDf = fabs (df);
 			bestCandidate = icand;
 		}
 	}
 	if (bestCandidate != -1) {
-		double bestFrequency = bestFrame -> candidate [bestCandidate]. frequency;
-		double distanceWC = (clickedFrequency - bestFrequency) / pitch -> ceiling * (1.0 - dyIntens - dyUnv);
-		double dx_mm = Graphics_dxWCtoMM (our graphics.get(), xWC - tmid), dy_mm = Graphics_dyWCtoMM (our graphics.get(), distanceWC);
+		const double bestFrequency = bestFrame -> candidates [bestCandidate]. frequency;
+		const double distanceWC = (clickedFrequency - bestFrequency) / pitch -> ceiling * (1.0 - dyIntens - dyUnv);
+		const double dx_mm = Graphics_dxWCtoMM (our graphics.get(), xWC - tmid), dy_mm = Graphics_dyWCtoMM (our graphics.get(), distanceWC);
 		if (bestFrequency < pitch -> ceiling &&   // above ceiling: ignore
 		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && clickedFrequency <= 0.0) ||   // voiceless: click within frame
 		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   // voiced: click within circle
 		{
-			struct structPitch_Candidate help = bestFrame -> candidate [1];
 			Editor_save (this, U"Change path");
-			bestFrame -> candidate [1] = bestFrame -> candidate [bestCandidate];
-			bestFrame -> candidate [bestCandidate] = help;
+			std::swap (bestFrame -> candidates [1], bestFrame -> candidates [bestCandidate]);
 			FunctionEditor_redraw (this);
 			Editor_broadcastDataChanged (this);
 			our startSelection = our endSelection = tmid;   // cursor will snap to candidate

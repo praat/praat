@@ -136,15 +136,15 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		*/
 
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			Pitch_Frame pitchFrame = & thy frame [iframe];
-			double tmid = Sampled_indexToX (thee.get(), iframe); // The center of this frame
+			const Pitch_Frame pitchFrame = & thy frames [iframe];
+			const double tmid = Sampled_indexToX (thee.get(), iframe); // The center of this frame
 			
 			// Copy a frame from the sound, apply a hamming window. Get local 'intensity'
 
 			Sound_into_Sound (sound.get(), analysisframe.get(), tmid - halfWindow);
 			Sounds_multiply (analysisframe.get(), hamming.get());
-			double localMean = Sound_localMean (sound.get(), tmid - 3.0 * halfWindow, tmid + 3.0 * halfWindow);
-			double localPeak = Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean);
+			const double localMean = Sound_localMean (sound.get(), tmid - 3.0 * halfWindow, tmid + 3.0 * halfWindow);
+			const double localPeak = Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean);
 			pitchFrame -> intensity = localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
 			
 			// Get the Fourier spectrum.
@@ -155,7 +155,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			// From complex spectrum to amplitude spectrum.
 
 			for (integer j = 1; j <= nfft2; j ++) {
-				double rs = spec -> z [1] [j], is = spec -> z [2] [j];
+				const double rs = spec -> z [1] [j], is = spec -> z [2] [j];
 				specAmp [j] = sqrt (rs * rs + is * is);
 			}
 
@@ -172,7 +172,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), specAmp.get(), 1e30, 1e30);
 			for (integer j = 1; j <= numberOfFrequencyPoints; j ++) {
-				double f = fminl2 + (j - 1) * dfl2;
+				const double f = fminl2 + (j - 1) * dfl2;
 				al2 [j] = NUMcubicSplineInterpolation (fl2.get(), specAmp.get(), yv2.get(), f);
 			}
 
@@ -243,7 +243,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 		double vuvCriterium = 0.52;
 		for (integer i = 1; i <= numberOfFrames; i ++)
-			Pitch_Frame_resizeStrengths (& thy frame [i], cc [i], vuvCriterium);
+			Pitch_Frame_resizeStrengths (& thy frames [i], cc [i], vuvCriterium);
 		
 		return thee;
 	} catch (MelderError) {

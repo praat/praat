@@ -1967,10 +1967,12 @@ Thing_implement (PitchModeler, DataModeler, 0);
 
 autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, integer numberOfParameters) {
 	try {
-		if (tmax <= tmin)
-			tmin = my xmin, tmax = my xmax;
+		if (tmax <= tmin) {
+			tmin = my xmin;
+			tmax = my xmax;
+		}
 		integer ifmin, ifmax;
-		integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
+		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		Melder_require (numberOfParameters <= numberOfDataPoints,
 			U"The number of parameters should not exceed the number of data points. Please, extend the selection.");
 		autoPitchModeler thee = Thing_new (PitchModeler);
@@ -1980,7 +1982,7 @@ autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, inte
 			thy x [++ idata] = Sampled_indexToX (me, iframe);
 			thy dataPointStatus [idata] = DataModeler_DATA_INVALID;
 			if (Pitch_isVoiced_i (me, iframe)) {
-				thy y [idata] = my frame [iframe]. candidate [1]. frequency;
+				thy y [idata] = my frames [iframe]. candidates [1]. frequency;
 				thy dataPointStatus [idata] = DataModeler_DATA_VALID;
 				validData ++;
 			}
