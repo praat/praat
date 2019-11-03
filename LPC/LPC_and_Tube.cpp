@@ -145,7 +145,8 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 			}
 
 			if (var < varMin) {
-				lmin = length; varMin = var;
+				lmin = length;
+				varMin = var;
 			}
 			plength = length;
 			length += dlength;
@@ -184,12 +185,11 @@ void VocalTract_setLength (VocalTract me, double newLength) {
 	my x1 = 0.5 * my dx;
 }
 
-autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
+autoVocalTract LPC_to_VocalTract_slice_special (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
-		integer iframe = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do? not nearestIndex?
-		if (iframe < 1) iframe = 1;
-		if (iframe > my nx) iframe = my nx;
-		LPC_Frame lpc = & my d_frames [iframe];
+		integer frameNumber = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do? not nearestIndex?
+		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
+		LPC_Frame lpc = & my d_frames___ [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
 		double length = VocalTract_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
 		VocalTract_setLength (thee.get(), length);
@@ -214,12 +214,11 @@ autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	}
 }
 
-autoVocalTract LPC_to_VocalTract (LPC me, double time, double length) {
+autoVocalTract LPC_to_VocalTract_slice (LPC me, double time, double length) {
 	try {
-		integer iframe = Sampled_xToNearestIndex (me, time);
-		if (iframe < 1) iframe = 1;
-		if (iframe > my nx) iframe = my nx;
-		LPC_Frame lpc = & my d_frames [iframe];
+		integer frameNumber = Sampled_xToNearestIndex (me, time);
+		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
+		LPC_Frame lpc = & my d_frames___ [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, length);
 		return thee;
 	} catch (MelderError) {

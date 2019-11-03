@@ -24,20 +24,16 @@
 #include "LPC_and_Cepstrumc.h"
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
-	integer n = my nCoefficients > thy nCoefficients ? thy nCoefficients : my nCoefficients;
+	integer n = std::min (my nCoefficients, thy nCoefficients);
 	double *c = thy c, *a = my a.at;
-
 	c [0] = 0.5 * log (my gain);
-	if (n == 0) {
+	if (n == 0)
 		return;
-	}
-
 	c [1] = -a [1];
 	for (integer i = 2; i <= n; i ++) {
 		c [i] = 0;
-		for (integer k = 1; k < i; k ++) {
+		for (integer k = 1; k < i; k ++)
 			c [i] += a [i - k] * c [k] * k;
-		}
 		c [i] = -a [i] - c [i] / i;
 	}
 }
@@ -45,32 +41,27 @@ void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
 	double *c = my c, *a = thy a.at;
 	thy gain = exp (2.0 * c [0]);
-	if (thy nCoefficients == 0) {
+	if (thy nCoefficients == 0)
 		return;
-	}
 	a [1] = -c [1];
-	for (integer i = 2; i <= thy nCoefficients; i ++) {
+	for (integer i = 2; i <= thy nCoefficients; i ++)
 		c [i] *= i;
-	}
 	for (integer i = 2; i <= thy nCoefficients; i ++) {
 		a [i] = c [i];
-		for (integer j = 1 ; j < i; j++) {
+		for (integer j = 1 ; j < i; j ++)
 			a [i] += a [j] * c [i - j];
-		}
 		a [i] /= -i;
 	}
-	for (integer i = 2; i <= thy nCoefficients; i ++) {
+	for (integer i = 2; i <= thy nCoefficients; i ++)
 		c [i] /= i;
-	}
 }
 
 autoCepstrumc LPC_to_Cepstrumc (LPC me) {
 	try {
 		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1,  my maxnCoefficients, 1.0 / my samplingPeriod);
-
 		for (integer i = 1; i <= my nx; i ++) {
-			Cepstrumc_Frame_init (& thy frame [i], my d_frames [i].nCoefficients);
-			LPC_Frame_into_Cepstrumc_Frame (& my d_frames [i], & thy frame [i]);
+			Cepstrumc_Frame_init (& thy frame [i], my d_frames___ [i]. nCoefficients);
+			LPC_Frame_into_Cepstrumc_Frame (& my d_frames___ [i], & thy frame [i]);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -83,8 +74,8 @@ autoLPC Cepstrumc_to_LPC (Cepstrumc me) {
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1,
 		                           my maxnCoefficients, 1.0 / my samplingFrequency);
 		for (integer i = 1; i <= my nx; i ++) {
-			LPC_Frame_init (& thy d_frames [i], my frame [i].nCoefficients);
-			Cepstrumc_Frame_into_LPC_Frame (& my frame [i], & thy d_frames [i]);
+			LPC_Frame_init (& thy d_frames___ [i], my frame [i].nCoefficients);
+			Cepstrumc_Frame_into_LPC_Frame (& my frame [i], & thy d_frames___ [i]);
 		}
 		return thee;
 	} catch (MelderError) {
