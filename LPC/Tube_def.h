@@ -32,7 +32,7 @@ oo_END_STRUCT (Tube_Frame)
 oo_DEFINE_CLASS (Tube, Sampled)
 	
 	oo_INT16 (maxNumberOfSegments)
-	oo_STRUCT_VECTOR (Tube_Frame, frame, nx)
+	oo_STRUCTVEC (Tube_Frame, frame, nx)
 
 	#if oo_DECLARING
 		void v_info ()
