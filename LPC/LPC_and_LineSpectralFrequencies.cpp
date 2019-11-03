@@ -239,7 +239,7 @@ autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridS
 		autoRoots roots = Roots_create ((my maxnCoefficients + 1) / 2);
 		
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			LPC_Frame lpc_frame = & my d_frames___ [iframe];
+			LPC_Frame lpc_frame = & my d_frames [iframe];
 			LineSpectralFrequencies_Frame lsf_frame = & thy d_frames [iframe];
 			/* Construct Fs and Fa
 				divide out the zeros
@@ -303,7 +303,7 @@ autoLPC LineSpectralFrequencies_to_LPC (LineSpectralFrequencies me) {
 		
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			LineSpectralFrequencies_Frame lsf_frame = & my d_frames [iframe];
-			LPC_Frame lpc_frame = & thy d_frames___ [iframe];
+			LPC_Frame lpc_frame = & thy d_frames [iframe];
 			/* Construct Fs and Fa
 				A(z) = (Fs(z) + Fa(z))/2
 			 */

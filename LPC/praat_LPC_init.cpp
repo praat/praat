@@ -619,7 +619,7 @@ DO
 	INTEGER_ONE (LPC)
 		Melder_require (frameNumber <= my nx,
 			U"Your frame number (", frameNumber, U") is too large. It should be between 1 and ", my nx, U".");
-		const integer result = my d_frames___ [frameNumber]. nCoefficients;
+		const integer result = my d_frames [frameNumber]. nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
 }
 

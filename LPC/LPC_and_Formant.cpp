@@ -98,7 +98,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 
 		for (integer i = 1; i <= my nx; i ++) {
 			Formant_Frame formant = & thy d_frames [i];
-			LPC_Frame lpc = & my d_frames___ [i];
+			LPC_Frame lpc = & my d_frames [i];
 
 			// Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
 
@@ -159,7 +159,7 @@ autoLPC Formant_to_LPC (Formant me, double samplingPeriod) {
 
 		for (integer i = 1; i <= my nx; i ++) {
 			Formant_Frame f = & my d_frames [i];
-			LPC_Frame lpc = & thy d_frames___ [i];
+			LPC_Frame lpc = & thy d_frames [i];
 			integer m = 2 * f -> nFormants;
 
 			LPC_Frame_init (lpc, m);
