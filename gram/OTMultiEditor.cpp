@@ -183,13 +183,14 @@ static void drawTableau (Graphics g) {
 }
 
 void structOTMultiEditor :: v_draw () {
-	OTMulti grammar = (OTMulti) data;
+	const OTMulti grammar = (OTMulti) data;
 	static MelderString buffer { };
-	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
+	const double rowHeight = 0.25;
+	longdouble tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (graphics.get());
 	HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (integer icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
-		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
+		const OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderString_copy (& buffer, U"\t", ( icons == selectedConstraint ? U"♠︎ " : U"   " ), U"@@", icons,
 			U"|", constraint -> name.get(), U"@\t      ", Melder_fixed (constraint -> ranking, 3),
 			U"\t      ", Melder_fixed (constraint -> disharmony, 3),
@@ -199,11 +200,9 @@ void structOTMultiEditor :: v_draw () {
 	}
 	Graphics_setAtSignIsLink (graphics.get(), false);
 	drawTableau_grammar = grammar;
-	for (integer icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
-		if (OTMulti_candidateMatches (grammar, icand, our form1.get(), our form2.get())) {
+	for (integer icand = 1; icand <= grammar -> numberOfCandidates; icand ++)
+		if (OTMulti_candidateMatches (grammar, icand, our form1.get(), our form2.get()))
 			tableauHeight += rowHeight;
-		}
-	}
 	drawTableau_form1 = our form1.get();   // BUG: dangle
 	drawTableau_form2 = our form2.get();
 	drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
@@ -212,7 +211,8 @@ void structOTMultiEditor :: v_draw () {
 }
 
 int structOTMultiEditor :: v_goToPage (conststring32 title) {
-	if (! title) return 1;
+	if (! title)
+		return 1;
 	selectedConstraint = Melder_atoi (title);
 	return 1;
 }

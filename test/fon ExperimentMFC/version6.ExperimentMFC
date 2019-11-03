@@ -39,11 +39,11 @@ responseInitialSilenceDuration = 0.1 seconds
 responseMedialSilenceDuration = 0
 responseFinalSilenceDuration = 0.5
 numberOfDifferentResponses = 5
-    0.25 0.35 0.8 0.9 "h I d" "i" "hid"
-    0.35 0.45 0.6 0.7 "h E d" "e" "hid"
-    0.45 0.55 0.4 0.5 "h A d" "a" "hud"
-    0.55 0.65 0.6 0.7 "h O d" "o" "hood"
-    0.65 0.75 0.8 0.9 "h U d" "u" "hud"
+    0.25 0.35 0.8 0.9 "h I d" 24 "i" "hid"
+    0.35 0.45 0.6 0.7 "h E d" 24 "e" "hid"
+    0.45 0.55 0.4 0.5 "h A d" 24 "a" "hud"
+    0.55 0.65 0.6 0.7 "h O d" 24 "o" "hood"
+    0.65 0.75 0.8 0.9 "h U d" 24 "u" "hud"
 
 numberOfGoodnessCategories = 5
     0.25 0.35 0.20 0.30 "1 (poor)"

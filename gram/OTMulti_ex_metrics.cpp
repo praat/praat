@@ -1,6 +1,6 @@
 /* OTMulti_ex_metrics.cpp
  *
- * Copyright (C) 2014-2018 Paul Boersma
+ * Copyright (C) 2014-2019 Paul Boersma
  * Forked from OTGrammar_ex_metrics.cpp, Copyright (C) 2001-2007,2009,2011,2012 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
@@ -84,30 +84,30 @@ static void fillSurfaceWeightPattern (OTMulti me, conststring32 underlyingForm, 
 	int overtFormsHaveSecondaryStress)
 {
 	int surfaceWeightPattern [1+7], minSurfaceWeight [1+7], maxSurfaceWeight [1+7];
-	int weight1, weight2, weight3, weight4, weight5;
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (underlyingWeightPattern [isyll] < 3) {
 			minSurfaceWeight [isyll] = maxSurfaceWeight [isyll] = underlyingWeightPattern [isyll];   // L -> L; H -> H
 		} else {
-			minSurfaceWeight [isyll] = 3, maxSurfaceWeight [isyll] = 4;   // C -> { J, K }
+			minSurfaceWeight [isyll] = 3;
+			maxSurfaceWeight [isyll] = 4;   // C -> { J, K }
 		}
 	}
 	surfaceWeightPattern [6] = surfaceWeightPattern [7] = 1;   // constant L
-	for (weight1 = minSurfaceWeight [1]; weight1 <= maxSurfaceWeight [1]; weight1 ++) {
+	for (int weight1 = minSurfaceWeight [1]; weight1 <= maxSurfaceWeight [1]; weight1 ++) {
 		surfaceWeightPattern [1] = weight1;
-		for (weight2 = minSurfaceWeight [2]; weight2 <= maxSurfaceWeight [2]; weight2 ++) {
+		for (int weight2 = minSurfaceWeight [2]; weight2 <= maxSurfaceWeight [2]; weight2 ++) {
 			surfaceWeightPattern [2] = weight2;
 			if (numberOfSyllables == 2) {
 				addCandidate (me, underlyingForm, 2, stress, footedToTheLeft, footedToTheRight, surfaceWeightPattern, overtFormsHaveSecondaryStress);
-			} else for (weight3 = minSurfaceWeight [3]; weight3 <= maxSurfaceWeight [3]; weight3 ++) {
+			} else for (int weight3 = minSurfaceWeight [3]; weight3 <= maxSurfaceWeight [3]; weight3 ++) {
 				surfaceWeightPattern [3] = weight3;
 				if (numberOfSyllables == 3) {
 					addCandidate (me, underlyingForm, 3, stress, footedToTheLeft, footedToTheRight, surfaceWeightPattern, overtFormsHaveSecondaryStress);
-				} else for (weight4 = minSurfaceWeight [4]; weight4 <= maxSurfaceWeight [4]; weight4 ++) {
+				} else for (int weight4 = minSurfaceWeight [4]; weight4 <= maxSurfaceWeight [4]; weight4 ++) {
 					surfaceWeightPattern [4] = weight4;
 					if (numberOfSyllables == 4) {
 						addCandidate (me, underlyingForm, 4, stress, footedToTheLeft, footedToTheRight, surfaceWeightPattern, overtFormsHaveSecondaryStress);
-					} else for (weight5 = minSurfaceWeight [5]; weight5 <= maxSurfaceWeight [5]; weight5 ++) {
+					} else for (int weight5 = minSurfaceWeight [5]; weight5 <= maxSurfaceWeight [5]; weight5 ++) {
 						surfaceWeightPattern [5] = weight5;
 						addCandidate (me, underlyingForm, numberOfSyllables, stress, footedToTheLeft, footedToTheRight, surfaceWeightPattern, overtFormsHaveSecondaryStress);
 					}
@@ -432,40 +432,43 @@ autoOTMulti OTMulti_create_metrics (
 	try {
 		int underlyingWeightPattern [1+7], maximumUnderlyingWeight = includeCodas ? 3 : 2;
 		autoOTMulti me = Thing_new (OTMulti);
-		my constraints = NUMvector <structOTConstraint> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
+		my constraints = newvectorzero <structOTConstraint> (my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
 		for (integer icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
-			OTConstraint constraint = & my constraints [icons];
+			const OTConstraint constraint = & my constraints [icons];
 			constraint -> name = Melder_dup (constraintNames [icons]);
 			constraint -> ranking = 100.0;
 			constraint -> plasticity = 1.0;
 		}
 		if (equal_footForm_wsp >= kOTGrammar_createMetricsGrammar_initialRanking::FOOT_FORM_HIGH) {
-			/* Foot form constraints high. */
+			/*
+				Foot form constraints high.
+			*/
 			my constraints [FtNonfinal]. ranking = 101.0;
 			my constraints [Iambic]. ranking = 101.0;
 			my constraints [Trochaic]. ranking = -1e9;
 		}
 		if (equal_footForm_wsp == kOTGrammar_createMetricsGrammar_initialRanking::WSP_HIGH) {
-			/* Quantity sensitivity high, foot form constraints in the second stratum. */
+			/*
+				Quantity sensitivity high, foot form constraints in the second stratum.
+			*/
 			my constraints [WSP]. ranking = 102.0;
 		}
 		integer numberOfCandidates = 0;
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			const integer numberOfUnderlyingWeightPatterns = ( numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables)) );
 			numberOfCandidates += ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables] * numberOfUnderlyingWeightPatterns;
 		}
-		my candidates = NUMvector <structOTCandidate> (1, numberOfCandidates);
+		my candidates = newvectorzero <structOTCandidate> (numberOfCandidates);
 		my numberOfCandidates = 0;
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
-			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-				underlyingWeightPattern [isyll] = 1;   /* L or cv */
-			}
+			const integer numberOfUnderlyingWeightPatterns = ( numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables)) );
+			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++)
+				underlyingWeightPattern [isyll] = 1;   // L or cv
 			for (integer iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
 				fillTableau (me.get(), numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
 				/*
-				 * Cycle to next underlying weight pattern.
-				 */
+					Cycle to next underlying weight pattern.
+				*/
 				underlyingWeightPattern [numberOfSyllables] += 1;
 				for (integer isyll = numberOfSyllables; isyll >= 2; isyll --) {
 					if (underlyingWeightPattern [isyll] > maximumUnderlyingWeight) {
@@ -476,20 +479,20 @@ autoOTMulti OTMulti_create_metrics (
 			}
 		}
 		Melder_assert (my numberOfCandidates == numberOfCandidates);
-		/* Compute violation marks. */
-		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
+		for (integer icand = 1; icand <= my numberOfCandidates; icand ++)
 			computeViolationMarks (& my candidates [icand]);
-		}
 		OTMulti_checkIndex (me.get());
 		OTMulti_newDisharmonies (me.get(), 0.0);
-		if (trochaicityConstraint == 1) {
+		if (trochaicityConstraint == 1)
 			OTMulti_removeConstraint (me.get(), U"Trochaic");
-		} else {
+		else
 			OTMulti_removeConstraint (me.get(), U"FtNonfinal");
-		}
-		if (! includeFootBimoraic) OTMulti_removeConstraint (me.get(), U"FtBimor");
-		if (! includeFootBisyllabic) OTMulti_removeConstraint (me.get(), U"FtBisyl");
-		if (! includePeripheral) OTMulti_removeConstraint (me.get(), U"Peripheral");
+		if (! includeFootBimoraic)
+			OTMulti_removeConstraint (me.get(), U"FtBimor");
+		if (! includeFootBisyllabic)
+			OTMulti_removeConstraint (me.get(), U"FtBisyl");
+		if (! includePeripheral)
+			OTMulti_removeConstraint (me.get(), U"Peripheral");
 		if (nonfinalityConstraint == 1) {
 			OTMulti_removeConstraint (me.get(), U"MainNonfinal");
 			OTMulti_removeConstraint (me.get(), U"HeadNonfinal");

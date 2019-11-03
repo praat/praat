@@ -343,7 +343,7 @@ autoResultsMFC ResultsMFC_create (integer numberOfTrials) {
 	try {
 		autoResultsMFC me = Thing_new (ResultsMFC);
 		my numberOfTrials = numberOfTrials;
-		my result = NUMvector <structTrialMFC> (1, my numberOfTrials);
+		my result = newvectorzero <structTrialMFC> (my numberOfTrials);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ResultsMFC not created.");
