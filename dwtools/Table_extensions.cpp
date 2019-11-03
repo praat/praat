@@ -65,48 +65,52 @@ static void Table_columnExtremaFromSelectedRows (Table me, integer column, const
 }
 
 /*
-The Peterson & Barney data were once (1991) obtained by me (djmw) as a compressed tar-file
-by anonymous ftp from ftp://linc.cis.upenn.edu/pub,
-However, this site appears no longer to be an anonymous ftp site.
-The compressed tar file contained two files: a header file 'pb.header'
-and a data file 'verified_pb.data'.
-The header file reads:
+	The Peterson & Barney data were once (1991) obtained by me (djmw) as a compressed tar-file
+	by anonymous ftp from ftp://linc.cis.upenn.edu/pub,
+	However, this site appears no longer to be an anonymous ftp site.
+	The compressed tar file contained two files: a header file 'pb.header'
+	and a data file 'verified_pb.data'.
+	The header file reads:
 
-"This file contains the vowel formant data reported by Gordon E.
-Peterson and Harold L. Barney in their classic paper, "Control methods
-used in a study of the vowels", JASA 24(2) 175-184, 1952. This data
-was supplied in printed form by Ignatius Mattingly, April, 1990.
+	"This file contains the vowel formant data reported by Gordon E.
+	Peterson and Harold L. Barney in their classic paper, "Control methods
+	used in a study of the vowels", JASA 24(2) 175-184, 1952. This data
+	was supplied in printed form by Ignatius Mattingly, April, 1990.
 
-The data consists of the formant values F0, F1, F2, and F3 for each of
-two repetitions of ten vowels by 76 speakers (1520 utterances). The
-vowels were pronounced in isolated words consisting of hVd. Of the
-speakers, 33 were men, 28 were women and 15 were children. Dr.
-Mattingly reported that he obtained from G. Peterson the information
-that children speakers 62, 63, 65, 66, 67, 68, 73 and 76 were female.
+	The data consists of the formant values F0, F1, F2, and F3 for each of
+	two repetitions of ten vowels by 76 speakers (1520 utterances). The
+	vowels were pronounced in isolated words consisting of hVd. Of the
+	speakers, 33 were men, 28 were women and 15 were children. Dr.
+	Mattingly reported that he obtained from G. Peterson the information
+	that children speakers 62, 63, 65, 66, 67, 68, 73 and 76 were female.
 
-The data are organized by speaker type, speaker, and vowel into 1520
-lines of 8 fields. The fields are: Speaker Type, Speaker Number,
-Phoneme Number, Phoneme Label, F0, F1, F2 and F3. The speaker types
-are type 1 (men), type 2 (women) and type 3 (children)."
+	The data are organized by speaker type, speaker, and vowel into 1520
+	lines of 8 fields. The fields are: Speaker Type, Speaker Number,
+	Phoneme Number, Phoneme Label, F0, F1, F2 and F3. The speaker types
+	are type 1 (men), type 2 (women) and type 3 (children)."
 */
 
 autoTable Table_create_petersonBarney1952 () {
 	integer nrows = 1520, ncols = 9;
 	conststring32 columnLabels [9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
 	conststring32 type [3] = {U"m", U"w", U"c"};
-	// Wrong order before 20080125
-	//	char32 *vowel [10] = {U"iy", U"ih", U"eh", U"ae", U"aa", U"ao", U"uh", U"uw", U"ah", U"er"};
-	//	char32 *ipa [10] = {U"i", U"\\ic", U"\\ep", U"\\ae", U"\\as", U"\\ct", U"\\hs", U"u",
-	//		U"\\vt", U"\\er\\hr"};
+	/*
+		Wrong order before 20080125
+		char32 *vowel [10] = {U"iy", U"ih", U"eh", U"ae", U"aa", U"ao", U"uh", U"uw", U"ah", U"er"};
+		char32 *ipa [10] = {U"i", U"\\ic", U"\\ep", U"\\ae", U"\\as", U"\\ct", U"\\hs", U"u",
+			U"\\vt", U"\\er\\hr"};
+	*/
 	conststring32 vowel [10] = {U"iy", U"ih", U"eh", U"ae", U"ah", U"aa", U"ao", U"uh", U"uw", U"er"};
-	// Watrous IPA symbols
-	//	char32 *ipa [10] = {U"i", U"\\ic", U"e", U"\\ae", U"\\vt", U"\\as", U"o", U"\\hs", U"u", U"\\er"};
+	/*
+		Watrous IPA symbols
+		char32 *ipa [10] = {U"i", U"\\ic", U"e", U"\\ae", U"\\vt", U"\\as", U"o", U"\\hs", U"u", U"\\er"};
+	*/
 	// P& B IPA symbols
 	conststring32 ipa [10] = {U"i", U"\\ic", U"\\ef", U"\\ae", U"\\vt", U"\\as", U"\\ct", U"\\hs", U"u", U"\\er\\hr"};
 	conststring32 sex [2] = {U"m", U"f"};
 	struct pbdatum {
-		short star; /* was there a * in front of the vowel-type? */
-		short f [4];	/* f0, f1, f2, f3 */
+		short star; // was there a * in front of the vowel-type?
+		short f [4];	// f0, f1, f2, f3
 	} pbdata [] = {
 		{0, {160, 240, 2280, 2850}},
 		{0, {186, 280, 2400, 2790}},
@@ -1679,23 +1683,23 @@ autoTable Table_create_polsVanNierop1973 () {
 	conststring32 ipa [12] = {U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
 	conststring32 sex [2] = {U"m", U"f"};
 	struct polsdatum {
-		short f [3]; /* frequency F1, F2, F3 */
-		short l [3];	/* level f1, f2, f3 */
+		short f [3]; // frequency F1, F2, F3
+		short l [3];	// level f1, f2, f3
 	} polsdata [] = {
 		/* 50*12 males */
 		/* male 1 */
-		{{320,  630,  2560},  {6,  13,  48}}, /* poet */
-		{{780, 1300,  2460},  {6,   8,  30}},	/* paat */
-		{{500,  940,  2420},  {3,  12,  35}},	/* poot */
-		{{720, 1060,  2420},  {3,   8,  27}},	/* pat */
-		{{430, 1580,  2260},  {2,  24,  36}},	/* peut */
-		{{280, 2300,  2780}, {14,  22,  27}},	/* piet */
-		{{320, 1680,  2140},  {6,  23,  30}},	/* puut */
-		{{420, 2000,  2620},  {5,  20,  23}},	/* peet */
-		{{420, 1540,  2380},  {4,  19,  24}},	/* put */
-		{{600, 1720,  2700},  {3,  17,  29}},	/* pet */
-		{{520, 1000,  2520},  {4,  13,  31}},	/* pot */
-		{{350, 2000,  2520},  {7,  19,  18}},	/* pit */
+		{{320,  630,  2560},  {6,  13,  48}}, 	// poet
+		{{780, 1300,  2460},  {6,   8,  30}},	// paat
+		{{500,  940,  2420},  {3,  12,  35}},	// poot
+		{{720, 1060,  2420},  {3,   8,  27}},	// pat
+		{{430, 1580,  2260},  {2,  24,  36}},	// peut
+		{{280, 2300,  2780}, {14,  22,  27}},	// piet
+		{{320, 1680,  2140},  {6,  23,  30}},	// puut
+		{{420, 2000,  2620},  {5,  20,  23}},	// peet
+		{{420, 1540,  2380},  {4,  19,  24}},	// put
+		{{600, 1720,  2700},  {3,  17,  29}},	// pet
+		{{520, 1000,  2520},  {4,  13,  31}},	// pot
+		{{350, 2000,  2520},  {7,  19,  18}},	// pit
 		/* male 2 */
 		{{440,  780,  2600},  {7,  20,  35}},
 		{{940, 1300,  2780},  {5,  13,  26}},
@@ -2334,23 +2338,23 @@ autoTable Table_create_polsVanNierop1973 () {
 		{{380,  800,  2560},  {7,  11,  25}},
 		{{360, 1740,  2260},  {5,  14,  17}},
 		/* 25*12 females */
-		{{250,  800, 2450},  {0,  8, 45}},	/* poet */
-		{{950, 1500, 2650},  {5, 14, 30}},	/* paat */
-		{{500, 1050, 2600},  {3,  5, 38}},	/* poot */
-		{{720, 1100, 2950},  {8,  2, 24}},	/* pat */
-		{{500, 1800, 2500},  {6, 14, 30}},	/* peut */
-		{{280, 2500, 3100},  {0, 32, 26}},	/* piet */
-		{{250, 1700, 2200},  {0, 18, 21}},	/* puut */
-		{{500, 2350, 2750},  {2, 12, 12}},	/* peet */
-		{{520, 1550, 2400},  {4, 15, 27}},	/* put */
-		{{750, 2000, 2600},  {4, 20, 20}},	/* pet */
-		{{550,  900, 2800},  {6,  3, 34}},	/* pot */
-		{{480, 2150, 2650},  {5, 20, 22}},	/* pit */
+		{{250,  800, 2450},  {0,  8, 45}},	// poet
+		{{950, 1500, 2650},  {5, 14, 30}},	// paat
+		{{500, 1050, 2600},  {3,  5, 38}},	// poot
+		{{720, 1100, 2950},  {8,  2, 24}},	// pat
+		{{500, 1800, 2500},  {6, 14, 30}},	// peut
+		{{280, 2500, 3100},  {0, 32, 26}},	// piet
+		{{250, 1700, 2200},  {0, 18, 21}},	// puut
+		{{500, 2350, 2750},  {2, 12, 12}},	// peet
+		{{520, 1550, 2400},  {4, 15, 27}},	// put
+		{{750, 2000, 2600},  {4, 20, 20}},	// pet
+		{{550,  900, 2800},  {6,  3, 34}},	// pot
+		{{480, 2150, 2650},  {5, 20, 22}},	// pit
 		/* female 2 */
 		{{300,  750, 2700},  {0, 10, 50}},
-		{{1100, 1500, 3000},  {6,  9, 28}}, /* djmw 20021212 L3 (was 20) */
+		{{1100, 1500, 3000},  {6,  9, 28}}, // djmw 20021212 L3 (was 20)
 		{{520,  900, 2800},  {2,  8, 30}},
-		{{800, 1150, 3000},  {2, 12, 34}}, /* djmw 20021212 F3 (was 300 in Van Nierop data!)*/
+		{{800, 1150, 3000},  {2, 12, 34}}, // djmw 20021212 F3 (was 300 in Van Nierop data!)
 		{{450, 1600, 2950},  {2, 22, 31}},
 		{{250, 2700, 3300},  {0, 27, 31}},
 		{{300, 1900, 2650},  {0, 23, 33}},
@@ -2399,17 +2403,17 @@ autoTable Table_create_polsVanNierop1973 () {
 		{{600, 1200, 2850},  {3, 17, 23}},
 		{{490, 1950, 2900},  {2, 29, 28}},
 		/* female 6 */
-		{{300,  750, 2350},  {2,  8, 37}}, /* djmw 20021212 L2 (was  0) */
+		{{300,  750, 2350},  {2,  8, 37}}, // djmw 20021212 L2 (was  0)
 		{{950, 1400, 2400},  {2, 12, 23}},
-		{{650, 1100, 2200},  {4,  8, 34}}, /* djmw 20021212 L2 (was  0) */
-		{{900, 1100, 2600},  {2,  6, 26}}, /* djmw 20021212 L3 (was 20) */
-		{{490, 1700, 2400},  {1, 18, 24}}, /* djmw 20021212 L2 (was 14) */
+		{{650, 1100, 2200},  {4,  8, 34}}, // djmw 20021212 L2 (was  0)
+		{{900, 1100, 2600},  {2,  6, 26}}, // djmw 20021212 L3 (was 20)
+		{{490, 1700, 2400},  {1, 18, 24}}, // djmw 20021212 L2 (was 14)
 		{{300, 2500, 2800},  {0, 16, 21}},
 		{{300, 1800, 2400},  {0, 10, 14}},
 		{{470, 2400, 2750},  {2, 17, 19}},
-		{{570, 1750, 2550},  {0, 17, 18}}, /* djmw 20021212 L3 (was 19) */
+		{{570, 1750, 2550},  {0, 17, 18}}, // djmw 20021212 L3 (was 19)
 		{{700, 1750, 2400},  {0, 10, 16}},
-		{{600, 1200, 2500},  {0, 18, 28}}, /* djmw 20021212 L2,3 (was 10,20) */
+		{{600, 1200, 2500},  {0, 18, 28}}, // djmw 20021212 L2,3 (was 10,20)
 		{{440, 2250, 2700},  {0, 17, 18}},
 		/* female 7 */
 		{{350,  850, 2600},  { -1, 16, 38}},
@@ -2419,10 +2423,10 @@ autoTable Table_create_polsVanNierop1973 () {
 		{{440, 1800, 2500},  {0, 24, 30}},
 		{{300, 2300, 3000},  { -1, 22, 30}},
 		{{350, 1850, 2400},  { -1, 23, 27}},
-		{{460, 2400, 2900},  {1, 28, 30}}, /* djmw 20021212 L2 (was 20) */
+		{{460, 2400, 2900},  {1, 28, 30}}, // djmw 20021212 L2 (was 20)
 		{{490, 1650, 2700},  {1, 22, 28}},
-		{{650, 1700, 2750},  {2, 28, 28}}, /* djmw 20021212 L2 (was 20) */
-		{{450,  700, 3000},  {6,  2, 33}}, /* djmw 20021212 L2 (was  8) */
+		{{650, 1700, 2750},  {2, 28, 28}}, // djmw 20021212 L2 (was 20)
+		{{450,  700, 3000},  {6,  2, 33}}, // djmw 20021212 L2 (was  8)
 		{{440, 2550, 3000},  {1, 40, 41}},
 		/* female 8 */
 		{{350, 1000, 2500},  {2, 19, 40}},
@@ -2471,8 +2475,8 @@ autoTable Table_create_polsVanNierop1973 () {
 		{{500, 1800, 2550},  {3, 17, 24}},
 		{{250, 2400, 3100},  {0, 27, 35}},
 		{{250, 2000, 3650},  {0, 30, 36}},
-		{{420, 2400, 2900},  {5, 28, 31}}, /* djmw 20021212 L2,3 (was 20,34) */
-		{{470, 1700, 2500},  {4, 26, 37}}, /* djmw 20021212 L2 (was 20) */
+		{{420, 2400, 2900},  {5, 28, 31}}, // djmw 20021212 L2,3 (was 20,34)
+		{{470, 1700, 2500},  {4, 26, 37}}, // djmw 20021212 L2 (was 20)
 		{{700, 1880, 2650},  {2, 21, 26}},
 		{{650,  900, 2650},  {5,  4, 33}},
 		{{490, 2250, 2650},  {3, 22, 26}},
@@ -2542,20 +2546,20 @@ autoTable Table_create_polsVanNierop1973 () {
 		{{450,  750, 2850},  {4,  2, 38}},
 		{{440, 2200, 2900},  {0, 30, 29}},
 		/* female 17 */
-		{{320,  850, 2500},  {0, 18, 50}}, /* djmw 20021212 L2 (was 10) */
+		{{320,  850, 2500},  {0, 18, 50}}, // djmw 20021212 L2 (was 10)
 		{{1100, 1350, 2900},  {7,  9, 25}},
-		{{450,  900, 2600},  {2,  8, 39}}, /* djmw 20021212 L3 (was 30) */
+		{{450,  900, 2600},  {2,  8, 39}}, // djmw 20021212 L3 (was 30)
 		{{800, 1200, 2800},  {2, 14, 32}},
 		{{480, 1800, 2500},  {2, 24, 29}},
 		{{300, 2600, 3000},  {0, 32, 32}},
 		{{300, 1900, 2400},  {0, 25, 28}},
 		{{460, 2300, 2900},  {2, 26, 29}},
-		{{480, 1800, 2650},  {2, 27, 28}}, /* djmw 20021212 L3 (was 20) */
+		{{480, 1800, 2650},  {2, 27, 28}}, // djmw 20021212 L3 (was 20)
 		{{650, 1850, 3000},  {4, 22, 34}},
 		{{550,  800, 2850},  {4,  4, 30}},
-		{{470, 2200, 3000},  {2, 28, 33}}, /* djmw 20021212 L2 (was 20) */
+		{{470, 2200, 3000},  {2, 28, 33}}, // djmw 20021212 L2 (was 20)
 		/* female 18 */
-		{{350,  750, 2550},  {0, 14, 48}}, /* djmw 20021212 L3 (was 40) */
+		{{350,  750, 2550},  {0, 14, 48}}, // djmw 20021212 L3 (was 40)
 		{{1050, 1700, 2850},  {0, 14, 22}},
 		{{550, 1000, 2600},  {3,  4, 32}},
 		{{750, 1150, 2950},  {5,  3, 30}},
@@ -2644,9 +2648,9 @@ autoTable Table_create_polsVanNierop1973 () {
 		{{520, 1800, 2450},  {3, 22, 23}},
 		{{650, 2100, 2800},  {2, 14, 13}},
 		{{550, 1100, 3900},  {2, 11, 32}},
-		{{510, 2350, 2950},  {1, 24, 23}}, /* djmw 20021212 L3 (was 33) */
+		{{510, 2350, 2950},  {1, 24, 23}}, // djmw 20021212 L3 (was 33)
 		/* female 25 */
-		{{300,  800, 3700},  {0, 13, 50}}, /* djmw 20021212 L2 (was 17) */
+		{{300,  800, 3700},  {0, 13, 50}}, // djmw 20021212 L2 (was 17)
 		{{1000, 1450, 2650},  {4,  7, 24}},
 		{{550, 1000, 2850},  {8, 10, 43}},
 		{{750, 1050, 3000},  {2,  6, 33}},
@@ -2692,8 +2696,10 @@ autoTable Table_create_weenink1983 () {
 	integer nrows = 360, ncols = 9;
 	conststring32 columnLabels [9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
 	conststring32 type [3] = {U"m", U"w", U"c"};
-	/* Our order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e"
-		to Pols & van Nierop order */
+	/*
+		Our vowel order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e".
+		To Pols & van Nierop order
+	*/
 	int order [13] = { 0, 1, 5, 3, 4, 7, 9, 8, 11, 6, 12, 2, 10};
 	conststring32 vowel [13] = {U"", U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
 	conststring32 ipa [13] = {U"", U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
@@ -3132,7 +3138,9 @@ autoTable Table_create_weenink1983 () {
 	}
 }
 
-// Keating& Esposito (2006), 
+/*
+	P.A. Keating & C. Esposito (2006): "Linguistic voice quality." UCLA Working Papers in Phonetics 105: 85-91.
+*/
 autoTable Table_create_esposito2006 () {
 	try {
 		autoTable me = Table_createWithColumnNames (10, U"Language Modal Breathy");
@@ -3172,6 +3180,10 @@ autoTable Table_create_esposito2006 () {
 	}
 }
 
+/*
+	W.F. Ganong III (1980): "Phonetic categorization in auditory word perception." Journal of Experimental Psychology: 
+		Human Perception and Performance 6: 110-125.
+*/
 autoTable Table_create_ganong1980 () {
 	try {
 		autoTable me = Table_createWithColumnNames (6, U"VOT dash-tash dask-task");
