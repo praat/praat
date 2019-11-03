@@ -59,7 +59,7 @@ Thing_implement (WarpingPath, Daata, 0);
 autoWarpingPath WarpingPath_create (integer length) {
 	try {
 		autoWarpingPath me = Thing_new (WarpingPath);
-		my path = NUMvector<structPairOfInteger> (1, length);
+		my path = newvectorzero <structPairOfInteger> (length);
 		my _capacity = my pathLength = length;
 		return me;
 	} catch (MelderError) {
@@ -114,9 +114,8 @@ integer WarpingPath_getColumnsFromRowIndex (WarpingPath me, integer iy, integer 
 			if (my path [i]. y < iy) {
 				continue;
 			} else if (my path [i]. y == iy) {
-				if (ix1 == 0) {
+				if (ix1 == 0)
 					ix1 = my path [i]. x;
-				}
 				ix2 = my path [i]. x;
 			} else {
 				break;
