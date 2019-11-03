@@ -78,8 +78,7 @@
 		for (integer _i = 1; _i <= _size; _i ++) { \
 			if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
 		} \
-	} \
-}
+	}
 
 #define oo_OBJECT(Class, version, x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
