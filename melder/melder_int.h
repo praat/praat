@@ -93,5 +93,42 @@ struct MelderIntegerRange {
 	}
 };
 
+template <typename T>
+void Melder_clipLeft (T minimum, T *var) {
+	if (*var < minimum)
+		*var = minimum;
+}
+
+template <typename T>
+T Melder_clippedLeft (T minimum, T var) {
+	return std::max (minimum, var);
+}
+
+template <typename T>
+void Melder_clipRight (T *var, T maximum) {
+	if (*var > maximum)
+		*var = maximum;
+}
+
+template <typename T>
+T Melder_clippedRight (T var, T maximum) {
+	return std::min (var, maximum);
+}
+
+template <typename T>
+void Melder_clip (T minimum, T *var, T maximum) {
+	Melder_assert (maximum >= minimum);
+	if (*var < minimum)
+		*var = minimum;
+	else if (*var > maximum)
+		*var = maximum;
+}
+
+template <typename T>
+T Melder_clipped (T minimum, T var, T maximum) {
+	Melder_assert (maximum >= minimum);
+	return std::max (minimum, std::min (var, maximum));
+}
+
 /* End of file melder_int.h */
 #endif

@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 
 #include "Sound.h"
 #include "Preferences.h"
-
-
 #include "../external/portaudio/portaudio.h"
 
 #if defined (macintosh)
@@ -111,7 +109,7 @@ static int portaudioStreamCallback (
 	struct Sound_recordFixedTime_Info *info = (struct Sound_recordFixedTime_Info *) void_info;
 	unsigned long samplesLeft = info -> numberOfSamples - info -> numberOfSamplesRead;
 	if (samplesLeft > 0) {
-		unsigned long dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
+		unsigned long dsamples = std::min (samplesLeft, frameCount);
 		memcpy (info -> buffer + 1 + info -> numberOfSamplesRead, input, 2 * dsamples);
 		info -> numberOfSamplesRead += dsamples;
 		short *input2 = (short*) input;
@@ -162,7 +160,6 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			(void) gain;
 			(void) balance;
 		#elif defined (linux)
-			#define min(a,b) a > b ? b : a
 			int dev_mask;
 			int fd_mixer = -1;
 			int val;
@@ -178,21 +175,25 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		bool supportsSamplingFrequency = true;
 		if (inputUsesPortAudio) {
 			#if defined (macintosh)
-				if (sampleRate != 44100 && sampleRate != 48000 && sampleRate != 96000) supportsSamplingFrequency = false;
+				if (sampleRate != 44100 && sampleRate != 48000 && sampleRate != 96000)
+					supportsSamplingFrequency = false;
 			#endif
 		} else {
 			#if defined (macintosh)
-				if (sampleRate != 44100) supportsSamplingFrequency = false;
+				if (sampleRate != 44100)
+					supportsSamplingFrequency = false;
 			#elif defined (linux)
 				if (sampleRate != 8000 && sampleRate != 11025 &&
 						sampleRate != 16000 && sampleRate != 22050 &&
 						sampleRate != 32000 && sampleRate != 44100 &&
-						sampleRate != 48000) supportsSamplingFrequency = false;
+						sampleRate != 48000)
+					supportsSamplingFrequency = false;
 			#elif defined (_WIN32)
 				if (sampleRate != 8000 && sampleRate != 11025 &&
 						sampleRate != 16000 && sampleRate != 22050 &&
 						sampleRate != 32000 && sampleRate != 44100 &&
-						sampleRate != 48000 && sampleRate != 96000) supportsSamplingFrequency = false;
+						sampleRate != 48000 && sampleRate != 96000)
+					supportsSamplingFrequency = false;
 			#endif
 		}
 		if (! supportsSamplingFrequency)
@@ -260,14 +261,14 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
 			#elif defined (linux) && ! defined (NO_AUDIO)
-				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : Melder_iround (gain * 100));  
-				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
+				val = ( gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : Melder_iround (gain * 100) );
+				balance = ( balance <= 0.0 ? 0 : balance >= 1 ? 1 : balance );
 				if (balance >= 0.5) {
 					val = (int)(((int)(val*balance/(1-balance)) << 8) | val);
 				} else {
 					val = (int)(val | ((int)(val*(1-balance)/balance) << 8));
 				}
-				val = (int)((min(2-2*balance,1))*val) | ((int)((min(2*balance,1))*val) << 8);
+				val = (int)((std::min(2.0-2.0*balance,1.0))*val) | ((int)((std::min(2.0*balance,1.0))*val) << 8);
 				if (inputSource == 1) {			
 					/* MIC */		       
 					if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_MIC), & val) == -1)
@@ -339,7 +340,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		numberOfSamples = Melder_iround (sampleRate * duration);
 		if (numberOfSamples < 1)
 			Melder_throw (U"Duration too short.");
-		autoNUMvector <short> buffer (1, numberOfSamples * (fakeMonoByStereo ? 2 : 1));
+		autovector<short> buffer = newvectorzero<short> (numberOfSamples * (fakeMonoByStereo ? 2 : 1));
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);   // STEREO BUG
 		Melder_assert (my nx == numberOfSamples);
 
@@ -360,7 +361,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 			info. numberOfSamples = numberOfSamples;
 			info. numberOfSamplesRead = 0;
-			info. buffer = buffer.peek();
+			info. buffer = buffer.begin();
 			PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, nullptr,
 				sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) & info);
 			if (err)
@@ -434,13 +435,13 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 				my z [1] [i] = ((integer) buffer [i + i - 1] + buffer [i + i]) * (1.0 / 65536);
 		else if (mulaw)
 			for (i = 1; i <= numberOfSamples; i ++)
-				my z [1] [i] = ulaw2linear [((unsigned char *) buffer.peek()) [i]] * (1.0 / 32768);
+				my z [1] [i] = ulaw2linear [((unsigned char *) buffer.begin()) [i]] * (1.0 / 32768);
 		else if (can16bit)
 			for (i = 1; i <= numberOfSamples; i ++)
 				my z [1] [i] = buffer [i] * (1.0 / 32768);
 		else
 			for (i = 1; i <= numberOfSamples; i ++)
-				my z [1] [i] = ((int) ((unsigned char *) buffer.peek()) [i + 1] - 128) * (1.0 / 128);
+				my z [1] [i] = ((int) ((unsigned char *) buffer.begin()) [i + 1] - 128) * (1.0 / 128);
 
 		/* Close the audio device. */
 
@@ -463,15 +464,20 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 		return me;
 	} catch (MelderError) {
 		if (inputUsesPortAudio) {
-			if (portaudioStream) Pa_StopStream (portaudioStream);
-			if (portaudioStream) Pa_CloseStream (portaudioStream);
+			if (portaudioStream)
+				Pa_StopStream (portaudioStream);
+			if (portaudioStream)
+				Pa_CloseStream (portaudioStream);
 		} else {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
-				if (hWaveIn != 0) waveInClose (hWaveIn);
+				if (hWaveIn != 0)
+					waveInClose (hWaveIn);
 			#else
-				if (fd_mixer != -1) close (fd_mixer);
-				if (fd != -1) close (fd);
+				if (fd_mixer != -1)
+					close (fd_mixer);
+				if (fd != -1)
+					close (fd);
 			#endif
 		}
 		Melder_throw (U"Sound not recorded.");
@@ -485,17 +491,17 @@ static struct SoundPlay {
 	double tmin, tmax, dt, t1;
 	Sound_PlayCallback callback;
 	Thing boss;
-	int16 *buffer;
+	autovector <int16> outputBuffer;
 } thePlayingSound;
 
 static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct SoundPlay *me = (struct SoundPlay *) closure;
 	int phase = 2;
-	double t = samplesPlayed <= my silenceBefore ? my tmin :
-		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
-		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
+	double t = ( samplesPlayed <= my silenceBefore ? my tmin :
+			samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
+			my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt );
 	if (! MelderAudio_isPlaying) {
-		NUMvector_free (my buffer, 1), my buffer = nullptr;
+		my outputBuffer.reset();   // get a bit of privacy
 		phase = 3;
 	}
 	if (my callback)
@@ -512,7 +518,8 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 			double *fromLeft = & my z [1] [0], *fromRight = ( my ny > 1 ? & my z [2] [0] : nullptr );
 			MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 			integer i1, i2;
-			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;
+			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1)
+				return;
 			thy tmin = tmin;
 			thy tmax = tmax;
 			thy dt = my dx;
@@ -522,33 +529,33 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 			thy silenceBefore = Melder_iroundTowardsZero (ifsamp * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = Melder_iroundTowardsZero (ifsamp * MelderAudio_getOutputSilenceAfter ());
 			integer numberOfChannels = my ny;
-			NUMvector_free (thy buffer, 1);   // just in case
-			thy buffer = NUMvector <short> (1, (i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels);
+			thy outputBuffer = newvectorzero <int16> ((i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels);
 			thy i1 = i1;
 			thy i2 = i2;
-			short *to = thy buffer + thy silenceBefore * numberOfChannels;
+			int16 *to = & thy outputBuffer [0] + thy silenceBefore * numberOfChannels;
 			if (numberOfChannels > 2) {
 				for (integer i = i1; i <= i2; i ++) {
 					for (integer chan = 1; chan <= my ny; chan ++) {
 						integer value = Melder_iround_tieDown (my z [chan] [i] * 32768.0);
-						* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+						* ++ to = (int16) Melder_clipped (integer (-32768), value, integer (+32767));
 					}
 				}
 			} else if (numberOfChannels == 2) {
 				for (integer i = i1; i <= i2; i ++) {
 					integer valueLeft = Melder_iround_tieDown (fromLeft [i] * 32768.0);
-					* ++ to = valueLeft < -32768 ? -32768 : valueLeft > 32767 ? 32767 : valueLeft;
+					* ++ to = (int16) Melder_clipped (integer (-32768), valueLeft, integer (+32767));
 					integer valueRight = Melder_iround_tieDown (fromRight [i] * 32768.0);
-					* ++ to = valueRight < -32768 ? -32768 : valueRight > 32767 ? 32767 : valueRight;
+					* ++ to = (int16) Melder_clipped (integer (-32768), valueRight, integer (+32767));
 				}
 			} else {
 				for (integer i = i1; i <= i2; i ++) {
 					integer value = Melder_iround_tieDown (fromLeft [i] * 32768.0);
-					* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+					* ++ to = (int16) Melder_clipped (integer (-32768), value, integer (+32767));
 				}
 			}
-			if (thy callback) thy callback (thy boss, 1, tmin, tmax, tmin);
-			MelderAudio_play16 (thy buffer + 1, ifsamp,
+			if (thy callback)
+				thy callback (thy boss, 1, tmin, tmax, tmin);
+			MelderAudio_play16 (thy outputBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), ifsamp,
 				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound part = Sound_extractPart (me, tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, true);

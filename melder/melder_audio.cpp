@@ -998,7 +998,7 @@ void context_state_cb (pa_context *context, void *userdata) {
 }
 #endif
 
-void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
+void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, integer numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed), void *playClosure)
 {
 	struct MelderPlay *me = & thePlay;

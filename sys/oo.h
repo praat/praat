@@ -175,6 +175,7 @@
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + (int) setType::MAX];
 #define oo_STRUCT_VECTOR(Type,x,size)  Type x;
+#define oo_STRUCTVEC(Type,x,size)   autovector <struct##Type> x;
 
 #define oo_OBJECT(Class,version,x)  auto##Class x;
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  Class<struct##ItemClass> x;

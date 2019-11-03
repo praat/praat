@@ -1,6 +1,6 @@
 /* Pitch_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2014-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,48 +19,87 @@
 #include "Pitch_Intensity.h"
 
 static void Pitch_getExtrema (Pitch me, double *minimum, double *maximum) {
-	*minimum = 1e308, *maximum = -1e308;
+	MelderExtremaWithInit extrema;
 	for (integer i = 1; i <= my nx; i ++) {
-		double frequency = my frame [i]. candidate [1]. frequency;
-		if (frequency == 0.0) continue;   // voiceless
-		if (frequency < *minimum) *minimum = frequency;
-		if (frequency > *maximum) *maximum = frequency;
+		const double frequency = my frame [i]. candidate [1]. frequency;
+		if (frequency == 0.0)
+			continue;   // voiceless
+		extrema.update (frequency);
 	}
-	if (*maximum == -1e308) *maximum = 0.0;
-	if (*minimum == 1e308) *minimum = 0.0;
+	if (extrema.isValid()) {
+		*minimum = extrema.min;
+		*maximum = extrema.max;
+	} else {
+		*minimum = *maximum = 0.0;
+	}
 }
 
-void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
+void Pitch_Intensity_draw (Pitch pitchObject, Intensity intensityObject, Graphics g,
 	double f1, double f2, double s1, double s2, bool garnish, int connect)
 {
-	if (f2 <= f1) Pitch_getExtrema (pitch, & f1, & f2);
-	if (f1 == 0.0) return;   // all voiceless
-	if (f1 == f2) { f1 -= 1.0; f2 += 1.0; }
-	if (s2 <= s1) Matrix_getWindowExtrema (intensity, 0, 0, 1, 1, & s1, & s2);
-	if (s1 == s2) { s1 -= 1.0; s2 += 1.0; }
+	if (f1 == f2)
+		Pitch_getExtrema (pitchObject, & f1, & f2);   // autowindow
+	if (f1 == 0.0)   // all voiceless?
+		return;
+	if (f1 == f2) {
+		f1 -= 1.0;
+		f2 += 1.0;
+	}
+	if (s1 == s2)
+		Matrix_getWindowExtrema (intensityObject, 0, 0, 1, 1, & s1, & s2);   // autowindow
+	if (s1 == s2) {
+		s1 -= 1.0;
+		s2 += 1.0;
+	}
 	Graphics_setWindow (g, f1, f2, s1, s2);
 	Graphics_setInner (g);
-	double previousX = undefined;
-	double previousY = undefined;
-	integer previousI = 0;
-	for (integer i = 1; i <= pitch -> nx; i ++) {
-		double t = Sampled_indexToX (pitch, i);
-		double x = pitch -> frame [i]. candidate [1]. frequency;
-		double y = Sampled_getValueAtX (intensity, t, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, true);
-		if (x == 0) {
-			continue;   // voiceless
-		}
-		if (connect & 1) Graphics_speckle (g, x, y);
-		if ((connect & 2) && isdefined (previousX)) {
-			if (previousI >= 1 && previousI < i - 1) {
+	double previousPitchValue = undefined;
+	double previousIntensityValue = undefined;
+	integer previousPitchFrameNumber = 0;
+	for (integer ipitchFrame = 1; ipitchFrame <= pitchObject -> nx; ipitchFrame ++) {
+		/*
+			Get pitch value.
+		*/
+		const bool pitchMeasurementWillBeValid = Pitch_isVoiced_i (pitchObject, ipitchFrame);
+		if (! pitchMeasurementWillBeValid)
+			continue;   // voiceless -> don't draw
+		Pitch_Frame pitchFrame = & pitchObject -> frame [ipitchFrame];
+		constexpr integer winningPitchCandidateNumber = 1;
+		const double pitchValue = pitchFrame -> candidate [winningPitchCandidateNumber]. frequency;
+		/*
+			Get the corresponding intensity value.
+			"Corresponding" means: measure the intensity at the same time as the pitch.
+		*/
+		const double time = Sampled_indexToX (pitchObject, ipitchFrame);
+		constexpr integer onlyIntensityChannel = 1;
+		constexpr integer defaultUnit = 0;
+		const double intensityValue = Sampled_getValueAtX (intensityObject, time, onlyIntensityChannel, defaultUnit, true);
+		const bool intensityMeasurementIsValid = isdefined (intensityValue);
+		if (! intensityMeasurementIsValid)
+			continue;   // no intensity measured, e.g. at the edges of the time domain -> don't draw
+		/*
+			Draw.
+		*/
+		constexpr integer shouldSpeckle_mask = 1;
+		constexpr integer shouldCurve_mask = 2;
+		if (connect & shouldSpeckle_mask)
+			Graphics_speckle (g, pitchValue, intensityValue);
+		if ((connect & shouldCurve_mask) && isdefined (previousPitchValue)) {
+			/*
+				We draw a solid line if the previous point represented the previous frame,
+				but a dotted line if, instead, the previous frame was voiceless.
+			*/
+			if (previousPitchFrameNumber >= 1 && previousPitchFrameNumber < ipitchFrame - 1)
 				Graphics_setLineType (g, Graphics_DOTTED);
-			}
-			Graphics_line (g, previousX, previousY, x, y);
+			Graphics_line (g, previousPitchValue, previousIntensityValue, pitchValue, intensityValue);
 			Graphics_setLineType (g, Graphics_DRAWN);
 		}
-		previousX = x;
-		previousY = y;
-		previousI = i;
+		/*
+			Cycle.
+		*/
+		previousPitchValue = pitchValue;
+		previousIntensityValue = intensityValue;
+		previousPitchFrameNumber = ipitchFrame;
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -76,8 +115,8 @@ double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 	integer numberOfValidLocalMeasurements = 0;
 	double sumOfLocalValues = 0.0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
-		double t = Sampled_indexToX (me, iframe);
-		bool localMeasurentIsValid = Pitch_isVoiced_t (thee, t);
+		const double time = Sampled_indexToX (me, iframe);
+		const bool localMeasurentIsValid = Pitch_isVoiced_t (thee, time);
 		if (localMeasurentIsValid) {
 			double localValue = my z [1] [iframe];
 			sumOfLocalValues += localValue;
@@ -91,9 +130,9 @@ double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 	integer numberOfValidLocalMeasurements = 0;
 	double sumOfLocalAbsoluteSlopes = 0.0;
 	for (integer iframe = 1; iframe < my nx; iframe ++) {
-		double t1 = Sampled_indexToX (me, iframe);
-		double t2 = t1 + my dx;
-		bool localMeasurentIsValid = ( Pitch_isVoiced_t (thee, t1) && Pitch_isVoiced_t (thee, t2) );
+		const double t1 = Sampled_indexToX (me, iframe);
+		const double t2 = t1 + my dx;
+		const bool localMeasurentIsValid = ( Pitch_isVoiced_t (thee, t1) && Pitch_isVoiced_t (thee, t2) );
 		if (localMeasurentIsValid) {
 			double absoluteLocalSlope = fabs (my z [1] [iframe + 1] -  my z [1] [iframe]);
 			sumOfLocalAbsoluteSlopes += absoluteLocalSlope;

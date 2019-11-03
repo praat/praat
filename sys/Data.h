@@ -63,14 +63,14 @@ Thing_define (Daata, Thing) {
 	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                                       { return undefined; }
 	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (integer /* ix */)                       { return undefined; }
 	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (integer /* iy */)                       { return undefined; }
-	virtual bool v_hasGetRowStr    () { return false; }   virtual conststring32 v_getRowStr    (integer /* irow */)                     { return nullptr;      }
-	virtual bool v_hasGetColStr    () { return false; }   virtual conststring32 v_getColStr    (integer /* icol */)                     { return nullptr;      }
+	virtual bool v_hasGetRowStr    () { return false; }   virtual conststring32 v_getRowStr    (integer /* irow */)                     { return nullptr;   }
+	virtual bool v_hasGetColStr    () { return false; }   virtual conststring32 v_getColStr    (integer /* icol */)                     { return nullptr;   }
 	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                                       { return undefined; }
-	virtual bool v_hasGetCellStr   () { return false; }   virtual conststring32 v_getCellStr   ()                                       { return nullptr; }
+	virtual bool v_hasGetCellStr   () { return false; }   virtual conststring32 v_getCellStr   ()                                       { return nullptr;   }
 	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (integer /* irow */, integer /* icol */) { return undefined; }
-	virtual bool v_hasGetVectorStr () { return false; }   virtual conststring32 v_getVectorStr (integer /* icol */)                     { return nullptr;      }
+	virtual bool v_hasGetVectorStr () { return false; }   virtual conststring32 v_getVectorStr (integer /* icol */)                     { return nullptr;   }
 	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (integer /* irow */, integer /* icol */) { return undefined; }
-	virtual bool v_hasGetMatrixStr () { return false; }   virtual conststring32 v_getMatrixStr (integer /* irow */, integer /* icol */) { return nullptr;      }
+	virtual bool v_hasGetMatrixStr () { return false; }   virtual conststring32 v_getMatrixStr (integer /* irow */, integer /* icol */) { return nullptr;   }
 	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                                       { return undefined; }
 	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (integer /* irow */, double /* x */)     { return undefined; }
 	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double /* x */, double /* y */)         { return undefined; }

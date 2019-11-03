@@ -52,7 +52,7 @@ integer MelderAudio_getOutputBestSampleRate (integer fsamp);
 
 extern bool MelderAudio_isPlaying;
 extern bool MelderAudio_hasBeenInitialized;
-void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
+void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, integer numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed),   // return true to continue, false to stop
 	void *playClosure);
 bool MelderAudio_stopPlaying (bool isExplicit);   // returns true if sound was playing

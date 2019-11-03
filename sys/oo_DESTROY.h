@@ -88,10 +88,19 @@
 			NUMvector_free <struct##Type> (our x, 1); \
 		} \
 	}
+#define oo_STRUCTVEC(Type, x, n)  \
+{ \
+	for (integer _i = 1; _i <= our x.size; _i ++) { \
+		our x [_i]. destroy (); \
+	} \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
+	} \
+}
 
 #define oo_OBJECT(Class, version, x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		x. reset (); \
+		our x. reset (); \
 	}
 
 #define oo_COLLECTION_OF(Class, x, ItemClass, version)

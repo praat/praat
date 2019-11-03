@@ -107,6 +107,16 @@
 			} \
 		} \
 	}
+#define oo_STRUCTVEC(Type, x, n)  \
+{ \
+	integer _size = (n); \
+	if (_size >= 1) { \
+		our x = newvectorzero <struct##Type> (_size); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
+			our x [_i]. readBinary (_filePointer_, _formatVersion_); \
+		} \
+	} \
+}
 
 #define oo_OBJECT(Class, formatVersion, x)  \
 	{ \

@@ -419,7 +419,7 @@ void praat_updateSelection () {
 
 static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionChangedEvent event) {
 	Melder_assert (event -> list == praatList_objects);
-	int IOBJECT;
+	integer IOBJECT;
 	bool first = true;
 	WHERE (SELECTED) {
 		SELECTED = false;
@@ -428,22 +428,18 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
 	theCurrentPraatObjects -> totalSelection = 0;
-	integer numberOfSelected;
-	integer *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
-	if (selected) {
-		for (integer iselected = 1; iselected <= numberOfSelected; iselected ++) {
-			IOBJECT = selected [iselected];
-			SELECTED = true;
-			integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
-			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
-			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
-			UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
-			UiHistory_write_expandQuotes (FULL_NAME);
-			UiHistory_write (U"\"");
-			first = false;
-			theCurrentPraatObjects -> totalSelection += 1;
-		}
-		NUMvector_free (selected, 1);
+	autoINTVEC selected = GuiList_getSelectedPositions (praatList_objects);
+	for (integer iselected = 1; iselected <= selected.size; iselected ++) {
+		IOBJECT = selected [iselected];
+		SELECTED = true;
+		integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+		theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
+		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
+		UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
+		UiHistory_write_expandQuotes (FULL_NAME);
+		UiHistory_write (U"\"");
+		first = false;
+		theCurrentPraatObjects -> totalSelection += 1;
 	}
 	praat_show ();
 }

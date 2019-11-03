@@ -70,7 +70,8 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 		for (integer itime = itmin; itime <= itmax; itime ++) {
 			double value = my z [ifreq] [itime];   // power
 			value = (10.0/NUMln10) * log ((value + 1e-30) / 4.0e-10) + preemphasisFactor [ifreq];   // dB
-			if (value > dynamicFactor [itime]) dynamicFactor [itime] = value;   // local maximum
+			if (value > dynamicFactor [itime])
+				dynamicFactor [itime] = value;   // local maximum
 			my z [ifreq] [itime] = value;
 		}
 	}
@@ -78,7 +79,8 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	if (autoscaling) {
 		maximum = 0.0;
 		for (integer itime = itmin; itime <= itmax; itime ++)
-			if (dynamicFactor [itime] > maximum) maximum = dynamicFactor [itime];
+			if (dynamicFactor [itime] > maximum)
+				maximum = dynamicFactor [itime];
 	}
 	/* Dynamic compression in place. */
 	for (integer itime = itmin; itime <= itmax; itime ++) {
@@ -95,9 +97,9 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	);
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++)
 		for (integer itime = itmin; itime <= itmax; itime ++) {
-			double value = 4.0e-10 * exp ((my z [ifreq] [itime] - dynamicFactor [itime]
+			const double value = 4.0e-10 * exp ((my z [ifreq] [itime] - dynamicFactor [itime]
 				- preemphasisFactor [ifreq]) * (NUMln10 / 10.0)) - 1e-30;
-			my z [ifreq] [itime] = value > 0.0 ? value : 0.0;
+			my z [ifreq] [itime] = Melder_clippedLeft (0.0, value);
 		}
 }
 

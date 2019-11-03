@@ -1,6 +1,6 @@
 /* Graphics_altitude.cpp
  *
- * Copyright (C) 1992-2005,2008,2011,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011,2015-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,13 @@
 #include "Graphics.h"
 
 static int empty (constMATVU const& data, constBOOLMAT const& right, constBOOLMAT const& below, integer row1, integer col1, double height, integer row, integer col, integer ori) {
-	if (ori == 3) { row ++; ori = 1; } else if (ori == 2) { col ++; ori = 4; }
+	if (ori == 3) {
+		row ++;
+		ori = 1;
+	} else if (ori == 2) {
+		col ++;
+		ori = 4;
+	}
 	if (ori == 1)
 		return (data [row] [col] < height) != (data [row] [col + 1] < height) &&
 			! right [row - row1 + 1] [col - col1 + 1];
@@ -49,12 +55,14 @@ static int note (constMATVU const& z, double height, integer row, integer col, i
 		ori = 4;
 	}
 	if (ori == 1) {
-		if (pleaseForget) right [row - row1 + 1] [col - col1 + 1] = true;
+		if (pleaseForget)
+			right [row - row1 + 1] [col - col1 + 1] = true;
 		x [numberOfPoints] = xoff +
 			(col + (height - z [row] [col]) / (z [row] [col + 1] - z [row] [col])) * dx;
 		y [numberOfPoints] = yoff + row * dy;
 	} else {   /* ori == 4 */
-		if (pleaseForget) below [row - row1 + 1] [col - col1 + 1] = true;
+		if (pleaseForget)
+			below [row - row1 + 1] [col - col1 + 1] = true;
 		x [numberOfPoints] = xoff + col * dx;
 		y [numberOfPoints] = yoff +
 			(row + (height - z [row] [col]) / (z [row + 1] [col] - z [row] [col])) * dy;
@@ -88,10 +96,13 @@ static void makeContour (Graphics graphics, constMATVU const& z, double height, 
 			}
 			ori = (ori + 1) % 4 + 1;
 		}
-		if (! note (z, height, row, col, ori, 1)) return;
+		if (! note (z, height, row, col, ori, 1))
+			return;
 	}
-	while (edge == 0 && (row != row0 || col != col0 || ori != ori0));
-	if (closed) note (z, height, row0, col0, ori0, true);   /* Close the contour. */
+	while (edge == 0 && (row != row0 || col != col0 || ori != ori0))
+		;
+	if (closed)
+		note (z, height, row0, col0, ori0, true);   // close the contour
 	Graphics_polyline (graphics, numberOfPoints, & x [1], & y [1]);
 }
 
@@ -133,7 +144,8 @@ void Graphics_contour (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC,
 	double height)
 {
-	if (z.nrow <= 1 || z.ncol <= 1) return;
+	if (z.nrow <= 1 || z.ncol <= 1)
+		return;
 	dx = (x2WC - x1WC) / (z.ncol - 1);
 	dy = (y2WC - y1WC) / (z.nrow - 1);
 	xoff = x1WC - dx;
@@ -146,8 +158,10 @@ void Graphics_contour (Graphics me, constMATVU const& z,
 	}
 	for (row1 = 1; row1 < z.nrow; row1 += MAXALTSIDE - 1) {
 		for (col1 = 1; col1 < z.ncol; col1 += MAXALTSIDE - 1) {
-			if ((row2 = row1 + (MAXALTSIDE - 1)) > z.nrow) row2 = z.nrow;
-			if ((col2 = col1 + (MAXALTSIDE - 1)) > z.ncol) col2 = z.ncol;
+			if ((row2 = row1 + (MAXALTSIDE - 1)) > z.nrow)
+				row2 = z.nrow;
+			if ((col2 = col1 + (MAXALTSIDE - 1)) > z.ncol)
+				col2 = z.ncol;
 			smallAlt (me, z, height);
 		}
 	}
@@ -157,7 +171,8 @@ void Graphics_altitude (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC,
 	int numberOfBorders, double borders [])
 {
-	if (z.nrow <= 1 || z.ncol <= 1) return;
+	if (z.nrow <= 1 || z.ncol <= 1)
+		return;
 	dx = (x2WC - x1WC) / (z.ncol - 1);
 	dy = (y2WC - y1WC) / (z.nrow - 1);
 	xoff = x1WC - dx;
@@ -170,8 +185,10 @@ void Graphics_altitude (Graphics me, constMATVU const& z,
 	}
 	for (row1 = 1; row1 < z.nrow; row1 += MAXALTSIDE - 1) {
 		for (col1 = 1; col1 < z.ncol; col1 += MAXALTSIDE - 1) {
-			if ((row2 = row1 + (MAXALTSIDE - 1)) > z.nrow) row2 = z.nrow;
-			if ((col2 = col1 + (MAXALTSIDE - 1)) > z.ncol) col2 = z.ncol;
+			if ((row2 = row1 + (MAXALTSIDE - 1)) > z.nrow)
+				row2 = z.nrow;
+			if ((col2 = col1 + (MAXALTSIDE - 1)) > z.ncol)
+				col2 = z.ncol;
 			for (int iborder = 1; iborder <= numberOfBorders; iborder ++)
 				smallAlt (me, z, borders [iborder]);
 		}

@@ -194,10 +194,12 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 		double sharedMaximumTime = my at [1] -> xmax;
 		for (integer isound = 2; isound <= my size; isound ++) {
 			Sound sound = my at [isound];
-			if (sound -> xmin < sharedMinimumTime) sharedMinimumTime = sound -> xmin;
-			if (sound -> xmax > sharedMaximumTime) sharedMaximumTime = sound -> xmax;
+			if (sound -> xmin < sharedMinimumTime)
+				sharedMinimumTime = sound -> xmin;
+			if (sound -> xmax > sharedMaximumTime)
+				sharedMaximumTime = sound -> xmax;
 		}
-		autoNUMvector <integer> numberOfInitialZeroes (1, my size);
+		autoINTVEC numberOfInitialZeroes = newINTVECzero (my size);
 		integer sharedNumberOfSamples = 0;
 		double sumOfFirstTimes = 0.0;
 		for (integer isound = 1; isound <= my size; isound ++) {
@@ -206,7 +208,8 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 			double newFirstTime = sound -> x1 - sound -> dx * numberOfInitialZeroes [isound];
 			sumOfFirstTimes += newFirstTime;
 			integer newNumberOfSamplesThroughLastNonzero = sound -> nx + numberOfInitialZeroes [isound];
-			if (newNumberOfSamplesThroughLastNonzero > sharedNumberOfSamples) sharedNumberOfSamples = newNumberOfSamplesThroughLastNonzero;
+			if (newNumberOfSamplesThroughLastNonzero > sharedNumberOfSamples)
+				sharedNumberOfSamples = newNumberOfSamplesThroughLastNonzero;
 		}
 		double sharedTimeOfFirstSample = sumOfFirstTimes / my size;   // this is an approximation
 		autoSound thee = Sound_create (totalNumberOfChannels, sharedMinimumTime, sharedMaximumTime,
