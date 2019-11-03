@@ -203,9 +203,9 @@ void ExperimentMFC_start (ExperimentMFC me) {
 			}
 			for (integer istim = 1; istim <= my numberOfDifferentStimuli; istim ++) {
 				readSound (me, my stimulusFileNameHead.get(), my stimulusFileNameTail.get(), my stimulusMedialSilenceDuration,
-						my stimulus [istim]. name.get(), & my stimulus [istim]. sound);
-				if (my stimulus [istim]. sound -> nx > maximumStimulusSamples)
-					maximumStimulusSamples = my stimulus [istim]. sound -> nx;
+						my stimulus___ [istim]. name.get(), & my stimulus___ [istim]. sound);
+				if (my stimulus___ [istim]. sound -> nx > maximumStimulusSamples)
+					maximumStimulusSamples = my stimulus___ [istim]. sound -> nx;
 			}
 		}
 		if (my responsesAreSounds) {
@@ -221,9 +221,9 @@ void ExperimentMFC_start (ExperimentMFC me) {
 			}
 			for (integer iresp = 1; iresp <= my numberOfDifferentResponses; iresp ++) {
 				readSound (me, my responseFileNameHead.get(), my responseFileNameTail.get(), my responseMedialSilenceDuration,
-						my response [iresp]. name.get(), & my response [iresp]. sound);
-				if (my response [iresp]. sound -> nx > maximumResponseSamples)
-					maximumResponseSamples = my response [iresp]. sound -> nx;
+						my response___ [iresp]. name.get(), & my response___ [iresp]. sound);
+				if (my response___ [iresp]. sound -> nx > maximumResponseSamples)
+					maximumResponseSamples = my response___ [iresp]. sound -> nx;
 			}
 		}
 		/*
@@ -318,13 +318,13 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 }
 
 void ExperimentMFC_playStimulus (ExperimentMFC me, integer istim) {
-	playSound (me, my stimulus [istim]. sound.get(),
+	playSound (me, my stimulus___ [istim]. sound.get(),
 			my stimulusCarrierBefore. sound.get(), my stimulusCarrierAfter. sound.get(),
 			my stimulusInitialSilenceDuration, my stimulusFinalSilenceDuration);
 }
 
 void ExperimentMFC_playResponse (ExperimentMFC me, integer iresp) {
-	playSound (me, my response [iresp]. sound.get(),
+	playSound (me, my response___ [iresp]. sound.get(),
 			my responseCarrierBefore. sound.get(), my responseCarrierAfter. sound.get(),
 			my responseInitialSilenceDuration, my responseFinalSilenceDuration);
 }
@@ -343,7 +343,7 @@ autoResultsMFC ResultsMFC_create (integer numberOfTrials) {
 	try {
 		autoResultsMFC me = Thing_new (ResultsMFC);
 		my numberOfTrials = numberOfTrials;
-		my result = NUMvector <structTrialMFC> (1, my numberOfTrials);
+		my result___ = newvectorzero <structTrialMFC> (my numberOfTrials);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ResultsMFC not created.");
@@ -356,13 +356,13 @@ autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 			Melder_warning (U"The experiment was not finished. Only the first ", my trial - 1 + my pausing, U" responses are valid.");
 		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
 		for (integer trial = 1; trial <= my numberOfTrials; trial ++) {
-			const char32 *pipe = ( my stimulus [my stimuli [trial]]. visibleText ?
-					str32chr (my stimulus [my stimuli [trial]]. visibleText.get(), U'|') : nullptr );
-			thy result [trial]. stimulus = Melder_dup (Melder_cat (my stimulus [my stimuli [trial]]. name.get(), pipe));
+			const char32 *pipe = ( my stimulus___ [my stimuli [trial]]. visibleText ?
+					str32chr (my stimulus___ [my stimuli [trial]]. visibleText.get(), U'|') : nullptr );
+			thy result___ [trial]. stimulus = Melder_dup (Melder_cat (my stimulus___ [my stimuli [trial]]. name.get(), pipe));
 			//if (my responses [trial] < 1) Melder_throw (U"No response for trial ", trial, U".")
-			thy result [trial]. response = Melder_dup (my responses [trial] ? my response [my responses [trial]]. name.get() : U"");
-			thy result [trial]. goodness = my goodnesses [trial];
-			thy result [trial]. reactionTime = my reactionTimes [trial];
+			thy result___ [trial]. response = Melder_dup (my responses [trial] ? my response___ [my responses [trial]]. name.get() : U"");
+			thy result___ [trial]. goodness = my goodnesses [trial];
+			thy result___ [trial]. reactionTime = my reactionTimes [trial];
 		}
 		return thee;
 	} catch (MelderError) {
@@ -377,15 +377,15 @@ autoResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee)
 		for (integer i = 1; i <= thy numberOfTrials; i ++) {
 			bool present = false;
 			for (integer j = 1; j <= my numberOfTrials; j ++) {
-				if (str32equ (thy result [i]. stimulus.get(), my result [j]. stimulus.get())) {
+				if (str32equ (thy result___ [i]. stimulus.get(), my result___ [j]. stimulus.get())) {
 					present = true;
 					break;
 				}
 			}
 			if (present) {
 				his numberOfTrials ++;
-				his result [his numberOfTrials]. stimulus = Melder_dup (thy result [i]. stimulus.get());
-				his result [his numberOfTrials]. response = Melder_dup (thy result [i]. response.get());
+				his result___ [his numberOfTrials]. stimulus = Melder_dup (thy result___ [i]. stimulus.get());
+				his result___ [his numberOfTrials]. response = Melder_dup (thy result___ [i]. response.get());
 			}
 		}
 		if (his numberOfTrials == 0)
@@ -404,9 +404,9 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 			ResultsMFC results = my at [iresults];
 			for (integer itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
-				if (results -> result [itrial]. goodness != 0)
+				if (results -> result___ [itrial]. goodness != 0)
 					hasGoodnesses = true;
-				if (results -> result [itrial]. reactionTime != 0.0)
+				if (results -> result___ [itrial]. reactionTime != 0.0)
 					hasReactionTimes = true;
 			}
 		}
@@ -424,12 +424,12 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 			for (integer itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, results -> name.get());
-				Table_setStringValue (thee.get(), irow, 2, results -> result [itrial]. stimulus.get());
-				Table_setStringValue (thee.get(), irow, 3, results -> result [itrial]. response.get());
+				Table_setStringValue (thee.get(), irow, 2, results -> result___ [itrial]. stimulus.get());
+				Table_setStringValue (thee.get(), irow, 3, results -> result___ [itrial]. response.get());
 				if (hasGoodnesses)
-					Table_setNumericValue (thee.get(), irow, 4, results -> result [itrial]. goodness);
+					Table_setNumericValue (thee.get(), irow, 4, results -> result___ [itrial]. goodness);
 				if (hasReactionTimes)
-					Table_setNumericValue (thee.get(), irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime);
+					Table_setNumericValue (thee.get(), irow, 4 + hasGoodnesses, results -> result___ [itrial]. reactionTime);
 			}
 		}
 		return thee;
@@ -442,7 +442,7 @@ autoCategories ResultsMFC_to_Categories_stimuli (ResultsMFC me) {
 	try {
 		autoCategories thee = Categories_create ();
 		for (integer trial = 1; trial <= my numberOfTrials; trial ++) {
-			autoSimpleString category = SimpleString_create (my result [trial]. stimulus.get());
+			autoSimpleString category = SimpleString_create (my result___ [trial]. stimulus.get());
 			thy addItem_move (category.move());
 		}
 		return thee;
@@ -455,7 +455,7 @@ autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 	try {
 		autoCategories thee = Categories_create ();
 		for (integer trial = 1; trial <= my numberOfTrials; trial ++) {
-			autoSimpleString category = SimpleString_create (my result [trial]. response.get());
+			autoSimpleString category = SimpleString_create (my result___ [trial]. response.get());
 			thy addItem_move (category.move());
 		}
 		return thee;
