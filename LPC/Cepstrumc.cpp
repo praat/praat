@@ -68,7 +68,7 @@ void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, integer nt, double 
 	my samplingFrequency = samplingFrequency;
 	my maxnCoefficients = nCoefficients;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
-	my frame = NUMvector<structCepstrumc_Frame> (1, nt);
+	my frame = newvectorzero <structCepstrumc_Frame> (nt);
 }
 
 autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt, double t1,

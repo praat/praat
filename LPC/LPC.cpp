@@ -70,7 +70,7 @@ void LPC_init (LPC me, double tmin, double tmax, integer nt, double dt, double t
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
-	my d_frames = NUMvector<structLPC_Frame> (1, nt);
+	my d_frames___ = newvectorzero <structLPC_Frame> (nt);
 }
 
 autoLPC LPC_create (double tmin, double tmax, integer nt, double dt, double t1, integer predictionOrder, double samplingPeriod) {
@@ -96,7 +96,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	autoVEC gain = newVECraw (numberOfSelected);
 
 	for (integer iframe = itmin; iframe <= itmax; iframe ++)
-		gain [iframe - itmin + 1] = my d_frames [iframe]. gain;
+		gain [iframe - itmin + 1] = my d_frames___ [iframe]. gain;
 
 	if (gmax <= gmin)
 		NUMextrema (gain.get(), & gmin, & gmax);
@@ -132,7 +132,7 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
-			LPC_Frame lpc = & my d_frames [j];
+			LPC_Frame lpc = & my d_frames___ [j];
 			thy z.column (j) <<= lpc-> a.get();
 		}
 		return thee;
@@ -146,7 +146,7 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoVEC rc = newVECzero (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
-			LPC_Frame lpc = & my d_frames [j];
+			LPC_Frame lpc = & my d_frames___ [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
 			if (lpc -> nCoefficients < my maxnCoefficients)
 				rc.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
@@ -164,10 +164,11 @@ autoMatrix LPC_downto_Matrix_area (LPC me) {
 		autoVEC rc = newVECraw (my maxnCoefficients);
 		autoVEC area = newVECraw (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
-			LPC_Frame lpc = & my d_frames [j];
+			LPC_Frame lpc = & my d_frames___ [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
 			VECarea_from_rc (area.part (1, lpc -> nCoefficients), rc.part (1, lpc -> nCoefficients));
-			if (lpc -> nCoefficients < my maxnCoefficients) area.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
+			if (lpc -> nCoefficients < my maxnCoefficients)
+				area.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
 			thy z.column (j) <<= area.get();
 		}
 		return thee;
