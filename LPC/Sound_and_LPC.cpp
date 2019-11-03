@@ -381,7 +381,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	}
 
 	for (integer i = 1; i <= numberOfFrames; i ++) {
-		LPC_Frame lpcframe = & thy d_frames___ [i];
+		LPC_Frame lpcframe = & thy d_frames [i];
 		double t = Sampled_indexToX (thee.get(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
 		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
@@ -462,7 +462,7 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 				his z [1] [isamp] = 0.0;
 				continue;
 			}
-			LPC_Frame frame = & my d_frames___ [frameNumber];
+			LPC_Frame frame = & my d_frames [frameNumber];
 			const integer maximumFilterDepth = frame -> nCoefficients;
 			const integer maximumSoundDepth = isamp - 1;
 			const integer usableDepth = std::min (maximumFilterDepth, maximumSoundDepth);
@@ -508,7 +508,7 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 				his z [1] [isamp] = 0.0;
 				continue;
 			}
-			LPC_Frame const frame = & my d_frames___ [frameNumber];
+			LPC_Frame const frame = & my d_frames [frameNumber];
 			const integer maximumFilterDepth = frame -> nCoefficients;
 			const integer maximumSourceDepth = isamp - 1;
 			const integer usableDepth = std::min (maximumFilterDepth, maximumSourceDepth);
@@ -534,13 +534,13 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 				if (rightFrameNumber < 1 || leftFrameNumber > my nx) {
 					his z [1] [isamp] = 0.0;
 				} else if (rightFrameNumber == 1) {
-					his z [1] [isamp] *= sqrt (my d_frames___ [1]. gain) * phase;
+					his z [1] [isamp] *= sqrt (my d_frames [1]. gain) * phase;
 				} else if (leftFrameNumber == my nx) {
-					his z [1] [isamp] *= sqrt (my d_frames___ [my nx]. gain) * (1.0 - phase);
+					his z [1] [isamp] *= sqrt (my d_frames [my nx]. gain) * (1.0 - phase);
 				} else {
 					his z [1] [isamp] *=
-							phase * sqrt (my d_frames___ [rightFrameNumber]. gain) +
-							(1.0 - phase) * sqrt (my d_frames___ [leftFrameNumber]. gain);
+							phase * sqrt (my d_frames [rightFrameNumber]. gain) +
+							(1.0 - phase) * sqrt (my d_frames [leftFrameNumber]. gain);
 				}
 			}
 		}
@@ -559,10 +559,10 @@ void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer chann
 		U"Frame should be in the range [1, ", my nx, U"].");
 
 	if (channel > 0) {
-		LPC_Frame_Sound_filter (& my d_frames___ [frameIndex], thee, channel);
+		LPC_Frame_Sound_filter (& my d_frames [frameIndex], thee, channel);
 	} else {
 		for (integer ichan = 1; ichan <= thy ny; ichan ++)
-			LPC_Frame_Sound_filter (& my d_frames___ [frameIndex], thee, ichan);
+			LPC_Frame_Sound_filter (& my d_frames [frameIndex], thee, ichan);
 	}
 }
 
@@ -583,10 +583,10 @@ void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, intege
 		if (channel > thy ny)
 			channel = 1;
 		if (channel > 0) {
-			LPC_Frame_Sound_filterInverse (& (my d_frames___ [frameIndex]), thee, channel);
+			LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, channel);
 		} else {
 			for (integer ichan = 1; ichan <= thy ny; ichan ++)
-				LPC_Frame_Sound_filterInverse (& (my d_frames___ [frameIndex]), thee, ichan);
+				LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, ichan);
 		}
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");

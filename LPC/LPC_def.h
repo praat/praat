@@ -43,7 +43,7 @@ oo_DEFINE_CLASS (LPC, Sampled)
 
 	oo_DOUBLE (samplingPeriod)   // from Sound
 	oo_INT (maxnCoefficients)
-	oo_STRUCTVEC (LPC_Frame, d_frames___, nx)
+	oo_STRUCTVEC (LPC_Frame, d_frames, nx)
 
 	#if oo_DECLARING
 		void v_info ()

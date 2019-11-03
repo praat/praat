@@ -169,8 +169,8 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 
 		for (integer i = 1; i <= numberOfFrames; i ++) {
-			LPC_Frame lpc = & thy d_frames___ [i];
-			LPC_Frame lpcto = & his d_frames___ [i];
+			LPC_Frame lpc = & thy d_frames [i];
+			LPC_Frame lpcto = & his d_frames [i];
 			const double t = Sampled_indexToX (thee, i);
 
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);

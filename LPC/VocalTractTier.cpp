@@ -155,7 +155,7 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 			}
 		}
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			LPC_Frame frame = & thy d_frames___ [iframe];
+			LPC_Frame frame = & thy d_frames [iframe];
 			LPC_Frame_init (frame, numberOfSections);
 			for (integer i = 1; i <= numberOfSections; i ++) {
 				areavec [i] = area [iframe] [numberOfSections + 1 - i]; // reverse

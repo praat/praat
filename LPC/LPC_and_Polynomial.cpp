@@ -23,7 +23,7 @@
 #include "LPC_and_Polynomial.h"
 
 autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
-	integer degree = (integer) my nCoefficients;
+	integer degree = my nCoefficients;
 	autoPolynomial thee = Polynomial_create (-1, 1, degree);
 	for (integer i = 1; i <= degree; i ++)
 		thy coefficients [i] = my a [degree - i + 1];
@@ -35,7 +35,7 @@ autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 	try {
 		integer iFrame = Sampled_xToIndex (me, time);
 		Melder_clip (integer (1), & iFrame, my nx);   // constant extrapolation
-		autoPolynomial thee = LPC_Frame_to_Polynomial (& my d_frames___ [iFrame]);
+		autoPolynomial thee = LPC_Frame_to_Polynomial (& my d_frames [iFrame]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Polynomial created.");

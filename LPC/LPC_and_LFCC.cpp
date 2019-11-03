@@ -55,7 +55,7 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 		longdouble ai = my c [i] * i;
 		for (integer j = 1; j < i; j ++)
 			ai += thy a [j] * my c [i - j] * (i - j);
-		thy a [i] = -ai / i;
+		thy a [i] = - double (ai) / i;
 	}
 }
 
@@ -68,7 +68,7 @@ autoLFCC LPC_to_LFCC (LPC me, integer numberOfCoefficients) {
 
 		for (integer i = 1; i <= my nx; i ++) {
 			CC_Frame_init (& thy frame [i], numberOfCoefficients);
-			LPC_Frame_into_CC_Frame (& my d_frames___ [i], & thy frame [i]);
+			LPC_Frame_into_CC_Frame (& my d_frames [i], & thy frame [i]);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -85,8 +85,8 @@ autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0.5 / my fmax);
 
 		for (integer i = 1; i <= my nx; i ++) {
-			LPC_Frame_init (& thy d_frames___ [i], numberOfCoefficients);
-			CC_Frame_into_LPC_Frame (& my frame [i], & thy d_frames___ [i]);
+			LPC_Frame_init (& thy d_frames [i], numberOfCoefficients);
+			CC_Frame_into_LPC_Frame (& my frame [i], & thy d_frames [i]);
 		}
 		return thee;
 	} catch (MelderError) {
