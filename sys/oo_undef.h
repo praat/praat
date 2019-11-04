@@ -33,7 +33,6 @@
 
 #undef oo_STRUCT
 #undef oo_STRUCT_SET
-#undef oo_STRUCT_VECTOR
 #undef oo_STRUCTVEC
 
 #undef oo_OBJECT

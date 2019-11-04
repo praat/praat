@@ -62,15 +62,6 @@
 		if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
 	}
 
-#define oo_STRUCT_VECTOR(Type, x, n)  \
-	{ \
-		integer _size = (n); \
-		if (our x) { \
-			for (integer _i = 1; _i <= _size; _i ++) { \
-				if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
-			} \
-		} \
-	}
 #define oo_STRUCTVEC(Type, x, n)  \
 	{ \
 		integer _size = (n); \

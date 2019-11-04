@@ -78,16 +78,6 @@
 		our x [_i]. destroy (); \
 	}
 
-#define oo_STRUCT_VECTOR(Type, x, n)  \
-	{ \
-		integer _size = (n); \
-		if (our x) { \
-			for (integer _i = 1; _i <= _size; _i ++) { \
-				our x [_i]. destroy (); \
-			} \
-			NUMvector_free <struct##Type> (our x, 1); \
-		} \
-	}
 #define oo_STRUCTVEC(Type, x, n)  \
 { \
 	for (integer _i = 1; _i <= our x.size; _i ++) { \
