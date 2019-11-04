@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2011,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2009-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ void structDemoEditor :: v_destroy () noexcept {
 
 void structDemoEditor :: v_info () {
 	DemoEditor_Parent :: v_info ();
-	MelderInfo_writeLine (U"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
+	MelderInfo_writeLine (U"Colour: ", MelderColour_name (((PraatPicture) praatPicture) -> colour));
 	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) ((PraatPicture) praatPicture) -> font));
 	MelderInfo_writeLine (U"Font size: ", ((PraatPicture) praatPicture) -> fontSize);
 }
@@ -58,10 +58,10 @@ static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent
 	 * Erase the background. Don't record this erasure!
 	 */
 	Graphics_stopRecording (my graphics.get());   // the only place in Praat (the Picture window has a separate Graphics for erasing)?
-	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_startRecording (my graphics.get());
 	Graphics_play (my graphics.get(), my graphics.get());
 }
@@ -110,10 +110,10 @@ void structDemoEditor :: v_createChildren () {
 void DemoEditor_init (DemoEditor me) {
 	Editor_init (me, 0, 0, 1344, 756, U"", nullptr);   // 70 percent of the standard 1920x1080 screen
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_startRecording (my graphics.get());
 	Graphics_setWsViewport (my graphics.get(), 0.0, GuiControl_getWidth  (my drawingArea),
 	                                           0.0, GuiControl_getHeight (my drawingArea));
@@ -149,7 +149,7 @@ void Demo_open () {
 		theCurrentPraatPicture -> font = (int) kGraphics_font::HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-		theCurrentPraatPicture -> colour = Graphics_BLACK;
+		theCurrentPraatPicture -> colour = Melder_BLACK;
 		theCurrentPraatPicture -> lineWidth = 1.0;
 		theCurrentPraatPicture -> arrowSize = 1.0;
 		theCurrentPraatPicture -> speckleSize = 1.0;

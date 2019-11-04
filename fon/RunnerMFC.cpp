@@ -52,10 +52,10 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 }
 
 static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, conststring32 visibleText) {
-	Graphics_setColour (my graphics.get(), Graphics_MAROON);
+	Graphics_setColour (my graphics.get(), Melder_MAROON);
 	Graphics_setLineWidth (my graphics.get(), 3.0);
 	Graphics_fillRectangle (my graphics.get(), left, right, bottom, top);
-	Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+	Graphics_setColour (my graphics.get(), Melder_YELLOW);
 	Graphics_rectangle (my graphics.get(), left, right, bottom, top);
 	Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
@@ -89,7 +89,7 @@ static void drawNow (RunnerMFC me) {
 		conststring32 visibleText_p = visibleText_dup.get();
 		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
 		Graphics_text (my graphics.get(), 0.0, 1.0,   experiment -> trial, U" / ", experiment -> numberOfTrials);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_TOP);
@@ -125,14 +125,14 @@ static void drawNow (RunnerMFC me) {
 				Graphics_imageFromFile (my graphics.get(), Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
 				Graphics_setColour (my graphics.get(),
-					response -> name [0] == U'\0' ? Graphics_SILVER :
-					experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
+					response -> name [0] == U'\0' ? Melder_SILVER :
+					experiment -> responses [experiment -> trial] == iresponse ? Melder_RED :
 					experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
-					Graphics_YELLOW : Graphics_SILVER
+					Melder_YELLOW : Melder_SILVER
 				);
 				Graphics_setLineWidth (my graphics.get(), 3.0);
 				Graphics_fillRectangle (my graphics.get(), response -> left, response -> right, response -> bottom, response -> top);
-				Graphics_setColour (my graphics.get(), Graphics_MAROON);
+				Graphics_setColour (my graphics.get(), Melder_MAROON);
 				Graphics_rectangle (my graphics.get(), response -> left, response -> right, response -> bottom, response -> top);
 				Graphics_setFontSize (my graphics.get(), response -> fontSize ? response -> fontSize : 24);
 				Graphics_text (my graphics.get(), 0.5 * (response -> left + response -> right),
@@ -142,11 +142,11 @@ static void drawNow (RunnerMFC me) {
 		}
 		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 			const GoodnessMFC goodness = & experiment -> goodness [iresponse];
-			Graphics_setColour (my graphics.get(), experiment -> responses [experiment -> trial] == 0 ? Graphics_SILVER :
-				experiment -> goodnesses [experiment -> trial] == iresponse ? Graphics_RED : Graphics_YELLOW);
+			Graphics_setColour (my graphics.get(), experiment -> responses [experiment -> trial] == 0 ? Melder_SILVER :
+				experiment -> goodnesses [experiment -> trial] == iresponse ? Melder_RED : Melder_YELLOW);
 			Graphics_setLineWidth (my graphics.get(), 3.0);
 			Graphics_fillRectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
-			Graphics_setColour (my graphics.get(), Graphics_MAROON);
+			Graphics_setColour (my graphics.get(), Melder_MAROON);
 			Graphics_rectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
 			Graphics_setFontSize (my graphics.get(), goodness -> fontSize ? goodness -> fontSize : 24);
 			Graphics_text (my graphics.get(),

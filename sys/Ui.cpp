@@ -142,23 +142,23 @@ static int colourToValue (UiField me, char32 *string) {
 		my colourValue. blue = Melder_atof (++ p);
 	} else {
 		*p = Melder_toLowerCase (*p);
-		if (str32equ (p, U"black")) my colourValue = Graphics_BLACK;
-		else if (str32equ (p, U"white")) my colourValue = Graphics_WHITE;
-		else if (str32equ (p, U"red")) my colourValue = Graphics_RED;
-		else if (str32equ (p, U"green")) my colourValue = Graphics_GREEN;
-		else if (str32equ (p, U"blue")) my colourValue = Graphics_BLUE;
-		else if (str32equ (p, U"yellow")) my colourValue = Graphics_YELLOW;
-		else if (str32equ (p, U"cyan")) my colourValue = Graphics_CYAN;
-		else if (str32equ (p, U"magenta")) my colourValue = Graphics_MAGENTA;
-		else if (str32equ (p, U"maroon")) my colourValue = Graphics_MAROON;
-		else if (str32equ (p, U"lime")) my colourValue = Graphics_LIME;
-		else if (str32equ (p, U"navy")) my colourValue = Graphics_NAVY;
-		else if (str32equ (p, U"teal")) my colourValue = Graphics_TEAL;
-		else if (str32equ (p, U"purple")) my colourValue = Graphics_PURPLE;
-		else if (str32equ (p, U"olive")) my colourValue = Graphics_OLIVE;
-		else if (str32equ (p, U"pink")) my colourValue = Graphics_PINK;
-		else if (str32equ (p, U"silver")) my colourValue = Graphics_SILVER;
-		else if (str32equ (p, U"grey")) my colourValue = Graphics_GREY;
+		if (str32equ (p, U"black")) my colourValue = Melder_BLACK;
+		else if (str32equ (p, U"white")) my colourValue = Melder_WHITE;
+		else if (str32equ (p, U"red")) my colourValue = Melder_RED;
+		else if (str32equ (p, U"green")) my colourValue = Melder_GREEN;
+		else if (str32equ (p, U"blue")) my colourValue = Melder_BLUE;
+		else if (str32equ (p, U"yellow")) my colourValue = Melder_YELLOW;
+		else if (str32equ (p, U"cyan")) my colourValue = Melder_CYAN;
+		else if (str32equ (p, U"magenta")) my colourValue = Melder_MAGENTA;
+		else if (str32equ (p, U"maroon")) my colourValue = Melder_MAROON;
+		else if (str32equ (p, U"lime")) my colourValue = Melder_LIME;
+		else if (str32equ (p, U"navy")) my colourValue = Melder_NAVY;
+		else if (str32equ (p, U"teal")) my colourValue = Melder_TEAL;
+		else if (str32equ (p, U"purple")) my colourValue = Melder_PURPLE;
+		else if (str32equ (p, U"olive")) my colourValue = Melder_OLIVE;
+		else if (str32equ (p, U"pink")) my colourValue = Melder_PINK;
+		else if (str32equ (p, U"silver")) my colourValue = Melder_SILVER;
+		else if (str32equ (p, U"grey")) my colourValue = Melder_GREY;
 		else { *p = first; return 0; }
 		*p = first;
 	}
@@ -481,7 +481,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					case _kUiField_type::COLOUR_:
 					{
 						UiHistory_write (next -- ? U", \"" : U" \"");
-						UiHistory_write (Graphics_Colour_name (field -> colourValue));
+						UiHistory_write (MelderColour_name (field -> colourValue));
 						UiHistory_write (U"\"");
 					}
 				}
@@ -2049,7 +2049,7 @@ MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
 				U"Please click Cancel in the form and try again.");
 		}
 	}
-	return Graphics_BLACK;
+	return Melder_BLACK;
 }
 
 void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {

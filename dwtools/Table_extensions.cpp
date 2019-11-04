@@ -55,7 +55,7 @@ static bool Table_selectedColumnPartIsNumeric (Table me, integer column, constIN
 static void Table_columnExtremaFromSelectedRows (Table me, integer column, constINTVEC selectedRows, double *out_min, double *out_max) {
 	MelderExtremaWithInit extrema;
 	for (integer irow = 1; irow <= selectedRows.size; irow ++) {
-		double val = Table_getNumericValue_Assert (me, selectedRows [irow], column);
+		const double val = Table_getNumericValue_Assert (me, selectedRows [irow], column);
 		extrema.update (val);
 	}
 	if (out_min)
@@ -4206,7 +4206,7 @@ static autoStrings itemizeColourString (conststring32 colourString) {
 
 static MelderColour Strings_colourToValue  (Strings me, integer index) {
 	if (index < 0 || index > my numberOfStrings)
-		return Graphics_GREY;
+		return Melder_GREY;
 
 	MelderColour colourValue;
 	char32 *p = my strings [index].get();
@@ -4216,30 +4216,30 @@ static MelderColour Strings_colourToValue  (Strings me, integer index) {
 	if (first == U'{') {
 		colourValue.red = Melder_atof ( ++ p);
 		p = (char32 *) str32chr (p, U',');
-		if (! p) return Graphics_GREY;
+		if (! p) return Melder_GREY;
 		colourValue.green = Melder_atof ( ++ p);
 		p = (char32 *) str32chr (p, U',');
-		if (! p) return Graphics_GREY;
+		if (! p) return Melder_GREY;
 		colourValue.blue = Melder_atof ( ++ p);
 	} else {
 		*p = Melder_toLowerCase (*p);
-		if (str32equ (p, U"black")) colourValue = Graphics_BLACK;
-		else if (str32equ (p, U"white")) colourValue = Graphics_WHITE;
-		else if (str32equ (p, U"red")) colourValue = Graphics_RED;
-		else if (str32equ (p, U"green")) colourValue = Graphics_GREEN;
-		else if (str32equ (p, U"blue")) colourValue = Graphics_BLUE;
-		else if (str32equ (p, U"yellow")) colourValue = Graphics_YELLOW;
-		else if (str32equ (p, U"cyan")) colourValue = Graphics_CYAN;
-		else if (str32equ (p, U"magenta")) colourValue = Graphics_MAGENTA;
-		else if (str32equ (p, U"maroon")) colourValue = Graphics_MAROON;
-		else if (str32equ (p, U"lime")) colourValue = Graphics_LIME;
-		else if (str32equ (p, U"navy")) colourValue = Graphics_NAVY;
-		else if (str32equ (p, U"teal")) colourValue = Graphics_TEAL;
-		else if (str32equ (p, U"purple")) colourValue = Graphics_PURPLE;
-		else if (str32equ (p, U"olive")) colourValue = Graphics_OLIVE;
-		else if (str32equ (p, U"pink")) colourValue = Graphics_PINK;
-		else if (str32equ (p, U"silver")) colourValue = Graphics_SILVER;
-		else if (str32equ (p, U"grey")) colourValue = Graphics_GREY;
+		if (str32equ (p, U"black")) colourValue = Melder_BLACK;
+		else if (str32equ (p, U"white")) colourValue = Melder_WHITE;
+		else if (str32equ (p, U"red")) colourValue = Melder_RED;
+		else if (str32equ (p, U"green")) colourValue = Melder_GREEN;
+		else if (str32equ (p, U"blue")) colourValue = Melder_BLUE;
+		else if (str32equ (p, U"yellow")) colourValue = Melder_YELLOW;
+		else if (str32equ (p, U"cyan")) colourValue = Melder_CYAN;
+		else if (str32equ (p, U"magenta")) colourValue = Melder_MAGENTA;
+		else if (str32equ (p, U"maroon")) colourValue = Melder_MAROON;
+		else if (str32equ (p, U"lime")) colourValue = Melder_LIME;
+		else if (str32equ (p, U"navy")) colourValue = Melder_NAVY;
+		else if (str32equ (p, U"teal")) colourValue = Melder_TEAL;
+		else if (str32equ (p, U"purple")) colourValue = Melder_PURPLE;
+		else if (str32equ (p, U"olive")) colourValue = Melder_OLIVE;
+		else if (str32equ (p, U"pink")) colourValue = Melder_PINK;
+		else if (str32equ (p, U"silver")) colourValue = Melder_SILVER;
+		else if (str32equ (p, U"grey")) colourValue = Melder_GREY;
 		else { 
 			double grey = Melder_atof (p);
 			grey = grey < 0 ? 0 : (grey > 1 ? 1 : grey);
@@ -4436,18 +4436,19 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 				if (i > 1) {
 					double x3, y3, x4, y4, xo1, yo1, xo2, yo2;
 					if (Graphics_getConnectingLine (g, symbol, x1, y1, symbol, x2, y2, & x3, & y3, & x4, & y4) && 
-						NUMclipLineWithinRectangle (x3, y3, x4, y4, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
+							NUMclipLineWithinRectangle (x3, y3, x4, y4, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 						Graphics_line (g, xo1, yo1, xo2, yo2);
 				}
 			} else {
 				x2 = x2 < xmin ? xmin : xmax;
 			}
-			x1 = x2; y1 = y2;
+			x1 = x2;
+			y1 = y2;
 		}
 		
 		if (garnish && ! xIsNumeric && xcolumn > 0) {
 			double y = ymin, dx = 0.0;
-			double currentFontSize = Graphics_inqFontSize (g);
+			const double currentFontSize = Graphics_inqFontSize (g);
 			Graphics_setTextRotation (g, angle);
 			if (angle < 0.0) {
 				y -= 0.3 * lineSpacing;
@@ -4463,7 +4464,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 			}
 			for (integer i = 1; i <= selectedRows.size; i ++) {
-				double x2 = i;
+				const double x2 = double (i);
 				if (x2 >= xmin && x2 <= xmax) {
 					conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], xcolumn);
 					if (label)
@@ -4527,7 +4528,7 @@ autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter i
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_run (irow, 1, & result);
 			if (result. numericResult != 0.0) {
-				TableRow row = my rows.at [irow];
+				const TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
 			}
@@ -4542,7 +4543,7 @@ autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter i
 
 static autoTableOfReal Table_to_TableOfReal_where (Table me, conststring32 columnLabels, conststring32 factorColumn, conststring32 formula, Interpreter interpreter) {
 	try {
-		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
+		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
 		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		autoTableOfReal thee = TableOfReal_create (selectedRows.size, columnIndexes.size);
@@ -4586,9 +4587,9 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		integer numberOfGroups = thy size;
 		Melder_assert (numberOfGroups > 0);
 
-		SSCP sscp = thy at [1];
-		integer numberOfColumns = sscp -> numberOfColumns;
-		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
+		const SSCP sscp = thy at [1];
+		const integer numberOfColumns = sscp -> numberOfColumns;
+		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
 		autoINTVEC columnIndex = newINTVECraw (numberOfColumns);
 		autoVEC vector = newVECraw (numberOfColumns);
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
@@ -4604,20 +4605,20 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			covs. addItem_move (cov.move());
 		}
 		for (integer i = 1; i <= selectedRows.size; i ++) {
-			integer irow = selectedRows [i];
-			integer igroup = 1; // if factorColIndex == 0 we don't need labels
+			const integer irow = selectedRows [i];
+			integer igroup = 1;   // if factorColIndex == 0 we don't need labels
 			if (factorColIndex > 0) {
 				conststring32 label = Table_getStringValue_Assert (me, irow, factorColIndex);
 				igroup = SSCPList_findIndexOfGroupLabel (thee, label);
 				if (igroup == 0)
 					Melder_throw (U"The label \"", label, U"\" in row ", irow, U" is not valid in this context.");
 			}
-			Covariance covi = covs.at [igroup];
+			const Covariance covi = covs.at [igroup];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			double dm2 = NUMmahalanobisDistanceSquared (covi -> lowerCholeskyInverse.get(), vector.get(), covi -> centroid.get());
+			const double dm2 = NUMmahalanobisDistanceSquared (covi -> lowerCholeskyInverse.get(), vector.get(), covi -> centroid.get());
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
-				TableRow row = my rows.at [irow];
+				const TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);
 				his rows. addItem_move (newRow.move());
 			}
@@ -4649,21 +4650,21 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		autoTableOfReal thee = TableOfReal_create (selectedRows.size, 2);
 		for (integer i = 1; i <= selectedRows.size; i ++) {
-			conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
+			const conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
 			TableOfReal_setRowLabel (thee.get(), i, label);
 			thy data [i] [1] = Table_getNumericValue_Assert (me, selectedRows [i], xcolumn);
 			thy data [i] [2] = Table_getNumericValue_Assert (me, selectedRows [i], ycolumn);
 		}
 		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());
-		bool confidence = false;
+		constexpr bool confidence = false;
 		if (ymax == ymin)   // autoscaling
 			SSCPList_getEllipsesBoundingBoxCoordinates (him.get(), numberOfSigmas, confidence, & xmin, & xmax, & ymin, & ymax);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		for (integer i = 1; i <= his size; i ++) {
-			SSCP sscpi = his at [i];
-			double scalei = SSCP_getEllipseScalefactor (sscpi, numberOfSigmas, confidence);
-			if (scalei > 0)
+			const SSCP sscpi = his at [i];
+			const double scalei = SSCP_getEllipseScalefactor (sscpi, numberOfSigmas, confidence);
+			if (scalei > 0.0)
 				SSCP_drawTwoDimensionalEllipse_inside (sscpi, g, scalei, Thing_getName (sscpi), labelSize);
 		}
 		Graphics_unsetInner (g);
@@ -4684,15 +4685,15 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 
 autoTable Table_extractColumnRanges (Table me, conststring32 ranges) {
 	try {
-		integer numberOfRows = my rows.size;
+		const integer numberOfRows = my rows.size;
 		autoINTVEC columnRanges = NUMstring_getElementsOfRanges (ranges, my numberOfColumns, U"columnn number", true);
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, columnRanges.size); 
 		for (integer icol = 1; icol <= columnRanges.size; icol ++)
 			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			//TableRow row = thy rows -> items [irow];
+			//const TableRow row = thy rows -> items [irow];
 			for (integer icol = 1; icol <= columnRanges.size; icol ++) {
-				conststring32 value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
+				const conststring32 value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
 				Table_setStringValue (thee.get(), irow, icol, value);
 			}
 		}

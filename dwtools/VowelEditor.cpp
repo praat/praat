@@ -157,7 +157,7 @@ void VowelEditor_prefs () {
 	Preferences_addDouble (U"VowelEditor.b4", & prefs.b4, 350.0);
 	Preferences_addDouble (U"VowelEditor.markTraceEvery", & prefs.markTraceEvery, 0.05);
 	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
-	Preferences_addEnum (U"VowelEditor.speakersType", & prefs.speakersType, kVowelEditor_speakersType, kVowelEditor_speakersType::Man);
+	Preferences_addEnum (U"VowelEditor.speakerType.2", & prefs.speakersType, kVowelEditor_speakersType, kVowelEditor_speakersType::Man);
 	Preferences_addEnum (U"VowelEditor.marksDataSet", & prefs.marksDataSet, kVowelEditor_marksDataSet, kVowelEditor_marksDataSet::AmericanEnglish);
 	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
 	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
@@ -171,23 +171,23 @@ void VowelEditor_prefs () {
 
 static MelderColour * Graphics_Colour_fromName (conststring32 name) {
 	return
-		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Graphics_GREY :
-		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Graphics_BLACK :
-		Melder_cmp_caseInsensitive (name, U"red") == 0 ? & Graphics_RED :
-		Melder_cmp_caseInsensitive (name, U"green") == 0 ? & Graphics_GREEN :
-		Melder_cmp_caseInsensitive (name, U"blue") == 0 ? & Graphics_BLUE :
-		Melder_cmp_caseInsensitive (name, U"cyan") == 0 ? & Graphics_CYAN :
-		Melder_cmp_caseInsensitive (name, U"magenta") == 0 ? & Graphics_MAGENTA :
-		Melder_cmp_caseInsensitive (name, U"yellow") == 0 ? & Graphics_YELLOW :
-		Melder_cmp_caseInsensitive (name, U"maroon") == 0 ? & Graphics_MAROON :
-		Melder_cmp_caseInsensitive (name, U"lime") == 0 ? & Graphics_LIME :
-		Melder_cmp_caseInsensitive (name, U"navy") == 0 ? & Graphics_NAVY :
-		Melder_cmp_caseInsensitive (name, U"teal") == 0 ? & Graphics_TEAL :
-		Melder_cmp_caseInsensitive (name, U"purple") == 0 ? & Graphics_PURPLE :
-		Melder_cmp_caseInsensitive (name, U"olive") == 0 ? & Graphics_OLIVE :
-		Melder_cmp_caseInsensitive (name, U"silver") == 0 ? & Graphics_SILVER :
-		Melder_cmp_caseInsensitive (name, U"white") == 0 ? & Graphics_WHITE :
-		& Graphics_GREY; // the default colour
+		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Melder_GREY :
+		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Melder_BLACK :
+		Melder_cmp_caseInsensitive (name, U"red") == 0 ? & Melder_RED :
+		Melder_cmp_caseInsensitive (name, U"green") == 0 ? & Melder_GREEN :
+		Melder_cmp_caseInsensitive (name, U"blue") == 0 ? & Melder_BLUE :
+		Melder_cmp_caseInsensitive (name, U"cyan") == 0 ? & Melder_CYAN :
+		Melder_cmp_caseInsensitive (name, U"magenta") == 0 ? & Melder_MAGENTA :
+		Melder_cmp_caseInsensitive (name, U"yellow") == 0 ? & Melder_YELLOW :
+		Melder_cmp_caseInsensitive (name, U"maroon") == 0 ? & Melder_MAROON :
+		Melder_cmp_caseInsensitive (name, U"lime") == 0 ? & Melder_LIME :
+		Melder_cmp_caseInsensitive (name, U"navy") == 0 ? & Melder_NAVY :
+		Melder_cmp_caseInsensitive (name, U"teal") == 0 ? & Melder_TEAL :
+		Melder_cmp_caseInsensitive (name, U"purple") == 0 ? & Melder_PURPLE :
+		Melder_cmp_caseInsensitive (name, U"olive") == 0 ? & Melder_OLIVE :
+		Melder_cmp_caseInsensitive (name, U"silver") == 0 ? & Melder_SILVER :
+		Melder_cmp_caseInsensitive (name, U"white") == 0 ? & Melder_WHITE :
+		& Melder_GREY; // the default colour
 }
 
 #pragma mark - class Vowel
@@ -538,7 +538,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	Graphics_setLineType (g, Graphics_DRAWN);
 	// Too short too hear ?
 	if ( (my xmax - my xmin) < 0.005) {
-		Graphics_setColour (g, Graphics_RED);
+		Graphics_setColour (g, Melder_RED);
 	}
 	x1p = x1 = GETX (fp -> formant [2]);
 	y1p = y1 = GETY (fp -> formant [1]);
@@ -1283,7 +1283,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 		}
 	}
 
-	Graphics_xorOn (my graphics.get(), Graphics_BLUE);
+	Graphics_xorOn (my graphics.get(), Melder_BLUE);
 	while (Graphics_mouseStillDown (my graphics.get())) {
 		xb = x, yb = y, tb = t;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock

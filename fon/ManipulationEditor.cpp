@@ -600,14 +600,14 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	PointProcess pulses = ana -> pulses.get();
 	Graphics_Viewport viewport = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Sound");
-	Graphics_setColour (my graphics.get(), Graphics_BLUE);
+	Graphics_setColour (my graphics.get(), Melder_BLUE);
 	Graphics_text (my graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my graphics.get(), 3), U"%%Pulses");
 	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 
@@ -616,7 +616,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	 */
 	if (pulses) {
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Graphics_BLUE);
+		Graphics_setColour (my graphics.get(), Melder_BLUE);
 		for (integer i = 1; i <= pulses -> nt; i ++) {
 			double t = pulses -> t [i];
 			if (t >= my startWindow && t <= my endWindow)
@@ -646,7 +646,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 * Draw dotted zero line.
 		 */
 		if (minimum < 0.0 && maximum > 0.0) {
-			Graphics_setColour (my graphics.get(), Graphics_CYAN);
+			Graphics_setColour (my graphics.get(), Melder_CYAN);
 			Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
 			Graphics_line (my graphics.get(), my startWindow, 0.0, my endWindow, 0.0);
 			Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
@@ -655,7 +655,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		/*
 		 * Draw samples.
 		 */    
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_function (my graphics.get(), & sound -> z [1] [0], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
@@ -678,11 +678,11 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	 */
 	Graphics_Viewport viewport = Graphics_insetViewport (my graphics.get(), 0, 1, ymin, ymax);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_GREEN);
+	Graphics_setColour (my graphics.get(), Melder_GREEN);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Pitch manip");
@@ -732,18 +732,18 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setLineWidth (my graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_text (my graphics.get(), 0.5 * (my startWindow + my endWindow), 0.5 * (my p_pitch_minimum + my p_pitch_maximum), U"(no pitch points)");
 	} else if (imax < imin) {
 		double fleft = YLIN (RealTier_getValueAtTime (pitch, my startWindow));
 		double fright = YLIN (RealTier_getValueAtTime (pitch, my endWindow));
-		Graphics_setColour (my graphics.get(), Graphics_GREEN);
+		Graphics_setColour (my graphics.get(), Melder_GREEN);
 		Graphics_line (my graphics.get(), my startWindow, fleft, my endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = pitch -> points.at [i];
 			double t = point -> number, f = YLIN (point -> value);
-			Graphics_setColour (my graphics.get(), Graphics_GREEN);
+			Graphics_setColour (my graphics.get(), Melder_GREEN);
 			if (i == 1)
 				Graphics_line (my graphics.get(), my startWindow, f, t, f);
 			else if (i == imin)
@@ -761,15 +761,15 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 			RealPoint point = pitch -> points.at [i];
 			double t = point -> number, f = YLIN (point -> value);
 			if (i >= ifirstSelected && i <= ilastSelected)
-				Graphics_setColour (my graphics.get(), Graphics_RED);
+				Graphics_setColour (my graphics.get(), Melder_RED);
 			else
-				Graphics_setColour (my graphics.get(), Graphics_GREEN);
+				Graphics_setColour (my graphics.get(), Melder_GREEN);
 			Graphics_fillCircle_mm (my graphics.get(), t, f, 3.0);
 		}
 	}
 	Graphics_setLineWidth (my graphics.get(), 1.0);
 
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_resetViewport (my graphics.get(), viewport);
 }
 
@@ -784,11 +784,11 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	 */
 	Graphics_Viewport viewport = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_GREEN);
+	Graphics_setColour (my graphics.get(), Melder_GREEN);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Duration manip");
@@ -816,20 +816,20 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	}
 	Graphics_setLineWidth (my graphics.get(), 2.0);
 	if (n == 0) {
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics.get(), 0.5 * (my startWindow + my endWindow),
 			0.5 * (my p_duration_minimum + my p_duration_maximum), U"(no duration points)");
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (duration, my startWindow);
 		double fright = RealTier_getValueAtTime (duration, my endWindow);
-		Graphics_setColour (my graphics.get(), Graphics_GREEN);
+		Graphics_setColour (my graphics.get(), Melder_GREEN);
 		Graphics_line (my graphics.get(), my startWindow, fleft, my endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = duration -> points.at [i];
 			double t = point -> number, dur = point -> value;
-			Graphics_setColour (my graphics.get(), Graphics_GREEN);
+			Graphics_setColour (my graphics.get(), Melder_GREEN);
 			if (i == 1)
 				Graphics_line (my graphics.get(), my startWindow, dur, t, dur);
 			else if (i == imin)
@@ -847,15 +847,15 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 			RealPoint point = duration -> points.at [i];
 			double t = point -> number, dur = point -> value;
 			if (i >= ifirstSelected && i <= ilastSelected)
-				Graphics_setColour (my graphics.get(), Graphics_RED);
+				Graphics_setColour (my graphics.get(), Melder_RED);
 			else
-				Graphics_setColour (my graphics.get(), Graphics_GREEN);
+				Graphics_setColour (my graphics.get(), Melder_GREEN);
 			Graphics_fillCircle_mm (my graphics.get(), t, dur, 3.0);
 		}
 	}
 
 	Graphics_setLineWidth (my graphics.get(), 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_resetViewport (my graphics.get(), viewport);
 }
 
@@ -970,7 +970,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	  * Since some systems do double buffering,
 	  * the undrawing at the old position and redrawing at the new have to be bracketed by Graphics_mouseStillDown ().
 	  */
-	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (my graphics.get(), Melder_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	dragHorizontal = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy::VERTICAL &&
 		(! shiftKeyPressed || my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy::HYBRID);
@@ -1127,7 +1127,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (my graphics.get(), Melder_MAROON);
 	drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	while (Graphics_mouseStillDown (my graphics.get())) {
 		double xWC_new, yWC_new;

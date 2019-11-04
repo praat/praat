@@ -154,7 +154,7 @@ void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
 void structPointEditor :: v_draw () {
 	PointProcess point = static_cast <PointProcess> (our data);
 	Sound sound = d_sound.data;
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	double minimum = -1.0, maximum = +1.0;
@@ -169,7 +169,7 @@ void structPointEditor :: v_draw () {
 		}
 	}
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, minimum, maximum);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	if (sound) {
 		integer first, last;
 		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) > 1) {
@@ -180,14 +180,14 @@ void structPointEditor :: v_draw () {
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		}
 	}
-	Graphics_setColour (our graphics.get(), Graphics_BLUE);
+	Graphics_setColour (our graphics.get(), Melder_BLUE);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, +1.0);
 	for (integer i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
 		if (t >= our startWindow && t <= our endWindow)
 			Graphics_line (our graphics.get(), t, -0.9, t, +0.9);
 	}
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	v_updateMenuItems_file ();
 }
 

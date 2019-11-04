@@ -154,7 +154,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		cellTop = std::min (cellTop, ymax);
 		cellBottom = std::max (cellBottom, ymin);
 		if (z > 0.0) {
-			Graphics_setColour (g, Graphics_WHITE);
+			Graphics_setColour (g, Melder_WHITE);
 		}
 		Graphics_fillRectangle (g, cellRight, cellLeft, cellBottom, cellTop);
 		Graphics_setColour (g, colour);

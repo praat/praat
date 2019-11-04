@@ -37,7 +37,7 @@ void Graphics_drawInnerBox (Graphics me) {
 	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (me, Graphics_DRAWN);
 	Graphics_setLineWidth (me, 2.0 * lineWidth);
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_rectangle (me, 0.0, 1.0, 0.0, 1.0);
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
@@ -50,7 +50,7 @@ void Graphics_textLeft (Graphics me, bool farr, conststring32 text) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
 	int vert = ( farr ? Graphics_TOP : Graphics_BOTTOM );
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setTextRotation (me, 90.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, vert);
@@ -68,7 +68,7 @@ void Graphics_textRight (Graphics me, bool farr, conststring32 text) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
 	int vert = ( farr ? Graphics_TOP : Graphics_BOTTOM );
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, vert);
 	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setTextRotation (me, 270.0);
@@ -85,7 +85,7 @@ void Graphics_textRight (Graphics me, bool farr, conststring32 text) {
 void Graphics_textBottom (Graphics me, bool farr, conststring32 text) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	if (farr) {
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
@@ -103,7 +103,7 @@ void Graphics_textBottom (Graphics me, bool farr, conststring32 text) {
 void Graphics_textTop (Graphics me, bool farr, conststring32 text) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 	if (farr) {
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
@@ -125,7 +125,7 @@ void Graphics_marksLeft (Graphics me, int numberOfMarks, bool haveNumbers, bool 
 	MelderColour colour = my colour;
 	if (numberOfMarks < 2)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -164,7 +164,7 @@ void Graphics_marksRight (Graphics me, int numberOfMarks, bool haveNumbers, bool
 	MelderColour colour = my colour;
 	if (numberOfMarks < 2)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -203,7 +203,7 @@ void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, boo
 	MelderColour colour = my colour;
 	if (numberOfMarks < 2)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
@@ -242,7 +242,7 @@ void Graphics_marksTop (Graphics me, int numberOfMarks, bool haveNumbers, bool h
 	MelderColour colour = my colour;
 	if (numberOfMarks < 2)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
@@ -298,7 +298,7 @@ void Graphics_marksLeftLogarithmic (Graphics me, int numberOfMarksPerDecade, boo
 		return;
 	double py1 = pow (10, y1 + ( y1 < y2 ? -1e-6 : 1e-6 ));
 	double py2 = pow (10, y2 + ( y1 < y2 ? 1e-6 : -1e-6 ));
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0, 1, y1, y2);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -343,7 +343,7 @@ void Graphics_marksRightLogarithmic (Graphics me, int numberOfMarksPerDecade, bo
 	if (y1 > 300.0 || y2 > 300.0) return;
 	double py1 = pow (10.0, y1 + ( y1 < y2 ? -1e-6 : 1e-6 ));
 	double py2 = pow (10.0, y2 + ( y1 < y2 ? 1e-6 : -1e-6 ));
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, y1, y2);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -388,7 +388,7 @@ void Graphics_marksTopLogarithmic (Graphics me, int numberOfMarksPerDecade, bool
 		return;
 	double px1 = pow (10.0, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
 	double px2 = pow (10.0, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1, x2, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
@@ -433,7 +433,7 @@ void Graphics_marksBottomLogarithmic (Graphics me, int numberOfMarksPerDecade, b
 		return;
 	double px1 = pow (10.0, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
 	double px2 = pow (10.0, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1, x2, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
@@ -471,7 +471,7 @@ void Graphics_markLeft (Graphics me, double position, bool hasNumber, bool hasTi
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -502,7 +502,7 @@ void Graphics_markRight (Graphics me, double position, bool hasNumber, bool hasT
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -533,7 +533,7 @@ void Graphics_markTop (Graphics me, double position, bool hasNumber, bool hasTic
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
@@ -564,7 +564,7 @@ void Graphics_markBottom (Graphics me, double position, bool hasNumber, bool has
 	int lineType = my lineType;
 	double lineWidth = my lineWidth;
 	MelderColour colour = my colour;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
@@ -597,7 +597,7 @@ void Graphics_markLeftLogarithmic (Graphics me, double position, bool hasNumber,
 	MelderColour colour = my colour;
 	if (position <= 0.0)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -629,7 +629,7 @@ void Graphics_markRightLogarithmic (Graphics me, double position, bool hasNumber
 	double lineWidth = my lineWidth;
 	MelderColour colour = my colour;
 	if (position <= 0.0) return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0.0, 1.0, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -662,7 +662,7 @@ void Graphics_markTopLogarithmic (Graphics me, double position, bool hasNumber, 
 	MelderColour colour = my colour;
 	if (position <= 0.0)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
@@ -695,7 +695,7 @@ void Graphics_markBottomLogarithmic (Graphics me, double position, bool hasNumbe
 	MelderColour colour = my colour;
 	if (position <= 0.0)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
@@ -730,7 +730,7 @@ void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool h
 	distance *= units;
 	first = Melder_iceiling (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
 	last  = Melder_ifloor   (( y1WC < y2WC ? y2WC : y1WC ) / distance + 1e-5);
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -773,7 +773,7 @@ void Graphics_marksRightEvery (Graphics me, double units, double distance, bool 
 	last  = Melder_ifloor   (( y1WC < y2WC ? y2WC : y1WC ) / distance + 1e-5);
 	if (first > last)
 		return;
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
@@ -814,7 +814,7 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 	distance *= units;
 	first = Melder_iceiling (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
 	last  = Melder_ifloor   (( x1WC < x2WC ? x2WC : x1WC ) / distance + 1e-5);
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
@@ -853,7 +853,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 	distance *= units;
 	first = Melder_iceiling (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
 	last  = Melder_ifloor   (( x1WC < x2WC ? x2WC : x1WC ) / distance + 1e-5);
-	Graphics_setColour (me, Graphics_BLACK);
+	Graphics_setColour (me, Melder_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);

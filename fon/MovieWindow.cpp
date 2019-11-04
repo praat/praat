@@ -53,7 +53,7 @@ void structMovieWindow :: v_draw () {
 	double soundY = _MovieWindow_getSoundBottomPosition (this);
 	if (movie -> d_sound) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
@@ -62,10 +62,10 @@ void structMovieWindow :: v_draw () {
 	}
 	if (true) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.3);
-		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 		integer firstFrame = Sampled_xToNearestIndex (movie, our startWindow);
 		integer lastFrame = Sampled_xToNearestIndex (movie, our endWindow);

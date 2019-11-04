@@ -43,12 +43,12 @@ static void drawMarkers (Picture me)
 {
 	/* Fill the entire canvas with GC's background. */
 
-	Graphics_setColour (my selectionGraphics.get(), Graphics_WHITE);
+	Graphics_setColour (my selectionGraphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my selectionGraphics.get(), 0, SIDE, 0, SIDE);
 
 	/* Draw yellow grid lines for coarse navigation. */
 
-	Graphics_setColour (my selectionGraphics.get(), Graphics_YELLOW);
+	Graphics_setColour (my selectionGraphics.get(), Melder_YELLOW);
 	for (int i = YELLOW_GRID; i < SIDE; i += YELLOW_GRID) {
 		Graphics_line (my selectionGraphics.get(), 0, i, SIDE, i);
 		Graphics_line (my selectionGraphics.get(), i, 0, i, SIDE);
@@ -56,7 +56,7 @@ static void drawMarkers (Picture me)
 
 	/* Draw red ticks and numbers for feedback on viewport measurement. */
 
-	Graphics_setColour (my selectionGraphics.get(), Graphics_RED);
+	Graphics_setColour (my selectionGraphics.get(), Melder_RED);
 	for (int i = 1; i < SIDE; i ++) {
 		double x = i;
 		Graphics_setTextAlignment (my selectionGraphics.get(), Graphics_CENTRE, Graphics_TOP);
@@ -82,7 +82,7 @@ static void drawMarkers (Picture me)
 		Graphics_line (my selectionGraphics.get(), 0, y, 0.04, y);
 	}
 
-	Graphics_setColour (my selectionGraphics.get(), Graphics_BLACK);
+	Graphics_setColour (my selectionGraphics.get(), Melder_BLACK);
 }
 
 static void drawSelection (Picture me, int high) {

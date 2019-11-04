@@ -60,9 +60,9 @@ static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, int 
 			Graphics_markBottom (g, 2000.0, true, true, false, nullptr);
 			Graphics_markBottom (g, 4000.0, true, true, false, nullptr);
 		}
-		Graphics_setColour (g, stop ? Graphics_BLUE : Graphics_RED);
+		Graphics_setColour (g, stop ? Melder_BLUE : Melder_RED);
 		Sound_draw (me.get(), g, 0.0, 0.0, -0.1, 1.1, false, U"curve");
-		Graphics_setColour (g, Graphics_BLACK);
+		Graphics_setColour (g, Melder_BLACK);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}

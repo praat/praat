@@ -232,15 +232,6 @@ void Graphics_mark (Graphics me, double x, double y, double size_mm, conststring
 void Graphics_button (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_innerRectangle (Graphics me, double x1, double x2, double y1, double y2);
 
-extern MelderColour Graphics_BLACK, Graphics_WHITE, Graphics_RED, Graphics_GREEN, Graphics_BLUE,
-	Graphics_CYAN, Graphics_MAGENTA, Graphics_YELLOW, Graphics_MAROON, Graphics_LIME, Graphics_NAVY, Graphics_TEAL,
-	Graphics_PURPLE, Graphics_OLIVE, Graphics_PINK, Graphics_SILVER, Graphics_GREY, Graphics_WINDOW_BACKGROUND_COLOUR;
-conststring32 Graphics_Colour_name (MelderColour colour);
-static inline bool Graphics_Colour_equal (MelderColour colour1, MelderColour colour2) {
-	return colour1. red == colour2. red && colour1. green == colour2. green && colour1. blue == colour2. blue;
-}
-MelderColour Graphics_cyclingBackgroundColour (integer category);
-MelderColour Graphics_cyclingTextColour (integer category);
 void Graphics_setColour (Graphics me, MelderColour colour);
 void Graphics_setGrey (Graphics me, double grey);
 

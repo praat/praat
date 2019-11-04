@@ -1215,7 +1215,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 			Graphics_setFontSize (g, ( bidirectional ? 1.2 : 1.5 ) * fontSize);
 			if (numberOfOptimalCandidates > 1)
-				Graphics_setColour (g, Graphics_RED);
+				Graphics_setColour (g, Melder_RED);
 			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 0.5) * fontSize / 12.0, bidirectional ? U"\\Vr" : U"\\pf");
 			Graphics_setColour (g, colour);
 			Graphics_setFontSize (g, fontSize);
@@ -1224,7 +1224,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 			Graphics_setFontSize (g, 1.5 * fontSize);
 			if (numberOfOptimalCandidates1 > 1)
-				Graphics_setColour (g, Graphics_RED);
+				Graphics_setColour (g, Melder_RED);
 			Graphics_text (g, x + margin + fingerWidth, y + descent - Graphics_dyMMtoWC (g, 0.5) * fontSize / 12.0, U"\\pf");
 			Graphics_setColour (g, colour);
 			Graphics_setFontSize (g, fontSize);
@@ -1233,7 +1233,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 			Graphics_setFontSize (g, 1.5 * fontSize);
 			if (numberOfOptimalCandidates2 > 1)
-				Graphics_setColour (g, Graphics_RED);
+				Graphics_setColour (g, Melder_RED);
 			Graphics_setTextRotation (g, 180);
 			Graphics_text (g, x + margin + fingerWidth * 2, y + descent - Graphics_dyMMtoWC (g, 0.0) * fontSize / 12.0, U"\\pf");
 			Graphics_setTextRotation (g, 0);

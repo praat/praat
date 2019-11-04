@@ -411,7 +411,7 @@ void Graphics_beginMovieFrame (Graphics any, MelderColour *p_colour) {
 			Graphics_setColour (me, *p_colour);
 			Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
 			Graphics_fillRectangle (me, 0.0, 1.0, 0.0, 1.0);
-			Graphics_setColour (me, Graphics_BLACK);
+			Graphics_setColour (me, Melder_BLACK);
 		}
 	}
 }

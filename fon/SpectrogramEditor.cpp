@@ -24,9 +24,9 @@ void structSpectrogramEditor :: v_draw () {
 	Spectrogram spectrogram = (Spectrogram) our data;
 
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	integer itmin, itmax;
@@ -46,7 +46,7 @@ void structSpectrogramEditor :: v_draw () {
 	 */
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, our maximum);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-	Graphics_setColour (our graphics.get(), Graphics_RED);
+	Graphics_setColour (our graphics.get(), Melder_RED);
 	integer df = 1000;
 	for (integer f = df; f <= our maximum; f += df) {
 		Graphics_line (our graphics.get(), 0.0, f, 1.0, f);
@@ -61,7 +61,7 @@ void structSpectrogramEditor :: v_draw () {
 		Graphics_line (our graphics.get(), our startSelection, 0, our startSelection, our maximum);
 	if (our endSelection > our startWindow && our endSelection < our endWindow)
 		Graphics_line (our graphics.get(), our endSelection, 0, our endSelection, our maximum);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 }
 
 bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {

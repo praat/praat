@@ -541,7 +541,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				theCurrentPraatPicture -> font = (int) kGraphics_font::TIMES;
 				theCurrentPraatPicture -> fontSize = 12.0;
 				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-				theCurrentPraatPicture -> colour = Graphics_BLACK;
+				theCurrentPraatPicture -> colour = Melder_BLACK;
 				theCurrentPraatPicture -> lineWidth = 1.0;
 				theCurrentPraatPicture -> arrowSize = 1.0;
 				theCurrentPraatPicture -> speckleSize = 1.0;
