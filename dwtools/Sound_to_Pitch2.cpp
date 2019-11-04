@@ -185,7 +185,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
 			autoVEC sumspec = newVECzero (numberOfFrequencyPoints);
-			pitchFrame -> nCandidates = 0; /* !!!!! */
+			pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 0);   // !!!!!
 
 			double hm = 1.0;
 			for (integer m = 1; m <= maxnSubharmonics + 1; m ++) {

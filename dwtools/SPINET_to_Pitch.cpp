@@ -95,8 +95,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			// into Pitch object
 
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
-			pitchFrame -> nCandidates = 0; /* !!!!! */
-			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates); /* unvoiced */
+			pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 0);   // !!!!!
+			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates);   // unvoiced
 
 			for (integer k = 2; k <= numberOfFrequencyPoints - 1; k ++) {
 				const double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];

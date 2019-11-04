@@ -165,7 +165,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	/*
 	 * Register the first candidate, which is always present: voicelessness.
 	 */
-	pitchFrame -> nCandidates = 1;
+	pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 1);   // no memory allocations
 	pitchFrame -> candidates [1]. frequency = 0.0;   // voiceless: always present
 	pitchFrame -> candidates [1]. strength = 0.0;
 
@@ -205,7 +205,8 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		 * Find a place for this maximum.
 		 */
 		if (pitchFrame->nCandidates < maxnCandidates) {   // is there still a free place?
-			place = ++ pitchFrame -> nCandidates;
+			pitchFrame -> candidates.resize (++ pitchFrame -> nCandidates);
+			place = pitchFrame -> nCandidates;
 		} else {
 			/* Try the place of the weakest candidate so far. */
 			double weakest = 2.0;

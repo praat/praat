@@ -117,7 +117,8 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 
 autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
-		if (tier -> points.size == 0) Melder_throw (U"No pitch points.");
+		if (tier -> points.size == 0)
+			Melder_throw (U"No pitch points.");
 		autoPitch you = Data_copy (me);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Pitch_Frame frame = & your frames [iframe];
@@ -125,7 +126,7 @@ autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 			if (Pitch_util_frequencyIsVoiced (cand -> frequency, my ceiling))
 				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
 			cand -> strength = 0.9;
-			frame -> nCandidates = 1;
+			frame -> candidates.resize (frame -> nCandidates = 1);
 		}
 		return you;
 	} catch (MelderError) {
