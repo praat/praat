@@ -119,7 +119,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			const double minimum = Table_getMinimum (me, ivar);
 			const double maximum = Table_getMaximum (me, ivar);
-			Regression_addParameter (thee.get(), my columnHeaders___ [ivar]. label.get(), minimum, maximum, 0.0);
+			Regression_addParameter (thee.get(), my columnHeaders [ivar]. label.get(), minimum, maximum, 0.0);
 		}
 		for (integer icell = 1; icell <= numberOfCells; icell ++) {
 			for (integer ivar = 1; ivar < numberOfParameters; ivar ++) {
