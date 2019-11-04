@@ -1,6 +1,6 @@
 /* Pitch_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 	integer pos = 0;
 	double weakest = 1e308;
 	if (my nCandidates < maxnCandidates) {
-		pos = ++ my nCandidates;
+		my candidates.resize (++ my nCandidates);
+		pos = my nCandidates;
 	} else {
 		// Find weakest candidate so far (skip the unvoiced one)
 		for (integer i = 1; i <= maxnCandidates; i ++) {

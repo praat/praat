@@ -277,7 +277,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
 		Table_numericize_Assert (me, column);
 		autoSTRVEC groupLabels (numberOfRows);
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
-			groupLabels [irow] = Melder_dup(my rows.at [irow] -> cells [column]. string.get()); //TODO no dup
+			groupLabels [irow] = Melder_dup(my rows.at [irow] -> cells___ [column]. string.get()); //TODO no dup
 
 		autoStrings thee = strings_to_Strings (groupLabels.get(), 1, numberOfRows);
 		autoStringsIndex him = Strings_to_StringsIndex (thee.get());

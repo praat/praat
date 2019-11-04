@@ -750,7 +750,7 @@ autoMatrix Table_to_Matrix (Table me) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				thy z [irow] [icol] = row -> cells [icol]. number;
+				thy z [irow] [icol] = row -> cells___ [icol]. number;
 			}
 		}
 		return thee;
