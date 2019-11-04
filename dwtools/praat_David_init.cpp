@@ -3360,16 +3360,16 @@ static void print_means (Table me) {
 		return;
 	}
 	MelderInfo_writeLine (
-		Melder_padOrTruncate (15, my columnHeaders___ [1]. label.get()), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders___ [2]. label.get()), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders___ [3]. label.get())
+		Melder_padOrTruncate (15, my columnHeaders [1]. label.get()), U"\t",
+		Melder_padOrTruncate (15, my columnHeaders [2]. label.get()), U"\t",
+		Melder_padOrTruncate (15, my columnHeaders [3]. label.get())
 	);
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		MelderInfo_writeLine (
-			Melder_padOrTruncate (15, row -> cells___ [1]. string.get()), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells___ [2]. number)), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells___ [3]. number))
+			Melder_padOrTruncate (15, row -> cells [1]. string.get()), U"\t",
+			Melder_padOrTruncate (15, Melder_double (row -> cells [2]. number)), U"\t",
+			Melder_padOrTruncate (15, Melder_double (row -> cells [3]. number))
 		);
 	}
 }

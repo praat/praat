@@ -42,7 +42,7 @@ static integer Table_getRownumberOfStringInColumn (Table me, conststring32 strin
 	if (icol > 0 && icol <= my numberOfColumns) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			if (Melder_equ (myRow -> cells___ [icol]. string.get(), string)) {
+			if (Melder_equ (myRow -> cells [icol]. string.get(), string)) {
 				return irow;
 			}
 		}

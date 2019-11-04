@@ -114,16 +114,6 @@
 		our x [_i]. readText (_textSource_, _formatVersion_); \
 	}
 
-#define oo_STRUCT_VECTOR(Type, x, n)  \
-{ \
-	integer _size = (n); \
-	if (_size >= 1) { \
-		our x = NUMvector <struct##Type> (1, _size); \
-		for (integer _i = 1; _i <= _size; _i ++) { \
-			our x [_i]. readText (_textSource_, _formatVersion_); \
-		} \
-	} \
-}
 #define oo_STRUCTVEC(Type, x, n)  \
 { \
 	integer _size = (n); \

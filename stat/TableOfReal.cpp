@@ -1062,30 +1062,30 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 		}
 		if (labelColumn) {
 			for (integer icol = 1; icol < labelColumn; icol ++)
-				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders___ [icol]. label.get());
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
 			for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++)
-				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders___ [icol]. label.get());
+				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label.get());
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
-				char32 *string = row -> cells___ [labelColumn]. string.get();
+				char32 *string = row -> cells [labelColumn]. string.get();
 				TableOfReal_setRowLabel (thee.get(), irow, string ? string : U"");
 				for (integer icol = 1; icol < labelColumn; icol ++) {
-					thy data [irow] [icol] = row -> cells___ [icol]. number;   // Optimization.
+					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
 					//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
 				}
 				for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-					thy data [irow] [icol - 1] = row -> cells___ [icol]. number;   // Optimization.
+					thy data [irow] [icol - 1] = row -> cells [icol]. number;   // Optimization.
 					//thy data [irow] [icol - 1] = Table_getNumericValue_Assert (me, irow, icol);
 				}
 			}
 		} else {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders___ [icol]. label.get());
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
 			}
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-					thy data [irow] [icol] = row -> cells___ [icol]. number;   // Optimization.
+					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
 					//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
 				}
 			}
@@ -1102,15 +1102,15 @@ autoTable TableOfReal_to_Table (TableOfReal me, conststring32 labelOfFirstColumn
 		Table_setColumnLabel (thee.get(), 1, labelOfFirstColumn);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			conststring32 columnLabel = my columnLabels [icol].get();
-			thy columnHeaders___ [icol + 1]. label = Melder_dup (columnLabel && columnLabel [0] ? columnLabel : U"?");
+			thy columnHeaders [icol + 1]. label = Melder_dup (columnLabel && columnLabel [0] ? columnLabel : U"?");
 		}
 		for (integer irow = 1; irow <= thy rows.size; irow ++) {
 			conststring32 stringValue = my rowLabels [irow].get();
 			const TableRow row = thy rows.at [irow];
-			row -> cells___ [1]. string = Melder_dup (stringValue && stringValue [0] ? stringValue : U"?");
+			row -> cells [1]. string = Melder_dup (stringValue && stringValue [0] ? stringValue : U"?");
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				const double numericValue = my data [irow] [icol];
-				row -> cells___ [icol + 1]. string = Melder_dup (Melder_double (numericValue));
+				row -> cells [icol + 1]. string = Melder_dup (Melder_double (numericValue));
 			}
 		}
 		return thee;

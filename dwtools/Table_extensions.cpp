@@ -1654,17 +1654,17 @@ autoTable Table_create_petersonBarney1952 () {
 					speaker_sex = 1;
 			}
 
-			row -> cells___ [1]. string = Melder_dup (type [speaker_type]);
-			row -> cells___ [2]. string = Melder_dup (sex [speaker_sex]);
-			row -> cells___ [3]. string = Melder_dup (Melder_integer (speaker_id));
-			row -> cells___ [4]. string = Melder_dup (vowel [vowel_id - 1]);
-			row -> cells___ [5]. string = Melder_dup (ipa [vowel_id - 1]);
+			row -> cells [1]. string = Melder_dup (type [speaker_type]);
+			row -> cells [2]. string = Melder_dup (sex [speaker_sex]);
+			row -> cells [3]. string = Melder_dup (Melder_integer (speaker_id));
+			row -> cells [4]. string = Melder_dup (vowel [vowel_id - 1]);
+			row -> cells [5]. string = Melder_dup (ipa [vowel_id - 1]);
 			for (integer j = 0; j <= 3; j ++)
-				row -> cells___ [j + 6]. string = Melder_dup (Melder_integer (pbdata [i - 1].f [j]));
+				row -> cells [j + 6]. string = Melder_dup (Melder_integer (pbdata [i - 1].f [j]));
 		}
 		for (integer j = 1; j <= ncols; j ++) {
 			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
-			my columnHeaders___ [j]. numericized = false;
+			my columnHeaders [j]. numericized = false;
 		}
 		return me;
 	} catch (MelderError) {
@@ -2669,18 +2669,18 @@ autoTable Table_create_polsVanNierop1973 () {
 			int speaker_id = (i - 1) / 12 + 1;  /* 1 - 75 */
 			int speaker_sex = ( speaker_id <= 50 ? 0 : 1 );
 
-			row -> cells___ [1]. string = Melder_dup (sex [speaker_sex]);
-			row -> cells___ [2]. string = Melder_dup (Melder_integer (speaker_id));
-			row -> cells___ [3]. string = Melder_dup (vowel [vowel_id - 1]);
-			row -> cells___ [4]. string = Melder_dup (ipa [vowel_id - 1]);
+			row -> cells [1]. string = Melder_dup (sex [speaker_sex]);
+			row -> cells [2]. string = Melder_dup (Melder_integer (speaker_id));
+			row -> cells [3]. string = Melder_dup (vowel [vowel_id - 1]);
+			row -> cells [4]. string = Melder_dup (ipa [vowel_id - 1]);
 			for (integer j = 0; j <= 2; j ++) {
-				row -> cells___ [j + 5]. string = Melder_dup (Melder_integer (polsdata [i - 1]. f [j]));
-				row -> cells___ [j + 8]. string = Melder_dup (Melder_integer (polsdata [i - 1]. l [j]));
+				row -> cells [j + 5]. string = Melder_dup (Melder_integer (polsdata [i - 1]. f [j]));
+				row -> cells [j + 8]. string = Melder_dup (Melder_integer (polsdata [i - 1]. l [j]));
 			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
 			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
-			my columnHeaders___ [j]. numericized = false;
+			my columnHeaders [j]. numericized = false;
 		}
 		return me;
 	} catch (MelderError) {
@@ -3113,18 +3113,18 @@ autoTable Table_create_weenink1983 () {
 				speaker_sex = 0;   // which children were m/f
 			}
 
-			row -> cells___ [1]. string = Melder_dup (type [speaker_type]);
-			row -> cells___ [2]. string = Melder_dup (sex [speaker_sex]);
-			row -> cells___ [3]. string = Melder_dup (Melder_integer (speaker_id));
-			row -> cells___ [4]. string = Melder_dup (vowel [vowel_id]);
-			row -> cells___ [5]. string = Melder_dup (ipa [vowel_id]);
+			row -> cells [1]. string = Melder_dup (type [speaker_type]);
+			row -> cells [2]. string = Melder_dup (sex [speaker_sex]);
+			row -> cells [3]. string = Melder_dup (Melder_integer (speaker_id));
+			row -> cells [4]. string = Melder_dup (vowel [vowel_id]);
+			row -> cells [5]. string = Melder_dup (ipa [vowel_id]);
 
 			for (integer j = 0; j <= 3; j ++)
-				row -> cells___ [j + 6]. string = Melder_dup (Melder_integer (weeninkdata [index_in_data]. f [j]));
+				row -> cells [j + 6]. string = Melder_dup (Melder_integer (weeninkdata [index_in_data]. f [j]));
 		}
 		for (integer j = 1; j <= ncols; j ++) {
 			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
-			my columnHeaders___ [j]. numericized = false;
+			my columnHeaders [j]. numericized = false;
 		}
 		return me;
 	} catch (MelderError) {
@@ -3381,7 +3381,7 @@ autoVEC Table_getColumnVector (Table me, integer columnNumber) {
 		autoVEC result = newVECraw (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			result [irow] = row -> cells___ [columnNumber].number;
+			result [irow] = row -> cells [columnNumber].number;
 			Melder_require (isdefined (result [irow]), 
 				U"The cell in row ", irow, U" of column ", Table_messageColumn (me, columnNumber), U" is undefined.");
 		}
@@ -3420,7 +3420,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 			U"There should be at least two levels.");
 
 		for (integer irow = 1; irow <= numberOfData; irow ++)
-			data [irow] = my rows.at [irow] -> cells___ [column]. number;
+			data [irow] = my rows.at [irow] -> cells [column]. number;
 
 		NUMsortTogether <double, integer> (data.get(), levels -> classIndex.get());
 		NUMrank (data.get());
@@ -3488,12 +3488,12 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
 		for (integer i = 1; i <= numberOfMeans; i ++) {
 			const TableRow row = my rows.at [i];
-			means [i] = row -> cells___ [2]. number;
-			cases [i] = row -> cells___ [3]. number;
+			means [i] = row -> cells [2]. number;
+			cases [i] = row -> cells [3]. number;
 		}
 		for (integer i = 1; i <= numberOfMeans - 1; i ++) {
-			Table_setStringValue (meansD.get(), i, 1, my rows.at [i] -> cells___ [1]. string.get());
-			Table_setColumnLabel (meansD.get(), i + 1, my rows.at [i + 1] -> cells___ [1]. string.get());
+			Table_setStringValue (meansD.get(), i, 1, my rows.at [i] -> cells [1]. string.get());
+			Table_setColumnLabel (meansD.get(), i + 1, my rows.at [i + 1] -> cells [1]. string.get());
 		}
 
 		for (integer irow = 1; irow <= numberOfMeans - 1; irow ++) {
@@ -3540,9 +3540,9 @@ void Table_printAsAnovaTable (Table me) {
 
 	for (integer i = 1; i <= my rows.size; i ++) {
 		TableRow row = my rows.at [i];
-		MelderString_copy (& s, Melder_padOrTruncate (width [1], row -> cells___ [1]. string.get()), U"\t");
+		MelderString_copy (& s, Melder_padOrTruncate (width [1], row -> cells [1]. string.get()), U"\t");
 		for (integer j = 2; j <= 6; j ++) {
-			double value = row -> cells___ [j]. number;
+			double value = row -> cells [j]. number;
 			if (isdefined (value))
 				MelderString_append (& s, Melder_pad (width [j], Melder_single (value)), j == 6 ? U"" : U"\t");
 			else
@@ -3559,15 +3559,15 @@ void Table_printAsMeansTable (Table me) {
 
 	for (integer j = 1; j <= my numberOfColumns; j ++)
 		MelderString_append (& s,
-			Melder_padOrTruncate (10, my columnHeaders___ [j]. label ? my columnHeaders___ [j]. label.get() : U""),
+			Melder_padOrTruncate (10, my columnHeaders [j]. label ? my columnHeaders [j]. label.get() : U""),
 			j == my numberOfColumns ? U"" : U"\t");
 
 	MelderInfo_writeLine (s.string);
 	for (integer i = 1; i <= my rows.size; i ++) {
 		const TableRow row = my rows.at [i];
-		MelderString_copy (& s, Melder_padOrTruncate (10, row -> cells___ [1]. string.get()), U"\t");
+		MelderString_copy (& s, Melder_padOrTruncate (10, row -> cells [1]. string.get()), U"\t");
 		for (integer j = 2; j <= my numberOfColumns; j ++) {
-			const double value = row -> cells___ [j].number;
+			const double value = row -> cells [j].number;
 			if (isdefined (value))
 				MelderString_append (& s, Melder_pad (10, Melder_half (value)), j == my numberOfColumns ? U"" : U"\t");
 			else
@@ -3589,7 +3589,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		// copy data from Table
 		autoVEC data = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
-			data [irow] = my rows.at [irow] -> cells___ [column]. number;
+			data [irow] = my rows.at [irow] -> cells [column]. number;
 		const integer numberOfLevels = levels -> classes->size;
 		Melder_require (numberOfLevels > 1,
 			U"There should be at least two levels.");
@@ -3676,8 +3676,8 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Melder_require (factorColumnB > 0 && factorColumnB <= my numberOfColumns && factorColumnB != column && factorColumnA != factorColumnB,
 			U"Invalid B group column number.");
 
-		char32 *label_A = my columnHeaders___ [factorColumnA]. label.get();
-		char32 *label_B = my columnHeaders___ [factorColumnB]. label.get();
+		char32 *label_A = my columnHeaders [factorColumnA]. label.get();
+		char32 *label_B = my columnHeaders [factorColumnB]. label.get();
 
 		integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
@@ -3686,7 +3686,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		// copy data from Table
 		autoVEC data = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
-			data [irow] = my rows.at [irow] -> cells___ [column]. number;
+			data [irow] = my rows.at [irow] -> cells [column]. number;
 		integer numberOfLevelsA = levelsA -> classes -> size;
 		integer numberOfLevelsB = levelsB -> classes -> size;
 		
@@ -3909,7 +3909,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 		integer numberOfData = my rows.size;
 		autoVEC data = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
-			data [irow] = my rows.at [irow] -> cells___ [column]. number;
+			data [irow] = my rows.at [irow] -> cells [column]. number;
 
 		MelderGaussianStats stats = NUMmeanStdev (data.all());
 		double xmin = 100.0, xmax = -xmin, ymin = 1e308, ymax = -ymin;
@@ -3923,7 +3923,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
 		TableOfReal_setColumnLabel (thee.get(), 1, U"Normal distribution quantiles");
-		TableOfReal_setColumnLabel (thee.get(), 2, my columnHeaders___ [column]. label.get());
+		TableOfReal_setColumnLabel (thee.get(), 2, my columnHeaders [column]. label.get());
 		double un = pow (0.5, 1.0 / numberOfQuantiles);
 		for (integer irow = 1; irow <= numberOfQuantiles; irow ++) {
 			double ui = irow == 1 ? 1.0 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
@@ -3965,8 +3965,8 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		autoVEC ydata = newVECraw (numberOfData);
 		integer xnumberOfData = 0, ynumberOfData = 0;
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
-			char32 *label = my rows.at [irow] -> cells___ [factorColumn]. string.get();
-			double val = my rows.at [irow] -> cells___ [dataColumn]. number;
+			char32 *label = my rows.at [irow] -> cells [factorColumn]. string.get();
+			double val = my rows.at [irow] -> cells [dataColumn]. number;
 			if (Melder_equ (label, xlevel))
 				xdata [ ++ xnumberOfData] = val;
 			else if (Melder_equ (label, ylevel))
@@ -3998,10 +3998,10 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		if (garnish) {
 			Graphics_drawInnerBox (g);
 
-			Graphics_textBottom (g, true, Melder_cat (my columnHeaders___ [dataColumn]. label.get(), U" (", xlevel, U")"));
+			Graphics_textBottom (g, true, Melder_cat (my columnHeaders [dataColumn]. label.get(), U" (", xlevel, U")"));
 			Graphics_marksBottom (g, 2, true, true, false);
 
-			Graphics_textLeft (g, true, Melder_cat (my columnHeaders___ [dataColumn]. label.get(), U" (", ylevel, U")"));
+			Graphics_textLeft (g, true, Melder_cat (my columnHeaders [dataColumn]. label.get(), U" (", ylevel, U")"));
 			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
@@ -4021,8 +4021,8 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		autoVEC xdata = newVECraw (numberOfData);
 		autoVEC ydata = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
-			xdata [irow] = my rows.at [irow] -> cells___ [xcolumn]. number;
-			ydata [irow] = my rows.at [irow] -> cells___ [ycolumn]. number;
+			xdata [irow] = my rows.at [irow] -> cells [xcolumn]. number;
+			ydata [irow] = my rows.at [irow] -> cells [ycolumn]. number;
 		}
 		if (xmin == xmax) {
 			NUMextrema (xdata.get(), & xmin, & xmax);
@@ -4045,12 +4045,12 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
-			if (my columnHeaders___ [xcolumn].label)
-				Graphics_textBottom (g, true, my columnHeaders___ [xcolumn]. label.get());
+			if (my columnHeaders [xcolumn].label)
+				Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label.get());
 
 			Graphics_marksBottom (g, 2, true, true, false);
-			if (my columnHeaders___ [ycolumn].label)
-				Graphics_textLeft (g, true, my columnHeaders___ [ycolumn]. label.get());
+			if (my columnHeaders [ycolumn].label)
+				Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label.get());
 
 			Graphics_marksLeft (g, 2, true, true, false);
 		}
@@ -4184,8 +4184,8 @@ void Table_distributionPlotWhere (Table me, Graphics g, integer dataColumn, doub
 		if (garnish) {
 			Graphics_drawInnerBox (g);
 			Graphics_marksBottom (g, 2, true, true, false);
-			if (my columnHeaders___ [dataColumn]. label)
-				Graphics_textBottom (g, true, my columnHeaders___ [dataColumn]. label.get());
+			if (my columnHeaders [dataColumn]. label)
+				Graphics_textBottom (g, true, my columnHeaders [dataColumn]. label.get());
 			Graphics_marksLeft (g, 2, true, true, false);
 			Graphics_textLeft (g, true, U"Number / bin");
 		}
@@ -4507,9 +4507,9 @@ void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, doub
 			Graphics_drawInnerBox (g);
 			Graphics_marksBottom (g, 2, true, true, false);
 			Graphics_marksLeft (g, 2, true, true, false);
-			if (my columnHeaders___ [column]. label) {
-				Graphics_textLeft (g, true, my columnHeaders___ [column]. label.get());
-				Graphics_textBottom (g, true, Melder_cat (my columnHeaders___ [column]. label.get(), U" (lag = ", lag, U")"));
+			if (my columnHeaders [column]. label) {
+				Graphics_textLeft (g, true, my columnHeaders [column]. label.get());
+				Graphics_textBottom (g, true, Melder_cat (my columnHeaders [column]. label.get(), U" (lag = ", lag, U")"));
 			}
 		}
 	} catch (MelderError) {
@@ -4523,7 +4523,7 @@ autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter i
 		Formula_Result result;
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			thy columnHeaders___ [icol]. label = Melder_dup (my columnHeaders___ [icol]. label.get());
+			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_run (irow, 1, & result);
 			if (result. numericResult != 0.0) {
@@ -4555,7 +4555,7 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me, conststring32 colum
 			}
 		}
 		for (integer icol = 1; icol <= columnIndexes.size; icol ++)
-			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders___ [columnIndexes [icol]]. label.get());
+			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndexes [icol]]. label.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"No TableOfReal created from Table.");
@@ -4596,7 +4596,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present
 		autoTable him = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			his columnHeaders___ [icol].label = Melder_dup (my columnHeaders___ [icol]. label.get());
+			his columnHeaders [icol].label = Melder_dup (my columnHeaders [icol]. label.get());
 		OrderedOf<structCovariance> covs;
 		for (integer igroup = 1; igroup <= numberOfGroups; igroup ++) {
 			autoCovariance cov = SSCP_to_Covariance (thy at [igroup], 1);
@@ -4672,10 +4672,10 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 			Graphics_drawInnerBox (g);
 			Graphics_marksBottom (g, 2, true, true, false);
 			Graphics_marksLeft (g, 2, true, true, false);
-			if (my columnHeaders___ [xcolumn]. label)
-				Graphics_textBottom (g, true, my columnHeaders___ [xcolumn]. label.get());
-			if (my columnHeaders___ [ycolumn]. label)
-				Graphics_textLeft (g, true, my columnHeaders___ [ycolumn]. label.get());
+			if (my columnHeaders [xcolumn]. label)
+				Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label.get());
+			if (my columnHeaders [ycolumn]. label)
+				Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label.get());
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored

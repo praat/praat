@@ -81,16 +81,6 @@
 		our x [_i]. copy (& thy x [_i]); \
 	}
 
-#define oo_STRUCT_VECTOR(Type, x, n)  \
-	{ \
-		integer _size = (n); \
-		if (our x) { \
-			thy x = NUMvector <struct##Type> (1, _size); \
-			for (integer _i = 1; _i <= _size; _i ++) { \
-				our x [_i]. copy (& thy x [_i]); \
-			} \
-		} \
-	}
 #define oo_STRUCTVEC(Type, x, n)  \
 { \
 	integer _size = (n); \

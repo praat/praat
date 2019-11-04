@@ -895,19 +895,19 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 
 		for (integer i = 1; i <= nrows; i ++) {
 			const TableRow row = table -> rows.at [ib + i - 1];
-			TableOfReal_setRowLabel (thee.get(), i, row -> cells___ [4]. string.get());
+			TableOfReal_setRowLabel (thee.get(), i, row -> cells [4]. string.get());
 			for (integer j = 1; j <= 3; j ++) {
-				thy data [i] [j] = Melder_atof (row -> cells___ [4 + j]. string.get());
+				thy data [i] [j] = Melder_atof (row -> cells [4 + j]. string.get());
 				if (include_levels) {
-					thy data [i] [3 + j] = Melder_atof (row -> cells___ [7 + j]. string.get());
+					thy data [i] [3 + j] = Melder_atof (row -> cells [7 + j]. string.get());
 				}
 			}
 		}
 		for (integer j = 1; j <= 3; j ++) {
-			conststring32 label = table -> columnHeaders___ [4 + j]. label.get();
+			conststring32 label = table -> columnHeaders [4 + j]. label.get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 			if (include_levels) {
-				label = table -> columnHeaders___ [7 + j]. label.get();
+				label = table -> columnHeaders [7 + j]. label.get();
 				TableOfReal_setColumnLabel (thee.get(), 3 + j, label);
 			}
 		}
@@ -937,13 +937,13 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 		autoTableOfReal thee = TableOfReal_create (nrows, ncols);
 		for (integer i = 1; i <= nrows; i ++) {
 			TableRow row = table -> rows.at [ib + i - 1];
-			TableOfReal_setRowLabel (thee.get(), i, row -> cells___ [5]. string.get());
+			TableOfReal_setRowLabel (thee.get(), i, row -> cells [5]. string.get());
 			for (integer j = 1; j <= 3; j ++) {
-				thy data [i] [j] = Melder_atof (row -> cells___ [6 + j]. string.get()); /* Skip F0 */
+				thy data [i] [j] = Melder_atof (row -> cells [6 + j]. string.get()); /* Skip F0 */
 			}
 		}
 		for (integer j = 1; j <= 3; j ++)  {
-			conststring32 label = table -> columnHeaders___ [6 + j]. label.get();
+			conststring32 label = table -> columnHeaders [6 + j]. label.get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 		}
 		return thee;

@@ -92,11 +92,11 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	autoVEC meanX = newVECzero (numberOfFactors);
 	autoVEC stdevX = newVECzero (numberOfFactors);
 	autoMAT smallMatrix = newMATzero (1+numberOfFactors, 1+numberOfParameters);
-	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders___ [dependent1]. label.get(), my columnHeaders___ [dependent2]. label.get());
+	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label.get(), my columnHeaders [dependent2]. label.get());
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
 		double minimum = Table_getMinimum (me, factors [ivar]);
 		double maximum = Table_getMaximum (me, factors [ivar]);
-		Regression_addParameter (thee.get(), my columnHeaders___ [factors [ivar]]. label.get(), minimum, maximum, 0.0);
+		Regression_addParameter (thee.get(), my columnHeaders [factors [ivar]]. label.get(), minimum, maximum, 0.0);
 	}
 	for (integer icell = 1; icell <= numberOfCells; icell ++) {
 		y0 [icell] = Table_getNumericValue_Assert (me, icell, dependent1);
@@ -113,9 +113,9 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	if (numberOfY0 == 0 && numberOfY1 == 0)
 		Melder_throw (U"No data in either class. Cannot determine result.");
 	if (numberOfY0 == 0)
-		Melder_throw (U"No data in class ", my columnHeaders___ [dependent1]. label.get(), U". Cannot determine result.");
+		Melder_throw (U"No data in class ", my columnHeaders [dependent1]. label.get(), U". Cannot determine result.");
 	if (numberOfY1 == 0)
-		Melder_throw (U"No data in class ", my columnHeaders___ [dependent2]. label.get(), U". Cannot determine result.");
+		Melder_throw (U"No data in class ", my columnHeaders [dependent2]. label.get(), U". Cannot determine result.");
 	/*
 	 * Normalize the data.
 	 */

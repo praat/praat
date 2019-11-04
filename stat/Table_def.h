@@ -34,7 +34,7 @@ oo_END_STRUCT (TableCell)
 oo_DEFINE_CLASS (TableRow, Daata)
 
 	oo_INTEGER (numberOfColumns)
-	oo_STRUCTVEC (TableCell, cells___, numberOfColumns)
+	oo_STRUCTVEC (TableCell, cells, numberOfColumns)
 
 	#if oo_DECLARING || oo_COPYING
 		oo_INTEGER (sortingIndex)
@@ -61,7 +61,7 @@ oo_END_STRUCT (TableColumnHeader)
 oo_DEFINE_CLASS (Table, Daata)
 
 	oo_INTEGER (numberOfColumns)
-	oo_STRUCTVEC (TableColumnHeader, columnHeaders___, numberOfColumns)
+	oo_STRUCTVEC (TableColumnHeader, columnHeaders, numberOfColumns)
 	oo_COLLECTION_OF (OrderedOf, rows, TableRow, 0)
 
 	#if oo_DECLARING

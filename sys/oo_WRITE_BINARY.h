@@ -95,17 +95,10 @@
 		our x [_i]. writeBinary (_filePointer_); \
 	}
 
-#define oo_STRUCT_VECTOR(Type, x, n)  \
-{ \
-	integer _size = (n); \
-	for (integer _i = 1; _i <= _size; _i ++) { \
-		our x [_i]. writeBinary (_filePointer_); \
-	} \
-}
 #define oo_STRUCTVEC(Type, x, n)  \
 { \
 	integer _size = (n); \
-	Melder_assert (our x.size          ==           _size); \
+	Melder_assert (our x.size == _size); \
 	for (integer _i = 1; _i <= _size; _i ++) { \
 		our x [_i]. writeBinary (_filePointer_); \
 	} \
