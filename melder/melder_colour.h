@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-using MelderColour = struct {
+struct MelderColour {
 	double red, green, blue;
 };
 

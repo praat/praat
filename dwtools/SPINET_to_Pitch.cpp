@@ -70,14 +70,14 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		Melder_require (maxPower != 0.0, U"The sound should not have all amplitudes equal to zero.");
 
 		for (integer j = 1; j <= my nx; j ++) {
-			Pitch_Frame pitchFrame = & thy frame [j];
+			const Pitch_Frame pitchFrame = & thy frames [j];
 
 			pitchFrame -> intensity = power [j] / maxPower;
 			y.all() <<= my s.column (j);
 			
 			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), y.get(), 1e30, 1e30);
 			for (integer k = 1; k <= numberOfFrequencyPoints; k ++) {
-				double f = fminl2 + (k - 1) * dfl2;
+				const double f = fminl2 + (k - 1) * dfl2;
 				pitch [k] = NUMcubicSplineInterpolation (fl2.get(), y.get(), yv2.get(), f);
 				sumspec [k] = 0.0;
 			}
@@ -85,8 +85,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			// Formula (8): weighted harmonic summation.
 
 			for (integer m = 1; m <= maxHarmonic; m ++) {
-				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
-				integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));
+				const double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
+				const integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));   // TODO: what is kb?
 				for (integer k = kb; k <= numberOfFrequencyPoints; k ++)
 					if (pitch [k] > 0.0)
 						sumspec [k - kb + 1] += pitch [k] * hm;
@@ -95,16 +95,16 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			// into Pitch object
 
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
-			pitchFrame -> nCandidates = 0; /* !!!!! */
-			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates); /* unvoiced */
+			pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 0);   // !!!!!
+			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates);   // unvoiced
 
 			for (integer k = 2; k <= numberOfFrequencyPoints - 1; k ++) {
-				double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
+				const double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
 				if (y2 > y1 && y2 >= y3) {
-					double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;
-					double x = dfl2 * (y1 - y3) / (2 * denum);
-					double f = pow (2.0, fminl2 + (k - 1) * dfl2 + x);
-					double strength = (2.0 * y1 * (4.0 * y2 + y3) - y1 * y1 - tmp * tmp) / (8.0 * denum);
+					const double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;
+					const double x = dfl2 * (y1 - y3) / (2 * denum);
+					const double f = pow (2.0, fminl2 + (k - 1) * dfl2 + x);
+					const double strength = (2.0 * y1 * (4.0 * y2 + y3) - y1 * y1 - tmp * tmp) / (8.0 * denum);
 					if (strength > maxStrength)
 						maxStrength = strength;
 					Pitch_Frame_addPitch (pitchFrame, f, strength, maxnCandidates);
@@ -116,8 +116,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 		for (integer j = 1; j <= my nx; j ++) {
 			double f0, localStrength;
-			Pitch_Frame_getPitch (& thy frame [j], & f0, & localStrength);
-			Pitch_Frame_resizeStrengths (& thy frame [j], localStrength / maxStrength, unvoicedCriterium);
+			Pitch_Frame_getPitch (& thy frames [j], & f0, & localStrength);
+			Pitch_Frame_resizeStrengths (& thy frames [j], localStrength / maxStrength, unvoicedCriterium);
 		}
 		return thee;
 	} catch (MelderError) {

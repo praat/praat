@@ -219,13 +219,13 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 		 * Invert matrix in the simplest way, and shift and wipe the last column with it.
 		 */
 		for (integer ivar = 0; ivar <= numberOfFactors; ivar ++) {
-			double pivot = smallMatrix [1+ivar] [1+ivar];   /* Save diagonal. */
+			const double pivot = smallMatrix [1+ivar] [1+ivar];   /* Save diagonal. */
 			smallMatrix [1+ivar] [1+ivar] = 1.0;
 			for (integer jvar = 0; jvar <= numberOfParameters; jvar ++)
 				smallMatrix [1+ivar] [1+jvar] /= pivot;
 			for (integer jvar = 0; jvar <= numberOfFactors; jvar ++) {
 				if (jvar != ivar) {
-					double temp = smallMatrix [1+jvar] [1+ivar];
+					const double temp = smallMatrix [1+jvar] [1+ivar];
 					smallMatrix [1+jvar] [1+ivar] = 0.0;
 					for (integer kvar = 0; kvar <= numberOfParameters; kvar ++)
 						smallMatrix [1+jvar] [1+kvar] -= temp * smallMatrix [1+ivar] [1+kvar];
@@ -237,14 +237,14 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 		 */
 		thy intercept += smallMatrix [1+0] [1+numberOfParameters];
 		for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			RegressionParameter parm = thy parameters.at [ivar];
+			const RegressionParameter parm = thy parameters.at [ivar];
 			parm -> value += smallMatrix [1+ivar] [1+numberOfParameters];
 		}
 	}
 	if (iteration > 100)
 		Melder_warning (U"Logistic regression has not converged in 100 iterations. The results are unreliable.");
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
-		RegressionParameter parm = thy parameters.at [ivar];
+		const RegressionParameter parm = thy parameters.at [ivar];
 		parm -> value /= stdevX [ivar];
 		thy intercept -= parm -> value * meanX [ivar];
 	}
@@ -256,8 +256,8 @@ autoLogisticRegression Table_to_LogisticRegression (Table me, conststring32 fact
 {
 	try {
 		auto factors_columnIndices = Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString);
-		integer dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel);
-		integer dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel);
+		const integer dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel);
+		const integer dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel);
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.get(), dependent1_columnIndex, dependent2_columnIndex);
 		return thee;
 	} catch (MelderError) {

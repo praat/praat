@@ -3341,7 +3341,7 @@ FORM (INFO_Table_reportRobustStatistics, U"Table: Report robust statistics", U"T
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double location, scale;
 		Table_reportHuberMStatistics (me, columnNumber, k_stdev, tolerance, & location, & scale, maximumNumberOfiterations);
 		MelderInfo_open ();
@@ -3360,15 +3360,17 @@ static void print_means (Table me) {
 		return;
 	}
 	MelderInfo_writeLine (
-		Melder_padOrTruncate (15, my columnHeaders[1]. label.get()), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders[2]. label.get()), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders[3]. label.get()));
+		Melder_padOrTruncate (15, my columnHeaders [1]. label.get()), U"\t",
+		Melder_padOrTruncate (15, my columnHeaders [2]. label.get()), U"\t",
+		Melder_padOrTruncate (15, my columnHeaders [3]. label.get())
+	);
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		MelderInfo_writeLine (
-			Melder_padOrTruncate (15, row -> cells[1]. string.get()), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells[2]. number)), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells[3]. number)));
+			Melder_padOrTruncate (15, row -> cells [1]. string.get()), U"\t",
+			Melder_padOrTruncate (15, Melder_double (row -> cells [2]. number)), U"\t",
+			Melder_padOrTruncate (15, Melder_double (row -> cells [3]. number))
+		);
 	}
 }
 

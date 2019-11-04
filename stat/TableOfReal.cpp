@@ -1061,12 +1061,10 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 			Table_numericize_Assert (me, icol);
 		}
 		if (labelColumn) {
-			for (integer icol = 1; icol < labelColumn; icol ++) {
+			for (integer icol = 1; icol < labelColumn; icol ++)
 				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
-			}
-			for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+			for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++)
 				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label.get());
-			}
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
 				char32 *string = row -> cells [labelColumn]. string.get();
@@ -1108,10 +1106,10 @@ autoTable TableOfReal_to_Table (TableOfReal me, conststring32 labelOfFirstColumn
 		}
 		for (integer irow = 1; irow <= thy rows.size; irow ++) {
 			conststring32 stringValue = my rowLabels [irow].get();
-			TableRow row = thy rows.at [irow];
+			const TableRow row = thy rows.at [irow];
 			row -> cells [1]. string = Melder_dup (stringValue && stringValue [0] ? stringValue : U"?");
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				double numericValue = my data [irow] [icol];
+				const double numericValue = my data [irow] [icol];
 				row -> cells [icol + 1]. string = Melder_dup (Melder_double (numericValue));
 			}
 		}
@@ -1158,14 +1156,18 @@ autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) 
 		char32 *p = & string [0];
 		for (;;) {
 			char32 kar = *p++;
-			if (kar == U'\n' || kar == U'\0') break;
-			if (kar == U' ' || kar == U'\t') continue;
+			if (kar == U'\n' || kar == U'\0')   // TODO: Unicode
+				break;
+			if (kar == U' ' || kar == U'\t')
+				continue;
 			ncol ++;
 			do { kar = *p++; } while (kar != U' ' && kar != U'\t' && kar != U'\n' && kar != U'\0');
-			if (kar == U'\n' || kar == U'\0') break;
+			if (kar == U'\n' || kar == U'\0')
+				break;
 		}
 		ncol --;
-		if (ncol < 1) Melder_throw (U"No columns.");
+		if (ncol < 1)
+			Melder_throw (U"No columns.");
 
 		/*
 			Count elements.
@@ -1174,11 +1176,14 @@ autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) 
 		integer nelements = 0;
 		for (;;) {
 			char32 kar = *p++;
-			if (kar == U'\0') break;
-			if (kar == U' ' || kar == U'\t' || kar == U'\n') continue;
+			if (kar == U'\0')
+				break;
+			if (kar == U' ' || kar == U'\t' || kar == U'\n')
+				continue;
 			nelements ++;
 			do { kar = *p++; } while (kar != U' ' && kar != U'\t' && kar != U'\n' && kar != U'\0');
-			if (kar == U'\0') break;
+			if (kar == U'\0')
+				break;
 		}
 
 		/*

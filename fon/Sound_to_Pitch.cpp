@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,15 +165,16 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	/*
 	 * Register the first candidate, which is always present: voicelessness.
 	 */
-	pitchFrame -> nCandidates = 1;
-	pitchFrame -> candidate [1]. frequency = 0.0;   // voiceless: always present
-	pitchFrame -> candidate [1]. strength = 0.0;
+	pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 1);   // no memory allocations
+	pitchFrame -> candidates [1]. frequency = 0.0;   // voiceless: always present
+	pitchFrame -> candidates [1]. strength = 0.0;
 
 	/*
 	 * Shortcut: absolute silence is always voiceless.
 	 * We are done for this frame.
 	 */
-	if (localPeak == 0.0) return;
+	if (localPeak == 0.0)
+		return;
 
 	/*
 	 * Find the strongest maxima of the correlation of this frame, 
@@ -190,28 +191,30 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		 * Use parabolic interpolation for first estimate of frequency,
 		 * and sin(x)/x interpolation to compute the strength of this frequency.
 		 */
-		double dr = 0.5 * (r [i+1] - r [i-1]), d2r = 2.0 * r [i] - r [i-1] - r [i+1];
-		double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
-		integer offset = - brent_ixmax - 1;
+		const double dr = 0.5 * (r [i+1] - r [i-1]), d2r = 2.0 * r [i] - r [i-1] - r [i+1];
+		const double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
+		const integer offset = - brent_ixmax - 1;
 		double strengthOfMaximum = /* method & 1 ? */
 			NUM_interpolate_sinc (constVEC (& r [offset], brent_ixmax - offset), 1.0 / my dx / frequencyOfMaximum - offset, 30)
 			/* : r [i] + 0.5 * dr * dr / d2r */;
 		/* High values due to short windows are to be reflected around 1. */
-		if (strengthOfMaximum > 1.0) strengthOfMaximum = 1.0 / strengthOfMaximum;
+		if (strengthOfMaximum > 1.0)
+			strengthOfMaximum = 1.0 / strengthOfMaximum;
 
 		/*
 		 * Find a place for this maximum.
 		 */
 		if (pitchFrame->nCandidates < maxnCandidates) {   // is there still a free place?
-			place = ++ pitchFrame -> nCandidates;
+			pitchFrame -> candidates.resize (++ pitchFrame -> nCandidates);
+			place = pitchFrame -> nCandidates;
 		} else {
 			/* Try the place of the weakest candidate so far. */
 			double weakest = 2.0;
 			for (int iweak = 2; iweak <= maxnCandidates; iweak ++) {
 				/* High frequencies are to be favoured */
 				/* if we want to analyze a perfectly periodic signal correctly. */
-				double localStrength = pitchFrame -> candidate [iweak]. strength - octaveCost *
-					NUMlog2 (minimumPitch / pitchFrame -> candidate [iweak]. frequency);
+				double localStrength = pitchFrame -> candidates [iweak]. strength - octaveCost *
+					NUMlog2 (minimumPitch / pitchFrame -> candidates [iweak]. frequency);
 				if (localStrength < weakest) {
 					weakest = localStrength;
 					place = iweak;
@@ -222,8 +225,8 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 				place = 0;
 		}
 		if (place) {   // have we found a place for this candidate?
-			pitchFrame -> candidate [place]. frequency = frequencyOfMaximum;
-			pitchFrame -> candidate [place]. strength = strengthOfMaximum;
+			pitchFrame -> candidates [place]. frequency = frequencyOfMaximum;
+			pitchFrame -> candidates [place]. strength = strengthOfMaximum;
 			imax [place] = i;
 		}
 	}
@@ -232,15 +235,16 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	 * Second pass: for extra precision, maximize sin(x)/x interpolation ('sinc').
 	 */
 	for (integer i = 2; i <= pitchFrame -> nCandidates; i ++) {
-		if (method != AC_HANNING || pitchFrame -> candidate [i]. frequency > 0.0 / my dx) {
+		if (method != AC_HANNING || pitchFrame -> candidates [i]. frequency > 0.0 / my dx) {
 			double xmid, ymid;
-			integer offset = - brent_ixmax - 1;
+			const integer offset = - brent_ixmax - 1;
 			ymid = NUMimproveMaximum (constVEC (& r [offset], brent_ixmax - offset), imax [i] - offset,
-				pitchFrame -> candidate [i]. frequency > 0.3 / my dx ? NUM_PEAK_INTERPOLATE_SINC700 : brent_depth, & xmid);
+					pitchFrame -> candidates [i]. frequency > 0.3 / my dx ? NUM_PEAK_INTERPOLATE_SINC700 : brent_depth, & xmid);
 			xmid += offset;
-			pitchFrame -> candidate [i]. frequency = 1.0 / my dx / xmid;
-			if (ymid > 1.0) ymid = 1.0 / ymid;
-			pitchFrame -> candidate [i]. strength = ymid;
+			pitchFrame -> candidates [i]. frequency = 1.0 / my dx / xmid;
+			if (ymid > 1.0)
+				ymid = 1.0 / ymid;
+			pitchFrame -> candidates [i]. strength = ymid;
 		}
 	}
 }
@@ -319,7 +323,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 		MelderThread_UNLOCK (mutex);
 	}
 	for (integer iframe = my firstFrame; iframe <= my lastFrame; iframe ++) {
-		Pitch_Frame pitchFrame = & my pitch -> frame [iframe];
+		const Pitch_Frame pitchFrame = & my pitch -> frames [iframe];
 		const double t = Sampled_indexToX (my pitch, iframe);
 		if (my isMainThread) {
 			try {
@@ -338,7 +342,8 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 			my maximumLag, my nsampFFT, my nsamp_period, my halfnsamp_period,
 			my brent_ixmax, my brent_depth, my globalPeak,
 			frame.get(), ac.peek(), my window, my windowR,
-			r.peek(), imax.peek(), localMean.peek());
+			r.peek(), imax.peek(), localMean.peek()
+		);
 	}
 	MelderThread_RETURN;
 }
@@ -436,7 +441,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		 * Create (too much) space for candidates.
 		 */
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			Pitch_Frame pitchFrame = & thy frame [iframe];
+			const Pitch_Frame pitchFrame = & thy frames [iframe];
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
 		}
 
@@ -444,20 +449,16 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		 * Compute the global absolute peak for determination of silence threshold.
 		 */
 		globalPeak = 0.0;
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			longdouble sum = 0.0;
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
+			const double mean = NUMmean (my z.row (ichan));
 			for (integer i = 1; i <= my nx; i ++) {
-				sum += my z [channel] [i];
-			}
-			double mean = double (sum / my nx);
-			for (integer i = 1; i <= my nx; i ++) {
-				double value = fabs (my z [channel] [i] - mean);
-				if (value > globalPeak) globalPeak = value;
+				double value = fabs (my z [ichan] [i] - mean);
+				if (value > globalPeak)
+					globalPeak = value;
 			}
 		}
-		if (globalPeak == 0.0) {
+		if (globalPeak == 0.0)
 			return thee;
-		}
 
 		autoNUMvector <double> window;
 		autoVEC windowR;

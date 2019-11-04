@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@ autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitc
 {
 	try {
 		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 1,
-			silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
+				silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
-			pitch -> dx, pitch -> x1);
+				pitch -> dx, pitch -> x1);
 		for (integer i = 1; i <= thy nx; i ++) {
-			if (pitch -> frame [i]. candidate [1]. frequency == 0.0) {
+			if (pitch -> frames [i]. candidates [1]. frequency == 0.0) {
 				thy z [1] [i] = -200.0;
 			} else {
-				double r = pitch -> frame [i]. candidate [1]. strength;
+				const double r = pitch -> frames [i]. candidates [1]. strength;
 				thy z [1] [i] = ( r <= 1e-15 ? -150.0 : r > 1.0 - 1e-15 ? 150.0 : 10.0 * log10 (r / (1.0 - r)) );
 			}
 		}
@@ -46,14 +46,14 @@ autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitc
 {
 	try {
 		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 3,
-			silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
+				silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
-			pitch -> dx, pitch -> x1);
+				pitch -> dx, pitch -> x1);
 		for (integer i = 1; i <= thy nx; i ++) {
-			if (pitch -> frame [i]. candidate [1]. frequency == 0.0) {
+			if (pitch -> frames [i]. candidates [1]. frequency == 0.0) {
 				thy z [1] [i] = -200.0;
 			} else {
-				double r = pitch -> frame [i]. candidate [1]. strength;
+				double r = pitch -> frames [i]. candidates [1]. strength;
 				thy z [1] [i] = ( r <= 1e-15 ? -150.0 : r > 1.0 - 1e-15 ? 150.0 : 10.0 * log10 (r / (1.0 - r)) );
 			}
 		}

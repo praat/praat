@@ -894,7 +894,7 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 		autoTableOfReal thee = TableOfReal_create (nrows, ncols);
 
 		for (integer i = 1; i <= nrows; i ++) {
-			TableRow row = table -> rows.at [ib + i - 1];
+			const TableRow row = table -> rows.at [ib + i - 1];
 			TableOfReal_setRowLabel (thee.get(), i, row -> cells [4]. string.get());
 			for (integer j = 1; j <= 3; j ++) {
 				thy data [i] [j] = Melder_atof (row -> cells [4 + j]. string.get());

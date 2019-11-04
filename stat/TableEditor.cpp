@@ -116,8 +116,10 @@ void structTableEditor :: v_draw () {
 	 */
 	integer rowmin = topRow, rowmax = rowmin + 197;
 	integer colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
-	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
+	if (rowmax > table -> rows.size)
+		rowmax = table -> rows.size;
+	if (colmax > table -> numberOfColumns)
+		colmax = table -> numberOfColumns;
 	Graphics_clearWs (graphics.get());
 	Graphics_setTextAlignment (graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	Graphics_setWindow (graphics.get(), 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
@@ -132,7 +134,8 @@ void structTableEditor :: v_draw () {
 	columnWidth = Graphics_textWidth (graphics.get(), U"row");
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		cellWidth = Graphics_textWidth (graphics.get(), Melder_integer (irow));
-		if (cellWidth > columnWidth) columnWidth = cellWidth;
+		if (cellWidth > columnWidth)
+			columnWidth = cellWidth;
 	}
 	columnLeft [0] = columnWidth + 2 * spacing;
 	Graphics_setColour (graphics.get(), Graphics_SILVER);
@@ -145,18 +148,23 @@ void structTableEditor :: v_draw () {
 	for (integer icol = colmin; icol <= colmax; icol ++) {
 		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
 		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
-		if (! columnLabel) columnLabel = U"";
+		if (! columnLabel)
+			columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics.get(), columnLabel);
-		if (cellWidth > columnWidth) columnWidth = cellWidth;
+		if (cellWidth > columnWidth)
+			columnWidth = cellWidth;
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
 			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
-			if (cell [0] == U'\0') cell = U"?";
+			if (cell [0] == U'\0')
+				cell = U"?";
 			cellWidth = Graphics_textWidth (graphics.get(), cell);
-			if (cellWidth > columnWidth) columnWidth = cellWidth;
+			if (cellWidth > columnWidth)
+				columnWidth = cellWidth;
 		}
 		columnRight [icol - colmin] = columnLeft [icol - colmin] + columnWidth + 2 * spacing;
-		if (icol < colmax) columnLeft [icol - colmin + 1] = columnRight [icol - colmin];
+		if (icol < colmax)
+			columnLeft [icol - colmin + 1] = columnRight [icol - colmin];
 	}
 	/*
 		Text can be "graphic" or not.
@@ -169,16 +177,16 @@ void structTableEditor :: v_draw () {
 	 * Show the row numbers.
 	 */
 	Graphics_text (graphics.get(), columnLeft [0] / 2, rowmin - 1, U"row");
-	for (integer irow = rowmin; irow <= rowmax; irow ++) {
+	for (integer irow = rowmin; irow <= rowmax; irow ++)
 		Graphics_text (graphics.get(), columnLeft [0] / 2, irow, irow);
-	}
 	/*
 	 * Show the column labels.
 	 */
 	for (integer icol = colmin; icol <= colmax; icol ++) {
-		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
+		const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
-		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
+		if (! columnLabel || columnLabel [0] == U'\0')
+			columnLabel = U"?";
 		Graphics_text (graphics.get(), mid, rowmin - 2, icol);
 		Graphics_text (graphics.get(), mid, rowmin - 1, columnLabel);
 	}
@@ -189,15 +197,16 @@ void structTableEditor :: v_draw () {
 		for (integer icol = colmin; icol <= colmax; icol ++) {
 			if (irow == selectedRow && icol == selectedColumn) {
 				Graphics_setColour (graphics.get(), Graphics_YELLOW);
-				double dx = Graphics_dxMMtoWC (graphics.get(), 0.3);
+				const double dx = Graphics_dxMMtoWC (graphics.get(), 0.3);
 				Graphics_fillRectangle (graphics.get(),
 					columnLeft [icol - colmin] + dx, columnRight [icol - colmin] - dx, irow - 0.45, irow + 0.55);
 				Graphics_setColour (graphics.get(), Graphics_BLACK);
 			}
-			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
+			const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2.0;
 			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
-			if (cell [0] == U'\0') cell = U"?";
+			if (cell [0] == U'\0')
+				cell = U"?";
 			Graphics_text (graphics.get(), mid, irow, cell);
 		}
 	}
@@ -221,11 +230,14 @@ static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEven
 
 static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent event) {
 	Table table = static_cast<Table> (my data);
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	integer rowmin = my topRow, rowmax = rowmin + 197;
 	integer colmin = my leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
-	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
+	if (rowmax > table -> rows.size)
+		rowmax = table -> rows.size;
+	if (colmax > table -> numberOfColumns)
+		colmax = table -> numberOfColumns;
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
 	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
@@ -242,12 +254,13 @@ static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent 
 }
 
 static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEvent /* event */) {
-	if (! my graphics) return;
+	if (! my graphics)
+		return;
 	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
-	integer value = GuiScrollBar_getValue (event -> scrollBar);
+	const integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
 		#if cocoa || gtk || motif || ! SUPPORT_DIRECT_DRAWING
@@ -260,7 +273,7 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 }
 
 static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
-	integer value = GuiScrollBar_getValue (event -> scrollBar);
+	const integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
 		#if cocoa || gtk || motif || ! SUPPORT_DIRECT_DRAWING

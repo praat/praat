@@ -247,17 +247,23 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double minimum, double maximum, bool garnish)
 {
-	if (xmax <= xmin)
-		xmin = my xmin, xmax = my xmax;
-	if (ymax <= ymin)
-		ymin = my ymin, ymax = my ymax;
+	if (xmax <= xmin) {
+		xmin = my xmin;
+		xmax = my xmax;
+	}
+	if (ymax <= ymin) {
+		ymin = my ymin;
+		ymax = my ymax;
+	}
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, & iymin, & iymax);
 	if (maximum <= minimum)
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
-	if (maximum <= minimum)
-		minimum -= 1.0, maximum += 1.0;
+	if (maximum <= minimum) {
+		minimum -= 1.0;
+		maximum += 1.0;
+	}
 	if (xmin >= xmax || ymin >= ymax)
 		return;
 	Graphics_setInner (g);
@@ -305,15 +311,15 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 		integer ibegin, iend;
 		setDrawingLimits (a.peek(), n, ymin, ymax, & ibegin, & iend);
 		if (ibegin <= iend) {
-			double fmin = zmin + (ibegin - 1) * df;
-			double fmax = zmax - (n - iend) * df;
+			const double fmin = zmin + (ibegin - 1) * df;
+			const double fmax = zmax - (n - iend) * df;
 			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
 		}
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		double distance = ( dbScale ? 10.0 : 1.0 );
-		conststring32 ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
+		const double distance = ( dbScale ? 10.0 : 1.0 );
+		const conststring32 ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
@@ -355,18 +361,16 @@ void FilterBank_drawTimeSlice (FilterBank me, Graphics g, double t,
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
-		if (xlabel) {
+		if (xlabel)
 			Graphics_textBottom (g, false, xlabel);
-		}
 	}
 }
 
 void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, int fromFilter, int toFilter,
 	double zmin, double zmax, int dbScale, double ymin, double ymax, bool garnish)
 {
-	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax)) {
+	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
-	}
 	integer n = 1000;
 	autoNUMvector<double> a (1, n);
 
@@ -389,9 +393,8 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 				a [i] = undefined;
 			} else {
 				a [i] = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, z);
-				if (dbScale) {
+				if (dbScale)
 					a [i] = to_dB (a [i], 10.0, ymin);
-				}
 			}
 		}
 
@@ -407,8 +410,8 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 	Graphics_unsetInner (g);
 
 	if (garnish) {
-		double distance = ( dbScale ? 10.0 : 1.0 );
-		char32 const *ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
+		const double distance = ( dbScale ? 10.0 : 1.0 );
+		const conststring32 ytext = ( dbScale ? U"Amplitude (dB)" : U"Amplitude" );
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);

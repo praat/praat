@@ -3494,12 +3494,12 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 	try {
 		Table_numericize_Assert (me, 2);
 		Table_numericize_Assert (me, 3);
-		integer numberOfMeans = my rows.size;
+		const integer numberOfMeans = my rows.size;
 		autoVEC means = newVECraw (numberOfMeans);
 		autoVEC cases = newVECraw (numberOfMeans);
 		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
 		for (integer i = 1; i <= numberOfMeans; i ++) {
-			TableRow row = my rows.at [i];
+			const TableRow row = my rows.at [i];
 			means [i] = row -> cells [2]. number;
 			cases [i] = row -> cells [3]. number;
 		}
@@ -3510,7 +3510,7 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 
 		for (integer irow = 1; irow <= numberOfMeans - 1; irow ++) {
 			for (integer icol = irow + 1; icol <= numberOfMeans; icol ++) {
-				double dif = fabs (means [irow] - means [icol]);
+				const double dif = fabs (means [irow] - means [icol]);
 				Table_setNumericValue (meansD.get(), irow, icol, dif);
 			}
 		}
@@ -3518,15 +3518,17 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 		for (integer irow = 1; irow <= numberOfMeans - 1; irow ++) {
 			for (integer icol = irow + 1; icol <= numberOfMeans; icol ++) {
 				// Tukey-Kramer correction for unequal sample sizes
-				double oneOverNstar =  0.5 * (1.0 / cases [icol] + 1.0 / cases [irow]);
-				double s = sqrt (sumOfSquaresWithin * oneOverNstar);
-				double q = fabs (means [irow] - means [icol]) / s;
-				double p = NUMtukeyQ (q, numberOfMeans, degreesOfFreedomWithin, 1);
+				const double oneOverNstar =  0.5 * (1.0 / cases [icol] + 1.0 / cases [irow]);
+				const double s = sqrt (sumOfSquaresWithin * oneOverNstar);
+				const double q = fabs (means [irow] - means [icol]) / s;
+				const double p = NUMtukeyQ (q, numberOfMeans, degreesOfFreedomWithin, 1);
 				Table_setNumericValue (meansP.get(), irow, icol, p);
 			}
 		}
-		if (out_meansDiff) *out_meansDiff = meansD.move();
-		if (out_meansDiffProbabilities) *out_meansDiffProbabilities = meansP.move();
+		if (out_meansDiff)
+			*out_meansDiff = meansD.move();
+		if (out_meansDiffProbabilities)
+			*out_meansDiffProbabilities = meansP.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no post-hoc performed.");
 	}
@@ -3574,10 +3576,10 @@ void Table_printAsMeansTable (Table me) {
 
 	MelderInfo_writeLine (s.string);
 	for (integer i = 1; i <= my rows.size; i ++) {
-		TableRow row = my rows.at [i];
+		const TableRow row = my rows.at [i];
 		MelderString_copy (& s, Melder_padOrTruncate (10, row -> cells [1]. string.get()), U"\t");
 		for (integer j = 2; j <= my numberOfColumns; j ++) {
-			double value = row -> cells [j].number;
+			const double value = row -> cells [j].number;
 			if (isdefined (value))
 				MelderString_append (& s, Melder_pad (10, Melder_half (value)), j == my numberOfColumns ? U"" : U"\t");
 			else
@@ -3593,14 +3595,14 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			U"Invalid column number.");
 		Melder_require (factorColumn > 0 && factorColumn <= my numberOfColumns && factorColumn != column,
 			U"Invalid group column number.");
-		integer numberOfData = my rows.size;
+		const integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		// copy data from Table
 		autoVEC data = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
-		integer numberOfLevels = levels -> classes->size;
+		const integer numberOfLevels = levels -> classes->size;
 		Melder_require (numberOfLevels > 1,
 			U"There should be at least two levels.");
 		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
@@ -3610,7 +3612,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		longdouble a = 0.0, ty = 0.0;
 		for (integer i = 1; i <= numberOfData; i ++) {
-			integer index = levels -> classIndex [i];
+			const integer index = levels -> classIndex [i];
 			factorLevelSizes [index] ++;
 			factorLevelMeans [index] += data [i];
 			a += data [i] * data [i];
@@ -3627,11 +3629,11 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			factorLevelMeans [j] /= factorLevelSizes [j];
 		}
 
-		double ss_t = a - ty * ty / numberOfData;
-		double ss_b = c - ty * ty / numberOfData;
-		double ss_w = a - c;
-		double dof_w = numberOfData - numberOfLevels;
-		double dof_b = numberOfLevels - 1;
+		const double ss_t = double (a - ty * ty / numberOfData);
+		const double ss_b = double (c - ty * ty / numberOfData);
+		const double ss_w = double (a - c);
+		const double dof_w = numberOfData - numberOfLevels;
+		const double dof_b = numberOfLevels - 1;
 
 		autoTable anova = Table_createWithColumnNames (3, U"Source SS Df MS F P");
 		integer col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
@@ -3756,16 +3758,16 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		nh = numberOfLevelsA * numberOfLevelsB / nh;
 
 		// row marginals (ystar [i.])
-		longdouble mean = 0.0;
+		longdouble sum = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
 				factorLevelMeans [i] [numberOfLevelsB + 1] += factorLevelMeans [i] [j];
-				mean += factorLevelMeans [i] [j];
+				sum += factorLevelMeans [i] [j];
 				factorLevelSizes [i] [numberOfLevelsB + 1] += factorLevelSizes [i] [j];
 			}
 			factorLevelMeans [i] [numberOfLevelsB + 1] /= numberOfLevelsB;
 		}
-		mean /= numberOfLevelsA * numberOfLevelsB;
+		double mean = double (sum) / (numberOfLevelsA * numberOfLevelsB);
 		factorLevelMeans [numberOfLevelsA + 1] [numberOfLevelsB + 1] = mean;
 		factorLevelSizes [numberOfLevelsA + 1] [numberOfLevelsB + 1] = numberOfData;
 
@@ -3783,20 +3785,20 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		longdouble ss_T = 0.0;
 		for (integer k = 1; k <= numberOfData; k ++) {
-			double dif = data [k] - mean;
+			const double dif = data [k] - mean;
 			ss_T += dif * dif;
 		}
 
 		longdouble ss_A = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
-			double dif = factorLevelMeans [i] [numberOfLevelsB + 1] - mean;
+			const double dif = factorLevelMeans [i] [numberOfLevelsB + 1] - mean;
 			ss_A += dif * dif;
 		}
 		ss_A *= nh * numberOfLevelsB;
 
 		longdouble ss_B = 0.0;
 		for (integer j = 1; j <= numberOfLevelsB; j ++) {
-			double dif = factorLevelMeans [numberOfLevelsA + 1] [j] - mean;
+			const double dif = factorLevelMeans [numberOfLevelsA + 1] [j] - mean;
 			ss_B += dif * dif;
 		}
 		ss_B *= nh * numberOfLevelsA;
@@ -3804,13 +3806,13 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		longdouble ss_AB = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
-				double dif = factorLevelMeans [i] [j] - factorLevelMeans [i] [numberOfLevelsB + 1] - factorLevelMeans [numberOfLevelsA + 1] [j] + mean;
+				const double dif = factorLevelMeans [i] [j] - factorLevelMeans [i] [numberOfLevelsB + 1] - factorLevelMeans [numberOfLevelsA + 1] [j] + mean;
 				ss_AB += dif * dif;
 			}
 		}
 		ss_AB *= nh;
 
-		double ss_E = ss_T - ss_A - ss_B - ss_AB;
+		double ss_E = double (ss_T - ss_A - ss_B - ss_AB);
 
 		// are there any replications? if not then the error term is the AB interaction.
 
@@ -3949,7 +3951,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 			}
 		}
 
-		TableOfReal_drawScatterPlot (thee.get(), g, 1, 2, 1, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, 0, label, garnish);
+		TableOfReal_drawScatterPlot (thee.get(), g, 1, 2, 1, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, false, label, garnish);
 
 		Graphics_setInner (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
@@ -3967,7 +3969,8 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel, bool garnish)
 {
 	try {
-		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
+		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns)
+			return;
 		Table_numericize_Assert (me, dataColumn);
 		integer numberOfData = my rows.size;
 		autoVEC xdata = newVECraw (numberOfData);
@@ -3976,11 +3979,10 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			char32 *label = my rows.at [irow] -> cells [factorColumn]. string.get();
 			double val = my rows.at [irow] -> cells [dataColumn]. number;
-			if (Melder_equ (label, xlevel)) {
+			if (Melder_equ (label, xlevel))
 				xdata [ ++ xnumberOfData] = val;
-			} else if (Melder_equ (label, ylevel)) {
+			else if (Melder_equ (label, ylevel))
 				ydata [ ++ ynumberOfData] = val;
-			}
 		}
 		if (xnumberOfData == 0 || ynumberOfData == 0) 
 			return;
@@ -4023,10 +4025,11 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel, bool garnish)
 {
 	try {
-		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
+			return;
 		Table_numericize_Assert (me, xcolumn);
 		Table_numericize_Assert (me, ycolumn);
-		integer numberOfData = my rows.size;
+		const integer numberOfData = my rows.size;
 		autoVEC xdata = newVECraw (numberOfData);
 		autoVEC ydata = newVECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
@@ -4050,7 +4053,7 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.get(), ydata.get(),
-			xmin, xmax, ymin, ymax, labelSize, plotLabel);
+				xmin, xmax, ymin, ymax, labelSize, plotLabel);
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
@@ -4088,11 +4091,9 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 		autoVEC data = newVECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			integer numberOfDataInLevel = 0;
-			for (integer k = 1; k <= numberOfData; k ++) {
-				if (si -> classIndex [k] == ilevel) {
+			for (integer k = 1; k <= numberOfData; k ++)
+				if (si -> classIndex [k] == ilevel)
 					data [ ++ numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
-				}
-			}
 			Graphics_boxAndWhiskerPlot (g, data.part (1, numberOfDataInLevel), ilevel, 0.2, 0.35, ymin, ymax);
 		}
 		Graphics_unsetInner (g);
@@ -4125,10 +4126,12 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 		if (ymin == ymax) {
 			ymin = 1e308, ymax = - ymin;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
-				double ymaxi = Table_getMaximum (me, dataColumns [icol]);
-				double ymini = Table_getMinimum (me, dataColumns [icol]);
-				ymax = ymaxi > ymax ? ymaxi : ymax;
-				ymin = ymini < ymin ? ymini : ymin;
+				const double ymaxi = Table_getMaximum (me, dataColumns [icol]);
+				const double ymini = Table_getMinimum (me, dataColumns [icol]);
+				if (ymaxi > ymax)
+					ymax = ymaxi;
+				if (ymini < ymin)
+					ymin = ymini;
 			}
 			if (ymax == ymin) {
 				ymax += 1.0;
@@ -4148,14 +4151,13 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 				for (integer irow = 1; irow <= numberOfData; irow ++) {
 					if (si -> classIndex [irow] == ilevel) {
 						Formula_run (irow, dataColumns [icol], & result);
-						if (result. numericResult != 0.0) {
+						if (result. numericResult != 0.0)
 							data [++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns [icol]);
-						}
 					}
 				}
 				if (numberOfDataInLevelColumn > 0) {
 					// determine position
-					double xc = xlevel - 0.5 + (spaceBetweenGroupsdiv2 + (icol - 1) * (boxWidth + spaceBetweenBoxesInGroup) + boxWidth / 2) * widthUnit;
+					const double xc = xlevel - 0.5 + (spaceBetweenGroupsdiv2 + (icol - 1) * (boxWidth + spaceBetweenBoxesInGroup) + boxWidth / 2) * widthUnit;
 					Graphics_boxAndWhiskerPlot (g, data.part (1, numberOfDataInLevelColumn), xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
 				}
 			}

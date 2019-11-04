@@ -289,10 +289,10 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		*/
 		integer imin, imax, n = Sampled_getWindowSamples (pitch, tmin, tmax, & imin, & imax), nunvoiced = n;
 		for (integer i = imin; i <= imax; i ++) {
-			Pitch_Frame frame = & pitch -> frame [i];
+			const Pitch_Frame frame = & pitch -> frames [i];
 			if (frame -> intensity >= silenceThreshold) {
 				for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
-					Pitch_Candidate cand = & frame -> candidate [icand];
+					const Pitch_Candidate cand = & frame -> candidates [icand];
 					if (cand -> frequency > 0.0 && cand -> frequency < ceiling && cand -> strength >= voicingThreshold) {
 						nunvoiced --;
 						break;   // next frame

@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ autoPitchTier Pitch_to_PitchTier (Pitch me) {
 	try {
 		autoPitchTier you = PitchTier_create (my xmin, my xmax);
 		for (integer i = 1; i <= my nx; i ++) {
-			double frequency = my frame [i]. candidate [1]. frequency;
+			double frequency = my frames [i]. candidates [1]. frequency;
 
 			/*
 				Count only voiced frames.
@@ -117,15 +117,16 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 
 autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
-		if (tier -> points.size == 0) Melder_throw (U"No pitch points.");
+		if (tier -> points.size == 0)
+			Melder_throw (U"No pitch points.");
 		autoPitch you = Data_copy (me);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			Pitch_Frame frame = & your frame [iframe];
-			Pitch_Candidate cand = & frame -> candidate [1];
+			const Pitch_Frame frame = & your frames [iframe];
+			const Pitch_Candidate cand = & frame -> candidates [1];
 			if (Pitch_util_frequencyIsVoiced (cand -> frequency, my ceiling))
 				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
 			cand -> strength = 0.9;
-			frame -> nCandidates = 1;
+			frame -> candidates.resize (frame -> nCandidates = 1);
 		}
 		return you;
 	} catch (MelderError) {
