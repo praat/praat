@@ -35,7 +35,7 @@ oo_DEFINE_CLASS (WarpingPath, Daata)
 
 	oo_INTEGER (_capacity)
 	oo_INTEGER (pathLength)
-	oo_STRUCT_VECTOR (PairOfInteger, path, pathLength)
+	oo_STRUCTVEC (PairOfInteger, path, pathLength)
 
 oo_END_CLASS (WarpingPath)
 #undef ooSTRUCT

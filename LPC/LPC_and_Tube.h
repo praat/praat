@@ -39,9 +39,9 @@ int Tube_Frame_into_LPC_Frame_area (Tube_Frame me, LPC_Frame thee);
 
 int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee);
 
-autoVocalTract LPC_to_VocalTract (LPC me, double time, double length);
+autoVocalTract LPC_to_VocalTract_slice (LPC me, double time, double length);
 void VocalTract_setLength (VocalTract me, double newLength);
 
-autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping);
+autoVocalTract LPC_to_VocalTract_slice_special (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping);
 
 #endif /* _LPC_and_Tube_h_ */

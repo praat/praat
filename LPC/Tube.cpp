@@ -73,14 +73,14 @@ void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee) {
 static void Tube_setLengths (Tube me, double length) {
 	for (integer i = 1; i <= my nx; i ++) {
 		Tube_Frame f = & my frame [i];
-		if (f) f -> length = length;
+		f -> length = length;
 	}
 }
 
 void Tube_init (Tube me, double tmin, double tmax, integer nt, double dt, double t1, integer maxNumberOfSegments, double defaultLength) {
 	my maxNumberOfSegments = maxNumberOfSegments;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
-	my frame = NUMvector<structTube_Frame> (1, nt);
+	my frame = newvectorzero <structTube_Frame> (nt);
 	Tube_setLengths (me, defaultLength);
 }
 

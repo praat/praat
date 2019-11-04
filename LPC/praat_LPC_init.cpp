@@ -168,7 +168,7 @@ FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration"
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
-		double result = PowerCepstrum_getRNR (me, fromPitch, toPitch, fractionalWIdth);
+		const double result = PowerCepstrum_getRNR (me, fromPitch, toPitch, fractionalWIdth);
 	NUMBER_ONE_END (U" (rnr)")
 }
 
@@ -178,7 +178,8 @@ FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get pea
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
-		double qpeak, result = PowerCepstrum_getPeakProminence_hillenbrand (me, fromPitch, toPitch, & qpeak);
+		double qpeak;
+		const double result = PowerCepstrum_getPeakProminence_hillenbrand (me, fromPitch, toPitch, & qpeak);
 	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
 }
 
@@ -223,7 +224,8 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
-		double qpeak, result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
+		double qpeak;
+		const double result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
 	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
@@ -329,25 +331,25 @@ DO
 
 DIRECT (REAL_PowerCepstrogram_getStartQuefrency) {
 	NUMBER_ONE (PowerCepstrogram)
-		double result = my ymin;
+		const double result = my ymin;
 	NUMBER_ONE_END (U" (s)")
 }
 
 DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
 	NUMBER_ONE (PowerCepstrogram)
-		double result = my ymax;
+		const double result = my ymax;
 	NUMBER_ONE_END (U" (s)")
 }
 
 DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
 	INTEGER_ONE (PowerCepstrogram)
-		integer result = my ny;
+		const integer result = my ny;
 	INTEGER_ONE_END (U" quefrency bins")
 }
 
 DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
 	NUMBER_ONE (PowerCepstrogram)
-		double result = my dy;
+		const double result = my dy;
 	NUMBER_ONE_END (U" s (quefrency step)")
 }
 
@@ -386,7 +388,7 @@ FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", 
 	OK
 DO
 	NUMBER_ONE (PowerCepstrogram)
-		double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
+		const double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -412,7 +414,7 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 	OK
 DO
 	NUMBER_ONE (PowerCepstrogram)
-		double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+		const double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	NUMBER_ONE_END (U" dB");
 }
 
@@ -606,7 +608,7 @@ DO
 
 DIRECT (REAL_LPC_getSamplingInterval) {
 	NUMBER_ONE (LPC)
-		double result = my samplingPeriod;
+		const double result = my samplingPeriod;
 	NUMBER_ONE_END (U" s");
 }
 
@@ -617,7 +619,7 @@ DO
 	INTEGER_ONE (LPC)
 		Melder_require (frameNumber <= my nx,
 			U"Your frame number (", frameNumber, U") is too large. It should be between 1 and ", my nx, U".");
-		integer result = my d_frames[frameNumber].nCoefficients;
+		const integer result = my d_frames [frameNumber]. nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
 }
 
@@ -702,17 +704,17 @@ FORM (NEW_LPC_to_VocalTract_slice_special, U"LPC: To VocalTract", U"LPC: To Voca
 	OK
 DO
 	CONVERT_EACH (LPC)
-		autoVocalTract result = LPC_to_VocalTract (me, time, glottalDamping, radiationDamping, internalDamping);
+		autoVocalTract result = LPC_to_VocalTract_slice_special (me, time, glottalDamping, radiationDamping, internalDamping);
 	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC: To VocalTract (slice)...") {
 	REAL (time, U"Time (s)", U"0.0")
-	POSITIVE (lenght, U"Length (m)", U"0.17")
+	POSITIVE (length, U"Length (m)", U"0.17")
 	OK
 DO
 	CONVERT_EACH (LPC)
-		autoVocalTract result = LPC_to_VocalTract (me, time, lenght);
+		autoVocalTract result = LPC_to_VocalTract_slice (me, time, length);
 	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
 }
 

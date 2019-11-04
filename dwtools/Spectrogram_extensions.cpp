@@ -130,7 +130,7 @@ void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, integer f
 	autoVEC y = newVECraw (nf);
 	for (integer frame = 1; frame <= my nx; frame ++) {
 		CC_Frame ccframe = & my frame [frame];
-		integer iend = last < ccframe -> numberOfCoefficients ? last : ccframe -> numberOfCoefficients;
+		integer iend = std::min (last, ccframe -> numberOfCoefficients);
 		x [1] = use_c0 ? ccframe -> c0 : 0;
 		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
 			x [i + 1] = ( i < first || i > iend ? 0.0 : ccframe -> c [i] );

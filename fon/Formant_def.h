@@ -46,7 +46,7 @@ oo_DEFINE_STRUCT (Formant_Frame)
 	oo_ENDFROM
 
 	oo_INT16 (nFormants)
-	oo_STRUCT_VECTOR (Formant_Formant, formant, nFormants)
+	oo_STRUCTVEC (Formant_Formant, formant, nFormants)
 
 oo_END_STRUCT (Formant_Frame)
 #undef ooSTRUCT
@@ -57,7 +57,7 @@ oo_END_STRUCT (Formant_Frame)
 oo_DEFINE_CLASS (Formant, Sampled)
 
 	oo_INT16 (maxnFormants)
-	oo_STRUCT_VECTOR (Formant_Frame, d_frames, nx)
+	oo_STRUCTVEC (Formant_Frame, frames, nx)
 
 	#if oo_DECLARING
 		void v_info ()

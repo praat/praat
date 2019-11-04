@@ -45,7 +45,7 @@ oo_DEFINE_CLASS (CC, Sampled)
 	oo_DOUBLE (fmax)
 	// c[0]..c[maximumNumberOfCoefficients] ; needed for inverse transform
 	oo_INTEGER (maximumNumberOfCoefficients)
-	oo_STRUCT_VECTOR (CC_Frame, frame, nx)
+	oo_STRUCTVEC (CC_Frame, frame, nx)
 
 	#if oo_DECLARING
 		void v_info ()

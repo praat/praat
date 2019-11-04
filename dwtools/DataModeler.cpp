@@ -1563,10 +1563,13 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 {
 	try {
 		integer ifmin, ifmax, posInCollection = 0;
-		if (tmax <= tmin)
-			tmin = my xmin, tmax = my xmax;
+		if (tmax <= tmin) {
+			tmin = my xmin;
+			tmax = my xmax;
+		}
 		integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack, U"There are not enought data points, please extend the selection.");
+		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack,
+			U"There are not enough data points, please extend the selection.");
 		
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfFormants, numberOfDataPoints, numberOfParametersPerTrack);
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
@@ -1574,15 +1577,15 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			DataModeler ffi = thy trackmodelers.at [posInCollection];
 			integer idata = 0, validData = 0;
 			for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
-				Formant_Frame curFrame = & my d_frames [iframe];
+				Formant_Frame curFrame = & my frames [iframe];
 				ffi -> x [++ idata] = Sampled_indexToX (me, iframe);
 				ffi -> dataPointStatus [idata] = DataModeler_DATA_INVALID;
 				if (iformant <= curFrame -> nFormants) {
-					double frequency = curFrame -> formant [iformant]. frequency;
+					const double frequency = curFrame -> formant [iformant]. frequency;
 					if (isdefined (frequency)) {
-						double bw = curFrame -> formant [iformant]. bandwidth;
+						const double bandwidth = curFrame -> formant [iformant]. bandwidth;
 						ffi -> y [idata] = curFrame -> formant [iformant]. frequency;
-						ffi -> sigmaY [idata] = bw;
+						ffi -> sigmaY [idata] = bandwidth;
 						ffi -> dataPointStatus [idata] = DataModeler_DATA_VALID;
 						validData ++;
 					}
@@ -1618,9 +1621,9 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, int useEstimates, int 
 				sigma [iformant] = FormantModeler_getStandardDeviation (me, iformant);
 		}
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			Formant_Frame thyFrame = & thy d_frames [iframe];
+			Formant_Frame thyFrame = & thy frames [iframe];
 			thyFrame -> intensity = 1.0; //???
-			thyFrame -> formant = NUMvector <structFormant_Formant> (1, numberOfFormants);
+			thyFrame -> formant = newvectorzero <structFormant_Formant> (numberOfFormants);
 			
 			for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 				DataModeler ffi = my trackmodelers.at [iformant];
@@ -1917,11 +1920,11 @@ autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
 			U"Your start and end time should be between ", my xmin, U" and ", my xmax, U".");
 		integer thyindex = 1, ifmin, ifmax;
 		integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		double t1 = Sampled_indexToX (me, ifmin);
+		const double t1 = Sampled_indexToX (me, ifmin);
 		autoFormant thee = Formant_create (tmin, tmax, numberOfFrames, my dx, t1, my maxnFormants);
-		for (integer iframe = ifmin; iframe <= ifmax; iframe++, thyindex++) {
-			Formant_Frame myFrame = & my d_frames [iframe];
-			Formant_Frame thyFrame = & thy d_frames [thyindex];
+		for (integer iframe = ifmin; iframe <= ifmax; iframe ++, thyindex ++) {
+			const Formant_Frame myFrame = & my frames [iframe];
+			const Formant_Frame thyFrame = & thy frames [thyindex];
 			myFrame -> copy (thyFrame);
 		}
 		return thee;

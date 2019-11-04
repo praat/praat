@@ -25,14 +25,14 @@ autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 		constexpr double fakeDuration = 1.0;
 		constexpr double fakeTimeStep = 1.0;
 		autoFormant thee = Formant_create (0.0, fakeDuration, 1, fakeTimeStep, 0.5 * fakeDuration, maxnFormants);
-		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
+		thy frames [1]. formant = newvectorzero <structFormant_Formant> (maxnFormants);
 		for (integer i = 1; i <= nfreq; i ++)
 			power [i] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		for (integer i = 2; i < nfreq; i ++)
 			if (power [i] > power [i - 1] && power [i] >= power [i + 1]) {
 				const double firstDerivative = power [i + 1] - power [i - 1];
 				const double secondDerivative = 2.0 * power [i] - power [i - 1] - power [i + 1];
-				const Formant_Formant formant = & thy d_frames [1]. formant [++ nform];
+				const Formant_Formant formant = & thy frames [1]. formant [++ nform];
 				formant -> frequency = my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative);
 				const double min3dB = 0.5 * (power [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative);
 				/*
@@ -62,7 +62,7 @@ autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 				if (nform == maxnFormants)
 					break;
 			}
-		thy d_frames [1]. nFormants = nform;
+		thy frames [1]. nFormants = nform;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");

@@ -33,7 +33,7 @@ oo_DEFINE_CLASS (LineSpectralFrequencies, Sampled)
 
 	oo_DOUBLE (maximumFrequency)
 	oo_INT (maximumNumberOfFrequencies)
-	oo_STRUCT_VECTOR (LineSpectralFrequencies_Frame, d_frames, nx)
+	oo_STRUCTVEC (LineSpectralFrequencies_Frame, d_frames, nx)
 
 	#if oo_DECLARING
 		void v_info ()

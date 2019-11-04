@@ -214,7 +214,8 @@ void DTW_Path_recode (DTW me) {
 					x = xright - nsc_x * my dx + nsc_x * my dx * f;
 					y = ytop - my dy + my dy * f;
 					index = nxy - 1;
-					if (nsc_x == 2) index = nxy ++;
+					if (nsc_x == 2)
+						index = nxy ++;
 
 					xytimes [index]. x = x;
 					xytimes [index]. y = y;
@@ -234,14 +235,16 @@ void DTW_Path_recode (DTW me) {
 					x = xright - my dx + my dx * f;
 					y = ytop - nsc_y * my dy + nsc_y * my dy * f;
 					index = nxy - 1;
-					if (nsc_y == 2) index = nxy ++;
+					if (nsc_y == 2)
+						index = nxy ++;
 					xytimes [index]. x = x;
 					xytimes [index]. y = y;
 				}
 				nd = 0;
-			} else if (ix == ixp + 1 && iy == iyp + 1) { // diagonal
+			} else if (ix == ixp + 1 && iy == iyp + 1) {   // diagonal
 				nd ++;
-				if (nd == 1) nxy ++;
+				if (nd == 1)
+					nxy ++;
 				nsc_x = nsc_y = 1;
 			} else {
 				Melder_throw (U"The path goes back in time.");
@@ -254,8 +257,8 @@ void DTW_Path_recode (DTW me) {
 		}
 
 		if (my xmax > xytimes [nxy].x || my ymax > xytimes [nxy].y) {
-			xytimes [++ nxy].x = my xmax;
-			xytimes [nxy].y = my ymax;
+			xytimes [++ nxy]. x = my xmax;
+			xytimes [nxy]. y = my ymax;
 		}
 		Melder_assert (nxy <= 2 * std::max (my ny, my nx) + 2);
 		
@@ -300,7 +303,7 @@ autoDTW DTW_create (double tminp, double tmaxp, integer ntp, double dtp, double 
 	try {
 		autoDTW me = Thing_new (DTW);
 		Matrix_init (me.get(), tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p);
-		my path = NUMvector<structDTW_Path> (1, ntc + ntp - 1);
+		my path = newvectorzero <structDTW_Path> (ntc + ntp - 1);
 		DTW_Path_Query_init (& my pathQuery, ntp, ntc);
 		my wx = 1;
 		my wy = 1;
@@ -440,25 +443,19 @@ double DTW_getPathY (DTW me, double tx) {
 
 integer DTW_getMaximumConsecutiveSteps (DTW me, int direction) {
 	integer nglobal = 1, nlocal = 1;
-
 	for (integer i = 2; i <= my pathLength; i ++) {
 		int localdirection;
-
-		if (my path [i].y == my path [i - 1]. y) {
+		if (my path [i]. y == my path [i - 1]. y)
 			localdirection = DTW_X;
-		} else if (my path [i]. x == my path [i - 1]. x) {
+		else if (my path [i]. x == my path [i - 1]. x)
 			localdirection = DTW_Y;
-		} else {
+		else
 			localdirection = DTW_XANDY;
-		}
-
-		if (localdirection == direction) {
+		if (localdirection == direction)
 			nlocal += 1;
-		}
 		if (direction != localdirection || i == my pathLength) {
-			if (nlocal > nglobal) {
+			if (nlocal > nglobal)
 				nglobal = nlocal;
-			}
 			nlocal = 1;
 		}
 	}
@@ -1367,17 +1364,17 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
             } else if (psi [iy] [ix] == DTW_START) {
                 break;
             }
-            if (pathIndex < 2 || iy < 1) break;
+            if (pathIndex < 2 || iy < 1)
+            	break;
             //Melder_assert (pathIndex > 1 && iy > 0);
             my path [-- pathIndex]. x = ix;
             my path [pathIndex]. y = iy;
         }
 
         my pathLength = my nx + my ny - 1 - pathIndex + 1;
-        if (pathIndex > 1) {
+        if (pathIndex > 1)
             for (integer j = 1; j <= my pathLength; j ++)
                 my path [j] = my path [pathIndex ++];
-        }
 
         DTW_Path_recode (me);
         if (cumulativeDists) {

@@ -50,7 +50,7 @@ oo_DEFINE_CLASS (DTW, Matrix)
 
 	oo_DOUBLE (weightedDistance)
 	oo_INTEGER (pathLength)
-	oo_STRUCT_VECTOR (DTW_Path, path, pathLength)
+	oo_STRUCTVEC (DTW_Path, path, pathLength)
 
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (wx)

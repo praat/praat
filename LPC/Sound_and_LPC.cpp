@@ -552,24 +552,17 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 
 void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
 	integer frameIndex = Sampled_xToNearestIndex (me, time);
-	if (frameIndex < 1) {
-		frameIndex = 1;
-	}
-	if (frameIndex > my nx) {
-		frameIndex = my nx;
-	}
-	if (channel > thy ny) {
+	Melder_clip (integer (1), & frameIndex, my nx);   // constant extrapolation
+	if (channel > thy ny)
 		channel = 1;
-	}
 	Melder_require (frameIndex > 0 && frameIndex <= my nx,
 		U"Frame should be in the range [1, ", my nx, U"].");
 
 	if (channel > 0) {
 		LPC_Frame_Sound_filter (& my d_frames [frameIndex], thee, channel);
 	} else {
-		for (integer ichan = 1; ichan <= thy ny; ichan ++) {
+		for (integer ichan = 1; ichan <= thy ny; ichan ++)
 			LPC_Frame_Sound_filter (& my d_frames [frameIndex], thee, ichan);
-		}
 	}
 }
 
@@ -586,21 +579,14 @@ autoSound LPC_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel,
 void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
 	try {
 		integer frameIndex = Sampled_xToNearestIndex (me, time);
-		if (frameIndex < 1) {
-			frameIndex = 1;
-		}
-		if (frameIndex > my nx) {
-			frameIndex = my nx;
-		}
-		if (channel > thy ny) {
+		Melder_clip (integer (1), & frameIndex, my nx);   // constant extrapolation
+		if (channel > thy ny)
 			channel = 1;
-		}
 		if (channel > 0) {
 			LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, channel);
 		} else {
-			for (integer ichan = 1; ichan <= thy ny; ichan ++) {
+			for (integer ichan = 1; ichan <= thy ny; ichan ++)
 				LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, ichan);
-			}
 		}
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");

@@ -26,17 +26,17 @@
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
 
-void Formant_Frame_init (Formant_Frame me, integer nFormants) {
-	my nFormants = nFormants;
-	if (nFormants > 0) {
-		my formant = NUMvector<structFormant_Formant> (1, my nFormants);
+void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
+	my nFormants = numberOfFormants;
+	if (numberOfFormants > 0) {
+		my formant = newvectorzero <structFormant_Formant> (my nFormants);
 	}
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale) {
 	for (integer i = 1; i <= my nFormants; i ++) {
-		my formant [i].frequency *= scale;
-		my formant [i].bandwidth *= scale;
+		my formant [i]. frequency *= scale;
+		my formant [i]. bandwidth *= scale;
 	}
 }
 
@@ -66,8 +66,8 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 	Formant_Frame_init (thee, thy nFormants);
 
 	for (integer i = 1; i <= thy nFormants; i ++) {
-		thy formant [i].frequency = fc [i];
-		thy formant [i].bandwidth = bc [i];
+		thy formant [i]. frequency = fc [i];
+		thy formant [i]. bandwidth = bc [i];
 	}
 }
 
@@ -97,7 +97,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 		autoMelderProgress progress (U"LPC to Formant");
 
 		for (integer i = 1; i <= my nx; i ++) {
-			Formant_Frame formant = & thy d_frames [i];
+			Formant_Frame formant = & thy frames [i];
 			LPC_Frame lpc = & my d_frames [i];
 
 			// Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
@@ -158,10 +158,9 @@ autoLPC Formant_to_LPC (Formant me, double samplingPeriod) {
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, 2 * my maxnFormants, samplingPeriod);
 
 		for (integer i = 1; i <= my nx; i ++) {
-			Formant_Frame f = & my d_frames [i];
-			LPC_Frame lpc = & thy d_frames [i];
-			integer m = 2 * f -> nFormants;
-
+			const Formant_Frame f = & my frames [i];
+			const LPC_Frame lpc = & thy d_frames [i];
+			const integer m = 2 * f -> nFormants;   // TODO: what is m?
 			LPC_Frame_init (lpc, m);
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		}

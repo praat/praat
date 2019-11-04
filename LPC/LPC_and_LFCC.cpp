@@ -55,7 +55,7 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 		longdouble ai = my c [i] * i;
 		for (integer j = 1; j < i; j ++)
 			ai += thy a [j] * my c [i - j] * (i - j);
-		thy a [i] = -ai / i;
+		thy a [i] = - double (ai) / i;
 	}
 }
 

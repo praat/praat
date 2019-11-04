@@ -45,7 +45,7 @@ oo_DEFINE_CLASS (Cepstrumc, Sampled)
 
 	oo_DOUBLE (samplingFrequency)   // from Sound
 	oo_INT (maxnCoefficients)
-	oo_STRUCT_VECTOR (Cepstrumc_Frame, frame, nx)
+	oo_STRUCTVEC (Cepstrumc_Frame, frame, nx)
 
 	#if oo_DECLARING
 		void v_info ()

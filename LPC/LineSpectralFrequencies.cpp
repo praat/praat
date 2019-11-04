@@ -63,7 +63,7 @@ void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, doub
 	my maximumFrequency = maximumFrequency;
 	my maximumNumberOfFrequencies = numberOfFrequencies;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
-	my d_frames = NUMvector<structLineSpectralFrequencies_Frame> (1, nt);
+	my d_frames = newvectorzero <structLineSpectralFrequencies_Frame> (nt);
 }
 
 autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, integer nt, double dt, double t1, integer numberOfFrequencies, double maximumFrequency) {
@@ -82,9 +82,8 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 		tmax = my xmax;
 	}
 	integer itmin, itmax;
-	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
+	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
-	}
 	if (fmax <= fmin) {
 		double f1max, f2min;
 		integer numberOfSelected = itmax - itmin + 1;
@@ -128,7 +127,7 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maximumNumberOfFrequencies, my maximumNumberOfFrequencies, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
-			LineSpectralFrequencies_Frame lsf = & my d_frames[j];
+			LineSpectralFrequencies_Frame lsf = & my d_frames [j];
 			for (integer i = 1; i <= lsf -> numberOfFrequencies; i ++) {
 				thy z [i] [j] = lsf -> frequencies [i];
 			}

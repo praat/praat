@@ -70,7 +70,7 @@ void LPC_init (LPC me, double tmin, double tmax, integer nt, double dt, double t
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
-	my d_frames = NUMvector<structLPC_Frame> (1, nt);
+	my d_frames = newvectorzero <structLPC_Frame> (nt);
 }
 
 autoLPC LPC_create (double tmin, double tmax, integer nt, double dt, double t1, integer predictionOrder, double samplingPeriod) {
@@ -167,7 +167,8 @@ autoMatrix LPC_downto_Matrix_area (LPC me) {
 			LPC_Frame lpc = & my d_frames [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
 			VECarea_from_rc (area.part (1, lpc -> nCoefficients), rc.part (1, lpc -> nCoefficients));
-			if (lpc -> nCoefficients < my maxnCoefficients) area.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
+			if (lpc -> nCoefficients < my maxnCoefficients)
+				area.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
 			thy z.column (j) <<= area.get();
 		}
 		return thee;
