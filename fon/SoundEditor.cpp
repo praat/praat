@@ -321,10 +321,10 @@ void structSoundEditor :: v_draw () {
 	 * We check beforehand whether the window fits the LongSound buffer.
 	 */
 	if (our d_longSound.data && our endWindow - our startWindow > our d_longSound.data -> bufferLength) {
-		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (our graphics.get(), 0.5, 0.5,   U"(window longer than ", Melder_float (Melder_single (our d_longSound.data -> bufferLength)), U" seconds)");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_TOP);
@@ -336,7 +336,7 @@ void structSoundEditor :: v_draw () {
 
 	if (showAnalysis)
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.5, 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);

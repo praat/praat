@@ -165,7 +165,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	/*
 	 * Register the first candidate, which is always present: voicelessness.
 	 */
-	pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 1);   // no memory allocations
+	pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 1);   // maintain invariant; no memory allocations
 	pitchFrame -> candidates [1]. frequency = 0.0;   // voiceless: always present
 	pitchFrame -> candidates [1]. strength = 0.0;
 

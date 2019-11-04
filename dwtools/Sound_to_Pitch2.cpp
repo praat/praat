@@ -54,43 +54,62 @@ static void spec_enhance_SHS (VEC const & a) {
 	}
 }
 
-static void spec_smoooth_SHS (VEC a) {
-	double aim1 = 0.0;
+static void spec_smoooth_SHS (VEC const& a) {
+	/*
+		Convolve in-place with the small symmetric moving-average
+		kernel { 0.25, 0.5, 0.25 }, aligned around its second element.
+		The basic equation for an output element a_new [i] is:
+			a_new [i] := 0.25 * (a [i - 1] + 2.0 * a [i] + a [i + 1])
+
+		The procedure is performed in place, i.e., the vector a_new[]
+		appears as the new version of the vector a[], so that care has
+		to be taken to timely save elements that will be overwritten.
+		At the edges we perform "same" convolution, meaning that
+		the output vector has the same number of elements as the
+		input vector (this is a natural situation in case of in-place
+		filtering). The elements just beyond the edges of the vector,
+		namely a [0] and a [a.size + 1], are assumed to be zero.
+	*/
+	double a_i_minus_1 = 0.0;   // save a [i - 1], for i == 1
 	for (integer i = 1; i <= a.size - 1; i ++) {
-		double ai = a [i];
-		a [i] = (aim1 + 2.0 * ai + a [i + 1]) / 4.0;
-		aim1 = ai;
+		const double a_i = a [i];   // save a [i]
+		a [i] = 0.25 * (a_i_minus_1 + 2.0 * a_i + a [i + 1]);
+		a_i_minus_1 = a_i;
 	}
+	a [a.size] = 0.25 * (a_i_minus_1 + 2.0 * a [a.size]);
 }
 
-autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, double maximumFrequency, double ceiling, integer maxnSubharmonics, integer maxnCandidates, double compressionFactor, integer numberOfPointsPerOctave) {
+autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, double maximumFrequency,
+	double ceiling, integer maxnSubharmonics, integer maxnCandidates, double compressionFactor, integer numberOfPointsPerOctave)
+{
 	try {
-		double firstTime, newSamplingFrequency = 2.0 * maximumFrequency;
-		double windowDuration = 2.0 / minimumPitch, halfWindow = 0.5 * windowDuration;
-		double atans = numberOfPointsPerOctave * NUMlog2 (65.0 / 50.0) - 1.0;
+		const double newSamplingFrequency = 2.0 * maximumFrequency;
+		const double windowDuration = 2.0 / minimumPitch, halfWindow = 0.5 * windowDuration;
+		const double atans = numberOfPointsPerOctave * NUMlog2 (65.0 / 50.0) - 1.0;
 		/*
 			Number of speech samples in the downsampled signal in each frame:
 			100 for windowDuration == 0.04 and newSamplingFrequency == 2500
 		*/
-		integer numberOfSamples = Melder_iround (windowDuration * newSamplingFrequency);
-		double frameDuration = numberOfSamples / newSamplingFrequency;
+		const integer numberOfSamples = Melder_iround (windowDuration * newSamplingFrequency);
+		const double frameDuration = numberOfSamples / newSamplingFrequency;
 		
 		integer nfft = 256; // the minimum number of points for the FFT
 		while (nfft < numberOfSamples)
 			nfft *= 2;
-		integer nfft2 = nfft / 2 + 1;
-		double fftframeDuration = nfft / newSamplingFrequency;
-		double df = newSamplingFrequency / nfft;
+		const integer nfft2 = nfft / 2 + 1;
+		const double fftframeDuration = nfft / newSamplingFrequency;
+		const double df = newSamplingFrequency / nfft;
 
 		/*
 			The number of points on the octave scale.
 		*/
-		double fminl2 = NUMlog2 (minimumPitch), fmaxl2 = NUMlog2 (maximumFrequency);
-		integer numberOfFrequencyPoints = Melder_ifloor ((fmaxl2 - fminl2) * numberOfPointsPerOctave);
-		double dfl2 = (fmaxl2 - fminl2) / (numberOfFrequencyPoints - 1);
+		const double fminl2 = NUMlog2 (minimumPitch), fmaxl2 = NUMlog2 (maximumFrequency);
+		const integer numberOfFrequencyPoints = Melder_ifloor ((fmaxl2 - fminl2) * numberOfPointsPerOctave);
+		const double dfl2 = (fmaxl2 - fminl2) / (numberOfFrequencyPoints - 1);
 
 		autoSound sound = Sound_resample (me, newSamplingFrequency, 50);
 		integer numberOfFrames;
+		double firstTime;
 		Sampled_shortTermAnalysis (sound.get(), windowDuration, timeStep, & numberOfFrames, & firstTime);
 		autoSound fftframe = Sound_createSimple (1, fftframeDuration, newSamplingFrequency);
 		autoSound analysisframe = Sound_createSimple (1, frameDuration, newSamplingFrequency);
@@ -109,8 +128,8 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		
 		// Compute the absolute value of the globally largest amplitude w.r.t. the global mean.
 
-		double globalMean = Sound_localMean (sound.get(), sound -> xmin, sound -> xmax);
-		double globalPeak = Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean);
+		const double globalMean = Sound_localMean (sound.get(), sound -> xmin, sound -> xmax);
+		const double globalPeak = Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean);
 
 		/*
 			For the cubic spline interpolation we need the frequencies on an octave
@@ -118,23 +137,19 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			the cubic spline interpolation will give corrupt results.
 			Because log2(f==0) is not defined, we use the heuristic: f [2] - f [1] == f [3] - f [2].
 		*/
-
 		for (integer i = 2; i <= nfft2; i ++)
 			fl2 [i] = NUMlog2 ((i - 1) * df);
-
-		fl2 [1] = 2 * fl2 [2] - fl2 [3];
+		fl2 [1] = 2.0 * fl2 [2] - fl2 [3];
 
 		/*
 			Calculate frequencies regularly spaced on a log2-scale and the frequency weighting function.
 		*/
-
 		for (integer i = 1; i <= numberOfFrequencyPoints; i ++)
 			arctg [i] = 0.5 + atan (3.0 * (i - atans) / numberOfPointsPerOctave) / NUMpi;
 
 		/*
 			Perform the analysis on all frames.
 		*/
-
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const Pitch_Frame pitchFrame = & thy frames [iframe];
 			const double tmid = Sampled_indexToX (thee.get(), iframe); // The center of this frame
@@ -179,7 +194,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			// Multiply by frequency selectivity of the auditory system.
 
 			for (integer j = 1; j <= numberOfFrequencyPoints; j ++)
-				al2 [j] = al2 [j] > 0 ? al2 [j] * arctg [j] : 0.0;
+				al2 [j] = ( al2 [j] > 0.0 ? al2 [j] * arctg [j] : 0.0 );
 
 			// The subharmonic summation. Shift spectra in octaves and sum.
 
@@ -189,7 +204,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 			double hm = 1.0;
 			for (integer m = 1; m <= maxnSubharmonics + 1; m ++) {
-				integer kb = 1 + Melder_ifloor (numberOfPointsPerOctave * NUMlog2 (m));
+				const integer kb = 1 + Melder_ifloor (numberOfPointsPerOctave * NUMlog2 (m));
 				for (integer k = kb; k <= numberOfFrequencyPoints; k ++)
 					sumspec [k - kb + 1] += al2 [k] * hm;
 				hm *= compressionFactor;
@@ -202,7 +217,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			/*
 				Get the best local estimates for the pitch as the maxima of the
 				subharmonic sum spectrum by parabolic interpolation on three points:
-				The formula for a parabole with a maximum is:
+				The formula for a parabola with a maximum is:
 					y(x) = a - b (x - c)^2 with a, b, c >= 0
 				The three points are (-x, y1), (0, y2) and (x, y3).
 				The solution for a (the maximum) and c (the position) is:
@@ -212,12 +227,12 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			*/
 
 			for (integer k = 2; k <= numberOfFrequencyPoints - 1; k ++) {
-				double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
+				const double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
 				if (y2 > y1 && y2 >= y3) {
-					double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;
-					double x =  dfl2 * (y1 - y3) / (2.0 * denum);
-					double f = pow (2.0, fminl2 + (k - 1) * dfl2 + x);
-					double strength = (2.0 * y1 * (4.0 * y2 + y3) - y1 * y1 - tmp * tmp) / (8.0 * denum);
+					const double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;
+					const double x = dfl2 * (y1 - y3) / (2.0 * denum);
+					const double f = pow (2.0, fminl2 + (k - 1) * dfl2 + x);
+					const double strength = (2.0 * y1 * (4.0 * y2 + y3) - y1 * y1 - tmp * tmp) / (8.0 * denum);
 					Pitch_Frame_addPitch (pitchFrame, f, strength, maxnCandidates);
 				}
 			}
@@ -234,16 +249,16 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			*/
 			double pitch_strength, f0;
 			Pitch_Frame_getPitch (pitchFrame, & f0, & pitch_strength);
-			if (f0 > 0)
+			if (f0 > 0.0)
 				cc [iframe] = Sound_correlateParts (sound.get(), tmid - 1.0 / f0, tmid, 1.0 / f0);
 		}
 
 		// Base V/UV decision on correlation coefficients.
 		// Resize the pitch strengths w.r.t. the cc.
 
-		double vuvCriterium = 0.52;
+		constexpr double vuvCriterion = 0.52;
 		for (integer i = 1; i <= numberOfFrames; i ++)
-			Pitch_Frame_resizeStrengths (& thy frames [i], cc [i], vuvCriterium);
+			Pitch_Frame_resizeStrengths (& thy frames [i], cc [i], vuvCriterion);
 		
 		return thee;
 	} catch (MelderError) {

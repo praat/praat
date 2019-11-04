@@ -25,9 +25,9 @@ static void draw_CreateDurationTier (Graphics g) {
 	Graphics_marksLeftEvery (g, 1.0, 1.0, true, true, false);
 	Graphics_marksBottomEvery (g, 1.0, 0.1, true, true, false);
 	Graphics_setInner (g);
-	Graphics_setColour (g, Graphics_RED);
+	Graphics_setColour (g, Melder_RED);
 	Graphics_polyline (g, 5, x, y);
-	Graphics_setColour (g, Graphics_BLACK);
+	Graphics_setColour (g, Melder_BLACK);
 	Graphics_unsetInner (g);
 	Graphics_textBottom (g, true, U"Time (s)");
 	Graphics_textLeft (g, true, U"Relative duration");

@@ -385,7 +385,7 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, my xmin, my xmax, my ymin, my ymax);
 	if (useColour) {
-		Graphics_setColour (graphics, Graphics_SILVER);
+		Graphics_setColour (graphics, Melder_SILVER);
 		Graphics_fillRectangle (graphics, my xmin, my xmax, my ymin, my ymax);
 	}
 	/*
@@ -397,7 +397,7 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 			NetworkNode nodeFrom = & my nodes [conn -> nodeFrom];
 			NetworkNode nodeTo = & my nodes [conn -> nodeTo];
 			Graphics_setLineWidth (graphics, fabs (conn -> weight) * 6.0);
-			Graphics_setColour (graphics, conn -> weight < 0.0 ? ( useColour ? Graphics_WHITE : Graphics_SILVER ) : Graphics_BLACK);
+			Graphics_setColour (graphics, conn -> weight < 0.0 ? ( useColour ? Melder_WHITE : Melder_SILVER ) : Melder_BLACK);
 			Graphics_line (graphics, nodeFrom -> x, nodeFrom -> y, nodeTo -> x, nodeTo -> y);
 		}
 	}
@@ -407,13 +407,13 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 	*/
 	for (integer inode = 1; inode <= my numberOfNodes; inode ++) {
 		NetworkNode node = & my nodes [inode];
-		Graphics_setColour (graphics, useColour ? Graphics_SILVER : Graphics_WHITE);
+		Graphics_setColour (graphics, useColour ? Melder_SILVER : Melder_WHITE);
 		Graphics_fillCircle_mm (graphics, node -> x, node -> y, 5.0);
 	}
 	/*
 		Draw the edges of the nodes.
 	*/
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setLineWidth (graphics, 2.0);
 	for (integer inode = 1; inode <= my numberOfNodes; inode ++) {
 		NetworkNode node = & my nodes [inode];
@@ -431,12 +431,12 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 		double diameter = activity * 5.0;
 		if (diameter != 0.0) {
 			Graphics_setColour (graphics,
-					useColour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )
-					: ( node -> activity < 0.0 ? Graphics_SILVER : Graphics_BLACK));
+					useColour ? ( node -> activity < 0.0 ? Melder_BLUE : Melder_RED )
+					: ( node -> activity < 0.0 ? Melder_SILVER : Melder_BLACK));
 			Graphics_fillCircle_mm (graphics, node -> x, node -> y, diameter);
 		}
 	}
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setLineWidth (graphics, saveLineWidth);
 	Graphics_setLineType (graphics, Graphics_DRAWN);
 	Graphics_unsetInner (graphics);

@@ -411,7 +411,7 @@ if (! my printing) {
 			theCurrentPraatPicture -> font = (int) font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-			theCurrentPraatPicture -> colour = Graphics_BLACK;
+			theCurrentPraatPicture -> colour = Melder_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
 			theCurrentPraatPicture -> speckleSize = 1.0;
@@ -455,7 +455,7 @@ if (! my printing) {
 			Graphics_setLineWidth (my graphics.get(), 1.0);
 			Graphics_setArrowSize (my graphics.get(), 1.0);
 			Graphics_setSpeckleSize (my graphics.get(), 1.0);
-			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			/*Graphics_Link *paragraphLinks;
 			integer numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 			if (my links) for (integer ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
@@ -508,7 +508,7 @@ if (! my printing) {
 		theCurrentPraatPicture -> font = (int) font;
 		theCurrentPraatPicture -> fontSize = size;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-		theCurrentPraatPicture -> colour = Graphics_BLACK;
+		theCurrentPraatPicture -> colour = Melder_BLACK;
 		theCurrentPraatPicture -> lineWidth = 1.0;
 		theCurrentPraatPicture -> arrowSize = 1.0;
 		theCurrentPraatPicture -> speckleSize = 1.0;
@@ -551,7 +551,7 @@ if (! my printing) {
 		Graphics_setLineWidth (my ps, 1.0);
 		Graphics_setArrowSize (my ps, 1.0);
 		Graphics_setSpeckleSize (my ps, 1.0);
-		Graphics_setColour (my ps, Graphics_BLACK);
+		Graphics_setColour (my ps, Melder_BLACK);
 		theCurrentPraatApplication = & theForegroundPraatApplication;
 		theCurrentPraatObjects = & theForegroundPraatObjects;
 		theCurrentPraatPicture = & theForegroundPraatPicture;

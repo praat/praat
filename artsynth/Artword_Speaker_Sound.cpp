@@ -33,7 +33,7 @@ static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, dou
 	if (! art)
 		art = Art_create ();
 	Artword_intoArt (my artword, art.get(), t);
-	Graphics_beginMovieFrame (my graphics, & Graphics_WHITE);
+	Graphics_beginMovieFrame (my graphics, & Melder_WHITE);
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Art_Speaker_draw (art.get(), my speaker, my graphics);
 	Graphics_endMovieFrame (my graphics, 0.0);

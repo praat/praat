@@ -924,7 +924,7 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, integer rowmi
 			double d = 0.95 * sqrt (fabs (my data [irow] [icol]) / datamax);
 			double x1WC = x - d * dx / 2.0, x2WC = x + d * dx / 2.0;
 			double y1WC = y - d * dy / 2.0, y2WC = y + d * dy / 2.0;
-			if (my data [irow] [icol] > 0) Graphics_setColour (graphics, Graphics_WHITE);
+			if (my data [irow] [icol] > 0) Graphics_setColour (graphics, Melder_WHITE);
 			Graphics_fillRectangle (graphics, x1WC, x2WC, y1WC, y2WC);
 			Graphics_setColour (graphics, colour);
 			Graphics_rectangle (graphics, x1WC, x2WC , y1WC, y2WC);

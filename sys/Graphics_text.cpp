@@ -578,7 +578,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			}
 			if (! my d_cairoGraphicsContext) return;
 			// TODO!
-			if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
+			if (lc -> link) _Graphics_setColour (me, Melder_BLUE);
 			int font = lc -> font.integer_;
 			cairo_save (my d_cairoGraphicsContext);
 			cairo_translate (my d_cairoGraphicsContext, xDC, yDC);

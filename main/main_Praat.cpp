@@ -24,7 +24,7 @@ static void logo (Graphics graphics) {
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (graphics, kGraphics_font::TIMES);
 	Graphics_setFontSize (graphics, 45.0);
-	Graphics_setColour (graphics, Graphics_MAROON);
+	Graphics_setColour (graphics, Melder_MAROON);
 	Graphics_text (graphics, 0.385, 0.66, U"P");
 	Graphics_text (graphics, 0.448, 0.66, U"\\s{R}");
 	Graphics_text (graphics, 0.510, 0.66, U"\\s{A}");
@@ -35,7 +35,7 @@ static void logo (Graphics graphics) {
 	#define xstr(s) str(s)
 	#define str(s) #s
 	Graphics_text (graphics, 0.5, 0.45, U"version " xstr(PRAAT_VERSION_STR));
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_text (graphics, 0.5, 0.20, U"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");

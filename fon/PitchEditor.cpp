@@ -154,9 +154,9 @@ void structPitchEditor :: v_draw () {
 	Pitch pitch = (Pitch) our data;
 
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
@@ -187,7 +187,7 @@ void structPitchEditor :: v_draw () {
 		if (our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow) {
 			double frequency = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit::HERTZ, Pitch_LINEAR);
 			if (isdefined (frequency)) {
-				Graphics_setColour (our graphics.get(), Graphics_RED);
+				Graphics_setColour (our graphics.get(), Melder_RED);
 				Graphics_line (our graphics.get(), our startWindow - radius, frequency, our endWindow, frequency);
 				Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 				Graphics_text (our graphics.get(), our startWindow - radius, frequency, Melder_fixed (frequency, 2));
@@ -196,7 +196,7 @@ void structPitchEditor :: v_draw () {
 
 		/* Horizontal scaling lines. */
 
-		Graphics_setColour (our graphics.get(), Graphics_BLUE);
+		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		for (double frequency = df; frequency <= pitch -> ceiling; frequency += df) {
@@ -212,10 +212,10 @@ void structPitchEditor :: v_draw () {
 			const double time = Sampled_indexToX (pitch, it);
 			double frequency = frame -> candidates [1]. frequency;
 			if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling)) {
-				Graphics_setColour (our graphics.get(), Graphics_MAGENTA);
+				Graphics_setColour (our graphics.get(), Melder_MAGENTA);
 				Graphics_fillCircle_mm (our graphics.get(), time, frequency, RADIUS * 2.0);
 			}
-			Graphics_setColour (our graphics.get(), Graphics_BLACK);
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
 			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
 				frequency = frame -> candidates [icand]. frequency;
@@ -235,7 +235,7 @@ void structPitchEditor :: v_draw () {
 	{
 		Graphics_Viewport previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - dyIntens, 1.0);
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our startWindow, 0.5, U"intens");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
@@ -261,7 +261,7 @@ void structPitchEditor :: v_draw () {
 	*/
 	{
 		Graphics_Viewport previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, dyUnv);
-		Graphics_setColour (our graphics.get(), Graphics_BLUE);
+		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our startWindow, 0.5, U"Unv");
@@ -278,7 +278,7 @@ void structPitchEditor :: v_draw () {
 			Melder_clipRight (& tright, our endWindow);
 			Graphics_fillRectangle (our graphics.get(), tleft, tright, 0.0, 1.0);
 		}
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_resetViewport (our graphics.get(), previous);
 	}
 }

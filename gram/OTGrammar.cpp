@@ -900,7 +900,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 			if (candidateIsOptimal) {
 				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 				Graphics_setFontSize (g, 1.5 * fontSize);
-				if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
+				if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Melder_RED);
 				Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, U"☞");
 				Graphics_setColour (g, colour);
 				Graphics_setFontSize (g, fontSize);
@@ -952,7 +952,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 						if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
 							crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
 						{
-							Graphics_setColour (g, Graphics_RED);
+							Graphics_setColour (g, Melder_RED);
 						}
 						for (integer imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
 							MelderString_appendCharacter (& markString, U'*');

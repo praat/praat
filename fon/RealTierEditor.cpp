@@ -157,22 +157,22 @@ void structRealTierEditor :: v_draw () {
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
 		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
 	}
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our ymin, our ymax);
-	Graphics_setColour (our graphics.get(), Graphics_RED);
+	Graphics_setColour (our graphics.get(), Melder_RED);
 	Graphics_line (our graphics.get(), our startWindow, ycursor, our endWindow, our ycursor);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (our graphics.get(), our startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
-	Graphics_setColour (our graphics.get(), Graphics_BLUE);
+	Graphics_setColour (our graphics.get(), Melder_BLUE);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
 	Graphics_text (our graphics.get(), our endWindow, our ymax,   Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
 	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
@@ -196,9 +196,9 @@ void structRealTierEditor :: v_draw () {
 		RealPoint point = data -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
-			Graphics_setColour (our graphics.get(), Graphics_RED);
+			Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_fillCircle_mm (our graphics.get(), t, y, 3.0);
-		Graphics_setColour (our graphics.get(), Graphics_BLUE);
+		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		if (i == 1)
 			Graphics_line (our graphics.get(), our startWindow, y, t, y);
 		else if (i == imin)
@@ -213,7 +213,7 @@ void structRealTierEditor :: v_draw () {
 		}
 	}
 	Graphics_setLineWidth (our graphics.get(), 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	our v_updateMenuItems_file ();
 }
 
@@ -297,7 +297,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (our graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (our graphics.get(), Melder_MAROON);
 	drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // draw at old position
 	while (Graphics_mouseStillDown (our graphics.get())) {
 		double xWC_new, yWC_new;

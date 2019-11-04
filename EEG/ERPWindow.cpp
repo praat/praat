@@ -172,7 +172,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	Graphics_setWindow (graphics, -1.0, 1.0, -1.0, 1.0);
 	//Graphics_setGrey (graphics, 1.0);
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
-	//Graphics_setColour (graphics, Graphics_BLACK);
+	//Graphics_setColour (graphics, Melder_BLACK);
 	integer numberOfDrawableChannels =
 			my ny >= 64 && Melder_equ (my channelNames [64].get(), U"O2") ? 64 :
 			my ny >= 32 && Melder_equ (my channelNames [32].get(), U"Cz") ? 32 :
@@ -243,7 +243,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (graphics, 3, x, y);
 	}
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_line (graphics, -0.08, 0.99, 0.0, 1.18);
 	Graphics_line (graphics, 0.08, 0.99, 0.0, 1.18);
 	/*
@@ -252,7 +252,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (graphics, -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (graphics, 1.09, 1.00, -0.08, 0.08);
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_line (graphics, -0.99, 0.08, -1.09, 0.08);
 	Graphics_line (graphics, -1.09, 0.08, -1.09, -0.08);
 	Graphics_line (graphics, -1.09, -0.08, -0.99, -0.08);
@@ -275,7 +275,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setWindow (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	integer numberOfDrawableChannels =
 			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64].get(), U"O2") ? 64 :
 			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32].get(), U"Cz") ? 32 :
@@ -368,7 +368,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (our graphics.get(), 3, x, y);
 	}
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_line (our graphics.get(), -0.08, 0.99, 0.0, 1.18);
 	Graphics_line (our graphics.get(), 0.08, 0.99, 0.0, 1.18);
 	/*
@@ -377,7 +377,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (our graphics.get(), -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (our graphics.get(), 1.09, 1.00, -0.08, 0.08);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_line (our graphics.get(), -0.99, 0.08, -1.09, 0.08);
 	Graphics_line (our graphics.get(), -1.09, 0.08, -1.09, -0.08);
 	Graphics_line (our graphics.get(), -1.09, -0.08, -0.99, -0.08);
