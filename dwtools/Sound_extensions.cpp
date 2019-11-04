@@ -102,10 +102,10 @@ static void Pitch_scaleDuration (Pitch me, double multiplier) {
 
 static void Pitch_scalePitch (Pitch me, double multiplier) {
 	for (integer i = 1; i <= my nx; i ++) {
-		double f = my frame [i].candidate [1].frequency;
+		double f = my frames [i].candidates [1].frequency;
 		f *= multiplier;
 		if (f < my ceiling)
-			my frame [i].candidate [1].frequency = f;
+			my frames [i].candidates [1].frequency = f;
 	}
 }
 
@@ -534,21 +534,23 @@ static autoSound Sound_create2 (double minimumTime, double maximumTime, double s
 	dx is small.
 */
 
-static autoSound Sound_createToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, integer numberOfComponents, double frequencyDistance, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes) {
+static autoSound Sound_createToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency,
+	integer numberOfComponents, double frequencyDistance, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes)
+{
 	try {
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (integer j = 1; j <= numberOfComponents; j ++) {
-			double fraction = j == mistunedComponent ? mistuningFraction : 0.0;
-			double w = NUM2pi * (firstFrequency + (j - 1 + fraction) * frequencyDistance);
-			double delta = w * my dx;
-			double alpha = 2.0 * sin (delta / 2.0) * sin (delta / 2.0);
-			double beta = sin (delta);
+			const double fraction = ( j == mistunedComponent ? mistuningFraction : 0.0 );
+			const double w = NUM2pi * (firstFrequency + (j - 1 + fraction) * frequencyDistance);
+			const double delta = w * my dx;
+			const double alpha = 2.0 * sin (delta / 2.0) * sin (delta / 2.0);
+			const double beta = sin (delta);
 			double sint = sin (w * my x1);
 			double cost = cos (w * my x1);
 			my z [1] [1] += sint;
 			for (integer i = 2; i <= my nx; i ++) {
-				double costd = cost - (alpha * cost + beta * sint);
-				double sintd = sint - (alpha * sint - beta * cost);
+				const double costd = cost - (alpha * cost + beta * sint);
+				const double sintd = sint - (alpha * sint - beta * cost);
 				my z [1] [i] += sintd;
 				cost = costd;
 				sint = sintd;
@@ -563,7 +565,9 @@ static autoSound Sound_createToneComplex (double minimumTime, double maximumTime
 }
 
 
-autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, integer numberOfComponents, double frequencyDistance, bool scaleAmplitudes) {
+autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency,
+	integer numberOfComponents, double frequencyDistance, bool scaleAmplitudes)
+{
 	if (firstFrequency + (numberOfComponents - 1) * frequencyDistance > samplingFrequency / 2) {
 		Melder_warning (U"Sound_createSimpleToneComplex: frequency of (some) components too high.");
 		numberOfComponents = Melder_ifloor (1.0 + (0.5 * samplingFrequency - firstFrequency) / frequencyDistance);
@@ -572,7 +576,9 @@ autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime,
 		firstFrequency, numberOfComponents, frequencyDistance, 0, 0, scaleAmplitudes);
 }
 
-autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, integer numberOfComponents, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes) {
+autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency,
+	integer numberOfComponents, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes)
+{
 	if (firstFrequency + (numberOfComponents - 1) * firstFrequency > samplingFrequency / 2) {
 		Melder_warning (U"Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
 		numberOfComponents = Melder_ifloor (1.0 + (0.5 * samplingFrequency - firstFrequency) / firstFrequency);
@@ -1438,12 +1444,11 @@ static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 		autoPitch thee = Pitch_create (my xmin, xmax, my nx, dx, x1, my ceiling, 2);
 
 		for (integer i = 1; i <= my nx; i ++) {
-			double f = my frame [i].candidate [1].frequency;
-			thy frame [i].candidate [1].strength = my frame [i].candidate [1].strength;
+			double f = my frames [i].candidates [1].frequency;
+			thy frames [i]. candidates [1].strength = my frames [i]. candidates [1].strength;
 			f /= scaleFactor;
-			if (f < my ceiling) {
-				thy frame [i]. candidate [1]. frequency = f;
-			}
+			if (f < my ceiling)
+				thy frames [i]. candidates [1]. frequency = f;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1453,7 +1458,7 @@ static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 
 autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor) {
 	try {
-		double samplingFrequency_old = 1 / my dx;
+		const double samplingFrequency_old = 1.0 / my dx;
 
 		Melder_require (my ny == 1,
 			U"Change Gender works only on mono sounds.");
@@ -1465,21 +1470,20 @@ autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
 
-		if (formantRatio != 1.0) {
-			// Shift all frequencies (inclusive pitch!)
+		if (formantRatio != 1.0)
+			// Shift all frequencies (including pitch!)
 			Sound_overrideSamplingFrequency (sound.get(), samplingFrequency_old * formantRatio);
-		}
 
 		autoPitch pitch = Pitch_scaleTime_old (him, 1 / formantRatio);
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
-		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit::HERTZ);
+		const double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit::HERTZ);
 		if (isdefined (median) && median != 0.0) {
 			// Incorporate pitch shift from overriding the sampling frequency
 			if (new_pitch == 0.0)
 				new_pitch = median / formantRatio;
-			double factor = new_pitch / median;
+			const double factor = new_pitch / median;
 			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax, factor);
 			PitchTier_modifyRange_old (pitchTier.get(), sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
 		} else {
@@ -1490,8 +1494,9 @@ autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(), duration.get(), 1.25 / Pitch_getMinimum (pitch.get(), 0.0, 0.0, kPitch_unit::HERTZ, false));
 
-		// Resample to the original sampling frequency
-
+		/*
+			Resample to the original sampling frequency
+		*/
 		if (formantRatio != 1.0)
 			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
 		return thee;
