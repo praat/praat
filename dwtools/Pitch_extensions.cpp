@@ -185,7 +185,7 @@ autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double
 			const double t = t1 + (i - 1) * dt;
 			double f = RealTier_getValueAtTime (me, t);
 			if (f < pitchFloor || f > pitchCeiling)
-				f = 0;
+				f = 0.0;
 			candidate -> frequency = f;
 		}
 		return thee;

@@ -39,7 +39,6 @@
 #include "melder_pointer.h"   // NULL
 #include "melder_real.h"   // longdouble, MelderPoint, MelderRealRange
 #include "complex.h"   // dcomplex
-#include "melder_colour.h"   // MelderColour
 
 /*
 	Law of Demeter for class functions defined outside class definition.
@@ -55,6 +54,7 @@
 
 #include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free
 #include "melder_string32.h"   // char32, conststring32, autostring32 (requires Melder_malloc, our), Melder_dup
+#include "melder_colour.h"   // MelderColour
 #include "melder_kar.h"   // Melder_hasInk (requires char32), Melder_toLowerCase
 #include "melder_str32.h"   // str32len, str32cpy, str32cmp_caseInsensitive (requires Melder_toLowerCase)
 

@@ -35,7 +35,7 @@ void Artword_Speaker_playMovie (Artword artword, Speaker speaker, Graphics graph
 	autoArt art = Art_create ();
 	for (double tim = 0.0; tim < artword -> totalTime; tim += timeStep) {
 		Artword_intoArt (artword, art.get(), tim);
-		Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
+		Graphics_beginMovieFrame (graphics, & Melder_WHITE);
 		Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
 		Art_Speaker_draw (art.get(), speaker, graphics);
 		Graphics_endMovieFrame (graphics, timeStep);

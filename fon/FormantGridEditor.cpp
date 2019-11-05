@@ -199,21 +199,21 @@ void structFormantGridEditor :: v_draw () {
 	RealTier selectedTier = tiers->at [our selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, ymin, ymax);
-	Graphics_setColour (our graphics.get(), Graphics_RED);
+	Graphics_setColour (our graphics.get(), Melder_RED);
 	Graphics_line (our graphics.get(), our startWindow, our ycursor, our endWindow, our ycursor);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (our graphics.get(), our startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
-	Graphics_setColour (our graphics.get(), Graphics_BLUE);
+	Graphics_setColour (our graphics.get(), Melder_BLUE);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
 	Graphics_text (our graphics.get(), our endWindow, ymax, Melder_float (Melder_half (ymax)), U" Hz");
 	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (our graphics.get(), our endWindow, ymin, Melder_float (Melder_half (ymin)), U" Hz");
 	Graphics_setLineWidth (our graphics.get(), 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_GREY);
+	Graphics_setColour (our graphics.get(), Melder_GREY);
 	for (integer iformant = 1; iformant <= grid -> formants.size; iformant ++) if (iformant != our selectedFormant) {
 		RealTier tier = tiers->at [iformant];
 		integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
@@ -242,7 +242,7 @@ void structFormantGridEditor :: v_draw () {
 			}
 		}
 	}
-	Graphics_setColour (our graphics.get(), Graphics_BLUE);
+	Graphics_setColour (our graphics.get(), Melder_BLUE);
 	integer ifirstSelected = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our startSelection);
 	integer ilastSelected = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our endSelection);
 	integer n = selectedTier -> points.size;
@@ -261,9 +261,9 @@ void structFormantGridEditor :: v_draw () {
 		RealPoint point = selectedTier -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
-			Graphics_setColour (our graphics.get(), Graphics_RED);
+			Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_fillCircle_mm (our graphics.get(), t, y, 3);
-		Graphics_setColour (our graphics.get(), Graphics_BLUE);
+		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		if (i == 1)
 			Graphics_line (our graphics.get(), our startWindow, y, t, y);
 		else if (i == imin)
@@ -278,7 +278,7 @@ void structFormantGridEditor :: v_draw () {
 		}
 	}
 	Graphics_setLineWidth (our graphics.get(), 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 }
 
 static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /* yWC */, integer first, integer last, double dt, double dy) {
@@ -361,7 +361,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (our graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (our graphics.get(), Melder_MAROON);
 	drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	while (Graphics_mouseStillDown (our graphics.get())) {
 		double xWC_new, yWC_new;

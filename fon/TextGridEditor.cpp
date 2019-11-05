@@ -1349,7 +1349,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 			if (tmax > my endWindow)
 				tmax = my endWindow;
 			if (labelDoesMatch) {
-				Graphics_setColour (my graphics.get(), Graphics_LIME);
+				Graphics_setColour (my graphics.get(), Melder_LIME);
 				Graphics_fillRectangle (my graphics.get(), tmin, tmax, 0.0, 1.0);
 			}
 			if (intervalIsSelected) {
@@ -1357,13 +1357,13 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 					tmin = 0.85 * tmin + 0.15 * tmax;
 					tmax = 0.15 * tmin + 0.85 * tmax;
 				}
-				Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+				Graphics_setColour (my graphics.get(), Melder_YELLOW);
 				Graphics_fillRectangle (my graphics.get(), tmin, tmax,
 						labelDoesMatch ? 0.15 : 0.0, labelDoesMatch? 0.85: 1.0);
 			}
 		}
 	}
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_line (my graphics.get(), my endWindow, 0.0, my endWindow, 1.0);
 
 	/*
@@ -1382,7 +1382,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
 			Graphics_setLineWidth (my graphics.get(), 1.0);
-			Graphics_setColour (my graphics.get(), Graphics_BLUE);
+			Graphics_setColour (my graphics.get(), Melder_BLUE);
 			Graphics_circle_mm (my graphics.get(), my startSelection, 1.0 - dy, 3.0);
 		}
 	}
@@ -1404,7 +1404,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		*/
 		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
 			const bool boundaryIsSelected = ( my selectedTier == itier && tmin == my startSelection );
-			Graphics_setColour (my graphics.get(), boundaryIsSelected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setColour (my graphics.get(), boundaryIsSelected ? Melder_RED : Melder_BLUE);
 			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
 
@@ -1412,7 +1412,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 				Show alignment with cursor.
 			*/
 			if (tmin == my startSelection) {
-				Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+				Graphics_setColour (my graphics.get(), Melder_YELLOW);
 				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
 				Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
 			}
@@ -1425,9 +1425,9 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		if (interval -> text && tmax >= my startWindow && tmin <= my endWindow) {
 			const double t1 = std::max (my startWindow, tmin);
 			const double t2 = std::min (my endWindow, tmax);
-			Graphics_setColour (my graphics.get(), intervalIsSelected ? Graphics_RED : Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), intervalIsSelected ? Melder_RED : Melder_BLACK);
 			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, interval -> text.get());
-			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), Melder_BLACK);
 		}
 
 	}
@@ -1465,7 +1465,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
 			Graphics_setLineWidth (my graphics.get(), 1.0);
-			Graphics_setColour (my graphics.get(), Graphics_BLUE);
+			Graphics_setColour (my graphics.get(), Melder_BLUE);
 			Graphics_circle_mm (my graphics.get(), my startSelection, 1.0 - dy, 3.0);
 		}
 	}
@@ -1476,7 +1476,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 		const double t = point -> number;
 		if (t >= my startWindow && t <= my endWindow) {
 			const bool pointIsSelected = ( itier == my selectedTier && t == my startSelection );
-			Graphics_setColour (my graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setColour (my graphics.get(), pointIsSelected ? Melder_RED : Melder_BLUE);
 			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics.get(), t, 0.0, t, 0.2);
 			Graphics_line (my graphics.get(), t, 0.8, t, 1);
@@ -1485,20 +1485,20 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 			/*
 				Wipe out the cursor where the text is going to be.
 			*/
-			Graphics_setColour (my graphics.get(), Graphics_WHITE);
+			Graphics_setColour (my graphics.get(), Melder_WHITE);
 			Graphics_line (my graphics.get(), t, 0.2, t, 0.8);
 
 			/*
 				Show alignment with cursor.
 			*/
 			if (my startSelection == my endSelection && t == my startSelection) {
-				Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+				Graphics_setColour (my graphics.get(), Melder_YELLOW);
 				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
 				Graphics_line (my graphics.get(), t, 0.0, t, 0.2);
 				Graphics_line (my graphics.get(), t, 0.8, t, 1.0);
 				Graphics_setLineWidth (my graphics.get(), 1.0);
 			}
-			Graphics_setColour (my graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setColour (my graphics.get(), pointIsSelected ? Melder_RED : Melder_BLUE);
 			if (point -> mark)
 				Graphics_text (my graphics.get(), t, 0.5, point -> mark.get());
 		}
@@ -1525,7 +1525,7 @@ void structTextGridEditor :: v_draw () {
 	*/
 	if (d_longSound.data || d_sound.data) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
@@ -1537,10 +1537,10 @@ void structTextGridEditor :: v_draw () {
 		Draw tiers.
 	*/
 	if (d_longSound.data || d_sound.data) vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, soundY);
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	for (integer itier = 1; itier <= ntier; itier ++) {
@@ -1550,14 +1550,14 @@ void structTextGridEditor :: v_draw () {
 		vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
 			1.0 - (double) itier / (double) ntier,
 			1.0 - (double) (itier - 1) / (double) ntier);
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		if (itier != 1)
 			Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
 
 		/*
 			Show the number and the name of the tier.
 		*/
-		Graphics_setColour (our graphics.get(), tierIsSelected ? Graphics_RED : Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), tierIsSelected ? Melder_RED : Melder_BLACK);
 		Graphics_setFont (our graphics.get(), oldFont);
 		Graphics_setFontSize (our graphics.get(), 14);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
@@ -1601,7 +1601,7 @@ void structTextGridEditor :: v_draw () {
 			}
 		}
 
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (our graphics.get(), p_fontSize);
 		if (isIntervalTier)
@@ -1610,7 +1610,7 @@ void structTextGridEditor :: v_draw () {
 			do_drawTextTier (this, (TextTier) anyTier, itier);
 		Graphics_resetViewport (our graphics.get(), vp2);
 	}
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_setFont (our graphics.get(), oldFont);
 	Graphics_setFontSize (our graphics.get(), oldFontSize);
 	if (d_longSound.data || d_sound.data)
@@ -1666,9 +1666,9 @@ static const conststring32 characters [12] [10] = {
 
 void structTextGridEditor :: v_drawSelectionViewer () {
 	Graphics_setWindow (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 	Graphics_setFontSize (our graphics.get(), 12);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -1738,7 +1738,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, integer iClickedT
 		}
 	}
 
-	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (my graphics.get(), Melder_MAROON);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // draw at old position
 	while (Graphics_mouseStillDown (my graphics.get())) {

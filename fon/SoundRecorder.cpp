@@ -220,7 +220,7 @@ static void stopRecording (SoundRecorder me) {
 		Melder_flushError (U"Cannot stop recording.");
 	}
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
@@ -262,17 +262,17 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 		-0.1, 1.1);
 	Graphics_setGrey (my graphics.get(), 0.9);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, maximum, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_GREEN);
+	Graphics_setColour (my graphics.get(), Melder_GREEN);
 	if (maximum < 0.75) {
 		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, maximum);
 	} else {
 		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 0.75);
-		Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+		Graphics_setColour (my graphics.get(), Melder_YELLOW);
 		if (maximum < 0.92) {
 			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.75, maximum);
 		} else {
 			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.75, 0.92);
-			Graphics_setColour (my graphics.get(), Graphics_RED);
+			Graphics_setColour (my graphics.get(), Melder_RED);
 			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.92, maximum);
 		}
 	}
@@ -283,11 +283,11 @@ static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
 	if (nsamp < 1) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		#if defined (macintosh)
-			Graphics_setColour (my graphics.get(), Graphics_WHITE);
+			Graphics_setColour (my graphics.get(), Melder_WHITE);
 			Graphics_fillRectangle (my graphics.get(), 0.2, 0.8, 0.3, 0.7);
 		#endif
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"Not recording.");
 		return;
 	}
@@ -337,11 +337,11 @@ static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
 		Graphics_setWindow (my graphics.get(),
 			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
 			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
-		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(),
 			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
 			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_fillCircle_mm (my graphics.get(), centreOfGravity, intensity, 3.0);
 	}
 	Graphics_flushWs (my graphics.get());
@@ -574,11 +574,11 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 			}
 		}
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	} catch (MelderError) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		my recording = false;
 		Melder_flushError (U"Cannot record.");
@@ -1159,7 +1159,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Graphics_WHITE);
+		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 struct structGuiDrawingArea_ResizeEvent event { my meter, 0 };

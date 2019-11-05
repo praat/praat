@@ -442,7 +442,7 @@ void Matrix_playMovie (Matrix me, Graphics g) {
 	}
 	for (integer icol = 1; icol <= my nx; icol ++) {
 		column.all() <<= my z.column (icol);
-		Graphics_beginMovieFrame (g, & Graphics_WHITE);
+		Graphics_beginMovieFrame (g, & Melder_WHITE);
 		Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
 		Graphics_function (g, column.at, 1, my ny, my ymin, my ymax);
 		Graphics_endMovieFrame (g, 0.03);

@@ -29,15 +29,15 @@ trajectory --> path ????
  The main part of the VowelEditor is a drawing area.
  In this drawing area a cursor can be moved around by a mouse.
  The position of the cursor is related to the F1 and F2 frequencies.
- On_mouse_down the position of the cursor is sampled (Not a fixed intervals!).
+ On_mouse_down the position of the cursor is sampled (Not at fixed intervals!).
  This results in a series of (x,y) values that will be transformed to (F1,F2) values in Hertz
- The corresponding sound wil be made audible until the mouse is released.
+ The corresponding sound wil be made audible after the mouse is released.
 
- Graphics area is F1-F2 plane. Origin top-right with log(F2) horizontal and log(F1) vertical).
- Axis orientation from topright: F1 down, F2 to the left.
- F1, F2 are always evaluated to Hz;
- In the Graphics part, the Graphics_window (0, 1, 0, 1), i.e. origin is bottom-left.
- log(fmin) -> 1; log(fmax)-> 0
+ The user graphics area is the F1-F2 plane: here the origin is at the top-right with log(F2) on the 
+ horizontal axis and log(F1) on the vertical axis (i.e. log (F1) top-down, log(F2) right-to-left)
+ F1, F2 are always evaluated to herts values;
+ On the contrary the Graphics_window has it origin at the bottom left (0,0) and the top-right is at (1,1).
+ We use a transformation such that log(fmin) -> 1 and  log(fmax)-> 0
  Transformations XY <=> F1F2: VowelEditor_getXYFromF1F2(...) and VowelEditor_getF1F2FromXY(...)
   For x direction F2 from right to left
    1 = a * log(f2min) +b
@@ -48,8 +48,6 @@ trajectory --> path ????
    0 = a * log(f1max) +b
    y' = a (log(f1)-log(f1max))
  TO DO:
- The third and higher formant frequencies can also be set indirectly by defining them as functions on the f1,f2 plane
- (for example, by an object of type Matrix).
  Make sound-follows-mouse real time!
 */
 
@@ -83,7 +81,6 @@ trajectory --> path ????
 
 Thing_implement (VowelEditor, Editor, 0);
 
-// STATUS_INFO >=Gui_LABEL_HEIGHT !!
 #define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)
 #define MARGIN_RIGHT 10
 #define MARGIN_LEFT 50
@@ -171,23 +168,23 @@ void VowelEditor_prefs () {
 
 static MelderColour * Graphics_Colour_fromName (conststring32 name) {
 	return
-		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Graphics_GREY :
-		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Graphics_BLACK :
-		Melder_cmp_caseInsensitive (name, U"red") == 0 ? & Graphics_RED :
-		Melder_cmp_caseInsensitive (name, U"green") == 0 ? & Graphics_GREEN :
-		Melder_cmp_caseInsensitive (name, U"blue") == 0 ? & Graphics_BLUE :
-		Melder_cmp_caseInsensitive (name, U"cyan") == 0 ? & Graphics_CYAN :
-		Melder_cmp_caseInsensitive (name, U"magenta") == 0 ? & Graphics_MAGENTA :
-		Melder_cmp_caseInsensitive (name, U"yellow") == 0 ? & Graphics_YELLOW :
-		Melder_cmp_caseInsensitive (name, U"maroon") == 0 ? & Graphics_MAROON :
-		Melder_cmp_caseInsensitive (name, U"lime") == 0 ? & Graphics_LIME :
-		Melder_cmp_caseInsensitive (name, U"navy") == 0 ? & Graphics_NAVY :
-		Melder_cmp_caseInsensitive (name, U"teal") == 0 ? & Graphics_TEAL :
-		Melder_cmp_caseInsensitive (name, U"purple") == 0 ? & Graphics_PURPLE :
-		Melder_cmp_caseInsensitive (name, U"olive") == 0 ? & Graphics_OLIVE :
-		Melder_cmp_caseInsensitive (name, U"silver") == 0 ? & Graphics_SILVER :
-		Melder_cmp_caseInsensitive (name, U"white") == 0 ? & Graphics_WHITE :
-		& Graphics_GREY; // the default colour
+		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Melder_GREY :
+		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Melder_BLACK :
+		Melder_cmp_caseInsensitive (name, U"red") == 0 ? & Melder_RED :
+		Melder_cmp_caseInsensitive (name, U"green") == 0 ? & Melder_GREEN :
+		Melder_cmp_caseInsensitive (name, U"blue") == 0 ? & Melder_BLUE :
+		Melder_cmp_caseInsensitive (name, U"cyan") == 0 ? & Melder_CYAN :
+		Melder_cmp_caseInsensitive (name, U"magenta") == 0 ? & Melder_MAGENTA :
+		Melder_cmp_caseInsensitive (name, U"yellow") == 0 ? & Melder_YELLOW :
+		Melder_cmp_caseInsensitive (name, U"maroon") == 0 ? & Melder_MAROON :
+		Melder_cmp_caseInsensitive (name, U"lime") == 0 ? & Melder_LIME :
+		Melder_cmp_caseInsensitive (name, U"navy") == 0 ? & Melder_NAVY :
+		Melder_cmp_caseInsensitive (name, U"teal") == 0 ? & Melder_TEAL :
+		Melder_cmp_caseInsensitive (name, U"purple") == 0 ? & Melder_PURPLE :
+		Melder_cmp_caseInsensitive (name, U"olive") == 0 ? & Melder_OLIVE :
+		Melder_cmp_caseInsensitive (name, U"silver") == 0 ? & Melder_SILVER :
+		Melder_cmp_caseInsensitive (name, U"white") == 0 ? & Melder_WHITE :
+		& Melder_GREY; // the default colour
 }
 
 #pragma mark - class Vowel
@@ -264,7 +261,6 @@ static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, dou
 	*y = log (f1 / my f1max) / log (my f1min / my f1max);
 }
 
-//Graphics_DCtoWC ????
 static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, double *f1, double *f2) {
 	*f2 = my f2min * pow (my f2max / my f2min, 1.0 - x);
 	*f1 = my f1min * pow (my f1max / my f1min, 1.0 - y);
@@ -533,7 +529,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	Graphics_setLineType (g, Graphics_DRAWN);
 	// Too short too hear ?
 	if ( (my xmax - my xmin) < 0.005)
-		Graphics_setColour (g, Graphics_RED);
+		Graphics_setColour (g, Melder_RED);
 	double x1 = GETX (fp -> formant [2]);
 	double y1 = GETY (fp -> formant [1]);
 	double x1p = x1, y1p = y1;
@@ -1283,7 +1279,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 		}
 	}
 
-	Graphics_xorOn (my graphics.get(), Graphics_BLUE);
+	Graphics_xorOn (my graphics.get(), Melder_BLUE);
 	while (Graphics_mouseStillDown (my graphics.get())) {
 		const double xb = x, yb = y, tb = t;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock

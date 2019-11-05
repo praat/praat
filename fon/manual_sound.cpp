@@ -43,9 +43,9 @@ static void draw_SoundDeepen_filter (Graphics g) {
 		Graphics_markBottom (g, 3.0, true, true, true, nullptr);
 		Graphics_markBottom (g, 30.0, true, true, true, nullptr);
 		Graphics_markBottom (g, 100.0, true, true, false, nullptr);
-		Graphics_setColour (g, Graphics_RED);
+		Graphics_setColour (g, Melder_RED);
 		Sound_draw (s.get(), g, 0.0, 0.0, 0.0, 1.0, false, U"curve");
-		Graphics_setColour (g, Graphics_BLACK);
+		Graphics_setColour (g, Melder_BLACK);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}
@@ -68,9 +68,9 @@ static void draw_SoundDeepen_impulse (Graphics g) {
 		Graphics_markBottom (g, 0, true, true, true, nullptr);
 		Graphics_markBottom (g, 0.2, true, true, false, nullptr);
 		Graphics_markLeft (g, 0, true, true, true, nullptr);
-		Graphics_setColour (g, Graphics_RED);
+		Graphics_setColour (g, Melder_RED);
 		Sound_draw (s.get(), g, 0.0, 0.0, -100.0, 400.0, false, U"curve");
-		Graphics_setColour (g, Graphics_BLACK);
+		Graphics_setColour (g, Melder_BLACK);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}

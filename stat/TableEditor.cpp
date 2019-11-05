@@ -123,9 +123,9 @@ void structTableEditor :: v_draw () {
 	Graphics_clearWs (graphics.get());
 	Graphics_setTextAlignment (graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	Graphics_setWindow (graphics.get(), 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
-	Graphics_setColour (graphics.get(), Graphics_SILVER);
+	Graphics_setColour (graphics.get(), Melder_SILVER);
 	Graphics_fillRectangle (graphics.get(), 0.0, 1.0, rowmin - 2.5, rowmin - 0.5);
-	Graphics_setColour (graphics.get(), Graphics_BLACK);
+	Graphics_setColour (graphics.get(), Melder_BLACK);
 	Graphics_line (graphics.get(), 0.0, rowmin - 0.5, 1.0, rowmin - 0.5);
 	Graphics_setWindow (graphics.get(), 0.0, Graphics_dxWCtoMM (graphics.get(), 1.0), rowmin + 197.5, rowmin - 2.5);
 	/*
@@ -138,9 +138,9 @@ void structTableEditor :: v_draw () {
 			columnWidth = cellWidth;
 	}
 	columnLeft [0] = columnWidth + 2 * spacing;
-	Graphics_setColour (graphics.get(), Graphics_SILVER);
+	Graphics_setColour (graphics.get(), Melder_SILVER);
 	Graphics_fillRectangle (graphics.get(), 0.0, columnLeft [0], rowmin - 0.5, rowmin + 197.5);
-	Graphics_setColour (graphics.get(), Graphics_BLACK);
+	Graphics_setColour (graphics.get(), Melder_BLACK);
 	Graphics_line (graphics.get(), columnLeft [0], rowmin - 0.5, columnLeft [0], rowmin + 197.5);
 	/*
 	 * Determine the width of the columns.
@@ -196,11 +196,11 @@ void structTableEditor :: v_draw () {
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		for (integer icol = colmin; icol <= colmax; icol ++) {
 			if (irow == selectedRow && icol == selectedColumn) {
-				Graphics_setColour (graphics.get(), Graphics_YELLOW);
+				Graphics_setColour (graphics.get(), Melder_YELLOW);
 				const double dx = Graphics_dxMMtoWC (graphics.get(), 0.3);
 				Graphics_fillRectangle (graphics.get(),
 					columnLeft [icol - colmin] + dx, columnRight [icol - colmin] - dx, irow - 0.45, irow + 0.55);
-				Graphics_setColour (graphics.get(), Graphics_BLACK);
+				Graphics_setColour (graphics.get(), Melder_BLACK);
 			}
 			const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2.0;
 			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);

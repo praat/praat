@@ -160,7 +160,8 @@ conststring32 Melder_double (double value) noexcept {
 }
 
 const char * Melder8_single (double value) noexcept {
-	if (isundef (value)) return "--undefined--";
+	if (isundef (value))
+		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value);
 	return buffers8 [ibuffer];
@@ -449,10 +450,9 @@ conststring32 Melder_VEC (constVECVU const& value) {
 		iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
-	if (! NUMisEmpty (value)) {
+	if (! NUMisEmpty (value))
 		for (integer i = 1; i <= value.size; i ++)
 			MelderString_append (string, value [i], U'\n');
-	}
 	return string -> string;
 }
 conststring32 Melder_MAT (constMATVU const& value) {
@@ -484,7 +484,8 @@ conststring32 Melder_pad (int64 width, conststring32 string) {
 		iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooShort = width - length;
-	if (tooShort <= 0) return string;
+	if (tooShort <= 0)
+		return string;
 	MelderString_empty (& thePadBuffers [iPadBuffer]);
 	for (int64 i = 0; i < tooShort; i ++)
 		MelderString_appendCharacter (& thePadBuffers [iPadBuffer], U' ');
@@ -497,7 +498,8 @@ conststring32 Melder_pad (conststring32 string, int64 width) {
 		iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooShort = width - length;
-	if (tooShort <= 0) return string;
+	if (tooShort <= 0)
+		return string;
 	MelderString_copy (& thePadBuffers [iPadBuffer], string);
 	for (int64 i = 0; i < tooShort; i ++)
 		MelderString_appendCharacter (& thePadBuffers [iPadBuffer], U' ');
@@ -509,7 +511,8 @@ conststring32 Melder_truncate (int64 width, conststring32 string) {
 		iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
-	if (tooLong <= 0) return string;
+	if (tooLong <= 0)
+		return string;
 	MelderString_ncopy (& thePadBuffers [iPadBuffer], string + tooLong, width);
 	return thePadBuffers [iPadBuffer]. string;
 }
@@ -519,7 +522,8 @@ conststring32 Melder_truncate (conststring32 string, int64 width) {
 		iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
-	if (tooLong <= 0) return string;
+	if (tooLong <= 0)
+		return string;
 	MelderString_ncopy (& thePadBuffers [iPadBuffer], string, width);
 	return thePadBuffers [iPadBuffer]. string;
 }
@@ -529,7 +533,8 @@ conststring32 Melder_padOrTruncate (int64 width, conststring32 string) {
 		iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
-	if (tooLong == 0) return string;
+	if (tooLong == 0)
+		return string;
 	if (tooLong < 0) {
 		int64 tooShort = - tooLong;
 		MelderString_empty (& thePadBuffers [iPadBuffer]);
@@ -547,7 +552,8 @@ conststring32 Melder_padOrTruncate (conststring32 string, int64 width) {
 		iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
-	if (tooLong == 0) return string;
+	if (tooLong == 0)
+		return string;
 	if (tooLong < 0) {
 		int64 tooShort = - tooLong;
 		MelderString_copy (& thePadBuffers [iPadBuffer], string);

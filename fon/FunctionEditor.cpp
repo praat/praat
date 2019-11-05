@@ -238,14 +238,14 @@ static void drawNow (FunctionEditor me) {
 					/*
 						Window domain text.
 					*/	
-					Graphics_setColour (my graphics.get(), Graphics_BLUE);
+					Graphics_setColour (my graphics.get(), Melder_BLUE);
 					Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 					Graphics_text (my graphics.get(), left, 0.5 * (bottom + top) - verticalCorrection,
 						Melder_fixed (my startWindow, my v_fixedPrecision_long ()));
 					Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 					Graphics_text (my graphics.get(), right, 0.5 * (bottom + top) - verticalCorrection,
 						Melder_fixed (my endWindow, my v_fixedPrecision_long ()));
-					Graphics_setColour (my graphics.get(), Graphics_BLACK);
+					Graphics_setColour (my graphics.get(), Melder_BLACK);
 					Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 				} break; case 2: {
 					value = my startWindow - my tmin;
@@ -290,15 +290,15 @@ static void drawNow (FunctionEditor me) {
 
 	Graphics_setViewport (my graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, 0.0, my height);
 	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, my height);
-	/*Graphics_setColour (my graphics.get(), Graphics_WHITE);
+	/*Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), my startWindow, my endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));*/
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), my startWindow, my endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	/*
 		Red marker text.
 	*/
-	Graphics_setColour (my graphics.get(), Graphics_RED);
+	Graphics_setColour (my graphics.get(), Melder_RED);
 	if (cursorIsVisible) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (my graphics.get(), my startSelection, my height - (TOP_MARGIN + space) - verticalCorrection,
@@ -314,7 +314,7 @@ static void drawNow (FunctionEditor me) {
 		Graphics_text (my graphics.get(), my endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection,
 			Melder_fixed (my endSelection, my v_fixedPrecision_long ()));
 	}
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 
 	/*
 		To reduce flashing, give our descendants the opportunity to prepare their data.
@@ -333,7 +333,7 @@ static void drawNow (FunctionEditor me) {
 		Red dotted marker lines.
 	*/
 	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_RED);
+	Graphics_setColour (my graphics.get(), Melder_RED);
 	Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
 	double bottom = my v_getBottomOfSoundAndAnalysisArea ();
 	if (cursorIsVisible)
@@ -342,7 +342,7 @@ static void drawNow (FunctionEditor me) {
 		Graphics_line (my graphics.get(), my startSelection, bottom, my startSelection, 1.0);
 	if (endIsVisible)
 		Graphics_line (my graphics.get(), my endSelection, bottom, my endSelection, 1.0);
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 
 	/*
@@ -1361,7 +1361,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	*/
 	const double xleft  = std::min (x1, x2);
 	const double xright = std::max (x1, x2);
-	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (my graphics.get(), Melder_MAROON);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics.get(), xleft, 1.0, Melder_fixed (xleft, 6));
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
@@ -1624,7 +1624,7 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 			our functionViewerLeft + MARGIN, our functionViewerRight - MARGIN,
 			BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	Graphics_xorOn (our graphics.get(), Graphics_MAROON);
+	Graphics_xorOn (our graphics.get(), Melder_MAROON);
 	/*
 	 * Undraw the play cursor at its old location.
 	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.
@@ -1762,7 +1762,7 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 
 	static MelderString text { };
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string) + Graphics_dxMMtoWC (my graphics.get(), 0.5);
-	Graphics_setColour (my graphics.get(), Graphics_BLUE);
+	Graphics_setColour (my graphics.get(), Melder_BLUE);
 	Graphics_line (my graphics.get(), my endWindow, yWC, my endWindow + textWidth, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, verticalAlignment);
 	if (verticalAlignment == Graphics_BOTTOM)
@@ -1771,10 +1771,10 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 
 }
 
 void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
-	Graphics_setColour (my graphics.get(), Graphics_CYAN);
+	Graphics_setColour (my graphics.get(), Melder_CYAN);
 	Graphics_line (my graphics.get(), my startWindow, yWC, 0.99 * my startWindow + 0.01 * my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics.get(), 0.5 * (my startSelection + my endSelection), yWC, 1.5);
-	Graphics_setColour (my graphics.get(), Graphics_BLUE);
+	Graphics_setColour (my graphics.get(), Melder_BLUE);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (my graphics.get(), my startWindow, yWC,   yWC_string, units);
 }
@@ -1784,7 +1784,7 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	int tooHigh = Graphics_dyWCtoMM (my graphics.get(), maximum - textY) < 5.0;
 	int tooLow = Graphics_dyWCtoMM (my graphics.get(), textY - minimum) < 5.0;
 	if (yWC < minimum || yWC > maximum) return;
-	Graphics_setColour (my graphics.get(), Graphics_CYAN);
+	Graphics_setColour (my graphics.get(), Melder_CYAN);
 	Graphics_line (my graphics.get(), 0.99 * my endWindow + 0.01 * my startWindow, yWC, my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics.get(), 0.5 * (my startSelection + my endSelection), yWC, 1.5);
 	if (tooHigh) {
@@ -1797,20 +1797,20 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string);
 	Graphics_fillCircle_mm (my graphics.get(), my endWindow + textWidth + Graphics_dxMMtoWC (my graphics.get(), 1.5), textY, 1.5);
-	Graphics_setColour (my graphics.get(), Graphics_RED);
+	Graphics_setColour (my graphics.get(), Melder_RED);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (my graphics.get(), textX, textY, text.string);
 }
 
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
-	Graphics_setColour (my graphics.get(), Graphics_RED);
+	Graphics_setColour (my graphics.get(), Melder_RED);
 	Graphics_line (my graphics.get(), my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (my graphics.get(), my startWindow, yWC,   yWC_string, units);
 }
 
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC) {
-	Graphics_setColour (my graphics.get(), Graphics_CYAN);
+	Graphics_setColour (my graphics.get(), Melder_CYAN);
 	Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
 	Graphics_line (my graphics.get(), my startWindow, yWC, my endWindow, yWC);
 	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);

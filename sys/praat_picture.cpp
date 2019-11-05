@@ -320,23 +320,23 @@ static void updatePenMenu () {
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			GuiMenuItem_check (praatButton_lines [i], theCurrentPraatPicture -> lineType == i);
 		}
-		GuiMenuItem_check (praatButton_black   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK));
-		GuiMenuItem_check (praatButton_white   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE));
-		GuiMenuItem_check (praatButton_red     , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED));
-		GuiMenuItem_check (praatButton_green   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN));
-		GuiMenuItem_check (praatButton_blue    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE));
-		GuiMenuItem_check (praatButton_yellow  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW));
-		GuiMenuItem_check (praatButton_cyan    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN));
-		GuiMenuItem_check (praatButton_magenta , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA));
-		GuiMenuItem_check (praatButton_maroon  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON));
-		GuiMenuItem_check (praatButton_lime    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME));
-		GuiMenuItem_check (praatButton_navy    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY));
-		GuiMenuItem_check (praatButton_teal    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL));
-		GuiMenuItem_check (praatButton_purple  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE));
-		GuiMenuItem_check (praatButton_olive   , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE));
-		GuiMenuItem_check (praatButton_pink    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK));
-		GuiMenuItem_check (praatButton_silver  , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER));
-		GuiMenuItem_check (praatButton_grey    , Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY));
+		GuiMenuItem_check (praatButton_black   , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_BLACK));
+		GuiMenuItem_check (praatButton_white   , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_WHITE));
+		GuiMenuItem_check (praatButton_red     , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_RED));
+		GuiMenuItem_check (praatButton_green   , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_GREEN));
+		GuiMenuItem_check (praatButton_blue    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_BLUE));
+		GuiMenuItem_check (praatButton_yellow  , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_YELLOW));
+		GuiMenuItem_check (praatButton_cyan    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_CYAN));
+		GuiMenuItem_check (praatButton_magenta , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_MAGENTA));
+		GuiMenuItem_check (praatButton_maroon  , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_MAROON));
+		GuiMenuItem_check (praatButton_lime    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_LIME));
+		GuiMenuItem_check (praatButton_navy    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_NAVY));
+		GuiMenuItem_check (praatButton_teal    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_TEAL));
+		GuiMenuItem_check (praatButton_purple  , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_PURPLE));
+		GuiMenuItem_check (praatButton_olive   , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_OLIVE));
+		GuiMenuItem_check (praatButton_pink    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_PINK));
+		GuiMenuItem_check (praatButton_silver  , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_SILVER));
+		GuiMenuItem_check (praatButton_grey    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_GREY));
 	}
 }
 static void setLineType (int lineType) {
@@ -402,23 +402,23 @@ static void setColour (MelderColour colour) {
 		updatePenMenu ();
 	}
 }
-DIRECT (GRAPHICS_Black)   { setColour (Graphics_BLACK);   END }
-DIRECT (GRAPHICS_White)   { setColour (Graphics_WHITE);   END }
-DIRECT (GRAPHICS_Red)     { setColour (Graphics_RED);     END }
-DIRECT (GRAPHICS_Green)   { setColour (Graphics_GREEN);   END }
-DIRECT (GRAPHICS_Blue)    { setColour (Graphics_BLUE);    END }
-DIRECT (GRAPHICS_Yellow)  { setColour (Graphics_YELLOW);  END }
-DIRECT (GRAPHICS_Cyan)    { setColour (Graphics_CYAN);    END }
-DIRECT (GRAPHICS_Magenta) { setColour (Graphics_MAGENTA); END }
-DIRECT (GRAPHICS_Maroon)  { setColour (Graphics_MAROON);  END }
-DIRECT (GRAPHICS_Lime)    { setColour (Graphics_LIME);    END }
-DIRECT (GRAPHICS_Navy)    { setColour (Graphics_NAVY);    END }
-DIRECT (GRAPHICS_Teal)    { setColour (Graphics_TEAL);    END }
-DIRECT (GRAPHICS_Purple)  { setColour (Graphics_PURPLE);  END }
-DIRECT (GRAPHICS_Olive)   { setColour (Graphics_OLIVE);   END }
-DIRECT (GRAPHICS_Pink)    { setColour (Graphics_PINK);    END }
-DIRECT (GRAPHICS_Silver)  { setColour (Graphics_SILVER);  END }
-DIRECT (GRAPHICS_Grey)    { setColour (Graphics_GREY);    END }
+DIRECT (GRAPHICS_Black)   { setColour (Melder_BLACK);   END }
+DIRECT (GRAPHICS_White)   { setColour (Melder_WHITE);   END }
+DIRECT (GRAPHICS_Red)     { setColour (Melder_RED);     END }
+DIRECT (GRAPHICS_Green)   { setColour (Melder_GREEN);   END }
+DIRECT (GRAPHICS_Blue)    { setColour (Melder_BLUE);    END }
+DIRECT (GRAPHICS_Yellow)  { setColour (Melder_YELLOW);  END }
+DIRECT (GRAPHICS_Cyan)    { setColour (Melder_CYAN);    END }
+DIRECT (GRAPHICS_Magenta) { setColour (Melder_MAGENTA); END }
+DIRECT (GRAPHICS_Maroon)  { setColour (Melder_MAROON);  END }
+DIRECT (GRAPHICS_Lime)    { setColour (Melder_LIME);    END }
+DIRECT (GRAPHICS_Navy)    { setColour (Melder_NAVY);    END }
+DIRECT (GRAPHICS_Teal)    { setColour (Melder_TEAL);    END }
+DIRECT (GRAPHICS_Purple)  { setColour (Melder_PURPLE);  END }
+DIRECT (GRAPHICS_Olive)   { setColour (Melder_OLIVE);   END }
+DIRECT (GRAPHICS_Pink)    { setColour (Melder_PINK);    END }
+DIRECT (GRAPHICS_Silver)  { setColour (Melder_SILVER);  END }
+DIRECT (GRAPHICS_Grey)    { setColour (Melder_GREY);    END }
 
 FORM (GRAPHICS_Colour, U"Praat picture: Colour", nullptr) {
 	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.0")
@@ -595,7 +595,7 @@ DIRECT (GRAPHICS_Erase_all) {
 		#if 1
 		autoPraatPicture picture;
 		MelderColour colour = GRAPHICS -> colour;
-		Graphics_setColour (GRAPHICS, Graphics_WHITE);
+		Graphics_setColour (GRAPHICS, Melder_WHITE);
 		double x1, y1, x2, y2;
 		//Melder_casual (GRAPHICS -> d_x1DC, U" ", GRAPHICS -> d_y1DC, U" ", GRAPHICS -> d_x2DC, U" ", GRAPHICS -> d_y2DC);
 		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, & x1, & y1);
@@ -1482,7 +1482,7 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_writeLine (U"Line width: ", theCurrentPraatPicture -> lineWidth);
 	MelderInfo_writeLine (U"Arrow size: ", theCurrentPraatPicture -> arrowSize);
 	MelderInfo_writeLine (U"Speckle size: ", theCurrentPraatPicture -> speckleSize);
-	MelderInfo_writeLine (U"Colour: ", Graphics_Colour_name (theCurrentPraatPicture -> colour));
+	MelderInfo_writeLine (U"Colour: ", MelderColour_name (theCurrentPraatPicture -> colour));
 	MelderInfo_writeLine (U"Red: ", theCurrentPraatPicture -> colour. red);
 	MelderInfo_writeLine (U"Green: ", theCurrentPraatPicture -> colour. green);
 	MelderInfo_writeLine (U"Blue: ", theCurrentPraatPicture -> colour. blue);
@@ -1623,7 +1623,7 @@ void praat_picture_init () {
 	GuiDrawingArea drawingArea = nullptr;
 	int margin, width, height, resolution, x, y;
 	theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-	theCurrentPraatPicture -> colour = Graphics_BLACK;
+	theCurrentPraatPicture -> colour = Melder_BLACK;
 	theCurrentPraatPicture -> lineWidth = 1.0;
 	theCurrentPraatPicture -> arrowSize = 1.0;
 	theCurrentPraatPicture -> speckleSize = 1.0;

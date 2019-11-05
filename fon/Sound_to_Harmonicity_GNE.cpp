@@ -105,7 +105,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			 */
 			autoSound band = Spectrum_to_Sound (bandSpectrum.get());
 			/*if (graphics) {
-				Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
+				Graphics_beginMovieFrame (graphics, & Melder_WHITE);
 				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, true);
 				Graphics_endMovieFrame (graphics, 0.0);
 			}*/

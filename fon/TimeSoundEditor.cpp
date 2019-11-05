@@ -459,7 +459,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	Melder_assert (!! sound != !! longSound);
 	integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
 	bool cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	bool fits;
 	try {
 		fits = sound ? true : LongSound_haveWindow (longSound, my startWindow, my endWindow);
@@ -581,7 +581,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 				Graphics_text (my graphics.get(), 0.0, 0.0, U"0");
 			}
-			Graphics_setColour (my graphics.get(), Graphics_CYAN);
+			Graphics_setColour (my graphics.get(), Melder_CYAN);
 			Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
 			Graphics_line (my graphics.get(), 0.0, 0.0, 1.0, 0.0);
 			Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
@@ -590,9 +590,9 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		 * Garnish the drawing area of each channel.
 		 */
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Graphics_CYAN);
+		Graphics_setColour (my graphics.get(), Melder_CYAN);
 		Graphics_innerRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Graphics_BLACK);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		if (numberOfChannels > 1) {
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
@@ -615,7 +615,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		 * Draw a very thin separator line underneath.
 		 */
 		if (ichan < numberOfChannels) {
-			/*Graphics_setColour (my graphics.get(), Graphics_BLACK);*/
+			/*Graphics_setColour (my graphics.get(), Melder_BLACK);*/
 			Graphics_line (my graphics.get(), 0.0, 0.0, 1.0, 0.0);
 		}
 		/*
@@ -626,7 +626,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible && isdefined (cursorFunctionValue))
 				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
-			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			Graphics_function (my graphics.get(), & sound -> z [ichan] [0], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		} else {

@@ -113,14 +113,14 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					if (area [i] < minTract [i]) minTract [i] = area [i];
 					if (area [i] > maxTract [i]) maxTract [i] = area [i];
 				}
-				Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
+				Graphics_beginMovieFrame (graphics, & Melder_WHITE);
 
 				Graphics_Viewport vp = Graphics_insetViewport (monitor.graphics(), 0.0, 0.5, 0.5, 1.0);
 				Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.05);
-				Graphics_setColour (graphics, Graphics_RED);
+				Graphics_setColour (graphics, Melder_RED);
 				Graphics_function (graphics, minTract, 1, 35, 0.0, 0.9);
 				Graphics_function (graphics, maxTract, 1, 35, 0.0, 0.9);
-				Graphics_setColour (graphics, Graphics_BLACK);
+				Graphics_setColour (graphics, Melder_BLACK);
 				Graphics_function (graphics, area, 1, 35, 0.0, 0.9);
 				Graphics_setLineType (graphics, Graphics_DOTTED);
 				Graphics_line (graphics, 0.0, 0.0, 1.0, 0.0);
@@ -129,10 +129,10 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 
 				vp = Graphics_insetViewport (graphics, 0, 0.5, 0, 0.5);
 				Graphics_setWindow (graphics, 0.0, 1.0, -0.000003, 0.00001);
-				Graphics_setColour (graphics, Graphics_RED);
+				Graphics_setColour (graphics, Melder_RED);
 				Graphics_function (graphics, minTract, 36, 37, 0.2, 0.8);
 				Graphics_function (graphics, maxTract, 36, 37, 0.2, 0.8);
-				Graphics_setColour (graphics, Graphics_BLACK);
+				Graphics_setColour (graphics, Melder_BLACK);
 				Graphics_function (graphics, area, 36, 37, 0.2, 0.8);
 				Graphics_setLineType (graphics, Graphics_DOTTED);
 				Graphics_line (graphics, 0.0, 0.0, 1.0, 0.0);
@@ -141,10 +141,10 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 
 				vp = Graphics_insetViewport (graphics, 0.5, 1.0, 0.5, 1.0);
 				Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.001);
-				Graphics_setColour (graphics, Graphics_RED);
+				Graphics_setColour (graphics, Melder_RED);
 				Graphics_function (graphics, minTract, 38, 64, 0.0, 1.0);
 				Graphics_function (graphics, maxTract, 38, 64, 0.0, 1.0);
-				Graphics_setColour (graphics, Graphics_BLACK);
+				Graphics_setColour (graphics, Melder_BLACK);
 				Graphics_function (graphics, area, 38, 64, 0.0, 1.0);
 				Graphics_setLineType (graphics, Graphics_DOTTED);
 				Graphics_line (graphics, 0.0, 0.0, 1.0, 0.0);
@@ -153,10 +153,10 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 
 				vp = Graphics_insetViewport (graphics, 0.5, 1.0, 0.0, 0.5);
 				Graphics_setWindow (graphics, 0.0, 1.0, 0.001, 0.0);
-				Graphics_setColour (graphics, Graphics_RED);
+				Graphics_setColour (graphics, Melder_RED);
 				Graphics_function (graphics, minTract, 65, 78, 0.5, 1.0);
 				Graphics_function (graphics, maxTract, 65, 78, 0.5, 1.0);
-				Graphics_setColour (graphics, Graphics_BLACK);
+				Graphics_setColour (graphics, Melder_BLACK);
 				Graphics_function (graphics, area, 65, 78, 0.5, 1.0);
 				Graphics_setLineType (graphics, Graphics_DRAWN);
 				Graphics_resetViewport (graphics, vp);

@@ -217,23 +217,23 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case SET_STANDARD_COLOUR: {   // only used in old Praat picture files
 				int standardColour = (int) get;
 				MelderColour colour =
-					standardColour == 0 ? Graphics_BLACK :
-					standardColour == 1 ? Graphics_WHITE :
-					standardColour == 2 ? Graphics_RED :
-					standardColour == 3 ? Graphics_GREEN :
-					standardColour == 4 ? Graphics_BLUE :
-					standardColour == 5 ? Graphics_CYAN :
-					standardColour == 6 ? Graphics_MAGENTA :
-					standardColour == 7 ? Graphics_YELLOW :
-					standardColour == 8 ? Graphics_MAROON :
-					standardColour == 9 ? Graphics_LIME :
-					standardColour == 10 ? Graphics_NAVY :
-					standardColour == 11 ? Graphics_TEAL :
-					standardColour == 12 ? Graphics_PURPLE :
-					standardColour == 13 ? Graphics_OLIVE :
-					standardColour == 14 ? Graphics_PINK :
-					standardColour == 15 ? Graphics_SILVER :
-					Graphics_GREY;
+					standardColour == 0 ? Melder_BLACK :
+					standardColour == 1 ? Melder_WHITE :
+					standardColour == 2 ? Melder_RED :
+					standardColour == 3 ? Melder_GREEN :
+					standardColour == 4 ? Melder_BLUE :
+					standardColour == 5 ? Melder_CYAN :
+					standardColour == 6 ? Melder_MAGENTA :
+					standardColour == 7 ? Melder_YELLOW :
+					standardColour == 8 ? Melder_MAROON :
+					standardColour == 9 ? Melder_LIME :
+					standardColour == 10 ? Melder_NAVY :
+					standardColour == 11 ? Melder_TEAL :
+					standardColour == 12 ? Melder_PURPLE :
+					standardColour == 13 ? Melder_OLIVE :
+					standardColour == 14 ? Melder_PINK :
+					standardColour == 15 ? Melder_SILVER :
+					Melder_GREY;
 				Graphics_setColour (thee, colour);
 			} break;
 			case SET_GREY: {

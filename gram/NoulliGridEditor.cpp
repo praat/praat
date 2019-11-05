@@ -42,14 +42,14 @@ void structNoulliGridEditor :: v_draw () {
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
-		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
 		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
 	}
-	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	if (data -> numberOfCategories == 2) {
@@ -62,11 +62,11 @@ void structNoulliGridEditor :: v_draw () {
 				double time = 0.5 * (point -> xmin + point -> xmax), nextTime = 0.5 * (nextPoint -> xmin + nextPoint -> xmax);
 				if (time > our startWindow && nextTime < our endWindow) {
 					double prob = point -> probabilities [1], nextProb = nextPoint -> probabilities [1];
-					Graphics_setColour (our graphics.get(), Graphics_cyclingBackgroundColour (itier));
+					Graphics_setColour (our graphics.get(), Melder_cyclingBackgroundColour (itier));
 					Graphics_line (our graphics.get(), time, prob, nextTime, nextProb);
 				}
 			}
-			Graphics_setColour (our graphics.get(), Graphics_BLACK);
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
 		}
 	} else {
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, data -> tiers.size);
@@ -82,12 +82,12 @@ void structNoulliGridEditor :: v_draw () {
 					for (integer icategory = 1; icategory <= point -> numberOfCategories; icategory ++) {
 						prob2 = prob1;
 						prob1 -= point -> probabilities [icategory];
-						Graphics_setColour (our graphics.get(), Graphics_cyclingBackgroundColour (icategory));
+						Graphics_setColour (our graphics.get(), Melder_cyclingBackgroundColour (icategory));
 						Graphics_fillRectangle (our graphics.get(), xmin, xmax, ymin + prob1 * (ymax - ymin), ymin + prob2 * (ymax - ymin));
 					}
 				}
 			}
-			Graphics_setColour (our graphics.get(), Graphics_BLACK);
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
 			if (itier > 1) {
 				Graphics_setLineWidth (our graphics.get(), 1.0);
 				Graphics_line (our graphics.get(), our startWindow, ymax, our endWindow, ymax);
@@ -95,7 +95,7 @@ void structNoulliGridEditor :: v_draw () {
 		}
 	}
 	Graphics_setLineWidth (our graphics.get(), 1.0);
-	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	our v_updateMenuItems_file ();
 }
 
@@ -111,7 +111,7 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 			(grid -> tiers.size - itier + 0.0) / grid -> tiers.size * (1.0 - SOUND_HEIGHT),
 			(grid -> tiers.size - itier + 1.0) / grid -> tiers.size * (1.0 - SOUND_HEIGHT));
 		if (itier == 1) {
-			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 			Graphics_text (my graphics.get(), 0.0, 1.0, header);
 		}
@@ -129,9 +129,9 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"scared") ||
 				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"angry"));
 			if (shouldDrawPicture) {
-				Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
+				Graphics_setColour (my graphics.get(), Melder_cyclingBackgroundColour (winningCategory));
 				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
-				Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
+				Graphics_setColour (my graphics.get(), Melder_cyclingTextColour (winningCategory));
 				/*
 					Draw the eyes.
 				*/
@@ -185,27 +185,27 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 				}
 				Graphics_setLineWidth (my graphics.get(), 1.0);
 			} else {
-				Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
+				Graphics_setColour (my graphics.get(), Melder_cyclingBackgroundColour (winningCategory));
 				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
 			}
 			if (my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::COLOUR_AND_TEXT ||
 				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT ||
 				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE && ! shouldDrawPicture)
 			{
-				Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
+				Graphics_setColour (my graphics.get(), Melder_cyclingTextColour (winningCategory));
 				Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 				Graphics_text (my graphics.get(), 0.0, 0.0, winningCategoryName);
 			}
 		} else {
-			Graphics_setColour (my graphics.get(), Graphics_WHITE);
+			Graphics_setColour (my graphics.get(), Melder_WHITE);
 			Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
-			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 			Graphics_text (my graphics.get(), 0.0, 0.0, U"?");
 		}
 		Graphics_resetViewport (my graphics.get(), vp);
 	}
-	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 }
 
 void structNoulliGridEditor :: v_drawSelectionViewer () {

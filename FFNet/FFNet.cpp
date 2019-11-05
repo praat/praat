@@ -547,7 +547,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 				x2WC += dx2;
 			}
 		}
-		Graphics_setColour (g, Graphics_RED);
+		Graphics_setColour (g, Melder_RED);
 		x2WC = x2;
 		for (integer j = 1; j <= numberOfUnitsInLayer; j ++) {
 			Graphics_circle (g, x2WC, y2WC, radius);
@@ -555,7 +555,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 				Graphics_fillCircle (g, x2WC, y2WC, radius);
 			x2WC += dx2;
 		}
-		Graphics_setColour (g, Graphics_BLACK);
+		Graphics_setColour (g, Melder_BLACK);
 		if (i > 0) {
 			integer numberOfUnitsInLayer_m1 = ( i == 1 ? my numberOfInputs : my numberOfUnitsInLayer [i - 1] );
 			double dx1 = dx;
@@ -618,7 +618,7 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 		for (integer j = 1; j <= numberOfUnitsInLayer; j ++, node ++) {
 			double activity = my activity [node];
 			double radius = r1 * (fabs (activity) < 0.05 ? 0.05 : fabs (activity));
-			/*Graphics_setColour (g, activity < 0 ? Graphics_BLACK : Graphics_RED);*/
+			/*Graphics_setColour (g, activity < 0 ? Melder_BLACK : Melder_RED);*/
 			Graphics_circle (g, x2WC, y2WC, radius);
 			if (activity < 0)
 				Graphics_fillCircle (g, x2WC, y2WC, radius);
