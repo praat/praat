@@ -196,13 +196,13 @@ double Graphics_textWidth_ps_mm (Graphics me, conststring32 text /* cattable */,
 void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *x, double const *y);
 void Graphics_cellArray (Graphics me, constMATVU const& z,
 	double x1, double x2, double y1, double y2, double minimum, double maximum);
-void Graphics_cellArray_colour (Graphics me, constmatrixview<double_rgbt> const& z,
+void Graphics_cellArray_colour (Graphics me, constmatrixview <MelderColour> const& z,
 	double x1, double x2, double y1, double y2, double minimum, double maximum);
 void Graphics_cellArray8 (Graphics me, constmatrixview <unsigned char> const& z,
 	double x1, double x2, double y1, double y2, unsigned char minimum, unsigned char maximum);
 void Graphics_image (Graphics me, constMATVU const& z,
 	double x1, double x2, double y1, double y2, double minimum, double maximum);
-void Graphics_image_colour (Graphics me, constmatrixview<double_rgbt> const& z,
+void Graphics_image_colour (Graphics me, constmatrixview <MelderColour> const& z,
 	double x1, double x2, double y1, double y2, double minimum, double maximum);
 void Graphics_image8 (Graphics me, constmatrixview <unsigned char> const& z,
 	double x1, double x2, double y1, double y2, uint8 minimum, uint8 maximum);

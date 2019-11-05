@@ -1716,7 +1716,9 @@ void praat_run () {
 	}
 	Melder_assert (str32equ (Melder_integer (1234567), U"1234567"));
 	Melder_assert (str32equ (Melder_integer (-1234567), U"-1234567"));
-	Melder_assert (str32equ (Melder_colour ({ 0.25, 0.50, 0.875 }), U"{0.25,0.5,0.875}"));
+	MelderColour notExplicitlyIniitialized;
+	Melder_assert (str32equ (Melder_colour (notExplicitlyIniitialized), U"{0,0,0}"));
+	Melder_assert (str32equ (Melder_colour (MelderColour (0.25, 0.50, 0.875)), U"{0.25,0.5,0.875}"));
 	{
 		VEC xn;   // uninitialized
 		Melder_assert (! xn.at);

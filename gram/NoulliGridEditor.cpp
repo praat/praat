@@ -210,7 +210,7 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 
 void structNoulliGridEditor :: v_drawSelectionViewer () {
 	Graphics_setWindow (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
-	Graphics_setColour (our graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
+	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
 	drawSelectionOrWindow (this, 0.0, 1.0, our startSelection, our endSelection, U"");
 	//drawSelectionOrWindow (this, 0.0, 0.5, our startSelection, our endSelection,

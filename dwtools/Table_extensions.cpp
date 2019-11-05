@@ -4207,46 +4207,10 @@ static autoStrings itemizeColourString (conststring32 colourString) {
 static MelderColour Strings_colourToValue  (Strings me, integer index) {
 	if (index < 0 || index > my numberOfStrings)
 		return Melder_GREY;
-
-	MelderColour colourValue;
-	char32 *p = my strings [index].get();
-	while (*p == U' ' || *p == U'\t') p ++;
-	*p = Melder_toLowerCase (*p);
-	char32 first = *p;
-	if (first == U'{') {
-		colourValue.red = Melder_atof ( ++ p);
-		p = (char32 *) str32chr (p, U',');
-		if (! p) return Melder_GREY;
-		colourValue.green = Melder_atof ( ++ p);
-		p = (char32 *) str32chr (p, U',');
-		if (! p) return Melder_GREY;
-		colourValue.blue = Melder_atof ( ++ p);
-	} else {
-		*p = Melder_toLowerCase (*p);
-		if (str32equ (p, U"black")) colourValue = Melder_BLACK;
-		else if (str32equ (p, U"white")) colourValue = Melder_WHITE;
-		else if (str32equ (p, U"red")) colourValue = Melder_RED;
-		else if (str32equ (p, U"green")) colourValue = Melder_GREEN;
-		else if (str32equ (p, U"blue")) colourValue = Melder_BLUE;
-		else if (str32equ (p, U"yellow")) colourValue = Melder_YELLOW;
-		else if (str32equ (p, U"cyan")) colourValue = Melder_CYAN;
-		else if (str32equ (p, U"magenta")) colourValue = Melder_MAGENTA;
-		else if (str32equ (p, U"maroon")) colourValue = Melder_MAROON;
-		else if (str32equ (p, U"lime")) colourValue = Melder_LIME;
-		else if (str32equ (p, U"navy")) colourValue = Melder_NAVY;
-		else if (str32equ (p, U"teal")) colourValue = Melder_TEAL;
-		else if (str32equ (p, U"purple")) colourValue = Melder_PURPLE;
-		else if (str32equ (p, U"olive")) colourValue = Melder_OLIVE;
-		else if (str32equ (p, U"pink")) colourValue = Melder_PINK;
-		else if (str32equ (p, U"silver")) colourValue = Melder_SILVER;
-		else if (str32equ (p, U"grey")) colourValue = Melder_GREY;
-		else { 
-			double grey = Melder_atof (p);
-			grey = grey < 0 ? 0 : (grey > 1 ? 1 : grey);
-			colourValue.red = colourValue.green = colourValue.blue = grey;
-		}
-	}
-	return colourValue;
+	MelderColour result = MelderColour_fromColourNameOrNumberStringOrRGBString (my strings [index].get());
+	if (! result.valid())
+		return Melder_GREY;
+	return result;
 }
 
 integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter) {
@@ -4255,9 +4219,8 @@ integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter
 	Formula_Result result;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		Formula_run (irow, 1, & result);
-		if (result. numericResult != 0.0) {
+		if (result. numericResult != 0.0)
 			numberOfRows ++;
-		}
 	}
 	return numberOfRows;
 }
@@ -4282,7 +4245,6 @@ autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Int
 		Melder_throw (me, U": cannot find matches.");
 	}
 }
-
 
 void Table_barPlotWhere (Table me, Graphics g,
 	conststring32 columnLabels, double ymin, double ymax, conststring32 factorColumn,
