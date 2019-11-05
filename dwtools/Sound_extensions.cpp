@@ -102,10 +102,10 @@ static void Pitch_scaleDuration (Pitch me, double multiplier) {
 
 static void Pitch_scalePitch (Pitch me, double multiplier) {
 	for (integer i = 1; i <= my nx; i ++) {
-		double f = my frame [i].candidate [1].frequency;
+		double f = my frames [i].candidates [1].frequency;
 		f *= multiplier;
 		if (f < my ceiling)
-			my frame [i].candidate [1].frequency = f;
+			my frames [i].candidates [1].frequency = f;
 	}
 }
 
@@ -1438,11 +1438,11 @@ static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 		autoPitch thee = Pitch_create (my xmin, xmax, my nx, dx, x1, my ceiling, 2);
 
 		for (integer i = 1; i <= my nx; i ++) {
-			double f = my frame [i].candidate [1].frequency;
-			thy frame [i].candidate [1].strength = my frame [i].candidate [1].strength;
+			double f = my frames [i].candidates [1].frequency;
+			thy frames [i].candidates [1].strength = my frames [i].candidates [1].strength;
 			f /= scaleFactor;
 			if (f < my ceiling) {
-				thy frame [i]. candidate [1]. frequency = f;
+				thy frames [i]. candidates [1]. frequency = f;
 			}
 		}
 		return thee;

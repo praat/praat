@@ -418,7 +418,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 					integer bytesLeft = 2 * numberOfSamples, dbytes, bytesRead = 0;
 					while (bytesLeft) {
 						//Melder_casual ("Reading %ld bytes", bytesLeft > 4000 ? 4000 : bytesLeft);
-						dbytes = read (fd, & ((char *) buffer.peek()) [2 + bytesRead], bytesLeft > 4000 ? 4000 : bytesLeft);
+						dbytes = read (fd, (char *) & buffer [2 + bytesRead], bytesLeft > 4000 ? 4000 : bytesLeft);
 						//Melder_casual("Read %ld bytes", dbytes);
 						if (dbytes <= 0) break;
 						bytesLeft -= dbytes;
