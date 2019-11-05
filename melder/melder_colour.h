@@ -32,6 +32,9 @@ struct MelderColour {
 	bool valid () const {
 		return isdefined (our red);
 	}
+	bool isGrey () const {
+		return red == green && green == blue;
+	}
 };
 
 extern MelderColour Melder_BLACK, Melder_WHITE, Melder_RED, Melder_GREEN, Melder_BLUE,
@@ -52,7 +55,10 @@ MelderColour MelderColour_fromColourNameOrNumberStringOrRGBString (conststring32
 
 MelderColour MelderColour_fromColourNameOrRGBString (conststring32 string);
 
+conststring32 MelderColour_nameRGB (MelderColour colour);
+conststring32 MelderColour_namePrettyOrNull (MelderColour colour);
 conststring32 MelderColour_name (MelderColour colour);
+
 static inline bool MelderColour_equal (MelderColour colour1, MelderColour colour2) {
 	return
 		colour1. red == colour2. red &&
