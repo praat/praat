@@ -83,8 +83,10 @@ void CC_init (CC me, double tmin, double tmax, integer nt, double dt, double t1,
 
 autoMatrix CC_to_Matrix (CC me) {
 	try {
-		// find number of coefficients by quering all frames.
-		// We cannot use maximumNumberOfCoefficiennts because this number is only used to calculate the inverse
+		/*
+			Find number of coefficients by quering all frames.
+			We cannot use maximumNumberOfCoefficients because this number is only used to calculate the inverse
+		*/
 		integer numberOfCoefficients = 0;
 		for (integer i = 1; i <= my nx; i ++) {
 			CC_Frame cf = & my frame [i];
@@ -95,7 +97,7 @@ autoMatrix CC_to_Matrix (CC me) {
 		
 		for (integer i = 1; i <= my nx; i ++) {
 			CC_Frame cf = & my frame [i];
-			thy z.column (i) <<= cf -> c.get();   // not coefficients must equal zero!
+			thy z.column (i).part (1, cf -> numberOfCoefficients) <<= cf -> c.get().part (1, cf -> numberOfCoefficients);
 		}
 		return thee;
 	} catch (MelderError) {

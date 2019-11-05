@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kVowelEditor_speakersType, 1)
-	enums_add (kVowelEditor_speakersType, 1, Man, U"Man")
-	enums_add (kVowelEditor_speakersType, 2, Woman, U"Women")
-	enums_add (kVowelEditor_speakersType, 3, Child, U"Child")
-enums_end (kVowelEditor_speakersType, 3, Man)
+enums_begin (kVowelEditor_speakerType, 1)
+	enums_add (kVowelEditor_speakerType, 1, Man, U"Man")
+	enums_add (kVowelEditor_speakerType, 2, Woman, U"Women")
+	enums_add (kVowelEditor_speakerType, 3, Child, U"Child")
+enums_end (kVowelEditor_speakerType, 3, Man)
 
 enums_begin (kVowelEditor_marksDataSet, 1)
 	enums_add (kVowelEditor_marksDataSet, 1, AmericanEnglish, U"American English")
