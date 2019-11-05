@@ -317,9 +317,8 @@ static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatB
 
 static void updatePenMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
+		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++)
 			GuiMenuItem_check (praatButton_lines [i], theCurrentPraatPicture -> lineType == i);
-		}
 		GuiMenuItem_check (praatButton_black   , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_BLACK));
 		GuiMenuItem_check (praatButton_white   , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_WHITE));
 		GuiMenuItem_check (praatButton_red     , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_RED));
@@ -345,9 +344,8 @@ static void setLineType (int lineType) {
 		Graphics_setLineType (GRAPHICS, lineType);
 	}
 	theCurrentPraatPicture -> lineType = lineType;
-	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
-	}
 }
 DIRECT (GRAPHICS_Solid_line)         { setLineType (Graphics_DRAWN);         END }
 DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END }

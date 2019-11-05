@@ -38,6 +38,7 @@
 #include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
 #include "melder_pointer.h"   // NULL
 #include "melder_real.h"   // longdouble, MelderPoint, MelderRealRange
+#include "NUMmath.h"   // <math.h>, NUMpi, undefined
 #include "complex.h"   // dcomplex
 
 /*
@@ -54,7 +55,6 @@
 
 #include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free
 #include "melder_string32.h"   // char32, conststring32, autostring32 (requires Melder_malloc, our), Melder_dup
-#include "melder_colour.h"   // MelderColour
 #include "melder_kar.h"   // Melder_hasInk (requires char32), Melder_toLowerCase
 #include "melder_str32.h"   // str32len, str32cpy, str32cmp_caseInsensitive (requires Melder_toLowerCase)
 
@@ -67,14 +67,13 @@
 #define ALLOW_GDK_DRAWING  (gtk && 1)   /* change to (gtk && 0) if you want to try out GTK 3 */
 /* */
 
-typedef struct { double red, green, blue, transparency; } double_rgbt;
-
-#include "melder_ftoa.h"   // Melder_double, Melder_pad (require dcomplex, conststring32)
+#include "melder_tensor.h"   // autoNUMvector, VEC, autoMAT, Melder_VEC
+#include "melder_colour.h"   // MelderColour (requires VEC)
+#include "melder_ftoa.h"   // Melder_double, Melder_pad (require dcomplex, conststring32, MelderColour)
 #include "melder_console.h"   // MelderConsole (requires conststring32)
 #include "melder_textencoding.h"   // str32len_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderDir
-#include "melder_tensor.h"   // autoNUMvector, VEC, autoMAT, Melder_VEC
 #include "melder_strvec.h"   // string32vector, autostring32vector (requires NUMvector)
 #include "melder_sort.h"   // VECsort_inplace (requires VEC), NUMsort_str (requires string32vector)
 
@@ -139,7 +138,6 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 
 #include "melder_templates.h"   // Melder_ENABLE_IF_ISA, MelderCallback, MelderCompareHook
 
-#include "NUMmath.h"   // <math.h>, NUMpi, undefined
 #include "NUMspecfunc.h"
 #include "NUMear.h"
 #include "NUMinterpol.h"
