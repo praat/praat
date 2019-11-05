@@ -5,7 +5,7 @@ printline two-way anova test
 
 # equal groups hayes pg 446
 
-table = Read from file... Hayes_table_12.7.1.txt
+table = Read from file... Hays_table_12.7.1.txt
 report$ = Report two-way anova... Data Norms Standing n
 group = extractNumber (report$, " Norms")
 standing = extractNumber (report$, " Standing")

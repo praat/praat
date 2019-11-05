@@ -2751,7 +2751,7 @@ INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix b
 MAN_END
 
 MAN_BEGIN (U"Matrix: To NMF (IS)...", U"djmw", 20191025)
-INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix based on the Itakura-Saito distance as was described in @@Magron & Virtanen (2018)@.")
+INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix based on the Itakura-Saito distance as was described in @@Févotte, Bertin & Durrieu (2009)@.")
 MAN_END
 
 MAN_BEGIN (U"MelFilter", U"djmw", 20141022)

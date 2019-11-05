@@ -2,7 +2,7 @@
 
 printline test_KruskalWallis.praat
 
-table = Read from file... Hayes_table_19.7.1.txt
+table = Read from file... Hays_table_19.7.1.txt
 report$ = Report one-way Kruskal-Wallis... Data Group
 hprime = extractNumber (report$, "Chi squared:")
 groupI = extractNumber (report$, " I")
