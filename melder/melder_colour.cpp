@@ -38,7 +38,7 @@ MelderColour
 	Melder_GREY = MelderColour (0.5),
 	Melder_WINDOW_BACKGROUND_COLOUR = MelderColour (0.90, 0.90, 0.85);
 
-inline static conststring32 rgbColourName (MelderColour colour) {
+conststring32 MelderColour_nameRGB (MelderColour colour) {
 	static MelderString buffer { };
 	MelderString_copy (& buffer,
 		U"{", Melder_fixed (colour. red, 6),
@@ -48,7 +48,7 @@ inline static conststring32 rgbColourName (MelderColour colour) {
 	);
 	return buffer.string;
 }
-conststring32 MelderColour_name (MelderColour colour) {
+conststring32 MelderColour_namePrettyOrNull (MelderColour colour) {
 	return
 		MelderColour_equal (colour, Melder_BLACK) ? U"black" :
 		MelderColour_equal (colour, Melder_WHITE) ? U"white" :
@@ -66,7 +66,13 @@ conststring32 MelderColour_name (MelderColour colour) {
 		MelderColour_equal (colour, Melder_OLIVE) ? U"olive" :
 		MelderColour_equal (colour, Melder_SILVER) ? U"silver" :
 		MelderColour_equal (colour, Melder_GREY) ? U"grey" :
-		rgbColourName (colour);
+		nullptr;
+}
+conststring32 MelderColour_name (MelderColour colour) {
+	conststring32 result = MelderColour_namePrettyOrNull (colour);
+	if (result)
+		return result;
+	return MelderColour_nameRGB (colour);
 }
 
 MelderColour MelderColour_fromColourName (conststring32 colourName) {

@@ -302,7 +302,9 @@ static void UiField_widgetToValue (UiField me) {
 /***** History mechanism. *****/
 
 static MelderString theHistory { };
-void UiHistory_write (conststring32 string) { MelderString_append (& theHistory, string); }
+void UiHistory_write (conststring32 string) {
+	MelderString_append (& theHistory, string);
+}
 void UiHistory_write_expandQuotes (conststring32 string) {
 	if (! string)
 		return;
@@ -314,7 +316,8 @@ void UiHistory_write_expandQuotes (conststring32 string) {
 	}
 }
 void UiHistory_write_colonize (conststring32 string) {
-	if (! string) return;
+	if (! string)
+		return;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		if (*p == U'.' && p [1] == U'.' && p [2] == U'.') {
 			MelderString_append (& theHistory, U":");
@@ -324,8 +327,12 @@ void UiHistory_write_colonize (conststring32 string) {
 		}
 	}
 }
-char32 *UiHistory_get () { return theHistory.string; }
-void UiHistory_clear () { MelderString_empty (& theHistory); }
+char32 *UiHistory_get () {
+	return theHistory.string;
+}
+void UiHistory_clear () {
+	MelderString_empty (& theHistory);
+}
 
 /***** class UiForm: dialog windows *****/
 
@@ -464,9 +471,19 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					break;
 					case _kUiField_type::COLOUR_:
 					{
-						UiHistory_write (next -- ? U", \"" : U" \"");
-						UiHistory_write (MelderColour_name (field -> colourValue));
-						UiHistory_write (U"\"");
+						conststring32 colourString = MelderColour_namePrettyOrNull (field -> colourValue);
+						if (colourString) {
+							UiHistory_write (next -- ? U", \"" : U" \"");
+							UiHistory_write (colourString);
+							UiHistory_write (U"\"");
+						} else if (field -> colourValue. isGrey()) {
+							UiHistory_write (next -- ? U", " : U" ");
+							UiHistory_write (Melder_double (field -> colourValue. red));
+						} else {
+							colourString = MelderColour_nameRGB (field -> colourValue);
+							UiHistory_write (next -- ? U", " : U" ");
+							UiHistory_write (colourString);
+						}
 					}
 				}
 			}
@@ -1119,16 +1136,16 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		}
 
 		MelderInfo_write (U"   // ");
-		if (isPositive) {
+		if (isPositive)
 			MelderInfo_write (U"positive, ");
-		}
-		if (unitsContainRange) {
+		if (unitsContainRange)
 			MelderInfo_write (units, U", ");
-		}
 		MelderInfo_write (U"e.g. ");
-		if (isText) MelderInfo_write (U"\"");
+		if (isText)
+			MelderInfo_write (U"\"");
 		MelderInfo_write (defaultValue);
-		if (isText) MelderInfo_write (U"\"");
+		if (isText)
+			MelderInfo_write (U"\"");
 		if (unitsAreAvailable && ! unitsContainRange) {
 			MelderInfo_write (U" ", units);
 		}
@@ -1144,7 +1161,8 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		MelderInfo_write (U"\"; other choice", ( my options.size > 2 ? U"s" : U"" ), U":");
 		bool firstWritten = false;
 		for (int i = 1; i <= my options.size; i ++) {
-			if (i == my integerDefaultValue) continue;
+			if (i == my integerDefaultValue)
+				continue;
 			if (firstWritten) MelderInfo_write (U",");
 			MelderInfo_write (U" \"", my options.at [i] -> name.get(), U"\"");
 			firstWritten = true;
@@ -1165,9 +1183,8 @@ void UiForm_info (UiForm me, integer narg) {
 				break;
 			}
 		}
-		for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 			UiField_api_header_C (my field [ifield].get(), ifield == my numberOfFields ? nullptr : my field [ifield + 1].get(), ifield == lastNonLabelFieldNumber);
-		}
 	}
 }
 
@@ -1273,7 +1290,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 						U"\" can only be a number or one of the strings \"yes\" or \"no\".");
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
-				my integerValue = arg -> number == 0.0 ? 0.0 : 1.0;
+				my integerValue = ( arg -> number == 0.0 ? 0.0 : 1.0 );
 			} else {
 				Melder_throw (U"Boolean argument \"", my name.get(), U"\" should be a number (0 or 1), not ", arg -> whichText(), U".");
 			}
@@ -1322,7 +1339,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
 			integer i = 1;
 			for (; i <= my strings.size; i ++)
-				if (str32equ (arg -> getString(), my strings [i])) break;
+				if (str32equ (arg -> getString(), my strings [i]))
+					break;
 			if (i > my strings.size)
 				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> getString(), U"\".");
 			my integerValue = i;
@@ -1476,7 +1494,8 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		{
 			integer i = 1;
 			for (; i <= my strings.size; i ++)
-				if (str32equ (string, my strings [i])) break;
+				if (str32equ (string, my strings [i]))
+					break;
 			if (i > my strings.size)
 				Melder_throw (U"Field \"", my name.get(), U"\" must not have the value \"", string, U"\".");
 			my integerValue = i;
@@ -1536,10 +1555,7 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpr
 		int ichar = 0;
 		if (my field [i] -> type == _kUiField_type::LABEL_)
 			continue;   // ignore non-trailing fields without a value
-		/*
-			Skip spaces until next argument.
-		*/
-		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
+		Melder_skipHorizontalOrVerticalSpace (& arguments);   // go to next argument
 		/*
 			The argument is everything up to the next space, or, if that starts with a double quote,
 			everything between this quote and the matching double quote;
@@ -1554,7 +1570,8 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpr
 			for (;;) {
 				if (*arguments == U'\0')
 					Melder_throw (U"Missing matching quote.");
-				if (*arguments == U'\"' && * ++ arguments != U'\"') break;   // remember second quote
+				if (*arguments == U'\"' && * ++ arguments != U'\"')
+					break;   // remember second quote
 				stringValue [ichar ++] = *arguments ++;
 			}
 		} else {
@@ -1573,7 +1590,7 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpr
 		Leading spaces are skipped, but trailing spaces are included.
 	*/
 	if (size > 0) {
-		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
+		Melder_skipHorizontalOrVerticalSpace (& arguments);   // rid leading spaces
 		try {
 			UiField_stringToValue (my field [size].get(), arguments, interpreter);
 		} catch (MelderError) {
