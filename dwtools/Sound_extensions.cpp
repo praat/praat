@@ -78,14 +78,14 @@
 static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tmax, double multiplier, double fref_Hz) {
 	if (fref_Hz <= 0)
 		return;
-	double fref_st = 12.0 * log (fref_Hz / 100.0) / NUMln2;
+	const double fref_st = 12.0 * log (fref_Hz / 100.0) / NUMln2;
 	for (integer i = 1; i <= my points.size; i ++) {
-		RealPoint point = my points.at [i];
-		double f = point -> value;
+		const RealPoint point = my points.at [i];
+		const double f = point -> value;
 		if (point -> number < tmin || point -> number > tmax)
 			continue;
 		if (f > 0.0) {
-			double f_st = fref_st + 12.0 * log2 (f / fref_Hz) * multiplier;
+			const double f_st = fref_st + 12.0 * log2 (f / fref_Hz) * multiplier;
 			point -> value = 100.0 * exp (f_st * (NUMln2 / 12.0));
 		}
 	}
@@ -110,7 +110,7 @@ static void Pitch_scalePitch (Pitch me, double multiplier) {
 }
 
 static void i1write (Sound me, FILE *f, integer *nClip) {
-	double min = -128.0, max = 127.0;
+	const double min = -128.0, max = 127.0;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double sample = round (my z [1] [i] * 128.0);
@@ -131,7 +131,7 @@ static void i1read (Sound me, FILE *f) {
 }
 
 static void u1write (Sound me, FILE *f, integer *nClip) {
-	double min = 0.0, max = 255.0;
+	const double min = 0.0, max = 255.0;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double sample = round ((my z [1] [i] + 1.0) * 255.0 / 2.0);
@@ -152,7 +152,7 @@ static void u1read (Sound me, FILE *f) {
 }
 
 static void i2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double min = -32768.0, max = 32767.0;
+	const double min = -32768.0, max = 32767.0;
 	void (*put) (int16, FILE *) = littleEndian ? binputi16LE : binputi16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
@@ -175,7 +175,7 @@ static void i2read (Sound me, FILE *f, bool littleEndian) {
 }
 
 static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double min = 0.0, max = 65535.0;
+	const double min = 0.0, max = 65535.0;
 	void (*put) (uint16, FILE *) = littleEndian ? binputu16LE : binputu16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
@@ -198,7 +198,7 @@ static void u2read (Sound me, FILE *f, bool littleEndian) {
 }
 
 static void i4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double min = -2147483648.0, max = 2147483647.0;
+	const double min = -2147483648.0, max = 2147483647.0;
 	void (*put) (int32, FILE *) = littleEndian ? binputi32LE : binputi32;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
@@ -222,7 +222,7 @@ static void i4read (Sound me, FILE *f, bool littleEndian) {
 
 
 static void u4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double min = 0.0, max = 4294967295.0;
+	const double min = 0.0, max = 4294967295.0;
 	void (*put) (uint32, FILE *) = littleEndian ? binputu32LE : binputu32;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
@@ -258,18 +258,18 @@ static void r4read (Sound me, FILE *f) {
 /* Old TIMIT sound-file format */
 autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 	try {
-		bool littleEndian = true;
+		constexpr bool littleEndian = true;
 		autofile f = Melder_fopen (file, "rb");
 		Melder_require (bingeti16LE (f) == 6, U"Incorrect header size.");
 		
 		bingeti16LE (f);
-		short nChannels = bingeti16LE (f);
+		const short nChannels = bingeti16LE (f);
 		Melder_require (nChannels == 1,
 			U"Incorrect number of channels.");
 		Melder_require (bingeti16LE (f) > 0,
 			U"Incorrect sampling frequency.");
 		
-		integer nSamples = bingeti32LE (f);
+		const integer nSamples = bingeti32LE (f);
 		Melder_require (nSamples > 0,
 			U"Incorrect number of samples.");
 		
@@ -297,7 +297,7 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		
 		if (skipNBytes <= 0)
 			skipNBytes = 0;
-		integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
+		const integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
 		Melder_require (nSamples > 0,
 			U"No samples left to read.");
 		
@@ -374,14 +374,14 @@ struct dialogic_adpcm {
 };
 
 static void dialogic_adpcm_init (struct dialogic_adpcm *adpcm) {
-	short step_size [49] = {
+	const short step_size [49] = {
 		16, 17, 19, 21, 23, 25, 28, 31, 34, 37,
 		41, 45, 50, 55, 60, 66, 73, 80, 88, 97,
 		107, 118, 130, 143, 157, 173, 190, 209, 230, 253,
 		279, 307, 337, 371, 408, 449, 494, 544, 598, 658,
 		724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552
 	};
-	short adjust [8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
+	const short adjust [8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
 
 	adpcm -> last = 0;
 	adpcm -> index = 0;
@@ -398,12 +398,12 @@ static void dialogic_adpcm_init (struct dialogic_adpcm *adpcm) {
 		Hardware", 272-276.
 */
 static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm) {
-	float scale = 32767.0 / 32768.0 / 2048.0;
+	constexpr float scale = 32767.0 / 32768.0 / 2048.0;
 
 	// nibble = B3 B2 B1 B0 (4 lower bits)
 	// d(n) = ss(n)*B2 + ss(n)/2 *B1 + ss(n)/4*B0 + ss(n)/8
 
-	short ss = adpcm -> step_size [adpcm -> index];
+	const short ss = adpcm -> step_size [adpcm -> index];
 	short e = ss / 8;
 	if (adpcm -> code & 0x01)
 		e += ss / 4;
@@ -414,7 +414,7 @@ static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm) {
 
 	// If B3==1 then d(n) = -d(n);
 
-	short diff = (adpcm -> code & 0x08) ? -e : e;
+	const short diff = (adpcm -> code & 0x08) ? -e : e;
 
 	// x(n) = x(n-1)+d(n)
 
@@ -439,14 +439,14 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 
-		integer filelength = MelderFile_length (file);
+		const integer filelength = MelderFile_length (file);
 		
 		Melder_require (filelength > 0,
 			U"File should not be empty.");
 		
 		// Two samples in each byte
 
-		integer numberOfSamples = 2 * filelength;
+		const integer numberOfSamples = 2 * filelength;
 		
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);
 
@@ -476,7 +476,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
 		return;    // above Nyquist?
-	double preEmphasis = exp (- NUM2pi * preEmphasisFrequency * my dx);
+	const double preEmphasis = exp (- NUM2pi * preEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		VEC s = my z.row (channel);
 		for (integer i = my nx; i >= 2; i --)
@@ -485,7 +485,7 @@ void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 }
 
 void Sound_deEmphasis (Sound me, double deEmphasisFrequency) {
-	double deEmphasis = exp (- NUM2pi * deEmphasisFrequency * my dx);
+	const double deEmphasis = exp (- NUM2pi * deEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		VEC s = my z.row (channel);
 		for (integer i = 2; i <= my nx; i ++)
@@ -497,7 +497,7 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 		VEC s = my z.row (1);
-		double imid = 0.5 * (my nx + 1), edge = exp (-12.0);
+		const double imid = 0.5 * (my nx + 1), edge = exp (-12.0);
 		for (integer i = 1; i <= my nx; i ++)
 			s [i] = (exp (-48.0 * (i - imid) * (i - imid) / (my nx + 1) / (my nx + 1)) - edge) / (1 - edge);
 		return me;
@@ -509,7 +509,7 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 autoSound Sound_createHamming (double windowDuration, double samplingFrequency) {
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
-		double p = NUM2pi / (my nx - 1);
+		const double p = NUM2pi / (my nx - 1);
 		for (integer i = 1; i <= my nx; i ++)
 			my z [1] [i] = 0.54 - 0.46 * cos ((i - 1) * p);
 		return me;
@@ -601,8 +601,8 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 	try {
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (integer i = 1; i <= my nx; i ++) {
-			double t = (i - 0.5) * my dx;
-			double f = frequency + addition / (NUM2pi * t);
+			const double t = (i - 0.5) * my dx;
+			const double f = frequency + addition / (NUM2pi * t);
 			if (f > 0 && f < samplingFrequency / 2)
 				my z [1] [i] = pow (t, gamma - 1.0) * exp (- NUM2pi * bandwidth * t) *
 					cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
@@ -792,9 +792,9 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099
 		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling::INTEGRAL, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 		
-		dcomplex r = gammaToneFilterResponseAtCentreFrequency (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin);
+		const dcomplex r = gammaToneFilterResponseAtCentreFrequency (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin);
 		
-		double scale = 1.0 / sqrt (r.re * r.re + r.im * r.im);
+		const double scale = 1.0 / sqrt (r.re * r.re + r.im * r.im);
 		for (integer i = 1; i <= thy nx; i ++) {
 			thy z [1] [i] *= scale;
 		}
@@ -833,8 +833,8 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 
 autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double lowestFrequency, integer numberOfComponents, double frequencyChange_st, double amplitudeRange_dB, double octaveShiftFraction) {
 	try {
-		double highestFrequency = lowestFrequency * pow (2, numberOfComponents);
-		double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange_dB);
+		const double highestFrequency = lowestFrequency * pow (2, numberOfComponents);
+		const double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange_dB);
 
 		Melder_require (highestFrequency <= samplingFrequency / 2.0,
 			U"The highest frequency you want to generate is "
@@ -852,11 +852,10 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 		}
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 
-		double a = frequencyChange_st / 12.0;
+		const double a = frequencyChange_st / 12.0;
 		for (integer i = 1; i <= numberOfComponents; i ++) {
-			double tswitch;
 			double freqi = lowestFrequency * pow (2.0, i - 1 + octaveShiftFraction);
-			double b1, b2;
+			double b1, b2, tswitch;
 			double phase1 = 0, phasejm1 = 0;
 
 			/*
@@ -886,14 +885,14 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 				tswitch = b1 * octaveTime;
 			}
 			for (integer j = 1; j <= my nx; j ++) {
-				double t = Sampled_indexToX (me.get(), j);
+				const double t = Sampled_indexToX (me.get(), j);
 				double tmod = fmod (t, sweeptime);
-				double tone = tmod <= tswitch ? b1 + a * tmod : b2 + a * (tmod - tswitch);
-				double f = lowestFrequency * pow (2, tone);
+				const double tone = tmod <= tswitch ? b1 + a * tmod : b2 + a * (tmod - tswitch);
+				const double f = lowestFrequency * pow (2, tone);
 				/* double theta = 2 * NUMpi * log2 (f / lowestFrequency) / numberOfComponents; */
-				double theta = 2 * NUMpi * tone / numberOfComponents;
-				double level = pow (10, (lmin_db + (lmax_db - lmin_db) * (1 - cos (theta)) / 2) / 20);
-				double phasej = phasejm1 + 2 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
+				const double theta = 2 * NUMpi * tone / numberOfComponents;
+				const double level = pow (10, (lmin_db + (lmax_db - lmin_db) * (1 - cos (theta)) / 2) / 20);
+				const double phasej = phasejm1 + 2 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
 
 				if (j == 1)
 					phase1 = phasej;    // phase1 = j == 1 ? phasej : phase1;
@@ -912,12 +911,12 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 /* amplitude(f) = min + (1-min)*(1-cos(2*pi*(ln(f/f1) / ln(fn/f1)))/2 */
 autoSound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency, double lowestFrequency, integer numberOfComponents, double frequencyChange_st, double amplitudeRange) {
 	try {
-		double scale = pow (2.0, numberOfComponents);
-		double maximumFrequency = lowestFrequency * scale;
-		double lmin = pow (10.0, - amplitudeRange / 10.0), twoPi = NUM2pi;
-		double ln2t0 = log (2.0) * frequencyChange_st / 12.0;
-		double lnf1 = log (lowestFrequency + 1.0);
-		double amplarg = twoPi / log ((maximumFrequency + 1.0) / (lowestFrequency + 1.0));
+		const double scale = pow (2.0, numberOfComponents);
+		const double maximumFrequency = lowestFrequency * scale;
+		const double lmin = pow (10.0, - amplitudeRange / 10.0), twoPi = NUM2pi;
+		const double ln2t0 = log (2.0) * frequencyChange_st / 12.0;
+		const double lnf1 = log (lowestFrequency + 1.0);
+		const double amplarg = twoPi / log ((maximumFrequency + 1.0) / (lowestFrequency + 1.0));
 
 		Melder_require (lowestFrequency <= 0.5 * samplingFrequency,
 			U"Sound_createShepardTone: lowest frequency too high.");
@@ -926,9 +925,10 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 
 		for (integer i = 1; i <= my nx; i ++) {
-			double argt, t = (i - 0.5) * my dx, ft = lowestFrequency;
+			const double t = (i - 0.5) * my dx;
+			double argt, ft = lowestFrequency;
 			if (frequencyChange_st != 0.0) {
-				double expt = exp (ln2t0 * t);
+				const double expt = exp (ln2t0 * t);
 				argt = twoPi * lowestFrequency * (expt - 1.0) / ln2t0;
 				ft *= expt;
 			} else {
@@ -940,7 +940,7 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 					argt /= scale;
 				}
 				//amplitude = lmin + (1 - lmin) * (1 - cos (twoPi * log (ft + 1) / log (maximumFrequency + 1))) / 2;
-				double amplitude = lmin + (1 - lmin) * (1 - cos (amplarg * (log (ft + 1) - lnf1))) / 2.0;
+				const double amplitude = lmin + (1 - lmin) * (1 - cos (amplarg * (log (ft + 1) - lnf1))) / 2.0;
 				my z [1] [i] += amplitude * sin (argt);
 				ft *= 2.0;
 				argt *= 2.0;
@@ -958,9 +958,10 @@ autoSound Sound_createPattersonWightmanTone (double minimumTime, double maximumT
 		Melder_require ((numberOfComponents - 1 + frequencyShiftRatio) * baseFrequency <=  samplingFrequency / 2.0,
 			U"Frequency of one or more components too large.");
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
-		double w0 = NUM2pi * baseFrequency;
+		const double w0 = NUM2pi * baseFrequency;
 		for (integer i = 1; i <= my nx; i ++) {
-			double a = 0.0, t = (i - 0.5) * my dx;
+			const double t = (i - 0.5) * my dx;
+			double a = 0.0;
 			for (integer j = 1; j <= numberOfComponents; j ++)
 				a += sin ( (j + frequencyShiftRatio) * w0 * t);
 			my z [1] [i] = a;
@@ -977,8 +978,8 @@ autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double 
 		Melder_require (12.0 * (1.0 + frequencyFraction) * baseFrequency <=  samplingFrequency / 2.0,
 			U"Sound_createPlompTone: frequency of one or more components too large.");
 		
-		double w1 = NUM2pi * (1.0 - frequencyFraction) * baseFrequency;
-		double w2 = NUM2pi * (1.0 + frequencyFraction) * baseFrequency;
+		const double w1 = NUM2pi * (1.0 - frequencyFraction) * baseFrequency;
+		const double w2 = NUM2pi * (1.0 + frequencyFraction) * baseFrequency;
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (integer i = 1; i <= my nx; i ++) {
 			double a = 0.0, t = (i - 0.5) * my dx;
@@ -996,7 +997,7 @@ autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double 
 }
 
 void Sounds_multiply (Sound me, Sound thee) {
-	integer n = std::min (my nx, thy nx );
+	const integer n = std::min (my nx, thy nx );
 	my z.row(1).part(1, n)  *=  thy z.row(1).part(1, n);
 }
 
@@ -1011,9 +1012,9 @@ double Sound_power (Sound me) {
 double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	if (ty < tx)
 		std::swap (tx, ty);
-	integer nbx = Sampled_xToNearestIndex (me, tx);
-	integer nby = Sampled_xToNearestIndex (me, ty);
-	integer ney = Sampled_xToNearestIndex (me, ty + duration);
+	const integer nbx = Sampled_xToNearestIndex (me, tx);
+	const integer nby = Sampled_xToNearestIndex (me, ty);
+	const integer ney = Sampled_xToNearestIndex (me, ty + duration);
 
 	integer increment = 0, decrement = 0;
 	if (nbx < 1)
@@ -1025,8 +1026,8 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	if (ns < 1)
 		return 0.0;
 
-	double *x = & my z [1] [nbx + increment - 1];
-	double *y = & my z [1] [nby + increment - 1];
+	const double *x = & my z [1] [nbx + increment - 1];
+	const double *y = & my z [1] [nby + increment - 1];
 	double xm = 0.0, ym = 0.0, sxx = 0.0, syy = 0.0, sxy = 0.0;
 	for (integer i = 1; i <= ns; i ++) {
 		xm += x [i];
@@ -1035,13 +1036,13 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	xm /= ns;
 	ym /= ns;
 	for (integer i = 1; i <= ns; i ++) {
-		double xt = x [i] - xm, yt = y [i] - ym;
+		const double xt = x [i] - xm, yt = y [i] - ym;
 		sxx += xt * xt;
 		syy += yt * yt;
 		sxy += xt * yt;
 	}
-	double denum = sxx * syy;
-	double rxy = denum > 0.0 ? sxy / sqrt (denum) : 0.0;
+	const double denum = sxx * syy;
+	const double rxy = denum > 0.0 ? sxy / sqrt (denum) : 0.0;
 	return rxy;
 }
 
@@ -1063,18 +1064,18 @@ double Sound_localMean (Sound me, double fromTime, double toTime) {
 static double interpolate (Sound me, integer i1, integer channel, double level)
 /* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
 {
-	integer i2 = i1 + 1;
-	double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
-	double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
+	const integer i2 = i1 + 1;
+	const double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
+	const double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
 	return x1 + (x2 - x1) * (y1 - level) / (y1 - y2);   // linear
 }
 
 double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection) {
-	double *amplitude = & my z [channel] [0];
-	integer leftSample = Sampled_xToLowIndex (me, position);
+	const double *amplitude = & my z [channel] [0];
+	const integer leftSample = Sampled_xToLowIndex (me, position);
 	if (leftSample > my nx)
 		return undefined;
-	integer rightSample = leftSample + 1;
+	const integer rightSample = leftSample + 1;
 	integer ileft, iright;
 	double leftCrossing, rightCrossing;
 	/*
@@ -1083,7 +1084,7 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (leftSample >= 1 && rightSample <= my nx &&
 			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level))
 	{
-		double crossing = interpolate (me, leftSample, channel, level);
+		const double crossing = interpolate (me, leftSample, channel, level);
 		return searchDirection == kSoundSearchDirection::LEFT ?
 			( crossing <= position ? crossing : undefined ) :
 			( crossing >= position ? crossing : undefined );
@@ -1120,14 +1121,15 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);
-	double *s = & my z [1] [0], peak = -1e308;
+	const double *s = & my z [1] [0];
+	double peak = -1e308;
 	if (fromTime <= toTime) {
 		if (n1 < 1)
 			n1 = 1;
 		if (n2 > my nx)
 			n2 = my nx;
 		for (integer i = n1; i <= n2; i ++) {
-			double ds = fabs (s [i] - reference);
+			const double ds = fabs (s [i] - reference);
 			if (ds > peak)
 				peak = ds;
 		}
@@ -1136,9 +1138,9 @@ double Sound_localPeak (Sound me, double fromTime, double toTime, double referen
 }
 
 void Sound_into_Sound (Sound me, Sound to, double startTime) {
-	integer index = Sampled_xToNearestIndex (me, startTime);
+	const integer index = Sampled_xToNearestIndex (me, startTime);
 	for (integer i = 1; i <= to -> nx; i ++) {
-		integer j = index - 1 + i;
+		const integer j = index - 1 + i;
 		to -> z [1] [i] = j < 1 || j > my nx ? 0.0 : my z [1] [j];
 	}
 }
@@ -1216,7 +1218,7 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, integer channel, doub
 /* Internal pitch representation in semitones */
 autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultiplier, double pitchMultiplier, double pitchRangeMultiplier, double durationMultiplier) {
 	try {
-		double samplingFrequency_old = 1.0 / my dx;
+		const double samplingFrequency_old = 1.0 / my dx;
 
 		Melder_require (my xmin == his xmin && my xmax == his xmax,
 			U"The Pitch and the Sound object should have the same domain.");
@@ -1272,7 +1274,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	conststring32 silentLabel, conststring32 soundingLabel) {
 	try {
-		bool subtractMeanPressure = true;
+		const bool subtractMeanPressure = true;
 		autoSound filtered = Sound_filter_passHannBand (me, 80.0, 8000.0, 80.0);
 		autoIntensity thee = Sound_to_Intensity (filtered.get(), minPitch, timeStep, subtractMeanPressure);
 		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.get(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
@@ -1284,7 +1286,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
-		conststring32 silentLabel = U"-", soundingLabel = U"+";
+		const conststring32 silentLabel = U"-", soundingLabel = U"+";
 		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		IntervalTier tier = (IntervalTier) dbs -> tiers->at [1];
 		Melder_assert (tier -> intervals.size > 0);
@@ -1352,8 +1354,8 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 		Melder_require (my ny == 1,
 			U"The sound should be a mono sound.");
 		
-        conststring32 silentLabel = U"silent", soundingLabel = U"sounding";
-        conststring32 copyLabel = U"";
+        const conststring32 silentLabel = U"silent", soundingLabel = U"sounding";
+        const conststring32 copyLabel = U"";
         autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
         autoIntervalTier itg = Data_copy ((IntervalTier) tg -> tiers->at [1]);
         IntervalTier tier = (IntervalTier) tg -> tiers->at [1];
@@ -1364,7 +1366,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
             if (duration > trimDuration && Melder_equ (ti -> text.get(), silentLabel)) {   // silent
 				conststring32 label = trimLabel;
                 if (iint == 1) { // first is special
-                    double trim_t = ti -> xmax - trimDuration;
+                    const double trim_t = ti -> xmax - trimDuration;
                     IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
                 } else if (iint == tier -> intervals.size) {   // last is special
                     double trim_t = ti -> xmin + trimDuration;
@@ -1406,12 +1408,14 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 		TextInterval ti1 = trim -> intervals.at [1];
 		if (startTimeOfSounding) {
 			*startTimeOfSounding = my xmin;
-			if (Melder_equ (ti1 -> text.get(), U"trimmed"))	*startTimeOfSounding = ti1 -> xmax;
+			if (Melder_equ (ti1 -> text.get(), U"trimmed"))
+				*startTimeOfSounding = ti1 -> xmax;
 		}
 		TextInterval ti2 = trim -> intervals.at [trim -> intervals.size];
 		if (endTimeOfSounding) {
 			*endTimeOfSounding = my xmax;
-			if (Melder_equ (ti2 -> text.get(), U"trimmed")) *endTimeOfSounding = ti2 -> xmin;
+			if (Melder_equ (ti2 -> text.get(), U"trimmed"))
+				*endTimeOfSounding = ti2 -> xmin;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1562,8 +1566,8 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	double a1 = my z [1] [itmin];
 	double t1 = Sampled_indexToX (me, itmin);
 	for (integer it = itmin + 1; it <= itmax; it ++) {
-		double t2 = Sampled_indexToX (me, it);
-		double a2 = my z [1] [it];
+		const double t2 = Sampled_indexToX (me, it);
+		const double a2 = my z [1] [it];
 		if (drawingDirection == kSoundDrawingDirection::BOTTOM_TO_TOP ||
 			drawingDirection == kSoundDrawingDirection::TOP_TO_BOTTOM) {
 			Graphics_line (g, a1, t1, a2, t2);
@@ -1596,11 +1600,11 @@ static void Sound_fadeIn_general (Sound me, int channel, double time, double fad
 	
 	Melder_require (channel >= 0 && channel <= my ny,
 		U"Invalid channel number: ", channel, U".");
-	integer channelFrom = channel == 0 ? 1 : channel;
-	integer channelTo = channel == 0 ? my ny : channel;
+	const integer channelFrom = channel == 0 ? 1 : channel;
+	const integer channelTo = channel == 0 ? my ny : channel;
 	
-	integer startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
-	integer endTime = startTime + fadeTime;
+	double startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
+	double endTime = startTime + fadeTime;
 	if (startTime > endTime)
 		std::swap (startTime, endTime);
 	
@@ -1612,7 +1616,7 @@ static void Sound_fadeIn_general (Sound me, int channel, double time, double fad
 	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
 		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*(1.0 + (isamp - 1.0)/ (numberOfSamplesFade - 1))));
 	
-	integer startSample = Sampled_xToNearestIndex (me, startTime);
+	const integer startSample = Sampled_xToNearestIndex (me, startTime);
 	integer endSample = startSample + numberOfSamplesFade - 1;
 	endSample = std::min (endSample, my nx);
 	
@@ -1628,8 +1632,8 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 	
 	Melder_require (channel >= 0 && channel <= my ny,
 		U"Invalid channel number: ", channel, U".");
-	integer channelFrom = channel == 0 ? 1 : channel;
-	integer channelTo = channel == 0 ? my ny : channel;
+	const integer channelFrom = channel == 0 ? 1 : channel;
+	const integer channelTo = channel == 0 ? my ny : channel;
 	
 	integer startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
 	integer endTime = startTime + fadeTime;
@@ -1644,7 +1648,7 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
 		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*((isamp - 1.0)/ (numberOfSamplesFade - 1))));
 	
-	integer startSample = Sampled_xToNearestIndex (me, startTime);
+	const integer startSample = Sampled_xToNearestIndex (me, startTime);
 	integer endSample = startSample + numberOfSamplesFade - 1;
 	endSample = std::min (endSample, my nx);
 	Melder_require (endSample > 0, 
@@ -1660,7 +1664,7 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal) {
 	integer numberOfSamples = Melder_ifloor (fabs (fadeTime) / my dx);
 	double t1 = t, t2 = t1 + fadeTime;
-	conststring32 fade_inout = inout > 0 ? U"out" : U"in";
+	const conststring32 fade_inout = inout > 0 ? U"out" : U"in";
 	
 	Melder_require (channel >= 0 && channel <= my ny,
 		U"Invalid channel number: ", channel, U".");
@@ -1785,19 +1789,19 @@ autoSound Sound_localAverage (Sound me, double averagingInterval, int windowType
 		autoSound thee = Data_copy (me);
 		autoSound window = Sound_createFromWindowFunction (windowDuration, 1 / my dx, windowType);
 
-		integer nswindow2 = window -> nx / 2;
-		integer nswindow2p = (window -> nx - 1) / 2; // nx is odd: one sample less in the forward direction
+		const integer nswindow2 = window -> nx / 2;
+		const integer nswindow2p = (window -> nx - 1) / 2; // nx is odd: one sample less in the forward direction
 		if (nswindow2 < 1) {
 			return thee;
 		}
-		double *w = & window -> z [1] [0];
+		const double *w = & window -> z [1] [0];
 
 		for (integer k = 1; k <= thy ny; k ++) {
 			for (integer i = 1; i <= my nx; i ++) {
 				longdouble sum = 0.0, wsum = 0.0;
 				integer m = (nswindow2 + 1 - i + 1) < 1 ? 1 : (nswindow2 + 1 - i + 1);
-				integer jfrom = (i - nswindow2) < 1 ? 1 : (i - nswindow2);
-				integer jto = (i + nswindow2p) > my nx ? my nx : (i + nswindow2p);
+				const integer jfrom = (i - nswindow2) < 1 ? 1 : (i - nswindow2);
+				const integer jto = (i + nswindow2p) > my nx ? my nx : (i + nswindow2p);
 				for (integer j = jfrom; j <= jto; j ++, m ++) {
 					sum += my z [k] [j] * w [m];
 					wsum += w [m];
@@ -1897,7 +1901,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
 		Formula_run (ichannel, 2, & result);
-		bool mid = ( result. numericResult != 0.0 );
+		const bool mid = ( result. numericResult != 0.0 );
 
 		thy dx *= 0.5;
 		if (left == mid) {
@@ -1935,7 +1939,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
 				if (result. numericResult != 0.0) {
-					double x = Sampled_indexToX (me, ix);
+					const double x = Sampled_indexToX (me, ix);
 					double y = my z [channel] [ix];
 					double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
 					if (y > maximum) {
@@ -1956,7 +1960,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
 				if (result. numericResult != 0.0) {
-					double x = Sampled_indexToX (me, ix);
+					const double x = Sampled_indexToX (me, ix);
 					double y = my z [channel] [ix];
 					if (y > maximum)
 						y = maximum;
@@ -1969,7 +1973,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
 				if (result. numericResult != 0.0) {
-					double x = Sampled_indexToX (me, ix);
+					const double x = Sampled_indexToX (me, ix);
 					Graphics_speckle (g, x, my z [channel] [ix]);
 				}
 			}
@@ -1982,7 +1986,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			double xb, yb, xe, ye;
 			for (integer ix = ixmin + 1; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				bool current = (result. numericResult != 0.0); // numericResult == 0.0 means false!
+				const bool current = (result. numericResult != 0.0); // numericResult == 0.0 means false!
 				if (previous && not current) { 
 					/* 
 						T to F change: we are leaving a segment to be drawn
@@ -1994,7 +1998,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 					xb = Matrix_columnToX (me, ix - 1);
 					yb = my z [channel] [ix - 1];
 					if (ix - istart > 1) {
-						double x1 = Matrix_columnToX (me, istart);
+						const double x1 = Matrix_columnToX (me, istart);
 						Graphics_function (g, & my z [channel] [0], istart, ix - 1, x1, xb);
 					}
 					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, numberOfBisections, & xe, & ye);
@@ -2090,11 +2094,12 @@ void Sound_paintWhere (Sound me, Graphics g, MelderColour colour, double tmin, d
 
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, MelderColour colour, double tmin, double tmax, double minimum, double maximum, bool garnish) {
 	try {
-		integer ixmin, ixmax, numberOfChannels = std::max (my ny, thy ny);
+		integer ixmin, ixmax;
+		const integer numberOfChannels = std::max (my ny, thy ny);
 		double min1 = minimum, max1 = maximum, tmin1 = tmin, tmax1 = tmax;
 		double min2 = min1, max2 = max1, tmin2 = tmin1, tmax2 = tmax1;
-		double xmin = std::max (my xmin, thy xmin);
-		double xmax = std::min (my xmax, thy xmax);
+		const double xmin = std::max (my xmin, thy xmin);
+		const double xmax = std::min (my xmax, thy xmax);
 		if (xmax <= xmin)
 			return;
 		if (tmin >= tmax) {   // ppgb: why this, if autoscaling occurs anyway?
