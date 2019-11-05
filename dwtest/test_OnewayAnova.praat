@@ -5,7 +5,7 @@ printline test_OnewayAnova.praat
 
 # unequal groups hayes pg 371
 
-table = Read from file... Hayes_table_10.18.1.txt
+table = Read from file... Hays_table_10.18.1.txt
 report$ = Report one-way anova... Data Group n n n
 between = extractNumber (report$, "Between")
 within = extractNumber (report$, "Within")
