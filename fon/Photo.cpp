@@ -447,10 +447,10 @@ static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double x
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	automatrix <double_rgbt> z (iymax - (iymin - 1), ixmax - (ixmin - 1), kTensorInitializationType::RAW);
+	automatrix <MelderColour> z (iymax - (iymin - 1), ixmax - (ixmin - 1), kTensorInitializationType::RAW);
 	for (integer iy = iymin; iy <= iymax; iy ++) {
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
-			double_rgbt& cell = z [iy - (iymin - 1)] [ix - (ixmin - 1)];
+			MelderColour& cell = z [iy - (iymin - 1)] [ix - (ixmin - 1)];
 			cell. red          = my d_red          -> z [iy] [ix];
 			cell. green        = my d_green        -> z [iy] [ix];
 			cell. blue         = my d_blue         -> z [iy] [ix];

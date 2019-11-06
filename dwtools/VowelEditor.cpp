@@ -166,27 +166,6 @@ void VowelEditor_prefs () {
 	}
 }
 
-static MelderColour * Graphics_Colour_fromName (conststring32 name) {
-	return
-		Melder_cmp_caseInsensitive (name, U"grey") == 0 ? & Melder_GREY :
-		Melder_cmp_caseInsensitive (name, U"black") == 0 ? & Melder_BLACK :
-		Melder_cmp_caseInsensitive (name, U"red") == 0 ? & Melder_RED :
-		Melder_cmp_caseInsensitive (name, U"green") == 0 ? & Melder_GREEN :
-		Melder_cmp_caseInsensitive (name, U"blue") == 0 ? & Melder_BLUE :
-		Melder_cmp_caseInsensitive (name, U"cyan") == 0 ? & Melder_CYAN :
-		Melder_cmp_caseInsensitive (name, U"magenta") == 0 ? & Melder_MAGENTA :
-		Melder_cmp_caseInsensitive (name, U"yellow") == 0 ? & Melder_YELLOW :
-		Melder_cmp_caseInsensitive (name, U"maroon") == 0 ? & Melder_MAROON :
-		Melder_cmp_caseInsensitive (name, U"lime") == 0 ? & Melder_LIME :
-		Melder_cmp_caseInsensitive (name, U"navy") == 0 ? & Melder_NAVY :
-		Melder_cmp_caseInsensitive (name, U"teal") == 0 ? & Melder_TEAL :
-		Melder_cmp_caseInsensitive (name, U"purple") == 0 ? & Melder_PURPLE :
-		Melder_cmp_caseInsensitive (name, U"olive") == 0 ? & Melder_OLIVE :
-		Melder_cmp_caseInsensitive (name, U"silver") == 0 ? & Melder_SILVER :
-		Melder_cmp_caseInsensitive (name, U"white") == 0 ? & Melder_WHITE :
-		& Melder_GREY; // the default colour
-}
-
 #pragma mark - class Vowel
 
 Thing_implement (Vowel, Function, 0);
@@ -788,9 +767,11 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 				if (col_size != 0)
 					size = Melder_ifloor (Table_getNumericValue_Assert (my marks.get(), irow, col_size));
 				if (col_colour != 0) {
-					conststring32 colourName = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
-					MelderColour *colour = Graphics_Colour_fromName (colourName);
-					Graphics_setColour (g, *colour);
+					conststring32 colourString = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
+					MelderColour colour = MelderColour_fromColourNameOrNumberStringOrRGBString (colourString);
+					if (! colour. valid())
+						colour = Melder_GREY;
+					Graphics_setColour (g, colour);
 				}
 				Graphics_setFontSize (g, size);
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);

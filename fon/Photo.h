@@ -78,7 +78,7 @@ autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns);
 
 autoPhoto Photo_readFromImageFile (MelderFile file);
 
-double_rgbt Photo_getValueAtXY (Photo me, double x, double y);
+MelderColour Photo_getValueAtXY (Photo me, double x, double y);
 /*
 	Linear interpolation between matrix points,
 	constant extrapolation in cells on the edge,

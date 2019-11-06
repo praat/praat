@@ -19,15 +19,52 @@
  */
 
 struct MelderColour {
-	double red, green, blue;
+	double red, green, blue, transparency;
+	explicit MelderColour () :
+		red (0.0), green (0.0), blue (0.0), transparency (0.0) {}
+	explicit MelderColour (double greyValue) :
+		red (Melder_clipped (0.0, greyValue, 1.0)), green (red), blue (red), transparency (0.0) {}
+	explicit MelderColour (double red, double green, double blue) :
+		red (red), green (green), blue (blue), transparency (0.0) {}
+	explicit MelderColour (double red, double green, double blue, double transparency) :
+		red (red), green (green), blue (blue), transparency (transparency) {}
+	explicit MelderColour (constVEC const& vec);
+	bool valid () const {
+		return isdefined (our red);
+	}
+	bool isGrey () const {
+		return red == green && green == blue;
+	}
 };
 
 extern MelderColour Melder_BLACK, Melder_WHITE, Melder_RED, Melder_GREEN, Melder_BLUE,
 	Melder_CYAN, Melder_MAGENTA, Melder_YELLOW, Melder_MAROON, Melder_LIME, Melder_NAVY, Melder_TEAL,
-	Melder_PURPLE, Melder_OLIVE, Melder_PINK, Melder_SILVER, Melder_GREY, Graphics_WINDOW_BACKGROUND_COLOUR;
+	Melder_PURPLE, Melder_OLIVE, Melder_PINK, Melder_SILVER, Melder_GREY, Melder_WINDOW_BACKGROUND_COLOUR;
+
+MelderColour MelderColour_fromColourName (conststring32 colourName);
+/*
+	If `colourName` is one of the 16 standard names (case-insensitively),
+	then return that colour. If not, then result.valid() will return false.
+*/
+
+MelderColour MelderColour_fromNumberString (conststring32 numberString);
+
+MelderColour MelderColour_fromRGBString (conststring32 rgbString);
+
+MelderColour MelderColour_fromColourNameOrNumberStringOrRGBString (conststring32 string);
+
+MelderColour MelderColour_fromColourNameOrRGBString (conststring32 string);
+
+conststring32 MelderColour_nameRGB (MelderColour colour);
+conststring32 MelderColour_namePrettyOrNull (MelderColour colour);
 conststring32 MelderColour_name (MelderColour colour);
+
 static inline bool MelderColour_equal (MelderColour colour1, MelderColour colour2) {
-	return colour1. red == colour2. red && colour1. green == colour2. green && colour1. blue == colour2. blue;
+	return
+		colour1. red == colour2. red &&
+		colour1. green == colour2. green &&
+		colour1. blue == colour2. blue &&
+		colour1. transparency == colour2. transparency;
 }
 MelderColour Melder_cyclingBackgroundColour (integer category);
 MelderColour Melder_cyclingTextColour (integer category);

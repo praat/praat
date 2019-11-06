@@ -193,7 +193,7 @@ static void drawNow (FunctionEditor me) {
 	*/
 	Graphics_setViewport (my graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
 	Graphics_setWindow (my graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
-	Graphics_setColour (my graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
+	Graphics_setColour (my graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (my graphics.get(), my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
 	Graphics_fillRectangle (my graphics.get(), my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my graphics.get(), my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);

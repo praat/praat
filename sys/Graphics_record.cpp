@@ -390,7 +390,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case CELL_ARRAY_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				automatrix <double_rgbt> z = newmatrixzero <double_rgbt> (nrow, ncol);
+				automatrix <MelderColour> z = newmatrixzero <MelderColour> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++) {
 						z [irow] [icol]. red = get;
@@ -403,7 +403,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case IMAGE_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				automatrix <double_rgbt> z = newmatrixzero <double_rgbt> (nrow, ncol);
+				automatrix <MelderColour> z = newmatrixzero <MelderColour> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++) {
 						z [irow] [icol]. red = get;
