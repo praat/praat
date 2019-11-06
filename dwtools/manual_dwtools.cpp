@@ -70,16 +70,17 @@ static void drawPolsDiscriminantConfiguration (Graphics g) {
 }
 
 static void drawBoxPlot (Graphics g) {
-	double q25 = 25, q50 = 50, q75 = 60, mean = 45;
-	double hspread = q75 - q25, r = 0.05, w = 0.2;
-	double lowerInnerFence = q25 - 1.5 * hspread;
-	double upperInnerFence = q75 + 1.5 * hspread;
-	double upperOuterFence = q75 + 3.0 * hspread;
-	double lowerWhisker = lowerInnerFence + 0.1 * hspread;
-	double upperWhisker = upperInnerFence - 0.5 * hspread;
-	double ymin = lowerWhisker - 0.1 * hspread, ymax = q75 + 4 * hspread;
-	double x = 0, dx = 0.01, xar = x + 0.7, xtl = xar + dx;
-	double xal1 = x + r + dx, xal2 = x + w + r, y;
+	const double q25 = 25, q50 = 50, q75 = 60, mean = 45;
+	const double hspread = q75 - q25, r = 0.05, w = 0.2;
+	const double lowerInnerFence = q25 - 1.5 * hspread;
+	const double upperInnerFence = q75 + 1.5 * hspread;
+	const double upperOuterFence = q75 + 3.0 * hspread;
+	const double lowerWhisker = lowerInnerFence + 0.1 * hspread;
+	const double upperWhisker = upperInnerFence - 0.5 * hspread;
+	const double ymin = lowerWhisker - 0.1 * hspread, ymax = q75 + 4 * hspread;
+	const double x = 0, dx = 0.01, xar = x + 0.7, xtl = xar + dx;
+	const double xal1 = x + r + dx, xal2 = x + w + r;
+
 
 	Graphics_setWindow (g, -1, 2, ymin, ymax);
 	Graphics_setInner (g);
@@ -95,7 +96,7 @@ static void drawBoxPlot (Graphics g) {
 	Graphics_line (g, x, q75, x, upperWhisker);
 	Graphics_line (g, x - r, upperWhisker, x + r, upperWhisker);
 
-	y = q75 + 2.5 * hspread;
+	double y = q75 + 2.5 * hspread;
 	Graphics_text (g, x, y, U"*");
 	Graphics_arrow (g, xar, y, xal1, y);
 	Graphics_text (g, xtl, y, U"outlier > %%upperInnerFence%");
@@ -135,11 +136,12 @@ static void drawBoxPlot (Graphics g) {
 }
 
 static void drawPartionedMatrix (Graphics g) {
-	double min = 0.0, max = 10.0, x1, x2, y1, y2;
+	const double min = 0.0, max = 10.0;
 	Graphics_setWindow (g, min, max, min, max);
-	x1 = 0.0;
-	x2 = max;
-	y1 = y2 = 7.0;
+	double x1 = 0.0;
+	double x2 = max;
+	double y1 = 7.0;
+	double y2 = 7.0;
 	Graphics_setLineType (g, Graphics_DOTTED);
 	Graphics_line (g, x1, y1, x2, y2);
 	x1 = x2 = 3.0;
