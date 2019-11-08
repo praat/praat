@@ -1,16 +1,18 @@
 # File: makefile.defs.cygwin64
 
 # System: Cygwin on Windows
-# Paul Boersma, 3 August 2018
+# Paul Boersma, 8 November 2019
 
-CC = gcc -std=gnu99
+CC = gcc
 
-CXX = g++ -std=gnu++17 -Wshadow
+CXX = g++
 
-CFLAGS = -mwin32 -DUNICODE -D_FILE_OFFSET_BITS=64 -O1
+COMMONFLAGS = -mwin32 -DUNICODE -D_FILE_OFFSET_BITS=64 -O1
 # Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
 
-CXXFLAGS = $(CFLAGS)
+CFLAGS = -std=gnu99 $(COMMONFLAGS)
+
+CXXFLAGS = -std=gnu++17 $(COMMONFLAGS) -Wshadow
 
 LINK = g++
 

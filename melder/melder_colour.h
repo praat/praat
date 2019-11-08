@@ -24,16 +24,16 @@ struct MelderColour {
 		red (0.0), green (0.0), blue (0.0), transparency (0.0) {}
 	explicit MelderColour (double greyValue) :
 		red (Melder_clipped (0.0, greyValue, 1.0)), green (red), blue (red), transparency (0.0) {}
-	explicit MelderColour (double red, double green, double blue) :
-		red (red), green (green), blue (blue), transparency (0.0) {}
-	explicit MelderColour (double red, double green, double blue, double transparency) :
-		red (red), green (green), blue (blue), transparency (transparency) {}
+	explicit MelderColour (double initialRed, double initialGreen, double initialBlue) :
+		red (initialRed), green (initialGreen), blue (initialBlue), transparency (0.0) {}
+	explicit MelderColour (double initialRed, double initialGreen, double initialBlue, double initialTransparency) :
+		red (initialRed), green (initialGreen), blue (initialBlue), transparency (initialTransparency) {}
 	explicit MelderColour (constVEC const& vec);
 	bool valid () const {
 		return isdefined (our red);
 	}
 	bool isGrey () const {
-		return red == green && green == blue;
+		return our red == our green && our green == our blue;
 	}
 };
 

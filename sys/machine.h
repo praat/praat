@@ -2,7 +2,7 @@
 #define _machine_h_
 /* machine.h
  *
- * Copyright (C) 1992-2011,2016 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2015,2016,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ int Machine_getMainWindowMenuBarHeight ();
 int Machine_getTitleBarHeight ();
 int Machine_getScrollBarWidth ();
 int Machine_getTextHeight ();
+int Machine_getButtonHeight ();
 
 /* End of file machine.h */
 #endif

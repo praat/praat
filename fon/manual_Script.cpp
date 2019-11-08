@@ -1,6 +1,6 @@
 /* manual_Script.cpp
  *
- * Copyright (C) 1992-2017 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1627,7 +1627,7 @@ NORMAL (U"It advisable to use$$ .praat $as the extension for script file names. 
 	"On the Mac and on Windows, if you drag a$$ .praat $file on the Praat icon, Praat will also start up and show the script.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20170926)
+MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20191106)
 INTRO (U"Not all menu commands are as simple as those on the @@Scripting 1. Your first scripts|previous page@, "
 	"which act immediately once you choose them from a menu (e.g. ##Play#, ##Erase all#). "
 	"Most commands in Praat require the user to supply additional information; "
@@ -1767,7 +1767,25 @@ CODE (U"Read from file: \"../Animals/miauw.aifc\"")
 NORMAL (U"where \"..\" is the general way on all platforms to go one folder up in the hierarchy.")
 NORMAL (U"Note that on Windows you could use the backslash (\"\\bs\") instead of the forward slash (\"/\"), "
 	"but with the forward slash your script will work on all three platforms.")
-ENTRY (U"7. How to supply arguments automatically")
+ENTRY (U"7. Colour arguments")
+NORMAL (U"Several commands in the World and Pen menus of the Picture window, "
+	"as well as many object drawing commands, ask for a colour in the following way:")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Praat picture: Paint rectangle", 5)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colour (0-1, name, or {r,g,b})", "0.5")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("From x", "0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("To x", "1.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("From y", "0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("To y", "1.0")
+)
+NORMAL (U"For the colour, you can supply, as text, one of the 16 explicit names that also appear in the Pen menu:")
+CODE (U"Paint rectangle: \"maroon\", 0.0, 1.0, 0.0, 1.0")
+NORMAL (U"Alternatively, you can supply a grey value, as a number between 0.0 (black) and 1.0 (white). The following produces a very light grey:")
+CODE (U"Paint rectangle: 0.9, 0.0, 1.0, 0.0, 1.0")
+NORMAL (U"Finally, you can supply an explicit RGB (red\\--green\\--blue) value, as a \"vector\" of three numbers between 0.0 and 1.0. "
+	"The following produces dark pink:")
+CODE (U"Paint rectangle: {0.8,0.2,0.4}, 0.0, 1.0, 0.0, 1.0")
+ENTRY (U"8. How to supply arguments automatically")
 NORMAL (U"Now you know all the ways to write the arguments of commands in a script line. "
 	"If you dislike manually copying arguments from settings windows into your script, "
 	"or if you are not sure whether something is a numeric or a string argument, "

@@ -1133,6 +1133,18 @@ void praat_init (conststring32 title, int argc, char **argv)
 			(void) 0;   // ignore this option, which was added by the Finder, perhaps when dragging a file on Praat (Process Serial Number)
 			praatP.argumentNumber += 1;
 		#endif
+		} else if (strequ (argv [praatP.argumentNumber], "-sgi") ||
+			strequ (argv [praatP.argumentNumber], "-motif") ||
+			strequ (argv [praatP.argumentNumber], "-solaris") ||
+			strequ (argv [praatP.argumentNumber], "-hp") ||
+			strequ (argv [praatP.argumentNumber], "-sum4") ||
+			strequ (argv [praatP.argumentNumber], "-mac") ||
+			strequ (argv [praatP.argumentNumber], "-win32") ||
+			strequ (argv [praatP.argumentNumber], "-linux") ||
+			strequ (argv [praatP.argumentNumber], "-cocoa") ||
+			strequ (argv [praatP.argumentNumber], "-chrome")
+		) {
+			praatP.argumentNumber += 1;
 		} else {
 			unknownCommandLineOption = Melder_8to32 (argv [praatP.argumentNumber]);
 			praatP.argumentNumber = INT32_MAX;   // ignore all other command line options
