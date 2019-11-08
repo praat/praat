@@ -373,7 +373,7 @@ autoINTVEC GuiList_getSelectedPositions (GuiList me) {
 		if (n == -1) {   // single selection
 			int selection = ListBox_GetCurSel (my d_widget -> window);
 			if (selection == -1)
-				return False;
+				return selectedPositions;
 			n = 1;
 			indices = Melder_calloc_f (int, n);
 			indices [0] = selection;

@@ -83,6 +83,7 @@ To set up the required system libraries, install some graphics and sound package
 	sudo apt-get install libgtk2.0-dev
 	sudo apt-get install libasound2-dev
 	sudo apt-get install libpulse-dev
+	sudo apt-get install libjack-dev
 
 To set up your source tree for Linux, go to Praat's sources directory (where the folders `fon` and `sys` are) and type
 
