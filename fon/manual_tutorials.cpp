@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20191016)
+MAN_BEGIN (U"What's new?", U"ppgb", 20191108)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.06# (8 November 2019)")
+LIST_ITEM (U"• Chromebook edition.")
+LIST_ITEM (U"• Scripting: colour fields now take name, grey value or RGB vector.")
 NORMAL (U"##6.1.05# (16 October 2019)")
 LIST_ITEM (U"• Repaired a bug introduced in 6.0.44 that could cause rubbish LPC smoothing.")
 LIST_ITEM (U"• Repaired a rare crash when dragging a selection on the Mac.")
