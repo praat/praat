@@ -1,6 +1,6 @@
 /* LPC_and_Tube.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,18 +44,18 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee) {
 double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
 		// match the average distance between the first two formants in the VocaTract and the LPC spectrum
-		integer numberOfFrequencies = 1000;
-		double maximumFrequency = 5000.0;
+		const integer numberOfFrequencies = 1000;
+		const double maximumFrequency = 5000.0;
 		autoSpectrum vts = VocalTract_to_Spectrum (me, numberOfFrequencies, maximumFrequency, glottalDamping, radiationDamping, internalDamping);
-		double samplingFrequency =  1000.0 * my nx;
+		const double samplingFrequency =  1000.0 * my nx;
 		autoSpectrum lps = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
 		LPC_Frame_into_Spectrum (thee, lps.get(), 0, 50);
 		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.get());
 		autoSpectrumTier lpst = Spectrum_to_SpectrumTier_peaks (lps.get());
-		double vt_f1 = vtst -> points.at [1] -> number, vt_f2 = vtst -> points.at [2] -> number;
-		double lp_f1 = lpst -> points.at [1] -> number, lp_f2 = lpst -> points.at [2] -> number;
-		double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
-		double dl = - df / lp_f2;
+		const double vt_f1 = vtst -> points.at [1] -> number, vt_f2 = vtst -> points.at [2] -> number;
+		const double lp_f1 = lpst -> points.at [1] -> number, lp_f2 = lpst -> points.at [2] -> number;
+		const double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
+		const double dl = - df / lp_f2;
 		return my dx * my nx * (1 + dl);
 	} catch (MelderError) {
 		Melder_throw (U"Length could not be determined from VocalTract and LPC_Frame.");
@@ -64,13 +64,13 @@ double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, do
 
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength) {
 	struct structLPC_Frame lpc_struct;
-	LPC_Frame lpc = & lpc_struct;
+	const LPC_Frame lpc = & lpc_struct;
 	struct structFormant_Frame f_struct;
-	Formant_Frame f = & f_struct;
+	const Formant_Frame f = & f_struct;
 	struct structTube_Frame rc_struct, af_struct;
-	Tube_Frame rc = & rc_struct, af = & af_struct;
+	const Tube_Frame rc = & rc_struct, af = & af_struct;
 	try {
-		integer m = my nCoefficients;
+		const integer m = my nCoefficients;
 		double length, dlength = 0.001, wakita_length = undefined;
 		double varMin = 1e308;
 
@@ -140,7 +140,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 			// step 6.3 and 7
 			double var = 0.0;
 			for (integer i = 1; i <= af -> numberOfSegments; i ++) {
-				double delta = area [i] - logSum / af -> numberOfSegments;
+				const double delta = area [i] - logSum / af -> numberOfSegments;
 				var += delta * delta;
 			}
 
@@ -191,7 +191,7 @@ autoVocalTract LPC_to_VocalTract_slice_special (LPC me, double time, double glot
 		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
 		LPC_Frame lpc = & my d_frames [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
-		double length = VocalTract_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
+		const double length = VocalTract_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
 		VocalTract_setLength (thee.get(), length);
 		return thee;
 	} catch (MelderError) {
@@ -201,7 +201,7 @@ autoVocalTract LPC_to_VocalTract_slice_special (LPC me, double time, double glot
 
 autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
-		integer m = my nCoefficients;
+		const integer m = my nCoefficients;
 		autoVocalTract thee = VocalTract_create (m, length / m);
 		VECarea_from_lpc (thy z.row (1), my a.part (1, m));
 		// area [lips..glottis] (m^2) to VocalTract [glottis..lips] (m^2)
