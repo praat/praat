@@ -104,7 +104,7 @@ int Machine_getTextHeight () {
 		20,   // Win32
 		25,   // Linux
 		23,   // Cocoa
-		29,   // Chrome
+		31,   // Chrome
 	};
 	return heights [lookAndFeel];
 }
