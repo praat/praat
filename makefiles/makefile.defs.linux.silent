@@ -1,15 +1,17 @@
 # File: makefile.defs.linux.silent
 
 # System: Linux without sound
-# Paul Boersma, 3 August 2018
+# Paul Boersma, 8 November 2019
 
-CC = gcc -std=gnu99
+CC = gcc
 
-CXX = g++ -std=c++17
+CXX = g++
 
-CFLAGS = -D_FILE_OFFSET_BITS=64 -DUNIX -Dlinux `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
+COMMONFLAGS = -D_FILE_OFFSET_BITS=64 -DUNIX -Dlinux `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
 
-CXXFLAGS = $(CFLAGS) -Wshadow
+CFLAGS = -std=gnu99 $(COMMONFLAGS)
+
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 LINK = g++
 

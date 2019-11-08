@@ -1,15 +1,17 @@
 # File: makefile.defs.linux.nogui
 
 # System: Linux without GUI, network, and sound
-# Paul Boersma, 3 August 2018
+# Paul Boersma, 8 November 2019
 
-CC = gcc -std=gnu99
+CC = gcc
 
-CXX = g++ -std=c++17
+CXX = g++
 
-CFLAGS = -DNO_GUI -DNO_NETWORK -D_FILE_OFFSET_BITS=64 `pkg-config --cflags pangocairo` -DUNIX -Dlinux -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+COMMONFLAGS = -DNO_GUI -DNO_NETWORK -D_FILE_OFFSET_BITS=64 `pkg-config --cflags pangocairo` -DUNIX -Dlinux -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
 
-CXXFLAGS = $(CFLAGS) -Wshadow
+CFLAGS = -std=gnu99 $(COMMONFLAGS)
+
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 LINK = g++
 

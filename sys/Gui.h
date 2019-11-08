@@ -73,6 +73,8 @@
 	#include "winport_off.h"
 #endif
 
+#include "machine.h"
+
 #define Gui_LEFT_DIALOG_SPACING  20
 #define Gui_RIGHT_DIALOG_SPACING  20
 #define Gui_TOP_DIALOG_SPACING  14
@@ -87,11 +89,7 @@
 #define Gui_CHECKBUTTON_HEIGHT  20
 #define Gui_LABEL_SPACING  8
 #define Gui_OPTIONMENU_HEIGHT  20
-#if gtk
-	#define Gui_PUSHBUTTON_HEIGHT  30
-#else
-	#define Gui_PUSHBUTTON_HEIGHT  20
-#endif
+#define Gui_PUSHBUTTON_HEIGHT  Machine_getButtonHeight ()
 #define Gui_OK_BUTTON_WIDTH  69
 #define Gui_CANCEL_BUTTON_WIDTH  69
 #define Gui_APPLY_BUTTON_WIDTH  69
