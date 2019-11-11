@@ -63,6 +63,8 @@ Extract the *praatXXXX_xcodeproj64.zip* file from the [latest release](https://g
 into the directory that contains
 `sys`, `fon`, `dwtools` and so on. Then open the project `praat64.xcodeproj` in Xcode
 and choose Build or Run for the target `praat_mac64`.
+Note that on Mojave or Catalina you may have to copy the 10.13 SDK into your Xcode app,
+because Praat will have problems with the Dark Mode if you compile with the 10.15 SDK.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac64`, go to Info → Build,
@@ -92,7 +94,7 @@ To set up your source tree for Linux, go to Praat's sources directory (where the
 To build the Praat executable, type `make`.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile
 (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0,
-cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound).
+cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound, jack).
 
 When compiling Praat on an external supercomputer or so, you will not have sound.
 If you do have `libgtk2.0-dev` (and its dependencies), do
@@ -146,6 +148,7 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ### 2.3. Unix binaries
+- `praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK)
 - `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK)
 - `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK)
 - `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
