@@ -46,7 +46,8 @@ conststring32 Melder_getenv (conststring32 variableName) {
 	#elif defined (_WIN32)
 		static char32 buffer [11] [255];
 		static int ibuffer = 0;
-		if (++ ibuffer == 11) ibuffer = 0;
+		if (++ ibuffer == 11)
+			ibuffer = 0;
 		DWORD n = GetEnvironmentVariableW (variableName, buffer [ibuffer], 255);   BUG
 		if (n == ERROR_ENVVAR_NOT_FOUND) return nullptr;
 		return & buffer [ibuffer] [0];
