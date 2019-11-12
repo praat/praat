@@ -1,6 +1,6 @@
 /* FFNet_ActivationList_Categories.cpp
  *
- * Copyright (C) 1997-2011, 2015-2018 David Weenink
+ * Copyright (C) 1997-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ static integer winnerTakesAll (FFNet me, constVEC activation) {
 }
 
 static integer stochastic (FFNet me, constVEC activation) {
-	integer i;
 	double range = 0.0, lower = 0.0;
+	integer i;
 	for (i = 1; i <= my numberOfOutputs; i ++)
 		range += activation [i];
-	double number = NUMrandomUniform (0.0, range);
+	const double number = NUMrandomUniform (0.0, range);
 	for (i = 1; i <= my numberOfOutputs; i ++) {
 		lower += activation [i];
 		if (number < lower) break;
@@ -59,7 +59,7 @@ autoCategories FFNet_ActivationList_to_Categories (FFNet me, ActivationList acti
 		autoCategories thee = Categories_create ();
 		labelingFunction = labeling == 2 ? stochastic : winnerTakesAll;
 		for (integer i = 1; i <= activation->ny; i ++) {
-			integer index = labelingFunction (me, activation -> z.row (i));
+			const integer index = labelingFunction (me, activation -> z.row (i));
 			autoSimpleString item = Data_copy (my outputCategories->at  [index]);
 			thy addItem_move (item.move());
 		}
@@ -75,14 +75,14 @@ autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee
 		Melder_require (my outputCategories,
 			U"The FFNet does not have categories.");
 		
-		integer nl = OrderedOfString_isSubsetOf (uniq.get(), my outputCategories.get(), 0);
+		const integer nl = OrderedOfString_isSubsetOf (uniq.get(), my outputCategories.get(), 0);
 		Melder_require (nl > 0,
 			U"The Categories should match the categories of the FFNet.");
 
 		autoActivationList him = ActivationList_create (thy size, my numberOfOutputs);
 		for (integer i = 1; i <= thy size; i ++) {
 			SimpleString category = thy at [i];
-			integer pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), category -> string.get());
+			const integer pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), category -> string.get());
 			if (pos < 1)
 				Melder_throw (U"The FFNet doesn't know the category ", category -> string.get(), U".");
 			his z [i] [pos] = 1.0;

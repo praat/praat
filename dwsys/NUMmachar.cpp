@@ -1,6 +1,6 @@
 /* NUMmachar.c
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,8 @@ ngrd
 */
 
 void NUMmachar () {
-	if (NUMfpp) {
+	if (NUMfpp)
 		return;
-	}
 
 	NUMfpp = & machar_table;
 

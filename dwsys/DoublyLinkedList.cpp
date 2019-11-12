@@ -1,6 +1,6 @@
 /* DoublyLinkedList.cpp
  *
- * Copyright (C) 2011-2017 David Weenink
+ * Copyright (C) 2011-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,21 +78,19 @@ void DoublyLinkedList_addFront (DoublyLinkedList me, DoublyLinkedNode node) {
 }
 
 void DoublyLinkedList_addBack (DoublyLinkedList me, DoublyLinkedNode node) {
-	if (my back) {
+	if (my back)
 		DoublyLinkedList_addAfter (me, my back, node);
-	} else {
+	else
 		DoublyLinkedList_addFront (me, node);    // empty list
-	}
 }
 
 void DoublyLinkedList_addBefore (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode node) {
 	node -> prev = pos -> prev;
 	node -> next = pos;
-	if (pos -> prev == nullptr) {
+	if (pos -> prev == nullptr)
 		my front = node;
-	} else {
+	else
 		pos -> prev -> next = node;
-	}
 	pos -> prev = node;
 	my numberOfNodes ++;
 }
@@ -100,19 +98,17 @@ void DoublyLinkedList_addBefore (DoublyLinkedList me, DoublyLinkedNode pos, Doub
 void DoublyLinkedList_addAfter (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode node) {
 	node -> prev = pos;
 	node -> next = pos -> next;
-	if (pos -> next == nullptr) {
+	if (pos -> next == nullptr)
 		my back = node;
-	} else {
+	else
 		pos -> next -> prev = node;
-	}
 	pos -> next = node;
 	my numberOfNodes ++;
 }
 
 void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
-	if (my numberOfNodes == 0) {
+	if (my numberOfNodes == 0)
 		return;
-	}
 	if (node == my front) {
 		my front = my front -> next;
 		my front -> prev = nullptr;
@@ -132,9 +128,9 @@ void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
 //	from must occur before to
 void DoublyLinkedList_sortPart (DoublyLinkedList me, DoublyLinkedNode from, DoublyLinkedNode to) {
 	// Save data
-	if (from == to) {
+	if (from == to)
 		return;   // nothing to do
-	}
+
 	DoublyLinkedNode from_prev = from -> prev;
 	DoublyLinkedNode to_next = to -> next;
 	DoublyLinkedNode my_front = my front;
@@ -146,19 +142,19 @@ void DoublyLinkedList_sortPart (DoublyLinkedList me, DoublyLinkedNode from, Doub
 	DoublyLinkedList_sort (me);
 	// restore complete list
 	my front -> prev = from_prev;
-	if (from_prev) {
+	if (from_prev)
 		from_prev -> next = my front;
-	}
+
 	my back -> next = to_next;
-	if (to_next) {
+	if (to_next)
 		to_next -> prev = my back;
-	}
-	if (my_front != from) {
+
+	if (my_front != from)
 		my front = my_front;
-	}
-	if (my_back != to) {
+
+	if (my_back != to)
 		my back = my_back;
-	}
+
 }
 
 void DoublyLinkedList_sort (DoublyLinkedList me) {
@@ -180,38 +176,45 @@ void DoublyLinkedList_sort (DoublyLinkedList me) {
 			for (integer i = 1; i <= increment; i++) {
 				node1size++;
 				node2 = node2 -> next;
-				if (! node2) {
+				if (! node2)
 					break;
-				}
 			}
 
 			integer node2size = increment;
 
 			while (node1size > 0 || (node2size > 0 && node2)) { // merge node1 and node2
 				if (node1size == 0) {
-					node2size--; node = node2; node2 = node2 -> next;
+					node2size--;
+					node = node2;
+					node2 = node2 -> next;
 				} else if (node2size == 0 || ! node2) {
-					node1size--; node = node1; node1 = node1 -> next;
+					node1size--;
+					node = node1;
+					node1 = node1 -> next;
 				} else if (compare (node1, node2) <= 0) {
-					node1size--; node = node1; node1 = node1 -> next;
+					node1size--;
+					node = node1;
+					node1 = node1 -> next;
 				} else {
-					node2size--; node = node2; node2 = node2 -> next;
+					node2size--;
+					node = node2;
+					node2 = node2 -> next;
 				}
 
-				if (back) {
+				if (back)
 					back -> next = node;
-				} else {
+				else
 					front = node;
-				}
+
 				node -> prev = back;
 				back = node;
 			}
 			node1 = node2;
 		}
 		back -> next = nullptr;
-		if (numberOfMerges <= 1) {
+		if (numberOfMerges <= 1)
 			break;
-		}
+
 		increment *= 2;
 	}
 	//

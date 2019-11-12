@@ -2215,7 +2215,7 @@ integer NUMrandomBinomial (double p, integer n) {
 	*/
 
 	if (np < SMALL_MEAN) {
-		double f0 = pow (q, n); // djmw gsl_pow_int (q, n); f(x), starting with x=0
+		const double f0 = pow (q, n); // djmw gsl_pow_int (q, n); f(x), starting with x=0
 
 		while (1) {
 			/*

@@ -174,7 +174,7 @@ void FFNet_computeDerivative (FFNet me);
 /* step (4) compute derivative in my dwi */
 /* Precondition: step (3) */
 
-integer FFNet_getWinningUnit (FFNet me, int labeling);
+integer FFNet_getWinningUnit (FFNet me, integer labeling);
 /* labeling = 1 : winner-takes-all */
 /* labeling = 2 : stochastic */
 
@@ -202,7 +202,7 @@ integer FFNet_getNumberOfUnits (FFNet me);
 
 integer FFNet_getNumberOfHiddenumberOfLayers (FFNet me);
 
-integer FFNet_getNumberOfUnitsInLayer (FFNet me, int layer);
+integer FFNet_getNumberOfUnitsInLayer (FFNet me, integer layer);
 
 double FFNet_getMinimum (FFNet me);
 
@@ -210,7 +210,7 @@ void FFNet_drawTopology (FFNet me, Graphics g);
 
 void FFNet_drawActivation (FFNet me, Graphics g);
 
-void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int toLayer, int scaling, bool garnish);
+void FFNet_drawWeightsToLayer (FFNet me, Graphics g, integer toLayer, integer scaling, bool garnish);
 /* Deprecated: the strengths of the weights that connect to the nodes in later 'layer' */
 /* are drawn with boxes. The area of each box corresponds to the strength. */
 /* Black boxes have negative strength? */

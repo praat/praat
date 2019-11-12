@@ -130,11 +130,11 @@ static double wprob(double w, double rr, double cc)
 		0.249147045813402785000562436043
     };
     double a, ac, pr_w, b, binc, c, cc1,
-	pminus, pplus, qexpo, qsqz, rinsum, wi, wincr, xx;
+	pminus, pplus, qexpo, rinsum, wi, wincr, xx;
     long double blb, bub, einsum, elsum;
     int j, jj;
 
-    qsqz = w * 0.5;
+    const double qsqz = w * 0.5;
 
     /* if w >= 16 then the integral lower bound (occurs for c=20) */
     /* is 0.99999999999995 so return a value of 1. */
@@ -332,9 +332,8 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     double ans, f2, f21, f2lf, ff4, otsum, qsqz, rotsum, t1, twa1, ulen, wprb;
     int i, j, jj;
 
-	if (isundef (q) || isundef (rr) || isundef (cc) || isundef (df)) {
+	if (isundef (q) || isundef (rr) || isundef (cc) || isundef (df))
 		return undefined;
-	}
 
     if (q <= 0.0)
 		return R_DT_0;
@@ -363,10 +362,14 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     /* degrees of freedom. */
 
     ff4 = df * 0.25;
-    if	    (df <= dhaf)	ulen = ulen1;
-    else if (df <= dquar)	ulen = ulen2;
-    else if (df <= deigh)	ulen = ulen3;
-    else			ulen = ulen4;
+    if	    (df <= dhaf)
+		ulen = ulen1;
+    else if (df <= dquar)
+		ulen = ulen2;
+    else if (df <= deigh)
+		ulen = ulen3;
+    else
+		ulen = ulen4;
 
     f2lf += log (ulen);
 
@@ -505,14 +508,12 @@ static double qinv(double p, double c, double v)
     const static double c5 = 1.4142;
     const static double vmax = 120.0;
 
-    double ps, q, t, yi;
-
-    ps = 0.5 - 0.5 * p;
-    yi = sqrt (log (1.0 / (ps * ps)));
-    t = yi + (((( yi * p4 + p3) * yi + p2) * yi + p1) * yi + p0)
+    const double ps = 0.5 - 0.5 * p;
+    const double yi = sqrt (log (1.0 / (ps * ps)));
+    double t = yi + (((( yi * p4 + p3) * yi + p2) * yi + p1) * yi + p0)
 	   / (((( yi * q4 + q3) * yi + q2) * yi + q1) * yi + q0);
     if (v < vmax) t += (t * t * t + t) / v / 4.0;
-    q = c1 - c2 * t;
+    double q = c1 - c2 * t;
     if (v < vmax) q += -c3 / v + c4 * t / v;
     return t * (q * log (c - 1.0) + c5);
 }
@@ -550,13 +551,12 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
     double ans = 0.0, valx0, valx1, x0, x1, xabs;
     int iter;
 
-	if (isundef (p) || isundef (rr) || isundef (cc) || isundef (df)) {
+	if (isundef (p) || isundef (rr) || isundef (cc) || isundef (df))
 		return undefined;
-	}
+
     /* df should be > 1 ; there should be at least two values */
-    if (df < 2.0 || rr < 1.0 || cc < 2.0) {
+    if (df < 2.0 || rr < 1.0 || cc < 2.0)
 		return undefined;
-	}
 
     //R_Q_P01_boundaries (p, 0.0, ML_POSINF);
 	R_Q_P01_boundaries (p, 0.0, undefined);
