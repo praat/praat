@@ -168,7 +168,7 @@ and use Parallels Desktop for Windows and Linux building and testing.
 This is how Praat is currently developed.
 Editing takes place in Xcode,
 after which building Praat involves no more then typing Command-B into Xcode
-(or Command-R to buuld and run)
+(or Command-R to build and run)
 or `b` into a Windows or Linux terminal (or `r` to build and run).
 
 ### 4.1. MacOS set-up
@@ -233,9 +233,9 @@ as `Home`, and from the `Terminal` you can access it as `/media/psf/Home`.
 
 The `Terminal` uses the `bash` shell, so it will be good to define
 
-    MAC_SOURCE="/cygdrive/z/Praats/src"
+    MAC_SOURCE="/media/psf/Home/Praats/src"
 
-in `/home/parallels/.bash_aliases` in your Ubuntu 18.04 home folder.
+in `/home/parallels/.bash_aliases` in your Ubuntu 18.04 home folder
 (this will be run automatically by `.bashrc` whenever you start a `Terminal` window).
 
 When developing Praat for Linux, you just edit and save your files in Xcode.
@@ -279,4 +279,4 @@ create a folder `praatc`, and to your `.bash_aliases` add
     alias rc="bc ; pc"
 
 To test `praat` for Chrome64, you can just run it on Ubuntu 18.04 by typing `pc`,
-or you transfer it to a Chromebook.
+or you transfer it to a Chromebook for the real test.
