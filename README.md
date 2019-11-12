@@ -301,7 +301,7 @@ let’s call this intermediate computer `fon.hum.uva.nl`
 (not coincidentally, that’s the name of the computer that hosts `praat.org`).
 If you have an account on that computer (say it’s called `yourname`),
 then you can access that account with `ssh`, and it is best to do that without 
-yping your password each time. To accomplish this, type
+typing your password each time. To accomplish this, type
 
     ssh-keygen
 
@@ -321,13 +321,13 @@ to the intermediate computer by just typing `ic`.
 On your Chromebook, start up Linux (see the Chromebook download page for details),
 create a directory `~/praats` there, and put the following lines in your `~/.bash_aliases`:
 
-   alias get="cd ~/praats ; rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat ."
-   alias p="~/praats/praat"
-   alias r="get ; p"
+    alias get="cd ~/praats ; rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat ."
+    alias p="~/praats/praat"
+    alias r="get ; p"
 
 From then on, you can use `r` to get Praat from the intermediate computer and run it.
 
-The cycle from editing Praat on the Mac to running it on your Chromebook therefore takes four steps:
+The cycle from editing Praat on the Mac to running it on your Chromebook therefore takes only three steps:
 
 1. edit and save the source code in Xcode on your Mac;
 2. type `ic` on your Ubuntu (under Parallels Desktop on your Mac);
