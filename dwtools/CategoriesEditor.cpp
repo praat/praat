@@ -1,6 +1,6 @@
 /* CategoriesEditor.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2008,2015-2018 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2008,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
 static void Ordered_moveItems (Ordered me, constINTVEC position, integer newpos) {
 	if (position.size < 1)
 		return;
-	integer pos, min = NUMmin (position), max = NUMmax (position);
+	const integer min = NUMmin (position), max = NUMmax (position);
 
 	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));
 
@@ -72,6 +72,7 @@ static void Ordered_moveItems (Ordered me, constINTVEC position, integer newpos)
 
 	// create a contiguous 'hole'
 
+	integer pos;
 	if (newpos <= min) {
 		pos = max;
 		for (integer i = max; i >= newpos; i --) {
@@ -161,7 +162,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	bool moveUp = false, moveDown = false;
 	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
-		integer firstPos = posList[1], lastPos = posList[posList.size];
+		const integer firstPos = posList[1], lastPos = posList[posList.size];
 		bool contiguous = ( lastPos - firstPos + 1 == posList.size );
 		moveUp = contiguous && firstPos > 1;
 		moveDown = contiguous && lastPos < size;
@@ -182,9 +183,8 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	GuiThing_setSensitive (my remove,      remove);
 	GuiThing_setSensitive (my moveUp,      moveUp);
 	GuiThing_setSensitive (my moveDown,    moveDown);
-	if (my history) {
+	if (my history)
 		updateUndoAndRedoMenuItems (me);
-	}
 	notifyNumberOfSelected (me);
 }
 
@@ -212,9 +212,11 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 		to = tmp;
 	}
 
-	// Begin optimization: add the items from a table instead of separately.
+	/*
+		Begin optimization: add the items from a table instead of separately.
+	*/
 	try {
-		integer offset = from - 1, numberOfElements = to - from + 1;
+		const integer offset = from - 1, numberOfElements = to - from + 1;
 		autoSTRVEC table (numberOfElements);
 		integer itemCount = GuiList_getNumberOfItems (my list);
 		for (integer i = from; i <= to; i ++) {
@@ -231,20 +233,21 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 				GuiList_insertItem (my list, table [itemCount + j - offset].get(), 0);
 		}
 		if (from <= itemCount) {
-			integer n = ( to < itemCount ? to : itemCount );
+			const integer n = ( to < itemCount ? to : itemCount );
 			for (integer j = from; j <= n; j ++)
 				GuiList_replaceItem (my list, table [j - offset].get(), j);
 		}
 	} catch (MelderError) {
 		throw;
 	}
-
-	// End of optimization
-
+	/*
+		End of optimization
+	*/
+	
 	// HIGHLIGHT
 
 	GuiList_deselectAllItems (my list);
-	if (size == 1) { /* the only item is always selected */
+	if (size == 1) { // the only item is always selected
 		SimpleString category = data->at [1];
 		GuiList_selectItem (my list, 1);
 		updateWidgets (me);   // instead of "notify". BUG?
@@ -260,8 +263,9 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 	// VIEWPORT
 
 	{
-		integer top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
-		integer visible = bottom - top + 1;
+		integer top = GuiList_getTopPosition (my list);
+		const integer bottom = GuiList_getBottomPosition (my list);
+		const integer visible = bottom - top + 1;
 		if (nSelect == 0) {
 			top = my position - visible / 2;
 		} else if (select [nSelect] < top) {
@@ -281,12 +285,10 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 			}
 			top += deltaTopPos;
 		}
-		if (top + visible > size) {
+		if (top + visible > size)
 			top = size - visible + 1;
-		}
-		if (top < 1) {
+		if (top < 1)
 			top = 1;
-		}
 		GuiList_setTopPosition (my list, top);
 	}
 }
@@ -667,10 +669,12 @@ void structCategoriesEditor :: v_createChildren () {
 
 	int left = 5, right = left + button_width, top = 3 + menuBarOffset, bottom = top + text_button_height;
 	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Positions:", 0);
-	left = right + delta_x ; right = left + button_width;
+	left = right + delta_x ;
+	right = left + button_width;
 	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Values:", 0);
 
-	left = 0; right = left + list_width; 
+	left = 0;
+	right = left + list_width;
 	// int buttons_top = (top = bottom + delta_y);
 	int list_bottom = bottom = top + list_height;
 	list = GuiList_create (our windowForm, left, right, top, bottom, true, 0);
@@ -679,30 +683,48 @@ void structCategoriesEditor :: v_createChildren () {
 	GuiList_setScrollCallback (list, gui_list_cb_scroll, this);
 	GuiThing_show (list);
 
-	int buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
+	int buttons_left = left = right + 2 * delta_x;
+	right = left + button_width;
+	bottom = top + button_height;
 	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Value:", 0);
-	left = right + delta_x; right = left + button_width;
+	left = right + delta_x;
+	right = left + button_width;
 	text = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 	GuiText_setString (text, CategoriesEditor_EMPTYLABEL);
 
-	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
-	insert = GuiButton_createShown (our windowForm, left, right, top, bottom,	U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
-	left = right + delta_x; right = left + button_width;
+	left = buttons_left;
+	right = left + button_width;
+	top = bottom + delta_y;
+	bottom = top + button_height;
+	insert = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	left = right + delta_x;
+	right = left + button_width;
 	replace = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Replace", gui_button_cb_replace, this, 0);
-	left = buttons_left; right = left + int (1.5 * button_width); top = bottom + delta_y; bottom = top + button_height;
+	left = buttons_left;
+	right = left + int (1.5 * button_width);
+	top = bottom + delta_y;
+	bottom = top + button_height;
 	insertAtEnd = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Insert at end", gui_button_cb_insertAtEnd, this, 0);
-	top = bottom + delta_y; bottom = top + button_height;
+	top = bottom + delta_y;
+	bottom = top + button_height;
 	undo = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Undo", gui_button_cb_undo, this, 0);
-	top = bottom + delta_y; bottom = top + button_height;
+	top = bottom + delta_y;
+	bottom = top + button_height;
 	redo = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Redo", gui_button_cb_redo, this, 0);
-	top = bottom + delta_y; bottom = top + button_height;
+	top = bottom + delta_y;
+	bottom = top + button_height;
 	remove = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Remove", gui_button_cb_remove, this, 0);
-	top = bottom + delta_y; bottom = top + button_height;
+	top = bottom + delta_y;
+	bottom = top + button_height;
 	moveUp = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Move selection up", gui_button_cb_moveUp, this, 0);
-	top = bottom + delta_y; bottom = top + button_height;
+	top = bottom + delta_y;
+	bottom = top + button_height;
 	moveDown = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Move selection down", gui_button_cb_moveDown, this, 0);
 
-	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;
+	top = list_bottom + delta_y;
+	bottom = top + button_height;
+	left = 5;
+	right = left + 200;
 	outOfView = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 }
 

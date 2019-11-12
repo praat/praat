@@ -50,7 +50,7 @@ autoCategories Strings_to_Categories (Strings me) {
 		thy _grow (my numberOfStrings);
 
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			const autoSimpleString s = SimpleString_create (my strings [i].get());
+			autoSimpleString s = SimpleString_create (my strings [i].get());
 			thy addItem_move (s.move());
 		}
 		return thee;

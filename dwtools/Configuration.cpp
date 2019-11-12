@@ -1,6 +1,6 @@
 /* Configuration.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,8 +93,8 @@ void Configuration_setDefaultWeights (Configuration me) {
 }
 
 void Configuration_setSqWeights (Configuration me, const double weight[]) {
-	for (integer i = 1; i <= my numberOfColumns; i ++) {
-		my w [i] = sqrt (weight [i]);
+	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+		my w [icol] = sqrt (weight [icol]);
 	}
 }
 
@@ -111,9 +111,9 @@ void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 }
 
 void Configuration_randomize (Configuration me) {
-	for (integer i = 1; i <= my numberOfRows; i ++)
-		for (integer j = 1; j <= my numberOfColumns; j ++)
-			my data [i] [j] = NUMrandomUniform (-1.0, 1.0);
+	for (integer irow = 1; irow <= my numberOfRows; irow ++)
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			my data [irow] [icol] = NUMrandomUniform (-1.0, 1.0);
 }
 
 void Configuration_rotate (Configuration me, integer dimension1, integer dimension2, double angle_degrees) {
@@ -126,8 +126,8 @@ void Configuration_rotate (Configuration me, integer dimension1, integer dimensi
 	const double phi = NUMpi * (2.0 - angle_degrees / 180.0);
 	const double cosa = cos (phi), sina = sin (phi);
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		double x1 = my data [irow] [dimension1];
-		double x2 = my data [irow] [dimension2];
+		const double x1 = my data [irow] [dimension1];
+		const double x2 = my data [irow] [dimension2];
 		my data [irow] [dimension1] =   cosa * x1 + sina * x2;
 		my data [irow] [dimension2] = - sina * x1 + cosa * x2;
 	}
@@ -168,17 +168,19 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 
 	ym <<= xm;
 
-	if (xm.ncol == 1) return;
-	if (xm.ncol == 2) maximumNumberOfIterations = 1;
-
+	if (xm.ncol == 1)
+		return;
+	if (xm.ncol == 2)
+		maximumNumberOfIterations = 1;
 
 	autoVEC u = newVECraw (xm.nrow);
 	autoVEC v = newVECraw (xm.nrow);
 	autoVEC norm = newVECraw (xm.nrow);
 
-	// Normalize sum of squares of each row to one.
-	// After rotation we have to rescale.
-
+	/*
+		Normalize sum of squares of each row to one.
+		After rotation we have to rescale.
+	*/
 	if (normalizeRows) {
 		for (long irow = 1; irow <= ym.nrow; irow ++) {
 			norm [irow] = NUMnorm (ym.row (irow), 2.0);
@@ -191,7 +193,8 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 
 	double varianceSq = NUMsquaredVariance (ym, quartimax);
 
-	if (varianceSq == 0.0) return;
+	if (varianceSq == 0.0)
+		return;
 
 	// Treat columns pairwise.
 
@@ -201,8 +204,8 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 		for (integer c1 = 1; c1 <= xm.ncol; c1 ++) {
 			for (integer c2 = c1 + 1; c2 <= xm.ncol; c2 ++) {
 				for (integer i = 1; i <= xm.nrow; i ++) {
-					double x = ym [i] [c1];
-					double y = ym [i] [c2];
+					const double x = ym [i] [c1];
+					const double y = ym [i] [c2];
 					u [i] = x * x - y * y;
 					v [i] = 2.0 * x * y;
 				}
@@ -212,17 +215,18 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 					VECcentre_inplace (v.get());
 				}
 
-				double a = 2.0 * NUMinner (u.get(), v.get());
-				double b = NUMinner (u.get(), u.get()) - NUMinner (v.get(), v.get());
+				const double a = 2.0 * NUMinner (u.get(), v.get());
+				const double b = NUMinner (u.get(), u.get()) - NUMinner (v.get(), v.get());
 				
-				double c = sqrt (a * a + b * b);
+				const double c = sqrt (a * a + b * b);
 				double vc = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
-				if (a > 0.0) vc = -vc;
+				if (a > 0.0)
+					vc = -vc;
 				
 				// Get the rotation matrix T
 				
-				double cost = sqrt (0.5 + 0.5 * vc);
-				double sint = sqrt (0.5 - 0.5 * vc);
+				const double cost = sqrt (0.5 + 0.5 * vc);
+				const double sint = sqrt (0.5 - 0.5 * vc);
 				double t11 = cost;
 				double t12 = sint;
 				double t21 = -sint;
@@ -239,7 +243,7 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 				// Rotate in the plane spanned by c1 and c2.
 
 				for (integer i = 1; i <= xm.nrow; i ++) {
-					double x = ym [i] [c1], y = ym [i] [c2];
+					const double x = ym [i] [c1], y = ym [i] [c2];
 					ym [i] [c1] = x * t11 + y * t21;
 					ym [i] [c2] = x * t12 + y * t22;
 				}
@@ -289,12 +293,12 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
-	integer nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
+	const integer nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions))
 		return;
 	if (numberOfDimensions == 1)
 		xCoordinate = 1;
-	double fontSize = Graphics_inqFontSize (g);
+	const double fontSize = Graphics_inqFontSize (g);
 	int noLabel = 0;
 	if (labelSize == 0)
 		labelSize = fontSize;
@@ -326,7 +330,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setFontSize (g, labelSize);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
-			conststring32 plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
+			const conststring32 plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
 			if (Melder_findInk (plotLabel)) {
 				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {
@@ -388,15 +392,15 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numb
 /********************** Examples *********************************************/
 
 autoConfiguration Configuration_createLetterRExample (int choice) {
-	double x1[33] = { 0,
+	const double x1[33] = { 0,
 		-5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
 		-5, -4, -3, -2, -1,  0,  1, 2.25,  3,  3,
 		2.25,  1,  0, -1, -2, -3, -4,   -1,  0,  1, 2, 3 };
-	double y1[33] = { 0,
+	const double y1[33] = { 0,
 		-6, -5, -4, -3, -2, -1, 0,   1,  2,  3,
 		4,  4,  4,  4,  4,  4, 4, 3.5,  2,  1,
 		-0.5, -1, -1, -1, -1, -1, -1, -2, -3, -4, -5, -6 };
-	double x2[33] = {0, 0.94756043346272423, 0.73504466902509913,
+	const double x2[33] = {0, 0.94756043346272423, 0.73504466902509913,
 		0.4528453515175927,    0.46311499024105723,   0.30345454816993439,
 		0.075184942115601547, -0.090010071904764719, -0.19630977381424003,
 		-0.36341509807865086,  -0.54216996409132612,  -0.68704678013309872,
@@ -407,7 +411,7 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 		0.18201798315035453,   0.048445620192953162,  0.081595930742961439,
 		0.20063623749033621,   0.28546520751183313,   0.39384438699721991,
 		0.62832258520372286,   0.78548335015622228,   1.0610707888793069 };
-	double y2[33] = {0, 0.49630791172076621, 0.53320347382055022,
+	const double y2[33] = {0, 0.49630791172076621, 0.53320347382055022,
 		0.62384637225470441,  0.47592708487655661,  0.50364353255684202,
 		0.55311720162084443,  0.55118713773007066,  0.50007736370068601,
 		0.40432332354648709,  0.49817059660482677,  0.49803436631629411,
@@ -419,23 +423,14 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 		0.30633527000982519, -0.14894460651161745, -0.30808798640907431,
 		-0.35920781945385832, -0.62766325578928184, -0.60389363590825562 };
 	try {
-		double *x, *y;
 		autoConfiguration me = Configuration_create (32, 2);
-
-		if (choice == 2) {
-			x = x2; y = y2;
-			Thing_setName (me.get(), U"R_fit");
-		} else {
-			x = x1; y = y1;
-			Thing_setName (me.get(), U"R");
-		}
-
+		Thing_setName (me.get(), ( choice == 2 ? U"R_fit" : U"R" ));
 		for (integer i = 1; i <= 32; i ++) {
 			char32 s [20];
 			Melder_sprint (s, 20, i);
 			TableOfReal_setRowLabel (me.get(), i, s);
-			my data [i] [1] = x [i];
-			my data [i] [2] = y [i];
+			my data [i] [1] = ( choice == 2 ? x2 [i] : x1 [i] );
+			my data [i] [2] = ( choice == 2 ? y2 [i] : y1 [i] );
 		}
 		return me;
 	} catch (MelderError) {
@@ -444,11 +439,11 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 }
 
 autoConfiguration Configuration_createCarrollWishExample () {
-	double x [10] = {0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0 };
-	double y [10] = {0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0 };
+	const double x [10] = {0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0 };
+	const double y [10] = {0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0 };
 	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
-		integer nObjects = 9;
+		constexpr integer nObjects = 9;
 		autoConfiguration me = Configuration_create (nObjects, 2);
 		for (integer i = 1; i <= nObjects; i ++) {
 			my data [i] [1] = x [i];

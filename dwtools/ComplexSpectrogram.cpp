@@ -1,17 +1,17 @@
 /* ComplexSpectrogram.cpp
- * 
+ *
  * Copyright (C) 2014-2019 David Weenink
- * 
+ *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -82,7 +82,8 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			U"There should be at least two samples in the window.");
 		
 		integer numberOfFrames;
-		double t1, timeStep = 0.5 * windowLength;
+		const double timeStep = 0.5 * windowLength;
+		double t1;
 		Sampled_shortTermAnalysis (me, windowLength, timeStep, & numberOfFrames, & t1);
 
 		// Compute sampling of the spectrum
@@ -91,7 +92,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 		const double df = samplingFrequency / (numberOfFrequencies - 1);
 		
 		autoComplexSpectrogram thee = ComplexSpectrogram_create (my xmin, my xmax, numberOfFrames, timeStep, t1, 0.0, maximumFrequency, numberOfFrequencies, df, 0.0);
-		// 
+
 		autoSound analysisWindow = Sound_create (1, 0.0, nsamp_window * my dx, nsamp_window, my dx, 0.5 * my dx);
 		
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
@@ -127,13 +128,13 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 
 autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFactor) {
 	try {
-		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
-		 * phase is either zero or +/-pi
+		/*
+			original number of samples is odd: imaginary part of last spectral value is zero ->
+			phase is either zero or +/-pi
 		 */
-		const double pi = NUMpi; //atan2 (0.0, - 0.5);
 		const double samplingFrequency = 2.0 * my ymax;
 		const double lastFrequency = my y1 + (my ny - 1) * my dy, lastPhase = my phase [my ny] [1];
-		const bool originalNumberOfSamplesProbablyOdd = ( lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi ||
+		const bool originalNumberOfSamplesProbablyOdd = ( lastPhase != 0.0 && lastPhase != NUMpi && lastPhase != -NUMpi ||
 				my ymax - lastFrequency > 0.25 * my dx );
 		Melder_require (my y1 == 0.0,
 			U"A Fourier-transformable ComplexSpectrogram should have a first frequency of 0 Hz, not ", my y1, U" Hz.");
@@ -170,7 +171,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 				const double f = my y1 + (ifreq - 1) * my dy;
 				const double a = sqrt (my z [ifreq] [iframe]);
 				double dummy;
-				const double extraPhase = 2.0 * pi * modf (extraTime * f, & dummy); // fractional part
+				const double extraPhase = 2.0 * NUMpi * modf (extraTime * f, & dummy); // fractional part
 				const double phi = my phase [ifreq] [iframe]; // + extraPhase;
 				spectrum -> z [1] [ifreq] = a * cos (phi);
 				spectrum -> z [2] [ifreq] = a * sin (phi);

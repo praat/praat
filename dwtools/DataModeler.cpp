@@ -77,9 +77,11 @@ void structDataModeler :: v_info () {
 
 static double polynomial_evaluate (DataModeler me, double xin, VEC p) {
 	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	double xpi = 1.0, result = p [1];
-	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-	double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	for (integer i = 2; i <= my numberOfParameters; i ++) {
 		xpi *= x;
 		result += p [i] * xpi;
@@ -89,23 +91,28 @@ static double polynomial_evaluate (DataModeler me, double xin, VEC p) {
 
 static void polynomial_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
 	Melder_assert (term.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	term [1] = 1.0;
-	// From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-	double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	for (integer i = 2; i <= my numberOfParameters; i ++)
-		term [i] = term [i-1] * x;
+		term [i] = term [i - 1] * x;
 }
 
 static double legendre_evaluate (DataModeler me, double xin, VEC p) {
 	Melder_assert (p.size == my numberOfParameters);
-	// From domain [xmin, xmax] to domain [-1, 1]
-	double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
+	/*
+		From domain [xmin, xmax] to domain [-1, 1]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
 	double pti, ptim1, ptim2 = 1.0, result = p [1];
 	if (my numberOfParameters > 1) {
-		double twox = 2.0 * x, f2 = x, d = 1.0;
+		const double twox = 2.0 * x;
+		double f2 = x, d = 1.0;
 		result += p [2] * (ptim1 = x);
 		for (integer i = 3; i <= my numberOfParameters; i ++) {
-			double f1 = d ++;
+			const double f1 = d ++;
 			f2 += twox;
 			result += p [i] * (pti = (f2 * ptim1 - f1 * ptim2) / d);
 			ptim2 = ptim1;
@@ -118,12 +125,15 @@ static double legendre_evaluate (DataModeler me, double xin, VEC p) {
 static void legendre_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
 	Melder_assert (term.size == my numberOfParameters);
 	term [1] = 1.0;
-	/* transform x from domain [xmin, xmax] to domain [-1, 1] */
-	double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
+	/*
+		transform x from domain [xmin, xmax] to domain [-1, 1]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
 	if (my numberOfParameters > 1) {
-		double twox = 2.0 * x, f2 = term [2] = x, d = 1.0;
+		const double twox = 2.0 * x;
+		double f2 = term [2] = x, d = 1.0;
 		for (integer i = 3; i <= my numberOfParameters; i ++) {
-			double f1 = d ++;
+			const double f1 = d ++;
 			f2 += twox;
 			term [i] = (f2 * term [i-1] - f1 * term [i-2]) / d;
 		}
@@ -134,14 +144,15 @@ static void chisqFromZScores (VEC zscores, double *out_chisq, integer *out_numbe
 	integer numberOfValidZScores = zscores.size;
 	double chisq = 0.0;
 	for (integer i = 1; i <= zscores.size; i ++) {
-		if (isdefined (zscores [i])) {
+		if (isdefined (zscores [i]))
 			chisq += zscores [i] * zscores [i];
-		} else {
+		else 
 			numberOfValidZScores --;
-		}
 	}
-	if (out_chisq) *out_chisq = chisq;
-	if (out_numberOfValidZScores) *out_numberOfValidZScores = numberOfValidZScores;
+	if (out_chisq)
+		*out_chisq = chisq;
+	if (out_numberOfValidZScores)
+		*out_numberOfValidZScores = numberOfValidZScores;
 }
 
 static double DataModeler_getDataPointInverseWeight (DataModeler me, integer iPoint, int useSigmaY ) {
@@ -183,8 +194,10 @@ void DataModeler_getExtremaY (DataModeler me, double *out_ymin, double *out_ymax
 				ymax = my y [i];
 		}
 	}
-	if (out_ymin) *out_ymin = ymin;
-	if (out_ymax) *out_ymax = ymax;
+	if (out_ymin)
+		*out_ymin = ymin;
+	if (out_ymax)
+		*out_ymax = ymax;
 }
 
 double DataModeler_getDataPointYValue (DataModeler me, integer index) {
