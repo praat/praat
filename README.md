@@ -176,7 +176,7 @@ or `b` into a Windows or Linux terminal (or `r` to build and run).
 Your source code folders, such as `fon` and `sys`, will reside in a folder like `/Users/yourname/Praats/src`,
 where you also put `praat64.xcodeproj`, as described above in 3.2.
 On Paul’s 2018 MacBook Pro with Xcode 11.2, building Praat with Command-B or Command-R,
-after cleaning the build folder with Shift-Command-K, takes 3 minutes.
+after cleaning the build folder with Shift-Command-K, takes 1 minute and 30 seconds (optimization level O3).
 
 ### 4.2. Windows set-up
 
@@ -185,7 +185,7 @@ and create a `praats` folder, as described above in 3.1.
 
 There are two options for your source tree: either it resides on the MacOS disk
 (which you will mount from Windows anyway), or it resides on the Windows disk.
-Compiling Praat for Windows on the MacOS disk takes 13 minutes,
+Compiling Praat for Windows on the MacOS disk takes 13 minutes (optimization level O3),
 whereas compiling Praat on the Windows disk takes only 4 minutes and 20 seconds.
 So we go with installing the source tree under the Cygwin home folder, as follows.
 
@@ -248,6 +248,8 @@ after you add the following definitions into `/home/parallels/.bash_aliases`:
     alias p="~/praats/praat"
     alias r="b ; p"
 
+Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
+
 To build `praat_barren`, create a folder `praatsb`, and to your `.bash_aliases` add
 
     alias bb="cd ~/praatsb ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
@@ -280,3 +282,55 @@ create a folder `praatc`, and to your `.bash_aliases` add
 
 To test `praat` for Chrome64, you can just run it on Ubuntu 18.04 by typing `pc`,
 or you transfer it to a Chromebook for the real test.
+
+### 4.4. Chromebook set-up
+
+Parallels Desktop 15 has no emulator for Chrome, so the choice is between
+building Praat on a Chromebook directly or building Praat on Ubuntu 18.04.
+On a 2019 HP Chromebook with Intel processor, building Praat takes
+a forbidding 27 minutes.
+
+So we choose to build Praat on Ubuntu 18.04 (under Parallels Desktop on the Mac),
+because building the Intel Chrome64 edition on Ubuntu 18.04 takes only
+2 minutes and 10 seconds. If you have the Linux set-up described in 4.3,
+you can do this with the `bc` command.
+
+Next, you need a way to get the executable `praat` from Mac/Ubuntu to your Chromebook.
+The distributors of Praat do this via an intermediate university computer;
+let’s call this intermediate computer `fon.hum.uva.nl`
+(not coincidentally, that’s the name of the computer that hosts `praat.org`).
+If you have an account on that computer (say it’s called `yourname`),
+then you can access that account with `ssh`, and it is best to do that without 
+yping your password each time. To accomplish this, type
+
+    ssh-keygen
+
+on your Ubuntu 18.04. This gives you a file `~/.ssh/id_rsa.pub` on your Ubuntu 18.04,
+which contains your public `ssh` key. You should append the contents of this `id_rsa.pub`
+to the file `~/.ssh/authorized_keys` on your intermediate computer. From that moment on,
+your intermediate computer will accept `rsync -e ssh` calls from your Ubuntu 18.04.
+On the intermediate computer, create a folder `builds`, and a folder `chrome64` inside that.
+If you now add
+
+    putc="rsync -tpvz ~/praatsc/praat yourname@fon.hum.uva.nl:~/builds/chrome64"
+    ic="bc ; putc"
+
+to `~/.bash_aliases` on your Ubuntu, you can build and send Praat for Chrome
+to the intermediate computer by just typing `ic`.
+
+On your Chromebook, start up Linux (see the Chromebook download page for details),
+create a directory `~/praats` there, and put the following lines in your `~/.bash_aliases`:
+
+   alias get="cd ~/praats ; rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat ."
+   alias p="~/praats/praat"
+   alias r="get ; p"
+
+From then on, you can use `r` to get Praat from the intermediate computer and run it.
+
+The cycle from editing Praat on the Mac to running it on your Chromebook therefore takes four steps:
+
+1. edit and save the source code in Xcode on your Mac;
+2. type `ic` on your Ubuntu (under Parallels Desktop on your Mac);
+3. type `r` on your Chromebook.
+
+For edits in a `cpp` file (no changes in header files), this whole cycle can be performed within 15 seconds.
