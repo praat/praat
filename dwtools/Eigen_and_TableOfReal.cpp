@@ -29,7 +29,8 @@
 
 autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
 	try {
-		Melder_require (my numberOfColumns == thy numberOfColumns, U"Both tables should have the same number of columns.");
+		Melder_require (my numberOfColumns == thy numberOfColumns,
+			U"Both tables should have the same number of columns.");
 		autoEigen him = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (him.get(), my data.get(), thy data.get());
 		return him;

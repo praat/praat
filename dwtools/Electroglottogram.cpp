@@ -79,7 +79,6 @@ void Electroglottogram_drawStylized (Graphics g, bool marks, bool levels) {
 		const double x3 = x [2] + 0.1;
 		Graphics_doubleArrow (g, x3, minimum, x3, at03);
 		Graphics_setLineType (g, Graphics_DRAWN);
-		const double y3 = 0.5 * (at03 + minimum);
 		Graphics_text (g, x3 + width, 0.5 * at03, U"0.3(%%Peak%\\--%%Valley%)");
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, 0.5 * (x1 + x2), at03, U"Closed Glottis Interval");
@@ -101,10 +100,10 @@ static void IntervalTier_insertBoundary (IntervalTier me, double t) {
 	try {
 		Melder_require (! IntervalTier_hasTime (me, t),
 			U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because there is already a boundary there.");
-		integer intervalNumber = IntervalTier_timeToIndex (me, t);
+		const integer intervalNumber = IntervalTier_timeToIndex (me, t);
 		Melder_require (intervalNumber != 0,
 			U"Cannot add a boundary at ", Melder_fixed (t, 6), U" seconds, because this is outside the time domain of the intervals.");
-		TextInterval interval = my intervals.at [intervalNumber];
+		const TextInterval interval = my intervals.at [intervalNumber];
 		/*
 			Move the text to the left of the boundary.
 		*/
@@ -120,7 +119,7 @@ void IntervalTier_setIntervalText (IntervalTier me, integer intervalNumber, cons
 	try {
 		Melder_require (intervalNumber >= 1 && intervalNumber <= my intervals.size,
 			U"Interval ", intervalNumber, U" does not exist.");
-		TextInterval interval = my intervals.at [intervalNumber];
+		const TextInterval interval = my intervals.at [intervalNumber];
 		TextInterval_setText (interval, text);
 	} catch (MelderError) {
 		Melder_throw (me, U": interval text not set.");
@@ -156,7 +155,7 @@ autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel,
 			U"The channel number should be in the interval from 1 to ", my ny);
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
 		thy z.all() <<= my z.row (channel);
-		if (invert) 
+		if (invert)
 			thy z.all()  *=  -1.0;
 		return thee;
 	} catch (MelderError) {
@@ -222,25 +221,24 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks, & valleys);
 		
-		double minimum = RealTier_getMinimumValue (valleys.get());
-		double maximum = RealTier_getMaximumValue (peaks.get());
-		double minimumPeakAmplitude = maximum * peakThresholdFraction;
+		const double maximum = RealTier_getMaximumValue (peaks.get());
+		const double minimumPeakAmplitude = maximum * peakThresholdFraction;
 
 		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
 		double previousOpeningTime = my xmin;
 		for (integer ipoint = 1; ipoint <= peaks -> points. size; ipoint ++) {
-			RealPoint peak = peaks -> points.at [ipoint];
-			double peakPosition = peak -> number;
-			double peakAmplitude = peak -> value;
+			const RealPoint peak = peaks -> points.at [ipoint];
+			const double peakPosition = peak -> number;
+			const double peakAmplitude = peak -> value;
 			double closingTime = undefined, openingTime = undefined;
 			if (peakAmplitude > minimumPeakAmplitude) {
-				double level = RealTier_getValueAtTime (levels.get(), peakPosition);
+				const double level = RealTier_getValueAtTime (levels.get(), peakPosition);
 				closingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::LEFT);
 				openingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::RIGHT);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
 					IntervalTier_insertBoundary (intervalTier.get(), closingTime);
 					IntervalTier_insertBoundary (intervalTier.get(), openingTime);
-					double midPoint = 0.5 * (closingTime + openingTime);
+					const double midPoint = 0.5 * (closingTime + openingTime);
 					integer intervalNumber = IntervalTier_timeToIndex (intervalTier.get(), midPoint);
 					IntervalTier_setIntervalText (intervalTier.get(), intervalNumber, U"c");
 					previousOpeningTime = openingTime;
@@ -279,8 +277,8 @@ autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFreq
 		try {
 			autoSpectrum thee = Sound_to_Spectrum (me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
-				double frequency = Sampled_indexToX (thee.get(), ifreq);
-				double im = thy z [2] [ifreq];
+				const double frequency = Sampled_indexToX (thee.get(), ifreq);
+				const double im = thy z [2] [ifreq];
 				thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq];
 				thy z [1] [ifreq] = - NUM2pi * frequency * im;
 			}

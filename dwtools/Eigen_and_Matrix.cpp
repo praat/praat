@@ -48,7 +48,7 @@ autoMatrix Eigen_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer nu
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 		}
-		Melder_require (thy nx == my dimension, 
+		Melder_require (thy nx == my dimension,
 			U"The number of columns (", thy nx, U") should equal the size of the eigenvectors (", my dimension, U").");
 		
 		autoMatrix him = Matrix_create (0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0, thy ymin, thy ymax, thy ny, thy dy, thy y1);
@@ -61,10 +61,10 @@ autoMatrix Eigen_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer nu
 
 autoMatrix Eigen_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
 	try {
-		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
+		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
-		}
-		Melder_require (thy nx == my dimension, 
+
+		Melder_require (thy nx == my dimension,
 			U"The number of rows (", thy ny, U") should equal the size of the eigenvectors (", my dimension, U").");
 		
 		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0);
