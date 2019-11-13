@@ -61,7 +61,7 @@ void Confusion_ClassificationTable_increase (Confusion me, ClassificationTable t
 	Melder_require (my numberOfColumns == thy numberOfColumns, 
 		U"The number of columns should be equal.");
 	for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
-		integer index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
+		const integer index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
 		Confusion_increase (me, thy rowLabels [irow].get(), my columnLabels [index].get());
 	}
 }
@@ -71,7 +71,7 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
 		Melder_assert (my numberOfColumns > 0);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			integer col = NUMmaxPos (my data.row (i));
+			const integer col = NUMmaxPos (my data.row (i));
 			if (my columnLabels [col])
 				Strings_replace (thee.get(), i, my columnLabels [col].get());
 		}
@@ -86,7 +86,7 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 		autoCategories thee = Categories_create ();
 		Melder_assert (my numberOfColumns > 0);
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			integer col = NUMmaxPos (my data.row (i));
+			const integer col = NUMmaxPos (my data.row (i));
 			OrderedOfString_append (thee.get(), my columnLabels [col].get());
 		}
 		return thee;
@@ -99,16 +99,16 @@ autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable 
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
 		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-			conststring32 label = my columnLabels [icol].get();
+			const conststring32 label = my columnLabels [icol].get();
 			TableOfReal_setRowLabel (thee.get(), icol, label);
 			TableOfReal_setColumnLabel (thee.get(), icol, label);
 		}
 		for (integer irow = 1; irow <= thy numberOfColumns; irow ++) {
 			thy data [irow] [irow] = 1.0;
 			for (integer icol = irow + 1; icol <= thy numberOfColumns; icol ++) {
-				double n12 = NUMinner (my data.column (irow), my data.column (icol));
-				double n11 = NUMinner (my data.column (irow), my data.column (irow));
-				double n22 = NUMinner (my data.column (icol), my data.column (icol));
+				const double n12 = NUMinner (my data.column (irow), my data.column (icol));
+				const double n11 = NUMinner (my data.column (irow), my data.column (irow));
+				const double n22 = NUMinner (my data.column (icol), my data.column (icol));
 				// probabilities might be very low!
 				if (n12 > 0.0 && n22 > 0.0) {
 					thy data [irow] [icol] = thy data [icol] [irow] = n12 / sqrt (n11 * n22);

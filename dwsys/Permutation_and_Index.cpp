@@ -1,6 +1,6 @@
 /* Permutation_and_Index.cpp
  *
- * Copyright (C) 2005-2018 David Weenink
+ * Copyright (C) 2005-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWithinClasses) {
 	try {
-		integer numberOfClasses = my classes -> size;
+		const integer numberOfClasses = my classes -> size;
 
 		autoPermutation thee = Permutation_create (my numberOfItems);
 		autoPermutation classes = Permutation_create (numberOfClasses);
@@ -39,22 +39,22 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWith
 
 		/* Get some other indices ready */
 		for (integer i = 1; i <= numberOfClasses; i ++) {
-			integer klass = classes -> p [i];
+			const integer klass = classes -> p [i];
 			indices [i] [1] = klass;
 			indices [i] [3] = ( i == 1 ? 0 : indices [i - 1] [3] + indices [i - 1] [2] );   // column 3: index at start of class
 		}
 
 		for (integer i = 1; i <= my numberOfItems; i ++) {
-			integer klass = my classIndex [i];
-			integer newindex = classesinv -> p [klass];
+			const integer klass = my classIndex [i];
+			const integer newindex = classesinv -> p [klass];
 			indices [newindex] [4] ++;   // column 4: number of elements processed for class
-			integer newpos = indices [newindex] [3] + indices [newindex] [4];
+			const integer newpos = indices [newindex] [3] + indices [newindex] [4];
 			thy p [newpos] = i;
 		}
 		if (permuteWithinClasses) {
 			for (integer i = 1; i <= numberOfClasses; i ++) {
-				integer from = indices [i] [3] + 1;
-				integer to = from + indices [i] [2] - 1;
+				const integer from = indices [i] [3] + 1;
+				const integer to = from + indices [i] [2] - 1;
 				if (to > from)
 					Permutation_permuteRandomly_inplace (thee.get(), from, to);
 			}

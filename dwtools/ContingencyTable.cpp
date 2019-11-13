@@ -70,7 +70,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 	if (my numberOfRows == 1 || my numberOfColumns == 1)
 		return 0.0;
 
-	double sum = NUMsum (my data.all());
+	const double sum = NUMsum (my data.all());
 
 	integer nmin = std::min (my numberOfColumns, my numberOfRows);
 
@@ -84,8 +84,8 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 }
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
-	
-	double chisq, df, sum = NUMsum (my data.all());
+	const double sum = NUMsum (my data.all());
+	double chisq, df;
 	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0)
 		return 0.0;
@@ -97,7 +97,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 	
 	autoVEC rowSums = newVECrowSums (my data.get());
 	autoVEC columnSums = newVECcolumnSums (my data.get());
-	double totalSum = NUMsum (my data.all());
+	const double totalSum = NUMsum (my data.all());
 	
 	integer nrow = my numberOfRows, ncol = my numberOfColumns;
 	
@@ -106,8 +106,10 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 			nrow --;
 
 	if (nrow == 0) {
-		if (out_chisq) *out_chisq = undefined;
-		if (out_df) *out_df = undefined;
+		if (out_chisq)
+			*out_chisq = undefined;
+		if (out_df)
+			*out_df = undefined;
 		return;
 	}
 	
@@ -123,8 +125,8 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 			if (rowSums [irow] > 0.0) {
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 					if (columnSums [icol] > 0.0) {
-						longdouble expected = rowSums [irow] * columnSums [icol] / totalSum;
-						longdouble difference = my data [irow] [icol] - expected;
+						const longdouble expected = rowSums [irow] * columnSums [icol] / totalSum;
+						const longdouble difference = my data [irow] [icol] - expected;
 						chisq += difference * difference / expected;
 					}
 				}

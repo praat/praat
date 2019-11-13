@@ -50,7 +50,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 
 	if (! sortAscending) {
 		for (integer i = 1; i <= m.ncol / 2; i ++) {
-			integer ilast = m.ncol - i + 1;
+			const integer ilast = m.ncol - i + 1;
 			std::swap (eigenvalues [i], eigenvalues [ilast]);
 				for (integer j = 1; j <= m.ncol; j ++)
 					std::swap (eigenvectors [i] [j], eigenvectors [ilast] [j]);
@@ -63,15 +63,16 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 	autoVEC eigenvalues = newVECraw (a.nrow);
 	autoMAT eigenvectors = newMATraw (a.nrow, a.ncol);	
 	
-	bool wantEigenvectors = out_eigenvectors != nullptr;
 	MAT_getEigenSystemFromSymmetricMatrix_preallocated (eigenvectors.get(), eigenvalues.get(), a, sortAscending);
 	
-	if (out_eigenvectors) *out_eigenvectors = eigenvectors.move ();
-	if (out_eigenvalues) *out_eigenvalues = eigenvalues.move ();
+	if (out_eigenvectors)
+		*out_eigenvectors = eigenvectors.move ();
+	if (out_eigenvalues)
+		*out_eigenvalues = eigenvalues.move ();
 }
 
 void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re, constVEC eigenvalues_im, autoMAT *out_eigenvectors_reim) {
-	integer n = eigenvalues_re.size;	
+	const integer n = eigenvalues_re.size;	
 	Melder_assert (eigenvalues_im.size == n);
 	Melder_assert (eigenvectors.nrow == n && eigenvectors.ncol == eigenvectors.nrow);
 		
@@ -94,7 +95,8 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 			pair_index = ivec; // guard for multiple equal complex conjugate pairs
 		}
 	}
-	if (out_eigenvectors_reim) *out_eigenvectors_reim = eigenvectors_reim.move();
+	if (out_eigenvectors_reim)
+		*out_eigenvectors_reim = eigenvectors_reim.move();
 }
 
 void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvectors, autoMAT *out_righteigenvectors, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im) {
@@ -123,10 +125,14 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 		& n, & righteigenvectors [1] [1], & n, & work [1], & workSize, & info);
 	Melder_require (info == 0, U"dgeev code = ", info, U").");
 	
-	if (out_righteigenvectors) *out_righteigenvectors = righteigenvectors.move();
-	if (out_lefteigenvectors) *out_lefteigenvectors = lefteigenvectors.move();
-	if (out_eigenvalues_re) *out_eigenvalues_re = eigenvalues_re.move();
-	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
+	if (out_righteigenvectors)
+		*out_righteigenvectors = righteigenvectors.move();
+	if (out_lefteigenvectors)
+		*out_lefteigenvectors = lefteigenvectors.move();
+	if (out_eigenvalues_re)
+		*out_eigenvalues_re = eigenvalues_re.move();
+	if (out_eigenvalues_im)
+		*out_eigenvalues_im = eigenvalues_im.move();
 }
 
 void MAT_asPrincipalComponents_preallocated (MATVU result, constMATVU const& m, integer numberOfComponents) {

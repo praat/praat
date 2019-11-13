@@ -1,6 +1,6 @@
 /* CCA_and_Correlation.cpp
  *
- * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
-		integer ny = my y -> dimension, nx = my x -> dimension;
+		const integer ny = my y -> dimension, nx = my x -> dimension;
 		Melder_require (ny + nx == thy numberOfColumns,
 			U"The number of columns in the Correlation should equal the sum of the dimensions in the CCA object.");
 		
@@ -83,14 +83,14 @@ double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y
 		longdouble variance = 0.0, varianceScaling = 0.0;
 		if (x_or_y == 1) { /* y: dependent set */
 			for (integer i = 1; i <= my y -> dimension; i ++) {
-				double si = NUMinner (thy data.row (i).part (1, my y -> dimension), my y -> eigenvectors.row (icv));
+				const double si = NUMinner (thy data.row (i).part (1, my y -> dimension), my y -> eigenvectors.row (icv));
 				variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
 				varianceScaling += my y -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
 			}
 			varianceFraction += (variance / varianceScaling) / my y -> dimension;
 		} else {
 			for (integer i = 1; i <= my x -> dimension; i ++) {
-				double si = NUMinner (thy data.row (my y -> dimension + i).part (my y -> dimension + 1, thy data.ncol), my x -> eigenvectors.row (icv));
+				const double si = NUMinner (thy data.row (my y -> dimension + i).part (my y -> dimension + 1, thy data.ncol), my x -> eigenvectors.row (icv));
 				variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
 				varianceScaling += my x -> eigenvectors [icv] [i] * si; /* e'.Rxx.e*/
 			}
@@ -105,7 +105,7 @@ double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, i
 
 	longdouble redundancy = 0.0;
 	for (integer icv = canonicalVariate_from; icv <= canonicalVariate_to; icv ++) {
-		double varianceFraction = CCA_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
+		const double varianceFraction = CCA_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
 		if (isundef (varianceFraction)) return undefined;
 
 		redundancy += varianceFraction * my y -> eigenvalues [icv]; // eigenvalue == (coefficient)^2

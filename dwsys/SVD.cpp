@@ -80,7 +80,8 @@ void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 	}
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	if (! NUMfpp) NUMmachar ();
+	if (! NUMfpp)
+		NUMmachar ();
 	my tolerance = NUMfpp -> eps * numberOfRows;
 	my u = newMATzero (numberOfRows,  numberOfColumns);
 	my v = newMATzero (numberOfColumns, numberOfColumns);
@@ -174,8 +175,8 @@ void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse) {
 			longdouble val = 0.0;
 			for (integer k = 1; k <= my numberOfColumns; k ++) {
 				if (my d [k] > 0.0) {
-					longdouble dsq = my d [k] * my d [k];
-					longdouble factor = ( inverse ? 1.0 / dsq : dsq );
+					const longdouble dsq = my d [k] * my d [k];
+					const longdouble factor = ( inverse ? 1.0 / dsq : dsq );
 					val += my v [i] [k] * my v [j] [k] * factor;
 				}
 			}
@@ -249,8 +250,8 @@ void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result) {
 }
 
 integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSingularValues) {
-	double sumOfSingularValues = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
-	double criterion = sumOfSingularValues * fractionOfSumOfSingularValues;
+	const double sumOfSingularValues = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
+	const double criterion = sumOfSingularValues * fractionOfSumOfSingularValues;
 	integer j = 1;
 	longdouble sum = my d [1];
 	while (sum < criterion && j < my numberOfColumns) {
@@ -282,8 +283,8 @@ double SVD_getConditionNumber (SVD me) {
 }
 
 double SVD_getSumOfSingularValuesAsFractionOfTotal (SVD me, integer from, integer to) {
-	double part = SVD_getSumOfSingularValues (me, from, to);
-	double total = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
+	const double part = SVD_getSumOfSingularValues (me, from, to);
+	const double total = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
 	return part / total;
 }
 
@@ -298,10 +299,7 @@ integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 	if (tolerance == 0.0)
 		tolerance = my tolerance;
 
-	double dmax = my d [1];
-	for (integer i = 2; i <= my numberOfColumns; i ++)
-		if (my d [i] > dmax)
-			dmax = my d [i];
+	const double dmax = NUMmax (my d);
 
 	integer numberOfZeroed = 0;
 	for (integer i = 1; i <= my numberOfColumns; i ++)
@@ -408,7 +406,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 
 		// Get R from a(1:k+l,n-k-l+1:n)
 
-		double *pr = & a [1] [1];
+		const double *pr = & a [1] [1];
 		for (integer i = 1; i <= kl; i ++) {
 			for (integer j = i; j <= kl; j ++) {
 				my r [i] [j] = pr [i - 1 + (n - kl + j - 1) * m]; /* from col-major */

@@ -52,7 +52,7 @@ Thing_implement (CC, Sampled, 1);
 integer CC_getMaximumNumberOfCoefficientsUsed (CC me) {
 	integer numberOfCoefficients = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
-		CC_Frame cf = & my frame [iframe];
+		const CC_Frame cf = & my frame [iframe];
 		numberOfCoefficients = std::max (cf -> numberOfCoefficients, numberOfCoefficients);
 	}
 	return numberOfCoefficients;
@@ -89,14 +89,14 @@ autoMatrix CC_to_Matrix (CC me) {
 		*/
 		integer numberOfCoefficients = 0;
 		for (integer i = 1; i <= my nx; i ++) {
-			CC_Frame cf = & my frame [i];
+			const CC_Frame cf = & my frame [i];
 			if (cf -> numberOfCoefficients > numberOfCoefficients)
 				numberOfCoefficients = cf -> numberOfCoefficients;
 		}
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, numberOfCoefficients, numberOfCoefficients, 1.0, 1.0);
 		
 		for (integer i = 1; i <= my nx; i ++) {
-			CC_Frame cf = & my frame [i];
+			const CC_Frame cf = & my frame [i];
 			thy z.column (i).part (1, cf -> numberOfCoefficients) <<= cf -> c.get().part (1, cf -> numberOfCoefficients);
 		}
 		return thee;
@@ -131,7 +131,7 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 	integer numberOfSelected = eframe - bframe + 1;
 	autoVEC c = newVECraw (numberOfSelected);
 	for (integer i = 1; i <= numberOfSelected; i ++) {
-		CC_Frame cf = & my frame [bframe + i - 1];
+		const CC_Frame cf = & my frame [bframe + i - 1];
 		c [i] = cf -> c0;
 	}
 	if (ymin >= ymax) {
@@ -166,8 +166,8 @@ void CC_getNumberOfCoefficients_extrema (CC me, integer startFrame, integer endF
 	integer max = 0;
 
 	for (integer i = startFrame; i <= endFrame; i ++) {
-		CC_Frame f = & my frame [i];
-		integer nc = f -> numberOfCoefficients;
+		const CC_Frame f = & my frame [i];
+		const integer nc = f -> numberOfCoefficients;
 		if (nc < min)
 			min = nc;
 		else if (nc > max)
@@ -194,7 +194,7 @@ integer CC_getMaximumNumberOfCoefficients (CC me, integer startFrame, integer en
 integer CC_getNumberOfCoefficients (CC me, integer frameNumber) {
 	if (frameNumber < 1 || frameNumber > my nx)
 		return 0;
-	CC_Frame cf = & me -> frame [frameNumber];
+	const CC_Frame cf = & me -> frame [frameNumber];
 	return cf -> numberOfCoefficients;
 }
 
@@ -202,22 +202,22 @@ integer CC_getNumberOfCoefficients (CC me, integer frameNumber) {
 double CC_getValueInFrame (CC me, integer frameNumber, integer coeffNumber) {
 	if (frameNumber < 1 || frameNumber > my nx)
 		return undefined;
-	CC_Frame cf = & me -> frame [frameNumber];
+	const CC_Frame cf = & me -> frame [frameNumber];
 	return ( coeffNumber > cf -> numberOfCoefficients ? undefined : cf -> c [coeffNumber] );
 }
 
 double CC_getValue (CC me, double t, integer coeffNumber) {
-	integer frameNumber = Sampled_xToNearestIndex (me, t);
+	const integer frameNumber = Sampled_xToNearestIndex (me, t);
 	if (frameNumber < 1 || frameNumber > my nx)
 		return undefined;
-	CC_Frame cf = & me -> frame [frameNumber];
+	const CC_Frame cf = & me -> frame [frameNumber];
 	return ( coeffNumber > cf -> numberOfCoefficients ? undefined : cf -> c [coeffNumber] );
 }
 
 double CC_getC0ValueInFrame (CC me, integer frameNumber) {
 	if (frameNumber < 1 || frameNumber > my nx)
 		return undefined;
-	CC_Frame cf = & me -> frame [frameNumber];
+	const CC_Frame cf = & me -> frame [frameNumber];
 	return cf -> c0;
 }
 

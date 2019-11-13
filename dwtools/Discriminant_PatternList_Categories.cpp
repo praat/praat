@@ -1,6 +1,6 @@
 /* Discriminant_PatternList_Categories.cpp
  *
- * Copyright (C) 2004-2011, 2015 David Weenink
+ * Copyright (C) 2004-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

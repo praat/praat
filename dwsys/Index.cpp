@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2018 David Weenink
+ * Copyright (C) 2005-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,8 @@ autoIndex Index_extractPart (Index me, integer from, integer to) {
 			from = 1;
 		if (to == 0)
 			to = my numberOfItems;
-		Melder_require (from <= to && from > 0 && to <= my numberOfItems, U"Range should be in interval [1,", my numberOfItems, U"].");
+		Melder_require (from <= to && from > 0 && to <= my numberOfItems,
+			U"Range should be in interval [1,", my numberOfItems, U"].");
 		
 		autoIndex thee = Data_copy (me);
 		thy numberOfItems = to - from + 1;
@@ -103,7 +104,7 @@ integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex) {
 
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 klasLabel) {
 	for (integer i = 1; i <= my classes->size; i ++) {
-		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
+		const SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
 		if (Melder_equ (ss -> string.get(), klasLabel))
 			return i;
 	}
@@ -113,7 +114,7 @@ int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 kla
 conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer klasIndex) {
 	conststring32 result = undefinedClassLabel;
 	if (klasIndex > 0 && klasIndex <= my classes -> size) {
-		SimpleString ss = (SimpleString) my classes->at [klasIndex];   // FIXME cast
+		const SimpleString ss = (SimpleString) my classes->at [klasIndex];   // FIXME cast
 		result = ss -> string.get();
 	}
 	return result;
@@ -122,8 +123,8 @@ conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer
 conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber) {
 	conststring32 result = undefinedClassLabel;
 	if (itemNumber > 0 && itemNumber <= my numberOfItems) {
-		integer klas = my classIndex [itemNumber];
-		SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
+		const integer klas = my classIndex [itemNumber];
+		const SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
 		result = ss -> string.get();
 	}
 	return result;

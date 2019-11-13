@@ -1,6 +1,6 @@
 /* FileInMemoryManager.cpp
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ integer SortedSetOfLong_Lookup (SortedSetOfLong me, integer number) {
 
 autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly) {
 	try {
-		integer numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
+		const integer numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
 		autoTable thee = Table_createWithColumnNames (numberOfRows, U"path id size position");
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
@@ -132,11 +132,12 @@ autoFileInMemorySet FileInMemoryManager_extractFiles (FileInMemoryManager me, kM
 }
 
 static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me, FILE *stream) {
-	integer filesIndex = reinterpret_cast<integer> (stream);
-	Melder_require (filesIndex > 0 && filesIndex <= my files -> size, U": Invalid file index: ", filesIndex);
+	const integer filesIndex = reinterpret_cast<integer> (stream);
+	Melder_require (filesIndex > 0 && filesIndex <= my files -> size,
+		U": Invalid file index: ", filesIndex);
 
 	FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
-	integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path.get());
+	const integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path.get());
 	return openFilesIndex;
 }
 
@@ -231,7 +232,7 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 	none
 */
 void FileInMemoryManager_rewind (FileInMemoryManager me, FILE *stream) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetChar = -1;
@@ -260,7 +261,7 @@ void FileInMemoryManager_rewind (FileInMemoryManager me, FILE *stream) {
 	On failure, EOF is returned.
 */
 int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetChar = -1;
@@ -293,13 +294,12 @@ int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream) {
 	Otherwise, zero is returned.
 */
 int FileInMemoryManager_feof (FileInMemoryManager me, FILE *stream) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	int eof = 0;
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		if (fim -> d_position >= fim -> d_numberOfBytes) {
+		if (fim -> d_position >= fim -> d_numberOfBytes)
 			eof = 1;
-		}
 	}
 	return eof;
 }
@@ -343,23 +343,23 @@ int FileInMemoryManager_feof (FileInMemoryManager me, FILE *stream) {
 	If a read or write error occurs, the error indicator (ferror) is set.
 */
 int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer offset, int origin) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	int errval = EBADF;
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		integer newPosition = 0;
-		if (origin == SEEK_SET) {
+		if (origin == SEEK_SET)
 			newPosition = offset;
-		} else if (origin == SEEK_CUR) {
+		else if (origin == SEEK_CUR)
 			newPosition = fim -> d_position + offset;
-		} else if (origin == SEEK_END) {
+		else if (origin == SEEK_END)
 			newPosition = fim -> d_numberOfBytes + offset;
-		} else {
+		else
 			return my errorNumber = EINVAL;
-		}
-		if (newPosition < 0) { // > numberOfBytes is allowed
+
+		if (newPosition < 0) // > numberOfBytes is allowed
 			newPosition = 0;
-		}
+
 		fim -> d_position = newPosition;
 		fim -> ungetChar = -1;
 		errval = 0;
@@ -389,7 +389,7 @@ int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer off
 	On failure, -1L is returned, and errno is set to a system-specific positive value.
 */
 integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	/* int errval = EBADF; */
 	integer currentPosition = -1L;
 	if (openFilesIndex > 0) {
@@ -429,10 +429,11 @@ integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
 	If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed). 
  */
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	char *result = nullptr;
 	
-	Melder_require (openFilesIndex > 0, U": File should be open.");
+	Melder_require (openFilesIndex > 0,
+		U": File should be open.");
 
 	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 	integer startPos = fim -> d_position;
@@ -521,9 +522,10 @@ int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
 	size_t is an unsigned integral type. 
 */
 size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t count, FILE *stream) {
-	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	
-	Melder_require (openFilesIndex > 0 && size > 0 && count > 0, U": File should be open.");
+	Melder_require (openFilesIndex > 0 && size > 0 && count > 0,
+		U": File should be open.");
 	
 	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 	size_t result = 0;
@@ -536,7 +538,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 			endPos = startPos + count * size;
 			fim -> d_errno = EOF;
 		}
-		integer numberOfBytes = count * size;
+		const integer numberOfBytes = count * size;
 		const unsigned char * p = fim -> d_data + fim -> d_position;
 		char * str = static_cast<char *> (ptr);
 		while (i < numberOfBytes) {
@@ -584,7 +586,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * stream) {
 	int result = EOF;
 	if (character != EOF) {
-		integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+		const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 		if (openFilesIndex > 0) {
 			FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 			-- (fim -> d_position);
@@ -696,7 +698,7 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 		va_start (args, format);
 		bufferSize = 3;
 		autoNUMvector<char> buf ((integer) 0, bufferSize);
-		int sizeNeeded = vsnprintf (buf.peek(), bufferSize, format, args); // find the size of the needed buffer
+		const int sizeNeeded = vsnprintf (buf.peek(), bufferSize, format, args); // find the size of the needed buffer
 		va_end (args);
 		if (sizeNeeded > bufferSize) {
 			buf.reset ((integer) 0, sizeNeeded);
@@ -715,10 +717,10 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 }
 
 void test_FileInMemoryManager_io (void) {
-	conststring32 path1 = U"~/kanweg1.txt";
-	conststring32 path2 = U"~/kanweg2.txt";
-	conststring32 lines1 [3] = { U"abcd\n", U"ef\n",  U"ghijk\n" };
-	conststring32 lines2 [3] = { U"lmno\n", U"pqr\n",  U"stuvwxyz\n" };
+	const conststring32 path1 = U"~/kanweg1.txt";
+	const conststring32 path2 = U"~/kanweg2.txt";
+	const conststring32 lines1 [3] = { U"abcd\n", U"ef\n",  U"ghijk\n" };
+	const conststring32 lines2 [3] = { U"lmno\n", U"pqr\n",  U"stuvwxyz\n" };
 
 	/*
 		Create a test FileInMemorySet with two (text) files in it.
@@ -732,15 +734,15 @@ void test_FileInMemoryManager_io (void) {
 	autoFileInMemorySet fims = FileInMemorySet_create ();
 
 	FILE *f = fopen (Melder_peek32to8 (file1 -> path), "w");
-	for (integer j = 0; j <= 2; j ++) {
+	for (integer j = 0; j <= 2; j ++)
 		fputs (Melder_peek32to8 (lines1 [j]), f);
-	}	
+	
 	fclose (f);
 
 	f = fopen (Melder_peek32to8 (file2 -> path), "w");
-	for (integer j = 0; j <= 2; j ++) {
+	for (integer j = 0; j <= 2; j ++)
 		fputs (Melder_peek32to8 (lines2 [j]), f);
-	}	
+	
 	fclose (f);
 	
 	MelderInfo_writeLine (U"\tCreating FileInMemorySet from two files...");
@@ -759,13 +761,13 @@ void test_FileInMemoryManager_io (void) {
 	// fopen test
 	MelderInfo_writeLine (U"\tOpen file ", file1 -> path);
 	FILE * f1 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8 (file1 -> path), "r");
-	integer openFilesIndex1 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f1);
+	const integer openFilesIndex1 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f1);
 	Melder_assert (openFilesIndex1 == 1);
 	MelderInfo_writeLine (U"\t\t ...opened");
 	
 	MelderInfo_writeLine (U"\tOpen file ", file2 -> path);
 	FILE * f2 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8 (file2 -> path), "r");
-	integer openFilesIndex2 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f2);
+	const integer openFilesIndex2 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f2);
 	Melder_assert (openFilesIndex2 == 2);
 	MelderInfo_writeLine (U"\t\t ...opened");
 	
@@ -777,15 +779,15 @@ void test_FileInMemoryManager_io (void) {
 	
 	MelderInfo_writeLine (U"\tRead as text file in memory: ", file1 -> path);
 	char buf0 [200], buf1 [200];
-	long nbuf = 200;
+	const long nbuf = 200;
 	
 	FileInMemory fim = (FileInMemory) my files -> at [openFilesIndex1];
 	FILE *file0 = fopen (Melder_peek32to8 (file1 -> path), "r");
 	for (integer i = 0; i <= 2; i ++) {
 		char *p0 = fgets (buf0, nbuf, file0);
-		integer pos0 = ftell (file0);
+		const integer pos0 = ftell (file0);
 		char *p1 = FileInMemoryManager_fgets (me.get(), buf1, nbuf, f1);
-		integer pos1 = FileInMemoryManager_ftell (me.get(), f1);
+		const integer pos1 = FileInMemoryManager_ftell (me.get(), f1);
 		Melder_assert (Melder_equ (Melder_peek8to32 (buf0), Melder_peek8to32 (buf1)));
 		Melder_assert (pos0 == pos1);
 		Melder_assert (p0 == buf0 && p1 == buf1);
@@ -806,7 +808,7 @@ void test_FileInMemoryManager_io (void) {
 	MelderInfo_writeLine (U"\tRead as binary file in memory: ", file1 -> path);
 	
 	Melder_assert (fim -> d_position == 0);
-	integer count = 8;
+	const integer count = 8;
 	size_t nread0 = fread (buf0, 1, count, file0);
 	size_t nread1 =  FileInMemoryManager_fread (me.get(), buf1, 1, count, f1);
 	MelderInfo_writeLine (U"\t\tRead ", nread0, U" and ", nread1, U" bytes");
@@ -819,8 +821,8 @@ void test_FileInMemoryManager_io (void) {
 	MelderInfo_writeLine (U"\t\tRead ", nread0, U" and ", nread1, U" bytes");
 	Melder_assert (nread0 == nread1);
 	
-	int eof0 = feof (file0);
-	int eof1 = FileInMemoryManager_feof (me.get(), f1);
+	const int eof0 = feof (file0);
+	const int eof1 = FileInMemoryManager_feof (me.get(), f1);
 	MelderInfo_writeLine (U"\tEOF ? ", eof0, U" and ", eof1);
 	
 	Melder_assert (eof0 != 0 && eof1 != 0);

@@ -26,24 +26,24 @@
 
 #include "CCs_to_DTW.h"
 
-static void regression (VEC r, CC me, integer frame, integer nr) {
+static void regression (VEC r, CC me, integer frameNumber, integer numberOfCoefficients) {
 
 	// sum(i^2;i=-n..n) = 2n^3/3 + n^2 +n/3 = n (n (2n/3 + 1) + 1/3);
 
-	const integer nrd2 = nr / 2;   // nr is always odd and > 2!
-	const double sumsq = nrd2 * (nrd2 * (nr / 3.0 + 1.0) + 1.0 / 3.0);
+	const integer numberOfCoefficientsd2 = numberOfCoefficients / 2;   // numberOfCoefficients is always odd and > 2!
+	const double sumsq = numberOfCoefficientsd2 * (numberOfCoefficientsd2 * (numberOfCoefficients / 3.0 + 1.0) + 1.0 / 3.0);
 
-	if (frame <= nrd2 || frame >= my nx - nrd2)
+	if (frameNumber <= numberOfCoefficientsd2 || frameNumber >= my nx - numberOfCoefficientsd2)
 		return;
 	
 	r <<= 0.0;
 
-	const integer nmin = CC_getMinimumNumberOfCoefficients (me, frame - nrd2, frame + nrd2);
+	const integer nmin = CC_getMinimumNumberOfCoefficients (me, frameNumber - numberOfCoefficientsd2, frameNumber + numberOfCoefficientsd2);
 
 	for (integer i = 1; i <= nmin + 1; i ++) {
 		longdouble ri = 0.0;
-		for (integer j = -nrd2; j <= nrd2; j ++) {
-			CC_Frame cf = & my frame [frame + j];
+		for (integer j = -numberOfCoefficientsd2; j <= numberOfCoefficientsd2; j ++) {
+			const CC_Frame cf = & my frame [frameNumber + j];
 			const double c = ( i == 1 ? cf -> c0 : cf -> c [i] );
 			ri += c * j;
 		}
@@ -53,15 +53,15 @@ static void regression (VEC r, CC me, integer frame, integer nr) {
 
 autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWeight, double coefficientRegressionWeight, double logEnergyRegressionWeight, double regressionWindowLength) {
 	try {
-		integer nr = Melder_ifloor (regressionWindowLength / my dx);
+		integer numberOfCoefficients = Melder_ifloor (regressionWindowLength / my dx);
 		
 		Melder_require (my maximumNumberOfCoefficients == thy maximumNumberOfCoefficients,
 			U"The maximum number of coefficients should be equal.");
-		Melder_require (! (coefficientRegressionWeight != 0.0 && nr < 2), 
+		Melder_require (! (coefficientRegressionWeight != 0.0 && numberOfCoefficients < 2),
 			U"Time window for regression is too small.");
 
-		if (nr % 2 == 0)
-			nr ++;
+		if (numberOfCoefficients % 2 == 0)
+			numberOfCoefficients ++;
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoVEC ri = newVECraw (my maximumNumberOfCoefficients + 1);
@@ -70,14 +70,14 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 		/* Calculate distance matrix. */
 
 		autoMelderProgress progess (U"CCs_to_DTW");
-		for (integer i = 1; i <= my nx; i ++) {
-			CC_Frame fi = & my frame [i];
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			const CC_Frame fi = & my frame [iframe];
 
-			regression (ri.get(), me, i, nr);
+			regression (ri.get(), me, iframe, numberOfCoefficients);
 
-			for (integer j = 1; j <= thy nx; j ++) {
-				CC_Frame fj = & thy frame [j];
-				longdouble dist = 0.0, distr = 0.0;
+			for (integer jframe = 1; jframe <= thy nx; jframe ++) {
+				const CC_Frame fj = & thy frame [jframe];
+				longdouble dist = 0.0;
 
 				if (coefficientWeight != 0.0) {
 					for (integer k = 1; k <= fj -> numberOfCoefficients; k ++) {
@@ -93,7 +93,8 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 				}
 
 				if (coefficientRegressionWeight != 0.0) {
-					regression (rj.get(), thee, j, nr);
+					longdouble distr = 0.0;
+					regression (rj.get(), thee, jframe, numberOfCoefficients);
 					for (integer k = 2; k <= fj -> numberOfCoefficients + 1; k ++) {
 						const double d = ri [k] - rj [k];
 						distr += d * d;
@@ -103,17 +104,17 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 
 				if (logEnergyRegressionWeight != 0.0) {
 					if (coefficientRegressionWeight == 0.0)
-						regression (rj.get(), thee, j, nr);
+						regression (rj.get(), thee, jframe, numberOfCoefficients);
 					const double d = ri [1] - rj [1];
 					dist += logEnergyRegressionWeight * d * d;
 				}
 
 				dist /= coefficientWeight + logEnergyWeight + coefficientRegressionWeight + logEnergyRegressionWeight;
-				his z [i] [j] = sqrt ((double) dist);   // prototype along y-direction
+				his z [iframe] [jframe] = sqrt ((double) dist);   // prototype along y-direction
 			}
 
-			if (i % 10 == 1)
-				Melder_progress (0.999 * i / my nx, U"Calculate distances: frame ", i, U" from ", my nx, U".");
+			if (iframe % 10 == 1)
+				Melder_progress (0.999 * iframe / my nx, U"Calculate distances: frame ", iframe, U" from ", my nx, U".");
 		}
 		return him;
 	} catch (MelderError) {
