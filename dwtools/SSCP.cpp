@@ -137,18 +137,26 @@ void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool
 	double xmin = 1e308, xmax = -xmin, ymin = xmin, ymax = -ymin;
 
 	for (integer i = 1; i <= my size; i ++) {
-		SSCP s = my at [i];
+		const SSCP s = my at [i];
 		double xmn, xmx, ymn, ymx;
 		getEllipseBoundingBoxCoordinates (s, scale, confidence, & xmn, & xmx, & ymn, & ymx);
-		if (xmn < xmin) xmin = xmn;
-		if (xmx > xmax) xmax = xmx;
-		if (ymn < ymin) ymin = ymn;
-		if (ymx > ymax) ymax = ymx;
+		if (xmn < xmin)
+			xmin = xmn;
+		if (xmx > xmax)
+			xmax = xmx;
+		if (ymn < ymin)
+			ymin = ymn;
+		if (ymx > ymax)
+			ymax = ymx;
 	}
-	if (out_xmin) *out_xmin = xmin;
-	if (out_xmax) *out_xmax = xmax;
-	if (out_ymin) *out_ymin = ymin;
-	if (out_ymax) *out_ymax = ymax;
+	if (out_xmin)
+		*out_xmin = xmin;
+	if (out_xmax)
+		*out_xmax = xmax;
+	if (out_ymin)
+		*out_ymin = ymin;
+	if (out_ymax)
+		*out_ymax = ymax;
 }
 
 static autoSSCP _SSCP_extractTwoDimensions (SSCP me, integer d1, integer d2) {
