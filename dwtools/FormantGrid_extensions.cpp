@@ -1,6 +1,6 @@
 /* FormantGrid_extensions.cpp
  *
- * Copyright (C) 2009-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2009-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 	for (integer iformant = 1; iformant <= tiers->size; iformant ++) {
 		conststring32 quantity = nullptr;
 		bool garnish2 = false;
-		RealTier tier = tiers->at [iformant];
+		const RealTier tier = tiers->at [iformant];
 		if (iformant == my formants.size) {
 			quantity = U"Frequency (Hz)";
 			if (garnish)
@@ -78,7 +78,8 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, integer position) {
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, integer position) {
 	try {
-		Melder_require (my formants.size == my bandwidths.size, U"Number of formants and bandwidths should be equal.");
+		Melder_require (my formants.size == my bandwidths.size,
+			U"Number of formants and bandwidths should be equal.");
 		
 		if (position > my formants.size || position < 1)
 			position = my formants.size + 1;

@@ -145,13 +145,13 @@ autoPCA GaussianMixture_to_PCA (GaussianMixture me);
 
 autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA pca, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny);
 
-void GaussianMixture_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
+void GaussianMixture_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax);
 
-void GaussianMixture_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee, integer d, double nsigmas, double *xmin, double *xmax);
+void GaussianMixture_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee, integer d, double nsigmas, double *out_xmin, double *out_xmax);
 
-void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, double nsigmas, double *xmin, double *xmax);
+void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, double nsigmas, double *out_xmin, double *out_xmax);
 
-void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
+void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax);
 
 /* with on demand expand of pca ! */
 void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c, autostring32 *out_covname, VEC const& buf);

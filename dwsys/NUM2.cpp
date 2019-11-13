@@ -332,8 +332,14 @@ void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU cons
 	// MATmul_tt (data.get(), eigenvectors.get()) ??
 }
 
-integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2) {
-	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
+integer NUMsolveQuadraticEquation (double a, double b, double c, double *out_x1, double *out_x2) {
+	double x1, x2;
+	integer result =  gsl_poly_solve_quadratic (a, b, c, & x1, & x2);
+	if (out_x1)
+		*out_x1 = x1;
+	if (out_x2)
+		*out_x2 = x2;
+	return result;
 }
 
 autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tolerance) {
