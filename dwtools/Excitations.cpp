@@ -22,9 +22,10 @@ Thing_implement (ExcitationList, Ordered, 0);
 
 void ExcitationList_addItem_copy (ExcitationList me, Excitation you) {
 	try {
-		if (my size > 0) {
-			Melder_require (your nx == my at [1] -> nx, U"Dimension of ", you, U" should agree with the rest.");
-		}
+		if (my size > 0)
+			Melder_require (your nx == my at [1] -> nx,
+				U"Dimension of ", you, U" should agree with the rest.");
+
 		autoExcitation newItem = Data_copy (you);
 		my addItem_move (newItem.move());
 	} catch (MelderError) {
@@ -33,8 +34,8 @@ void ExcitationList_addItem_copy (ExcitationList me, Excitation you) {
 }
 
 void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list) {
-	for (integer i = 1; i <= list -> size; i ++) {
-		ExcitationList_addItem_copy (me, list -> at [i]);
+	for (integer item = 1; item <= list -> size; item ++) {
+		ExcitationList_addItem_copy (me, list -> at [item]);
 	}
 }
 
@@ -52,22 +53,22 @@ autoPatternList ExcitationList_to_PatternList (ExcitationList me, integer join) 
 	try {
 		Melder_assert (my size > 0);
 		Excitation excitation = my at [1];
-		if (join < 1) {
+		if (join < 1)
 			join = 1;
-		}
-		Melder_require (my size % join == 0, U"Number of rows should be a multiple of the join.");
+
+		Melder_require (my size % join == 0,
+			U"Number of rows should be a multiple of the join.");
 		
 		autoPatternList thee = PatternList_create (my size / join, join * excitation -> nx);
 		integer r = 0, c = 1;
 		for (integer i = 1; i <= my size; i ++) {
-			constVEC z = my at [i] -> z.row (1);
+			const constVEC z = my at [i] -> z.row (1);
 			if ((i - 1) % join == 0) {
 				r ++;
 				c = 1;
 			}
-			for (integer j = 1; j <= excitation -> nx; j ++) {
+			for (integer j = 1; j <= excitation -> nx; j ++)
 				thy z [r] [c ++] = z [j];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -81,7 +82,7 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 		Excitation excitation = my at [1];
 		autoTableOfReal thee = TableOfReal_create (my size, excitation -> nx);
 		for (integer i = 1; i <= my size; i ++) {
-			constVEC z = my at [i] -> z.row (1);
+			const constVEC z = my at [i] -> z.row (1);
 			for (integer j = 1; j <= excitation -> nx; j ++) {
 				thy data [i] [j] = z [j];
 			}
@@ -94,7 +95,8 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 
 autoExcitation ExcitationList_extractItem (ExcitationList me, integer item) {
 	try {
-		Melder_require (item > 0 && item <= my size, U"Item number should be in the range [1, ", my size, U"].");
+		Melder_require (item > 0 && item <= my size,
+			U"Item number should be in the range [1, ", my size, U"].");
 		
 		autoExcitation thee = Data_copy (my at [item]);
 		Thing_setName (thee.get(), Thing_getName (my at [item]));

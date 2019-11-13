@@ -56,7 +56,8 @@ autoDistance Configuration_to_Distance (Configuration me) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
 				dist <<= my data.row (i)  -  my data.row (j);
 				VECabs_inplace (dist.get());
-				double dmax = NUMmax (dist.get()), d = 0.0;
+				const double dmax = NUMmax (dist.get());
+				double d = 0.0;
 				if (dmax > 0.0) {
 					dist  /=  dmax; // prevent overflow
 					VECpow (dist.get(), my metric);

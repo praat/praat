@@ -23,16 +23,17 @@
 
 autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, integer evec_to) {
 	try {
-		integer numberOfVectors = evec_to - evec_from + 1;
-		integer nmin = std::min (my numberOfEigenvalues, thy numberOfEigenvalues );
+		const integer numberOfVectors = evec_to - evec_from + 1;
+		const integer nmin = std::min (my numberOfEigenvalues, thy numberOfEigenvalues );
 		Melder_require (my dimension == thy dimension,
 			U"The eigenvectors should have the same dimension.");
 		Melder_require (evec_from <= evec_to && evec_from > 0 && evec_to <= nmin,
 			U"Eigenvector range is too large.");
 
 		autoProcrustes him = Procrustes_create (numberOfVectors);
-		autoMAT rotation; 
-		NUMprocrustes (my eigenvectors.horizontalBand (evec_from, evec_to).transpose(), thy eigenvectors.horizontalBand (evec_from, evec_to).transpose(), & rotation, nullptr, nullptr);
+		autoMAT rotation;
+		NUMprocrustes (my eigenvectors.horizontalBand (evec_from, evec_to).transpose(),
+			thy eigenvectors.horizontalBand (evec_from, evec_to).transpose(), & rotation, nullptr, nullptr);
 		his r.all() <<= rotation.all();
 		return him;
 	} catch (MelderError) {

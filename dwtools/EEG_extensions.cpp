@@ -45,8 +45,8 @@ static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, string32vector cha
 			for (integer j = 1; j <= my numberOfChannels; j ++)
 				if (Melder_equ (channelNames [i], my channelNames [j].get()))
 					channelNumbers [i] = j;
-			if (channelNumbers [i] == 0)
-				Melder_throw (U"Channel name \"", channelNames [i], U"\" not found.");
+			Melder_require (channelNumbers [i] != 0,
+				U"Channel name \"", channelNames [i], U"\" not found.");
 		}
 		return channelNumbers;
 	} catch (MelderError) {
@@ -56,7 +56,7 @@ static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, string32vector cha
 
 static void EEG_setChannelNames_selected (EEG me, conststring32 precursor, constINTVEC channelNumbers) {
 	autoMelderString name;
-	conststring32 zero = U"0";
+	const conststring32 zero = U"0";
 	for (integer i = 1; i <= channelNumbers.size; i ++) {
 		MelderString_copy (& name, precursor);
 		if (my numberOfChannels > 100) {
@@ -95,8 +95,8 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 		autoCrossCorrelationTable him = Sound_to_CrossCorrelationTable (soundPart.get(), startTime, endTime, lagStep);
 		// assign channel names
 		for (integer i = 1; i <= channels.size; i ++) {
-			integer ichannel = channels [i];
-			conststring32 label = my channelNames [ichannel].get();
+			const integer ichannel = channels [i];
+			const conststring32 label = my channelNames [ichannel].get();
 			TableOfReal_setRowLabel (him.get(), i, label);
 			TableOfReal_setColumnLabel (him.get(), i, label);
 		}
@@ -214,16 +214,16 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 			endTime = my xmax;
 		}
 		// don't allow times outside domain
-		if (startTime < my xmin) {
+		if (startTime < my xmin)
 			startTime = my xmin;
-		}
-		if (endTime > my xmax) {
+
+		if (endTime > my xmax)
 			endTime = my xmax;
-		}
+
 		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, U"channel", true);
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		if (whiteningMethod != 0) {
-			bool fromCorrelation = ( whiteningMethod == 2 );
+			const bool fromCorrelation = ( whiteningMethod == 2 );
 			autoPCA pca = EEG_to_PCA (thee.get(), thy xmin, thy xmax, channelRanges, fromCorrelation);
 			autoEEG white = EEG_PCA_to_EEG_whiten (thee.get(), pca.get(), 0);
 			thee = white.move();
@@ -238,8 +238,10 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 
 		// Calculate the cross-correlations between eye-channels and the ic's
 
-		if (p_resultingEEG) *p_resultingEEG = thee.move();
-		if (p_resultingMixingMatrix) *p_resultingMixingMatrix = mm.move();
+		if (p_resultingEEG)
+			*p_resultingEEG = thee.move();
+		if (p_resultingMixingMatrix)
+			*p_resultingMixingMatrix = mm.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no independent components determined.");
 	}
@@ -248,18 +250,18 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, conststring32 channelRanges) {
 	try {
 		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, U"channel", true);
-		double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
-		double samplingFrequency = std::max (2.0 * maxFreq, 44100.0);
+		const double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
+		const double samplingFrequency = std::max (2.0 * maxFreq, 44100.0);
 		autoSound thee = Sound_createSimple (1, my xmax - my xmin, samplingFrequency);
 		for (integer i = 1; i <= channelNumbers.size; i ++) {
-			integer ichannel = channelNumbers [i];
-			double fbase = baseFrequency;// + (ichannel - 1) * channelBandwidth;
+			const integer ichannel = channelNumbers [i];
+			const double fbase = baseFrequency;// + (ichannel - 1) * channelBandwidth;
 			autoSound si = Sound_extractChannel (my sound.get(), ichannel);
 			autoSpectrum spi = Sound_to_Spectrum (si.get(), true);
 			Spectrum_passHannBand (spi.get(), 0.5, channelBandwidth - 0.5, 0.5);
 			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.get(), fbase, samplingFrequency / 2.0, 30);
 			autoSound resampled = Spectrum_to_Sound (spi_shifted.get());
-			integer nx = std::min (resampled -> nx, thy nx);
+			const integer nx = std::min (resampled -> nx, thy nx);
 			for (integer j = 1; j <= nx; j ++) {
 				thy z [1] [j] += resampled -> z [1] [j];
 			}
@@ -277,9 +279,8 @@ autoSound EEG_to_Sound_frequencyShifted (EEG me, integer channel, double frequen
 		autoSpectrum spi = Sound_to_Spectrum (si.get(), true);
 		autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.get(), frequencyShift, samplingFrequency / 2.0, 30);
 		autoSound thee = Spectrum_to_Sound (spi_shifted.get());
-		if (maxAmp > 0) {
+		if (maxAmp > 0)
 			Vector_scale (thee.get(), maxAmp);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": channel not converted to sound.");
