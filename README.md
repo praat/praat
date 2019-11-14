@@ -216,6 +216,7 @@ into your `Cygwin64 Terminal`. To accomplish this,
 add the following definitions into `/home/yourname/.profile` in your Cygwin home folder,
 so that the `bash` shell will automatically execute them whenever you start your `Cygwin64 Terminal`:
 
+    # in Cygwin:~/.profile
     PRAAT_SOURCES="/cygdrive/z/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
     alias praat-build="( cd ~/praats ;\
@@ -233,6 +234,7 @@ The cycle from editing Praat on the Mac to running the new version on Windows th
 
 If you also want to develop the 32-bit edition, you add to `.profile`:
 
+    # in Cygwin:~/.profile
     alias praat32-build="( cd ~/praats32 ;\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
         cp makefiles/makefile.defs.mingw32 makefile.defs ;\
@@ -258,6 +260,7 @@ into your `Terminal` after you add the following definitions into
 (this will be run automatically by `.bashrc` whenever you start a `Terminal` window,
 assuming that it uses the `bash` shell):
 
+    # in Ubuntu:~/.bash_aliases
     PRAAT_SOURCES="/media/psf/Home/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
     alias praat-build="( cd ~/praats ;\
@@ -269,8 +272,9 @@ assuming that it uses the `bash` shell):
 
 Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
 
-To build `praat_barren`, create a folder `praatsb`, and to your `.bash_aliases` add
+To build `praat_barren`, create a folder `praatsb`, and define
 
+    # in Ubuntu:~/.bash_aliases
     alias praatb-build="( cd ~/praatsb ;\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
         cp makefiles/makefile.defs.linux.barren makefile.defs ;\
@@ -280,10 +284,12 @@ To build `praat_barren`, create a folder `praatsb`, and to your `.bash_aliases` 
 
 You test `praat_barren` briefly by typing
 
+    # on Ubuntu command line
     praatb --version
 
-To build `praat_nogui`, create a folder `praatsn`, and to your `.bash_aliases` add
+To build `praat_nogui`, create a folder `praatsn`, and define
 
+    # in Ubuntu:~/.bash_aliases
     alias praatn-build="( cd ~/praatsn ;\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
         cp makefiles/makefile.defs.linux.nogui makefile.defs ;\
@@ -293,11 +299,13 @@ To build `praat_nogui`, create a folder `praatsn`, and to your `.bash_aliases` a
 
 You test `praat_nogui` briefly by typing
 
+    # on Ubuntu command line
     praatn --version
 
 To build Praat for Chrome64 (64-bit Intel Chromebooks only),
-create a folder `praatc`, and to your `.bash_aliases` add
+create a folder `praatc`, and define
 
+    # in Ubuntu:~/.bash_aliases
     alias praatc-build="( cd ~/praatsc ;\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
         cp makefiles/makefile.defs.chrome64 makefile.defs ;\
@@ -328,30 +336,40 @@ If you have an account on that computer (say it’s called `yourname`),
 then you can access that account with `ssh`, and it is best to do that without 
 typing your password each time. To accomplish this, type
 
+    # on Ubuntu command line
     ssh-keygen
 
 on your Ubuntu 18.04. This gives you a file `~/.ssh/id_rsa.pub` on your Ubuntu 18.04,
 which contains your public `ssh` key. You should append the contents of this `id_rsa.pub`
 to the file `~/.ssh/authorized_keys` on your intermediary computer. From that moment on,
 your intermediary computer will accept `rsync -e ssh` calls from your Ubuntu 18.04.
-On the intermediary computer, create a folder `builds`, and a folder `chrome64` inside that.
-If you now add
+On the intermediary computer, create a folder `~/builds`, and a folder `chrome64` inside that.
+If you now define
 
+    # in Ubuntu:~/.bash_aliases
     praatc-put="rsync -tpvz ~/praatsc/praat yourname@fon.hum.uva.nl:~/builds/chrome64"
     praatc-mid="praatc-build ; praatc-put"
 
-to `~/.bash_aliases` on your Ubuntu, you can build and send Praat for Chrome
-to the intermediary computer by just typing `praatc-mid`.
+you can build and send Praat for Chrome to the intermediary computer by just typing
+
+    # on Ubuntu command line
+    praatc-mid
 
 On your Chromebook, start up Linux (see the Chromebook download page for details),
-create a directory `~/praats` there, and put the following lines in your `~/.bash_aliases`:
+create a directory `~/praats` there, and define the following:
 
+    # in Chromebook:~/.bash_aliases
     alias praat-get="( cd ~/praats ;\
         rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat . )"
     alias praat="~/praats/praat"
     alias praat-run="praat-get ; praat"
 
-From then on, you can use `praat-run` to fetch Praat from the intermediary computer and run it.
+From then on, you can use
+
+    # on Chromebook command line
+    praat-run
+
+to fetch Praat from the intermediary computer and run it.
 
 The cycle from editing Praat on the Mac to running it on your Chromebook therefore takes only three steps:
 
@@ -371,17 +389,20 @@ or how to get `dpkg` under Ubuntu-buster to actually find `armhf` libraries).
 Till then, you build on the Raspberry Pi itself. On your intermediary computer, you created a folder `~/sources`.
 You send the sources there from your Mac with
 
+    # in Mac:~/.bash_profile
     PRAAT_SOURCES="~/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
     alias praats-mid="rsync -rptvz -e ssh $PRAAT_EXCLUDES \
-         $PRAAT_SOURCES/ yourname@fon.hum.uva.nl:~/sources"
+        $PRAAT_SOURCES/ yourname@fon.hum.uva.nl:~/sources"
 
 and
 
+    # on Mac command line
     praats-mid
 
 On your Raspberry Pi, you create a folder `~/praats`, and you fetch the sources there with
 
+    # in RaspberryPi:~/.bash_aliases
     alias praat-build="( cd ~/praats ;\
         rsync -rptvz -e ssh yourname@fon.hum.uva.nl:~/sources/ . ;\
         cp makefiles/makefile.defs.linux.rpi makefile.defs ;\
@@ -389,13 +410,19 @@ On your Raspberry Pi, you create a folder `~/praats`, and you fetch the sources 
     alias praat="~/praats/praat"
     alias praat-run="praat-build ; praat"
 
-after which you can build and run Praat with `praat-run`.
+after which you can build and run Praat with
+
+    # on Raspberry Pi command line
+    praat-run
 
 Thus, the cycle from editing Praat on the Mac to running it on your Chromebook therefore takes three steps:
 
 1. edit and save the source code in Xcode on your Mac;
 2. type `praats-mid` on your Mac;
 3. type `praat-run` on your Raspberry Pi.
+
+From clean sources this takes around 19 minutes (on a Raspberry Pi 4B),
+but if no header files change, then it can be done in approximately 20 seconds.
 
 ### 4.6. Distributing Praat
 
@@ -411,17 +438,17 @@ in a place like `~/builds/mac_products/Configuration64`.
 After notarizing the Mac binary (see above under 3.2),
 you include the executable in a `.dmg` disk image, with the following commands:
 
+    # on Mac command line
     PRAAT_WWW=~/Praats/www
     PRAAT_VERSION=9999
     cd ~/builds/mac_products/Configuration64
-    hdiutil create -fs HFS+ -ov -srcfolder Praat.app \
-        -volname Praat64_$PRAAT_VERSION praat64_$(PRAAT_VERSION).dmg
-    hdiutil convert -ov -format UDZO -o $PRAAT_WWW/praat$(PRAAT_VERSION)_mac64.dmg \
-        praat64_$(PRAAT_VERSION).dmg
-    rm praat64_$(PRAAT_VERSION).dmg
+    hdiutil create -fs HFS+ -ov -srcfolder Praat.app -volname Praat64_${PRAAT_VERSION} praat64_${PRAAT_VERSION}.dmg
+    hdiutil convert -ov -format UDZO -o ${PRAAT_WWW}/praat${PRAAT_VERSION}_mac64.dmg praat64_${PRAAT_VERSION}.dmg
+    rm praat64_${PRAAT_VERSION}.dmg
 
 You also need to distribute the `.xcodeproj` file, which is actually a folder, so that you have to zip it:
 
+    # on Mac command line
     PRAAT_SOURCES="~/Praats/src
     cd $PRAAT_SOURCES
     zip -r $PRAAT_WWW/praat$(PRAAT_VERSION)_xcodeproj64.zip praat64.xcodeproj
@@ -429,52 +456,59 @@ You also need to distribute the `.xcodeproj` file, which is actually a folder, s
 The Windows executables have to be sent from your Cygwin terminal to your Mac.
 It is easiest to do this without a version number (so that you have to supply the number only once),
 so you send them to the intermediate Mac folders `~/builds/win64` and `~/builds/win32`.
-In `~/.profile` on Cygwin you can include:
+On Cygwin you can define:
 
+    # in Cygwin:~/.profile
     alias praat-dist="praat-build ; rsync -t ~/praats/Praat.exe /cygdrive/z/builds/win64" 
     alias praat32-dist="praat32-build ; rsync -t ~/praats32/Praat.exe /cygdrive/z/builds/win32"
 
-On the command line in Cygwin you then write:
+so that you can “upload” the two executables to the Mac with
 
+    # on Cygwin command line
     praat-dist
     praat32-dist
 
 The four Linux executables have to be sent from your Ubuntu terminal to your Mac,
 namely to the folders `~/builds/linux64` (which will contain `praat`, `praat_barren` and
 `praat_nogui`) and `~/builds/chrome64` (which will contain only `praat`).
-In `~/.bash_aliases` you can include:
+On Ubuntu you can define
 
+    # in Ubuntu:~/.bash_aliases
     alias praat-dist="praat-build ; rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
     alias praatb-dist="praatb-build ; rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
     alias praatn-dist="praatn-build ; rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
     alias praatc-dist="praatc-build ; rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
 
-On the command line in Ubuntu you then write:
+so that you can “upload” the four executables to the Mac with
 
+    # on Ubuntu command line
     praat-dist
     praatb-dist
     praatn-dist
     praatc-dist
 
 On the Raspberry Pi, you send the executable to the intermediary computer,
-which has a folder `~/builds/rpi_armv7`.
-In `.bash_aliases` on your Raspberry Pi, you define
+which has a folder `~/builds/rpi_armv7`. On your Raspberry Pi, you define
 
+    # in RaspberryPi:~/.bash_aliases
     alias praat-mid="rsync -tpvz ~/praats/praat yourname@fon.hum.uva.nl:/builds/rpi_armv7"
 
-so that you can type
+so that you can “upload” the executable to the computer-in-the-middle with
 
+    # on Raspberry Pi command line
     praat-mid
 
 After all this, you execute the following lines in the Mac `Terminal`.
 First you fetch the Raspberry Pi edition from the intermediary computer:
 
-    rsync -tpvz yourname@fon.hum.uva.nl:/builds/rpi_armv7/praat ~/builds/rpi_armv7
+    # on Mac command line
+    rsync -tpvz yourname@fon.hum.uva.nl:~/builds/rpi_armv7/praat ~/builds/rpi_armv7
 
 When the folders under `~/builds`, namely `win64`, `win32`, `linux64`, `chrome64` and `rpi_armv7`
 all contain enough new executables (there should be 1, 1, 3, 1 and 1, respectively),
 you can issue the following commands to create the packages and install them in `~/Praats/www`:
 
+    # on Mac command line
     zip $PRAAT_WWW/praat$(PRAAT_VERSION)_win64.zip ~/builds/win64/Praat.exe
     zip $PRAAT_WWW/praat$(PRAAT_VERSION)_win32.zip ~/builds/win32/Praat.exe
     ( cd ~/builds/linux64 ;\
