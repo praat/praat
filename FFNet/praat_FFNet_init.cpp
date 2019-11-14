@@ -1,6 +1,6 @@
 /* praat_FFNet_init.cpp
  *
- * Copyright (C) 1994-2011, 2016-2017 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,6 @@
 20040422, 2.4.04: FFNet_drawWeightsToLayer  use FFNet_drawWeights
 20040422, 2.4.04: FFNet_weightsToMatrix use FFNet_extractWeights
 */
-
-#undef iam
-#define iam iam_LOOP
 
 static char32 const *QUERY_BUTTON   = U"Query -";
 static char32 const *DRAW_BUTTON     = U"Draw -";

@@ -57,16 +57,18 @@ template <class T>
 void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *, void *)) {
 	integer ii, imin;
 	T min;
-	for (integer j = 1; j <= n; j ++) {
+	for (integer j = 1; j <= n; j ++)
 		index [j] = j;
-	}
-	if (n < 2) return;   // Already sorted
+
+	if (n < 2)
+		return;   // Already sorted
 	if (n == 2) {
 		if (COMPARELT (a [2], a [1])) {
-			index [1] = 2; index [2] = 1;
+			index [1] = 2;
+			index [2] = 1;
 		}
 		return;
-	} 
+	}
 	if (n <= 12) {
 		for (integer i = 1; i < n; i ++) {
 			imin = i;
@@ -77,7 +79,9 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 					min = a [index [j]];
 				}
 			}
-			ii = index [imin]; index [imin] = index [i]; index [i] = ii;
+			ii = index [imin];
+			index [imin] = index [i];
+			index [i] = ii;
 		}
 		return;
 	}
@@ -93,7 +97,8 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			index [r] = index [1];
 			r --;
 			if (r == 1) {
-				index [1] = k; break;
+				index [1] = k;
+				break;
 			}
 		}
 		// H3 
@@ -102,12 +107,12 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			// H4
 			i = j;
 			j *= 2;
-			if (j > r) {
+			if (j > r)
 				break;
-			}
-			if (j < r && COMPARELT (a [index [j]], a [index [j + 1]])) {
+
+			if (j < r && COMPARELT (a [index [j]], a [index [j + 1]]))
 				j++; // H5
-			}
+
 			index [i] = index [j]; // H7
 		}
 		for (;;) { // H8' 
@@ -115,7 +120,8 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			i = j >> 1;
 			// H9'
 			if (j == l || COMPARELT (a [k], a [index [i]])) {
-				index [j] = k; break;
+				index [j] = k;
+				break;
 			}
 			index[j] = index[i];
 		}
@@ -227,13 +233,10 @@ void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
 		return;
 	autoVEC atmp = newVECcopy (a);
 	autoINTVEC index = NUMindexx (atmp.get());
-	if (descending) {
-		for (integer j = 1; j <= a.size / 2; j ++) {
-			integer tmp = index [j];
-			index [j] = index [a.size - j + 1];
-			index [a.size - j + 1] = tmp;
-		}
-	}
+	if (descending)
+		for (integer j = 1; j <= a.size / 2; j ++)
+			std::swap (index [j], index [a.size - j + 1]);
+
 	for (integer j = 1; j <= a.size; j ++)
 		a [j] = atmp [index [j]];
 	autoINTVEC itmp = newINTVECraw (a.size);

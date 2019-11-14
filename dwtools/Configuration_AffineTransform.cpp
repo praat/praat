@@ -1,6 +1,6 @@
 /* Configuration_AffineTransform.cpp
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c, double *out_f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 	for (integer i = 1; i <= w.ncol; i ++) {
-		double d = NUMinner (w.column (i), t.column (i));
+		const double d = NUMinner (w.column (i), t.column (i));
 		if (d < 0.0)
 			t.column (i)  *=  -1.0;
 	}
@@ -37,7 +37,7 @@ static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c
 
 	*out_f = 0.0;
 	for (integer i = 1; i <= w.ncol; i ++) {
-		longdouble d = NUMinner (w.column (i), t.column (i));
+		const longdouble d = NUMinner (w.column (i), t.column (i));
 		double tct = 0.0;
 		for (integer k = 1; k <= w.ncol; k ++)
 			tct += t [k] [i] * NUMinner (c.row (k), t.column (i));
@@ -59,7 +59,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 		t [1] [1] = 1.0;
 		return;
 	}
-	integer nr = b.nrow, nc = b.ncol;
+	const integer nc = b.ncol;
 	autoMAT u = newMATzero (nc, nc);
 	autoVEC evec = newVECzero (nc);
 	autoSVD svd = SVD_create (nc, nc);
@@ -68,8 +68,8 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 	autoMAT c = newMATmtm (a);
 	autoMAT w = newMATmul (a.transpose(), b);
-	double checkc = NUMsum (c.all());
-	double checkw = NUMsum (w.all());
+	const double checkc = NUMsum (c.all());
+	const double checkw = NUMsum (w.all());
 	
 	Melder_require (checkc != 0.0 && checkw != 0.0,
 		U"NUMmaximizeCongruence: the matrix should not be zero.");
@@ -86,8 +86,8 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 	// Step 3: largest eigenvalue of C
 
 	evec [1] = 1.0;
+	const double rho = VECdominantEigenvector_inplace (evec.get(), c.get(), 1.0e-6);
 	double f, f_old;
-	double rho = VECdominantEigenvector_inplace (evec.get(), c.get(), 1.0e-6);
 
 	do_steps45 (w.get(), t, c.get(), & f);
 	do {

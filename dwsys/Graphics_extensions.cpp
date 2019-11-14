@@ -1,6 +1,6 @@
 /* Graphics_extensions.cpp
  *
- * Copyright (C) 2012-2018 David Weenink
+ * Copyright (C) 2012-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 */
 
 void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, double w, double ymin, double ymax) {
-	int lineType = Graphics_inqLineType (g);
+	const int lineType = Graphics_inqLineType (g);
 
 	Melder_assert (r > 0.0 && w > 0.0);
 	if (data.size < 3)
@@ -59,35 +59,33 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	if (sorted [1] > ymax || sorted [sorted.size] < ymin)
 		return;
 
-	double mean = NUMmean (sorted.get());
-	double q25 = NUMquantile (sorted.get(), 0.25);
-	double q50 = NUMquantile (sorted.get(), 0.5);
-	double q75 = NUMquantile (sorted.get(), 0.75);
+	const double mean = NUMmean (sorted.get());
+	const double q25 = NUMquantile (sorted.get(), 0.25);
+	const double q50 = NUMquantile (sorted.get(), 0.5);
+	const double q75 = NUMquantile (sorted.get(), 0.75);
 
-	double hspread = fabs (q75 - q25);
-	double lowerOuterFence = q25 - 3.0 * hspread;
-	double lowerInnerFence = q25 - 1.5 * hspread;
-	double upperInnerFence = q75 + 1.5 * hspread;
-	double upperOuterFence = q75 + 3.0 * hspread;
+	const double hspread = fabs (q75 - q25);
+	const double lowerOuterFence = q25 - 3.0 * hspread;
+	const double lowerInnerFence = q25 - 1.5 * hspread;
+	const double upperInnerFence = q75 + 1.5 * hspread;
+	const double upperOuterFence = q75 + 3.0 * hspread;
 
 	/*
 		Decide whether there are outliers that have to be drawn.
 		First process sorted from below.
 	*/
-
+	
 	integer i = 1, ie = sorted.size;
 	while (i <= ie && sorted [i] < ymin)
 		i ++;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	while (i <= ie && sorted [i] < lowerOuterFence) {
-		Graphics_text (g, x, sorted [i], U"o");
-		i ++;
-	}
-	while (i <= ie && sorted[i] < lowerInnerFence) {
-		Graphics_text (g, x, sorted [i], U"*");
-		i ++;
-	}
-	double lowerWhisker = sorted [i] < q25 ? sorted [i] : lowerInnerFence;
+	while (i <= ie && sorted [i] < lowerOuterFence)
+		Graphics_text (g, x, sorted [i ++], U"o");
+
+	while (i <= ie && sorted[i] < lowerInnerFence)
+		Graphics_text (g, x, sorted [i ++], U"*");
+
+	const double lowerWhisker = sorted [i] < q25 ? sorted [i] : lowerInnerFence;
 	if (lowerWhisker > ymax)
 		return;
 
@@ -96,15 +94,13 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	i = sorted.size; ie = i;
 	while (i >= ie && sorted [i] > ymax)
 		i --;
-	while (i >= ie && sorted [i] > upperOuterFence) {
-		Graphics_text (g, x, sorted [i], U"o");
-		i --;
-	}
-	while (i >= ie && sorted [i] > upperInnerFence) {
-		Graphics_text (g, x, sorted [i], U"*");
-		i --;
-	}
-	double upperWhisker = sorted [i] > q75 ? sorted [i] : upperInnerFence;
+	while (i >= ie && sorted [i] > upperOuterFence)
+		Graphics_text (g, x, sorted [i --], U"o");
+
+	while (i >= ie && sorted [i] > upperInnerFence)
+		Graphics_text (g, x, sorted [i --], U"*");
+
+	const double upperWhisker = sorted [i] > q75 ? sorted [i] : upperInnerFence;
 	if (upperWhisker < ymin)
 		return;
 
@@ -163,8 +159,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 }
 
 void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, constVEC x, constVEC y, 
-	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel)
-{
+	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel) {
 	const double fontSize = Graphics_inqFontSize (g);
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -174,10 +169,10 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 	autoVEC ysorted = newVECcopy (y);
 	VECsort_inplace (ysorted.get());
 
-	integer numberOfData = x.size < y.size ? x.size : y.size;
+	const integer numberOfData = x.size < y.size ? x.size : y.size;
 	numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
-	double un = pow (0.5, 1.0 / numberOfQuantiles);
-	double u1 = 1.0 - un;
+	const double un = pow (0.5, 1.0 / numberOfQuantiles);
+	const double u1 = 1.0 - un;
 	if (xmin == xmax) {
 		xmin = NUMquantile (xsorted.get(), u1);
 		xmax = NUMquantile (xsorted.get(), un);
@@ -187,9 +182,9 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 		ymax = NUMquantile (ysorted.get(), un);
 	}
 	for (integer i = 1; i <= numberOfQuantiles; i++) {
-		double ui = i == 1 ? u1 : (i == numberOfQuantiles ? un : (i - 0.3175) / (numberOfQuantiles + 0.365));
-		double qx = NUMquantile (xsorted.get(), ui);
-		double qy = NUMquantile (ysorted.get(), ui);
+		const double ui = i == 1 ? u1 : (i == numberOfQuantiles ? un : (i - 0.3175) / (numberOfQuantiles + 0.365));
+		const double qx = NUMquantile (xsorted.get(), ui);
+		const double qy = NUMquantile (ysorted.get(), ui);
 		if (qx < xmin || qx > xmax || qy < ymin || qy > ymax)
 			continue; // outside area
 		Graphics_text (g, qx, qy, plotLabel);
@@ -209,7 +204,7 @@ void Graphics_lagPlot (Graphics g, constVEC data, double xmin, double xmax, inte
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	// plot x[i] vertically and x[i-lag] horizontally
 	for (integer i = 1; i <= data.size - lag; i++) {
-		double x = data[i + lag], y = data[i];
+		const double x = data[i + lag], y = data[i];
 		if (x >= xmin && x <= xmax && y >= xmin && y <= xmax)
 			Graphics_text (g, x, y, plotLabel);
 	}

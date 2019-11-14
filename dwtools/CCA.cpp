@@ -94,7 +94,8 @@ double CCA_getEigenvectorElement (CCA me, int x_or_y, integer ivec, integer elem
 
 autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 	try {
-		integer numberOfObservations = my numberOfRows, numberOfIndependents = my numberOfColumns - numberOfDependents;
+		const integer numberOfObservations = my numberOfRows;
+		const integer numberOfIndependents = my numberOfColumns - numberOfDependents;
 		Melder_require (numberOfDependents >= 1 && numberOfDependents < my numberOfColumns,
 			U"Number of dependents not correct.");
 		Melder_require (numberOfDependents <= numberOfIndependents,
@@ -110,8 +111,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		autoSVD svdx = SVD_create (numberOfObservations, numberOfIndependents);	 // numberOfObservations >= numberOfIndependents, hence no transposition
 		svdy -> u.all() <<= my data.verticalBand (1, numberOfDependents);
 		svdx -> u.all() <<= my data.verticalBand (numberOfDependents + 1, my numberOfColumns);
-		double fnormy = NUMnorm (svdy -> u.get(), 2.0);
-		double fnormx = NUMnorm (svdx -> u.get(), 2.0);
+		const double fnormy = NUMnorm (svdy -> u.get(), 2.0);
+		const double fnormx = NUMnorm (svdx -> u.get(), 2.0);
 		
 		Melder_require (fnormy > 0.0 && fnormx > 0.0,
 			U"One of the parts of the table contains only zeros.");
@@ -124,16 +125,16 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		SVD_compute (svdy.get());
 		SVD_compute (svdx.get());
 
-		integer numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.get(), 0.0);
-		integer numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.get(), 0.0);
+		const integer numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.get(), 0.0);
+		const integer numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.get(), 0.0);
 
 		// Form the matrix C = ux' uy (use svd-object storage)
 
 		autoSVD svdc = SVD_create (numberOfIndependents, numberOfDependents);
 		MATmul_fast (svdc -> u.get(), svdx -> u.transpose(), svdy -> u.get());
 		SVD_compute (svdc.get());
-		integer numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.get(), 0.0);
-		integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;
+		const integer numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.get(), 0.0);
+		const integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, numberOfDependents, numberOfIndependents);
 		thy yLabels = strings_to_Strings (my columnLabels.get(), 1, numberOfDependents);
@@ -150,7 +151,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 			rows(X') = evecx[i][j] = Uc[k][i] * Vx[j][k] / Dx[k]
 		*/
 		for (integer icoef = 1; icoef <= numberOfCoefficients; icoef ++) {
-			double ccc = svdc -> d [icoef];
+			const double ccc = svdc -> d [icoef];
 			thy y -> eigenvalues [icoef] = thy x -> eigenvalues [icoef] = ccc * ccc;
 			for (integer idep = 1; idep <= numberOfDependents; idep ++) {
 				longdouble t = 0.0;
@@ -180,8 +181,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 
 autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer numberOfFactors) {
 	try {
-		integer n = thy numberOfRows;
-		integer nx = my x -> dimension, ny = my y -> dimension;
+		const integer n = thy numberOfRows;
+		const integer nx = my x -> dimension, ny = my y -> dimension;
 
 		Melder_require (ny + nx == thy numberOfColumns,
 			U"The number of columns in the table (", thy numberOfColumns,
@@ -209,22 +210,24 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 
 autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from) {
 	try {
-		integer ny = my y -> dimension, nx = my x -> dimension;
-		integer nev = my y -> numberOfEigenvalues;
+		const integer ny = my y -> dimension, nx = my x -> dimension;
+		const integer nev = my y -> numberOfEigenvalues;
 
 		/*
 			We can only predict when we have the largest dimension as input
 			and the number of coefficients equals the dimension of the smallest.
 		*/
 		
-		Melder_require (ny == nev, U"There are not enough correlations present for prediction.");
+		Melder_require (ny == nev,
+			U"There are not enough correlations present for prediction.");
 		
 
 		if (from == 0)
 			from = 1;
 
-		integer ncols = thy numberOfColumns - from + 1;
-		Melder_require (from > 0 && ncols == nx, U"The number of columns to analyze should be equal to ", nx, U".");
+		const integer ncols = thy numberOfColumns - from + 1;
+		Melder_require (from > 0 && ncols == nx,
+			U"The number of columns to analyze should be equal to ", nx, U".");
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, ny);
 		MATmul (his data.get(), thy data.verticalBand (from, thy numberOfColumns), my x -> eigenvectors.transpose());
@@ -266,24 +269,28 @@ double CCA_getCorrelationCoefficient (CCA me, integer index) {
 	return sqrt (my y -> eigenvalues[index]);
 }
 
-void CCA_getZeroCorrelationProbability (CCA me, integer index, double *out_prob, double *out_chisq, double *out_df) {
-	double lambda = 1.0, *ev = my y -> eigenvalues.at;
-	integer nev = my y -> numberOfEigenvalues;
-	integer ny = my y -> dimension, nx = my x -> dimension;
+void CCA_getZeroCorrelationProbability (CCA me, integer eigenvalueNumber, double *out_prob, double *out_chisq, double *out_df) {
+	const double *eigenvalues = my y -> eigenvalues.at;
+	const integer numberOfEigenvalues = my y -> numberOfEigenvalues;
+	const integer ny = my y -> dimension, nx = my x -> dimension;
 
 	double chisq = undefined, prob = undefined, df = undefined;
 
-	if (index >= 1 && index <= nev) {
-		for (integer i = index; i <= nev; i ++)
-			lambda *= 1.0 - ev [i];
-		df = (ny - index + 1) * (nx - index + 1);
+	if (eigenvalueNumber >= 1 && eigenvalueNumber <= numberOfEigenvalues) {
+		double lambda = 1.0;
+		for (integer ieigen = eigenvalueNumber; ieigen <= numberOfEigenvalues; ieigen ++)
+			lambda *= 1.0 - eigenvalues [ieigen];
+		df = (ny - eigenvalueNumber + 1) * (nx - eigenvalueNumber + 1);
 		chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);
 		prob = NUMchiSquareQ (chisq, df);
 	}
 	
-	if (out_chisq) *out_chisq = chisq;
-	if (out_df) *out_df = df;
-	if (out_prob) *out_prob = prob;
+	if (out_chisq)
+		*out_chisq = chisq;
+	if (out_df)
+		*out_df = df;
+	if (out_prob)
+		*out_prob = prob;
 }
 
 /* End of file CCA.c */

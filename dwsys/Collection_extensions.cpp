@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2018 David Weenink, 2018 Paul Boersma
+ * Copyright (C) 1994-2019 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@
 
 autoCollection Collection_Permutation_permuteItems (Collection me, Permutation him) {
 	try {
-		if (my size != his numberOfElements) {
-			Melder_throw (me, U"The number of elements are not equal.");
-		}
+		Melder_require (my size == his numberOfElements,
+			U"The number of elements must be equal.");
+
 		autoINTVEC pos = newINTVECraw (my size);
 		autoCollection thee = Data_copy (me);
 
@@ -43,8 +43,8 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 		/* k <  i : position of item 'k' */
 		/* k >= i : the item at position 'k' */
 		for (integer i = 1; i <= my size; i++) {
-			integer ti = pos [i], which = Permutation_getValueAtIndex (him, i);
-			integer where = pos [which];   // where >= i
+			const integer ti = pos [i], which = Permutation_getValueAtIndex (him, i);
+			const integer where = pos [which];   // where >= i
 			Daata tmp = static_cast<Daata> (thy at [i]);
 			if (i == where)
 				continue;
@@ -89,9 +89,9 @@ int OrderedOfString_append (StringList me, conststring32 append) {
 
 autoStringList OrderedOfString_joinItems (StringList me, StringList thee) {
 	try {
-		if (my size != thy size) {
-			Melder_throw (U"sizes should be equal.");
-		}
+		Melder_require (my size == thy size,
+			U"sizes should be equal.");
+		
 		autoStringList him = Data_copy (me);   // FIXME: this copies *all* the data from me, and only the strings from thee
 
 		for (integer i = 1; i <= my size; i ++) {
@@ -134,9 +134,9 @@ integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee) 
 
 double OrderedOfString_getFractionDifferent (StringList me, StringList thee) {
 	integer numberOfDifferences = OrderedOfString_getNumberOfDifferences (me, thee);
-	if (numberOfDifferences < 0) {
+	if (numberOfDifferences < 0)
 		return undefined;
-	}
+
 	return my size == 0 ? 0.0 : (double) numberOfDifferences / my size;
 }
 
@@ -215,8 +215,7 @@ void OrderedOfString_removeOccurrences (StringList me, conststring32 search, boo
 	for (integer i = my size; i >= 1; i --) {
 		SimpleString ss = my at [i];
 		if ((use_regexp && strstr_regexp (ss -> string.get(), search)) ||
-		        (! use_regexp && str32str (ss -> string.get(), search)))
-		{
+		        (! use_regexp && str32str (ss -> string.get(), search))) {
 			my removeItem (i);
 		}
 	}

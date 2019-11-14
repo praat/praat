@@ -1,6 +1,6 @@
 /* FFNet_Eigen.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 #include "NUM2.h"
 
 void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax) {
-	integer ix = integer_abs (pcx), iy = integer_abs (pcy);
-	integer numberOfEigenvalues = eigen -> numberOfEigenvalues;
-	integer dimension = eigen -> dimension;
+	const integer ix = integer_abs (pcx), iy = integer_abs (pcy);
+	const integer numberOfEigenvalues = eigen -> numberOfEigenvalues;
+	const integer dimension = eigen -> dimension;
 
 	if (ix > numberOfEigenvalues || iy > numberOfEigenvalues || my numberOfInputs != dimension)
 		return;
@@ -49,20 +49,23 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (integer i = 1; i <= my numberOfUnitsInLayer [1]; i ++) {
-		integer unitOffset = my numberOfInputs + 1;
-		double c1 = 0.0, c2 = 0.0, bias = my w [my wLast [unitOffset + i]];
-		double x [6], y [6], xs [3], ys [3]; 
+		const integer unitOffset = my numberOfInputs + 1;
+		const double bias = my w [my wLast [unitOffset + i]];
+		double c1 = 0.0, c2 = 0.0;
+		double x [6], y [6], xs [3], ys [3];
 		integer ns = 0;
 		for (integer j = 1; j <= my numberOfInputs; j ++) {
 			c1 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [ix] [j];
 			c2 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [iy] [j];
 		}
-		x [1] = x [2] = x [5] = xmin; x [3] = x [4] = xmax;
-		y [1] = y [4] = y [5] = ymin; y [2] = y [3] = ymax;
+		x [1] = x [2] = x [5] = xmin;
+		x [3] = x [4] = xmax;
+		y [1] = y [4] = y [5] = ymin;
+		y [2] = y [3] = ymax;
 		for (integer j = 1; j <= 4; j++) {
-			double p1 = c1 * x [j] + c2 * y [j] + bias;
-			double p2 = c1 * x [j + 1] + c2 * y [j + 1] + bias;
-			double r = fabs (p1) / (fabs (p1) + fabs (p2));
+			const double p1 = c1 * x [j] + c2 * y [j] + bias;
+			const double p2 = c1 * x [j + 1] + c2 * y [j + 1] + bias;
+			const double r = fabs (p1) / (fabs (p1) + fabs (p2));
 			if (p1 *p2 > 0 || r == 0.0) 
 				continue;
 
@@ -86,10 +89,13 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, integer unit, integer layer,
 	integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax)
 {
-	if (layer < 1 || layer > my numberOfLayers) return;
-	if (unit < 1 || unit > my numberOfUnitsInLayer [layer]) return;
-	if (pcx > thy numberOfEigenvalues || pcy > thy numberOfEigenvalues) return;
-	integer numberOfUnitsInLayer_m1 = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer [layer - 1] );
+	if (layer < 1 || layer > my numberOfLayers)
+		return;
+	if (unit < 1 || unit > my numberOfUnitsInLayer [layer])
+		return;
+	if (pcx > thy numberOfEigenvalues || pcy > thy numberOfEigenvalues)
+		return;
+	const integer numberOfUnitsInLayer_m1 = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer [layer - 1] );
 	if (numberOfUnitsInLayer_m1 != thy dimension) return;
 
 
@@ -106,7 +112,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	integer node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
+	const integer node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
 	if (node < 1) return;
 
 	/*
@@ -135,16 +141,18 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 			Both planes are parallel, no intersection.
 	*/
 
-	integer iw = my wFirst [node] - 1;
+	const integer iw = my wFirst [node] - 1;
 	double we1 = 0.0, we2 = 0.0;
 	for (integer i = 1; i <= numberOfUnitsInLayer_m1; i ++) {
 		we1 += my w [iw + i] * thy eigenvectors [pcx] [i];
 		we2 += my w [iw + i] * thy eigenvectors [pcy] [i];
 	}
 
-	double bias = my w [my wLast [node]];
-	x1 = xmin; x2 = xmax;
-	y1 = ymin; y2 = ymax;
+	const double bias = my w [my wLast [node]];
+	x1 = xmin;
+	x2 = xmax;
+	y1 = ymin;
+	y2 = ymax;
 	if (we1 != 0.0) {
 		x1 = -bias / we1;
 		y1 = 0.0;
@@ -159,7 +167,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 		return;
 	}
 	double xi [3], yi [3]; /* Intersections */
-	double ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
+	const double ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
 	if (ni == 2)
 		Graphics_line (g, xi [1], yi [1], xi [2], yi [2]);
 	else

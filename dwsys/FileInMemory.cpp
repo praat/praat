@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2013, 2015-2017 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2019 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ void structFileInMemory :: v_info () {
 autoFileInMemory FileInMemory_create (MelderFile file) {
 	try {
 		Melder_require (MelderFile_readable (file), U"File is not readable.");
-		integer length = MelderFile_length (file);
+		const integer length = MelderFile_length (file);
 		Melder_require (length > 0, U"File should not be empty.");
 		
 		autoFileInMemory me = Thing_new (FileInMemory);
@@ -62,7 +62,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my d_data = NUMvector <uint8> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
 		MelderFile_open (file);
 		for (integer i = 0; i < my d_numberOfBytes; i++) {
-			unsigned int number = bingetu8 (file -> filePointer);
+			const unsigned int number = bingetu8 (file -> filePointer);
 			my d_data[i] = number;
 		}
 		my d_data[my d_numberOfBytes] = 0;   // one extra
@@ -86,7 +86,7 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 			my _dontOwnData = false;
 			my d_data = NUMvector <unsigned char> ((integer) 0, numberOfBytes);
 			memcpy (my d_data, data, (size_t) numberOfBytes + 1);
-		} 
+		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FileInMemory not created from data.");
@@ -99,12 +99,12 @@ void FileInMemory_setId (FileInMemory me, conststring32 newId) {
 
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine)
 {
-	if (numberOfBytesPerLine < 1) {
+	if (numberOfBytesPerLine < 1)
 		numberOfBytesPerLine = 20;
-	}
+
 	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
 	for (integer i = 0; i < my d_numberOfBytes; i++) {
-		unsigned char number = my d_data [i];
+		const unsigned char number = my d_data [i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
 				i % numberOfBytesPerLine == numberOfBytesPerLine - 1 ? U"\n" : U" ");
 	}

@@ -1,6 +1,6 @@
 /* FFNet_PatternList_Categories.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ double FFNet_PatternList_Categories_getCosts_total (FFNet me, PatternList p, Cat
 }
 
 double FFNet_PatternList_Categories_getCosts_average (FFNet me, PatternList p, Categories c, int costFunctionType) {
-	double costs = FFNet_PatternList_Categories_getCosts_total (me, p, c, costFunctionType);
+	const double costs = FFNet_PatternList_Categories_getCosts_total (me, p, c, costFunctionType);
 	return ( isundef (costs) ? undefined : costs / p -> ny );
 }
 
@@ -80,7 +80,7 @@ autoCategories FFNet_PatternList_to_Categories (FFNet me, PatternList thee, int 
 
 		for (integer k = 1; k <= thy ny; k ++) {
 			FFNet_propagate (me, thy z.row (k), nullptr);
-			integer index = FFNet_getWinningUnit (me, labeling);
+			const integer index = FFNet_getWinningUnit (me, labeling);
 			autoSimpleString item = Data_copy (my outputCategories->at [index]);
 			his addItem_move (item.move());
 		}

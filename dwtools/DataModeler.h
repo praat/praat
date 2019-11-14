@@ -33,7 +33,6 @@
 #define DataModeler_DATA_WEIGH_SIGMA 1
 #define DataModeler_DATA_WEIGH_RELATIVE 2
 #define DataModeler_DATA_WEIGH_SQRT 3
-#define DataModeler_DATA_WEIGH_SQRT 3
 
 #define DataModeler_DATA_VALID 0
 #define DataModeler_DATA_INVALID -1
@@ -74,19 +73,19 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax, integer numb
 void DataModeler_setBasisFunctions (DataModeler me, int type);
 
 void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	int estimated, integer numberOfParameters, int errorbars, int connectPoints, double barWidth_mm, double horizontalOffset_mm, int drawDots);
+	bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, double horizontalOffset_mm, bool drawDots);
 
 void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	int estimated, integer numberOfParameters, int errorbars, double barWidth_mm, double horizontalOffset_mm);
+	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_mm);
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	int estimated, integer numberOfParameters, int errorbars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
+	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	int estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
+	bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
 
 void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	int estimated, integer numberOfParameters, double horizontalOffset_mm);
+	bool estimated, integer numberOfParameters, double horizontalOffset_mm);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm);
@@ -182,11 +181,11 @@ void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromFor
 void FormantModeler_setTolerance (FormantModeler me, double tolerance);
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters,
-	int errorBars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
+	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
+	bool errorBars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	int estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
+	bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
 	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish);
@@ -254,9 +253,9 @@ double FormantModeler_getWeightedMean (FormantModeler me, integer iformant);
 double FormantModeler_getParameterValue (FormantModeler me, integer iformant, integer iparameter);
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, integer numberOfFormants,
-	integer numberOfParametersPerTrack, int bandwidthEstimatesSigma);
+	integer numberOfParametersPerTrack, bool bandwidthEstimatesSigma);
 
-autoFormant FormantModeler_to_Formant (FormantModeler me, int estimate, int estimateUndefined);
+autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool estimateUndefined);
 
 autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas, int useSigmaY);
 
@@ -267,11 +266,11 @@ double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, intege
 
 void FormantModeler_reportChiSquared (FormantModeler me, int weighDataType);
 
-integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, bool useBandWidthsForTrackEstimation, bool useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
 double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
-autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power);
+autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, bool useBandWidthsForTrackEstimation, double numberOfSigmas, double power);
 
 autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
