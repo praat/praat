@@ -120,6 +120,18 @@ then you may have to switch the Type of some .cpp file from “C++ Source” to 
 If you want to build Praat as a library instead of as an executable,
 try the target `praat_mac64_a` (static) or `praat_mac64_so` (dynamic).
 
+**Notarization.** If you want others to be able to use your Mac app,
+you will probably have to not only *sign* the executable, but also *notarize* it. To this end,
+do Xcode (11.2) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
+Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ...wait...
+(“Ready to distribute”) -> Export Notarized App). If your Praat.app was built into
+`~/builds/mac_products/Configuration64`, then you can save the notarized
+`Praat.app` in `~/builds/mac_products`, then drag it in the Finder to
+`~/builds/mac_products/Configuration64`, overwriting the non-notarized
+Praat.app that was already there. If on the way you receive an error
+“App Store Connect Operation Error -- You must first sign the relevant contracts online”,
+you have to log in to `developer.apple.com` and do Review Agreement -> Agree.
+
 ### 3.3. Compiling on Linux and other Unixes
 
 To set up the required system libraries, install some graphics and sound packages:
@@ -171,14 +183,14 @@ after which building Praat involves no more then typing Command-B into Xcode
 (or Command-R to build and run)
 or `b` into a Windows or Linux terminal (or `r` to build and run).
 
-### 4.1. MacOS set-up
+### 4.1. MacOS development set-up
 
 Your source code folders, such as `fon` and `sys`, will reside in a folder like `/Users/yourname/Praats/src`,
 where you also put `praat64.xcodeproj`, as described above in 3.2.
 On Paul’s 2018 MacBook Pro with Xcode 11.2, building Praat with Command-B or Command-R,
 after cleaning the build folder with Shift-Command-K, takes 1 minute and 30 seconds (optimization level O3).
 
-### 4.2. Windows set-up
+### 4.2. Windows development set-up
 
 Under Parallels Desktop 15 or later, install Windows 10. In Windows 10, install Cygwin,
 and create a `praats` folder, as described above in 3.1.
@@ -196,31 +208,39 @@ then `Options`, then `Sharing`, then `Share Mac`, and set `Share folders` to `Ho
 Your MacOS home folder (i.e. `/Users/yourname`) is now visible anywhere on Windows 10
 as the `Z` drive (or so), and from the `Cygwin64 Terminal` you can access it as `/cygdrive/z`.
 
-The `Cygwin64 Terminal` uses the `bash` shell, so it will be good to define
-
-    MAC_SOURCE="/cygdrive/z/Praats/src"
-
-in `/home/yourname/.bashrc` and/or `/home/yourname/.bash_profile` in your Cygwin home folder.
-
 When developing Praat for Windows, you just edit your files in Xcode;
 do not forget to save them (as you do e.g. by building in Xcode).
 Then, just as you use Command-B and Command-R in Xcode,
-you will be able to type `b` (Build) or `r` (Build & Run) into your `Cygwin64 Terminal`
-after you add the following definitions into `/home/yourname/.bashrc` and/or `/home/yourname/.bash_profile`:
+you will be able to type `praat-build` (which only buiulds) or `praat-run` (which build and runs)
+into your `Cygwin64 Terminal`. To accomplish this,
+add the following definitions into `/home/yourname/.profile` in your Cygwin home folder,
+so that the `bash` shell will automatically execute them whenever you start your `Cygwin64 Terminal`:
 
+    PRAAT_SOURCES="/cygdrive/z/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
-    alias b="  cd ~/praats   ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.mingw64 makefile.defs ; make -j12"
-    alias b32="cd ~/praats32 ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.mingw32 makefile.defs ; make -j12"
-    alias p="~/praats/Praat.exe"
-    alias p32="~/praats32/Praat.exe"
-    alias r="b ; p"
-    alias r32="b32 ; p32"
+    alias praat-build="( cd ~/praats ;\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
+        cp makefiles/makefile.defs.mingw64 makefile.defs ;\
+        make -j12 )"
+    alias praat="~/praats/Praat.exe"
+    alias praat-run="praat-build ; praat"
 
-This also defines `p` for running Praat without first rebuilding it.
+This also defines `praat` for running Praat without first rebuilding it.
+The cycle from editing Praat on the Mac to running the new version on Windows therefore takes only two steps:
 
-### 4.3. Linux set-up
+1. edit and save the source code in Xcode on your Mac;
+2. type `praat-run` on your Windows 10 (under Parallels Desktop on your Mac).
+
+If you also want to develop the 32-bit edition, you add to `.profile`:
+
+    alias praat32-build="( cd ~/praats32 ;\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
+        cp makefiles/makefile.defs.mingw32 makefile.defs ;\
+        make -j12 )"
+    alias praat32="~/praats32/Praat.exe"
+    alias praat32-run="praat32-build ; praat32"
+
+### 4.3. Linux development set-up
 
 Under Parallels Desktop 15 or later, install Ubuntu 18.04, and create
 a folder `praats` in your home folder, as described above in 3.3.
@@ -231,59 +251,64 @@ then `Options`, then `Sharing`, then `Share Mac`, and set `Share folders` to `Ho
 Your MacOS home folder (i.e. `/Users/yourname`) is now visible on the Ubuntu 18.04 desktop
 as `Home`, and from the `Terminal` you can access it as `/media/psf/Home`.
 
-The `Terminal` uses the `bash` shell, so it will be good to define
-
-    MAC_SOURCE="/media/psf/Home/Praats/src"
-
-in `/home/parallels/.bash_aliases` in your Ubuntu 18.04 home folder
-(this will be run automatically by `.bashrc` whenever you start a `Terminal` window).
-
 When developing Praat for Linux, you just edit and save your files in Xcode.
-You will be able to type `b` (Build) or `p` (run Praat) or `r` (Build & Run) into your `Terminal`
-after you add the following definitions into `/home/parallels/.bash_aliases`:
+You will be able to type `praat-build` (which only builds) or `praat-run` (which builds and runs)
+into your `Terminal` after you add the following definitions into
+`/home/parallels/.bash_aliases` in your Ubuntu 18.04 home folder
+(this will be run automatically by `.bashrc` whenever you start a `Terminal` window,
+assuming that it uses the `bash` shell):
 
+    PRAAT_SOURCES="/media/psf/Home/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
-    alias b="cd ~/praats ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.linux.pulse makefile.defs ; make -j12"
-    alias p="~/praats/praat"
-    alias r="b ; p"
+    alias praat-build="( cd ~/praats ;\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
+        cp makefiles/makefile.defs.linux.pulse makefile.defs ;\
+        make -j12 )"
+    alias praat="~/praats/praat"
+    alias praat-run="praat-build ; praat"
 
 Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
 
 To build `praat_barren`, create a folder `praatsb`, and to your `.bash_aliases` add
 
-    alias bb="cd ~/praatsb ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.linux.barren makefile.defs ; make -j12"
-    alias pb="~/praatsb/praat_barren"
-    alias rb="bb ; pb"
+    alias praatb-build="( cd ~/praatsb ;\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
+        cp makefiles/makefile.defs.linux.barren makefile.defs ;\
+        make -j12 )"
+    alias praatb="~/praatsb/praat_barren"
+    alias praatb-run="praatb-build ; praatb"
 
 You test `praat_barren` briefly by typing
 
-    pb --version
+    praatb --version
 
 To build `praat_nogui`, create a folder `praatsn`, and to your `.bash_aliases` add
 
-    alias bn="cd ~/praatsn ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.linux.nogui makefile.defs ; make -j12"
-    alias pn="~/praatsn/praat_nogui"
-    alias rn="bn ; pn"
+    alias praatn-build="( cd ~/praatsn ;\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
+        cp makefiles/makefile.defs.linux.nogui makefile.defs ;\
+        make -j12 )"
+    alias praatn="~/praatsn/praat_nogui"
+    alias praatn-run="praatn-build ; praatn"
 
 You test `praat_nogui` briefly by typing
 
-    pn --version
+    praatn --version
 
-To build `praat` for Chrome64 (64-bit Intel Chromebooks only),
+To build Praat for Chrome64 (64-bit Intel Chromebooks only),
 create a folder `praatc`, and to your `.bash_aliases` add
 
-    alias bc="cd ~/praatsc ; rsync -rptvz $MAC_SOURCE/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.chrome64 makefile.defs ; make -j12"
-    alias pc="~/praatsc/praat"
-    alias rc="bc ; pc"
+    alias praatc-build="( cd ~/praatsc ;\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
+        cp makefiles/makefile.defs.chrome64 makefile.defs ;\
+        make -j12 )"
+    alias praatc="~/praatsc/praat"
+    alias praatc-run="praatc-build ; praat"
 
-To test `praat` for Chrome64, you can just run it on Ubuntu 18.04 by typing `pc`,
+To test Praat for Chrome64, you can just run it on Ubuntu 18.04 by typing `praatc`,
 or you transfer it to a Chromebook for the real test.
 
-### 4.4. Chromebook set-up
+### 4.4. Chromebook development set-up
 
 Parallels Desktop 15 has no emulator for Chrome, so the choice is between
 building Praat on a Chromebook directly or building Praat on Ubuntu 18.04.
@@ -296,8 +321,8 @@ because building the Intel Chrome64 edition on Ubuntu 18.04 takes only
 you can do this with the `bc` command.
 
 Next, you need a way to get the executable `praat` from Mac/Ubuntu to your Chromebook.
-The distributors of Praat do this via an intermediate university computer;
-let’s call this intermediate computer `fon.hum.uva.nl`
+The distributors of Praat do this via an intermediary university computer;
+let’s call this computer-in-the-middle `fon.hum.uva.nl`
 (not coincidentally, that’s the name of the computer that hosts `praat.org`).
 If you have an account on that computer (say it’s called `yourname`),
 then you can access that account with `ssh`, and it is best to do that without 
@@ -307,30 +332,170 @@ typing your password each time. To accomplish this, type
 
 on your Ubuntu 18.04. This gives you a file `~/.ssh/id_rsa.pub` on your Ubuntu 18.04,
 which contains your public `ssh` key. You should append the contents of this `id_rsa.pub`
-to the file `~/.ssh/authorized_keys` on your intermediate computer. From that moment on,
-your intermediate computer will accept `rsync -e ssh` calls from your Ubuntu 18.04.
-On the intermediate computer, create a folder `builds`, and a folder `chrome64` inside that.
+to the file `~/.ssh/authorized_keys` on your intermediary computer. From that moment on,
+your intermediary computer will accept `rsync -e ssh` calls from your Ubuntu 18.04.
+On the intermediary computer, create a folder `builds`, and a folder `chrome64` inside that.
 If you now add
 
-    putc="rsync -tpvz ~/praatsc/praat yourname@fon.hum.uva.nl:~/builds/chrome64"
-    ic="bc ; putc"
+    praatc-put="rsync -tpvz ~/praatsc/praat yourname@fon.hum.uva.nl:~/builds/chrome64"
+    praatc-mid="praatc-build ; praatc-put"
 
 to `~/.bash_aliases` on your Ubuntu, you can build and send Praat for Chrome
-to the intermediate computer by just typing `ic`.
+to the intermediary computer by just typing `praatc-mid`.
 
 On your Chromebook, start up Linux (see the Chromebook download page for details),
 create a directory `~/praats` there, and put the following lines in your `~/.bash_aliases`:
 
-    alias get="cd ~/praats ; rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat ."
-    alias p="~/praats/praat"
-    alias r="get ; p"
+    alias praat-get="( cd ~/praats ;\
+        rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat . )"
+    alias praat="~/praats/praat"
+    alias praat-run="praat-get ; praat"
 
-From then on, you can use `r` to get Praat from the intermediate computer and run it.
+From then on, you can use `praat-run` to fetch Praat from the intermediary computer and run it.
 
 The cycle from editing Praat on the Mac to running it on your Chromebook therefore takes only three steps:
 
 1. edit and save the source code in Xcode on your Mac;
-2. type `ic` on your Ubuntu (under Parallels Desktop on your Mac);
-3. type `r` on your Chromebook.
+2. type `praatc-mid` on your Ubuntu (under Parallels Desktop on your Mac);
+3. type `praat-run` on your Chromebook.
 
 For edits in a `cpp` file (no changes in header files), this whole cycle can be performed within 15 seconds.
+
+### 4.5. Raspberry Pi development set-up
+
+One could perhaps create the Raspberry Pi edition by cross-compiling on Ubuntu 18.04.
+If any reader of these lines has precise instructions, we would like to know about it
+(the main problem is how to install the GTK etc libraries in the Raspberry Pi toolchain,
+or how to get `dpkg` under Ubuntu-buster to actually find `armhf` libraries).
+
+Till then, you build on the Raspberry Pi itself. On your intermediary computer, you created a folder `~/sources`.
+You send the sources there from your Mac with
+
+    PRAAT_SOURCES="~/Praats/src"
+    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
+    alias praats-mid="rsync -rptvz -e ssh $PRAAT_EXCLUDES \
+         $PRAAT_SOURCES/ yourname@fon.hum.uva.nl:~/sources"
+
+and
+
+    praats-mid
+
+On your Raspberry Pi, you create a folder `~/praats`, and you fetch the sources there with
+
+    alias praat-build="( cd ~/praats ;\
+        rsync -rptvz -e ssh yourname@fon.hum.uva.nl:~/sources/ . ;\
+        cp makefiles/makefile.defs.linux.rpi makefile.defs ;\
+        make -j4 )"
+    alias praat="~/praats/praat"
+    alias praat-run="praat-build ; praat"
+
+after which you can build and run Praat with `praat-run`.
+
+Thus, the cycle from editing Praat on the Mac to running it on your Chromebook therefore takes three steps:
+
+1. edit and save the source code in Xcode on your Mac;
+2. type `praats-mid` on your Mac;
+3. type `praat-run` on your Raspberry Pi.
+
+### 4.6. Distributing Praat
+
+If you want to distribute your version of Praat, you can do so on GitHub and/or on a website
+(at least, that’s how the main authors do it). Both of these venues require that you have
+all the executables in one place. The guide below refers to the creation of packages
+for all platforms for Praat version 9.9.99, although your version number will be different.
+The packages will be collected in the directory `~/Praats/www` on the Mac.
+
+If you follow the location mentioned in the `.xcodeproj` file, the Mac binary will reside
+in a place like `~/builds/mac_products/Configuration64`.
+
+After notarizing the Mac binary (see above under 3.2),
+you include the executable in a `.dmg` disk image, with the following commands:
+
+    PRAAT_WWW=~/Praats/www
+    PRAAT_VERSION=9999
+    cd ~/builds/mac_products/Configuration64
+    hdiutil create -fs HFS+ -ov -srcfolder Praat.app \
+        -volname Praat64_$PRAAT_VERSION praat64_$(PRAAT_VERSION).dmg
+    hdiutil convert -ov -format UDZO -o $PRAAT_WWW/praat$(PRAAT_VERSION)_mac64.dmg \
+        praat64_$(PRAAT_VERSION).dmg
+    rm praat64_$(PRAAT_VERSION).dmg
+
+You also need to distribute the `.xcodeproj` file, which is actually a folder, so that you have to zip it:
+
+    PRAAT_SOURCES="~/Praats/src
+    cd $PRAAT_SOURCES
+    zip -r $PRAAT_WWW/praat$(PRAAT_VERSION)_xcodeproj64.zip praat64.xcodeproj
+
+The Windows executables have to be sent from your Cygwin terminal to your Mac.
+It is easiest to do this without a version number (so that you have to supply the number only once),
+so you send them to the intermediate Mac folders `~/builds/win64` and `~/builds/win32`.
+In `~/.profile` on Cygwin you can include:
+
+    alias praat-dist="praat-build ; rsync -t ~/praats/Praat.exe /cygdrive/z/builds/win64" 
+    alias praat32-dist="praat32-build ; rsync -t ~/praats32/Praat.exe /cygdrive/z/builds/win32"
+
+On the command line in Cygwin you then write:
+
+    praat-dist
+    praat32-dist
+
+The four Linux executables have to be sent from your Ubuntu terminal to your Mac,
+namely to the folders `~/builds/linux64` (which will contain `praat`, `praat_barren` and
+`praat_nogui`) and `~/builds/chrome64` (which will contain only `praat`).
+In `~/.bash_aliases` you can include:
+
+    alias praat-dist="praat-build ; rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
+    alias praatb-dist="praatb-build ; rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
+    alias praatn-dist="praatn-build ; rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
+    alias praatc-dist="praatc-build ; rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
+
+On the command line in Ubuntu you then write:
+
+    praat-dist
+    praatb-dist
+    praatn-dist
+    praatc-dist
+
+On the Raspberry Pi, you send the executable to the intermediary computer,
+which has a folder `~/builds/rpi_armv7`.
+In `.bash_aliases` on your Raspberry Pi, you define
+
+    alias praat-mid="rsync -tpvz ~/praats/praat yourname@fon.hum.uva.nl:/builds/rpi_armv7"
+
+so that you can type
+
+    praat-mid
+
+After all this, you execute the following lines in the Mac `Terminal`.
+First you fetch the Raspberry Pi edition from the intermediary computer:
+
+    rsync -tpvz yourname@fon.hum.uva.nl:/builds/rpi_armv7/praat ~/builds/rpi_armv7
+
+When the folders under `~/builds`, namely `win64`, `win32`, `linux64`, `chrome64` and `rpi_armv7`
+all contain enough new executables (there should be 1, 1, 3, 1 and 1, respectively),
+you can issue the following commands to create the packages and install them in `~/Praats/www`:
+
+    zip $PRAAT_WWW/praat$(PRAAT_VERSION)_win64.zip ~/builds/win64/Praat.exe
+    zip $PRAAT_WWW/praat$(PRAAT_VERSION)_win32.zip ~/builds/win32/Praat.exe
+    ( cd ~/builds/linux64 ;\
+      tar cvf praat$(PRAAT_VERSION)_linux64.tar praat ;\
+      gzip praat$(PRAAT_VERSION)_linux64.tar ;\
+      mv praat$(PRAAT_VERSION)_linux64.tar.gz $PRAAT_WWW )
+    ( cd ~/builds/linux64 ;\
+      tar cvf praat$(PRAAT_VERSION)_linux64barren.tar praat_barren ;\
+      gzip praat$(PRAAT_VERSION)_linux64barren.tar ;\
+      mv praat$(PRAAT_VERSION)_linux64barren.tar.gz $PRAAT_WWW )
+    ( cd ~/builds/linux64 ;\
+      tar cvf praat$(PRAAT_VERSION)_linux64nogui.tar praat_nogui ;\
+      gzip praat$(PRAAT_VERSION)_linux64nogui.tar ;\
+      mv praat$(PRAAT_VERSION)_linux64nogui.tar.gz $PRAAT_WWW )
+    ( cd ~/builds/chrome64 ;\
+      tar cvf praat$(PRAAT_VERSION)_chrome64.tar praat ;\
+      gzip praat$(PRAAT_VERSION)_chrome64.tar ;\
+      mv praat$(PRAAT_VERSION)_chrome64.tar.gz $PRAAT_WWW )
+    ( cd ~/builds/rpi_armv7 ;\
+      tar cvf praat$(PRAAT_VERSION)_rpi_armv7.tar praat ;\
+      gzip praat$(PRAAT_VERSION)_rpi_armv7.tar ;\
+      mv praat$(PRAAT_VERSION)_rpi_armv7.tar.gz $PRAAT_WWW )
+
+Finally, you can update your website and/or create a new release on GitHub.
