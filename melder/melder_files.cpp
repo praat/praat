@@ -88,7 +88,12 @@ void Melder_8bitFileRepresentationToStr32_inplace (const char *path8, char32 *pa
 			/*
 				Probably something wrong, like a disk was disconnected in the meantime.
 			*/
-			Melder_8to32_inplace (path8, path32, kMelder_textInputEncoding::UTF8);
+			try {
+				Melder_8to32_inplace (path8, path32, kMelder_textInputEncoding::UTF8);
+			} catch (MelderError) {
+				Melder_8to32_inplace (path8, path32, kMelder_textInputEncoding::MACROMAN);   // cannot fail
+				Melder_throw (U"Unusual error finding or creating file <<", path32, U">> (MacRoman).");
+			}
 			Melder_throw (U"Unusual error finding or creating file ", path32, U".");
 		}
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
@@ -709,11 +714,25 @@ conststring32 MelderFile_messageName (MelderFile file) {
 	return Melder_cat (U"“", file -> path, U"”");   // BUG: is cat allowed here?
 }
 
+#if defined (UNIX)
+	/*
+		From macOS 10.15 Catalina on, getcwd() has failed if a part of the path
+		is inaccessible, such as when you open a script that is attached to an email message.
+	*/
+	static structMelderDir theDefaultDir;
+#endif
+
 void Melder_getDefaultDir (MelderDir dir) {
 	#if defined (UNIX)
 		char path [kMelder_MAXPATH+1];
-		getcwd (path, kMelder_MAXPATH+1);
-		Melder_8bitFileRepresentationToStr32_inplace (path, dir -> path);
+		char *pathResult = getcwd (path, kMelder_MAXPATH+1);
+		if (pathResult)
+			Melder_8bitFileRepresentationToStr32_inplace (path, dir -> path);
+		else if (errno == EPERM)
+			str32cpy (dir -> path, theDefaultDir. path);
+		else
+			Melder_throw (Melder_peek8to32 (strerror (errno)));
+		Melder_assert (str32len (dir -> path) <= kMelder_MAXPATH);
 	#elif defined (_WIN32)
 		static WCHAR dirPathW [kMelder_MAXPATH+1];
 		GetCurrentDirectory (kMelder_MAXPATH+1, dirPathW);
@@ -724,6 +743,7 @@ void Melder_getDefaultDir (MelderDir dir) {
 void Melder_setDefaultDir (MelderDir dir) {
 	#if defined (UNIX)
 		chdir (Melder_peek32to8 (dir -> path));
+		str32cpy (theDefaultDir. path, dir -> path);
 	#elif defined (_WIN32)
 		SetCurrentDirectory (Melder_peek32toW_fileSystem (dir -> path));
 	#endif
@@ -952,8 +972,8 @@ void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutp
 			#define putc_unlocked  putc
 		#endif
 		flockfile (f);
-		size_t n = str32len (text);
-		for (size_t i = 0; i < n; i ++) {
+		integer n = str32len (text);
+		for (integer i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
 				if (kar == U'\n')
@@ -964,8 +984,8 @@ void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutp
 		funlockfile (f);
 	} else {
 		binputu16 (0xFEFF, f);   // Byte Order Mark
-		size_t n = str32len (text);
-		for (size_t i = 0; i < n; i ++) {
+		integer n = str32len (text);
+		for (integer i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
 				if (kar == U'\n')
