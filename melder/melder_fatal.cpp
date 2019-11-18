@@ -1,6 +1,6 @@
 /* melder_fatal.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ void Melder_fatal (const MelderArg& arg1,
 void Melder_assert_ (const char *fileName, int lineNumber, const char *condition) {
 	/*
 	 * This function tries to make sure that it allocates no heap memory.
-	 * Hence, character conversion is done inline rather than with Melder_peek8to32(),
+	 * Hence, character conversion is done in place rather than with Melder_peek8to32(),
 	 * and Melder_integer() is also avoided.
 	 */
 	MelderThread_LOCK (theMelder_fatal_mutex);

@@ -1,6 +1,6 @@
 /* melder_readtext.cpp
  *
- * Copyright (C) 2008,2010-2012,2014-2017 Paul Boersma
+ * Copyright (C) 2008,2010-2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

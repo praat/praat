@@ -198,13 +198,18 @@ void structGuiMenu :: v_destroy () noexcept {
 	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
 	{
 		(void) sender;
-		if (praatP.userWantsToOpen) return;
+		if (praatP.userWantsToOpen)
+			return;
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
-			NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
-			structMelderFile file { };
-			Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
-			if (theOpenDocumentCallback)
-				theOpenDocumentCallback (& file);
+			try {
+				NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
+				structMelderFile file { };
+				Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
+				if (theOpenDocumentCallback)
+					theOpenDocumentCallback (& file);
+			} catch (MelderError) {
+				Melder_throw (U"Cannot open dropped file.");
+			}
 		}
 		if (theFinishedOpeningDocumentsCallback)
 			theFinishedOpeningDocumentsCallback ();

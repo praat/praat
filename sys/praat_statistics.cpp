@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include <time.h>
 #include <locale.h>
 #include <thread>
+#include <pwd.h>
 #include "praatP.h"
 
 static struct {
@@ -86,6 +87,49 @@ void praat_reportTextProperties () {
 	MelderInfo_close ();
 }
 
+#if defined (macintosh)
+static bool isSandboxed () {
+	return !! NSProcessInfo.processInfo.environment [@"APP_SANDBOX_CONTAINER_ID"];
+}
+static int hasFullDiskAccess () {
+	if (Melder_systemVersion < 101400)
+		return true;
+	NSFileManager *nsFileManager = [NSFileManager defaultManager];
+	NSWorkspace *nsWorkspace = [NSWorkspace sharedWorkspace];
+	// to open the preferences at Full Disk Access: [nsWorkspace openURL: [NSURL URLWithString: @"x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"]];
+	NSString *nsUserHomeFolderPath;
+	if (isSandboxed ()) {
+		struct passwd *password = getpwuid (getuid ());
+		Melder_assert (!! password);
+		nsUserHomeFolderPath = [NSString stringWithUTF8String: password -> pw_dir];
+	} else {
+		nsUserHomeFolderPath = NSHomeDirectory ();
+	}
+	NSString *perhapsUnreadableFilePath = ( Melder_systemVersion < 101500 ?
+		[nsUserHomeFolderPath stringByAppendingPathComponent: @"Library/Safari/Bookmarks.plist"] :
+		[nsUserHomeFolderPath stringByAppendingPathComponent: @"Library/Safari/CloudTabs.db"]
+	);
+	bool fileExists = [nsFileManager fileExistsAtPath: perhapsUnreadableFilePath];
+	if (! fileExists)
+		return -1;   // unknown
+	NSData *data = [NSData dataWithContentsOfFile: perhapsUnreadableFilePath];
+	if (! data)
+		return 0;   // false
+	return 1;   // true
+}
+static NSString *getRealHomeDirectory () {
+	NSString *nsUserHomeFolderPath;
+	if (isSandboxed ()) {
+		struct passwd *password = getpwuid (getuid ());
+		Melder_assert (!! password);
+		nsUserHomeFolderPath = [NSString stringWithUTF8String: password -> pw_dir];
+	} else {
+		nsUserHomeFolderPath = NSHomeDirectory ();
+	}
+	return nsUserHomeFolderPath;
+}
+#endif
+
 void praat_reportSystemProperties () {
 	#define xstr(s) str(s)
 	#define str(s) #s
@@ -118,6 +162,15 @@ void praat_reportSystemProperties () {
 	MelderInfo_writeLine (U"The number of processors is ", std::thread::hardware_concurrency(), U".");
 	#ifdef macintosh
 		MelderInfo_writeLine (U"system version is ", Melder_systemVersion, U".");
+	#endif
+	#ifdef macintosh
+		int weHaveFullDiskAccess = hasFullDiskAccess ();
+		MelderInfo_writeLine (U"Full Disk Access: ", weHaveFullDiskAccess == -1 ? U"unknown":
+				weHaveFullDiskAccess == 0 ? U"no" : U"yes");
+		MelderInfo_writeLine (U"Sandboxed: ", ( isSandboxed () ? U"yes" : U"no" ));
+		if (isSandboxed ())
+			MelderInfo_writeLine (U"Sandbox (application home) directory: ", Melder_peek8to32 ([NSHomeDirectory () UTF8String]));
+		MelderInfo_writeLine (U"User home directory: ", Melder_peek8to32 ([ getRealHomeDirectory () UTF8String]));
 	#endif
 	MelderInfo_close ();
 }
