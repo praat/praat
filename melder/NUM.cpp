@@ -330,6 +330,14 @@ MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept {
 	return result;
 }
 
+MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept {
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
+	const longdouble variance = stats.sumsq / (mat.nrow * mat.ncol - 1);
+	MelderGaussianStats result;
+	result.mean = double (stats.mean);
+	result.stdev = sqrt (double (variance));
+	return result;
+}
 
 double NUMnorm (constVECVU const& vec, double power) noexcept {
 	if (power < 0.0) return undefined;

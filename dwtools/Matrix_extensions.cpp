@@ -40,11 +40,10 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 	double xmin, double xmax, double ymin, double ymax,
 	double size_mm, conststring32 mark, bool garnish)
 {
-	integer ix = integer_abs (icx), iy = integer_abs (icy);
+	const integer ix = integer_abs (icx), iy = integer_abs (icy);
 
-	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) {
+	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx)
 		return;
-	}
 	if (xmax <= xmin) {
 		(void) Matrix_getWindowExtrema (me, ix, ix, 1, my ny, & xmin, & xmax);
 		if (xmax <= xmin) {
@@ -60,38 +59,29 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 		}
 	}
 	Graphics_setInner (g);
-	if (icx < 0) {
-		double t = xmin;
-		xmin = xmax;
-		xmax = t;
-	}
-	if (icy < 0) {
-		double t = ymin;
-		ymin = ymax;
-		ymax = t;
-	}
+	if (icx < 0)
+		std::swap (xmin, xmax);
+	if (icy < 0)
+		std::swap (ymin, ymax);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	for (integer i = 1; i <= my ny; i ++) {
-		if (my z [i] [ix] >= xmin && my z [i] [ix] <= xmax && my z [i] [iy] >= ymin && my z [i] [iy] <= ymax) {
+	for (integer i = 1; i <= my ny; i ++)
+		if (my z [i] [ix] >= xmin && my z [i] [ix] <= xmax && my z [i] [iy] >= ymin && my z [i] [iy] <= ymax)
 			Graphics_mark (g, my z [i] [ix], my z [i] [iy], size_mm, mark);
-		}
-	}
+
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, true, true, false);
-		if (ymin * ymax < 0.0) {
+		if (ymin * ymax < 0.0)
 			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
-		}
 		Graphics_marksBottom (g, 2, true, true, false);
-		if (xmin * xmax < 0.0) {
+		if (xmin * xmax < 0.0)
 			Graphics_markBottom (g, 0.0, true, true, true, nullptr);
-		}
 	}
 }
 
 static autoVEC nummat_vectorize (constMATVU const& m, integer rowmin, integer rowmax, integer colmin, integer colmax) {
-	integer numberOfElements = (rowmax - rowmin + 1) * (colmax - colmin + 1);
+	const integer numberOfElements = (rowmax - rowmin + 1) * (colmax - colmin + 1);
 	autoVEC result = newVECraw (numberOfElements);
 	for (integer irow = rowmin, index = 1; irow <= rowmax; irow ++)
 		for (integer icol = colmin; icol <= colmax; icol ++)
@@ -101,10 +91,10 @@ static autoVEC nummat_vectorize (constMATVU const& m, integer rowmin, integer ro
 
 void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, kGraphicsMatrixOrigin origin, double cellAreaScaleFactor, kGraphicsMatrixCellDrawingOrder drawingOrder) {
 	integer colmin, colmax, rowmin, rowmax;
-	integer numberOfColumns = Matrix_getWindowSamplesX (me, xmin, xmax, & colmin, & colmax);
-	integer numberOfRows = Matrix_getWindowSamplesY (me, ymin, ymax, & rowmin, & rowmax);
+	const integer numberOfColumns = Matrix_getWindowSamplesX (me, xmin, xmax, & colmin, & colmax);
+	const integer numberOfRows = Matrix_getWindowSamplesY (me, ymin, ymax, & rowmin, & rowmax);
 
-	integer numberOfCells = numberOfRows * numberOfColumns;
+	const integer numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	
 	if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Rows) {
@@ -114,25 +104,23 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
 		autoVEC v = nummat_vectorize (my z.get(), rowmin, rowmax, colmin, colmax);
 		NUMsortTogether (v.get(), p -> p.get());
-		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
+		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues)
 			Permutation_reverse_inline (p.get(), 1, numberOfCells);
-		}
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Columns) {
 		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
 	}
 	
-	double extremum = fabs (NUMextremum (my z.get()));
-
-	MelderColour colour = Graphics_inqColour (g);
-	double scaleFactor = sqrt (cellAreaScaleFactor);
+	const double extremum = fabs (NUMextremum (my z.get()));
+	const MelderColour colour = Graphics_inqColour (g);
+	const double scaleFactor = sqrt (cellAreaScaleFactor);
 	for (integer i = 1; i <= numberOfCells; i++) {
-		integer index = Permutation_getValueAtIndex (p.get(), i);
-		integer irow = rowmin + (index - 1) / numberOfColumns;
-		integer icol = colmin + (index - 1) % numberOfColumns;
-		double z = my z [irow] [icol];
-		double xfraction = sqrt (fabs (z) / extremum), yfraction = xfraction;
-		double halfCellWidth = xfraction * 0.5 * my dx * scaleFactor;
-		double halfCellHeight = yfraction * 0.5 * my dy * scaleFactor;
+		const integer index = Permutation_getValueAtIndex (p.get(), i);
+		const integer irow = rowmin + (index - 1) / numberOfColumns;
+		const integer icol = colmin + (index - 1) % numberOfColumns;
+		const double z = my z [irow] [icol];
+		const double xfraction = sqrt (fabs (z) / extremum), yfraction = xfraction;
+		const double halfCellWidth = xfraction * 0.5 * my dx * scaleFactor;
+		const double halfCellHeight = yfraction * 0.5 * my dy * scaleFactor;
 		double cellLeft, cellTop;
 		if (origin == kGraphicsMatrixOrigin::TopLeft) {
 			cellLeft = Matrix_columnToX (me, icol) - halfCellWidth;
@@ -153,9 +141,8 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		cellRight = std::min (cellRight, xmax);
 		cellTop = std::min (cellTop, ymax);
 		cellBottom = std::max (cellBottom, ymin);
-		if (z > 0.0) {
+		if (z > 0.0)
 			Graphics_setColour (g, Melder_WHITE);
-		}
 		Graphics_fillRectangle (g, cellRight, cellLeft, cellBottom, cellTop);
 		Graphics_setColour (g, colour);
 		Graphics_rectangle (g, cellRight, cellLeft, cellBottom, cellTop);
@@ -181,63 +168,47 @@ void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, doub
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, true, true, false);
-		if (ymin * ymax < 0.0) {
+		if (ymin * ymax < 0.0)
 			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
-		}
 		Graphics_marksBottom (g, 2, true, true, false);
-		if (xmin * xmax < 0.0) {
+		if (xmin * xmax < 0.0)
 			Graphics_markBottom (g, 0.0, true, true, true, nullptr);
-		}
 	}
 }
 
 void Matrix_scale (Matrix me, int choice) {
 	double min, max, extremum;
 	integer nZero = 0;
-
+	Melder_require (choice > 0 && choice < 4,
+		U"Matrix_scale: choice should be > 0 && <= 3.");
 	if (choice == 2) { // by row
-		for (integer i = 1; i <= my ny; i ++) {
-			Matrix_getWindowExtrema (me, 1, my nx, i, i, &min, &max);
+		for (integer irow = 1; irow <= my ny; irow ++) {
+			Matrix_getWindowExtrema (me, 1, my nx, irow, irow, & min, & max);
 			extremum = std::max (fabs (max), fabs (min));
-			if (extremum == 0.0) {
+			if (extremum == 0.0)
 				nZero ++;
-			} else {
-				for (integer j = 1; j <= my nx; j ++) {
-					my z [i] [j] /= extremum;
-				}
-			}
+			else
+				my z.row (irow)  /=  extremum;
 		}
 	} else if (choice == 3) { // by col
-		for (integer j = 1; j <= my nx; j ++) {
-			Matrix_getWindowExtrema (me, j, j, 1, my ny, &min, &max);
+		for (integer icol = 1; icol <= my nx; icol ++) {
+			Matrix_getWindowExtrema (me, icol, icol, 1, my ny, & min, & max);
 			extremum = std::max (fabs (max), fabs (min));
-			if (extremum == 0.0) {
+			if (extremum == 0.0)
 				nZero ++;
-			} else {
-				for (integer i = 1; i <= my ny; i ++) {
-					my z [i] [j] /= extremum;
-				}
-			}
+			else 
+				my z.column (icol)  /=  extremum;
 		}
 	} else if (choice == 1) { // overall
-		Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, &min, &max);
+		Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & min, & max);
 		extremum =  std::max (fabs (max), fabs (min));
-		if (extremum == 0.0) {
+		if (extremum == 0.0)
 			nZero ++;
-		} else {
-			for (integer i = 1; i <= my ny; i ++) {
-				for (integer j = 1; j <= my nx; j ++) {
-					my z [i] [j] /= extremum;
-				}
-			}
-		}
-	} else {
-		Melder_flushError (U"Matrix_scale: choice should be > 0 && <= 3.");
-		return;
+		else
+			my z.get()  /=  extremum;
 	}
-	if (nZero) {
+	if (nZero)
 		Melder_warning (U"Matrix_scale: extremum == 0, (part of) matrix unscaled.");
-	}
 }
 
 autoMatrix Matrix_transpose (Matrix me) {
@@ -253,7 +224,8 @@ autoMatrix Matrix_transpose (Matrix me) {
 void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum,
 	integer nBins, double freqMin, double freqMax, bool cumulative, bool garnish)
 {
-	if (nBins <= 0) return;
+	if (nBins <= 0)
+		return;
 	if (xmax <= xmin) {
 		xmin = my xmin;
 		xmax = my xmax;
@@ -264,24 +236,25 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	}
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) || 
-		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) return;
+		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0))
+			return;
 	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
 	if (maximum <= minimum) {
 		minimum -= 1.0; 
 		maximum += 1.0;
 	}
-
-	// Count the numbers per bin and the total
-
-	if (nBins < 1) nBins = 10;
-
+	/*
+		Count the numbers per bin and the total
+	*/
+	if (nBins < 1)
+		nBins = 10;
 	autoVEC freq = newVECzero (nBins);
-	double binWidth = (maximum - minimum) / nBins;
+	const double binWidth = (maximum - minimum) / nBins;
 	integer nxy = 0;
 	for (integer i = iymin; i <= iymax; i ++) {
 		for (integer j = ixmin; j <= ixmax; j ++) {
-			integer bin = 1 + Melder_ifloor ((my z [i] [j] - minimum) / binWidth);
+			const integer bin = 1 + Melder_ifloor ((my z [i] [j] - minimum) / binWidth);
 			if (bin <= nBins && bin > 0) {
 				freq [bin] ++;
 				nxy ++;
@@ -291,7 +264,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 
 	if (freqMax <= freqMin) {
 		if (cumulative) {
-			freqMin = 0;
+			freqMin = 0.0;
 			freqMax = 1.0;
 		} else {
 			NUMextrema (freq.get(), & freqMin, & freqMax);
@@ -306,31 +279,27 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_setWindow (g, minimum, maximum, freqMin, freqMax);
 	double fi = 0.0;
 	for (integer i = 1; i <= nBins; i ++) {
-		double ftmp = freq [i];
 		fi = ( cumulative ? fi + freq [i] / nxy : freq [i] );
-		ftmp = fi;
+		double ftmp = fi;
 		ftmp = std::min (ftmp, freqMax);
-		if (ftmp > freqMin) {
+		if (ftmp > freqMin)
 			Graphics_rectangle (g, minimum + (i - 1) * binWidth, minimum + i * binWidth, freqMin, ftmp);
-		}
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
-		if (! cumulative) {
+		if (! cumulative)
 			Graphics_textLeft (g, true, U"Number/bin");
-		}
 	}
 }
 
 void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double ymax, double min, double max) {
 
-	if (x < my xmin || x > my xmax) {
+	if (x < my xmin || x > my xmax)
 		return;
-	}
-	integer ix = Matrix_xToNearestColumn (me, x);
+	const integer ix = Matrix_xToNearestColumn (me, x);
 
 	if (ymax <= ymin) {
 		ymin = my ymin;
@@ -338,53 +307,46 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 	}
 
 	integer iymin, iymax;
-	integer ny = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-	if (ny < 1) {
+	const integer ny = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
+	if (ny < 1)
 		return;
-	}
 
-	if (max <= min) {
+	if (max <= min)
 		Matrix_getWindowExtrema (me, ix, ix, iymin, iymax, & min, & max);
-	}
 	if (max <= min) {
-		min -= 0.5; max += 0.5;
+		min -= 0.5;
+		max += 0.5;
 	}
 	autoNUMvector<double> y (iymin, iymax);
 
 	Graphics_setWindow (g, ymin, ymax, min, max);
 	Graphics_setInner (g);
 
-	for (integer i = iymin; i <= iymax; i ++) {
+	for (integer i = iymin; i <= iymax; i ++)
 		y [i] = my z [i] [ix];
-	}
 	Graphics_function (g, y.peek(), iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
 	Graphics_unsetInner (g);
 }
 
 autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 	try {
-		integer nr = my ny, nc = my nx - 1;
-		Melder_require (nc > 0, U"There should be at least 2 columns in the matrix.");
+		const integer nr = my ny, nc = my nx - 1;
+		Melder_require (nc > 0,
+			U"There should be at least 2 columns in the matrix.");
 		
-		if (nr < nc) {
+		if (nr < nc)
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
-		}
 
 		autoMAT u = newMATraw (nr, nc);
 		autoVEC b = newVECraw (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 
-		for (integer i = 1; i <= nr; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				u [i] [j] = my z [i] [j];
-			}
-			b [i] = my z [i] [my nx];
-		}
+		u.get() <<= my z.get();
+		b.get() <<= my z.column (my nx);
 
 		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
-		for (integer j = 1; j <= nc; j ++) {
-			thy z [1] [j] = x [j];
-		}
+		thy z.row (1) <<= x;
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": matrix equation not solved.");
@@ -396,9 +358,8 @@ autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance) {
 		Melder_require (my ny == thy ny,
 			U"The number of rows must be equal.");
 		
-		if (my ny < my nx) {
+		if (my ny < my nx)
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
-		}
 
 		autoMatrix him = Matrix_create (0.5, 0.5 + thy nx, thy nx, 1, 1, 0.5, 0.5 + my nx, my nx, 1, 1);
 		autoSVD svd = SVD_createFromGeneralMatrix (my z.get());
@@ -424,13 +385,8 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return undefined;
 	}
-	double sum = 0.0;
-	for (integer row = iymin; row <= iymax; row ++) {
-		for (integer col = ixmin; col <= ixmax; col ++) {
-			sum += my z [row] [col];
-		}
-	}
-	return sum / ((iymax - iymin + 1) * (ixmax - ixmin + 1));
+	double mean = NUMmean (my z.part (iymin, iymax, ixmin, ixmax));	
+	return mean;
 }
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax) {
@@ -444,60 +400,54 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 	}
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
-		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
-		return undefined;
-	}
+		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0))
+			return undefined;
+	
 	integer nx = ixmax - ixmin + 1, ny = iymax - iymin + 1;
-	if (nx == 1 && ny == 1) {
+	if (nx == 1 && ny == 1)
 		return undefined;
-	}
-	double mean = Matrix_getMean (me, xmin, xmax, ymin, ymax), sum = 0;
-	for (integer row = iymin; row <= iymax; row ++) {
-		for (integer col = ixmin; col <= ixmax; col ++) {
-			double val = my z [row] [col] - mean;
-			sum += val * val;
-		}
-	}
-	return sqrt (sum / (nx * ny - 1));
+
+	MelderGaussianStats stats = NUMmeanStdev (my z.part (iymin, iymax, ixmin, ixmax));
+	
+	return stats.stdev;
 }
 
 autoDaata IDXFormattedMatrixFileRecognizer (integer numberOfBytesRead, const char *header, MelderFile file) {
 	unsigned int numberOfDimensions, type, pos = 4;
-	/* 
+	/*
 		9: minumum size is 4 bytes (magic number) + 4 bytes for 1 dimension + 1 value of 1 byte
 	 */
 	if (numberOfBytesRead < 9 || header [0] != 0 ||  header [1] != 0 || (type = header [2]) < 8 ||
-		numberOfBytesRead < 4 + (numberOfDimensions = header [3]) * 4) { // each dimension occupies 4 bytes
-		return autoDaata ();
-	}
+		numberOfBytesRead < 4 + (numberOfDimensions = header [3]) * 4) // each dimension occupies 4 bytes
+			return autoDaata ();
+
 	trace (U"dimensions = ", numberOfDimensions, U" type = ", type);
 	/*
-		Check if the file size (bytes) equals the number of data cells in the matrix times the size of each cell (bytes) plus thee
+		Check if the file size (bytes) equals the number of data cells in the matrix times the size of each cell (bytes) plus three
 		offset of the data (4 + numberOfDimensions * 4)
-	 */ 
+	 */
 	double numberOfCells = 1.0; // double because sizes of the dimensions could turn out to be very large if not an IDX format file
 	for (integer i = 1; i <= numberOfDimensions; i ++, pos += 4) {
-		unsigned char b1 = header [pos], b2 = header [pos + 1], b3 = header [pos + 2], b4 = header [pos + 3];
-		integer size = ((uint32) b1 << 24) + ((uint32) b2 << 16) + ((uint32) b3 << 8) + (uint32) b4;
+		const unsigned char b1 = header [pos], b2 = header [pos + 1], b3 = header [pos + 2], b4 = header [pos + 3];
+		const integer size = ((uint32) b1 << 24) + ((uint32) b2 << 16) + ((uint32) b3 << 8) + (uint32) b4;
 		trace (U"size = ", size, U" ", b1, U" ", b2, U" ", b3, U" ", b4);
 		numberOfCells *= size;
 	}
 	trace (U"Number of cells =", numberOfCells);
 	/*
-	 * Check how many bytes each cell needs
+		Check how many bytes each cell needs
 	 */
-	integer cellSizeBytes = ( (type == 0x08 || type == 0x09) ? 1 : ( type == 0x0B ? 2 : ( (type == 0x0C || type == 0x0D) ? 4 : ( type == 0x0E ? 8 : 0 ) ) ) );
+	const integer cellSizeBytes = ( (type == 0x08 || type == 0x09) ? 1 : ( type == 0x0B ? 2 : ( (type == 0x0C || type == 0x0D) ? 4 : ( type == 0x0E ? 8 : 0 ) ) ) );
 	if (cellSizeBytes == 0)
 		return autoDaata ();
 
 	trace (U"Cell size =", cellSizeBytes);
-	double numberOfBytes = numberOfCells * cellSizeBytes + 4 + numberOfDimensions * 4;
+	const double numberOfBytes = numberOfCells * cellSizeBytes + 4 + numberOfDimensions * 4;
 	trace (U"Number of bytes =", numberOfBytes);
-	integer numberOfBytesInFile = MelderFile_length (file);
+	const integer numberOfBytesInFile = MelderFile_length (file);
 	trace (U"File size = ", numberOfBytesInFile);
-	if (numberOfBytes > numberOfBytesInFile || (integer) numberOfBytes < numberOfBytesInFile) { // may occur if it is not an IDX file
+	if (numberOfBytes > numberOfBytesInFile || (integer) numberOfBytes < numberOfBytesInFile) // may occur if it is not an IDX file
 		return autoDaata ();
-	}
 	autoMatrix thee = Matrix_readFromIDXFormatFile (file);
 	return thee.move();
 }
@@ -539,12 +489,13 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 	*/
 	try {
 		autofile f = Melder_fopen (file, "r");
-		unsigned int b1 = bingetu8 (f);   // 0
-		unsigned int b2 = bingetu8 (f);   // 0
+		const unsigned int b1 = bingetu8 (f);   // 0
+		const unsigned int b2 = bingetu8 (f);   // 0
 		
-		Melder_require (b1 == 0 && b2 == 0, U"Starting two bytes should be zero.");
+		Melder_require (b1 == 0 && b2 == 0,
+			U"Starting two bytes should be zero.");
 
-		unsigned int b3 = bingetu8 (f);   // data type
+		const unsigned int b3 = bingetu8 (f);   // data type
 		unsigned int b4 = bingetu8 (f);   // number of dimensions
 		integer ncols = bingeti32 (f), nrows = 1;   // ok if vector
 		if (b4 > 1) {
@@ -552,7 +503,7 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 			ncols = bingeti32 (f);
 		}
 		while (b4 > 2) {   // accumulate all other dimensions in the columns
-			integer n2 = bingeti32 (f);
+			const integer n2 = bingeti32 (f);
 			ncols *= n2;   // put the matrix in one row
 			-- b4;
 		}
@@ -605,8 +556,10 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 
 autoEigen Matrix_to_Eigen (Matrix me) {
 	try {
-		Melder_require (my nx == my ny, U"The Matrix should be square.");
-		Melder_require (NUMisSymmetric (my z.get()), U"The Matrix should be symmetric.");
+		Melder_require (my nx == my ny,
+			U"The Matrix should be square.");
+		Melder_require (NUMisSymmetric (my z.get()),
+			U"The Matrix should be symmetric.");
 		autoEigen thee = Eigen_create (my nx, my nx);
 		Eigen_initFromSymmetricMatrix (thee.get(), my z.get());
 		return thee;
@@ -617,7 +570,8 @@ autoEigen Matrix_to_Eigen (Matrix me) {
 
 void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
 	try {
-		Melder_require (my nx == my ny, U"The Matrix should be square.");
+		Melder_require (my nx == my ny,
+			U"The Matrix should be square.");
 		autoVEC eigenvalues_re, eigenvalues_im;
 		autoMAT right_eigenvectors;
 		MAT_getEigenSystemFromGeneralMatrix (my z.get(), nullptr, & right_eigenvectors, & eigenvalues_re, & eigenvalues_im);
@@ -636,7 +590,7 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 			}
 			*out_eigenvalues = eigenvalues.move();	
 		}
-	}catch (MelderError) {
+	} catch (MelderError) {
 		Melder_throw (U"Cannot create Eigenvalues from Matrix.");
 	}
 }

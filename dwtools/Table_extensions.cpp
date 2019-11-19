@@ -3938,7 +3938,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 		MelderGaussianStats stats = NUMmeanStdev (data.all());
 		double xmin = 100.0, xmax = -xmin, ymin = 1e308, ymax = -ymin;
 		if (numberOfSigmas != 0) {
-			xmin = -numberOfSigmas; 
+			xmin = -numberOfSigmas;
 			xmax =  numberOfSigmas;
 			ymin = stats.mean - numberOfSigmas * stats.stdev;
 			ymax = stats.mean + numberOfSigmas * stats.stdev;
