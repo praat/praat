@@ -1,6 +1,6 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2018 Paul Boersma
+ * Copyright (C) 2009-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,8 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	UiForm_finish (thePauseForm.get());
 	bool wasBackgrounding = Melder_backgrounding;
 	//if (theCurrentPraatApplication -> batch) goto end;
-	if (wasBackgrounding) praat_foreground ();
+	if (wasBackgrounding)
+		praat_foreground ();
 	/*
 	 * Put the pause form on the screen.
 	 */
@@ -176,7 +177,8 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		}
 		theEventLoopDepth --;
 	}
-	if (wasBackgrounding) praat_background ();
+	if (wasBackgrounding)
+		praat_background ();
 	/* BUG: should also restore praatP. editor. */
 	thePauseForm. releaseToUser();   // undangle
 	thePauseFormRadio = nullptr;   // undangle

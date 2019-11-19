@@ -193,7 +193,8 @@ static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* ca
 			Strings_sort (me.get());
 			return me;
 		} catch (MelderError) {
-			if (d) closedir (d);   // "finally"
+			if (d)
+				closedir (d);   // "finally"
 			throw;
 		}
 	#elif defined (_WIN32)
