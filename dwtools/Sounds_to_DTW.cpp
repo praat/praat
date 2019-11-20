@@ -1,6 +1,6 @@
 /* Sounds_to_DTW.cpp
  *
- * Copyright (C) 2012-2017 David Weenink
+ * Copyright (C) 2012-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 
 autoDTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, double band, int slope) {
 	try {
-        integer numberOfCoefficients = 12;
-        double fmin_mel = 100, df_mel = 100, fmax_mel = 0.0;
+        constexpr integer numberOfCoefficients = 12;
+        const double fmin_mel = 100, df_mel = 100, fmax_mel = 0.0;
 		autoMFCC mfcc_me = Sound_to_MFCC (me, numberOfCoefficients, analysisWidth, dt, fmin_mel, fmax_mel, df_mel);
 		autoMFCC mfcc_thee = Sound_to_MFCC (thee, numberOfCoefficients, analysisWidth, dt, fmin_mel, fmax_mel, df_mel);
-        double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
+        constexpr double wc = 1.0, wle = 0.0, wr = 0.0, wer = 0.0, dtr = 0.0;
         autoDTW him = CCs_to_DTW (mfcc_me.get(), mfcc_thee.get(), wc, wle, wr, wer, dtr);
         autoPolygon p = DTW_to_Polygon (him.get(), band, slope);
         DTW_Polygon_findPathInside (him.get(), p.get(), slope, 0);

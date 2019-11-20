@@ -53,10 +53,9 @@ void PatternList_normalize (PatternList me, int choice, double pmin, double pmax
 		return;
 
 	if (choice == 1) {
-		for (integer i = 1; i <= my ny; i ++) {
+		for (integer i = 1; i <= my ny; i ++)
 			for (integer j = 1; j <= my nx; j ++)
 				my z [i] [j] = (my z [i] [j] - pmin) / (pmax - pmin);
-		}
 	} else { /* default choice */
 		for (integer i = 1; i <= my ny; i ++) {
 			double sum = 0;
@@ -80,8 +79,8 @@ void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin,
 autoPatternList Matrix_to_PatternList (Matrix me, integer join) {
 	try {
 		if (join < 1) join = 1;
-		Melder_require (my ny % join == 0, U"Number of rows should be a multiple of join factor.");
-
+		Melder_require (my ny % join == 0,
+			U"Number of rows should be a multiple of join factor.");
 		autoPatternList thee = PatternList_create (my ny / join, join * my nx);
 
 		integer r = 0, c = 1;

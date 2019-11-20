@@ -64,14 +64,10 @@ autoAffineTransform structProcrustes :: v_invert () {
 		R is symmetric rotation matrix -->
 		inverse is transpose!
 	*/
-
 	thy s = ( our s == 0.0 ? 1.0 : 1.0 / our s );
 	thy r.all() <<= our r.transpose();
 	VECmul (thy t.get(), our r.get(), our t.get());
 	thy t.get()  *=  -thy s;
-	/*for (integer i = 1; i <= dimension; i ++) {
-		thy t [i] = -thy s * NUMinner (thy r.column (i), t);
-	}*/
 	return thee.move();   // explicit move() seems to be needed because of the type difference
 }
 

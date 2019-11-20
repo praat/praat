@@ -60,22 +60,23 @@ static void monitor_off (Minimizer me) {
 
 void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double tolerance, int monitor) {
 	try {
-
 		my tolerance = tolerance;
-		if (maximumNumberOfIterations <= 0) return;
+		if (maximumNumberOfIterations <= 0)
+			return;
 
 		if (my iteration + maximumNumberOfIterations > my maximumNumberOfIterations) {
 			my maximumNumberOfIterations += maximumNumberOfIterations;
 			my history.resize (my maximumNumberOfIterations);
 		}
-		if (monitor) 
+		if (monitor)
 			my gmonitor = (Graphics) Melder_monitor (0.0, U"Starting...");
 
 		my start = 1;   // for my after()
 		my v_minimize ();
 		if (monitor)
 			monitor_off (me);
-		if (my success) Melder_casual (U"Minimizer_minimize:", U" minimum ", my minimum, U" reached \nafter ", my iteration,
+		if (my success)
+			Melder_casual (U"Minimizer_minimize:", U" minimum ", my minimum, U" reached \nafter ", my iteration,
 			U" iterations and ", my numberOfFunctionCalls, U" function calls.");
 	} catch (MelderError) {
 		if (monitor)
@@ -89,7 +90,6 @@ void Minimizer_minimizeManyTimes (Minimizer me, integer maxIterationsPerTime, in
 	int monitorSingle = numberOfTimes == 1;
 
 	autoVEC popt = newVECraw (my numberOfParameters);
-	autoVEC p; 
 	popt.get () <<= my p.get();
 
 	if (! monitorSingle)
@@ -103,7 +103,8 @@ void Minimizer_minimizeManyTimes (Minimizer me, integer maxIterationsPerTime, in
 			my p.get () <<= popt.get();
 			fopt = my minimum;
 		}
-		Minimizer_reset (me, p.get()); // do initialization if p.size == 0
+		VEC p;
+		Minimizer_reset (me, p); // do initialization if p.size == 0
 		if (! monitorSingle) {
 			try {
 				Melder_progress ((double) iter / numberOfTimes, iter, U" from ", numberOfTimes);
@@ -142,8 +143,10 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo
 		iTo = my iteration;
 	}
 	integer itmin = iFrom, itmax = iTo;
-	if (itmin < 1) itmin = 1;
-	if (itmax > my iteration) itmax = my iteration;
+	if (itmin < 1)
+		itmin = 1;
+	if (itmax > my iteration)
+		itmax = my iteration;
 	if (hmax <= hmin)
 		NUMextrema (my history.part (itmin, itmax), & hmin, & hmax);
 
@@ -217,14 +220,14 @@ void structVDSmagtMinimizer :: v_minimize () {
 	int decrease_direction_found = 1;
 	int l_iteration = 1;   // yes, we can iterate in steps, therefore local and global counter
 	longdouble rtemp, rtemp2;
-
-	// df is estimate of function reduction obtainable during line search
-	// restart = 2 => line search in direction of steepest descent
-	// restart = 1 => line search with Powell-restart.
-	// flag = 1 => no decrease in function value during previous line search;
-	// flag = 2 => line search did not decrease gradient
-	//    OK; must restart
-
+	/*
+		df is estimate of function reduction obtainable during line search
+		restart = 2 => line search in direction of steepest descent
+		restart = 1 => line search with Powell-restart.
+		flag = 1 => no decrease in function value during previous line search;
+		flag = 2 => line search did not decrease gradient
+			OK; must restart
+	*/
 	if (restart_flag) {
 		minimum = func (object, p.get());
 		dfunc (object, p.get(), dp.get());
@@ -276,10 +279,10 @@ void structVDSmagtMinimizer :: v_minimize () {
 			}
 			restart = 0;
 		}
-
-		// Begin line search
-		// lineSearch_iteration = #iterations during current line search
-
+		/*
+			Begin line search
+			lineSearch_iteration = #iterations during current line search
+		*/
 		flag = 0;
 		lineSearch_iteration = 0;
 		rtemp = 0.0;
@@ -296,11 +299,11 @@ void structVDSmagtMinimizer :: v_minimize () {
 			continue;
 		}
 		f0 = minimum;
-
-		// alpha = length of step along line;
-		// dalpha = change in alpha
-		// alphamin = position of min along line
-
+		/*
+			alpha = length of step along line;
+			dalpha = change in alpha
+			alphamin = position of min along line
+		*/
 		alplim = -1;
 		again = -1;
 		rtemp = fabs (df / gropt);
@@ -314,7 +317,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 
 					if (alplim < -0.5)
 						dalpha = 9.0 * alphamin;
-					else 
+					else
 						dalpha = 0.5 * (alplim - alphamin);
 
 					grs = gropt + dalpha * gr2s;
@@ -356,8 +359,10 @@ void structVDSmagtMinimizer :: v_minimize () {
 							break;
 						}
 					}
-					if (success) return;
-					if (fabs (gropt / gr0) < lineSearchGradient) break;
+					if (success)
+						return;
+					if (fabs (gropt / gr0) < lineSearchGradient)
+						break;
 				} else {
 					alplim = alpha;
 				}
@@ -379,7 +384,8 @@ void structVDSmagtMinimizer :: v_minimize () {
 			if (again > 0) flag += 2;
 		} while (flag < 1);
 
-		if (f0 <= minimum) flag += 1;
+		if (f0 <= minimum)
+			flag += 1;
 		df = gr0 * alphamin;
 	}
 	if (this -> iteration > maximumNumberOfIterations)
