@@ -276,15 +276,16 @@ integer structFunctionTerms :: v_getDegree () {
 }
 
 void structFunctionTerms :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) { // David, geen aparte naam hier nodig: ???
-	integer numberOfPoints = 1000;
+	const integer numberOfPoints = 1000;
 
 	// Melder_warning (L"defaultGetExtrema: extrema calculated by sampling the interval");
 
-	double x = x1, dx = (x2 - x1) / (numberOfPoints - 1);
+	const double dx = (x2 - x1) / (numberOfPoints - 1);
+	double x = x1;
 	double xmn = x, xmx = xmn, ymn = v_evaluate (x), ymx = ymn; // xmin, xmax .. would shadow  member
 	for (integer i = 2; i <= numberOfPoints; i ++) {
 		x += dx;
-		double y = v_evaluate (x);
+		const double y = v_evaluate (x);
 		if (y > ymx) {
 			ymx = y;
 			xmx = x;
@@ -293,10 +294,14 @@ void structFunctionTerms :: v_getExtrema (double x1, double x2, double *out_xmin
 			xmn = x;
 		}
 	}
-	if (out_xmin) *out_xmin = xmn;
-	if (out_xmax) *out_xmax = xmx;
-	if (out_ymin) *out_ymin = ymn;
-	if (out_ymax) *out_ymax = ymx;
+	if (out_xmin)
+		*out_xmin = xmn;
+	if (out_xmax)
+		*out_xmax = xmx;
+	if (out_ymin)
+		*out_ymin = ymn;
+	if (out_ymax)
+		*out_ymax = ymx;
 }
 
 static inline void FunctionTerms_extendCapacityIf (FunctionTerms me, integer minimum) {
@@ -329,7 +334,7 @@ void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, c
 	autoVEC numbers = VEC_createFromString (s);
 	integer numberOfCoefficients = numbers.size;
 	if (! allowTrailingZeros)
-		while (numbers [numberOfCoefficients] = 0.0 && numberOfCoefficients > 1)
+		while (numbers [numberOfCoefficients] == 0.0 && numberOfCoefficients > 1)
 			numberOfCoefficients --;
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
 	my coefficients.part (1, numberOfCoefficients) <<= numbers.part (1, numberOfCoefficients);
