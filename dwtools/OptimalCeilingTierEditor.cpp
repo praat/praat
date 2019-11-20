@@ -1,6 +1,6 @@
 /* OptimalCeilingTierEditor.cpp
  *
- * Copyright (C) 2015 David Weenink
+ * Copyright (C) 2015-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,10 @@ void structOptimalCeilingTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structOptimalCeilingTierEditor :: v_play (double fromTime, double toTime) {
-	if (our d_sound.data) {
+	if (our d_sound.data)
 		Sound_playPart (our d_sound.data, fromTime, toTime, theFunctionEditor_playCallback, this);
-	} else {
-		//OptimalCeilingTier_playPart (data, fromTime, toTime, false);
-	}
+	//else
+	//	OptimalCeilingTier_playPart (data, fromTime, toTime, false);
 }
 
 autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title, OptimalCeilingTier octier, Sound sound, bool ownSound) {

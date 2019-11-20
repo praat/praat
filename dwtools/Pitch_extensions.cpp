@@ -33,12 +33,9 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 		pos = my nCandidates;
 	} else {
 		// Find weakest candidate so far (skip the unvoiced one)
-		for (integer i = 1; i <= maxnCandidates; i ++) {
-			if (my candidates [i]. strength < weakest && my candidates [i]. frequency > 0.0) {
-				weakest = my candidates [i]. strength;
-				pos = i;
-			}
-		}
+		for (integer i = 1; i <= maxnCandidates; i ++)
+			if (my candidates [i]. strength < weakest && my candidates [i]. frequency > 0.0)
+				weakest = my candidates [pos = i]. strength;
 		if (strength < weakest)
 			pos = 0;
 	}
@@ -51,12 +48,9 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 void Pitch_Frame_getPitch (Pitch_Frame me, double *out_f, double *out_strength) {
 	integer pos = 1;
 	double strength = -1.0;
-	for (integer i = 1; i <= my nCandidates; i ++) {
-		if (my candidates [i]. strength > strength && my candidates [i]. frequency > 0.0) {
-			strength = my candidates [i]. strength;
-			pos = i;
-		}
-	}
+	for (integer i = 1; i <= my nCandidates; i ++)
+		if (my candidates [i]. strength > strength && my candidates [i]. frequency > 0.0)
+			strength = my candidates [pos = i]. strength;
 	if (out_f)
 		*out_f = my candidates [pos]. frequency;
 	if (out_strength)
@@ -66,24 +60,19 @@ void Pitch_Frame_getPitch (Pitch_Frame me, double *out_f, double *out_strength) 
 void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
 	integer pos = 1;
 	double strongest = my candidates [1]. strength;
-	for (integer i = 2; i <= my nCandidates; i ++) {
-		if (my candidates [i]. strength > strongest) {
-			strongest = my candidates [i]. strength;
-			pos = i;
-		}
-	}
+	for (integer i = 2; i <= my nCandidates; i ++)
+		if (my candidates [i]. strength > strongest)
+			strongest = my candidates [pos = i]. strength;
 	if (strongest != 0)
 		for (integer i = 1; i <= my nCandidates; i ++)
 			my candidates [i]. strength *= maxStrength / strongest;
 
-	if (maxStrength < unvoicedCriterium) {
-		for (integer i = 1; i <= my nCandidates; i ++) {
+	if (maxStrength < unvoicedCriterium)
+		for (integer i = 1; i <= my nCandidates; i ++)
 			if (my candidates [i]. frequency == 0) {
 				pos = i;
 				break;
 			}
-		}
-	}
 	if (pos != 1) {
 		std::swap (my candidates [1]. frequency, my candidates [pos]. frequency);
 		std::swap (my candidates [1]. strength, my candidates [pos]. strength);
@@ -139,19 +128,19 @@ static double SpecialToHertz (double value, kPitch_unit pitchUnit) {
 autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, double pitchMin_Hz, double pitchMax_Hz, kPitch_unit pitchUnit);
 autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, double pitchMin_Hz, double pitchMax_Hz, kPitch_unit pitchUnit) {
 	try {
-		double fminr = HertzToSpecial (pitchMin_ref_Hz, pitchUnit);
-		double fmaxr = HertzToSpecial (pitchMax_ref_Hz, pitchUnit);
-		double fmin = HertzToSpecial (pitchMin_Hz, pitchUnit);
-		double fmax = HertzToSpecial (pitchMax_Hz, pitchUnit);
+		const double fminr = HertzToSpecial (pitchMin_ref_Hz, pitchUnit);
+		const double fmaxr = HertzToSpecial (pitchMax_ref_Hz, pitchUnit);
+		const double fmin = HertzToSpecial (pitchMin_Hz, pitchUnit);
+		const double fmax = HertzToSpecial (pitchMax_Hz, pitchUnit);
 
 		Melder_require (! (isundef (fminr) || isundef (fmaxr) || isundef (fmin) || isundef (fmax)), 
 			U"The conversion of a pitch value is not defined.");
-		double ranger = fmaxr - fminr, range = fmax - fmin;
+		const double ranger = fmaxr - fminr, range = fmax - fmin;
 		Melder_require (ranger >= 0.01 && range >= 0.01,
 			U"Pitch range too small.");
 		
-		double fmidr = fminr + ranger / 2.0;
-		double factor = ranger / range;
+		const double fmidr = fminr + ranger / 2.0;
+		const double factor = ranger / range;
 		autoPitchTier thee = Data_copy (me);
 		for (integer i = 1; i <= my points.size; i ++) {
 			const RealPoint point = thy points.at [i];
@@ -168,15 +157,19 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 
 autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling) {
 	try {
-		Melder_require (my points.size > 0, U"The PitchTier is empty.");
-		Melder_require (dt > 0.0, U"The time step should be a positive number.");
-		Melder_require (pitchFloor < pitchCeiling, U"The pitch floor should be lower than the pitch ceiling.");
+		Melder_require (my points.size > 0,
+			U"The PitchTier is empty.");
+		Melder_require (dt > 0.0,
+			U"The time step should be a positive number.");
+		Melder_require (pitchFloor < pitchCeiling,
+			U"The pitch floor should be lower than the pitch ceiling.");
 		
-		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
+		const double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
 		integer nt = Melder_ifloor ((tmax - tmin - t1) / dt);
 		if (t1 + nt * dt < tmax)
 			nt ++;
-		Melder_require (nt > 0, U"Duration is too short.");
+		Melder_require (nt > 0,
+			U"Duration is too short.");
 		
 		autoPitch thee = Pitch_create (tmin, tmax, nt, dt, t1, pitchCeiling, 1);
 		for (integer i = 1; i <= nt; i ++) {

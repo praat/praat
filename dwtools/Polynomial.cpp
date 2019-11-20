@@ -62,8 +62,10 @@ void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, 
 		dp = dp * x + p;
 		p =  p * x + my coefficients [i];
 	}
-	if (out_f) *out_f = (double) p;
-	if (out_df) *out_df = (double) dp;
+	if (out_f)
+		*out_f = (double) p;
+	if (out_df)
+		*out_df = (double) dp;
 }
 
 /* Get value and derivative */
@@ -79,8 +81,10 @@ static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, 
 		pr   =   pr * x -   pi * y + my coefficients [i];
 		pi   =   tr * y +   pi * x;
 	}
-	if (out_p) *out_p = { (double) pr, (double) pi };
-	if (out_dp) *out_dp = { (double) dpr, (double) dpi };
+	if (out_p)
+		*out_p = { (double) pr, (double) pi };
+	if (out_dp)
+		*out_dp = { (double) dpr, (double) dpi };
 }
 
 autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives) {
@@ -88,14 +92,14 @@ autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDe
 		Evaluate polynomial c [1]+c [2]*x+...degree*x^degree in derivative [1] and the numberOfDerivatives 
 		in derivatives in derivatives [2..numberOfDerivatives+1].
 	*/
-	integer degree = my numberOfCoefficients - 1;
+	const integer degree = my numberOfCoefficients - 1;
 	autoVEC derivatives = newVECzero (numberOfDerivatives + 1);
 	numberOfDerivatives = numberOfDerivatives > degree ? degree : numberOfDerivatives;
 	
 	derivatives [1] = my coefficients [my numberOfCoefficients];
 
 	for (integer i = degree - 1; i >= 0; i--) {
-		integer n = numberOfDerivatives < degree - i ? numberOfDerivatives : degree - i;
+		const integer n = numberOfDerivatives < degree - i ? numberOfDerivatives : degree - i;
 		for (integer j = n; j >= 1; j --)
 			derivatives [j + 1] = derivatives [j + 1] * x + derivatives [j];
 		derivatives [1] = derivatives [1] * x + my coefficients [i + 1];   // evaluate polynomial (Horner)
@@ -138,13 +142,13 @@ static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 
 
 static void Polynomial_polish_realroot (Polynomial me, double *x, integer maxit) {
-	double xbest = *x, pmin = 1e308;
 	if (! NUMfpp)
 		NUMmachar ();
+	double xbest = *x, pmin = 1e308;
 	for (integer i = 1; i <= maxit; i ++) {
 		double p, dp;
 		Polynomial_evaluateWithDerivative (me, *x, & p, & dp);
-		double fabsp = fabs (p);
+		const double fabsp = fabs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse or we cannot get any closer.
@@ -157,21 +161,21 @@ static void Polynomial_polish_realroot (Polynomial me, double *x, integer maxit)
 		xbest = *x;
 		if (fabs (dp) == 0.0)
 			return;
-		double dx = p / dp;   // Newton-Raphson
+		const double dx = p / dp;   // Newton-Raphson
 		*x -= dx;
 	}
 	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
 
 static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, integer maxit) {
-	dcomplex zbest = *z;
-	double pmin = 1e308;
 	if (! NUMfpp)
 		NUMmachar ();
+	dcomplex zbest = *z;
+	double pmin = 1e308;
 	for (integer i = 1; i <= maxit; i ++) {
 		dcomplex p, dp;
 		Polynomial_evaluateWithDerivative_z (me, z, &p, &dp);
-		double fabsp = dcomplex_abs (p);
+		const double fabsp = dcomplex_abs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse.
@@ -184,7 +188,7 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, intege
 		zbest = *z;
 		if (dcomplex_abs (dp) == 0.0)
 			return;
-		dcomplex dz = dcomplex_div (p, dp);   // Newton-Raphson
+		const dcomplex dz = dcomplex_div (p, dp);   // Newton-Raphson
 		*z = dcomplex_sub (*z, dz);
 	}
 	// Melder_throw (U"Maximum number of iterations exceeded.");
@@ -202,7 +206,7 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, intege
 */
 
 static void NUMpolynomial_recurrence (VEC pn, double a, double b, double c, constVEC pnm1, constVEC pnm2) {
-	integer degree = pn.size - 1;
+	const integer degree = pn.size - 1;
 	Melder_assert (degree > 1 && pnm1.size >= pn.size && pnm2.size >= pn.size);
 
 	pn [1] = b * pnm1 [1] + c * pnm2 [1];
@@ -218,21 +222,19 @@ static void svdcvm (MAT cvm, constMAT v, integer mfit, constINTVEC frozen, const
 	autoVEC wti = newVECzero (mfit);
 
 	for (integer i = 1; i <= mfit; i ++) {
-		if (w [i] != 0.0) {
+		if (w [i] != 0.0)
 			wti [i] = 1.0 / (w [i] * w [i]);
-		} else {
+		else 
 			;   // TODO: write up an explanation for why it is not necessary to do anything if w [i] is zero
-		}
+
 	}
-	for (integer i = 1; i <= mfit; i ++) {
+	for (integer i = 1; i <= mfit; i ++)
 		for (integer j = 1; j <= i; j ++) {
 			longdouble sum = 0.0;
-			for (integer k = 1; k <= mfit; k ++) {
+			for (integer k = 1; k <= mfit; k ++)
 				sum += v [i] [k] * v [j] [k] * wti [k];
-			}
 			cvm [j] [i] = cvm [i] [j] = (double) sum;
 		}
-	}
 
 	for (integer i = mfit + 1; i <= frozen.size; i ++) {
 		for (integer j = 1; j <= i; j ++)
@@ -242,7 +244,7 @@ static void svdcvm (MAT cvm, constMAT v, integer mfit, constINTVEC frozen, const
 	integer k = mfit;
 	for (integer j = frozen.size; j > 0; j --) {
 		//	only change parameters that are not frozen
-		if (frozen.size = 0 || ! frozen [j]) {
+		if (frozen.size == 0 || ! frozen [j]) {
 			for (integer i = 1; i <= frozen.size; i ++)
 				std::swap (cvm [i] [k], cvm [i] [j]);
 			for (integer i = 1; i <= frozen.size; i ++)
@@ -274,15 +276,16 @@ integer structFunctionTerms :: v_getDegree () {
 }
 
 void structFunctionTerms :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) { // David, geen aparte naam hier nodig: ???
-	integer numberOfPoints = 1000;
+	const integer numberOfPoints = 1000;
 
 	// Melder_warning (L"defaultGetExtrema: extrema calculated by sampling the interval");
 
-	double x = x1, dx = (x2 - x1) / (numberOfPoints - 1);
+	const double dx = (x2 - x1) / (numberOfPoints - 1);
+	double x = x1;
 	double xmn = x, xmx = xmn, ymn = v_evaluate (x), ymx = ymn; // xmin, xmax .. would shadow  member
 	for (integer i = 2; i <= numberOfPoints; i ++) {
 		x += dx;
-		double y = v_evaluate (x);
+		const double y = v_evaluate (x);
 		if (y > ymx) {
 			ymx = y;
 			xmx = x;
@@ -291,10 +294,14 @@ void structFunctionTerms :: v_getExtrema (double x1, double x2, double *out_xmin
 			xmn = x;
 		}
 	}
-	if (out_xmin) *out_xmin = xmn;
-	if (out_xmax) *out_xmax = xmx;
-	if (out_ymin) *out_ymin = ymn;
-	if (out_ymax) *out_ymax = ymx;
+	if (out_xmin)
+		*out_xmin = xmn;
+	if (out_xmax)
+		*out_xmax = xmx;
+	if (out_ymin)
+		*out_ymin = ymn;
+	if (out_ymax)
+		*out_ymax = ymx;
 }
 
 static inline void FunctionTerms_extendCapacityIf (FunctionTerms me, integer minimum) {
@@ -327,7 +334,7 @@ void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, c
 	autoVEC numbers = VEC_createFromString (s);
 	integer numberOfCoefficients = numbers.size;
 	if (! allowTrailingZeros)
-		while (numbers [numberOfCoefficients] = 0.0 && numberOfCoefficients > 1)
+		while (numbers [numberOfCoefficients] == 0.0 && numberOfCoefficients > 1)
 			numberOfCoefficients --;
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
 	my coefficients.part (1, numberOfCoefficients) <<= numbers.part (1, numberOfCoefficients);
@@ -396,15 +403,16 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 	double xb = x1, yb = y1;
 
 	for (integer i = 2; i < x.size; i ++) {
-		double x2 = x [i], y2 = y [i];
+		const double x2 = x [i], y2 = y [i];
 
 		if (! ((y1 > ymax && y2 > ymax) || (y1 < ymin && y2 < ymin))) {
-			double dxy = (x2 - x1) / (y1 - y2);
-			double xcros_max = x1 - (ymax - y1) * dxy;
-			double xcros_min = x1 - (ymin - y1) * dxy;
+			const double dxy = (x2 - x1) / (y1 - y2);
+			const double xcros_max = x1 - (ymax - y1) * dxy;
+			const double xcros_min = x1 - (ymin - y1) * dxy;
 			if (y1 > ymax && y2 < ymax) {
-				// Line enters from above: start new segment. Save start values.
-
+				/*
+					Line enters from above: start new segment. Save start values.
+				*/
 				xb = x [i - 1];
 				yb = y [i - 1];
 				index = i - 1;
@@ -412,10 +420,11 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 				x [i - 1] = xcros_max;
 			}
 			if (y1 > ymin && y2 < ymin) {
-				// Line leaves at bottom: draw segment. Save end values and restore them
-				// Origin of arrays for Graphics_polyline are at element 0 !!!
-
-				double xe = x [i], ye = y [i];
+				/*
+					Line leaves at bottom: draw segment. Save end values and restore them
+					Origin of arrays for Graphics_polyline are at element 0 !!!
+				*/
+				const double xe = x [i], ye = y [i];
 				y [i] = ymin;
 				x [i] = xcros_min;
 
@@ -438,7 +447,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 			if (y1 < ymax && y2 > ymax) {
 				// Line leaves at top: draw segment. Save and restore
 
-				double xe = x [i], ye = y [i];
+				const double xe = x [i], ye = y [i];
 				y [i] = ymax;
 				x [i] =  xcros_max;
 
@@ -457,7 +466,8 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 	}
 	if (index < x.size - 1) {
 		Graphics_polyline (g, x.size - index, x.at + index, y.at + index);
-		x [index] = xb; y [index] = yb;
+		x [index] = xb;
+		y [index] = yb;
 	}
 }
 
@@ -488,10 +498,10 @@ void FunctionTerms_draw (FunctionTerms me, Graphics g, double xmin, double xmax,
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-
-	// Draw only the parts within [fxmin, fxmax] X [ymin, ymax].
-
-	double dx = (fxmax - fxmin) / (numberOfPoints - 1);
+	/*
+		Draw only the parts within [fxmin, fxmax] X [ymin, ymax].
+	*/
+	const double dx = (fxmax - fxmin) / (numberOfPoints - 1);
 	for (integer i = 1; i <= numberOfPoints; i ++) {
 		x [i] = fxmin + (i - 1.0) * dx;
 		y [i] = FunctionTerms_evaluate (me, x [i]);
@@ -518,8 +528,10 @@ void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, integer inde
 }
 
 void FunctionTerms_setCoefficient (FunctionTerms me, integer index, double value) {
-	Melder_require (index > 0 && index <= my numberOfCoefficients, U"Index out of range [1, ", my numberOfCoefficients, U"].");
-	Melder_require (value == 0.0 && index < my numberOfCoefficients, U"You should not remove the highest degree term.");
+	Melder_require (index > 0 && index <= my numberOfCoefficients,
+		U"Index out of range [1, ", my numberOfCoefficients, U"].");
+	Melder_require (value == 0.0 && index < my numberOfCoefficients,
+		U"You should not remove the highest degree term.");
 	my coefficients [index] = value;
 }
 
@@ -556,7 +568,7 @@ void structPolynomial :: v_evaluateTerms (double x, VEC terms) {
 
 void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, double *out_ymin, double *out_xmax, double *out_ymax) {
 	try {
-		integer degree = numberOfCoefficients - 1;
+		const integer degree = numberOfCoefficients - 1;
 
 		double xmn = x1, ymn = v_evaluate (x1);
 		double xmx = x2, ymx = v_evaluate (x2);
@@ -571,9 +583,9 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, d
 		autoRoots r = Polynomial_to_Roots (d.get());
 
 		for (integer i = 1; i <= degree - 1; i ++) {
-			double x = (r -> v [i]).re;
+			const double x = (r -> v [i]).re;
 			if (x > x1 && x < x2) {
-				double y = v_evaluate (x);
+				const double y = v_evaluate (x);
 				if (y > ymx) {
 					ymx = y;
 					xmx = x;
@@ -583,10 +595,14 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, d
 				}
 			}
 		}
-		if (out_xmin) *out_xmin = xmn;
-		if (out_xmax) *out_xmax = xmx;
-		if (out_ymin) *out_ymin = ymn;
-		if (out_ymax) *out_ymax = ymx;
+		if (out_xmin)
+			*out_xmin = xmn;
+		if (out_xmax)
+			*out_xmax = xmx;
+		if (out_ymin)
+			*out_ymin = ymn;
+		if (out_ymax)
+			*out_ymax = ymx;
 	} catch (MelderError) {
 		structFunctionTerms :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 		Melder_clearError ();
@@ -614,10 +630,10 @@ autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, conststr
 }
 
 void Polynomial_scaleCoefficients_monic (Polynomial me) {
-	double cn = my coefficients [my numberOfCoefficients];
+	const double cn = my coefficients [my numberOfCoefficients];
 	if (cn == 1 || my numberOfCoefficients <= 1)
 		return;
-	my coefficients.get() /= cn;
+	my coefficients.get()  /=  cn;
 	my coefficients [my numberOfCoefficients] = 1.0;
 }
 
@@ -636,14 +652,14 @@ autoPolynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax) {
 		thy coefficients [1] = my coefficients [1];
 		if (my numberOfCoefficients == 1)
 			return thee;
-
-		// x = a x + b
-		// Constraints:
-		// my xmin = a xmin + b;    a = (my xmin - my xmax) / (xmin - xmax);
-		// my xmax = a xmax + b;    b = my xmin - a * xmin
-
-		double a = (my xmin - my xmax) / (xmin - xmax);
-		double b = my xmin - a * xmin;
+		/*
+			x = a x + b
+			Constraints:
+			my xmin = a xmin + b;    a = (my xmin - my xmax) / (xmin - xmax);
+			my xmax = a xmax + b;    b = my xmin - a * xmin
+		*/
+		const double a = (my xmin - my xmax) / (xmin - xmax);
+		const double b = my xmin - a * xmin;
 		thy coefficients [2] = my coefficients [2] * a;
 		thy coefficients [1] += my coefficients [2] * b;
 		if (my numberOfCoefficients == 2)
@@ -656,13 +672,12 @@ autoPolynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax) {
 
 		pnm1 [2] = a;
 		pnm1 [1] = b;
-		pnm2 [1] = 1;
+		pnm2 [1] = 1.0;
 		for (integer n = 2; n <= my numberOfCoefficients - 1; n ++) {
 			NUMpolynomial_recurrence (pn.part (1, n + 1), a, b, 0.0, pnm1.get(), pnm2.get());
-			if (my coefficients [n + 1] != 0.0) {
+			if (my coefficients [n + 1] != 0.0)
 				for (integer j = 1; j <= n + 1; j ++)
 					thy coefficients [j] += my coefficients [n + 1] * pn [j];
-			}
 			double *t1 = pnm1.at, *t2 = pnm2.at;
 			pnm1.at = pn.at;
 			pnm2.at = t1;
@@ -691,12 +706,14 @@ static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi, dou
 		return;
 	for (integer i = 2; i <= my numberOfCoefficients; i ++) {
 		rn *= r;
-		longdouble arg = (i - 1) * phi;
+		const longdouble arg = (i - 1) * phi;
 		re += my coefficients [i] * rn * cos (arg);
 		im += my coefficients [i] * rn * sin (arg);
 	}
-	if (out_re) *out_re = (double) re;
-	if (out_im) *out_im = (double) im;
+	if (out_re)
+		*out_re = (double) re;
+	if (out_im)
+		*out_im = (double) im;
 }
 
 
@@ -803,7 +820,7 @@ double Polynomial_getArea (Polynomial me, double xmin, double xmax) {
  * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 1 
  */
 void Polynomial_multiply_firstOrderFactor (Polynomial me, double factor) { 
-	integer n = my numberOfCoefficients;
+	const integer n = my numberOfCoefficients;
 	FunctionTerms_extendCapacityIf (me, n + 1);
 	
 	my coefficients [n + 1] = my coefficients [n];
@@ -813,11 +830,12 @@ void Polynomial_multiply_firstOrderFactor (Polynomial me, double factor) {
 	my numberOfCoefficients += 1;
 }
 
-/* P(x) * (x^2 - a)
- * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 2
+/*
+	P(x) * (x^2 - a)
+	Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 2
  */
 void Polynomial_multiply_secondOrderFactor (Polynomial me, double factor) {
-	integer n = my numberOfCoefficients;
+	const integer n = my numberOfCoefficients;
 	FunctionTerms_extendCapacityIf (me, n + 2);
 	my coefficients [n + 2] = my coefficients [n];
 	my coefficients [n + 1] = my coefficients [n - 1];
@@ -830,18 +848,15 @@ void Polynomial_multiply_secondOrderFactor (Polynomial me, double factor) {
 
 autoPolynomial Polynomials_multiply (Polynomial me, Polynomial thee) {
 	try {
-		integer n1 = my numberOfCoefficients, n2 = thy numberOfCoefficients;
-		Melder_require (my xmax > thy xmin && my xmin < thy xmax, U"Domains should overlap.");
-	
-		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
-		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
+		const integer n1 = my numberOfCoefficients, n2 = thy numberOfCoefficients;
+		Melder_require (my xmax > thy xmin && my xmin < thy xmax,
+			U"Domains should overlap.");
+		const double xmin = my xmin > thy xmin ? my xmin : thy xmin;
+		const double xmax = my xmax < thy xmax ? my xmax : thy xmax;
 		autoPolynomial him = Polynomial_create (xmin, xmax, n1 + n2 - 2);
-		for (integer i = 1; i <= n1; i ++) {
-			for (integer j = 1; j <= n2; j ++) {
-				integer k = i + j - 1;
-				his coefficients [k] += my coefficients [i] * thy coefficients [j];
-			}
-		}
+		for (integer i = 1; i <= n1; i ++)
+			for (integer j = 1; j <= n2; j ++)
+				his coefficients [i + j - 1] += my coefficients [i] * thy coefficients [j];
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomials not multiplied.");
@@ -856,9 +871,10 @@ void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, 
 	autoPolynomial aq, ar;
 	VECpolynomial_divide (my coefficients.get (), thy coefficients.get (), qc.get (), rc.get ());
 	if (out_q) {
-		integer degree = std::max (my numberOfCoefficients - thy numberOfCoefficients, (integer) 0);
+		const integer degree = std::max (my numberOfCoefficients - thy numberOfCoefficients, (integer) 0);
 		aq = Polynomial_create (my xmin, my xmax, degree);
-		if (degree >= 0) aq -> coefficients.get () <<= qc.part (1, degree + 1);
+		if (degree >= 0)
+			aq -> coefficients.get () <<= qc.part (1, degree + 1);
 		*out_q = aq.move();
 	}
 	if (out_r) {
@@ -881,22 +897,21 @@ void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, 
 Thing_implement (LegendreSeries, FunctionTerms, 0);
 
 double structLegendreSeries :: v_evaluate (double x) {
-	double p = our coefficients [1];
-
-	// Transform x from domain [xmin, xmax] to domain [-1, 1]
-
 	if (x < our xmin || x > our xmax)
 		return undefined;
-
+	/*
+		Transform x from domain [xmin, xmax] to domain [-1, 1]
+	*/
+	double p = our coefficients [1];
 	double pim1 = x = (2 * x - our xmin - our xmax) / (our xmax - our xmin);
-
 	if (numberOfCoefficients > 1) {
-		double pim2 = 1, twox = 2.0 * x, f2 = x, d = 1.0;
+		const double twox = 2.0 * x;
+		double pim2 = 1, f2 = x, d = 1.0;
 		p += our coefficients [2] * pim1;
 		for (integer i = 3; i <= our numberOfCoefficients; i ++) {
-			double f1 = d ++;
+			const double f1 = d ++;
 			f2 += twox;
-			double pi = (f2 * pim1 - f1 * pim2) / d;
+			const double pi = (f2 * pim1 - f1 * pim2) / d;
 			p += our coefficients [i] * pi;
 			pim2 = pim1; 
 			pim1 = pi;
@@ -918,10 +933,11 @@ void structLegendreSeries :: v_evaluateTerms (double x, VEC terms) {
 
 	terms [1] = 1.0;
 	if (our numberOfCoefficients > 1) {
-		double twox = 2.0 * x, f2 = x, d = 1.0;
+		const double twox = 2.0 * x;
+		double f2 = x, d = 1.0;
 		terms [2] = x;
 		for (integer i = 3; i <= numberOfCoefficients; i ++) {
-			double f1 = d ++;
+			const double f1 = d ++;
 			f2 += twox;
 			terms [i] = (f2 * terms [i - 1] - f1 * terms [i - 2]) / d;
 		}
@@ -963,8 +979,9 @@ autoLegendreSeries LegendreSeries_getDerivative (LegendreSeries me) {
 		autoLegendreSeries thee = LegendreSeries_create (my xmin, my xmax, my numberOfCoefficients - 1);
 
 		for (integer n = 1; n <= my numberOfCoefficients - 1; n ++) {
-			// P [n]'(x) = Sum (k=0..nonNegative, (2n - 4k - 1) P [n-2k-1](x))
-
+			/*
+				P [n]'(x) = Sum (k=0..nonNegative, (2n - 4k - 1) P [n-2k-1](x))
+			*/
 			integer n2 = n - 1;
 			for (integer k = 0; n2 >= 0; k ++, n2 -= 2)
 				thy coefficients [n2 + 1] += (2 * n - 4 * k - 1) * my coefficients [n + 1];
@@ -977,7 +994,7 @@ autoLegendreSeries LegendreSeries_getDerivative (LegendreSeries me) {
 
 autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me) {
 	try {
-		double xmin = -1, xmax = 1;
+		const double xmin = -1, xmax = 1;
 		autoPolynomial thee = Polynomial_create (xmin, xmax, my numberOfCoefficients - 1);
 
 		thy coefficients [1] = my coefficients [1];   /* * p [1] */
@@ -992,16 +1009,15 @@ autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me) {
 
 			// Start the recursion: P [1] = x; P [0] = 1;
 
-			pnm1 [2] = 1;
-			pnm2 [1] = 1;
+			pnm1 [2] = 1.0;
+			pnm2 [1] = 1.0;
 			for (integer n = 2; n <= my numberOfCoefficients - 1; n ++) {
-				double a = (2.0 * n - 1.0) / (double) n;
-				double c = - (n - 1.0) / (double) n;
+				const double a = (2.0 * n - 1.0) / (double) n;
+				const double c = - (n - 1.0) / (double) n;
 				NUMpolynomial_recurrence (pn.part (1, n + 1), a, 0, c, pnm1.get(), pnm2.get());
-				if (my coefficients [n + 1] != 0.0) {
+				if (my coefficients [n + 1] != 0.0)
 					for (integer j = 1; j <= n + 1; j ++)
 						thy coefficients [j] += my coefficients [n + 1] * pn [j];
-				}
 				double *t1 = pnm1.at, *t2 = pnm2.at;
 				pnm1.at = pn.at;
 				pnm2.at = t1;
@@ -1040,28 +1056,28 @@ void Roots_fixIntoUnitCircle (Roots me) {
 
 static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
 	double min = v [lo].re,  max = v [lo].re;
-	for (integer i = lo + 1; i <= hi; i ++) {
-		if (v [i].re < min) {
+	for (integer i = lo + 1; i <= hi; i ++)
+		if (v [i].re < min)
 			min = v [i].re;
-		} else if (v [i].re > max) {
+		else if (v [i].re > max)
 			max = v [i].re;
-		}
-	}
-	if (out_min) *out_min = min;
-	if (out_max) *out_max = max;
+	if (out_min)
+		*out_min = min;
+	if (out_max)
+		*out_max = max;
 }
 
 static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
 	double min = v [lo].im, max = v [lo].im;
-	for (integer i = lo + 1; i <= hi; i ++) {
-		if (v [i]. im < min) {
+	for (integer i = lo + 1; i <= hi; i ++)
+		if (v [i]. im < min)
 			min = v [i]. im;
-		} else if (v [i]. im > max) {
+		else if (v [i]. im > max)
 			max = v [i]. im;
-		}
-	}
-	if (out_min) *out_min = min;
-	if (out_max) *out_max = max;
+	if (out_min)
+		*out_min = min;
+	if (out_max)
+		*out_max = max;
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
@@ -1070,9 +1086,9 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	const double oldFontSize = Graphics_inqFontSize (g);
 	const double eps = 1e-6;
 
-	if (rmax <= rmin) {
+	if (rmax <= rmin)
 		NUMdcvector_extrema_re (my v, 1, my max, & rmin, & rmax);
-	}
+
 	double denominator = fabs (rmax) > fabs (rmin) ? fabs (rmax) : fabs (rmin);
 	if (denominator == 0.0)
 		denominator = 1.0;
@@ -1080,9 +1096,8 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 		rmin -= 1.0;
 		rmax += 1.0;
 	}
-	if (imax <= imin) {
+	if (imax <= imin)
 		NUMdcvector_extrema_im (my v, 1, my max, & imin, & imax);
-	}
 	denominator = fabs (imax) > fabs (imin) ? fabs (imax) : fabs (imin);
 	if (denominator == 0.0)
 		denominator = 1.0;
@@ -1095,7 +1110,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	Graphics_setFontSize (g, fontSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	for (integer i = 1; i <= my max; i ++) {
-		double re = my v [i].re, im = my v [i].im;
+		const double re = my v [i].re, im = my v [i].im;
 		if (re >= rmin && re <= rmax && im >= imin && im <= imax)
 			Graphics_text (g, re, im, symbol);
 	}
@@ -1117,35 +1132,34 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 autoRoots Polynomial_to_Roots (Polynomial me) {
 	try {
 		integer np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n;
-		Melder_require (n > 0, U"Cannot find roots of a constant function.");
-		
-		// Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
-		// parts of eigenvalues wr [1..n] and wi [1..n].
-
+		Melder_require (n > 0,
+			U"Cannot find roots of a constant function.");
+		/*
+			Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
+			parts of eigenvalues wr [1..n] and wi [1..n].
+		*/
 		autoVEC hes = newVECzero (n2);
 		autoVEC wr = newVECraw (n);
 		autoVEC wi = newVECraw (n);
-
-		// Fill the upper Hessenberg matrix (storage is Fortran)
-		// C: [i] [j] -> Fortran: (j-1)*n + i
-
+		/*
+			Fill the upper Hessenberg matrix (storage is Fortran)
+			C: [i] [j] -> Fortran: (j-1)*n + i
+		*/
 		for (integer i = 1; i <= n; i ++) {
 			hes [(i - 1) * n + 1] = - (my coefficients [np1 - i] / my coefficients [np1]);
-			if (i < n) {
-				hes [(i - 1) * n + 1 + i] = 1;
-			}
+			if (i < n)
+				hes [(i - 1) * n + 1 + i] = 1.0;
 		}
 
 		// Find out the working storage needed
 
 		char job = 'E', compz = 'N';
 		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
-		double *z = 0, wt [1];
+		double *z = nullptr, wt [1];
 		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
-		if (info != 0) {
-			if (info < 0)
-				Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		}
+		if (info != 0)
+			Melder_require (info > 0,
+				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 		lwork = Melder_ifloor (wt [0]);
 		autoVEC work = newVECraw (lwork);
 
@@ -1155,10 +1169,13 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		integer nrootsfound = n;
 		integer ioffset = 0;
 		if (info > 0) {
-			// if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
-			// WR and WI contain those eigenvalues which have been successfully computed
+			/*
+				if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
+				WR and WI contain those eigenvalues which have been successfully computed
+			*/
 			nrootsfound -= info;
-			Melder_require (nrootsfound > 0, U"No roots found.");
+			Melder_require (nrootsfound > 0,
+				U"No roots found.");
 			Melder_warning (U"Calculated only ", nrootsfound, U" roots.");
 			ioffset = info;
 		} else if (info < 0) {
@@ -1183,9 +1200,10 @@ void Roots_sort (Roots me) {
 
 // Precondition: complex roots occur in pairs (a,bi), (a,-bi) with b>0
 void Roots_Polynomial_polish (Roots me, Polynomial thee) {
-	integer i = my min, maxit = 80;
+	const integer maxit = 80;
+	integer i = my min;
 	while (i <= my max) {
-		double im = my v [i].im, re = my v [i].re;
+		const double im = my v [i].im, re = my v [i].re;
 		if (im != 0.0) {
 			Polynomial_polish_complexroot_nr (thee, & my v [i], maxit);
 			if (i < my max && im == -my v [i + 1].im && re == my v [i + 1].re) {
@@ -1235,7 +1253,7 @@ void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *o
 	if (my numberOfCoefficients > 1) {
 		remainder = my coefficients [my numberOfCoefficients];
 		for (integer j = my numberOfCoefficients - 1; j > 0; j --) {
-			double tmp = my coefficients [j];
+			const double tmp = my coefficients [j];
 			my coefficients [j] = remainder;
 			remainder = tmp + remainder * factor;
 		}
@@ -1243,19 +1261,22 @@ void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *o
 	} else {
 		my coefficients [1] = 0.0;
 	}
-	if (out_remainder) *out_remainder = remainder;
+	if (out_remainder)
+		*out_remainder = remainder;
 }
 
 void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
 	if (my numberOfCoefficients > 2) {
 		integer n = my numberOfCoefficients;
-		/* c [1]+c [2]*x...c [n+1]*x^n / (x^2 - a) = r [1]+r [2]*x+...r [n-1]x^(n-2) + possible remainder a [1]+a [2]*x)
-		 * r [j] = c [j+2]+factor*r [j+2] */
+		/*
+			c [1]+c [2]*x...c [n+1]*x^n / (x^2 - a) = r [1]+r [2]*x+...r [n-1]x^(n-2) + possible remainder a [1]+a [2]*x)
+			r [j] = c [j+2]+factor*r [j+2]
+		*/
 		double cjp2 = my coefficients [n];
 		double cjp1 = my coefficients [n - 1];
 		my coefficients [n] = my coefficients [n - 1] = 0.0;
 		for (integer j = n - 2; j > 0; j --) {
-			double cj = my coefficients [j];
+			const double cj = my coefficients [j];
 			my coefficients [j] = cjp2 + factor * my coefficients [j + 2];
 			cjp2 = cjp1;
 			cjp1 = cj;
@@ -1268,7 +1289,8 @@ void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
 }
 
 void Roots_setRoot (Roots me, integer index, double re, double im) {
-	Melder_require (index >= my min && index <= my max, U"Index should be in interval [1, ", my max, U"].");
+	Melder_require (index >= my min && index <= my max,
+		U"Index should be in interval [1, ", my max, U"].");
 	my v [index].re = re;
 	my v [index].im = im;
 }
@@ -1288,12 +1310,12 @@ autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numbe
 			U"Number of frequencies should be greater than 1.");
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFrequencies);
 
-		double phi = NUMpi / (numberOfFrequencies - 1);
+		const double phi = NUMpi / (numberOfFrequencies - 1);
 		dcomplex z;
 		for (integer i = 1; i <= numberOfFrequencies; i ++) {
 			z.re = radius * cos ( (i - 1) * phi);
 			z.im = radius * sin ( (i - 1) * phi);
-			dcomplex s = Roots_evaluate_z (me, z);
+			const dcomplex s = Roots_evaluate_z (me, z);
 			thy z [1] [i] = s.re;
 			thy z [2] [i] = s.im;
 		}
@@ -1320,7 +1342,7 @@ autoSpectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, int
 			U"Number of frequencies should be greater than 1.");
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFrequencies);
 
-		double phi = NUMpi / (numberOfFrequencies - 1);
+		const double phi = NUMpi / (numberOfFrequencies - 1);
 		for (integer i = 1; i <= numberOfFrequencies; i ++) {
 			double re, im;
 			Polynomial_evaluate_z_cart (me, radius, (i - 1) * phi, & re, & im);
@@ -1351,13 +1373,14 @@ double structChebyshevSeries :: v_evaluate (double x) {
 
 	double d1 = 0.0, d2 = 0.0;
 	if (numberOfCoefficients > 1) {
-		// Transform x from domain [xmin, xmax] to domain [-1, 1]
-
+		/*
+			Transform x from domain [xmin, xmax] to domain [-1, 1]
+		*/
 		x = (2.0 * x - our xmin - our xmax) / (our xmax - our xmin);
-		double x2 = 2.0 * x;
+		const double twox = 2.0 * x;
 		for (integer i = our numberOfCoefficients; i > 1; i --) {
-			double tmp = d1;
-			d1 = x2 * d1 - d2 + our coefficients [i];
+			const double tmp = d1;
+			d1 = twox * d1 - d2 + our coefficients [i];
 			d2 = tmp;
 		}
 	}
@@ -1375,8 +1398,9 @@ void structChebyshevSeries :: v_evaluateTerms (double x, VEC terms) {
 	}
 	terms [1] = 1.0;
 	if (numberOfCoefficients > 1) {
-		// Transform x from domain [xmin, xmax] to domain [-1, 1]
-
+		/*
+			Transform x from domain [xmin, xmax] to domain [-1, 1]
+		*/
 		terms [2] = x = (2.0 * x - xmin - xmax) / (xmax - xmin);
 
 		for (integer i = 3; i <= numberOfCoefficients; i ++)
@@ -1415,7 +1439,7 @@ autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 	try {
-		double xmin = -1.0, xmax = 1.0;
+		const double xmin = -1.0, xmax = 1.0;
 
 		autoPolynomial thee = Polynomial_create (xmin, xmax, my numberOfCoefficients - 1);
 
@@ -1433,13 +1457,12 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 
 			pnm1 [2] = 1.0;
 			pnm2 [1] = 1.0;
-			double a = 2.0, b = 0.0, c = -1.0;
+			const double a = 2.0, b = 0.0, c = -1.0;
 			for (integer n = 2; n <= my numberOfCoefficients - 1; n ++) {
 				NUMpolynomial_recurrence (pn.part (1, n + 1), a, b, c, pnm1.get (), pnm2.get());
-				if (my coefficients [n + 1] != 0.0) {
+				if (my coefficients [n + 1] != 0.0)
 					for (integer j = 1; j <= n + 1; j ++)
 						thy coefficients [j] += my coefficients [n + 1] * pn [j];
-				}
 				double *t1 = pnm1.at, *t2 = pnm2.at;  // circular swap
 				pnm1.at = pn.at;
 				pnm2.at = t1;
@@ -1457,10 +1480,10 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 
 void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, INTVEC freeze, double tol, int ic, autoCovariance *c) {
 	try {
-		integer numberOfData = thy points.size;
-		integer numberOfParameters = my numberOfCoefficients;
-		integer numberOfFreeParameters = numberOfParameters;
-		Melder_require (numberOfData > 1, U"The number of data point should be larger than 1.");
+		const integer numberOfData = thy points.size;
+		const integer numberOfParameters = my numberOfCoefficients;
+		Melder_require (numberOfData > 1,
+			U"The number of data point should be larger than 1.");
 
 		autoFunctionTerms frozen = Data_copy (me);
 		autoVEC terms = newVECzero (my numberOfCoefficients);
@@ -1471,62 +1494,63 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, INTVEC freeze,
 			ac = Covariance_create (numberOfParameters);
 
 		integer k = 1;
-		for (integer j = 1; j <= my numberOfCoefficients; j ++) {
+		integer numberOfFreeParameters = numberOfParameters;
+		for (integer j = 1; j <= my numberOfCoefficients; j ++)
 			if (freeze.size > 0 && freeze [j])
 				numberOfFreeParameters--;
 			else {
 				p [k ++] = my coefficients [j];
 				frozen -> coefficients [j] = 0.0;
 			}
-		}
 		
-		Melder_require (numberOfFreeParameters > 0, U"No free parameters left.");
+		Melder_require (numberOfFreeParameters > 0,
+			U"No free parameters left.");
 
 		autoSVD svd = SVD_create (numberOfData, numberOfFreeParameters);
 
-		double sigma = RealTier_getStandardDeviation_points (thee, my xmin, my xmax);
+		const double sigma = RealTier_getStandardDeviation_points (thee, my xmin, my xmax);
 		
-		Melder_require (isdefined (sigma), U"Not enough data points in fit interval.");
+		Melder_require (isdefined (sigma),
+			U"Not enough data points in fit interval.");
 
 		for (integer i = 1; i <= numberOfData; i ++) {
-			// Only 'residual variance' must be explained by the model
-			// Evaluate only with the frozen parameters
-
+			/*
+				Only 'residual variance' must be explained by the model
+				Evaluate only with the frozen parameters
+			*/
 			RealPoint point = thy points.at [i];
-			double x = point -> number;
-			double y = point -> value;
-			double y_frozen = ( numberOfFreeParameters == numberOfParameters ? 0.0 :
+			const double x = point -> number;
+			const double y = point -> value;
+			const double y_frozen = ( numberOfFreeParameters == numberOfParameters ? 0.0 :
 				FunctionTerms_evaluate (frozen.get(), x));
 
 			y_residual [i] = (y - y_frozen) / sigma;
 
-			// Data matrix
-
 			FunctionTerms_evaluateTerms (me, x, terms.get ());
 			k = 0;
-			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				if (freeze.size == 0 || ! freeze [j]) 
+			for (integer j = 1; j <= my numberOfCoefficients; j ++)
+				if (freeze.size == 0 || ! freeze [j])
 					svd -> u [i] [++ k] = terms [j] / sigma;
-			}
 		}
-
-		// SVD and evaluation of the singular values
-
+		/*
+			SVD and evaluation of the singular values
+		*/
 		if (tol > 0.0)
 			SVD_setTolerance (svd.get(), tol);
 
 		SVD_compute (svd.get());
 		autoVEC result = SVD_solve (svd.get(), y_residual.get());
-
-		// Put fitted values at correct position
+		/*
+			Put fitted values at correct position
+		*/
 		k = 1;
-		for (integer j = 1; j <= my numberOfCoefficients; j ++) {
+		for (integer j = 1; j <= my numberOfCoefficients; j ++)
 			if (freeze.size == 0 || ! freeze [j])
 				my coefficients [j] = result [k ++];
-		}
 		if (ic)
 			svdcvm (ac -> data.get(), svd -> v.get(), numberOfFreeParameters, freeze, svd -> d.get());
-		if (c) *c = ac.move();
+		if (c)
+			*c = ac.move();
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no fit.");
 	}
@@ -1579,7 +1603,7 @@ autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, integer degree, do
 	nKnots is now numberOfinteriorKnots + 2.
 */
 static double NUMmspline2 (constVEC points, integer order, integer index, double x) {
-	integer numberOfSplines = points.size + order - 2;
+	const integer numberOfSplines = points.size + order - 2;
 	double m [Spline_MAXIMUM_DEGREE + 2];
 
 	Melder_assert (points.size > 2 && order > 0 && index > 0);
@@ -1604,18 +1628,18 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 	index_e = std::min (points.size, index_e);
 	if (x > points [index_e])
 		return 0.0;
-
-	// Calculate M [i](x|1,t) according to eq.2.
-
+	/*
+		Calculate M [i](x|1,t) according to eq.2.
+	*/
 	for (integer k = 1; k <= order; k ++) {
-		integer k1 = index - order + k, k2 = k1 + 1;
+		const integer k1 = index - order + k, k2 = k1 + 1;
 		m [k] = 0.0;
 		if (k1 > 0 && k2 <= points.size && x >= points [k1] && x < points [k2])
 			m [k] = 1.0 / (points [k2] - points [k1]);
 	}
-
-	// Iterate to get M [i](x|k,t)
-
+	/*
+		Iterate to get M [i](x|k,t)
+	*/
 	for (integer k = 2; k <= order; k ++) {
 		for (integer j = 1; j <= order - k + 1; j ++) {
 			integer k1 = index - order + j, k2 = k1 + k;
@@ -1624,7 +1648,7 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 			else if (k2 > points.size && k1 < points.size)
 				k2 = points.size;
 			if (k1 > 0 && k2 <= points.size) {
-				double p1 = points [k1], p2 = points [k2];
+				const double p1 = points [k1], p2 = points [k2];
 				m [j] = k * ((x - p1) * m [j] + (p2 - x) * m [j + 1]) /
 					((k - 1) * (p2 - p1));
 			}
@@ -1650,12 +1674,12 @@ static double NUMispline2 (constVEC points, integer order, integer index, double
 	integer j;
 	for (j = index_e - 1; j >= index_b; j--)
 		if (x > points [j]) break;
-
-	// Equation 5 in Ramsay's article contains some errors!!!
-	// 1. the interval selection must be 'j-k <= i <= j' instead of
-	//	'j-k+1 <= i <= j'
-	// 2. the summation index m starts at 'i+1' instead of 'i'
-
+	/*
+		Equation 5 in Ramsay's article contains some errors!!!
+		1. the interval selection must be 'j-k <= i <= j' instead of
+			'j-k+1 <= i <= j'
+		2. the summation index m starts at 'i+1' instead of 'i'
+	*/
 	double y = 0.0;
 	for (integer m = index + 1; m <= j + order; m ++) {
 		integer km = m - order, kmp = km + order + 1;
@@ -1682,8 +1706,8 @@ integer structSpline :: v_getOrder () {
 
 /* Precondition: FunctionTerms part inited + degree */
 static void Spline_initKnotsFromString (Spline me, integer degree, conststring32 interiorKnots_string) {
-
-	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
+	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
+		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
 	autoVEC interiorKnots = VEC_createFromString (interiorKnots_string);
 
@@ -1692,9 +1716,10 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 		U"Knots should be inside domain.");
 
 	my degree = degree;
-	integer order = Spline_getOrder (me); /* depends on spline type !! */
-	integer n = interiorKnots.size + order;
-	Melder_require (my numberOfCoefficients == n, U"Number of coefficients should equal ", n, U".");
+	const integer order = Spline_getOrder (me); /* depends on spline type !! */
+	const integer n = interiorKnots.size + order;
+	Melder_require (my numberOfCoefficients == n,
+		U"Number of coefficients should equal ", n, U".");
 
 	my numberOfKnots = interiorKnots.size + 2;
 	my knots = newVECzero (my numberOfKnots);
@@ -1704,9 +1729,8 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 }
 
 void Spline_init (Spline me, double xmin, double xmax, integer degree, integer numberOfCoefficients, integer numberOfKnots) {
-
-	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
-	
+	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
+		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
 	my knots = newVECzero (numberOfKnots);
 	my degree = degree;
@@ -1716,7 +1740,7 @@ void Spline_init (Spline me, double xmin, double xmax, integer degree, integer n
 }
 
 void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
-	integer order = Spline_getOrder (me);
+	const integer order = Spline_getOrder (me);
 
 	if (xmax <= xmin) {
 		xmin = my xmin;
@@ -1725,10 +1749,8 @@ void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double y
 	if (xmax < my xmin || xmin > my xmax)
 		return;
 
-	if (ymax <= ymin) {
-		double x1, x2;
-		FunctionTerms_getExtrema (me, xmin, xmax, & x1, & ymin, & x2, & ymax);
-	}
+	if (ymax <= ymin)
+		FunctionTerms_getExtrema (me, xmin, xmax, nullptr, & ymin, nullptr, & ymax);
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
@@ -1749,7 +1771,7 @@ void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double y
 		}
 	}
 	if (my knots [my numberOfKnots] >= xmin && my knots [my numberOfKnots] <= xmax) {
-		integer numberOfKnots = ! garnish ? 0 : my numberOfKnots + 2 * (order - 1);
+		const integer numberOfKnots = ! garnish ? 0 : my numberOfKnots + 2 * (order - 1);
 		Graphics_markTop (g, my knots [my numberOfKnots], false, true, true,
 				! garnish ? U"" :
 				order == 1 ? Melder_cat (U"t__", numberOfKnots, U"_") :
@@ -1771,17 +1793,16 @@ autoSpline Spline_scaleX (Spline me, double xmin, double xmax) {
 
 		thy xmin = xmin;
 		thy xmax = xmax;
-
-		// x = a x + b
-		// Constraints:
-		// my xmin = a xmin + b;    a = (my xmin - my xmax) / (xmin - xmax);
-		// my xmax = a xmax + b;    b = my xmin - a * xmin
-
-		double a = (xmin - xmax) / (my xmin - my xmax);
-		double b = xmin - a * my xmin;
-		for (integer i = 1; i <= my numberOfKnots; i ++) {
+		/*
+			x = a x + b
+			Constraints:
+			my xmin = a xmin + b;    a = (my xmin - my xmax) / (xmin - xmax);
+			my xmax = a xmax + b;    b = my xmin - a * xmin
+		*/
+		const double a = (xmin - xmax) / (my xmin - my xmax);
+		const double b = xmin - a * my xmin;
+		for (integer i = 1; i <= my numberOfKnots; i ++)
 			thy knots [i] = a * my knots [i] + b;
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Scaled Spline not created.");
@@ -1794,10 +1815,9 @@ double structMSpline :: v_evaluate (double x) {
 	if (x < our xmin || x > our xmax)
 		return 0.0;
 	double result = 0.0;
-	for (integer i = 1; i <= numberOfCoefficients; i ++) {
+	for (integer i = 1; i <= numberOfCoefficients; i ++)
 		if (coefficients [i] != 0.0)
 			result += coefficients [i] * NUMmspline2 (knots.get(), degree + 1, i, x);
-	}
 	return result;
 }
 
@@ -1814,8 +1834,8 @@ Thing_implement (MSpline, Spline, 0);
 autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots) {
 	try {
 		autoMSpline me = Thing_new (MSpline);
-		integer numberOfCoefficients = numberOfInteriorKnots + degree + 1;
-		integer numberOfKnots = numberOfCoefficients + degree + 1;
+		const integer numberOfCoefficients = numberOfInteriorKnots + degree + 1;
+		const integer numberOfKnots = numberOfCoefficients + degree + 1;
 		Spline_init (me.get(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
 		return me;
 	} catch (MelderError) {
@@ -1842,10 +1862,9 @@ double structISpline :: v_evaluate (double x) {
 	if (x < our xmin || x > our xmax)
 		return 0.0;
 	double result = 0.0;
-	for (integer i = 1; i <= numberOfCoefficients; i ++) {
+	for (integer i = 1; i <= numberOfCoefficients; i ++)
 		if (coefficients [i] != 0.0)
 			result += coefficients [i] * NUMispline2 (knots.get(), degree, i, x);
-	}
 	return result;
 }
 
@@ -1864,8 +1883,8 @@ Thing_implement (ISpline, Spline, 0);
 autoISpline ISpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots) {
 	try {
 		autoISpline me = Thing_new (ISpline);
-		integer numberOfCoefficients = numberOfInteriorKnots + degree;
-		integer numberOfKnots = numberOfCoefficients + degree;
+		const integer numberOfCoefficients = numberOfInteriorKnots + degree;
+		const integer numberOfKnots = numberOfCoefficients + degree;
 		Spline_init (me.get(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
 		return me;
 	} catch (MelderError) {
@@ -1875,8 +1894,8 @@ autoISpline ISpline_create (double xmin, double xmax, integer degree, integer nu
 
 autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots) {
 	try {
-		if (degree > Spline_MAXIMUM_DEGREE)
-			Melder_throw (U"Degree should be <= 20.");
+		Melder_require (degree <= Spline_MAXIMUM_DEGREE,
+			U"Degree should should not exceed ", Spline_MAXIMUM_DEGREE);
 		autoISpline me = Thing_new (ISpline);
 		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, true);
 		Spline_initKnotsFromString (me.get(), degree, interiorKnots);

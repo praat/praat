@@ -43,7 +43,7 @@ static double Dissimilarity_getAverage (Dissimilarity me) {
 	integer numberOfPositives = 0;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
 		for (integer j = i + 1; j <= my numberOfRows; j ++) {
-			longdouble proximity = 0.5 * (my data [i] [j] + my data [j] [i]);
+			const longdouble proximity = 0.5 * (my data [i] [j] + my data [j] [i]);
 			if (proximity > 0.0) {
 				numberOfPositives ++;
 				sum += proximity;
@@ -72,7 +72,7 @@ autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd) {
 
 		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= my numberOfRows; j ++) {
-				double dis = my data [i] [j];
+				const double dis = my data [i] [j];
 				my data [j] [i] = my data [i] [j] = dis * dis + 5.0 + NUMrandomUniform (0.0, noiseStd);
 			}
 		}
@@ -90,24 +90,24 @@ autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd) {
 double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 	double additiveConstant = undefined;
 	try {
-		integer nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
+		const integer nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
 		Melder_require (nPoints > 0,
 			U"Matrix part should not be empty.");
-
-		// Return c = average dissimilarity in case of failure
-
+		/*
+			Return c = average dissimilarity in case of failure
+		*/
 		additiveConstant = Dissimilarity_getAverage (me);
 		Melder_require (isdefined (additiveConstant),
 			U"There are no positive dissimilarities.");
 		
 		autoMAT wd = newMATzero (nPoints, nPoints);
 		autoMAT wdsqrt = newMATzero (nPoints, nPoints);
-
-		// The matrices D & D1/2 with distances (squared and linear)
-
+		/*
+			The matrices D & D1/2 with distances (squared and linear)
+		*/
 		for (integer i = 1; i <= nPoints - 1; i ++) {
 			for (integer j = i + 1; j <= nPoints; j ++) {
-				double proximity = (my data [i] [j] + my data [j] [i]) / 2.0;
+				const double proximity = (my data [i] [j] + my data [j] [i]) / 2.0;
 				wdsqrt [j] [i] = wdsqrt [i] [j] = - proximity / 2.0; // djmw 20180830
 				wd [j] [i] = wd [i] [j] = - proximity * proximity / 2.0;
 			}
@@ -115,20 +115,21 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		MATdoubleCentre_inplace (wdsqrt.get());
 		MATdoubleCentre_inplace (wd.get());
-
-		// Calculate the B matrix according to eq. 6
-		
+		/*
+			Calculate the B matrix according to eq. 6
+		*/
 		autoMAT b = newMATzero (nPoints2, nPoints2);
 		b.part (1, nPoints, nPoints + 1, nPoints2) <<= 2.0  *  wd.get();
 		b.part (nPoints + 1, nPoints2, 1, nPoints).diagonal() <<= - 1.0;
 		b.part (nPoints + 1, nPoints2, nPoints + 1, nPoints2) <<= -4.0  *  wdsqrt.get();
-
-		// Get eigenvalues
-		
+		/*
+			Get eigenvalues
+		*/
 		autoVEC eigenvalues_re, eigenvalues_im;
 		MAT_getEigenSystemFromGeneralMatrix (b.get(), nullptr, nullptr, & eigenvalues_re, & eigenvalues_im);
-		
-		// Get largest real eigenvalue
+		/*
+			Get largest real eigenvalue
+		*/
 		double largestEigenvalue = - fabs (eigenvalues_re [1]);
 		integer numberOfRealEigenvalues = 0;
 		for (integer i = 1; i <= nPoints2; i ++) {

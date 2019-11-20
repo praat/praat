@@ -42,10 +42,10 @@ static double Polygon_area (Polygon me) {
 }
 
 void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax) {
-    double xmin = NUMmin (my x.get());
-	double xmax = NUMmax (my x.get());;
-    double ymin = NUMmin (my y.get());
-	double ymax = NUMmax (my y.get());;
+    const double xmin = NUMmin (my x.get());
+	const double xmax = NUMmax (my x.get());;
+    const double ymin = NUMmin (my y.get());
+	const double ymax = NUMmax (my y.get());;
     if (out_xmin)
 		*out_xmin = xmin;
     if (out_xmax)
@@ -64,7 +64,7 @@ autoPolygon Polygon_createSimple (conststring32 xystring) {
 		Melder_require (xys.size % 2 == 0,
 			U"One value is missing.");
 		
-		integer numberOfPoints = xys.size / 2;
+		const integer numberOfPoints = xys.size / 2;
 		autoPolygon me = Polygon_create (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			my x [i] = xys [2 * i - 1];
@@ -98,7 +98,7 @@ void Polygon_translate (Polygon me, double xt, double yt) {
 
 /* rotate counterclockwise w.r.t. (xc,yc) */
 void Polygon_rotate (Polygon me, double alpha, double xc, double yc) {
-	double f = alpha * NUMpi / 180, cosa = cos (f), sina = sin (f);
+	const double f = alpha * NUMpi / 180, cosa = cos (f), sina = sin (f);
 
 	Polygon_translate (me, -xc, -yc);
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
@@ -187,9 +187,8 @@ static void setWindow (Polygon me, Graphics graphics, double xmin, double xmax, 
 void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (integer i = 1; i <= my numberOfPoints; i ++) {
+	for (integer i = 1; i <= my numberOfPoints; i ++)
 		Graphics_mark (g, my x [i], my y [i], size_mm, mark);
-	}
 	Graphics_unsetInner (g);
 }
 
@@ -197,7 +196,7 @@ void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double
 
 autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tmax, double ymin, double ymax, double level) {
 	try {
-		bool clip = ymin < ymax;
+		const bool clip = ymin < ymax;
 		Melder_require (channel > 0 && channel <= my ny,
 			U"Channel does not exist.");
 		if (tmin >= tmax) {
@@ -211,9 +210,9 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 		Melder_require (tmin < my xmax && tmax > my xmin,
 			U"Invalid domain.");
 		
-		integer k = 1, i1 = Sampled_xToHighIndex (me, tmin);
-		integer i2 = Sampled_xToLowIndex (me, tmax);
-		integer numberOfPoints = i2 - i1 + 1 + 2 + 2; // begin + endpoint + level
+		const integer i1 = Sampled_xToHighIndex (me, tmin);
+		const integer i2 = Sampled_xToLowIndex (me, tmax);
+		const integer numberOfPoints = i2 - i1 + 1 + 2 + 2; // begin + endpoint + level
 		autoPolygon him = Polygon_create (numberOfPoints);
 
 		/*
@@ -226,11 +225,12 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 			Querying for the value at xmin which is outside the interpolation domain then produces an 'undefined'.
 			We try to avoid this with the following workaround.
 		*/
-		double xmin = my x1 - 0.5 * my dx;
-		double xmax = xmin + my nx * my dx;
+		const double xmin = my x1 - 0.5 * my dx;
+		const double xmax = xmin + my nx * my dx;
 		tmin = std::max (tmin, xmin); // yes, looks strange
 		tmax = std::min (tmax, xmax);
 		// End of workaround
+		integer k = 1;
 		his x [k] = tmin;
 		his y [k ++] = CLIP_Y (level, ymin, ymax);
 		his x [k] = tmin;
@@ -256,44 +256,43 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 
 autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, integer channel, double tmin, double tmax, double ymin, double ymax) {
 	try {
-		bool clip = ymin < ymax;
-		Melder_require (channel > 0 && channel <= my ny && channel <= thy ny, U"Invalid channel."); 
+		const bool clip = ymin < ymax;
+		Melder_require (channel > 0 && channel <= my ny && channel <= thy ny,
+			U"Invalid channel."); 
 		
 		// find overlap in the domains  with xmin workaround as in Sound_to_Polygon
-		double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx;
-		double xmin = ( my xmin > thy xmin ? xmin1 : xmin2 );
-		double xmax = ( my xmax < thy xmax ? xmin1 + my nx * my dx : xmin2 + thy nx * thy dx );
+		const double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx;
+		const double xmin = ( my xmin > thy xmin ? xmin1 : xmin2 );
+		const double xmax = ( my xmax < thy xmax ? xmin1 + my nx * my dx : xmin2 + thy nx * thy dx );
 		Melder_require (xmax > xmin,
 			U"Domains should overlap.");
-		if (xmax <= xmin)
-			Melder_throw (U"Domains should overlap.");
+		Melder_require (xmin < xmax,
+			U"Domains should overlap.");
 		if (tmin >= tmax) {
 			tmin = xmin;
 			tmax = xmax;
 		}
-		if (tmin < xmin) {
+		if (tmin < xmin)
 			tmin = xmin;
-		}
-		if (tmax > xmax) {
+		if (tmax > xmax)
 			tmax = xmax;
-		}
 		Melder_require (tmin < xmax && tmax > xmin,
 			U"Invalid domain.");
 		
-		integer k = 1;
-		integer ib1 = Sampled_xToHighIndex (me, tmin);
-		integer ie1 = Sampled_xToLowIndex (me, tmax);
-		integer n1 = ie1 - ib1 + 1;
-		integer ib2 = Sampled_xToHighIndex (thee, tmin);
-		integer ie2 = Sampled_xToLowIndex (thee, tmax);
-		integer n2 = ie2 - ib2 + 1;
-		integer numberOfPoints = n1 + n2 + 4; // me + thee + begin + endpoint + closing
+		const integer ib1 = Sampled_xToHighIndex (me, tmin);
+		const integer ie1 = Sampled_xToLowIndex (me, tmax);
+		const integer n1 = ie1 - ib1 + 1;
+		const integer ib2 = Sampled_xToHighIndex (thee, tmin);
+		const integer ie2 = Sampled_xToLowIndex (thee, tmax);
+		const integer n2 = ie2 - ib2 + 1;
+		const integer numberOfPoints = n1 + n2 + 4; // me + thee + begin + endpoint + closing
 
 		autoPolygon him = Polygon_create (numberOfPoints);
-
-		// my starting point at tmin
-
+		/*
+			my starting point at tmin
+		*/
 		double y = Vector_getValueAtX (me, tmin, ( my ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
+		integer k = 1;
 		his x [k] = tmin;
 		his y [k ++] = CLIP_Y (y, ymin, ymax);
 

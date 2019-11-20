@@ -1,6 +1,6 @@
 /* Proximity_and_Distance.cpp
  *
- * Copyright (C) 2018 David Weenink
+ * Copyright (C) 2018-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ autoDistance Dissimilarity_to_Distance (Dissimilarity me, kMDS_AnalysisScale sca
 		}
 		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= my numberOfColumns; j ++) {
-				double d = 0.5 * (my data [i] [j] + my data [j] [i]) + additiveConstant;
+				const double d = 0.5 * (my data [i] [j] + my data [j] [i]) + additiveConstant;
 				thy data [i] [j] = thy data [j] [i] = d;
 			}
 		}

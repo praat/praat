@@ -183,7 +183,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 	conststring32 silentLabel, conststring32 soundingLabel);
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *out_t1, double *out_t2);
 
 autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, conststring32 match);
 /* Cut intervals that match the label from the sound. The starting time of the new sound is
