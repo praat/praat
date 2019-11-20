@@ -62,8 +62,10 @@ void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, 
 		dp = dp * x + p;
 		p =  p * x + my coefficients [i];
 	}
-	if (out_f) *out_f = (double) p;
-	if (out_df) *out_df = (double) dp;
+	if (out_f)
+		*out_f = (double) p;
+	if (out_df)
+		*out_df = (double) dp;
 }
 
 /* Get value and derivative */
@@ -79,8 +81,10 @@ static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, 
 		pr   =   pr * x -   pi * y + my coefficients [i];
 		pi   =   tr * y +   pi * x;
 	}
-	if (out_p) *out_p = { (double) pr, (double) pi };
-	if (out_dp) *out_dp = { (double) dpr, (double) dpi };
+	if (out_p)
+		*out_p = { (double) pr, (double) pi };
+	if (out_dp)
+		*out_dp = { (double) dpr, (double) dpi };
 }
 
 autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives) {
@@ -88,14 +92,14 @@ autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDe
 		Evaluate polynomial c [1]+c [2]*x+...degree*x^degree in derivative [1] and the numberOfDerivatives 
 		in derivatives in derivatives [2..numberOfDerivatives+1].
 	*/
-	integer degree = my numberOfCoefficients - 1;
+	const integer degree = my numberOfCoefficients - 1;
 	autoVEC derivatives = newVECzero (numberOfDerivatives + 1);
 	numberOfDerivatives = numberOfDerivatives > degree ? degree : numberOfDerivatives;
 	
 	derivatives [1] = my coefficients [my numberOfCoefficients];
 
 	for (integer i = degree - 1; i >= 0; i--) {
-		integer n = numberOfDerivatives < degree - i ? numberOfDerivatives : degree - i;
+		const integer n = numberOfDerivatives < degree - i ? numberOfDerivatives : degree - i;
 		for (integer j = n; j >= 1; j --)
 			derivatives [j + 1] = derivatives [j + 1] * x + derivatives [j];
 		derivatives [1] = derivatives [1] * x + my coefficients [i + 1];   // evaluate polynomial (Horner)
@@ -138,13 +142,13 @@ static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 
 
 static void Polynomial_polish_realroot (Polynomial me, double *x, integer maxit) {
-	double xbest = *x, pmin = 1e308;
 	if (! NUMfpp)
 		NUMmachar ();
+	double xbest = *x, pmin = 1e308;
 	for (integer i = 1; i <= maxit; i ++) {
 		double p, dp;
 		Polynomial_evaluateWithDerivative (me, *x, & p, & dp);
-		double fabsp = fabs (p);
+		const double fabsp = fabs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse or we cannot get any closer.
@@ -157,21 +161,21 @@ static void Polynomial_polish_realroot (Polynomial me, double *x, integer maxit)
 		xbest = *x;
 		if (fabs (dp) == 0.0)
 			return;
-		double dx = p / dp;   // Newton-Raphson
+		const double dx = p / dp;   // Newton-Raphson
 		*x -= dx;
 	}
 	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
 
 static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, integer maxit) {
-	dcomplex zbest = *z;
-	double pmin = 1e308;
 	if (! NUMfpp)
 		NUMmachar ();
+	dcomplex zbest = *z;
+	double pmin = 1e308;
 	for (integer i = 1; i <= maxit; i ++) {
 		dcomplex p, dp;
 		Polynomial_evaluateWithDerivative_z (me, z, &p, &dp);
-		double fabsp = dcomplex_abs (p);
+		const double fabsp = dcomplex_abs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse.
@@ -184,7 +188,7 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, intege
 		zbest = *z;
 		if (dcomplex_abs (dp) == 0.0)
 			return;
-		dcomplex dz = dcomplex_div (p, dp);   // Newton-Raphson
+		const dcomplex dz = dcomplex_div (p, dp);   // Newton-Raphson
 		*z = dcomplex_sub (*z, dz);
 	}
 	// Melder_throw (U"Maximum number of iterations exceeded.");
@@ -202,7 +206,7 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, intege
 */
 
 static void NUMpolynomial_recurrence (VEC pn, double a, double b, double c, constVEC pnm1, constVEC pnm2) {
-	integer degree = pn.size - 1;
+	const integer degree = pn.size - 1;
 	Melder_assert (degree > 1 && pnm1.size >= pn.size && pnm2.size >= pn.size);
 
 	pn [1] = b * pnm1 [1] + c * pnm2 [1];
@@ -218,21 +222,19 @@ static void svdcvm (MAT cvm, constMAT v, integer mfit, constINTVEC frozen, const
 	autoVEC wti = newVECzero (mfit);
 
 	for (integer i = 1; i <= mfit; i ++) {
-		if (w [i] != 0.0) {
+		if (w [i] != 0.0)
 			wti [i] = 1.0 / (w [i] * w [i]);
-		} else {
+		else 
 			;   // TODO: write up an explanation for why it is not necessary to do anything if w [i] is zero
-		}
+
 	}
-	for (integer i = 1; i <= mfit; i ++) {
+	for (integer i = 1; i <= mfit; i ++)
 		for (integer j = 1; j <= i; j ++) {
 			longdouble sum = 0.0;
-			for (integer k = 1; k <= mfit; k ++) {
+			for (integer k = 1; k <= mfit; k ++)
 				sum += v [i] [k] * v [j] [k] * wti [k];
-			}
 			cvm [j] [i] = cvm [i] [j] = (double) sum;
 		}
-	}
 
 	for (integer i = mfit + 1; i <= frozen.size; i ++) {
 		for (integer j = 1; j <= i; j ++)
@@ -242,7 +244,7 @@ static void svdcvm (MAT cvm, constMAT v, integer mfit, constINTVEC frozen, const
 	integer k = mfit;
 	for (integer j = frozen.size; j > 0; j --) {
 		//	only change parameters that are not frozen
-		if (frozen.size = 0 || ! frozen [j]) {
+		if (frozen.size == 0 || ! frozen [j]) {
 			for (integer i = 1; i <= frozen.size; i ++)
 				std::swap (cvm [i] [k], cvm [i] [j]);
 			for (integer i = 1; i <= frozen.size; i ++)
