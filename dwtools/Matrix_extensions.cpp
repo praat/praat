@@ -341,7 +341,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		autoVEC b = newVECraw (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 
-		u.get() <<= my z.get();
+		u.get() <<= my z.part (1, nr, 1, nc);
 		b.get() <<= my z.column (my nx);
 
 		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
