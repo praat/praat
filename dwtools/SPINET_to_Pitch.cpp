@@ -31,18 +31,20 @@
 
 autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, integer maxnCandidates) {
 	try {
-		integer nPointsPerOctave = 48;
-		double fmin = NUMerbToHertz (SampledXY_indexToY (me, 1L));
-		double fmax = NUMerbToHertz (SampledXY_indexToY (me, my ny));
-		double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
-		double points = (fmaxl2 - fminl2) * nPointsPerOctave;
-		double dfl2 = (fmaxl2 - fminl2) / (points - 1);
-		integer numberOfFrequencyPoints = Melder_ifloor (points);
-		integer maxHarmonic = Melder_ifloor (fmax / fmin);
-		double maxStrength = 0.0, unvoicedCriterium = 0.45, maxPower = 0.0;
+		constexpr integer nPointsPerOctave = 48;
+		const double fmin = NUMerbToHertz (SampledXY_indexToY (me, 1L));
+		const double fmax = NUMerbToHertz (SampledXY_indexToY (me, my ny));
+		const double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
+		const double points = (fmaxl2 - fminl2) * nPointsPerOctave;
+		const double dfl2 = (fmaxl2 - fminl2) / (points - 1);
+		const integer numberOfFrequencyPoints = Melder_ifloor (points);
+		const integer maxHarmonic = Melder_ifloor (fmax / fmin);
+		const double unvoicedCriterium = 0.45;
 
-		Melder_require (numberOfFrequencyPoints > 1, U"Frequency range too small.");
-		Melder_require (fmin < ceiling, U"The centre frequency of the lowest filter should be smaller than the ceiling.");
+		Melder_require (numberOfFrequencyPoints > 1,
+			U"Frequency range too small.");
+		Melder_require (fmin < ceiling,
+			U"The centre frequency of the lowest filter should be smaller than the ceiling.");
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
 		autoVEC power = newVECraw (my nx);
@@ -51,23 +53,25 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		autoVEC y = newVECraw (my ny);
 		autoVEC yv2 = newVECraw (my ny);
 		autoVEC fl2 = newVECraw (my ny);
-
-		// From ERB's to log (f)
-
+		/*
+			From ERB's to log (f)
+		*/
 		for (integer i = 1; i <= my ny; i ++) {
-			double f = NUMerbToHertz (my y1 + (i - 1) * my dy);
+			const double f = NUMerbToHertz (my y1 + (i - 1) * my dy);
 			fl2 [i] = NUMlog2 (f);
 		}
-
-		// Determine global maximum power in frame
-
+		/*
+			Determine global maximum power in frame
+		*/
+		double maxStrength = 0.0, maxPower = 0.0;
 		for (integer j = 1; j <= my nx; j ++) {
 			const double p = NUMsum (my s.column (j));
 			if (p > maxPower)
 				maxPower = p;
 			power [j] = p;
 		}
-		Melder_require (maxPower != 0.0, U"The sound should not have all amplitudes equal to zero.");
+		Melder_require (maxPower != 0.0,
+			U"The sound should not have all amplitudes equal to zero.");
 
 		for (integer j = 1; j <= my nx; j ++) {
 			const Pitch_Frame pitchFrame = & thy frames [j];
@@ -81,9 +85,9 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 				pitch [k] = NUMcubicSplineInterpolation (fl2.get(), y.get(), yv2.get(), f);
 				sumspec [k] = 0.0;
 			}
-
-			// Formula (8): weighted harmonic summation.
-
+			/*
+				Formula (8): weighted harmonic summation.
+			*/
 			for (integer m = 1; m <= maxHarmonic; m ++) {
 				const double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
 				const integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));   // TODO: what is kb?
@@ -91,9 +95,9 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 					if (pitch [k] > 0.0)
 						sumspec [k - kb + 1] += pitch [k] * hm;
 			}
-
-			// into Pitch object
-
+			/*
+				Into Pitch object
+			*/
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
 			pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 0);   // !!!!!
 			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates);   // unvoiced
