@@ -113,7 +113,7 @@ void Pitch_Intensity_draw (Pitch pitchObject, Intensity intensityObject, Graphic
 
 double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 	integer numberOfValidLocalMeasurements = 0;
-	double sumOfLocalValues = 0.0;
+	longdouble sumOfLocalValues = 0.0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		const double time = Sampled_indexToX (me, iframe);
 		const bool localMeasurentIsValid = Pitch_isVoiced_t (thee, time);
@@ -123,12 +123,12 @@ double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 			numberOfValidLocalMeasurements += 1;
 		}
 	}
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : undefined;
+	return numberOfValidLocalMeasurements > 0 ? double (sumOfLocalValues) / numberOfValidLocalMeasurements : undefined;
 }
 
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 	integer numberOfValidLocalMeasurements = 0;
-	double sumOfLocalAbsoluteSlopes = 0.0;
+	longdouble sumOfLocalAbsoluteSlopes = 0.0;
 	for (integer iframe = 1; iframe < my nx; iframe ++) {
 		const double t1 = Sampled_indexToX (me, iframe);
 		const double t2 = t1 + my dx;
@@ -140,7 +140,7 @@ double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 		}
 	}
 	sumOfLocalAbsoluteSlopes /= my dx;   // convert to dB per second
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : undefined;
+	return numberOfValidLocalMeasurements > 0 ? double (sumOfLocalAbsoluteSlopes) / numberOfValidLocalMeasurements : undefined;
 }
 
 /* End of file Pitch_Intensity.cpp */

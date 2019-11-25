@@ -69,7 +69,8 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 			if (p1 *p2 > 0 || r == 0.0) 
 				continue;
 
-			if (++ ns > 2) break;
+			if (++ ns > 2)
+				break;
 
 			xs [ns] = x [j] + (x [j + 1] - x [j]) * r;
 			ys [ns] = y [j] + (y [j + 1] - y [j]) * r;
@@ -96,7 +97,8 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 	if (pcx > thy numberOfEigenvalues || pcy > thy numberOfEigenvalues)
 		return;
 	const integer numberOfUnitsInLayer_m1 = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer [layer - 1] );
-	if (numberOfUnitsInLayer_m1 != thy dimension) return;
+	if (numberOfUnitsInLayer_m1 != thy dimension)
+		return;
 
 
 	double x1, x2, y1, y2;
@@ -113,7 +115,8 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	const integer node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
-	if (node < 1) return;
+	if (node < 1)
+		return;
 
 	/*
 		Suppose p1 and p2 are the two points in the eigenplane, spanned by the eigenvectors

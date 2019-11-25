@@ -150,10 +150,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 }
 
 void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
@@ -226,10 +223,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 {
 	if (nBins <= 0)
 		return;
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
@@ -372,10 +366,7 @@ autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance) {
 }
 
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
@@ -390,10 +381,7 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 }
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax) {
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;

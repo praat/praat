@@ -98,9 +98,10 @@
 //#define oo_COMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 
 #define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
+#define oo_obsoleteVEC32(x,size)  oo_ANYVEC (double, r32, x, size)
 #define oo_INTVEC(x,size)  oo_ANYVEC (integer, integer32BE, x, size)
 #define oo_INTVEC16(x,size)  oo_ANYVEC (integer, integer16BE, x, size)
-#define oo_obsoleteVEC32(x,size)  oo_ANYVEC (double, r32, x, size)
+#define oo_BOOLVEC(x,size)  oo_ANYVEC (bool, eb, x, size)
 
 #define oo_MAT(x,nrow,ncol)  oo_ANYMAT (double, r64, x, nrow, ncol)
 #define oo_INTMAT(x,nrow,ncol)  oo_ANYMAT (integer, integer32BE, x, nrow, ncol)

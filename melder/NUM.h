@@ -61,7 +61,8 @@ bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
 }
 
 inline MelderRealRange NUMextrema (const constVECVU& vec) {
-	if (NUMisEmpty (vec)) return { undefined, undefined };
+	if (NUMisEmpty (vec))
+		return { undefined, undefined };
 	double minimum = vec [1], maximum = minimum;
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
@@ -71,24 +72,30 @@ inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	return { minimum, maximum };
 }
 inline MelderRealRange NUMextrema (const constMATVU& mat) {
-	if (NUMisEmpty (mat)) return { undefined, undefined };
+	if (NUMisEmpty (mat))
+		return { undefined, undefined };
 	double minimum = mat [1] [1], maximum = minimum;
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
 			const double value = mat [irow] [icol];
-			if (value < minimum) minimum = value;
-			if (value > maximum) maximum = value;
+			if (value < minimum)
+				minimum = value;
+			if (value > maximum)
+				maximum = value;
 		}
 	}
 	return { minimum, maximum };
 }
 inline MelderIntegerRange NUMextrema (const constINTVECVU& vec) {
-	if (NUMisEmpty (vec)) return { INTEGER_MIN, INTEGER_MAX };
+	if (NUMisEmpty (vec))
+		return { INTEGER_MIN, INTEGER_MAX };
 	integer minimum = vec [1], maximum = minimum;
 	for (integer i = 2; i <= vec.size; i ++) {
 		const integer value = vec [i];
-		if (value < minimum) minimum = value;
-		if (value > maximum) maximum = value;
+		if (value < minimum)
+			minimum = value;
+		if (value > maximum)
+			maximum = value;
 	}
 	return { minimum, maximum };
 }
@@ -122,6 +129,9 @@ inline bool NUMequal (double x, double y) {
 	return x == y || isundef (x) && isundef (y);
 }
 inline bool NUMequal (integer x, integer y) {
+	return x == y;
+}
+inline bool NUMequal (bool x, bool y) {
 	return x == y;
 }
 inline bool NUMequal (byte x, byte y) {
@@ -200,7 +210,8 @@ inline double NUMextremum (constMATVU const& mat) {
 extern double NUMinner (constVECVU const& x, constVECVU const& y) noexcept;
 
 inline bool NUMisSymmetric (constMATVU const& x) noexcept {
-	if (x.nrow != x.ncol) return false;
+	if (x.nrow != x.ncol)
+		return false;
 	const integer n = x.nrow;
 	for (integer irow = 1; irow <= n; irow ++)
 		for (integer icol = irow + 1; icol < n; icol ++)
@@ -218,29 +229,35 @@ inline double NUMlog2 (double x) {
 }
 
 inline double NUMmax (constVECVU const& vec) {
-	if (NUMisEmpty (vec)) return undefined;
+	if (NUMisEmpty (vec))
+		return undefined;
 	double maximum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (value > maximum) maximum = value;
+		if (value > maximum)
+			maximum = value;
 	}
 	return maximum;
 }
 inline integer NUMmax (const constINTVECVU& vec) {
-	if (NUMisEmpty (vec)) return INTEGER_MIN;
+	if (NUMisEmpty (vec))
+		return INTEGER_MIN;
 	integer maximum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const integer value = vec [i];
-		if (value > maximum) maximum = value;
+		if (value > maximum)
+			maximum = value;
 	}
 	return maximum;
 }
 inline double NUMmax (constMATVU const& mat) {
-	if (NUMisEmpty (mat)) return undefined;
+	if (NUMisEmpty (mat))
+		return undefined;
 	double maximum = NUMmax (mat [1]);
 	for (integer irow = 2; irow <= mat.nrow; irow ++) {
 		const double value = NUMmax (mat [irow]);
-		if (value > maximum) maximum = value;
+		if (value > maximum)
+			maximum = value;
 	}
 	return maximum;
 }
@@ -252,29 +269,35 @@ extern MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept;
 extern MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept;
 
 inline double NUMmin (constVECVU const& vec) {
-	if (NUMisEmpty (vec)) return undefined;
+	if (NUMisEmpty (vec))
+		return undefined;
 	double minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (value < minimum) minimum = value;
+		if (value < minimum)
+			minimum = value;
 	}
 	return minimum;
 }
 inline integer NUMmin (const constINTVECVU& vec) {
-	if (NUMisEmpty (vec)) return INTEGER_MAX;
+	if (NUMisEmpty (vec))
+		return INTEGER_MAX;
 	integer minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const integer value = vec [i];
-		if (value < minimum) minimum = value;
+		if (value < minimum)
+			minimum = value;
 	}
 	return minimum;
 }
 inline double NUMmin (constMATVU const& mat) {
-	if (NUMisEmpty (mat)) return undefined;
+	if (NUMisEmpty (mat))
+		return undefined;
 	double minimum = NUMmin (mat [1]);
 	for (integer irow = 2; irow <= mat.nrow; irow ++) {
 		const double value = NUMmin (mat [irow]);
-		if (value < minimum) minimum = value;
+		if (value < minimum)
+			minimum = value;
 	}
 	return minimum;
 }

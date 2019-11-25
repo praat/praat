@@ -349,10 +349,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 {
 	integer numberOfTiers = my tiers->size;
 
-	/*
-	 * Automatic windowing:
-	 */
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, -1.0 - 0.5 * numberOfTiers, 1.0);
@@ -579,7 +576,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, kPitch_unit unit)
 {
 	integer numberOfTiers = grid -> tiers->size;
-	if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
+	Function_unidirectionalAutowindow (grid, & tmin, & tmax);
 	if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 		fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);
 		fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, (int) unit);
@@ -624,10 +621,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
 		const double oldFontSize = Graphics_inqFontSize (g);
 		Pitch_draw (pitch, g, tmin, tmax, fmin, fmax, garnish, speckle, unit);
-		if (tmax <= tmin) {
-			tmin = grid -> xmin;
-			tmax = grid -> xmax;
-		}
+		Function_unidirectionalAutowindow (grid, & tmin, & tmax);
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
 		if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 			fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);

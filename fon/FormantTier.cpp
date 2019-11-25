@@ -135,10 +135,7 @@ double FormantTier_getBandwidthAtTime (FormantTier me, integer iformant, double 
 }
 
 void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, bool garnish) {
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setWindow (g, tmin, tmax, 0.0, fmax);
 	Graphics_setInner (g);
 	integer imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);

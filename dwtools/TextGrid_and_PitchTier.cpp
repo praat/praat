@@ -151,14 +151,11 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 {
 	(void) pitch_unit;
 	try {
-		if (tmin >= tmax) {
-			tmin = my xmin; tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		
-		if (((pitch_as == PITCH_VALUE_AS_FRACTION) || (pitch_as == PITCH_VALUE_AS_PERCENTAGE)) && 
-			pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED) {
+		if ((pitch_as == PITCH_VALUE_AS_FRACTION || pitch_as == PITCH_VALUE_AS_PERCENTAGE) &&
+				pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED)
 			Melder_throw (U"You need to specify an anchor value to calculate ", (pitch_as == PITCH_VALUE_AS_FRACTION ? U"fractions" : U"percentages"), U".");
-		}
 		
 		autoVEC times = getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset);
 		
@@ -306,10 +303,8 @@ static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier the
 static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, conststring32 times_string, int time_offset, conststring32 pitches_string)
 {
 	try {
-		if (tmin >= tmax) {
-			tmin = my xmin; tmax = my xmax;
-		}
-		Melder_require (fmin < fmax, 
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
+		Melder_require (fmin < fmax,
 			U"The lowest frequency should be lower than the highest frequency.");
 
 		autoVEC times = getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset);

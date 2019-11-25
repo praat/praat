@@ -29,11 +29,11 @@ struct MelderPoint {
 
 struct MelderRealRange {
 	double min, max;
-	bool isEmpty () { return ! (max > min); }   // note edge case: will return true if min or max is NaN
-	double size () {
-		double result = max - min;
-		return std::max (result, 0.0);
-	}
+	//bool isEmpty () { return ! (max > min); }   // note edge case: will return true if min or max is NaN
+	//double size () {
+	//	double result = max - min;
+	//	return std::max (result, 0.0);
+	//}
 };
 
 struct MelderExtremaWithInit {

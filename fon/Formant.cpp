@@ -109,10 +109,7 @@ integer Formant_getMaxNumFormants (Formant me) {
 
 void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, double fmax, bool garnish) {
 	const integer ntrack = Formant_getMinNumFormants (me);
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
@@ -142,10 +139,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 	double suppress_dB)
 {
 	double maximumIntensity = 0.0, minimumIntensity;
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
@@ -240,10 +234,7 @@ void Formant_getExtrema (Formant me, integer iformant, double tmin, double tmax,
 		*fmax = 0.0;
 	if (iformant < 1)
 		return;
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
@@ -312,10 +303,7 @@ double Formant_getMean (Formant me, integer iformant, double tmin, double tmax, 
 double Formant_getStandardDeviation (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit) {
 	if (iformant < 1 || isundef (tmin) || isundef (tmax))
 		return undefined;
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return undefined;
@@ -357,10 +345,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 {
 	if (iformant1 < 1 || iformant2 < 1)
 		return;
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;

@@ -63,7 +63,7 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
 		oo_INTEGER (numberOfPotentialPartialOutputsMatching)
-		oo_BOOLEAN_VECTOR (partialOutputMatches, numberOfPotentialPartialOutputsMatching)
+		oo_BOOLVEC (partialOutputMatches___, numberOfPotentialPartialOutputsMatching)
 	#endif
 
 oo_END_STRUCT (OTGrammarCandidate)

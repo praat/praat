@@ -78,7 +78,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 		PitchTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method);
 		return;
 	}
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setInner (g);
 	imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);

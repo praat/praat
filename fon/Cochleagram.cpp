@@ -36,7 +36,7 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, bo
 		{ 0.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0 };
 	try {
 		autoCochleagram copy = Data_copy (me);
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		integer itmin, itmax;
 		Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 		for (integer iy = 2; iy < my ny; iy ++)
@@ -73,7 +73,7 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 			Melder_throw (U"Unequal time samplings.");
 		Melder_require (my ny == thy ny,
 			U"Unequal numbers of frequencies.");
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		integer itmin, itmax;
 		integer nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 		Melder_require (nt > 0,

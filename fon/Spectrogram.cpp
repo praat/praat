@@ -55,7 +55,7 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double
 void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax,
 	double maximum, int autoscaling, double dynamic, double preemphasis, double dynamicCompression)
 {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	if (fmax <= fmin) { fmin = my ymin; fmax = my ymax; }
 	integer itmin, itmax, ifmin, ifmax;
 	if (! Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) ||
