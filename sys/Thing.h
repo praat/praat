@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2009,2011-2018 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

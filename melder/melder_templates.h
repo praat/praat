@@ -2,7 +2,7 @@
 #define _melder_templates_h_
 /* melder_templates.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class MelderCallback {
 				"Return type of MelderCallback should be covariant.");
 		};
 		Ret* operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
-		explicit operator bool () const { return !! _f; }
+		explicit operator bool () const noexcept { return !! _f; }
 	private:
 		FunctionType _f;
 };
@@ -50,7 +50,7 @@ class MelderCallback <void, T, Args...> {   // specialization
 				"First argument of MelderCallback should have covariant type.");
 		};
 		void operator () (T* data, Args ... args) { _f (data, std::forward<Args>(args)...); }
-		explicit operator bool () const { return !! _f; }
+		explicit operator bool () const noexcept { return !! _f; }
 	private:
 		FunctionType _f;
 };
@@ -65,7 +65,7 @@ class MelderCallback <int, T, Args...> {   // specialization
 				"First argument of MelderCallback should have covariant type.");
 		};
 		int operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
-		explicit operator bool () const { return !! _f; }
+		explicit operator bool () const noexcept { return !! _f; }
 	private:
 		FunctionType _f;
 };
@@ -78,7 +78,7 @@ class MelderCompareHook {
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
 			MelderCompareHook (int (*f) (T2*, T2*)) : _f (reinterpret_cast<FunctionType> (f)) { };
 		int operator () (T* data1, T* data2) noexcept { return _f (data1, data2); }
-		explicit operator bool () const { return !! _f; }
+		explicit operator bool () const noexcept { return !! _f; }
 		FunctionType get () { return _f; }
 	private:
 		FunctionType _f;

@@ -34,13 +34,6 @@
 #include <new>   // placement new
 #include <algorithm>   // std::min
 
-#include "melder_assert.h"   // Melder_assert
-#include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
-#include "melder_pointer.h"   // NULL
-#include "melder_real.h"   // longdouble, MelderPoint, MelderRealRange
-#include "NUMmath.h"   // <math.h>, NUMpi, undefined
-#include "complex.h"   // dcomplex
-
 /*
 	Law of Demeter for class functions defined outside class definition.
 */
@@ -52,6 +45,13 @@
 #define his  him ->
 #define her  she ->
 #define iam(klas)  klas me = (klas) void_me
+
+#include "melder_assert.h"   // Melder_assert
+#include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
+#include "melder_pointer.h"   // NULL
+#include "melder_real.h"   // longdouble, MelderPoint, MelderRealRange
+#include "NUMmath.h"   // <math.h>, NUMpi, undefined
+#include "complex.h"   // dcomplex
 
 #include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free
 #include "melder_string32.h"   // char32, conststring32, autostring32 (requires Melder_malloc, our), Melder_dup

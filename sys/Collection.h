@@ -2,7 +2,7 @@
 #define _Collection_h_
 /* Collection.h
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ struct CollectionOf : structDaata {
 			Melder_free (our at._elements);
 		}
 	}
-	//explicit operator bool () const {
+	//explicit operator bool () const noexcept {
 	//	return !! our item;
 	//}
 	CollectionOf<T>& operator= (const CollectionOf<T>&) = delete;   // disable copy assignment from an l-value of class T*
