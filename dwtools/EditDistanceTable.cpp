@@ -255,8 +255,8 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targe
 	try {
 		autostring32vector targets = newSTRVECtokenize (targets_string);
 		autostring32vector sources = newSTRVECtokenize (sources_string);
-		autoNUMvector<integer> targetIndex (1, my numberOfRows);
-		autoNUMvector<integer> sourceIndex (1, my numberOfRows);
+		autoINTVEC targetIndex = newINTVECzero (my numberOfRows);   // note: this includes zero padding
+		autoINTVEC sourceIndex = newINTVECzero (my numberOfRows);   // note: this includes zero padding
 		integer numberOfTargetSymbols = 0;
 		for (integer itarget = 1; itarget <= targets.size; itarget ++) {
 			const integer index = EditCostsTable_getTargetIndex (me, targets [itarget].get());
@@ -493,7 +493,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics) {
 	const conststring32 oinsertion = U"i", insertion = U"*", odeletion = U"d", deletion = U"*", osubstitution = U"s", oequal = U"";
-	Graphics_setWindow (graphics, 0.5, my warpingPath -> pathLength - 0.5, 0, 1); // pathLength-1 symbols
+	Graphics_setWindow (graphics, 0.5, my warpingPath -> pathLength - 0.5, 0.0, 1.0); // pathLength-1 symbols
 	const double lineSpacing = getLineSpacing (graphics);
 	const double ytarget = 1 - lineSpacing, ysource = ytarget - 2 * lineSpacing, yoper = ysource - lineSpacing;
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
