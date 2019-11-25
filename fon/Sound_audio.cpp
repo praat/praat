@@ -128,6 +128,8 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::MME_VIA_PORTAUDIO;
 		#elif defined (macintosh)
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
+		#elif defined (raspberrypi)
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::JACK_VIA_PORTAUDIO;
 		#else
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::ALSA_VIA_PORTAUDIO;
 		#endif
