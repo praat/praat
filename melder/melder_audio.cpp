@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2017 Paul Boersma, David Weenink
+ * Copyright (C) 1992-2019 Paul Boersma, David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +127,8 @@ integer MelderAudio_getOutputBestSampleRate (integer fsamp) {
 	#elif defined (_WIN32)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
 			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
+	#elif defined (raspberrypi)
+		return 48000;
 	#elif defined (linux)
 		return fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
 	#else
@@ -1029,6 +1031,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 			preferences. outputSoundSystem == kMelder_outputSoundSystem::MME_VIA_PORTAUDIO;
 		#elif defined (macintosh)
 			preferences. outputSoundSystem == kMelder_outputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
+		#elif defined (raspberrypi)
+			preferences. outputSoundSystem == kMelder_outputSoundSystem::JACK_VIA_PORTAUDIO;
 		#else
 			preferences. outputSoundSystem == kMelder_outputSoundSystem::ALSA_VIA_PORTAUDIO;
 		#endif
