@@ -1,6 +1,6 @@
 /* Art_Speaker_Delta.cpp
  *
- * Copyright (C) 1992-2005,2009,2011,2016-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2009,2011,2016-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 	/* Lungs. */
 
 	for (integer itube = 7; itube <= 18; itube ++)
-		delta -> tube [itube]. Dyeq = 120 * f * (1 + art -> art [(int) kArt_muscle::LUNGS]);
+		delta -> tubes [itube]. Dyeq = 120 * f * (1 + art -> art [(int) kArt_muscle::LUNGS]);
 
 	/* Glottis. */
 
 	{
-		Delta_Tube t = delta -> tube + 36;
+		Delta_Tube t = & delta -> tubes [36];
 		t -> Dyeq = f * (5 - 10 * art -> art [(int) kArt_muscle::INTERARYTENOID]
 		      + 3 * art -> art [(int) kArt_muscle::POSTERIOR_CRICOARYTENOID]
 		      - 3 * art -> art [(int) kArt_muscle::LATERAL_CRICOARYTENOID]);   // 4.38
@@ -40,21 +40,21 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 		t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
 	}
 	if (speaker -> cord.numberOfMasses >= 2) {
-		Delta_Tube t = delta -> tube + 37;
-		t -> Dyeq = delta -> tube [36]. Dyeq;
+		Delta_Tube t = & delta -> tubes [37];
+		t -> Dyeq = delta -> tubes [36]. Dyeq;
 		t -> k1 = speaker -> upperCord.k1 * (1 + art -> art [(int) kArt_muscle::CRICOTHYROID]);
 		t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
 	}
 	if (speaker -> cord.numberOfMasses >= 10) {
-		delta -> tube [84]. Dyeq = 0.75 * 1 * f + 0.25 * delta -> tube [36]. Dyeq;
-		delta -> tube [85]. Dyeq = 0.50 * 1 * f + 0.50 * delta -> tube [36]. Dyeq;
-		delta -> tube [86]. Dyeq = 0.25 * 1 * f + 0.75 * delta -> tube [36]. Dyeq;
-		delta -> tube [84]. k1 = 0.75 * 160 + 0.25 * delta -> tube [36]. k1;
-		delta -> tube [85]. k1 = 0.50 * 160 + 0.50 * delta -> tube [36]. k1;
-		delta -> tube [86]. k1 = 0.25 * 160 + 0.75 * delta -> tube [36]. k1;
+		delta -> tubes [84]. Dyeq = 0.75 * 1 * f + 0.25 * delta -> tubes [36]. Dyeq;
+		delta -> tubes [85]. Dyeq = 0.50 * 1 * f + 0.50 * delta -> tubes [36]. Dyeq;
+		delta -> tubes [86]. Dyeq = 0.25 * 1 * f + 0.75 * delta -> tubes [36]. Dyeq;
+		delta -> tubes [84]. k1 = 0.75 * 160 + 0.25 * delta -> tubes [36]. k1;
+		delta -> tubes [85]. k1 = 0.50 * 160 + 0.50 * delta -> tubes [36]. k1;
+		delta -> tubes [86]. k1 = 0.25 * 160 + 0.75 * delta -> tubes [36]. k1;
 		for (integer itube = 84; itube <= 86; itube ++)
-			delta -> tube [itube]. k3 = delta -> tube [itube]. k1 *
-				(20 / delta -> tube [itube]. Dz) * (20 / delta -> tube [itube]. Dz);
+			delta -> tubes [itube]. k3 = delta -> tubes [itube]. k1 *
+				(20 / delta -> tubes [itube]. Dz) * (20 / delta -> tubes [itube]. Dz);
 	}
 
 	/* Vocal tract. */
@@ -62,7 +62,7 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 	bool closed [40];
 	Art_Speaker_meshVocalTract (art, speaker, xi, yi, xe, ye, xmm, ymm, closed);
 	for (integer itube = 38; itube <= 64; itube ++) {
-		Delta_Tube t = delta -> tube + itube;
+		Delta_Tube t = & delta -> tubes [itube];
 		integer i = itube - 37;
 		double dx = xmm [i] - xmm [i + 1];
 		double dy = ymm [i] - ymm [i + 1];
@@ -70,17 +70,18 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 		dx = xe [i] - xi [i];
 		dy = ye [i] - yi [i];
 		t -> Dyeq = sqrt (dx * dx + dy * dy);
-		if (closed [i]) t -> Dyeq = - t -> Dyeq;
+		if (closed [i])
+			t -> Dyeq = - t -> Dyeq;
 	}
-	delta -> tube [65]. Dxeq = delta -> tube [51]. Dxeq = delta -> tube [50]. Dxeq;
-	/* Voor [r]:  thy tube [60]. Brel = 0.1; thy tube [60]. k1 = 3; */
+	delta -> tubes [65]. Dxeq = delta -> tubes [51]. Dxeq = delta -> tubes [50]. Dxeq;
+	/* Voor [r]:  thy tubes [60]. Brel = 0.1; thy tubes [60]. k1 = 3; */
 
 	/* Nasopharyngeal port. */
 
-	delta -> tube [65]. Dyeq = f * (18 - 25 * art -> art [(int) kArt_muscle::LEVATOR_PALATINI]);   // 4.40
+	delta -> tubes [65]. Dyeq = f * (18 - 25 * art -> art [(int) kArt_muscle::LEVATOR_PALATINI]);   // 4.40
 
 	for (integer itube = 1; itube <= delta -> numberOfTubes; itube ++) {
-		Delta_Tube t = delta -> tube + itube;
+		Delta_Tube t = & delta -> tubes [itube];
 		t -> s1 = 5e6 * t -> Dxeq * t -> Dzeq;
 		t -> s3 = t -> s1 / (0.9e-3 * 0.9e-3);
 	}

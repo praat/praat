@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		autoMelderMonitor monitor (U"Articulatory synthesis");
 		Artword_intoArt (artword, art.get(), 0.0);
 		Art_Speaker_intoDelta (art.get(), speaker, delta.get());
-		int M = delta -> numberOfTubes;
+		integer M = delta -> numberOfTubes;
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 		if (iw1 > 0 && iw1 <= M) w1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw1 = 0;
 		if (iw2 > 0 && iw2 <= M) w2 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw2 = 0;
@@ -82,7 +82,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		}
 		totalVolume = 0.0;
 		for (int m = 1; m <= M; m ++) {
-			Delta_Tube t = delta->tube + m;
+			Delta_Tube t = & delta->tubes [m];
 			if (! t -> left1 && ! t -> right1) continue;
 			t->Dx = t->Dxeq; t->dDxdt = 0.0;   // 5.113 (numbers refer to equations in Boersma (1998)
 			t->Dy = t->Dyeq; t->dDydt = 0.0;   // 5.113
@@ -109,7 +109,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				Graphics graphics = monitor.graphics();
 				double area [1+78];
 				for (int i = 1; i <= 78; i ++) {
-					area [i] = delta -> tube [i]. A;
+					area [i] = delta -> tubes [i]. A;
 					if (area [i] < minTract [i]) minTract [i] = area [i];
 					if (area [i] > maxTract [i]) maxTract [i] = area [i];
 				}
@@ -166,8 +166,9 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 			}
 			for (int n = 1; n <= oversampling; n ++) {
 				for (int m = 1; m <= M; m ++) {
-					Delta_Tube t = delta -> tube + m;
-					if (! t -> left1 && ! t -> right1) continue;
+					Delta_Tube t = & delta -> tubes [m];
+					if (! t -> left1 && ! t -> right1)
+						continue;
 
 					/* New geometry. */
 
@@ -250,7 +251,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					#endif
 				}
 				for (int m = 1; m <= M; m ++) {   // compute Jleftnew and Qleftnew
-					Delta_Tube l = delta->tube + m, r1 = l -> right1, r2 = l -> right2, r = r1;
+					Delta_Tube l = & delta->tubes [m], r1 = l -> right1, r2 = l -> right2, r = r1;
 					Delta_Tube l1 = l, l2 = r ? r -> left2 : nullptr;
 					if (! l->left1) {   // closed boundary at the left side (diaphragm)?
 						if (! r) continue;   // tube not connected at all
@@ -365,24 +366,24 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				if (n == (oversampling + 1) / 2) {
 					double out = 0.0;
 					for (int m = 1; m <= M; m ++) {
-						Delta_Tube t = delta->tube + m;
+						Delta_Tube t = & delta->tubes [m];
 						out += rho0 * t->Dx * t->Dz * t->dDydt * Dt * 1000.0;   // radiation of wall movement, 5.140
 						if (! t->right1)
 							out += t->Jrightnew - t->Jright;   // radiation of open tube end
 					}
 					result -> z [1] [sample] = out /= 4.0 * NUMpi * 0.4 * Dt;   // at 0.4 metres
-					if (iw1) w1 -> z [1] [sample] = delta->tube[iw1].Dy;
-					if (iw2) w2 -> z [1] [sample] = delta->tube[iw2].Dy;
-					if (iw3) w3 -> z [1] [sample] = delta->tube[iw3].Dy;
-					if (ip1) p1 -> z [1] [sample] = delta->tube[ip1].DeltaP;
-					if (ip2) p2 -> z [1] [sample] = delta->tube[ip2].DeltaP;
-					if (ip3) p3 -> z [1] [sample] = delta->tube[ip3].DeltaP;
-					if (iv1) v1 -> z [1] [sample] = delta->tube[iv1].v;
-					if (iv2) v2 -> z [1] [sample] = delta->tube[iv2].v;
-					if (iv3) v3 -> z [1] [sample] = delta->tube[iv3].v;
+					if (iw1) w1 -> z [1] [sample] = delta->tubes [iw1]. Dy;
+					if (iw2) w2 -> z [1] [sample] = delta->tubes [iw2]. Dy;
+					if (iw3) w3 -> z [1] [sample] = delta->tubes [iw3]. Dy;
+					if (ip1) p1 -> z [1] [sample] = delta->tubes [ip1]. DeltaP;
+					if (ip2) p2 -> z [1] [sample] = delta->tubes [ip2]. DeltaP;
+					if (ip3) p3 -> z [1] [sample] = delta->tubes [ip3]. DeltaP;
+					if (iv1) v1 -> z [1] [sample] = delta->tubes [iv1]. v;
+					if (iv2) v2 -> z [1] [sample] = delta->tubes [iv2]. v;
+					if (iv3) v3 -> z [1] [sample] = delta->tubes [iv3]. v;
 				}
 				for (int m = 1; m <= M; m ++) {
-					Delta_Tube t = delta->tube + m;
+					Delta_Tube t = & delta->tubes [m];
 					t->Jleft = t->Jleftnew;
 					t->Jright = t->Jrightnew;
 					t->Qleft = t->Qleftnew;
@@ -408,7 +409,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		}
 		totalVolume = 0.0;
 		for (int m = 1; m <= M; m ++)
-			totalVolume += delta->tube [m]. V;
+			totalVolume += delta->tubes [m]. V;
 		//Melder_casual (U"Ending volume: ", totalVolume * 1000, U" litres.");
 		if (out_w1) *out_w1 = w1.move();
 		if (out_w2) *out_w2 = w2.move();
