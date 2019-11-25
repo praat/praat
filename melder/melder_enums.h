@@ -1,6 +1,6 @@
 /* melder_enums.h
  *
- * Copyright (C) 2007,2013,2015,2016,2018 Paul Boersma
+ * Copyright (C) 2007,2013,2015,2016,2018,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,18 @@ enums_end (kMelder_asynchronicityLevel, 3, ASYNCHRONOUS)
 		enums_add (kMelder_outputSoundSystem, 1, COREAUDIO_VIA_PORTAUDIO, U"CoreAudio via PortAudio")
 	enums_end (kMelder_outputSoundSystem, 1, COREAUDIO_VIA_PORTAUDIO)
 			// in order to have CoreAudio
+
+#elif defined (raspberrypi)
+
+	enums_begin (kMelder_inputSoundSystem, 1)
+		enums_add (kMelder_inputSoundSystem, 1, JACK_VIA_PORTAUDIO, U"JACK via PortAudio")
+	enums_end (kMelder_inputSoundSystem, 1, JACK_VIA_PORTAUDIO)
+			// in order to use JACK
+
+	enums_begin (kMelder_outputSoundSystem, 1)
+		enums_add (kMelder_outputSoundSystem, 1, JACK_VIA_PORTAUDIO, U"JACK via PortAudio")
+	enums_end (kMelder_outputSoundSystem, 1, JACK_VIA_PORTAUDIO)
+			// in order to use JACK
 
 #else
 
