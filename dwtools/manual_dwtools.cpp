@@ -33,11 +33,9 @@
 
 static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
 	autoTableOfReal me = TableOfReal_create_pols1973 (includeLevels);
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= 3; j++) {
+	for (integer i = 1; i <= my numberOfRows; i ++)
+		for (integer j = 1; j <= 3; j++)
 			my data [i] [j] = log10 (my data [i] [j]);
-		}
-	}
 	TableOfReal_standardizeColumns (me.get());
 	TableOfReal_setColumnLabel (me.get(), 1, U"standardized log (%F__1_)");
 	TableOfReal_setColumnLabel (me.get(), 2, U"standardized log (%F__2_)");
@@ -80,7 +78,6 @@ static void drawBoxPlot (Graphics g) {
 	const double ymin = lowerWhisker - 0.1 * hspread, ymax = q75 + 4 * hspread;
 	const double x = 0, dx = 0.01, xar = x + 0.7, xtl = xar + dx;
 	const double xal1 = x + r + dx, xal2 = x + w + r;
-
 
 	Graphics_setWindow (g, -1, 2, ymin, ymax);
 	Graphics_setInner (g);

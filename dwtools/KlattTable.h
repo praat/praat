@@ -2,7 +2,7 @@
 #define _KlattTable_h_
 /* KlattTable.h
  *
- * Copyright (C) 2008-2011, 2015 David Weenink
+ * Copyright (C) 2008-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

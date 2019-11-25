@@ -31,7 +31,7 @@ void structFilter :: v_resetMemory () {
 }
 
 void structFilter :: v_setCoefficients (double frequency, double bandwidth) {
-	double r = exp (-NUMpi * samplingPeriod * bandwidth);
+	const double r = exp (-NUMpi * samplingPeriod * bandwidth);
 	c = -(r * r);
 	b = 2.0 * r * cos (2.0 * NUMpi * frequency * samplingPeriod);
 	a = 1.0 - b - c; // normalization: H(0) = 0 dB
@@ -85,7 +85,7 @@ void structAntiResonator :: v_setCoefficients (double frequency, double bandwidt
 	y[n] = a * (x[n] - b * x[n-1] - c * x[n-2])
 */
 double structAntiResonator :: v_getOutput (double input) {
-	double output = a * (input - b * p1 - c * p2);
+	const double output = a * (input - b * p1 - c * p2);
 	p2 = p1;
 	p1 = input;
 	return output;
@@ -99,7 +99,7 @@ void structConstantGainResonator :: v_resetMemory () {
 
 void structConstantGainResonator :: v_setCoefficients (double frequency, double bandwidth) {
 	structFilter :: v_setCoefficients (frequency, bandwidth);
-	double r = exp (-NUMpi * samplingPeriod * bandwidth);
+	const double r = exp (-NUMpi * samplingPeriod * bandwidth);
 	a = 1.0 - r;
 	d = -r;
 }
@@ -108,7 +108,7 @@ void structConstantGainResonator :: v_setCoefficients (double frequency, double 
 	y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2]
 */
 double structConstantGainResonator :: v_getOutput (double input) {
-	double output = a * (input + d * p4) + b * p1 + c * p2;
+	const double output = a * (input + d * p4) + b * p1 + c * p2;
 	p2 = p1;
 	p1 = output;
 	p4 = p3;

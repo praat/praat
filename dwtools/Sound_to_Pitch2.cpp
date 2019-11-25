@@ -99,7 +99,6 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		const integer nfft2 = nfft / 2 + 1;
 		const double fftframeDuration = nfft / newSamplingFrequency;
 		const double df = newSamplingFrequency / nfft;
-
 		/*
 			The number of points on the octave scale.
 		*/
@@ -125,12 +124,11 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		Melder_assert (fftframe -> nx >= numberOfSamples);
 		Melder_assert (hamming -> nx == numberOfSamples);
 		Melder_assert (analysisframe -> nx == numberOfSamples);
-		
-		// Compute the absolute value of the globally largest amplitude w.r.t. the global mean.
-
+		/*
+			Compute the absolute value of the globally largest amplitude w.r.t. the global mean.
+		*/
 		const double globalMean = Sound_localMean (sound.get(), sound -> xmin, sound -> xmax);
 		const double globalPeak = Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean);
-
 		/*
 			For the cubic spline interpolation we need the frequencies on an octave
 			scale, i.e., a log2 scale. All frequencies should be DIFFERENT, otherwise
@@ -140,64 +138,63 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		for (integer i = 2; i <= nfft2; i ++)
 			fl2 [i] = NUMlog2 ((i - 1) * df);
 		fl2 [1] = 2.0 * fl2 [2] - fl2 [3];
-
 		/*
 			Calculate frequencies regularly spaced on a log2-scale and the frequency weighting function.
 		*/
 		for (integer i = 1; i <= numberOfFrequencyPoints; i ++)
 			arctg [i] = 0.5 + atan (3.0 * (i - atans) / numberOfPointsPerOctave) / NUMpi;
-
 		/*
 			Perform the analysis on all frames.
 		*/
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const Pitch_Frame pitchFrame = & thy frames [iframe];
 			const double tmid = Sampled_indexToX (thee.get(), iframe); // The center of this frame
-			
-			// Copy a frame from the sound, apply a hamming window. Get local 'intensity'
-
+			/*
+				Copy a frame from the sound, apply a hamming window. Get local 'intensity'
+			*/
 			Sound_into_Sound (sound.get(), analysisframe.get(), tmid - halfWindow);
 			Sounds_multiply (analysisframe.get(), hamming.get());
 			const double localMean = Sound_localMean (sound.get(), tmid - 3.0 * halfWindow, tmid + 3.0 * halfWindow);
 			const double localPeak = Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean);
 			pitchFrame -> intensity = localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
-			
-			// Get the Fourier spectrum.
+			/*
+				Get the Fourier spectrum.
+			*/
 			fftframe -> z[1].part (1, analysisframe -> nx) <<= analysisframe -> z [1]; // 
 			autoSpectrum spec = Sound_to_Spectrum (fftframe.get(), true);
 			Melder_assert (spec -> nx == nfft2);
-
-			// From complex spectrum to amplitude spectrum.
-
+			/*
+				From complex spectrum to amplitude spectrum.
+			*/
 			for (integer j = 1; j <= nfft2; j ++) {
 				const double rs = spec -> z [1] [j], is = spec -> z [2] [j];
 				specAmp [j] = sqrt (rs * rs + is * is);
 			}
-
-			// Enhance the peaks in the spectrum.
-
+			/*
+				Enhance the peaks in the spectrum.
+			*/
 			spec_enhance_SHS (specAmp.get());
-
-			// Smooth the enhanced spectrum.
-
+			/*
+				Smooth the enhanced spectrum.
+			*/
 			spec_smoooth_SHS (specAmp.get());
-
-			// Go to a logarithmic scale and perform cubic spline interpolation to get
-			// spectral values for the increased number of frequency points.
-
+			/*
+				Go to a logarithmic scale and perform cubic spline interpolation to get
+				spectral values for the increased number of frequency points.
+			*/
 			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), specAmp.get(), 1e30, 1e30);
 			for (integer j = 1; j <= numberOfFrequencyPoints; j ++) {
 				const double f = fminl2 + (j - 1) * dfl2;
 				al2 [j] = NUMcubicSplineInterpolation (fl2.get(), specAmp.get(), yv2.get(), f);
 			}
-
-			// Multiply by frequency selectivity of the auditory system.
-
+			/*
+				Multiply by frequency selectivity of the auditory system.
+			*/
 			for (integer j = 1; j <= numberOfFrequencyPoints; j ++)
 				al2 [j] = ( al2 [j] > 0.0 ? al2 [j] * arctg [j] : 0.0 );
-
-			// The subharmonic summation. Shift spectra in octaves and sum.
-
+			/*
+				The subharmonic summation. Shift spectra in octaves and sum.
+			*/
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
 			autoVEC sumspec = newVECzero (numberOfFrequencyPoints);
 			pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 0);   // !!!!!
@@ -209,11 +206,10 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 					sumspec [k - kb + 1] += al2 [k] * hm;
 				hm *= compressionFactor;
 			}
-
-			// First register the voiceless candidate (always present).
-
+			/*
+				First register the voiceless candidate (always present).
+			*/
 			Pitch_Frame_addPitch (pitchFrame, 0.0, 0.0, maxnCandidates);
-
 			/*
 				Get the best local estimates for the pitch as the maxima of the
 				subharmonic sum spectrum by parabolic interpolation on three points:
@@ -225,7 +221,6 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 				c = dx (y1 - y3) / (2 (y1 - 2 y2 + y3))
 				(b = (2 y2 - y1 - y3) / (2 dx^2) )
 			*/
-
 			for (integer k = 2; k <= numberOfFrequencyPoints - 1; k ++) {
 				const double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
 				if (y2 > y1 && y2 >= y3) {
@@ -236,7 +231,6 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 					Pitch_Frame_addPitch (pitchFrame, f, strength, maxnCandidates);
 				}
 			}
-
 			/*
 				Check whether f0 corresponds to an actual periodicity T = 1 / f0:
 				correlate two signal periods of duration T, one starting at the
@@ -252,10 +246,10 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			if (f0 > 0.0)
 				cc [iframe] = Sound_correlateParts (sound.get(), tmid - 1.0 / f0, tmid, 1.0 / f0);
 		}
-
-		// Base V/UV decision on correlation coefficients.
-		// Resize the pitch strengths w.r.t. the cc.
-
+		/*
+			Base V/UV decision on correlation coefficients.
+			Resize the pitch strengths w.r.t. the cc.
+		*/
 		constexpr double vuvCriterion = 0.52;
 		for (integer i = 1; i <= numberOfFrames; i ++)
 			Pitch_Frame_resizeStrengths (& thy frames [i], cc [i], vuvCriterion);

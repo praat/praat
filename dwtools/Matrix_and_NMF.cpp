@@ -64,17 +64,20 @@ autoMatrix NMF_to_Matrix (NMF me) {
 }
 
 void NMF_Matrix_improveFactorization_mu (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
-	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx, U"The dimensions of the NMF and the Matrix must match.");
+	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx,
+		U"The dimensions of the NMF and the Matrix must match.");
 	NMF_improveFactorization_mu (me, thy z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance, info);
 }
 
 void NMF_Matrix_improveFactorization_als (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
-	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx, U"The dimensions of the NMF and the Matrix must match.");
+	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx,
+		U"The dimensions of the NMF and the Matrix must match.");
 	NMF_improveFactorization_als (me, thy z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance, info);
 }
 
 void NMF_Matrix_improveFactorization_is (NMF me, Matrix thee, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info) {
-	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx, U"The dimensions of the NMF and the Matrix must match.");
+	Melder_require (my numberOfRows == thy ny && my numberOfColumns == thy nx,
+		U"The dimensions of the NMF and the Matrix must match.");
 	NMF_improveFactorization_is (me, thy z.get(), maximumNumberOfIterations, changeTolerance, approximationTolerance, info);
 }
 

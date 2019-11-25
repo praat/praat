@@ -49,7 +49,7 @@ autoMFCC MFCC_create (double tmin, double tmax, integer nt, double dt, double t1
 void MFCC_lifter (MFCC me, integer lifter) {
 	try {
 		Melder_assert (lifter > 0);
-		autoNUMvector <double> c (1, my maximumNumberOfCoefficients);
+		autoVEC c = newVECzero (my maximumNumberOfCoefficients);
 		for (integer icoef = 1; icoef <= my maximumNumberOfCoefficients; icoef ++)
 			c [icoef] = (1 + lifter / 2 * sin (NUMpi * icoef / lifter));   // BUG ?
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
@@ -68,9 +68,9 @@ autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
 		for (integer i = 1; i <= numberOfColumns; i ++)
 			TableOfReal_setColumnLabel (thee.get(), i, Melder_cat (U"c", ( includeC0 ? i - 1 : i )));
-		integer offset = ( includeC0 ? 1 : 0 );
+		const integer offset = ( includeC0 ? 1 : 0 );
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			CC_Frame cf = & my frame [iframe];
+			const CC_Frame cf = & my frame [iframe];
 			for (integer j = 1; j <= cf -> numberOfCoefficients; j ++)
 				thy data [iframe] [j + offset] = cf -> c [j];
 			if (includeC0)
@@ -87,9 +87,8 @@ autoSound MFCC_to_Sound (MFCC me) {
 	try {
 		autoSound thee = Sound_create (my maximumNumberOfCoefficients, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			CC_Frame cf = & my frame [iframe];
-			for (integer j = 1; j <= my maximumNumberOfCoefficients; j ++)
-				thy z [j] [iframe] = cf -> c [j];
+			const CC_Frame cf = & my frame [iframe];
+			thy z.column (iframe) <<= cf -> c;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -99,10 +98,10 @@ autoSound MFCC_to_Sound (MFCC me) {
 
 autoSound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
-		if (my dx != thy dx)
-			Melder_throw (U"The samplings of the two MFCC's have to be equal.");
-		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients)
-			Melder_throw (U"The number of coefficients in the two MFCC's have to be equal.");
+		Melder_require (my dx == thy dx,
+			U"The samplings of the two MFCC's should be equal.");
+		Melder_require (my maximumNumberOfCoefficients == thy maximumNumberOfCoefficients,
+			U"The number of coefficients in the two MFCC's should be equal.");
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_crossCorrelate (target.get(), source.get(), scaling, signalOutsideTimeDomain);
@@ -130,29 +129,30 @@ autoSound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scal
 static double CC_Frames_distance (CC_Frame me, CC_Frame thee, bool includeEnergy) {
 	double dist = 0;
 	if (includeEnergy) {
-		double d0 = my c0 - thy c0;
+		const double d0 = my c0 - thy c0;
 		dist += d0 * d0;
 	}
 	for (integer i = 1; i <= my numberOfCoefficients; i ++) {
-		double di = my c [i] - thy c [i];
+		const double di = my c [i] - thy c [i];
 		dist += di * di;
 	}
 	return sqrt (dist);
 }
 
-/* 1: cepstral difference function (d)
- * 2: spectral stability (dstab)
- * 3: spectral center of gravity (gs)
- * 4: stable internal duration
+/*
+	1: cepstral difference function (d)
+	2: spectral stability (dstab)
+	3: spectral center of gravity (gs)
+	4: stable internal duration
  */
 autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
 	try {
-		integer nw = Melder_ifloor (windowLength / my dx / 2.0);
+		const integer nw = Melder_ifloor (windowLength / my dx / 2.0);
 		autoMelSpectrogram him = MFCC_to_MelSpectrogram (me, 0, 0, 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 4.0, 4, 1.0, 1.0);
 		thy z [1] [1] = thy z [1] [my nx] = 0;  // first & last frame
 		for (integer iframe = 2; iframe <= my nx - 1; iframe ++) {
-			CC_Frame cfi = & my frame [iframe];
+			const CC_Frame cfi = & my frame [iframe];
 			// 1. cepstral difference
 			integer nwi = ( iframe > nw ? nw : iframe - 1 );
 			if (nwi > my nx - iframe)
@@ -165,8 +165,8 @@ autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEn
 			if (includeEnergy) {
 				longdouble sumj = 0.0;
 				for (integer j = 1; j <= nwi; j ++) {
-					CC_Frame cfp = & my frame [iframe + j];
-					CC_Frame cfm = & my frame [iframe - j];
+					const CC_Frame cfp = & my frame [iframe + j];
+					const CC_Frame cfm = & my frame [iframe - j];
 					sumj += j * (cfp -> c0 - cfm -> c0);
 				}
 				sumj /= numer;
@@ -175,8 +175,8 @@ autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEn
 			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++) {
 				longdouble sumj = 0.0;
 				for (integer j = 1; j <= nwi; j ++) {
-					CC_Frame cfp = & my frame [iframe + j];
-					CC_Frame cfm = & my frame [iframe - j];
+					const CC_Frame cfp = & my frame [iframe + j];
+					const CC_Frame cfm = & my frame [iframe - j];
 					sumj += j * (cfp -> c [j] - cfm -> c [j]);
 				}
 				sumj /= numer;
@@ -185,10 +185,10 @@ autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEn
 			thy z [1] [iframe] = dsq;
 			
 			// 2: spectral stability (dstab)
-			CC_Frame cfp = & my frame [iframe + 1];
-			CC_Frame cfm = & my frame [iframe - 1];
-			double dim1 = CC_Frames_distance (cfi, cfm, includeEnergy);
-			double dip1 = CC_Frames_distance (cfi, cfp, includeEnergy);
+			const CC_Frame cfp = & my frame [iframe + 1];
+			const CC_Frame cfm = & my frame [iframe - 1];
+			const double dim1 = CC_Frames_distance (cfi, cfm, includeEnergy);
+			const double dip1 = CC_Frames_distance (cfi, cfp, includeEnergy);
 			thy z [2] [iframe] = (dim1 + dip1) / 2.0;
 			
 			// 3: spectral centere of gravity (gs)
@@ -197,7 +197,7 @@ autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEn
 				sm += his z [j] [iframe];
 				msm += j * his z [j] [iframe];
 			}
-			double gs = ( sm == 0.0 ? 0.0 : (double) (msm / sm) );
+			const double gs = ( sm == 0.0 ? 0.0 : (double) (msm / sm) );
 			thy z [3] [iframe] = gs;
 			
 			// 4: stable internal duration

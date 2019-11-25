@@ -33,8 +33,10 @@ static void checkChannelsWithinRange (constINTVEC const& channels, integer min, 
 
 autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	try {
-		// covariance is cross-correlation with lag time 0
-		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, 0);
+		/*
+			Covariance is cross-correlation with lag time 0
+		*/
+		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, 0.0);
 		autoPCA him = SSCP_to_PCA (thee.get());
 		return him;
 	} catch (MelderError) {
@@ -52,11 +54,13 @@ autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer nu
 		checkChannelsWithinRange (channels, 1, my ny);
 
 		autoSound him = Data_copy (me);
-		// R ['i',j] = E(i,k]*S ['k',j]
-		// use kij-variant for faster inner loop
+		/*
+			R ['i',j] = E(i,k]*S ['k',j]
+			use kij-variant for faster inner loop
+		*/
 		for (integer k = 1; k <= thy dimension; k ++)
 			for (integer i = 1; i <= numberOfComponents; i ++) {
-				double ev_ik = thy eigenvectors [i] [k];
+				const double ev_ik = thy eigenvectors [i] [k];
 				for (integer j = 1; j <= my nx; j ++)
 					his z [channels [i]] [j] += ev_ik * my z [channels [k]] [j];
 			}
@@ -91,7 +95,7 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
 		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer k = 1; k <= channels.size; k ++) {
             for (integer i = 1; i <= channels.size; i ++) {
-				double w_ik = whiten [i] [k];
+				const double w_ik = whiten [i] [k];
                 for (integer j = 1; j <= my nx; j ++)
                     his z [channels [i]] [j] += w_ik * my z [channels [k]] [j];
             }
