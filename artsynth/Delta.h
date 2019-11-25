@@ -2,7 +2,7 @@
 #define _Delta_h_
 /* Delta.h
  *
- * Copyright (C) 1992-2005,2007,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,10 +54,7 @@ struct structDelta_Tube
 
 Thing_define (Delta, Thing) {
 	integer numberOfTubes;           // >= 1
-	struct structDelta_Tube *tube;   // tube [1..numberOfTubes]
-
-	void v_destroy () noexcept
-		override;
+	autovector <structDelta_Tube> tubes;
 };
 
 void Delta_init (Delta me, integer numberOfTubes);

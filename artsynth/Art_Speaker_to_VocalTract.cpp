@@ -1,6 +1,6 @@
 /* Art_Speaker_to_VocalTract.cpp
  *
- * Copyright (C) 1992-2005,2008,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011,2015-2017,2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ autoVocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker) {
 	constexpr double sectionLength = 0.001;   // one millimetre
 	integer numberOfSections = 0;
 	for (integer isection = 1; isection <= 27; isection ++) {
-		Delta_Tube tube = delta -> tube + 37 + isection;
+		Delta_Tube tube = & delta -> tubes [37 + isection];
 		integer numberOfConstantSections = Melder_iround (tube -> Dxeq / sectionLength);
 		double constantArea = tube -> Dyeq * tube -> Dzeq;
 		for (integer jsection = 1; jsection <= numberOfConstantSections; jsection ++)
