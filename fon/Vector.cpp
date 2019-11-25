@@ -22,10 +22,13 @@
 // Vector::getVector () returns a channel or the average of all the channels.
 //
 double structVector :: v_getVector (integer irow, integer icol) {
-	if (icol < 1 || icol > nx) return 0.0;
-	if (ny == 1) return z [1] [icol];   // optimization
+	if (icol < 1 || icol > nx)
+		return 0.0;
+	if (ny == 1)
+		return z [1] [icol];   // optimization
 	if (irow == 0) {
-		if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
+		if (ny == 2)
+			return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 		longdouble sum = 0.0;
 		for (integer channel = 1; channel <= ny; channel ++)
 			sum += z [channel] [icol];
@@ -110,7 +113,8 @@ Thing_implement (Vector, Matrix, 2);
 //
 double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolation) {
 	double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
-	if (x <  leftEdge || x > rightEdge) return undefined;
+	if (x <  leftEdge || x > rightEdge)
+		return undefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
 		return NUM_interpolate_sinc (my z.row (ilevel), Sampled_xToIndex (me, x),
@@ -136,7 +140,7 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
 	constVEC y = my z.row (channelNumber);
 	double minimum, x;
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
@@ -156,8 +160,10 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 			minimum = y [imax];
 			x = imax;
 		}
-		if (imin == 1) imin ++;
-		if (imax == my nx) imax --;
+		if (imin == 1)
+			imin ++;
+		if (imax == my nx)
+			imax --;
 		for (integer i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
 				double i_real, localMinimum = NUMimproveMinimum (y, i, interpolation, & i_real);
@@ -168,10 +174,12 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 			}
 		}
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
-		if (x < xmin) x = xmin; else if (x > xmax) x = xmax;
+		Melder_clip (xmin, & x, xmax);
 	}
-	if (out_minimum) *out_minimum = minimum;
-	if (out_xOfMinimum) *out_xOfMinimum = x;
+	if (out_minimum)
+		*out_minimum = minimum;
+	if (out_xOfMinimum)
+		*out_xOfMinimum = x;
 }
 
 void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
@@ -189,9 +197,12 @@ void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int i
 			channelOfMinimum = channel;
 		}
 	}
-	if (out_minimum) *out_minimum = minimum;
-	if (out_xOfMinimum) *out_xOfMinimum = xOfMinimum;
-	if (out_channelOfMinimum) *out_channelOfMinimum = channelOfMinimum;
+	if (out_minimum)
+		*out_minimum = minimum;
+	if (out_xOfMinimum)
+		*out_xOfMinimum = xOfMinimum;
+	if (out_channelOfMinimum)
+		*out_channelOfMinimum = channelOfMinimum;
 }
 
 double Vector_getMinimum (Vector me, double xmin, double xmax, int interpolation) {
@@ -218,7 +229,7 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
 	constVEC y = my z.row (channelNumber);
 	double maximum, x;
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer imin, imax, i;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
@@ -250,10 +261,12 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 			}
 		}
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
-		if (x < xmin) x = xmin; else if (x > xmax) x = xmax;
+		Melder_clip (xmin, & x, xmax);
 	}
-	if (out_maximum) *out_maximum = maximum;
-	if (out_xOfMaximum) *out_xOfMaximum = x;
+	if (out_maximum)
+		*out_maximum = maximum;
+	if (out_xOfMaximum)
+		*out_xOfMaximum = x;
 }
 
 void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
@@ -271,9 +284,12 @@ void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int i
 			channelOfMaximum = channel;
 		}
 	}
-	if (out_maximum) *out_maximum = maximum;
-	if (out_xOfMaximum) *out_xOfMaximum = xOfMaximum;
-	if (out_channelOfMaximum) *out_channelOfMaximum = channelOfMaximum;
+	if (out_maximum)
+		*out_maximum = maximum;
+	if (out_xOfMaximum)
+		*out_xOfMaximum = xOfMaximum;
+	if (out_channelOfMaximum)
+		*out_channelOfMaximum = channelOfMaximum;
 }
 
 double Vector_getMaximum (Vector me, double xmin, double xmax, int interpolation) {
@@ -295,9 +311,9 @@ integer Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, int int
 }
 
 double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, int interpolation) {
-	double minimum = fabs (Vector_getMinimum (me, xmin, xmax, interpolation));
-	double maximum = fabs (Vector_getMaximum (me, xmin, xmax, interpolation));
-	return minimum > maximum ? minimum : maximum;
+	double minimum = Vector_getMinimum (me, xmin, xmax, interpolation);
+	double maximum = Vector_getMaximum (me, xmin, xmax, interpolation);
+	return std::max (fabs (minimum), fabs (maximum));
 }
 
 /***** Get statistics. *****/
@@ -307,9 +323,10 @@ double Vector_getMean (Vector me, double xmin, double xmax, integer channel) {
 }
 
 double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer ilevel) {
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer imin, imax, n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-	if (n < 2) return undefined;
+	if (n < 2)
+		return undefined;
 	if (ilevel == Vector_CHANNEL_AVERAGE) {
 		longdouble sum2 = 0.0;
 		for (integer channel = 1; channel <= my ny; channel ++) {
@@ -361,21 +378,18 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 	double defaultDy, conststring32 method)
 {
 	bool xreversed = *pxmin > *pxmax, yreversed = *pymin > *pymax;
-	if (xreversed) { double temp = *pxmin; *pxmin = *pxmax; *pxmax = temp; }
-	if (yreversed) { double temp = *pymin; *pymin = *pymax; *pymax = temp; }
-	/*
-		Automatic domain.
-	*/
-	if (*pxmin == *pxmax) {
-		*pxmin = my xmin;
-		*pxmax = my xmax;
-	}
+	if (xreversed)
+		std::swap (*pxmin, *pxmax);
+	if (yreversed)
+		std::swap (*pymin, *pymax);
+	Function_bidirectionalAutowindow (me, pxmin, pxmax);
 	/*
 		Domain expressed in sample numbers.
 	*/
 	integer ixmin, ixmax;
 	integer n = Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
-	if (n < 1) return;
+	if (n < 1)
+		return;
 	/*
 		Automatic vertical range.
 	*/
@@ -396,9 +410,9 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 			double x = Sampled_indexToX (me, ix);
 			double y = my z [1] [ix];
 			double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
-			if (y > *pymax) y = *pymax;
-			if (left < *pxmin) left = *pxmin;
-			if (right > *pxmax) right = *pxmax;
+			Melder_clipRight (& y, *pymax);
+			Melder_clipLeft (*pxmin, & left);
+			Melder_clipRight (& right, *pxmax);
 			if (y > *pymin) {
 				Graphics_line (g, left, y, right, y);
 				Graphics_line (g, left, y, left, *pymin);
@@ -417,10 +431,10 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		}
 	} else {
 		/*
-		 * The default: draw as a curve.
-		 */
+			The default: draw as a curve.
+		*/
 		Graphics_function (g, & my z [1] [0], ixmin, ixmax,
-			Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
+				Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
 	Graphics_unsetInner (g);
 }

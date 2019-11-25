@@ -236,7 +236,7 @@ void PointProcess_removePointsBetween (PointProcess me, double tmin, double tmax
 }
 
 void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, bool garnish) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setWindow (g, tmin, tmax, -1.0, 1.0);
 	if (my nt) {
 		integer imin = PointProcess_getHighIndex (me, tmin);

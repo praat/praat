@@ -467,10 +467,7 @@ integer DTW_getMaximumConsecutiveSteps (DTW me, int direction) {
 
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish, bool inset) {
 	integer ixmin, ixmax, iymin, iymax;
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
@@ -731,10 +728,7 @@ autoMatrix DTW_to_Matrix_distances (DTW me) {
 
 /* nog aanpassen, dl = sqrt (dx^2 + dy^2) */
 void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, bool garnish) {
-	if (xmin >= xmax) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer ixmax, ixmin;
 	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0)
 		return;

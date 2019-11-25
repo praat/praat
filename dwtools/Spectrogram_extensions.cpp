@@ -239,11 +239,9 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 }
 
 void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
-	double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish) {
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish)
+{
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;

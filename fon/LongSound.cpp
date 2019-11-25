@@ -340,10 +340,7 @@ void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSampl
 
 autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool preserveTimes) {
 	try {
-		if (tmax <= tmin) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		if (tmin < my xmin)
 			tmin = my xmin;
 		if (tmax > my xmax)
@@ -390,10 +387,7 @@ static void writePartToOpenFile (LongSound me, int audioFileType, integer imin, 
 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
-		if (tmax <= tmin) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		if (tmin < my xmin)
 			tmin = my xmin;
 		if (tmax > my xmax)

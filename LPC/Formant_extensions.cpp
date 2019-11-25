@@ -21,11 +21,8 @@
 
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression) {
 	try {
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		integer numberOfPossibleFormants = my maxnFormants;
-		if (tmax <= tmin) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
 		if (formantmax >= formantmin) {
 			formantmin = 1;
 			formantmax = numberOfPossibleFormants;

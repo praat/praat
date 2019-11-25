@@ -22,7 +22,7 @@
 Thing_implement (Harmonicity, Vector, 2);
 
 static autoVEC Harmonicity_getSoundingValues (Harmonicity me, double tmin, double tmax) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
 	integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (numberOfFrames < 1)

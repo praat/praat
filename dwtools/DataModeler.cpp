@@ -316,8 +316,10 @@ double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, i
 }
 
 void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer toIndex) {
-	if (toIndex < fromIndex || (toIndex == 0 && fromIndex == 0))
-		fromIndex = 1, toIndex = my numberOfParameters;
+	if (toIndex < fromIndex || (toIndex == 0 && fromIndex == 0)) {
+		fromIndex = 1;
+		toIndex = my numberOfParameters;
+	}
 	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
 		for (integer index = fromIndex; index <= toIndex; index ++)
 			my parameterStatus [index] = DataModeler_PARAMETER_FREE;
@@ -488,10 +490,7 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *out_ss
 static void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	integer iterm, bool scale, integer numberOfPoints)
 {
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	autoVEC x = newVECraw (numberOfPoints);
 	autoVEC y = newVECraw (numberOfPoints);
 	autoVEC term = newVECraw (my numberOfParameters);
@@ -556,8 +555,7 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, double horizontalOffset_mm, bool drawDots)
 {
-	if (xmax <= xmin)
-		xmin = my xmin, xmax = my xmax;
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer ixmin = 2;
 	while (my x [ixmin] < xmin && ixmin < my numberOfDataPoints)
 		ixmin ++;
@@ -1104,8 +1102,7 @@ void FormantModeler_fit (FormantModeler me) {
 void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax,
  	integer iformant, integer iterm, bool scaled, integer numberOfPoints, bool garnish)
 {
-	if (tmax <= tmin)
-		tmin = my xmin, tmax = my xmax;
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	if (iformant < 1 || iformant > my trackmodelers.size)
 		return;
 	Graphics_setInner (g);
@@ -1278,10 +1275,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
 	double numberOfSigmas, int useSigmaY, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish)
 {
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const integer maxTrack = my trackmodelers.size;
 	if (toTrack == 0 && fromTrack == 0) {
 		fromTrack = 1;
@@ -1329,10 +1323,7 @@ static void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, dou
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish)
 {
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const integer maxTrack = my trackmodelers.size;
 	if (toTrack == 0 && fromTrack == 0) {
 		fromTrack = 1;
@@ -1367,10 +1358,7 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
 	bool errorBars, double barWidth_mm, double horizontalOffset_mm, bool garnish)
 {
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const integer maxTrack = my trackmodelers.size;
 	if (toTrack == 0 && fromTrack == 0) {
 		fromTrack = 1;
@@ -1381,7 +1369,7 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	if (toTrack > maxTrack)
 		toTrack = maxTrack;
 	Graphics_setInner (g);
-	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, estimated, numberOfParameters,  errorBars, barWidth_mm, horizontalOffset_mm);
+	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, estimated, numberOfParameters, errorBars, barWidth_mm, horizontalOffset_mm);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -1398,7 +1386,7 @@ autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numb
 		my xmin = tmin;
 		my xmax = tmax;
 		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
-			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters,  DataModeler_TYPE_LEGENDRE);
+			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters, DataModeler_TYPE_LEGENDRE);
 			my trackmodelers. addItem_move (ff.move());
 		}
 		return me;
@@ -1597,10 +1585,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 {
 	try {
 		integer ifmin, ifmax, posInCollection = 0;
-		if (tmax <= tmin) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack,
 			U"There are not enough data points, please extend the selection.");
@@ -1685,8 +1670,10 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, in
 	double *out_probability, double *out_ndf)
 {
 	double chisq = undefined, ndfTotal = 0.0;
-	if (toFormant < fromFormant || (fromFormant == 0 && toFormant == 0))
-		fromFormant = 1, toFormant = my trackmodelers.size;
+	if (toFormant < fromFormant || (fromFormant == 0 && toFormant == 0)) {
+		fromFormant = 1;
+		toFormant = my trackmodelers.size;
+	}
 	if (fromFormant >= 1 && toFormant <= my trackmodelers.size) {
 		chisq = 0.0;
 		integer numberOfDefined = 0;
@@ -1953,10 +1940,7 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 
 autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
 	try {
-		if (tmin >= tmax) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		Melder_require (tmin < my xmax && tmax > my xmin,
 			U"Your start and end time should be between ", my xmin, U" and ", my xmax, U".");
 		integer ifmin, ifmax, thyindex = 1;
@@ -1974,7 +1958,7 @@ autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
 	}
 }
 
-autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax,
+static autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax,
 	integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power) {
 	try {
 		const integer index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
@@ -1988,7 +1972,7 @@ autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, doub
 }
 
 
-autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax,
+static autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax,
 	integer numberOfFormantTracks, integer numberOfParametersPerTrack, bool useBandWidthsForTrackEstimation,
 	double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3)
 {
@@ -2007,10 +1991,7 @@ Thing_implement (PitchModeler, DataModeler, 0);
 
 autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, integer numberOfParameters) {
 	try {
-		if (tmax <= tmin) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		integer ifmin, ifmax;
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		Melder_require (numberOfParameters <= numberOfDataPoints,
@@ -2070,8 +2051,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 {
 	try {
 		// parameter check
-		if (endTime <= startTime)
-			startTime = my xmin, endTime = my xmax;
+		Function_unidirectionalAutowindow (me, & startTime, & endTime);
 		const double nyquistFrequency = 0.5 / my dx;
 		Melder_require (maxFreq <= nyquistFrequency,
 			U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");

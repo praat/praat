@@ -1206,7 +1206,7 @@ autoSound Sound_filter_deemphasis (Sound me, double frequency) {
 }
 
 void Sound_reverse (Sound me, double tmin, double tmax) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	integer n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax) / 2;
 	for (integer channel = 1; channel <= my ny; channel ++) {

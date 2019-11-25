@@ -618,8 +618,7 @@ static void OTGrammar_getInterpretiveParse_opt (OTGrammar me, integer ipartialOu
 			OTGrammarTableau tableau = & my tableaus [itab];
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				OTGrammarCandidate cand = & tableau -> candidates [icand];
-				Melder_assert (cand -> partialOutputMatches);
-				if (cand -> partialOutputMatches [ipartialOutput]) {   // T&S' idea of surface->overt mapping
+				if (cand -> partialOutputMatches___ [ipartialOutput]) {   // T&S' idea of surface->overt mapping
 					if (itab_best == 0) {
 						itab_best = itab;   // the first compatible input/output pair found is the first guess for the best candidate
 						icand_best = icand;
@@ -2220,8 +2219,7 @@ static void OTGrammar_opt_deleteOutputMatching (OTGrammar me) {
 		for (integer icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate cand = & tab -> candidates [icand];
 			cand -> numberOfPotentialPartialOutputsMatching = 0;
-			NUMvector_free (cand -> partialOutputMatches, 1);
-			cand -> partialOutputMatches = nullptr;
+			cand -> partialOutputMatches___.reset();
 		}
 	}
 }
@@ -2237,7 +2235,7 @@ static void OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Dist
 			for (integer icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 				OTGrammarCandidate cand = & tab -> candidates [icand];
 				cand -> numberOfPotentialPartialOutputsMatching = thy numberOfRows;
-				cand -> partialOutputMatches = NUMvector <bool> (1, thy numberOfRows);
+				cand -> partialOutputMatches___ = newBOOLVECzero (thy numberOfRows);
 			}
 		}
 		for (integer ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {
@@ -2250,7 +2248,7 @@ static void OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Dist
 						OTGrammarCandidate cand = & tab -> candidates [icand];
 						if (str32str (cand -> output.get(), partialOutput)) {
 							foundPartialOutput = true;
-							cand -> partialOutputMatches [ipartialOutput] = true;
+							cand -> partialOutputMatches___ [ipartialOutput] = true;
 						}
 					}
 				}

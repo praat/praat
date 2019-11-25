@@ -199,10 +199,7 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 		const bool clip = ymin < ymax;
 		Melder_require (channel > 0 && channel <= my ny,
 			U"Channel does not exist.");
-		if (tmin >= tmax) {
-			tmin = my xmin;
-			tmax = my xmax;
-		}
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		if (tmin < my xmin)
 			tmin = my xmin;
 		if (tmax > my xmax)
