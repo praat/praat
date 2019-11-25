@@ -2,7 +2,7 @@
 #define _melder_readtext_h_
 /* melder_readtext.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ struct autoMelderReadText {
 		return *this;
 	}
 	autoMelderReadText&& move () noexcept { return static_cast <autoMelderReadText&&> (*this); }
-	explicit operator bool () const { return !! our text; }
+	explicit operator bool () const noexcept { return !! our text; }
 };
 #endif
 

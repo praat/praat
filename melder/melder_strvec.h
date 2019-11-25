@@ -2,7 +2,7 @@
 #define _melder_strvec_h_
 /* melder_strvec.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ public:
 	~ _autostringautovector<T> () {
 		our reset ();
 	}
-	explicit operator bool () const { return !! our _ptr; }
+	explicit operator bool () const noexcept { return !! our _ptr; }
 	_autostring <T> & operator[] (integer i) {
 		return our _ptr [i];
 	}

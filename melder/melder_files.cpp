@@ -559,8 +559,11 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	}
 	if (! f) {
 		char32 *path = file -> path;
-		Melder_appendError (U"Cannot ", type [0] == 'r' ? U"open" : type [0] == 'a' ? U"append to" : U"create",
-			U" file ", file, U".");
+		Melder_appendError (
+			( errno == EPERM ? U"No permission to " : U"Cannot " ),
+			( type [0] == 'r' ? U"open" : type [0] == 'a' ? U"append to" : U"create" ),
+			U" file ", file, U"."
+		);
 		if (path [0] == U'\0')
 			Melder_appendError (U"Hint: empty file name.");
 		else if (path [0] == U' ' || path [0] == U'\t')

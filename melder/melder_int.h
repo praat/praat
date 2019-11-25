@@ -130,5 +130,54 @@ T Melder_clipped (T minimum, T var, T maximum) {
 	return std::max (minimum, std::min (var, maximum));
 }
 
+class kleenean {
+	int _intValue;
+public:
+	static constexpr int UNKNOWN = -1;
+	static constexpr int NO_ = 0;
+	static constexpr int YES_ = 1;
+	explicit constexpr kleenean (int initialValue): _intValue (initialValue) { }
+	bool isTrue () const noexcept {
+		return our _intValue > 0;
+	}
+	bool isFalse () const noexcept {
+		return our _intValue == 0;
+	}
+	bool isUnknown () const noexcept {
+		return our _intValue < 0;
+	}
+	bool isKnown () const noexcept {
+		return our _intValue >= 0;
+	}
+	explicit operator bool () const noexcept {
+		return our isTrue();
+	}
+	bool operator! () const noexcept {
+		return our isFalse();
+	}
+	kleenean operator&& (const kleenean other) const noexcept {
+		return our isFalse() || other. isFalse() ? kleenean (our NO_) :
+				our isTrue() && other. isTrue() ? kleenean (our YES_) :
+				kleenean (our UNKNOWN);
+	}
+	kleenean operator|| (const kleenean other) const noexcept {
+		return our isTrue() || other. isTrue() ? kleenean (our YES_) :
+				our isFalse() && other. isFalse() ? kleenean (our NO_) :
+				kleenean (our UNKNOWN);
+	}
+	kleenean operator== (const kleenean other) const noexcept {   // logical equivalence
+		return our isUnknown() || other. isUnknown() ? kleenean (our UNKNOWN) :
+				kleenean (our isTrue() == other. isTrue());
+	}
+	kleenean operator!= (const kleenean other) const noexcept {
+		return our isUnknown() || other. isUnknown() ? kleenean (our UNKNOWN) :
+				kleenean (our isTrue() != other. isTrue());
+		// this is the same as ! ( *this == other )
+	}
+};
+constexpr kleenean kleenean_UNKNOWN = kleenean (-1);
+constexpr kleenean kleenean_NO = kleenean (0);
+constexpr kleenean kleenean_YES = kleenean (1);
+
 /* End of file melder_int.h */
 #endif

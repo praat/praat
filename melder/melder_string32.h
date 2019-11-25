@@ -2,7 +2,7 @@
 #define _melder_string32_h_
 /* melder_string32.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ public:
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
 	_autostring (_autostring &) = delete;   // disable copy constructor
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
-	explicit operator bool () const { return !! our ptr; }
+	explicit operator bool () const noexcept { return !! our ptr; }
 	/*
 		Enable moving.
 	*/
