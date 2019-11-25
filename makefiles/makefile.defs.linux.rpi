@@ -1,13 +1,13 @@
 # File: makefile.defs.linux.rpi
 
 # System: Raspberry Pi
-# Paul Boersma, 10 November 2019
+# Paul Boersma, 25 November 2019
 
 CC = gcc
 
 CXX = g++
 
-COMMONFLAGS = -DUNIX -Dlinux -DJACK -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
+COMMONFLAGS = -DUNIX -Dlinux -DJACK -DPA_LITTLE_ENDIAN -Draspberrypi -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS)
 
