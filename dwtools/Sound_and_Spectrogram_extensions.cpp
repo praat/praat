@@ -86,17 +86,17 @@ static autoSpectrum Sound_to_Spectrum_power (Sound me) {
 static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, integer frame) {
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 	integer numberOfFrequencies = his nx;
-	autoNUMvector<double> z (1, numberOfFrequencies);
 
+	autoVEC z = newVECraw (numberOfFrequencies);
 	for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
-		const double fhz = his x1 + (ifreq - 1) * his dx;
-		z [ifreq] = thy v_hertzToFrequency (fhz);
+		const double frequency_Hz = his x1 + (ifreq - 1) * his dx;
+		z [ifreq] = thy v_hertzToFrequency (frequency_Hz);
 	}
 
 	for (integer i = 1; i <= thy ny; i ++) {
 		const double z0 = thy y1 + (i - 1) * thy dy;
 		constVEC pow = his z.row (1); // TODO ??
-		double p = 0.0;
+		longdouble p = 0.0;
 		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 			/*
 				Sekey & Hanson filter is defined in the power domain.
@@ -106,7 +106,7 @@ static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, in
 			const double a = NUMsekeyhansonfilter_amplitude (z0, z [ifreq]);
 			p += a * pow [ifreq] ;
 		}
-		thy z [i] [frame] = p;
+		thy z [i] [frame] = double (p);
 	}
 }
 
