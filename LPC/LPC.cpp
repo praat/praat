@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
 
-	integer numberOfSelected = itmax - itmin + 1;
+	const integer numberOfSelected = itmax - itmin + 1;
 	autoVEC gain = newVECraw (numberOfSelected);
 
 	for (integer iframe = itmin; iframe <= itmax; iframe ++)
@@ -106,7 +106,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
-		double x = Sampled_indexToX (me, iframe);
+		const double x = Sampled_indexToX (me, iframe);
 		Graphics_speckle (g, x, gain [iframe - itmin + 1]);
 	}
 	Graphics_unsetInner (g);
@@ -129,7 +129,7 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
-			LPC_Frame lpc = & my d_frames [j];
+			const LPC_Frame lpc = & my d_frames [j];
 			thy z.column (j) <<= lpc-> a.get();
 		}
 		return thee;
@@ -143,7 +143,7 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoVEC rc = newVECzero (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
-			LPC_Frame lpc = & my d_frames [j];
+			const LPC_Frame lpc = & my d_frames [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
 			if (lpc -> nCoefficients < my maxnCoefficients)
 				rc.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
@@ -161,7 +161,7 @@ autoMatrix LPC_downto_Matrix_area (LPC me) {
 		autoVEC rc = newVECraw (my maxnCoefficients);
 		autoVEC area = newVECraw (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
-			LPC_Frame lpc = & my d_frames [j];
+			const LPC_Frame lpc = & my d_frames [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
 			VECarea_from_rc (area.part (1, lpc -> nCoefficients), rc.part (1, lpc -> nCoefficients));
 			if (lpc -> nCoefficients < my maxnCoefficients)

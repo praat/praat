@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,8 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration, i
 	hs -> iter = 1;
 	hs -> itermax = 1;
 	hs -> wantlocation = wantlocation;
-	if (! wantlocation) hs -> location = location;
+	if (! wantlocation)
+		hs -> location = location;
 	hs -> wantscale = 1;
 	integer n = hs -> e -> nx;
 	hs -> n = n;
@@ -67,17 +68,17 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration, i
 
 static void huber_struct_getWeights (struct huber_struct *hs, constVEC e) {
 	Melder_assert (e.size == hs -> n);
-	double kstdev = hs -> k_stdev * hs -> scale;
+	const double kstdev = hs -> k_stdev * hs -> scale;
 
 	for (integer i = 1 ; i <= hs -> n; i ++) {
-		double abs_ei = fabs (e [i] - hs -> location);
+		const double abs_ei = fabs (e [i] - hs -> location);
 		hs -> w [i] = abs_ei < kstdev ? 1.0 : kstdev / abs_ei;
 	}
 }
 
 static void huber_struct_getWeightedCovars (struct huber_struct *hs, VEC s) {
 	Melder_assert (s.size == hs -> n);
-	integer p = hs -> p;
+	const integer p = hs -> p;
 
 	for (integer i = 1; i <= p; i ++) {
 		for (integer j = i; j <= p; j ++) {
@@ -105,7 +106,7 @@ static void huber_struct_solvelpc (struct huber_struct *hs) {
 }
 
 void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
-	integer p = std::min (my nCoefficients, his nCoefficients);
+	const integer p = std::min (my nCoefficients, his nCoefficients);
 
 	hs -> iter = 0;
 	hs -> scale = 1e308;
@@ -124,8 +125,9 @@ void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct hub
 
 		huber_struct_getWeights (hs, hs -> e -> z.row (1));
 		huber_struct_getWeightedCovars (hs, thy z.row (1));
-
-		// Solve C a = [-] c */
+		/*
+			Solve C a = [-] c
+		*/
 		try {
 			huber_struct_solvelpc (hs);
 		} catch (MelderError) {
@@ -142,21 +144,26 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 	int itermax, double tol, bool wantlocation) {
 	struct huber_struct struct_huber;
 	try {
-		double t1, samplingFrequency = 1.0 / my dx, tol_svd = 0.000001;
-		double location = 0, windowDuration = 2 * analysisWidth; /* Gaussian window */
-		integer numberOfFrames, frameErrorCount = 0, iter = 0;
-		integer p = thy maxnCoefficients;
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Time domains should be equal.");
-		Melder_require (my dx == thy samplingPeriod, U"Sampling intervals should be equal.");
-		Melder_require (Melder_roundDown (windowDuration / my dx) > p, U"Analysis window too short.");
-		
+		const double samplingFrequency = 1.0 / my dx, tol_svd = 0.000001;
+		const double windowDuration = 2 * analysisWidth; /* Gaussian window */
+		const integer p = thy maxnCoefficients;
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
+			U"Time domains should be equal.");
+		Melder_require (my dx == thy samplingPeriod,
+			U"Sampling intervals should be equal.");
+		Melder_require (Melder_roundDown (windowDuration / my dx) > p,
+			U"Analysis window too short.");
+		double t1;
+		integer numberOfFrames;
 		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & numberOfFrames, & t1);
-		Melder_require (numberOfFrames == thy nx && t1 == thy x1, U"Incorrect retrieved analysis width.");
+		Melder_require (numberOfFrames == thy nx && t1 == thy x1,
+			U"Incorrect retrieved analysis width.");
 
 		autoSound sound = Data_copy (me);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoLPC him = Data_copy (thee);
+		double location = 0.0;
 		huber_struct_init (& struct_huber, windowDuration, p, samplingFrequency, location, wantlocation);
 
 		struct_huber.k_stdev = k_stdev;
@@ -167,11 +174,11 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		autoMelderProgress progess (U"LPC analysis");
 
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
-
-		for (integer i = 1; i <= numberOfFrames; i ++) {
-			LPC_Frame lpc = & thy d_frames [i];
-			LPC_Frame lpcto = & his d_frames [i];
-			const double t = Sampled_indexToX (thee, i);
+		integer frameErrorCount = 0, iter = 0;
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+			const LPC_Frame lpc = & thy d_frames [iframe];
+			const LPC_Frame lpcto = & his d_frames [iframe];
+			const double t = Sampled_indexToX (thee, iframe);
 
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.get());
@@ -185,14 +192,13 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 
 			iter += struct_huber.iter;
 
-			if (i % 10 == 1)
-				Melder_progress ((double) i / numberOfFrames,
-					U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
+			if (iframe % 10 == 1)
+				Melder_progress ((double) iframe / numberOfFrames,
+					U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
 		}
 
 		if (frameErrorCount) Melder_warning (U"Results of ", frameErrorCount,
 			U" frame(s) out of ", numberOfFrames, U" could not be optimised.");
-		//Melder_casual (U"Number of iterations: ", iter, U"\n   Average per frame: ", (double) iter / numberOfFrames);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC created.");
@@ -200,11 +206,10 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 }
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, int itermax, double tol, bool wantlocation)
-{
-	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
-	double nyquist = 0.5 / my dx;
-	integer predictionOrder = Melder_ifloor (2 * numberOfFormants);
+	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, int itermax, double tol, bool wantlocation) {
+	const double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
+	const double nyquist = 0.5 / my dx;
+	const integer predictionOrder = Melder_ifloor (2 * numberOfFormants);
 	try {
 		autoSound sound;
 		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12)
@@ -213,8 +218,8 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 			sound = Sound_resample (me, maximumFrequency * 2.0, 50);
 
 		autoLPC lpc = Sound_to_LPC_auto (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
-		autoLPC lpcr = LPC_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
-		autoFormant thee = LPC_to_Formant (lpcr.get(), safetyMargin);
+		autoLPC lpcRobust = LPC_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
+		autoFormant thee = LPC_to_Formant (lpcRobust.get(), safetyMargin);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust Formant created.");

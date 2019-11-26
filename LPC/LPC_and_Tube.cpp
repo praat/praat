@@ -43,7 +43,9 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee) {
 
 double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
-		// match the average distance between the first two formants in the VocaTract and the LPC spectrum
+		/*
+			Match the average distance between the first two formants in the VocaTract and the LPC spectrum
+		*/
 		const integer numberOfFrequencies = 1000;
 		const double maximumFrequency = 5000.0;
 		autoSpectrum vts = VocalTract_to_Spectrum (me, numberOfFrequencies, maximumFrequency, glottalDamping, radiationDamping, internalDamping);
@@ -70,8 +72,9 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 	struct structTube_Frame rc_struct, af_struct;
 	const Tube_Frame rc = & rc_struct, af = & af_struct;
 	try {
-		const integer m = my nCoefficients;
-		double length, dlength = 0.001, wakita_length = undefined;
+		const integer numberOfCoefficients = my nCoefficients;
+		const double dlength = 0.001;
+		double length, wakita_length = undefined;
 		double varMin = 1e308;
 
 		memset (& lpc_struct, 0, sizeof (lpc_struct));
@@ -80,70 +83,69 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		memset (& af_struct, 0, sizeof (af_struct));
 
 
-		LPC_Frame_init (lpc, m);
-		Tube_Frame_init (rc, m, refLength);
-		Tube_Frame_init (af, m, refLength);
-
-		// Step 2
-
+		LPC_Frame_init (lpc, numberOfCoefficients);
+		Tube_Frame_init (rc, numberOfCoefficients, refLength);
+		Tube_Frame_init (af, numberOfCoefficients, refLength);
+		/*
+			Step 2
+		*/
 		LPC_Frame_into_Formant_Frame (me, f, samplingPeriod, 0);
-
-		// LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !!
-		
-		Melder_require (f -> nFormants > 0, U"Not enough formants.");
-		
-
+		/*
+			LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !!
+		*/
+		Melder_require (f -> nFormants > 0,
+			U"Not enough formants.");
 		double *area = af -> c.at; // TODO
 		double lmin = length = 0.10;
 		double plength = refLength;
 		while (length <= 0.25) {
-			// Step 3
-
+			/*
+				Step 3
+			*/
 			const double fscale = plength / length;
 			for (integer i = 1; i <= f -> nFormants; i ++) {
 				f -> formant [i]. frequency *= fscale;
 				f -> formant [i]. bandwidth *= fscale;
 			}
-
 			/*
-			20000125: Bovenstaande schaling van f1/b1 kan ook gedaan worden door
-			MGfb_to_a (f, b, nf, samplingFrequency*length/refLength, a1)
-			De berekening is extreem gevoelig voor de samplefrequentie: een zelfde
-			stel f,b waardes geven andere lengtes afhankelijk van Fs. Ook het
-			weglaten van een hogere formant heeft consekwenties.
-			De refLength zou eigenlijk vast moeten liggen op
-			refLength=c*aantalFormanten/Fs waarbij c=340 m/s (geluidssnelheid).
-			Bij Fs=10000 zou aantalFormanten=5 zijn en refLength -> 0.17 m
+				20000125: Bovenstaande schaling van f1/b1 kan ook gedaan worden door
+				MGfb_to_a (f, b, nf, samplingFrequency*length/refLength, a1)
+				De berekening is extreem gevoelig voor de samplefrequentie: een zelfde
+				stel f,b waardes geven andere lengtes afhankelijk van Fs. Ook het
+				weglaten van een hogere formant heeft consekwenties.
+				De refLength zou eigenlijk vast moeten liggen op
+				refLength=c*aantalFormanten/Fs waarbij c=340 m/s (geluidssnelheid).
+				Bij Fs=10000 zou aantalFormanten=5 zijn en refLength -> 0.17 m
 			*/
-
-			// step 4
-
+			/*
+				Step 4
+			*/
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
-
-			// step 5
-
+			/*
+				Step 5
+			*/
 			rc -> length = length;
 			LPC_Frame_into_Tube_Frame_rc (lpc, rc);
-
-			// step 6.1
-
+			/*
+				Step 6.1
+			*/
 			Tube_Frames_rc_into_area (rc, af);
-
-			// step 6.2 Log(areas)
-
+			/*
+				Step 6.2 Log(areas)
+			*/
 			double logSum = 0.0;
 			for (integer i = 1; i <= af -> numberOfSegments; i ++) {
 				area [i] = log (area [i]);
 				logSum += area [i];
 			}
-
-			// step 6.3 and 7
+			/*
+				Steps 6.3 and 7
+			*/
 			double var = 0.0;
 			for (integer i = 1; i <= af -> numberOfSegments; i ++) {
 				const double delta = area [i] - logSum / af -> numberOfSegments;
 				var += delta * delta;
 			}
-
 			if (var < varMin) {
 				lmin = length;
 				varMin = var;
@@ -187,7 +189,7 @@ void VocalTract_setLength (VocalTract me, double newLength) {
 
 autoVocalTract LPC_to_VocalTract_slice_special (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
-		integer frameNumber = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do? not nearestIndex?
+		integer frameNumber = Sampled_xToNearestIndex (me, time);
 		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
 		LPC_Frame lpc = & my d_frames [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
@@ -218,7 +220,7 @@ autoVocalTract LPC_to_VocalTract_slice (LPC me, double time, double length) {
 	try {
 		integer frameNumber = Sampled_xToNearestIndex (me, time);
 		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
-		LPC_Frame lpc = & my d_frames [frameNumber];
+		const LPC_Frame lpc = & my d_frames [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, length);
 		return thee;
 	} catch (MelderError) {

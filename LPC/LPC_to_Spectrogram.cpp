@@ -28,7 +28,7 @@ autoSpectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduct
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		integer nfft = 2;
 		if (dfMin <= 0.0) {
-			nfft = 512; 
+			nfft = 512;
 			dfMin = samplingFrequency / nfft;
 		}
 		while (samplingFrequency / nfft > dfMin || nfft <= my maxnCoefficients)
@@ -37,12 +37,12 @@ autoSpectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduct
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, 0.0, samplingFrequency / 2.0, nfft / 2 + 1, freqStep, 0.0);
 
-		for (integer i = 1; i <= my nx; i ++) {
-			const double t = Sampled_indexToX (me, i);
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			const double t = Sampled_indexToX (me, iframe);
 			autoSpectrum spec = LPC_to_Spectrum (me, t, dfMin, bandwidthReduction, deEmphasisFrequency);
 			for (integer j = 1; j <= spec -> nx; j ++) {
 				const double re = spec -> z [1] [j], im = spec -> z [2] [j];
-				thy z [j] [i] = re * re + im * im;
+				thy z [j] [iframe] = re * re + im * im;
 			}
 		}
 		return thee;

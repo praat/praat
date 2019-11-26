@@ -1,6 +1,6 @@
 /* LPC_to_Spectrum.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,55 +38,54 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 		thy z.get() <<= 0.0;
 		return;
 	}
-
-	// When deEmphasisFrequency is effective we need 1 extra position in the fftbuffer.
-
-	integer nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
+	/*
+		When deEmphasisFrequency is effective we need 1 extra position in the fftbuffer.
+	*/
+	const integer nfft = 2 * (thy nx - 1);
+	double ndata = my nCoefficients + 1;
 	double scale = 1.0 / sqrt (2.0 * thy xmax * thy dx);
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft))
 		Melder_throw (U"Spectrum size not large enough.");
 
 	autoVEC fftbuffer = newVECzero (nfft);
-
-	// Copy 1, a [1], ... a [p] into fftbuffer
-
+	/*
+		Copy 1.0, a [1], ... a [p] into fftbuffer
+	*/
 	fftbuffer [1] = 1.0;
 	fftbuffer.part (2, ndata) <<= my a.get();
 
 	if (deEmphasisFrequency < thy xmax) {
-		// Multiply (1, a [1] z^-1, ... a [p] z^-p) by (1 - b z^-1)
-
-		double b = exp (- NUM2pi * deEmphasisFrequency / thy xmax);
+		/*
+			Multiply (1, a [1] z^-1, ... a [p] z^-p) by (1 - b z^-1)
+		*/
+		const double b = exp (- NUM2pi * deEmphasisFrequency / thy xmax);
 		ndata ++;
 		for (integer i = ndata; i > 1; i--)
 			fftbuffer [i] -= b * fftbuffer [i - 1];
 	}
-
 	/*
 		Calculate sum (k=0..ndata; a [k] (z)^-k) along a contour with radius r:
 		sum (k=0..ndata; a [k] (rz)^-k) = sum (k=0..ndata; (a [k]r^-k) z^-k)
 	*/
-
-	double g = exp (NUMpi * bandwidthReduction / (thy dx * nfft)); /* r = 1/g */
+	const double g = exp (NUMpi * bandwidthReduction / (thy dx * nfft)); /* r = 1/g */
 	for (integer i = 2; i <= ndata; i ++)
 		fftbuffer [i] *= pow (g, i - 1);
-
 	/*
 		Perform the fft.
 		The LPC spectrum is obtained by inverting this spectrum.
 		The imaginary parts of the frequencies 0 and Nyquist are 0.
 	*/
-
 	NUMforwardRealFastFourierTransform (fftbuffer.get());
 	if (my gain > 0.0)
 		scale *= sqrt (my gain);
 	thy z [1] [1] = scale / fftbuffer [1];
 	thy z [2] [1] = 0.0;
 	for (integer i = 2; i <= nfft / 2; i ++) {
-		// We use: 1 / (a + ib) = (a - ib) / (a^2 + b^2)
-
-		double re = fftbuffer [i + i - 1], im = fftbuffer [i + i];
-		double invSquared = scale / (re * re + im * im);
+		/*
+			We use: 1 / (a + ib) = (a - ib) / (a^2 + b^2)
+		*/
+		const double re = fftbuffer [i + i - 1], im = fftbuffer [i + i];
+		const double invSquared = scale / (re * re + im * im);
 		thy z [1] [i] =  re * invSquared;
 		thy z [2] [i] = -im * invSquared;
 	}
@@ -96,13 +95,14 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 
 autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
-		double samplingFrequency = 1.0 / my samplingPeriod;
+		const double samplingFrequency = 1.0 / my samplingPeriod;
 		integer nfft = 2, index = Sampled_xToNearestIndex (me, t);
-
-		if (index < 1) index = 1;
-		if (index > my nx) index = my nx;
+		if (index < 1)
+			index = 1;
+		if (index > my nx)
+			index = my nx;
 		if (dfMin <= 0) {
-			nfft = 512; 
+			nfft = 512;
 			dfMin = samplingFrequency / nfft;
 		}
 		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames [index].nCoefficients)

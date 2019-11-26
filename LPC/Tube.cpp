@@ -58,15 +58,15 @@ void structTube :: v_info () {
 void Tube_Frame_init (Tube_Frame me, integer numberOfSegments, double length) {
 	my numberOfSegments = numberOfSegments;
 	my length = length;
-	Melder_require (numberOfSegments > 0, 
+	Melder_require (numberOfSegments > 0,
 		U"Number of segments should be a natural number.");
 	my c = newVECzero (numberOfSegments);
 }
 
 /* Gray & Markel (1979), LPTRN */
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee) {
-	if (my numberOfSegments > thy numberOfSegments)
-		Melder_throw (U"Number of segments to big.");
+	Melder_require (my numberOfSegments <= thy numberOfSegments,
+		U"Number of segments to big.");
 	VECarea_from_rc (thy c.get(), my c.get());
 }
 

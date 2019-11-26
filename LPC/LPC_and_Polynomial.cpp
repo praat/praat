@@ -1,6 +1,6 @@
 /* LPC_and_Polynomial.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "LPC_and_Polynomial.h"
 
 autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
-	integer degree = my nCoefficients;
+	const integer degree = my nCoefficients;
 	autoPolynomial thee = Polynomial_create (-1, 1, degree);
 	for (integer i = 1; i <= degree; i ++)
 		thy coefficients [i] = my a [degree - i + 1];
