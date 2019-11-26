@@ -24,7 +24,7 @@
 #include "FFNet_PatternList.h"
 
 void FFNet_PatternList_drawActivation (FFNet me, PatternList pattern, Graphics g, integer index) {
-	if (index < 1 || index > pattern->ny) 
+	if (index < 1 || index > pattern->ny)
 		return;
 	FFNet_propagate (me, pattern -> z.row (index), nullptr);
 	FFNet_drawActivation (me, g);

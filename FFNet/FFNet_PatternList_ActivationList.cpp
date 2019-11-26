@@ -29,21 +29,22 @@
 
 static double func (Daata object, VEC const& p) {
 	FFNet me = (FFNet) object;
-	Minimizer thee = my minimizer.get();
-	longdouble fp = 0.0;
+	const Minimizer thee = my minimizer.get();
 
 	for (integer j = 1, k = 1; k <= my numberOfWeights; k ++) {
 		my dw [k] = 0.0;
 		if (my wSelected [k])
 			my w [k] = p [j ++];
 	}
+	longdouble fp = 0.0;
 	for (integer i = 1; i <= my numberOfPatterns; i ++) {
 		FFNet_propagate (me, my inputPattern.row (i), nullptr);
 		fp += FFNet_computeError (me, my targetActivation.row (i));
 		FFNet_computeDerivative (me);
-		/* derivative (cumulative) */
-		for (integer k = 1; k <= my numberOfWeights; k ++)
-			my dw [k] += my dwi [k];
+		/*
+			Derivative (cumulative)
+		*/
+		my dw.part (1, my numberOfWeights)  +=  my dwi.part (1, my numberOfWeights);
 	}
 	thy numberOfFunctionCalls ++;
 	return (double) fp;
@@ -66,19 +67,18 @@ static void _FFNet_PatternList_ActivationList_checkDimensions (FFNet me, Pattern
 		U"The Activation and the FFNet do not match.\nThe number of columns in the Activation must equal the number of outputs in the FFNet.");
 	Melder_require (p -> ny == a -> ny,
 		U"The PatternList and the ActivationList do not match.\nThe number of rows in the PatternList must equal the number of rows in the Activation.");
-	if (! _PatternList_checkElements (p)) {
-		Melder_throw (U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");	}
-	if (! _ActivationList_checkElements (a)) {
-		Melder_throw (U"All Activation elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the Activation values first.");
-	}
+	Melder_require (_PatternList_checkElements (p),
+		U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
+	Melder_require (_ActivationList_checkElements (a),
+		U"All Activation elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the Activation values first.");
 }
 
 static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList pattern, ActivationList activation, integer maxNumOfEpochs, double tolerance, int costFunctionType, bool reset) {
 	try {
 		_FFNet_PatternList_ActivationList_checkDimensions (me, pattern, activation);
-
-		// Link the things to be learned
-
+		/*
+			Link the things to be learned
+		*/
 		my numberOfPatterns = pattern -> ny;
 		my inputPattern = pattern -> z.get();
 		my targetActivation = activation -> z.get();
@@ -87,11 +87,9 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 		if (reset) {
 			autoVEC wbuf = newVECzero (my dimension);
 			integer k = 1;
-			for (integer i = 1; i <= my numberOfWeights; i ++) {
-				if (my wSelected [i]) {
+			for (integer i = 1; i <= my numberOfWeights; i ++)
+				if (my wSelected [i])
 					wbuf [k ++] = my w [i];
-				}
-			}
 			Minimizer_reset (my minimizer.get(), wbuf.get());
 		}
 
@@ -112,12 +110,16 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 
 void FFNet_PatternList_ActivationList_learnSD (FFNet me, PatternList p, ActivationList a, integer maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {
 	bool resetMinimizer = false;
-	/* Did we choose another minimizer */
+	/*
+		Did we choose another minimizer
+	*/
 	if (my minimizer && ! Thing_isa (my minimizer.get(), classSteepestDescentMinimizer)) {
 		my minimizer.reset();
 		resetMinimizer = true;
 	}
-	/* create the minimizer if it doesn't exist */
+	/*
+		Create the minimizer if it doesn't exist
+	*/
 	if (! my minimizer) {
 		resetMinimizer = true;
 		my minimizer = SteepestDescentMinimizer_create (my dimension, me, func, dfunc_optimized);
@@ -129,14 +131,16 @@ void FFNet_PatternList_ActivationList_learnSD (FFNet me, PatternList p, Activati
 
 void FFNet_PatternList_ActivationList_learnSM (FFNet me, PatternList p, ActivationList a, integer maxNumOfEpochs, double tolerance, int costFunctionType) {
 	bool resetMinimizer = false;
-
-	// Did we choose another minimizer
-
+	/*
+		Did we choose another minimizer
+	*/
 	if (my minimizer.get() && ! Thing_isa (my minimizer.get(), classVDSmagtMinimizer)) {
 		my minimizer.reset();
 		resetMinimizer = true;
 	}
-	// create the minimizer if it doesn't exist
+	/*
+		Create the minimizer if it doesn't exist
+	*/
 	if (! my minimizer.get()) {
 		resetMinimizer = true;
 		my minimizer = VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
@@ -176,10 +180,8 @@ autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p,
 		
 		const integer numberOfPatterns = p -> ny;
 		autoActivationList thee = ActivationList_create (numberOfPatterns, my numberOfUnitsInLayer [layer]);
-
-		for (integer i = 1; i <= numberOfPatterns; i ++) {
+		for (integer i = 1; i <= numberOfPatterns; i ++)
 			FFNet_propagateToLayer (me, p -> z.row (i), thy z.row (i), layer);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no ActivationList created.");

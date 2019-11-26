@@ -50,28 +50,26 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (integer i = 1; i <= my numberOfUnitsInLayer [1]; i ++) {
 		const integer unitOffset = my numberOfInputs + 1;
-		const double bias = my w [my wLast [unitOffset + i]];
 		double c1 = 0.0, c2 = 0.0;
-		double x [6], y [6], xs [3], ys [3];
-		integer ns = 0;
 		for (integer j = 1; j <= my numberOfInputs; j ++) {
 			c1 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [ix] [j];
 			c2 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [iy] [j];
 		}
+		double x [6], y [6], xs [3], ys [3];
 		x [1] = x [2] = x [5] = xmin;
 		x [3] = x [4] = xmax;
 		y [1] = y [4] = y [5] = ymin;
 		y [2] = y [3] = ymax;
+		integer ns = 0;
+		const double bias = my w [my wLast [unitOffset + i]];
 		for (integer j = 1; j <= 4; j++) {
 			const double p1 = c1 * x [j] + c2 * y [j] + bias;
 			const double p2 = c1 * x [j + 1] + c2 * y [j + 1] + bias;
 			const double r = fabs (p1) / (fabs (p1) + fabs (p2));
 			if (p1 *p2 > 0 || r == 0.0) 
 				continue;
-
 			if (++ ns > 2)
 				break;
-
 			xs [ns] = x [j] + (x [j + 1] - x [j]) * r;
 			ys [ns] = y [j] + (y [j + 1] - y [j]) * r;
 		}
@@ -88,8 +86,7 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 	from layer j with the plane spanned by eigenvectors pcx and pcy.
 */
 void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, integer unit, integer layer,
-	integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax)
-{
+	integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax) {
 	if (layer < 1 || layer > my numberOfLayers)
 		return;
 	if (unit < 1 || unit > my numberOfUnitsInLayer [layer])
@@ -100,7 +97,6 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 	if (numberOfUnitsInLayer_m1 != thy dimension)
 		return;
 
-
 	double x1, x2, y1, y2;
 	Graphics_inqWindow (g, & x1, & x2, & y1, & y2);
 	if (xmax <= xmin) {
@@ -108,7 +104,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 		xmax = x2;
 	}
 	if (ymax <= ymin) {
-		ymin = y1; 
+		ymin = y1;
 		ymax = y2;
 	}
 	Graphics_setInner (g);
@@ -169,7 +165,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g
 		    "for unit ", unit, U" in layer ", layer, U" with the plane spanned by the eigenvectors because \nboth planes are parallel.");
 		return;
 	}
-	double xi [3], yi [3]; /* Intersections */
+	double xi [3], yi [3]; // Intersections
 	const double ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
 	if (ni == 2)
 		Graphics_line (g, xi [1], yi [1], xi [2], yi [2]);

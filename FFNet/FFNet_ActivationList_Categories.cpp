@@ -28,10 +28,9 @@
 static integer winnerTakesAll (FFNet me, constVEC activation) {
 	integer pos = 1;
 	double max = activation[1];
-	for (integer i = 2; i <= my numberOfOutputs; i ++) {
+	for (integer i = 2; i <= my numberOfOutputs; i ++)
 		if (activation [i] > max)
-			max = activation [pos = i]; 
-	}
+			max = activation [pos = i];
 	return pos;
 }
 
@@ -43,7 +42,8 @@ static integer stochastic (FFNet me, constVEC activation) {
 	const double number = NUMrandomUniform (0.0, range);
 	for (i = 1; i <= my numberOfOutputs; i ++) {
 		lower += activation [i];
-		if (number < lower) break;
+		if (number < lower)
+			break;
 	}
 	return i;
 }
@@ -74,17 +74,16 @@ autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee
 		autoCategories uniq = Categories_selectUniqueItems (thee);
 		Melder_require (my outputCategories,
 			U"The FFNet does not have categories.");
-		
 		const integer nl = OrderedOfString_isSubsetOf (uniq.get(), my outputCategories.get(), 0);
 		Melder_require (nl > 0,
 			U"The Categories should match the categories of the FFNet.");
 
 		autoActivationList him = ActivationList_create (thy size, my numberOfOutputs);
 		for (integer i = 1; i <= thy size; i ++) {
-			SimpleString category = thy at [i];
+			const SimpleString category = thy at [i];
 			const integer pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), category -> string.get());
-			if (pos < 1)
-				Melder_throw (U"The FFNet doesn't know the category ", category -> string.get(), U".");
+			Melder_require (pos > 0,
+				U"The FFNet doesn't know the category ", category -> string.get(), U".");
 			his z [i] [pos] = 1.0;
 		}
 		return him;
