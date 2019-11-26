@@ -23,11 +23,7 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 	bool bandwidths, bool garnish, conststring32 method)
 {
 	OrderedOf<structRealTier>* tiers = ( bandwidths ? & my bandwidths : & my formants );
-
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = 0.0;
 		ymax = ( bandwidths ? 1000.0 : 8000.0 );

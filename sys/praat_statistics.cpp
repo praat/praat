@@ -19,7 +19,9 @@
 #include <time.h>
 #include <locale.h>
 #include <thread>
-#include <pwd.h>
+#if defined (macintosh)
+	#include <pwd.h>
+#endif
 #include "praatP.h"
 
 static struct {
@@ -89,13 +91,14 @@ void praat_reportTextProperties () {
 
 #if defined (macintosh)
 static bool isSandboxed () {
-	return !! NSProcessInfo.processInfo.environment [@"APP_SANDBOX_CONTAINER_ID"];
+	//return !! NSProcessInfo.processInfo.environment [@"APP_SANDBOX_CONTAINER_ID"];
+	return !! Melder_getenv (U"APP_SANDBOX_CONTAINER_ID");
 }
-static int hasFullDiskAccess () {
+static kleenean hasFullDiskAccess () {
 	if (Melder_systemVersion < 101400)
-		return true;
+		return kleenean_YES;
 	NSFileManager *nsFileManager = [NSFileManager defaultManager];
-	NSWorkspace *nsWorkspace = [NSWorkspace sharedWorkspace];
+	//NSWorkspace *nsWorkspace = [NSWorkspace sharedWorkspace];
 	// to open the preferences at Full Disk Access: [nsWorkspace openURL: [NSURL URLWithString: @"x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"]];
 	NSString *nsUserHomeFolderPath;
 	if (isSandboxed ()) {
@@ -109,13 +112,13 @@ static int hasFullDiskAccess () {
 		[nsUserHomeFolderPath stringByAppendingPathComponent: @"Library/Safari/Bookmarks.plist"] :
 		[nsUserHomeFolderPath stringByAppendingPathComponent: @"Library/Safari/CloudTabs.db"]
 	);
-	bool fileExists = [nsFileManager fileExistsAtPath: perhapsUnreadableFilePath];
-	if (! fileExists)
-		return -1;   // unknown
-	NSData *data = [NSData dataWithContentsOfFile: perhapsUnreadableFilePath];
-	if (! data)
-		return 0;   // false
-	return 1;   // true
+	structMelderFile file { };
+	Melder_pathToFile (Melder_peek8to32 ([perhapsUnreadableFilePath UTF8String]), & file);
+	if (! MelderFile_exists (& file))
+		return kleenean_UNKNOWN;
+	if (! MelderFile_readable (& file))
+		return kleenean_NO;
+	return kleenean_YES;
 }
 static NSString *getRealHomeDirectory () {
 	NSString *nsUserHomeFolderPath;
@@ -163,11 +166,12 @@ void praat_reportSystemProperties () {
 	#ifdef macintosh
 		MelderInfo_writeLine (U"system version is ", Melder_systemVersion, U".");
 	#endif
+	structMelderDir dir {};
+	Melder_getHomeDir (& dir);
+	MelderInfo_writeLine (U"Home directory: ", dir. path);
 	#ifdef macintosh
-		int weHaveFullDiskAccess = hasFullDiskAccess ();
-		MelderInfo_writeLine (U"Full Disk Access: ", weHaveFullDiskAccess == -1 ? U"unknown":
-				weHaveFullDiskAccess == 0 ? U"no" : U"yes");
-		MelderInfo_writeLine (U"Sandboxed: ", ( isSandboxed () ? U"yes" : U"no" ));
+		MelderInfo_writeLine (U"Full Disk Access: ", Melder_kleenean (hasFullDiskAccess ()));
+		MelderInfo_writeLine (U"Sandboxed: ", Melder_boolean (isSandboxed ()));
 		if (isSandboxed ())
 			MelderInfo_writeLine (U"Sandbox (application home) directory: ", Melder_peek8to32 ([NSHomeDirectory () UTF8String]));
 		MelderInfo_writeLine (U"User home directory: ", Melder_peek8to32 ([ getRealHomeDirectory () UTF8String]));

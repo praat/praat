@@ -3186,9 +3186,8 @@ FORM (MODIFY_FunctionTerms_setDomain, U"FunctionTerms: Set domain", nullptr) {
 	OK
 DO
 	MODIFY_EACH (FunctionTerms)
-		if (xmax <= xmin) {
+		if (xmax <= xmin)
 			Melder_throw (U"Xmax should be larger than Xmin.");
-		}
 		FunctionTerms_setDomain (me, xmin, xmax);
 	MODIFY_EACH_END
 }
@@ -3253,9 +3252,8 @@ FORM (NEW1_ISpline_create, U"Create ISpline", U"Create ISpline...") {
 	OK
 DO
 	CREATE_ONE
-		if (xmax <= xmin) {
+		if (xmax <= xmin)
 			Melder_throw (U"Xmin should be smaller than Xmax.");
-		}
 		autoISpline result = ISpline_createFromStrings (xmin, xmax, degree, coefficients_string, knots_string);
 	CREATE_ONE_END (name)
 }

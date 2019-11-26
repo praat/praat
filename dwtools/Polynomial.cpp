@@ -477,10 +477,7 @@ void FunctionTerms_draw (FunctionTerms me, Graphics g, double xmin, double xmax,
 	autoVEC x = newVECraw (numberOfPoints);
 	autoVEC y = newVECraw (numberOfPoints);
 
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	double fxmin = xmin, fxmax = xmax;
 	if (! extrapolate) {
 		if (xmax < my xmin || xmin > my xmax)
@@ -1741,11 +1738,7 @@ void Spline_init (Spline me, double xmin, double xmax, integer degree, integer n
 
 void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	const integer order = Spline_getOrder (me);
-
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (xmax < my xmin || xmin > my xmax)
 		return;
 

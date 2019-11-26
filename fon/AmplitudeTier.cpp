@@ -154,7 +154,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, S
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		integer imin, imax;
 		integer numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
 		if (numberOfPeaks < 3) Melder_throw (U"Too few pulses between ", tmin, U" and ", tmax, U" seconds.");

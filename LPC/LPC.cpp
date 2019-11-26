@@ -84,10 +84,7 @@ autoLPC LPC_create (double tmin, double tmax, integer nt, double dt, double t1, 
 }
 
 void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, bool garnish) {
-	if (tmax <= tmin) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;

@@ -137,6 +137,20 @@ conststring32 Melder_boolean (bool value) noexcept {
 	return value ? U"yes" : U"no";
 }
 
+const char * Melder8_onoff (bool value) noexcept {
+	return value ? "on" : "off";
+}
+conststring32 Melder_onoff (bool value) noexcept {
+	return value ? U"on" : U"off";
+}
+
+const char * Melder8_kleenean (kleenean valueK) noexcept {
+	return valueK ? "yes" : ! valueK ? "no": "unknown";
+}
+conststring32 Melder_kleenean (kleenean valueK) noexcept {
+	return valueK ? U"yes" : ! valueK ? U"no": U"unknown";
+}
+
 /*@praat
 	assert string$ (1000000000000) = "1000000000000"
 	assert string$ (undefined) = "--undefined--"

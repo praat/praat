@@ -243,10 +243,7 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double minimum, double maximum, bool garnish)
 {
-	if (xmax <= xmin) {
-		xmin = my xmin;
-		xmax = my xmax;
-	}
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
