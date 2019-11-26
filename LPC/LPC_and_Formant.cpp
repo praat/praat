@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,8 @@
 
 void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 	my nFormants = numberOfFormants;
-	if (numberOfFormants > 0) {
+	if (numberOfFormants > 0)
 		my formant = newvectorzero <structFormant_Formant> (my nFormants);
-	}
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale) {
@@ -41,21 +40,19 @@ void Formant_Frame_scale (Formant_Frame me, double scale) {
 }
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin) {
-	integer n = my max - my min + 1;
+	const integer n = my max - my min + 1;
 	autoVEC fc = newVECzero (n);
 	autoVEC bc = newVECzero (n);
-
-	// Determine the formants and bandwidths
-
+	/*
+		Determine the formants and bandwidths
+	*/
 	thy nFormants = 0;
-	double fLow = margin, fHigh = samplingFrequency / 2 - margin;
+	const double fLow = margin, fHigh = samplingFrequency / 2 - margin;
 	for (integer i = my min; i <= my max; i ++) {
-		if (my v [i].im < 0) {
+		if (my v [i].im < 0)
 			continue;
-		}
-		double f = fabs (atan2 (my v [i].im, my v [i].re)) * samplingFrequency / 2.0 / NUMpi;
+		const double f = fabs (atan2 (my v [i].im, my v [i].re)) * samplingFrequency / 2.0 / NUMpi;
 		if (f >= fLow && f <= fHigh) {
-			/*b = - log (my v [i].re * my v [i].re + my v [i].im * my v [i].im) * samplingFrequency / 2 / NUMpi;*/
 			double b = - log (dcomplex_abs (my v [i])) * samplingFrequency / NUMpi;
 			thy nFormants ++;
 			fc [thy nFormants] = f;
@@ -84,9 +81,9 @@ void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samp
 autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
-		integer nmax = my maxnCoefficients;
+		const integer nmax = my maxnCoefficients;
 		integer numberOfSuspectFrames = 0;
-		integer interval = ( nmax > 20 ? 1 : 10 );
+		const integer interval = ( nmax > 20 ? 1 : 10 );
 		Melder_require (nmax < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
 		Melder_require (margin < samplingFrequency / 4.0,
@@ -96,20 +93,20 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 
 		autoMelderProgress progress (U"LPC to Formant");
 
-		for (integer i = 1; i <= my nx; i ++) {
-			Formant_Frame formant = & thy frames [i];
-			LPC_Frame lpc = & my d_frames [i];
-
-			// Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
-
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			const Formant_Frame formant = & thy frames [iframe];
+			const LPC_Frame lpc = & my d_frames [iframe];
+			/*
+				Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
+			*/
 			try {
 				LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin);
 			} catch (MelderError) {
 				Melder_clearError();
 				numberOfSuspectFrames ++;
 			}
-			if (interval == 1 || i % interval == 1)
-				Melder_progress ((double) i / my nx, U"LPC to Formant: frame ", i, U" out of ", my nx, U".");
+			if (interval == 1 || iframe % interval == 1)
+				Melder_progress ((double) iframe / my nx, U"LPC to Formant: frame ", iframe, U" out of ", my nx, U".");
 		}
 		Formant_sort (thee.get());
 		if (numberOfSuspectFrames > 0)
@@ -121,10 +118,10 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 }
 
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod) {
-	const double nyquistFrequency = 0.5 / samplingPeriod;
-	integer numberOfPoles = 2 * my nFormants;
 	if (my nFormants < 1)
 		return;
+	const double nyquistFrequency = 0.5 / samplingPeriod;
+	integer numberOfPoles = 2 * my nFormants;
 	autoVEC lpc = newVECzero (numberOfPoles + 2);   // all odd coefficients have to be initialized to zero
 	lpc [2] = 1.0;
 	integer m = 2;
@@ -160,8 +157,8 @@ autoLPC Formant_to_LPC (Formant me, double samplingPeriod) {
 		for (integer i = 1; i <= my nx; i ++) {
 			const Formant_Frame f = & my frames [i];
 			const LPC_Frame lpc = & thy d_frames [i];
-			const integer m = 2 * f -> nFormants;   // TODO: what is m?
-			LPC_Frame_init (lpc, m);
+			const integer numberOfCoefficients = 2 * f -> nFormants;
+			LPC_Frame_init (lpc, numberOfCoefficients);
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		}
 		return thee;
