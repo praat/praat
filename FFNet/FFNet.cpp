@@ -77,7 +77,8 @@ autostring32 FFNet_createNameFromTopology (FFNet me) {
 
 static double sigmoid (FFNet /*me*/, double x, double *out_deriv) {
 	const double act = NUMsigmoid (x);
-	if (out_deriv) *out_deriv = act * (1.0 - act);
+	if (out_deriv)
+		*out_deriv = act * (1.0 - act);
 	return act;
 }
 
@@ -111,7 +112,6 @@ static double minimumCrossEntropy (FFNet me, constVEC& target) {
 	for (integer i = 1; i <= my numberOfOutputs; i ++, k ++) {
 		const double t1 = 1.0 - target [i];
 		const double o1 = 1.0 - my activity [k];
-
 		cost -= target [i] * log (my activity [k]) + t1 * log (o1);
 		my error [k] = -t1 / o1 + target [i] / my activity [k];
 	}
@@ -124,7 +124,7 @@ static double minimumCrossEntropy (FFNet me, constVEC& target) {
 static void bookkeeping (FFNet me) {
 	integer numberOfWeights = 0;
 	integer numberOfUnitsInPreviousLayer = my numberOfInputs;
-	my numberOfNodes = my numberOfInputs; 
+	my numberOfNodes = my numberOfInputs;
 	for (integer i = 1; i <= my numberOfLayers; i ++) {
 		my numberOfNodes += my numberOfUnitsInLayer [i] + 1;
 		numberOfWeights += my numberOfUnitsInLayer [i] * (numberOfUnitsInPreviousLayer + 1);
@@ -134,8 +134,9 @@ static void bookkeeping (FFNet me) {
 		U"Number of weights is incorrect.");
 
 	my numberOfWeights = numberOfWeights;
-
-	// The following test is essential because when an FFNet is read from file the w array already exists
+	/*
+		The following test is essential because when an FFNet is read from file the w array already exists
+	*/
 	if (! my w.at)
 		my w = newVECzero (my numberOfWeights);
 
@@ -257,7 +258,8 @@ void FFNet_setCostFunction (FFNet me, int costType) {
 double FFNet_getBias (FFNet me, integer layer, integer unit) {
 	try {
 		const integer node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
-		Melder_require (node > 0, U"Not a valid unit / layer combination.");
+		Melder_require (node > 0,
+			U"Not a valid unit / layer combination.");
 		const integer bias_unit = my wLast [node];
 		return my w [bias_unit];
 	} catch (MelderError) {
@@ -312,7 +314,7 @@ void FFNet_reset (FFNet me, double weightRange) {
 conststring32 FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit) {
 	conststring32 result = U"-- undefined --";
 	if (my outputCategories && outputUnit <= my outputCategories -> size) {
-		SimpleString ss = my outputCategories->at [outputUnit];
+		const SimpleString ss = my outputCategories->at [outputUnit];
 		result = ss -> string.get();
 	}
 	return result;
@@ -322,7 +324,7 @@ integer FFNet_getOutputUnitOfCategory (FFNet me, const char32* category) {
 	integer result = 0;
 	if (my outputCategories) {
 		for (integer i = 1; i <= my outputCategories -> size; i ++) {
-			SimpleString s = my outputCategories->at [i];
+			const SimpleString s = my outputCategories->at [i];
 			if (Melder_equ (s -> string.get(), category)) {
 				result = i;
 				break;
@@ -336,21 +338,27 @@ integer FFNet_getOutputUnitOfCategory (FFNet me, const char32* category) {
 /* step 1 */
 void FFNet_propagate (FFNet me, constVEC input, autoVEC *output) {
 	Melder_assert (my numberOfInputs == input.size);
-	// clamp input pattern on the network
+	/*
+		Clamp input pattern on the network
+	*/
 	my activity.part (1, my numberOfInputs) <<= input;
-
-	// on hidden units use activation function
-	integer k = 1, numberOfNodes = my outputsAreLinear ? my numberOfNodes - my numberOfOutputs : my numberOfNodes;
+	/*
+		On hidden units use activation function
+	*/
+	const integer numberOfNodes = my outputsAreLinear ? my numberOfNodes - my numberOfOutputs : my numberOfNodes;
+	integer k = 1;
 	for (integer i = my numberOfInputs + 2; i <= numberOfNodes; i ++) {
 		if (my isbias [i])
 			continue;
 		longdouble act = 0.0;
-		for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++) 
+		for (integer j = my nodeFirst [i]; j <= my nodeLast [i]; j ++, k ++)
 			act += my w [k] * my activity [j];
 
 		my activity [i] = my nonLinearity (me, act, & my deriv [i]);
 	}
-	// on output units use another activation function
+	/*
+		On output units use another activation function
+	*/
 	if (my outputsAreLinear) {
 		for (integer i = numberOfNodes + 1; i <= my numberOfNodes; i ++) {
 			if (my isbias [i])
@@ -373,12 +381,15 @@ void FFNet_propagate (FFNet me, constVEC input, autoVEC *output) {
 
 double FFNet_computeError (FFNet me, constVEC target) {
 	Melder_assert (my numberOfOutputs == target.size);
-	// compute error at output layer
+	/*
+		Compute error at output layer
+	*/
 	const double cost = my costFunction (me, target);
 	for (integer i = 1; i <= my numberOfNodes - my numberOfOutputs; i ++)
 		my error [i] = 0.0;
-
-	// backpropagation of errors from output to first hidden layer
+	/*
+		Backpropagation of errors from output to first hidden layer
+	*/
 	for (integer i = my numberOfNodes; i > my numberOfInputs + 1; i--) {
 		if (my isbias [i])
 			continue;
@@ -395,11 +406,10 @@ double FFNet_computeError (FFNet me, constVEC target) {
 
 void FFNet_computeDerivative (FFNet me) {
 	integer k = 1;
-	for (integer i = my numberOfInputs + 2; i <= my numberOfNodes; i ++) {
+	for (integer i = my numberOfInputs + 2; i <= my numberOfNodes; i ++)
 		if (! my isbias [i])
 			for (integer node = my nodeFirst [i]; node <= my nodeLast [i]; node ++, k ++)
 				my dwi [k] = - my error [i] * my activity [node];
-	}
 }
 
 /******* end operation ******************************************************/
@@ -413,10 +423,9 @@ integer FFNet_getWinningUnit (FFNet me, integer labeling) {
 			sum += my activity [k + ioutput];
 
 		const double random = NUMrandomUniform (0.0, sum);
-		for (winningUnit = my numberOfOutputs; winningUnit >= 2; winningUnit--) {
+		for (winningUnit = my numberOfOutputs; winningUnit >= 2; winningUnit--)
 			if (random > (sum -= my activity [k + winningUnit]))
 				break;
-		}
 	} else { /* winner-takes-all */
 		double max = my activity [k + 1];
 		for (integer ioutput = 2; ioutput <= my numberOfOutputs; ioutput ++)
@@ -546,7 +555,9 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 		const double y2WC = dy / 2 + layer * dy;
 		double dx2 = dx, x2WC;
 		double x2 = (maxNumOfUnits - numberOfUnitsInLayer + 1) * dx2 / 2;
-		/* draw the units */
+		/*
+			Draw the units
+		*/
 		if (! dxIsFixed) {
 			dx2 = 1.0 / numberOfUnitsInLayer;
 			x2 = dx2 / 2.0;
@@ -629,8 +640,8 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 		}
 		x2WC = x2;
 		for (integer iunit = 1; iunit <= numberOfUnitsInLayer; iunit ++, node ++) {
-			double activity = my activity [node];
-			double radius = r1 * (fabs (activity) < 0.05 ? 0.05 : fabs (activity));
+			const double activity = my activity [node];
+			const double radius = r1 * (fabs (activity) < 0.05 ? 0.05 : fabs (activity));
 			/*Graphics_setColour (g, activity < 0 ? Melder_BLACK : Melder_RED);*/
 			Graphics_circle (g, x2WC, y2WC, radius);
 			if (activity < 0)

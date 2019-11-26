@@ -32,7 +32,7 @@
 autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);
-		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
+		const VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);
 			im [i] = 0.0;
@@ -40,7 +40,7 @@ autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 		autoPowerCepstrum thee = PowerCepstrum_create (0.5 / my dx, my nx);
 		for (integer i = 1; i <= thy nx; i ++) {
-			double val = cepstrum -> z [1] [i];
+			const double val = cepstrum -> z [1] [i];
 			thy z [1] [i] = val * val;
 		}
 		return thee;
@@ -52,17 +52,14 @@ autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 autoCepstrum Spectrum_to_Cepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);
-		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
+		const VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);
 			im [i] = 0.0;
 		}
 		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
-		for (integer i = 1; i <= thy nx; i ++) {
-			double val = cepstrum -> z [1] [i];
-			thy z [1] [i] = val;
-		}
+		thy z.row (1) <<= cepstrum -> z.row(1).part (1, thy nx);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -73,12 +70,11 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 	try {
 		autoCepstrum cepstrum = Data_copy (me);
 		cepstrum ->  z [1] [1] = my z [1] [1];
-		for (integer i = 2; i <= cepstrum -> nx; i ++) {
-			cepstrum -> z [1] [i] = 2 * my z [1] [i];
-		}
+		for (integer i = 2; i <= cepstrum -> nx; i ++)
+			cepstrum -> z [1] [i] = 2.0 * my z [1] [i];
 		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.get(), true);
 
-		VEC re = thy z.row (1), im = thy z.row (2);
+		const VEC re = thy z.row (1), im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
 			re [i] =  exp (0.5 * re [i]);   // i.e., sqrt (exp(re [i]))
 			im [i] = 0.0;

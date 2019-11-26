@@ -1,6 +1,6 @@
 /* LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016-2018 David Weenink
+ * Copyright (C) 2016-2019 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,14 +82,14 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
 	if (fmax <= fmin) {
-		double f1max, f2min;
-		integer numberOfSelected = itmax - itmin + 1;
+		const integer numberOfSelected = itmax - itmin + 1;
 		autoVEC f1 = newVECraw (numberOfSelected);
 		autoVEC f2 = newVECraw (numberOfSelected);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 			f1 [iframe - itmin + 1] = my d_frames [iframe]. frequencies [1];
 			f2 [iframe - itmin + 1] = my d_frames [iframe]. frequencies [my d_frames [iframe] . numberOfFrequencies];
 		}
+		double f1max, f2min;
 		NUMextrema (f1.get(), & fmin, & f1max);
 		NUMextrema (f2.get(), & f2min, & fmax);
 	}
@@ -101,13 +101,12 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
-		LineSpectralFrequencies_Frame lsf = & my d_frames [iframe];
-		double x = Sampled_indexToX (me, iframe);
+		const LineSpectralFrequencies_Frame lsf = & my d_frames [iframe];
+		const double x = Sampled_indexToX (me, iframe);
 		for (integer ifreq = 1; ifreq <= lsf -> numberOfFrequencies; ifreq ++) {
-			double y = lsf -> frequencies [ifreq];
-			if (y >= fmin && y <= fmax) { 
+			const double y = lsf -> frequencies [ifreq];
+			if (y >= fmin && y <= fmax)
 				Graphics_speckle (g, x, y);
-			}
 		}
 	}
 	Graphics_unsetInner (g);
@@ -124,7 +123,7 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maximumNumberOfFrequencies, my maximumNumberOfFrequencies, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
-			LineSpectralFrequencies_Frame lsf = & my d_frames [j];
+			const LineSpectralFrequencies_Frame lsf = & my d_frames [j];
 			for (integer i = 1; i <= lsf -> numberOfFrequencies; i ++) {
 				thy z [i] [j] = lsf -> frequencies [i];
 			}

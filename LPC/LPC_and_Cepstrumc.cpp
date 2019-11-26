@@ -1,6 +1,6 @@
 /* LPC_and_Cepstrumc.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,15 @@
 #include "LPC_and_Cepstrumc.h"
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
-	integer n = std::min (my nCoefficients, thy nCoefficients);
-	double *c = thy c, *a = my a.at;
+	const integer n = std::min (my nCoefficients, thy nCoefficients);
+	const double *a = my a.at;
+	double *c = thy c;
 	c [0] = 0.5 * log (my gain);
 	if (n == 0)
 		return;
 	c [1] = -a [1];
 	for (integer i = 2; i <= n; i ++) {
-		c [i] = 0;
+		c [i] = 0.0;
 		for (integer k = 1; k < i; k ++)
 			c [i] += a [i - k] * c [k] * k;
 		c [i] = -a [i] - c [i] / i;
@@ -52,6 +53,9 @@ void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
 			a [i] += a [j] * c [i - j];
 		a [i] /= -i;
 	}
+	/*
+		Undo the modification of the c array
+	*/
 	for (integer i = 2; i <= thy nCoefficients; i ++)
 		c [i] /= i;
 }
@@ -71,8 +75,7 @@ autoCepstrumc LPC_to_Cepstrumc (LPC me) {
 
 autoLPC Cepstrumc_to_LPC (Cepstrumc me) {
 	try {
-		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1,
-		                           my maxnCoefficients, 1.0 / my samplingFrequency);
+		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, my maxnCoefficients, 1.0 / my samplingFrequency);
 		for (integer i = 1; i <= my nx; i ++) {
 			LPC_Frame_init (& thy d_frames [i], my frame [i].nCoefficients);
 			Cepstrumc_Frame_into_LPC_Frame (& my frame [i], & thy d_frames [i]);
