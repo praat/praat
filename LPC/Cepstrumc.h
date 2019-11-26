@@ -32,10 +32,10 @@
 #include "Cepstrumc_def.h"
 
 void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, integer nt, double dt, double t1,
-	int nCoefficients, double samplingFrequency);
+	integer nCoefficients, double samplingFrequency);
 	
 autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt, double t1,
-	int nCoefficients, double samplingFrequency);
+	integer nCoefficients, double samplingFrequency);
 
 /******************* Frames ************************************************/
 
