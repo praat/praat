@@ -42,11 +42,11 @@
 void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, double maxArea, bool closedAtGlottis)
 {
 	Graphics_setInner (g);
-	double maxCrossection = sqrt (maxArea);
+	const double maxCrossection = sqrt (maxArea);
 	Graphics_setWindow (g, 0.0, maxLength, -maxCrossection, maxCrossection);
 	for (integer isection = 1; isection <= my nx; isection ++) {
-		double x1 = (isection - 1.0) * my dx, x2 = x1 + my dx;
-		double crosssection2 = sqrt (my z [1] [isection]);
+		const double x1 = (isection - 1.0) * my dx, x2 = x1 + my dx;
+		const double crosssection2 = sqrt (my z [1] [isection]);
 		Graphics_line (g, x1, crosssection2, x2, crosssection2);
 		Graphics_line (g, x1, -crosssection2, x2, -crosssection2);
 		if (isection > 1) {
@@ -111,14 +111,14 @@ void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract vo
 autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 	try {
 		Melder_assert (my d_vocalTracts.size > 0);
-		VocalTractPoint vtp = my d_vocalTracts.at [1];
-		integer numberOfSections = vtp -> d_vocalTract -> nx;
+		const VocalTractPoint vtp = my d_vocalTracts.at [1];
+		const integer numberOfSections = vtp -> d_vocalTract -> nx;
 		autoVocalTract thee = VocalTract_create (numberOfSections, vtp -> d_vocalTract -> dx);
 		for (integer isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier section = RealTier_create (my xmin, my xmax);
 			for (integer i = 1; i <= my d_vocalTracts.size; i ++) {
-				VocalTractPoint vtpi = my d_vocalTracts.at [i];
-				double areai = vtpi -> d_vocalTract -> z [1] [isection];
+				const VocalTractPoint vtpi = my d_vocalTracts.at [i];
+				const double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (section.get(), vtpi -> number, areai);
 			}
 			thy z[1] [isection] = RealTier_getValueAtTime (section.get(), time);
@@ -133,10 +133,10 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 	try {
 		Melder_require (my d_vocalTracts.size > 0.0,
 			U"The VocalTractTier should not be empty.");
-		integer numberOfFrames = Melder_ifloor ((my xmax - my xmin) / timeStep);
-		VocalTractPoint vtp = my d_vocalTracts.at [1];
+		const integer numberOfFrames = Melder_ifloor ((my xmax - my xmin) / timeStep);
+		const VocalTractPoint vtp = my d_vocalTracts.at [1];
 		integer numberOfSections = vtp -> d_vocalTract -> nx;
-		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
+		const double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
 		
 		autoMAT area = newMATzero (numberOfFrames, numberOfSections);
 		autoVEC areavec = newVECraw (numberOfSections);
@@ -145,21 +145,20 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		for (integer isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier sectioni = RealTier_create (my xmin, my xmax);
 			for (integer i = 1; i <= my d_vocalTracts.size; i ++) {
-				VocalTractPoint vtpi = my d_vocalTracts.at [i];
-				double areai = vtpi -> d_vocalTract -> z [1] [isection];
+				const VocalTractPoint vtpi = my d_vocalTracts.at [i];
+				const double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (sectioni.get(), vtpi -> number, areai);
 			}
 			for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-				double time = thy x1 + (iframe - 1) * thy dx;
+				const double time = thy x1 + (iframe - 1) * thy dx;
 				area [iframe] [isection] = RealTier_getValueAtTime (sectioni.get(), time);
 			}
 		}
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			LPC_Frame frame = & thy d_frames [iframe];
+			const LPC_Frame frame = & thy d_frames [iframe];
 			LPC_Frame_init (frame, numberOfSections);
-			for (integer i = 1; i <= numberOfSections; i ++) {
+			for (integer i = 1; i <= numberOfSections; i ++)
 				areavec [i] = area [iframe] [numberOfSections + 1 - i]; // reverse
-			}
 			VEClpc_from_area (frame -> a.get(), areavec.get());
 			frame -> gain = 1e-6;   // something
 		}

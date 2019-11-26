@@ -1,6 +1,6 @@
 /* Sound_and_Cepstrum.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		integer nfft = 2;
 		while (nfft < my nx) nfft *= 2;
 
-		double qmax = (my xmax - my xmin) * nfft / my nx;
+		const double qmax = (my xmax - my xmin) * nfft / my nx;
 		autoCepstrum thee = Cepstrum_create (qmax, nfft);
 
 		autoVEC x = newVECraw (nfft);
@@ -48,17 +48,17 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 			x [i] = my z [1] [i];
 			nx [i] = (i - 1) * x [i];
 		}
-
-		// Step 1: Fourier transform x(n) -> X(f)
-		// and n*x(n) -> NX(f)
-
+		/*
+			Step 1: Fourier transform x(n) -> X(f)
+			and n*x(n) -> NX(f)
+		*/
 		NUMforwardRealFastFourierTransform (x.get());
 		NUMforwardRealFastFourierTransform (nx.get());
-
-		// Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
-		// Compute Avg (ln |X(f)|) as Avg (ln |X(f)|^2) / 2.
-		// Treat i=1 separately: x [1] * nx [1] / |x [1]|^2
-
+		/*
+			Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
+			Compute Avg (ln |X(f)|) as Avg (ln |X(f)|^2) / 2.
+			Treat i=1 separately: x [1] * nx [1] / |x [1]|^2
+		*/
 		double lnxa = 0.0;
 		if (x [1] != 0.0) {
 			lnxa = 2.0 * log (fabs (x [1]));
@@ -70,11 +70,11 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		}
 
 		for (integer i = 3; i < nfft; i += 2) {
-			double xr = x [i], nxr = nx [i];
-			double xi = x [i + 1], nxi = nx [i + 1];
-			double xa = xr * xr + xi * xi;
+			const double xr = x [i], nxr = nx [i];
+			const double xi = x [i + 1], nxi = nx [i + 1];
+			const double xa = xr * xr + xi * xi;
 			if (xa > 0.0) {
-				x [i]   = (xr * nxr + xi * nxi) / xa;
+				x [i]     = (xr * nxr + xi * nxi) / xa;
 				x [i + 1] = (xr * nxi - xi * nxr) / xa;
 				lnxa += log (xa);
 			} else {
@@ -83,21 +83,20 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		}
 
 		lnxa /= 2.0 * nfft / 2.0; // TODO
-
-		// Step 4: Inverse transform of complex array x
-		//	results in: n * xhat (n)
-
+		/*
+			Step 4: Inverse transform of complex array x
+			results in: n * xhat (n)
+		*/
 		NUMreverseRealFastFourierTransform (x.get());
-
-		// Step 5: Inverse fft-correction factor: 1/nfftd2
-		// Divide n * xhat (n) by n
-
-		for (integer i = 2; i <= my nx; i++) {
+		/*
+			Step 5: Inverse fft-correction factor: 1/nfftd2
+			Divide n * xhat (n) by n
+		*/
+		for (integer i = 2; i <= my nx; i++)
 			thy z [1] [i] = x [i] / ( (i - 1) * nfft);
-		}
-
-		// Step 6: xhat [0] = Avg (ln |X(f)|)
-
+		/*
+			Step 6: xhat [0] = Avg (ln |X(f)|)
+		*/
 		thy z [1] [1] = lnxa;
 		return thee;
 	} catch (MelderError) {
