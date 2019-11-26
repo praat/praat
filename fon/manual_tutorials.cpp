@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20191108)
+MAN_BEGIN (U"What's new?", U"ppgb", 20191126)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.07# (26 November 2019)")
+LIST_ITEM (U"• Raspberry Pi edition.")
 NORMAL (U"##6.1.06# (8 November 2019)")
 LIST_ITEM (U"• Chromebook edition.")
 LIST_ITEM (U"• Scripting: colour fields now take name, grey value or RGB vector.")

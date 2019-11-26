@@ -19,7 +19,9 @@
 #include <time.h>
 #include <locale.h>
 #include <thread>
-#include <pwd.h>
+#if defined (macintosh)
+	#include <pwd.h>
+#endif
 #include "praatP.h"
 
 static struct {

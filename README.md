@@ -33,6 +33,7 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ### 1.3. Unix binaries
+- `praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for 32-bit Linux on the Raspberry Pi 4B (GTK)
 - `praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK)
 - `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK)
 - `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK)
@@ -136,14 +137,22 @@ you have to log in to `developer.apple.com` and do Review Agreement -> Agree.
 
 To set up the required system libraries, install some graphics and sound packages:
 
-	sudo apt-get install libgtk2.0-dev
-	sudo apt-get install libasound2-dev
-	sudo apt-get install libpulse-dev
-	sudo apt-get install libjack-dev
+    sudo apt-get install libgtk2.0-dev
+    sudo apt-get install libasound2-dev
+    sudo apt-get install libpulse-dev
+    sudo apt-get install libjack-dev
 
-To set up your source tree for Linux, go to Praat's sources directory (where the folders `fon` and `sys` are) and type
+To set up your source tree for Linux, go to Praat's sources directory (where the folders `fon` and `sys` are)
+and type one of the three following commands:
 
+    # on Ubuntu command line
     cp makefiles/makefile.defs.linux.pulse ./makefile.defs
+
+    # on Chromebook command line
+    cp makefiles/makefile.defs.chrome64 ./makefile.defs
+
+    # on Raspberry Pi command line
+    cp makefiles/makefile.defs.linux.rpi ./makefile.defs
 
 To build the Praat executable, type `make`.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile
