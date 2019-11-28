@@ -188,7 +188,7 @@ is to edit the source code on a Mac (with Xcode)
 and use Parallels Desktop for Windows and Linux building and testing.
 This is how Praat is currently developed.
 Editing takes place in Xcode,
-after which building Praat involves no more then typing Command-B into Xcode
+after which building Praat involves no more than typing Command-B into Xcode
 (or Command-R to build and run)
 or `b` into a Windows or Linux terminal (or `r` to build and run).
 
@@ -220,7 +220,7 @@ as the `Z` drive (or so), and from the `Cygwin64 Terminal` you can access it as 
 When developing Praat for Windows, you just edit your files in Xcode;
 do not forget to save them (as you do e.g. by building in Xcode).
 Then, just as you use Command-B and Command-R in Xcode,
-you will be able to type `praat-build` (which only buiulds) or `praat-run` (which build and runs)
+you will be able to type `praat-build` (which only builds) or `praat-run` (which builds and runs)
 into your `Cygwin64 Terminal`. To accomplish this,
 add the following definitions into `/home/yourname/.profile` in your Cygwin home folder,
 so that the `bash` shell will automatically execute them whenever you start your `Cygwin64 Terminal`:
