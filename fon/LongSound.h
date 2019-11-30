@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2019 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,12 @@ Thing_define (LongSound, Sampled) {
 	double sampleRate;
 	integer startOfData;
 	double bufferLength;
-	int16 *buffer;   // this is always 16-bit, because will always play sounds in 16-bit, even those from 24-bit files
-	integer imin, imax, nmax;
+
+	integer nmax;
+	autovector <int16> buffer;   // this is always 16-bit, because we will always play sounds in 16-bit, even those from 24-bit files
+	integer imin, imax;
+	void invalidateBuffer () noexcept { our imin = 1; our imax = 0; }
+
 	struct FLAC__StreamDecoder *flacDecoder;
 	struct _MP3_FILE *mp3f;
 	int compressedMode;
@@ -66,13 +70,13 @@ bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
  * Returns 0 if error or if window exceeds buffer, otherwise 1;
  */
 
-void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int channel, double *minimum, double *maximum);
+void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, integer channel, double *minimum, double *maximum);
 
 void LongSound_playPart (LongSound me, double tmin, double tmax,
 	Sound_PlayCallback callback, Thing boss);
 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
-void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
+void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer channel, MelderFile file);
 
 void LongSound_readAudioToFloat (LongSound me, MAT buffer, integer firstSample);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples);

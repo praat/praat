@@ -425,12 +425,12 @@ void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 
 void structTimeSoundEditor :: v_updateMenuItems_file () {
 	Sampled sound;
-	if (our d_sound.data) {   // cannot do this with "?:", because d_sound.data and d_longSound.data have differemt types
+	if (our d_sound.data)   // cannot do this with "?:", because d_sound.data and d_longSound.data have differemt types
 		sound = our d_sound.data;
-	} else {
+	else
 		sound = our d_longSound.data;
-	}
-	if (! sound) return;
+	if (! sound)
+		return;
 	integer first, last, selectedSamples = Sampled_getWindowSamples (sound, our startSelection, our endSelection, & first, & last);
 	if (our drawButton) {
 		GuiThing_setSensitive (our drawButton, selectedSamples != 0);
@@ -457,12 +457,12 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	Sound sound = my d_sound.data;
 	LongSound longSound = my d_longSound.data;
 	Melder_assert (!! sound != !! longSound);
-	integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
-	bool cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
+	const integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
+	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	bool fits;
 	try {
-		fits = sound ? true : LongSound_haveWindow (longSound, my startWindow, my endWindow);
+		fits = ( sound ? true : LongSound_haveWindow (longSound, my startWindow, my endWindow) );
 	} catch (MelderError) {
 		bool outOfMemory = !! str32str (Melder_getError (), U"memory");
 		if (Melder_debug == 9) Melder_flushError (); else Melder_clearError ();
@@ -484,11 +484,9 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"(zoom out to see the data)");
 		return;
 	}
-	const integer numberOfVisibleChannels = ( numberOfChannels > 8 ? 8 : numberOfChannels );
+	const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, integer (8));
 	const integer firstVisibleChannel = my d_sound.channelOffset + 1;
-	integer lastVisibleChannel = my d_sound.channelOffset + numberOfVisibleChannels;
-	if (lastVisibleChannel > numberOfChannels)
-		lastVisibleChannel = numberOfChannels;
+	const integer lastVisibleChannel = Melder_clippedRight (my d_sound.channelOffset + numberOfVisibleChannels, numberOfChannels);
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
 	if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
 		if (longSound)
@@ -509,25 +507,24 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		maximumExtent = visibleMaximum - visibleMinimum;
 	}
 	for (integer ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
-		double cursorFunctionValue = longSound ? 0.0 :
-			Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70);
+		const double cursorFunctionValue = ( longSound ? 0.0 :
+				Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70) );
 		/*
-		 * BUG: this will only work for mono or stereo, until Graphics_function16 handles quadro.
-		 */
-		double ymin = (double) (numberOfVisibleChannels - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
-		double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
+			BUG: this will only work for mono or stereo, until Graphics_function16 handles quadro.
+		*/
+		const double ymin = (double) (numberOfVisibleChannels - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
+		const double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
 		bool horizontal = false;
-		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0;
+		double minimum = ( sound ? globalMinimum : -1.0 ), maximum = ( sound ? globalMaximum : 1.0 );
 		if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
 			if (numberOfChannels > 2) {
-				if (longSound) {
+				if (longSound)
 					LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-				} else {
+				else
 					Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-				}
 				if (maximumExtent > 0.0) {
-					double middle = 0.5 * (minimum + maximum);
+					const double middle = 0.5 * (minimum + maximum);
 					minimum = middle - 0.5 * maximumExtent;
 					maximum = middle + 0.5 * maximumExtent;
 				}
@@ -536,19 +533,17 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 				maximum = visibleMaximum;
 			}
 		} else if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
-			if (longSound) {
+			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-			} else {
+			else
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-			}
 		} else if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
-			if (longSound) {
+			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-			} else {
+			else
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-			}
-			double channelExtent = my p_sound_scaling_height;
-			double middle = 0.5 * (minimum + maximum);
+			const double channelExtent = my p_sound_scaling_height;
+			const double middle = 0.5 * (minimum + maximum);
 			minimum = middle - 0.5 * channelExtent;
 			maximum = middle + 0.5 * channelExtent;
 		} else if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
@@ -563,7 +558,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum, maximum);
 		if (horizontal) {
 			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
-			double mid = 0.5 * (minimum + maximum);
+			const double mid = 0.5 * (minimum + maximum);
 			Graphics_text (my graphics.get(), my startWindow, mid, Melder_float (Melder_half (mid)));
 		} else {
 			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - minimum) > 5.0) {
@@ -587,8 +582,8 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 		}
 		/*
-		 * Garnish the drawing area of each channel.
-		 */
+			Garnish the drawing area of each channel.
+		*/
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics.get(), Melder_CYAN);
 		Graphics_innerRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -601,26 +596,24 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
 			if (channelName)
 				MelderString_append (& channelLabel, U": ", channelName);
-			//
 			MelderString_append (& channelLabel, U" ",
-				( my d_sound.muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE : UNITEXT_SPEAKER ));
-			if (ichan > 8 && ichan - my d_sound.channelOffset == 1) {
+					( my d_sound.muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE : UNITEXT_SPEAKER ));
+			if (ichan > 8 && ichan - my d_sound.channelOffset == 1)
 				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
-			} else if (numberOfChannels >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < numberOfChannels) {
+			else if (numberOfChannels >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < numberOfChannels)
 				MelderString_append (& channelLabel, U"      " UNITEXT_DOWNWARDS_ARROW);
-			}
 			Graphics_text (my graphics.get(), 1.0, 0.5, channelLabel.string);
 		}
 		/*
-		 * Draw a very thin separator line underneath.
-		 */
+			Draw a very thin separator line underneath.
+		*/
 		if (ichan < numberOfChannels) {
 			/*Graphics_setColour (my graphics.get(), Melder_BLACK);*/
 			Graphics_line (my graphics.get(), 0.0, 0.0, 1.0, 0.0);
 		}
 		/*
-		 * Draw the samples.
-		 */
+			Draw the samples.
+		*/
 		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (this);*/
 		if (sound) {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum, maximum);
@@ -628,12 +621,12 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
 			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			Graphics_function (my graphics.get(), & sound -> z [ichan] [0], first, last,
-				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+					Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		} else {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics.get(),
-				longSound -> buffer - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels, first, last,
-				Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
+					longSound -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels, first, last,
+					Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
 		}
 		Graphics_resetViewport (my graphics.get(), vp);
 	}

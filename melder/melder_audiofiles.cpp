@@ -33,7 +33,7 @@
 #define WAVE_FORMAT_DVI_ADPCM  0x0011
 #define WAVE_FORMAT_EXTENSIBLE 0xFFFE
 
-void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, integer numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) return;
@@ -212,7 +212,7 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 	}
 }
 
-void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, integer numberOfChannels, int numberOfBitsPerSamplePoint) {
 	(void) sampleRate;
 	bool shouldPadTheDataToAnEvenNumberOfBytes = audioFileType == Melder_WAV;
 	bool numberOfSamplesIsOdd = (numberOfSamples & 1) != 0;
@@ -249,7 +249,7 @@ int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSampl
 		defaultAudioFileEncoding32 [audioFileType];
 }
 
-void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, integer sampleRate, integer numberOfSamples, integer numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
@@ -1348,7 +1348,7 @@ void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, in
 		integer n = numberOfSamples * numberOfChannels, start = 0, step = 1, i;
 		if (numberOfChannels < 0) {
 			n = numberOfSamples * 2;   // stereo
-			step = 2;   // only one channel will be  written
+			step = 2;   // only one channel will be written
 			if (numberOfChannels == -2) {
 				start = 1;   // right channel
 			}
