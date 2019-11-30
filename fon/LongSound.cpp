@@ -67,15 +67,14 @@ integer LongSound_getBufferSizePref_seconds () {
 }
 
 void LongSound_setBufferSizePref_seconds (integer size) {
-	prefs_bufferLength =
-		size < minimumBufferDuration ? minimumBufferDuration : size > maximumBufferDuration ? maximumBufferDuration: size;
+	prefs_bufferLength = Melder_clipped (minimumBufferDuration, size, maximumBufferDuration);
 }
 
 void structLongSound :: v_destroy () noexcept {
 	/*
-	 * The play callback may contain a pointer to my buffer.
-	 * That pointer is about to dangle, so kill the playback.
-	 */
+		The play callback may contain a pointer to my buffer.
+		That pointer is about to dangle, so kill the playback.
+	*/
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	if (mp3f)
 		mp3f_delete (mp3f);
@@ -85,7 +84,6 @@ void structLongSound :: v_destroy () noexcept {
 	} else if (f) {
 		fclose (f);
 	}
-	NUMvector_free <int16> (buffer, 0);
 	LongSound_Parent :: v_destroy ();
 }
 
@@ -223,9 +221,9 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	my numberOfBytesPerSamplePoint = Melder_bytesPerSamplePoint (my encoding);
 	my bufferLength = prefs_bufferLength;
 	for (;;) {
-		my nmax = my bufferLength * my numberOfChannels * my sampleRate * (1 + 3 * MARGIN);
+		my nmax = my bufferLength * my sampleRate * (1 + 3 * MARGIN);
 		try {
-			my buffer = NUMvector <int16> (0, my nmax * my numberOfChannels);
+			my buffer = newvectorzero <int16> (my nmax * my numberOfChannels + 1);
 			break;
 		} catch (MelderError) {
 			my bufferLength *= 0.5;   // try 30, 15, or 7.5 seconds
@@ -256,8 +254,8 @@ static void LongSound_init (LongSound me, MelderFile file) {
 void structLongSound :: v_copy (Daata thee_Daata) {
 	LongSound thee = static_cast <LongSound> (thee_Daata);
 	thy f = nullptr;
-	thy buffer = nullptr;
-	LongSound_init (thee, & file);
+	thy buffer.releaseToAmbiguousOwner();   // this may have been shallow-copied, so undangle and nullify
+	LongSound_init (thee, & our file);   // this recreates a new buffer
 }
 
 autoLongSound LongSound_open (MelderFile file) {
@@ -373,16 +371,12 @@ static void writePartToOpenFile (LongSound me, int audioFileType, integer imin, 
 	numberOfBuffers = (n - 1) / my nmax + 1;
 	numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
 	if (file -> filePointer) for (ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
-		integer numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
-		LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
+		integer numberOfSamplesToCopy = ( ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer );
+		my invalidateBuffer();
+		LongSound_readAudioToShort (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), offset, numberOfSamplesToCopy);
 		offset += numberOfSamplesToCopy;
-		MelderFile_writeShortToAudio (file, numberOfChannels_override ? numberOfChannels_override : my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);
+		MelderFile_writeShortToAudio (file, numberOfChannels_override ? numberOfChannels_override : my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), numberOfSamplesToCopy);
 	}
-	/*
-	 * We "have" no samples any longer.
-	 */
-	my imin = 1;
-	my imax = 0;
 }
 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
@@ -394,7 +388,8 @@ void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin
 			tmax = my xmax;
 		integer imin, imax;
 		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-		if (n < 1) Melder_throw (U"Less than 1 sample selected.");
+		if (n < 1)
+			Melder_throw (U"Less than 1 sample selected.");
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, n, my numberOfChannels, numberOfBitsPerSamplePoint);
 		writePartToOpenFile (me, audioFileType, imin, n, file, 0, numberOfBitsPerSamplePoint);
@@ -405,14 +400,13 @@ void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin
 	}
 }
 
-void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file) {
+void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer channel, MelderFile file) {
 	try {
 		if (my numberOfChannels != 2)
 			Melder_throw (U"This audio file is not a stereo file. It does not have a ", channel == 0 ? U"left" : U"right", U" channel.");
 		autoMelderFile mfile = MelderFile_create (file);
-		if (file -> filePointer) {
+		if (file -> filePointer)
 			MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, my nx, 1, 8 * my numberOfBytesPerSamplePoint);
-		}
 		writePartToOpenFile (me, audioFileType, 1, my nx, file, channel == 0 ? -1 : -2, 8 * my numberOfBytesPerSamplePoint);
 		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, my nx, 1, 8 * my numberOfBytesPerSamplePoint);
 		mfile.close ();
@@ -425,79 +419,82 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 	integer n = imax - imin + 1;
 	Melder_assert (n <= my nmax);
 	/*
-	 * Included?
-	 */
+		Included?
+	*/
 	if (imin >= my imin && imax <= my imax)
 		return;
 	/*
-	 * Extendable?
-	 */
+		Extendable?
+	*/
 	if (imin >= my imin && imax - my imin + 1 <= my nmax) {
-		_LongSound_readSamples (me, my buffer + (my imax - my imin + 1) * my numberOfChannels, my imax + 1, imax);
+		_LongSound_readSamples (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + (my imax - my imin + 1) * my numberOfChannels, my imax + 1, imax);
 		my imax = imax;
 		return;
 	}
 	/*
-	 * Determine the loadable imin..imax.
-	 * Add margins on both sides.
-	 */
+		Determine the loadable imin..imax.
+		Add margins on both sides.
+	*/
 	imin -= MARGIN * n;
-	if (imin < 1) imin = 1;
+	if (imin < 1)
+		imin = 1;
 	imax = imin + Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
-	if (imax > my nx) imax = my nx;
+	if (imax > my nx)
+		imax = my nx;
 	imin = imax - Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
-	if (imin < 1) imin = 1;
+	if (imin < 1)
+		imin = 1;
 	Melder_assert (imax - imin + 1 <= my nmax);
 	/*
-	 * Overlap?
-	 */
+		Overlap?
+	*/
 	if (imax < my imin || imin > my imax) {
 		/*
-		 * No overlap.
-		 */
-		_LongSound_readSamples (me, my buffer, imin, imax);
+			No overlap.
+		*/
+		_LongSound_readSamples (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), imin, imax);
 	} else if (imin < my imin) {
 		/*
-		 * Left overlap.
-		 */
+			Left overlap.
+		*/
 		if (imax <= my imax) {
 			/*
-			 * Only left overlap (e.g. scrolling up).
-			 */
-			integer nshift = (imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
+				Only left overlap (e.g. scrolling up).
+			*/
+			const integer nshift = (imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
 			#if USE_MEMMOVE
-				memmove (my buffer + shift, my buffer, nshift * sizeof (int16));
+				memmove (my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + shift, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), nshift * sizeof (int16));
 			#else
-				for (i = nshift - 1; i >= 0; i --)
+				for (i = nshift; i >= 1; i --)
 					my buffer [i + shift] = my buffer [i];
 			#endif
-			_LongSound_readSamples (me, my buffer, imin, my imin - 1);
+			_LongSound_readSamples (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), imin, my imin - 1);
 		} else {
 			/*
-			 * Left and right overlap (e.g. zooming out).
-			 */
-			integer nshift = (my imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
+				Left and right overlap (e.g. zooming out).
+			*/
+			const integer nshift = (my imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
 			#if USE_MEMMOVE
-				memmove (my buffer + shift, my buffer, nshift * sizeof (int16));
+				memmove (my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + shift, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), nshift * sizeof (int16));
 			#else
-				for (i = nshift - 1; i >= 0; i --)
+				for (i = nshift; i >= 1; i --)
 					my buffer [i + shift] = my buffer [i];
 			#endif
-			_LongSound_readSamples (me, my buffer, imin, my imin - 1);
-			_LongSound_readSamples (me, my buffer + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax);
+			_LongSound_readSamples (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), imin, my imin - 1);
+			_LongSound_readSamples (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax);
 		}
 	} else {
 		/*
-		 * Only right overlap (e.g. scrolling down).
-		 */
-		integer nshift = (my imax - imin + 1) * my numberOfChannels, shift = (imin - my imin) * my numberOfChannels;
+			Only right overlap (e.g. scrolling down).
+		*/
+		const integer nshift = (my imax - imin + 1) * my numberOfChannels, shift = (imin - my imin) * my numberOfChannels;
 		#if USE_MEMMOVE
-			memmove (my buffer, my buffer + shift, nshift * sizeof (int16));
+			memmove (my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + shift, nshift * sizeof (int16));
 		#else
-			for (i = 0; i < nshift; i ++)
+			for (i = 1; i <= nshift; i ++)
 				my buffer [i] = my buffer [i + shift];
 		#endif
-		_LongSound_readSamples (me, my buffer + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax);
+		_LongSound_readSamples (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax);
 	}
 	my imin = imin;
 	my imax = imax;
@@ -505,13 +502,14 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax) {
 	integer imin, imax;
-	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if ((1.0 + 2 * MARGIN) * n + 1 > my nmax) return false;
+	const integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	if ((1.0 + 2 * MARGIN) * n + 1 > my nmax)
+		return false;
 	_LongSound_haveSamples (me, imin, imax);
 	return true;
 }
 
-void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int channel, double *minimum, double *maximum) {
+void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, integer channel, double *minimum, double *maximum) {
 	integer imin, imax;
 	(void) Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	*minimum = 1.0;
@@ -524,9 +522,11 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 	}
 	integer minimum_int = 32767, maximum_int = -32768;
 	for (integer i = imin; i <= imax; i ++) {
-		integer value = my buffer [(i - my imin) * my numberOfChannels + channel - 1];
-		if (value < minimum_int) minimum_int = value;
-		if (value > maximum_int) maximum_int = value;
+		const integer value = my buffer [(i - my imin) * my numberOfChannels + channel];
+		if (value < minimum_int)
+			minimum_int = value;
+		if (value > maximum_int)
+			maximum_int = value;
 	}
 	*minimum = minimum_int / 32768.0;
 	*maximum = maximum_int / 32768.0;
@@ -567,8 +567,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		if (! fits)
 			Melder_throw (U"Sound too long (", tmax - tmin, U" seconds).");
 		/*
-		 * Assign to *thee only after stopping the playing sound.
-		 */
+			Assign to *thee only after stopping the playing sound.
+		*/
 		thy tmin = tmin;
 		thy tmax = tmax;
 		thy callback = callback;
@@ -586,22 +586,23 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 				thy callback (thy boss, 1, tmin, tmax, tmin);
 			if (thy silenceBefore > 0 || thy silenceAfter > 0 || 1) {
 				thy resampledBuffer = Melder_calloc (int16, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
-				memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels], & my buffer [(i1 - my imin) * my numberOfChannels],
-					thy numberOfSamples * sizeof (int16) * my numberOfChannels);
+				memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels],
+						my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + (i1 - my imin) * my numberOfChannels,
+						thy numberOfSamples * sizeof (int16) * my numberOfChannels);
 				MelderAudio_play16 (thy resampledBuffer, my sampleRate, thy silenceBefore + thy numberOfSamples + thy silenceAfter,
-					my numberOfChannels, melderPlayCallback, thee);
+						my numberOfChannels, melderPlayCallback, thee);
 			} else {
-				MelderAudio_play16 (my buffer + (i1 - my imin) * my numberOfChannels, my sampleRate,
+				MelderAudio_play16 (my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + (i1 - my imin) * my numberOfChannels, my sampleRate,
 				   thy numberOfSamples, my numberOfChannels, melderPlayCallback, thee);
 			}
 		} else {
-			integer newSampleRate = bestSampleRate;
-			integer newN = ((double) n * newSampleRate) / my sampleRate - 1;
-			integer silenceBefore = Melder_iroundTowardsZero (newSampleRate * MelderAudio_getOutputSilenceBefore ());
-			integer silenceAfter = Melder_iroundTowardsZero (newSampleRate * MelderAudio_getOutputSilenceAfter ());
+			const integer newSampleRate = bestSampleRate;
+			const integer newN = ((double) n * newSampleRate) / my sampleRate - 1;
+			const integer silenceBefore = Melder_iroundTowardsZero (newSampleRate * MelderAudio_getOutputSilenceBefore ());
+			const integer silenceAfter = Melder_iroundTowardsZero (newSampleRate * MelderAudio_getOutputSilenceAfter ());
 			int16 *resampledBuffer = Melder_calloc (int16, (silenceBefore + newN + silenceAfter) * my numberOfChannels);
-			int16 *from = my buffer + (i1 - my imin) * my numberOfChannels;   // guaranteed: from [0 .. (my imax - my imin + 1) * nchan]
-			double t1 = my x1, dt = 1.0 / newSampleRate;
+			int16 *from = my buffer.asArgumentToFunctionThatExpectsZeroBasedArray() + (i1 - my imin) * my numberOfChannels;   // guaranteed: from [0 .. (my imax - my imin + 1) * nchan]
+			const double t1 = my x1, dt = 1.0 / newSampleRate;
 			thy numberOfSamples = newN;
 			thy dt = dt;
 			thy t1 = t1 + i1 / my sampleRate;
@@ -612,29 +613,29 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy resampledBuffer = resampledBuffer;
 			if (my numberOfChannels == 1) {
 				for (integer i = 0; i < newN; i ++) {
-					double t = t1 + i * dt;   // from t1 to t1 + (newN-1) * dt
-					double index = (t - t1) * my sampleRate;   // from 0
-					integer flore = Melder_iroundTowardsZero (index);
-					double fraction = index - flore;
+					const double t = t1 + i * dt;   // from t1 to t1 + (newN-1) * dt
+					const double index = (t - t1) * my sampleRate;   // from 0
+					const integer flore = Melder_iroundTowardsZero (index);
+					const double fraction = index - flore;
 					resampledBuffer [i + silenceBefore] = (1.0 - fraction) * from [flore] + fraction * from [flore + 1];
 				}
 			} else if (my numberOfChannels == 2) {
 				for (integer i = 0; i < newN; i ++) {
-					double t = t1 + i * dt;
-					double index = (t - t1) * my sampleRate;
-					integer flore = Melder_iroundTowardsZero (index);
-					double fraction = index - flore;
-					integer ii = i + silenceBefore;
+					const double t = t1 + i * dt;
+					const double index = (t - t1) * my sampleRate;
+					const integer flore = Melder_iroundTowardsZero (index);
+					const double fraction = index - flore;
+					const integer ii = i + silenceBefore;
 					resampledBuffer [ii + ii] = (1.0 - fraction) * from [flore + flore] + fraction * from [flore + flore + 2];
 					resampledBuffer [ii + ii + 1] = (1.0 - fraction) * from [flore + flore + 1] + fraction * from [flore + flore + 3];
 				}
 			} else {
 				for (integer i = 0; i < newN; i ++) {
-					double t = t1 + i * dt;
-					double index = (t - t1) * my sampleRate;
-					integer flore = Melder_iroundTowardsZero (index);
-					double fraction = index - flore;
-					integer ii = (i + silenceBefore) * my numberOfChannels;
+					const double t = t1 + i * dt;
+					const double index = (t - t1) * my sampleRate;
+					const integer flore = Melder_iroundTowardsZero (index);
+					const double fraction = index - flore;
+					const integer ii = (i + silenceBefore) * my numberOfChannels;
 					for (integer chan = 0; chan < my numberOfChannels; chan ++) {
 						resampledBuffer [ii + chan] =
 							(1.0 - fraction) * from [flore * my numberOfChannels + chan] +
@@ -655,13 +656,13 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 
 void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
-		integer sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
+		integer sampleRate, n;   // integer sampling frequencies only, because of possible rounding errors
 		integer numberOfChannels;
 		if (my size < 1)
 			Melder_throw (U"No Sound or LongSound objects to concatenate.");
 		/*
-		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
-		 */
+			The sampling frequencies and numbers of channels must be equal for all (long)sounds.
+		*/
 		Sampled data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
@@ -675,8 +676,8 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 			n = longSound -> nx;
 		}
 		/*
-		 * Check whether all the sampling frequencies and channels match.
-		 */
+			Check whether all the sampling frequencies and channels match.
+		*/
 		for (integer i = 2; i <= my size; i ++) {
 			bool sampleRatesMatch, numbersOfChannelsMatch;
 			data = my at [i];
@@ -697,8 +698,8 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 				Melder_throw (U"Cannot mix stereo and mono.");
 		}
 		/*
-		 * Create output file and write header.
-		 */
+			Create output file and write header.
+		*/
 		autoMelderFile mfile = MelderFile_create (file);
 		if (file -> filePointer)
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
