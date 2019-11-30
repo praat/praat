@@ -7,9 +7,9 @@ CC = gcc
 
 CXX = g++
 
-COMMONFLAGS = -DUNIX -Dlinux -DALSA -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
+COMMONFLAGS = -DUNIX -Dlinux -DALSA -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread
 
-CFLAGS = -std=gnu99 $(COMMONFLAGS)
+CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
