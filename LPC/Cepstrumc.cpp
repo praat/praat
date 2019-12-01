@@ -84,7 +84,7 @@ static void regression (VEC const& r, Cepstrumc me, integer iframe, integer numb
 	Melder_assert (r.size == my maxnCoefficients + 1);
 	integer nc = 1e6;
 	r <<= 0.0;
-	if (iframe <= numberOfRegressionFrames / 2 || iframe >= my nx - numberOfRegressionFrames / 2)
+	if (iframe <= numberOfRegressionFrames / 2 || iframe > my nx - numberOfRegressionFrames / 2)
 		return;
 	double sumsq = 0.0;
 	for (integer j = -numberOfRegressionFrames / 2; j <= numberOfRegressionFrames / 2; j ++) {
