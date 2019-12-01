@@ -127,6 +127,11 @@ enum { NO_SYMBOL_,
 		BINOMIAL_P_, BINOMIAL_Q_, INCOMPLETE_BETA_, INV_BINOMIAL_P_, INV_BINOMIAL_Q_,
 	#define HIGH_FUNCTION_3  INV_BINOMIAL_Q_
 
+	/* Functions of 4 variables; if you add, update the #defines. */
+	#define LOW_FUNCTION_4 VEC_SOLVE_WEAKLYCONSTRAINED_
+		VEC_SOLVE_WEAKLYCONSTRAINED_,
+	#define HIGH_FUNCTION_4 VEC_SOLVE_WEAKLYCONSTRAINED_
+		
 	/* Functions of a variable number of variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_N  DO_
 		DO_, DOSTR_,
@@ -246,7 +251,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"soundPressureToPhon", U"objectsAreIdentical",
 	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
-	U"rowInners#", U"solve#", U"solve##",
+	U"rowInners#", U"solve#", U"solve##", U"solveWithWeakConstraints#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -1422,6 +1427,20 @@ static void parsePowerFactor () {
 
 	if (symbol >= LOW_FUNCTION_3 && symbol <= HIGH_FUNCTION_3) {
 		bool isParenthesis = fitArguments ();
+		parseExpression ();
+		fit (COMMA_);
+		parseExpression ();
+		fit (COMMA_);
+		parseExpression ();
+		if (isParenthesis) fit (CLOSING_PARENTHESIS_);
+		newparse (symbol);
+		return;
+	}
+	
+	if (symbol >= LOW_FUNCTION_4 && symbol <= HIGH_FUNCTION_4) {
+		bool isParenthesis = fitArguments ();
+		parseExpression ();
+		fit (COMMA_);
 		parseExpression ();
 		fit (COMMA_);
 		parseExpression ();
@@ -5641,6 +5660,27 @@ static void do_VECsolve () {
 		Melder_throw (U"The function \"solve#\" requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
+
+static void do_VECsolveWeaklyConstrained () {
+	Stackel delta = pop, alpha = pop, y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && delta == Stackel_NUMBER && alpha == Stackel_NUMBER) {
+		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
+			U"In the function solveWeaklyConstrained#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
+			x->numericMatrix.nrow, U" and ", y->numericVector.size
+		);
+		Melder_require (alpha->number >= 0.0,
+			U"Argument 3, the weight coefficient of the penalty function should not be negative.");
+		Melder_require (delta->number >= 0.0,
+			U"Argument 4, the squared lenth of the solution vector should not be negative.");
+		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
+		pushNumericVector (newVECsolveWeaklyConstrainedLinearRegression (x->numericMatrix, y->numericVector, alpha->number, delta->number));
+	} else {
+		Melder_throw (U"The function \"solveWeaklyConstrained#\" requires a matrix, a vector, and two numbers not ", x->whichText(), U", ",
+			y->whichText(), U", ", alpha->whichText(), U" and ", delta->whichText(), U".");
+	}
+}
+
+
 static void do_MATsolve () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
@@ -6939,6 +6979,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case VEC_ROW_INNERS_: { do_VECrowInners ();
 } break; case VEC_SOLVE_: { do_VECsolve ();	
 } break; case MAT_SOLVE_: { do_MATsolve ();	
+} break; case VEC_SOLVE_WEAKLYCONSTRAINED_: { do_VECsolveWeaklyConstrained ();	
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();
