@@ -174,7 +174,7 @@ void DTW_Path_recode (DTW me) {
 		// 1. Starting point always at origin
 		
 		const integer nxymax = thy nx + thy ny + 2;
-		autoNUMvector<struct structPoint> xytimes (1, nxymax);
+		autovector <structPoint> xytimes = newvectorzero <structPoint> (nxymax);
 		xytimes [1]. x = my xmin;
 		xytimes [1]. y = my ymin;
 		

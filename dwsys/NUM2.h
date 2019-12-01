@@ -53,7 +53,7 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp);
 	no match is found.
 */
 
-autostring32vector string32vector_searchAndReplace (string32vector me,
+autostring32vector string32vector_searchAndReplace (conststring32vector me,
 	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp);
 /*

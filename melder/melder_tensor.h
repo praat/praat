@@ -1291,6 +1291,21 @@ inline autoBOOLVEC newBOOLVECcopy (constBOOLVECVU const& source) {
 	return newvectorcopy (source);
 }
 
+using BYTEVEC = vector <byte>;
+using BYTEVECVU = vectorview <byte>;
+using constBYTEVEC = constvector <byte>;
+using constBYTEVECVU = constvectorview <byte>;
+using autoBYTEVEC = autovector <byte>;
+inline autoBYTEVEC newBYTEVECraw (integer size) {
+	return newvectorraw <byte> (size);
+}
+inline autoBYTEVEC newBYTEVECzero (integer size) {
+	return newvectorzero <byte> (size);
+}
+inline autoBYTEVEC newBYTEVECcopy (constBYTEVECVU const& source) {
+	return newvectorcopy (source);
+}
+
 using COMPVEC = vector <dcomplex>;
 using COMPVECVU = vectorview <dcomplex>;
 using constCOMPVEC = constvector <dcomplex>;

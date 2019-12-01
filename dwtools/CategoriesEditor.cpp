@@ -60,7 +60,7 @@ static void Ordered_moveItems (Ordered me, constINTVEC position, integer newpos)
 
 	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));
 
-	autoNUMvector<Daata> tmp (1, position.size);
+	autovector <Daata> tmp = newvectorzero <Daata> (position.size);
 
 	/*
 		Move some data from `me` into `tmp`, in a different order.

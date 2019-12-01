@@ -284,7 +284,7 @@ autoPermutation Permutation_interleave (Permutation me, integer from, integer to
 		autoPermutation thee = Data_copy (me);
 
 		if (nblocks > 1) {
-			autoNUMvector<integer> occupied (1, blockSize);
+			autoBOOLVEC occupied = newBOOLVECzero (blockSize);
 
 			integer posinblock = 1 - offset;
 			for (integer i = 1; i <= n; i ++) {
@@ -296,13 +296,13 @@ autoPermutation Permutation_interleave (Permutation me, integer from, integer to
 
 				if (i % nblocks == 1) {
 					integer count = blockSize;
-					while (occupied [posinblock] == 1 && count > 0) {
+					while (occupied [posinblock] && count > 0) {
 						posinblock ++;
 						count --;
 						if (posinblock > blockSize)
 							posinblock -= blockSize;
 					}
-					occupied [posinblock] = 1;
+					occupied [posinblock] = true;
 				}
 				const integer index = from - 1 + (rblock - 1) * blockSize + posinblock;
 				thy p [from - 1 + i] = my p [index];

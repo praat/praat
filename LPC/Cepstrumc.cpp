@@ -80,23 +80,24 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt,
 	}
 }
 
-static void regression (VEC const& r, Cepstrumc me, integer iframe, integer numberOfRegressionFrames) {
+static void regression (VEC const& r, Cepstrumc me, integer frameNumber, integer numberOfRegressionFrames) {
 	Melder_assert (r.size == my maxnCoefficients + 1);
-	integer nc = 1e6;
 	r <<= 0.0;
+
 	if (iframe <= numberOfRegressionFrames / 2 || iframe > my nx - numberOfRegressionFrames / 2)
 		return;
-	double sumsq = 0.0;
+	integer nc = INTEGER_MAX;
+	longdouble sumsq = 0.0;
 	for (integer j = -numberOfRegressionFrames / 2; j <= numberOfRegressionFrames / 2; j ++) {
-		const Cepstrumc_Frame f = & my frame [iframe + j];
+		const Cepstrumc_Frame f = & my frame [frameNumber + j];
 		if (f -> nCoefficients < nc)
 			nc = f -> nCoefficients;
 		sumsq += j * j;
 	}
 	for (integer i = 0; i <= nc; i ++) {
 		for (integer j = -numberOfRegressionFrames / 2; j <= numberOfRegressionFrames / 2; j ++) {
-			const Cepstrumc_Frame f = & my frame [iframe + j];
-			r [i + 1] += f -> c [i] * j / sumsq / my dx;
+			const Cepstrumc_Frame f = & my frame [frameNumber + j];
+			r [i + 1] += f -> c [i] * j / (double (sumsq) * my dx);
 		}
 	}
 }
@@ -106,17 +107,17 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 		integer numberOfRegressionFrames = Melder_ifloor (dtr / my dx);
 		Melder_require (my maxnCoefficients == thy maxnCoefficients,
 			U"Cepstrumc orders should be equal.");
-		Melder_require (! (wr != 0 && numberOfRegressionFrames < 2),
+		Melder_require (! (wr != 0.0 && numberOfRegressionFrames < 2),
 			U"Time window for regression coefficients too small.");
 		if (numberOfRegressionFrames % 2 == 0)
-			numberOfRegressionFrames ++;
-		if (wr != 0)
+			numberOfRegressionFrames += 1;
+		if (wr != 0.0)
 			Melder_casual (U"Number of frames used for regression coefficients ", numberOfRegressionFrames);
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoVEC ri = newVECraw (my maxnCoefficients + 1);
 		autoVEC rj = newVECraw (my maxnCoefficients + 1);
 		/*
-			Calculate distance matrix
+			Calculate distance matrix.
 		*/
 		autoMelderProgress progress (U"");
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
@@ -126,7 +127,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 				const Cepstrumc_Frame fj = & thy frame [jframe];
 				longdouble dist = 0.0, distr = 0.0;
 				/*
-					Cepstral distance
+					Cepstral distance.
 				*/
 				if (wc != 0) {
 					for (integer k = 1; k <= fj -> nCoefficients; k ++) {
@@ -136,12 +137,12 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 					dist *= wc;
 				}
 				/*
-					Log energy distance
+					Log energy distance.
 				*/
 				const double dc0 = fi -> c [0] - fj -> c [0];
 				dist += wle * dc0 * dc0;
 				/*
-					Regression distance
+					Regression distance.
 				*/
 				if (wr != 0) {
 					regression (rj.get(), thee, jframe, numberOfRegressionFrames);

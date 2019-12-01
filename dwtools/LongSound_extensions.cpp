@@ -55,7 +55,8 @@ static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, inte
 	if (ibuf <= numberOfReads) {
 		n_to_read = ( ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf );
 		const integer imin = (ibuf - 1) * nbuf + 1;
-		LongSound_readAudioToShort (me, my buffer, imin, n_to_read);
+		my invalidateBuffer();
+		LongSound_readAudioToShort (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), imin, n_to_read);
 
 		for (integer i = 1; i <= n_to_read; i ++)
 			buffer [nchannels * (i - 1) + ichannel] = my buffer [i];
@@ -83,17 +84,17 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		*/
 
 		const integer nchannels = 2;
-		autoNUMvector<short> buffer (1, nchannels * nbuf);
+		autovector <short> buffer = newvectorzero <short> (nchannels * nbuf);
 
 		autoMelderFile f  = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (integer i = 1; i <= numberOfReads; i ++) {
 			const integer n_to_write = ( i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf );
-			_LongSound_to_multichannel_buffer (me, buffer.peek(), nbuf, nchannels, 1, i);
-			_LongSound_to_multichannel_buffer (thee, buffer.peek(), nbuf, nchannels, 2, i);
+			_LongSound_to_multichannel_buffer (me, buffer.asArgumentToFunctionThatExpectsOneBasedArray(), nbuf, nchannels, 1, i);
+			_LongSound_to_multichannel_buffer (thee, buffer.asArgumentToFunctionThatExpectsOneBasedArray(), nbuf, nchannels, 2, i);
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
-                numberOfBitsPerSamplePoint), buffer.peek(), n_to_write);
+                numberOfBitsPerSamplePoint), & buffer [1], n_to_write);
 		}
 		MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 		f.close ();
@@ -153,16 +154,12 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, integer imin
 	if (file -> filePointer) {
 		for (integer ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
 			const integer numberOfSamplesToCopy = ( ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer );
-			LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
+			my invalidateBuffer();
+			LongSound_readAudioToShort (me, my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), offset, numberOfSamplesToCopy);
 			offset += numberOfSamplesToCopy;
-			MelderFile_writeShortToAudio (file, my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);
+			MelderFile_writeShortToAudio (file, my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer.asArgumentToFunctionThatExpectsZeroBasedArray(), numberOfSamplesToCopy);
 		}
 	}
-	/*
-		We "have" no samples any longer.
-	*/	
-	my imin = 1;
-	my imax = 0;
 }
 
 void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderFile file) {

@@ -600,12 +600,15 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to,
 		Melder_require (! (use_regexp && search [0] == U'\0'),
 			U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		const integer offset = from - 1, nlabels = to - offset;
-		autoNUMvector<char32 *> labels (1, nlabels);
+		autovector <conststring32> labels = newvectorzero <conststring32> (nlabels);
 		for (integer i = from; i <= to; i ++) {
 			const TextInterval interval = my intervals.at [i];
 			labels [i - offset] = interval -> text.get();   // shallow copy
 		}
-		autostring32vector newLabels = string32vector_searchAndReplace (string32vector (labels.peek(), nlabels), search, replace, 0, nmatches, nstringmatches, use_regexp);
+		autostring32vector newLabels = string32vector_searchAndReplace (
+			conststring32vector (labels.asArgumentToFunctionThatExpectsOneBasedArray(), nlabels),
+			search, replace, 0, nmatches, nstringmatches, use_regexp
+		);
 		for (integer i = from; i <= to; i ++) {
 			const TextInterval interval = my intervals.at [i];
 			interval -> text = newLabels [i - offset].move();
