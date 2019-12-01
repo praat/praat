@@ -363,12 +363,11 @@ autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer colu
 		if (column < 1 || column > my numberOfColumns)
 			Melder_throw (U"No such column: ", column, U".");
 		integer n = 0;
-		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion)) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++)
+			if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion))
 				n ++;
-			}
-		}
-		if (n == 0) Melder_throw (U"No row matches this criterion.");
+		if (n == 0)
+			Melder_throw (U"No row matches this criterion.");
 		autoTableOfReal thee = TableOfReal_create (n, my numberOfColumns);
 		copyColumnLabels (me, thee.get());
 		n = 0;
@@ -384,11 +383,9 @@ autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer colu
 autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion) {
 	try {
 		integer n = 0;
-		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_stringMatchesCriterion (my rowLabels [irow].get(), which, criterion, true)) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++)
+			if (Melder_stringMatchesCriterion (my rowLabels [irow].get(), which, criterion, true))
 				n ++;
-			}
-		}
 		if (n == 0)
 			Melder_throw (U"No row matches this criterion.");
 		autoTableOfReal thee = TableOfReal_create (n, my numberOfColumns);
@@ -408,12 +405,11 @@ autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row,
 		if (row < 1 || row > my numberOfRows)
 			Melder_throw (U"No such row: ", row, U".");
 		integer n = 0;
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion)) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion))
 				n ++;
-			}
-		}
-		if (n == 0) Melder_throw (U"No column matches this criterion.");
+		if (n == 0)
+			Melder_throw (U"No column matches this criterion.");
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, n);
 		copyRowLabels (me, thee.get());
@@ -430,21 +426,18 @@ autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row,
 autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion) {
 	try {
 		integer n = 0;
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol].get(), which, criterion, true)) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			if (Melder_stringMatchesCriterion (my columnLabels [icol].get(), which, criterion, true))
 				n ++;
-			}
-		}
-		if (n == 0) Melder_throw (U"No column matches this criterion.");
+		if (n == 0)
+			Melder_throw (U"No column matches this criterion.");
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, n);
 		copyRowLabels (me, thee.get());
 		n = 0;
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol].get(), which, criterion, true)) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			if (Melder_stringMatchesCriterion (my columnLabels [icol].get(), which, criterion, true))
 				copyColumn (me, icol, thee.get(), ++ n);
-			}
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": columns not extracted.");
@@ -452,16 +445,16 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_st
 }
 
 /*
- * Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
- * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
- * Overlap is allowed. Ranges can go up and down.
- */
-static integer *getElementsOfRanges (conststring32 ranges, integer maximumElement, integer *numberOfElements, conststring32 elementType) {
+	Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
+	1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
+	Overlap is allowed. Ranges can go up and down.
+*/
+static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType) {
 	/*
 		Count the elements.
 	*/
 	integer previousElement = 0;
-	*numberOfElements = 0;
+	integer numberOfElements = 0;
 	const char32 *p = & ranges [0];
 	for (;;) {
 		while (*p == U' ' || *p == U'\t') p ++;
@@ -472,7 +465,7 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 				Melder_throw (U"No such ", elementType, U": 0 (minimum is 1).");
 			if (currentElement > maximumElement)
 				Melder_throw (U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
-			*numberOfElements += 1;
+			numberOfElements += 1;
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
 		} else if (*p == ':') {
@@ -488,9 +481,9 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 			if (currentElement > maximumElement)
 				Melder_throw (U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
 			if (currentElement > previousElement) {
-				*numberOfElements += currentElement - previousElement;
+				numberOfElements += currentElement - previousElement;
 			} else {
-				*numberOfElements += previousElement - currentElement;
+				numberOfElements += previousElement - currentElement;
 			}
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
@@ -501,19 +494,21 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 	/*
 		Create room for the elements.
 	*/
-	autoNUMvector <integer> elements (1, *numberOfElements);
+	autoINTVEC elements = newINTVECzero (numberOfElements);
 	/*
 		Store the elements.
 	*/
 	previousElement = 0;
-	*numberOfElements = 0;
+	numberOfElements = 0;
 	p = & ranges [0];
 	for (;;) {
-		while (*p == U' ' || *p == U'\t') p ++;
-		if (*p == U'\0') break;
+		while (*p == U' ' || *p == U'\t')
+			p ++;
+		if (*p == U'\0')
+			break;
 		if (Melder_isAsciiDecimalNumber (*p)) {
 			integer currentElement = Melder_atoi (p);
-			elements [++ *numberOfElements] = currentElement;
+			elements [++ numberOfElements] = currentElement;
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
 		} else if (*p == ':') {
@@ -521,27 +516,27 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 			integer currentElement = Melder_atoi (p);
 			if (currentElement > previousElement) {
 				for (integer ielement = previousElement + 1; ielement <= currentElement; ielement ++) {
-					elements [++ *numberOfElements] = ielement;
+					elements [++ numberOfElements] = ielement;
 				}
 			} else {
 				for (integer ielement = previousElement - 1; ielement >= currentElement; ielement --) {
-					elements [++ *numberOfElements] = ielement;
+					elements [++ numberOfElements] = ielement;
 				}
 			}
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
 		}
 	}
-	return elements.transfer();
+	Melder_assert (numberOfElements == elements.size);
+	return elements;
 }
 
 autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, conststring32 ranges) {
 	try {
-		integer numberOfElements;
-		autoNUMvector <integer> elements (getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, U"row"), 1);
-		autoTableOfReal thee = TableOfReal_create (numberOfElements, my numberOfColumns);
+		autoINTVEC elements = getElementsOfRanges (ranges, my numberOfRows, U"row");
+		autoTableOfReal thee = TableOfReal_create (elements.size, my numberOfColumns);
 		copyColumnLabels (me, thee.get());
-		for (integer ielement = 1; ielement <= numberOfElements; ielement ++)
+		for (integer ielement = 1; ielement <= elements.size; ielement ++)
 			copyRow (me, elements [ielement], thee.get(), ielement);
 		return thee;
 	} catch (MelderError) {
@@ -551,11 +546,10 @@ autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, conststring32 rang
 
 autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, conststring32 ranges) {
 	try {
-		integer numberOfElements;
-		autoNUMvector <integer> elements (getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, U"column"), 1);
-		autoTableOfReal thee = TableOfReal_create (my numberOfRows, numberOfElements);
+		autoINTVEC elements = getElementsOfRanges (ranges, my numberOfColumns, U"column");
+		autoTableOfReal thee = TableOfReal_create (my numberOfRows, elements.size);
 		copyRowLabels (me, thee.get());
-		for (integer ielement = 1; ielement <= numberOfElements; ielement ++)
+		for (integer ielement = 1; ielement <= elements.size; ielement ++)
 			copyColumn (me, elements [ielement], thee.get(), ielement);
 		return thee;
 	} catch (MelderError) {
