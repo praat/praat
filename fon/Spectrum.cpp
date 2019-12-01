@@ -100,10 +100,13 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 		double oneSidedPowerSpectralDensity =   // Pa2 Hz-2 s-1
 			2.0 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
-		if (oneSidedPowerSpectralDensity < *minimum) *minimum = oneSidedPowerSpectralDensity;
-		if (oneSidedPowerSpectralDensity > *maximum) *maximum = oneSidedPowerSpectralDensity;
+		if (oneSidedPowerSpectralDensity < *minimum)
+			*minimum = oneSidedPowerSpectralDensity;
+		if (oneSidedPowerSpectralDensity > *maximum)
+			*maximum = oneSidedPowerSpectralDensity;
 	}
-	if (*maximum == 0.0) return 0;
+	if (*maximum == 0.0)
+		return 0;
 	*minimum = 10.0 * log10 (*minimum / 4.0e-10);
 	*maximum = 10.0 * log10 (*maximum / 4.0e-10);
 	return 1;
@@ -112,19 +115,25 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum) {
 	bool autoscaling = ( minimum >= maximum );
 
-	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
+	if (fmax <= fmin) {
+		fmin = my xmin;
+		fmax = my xmax;
+	}
 	integer ifmin, ifmax;
-	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
+	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax))
+		return;
 
 	autoNUMvector <double> yWC (ifmin, ifmax);
 
 	/*
-	 * First pass: compute power density.
-	 */
-	if (autoscaling) maximum = -1e308;
+		First pass: compute power density.
+	*/
+	if (autoscaling)
+		maximum = -1e308;
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		double y = my v_getValueAtSample (ifreq, 0, 2);
-		if (autoscaling && y > maximum) maximum = y;
+		if (autoscaling && y > maximum)
+			maximum = y;
 		yWC [ifreq] = y;
 	}
 	if (autoscaling) {
@@ -139,12 +148,10 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	}
 
 	/*
-	 * Second pass: clip.
-	 */
-	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
-		if (yWC [ifreq] < minimum) yWC [ifreq] = minimum;
-		else if (yWC [ifreq] > maximum) yWC [ifreq] = maximum;
-	}
+		Second pass: clip.
+	*/
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++)
+		Melder_clip (minimum, & yWC [ifreq], maximum);
 
 	Graphics_setWindow (g, fmin, fmax, minimum, maximum);
 	Graphics_function (g, yWC.peek(), ifmin, ifmax, Matrix_columnToX (me, ifmin), Matrix_columnToX (me, ifmax));
@@ -165,31 +172,36 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
 	bool autoscaling = ( minimum >= maximum );
-	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
+	if (fmax <= fmin) {
+		fmin = my xmin;
+		fmax = my xmax;
+	}
 	integer ifmin, ifmax;
-	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
+	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax))
+		return;
 if(ifmin==1)ifmin=2;  /* BUG */
 	autoNUMvector <double> xWC (ifmin, ifmax);
 	autoNUMvector <double> yWC (ifmin, ifmax);
 
 	/*
-	 * First pass: compute power density.
-	 */
-	if (autoscaling) maximum = -1e6;
+		First pass: compute power density.
+	*/
+	if (autoscaling)
+		maximum = -1e6;
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		xWC [ifreq] = log10 (my x1 + (ifreq - 1) * my dx);
 		yWC [ifreq] = my v_getValueAtSample (ifreq, 0, 2);
-		if (autoscaling && yWC [ifreq] > maximum) maximum = yWC [ifreq];
+		if (autoscaling && yWC [ifreq] > maximum)
+			maximum = yWC [ifreq];
 	}
-	if (autoscaling) minimum = maximum - 60;   // default dynamic range is 60 dB
+	if (autoscaling)
+		minimum = maximum - 60;   // default dynamic range is 60 dB
 
 	/*
-	 * Second pass: clip.
-	 */
-	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
-		if (yWC [ifreq] < minimum) yWC [ifreq] = minimum;
-		else if (yWC [ifreq] > maximum) yWC [ifreq] = maximum;
-	}
+		Second pass: clip.
+	*/
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++)
+		Melder_clip (minimum, & yWC [ifreq], maximum);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, log10 (fmin), log10 (fmax), minimum, maximum);
