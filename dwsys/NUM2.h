@@ -537,7 +537,7 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 */
 void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
-autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
+autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer itermax);
 /*
 	Solve the equation: M.b = d for b under the constraint: all b[i] >= 0;
 	m[1..nr][1..nc], d[1..nr] and b[1..nc].
@@ -545,7 +545,7 @@ autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, do
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y, double *out_alpha, double *out_gamma);
+void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC y, double *out_alpha, double *out_gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
@@ -558,7 +558,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y, double *o
 	Psychometrika 48, 631-638.
 */
 
-autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta);
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta);
 /*
 	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
 	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
@@ -571,7 +571,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, 
 	Jos M.F. ten Berge (1991), A general solution for a class of weakly
 	constrained linear regression problems, Psychometrika 56, 601-609.
 	Preconditions:
-		n >= m
+		f.nrow >= f.ncol
 		alpha >= 0
 */
 
@@ -600,7 +600,7 @@ double NUMridders (double (*f) (double x, void *closure), double xmin, double xm
 		root not bracketed.
 */
 
-double NUMmspline (constVEC knot, integer order, integer i, double x);
+double NUMmspline (constVEC const & knot, integer order, integer i, double x);
 /*
 	Calculates an M-spline for a knot sequence.
 	After Ramsay (1988), Monotone splines in action, Statistical Science 4.
@@ -612,7 +612,7 @@ double NUMmspline (constVEC knot, integer order, integer i, double x);
 	Error condition: no memory.
 */
 
-double NUMispline (constVEC aknot, integer order, integer i, double x);
+double NUMispline (constVEC const & aknot, integer order, integer i, double x);
 /*
 	Calculates an I-spline for simple knot sequences: only one knot at each
 	interior boundary.
@@ -629,7 +629,7 @@ double NUMispline (constVEC aknot, integer order, integer i, double x);
 	Error condition: no memory.
 */
 
-double NUMwilksLambda (constVEC lambda, integer from, integer to);
+double NUMwilksLambda (constVEC const& lambda, integer from, integer to);
 /*
 	Calculate: Product (i=from..to; 1/(1+lambda[i]))
 	Preconditions: to >= from
@@ -848,7 +848,7 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-double VECburg (VEC a, constVEC x);
+double VECburg (VEC const& a, constVEC const& x);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
@@ -856,9 +856,9 @@ double VECburg (VEC a, constVEC x);
 	Returns the sum of squared sample values or 0.0 if failure
 */
 
-autoVEC newVECburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
+autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, double *out_xms);
 
-void NUMdmatrix_to_dBs (MAT m, double ref, double factor, double floor);
+void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's
 
@@ -880,12 +880,12 @@ autoMAT MATcosinesTable (integer  n);
 
 	result [i] [j] = cos (i * pi * (j - 1/2) / npoints)
 */
-void VECcosineTransform_preallocated (VEC target, constVEC x, constMAT cosinesTable);
-void VECinverseCosineTransform_preallocated (VEC target, constVEC x, constMAT cosinesTable);
+void VECcosineTransform_preallocated (VEC const& target, constVEC const& x, constMAT const& cosinesTable);
+void VECinverseCosineTransform_preallocated (VEC const& target, constVEC const& x, constMAT const& cosinesTable);
 
 /******  Interpolation ****/
 
-void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, constVEC y, double yp1, double ypn);
+void NUMcubicSplineInterpolation_getSecondDerivatives (VEC const& out_y, constVEC const& x, constVEC const& y, double yp1, double ypn);
 /*
 	Given arrays x[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
@@ -898,7 +898,7 @@ void NUMcubicSplineInterpolation_getSecondDerivatives (VEC out_y, constVEC x, co
 	zero second derivative on that boundary.
 */
 
-double NUMcubicSplineInterpolation (constVEC xa, constVEC ya, constVEC y2a, double x);
+double NUMcubicSplineInterpolation (constVEC const& xa, constVEC const& ya, constVEC const& y2a, double x);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the
