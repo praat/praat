@@ -47,7 +47,7 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {
 	return charp;
 }
 
-static autostring32vector string32vector_searchAndReplace_literal (string32vector me,
+static autostring32vector string32vector_searchAndReplace_literal (conststring32vector me,
 	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *out_numberOfMatches, integer *out_numberOfStringMatches)
 {
@@ -72,7 +72,7 @@ static autostring32vector string32vector_searchAndReplace_literal (string32vecto
 	return result;
 }
 
-static autostring32vector string32vector_searchAndReplace_regexp (string32vector me,
+static autostring32vector string32vector_searchAndReplace_regexp (conststring32vector me,
 	conststring32 searchRE, conststring32 replaceRE, int maximumNumberOfReplaces,
 	integer *out_numberOfMatches, integer *out_numberOfStringMatches)
 {
@@ -101,7 +101,7 @@ static autostring32vector string32vector_searchAndReplace_regexp (string32vector
 	return result;
 }
 
-autostring32vector string32vector_searchAndReplace (string32vector me,
+autostring32vector string32vector_searchAndReplace (conststring32vector me,
 	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp)
 {

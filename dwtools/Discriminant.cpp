@@ -493,7 +493,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoVEC ln_determinant = newVECraw (numberOfGroups);
 		autoVEC buf = newVECraw (dimension);
 		
-		autoNUMvector<SSCP> sscpvec (1, numberOfGroups);
+		autovector <SSCP> sscpvec = newvectorzero <SSCP> (numberOfGroups);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, numberOfGroups);
 		his rowLabels.all() <<= thy rowLabels.all();
@@ -621,7 +621,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoVEC buf = newVECraw (p);
 		autoVEC displacement = newVECraw (p);
 		autoVEC x = newVECzero (p);
-		autoNUMvector<SSCP> sscpvec (1, g);
+		autovector <SSCP> sscpvec = newvectorzero <SSCP> (g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
 		his rowLabels.all() <<= thy rowLabels.all();

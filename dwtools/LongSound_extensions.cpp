@@ -84,15 +84,15 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		*/
 
 		const integer nchannels = 2;
-		autoNUMvector<short> buffer (1, nchannels * nbuf);
+		autovector <short> buffer = newvectorzero <short> (nchannels * nbuf);
 
 		autoMelderFile f  = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (integer i = 1; i <= numberOfReads; i ++) {
 			const integer n_to_write = ( i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf );
-			_LongSound_to_multichannel_buffer (me, buffer.peek(), nbuf, nchannels, 1, i);
-			_LongSound_to_multichannel_buffer (thee, buffer.peek(), nbuf, nchannels, 2, i);
+			_LongSound_to_multichannel_buffer (me, buffer.asArgumentToFunctionThatExpectsOneBasedArray(), nbuf, nchannels, 1, i);
+			_LongSound_to_multichannel_buffer (thee, buffer.asArgumentToFunctionThatExpectsOneBasedArray(), nbuf, nchannels, 2, i);
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
                 numberOfBitsPerSamplePoint), & buffer [1], n_to_write);
 		}

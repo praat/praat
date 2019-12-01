@@ -210,7 +210,7 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 	}
 
 	const integer n = 2000;
-	autoNUMvector<double> a (1, n);
+	autoVEC a = newVECzero (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -223,11 +223,11 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 	}
 
 	integer ibegin, iend;
-	setDrawingLimits (a.peek(), n, ymin, ymax,	& ibegin, & iend);
+	setDrawingLimits (a.asArgumentToFunctionThatExpectsOneBasedArray(), n, ymin, ymax,	& ibegin, & iend);
 	if (ibegin <= iend) {
 		const double fmin = xmin + (ibegin - 1) * df;
 		const double fmax = xmax - (n - iend) * df;
-		Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
+		Graphics_function (g, a.asArgumentToFunctionThatExpectsOneBasedArray(), ibegin, iend, fmin, fmax);
 	}
 	Graphics_unsetInner (g);
 
@@ -281,7 +281,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
 	const integer n = 1000;
-	autoNUMvector<double> a (1, n);
+	autoVEC a = newVECzero (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
@@ -302,11 +302,11 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 			}
 		}
 		integer ibegin, iend;
-		setDrawingLimits (a.peek(), n, ymin, ymax, & ibegin, & iend);
+		setDrawingLimits (a.asArgumentToFunctionThatExpectsOneBasedArray(), n, ymin, ymax, & ibegin, & iend);
 		if (ibegin <= iend) {
 			const double fmin = zmin + (ibegin - 1) * df;
 			const double fmax = zmax - (n - iend) * df;
-			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
+			Graphics_function (g, a.asArgumentToFunctionThatExpectsOneBasedArray(), ibegin, iend, fmin, fmax);
 		}
 	}
 	Graphics_unsetInner (g);
@@ -365,7 +365,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
 	const integer n = 1000;
-	autoNUMvector<double> a (1, n);
+	autoVEC a = newVECzero (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
@@ -391,12 +391,12 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 			}
 		}
 
-		setDrawingLimits (a.peek(), n, ymin, ymax,	&ibegin, &iend);
+		setDrawingLimits (a.asArgumentToFunctionThatExpectsOneBasedArray(), n, ymin, ymax,	&ibegin, &iend);
 
 		if (ibegin <= iend) {
 			double fmin = zmin + (ibegin - 1) * df;
 			double fmax = zmax - (n - iend) * df;
-			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
+			Graphics_function (g, a.asArgumentToFunctionThatExpectsOneBasedArray(), ibegin, iend, fmin, fmax);
 		}
 	}
 
@@ -460,11 +460,11 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 {
 	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
-	if (bandwidth <= 0)
+	if (bandwidth <= 0.0)
 		Melder_warning (U"Bandwidth should be greater than zero.");
 
 	const integer n = 1000;
-	autoNUMvector<double>a (1, n);
+	autoVEC a = newVECzero (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
@@ -472,7 +472,6 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	for (integer j = fromFilter; j <= toFilter; j ++) {
 		const double df = (zmax - zmin) / (n - 1);
 		const double fc = my y1 + (j - 1) * my dy;
-		integer ibegin, iend;
 
 		for (integer i = 1; i <= n; i ++) {
 			const double f = zmin + (i - 1) * df;
@@ -486,12 +485,12 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 			}
 		}
 
-		setDrawingLimits (a.peek(), n, ymin, ymax,	&ibegin, &iend);
-
+		integer ibegin, iend;
+		setDrawingLimits (a.asArgumentToFunctionThatExpectsOneBasedArray(), n, ymin, ymax, & ibegin, & iend);
 		if (ibegin <= iend) {
 			const double fmin = zmin + (ibegin - 1) * df;
 			const double fmax = zmax - (n - iend) * df;
-			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
+			Graphics_function (g, a.asArgumentToFunctionThatExpectsOneBasedArray(), ibegin, iend, fmin, fmax);
 		}
 	}
 
@@ -712,19 +711,19 @@ autoSound FilterBank_as_Sound (FilterBank me);
 	window width (n-1) x 1^2.
 */
 static double gaussian_window_squared_correction (integer n) {
-	const double e12 = exp (-12), denum = (e12 - 1) * (e12 - 1) * 24 * (n - 1);
-	const double sqrt3 = sqrt (3), sqrt2 = sqrt (2), sqrtpi = sqrt (NUMpi);
-	const double arg1 = 2 * sqrt3 * (n - 1) / (n + 1), arg2 = arg1 * sqrt2;
-	const double p2 = sqrtpi * sqrt3 * sqrt2 * (1 - NUMerfcc (arg2)) * (n + 1);
-	const double p1 = 4 * sqrtpi * sqrt3 * e12 * (1 - NUMerfcc (arg1)) * (n + 1);
+	const double e12 = exp (-12.0), denum = (e12 - 1.0) * (e12 - 1.0) * 24.0 * (n - 1);
+	const double sqrt3 = sqrt (3.0), sqrt2 = sqrt (2.0), sqrtpi = sqrt (NUMpi);
+	const double arg1 = 2.0 * sqrt3 * (n - 1) / (n + 1), arg2 = arg1 * sqrt2;
+	const double p2 = sqrtpi * sqrt3 * sqrt2 * (1.0 - NUMerfcc (arg2)) * (n + 1);
+	const double p1 = 4.0 * sqrtpi * sqrt3 * e12 * (1.0 - NUMerfcc (arg1)) * (n + 1);
 
-	return (p2 - p1 + 24 * (n - 1) * e12 * e12) / denum;
+	return (p2 - p1 + 24.0 * (n - 1) * e12 * e12) / denum;
 }
 
 static autoMatrix Sound_to_spectralpower (Sound me) {
 	try {
 		autoSpectrum s = Sound_to_Spectrum (me, true);
-		autoMatrix thee = Matrix_create (s -> xmin, s -> xmax, s -> nx, s -> dx, s -> x1, 1, 1, 1, 1, 1);
+		autoMatrix thee = Matrix_create (s -> xmin, s -> xmax, s -> nx, s -> dx, s -> x1, 1.0, 1.0, 1, 1.0, 1.0);
 		const double scale = 2.0 * s -> dx / (my xmax - my xmin);
 
 		// factor '2' because of positive and negative frequencies
@@ -748,15 +747,15 @@ static autoMatrix Sound_to_spectralpower (Sound me) {
 static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, integer frame) {
 	autoMatrix pv = Sound_to_spectralpower (me);
 	const integer nf = pv -> nx;
-	autoNUMvector<double> z (1, nf);
 
+	autoVEC z = newVECraw (nf);
 	for (integer j = 1; j <= nf; j ++)
 		z [j] = HZTOBARK (pv -> x1 + (j - 1) * pv -> dx);
 
 	for (integer i = 1; i <= thy ny; i ++) {
 		const double z0 = thy y1 + (i - 1) * thy dy;
 		const constVEC pow = pv -> z.row (1); // TODO ??
-		double p = 0.0;
+		longdouble p = 0.0;
 		for (integer j = 1; j <= nf; j ++) {
 			/*
 				Sekey & Hanson filter is defined in the power domain.
@@ -766,7 +765,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, integer frame
 			const double a = NUMsekeyhansonfilter_amplitude (z0, z [j]);
 			p += a * pow [j] ;
 		}
-		thy z [i] [frame] = p;
+		thy z [i] [frame] = double (p);
 	}
 	return 1;
 }
@@ -774,22 +773,22 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, integer frame
 autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, double f1_bark, double fmax_bark, double df_bark) {
 	try {
 
-		const double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist;
-		const double windowDuration = 2 * analysisWidth; /* gaussian window */
+		const double nyquist = 0.5 / my dx, samplingFrequency = 2.0 * nyquist;
+		const double windowDuration = 2.0 * analysisWidth; /* gaussian window */
 		const double zmax = NUMhertzToBark2 (nyquist);
-		double fmin_bark = 0;
+		double fmin_bark = 0.0;
 
 		// Check defaults.
 
-		if (f1_bark <= 0)
-			f1_bark = 1;
-		if (fmax_bark <= 0)
+		if (f1_bark <= 0.0)
+			f1_bark = 1.0;
+		if (fmax_bark <= 0.0)
 			fmax_bark = zmax;
-		if (df_bark <= 0)
-			df_bark = 1;
+		if (df_bark <= 0.0)
+			df_bark = 1.0;
 
-		fmax_bark = std::min (fmax_bark, zmax);
-		integer nf = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
+		Melder_clipRight (& fmax_bark, zmax);
+		integer nf = Melder_iround ((fmax_bark - f1_bark) / df_bark);
 		Melder_require (nf > 0, U"The combination of filter parameters is not valid.");
 
 		double t1;

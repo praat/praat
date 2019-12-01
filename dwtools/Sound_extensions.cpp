@@ -751,25 +751,23 @@ static void NUMgammatoneFilter4 (double *x, double *y, integer n, double centre_
 
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
-		Meldr_require (centre_frequency > 0, U"Centre frequency should be positive.");
+		Meldr_require (centre_frequency > 0,
+			U"Centre frequency should be positive.");
 		Melder_require (bandwidth > 0,
 			U"Bandwidth should be positive.");
 
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-		autoNUMvector<double> y (1, my nx);
-		autoNUMvector<double> x (1, my nx);
+		autoVEC y = newVECzero (my nx);
+		autoVEC x = newVECzero (my nx);
 
-		double fs = 1 / my dx;
+		const double fs = 1.0 / my dx;
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			for (integer i = 1; i <= my nx; i ++) {
+			for (integer i = 1; i <= my nx; i ++)
 				x [i] = my z [channel] [i];
-			}
-
-			NUMgammatoneFilter4 (x.peek(), y.peek(), my nx, centre_frequency, bandwidth, fs);
-
-			for (integer i = 1; i <= my nx; i ++) {
+			NUMgammatoneFilter4 (x.asArgumentToFunctionThatExpectsOneBasedArray(), y.asArgumentToFunctionThatExpectsOneBasedArray(),
+					my nx, centre_frequency, bandwidth, fs);
+			for (integer i = 1; i <= my nx; i ++)
 				thy z [channel] [i] = y [i];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
