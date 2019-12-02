@@ -410,16 +410,17 @@ struct nr_struct {
 	f'(lambda) = 2 * sum (y [i]^2 delta [i] / (delta [i]-lambda)^3, i=1..3)
 */
 
-static void nr_func (double x, double *f, double *df, void *data) {
+static double nr_func (double x, double *df, void *data) {
 	const struct nr_struct *me = (struct nr_struct *) data;
-	*f = *df = 0.0;
+	double f = *df = 0.0;
 	for (integer i = 1; i <= 3; i ++) {
 		const double t1 = (my delta [i] - x);
 		const double t2 = my y [i] / t1;
 		const double t3 = t2 * t2 * my delta [i];
-		*f += t3;
+		f += t3;
 		*df += t3 * 2.0 / t1;
 	}
+	return f;
 }
 
 void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC const& d, double *out_alpha, double *out_gamma) {
@@ -544,9 +545,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC const
 		me.y = y.at;
 		me.delta = delta.at;
 
-		double xlambda;
 		const double eps2 = (delta [2] - delta [1]) * 1e-6;
-		NUMnrbis (nr_func, delta [1] + eps, delta [2] - eps2, & me, & xlambda);
+		double xlambda = NUMnrbis (nr_func, delta [1] + eps, delta [2] - eps2, & me);
 
 		for (integer i = 1; i <= 3; i++)
 			w [i] = y [i] / (1.0 - xlambda / delta [i]);
@@ -572,18 +572,19 @@ struct nr2_struct {
 	VEC x, c;
 };
 
-static void nr2_func (double b, double *f, double *df, void *data) {
+static double nr2_func (double b, double *df, void *data) {
 	const struct nr2_struct *me = (struct nr2_struct *) data;
 
-	*f = my delta - 0.5 * b / my alpha;
+	double f = my delta - 0.5 * b / my alpha;
 	*df = - 0.5 / my alpha;
 	for (integer i = 1; i <= my numberOfTerms; i ++) {
 		const double c1 = (my c [i] - b);
 		const double c2 = my x [i] / c1;
 		const double c2sq = c2 * c2;
-		*f -= c2sq;
+		f -= c2sq;
 		*df -= 2.0 * c2sq / c1;
 	}
+	return f;
 }
 
 static double bolzanoFunction (double b, void *data) {
@@ -624,39 +625,38 @@ double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, 
 }
 
 autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta) {
-	Melder_assert (f.ncol == phi.size);
+	Melder_assert (f.nrow == phi.size);
 	Melder_require (f.nrow >= f.ncol,
 		U"The number of rows should not be less than the number of columns.");
 	Melder_require (alpha >= 0.0,
 		U"The coefficient of the penalty function should not be negative.");
 	Melder_require (delta > 0,
 		U"The solution's vector length should be positive.");
-	autoMAT u = newMATzero (f.ncol, f.ncol);
-	autoVEC c = newVECzero (f.ncol);
-	autoVEC result;
 	
+	autoVEC c = newVECzero (f.ncol);	
 	autoSVD svd = SVD_createFromGeneralMatrix (f);
 
 	if (alpha == 0.0) {
 		/*
 			Solve by standard least squares
 		*/
-		result = SVD_solve (svd.get(), phi);
+		autoVEC result = SVD_solve (svd.get(), phi);
 		return result;
 	}
 	/*
 		Step 1: (page 608)
 		Compute U and C from the eigendecomposition F'F = UCU'
-		U is from the SVD (F) = VCU' as in the paper (we would write it with symbols reversed as SVD(F)=UDV')
+		U is from the SVD (F) = VCU' as in the paper (our notation would be: SVD(F)=UDV')
+		Therefore, the paper's U is our V but since our V is stored as the transpose: U == svd -> v.transpose()!
 	*/
+	constMATVU u = svd -> v.transpose();
 	for (integer i = 1; i <= f.ncol; i++) {
 		const double ci = svd -> d [i];
 		c [i] = ci * ci;
-		u.column (i) <<= svd->v.row (i);
 	}
 	/*
 		Evaluate q, the multiplicity of the smallest eigenvalue in C.
-		As the c[i] are ordered c[i] >= c[i+1] for all i.
+		The c[i] are ordered, i.e. c[i] >= c[i+1] for all i.
 	*/
 	integer q = 1;
 	const double tol = 1e-6;
@@ -692,13 +692,13 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 				x [j] /= c [j] - c [f.ncol]; // eq. 10
 			if (q > 1)
 				x.part (r + 2, f.ncol) <<= 0.0;
-			VECmul (result.get(), u.get(), x);
+			autoVEC result = newVECmul (u,  x);
 			return result;
 		}
 		// else continue with r = m - q
 	}
 	/*
-		Step 3a & 3b2, determine interval lower bound for Newton-Raphson root finder
+		Step 3a & 3b2, determine interval lower bound for root finder
 	*/
 	longdouble xCx = 0.0;
 	for (integer j = 1; j <= r; j ++)
@@ -709,9 +709,8 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 	/*
 		Find the root of d(psi(b)/db in interval (bmin, c [m])
 	*/
-	double b0;
-	NUMnrbis (nr2_func, bmin + eps, c [f.ncol] - eps, & me, & b0);
-	const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin + eps, c [f.ncol] - eps, & me); // TODO test if  b0 == b02 ??
+	double b0 =	NUMnrbis (nr2_func, bmin, c [f.ncol], & me);
+	const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin, c [f.ncol], & me); // TODO test if  b0 == b02 ??
 	Melder_require (b0 < c [f.ncol],
 		U"The root (", b0, U") should be smaller than the smallest eigenvalue (", c[f.ncol], U").");
 	/*
@@ -721,7 +720,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 		x [j] /= c [j] - b0; // eq. 7
 	if (q > 1)
 		x.part (r + 1, f.ncol) <<= 0.0;
-	VECmul (result.get(), u.get(), x);
+	autoVEC result = newVECmul (u, x);
 	return result;
 }
 
@@ -877,26 +876,19 @@ double NUMfactln (int n) {
 	return n > 100 ? NUMlnGamma (n + 1.0) : table [n] != 0.0 ? table [n] : (table [n] = NUMlnGamma (n + 1.0));
 }
 
-void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
-	double df, fx, fh, fl, tmp, xh, xl, tol;
-	const integer itermax = 100; // 80 or so could be enough; 60 is too small
+double NUMnrbis (double (*f) (double x, double *dfx, void *closure), double xmin, double xmax, void *closure) {
+	double df, tmp, xh, xl, tol;
+	const integer itermax = 80;
+	double fl = (*f) (xmin, & df, closure);
+	if (fl == 0.0)
+		return xmin;;
 
-	(*f) (xmin, & fl, & df, closure);
-	if (fl == 0.0) {
-		*root = xmin;
-		return;
-	}
+	double fh = (*f) (xmax, & df, closure);
+	if (fh == 0.0)
+		return xmax;
 
-	(*f) (xmax, & fh, & df, closure);
-	if (fh == 0.0) {
-		*root = xmax;
-		return;
-	}
-
-	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
-		*root = undefined;
-		return;
-	}
+	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0))
+		return undefined;
 
 	if (fl < 0.0) {
 		xl = xmin;
@@ -908,36 +900,37 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 
 	double dxold = fabs (xmax - xmin);
 	double dx = dxold;
-	*root = 0.5 * (xmin + xmax);
-	(*f) (*root, & fx, & df, closure);
+	double root = 0.5 * (xmin + xmax);
+	double fx = (*f) (root, & df, closure);
 
 	for (integer iter = 1; iter <= itermax; iter ++) {
-		if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
+		if ((((root - xh) * df - fx) * ((root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
 			dxold = dx;
 			dx = 0.5 * (xh - xl);
-			*root = xl + dx;
-			if (xl == *root)
-				return;
+			root = xl + dx;
+			if (xl == root)
+				return root;
 		} else {
 			dxold = dx;
 			dx = fx / df;
-			tmp = *root;
-			*root -= dx;
-			if (tmp == *root)
-				return;
+			tmp = root;
+			root -= dx;
+			if (tmp == root)
+				return root;
 		}
-		tol = NUMfpp -> eps	* (*root == 0.0 ? 1.0 : fabs (*root));
+		tol = NUMfpp -> eps	* (root == 0.0 ? 1.0 : fabs (root));
 		if (fabs (dx) < tol)
-			return;
+			return root;
 
-		(*f) (*root, & fx, & df, closure);
+		fx = (*f) (root, & df, closure);
 
 		if (fx < 0.0)
-			xl = *root;
+			xl = root;
 		else
-			xh = *root;
+			xh = root;
 	}
 	Melder_warning (U"NUMnrbis: maximum number of iterations (", itermax, U") exceeded.");
+	return root;
 }
 
 double NUMridders (double (*f) (double x, void *closure), double x1, double x2, void *closure) {

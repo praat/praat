@@ -899,12 +899,13 @@ struct nrfunction_struct {
 	double a;
 };
 
-static void nrfunction (double x, double *fx, double *dfx, void *closure) {
+static double nrfunction (double x, double *dfx, void *closure) {
 	const struct nrfunction_struct *nrfs = (struct nrfunction_struct *) closure;
 	const double mplusax = nrfs -> m + nrfs -> a * x;
 	const double mminn = nrfs -> m - nrfs -> n;
-	*fx = pow (x, mminn) - (nrfs -> n + nrfs -> a * x) / mplusax;
+	const double fx = pow (x, mminn) - (nrfs -> n + nrfs -> a * x) / mplusax;
 	*dfx = mminn * pow (x, mminn - 1) - nrfs -> a * mminn / (mplusax * mplusax);
+	return fx;
 }
 
 static double get_collisionPoint_x (double n, double m, double collisionPhase) {
@@ -937,8 +938,7 @@ static double get_collisionPoint_x (double n, double m, double collisionPhase) {
 		// search in the interval from where the flow is a maximum to 1
 		const double xmaxFlow = pow (n / m, 1.0 / (m - n));
 		struct nrfunction_struct nrfs = {n, m, a};
-		double root;
-		NUMnrbis (& nrfunction, xmaxFlow, 1.0, & nrfs, & root);
+		double root = NUMnrbis (& nrfunction, xmaxFlow, 1.0, & nrfs);
 		y = root;
 	}
 	return y;

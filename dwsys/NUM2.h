@@ -585,7 +585,7 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 	the orthogonal Procrustes transform.
 */
 
-void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root);
+double NUMnrbis (double (*f)(double x, double *dfx, void *closure), double xmin, double xmax, void *closure);
 /*
 	Find the root of a function between xmin and xmax.
 	Method: Newton-Raphson with bisection (i.e., derivative is known!).
