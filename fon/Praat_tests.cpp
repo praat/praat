@@ -623,7 +623,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
 				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);
 				Melder_casual (U"hello ", sound -> dx);
-				autostring32vector v;
+				autoSTRVEC v;
 				mutablestring32 *pm = v.peek2();
 				const mutablestring32 *pcm = v.peek2();
 				//conststring32 *pc = v.peek2();

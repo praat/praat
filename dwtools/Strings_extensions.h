@@ -46,8 +46,7 @@ autoStrings Strings_append (OrderedOf<structStrings>* me);
 autoStrings Strings_change (Strings me, conststring32 search, conststring32 replace,
 	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 
-//autoStrings strings_to_Strings (constSTRVEC strings, integer from, integer to);
-autoStrings strings_to_Strings (string32vector strings, integer from, integer to);
+autoStrings strings_to_Strings (constSTRVEC strings, integer from, integer to);
 
 autoStrings Strings_extractPart (Strings me, integer start, integer end);
 

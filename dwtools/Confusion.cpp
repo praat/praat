@@ -88,7 +88,7 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 
 autoConfusion Confusion_createSimple (conststring32 labels_string) {
 	try {
-		autostring32vector labels = newSTRVECtokenize (labels_string);
+		autoSTRVEC labels = newSTRVECtokenize (labels_string);
 		Melder_require (labels.size > 0, U"There should be at least one label.");
 		
 		autoConfusion me = Confusion_create (labels.size, labels.size);
@@ -319,7 +319,7 @@ integer Confusion_getNumberOfEntries (Confusion me) {
 	return Melder_ifloor (total);
 }
 
-static autoINTVEC create_index (string32vector s, string32vector ref) {
+static autoINTVEC create_index (constSTRVEC const& s, constSTRVEC const& ref) {
 	autoINTVEC index = newINTVECraw (s.size);
 	for (integer i = 1; i <= s.size; i ++) {
 		integer indxj = 0;
@@ -341,10 +341,10 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 		Melder_require (my rowLabels && my columnLabels,
 			U"Both row and column labels should be present.");
 		
-		autostring32vector rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
+		autoSTRVEC rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
 			search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
-		autostring32vector columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
+		autoSTRVEC columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
 			search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
 		autoStrings srow = Thing_new (Strings);
@@ -405,7 +405,7 @@ autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32
 
 autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autostring32vector labels = newSTRVECtokenize (labels_string);
+		autoSTRVEC labels = newSTRVECtokenize (labels_string);
 		const integer ncondense = labels.size;
 		autoINTVEC irow = newINTVECraw (my numberOfRows);
 
@@ -459,7 +459,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 
 autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autostring32vector labels = newSTRVECtokenize (labels_string);
+		autoSTRVEC labels = newSTRVECtokenize (labels_string);
 		const integer ncondense = labels.size;
 		autoINTVEC icol = newINTVECraw (my numberOfColumns);
 

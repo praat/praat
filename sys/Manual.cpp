@@ -63,7 +63,7 @@ static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		static ManPages manPages;
-		static conststring32vector pages;
+		static constSTRVEC pages;
 		manPages = (ManPages) my data;
 		pages = ManPages_getTitles (manPages);
 		LIST (page, U"Page", pages, 1)

@@ -1,7 +1,7 @@
 #pragma once
 /* VEC.h
  *
- * Copyright (C) 2017,2018 Paul Boersma
+ * Copyright (C) 2017-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -290,6 +290,7 @@ inline void VECsin_inplace (VECVU const& vec) noexcept {
 }
 
 extern void VECsort_inplace (VECVU const& x) noexcept;
+extern void INTVECsort_inplace (INTVECVU const& x) noexcept;
 
 inline autoVEC newVECrowSums (constMATVU const& x) {
 	autoVEC result = newVECraw (x.nrow);

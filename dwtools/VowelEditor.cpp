@@ -681,7 +681,7 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
 		integer nmarksFound = 0;
 		for (integer i = 1; i <= numberOfRows; i ++) {
-			autostring32vector rowi = newSTRVECtokenize (prefs.mark [i - 1]);
+			autoSTRVEC rowi = newSTRVECtokenize (prefs.mark [i - 1]);
 			const integer numberOfTokens = rowi.size;
 			if (numberOfTokens < 4)
 				break;

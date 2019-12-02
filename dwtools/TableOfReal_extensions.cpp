@@ -172,7 +172,7 @@ autoStrings TableOfReal_extractRowLabels (TableOfReal me) {
 		autoStrings thee = Thing_new (Strings);
 
 		if (my numberOfRows > 0) {
-			thy strings = autostring32vector (my numberOfRows);
+			thy strings = autoSTRVEC (my numberOfRows);
 			thy numberOfStrings = my numberOfRows;
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				const conststring32 label = my rowLabels [i] ? my rowLabels [i].get() : U"?";
@@ -190,7 +190,7 @@ autoStrings TableOfReal_extractColumnLabels (TableOfReal me) {
 		autoStrings thee = Thing_new (Strings);
 
 		if (my numberOfColumns > 0) {
-			thy strings = autostring32vector (my numberOfColumns);
+			thy strings = autoSTRVEC (my numberOfColumns);
 			thy numberOfStrings = my numberOfColumns;
 
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
@@ -949,7 +949,7 @@ void TableOfReal_changeRowLabels (TableOfReal me,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
-		autostring32vector rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
+		autoSTRVEC rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
 			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my rowLabels = std::move (rowLabels);
 	} catch (MelderError) {
@@ -961,7 +961,7 @@ void TableOfReal_changeColumnLabels (TableOfReal me,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
-		autostring32vector columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
+		autoSTRVEC columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
 			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my columnLabels = std::move (columnLabels);
 	} catch (MelderError) {

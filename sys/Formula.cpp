@@ -4136,7 +4136,7 @@ static void do_runSubprocess () {
 	Stackel commandFile = & theStack [w + 1];
 	if (commandFile->which != Stackel_STRING)
 		Melder_throw (U"The first argument to \"runSubprocess\" should be a command name.");
-	autostring32vector arguments (numberOfArguments - 1);
+	autoSTRVEC arguments (numberOfArguments - 1);
 	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + 1 + iarg];
 		if (arg->which == Stackel_NUMBER)

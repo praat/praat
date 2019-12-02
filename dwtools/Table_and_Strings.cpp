@@ -22,7 +22,7 @@ autoStrings Table_column_to_Strings (Table me, integer columnNumber) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (my rows.size);
+		thy strings = autoSTRVEC (my rows.size);
 		thy numberOfStrings = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, columnNumber));

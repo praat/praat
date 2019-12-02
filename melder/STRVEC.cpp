@@ -18,13 +18,13 @@
 
 #include "melder.h"
 
-autostring32vector newSTRVECtokenize (conststring32 string) {
+autoSTRVEC newSTRVECtokenize (conststring32 string) {
 	if (! string)
-		return autostring32vector();   // accept null pointer input
+		return autoSTRVEC();   // accept null pointer input
 	integer n = NUMnumberOfTokens (string);
 	if (n == 0)
-		return autostring32vector();
-	autostring32vector result (n);
+		return autoSTRVEC();
+	autoSTRVEC result (n);
 
 	integer itoken = 0;
 	const char32 *p = & string [0];

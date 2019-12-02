@@ -72,7 +72,7 @@ autoPCA PCA_create (integer numberOfComponents, integer dimension) {
 	try {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.get(), numberOfComponents, dimension);
-		my labels = autostring32vector (dimension);
+		my labels = autoSTRVEC (dimension);
 		my centroid = newVECzero (dimension);
 		return me;
 	} catch (MelderError) {
@@ -166,7 +166,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 		thy centroid = newVECcolumnMeans (mcopy.get());
 		mcopy.all()  -=  thy centroid.all();
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
-		thy labels = autostring32vector (mcopy.ncol);
+		thy labels = autoSTRVEC (mcopy.ncol);
 		PCA_setNumberOfObservations (thee.get(), mcopy.nrow);
 		/*
 			The covariance matrix C = A'A / (N-1). However, we have calculated

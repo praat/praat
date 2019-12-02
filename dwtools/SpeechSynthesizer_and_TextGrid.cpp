@@ -477,7 +477,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
 			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
-		autostring32vector tokens = newSTRVECtokenize (his text.get());
+		autoSTRVEC tokens = newSTRVECtokenize (his text.get());
 		const integer numberOfTokens = tokens.size;
 		Melder_require (numberOfTokens > 0,
 			U"The interval should have text.");
@@ -686,7 +686,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextGrid_align2 (SpeechSynthesizer me, Soun
 static autoStrings IntervalTier_to_Strings_withOriginData (IntervalTier me, INTVEC from) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (my intervals.size);
+		thy strings = autoSTRVEC (my intervals.size);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			const TextInterval ti = my intervals.at [i];
 			if (ti -> text && ti -> text [0] != U'\0') {

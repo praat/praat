@@ -2,7 +2,7 @@
 #define _melder_sort_h_
 /* melder_sort.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 
 /********** Sorting **********/
 
-void NUMsort_integer (integer n, integer ra []);
-void NUMsort_str (string32vector a);
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
 
 double NUMquantile (integer n, double a [], double factor);

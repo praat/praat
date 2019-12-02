@@ -18,106 +18,28 @@
 
 #include "melder.h"
 
-/*
-	NUMsort uses heapsort.
-	J.W.J. Williams (1964). 'xx.'
-		Communications of the Association for Computing Machinery 7: 347-348.
-	R.W. Floyd (1964). 'xx.'
-		Communications of the Association for Computing Machinery 7: 701.
-
-	Algorithm follows p. 145 of:
-	Donald E. Knuth (1998): The art of computer programming. Third edition. Vol. 3: sorting and searching.
-		Boston: Addison-Wesley.
-	Modification: there is no distinction between record and key.
-*/
-
-#define MACRO_NUMsort(DataType, dataExpression, CounterType, sizeExpression) \
-	{/* scope */ \
-		DataType *_x = dataExpression; \
-		CounterType _n = sizeExpression; \
-		if (_n < 2) return;   /* Already sorted. */ \
-		/* This `n < 2` step is absent from Press et al.'s implementation,      */ \
-		/* which will therefore not terminate on `if (_r == 1)`.                */ \
-		/* Knuth's initial assumption is now fulfilled: n >= 2.                 */ \
-		if (_n == 2) { \
-			if (_x [1] > _x [2]) { DataType _min = _x [2]; _x [2] = _x [1]; _x [1] = _min; } \
-		} else if (_n <= 44) { \
-			for (CounterType _i = 1; _i < _n; _i ++) { \
-				DataType _min = _x [_i]; \
-				CounterType _pmin = _i; \
-				for (CounterType _j = _i + 1; _j <= _n; _j ++) if (_x [_j] < _min) { \
-					_min = _x [_j]; \
-					_pmin = _j; \
-				} \
-				_x [_pmin] = _x [_i]; \
-				_x [_i] = _min; \
-			} \
-		} else { \
-			CounterType _l = (_n >> 1) + 1; \
-			CounterType _r = _n; \
-			for (;;) { \
-				DataType _k; \
-				if (_l > 1) { \
-					_l --; \
-					_k = _x [_l]; \
-				} else /* _l == 1 */ { \
-					_k = _x [_r]; \
-					_x [_r] = _x [1]; \
-					_r --; \
-					if (_r == 1) { _x [1] = _k; return; } \
-				} \
-				CounterType _j = _l; \
-				CounterType _i; \
-				for (;;) { \
-					_i = _j; \
-					_j = _j << 1; \
-					if (_j > _r) break; \
-					if (_j < _r && _x [_j] < _x [_j + 1]) _j ++; \
-					if (_k >= _x [_j]) break; \
-					_x [_i] = _x [_j]; \
-				} \
-				_x [_i] = _k; \
-			} \
-		} \
-	}
-
 void VECsort_inplace (VECVU const& x) noexcept {
-	MACRO_NUMsort (double, & x [0], integer, x.size)
+	std::sort (x.begin(), x.end(),
+		[] (double first, double last) {
+			return first < last;
+		}
+	);
 }
 
-void NUMsort_integer (integer n, integer a []) {
-	MACRO_NUMsort (integer, a, integer, n)
+void INTVECsort_inplace (INTVECVU const& x) noexcept {
+	std::sort (x.begin(), x.end(),
+		[] (double first, double last) {
+			return first < last;
+		}
+	);
 }
 
-void NUMsort_str (string32vector array) {
-	char32 **a = array.at;
-	integer n = array.size;
-	integer l, r, j, i;
-	char32 *k;
-	if (n < 2) return;
-	l = (n >> 1) + 1;
-	r = n;
-	for (;;) {
-		if (l > 1) {
-			l --;
-			k = a [l];
-		} else { 
-			k = a [r];
-			a [r] = a [1];
-			r --;
-			if (r == 1) { a [1] = k; return; }
+void STRVECsort_inplace (STRVEC const& array) {
+	std::sort (array.begin(), array.end(),
+		[] (conststring32 first, conststring32 last) {
+			return str32cmp (first, last) < 0;
 		}
-		j = l;
-		for (;;) {
-			i = j;
-			j = j << 1;
-			if (j > r) break;
-			if (j < r && str32cmp (a [j], a [j + 1]) < 0) j ++;
-			if (str32cmp (k, a [j]) >= 0) break;
-			a [i] = a [j];
-		}
-		a [i] = k;
-	}
+	);
 }
 
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *)) {

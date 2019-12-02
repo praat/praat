@@ -22,7 +22,7 @@ autoStrings Distributions_to_Strings (Distributions me, integer column, integer 
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = numberOfStrings;
-		thy strings = autostring32vector (numberOfStrings);
+		thy strings = autoSTRVEC (numberOfStrings);
 		for (integer istring = 1; istring <= numberOfStrings; istring ++) {
 			conststring32 string;
 			Distributions_peek (me, column, & string, nullptr);
@@ -54,7 +54,7 @@ autoStrings Distributions_to_Strings_exact (Distributions me, integer column) {
 			Melder_throw (U"Column total not positive.");
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = total;
-		thy strings = autostring32vector (total);
+		thy strings = autoSTRVEC (total);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			integer number = my data [irow] [column];
 			conststring32 string = my rowLabels [irow].get();

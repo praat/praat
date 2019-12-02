@@ -220,7 +220,7 @@ integer EditCostsTable_getSourceIndex (EditCostsTable me, conststring32 symbol) 
 }
 
 void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets_string, double cost) {
-	autostring32vector targets = newSTRVECtokenize (targets_string);
+	autoSTRVEC targets = newSTRVECtokenize (targets_string);
 	for (integer itarget = 1; itarget <= targets.size; itarget ++) {
 		integer irow = EditCostsTable_getTargetIndex (me, targets [itarget].get());
 		irow = ( irow > 0 ? irow : my numberOfRows - 1 );   // nomatch condition to penultimate row
@@ -229,7 +229,7 @@ void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets_
 }
 
 void EditCostsTable_setDeletionCosts (EditCostsTable me, conststring32 sources_string, double cost) {
-	autostring32vector sources = newSTRVECtokenize (sources_string);
+	autoSTRVEC sources = newSTRVECtokenize (sources_string);
 	for (integer isource = 1; isource <= sources.size; isource ++) {
 		integer icol = EditCostsTable_getSourceIndex (me, sources [isource].get());
 		icol = ( icol > 0 ? icol : my numberOfColumns - 1 );   // nomatch condition to penultimate column
@@ -253,8 +253,8 @@ double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets_string, conststring32 sources_string, double cost) {
 	try {
-		autostring32vector targets = newSTRVECtokenize (targets_string);
-		autostring32vector sources = newSTRVECtokenize (sources_string);
+		autoSTRVEC targets = newSTRVECtokenize (targets_string);
+		autoSTRVEC sources = newSTRVECtokenize (sources_string);
 		autoINTVEC targetIndex = newINTVECzero (my numberOfRows);   // note: this includes zero padding
 		autoINTVEC sourceIndex = newINTVECzero (my numberOfRows);   // note: this includes zero padding
 		integer numberOfTargetSymbols = 0;

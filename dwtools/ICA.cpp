@@ -598,8 +598,8 @@ autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 
 autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars_string, conststring32 centroid_string, integer numberOfSamples) {
 	try {
-		autostring32vector covars = newSTRVECtokenize (covars_string);
-		autostring32vector centroid = newSTRVECtokenize (centroid_string);
+		autoSTRVEC covars = newSTRVECtokenize (covars_string);
+		autoSTRVEC centroid = newSTRVECtokenize (centroid_string);
 		const integer dimension = centroid.size;
 		const integer ncovars = covars.size;
 		const integer ncovars_wanted = dimension * (dimension + 1) / 2;

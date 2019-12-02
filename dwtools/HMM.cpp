@@ -307,7 +307,7 @@ autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 	try {
 		const integer numberOfStrings = my rows.size;
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (numberOfStrings);
+		thy strings = autoSTRVEC (numberOfStrings);
 		for (integer i = 1; i <= numberOfStrings; i ++)
 			thy strings [i] = Melder_dup (Table_getStringValue_Assert (me, i, 1));
 		thy numberOfStrings = numberOfStrings;
@@ -358,7 +358,7 @@ integer HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag 
 autoHMMStateSequence HMMStateSequence_create (integer numberOfItems) {
 	try {
 		autoHMMStateSequence me = Thing_new (HMMStateSequence);
-		my strings = autostring32vector (numberOfItems);
+		my strings = autoSTRVEC (numberOfItems);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMStateSequence not created.");
@@ -460,8 +460,8 @@ autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, inte
 // for a simple non-hidden model leave either states empty or symbols empty !!!
 autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string) {
 	try {
-		autostring32vector states = newSTRVECtokenize (states_string);
-		autostring32vector symbols = newSTRVECtokenize (symbols_string);
+		autoSTRVEC states = newSTRVECtokenize (states_string);
+		autoSTRVEC symbols = newSTRVECtokenize (symbols_string);
 		autoHMM me = Thing_new (HMM);
 
 		Melder_require (states.size > 0 || symbols.size > 0,
@@ -1581,7 +1581,7 @@ autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservatio
 autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
-		classes -> strings = autostring32vector (my numberOfObservationSymbols);
+		classes -> strings = autoSTRVEC (my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfObservationSymbols; is ++) {
 			const HMMObservation hmmo = my observationSymbols->at [is];
 			classes -> strings [is] = Melder_dup (hmmo -> label.get());
@@ -1598,7 +1598,7 @@ autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservat
 autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
-		classes -> strings = autostring32vector (my numberOfObservationSymbols);
+		classes -> strings = autoSTRVEC (my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			const HMMState hmms = my states->at [is];
 			classes -> strings [is] = Melder_dup (hmms -> label.get());
