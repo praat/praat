@@ -251,10 +251,12 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"soundPressureToPhon", U"objectsAreIdentical",
 	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
-	U"rowInners#", U"solve#", U"solve##", U"solveWithWeakConstraints#",
+	U"rowInners#", U"solve#", U"solve##",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
-
+	
+	U"solveWeaklyConstrained#",
+	
 	U"do", U"do$",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
@@ -1438,7 +1440,7 @@ static void parsePowerFactor () {
 	}
 	
 	if (symbol >= LOW_FUNCTION_4 && symbol <= HIGH_FUNCTION_4) {
-		bool isParenthesis = fitArguments ();
+		const bool isParenthesis = fitArguments ();
 		parseExpression ();
 		fit (COMMA_);
 		parseExpression ();
@@ -1446,7 +1448,8 @@ static void parsePowerFactor () {
 		parseExpression ();
 		fit (COMMA_);
 		parseExpression ();
-		if (isParenthesis) fit (CLOSING_PARENTHESIS_);
+		if (isParenthesis)
+			fit (CLOSING_PARENTHESIS_);
 		newparse (symbol);
 		return;
 	}
@@ -5663,7 +5666,7 @@ static void do_VECsolve () {
 
 static void do_VECsolveWeaklyConstrained () {
 	Stackel delta = pop, alpha = pop, y = pop, x = pop;
-	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && delta == Stackel_NUMBER && alpha == Stackel_NUMBER) {
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && alpha->which == Stackel_NUMBER && delta->which == Stackel_NUMBER) {
 		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
 			U"In the function solveWeaklyConstrained#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
 			x->numericMatrix.nrow, U" and ", y->numericVector.size
@@ -5672,7 +5675,6 @@ static void do_VECsolveWeaklyConstrained () {
 			U"Argument 3, the weight coefficient of the penalty function should not be negative.");
 		Melder_require (delta->number >= 0.0,
 			U"Argument 4, the squared lenth of the solution vector should not be negative.");
-		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
 		pushNumericVector (newVECsolveWeaklyConstrainedLinearRegression (x->numericMatrix, y->numericVector, alpha->number, delta->number));
 	} else {
 		Melder_throw (U"The function \"solveWeaklyConstrained#\" requires a matrix, a vector, and two numbers not ", x->whichText(), U", ",
