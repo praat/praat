@@ -34,35 +34,12 @@ void INTVECsort_inplace (INTVECVU const& x) noexcept {
 	);
 }
 
-void NUMsort_str (string32vector array) {
-	char32 **a = array.at;
-	integer n = array.size;
-	integer l, r, j, i;
-	char32 *k;
-	if (n < 2) return;
-	l = (n >> 1) + 1;
-	r = n;
-	for (;;) {
-		if (l > 1) {
-			l --;
-			k = a [l];
-		} else { 
-			k = a [r];
-			a [r] = a [1];
-			r --;
-			if (r == 1) { a [1] = k; return; }
+void STRVECsort_inplace (STRVEC const& array) {
+	std::sort (array.begin(), array.end(),
+		[] (conststring32 first, conststring32 last) {
+			return str32cmp (first, last) < 0;
 		}
-		j = l;
-		for (;;) {
-			i = j;
-			j = j << 1;
-			if (j > r) break;
-			if (j < r && str32cmp (a [j], a [j + 1]) < 0) j ++;
-			if (str32cmp (k, a [j]) >= 0) break;
-			a [i] = a [j];
-		}
-		a [i] = k;
-	}
+	);
 }
 
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *)) {

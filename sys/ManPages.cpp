@@ -434,11 +434,11 @@ static integer ManPages_lookUp_caseSensitive (ManPages me, conststring32 title) 
 	return 0;
 }
 
-conststring32vector ManPages_getTitles (ManPages me) {
+constSTRVEC ManPages_getTitles (ManPages me) {
 	if (! my ground)
 		grind (me);
 	if (! my titles) {
-		my titles = autostring32vector (my pages.size);
+		my titles = autoSTRVEC (my pages.size);
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
 			my titles [i] = Melder_dup (page -> title.get());

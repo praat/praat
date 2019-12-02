@@ -148,10 +148,10 @@ void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrin
 		const double total = PairDistributions_getTotalWeight_checkPositive (me);
 		autoStrings strings1 = Thing_new (Strings);
 		strings1 -> numberOfStrings = nout;
-		strings1 -> strings = autostring32vector (nout);
+		strings1 -> strings = autoSTRVEC (nout);
 		autoStrings strings2 = Thing_new (Strings);
 		strings2 -> numberOfStrings = nout;
-		strings2 -> strings = autostring32vector (nout);
+		strings2 -> strings = autoSTRVEC (nout);
 		for (integer iout = 1; iout <= nout; iout ++) {
 			integer iin;
 			do {

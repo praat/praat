@@ -82,7 +82,7 @@
 	{ \
 		integer _size = (n); \
 		if (_size >= 1) { \
-			our x = autostring32vector (_size); \
+			our x = autoSTRVEC (_size); \
 			for (integer _i = 1; _i <= _size; _i ++) { \
 				our x [_i] = binget##storage (_filePointer_); \
 			} \

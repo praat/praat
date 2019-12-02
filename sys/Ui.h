@@ -112,7 +112,7 @@ Thing_define (UiField, Thing) {
 	autoMAT numericMatrixValue;
 	MelderColour colourValue;
 	OrderedOf<structUiOption> options;
-	conststring32vector strings;
+	constSTRVEC strings;
 	GuiLabel label;
 	GuiText text;
 	GuiCheckButton checkButton;
@@ -201,7 +201,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVaria
 UiOption UiRadio_addButton (UiField me, conststring32 label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, conststring32 label);
-UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, conststring32vector strings, integer defaultValue);
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, constSTRVEC strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 void UiForm_finish (UiForm me);

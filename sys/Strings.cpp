@@ -258,7 +258,8 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		 * Create.
 		 */
 		autoStrings me = Thing_new (Strings);
-		if (n > 0) my strings = autostring32vector (n);
+		if (n > 0)
+			my strings = autoSTRVEC (n);
 		my numberOfStrings = n;
 
 		/*
@@ -314,7 +315,7 @@ void Strings_nativize (Strings me) {
 }
 
 void Strings_sort (Strings me) {
-	NUMsort_str (my strings.get());
+	STRVECsort_inplace (my strings.get());
 }
 
 void Strings_remove (Strings me, integer position) {
@@ -352,7 +353,7 @@ void Strings_insert (Strings me, integer position, conststring32 text) {
 		Create without change.
 	*/
 	autostring32 newString = Melder_dup (text);
-	autostring32vector newStrings (my numberOfStrings + 1);
+	autoSTRVEC newStrings (my numberOfStrings + 1);
 	/*
 		Change without error.
 	*/

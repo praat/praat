@@ -69,13 +69,13 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	our numberOfColumns = texgeti32 (a_text);
 	if (our numberOfColumns >= 1) {
-		our columnLabels = autostring32vector (our numberOfColumns);
+		our columnLabels = autoSTRVEC (our numberOfColumns);
 		for (integer i = 1; i <= our numberOfColumns; i ++)
 			our columnLabels [i] = texgetw16 (a_text);
 	}
 	our numberOfRows = texgeti32 (a_text);
 	if (our numberOfRows >= 1) {
-		our rowLabels = autostring32vector (our numberOfRows);
+		our rowLabels = autoSTRVEC (our numberOfRows);
 	}
 	if (our numberOfRows >= 1 && our numberOfColumns >= 1) {
 		our data = newMATzero (our numberOfRows, our numberOfColumns);
@@ -118,9 +118,9 @@ void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfCol
 		Melder_throw (U"Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	my rowLabels = autostring32vector (numberOfRows);
+	my rowLabels = autoSTRVEC (numberOfRows);
 	Melder_assert (my rowLabels.size == numberOfRows);   // probably captured by test script
-	my columnLabels = autostring32vector (numberOfColumns);
+	my columnLabels = autoSTRVEC (numberOfColumns);
 	my data = newMATzero (my numberOfRows, my numberOfColumns);
 }
 
@@ -208,7 +208,7 @@ void TableOfReal_insertRow (TableOfReal me, integer rowNumber) {
 			Create without change.
 		*/
 		autoMAT newData = newMATzero (my numberOfRows + 1, my numberOfColumns);
-		autostring32vector newRowLabels (my numberOfRows + 1);
+		autoSTRVEC newRowLabels (my numberOfRows + 1);
 		for (integer irow = 1; irow < rowNumber; irow ++)	{
 			newRowLabels [irow] = my rowLabels [irow]. move();
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
@@ -268,7 +268,7 @@ void TableOfReal_insertColumn (TableOfReal me, integer columnNumber) {
 			Create without change.
 		*/
 		autoMAT newData = newMATzero (my numberOfRows, my numberOfColumns + 1);
-		autostring32vector newColumnLabels (my numberOfColumns + 1);
+		autoSTRVEC newColumnLabels (my numberOfColumns + 1);
 		for (integer j = 1; j < columnNumber; j ++) {
 			newColumnLabels [j] = my columnLabels [j]. move();
 			for (integer i = 1; i <= my numberOfRows; i ++)
@@ -650,7 +650,7 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, conststring32 c
 autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (my numberOfRows);
+		thy strings = autoSTRVEC (my numberOfRows);
 		thy numberOfStrings = my numberOfRows;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			thy strings [irow] = Melder_dup (my rowLabels [irow] ? my rowLabels [irow].get() : U"");
@@ -664,7 +664,7 @@ autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (my numberOfColumns);
+		thy strings = autoSTRVEC (my numberOfColumns);
 		thy numberOfStrings = my numberOfColumns;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy strings [icol] = Melder_dup (my columnLabels [icol] ? my columnLabels [icol].get() : U"");

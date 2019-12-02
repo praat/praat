@@ -171,7 +171,7 @@
 
 #define oo_STRINGx(storage,x)  autostring32 x;
 #define oo_STRINGx_SET(storage,x,setType)  autostring32 x [1 + setType::MAX];
-#define oo_STRINGx_VECTOR(storage,x,size)  autostring32vector x;
+#define oo_STRINGx_VECTOR(storage,x,size)  autoSTRVEC x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + (int) setType::MAX];

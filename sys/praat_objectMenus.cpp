@@ -518,7 +518,7 @@ DO
 END }
 
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
-	static conststring32vector pages;
+	static constSTRVEC pages;
 	pages = ManPages_getTitles (theCurrentPraatApplication -> manPages);
 	LIST (pageNumber, U"Page", pages, 1)
 	OK

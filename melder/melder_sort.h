@@ -20,7 +20,6 @@
 
 /********** Sorting **********/
 
-void NUMsort_str (string32vector a);
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
 
 double NUMquantile (integer n, double a [], double factor);

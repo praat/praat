@@ -25,7 +25,7 @@ public:
 	integer size = 0;
 	_stringvector () { }
 	_stringvector (T** givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	T* & operator[] (integer i) {
+	T* & operator[] (integer i) const {
 		return our at [i];
 	}
 	_stringvector<T> part (integer firstPosition, integer lastPosition) {
@@ -35,6 +35,8 @@ public:
 		if (newSize <= 0) return _stringvector<T> ();
 		return _stringvector (at + (firstPosition - 1), newSize);
 	}
+	T* *begin () const { return & our operator[] (1); }
+	T* *end () const { return & our operator[] (our size + 1); }
 };
 using string32vector = _stringvector <char32>;
 using string8vector  = _stringvector <char>;
@@ -51,7 +53,7 @@ public:
 	_conststringvector (const T* const * givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): at (other.at), size (other.size) { }
 	_conststringvector (_autostringvectorview<T> other): at ((T**) other._ptr), size (other.size) { }
-	const T* const & operator[] (integer i) {
+	const T* const & operator[] (integer i) const {
 		return our at [i];
 	}
 	_conststringvector<T> part (integer firstPosition, integer lastPosition) {
@@ -61,6 +63,8 @@ public:
 		if (newSize <= 0) return _conststringvector<T> ();
 		return _conststringvector (at + (firstPosition - 1), newSize);
 	}
+	T* *begin () const { return & our operator[] (1); }
+	T* *end () const { return & our operator[] (our size + 1); }
 };
 using conststring32vector = _conststringvector <char32>;
 using conststring8vector  = _conststringvector <char>;

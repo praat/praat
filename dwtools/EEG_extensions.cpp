@@ -38,7 +38,7 @@ static autoEEG EEG_copyWithoutSound (EEG me) {
 	}
 }
 
-static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, string32vector channelNames) {
+static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, constSTRVEC const& channelNames) {
 	try {
 		autoINTVEC channelNumbers = newINTVECzero (channelNames.size);
 		for (integer i = 1; i <= channelNames.size; i ++) {
@@ -54,18 +54,16 @@ static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, string32vector cha
 	}
 }
 
-static void EEG_setChannelNames_selected (EEG me, conststring32 precursor, constINTVEC channelNumbers) {
+static void EEG_setChannelNames_selected (EEG me, conststring32 precursor, constINTVEC const& channelNumbers) {
 	autoMelderString name;
 	const conststring32 zero = U"0";
 	for (integer i = 1; i <= channelNumbers.size; i ++) {
 		MelderString_copy (& name, precursor);
 		if (my numberOfChannels > 100) {
-			if (i < 10) {
+			if (i < 10)
 				MelderString_append (& name, zero);
-			}
-			if (i < 100) {
+			if (i < 100)
 				MelderString_append (& name, zero);
-			}
 		} else if (i < 10) {
 			MelderString_append (& name, zero);
 		}

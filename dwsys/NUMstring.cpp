@@ -26,7 +26,7 @@
 #include "NUM2.h"
 
 autoVEC VEC_createFromString (conststring32 s) {
-	autostring32vector tokens = newSTRVECtokenize (s);
+	autoSTRVEC tokens = newSTRVECtokenize (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
 	autoVEC numbers = newVECraw (tokens.size);
@@ -47,13 +47,13 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {
 	return charp;
 }
 
-static autostring32vector string32vector_searchAndReplace_literal (conststring32vector me,
+static autoSTRVEC string32vector_searchAndReplace_literal (constSTRVEC me,
 	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *out_numberOfMatches, integer *out_numberOfStringMatches)
 {
 	if (! search || ! replace)
-		return autostring32vector();
-	autostring32vector result (me.size);
+		return autoSTRVEC();
+	autoSTRVEC result (me.size);
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
@@ -72,18 +72,18 @@ static autostring32vector string32vector_searchAndReplace_literal (conststring32
 	return result;
 }
 
-static autostring32vector string32vector_searchAndReplace_regexp (conststring32vector me,
+static autoSTRVEC string32vector_searchAndReplace_regexp (constSTRVEC me,
 	conststring32 searchRE, conststring32 replaceRE, int maximumNumberOfReplaces,
 	integer *out_numberOfMatches, integer *out_numberOfStringMatches)
 {
 	if (! searchRE || ! replaceRE)
-		return autostring32vector();
+		return autoSTRVEC();
 
 	integer nmatches_sub = 0;
 
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 
-	autostring32vector result (me.size);
+	autoSTRVEC result (me.size);
 
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
@@ -101,7 +101,7 @@ static autostring32vector string32vector_searchAndReplace_regexp (conststring32v
 	return result;
 }
 
-autostring32vector string32vector_searchAndReplace (conststring32vector me,
+autoSTRVEC string32vector_searchAndReplace (constSTRVEC me,
 	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp)
 {

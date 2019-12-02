@@ -28,7 +28,7 @@ autoStrings Strings_createFixedLength (integer numberOfStrings) {
 		Melder_require (numberOfStrings > 0,
 			U"The number of strings should be positive.");
 		autoStrings me = Thing_new (Strings);
-		my strings = autostring32vector (numberOfStrings);
+		my strings = autoSTRVEC (numberOfStrings);
 		my numberOfStrings = numberOfStrings;
 		return me;
 	} catch (MelderError) {
@@ -40,7 +40,7 @@ autoStrings Strings_createAsCharacters (conststring32 string) {
 	try {
 		autoStrings me = Thing_new (Strings);
 		my numberOfStrings = str32len (string);
-		my strings = autostring32vector (my numberOfStrings);
+		my strings = autoSTRVEC (my numberOfStrings);
 		for (integer i = 1; i <= my numberOfStrings; i ++)
 			my strings [i] = Melder_dup (Melder_character (*string ++));
 		return me;
@@ -82,7 +82,7 @@ autoStrings Strings_createAsTokens (conststring32 token_string, conststring32 se
 		if (*(index - 1) != U'\0') // if token_string ends with a non-separator
 			numberOfTokens ++;
 		my numberOfStrings = numberOfTokens;
-		my strings = autostring32vector (my numberOfStrings);
+		my strings = autoSTRVEC (my numberOfStrings);
 		numberOfTokens = 0;
 		char32 *start = tokens;
 		index = & tokens [0];
@@ -129,7 +129,7 @@ autoStrings Strings_append (OrderedOf<structStrings>* me) {
 autoStrings Strings_change (Strings me, conststring32 search, conststring32 replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		autostring32vector strings = string32vector_searchAndReplace (my strings.get(),
+		autoSTRVEC strings = string32vector_searchAndReplace (my strings.get(),
 			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		thy numberOfStrings = my numberOfStrings;
 		thy strings = std::move (strings);
@@ -139,7 +139,7 @@ autoStrings Strings_change (Strings me, conststring32 search, conststring32 repl
 	}
 }
 
-autoStrings strings_to_Strings (string32vector strings, integer from, integer to) {
+autoStrings strings_to_Strings (constSTRVEC strings, integer from, integer to) {
 	try {
 		autoStrings thee = Strings_createFixedLength (to - from + 1);
 		for (integer i = from; i <= to; i ++)

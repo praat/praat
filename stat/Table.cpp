@@ -113,7 +113,7 @@ conststring32 Table_messageColumn (Table me, integer column) {
 }
 
 void Table_initWithColumnNames (Table me, integer numberOfRows, conststring32 columnNames_string) {
-	autostring32vector columnNames = newSTRVECtokenize (columnNames_string);
+	autoSTRVEC columnNames = newSTRVECtokenize (columnNames_string);
 	Table_initWithoutColumnNames (me, numberOfRows, columnNames.size);
 	for (integer icol = 1; icol <= columnNames.size; icol ++)
 		Table_setColumnLabel (me, icol, columnNames [icol].get());
@@ -295,7 +295,7 @@ integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel
 }
 
 autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 columnLabels_string) {
-	autostring32vector columnLabels = newSTRVECtokenize (columnLabels_string);
+	autoSTRVEC columnLabels = newSTRVECtokenize (columnLabels_string);
 	if (columnLabels.size < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
 	autoINTVEC columns = newINTVECraw (columnLabels.size);
@@ -663,13 +663,13 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 	}
 }
 
-static void Table_columns_checkExist (Table me, conststring32vector columnNames) {
+static void Table_columns_checkExist (Table me, constSTRVEC columnNames) {
 	for (integer i = 1; i <= columnNames.size; i ++)
 		if (Table_findColumnIndexFromColumnLabel (me, columnNames [i]) == 0)
 			Melder_throw (me, U": column \"", columnNames [i], U"\" does not exist.");
 }
 
-static void Table_columns_checkCrossSectionEmpty (conststring32vector factors, conststring32vector vars) {
+static void Table_columns_checkCrossSectionEmpty (constSTRVEC factors, constSTRVEC vars) {
 	for (integer ifactor = 1; ifactor <= factors.size; ifactor ++)
 		for (integer ivar = 1; ivar <= vars.size; ivar ++)
 			if (str32equ (factors [ifactor], vars [ivar]))
@@ -687,28 +687,28 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			Parse the six strings of tokens.
 		*/
-		autostring32vector factors = newSTRVECtokenize (factors_string);
+		autoSTRVEC factors = newSTRVECtokenize (factors_string);
 		if (factors.size < 1)
 			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors.get());
 
-		autostring32vector columnsToSum = newSTRVECtokenize (columnsToSum_string);
+		autoSTRVEC columnsToSum = newSTRVECtokenize (columnsToSum_string);
 		Table_columns_checkExist (me, columnsToSum.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToSum.get());
 
-		autostring32vector columnsToAverage = newSTRVECtokenize (columnsToAverage_string);
+		autoSTRVEC columnsToAverage = newSTRVECtokenize (columnsToAverage_string);
 		Table_columns_checkExist (me, columnsToAverage.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverage.get());
 
-		autostring32vector columnsToMedianize = newSTRVECtokenize (columnsToMedianize_string);
+		autoSTRVEC columnsToMedianize = newSTRVECtokenize (columnsToMedianize_string);
 		Table_columns_checkExist (me, columnsToMedianize.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianize.get());
 
-		autostring32vector columnsToAverageLogarithmically = newSTRVECtokenize (columnsToAverageLogarithmically_string);
+		autoSTRVEC columnsToAverageLogarithmically = newSTRVECtokenize (columnsToAverageLogarithmically_string);
 		Table_columns_checkExist (me, columnsToAverageLogarithmically.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverageLogarithmically.get());
 
-		autostring32vector columnsToMedianizeLogarithmically = newSTRVECtokenize (columnsToMedianizeLogarithmically_string);
+		autoSTRVEC columnsToMedianizeLogarithmically = newSTRVECtokenize (columnsToMedianizeLogarithmically_string);
 		Table_columns_checkExist (me, columnsToMedianizeLogarithmically.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianizeLogarithmically.get());
 
@@ -875,7 +875,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 	}
 }
 
-static autostring32vector Table_getLevels_ (Table me, integer column) {
+static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 	try {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -892,7 +892,7 @@ static autostring32vector Table_getLevels_ (Table me, integer column) {
 				;
 			}
 		}
-		autostring32vector result (numberOfLevels);
+		autoSTRVEC result (numberOfLevels);
 		numberOfLevels = 0;
 		irow = 1;
 		while (irow <= my rows.size) {
@@ -917,18 +917,18 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Parse the two strings of tokens.
 		*/
-		autostring32vector factors_names = newSTRVECtokenize (factors_string);
+		autoSTRVEC factors_names = newSTRVECtokenize (factors_string);
 		const integer numberOfFactors = factors_names.size;
 		if (numberOfFactors < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.get());
-		autostring32vector columnsToExpand_names = newSTRVECtokenize (columnsToExpand_string);
+		autoSTRVEC columnsToExpand_names = newSTRVECtokenize (columnsToExpand_string);
 		const integer numberToExpand = columnsToExpand_names.size;
 		if (numberToExpand < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.get());
 		Table_columns_checkCrossSectionEmpty (factors_names.get(), columnsToExpand_names.get());
-		autostring32vector levels_names = Table_getLevels_ (me, columnToTranspose);
+		autoSTRVEC levels_names = Table_getLevels_ (me, columnToTranspose);
 		const integer numberOfLevels = levels_names.size;
 		/*
 			Get the column numbers for the factors.

@@ -133,7 +133,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
 			Melder_throw (U"Number of bytes in header record (", numberOfBytesInHeaderRecord,
 				U") doesn't match number of channels (", numberOfChannels, U").");
-		autostring32vector channelNames (numberOfChannels);
+		autoSTRVEC channelNames (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 16, f);
 			buffer [16] = '\0';   // labels of the channels
@@ -552,7 +552,7 @@ autoEEG EEG_extractChannel (EEG me, integer channelNumber) {
 			Melder_throw (U"No channel ", channelNumber, U".");
 		autoEEG thee = EEG_create (my xmin, my xmax);
 		thy numberOfChannels = 1;
-		thy channelNames = autostring32vector (1);
+		thy channelNames = autoSTRVEC (1);
 		thy channelNames [1] = Melder_dup (my channelNames [1].get());
 		thy sound = Sound_extractChannel (my sound.get(), channelNumber);
 		thy textgrid = Data_copy (my textgrid.get());
@@ -581,7 +581,7 @@ autoEEG EEG_extractChannels (EEG me, constVECVU const& channelNumbers) {
 		autoEEG you = EEG_create (my xmin, my xmax);
 		your sound = Sound_extractChannels (my sound.get(), channelNumbers);
 		your numberOfChannels = numberOfChannels;
-		your channelNames = autostring32vector (numberOfChannels);
+		your channelNames = autoSTRVEC (numberOfChannels);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 			const integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
 			your channelNames [ichan] = Melder_dup (my channelNames [originalChannelNumber].get());
@@ -639,7 +639,7 @@ autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 			Melder_throw (U"Cannot concatenate zero EEG objects.");
 		EEG first = my at [1];
 		const integer numberOfChannels = first -> numberOfChannels;
-		autostring32vector channelNames = newSTRVECcopy (first -> channelNames.get());
+		autoSTRVEC channelNames = newSTRVECcopy (first -> channelNames.get());
 		for (integer ieeg = 2; ieeg <= my size; ieeg ++) {
 			EEG other = my at [ieeg];
 			if (other -> numberOfChannels != numberOfChannels)

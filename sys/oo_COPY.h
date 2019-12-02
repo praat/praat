@@ -66,7 +66,7 @@
 		integer _size = (n); \
 		Melder_assert (_size == our x.size); \
 		if (our x) { \
-			thy x = autostring32vector (_size); \
+			thy x = autoSTRVEC (_size); \
 			for (integer _i = 1; _i <= _size; _i ++) { \
 				if (our x [_i]) thy x [_i] = Melder_dup (our x [_i].get()); \
 			} \

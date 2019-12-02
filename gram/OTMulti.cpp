@@ -1423,7 +1423,7 @@ autoStrings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, doub
 		autoStrings outputs = Thing_new (Strings);
 		integer n = thy numberOfStrings;
 		outputs -> numberOfStrings = n;
-		outputs -> strings = autostring32vector (n);
+		outputs -> strings = autoSTRVEC (n);
 		for (integer i = 1; i <= n; i ++)
 			outputs -> strings [i] = OTMulti_generateOptimalForm (me, thy strings [i].get(), U"", evaluationNoise);
 		return outputs;
@@ -1436,7 +1436,7 @@ autoStrings OTMulti_generateOptimalForms (OTMulti me, conststring32 form1, const
 	try {
 		autoStrings outputs = Thing_new (Strings);
 		outputs -> numberOfStrings = numberOfTrials;
-		outputs -> strings = autostring32vector (numberOfTrials);
+		outputs -> strings = autoSTRVEC (numberOfTrials);
 		for (integer i = 1; i <= numberOfTrials; i ++)
 			outputs -> strings [i] = OTMulti_generateOptimalForm (me, form1, form2, evaluationNoise);
 		return outputs;

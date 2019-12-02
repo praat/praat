@@ -74,8 +74,8 @@
 #include "melder_textencoding.h"   // str32len_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderDir
-#include "melder_strvec.h"   // string32vector, autostring32vector (requires NUMvector)
-#include "melder_sort.h"   // VECsort_inplace (requires VEC), NUMsort_str (requires string32vector)
+#include "melder_strvec.h"   // STRVEC, autoSTRVEC (requires NUMvector)
+#include "melder_sort.h"   // VECsort_inplace (requires VEC), STRVECsort_inplace (requires STRVEC)
 
 #include "MelderArg.h"   // MelderArg (requires Melder_double, MelderFile, Melder_VEC)
 #include "melder_debug.h"   // trace (requires MelderFile, MelderArg), Melder_debug
