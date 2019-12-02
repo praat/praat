@@ -120,7 +120,7 @@ void VECmul (VECVU const& target, constMATVU const& mat, constVECVU const& vec) 
 			for (integer j = 1; j <= vec.size; j ++)
 				target [i] += mat [i] [j] * vec [j];
 		} else {
-			target [i] = NUMinner (constVEC (& mat [i] [1] - 1, mat.ncol), vec);
+			target [i] = NUMinner (mat.row (i), vec);
 		}
 	}
 }
