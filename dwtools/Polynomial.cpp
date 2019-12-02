@@ -1227,13 +1227,14 @@ autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal) {
 	}
 }
 
-static void dpoly_nr (double x, double *f, double *df, void *closure) {
-	Polynomial_evaluateWithDerivative ((Polynomial) closure, x, f, df);
+static double dpoly_nr (double x, double *df, void *closure) {
+	double f;
+	Polynomial_evaluateWithDerivative ((Polynomial) closure, x, & f, df);
+	return f;
 }
 
 double Polynomial_findOneSimpleRealRoot_nr (Polynomial me, double xmin, double xmax) {	
-	double root;
-	NUMnrbis (dpoly_nr, xmin, xmax, me, & root);
+	double root = NUMnrbis (dpoly_nr, xmin, xmax, me);
 	return root;
 }
 

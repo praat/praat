@@ -155,7 +155,7 @@ FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of p
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
-		double result, quefrency;
+		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, interpolationMethod - 1, nullptr, & result);
 		double f = 1.0 / result;
 	NUMBER_ONE_END (U" s (f =", f, U" Hz)")
