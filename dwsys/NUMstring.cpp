@@ -207,7 +207,7 @@ static autoINTVEC INTVEC_getUniqueNumbers (INTVEC & inout_numbers) {
 	autoINTVEC sorted = newINTVECraw (inout_numbers.size);
 	sorted.get () <<= inout_numbers;
 	
-	NUMsort_integer (inout_numbers.size, sorted.at); // TODO INTVEC_sortInplace
+	INTVECsort_inplace (sorted.all());
 
 	integer numberOfUniques = 1;
 	for (integer i = 2; i <= inout_numbers.size; i ++) {
