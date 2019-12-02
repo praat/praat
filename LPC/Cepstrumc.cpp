@@ -83,7 +83,8 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt,
 static void regression (VEC const& r, Cepstrumc me, integer frameNumber, integer numberOfRegressionFrames) {
 	Melder_assert (r.size == my maxnCoefficients + 1);
 	r <<= 0.0;
-	if (frameNumber <= numberOfRegressionFrames / 2 || frameNumber >= my nx - numberOfRegressionFrames / 2)
+
+	if (frameNumber <= numberOfRegressionFrames / 2 || frameNumber > my nx - numberOfRegressionFrames / 2)
 		return;
 	integer nc = INTEGER_MAX;
 	longdouble sumsq = 0.0;

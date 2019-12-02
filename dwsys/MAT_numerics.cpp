@@ -32,22 +32,23 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	double wt [1];
 	
 	eigenvectors <<= m;
-	// 0. No need to transpose a because it is a symmetric matrix
-	// 1. Query for the size of the work array
-	
+	/*
+		0. No need to transpose a because it is a symmetric matrix
+		1. Query for the size of the work array
+	*/
 	(void) NUMlapack_dsyev (& jobz, & uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), wt, & workSize, & info);
 	Melder_require (info == 0, U"dsyev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt [0]);
 	autoVEC work = newVECraw (workSize);
-
-	// 2. Calculate the eigenvalues and eigenvectors (row-wise)
-	
+	/*
+		2. Calculate the eigenvalues and eigenvectors (row-wise)
+	*/
 	(void) NUMlapack_dsyev (& jobz, & uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), work.begin(), & workSize, & info);
 	Melder_require (info == 0, U"dsyev code = ", info, U").");
-
-	// 3. Eigenvalues are returned in ascending order
-
+	/*
+		3. Eigenvalues are returned in ascending order
+	*/
 	if (! sortAscending) {
 		for (integer i = 1; i <= m.ncol / 2; i ++) {
 			const integer ilast = m.ncol - i + 1;
@@ -79,12 +80,13 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 	autoMAT eigenvectors_reim = newMATzero (n, 2 * n);
 	integer pair_index = 0;
 	for (integer ivec = 1; ivec <= eigenvalues_re.size; ivec ++) {
-		// eigenvalues of a real matrix are either real or occur in complex conjugate pairs
-		
+		/*
+			Eigenvalues of a real matrix are either real or occur in complex conjugate pairs
+		*/
 		if (eigenvalues_im [ivec] == 0.0) { // real eigenvalue
 			for (integer j = 1; j <= n; j ++)
 				eigenvectors_reim [j] [2 * ivec - 1] = eigenvectors [ivec] [j];
-		} else if (ivec > 1 && eigenvalues_re [ivec] == eigenvalues_re [ivec - 1] && 
+		} else if (ivec > 1 && eigenvalues_re [ivec] == eigenvalues_re [ivec - 1] &&
 			eigenvalues_im [ivec] == -eigenvalues_im [ivec - 1] && ivec - pair_index > 1) {
 			for (integer j = 1; j <= n; j ++) {
 				eigenvectors_reim [j] [2 * (ivec - 1) - 1]= eigenvectors [ivec - 1] [j];

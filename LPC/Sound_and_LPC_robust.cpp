@@ -120,7 +120,7 @@ void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct hub
 		LPC_Frame_Sound_filterInverse (him, hse, 1);
 
 		scale0 = hs -> scale;
-		VEC work = hs -> work.get();
+		//VEC work = hs -> work.get();
 		NUMstatistics_huber (hs -> e -> z.row (1), & hs -> location, hs -> wantlocation, & hs -> scale, hs -> wantscale, hs -> k_stdev, hs -> tol, 5);
 
 		huber_struct_getWeights (hs, hs -> e -> z.row (1));
