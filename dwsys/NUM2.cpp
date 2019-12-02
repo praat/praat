@@ -606,9 +606,9 @@ double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, 
 	if (fright == 0.0)
 		return fright;
 	Melder_require (fleft * fright < 0.0,
-		U"");
+		U"Invalid interval: the function values at the borders should have different signs.");
 	double xdifference = fabs (xmax - xmin);
-	double xdifference_old = 2.0 * xdifference;
+	double xdifference_old = 2.0 * xdifference; // just larger to make the next comparison 'true'.
 	while (xdifference < xdifference_old) {
 		const double xmid = 0.5 * (xmax + xmin);
 		const double fmid = (*func)(xmid, closure);
@@ -619,7 +619,7 @@ double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, 
 		else
 			xmin = xmid;
 		xdifference_old = xdifference;
-		xdifference = fabs (xmax -xmin);
+		xdifference = fabs (xmax - xmin);
 	}
 	return 0.5 * (xmax + xmin);
 }
