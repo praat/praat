@@ -82,7 +82,12 @@
 	}
 
 void VECsort_inplace (VECVU const& x) noexcept {
-	MACRO_NUMsort (double, & x [0], integer, x.size)
+	//MACRO_NUMsort (double, & x [0], integer, x.size)
+	std::sort (x.begin(), x.end(),
+		[] (double a, double b) {
+			return a < b;
+		}
+	);
 }
 
 void NUMsort_integer (integer n, integer a []) {
