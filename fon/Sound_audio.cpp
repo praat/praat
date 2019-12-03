@@ -539,20 +539,20 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 				for (integer i = i1; i <= i2; i ++) {
 					for (integer chan = 1; chan <= my ny; chan ++) {
 						integer value = Melder_iround_tieDown (my z [chan] [i] * 32768.0);
-						* ++ to = (int16) Melder_clipped (integer (-32768), value, integer (+32767));
+						* ++ to = (int16) Melder_clipped (-32768_integer, value, +32767_integer);
 					}
 				}
 			} else if (numberOfChannels == 2) {
 				for (integer i = i1; i <= i2; i ++) {
 					integer valueLeft = Melder_iround_tieDown (fromLeft [i] * 32768.0);
-					* ++ to = (int16) Melder_clipped (integer (-32768), valueLeft, integer (+32767));
+					* ++ to = (int16) Melder_clipped (-32768_integer, valueLeft, +32767_integer);
 					integer valueRight = Melder_iround_tieDown (fromRight [i] * 32768.0);
-					* ++ to = (int16) Melder_clipped (integer (-32768), valueRight, integer (+32767));
+					* ++ to = (int16) Melder_clipped (-32768_integer, valueRight, +32767_integer);
 				}
 			} else {
 				for (integer i = i1; i <= i2; i ++) {
 					integer value = Melder_iround_tieDown (fromLeft [i] * 32768.0);
-					* ++ to = (int16) Melder_clipped (integer (-32768), value, integer (+32767));
+					* ++ to = (int16) Melder_clipped (-32768_integer, value, +32767_integer);
 				}
 			}
 			if (thy callback)

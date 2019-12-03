@@ -289,7 +289,7 @@ autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalT
 // The resulting IntervalTier has thy xmin as starting time and thy xmax as end time
 autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
     try {
-		autoNUMvector <double> durations ((integer) 0, my intervals.size + 1);
+		autoNUMvector <double> durations (0_integer, my intervals.size + 1);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			const TextInterval myti = my intervals.at [i];
 			durations [i] = myti -> xmax - myti -> xmin;

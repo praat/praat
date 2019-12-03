@@ -27,7 +27,7 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 			formantmin = 1;
 			formantmax = numberOfPossibleFormants;
 		}
-		Melder_clipLeft (integer (1), & formantmin);
+		Melder_clipLeft (1_integer, & formantmin);
 		Melder_clipRight (& formantmax, numberOfPossibleFormants);
 
 		autoMatrix fb = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 2 * numberOfPossibleFormants, 2 * numberOfPossibleFormants, 1.0, 1.0);

@@ -493,7 +493,7 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 
 		autoSound him = Data_copy (thee);
 
-		const integer ifirst = std::max (integer (1), Sampled_xToHighIndex (thee, xmin));
+		const integer ifirst = std::max (1_integer, Sampled_xToHighIndex (thee, xmin));
 		const integer ilast = std::min (Sampled_xToLowIndex (thee, xmax), thy nx);
 		for (integer isamp = ifirst; isamp <= ilast; isamp ++) {
 			const double sampleTime = Sampled_indexToX (him.get(), isamp);
@@ -544,7 +544,7 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 
 void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
 	integer frameIndex = Sampled_xToNearestIndex (me, time);
-	Melder_clip (integer (1), & frameIndex, my nx);   // constant extrapolation
+	Melder_clip (1_integer, & frameIndex, my nx);   // constant extrapolation
 	if (channel > thy ny)
 		channel = 1;
 	Melder_require (frameIndex > 0 && frameIndex <= my nx,
@@ -570,7 +570,7 @@ autoSound LPC_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel,
 void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
 	try {
 		integer frameIndex = Sampled_xToNearestIndex (me, time);
-		Melder_clip (integer (1), & frameIndex, my nx);   // constant extrapolation
+		Melder_clip (1_integer, & frameIndex, my nx);   // constant extrapolation
 		if (channel > thy ny)
 			channel = 1;
 		if (channel > 0)

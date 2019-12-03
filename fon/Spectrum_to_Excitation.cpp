@@ -37,7 +37,7 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 		}
 		const autoVEC inSig = newVECzero (nbark);
 		for (integer i = 1; i <= nbark; i ++) {
-			const integer low = std::max (integer (1), iFreqs [i]);
+			const integer low = std::max (1_integer, iFreqs [i]);
 			const integer high = std::min (iFreqs [i + 1] - 1, my nx);
 			for (integer j = low; j <= high; j ++)
 				inSig [i] += re [j] * re [j] + im [j] * im [j];   // Pa2 s2

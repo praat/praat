@@ -84,7 +84,7 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 			my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // ... just a link
 		} else {
 			my _dontOwnData = false;
-			my d_data = NUMvector <unsigned char> ((integer) 0, numberOfBytes);
+			my d_data = NUMvector <unsigned char> (0_integer, numberOfBytes);
 			memcpy (my d_data, data, (size_t) numberOfBytes + 1);
 		}
 		return me;

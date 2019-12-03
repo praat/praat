@@ -155,8 +155,7 @@ void structManual :: v_draw () {
 	if (! our printing && page -> date) {
 		char32 signature [100];
 		integer date = page -> date;
-		int imonth = date % 10000 / 100;
-		if (imonth < 0 || imonth > 12) imonth = 0;
+		const integer imonth = Melder_clipped (0_integer, date % 10000 / 100, 12_integer);
 		Melder_sprint (signature,100,
 			U"© ", str32equ (page -> author.get(), U"ppgb") ? U"Paul Boersma" :
 			       str32equ (page -> author.get(), U"djmw") ? U"David Weenink" : page -> author.get(),
@@ -252,16 +251,14 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 
 /********** SEARCHING **********/
 
-static double *goodnessOfMatch;
-
 static double searchToken (ManPages me, integer ipage, char32 *token) {
 	double goodness = 0.0;
 	ManPage page = my pages.at [ipage];
 	struct structManPage_Paragraph *par = & page -> paragraphs [0];
 	if (! token [0]) return 1.0;
 	/*
-	 * Try to find a match in the title, case-insensitively.
-	 */
+		Try to find a match in the title, case-insensitively.
+	*/
 	static MelderString buffer { };
 	MelderString_copy (& buffer, page -> title.get());
 	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = Melder_toLowerCase (*p);
@@ -271,8 +268,8 @@ static double searchToken (ManPages me, integer ipage, char32 *token) {
 			goodness += 10000.0;   // even more points for an exact match!
 	}
 	/*
-	 * Try to find a match in the paragraphs, case-insensitively.
-	 */
+		Try to find a match in the paragraphs, case-insensitively.
+	*/
 	while ((int) par -> type != 0) {
 		if (par -> text) {
 			char32 *ptoken;
@@ -297,26 +294,30 @@ static void search (Manual me, conststring32 query) {
 	static MelderString searchText { };
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
-		if (*p == U'\n') *p = U' ';
+		if (*p == U'\n')
+			*p = U' ';
 		*p = Melder_toLowerCase (*p);
 	}
-	if (! goodnessOfMatch)
-		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
+	static autoVEC goodnessOfMatch;
+	if (NUMisEmpty (goodnessOfMatch))
+		goodnessOfMatch = newVECzero (numberOfPages);
 	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		char32 *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;
 		for (;;) {
 			char32 *space = str32chr (token, U' ');
-			if (space) *space = U'\0';
+			if (space)
+				*space = U'\0';
 			goodnessOfMatch [ipage] *= searchToken (manPages, ipage, token);
-			if (! space) break;
+			if (! space)
+				break;
 			*space = U' ';   // restore
 			token = space + 1;
 		}
 	}
 	/*
-	 * Find the 20 best matches.
-	 */
+		Find the 20 best matches.
+	*/
 	my numberOfMatches = 0;
 	for (integer imatch = 1; imatch <= 20; imatch ++) {
 		integer imax = 0;

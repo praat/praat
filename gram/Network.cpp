@@ -221,7 +221,7 @@ void Network_zeroActivities (Network me, integer nodeMin, integer nodeMax) {
 		nodeMin = 1;
 		nodeMax = my numberOfNodes;
 	}
-	Melder_clipLeft (integer (1), & nodeMin);
+	Melder_clipLeft (1_integer, & nodeMin);
 	Melder_clipRight (& nodeMax, my numberOfNodes);
 	for (integer inode = nodeMin; inode <= nodeMax; inode ++)
 		my nodes [inode]. activity = my nodes [inode]. excitation = 0.0;
@@ -234,7 +234,7 @@ void Network_normalizeActivities (Network me, integer nodeMin, integer nodeMax) 
 		nodeMin = 1;
 		nodeMax = my numberOfNodes;
 	}
-	Melder_clipLeft (integer (1), & nodeMin);
+	Melder_clipLeft (1_integer, & nodeMin);
 	Melder_clipRight (& nodeMax, my numberOfNodes);
 	if (nodeMax < nodeMin)
 		return;
@@ -265,7 +265,7 @@ void Network_normalizeWeights (Network me, integer nodeMin, integer nodeMax, int
 		nodeMin = 1;
 		nodeMax = my numberOfNodes;
 	}
-	Melder_clipLeft (integer (1), & nodeMin);
+	Melder_clipLeft (1_integer, & nodeMin);
 	Melder_clipRight (& nodeMax, my numberOfNodes);
 	if (nodeMax < nodeMin)
 		return;
@@ -506,7 +506,7 @@ autoTable Network_nodes_downto_Table (Network me, integer fromNodeNumber, intege
 	bool includeActivity, bool includeExcitation, int activityDecimals)
 {
 	try {
-		Melder_clipLeft (integer (1), & fromNodeNumber);
+		Melder_clipLeft (1_integer, & fromNodeNumber);
 		Melder_clipRight (& toNodeNumber, my numberOfNodes);
 		if (fromNodeNumber > toNodeNumber) {
 			fromNodeNumber = 1;

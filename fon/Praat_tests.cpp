@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2007,2009,2011-2018 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ static autoDaata newAutoData () {
 	autoDaata data (Thing_new (Daata));
 	return data;
 }
-static int length (conststring32 s) {
-	int result = str32len (s);
+static integer length (conststring32 s) {
+	integer result = str32len (s);
 	Melder_free (s);
 	return result;
 }
@@ -71,6 +71,10 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 	Melder_clearInfo ();
 	Melder_stopwatch ();
 	switch (itest) {
+		case kPraatTests::UNDEFINED:
+		case kPraatTests::_:
+		case kPraatTests::CHECK_RANDOM_1009_2009: {
+		} break;
 		case kPraatTests::TIME_RANDOM_FRACTION: {
 			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomFraction ();
@@ -141,7 +145,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_MELDER_32: {
 			autoMelderString string;
 			char32 word [] { U"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = char32 (NUMrandomInteger (U'a', U'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				MelderString_copy (& string, word);
 				for (int j = 1; j <= 30; j ++)
@@ -151,7 +155,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_STRING_MELDER_32_ALLOC: {
 			char32 word [] { U"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = char32 (NUMrandomInteger (U'a', U'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				autoMelderString string;
 				MelderString_copy (& string, word);
@@ -163,7 +167,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_CPP_S: {
 			std::string s = "";
 			char word [] { "abc" };
-			word [2] = (char) NUMrandomInteger ('a', 'z');
+			word [2] = char (NUMrandomInteger ('a', 'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				s = word;
 				for (int j = 1; j <= 30; j ++)
@@ -174,7 +178,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_CPP_C: {
 			std::basic_string<char> s = "";
 			char word [] { "abc" };
-			word [2] = (char) NUMrandomInteger ('a', 'z');
+			word [2] = char (NUMrandomInteger ('a', 'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				s = word;
 				for (int j = 1; j <= 30; j ++)
@@ -185,7 +189,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_CPP_WS: {
 			std::wstring s = L"";
 			wchar_t word [] { L"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = wchar_t (NUMrandomInteger (L'a', L'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				s = word;
 				for (int j = 1; j <= 30; j ++)
@@ -196,7 +200,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_CPP_WC: {
 			std::basic_string<wchar_t> s = L"";
 			wchar_t word [] { L"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = wchar_t (NUMrandomInteger (L'a', L'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				s = word;
 				for (int j = 1; j <= 30; j ++)
@@ -207,7 +211,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_CPP_32: {
 			std::basic_string<char32_t> s = U"";
 			char32 word [] { U"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = char32 (NUMrandomInteger (U'a', U'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				s = word;
 				for (int j = 1; j <= 30; j ++)
@@ -218,7 +222,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STRING_CPP_U32STRING: {
 			std::u32string s = U"";
 			char32 word [] { U"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = char32 (NUMrandomInteger (U'a', U'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				s = word;
 				for (int j = 1; j <= 30; j ++)
@@ -241,7 +245,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_WCSCPY: {
 			wchar_t buffer [100];
 			wchar_t word [] { L"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = wchar_t (NUMrandomInteger (L'a', L'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				wcscpy (buffer, word);
 				for (int j = 1; j <= 30; j ++)
@@ -252,7 +256,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_STR32CPY: {
 			char32 buffer [100];
 			char32 word [] { U"abc" };
-			word [2] = NUMrandomInteger ('a', 'z');
+			word [2] = char32 (NUMrandomInteger (U'a', U'z'));
 			for (int64 i = 1; i <= n; i ++) {
 				str32cpy (buffer, word);
 				for (int j = 1; j <= 30; j ++)
@@ -487,7 +491,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			//Melder_require (NUMequal (result.get(), constantHH (size, size, size * 30.0).get()), U"...");
 		} break;
 		case kPraatTests::THING_AUTO: {
-			int numberOfThingsBefore = theTotalNumberOfThings;
+			integer numberOfThingsBefore = theTotalNumberOfThings;
 			{
 				Melder_casual (U"1\n");
 				autoDaata data = Thing_new (Daata);

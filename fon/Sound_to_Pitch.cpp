@@ -417,7 +417,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Determine the minimum and maximum lags.
 		 */
-		const integer minimumLag = std::max (integer (2), Melder_ifloor (1.0 / my dx / ceiling));
+		const integer minimumLag = std::max (2_integer, Melder_ifloor (1.0 / my dx / ceiling));
 		const integer maximumLag = std::min (Melder_ifloor (nsamp_window / periodsPerWindow) + 2, nsamp_window);
 
 		/*

@@ -868,7 +868,7 @@ void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, 
 	autoPolynomial aq, ar;
 	VECpolynomial_divide (my coefficients.get (), thy coefficients.get (), qc.get (), rc.get ());
 	if (out_q) {
-		const integer degree = std::max (my numberOfCoefficients - thy numberOfCoefficients, (integer) 0);
+		const integer degree = std::max (my numberOfCoefficients - thy numberOfCoefficients, 0_integer);
 		aq = Polynomial_create (my xmin, my xmax, degree);
 		if (degree >= 0)
 			aq -> coefficients.get () <<= qc.part (1, degree + 1);
@@ -1617,13 +1617,11 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 		knot [1] = ... = knot [order] && knot [nKnots-order+1] = ... knot [nKnots].
 	*/
 
-	integer index_b = index - order + 1;
-	index_b = std::max (index_b, (integer) 1);
+	const integer index_b = Melder_clippedLeft (1_integer, index - order + 1);
 	if (x < points [index_b])
 		return 0.0;
 
-	integer index_e = index_b + std::min (index, order);
-	index_e = std::min (points.size, index_e);
+	const integer index_e = Melder_clippedRight (index_b + std::min (index, order), points.size);
 	if (x > points [index_e])
 		return 0.0;
 	/*
@@ -1658,34 +1656,32 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 static double NUMispline2 (constVEC points, integer order, integer index, double x) {
 	Melder_assert (points.size > 2 && order > 0 && index > 0);
 
-	integer index_b = index - order + 1;
-	index_b = std::max (index_b, (integer) 1);
-
+	const integer index_b = Melder_clippedLeft (1_integer, index - order + 1);
 	if (x < points [index_b])
 		return 0.0;
 
-	integer index_e = index_b + std::min (index, order);
-	index_e = std::min (points.size, index_e);
-
+	const integer index_e = Melder_clippedRight (index_b + std::min (index, order), points.size);
 	if (x > points [index_e])
 		return 1.0;
+
 	integer j;
 	for (j = index_e - 1; j >= index_b; j--)
-		if (x > points [j]) break;
+		if (x > points [j])
+			break;
 	/*
 		Equation 5 in Ramsay's article contains some errors!!!
 		1. the interval selection must be 'j-k <= i <= j' instead of
 			'j-k+1 <= i <= j'
 		2. the summation index m starts at 'i+1' instead of 'i'
 	*/
-	double y = 0.0;
+	longdouble y = 0.0;
 	for (integer m = index + 1; m <= j + order; m ++) {
 		integer km = m - order, kmp = km + order + 1;
-		km = std::max (km, (integer) 1);
-		kmp = std::min (kmp, points.size);
+		Melder_clipLeft (1_integer, & km);
+		Melder_clipRight (& kmp, points.size);
 		y += (points [kmp] - points [km]) * NUMmspline2 (points, order + 1, m, x);
 	}
-	return y /= (order + 1);
+	return double (y / (order + 1));
 }
 
 Thing_implement (Spline, FunctionTerms, 0);

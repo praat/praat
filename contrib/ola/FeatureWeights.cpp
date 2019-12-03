@@ -165,9 +165,9 @@ autoFeatureWeights FeatureWeights_computeWrapperInt (
 	try {
 		double pivot = 0.5;
 		double range = 0.5;
-		autoNUMvector<double> results ((integer)0, nseeds);
+		autoNUMvector<double> results (0_integer, nseeds);
 
-		autoThingVector<structFeatureWeights> cs ((integer)0, nseeds);
+		autoThingVector<structFeatureWeights> cs (0_integer, nseeds);
 		for (integer y = 0; y <= nseeds; y++) {
 			cs[y] = FeatureWeights_create (my input->nx);
 		}
@@ -266,9 +266,9 @@ autoFeatureWeights FeatureWeights_computeWrapperExt (
 	try {
 		double pivot = 0.5;
 		double range = 0.5;
-		autoNUMvector<double> results ((integer)0, nseeds);
+		autoNUMvector<double> results (0_integer, nseeds);
 
-		autoThingVector<structFeatureWeights> cs ((integer)0, nseeds);
+		autoThingVector<structFeatureWeights> cs (0_integer, nseeds);
 		for (integer y = 0; y <= nseeds; y++) {
 			cs[y] = FeatureWeights_create (pp->nx);
 		}
@@ -403,8 +403,8 @@ autoFeatureWeights FeatureWeights_computeRELIEF (
 	// Normalization               //
 	/////////////////////////////////
 
-	autoNUMvector<double> min ((integer)0, p->nx - 1);
-	autoNUMvector<double> max ((integer)0, p->nx - 1);
+	autoNUMvector<double> min (0_integer, p->nx - 1);
+	autoNUMvector<double> max (0_integer, p->nx - 1);
 	for (integer x = 1; x <= p->nx; x++) {
 		max[x] = p->z[1][x];   // BUG: this will just crash because of
 		                       // array index out of bounds
@@ -418,7 +418,7 @@ autoFeatureWeights FeatureWeights_computeRELIEF (
 		}
 	}
 
-	autoNUMvector<double> alfa ((integer)0, p->nx - 1);
+	autoNUMvector<double> alfa (0_integer, p->nx - 1);
 	for (integer x = 1; x <= p->nx; x++) {
 		alfa[x] = max[x] - min[x];   // BUG: this will just crash because of
 		                             // array index out of bounds
@@ -438,13 +438,11 @@ autoFeatureWeights FeatureWeights_computeRELIEF (
 	// Computing prior class probs //
 	/////////////////////////////////
 
-	autoNUMvector<double> priors (
-	        (integer) 0, c->size - 1);   // worst-case allocations
-	autoNUMvector<integer> classes ((integer) 0, c->size - 1);   //
-	autoNUMvector<integer> enemies ((integer) 0, c->size - 1);   //
-	autoNUMvector<integer> friends ((integer) 0, c->size - 1);   //
-	integer nclasses =
-	        FeatureWeights_computePriors (c, classes.peek (), priors.peek ());
+	autoNUMvector<double> priors (0_integer, c->size - 1);   // worst-case allocations
+	autoNUMvector<integer> classes (0_integer, c->size - 1);   //
+	autoNUMvector<integer> enemies (0_integer, c->size - 1);   //
+	autoNUMvector<integer> friends (0_integer, c->size - 1);   //
+	integer nclasses = FeatureWeights_computePriors (c, classes.peek (), priors.peek ());
 	Melder_assert (nclasses >= 2);
 
 	/////////////////////////////////
@@ -453,13 +451,11 @@ autoFeatureWeights FeatureWeights_computeRELIEF (
 
 	for (integer y = 1; y <= p->ny; y++) {
 
-		integer nfriends =
-		        KNN_kFriends (p.get (), p.get (), c, y, k, friends.peek ());
-		integer nenemies = KNN_kUniqueEnemies (
-		        p.get (), p.get (), c, y, nclasses - 1, enemies.peek ());
+		integer nfriends = KNN_kFriends (p.get (), p.get (), c, y, k, friends.peek ());
+		integer nenemies = KNN_kUniqueEnemies (p.get (), p.get (), c, y, nclasses - 1, enemies.peek ());
 
 		if (nfriends && nenemies) {
-			autoNUMvector<double> classps ((integer)0, nenemies - 1);
+			autoNUMvector<double> classps (0_integer, nenemies - 1);
 			for (integer eq = 0; eq < nenemies; eq++) {
 				for (integer iq = 0; iq < nclasses; iq++) {
 					if (FeatureWeights_areFriends (

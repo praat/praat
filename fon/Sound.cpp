@@ -1088,7 +1088,7 @@ autoSound Sound_extractPart (Sound me, double tmin, double tmax, kSound_windowSh
 			The *virtual* samples will remain at zero.
 		*/
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			const integer itmin_clipped = std::max (integer (1), itmin);
+			const integer itmin_clipped = std::max (1_integer, itmin);
 			const integer itmax_clipped = std::min (itmax, my nx);
 			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
 					<<= my z.row (ichan). part (itmin_clipped, itmax_clipped);
@@ -1132,7 +1132,7 @@ autoSound Sound_extractPartForOverlap (Sound me, double tmin, double tmax, doubl
 			The *virtual* samples will remain at zero.
 		*/
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			const integer itmin_clipped = std::max (integer (1), itmin);
+			const integer itmin_clipped = std::max (1_integer, itmin);
 			const integer itmax_clipped = std::min (itmax, my nx);
 			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
 					<<= my z.row (ichan). part (itmin_clipped, itmax_clipped);
