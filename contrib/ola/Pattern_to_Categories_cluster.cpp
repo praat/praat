@@ -61,11 +61,11 @@ autoCategories PatternList_to_Categories_cluster
 				s = (double) (p -> ny / k) / (double) (p -> ny / k + 1);
 
 		double progress = m;
-		autoNUMvector <double> sizes ((integer) 0, k);
-		autoNUMvector <integer> seeds ((integer) 0, k);
+		autoNUMvector <double> sizes (0_integer, k);
+		autoNUMvector <integer> seeds (0_integer, k);
 
 		autoPatternList centroids = PatternList_create (k, p -> nx);
-		autoNUMvector <double> beta ((integer) 0, centroids -> nx);
+		autoNUMvector <double> beta (0_integer, centroids -> nx);
 
 		do
 		{

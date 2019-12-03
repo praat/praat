@@ -484,7 +484,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"(zoom out to see the data)");
 		return;
 	}
-	const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, integer (8));
+	const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
 	const integer firstVisibleChannel = my d_sound.channelOffset + 1;
 	const integer lastVisibleChannel = Melder_clippedRight (my d_sound.channelOffset + numberOfVisibleChannels, numberOfChannels);
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
@@ -664,7 +664,7 @@ bool structTimeSoundEditor :: v_clickB (double xbegin, double ybegin) {
 		if (numberOfChannels > 1) {
 			integer numberOfVisibleChannels = ( numberOfChannels > 8 ? 8 : numberOfChannels );
 			trace (xbegin, U" ", ybegin, U" ", numberOfChannels, U" ", d_sound.channelOffset);
-			const integer box = Melder_clipped (integer (1), Melder_ifloor (ybegin * numberOfVisibleChannels + 1), numberOfVisibleChannels);
+			const integer box = Melder_clipped (1_integer, Melder_ifloor (ybegin * numberOfVisibleChannels + 1), numberOfVisibleChannels);
 			const integer channel = numberOfVisibleChannels - box + 1 + d_sound.channelOffset;
 			if (Melder_debug == 24)
 				Melder_casual (U"structTimeSoundEditor :: v_clickB ", ybegin, U" ", channel);

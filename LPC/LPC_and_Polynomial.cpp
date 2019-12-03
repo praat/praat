@@ -34,7 +34,7 @@ autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 	try {
 		integer iFrame = Sampled_xToIndex (me, time);
-		Melder_clip (integer (1), & iFrame, my nx);   // constant extrapolation
+		Melder_clip (1_integer, & iFrame, my nx);   // constant extrapolation
 		autoPolynomial thee = LPC_Frame_to_Polynomial (& my d_frames [iFrame]);
 		return thee;
 	} catch (MelderError) {

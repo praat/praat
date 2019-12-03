@@ -445,8 +445,8 @@ void * KNN_classifyToTableOfRealAux
 {
 	KNN_input_ToTableOfReal_t *input = (KNN_input_ToTableOfReal_t *) void_input;
     integer ncategories = input -> uniqueCategories->size;
-    autoNUMvector <integer> indices ((integer) 0, input -> k);
-    autoNUMvector <double> distances ((integer) 0, input -> k);
+    autoNUMvector <integer> indices (0_integer, input -> k);
+    autoNUMvector <double> distances (0_integer, input -> k);
 
 	for (integer y = input -> istart; y <= input -> istop; y ++) {
 		KNN_kNeighbours (input -> ps, input -> me -> input.get(), input -> fws, y, input -> k, indices.peek(), distances.peek());
@@ -531,11 +531,11 @@ autoCategories KNN_classifyFold
 
     integer ncollected;
     integer ncategories;
-    autoNUMvector <integer> indices ((integer) 0, k);
-    autoNUMvector <integer> freqindices ((integer) 0, k);
-    autoNUMvector <double> distances ((integer) 0, k);
-    autoNUMvector <double> freqs ((integer) 0, k);
-    autoNUMvector <integer> outputindices ((integer) 0, ps->ny);
+    autoNUMvector <integer> indices (0_integer, k);
+    autoNUMvector <integer> freqindices (0_integer, k);
+    autoNUMvector <double> distances (0_integer, k);
+    autoNUMvector <double> freqs (0_integer, k);
+    autoNUMvector <integer> outputindices (0_integer, ps->ny);
     integer noutputindices = 0;
 
     for (integer y = begin; y <= end; y ++)
@@ -718,7 +718,7 @@ double KNN_modelSearch
 		double drate = rate / range;
 
 		soil best = { 0, Melder_iround (dpivot), Melder_iround (dpivot) };
-		autoNUMvector <soil> field ((integer) 0, nseeds - 1);
+		autoNUMvector <soil> field (0_integer, nseeds - 1);
 
 		while (range > 0) {
 			for (integer n = 0; n < nseeds; n++) {
@@ -854,7 +854,7 @@ integer KNN_kNeighboursSkip
     integer dc = 0;
     integer py = 1;
 
-	autoNUMvector <double> distances ((integer) 0, k - 1);
+	autoNUMvector <double> distances (0_integer, k - 1);
 
 	Melder_assert (jy > 0 && jy <= j -> ny);
 	Melder_assert (k > 0 && k <= p -> ny);
@@ -1061,7 +1061,7 @@ integer KNN_kFriends
     integer maxi;
     integer dc = 0;
     integer py = 1;
-    autoNUMvector <double> distances ((integer) 0, k - 1);
+    autoNUMvector <double> distances (0_integer, k - 1);
 
     Melder_assert (jy <= j -> ny  && k <= p -> ny && k > 0);
     Melder_assert (indices);
@@ -1150,8 +1150,8 @@ integer KNN_friendsAmongkNeighbours
 )
 
 {
-    autoNUMvector <double> distances ((integer) 0, k - 1);
-    autoNUMvector <integer> indices ((integer) 0, k - 1);
+    autoNUMvector <double> distances (0_integer, k - 1);
+    autoNUMvector <integer> indices (0_integer, k - 1);
     integer friends = 0;
 
     Melder_assert (jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
@@ -1618,7 +1618,7 @@ void * KNN_SA_t_copy_construct
     KNN_SA_t * result = (KNN_SA_t *) malloc(sizeof(KNN_SA_t));
 
     result->p = ((KNN_SA_t *) istruct)->p;
-    result->indices = (integer *) malloc (sizeof(integer) * (result->p->ny + 1));
+    result->indices = (integer *) malloc (sizeof (integer) * (result->p->ny + 1));
 
     for (integer i = 1; i <= result->p->ny; ++i)
         result->indices[i] = ((KNN_SA_t *) istruct)->indices[i];

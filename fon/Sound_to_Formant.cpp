@@ -307,7 +307,7 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 		integer startSample = rightSample - halfnsamp_window;
 		integer endSample = leftSample + halfnsamp_window;
 		double maximumIntensity = 0.0;
-		Melder_clipLeft (integer (1), & startSample);   // this should not be more than a rounding problem
+		Melder_clipLeft (1_integer, & startSample);   // this should not be more than a rounding problem
 		Melder_clipRight (& endSample, my nx);   // this should not be more than a rounding problem
 		for (integer i = startSample; i <= endSample; i ++) {
 			const double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);

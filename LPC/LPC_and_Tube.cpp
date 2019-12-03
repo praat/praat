@@ -190,7 +190,7 @@ void VocalTract_setLength (VocalTract me, double newLength) {
 autoVocalTract LPC_to_VocalTract_slice_special (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
 		integer frameNumber = Sampled_xToNearestIndex (me, time);
-		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
+		Melder_clip (1_integer, & frameNumber, my nx);   // constant extrapolation
 		LPC_Frame lpc = & my d_frames [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
 		const double length = VocalTract_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
@@ -219,7 +219,7 @@ autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 autoVocalTract LPC_to_VocalTract_slice (LPC me, double time, double length) {
 	try {
 		integer frameNumber = Sampled_xToNearestIndex (me, time);
-		Melder_clip (integer (1), & frameNumber, my nx);   // constant extrapolation
+		Melder_clip (1_integer, & frameNumber, my nx);   // constant extrapolation
 		const LPC_Frame lpc = & my d_frames [frameNumber];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, length);
 		return thee;

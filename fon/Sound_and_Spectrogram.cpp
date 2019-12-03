@@ -71,7 +71,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		/*
 			Compute the frequency sampling of the spectrogram.
 		*/
-		const integer binWidth_samples = std::max (integer (1), Melder_ifloor (freqStep * my dx * nsampFFT));
+		const integer binWidth_samples = std::max (1_integer, Melder_ifloor (freqStep * my dx * nsampFFT));
 		double binWidth_hertz = 1.0 / (my dx * nsampFFT);
 		freqStep = binWidth_samples * binWidth_hertz;
 		numberOfFreqs = Melder_ifloor (fmax / freqStep);

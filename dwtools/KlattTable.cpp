@@ -1102,7 +1102,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 			Melder_warning (U"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
 		thee = KlattGlobal_create (samplingFrequency);
 		frame = KlattFrame_create ();
-		autoNUMvector <short> iwave ((integer) 0, MAX_SAM);
+		autoNUMvector <short> iwave (0_integer, MAX_SAM);
 		thy samrate = Melder_ifloor (samplingFrequency);
 
 		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, Melder_ifloor (flutter), outputType);

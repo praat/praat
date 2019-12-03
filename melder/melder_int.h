@@ -61,6 +61,8 @@ using uint64 = uint64_t;
 	#define INT54_MIN  -9007199254740991LL
 #endif
 
+inline static integer operator"" _integer (unsigned long long value) { return integer (value); }
+
 /*
 	We assume that the types "integer" and "uinteger" are both large enough to contain
 	any possible value that Praat wants to assign to them.
@@ -89,7 +91,7 @@ struct MelderIntegerRange {
 	bool isEmpty () { return ( last < first ); }
 	integer size () {
 		integer result = last - first + 1;
-		return std::max (result, integer (0));
+		return std::max (result, 0_integer);
 	}
 };
 

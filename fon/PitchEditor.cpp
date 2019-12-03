@@ -108,7 +108,7 @@ static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	const Pitch pitch = (Pitch) my data;
-	const integer ileft = std::max (integer (1), Sampled_xToHighIndex (pitch, my startSelection));
+	const integer ileft = std::max (1_integer, Sampled_xToHighIndex (pitch, my startSelection));
 	const integer iright = std::min (Sampled_xToLowIndex (pitch, my endSelection), pitch -> nx);
 	Editor_save (me, U"Unvoice");
 	for (integer iframe = ileft; iframe <= iright; iframe ++) {
@@ -205,8 +205,9 @@ void structPitchEditor :: v_draw () {
 		}
 		Graphics_setLineType (our graphics.get(), Graphics_DRAWN);
 
-		/* Show candidates. */
-
+		/*
+			Show candidates.
+		*/
 		for (integer it = it1; it <= it2; it ++) {
 			const Pitch_Frame frame = & pitch -> frames [it];
 			const double time = Sampled_indexToX (pitch, it);
@@ -220,8 +221,8 @@ void structPitchEditor :: v_draw () {
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
 				frequency = frame -> candidates [icand]. frequency;
 				if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling)) {
-					const integer strength = std::min (Melder_iround (10.0 * frame -> candidates [icand]. strength),
-							integer (9));
+					const integer strength = Melder_clippedRight (Melder_iround (10.0 * frame -> candidates [icand]. strength),
+							9_integer);   // map 0.0-1.0 to 0-9
 					Graphics_text (our graphics.get(), time, frequency,   strength);
 				}
 			}
@@ -244,8 +245,8 @@ void structPitchEditor :: v_draw () {
 		for (integer it = it1; it <= it2; it ++) {
 			const Pitch_Frame frame = & pitch -> frames [it];
 			const double time = Sampled_indexToX (pitch, it);
-			const integer strength = std::min (Melder_iround (10.0 * frame -> intensity + 0.5),
-					integer (9));   // map 0.0-1.0 to 0-9
+			const integer strength = Melder_clippedRight (Melder_iround (10.0 * frame -> intensity + 0.5),
+					9_integer);   // map 0.0-1.0 to 1-9
 			Graphics_text (our graphics.get(), time, 0.5,   strength);
 		}
 		Graphics_resetViewport (our graphics.get(), previous);
@@ -296,7 +297,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	integer bestCandidate = -1;
 
 	integer ibestFrame = Sampled_xToNearestIndex (pitch, xWC);
-	Melder_clip (integer (1), & ibestFrame, pitch -> nx);
+	Melder_clip (1_integer, & ibestFrame, pitch -> nx);
 	const Pitch_Frame bestFrame = & pitch -> frames [ibestFrame];
 
 	const double tmid = Sampled_indexToX (pitch, ibestFrame);

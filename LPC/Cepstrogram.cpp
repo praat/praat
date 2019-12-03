@@ -384,7 +384,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const double tbegin = std::max (thy xmin, t1 + (iframe - 1) * dt - analysisWidth / 2.0);
-			const integer istart = std::max (integer (1), Sampled_xToLowIndex (thee.get(), tbegin));   // ppgb: afronding naar beneden?
+			const integer istart = std::max (1_integer, Sampled_xToLowIndex (thee.get(), tbegin));   // ppgb: afronding naar beneden?
 			integer iend = istart + nosInWindow - 1;
 			if (iend > thy nx)
 				iend = thy nx;
