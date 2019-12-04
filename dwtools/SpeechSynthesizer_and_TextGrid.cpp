@@ -289,19 +289,19 @@ autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalT
 // The resulting IntervalTier has thy xmin as starting time and thy xmax as end time
 autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
     try {
-		autoNUMvector <double> durations (0_integer, my intervals.size + 1);
+		autoVEC durations = newVECzero (my intervals.size + 1);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			const TextInterval myti = my intervals.at [i];
 			durations [i] = myti -> xmax - myti -> xmin;
 		}
 		integer myInterval = 1;
-		double xShift = thy xmin - my xmin;
-        for (integer j = 1; j <= thy intervals.size; j ++) {
-            const TextInterval patch = thy intervals.at [j];
+		double xShift = thy xmin - my xmin, firstShift = 0.0;
+        for (integer interval = 1; interval <= thy intervals.size; interval ++) {
+            const TextInterval patch = thy intervals.at [interval];
             if (Melder_equ (patch -> text.get(), patchLabel)) {
-				if (j == 1)
-					xShift += durations[0] = patch -> xmax - patch -> xmin;
-				else if (j == thy intervals.size) 
+				if (interval == 1)
+					xShift += firstShift = patch -> xmax - patch -> xmin;
+				else if (interval == thy intervals.size) 
 					durations [my intervals.size + 1] = patch -> xmax - patch -> xmin;
 				else
 					while (myInterval <= my intervals.size) {
@@ -326,19 +326,19 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
         }
         autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
         // first interval
-		double time = thy xmin + durations[0];
+		double time = thy xmin + firstShift;
 		integer hisInterval = 1;
-		if (durations [0] > 0) {
+		if (firstShift > 0.0) {
 			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
 			hisInterval++;
 		}
-		for (integer i = 1; i <= my intervals.size; i ++) {
-			const TextInterval ti = my intervals.at [i];
-			time += durations [i];
+		for (integer interval = 1; interval <= my intervals.size; interval ++) {
+			const TextInterval ti = my intervals.at [interval];
+			time += durations [interval];
 			IntervalTier_splitInterval (him.get(), time, ti -> text.get(), hisInterval, precision);
 			hisInterval++;
 		}
-		if (durations [my intervals.size + 1] > 0) {
+		if (durations [my intervals.size + 1] > 0.0) {
 			time += durations [my intervals.size + 1];
 			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
 		}
