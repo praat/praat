@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20191126)
+MAN_BEGIN (U"What's new?", U"ppgb", 20191205)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.08# (5 December 2019)")
+LIST_ITEM (U"• Repaired a bug with automatic alignment for TextGrids (introduced in 6.1.07).")
 NORMAL (U"##6.1.07# (26 November 2019)")
 LIST_ITEM (U"• Raspberry Pi edition.")
 NORMAL (U"##6.1.06# (8 November 2019)")
