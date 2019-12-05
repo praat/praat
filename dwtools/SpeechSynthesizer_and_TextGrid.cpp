@@ -71,7 +71,7 @@ autoSound SpeechSynthesizer_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid th
 }
 
 #if 0
-static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, integer tierNumber, conststring32 label) {
+static double TextGrid_getStartTimeOfFirstOccurrence (TextGrid thee, integer tierNumber, conststring32 label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	const IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 	Melder_require (intervalTier -> classInfo == classIntervalTier,
@@ -87,7 +87,7 @@ static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, integer tier
 	return start;
 }
 
-static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, integer tierNumber, conststring32 label) {
+static double TextGrid_getEndTimeOfLastOccurrence (TextGrid thee, integer tierNumber, conststring32 label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 	Melder_require (intervalTier -> classInfo == classIntervalTier,
@@ -111,7 +111,7 @@ static void IntervalTier_getLabelInfo (IntervalTier me, conststring32 label, dou
 		const TextInterval ti = my intervals.at [i];
         if (Melder_equ (ti -> text.get(), label)) {
             *labelDurations += ti -> xmax - ti -> xmin;
-            (*numberOfOccurences)++;
+            (*numberOfOccurences) ++;
         }
     }
 }
@@ -124,8 +124,10 @@ void IntervalTier_splitInterval (IntervalTier me, double time, conststring32 lef
 		integer index = 0;
         for (integer i = interval; i <= my intervals.size; i ++) {
             ti = my intervals.at [i];
-            if (time < ti -> xmax + precision && time > ti -> xmin - precision)
-                index = i; break;
+            if (time < ti -> xmax + precision && time > ti -> xmin - precision) {
+                index = i;
+                break;
+			}
         }
         // if index == 0 then search left intervals??
         if (index == 0 || TIMES_ARE_CLOSE(time, ti -> xmin) || TIMES_ARE_CLOSE(time, ti -> xmax))
@@ -158,12 +160,12 @@ static autoTextTier TextTier_IntervalTier_cutPartsMatchingLabel (TextTier me, In
                     const TextPoint tp = my points.at [myIndex];
                     if (tp -> number < cut -> xmin - precision) {
                         // point is left of cut
-                        myIndex++;
+                        myIndex ++;
                     } else if (tp -> number < cut -> xmax + precision) {
                         // point is in (no)cut
                         const double time = tp -> number - my xmin - timeCut;
                         TextTier_addPoint (him.get(), time, tp -> mark.get());
-                        myIndex++;
+                        myIndex ++;
                     } else {
                         break;
                     }
@@ -319,26 +321,26 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 					TextInterval ti = my intervals.at [myInterval];
 					double tixmax = ti -> xmax + xShift;
 					if (tixmax < patch -> xmin + precision)
-						myInterval++;
+						myInterval ++;
 					else
 						break;
 				}
         }
         autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
         // first interval
-		double time = thy xmin + durations[0];
+		double time = thy xmin + durations [0];
 		integer hisInterval = 1;
-		if (durations [0] > 0) {
+		if (durations [0] > 0.0) {
 			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
-			hisInterval++;
+			hisInterval ++;
 		}
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			const TextInterval ti = my intervals.at [i];
 			time += durations [i];
 			IntervalTier_splitInterval (him.get(), time, ti -> text.get(), hisInterval, precision);
-			hisInterval++;
+			hisInterval ++;
 		}
-		if (durations [my intervals.size + 1] > 0) {
+		if (durations [my intervals.size + 1] > 0.0) {
 			time += durations [my intervals.size + 1];
 			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
 		}
@@ -350,38 +352,40 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 
 #if 0
 static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
-    try {
-        autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
-        integer myInterval = 1, hisInterval = 1;
-        double xmax = thy xmin;
-        for (integer i = 1; i <= thy intervals.size; i ++) {
-            TextInterval myti, ti = thy intervals.at [i];
-            if (Melder_equ (ti -> text, patchLabel)) {
-                bool splitInterval = false; double endtime, split = 0;
-                if (i > 0) {
+	try {
+		utoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
+		integer myInterval = 1, hisInterval = 1;
+		double xmax = thy xmin;
+		for (integer i = 1; i <= thy intervals.size; i ++) {
+			TextInterval myti, ti = thy intervals.at [i];
+			if (Melder_equ (ti -> text, patchLabel)) {
+				bool splitInterval = false;
+				double endtime, split = 0.0;
+BUG				if (i > 0) {
                     while (myInterval <= my intervals.size) {
                         myti = my intervals.at [myInterval];
                         endtime = xmax + myti -> xmax - myti -> xmin;
                         if (endtime <= ti -> xmin + precision) {
                             xmax = endtime;
                             IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
-                            hisInterval++;
+                            hisInterval ++;
                         } else {
                             if (xmax < ti -> xmin - precision) { // split interval ???
                                 splitInterval = true;
                                 xmax = ti -> xmin;
                                 split = endtime - xmax;
                                 IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
-                                hisInterval ++; myInterval++;
+                                hisInterval ++;
+                                myInterval ++;
                             }
                             break;
                         }
-                        myInterval++;
+                        myInterval ++;
                     }
                 }
                 xmax += ti -> xmax - ti -> xmin;
                 IntervalTier_splitInterval (him.get(), xmax, U"", hisInterval, precision);
-                hisInterval++;
+                hisInterval ++;
                 if (splitInterval) {
                     xmax += split;
                     IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
@@ -392,8 +396,8 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
                     myti = my intervals.at [myInterval];
                     xmax += myti -> xmax - myti -> xmin;
                     IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
-                    hisInterval++;
-                    myInterval++;
+                    hisInterval ++;
+                    myInterval ++;
                 }
             }
         }
@@ -405,68 +409,68 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
 #endif
 
 static autoTextTier TextTier_IntervalTier_patch (TextTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
-    try {
-        integer myIndex = 1;
-        autoTextTier him = TextTier_create (thy xmin, thy xmax);
-        double xShift = thy xmin - my xmin;
-        for (integer i = 1; i <= thy intervals.size; i ++) {
-            const TextInterval ti = thy intervals.at [i];
-            if (Melder_equ (ti -> text.get(), patchLabel)) {
-                if (i > 1) {
-                    while (myIndex <= my points.size) {
-                        const TextPoint tp = my points.at [myIndex];
-                        const double time = tp -> number + xShift;
-                        if (time < ti -> xmin + precision) {
-                            autoTextPoint newPoint = TextPoint_create (time, tp -> mark.get());
-                            his points. addItem_move (newPoint.move());
-                        } else {
-                            break;
-                        }
-                        myIndex++;
-                    }
-                }
-                xShift += ti -> xmax - ti -> xmin;
-           } else if (i == thy intervals.size) {
-                while (myIndex <= my points.size) {
-                    const TextPoint tp = my points.at [myIndex];
-                   const  double time = tp -> number + xShift;
-                    if (time < ti -> xmin + precision) {
-                        autoTextPoint newPoint = TextPoint_create (time, tp -> mark.get());
-                        his points. addItem_move (newPoint.move());
-                    }
-                    myIndex++;
-                }
-            }
-        }
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": cannot patch TextTier.");
-    }
+	try {
+		integer myIndex = 1;
+		autoTextTier him = TextTier_create (thy xmin, thy xmax);
+		double xShift = thy xmin - my xmin;
+		for (integer i = 1; i <= thy intervals.size; i ++) {
+			const TextInterval ti = thy intervals.at [i];
+			if (Melder_equ (ti -> text.get(), patchLabel)) {
+				if (i > 1) {
+					while (myIndex <= my points.size) {
+						const TextPoint tp = my points.at [myIndex];
+						const double time = tp -> number + xShift;
+						if (time < ti -> xmin + precision) {
+							autoTextPoint newPoint = TextPoint_create (time, tp -> mark.get());
+							his points. addItem_move (newPoint.move());
+						} else {
+							break;
+						}
+						myIndex ++;
+					}
+				}
+				xShift += ti -> xmax - ti -> xmin;
+			} else if (i == thy intervals.size) {
+				while (myIndex <= my points.size) {
+					const TextPoint tp = my points.at [myIndex];
+					const  double time = tp -> number + xShift;
+					if (time < ti -> xmin + precision) {
+						autoTextPoint newPoint = TextPoint_create (time, tp -> mark.get());
+						his points. addItem_move (newPoint.move());
+					}
+					myIndex ++;
+				}
+			}
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot patch TextTier.");
+	}
 }
 
 autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, conststring32 patchLabel, double precision) {
-    try {
-        double patchDurations;
-        integer numberOfPatches;
-        IntervalTier_getLabelInfo (thee, patchLabel, &patchDurations, &numberOfPatches);
-        if (patchDurations <= 0 || my xmax - my xmin >= thy xmax - thy xmin ) // Nothing to patch
-            return Data_copy (me);
-        autoTextGrid him = TextGrid_createWithoutTiers (thy xmin, thy xmax);
-        for (integer itier = 1; itier <= my tiers->size; itier ++) {
-            const Function anyTier = my tiers->at [itier];
-            if (anyTier -> classInfo == classIntervalTier) {
-//                autoIntervalTier ait = IntervalTiers_patch ((IntervalTier) anyTier, thee, patchLabel, precision);
-                autoIntervalTier newTier = IntervalTiers_patch_noBoundaries ((IntervalTier) anyTier, thee, patchLabel, precision);
-                his tiers -> addItem_move (newTier.move());
-            } else {
-                autoTextTier newTier = TextTier_IntervalTier_patch ((TextTier) anyTier, thee, patchLabel, precision);
-                his tiers -> addItem_move (newTier.move());
-            }
-        }
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": not patched.");
-    }
+	try {
+		double patchDurations;
+		integer numberOfPatches;
+		IntervalTier_getLabelInfo (thee, patchLabel, & patchDurations, & numberOfPatches);
+		if (patchDurations <= 0 || my xmax - my xmin >= thy xmax - thy xmin ) // Nothing to patch
+			return Data_copy (me);
+		autoTextGrid him = TextGrid_createWithoutTiers (thy xmin, thy xmax);
+		for (integer itier = 1; itier <= my tiers->size; itier ++) {
+			const Function anyTier = my tiers->at [itier];
+			if (anyTier -> classInfo == classIntervalTier) {
+				//autoIntervalTier ait = IntervalTiers_patch ((IntervalTier) anyTier, thee, patchLabel, precision);
+				autoIntervalTier newTier = IntervalTiers_patch_noBoundaries ((IntervalTier) anyTier, thee, patchLabel, precision);
+				his tiers -> addItem_move (newTier.move());
+			} else {
+				autoTextTier newTier = TextTier_IntervalTier_patch ((TextTier) anyTier, thee, patchLabel, precision);
+				his tiers -> addItem_move (newTier.move());
+			}
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": not patched.");
+	}
 }
 
 // We assume that the Sound and the SpeechSynthesizer have the same samplingFrequency
@@ -480,7 +484,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		autoSTRVEC tokens = newSTRVECtokenize (his text.get());
 		const integer numberOfTokens = tokens.size;
 		Melder_require (numberOfTokens > 0,
-			U"The interval should have text.");
+			U"The interval should contain text.");
 		/*
 			Remove silent intervals from start and end of sounds because
 			1. it will improve the word rate guess
@@ -527,12 +531,12 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 			Compare the durations of the two sounds to get an indication of the slope constraint needed for the DTW
 		*/
 		double slope = duration_soundTrimmed / synthTrimmed_duration;
-		slope = (slope > 1.0 ? slope : 1.0 / slope);
-        const int constraint = (slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1); // TODO enums
+		slope = ( slope > 1.0 ? slope : 1.0 / slope );
+        const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 ); // TODO enums
 		
 		const double analysisWidth = 0.02, dt = 0.005, band = 0.0;
         autoDTW dtw = Sounds_to_DTW ((hasSilence_sound ? soundTrimmed.get() : thee),
-			(hasSilence_synth ? synthTrimmed.get() : synth.get()), analysisWidth, dt, band, constraint);
+				(hasSilence_synth ? synthTrimmed.get() : synth.get()), analysisWidth, dt, band, constraint);
 		
 		autoTextGrid result = DTW_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? textgrid_synth_sounding.get() : textgrid_synth.get()), precision);
 		if (hasSilence_sound) {
@@ -721,8 +725,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			double targetStart = undefined, targetEnd = undefined;
 			double sourceStart = undefined, sourceEnd = undefined;
 			conststring32 targetText = U"", sourceText = U"";
-			const integer targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
-			const integer sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
+			const integer targetInterval = ( p.y > 1 ? targetOrigin [p.y - 1] : 0 );
+			const integer sourceInterval = ( p.x > 1 ? sourceOrigin [p.x - 1] : 0 );
 			if (targetInterval > 0) {
 				const TextInterval ti = target -> intervals.at [targetInterval];
 				targetStart = ti -> xmin;
