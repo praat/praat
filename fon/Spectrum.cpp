@@ -120,7 +120,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 		fmax = my xmax;
 	}
 	integer ifmin, ifmax;
-	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax))
+	if (Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax) == 0)
 		return;
 
 	autoNUMvector <double> yWC (ifmin, ifmax);
@@ -177,7 +177,7 @@ void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, do
 		fmax = my xmax;
 	}
 	integer ifmin, ifmax;
-	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax))
+	if (Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax) == 0)
 		return;
 if(ifmin==1)ifmin=2;  /* BUG */
 	autoNUMvector <double> xWC (ifmin, ifmax);

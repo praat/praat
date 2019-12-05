@@ -71,9 +71,9 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 		qmax = my ymax;
 	}
 	integer itmin, itmax, ifmin, ifmax;
-	if (! Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) ||
-		! Matrix_getWindowSamplesY (me, qmin - 0.49999 * my dy, qmax + 0.49999 * my dy, & ifmin, & ifmax))
-			return;
+	if (Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) == 0 ||
+			Matrix_getWindowSamplesY (me, qmin - 0.49999 * my dy, qmax + 0.49999 * my dy, & ifmin, & ifmax) == 0)
+		return;
 	autoMatrix thee = Data_copy (me);
 	MelderExtremaWithInit extrema;
 	for (integer irow = 1; irow <= my ny; irow ++) {

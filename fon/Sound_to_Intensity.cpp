@@ -36,70 +36,89 @@
 static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double timeStep, bool subtractMeanPressure) {
 	try {
 		/*
-		 * Preconditions.
-		 */
-		if (isundef (minimumPitch)) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch undefined.");
-		if (isundef (timeStep)) Melder_throw (U"(Sound-to-Intensity:) Time step undefined.");
-		if (timeStep < 0.0) Melder_throw (U"(Sound-to-Intensity:) Time step should be zero or positive instead of ", timeStep, U".");
-		if (my dx <= 0.0) Melder_throw (U"(Sound-to-Intensity:) The Sound's time step should be positive.");
-		if (minimumPitch <= 0.0) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch should be positive.");
+			Preconditions.
+		*/
+		Melder_require (isdefined (minimumPitch),
+			U"Minimum pitch is undefined.");
+		Melder_require (isdefined (timeStep),
+			U"Time step is undefined.");
+		Melder_require (timeStep >= 0.0,
+			U"Time step should be zero (= automatic) or positive, instead of ", timeStep, U" seconds.");
+		Melder_require (my dx > 0.0,
+			U"The Sound's time step should be positive, instead of ", my dx, U" seconds.");
+		Melder_require (minimumPitch > 0.0,
+			U"Minimum pitch should be positive, instead of ", minimumPitch, U" Hz.");
 		/*
-		 * Defaults.
-		 */
-		if (timeStep == 0.0) timeStep = 0.8 / minimumPitch;   // default: four times oversampling Hanning-wise
+			Defaults.
+		*/
+		constexpr double minimumNumberOfPeriodsNeededForReliablePitchMeasurement = 3.2;
+		const double maximumPeriod = 1.0 / minimumPitch;
+		const double logicalWindowDuration = minimumNumberOfPeriodsNeededForReliablePitchMeasurement * maximumPeriod;   // == 3.2 / minimumPitch
+		if (timeStep == 0.0) {
+			constexpr double defaultOversampling = 4.0;
+			timeStep = logicalWindowDuration / defaultOversampling;   // == 0.8 / minimumPitch
+		}
 
-		const double windowDuration = 6.4 / minimumPitch;
-		Melder_assert (windowDuration > 0.0);
-		const double halfWindowDuration = 0.5 * windowDuration;
+		const double physicalWindowDuration = 2.0 * logicalWindowDuration;   // == 6.4 / minimumPitch
+		Melder_assert (physicalWindowDuration > 0.0);
+		const double halfWindowDuration = 0.5 * physicalWindowDuration;
 		const integer halfWindowSamples = Melder_ifloor (halfWindowDuration / my dx);
-		autoNUMvector <double> amplitude (- halfWindowSamples, halfWindowSamples);
-		autoNUMvector <double> window (- halfWindowSamples, halfWindowSamples);
+		const integer windowNumberOfSamples = 2 * halfWindowSamples + 1;
+		autoVEC amplitude = newVECzero (windowNumberOfSamples);
+		autoVEC window = newVECzero (windowNumberOfSamples);
+		const integer windowCentreSampleNumber = halfWindowSamples + 1;
 
-		for (integer i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
-			const double x = i * my dx / halfWindowDuration, root = 1 - x * x;
-			window [i] = root <= 0.0 ? 0.0 : NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root));
+		for (integer i = 1; i <= windowNumberOfSamples; i ++) {
+			const double x = (i - windowCentreSampleNumber) * my dx / halfWindowDuration;
+			const double root = sqrt (Melder_clippedLeft (0.0, 1.0 - sqr (x)));   // clipping should be rare
+			window [i] = NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * root);
 		}
 
 		integer numberOfFrames;
 		double thyFirstTime;
 		try {
-			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime);
+			Sampled_shortTermAnalysis (me, physicalWindowDuration, timeStep, & numberOfFrames, & thyFirstTime);
 		} catch (MelderError) {
+			const double physicalSoundDuration = my nx * my dx;
 			Melder_throw (U"The physical duration of the sound (the number of samples times the sampling period) in an intensity analysis "
 				"should be at least 6.4 divided by the minimum pitch (", minimumPitch, U" Hz), "
-				U"i.e. at least ", 6.4 / minimumPitch, U" s, instead of ", my nx * my dx, U" s.");
+				U"i.e. at least ", physicalWindowDuration, U" s, instead of ", physicalSoundDuration, U" s.");
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const double midTime = Sampled_indexToX (thee.get(), iframe);
-			const integer midSample = Sampled_xToNearestIndex (me, midTime);   // time accuracy is half a sampling period
-			integer leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
-			longdouble sumxw = 0.0, sumw = 0.0;
-			if (leftSample < 1) leftSample = 1;
-			if (rightSample > my nx) rightSample = my nx;
+			const integer soundCentreSampleNumber = Sampled_xToNearestIndex (me, midTime);   // time accuracy is half a sampling period
 
-			for (integer channel = 1; channel <= my ny; channel ++) {
-				for (integer i = leftSample; i <= rightSample; i ++) {
-					amplitude [i - midSample] = my z [channel] [i];
-				}
-				if (subtractMeanPressure) {
-					longdouble sum = 0.0;
-					for (integer i = leftSample; i <= rightSample; i ++) {
-						sum += amplitude [i - midSample];
-					}
-					double mean = (double) sum / (rightSample - leftSample + 1);
-					for (integer i = leftSample; i <= rightSample; i ++) {
-						amplitude [i - midSample] -= mean;
-					}
-				}
-				for (integer i = leftSample; i <= rightSample; i ++) {
-					sumxw += amplitude [i - midSample] * amplitude [i - midSample] * window [i - midSample];
-					sumw += window [i - midSample];
+			integer leftSample = soundCentreSampleNumber - halfWindowSamples;
+			integer rightSample = soundCentreSampleNumber + halfWindowSamples;
+			/*
+				Catch some edge cases, which are uncommon because Sampled_shortTermAnalysis() filtered out most problems.
+			*/
+			Melder_clipLeft (1_integer, & leftSample);
+			Melder_clipRight (& rightSample, my nx);
+			Melder_require (rightSample >= leftSample,
+				U"Unexpected edge case: right sample (", rightSample, U") less than left sample (", leftSample, U").");
+
+			const integer windowFromSoundOffset = windowCentreSampleNumber - soundCentreSampleNumber;
+			VEC amplitudePart = amplitude.part (windowFromSoundOffset + leftSample, windowFromSoundOffset + rightSample);
+			constVEC windowPart = window.part (windowFromSoundOffset + leftSample, windowFromSoundOffset + rightSample);
+			longdouble sumxw = 0.0, sumw = 0.0;
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
+				amplitudePart <<= my z [ichan].part (leftSample, rightSample);
+				if (subtractMeanPressure)
+					VECcentre_inplace (amplitudePart);
+				for (integer isamp = 1; isamp <= amplitudePart.size; isamp ++) {
+					sumxw += sqr (amplitudePart [isamp]) * windowPart [isamp];
+					sumw += windowPart [isamp];
 				}
 			}
-			double intensity = double (sumxw / sumw);
-			intensity /= 4.0e-10;
-			thy z [1] [iframe] = intensity < 1.0e-30 ? -300.0 : 10.0 * log10 (intensity);
+			const double intensity_in_Pa2 = double (sumxw / sumw);
+			constexpr double hearingThreshold_in_Pa = 2.0e-5;
+			constexpr double hearingThreshold_in_Pa2 = sqr (hearingThreshold_in_Pa);
+			const double intensity_re_hearingThreshold = intensity_in_Pa2 / hearingThreshold_in_Pa2;
+			const double intensity_in_dB_re_hearingThreshold = ( intensity_re_hearingThreshold < 1.0e-30 ? -300.0 :
+					10.0 * log10 (intensity_re_hearingThreshold) );
+			thy z [1] [iframe] = intensity_in_dB_re_hearingThreshold;
 		}
 		return thee;
 	} catch (MelderError) {

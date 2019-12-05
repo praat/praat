@@ -23,6 +23,11 @@
 */
 using longdouble = long double;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 
+template <typename T>
+constexpr T sqr (T x) {
+	return x * x;
+}
+
 struct MelderPoint {
 	double x, y;
 };
