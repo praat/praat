@@ -70,65 +70,12 @@ byte * NUMvector_copy_generic (integer elementSize, const byte *vector, integer 
 	}
 }
 
-void NUMvector_copyElements_generic (integer elementSize, const byte *fromVector, byte *toVector, integer lo, integer hi) {
-	Melder_assert (fromVector && toVector);
-	const byte *p_fromCells = & fromVector [lo * elementSize];
-	byte *p_toCells = & toVector [lo * elementSize];
-	integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
-	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);   // BUG this assumes contiguity
-}
-
 bool NUMvector_equal_generic (integer elementSize, const byte *vector1, const byte *vector2, integer lo, integer hi) {
 	Melder_assert (vector1 && vector2);
 	const byte *p_cells1 = & vector1 [lo * elementSize];
 	const byte *p_cells2 = & vector2 [lo * elementSize];
 	integer numberOfBytesToCompare = (hi - lo + 1) * elementSize;
 	return memcmp (p_cells1, p_cells2, (size_t) numberOfBytesToCompare) == 0;
-}
-
-void NUMvector_append_generic (integer elementSize, byte **v, integer lo, integer *hi) {
-	try {
-		byte *result;
-		if (! *v) {
-			result = NUMvector_generic (elementSize, lo, lo, true);
-			*hi = lo;
-		} else {
-			integer offset = lo * elementSize;
-			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-				result = reinterpret_cast <byte *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize));
-				if ((result -= offset) != nullptr)   // it would be quite a coincidence if this failed
-					break;   // this will normally succeed at the first try
-				(void) Melder_realloc_f (result + offset, 1);   // make "sure" that the second try will succeed
-			}
-			(*hi) ++;
-			memset (result + *hi * elementSize, 0, elementSize);   // initialize the new element to zeroes
-		}
-		*v = result;
-	} catch (MelderError) {
-		Melder_throw (U"Vector: element not appended.");
-	}
-}
-
-void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, integer *hi, integer position) {
-	try {
-		byte *result;
-		if (! *v) {
-			result = NUMvector_generic (elementSize, lo, lo, true);
-			*hi = lo;
-			Melder_assert (position == lo);
-		} else {
-			result = NUMvector_generic (elementSize, lo, *hi + 1, false);
-			Melder_assert (position >= lo && position <= *hi + 1);
-			NUMvector_copyElements_generic (elementSize, *v, result, lo, position - 1);
-			memset (result + position * elementSize, 0, elementSize);
-			NUMvector_copyElements_generic (elementSize, *v, result + elementSize, position, *hi);
-			NUMvector_free_generic (elementSize, *v, lo);
-			(*hi) ++;
-		}
-		*v = result;
-	} catch (MelderError) {
-		Melder_throw (U"Vector: element not inserted.");
-	}
 }
 
 /* End of file melder_tensor.cpp */
