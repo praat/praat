@@ -97,15 +97,13 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 	}
 
 	integer imin, imax;
-	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+	if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 		return;
-	}
 	integer numberOfSelected = imax - imin + 1;
 	autoVEC y = newVECraw (numberOfSelected);
 
-	for (integer i = 1; i <= numberOfSelected; i ++) {
+	for (integer i = 1; i <= numberOfSelected; i ++)
 		y [i] = my v_getValueAtSample (imin + i - 1, (power ? 1 : 0), 0);
-	}
 
 	if (autoscaling)
 		NUMextrema (y.get(), & minimum, & maximum);
@@ -145,9 +143,8 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 
 	if (dBminimum >= dBmaximum) { // autoscaling
 		integer imin, imax;
-		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+		if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 			return;
-		}
 		integer numberOfPoints = imax - imin + 1;
 		dBminimum = dBmaximum = my v_getValueAtSample (imin, 1, 0);
 		for (integer i = 2; i <= numberOfPoints; i ++) {
@@ -219,7 +216,7 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		}
 
 		integer imin, imax;
-		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax))
+		if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 			return;
 		if (imin == 1 && lineType == kCepstrumTrendType::ExponentialDecay)
 			imin = 2; // because log(0) is undefined
@@ -345,7 +342,7 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, & peakdB, & qpeak);
 	integer imin, imax;
-	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax))
+	if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 		return rnr;
 
 	integer ndata = imax - imin + 1;

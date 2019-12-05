@@ -58,8 +58,8 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	if (fmax <= fmin) { fmin = my ymin; fmax = my ymax; }
 	integer itmin, itmax, ifmin, ifmax;
-	if (! Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) ||
-			! Matrix_getWindowSamplesY (me, fmin - 0.49999 * my dy, fmax + 0.49999 * my dy, & ifmin, & ifmax))
+	if (Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) == 0||
+			Matrix_getWindowSamplesY (me, fmin - 0.49999 * my dy, fmax + 0.49999 * my dy, & ifmin, & ifmax) == 0)
 		return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	autoNUMvector <double> preemphasisFactor (ifmin, ifmax);

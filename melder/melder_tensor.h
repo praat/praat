@@ -44,26 +44,11 @@ byte * NUMvector_copy_generic (integer elementSize, const byte *v, integer lo, i
 		if v != nullptr, the values v [lo..hi] must exist.
 */
 
-void NUMvector_copyElements_generic (integer elementSize, const byte *v, byte *to, integer lo, integer hi);
-/*
-	copy the vector elements v [lo..hi] to those of a vector 'to'.
-	These vectors need not have been created by NUMvector.
-*/
-
 bool NUMvector_equal_generic (integer elementSize, const byte *v1, const byte *v2, integer lo, integer hi);
 /*
 	return true if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return false.
 	The vectors need not have been created by NUMvector.
-*/
-
-void NUMvector_append_generic (integer elementSize, byte **v, integer lo, integer *hi);
-void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, integer *hi, integer position);
-/*
-	add one element to the vector *v.
-	The new element is initialized to zero.
-	On success, *v points to the new vector, and *hi is incremented by 1.
-	On failure, *v and *hi are not changed.
 */
 
 template <class T>
@@ -92,16 +77,6 @@ T* NUMvector_copy (const T* ptr, integer lo, integer hi) {
 template <class T>
 bool NUMvector_equal (const T* v1, const T* v2, integer lo, integer hi) {
 	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <const byte *> (v1), reinterpret_cast <const byte *> (v2), lo, hi);
-}
-
-template <class T>
-void NUMvector_append (T** v, integer lo, integer *hi) {
-	NUMvector_append_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi);
-}
-
-template <class T>
-void NUMvector_insert (T** v, integer lo, integer *hi, integer position) {
-	NUMvector_insert_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi, position);
 }
 
 integer NUM_getTotalNumberOfArrays ();   // for debugging
@@ -159,12 +134,12 @@ public:
 
 	Initialization (tested in praat.cpp):
 		VEC x;               // initializes x.at to nullptr and x.size to 0
-		NUMvector<double> a (1, 100);
+		double a [] = { undefined, 3.14, 2.718, ... };
 		VEC x3 { a, 100 };   // initializes x to 100 values from a base-1 array
 
 		autoVEC y;                     // initializes y.at to nullptr and y.size to 0
-		autoVEC y1 (100);              // initializes y to 100 uninitialized values, having ownership
-		autoVEC y2 (100, 0.0);         // initializes y to 100 zeroes, having ownership
+		autoVEC y2 = newVECzero (100); // initializes y to 100 zeroes, having ownership
+		autoVEC y1 = newVECraw (100);  // initializes y to 100 uninitialized values (caution!), having ownership
 		y.adoptFromAmbiguousOwner (x); // initializes y to the content of x, taking ownership (explicit, so not "y = x")
 		VEC z = y.releaseToAmbiguousOwner();   // releases ownership, y.at becoming nullptr
 		"}"                            // end of scope destroys y.at if not nullptr
@@ -172,7 +147,7 @@ public:
 
 	To return an autoVEC from a function, transfer ownership like this:
 		autoVEC foo () {
-			autoVEC x (100);
+			autoVEC x = newVECero (100);
 			... // fill in the 100 values
 			return x;
 		}
