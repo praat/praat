@@ -1,7 +1,7 @@
-# Sound_drawWhere_test.praat
+# test_Sound_draw_where.praat
 # djmw 20091031,20100912, 20110524
 
-appendInfoLine: "Sound_drawWhere_test.praat"
+appendInfoLine: "test_Sound_draw_where.praat"
 
 Erase all
 
@@ -15,9 +15,9 @@ Select outer viewport: 0, 6, 9, 12
 	@randomAmplitudes
 
 procedure sawtooth
-	appendInfoLine: "Sound_drawWhere_test.praat"
+	appendInfoLine: "test_Sound_draw_where.praat"
 	# maximally steep
-	appendInfoLine: tab$, "Top: sawtooth in black with parts above 0.5 in Red + blue line"
+	appendInfoLine: tab$, "Top: sawtooth in black with parts above 0.5 in red"
 	s = Create Sound from formula: "s", 1, 0, 1, 44100, "20*((x mod 0.1) - 0.05)"
 	ymin = -1.1
 	ymax = 1.1
@@ -27,7 +27,7 @@ procedure sawtooth
 	Draw where: 0, 0.4, ymin, ymax, "no", "Curve", "self<=0.5"
 	One mark left: 0.5, "yes", "yes", "yes", ""
 	Draw inner box
-	Text top: "no", "sawtooth in blue with parts above 0.5 in red"
+	Text top: "no", "sawtooth in black with parts above 0.5 in red"
 	removeObject: s
 endproc
 
@@ -46,7 +46,6 @@ procedure three_samples
 	Draw where: 0, 0, ymin, ymax, "no", "Curve", "self>0.5"
 	Colour: "Black"
 	Draw where: 0, 0, ymin, ymax, "no", "Curve", "self<=0.5"
-	One mark left: 0.5, "yes", "yes", "yes", ""
 	Draw inner box
 	Text top: "no", "Interpolation between 3 sample points: parts above 0.5 in red"
 	removeObject: s
@@ -87,5 +86,5 @@ procedure randomAmplitudes
 	removeObject: s
 endproc
 
-appendInfoLine: "Sound_drawWhere_test.praat End"
+appendInfoLine: "test_Sound_draw_where.praat End"
 
