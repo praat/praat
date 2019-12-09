@@ -60,10 +60,9 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 }
 
 void Permutation_checkInvariant (Permutation me) {
-	autoPermutation thee = Data_copy (me);
-	INTVECsort_inplace (thy p.all());
+	autoINTVEC p = newINTVECsort (my p.all());
 	for (integer i = 1; i <= my numberOfElements; i ++)
-		Melder_require (thy p [i] == i,
+		Melder_require (p [i] == i,
 			me, U": is not a valid permutation.");
 }
 

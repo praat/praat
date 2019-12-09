@@ -25,6 +25,7 @@ procedure solve_sparse_system
 	endfor
 	selectObject: .yy, .phi
 	.x = Solve matrix equation (sparse): 10, 50, 1e-7, "yes"
+	removeObject: .x, .phi, .xx, .yy
 endproc
 
 procedure matrix_solve: .ncol

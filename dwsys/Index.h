@@ -2,7 +2,7 @@
 #define _Index_h_
 /* Index.h
  *
- * Copyright (C) 2005-2011, 2016-2017 David Weenink
+ * Copyright (C) 2005-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,6 @@ conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer
 
 conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber);
 
-integer StringsIndex_countItems (StringsIndex me, int iclas);
+integer StringsIndex_countItems (StringsIndex me, integer iclas);
 
 #endif /* _Index_h_ */

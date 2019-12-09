@@ -49,8 +49,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 		(lower/upper) outerfence = (lower/upper) hinge +/- 3.0 hspread
 	*/
 	
-	autoVEC sorted = newVECcopy (data);
-	VECsort_inplace (sorted.get());
+	autoVEC sorted = newVECsort (data);
 
 	if (ymax <= ymin) {
 		ymin = sorted [1];
@@ -86,9 +85,9 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	const double lowerWhisker = sorted [i] < q25 ? sorted [i] : lowerInnerFence;
 	if (lowerWhisker > ymax)
 		return;
-
-	// Next process data from above.
-
+	/*
+		Next process data from above.
+	*/
 	const integer ilow = i;
 	i = sorted.size;
 	while (i >= ilow && sorted [i] > ymax)
@@ -102,7 +101,6 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	const double upperWhisker = sorted [i] > q75 ? sorted [i] : upperInnerFence;
 	if (upperWhisker < ymin)
 		return;
-
 	/*
 		Determine what parts of the "box" have to be drawn within the
 		range [ymin, ymax].
@@ -123,18 +121,18 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	y1 = upperWhisker;
 	if (ymax > y1 && ymin < y1)
 		Graphics_line (g, x - r, y1, x + r, y1);
-
-	// Extension: draw the mean too.
-
+	/*
+		Extension: draw the mean too.
+	*/
 	y1 = mean;
 	if (ymax > y1 && ymin < y1) {
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_line (g, x - w, y1, x + w, y1);
 		Graphics_setLineType (g, lineType);
 	}
-
-	// Now process the vertical lines.
-
+	/*
+		Vertical lines.
+	*/
 	y1 = lowerWhisker;
 	double y2 = q25;
 	if (ymax > y1 && ymin < y2) {
@@ -142,14 +140,16 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 		y2 = y2 < ymax ? y2 : ymax;
 		Graphics_line (g, x, y1, x, y2);
 	}
-	y1 = q25, y2 = q75;
+	y1 = q25;
+	y2 = q75;
 	if (ymax > y1 && ymin < y2) {
 		y1 = y1 > ymin ? y1 : ymin;
 		y2 = y2 < ymax ? y2 : ymax;
 		Graphics_line (g, x - w, y1, x - w, y2);
 		Graphics_line (g, x + w, y1, x + w, y2);
 	}
-	y1 = q75, y2 = upperWhisker;
+	y1 = q75;
+	y2 = upperWhisker;
 	if (ymax > y1 && ymin < y2) {
 		y1 = y1 > ymin ? y1 : ymin;
 		y2 = y2 < ymax ? y2 : ymax;
@@ -163,13 +163,11 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
-	autoVEC xsorted = newVECcopy (x);
-	VECsort_inplace (xsorted.get());
-	autoVEC ysorted = newVECcopy (y);
-	VECsort_inplace (ysorted.get());
+	autoVEC xsorted = newVECsort (x);
+	autoVEC ysorted = newVECsort (y);
 
-	const integer numberOfData = x.size < y.size ? x.size : y.size;
-	numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
+	const integer numberOfData = std::min (x.size, y.size);
+	numberOfQuantiles = std::min (numberOfData, numberOfQuantiles);
 	const double un = pow (0.5, 1.0 / numberOfQuantiles);
 	const double u1 = 1.0 - un;
 	if (xmin == xmax) {
@@ -201,9 +199,11 @@ void Graphics_lagPlot (Graphics g, constVEC data, double xmin, double xmax, inte
 	const double fontSize = Graphics_inqFontSize (g);
 	Graphics_setFontSize (g, labelSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	// plot x[i] vertically and x[i-lag] horizontally
-	for (integer i = 1; i <= data.size - lag; i++) {
-		const double x = data[i + lag], y = data[i];
+	/*
+		Plot x [i] vertically and x [i-lag] horizontally
+	*/
+	for (integer i = 1; i <= data.size - lag; i ++) {
+		const double x = data [i + lag], y = data [i];
 		if (x >= xmin && x <= xmax && y >= xmin && y <= xmax)
 			Graphics_text (g, x, y, plotLabel);
 	}
