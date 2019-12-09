@@ -56,8 +56,8 @@ void structIndex :: v_info () {
 }
 
 void Index_init (Index me, integer numberOfItems) {
-	Melder_require (numberOfItems > 0, U"The index should not be empty.");
-	
+	Melder_require (numberOfItems > 0,
+		U"The index should not be empty.");
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;
 	my classIndex = newINTVECzero (numberOfItems);
@@ -130,7 +130,7 @@ conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer i
 	return result;
 }
 
-integer StringsIndex_countItems (StringsIndex me, int iclass) {
+integer StringsIndex_countItems (StringsIndex me, integer iclass) {
 	integer sum = 0;
 	for (integer i = 1; i <= my numberOfItems; i ++) {
 		if (my classIndex [i] == iclass)

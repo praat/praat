@@ -292,6 +292,18 @@ inline void VECsin_inplace (VECVU const& vec) noexcept {
 extern void VECsort_inplace (VECVU const& x) noexcept;
 extern void INTVECsort_inplace (INTVECVU const& x) noexcept;
 
+inline autoVEC newVECsort (constVECVU const& x) {
+	autoVEC result = newVECcopy (x);
+	VECsort_inplace (result.get());
+	return result;
+}
+
+inline autoINTVEC newINTVECsort (constINTVECVU const& x) {
+	autoINTVEC result = newINTVECcopy (x);
+	INTVECsort_inplace (result.get());
+	return result;
+}
+
 inline autoVEC newVECrowSums (constMATVU const& x) {
 	autoVEC result = newVECraw (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)

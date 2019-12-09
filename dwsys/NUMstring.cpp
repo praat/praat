@@ -162,13 +162,11 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 			Melder_throw (U"Start of range should be a positive whole number.");
 		}
 	}
-
 	/*
 		Create room for the elements.
 	*/
-	
-	if (numberOfElements == 0)
-		Melder_throw (U"No element(s) found");
+	Melder_require (numberOfElements > 0,
+		U"No element(s) found");
 	autoINTVEC elements = newINTVECraw (numberOfElements);
 
 	/*
@@ -203,14 +201,10 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	return elements;
 }
 
-static autoINTVEC INTVEC_getUniqueNumbers (INTVEC & inout_numbers) {
-	autoINTVEC sorted = newINTVECraw (inout_numbers.size);
-	sorted.get () <<= inout_numbers;
-	
-	INTVECsort_inplace (sorted.all());
-
+static autoINTVEC INTVEC_getUniqueNumbers (constINTVEC const& numbers) {
+	autoINTVEC sorted = newINTVECsort (numbers);
 	integer numberOfUniques = 1;
-	for (integer i = 2; i <= inout_numbers.size; i ++) {
+	for (integer i = 2; i <= numbers.size; i ++) {
 		if (sorted [i] != sorted [i - 1])
 			sorted [++ numberOfUniques] = sorted [i];
 	}
@@ -221,14 +215,15 @@ static autoINTVEC INTVEC_getUniqueNumbers (INTVEC & inout_numbers) {
 autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques)
 {
 	autoINTVEC elements = getElementsOfRanges (ranges, maximumElement, elementType);
-	if (sortedUniques) elements = INTVEC_getUniqueNumbers (elements);
+	if (sortedUniques)
+		return INTVEC_getUniqueNumbers (elements.get());
 	return elements;
 }
 
 char32 * NUMstring_timeNoDot (double time) {
 	static char32 string [100];
-	integer seconds = Melder_ifloor (time);
-	integer ms = Melder_iround ((time - seconds) * 1000.0);
+	const integer seconds = Melder_ifloor (time);
+	const integer ms = Melder_iround ((time - seconds) * 1000.0);
 	Melder_sprint (string,100, U"_", seconds, U"_", ms);
 	return string;
 }
