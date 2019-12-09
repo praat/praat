@@ -135,7 +135,8 @@ inline integer NUMminPos (constVECVU const& v) {
 }
 
 inline integer NUMminPos (constINTVECVU const& v) {
-	if (NUMisEmpty (v)) return 0;
+	if (NUMisEmpty (v))
+		return 0;
 	integer index = 1;
 	integer minimum = v [1];
 	for (integer i = 2; i <= v.size; i ++) {
@@ -155,8 +156,10 @@ inline integer NUMminPos (constINTVECVU const& v) {
 */
 
 inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_maximum) {
-	if (out_minimum) *out_minimum = NUMmin (x);
-	if (out_maximum) *out_maximum = NUMmax (x);
+	if (out_minimum)
+		*out_minimum = NUMmin (x);
+	if (out_maximum)
+		*out_maximum = NUMmax (x);
 }
 
 /* NUMvector_clip
@@ -531,11 +534,12 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 	Minimize the 2-norm (y - D.x), where maximally K elements of x may be non-zero, by an iterative hard thresholding algorithm.
 	D is a MxN real matrix with (many) more columns than rows, i.e. N > M. We need to find a vector x
 	with maximally K non-zero elements (sparse).
-	The algorithm is described in T. Blumensath & M.E. Davies, "Normalised iterative hard thresholding;
-	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4, 298-309.
+	The algorithm is described in T. Blumensath & M.E. Davies (2010): "Normalised iterative hard thresholding;
+	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4: 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
 */
-void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+autoVEC newVECsolveSparse_IHT (constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
 autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer itermax);
 /*
@@ -560,7 +564,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC y, do
 
 autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta);
 /*
-	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
+	Solve g(t) = ||F*t - phi||^2 + alpha (t'*t - delta)^2 for t[1..m],
 	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
 	and delta are fixed numbers.
 	This class of functions is composed of a linear regression function and
