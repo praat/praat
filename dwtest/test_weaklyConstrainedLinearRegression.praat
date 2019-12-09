@@ -28,4 +28,13 @@ assert abs (result#[2]) < 1.0e-14; 'diff'
 diff = abs (result#[3] - sqrt (35095/60492))
 assert diff < 1.0e-14; 'diff'
 appendInfoLine: tab$, inner, "; ", result#
+
+# force ||result|| to be 1.0
+alpha = 1e30
+delta=1.0
+result# = solveWeaklyConstrained# (f##, phi#, alpha, delta)
+inner = inner (result#, result#)
+appendInfoLine: tab$, "alpha very big, delta=1, norm(result)=", inner
+diff = abs(inner - 1.0)
+assert diff < 1.0e-14; 'diff'
 appendInfoLine: "test_weaklyConstrainedLinearRegression.praat OK"
