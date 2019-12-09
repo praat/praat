@@ -1,6 +1,6 @@
 /* Command.cpp
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,13 +56,11 @@ Command CommandHistory_getItem (CommandHistory me) {
 }
 
 void CommandHistory_insertItem_move (CommandHistory me, autoCommand command) {
-	for (integer i = my size; i >= my current + 1; i --) {
+	for (integer i = my size; i >= my current + 1; i --)
 		my removeItem (i);
-	}
 	my addItem_move (command.move());
-	while (my size > 20) {
+	while (my size > 20)
 		my removeItem (1);
-	}
 	my current = my size;
 }
 
