@@ -224,7 +224,7 @@ inline double NUMmul (constVECVU const& x, constMATVU const& m, constVECVU const
 	Melder_assert (y.size == m.ncol);
 	longdouble result = 0.0;
 	for (integer k = 1; k <= x.size; k ++)
-		result += x [k] * NUMinner (m.row (k), y); 
+		result += x [k] * NUMinner (m.row (k), y);
 	return (double) result;
 }	
 

@@ -50,9 +50,11 @@ void structFileInMemory :: v_info () {
 
 autoFileInMemory FileInMemory_create (MelderFile file) {
 	try {
-		Melder_require (MelderFile_readable (file), U"File is not readable.");
+		Melder_require (MelderFile_readable (file),
+			U"File is not readable.");
 		const integer length = MelderFile_length (file);
-		Melder_require (length > 0, U"File should not be empty.");
+		Melder_require (length > 0,
+			U"File should not be empty.");
 		
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my d_path = Melder_dup (file -> path);
@@ -63,9 +65,9 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		MelderFile_open (file);
 		for (integer i = 0; i < my d_numberOfBytes; i++) {
 			const unsigned int number = bingetu8 (file -> filePointer);
-			my d_data[i] = number;
+			my d_data [i] = number;
 		}
-		my d_data[my d_numberOfBytes] = 0;   // one extra
+		my d_data [my d_numberOfBytes] = 0;   // one extra
 		MelderFile_close (file);
 		return me;
 	} catch (MelderError) {
