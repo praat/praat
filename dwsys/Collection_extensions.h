@@ -2,7 +2,7 @@
 #define _Collection_extensions_h_
 /* Collection_extensions.h
  *
- * Copyright (C) 1994-2017 David Weenink, 2015,2018 Paul Boersma
+ * Copyright (C) 1994-2019 David Weenink, 2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +45,17 @@ void OrderedOfString_initWithSequentialNumbers (StringList me, integer n);
 void OrderedOfString_removeOccurrences (StringList me, conststring32 search, bool use_regexp);
 
 void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace,
-	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
+	integer maximumNumberOfReplaces, integer *out_numberOfMatches, integer *out_numberOfStringmatches, bool use_regexp);
 
-integer OrderedOfString_isSubsetOf (StringList me, StringList thee, integer *translation);
-/* Check whether my items are (a subset of)|(in) thy items.
- * Preconditions:
- *	if (translation) translation[1..my size] exists.
- * Postconditions:
- *  Return: the number of my labels that are in thee.
- *  if (translation) the returned translation table has the following property:
- *	if (translation[i] > 0) my label[i] = thy label[ translation[i] ];
- *	else if (translation[i] == 0) my label[i] not in thy labels.
+bool OrderedOfString_containSameElements (StringList me, StringList thee);
+/*
+	Check whether my items are all in thy items.
+
+	Postconditions:
+	if (index.size == my size) the returned index table has the following property:
+		if (index [i] > 0)
+			my label [i] = thy label [index [i]];
+		else if (index[i] == 0) my label[i] not in thy labels.
  */
 
 #endif /* _Collection_extensions_h_ */
