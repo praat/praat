@@ -41,7 +41,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 		Get the median (q50) and the upper and lower quartile points
 		(q25 and q75).
 		Now q25 and q75 are the lower and upper hinges, respectively.
-		The fances can be calcultaed from q25 and q75.
+		The fences can be calculated from q25 and q75.
 		The spread is defined as the interquartile range or midrange
 		|q75 - q25|.
 		The fences are defined as:
@@ -69,20 +69,18 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	const double lowerInnerFence = q25 - 1.5 * hspread;
 	const double upperInnerFence = q75 + 1.5 * hspread;
 	const double upperOuterFence = q75 + 3.0 * hspread;
-
 	/*
 		Decide whether there are outliers that have to be drawn.
 		First process sorted from below.
 	*/
-	
-	integer i = 1, ie = sorted.size;
-	while (i <= ie && sorted [i] < ymin)
+	integer i = 1;
+	while (i <= sorted.size && sorted [i] < ymin)
 		i ++;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	while (i <= ie && sorted [i] < lowerOuterFence)
+	while (i <= sorted.size && sorted [i] < lowerOuterFence)
 		Graphics_text (g, x, sorted [i ++], U"o");
 
-	while (i <= ie && sorted[i] < lowerInnerFence)
+	while (i <= sorted.size && sorted[i] < lowerInnerFence)
 		Graphics_text (g, x, sorted [i ++], U"*");
 
 	const double lowerWhisker = sorted [i] < q25 ? sorted [i] : lowerInnerFence;
@@ -91,13 +89,14 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 
 	// Next process data from above.
 
-	i = sorted.size; ie = i;
-	while (i >= ie && sorted [i] > ymax)
+	const integer ilow = i;
+	i = sorted.size;
+	while (i >= ilow && sorted [i] > ymax)
 		i --;
-	while (i >= ie && sorted [i] > upperOuterFence)
+	while (i >= ilow && sorted [i] > upperOuterFence)
 		Graphics_text (g, x, sorted [i --], U"o");
 
-	while (i >= ie && sorted [i] > upperInnerFence)
+	while (i >= ilow && sorted [i] > upperInnerFence)
 		Graphics_text (g, x, sorted [i --], U"*");
 
 	const double upperWhisker = sorted [i] > q75 ? sorted [i] : upperInnerFence;

@@ -74,8 +74,7 @@ autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee
 		autoCategories uniq = Categories_selectUniqueItems (thee);
 		Melder_require (my outputCategories,
 			U"The FFNet does not have categories.");
-		const integer nl = OrderedOfString_isSubsetOf (uniq.get(), my outputCategories.get(), 0);
-		Melder_require (nl > 0,
+		Melder_require (OrderedOfString_containSameElements (uniq.get(), my outputCategories.get()),
 			U"The Categories should match the categories of the FFNet.");
 
 		autoActivationList him = ActivationList_create (thy size, my numberOfOutputs);

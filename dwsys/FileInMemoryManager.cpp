@@ -106,7 +106,7 @@ autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFil
 		const integer numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
 		autoTable thee = Table_createWithColumnNames (numberOfRows, U"path id size position");
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
+			const FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
 			Table_setStringValue (thee.get(), irow, 1, fim -> d_path.get());
 			Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 			Table_setNumericValue (thee.get(), irow, 3, fim -> d_numberOfBytes);
@@ -136,7 +136,7 @@ static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me,
 	Melder_require (filesIndex > 0 && filesIndex <= my files -> size,
 		U": Invalid file index: ", filesIndex);
 
-	FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
+	const FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
 	const integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path.get());
 	return openFilesIndex;
 }
@@ -193,12 +193,11 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 		if (*mode == 'r') { // also covers mode == 'rb'
 			index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32(filename));
 			if (index > 0) {
-				FileInMemory fim = (FileInMemory) my files -> at [index];
-				if (fim -> d_position == 0) { // not open
+				const FileInMemory fim = (FileInMemory) my files -> at [index];
+				if (fim -> d_position == 0) // not open
 					my openFiles -> addItem_ref (fim);
-				} else { // reset position
+				else // reset position
 					fim -> d_position = 0;
-				}
 			} else {
 				// file does not exist, set error condition?
 			}
@@ -234,8 +233,10 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 void FileInMemoryManager_rewind (FileInMemoryManager me, FILE *stream) {
 	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetChar = -1;
+		const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+		fim -> d_position = 0;
+		fim -> d_errno = 0;
+		fim -> ungetChar = -1;
 	}
 }
 
@@ -263,8 +264,10 @@ void FileInMemoryManager_rewind (FileInMemoryManager me, FILE *stream) {
 int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream) {
 	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetChar = -1;
+		const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+		fim -> d_position = 0;
+		fim -> d_errno = 0;
+		fim -> ungetChar = -1;
 		my openFiles -> removeItem (openFilesIndex);
 	}
 	return my errorNumber = 0; // always ok
@@ -297,7 +300,7 @@ int FileInMemoryManager_feof (FileInMemoryManager me, FILE *stream) {
 	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	int eof = 0;
 	if (openFilesIndex > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+		const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		if (fim -> d_position >= fim -> d_numberOfBytes)
 			eof = 1;
 	}
@@ -346,7 +349,7 @@ int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer off
 	const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	int errval = EBADF;
 	if (openFilesIndex > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+		const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		integer newPosition = 0;
 		if (origin == SEEK_SET)
 			newPosition = offset;
@@ -393,7 +396,7 @@ integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
 	/* int errval = EBADF; */
 	integer currentPosition = -1L;
 	if (openFilesIndex > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+		const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		currentPosition = fim -> d_position;
 	}
 	return currentPosition;
@@ -447,7 +450,8 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 				copy the ungetChar and advance one position in stream
 			*/
 			*p_str ++ = fim -> ungetChar;
-			p ++; i ++;
+			p ++;
+			i ++;
 			fim -> ungetChar = -1;
 		}
 		while (i ++ < num && (*p_str ++ = *p) && *p ++ != '\n');
@@ -527,7 +531,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 	Melder_require (openFilesIndex > 0 && size > 0 && count > 0,
 		U": File should be open.");
 	
-	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+	const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 	size_t result = 0;
 	integer startPos = fim -> d_position;
 	if (startPos < fim -> d_numberOfBytes) {
@@ -541,9 +545,8 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 		const integer numberOfBytes = count * size;
 		const unsigned char * p = fim -> d_data + fim -> d_position;
 		char * str = static_cast<char *> (ptr);
-		while (i < numberOfBytes) {
+		while (i < numberOfBytes)
 			str [i ++] = *p ++;
-		}
 		fim -> d_position = endPos;
 	}
 	result = count;
@@ -588,7 +591,7 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 	if (character != EOF) {
 		const integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 		if (openFilesIndex > 0) {
-			FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+			const FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 			-- (fim -> d_position);
 			result = fim -> ungetChar = character;
 		}
@@ -721,14 +724,13 @@ void test_FileInMemoryManager_io (void) {
 	const conststring32 path2 = U"~/kanweg2.txt";
 	const conststring32 lines1 [3] = { U"abcd\n", U"ef\n",  U"ghijk\n" };
 	const conststring32 lines2 [3] = { U"lmno\n", U"pqr\n",  U"stuvwxyz\n" };
-
 	/*
 		Create a test FileInMemorySet with two (text) files in it.
 	*/
 	MelderInfo_writeLine (U"test_FileInMemoryManager_io:");
 	MelderInfo_writeLine (U"\tCreating two files: ", path1, U" and ", path2);
 	structMelderFile s_file1 = {} , s_file2 = {};
-	MelderFile file1 = & s_file1, file2 = & s_file2;
+	const MelderFile file1 = & s_file1, file2 = & s_file2;
 	Melder_relativePathToFile (path1, file1);
 	Melder_relativePathToFile (path2, file2);
 	autoFileInMemorySet fims = FileInMemorySet_create ();

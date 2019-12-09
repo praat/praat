@@ -92,8 +92,8 @@ autoDaata _Data_copy (Daata me);
 bool Data_equal (Daata data1, Daata data2);
 /*
 	Message:
-		"return 1 if the shallow or deep attributes of 'data1' and 'data2' are equal;
-		 otherwise, return 0."
+		"return true if the shallow or deep attributes of 'data1' and 'data2' are equal;
+		 otherwise, return false."
 	Comment:
 		Data_equal (data, Data_copy (data)) should always return 1; the names are not compared.
 */

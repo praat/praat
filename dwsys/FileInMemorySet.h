@@ -2,7 +2,7 @@
 #define _FileInMemorySet_h_
 /* FileInMemorySet.h
  *
- * Copyright (C) 2011-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011-2019 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 #include "FileInMemorySet_def.h"
 
-autoFileInMemorySet FileInMemorySet_create (); 
+autoFileInMemorySet FileInMemorySet_create ();
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 file);
 
@@ -44,8 +44,8 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer
 
 void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine);
 
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id, integer *numberOfBytes);
-const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, integer *numberOfBytes);
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id, integer *out_numberOfBytes);
+const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, integer *out_numberOfBytes);
 
 integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion);
 

@@ -131,10 +131,10 @@ void DoublyLinkedList_sortPart (DoublyLinkedList me, DoublyLinkedNode from, Doub
 	if (from == to)
 		return;   // nothing to do
 
-	DoublyLinkedNode from_prev = from -> prev;
-	DoublyLinkedNode to_next = to -> next;
-	DoublyLinkedNode my_front = my front;
-	DoublyLinkedNode my_back = my back;
+	const DoublyLinkedNode from_prev = from -> prev;
+	const DoublyLinkedNode to_next = to -> next;
+	const DoublyLinkedNode my_front = my front;
+	const DoublyLinkedNode my_back = my back;
 
 	from -> prev = to -> next = nullptr;
 	my front = from;
@@ -171,10 +171,10 @@ void DoublyLinkedList_sort (DoublyLinkedList me) {
 		while (node1) {
 			DoublyLinkedNode node2 = node1, node;
 			integer node1size = 0;
-			numberOfMerges++;
+			numberOfMerges ++;
 
 			for (integer i = 1; i <= increment; i++) {
-				node1size++;
+				node1size ++;
 				node2 = node2 -> next;
 				if (! node2)
 					break;
@@ -184,19 +184,19 @@ void DoublyLinkedList_sort (DoublyLinkedList me) {
 
 			while (node1size > 0 || (node2size > 0 && node2)) { // merge node1 and node2
 				if (node1size == 0) {
-					node2size--;
+					node2size --;
 					node = node2;
 					node2 = node2 -> next;
 				} else if (node2size == 0 || ! node2) {
-					node1size--;
+					node1size --;
 					node = node1;
 					node1 = node1 -> next;
 				} else if (compare (node1, node2) <= 0) {
-					node1size--;
+					node1size --;
 					node = node1;
 					node1 = node1 -> next;
 				} else {
-					node2size--;
+					node2size --;
 					node = node2;
 					node2 = node2 -> next;
 				}

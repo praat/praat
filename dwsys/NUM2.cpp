@@ -2861,7 +2861,19 @@ static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECV
 	return xdifsq / ydifsq;
 }
 
-void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
+autoVEC newVECsolveSparse_IHT (constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
+	try {
+		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
+		Melder_assert (dictionary.nrow == y.size); // y = D.x + e
+		autoVEC result = newVECzero (dictionary.ncol);
+		VECsolveSparse_IHT (result.get(), dictionary, y, numberOfNonZeros, maximumNumberOfIterations, tolerance, info);
+		return result;
+	} catch (MelderError) {
+		Melder_throw (U"Solution of sparse problem not found.");
+	}
+}
+
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
 	try {
 		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
 		Melder_assert (dictionary.ncol == x.size); // we calculate D.x
@@ -2886,7 +2898,7 @@ void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constV
 				Get initial support supp (Hard_K (D'y))
 				Hard_K (v) is a hard thresholder which only keeps the largest K elements from the vector v
 			*/
-			VECmul (buffer.get(), dictionary.transpose(), y); // 
+			VECmul (buffer.get(), dictionary.transpose(), y);
 			VECsetThresholdAndSupport (buffer.get(), support.get(), numberOfNonZeros);
 			yfromx <<= 0.0;
 			ydif <<= y;
@@ -2940,8 +2952,8 @@ void newVECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constV
 
 			ydif <<= y  -  yfromx_new; // y - D.x(n+1)
 
-			double rms_new = NUMsum2 (ydif.get()) / y.size;
-			double relativeError = fabs (rms - rms_new) / rms_y;
+			const double rms_new = NUMsum2 (ydif.get()) / y.size;
+			const double relativeError = fabs (rms - rms_new) / rms_y;
 			convergence = relativeError < tolerance;
 			if (info)
 				MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
