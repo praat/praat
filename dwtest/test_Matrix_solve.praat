@@ -3,7 +3,7 @@
 
 appendInfoLine: "test_Matrix_solve.praat"
 
-;@solve_sparse_system
+@solve_sparse_system
 @solve_undetermined: 10, 100
 @solve3x3
 
@@ -12,7 +12,7 @@ procedure solve_sparse_system
 	.ncol = 1000
 	.yy = Create simple Matrix: "y", .nrow, 1, "0.0"
 	.xx = Create simple Matrix: "x", .ncol, 1, "0.0"
-	Formula: "if randomUniform (0,1) < 0.005 then 0.1 else 0.0 fi"
+	Formula: "if randomUniform (0,1) < 0.05 then 0.1 else 0.0 fi"
 	.phi = Create simple Matrix: "phi", .nrow, .ncol, "0.0"
 	Formula: "randomGauss (0.0, 1.0 / .nrow)"
 	for .irow to .nrow
