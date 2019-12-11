@@ -89,7 +89,7 @@ struct pdf2_struct {
 };
 
 void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
-	const integer npc = 5;
+	constexpr integer npc = 5;
 	const ldiv_t n = ldiv (m.ncol, npc);
 
 	MelderInfo_open ();
@@ -159,10 +159,15 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 	}
 }
 
-inline void MATmul_rows_inplace (MATVU const& x, constVECVU const& v) { // TODO better name??
+inline void MATmultiplyRows_inplace (MATVU const& x, constVECVU const& v) {
 	Melder_assert (x.nrow == v.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		x.row (irow)  *=  v [irow];
+		x.row (irow)  *=  v [irow];  // x[i,j]*v[i]
+}
+inline void MATmultiplyColumns_inplace (MATVU const& x, constVECVU const& v) {
+	Melder_assert (x.ncol == v.size);
+	for (integer icol = 1; icol <= x.nrow; icol ++)
+		x.column (icol)  *=  v [icol];  // x[i,j]*v[j]
 }
 
 double NUMmultivariateKurtosis (constMATVU const& m, int method) {
