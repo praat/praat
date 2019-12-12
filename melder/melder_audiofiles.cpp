@@ -439,15 +439,20 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 	int numberOfBitsPerSamplePoint = -1;
 	uint32 dataChunkSize = 0xffffffff;
 
-	if (fread (data, 1, 4, f) < 4)   Melder_throw (U"File too small: no RIFF statement.");
-	if (! strnequ (data, "RIFF", 4)) Melder_throw (U"Not a WAV file (RIFF statement expected).");
-	if (fread (data, 1, 4, f) < 4)   Melder_throw (U"File too small: no size of RIFF chunk.");
-	if (fread (data, 1, 4, f) < 4)   Melder_throw (U"File too small: no file type info (expected WAVE statement).");
-	if (! strnequ (data, "WAVE", 4) && ! strnequ (data, "CDDA", 4))
-	                                 Melder_throw (U"Not a WAVE or CD audio file (wrong file type info).");
+	Melder_require (fread (data, 1, 4, f) == 4,
+		U"File too small: no RIFF statement.");
+	Melder_require (strnequ (data, "RIFF", 4),
+		U"Not a WAV file (RIFF statement expected).");
+	Melder_require (fread (data, 1, 4, f) == 4,
+		U"File too small: no size of RIFF chunk.");
+	Melder_require (fread (data, 1, 4, f) == 4,
+		U"File too small: no file type info (expected WAVE statement).");
+	Melder_require (strnequ (data, "WAVE", 4) || strnequ (data, "CDDA", 4),
+		U"Not a WAVE or CD audio file (wrong file type info).");
 
-	/* Search for Format Chunk and Data Chunk. */
-
+	/*
+		Search for Format Chunk and Data Chunk.
+	*/
 	while (fread (chunkID, 1, 4, f) == 4) {
 		uint32 chunkSize = bingetu32LE (f);
 		if (Melder_debug == 23) {
@@ -456,23 +461,25 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 		}
 		if (strnequ (chunkID, "fmt ", 4)) {
 			/*
-			 * Found a Format Chunk.
-			 */
+				Found a Format Chunk.
+			*/
 			uint16 winEncoding = bingetu16LE (f);
 			formatChunkPresent = true;			
 			*numberOfChannels = bingeti16LE (f);
-			if (*numberOfChannels < 1) Melder_throw (U"Too few sound channels (", *numberOfChannels, U").");
+			Melder_require (*numberOfChannels >= 1,
+				U"Too few sound channels (", *numberOfChannels, U").");
 			*sampleRate = (double) bingeti32LE (f);
-			if (*sampleRate <= 0.0) Melder_throw (U"Wrong sampling frequency (", *sampleRate, U" Hz).");
+			Melder_require (*sampleRate > 0.0,
+				U"Wrong sampling frequency (", *sampleRate, U" Hz).");
 			(void) bingeti32LE (f);   // avgBytesPerSec
 			(void) bingeti16LE (f);   // blockAlign
 			numberOfBitsPerSamplePoint = bingeti16LE (f);
 			if (numberOfBitsPerSamplePoint == 0)
 				numberOfBitsPerSamplePoint = 16;   // the default
-			else if (numberOfBitsPerSamplePoint < 4)
-				Melder_throw (U"Too few bits per sample (", numberOfBitsPerSamplePoint, U"; the minimum is 4).");
-			else if (numberOfBitsPerSamplePoint > 64)
-				Melder_throw (U"Too many bits per sample (", numberOfBitsPerSamplePoint, U"; the maximum is 32).");
+			Melder_require (numberOfBitsPerSamplePoint >= 4,
+				U"Too few bits per sample (", numberOfBitsPerSamplePoint, U"; the minimum is 4).");
+			Melder_require (numberOfBitsPerSamplePoint <= 64,
+				U"Too many bits per sample (", numberOfBitsPerSamplePoint, U"; the maximum is 64).");
 			switch (winEncoding) {
 				case WAVE_FORMAT_PCM:
 					*encoding =
@@ -498,8 +505,8 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 						U"please use an audio converter program to convert it first to normal (PCM) WAV format\n"
 						U"(Praat may have difficulty analysing the poor recording, though).");
 				case WAVE_FORMAT_EXTENSIBLE: {
-					if (chunkSize < 40)
-						Melder_throw (U"Not enough format data in extensible WAV format");
+					Melder_require (chunkSize >= 40,
+						U"Not enough format data in extensible WAV format");
 					(void) bingeti16LE (f);   // extensionSize
 					(void) bingeti16LE (f);   // validBitsPerSample
 					(void) bingeti32LE (f);   // channelMask
@@ -531,46 +538,63 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 						default:
 							Melder_throw (U"Unsupported Windows audio encoding ", winEncoding2, U".");
 					}
-					if (fread (data, 1, 14, f) < 14)   Melder_throw (U"File too small: no SubFormat data.");
+					Melder_require (fread (data, 1, 14, f) == 14,
+						U"File too small: no SubFormat data.");
 					continue;   // next chunk
 				}
 				default:
 					Melder_throw (U"Unsupported Windows audio encoding ", winEncoding, U".");
 			}
-			if (chunkSize & 1) chunkSize ++;
+			if (chunkSize & 1)
+				chunkSize += 1;
 			for (integer i = 17; i <= chunkSize; i ++)
-				if (fread (data, 1, 1, f) < 1) Melder_throw (U"File too small: expected ", chunkSize, U" bytes in fmt chunk, but found ", i, U".");
+				Melder_require (fread (data, 1, 1, f) == 1,
+					U"File too small: expected ", chunkSize, U" bytes in fmt chunk, but found ", i, U".");
 		} else if (strnequ (chunkID, "data", 4)) {
 			/*
-			 * Found a Data Chunk.
-			 */
+				Found a Data Chunk.
+			*/
 			dataChunkPresent = true;
 			dataChunkSize = chunkSize;
 			*startOfData = ftell (f);
-			if (chunkSize & 1) chunkSize ++;
-			if (chunkSize > UINT32_MAX - 100) {   // incorrect data chunk (sometimes -44); assume that the data run till the end of the file
+			if (chunkSize > UINT32_MAX - 100) {   // incorrect data chunk (sometimes -1 or -44); assume that the data run till the end of the file
 				fseeko (f, 0LL, SEEK_END);
 				off_t endOfData = ftello (f);
 				dataChunkSize = chunkSize = endOfData - *startOfData;
 				fseeko (f, *startOfData, SEEK_SET);
 			}
+			/*
+				ppgb 20191211:
+				The following check had to be moved here (from six lines up),
+				because the original chunkSize could have been 0xffffffff,
+				leading to it becoming 0 here and skipping the above block,
+				thus violating the assert on dataChunkSize below.
+			*/
+			if (chunkSize & 1)
+				chunkSize += 1;
 			if (Melder_debug == 23) {
 				for (integer i = 1; i <= chunkSize; i ++)
-					if (fread (data, 1, 1, f) < 1) Melder_throw (U"File too small: expected ", chunkSize, U" bytes of data, but found ", i, U".");
+					Melder_require (fread (data, 1, 1, f) == 1,
+						U"File too small: expected ", chunkSize, U" bytes of data, but found ", i, U".");
 			} else {
-				if (formatChunkPresent) break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
+				if (formatChunkPresent)
+					break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
 			}
 		} else {   // ignore other chunks
-			if (chunkSize & 1) chunkSize ++;
+			if (chunkSize & 1)
+				chunkSize += 1;
 			for (integer i = 1; i <= chunkSize; i ++)
-				if (fread (data, 1, 1, f) < 1)
-					Melder_throw (U"File too small: expected ", chunkSize, U" bytes, but found ", i, U".");
+				Melder_require (fread (data, 1, 1, f) == 1,
+					U"File too small: expected ", chunkSize, U" bytes, but found ", i, U".");
 		}
 	}
 
-	if (! formatChunkPresent) Melder_throw (U"Found no Format Chunk.");
-	if (! dataChunkPresent) Melder_throw (U"Found no Data Chunk.");
-	Melder_assert (numberOfBitsPerSamplePoint != -1 && dataChunkSize != 0xffffffff);
+	Melder_require (formatChunkPresent,
+		U"Found no Format Chunk.");
+	Melder_require (dataChunkPresent,
+		U"Found no Data Chunk.");
+	Melder_assert (numberOfBitsPerSamplePoint != -1);
+	Melder_assert (dataChunkSize != 0xffffffff);
 	*numberOfSamples = dataChunkSize / *numberOfChannels / ((numberOfBitsPerSamplePoint + 7) / 8);
 }
 
