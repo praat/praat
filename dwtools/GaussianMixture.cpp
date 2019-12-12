@@ -64,8 +64,6 @@ void structGaussianMixture :: v_info () {
 static integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
 	Melder_assert (my covariances->size > 0);
 	const Covariance thee = my covariances->at [1];
-	// if diagonal) d (means) + d (variance)
-	// else  n + n(n+1)/2
 	return ( thy numberOfRows == 1 ? 2 * thy numberOfColumns : thy numberOfColumns * (thy numberOfColumns + 3) / 2 );
 }
 
@@ -90,13 +88,13 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 				lnsum += pp * log (pp); // scaling outside the loop
 			}
 			if (psum > 0)
-				lnpcd += lnsum / psum; // scaling: to reponsibilities
+				lnpcd += lnsum / psum; // scaling: as reponsibilities
 		}
 		return lnpcd;
 	}
-
-	// The common factor for the following criteria is the log(likelihood), Bishop eq. 9.28
-
+	/*
+		The common factor for the following criteria is the log(likelihood), Bishop eq. 9.28
+	*/
 	longdouble lnp = 0.0;
 	for (integer irow = 1; irow <= numberOfData; irow ++) {
 		double psum = NUMinner (my mixingProbabilities.get(), probabilities.row (irow));
@@ -110,7 +108,8 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 	const double numberOfParametersPerComponent = GaussianMixture_getNumberOfParametersInComponent (me);
 	const double numberOfParametersTotal = numberOfParametersPerComponent * my numberOfComponents;
 	if (criterion == kGaussianMixtureCriterion::MessageLength) {
-		/* Equation (15) in
+		/*
+			Equation (15) in
 			Figueiredo & Jain, Unsupervised Learning of Finite Mixture Models :
 			IEEE TRANSACTIONS ON PATTERN ANALYSIS AND MACHINE INTELLIGENCE, VOL. 24, NO. 3, MARCH 2002
 
@@ -124,9 +123,9 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 				logmpn += log (my mixingProbabilities [ic]);
 				numberOfNonZeroComponents ++;
 			}
-
-		// a rewritten L(theta,Y) is
-
+		/*
+			A rewritten L(theta,Y) is
+		*/
 		return lnp - 0.5 * numberOfNonZeroComponents * (numberOfParametersPerComponent + 1) * (log (numberOfData / 12.0) + 1.0)
 		       - 0.5 * numberOfParametersPerComponent * logmpn;
 	} else if (criterion == kGaussianMixtureCriterion::BayesInformation)
@@ -168,22 +167,18 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 		U"The component number should be in the range from 1 to ", my numberOfComponents, U".");
 	
 	const Covariance thee = my covariances->at [component];
-	
 	/*
-		update the means: Bishop eq. 9.24
+		Update the means: Bishop eq. 9.24
 	*/
-	
 	thy centroid.get() <<= 0.0;
 	for (integer irow = 1; irow <= numberOfData; irow ++)
 		thy centroid.get()  +=  responsibilities [irow] [component]  *  data.row (irow);
 	
 	const double totalComponentResponsibility = NUMsum (responsibilities.column (component));
 	thy centroid.get ()  /=  totalComponentResponsibility;
-	
 	/*
 		update covariance with the new mean: Bishop eq. 9.25
 	*/
-	
 	thy data.get() <<= 0.0;
 	autoVEC dif = newVECraw (thy numberOfColumns);
 	if (thy numberOfRows == 1) { // 1xn covariance
@@ -218,9 +213,9 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer c
 	const Covariance thee = my covariances->at [component];
 	Melder_require (thy numberOfColumns == his numberOfColumns,
 		U"The dimension of the Covariance should equal the dimension of the covariances in the GaussianMixture.");
-
-	// prevent instability: add lambda fraction of global covariances
-
+	/*
+		Prevent instability: add lambda fraction of global covariances
+	*/
 	if (thy numberOfRows == 1)
 		if (his numberOfRows == 1)
 			thy data.row (1)  +=  fraction * his data.row (1);
@@ -249,7 +244,7 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 	thy numberOfObservations = my numberOfObservations;
 	thy centroid.all() <<= my centroid.all();
 	thy columnLabels.all() <<= my columnLabels.all();
-	// Are the matrix sizes equal
+
 	if (my numberOfRows == thy numberOfRows) {
 		thy rowLabels.all() <<= my rowLabels.all();
 		thy data.all() <<= my data.all();
@@ -436,7 +431,6 @@ autoPCA GaussianMixture_to_PCA (GaussianMixture me) {
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, integer d1, integer d2, double nsigmas, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax) {
 	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension,
 		U"The directions should be in the range from 1 to ", my dimension, U".");
-	
 	autoSSCPList sscps = SSCPList_extractTwoDimensions (my covariances->asSSCPList(), d1, d2);
 	SSCPList_getEllipsesBoundingBoxCoordinates (sscps.get(), -nsigmas, 0, out_xmin, out_xmax, out_ymin, out_ymax);
 }
@@ -504,19 +498,19 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 		npoints = 1000;
 
 	constexpr double nsigmas = 2.0;
-	if (xmax <= xmin) 
+	if (xmax <= xmin)
 		GaussianMixture_getIntervalAlongDirection (me, d, nsigmas, & xmin, & xmax);
 
 	const double dx = (xmax - xmin) / (npoints - 1);
 	const double scalef = 1.0; // TODO
 	autoVEC p = newVECraw (npoints);
-	autoVEC v = newVECraw (my dimension);
+	autoVEC pos = newVECraw (my dimension);
 	
 	for (integer k = 1; k <= my dimension; k++)
-		v [k] = ( k == d ? 1.0 : 0.0 );
+		pos [k] = ( k == d ? 1.0 : 0.0 );
 	for (integer i = 1; i <= npoints; i++) {
 		const double x = xmin + (i - 1) * dx;
-		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, v.get(), x);
+		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, pos.get(), x);
 	}
 	const double pmax = NUMmax (p.get());
 	if (ymin >= ymax) {
@@ -539,29 +533,20 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 }
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale,
-	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
-{
+	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	Melder_require (my dimension == his dimension,
 		U"The numbers of dimensions should agree.");
-	Melder_require (integer_abs (d1) >= 1 && integer_abs (d1) <= my dimension && integer_abs (d2) >= 1 && integer_abs (d2) <= my dimension,
+	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
+	Melder_require (dim1 >= 1 && dim1 <= my dimension && dim2 >= 1 && dim2 <= my dimension,
 		U"The dimension numbers should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");
-	const bool d1_inverted = d1 < 0, d2_inverted = d2 < 0;
-	d1 = integer_abs (d1);
-	d2 = integer_abs (d2);
+	autoVEC eigenvector1 = newVECcopy (his eigenvectors.row (dim1));
+	autoVEC eigenvector2 = newVECcopy (his eigenvectors.row (dim2));
+	if (d1 < 0)
+		eigenvector1.all()  *=  -1.0;
+	if (d2 < 0)
+		eigenvector2.all()  *=  -1.0;
 
-	if (d1_inverted)
-		Eigen_invertEigenvector (him, d1);
-	if (d2_inverted)
-		Eigen_invertEigenvector (him, d2);
-
-	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), his eigenvectors.row(d1), his eigenvectors.row (d2));
-
-	// Restore eigenvectors
-	
-	if (d1_inverted)
-		Eigen_invertEigenvector (him, d1);
-	if (d2_inverted)
-		Eigen_invertEigenvector (him, d2);
+	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), eigenvector1, eigenvector2);
 
 	SSCPList_drawConcentrationEllipses (thee.get(), g, -scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 
@@ -579,13 +564,12 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 
 void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label,
 	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
-	Melder_require (integer_abs (d1) >= 1 && integer_abs (d1) <= my dimension && integer_abs (d2) >= 1 && integer_abs (d2) <= my dimension,
-		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for "
-		"a reversed axis).");
-
+	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
+	Melder_require (dim1 >= 1 && dim1 <= my dimension && dim2 >= 1 && dim2 <= my dimension,
+		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");
 	if (! pcaDirections) {
 		SSCPList_drawConcentrationEllipses (my covariances->asSSCPList(), g, -scale, confidence, label,
-			integer_abs (d1), integer_abs (d2), xmin, xmax, ymin, ymax, fontSize, garnish);
+			dim1, dim2, xmin, xmax, ymin, ymax, fontSize, garnish);
 		return;
 	}
 
@@ -622,7 +606,6 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee) {
 void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double nSigmas, double ru_range) {
 	try {
 		autoCovariance cov_t = TableOfReal_to_Covariance (thee);
-
 		/*
 			Assume equal probabilities for mixture
 			Assume equal covariance matrices
@@ -646,18 +629,19 @@ void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double
 			double a, b, cs, sn;
 			NUMeigencmp22 (s2d -> data [1] [1], s2d -> data [1] [2], s2d -> data [2] [2], & a, & b, & cs, & sn);
 
-			a = nSigmas * sqrt (a);
-			b = nSigmas * sqrt (b);
+			const double a_scaled = nSigmas * sqrt (a);
+			const double b_scaled = nSigmas * sqrt (b);
 			const double angle_inc = NUM2pi / my numberOfComponents;
 			double angle = 0.0;
 			for (integer im = 1; im <= my numberOfComponents; im++, angle += angle_inc) {
-				const double xc = a * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * cos (angle);
-				const double yc = b * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * sin (angle);
+				const double xc = a_scaled * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * cos (angle);
+				const double yc = b_scaled * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * sin (angle);
 				means2d [im] [1] = s2d -> centroid [1] + xc * cs - yc * sn;
 				means2d [im] [2] = s2d -> centroid [2] + xc * sn + yc * cs;
 			}
-
-			// reconstruct the n-dimensional means from the 2-d pc's and the 2 eigenvectors
+			/*
+				Reconstruct the n-dimensional means from the 2-d pc's and the 2 eigenvectors
+			*/
 			autoMAT means = newMATmul (means2d.get(), pca -> eigenvectors.horizontalBand (1, 2));
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
@@ -665,10 +649,10 @@ void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double
 				covi -> centroid.all() <<= means.row (im);
 				covi -> numberOfObservations = thy numberOfRows / my numberOfComponents;
 			}
-
-			// Trick: use the new means to get the between SSCP,
-			// if there is only one component the cov_b will be zero!
-
+			/*
+				Trick: use the new means to get the between SSCP,
+				if there is only one component the cov_b will be zero!
+			*/
 			autoCovariance cov_b = GaussianMixture_to_Covariance_between (me);
 			const double var_t = SSCP_getTotalVariance (cov_t.get());
 			const double var_b = SSCP_getTotalVariance (cov_b.get());
@@ -681,14 +665,14 @@ void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double
 				}
 				cov_b = GaussianMixture_to_Covariance_between (me);
 			}
-
-			// Within variances are now (total - between) / numberOfComponents;
-
+			/*
+				Within variances are now (total - between) / numberOfComponents;
+			*/
 			if (my numberOfComponents > 1)
 				cov_t -> data.all()  *=  var_b / var_t / my numberOfComponents;
-
-			// Copy them
-
+			/*
+				Copy them
+			*/
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				const Covariance cov = my covariances->at [im];
 				if (cov -> numberOfRows == 1)
