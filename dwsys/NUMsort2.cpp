@@ -1,6 +1,6 @@
 /* NUMsort.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ void NUMrankColumns (MAT m, integer cb, integer ce) {
 
 template <class T>
 void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *, void *)) {
-	integer ii, imin;
 	T min;
 	for (integer j = 1; j <= n; j ++)
 		index [j] = j;
@@ -71,7 +70,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 	}
 	if (n <= 12) {
 		for (integer i = 1; i < n; i ++) {
-			imin = i;
+			integer imin = i;
 			min = a [index [imin]];
 			for (integer j = i + 1; j <= n; j ++) {
 				if (COMPARELT (a[index [j]], min)) {
@@ -79,7 +78,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 					min = a [index [j]];
 				}
 			}
-			ii = index [imin];
+			const integer ii = index [imin];
 			index [imin] = index [i];
 			index [i] = ii;
 		}
@@ -101,7 +100,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 				break;
 			}
 		}
-		// H3 
+		// H3
 		integer j = l;
 		for (;;) {
 			// H4
@@ -133,8 +132,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 {\
 	integer l, r, j, i, ii, k, imin; \
 	TYPE min; \
-	autoINTVEC index = newINTVECraw (n); \
-	for (j = 1; j <= n; j ++) index[j] = j;	\
+	autoINTVEC index = newINTVEClinear (n, 1, 1); \
 	if (n < 2) return index;   /* Already sorted. */ \
 	if (n == 2) \
 	{ \
