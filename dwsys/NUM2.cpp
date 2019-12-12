@@ -89,7 +89,7 @@ struct pdf2_struct {
 };
 
 void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
-	const integer npc = 5;
+	constexpr integer npc = 5;
 	const ldiv_t n = ldiv (m.ncol, npc);
 
 	MelderInfo_open ();
@@ -159,10 +159,15 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 	}
 }
 
-inline void MATmul_rows_inplace (MATVU const& x, constVECVU const& v) { // TODO better name??
+inline void MATmultiplyRows_inplace (MATVU const& x, constVECVU const& v) {
 	Melder_assert (x.nrow == v.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		x.row (irow)  *=  v [irow];
+		x.row (irow)  *=  v [irow];  // x[i,j]*v[i]
+}
+inline void MATmultiplyColumns_inplace (MATVU const& x, constVECVU const& v) {
+	Melder_assert (x.ncol == v.size);
+	for (integer icol = 1; icol <= x.nrow; icol ++)
+		x.column (icol)  *=  v [icol];  // x[i,j]*v[j]
 }
 
 double NUMmultivariateKurtosis (constMATVU const& m, int method) {
@@ -2702,8 +2707,8 @@ double NUMtrace2 (const constMATVU& x, const constMATVU& y) {
 }
 
 void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1) {
-	longdouble sm = a + c, df = a - c, adf = fabs (df);
-	longdouble tb = b + b, ab = fabs (tb);
+	const longdouble sm = a + c, df = a - c, adf = fabs (df);
+	const longdouble tb = b + b, ab = fabs (tb);
 	longdouble acmx = c, acmn = a;
 	if (fabs (a) > fabs (c)) {
 		acmx = a;
@@ -2716,12 +2721,12 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	} else if (adf < ab) {
 		tn = adf / ab;
 		rt = ab * sqrt (1.0 + tn * tn);
-	} else 
+	} else
 		rt = ab * sqrt (2.0);
 	
 	longdouble rt1, rt2;
 	integer sgn1, sgn2;
-	if (sm < 0) {
+	if (sm < 0.0) {
 		rt1 = 0.5 * (sm - rt);
 		sgn1 = -1;
 		/*
@@ -2730,7 +2735,7 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 			next line needs to be executed in higher precision.
 		*/
 		rt2 = (acmx / rt1) * acmn - (b / rt1) * b;
-	} else if (sm > 0) {
+	} else if (sm > 0.0) {
 		rt1 = 0.5 * (sm + rt);
 		sgn1 = 1;
 		/*
@@ -2748,20 +2753,21 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	// Compute the eigenvector
 
 	longdouble cs;
-	if (df >= 0) {
+	if (df >= 0.0) {
 		cs = df + rt;
 		sgn2 = 1;
 	} else {
 		cs = df - rt;
 		sgn2 = -1;
 	}
-	longdouble acs = fabs (cs), cs1, sn1;
+	const longdouble acs = fabs (cs);
+	longdouble cs1, sn1;
 	if (acs > ab) {
-		longdouble ct = -tb / cs;
+		const longdouble ct = -tb / cs;
 		sn1 = 1.0 / sqrt (1.0 + ct * ct);
 		cs1 = ct * sn1;
 	} else {
-		if (ab == 0) {
+		if (ab == 0.0) {
 			cs1 = 1.0;
 			sn1 = 0.0;
 		} else {
@@ -2824,7 +2830,7 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 */
 static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
-	Melder_assert (numberOfNonZeros < v.size);
+	Melder_assert (numberOfNonZeros > 0 && numberOfNonZeros < v.size);
 	autoVEC abs = newVECabs (v);
 	autoINTVEC linear = newINTVEClinear (v.size, 1, 1);
 	NUMsortTogether <double, integer> (abs.get(), linear.get()); // sort is always increasing
@@ -2836,14 +2842,15 @@ static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, 
 		support [linear [i]] = 1;
 }
 
-bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
+static bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
+	Melder_assert (a.size == b.size);
 	for (integer i = 1; i <= a.size; i ++)
 		if (a [i] != b [i])
 			return false;
 	return true;
 }
 
-static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
+static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
 	Melder_assert (x_new.size == xn.size && buffer.size == x_new.size);
 	Melder_assert (gradient.size == support_new.size && gradient.size == x_new.size);
 	Melder_assert (y_new.size == yn.size);
@@ -2853,7 +2860,7 @@ static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECV
 	x_new <<= xn + buffer; // x(n) + stepSize * gradient
 	VECsetThresholdAndSupport (x_new, support_new, numberOfNonZeros);
 	buffer <<= x_new  -  xn; // x(n+1) - x (n)
-	double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
+	const double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
 	
 	VECmul (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
 	buffer.part (1, yn.size) <<= y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
@@ -2888,8 +2895,8 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		autoINTVEC support = newINTVECraw (x.size);
 		autoINTVEC support_new = newINTVECraw (x.size);
 		
-		double xnormSq = NUMsum2 (x);
-		double rms_y = NUMsum2 (y) / y.size;
+		const double xnormSq = NUMsum2 (x);
+		const double rms_y = NUMsum2 (y) / y.size;
 		double rms = rms_y;
 		
 		if (xnormSq == 0.0) {

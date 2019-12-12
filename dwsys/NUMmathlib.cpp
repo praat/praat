@@ -106,14 +106,14 @@ static double wprob(double w, double rr, double cc)
        (see how C1-C3 are used) <MM>
     */
     /* const double iMax  = 1.; not used if = 1*/
-    const static double C1 = -30.;
-    const static double C2 = -50.;
-    const static double C3 = 60.;
-    const static double bb   = 8.;
-    const static double wlar = 3.;
-    const static double wincr1 = 2.;
-    const static double wincr2 = 3.;
-    const static double xleg[ihalf] = {
+    constexpr static double C1 = -30.;
+    constexpr static double C2 = -50.;
+    constexpr static double C3 = 60.;
+    constexpr static double bb   = 8.;
+    constexpr static double wlar = 3.;
+    constexpr static double wincr1 = 2.;
+    constexpr static double wincr2 = 3.;
+    constexpr static double xleg [ihalf] = {
 		0.981560634246719250690549090149,
 		0.904117256370474856678465866119,
 		0.769902674194304687036893833213,
@@ -121,7 +121,7 @@ static double wprob(double w, double rr, double cc)
 		0.367831498998180193752691536644,
 		0.125233408511468915472441369464
     };
-    const static double aleg[ihalf] = {
+    constexpr static double aleg[ihalf] = {
 		0.047175336386511827194615961485,
 		0.106939325995318430960254718194,
 		0.160078328543346226334652529543,
@@ -129,10 +129,8 @@ static double wprob(double w, double rr, double cc)
 		0.233492536538354808760849898925,
 		0.249147045813402785000562436043
     };
-    double a, ac, pr_w, b, binc, c, cc1,
-	pminus, pplus, qexpo, rinsum, wi, wincr, xx;
+    double pr_w, rinsum, xx;
     long double blb, bub, einsum, elsum;
-    int j, jj;
 
     const double qsqz = w * 0.5;
 
@@ -156,10 +154,7 @@ static double wprob(double w, double rr, double cc)
     /* if w is large then the second component of the */
     /* integral is small, so fewer intervals are needed. */
 
-    if (w > wlar)
-		wincr = wincr1;
-    else
-		wincr = wincr2;
+	const double wincr = ( w > wlar ? wincr1 : wincr2 );
 
     /* find the integral of second term of hartley's form */
     /* for the integral of the range for equal-length */
@@ -170,22 +165,23 @@ static double wprob(double w, double rr, double cc)
     /* blb and bub are lower and upper limits of integration. */
 
     blb = qsqz;
-    binc = (bb - qsqz) / wincr;
+    const double binc = (bb - qsqz) / wincr;
     bub = blb + binc;
     einsum = 0.0;
 
     /* integrate over each interval */
 
-    cc1 = cc - 1.0;
-    for (wi = 1; wi <= wincr; wi ++) {
+    const double cc1 = cc - 1.0;
+    for (double wi = 1.0; wi <= wincr; wi ++) {
 		elsum = 0.0;
-		a = double (0.5 * (bub + blb));
+		const double a = double (0.5 * (bub + blb));
 
 		/* legendre quadrature with order = nleg */
 
-		b = double (0.5 * (bub - blb));
+		const double b = double (0.5 * (bub - blb));
 
-		for (jj = 1; jj <= nleg; jj ++) {
+		for (integer jj = 1; jj <= nleg; jj ++) {
+			integer j;
 			if (ihalf < jj) {
 				j = (nleg - jj) + 1;
 				xx = xleg [j-1];
@@ -193,18 +189,18 @@ static double wprob(double w, double rr, double cc)
 				j = jj;
 				xx = -xleg [j-1];
 			}
-			c = b * xx;
-			ac = a + c;
+			const double c = b * xx;
+			const double ac = a + c;
 
 			/* if exp(-qexpo/2) < 9e-14, */
 			/* then doesn't contribute to integral */
 
-			qexpo = ac * ac;
+			const double qexpo = ac * ac;
 			if (qexpo > C3)
-			break;
+				break;
 
-			pplus = 2 * NUMgaussP (ac); // djmw: 2 * pnorm(ac, 0., 1., 1,0);
-			pminus= 2 * NUMgaussP (ac - w); // djmw: 2 * pnorm(ac, w,  1., 1,0);
+			const double pplus = 2 * NUMgaussP (ac); // djmw: 2 * pnorm(ac, 0., 1., 1,0);
+			const double pminus= 2 * NUMgaussP (ac - w); // djmw: 2 * pnorm(ac, w,  1., 1,0);
 
 			/* if rinsum ^ (cc-1) < 9e-14, */
 			/* then doesn't contribute to integral */
@@ -299,17 +295,17 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 #define ihalfq	8
 
 /*  const double eps = 1.0; not used if = 1 */
-    const static double eps1 = -30.0;
-    const static double eps2 = 1.0e-14;
-    const static double dhaf  = 100.0;
-    const static double dquar = 800.0;
-    const static double deigh = 5000.0;
-    const static double dlarg = 25000.0;
-    const static double ulen1 = 1.0;
-    const static double ulen2 = 0.5;
-    const static double ulen3 = 0.25;
-    const static double ulen4 = 0.125;
-    const static double xlegq[ihalfq] = {
+    constexpr static double eps1 = -30.0;
+    constexpr static double eps2 = 1.0e-14;
+    constexpr static double dhaf  = 100.0;
+    constexpr static double dquar = 800.0;
+    constexpr static double deigh = 5000.0;
+    constexpr static double dlarg = 25000.0;
+    constexpr static double ulen1 = 1.0;
+    constexpr static double ulen2 = 0.5;
+    constexpr static double ulen3 = 0.25;
+    constexpr static double ulen4 = 0.125;
+    constexpr static double xlegq[ihalfq] = {
 		0.989400934991649932596154173450,
 		0.944575023073232576077988415535,
 		0.865631202387831743880467897712,
@@ -319,7 +315,7 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 		0.281603550779258913230460501460,
 		0.950125098376374401853193354250e-1
     };
-    const static double alegq[ihalfq] = {
+    constexpr static double alegq[ihalfq] = {
 		0.271524594117540948517805724560e-1,
 		0.622535239386478928628438369944e-1,
 		0.951585116824927848099251076022e-1,
@@ -329,8 +325,6 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 		0.182603415044923588866763667969,
 		0.189450610455068496285396723208
     };
-    double ans, f2, f21, f2lf, ff4, otsum, qsqz, rotsum, t1, twa1, ulen, wprb;
-    int i, j, jj;
 
 	if (isundef (q) || isundef (rr) || isundef (cc) || isundef (df))
 		return undefined;
@@ -352,16 +346,17 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 
     /* calculate leading constant */
 
-    f2 = df * 0.5;
+    const double f2 = df * 0.5;
     /* lgammafn(u) = log(gamma(u)) */
-    f2lf = ((f2 * log(df)) - (df * NUMln2)) - NUMlnGamma (f2); //lgammafn(f2);
-    f21 = f2 - 1.0;
+	double f2lf = ((f2 * log(df)) - (df * NUMln2)) - NUMlnGamma (f2); //lgammafn(f2);
+	const double f21 = f2 - 1.0;
 
     /* integral is divided into unit, half-unit, quarter-unit, or */
     /* eighth-unit length intervals depending on the value of the */
     /* degrees of freedom. */
 
-    ff4 = df * 0.25;
+    const double ff4 = df * 0.25;
+	double ulen;
     if	    (df <= dhaf)
 		ulen = ulen1;
     else if (df <= dquar)
@@ -375,17 +370,19 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 
     /* integrate over each subinterval */
 
-    ans = 0.0;
+    double otsum, ans = 0.0;
 
-    for (i = 1; i <= 50; i++) {
+    for (integer i = 1; i <= 50; i++) {
 		otsum = 0.0;
 
 		/* legendre quadrature with order = nlegq */
 		/* nodes (stored in xlegq) are symmetric around zero. */
 
-		twa1 = (2 * i - 1) * ulen;
+		const double twa1 = (2 * i - 1) * ulen;
 
-		for (jj = 1; jj <= nlegq; jj ++) {
+		for (integer jj = 1; jj <= nlegq; jj ++) {
+			double t1;
+			integer j;
 			if (ihalfq < jj) {
 				j = jj - ihalfq - 1;
 				t1 = f2lf + f21 * log (twa1 + xlegq[j] * ulen) - (xlegq[j] * ulen + twa1) * ff4;
@@ -396,16 +393,14 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 
 			/* if exp(t1) < 9e-14, then doesn't contribute to integral */
 			if (t1 >= eps1) {
-				if (ihalfq < jj) {
-					qsqz = q * sqrt ((xlegq[j] * ulen + twa1) * 0.5);
-				} else {
-					qsqz = q * sqrt ((-(xlegq[j] * ulen) + twa1) * 0.5);
-				}
-
+				const double qsqz = ( ihalfq < jj ?
+					q * sqrt ((xlegq[j] * ulen + twa1) * 0.5) :
+					q * sqrt ((-(xlegq[j] * ulen) + twa1) * 0.5) );
+				
 				/* call wprob to find integral of range portion */
 
-				wprb = wprob (qsqz, rr, cc);
-				rotsum = wprb * alegq [j] * exp (t1);
+				const double wprb = wprob (qsqz, rr, cc);
+				const double rotsum = wprb * alegq [j] * exp (t1);
 				otsum += rotsum;
 			}
 			/* end legendre integral for interval i */
@@ -491,30 +486,32 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 
 static double qinv(double p, double c, double v)
 {
-    const static double p0 = 0.322232421088;
-    const static double q0 = 0.993484626060e-01;
-    const static double p1 = -1.0;
-    const static double q1 = 0.588581570495;
-    const static double p2 = -0.342242088547;
-    const static double q2 = 0.531103462366;
-    const static double p3 = -0.204231210125;
-    const static double q3 = 0.103537752850;
-    const static double p4 = -0.453642210148e-04;
-    const static double q4 = 0.38560700634e-02;
-    const static double c1 = 0.8832;
-    const static double c2 = 0.2368;
-    const static double c3 = 1.214;
-    const static double c4 = 1.208;
-    const static double c5 = 1.4142;
-    const static double vmax = 120.0;
+    constexpr static double p0 = 0.322232421088;
+    constexpr static double q0 = 0.993484626060e-01;
+    constexpr static double p1 = -1.0;
+    constexpr static double q1 = 0.588581570495;
+    constexpr static double p2 = -0.342242088547;
+    constexpr static double q2 = 0.531103462366;
+    constexpr static double p3 = -0.204231210125;
+    constexpr static double q3 = 0.103537752850;
+    constexpr static double p4 = -0.453642210148e-04;
+    constexpr static double q4 = 0.38560700634e-02;
+    constexpr static double c1 = 0.8832;
+    constexpr static double c2 = 0.2368;
+    constexpr static double c3 = 1.214;
+    constexpr static double c4 = 1.208;
+    constexpr static double c5 = 1.4142;
+    constexpr static double vmax = 120.0;
 
     const double ps = 0.5 - 0.5 * p;
     const double yi = sqrt (log (1.0 / (ps * ps)));
     double t = yi + (((( yi * p4 + p3) * yi + p2) * yi + p1) * yi + p0)
 	   / (((( yi * q4 + q3) * yi + q2) * yi + q1) * yi + q0);
-    if (v < vmax) t += (t * t * t + t) / v / 4.0;
+    if (v < vmax)
+		t += (t * t * t + t) / v / 4.0;
     double q = c1 - c2 * t;
-    if (v < vmax) q += -c3 / v + c4 * t / v;
+    if (v < vmax)
+		q += -c3 / v + c4 * t / v;
     return t * (q * log (c - 1.0) + c5);
 }
 
@@ -545,11 +542,8 @@ static double qinv(double p, double c, double v)
 
 
 static double qtukey(double p, double rr, double cc, double df, int lower_tail, int log_p) {
-    const static double eps = 0.0001;
-    const int maxiter = 50;
-
-    double ans = 0.0, valx0, valx1, x0, x1, xabs;
-    int iter;
+    constexpr static double eps = 0.0001;
+    constexpr int maxiter = 50;
 
 	if (isundef (p) || isundef (rr) || isundef (cc) || isundef (df))
 		return undefined;
@@ -564,26 +558,27 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 
     /* Initial value */
 
-    x0 = qinv (p, cc, df);
+    double x0 = qinv (p, cc, df);
 
     /* Find prob(value < x0) */
 
-    valx0 = ptukey (x0, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
+    double valx0 = ptukey (x0, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
 
     /* Find the second iterate and prob(value < x1). */
     /* If the first iterate has probability value */
     /* exceeding p then second iterate is 1 less than */
     /* first iterate; otherwise it is 1 greater. */
-
+	double x1;
     if (valx0 > 0.0)
 		x1 = ( x0 > 1.0 ? x0 - 1.0 : 0.0 ); // djmw: fmax2 (0.0, x0 - 1.0);
     else
 		x1 = x0 + 1.0;
-    valx1 = ptukey (x1, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
+    double valx1 = ptukey (x1, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
 
     /* Find new iterate */
 
-    for (iter = 1 ; iter < maxiter; iter ++) {
+    double ans = 0.0;
+    for (integer iter = 1 ; iter < maxiter; iter ++) {
 		ans = x1 - ((valx1 * (x1 - x0)) / (valx1 - valx0));
 		valx0 = valx1;
 
@@ -602,7 +597,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 		/* If the difference between two successive */
 		/* iterates is less than eps, stop */
 
-		xabs = fabs (x1 - x0);
+		const double xabs = fabs (x1 - x0);
 		if (xabs < eps)
 			return ans;
     }

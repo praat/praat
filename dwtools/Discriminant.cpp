@@ -339,8 +339,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discrimi
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, bool confidence,
 	conststring32 label, bool discriminantDirections,
-	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
-{
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	const integer numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 
 	if (! discriminantDirections) {
