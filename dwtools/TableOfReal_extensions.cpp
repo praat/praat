@@ -1099,7 +1099,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 
 autoINTVEC TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 	try {
-		return NUMindexx_s (my rowLabels.get());
+		return newINTVECindex (my rowLabels.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no sorted index created.");
 	}
@@ -1186,7 +1186,7 @@ autoTableOfReal TableOfReal_rankColumns (TableOfReal me, integer fromColumn, int
 	try {
 		fixAndCheckColumnRange (& fromColumn, & toColumn, my data.get(), 1);
 		autoTableOfReal thee = Data_copy (me);
-		NUMrankColumns (thy data.get(), fromColumn, toColumn);
+		MATrankColumns (thy data.get(), fromColumn, toColumn);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranks not created.");

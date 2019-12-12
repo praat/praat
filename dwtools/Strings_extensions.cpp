@@ -161,13 +161,11 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-autoPermutation Strings_to_Permutation (Strings me, bool sort) { // TODO sort
+autoPermutation Strings_to_Permutation (Strings me, bool sort) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfStrings);
-		if (sort) {
-			autoINTVEC index = NUMindexx_s (my strings.get()); // TODO inplace version
-			thy p.all() <<= index.all();
-		}
+		if (sort)
+			INTVECindex (thy p.get(), my strings.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");

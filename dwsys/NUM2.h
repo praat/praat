@@ -407,24 +407,28 @@ void NUMsortTogether (vector<T1> a, vector<T2> b) {
 	}
 }
 
-void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending); // TODO template
+void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool descending); // TODO template
 /* Sort a together with iv1  and iv2 */
 
+void INTVECindex (INTVEC const& target, constVEC const& a);
+void INTVECindex (INTVEC const& target, constSTRVEC const& s);
 
-autoINTVEC NUMindexx (constVEC a);
-autoINTVEC NUMindexx_s (constSTRVEC a);
+inline autoINTVEC newINTVECindex (constVEC const& a) {
+	autoINTVEC result = newINTVECraw (a.size);
+	INTVECindex (result.get(), a);
+	return result;
+}
 
-void NUMindexx_s (char32 *a[], integer n, integer indx[]);
-/*
-	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
-	a [indx[i]] is in ascending order for i=1..n;
-	No preservation of order among equals (see NUMsort2_...)
-*/
+inline autoINTVEC newINTVECindex (constSTRVEC const& s) {
+	autoINTVEC result = newINTVECraw (s.size);
+	INTVECindex (result.get(), s);
+	return result;
+}
 
-void NUMrankColumns (MAT m, integer cb, integer ce);
+void MATrankColumns (MAT m, integer cb, integer ce);
 
 /* NUMrank:
- *  Replace content of array by rank number, including midranking of ties.
+ *  Replace content of sorted array by rank number, including midranking of ties.
  *  E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
  *  by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively. *
  */
@@ -438,7 +442,8 @@ void NUMrank (vector<T> a) {
 			a [i] = rank;
 		j = jt;
 	}
-	if (j == a.size) a [a.size] = a.size;
+	if (j == a.size)
+		a [a.size] = a.size;
 }
 
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
@@ -538,8 +543,8 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4: 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
 */
-void VECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
-autoVEC newVECsolveSparse_IHT (constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
 autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer itermax);
 /*

@@ -77,7 +77,7 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 			}
 		}
 		thy numberOfProximities = n;
-		NUMsort3 (thy proximity.get(), thy rowIndex.get(), thy columnIndex.get(), false);
+		VECsort3_inplace (thy proximity.get(), thy rowIndex.get(), thy columnIndex.get(), false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MDSVec created.");

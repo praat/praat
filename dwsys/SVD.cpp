@@ -262,7 +262,7 @@ integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSing
 void SVD_sort (SVD me) { // Superfluous??, SVD is always sorted
 	try {
 		autoSVD thee = Data_copy (me);
-		autoINTVEC index = NUMindexx (my d.get());
+		autoINTVEC index = newINTVECindex (my d.get());
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			const integer from = index [my numberOfColumns - j + 1];

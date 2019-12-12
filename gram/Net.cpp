@@ -68,7 +68,7 @@ void Net_initEmpty (Net me) {
 	my layers = LayerList_create ();
 }
 
-autoNet Net_createEmpty (integer numberOfInputNodes) {
+autoNet Net_createEmpty (integer /* numberOfInputNodes */) {
 	try {
 		autoNet me = Thing_new (Net);
 		
