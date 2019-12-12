@@ -134,7 +134,7 @@ double SVD_getTolerance (SVD me) {
 	We may call the algorithm with reverted row/column dimensions, and we switch the U and V'
 	output arguments.
 	The only thing that we have to do afterwards is transposing the (small) V matrix
-	because the SVD-object has row vectors in v.
+	because our SVD-object has row vectors in v.
 	The sv's are already sorted.
 	int NUMlapack_dgesvd (char *jobu, char *jobvt, integer *m, integer *n, double *a, integer *lda,
 		double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
@@ -160,7 +160,7 @@ void SVD_compute (SVD me) {
 		/*
 			Because we store the eigenvectors row-wise, they must be transposed
 		*/
-		MATtranspose_inplace_mustBeSquare (my v.get()); 
+		MATtranspose_inplace_mustBeSquare (my v.get());
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
@@ -201,10 +201,9 @@ void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result) {
 		if (! my isTransposed) {
 			Melder_assert (my numberOfRows == b.size);
 			Melder_assert (result.size == my numberOfColumns);
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
+			for (integer j = 1; j <= my numberOfColumns; j ++)
 				if (my d [j] > 0.0)
 					t [j] = NUMinner (my u.column (j), b) / my d [j];
-			}
 			VECmul (result, my v.get(), t.get());
 		} else {
 			/*
@@ -266,7 +265,7 @@ void SVD_sort (SVD me) { // Superfluous??, SVD is always sorted
 		autoINTVEC index = NUMindexx (my d.get());
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			integer from = index [my numberOfColumns - j + 1];
+			const integer from = index [my numberOfColumns - j + 1];
 			my d [j] = thy d [from];
 			for (integer i = 1; i <= my numberOfRows; i ++)
 				my u [i] [j] = thy u [i] [from];
@@ -289,9 +288,10 @@ double SVD_getSumOfSingularValuesAsFractionOfTotal (SVD me, integer from, intege
 }
 
 double SVD_getSumOfSingularValues (SVD me, integer from, integer to) {
-	from = from == 0 ? 1 : from;
-	to = to == 0 ? my numberOfColumns : to;
-	Melder_require (from > 0 && from <= to && to <= my numberOfColumns, U"The range should be within [1,", my numberOfColumns, U"].");
+	from = ( from == 0 ? 1 : from );
+	to = ( to == 0 ? my numberOfColumns : to );
+	Melder_require (from > 0 && from <= to && to <= my numberOfColumns,
+		U"The range should be within [1,", my numberOfColumns, U"].");
 	return NUMsum (my d.part (from, to));
 }
 
@@ -329,10 +329,12 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 	if (sv_to == 0)
 		sv_to = my numberOfColumns;
 	try {
-		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns, U"Indices must be in range [1, ", my numberOfColumns, U"].");
+		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns,
+			U"Indices must be in range [1, ", my numberOfColumns, U"].");
 		long nrow = my numberOfRows;
 		long ncol = my numberOfColumns;
-		if (my isTransposed) std::swap (nrow, ncol);
+		if (my isTransposed)
+			std::swap (nrow, ncol);
 		autoMAT result = newMATzero (nrow, ncol);
 		autoMAT outer = newMATzero (nrow, ncol);
 
@@ -341,7 +343,7 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 				MATouter (outer.get(), my v.column(k), my u.column(k));
 			else
 				MATouter (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
-			result.get() += outer.get() * my d [k];
+			result.get()  +=  outer.get()  *  my d [k];
 		}
 		return result;
 	} catch (MelderError) {
@@ -384,15 +386,15 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		autoVEC work = newVECraw (lwork);
 		autoINTVEC iwork = newINTVECraw (n);
 
-
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		integer k, l, info;
 		NUMlapack_dggsvd (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
 		    & a [1] [1], & m, & b [1] [1], & p, alpha.begin(), beta.begin(), nullptr, & m,
 		    nullptr, & p, & q [1] [1], & n, work.begin(), iwork.begin(), & info);
-		Melder_require (info == 0, U"dggsvd failed with error = ", info);
+		Melder_require (info == 0,
+			U"dggsvd failed with error = ", info);
 
-		integer kl = k + l;
+		const integer kl = k + l;
 		autoGSVD me = GSVD_create (kl);
 
 		for (integer i = 1; i <= kl; i ++) {
@@ -400,12 +402,10 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 			my d2 [i] = beta [i];
 		}
 
-		// Transpose q
-
 		MATtranspose (my q.get(), q.get());
-
-		// Get R from a(1:k+l,n-k-l+1:n)
-
+		/*
+			Get R from a(1:k+l,n-k-l+1:n)
+		*/
 		const double *pr = & a [1] [1];
 		for (integer i = 1; i <= kl; i ++) {
 			for (integer j = i; j <= kl; j ++) {
