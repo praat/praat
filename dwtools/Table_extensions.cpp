@@ -3440,7 +3440,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 
 		NUMsortTogether <double, integer> (data.get(), levels -> classIndex.get());
-		NUMrank (data.get());
+		VECrankSorted (data.get());
 		/*
 			Get correctionfactor for ties (Hays pg. 831)
 			W. Hays (1988), Statistics, Fourth edition, Sauders college publishing.

@@ -47,7 +47,7 @@ void MATrankColumns (MAT m, integer cb, integer ce) {
 		for (integer i = 1; i <= m.nrow; i ++)
 			index [i] = i;
 		NUMsortTogether (v.get(), index.get());
-		NUMrank (v.get());
+		VECrankSorted (v.get());
 		for (integer i = 1; i <= m.nrow; i ++)
 			m [index [i]] [j] = v [i];
 	}

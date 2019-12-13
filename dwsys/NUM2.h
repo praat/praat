@@ -427,17 +427,17 @@ inline autoINTVEC newINTVECindex (constSTRVEC const& s) {
 
 void MATrankColumns (MAT m, integer cb, integer ce);
 
-/* NUMrank:
+/* rank:
  *  Replace content of sorted array by rank number, including midranking of ties.
  *  E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
  *  by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively. *
  */
-template <class T>
-void NUMrank (vector<T> a) {
+
+inline void VECrankSorted (VECVU const& a) {
 	integer jt, j = 1;
 	while (j < a.size) {
 		for (jt = j + 1; jt <= a.size && a [jt] == a [j]; jt ++) {}
-		T rank = (j + jt - 1) * 0.5;
+		double rank = (j + jt - 1) * 0.5;
 		for (integer i = j; i <= jt - 1; i ++)
 			a [i] = rank;
 		j = jt;
