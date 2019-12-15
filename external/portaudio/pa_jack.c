@@ -1,4 +1,4 @@
-#ifdef UNIX
+#if defined (UNIX) && defined (JACK)
 /*
  * $Id: pa_jack.c 1912 2013-11-15 12:27:07Z gineera $
  * PortAudio Portable Real-Time Audio Library
