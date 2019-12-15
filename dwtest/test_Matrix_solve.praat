@@ -10,22 +10,21 @@ appendInfoLine: "test_Matrix_solve.praat"
 procedure solve_sparse_system
 	.nrow = 100
 	.ncol = 1000
-	.yy = Create simple Matrix: "y", .nrow, 1, "0.0"
-	.xx = Create simple Matrix: "x", .ncol, 1, "0.0"
-	Formula: "if randomUniform (0,1) < 0.05 then 0.1 else 0.0 fi"
-	.phi = Create simple Matrix: "phi", .nrow, .ncol, "0.0"
-	Formula: "randomGauss (0.0, 1.0 / .nrow)"
-	for .irow to .nrow
-		.val = 0.0
-		for .icol to .ncol
-			.val += object [.phi, .irow, .icol] * object [.xx, .icol, 1]
-		endfor
-		selectObject: .yy
-		Set value: .irow, 1, .val
+	.phi## = zero## (.nrow, .ncol)
+	.x# = zero# (.ncol)
+	for .i to size (.x#)
+	 	.x# [.i] =  if randomUniform (0,1) < 0.005 then randomUniform (0.1, 10)  else 0.0 fi
 	endfor
-	selectObject: .yy, .phi
-	.x = Solve matrix equation (sparse): 10, 50, 1e-7, "yes"
-	removeObject: .x, .phi, .xx, .yy
+	.phi## = randomGauss## (.phi##, 0.0, 1.0 / .nrow)
+	.y# = mul# (.phi##, .x#)	
+	.xs# = solveSparse# (.phi##, .y#, 10, 200, 1e-17, 0)
+	for .icol to .ncol
+		.val = .xs# [.icol]
+		if .val >= 0.1
+			.dif = abs (.val - .x# [.icol])
+			assert .dif < 1e-5
+		endif
+	endfor
 endproc
 
 procedure matrix_solve: .ncol

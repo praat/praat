@@ -365,47 +365,6 @@ autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance) {
 	}
 }
 
-autoMatrix Matrix_solveEquation_sparse (Matrix me, Matrix thee, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
-	try {
-		Melder_require (my nx == 1 != thy nx == 1, 
-			U"Only one of the matrices should have one column.");
-		Melder_require (my ny == thy ny,
-			U"Both matrices should have the same number of rows.");
-		autoMatrix him = Matrix_createSimple (my nx == 1 ? thy nx : my nx, 1);
-		VECsolveSparse_IHT (his z.column (1), my nx == 1 ? thy z.get() : my z.get(),
-			my nx == 1 ? my z.column (1) : thy z.column (1), numberOfNonZeros,  maximumNumberOfIterations, tolerance, info);
-		return him;	
-	} catch (MelderError) {
-		Melder_throw (me, U": sparse matrix equation not solved.");
-	}
-}
-
-void Matrix_improveSparseSolution (OrderedOf<structMatrix>* me, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info) {
-	Melder_require (my size == 3, U"There should be three matrices selected.");
-	Matrix d = nullptr;
-	// find d matrix
-	bool found_d = false;
-	for (integer i = 1; i <= 3; i ++) {
-		d = my at [i];
-		if (d -> nx > d -> ny) {
-			found_d = true;
-			my subtractItem_ref (i);
-			break;
-		}
-	}
-	Melder_require (found_d, 
-		U"One of the matrices should have more columms than rows.");
-	Matrix x = my at [1];
-	Matrix y = my at [2];
-	Melder_require (x -> nx == 1 && y -> nx == 1,
-		U"Two matrices should have 1 column.");
-	if (x -> ny < y -> ny)
-		std::swap (x, y);
-	Melder_require (numberOfNonZeros > 0,
-		U"The sparse vector should have some elements different from zero (or you should specify the sparsity).");
-	VECsolveSparse_IHT (x -> z.column (1), d -> z.get(), y -> z.column (1), numberOfNonZeros,  maximumNumberOfIterations, tolerance, info);
-}
-
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (ymax <= ymin) {
