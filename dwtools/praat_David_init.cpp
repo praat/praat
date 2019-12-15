@@ -3680,29 +3680,6 @@ DO
 	CONVERT_COUPLE_END (U"solution")
 }
 
-FORM (NEW_Matrix_solveMatrixEquation_sparse, U"Matrices: Solve sparse equation", nullptr) {
-	NATURAL (numberOfNonZeros, U"Number of non-zeros", U"10")
-	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"50")
-	REAL (tolerance, U"Tolerance", U"1.0e-7")
-	BOOLEAN (info, U"Show info", false)
-	OK
-DO
-	CONVERT_COUPLE (Matrix)
-		autoMatrix result = Matrix_solveEquation_sparse (me, you, numberOfNonZeros, maximumNumberOfIterations, tolerance, info);
-	CONVERT_COUPLE_END (U"solution")
-}
-
-FORM (INFO_Matrix_improveSparseSolution, U"Matrices: Improve sparse solution", nullptr) {
-	NATURAL (numberOfNonZeros, U"Number of non-zeros", U"10")
-	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"50")
-	REAL (tolerance, U"Tolerance", U"1.0e-7")
-	BOOLEAN (info, U"Show info", true)
-	OK
-DO
-	FIND_LIST (Matrix)
-		Matrix_improveSparseSolution (& list, numberOfNonZeros, maximumNumberOfIterations, tolerance, info);
-	END
-}
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
 	CONVERT_ONE_AND_GENERIC (Categories, Matrix)
 		autoTableOfReal result = Matrix_Categories_to_TableOfReal (you, me);
@@ -8461,8 +8438,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, NEW_Matrix_transpose);
 	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, NEW_Matrix_solveEquation);
 	praat_addAction1 (classMatrix, 2, U"Solve matrix equation...", U"Solve equation...", 0, NEW_Matrix_solveMatrixEquation);
-	praat_addAction1 (classMatrix, 2, U"Solve matrix equation (sparse)...", U"Solve equation...", praat_HIDDEN, NEW_Matrix_solveMatrixEquation_sparse);
-	praat_addAction1 (classMatrix, 3, U"Improve sparse solution...", U"Solve equation...", praat_HIDDEN, INFO_Matrix_improveSparseSolution);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve matrix equation...", 0, NEW_Matrix_to_PCA_byRows);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, NEW_Matrix_to_PCA_byColumns);
 	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, NEW_Matrix_to_PatternList);

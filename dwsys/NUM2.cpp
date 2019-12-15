@@ -2832,14 +2832,14 @@ static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, 
 	Melder_assert (v.size == support.size);
 	Melder_assert (numberOfNonZeros > 0 && numberOfNonZeros < v.size);
 	autoVEC abs = newVECabs (v);
-	autoINTVEC linear = newINTVEClinear (v.size, 1, 1);
-	NUMsortTogether <double, integer> (abs.get(), linear.get()); // sort is always increasing
+	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
+	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
-		v [linear [i]] = 0.0;
-		support [linear [i]] = 0;
+		v [index [i]] = 0.0;
+		support [index [i]] = 0;
 	}
 	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++)
-		support [linear [i]] = 1;
+		support [index [i]] = 1;
 }
 
 static bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
@@ -2864,7 +2864,7 @@ static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_
 	
 	VECmul (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
 	buffer.part (1, yn.size) <<= y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
-	double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
+	const double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
 	return xdifsq / ydifsq;
 }
 
@@ -2908,7 +2908,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			VECmul (buffer.get(), dictionary.transpose(), y);
 			VECsetThresholdAndSupport (buffer.get(), support.get(), numberOfNonZeros);
 			yfromx <<= 0.0;
-			ydif <<= y;
+			ydif <<= y; // ydif = y - D.x(1) = y - D.0 = y
 		} else {
 			/*
 				We improve a current solution x
@@ -2929,21 +2929,20 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				mu = || g_sparse ||^2 / || D_sparse * g_sparse ||^2
 				where g_sparse only contains the supported elements from the gradient and D_sparse only the supported columns from the dictionary.
 			*/
-			
-			// 1. the norm of the sparse gradient
-			double normsq_gs = 0.0;
+			double normsq_gs = 0.0; // squared norm of the sparse gradient
 			for (integer ig = 1; ig <= gradient.size; ig ++) {
 				if (support [ig] != 0)
 					normsq_gs += gradient [ig] * gradient [ig];
 			}
-			// 2. the norm of the transformed sparse gradient
-			double normsq_dgs = 0.0;
-			for (integer icol = 1; icol <= dictionary.ncol; icol ++) {
-				if (support [icol] != 0) {
-					double dgs = NUMsum (dictionary.column (icol)) * gradient [icol];
-					normsq_dgs += dgs * dgs;
-				}	
+			double normsq_dgs = 0.0; // squared norm of the transformed sparse gradient
+			for (integer irow = 1; irow <= dictionary.nrow; irow ++) {
+				longdouble sum = 0.0;
+				for (integer icol = 1; icol <= dictionary.ncol; icol ++)
+					if (support [icol] != 0)
+						sum += dictionary [irow] [icol] * gradient [icol];
+				normsq_dgs += sum * sum;
 			}
+						
 			double stepSize = normsq_gs / normsq_dgs;
 			
 			double normsq_ratio = update (x_new.get(), yfromx_new.get(), support_new.get(), x, stepSize, gradient.get(), dictionary, yfromx.get(), numberOfNonZeros, buffer.get());
