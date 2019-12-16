@@ -5734,11 +5734,13 @@ static void do_function_VECsolveSparse () {
 				U"The number of rows in the matrix should equal the size of the vector.");
 			Melder_require (x.size == d.ncol,
 				U"The number of columns in the matrix should equal the size of start vector.");
+			autoVEC xs = newVECcopy (x);
 			integer numberOfNonzeros = Melder_iround (nonzeros->number);
 			integer maximumNumberOfIterations = Melder_iround (niter ->number);
 			bool showInfo = info->number > 0;
 			double tolerance = tol->number;
-			VECsolveSparse_IHT (x, d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, showInfo);
+			VECsolveSparse_IHT (xs, d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, showInfo);
+			pushNumericVector (xs.move());
 		} else {
 			Melder_throw (U"The function \"solveSparse#\" requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
