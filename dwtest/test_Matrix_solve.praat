@@ -17,12 +17,20 @@ procedure solve_sparse_system
 	endfor
 	.phi## = randomGauss## (.phi##, 0.0, 1.0 / .nrow)
 	.y# = mul# (.phi##, .x#)	
-	.xs# = solveSparse# (.phi##, .y#, 10, 200, 1e-17, 0)
+	.xs# = solveSparse# (.phi##, .y#, 10, 200, 1e-17, 0) ; 6 arguments
 	for .icol to .ncol
 		.val = .xs# [.icol]
 		if .val >= 0.1
 			.dif = abs (.val - .x# [.icol])
 			assert .dif < 1e-5
+		endif
+	endfor
+	.xs2# = solveSparse# (.phi##, .y#, .xs#, 10, 10, 1e-20, 1) ; 7 arguments
+	for .icol to .ncol
+		.val = .xs2# [.icol]
+		if .val >= 0.1
+			.dif = abs (.val - .x# [.icol])
+			assert .dif < 1e-6
 		endif
 	endfor
 endproc
