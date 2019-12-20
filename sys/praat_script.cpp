@@ -72,7 +72,8 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 
 Editor praat_findEditorFromString (conststring32 string) {
 	int IOBJECT;
-	while (*string == U' ') string ++;
+	while (*string == U' ')
+		string ++;
 	if (*string >= U'A' && *string <= U'Z') {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
@@ -82,7 +83,8 @@ Editor praat_findEditorFromString (conststring32 string) {
 					const char32 *space = str32chr (editor -> name.get(), U' ');   // editors tend to be called like "3. Sound kanweg"
 					if (space) {   // but not all
 						conststring32 name = space + 1;
-						if (str32equ (name, string)) return editor;
+						if (str32equ (name, string))
+							return editor;
 					}
 				}
 			}
@@ -91,7 +93,8 @@ Editor praat_findEditorFromString (conststring32 string) {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
-				if (editor && str32equ (editor -> name.get(), string)) return editor;
+				if (editor && str32equ (editor -> name.get(), string))
+					return editor;
 			}
 		}
 	}
@@ -104,7 +107,8 @@ Editor praat_findEditorById (integer id) {
 		if (ID == id) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
-				if (editor) return editor;
+				if (editor)
+					return editor;
 			}
 		}
 	}

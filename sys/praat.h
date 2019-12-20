@@ -787,7 +787,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
-int praat_installEditor (Editor editor, int iobject);
+void praat_installEditor (Editor editor, int iobject);
 /* This routine adds a reference to a new editor (unless it is null) to the screen object
    which is in the list at position 'iobject'.
    It sets the destroyCallback and dataChangedCallback as appropriate for Praat:
@@ -804,9 +804,9 @@ int praat_installEditor (Editor editor, int iobject);
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
 	END }
 */
-int praat_installEditor2 (Editor editor, int iobject1, int iobject2);
-int praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
-int praat_installEditorN (Editor editor, DaataList objects);
+void praat_installEditor2 (Editor editor, int iobject1, int iobject2);
+void praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
+void praat_installEditorN (Editor editor, DaataList objects);
 
 void praat_dataChanged (Daata object);
 /* Call this after changing a screen object. */
