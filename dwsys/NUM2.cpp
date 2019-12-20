@@ -372,38 +372,47 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	return x;
 }
 
-autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer maximunNumberOfIterations) {
-	Melder_assert (m.nrow == d.size);
-	autoVEC b = newVECzero (m.ncol);
-	for (integer iter = 1; iter <= maximunNumberOfIterations; iter ++) {
+static void VECcopy (VECVU const& target, constVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+
+void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, bool info) {
+	Melder_assert (a.nrow == y.size);
+	Melder_assert (a.ncol == x.size);
+	double difsq_previous = 1e100; // not important just large enough
+	for (integer i = 1; i <= x.size; i ++)
+		if (x [i] < 0.0)
+			x [i] = 0.0;
+	autoVEC r = newVECraw (y.size);
+	for (integer iter = 1; iter <= maximumNumberOfIterations; iter ++) {
 		/*
-			Fix all weights except b [j]
+			Alternating Least Squares: Fix all except x [icol]
 		*/
-		for (integer j = 1; j <= m.ncol; j ++) {
-			longdouble mjr = 0.0, mjmj = 0.0;
-			for (integer i = 1; i <= m.nrow; i ++) {
-				double ri = d [i], mij = m [i] [j];
-				for (integer l = 1; l <= m.ncol; l ++)
-					if (l != j)
-						ri -= b [l] * m [i] [l];
-				mjr += mij * ri;
-				mjmj += mij * mij;
-			}
-			b [j] = std::max (0.0, double (mjr / mjmj));
+		for (integer icol = 1; icol <= a.ncol; icol ++) {
+			VECcopy (r.get(), y);
+			for (integer jcol = 1; jcol <= a.ncol; jcol ++)
+				if (jcol != icol)
+					r  -=  x [jcol] * a.column (jcol);
+			const double ajr = NUMinner (a.column (icol), r);
+			const double ajaj = NUMsum2 (a.column (icol));
+			x [icol] = std::max (0.0, ajr / ajaj);
 		}
 		/*
-			Calculate t(b) and compare with previous result.
+			Calculate t(x) and compare with previous result.
 		*/
-		longdouble difsq = 0.0, difsqp = 0.0;
-		for (integer i = 1; i <= m.nrow; i ++) {
-			const double dmb = d [i] - NUMinner (m.row (i), b);
-			difsq += dmb * dmb;
-		}
-		if (fabs (difsq - difsqp) / difsq < tol)
+		VECmul (r, a, x);
+		r  -=  y;
+		const double difsq = NUMsum2 (r);
+		if (info)
+			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
+		if (difsq == 0.0 || fabs (difsq - difsq_previous) < tol * difsq)
 			break;
-		difsqp = difsq;
+		difsq_previous = difsq;
 	}
-	return b;
+	if (info)
+			MelderInfo_drain();
 }
 
 struct nr_struct {
@@ -629,23 +638,23 @@ double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, 
 	return 0.5 * (xmax + xmin);
 }
 
-autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta) {
-	Melder_assert (f.nrow == phi.size);
-	Melder_require (f.nrow >= f.ncol,
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVEC const& y, double alpha, double delta) {
+	Melder_assert (a.nrow == y.size);
+	Melder_require (a.nrow >= a.ncol,
 		U"The number of rows should not be less than the number of columns.");
 	Melder_require (alpha >= 0.0,
 		U"The coefficient of the penalty function should not be negative.");
 	Melder_require (delta > 0,
 		U"The solution's vector length should be positive.");
 	
-	autoVEC c = newVECzero (f.ncol);	
-	autoSVD svd = SVD_createFromGeneralMatrix (f);
+	autoVEC c = newVECzero (a.ncol);	
+	autoSVD svd = SVD_createFromGeneralMatrix (a);
 
 	if (alpha == 0.0) {
 		/*
 			Solve by standard least squares
 		*/
-		autoVEC result = SVD_solve (svd.get(), phi);
+		autoVEC result = SVD_solve (svd.get(), y);
 		return result;
 	}
 	/*
@@ -655,7 +664,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 		Therefore, the paper's U is our V but since our V is stored as the transpose: U == svd -> v.transpose()!
 	*/
 	constMATVU u = svd -> v.transpose();
-	for (integer i = 1; i <= f.ncol; i++) {
+	for (integer i = 1; i <= a.ncol; i++) {
 		const double ci = svd -> d [i];
 		c [i] = ci * ci;
 	}
@@ -665,38 +674,38 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 	*/
 	integer q = 1;
 	const double tol = 1e-6;
-	while (q < f.ncol && (c [f.ncol - q] - c [f.ncol]) < tol)
+	while (q < a.ncol && (c [a.ncol - q] - c [a.ncol]) < tol)
 		q ++;
 	/*
-		Step 2: x = U'F'phi
+		Step 2: x = U'F'y
 	*/
-	autoVEC ftphi = newVECmul (f.transpose(), phi);
+	autoVEC ftphi = newVECmul (a.transpose(), y);
 	autoVEC x = newVECmul (u.transpose(), ftphi.get());
 	/*
 		Step 3:
 	*/
 	struct nr2_struct me;
-	me.numberOfTerms = f.ncol;
+	me.numberOfTerms = a.ncol;
 	me.delta = delta;
 	me.alpha = alpha;
 	me.x = x.get();
 	me.c = c.get();
 
-	const double xqsq = NUMsum2 (x.part (f.ncol - q + 1, f.ncol)); // = NUMinner (xq,xq)
-	integer r = f.ncol;
+	const double xqsq = NUMsum2 (x.part (a.ncol - q + 1, a.ncol)); // = NUMinner (xq,xq)
+	integer r = a.ncol;
 	if (xqsq < tol) { // Case3.b page 608
-		r = f.ncol - q;
+		r = a.ncol - q;
 		me.numberOfTerms = r;
-		double fm = bolzanoFunction (c[f.ncol], & me);
+		double fm = bolzanoFunction (c[a.ncol], & me);
 		if (fm >= 0.0) { // step 3.b1
 			/*
 				Get w0 by overwriting vector x.
 			*/
 			x [r + 1] = sqrt (fm);
 			for (integer j = 1; j <= r; j ++)
-				x [j] /= c [j] - c [f.ncol]; // eq. 10
+				x [j] /= c [j] - c [a.ncol]; // eq. 10
 			if (q > 1)
-				x.part (r + 2, f.ncol) <<= 0.0;
+				x.part (r + 2, a.ncol) <<= 0.0;
 			autoVEC result = newVECmul (u,  x);
 			return result;
 		}
@@ -710,21 +719,21 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 		xCx += x [j] * x [j] / c [j];
 
 	const double bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
-	const double eps = (c [f.ncol] - bmin) * tol;
+	const double eps = (c [a.ncol] - bmin) * tol;
 	/*
 		Find the root of d(psi(b)/db in interval (bmin, c [m])
 	*/
-	double b0 =	NUMnrbis (nr2_func, bmin, c [f.ncol], & me);
-	const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin, c [f.ncol], & me); // TODO test if  b0 == b02 ??
-	Melder_require (b0 < c [f.ncol],
-		U"The root (", b0, U") should be smaller than the smallest eigenvalue (", c[f.ncol], U").");
+	double b0 =	NUMnrbis (nr2_func, bmin, c [a.ncol], & me);
+	const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin, c [a.ncol], & me); // TODO test if  b0 == b02 ??
+	Melder_require (b0 < c [a.ncol],
+		U"The root (", b0, U") should be smaller than the smallest eigenvalue (", c[a.ncol], U").");
 	/*
 				Get w0 by overwriting vector x.
 	*/
 	for (integer j = 1; j <= r; j ++)
 		x [j] /= c [j] - b0; // eq. 7
 	if (q > 1)
-		x.part (r + 1, f.ncol) <<= 0.0;
+		x.part (r + 1, a.ncol) <<= 0.0;
 	autoVEC result = newVECmul (u, x);
 	return result;
 }

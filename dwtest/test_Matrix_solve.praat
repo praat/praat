@@ -10,29 +10,20 @@ appendInfoLine: "test_Matrix_solve.praat"
 procedure solve_sparse_system
 	.nrow = 100
 	.ncol = 1000
-	.phi## = zero## (.nrow, .ncol)
 	.x# = zero# (.ncol)
 	for .i to size (.x#)
 	 	.x# [.i] =  if randomUniform (0,1) < 0.005 then randomUniform (0.1, 10)  else 0.0 fi
 	endfor
-	.phi## = randomGauss## (.phi##, 0.0, 1.0 / .nrow)
+	.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
 	.y# = mul# (.phi##, .x#)	
 	.xs# = solveSparse# (.phi##, .y#, 10, 200, 1e-17, 0) ; 6 arguments
-	for .icol to .ncol
-		.val = .xs# [.icol]
-		if .val >= 0.1
-			.dif = abs (.val - .x# [.icol])
-			assert .dif < 1e-5
-		endif
-	endfor
+	dif# = .x# - .xs#
+	inner = inner (dif#, dif#)
+	assert inner < 1e-7
 	.xs2# = solveSparse# (.phi##, .y#, .xs#, 10, 10, 1e-20, 1) ; 7 arguments
-	for .icol to .ncol
-		.val = .xs2# [.icol]
-		if .val >= 0.1
-			.dif = abs (.val - .x# [.icol])
-			assert .dif < 1e-6
-		endif
-	endfor
+	dif# = .x# - .xs2#
+	inner = inner (dif#, dif#)
+	assert inner < 1e-7
 endproc
 
 procedure matrix_solve: .ncol

@@ -546,10 +546,16 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
-autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer itermax);
+void VECsolveNonNegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, bool info);
+
+inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, bool info) {
+	autoVEC result = newVECrandomUniform (a.ncol, 0.0, 1.0);
+	VECsolveNonNegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, info);
+	return result;
+}
 /*
-	Solve the equation: M.b = d for b under the constraint: all b[i] >= 0;
-	m[1..nr][1..nc], d[1..nr] and b[1..nc].
+	Solve the equation: A.x = y for x under the constraint: all x[i] >= 0;
+	a[1..nr][1..nc], y[1..nr] and x[1..nc].
 	Algorithm: Alternating least squares.
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
@@ -567,20 +573,20 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC y, do
 	Psychometrika 48, 631-638.
 */
 
-autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta);
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVEC const& y, double alpha, double delta);
 /*
-	Solve g(t) = ||F*t - phi||^2 + alpha (t'*t - delta)^2 for t[1..m],
-	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
+	Solve g(x) = ||A*x - y||^2 + alpha (x'*x - delta)^2 for x[1..m],
+	where A[1..n][1..m] is a matrix, y[1..n] a given vector, and alpha
 	and delta are fixed numbers.
 	This class of functions is composed of a linear regression function and
 	a penalty function for the sum of squared regression weights. It is weakly
 	constrained because the penalty function prohibits a relatively large
-	departure of t't from delta.
+	departure of x'x from delta.
 	The solution is due to:
 	Jos M.F. ten Berge (1991), A general solution for a class of weakly
 	constrained linear regression problems, Psychometrika 56, 601-609.
 	Preconditions:
-		f.nrow >= f.ncol
+		a.nrow >= a.ncol
 		alpha >= 0
 */
 
