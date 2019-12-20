@@ -386,6 +386,7 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		if (x [i] < 0.0)
 			x [i] = 0.0;
 	autoVEC r = newVECraw (y.size);
+	const double normSquared_y = NUMsum2 (y);
 	for (integer iter = 1; iter <= maximumNumberOfIterations; iter ++) {
 		/*
 			Alternating Least Squares: Fix all except x [icol]
@@ -407,7 +408,7 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		const double difsq = NUMsum2 (r);
 		if (info)
 			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
-		if (difsq == 0.0 || fabs (difsq - difsq_previous) < tol * difsq)
+		if (fabs (difsq - difsq_previous) < tol * normSquared_y)
 			break;
 		difsq_previous = difsq;
 	}
