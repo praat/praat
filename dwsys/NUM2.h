@@ -543,14 +543,14 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4: 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
 */
-void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
-autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel);
+autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel);
 
 void VECsolveNonNegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, bool info);
 
-inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, bool info) {
+inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, integer infoLevel) {
 	autoVEC result = newVECrandomUniform (a.ncol, 0.0, 1.0);
-	VECsolveNonNegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, info);
+	VECsolveNonNegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, infoLevel);
 	return result;
 }
 /*
@@ -560,7 +560,7 @@ inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC y, double *out_alpha, double *out_gamma);
+void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC y, double *out_alpha, double *out_gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
