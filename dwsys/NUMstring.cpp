@@ -123,41 +123,45 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	integer numberOfElements = 0;
 	const char32 *p = & ranges [0];
 	for (;;) {
-		while (Melder_isHorizontalSpace (*p)) p ++;
+		while (Melder_isHorizontalSpace (*p))
+			p ++;
 		if (*p == U'\0')
 			break;
 		if (Melder_isAsciiDecimalNumber (*p)) {
-			integer currentElement = Melder_atoi (p);
+			const integer currentElement = Melder_atoi (p);
 			Melder_require (currentElement != 0,
 				U"No such ", elementType, U": 0 (minimum is 1).");
 			Melder_require (currentElement <= maximumElement,
 				U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
-			
 			numberOfElements += 1;
 			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
+			do {
+				p ++;
+			} while (Melder_isAsciiDecimalNumber (*p));
 		} else if (*p == ':') {
-			Melder_require (previousElement != 0, U"The range should not start with a colon.");
-			
-			do { p ++; } while (Melder_isHorizontalSpace (*p));
+			Melder_require (previousElement != 0,
+				U"The range should not start with a colon.");
+			do {
+				p ++;
+			} while (Melder_isHorizontalSpace (*p));
 			Melder_require (*p != U'\0',
 				U"The range should not end with a colon.");
 			Melder_require (Melder_isAsciiDecimalNumber (*p),
 				U"End of range should be a positive whole number.");
-			
-			integer currentElement = Melder_atoi (p);
+			const integer currentElement = Melder_atoi (p);
 			Melder_require (currentElement != 0,
 				U"No such ", elementType, U": 0 (minimum is 1).");
 			Melder_require (currentElement <= maximumElement,
 				U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
 			
-			if (currentElement > previousElement) {
+			if (currentElement > previousElement)
 				numberOfElements += currentElement - previousElement;
-			} else {
+			else
 				numberOfElements += previousElement - currentElement;
-			}
 			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
+			do {
+				p ++;
+			} while (Melder_isAsciiDecimalNumber (*p));
 		} else {
 			Melder_throw (U"Start of range should be a positive whole number.");
 		}
@@ -168,7 +172,6 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	Melder_require (numberOfElements > 0,
 		U"No element(s) found");
 	autoINTVEC elements = newINTVECraw (numberOfElements);
-
 	/*
 		Store the elements.
 	*/
@@ -176,26 +179,32 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	numberOfElements = 0;
 	p = & ranges [0];
 	for (;;) {
-		while (Melder_isHorizontalSpace (*p)) p ++;
+		while (Melder_isHorizontalSpace (*p))
+			p ++;
 		if (*p == U'\0')
 			break;
 		if (Melder_isAsciiDecimalNumber (*p)) {
-			integer currentElement = Melder_atoi (p);
+			const integer currentElement = Melder_atoi (p);
 			elements [++ numberOfElements] = currentElement;
 			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
+			do {
+				p ++;
+			} while (Melder_isAsciiDecimalNumber (*p));
 		} else if (*p == U':') {
-			do { p ++; } while (Melder_isHorizontalSpace (*p));
-			integer currentElement = Melder_atoi (p);
-			if (currentElement > previousElement) {
+			do {
+				p ++;
+			} while (Melder_isHorizontalSpace (*p));
+			const integer currentElement = Melder_atoi (p);
+			if (currentElement > previousElement)
 				for (integer ielement = previousElement + 1; ielement <= currentElement; ielement ++)
 					elements [++ numberOfElements] = ielement;
-			} else {
+			else
 				for (integer ielement = previousElement - 1; ielement >= currentElement; ielement --)
 					elements [++ numberOfElements] = ielement;
-			}
 			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
+			do {
+				p ++;
+			} while (Melder_isAsciiDecimalNumber (*p));
 		}
 	}
 	return elements;
@@ -204,16 +213,14 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 static autoINTVEC INTVEC_getUniqueNumbers (constINTVEC const& numbers) {
 	autoINTVEC sorted = newINTVECsort (numbers);
 	integer numberOfUniques = 1;
-	for (integer i = 2; i <= numbers.size; i ++) {
+	for (integer i = 2; i <= numbers.size; i ++)
 		if (sorted [i] != sorted [i - 1])
 			sorted [++ numberOfUniques] = sorted [i];
-	}
 	sorted.resize (numberOfUniques);
 	return sorted;
 }
 
-autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques)
-{
+autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques) {
 	autoINTVEC elements = getElementsOfRanges (ranges, maximumElement, elementType);
 	if (sortedUniques)
 		return INTVEC_getUniqueNumbers (elements.get());

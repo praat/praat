@@ -5,25 +5,20 @@
 //#include "melder.h"
 
 double d_sign (double *a, double *b) {
-	double x;
-	x = (*a >= 0.0 ? *a : - *a);
+	const double x = (*a >= 0.0 ? *a : - *a);
 	return (*b >= 0.0 ? x : -x);
 }
 
 integer lsame_ (const char *ca, const char *cb) {
-	int a = * (unsigned char *) ca;
-	int b = * (unsigned char *) cb;
+	const int a = * (unsigned char *) ca;
+	const int b = * (unsigned char *) cb;
 	return tolower (a) == tolower (b);
 }
 
 double pow_di (double *ap, integer *bp) {
-	double pow, x;
-	integer n;
-	uinteger u;
-
-	pow = 1;
-	x = *ap;
-	n = *bp;
+	double pow = 1.0;
+	double x = *ap;
+	integer u, n = *bp;
 
 	if (n != 0) {
 		if (n < 0) {
@@ -31,17 +26,15 @@ double pow_di (double *ap, integer *bp) {
 			x = 1.0 / x;
 		}
 		for (u = n; ;) {
-			if (u & 01) {
+			if (u & 01)
 				pow *= x;
-			}
-			if (u >>= 1) {
+			if (u >>= 1)
 				x *= x;
-			} else {
+			else
 				break;
-			}
 		}
 	}
-	return (pow);
+	return pow;
 }
 
 void s_cat (char *lp, const char *rpp[], integer rnp[], integer *np, integer ll) {
@@ -75,18 +68,15 @@ void s_cat (char *lp, const char *rpp[], integer rnp[], integer *np, integer ll)
 #endif /* NO_OVERWRITE */
 	for (i = 0 ; i < n ; ++i) {
 		nc = ll;
-		if (rnp[i] < nc) {
+		if (rnp[i] < nc)
 			nc = rnp[i];
-		}
 		ll -= nc;
 		rp = (char *) rpp[i];
-		while (--nc >= 0) {
+		while (--nc >= 0)
 			*lp++ = *rp++;
-		}
 	}
-	while (--ll >= 0) {
+	while (--ll >= 0)
 		*lp++ = ' ';
-	}
 #ifndef NO_OVERWRITE
 	if (lp0) {
 		memcpy (lp0, lp1, L);
@@ -112,13 +102,11 @@ integer s_cmp (const char *a0, const char *b0, integer la, integer lb) {
 				++a;
 				++b;
 			}
-
 		while (b < bend)
-			if (*b != ' ') {
+			if (*b != ' ')
 				return (' ' - *b);
-			} else	{
+			else
 				++b;
-			}
 	}
 
 	else {
@@ -130,32 +118,27 @@ integer s_cmp (const char *a0, const char *b0, integer la, integer lb) {
 				return (*a - *b);
 			}
 		while (a < aend)
-			if (*a != ' ') {
+			if (*a != ' ')
 				return (*a - ' ');
-			} else	{
+			else
 				++a;
-			}
 	}
 	return (0);
 }
 
 void s_copy (char *a, char *b, integer la, integer lb) {
 	char *aend, *bend;
-
 	aend = a + la;
-
 	if (la <= lb)
 #ifndef NO_OVERWRITE
 		if (a <= b || a >= b + la)
 #endif
-			while (a < aend) {
+			while (a < aend)
 				*a++ = *b++;
-			}
 #ifndef NO_OVERWRITE
 		else
-			for (b += la; a < aend;) {
+			for (b += la; a < aend;)
 				*--aend = *--b;
-			}
 #endif
 
 	else {
@@ -163,21 +146,18 @@ void s_copy (char *a, char *b, integer la, integer lb) {
 #ifndef NO_OVERWRITE
 		if (a <= b || a >= bend)
 #endif
-			while (b < bend) {
+			while (b < bend)
 				*a++ = *b++;
-			}
 #ifndef NO_OVERWRITE
 		else {
 			a += lb;
-			while (b < bend) {
+			while (b < bend)
 				*--a = *--bend;
-			}
 			a += lb;
 		}
 #endif
-		while (a < aend) {
+		while (a < aend) 
 			*a++ = ' ';
-		}
 	}
 }
 

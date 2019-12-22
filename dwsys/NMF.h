@@ -43,7 +43,7 @@ void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initializ
 /*
 	Factorize D as F*W, where D, F and W >= 0
 	
-	initiaze F and W;
+	initialize F and W;
 	for iter to maxiter
 		W(n+1) = W(n).(F(n)'*D) / (F(n)'*F(n))*W(n) + eps)
 		F(n+1) = F(n).(D*W(n+1)') / (F(n)*(W(n+1)*W(n+1)') + eps)
@@ -54,7 +54,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 /*
 	Factorize D as F*W, where D, F and W >= 0
 	
-	inialize F;
+	initialize F;
 	for iter to maxiter
 		W is solution of F´*F*W = F'*D.
 		Set all negative elements in W to 0.
@@ -62,7 +62,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		Set all negative elements in F to 0.
 	endfor
 */
-void NMF_improveFactorization_als (NMF me, constMATVU const & data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
+void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maximumNumberOfIterations, double changeTolerance, double approximationTolerance, bool info);
 
 
 /*

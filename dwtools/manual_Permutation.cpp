@@ -1,6 +1,6 @@
 /* manual_Permutation.cpp
  *
- * Copyright (C) 2005-2018 David Weenink
+ * Copyright (C) 2005-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,8 +90,9 @@ ENTRY (U"Example")
 NORMAL (U"The query for the index of value 3 for the permutation (3,2,4,5,1) gives 1.")
 MAN_END
 
-MAN_BEGIN (U"Permutation: Table jump...", U"djmw", 20180228)
-INTRO (U"Reorder by jumping columnwise to next row over the permutation indices layed out like a table. ")
+MAN_BEGIN (U"Permutation: Table jump...", U"djmw", 20191211)
+INTRO (U"Reorder by jumping columnwise to next row over the permutation indices layed out like a table with "
+	"%%jumpSize% columns. ")
 ENTRY (U"Settings")
 TAG (U"##Jump size#")
 DEFINITION (U"defines how many indices to jump over, i.e. the number of columns in the \"table\".")
@@ -103,10 +104,10 @@ CODE (U" 1  2  3  4")
 CODE (U" 5  6  7  8")
 CODE (U" 9 10 11 12")
 CODE (U"13 14")
-NORMAL (U"1. ##Table jump: 4, 1# will result in the permutation (1, 5. 9, 13, 2, 6, 10, 14, 3, 7, 11, 4, 8, 12)")
+NORMAL (U"1. ##Table jump: 4, 1# will result in the permutation (1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 4, 8, 12)")
 NORMAL (U"2. ##Table jump: 4, 2# will result in the permutation (2, 6, 10, 14, 3, 7, 11, 4, 8, 12, 1, 5. 9, 13)")
-NORMAL (U"3. ##Table jump: 4, 5# will result in the permutation (5. 9, 13, 2, 6, 10, 14, 3, 7, 11, 4, 8, 12, 1)")
-NORMAL (U"4. ##Table jump: 4, 12# will result in the permutation (12, 1, 5. 9, 13, 2, 6, 10, 14, 3, 7, 11, 4, 8)")
+NORMAL (U"3. ##Table jump: 4, 5# will result in the permutation (5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 4, 8, 12, 1)")
+NORMAL (U"4. ##Table jump: 4, 12# will result in the permutation (12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 4, 8)")
 ENTRY (U"Example 2")
 NORMAL (U"Consider the identity permutation of 14 elements layed out like a table with %%jumpSize% = 7 columns.")
 CODE (U" 1  2  3  4  5  6  7")

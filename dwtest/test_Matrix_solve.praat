@@ -10,22 +10,20 @@ appendInfoLine: "test_Matrix_solve.praat"
 procedure solve_sparse_system
 	.nrow = 100
 	.ncol = 1000
-	.yy = Create simple Matrix: "y", .nrow, 1, "0.0"
-	.xx = Create simple Matrix: "x", .ncol, 1, "0.0"
-	Formula: "if randomUniform (0,1) < 0.05 then 0.1 else 0.0 fi"
-	.phi = Create simple Matrix: "phi", .nrow, .ncol, "0.0"
-	Formula: "randomGauss (0.0, 1.0 / .nrow)"
-	for .irow to .nrow
-		.val = 0.0
-		for .icol to .ncol
-			.val += object [.phi, .irow, .icol] * object [.xx, .icol, 1]
-		endfor
-		selectObject: .yy
-		Set value: .irow, 1, .val
+	.x# = zero# (.ncol)
+	for .i to size (.x#)
+	 	.x# [.i] =  if randomUniform (0,1) < 0.005 then randomUniform (0.1, 10)  else 0.0 fi
 	endfor
-	selectObject: .yy, .phi
-	.x = Solve matrix equation (sparse): 10, 50, 1e-7, "yes"
-	removeObject: .x, .phi, .xx, .yy
+	.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
+	.y# = mul# (.phi##, .x#)	
+	.xs# = solveSparse# (.phi##, .y#, 10, 200, 1e-17, 0) ; 6 arguments
+	dif# = .x# - .xs#
+	inner = inner (dif#, dif#)
+	assert inner < 1e-7
+	.xs2# = solveSparse# (.phi##, .y#, .xs#, 10, 10, 1e-20, 1) ; 7 arguments
+	dif# = .x# - .xs2#
+	inner = inner (dif#, dif#)
+	assert inner < 1e-7
 endproc
 
 procedure matrix_solve: .ncol

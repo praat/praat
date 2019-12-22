@@ -407,38 +407,43 @@ void NUMsortTogether (vector<T1> a, vector<T2> b) {
 	}
 }
 
-void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending); // TODO template
+void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool descending); // TODO template
 /* Sort a together with iv1  and iv2 */
 
+void INTVECindex (INTVEC const& target, constVEC const& a);
+void INTVECindex (INTVEC const& target, constSTRVEC const& s);
 
-autoINTVEC NUMindexx (constVEC a);
-autoINTVEC NUMindexx_s (constSTRVEC a);
+inline autoINTVEC newINTVECindex (constVEC const& a) {
+	autoINTVEC result = newINTVECraw (a.size);
+	INTVECindex (result.get(), a);
+	return result;
+}
 
-void NUMindexx_s (char32 *a[], integer n, integer indx[]);
-/*
-	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
-	a [indx[i]] is in ascending order for i=1..n;
-	No preservation of order among equals (see NUMsort2_...)
-*/
+inline autoINTVEC newINTVECindex (constSTRVEC const& s) {
+	autoINTVEC result = newINTVECraw (s.size);
+	INTVECindex (result.get(), s);
+	return result;
+}
 
-void NUMrankColumns (MAT m, integer cb, integer ce);
+void MATrankColumns (MAT m, integer cb, integer ce);
 
-/* NUMrank:
- *  Replace content of array by rank number, including midranking of ties.
+/* rank:
+ *  Replace content of sorted array by rank number, including midranking of ties.
  *  E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
  *  by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively. *
  */
-template <class T>
-void NUMrank (vector<T> a) {
+
+inline void VECrankSorted (VECVU const& a) {
 	integer jt, j = 1;
 	while (j < a.size) {
 		for (jt = j + 1; jt <= a.size && a [jt] == a [j]; jt ++) {}
-		T rank = (j + jt - 1) * 0.5;
+		double rank = (j + jt - 1) * 0.5;
 		for (integer i = j; i <= jt - 1; i ++)
 			a [i] = rank;
 		j = jt;
 	}
-	if (j == a.size) a [a.size] = a.size;
+	if (j == a.size)
+		a [a.size] = a.size;
 }
 
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
@@ -538,13 +543,19 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4: 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
 */
-void VECsolveSparse_IHT (VECVU const& x, constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
-autoVEC newVECsolveSparse_IHT (constMATVU const& p, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
 
-autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer itermax);
+void VECsolveNonNegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, bool info);
+
+inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, bool info) {
+	autoVEC result = newVECrandomUniform (a.ncol, 0.0, 1.0);
+	VECsolveNonNegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, info);
+	return result;
+}
 /*
-	Solve the equation: M.b = d for b under the constraint: all b[i] >= 0;
-	m[1..nr][1..nc], d[1..nr] and b[1..nc].
+	Solve the equation: A.x = y for x under the constraint: all x[i] >= 0;
+	a[1..nr][1..nc], y[1..nr] and x[1..nc].
 	Algorithm: Alternating least squares.
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
@@ -562,20 +573,20 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC y, do
 	Psychometrika 48, 631-638.
 */
 
-autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta);
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVEC const& y, double alpha, double delta);
 /*
-	Solve g(t) = ||F*t - phi||^2 + alpha (t'*t - delta)^2 for t[1..m],
-	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
+	Solve g(x) = ||A*x - y||^2 + alpha (x'*x - delta)^2 for x[1..m],
+	where A[1..n][1..m] is a matrix, y[1..n] a given vector, and alpha
 	and delta are fixed numbers.
 	This class of functions is composed of a linear regression function and
 	a penalty function for the sum of squared regression weights. It is weakly
 	constrained because the penalty function prohibits a relatively large
-	departure of t't from delta.
+	departure of x'x from delta.
 	The solution is due to:
 	Jos M.F. ten Berge (1991), A general solution for a class of weakly
 	constrained linear regression problems, Psychometrika 56, 601-609.
 	Preconditions:
-		f.nrow >= f.ncol
+		a.nrow >= a.ncol
 		alpha >= 0
 */
 

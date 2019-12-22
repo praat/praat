@@ -89,7 +89,7 @@ struct pdf2_struct {
 };
 
 void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
-	const integer npc = 5;
+	constexpr integer npc = 5;
 	const ldiv_t n = ldiv (m.ncol, npc);
 
 	MelderInfo_open ();
@@ -159,10 +159,15 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 	}
 }
 
-inline void MATmul_rows_inplace (MATVU const& x, constVECVU const& v) { // TODO better name??
+inline void MATmultiplyRows_inplace (MATVU const& x, constVECVU const& v) {
 	Melder_assert (x.nrow == v.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		x.row (irow)  *=  v [irow];
+		x.row (irow)  *=  v [irow];  // x[i,j]*v[i]
+}
+inline void MATmultiplyColumns_inplace (MATVU const& x, constVECVU const& v) {
+	Melder_assert (x.ncol == v.size);
+	for (integer icol = 1; icol <= x.nrow; icol ++)
+		x.column (icol)  *=  v [icol];  // x[i,j]*v[j]
 }
 
 double NUMmultivariateKurtosis (constMATVU const& m, int method) {
@@ -367,38 +372,48 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	return x;
 }
 
-autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMAT const& m, constVEC const& d, double tol, integer maximunNumberOfIterations) {
-	Melder_assert (m.nrow == d.size);
-	autoVEC b = newVECzero (m.ncol);
-	for (integer iter = 1; iter <= maximunNumberOfIterations; iter ++) {
+static void VECcopy (VECVU const& target, constVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+
+void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, bool info) {
+	Melder_assert (a.nrow == y.size);
+	Melder_assert (a.ncol == x.size);
+	double difsq_previous = 1e100; // not important just large enough
+	for (integer i = 1; i <= x.size; i ++)
+		if (x [i] < 0.0)
+			x [i] = 0.0;
+	autoVEC r = newVECraw (y.size);
+	const double normSquared_y = NUMsum2 (y);
+	for (integer iter = 1; iter <= maximumNumberOfIterations; iter ++) {
 		/*
-			Fix all weights except b [j]
+			Alternating Least Squares: Fix all except x [icol]
 		*/
-		for (integer j = 1; j <= m.ncol; j ++) {
-			longdouble mjr = 0.0, mjmj = 0.0;
-			for (integer i = 1; i <= m.nrow; i ++) {
-				double ri = d [i], mij = m [i] [j];
-				for (integer l = 1; l <= m.ncol; l ++)
-					if (l != j)
-						ri -= b [l] * m [i] [l];
-				mjr += mij * ri;
-				mjmj += mij * mij;
-			}
-			b [j] = std::max (0.0, double (mjr / mjmj));
+		for (integer icol = 1; icol <= a.ncol; icol ++) {
+			VECcopy (r.get(), y);
+			for (integer jcol = 1; jcol <= a.ncol; jcol ++)
+				if (jcol != icol)
+					r  -=  x [jcol] * a.column (jcol);
+			const double ajr = NUMinner (a.column (icol), r);
+			const double ajaj = NUMsum2 (a.column (icol));
+			x [icol] = std::max (0.0, ajr / ajaj);
 		}
 		/*
-			Calculate t(b) and compare with previous result.
+			Calculate t(x) and compare with previous result.
 		*/
-		longdouble difsq = 0.0, difsqp = 0.0;
-		for (integer i = 1; i <= m.nrow; i ++) {
-			const double dmb = d [i] - NUMinner (m.row (i), b);
-			difsq += dmb * dmb;
-		}
-		if (fabs (difsq - difsqp) / difsq < tol)
+		VECmul (r, a, x);
+		r  -=  y;
+		const double difsq = NUMsum2 (r);
+		if (info)
+			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
+		if (fabs (difsq - difsq_previous) < tol * normSquared_y)
 			break;
-		difsqp = difsq;
+		difsq_previous = difsq;
 	}
-	return b;
+	if (info)
+			MelderInfo_drain();
 }
 
 struct nr_struct {
@@ -624,23 +639,23 @@ double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, 
 	return 0.5 * (xmax + xmin);
 }
 
-autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVEC const& phi, double alpha, double delta) {
-	Melder_assert (f.nrow == phi.size);
-	Melder_require (f.nrow >= f.ncol,
+autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVEC const& y, double alpha, double delta) {
+	Melder_assert (a.nrow == y.size);
+	Melder_require (a.nrow >= a.ncol,
 		U"The number of rows should not be less than the number of columns.");
 	Melder_require (alpha >= 0.0,
 		U"The coefficient of the penalty function should not be negative.");
 	Melder_require (delta > 0,
 		U"The solution's vector length should be positive.");
 	
-	autoVEC c = newVECzero (f.ncol);	
-	autoSVD svd = SVD_createFromGeneralMatrix (f);
+	autoVEC c = newVECzero (a.ncol);	
+	autoSVD svd = SVD_createFromGeneralMatrix (a);
 
 	if (alpha == 0.0) {
 		/*
 			Solve by standard least squares
 		*/
-		autoVEC result = SVD_solve (svd.get(), phi);
+		autoVEC result = SVD_solve (svd.get(), y);
 		return result;
 	}
 	/*
@@ -650,7 +665,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 		Therefore, the paper's U is our V but since our V is stored as the transpose: U == svd -> v.transpose()!
 	*/
 	constMATVU u = svd -> v.transpose();
-	for (integer i = 1; i <= f.ncol; i++) {
+	for (integer i = 1; i <= a.ncol; i++) {
 		const double ci = svd -> d [i];
 		c [i] = ci * ci;
 	}
@@ -660,38 +675,38 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 	*/
 	integer q = 1;
 	const double tol = 1e-6;
-	while (q < f.ncol && (c [f.ncol - q] - c [f.ncol]) < tol)
+	while (q < a.ncol && (c [a.ncol - q] - c [a.ncol]) < tol)
 		q ++;
 	/*
-		Step 2: x = U'F'phi
+		Step 2: x = U'F'y
 	*/
-	autoVEC ftphi = newVECmul (f.transpose(), phi);
+	autoVEC ftphi = newVECmul (a.transpose(), y);
 	autoVEC x = newVECmul (u.transpose(), ftphi.get());
 	/*
 		Step 3:
 	*/
 	struct nr2_struct me;
-	me.numberOfTerms = f.ncol;
+	me.numberOfTerms = a.ncol;
 	me.delta = delta;
 	me.alpha = alpha;
 	me.x = x.get();
 	me.c = c.get();
 
-	const double xqsq = NUMsum2 (x.part (f.ncol - q + 1, f.ncol)); // = NUMinner (xq,xq)
-	integer r = f.ncol;
+	const double xqsq = NUMsum2 (x.part (a.ncol - q + 1, a.ncol)); // = NUMinner (xq,xq)
+	integer r = a.ncol;
 	if (xqsq < tol) { // Case3.b page 608
-		r = f.ncol - q;
+		r = a.ncol - q;
 		me.numberOfTerms = r;
-		double fm = bolzanoFunction (c[f.ncol], & me);
+		double fm = bolzanoFunction (c[a.ncol], & me);
 		if (fm >= 0.0) { // step 3.b1
 			/*
 				Get w0 by overwriting vector x.
 			*/
 			x [r + 1] = sqrt (fm);
 			for (integer j = 1; j <= r; j ++)
-				x [j] /= c [j] - c [f.ncol]; // eq. 10
+				x [j] /= c [j] - c [a.ncol]; // eq. 10
 			if (q > 1)
-				x.part (r + 2, f.ncol) <<= 0.0;
+				x.part (r + 2, a.ncol) <<= 0.0;
 			autoVEC result = newVECmul (u,  x);
 			return result;
 		}
@@ -705,21 +720,21 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& f, constVE
 		xCx += x [j] * x [j] / c [j];
 
 	const double bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
-	const double eps = (c [f.ncol] - bmin) * tol;
+	const double eps = (c [a.ncol] - bmin) * tol;
 	/*
 		Find the root of d(psi(b)/db in interval (bmin, c [m])
 	*/
-	double b0 =	NUMnrbis (nr2_func, bmin, c [f.ncol], & me);
-	const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin, c [f.ncol], & me); // TODO test if  b0 == b02 ??
-	Melder_require (b0 < c [f.ncol],
-		U"The root (", b0, U") should be smaller than the smallest eigenvalue (", c[f.ncol], U").");
+	double b0 =	NUMnrbis (nr2_func, bmin, c [a.ncol], & me);
+	const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin, c [a.ncol], & me); // TODO test if  b0 == b02 ??
+	Melder_require (b0 < c [a.ncol],
+		U"The root (", b0, U") should be smaller than the smallest eigenvalue (", c[a.ncol], U").");
 	/*
 				Get w0 by overwriting vector x.
 	*/
 	for (integer j = 1; j <= r; j ++)
 		x [j] /= c [j] - b0; // eq. 7
 	if (q > 1)
-		x.part (r + 1, f.ncol) <<= 0.0;
+		x.part (r + 1, a.ncol) <<= 0.0;
 	autoVEC result = newVECmul (u, x);
 	return result;
 }
@@ -2702,8 +2717,8 @@ double NUMtrace2 (const constMATVU& x, const constMATVU& y) {
 }
 
 void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1) {
-	longdouble sm = a + c, df = a - c, adf = fabs (df);
-	longdouble tb = b + b, ab = fabs (tb);
+	const longdouble sm = a + c, df = a - c, adf = fabs (df);
+	const longdouble tb = b + b, ab = fabs (tb);
 	longdouble acmx = c, acmn = a;
 	if (fabs (a) > fabs (c)) {
 		acmx = a;
@@ -2716,12 +2731,12 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	} else if (adf < ab) {
 		tn = adf / ab;
 		rt = ab * sqrt (1.0 + tn * tn);
-	} else 
+	} else
 		rt = ab * sqrt (2.0);
 	
 	longdouble rt1, rt2;
 	integer sgn1, sgn2;
-	if (sm < 0) {
+	if (sm < 0.0) {
 		rt1 = 0.5 * (sm - rt);
 		sgn1 = -1;
 		/*
@@ -2730,7 +2745,7 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 			next line needs to be executed in higher precision.
 		*/
 		rt2 = (acmx / rt1) * acmn - (b / rt1) * b;
-	} else if (sm > 0) {
+	} else if (sm > 0.0) {
 		rt1 = 0.5 * (sm + rt);
 		sgn1 = 1;
 		/*
@@ -2748,20 +2763,21 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	// Compute the eigenvector
 
 	longdouble cs;
-	if (df >= 0) {
+	if (df >= 0.0) {
 		cs = df + rt;
 		sgn2 = 1;
 	} else {
 		cs = df - rt;
 		sgn2 = -1;
 	}
-	longdouble acs = fabs (cs), cs1, sn1;
+	const longdouble acs = fabs (cs);
+	longdouble cs1, sn1;
 	if (acs > ab) {
-		longdouble ct = -tb / cs;
+		const longdouble ct = -tb / cs;
 		sn1 = 1.0 / sqrt (1.0 + ct * ct);
 		cs1 = ct * sn1;
 	} else {
-		if (ab == 0) {
+		if (ab == 0.0) {
 			cs1 = 1.0;
 			sn1 = 0.0;
 		} else {
@@ -2824,26 +2840,27 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 */
 static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
-	Melder_assert (numberOfNonZeros < v.size);
+	Melder_assert (numberOfNonZeros > 0 && numberOfNonZeros < v.size);
 	autoVEC abs = newVECabs (v);
-	autoINTVEC linear = newINTVEClinear (v.size, 1, 1);
-	NUMsortTogether <double, integer> (abs.get(), linear.get()); // sort is always increasing
+	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
+	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
-		v [linear [i]] = 0.0;
-		support [linear [i]] = 0;
+		v [index [i]] = 0.0;
+		support [index [i]] = 0;
 	}
 	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++)
-		support [linear [i]] = 1;
+		support [index [i]] = 1;
 }
 
-bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
+static bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
+	Melder_assert (a.size == b.size);
 	for (integer i = 1; i <= a.size; i ++)
 		if (a [i] != b [i])
 			return false;
 	return true;
 }
 
-static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
+static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
 	Melder_assert (x_new.size == xn.size && buffer.size == x_new.size);
 	Melder_assert (gradient.size == support_new.size && gradient.size == x_new.size);
 	Melder_assert (y_new.size == yn.size);
@@ -2853,11 +2870,11 @@ static double update (VEC x_new, VEC y_new, INTVEC const& support_new, constVECV
 	x_new <<= xn + buffer; // x(n) + stepSize * gradient
 	VECsetThresholdAndSupport (x_new, support_new, numberOfNonZeros);
 	buffer <<= x_new  -  xn; // x(n+1) - x (n)
-	double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
+	const double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
 	
 	VECmul (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
 	buffer.part (1, yn.size) <<= y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
-	double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
+	const double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
 	return xdifsq / ydifsq;
 }
 
@@ -2888,8 +2905,8 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		autoINTVEC support = newINTVECraw (x.size);
 		autoINTVEC support_new = newINTVECraw (x.size);
 		
-		double xnormSq = NUMsum2 (x);
-		double rms_y = NUMsum2 (y) / y.size;
+		const double xnormSq = NUMsum2 (x);
+		const double rms_y = NUMsum2 (y) / y.size;
 		double rms = rms_y;
 		
 		if (xnormSq == 0.0) {
@@ -2901,7 +2918,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			VECmul (buffer.get(), dictionary.transpose(), y);
 			VECsetThresholdAndSupport (buffer.get(), support.get(), numberOfNonZeros);
 			yfromx <<= 0.0;
-			ydif <<= y;
+			ydif <<= y; // ydif = y - D.x(1) = y - D.0 = y
 		} else {
 			/*
 				We improve a current solution x
@@ -2922,21 +2939,20 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				mu = || g_sparse ||^2 / || D_sparse * g_sparse ||^2
 				where g_sparse only contains the supported elements from the gradient and D_sparse only the supported columns from the dictionary.
 			*/
-			
-			// 1. the norm of the sparse gradient
-			double normsq_gs = 0.0;
+			double normsq_gs = 0.0; // squared norm of the sparse gradient
 			for (integer ig = 1; ig <= gradient.size; ig ++) {
 				if (support [ig] != 0)
 					normsq_gs += gradient [ig] * gradient [ig];
 			}
-			// 2. the norm of the transformed sparse gradient
-			double normsq_dgs = 0.0;
-			for (integer icol = 1; icol <= dictionary.ncol; icol ++) {
-				if (support [icol] != 0) {
-					double dgs = NUMsum (dictionary.column (icol)) * gradient [icol];
-					normsq_dgs += dgs * dgs;
-				}	
+			double normsq_dgs = 0.0; // squared norm of the transformed sparse gradient
+			for (integer irow = 1; irow <= dictionary.nrow; irow ++) {
+				longdouble sum = 0.0;
+				for (integer icol = 1; icol <= dictionary.ncol; icol ++)
+					if (support [icol] != 0)
+						sum += dictionary [irow] [icol] * gradient [icol];
+				normsq_dgs += sum * sum;
 			}
+						
 			double stepSize = normsq_gs / normsq_dgs;
 			
 			double normsq_ratio = update (x_new.get(), yfromx_new.get(), support_new.get(), x, stepSize, gradient.get(), dictionary, yfromx.get(), numberOfNonZeros, buffer.get());
