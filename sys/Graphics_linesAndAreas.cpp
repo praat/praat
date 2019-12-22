@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2005,2007-2019 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -943,7 +943,7 @@ void Graphics_function (Graphics me, const double yWC [], integer ix1, integer i
 	if (my recording && n >= 2) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
 }
 
-void Graphics_function16 (Graphics me, const int16 yWC [], int stride, integer ix1, integer ix2, double x1WC, double x2WC) {
+void Graphics_function16 (Graphics me, const int16 yWC [], integer stride, integer ix1, integer ix2, double x1WC, double x2WC) {
 	(void) Graphics_function_ <int16> (me, yWC, stride, ix1, ix2, x1WC, x2WC);
 }
 

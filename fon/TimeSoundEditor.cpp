@@ -509,9 +509,6 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	for (integer ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
 		const double cursorFunctionValue = ( longSound ? 0.0 :
 				Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70) );
-		/*
-			BUG: this will only work for mono or stereo, until Graphics_function16 handles quadro.
-		*/
 		const double ymin = (double) (numberOfVisibleChannels - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
 		const double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
@@ -625,8 +622,8 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		} else {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics.get(),
-					longSound -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - longSound -> imin * numberOfChannels + (ichan - 1), numberOfChannels, first, last,
-					Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
+					longSound -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - longSound -> imin * numberOfChannels + (ichan - 1),
+					numberOfChannels, first, last, Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
 		}
 		Graphics_resetViewport (my graphics.get(), vp);
 	}
