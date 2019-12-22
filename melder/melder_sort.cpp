@@ -28,7 +28,7 @@ void VECsort_inplace (VECVU const& x) noexcept {
 
 void INTVECsort_inplace (INTVECVU const& x) noexcept {
 	std::sort (x.begin(), x.end(),
-		[] (double first, double last) {
+		[] (integer first, integer last) {
 			return first < last;
 		}
 	);
@@ -40,35 +40,6 @@ void STRVECsort_inplace (STRVEC const& array) {
 			return str32cmp (first, last) < 0;
 		}
 	);
-}
-
-void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *)) {
-	integer l, r, j, i;
-	void *k;
-	if (n < 2) return;
-	l = (n >> 1) + 1;
-	r = n;
-	for (;;) {
-		if (l > 1) {
-			l --;
-			k = a [l];
-		} else { 
-			k = a [r];
-			a [r] = a [1];
-			r --;
-			if (r == 1) { a [1] = k; return; }
-		}
-		j = l;
-		for (;;) {
-			i = j;
-			j = j << 1;
-			if (j > r) break;
-			if (j < r && compare (a [j], a [j + 1]) < 0) j ++;
-			if (compare (k, a [j]) >= 0) break;
-			a [i] = a [j];
-		}
-		a [i] = k;
-	}
 }
 
 double NUMquantile (integer n, double a [], double factor) {

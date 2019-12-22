@@ -20,8 +20,6 @@
 
 /********** Sorting **********/
 
-void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
-
 double NUMquantile (integer n, double a [], double factor);
 double NUMquantile (const constVECVU& a, double factor) noexcept;
 /*
