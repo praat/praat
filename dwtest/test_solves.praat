@@ -54,15 +54,18 @@ procedure test_nonnegative
 	; x =[0.17687; 0.0000; 0.85941]
 	; 
 	solution# = {0.17687, 0.0, 0.85941}
-	result# = solveNonnegative# (a##, y#,  100, 1e-17, 0)
+	result# = solveNonnegative# (a##, y#,  100, 1e-17, 2)
+	;appendInfoLine: result#
 	dif = norm (result# - solution#)
 	assert dif < 1e-5
 	a## = {{-4, 2, 2}, {2,4, 2}, {1,1,1},{2,-1,3}}
 	y# = {1,2,1,3}
-	result# = solveNonnegative# (a##, y#,  3, 1e-17, 0)
-	result# = solveNonnegative# (a##, y#,  result#, 100, 1e-17, 0)
+	result3# = solveNonnegative# (a##, y#,  3, 1e-17, 2)
+	;appendInfoLine: result#
+	result# = solveNonnegative# (a##, y#,  result3#, 100, 1e-17, 1)
+	;appendInfoLine: result#
 	dif = norm (result# - solution#)
-	assert dif < 1e-5
+	assert dif < 1e-6
 endproc
 
 procedure test_weakly: .numberOfTries

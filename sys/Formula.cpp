@@ -5768,7 +5768,7 @@ static void do_VECsolveNonnegative () {
 			autoVEC x = newVECcopy (xstart->numericVector);
 			Melder_require (x.size == a.ncol,
 				U"The size of start vector should equal the number of columns in the matrix.");
-			VECsolveNonNegativeLeastSquaresRegression (x.get(), a, yy, maximumNumberOfIterations, tolerance, infoLevel);
+			VECsolveNonnegativeLeastSquaresRegression (x.get(), a, yy, maximumNumberOfIterations, tolerance, infoLevel);
 			pushNumericVector (x.move());
 		} else {
 			Melder_throw (U"The function \"solveNonnegative#\" requires a matrix, a vector, a vector and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", xstart->whichText(), U", ",
@@ -5785,7 +5785,7 @@ static void do_VECsolveNonnegative () {
 			const VEC yy = y->numericVector;
 			Melder_require (a.nrow == yy.size,
 				U"The number of rows in the matrix should equal the size of the vector.");
-			pushNumericVector (newVECsolveNonNegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
+			pushNumericVector (newVECsolveNonnegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function \"solveNonnegative#\" requires a matrix, a vector, and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}

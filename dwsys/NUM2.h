@@ -546,11 +546,11 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel);
 autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel);
 
-void VECsolveNonNegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, integer infoLevel);
+void VECsolveNonnegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, integer infoLevel);
 
-inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, integer infoLevel) {
-	autoVEC result = newVECrandomUniform (a.ncol, 0.0, 1.0);
-	VECsolveNonNegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, infoLevel);
+inline autoVEC newVECsolveNonnegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, integer infoLevel) {
+	autoVEC result = newVECzero (a.ncol);
+	VECsolveNonnegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, infoLevel);
 	return result;
 }
 /*

@@ -378,7 +378,7 @@ static void VECcopy (VECVU const& target, constVECVU const& source) {
 		target [i] = source [i];
 }
 
-void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, integer infoLevel) {
+void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, integer infoLevel) {
 	Melder_assert (a.nrow == y.size);
 	Melder_assert (a.ncol == x.size);
 	for (integer i = 1; i <= x.size; i ++)
@@ -386,9 +386,10 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 			x [i] = 0.0;
 	autoVEC r = newVECraw (y.size);
 	const double normSquared_y = NUMsum2 (y);
-	integer iter;
+	integer iter = 1;
+	bool convergence = false;
 	double difsq, difsq_previous = 1e100; // large enough
-	for (iter = 1; iter <= maximumNumberOfIterations; iter ++) {
+	while (iter <= maximumNumberOfIterations && ! convergence) {
 		/*
 			Alternating Least Squares: Fixate all except x [icol]
 		*/
@@ -407,12 +408,13 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		VECmul (r.get(), a, x);
 		r.get()  -=  y;
 		difsq = NUMsum2 (r);
+		convergence = fabs (difsq - difsq_previous) < tol * normSquared_y;
 		if (infoLevel > 1)
 			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
-		if (fabs (difsq - difsq_previous) < tol * normSquared_y)
-			break;
 		difsq_previous = difsq;
+		iter ++;
 	}
+	iter --;
 	if (infoLevel >= 1)
 		MelderInfo_writeLine (U"Number of iterations: ", iter, U"; Minimum: ", difsq);
 	if (infoLevel > 0)
@@ -2982,6 +2984,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			rms = rms_new;
 			iter ++;
 		}
+		iter = std::min (iter, maximumNumberOfIterations);
 		if (infoLevel >= 1)
 			MelderInfo_writeLine (U"Number of iterations: ", iter, U" Difference squared: ", rms);
 		if (infoLevel > 0)

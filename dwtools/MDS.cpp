@@ -311,7 +311,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		}
 	}
 
-	b = newVECsolveNonNegativeLeastSquaresRegression (m.get(), d.get(), tol, itermax, 0);
+	b = newVECsolveNonnegativeLeastSquaresRegression (m.get(), d.get(), tol, itermax, 0);
 
 	for (integer iprox = 1; iprox <= numberOfProximities; iprox ++) {
 		const integer ii = vec->rowIndex [iprox];
