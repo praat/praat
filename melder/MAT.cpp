@@ -220,6 +220,9 @@ void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 		(100,000 flops).
 
 		For the X.Y case, where X and Y are packed row-major matrices,
+		the speed is 0.204, 1.130, 3.74, 3.47, 4.77, 3.81, 4.05, 4.26, 3.92, 2.82, 2.83, 2.80 Gflop/s on 2.9 GHz i9
+		the speed is 0.158, 1.452, 3.70, 4.40, 6.01, 4.55, 4.56, 4.76, 4.84, 3.23, 3.23, 3.26 Gflop/s with SSE 4.2
+		the speed is 0.135, 1.483, 3.85, 4.80, 5.60, 4.49, 4.43, 4.52, 5.05, 3.31, 3.19, 3.25 Gflop/s with AVX2
 		the speed is 0.087, 0.574, 1.18, 1.61, 2.25, 2.14, 2.11, 2.23, 2.23, 1.88, 1.74, 1.53 Gflop/s
 		for size =       1,     3,   10,   20,   50,  100,  200,  500, 1000, 2000, 3000, 5000.
 
