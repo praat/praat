@@ -5704,17 +5704,17 @@ static void do_VECsolveSparse () {
 		if (dict->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && 
 			nonzeros->which == Stackel_NUMBER && niter->which == Stackel_NUMBER &&
 			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
-			MAT d = dict->numericMatrix;
+			const MAT d = dict->numericMatrix;
 			Melder_require (d.ncol > d.nrow,
 				U"The number of columns should be larger than the number of rows (sparse!).");
-			VEC yy = y->numericVector;
+			const VEC yy = y->numericVector;
 			Melder_require (yy.size == d.nrow,
 				U"The number of rows in the matrix should equal the size of the vector.");
-			integer numberOfNonzeros = Melder_iround (nonzeros->number);
-			integer maximumNumberOfIterations = Melder_iround (niter ->number);
-			bool showInfo = info->number > 0;
-			double tolerance = tol->number;
-			pushNumericVector (newVECsolveSparse_IHT (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, showInfo));
+			const integer numberOfNonzeros = Melder_iround (nonzeros->number);
+			const integer maximumNumberOfIterations = Melder_iround (niter ->number);
+			const integer infoLevel = Melder_iround (info->number);
+			const double tolerance = tol->number;
+			pushNumericVector (newVECsolveSparse_IHT (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function \"solveSparse#\" requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
@@ -5725,21 +5725,21 @@ static void do_VECsolveSparse () {
 			xstart->which == Stackel_NUMERIC_VECTOR &&
 			nonzeros->which == Stackel_NUMBER && niter->which == Stackel_NUMBER &&
 			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
-			constMAT d = dict->numericMatrix;
+			const constMAT d = dict->numericMatrix;
 			Melder_require (d.ncol > d.nrow,
 				U"The number of columns should be larger than the number of rows (sparse!).");
-			constVEC yy = y->numericVector;
-			VEC x = xstart->numericVector;
+			const constVEC yy = y->numericVector;
+			const VEC x = xstart->numericVector;
 			Melder_require (yy.size == d.nrow,
 				U"The number of rows in the matrix should equal the size of the vector.");
 			Melder_require (x.size == d.ncol,
 				U"The number of columns in the matrix should equal the size of start vector.");
 			autoVEC xs = newVECcopy (x);
-			integer numberOfNonzeros = Melder_iround (nonzeros->number);
-			integer maximumNumberOfIterations = Melder_iround (niter ->number);
-			bool showInfo = info->number > 0;
-			double tolerance = tol->number;
-			VECsolveSparse_IHT (xs, d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, showInfo);
+			const integer numberOfNonzeros = Melder_iround (nonzeros->number);
+			const integer maximumNumberOfIterations = Melder_iround (niter ->number);
+			const integer infoLevel = Melder_iround (info->number);
+			const double tolerance = tol->number;
+			VECsolveSparse_IHT (xs, d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, infoLevel);
 			pushNumericVector (xs.move());
 		} else {
 			Melder_throw (U"The function \"solveSparse#\" requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
@@ -5758,17 +5758,17 @@ static void do_VECsolveNonnegative () {
 		if (m->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR &&
 			xstart->which == Stackel_NUMERIC_VECTOR && itermax->which == Stackel_NUMBER &&
 			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
-			double tolerance = tol->number;
-			integer maximumNumberOfIterations = Melder_iround (itermax->number);
-			bool showInfo = info->number > 0;
-			constMAT a = m->numericMatrix;
-			VEC yy = y->numericVector;
+			const double tolerance = tol->number;
+			const integer maximumNumberOfIterations = Melder_iround (itermax->number);
+			const integer infoLevel = Melder_iround (info->number);
+			const constMAT a = m->numericMatrix;
+			const VEC yy = y->numericVector;
 			Melder_require (a.nrow == yy.size,
 				U"The number of rows in the matrix should equal the size of the vector.");
 			autoVEC x = newVECcopy (xstart->numericVector);
 			Melder_require (x.size == a.ncol,
 				U"The size of start vector should equal the number of columns in the matrix.");
-			VECsolveNonNegativeLeastSquaresRegression (x.get(), a, yy, maximumNumberOfIterations, tolerance, showInfo);
+			VECsolveNonNegativeLeastSquaresRegression (x.get(), a, yy, maximumNumberOfIterations, tolerance, infoLevel);
 			pushNumericVector (x.move());
 		} else {
 			Melder_throw (U"The function \"solveNonnegative#\" requires a matrix, a vector, a vector and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", xstart->whichText(), U", ",
@@ -5778,14 +5778,14 @@ static void do_VECsolveNonnegative () {
 		Stackel info = pop, tol = pop, itermax = pop, y = pop, m = pop;
 		if (m->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR &&
 			itermax->which == Stackel_NUMBER && tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
-			double tolerance = tol->number;
-			integer maximumNumberOfIterations = Melder_iround (itermax->number);
-			bool showInfo = info->number > 0;
-			constMAT a = m->numericMatrix;
-			VEC yy = y->numericVector;
+			const double tolerance = tol->number;
+			const integer maximumNumberOfIterations = Melder_iround (itermax->number);
+			const integer infoLevel = Melder_iround (info->number);
+			const constMAT a = m->numericMatrix;
+			const VEC yy = y->numericVector;
 			Melder_require (a.nrow == yy.size,
 				U"The number of rows in the matrix should equal the size of the vector.");
-			pushNumericVector (newVECsolveNonNegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, showInfo));
+			pushNumericVector (newVECsolveNonNegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function \"solveNonnegative#\" requires a matrix, a vector, and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}

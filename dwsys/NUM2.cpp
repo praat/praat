@@ -378,7 +378,7 @@ static void VECcopy (VECVU const& target, constVECVU const& source) {
 		target [i] = source [i];
 }
 
-void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, bool infoLevel) {
+void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, integer infoLevel) {
 	Melder_assert (a.nrow == y.size);
 	Melder_assert (a.ncol == x.size);
 	for (integer i = 1; i <= x.size; i ++)
@@ -387,16 +387,16 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 	autoVEC r = newVECraw (y.size);
 	const double normSquared_y = NUMsum2 (y);
 	integer iter;
-	double difsq, difsq_previous = 1e100; // not important just large enough
+	double difsq, difsq_previous = 1e100; // large enough
 	for (iter = 1; iter <= maximumNumberOfIterations; iter ++) {
 		/*
-			Alternating Least Squares: Fix all except x [icol]
+			Alternating Least Squares: Fixate all except x [icol]
 		*/
 		for (integer icol = 1; icol <= a.ncol; icol ++) {
 			VECcopy (r.get(), y);
 			for (integer jcol = 1; jcol <= a.ncol; jcol ++)
 				if (jcol != icol)
-					r  -=  x [jcol] * a.column (jcol);
+					r.get()  -=  x [jcol] * a.column (jcol);
 			const double ajr = NUMinner (a.column (icol), r);
 			const double ajaj = NUMsum2 (a.column (icol));
 			x [icol] = std::max (0.0, ajr / ajaj);
@@ -404,8 +404,8 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		/*
 			Calculate t(x) and compare with previous result.
 		*/
-		VECmul (r, a, x);
-		r  -=  y;
+		VECmul (r.get(), a, x);
+		r.get()  -=  y;
 		difsq = NUMsum2 (r);
 		if (infoLevel > 1)
 			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
@@ -413,8 +413,8 @@ void VECsolveNonNegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 			break;
 		difsq_previous = difsq;
 	}
-	if (infoLevel == 1)
-		MelderInfo_writeLine (U"Number of iterations: ", iter, U" minimum: ", difsq);
+	if (infoLevel >= 1)
+		MelderInfo_writeLine (U"Number of iterations: ", iter, U"; Minimum: ", difsq);
 	if (infoLevel > 0)
 			MelderInfo_drain();
 }
@@ -594,26 +594,27 @@ struct nr2_struct {
 static double nr2_func (double b, double *df, void *data) {
 	const struct nr2_struct *me = (struct nr2_struct *) data;
 
-	double f = my delta - 0.5 * b / my alpha;
-	*df = - 0.5 / my alpha;
+	longdouble f = my delta - 0.5 * b / my alpha;
+	longdouble derivative = - 0.5 / my alpha;
 	for (integer i = 1; i <= my numberOfTerms; i ++) {
-		const double c1 = (my c [i] - b);
-		const double c2 = my x [i] / c1;
-		const double c2sq = c2 * c2;
+		const longdouble c1 = (my c [i] - b);
+		const longdouble c2 = my x [i] / c1;
+		const longdouble c2sq = c2 * c2;
 		f -= c2sq;
-		*df -= 2.0 * c2sq / c1;
+		derivative -= 2.0 * c2sq / c1;
 	}
-	return f;
+	*df = (double) derivative;
+	return (double)f;
 }
 
 static double bolzanoFunction (double b, void *data) {
 	const struct nr2_struct *me = (struct nr2_struct *) data;
-	double f = my delta - 0.5 * b / my alpha;
+	longdouble f = my delta - 0.5 * b / my alpha;
 	for (integer i = 1; i <= my numberOfTerms; i ++) {
-		const double c = my x [i] / (my c [i] - b);
+		const longdouble c = my x [i] / (my c [i] - b);
 		f -= c * c;
 	}
-	return f;
+	return (double) f;
 }
 
 double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, double xmax, void *closure) {
@@ -627,7 +628,7 @@ double NUMbolzanoSearch (double (*func) (double x, void *closure), double xmin, 
 	Melder_require (fleft * fright < 0.0,
 		U"Invalid interval: the function values at the borders should have different signs.");
 	double xdifference = fabs (xmax - xmin);
-	double xdifference_old = 2.0 * xdifference; // just larger to make the next comparison 'true'.
+	double xdifference_old = 2.0 * xdifference; // just larger to make the first comparison 'true'.
 	while (xdifference < xdifference_old) {
 		const double xmid = 0.5 * (xmax + xmin);
 		const double fmid = (*func)(xmid, closure);
@@ -701,7 +702,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	if (xqsq < tol) { // Case3.b page 608
 		r = a.ncol - q;
 		me.numberOfTerms = r;
-		double fm = bolzanoFunction (c[a.ncol], & me);
+		const double fm = bolzanoFunction (c[a.ncol], & me);
 		if (fm >= 0.0) { // step 3.b1
 			/*
 				Get w0 by overwriting vector x.
@@ -728,14 +729,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	/*
 		Find the root of d(psi(b)/db in interval (bmin, c [m])
 	*/
-	double b0 =	NUMnrbis (nr2_func, bmin, c [a.ncol], & me);
-	if (Melder_debug == -2) {
-		const double b02 = NUMbolzanoSearch (bolzanoFunction, bmin, c [a.ncol], & me);
-		if (fabs (b0 - b02) > 1e-6)
-			Melder_casual (U"b0=", b0, U"; bolzano: ", b02);
-	}
-	Melder_require (b0 < c [a.ncol],
-		U"The root (", b0, U") should be smaller than the smallest eigenvalue (", c[a.ncol], U").");
+	const double b0 = NUMbolzanoSearch (bolzanoFunction, bmin, c [a.ncol], & me);
 	/*
 				Get w0 by overwriting vector x.
 	*/
@@ -2988,7 +2982,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			rms = rms_new;
 			iter ++;
 		}
-		if (infoLevel == 1)
+		if (infoLevel >= 1)
 			MelderInfo_writeLine (U"Number of iterations: ", iter, U" Difference squared: ", rms);
 		if (infoLevel > 0)
 			MelderInfo_drain();
