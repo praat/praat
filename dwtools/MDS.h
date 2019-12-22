@@ -55,9 +55,9 @@ void Salience_setDefaults (Salience me);
 
 integer Salience_correctNegatives (Salience me);
 
-void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension, bool garnish);
+void Salience_draw (Salience me, Graphics g, integer xdimension, integer ydimension, bool garnish);
 
-autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, int scaling);
+autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, integer scaling);
 
 #pragma mark - class ConfusionList
 
@@ -93,7 +93,7 @@ Collection_define (ScalarProductList, OrderedOf, ScalarProduct) {
 
 Thing_define (Transformator, Thing) {
 	integer numberOfPoints;
-	int normalization;
+	integer normalization;
 
 	virtual autoDistance v_transform (MDSVec vec, Distance dist, Weight w);
 };
@@ -102,7 +102,7 @@ void Transformator_init (Transformator me, integer numberOfPoints);
 
 autoTransformator Transformator_create (integer numberOfPoints);
 
-void Transformator_setNormalization (Transformator me, int normalization);
+void Transformator_setNormalization (Transformator me, integer normalization);
 
 autoDistance Transformator_transform (Transformator me, MDSVec vec, Distance dist, Weight w);
 
@@ -332,7 +332,7 @@ autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight 
 
 /************** DISSIMILARITY & DISTANCE *************************************/
 
-autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale);
+autoDistance Dissimilarity_to_Distance (Dissimilarity me, integer scale);
 /* with optional scaling with "additive constant" */
 
 autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, kMDS_TiesHandling tiesHandling);
@@ -355,7 +355,7 @@ autoWeight Dissimilarity_to_Weight (Dissimilarity me);
 
 /************** CONFUSION & SIMILARITY ***************************************/
 
-autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmetrizeMethod);
+autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, integer symmetrizeMethod);
 
 
 /************** DissimilarityList & DistanceList **********************************/
@@ -367,7 +367,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me);
 /************** DistanceList & Configuration ************************************/
 
 void DistanceList_to_Configuration_ytl (DistanceList me,
-	int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2);
+	integer numberOfDimensions, integer normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2);
 /*
 	F.W. Young, Y. Takane & R. Lewyckyj (1978), Three notes on ALSCAL,
 	Psychometrika 43, 433-435.
@@ -393,7 +393,7 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 
 autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool normalize);
 
-void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
+void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
 
 void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration conf, Salience weights,
 	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *out_varianceAccountedFor);
