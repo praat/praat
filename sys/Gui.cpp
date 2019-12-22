@@ -97,8 +97,8 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 	#elif cocoa
 		NSRect rect;
 		NSArray *screenArray = [NSScreen screens];
-		NSInteger screenCount = [screenArray count];
-		NSInteger index = 0;
+		NSUInteger screenCount = [screenArray count];
+		NSUInteger index = 0;
 		for (index = 0; index < screenCount; index ++) {
 			NSScreen *screen = [screenArray objectAtIndex: index];
 			rect = [screen visibleFrame];
