@@ -354,7 +354,7 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 
 /***************** CONTINGENCYTABLE **************************************/
 
-autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, int scaling) {
+autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, integer scaling) {
 	try {
 		const integer nrow = my numberOfRows, ncol = my numberOfColumns;
 		const integer dimmin = std::min (nrow, ncol);
@@ -592,7 +592,7 @@ void Salience_setDefaults (Salience me) {
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
 }
 
-void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
+void Salience_draw (Salience me, Graphics g, integer ix, integer iy, bool garnish) {
 	integer nc2, nc1 = ( ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy) );
 
 	if (ix < 1 || ix > my numberOfColumns || iy < 1 || iy > my numberOfColumns)
@@ -652,7 +652,7 @@ autoScalarProduct ScalarProduct_create (integer numberOfPoints) {
 	}
 }
 
-autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmetrizeMethod) {
+autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, integer symmetrizeMethod) {
 	try {
 		Melder_require (my numberOfColumns == my numberOfRows,
 			U"Confusion should be a square table.");
@@ -1009,7 +1009,7 @@ autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool n
 	}
 }
 
-void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2) {
+void DistanceList_to_Configuration_ytl (DistanceList me, integer numberOfDimensions, integer normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoScalarProductList sp = DistanceList_to_ScalarProductList (me, normalizeScalarProducts);
 		ScalarProductList_to_Configuration_ytl (sp.get(), numberOfDimensions, out1, out2);
@@ -1022,7 +1022,7 @@ void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions,
 	Algorithm : F. Young, Y. Takane & R. Lewyckyj (1978), "Three notes on ALSCAL", 
 	Psychometrika 43, 433-435.
 */
-void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
+void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		const integer numberOfSources = my size;
 		Melder_require (numberOfSources > 1,
@@ -1432,7 +1432,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 }
 
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,  Weight w, Transformator t, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
-	int showMulti = showProgress && numberOfRepetitions > 1;
+	bool showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		const bool showSingle = showProgress && numberOfRepetitions == 1;
 		autoConfiguration cstart = Data_copy (conf);
@@ -2114,7 +2114,7 @@ void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configu
 }
 
 void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions, kMDS_TiesHandling tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal) {
-	int showMulti = showProgress && numberOfRepetitions > 1;
+	bool showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		const bool showSingle = (showProgress && numberOfRepetitions == 1);
 
@@ -2162,7 +2162,7 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 }
 
 void DistanceList_to_Configuration_indscal (DistanceList distances, integer numberOfDimensions, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *out_conf, autoSalience *out_sal) {
-	int showMulti = showProgress && numberOfRepetitions > 1;
+	bool showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		const bool showSingle = (showProgress && numberOfRepetitions == 1);
 		autoConfiguration cstart;
