@@ -446,7 +446,14 @@ inline void VECrankSorted (VECVU const& a) {
 		a [a.size] = a.size;
 }
 
+autoMAT newMATlowerCholeslyInverse_fromLowerCholesky (constMAT const& m);
+
+void MATlowerCholesky_inplace (MAT a, double *out_lnd);
+
+autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd);
+
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
+
 inline autoMAT newMATlowerCholeskyInverse (constMAT const& a) {
 	autoMAT result = newMATcopy (a);
 	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
@@ -1306,10 +1313,10 @@ inline autoVEC VECchainColumns (constMATVU const& m) {
 }
 
 /* R = X.Y.Z */
-void MATmul3 (MATVU const & target, constMATVU& X, constMATVU& Y, constMATVU& Z);
+void MATmul3 (MATVU const & target, constMATVU const& X, constMATVU const& Y, constMATVU const& Z);
 
 /* Z = X.Y.X' */
-void MATmul3_XYXt (MATVU const& target, constMAT const& X, constMAT const& Y);
+void MATmul3_XYXt (MATVU const& target, constMATVU const& X, constMATVU const& Y);
 
 /* Z = X.Y.X where Y is a symmetric matrix */
 void MATmul3_XYsXt (MATVU const& target, constMAT const& X, constMAT const& Y);
