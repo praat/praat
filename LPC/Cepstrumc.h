@@ -2,7 +2,7 @@
 #define _Cepstrumc_h_
 /* Cepstrumc.h
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2019 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt,
 
 void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients);
 	
-autoDTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
+autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint);
 /*
 	1. Calculate distances between Cepstra:

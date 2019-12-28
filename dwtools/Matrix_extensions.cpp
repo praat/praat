@@ -274,8 +274,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	double fi = 0.0;
 	for (integer i = 1; i <= nBins; i ++) {
 		fi = ( cumulative ? fi + freq [i] / nxy : freq [i] );
-		double ftmp = fi;
-		ftmp = std::min (ftmp, freqMax);
+		const double ftmp = std::min (fi, freqMax);
 		if (ftmp > freqMin)
 			Graphics_rectangle (g, minimum + (i - 1) * binWidth, minimum + i * binWidth, freqMin, ftmp);
 	}

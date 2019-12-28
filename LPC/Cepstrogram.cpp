@@ -245,7 +245,7 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 
 autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
-		double analysisWidth = 3.0  / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
+		const double analysisWidth = 3.0  / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
 		double windowDuration = 2.0 * analysisWidth; // gaussian window
 		integer nFrames;
 
