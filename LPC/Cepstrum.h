@@ -66,11 +66,11 @@ autoPowerCepstrum PowerCepstrum_create (double qmax, integer nq);
 /* Preconditions:
 		nq >= 2;
 	Postconditions:
-		my xmin == 0;				my ymin == 1;
+		my xmin == 0;					my ymin == 1;
 		my xmax == qmax;				my ymax == 1;
 		my nx == nq;					my ny == 1;
-		my dx == qmax / (nq -1);			my dy == 1;
-		my x1 == 0.0;			my y1 == 1.0;
+		my dx == qmax / (nq -1);		my dy == 1;
+		my x1 == 0.0;					my y1 == 1.0;
 		my z [1..ny] [1..nx] == 0.0;
 */
 

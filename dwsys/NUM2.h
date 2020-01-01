@@ -446,7 +446,14 @@ inline void VECrankSorted (VECVU const& a) {
 		a [a.size] = a.size;
 }
 
+autoMAT newMATlowerCholeslyInverse_fromLowerCholesky (constMAT const& m);
+
+void MATlowerCholesky_inplace (MAT a, double *out_lnd);
+
+autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd);
+
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
+
 inline autoMAT newMATlowerCholeskyInverse (constMAT const& a) {
 	autoMAT result = newMATcopy (a);
 	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
@@ -543,14 +550,14 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 	guaranteed stability and performance", IEEE Journal of Selected Topics in Signal Processing #4: 298-309.
 	x in/out: the start value (you typically would start the iteration with all zeros).
 */
-void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
-autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, bool info);
+void VECsolveSparse_IHT (VECVU const& x, constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel);
+autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel);
 
-void VECsolveNonNegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, bool info);
+void VECsolveNonnegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, integer infoLevel);
 
-inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, bool info) {
-	autoVEC result = newVECrandomUniform (a.ncol, 0.0, 1.0);
-	VECsolveNonNegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, info);
+inline autoVEC newVECsolveNonnegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, integer infoLevel) {
+	autoVEC result = newVECzero (a.ncol);
+	VECsolveNonnegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, infoLevel);
 	return result;
 }
 /*
@@ -560,7 +567,7 @@ inline autoVEC newVECsolveNonNegativeLeastSquaresRegression (constMATVU const& a
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-void NUMsolveConstrainedLSQuadraticRegression (constMAT const& o, constVEC y, double *out_alpha, double *out_gamma);
+void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC y, double *out_alpha, double *out_gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
@@ -1306,10 +1313,10 @@ inline autoVEC VECchainColumns (constMATVU const& m) {
 }
 
 /* R = X.Y.Z */
-void MATmul3 (MATVU const & target, constMATVU& X, constMATVU& Y, constMATVU& Z);
+void MATmul3 (MATVU const & target, constMATVU const& X, constMATVU const& Y, constMATVU const& Z);
 
 /* Z = X.Y.X' */
-void MATmul3_XYXt (MATVU const& target, constMAT const& X, constMAT const& Y);
+void MATmul3_XYXt (MATVU const& target, constMATVU const& X, constMATVU const& Y);
 
 /* Z = X.Y.X where Y is a symmetric matrix */
 void MATmul3_XYsXt (MATVU const& target, constMAT const& X, constMAT const& Y);
