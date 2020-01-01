@@ -631,12 +631,12 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 		Melder_require (! (use_regexp && search [0] == U'\0'),
 			U"The regex search string cannot be empty.\nTo search for an empty string, use the expression \"^$\" instead.");
 		const integer offset = from - 1, nmarks = to - offset;
-		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
+		autovector <conststring32> marks = newvectorzero <conststring32> (nmarks);   // a non-owning vector of strings
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
 			marks [i - offset] = point -> mark.get();   // reference copy
 		}
-		autoSTRVEC newMarks = string32vector_searchAndReplace (constSTRVEC (marks.peek(), nmarks),
+		autoSTRVEC newMarks = string32vector_searchAndReplace (constSTRVEC (marks.asArgumentToFunctionThatExpectsOneBasedArray(), nmarks),
 			search, replace, 0, nmatches, nstringmatches, use_regexp);
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];

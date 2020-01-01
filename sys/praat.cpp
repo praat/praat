@@ -649,8 +649,9 @@ static void cb_Editor_publication (Editor /* me */, autoDaata publication) {
 	praat_updateSelection ();
 }
 
-int praat_installEditor (Editor editor, int IOBJECT) {
-	if (! editor) return 0;
+void praat_installEditor (Editor editor, int IOBJECT) {
+	if (! editor)
+		return;
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		if (! EDITOR [ieditor]) {
 			EDITOR [ieditor] = editor;
@@ -658,15 +659,16 @@ int praat_installEditor (Editor editor, int IOBJECT) {
 			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 			if (! editor -> d_publicationCallback)
 				Editor_setPublicationCallback (editor, cb_Editor_publication);
-			return 1;
+			Thing_setName (editor, Melder_cat (editor -> name.get(), U" [", ieditor + 1, U"]"));
+			return;
 		}
 	}
-	//forget (editor);
 	Melder_throw (U"(praat_installEditor:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 }
 
-int praat_installEditor2 (Editor editor, int i1, int i2) {
-	if (! editor) return 0;
+void praat_installEditor2 (Editor editor, int i1, int i2) {
+	if (! editor)
+		return;
 	int ieditor1 = 0;
 	for (; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
 		if (! theCurrentPraatObjects -> list [i1]. editors [ieditor1])
@@ -682,14 +684,13 @@ int praat_installEditor2 (Editor editor, int i1, int i2) {
 		if (! editor -> d_publicationCallback)
 			Editor_setPublicationCallback (editor, cb_Editor_publication);
 	} else {
-		//forget (editor);
 		Melder_throw (U"(praat_installEditor2:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 	}
-	return 1;
 }
 
-int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
-	if (! editor) return 0;
+void praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
+	if (! editor)
+		return;
 	int ieditor1 = 0;
 	for (; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
 		if (! theCurrentPraatObjects -> list [i1]. editors [ieditor1])
@@ -709,41 +710,36 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 		if (! editor -> d_publicationCallback)
 			Editor_setPublicationCallback (editor, cb_Editor_publication);
 	} else {
-		//forget (editor);
 		Melder_throw (U"(praat_installEditor3:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 	}
-	return 1;
 }
 
-int praat_installEditorN (Editor editor, DaataList objects) {
-	if (! editor) return 0;
+void praat_installEditorN (Editor editor, DaataList objects) {
+	if (! editor)
+		return;
 	/*
-	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
-	 * and check whether there is room to add an editor for each.
-	 */
+		First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
+		and check whether there is room to add an editor for each.
+	*/
 	for (integer iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
 		integer iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
-				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-					if (! theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor]) {
+				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+					if (! theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor])
 						break;
-					}
-				}
-				if (ieditor >= praat_MAXNUM_EDITORS) {
-					//forget (editor);
+				if (ieditor >= praat_MAXNUM_EDITORS)
 					Melder_throw (U"Cannot view the same object in more than ", praat_MAXNUM_EDITORS, U" windows.");
-				}
 				break;
 			}
 		}
 		Melder_assert (iPraatObject <= theCurrentPraatObjects -> n);   // an element of the Ordered does not occur in the List of Objects
 	}
 	/*
-	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
-	 */
+		There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
+	*/
 	for (integer iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
 		integer iPraatObject = 1;
@@ -766,7 +762,6 @@ int praat_installEditorN (Editor editor, DaataList objects) {
 		}
 		Melder_assert (iPraatObject <= theCurrentPraatObjects -> n);   // we already checked, but still
 	}
-	return 1;
 }
 
 void praat_dataChanged (Daata object) {
@@ -783,9 +778,8 @@ void praat_dataChanged (Daata object) {
 	WHERE (OBJECT == object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			Editor editor = EDITOR [ieditor];
-			if (editor) {
+			if (editor)
 				Editor_dataChanged (editor);
-			}
 		}
 	}
 	if (duringError) {

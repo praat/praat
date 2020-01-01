@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2018 Paul Boersma
+ * Copyright (C) 1996-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 
 static void updateVerticalScrollBar (HyperPage me);
 
-void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, int size, int style, double minFooterDistance,
+void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, double size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method)
 {
 	if (my rightMargin == 0) return;   // no infinite heights please
@@ -218,7 +218,7 @@ if (! my printing) {
 }
 
 void HyperPage_pageTitle (HyperPage me, conststring32 title) {
-	HyperPage_any (me, title, my p_font, my p_fontSize * 2, 0,
+	HyperPage_any (me, title, my p_font, my p_fontSize * 2.0, 0,
 		2.0, 0.0, 0.0, my printing ? 0.4/2 : 0.2/2, 0.3/2, HyperPage_ADD_BORDER);
 }
 void HyperPage_intro (HyperPage me, conststring32 text) {
@@ -290,7 +290,7 @@ void HyperPage_prototype (HyperPage me, conststring32 text) {
 void HyperPage_formula (HyperPage me, conststring32 formula) {
 	double topSpacing = 0.2, bottomSpacing = 0.2, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
-	int size = my p_fontSize;
+	double size = my p_fontSize;
 if (! my printing) {
 	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	my d_y -= size * (1.2/72);

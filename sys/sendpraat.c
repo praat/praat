@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 20 September 2019 */
+/* 22 December 2019 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -120,9 +120,9 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	 */
 	strcpy (nativeProgramName, programName);
 	#if gtk
-		nativeProgramName [0] = tolower (nativeProgramName [0]);
+		nativeProgramName [0] = (char) tolower (nativeProgramName [0]);
 	#else
-		nativeProgramName [0] = toupper (nativeProgramName [0]);
+		nativeProgramName [0] = (char) toupper (nativeProgramName [0]);
 	#endif
 
 	/*
@@ -279,7 +279,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		 * Notify the running program by sending it an Apple event of the magic class 758934755.
 		 */
 		AECreateAppleEvent (758934755, 0, & programDescriptor, kAutoGenerateReturnID, 1, & event);
-		AEPutParamPtr (& event, 1, typeChar, text, strlen (text) + 1);
+		AEPutParamPtr (& event, 1, typeChar, text, (Size) strlen (text) + 1);
 		#ifdef __MACH__
 			err = AESendMessage (& event, & reply,
 				( timeOut == 0 ? kAENoReply : kAEWaitReply ) | kAECanInteract | kAECanSwitchLayer,
@@ -394,7 +394,8 @@ int main (int argc, char **argv) {
 		/*
 		 * Get time-out.
 		 */
-		if (isdigit (argv [iarg] [0])) timeOut = atol (argv [iarg ++]);
+		if (isdigit (argv [iarg] [0]))
+			timeOut = atol (argv [iarg ++]);
 	#endif
 
 	/*
@@ -402,28 +403,32 @@ int main (int argc, char **argv) {
 	 */
 	if (iarg == argc) {
 		fprintf (stderr, "sendpraat: missing program name. Type \"sendpraat\" to get help.\n");
-		return 1;
+		exit (1);
 	}
 	strcpy (programName, argv [iarg ++]);
 
 	/*
 	 * Create the message string.
 	 */
-	for (line = iarg; line < argc; line ++) length += strlen (argv [line]) + 1;
+	for (line = iarg; line < argc; line ++)
+		length += strlen (argv [line]) + 1;
 	length --;
 	message = malloc (length + 1);
 	message [0] = '\0';
 	for (line = iarg; line < argc; line ++) {
 		strcat (message, argv [line]);
-		if (line < argc - 1) strcat (message, "\n");
+		if (line < argc - 1)
+			strcat (message, "\n");
 	}
 
 	/*
 	 * Send message.
 	 */
 	result = sendpraat (NULL, programName, timeOut, message);
-	if (result != NULL)
-		{ fprintf (stderr, "sendpraat: %s\n", result); exit (1); }
+	if (result != NULL) {
+		fprintf (stderr, "sendpraat: %s\n", result);
+		exit (1);
+	}
 
 	exit (0);
 	return 0;

@@ -39,7 +39,8 @@ DIRECT (MODIFY_Categories_sort) {
 // MARK: - EXPERIMENT_MFC
 
 DIRECT (WINDOW_ExperimentMFC_run) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot run experiments from the command line.");
 	autoRunnerMFC runner;
 	{// scope
 		/*

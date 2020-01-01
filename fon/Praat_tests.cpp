@@ -481,7 +481,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			constMATVU const y_all = y.all();
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				MATmul_forceMetal_ (result_all, x_all, y_all);
+				//MATmul_forceMetal_ (result_all, x_all, y_all);
+				MATmul_allowAllocation_ (result_all, x_all, y_all);
 			const integer numberOfComputations = size1 * size2 * size3 * 2;
 			t = Melder_stopwatch () / numberOfComputations;
 			const double sum = NUMsum (result.get());

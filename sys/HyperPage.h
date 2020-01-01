@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2019 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
 
-void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, int size, int style, double minFooterDistance,
+void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, double size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method);
 void HyperPage_pageTitle (HyperPage me, conststring32 title);
 void HyperPage_intro (HyperPage me, conststring32 text);
