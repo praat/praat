@@ -397,12 +397,6 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	return x;
 }
 
-static void VECcopy (VECVU const& target, constVECVU const& source) {
-	Melder_assert (target.size == source.size);
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = source [i];
-}
-
 void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, integer infoLevel) {
 	Melder_assert (a.nrow == y.size);
 	Melder_assert (a.ncol == x.size);
@@ -419,7 +413,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 			Alternating Least Squares: Fixate all except x [icol]
 		*/
 		for (integer icol = 1; icol <= a.ncol; icol ++) {
-			VECcopy (r.get(), y);
+			r.get() <<= y;
 			for (integer jcol = 1; jcol <= a.ncol; jcol ++)
 				if (jcol != icol)
 					r.get()  -=  x [jcol] * a.column (jcol);
