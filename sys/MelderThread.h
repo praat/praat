@@ -2,7 +2,7 @@
 #define _MelderThread_h_
 /* MelderThread.h
  *
- * Copyright (C) 2014-2017 Paul Boersma
+ * Copyright (C) 2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@
 #include "Thing.h"
 
 #if defined (_WIN32)
-	#define USE_WINTHREADS 1
+	#define USE_WINTHREADS 0
 	#define USE_PTHREADS 0
-	#define USE_CPPTHREADS 0
+	#define USE_CPPTHREADS 1
 #elif defined (macintosh)
 	#define USE_WINTHREADS 0
-	#define USE_PTHREADS 1
-	#define USE_CPPTHREADS 0
+	#define USE_PTHREADS 0
+	#define USE_CPPTHREADS 1
 #else
 	#define USE_WINTHREADS 0
-	#define USE_PTHREADS 1
-	#define USE_CPPTHREADS 0
+	#define USE_PTHREADS 0
+	#define USE_CPPTHREADS 1
 #endif
 
 #if USE_WINTHREADS
@@ -140,7 +140,7 @@ inline static int MelderThread_getNumberOfProcessors () {
 		}
 	}
 #elif USE_CPPTHREADS
-	template <class T> void MelderThread_run (void * (*func) (T *), autoSomeThing <T> *args, int numberOfThreads) {
+	template <class T> void MelderThread_run (void (*func) (T *), autoSomeThing <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
 			func (args [0].get());
 		} else {
