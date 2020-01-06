@@ -105,9 +105,9 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	Melder_assert (a.nrow == a.ncol);
 	integer n = a.nrow, info, workSize = -1;
 	char jobvl = out_lefteigenvectors ? 'V' : 'N';
-	integer left_nvecs = out_lefteigenvectors ? n : 1;   // 1x1 if not wanted
+	const integer left_nvecs = out_lefteigenvectors ? n : 1;   // 1x1 if not wanted
 	char jobvr = out_righteigenvectors ? 'V' : 'N';
-	integer right_nvecs = out_righteigenvectors ? n : 1;
+	const integer right_nvecs = out_righteigenvectors ? n : 1;
 	double wt;
 	
 	autoMAT data = newMATtranspose (a);   // lapack is fortran storage
@@ -125,7 +125,8 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	
 	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n, eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & work [1], & workSize, & info);
-	Melder_require (info == 0, U"dgeev code = ", info, U").");
+	Melder_require (info == 0,
+		U"dgeev code = ", info, U").");
 	
 	if (out_righteigenvectors)
 		*out_righteigenvectors = righteigenvectors.move();
