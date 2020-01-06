@@ -170,7 +170,7 @@ inline void MATmultiplyColumns_inplace (MATVU const& x, constVECVU const& v) {
 		x.column (icol)  *=  v [icol];  // x[i,j]*v[j]
 }
 
-double NUMmultivariateKurtosis (constMATVU const& m, int method) {
+double NUMmultivariateKurtosis (constMATVU const& m, integer method) {
 	double kurt = undefined;
 	if (m.nrow < 5)
 		return kurt;
@@ -882,7 +882,7 @@ double NUMwilksLambda (constVEC const& lambda, integer from, integer to) {
 	return (double) result;
 }
 
-double NUMfactln (int n) {
+double NUMfactln (integer n) {
 	static double table [101];
 	if (n < 0)
 		return undefined;
@@ -1258,13 +1258,13 @@ double NUMinvFisherQ (double p, double df1, double df2) {
 
 double NUMbeta2 (double z, double w) {
 	gsl_sf_result result;
-	const int status = gsl_sf_beta_e (z, w, &result);
+	const integer status = gsl_sf_beta_e (z, w, &result);
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
 double NUMlnBeta (double a, double b) {
 	gsl_sf_result result;
-	const int status = gsl_sf_lnbeta_e (a, b, & result);
+	const integer status = gsl_sf_lnbeta_e (a, b, & result);
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
@@ -1574,27 +1574,27 @@ double NUMcubicSplineInterpolation (constVEC const& x, constVEC const& y, constV
 
 double NUMsinc (const double x) {
 	struct gsl_sf_result_struct result;
-	const int status = gsl_sf_sinc_e (x / NUMpi, &result);
+	const integer status = gsl_sf_sinc_e (x / NUMpi, &result);
 	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMsincpi (const double x) {
 	struct gsl_sf_result_struct result;
-	const int status = gsl_sf_sinc_e (x, &result);
+	const integer status = gsl_sf_sinc_e (x, &result);
 	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 /* Does the line segment from (x1,y1) to (x2,y2) intersect with the line segment from (x3,y3) to (x4,y4)? */
-int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
-	const int o11 = NUMgetOrientationOfPoints (x1, y1, x2, y2, x3, y3);
-	const int o12 = NUMgetOrientationOfPoints (x1, y1, x2, y2, x4, y4);
-	const int o21 = NUMgetOrientationOfPoints (x3, y3, x4, y4, x1, y1);
-	const int o22 = NUMgetOrientationOfPoints (x3, y3, x4, y4, x2, y2);
+bool NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+	const integer o11 = NUMgetOrientationOfPoints (x1, y1, x2, y2, x3, y3);
+	const integer o12 = NUMgetOrientationOfPoints (x1, y1, x2, y2, x4, y4);
+	const integer o21 = NUMgetOrientationOfPoints (x3, y3, x4, y4, x1, y1);
+	const integer o22 = NUMgetOrientationOfPoints (x3, y3, x4, y4, x2, y2);
 	return ((o11 * o12 < 0) && (o21 * o22 < 0)) || (o11 *o12 *o21 *o22 == 0);
 }
 
-int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3) {
-	int orientation;
+integer NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3) {
+	integer orientation;
 	const longdouble dx2 = x2 - x1, dy2 = y2 - y1;
 	const longdouble dx3 = x3 - x1, dy3 = y3 - y1;
 	if (dx2 * dy3 > dy2 * dx3)
@@ -1612,7 +1612,7 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 	return orientation;
 }
 
-int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2, double xmin, double ymin, double xmax, double ymax, double *xi, double *yi) {
+integer NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2, double xmin, double ymin, double xmax, double ymax, double *xi, double *yi) {
 	double x [6], y [6];
 	integer ni = 0;
 
@@ -2052,7 +2052,7 @@ void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double 
 		*out_m = m;
 }
 
-void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, int method) {
+void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, integer method) {
 	if (method == 1)
 		NUMlineFit_LS (x, y, out_m, out_intercept);
 	else if (method == 3)
@@ -2646,7 +2646,7 @@ void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double
 		for (integer i = 1; i <= m.nrow; i ++) {
 			double rowsum = NUMsum (m.row (i));
 			if (rowsum > 0.0) {
-				longdouble p = rowsum / totalSum;
+				double p = rowsum / totalSum;
 				hy_t -= p * NUMlog2 (p);
 			}
 		}
@@ -2656,7 +2656,7 @@ void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double
 		for (integer j = 1; j <= m.ncol; j ++) {
 			double colsum = NUMsum (m.column (j));
 			if (colsum > 0.0) {
-				longdouble p = colsum / totalSum;
+				double p = colsum / totalSum;
 				hx_t -= p * NUMlog2 (p);
 			}
 		}
@@ -2838,9 +2838,8 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 	3. Make all elements of v zero, except the numberOfNonZeros largest elements.
 	4. Set the support of these largest elements to 1 and the rest to zero.
 */
-static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
+static void VECupdateDataAndSupport_inplace (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
-	Melder_assert (numberOfNonZeros > 0 && numberOfNonZeros < v.size);
 	autoVEC abs = newVECabs (v);
 	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
 	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
@@ -2852,14 +2851,6 @@ static void VECsetThresholdAndSupport (VECVU const& v, INTVECVU const& support, 
 		support [index [i]] = 1;
 }
 
-static bool haveEqualSupport (constINTVEC const& a, constINTVEC const& b) {
-	Melder_assert (a.size == b.size);
-	for (integer i = 1; i <= a.size; i ++)
-		if (a [i] != b [i])
-			return false;
-	return true;
-}
-
 static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
 	Melder_assert (x_new.size == xn.size && buffer.size == x_new.size);
 	Melder_assert (gradient.size == support_new.size && gradient.size == x_new.size);
@@ -2867,8 +2858,8 @@ static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_
 	Melder_assert (dictionary.nrow == yn.size && dictionary.ncol == xn.size);
 	
 	buffer <<=  stepSize * gradient;
-	x_new <<= xn + buffer; // x(n) + stepSize * gradient
-	VECsetThresholdAndSupport (x_new, support_new, numberOfNonZeros);
+	x_new <<= xn  +  buffer; // x(n) + stepSize * gradient
+	VECupdateDataAndSupport_inplace (x_new, support_new, numberOfNonZeros);
 	buffer <<= x_new  -  xn; // x(n+1) - x (n)
 	const double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
 	
@@ -2916,14 +2907,14 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				Hard_K (v) is a hard thresholder which only keeps the largest K elements from the vector v
 			*/
 			VECmul (buffer.get(), dictionary.transpose(), y);
-			VECsetThresholdAndSupport (buffer.get(), support.get(), numberOfNonZeros);
+			VECupdateDataAndSupport_inplace (buffer.get(), support.get(), numberOfNonZeros);
 			yfromx <<= 0.0;
 			ydif <<= y; // ydif = y - D.x(1) = y - D.0 = y
 		} else {
 			/*
 				We improve a current solution x
 			*/
-			VECsetThresholdAndSupport (x, support.get(), numberOfNonZeros);
+			VECupdateDataAndSupport_inplace (x, support.get(), numberOfNonZeros);
 			VECmul (yfromx.get(), dictionary, x); // D.x(n)
 			ydif <<= y  -  yfromx; // y - D.x(n)
 			rms = NUMsum2 (ydif.get()) / y.size; // ||y - D.x(n)||^2
@@ -2939,12 +2930,12 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				mu = || g_sparse ||^2 / || D_sparse * g_sparse ||^2
 				where g_sparse only contains the supported elements from the gradient and D_sparse only the supported columns from the dictionary.
 			*/
-			double normsq_gs = 0.0; // squared norm of the sparse gradient
+			longdouble normsq_gs = 0.0; // squared norm of the sparse gradient
 			for (integer ig = 1; ig <= gradient.size; ig ++) {
 				if (support [ig] != 0)
 					normsq_gs += gradient [ig] * gradient [ig];
 			}
-			double normsq_dgs = 0.0; // squared norm of the transformed sparse gradient
+			longdouble normsq_dgs = 0.0; // squared norm of the transformed sparse gradient
 			for (integer irow = 1; irow <= dictionary.nrow; irow ++) {
 				longdouble sum = 0.0;
 				for (integer icol = 1; icol <= dictionary.ncol; icol ++)
@@ -2957,7 +2948,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			
 			double normsq_ratio = update (x_new.get(), yfromx_new.get(), support_new.get(), x, stepSize, gradient.get(), dictionary, yfromx.get(), numberOfNonZeros, buffer.get());
 			
-			if (! haveEqualSupport (support.get(), support_new.get())) {
+			if (! NUMequal (support.get(), support_new.get())) {
 				double omega;
 				const double kappa = 2.0, c = 0.0;
 				while (stepSize > (omega = (1.0 - c) * normsq_ratio)) { // stepSize > omega, from Eq. 14

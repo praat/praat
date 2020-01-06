@@ -54,7 +54,7 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp);
 */
 
 autoSTRVEC string32vector_searchAndReplace (constSTRVEC me,
-	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp);
 /*
 	Searches and replaces in string array of strings.
@@ -279,7 +279,7 @@ inline autoMAT newMATmtm_weighRows (constMATVU const& data, constVECVU const& ro
 	return result;
 }
 
-double NUMmultivariateKurtosis (constMATVU const& x, int method);
+double NUMmultivariateKurtosis (constMATVU const& x, integer method);
 /*
 	calculate multivariate kurtosis.
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
@@ -667,7 +667,7 @@ double NUMbeta2 (double z, double w);//temporarily
 
 double NUMbetaContinuedFraction(double a, double b, double x);
 
-double NUMfactln (int n);
+double NUMfactln (integer n);
 /* Returns ln (n!) */
 
 void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg);
@@ -958,17 +958,17 @@ double NUMsinc (const double x);
 
 /*********************** Geometry *************************************/
 
-int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3);
+integer NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3);
 /* Traverse points 1, 2 and 3. If we travel counter-clockwise the result will be 1,
 	if we travel clockwise the result will be -1 and the result will be 0 if 3 is on the line segment between 1 and 2.
 	J. O'Rourke: Computational Geometry, 2nd Edition, Code 1.5
 */
 
-int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, double x3, double y3,
+bool NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, double x3, double y3,
 	double x4, double y4);
 /* Does the line segment from (x1,y1) to (x2,y2) intersect with the line segment from (x3,y3) to (x4,y4)? */
 
-int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,
+integer NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,
 	double xmin, double ymin, double xmax, double ymax, double *xi, double *yi);
 /* Get the intersection points of the line through the points (x1,y1) and (x2,y2) with the
 	rectangle with corners (xmin, ymin) and (xmax,ymax).
@@ -1163,13 +1163,13 @@ void NUMreverseRealFastFourierTransform (VEC data);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMrealft (VEC data, int direction);
+void NUMrealft (VEC data, integer direction);
 
 integer NUMgetIndexFromProbability (constVEC probs, double p); //TODO HMM zero start matrices
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);
 
 // Fit the line y= ax+b
-void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, int method);
+void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, integer method);
 /* method
  * 1 least squares
  * 2 rubust incomplete Theil O(N/2)
