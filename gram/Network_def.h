@@ -113,6 +113,21 @@ oo_DEFINE_CLASS (Network, Daata)
 	#if oo_DECLARING
 		void v_info ()
 			override;
+		void checkNodeNumber (integer nodeNumber) {
+			Melder_require (nodeNumber >= 1 && nodeNumber <= our numberOfNodes,
+				this, U": node number (", nodeNumber, U") out of the range 1..", our numberOfNodes, U".");
+		}
+		integer checkAndDefaultNodeRange (integer *p_fromNode, integer *p_toNode) {
+			if (*p_fromNode == 0)
+				*p_fromNode = 1;
+			if (*p_toNode == 0)
+				*p_toNode = our numberOfNodes;
+			Melder_require (*p_fromNode >= 1 && *p_fromNode <= our numberOfNodes,
+				this, U": from-node number (", *p_fromNode, U") out of the range 1..", our numberOfNodes, U".");
+			Melder_require (*p_toNode >= 1 && *p_toNode <= our numberOfNodes,
+				this, U": to-node number (", *p_toNode, U") out of the range 1..", our numberOfNodes, U".");
+			return *p_toNode - *p_fromNode + 1;
+		}
 	#endif
 
 oo_END_CLASS (Network)

@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2019 Paul Boersma
+ * Copyright (C) 1997-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,16 @@ DO
 	NUMBER_ONE_END (U" (activity of node ", node, U")")
 }
 
+FORM (NUMVEC_Network_getActivities, U"Network: Get activities", nullptr) {
+	NATURAL (fromNode, U"From node", U"1")
+	NATURAL (toNode, U"To node", U"0 (= all)")
+	OK
+DO
+	NUMVEC_ONE (Network)
+		autoVEC result = Network_getActivities (me, fromNode, toNode);
+	NUMVEC_ONE_END
+}
+
 FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
 	NATURAL (connection, U"Connection", U"1")
 	OK
@@ -236,6 +246,19 @@ DO
 	MODIFY_EACH (Network)
 		Network_setActivity (me, node, activity);
 	MODIFY_EACH_END
+}
+
+FORM (MODIFY_Network_formula_activities, U"Network: Formula (activities)", nullptr) {
+	INTEGER (fromNode, U"From node", U"1")
+	INTEGER (toNode, U"To node", U"0 (= all)")
+	LABEL (U"`col` is the node number, `self` is the current activity")
+	LABEL (U"for col := 1 to ncol do { self [col] := `formula' }")
+	TEXTFIELD (formula, U"Formula:", U"0")
+	OK
+DO
+	MODIFY_EACH_WEAK (Network)
+		Network_formula_activities (me, fromNode, toNode, formula, interpreter);
+	MODIFY_EACH_WEAK_END
 }
 
 FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", nullptr) {
@@ -1874,6 +1897,7 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classNetwork, 1, U"Nodes down to table...", nullptr, 1, NEW_Network_nodes_downto_Table);
 	praat_addAction1 (classNetwork, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classNetwork, 1, U"Get activity...", nullptr, 1, REAL_Network_getActivity);
+		praat_addAction1 (classNetwork, 1, U"Get activities...", nullptr, 1, NUMVEC_Network_getActivities);
 		praat_addAction1 (classNetwork, 1, U"Get weight...", nullptr, 1, REAL_Network_getWeight);
 	praat_addAction1 (classNetwork, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classNetwork, 0, U"Add node...", nullptr, 1, MODIFY_Network_addNode);
@@ -1883,6 +1907,7 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classNetwork, 0, U"Set clamping...", nullptr, 1, MODIFY_Network_setClamping);
 		praat_addAction1 (classNetwork, 0, U"Zero activities...", nullptr, 1, MODIFY_Network_zeroActivities);
 		praat_addAction1 (classNetwork, 0, U"Normalize activities...", nullptr, 1, MODIFY_Network_normalizeActivities);
+		praat_addAction1 (classNetwork, 0, U"Formula (activities)...", nullptr, 1, MODIFY_Network_formula_activities);
 		praat_addAction1 (classNetwork, 0, U"Spread activities...", nullptr, 1, MODIFY_Network_spreadActivities);
 		praat_addAction1 (classNetwork, 0, U"Set activity clipping rule...", nullptr, 1, MODIFY_Network_setActivityClippingRule);
 		praat_addAction1 (classNetwork, 0, U"Set activity leak...", nullptr, 1, MODIFY_Network_setActivityLeak);
