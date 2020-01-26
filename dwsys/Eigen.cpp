@@ -191,7 +191,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 	integer numberOfEigenvalues = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
-		if (alpha [i] == undefined)
+		if (isundef (alpha [i]))
 			continue;
 		my eigenvalues [++ numberOfEigenvalues] = alpha [i];
 		for (integer j = 1; j <= a.ncol; j ++)
