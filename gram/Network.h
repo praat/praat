@@ -2,7 +2,7 @@
 #define _Network_h_
 /* Network.h
  *
- * Copyright (C) 2009,2011-2017 Paul Boersma
+ * Copyright (C) 2009,2011-2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,9 @@ void Network_addNode (Network me, double x, double y, double activity, bool clam
 void Network_addConnection (Network me, integer fromNodeNumber, integer toNodeNumber, double weight, double plasticity);
 void Network_draw (Network me, Graphics graphics, bool colour);
 double Network_getActivity (Network me, integer nodeNumber);
+autoVEC Network_getActivities (Network me, integer fromNode, integer toNode);
 void Network_setActivity (Network me, integer nodeNumber, double activity);
+void Network_formula_activities (Network me, integer fromNode, integer toNode, conststring32 formula, Interpreter interpreter);
 double Network_getWeight (Network me, integer connectionNumber);
 void Network_setWeight (Network me, integer connectionNumber, double weight);
 void Network_setClamping (Network me, integer nodeNumber, bool clamped);
@@ -68,14 +70,14 @@ void Network_setShunting (Network me, double shunting);
 void Network_setActivityClippingRule (Network me, enum kNetwork_activityClippingRule activityClippingRule);
 autoTable Network_nodes_downto_Table (Network me, integer fromNodeNumber, integer toNodeNumber,
 	bool includeNodeNumbers,
-	bool includeX, bool includeY, int positionDecimals,
+	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, int activityDecimals);
+	bool includeActivity, bool includeExcitation, integer activityDecimals);
 void Network_listNodes (Network me, integer fromNodeNumber, integer toNodeNumber,
 	bool includeNodeNumbers,
-	bool includeX, bool includeY, int positionDecimals,
+	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, int activityDecimals);
+	bool includeActivity, bool includeExcitation, integer activityDecimals);
 
 /* End of file Network.h */
 #endif

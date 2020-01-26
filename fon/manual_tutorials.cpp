@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20191205)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200126)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.09# (26 January 2020)")
+LIST_ITEM (U"• Accept some more kinds of broken WAV files.")
+LIST_ITEM (U"• Improved box plot drawing.")
+LIST_ITEM (U"• More Network commands.")
 NORMAL (U"##6.1.08# (5 December 2019)")
 LIST_ITEM (U"• Repaired a bug with automatic alignment for TextGrids (introduced in 6.1.07).")
 NORMAL (U"##6.1.07# (26 November 2019)")

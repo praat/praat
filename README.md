@@ -190,7 +190,7 @@ This is how Praat is currently developed.
 Editing takes place in Xcode,
 after which building Praat involves no more than typing Command-B into Xcode
 (or Command-R to build and run)
-or `b` into a Windows or Linux terminal (or `r` to build and run).
+or `praat-build` into a Windows or Linux terminal (or `praat-run` to build and run).
 
 ### 4.1. MacOS development set-up
 
@@ -228,12 +228,12 @@ so that the `bash` shell will automatically execute them whenever you start your
     # in Cygwin:~/.profile
     PRAAT_SOURCES="/cygdrive/z/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
-    alias praat-build="( cd ~/praats ;\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.mingw64 makefile.defs ;\
+    alias praat-build="( cd ~/praats &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.mingw64 makefile.defs &&\
         make -j12 )"
     alias praat="~/praats/Praat.exe"
-    alias praat-run="praat-build ; praat"
+    alias praat-run="praat-build && praat"
 
 This also defines `praat` for running Praat without first rebuilding it.
 The cycle from editing Praat on the Mac to running the new version on Windows therefore takes only two steps:
@@ -244,12 +244,12 @@ The cycle from editing Praat on the Mac to running the new version on Windows th
 If you also want to develop the 32-bit edition, you add to `.profile`:
 
     # in Cygwin:~/.profile
-    alias praat32-build="( cd ~/praats32 ;\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.mingw32 makefile.defs ;\
+    alias praat32-build="( cd ~/praats32 &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.mingw32 makefile.defs &&\
         make -j12 )"
     alias praat32="~/praats32/Praat.exe"
-    alias praat32-run="praat32-build ; praat32"
+    alias praat32-run="praat32-build && praat32"
 
 ### 4.3. Linux development set-up
 
@@ -272,24 +272,24 @@ assuming that it uses the `bash` shell):
     # in Ubuntu:~/.bash_aliases
     PRAAT_SOURCES="/media/psf/Home/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
-    alias praat-build="( cd ~/praats ;\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.linux.pulse makefile.defs ;\
+    alias praat-build="( cd ~/praats &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.linux.pulse makefile.defs &&\
         make -j12 )"
     alias praat="~/praats/praat"
-    alias praat-run="praat-build ; praat"
+    alias praat-run="praat-build && praat"
 
 Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
 
 To build `praat_barren`, create a folder `praatsb`, and define
 
     # in Ubuntu:~/.bash_aliases
-    alias praatb-build="( cd ~/praatsb ;\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.linux.barren makefile.defs ;\
+    alias praatb-build="( cd ~/praatsb &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.linux.barren makefile.defs &&\
         make -j12 )"
     alias praatb="~/praatsb/praat_barren"
-    alias praatb-run="praatb-build ; praatb"
+    alias praatb-run="praatb-build && praatb"
 
 You test `praat_barren` briefly by typing
 
@@ -299,12 +299,12 @@ You test `praat_barren` briefly by typing
 To build `praat_nogui`, create a folder `praatsn`, and define
 
     # in Ubuntu:~/.bash_aliases
-    alias praatn-build="( cd ~/praatsn ;\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.linux.nogui makefile.defs ;\
+    alias praatn-build="( cd ~/praatsn &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.linux.nogui makefile.defs &&\
         make -j12 )"
     alias praatn="~/praatsn/praat_nogui"
-    alias praatn-run="praatn-build ; praatn"
+    alias praatn-run="praatn-build && praatn"
 
 You test `praat_nogui` briefly by typing
 
@@ -315,12 +315,12 @@ To build Praat for Chrome64 (64-bit Intel Chromebooks only),
 create a folder `praatc`, and define
 
     # in Ubuntu:~/.bash_aliases
-    alias praatc-build="( cd ~/praatsc ;\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . ;\
-        cp makefiles/makefile.defs.chrome64 makefile.defs ;\
+    alias praatc-build="( cd ~/praatsc &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.chrome64 makefile.defs &&\
         make -j12 )"
     alias praatc="~/praatsc/praat"
-    alias praatc-run="praatc-build ; praat"
+    alias praatc-run="praatc-build && praat"
 
 To test Praat for Chrome64, you can just run it on Ubuntu 18.04 by typing `praatc`,
 or you transfer it to a Chromebook for the real test.
@@ -357,7 +357,7 @@ If you now define
 
     # in Ubuntu:~/.bash_aliases
     praatc-put="rsync -tpvz ~/praatsc/praat yourname@fon.hum.uva.nl:~/builds/chrome64"
-    praatc-mid="praatc-build ; praatc-put"
+    praatc-mid="praatc-build && praatc-put"
 
 you can build and send Praat for Chrome to the intermediary computer by just typing
 
@@ -368,10 +368,10 @@ On your Chromebook, start up Linux (see the Chromebook download page for details
 create a directory `~/praats` there, and define the following:
 
     # in Chromebook:~/.bash_aliases
-    alias praat-get="( cd ~/praats ;\
+    alias praat-get="( cd ~/praats &&\
         rsync -tpvz yourname@fon.hum.uva.nl:~/builds/chrome64/praat . )"
     alias praat="~/praats/praat"
-    alias praat-run="praat-get ; praat"
+    alias praat-run="praat-get && praat"
 
 From then on, you can use
 
@@ -412,12 +412,12 @@ and
 On your Raspberry Pi, you create a folder `~/praats`, and you fetch the sources there with
 
     # in RaspberryPi:~/.bash_aliases
-    alias praat-build="( cd ~/praats ;\
-        rsync -rptvz -e ssh yourname@fon.hum.uva.nl:~/sources/ . ;\
-        cp makefiles/makefile.defs.linux.rpi makefile.defs ;\
+    alias praat-build="( cd ~/praats &&\
+        rsync -rptvz -e ssh yourname@fon.hum.uva.nl:~/sources/ . &&\
+        cp makefiles/makefile.defs.linux.rpi makefile.defs &&\
         make -j4 )"
     alias praat="~/praats/praat"
-    alias praat-run="praat-build ; praat"
+    alias praat-run="praat-build && praat"
 
 after which you can build and run Praat with
 
@@ -468,8 +468,8 @@ so you send them to the intermediate Mac folders `~/builds/win64` and `~/builds/
 On Cygwin you can define:
 
     # in Cygwin:~/.profile
-    alias praat-dist="praat-build ; rsync -t ~/praats/Praat.exe /cygdrive/z/builds/win64" 
-    alias praat32-dist="praat32-build ; rsync -t ~/praats32/Praat.exe /cygdrive/z/builds/win32"
+    alias praat-dist="praat-build && rsync -t ~/praats/Praat.exe /cygdrive/z/builds/win64" 
+    alias praat32-dist="praat32-build && rsync -t ~/praats32/Praat.exe /cygdrive/z/builds/win32"
 
 so that you can “upload” the two executables to the Mac with
 
@@ -483,10 +483,10 @@ namely to the folders `~/builds/linux64` (which will contain `praat`, `praat_bar
 On Ubuntu you can define
 
     # in Ubuntu:~/.bash_aliases
-    alias praat-dist="praat-build ; rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
-    alias praatb-dist="praatb-build ; rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
-    alias praatn-dist="praatn-build ; rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
-    alias praatc-dist="praatc-build ; rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
+    alias praat-dist="praat-build && rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
+    alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
+    alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
+    alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
 
 so that you can “upload” the four executables to the Mac with
 
@@ -520,25 +520,25 @@ you can issue the following commands to create the packages and install them in 
     # on Mac command line
     zip $PRAAT_WWW/praat$(PRAAT_VERSION)_win64.zip ~/builds/win64/Praat.exe
     zip $PRAAT_WWW/praat$(PRAAT_VERSION)_win32.zip ~/builds/win32/Praat.exe
-    ( cd ~/builds/linux64 ;\
-      tar cvf praat$(PRAAT_VERSION)_linux64.tar praat ;\
-      gzip praat$(PRAAT_VERSION)_linux64.tar ;\
+    ( cd ~/builds/linux64 &&\
+      tar cvf praat$(PRAAT_VERSION)_linux64.tar praat &&\
+      gzip praat$(PRAAT_VERSION)_linux64.tar &&\
       mv praat$(PRAAT_VERSION)_linux64.tar.gz $PRAAT_WWW )
-    ( cd ~/builds/linux64 ;\
-      tar cvf praat$(PRAAT_VERSION)_linux64barren.tar praat_barren ;\
-      gzip praat$(PRAAT_VERSION)_linux64barren.tar ;\
+    ( cd ~/builds/linux64 &&\
+      tar cvf praat$(PRAAT_VERSION)_linux64barren.tar praat_barren &&\
+      gzip praat$(PRAAT_VERSION)_linux64barren.tar &&\
       mv praat$(PRAAT_VERSION)_linux64barren.tar.gz $PRAAT_WWW )
-    ( cd ~/builds/linux64 ;\
-      tar cvf praat$(PRAAT_VERSION)_linux64nogui.tar praat_nogui ;\
-      gzip praat$(PRAAT_VERSION)_linux64nogui.tar ;\
+    ( cd ~/builds/linux64 &&\
+      tar cvf praat$(PRAAT_VERSION)_linux64nogui.tar praat_nogui &&\
+      gzip praat$(PRAAT_VERSION)_linux64nogui.tar &&\
       mv praat$(PRAAT_VERSION)_linux64nogui.tar.gz $PRAAT_WWW )
-    ( cd ~/builds/chrome64 ;\
-      tar cvf praat$(PRAAT_VERSION)_chrome64.tar praat ;\
-      gzip praat$(PRAAT_VERSION)_chrome64.tar ;\
+    ( cd ~/builds/chrome64 &&\
+      tar cvf praat$(PRAAT_VERSION)_chrome64.tar praat &&\
+      gzip praat$(PRAAT_VERSION)_chrome64.tar &&\
       mv praat$(PRAAT_VERSION)_chrome64.tar.gz $PRAAT_WWW )
-    ( cd ~/builds/rpi_armv7 ;\
-      tar cvf praat$(PRAAT_VERSION)_rpi_armv7.tar praat ;\
-      gzip praat$(PRAAT_VERSION)_rpi_armv7.tar ;\
+    ( cd ~/builds/rpi_armv7 &&\
+      tar cvf praat$(PRAAT_VERSION)_rpi_armv7.tar praat &&\
+      gzip praat$(PRAAT_VERSION)_rpi_armv7.tar &&\
       mv praat$(PRAAT_VERSION)_rpi_armv7.tar.gz $PRAAT_WWW )
 
 Finally, you can update your website and/or create a new release on GitHub.

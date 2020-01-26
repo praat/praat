@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009,2011-2019 Paul Boersma
+ * Copyright (C) 2009,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
  */
 
 #include "Network.h"
+#include "Matrix.h"
+#include "Formula.h"
 
 #include "oo_DESTROY.h"
 #include "Network_def.h"
@@ -115,21 +117,47 @@ autoNetwork Network_create (double spreadingRate, kNetwork_activityClippingRule 
 
 double Network_getActivity (Network me, integer nodeNumber) {
 	try {
-		Melder_require (nodeNumber >= 1 && nodeNumber <= my numberOfNodes,
-			me, U": node number (", nodeNumber, U") out of the range 1..", my numberOfNodes, U".");
+		my checkNodeNumber (nodeNumber);
 		return my nodes [nodeNumber]. activity;
 	} catch (MelderError) {
 		Melder_throw (me, U": activity not gotten.");
 	}
 }
 
+autoVEC Network_getActivities (Network me, integer fromNode, integer toNode) {
+	try {
+		const integer newNumberOfNodes = my checkAndDefaultNodeRange (& fromNode, & toNode);
+		autoVEC result = newVECraw (newNumberOfNodes);
+		for (integer inode = 1; inode <= result.size; inode ++)
+			result [inode] = my nodes [fromNode - 1 + inode]. activity;
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": activities not gotten.");
+	}
+}
+
 void Network_setActivity (Network me, integer nodeNumber, double activity) {
 	try {
-		Melder_require (nodeNumber >= 1 && nodeNumber <= my numberOfNodes,
-			me, U": node number (", nodeNumber, U") out of the range 1..", my numberOfNodes, U".");
+		my checkNodeNumber (nodeNumber);
 		my nodes [nodeNumber]. activity = my nodes [nodeNumber]. excitation = activity;
 	} catch (MelderError) {
 		Melder_throw (me, U": activity not set.");
+	}
+}
+
+void Network_formula_activities (Network me, integer fromNode, integer toNode, conststring32 expression, Interpreter interpreter) {
+	try {
+		const integer newNumberOfNodes = my checkAndDefaultNodeRange (& fromNode, & toNode);
+		autoMatrix thee = Matrix_create (0.5, newNumberOfNodes + 0.5, newNumberOfNodes, 1.0, 1.0,
+			1.0, 1.0, 1, 1.0, 1.0);
+		Formula_compile (interpreter, thee.get(), expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
+		for (integer icol = 1; icol <= thy nx; icol ++) {
+			Formula_run (1, icol, & result);
+			my nodes [fromNode - 1 + icol]. activity = thy z [1] [icol] = result. numericResult;
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": activities not set from formula.");
 	}
 }
 
@@ -155,8 +183,7 @@ void Network_setWeight (Network me, integer connectionNumber, double weight) {
 
 void Network_setClamping (Network me, integer nodeNumber, bool clamped) {
 	try {
-		Melder_require (nodeNumber >= 1 && nodeNumber <= my numberOfNodes,
-			me, U": node number (", nodeNumber, U") out of the range 1..", my numberOfNodes, U".");
+		my checkNodeNumber (nodeNumber);
 		my nodes [nodeNumber]. clamped = clamped;
 	} catch (MelderError) {
 		Melder_throw (me, U": clamping not set.");
@@ -208,41 +235,31 @@ void Network_spreadActivities (Network me, integer numberOfSteps) {
 							trace (U"excitation ", node -> excitation, U", activity ", node -> activity);
 						}
 					break;
+					case kNetwork_activityClippingRule::UNDEFINED:
+					break;
 				}
 			}
 		}
 	}
 }
 
-void Network_zeroActivities (Network me, integer nodeMin, integer nodeMax) {
+void Network_zeroActivities (Network me, integer fromNode, integer toNode) {
 	if (my numberOfNodes < 1)
-		return;
-	if (nodeMax == 0) {
-		nodeMin = 1;
-		nodeMax = my numberOfNodes;
-	}
-	Melder_clipLeft (1_integer, & nodeMin);
-	Melder_clipRight (& nodeMax, my numberOfNodes);
-	for (integer inode = nodeMin; inode <= nodeMax; inode ++)
+		return;   // it is OK to zero zero activities
+	my checkAndDefaultNodeRange (& fromNode, & toNode);
+	for (integer inode = fromNode; inode <= toNode; inode ++)
 		my nodes [inode]. activity = my nodes [inode]. excitation = 0.0;
 }
 
-void Network_normalizeActivities (Network me, integer nodeMin, integer nodeMax) {
-	if (my numberOfNodes < 1)
-		return;
-	if (nodeMax == 0) {
-		nodeMin = 1;
-		nodeMax = my numberOfNodes;
-	}
-	Melder_clipLeft (1_integer, & nodeMin);
-	Melder_clipRight (& nodeMax, my numberOfNodes);
-	if (nodeMax < nodeMin)
+void Network_normalizeActivities (Network me, integer fromNode, integer toNode) {
+	const integer newNumberOfNodes = my checkAndDefaultNodeRange (& fromNode, & toNode);
+	if (newNumberOfNodes < 1)
 		return;
 	longdouble sum = 0.0;
-	for (integer inode = nodeMin; inode <= nodeMax; inode ++)
+	for (integer inode = fromNode; inode <= toNode; inode ++)
 		sum += my nodes [inode]. activity;
-	const double average = (double) sum / (nodeMax - nodeMin + 1);
-	for (integer inode = nodeMin; inode <= nodeMax; inode ++)
+	const double average = double (sum) / newNumberOfNodes;
+	for (integer inode = fromNode; inode <= toNode; inode ++)
 		my nodes [inode]. activity -= average;
 }
 
@@ -258,18 +275,11 @@ void Network_updateWeights (Network me) {
 	}
 }
 
-void Network_normalizeWeights (Network me, integer nodeMin, integer nodeMax, integer nodeFromMin, integer nodeFromMax, double newSum) {
-	if (my numberOfNodes < 1)
+void Network_normalizeWeights (Network me, integer fromNode, integer toNode, integer nodeFromMin, integer nodeFromMax, double newSum) {
+	const integer newNumberOfNodes = my checkAndDefaultNodeRange (& fromNode, & toNode);
+	if (newNumberOfNodes < 1)
 		return;
-	if (nodeMax == 0) {
-		nodeMin = 1;
-		nodeMax = my numberOfNodes;
-	}
-	Melder_clipLeft (1_integer, & nodeMin);
-	Melder_clipRight (& nodeMax, my numberOfNodes);
-	if (nodeMax < nodeMin)
-		return;
-	for (integer inode = nodeMin; inode <= nodeMax; inode ++) {
+	for (integer inode = fromNode; inode <= toNode; inode ++) {
 		longdouble sum = 0.0;
 		for (integer iconn = 1; iconn <= my numberOfConnections; iconn ++) {
 			NetworkConnection connection = & my connections [iconn];
@@ -501,9 +511,9 @@ void Network_setActivityClippingRule (Network me, enum kNetwork_activityClipping
 
 autoTable Network_nodes_downto_Table (Network me, integer fromNodeNumber, integer toNodeNumber,
 	bool includeNodeNumbers,
-	bool includeX, bool includeY, int positionDecimals,
+	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, int activityDecimals)
+	bool includeActivity, bool includeExcitation, integer activityDecimals)
 {
 	try {
 		Melder_clipLeft (1_integer, & fromNodeNumber);
@@ -541,9 +551,9 @@ autoTable Network_nodes_downto_Table (Network me, integer fromNodeNumber, intege
 
 void Network_listNodes (Network me, integer fromNodeNumber, integer toNodeNumber,
 	bool includeNodeNumbers,
-	bool includeX, bool includeY, int positionDecimals,
+	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, int activityDecimals)
+	bool includeActivity, bool includeExcitation, integer activityDecimals)
 {
 	try {
 		autoTable table = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber, includeNodeNumbers,

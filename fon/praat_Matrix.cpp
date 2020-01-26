@@ -361,6 +361,17 @@ DIRECT (NUMMAT_Matrix_getAllValues) {
 	NUMMAT_ONE_END
 }
 
+FORM (NUMVEC_Matrix_getAllValuesInColumn, U"Get all values in column", nullptr) {
+	NATURAL (columnNumber, U"Column number", U"1")
+	OK
+DO
+	NUMVEC_ONE (Matrix)
+		Melder_require (columnNumber <= my nx,
+			U"The column number (", columnNumber, U") should not be greater than the number of columns (", my nx, U").");
+		autoVEC result = newVECcopy (my z.column (columnNumber));
+	NUMVEC_ONE_END
+}
+
 FORM (NUMVEC_Matrix_getAllValuesInRow, U"Get all values in row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
@@ -848,6 +859,7 @@ void praat_Matrix_init () {
 		praat_addAction1 (classMatrix, 1, U"Get value at xy...", nullptr, 1, REAL_Matrix_getValueAtXY);
 		praat_addAction1 (classMatrix, 1, U"Get all values", nullptr, 1, NUMMAT_Matrix_getAllValues);
 		praat_addAction1 (classMatrix, 1, U"Get all values in row...", nullptr, 1, NUMVEC_Matrix_getAllValuesInRow);
+		praat_addAction1 (classMatrix, 1, U"Get all values in column...", nullptr, 1, NUMVEC_Matrix_getAllValuesInColumn);
 		praat_addAction1 (classMatrix, 1, U"Get minimum", nullptr, 1, REAL_Matrix_getMinimum);
 		praat_addAction1 (classMatrix, 1, U"Get maximum", nullptr, 1, REAL_Matrix_getMaximum);
 		praat_addAction1 (classMatrix, 1, U"Get sum", nullptr, 1, REAL_Matrix_getSum);
