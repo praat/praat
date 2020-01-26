@@ -1866,7 +1866,8 @@ void FormantModeler_reportChiSquared (FormantModeler me, int weighDataType) {
 integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax,
 	integer numberOfFormantTracks, integer numberOfParametersPerTrack,
 	bool useBandWidthsForTrackEstimation, bool useConstraints, double numberOfSigmas, double power,
-	double minF1, double maxF1, double minF2, double maxF2, double minF3) {
+	double minF1, double maxF1, double minF2, double maxF2, double minF3)
+{
 	try {
 		const integer numberOfFormantObjects = my size;
 		integer minNumberOfFormants = 1000000;
@@ -1902,7 +1903,6 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 			}
 			Melder_require (numberOfInvalids < numberOfFormantObjects, 
 				U"None of the Formants has enough formant tracks. Please, lower your upper formant number.");
-			
 		}
 		if (tmax <= tmin) {
 			tmin = tminf;
