@@ -3717,9 +3717,10 @@ DEFINITION (U"is a real, nonnegative, and diagonal matrix. Its diagonal contains
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
 MAN_END
 
-MAN_BEGIN (U"solving matrix equations", U"djmw", 20191222)
+MAN_BEGIN (U"solving matrix equations", U"djmw", 20191231)
 INTRO (U"In this manual you will learn how to solve different kinds of equations involving matrices and vectors.")
-NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form ##y#=##A\\.cx#. The task is to find the vector #x (sometimes, however, the #x's are constrained). The matrix and the vectors have to conform. This means that the number of rows of #A should equal the size of the #y vector and the size of the solution vector #x will always equal the number of colums of #A.")
+NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form ##y#=##A\\.cx#, where #A and #y are given. The task is to find the vector #x. The first two subsections show how to deal with this equation with no constraints on the solution vector #x. Section 4 will show how to deal with the situation when the solution vector #x is constrained.")
+NORMAL (U"In the equation above, the matrix and the vectors have to conform. This means that the number of rows of #A should equal the size of the #y vector and the size of the solution vector #x will always equal the number of colums of #A.")
 NORMAL (U"Note: In Praat scripting we don't distinguish in notation between a vector and its transpose.")
 ENTRY (U"1. Matrix A is square")
 NORMAL (U"In this case an exact solution for #x is possible because if #A is \"well behaved\" we can calculate its inverse and the solution will be #x = ##A^^-1^\\.cy#. The function ##solve\\#  (a\\# \\# , y\\# )# is for this type of problem.")

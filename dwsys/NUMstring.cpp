@@ -102,7 +102,7 @@ static autoSTRVEC string32vector_searchAndReplace_regexp (constSTRVEC me,
 }
 
 autoSTRVEC string32vector_searchAndReplace (constSTRVEC me,
-	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp)
 {
 	return use_regexp ?

@@ -81,7 +81,7 @@ void NUMfft_Table_init (NUMfft_Table me, integer n) {
 	NUMrffti (n, my trigcache.begin(), my splitcache.begin());
 }
 
-void NUMrealft (VEC data, int isign) {
+void NUMrealft (VEC data, integer isign) {
 	isign == 1 ? NUMforwardRealFastFourierTransform (data) :
 	NUMreverseRealFastFourierTransform (data);
 }
