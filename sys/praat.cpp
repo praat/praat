@@ -659,7 +659,7 @@ void praat_installEditor (Editor editor, int IOBJECT) {
 			Editor_setDataChangedCallback (editor, cb_Editor_dataChanged);
 			if (! editor -> d_publicationCallback)
 				Editor_setPublicationCallback (editor, cb_Editor_publication);
-			Thing_setName (editor, Melder_cat (editor -> name.get(), U" [", ieditor + 1, U"]"));
+			//Thing_setName (editor, Melder_cat (editor -> name.get(), U" [", ieditor + 1, U"]"));   // would break existing scripts
 			return;
 		}
 	}
