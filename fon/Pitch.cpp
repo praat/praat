@@ -477,7 +477,7 @@ static void Pitch_checkFrameNumber (Pitch me, integer frameNumber) {
     Melder_require (frameNumber >= 1,
     	U"The frame number should be at least 1, but is ", frameNumber, U" instead.");
     Melder_require (frameNumber <= my nx,
-    	U"The frame number should at most the number of frames (", my nx, U"), but is ", frameNumber, U" instead.");
+    	U"The frame number should be at most the number of frames (", my nx, U"), but is ", frameNumber, U" instead.");
 }
 
 autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
