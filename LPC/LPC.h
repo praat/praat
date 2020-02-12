@@ -2,7 +2,7 @@
 #define _LPC_h_
 /* LPC.h
  *
- * Copyright (C) 1994-2018 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,27 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me);
 autoMatrix LPC_downto_Matrix_rc (LPC me);
 
 autoMatrix LPC_downto_Matrix_area (LPC me);
+
+static inline autoVEC LPC_listAllGains (LPC me) {
+	autoVEC result = newVECraw (my nx);
+	for (integer iframe = 1; iframe <= my nx; iframe ++)
+		result [iframe] = my d_frames [iframe]. gain;
+	return result;
+}
+
+static inline autoVEC LPC_listAllCoefficientsInFrame (LPC me, integer frameNumber) {
+	Sampled_checkFrameNumber (me, frameNumber);
+	autoVEC result = newVECzero (my maxnCoefficients);
+	result <<= my d_frames [frameNumber] .a;
+	return result;
+}
+
+static inline autoMAT LPC_listAllCoefficients (LPC me) {
+	autoMAT result = newMATraw (my maxnCoefficients, my nx);
+	for (integer iframe = 1; iframe <= my nx; iframe ++)
+		result.column (iframe) <<= my d_frames [iframe] .a;
+	return result;
+}
 
 /******************* Frames ************************************************/
 

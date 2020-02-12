@@ -2,7 +2,7 @@
 #define _LineSpectralFrequencies_h_
 /* LineSpectralFrequencies.h
  *
- * Copyright (C) 2016-2018 David Weenink
+ * Copyright (C) 2016-2020 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,5 +44,20 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me);
 /******************* Frames ************************************************/
 
 void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integer numberOfFrequencies);
+
+static inline autoVEC LineSpectralFrequencies_listAllFrequenciesInFrame (LineSpectralFrequencies me, integer frameNumber) {
+	Sampled_checkFrameNumber (me, frameNumber);
+	autoVEC result = newVECzero (my maximumNumberOfFrequencies);
+	result <<= my d_frames [frameNumber] .frequencies;
+	return result;
+}
+
+static inline autoMAT LineSpectralFrequencies_listAllFrequencies (LineSpectralFrequencies me) {
+	autoMAT result = newMATraw (my maximumNumberOfFrequencies, my nx);
+	for (integer iframe = 1; iframe <= my nx; iframe ++)
+		result.column (iframe) <<= my d_frames [iframe] .frequencies;
+	return result;
+}
+
 
 #endif /* _LineSpectralFrequencies_h_ */
