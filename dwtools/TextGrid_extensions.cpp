@@ -158,12 +158,12 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, 
 	char hkruis[3] = "h#", label1[512], label2[512];
 	int length;
 	bool phnFile = false;
-	integer it[5];
-	if (nread < 12 || sscanf (header, "%ld%ld%511s%n\n", &it[1], &it[2], label1, & length) != 3 ||
-		it[1] < 0 || it[2] <= it[1] || sscanf (& header[length], "%ld%ld%511s\n", &it[3], &it[4], label2) != 3 ||
-		it[4] <= it[3]) {
+	long_not_integer it [5]; // because of %ld in sscanf we need an explicit long
+	if (nread < 12 || sscanf (header, "%ld%ld%511s%n\n", & it [1], & it [2], label1, & length) != 3 ||
+		it [1] < 0 || it [2] <= it [1] || sscanf (& header[length], "%ld%ld%511s\n", & it [3], & it [4], label2) != 3 ||
+		it [4] <= it [3]) {
 		/*
-			20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
+			20120512 djmw removed the extra "it [3] < it [2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
 		*/
 		return autoDaata ();
 	}
@@ -225,9 +225,9 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 		integer linesRead = 0;
 		char line[200], label[200];
 		while (fgets (line, 199, f)) {
-			integer it1, it2;
+			long_not_integer it1, it2; // because of %ld in sscanf we need an explicit long
 			linesRead++;
-			Melder_require (sscanf (line, "%ld%ld%199s", &it1, &it2, label) == 3,
+			Melder_require (sscanf (line, "%ld%ld%199s", & it1, & it2, label) == 3,
 				U"Incorrect number of items.");
 			Melder_require (it1 >= 0 && it1 < it2,
 				U"Incorrect time at line ", linesRead);

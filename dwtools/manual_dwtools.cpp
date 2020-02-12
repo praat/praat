@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2654,6 +2654,13 @@ MAN_END
 
 MAN_BEGIN (U"Kirshenbaum phonetic encoding", U"djmw", 20120413)
 INTRO (U"The Kirshenbaum phonetic encoding represents International Phonetic Alphabet symbols using ascii characters. See: http://www.kirshenbaum.net/IPA/ascii-ipa.pdf. The @@espeak@ speech synthesizer on which our synthesizer is based accepts this encoding as text input. ")
+MAN_END
+
+MAN_BEGIN (U"LAPACK", U"djmw", 20200131)
+NORMAL (U"From %%http://www.netlib.org/lapack%:")
+DEFINITION (U"\"LAPACK provides routines for solving systems of simultaneous linear equations, least-squares solutions of linear systems of equations, eigenvalue problems and singular value problems. All the necessary matrix factorizations are also provided.\"")
+NORMAL (U"LAPACK is written in the computer language FORTRAN. In Praat we use CLAPACK, a version which was automatically translated from FORTRAN to C.")
+NORMAL (U"More information can be found in the @@Anderson et al. (1999)|LAPACK's user guide@.")
 MAN_END
 
 MAN_BEGIN (U"Legendre polynomials", U"djmw", 19990620)
@@ -5725,6 +5732,11 @@ DEFINITION (U"Computes the logarithm of the #beta function, subject to %a and %b
 MAN_END
 
 /********************* References **************************************/
+
+MAN_BEGIN (U"Anderson et al. (1999)", U"djmw", 20200131)
+NORMAL (U"E. Anderson, Z. Bai, C. Bischof, S. Blackford, J. Demmel, J. Dongarra, J. Du Croz, A. Greenbaum, "
+	"S. Hammarling, A. McKenney & D. Sorensen (1999): %%LAPACK users' guide%. Third edition. Philadelphia, PA: Society for Industrial and Applied Mathematics.")
+MAN_END
 
 MAN_BEGIN (U"Bai & Demmel (1993)", U"djmw", 19981007)
 NORMAL (U"Z. Bai & J. Demmel (1993): \"Computing the generalized singular value "

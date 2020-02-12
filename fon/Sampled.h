@@ -121,5 +121,14 @@ double Sampled_getXOfMaximum
 void Sampled_drawInside
 	(Sampled me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool speckle, integer levelNumber, int unit);
 
+/***** For inheritors ***/
+
+static void Sampled_checkFrameNumber (Sampled me, integer frameNumber) {
+    Melder_require (frameNumber >= 1,
+    	U"The frame number should be at least 1, but is ", frameNumber, U" instead.");
+    Melder_require (frameNumber <= my nx,
+    	U"The frame number should be at most the number of frames (", my nx, U"), but is ", frameNumber, U" instead.");
+}
+
 /* End of file Sampled.h */
 #endif
