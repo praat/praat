@@ -876,12 +876,9 @@ DIRECT (HELP_ComplexSpectrogram_help) {
 	HELP (U"ComplexSpectrogram_help")
 }
 
-FORM (NEW_ComplexSpectrogram_to_Sound, U"ComplexSpectrogram: To Sound", nullptr) {
-	POSITIVE (durationFactor, U"Duration factor", U"1.0")
-	OK
-DO
+DIRECT (NEW_ComplexSpectrogram_to_Sound) {
 	CONVERT_EACH (ComplexSpectrogram)
-		autoSound result = ComplexSpectrogram_to_Sound (me, durationFactor);
+		autoSound result = ComplexSpectrogram_to_Sound (me);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -5689,12 +5686,11 @@ DO
 }
 
 FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
-	POSITIVE (windowLength, U"Window length (s)", U"0.015")
-	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"8000.0")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, maximumFrequency);
+		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength);
 	CONVERT_EACH_END (my name.get())
 }
 

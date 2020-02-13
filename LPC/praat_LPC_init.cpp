@@ -642,8 +642,7 @@ FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U
 	OK
 DO
 	INTEGER_ONE (LPC)
-		Melder_require (frameNumber <= my nx,
-			U"Your frame number (", frameNumber, U") is too large. It should be between 1 and ", my nx, U".");
+		Sampled_checkFrameNumber (me, frameNumber);
 		const integer result = my d_frames [frameNumber]. nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
 }
