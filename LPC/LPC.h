@@ -53,7 +53,7 @@ static inline autoVEC LPC_listAllGains (LPC me) {
 }
 
 static inline autoVEC LPC_listAllCoefficientsInFrame (LPC me, integer frameNumber) {
-	Sampled_checkFrameNumber (me, frameNumber);
+	my checkIndex (frameNumber);
 	autoVEC result = newVECzero (my maxnCoefficients);
 	result <<= my d_frames [frameNumber] .a;
 	return result;
