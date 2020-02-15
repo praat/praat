@@ -1,6 +1,6 @@
 /* Pitch_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@
 #include "Pitch_to_PointProcess.h"
 #include "PitchTier_to_PointProcess.h"
 #include "Pitch_to_PitchTier.h"
-#include <ctype.h>
 
 autoPointProcess Pitch_to_PointProcess (Pitch pitch) {
 	try {

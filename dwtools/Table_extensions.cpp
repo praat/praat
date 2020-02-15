@@ -37,7 +37,6 @@
 #include "Index.h"
 #include "Matrix_extensions.h"
 #include "NUM2.h"
-#include <ctype.h>
 #include "Strings_extensions.h"
 #include "SSCP.h"
 #include "Table_extensions.h"
