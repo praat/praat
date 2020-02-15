@@ -1,6 +1,6 @@
 /* GraphicsPostscript.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>	/* For 'floor' and 'ceil' in BoundingBox. */
-#include <time.h>	/* For creation date. */
 #include "GraphicsP.h"
+#include <time.h>	/* For creation date. */
 #include "Printer.h"
 
 Thing_implement (GraphicsPostscript, Graphics, 0);

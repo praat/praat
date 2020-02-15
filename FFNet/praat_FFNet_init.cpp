@@ -29,7 +29,6 @@
  djmw 20100511 FFNet query outputs
 */
 
-#include <math.h>
 #include "Discriminant.h"
 #include "PCA.h"
 #include "Minimizers.h"

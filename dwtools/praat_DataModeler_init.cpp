@@ -22,7 +22,6 @@
 #include "OptimalCeilingTierEditor.h"
 #include "Pitch.h"
 #include "Table_extensions.h"
-#include <math.h>
 
 #undef iam
 #define iam iam_LOOP

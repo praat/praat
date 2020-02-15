@@ -18,8 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
-
 struct dcomplex { double re, im; };
 
 inline static dcomplex dcomplex_add (dcomplex a, dcomplex b) {

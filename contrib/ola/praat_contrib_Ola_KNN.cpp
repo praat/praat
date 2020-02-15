@@ -764,7 +764,7 @@ DIRECT (HINT_KNN_and_Pattern_classify) {
 
 DIRECT (HINT_KNN_and_Pattern_and_FeatureWeights_classify) {
 	INFO_NONE
-		Melder_information (U"You can use the KNN as a classifier by selecting a KNN, a PatternList and an FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
+		Melder_information (U"You can use the KNN as a classifier by selecting a KNN, a PatternList and a FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
 	INFO_NONE_END
 }
 
