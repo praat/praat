@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2018 Paul Boersma
+ * Copyright (C) 1995-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,17 +172,21 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;
 				case complexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
-					sscanf (Melder_peek32to8 (text.get()), "%lf + %lf i", & x -> re, & x -> im); } break;
+					double re, im;
+					sscanf (Melder_peek32to8 (text.get()), "%lf + %lf i", & re, & im);
+					x -> real (re);
+					x -> imag (im);
+				} break;
 				case enumwa: {
 					if (str32len (text.get()) < 3) goto error;
-					text [str32len (text.get()) - 1] = '\0';   // remove trailing ">"
+					text [str32len (text.get()) - 1] = U'\0';   // remove trailing ">"
 					int value = ((int (*) (conststring32)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
 					if (value < 0) goto error;
 					* (signed char *) my d_fieldData [irow]. address = (signed char) value;
 				} break;
 				case lenumwa: {
 					if (str32len (text.get()) < 3) goto error;
-					text [str32len (text.get()) - 1] = '\0';   // remove trailing ">"
+					text [str32len (text.get()) - 1] = U'\0';   // remove trailing ">"
 					int value = ((int (*) (conststring32)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
 					if (value < 0) goto error;
 					* (signed short *) my d_fieldData [irow]. address = (signed short) value;

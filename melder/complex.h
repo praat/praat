@@ -2,7 +2,7 @@
 #define _complex_h_
 /* complex.h
  *
- * Copyright (C) 1992-2011,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2016-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,80 +18,80 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-struct dcomplex { double re, im; };
+//struct dcomplex { double re, im; };
+#include <complex>
+using dcomplex = std::complex <double>;
 
 inline static dcomplex dcomplex_add (dcomplex a, dcomplex b) {
 	dcomplex result;
-	result.re = a.re + b.re;
-	result.im = a.im + b.im;
+	result. real (a.real() + b.real());
+	result. imag (a.imag() + b.imag());
 	return result;
 }
 
 inline static dcomplex dcomplex_sub (dcomplex a, dcomplex b) {
 	dcomplex result;
-	result.re = a.re - b.re;
-	result.im = a.im - b.im;
+	result. real (a.real() - b.real());
+	result. imag (a.imag() - b.imag());
 	return result;
 }
 
 inline static dcomplex dcomplex_mul (dcomplex a, dcomplex b) {
 	dcomplex result;
-	result.re = a.re * b.re - a.im * b.im;
-	result.im = a.im * b.re + a.re * b.im;
+	result. real (a.real() * b.real() - a.imag() * b.imag());
+	result. imag (a.imag() * b.real() + a.real() * b.imag());
 	return result;
 }
 
 inline static dcomplex dcomplex_conjugate (dcomplex z) {
 	dcomplex result;
-	result.re = z.re;
-	result.im = - z.im;
+	result. real (z.real());
+	result. imag (- z.imag());
 	return result;
 }
 
 inline static dcomplex dcomplex_div (dcomplex a, dcomplex b) {
 	dcomplex result;
-	double r, den;
-	if (fabs (b.re) >= fabs (b.im)) {
-		r = b.im / b.re;
-		den = b.re + r * b.im;
-		result.re = (a.re + r * a.im) / den;
-		result.im = (a.im - r * a.re) / den;
+	if (fabs (b.real()) >= fabs (b.imag())) {
+		const double r = b.imag() / b.real();
+		const double den = b.real() + r * b.imag();
+		result. real ((a.real() + r * a.imag()) / den);
+		result. imag ((a.imag() - r * a.real()) / den);
 	} else {
-		r = b.re / b.im;
-		den = b.im + r * b.re;
-		result.re = (a.re * r + a.im) / den;
-		result.im = (a.im * r - a.re) / den;
+		const double r = b.real() / b.imag();
+		const double den = b.imag() + r * b.real();
+		result. real ((a.real() * r + a.imag()) / den);
+		result. imag ((a.imag() * r - a.real()) / den);
 	}
 	return result;
 }
 
 inline static double dcomplex_abs (dcomplex z) {
-	double x, y, temp;
-	x = fabs (z.re);
-	y = fabs (z.im);
+	const double x = fabs (z.real());
+	const double y = fabs (z.imag());
 	if (x == 0.0) return y;
 	if (y == 0.0) return x;
 	if (x > y) {
-		temp = y / x;
+		const double temp = y / x;
 		return x * sqrt (1.0 + temp * temp);
 	} else {
-		temp = x / y;
+		const double temp = x / y;
 		return y * sqrt (1.0 + temp * temp);
 	}
 }
 
 inline static dcomplex dcomplex_rmul (double x, dcomplex a) {
 	dcomplex result;
-	result.re = x * a.re;
-	result.im = x * a.im;
+	result. real (x * a.real());
+	result. imag (x * a.imag());
 	return result;
 }
 
 inline static dcomplex dcomplex_exp (dcomplex z) {
 	dcomplex result;
-	double size = exp (z.re);
-	result.re = size * cos (z.im);
-	result.im = size * sin (z.im);
+	double size = exp (z.real());
+	result. real (size * cos (z.imag()));
+	result. imag (size * sin (z.imag()));
 	return result;
 }
 

@@ -49,9 +49,9 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 	thy nFormants = 0;
 	const double fLow = margin, fHigh = samplingFrequency / 2 - margin;
 	for (integer i = my min; i <= my max; i ++) {
-		if (my v [i].im < 0)
+		if (my v [i].imag() < 0.0)
 			continue;
-		const double f = fabs (atan2 (my v [i].im, my v [i].re)) * samplingFrequency / 2.0 / NUMpi;
+		const double f = fabs (atan2 (my v [i].imag(), my v [i].real())) * samplingFrequency / 2.0 / NUMpi;
 		if (f >= fLow && f <= fHigh) {
 			double b = - log (dcomplex_abs (my v [i])) * samplingFrequency / NUMpi;
 			thy nFormants ++;

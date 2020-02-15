@@ -192,9 +192,9 @@ static integer Roots_fromPolynomial_grid (Roots me, Polynomial thee, double grid
 		double xmax = xmin + gridSize;
 		xmax = xmax > thy xmax ? thy xmax : xmax;
 		const double root = Polynomial_findOneSimpleRealRoot_ridders (thee, xmin, xmax);
-		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
-			my v [++ numberOfRootsFound].re = root; // root not at border of interval
-			my v [numberOfRootsFound].im = 0.0;
+		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].real() != root)) {
+			my v [++ numberOfRootsFound]. real (root); // root not at border of interval
+			my v [numberOfRootsFound]. imag (0.0);
 		}
 		xmin = xmax;
 	}
@@ -227,13 +227,13 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 		i.e. highest root corresponds to lowest frequency
 	*/
 	for (integer i = 1; i <= half_order_g1; i ++)
-		my frequencies [2 * i - 1] = acos (roots -> v [half_order_g1 + 1 - i].re / 2.0) / NUMpi * maximumFrequency; 
+		my frequencies [2 * i - 1] = acos (roots -> v [half_order_g1 + 1 - i].real() / 2.0) / NUMpi * maximumFrequency;
 	/*
 		The roots of g2 lie inbetween the roots of g1
 	*/
 	for (integer i = 1; i <= half_order_g2; i ++) {
-		const double xmax = roots -> v [half_order_g1 + 1 - i].re;
-		const double xmin = i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].re;
+		const double xmax = roots -> v [half_order_g1 + 1 - i].real();
+		const double xmin = ( i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].real() );
 		const double root = Polynomial_findOneSimpleRealRoot_ridders (g2, xmin, xmax);
 		if (isdefined (root))
 			my frequencies [2 * i] = acos (root / 2.0) / NUMpi * maximumFrequency;

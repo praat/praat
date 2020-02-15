@@ -1,6 +1,6 @@
 /* Sound_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2019 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ static void burg (constVEC samples, VEC coefficients,
 		The roots come in conjugate pairs, so we need only count those above the real axis.
 	 */
 	for (integer i = roots -> min; i <= roots -> max; i ++)
-		if (roots -> v [i]. im >= 0.0) {
-			double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
+		if (roots -> v [i].imag() >= 0.0) {
+			double f = fabs (atan2 (roots -> v [i].imag(), roots -> v [i].real())) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
 				frame -> nFormants ++;
 		}
@@ -74,13 +74,13 @@ static void burg (constVEC samples, VEC coefficients,
 		Second pass: fill in the formants.
 	 */
 	int iformant = 0;
-	for (integer i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0.0) {
-		double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
+	for (integer i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i].imag() >= 0.0) {
+		double f = fabs (atan2 (roots -> v [i].imag(), roots -> v [i].real())) * nyquistFrequency / NUMpi;
 		if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin) {
 			Formant_Formant formant = & frame -> formant [++ iformant];
 			formant -> frequency = f;
 			formant -> bandwidth = -
-				log (roots -> v [i].re * roots -> v [i].re + roots -> v [i].im * roots -> v [i].im) * nyquistFrequency / NUMpi;
+				log (roots -> v [i].real() * roots -> v [i].real() + roots -> v [i].imag() * roots -> v [i].imag()) * nyquistFrequency / NUMpi;
 		}
 	}
 	Melder_assert (iformant == frame -> nFormants);   // may fail if some frequency is NaN

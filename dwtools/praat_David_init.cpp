@@ -5228,7 +5228,7 @@ FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
 DO
 	NUMBER_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
-		double result = z.re;
+		double result = z.real();
 	NUMBER_ONE_END (U"")
 }
 
@@ -5238,7 +5238,7 @@ FORM (REAL_Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", nullptr) 
 DO
 	NUMBER_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
-		double result = z.im;
+		double result = z.imag();
 	NUMBER_ONE_END (U" i")
 }
 

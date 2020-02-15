@@ -71,7 +71,7 @@ void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, 
 /* Get value and derivative */
 static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, dcomplex *out_p, dcomplex *out_dp) {
 	longdouble pr = my coefficients [my numberOfCoefficients], pi = 0.0;
-	longdouble dpr = 0.0, dpi = 0.0, x = in_z -> re, y = in_z -> im;
+	longdouble dpr = 0.0, dpi = 0.0, x = in_z->real(), y = in_z->imag();
 
 	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
 		longdouble tr   = dpr;
@@ -141,29 +141,30 @@ static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 }
 
 
-static void Polynomial_polish_realroot (Polynomial me, double *x, integer maxit) {
+static double Polynomial_polish_realroot (Polynomial me, double x, integer maxit) {
 	if (! NUMfpp)
 		NUMmachar ();
-	double xbest = *x, pmin = 1e308;
+	double xbest = x, pmin = 1e308;
 	for (integer i = 1; i <= maxit; i ++) {
 		double p, dp;
-		Polynomial_evaluateWithDerivative (me, *x, & p, & dp);
+		Polynomial_evaluateWithDerivative (me, x, & p, & dp);
 		const double fabsp = fabs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse or we cannot get any closer.
 				Return the previous (hitherto best) value for x.
 			*/
-			*x = xbest;
-			return;
+			x = xbest;
+			return x;
 		}
 		pmin = fabsp;
-		xbest = *x;
+		xbest = x;
 		if (fabs (dp) == 0.0)
-			return;
+			return x;
 		const double dx = p / dp;   // Newton-Raphson
-		*x -= dx;
+		x -= dx;
 	}
+	return x;
 	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
 
@@ -544,7 +545,7 @@ double structPolynomial :: v_evaluate (double x) {
 }
 
 dcomplex structPolynomial :: v_evaluate_z (dcomplex z) {
-	longdouble x = z.re, y = z.im;
+	longdouble x = z.real(), y = z.imag();
 
 	longdouble pr = coefficients [numberOfCoefficients];
 	longdouble pi = 0.0;
@@ -580,7 +581,7 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, d
 		autoRoots r = Polynomial_to_Roots (d.get());
 
 		for (integer i = 1; i <= degree - 1; i ++) {
-			const double x = (r -> v [i]).re;
+			const double x = r -> v [i].real();
 			if (x > x1 && x < x2) {
 				const double y = v_evaluate (x);
 				if (y > ymx) {
@@ -1052,12 +1053,12 @@ void Roots_fixIntoUnitCircle (Roots me) {
 }
 
 static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
-	double min = v [lo].re,  max = v [lo].re;
+	double min = v [lo].real(), max = v [lo].real();
 	for (integer i = lo + 1; i <= hi; i ++)
-		if (v [i].re < min)
-			min = v [i].re;
-		else if (v [i].re > max)
-			max = v [i].re;
+		if (v [i].real() < min)
+			min = v [i].real();
+		else if (v [i].real() > max)
+			max = v [i].real();
 	if (out_min)
 		*out_min = min;
 	if (out_max)
@@ -1065,12 +1066,12 @@ static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, doubl
 }
 
 static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
-	double min = v [lo].im, max = v [lo].im;
+	double min = v [lo].imag(), max = v [lo].imag();
 	for (integer i = lo + 1; i <= hi; i ++)
-		if (v [i]. im < min)
-			min = v [i]. im;
-		else if (v [i]. im > max)
-			max = v [i]. im;
+		if (v [i].imag() < min)
+			min = v [i].imag();
+		else if (v [i].imag() > max)
+			max = v [i].imag();
 	if (out_min)
 		*out_min = min;
 	if (out_max)
@@ -1107,7 +1108,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	Graphics_setFontSize (g, fontSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	for (integer i = 1; i <= my max; i ++) {
-		const double re = my v [i].re, im = my v [i].im;
+		const double re = my v [i].real(), im = my v [i].imag();
 		if (re >= rmin && re <= rmax && im >= imin && im <= imax)
 			Graphics_text (g, re, im, symbol);
 	}
@@ -1181,8 +1182,8 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 
 		autoRoots thee = Roots_create (nrootsfound);
 		for (integer i = 1; i <= nrootsfound; i ++) {
-			(thy v [i]).re = wr [ioffset + i];
-			(thy v [i]).im = wi [ioffset + i];
+			thy v [i]. real (wr [ioffset + i]);
+			thy v [i]. imag (wi [ioffset + i]);
 		}
 		Roots_Polynomial_polish (thee.get(), me);
 		return thee;
@@ -1200,16 +1201,16 @@ void Roots_Polynomial_polish (Roots me, Polynomial thee) {
 	const integer maxit = 80;
 	integer i = my min;
 	while (i <= my max) {
-		const double im = my v [i].im, re = my v [i].re;
+		const double im = my v [i].imag(), re = my v [i].real();
 		if (im != 0.0) {
 			Polynomial_polish_complexroot_nr (thee, & my v [i], maxit);
-			if (i < my max && im == -my v [i + 1].im && re == my v [i + 1].re) {
-				my v [i + 1].re = my v [i].re;
-				my v [i + 1].im = -my v [i].im;
+			if (i < my max && im == - my v [i + 1].imag() && re == my v [i + 1].real()) {
+				my v [i + 1]. real (my v [i].real());
+				my v [i + 1]. imag (- my v [i].imag());
 				i ++;
 			}
 		} else {
-			Polynomial_polish_realroot (thee, & (my v [i].re), maxit);
+			my v [i]. real (Polynomial_polish_realroot (thee, my v [i].real(), maxit));
 		}
 		i ++;
 	}
@@ -1289,8 +1290,8 @@ void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
 void Roots_setRoot (Roots me, integer index, double re, double im) {
 	Melder_require (index >= my min && index <= my max,
 		U"Index should be in interval [1, ", my max, U"].");
-	my v [index].re = re;
-	my v [index].im = im;
+	my v [index]. real (re);
+	my v [index]. imag (im);
 }
 
 dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
@@ -1311,11 +1312,11 @@ autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numbe
 		const double phi = NUMpi / (numberOfFrequencies - 1);
 		dcomplex z;
 		for (integer i = 1; i <= numberOfFrequencies; i ++) {
-			z.re = radius * cos ( (i - 1) * phi);
-			z.im = radius * sin ( (i - 1) * phi);
+			z. real (radius * cos ((i - 1) * phi));
+			z. imag (radius * sin ((i - 1) * phi));
 			const dcomplex s = Roots_evaluate_z (me, z);
-			thy z [1] [i] = s.re;
-			thy z [2] [i] = s.im;
+			thy z [1] [i] = s.real();
+			thy z [2] [i] = s.imag();
 		}
 		return thee;
 	} catch (MelderError) {

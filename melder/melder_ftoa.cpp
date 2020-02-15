@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,25 +284,25 @@ conststring32 Melder_hexadecimal (integer value, integer precision) noexcept {
 }
 
 const char * Melder8_dcomplex (dcomplex value) noexcept {
-	if (isundef (value.re) || isundef (value.im))
+	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
-	sprintf (buffers8 [ibuffer], "%.15g", value.re);
-	if (strtod (buffers8 [ibuffer], nullptr) != value.re) {
-		sprintf (buffers8 [ibuffer], "%.16g", value.re);
-		if (strtod (buffers8 [ibuffer], nullptr) != value.re)
-			sprintf (buffers8 [ibuffer], "%.17g", value.re);
+	sprintf (buffers8 [ibuffer], "%.15g", value.real());
+	if (strtod (buffers8 [ibuffer], nullptr) != value.real()) {
+		sprintf (buffers8 [ibuffer], "%.16g", value.real());
+		if (strtod (buffers8 [ibuffer], nullptr) != value.real())
+			sprintf (buffers8 [ibuffer], "%.17g", value.real());
 	}
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
-	*p = ( value.im < 0.0 ? '-' : '+' );
-	value.im = fabs (value.im);
+	*p = ( value.imag() < 0.0 ? '-' : '+' );
+	value. imag (fabs (value.imag()));
 	++ p;
-	sprintf (p, "%.15g", value.im);
-	if (strtod (p, nullptr) != value.im) {
-		sprintf (p, "%.16g", value.im);
-		if (strtod (p, nullptr) != value.im)
-			sprintf (p, "%.17g", value.im);
+	sprintf (p, "%.15g", value.imag());
+	if (strtod (p, nullptr) != value.imag()) {
+		sprintf (p, "%.16g", value.imag());
+		if (strtod (p, nullptr) != value.imag())
+			sprintf (p, "%.17g", value.imag());
 	}
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
@@ -313,14 +313,14 @@ conststring32 Melder_dcomplex (dcomplex value) noexcept {
 }
 
 const char * Melder8_scomplex (dcomplex value) noexcept {
-	if (isundef (value.re) || isundef (value.im))
+	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
-	sprintf (buffers8 [ibuffer], "%.9g", value.re);
+	sprintf (buffers8 [ibuffer], "%.9g", value.real());
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
-	*p = ( value.im < 0.0 ? '-' : '+' );
-	sprintf (++ p, "%.9g", fabs (value.im));
+	*p = ( value.imag() < 0.0 ? '-' : '+' );
+	sprintf (++ p, "%.9g", fabs (value.imag()));
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
 }
