@@ -1,6 +1,6 @@
 /* Sampled.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
 #include "Sampled.h"
 
 #include "oo_DESTROY.h"

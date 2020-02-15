@@ -1099,7 +1099,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 		integer numberOfSamples = 1, par [KlattTable_NPAR + 1];
 
 		if (! KlattTable_checkLimits (me))
-			Melder_warning (U"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
+			Melder_warning (U"Some values in the KlattTable are outside the limits; the resulting sound may sound weird.");
 		thee = KlattGlobal_create (samplingFrequency);
 		frame = KlattFrame_create ();
 		autoNUMvector <short> iwave (0_integer, MAX_SAM);

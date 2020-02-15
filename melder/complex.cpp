@@ -1,6 +1,6 @@
 /* complex.cpp
  *
- * Copyright (C) 1992-2011,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2016-2018,2020 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
-#include "complex.h"
+#include "melder.h"
+#include <complex>
 
 dcomplex dcomplex_sqrt (dcomplex z) {
 	dcomplex result;

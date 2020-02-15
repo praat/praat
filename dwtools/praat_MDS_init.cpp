@@ -32,7 +32,6 @@
  djmw 20090818 Thing_recognizeClassesByName: added classAffineTransform, classScalarProduct, classWeight
 */
 
-#include <math.h>
 #include "NUM2.h"
 #include "praat.h"
 #include "MDS.h"
