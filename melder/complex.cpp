@@ -17,18 +17,17 @@
  */
 
 #include "melder.h"
-#include <complex>
 
 dcomplex dcomplex_sqrt (dcomplex z) {
 	dcomplex result;
 	double x, y, w, r;
-	if (z.re == 0 && z.im == 0) {
-		result.re = 0;
-		result.im = 0;
+	if (z.real() == 0 && z.imag() == 0) {
+		result. real (0.0);
+		result. imag (0.0);
 		return result;
 	}
-	x = fabs (z.re);
-	y = fabs (z.im);
+	x = fabs (z.real());
+	y = fabs (z.imag());
 	if (x >= y) {
 		r = y / x;
 		w = sqrt (x) * sqrt (0.5 * (1.0 + sqrt (1.0 + r * r)));
@@ -36,12 +35,12 @@ dcomplex dcomplex_sqrt (dcomplex z) {
 		r = x / y;
 		w = sqrt (y) * sqrt (0.5 * (r + sqrt (1.0 + r * r)));
 	}
-	if (z.re >= 0.0) {
-		result.re = w;
-		result.im = z.im / (2.0 * w);
+	if (z.real() >= 0.0) {
+		result. real (w);
+		result. imag (z.imag() / (2.0 * w));
 	} else {
-		result.im = (z.im >= 0) ? w : -w;
-		result.re = z.im / (2.0 * result.im);
+		result. imag ((z.imag() >= 0) ? w : -w);
+		result. real (z.imag() / (2.0 * result.imag()));
 	}
 	return result;
 }

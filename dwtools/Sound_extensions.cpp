@@ -788,7 +788,7 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 		
 		const dcomplex r = gammaToneFilterResponseAtCentreFrequency (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin);
 		
-		const double scale = 1.0 / sqrt (r.re * r.re + r.im * r.im);
+		const double scale = 1.0 / sqrt (r.real() * r.real() + r.imag() * r.imag());
 		thy z.row (1)  *=  scale;
 		
 		return thee;

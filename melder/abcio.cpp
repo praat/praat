@@ -319,8 +319,8 @@ uint32 texgetu32 (MelderReadText text) {
 double texgetr32 (MelderReadText text) { return getReal (text); }
 double texgetr64 (MelderReadText text) { return getReal (text); }
 double texgetr80 (MelderReadText text) { return getReal (text); }
-dcomplex texgetc64  (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
-dcomplex texgetc128 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+dcomplex texgetc64  (MelderReadText text) { dcomplex z; z. real (getReal (text)); z. imag (getReal (text)); return z; }
+dcomplex texgetc128 (MelderReadText text) { dcomplex z; z. real (getReal (text)); z. imag (getReal (text)); return z; }
 
 int texgete8 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
 int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
@@ -1612,8 +1612,8 @@ void binputr80 (double x, FILE *f) {
 dcomplex bingetc64 (FILE *f) {
 	try {
 		dcomplex result;
-		result.re = bingetr32 (f);
-		result.im = bingetr32 (f);
+		result. real (bingetr32 (f));
+		result. imag (bingetr32 (f));
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not read from 8 bytes in binary file.");
@@ -1625,8 +1625,8 @@ dcomplex bingetc64 (FILE *f) {
 dcomplex bingetc128 (FILE *f) {
 	try {
 		dcomplex result;
-		result.re = bingetr64 (f);
-		result.im = bingetr64 (f);
+		result. real (bingetr64 (f));
+		result. imag (bingetr64 (f));
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not read from 16 bytes in binary file.");
@@ -1637,8 +1637,8 @@ dcomplex bingetc128 (FILE *f) {
 
 void binputc64 (dcomplex z, FILE *f) {
 	try {
-		binputr32 (z.re, f);
-		binputr32 (z.im, f);
+		binputr32 (z.real(), f);
+		binputr32 (z.imag(), f);
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not written to 8 bytes in binary file.");
 	}
@@ -1646,8 +1646,8 @@ void binputc64 (dcomplex z, FILE *f) {
 
 void binputc128 (dcomplex z, FILE *f) {
 	try {
-		binputr64 (z.re, f);
-		binputr64 (z.im, f);
+		binputr64 (z.real(), f);
+		binputr64 (z.imag(), f);
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not written to 16 bytes in binary file.");
 	}

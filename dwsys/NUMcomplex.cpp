@@ -17,7 +17,6 @@
  */
 
 #include <cmath>
-#include <complex>
 #include "NUMcomplex.h"
 
 /*
@@ -230,17 +229,15 @@ dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_
 dcomplex gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime) {
 	const double b = NUM2pi * bandwidth, w0 = NUM2pi * centre_frequency, theta = atan (2.0 * centre_frequency / bandwidth);
 	const double gamma_n = exp (NUMlnGamma (gamma)), bpow = pow (b, -gamma);
-	const std::complex<double> expiphi (cos (initialPhase), sin(initialPhase)), expmiphi = conj (expiphi);
-	const std::complex<double> expnitheta (cos (gamma * theta), - sin(gamma * theta));
+	const std::complex<double> expiphi (cos (initialPhase), sin (initialPhase)), expmiphi = conj (expiphi);
+	const std::complex<double> expnitheta (cos (gamma * theta), - sin (gamma * theta));
 	const std::complex<double> expiw0T (cos (w0 * truncationTime), sin (w0 * truncationTime));
 	const std::complex<double> peak = expnitheta * pow (1.0 + 4.0 * (w0 / b) * (w0 / b), - 0.5 * gamma);
 	const dcomplex r1 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 0.0);
 	const dcomplex r2 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 2.0 * w0 * truncationTime);
-	const std::complex<double> result1 (r1.re, r1.im), result2 (r2.re, r2.im);
-	//std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
-	const std::complex<double> response = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
-		expiw0T * (expiphi * result1 + expmiphi * peak * result2));
-	return { real (response), imag (response) };
+	const dcomplex response = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
+		expiw0T * (expiphi * r1 + expmiphi * peak * r2));
+	return response;
 }
 
 /* End of file NUMcomplex.cpp */
