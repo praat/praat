@@ -1,6 +1,6 @@
 /* Pitch.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -485,7 +485,7 @@ autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
 
 autoMAT Pitch_getAllCandidatesInFrame (Pitch me, integer frameNumber) {
 	try {
-    	Sampled_checkFrameNumber (me, frameNumber);
+    	my checkIndex (frameNumber);
     	const Pitch_Frame frame = & my frames [frameNumber];
     	return Pitch_Frame_getAllCandidates (frame);
 	} catch (MelderError) {
@@ -952,7 +952,7 @@ static autoTable Pitch_Frame_tabulateCandidates (Pitch_Frame me) {
 }
 
 autoTable Pitch_tabulateCandidatesInFrame (Pitch me, integer frameNumber) {
-	Sampled_checkFrameNumber (me, frameNumber);
+	my checkIndex (frameNumber);
 	const Pitch_Frame frame = & my frames [frameNumber];
 	return Pitch_Frame_tabulateCandidates (frame);
 }

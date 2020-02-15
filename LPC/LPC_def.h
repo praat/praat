@@ -48,6 +48,10 @@ oo_DEFINE_CLASS (LPC, Sampled)
 	#if oo_DECLARING
 		void v_info ()
 			override;
+		conststring32 v_getIndexText () const
+			override { return U"frame number"; }
+		conststring32 v_getNxText () const
+			override { return U"the number of frames"; }
 	#endif
 
 oo_END_CLASS (LPC)

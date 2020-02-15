@@ -1,6 +1,6 @@
 /* Pitch_def.h
  *
- * Copyright (C) 1992-2006,2008,2011,2012,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2006,2008,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +101,10 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 			override;
 		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
 			override;
+		conststring32 v_getIndexText () const
+			override { return U"frame number"; }
+		conststring32 v_getNxText () const
+			override { return U"the number of frames"; }
 	#endif
 
 oo_END_CLASS (Pitch)

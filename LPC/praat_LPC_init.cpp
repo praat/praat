@@ -587,7 +587,7 @@ FORM (INTEGER_LineSpectralFrequencies_getNumberOfFrequencies, U"LineSpectralFreq
 	OK
 DO
 	INTEGER_ONE (LineSpectralFrequencies)
-		Sampled_checkFrameNumber (me, frameNumber);
+		my checkIndex (frameNumber);
 		const integer result = my d_frames [frameNumber]. numberOfFrequencies;
 	INTEGER_ONE_END (U" frequencies")
 }
@@ -642,7 +642,7 @@ FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U
 	OK
 DO
 	INTEGER_ONE (LPC)
-		Sampled_checkFrameNumber (me, frameNumber);
+		my checkIndex (frameNumber);
 		const integer result = my d_frames [frameNumber]. nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
 }

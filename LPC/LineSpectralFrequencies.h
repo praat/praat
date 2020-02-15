@@ -46,7 +46,7 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me);
 void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integer numberOfFrequencies);
 
 static inline autoVEC LineSpectralFrequencies_listAllFrequenciesInFrame (LineSpectralFrequencies me, integer frameNumber) {
-	Sampled_checkFrameNumber (me, frameNumber);
+	my checkIndex (frameNumber);
 	autoVEC result = newVECzero (my maximumNumberOfFrequencies);
 	result <<= my d_frames [frameNumber] .frequencies;
 	return result;
