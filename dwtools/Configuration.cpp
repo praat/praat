@@ -31,7 +31,6 @@
  djmw 20110304 Thing_new
  */
 
-#include <ctype.h>
 #include "SVD.h"
 #include "PCA.h"
 #include "Configuration.h"

@@ -17,7 +17,6 @@
  */
 
 #include "Pitch.h"
-#include <ctype.h>
 #include "Sound_and_Spectrum.h"
 #include "Matrix_and_Pitch.h"
 

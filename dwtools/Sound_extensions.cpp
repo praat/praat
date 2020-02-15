@@ -49,7 +49,6 @@
  djmw 20120616 Change 0.8 to 1.25 in Sound_Point_Pitch_Duration_to_Sound
 */
 
-#include <ctype.h>
 #include "Formula.h"
 #include "Intensity_extensions.h"
 #include "Sound_extensions.h"

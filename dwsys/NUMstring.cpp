@@ -20,8 +20,6 @@
  djmw 20121005 First version
 */
 
-#include <ctype.h>
-#include <wctype.h>
 #include "Interpreter.h"
 #include "NUM2.h"
 

@@ -1,6 +1,6 @@
 /* Gui_messages.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma,
+ * Copyright (C) 1992-2018,2020 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  */
 
 #include <time.h>
-//#include <ctype.h>
 
 #include <assert.h>
 #ifdef _WIN32

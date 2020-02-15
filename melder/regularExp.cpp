@@ -88,7 +88,6 @@
  *    Thereby removed shortcut escapes from classes.
  */
 
-#include <ctype.h>
 #include <limits.h>
 #include "melder.h"
 

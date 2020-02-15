@@ -30,7 +30,6 @@
  djmw 20071202 Melder_warning<n>
 */
 
-#include <ctype.h>
 #include "TextGrid_extensions.h"
 #include "NUM2.h"
 
