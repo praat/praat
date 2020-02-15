@@ -37,7 +37,7 @@ MAN_END
 MAN_BEGIN (U"TextGrid file formats", U"ppgb", 20180821)
 INTRO (U"This page describes the syntax and semantics of TextGrid files that Praat can read and/or write.")
 ENTRY (U"1. The full text format of a minimal TextGrid")
-NORMAL (U"If you record a Sound with a druation of 2.3 seconds, and then do ##To TextGrid...#, "
+NORMAL (U"If you record a Sound with a duration of 2.3 seconds, and then do ##To TextGrid...#, "
 	"you are asked to provide tier names and to say which of these tiers are point tiers. "
 	"If you click OK without changing the settings from their standard values, "
 	"you obtain a TextGrid with two interval tiers, called %Mary and %John, and one point tier called %bell. "

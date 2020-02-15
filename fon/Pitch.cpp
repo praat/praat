@@ -473,13 +473,6 @@ integer Pitch_getMaxnCandidates (Pitch me) {
 	return result;
 }
 
-static void Pitch_checkFrameNumber (Pitch me, integer frameNumber) {
-    Melder_require (frameNumber >= 1,
-    	U"The frame number should be at least 1, but is ", frameNumber, U" instead.");
-    Melder_require (frameNumber <= my nx,
-    	U"The frame number should at most the number of frames (", my nx, U"), but is ", frameNumber, U" instead.");
-}
-
 autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
 	integer numberOfCandidates = my nCandidates;
 	autoMAT candidates = newMATraw (2, numberOfCandidates);
@@ -492,7 +485,7 @@ autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
 
 autoMAT Pitch_getAllCandidatesInFrame (Pitch me, integer frameNumber) {
 	try {
-    	Pitch_checkFrameNumber (me, frameNumber);
+    	Sampled_checkFrameNumber (me, frameNumber);
     	const Pitch_Frame frame = & my frames [frameNumber];
     	return Pitch_Frame_getAllCandidates (frame);
 	} catch (MelderError) {
@@ -959,7 +952,7 @@ static autoTable Pitch_Frame_tabulateCandidates (Pitch_Frame me) {
 }
 
 autoTable Pitch_tabulateCandidatesInFrame (Pitch me, integer frameNumber) {
-	Pitch_checkFrameNumber (me, frameNumber);
+	Sampled_checkFrameNumber (me, frameNumber);
 	const Pitch_Frame frame = & my frames [frameNumber];
 	return Pitch_Frame_tabulateCandidates (frame);
 }

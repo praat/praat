@@ -1,6 +1,6 @@
 /* praat_LPC_init.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -582,6 +582,31 @@ DO
 	GRAPHICS_EACH_END
 }
 
+FORM (INTEGER_LineSpectralFrequencies_getNumberOfFrequencies, U"LineSpectralFrequencies: Get number of frequencies", U"LineSpectralFrequencies: Get number of frequencies...") {
+	NATURAL (frameNumber, U"Frame number", U"2")
+	OK
+DO
+	INTEGER_ONE (LineSpectralFrequencies)
+		Sampled_checkFrameNumber (me, frameNumber);
+		const integer result = my d_frames [frameNumber]. numberOfFrequencies;
+	INTEGER_ONE_END (U" frequencies")
+}
+
+FORM (NUMVEC_LineSpectralFrequencies_listAllFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
+	NATURAL (frameNumber, U"Frame number", U"10")
+	OK
+DO
+	NUMVEC_ONE (LineSpectralFrequencies)
+		autoVEC result = LineSpectralFrequencies_listAllFrequenciesInFrame (me, frameNumber);
+	NUMVEC_ONE_END
+}
+
+DIRECT (NUMMAT_LineSpectralFrequencies_listAllFrequencies) {
+	NUMMAT_ONE (LineSpectralFrequencies)
+		autoMAT result = LineSpectralFrequencies_listAllFrequencies (me);
+	NUMMAT_ONE_END	
+}
+
 DIRECT (NEW_LineSpectralFrequencies_to_LPC) {
 	CONVERT_EACH (LineSpectralFrequencies)
 		autoLPC result = LineSpectralFrequencies_to_LPC (me);
@@ -617,10 +642,41 @@ FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U
 	OK
 DO
 	INTEGER_ONE (LPC)
-		Melder_require (frameNumber <= my nx,
-			U"Your frame number (", frameNumber, U") is too large. It should be between 1 and ", my nx, U".");
+		Sampled_checkFrameNumber (me, frameNumber);
 		const integer result = my d_frames [frameNumber]. nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
+}
+
+FORM (NUMVEC_LPC_listAllCoefficientsInFrame, U"", U"") {
+	NATURAL (frameNumber, U"Frame number", U"10")
+	OK
+DO
+	NUMVEC_ONE (LPC)
+		autoVEC result = LPC_listAllCoefficientsInFrame (me, frameNumber);
+	NUMVEC_ONE_END
+}
+
+DIRECT (NUMMAT_LPC_listAllCoefficients) {
+	NUMMAT_ONE (LPC)
+		autoMAT result = LPC_listAllCoefficients (me);
+	NUMMAT_ONE_END	
+}
+
+FORM (REAL_LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in frame...") {
+	NATURAL (frameNumber, U"Frame number", U"10")
+	OK
+DO
+	NUMBER_ONE (LPC)
+		double result = undefined;
+		if (frameNumber > 0 && frameNumber <= my nx)
+			result = my d_frames [frameNumber] .gain;
+	NUMBER_ONE_END (U" gain in frame ", frameNumber)
+}
+
+DIRECT (NUMVEC_LPC_listAllGains) {
+	NUMVEC_ONE (LPC)
+		autoVEC result = LPC_listAllGains (me);
+	NUMVEC_ONE_END
 }
 
 FORM (GRAPHICS_LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...") {
@@ -1066,6 +1122,12 @@ void praat_uvafon_LPC_init () {
 
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"LineSpectralFrequencies help", 0, 0, HELP_LineSpectralFrequencies_help);
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"Draw frequencies...", 0, 0, GRAPHICS_LineSpectralFrequencies_drawFrequencies);
+	praat_addAction1 (classLineSpectralFrequencies, 0, QUERY_BUTTON, 0, 0, 0);
+		praat_TimeFrameSampled_query_init (classLineSpectralFrequencies);
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", 0, 1, INTEGER_LineSpectralFrequencies_getNumberOfFrequencies);
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get frequencies in frame...", 0, 1, NUMVEC_LineSpectralFrequencies_listAllFrequenciesInFrame);
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"List all frequencies", 0, 1, NUMMAT_LineSpectralFrequencies_listAllFrequencies);
+
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"To LPC", 0, 0, NEW_LineSpectralFrequencies_to_LPC);
 	
 	praat_addAction1 (classLPC, 0, U"LPC help", 0, 0, HELP_LPC_help);
@@ -1075,7 +1137,13 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLPC, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classLPC);
 		praat_addAction1 (classLPC, 1, U"Get sampling interval", 0, 1, REAL_LPC_getSamplingInterval);
+		praat_addAction1 (classLPC, 1, U"-- get coefficients --", nullptr, 1, nullptr);
 		praat_addAction1 (classLPC, 1, U"Get number of coefficients...", 0, 1, INTEGER_LPC_getNumberOfCoefficients);
+		praat_addAction1 (classLPC, 1, U"Get coefficients in frame...", 0, 1, NUMVEC_LPC_listAllCoefficientsInFrame);
+		praat_addAction1 (classLPC, 1, U"List all coefficients", 0, 1, NUMMAT_LPC_listAllCoefficients);
+		praat_addAction1 (classLPC, 1, U"-- get gain --", nullptr, 1, nullptr);
+		praat_addAction1 (classLPC, 1, U"Get gain in frame...", 0, 1, REAL_LPC_getGainInFrame);
+		praat_addAction1 (classLPC, 1, U"List all gains", 0, 1, NUMVEC_LPC_listAllGains);
 	praat_addAction1 (classLPC, 0, MODIFY_BUTTON, 0, 0, 0);
 		praat_TimeFunction_modify_init (classLPC);
 	praat_addAction1 (classLPC, 0, U"Extract", 0, 0, 0);
