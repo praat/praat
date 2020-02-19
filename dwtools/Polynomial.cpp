@@ -675,11 +675,11 @@ void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
 		integer n = 1;
 		my coefficients [1] = - roots [1];
 		my coefficients [2] = 1.0;
-		for (integer i = 2; i <= roots.size; i ++) {
+		for (integer iroot = 2; iroot <= roots.size; iroot ++) {
 			my coefficients [n + 2] = my coefficients [n + 1];
 			for (integer j = n; j >= 1; j --)
-				my coefficients [j + 1] = my coefficients [j] - my coefficients [j + 1] * roots [i];
-			my coefficients [1] *= -roots [i];
+				my coefficients [j + 1] = my coefficients [j] - my coefficients [j + 1] * roots [iroot];
+			my coefficients [1] *= -roots [iroot];
 			n ++;
 		}
 		my numberOfCoefficients = n + 1;
