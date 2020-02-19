@@ -1,6 +1,6 @@
 /* LineSpectralFrequencies_def.h
  *
- * Copyright (C) 2016-2018 David Weenink
+ * Copyright (C) 2016-2020 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,10 @@ oo_DEFINE_CLASS (LineSpectralFrequencies, Sampled)
 	#if oo_DECLARING
 		void v_info ()
 			override;
+		conststring32 v_getIndexText () const
+			override { return U"frame number"; }
+		conststring32 v_getNxText () const
+			override { return U"the number of frames"; }
 	#endif
 
 oo_END_CLASS (LineSpectralFrequencies)
