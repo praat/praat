@@ -592,12 +592,12 @@ DO
 	INTEGER_ONE_END (U" frequencies")
 }
 
-FORM (NUMVEC_LineSpectralFrequencies_listAllFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
+FORM (NUMVEC_LineSpectralFrequencies_listFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
 	NUMVEC_ONE (LineSpectralFrequencies)
-		autoVEC result = LineSpectralFrequencies_listAllFrequenciesInFrame (me, frameNumber);
+		autoVEC result = LineSpectralFrequencies_listFrequenciesInFrame (me, frameNumber);
 	NUMVEC_ONE_END
 }
 
@@ -1125,7 +1125,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLineSpectralFrequencies, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classLineSpectralFrequencies);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", 0, 1, INTEGER_LineSpectralFrequencies_getNumberOfFrequencies);
-		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get frequencies in frame...", 0, 1, NUMVEC_LineSpectralFrequencies_listAllFrequenciesInFrame);
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"List frequencies in frame...", 0, 1, NUMVEC_LineSpectralFrequencies_listFrequenciesInFrame);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"List all frequencies", 0, 1, NUMMAT_LineSpectralFrequencies_listAllFrequencies);
 
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"To LPC", 0, 0, NEW_LineSpectralFrequencies_to_LPC);
