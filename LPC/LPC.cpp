@@ -29,6 +29,7 @@
 
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
+#include "Roots.h"
 
 #include "oo_DESTROY.h"
 #include "LPC_def.h"

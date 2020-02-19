@@ -137,7 +137,9 @@ inline bool NUMequal (bool x, bool y) {
 inline bool NUMequal (byte x, byte y) {
 	return x == y;
 }
-
+inline bool NUMequal (dcomplex x, dcomplex y) {
+	return x.real() == y.real() && x.imag() == y.imag(); // 
+}
 template <typename T>
 bool NUMequal (constvector<T> const& x, constvector<T> const& y) noexcept {
 	const integer n = x.size;

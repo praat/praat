@@ -40,20 +40,19 @@ void Formant_Frame_scale (Formant_Frame me, double scale) {
 }
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin) {
-	const integer n = my max - my min + 1;
-	autoVEC fc = newVECzero (n);
-	autoVEC bc = newVECzero (n);
+	autoVEC fc = newVECzero (my numberOfRoots);
+	autoVEC bc = newVECzero (my numberOfRoots);
 	/*
 		Determine the formants and bandwidths
 	*/
 	thy nFormants = 0;
 	const double fLow = margin, fHigh = samplingFrequency / 2 - margin;
-	for (integer i = my min; i <= my max; i ++) {
-		if (my v [i].imag() < 0.0)
+	for (integer i = 1; i <= my numberOfRoots; i ++) {
+		if (my roots [i].imag() < 0.0)
 			continue;
-		const double f = fabs (atan2 (my v [i].imag(), my v [i].real())) * samplingFrequency / 2.0 / NUMpi;
+		const double f = fabs (atan2 (my roots [i].imag(), my roots [i].real())) * samplingFrequency / 2.0 / NUMpi;
 		if (f >= fLow && f <= fHigh) {
-			double b = - log (dcomplex_abs (my v [i])) * samplingFrequency / NUMpi;
+			double b = - log (dcomplex_abs (my roots [i])) * samplingFrequency / NUMpi;
 			thy nFormants ++;
 			fc [thy nFormants] = f;
 			bc [thy nFormants] = b;

@@ -652,7 +652,7 @@ FORM (NUMVEC_LPC_listAllCoefficientsInFrame, U"", U"") {
 	OK
 DO
 	NUMVEC_ONE (LPC)
-		autoVEC result = LPC_listAllCoefficientsInFrame (me, frameNumber);
+		autoVEC result = LPC_listCoefficientsInFrame (me, frameNumber);
 	NUMVEC_ONE_END
 }
 

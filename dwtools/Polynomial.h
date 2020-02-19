@@ -2,7 +2,7 @@
 #define _Polynomial_h_
 /* Polynomial.h
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #define FITTER_PARAMETER_FREE 0
 #define FITTER_PARAMETER_FIXED 1
 
-#include "SimpleVector.h"
 #include "Function.h"
 #include "TableOfReal.h"
 #include "Graphics.h"
@@ -177,43 +176,11 @@ autoLegendreSeries LegendreSeries_getDerivative (LegendreSeries me);
 
 autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me);
 
-Thing_define (Roots, ComplexVector) {
-};
-
-autoRoots Roots_create (integer numberOfRoots);
-
-void Roots_fixIntoUnitCircle (Roots me);
-
-void Roots_sort (Roots me);
-/* Sort to size of real part a+bi, a-bi*/
-
-dcomplex Roots_evaluate_z (Roots me, dcomplex z);
-
-autoRoots Polynomial_to_Roots_ev (Polynomial me);
-
-integer Roots_getNumberOfRoots (Roots me);
-
-void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	conststring32 symbol, double fontSize, bool garnish);
-
-dcomplex Roots_getRoot (Roots me, integer index);
-
-void Roots_setRoot (Roots me, integer index, double re, double im);
-
-autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
-
-autoRoots Polynomial_to_Roots (Polynomial me);
-/* Find roots of polynomial and polish them */
-
 double Polynomial_findOneSimpleRealRoot_nr (Polynomial me, double xmin, double xmax);
 double Polynomial_findOneSimpleRealRoot_ridders (Polynomial me, double xmin, double xmax);
 /* Preconditions: there must be exactly one root in the [xmin, xmax] interval;
  * Root will be found by newton-raphson with bisecting
  */
-
-void Roots_Polynomial_polish (Roots me, Polynomial thee);
-
-autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
 
 autoPolynomial TableOfReal_to_Polynomial (TableOfReal me, integer degree, integer xcol, integer ycol, integer scol);
 

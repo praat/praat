@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2020 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,6 +105,7 @@
 #include "PitchTierEditor.h"
 #include "Polygon_extensions.h"
 #include "Polynomial.h"
+#include "Roots.h"
 #include "Sound_extensions.h"
 #include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"

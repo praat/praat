@@ -39,7 +39,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Pitch_extensions.o Polynomial.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o Proximity_and_Distance.o \
-	Resonator.o \
+	Resonator.o Roots.o \
 	Sound_and_MixingMatrix.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \

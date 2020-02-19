@@ -1,6 +1,6 @@
 /* LPC_and_LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016-2019 David Weenink
+ * Copyright (C) 2016-2020 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "LPC_and_LineSpectralFrequencies.h"
 #include "NUM2.h"
 #include "Polynomial.h"
-
+#include "Roots.h"
 
 /*
 	Conversion from Y(w) to a polynomial in x (= 2 cos (w))
@@ -185,16 +185,16 @@ static void Roots_fromPolynomial (Roots me, Polynomial g, integer numberOfDeriva
 #endif
 
 static integer Roots_fromPolynomial_grid (Roots me, Polynomial thee, double gridSize) {
-	Melder_assert (my max >= thy numberOfCoefficients - 1);
+	Melder_assert (my numberOfRoots >= thy numberOfCoefficients - 1);
 	double xmin = thy xmin;
 	integer numberOfRootsFound = 0;
 	while (xmin < thy xmax && numberOfRootsFound < thy numberOfCoefficients - 1) {
 		double xmax = xmin + gridSize;
 		xmax = xmax > thy xmax ? thy xmax : xmax;
 		const double root = Polynomial_findOneSimpleRealRoot_ridders (thee, xmin, xmax);
-		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].real() != root)) {
-			my v [++ numberOfRootsFound]. real (root); // root not at border of interval
-			my v [numberOfRootsFound]. imag (0.0);
+		if (isdefined (root) && (numberOfRootsFound == 0 || my roots [numberOfRootsFound].real() != root)) {
+			my roots [++ numberOfRootsFound]. real (root); // root not at border of interval
+			my roots [numberOfRootsFound]. imag (0.0);
 		}
 		xmin = xmax;
 	}
@@ -227,13 +227,13 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 		i.e. highest root corresponds to lowest frequency
 	*/
 	for (integer i = 1; i <= half_order_g1; i ++)
-		my frequencies [2 * i - 1] = acos (roots -> v [half_order_g1 + 1 - i].real() / 2.0) / NUMpi * maximumFrequency;
+		my frequencies [2 * i - 1] = acos (roots -> roots [half_order_g1 + 1 - i].real() / 2.0) / NUMpi * maximumFrequency;
 	/*
 		The roots of g2 lie inbetween the roots of g1
 	*/
 	for (integer i = 1; i <= half_order_g2; i ++) {
-		const double xmax = roots -> v [half_order_g1 + 1 - i].real();
-		const double xmin = ( i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].real() );
+		const double xmax = roots -> roots [half_order_g1 + 1 - i].real();
+		const double xmin = ( i == half_order_g1 ? g1 -> xmin : roots -> roots [half_order_g1 - i].real() );
 		const double root = Polynomial_findOneSimpleRealRoot_ridders (g2, xmin, xmax);
 		if (isdefined (root))
 			my frequencies [2 * i] = acos (root / 2.0) / NUMpi * maximumFrequency;
