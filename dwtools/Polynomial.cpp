@@ -1,6 +1,6 @@
 /* Polynomial.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
   djmw 20110304 Thing_new
 */
 
+#include "Roots.h"
 #include "Polynomial.h"
 #include "SVD.h"
-#include "NUMclapack.h"
 #include "TableOfReal_extensions.h"
 #include "NUMmachar.h"
 
@@ -68,24 +68,6 @@ void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, 
 		*out_df = (double) dp;
 }
 
-/* Get value and derivative */
-static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, dcomplex *out_p, dcomplex *out_dp) {
-	longdouble pr = my coefficients [my numberOfCoefficients], pi = 0.0;
-	longdouble dpr = 0.0, dpi = 0.0, x = in_z->real(), y = in_z->imag();
-
-	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
-		longdouble tr   = dpr;
-		dpr  =  dpr * x -  dpi * y + pr;
-		dpi  =   tr * y +  dpi * x + pi;
-		tr   = pr;
-		pr   =   pr * x -   pi * y + my coefficients [i];
-		pi   =   tr * y +   pi * x;
-	}
-	if (out_p)
-		*out_p = { (double) pr, (double) pi };
-	if (out_dp)
-		*out_dp = { (double) dpr, (double) dpi };
-}
 
 autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives) {
 	/* 
@@ -140,60 +122,6 @@ static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 	}
 }
 
-
-static double Polynomial_polish_realroot (Polynomial me, double x, integer maxit) {
-	if (! NUMfpp)
-		NUMmachar ();
-	double xbest = x, pmin = 1e308;
-	for (integer i = 1; i <= maxit; i ++) {
-		double p, dp;
-		Polynomial_evaluateWithDerivative (me, x, & p, & dp);
-		const double fabsp = fabs (p);
-		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
-			/*
-				We stop, because the approximation is getting worse or we cannot get any closer.
-				Return the previous (hitherto best) value for x.
-			*/
-			x = xbest;
-			return x;
-		}
-		pmin = fabsp;
-		xbest = x;
-		if (fabs (dp) == 0.0)
-			return x;
-		const double dx = p / dp;   // Newton-Raphson
-		x -= dx;
-	}
-	return x;
-	// Melder_throw (U"Maximum number of iterations exceeded.");
-}
-
-static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, integer maxit) {
-	if (! NUMfpp)
-		NUMmachar ();
-	dcomplex zbest = *z;
-	double pmin = 1e308;
-	for (integer i = 1; i <= maxit; i ++) {
-		dcomplex p, dp;
-		Polynomial_evaluateWithDerivative_z (me, z, &p, &dp);
-		const double fabsp = dcomplex_abs (p);
-		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
-			/*
-				We stop, because the approximation is getting worse.
-				Return the previous (hitherto best) value for z.
-			*/
-			*z = zbest;
-			return;
-		}
-		pmin = fabsp;
-		zbest = *z;
-		if (dcomplex_abs (dp) == 0.0)
-			return;
-		const dcomplex dz = dcomplex_div (p, dp);   // Newton-Raphson
-		*z = dcomplex_sub (*z, dz);
-	}
-	// Melder_throw (U"Maximum number of iterations exceeded.");
-}
 
 /*
 	Symbolic evaluation of polynomial coefficients.
@@ -581,7 +509,7 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, d
 		autoRoots r = Polynomial_to_Roots (d.get());
 
 		for (integer i = 1; i <= degree - 1; i ++) {
-			const double x = r -> v [i].real();
+			const double x = r -> roots [i].real();
 			if (x > x1 && x < x2) {
 				const double y = v_evaluate (x);
 				if (y > ymx) {
@@ -1030,203 +958,6 @@ autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me) {
 	}
 }
 
-/********* Roots ****************************************************/
-
-Thing_implement (Roots, ComplexVector, 0);
-
-autoRoots Roots_create (integer numberOfRoots) {
-	try {
-		autoRoots me = Thing_new (Roots);
-		ComplexVector_init (me.get(), 1, numberOfRoots);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Roots not created.");
-	}
-}
-
-void Roots_fixIntoUnitCircle (Roots me) {
-	dcomplex z10 { 1.0, 0.0 };
-	for (integer i = my min; i <= my max; i ++) {
-		if (dcomplex_abs (my v [i]) > 1.0)
-			my v [i] = dcomplex_div (z10, dcomplex_conjugate (my v [i]));
-	}
-}
-
-static void NUMdcvector_extrema_re (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
-	double min = v [lo].real(), max = v [lo].real();
-	for (integer i = lo + 1; i <= hi; i ++)
-		if (v [i].real() < min)
-			min = v [i].real();
-		else if (v [i].real() > max)
-			max = v [i].real();
-	if (out_min)
-		*out_min = min;
-	if (out_max)
-		*out_max = max;
-}
-
-static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, double *out_min, double *out_max) {
-	double min = v [lo].imag(), max = v [lo].imag();
-	for (integer i = lo + 1; i <= hi; i ++)
-		if (v [i].imag() < min)
-			min = v [i].imag();
-		else if (v [i].imag() > max)
-			max = v [i].imag();
-	if (out_min)
-		*out_min = min;
-	if (out_max)
-		*out_max = max;
-}
-
-void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	conststring32 symbol, double fontSize, bool garnish)
-{
-	const double oldFontSize = Graphics_inqFontSize (g);
-	const double eps = 1e-6;
-
-	if (rmax <= rmin)
-		NUMdcvector_extrema_re (my v, 1, my max, & rmin, & rmax);
-
-	double denominator = fabs (rmax) > fabs (rmin) ? fabs (rmax) : fabs (rmin);
-	if (denominator == 0.0)
-		denominator = 1.0;
-	if (fabs ((rmax - rmin) / denominator) < eps) {
-		rmin -= 1.0;
-		rmax += 1.0;
-	}
-	if (imax <= imin)
-		NUMdcvector_extrema_im (my v, 1, my max, & imin, & imax);
-	denominator = fabs (imax) > fabs (imin) ? fabs (imax) : fabs (imin);
-	if (denominator == 0.0)
-		denominator = 1.0;
-	if (fabs ((imax - imin) / denominator) < eps) {
-		imin -= 1;
-		imax += 1;
-	}
-	Graphics_setInner (g);
-	Graphics_setWindow (g, rmin, rmax, imin, imax);
-	Graphics_setFontSize (g, fontSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	for (integer i = 1; i <= my max; i ++) {
-		const double re = my v [i].real(), im = my v [i].imag();
-		if (re >= rmin && re <= rmax && im >= imin && im <= imax)
-			Graphics_text (g, re, im, symbol);
-	}
-	Graphics_setFontSize (g, oldFontSize);
-	Graphics_unsetInner (g);
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		if (rmin * rmax < 0.0)
-			Graphics_markLeft (g, 0.0, true, true, true, U"0");
-		if (imin * imax < 0.0)
-			Graphics_markBottom (g, 0.0, true, true, true, U"0");
-		Graphics_marksLeft (g, 2, true, true, false);
-		Graphics_textLeft (g, true, U"Imaginary part");
-		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textBottom (g, true, U"Real part");
-	}
-}
-
-autoRoots Polynomial_to_Roots (Polynomial me) {
-	try {
-		integer np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n;
-		Melder_require (n > 0,
-			U"Cannot find roots of a constant function.");
-		/*
-			Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
-			parts of eigenvalues wr [1..n] and wi [1..n].
-		*/
-		autoVEC hes = newVECzero (n2);
-		autoVEC wr = newVECraw (n);
-		autoVEC wi = newVECraw (n);
-		/*
-			Fill the upper Hessenberg matrix (storage is Fortran)
-			C: [i] [j] -> Fortran: (j-1)*n + i
-		*/
-		for (integer i = 1; i <= n; i ++) {
-			hes [(i - 1) * n + 1] = - (my coefficients [np1 - i] / my coefficients [np1]);
-			if (i < n)
-				hes [(i - 1) * n + 1 + i] = 1.0;
-		}
-
-		// Find out the working storage needed
-
-		char job = 'E', compz = 'N';
-		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
-		double *z = nullptr, wt [1];
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
-		if (info != 0)
-			Melder_require (info > 0,
-				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		lwork = Melder_ifloor (wt [0]);
-		autoVEC work = newVECraw (lwork);
-
-		// Find eigenvalues.
-
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
-		integer nrootsfound = n;
-		integer ioffset = 0;
-		if (info > 0) {
-			/*
-				if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
-				WR and WI contain those eigenvalues which have been successfully computed
-			*/
-			nrootsfound -= info;
-			Melder_require (nrootsfound > 0,
-				U"No roots found.");
-			Melder_warning (U"Calculated only ", nrootsfound, U" roots.");
-			ioffset = info;
-		} else if (info < 0) {
-			Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		}
-
-		autoRoots thee = Roots_create (nrootsfound);
-		for (integer i = 1; i <= nrootsfound; i ++) {
-			thy v [i]. real (wr [ioffset + i]);
-			thy v [i]. imag (wi [ioffset + i]);
-		}
-		Roots_Polynomial_polish (thee.get(), me);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no roots can be calculated.");
-	}
-}
-
-void Roots_sort (Roots me) {
-	(void) me;
-}
-
-// Precondition: complex roots occur in pairs (a,bi), (a,-bi) with b>0
-void Roots_Polynomial_polish (Roots me, Polynomial thee) {
-	const integer maxit = 80;
-	integer i = my min;
-	while (i <= my max) {
-		const double im = my v [i].imag(), re = my v [i].real();
-		if (im != 0.0) {
-			Polynomial_polish_complexroot_nr (thee, & my v [i], maxit);
-			if (i < my max && im == - my v [i + 1].imag() && re == my v [i + 1].real()) {
-				my v [i + 1]. real (my v [i].real());
-				my v [i + 1]. imag (- my v [i].imag());
-				i ++;
-			}
-		} else {
-			my v [i]. real (Polynomial_polish_realroot (thee, my v [i].real(), maxit));
-		}
-		i ++;
-	}
-}
-
-autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal) {
-	try {
-		(void) me;
-		autoPolynomial thee;
-		if (! rootsAreReal)
-			throw MelderError();
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (U"Not implemented yet");
-	}
-}
 
 static double dpoly_nr (double x, double *df, void *closure) {
 	double f;
@@ -1288,16 +1019,16 @@ void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
 }
 
 void Roots_setRoot (Roots me, integer index, double re, double im) {
-	Melder_require (index >= my min && index <= my max,
-		U"Index should be in interval [1, ", my max, U"].");
-	my v [index]. real (re);
-	my v [index]. imag (im);
+	Melder_require (index >= 1 && index <= my numberOfRoots,
+		U"Index should be in interval [1, ", my numberOfRoots, U"].");
+	my roots [index]. real (re);
+	my roots [index]. imag (im);
 }
 
 dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
 	dcomplex result = {1, 0};
-	for (integer i = my min; i <= my max; i ++) {
-		dcomplex t = dcomplex_sub (z, my v [i]);
+	for (integer i = 1; i <= my numberOfRoots; i ++) {
+		dcomplex t = dcomplex_sub (z, my roots [i]);
 		result = dcomplex_mul (result, t);
 	}
 	return result;
@@ -1325,13 +1056,13 @@ autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numbe
 }
 
 integer Roots_getNumberOfRoots (Roots me) {
-	return my max;
+	return my numberOfRoots;
 }
 
 dcomplex Roots_getRoot (Roots me, integer index) {
-	Melder_require (index > 0 && index <= my max,
+	Melder_require (index > 0 && index <= my numberOfRoots,
 		U"Root index out of range.");
-	return my v [index];
+	return my roots [index];
 }
 
 /* Can be speeded up by doing a FFT */

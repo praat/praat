@@ -52,10 +52,9 @@ static inline autoVEC LPC_listAllGains (LPC me) {
 	return result;
 }
 
-static inline autoVEC LPC_listAllCoefficientsInFrame (LPC me, integer frameNumber) {
+static inline autoVEC LPC_listCoefficientsInFrame (LPC me, integer frameNumber) {
 	my checkIndex (frameNumber);
-	autoVEC result = newVECzero (my maxnCoefficients);
-	result <<= my d_frames [frameNumber] .a;
+	autoVEC result = newVECcopy (my d_frames [frameNumber] .a);
 	return result;
 }
 
