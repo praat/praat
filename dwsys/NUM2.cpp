@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1993-2020 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2979,6 +2979,17 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 	} catch (MelderError) {
 		Melder_throw (U"Solution of sparse problem not found.");
 	}
+}
+
+void NUMpolynomial_recurrence (VEC const& pn, double a, double b, double c, constVEC const& pnm1, constVEC const& pnm2) {
+	const integer degree = pn.size - 1;
+	Melder_assert (degree > 1 && pnm1.size >= pn.size && pnm2.size >= pn.size);
+
+	pn [1] = b * pnm1 [1] + c * pnm2 [1];
+	for (integer i = 2; i <= degree - 1; i ++)
+		pn [i] = a * pnm1 [i - 1] + b * pnm1 [i] + c * pnm2 [i];
+	pn [degree] = a * pnm1 [degree - 1] + b * pnm1 [degree];
+	pn [degree + 1] = a * pnm1 [degree];
 }
 
 /* End of file NUM2.cpp */
