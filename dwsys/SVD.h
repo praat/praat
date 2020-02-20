@@ -1,6 +1,8 @@
+#ifndef _SVD_h_
+#define _SVD_h_
 /* SVD.h
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +22,6 @@
  djmw 20020423 GPL header
  djmw 20120808 Latest modification.
 */
-#ifndef _SVD_h_
-#define _SVD_h_
 
 #include "NUM2.h"
 #include "Data.h"
@@ -46,12 +46,12 @@ void SVD_update (SVD me, constMATVU const& m);
 
 void SVD_compute (SVD me);
 
-void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result);
-autoVEC SVD_solve (SVD me, constVECVU const& b);
 /* Solve Ax = b */
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result);
+autoVEC SVD_solve (SVD me, constVECVU const& b);
 
 /* Solve A*X = B */
-void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result);
+void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU const& result);
 autoMAT SVD_solve (SVD me, constMATVU const& b);
 
 void SVD_sort (SVD me);
@@ -88,7 +88,7 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to);
 */
 
 autoMAT SVD_getSquared (SVD me, bool inverse);
-void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse);
+void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m);
 // compute V D^2 V' or V D^-2 V'
 
 integer SVD_getRank (SVD me);

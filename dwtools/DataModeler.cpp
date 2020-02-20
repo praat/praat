@@ -844,7 +844,7 @@ void DataModeler_fit (DataModeler me) {
 				}
 			}
 		} else {
-			SVD_getSquared_preallocated (cov -> data.get(), thee.get(), true);
+			SVD_getSquared_preallocated (thee.get(), true, cov -> data.get());
 		}
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");
