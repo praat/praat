@@ -16,18 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20030619 Added SVD_compute before SVD_solve
- djmw 20060510 Polynomial_to_Roots: changed behaviour. All roots found are now saved.
- 	In previous version a nullptr pointer was returned. New error messages.
- djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
- djmw 20071201 Melder_warning<n>
- djmw 20080122 float -> double
-  djmw 20110304 Thing_new
-*/
-
 #include "Spline.h"
+#include "NUM2.h"
 
 #include "oo_DESTROY.h"
 #include "Spline_def.h"
@@ -142,7 +132,7 @@ static double NUMispline2 (constVEC points, integer order, integer index, double
 	return double (y / (order + 1));
 }
 
-Thing_implement (Spline, FunctionTerms, 0);
+Thing_implement (Spline, FunctionSeries, 0);
 
 double structSpline :: v_evaluate (double /* x */) {
 	return 0.0;
@@ -156,7 +146,7 @@ integer structSpline :: v_getOrder () {
 	return degree + 1;
 }
 
-/* Precondition: FunctionTerms part inited + degree */
+/* Precondition: FunctionSeries part inited + degree */
 static void Spline_initKnotsFromString (Spline me, integer degree, conststring32 interiorKnots_string) {
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
@@ -183,7 +173,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 void Spline_init (Spline me, double xmin, double xmax, integer degree, integer numberOfCoefficients, integer numberOfKnots) {
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
-	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
+	FunctionSeries_init (me, xmin, xmax, numberOfCoefficients);
 	my knots = newVECzero (numberOfKnots);
 	my degree = degree;
 	my numberOfKnots = numberOfKnots;
@@ -198,7 +188,7 @@ void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double y
 		return;
 
 	if (ymax <= ymin)
-		FunctionTerms_getExtrema (me, xmin, xmax, nullptr, & ymin, nullptr, & ymax);
+		FunctionSeries_getExtrema (me, xmin, xmax, nullptr, & ymin, nullptr, & ymax);
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
@@ -296,7 +286,7 @@ autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree,
 		Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 			U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 		autoMSpline me = Thing_new (MSpline);
-		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, true);
+		FunctionSeries_initFromString (me.get(), xmin, xmax, coef, true);
 		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {
@@ -345,7 +335,7 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree,
 		Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 			U"Degree should should not exceed ", Spline_MAXIMUM_DEGREE);
 		autoISpline me = Thing_new (ISpline);
-		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, true);
+		FunctionSeries_initFromString (me.get(), xmin, xmax, coef, true);
 		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {

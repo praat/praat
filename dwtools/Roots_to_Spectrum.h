@@ -1,6 +1,8 @@
-/* Spline_def.h
+#ifndef _Roots_to_Spectrum_h_
+#define _Roots_to_Spectrum_h_
+/* Roots_to_Spectrum.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT Spline
-oo_DEFINE_CLASS (Spline, FunctionTerms)
+#include "Roots.h"
+#include "Spectrum.h"
 
-	oo_INTEGER (degree)
-	oo_INTEGER (numberOfKnots)
-	oo_VEC (knots, numberOfKnots)
-	
-	#if oo_DECLARING
-		double v_evaluate (double x)
-			override;
-		integer v_getDegree ()
-			override;
+autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
 
-		virtual integer v_getOrder ();
-	#endif
-
-oo_END_CLASS (Spline)	
-#undef ooSTRUCT
-
-/* End of file Spline_def.h */	
+#endif /* _Roots_to_Spectrum_h_ */

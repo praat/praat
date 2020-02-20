@@ -36,17 +36,16 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Matrix_Categories.o MDS.o \
 	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
-	Pitch_extensions.o Polynomial.o \
+	Pitch_extensions.o Polynomial_to_Spectrum.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o Proximity_and_Distance.o \
-	Resonator.o Roots.o \
+	Resonator.o Roots_to_Spectrum.o \
 	Sound_and_MixingMatrix.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrogram_extensions.o Spectrum_extensions.o SSCP.o Strings_extensions.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
-	Spline.o \
 	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \

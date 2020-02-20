@@ -1376,4 +1376,6 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 	underflow_threshold / macheps.
 */
 
+void NUMpolynomial_recurrence (VEC const& pn, double a, double b, double c, constVEC const& pnm1, constVEC const& pnm2);
+
 #endif // _NUM2_h_

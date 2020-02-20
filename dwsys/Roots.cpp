@@ -1,6 +1,6 @@
 /* Roots.cpp
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,24 @@
 #include "Roots_def.h"
 #include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Roots_def.h"
-#include "oo_WRITE_TEXT.h"
-#include "Roots_def.h"
-#include "oo_WRITE_BINARY.h"
-#include "Roots_def.h"
 #include "oo_READ_TEXT.h"
 #include "Roots_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "Roots_def.h"
 #include "oo_READ_BINARY.h"
+#include "Roots_def.h"
+#include "oo_WRITE_BINARY.h"
 #include "Roots_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Roots_def.h"
 
-/********* Roots ****************************************************/
 
 Thing_implement (Roots, Daata, 1);
+
+void structRoots :: v_info () {
+	structDaata :: v_info ();
+	MelderInfo_writeLine (U"Number of roots: ", numberOfRoots);
+}
 
 autoRoots Roots_create (integer numberOfRoots) {
 	try {
@@ -53,6 +57,16 @@ autoRoots Roots_create (integer numberOfRoots) {
 	} catch (MelderError) {
 		Melder_throw (U"Roots not created.");
 	}
+}
+
+integer Roots_getNumberOfRoots (Roots me) {
+	return my numberOfRoots;
+}
+
+dcomplex Roots_getRoot (Roots me, integer index) {
+	Melder_require (index > 0 && index <= my numberOfRoots,
+		U"Root index out of range.");
+	return my roots [index];
 }
 
 void Roots_fixIntoUnitCircle (Roots me) {

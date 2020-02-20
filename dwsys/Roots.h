@@ -23,10 +23,12 @@
  djmw 20110306 Latest modification.
 */
 
+#include "Data.h"
 #include "Graphics.h"
 #include "Polynomial.h"
+
 #include "Roots_def.h"
-#include "Spectrum.h"
+
 
 autoRoots Roots_create (integer numberOfRoots);
 
@@ -47,8 +49,6 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 dcomplex Roots_getRoot (Roots me, integer index);
 
 void Roots_setRoot (Roots me, integer index, double re, double im);
-
-autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
 
 autoRoots Polynomial_to_Roots (Polynomial me);
 /* Find roots of polynomial and polish them */

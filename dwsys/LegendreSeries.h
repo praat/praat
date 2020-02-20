@@ -1,6 +1,8 @@
-/* Polynomial_def.h
+#ifndef _LegendreSeries_h_
+#define _LegendreSeries_h_
+/* LegendreSeries.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +18,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 1999
- djmw 20020813 GPL header
-*/
 
-#define ooSTRUCT FunctionTerms
-oo_DEFINE_CLASS (FunctionTerms, Function)
+#include "FunctionSeries.h"
+#include "Polynomial.h"
 
-	oo_INTEGER (numberOfCoefficients)
-	oo_VEC (coefficients, numberOfCoefficients)
-	
-	#if ! oo_READING && ! oo_WRITING
-		oo_INTEGER (_capacity)
-	#endif
-		
-	#if oo_READING
-		_capacity = numberOfCoefficients;
-	#endif
-
-	#if oo_DECLARING
+Thing_define (LegendreSeries, FunctionSeries) {
+	// overridden methods:
+	public:
 		virtual double v_evaluate (double x);
-		virtual dcomplex v_evaluate_z (dcomplex z);
 		virtual void v_evaluateTerms (double x, VEC terms);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
-		virtual integer v_getDegree ();
-	#endif
-	
-oo_END_CLASS (FunctionTerms)	
-#undef ooSTRUCT
+};
 
-/* End of file Polynomial_def.h */	
+autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numberOfPolynomials);
+
+autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, conststring32 s);
+
+autoLegendreSeries LegendreSeries_getDerivative (LegendreSeries me);
+
+autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me);
+
+#endif /* _LegendreSeries_h_ */
