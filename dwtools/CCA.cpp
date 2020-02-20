@@ -1,6 +1,6 @@
 /* CCA.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,8 +137,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		const integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, numberOfDependents, numberOfIndependents);
-		thy yLabels = strings_to_Strings (my columnLabels.get(), 1, numberOfDependents);
-		thy xLabels = strings_to_Strings (my columnLabels.get(), numberOfDependents + 1, my numberOfColumns);
+		thy yLabels = Strings_createFromSTRVEC (my columnLabels.get(), 1, numberOfDependents);
+		thy xLabels = Strings_createFromSTRVEC (my columnLabels.get(), numberOfDependents + 1, my numberOfColumns);
 		thy numberOfObservations = numberOfObservations;
 
 		/*

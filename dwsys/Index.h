@@ -2,7 +2,7 @@
 #define _Index_h_
 /* Index.h
  *
- * Copyright (C) 2005-2019 David Weenink
+ * Copyright (C) 2005-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,16 @@
 #include "Index_def.h"
 
 /*
- * An Index is a summary of an array of strings. 
- * It has two parts: 
- * 1 an OrderedSet of the different strings that occur 
- * 2 an item array with indexes in this OrderedSet
- * Example:
- * Suppose we have a Strings with 7 elements/items "u", "o", "a", "u", "u", "o", "a"
- * The Index derived from this Strings will have 3 elements in its sorted set "a", "o" and "u"
- * The item array with indices will have the following content: 3, 2, 1, 3, 3, 2, 1
+	An Index is a summary of an array of strings.
+	It has two parts: 
+	1 an OrderedSet of the different string classes that occur
+	2 an item array with indexes in this OrderedSet
+	Example:
+	Suppose we have a Strings with 7 elements/items "u", "o", "a", "u", "u", "o", "a"
+	The Index derived from this Strings will have 3 elements in its sorted set "a", "o" and "u"
+	The item array with indices will have the following content: 3, 2, 1, 3, 3, 2, 1
  */
+
 void Index_init (Index me, integer numberOfElements);
 
 autoIndex Index_extractPart (Index me, integer from, integer to);
