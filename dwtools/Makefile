@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 1 April 2019
+# 20 February 2020
 
 include ../makefile.defs
 
@@ -46,6 +46,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrogram_extensions.o Spectrum_extensions.o SSCP.o Strings_extensions.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
+	Spline.o \
 	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \

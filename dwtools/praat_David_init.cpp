@@ -112,6 +112,7 @@
 #include "Spectrogram.h"
 #include "SpeechSynthesizer.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
+#include "Spline.h"
 #include "SSCP.h"
 #include "Strings_extensions.h"
 #include "SVD.h"

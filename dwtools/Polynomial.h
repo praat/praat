@@ -211,38 +211,6 @@ autoChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, 
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 
-void Spline_init (Spline me, double xmin, double xmax, integer degree, integer numberOfCoefficients, integer numberOfKnots);
-
-integer Spline_getOrder (Spline me);
-
-void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
-
-autoSpline Spline_scaleX (Spline me, double xmin, double xmax);
-/* scale domain and knots to new domain */
-
-Thing_define (MSpline, Spline) {
-	// overridden methods:
-	public:
-		virtual double v_evaluate (double x);
-		virtual void v_evaluateTerms (double x, VEC terms);
-};
-
-autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
-
-autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots);
-
-Thing_define (ISpline, Spline) {
-	// overridden methods:
-	public:
-		virtual double v_evaluate (double x);
-		virtual void v_evaluateTerms (double x, VEC terms);
-		virtual integer v_getOrder ();
-};
-
-autoISpline ISpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
-
-autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots);
-
 /****************** fit **********************************************/
 
 void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, INTVEC freezeCoefficients, double tol, int ic, autoCovariance *c);
