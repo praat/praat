@@ -168,7 +168,7 @@ void SVD_compute (SVD me) {
 }
 
 // V D^2 V'or V D^-2 V
-void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse) {
+void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m) {
 	Melder_assert (m.nrow == m.ncol && m.ncol == my numberOfColumns);
 	for (integer i = 1; i <= my numberOfColumns; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -187,11 +187,11 @@ void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse) {
 
 autoMAT SVD_getSquared (SVD me, bool inverse) {
 	autoMAT result = newMATraw (my numberOfColumns, my numberOfColumns);
-	SVD_getSquared_preallocated (result.get(), me, inverse);
+	SVD_getSquared_preallocated (me, inverse, result.get());
 	return result;
 }
 
-void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU result) {
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result) {
 	try {
 		/*
 			Solve UDV' x = b.
@@ -236,7 +236,7 @@ autoVEC SVD_solve (SVD me, constVECVU const& b) {
 /*
 	Solve UDV' X = B.
 */
-void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU result) {
+void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU const& result) {
 	Melder_assert (b.nrow == my numberOfRows && b.ncol == result.ncol);
 	Melder_assert (result.nrow == my numberOfColumns);
 	autoVEC bcol = newVECraw (b.nrow);

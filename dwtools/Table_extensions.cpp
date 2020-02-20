@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2019 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1997-2020 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3207,6 +3207,23 @@ autoTable Table_create_ganong1980 () {
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Ganong table not created.");
+	}
+}
+
+autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly) {
+	try {
+		const integer numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
+		autoTable thee = Table_createWithColumnNames (numberOfRows, U"path id size position");
+		for (integer irow = 1; irow <= numberOfRows; irow ++) {
+			const FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
+			Table_setStringValue (thee.get(), irow, 1, fim -> d_path.get());
+			Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
+			Table_setNumericValue (thee.get(), irow, 3, fim -> d_numberOfBytes);
+			Table_setNumericValue (thee.get(), irow, 4, fim -> d_position);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": no Table created.");
 	}
 }
 

@@ -32,8 +32,6 @@ autoFileInMemory FileInMemoryManager_createFile (FileInMemoryManager me, MelderF
 /* Generates the set with ownership */
 autoFileInMemorySet FileInMemoryManager_extractFiles (FileInMemoryManager me, kMelder_string which, conststring32 criterion);
 
-autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly);
-
 /*
 	File open and read emulations. The FILE * is internally used as an index of the file in the Set.
 */
