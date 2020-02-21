@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2020 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,7 @@
 #include "AmplitudeTier.h"
 #include "Categories.h"
 #include "CategoriesEditor.h"
+#include "ChebyshevSeries.h"
 #include "ClassificationTable.h"
 #include "Collection_extensions.h"
 #include "ComplexSpectrogram.h"
@@ -98,19 +99,22 @@
 #include "LongSound_extensions.h"
 #include "KlattGridEditors.h"
 #include "KlattTable.h"
+#include "LegendreSeries.h"
 #include "Ltas_extensions.h"
 #include "Minimizers.h"
 #include "PatternList.h"
 #include "PCA.h"
 #include "PitchTierEditor.h"
 #include "Polygon_extensions.h"
-#include "Polynomial.h"
+#include "Polynomial_to_Spectrum.h"
+#include "Roots_to_Spectrum.h"
 #include "Sound_extensions.h"
 #include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"
 #include "Spectrogram.h"
 #include "SpeechSynthesizer.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
+#include "Spline.h"
 #include "SSCP.h"
 #include "Strings_extensions.h"
 #include "SVD.h"
@@ -3062,9 +3066,9 @@ DO_ALTERNATIVE (GRAPHICS_old_FormantGrid_draw)
 	GRAPHICS_EACH_END
 }
 
-/****************** FunctionTerms  *********************************/
+/****************** FunctionSeries  *********************************/
 
-FORM (GRAPHICS_FunctionTerms_draw, U"FunctionTerms: Draw", nullptr) {
+FORM (GRAPHICS_FunctionSeries_draw, U"FunctionSeries: Draw", nullptr) {
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -3073,12 +3077,12 @@ FORM (GRAPHICS_FunctionTerms_draw, U"FunctionTerms: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_EACH (FunctionTerms)
-		FunctionTerms_draw (me, GRAPHICS, xmin, xmax, ymin, ymax,extrapolate, garnish);
+	GRAPHICS_EACH (FunctionSeries)
+		FunctionSeries_draw (me, GRAPHICS, xmin, xmax, ymin, ymax,extrapolate, garnish);
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis function", nullptr) {
+FORM (GRAPHICS_FunctionSeries_drawBasisFunction, U"FunctionSeries: Draw basis function", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0")
@@ -3088,107 +3092,107 @@ FORM (GRAPHICS_FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis func
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_EACH (FunctionTerms)
-		FunctionTerms_drawBasisFunction (me, GRAPHICS, index, xmin, xmax, ymin, ymax, extrapolate, garnish);
+	GRAPHICS_EACH (FunctionSeries)
+		FunctionSeries_drawBasisFunction (me, GRAPHICS, index, xmin, xmax, ymin, ymax, extrapolate, garnish);
 	GRAPHICS_EACH_END
 }
 
-FORM (REAL_FunctionTerms_getValue, U"FunctionTerms: Evaluate", nullptr) {
+FORM (REAL_FunctionSeries_getValue, U"FunctionSeries: Evaluate", nullptr) {
 	REAL (x, U"X", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionTerms)
-		double result = FunctionTerms_evaluate (me, x);
+	NUMBER_ONE (FunctionSeries)
+		double result = FunctionSeries_evaluate (me, x);
 	NUMBER_ONE_END (U"")
 }
 
-DIRECT (INTEGER_FunctionTerms_getNumberOfCoefficients) {
-	INTEGER_ONE (FunctionTerms)
+DIRECT (INTEGER_FunctionSeries_getNumberOfCoefficients) {
+	INTEGER_ONE (FunctionSeries)
 		integer result = my numberOfCoefficients;
 	INTEGER_ONE_END (U"")
 }
 
-FORM (REAL_FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", nullptr) {
+FORM (REAL_FunctionSeries_getCoefficient, U"FunctionSeries: Get coefficient", nullptr) {
 	LABEL (U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	NUMBER_ONE (FunctionTerms)
+	NUMBER_ONE (FunctionSeries)
 		double result = ( index > 0 && index <= my numberOfCoefficients ? my coefficients [index] : undefined );
 	NUMBER_ONE_END (U"")
 }
 
-DIRECT (INTEGER_FunctionTerms_getDegree) {
-	INTEGER_ONE (FunctionTerms)
-		integer result = FunctionTerms_getDegree (me);
+DIRECT (INTEGER_FunctionSeries_getDegree) {
+	INTEGER_ONE (FunctionSeries)
+		integer result = FunctionSeries_getDegree (me);
 	INTEGER_ONE_END (U"")
 }
 
-FORM (REAL_FunctionTerms_getMaximum, U"FunctionTerms: Get maximum", U"Polynomial: Get maximum...") {
+FORM (REAL_FunctionSeries_getMaximum, U"FunctionSeries: Get maximum", U"Polynomial: Get maximum...") {
 	LABEL (U"Interval")
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionTerms)
-		double result = FunctionTerms_getMaximum (me, xmin, xmax);
+	NUMBER_ONE (FunctionSeries)
+		double result = FunctionSeries_getMaximum (me, xmin, xmax);
 	NUMBER_ONE_END (U" (maximum)")
 }
 
-FORM (REAL_FunctionTerms_getMinimum, U"FunctionTerms: Get minimum", U"Polynomial: Get minimum...") {
+FORM (REAL_FunctionSeries_getMinimum, U"FunctionSeries: Get minimum", U"Polynomial: Get minimum...") {
 	LABEL (U"Interval")
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionTerms)
-		double result = FunctionTerms_getMinimum (me, xmin, xmax);
+	NUMBER_ONE (FunctionSeries)
+		double result = FunctionSeries_getMinimum (me, xmin, xmax);
 	NUMBER_ONE_END (U" (minimum)")
 }
 
-FORM (REAL_FunctionTerms_getXOfMaximum, U"FunctionTerms: Get x of maximum", U"Polynomial: Get x of maximum...") {
+FORM (REAL_FunctionSeries_getXOfMaximum, U"FunctionSeries: Get x of maximum", U"Polynomial: Get x of maximum...") {
 	LABEL (U"Interval")
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionTerms)
-		double result = FunctionTerms_getXOfMaximum (me, xmin, xmax);
+	NUMBER_ONE (FunctionSeries)
+		double result = FunctionSeries_getXOfMaximum (me, xmin, xmax);
 	NUMBER_ONE_END (U" (x of maximum)")
 }
 
-FORM (REAL_FunctionTerms_getXOfMinimum, U"FunctionTerms: Get x of minimum", U"Polynomial: Get x of minimum...") {
+FORM (REAL_FunctionSeries_getXOfMinimum, U"FunctionSeries: Get x of minimum", U"Polynomial: Get x of minimum...") {
 	LABEL (U"Interval")
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionTerms)
-		double result = FunctionTerms_getXOfMinimum (me, xmin, xmax);
+	NUMBER_ONE (FunctionSeries)
+		double result = FunctionSeries_getXOfMinimum (me, xmin, xmax);
 	NUMBER_ONE_END (U" (x of minimum)")
 }
 
-FORM (MODIFY_FunctionTerms_setCoefficient, U"FunctionTerms: Set coefficient", nullptr) {
+FORM (MODIFY_FunctionSeries_setCoefficient, U"FunctionSeries: Set coefficient", nullptr) {
 	LABEL (U"p(x) = c[1]F[0] + c[2]F[1] + ... c[n+1]F[n]")
 	LABEL (U"F[k] is of degree k")
 	NATURAL (index, U"Index", U"1")
 	REAL (value, U"Value", U"0.0")
 	OK
 DO
-	MODIFY_EACH (FunctionTerms)
-		FunctionTerms_setCoefficient (me, index, value);
+	MODIFY_EACH (FunctionSeries)
+		FunctionSeries_setCoefficient (me, index, value);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_FunctionTerms_setDomain, U"FunctionTerms: Set domain", nullptr) {
+FORM (MODIFY_FunctionSeries_setDomain, U"FunctionSeries: Set domain", nullptr) {
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"2.0")
 	OK
 DO
-	MODIFY_EACH (FunctionTerms)
+	MODIFY_EACH (FunctionSeries)
 		if (xmax <= xmin)
 			Melder_throw (U"Xmax should be larger than Xmin.");
-		FunctionTerms_setDomain (me, xmin, xmax);
+		FunctionSeries_setDomain (me, xmin, xmax);
 	MODIFY_EACH_END
 }
 
@@ -7821,23 +7825,23 @@ static void praat_FilterBank_all_init (ClassInfo klas) {
 	praat_addAction1 (klas, 2, U"Convolve...", nullptr, praat_DEPRECATED_2014, NEW1_FilterBanks_convolve);
 }
 
-static void praat_FunctionTerms_init (ClassInfo klas) {
+static void praat_FunctionSeries_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, DRAW_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (klas, 0, U"Draw...", nullptr, 1, GRAPHICS_FunctionTerms_draw);
-	praat_addAction1 (klas, 0, U"Draw basis function...", nullptr, 1, GRAPHICS_FunctionTerms_drawBasisFunction);
+	praat_addAction1 (klas, 0, U"Draw...", nullptr, 1, GRAPHICS_FunctionSeries_draw);
+	praat_addAction1 (klas, 0, U"Draw basis function...", nullptr, 1, GRAPHICS_FunctionSeries_drawBasisFunction);
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (klas, 1, U"Get number of coefficients", nullptr, 1, INTEGER_FunctionTerms_getNumberOfCoefficients);
-	praat_addAction1 (klas, 1, U"Get coefficient...", nullptr, 1, REAL_FunctionTerms_getCoefficient);
-	praat_addAction1 (klas, 1, U"Get degree", nullptr, 1, INTEGER_FunctionTerms_getDegree);
+	praat_addAction1 (klas, 1, U"Get number of coefficients", nullptr, 1, INTEGER_FunctionSeries_getNumberOfCoefficients);
+	praat_addAction1 (klas, 1, U"Get coefficient...", nullptr, 1, REAL_FunctionSeries_getCoefficient);
+	praat_addAction1 (klas, 1, U"Get degree", nullptr, 1, INTEGER_FunctionSeries_getDegree);
 	praat_addAction1 (klas, 0, U"-- function specifics --", nullptr, 1, 0);
-	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, REAL_FunctionTerms_getValue);
-	praat_addAction1 (klas, 1, U"Get minimum...", nullptr, 1, REAL_FunctionTerms_getMinimum);
-	praat_addAction1 (klas, 1, U"Get x of minimum...", nullptr, 1, REAL_FunctionTerms_getXOfMinimum);
-	praat_addAction1 (klas, 1, U"Get maximum...", nullptr, 1, REAL_FunctionTerms_getMaximum);
-	praat_addAction1 (klas, 1, U"Get x of maximum...", nullptr, 1, REAL_FunctionTerms_getXOfMaximum);
+	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, REAL_FunctionSeries_getValue);
+	praat_addAction1 (klas, 1, U"Get minimum...", nullptr, 1, REAL_FunctionSeries_getMinimum);
+	praat_addAction1 (klas, 1, U"Get x of minimum...", nullptr, 1, REAL_FunctionSeries_getXOfMinimum);
+	praat_addAction1 (klas, 1, U"Get maximum...", nullptr, 1, REAL_FunctionSeries_getMaximum);
+	praat_addAction1 (klas, 1, U"Get x of maximum...", nullptr, 1, REAL_FunctionSeries_getXOfMaximum);
 	praat_addAction1 (klas, 0, U"Modify -", nullptr, 0, 0);
-	praat_addAction1 (klas, 1, U"Set domain...", nullptr, 1, MODIFY_FunctionTerms_setDomain);
-	praat_addAction1 (klas, 1, U"Set coefficient...", nullptr, 1, MODIFY_FunctionTerms_setCoefficient);
+	praat_addAction1 (klas, 1, U"Set domain...", nullptr, 1, MODIFY_FunctionSeries_setDomain);
+	praat_addAction1 (klas, 1, U"Set coefficient...", nullptr, 1, MODIFY_FunctionSeries_setCoefficient);
 	praat_addAction1 (klas, 0, U"Analyse", nullptr, 0, 0);
 }
 
@@ -7865,7 +7869,7 @@ static void praat_PatternList_query_init (ClassInfo klas) {
 }
 
 static void praat_Spline_init (ClassInfo klas) {
-	praat_FunctionTerms_init (klas);
+	praat_FunctionSeries_init (klas);
 	praat_addAction1 (klas, 0, U"Draw knots...", U"Draw basis function...", 1, GRAPHICS_Spline_drawKnots);
 	praat_addAction1 (klas, 1, U"Get order", U"Get degree", 1, INTEGER_Spline_getOrder);
 	praat_addAction1 (klas, 1, U"Scale x...", U"Analyse",	0, NEW_Spline_scaleX);
@@ -8060,7 +8064,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCategories, 0, U"To Strings", nullptr, 0, NEW_Categories_to_Strings);
 
 	praat_addAction1 (classChebyshevSeries, 0, U"ChebyshevSeries help", nullptr, 0, HELP_ChebyshevSeries_help);
-	praat_FunctionTerms_init (classChebyshevSeries);
+	praat_FunctionSeries_init (classChebyshevSeries);
 	praat_addAction1 (classChebyshevSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_ChebyshevSeries_to_Polynomial);
 
 	praat_addAction1 (classCCA, 1, U"CCA help", nullptr, 0, HELP_CCA_help);
@@ -8405,7 +8409,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classKlattTable, 0, U"To Table", nullptr, 0, NEW_KlattTable_to_Table);
 
 	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", nullptr, 0, HELP_LegendreSeries_help);
-	praat_FunctionTerms_init (classLegendreSeries);
+	praat_FunctionSeries_init (classLegendreSeries);
 	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_LegendreSeries_to_Polynomial);
 
 	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
@@ -8605,7 +8609,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPolygon, 1, classCategories, 1, U"Draw...", nullptr, 0, GRAPHICS_Polygon_Categories_draw);
 
 	praat_addAction1 (classPolynomial, 0, U"Polynomial help", nullptr, 0, HELP_Polynomial_help);
-	praat_FunctionTerms_init (classPolynomial);
+	praat_FunctionSeries_init (classPolynomial);
 	praat_addAction1 (classPolynomial, 0, U"-- area --", U"Get x of maximum...", 1, 0);
 	praat_addAction1 (classPolynomial, 1, U"Get area...", U"-- area --", 1, REAL_Polynomial_getArea);
 	praat_addAction1 (classPolynomial, 1, U"Get remainder after division...", U"Get area...", 1, REAL_Polynomial_getRemainderAfterDivision);

@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,38 +33,37 @@ void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale) {
-	for (integer i = 1; i <= my nFormants; i ++) {
-		my formant [i]. frequency *= scale;
-		my formant [i]. bandwidth *= scale;
+	for (integer iformant = 1; iformant <= my nFormants; iformant ++) {
+		my formant [iformant]. frequency *= scale;
+		my formant [iformant]. bandwidth *= scale;
 	}
 }
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin) {
-	const integer n = my max - my min + 1;
-	autoVEC fc = newVECzero (n);
-	autoVEC bc = newVECzero (n);
+	autoVEC fc = newVECzero (my numberOfRoots);
+	autoVEC bc = newVECzero (my numberOfRoots);
 	/*
 		Determine the formants and bandwidths
 	*/
 	thy nFormants = 0;
-	const double fLow = margin, fHigh = samplingFrequency / 2 - margin;
-	for (integer i = my min; i <= my max; i ++) {
-		if (my v [i].imag() < 0.0)
+	const double nyquistFrequency = 0.5 * samplingFrequency;
+	const double fLow = margin, fHigh = nyquistFrequency - margin;
+	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++) {
+		if (my roots [iroot].imag() < 0.0)
 			continue;
-		const double f = fabs (atan2 (my v [i].imag(), my v [i].real())) * samplingFrequency / 2.0 / NUMpi;
+		const double f = fabs (atan2 (my roots [iroot].imag(), my roots [iroot].real())) * nyquistFrequency / NUMpi;
 		if (f >= fLow && f <= fHigh) {
-			double b = - log (dcomplex_abs (my v [i])) * samplingFrequency / NUMpi;
-			thy nFormants ++;
-			fc [thy nFormants] = f;
+			double b = - log (norm (my roots [iroot])) * nyquistFrequency / NUMpi;
+			fc [++ thy nFormants] = f;
 			bc [thy nFormants] = b;
 		}
 	}
 
 	Formant_Frame_init (thee, thy nFormants);
 
-	for (integer i = 1; i <= thy nFormants; i ++) {
-		thy formant [i]. frequency = fc [i];
-		thy formant [i]. bandwidth = bc [i];
+	for (integer iformant = 1; iformant <= thy nFormants; iformant ++) {
+		thy formant [iformant]. frequency = fc [iformant];
+		thy formant [iformant]. bandwidth = bc [iformant];
 	}
 }
 

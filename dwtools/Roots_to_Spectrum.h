@@ -1,6 +1,8 @@
-/* SimpleVector_def.h
+#ifndef _Roots_to_Spectrum_h_
+#define _Roots_to_Spectrum_h_
+/* Roots_to_Spectrum.h
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,19 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20020606 GPL header
-*/
+#include "Roots.h"
+#include "Spectrum.h"
 
-#define ooSTRUCT ComplexVector
-oo_DEFINE_CLASS (ComplexVector, Daata)
+autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
 
-	oo_INTEGER (min)
-	oo_INTEGER (max)
-	oo_COMPLEX_VECTOR_FROM (v, min, max)
-	
-oo_END_CLASS (ComplexVector)	
-#undef ooSTRUCT
-
-
-/* End of file SimpleVector_def.h */	
+#endif /* _Roots_to_Spectrum_h_ */

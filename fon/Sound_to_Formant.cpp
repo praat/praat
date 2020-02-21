@@ -31,6 +31,7 @@
 #include "Sound_to_Formant.h"
 #include "NUM2.h"
 #include "Polynomial.h"
+#include "Roots.h"
 
 static void burg (constVEC samples, VEC coefficients,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
@@ -57,9 +58,9 @@ static void burg (constVEC samples, VEC coefficients,
 		First pass: count the formants.
 		The roots come in conjugate pairs, so we need only count those above the real axis.
 	 */
-	for (integer i = roots -> min; i <= roots -> max; i ++)
-		if (roots -> v [i].imag() >= 0.0) {
-			double f = fabs (atan2 (roots -> v [i].imag(), roots -> v [i].real())) * nyquistFrequency / NUMpi;
+	for (integer iroot = 1; iroot <= roots -> numberOfRoots; iroot ++)
+		if (roots -> roots [iroot].imag() >= 0.0) {
+			double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
 				frame -> nFormants ++;
 		}
@@ -74,15 +75,16 @@ static void burg (constVEC samples, VEC coefficients,
 		Second pass: fill in the formants.
 	 */
 	int iformant = 0;
-	for (integer i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i].imag() >= 0.0) {
-		double f = fabs (atan2 (roots -> v [i].imag(), roots -> v [i].real())) * nyquistFrequency / NUMpi;
-		if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin) {
-			Formant_Formant formant = & frame -> formant [++ iformant];
-			formant -> frequency = f;
-			formant -> bandwidth = -
-				log (roots -> v [i].real() * roots -> v [i].real() + roots -> v [i].imag() * roots -> v [i].imag()) * nyquistFrequency / NUMpi;
+	for (integer iroot = 1; iroot <= roots -> numberOfRoots; iroot ++)
+		if (roots -> roots [iroot].imag() >= 0.0) {
+			double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
+			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin) {
+				Formant_Formant formant = & frame -> formant [++ iformant];
+				formant -> frequency = f;
+				formant -> bandwidth = -
+					log (norm (roots -> roots [iroot])) * nyquistFrequency / NUMpi;
+			}
 		}
-	}
 	Melder_assert (iformant == frame -> nFormants);   // may fail if some frequency is NaN
 }
 

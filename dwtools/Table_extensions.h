@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Categories.h"
+#include "FileInMemoryManager.h"
 #include "Strings_.h"
 #include "SSCP.h"
 #include "Table.h"
@@ -45,6 +46,8 @@ autoTable Table_create_weenink1983 ();
 autoTable Table_create_esposito2006 ();
 
 autoTable Table_create_ganong1980 ();
+
+autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly);
 
 double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber);
 

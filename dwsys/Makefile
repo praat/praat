@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20180828
+# David Weenink 20200220
 # Paul Boersma 2018-08-10
 
 include ../makefile.defs
@@ -8,17 +8,20 @@ CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../external/gsl -I ../kar
 
 all: libdwsys.a
 
-OBJECTS = Collection_extensions.o Command.o \
+OBJECTS = ChebyshevSeries.o Collection_extensions.o Command.o \
 	DoublyLinkedList.o Eigen.o \
-	FileInMemory.o FileInMemorySet.o FileInMemoryManager.o\
+	FileInMemory.o FileInMemorySet.o FileInMemoryManager.o \
+	FunctionSeries.o \
 	Graphics_extensions.o Index.o \
+	LegendreSeries.o \
 	MAT_numerics.o \
 	NMF.o NUM2.o NUMhuber.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMcomplex.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \
 	Permutation.o Permutation_and_Index.o \
-	SimpleVector.o \
-	SVD.o
+	Polynomial.o \
+	Roots.o \
+	Spline.o SVD.o
 
 .PHONY: all clean
 
