@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -549,9 +549,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 		if (t1IsABoundary && t2IsABoundary)
 			Melder_throw (U"Cannot add boundaries at ", Melder_fixed (t1, 6), U" and ", Melder_fixed (t2, 6), U" seconds, because there are already boundaries there.");
 		const integer iinterval = IntervalTier_timeToIndex (intervalTier, t1);
-		//Melder_casual ("iinterval %ld, t = %f", iinterval, t1);
 		const integer iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
-		//Melder_casual ("iinterval2 %ld, t = %f", iinterval2, t2);
 		if (iinterval == 0 || iinterval2 == 0)
 			Melder_throw (U"The selection is outside the time domain of the intervals.");
 		const integer correctedIinterval2 = ( t2IsABoundary && iinterval2 == intervalTier -> intervals.size ? iinterval2 + 1 : iinterval2 );
@@ -2167,7 +2165,6 @@ void structTextGridEditor :: v_updateText () {
 			}
 		}
 	}
-	//Melder_casual ("v_updateText in editor %ld %ls %d", this, name, (int) suppressRedraw);
 	if (our text) {
 		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 		trace (U"setting new text ", newText);

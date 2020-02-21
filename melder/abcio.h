@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2011,2015,2017-2019 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,6 @@ int texgete16 (MelderReadText text, enum_generic_getValue getValue);
 bool texgeteb (MelderReadText text);
 bool texgeteq (MelderReadText text);
 bool texgetex (MelderReadText text);
-autostring8 texgets16 (MelderReadText text);
-autostring8 texgets32 (MelderReadText text);
 autostring32 texgetw16 (MelderReadText text);
 autostring32 texgetw32 (MelderReadText text);
 
