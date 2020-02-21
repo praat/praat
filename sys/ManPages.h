@@ -2,7 +2,7 @@
 #define _ManPages_h_
 /* ManPages.h
  *
- * Copyright (C) 1996-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ Thing_define (ManPages, Daata) {
 	autoSTRVEC titles;
 	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;
+	autoINTVEC grandLinksHither, grandLinksThither;
 
 	void v_destroy () noexcept
 		override;

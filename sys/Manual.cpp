@@ -39,13 +39,17 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as HTML file", nullptr)
 		ManPages manPages = (ManPages) my data;
 		autoMelderString buffer;
-		MelderString_copy (& buffer, manPages -> pages.at [my path] -> title.get());
+		MelderString_copy (& buffer, manPages -> pages.at [my visiblePageNumber] -> title.get());
 		char32 *p = buffer.string;
-		while (*p) { if (! isalnum ((int) *p) && *p != U'_') *p = U'_'; p ++; }
+		while (*p) {
+			if (! isalnum ((int) *p) && *p != U'_')
+				*p = U'_';
+			p ++;
+		}
 		MelderString_append (& buffer, U".html");
 		Melder_sprint (defaultName,300, buffer.string);
 	EDITOR_DO_SAVE
-		ManPages_writeOneToHtmlFile ((ManPages) my data, my path, file);
+		ManPages_writeOneToHtmlFile ((ManPages) my data, my visiblePageNumber, file);
 	EDITOR_END
 }
 
@@ -77,7 +81,7 @@ void structManual :: v_draw () {
 	#if motif
 	Graphics_clearWs (our graphics.get());
 	#endif
-	if (our path == SEARCH_PAGE) {
+	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
 		HyperPage_intro (this, U"The best matches to your query seem to be:");
 		for (int i = 1; i <= our numberOfMatches; i ++) {
@@ -88,9 +92,9 @@ void structManual :: v_draw () {
 		}
 		return;
 	}
-	ManPage page = manPages -> pages.at [our path];
-	if (! our paragraphs)
-		return;
+	ManPage page = manPages -> pages.at [our visiblePageNumber];
+	//if (! our paragraphs____)
+	//	return;
 	HyperPage_pageTitle (this, page -> title.get());
 	for (integer ipar = 1; ipar <= page -> paragraphs___.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs___ [ipar];
@@ -125,7 +129,7 @@ void structManual :: v_draw () {
 			default: break;
 		}
 	}
-	if (ManPages_uniqueLinksHither (manPages, our path)) {
+	if (ManPages_uniqueLinksHither (manPages, our visiblePageNumber)) {
 		integer ilink, jlink;
 		bool goAhead = true;
 		if (page -> paragraphs___.size > 0) {
@@ -173,7 +177,7 @@ void structManual :: v_draw () {
 static void print (void *void_me, Graphics graphics) {
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
-	integer numberOfPages = manPages -> pages.size, savePage = my path;
+	integer numberOfPages = manPages -> pages.size, saveVisiblePageNumber = my visiblePageNumber;
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (my ps, true);
 	Graphics_setAtSignIsLink (my ps, true);
@@ -184,13 +188,11 @@ static void print (void *void_me, Graphics graphics) {
 		if (my printPagesStartingWith == nullptr ||
 		    Melder_stringMatchesCriterion (page -> title.get(), kMelder_string::STARTS_WITH, my printPagesStartingWith, true))
 		{
-			my path = ipage;
-			my paragraphs = & page -> paragraphs___ [1];
-			my numberOfParagraphs  = page -> paragraphs___.size;
+			my visiblePageNumber = ipage;
 			my currentPageTitle = Melder_dup_f (page -> title.get());
 			my v_goToPage_i (ipage);
 			my v_draw ();
-			my v_goToPage_i (savePage);
+			my v_goToPage_i (saveVisiblePageNumber);
 		}
 	}
 	my printing = false;
@@ -226,8 +228,8 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		SET_STRING (leftOrInsideHeader, date.get())
 		SET_STRING (rightOrOutsideHeader, my name.get())
 		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
-		if (my path >= 1 && my path <= manPages -> pages.size) {
-			ManPage page = manPages -> pages.at [my path];
+		if (my visiblePageNumber >= 1 && my visiblePageNumber <= manPages -> pages.size) {
+			ManPage page = manPages -> pages.at [my visiblePageNumber];
 			SET_STRING (printAllPagesWhoseTitleStartsWith, page -> title.get());
 		}
 	EDITOR_DO
@@ -345,7 +347,7 @@ static void gui_button_cb_home (Manual me, GuiButtonEvent /* event */) {
  
 static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
 	ManPages manPages = (ManPages) my data;
-	ManPage manPage = ( my path < 1 ? nullptr : manPages -> pages.at [my path] );
+	ManPage manPage = ( my visiblePageNumber < 1 ? nullptr : manPages -> pages.at [my visiblePageNumber] );
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
@@ -430,11 +432,11 @@ void structManual :: v_createHelpMenuItems (EditorMenu menu) {
 void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	Manual me = (Manual) cmd -> d_editor;
 	ManPages manPages = (ManPages) my data;
-	if (my path) {
+	if (my visiblePageNumber > 0) {
 		char32 string [400];
 		static const conststring32 shortMonth [] =
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
-		ManPage page = manPages -> pages.at [my path];
+		ManPage page = manPages -> pages.at [my visiblePageNumber];
 		integer date = page -> date;
 		SET_STRING (my outsideHeader, page -> title.get())
 		SET_STRING (my insideFooter, page -> author.get())
@@ -451,22 +453,20 @@ integer structManual :: v_getNumberOfPages () {
 }
 
 integer structManual :: v_getCurrentPageNumber () {
-	return our path ? our path : 1;
+	return our visiblePageNumber > 0 ? our visiblePageNumber : 1;
 }
 
-void structManual :: v_goToPage_i (integer pageNumber) {
+void structManual :: v_goToPage_i (integer goToPageNumber) {
 	ManPages manPages = (ManPages) our data;
-	if (pageNumber < 1 || pageNumber > manPages -> pages.size) {
-		if (pageNumber == SEARCH_PAGE) {
-			our path = SEARCH_PAGE;
+	if (goToPageNumber < 1 || goToPageNumber > manPages -> pages.size) {
+		if (goToPageNumber == SEARCH_PAGE) {
+			our visiblePageNumber = SEARCH_PAGE;
 			our currentPageTitle. reset();
 			return;
-		} else Melder_throw (U"Page ", pageNumber, U" not found.");
+		} else Melder_throw (U"Page ", goToPageNumber, U" not found.");
 	}
-	our path = pageNumber;
-	ManPage page = manPages -> pages.at [path];
-	our paragraphs = & page -> paragraphs___ [1];
-	our numberOfParagraphs = page -> paragraphs___.size;
+	our visiblePageNumber = goToPageNumber;
+	ManPage page = manPages -> pages.at [our visiblePageNumber];
 	our currentPageTitle = Melder_dup_f (page -> title.get());
 }
 
@@ -498,14 +498,17 @@ int structManual :: v_goToPage (conststring32 title) {
 
 void Manual_init (Manual me, conststring32 title, Daata data, bool ownData) {
 	ManPages manPages = (ManPages) data;
-	integer i;
-	if ((i = ManPages_lookUp (manPages, title)) == 0)
+	integer lookUpPageNumber;
+	if ((lookUpPageNumber = ManPages_lookUp (manPages, title)) == 0)
 		Melder_throw (U"Page \"", title, U"\" not found.");
-	my path = i;
-	ManPage page = manPages -> pages.at [i];
-	my paragraphs = & page -> paragraphs___ [1];
-	my numberOfParagraphs = page -> paragraphs___.size;
+	my visiblePageNumber = lookUpPageNumber;
+	ManPage page = manPages -> pages.at [lookUpPageNumber];
 
+	/*
+		The title of the window is the title of the whole manual, not the title of the page.
+		If the first page has a title that starts with "-", then that is the title;
+		otherwise, the title is just "Manual".
+	*/
 	char32 windowTitle [101];
 	if (manPages -> pages.at [1] -> title [0] == U'-') {
 		Melder_sprint (windowTitle,101, & manPages -> pages.at [1] -> title [1]);

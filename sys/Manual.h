@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2012,2015 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009-2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 #include "ManPages.h"
 
 Thing_define (Manual, HyperPage) {
-	integer path, numberOfParagraphs;
-	struct structManPage_Paragraph *paragraphs;
+	integer visiblePageNumber;
 	GuiText searchText;
 	GuiButton homeButton, recordButton, playButton, publishButton;
 	int numberOfMatches;
@@ -51,7 +50,7 @@ Thing_define (Manual, HyperPage) {
 		override;
 	int v_goToPage (conststring32 title)
 		override;
-	void v_goToPage_i (integer pageNumber)
+	void v_goToPage_i (integer goToPageNumber)
 		override;
 	bool v_hasHistory ()
 		override { return true; }

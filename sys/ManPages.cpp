@@ -307,7 +307,6 @@ static integer lookUp_sorted (ManPages me, conststring32 title) {
 
 static void grind (ManPages me) {
 	integer ndangle = 0, jpage, grandNlinks, ilinkHither, ilinkThither;
-	integer *grandLinksHither, *grandLinksThither;
 
 	qsort (& my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);
 
@@ -349,15 +348,18 @@ static void grind (ManPages me) {
 		my ground = true;
 		return;
 	}
-	if (! (grandLinksHither = NUMvector <integer> (1, grandNlinks)) || ! (grandLinksThither = NUMvector <integer> (1, grandNlinks))) {
+	try {
+		my grandLinksHither = newINTVECzero (grandNlinks);
+		my grandLinksThither = newINTVECzero (grandNlinks);
+	} catch (MelderError) {
 		Melder_flushError ();
 		return;
 	}
 	ilinkHither = ilinkThither = 0;
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
-		page -> linksHither = grandLinksHither + ilinkHither;
-		page -> linksThither = grandLinksThither + ilinkThither;
+		page -> linksHither = & my grandLinksHither [ilinkHither];
+		page -> linksThither = & my grandLinksThither [ilinkThither];
 		ilinkHither += page -> nlinksHither;
 		ilinkThither += page -> nlinksThither;
 		page -> nlinksHither = 0;
