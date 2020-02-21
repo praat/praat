@@ -517,11 +517,11 @@ void texputr64 (MelderFile file, double x, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 }
 void texputc64 (MelderFile file, dcomplex z, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" " : nullptr);
 }
 void texputc128 (MelderFile file, dcomplex z, texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" " : nullptr);
 }
 void texpute8 (MelderFile file, int i, conststring32 (*getText) (int), texput_UP_TO_NINE_NULLABLE_STRINGS) {
 	PUTLEADER
