@@ -2,7 +2,7 @@
 #define _melder_require_h_
 /* melder_require.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,8 @@ void checkRowNumber (integer rowNumber, const constmatrix<T>& mat) {
 		U"The row number should be at most the number of rows (", mat.nrow, U"), not", rowNumber, U".");
 }
 template <typename T>
-void checkRowNumber (integer rowNumber, const vector<T>& x) {
-	checkRowNumber (rowNumber, constvector<T> (x));
+void checkRowNumber (integer rowNumber, const matrix<T>& x) {
+	checkRowNumber (rowNumber, constmatrix<T> (x));
 }
 
 template <typename T>
@@ -106,8 +106,8 @@ void checkColumnNumber (integer columnNumber, const constmatrix<T>& mat) {
 		U"The column number should be at most the number of columns (", mat.ncol, U"), not", columnNumber, U".");
 }
 template <typename T>
-void checkColumnNumber (integer columnNumber, const vector<T>& x) {
-	checkColumnNumber (columnNumber, constvector<T> (x));
+void checkColumnNumber (integer columnNumber, const matrix<T>& x) {
+	checkColumnNumber (columnNumber, constmatrix<T> (x));
 }
 
 template <typename T>

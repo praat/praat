@@ -57,7 +57,7 @@ void structDataSubEditor :: v_destroy () noexcept {
 	//for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 	//	Melder_free (d_fieldData [i]. history);
 	if (our root)
-		for (int i = our root -> children.size; i > 0; i --)
+		for (integer i = our root -> children.size; i > 0; i --)
 			if (our root -> children.at [i] == this)
 				our root -> children.subtractItem_ref (i);
 	DataSubEditor_Parent :: v_destroy ();
@@ -67,7 +67,7 @@ static void update (DataSubEditor me) {
 
 	/* Hide all the existing widgets. */
 
-	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
+	for (integer i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
 		my d_fieldData [i]. address = nullptr;
 		my d_fieldData [i]. description = nullptr;
 		GuiThing_hide (my d_fieldData [i]. label);
@@ -254,8 +254,11 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 
 	/* Identify the pressed button; it must be one of those created in the list. */
 
-	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
-		if (my d_fieldData [i]. button == event -> button) { ifield = i; break; }
+	for (integer i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
+		if (my d_fieldData [i]. button == event -> button) {
+			ifield = i;
+			break;
+		}
 	Melder_assert (ifield != 0);
 
 	/* Launch the appropriate subeditor. */
@@ -263,7 +266,7 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 	DataSubEditor_FieldData fieldData = & my d_fieldData [ifield];
 	if (! fieldData -> description) {
 		Melder_casual (U"Not yet implemented.");
-		return;   /* Not yet implemented. */
+		return;   // not yet implemented
 	}
 
 	if (fieldData -> description -> rank == 1 || fieldData -> description -> rank == 3 || fieldData -> description -> rank < 0) {
