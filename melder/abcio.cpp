@@ -149,6 +149,108 @@ static double getReal (MelderReadText me) {
 	return Melder_a8tof (buffer);
 }
 
+static dcomplex getComplex (MelderReadText me) {
+	dcomplex result;
+	char realBuffer [41], imaginaryBuffer [41];
+	integer ireal = 0, iimag = 0;
+	char32 c;
+	bool inExponent = false, inExponentNumber = false, separatorIsMinus = false;
+	for (c = MelderReadText_getChar (me); c != U'-' && ! Melder_isAsciiDecimalNumber (c) && c != U'+'; c = MelderReadText_getChar (me)) {
+		if (c == U'\0')
+			Melder_throw (U"Early end of text detected while looking for a complex number (line ", MelderReadText_getLineNumber (me), U").");
+		if (c == U'!') {   // end-of-line comment?
+			while ((c = MelderReadText_getChar (me)) != U'\n' && c != U'\r') {
+				if (c == U'\0')
+					Melder_throw (U"Early end of text detected in comment while looking for a complex number (line ", MelderReadText_getLineNumber (me), U").");
+			}
+		}
+		if (c == U'\"')
+			Melder_throw (U"Found a string while looking for a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+		if (c == U'<')
+			Melder_throw (U"Found an enumerated value while looking for a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+		while (! Melder_isHorizontalOrVerticalSpace (c)) {
+			if (c == U'\0')
+				Melder_throw (U"Early end of text detected in comment while looking for a complex number (line ", MelderReadText_getLineNumber (me), U").");
+			c = MelderReadText_getChar (me);
+		}
+	}
+	for (; ireal < 40; ireal ++) {
+		if (c > 127)
+			Melder_throw (U"Found strange text while looking for a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+		if (inExponent) {
+			if (c == U'+' || c == U'-')  {
+				if (inExponentNumber) {
+					/*
+						This  must be the beginning of the imaginary part.
+					*/
+					separatorIsMinus = ( c == U'-' );
+					realBuffer [ireal] = U'\0';
+					break;
+				} else {
+					inExponentNumber = true;
+				}
+			} else if (Melder_isAsciiDecimalNumber (c)) {
+				inExponentNumber = true;
+			} else if (inExponentNumber) {   // typically a space
+				realBuffer [ireal] = U'\0';
+				break;
+			} else {
+				Melder_throw (U"Found unexpected symbol in the exponent of a complex number (line ", MelderReadText_getLineNumber (me), U").");
+			}
+		} else if (ireal > 0 && (c == U'+' || c == U'-')) {   // note: initial signs are not separators
+			separatorIsMinus = ( c == U'-' );
+			realBuffer [ireal] = U'\0';
+			break;
+		}
+		if (c == 'e' || c == 'E')
+			inExponent = true;
+		realBuffer [ireal] = (char) (char8) c;   // guarded conversion down
+		c = MelderReadText_getChar (me);
+		if (c == U'\0')
+			Melder_throw (U"Missing imaginary part in complex number (line ", MelderReadText_getLineNumber (me), U").");
+		if (Melder_isHorizontalOrVerticalSpace (c))
+			Melder_throw (U"Found a space within a complex number (line ", MelderReadText_getLineNumber (me), U").");
+	}
+	if (ireal >= 40)
+		Melder_throw (U"Found long text while searching for a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+	realBuffer [ireal + 1] = '\0';
+	result. real (Melder_a8tof (realBuffer));
+	c = MelderReadText_getChar (me);
+	if (c != U'-' && ! Melder_isAsciiDecimalNumber (c) && c != U'+')
+		Melder_throw (U"Found strange text while looking for the imaginary part of a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+	if (c == U'\0')
+		Melder_throw (U"Early end of text detected while looking for the imaginary part of a complex number (line ", MelderReadText_getLineNumber (me), U").");
+	if (Melder_isHorizontalOrVerticalSpace (c))
+		Melder_throw (U"Found a space within a complex number (line ", MelderReadText_getLineNumber (me), U").");
+	if (c == U'!') {   // end-of-line comment?
+		while ((c = MelderReadText_getChar (me)) != U'\n' && c != U'\r') {
+			if (c == U'\0')
+				Melder_throw (U"Early end of text detected in comment while looking for the imaginary part of a complex number (line ", MelderReadText_getLineNumber (me), U").");
+		}
+	}
+	if (c == U'\"')
+		Melder_throw (U"Found a string while looking for the imaginary part of a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+	if (c == U'<')
+		Melder_throw (U"Found an enumerated value while looking for the imaginary part of a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+	for (; iimag < 40; iimag ++) {
+		if (c > 127)
+			Melder_throw (U"Found strange text while looking for the imaginary part of a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+		imaginaryBuffer [iimag] = (char) (char8) c;   // guarded conversion down
+		c = MelderReadText_getChar (me);
+		if (c == U'\0')
+			Melder_throw (U"Missing i in a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+		if (Melder_isHorizontalOrVerticalSpace (c))
+			Melder_throw (U"Missing i in a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+		if (c == U'i')
+			break;
+	}
+	if (iimag >= 40)
+		Melder_throw (U"Found long text while searching for the imaginary part of a complex number in text (line ", MelderReadText_getLineNumber (me), U").");
+	imaginaryBuffer [iimag + 1] = '\0';
+	result. imag (Melder_a8tof (imaginaryBuffer) * ( separatorIsMinus ? -1.0 : 1.0 ));
+	return result;
+}
+
 static int getEnum (MelderReadText me, int (*getValue) (conststring32)) {
 	char32 buffer [41], c;
 	for (c = MelderReadText_getChar (me); c != U'<'; c = MelderReadText_getChar (me)) {
@@ -319,16 +421,14 @@ uint32 texgetu32 (MelderReadText text) {
 double texgetr32 (MelderReadText text) { return getReal (text); }
 double texgetr64 (MelderReadText text) { return getReal (text); }
 double texgetr80 (MelderReadText text) { return getReal (text); }
-dcomplex texgetc64  (MelderReadText text) { dcomplex z; z. real (getReal (text)); z. imag (getReal (text)); return z; }
-dcomplex texgetc128 (MelderReadText text) { dcomplex z; z. real (getReal (text)); z. imag (getReal (text)); return z; }
+dcomplex texgetc64  (MelderReadText text) { return getComplex (text); }
+dcomplex texgetc128 (MelderReadText text) { return getComplex (text); }
 
 int texgete8 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
 int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
 bool texgeteb (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kExistence_getValue); }
-autostring8 texgets16 (MelderReadText text) { return Melder_32to8 (peekString (text)); }
-autostring8 texgets32 (MelderReadText text) { return Melder_32to8 (peekString (text)); }
 autostring32 texgetw16 (MelderReadText text) { return Melder_dup (peekString (text)); }
 autostring32 texgetw32 (MelderReadText text) { return Melder_dup (peekString (text)); }
 
