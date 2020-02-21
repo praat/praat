@@ -19,7 +19,7 @@
  */
 
 #include "LPC.h"
-#include "Polynomial.h"
+//#include "Polynomial.h"
 #include "Roots.h"
 #include "Formant.h"
 
