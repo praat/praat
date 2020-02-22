@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,8 @@ autoSpectrum Spectrum_create (double fmax, integer nf) {
 }
 
 int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum) {
-	*minimum = 1e308, *maximum = 0.0;
+	*minimum = 1e308;
+	*maximum = 0.0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 		double oneSidedPowerSpectralDensity =   // Pa2 Hz-2 s-1
 			2.0 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
@@ -114,16 +115,16 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 
 void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum) {
 	bool autoscaling = ( minimum >= maximum );
-
 	if (fmax <= fmin) {
 		fmin = my xmin;
 		fmax = my xmax;
 	}
 	integer ifmin, ifmax;
-	if (Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax) == 0)
+	const integer nf = Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax);
+	if (nf == 0)
 		return;
-
-	autoNUMvector <double> yWC (ifmin, ifmax);
+	auto ybuffer = newVECzero (nf);
+	double *yWC = & ybuffer [1 - ifmin];
 
 	/*
 		First pass: compute power density.
@@ -154,7 +155,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 		Melder_clip (minimum, & yWC [ifreq], maximum);
 
 	Graphics_setWindow (g, fmin, fmax, minimum, maximum);
-	Graphics_function (g, yWC.peek(), ifmin, ifmax, Matrix_columnToX (me, ifmin), Matrix_columnToX (me, ifmax));
+	Graphics_function (g, yWC, ifmin, ifmax, Matrix_columnToX (me, ifmin), Matrix_columnToX (me, ifmax));
 }
 
 void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
@@ -177,11 +178,12 @@ void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, do
 		fmax = my xmax;
 	}
 	integer ifmin, ifmax;
-	if (Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax) == 0)
+	const integer nf = Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax);
+	if (nf == 0)
 		return;
 if(ifmin==1)ifmin=2;  /* BUG */
-	autoNUMvector <double> xWC (ifmin, ifmax);
-	autoNUMvector <double> yWC (ifmin, ifmax);
+	auto xbuffer = newVECzero (nf), ybuffer = newVECzero (nf);
+	double *xWC = & xbuffer [1 - ifmin], *yWC = & ybuffer [1 - ifmin];
 
 	/*
 		First pass: compute power density.
@@ -221,22 +223,34 @@ autoTable Spectrum_tabulate (Spectrum me, bool includeBinNumbers, bool includeFr
 {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx,
-			includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity);
+				includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity);
 		integer icol = 0;
-		if (includeBinNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"bin");
-		if (includeFrequency) Table_setColumnLabel (thee.get(), ++ icol, U"freq(Hz)");
-		if (includeRealPart) Table_setColumnLabel (thee.get(), ++ icol, U"re(Pa/Hz)");
-		if (includeImaginaryPart) Table_setColumnLabel (thee.get(), ++ icol, U"im(Pa/Hz)");
-		if (includeEnergyDensity) Table_setColumnLabel (thee.get(), ++ icol, U"energy(Pa^2/Hz^2)");
-		if (includePowerDensity) Table_setColumnLabel (thee.get(), ++ icol, U"pow(dB/Hz)");
+		if (includeBinNumbers)
+			Table_setColumnLabel (thee.get(), ++ icol, U"bin");
+		if (includeFrequency)
+			Table_setColumnLabel (thee.get(), ++ icol, U"freq(Hz)");
+		if (includeRealPart)
+			Table_setColumnLabel (thee.get(), ++ icol, U"re(Pa/Hz)");
+		if (includeImaginaryPart)
+			Table_setColumnLabel (thee.get(), ++ icol, U"im(Pa/Hz)");
+		if (includeEnergyDensity)
+			Table_setColumnLabel (thee.get(), ++ icol, U"energy(Pa^2/Hz^2)");
+		if (includePowerDensity)
+			Table_setColumnLabel (thee.get(), ++ icol, U"pow(dB/Hz)");
 		for (integer ibin = 1; ibin <= my nx; ibin ++) {
 			icol = 0;
-			if (includeBinNumbers) Table_setNumericValue (thee.get(), ibin, ++ icol, ibin);
-			if (includeFrequency) Table_setNumericValue (thee.get(), ibin, ++ icol, my x1 + (ibin - 1) * my dx);
-			if (includeRealPart) Table_setNumericValue (thee.get(), ibin, ++ icol, my z [1] [ibin]);
-			if (includeImaginaryPart) Table_setNumericValue (thee.get(), ibin, ++ icol, my z [2] [ibin]);
-			if (includeEnergyDensity) Table_setNumericValue (thee.get(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 1));
-			if (includePowerDensity) Table_setNumericValue (thee.get(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 2));
+			if (includeBinNumbers)
+				Table_setNumericValue (thee.get(), ibin, ++ icol, ibin);
+			if (includeFrequency)
+				Table_setNumericValue (thee.get(), ibin, ++ icol, my x1 + (ibin - 1) * my dx);
+			if (includeRealPart)
+				Table_setNumericValue (thee.get(), ibin, ++ icol, my z [1] [ibin]);
+			if (includeImaginaryPart)
+				Table_setNumericValue (thee.get(), ibin, ++ icol, my z [2] [ibin]);
+			if (includeEnergyDensity)
+				Table_setNumericValue (thee.get(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 1));
+			if (includePowerDensity)
+				Table_setNumericValue (thee.get(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 2));
 		}
 		return thee;
 	} catch (MelderError) {
@@ -269,8 +283,8 @@ autoMatrix Spectrum_to_Matrix (Spectrum me) {
 autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 	try {
 		/*
-		 * dB-spectrum is log (power).
-		 */
+			dB-spectrum is log (power).
+		*/
 		autoSpectrum dBspectrum = Data_copy (me);
 		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
@@ -279,28 +293,29 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		}
 
 		/*
-		 * Cepstrum is Fourier transform of dB-spectrum.
-		 */
+			Cepstrum is Fourier transform of dB-spectrum.
+		*/
 		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 
 		/*
-		 * Multiply cepstrum by a Gaussian.
-		 */
-		double factor = - bandWidth * bandWidth;
+			Multiply cepstrum by a Gaussian.
+		*/
+		const double factor = - bandWidth * bandWidth;
 		for (integer i = 1; i <= cepstrum -> nx; i ++) {
 			double t = (i - 1) * cepstrum -> dx;
 			cepstrum -> z [1] [i] *= exp (factor * t * t) * ( i == 1 ? 1.0 : 2.0 );
 		}
 
 		/*
-		 * Smoothed power spectrum is original power spectrum convolved with a Gaussian.
-		 */
+			Smoothed power spectrum is original power spectrum convolved with a Gaussian.
+		*/
 		autoSpectrum thee = Sound_to_Spectrum (cepstrum.get(), true);
 
 		/*
-		 * Convert power spectrum back into a "complex" spectrum without phase information.
-		 */
-		re = thy z.row (1), im = thy z.row (2);
+			Convert power spectrum back into a "complex" spectrum without phase information.
+		*/
+		re = thy z.row (1);
+		im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
 			re [i] = exp (0.5 * re [i]);   // i.e., sqrt (exp (re [i]))
 			im [i] = 0.0;
