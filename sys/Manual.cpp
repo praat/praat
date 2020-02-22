@@ -141,14 +141,14 @@ void structManual :: v_draw () {
 					HyperPage_entry (this, U"Links to this page");
 			}
 		}
-		if (goAhead) for (ilink = 1; ilink <= page -> linksHither___.size; ilink ++) {
-			integer link = page -> linksHither___ [ilink];
+		if (goAhead) for (ilink = 1; ilink <= page -> linksHither.size; ilink ++) {
+			integer link = page -> linksHither [ilink];
 			bool alreadyShown = false;
-			for (jlink = 1; jlink <= page -> linksThither___.size; jlink ++)
-				if (page -> linksThither___ [jlink] == link)
+			for (jlink = 1; jlink <= page -> linksThither.size; jlink ++)
+				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				conststring32 title = manPages -> pages.at [page -> linksHither___ [ilink]] -> title.get();
+				conststring32 title = manPages -> pages.at [page -> linksHither [ilink]] -> title.get();
 				char32 linkText [304];
 				Melder_sprint (linkText, 304, U"@@", title, U"@");
 				HyperPage_listItem (this, linkText);

@@ -33,7 +33,7 @@ Thing_define (ManPage, Thing) {
 	autostring32 title, author;
 	integer date;
 	autovector <structManPage_Paragraph> paragraphs;
-	autoINTVEC linksHither___, linksThither___;
+	autoINTVEC linksHither, linksThither;
 	double recordingTime;
 };
 

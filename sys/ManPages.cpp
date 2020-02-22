@@ -41,41 +41,46 @@ void structManPages :: v_destroy () noexcept {
 			ManPage_Paragraph par = & page -> paragraphs [ipar];
 			Melder_free (par -> text);   // not an autostring32, because it can be a string literal (if not dynamic)
 		}
-		page -> linksHither___. reset();
-		page -> linksThither___. reset();
+		page -> linksHither. reset();   // TODO automate
+		page -> linksThither. reset();
 	}
 	ManPages_Parent :: v_destroy ();
 }
 
 static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {
 	char32 *to = link, *max = link + 300;
-	if (! p) p = text;
+	if (! p)
+		p = text;
 	/*
-	 * Search for next '@' that is not in a backslash sequence.
-	 */
+		Search for next '@' that is not in a backslash sequence.
+	*/
 	for (;;) {
 		p = str32chr (p, U'@');
-		if (! p) return nullptr;   // no more '@'
-		if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\'))) break;
+		if (! p)
+			return nullptr;   // no more '@'
+		if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\')))
+			break;
 		p ++;
 	}
 	Melder_assert (*p == U'@');
 	if (p [1] == U'@') {
 		const char32 *from = p + 2;
 		while (*from != U'@' && *from != U'|' && *from != U'\0') {
-			if (to >= max) {
+			if (to >= max)
 				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
-			}
 			*to ++ = *from ++;
 		}
-		if (*from == U'|') { from ++; while (*from != U'@' && *from != U'\0') from ++; }
-		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
+		if (*from == U'|') {
+			from ++;
+			while (*from != U'@' && *from != U'\0')
+				from ++;
+		}
+		p = from + ( *from == U'@' );   // add bool to pointer: skip '@' but not '\0'
 	} else {
 		const char32 *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
-			if (to >= max) {
+			if (to >= max)
 				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
-			}
 			*to ++ = *from ++;
 		}
 		p = from;
@@ -316,8 +321,8 @@ static void grind (ManPages me) {
 	qsort (& my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
-		page -> linksHither___ = newINTVECzero (0);
-		page -> linksThither___ = newINTVECzero (0);
+		page -> linksHither = newINTVECzero (0);   // superfluous if not ground twice
+		page -> linksThither = newINTVECzero (0);   // superfluous if not ground twice
 	}
 	integer ndangle = 0;
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
@@ -335,20 +340,20 @@ static void grind (ManPages me) {
 					ndangle ++;
 				} else {
 					bool alreadyPresent = false;
-					for (int ilink = 1; ilink <= page -> linksThither___.size; ilink ++) {
-						if (page -> linksThither___ [ilink] == jpage) {
+					for (int ilink = 1; ilink <= page -> linksThither.size; ilink ++) {
+						if (page -> linksThither [ilink] == jpage) {
 							alreadyPresent = true;
 							break;
 						}
 					}
 					if (! alreadyPresent) {
 						ManPage otherPage = my pages.at [jpage];
-						integer newNumberOfLinksThither = page -> linksThither___.size + 1;
-						page -> linksThither___. resize (newNumberOfLinksThither);
-						page -> linksThither___ [newNumberOfLinksThither] = jpage;
-						integer newNumberOfLinksHither = otherPage -> linksHither___.size + 1;
-						otherPage -> linksHither___. resize (newNumberOfLinksHither);
-						otherPage -> linksHither___ [newNumberOfLinksHither] = ipage;
+						integer newNumberOfLinksThither = page -> linksThither.size + 1;
+						page -> linksThither. resize (newNumberOfLinksThither);
+						page -> linksThither [newNumberOfLinksThither] = jpage;
+						integer newNumberOfLinksHither = otherPage -> linksHither.size + 1;
+						otherPage -> linksHither. resize (newNumberOfLinksHither);
+						otherPage -> linksHither [newNumberOfLinksHither] = ipage;
 					}
 				}
 			}
@@ -363,11 +368,11 @@ static void grind (ManPages me) {
 
 integer ManPages_uniqueLinksHither (ManPages me, integer ipage) {
 	ManPage page = my pages.at [ipage];
-	integer result = page -> linksHither___.size;
-	for (integer ilinkHither = 1; ilinkHither <= page -> linksHither___.size; ilinkHither ++) {
-		integer link = page -> linksHither___ [ilinkHither];
-		for (integer ilinkThither = 1; ilinkThither <= page -> linksThither___.size; ilinkThither ++) {
-			if (page -> linksThither___ [ilinkThither] == link) {
+	integer result = page -> linksHither.size;
+	for (integer ilinkHither = 1; ilinkHither <= page -> linksHither.size; ilinkHither ++) {
+		integer link = page -> linksHither [ilinkHither];
+		for (integer ilinkThither = 1; ilinkThither <= page -> linksThither.size; ilinkThither ++) {
+			if (page -> linksThither [ilinkThither] == link) {
 				result --;
 				break;
 			}
@@ -378,7 +383,7 @@ integer ManPages_uniqueLinksHither (ManPages me, integer ipage) {
 
 integer ManPages_lookUp (ManPages me, conststring32 title) {
 	if (! my ground)
-		for(integer i=1;i<=1000;i++) grind (me);
+		grind (me);
 	return lookUp_sorted (me, title);
 }
 
@@ -900,14 +905,14 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 				MelderString_append (buffer, U"<h3>Links to this page</h3>\n");
 		}
 		MelderString_append (buffer, U"<ul>\n");
-		for (ilink = 1; ilink <= page -> linksHither___.size; ilink ++) {
-			integer link = page -> linksHither___ [ilink];
+		for (ilink = 1; ilink <= page -> linksHither.size; ilink ++) {
+			integer link = page -> linksHither [ilink];
 			bool alreadyShown = false;
-			for (jlink = 1; jlink <= page -> linksThither___.size; jlink ++)
-				if (page -> linksThither___ [jlink] == link)
+			for (jlink = 1; jlink <= page -> linksThither.size; jlink ++)
+				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				ManPage linkingPage = my pages.at [page -> linksHither___ [ilink]];
+				ManPage linkingPage = my pages.at [page -> linksHither [ilink]];
 				conststring32 title = linkingPage -> title.get();
 				const char32 *p;
 				MelderString_append (buffer, U"<li><a href=\"");
