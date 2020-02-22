@@ -1149,7 +1149,7 @@ static autoVEC FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (Formant
 		autoVEC var;
 		if (iformant < 1 || iformant > numberOfFormants || estimatedFormant < 1 || estimatedFormant > numberOfFormants)
 			return var;
-		var.resize (numberOfDataPoints);
+		var. resize (numberOfDataPoints);
 		const DataModeler fi = my trackmodelers.at [iformant];
 		const DataModeler fe = my trackmodelers.at [estimatedFormant];
 		for (integer i = 1; i <= numberOfDataPoints; i ++) {

@@ -1,6 +1,6 @@
 /* Artword.cpp
  *
- * Copyright (C) 1992-2009,2011,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +71,8 @@ static void ArtwordData_setTarget (ArtwordData me, double time, double target) {
 	}
 	if (my numberOfTargets == INT16_MAX)
 		Melder_throw (U"An Artword cannot have more than ", INT16_MAX, U" targets.");
-	my times.insert (insertionPosition, time);
-	my targets.insert (insertionPosition, target);
+	my times. insert (insertionPosition, time);
+	my targets. insert (insertionPosition, target);
 	my numberOfTargets ++;   // maintain invariant
 }
 

@@ -66,7 +66,7 @@ void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double
 
 		if (my iteration + maximumNumberOfIterations > my maximumNumberOfIterations) {
 			my maximumNumberOfIterations += maximumNumberOfIterations;
-			my history.resize (my maximumNumberOfIterations);
+			my history. resize (my maximumNumberOfIterations);
 		}
 		if (monitor)
 			my gmonitor = (Graphics) Melder_monitor (0.0, U"Starting...");
@@ -127,7 +127,7 @@ void Minimizer_reset (Minimizer me, constVEC const& guess) {
 		for (integer i = 1; i <= my numberOfParameters; i ++)
 			my p [i] = NUMrandomUniform (-1.0, 1.0);
 
-	my history.resize (0);
+	my history. resize (0);
 	my maximumNumberOfIterations = my numberOfFunctionCalls = my iteration = 0;
 	my success = false;
 	my minimum = 1.0e38;

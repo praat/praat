@@ -455,7 +455,7 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 void Network_addNode (Network me, double x, double y, double activity, bool clamped) {
 	try {
 		Melder_assert (my nodes.size == my numberOfNodes);
-		my nodes.resize (my numberOfNodes + 1);
+		my nodes. resize (my numberOfNodes + 1);
 		my numberOfNodes += 1;   // maintain invariant
 		Melder_assert (my numberOfNodes == my nodes.size);
 		my nodes [my numberOfNodes]. x = x;
@@ -470,7 +470,7 @@ void Network_addNode (Network me, double x, double y, double activity, bool clam
 void Network_addConnection (Network me, integer nodeFrom, integer nodeTo, double weight, double plasticity) {
 	try {
 		Melder_assert (my connections.size == my numberOfConnections);
-		my connections.resize (my numberOfConnections + 1);
+		my connections. resize (my numberOfConnections + 1);
 		my numberOfConnections += 1;   // maintain invariant
 		Melder_assert (my numberOfConnections == my connections.size);
 		my connections [my numberOfConnections]. nodeFrom = nodeFrom;

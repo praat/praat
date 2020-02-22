@@ -214,7 +214,7 @@ static autoINTVEC INTVEC_getUniqueNumbers (constINTVEC const& numbers) {
 	for (integer i = 2; i <= numbers.size; i ++)
 		if (sorted [i] != sorted [i - 1])
 			sorted [++ numberOfUniques] = sorted [i];
-	sorted.resize (numberOfUniques);
+	sorted. resize (numberOfUniques);
 	return sorted;
 }
 

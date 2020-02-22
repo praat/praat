@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 			if (Pitch_util_frequencyIsVoiced (cand -> frequency, my ceiling))
 				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
 			cand -> strength = 0.9;
-			frame -> candidates.resize (frame -> nCandidates = 1);
+			frame -> candidates. resize (frame -> nCandidates = 1);
 		}
 		return you;
 	} catch (MelderError) {
