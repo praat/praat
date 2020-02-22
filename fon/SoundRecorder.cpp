@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1040,10 +1040,9 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 			#endif
 		}
 		/*
-		 * Allocate the maximum buffer.
-		 */
-		if (preferences.bufferSizeInMegabytes < 1) preferences.bufferSizeInMegabytes = 1;   // validate preferences
-		if (preferences.bufferSizeInMegabytes > 1000) preferences.bufferSizeInMegabytes = 1000;
+			Allocate the maximum buffer.
+		*/
+		Melder_clip (1, & preferences.bufferSizeInMegabytes, 1000);
 		if (! my buffer) {
 			integer nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
 			integer nmax_bytes = my inputUsesPortAudio ? nmax_bytes_pref :
