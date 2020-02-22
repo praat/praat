@@ -867,13 +867,13 @@ static void gui_drawingarea_cb_resize (HyperPage me, GuiDrawingArea_ResizeEvent 
 }
 
 static void gui_button_cb_previousPage (HyperPage me, GuiButtonEvent /* event */) {
-	HyperPage_goToPage_i (me, my v_getCurrentPageNumber () > 1 ?
+	HyperPage_goToPage_number (me, my v_getCurrentPageNumber () > 1 ?
 		my v_getCurrentPageNumber () - 1 : my v_getNumberOfPages ());
 }
 
 static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
 	integer currentPageNumber = my v_getCurrentPageNumber ();
-	HyperPage_goToPage_i (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
+	HyperPage_goToPage_number (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
 }
 
 void structHyperPage :: v_createChildren () {
@@ -956,8 +956,8 @@ int HyperPage_goToPage (HyperPage me, conststring32 title) {
 	return 1;	
 }
 
-void HyperPage_goToPage_i (HyperPage me, integer i) {
-	my v_goToPage_i (i);   // catch -> HyperPage_clear (me); ?
+void HyperPage_goToPage_number (HyperPage me, integer i) {
+	my v_goToPage_number (i);   // catch -> HyperPage_clear (me); ?
 	my top = 0;
 	HyperPage_clear (me);
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)

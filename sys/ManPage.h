@@ -32,9 +32,8 @@ typedef struct structManPage_Paragraph {
 Thing_define (ManPage, Thing) {
 	autostring32 title, author;
 	integer date;
-	autovector <structManPage_Paragraph> paragraphs___;
-	integer nlinksHither, nlinksThither;
-	integer *linksHither, *linksThither;
+	autovector <structManPage_Paragraph> paragraphs;
+	autoINTVEC linksHither___, linksThither___;
 	double recordingTime;
 };
 

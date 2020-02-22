@@ -27,7 +27,7 @@ Thing_define (Manual, HyperPage) {
 	GuiButton homeButton, recordButton, playButton, publishButton;
 	int numberOfMatches;
 	integer matches [1 + 20], fromPage, toPage;
-	int suppressLinksHither;
+	bool suppressLinksHither;
 	conststring32 printPagesStartingWith;
 
 	bool v_scriptable ()
@@ -50,7 +50,7 @@ Thing_define (Manual, HyperPage) {
 		override;
 	int v_goToPage (conststring32 title)
 		override;
-	void v_goToPage_i (integer goToPageNumber)
+	void v_goToPage_number (integer goToPageNumber)
 		override;
 	bool v_hasHistory ()
 		override { return true; }

@@ -181,11 +181,11 @@ void Table_removeColumn (Table me, integer columnNumber) {
 			Changes without error.
 		*/
 		my columnHeaders [columnNumber]. destroy ();
-		my columnHeaders.remove (columnNumber);
+		my columnHeaders. remove (columnNumber);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			row -> cells [columnNumber]. destroy ();
-			row -> cells.remove (columnNumber);
+			row -> cells. remove (columnNumber);
 			row -> numberOfColumns --;   // maintain invariant
 		}
 		my numberOfColumns --;   // maintain invariant

@@ -72,7 +72,7 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 		LIST (page, U"Page", pages, 1)
 	EDITOR_OK
 	EDITOR_DO
-		HyperPage_goToPage_i (me, page);
+		HyperPage_goToPage_number (me, page);
 	EDITOR_END
 }
 
@@ -96,8 +96,8 @@ void structManual :: v_draw () {
 	//if (! our paragraphs____)
 	//	return;
 	HyperPage_pageTitle (this, page -> title.get());
-	for (integer ipar = 1; ipar <= page -> paragraphs___.size; ipar ++) {
-		ManPage_Paragraph paragraph = & page -> paragraphs___ [ipar];
+	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
+		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		switch (paragraph -> type) {
 			case  kManPage_type::INTRO: HyperPage_intro (this, paragraph -> text); break;
 			case  kManPage_type::ENTRY: HyperPage_entry (this, paragraph -> text); break;
@@ -132,8 +132,8 @@ void structManual :: v_draw () {
 	if (ManPages_uniqueLinksHither (manPages, our visiblePageNumber)) {
 		integer ilink, jlink;
 		bool goAhead = true;
-		if (page -> paragraphs___.size > 0) {
-			conststring32 text = page -> paragraphs___ [page -> paragraphs___.size]. text;
+		if (page -> paragraphs.size > 0) {
+			conststring32 text = page -> paragraphs [page -> paragraphs.size]. text;
 			if (! text || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
 				if (our printing && our suppressLinksHither)
 					goAhead = false;
@@ -141,14 +141,14 @@ void structManual :: v_draw () {
 					HyperPage_entry (this, U"Links to this page");
 			}
 		}
-		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
-			integer link = page -> linksHither [ilink];
+		if (goAhead) for (ilink = 1; ilink <= page -> linksHither___.size; ilink ++) {
+			integer link = page -> linksHither___ [ilink];
 			bool alreadyShown = false;
-			for (jlink = 1; jlink <= page -> nlinksThither; jlink ++)
-				if (page -> linksThither [jlink] == link)
+			for (jlink = 1; jlink <= page -> linksThither___.size; jlink ++)
+				if (page -> linksThither___ [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				conststring32 title = manPages -> pages.at [page -> linksHither [ilink]] -> title.get();
+				conststring32 title = manPages -> pages.at [page -> linksHither___ [ilink]] -> title.get();
 				char32 linkText [304];
 				Melder_sprint (linkText, 304, U"@@", title, U"@");
 				HyperPage_listItem (this, linkText);
@@ -190,9 +190,9 @@ static void print (void *void_me, Graphics graphics) {
 		{
 			my visiblePageNumber = ipage;
 			my currentPageTitle = Melder_dup_f (page -> title.get());
-			my v_goToPage_i (ipage);
+			my v_goToPage_number (ipage);
 			my v_draw ();
-			my v_goToPage_i (saveVisiblePageNumber);
+			my v_goToPage_number (saveVisiblePageNumber);
 		}
 	}
 	my printing = false;
@@ -269,8 +269,8 @@ static double searchToken (ManPages me, integer ipage, conststring32 token) {
 	/*
 		Try to find a match in the paragraphs, case-insensitively.
 	*/
-	for (integer ipar = 1; ipar <= page -> paragraphs___.size; ipar ++) {
-		ManPage_Paragraph par = & page -> paragraphs___ [ipar];
+	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
+		ManPage_Paragraph par = & page -> paragraphs [ipar];
 		if (par -> text) {
 			char32 *ptoken;
 			MelderString_copy (& buffer, par -> text);
@@ -331,7 +331,7 @@ static void search (Manual me, conststring32 query) {
 		my matches [++ my numberOfMatches] = imax;
 		goodnessOfMatch [imax] = 0.0;   // skip next time
 	}
-	HyperPage_goToPage_i (me, SEARCH_PAGE);
+	HyperPage_goToPage_number (me, SEARCH_PAGE);
 }
 
 void Manual_search (Manual me, conststring32 query) {
@@ -342,7 +342,7 @@ void Manual_search (Manual me, conststring32 query) {
 static void gui_button_cb_home (Manual me, GuiButtonEvent /* event */) {
 	ManPages pages = (ManPages) my data;
 	integer iHome = ManPages_lookUp (pages, U"Intro");
-	HyperPage_goToPage_i (me, iHome ? iHome : 1);
+	HyperPage_goToPage_number (me, iHome ? iHome : 1);
 }
  
 static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
@@ -456,7 +456,7 @@ integer structManual :: v_getCurrentPageNumber () {
 	return our visiblePageNumber > 0 ? our visiblePageNumber : 1;
 }
 
-void structManual :: v_goToPage_i (integer goToPageNumber) {
+void structManual :: v_goToPage_number (integer goToPageNumber) {
 	ManPages manPages = (ManPages) our data;
 	if (goToPageNumber < 1 || goToPageNumber > manPages -> pages.size) {
 		if (goToPageNumber == SEARCH_PAGE) {
@@ -491,7 +491,7 @@ int structManual :: v_goToPage (conststring32 title) {
 		integer i = ManPages_lookUp (manPages, title);
 		if (! i)
 			Melder_throw (U"Page \"", title, U"\" not found.");
-		our v_goToPage_i (i);
+		our v_goToPage_number (i);
 		return 1;
 	}
 }

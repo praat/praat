@@ -285,7 +285,7 @@ void GaussianMixture_removeUnsupportedComponents (GaussianMixture me) {
 				my mixingProbabilities [ic] = my mixingProbabilities [ic + 1];
 		}
 	}
-	my mixingProbabilities.resize (my numberOfComponents); // they stay normalized
+	my mixingProbabilities. resize (my numberOfComponents); // they stay normalized
 }
 
 autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer dimension, kGaussianMixtureStorage storage) {
@@ -1097,7 +1097,7 @@ void GaussianMixture_removeComponent (GaussianMixture me, integer component) {
 	for (integer ic = component; ic <= my numberOfComponents; ic ++)
 		my mixingProbabilities [ic] = my mixingProbabilities [ic + 1];
 	
-	my mixingProbabilities.resize (my numberOfComponents);
+	my mixingProbabilities. resize (my numberOfComponents);
 	
 	VECnormalize_inplace (my mixingProbabilities.get(), 1.0, 1.0);
 }

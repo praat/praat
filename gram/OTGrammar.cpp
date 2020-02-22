@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2019 Paul Boersma
+ * Copyright (C) 1997-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2430,7 +2430,7 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 		*/
 		my constraints [removed]. destroy ();
 		Melder_assert (! my constraints [removed]. name);
-		my constraints.remove (removed);
+		my constraints. remove (removed);
 		my numberOfConstraints -= 1;   // maintain invariant
 		Melder_assert (my numberOfConstraints == my constraints.size);
 		/*
@@ -2443,7 +2443,7 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 					Remove fixed ranking.
 				*/
 				my fixedRankings [ifixed]. destroy();
-				my fixedRankings.remove (ifixed);
+				my fixedRankings. remove (ifixed);
 				my numberOfFixedRankings -= 1;   // maintain invariant
 				Melder_assert (my numberOfFixedRankings == my fixedRankings.size);
 			} else {
@@ -2463,7 +2463,7 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 			OTGrammarTableau tableau = & my tableaus [itab];
 			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				OTGrammarCandidate candidate = & tableau -> candidates [icand];
-				candidate -> marks.remove (removed);
+				candidate -> marks. remove (removed);
 				candidate -> numberOfConstraints -= 1;   // maintain invariant
 				Melder_assert (candidate -> numberOfConstraints == candidate -> marks.size);
 			}
@@ -2489,7 +2489,7 @@ static void OTGrammarTableau_removeCandidate_unstripped (OTGrammarTableau me, in
 	Melder_assert (! my candidates [candidateNumber]. output);   // check leak
 	Melder_assert (my candidates [candidateNumber]. marks.size == 0);
 	Melder_assert (my candidates [candidateNumber]. marks.at == nullptr);   // check leak
-	my candidates.remove (candidateNumber);
+	my candidates. remove (candidateNumber);
 	my numberOfCandidates -= 1;   // maintain invariant
 	Melder_assert (my numberOfCandidates == my candidates.size);
 }

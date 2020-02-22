@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.cpp
  *
- * Copyright (C) 1992-2005,2007-2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	/*
 	 * Register the first candidate, which is always present: voicelessness.
 	 */
-	pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 1);   // maintain invariant; no memory allocations
+	pitchFrame -> candidates. resize (pitchFrame -> nCandidates = 1);   // maintain invariant; no memory allocations
 	pitchFrame -> candidates [1]. frequency = 0.0;   // voiceless: always present
 	pitchFrame -> candidates [1]. strength = 0.0;
 
@@ -205,7 +205,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		 * Find a place for this maximum.
 		 */
 		if (pitchFrame->nCandidates < maxnCandidates) {   // is there still a free place?
-			pitchFrame -> candidates.resize (++ pitchFrame -> nCandidates);
+			pitchFrame -> candidates. resize (++ pitchFrame -> nCandidates);
 			place = pitchFrame -> nCandidates;
 		} else {
 			/* Try the place of the weakest candidate so far. */
@@ -483,7 +483,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			/*
 			* Create buffers for autocorrelation analysis.
 			*/
-			windowR.resize (nsampFFT);
+			windowR. resize (nsampFFT);
 			window.reset (1, nsamp_window);
 			NUMfft_Table_init (& fftTable, nsampFFT);
 

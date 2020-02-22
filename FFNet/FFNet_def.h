@@ -38,7 +38,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 			numberOfOutputs = numberOfUnitsInLayer [numberOfLayers + 1];
 			for (integer ilayer = 1; ilayer <= numberOfLayers; ilayer ++)
 				numberOfUnitsInLayer [ilayer] = numberOfUnitsInLayer [ilayer + 1];
-			numberOfUnitsInLayer.resize (numberOfLayers);
+			numberOfUnitsInLayer. resize (numberOfLayers);
 		oo_VERSION_ELSE
 			oo_INTVEC (numberOfUnitsInLayer, numberOfLayers)
 		oo_VERSION_END
