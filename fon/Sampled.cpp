@@ -603,16 +603,15 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, integer level
 				xOfMinimum = xmax;
 			}
 		}
-		if (xOfMinimum < xmin)
-			xOfMinimum = xmin;
-		if (xOfMinimum > xmax)
-			xOfMinimum = xmax;
+		Melder_clip (xmin, & xOfMinimum, xmax);
 	}
 	if (minimum == 1e301)
 		minimum = xOfMinimum = undefined;
 end:
-	if (return_minimum) *return_minimum = minimum;
-	if (return_xOfMinimum) *return_xOfMinimum = xOfMinimum;
+	if (return_minimum)
+		*return_minimum = minimum;
+	if (return_xOfMinimum)
+		*return_xOfMinimum = xOfMinimum;
 }
 
 double Sampled_getMinimum (Sampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
@@ -708,16 +707,15 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, integer level
 				xOfMaximum = xmax;
 			}
 		}
-		if (xOfMaximum < xmin)
-			xOfMaximum = xmin;
-		if (xOfMaximum > xmax)
-			xOfMaximum = xmax;
+		Melder_clip (xmin, & xOfMaximum, xmax);
 	}
 	if (maximum == -1e301)
 		maximum = xOfMaximum = undefined;
 end:
-	if (return_maximum) *return_maximum = maximum;
-	if (return_xOfMaximum) *return_xOfMaximum = xOfMaximum;
+	if (return_maximum)
+		*return_maximum = maximum;
+	if (return_xOfMaximum)
+		*return_xOfMaximum = xOfMaximum;
 }
 
 double Sampled_getMaximum (Sampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
@@ -773,13 +771,17 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		if (ymax <= ymin)
 			return;
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-		autoNUMvector <double> xarray (ixmin - 1, ixmax + 1);
-		autoNUMvector <double> yarray (ixmin - 1, ixmax + 1);
-		double previousValue = Sampled_getValueAtSample (me, ixmin - 1, levelNumber, unit);
+		auto const lowIndex = ixmin - 1, highIndex = ixmax + 1;
+		auto const nbuffer = highIndex - lowIndex + 1;
+		auto xbuffer = newVECzero (nbuffer), ybuffer = newVECzero (nbuffer);
+		auto const bufferShift = 1 - lowIndex;
+		double *xarray = & xbuffer [bufferShift];
+		double *yarray = & ybuffer [bufferShift];
+		double previousValue = Sampled_getValueAtSample (me, lowIndex, levelNumber, unit);
 		if (isdefined (previousValue)) {
-			startOfDefinedStretch = ixmin - 1;
-			xarray [ixmin - 1] = Sampled_indexToX (me, ixmin - 1);
-			yarray [ixmin - 1] = previousValue;
+			startOfDefinedStretch = lowIndex;
+			xarray [lowIndex] = Sampled_indexToX (me, lowIndex);
+			yarray [lowIndex] = previousValue;
 		}
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
 			const double x = Sampled_indexToX (me, ix);
@@ -796,7 +798,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 					yarray [ix] = value;
 				}
 			} else if (isdefined (previousValue)) {
-				Melder_assert (startOfDefinedStretch >= ixmin - 1);
+				Melder_assert (startOfDefinedStretch >= lowIndex);
 				if (ix > ixmin) {
 					xarray [ix] = x - 0.5 * my dx;
 					yarray [ix] = previousValue;
@@ -812,25 +814,25 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 			previousValue = value;
 		}
 		if (startOfDefinedStretch > -1) {
-			const double x = Sampled_indexToX (me, ixmax + 1);
+			const double x = Sampled_indexToX (me, highIndex);
 			const double value = Sampled_getValueAtSample (me, ixmax + 1, levelNumber, unit);
 			Melder_assert (isdefined (previousValue));
 			if (isdefined (value)) {
-				xarray [ixmax + 1] = x;
-				yarray [ixmax + 1] = value;
+				xarray [highIndex] = x;
+				yarray [highIndex] = value;
 			} else {
-				xarray [ixmax + 1] = x - 0.5 * my dx;
-				yarray [ixmax + 1] = previousValue;
+				xarray [highIndex] = x - 0.5 * my dx;
+				yarray [highIndex] = previousValue;
 			}
 			if (xarray [startOfDefinedStretch] < xmin) {
-				double phase = (xmin - xarray [startOfDefinedStretch]) / my dx;
+				const double phase = (xmin - xarray [startOfDefinedStretch]) / my dx;
 				xarray [startOfDefinedStretch] = xmin;
 				yarray [startOfDefinedStretch] = phase * yarray [startOfDefinedStretch + 1] + (1.0 - phase) * yarray [startOfDefinedStretch];
 			}
-			if (xarray [ixmax + 1] > xmax) {
-				double phase = (xarray [ixmax + 1] - xmax) / my dx;
-				xarray [ixmax + 1] = xmax;
-				yarray [ixmax + 1] = phase * yarray [ixmax] + (1.0 - phase) * yarray [ixmax + 1];
+			if (xarray [highIndex] > xmax) {
+				const double phase = (xarray [highIndex] - xmax) / my dx;
+				xarray [highIndex] = xmax;
+				yarray [highIndex] = phase * yarray [ixmax] + (1.0 - phase) * yarray [highIndex];
 			}
 			Graphics_polyline (g, ixmax + 2 - startOfDefinedStretch, & xarray [startOfDefinedStretch], & yarray [startOfDefinedStretch]);
 		}
