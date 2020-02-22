@@ -46,30 +46,29 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	NUMfft_Table fftTable, double dt_window, integer nsamp_window, integer halfnsamp_window,
 	integer maximumLag, integer nsampFFT, integer nsamp_period, integer halfnsamp_period,
 	integer brent_ixmax, integer brent_depth, double globalPeak,
-	const MAT& frame, double *ac, double *window, double *windowR,
-	double *r, integer *imax, double *localMean)
+	MAT const& frame, VEC const& ac, VEC const& window, VEC const& windowR,
+	double *r, INTVEC const& imax, VEC const& localMean)
 {
 	integer leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 	integer startSample, endSample;
 
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		/*
-		 * Compute the local mean; look one longest period to both sides.
-		 */
+			Compute the local mean; look one longest period to both sides.
+		*/
 		startSample = rightSample - nsamp_period;
 		endSample = leftSample + nsamp_period;
 		Melder_assert (startSample >= 1);
 		Melder_assert (endSample <= my nx);
 		localMean [channel] = 0.0;
-		for (integer i = startSample; i <= endSample; i ++) {
+		for (integer i = startSample; i <= endSample; i ++)
 			localMean [channel] += my z [channel] [i];
-		}
 		localMean [channel] /= 2 * nsamp_period;
 
 		/*
-		 * Copy a window to a frame and subtract the local mean.
-		 * We are going to kill the DC component before windowing.
-		 */
+			Copy a window to a frame and subtract the local mean.
+			We are going to kill the DC component before windowing.
+		*/
 		startSample = rightSample - halfnsamp_window;
 		endSample = leftSample + halfnsamp_window;
 		Melder_assert (startSample >= 1);
@@ -86,35 +85,39 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	}
 
 	/*
-	 * Compute the local peak; look half a longest period to both sides.
-	 */
+		Compute the local peak; look half a longest period to both sides.
+	*/
 	double localPeak = 0.0;
-	if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1) startSample = 1;
-	if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window) endSample = nsamp_window;
+	if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1)
+		startSample = 1;
+	if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window)
+		endSample = nsamp_window;
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		for (integer j = startSample; j <= endSample; j ++) {
 			double value = fabs (frame [channel] [j]);
-			if (value > localPeak) localPeak = value;
+			if (value > localPeak)
+				localPeak = value;
 		}
 	}
-	pitchFrame -> intensity =
-		localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
+	pitchFrame -> intensity = ( localPeak > globalPeak ? 1.0 : localPeak / globalPeak );
 
 	/*
-	 * Compute the correlation into the array 'r'.
-	 */
+		Compute the correlation into the array 'r'.
+	*/
 	if (method >= FCC_NORMAL) {
 		double startTime = t - 0.5 * (1.0 / minimumPitch + dt_window);
 		integer localSpan = maximumLag + nsamp_window, localMaximumLag, offset;
-		if ((startSample = Sampled_xToLowIndex (me, startTime)) < 1) startSample = 1;
-		if (localSpan > my nx + 1 - startSample) localSpan = my nx + 1 - startSample;
+		if ((startSample = Sampled_xToLowIndex (me, startTime)) < 1)
+			startSample = 1;
+		if (localSpan > my nx + 1 - startSample)
+			localSpan = my nx + 1 - startSample;
 		localMaximumLag = localSpan - nsamp_window;
 		offset = startSample - 1;
 		longdouble sumx2 = 0.0;   // sum of squares
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			double *amp = & my z [channel] [0] + offset;
 			for (integer i = 1; i <= nsamp_window; i ++) {
-				double x = amp [i] - localMean [channel];
+				const double x = amp [i] - localMean [channel];
 				sumx2 += x * x;
 			}
 		}
@@ -138,48 +141,46 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	} else {
 
 		/*
-		 * The FFT of the autocorrelation is the power spectrum.
-		 */
-		for (integer i = 1; i <= nsampFFT; i ++) {
+			The FFT of the autocorrelation is the power spectrum.
+		*/
+		for (integer i = 1; i <= nsampFFT; i ++)
 			ac [i] = 0.0;
-		}
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			NUMfft_forward (fftTable, VEC (& frame [channel] [0], fftTable->n));   // complex spectrum
 			ac [1] += frame [channel] [1] * frame [channel] [1];   // DC component
-			for (integer i = 2; i < nsampFFT; i += 2) {
+			for (integer i = 2; i < nsampFFT; i += 2)
 				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];   // power spectrum
-			}
 			ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   // Nyquist frequency
 		}
-		NUMfft_backward (fftTable, VEC (ac, fftTable->n));   /* Autocorrelation. */
+		NUMfft_backward (fftTable, ac);   // autocorrelation
 
 		/*
-		 * Normalize the autocorrelation to the value with zero lag,
-		 * and divide it by the normalized autocorrelation of the window.
-		 */
+			Normalize the autocorrelation to the value with zero lag,
+			and divide it by the normalized autocorrelation of the window.
+		*/
 		r [0] = 1.0;
 		for (integer i = 1; i <= brent_ixmax; i ++)
 			r [- i] = r [i] = ac [i + 1] / (ac [1] * windowR [i + 1]);
 	}
 
 	/*
-	 * Register the first candidate, which is always present: voicelessness.
-	 */
+		Register the first candidate, which is always present: voicelessness.
+	*/
 	pitchFrame -> candidates. resize (pitchFrame -> nCandidates = 1);   // maintain invariant; no memory allocations
 	pitchFrame -> candidates [1]. frequency = 0.0;   // voiceless: always present
 	pitchFrame -> candidates [1]. strength = 0.0;
 
 	/*
-	 * Shortcut: absolute silence is always voiceless.
-	 * We are done for this frame.
-	 */
+		Shortcut: absolute silence is always voiceless.
+		We are done for this frame.
+	*/
 	if (localPeak == 0.0)
 		return;
 
 	/*
-	 * Find the strongest maxima of the correlation of this frame, 
-	 * and register them as candidates.
-	 */
+		Find the strongest maxima of the correlation of this frame,
+		and register them as candidates.
+	*/
 	imax [1] = 0;
 	for (integer i = 2; i < maximumLag && i < brent_ixmax; i ++)
 		if (r [i] > 0.5 * voicingThreshold &&   // not too unvoiced?
@@ -188,31 +189,37 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		integer place = 0;
 
 		/*
-		 * Use parabolic interpolation for first estimate of frequency,
-		 * and sin(x)/x interpolation to compute the strength of this frequency.
-		 */
+			Use parabolic interpolation for first estimate of frequency,
+			and sin(x)/x interpolation to compute the strength of this frequency.
+		*/
 		const double dr = 0.5 * (r [i+1] - r [i-1]), d2r = 2.0 * r [i] - r [i-1] - r [i+1];
 		const double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
 		const integer offset = - brent_ixmax - 1;
 		double strengthOfMaximum = /* method & 1 ? */
 			NUM_interpolate_sinc (constVEC (& r [offset], brent_ixmax - offset), 1.0 / my dx / frequencyOfMaximum - offset, 30)
 			/* : r [i] + 0.5 * dr * dr / d2r */;
-		/* High values due to short windows are to be reflected around 1. */
+		/*
+			High values due to short windows are to be reflected around 1.
+		*/
 		if (strengthOfMaximum > 1.0)
 			strengthOfMaximum = 1.0 / strengthOfMaximum;
 
 		/*
-		 * Find a place for this maximum.
-		 */
+			Find a place for this maximum.
+		*/
 		if (pitchFrame->nCandidates < maxnCandidates) {   // is there still a free place?
 			pitchFrame -> candidates. resize (++ pitchFrame -> nCandidates);
 			place = pitchFrame -> nCandidates;
 		} else {
-			/* Try the place of the weakest candidate so far. */
+			/*
+				Try the place of the weakest candidate so far.
+			*/
 			double weakest = 2.0;
 			for (int iweak = 2; iweak <= maxnCandidates; iweak ++) {
-				/* High frequencies are to be favoured */
-				/* if we want to analyze a perfectly periodic signal correctly. */
+				/*
+					High frequencies are to be favoured
+					if we want to analyze a perfectly periodic signal correctly.
+				*/
 				double localStrength = pitchFrame -> candidates [iweak]. strength - octaveCost *
 					NUMlog2 (minimumPitch / pitchFrame -> candidates [iweak]. frequency);
 				if (localStrength < weakest) {
@@ -220,7 +227,9 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 					place = iweak;
 				}
 			}
-			/* If this maximum is weaker than the weakest candidate so far, give it no place. */
+			/*
+				If this maximum is weaker than the weakest candidate so far, give it no place.
+			*/
 			if (strengthOfMaximum - octaveCost * NUMlog2 (minimumPitch / frequencyOfMaximum) <= weakest)
 				place = 0;
 		}
@@ -232,8 +241,8 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	}
 
 	/*
-	 * Second pass: for extra precision, maximize sin(x)/x interpolation ('sinc').
-	 */
+		Second pass: for extra precision, maximize sin(x)/x interpolation ('sinc').
+	*/
 	for (integer i = 2; i <= pitchFrame -> nCandidates; i ++) {
 		if (method != AC_HANNING || pitchFrame -> candidates [i]. frequency > 0.0 / my dx) {
 			double xmid, ymid;
@@ -257,7 +266,8 @@ Thing_define (Sound_into_Pitch_Args, Thing) { public:
 	int maxnCandidates, method;
 	double voicingThreshold, octaveCost, dt_window;
 	integer nsamp_window, halfnsamp_window, maximumLag, nsampFFT, nsamp_period, halfnsamp_period, brent_ixmax, brent_depth;
-	double globalPeak, *window, *windowR;
+	double globalPeak;
+	VEC window, windowR;
 	bool isMainThread;
 	volatile int *cancelled;
 };
@@ -269,7 +279,7 @@ static autoSound_into_Pitch_Args Sound_into_Pitch_Args_create (Sound sound, Pitc
 	double voicingThreshold, double octaveCost,
 	double dt_window, integer nsamp_window, integer halfnsamp_window, integer maximumLag, integer nsampFFT,
 	integer nsamp_period, integer halfnsamp_period, integer brent_ixmax, integer brent_depth,
-	double globalPeak, double *window, double *windowR,
+	double globalPeak, VEC window, VEC windowR,
 	bool isMainThread, volatile int *cancelled)
 {
 	autoSound_into_Pitch_Args me = Thing_new (Sound_into_Pitch_Args);
@@ -306,8 +316,9 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 {
 	autoNUMfft_Table fftTable;
 	autoMAT frame;
-	autoNUMvector <double> ac, r, localMean;
-	autoNUMvector <integer> imax;
+	autoVEC ac, rbuffer, localMean;
+	double *r;
+	autoINTVEC imax;
 	{// scope
 		MelderThread_LOCK (mutex);
 		if (my method >= FCC_NORMAL) {   // cross-correlation
@@ -315,11 +326,12 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 		} else {   // autocorrelation
 			NUMfft_Table_init (& fftTable, my nsampFFT);
 			frame = newMATzero (my sound -> ny, my nsampFFT);
-			ac.reset (1, my nsampFFT);
+			ac = newVECzero (my nsampFFT);
 		}
-		r.reset (- my nsamp_window, my nsamp_window);
-		imax.reset (1, my maxnCandidates);
-		localMean.reset (1, my sound -> ny);
+		rbuffer = newVECzero (2 * my nsamp_window + 1);
+		r = & rbuffer [1 + my nsamp_window];
+		imax = newINTVECzero (my maxnCandidates);
+		localMean = newVECzero (my sound -> ny);
 		MelderThread_UNLOCK (mutex);
 	}
 	for (integer iframe = my firstFrame; iframe <= my lastFrame; iframe ++) {
@@ -341,8 +353,8 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 			& fftTable, my dt_window, my nsamp_window, my halfnsamp_window,
 			my maximumLag, my nsampFFT, my nsamp_period, my halfnsamp_period,
 			my brent_ixmax, my brent_depth, my globalPeak,
-			frame.get(), ac.peek(), my window, my windowR,
-			r.peek(), imax.peek(), localMean.peek()
+			frame.get(), ac.get(), my window, my windowR,
+			r, imax.get(), localMean.get()
 		);
 	}
 	MelderThread_RETURN;
@@ -369,7 +381,8 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		if (maxnCandidates < ceiling / minimumPitch)
 			maxnCandidates = Melder_ifloor (ceiling / minimumPitch);
 
-		if (dt <= 0.0) dt = periodsPerWindow / minimumPitch / 4.0;   // e.g. 3 periods, 75 Hz: 10 milliseconds
+		if (dt <= 0.0)
+			dt = periodsPerWindow / minimumPitch / 4.0;   // e.g. 3 periods, 75 Hz: 10 milliseconds
 
 		switch (method) {
 			case AC_HANNING:
@@ -395,18 +408,18 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			Melder_throw (U"To analyse this Sound, “minimum pitch” must not be less than ", periodsPerWindow / duration, U" Hz.");
 
 		/*
-		 * Determine the number of samples in the longest period.
-		 * We need this to compute the local mean of the sound (looking one period in both directions),
-		 * and to compute the local peak of the sound (looking half a period in both directions).
-		 */
+			Determine the number of samples in the longest period.
+			We need this to compute the local mean of the sound (looking one period in both directions),
+			and to compute the local peak of the sound (looking half a period in both directions).
+		*/
 		integer nsamp_period = Melder_ifloor (1.0 / my dx / minimumPitch);
 		integer halfnsamp_period = nsamp_period / 2 + 1;
 
-		if (ceiling > 0.5 / my dx) ceiling = 0.5 / my dx;
+		Melder_clipRight (& ceiling, 0.5 / my dx);
 
 		/*
-		 * Determine window length in seconds and in samples.
-		 */
+			Determine window duration in seconds and in samples.
+		*/
 		double dt_window = periodsPerWindow / minimumPitch;
 		integer nsamp_window = Melder_ifloor (dt_window / my dx);
 		integer halfnsamp_window = nsamp_window / 2 - 1;
@@ -433,21 +446,21 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		}
 
 		/*
-		 * Create the resulting pitch contour.
-		 */
+			Create the resulting pitch contour.
+		*/
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, dt, t1, ceiling, maxnCandidates);
 
 		/*
-		 * Create (too much) space for candidates.
-		 */
+			Create (too much) space for candidates.
+		*/
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const Pitch_Frame pitchFrame = & thy frames [iframe];
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
 		}
 
 		/*
-		 * Compute the global absolute peak for determination of silence threshold.
-		 */
+			Compute the global absolute peak for determination of silence threshold.
+		*/
 		globalPeak = 0.0;
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
 			const double mean = NUMmean (my z.row (ichan));
@@ -460,56 +473,51 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		if (globalPeak == 0.0)
 			return thee;
 
-		autoNUMvector <double> window;
-		autoVEC windowR;
-		if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
+		autoVEC window, windowR;
+		if (method >= FCC_NORMAL) {   // for cross-correlation analysis
 
 			nsampFFT = 0;
 			brent_ixmax = Melder_ifloor (nsamp_window * interpolation_depth);
 
-		} else {   /* For autocorrelation analysis. */
+		} else {   // for autocorrelation analysis
 
 			/*
-			* Compute the number of samples needed for doing FFT.
-			* To avoid edge effects, we have to append zeroes to the window.
-			* The maximum lag considered for maxima is maximumLag.
-			* The maximum lag used in interpolation is nsamp_window * interpolation_depth.
+				Compute the number of samples needed for doing FFT.
+				To avoid edge effects, we have to append zeroes to the window.
+				The maximum lag considered for maxima is maximumLag.
+				The maximum lag used in interpolation is nsamp_window * interpolation_depth.
 			*/
 			nsampFFT = 1;
-			while (nsampFFT < nsamp_window * (1 + interpolation_depth)) {
+			while (nsampFFT < nsamp_window * (1 + interpolation_depth))
 				nsampFFT *= 2;
-			}
 
 			/*
-			* Create buffers for autocorrelation analysis.
+				Create buffers for autocorrelation analysis.
 			*/
 			windowR. resize (nsampFFT);
-			window.reset (1, nsamp_window);
+			window. resize (nsamp_window);
 			NUMfft_Table_init (& fftTable, nsampFFT);
 
 			/*
-			* A Gaussian or Hanning window is applied against phase effects.
-			* The Hanning window is 2 to 5 dB better for 3 periods/window.
-			* The Gaussian window is 25 to 29 dB better for 6 periods/window.
+				A Gaussian or Hanning window is applied against phase effects.
+				The Hanning window is 2 to 5 dB better for 3 periods/window.
+				The Gaussian window is 25 to 29 dB better for 6 periods/window.
 			*/
-			if (method == AC_GAUSS) {   /* Gaussian window. */
+			if (method == AC_GAUSS) {   // Gaussian window
 				double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
-				for (integer i = 1; i <= nsamp_window; i ++) {
+				for (integer i = 1; i <= nsamp_window; i ++)
 					window [i] = (exp (-48.0 * (i - imid) * (i - imid) /
-						(nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
-				}
+							(nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
 			} else {   // Hanning window
-				for (integer i = 1; i <= nsamp_window; i ++) {
+				for (integer i = 1; i <= nsamp_window; i ++)
 					window [i] = 0.5 - 0.5 * cos (i * 2 * NUMpi / (nsamp_window + 1));
-				}
 			}
 
 			/*
-			* Compute the normalized autocorrelation of the window.
+				Compute the normalized autocorrelation of the window.
 			*/
-			for (integer i = 1; i <= nsamp_window; i ++) {
+			for (integer i = 1; i <= nsamp_window; i ++)
 				windowR [i] = window [i];
-			}
 			NUMfft_forward (& fftTable, windowR.get());
 			windowR [1] *= windowR [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2) {
@@ -518,9 +526,8 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			}
 			windowR [nsampFFT] *= windowR [nsampFFT];   // Nyquist frequency
 			NUMfft_backward (& fftTable, windowR.get());   // autocorrelation
-			for (integer i = 2; i <= nsamp_window; i ++) {
+			for (integer i = 2; i <= nsamp_window; i ++)
 				windowR [i] /= windowR [1];   // normalize
-			}
 			windowR [1] = 1.0;   // normalize
 
 			brent_ixmax = Melder_ifloor (nsamp_window * interpolation_depth);
@@ -548,7 +555,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 				voicingThreshold, octaveCost,
 				dt_window, nsamp_window, halfnsamp_window, maximumLag,
 				nsampFFT, nsamp_period, halfnsamp_period, brent_ixmax, brent_depth,
-				globalPeak, window.peek(), windowR.at,
+				globalPeak, window.get(), windowR.get(),
 				ithread == numberOfThreads, & cancelled);
 			firstFrame = lastFrame + 1;
 			lastFrame += numberOfFramesPerThread;
