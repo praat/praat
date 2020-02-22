@@ -48,14 +48,14 @@ void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integ
 static inline autoVEC LineSpectralFrequencies_listFrequenciesInFrame (LineSpectralFrequencies me, integer frameNumber) {
 	my checkIndex (frameNumber);
 	autoVEC result = newVECzero (my maximumNumberOfFrequencies);
-	result <<= my d_frames [frameNumber] .frequencies;
+	result.all() <<= my d_frames [frameNumber]. frequencies.get();
 	return result;
 }
 
 static inline autoMAT LineSpectralFrequencies_listAllFrequencies (LineSpectralFrequencies me) {
 	autoMAT result = newMATraw (my maximumNumberOfFrequencies, my nx);
 	for (integer iframe = 1; iframe <= my nx; iframe ++)
-		result.column (iframe) <<= my d_frames [iframe] .frequencies;
+		result.column (iframe) <<= my d_frames [iframe]. frequencies.get();
 	return result;
 }
 

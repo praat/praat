@@ -417,7 +417,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 			for (integer jcol = 1; jcol <= a.ncol; jcol ++)
 				if (jcol != icol)
 					r.get()  -=  x [jcol] * a.column (jcol);
-			const double ajr = NUMinner (a.column (icol), r);
+			const double ajr = NUMinner (a.column (icol), r.all());
 			const double ajaj = NUMsum2 (a.column (icol));
 			x [icol] = std::max (0.0, ajr / ajaj);
 		}
@@ -426,7 +426,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		*/
 		VECmul (r.get(), a, x);
 		r.get()  -=  y;
-		difsq = NUMsum2 (r);
+		difsq = NUMsum2 (r.all());
 		convergence = fabs (difsq - difsq_previous) < tol * normSquared_y;
 		if (infoLevel > 1)
 			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
@@ -710,7 +710,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 				x [j] /= c [j] - c [a.ncol]; // eq. 10
 			if (q > 1)
 				x.part (r + 2, a.ncol) <<= 0.0;
-			autoVEC result = newVECmul (u,  x);
+			autoVEC result = newVECmul (u, x.all());
 			return result;
 		}
 		// else continue with r = m - q
@@ -722,7 +722,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	for (integer j = 1; j <= r; j ++)
 		xCx += x [j] * x [j] / c [j];
 
-	const double bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
+	const double bmin = ( delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx) );
 	const double eps = (c [a.ncol] - bmin) * tol;
 	/*
 		Find the root of d(psi(b)/db in interval (bmin, c [m])
@@ -735,7 +735,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 		x [j] /= c [j] - b0; // eq. 7
 	if (q > 1)
 		x.part (r + 1, a.ncol) <<= 0.0;
-	autoVEC result = newVECmul (u, x);
+	autoVEC result = newVECmul (u, x.all());
 	return result;
 }
 
@@ -1278,7 +1278,7 @@ void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT co
 		autoMAT lowerInverse = newMATcopy (covariance);
 		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			dif <<= data.row (irow)  -  means;
+			dif.all() <<= data.row (irow)  -  means;
 			residuals.row(irow) <<= 0.0;
 			if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
 				residuals.row(irow) <<= lowerInverse.row(1)  *  dif.get();
@@ -2908,15 +2908,15 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			*/
 			VECmul (buffer.get(), dictionary.transpose(), y);
 			VECupdateDataAndSupport_inplace (buffer.get(), support.get(), numberOfNonZeros);
-			yfromx <<= 0.0;
-			ydif <<= y; // ydif = y - D.x(1) = y - D.0 = y
+			yfromx.all() <<= 0.0;
+			ydif.all() <<= y; // ydif = y - D.x(1) = y - D.0 = y
 		} else {
 			/*
 				We improve a current solution x
 			*/
 			VECupdateDataAndSupport_inplace (x, support.get(), numberOfNonZeros);
 			VECmul (yfromx.get(), dictionary, x); // D.x(n)
-			ydif <<= y  -  yfromx; // y - D.x(n)
+			ydif.all() <<= y  -  yfromx.all(); // y - D.x(n)
 			rms = NUMsum2 (ydif.get()) / y.size; // ||y - D.x(n)||^2
 		}
 		
@@ -2957,7 +2957,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				}
 			}
 
-			ydif <<= y  -  yfromx_new; // y - D.x(n+1)
+			ydif.all() <<= y  -  yfromx_new.all();   // y - D.x(n+1)
 
 			const double rms_new = NUMsum2 (ydif.get()) / y.size;
 			const double relativeError = fabs (rms - rms_new) / rms_y;
@@ -2965,9 +2965,9 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			if (infoLevel > 1)
 				MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
 			
-			x <<= x_new;
-			support <<= support_new;
-			yfromx <<= yfromx_new;
+			x <<= x_new.all();
+			support.all() <<= support_new.all();
+			yfromx.all() <<= yfromx_new.all();
 			rms = rms_new;
 			iter ++;
 		}

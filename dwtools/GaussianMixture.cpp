@@ -546,7 +546,7 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	if (d2 < 0)
 		eigenvector2.all()  *=  -1.0;
 
-	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), eigenvector1, eigenvector2);
+	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), eigenvector1.all(), eigenvector2.all());
 
 	SSCPList_drawConcentrationEllipses (thee.get(), g, -scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 

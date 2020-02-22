@@ -407,16 +407,16 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
 			const SSCP m = thy groups->at [k];
 			const double scale = SSCP_getNumberOfObservations (m);
-			centroid  +=  scale  *  m -> centroid;
+			centroid.all()  +=  scale  *  m -> centroid.all();
 			sum += scale;
 		}
-		centroid  /=  double (sum);
+		centroid.all()  /=  double (sum);
 
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
 			const SSCP m = thy groups->at [k];
 			const double scale = SSCP_getNumberOfObservations (m);
 			thy aprioriProbabilities [k] = scale / my numberOfRows;
-			between.row (k) <<= m -> centroid  -  centroid;
+			between.row (k) <<= m -> centroid.all()  -  centroid.all();
 			between.row (k)  *=  sqrt (scale);
 		}
 

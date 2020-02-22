@@ -106,36 +106,36 @@ static void computeDistanceTable (Polygon me, INTMAT const& table) {
 		}
 }
 
-static integer computeTotalDistance (constINTMAT const& distance, integer path [], integer numberOfCities) {
+static integer computeTotalDistance (constINTMATVU const& distance, constINTVECVU const& path) {
 	integer result = 0;
-	for (integer i = 1; i <= numberOfCities; i ++)
+	for (integer i = 2; i <= path.size; i ++)
 		result += distance [path [i - 1]] [path [i]];
 	return result;
 }
 
-static void shuffle (integer path [], integer numberOfCities) {
-	for (integer i = 1; i <= numberOfCities; i ++) {
-		integer j = NUMrandomInteger (i, numberOfCities);
+static void shuffle (INTVECVU const& path) {
+	for (integer i = 1; i < path.size; i ++) {
+		integer j = NUMrandomInteger (i, path.size - 1);
 		std::swap (path [i], path [j]);
 	}
-	path [0] = path [numberOfCities];
+	path [path.size] = path [1];
 }
   
-static bool tryExchange (constINTMAT const& distance, integer *path, integer numberOfCities, integer *totalDistance) {
+static bool tryExchange (constINTMATVU const& distance, INTVECVU const& path, integer *totalDistance) {
 	bool result = false;
-	integer b1 = path [0];
+	integer b1 = path [1];
 	integer b2nr = 1;
-	while (b2nr < numberOfCities - 1) {
-		integer b2 = path [b2nr];
+	while (b2nr < path.size - 2) {
+		integer b2 = path [b2nr + 1];
 		integer distance_b1_b2 = distance [b1] [b2];
 		integer d2nr = b2nr + 2;
-		integer d1 = path [d2nr - 1];
+		integer d1 = path [d2nr];
 		bool cont = true;
-		while (d2nr <= numberOfCities && cont) {
-			integer d2 = path [d2nr];
+		while (d2nr < path.size && cont) {
+			integer d2 = path [d2nr + 1];
 			integer gain = distance_b1_b2 + distance [d1] [d2] - distance [b1] [d1] - distance [b2] [d2];
 			if (gain > 0) {
-				integer below = b2nr, above = d2nr - 1;
+				integer below = b2nr + 1, above = d2nr;
 				cont = false;
 				do {
 					integer help = path [below];
@@ -147,49 +147,53 @@ static bool tryExchange (constINTMAT const& distance, integer *path, integer num
 			d1 = d2;
 			d2nr ++;
 		}
-		if (cont) { b1 = b2; b2nr ++; } else result = true;
+		if (cont) {
+			b1 = b2;
+			b2nr ++;
+		} else
+			result = true;
 	}
 	return result;
 }
 
-static bool tryAdoption (constINTMAT const& distance, integer *path, integer numberOfCities, integer *totalDistance)
+static bool tryAdoption (constINTMATVU const& distance, INTVECVU const& path, integer *totalDistance)
 {
-	autoINTVEC help = newINTVECzero (numberOfCities + 1);
+	autoINTVEC help = newINTVECzero (path.size);
 	bool result = false;
 
 	/*
 		Compute the maximum distance between two successive cities.
 	*/
-	integer city1 = path [0], city2 = path [1];
+	integer city1 = path [1], city2 = path [2];
 	integer maximumDistance = distance [city1] [city2];
-	for (integer i = 2; i <= numberOfCities; i ++) {
+	for (integer i = 2; i < path.size; i ++) {
 		city1 = city2;
-		city2 = path [i];
+		city2 = path [i + 1];
 		if (distance [city1] [city2] > maximumDistance)
 			maximumDistance = distance [city1] [city2];
 	}
 
 	integer maximumGainLeft = maximumDistance;
-	for (integer i = 1; i <= numberOfCities; i ++) {
+	for (integer i = 1; i < path.size; i ++) {
 		bool cont = true;
 		integer b1, b2, distance_b1_b2, d1nr = 3, cc, e1nrMax = 6;
-		integer numberOfCitiesMinus1 = numberOfCities - 1;
-		for (integer j = 0; j <= numberOfCitiesMinus1; j ++)
+		integer numberOfCitiesMinus1 = path.size - 2;
+		for (integer j = 1; j < path.size; j ++)
 			path [j] = path [j + 1];
-		path [numberOfCities] = path [0];
-		b1 = path [0];
-		b2 = path [1];
+		path [path.size] = path [1];
+		b1 = path [1];
+		b2 = path [2];
 		distance_b1_b2 = distance [b1] [b2];
-		cc = path [2];
+		cc = path [3];
 		while (d1nr < numberOfCitiesMinus1 && cont) {
-			integer d1 = path [d1nr];
+			integer d1 = path [d1nr + 1];
 			integer gain1 = distance_b1_b2 + distance [d1] [cc] - distance [d1] [b2];
 			if (gain1 + maximumGainLeft > 0) {
 				integer e1nr = d1nr + 1;
-				integer dn = path [d1nr];
+				integer dn = path [d1nr + 1];
 				Melder_clipRight (& e1nrMax, numberOfCitiesMinus1);
 				while (e1nr < e1nrMax && cont) {
-					integer e1 = path [e1nr];
+					integer e1 = path [e1nr + 1];
 					integer gain = gain1 + distance [dn] [e1] - distance [dn] [b1] - distance [cc] [e1];
 					if (gain > 0) {
 						integer nAdoption = e1nr - d1nr;
@@ -197,9 +201,9 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 						cont = false;
 						*totalDistance -= gain;
 						for (integer j = 1; j <= dnnr; j ++)
-							help [j] = path [j];
+							help [j] = path [j + 1];
 						for (integer j = 1; j <= nAdoption; j ++)
-							path [j] = help [dnnr - j + 1];
+							path [j + 1] = help [dnnr - j + 1];
 						for (integer j = 1; j <= d1nr - 1; j ++)
 							path [nAdoption + j] = help [j];
 					}
@@ -225,22 +229,24 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 			Melder_throw (U"No points.");
 		autoINTMAT distance = newINTMATzero (numberOfCities, numberOfCities);
 		computeDistanceTable (me, distance.get());
-		autoNUMvector <integer> path (0_integer, numberOfCities);
+		autoINTVEC path = newINTVECzero (numberOfCities + 1);
 		for (integer i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
-		path [0] = numberOfCities;   // close path
-		autoNUMvector <integer> shortestPath (NUMvector_copy (path.peek(), 0, numberOfCities), 0);
+		path [numberOfCities + 1] = 1;   // close path
+		autoINTVEC shortestPath = newINTVECcopy (path.all());
 		for (integer iteration = 1; iteration <= numberOfIterations; iteration ++) {
-			if (iteration > 1) shuffle (path.peek(), numberOfCities);
-			totalDistance = computeTotalDistance (distance.get(), path.peek(), numberOfCities);
-			if (iteration == 1) shortestDistance = totalDistance;
+			if (iteration > 1)
+				shuffle (path.all());
+			totalDistance = computeTotalDistance (distance.get(), path.all());
+			if (iteration == 1)
+				shortestDistance = totalDistance;
 			do {
 				do {
-				} while (tryExchange (distance.get(), path.peek(), numberOfCities, & totalDistance));
-			} while (tryAdoption (distance.get(), path.peek(), numberOfCities, & totalDistance));
+				} while (tryExchange (distance.get(), path.all(), & totalDistance));
+			} while (tryAdoption (distance.get(), path.all(), & totalDistance));
 			if (totalDistance < shortestDistance) {   // new shortest path
 				numberOfShortest = 1;
-				for (int i = 0; i <= numberOfCities; i ++) shortestPath [i] = path [i];
+				shortestPath.all() <<= path.all();
 				shortestDistance = totalDistance;
 			}
 			else if (totalDistance == shortestDistance)   // shortest path confirmed

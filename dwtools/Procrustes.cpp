@@ -53,9 +53,9 @@ Thing_implement (Procrustes, AffineTransform, 0);
 void structProcrustes :: v_transform (MATVU const& out, constMATVU const& in) {
 	Melder_assert (in.nrow == out.nrow && in.ncol == out.ncol);
 	Melder_assert (in.ncol == dimension);
-	MATmul (out, in, r.get());
-	out  *=  s;
-	out  +=  t;
+	MATmul (out, in, our r.get());
+	out  *=  our s;
+	out  +=  our t.all();
 }
 
 autoAffineTransform structProcrustes :: v_invert () {
@@ -67,7 +67,7 @@ autoAffineTransform structProcrustes :: v_invert () {
 	thy s = ( our s == 0.0 ? 1.0 : 1.0 / our s );
 	thy r.all() <<= our r.transpose();
 	VECmul (thy t.get(), our r.get(), our t.get());
-	thy t.get()  *=  -thy s;
+	thy t.get()  *=  - thy s;
 	return thee.move();   // explicit move() seems to be needed because of the type difference
 }
 

@@ -316,7 +316,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	for (integer iprox = 1; iprox <= numberOfProximities; iprox ++) {
 		const integer ii = vec->rowIndex [iprox];
 		const integer jj = vec->columnIndex [iprox];
-		const double r = NUMinner (m.row (iprox), b);
+		const double r = NUMinner (m.row (iprox), b.all());
 		thy data [ii] [jj] = thy data [jj] [ii] = r;
 	}
 	if (normalization)
