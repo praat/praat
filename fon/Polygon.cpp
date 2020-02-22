@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ static bool tryExchange (constINTMAT const& distance, integer *path, integer num
 
 static bool tryAdoption (constINTMAT const& distance, integer *path, integer numberOfCities, integer *totalDistance)
 {
-	integer *help = NUMvector <integer> (0, numberOfCities);
+	autoINTVEC help = newINTVECzero (numberOfCities + 1);
 	bool result = false;
 
 	/*
@@ -196,12 +196,12 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 						integer dnnr = e1nr - 1;
 						cont = false;
 						*totalDistance -= gain;
-						for (integer j = 0; j <= dnnr - 1; j ++)
-							help [j] = path [j + 1];
+						for (integer j = 1; j <= dnnr; j ++)
+							help [j] = path [j];
 						for (integer j = 1; j <= nAdoption; j ++)
-							path [j] = help [dnnr - j];
-						for (integer j = 0; j <= d1nr - 2; j ++)
-							path [nAdoption + j + 1] = help [j];
+							path [j] = help [dnnr - j + 1];
+						for (integer j = 1; j <= d1nr - 1; j ++)
+							path [nAdoption + j] = help [j];
 					}
 					dn = e1;
 					e1nr ++;
@@ -213,7 +213,6 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 		}
 		result |= ! cont;
 	}
-	NUMvector_free (help, 0);
 	return result;
 }
 
