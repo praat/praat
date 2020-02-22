@@ -338,7 +338,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		b.get() <<= my z.column (my nx);
 
 		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
-		thy z.row (1) <<= x;
+		thy z.row (1) <<= x.all();
 		
 		return thee;
 	} catch (MelderError) {

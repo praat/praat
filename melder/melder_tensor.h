@@ -227,6 +227,7 @@ public:
 	vectorview () = default;
 	vectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
+	vectorview (const autovector<T>& other) = delete;
 	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_) :
 			firstCell (firstCell_), size (size_), stride (stride_) { }
 	T& operator[] (integer i) const {
@@ -285,6 +286,7 @@ public:
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
 	constvectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
+	constvectorview (const autovector<T>& other) = delete;
 	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_) :
 			firstCell (firstCell_), size (size_), stride (stride_) { }
 	constvectorview (vectorview<T> vec): firstCell (vec.firstCell), size (vec.size), stride (vec.stride) { }

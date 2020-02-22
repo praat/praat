@@ -165,7 +165,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 
 	my numberOfKnots = interiorKnots.size + 2;
 	my knots = newVECzero (my numberOfKnots);
-	my knots.part (2, interiorKnots.size + 1) <<= interiorKnots;
+	my knots.part (2, interiorKnots.size + 1) <<= interiorKnots.all();
 	my knots [1] = my xmin;
 	my knots [my numberOfKnots] = my xmax;
 }

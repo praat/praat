@@ -5719,7 +5719,7 @@ static void do_VECsolveSparse () {
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
 	} else if (n -> number == 7) {
-		Stackel info = pop, tol = pop, niter = pop, nonzeros = pop, xstart = pop, y =pop, dict = pop;
+		Stackel info = pop, tol = pop, niter = pop, nonzeros = pop, xstart = pop, y = pop, dict = pop;
 		if (dict->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && 
 			xstart->which == Stackel_NUMERIC_VECTOR &&
 			nonzeros->which == Stackel_NUMBER && niter->which == Stackel_NUMBER &&
@@ -5738,7 +5738,7 @@ static void do_VECsolveSparse () {
 			const integer maximumNumberOfIterations = Melder_iround (niter ->number);
 			const integer infoLevel = Melder_iround (info->number);
 			const double tolerance = tol->number;
-			VECsolveSparse_IHT (xs, d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, infoLevel);
+			VECsolveSparse_IHT (xs.all(), d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, infoLevel);
 			pushNumericVector (xs.move());
 		} else {
 			Melder_throw (U"The function \"solveSparse#\" requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",

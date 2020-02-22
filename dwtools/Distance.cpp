@@ -54,15 +54,15 @@ autoDistance Configuration_to_Distance (Configuration me) {
 		autoVEC dist = newVECraw (my numberOfColumns);
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
-				dist <<= my data.row (i)  -  my data.row (j);
+				dist.all() <<= my data.row (i)  -  my data.row (j);
 				VECabs_inplace (dist.get());
 				const double dmax = NUMmax (dist.get());
 				double d = 0.0;
 				if (dmax > 0.0) {
-					dist  /=  dmax; // prevent overflow
+					dist.all()  /=  dmax;   // prevent overflow
 					VECpow (dist.get(), my metric);
-					d = NUMinner (my w, dist.get());
-					d = dmax * pow (d, 1.0 / my metric); // scale back
+					d = NUMinner (my w.all(), dist.get());
+					d = dmax * pow (d, 1.0 / my metric);   // scale back
 				}
 				thy data [i] [j] = thy data [j] [i] = d;
 			}

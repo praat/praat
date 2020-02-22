@@ -299,7 +299,7 @@ integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 	if (tolerance == 0.0)
 		tolerance = my tolerance;
 
-	const double dmax = NUMmax (my d);
+	const double dmax = NUMmax (my d.all());
 
 	integer numberOfZeroed = 0;
 	for (integer i = 1; i <= my numberOfColumns; i ++)
