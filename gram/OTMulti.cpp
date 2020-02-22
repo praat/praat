@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2019 Paul Boersma
+ * Copyright (C) 2005-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1334,7 +1334,8 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 	*/
 	x = doubleLineDx;   // left side of tableau
 	y = 1.0 - doubleLineDy;
-	if (showDisharmonies) y -= 0.6 * rowHeight;
+	if (showDisharmonies)
+		y -= 0.6 * rowHeight;
 	Graphics_rectangle (g, x, x + tableauWidth,
 		y - headerHeight - numberOfMatchingCandidates * rowHeight - doubleLineDy, y);
 }
@@ -1384,7 +1385,7 @@ void OTMulti_removeConstraint (OTMulti me, conststring32 constraintName) {
 			Remove the constraint while reusing the memory space.
 		*/
 		my constraints [constraintToBeRemoved]. destroy ();
-		my constraints.remove (constraintToBeRemoved);
+		my constraints. remove (constraintToBeRemoved);
 		my numberOfConstraints -= 1;   // maintain invariant
 		Melder_assert (my numberOfConstraints == my constraints.size);
 		/*
@@ -1392,7 +1393,7 @@ void OTMulti_removeConstraint (OTMulti me, conststring32 constraintName) {
 		*/
 		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
 			const OTCandidate candidate = & my candidates [icand];
-			candidate -> marks.remove (constraintToBeRemoved);
+			candidate -> marks. remove (constraintToBeRemoved);
 			candidate -> numberOfConstraints -= 1;   // maintain invariant
 			Melder_assert (candidate -> numberOfConstraints == candidate -> marks.size);
 		}

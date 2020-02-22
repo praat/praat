@@ -29,7 +29,7 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, integer ma
 	integer pos = 0;
 	double weakest = 1e308;
 	if (my nCandidates < maxnCandidates) {
-		my candidates.resize (++ my nCandidates);
+		my candidates. resize (++ my nCandidates);
 		pos = my nCandidates;
 	} else {
 		// Find weakest candidate so far (skip the unvoiced one)

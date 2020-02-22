@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,11 +154,12 @@ static bool tryExchange (constINTMAT const& distance, integer *path, integer num
 
 static bool tryAdoption (constINTMAT const& distance, integer *path, integer numberOfCities, integer *totalDistance)
 {
-	integer *help = NUMvector <integer> (0, numberOfCities);
+	autoINTVEC help = newINTVECzero (numberOfCities + 1);
 	bool result = false;
 
-	/* Compute maximum distance between two successive cities. */
-
+	/*
+		Compute the maximum distance between two successive cities.
+	*/
 	integer city1 = path [0], city2 = path [1];
 	integer maximumDistance = distance [city1] [city2];
 	for (integer i = 2; i <= numberOfCities; i ++) {
@@ -167,12 +168,14 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 		if (distance [city1] [city2] > maximumDistance)
 			maximumDistance = distance [city1] [city2];
 	}
+
 	integer maximumGainLeft = maximumDistance;
 	for (integer i = 1; i <= numberOfCities; i ++) {
 		bool cont = true;
 		integer b1, b2, distance_b1_b2, d1nr = 3, cc, e1nrMax = 6;
 		integer numberOfCitiesMinus1 = numberOfCities - 1;
-		for (integer j = 0; j <= numberOfCitiesMinus1; j ++) path [j] = path [j + 1];
+		for (integer j = 0; j <= numberOfCitiesMinus1; j ++)
+			path [j] = path [j + 1];
 		path [numberOfCities] = path [0];
 		b1 = path [0];
 		b2 = path [1];
@@ -184,7 +187,7 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 			if (gain1 + maximumGainLeft > 0) {
 				integer e1nr = d1nr + 1;
 				integer dn = path [d1nr];
-				if (e1nrMax > numberOfCitiesMinus1) e1nrMax = numberOfCitiesMinus1;
+				Melder_clipRight (& e1nrMax, numberOfCitiesMinus1);
 				while (e1nr < e1nrMax && cont) {
 					integer e1 = path [e1nr];
 					integer gain = gain1 + distance [dn] [e1] - distance [dn] [b1] - distance [cc] [e1];
@@ -193,9 +196,12 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 						integer dnnr = e1nr - 1;
 						cont = false;
 						*totalDistance -= gain;
-						for (integer j = 0; j <= dnnr - 1; j ++) help [j] = path [j + 1];
-						for (integer j = 1; j <= nAdoption; j ++) path [j] = help [dnnr - j];
-						for (integer j = 0; j <= d1nr - 2; j ++) path [nAdoption + j + 1] = help [j];
+						for (integer j = 1; j <= dnnr; j ++)
+							help [j] = path [j];
+						for (integer j = 1; j <= nAdoption; j ++)
+							path [j] = help [dnnr - j + 1];
+						for (integer j = 1; j <= d1nr - 1; j ++)
+							path [nAdoption + j] = help [j];
 					}
 					dn = e1;
 					e1nr ++;
@@ -207,7 +213,6 @@ static bool tryAdoption (constINTMAT const& distance, integer *path, integer num
 		}
 		result |= ! cont;
 	}
-	NUMvector_free (help, 0);
 	return result;
 }
 

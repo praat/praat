@@ -525,7 +525,7 @@ DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view a manual from batch.");
 	autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
-	HyperPage_goToPage_i (manual.get(), goToPageNumber);
+	HyperPage_goToPage_number (manual.get(), goToPageNumber);
 	manual.releaseToUser();
 END }
 

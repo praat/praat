@@ -22,11 +22,10 @@
 #include "Collection.h"
 
 Thing_define (ManPages, Daata) {
-	OrderedOf<structManPage> pages;
+	OrderedOf <structManPage> pages;
 	autoSTRVEC titles;
 	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;
-	autoINTVEC grandLinksHither, grandLinksThither;
 
 	void v_destroy () noexcept
 		override;
@@ -37,7 +36,7 @@ Thing_define (ManPages, Daata) {
 autoManPages ManPages_create ();
 
 void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
-	struct structManPage_Paragraph paragraphs []);
+	structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.

@@ -4024,8 +4024,8 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		}
 		if (xnumberOfData == 0 || ynumberOfData == 0)
 			return;
-		xdata.resize (xnumberOfData);
-		ydata.resize (ynumberOfData);
+		xdata. resize (xnumberOfData);
+		ydata. resize (ynumberOfData);
 		if (xmin == xmax) {
 			NUMextrema (xdata.part (1, xnumberOfData), & xmin, & xmax);
 			if (xmin == xmax) {

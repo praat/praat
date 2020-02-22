@@ -37,47 +37,50 @@ static integer lookUp_unsorted (ManPages me, conststring32 title);
 void structManPages :: v_destroy () noexcept {
 	for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
 		ManPage page = our pages.at [ipage];
-		for (integer ipar = 1; ipar <= page -> paragraphs___.size; ipar ++) {
-			ManPage_Paragraph par = & page -> paragraphs___ [ipar];
+		for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
+			ManPage_Paragraph par = & page -> paragraphs [ipar];
 			Melder_free (par -> text);   // not an autostring32, because it can be a string literal (if not dynamic)
 		}
-		if (ipage == 1) {
-			NUMvector_free <integer> (page -> linksHither, 1);
-			NUMvector_free <integer> (page -> linksThither, 1);
-		}
+		page -> linksHither. reset();   // TODO automate
+		page -> linksThither. reset();
 	}
 	ManPages_Parent :: v_destroy ();
 }
 
 static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {
 	char32 *to = link, *max = link + 300;
-	if (! p) p = text;
+	if (! p)
+		p = text;
 	/*
-	 * Search for next '@' that is not in a backslash sequence.
-	 */
+		Search for next '@' that is not in a backslash sequence.
+	*/
 	for (;;) {
 		p = str32chr (p, U'@');
-		if (! p) return nullptr;   // no more '@'
-		if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\'))) break;
+		if (! p)
+			return nullptr;   // no more '@'
+		if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\')))
+			break;
 		p ++;
 	}
 	Melder_assert (*p == U'@');
 	if (p [1] == U'@') {
 		const char32 *from = p + 2;
 		while (*from != U'@' && *from != U'|' && *from != U'\0') {
-			if (to >= max) {
+			if (to >= max)
 				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
-			}
 			*to ++ = *from ++;
 		}
-		if (*from == U'|') { from ++; while (*from != U'@' && *from != U'\0') from ++; }
-		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
+		if (*from == U'|') {
+			from ++;
+			while (*from != U'@' && *from != U'\0')
+				from ++;
+		}
+		p = from + ( *from == U'@' );   // add bool to pointer: skip '@' but not '\0'
 	} else {
 		const char32 *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
-			if (to >= max) {
+			if (to >= max)
 				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
-			}
 			*to ++ = *from ++;
 		}
 		p = from;
@@ -123,7 +126,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find recording time.");
 	}
-	page -> paragraphs___ = newvectorzero <structManPage_Paragraph> (0);
+	page -> paragraphs = newvectorzero <structManPage_Paragraph> (0);
 
 	for (;;) {
 		enum kManPage_type type;
@@ -138,8 +141,9 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				throw;
 			}
 		}
-		page -> paragraphs___.resize (page -> paragraphs___.size + 1);
-		ManPage_Paragraph par = & page -> paragraphs___ [page -> paragraphs___.size];
+		const auto newSize = page -> paragraphs.size + 1;
+		page -> paragraphs. resize (newSize);
+		ManPage_Paragraph par = & page -> paragraphs [newSize];
 		par -> type = type;
 		if (par -> type == kManPage_type::SCRIPT) {
 			par -> width = texgetr64 (text);
@@ -165,8 +169,8 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					Melder_warning (U"Cannot find sound file ", MelderFile_messageName (& file2), U".");
 			} else if (link [0] == U'\\' && link [1] == U'S' && link [2] == U'C') {
 				/*
-				 * A link to a script: see if it exists.
-				 */
+					A link to a script: see if it exists.
+				s*/
 				char32 *p = link + 3;
 				if (*p == U'\"') {
 					char32 *q = fileName;
@@ -235,10 +239,16 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, i
 {
 	autoManPage page = Thing_new (ManPage);
 	page -> title = Melder_dup (title);
-	page -> paragraphs___ = newvectorzero <structManPage_Paragraph> (0);
+	page -> paragraphs = newvectorzero <structManPage_Paragraph> (0);
 	for (ManPage_Paragraph par = & paragraphs [0]; (int) par -> type != 0; par ++) {
-		page -> paragraphs___. resize (page -> paragraphs___.size + 1);
-		page -> paragraphs___ [page -> paragraphs___.size] = *par;
+		auto const newSize = page -> paragraphs.size + 1;
+		page -> paragraphs. resize (newSize);
+		ManPage_Paragraph targetParagraph = & page -> paragraphs [newSize];
+		targetParagraph -> type = par -> type;
+		targetParagraph -> text = par -> text;   // static string
+		targetParagraph -> width = par -> width;
+		targetParagraph -> height = par -> height;
+		targetParagraph -> draw = par -> draw;
 	}
 	page -> author = Melder_dup (author);
 	page -> date = date;
@@ -268,7 +278,8 @@ static integer lookUp_unsorted (ManPages me, conststring32 title) {
 	*/
 	for (integer i = 1; i <= my pages.size; i ++) {
 		ManPage page = my pages.at [i];
-		if (str32equ (page -> title.get(), title)) return i;
+		if (str32equ (page -> title.get(), title))
+			return i;
 	}
 	/*
 		If that fails, try to find the upper-case variant.
@@ -279,7 +290,8 @@ static integer lookUp_unsorted (ManPages me, conststring32 title) {
 		upperTitle [0] = Melder_toUpperCase (upperTitle [0]);
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
-			if (str32equ (page -> title.get(), upperTitle)) return i;
+			if (str32equ (page -> title.get(), upperTitle))
+				return i;
 		}
 	}
 	return 0;
@@ -306,30 +318,43 @@ static integer lookUp_sorted (ManPages me, conststring32 title) {
 }
 
 static void grind (ManPages me) {
-	integer ndangle = 0, jpage, grandNlinks, ilinkHither, ilinkThither;
-
 	qsort (& my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);
-
-	/*
-		First pass: count and check links: fill in nlinksHither and nlinksThither.
-	*/
-	grandNlinks = 0;
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
-		for (integer ipar = 1; ipar <= page -> paragraphs___.size; ipar ++) {
-			conststring32 text = page -> paragraphs___ [ipar]. text;
+		page -> linksHither = newINTVECzero (0);   // superfluous if not ground twice
+		page -> linksThither = newINTVECzero (0);   // superfluous if not ground twice
+	}
+	integer ndangle = 0;
+	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
+		ManPage page = my pages.at [ipage];
+		for (int ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
+			conststring32 text = page -> paragraphs [ipar]. text;
 			const char32 *p;
 			char32 link [301];
 			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
 					continue;   // ignore "FILE" links
-				if ((jpage = lookUp_sorted (me, link)) != 0) {
-					page -> nlinksThither ++;
-					my pages.at [jpage] -> nlinksHither ++;
-					grandNlinks ++;
-				} else {
+				integer jpage = lookUp_sorted (me, link);
+				if (jpage == 0) {
 					MelderInfo_writeLine (U"Page \"", page -> title.get(), U"\" contains a dangling link to \"", link, U"\".");
 					ndangle ++;
+				} else {
+					bool alreadyPresent = false;
+					for (int ilink = 1; ilink <= page -> linksThither.size; ilink ++) {
+						if (page -> linksThither [ilink] == jpage) {
+							alreadyPresent = true;
+							break;
+						}
+					}
+					if (! alreadyPresent) {
+						ManPage otherPage = my pages.at [jpage];
+						integer newNumberOfLinksThither = page -> linksThither.size + 1;
+						page -> linksThither. resize (newNumberOfLinksThither);
+						page -> linksThither [newNumberOfLinksThither] = jpage;
+						integer newNumberOfLinksHither = otherPage -> linksHither.size + 1;
+						otherPage -> linksHither. resize (newNumberOfLinksHither);
+						otherPage -> linksHither [newNumberOfLinksHither] = ipage;
+					}
 				}
 			}
 		}
@@ -338,75 +363,15 @@ static void grind (ManPages me) {
 		MelderInfo_close ();
 		Melder_warning (U"(ManPages::grind:) ", ndangle, U" dangling links encountered. See console window.");
 	}
-
-	/*
-		Second pass: allocate memory: fill in linksHither and linksThither.
-		Some optimization required: use only two mallocs.
-		Forget nlinksHither and nlinksThither.
-	*/
-	if (grandNlinks == 0) {
-		my ground = true;
-		return;
-	}
-	try {
-		my grandLinksHither = newINTVECzero (grandNlinks);
-		my grandLinksThither = newINTVECzero (grandNlinks);
-	} catch (MelderError) {
-		Melder_flushError ();
-		return;
-	}
-	ilinkHither = ilinkThither = 0;
-	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
-		ManPage page = my pages.at [ipage];
-		page -> linksHither = & my grandLinksHither [ilinkHither];
-		page -> linksThither = & my grandLinksThither [ilinkThither];
-		ilinkHither += page -> nlinksHither;
-		ilinkThither += page -> nlinksThither;
-		page -> nlinksHither = 0;
-		page -> nlinksThither = 0;
-	}
-	Melder_assert (ilinkHither == grandNlinks && ilinkThither == grandNlinks);
-
-	/*
-		Third pass: remember the links: fill in linksThither [1..nlinksThither] and linksHither [1..nlinksHither].
-		Rebuild nlinksHither and nlinksThither.
-	*/
-	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
-		ManPage page = my pages.at [ipage];
-		for (int ipar = 1; ipar <= page -> paragraphs___.size; ipar ++) {
-			conststring32 text = page -> paragraphs___ [ipar]. text;
-			const char32 *p;
-			char32 link [301];
-			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
-				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
-					continue;   // ignore "FILE" links
-				if ((jpage = lookUp_sorted (me, link)) != 0) {
-					bool alreadyPresent = false;
-					for (int ilink = 1; ilink <= page -> nlinksThither; ilink ++) {
-						if (page -> linksThither [ilink] == jpage) {
-							alreadyPresent = true;
-							break;
-						}
-					}
-					if (! alreadyPresent) {
-						ManPage otherPage = my pages.at [jpage];
-						page -> linksThither [++ page -> nlinksThither] = jpage;
-						otherPage -> linksHither [++ otherPage -> nlinksHither] = ipage;
-					}
-				}
-			}
-		}
-	}
-
 	my ground = true;
 }
 
 integer ManPages_uniqueLinksHither (ManPages me, integer ipage) {
 	ManPage page = my pages.at [ipage];
-	integer result = page -> nlinksHither;
-	for (integer ilinkHither = 1; ilinkHither <= page -> nlinksHither; ilinkHither ++) {
+	integer result = page -> linksHither.size;
+	for (integer ilinkHither = 1; ilinkHither <= page -> linksHither.size; ilinkHither ++) {
 		integer link = page -> linksHither [ilinkHither];
-		for (integer ilinkThither = 1; ilinkThither <= page -> nlinksThither; ilinkThither ++) {
+		for (integer ilinkThither = 1; ilinkThither <= page -> linksThither.size; ilinkThither ++) {
 			if (page -> linksThither [ilinkThither] == link) {
 				result --;
 				break;
@@ -931,19 +896,19 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		U"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
 		U"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
 		page -> title.get(), U"\n</b></font></table></table>\n");
-	writeParagraphsAsHtml (me, file, page -> paragraphs___.get(), buffer);
+	writeParagraphsAsHtml (me, file, page -> paragraphs.get(), buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		integer ilink, jlink;
-		if (page -> paragraphs___.size > 0) {
-			conststring32 text = page -> paragraphs___ [page -> paragraphs___.size]. text;
+		if (page -> paragraphs.size > 0) {
+			conststring32 text = page -> paragraphs [page -> paragraphs.size]. text;
 			if (text && text [0] != U'\0' && text [str32len (text) - 1] != U':')
 				MelderString_append (buffer, U"<h3>Links to this page</h3>\n");
 		}
 		MelderString_append (buffer, U"<ul>\n");
-		for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
+		for (ilink = 1; ilink <= page -> linksHither.size; ilink ++) {
 			integer link = page -> linksHither [ilink];
 			bool alreadyShown = false;
-			for (jlink = 1; jlink <= page -> nlinksThither; jlink ++)
+			for (jlink = 1; jlink <= page -> linksThither.size; jlink ++)
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
@@ -952,11 +917,15 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 				const char32 *p;
 				MelderString_append (buffer, U"<li><a href=\"");
 				for (p = & title [0]; *p; p ++) {
-					if (p - title >= LONGEST_FILE_NAME) break;
-					if (! isAllowedFileNameCharacter (*p)) MelderString_append (buffer, U"_");
-					else MelderString_appendCharacter (buffer, *p);
+					if (p - title >= LONGEST_FILE_NAME)
+						break;
+					if (! isAllowedFileNameCharacter (*p))
+						MelderString_append (buffer, U"_");
+					else
+						MelderString_appendCharacter (buffer, *p);
 				}
-				if (title [0] == U'\0') MelderString_append (buffer, U"_");
+				if (title [0] == U'\0')
+					MelderString_append (buffer, U"_");
 				MelderString_append (buffer, U".html\">", title, U"</a>\n");
 			}
 		}
@@ -966,7 +935,8 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 	if (page -> date) {
 		integer date = page -> date;
 		int imonth = date % 10000 / 100;
-		if (imonth < 0 || imonth > 12) imonth = 0;
+		if (imonth < 0 || imonth > 12)
+			imonth = 0;
 		MelderString_append (buffer, U", ", month [imonth], U" ", date % 100);
 		MelderString_append (buffer, U", ", date / 10000);
 	}

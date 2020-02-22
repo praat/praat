@@ -65,7 +65,7 @@ Thing_define (HyperPage, Editor) {
 	virtual integer v_getNumberOfPages () { return 0; }
 	virtual integer v_getCurrentPageNumber () { return 0; }
 	virtual int v_goToPage (conststring32 /* title */) { return 0; }
-	virtual void v_goToPage_i (integer /* goToPageNumber */) { }
+	virtual void v_goToPage_number (integer /* goToPageNumber */) { }
 	virtual void v_defaultHeaders (EditorCommand /* cmd */) { }
 	virtual bool v_hasHistory () { return false; }
 	virtual bool v_isOrdered () { return false; }
@@ -109,7 +109,7 @@ void HyperPage_picture (HyperPage me, double width_inches, double height_inches,
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script);
 
 int HyperPage_goToPage (HyperPage me, conststring32 title);
-void HyperPage_goToPage_i (HyperPage me, integer i);
+void HyperPage_goToPage_number (HyperPage me, integer goToPageNumber);
 
 void HyperPage_init (HyperPage me, conststring32 title, Daata data);
 

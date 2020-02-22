@@ -99,7 +99,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 				Into Pitch object
 			*/
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
-			pitchFrame -> candidates.resize (pitchFrame -> nCandidates = 0);   // !!!!!
+			pitchFrame -> candidates. resize (pitchFrame -> nCandidates = 0);   // !!!!!
 			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates);   // unvoiced
 
 			for (integer k = 2; k <= numberOfFrequencyPoints - 1; k ++) {

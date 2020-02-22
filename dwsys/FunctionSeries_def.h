@@ -43,7 +43,7 @@ oo_DEFINE_CLASS (FunctionSeries, Function)
 		virtual integer v_getDegree ();
 		virtual void extendCapacity (integer newCapacity) {
 			if (_capacity < newCapacity) {
-				coefficients.resize (newCapacity);
+				coefficients. resize (newCapacity);
 				_capacity = newCapacity;
 			}
 		}

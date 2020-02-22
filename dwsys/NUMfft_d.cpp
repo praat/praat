@@ -1,6 +1,6 @@
-/* NUMfft_d.c
+/* NUMfft_d.cpp
  *
- * Copyright (C) 1997-2011 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1997-2011 David Weenink, Paul Boersma 2016-2018,2020
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,59 +31,68 @@ void NUMforwardRealFastFourierTransform (VEC data) {
 	autoNUMfft_Table table;
 	NUMfft_Table_init (& table, data.size);
 	NUMfft_forward (& table, data);
-
 	if (data.size > 1) {
-		// To be compatible with old behaviour
+		/*
+			To be compatible with old behaviour.
+		*/
 		double tmp = data [data.size];
-		for (integer i = data.size; i > 2; i--) {
+		for (integer i = data.size; i > 2; i --)
 			data [i] = data [i - 1];
-		}
 		data [2] = tmp;
 	}
 }
 
 void NUMreverseRealFastFourierTransform (VEC data) {
 	autoNUMfft_Table table;
-
 	if (data.size > 1) {
-		// To be compatible with old behaviour
+		/*
+			To be compatible with old behaviour.
+		*/
 		double tmp = data [2];
-		for (integer i = 2; i < data.size; i++) {
+		for (integer i = 2; i < data.size; i ++)
 			data [i] = data [i + 1];
-		}
 		data [data.size] = tmp;
 	}
-
 	NUMfft_Table_init (& table, data.size);
 	NUMfft_backward (& table, data);
 }
 
 void NUMfft_forward (NUMfft_Table me, VEC data) {
-	if (my n == 1) {
+	if (my n == 1)
 		return;
-	}
 	Melder_assert (my n == data.size);
-	drftf1 (my n, data.begin(), my trigcache.begin(), my trigcache.begin() + my n, my splitcache.begin());
+	drftf1 (my n, data.asArgumentToFunctionThatExpectsZeroBasedArray(),
+		my trigcache.asArgumentToFunctionThatExpectsZeroBasedArray(),
+		my trigcache.asArgumentToFunctionThatExpectsZeroBasedArray() + my n,
+		my splitcache.asArgumentToFunctionThatExpectsZeroBasedArray()
+	);
 }
 
 void NUMfft_backward (NUMfft_Table me, VEC data) {
-	if (my n == 1) {
+	if (my n == 1)
 		return;
-	}
 	Melder_assert (my n == data.size);
-	drftb1 (my n, data.begin(), my trigcache.begin(), my trigcache.begin() + my n, my splitcache.begin());
+	drftb1 (my n, data.asArgumentToFunctionThatExpectsZeroBasedArray(),
+		my trigcache.asArgumentToFunctionThatExpectsZeroBasedArray(),
+		my trigcache.asArgumentToFunctionThatExpectsZeroBasedArray() + my n,
+		my splitcache.asArgumentToFunctionThatExpectsZeroBasedArray()
+	);
 }
 
 void NUMfft_Table_init (NUMfft_Table me, integer n) {
 	my n = n;
 	my trigcache = newVECzero (3 * n);
 	my splitcache = newINTVECzero (32);
-	NUMrffti (n, my trigcache.begin(), my splitcache.begin());
+	NUMrffti (n, my trigcache.asArgumentToFunctionThatExpectsZeroBasedArray(),
+		my splitcache.asArgumentToFunctionThatExpectsZeroBasedArray()
+	);
 }
 
 void NUMrealft (VEC data, integer isign) {
-	isign == 1 ? NUMforwardRealFastFourierTransform (data) :
-	NUMreverseRealFastFourierTransform (data);
+	if (isign == 1)
+		NUMforwardRealFastFourierTransform (data);
+	else
+		NUMreverseRealFastFourierTransform (data);
 }
 
-/* End of file NUMfft.c */
+/* End of file NUMfft.cpp */

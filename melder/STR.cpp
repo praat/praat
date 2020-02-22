@@ -1,6 +1,6 @@
 /* STR.cpp
  *
- * Copyright (C) 2012-2017 David Weenink, 2008,2018 Paul Boersma
+ * Copyright (C) 2012-2017 David Weenink, 2008,2018,2020s Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ autostring32 newSTRreplace_regex (conststring32 string,
 
 	integer bufferLength = 2 * string_length;
 	bufferLength = bufferLength < 100 ? 100 : bufferLength;
-	buf.resize (bufferLength);
+	buf. resize (bufferLength);
 
 	pos = posp = string;
 	while (ExecRE (compiledSearchRE, nullptr, pos, nullptr, reverse, prev_char, U'\0', nullptr, nullptr) &&
@@ -176,7 +176,7 @@ autostring32 newSTRreplace_regex (conststring32 string,
 		if (nchar > 0 && ! gap_copied) {
 			if (buf_nchar + nchar > bufferLength) {
 				bufferLength *= 2;
-				buf.resize (bufferLength);
+				buf. resize (bufferLength);
 			}
 			str32ncpy (buf.get() + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
@@ -191,7 +191,7 @@ autostring32 newSTRreplace_regex (conststring32 string,
 		if (! SubstituteRE (compiledSearchRE, replaceRE, buf.get() + buf_nchar, bufferLength + 1 - buf_nchar, & errorType)) {
 			if (errorType == 1) {   // not enough memory
 				bufferLength *= 2;
-				buf.resize (bufferLength);
+				buf. resize (bufferLength);
 				Melder_clearError ();
 				i --;   // retry
 				continue;
@@ -224,7 +224,7 @@ autostring32 newSTRreplace_regex (conststring32 string,
 
 	nchar = (string + string_length) - pos;
 	bufferLength = buf_nchar + nchar;
-	buf.resize (bufferLength);
+	buf. resize (bufferLength);
 	str32ncpy (buf.get() + buf_nchar, pos, nchar);
 	return buf;
 }
