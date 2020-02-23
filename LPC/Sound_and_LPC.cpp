@@ -140,15 +140,16 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 	constVEC x = my z.row (1);
 	
 	workspace <<= 0.0;
-	integer pos = m * (m + 1) / 2;
-	VEC b = workspace. part (1, pos); // autoVEC b = newVECzero (m * (m + 1) / 2);
-	VEC grc = workspace. part (pos + 1, pos + m); //autoVEC grc = newVECzero (m);
-	pos += m;
-	VEC beta = workspace. part (pos + 1, pos + m); // autoVEC beta = newVECzero (m);
-	pos += m;
-	VEC a = workspace. part (pos, pos + m + 1); // autoVEC a = newVECzero (m + 1);
-	pos + m + 1;
-	VEC cc =  workspace. part (pos + 1, pos + m + 1); // autoVEC cc = newVECzero (m + 1);
+	integer start = 1, end = m * (m + 1) / 2;
+	VEC b = workspace. part (start, end); // autoVEC b = newVECzero (m * (m + 1) / 2);
+	start = end + 1; end += m;
+	VEC grc = workspace. part (start, end); //autoVEC grc = newVECzero (m);
+	start = end + 1; end += m;
+	VEC beta = workspace. part (start, end); // autoVEC beta = newVECzero (m);
+	start = end + 1; end += m + 1;
+	VEC a = workspace. part (start, end); // autoVEC a = newVECzero (m + 1);
+	start = end + 1; end += m + 1;
+	VEC cc =  workspace. part (start, end); // autoVEC cc = newVECzero (m + 1);
 
 	thy gain = 0.0;
 	integer i;
@@ -225,22 +226,86 @@ end:
 	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
-static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee) {
-	thy gain = VECburg (thy a.get(), my z.row(1));
+static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& workspace) {
+	const integer n = x.size, m = a.size;
+	for (integer j = 1; j <= m; j ++)
+		a [j] = 0.0;
+
+	VEC b1 = workspace. part (1, n); // autoVEC b1 = newVECzero (n);
+	VEC b2 = workspace. part (n + 1, 2 * n); // autoVEC b2 = newVECzero (n);
+	VEC aa = workspace. part (2 * n + 1, 2 * n + m); // autoVEC aa = newVECzero (m);
+
+	// (3)
+
+	longdouble p = 0.0;
+	for (integer j = 1; j <= n; j ++)
+		p += x [j] * x [j];
+
+	longdouble xms = p / n;
+	if (xms <= 0.0)
+		return xms;	// warning empty
+
+	// (9)
+
+	b1 [1] = x [1];
+	b2 [n - 1] = x [n];
+	for (integer j = 2; j <= n - 1; j ++)
+		b1 [j] = b2 [j - 1] = x [j];
+
+	for (integer i = 1; i <= m; i ++) {
+		// (7)
+
+		longdouble num = 0.0, denum = 0.0;
+		for (integer j = 1; j <= n - i; j ++) {
+			num += b1 [j] * b2 [j];
+			denum += b1 [j] * b1 [j] + b2 [j] * b2 [j];
+		}
+
+		if (denum <= 0.0)
+			return 0.0;	// warning ill-conditioned
+
+		a [i] = 2.0 * num / denum;
+
+		// (10)
+
+		xms *= 1.0 - a [i] * a [i];
+
+		// (5)
+
+		for (integer j = 1; j <= i - 1; j ++)
+			a [j] = aa [j] - a [i] * aa [i - j];
+
+		if (i < m) {
+
+			// (8) Watch out: i -> i+1
+
+			for (integer j = 1; j <= i; j ++)
+				aa [j] = a [j];
+			for (integer j = 1; j <= n - i - 1; j ++) {
+				b1 [j] -= aa [i] * b2 [j];
+				b2 [j] = b2 [j + 1] - aa [i] * b1 [j + 1];
+			}
+		}
+	}
+	return xms;
+}
+
+static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee, VEC const& workspace) {
+	thy gain = VECburg_buffered (thy a.get(), my z.row(1), workspace);
 	thy gain *= my nx;
 	for (integer i = 1; i <= thy nCoefficients; i ++)
 		thy a [i] = -thy a [i];
 	return thy gain != 0.0;
 }
 
-static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2) {
-	const integer n = my nx, mmax = thy nCoefficients;
+static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2, VEC const& workspace) {
+	const integer n = my nx, mmax = thy nCoefficients, mmaxp1 = mmax + 1;
 	int status = 1;
+	// workspace.all () << 0.0 not necessary
 	constVEC x = my z.row (1);
-
-	autoVEC c = newVECzero (mmax + 1);
-	autoVEC d = newVECzero (mmax + 1);
-	autoVEC r = newVECzero (mmax + 1);
+	VEC c = workspace .part (1, mmaxp1); // autoVEC c = newVECzero (mmax + 1);
+	VEC d = workspace .part (mmaxp1 + 1, 2 * mmaxp1); // autoVEC d = newVECzero (mmax + 1);
+	VEC r = workspace .part (2 * mmaxp1 + 1, 3 * mmaxp1); // autoVEC r = newVECzero (mmax + 1);
 	double e0 = 2.0 * NUMsum2 (x);
 	integer m = 1;
 	if (e0 == 0.0) {
@@ -389,6 +454,11 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
+	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		const LPC_Frame lpcFrame = & thy d_frames [iframe];
+		LPC_Frame_init (lpcFrame, predictionOrder);
+	}
+
 	autoVEC workspace = getLPCAnalysisWorkspace (sframe -> nx, predictionOrder, method);
 	autoMelderProgress progress (U"LPC analysis");
 
@@ -398,7 +468,6 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const LPC_Frame lpcframe = & thy d_frames [iframe];
 		const double t = Sampled_indexToX (thee.get(), iframe);
-		LPC_Frame_init (lpcframe, predictionOrder);
 		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 		Vector_subtractMean (sframe.get());
 		Sounds_multiply (sframe.get(), window.get());
@@ -409,10 +478,10 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 			if (! Sound_into_LPC_Frame_covar (sframe.get(), lpcframe, workspace.get()))
 				frameErrorCount ++;
 		} else if (method == kLPC_Analysis :: Burg) {
-			if (! Sound_into_LPC_Frame_burg (sframe.get(), lpcframe))
+			if (! Sound_into_LPC_Frame_burg (sframe.get(), lpcframe, workspace.get()))
 				frameErrorCount ++;
 		} else if (method == kLPC_Analysis :: Marple) {
-			if (! Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2))
+			if (! Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2, workspace.get()))
 				frameErrorCount ++;
 		}
 		if (iframe % 10 == 1)
