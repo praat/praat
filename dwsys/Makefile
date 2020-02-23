@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../external/gsl -I ../kar
+CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../kar
 
 all: libdwsys.a
 
@@ -37,5 +37,5 @@ libdwsys.a: $(OBJECTS) NUMmachar.o
 	$(AR) cq libdwsys.a $(OBJECTS)
 	$(RANLIB) libdwsys.a
 
-$(OBJECTS): *.h ../melder/*.h ../stat/*.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
+$(OBJECTS): *.h ../melder/*.h ../stat/*.h ../sys/*.h ../fon/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
 

@@ -22,13 +22,13 @@
 #include "Thing.h"
 
 #if defined (_WIN32)
-	#define USE_WINTHREADS 0
+	#define USE_WINTHREADS 1
 	#define USE_PTHREADS 0
-	#define USE_CPPTHREADS 1
+	#define USE_CPPTHREADS 0
 #elif defined (macintosh)
 	#define USE_WINTHREADS 0
-	#define USE_PTHREADS 0
-	#define USE_CPPTHREADS 1
+	#define USE_PTHREADS 1
+	#define USE_CPPTHREADS 0
 #else
 	#define USE_WINTHREADS 0
 	#define USE_PTHREADS 0

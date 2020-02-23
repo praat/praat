@@ -648,7 +648,7 @@ autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const CC_Frame cf = & thy frame [iframe];
-			x <<= my z.column (iframe);
+			x.all() <<= my z.column (iframe);
 			VECcosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
 			CC_Frame_init (cf, numberOfCoefficients);
 			for (integer icoef = 1; icoef <= numberOfCoefficients; icoef ++)

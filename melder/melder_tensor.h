@@ -435,6 +435,10 @@ public:
 			our at [i] = std::move (our at [i - 1]);
 		our at [position] = value;
 	}
+	T* append () {
+		resize (our size + 1, kTensorInitializationType::ZERO);
+		return & our at [our size];
+	}
 	void remove (integer position) {
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = position; i < our size; i ++)
