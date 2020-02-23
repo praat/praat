@@ -85,7 +85,8 @@ static void ensureThatStdoutAndStderrAreInitialized () {
 					int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
 					Melder_assert (fileDescriptor != 0);
 					FILE *f = _fdopen (fileDescriptor, "w");
-					Melder_assert (!! f);
+					if (! f)
+						return;   // this can happen under Cygwin
 					*stream = *f;
 				}
 			}
