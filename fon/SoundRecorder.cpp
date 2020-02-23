@@ -228,17 +228,19 @@ void structSoundRecorder :: v_destroy () noexcept {
 	stopRecording (this);   // must occur before freeing our buffer
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing our buffer
 	#if cocoa
-		if (our d_cocoaTimer) CFRunLoopTimerInvalidate (our d_cocoaTimer);
+		if (our d_cocoaTimer)
+			CFRunLoopTimerInvalidate (our d_cocoaTimer);
 	#elif gtk
 		g_idle_remove_by_data (this);
 	#elif motif
 		if (our workProcId) XtRemoveWorkProc (our workProcId);
 	#endif
-	NUMvector_free (our buffer, 0);
 
 	if (our inputUsesPortAudio) {
-		if (our portaudioStream) Pa_StopStream (our portaudioStream);
-		if (our portaudioStream) Pa_CloseStream (our portaudioStream);
+		if (our portaudioStream)
+			Pa_StopStream (our portaudioStream);
+		if (our portaudioStream)
+			Pa_CloseStream (our portaudioStream);
 	} else {
 		#if defined (_WIN32)
 			if (our hWaveIn != 0) {
@@ -248,7 +250,8 @@ void structSoundRecorder :: v_destroy () noexcept {
 			}
 		#elif defined (macintosh)
 		#elif defined (UNIX)
-			if (our fd != -1) close (our fd);
+			if (our fd != -1)
+				close (our fd);
 		#endif
 	}
 	our SoundRecorder_Parent :: v_destroy ();
@@ -278,7 +281,7 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 	}
 }
 
-static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
+static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) {
 	Melder_assert (my graphics);
 	if (nsamp < 1) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -295,52 +298,55 @@ static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
 		int leftMaximum = 0, rightMaximum = 0;
 		if (my numberOfChannels == 1) {
 			for (integer i = 0; i < nsamp; i ++) {
-				int value = buffer [i];
-				if (abs (value) > leftMaximum) leftMaximum = abs (value);
+				int value = buffertje [i];
+				if (abs (value) > leftMaximum)
+					leftMaximum = abs (value);
 			}
 		} else {
 			for (integer i = 0; i < nsamp; i ++) {
-				int left = buffer [i+i], right = buffer [i+i+1];
-				if (abs (left) > leftMaximum) leftMaximum = abs (left);
-				if (abs (right) > rightMaximum) rightMaximum = abs (right);
+				int left = buffertje [2 * i], right = buffertje [2 * i + 1];
+				if (abs (left) > leftMaximum)
+					leftMaximum = abs (left);
+				if (abs (right) > rightMaximum)
+					rightMaximum = abs (right);
 			}
 		}
 		if (my lastLeftMaximum > 30000) {
 			int leak = my lastLeftMaximum - Melder_ifloor (2000000.0 / theControlPanel. sampleRate);
-			if (leftMaximum < leak) leftMaximum = leak;
+			if (leftMaximum < leak)
+				leftMaximum = leak;
 		}
 		showMaximum (me, 1, leftMaximum);
 		my lastLeftMaximum = leftMaximum;
 		if (my numberOfChannels == 2) {
 			if (my lastRightMaximum > 30000) {
 				int leak = my lastRightMaximum - Melder_ifloor (2000000.0 / theControlPanel. sampleRate);
-				if (rightMaximum < leak) rightMaximum = leak;
+				if (rightMaximum < leak)
+					rightMaximum = leak;
 			}
 			showMaximum (me, 2, rightMaximum);
 			my lastRightMaximum = rightMaximum;
 		}
 	} else if (my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
 		autoSound sound = Sound_create (my numberOfChannels,
-			0.0, nsamp / theControlPanel. sampleRate,
-			nsamp, 1.0 / theControlPanel. sampleRate, 0.5 / theControlPanel. sampleRate);
-		short *p = & buffer [0];
-		for (integer isamp = 1; isamp <= nsamp; isamp ++) {
-			for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
+				0.0, nsamp / theControlPanel. sampleRate,
+				nsamp, 1.0 / theControlPanel. sampleRate, 0.5 / theControlPanel. sampleRate);
+		const short *p = & buffertje [0];
+		for (integer isamp = 1; isamp <= nsamp; isamp ++)
+			for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++)
 				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
-			}
-		}
 		Sound_multiplyByWindow (sound.get(), kSound_windowShape::KAISER_2);
 		double intensity = Sound_getIntensity_dB (sound.get());
 		autoSpectrum spectrum = Sound_to_Spectrum (sound.get(), true);
 		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
 		trace (nsamp, U" samples, intensity ", intensity, U" dB, centre of gravity ", centreOfGravity, U" Hz");
 		Graphics_setWindow (my graphics.get(),
-			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
-			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
+				my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
+				my p_meter_intensity_minimum, my p_meter_intensity_maximum);
 		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(),
-			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
-			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
+				my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
+				my p_meter_intensity_minimum, my p_meter_intensity_maximum);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_fillCircle_mm (my graphics.get(), centreOfGravity, intensity, 3.0);
 	}
@@ -446,7 +452,7 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 				}
 
 				if (my recording)
-					memcpy (my buffer + my nsamp * my numberOfChannels, buffertje, stepje * (sizeof (short) * my numberOfChannels));
+					memcpy (& my buffer___ [1 + my nsamp * my numberOfChannels], buffertje, stepje * (sizeof (short) * my numberOfChannels));
 				showMeter (me, buffertje, stepje);
 				if (my recording) {
 					my nsamp += stepje;
@@ -484,7 +490,7 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 				integer firstSample = lastSample - 3000;
 				if (firstSample < 0)
 					firstSample = 0;
-				showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
+				showMeter (me, & my buffer___ [1 + firstSample * my numberOfChannels], lastSample - firstSample);
 				GuiScale_setValue (my progressScale, 1000.0 * ((double) lastSample / (double) my nmax));
 			} else {
 				showMeter (me, nullptr, 0);
@@ -525,7 +531,7 @@ static int portaudioStreamCallback (
 		uinteger dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
 		if (Melder_debug == 20)
 			Melder_casual (U"play ", dsamples, U" ", Pa_GetStreamCpuLoad (my portaudioStream));
-		memcpy (my buffer + my nsamp * my numberOfChannels, input, 2 * dsamples * my numberOfChannels);
+		memcpy (& my buffer___ [1 + my nsamp * my numberOfChannels], input, 2 * dsamples * my numberOfChannels);
 		my nsamp += dsamples;
 		if (my nsamp >= my nmax)
 			return paComplete;
@@ -603,7 +609,7 @@ static void gui_button_cb_stop (SoundRecorder me, GuiButtonEvent /* event */) {
 static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
 	if (my recording || my nsamp == 0)
 		return;
-	MelderAudio_play16 (my buffer, theControlPanel. sampleRate,
+	MelderAudio_play16 (my buffer___.asArgumentToFunctionThatExpectsZeroBasedArray(), theControlPanel. sampleRate,
 			my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, nullptr, nullptr);
 }
 
@@ -623,14 +629,14 @@ static void publish (SoundRecorder me) {
 	}
 	if (my fakeMono) {
 		for (integer i = 1; i <= nsamp; i ++)
-			sound -> z [1] [i] = (my buffer [i + i - 2] + my buffer [i + i - 1]) * (1.0 / 65536);
+			sound -> z [1] [i] = (my buffer___ [i + i - 1] + my buffer___ [i + i]) * (1.0 / 65536);
 	} else if (my numberOfChannels == 1) {
 		for (integer i = 1; i <= nsamp; i ++)
-			sound -> z [1] [i] = my buffer [i - 1] * (1.0 / 32768);
+			sound -> z [1] [i] = my buffer___ [i] * (1.0 / 32768);
 	} else {
 		for (integer i = 1; i <= nsamp; i ++) {
-			sound -> z [1] [i] = my buffer [i + i - 2] * (1.0 / 32768);
-			sound -> z [2] [i] = my buffer [i + i - 1] * (1.0 / 32768);
+			sound -> z [1] [i] = my buffer___ [i + i - 1] * (1.0 / 32768);
+			sound -> z [2] [i] = my buffer___ [i + i] * (1.0 / 32768);
 		}
 	}
 	if (my soundName) {
@@ -912,11 +918,11 @@ static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileT
 	autoMelderFile mfile = MelderFile_create (file);
 	MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
-		for (integer i = 0; i < nsamp; i ++)
-			binputi16 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+		for (integer i = 1; i <= nsamp; i ++)
+			binputi16 ((my buffer___ [i + i - 1] + my buffer___ [i + i]) / 2, file -> filePointer);
 	} else {
-		for (integer i = 0; i < nsamp; i ++)
-			binputi16LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+		for (integer i = 1; i <= nsamp; i ++)
+			binputi16LE ((my buffer___ [i + i - 1] + my buffer___ [i + i]) / 2, file -> filePointer);
 	}
 	MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
 	mfile.close ();
@@ -927,7 +933,8 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 		if (my fakeMono) {
 			writeFakeMonoFile (me, file, audioFileType);
 		} else {
-			MelderFile_writeAudioFile (file, audioFileType, my buffer, Melder_iround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
+			MelderFile_writeAudioFile (file, audioFileType, my buffer___.asArgumentToFunctionThatExpectsZeroBasedArray(),
+					Melder_iround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Audio file not written.");
@@ -1065,7 +1072,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 			Allocate the maximum buffer.
 		*/
 		Melder_clip (1, & preferences.bufferSizeInMegabytes, 1000);
-		if (! my buffer) {
+		if (NUMisEmpty (my buffer___.get())) {
 			integer nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
 			integer nmax_bytes = ( my inputUsesPortAudio ? nmax_bytes_pref :
 				#if defined (_WIN32)
@@ -1076,7 +1083,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 			my nmax = nmax_bytes / (sizeof (short) * numberOfChannels);
 			for (;;) {
 				try {
-					my buffer = NUMvector <short> (0, my nmax * numberOfChannels - 1);
+					my buffer___ = newvectorzero <short> (my nmax * numberOfChannels);
 					break;   // success
 				} catch (MelderError) {
 					if (my nmax < 100000) {
@@ -1088,7 +1095,6 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 				}
 			}
 		}
-		Melder_assert (my buffer);
 
 		/*
 			Count the number of input devices and sources.
