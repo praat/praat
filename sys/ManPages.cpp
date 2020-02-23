@@ -126,7 +126,6 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find recording time.");
 	}
-	page -> paragraphs = newvectorzero <structManPage_Paragraph> (0);
 
 	for (;;) {
 		enum kManPage_type type;
@@ -141,9 +140,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				throw;
 			}
 		}
-		const auto newSize = page -> paragraphs.size + 1;
-		page -> paragraphs. resize (newSize);
-		ManPage_Paragraph par = & page -> paragraphs [newSize];
+		ManPage_Paragraph par = page -> paragraphs. append ();
 		par -> type = type;
 		if (par -> type == kManPage_type::SCRIPT) {
 			par -> width = texgetr64 (text);
@@ -239,11 +236,8 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, i
 {
 	autoManPage page = Thing_new (ManPage);
 	page -> title = Melder_dup (title);
-	page -> paragraphs = newvectorzero <structManPage_Paragraph> (0);
 	for (ManPage_Paragraph par = & paragraphs [0]; (int) par -> type != 0; par ++) {
-		auto const newSize = page -> paragraphs.size + 1;
-		page -> paragraphs. resize (newSize);
-		ManPage_Paragraph targetParagraph = & page -> paragraphs [newSize];
+		ManPage_Paragraph targetParagraph = page -> paragraphs. append ();
 		targetParagraph -> type = par -> type;
 		targetParagraph -> text = par -> text;   // static string
 		targetParagraph -> width = par -> width;
@@ -348,12 +342,8 @@ static void grind (ManPages me) {
 					}
 					if (! alreadyPresent) {
 						ManPage otherPage = my pages.at [jpage];
-						integer newNumberOfLinksThither = page -> linksThither.size + 1;
-						page -> linksThither. resize (newNumberOfLinksThither);
-						page -> linksThither [newNumberOfLinksThither] = jpage;
-						integer newNumberOfLinksHither = otherPage -> linksHither.size + 1;
-						otherPage -> linksHither. resize (newNumberOfLinksHither);
-						otherPage -> linksHither [newNumberOfLinksHither] = ipage;
+						* page -> linksThither. append () = jpage;
+						* otherPage -> linksHither. append () = ipage;
 					}
 				}
 			}
@@ -382,8 +372,11 @@ integer ManPages_uniqueLinksHither (ManPages me, integer ipage) {
 }
 
 integer ManPages_lookUp (ManPages me, conststring32 title) {
-	if (! my ground)
+	if (! my ground) {
+		//Melder_stopwatch ();
 		grind (me);
+		//Melder_information (U"grinding lasted ", Melder_stopwatch (), U" seconds.");
+	}
 	return lookUp_sorted (me, title);
 }
 
