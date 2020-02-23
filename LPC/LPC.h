@@ -20,6 +20,7 @@
 
 #include "Matrix.h"
 #include "Graphics.h"
+#include "LPC_enums.h"
 
 #include "LPC_def.h"
 

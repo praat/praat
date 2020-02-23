@@ -3,7 +3,7 @@
 
 /* MDS_enums.h
  *
- * Copyright (C) 2018-2019 David Weenink
+ * Copyright (C) 2018-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,4 +51,4 @@ enums_begin (kMDS_splineType, 1)
 	enums_add (kMDS_splineType, 2, ISpline , U"I-spline")
 enums_end (kMDS_splineType, 2, MSpline)
 
-#endif /* _MDS-enums_h_ */
+#endif /* _MDS_enums_h_ */
