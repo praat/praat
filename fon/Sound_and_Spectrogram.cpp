@@ -133,7 +133,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 			Melder_assert (startSample >= 1);
 			Melder_assert (endSample <= my nx);
 
-			spectrum <<= 0.0;
+			spectrum.all() <<= 0.0;
 			/*
 				For multichannel sounds, the power spectrogram should represent the
 				average power in the channels,
@@ -169,7 +169,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				Power averaging ends by dividing the summed power by the number of channels,
 			*/
 			if (my ny > 1 )
-				spectrum  /=  my ny;
+				spectrum.all()  /=  my ny;
 
 			/*
 				Binning.

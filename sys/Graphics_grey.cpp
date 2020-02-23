@@ -1,6 +1,6 @@
 /* Graphics_grey.cpp
  *
- * Copyright (C) 1992-2011,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,8 +356,9 @@ static void smallGrey () {
 			int edge1 = edge0;
 			int darkness;
 			do {
-				/* Follow one edge contour.
-				 */
+				/*
+					Follow one edge contour.
+				*/
 				EdgePoint p = & edgePoints [edge1];
 				integer iContour = p -> iContour;
 				EdgeContour c = edgeContours [iContour];
@@ -386,8 +387,9 @@ static void smallGrey () {
 				}
 				edge1 = edge1 % numberOfEdgePoints + 1;
 
-				/* Round some corners.
-				 */
+				/*
+					Round some corners.
+				*/
 				while (edgePoints [edge1].grey == -1) {
 					++ iPoint;
 					Melder_assert (iPoint <= MAXGREYPATH);
@@ -401,22 +403,24 @@ static void smallGrey () {
 				}
 			}
 			while (edge1 != edge0);
-			fillGrey (iPoint, x, y, darkness);
+			fillGrey (iPoint, x.all(), y.all(), darkness);
 		}
 	}
 	if (numberOfEdgeContours == 0) {
 		int i = 1;
-		while (i <= numberOfBorders && border [i] < data [row1] [col1]) i ++;
+		while (i <= numberOfBorders && border [i] < data [row1] [col1])
+			i ++;
 		x [1] = x [4] = xoff + col1 * dx;
 		x [2] = x [3] = xoff + col2 * dx;
 		y [1] = y [2] = yoff + row1 * dy;
 		y [3] = y [4] = yoff + row2 * dy;
-		fillGrey (4, x, y, i);
+		fillGrey (4, x.all(), y.all(), i);
 	}
 
-	/* Iterate over all the closed contours.
-	 * Those that are not enclosed by any other contour, are filled first.
-	 */
+	/*
+		Iterate over all the closed contours.
+		Those that are not enclosed by any other contour, are filled first.
+	*/
 	{
 		bool found;
 		do {
@@ -437,7 +441,7 @@ static void smallGrey () {
 					}
 					if (! enclosed) {
 						found = true;
-						fillGrey (ci -> numberOfPoints, ci -> x, ci -> y, ci -> grey);
+						fillGrey (ci -> numberOfPoints, ci -> x.all(), ci -> y.all(), ci -> grey);
 						ci -> drawn = 1;
 					}
 				}

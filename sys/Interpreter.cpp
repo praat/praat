@@ -755,7 +755,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 }
 
 inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
-	variable -> numericVectorValue  +=  scalar;
+	variable -> numericVectorValue.all()  +=  scalar;
 }
 inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -766,7 +766,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, cons
 	variableVector  +=  vector;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
-	variable -> numericVectorValue  -=  scalar;
+	variable -> numericVectorValue.all()  -=  scalar;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -777,7 +777,7 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 	variableVector  -=  vector;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
-	variable -> numericVectorValue  *=  scalar;
+	variable -> numericVectorValue.all()  *=  scalar;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();
@@ -788,7 +788,7 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 	variableVector  *=  vector;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
-	variable -> numericVectorValue  /=  scalar;
+	variable -> numericVectorValue.all()  /=  scalar;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
 	const VEC& variableVector = variable -> numericVectorValue.get();

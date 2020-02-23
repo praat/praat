@@ -55,14 +55,14 @@ static inline autoVEC LPC_listAllGains (LPC me) {
 
 static inline autoVEC LPC_listCoefficientsInFrame (LPC me, integer frameNumber) {
 	my checkIndex (frameNumber);
-	autoVEC result = newVECcopy (my d_frames [frameNumber] .a);
+	autoVEC result = newVECcopy (my d_frames [frameNumber]. a.get());
 	return result;
 }
 
 static inline autoMAT LPC_listAllCoefficients (LPC me) {
 	autoMAT result = newMATraw (my maxnCoefficients, my nx);
 	for (integer iframe = 1; iframe <= my nx; iframe ++)
-		result.column (iframe) <<= my d_frames [iframe] .a;
+		result.column (iframe) <<= my d_frames [iframe]. a.get();
 	return result;
 }
 

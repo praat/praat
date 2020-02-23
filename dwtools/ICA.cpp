@@ -270,17 +270,17 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 				delta_w = 0.0;
 				for (integer kol = 1; kol <= dimension; kol ++) {
-					wvec <<= my data.column (kol);
+					wvec.all() <<= my data.column (kol);
 
 					update_one_column (ccts.get(), d.get(), cweights, wvec.get(), -1.0, mvec.get());
 
 					Eigen_initFromSymmetricMatrix (eigen.get(), d.get());
 
 					// Eigenvalues already sorted; get eigenvector of smallest !
-					wnew <<= eigen -> eigenvectors.row (dimension);
+					wnew.all() <<= eigen -> eigenvectors.row (dimension);
 
 					update_one_column (ccts.get(), d.get(), cweights, wnew.get(), 1.0, mvec.get());
-					my data.column (kol) <<= wnew;
+					my data.column (kol) <<= wnew.all();
 
 					// compare norms of eigenvectors. We have to compare ||wvec +/- w_new|| because eigenvectors
 					//  may change sign.
