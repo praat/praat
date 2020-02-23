@@ -455,13 +455,13 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 void Network_addNode (Network me, double x, double y, double activity, bool clamped) {
 	try {
 		Melder_assert (my nodes.size == my numberOfNodes);
-		my nodes. resize (my numberOfNodes + 1);
+		NetworkNode node = my nodes. append ();
 		my numberOfNodes += 1;   // maintain invariant
 		Melder_assert (my numberOfNodes == my nodes.size);
-		my nodes [my numberOfNodes]. x = x;
-		my nodes [my numberOfNodes]. y = y;
-		my nodes [my numberOfNodes]. activity = my nodes [my numberOfNodes]. excitation = activity;
-		my nodes [my numberOfNodes]. clamped = clamped;
+		node -> x = x;
+		node -> y = y;
+		node -> activity = node -> excitation = activity;
+		node -> clamped = clamped;
 	} catch (MelderError) {
 		Melder_throw (me, U": node not added.");
 	}
@@ -470,13 +470,13 @@ void Network_addNode (Network me, double x, double y, double activity, bool clam
 void Network_addConnection (Network me, integer nodeFrom, integer nodeTo, double weight, double plasticity) {
 	try {
 		Melder_assert (my connections.size == my numberOfConnections);
-		my connections. resize (my numberOfConnections + 1);
+		NetworkConnection connection = my connections. append ();
 		my numberOfConnections += 1;   // maintain invariant
 		Melder_assert (my numberOfConnections == my connections.size);
-		my connections [my numberOfConnections]. nodeFrom = nodeFrom;
-		my connections [my numberOfConnections]. nodeTo = nodeTo;
-		my connections [my numberOfConnections]. weight = weight;
-		my connections [my numberOfConnections]. plasticity = plasticity;
+		connection -> nodeFrom = nodeFrom;
+		connection -> nodeTo = nodeTo;
+		connection -> weight = weight;
+		connection -> plasticity = plasticity;
 	} catch (MelderError) {
 		Melder_throw (me, U": connection not added.");
 	}

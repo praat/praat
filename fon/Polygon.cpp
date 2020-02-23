@@ -205,7 +205,7 @@ static bool tryAdoption (constINTMATVU const& distance, INTVECVU const& path, in
 						for (integer j = 1; j <= nAdoption; j ++)
 							path [j + 1] = help [dnnr - j + 1];
 						for (integer j = 1; j <= d1nr - 1; j ++)
-							path [nAdoption + j] = help [j];
+							path [nAdoption + j + 1] = help [j];
 					}
 					dn = e1;
 					e1nr ++;

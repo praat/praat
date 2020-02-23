@@ -1427,9 +1427,8 @@ double HMM_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 		U"You should not start with a zero probability state.");
 	
 	double lnp = log (p0);
-	for (integer it = 2; it <= thy numberOfStrings; it ++) {
+	for (integer it = 2; it <= thy numberOfStrings; it ++)
 		lnp += log (my transitionProbs [index [it - 1]] [index [it]]);
-	}
 	return lnp;
 }
 
@@ -1438,11 +1437,12 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 		return undefined;
 
 	autoVEC scale = newVECzero (itime);
-	autoVEC  alpha_t = newVECraw (my numberOfStates);
-	autoVEC  alpha_tm1 = newVECzero (my numberOfStates);
+	autoVEC alpha_t = newVECraw (my numberOfStates);
+	autoVEC alpha_tm1 = newVECzero (my numberOfStates);
 
 	alpha_t. all() <<= my initialStateProbs.get();
 	scale [1] = NUMsum (alpha_t.all());
+
 	alpha_t. all() /= scale [1];
 	
 	// recursion
@@ -1490,7 +1490,7 @@ double HMM_getProbabilityOfObservations (HMM me, constINTVEC obs) {
 	Melder_require (scale [1] > 0.0,
 		U"The observation sequence should not start with a symbol whose state has zero starting probability.");
 	
-	alpha_t.get() /= scale [1];
+	alpha_t.get()  /=  scale [1];
 
 	// recursion
 	for (integer it = 2; it <= numberOfTimes; it ++) {
