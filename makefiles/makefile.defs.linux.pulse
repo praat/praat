@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.pulse
 
 # System: Linux
-# David Weenink and Paul Boersma, 8 November 2019
+# David Weenink and Paul Boersma, 23 February 2020
 
 CC = gcc
 
@@ -17,7 +17,7 @@ LINK = g++
 
 EXECUTABLE = praat
 
-LIBS = `pkg-config --libs gtk+-2.0` -lm -lpulse -lasound -lpthread
+LIBS = `pkg-config --libs gtk+-2.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread
 
 AR = ar
 RANLIB = ls
