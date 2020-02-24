@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.rpi
 
 # System: Raspberry Pi
-# Paul Boersma, 25 November 2019
+# Paul Boersma, 23 February 2020
 
 CC = gcc
 
@@ -17,7 +17,7 @@ LINK = g++
 
 EXECUTABLE = praat
 
-LIBS = `pkg-config --libs gtk+-2.0` -lm -ljack -lpthread
+LIBS = `pkg-config --libs gtk+-2.0` -lm -ljack -static-libgcc -static-libstc++ -lpthread
 
 AR = ar
 RANLIB = ls

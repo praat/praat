@@ -22,18 +22,20 @@
 #include "Thing.h"
 
 #if defined (_WIN32)
-	#define USE_WINTHREADS 1
+	#define USE_WINTHREADS 0
 	#define USE_PTHREADS 0
-	#define USE_CPPTHREADS 0
+	#define USE_CPPTHREADS 1
 #elif defined (macintosh)
 	#define USE_WINTHREADS 0
-	#define USE_PTHREADS 1
-	#define USE_CPPTHREADS 0
+	#define USE_PTHREADS 0
+	#define USE_CPPTHREADS 1
 #else
 	#define USE_WINTHREADS 0
 	#define USE_PTHREADS 0
 	#define USE_CPPTHREADS 1
 #endif
+
+#include <thread>
 
 #if USE_WINTHREADS
 	#include <windows.h>
@@ -54,7 +56,6 @@
 	#define MelderThread_RETURN  return nullptr;
 #elif USE_CPPTHREADS
 	#include <mutex>
-	#include <thread>
 	#define MelderThread_MUTEX(_mutex)  static std::mutex _mutex
 	#define MelderThread_MUTEX_INIT(_mutex)  (void) 0
 	#define MelderThread_LOCK(_mutex)  std::lock_guard <std::mutex> lock (_mutex)

@@ -342,7 +342,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		numberOfSamples = Melder_iround (sampleRate * duration);
 		if (numberOfSamples < 1)
 			Melder_throw (U"Duration too short.");
-		autovector<short> buffer = newvectorzero<short> (numberOfSamples * (fakeMonoByStereo ? 2 : 1));
+		autovector<short> buffer = newvectorzero<short> (numberOfSamples * ( fakeMonoByStereo ? 2 : 1 ));
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);   // STEREO BUG
 		Melder_assert (my nx == numberOfSamples);
 

@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.barren
 
 # System: Linux without GUI, network, graphics, and sound
-# Paul Boersma, 8 November 2019
+# Paul Boersma, 23 February 2020
 
 CC = gcc
 
