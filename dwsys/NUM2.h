@@ -155,11 +155,10 @@ inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_ma
 		*out_maximum = NUMmax (x);
 }
 
-/* NUMvector_clip
+/*
 	Clip array values.
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
-
 inline void VECclip_inplace (VEC x, double min, double max) {
 	for (integer i = 1; i <= x.size; i ++)
 		if (x [i] < min)
