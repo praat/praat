@@ -311,7 +311,7 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 		max += 0.5;
 	}
 	const integer ysize = iymax - iymin + 1;
-	autoVEC y = newVECraw (ysize); // autoNUMvector<double> y (iymin, iymax);
+	autoVEC y = newVECraw (ysize);
 
 	Graphics_setWindow (g, ymin, ymax, min, max);
 	Graphics_setInner (g);
