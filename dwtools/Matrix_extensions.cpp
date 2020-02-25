@@ -1,6 +1,6 @@
 /* Matrix_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,14 +310,15 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 		min -= 0.5;
 		max += 0.5;
 	}
-	autoNUMvector<double> y (iymin, iymax);
+	const integer ysize = iymax - iymin + 1;
+	autoVEC y = newVECraw (ysize); // autoNUMvector<double> y (iymin, iymax);
 
 	Graphics_setWindow (g, ymin, ymax, min, max);
 	Graphics_setInner (g);
 
 	for (integer i = iymin; i <= iymax; i ++)
-		y [i] = my z [i] [ix];
-	Graphics_function (g, y.peek(), iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
+		y [i - iymin + 1] = my z [i] [ix];
+	Graphics_function (g, y.at, 1, ysize, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
 	Graphics_unsetInner (g);
 }
 
