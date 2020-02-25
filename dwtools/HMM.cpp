@@ -1,6 +1,6 @@
 /* HMM.cpp
  *
- * Copyright (C) 2010-2019 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2010-2020 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1440,9 +1440,10 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 	autoVEC alpha_t = newVECraw (my numberOfStates);
 	autoVEC alpha_tm1 = newVECzero (my numberOfStates);
 
-	alpha_t.get() <<= my initialStateProbs.get();
+	alpha_t. all() <<= my initialStateProbs.get();
 	scale [1] = NUMsum (alpha_t.all());
-	alpha_t.all()  /=  scale [1];
+
+	alpha_t. all() /= scale [1];
 	
 	// recursion
 	for (integer it = 2; it <= itime; it ++) {
@@ -1455,7 +1456,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 			alpha_t [js] = double (sum);
 			scale [it] += alpha_t [js];
 		}
-		alpha_t.all()  /=  scale [it];
+		alpha_t. all() /= scale [it];
 	}
 
 	longdouble lnp = 0.0;

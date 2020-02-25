@@ -64,21 +64,21 @@ autoEspeakVoice EspeakVoice_create () {
 		autoEspeakVoice me = Thing_new (EspeakVoice);
 		my numberOfFormants = 9; // equals N_PEAKS 
 		my numberOfKlattParameters = 8;
-		my klattv = NUMvector<int32> (1, my numberOfKlattParameters);
-		my freq = NUMvector<int32> (1, my numberOfFormants);
-		my height = NUMvector<int32> (1, my numberOfFormants);	// 100% = 256
-		my width = NUMvector<int32> (0, my numberOfFormants);		// 100% = 256
-		my freqadd = NUMvector<int32> (0, my numberOfFormants);	// Hz
+		my klattv = newINTVECzero (my numberOfKlattParameters);
+		my freq = newINTVECzero (my numberOfFormants);
+		my height = newINTVECzero (my numberOfFormants);	// 100% = 256
+		my width = newINTVECzero (my numberOfFormants);		// 100% = 256
+		my freqadd = newINTVECzero (my numberOfFormants);	// Hz
 
 		// copies without temporary adjustments from embedded commands
-		my freq2 = NUMvector<int32> (0, my numberOfFormants);		// 100% = 256
-		my height2 = NUMvector<int32> (0, my numberOfFormants);	// 100% = 256
-		my width2 = NUMvector<int32> (0, my numberOfFormants);	// 100% = 256
+		my freq2 = newINTVECzero (my numberOfFormants);		// 100% = 256
+		my height2 = newINTVECzero (my numberOfFormants);	// 100% = 256
+		my width2 = newINTVECzero (my numberOfFormants);	// 100% = 256
 
-		my breath = NUMvector<int32> (0, my numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
-		my breathw = NUMvector<int32> (0, my numberOfFormants);	// width of each breath formant
+		my breath = newINTVECzero (my numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
+		my breathw = newINTVECzero (my numberOfFormants);	// width of each breath formant
 		my numberOfToneAdjusts = 1000; // equals N_TONE_ADJUST in voice.h
-		my tone_adjust = NUMvector<unsigned char> (1, my numberOfToneAdjusts);
+		my tone_adjust = newvectorzero<unsigned char> (my numberOfToneAdjusts);
 		EspeakVoice_setDefaults (me.get());
 		return me;
 	} catch (MelderError) {
@@ -198,45 +198,6 @@ void structSpeechSynthesizer :: v_info () {
 	);
 }
 
-static void NUMvector_extendNumberOfElements (integer elementSize, void **v, integer lo, integer *hi, integer extraDemand)
-{
-	try {
-		byte *result;
-		if (! *v) {
-			const integer newhi = lo + extraDemand - 1;
-			result = NUMvector_generic (elementSize, lo, newhi, true);
-			*hi = newhi;
-		} else {
-			const integer offset = lo * elementSize;
-			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-				result = reinterpret_cast <byte *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 1 + extraDemand) * elementSize));
-				if ((result -= offset))  // this will normally succeed at the first try
-					break;
-				(void) Melder_realloc_f (result + offset, 1);   // ??make "sure" that the second try will succeed
-			}
-			(*hi) += extraDemand;
-			memset (result + *hi * elementSize, 0, elementSize);   // initialize the new elements to zeroes
-		}
-		*v = result;
-	} catch (MelderError) {
-		Melder_throw (U"Vector: size not extended.");
-	}
-}
-
-static void NUMvector_supplyStorage (integer elementSize, void **v, integer lo, integer *hi, integer nfilled, integer extraDemand)
-{
-	const integer old_capacity = *hi - lo + 1;
-	integer new_capacity = nfilled + extraDemand;
-	if (new_capacity < old_capacity) return;
-	new_capacity = new_capacity > 2 * old_capacity ? new_capacity : 2 * old_capacity;
-	NUMvector_extendNumberOfElements (elementSize, v, lo, hi, new_capacity);
-}
-
-template <class T>
-void NUMvector_supplyStorage (T** v, integer lo, integer *hi, integer nfilled, integer extraDemand) {
-	NUMvector_supplyStorage (sizeof (T), (void**) v, lo, hi, nfilled, extraDemand);
-}
-
 static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 {
 	char phoneme_name[9];
@@ -276,7 +237,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		events++;
 	}
 	if (me) {
-		NUMvector_supplyStorage<int> (& my d_wav, 1, & my d_wavCapacity, my d_numberOfSamples, numsamples);
+		my d_wav.resize (my d_numberOfSamples + numsamples);
 		for (integer i = 1; i <= numsamples; i++)
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
 		my d_numberOfSamples += numsamples;
@@ -368,14 +329,14 @@ void SpeechSynthesizer_playText (SpeechSynthesizer me, conststring32 text) {
 	Sound_play (thee.get(), nullptr, nullptr);
 }
 
-static autoSound buffer_to_Sound (int *wav, integer numberOfSamples, double samplingFrequency)
+static autoSound buffer_to_Sound (constINTVEC const& wav, double samplingFrequency)
 {
 	try {
 		const double dx = 1.0 / samplingFrequency;
-		const double xmax = numberOfSamples * dx;
-		autoSound thee = Sound_create (1, 0.0, xmax, numberOfSamples, dx, dx / 2.0);
-		for (integer i = 1; i <= numberOfSamples; i++)
-			thy z[1][i] = wav[i] / 32768.0;
+		const double xmax = wav.size * dx;
+		autoSound thee = Sound_create (1, 0.0, xmax, wav.size, dx, dx / 2.0);
+		for (integer i = 1; i <= wav.size; i++)
+			thy z[1][i] = wav [i] / 32768.0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from synthesizer data.");
@@ -711,7 +672,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		#endif
 				
 		espeak_ng_Terminate ();
-		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
+		autoSound thee = buffer_to_Sound (my d_wav.get(), my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency)
 			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);

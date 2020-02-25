@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ autoStrings Strings_change (Strings me, conststring32 search, conststring32 repl
 	}
 }
 
-autoStrings strings_to_Strings (constSTRVEC strings, integer from, integer to) {
+autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings, integer from, integer to) {
 	try {
 		autoStrings thee = Strings_createFixedLength (to - from + 1);
 		for (integer i = from; i <= to; i ++)
@@ -155,7 +155,7 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	try {
 		Melder_require (from > 0 && from <= to && to <= my numberOfStrings,
 			U"Strings_extractPart: begin and end should be in interval [1, ", my numberOfStrings, U"].");
-		return strings_to_Strings (my strings.get(), from, to);
+		return Strings_createFromSTRVEC (my strings.get(), from, to);
 	} catch (MelderError) {
 		Melder_throw (me, U": no part extracted.");
 	}
@@ -262,7 +262,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			groupLabels [irow] = Melder_dup(my rows.at [irow] -> cells [column]. string.get()); //TODO no dup
 
-		autoStrings thee = strings_to_Strings (groupLabels.get(), 1, numberOfRows);
+		autoStrings thee = Strings_createFromSTRVEC (groupLabels.get(), 1, numberOfRows);
 		autoStringsIndex him = Strings_to_StringsIndex (thee.get());
 		return him;
 	} catch (MelderError) {

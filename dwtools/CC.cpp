@@ -1,6 +1,6 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 			ymax += 1.0;
 		}
 	} else
-		VECclip_inplace_inline (c.get(), ymin, ymax);
+		VECclip_inplace (c.get(), ymin, ymax);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);

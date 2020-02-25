@@ -1,6 +1,6 @@
 /* Cepstrum.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 	if (autoscaling)
 		NUMextrema (y.get(), & minimum, & maximum);
 	else
-		VECclip_inplace_inline (y.get(), minimum, maximum);
+		VECclip_inplace (y.get(), minimum, maximum);
 
 	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
 	Graphics_function (g, y.at, 1, numberOfSelected, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));

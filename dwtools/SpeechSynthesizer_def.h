@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_def.h
  *
- * Copyright (C) 2011-2012, 2015-2016 David Weenink
+ * Copyright (C) 2011-2020 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,45 +22,45 @@ oo_DEFINE_CLASS (EspeakVoice, Daata)
 	oo_STRING (v_name) // maximum 39 characters + 1 0-byte
 	oo_STRING (language_name) // maximum 19 characters + 1 0-byte
 
-	oo_INT32 (phoneme_tab_ix)  // phoneme table number
-	oo_INT32 (pitch_base)    // Hz
-	oo_INT32 (pitch_range)   // Hz
+	oo_INTEGER (phoneme_tab_ix)  // phoneme table number
+	oo_INTEGER (pitch_base)    // Hz
+	oo_INTEGER (pitch_range)   // Hz
 
-	oo_INT32 (speedf1)
-	oo_INT32 (speedf2)
-	oo_INT32 (speedf3)
+	oo_INTEGER (speedf1)
+	oo_INTEGER (speedf2)
+	oo_INTEGER (speedf3)
 
-	oo_INT32 (speed_percent)      // adjust the WPM speed by this percentage
-	oo_INT32 (flutter)
-	oo_INT32 (roughness)
-	oo_INT32 (echo_delay)
-	oo_INT32 (echo_amp)
-	oo_INT32 (n_harmonic_peaks)  // highest formant which is formed from adding harmonics
-	oo_INT32 (peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
-	oo_INT32 (voicing)           // 100% = 64, level of formant-synthesized sound
-	oo_INT32 (formant_factor)      // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
-	oo_INT32 (consonant_amp)     // amplitude of unvoiced consonants
-	oo_INT32 (consonant_ampv)    // amplitude of the noise component of voiced consonants
-	oo_INT32 (samplerate)			// sampling frequency as integer Hz
-	oo_INT32 (numberOfKlattParameters) // default 8 
-	oo_INT_VECTOR (klattv, numberOfKlattParameters)
+	oo_INTEGER (speed_percent)      // adjust the WPM speed by this percentage
+	oo_INTEGER (flutter)
+	oo_INTEGER (roughness)
+	oo_INTEGER (echo_delay)
+	oo_INTEGER (echo_amp)
+	oo_INTEGER (n_harmonic_peaks)  // highest formant which is formed from adding harmonics
+	oo_INTEGER (peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
+	oo_INTEGER (voicing)           // 100% = 64, level of formant-synthesized sound
+	oo_INTEGER (formant_factor)      // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
+	oo_INTEGER (consonant_amp)     // amplitude of unvoiced consonants
+	oo_INTEGER (consonant_ampv)    // amplitude of the noise component of voiced consonants
+	oo_INTEGER (samplerate)			// sampling frequency as integer Hz
+	oo_INTEGER (numberOfKlattParameters) // default 8 
+	oo_INTVEC (klattv, numberOfKlattParameters)
 
 	// parameters used by Wavegen
-	oo_INT32 (numberOfFormants) // 9
-	oo_INT_VECTOR (freq, numberOfFormants)		// (short) 100% = 256
-	oo_INT_VECTOR (height, numberOfFormants)	// (short) 100% = 256
-	oo_INT_VECTOR (width, numberOfFormants)		// (short) 100% = 256
-	oo_INT_VECTOR (freqadd, numberOfFormants)	// (short) Hz
+	oo_INTEGER (numberOfFormants) // 9
+	oo_INTVEC (freq, numberOfFormants)		// (short) 100% = 256
+	oo_INTVEC (height, numberOfFormants)	// (short) 100% = 256
+	oo_INTVEC (width, numberOfFormants)		// (short) 100% = 256
+	oo_INTVEC (freqadd, numberOfFormants)	// (short) Hz
 
 	// copies without temporary adjustments from embedded commands
-	oo_INT_VECTOR (freq2, numberOfFormants)		// (short) 100% = 256
-	oo_INT_VECTOR (height2, numberOfFormants)	// (short) 100% = 256
-	oo_INT_VECTOR (width2, numberOfFormants)	// (short) 100% = 256
+	oo_INTVEC (freq2, numberOfFormants)		// (short) 100% = 256
+	oo_INTVEC (height2, numberOfFormants)	// (short) 100% = 256
+	oo_INTVEC (width2, numberOfFormants)	// (short) 100% = 256
 
-	oo_INT_VECTOR (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath[0] indicates whether any are set.
-	oo_INT_VECTOR (breathw, numberOfFormants)	// width of each breath formant
-	oo_INT32 (numberOfToneAdjusts)
-	oo_UBYTE_VECTOR_FROM (tone_adjust, 1, numberOfToneAdjusts)
+	oo_INTVEC (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath[0] indicates whether any are set.
+	oo_INTVEC (breathw, numberOfFormants)	// width of each breath formant
+	oo_INTEGER (numberOfToneAdjusts)
+	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts)
 
 oo_END_CLASS (EspeakVoice)
 #undef ooSTRUCT
@@ -119,7 +119,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_DOUBLE (d_internalSamplingFrequency)
 		oo_INTEGER (d_numberOfSamples)
 		oo_INTEGER (d_wavCapacity)
-		oo_INT_VECTOR (d_wav, d_wavCapacity)
+		oo_INTVEC (d_wav, d_wavCapacity) // int16??
 	#endif
 
 	#if oo_DECLARING

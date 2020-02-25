@@ -108,6 +108,8 @@
 #define oo_BOOLVEC(x,n)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_COMPVEC
 #define oo_COMPVEC(x,n)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
+#undef oo_BYTEVEC
+#define oo_BYTEVEC(x,n)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 
 #undef oo_MAT
 #define oo_MAT(x,nrow,ncol)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
