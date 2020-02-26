@@ -254,7 +254,7 @@ char * FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id, inte
 
 	const FileInMemory fim = (FileInMemory) my at [index];
 	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes + 1);
-	if (! data || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes))
+	if (! data || ! memcpy (data, fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray (), fim -> d_numberOfBytes))
 		return nullptr;
 
 	data [fim -> d_numberOfBytes] = '\0';
@@ -273,7 +273,7 @@ const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, inte
 	const FileInMemory fim = (FileInMemory) my at [index];
 	if (out_numberOfBytes)
 		*out_numberOfBytes = fim -> d_numberOfBytes;
-	return reinterpret_cast<const char *> (fim -> d_data);
+	return reinterpret_cast<const char *> (fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray ());
 }
 
 
