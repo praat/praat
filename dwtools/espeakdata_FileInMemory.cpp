@@ -1,6 +1,6 @@
 /* espeakdata_FileInMemory.cpp
  *
- * Copyright (C) David Weenink 2012-2019
+ * Copyright (C) David Weenink 2012-2020
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,14 +91,14 @@ const char * espeakdata_get_voicedata (const char *data, integer ndata, char *bu
 }
 
 
-static conststring32 get_wordAfterPrecursor_u8 (const unsigned char *text8, conststring32 precursor) {
+static conststring32 get_wordAfterPrecursor_u8 (constvector<unsigned char> const& text8, conststring32 precursor) {
 	static char32 word [100];
 	/*
 		1. Find (first occurrence of) 'precursor' at the start of a line (with optional leading whitespace).
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
-	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
+	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
@@ -116,14 +116,14 @@ static conststring32 get_wordAfterPrecursor_u8 (const unsigned char *text8, cons
 	return p;
 }
 
-static conststring32 get_stringAfterPrecursor_u8 (const unsigned char *text8, conststring32 precursor) {
+static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> const& text8, conststring32 precursor) {
 	static char32 word [100];
 	/*
 		1. Find (first occurrence of) 'precursor' at the start of a line (with optional leading whitespace).
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
-	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
+	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
@@ -157,7 +157,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
-				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
+				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
 				// The first character of name must be upper case
 				if (name) {
 					autoMelderString capitalFirst;
@@ -169,11 +169,11 @@ autoTable Table_createAsEspeakVoicesProperties () {
 					Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 				}
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
-				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
+				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"gender");
 				Table_setStringValue (thee.get(), irow, 4, (word ? word : U"0"));
-				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"age");
+				word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"age");
 				Table_setStringValue (thee.get(), irow, 5, (word ? word : U"0"));
-				word = get_stringAfterPrecursor_u8 (fim -> d_data, U"variant");
+				word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"variant");
 				Table_setStringValue (thee.get(), irow, 6, (word ? word : U"0"));
 			}
 		}
@@ -197,7 +197,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
-				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
+				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
 				Table_setStringValue (thee.get(), irow, 2, ( word ? word : fim -> d_id.get() ));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}

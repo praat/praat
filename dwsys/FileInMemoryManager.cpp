@@ -1,6 +1,6 @@
 /* FileInMemoryManager.cpp
  *
- * Copyright (C) 2017-2019 David Weenink
+ * Copyright (C) 2017-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,7 +426,7 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 	if (startPos < fim -> d_numberOfBytes) {
 		integer i = 0, endPos = startPos + num;
 		endPos = endPos < fim -> d_numberOfBytes ? endPos : fim -> d_numberOfBytes;
-		const unsigned char * p = fim -> d_data + startPos;
+		const unsigned char * p = fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray () + startPos;
 		char *p_str = str;
 		if (fim -> ungetChar > 0) {
 			/*
@@ -526,7 +526,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 			fim -> d_errno = EOF;
 		}
 		const integer numberOfBytes = count * size;
-		const unsigned char * p = fim -> d_data + fim -> d_position;
+		const unsigned char * p = fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray () + fim -> d_position;
 		char * str = static_cast<char *> (ptr);
 		while (i < numberOfBytes)
 			str [i ++] = *p ++;
@@ -682,20 +682,17 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 	size_t bufferSize = -1;
 	if (stream == stderr) {
 		va_start (args, format);
-		bufferSize = 3;
-		autoNUMvector<char> buf (0_integer, bufferSize);
-		const int sizeNeeded = vsnprintf (buf.peek(), bufferSize, format, args); // find the size of the needed buffer
+		bufferSize = 256;
+		autovector<char> buf = newvectorraw <char> (bufferSize);
+		int sizeNeeded = vsnprintf (buf.asArgumentToFunctionThatExpectsZeroBasedArray (), bufferSize, format, args); // find the size of the needed buffer (without terminating null byte)
 		va_end (args);
-		if (sizeNeeded > bufferSize) {
-			buf.reset (0_integer, sizeNeeded);
+		if (++ sizeNeeded > bufferSize) { 
+			buf.resize (sizeNeeded);
 			va_start (args, format);
-			(void) vsnprintf (buf.peek(), sizeNeeded, format, args);
+			(void) vsnprintf (buf.asArgumentToFunctionThatExpectsZeroBasedArray (), sizeNeeded, format, args);
 			va_end (args);
 		}
 		bufferSize = sizeNeeded;
-		// append the buffer 
-		//MelderInfo_writeLine (Melder_peek8to32 (buf.peek()));
-
 	} else {
 		//integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream); // 
 	}
