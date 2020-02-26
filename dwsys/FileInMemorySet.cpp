@@ -1,6 +1,6 @@
 /* FileInMemorySet.cpp
  *
- * Copyright (C) 2012-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2020 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,22 +245,14 @@ autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	}
 }
 
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id, integer *out_numberOfBytes) {
-	if (out_numberOfBytes)
-		*out_numberOfBytes = 0;
+autovector<unsigned char> FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id) {
+	autovector<unsigned char> result;
 	integer index = FileInMemorySet_getIndexFromId (me, id);
-	if (index == 0)
-		return nullptr;
-
-	const FileInMemory fim = (FileInMemory) my at [index];
-	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes + 1);
-	if (! data || ! memcpy (data, fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray (), fim -> d_numberOfBytes))
-		return nullptr;
-
-	data [fim -> d_numberOfBytes] = '\0';
-	if (out_numberOfBytes)
-		*out_numberOfBytes = fim -> d_numberOfBytes;
-	return data;
+	if (index != 0) {
+		const FileInMemory fim = (FileInMemory) my at [index];
+		result = newvectorcopy (fim -> d_data.all());
+	}
+	return result;
 }
 
 const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, integer *out_numberOfBytes) {
