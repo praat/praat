@@ -1,6 +1,6 @@
 /* Cepstrumc.c
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Cepstrumc_def.h"
 
-Thing_implement (Cepstrumc, Sampled, 1);
+Thing_implement (Cepstrumc, Sampled, 2);
 
 void structCepstrumc :: v_info () {
 	structDaata :: v_info ();
@@ -58,8 +58,8 @@ void structCepstrumc :: v_info () {
 	MelderInfo_writeLine (U"  Number of coefficients: ", maxnCoefficients);
 }
 
-void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients) {
-	my c = NUMvector<double> (0, nCoefficients);
+void Cepstrumc_Frame_init (Cepstrumc_Frame me, integer nCoefficients) {
+	my c = newVECzero (nCoefficients);
 	my nCoefficients = nCoefficients;
 }
 

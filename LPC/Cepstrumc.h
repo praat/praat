@@ -39,7 +39,7 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt,
 
 /******************* Frames ************************************************/
 
-void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients);
+void Cepstrumc_Frame_init (Cepstrumc_Frame me, integer nCoefficients);
 	
 autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint);
