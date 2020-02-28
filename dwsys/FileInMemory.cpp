@@ -38,7 +38,6 @@
 #include "oo_DESCRIPTION.h"
 #include "FileInMemory_def.h"
 
-
 Thing_implement (FileInMemory, Daata, 0);
 
 void structFileInMemory :: v_info () {
@@ -86,7 +85,7 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 			/*
 				djmw 20200226:
 				We changed d_data from type vector to autovector and cannot share the data anynmore.
-				We therefore have to make an explicit copy until we find a solution.
+				Therefore make an explicit copy until we find a solution.
 			*/
 			//my d_data.at = reinterpret_cast<unsigned char *> (const_cast<char *> (data))-1; // ... just a link
 			//my d_data.size = numberOfBytes + 1;
@@ -108,8 +107,7 @@ void FileInMemory_setId (FileInMemory me, conststring32 newId) {
 	my d_id = Melder_dup (newId);
 }
 
-void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine)
-{
+void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine) {
 	if (numberOfBytesPerLine < 1)
 		numberOfBytesPerLine = 20;
 
