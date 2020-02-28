@@ -1,6 +1,6 @@
 /* SPINET.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2020 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 		minimum -= 1;
 		maximum += 1;
 	}
-	VECclip_inplace_inline (spec.part (ifmin, ifmax), minimum, maximum);
+	VECclip_inplace (spec.part (ifmin, ifmax), minimum, maximum);
 	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fromErb, toErb, minimum, maximum);

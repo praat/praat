@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,13 @@
 #include "LPC_def.h"
 #include "oo_DESCRIPTION.h"
 #include "LPC_def.h"
+
+#include "enums_getText.h"
+#undef _LPC_enums_h_
+#include "LPC_enums.h"
+#include "enums_getValue.h"
+#undef _LPC_enums_h_
+#include "LPC_enums.h"
 
 Thing_implement (LPC, Sampled, 1);
 

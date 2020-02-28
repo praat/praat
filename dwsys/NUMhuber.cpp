@@ -1,6 +1,6 @@
 /* NUMhuber.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 		const double high = location0 + k_stdev * scale0;
 		
 		work.get ()  <<=  x;
-		VECclip_inplace_inline (work.get (), low, high); // windsorize
+		VECclip_inplace (work.get (), low, high); // windsorize
 		
 		if (wantlocation)
 			location1 = NUMmean (work.get());

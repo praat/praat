@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2020 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 #include "oo_DESCRIPTION.h"
 #include "FileInMemory_def.h"
 
-
 Thing_implement (FileInMemory, Daata, 0);
 
 void structFileInMemory :: v_info () {
@@ -61,13 +60,13 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my d_id = Melder_dup (MelderFile_name (file));
 		my d_numberOfBytes = length;
 		my _dontOwnData = false;
-		my d_data = NUMvector <uint8> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
+		my d_data = newvectorzero <byte> (my d_numberOfBytes + 1);   // includes room for a final null byte in case the file happens to contain only text
 		MelderFile_open (file);
-		for (integer i = 0; i < my d_numberOfBytes; i++) {
+		for (integer i = 1; i <= my d_numberOfBytes; i++) {
 			const unsigned int number = bingetu8 (file -> filePointer);
 			my d_data [i] = number;
 		}
-		my d_data [my d_numberOfBytes] = 0;   // one extra
+		my d_data [my d_numberOfBytes + 1] = 0;   // "extra" null byte
 		MelderFile_close (file);
 		return me;
 	} catch (MelderError) {
@@ -83,11 +82,20 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 		my d_numberOfBytes = numberOfBytes;
 		if (isStaticData) {
 			my _dontOwnData = true; // we cannot dispose of the data!
-			my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // ... just a link
+			/*
+				djmw 20200226:
+				We changed d_data from type vector to autovector and cannot share the data anynmore.
+				Therefore make an explicit copy until we find a solution.
+			*/
+			//my d_data.at = reinterpret_cast<unsigned char *> (const_cast<char *> (data))-1; // ... just a link
+			//my d_data.size = numberOfBytes + 1;
+			my _dontOwnData = false; // we can dispose of the data!
+			my d_data = newvectorraw <unsigned char> (numberOfBytes + 1);
+			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray (), data, (size_t) numberOfBytes + 1);
 		} else {
 			my _dontOwnData = false;
-			my d_data = NUMvector <unsigned char> (0_integer, numberOfBytes);
-			memcpy (my d_data, data, (size_t) numberOfBytes + 1);
+			my d_data = newvectorraw <unsigned char> (numberOfBytes + 1);
+			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray (), data, (size_t) numberOfBytes + 1);
 		}
 		return me;
 	} catch (MelderError) {
@@ -99,8 +107,7 @@ void FileInMemory_setId (FileInMemory me, conststring32 newId) {
 	my d_id = Melder_dup (newId);
 }
 
-void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine)
-{
+void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine) {
 	if (numberOfBytesPerLine < 1)
 		numberOfBytesPerLine = 20;
 

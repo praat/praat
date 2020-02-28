@@ -1,6 +1,6 @@
 /* FileInMemory_def.h
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@ oo_DEFINE_CLASS (FileInMemory, Daata)
 	oo_INT32 (ungetChar)
 	#if oo_DESTROYING
 		if (! _dontOwnData) {
-			oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes)
+			oo_BYTEVEC (d_data, d_numberOfBytes + 1)
 		}
 	#else
-		oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes) // final null byte possible
+		oo_BYTEVEC (d_data, d_numberOfBytes + 1) // final null byte possible
 	#endif
 	oo_UBYTE (writable)
 

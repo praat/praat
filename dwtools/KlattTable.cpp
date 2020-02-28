@@ -1,6 +1,6 @@
 /* KlattTable.cpp
  *
- * Copyright (C) 2008-2019 David Weenink
+ * Copyright (C) 2008-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -493,7 +493,7 @@ static void KlattGlobal_free (KlattGlobal me) {
 }
 
 static KlattGlobal KlattGlobal_create (double samplingFrequency) {
-	KlattGlobal me = 0;
+	KlattGlobal me = nullptr;
 	try {
 		me = (KlattGlobal) _Melder_calloc_f (1, sizeof (struct structKlattGlobal));
 
@@ -518,8 +518,7 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 	}
 }
 
-static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFormants, int glottalSource,
-                              double frameDuration, integer flutter, int outputType) {
+static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFormants, int glottalSource, double frameDuration, integer flutter, int outputType) {
 	static short natural_samples [NUMBER_OF_SAMPLES] = {
 		-310, -400, 530, 356, 224, 89, 23, -10, -58, -16, 461, 599, 536, 701, 770,
 		605, 497, 461, 560, 404, 110, 224, 131, 104, -97, 155, 278, -154, -1165,
@@ -590,20 +589,20 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 		thy Gain0 = 57;
 
 	my amp_gain0 = DBtoLIN (thy Gain0);
-
-	/* Set coefficients of variable cascade resonators */
-
+	/*
+		Set coefficients of variable cascade resonators
+	*/
 	for (integer i = 8; i > 0; i--)
 		if (my nfcascade >= i)
 			Filter_setCoefficients (my rc [i].get(), thy Fhz [i], thy Bhz [i]);
-
-	/* Set coefficients of nasal resonator and zero antiresonator */
-
+	/*
+		Set coefficients of nasal resonator and zero antiresonator
+	*/
 	Filter_setCoefficients (my rnpc.get(), thy FNPhz, thy BNPhz);
 	Filter_setCoefficients (my rnz.get(), thy FNZhz, thy BNZhz);
-
-	/* Set coefficients of parallel resonators, and amplitude of outputs */
-
+	/*
+		Set coefficients of parallel resonators, and amplitude of outputs
+	*/
 	for (integer i = 1; i <= 6; i ++) {
 		Filter_setCoefficients (my rp [i].get(), thy Fhz [i], thy Bphz [i]);
 		my rp [i] -> a *= amp_parF [i] * DBtoLIN (thy A [i]);
@@ -611,9 +610,9 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	Filter_setCoefficients (my rnpp.get(), thy FNPhz, thy BNPhz);
 	my rnpp -> a *= amp_parFNP;
-
-	/* output low-pass filter */
-
+	/*
+		Output low-pass filter
+	*/
 	Filter_setCoefficients (my rout.get(), 0, (integer) (my samrate / 2));
 }
 
@@ -629,12 +628,12 @@ slowly varying sine waves.
 
 static void KlattFrame_flutter (KlattGlobal me) {
 	static integer time_count = 0;
-	const double fla = (double) my f0_flutter / 50;
-	const double flb = (double) my original_f0 / 100;
+	const double fla = (double) my f0_flutter / 50.0;
+	const double flb = (double) my original_f0 / 100.0;
 	const double flc = sin (2 * NUMpi * 12.7 * time_count);
 	const double fld = sin (2 * NUMpi * 7.1 * time_count);
 	const double fle = sin (2 * NUMpi * 4.7 * time_count);
-	const double delta_f0 =  fla * flb * (flc + fld + fle) * 10;
+	const double delta_f0 =  fla * flb * (flc + fld + fle) * 10.0;
 	my F0hz10 += (integer) delta_f0;
 	time_count ++;
 }
@@ -644,7 +643,7 @@ static void KlattFrame_flutter (KlattGlobal me) {
   Noise spectrum is tilted down by soft low-pass filter having a pole near
     the origin in the z-plane, i.e. output = input + (0.75 * lastoutput)
 */
-static double KlattGlobal_gen_noise (KlattGlobal me) {   // ppgb: dit was een float; kan niet goed zijn
+static double KlattGlobal_gen_noise (KlattGlobal me) {
 	static double nlast = 0.0;
 
 	my nrand = ( (rand() % (int) ( ( (8191) + 1) - (-8191))) + (-8191));
@@ -869,7 +868,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 }
 
 // This is Klatt80 with improved source model.
-static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
+static void KlattGlobal_synthesizeFrame (KlattGlobal me, vector<int16> const& output) {
 	double out, frics, glotout, aspiration, par_glotout, noise, sourc, voice = 0;
 	static double vlast = 0, glotlast = 0;
 
@@ -877,7 +876,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 	/*
 		MAIN LOOP, for each output sample of current frame:
 	*/
-	for (my ns = 0; my ns < my nspfr; my ns ++) {
+	for (integer isamp = 1; isamp <= my nspfr; isamp ++) {
 		/*
 			Get low-passed random number for aspiration and frication noise
 		*/
@@ -1035,8 +1034,9 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		if (temp >	32767.0) {
 			temp =  32767.0;
 		}
-		*output ++ = temp;   // ppgb: truncatie naar 0, dus compressie; is dat de bedoeling?
+		output [isamp] = temp;   // ppgb: truncatie naar 0, dus compressie; is dat de bedoeling?
 	}
+	my ns = my nspfr;
 }
 
 static int KlattTable_checkLimits (KlattTable me) {
@@ -1102,7 +1102,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 			Melder_warning (U"Some values in the KlattTable are outside the limits; the resulting sound may sound weird.");
 		thee = KlattGlobal_create (samplingFrequency);
 		frame = KlattFrame_create ();
-		autoNUMvector <short> iwave (0_integer, MAX_SAM);
+		autovector <short> iwave = newvectorzero<short> (MAX_SAM);
 		thy samrate = Melder_ifloor (samplingFrequency);
 
 		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, Melder_ifloor (flutter), outputType);
@@ -1160,13 +1160,13 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 
 			KlattGlobal_getFrame (thee, frame);
 
-			KlattGlobal_synthesizeFrame (thee, iwave.peek());
+			KlattGlobal_synthesizeFrame (thee, iwave);
 
-			for (integer isam = 0; isam < thy nspfr; isam ++) {
+			for (integer isam = 1; isam <= thy nspfr; isam ++)
 				his z [1] [numberOfSamples ++] = iwave [isam] / 32768.0;
-			}
 		}
-		KlattGlobal_free (thee); KlattFrame_free (frame);
+		KlattGlobal_free (thee);
+		KlattFrame_free (frame);
 		return him;
 	} catch (MelderError) {
 		KlattGlobal_free (thee);

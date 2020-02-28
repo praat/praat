@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2019 David Weenink
+ * Copyright (C) 1997-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,13 +148,6 @@ inline integer NUMminPos (constINTVECVU const& v) {
 	return index;	
 }
 
-/*  NUMvector_extrema
- * Function:
- *	 compute minimum and maximum values of array v[lo..hi].
- * Precondition:
- *	 lo and hi should be valid indices in the array.
-*/
-
 inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_maximum) {
 	if (out_minimum)
 		*out_minimum = NUMmin (x);
@@ -162,12 +155,11 @@ inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_ma
 		*out_maximum = NUMmax (x);
 }
 
-/* NUMvector_clip
+/*
 	Clip array values.
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
-
-inline void VECclip_inplace_inline (VEC x, double min, double max) {
+inline void VECclip_inplace (VEC x, double min, double max) {
 	for (integer i = 1; i <= x.size; i ++)
 		if (x [i] < min)
 			x [i] = min;
@@ -1068,7 +1060,7 @@ void NUMfft_forward (NUMfft_Table table, VEC data);
 		of its complex Fourier Transform, with a minus sign in the exponent.
 	Preconditions:
 		data != NULL;
-		table must have been initialised with NUMfft_Table_init_f/d
+		table must have been initialised with NUMfft_Table_init
 	Postconditions:
 		data[1] contains real valued first component (Direct Current)
 		data[2..n-1] even index : real part; odd index: imaginary part of DFT.
