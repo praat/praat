@@ -2,7 +2,7 @@
 #define _FileInMemory_h_
 /* FileInMemory.h
  *
- * Copyright (C) 2011-2017 David Weenink, 2015,2018 Paul Boersma
+ * Copyright (C) 2011-2020 David Weenink, 2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

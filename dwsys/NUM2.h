@@ -1060,7 +1060,7 @@ void NUMfft_forward (NUMfft_Table table, VEC data);
 		of its complex Fourier Transform, with a minus sign in the exponent.
 	Preconditions:
 		data != NULL;
-		table must have been initialised with NUMfft_Table_init_f/d
+		table must have been initialised with NUMfft_Table_init
 	Postconditions:
 		data[1] contains real valued first component (Direct Current)
 		data[2..n-1] even index : real part; odd index: imaginary part of DFT.
