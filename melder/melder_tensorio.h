@@ -2,7 +2,7 @@
 #define _melder_tensorio_h_
 /* melder_tensorio.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,9 @@
 
 /* Declaring 192 functions. */
 #define FUNCTION(T,storage)  \
-	void NUMvector_writeText_##storage (const T *v, integer lo, integer hi, MelderFile file, conststring32 name); \
 	void vector_writeText_##storage (const constvector<T>& vec, MelderFile file, conststring32 name); \
-	void NUMvector_writeBinary_##storage (const T *v, integer lo, integer hi, FILE *f); \
 	void vector_writeBinary_##storage (const constvector<T>& vec, FILE *f); \
-	T * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
 	autovector<T> vector_readText_##storage (integer size, MelderReadText text, const char *name); \
-	T * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
 	autovector<T> vector_readBinary_##storage (integer size, FILE *f); \
 	void matrix_writeText_##storage (const constmatrix<T>& mat, MelderFile file, conststring32 name); \
 	void matrix_writeBinary_##storage (const constmatrix<T>& mat, FILE *f); \
