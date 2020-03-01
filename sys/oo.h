@@ -99,16 +99,8 @@
 //#define oo_LENUM(Type,x)  oo_ENUMx (short, e16, Type, x)
 //#define oo_ENUM_SET(Type,x,setType)  oo_ENUMx_SET (signed char, e8, Type, x, setType)
 //#define oo_LENUM_SET(Type,x,setType)  oo_ENUMx_SET (short, e16, Type, x, setType)
-//#define oo_ENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (signed char, e8, Type, x, min, max)
-//#define oo_LENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (short, e16, Type, x, min, max)
-//#define oo_ENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (signed char, e8, Type, x, 1, n)
-//#define oo_LENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (short, e16, Type, x, 1, n)
 #define oo_BOOLEAN(x)  oo_SIMPLE (bool, eb, x)
-//#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eb, x, min, max)
-#define oo_BOOLEAN_VECTOR(x,n)  oo_VECTOR (bool, eb, x, 1, n)
 #define oo_QUESTION(x)  oo_SIMPLE (bool, eq, x)
-//#define oo_QUESTION_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eq, x, min, max)
-//#define oo_QUESTION_VECTOR(x,n)  oo_VECTOR (bool, eq, x, 1, n)
 
 /*** Strings. ***/
 
@@ -135,14 +127,12 @@
 
 #define oo_SIMPLE(type,storage,x)  type x;
 #define oo_SET(type,storage,x,setType)  type x [1 + (int) setType::MAX];
-#define oo_VECTOR(type,storage,x,min,max)  type *x;
 #define oo_ANYVEC(type,storage,x,size)  autovector <type> x;
 #define oo_ANYMAT(type,storage,x,nrow,ncol)  automatrix <type> x;
 #define oo_ANYTEN3(type,storage,x,ndim1,ndim2,ndim3)  autotensor3 <type> x;
 
 #define oo_ENUMx(kType,storage,x)  kType x;
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];
-//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  kType *x;
 
 #define oo_STRINGx(storage,x)  autostring32 x;
 #define oo_STRINGx_SET(storage,x,setType)  autostring32 x [1 + setType::MAX];

@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2007,2009,2011-2019 Paul Boersma
+ * Copyright (C) 1994-2007,2009,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,6 @@
 		thy x [_i] = our x [_i]; \
 	}
 
-#define oo_VECTOR(type, storage, x, min, max)  \
-	{ \
-		integer _min = (min), _max = (max); \
-		if (our x) thy x = NUMvector_copy (our x, _min, _max); \
-	}
-
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	thy x = newvectorcopy (our x.all());
 
@@ -46,12 +40,6 @@
 
 //#define oo_ENUMx_SET(kType, storage, x, setType)  \
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) thy x [_i] = our x [_i];
-
-//#define oo_ENUMx_VECTOR(kType, storage, x, min, max)  \
-//	{ \
-//		integer _min = (min), _max = (max); \
-//		if (our x) thy x = NUMvector_copy (our x, _min, _max); \
-//	}
 
 #define oo_STRINGx(storage, x)  \
 	if (our x) thy x = Melder_dup (our x.get());
