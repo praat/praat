@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2007,2009-2019 Paul Boersma
+ * Copyright (C) 1994-2007,2009-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,6 @@
 
 #define oo_SET(type, storage, x, setType)
 
-#define oo_VECTOR(type, storage, x, min, max)  \
-	{ \
-		integer _min = (min); \
-		NUMvector_free <type> (our x, _min); \
-	}
-
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		our x. reset (); \
@@ -46,12 +40,6 @@
 #define oo_ENUMx(kType, storage, x)
 
 //#define oo_ENUMx_SET(kType, storage, x, setType)
-
-//#define oo_ENUMx_VECTOR(kType, storage, x, min, max)  \
-//	{ \
-//		integer _min = (min); \
-//		NUMvector_free <type> (our x, _min); \
-//	}
 
 #define oo_STRINGx(storage, x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \

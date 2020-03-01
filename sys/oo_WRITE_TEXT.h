@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2005,2007-2009,2011-2019 Paul Boersma
+ * Copyright (C) 1994-2005,2007-2009,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,6 @@
 		texput##storage (_file_, our x [_i], U"" #x U" [", setType##_getText ((setType) _i), U"]"); \
 	} \
 	texexdent (_file_);
-
-#define oo_VECTOR(type, storage, x, min, max)  \
-	{ \
-		integer _min = (min), _max = (max); \
-		if (our x) { \
-			NUMvector_writeText_##storage (our x, _min, _max, _file_, U"" #x); \
-		} \
-	}
 
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	{ \
@@ -65,16 +57,6 @@
 //		texput##storage (_file_, (int) our x [_i], (const char32* (*) (int)) kType##_getText, U"" #x U" [", setType##_getText ((setType) _i), U"]"); \
 //	} \
 //	texexdent (file);
-
-//#define oo_ENUMx_VECTOR(kType, storage, x, min, max)  \
-//	{ \
-//		integer _min = (min), _max = (max); \
-//		texputintro (_file_, U"" #x U" []: ", _max >= _min ? nullptr : U"(empty)"); \
-//		for (integer _i = _min; _i <= _max; _i ++) { \
-//			texput##storage (_file_, (int) our x [_i], (const char32* (*) (int)) kType##_getText, U"" #x U" [", Melder_integer (_i), U"]"); \
-//		} \
-//		texexdent (file); \
-//	}
 
 #define oo_STRINGx(storage, x)  \
 	texput##storage (_file_, our x.get(), U""#x);

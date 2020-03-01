@@ -34,14 +34,6 @@
 		} \
 	}
 
-#define oo_VECTOR(type, storage, x, min, max)  \
-	{ \
-		integer _min = (min), _max = (max); \
-		if (_max >= _min) { \
-			our x = NUMvector_readText_##storage (_min, _max, _textSource_, #x); \
-		} \
-	}
-
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	{ \
 		integer _size = (sizeExpression); \

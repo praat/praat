@@ -26,14 +26,6 @@
 		our x [_i] = binget##storage (_filePointer_); \
 	}
 
-#define oo_VECTOR(type, storage, x, min, max)  \
-	{ \
-		integer _min = (min), _max = (max); \
-		if (_max >= _min) { \
-			our x = NUMvector_readBinary_##storage (_min, _max, _filePointer_); \
-		} \
-	}
-
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	{ \
 		integer _size = (sizeExpression); \
