@@ -1299,20 +1299,20 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 					Melder_throw (U"Cannot set sample size to 16 bit.");
 				}
 				if (ioctl (my audio_fd, SNDCTL_DSP_CHANNELS, (my val = my numberOfChannels, & my val)) == -1 ||   /* Error? */
-					my val != my numberOfChannels)   /* Has sound card overridden our number of channels? */
+					my val != my numberOfChannels)   // has the sound card overridden our number of channels?
 				{
 					/*
-					 * There is one specific case in which we can work around the current failure,
-					 * namely when we are trying to play in mono but the driver of the sound card supports stereo only
-					 * and notified us of this by overriding our number of channels.
-					 */
+						There is one specific case in which we can work around the current failure,
+						namely when we are trying to play in mono but the driver of the sound card supports stereo only
+						and notified us of this by overriding our number of channels.
+					*/
 					if (my numberOfChannels == 1 && my val == 2) {
 						my fakeMono = true;
 						int16 *newBuffer = NUMvector <int16> (0, 2 * numberOfSamples - 1);
 						for (integer isamp = 0; isamp < numberOfSamples; isamp ++) {
 							newBuffer [isamp + isamp] = newBuffer [isamp + isamp + 1] = buffer [isamp];
 						}
-						my buffer = newBuffer;
+						my buffer = newBuffer;   // BUG: this leaks my buffer
 						my numberOfChannels = 2;
 					} else {
 						Melder_throw (U"Cannot set number of channels to .", my numberOfChannels, U".");
@@ -1344,8 +1344,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 					}
 					if (! interrupted) {
 						/*
-						 * Wait for playing to end.
-						 */
+							Wait for playing to end.
+						*/
 						close (my audio_fd), my audio_fd = 0;   // BUG: should do a loop
 						my samplesPlayed = my numberOfSamples;
 					}

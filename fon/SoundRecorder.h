@@ -81,7 +81,7 @@ Thing_define (SoundRecorder, Editor) {
 	integer numberOfInputDevices;
 	struct SoundRecorder_Device devices [1+SoundRecorder_IDEVICE_MAX];
 	struct SoundRecorder_Fsamp fsamps [1+SoundRecorder_IFSAMP_MAX];
-	autovector <short> buffer___;
+	autovector <short> recordBuffer;
 	GuiRadioButton monoButton, stereoButton;
 	GuiDrawingArea meter;
 	GuiScale progressScale;

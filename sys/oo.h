@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2013,2015-2019 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,33 +69,6 @@
 //#define oo_FLOAT_SET(x,setType)  oo_SET (double, r32, x, setType)
 #define oo_DOUBLE_SET(x,setType)  oo_SET (double, r64, x, setType)
 //#define oo_COMPLEX_SET(x,setType)  oo_SET (dcomplex, c128, x, setType)
-
-/* Arrays with run-time allocation of size. Declarations like: int *x; */
-/* The first index is 'min', the last index is 'max'. */
-/* While the structure exists, 'min' and 'max' may change in any direction if the pointer changes; */
-/* if the pointer does not change, 'min' cannot change, but 'max' may become lower than the original value. */
-
-//#define oo_BYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (signed char, i8, x, min, max)
-//#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
-//#define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer32BE, x, min, max)
-#define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
-//#define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, u16, x, min, max)
-//#define oo_UINTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (uinteger, u32, x, min, max)
-#define oo_FLOAT_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r32, x, min, max)
-#define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r64, x, min, max)
-#define oo_COMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, c128, x, min, max)
-
-/* The same arrays, with the first index fixed at 1. */
-
-//#define oo_BYTE_VECTOR(x,n)  oo_VECTOR (signed char, i8, x, 1, n)
-#define oo_INT_VECTOR(x,n)  oo_VECTOR (int, i16, x, 1, n)
-//#define oo_INTEGER_VECTOR(x,n)  oo_VECTOR (integer, integer32BE, x, 1, n)
-//#define oo_UBYTE_VECTOR(x,n)  oo_VECTOR (unsigned char, u8, x, 1, n)
-//#define oo_UINT_VECTOR(x,n)  oo_VECTOR (unsigned int, u16, x, 1, n)
-//#define oo_UINTEGER_VECTOR(x,n)  oo_VECTOR (uinteger, u32, x, 1, n)
-//#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
-//#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
-//#define oo_COMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 
 #define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
 #define oo_obsoleteVEC32(x,size)  oo_ANYVEC (double, r32, x, size)
