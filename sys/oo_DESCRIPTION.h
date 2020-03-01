@@ -60,44 +60,6 @@
 #undef oo_COMPLEX_SET
 #define oo_COMPLEX_SET(x,setType)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), nullptr, nullptr, 3, (conststring32) setType##_getText, (conststring32) setType##_getValue, nullptr, nullptr },
 
-#undef oo_BYTE_VECTOR_FROM
-#define oo_BYTE_VECTOR_FROM(x,min,max)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_INT_VECTOR_FROM
-#define oo_INT_VECTOR_FROM(x,min,max)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_INTEGER_VECTOR_FROM
-#define oo_INTEGER_VECTOR_FROM(x,min,max)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_UBYTE_VECTOR_FROM
-#define oo_UBYTE_VECTOR_FROM(x,min,max)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned char), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_UINT_VECTOR_FROM
-#define oo_UINT_VECTOR_FROM(x,min,max)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_UINTEGER_VECTOR_FROM
-#define oo_UINTEGER_VECTOR_FROM(x,min,max)  { U"" #x, uintegerwa, Melder_offsetof (ooSTRUCT, x), sizeof (uinteger), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_FLOAT_VECTOR_FROM
-#define oo_FLOAT_VECTOR_FROM(x,min,max)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_DOUBLE_VECTOR_FROM
-#define oo_DOUBLE_VECTOR_FROM(x,min,max)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_COMPLEX_VECTOR_FROM
-#define oo_COMPLEX_VECTOR_FROM(x,min,max)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), nullptr, nullptr, 1, U"" #min, U"" #max, nullptr, nullptr },
-
-#undef oo_BYTE_VECTOR
-#define oo_BYTE_VECTOR(x,n)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_INT_VECTOR
-#define oo_INT_VECTOR(x,n)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_INTEGER_VECTOR
-#define oo_INTEGER_VECTOR(x,n)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_UBYTE_VECTOR
-#define oo_UBYTE_VECTOR(x,n)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned char), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_UINT_VECTOR
-#define oo_UINT_VECTOR(x,n)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_UINTEGER_VECTOR
-#define oo_UINTEGER_VECTOR(x,n)  { U"" #x, uintegerwa, Melder_offsetof (ooSTRUCT, x), sizeof (uinteger), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_FLOAT_VECTOR
-#define oo_FLOAT_VECTOR(x,n)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_DOUBLE_VECTOR
-#define oo_DOUBLE_VECTOR(x,n)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_COMPLEX_VECTOR
-#define oo_COMPLEX_VECTOR(x,n)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
-
 #undef oo_VEC
 #define oo_VEC(x,n)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_INTVEC
@@ -109,7 +71,7 @@
 #undef oo_COMPVEC
 #define oo_COMPVEC(x,n)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_BYTEVEC
-#define oo_BYTEVEC(x,n)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
+#define oo_BYTEVEC(x,n)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (byte), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 
 #undef oo_MAT
 #define oo_MAT(x,nrow,ncol)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
