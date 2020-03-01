@@ -78,7 +78,7 @@
 #undef oo_INTMAT
 #define oo_INTMAT(x,nrow,ncol)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
 #undef oo_BYTEMAT
-#define oo_BYTEMAT(x,nrow,ncol)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
+#define oo_BYTEMAT(x,nrow,ncol)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (byte), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
 
 #undef oo_ENUM
 #define oo_ENUM(Type,x)  { U"" #x, enumwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), U"" #Type, (void *) Type##_getText, 0, nullptr, nullptr, nullptr, nullptr },
