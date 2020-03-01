@@ -2129,7 +2129,6 @@ void VECarea_from_lpc (VEC area, constVEC lpc) {
 /*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoVEC b = newVECzero (p);
-	//autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
 	autoVEC a <<= VEC(lpc, p);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
