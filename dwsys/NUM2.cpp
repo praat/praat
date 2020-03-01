@@ -2129,7 +2129,6 @@ void VECarea_from_lpc (VEC area, constVEC lpc) {
 /*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoVEC b = newVECzero (p);
-	//autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
 	autoVEC a <<= VEC(lpc, p);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
@@ -2179,7 +2178,7 @@ void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc) {
 
 void NUMlpc_lpc_to_rc2 (double *lpc, integer m, double *rc);
 void NUMlpc_lpc_to_rc2 (double *lpc, integer m, double *rc) { // klopt nog niet
-	NUMvector_copyElements<double> (lpc, rc, 1, m);
+	rc.part(1,m) <<= lpc.part (1,m)
 	for (integer j = 2; j <= m; j ++) {
 		integer jb = m + 1 - j;
 		integer mh = (jb + 1) / 2;
@@ -2209,7 +2208,7 @@ void NUMlpc_area_to_rc (double *area, integer m, double *rc) {
 
 void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc);
 void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc) {
-	NUMvector_copyElements<double> (rc, lpc, 1, m);
+	lpc.part (1,m) <<= rc. part (1.m)
 	for (integer j = 2; j <= m; j ++) {
 		for (integer k = 1; k <= j / 2; k ++) {
 			double at = lpc [k] + rc [j] * lpc [j - k];

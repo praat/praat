@@ -1,6 +1,6 @@
 /* LPC_and_Cepstrumc.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,47 +25,44 @@
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
 	const integer n = std::min (my nCoefficients, thy nCoefficients);
-	const double *a = my a.at;
-	double *c = thy c;
-	c [0] = 0.5 * log (my gain);
+	thy c0 = 0.5 * log (my gain);
 	if (n == 0)
 		return;
-	c [1] = -a [1];
+	thy c [1] = - my a [1];
 	for (integer i = 2; i <= n; i ++) {
-		c [i] = 0.0;
+		thy c [i] = 0.0;
 		for (integer k = 1; k < i; k ++)
-			c [i] += a [i - k] * c [k] * k;
-		c [i] = -a [i] - c [i] / i;
+			thy c [i] += my a [i - k] * thy c [k] * k;
+		thy c [i] = - my a [i] - thy c [i] / i;
 	}
 }
 
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
-	double *c = my c, *a = thy a.at;
-	thy gain = exp (2.0 * c [0]);
+	thy gain = exp (2.0 * my c0);
 	if (thy nCoefficients == 0)
 		return;
-	a [1] = -c [1];
+	thy a [1] = -my c [1];
 	for (integer i = 2; i <= thy nCoefficients; i ++)
-		c [i] *= i;
+		my c [i] *= i;
 	for (integer i = 2; i <= thy nCoefficients; i ++) {
-		a [i] = c [i];
+		thy a [i] = my c [i];
 		for (integer j = 1 ; j < i; j ++)
-			a [i] += a [j] * c [i - j];
-		a [i] /= -i;
+			thy a [i] += thy a [j] * my c [i - j];
+		thy a [i] /= -i;
 	}
 	/*
 		Undo the modification of the c array
 	*/
 	for (integer i = 2; i <= thy nCoefficients; i ++)
-		c [i] /= i;
+		my c [i] /= i;
 }
 
 autoCepstrumc LPC_to_Cepstrumc (LPC me) {
 	try {
 		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1,  my maxnCoefficients, 1.0 / my samplingPeriod);
-		for (integer i = 1; i <= my nx; i ++) {
-			Cepstrumc_Frame_init (& thy frame [i], my d_frames [i]. nCoefficients);
-			LPC_Frame_into_Cepstrumc_Frame (& my d_frames [i], & thy frame [i]);
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			Cepstrumc_Frame_init (& thy frame [iframe], my d_frames [iframe]. nCoefficients);
+			LPC_Frame_into_Cepstrumc_Frame (& my d_frames [iframe], & thy frame [iframe]);
 		}
 		return thee;
 	} catch (MelderError) {
