@@ -1,6 +1,6 @@
 /* melder_tensorio.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,6 @@
 /*** Typed I/O functions for vectors and matrices. ***/
 
 #define FUNCTION(T,storage)  \
-	void NUMvector_writeText_##storage (const T *v, integer lo, integer hi, MelderFile file, conststring32 name) { \
-		texputintro (file, name, U" []: ", hi >= lo ? nullptr : U"(empty)", 0,0,0); \
-		for (integer i = lo; i <= hi; i ++) \
-			texput##storage (file, v [i], name, U" [", Melder_integer (i), U"]", 0,0); \
-		texexdent (file); \
-		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
-	} \
 	void vector_writeText_##storage (const constvector<T>& vec, MelderFile file, conststring32 name) { \
 		texputintro (file, name, U" []: ", vec.size >= 1 ? nullptr : U"(empty)", 0,0,0); \
 		for (integer i = 1; i <= vec.size; i ++) \
@@ -35,32 +28,10 @@
 		texexdent (file); \
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
 	} \
-	void NUMvector_writeBinary_##storage (const T *v, integer lo, integer hi, FILE *f) { \
-		for (integer i = lo; i <= hi; i ++) \
-			binput##storage (v [i], f); \
-		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
-	} \
 	void vector_writeBinary_##storage (const constvector<T>& vec, FILE *f) { \
 		for (integer i = 1; i <= vec.size; i ++) \
 			binput##storage (vec [i], f); \
 		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
-	} \
-	T * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name) { \
-		T *result = nullptr; \
-		try { \
-			result = NUMvector <T> (lo, hi); \
-			for (integer i = lo; i <= hi; i ++) { \
-				try { \
-					result [i] = texget##storage (text); \
-				} catch (MelderError) { \
-					Melder_throw (U"Could not read ", Melder_peek8to32 (name), U" [", i, U"]."); \
-				} \
-			} \
-			return result; \
-		} catch (MelderError) { \
-			NUMvector_free (result, lo); \
-			throw; \
-		} \
 	} \
 	autovector<T> vector_readText_##storage (integer size, MelderReadText text, const char *name) { \
 		autovector<T> result = newvectorzero<T> (size); \
@@ -72,19 +43,6 @@
 			} \
 		} \
 		return result; \
-	} \
-	T * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f) { \
-		T *result = nullptr; \
-		try { \
-			result = NUMvector <T> (lo, hi); \
-			for (integer i = lo; i <= hi; i ++) { \
-				result [i] = binget##storage (f); \
-			} \
-			return result; \
-		} catch (MelderError) { \
-			NUMvector_free (result, lo); \
-			throw; \
-		} \
 	} \
 	autovector<T> vector_readBinary_##storage (integer size, FILE *f) { \
 		autovector<T> result = newvectorzero<T> (size); \
