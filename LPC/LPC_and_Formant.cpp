@@ -29,7 +29,7 @@
 void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 	my nFormants = numberOfFormants;
 	if (numberOfFormants > 0)
-		my formant = newvectorzero <structFormant_Formant> (my nFormants);
+		my formant = newvectorzero <structFormant_Formant> (numberOfFormants);
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale) {
@@ -40,31 +40,25 @@ void Formant_Frame_scale (Formant_Frame me, double scale) {
 }
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin) {
-	autoVEC fc = newVECzero (my numberOfRoots);
-	autoVEC bc = newVECzero (my numberOfRoots);
 	/*
 		Determine the formants and bandwidths
 	*/
-	thy nFormants = 0;
+	Melder_assert (my roots.size <= 2 * thy formant.size);
+	integer numberOfFormantsFound = 0;
 	const double nyquistFrequency = 0.5 * samplingFrequency;
 	const double fLow = margin, fHigh = nyquistFrequency - margin;
 	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++) {
 		if (my roots [iroot].imag() < 0.0)
 			continue;
-		const double f = fabs (atan2 (my roots [iroot].imag(), my roots [iroot].real())) * nyquistFrequency / NUMpi;
-		if (f >= fLow && f <= fHigh) {
-			double b = - log (norm (my roots [iroot])) * nyquistFrequency / NUMpi;
-			fc [++ thy nFormants] = f;
-			bc [thy nFormants] = b;
+		const double frequency = fabs (atan2 (my roots [iroot].imag(), my roots [iroot].real())) * nyquistFrequency / NUMpi;
+		if (frequency >= fLow && frequency <= fHigh) {
+			const double bandwidth = - log (norm (my roots [iroot])) * nyquistFrequency / NUMpi;
+			thy formant [++ numberOfFormantsFound]. frequency = frequency;
+			thy formant [numberOfFormantsFound]. bandwidth = bandwidth;
 		}
 	}
-
-	Formant_Frame_init (thee, thy nFormants);
-
-	for (integer iformant = 1; iformant <= thy nFormants; iformant ++) {
-		thy formant [iformant]. frequency = fc [iformant];
-		thy formant [iformant]. bandwidth = bc [iformant];
-	}
+	Melder_assert (numberOfFormantsFound <= thy formant.size);
+	thy nFormants = numberOfFormantsFound;
 }
 
 void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin) {
@@ -77,29 +71,45 @@ void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samp
 	Roots_into_Formant_Frame (r.get(), thee, 1.0 / samplingPeriod, margin);
 }
 
+void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace) {
+	thy intensity = my gain;
+	if (my nCoefficients == 0)
+		return;
+	LPC_Frame_into_Polynomial (me, p);
+	Polynomial_into_Roots (p, r, workspace);
+	Roots_fixIntoUnitCircle (r);
+	Roots_into_Formant_Frame (r, thee, 1.0 / samplingPeriod, margin);
+}
+
 autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
-		const integer nmax = my maxnCoefficients;
+		/*
+			In very extreme case all roots of the lpc polynomial might be real.
+			A real root gives either a frequency at 0 Hz or at the Nyquist frequency.
+			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
+			my maxnCoefficients / 2.
+		*/
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : my maxnCoefficients / 2 );
+		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
 		integer numberOfSuspectFrames = 0;
-		const integer interval = ( nmax > 20 ? 1 : 10 );
-		Melder_require (nmax < 100,
+		const integer interval = ( my maxnCoefficients > 20 ? 1 : 10 );
+		Melder_require (my maxnCoefficients < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
 		Melder_require (margin < samplingFrequency / 4.0,
 			U"Margin should be smaller than ", samplingFrequency / 4.0, U".");
-
-		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, (nmax + 1) / 2);
-
+		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
+		autoPolynomial polynomial = Polynomial_create (-1.0, 1.0, my maxnCoefficients);
+		autoRoots roots = Roots_create (my maxnCoefficients);
+		autoVEC workspace = newVECraw (maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 3));
 		autoMelderProgress progress (U"LPC to Formant");
-
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			const Formant_Frame formant = & thy frames [iframe];
-			const LPC_Frame lpc = & my d_frames [iframe];
-			/*
-				Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
-			*/
+			const LPC_Frame lpcFrame = & my d_frames [iframe];
+			const Formant_Frame formantFrame = & thy frames [iframe];
+			Formant_Frame_init (formantFrame, maximumNumberOfFormants);
 			try {
-				LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin);
+				LPC_Frame_into_Formant_Frame_mt (lpcFrame, formantFrame, my samplingPeriod, margin, polynomial.get(), roots.get(), workspace.get());
+				//LPC_Frame_into_Formant_Frame (lpcFrame, formant, my samplingPeriod, margin);
 			} catch (MelderError) {
 				Melder_clearError();
 				numberOfSuspectFrames ++;

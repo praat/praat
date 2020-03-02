@@ -1,6 +1,6 @@
 /* LPC_and_Polynomial.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,21 @@
 #include "LPC_and_Polynomial.h"
 
 autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
-	const integer degree = my nCoefficients;
-	autoPolynomial thee = Polynomial_create (-1, 1, degree);
-	for (integer i = 1; i <= degree; i ++)
-		thy coefficients [i] = my a [degree - i + 1];
-	thy coefficients[degree + 1] = 1.0;
+	const integer numberOfPolynomialCoefficients = my nCoefficients + 1;
+	autoPolynomial thee = Polynomial_create (-1, 1, my nCoefficients);
+	for (integer icof = 1; icof <= my nCoefficients; icof ++)
+		thy coefficients [icof] = my a [numberOfPolynomialCoefficients - icof];
+	thy coefficients [numberOfPolynomialCoefficients] = 1.0;
 	return thee;
+}
+
+void LPC_Frame_into_Polynomial (LPC_Frame me, Polynomial p) {
+	const integer numberOfPolynomialCoefficients = my nCoefficients + 1;
+	Melder_assert (p -> _capacity >= numberOfPolynomialCoefficients);
+	for (integer icof = 1; icof <= my nCoefficients; icof ++)
+		p -> coefficients [icof] = my a [numberOfPolynomialCoefficients - icof];
+	p -> coefficients [numberOfPolynomialCoefficients] = 1.0;
+	p -> numberOfCoefficients = numberOfPolynomialCoefficients;
 }
 
 autoPolynomial LPC_to_Polynomial (LPC me, double time) {

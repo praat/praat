@@ -216,6 +216,74 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 	}
 }
 
+// workspace.size >= n * (n + 3) 
+void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
+	try {
+		integer np1 = my numberOfCoefficients, n = np1 - 1;
+		Melder_require (n > 0,
+			U"Cannot find roots of a constant function.");
+		/*
+			Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
+			parts of eigenvalues wr [1..n] and wi [1..n].
+		*/
+		VEC hes = workspace. part (1, n * n);
+		VEC wr = workspace. part (n * n + 1, n * (n + 1));
+		VEC wi = workspace. part (n * (n + 1) + 1, n * (n + 2));
+		/*
+			Fill the upper Hessenberg matrix (storage is Fortran)
+			C: [i] [j] -> Fortran: (j-1)*n + i
+		*/
+		hes <<= 0.0;
+		for (integer i = 1; i < n; i ++) {
+			hes [(i - 1) * n + 1] = - (my coefficients [np1 - i] / my coefficients [np1]);
+			hes [(i - 1) * n + 1 + i] = 1.0;
+		}
+		hes [(n - 1) * n + 1] = - my coefficients [1] / my coefficients [n + 1];
+		/*
+			Find out the working storage needed
+		*/
+		char job = 'E', compz = 'N';
+		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
+		double *z = nullptr, wt [1];
+		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
+		if (info != 0)
+			Melder_require (info > 0,
+				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
+		lwork = Melder_ifloor (wt [0]);
+		Melder_require (lwork <= 2 * n,
+			U"insufficient working memory.");
+		VEC work = workspace. part (n * (n + 2) + 1, n * (n + 2) + lwork);
+
+		// Find eigenvalues.
+
+		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
+		integer nrootsfound = n;
+		integer ioffset = 0;
+		if (info > 0) {
+			/*
+				if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
+				WR and WI contain those eigenvalues which have been successfully computed
+			*/
+			nrootsfound -= info;
+			Melder_require (nrootsfound > 0,
+				U"No roots found.");
+			Melder_warning (U"Calculated only ", nrootsfound, U" roots.");
+			ioffset = info;
+		} else if (info < 0) {
+			Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
+		}
+
+		for (integer i = 1; i <= nrootsfound; i ++) {
+			r -> roots [i]. real (wr [ioffset + i]);
+			r -> roots [i]. imag (wi [ioffset + i]);
+		}
+		r -> numberOfRoots = nrootsfound;
+		Roots_Polynomial_polish (r, me);
+	} catch (MelderError) {
+		Melder_throw (me, U": no roots can be calculated.");
+	}
+}
+
 void Roots_sort (Roots me) {
 	(void) me;
 }
