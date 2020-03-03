@@ -216,7 +216,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 	}
 }
 
-// workspace.size >= n * (n + 3) 
+// workspace.size >= n * (n + 3) with 20200302 version of LAPACK in Praat
 void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	try {
 		integer np1 = my numberOfCoefficients, n = np1 - 1;

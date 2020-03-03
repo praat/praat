@@ -29,6 +29,9 @@
 #include "Sound_extensions.h"
 #include "Vector.h"
 #include "Spectrum.h"
+#include <thread>
+#include <atomic>
+#include <functional>
 #include "NUM2.h"
 
 #define LPC_METHOD_AUTO 1
@@ -67,8 +70,9 @@ void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
 	}
 }
 
-static autoVEC getLPCAnalysisWorkspace (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
-	integer size;
+
+static integer getLPCAnalysisWorkspaceSize (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
+	integer size = 0;
 	if (method == kLPC_Analysis :: Autocorrelation)
 		size = 3 * numberOfCoefficients + 2;
 	else if (method == kLPC_Analysis :: Covariance)
@@ -77,6 +81,11 @@ static autoVEC getLPCAnalysisWorkspace (integer numberOfSamples, integer numberO
 		size = 3 * numberOfSamples;
 	else if (method == kLPC_Analysis :: Marple)
 		size = 3 * (numberOfCoefficients + 1);
+	return size;
+}
+
+static autoVEC getLPCAnalysisWorkspace (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
+	integer size = getLPCAnalysisWorkspaceSize (numberOfSamples, numberOfCoefficients, method);
 	autoVEC result = newVECraw (size);
 	return result;
 }
@@ -436,7 +445,7 @@ end:
 	return status == 1 || status == 4 || status == 5;
 }
 
-static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const double samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
@@ -468,25 +477,132 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const LPC_Frame lpcframe = & thy d_frames [iframe];
 		const double t = Sampled_indexToX (thee.get(), iframe);
-		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
+		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2.0);
 		Vector_subtractMean (sframe.get());
 		Sounds_multiply (sframe.get(), window.get());
-		if (method == kLPC_Analysis :: Autocorrelation) {
-			if (! Sound_into_LPC_Frame_auto (sframe.get(), lpcframe, workspace.get()))
-				frameErrorCount ++;
-		} else if (method == kLPC_Analysis :: Covariance) {
-			if (! Sound_into_LPC_Frame_covar (sframe.get(), lpcframe, workspace.get()))
-				frameErrorCount ++;
-		} else if (method == kLPC_Analysis :: Burg) {
-			if (! Sound_into_LPC_Frame_burg (sframe.get(), lpcframe, workspace.get()))
-				frameErrorCount ++;
-		} else if (method == kLPC_Analysis :: Marple) {
-			if (! Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2, workspace.get()))
-				frameErrorCount ++;
-		}
+		integer status = 1;
+		if (method == kLPC_Analysis :: Autocorrelation)
+			status = Sound_into_LPC_Frame_auto (sframe.get(), lpcframe, workspace.get());
+		else if (method == kLPC_Analysis :: Covariance)
+			status = Sound_into_LPC_Frame_covar (sframe.get(), lpcframe, workspace.get());
+		else if (method == kLPC_Analysis :: Burg)
+			status = Sound_into_LPC_Frame_burg (sframe.get(), lpcframe, workspace.get());
+		else if (method == kLPC_Analysis :: Marple)
+			status = Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2, workspace.get());
+		if (status != 0)
+			frameErrorCount ++;
+	
 		if (iframe % 10 == 1)
 			Melder_progress ( (double) iframe / numberOfFrames, U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
 	}
+	return thee;
+}
+
+static void NUMgetThreadingInfo (integer numberOfFrames, integer maximumNumberOfThreads, integer *inout_numberOfFramesPerThread, integer * out_numberOfThreads) {
+	if (*inout_numberOfFramesPerThread <= 0)
+		*inout_numberOfFramesPerThread = 25;
+	integer numberOfThreads = (numberOfFrames - 1) / *inout_numberOfFramesPerThread + 1;
+	if (numberOfThreads > maximumNumberOfThreads)
+		numberOfThreads = maximumNumberOfThreads;
+	if (numberOfThreads < 1)
+		numberOfThreads = 1;
+	*inout_numberOfFramesPerThread = (numberOfFrames - 1) / numberOfThreads + 1;
+	if (out_numberOfThreads)
+		*out_numberOfThreads = numberOfThreads;
+}
+
+static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+	const double samplingFrequency = 1.0 / my dx;
+	double windowDuration = 2.0 * analysisWidth; // Gaussian window
+	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
+		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
+		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
+	
+	// Convenience: analyse the whole sound into one LPC_frame
+	if (windowDuration > my dx * my nx) {
+		windowDuration = my dx * my nx;
+	}
+	double t1;
+	integer numberOfFrames;
+	Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
+	autoSound sound = Data_copy (me);
+	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
+	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
+	/*
+		Because of threading we initialise the frames beforehand.
+	*/
+	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		const LPC_Frame lpcFrame = & thy d_frames [iframe];
+		LPC_Frame_init (lpcFrame, predictionOrder);
+	}
+	if (preEmphasisFrequency < samplingFrequency / 2.0)
+		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
+	
+	constexpr integer maximumNumberOfThreads = 16; 
+	integer numberOfThreads, numberOfFramesPerThread = 25;
+	const integer numberOfProcessors = std::thread::hardware_concurrency ();
+	NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
+	/*
+		We have to reserve all the needed working memory for each thread beforehand.
+		20200304 djmw: We cannot allocate
+		autovector<autoSound> sounds = newvectorzero<autoSound> (numberOfThreads);
+		because this is not completely functional yet. If this will be fuctional we don't
+		need the maximumNumberOfThreads variable anymore.
+	*/
+	autoSound sframe [maximumNumberOfThreads + 1];
+	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
+		sframe [ithread] = Sound_createSimple (1, windowDuration, samplingFrequency);
+	
+	const integer worspaceSize = getLPCAnalysisWorkspaceSize (sframe [1] -> nx, predictionOrder, method);
+	Melder_require (worspaceSize > 0,
+		U"");
+	autoMAT workspace = newMATraw (numberOfThreads, worspaceSize);
+
+	autovector <std::thread> thread = newvectorzero <std::thread> (numberOfThreads);
+	std::atomic<integer> frameErrorCount (0);
+	
+	integer firstFrame = 1, lastFrame = numberOfFramesPerThread;
+	try {
+		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+			Sound soundFrame = sframe [ithread]. get(), fullsound = sound.get(), windowFrame = window.get();
+			VEC threadWorkspace = workspace. row (ithread);
+			LPC lpc = thee.get();
+			if (ithread == numberOfThreads)
+				lastFrame = numberOfFrames;
+		
+			thread [ithread] = std::thread ([=, & frameErrorCount]() {
+				for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
+					const LPC_Frame lpcframe = & lpc -> d_frames [iframe];
+					const double t = Sampled_indexToX (lpc, iframe);
+					Sound_into_Sound (fullsound, soundFrame, t - windowDuration / 2.0);
+					Vector_subtractMean (soundFrame);
+					Sounds_multiply (soundFrame, windowFrame);
+					integer status = 1;
+					if (method == kLPC_Analysis :: Autocorrelation)
+						status = Sound_into_LPC_Frame_auto (soundFrame, lpcframe, threadWorkspace);
+					else if (method == kLPC_Analysis :: Covariance)
+						status = Sound_into_LPC_Frame_covar (soundFrame, lpcframe, threadWorkspace);
+					else if (method == kLPC_Analysis :: Burg)
+						status = Sound_into_LPC_Frame_burg (soundFrame, lpcframe, threadWorkspace);
+					else if (method == kLPC_Analysis :: Marple)
+						status = Sound_into_LPC_Frame_marple (soundFrame, lpcframe, tol1, tol2, threadWorkspace);
+					if (status != 0)
+						++ frameErrorCount;
+				}
+			});
+			firstFrame = lastFrame + 1;
+			lastFrame += numberOfFramesPerThread;
+		}
+	} catch (MelderError) {
+		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+			if (thread [ithread]. joinable ())
+				thread [ithread]. join ();
+		}
+		throw;
+	}
+	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
+		thread [ithread]. join ();
+	
 	return thee;
 }
 
