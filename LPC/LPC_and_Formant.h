@@ -29,6 +29,13 @@ autoLPC Formant_to_LPC (Formant me, double samplingPeriod);
 
 void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin);
 
+/*
+	No extra memory allocations
+	The workspace size is at least 
+*/
+void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace);
+
+
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod);
 
 void Formant_Frame_scale (Formant_Frame me, double scale);

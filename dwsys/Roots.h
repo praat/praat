@@ -57,4 +57,9 @@ void Roots_Polynomial_polish (Roots me, Polynomial thee);
 
 autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
 
+/*
+	The size of the workspace must be >= n * (n + 3)
+	for the current LAPACK version of root solving routine.
+*/
+void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace);
 #endif /* _Roots_h_ */
