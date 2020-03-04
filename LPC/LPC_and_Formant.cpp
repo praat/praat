@@ -25,6 +25,8 @@
 #include "LPC_and_Formant.h"
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
+#include <thread>
+#include <atomic>
 
 void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 	my nFormants = numberOfFormants;
@@ -120,6 +122,91 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 		Formant_sort (thee.get());
 		if (numberOfSuspectFrames > 0)
 			Melder_warning (numberOfSuspectFrames, U" formant frames out of ", my nx, U" are suspect.");
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": no Formant created.");
+	}
+}
+autoFormant LPC_to_Formant_mt (LPC me, double margin) {
+	try {
+		const double samplingFrequency = 1.0 / my samplingPeriod;
+		Melder_require (my maxnCoefficients < 100,
+			U"We cannot find the roots of a polynomial of order > 99.");
+		Melder_require (margin < samplingFrequency / 4.0,
+			U"Margin should be smaller than ", samplingFrequency / 4.0, U".");
+		/*
+			In very extreme case all roots of the lpc polynomial might be real.
+			A real root gives either a frequency at 0 Hz or at the Nyquist frequency.
+			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
+			my maxnCoefficients / 2.
+		*/
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : my maxnCoefficients / 2 );
+		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
+		const integer numberOfFrames = my nx;
+		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, my dx, my x1, maximumNumberOfFormants);
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+			const Formant_Frame formantFrame = & thy frames [iframe];
+			Formant_Frame_init (formantFrame, maximumNumberOfFormants);
+		}
+		
+		constexpr integer maximumNumberOfThreads = 16;
+		integer numberOfThreads, numberOfFramesPerThread = 25;
+		const integer numberOfProcessors = std::thread::hardware_concurrency ();
+		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
+		/*
+			Reserve working memory for each thread
+			We would like:
+			autovector<autoPolynomial> polynomials = newveczero<autoPolynomial> (numberOfThreads);
+		*/
+		autoPolynomial polynomials [maximumNumberOfThreads + 1];
+		autoRoots roots [maximumNumberOfThreads + 1];
+		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+			polynomials [ithread] = Polynomial_create (-1.0, 1.0, my maxnCoefficients);
+			roots [ithread] = Roots_create (my maxnCoefficients);
+		}
+		autoMAT workspaces = newMATraw (numberOfThreads, maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 3));
+		autovector<std::thread> thread = newvectorzero<std::thread> (numberOfThreads); // TODO memory leak?
+		std::atomic<integer> numberOfSuspectFrames (0);
+		
+		integer firstFrame = 1, lastFrame = numberOfFramesPerThread;
+		try {
+			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+				Polynomial p = polynomials [ithread]. get ();
+				Roots r = roots [ithread]. get ();
+				Formant formant = thee. get ();
+				LPC lpc = me;
+				VEC workspace = workspaces. row (ithread);
+				if (ithread == numberOfThreads)
+					lastFrame = numberOfFrames;
+				thread [ithread] = std::thread ([=, & numberOfSuspectFrames] () {
+					for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
+						const LPC_Frame lpcFrame = & lpc -> d_frames [iframe];
+						const Formant_Frame formantFrame = & formant -> frames [iframe];
+						try {
+							LPC_Frame_into_Formant_Frame_mt (lpcFrame, formantFrame, my samplingPeriod, margin, p, r, workspace);
+						} catch (MelderError) {
+							Melder_clearError(); // this is not thread-safe
+							numberOfSuspectFrames ++;
+						}
+					}
+				});
+				firstFrame = lastFrame + 1;
+				lastFrame += numberOfFramesPerThread;
+			}
+		} catch (MelderError) {
+			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+				if (thread [ithread]. joinable ())
+					thread [ithread]. join ();
+			}
+			throw;
+		}
+		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
+			thread [ithread]. join ();
+	
+				
+		Formant_sort (thee. get ());
+		if (numberOfSuspectFrames > 0)
+			Melder_warning ((integer) numberOfSuspectFrames, U" formant frames out of ", numberOfFrames, U" are suspect.");
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Formant created.");
