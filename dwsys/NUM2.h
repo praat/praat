@@ -1370,4 +1370,17 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 
 void NUMpolynomial_recurrence (VEC const& pn, double a, double b, double c, constVEC const& pnm1, constVEC const& pnm2);
 
+static inline void NUMgetThreadingInfo (integer numberOfFrames, integer maximumNumberOfThreads, integer *inout_numberOfFramesPerThread, integer * out_numberOfThreads) {
+	if (*inout_numberOfFramesPerThread <= 0)
+		*inout_numberOfFramesPerThread = 25;
+	integer numberOfThreads = (numberOfFrames - 1) / *inout_numberOfFramesPerThread + 1;
+	if (numberOfThreads > maximumNumberOfThreads)
+		numberOfThreads = maximumNumberOfThreads;
+	if (numberOfThreads < 1)
+		numberOfThreads = 1;
+	*inout_numberOfFramesPerThread = (numberOfFrames - 1) / numberOfThreads + 1;
+	if (out_numberOfThreads)
+		*out_numberOfThreads = numberOfThreads;
+}
+
 #endif // _NUM2_h_

@@ -96,7 +96,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& works
 	//workspace <<= 0.0; not necessary !
 	VEC r = workspace. part (1, np1); // autoVEC r = newVECzero (numberOfCoefficients + 1);
 	VEC a = workspace. part (np1 + 1, 2 * np1); // autoVEC a = newVECzero (numberOfCoefficients + 1);
-	VEC rc = workspace. part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = newVECzero (numberOfCoefficients); 
+	VEC rc = workspace. part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = newVECzero (numberOfCoefficients);
 	const VEC x = my z.row (1);
 	integer i = 1; // For error condition at end
 	for (i = 1; i <= numberOfCoefficients + 1; i ++) {
@@ -498,19 +498,6 @@ static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analy
 	return thee;
 }
 
-static void NUMgetThreadingInfo (integer numberOfFrames, integer maximumNumberOfThreads, integer *inout_numberOfFramesPerThread, integer * out_numberOfThreads) {
-	if (*inout_numberOfFramesPerThread <= 0)
-		*inout_numberOfFramesPerThread = 25;
-	integer numberOfThreads = (numberOfFrames - 1) / *inout_numberOfFramesPerThread + 1;
-	if (numberOfThreads > maximumNumberOfThreads)
-		numberOfThreads = maximumNumberOfThreads;
-	if (numberOfThreads < 1)
-		numberOfThreads = 1;
-	*inout_numberOfFramesPerThread = (numberOfFrames - 1) / numberOfThreads + 1;
-	if (out_numberOfThreads)
-		*out_numberOfThreads = numberOfThreads;
-}
-
 static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const double samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
@@ -538,7 +525,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	if (preEmphasisFrequency < samplingFrequency / 2.0)
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 	
-	constexpr integer maximumNumberOfThreads = 16; 
+	constexpr integer maximumNumberOfThreads = 16;
 	integer numberOfThreads, numberOfFramesPerThread = 25;
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
@@ -546,8 +533,10 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		We have to reserve all the needed working memory for each thread beforehand.
 		20200304 djmw: We cannot allocate
 		autovector<autoSound> sounds = newvectorzero<autoSound> (numberOfThreads);
-		because this is not completely functional yet. If this will be fuctional we don't
-		need the maximumNumberOfThreads variable anymore.
+		because this is not completely functional yet. If this will be fuctional we
+		1. can use this dynamic allocation
+		2. don't need the maximumNumberOfThreads variable anymore (because we don't need
+		the random generator which can handle only 16 threads)
 	*/
 	autoSound sframe [maximumNumberOfThreads + 1];
 	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
@@ -555,21 +544,20 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	
 	const integer worspaceSize = getLPCAnalysisWorkspaceSize (sframe [1] -> nx, predictionOrder, method);
 	Melder_require (worspaceSize > 0,
-		U"");
+		U"The workspace size is not properly defined.");
 	autoMAT workspace = newMATraw (numberOfThreads, worspaceSize);
 
-	autovector <std::thread> thread = newvectorzero <std::thread> (numberOfThreads);
+	autovector <std::thread> thread = newvectorzero <std::thread> (numberOfThreads); // TODO memory leak?
 	std::atomic<integer> frameErrorCount (0);
 	
-	integer firstFrame = 1, lastFrame = numberOfFramesPerThread;
 	try {
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 			Sound soundFrame = sframe [ithread]. get(), fullsound = sound.get(), windowFrame = window.get();
 			VEC threadWorkspace = workspace. row (ithread);
 			LPC lpc = thee.get();
-			if (ithread == numberOfThreads)
-				lastFrame = numberOfFrames;
-		
+			const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
+			const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
+			
 			thread [ithread] = std::thread ([=, & frameErrorCount]() {
 				for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 					const LPC_Frame lpcframe = & lpc -> d_frames [iframe];
@@ -590,8 +578,6 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 						++ frameErrorCount;
 				}
 			});
-			firstFrame = lastFrame + 1;
-			lastFrame += numberOfFramesPerThread;
 		}
 	} catch (MelderError) {
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {

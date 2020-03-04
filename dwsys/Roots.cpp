@@ -250,12 +250,12 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 			Melder_require (info > 0,
 				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 		lwork = Melder_ifloor (wt [0]);
-		Melder_require (lwork <= 2 * n,
+		Melder_require (lwork <= n,
 			U"insufficient working memory.");
 		VEC work = workspace. part (n * (n + 2) + 1, n * (n + 2) + lwork);
-
-		// Find eigenvalues.
-
+		/*
+			Find eigenvalues.
+		*/
 		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
 		integer nrootsfound = n;
 		integer ioffset = 0;
@@ -273,9 +273,9 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 			Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 		}
 
-		for (integer i = 1; i <= nrootsfound; i ++) {
-			r -> roots [i]. real (wr [ioffset + i]);
-			r -> roots [i]. imag (wi [ioffset + i]);
+		for (integer iroot = 1; iroot <= nrootsfound; iroot ++) {
+			r -> roots [iroot]. real (wr [ioffset + iroot]);
+			r -> roots [iroot]. imag (wi [ioffset + iroot]);
 		}
 		r -> numberOfRoots = nrootsfound;
 		Roots_Polynomial_polish (r, me);
