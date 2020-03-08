@@ -1,7 +1,7 @@
 # File: Makefile
 
 # Makefile for Praat.
-# Paul Boersma, 12 August 2018
+# Paul Boersma, 8 March 2020
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -31,11 +31,10 @@ all:
 	$(MAKE) -C gram
 	$(MAKE) -C FFNet
 	$(MAKE) -C artsynth
-	$(MAKE) -C contrib/ola
 	$(MAKE) -C main main_Praat.o $(ICON)
 	$(LINK) -o $(EXECUTABLE) main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
-		contrib/ola/libOla.a artsynth/libartsynth.a \
-		FFNet/libFFNet.a gram/libgram.a EEG/libEEG.a \
+		artsynth/libartsynth.a FFNet/libFFNet.a \
+		gram/libgram.a EEG/libEEG.a \
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
 		sys/libsys.a melder/libmelder.a kar/libkar.a \
@@ -64,7 +63,6 @@ clean:
 	$(MAKE) -C gram clean
 	$(MAKE) -C FFNet clean
 	$(MAKE) -C artsynth clean
-	$(MAKE) -C contrib/ola clean
 	$(MAKE) -C main clean
 	$(RM) praat
 
