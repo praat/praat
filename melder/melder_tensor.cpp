@@ -47,10 +47,23 @@ byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool init
 	}
 }
 
-void NUMvector_free_generic (integer elementSize, byte *vector, integer lo) noexcept {
-	if (! vector)
+byte * MelderTensor_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType) {
+	try {
+		if (numberOfCells <= 0)
+			return nullptr;   // not an error
+		byte *result = ( initializationType == kTensorInitializationType :: ZERO ?
+				reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, cellSize)) :
+				reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * cellSize)) );
+		theTotalNumberOfArrays += 1;
+		return result;
+	} catch (MelderError) {
+		Melder_throw (U"Tensor of ", numberOfCells, U" cells not created.");
+	}
+}
+
+void MelderTensor_free_generic (byte *cells) noexcept {
+	if (! cells)
 		return;   // not an error
-	byte *cells = & vector [lo * elementSize];
 	Melder_free (cells);
 	theTotalNumberOfArrays -= 1;
 }

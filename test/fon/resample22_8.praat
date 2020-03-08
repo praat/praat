@@ -31,13 +31,13 @@ for ifilter from 0 to 3
 endfor
 
 mooi = Create Sound from formula: "mooi", 1, 0, 10, 22050/2.75,
-	... ~ object [sweep_low [col mod 4], (col*11+(col mod 4))/4]   ; 3, 6, 9, 11, 14, 17, 20, 22...
+	... ~ object [sweep_low [col mod 4], (col*11+(col mod 4))/4]   ; 3 6 9 11 14 17 20 22...
 To Spectrogram: 0.05, 6000, 0.002, 20, "Gaussian"
 Select outer viewport: 0, 6, 6, 9
 Paint: 0, 0, 0, 6000, 100, "yes", 90, 0, 0, "yes"
 Remove
 
-exit
+;exit
 
 #
 # Write to Info window in base-0 C format.

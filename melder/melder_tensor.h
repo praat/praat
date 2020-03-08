@@ -20,6 +20,16 @@
 
 /********** Arrays with one index **********/
 
+enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
+
+byte * MelderTensor_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType);
+
+template <class T>
+T* MelderTensor (integer numberOfCells, kTensorInitializationType initializationType) {
+	T* result = reinterpret_cast <T*> (MelderTensor_generic (sizeof (T), numberOfCells, initializationType));
+	return result;
+}
+
 byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
 /*
 	Function:
@@ -28,13 +38,12 @@ byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero
 		hi >= lo;
 */
 
-void NUMvector_free_generic (integer elementSize, byte *v, integer lo) noexcept;
-/*
-	Function:
-		destroy a vector v that was created with NUMvector.
-	Preconditions:
-		lo must have the same values as with the creation of the vector.
-*/
+void MelderTensor_free_generic (byte *cells) noexcept;
+
+template <class T>
+void MelderTensor_free (T* cells) noexcept {
+	MelderTensor_free_generic (reinterpret_cast <byte *> (cells));
+}
 
 template <class T>
 T* NUMvector (integer from, integer to) {
@@ -46,11 +55,6 @@ template <class T>
 T* NUMvector (integer from, integer to, bool initializeToZero) {
 	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, initializeToZero));
 	return result;
-}
-
-template <class T>
-void NUMvector_free (T* ptr, integer from) noexcept {
-	NUMvector_free_generic (sizeof (T), reinterpret_cast <byte *> (ptr), from);
 }
 
 integer NUM_getTotalNumberOfArrays ();   // for debugging
@@ -79,8 +83,6 @@ integer NUM_getTotalNumberOfArrays ();   // for debugging
 			return x;
 		}
 */
-
-enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
 
 template <typename T>
 class autovector;   // forward declaration, needed in the declaration of vector<>
@@ -299,7 +301,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
 		if (our at) {
-			NUMvector_free (our at, 1);
+			MelderTensor_free (& our at [1]);
 			our at = nullptr;
 		}
 		our size = 0;
@@ -349,7 +351,7 @@ public:
 			for (integer i = 1; i <= our size; i ++)
 				newAt [i] = std::move (our at [i]);
 			if (our at)
-				NUMvector_free (our at, 1);
+				MelderTensor_free (& our at [1]);
 			our at = newAt;
 			our _capacity = newCapacity;
 		}
@@ -640,12 +642,13 @@ public:
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
 		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: NUMvector<T> (0, givenNrow * givenNcol - 1, initializationType == kTensorInitializationType::ZERO));
+				: MelderTensor <T> (givenNrow * givenNcol, initializationType) );
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
-		if (our cells) NUMvector_free (our cells, 0);
+		if (our cells)
+			MelderTensor_free (our cells);
 	}
 	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
@@ -679,7 +682,8 @@ public:
 	}
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
-			if (our cells) NUMvector_free (our cells, 0);
+			if (our cells)
+				MelderTensor_free (our cells);
 			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -691,7 +695,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			NUMvector_free (our cells, 0);
+			MelderTensor_free (our cells);
 			our cells = nullptr;
 		}
 		our nrow = 0;
@@ -995,7 +999,7 @@ public:
 		Melder_assert (givenNdim2 >= 0);
 		Melder_assert (givenNdim3 >= 0);
 		our cells = ( givenNdim1 == 0 || givenNdim2 == 0 || givenNdim3 == 0 ? nullptr
-				: NUMvector<T> (0, givenNdim3 * givenNdim2 * givenNdim1 - 1, initializationType == kTensorInitializationType::ZERO));
+				: MelderTensor <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
 		our ndim1 = givenNdim1;
 		our ndim2 = givenNdim2;
 		our ndim3 = givenNdim3;
@@ -1004,7 +1008,8 @@ public:
 		our stride1 = givenNdim3 * givenNdim2;
 	}
 	~autotensor3 () {   // destroy the payload (if any)
-		if (our cells) NUMvector_free (our cells, 0);
+		if (our cells)
+			MelderTensor_free (our cells);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	const tensor3<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
@@ -1040,7 +1045,8 @@ public:
 	}
 	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
-			if (our cells) NUMvector_free (our cells, 0);
+			if (our cells)
+				MelderTensor_free (our cells);
 			our cells = other.cells;
 			our ndim1 = other.ndim1;
 			our ndim2 = other.ndim2;
@@ -1054,7 +1060,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			NUMvector_free (our cells, 0);
+			MelderTensor_free (our cells);
 			our cells = nullptr;
 		}
 		our ndim1 = 0;
