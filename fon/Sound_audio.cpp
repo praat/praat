@@ -145,10 +145,10 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		integer numberOfSamples, i;
 		bool mulaw = false;
 		bool can16bit = true;
-		bool fakeMonoByStereo = false;   // will be set to `true` for systems (like MacOS X) that do not allow direct mono recording
 
-		/* Declare system-dependent data structures. */
-
+		/*
+			Declare platform-dependent data structures.
+		*/
 		volatile struct Sound_recordFixedTime_Info info = { 0 };
 		PaStreamParameters streamParameters = { 0 };
 		#if defined (macintosh)
@@ -167,13 +167,15 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			int val;
 		#endif
 
-		/* Check representation of shorts. */
-
+		/*
+			Check representation of shorts.
+		*/
 		if (sizeof (short) != 2)
 			Melder_throw (U"Cannot record a sound on this computer.");
 
-		/* Check sampling frequency. */
-
+		/*
+			Check sampling frequency.
+		*/
 		bool supportsSamplingFrequency = true;
 		if (inputUsesPortAudio) {
 			#if defined (macintosh)
@@ -202,10 +204,10 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			Melder_throw (U"Your audio hardware does not support a sampling frequency of ", sampleRate, U" Hz.");
 
 		/*
-		 * Open phase 1.
-		 * On some systems, the info is filled in before the audio port is opened.
-		 * On other systems, the info is filled in after the port is opened.
-		 */
+			Open phase 1.
+			On some platforms, the info is filled in before the audio port is opened.
+			On other platforms, the info is filled in after the port is opened.
+		*/
 		if (inputUsesPortAudio) {
 			if (! MelderAudio_hasBeenInitialized) {
 				PaError err = Pa_Initialize ();
@@ -217,7 +219,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#if defined (macintosh)
 			#elif defined (_WIN32)
 			#elif ! defined (NO_AUDIO)
-				/* We must open the port now, because we use an ioctl to set the info to an open port. */
+				/*
+					We must open the port now, because we use an ioctl to set the info to an open port.
+				*/
 				fd = open (DEV_AUDIO, O_RDONLY);
 				if (fd == -1) {
 					if (errno == EBUSY)
@@ -229,16 +233,20 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 							Melder_throw (U"Cannot open audio device.");
 						#endif
 				}
-				/* The device immediately started recording into its buffer, but probably at the wrong rate etc. */
-				/* Pause and flush this rubbish. */
+				/*
+					The device immediately started recording into its buffer,
+					but probably at the wrong rate etc.
+					Pause and flush this rubbish.
+				*/
 				#if defined (linux)
 					ioctl (fd, SNDCTL_DSP_RESET, nullptr);
 				#endif
 			#endif
 		}
 
-		/* Set the input source; the default is the microphone. */
-
+		/*
+			Set the input source; the default is the microphone.
+		*/
 		if (inputUsesPortAudio) {
 			if (inputSource < 1 || inputSource > Pa_GetDeviceCount ())
 				Melder_throw (U"Unknown device #", inputSource, U".");
@@ -255,8 +263,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 		}
 
-		/* Set gain and balance. */
-
+		/*
+			Set gain and balance.
+		*/
 		if (inputUsesPortAudio) {
 			/* Taken from Audio Control Panel. */
 		} else {
@@ -285,8 +294,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 		}
 
-		/* Set the sampling frequency. */
-
+		/*
+			Set the sampling frequency.
+		*/
 		if (inputUsesPortAudio) {
 			// Set while opening.
 		} else {
@@ -300,8 +310,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 		}
 
-		/* Set the number of channels to 1 (mono), if possible. */
-
+		/*
+			Set the number of channels to 1 (mono), if possible.
+		*/
 		if (inputUsesPortAudio) {
 			streamParameters. channelCount = 1;
 		} else {
@@ -315,8 +326,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 		}
 
-		/* Set the encoding to 16-bit linear (or to 8-bit linear, if 16-bit is not available). */
-
+		/*
+			Set the encoding to 16-bit linear (or to 8-bit linear, if 16-bit is not available).
+		*/
 		if (inputUsesPortAudio) {
 			streamParameters. sampleFormat = paInt16;
 		} else {
@@ -337,20 +349,20 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 		}
 
-		/* Create a buffer for recording, and the resulting sound. */
-
+		/*
+			Create a buffer for recording, and the resulting sound.
+		*/
 		numberOfSamples = Melder_iround (sampleRate * duration);
 		if (numberOfSamples < 1)
 			Melder_throw (U"Duration too short.");
-		autovector<short> buffer = newvectorzero<short> (numberOfSamples * ( fakeMonoByStereo ? 2 : 1 ));
-		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);   // STEREO BUG
+		autovector<short> buffer = newvectorzero <short> (numberOfSamples);
+		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);
 		Melder_assert (my nx == numberOfSamples);
 
 		/*
-		 * Open phase 2.
-		 * This starts recording now.
-		 */
-
+			Open phase 2.
+			This starts recording now.
+		*/
 		if (inputUsesPortAudio) {
 			streamParameters. suggestedLatency = Pa_GetDeviceInfo (inputSource - 1) -> defaultLowInputLatency;
 			#if defined (macintosh)
@@ -382,8 +394,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		}
 for (i = 1; i <= numberOfSamples; i ++) trace (U"Started ", buffer [i]);
 
-		/* Read the sound into the buffer. */
-
+		/*
+			Read the sound into the buffer.
+		*/
 		if (inputUsesPortAudio) {
 			// The callback will do this. Just wait.
 			while (/*getNumberOfSamplesRead (& info)*/ info. numberOfSamplesRead < numberOfSamples) {
@@ -429,12 +442,10 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 			#endif
 		}
 
-		/* Copy the buffered data to the sound object, and discard the buffer. */
-
-		if (fakeMonoByStereo)
-			for (i = 1; i <= numberOfSamples; i ++)
-				my z [1] [i] = ((integer) buffer [i + i - 1] + buffer [i + i]) * (1.0 / 65536);
-		else if (mulaw)
+		/*
+			Copy the buffered data to the sound object, and discard the buffer.
+		*/
+		if (mulaw)
 			for (i = 1; i <= numberOfSamples; i ++)
 				my z [1] [i] = ulaw2linear [((unsigned char *) buffer.begin()) [i]] * (1.0 / 32768);
 		else if (can16bit)
@@ -444,8 +455,9 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 			for (i = 1; i <= numberOfSamples; i ++)
 				my z [1] [i] = ((int) ((unsigned char *) buffer.begin()) [i + 1] - 128) * (1.0 / 128);
 
-		/* Close the audio device. */
-
+		/*
+			Close the audio device.
+		*/
 		if (inputUsesPortAudio) {
 			Pa_StopStream (portaudioStream);
 			Pa_CloseStream (portaudioStream);
@@ -460,8 +472,9 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 			#endif
 		}
 
-		/* Hand the resulting sound to the caller. */
-
+		/*
+			Hand the resulting sound to the caller.
+		*/
 		return me;
 	} catch (MelderError) {
 		if (inputUsesPortAudio) {

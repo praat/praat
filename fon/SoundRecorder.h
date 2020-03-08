@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2011,2012,2013,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2008-2013,2015-2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ struct SoundRecorder_Fsamp {
 Thing_define (SoundRecorder, Editor) {
 	int numberOfChannels;
 	integer nsamp, nmax;
-	bool fakeMono, synchronous, recording;
+	bool synchronous, recording;
 	int lastLeftMaximum, lastRightMaximum;
 	integer numberOfInputDevices;
 	struct SoundRecorder_Device devices [1+SoundRecorder_IDEVICE_MAX];
@@ -141,8 +141,8 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels);
 */
 
 void SoundRecorder_preferences ();
-int SoundRecorder_getBufferSizePref_MB ();
-void SoundRecorder_setBufferSizePref_MB (int size);
+integer SoundRecorder_getBufferSizePref_MB ();
+void SoundRecorder_setBufferSizePref_MB (integer size);
 
 /* End of file SoundRecorder.h */
 #endif

@@ -188,32 +188,3 @@ void * KNN_threadDistribution
 	return result;
 }
 
-
-
-/////////////////////////////////////////////////////
-// KNN_threadTest                                  //
-/////////////////////////////////////////////////////
-
-void KNN_threadTest ()
-{
-    void * dummy[KNN_getNumberOfCPUs()];
-    KNN_threadDistribution(KNN_threadTestAux, (void **) &dummy, KNN_getNumberOfCPUs());
-}
-
-
-
-/////////////////////////////////////////////////////
-// KNN_threadTestAux                               //
-/////////////////////////////////////////////////////
-
-void * KNN_threadTestAux (void * dummy)
-{
-    dummy = nullptr; // dummy assignment to avoid compiler warnings;
-
-    for(int i = 0; i < 50000; ++i)
-        for(int i = 0; i < 50000; ++i) ;
-
-    return nullptr;
-}
-
-

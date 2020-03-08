@@ -1,6 +1,6 @@
 /* melder_tensor.cpp
  *
- * Copyright (C) 1992-2012,2018,2019 Paul Boersma
+ * Copyright (C) 1992-2012,2018-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,29 +53,6 @@ void NUMvector_free_generic (integer elementSize, byte *vector, integer lo) noex
 	byte *cells = & vector [lo * elementSize];
 	Melder_free (cells);
 	theTotalNumberOfArrays -= 1;
-}
-
-byte * NUMvector_copy_generic (integer elementSize, const byte *vector, integer lo, integer hi) {
-	try {
-		if (! vector)
-			return nullptr;
-		byte *result = NUMvector_generic (elementSize, lo, hi, false);
-		const byte *p_cells = & vector [lo * elementSize];
-		byte *p_resultCells = & result [lo * elementSize];
-		integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
-		memcpy (p_resultCells, p_cells, (size_t) numberOfBytesToCopy);
-		return result;
-	} catch (MelderError) {
-		Melder_throw (U"Vector of elements not copied.");
-	}
-}
-
-bool NUMvector_equal_generic (integer elementSize, const byte *vector1, const byte *vector2, integer lo, integer hi) {
-	Melder_assert (vector1 && vector2);
-	const byte *p_cells1 = & vector1 [lo * elementSize];
-	const byte *p_cells2 = & vector2 [lo * elementSize];
-	integer numberOfBytesToCompare = (hi - lo + 1) * elementSize;
-	return memcmp (p_cells1, p_cells2, (size_t) numberOfBytesToCompare) == 0;
 }
 
 /* End of file melder_tensor.cpp */

@@ -53,15 +53,19 @@ Thing_implement (SoundRecorder, Editor, 0);
 #include "SoundRecorder_prefs.h"
 
 static struct {
-	int bufferSizeInMegabytes;
+	integer bufferSizeInMegabytes;
 } preferences;
 
 void SoundRecorder_preferences () {
-	Preferences_addInt (U"SoundRecorder.bufferSizeInMegabytes", & preferences.bufferSizeInMegabytes, 60);
+	Preferences_addInteger (U"SoundRecorder.bufferSizeInMegabytes", & preferences.bufferSizeInMegabytes, 60);
 }
 
-int SoundRecorder_getBufferSizePref_MB () { return preferences.bufferSizeInMegabytes; }
-void SoundRecorder_setBufferSizePref_MB (int size) { preferences.bufferSizeInMegabytes = size < 1 ? 1 : size > 1000 ? 1000: size; }
+integer SoundRecorder_getBufferSizePref_MB () {
+	return preferences.bufferSizeInMegabytes;
+}
+void SoundRecorder_setBufferSizePref_MB (integer size) {
+	preferences.bufferSizeInMegabytes = Melder_clipped (1_integer, size, 1000_integer);
+}
 
 #define step 1000
 
@@ -97,8 +101,11 @@ static void win_fillFormat (SoundRecorder me) {
 }
 static void win_fillHeader (SoundRecorder me, int which) {
 	my waveHeader [which]. dwFlags = 0;
-	my waveHeader [which]. lpData = which == 0 ? (char *) my buffer : which == 1 ? (char *) my buffertje1: (char *) my buffertje2;
-	my waveHeader [which]. dwBufferLength = which == 0 ? my nmax * my waveFormat. nChannels * 2 : 1000 * my waveFormat. nChannels * 2;
+	my waveHeader [which]. lpData =
+			( which == 0 ? (char *) my recordBuffer.asArgumentToFunctionThatExpectsZeroBasedArray() :
+			  which == 1 ? (char *) my buffertje1: (char *) my buffertje2 );
+	my waveHeader [which]. dwBufferLength =
+			( which == 0 ? my nmax * my waveFormat. nChannels * 2 : 1000 * my waveFormat. nChannels * 2 );
 	my waveHeader [which]. dwLoops = 0;
 	my waveHeader [which]. lpNext = nullptr;
 	my waveHeader [which]. reserved = 0;
@@ -108,17 +115,23 @@ static void win_waveInCheck (SoundRecorder me) {
 	MMRESULT err;
 	if (my err == MMSYSERR_NOERROR) return;
 	err = waveInGetErrorText (my err, messageText, MAXERRORLENGTH);
-	if (err == MMSYSERR_NOERROR) Melder_throw (Melder_peekWto32 (messageText));
-	else if (err == MMSYSERR_BADERRNUM) Melder_throw (U"Error number ", my err, U" out of range.");
-	else if (err == MMSYSERR_NODRIVER) Melder_throw (U"No sound driver present.");
-	else if (err == MMSYSERR_NOMEM) Melder_throw (U"Out of memory.");
-	else Melder_throw (U"Unknown sound error.");
+	if (err == MMSYSERR_NOERROR)
+		Melder_throw (Melder_peekWto32 (messageText));
+	else if (err == MMSYSERR_BADERRNUM)
+		Melder_throw (U"Error number ", my err, U" out of range.");
+	else if (err == MMSYSERR_NODRIVER)
+		Melder_throw (U"No sound driver present.");
+	else if (err == MMSYSERR_NOMEM)
+		Melder_throw (U"Out of memory.");
+	else
+		Melder_throw (U"Unknown sound error.");
 }
 static void win_waveInOpen (SoundRecorder me) {
 	try {
 		my err = waveInOpen (& my hWaveIn, WAVE_MAPPER, & my waveFormat, 0, 0, CALLBACK_NULL);
 		win_waveInCheck (me);
-		if (Melder_debug != 8) waveInReset (my hWaveIn);
+		if (Melder_debug != 8)
+			waveInReset (my hWaveIn);
 	} catch (MelderError) {
 		Melder_throw (U"Audio input not opened.");
 	}
@@ -233,7 +246,8 @@ void structSoundRecorder :: v_destroy () noexcept {
 	#elif gtk
 		g_idle_remove_by_data (this);
 	#elif motif
-		if (our workProcId) XtRemoveWorkProc (our workProcId);
+		if (our workProcId)
+			XtRemoveWorkProc (our workProcId);
 	#endif
 
 	if (our inputUsesPortAudio) {
@@ -609,32 +623,28 @@ static void gui_button_cb_stop (SoundRecorder me, GuiButtonEvent /* event */) {
 static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
 	if (my recording || my nsamp == 0)
 		return;
-	MelderAudio_play16 (my recordBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), theControlPanel. sampleRate,
-			my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, nullptr, nullptr);
+	MelderAudio_play16 (my recordBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(),
+			theControlPanel. sampleRate, my nsamp, my numberOfChannels, nullptr, nullptr);
 }
 
 static void publish (SoundRecorder me) {
 	autoSound sound;
-	integer nsamp = ( my fakeMono ? my nsamp / 2 : my nsamp );
 	if (my nsamp == 0)
 		return;
 	double fsamp = theControlPanel. sampleRate;
 	if (fsamp <= 0.0)
 		fsamp = 44100.0;   // safe
 	try {
-		sound = Sound_createSimple (my numberOfChannels, (double) nsamp / fsamp, fsamp);
+		sound = Sound_createSimple (my numberOfChannels, (double) my nsamp / fsamp, fsamp);
 	} catch (MelderError) {
 		Melder_flushError (U"You can still save to file.");
 		return;
 	}
-	if (my fakeMono) {
-		for (integer i = 1; i <= nsamp; i ++)
-			sound -> z [1] [i] = (my recordBuffer [i + i - 1] + my recordBuffer [i + i]) * (1.0 / 65536);
-	} else if (my numberOfChannels == 1) {
-		for (integer i = 1; i <= nsamp; i ++)
+	if (my numberOfChannels == 1) {
+		for (integer i = 1; i <= my nsamp; i ++)
 			sound -> z [1] [i] = my recordBuffer [i] * (1.0 / 32768);
 	} else {
-		for (integer i = 1; i <= nsamp; i ++) {
+		for (integer i = 1; i <= my nsamp; i ++) {
 			sound -> z [1] [i] = my recordBuffer [i + i - 1] * (1.0 / 32768);
 			sound -> z [2] [i] = my recordBuffer [i + i] * (1.0 / 32768);
 		}
@@ -913,29 +923,10 @@ void structSoundRecorder :: v_createChildren ()
 			U"Save to list & Close", gui_button_cb_ok, this, 0);
 }
 
-static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
-	integer nsamp = my nsamp / 2;
-	autoMelderFile mfile = MelderFile_create (file);
-	MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
-	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
-		for (integer i = 1; i <= nsamp; i ++)
-			binputi16 ((my recordBuffer [i + i - 1] + my recordBuffer [i + i]) / 2, file -> filePointer);
-	} else {
-		for (integer i = 1; i <= nsamp; i ++)
-			binputi16LE ((my recordBuffer [i + i - 1] + my recordBuffer [i + i]) / 2, file -> filePointer);
-	}
-	MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
-	mfile.close ();
-}
-
 static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	try {
-		if (my fakeMono) {
-			writeFakeMonoFile (me, file, audioFileType);
-		} else {
-			MelderFile_writeAudioFile (file, audioFileType, my recordBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(),
-					Melder_iround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
-		}
+		MelderFile_writeAudioFile (file, audioFileType, my recordBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(),
+				Melder_iround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
 	} catch (MelderError) {
 		Melder_throw (U"Audio file not written.");
 	}
@@ -1071,7 +1062,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		/*
 			Allocate the maximum buffer.
 		*/
-		Melder_clip (1, & preferences.bufferSizeInMegabytes, 1000);
+		Melder_clip (1_integer, & preferences.bufferSizeInMegabytes, 1000_integer);
 		if (NUMisEmpty (my recordBuffer.get())) {
 			integer nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
 			integer nmax_bytes = ( my inputUsesPortAudio ? nmax_bytes_pref :
