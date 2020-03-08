@@ -67,7 +67,6 @@ the behaviour of Praat will temporarily change in the following ways:
 34: trace memory allocation and deallocation
 35: debugging on for QuickTime movie file opening
 37: debug autoThing
-38: debug autoNUMvector
 39: debug autostring
 40: debug Thing_new
 41: OTGrammar_getWinner: always first choice rather than random choice 

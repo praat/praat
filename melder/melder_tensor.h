@@ -36,21 +36,6 @@ void NUMvector_free_generic (integer elementSize, byte *v, integer lo) noexcept;
 		lo must have the same values as with the creation of the vector.
 */
 
-byte * NUMvector_copy_generic (integer elementSize, const byte *v, integer lo, integer hi);
-/*
-	Function:
-		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
-	Preconditions:
-		if v != nullptr, the values v [lo..hi] must exist.
-*/
-
-bool NUMvector_equal_generic (integer elementSize, const byte *v1, const byte *v2, integer lo, integer hi);
-/*
-	return true if the vector elements v1 [lo..hi] are equal
-	to the corresponding elements of the vector v2; otherwise, return false.
-	The vectors need not have been created by NUMvector.
-*/
-
 template <class T>
 T* NUMvector (integer from, integer to) {
 	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, true));
@@ -68,65 +53,7 @@ void NUMvector_free (T* ptr, integer from) noexcept {
 	NUMvector_free_generic (sizeof (T), reinterpret_cast <byte *> (ptr), from);
 }
 
-template <class T>
-T* NUMvector_copy (const T* ptr, integer lo, integer hi) {
-	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <const byte *> (ptr), lo, hi));
-	return result;
-}
-
-template <class T>
-bool NUMvector_equal (const T* v1, const T* v2, integer lo, integer hi) {
-	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <const byte *> (v1), reinterpret_cast <const byte *> (v2), lo, hi);
-}
-
 integer NUM_getTotalNumberOfArrays ();   // for debugging
-
-template <class T>
-class autoNUMvector {
-	T* d_ptr;
-	integer d_from;
-public:
-	autoNUMvector<T> (integer from, integer to) : d_from (from) {
-		d_ptr = NUMvector<T> (from, to, true);
-	}
-	autoNUMvector<T> (integer from, integer to, bool zero) : d_from (from) {
-		d_ptr = NUMvector<T> (from, to, zero);
-	}
-	autoNUMvector (T *ptr, integer from) : d_ptr (ptr), d_from (from) {
-	}
-	autoNUMvector () : d_ptr (nullptr), d_from (1) {
-	}
-	~autoNUMvector<T> () {
-		if (d_ptr) NUMvector_free (d_ptr, d_from);
-	}
-	T& operator[] (integer i) {
-		return d_ptr [i];
-	}
-	T* peek () const {
-		return d_ptr;
-	}
-	T* transfer () {
-		T* temp = d_ptr;
-		d_ptr = nullptr;   // make the pointer non-automatic again
-		return temp;
-	}
-	void reset (integer from, integer to) {
-		if (d_ptr) {
-			NUMvector_free (d_ptr, d_from);
-			d_ptr = nullptr;
-		}
-		d_from = from;
-		d_ptr = NUMvector<T> (from, to, true);
-	}
-	void reset (integer from, integer to, bool zero) {
-		if (d_ptr) {
-			NUMvector_free (d_ptr, d_from);
-			d_ptr = nullptr;
-		}
-		d_from = from;
-		d_ptr = NUMvector<T> (from, to, zero);
-	}
-};
 
 #pragma mark - TENSOR
 /*

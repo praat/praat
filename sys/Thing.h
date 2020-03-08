@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2009,2011-2019 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,53 +484,6 @@ autoThing Thing_newFromClassName (conststring32 className, int *out_formatVersio
 	Side effect:
 		see Thing_classFromClassName.
 */
-
-template <class T>
-class autoThingVector {
-	autoSomeThing<T> *d_ptr;
-	integer d_from, d_to;
-public:
-	autoThingVector<T> (integer from, integer to) : d_from (from), d_to (to) {
-		//d_ptr = reinterpret_cast <autoSomeThing<T>*> (NUMvector_ (sizeof (autoSomeThing<T>), from, to, true));
-		d_ptr = NUMvector <autoSomeThing<T>> (from, to, true);
-	}
-	autoThingVector (autoSomeThing<T> *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
-	}
-	autoThingVector () : d_ptr (nullptr), d_from (1), d_to (0) {
-	}
-	~autoThingVector<T> () {
-		if (d_ptr) {
-			for (integer i = d_from; i <= d_to; i ++)
-				d_ptr [i].reset();
-			NUMvector_free (d_ptr, d_from);
-		}
-	}
-	autoSomeThing<T>& operator[] (integer i) {
-		return d_ptr [i];
-	}
-	autoSomeThing<T>* peek () const {
-		return d_ptr;
-	}
-	/*
-	T* transfer () {
-		T* temp = d_ptr;
-		d_ptr = nullptr;   // make the pointer non-automatic again
-		return temp;
-	}
-
-	void reset (integer from, integer to) {
-		if (d_ptr) {
-			for (integer i = d_from; i <= d_to; i ++)
-				forget (d_ptr [i]);
-			NUMvector_free (sizeof (T), d_ptr, d_from);
-			d_ptr = nullptr;
-		}
-		d_from = from;   // this assignment is safe, because d_ptr is null
-		d_to = to;
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
-	}
-	*/
-};
 
 /* End of file Thing.h */
 #endif
