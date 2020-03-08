@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,14 +67,14 @@
 #define ALLOW_GDK_DRAWING  (gtk && 1)   /* change to (gtk && 0) if you want to try out GTK 3 */
 /* */
 
-#include "melder_tensor.h"   // autoNUMvector, VEC, autoMAT, Melder_VEC
+#include "melder_tensor.h"   // MelderTensor, VEC, autoMAT, Melder_VEC
 #include "melder_colour.h"   // MelderColour (requires VEC)
 #include "melder_ftoa.h"   // Melder_double, Melder_pad (require dcomplex, conststring32, MelderColour)
 #include "melder_console.h"   // MelderConsole (requires conststring32)
 #include "melder_textencoding.h"   // str32len_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderDir
-#include "melder_strvec.h"   // STRVEC, autoSTRVEC (requires NUMvector)
+#include "melder_strvec.h"   // STRVEC, autoSTRVEC (requires MelderTensor)
 #include "melder_sort.h"   // VECsort_inplace (requires VEC), STRVECsort_inplace (requires STRVEC)
 
 #include "MelderArg.h"   // MelderArg (requires Melder_double, MelderFile, Melder_VEC)

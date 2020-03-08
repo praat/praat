@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 	thy size = my size;
 	if (my _capacity > 0) {
 		thy at._elements = Melder_calloc (Daata, my _capacity);   // filled with null pointers
-		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
+		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use MelderTensor
 	}
 	for (integer i = 1; i <= my size; i ++) {
 		Daata item = my at [i];

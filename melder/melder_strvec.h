@@ -2,7 +2,7 @@
 #define _melder_strvec_h_
 /* melder_strvec.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ public:
 		if (our _ptr) {
 			for (integer i = 1; i <= our size; i ++)
 				our _ptr [i]. reset ();
-			NUMvector_free (our _ptr, 1);
+			MelderTensor_free (& our _ptr [1]);
 			our _ptr = nullptr;
 			our size = 0;
 		}
