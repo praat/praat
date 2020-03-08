@@ -962,7 +962,7 @@ LIST_ITEM (U"• Sound: @@Combine to stereo@ works even if the two mono sounds h
 NORMAL (U"##5.0.33# (9 September 2008)")
 LIST_ITEM (U"• Windows: prevented warning messages about \"Widget type\".")
 NORMAL (U"##5.0.32# (12 August 2008)")
-LIST_ITEM (U"• Contributed by Ola Söder: @@kNN classifiers@ and @@k-means clustering@.")
+LIST_ITEM (U"• Contributed by Ola Söder: kNN classifiers and k-means clustering.")
 LIST_ITEM (U"• Made UTF-16-encoded chronological TextGrid files readable.")
 NORMAL (U"##5.0.31# (6 August 2008)")
 LIST_ITEM (U"• Macintosh: corrected a bug introduced in 5.0.30 that caused Praat to crash when you pressed the Tab key "
@@ -1986,7 +1986,7 @@ LIST_ITEM (U"David Weenink: "
 LIST_ITEM (U"Stefan de Konink and Franz Brauße: major help in port to GTK.")
 LIST_ITEM (U"Tom Naughton: major help in port to Cocoa.")
 LIST_ITEM (U"Erez Volk: adaptation of FLAC and MAD.")
-LIST_ITEM (U"Ola Söder: @@kNN classifiers@, @@k-means clustering@.")
+LIST_ITEM (U"Ola Söder: kNN classifiers, k-means clustering.")
 LIST_ITEM (U"Rafael Laboissière: adaptation of XIPA, audio bug fixes for Linux.")
 LIST_ITEM (U"Darryl Purnell created the first version of audio for Praat for Linux.")
 NORMAL (U"We included the following freely available software libraries in Praat (sometimes with adaptations):")

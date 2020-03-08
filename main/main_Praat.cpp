@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2008,2010-2019 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ int main (int argc, char *argv []) {
 		praat_setLogo (130.0, 80.0, logo);
 		praat_init (U"Praat", argc, argv);
 		INCLUDE_LIBRARY (praat_uvafon_init)
-		INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
 		praat_run ();
 	} catch (MelderError) {
 		Melder_flushError (U"This error message percolated all the way to the top.");   // an attempt to catch Apache errors
