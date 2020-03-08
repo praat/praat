@@ -707,42 +707,6 @@ DO
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// DEBUG                                                                               //
-/////////////////////////////////////////////////////////////////////////////////////////
-
-// Disabled
-/*
-#ifdef _DEBUG
-
-DIRECT (KNN_debug_KNN_SA_partition) {
-    FIND_ONE (PatternList)
-		autoPatternList output = PatternList_create (my ny, my nx);
-		autoNUMvector <integer> result (0, my ny);
-		KNN_SA_partition (me, 1, my ny, result);
-
-		for (integer k = 1, c = 1; k <= output -> ny; k ++, c ++)
-			for (integer i = 1; i <= my ny && k <= output -> ny; i ++)
-				if (result [i] == c) {
-					for(integer j = 1; j <= output -> nx; ++j)
-						output -> z [k] [j] = my z [i] [j];
-					k ++;
-				}
-		praat_new (output.move(), U"Output");
-	END
-}
-
-DIRECT (KNN_debug_KNN_getNumberOfCPUs) {
-    Melder_information (KNN_getNumberOfCPUs(), U" CPUs available");
-END }
-
-DIRECT (KNN_debug_KNN_threadTest) {
-    KNN_threadTest();
-END }
-
-#endif
-*/
-
-/////////////////////////////////////////////////////////////////////////////////////////
 // Help                                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -867,20 +831,6 @@ void praat_contrib_Ola_KNN_init ()
 
     praat_addAction2 (classPatternList, 1, classCategories, 1, U"To FeatureWeights (relief)...", nullptr, 0, NEW1_PatternList_Categories_to_FeatureWeights_relief);
     praat_addAction2 (classPatternList, 1, classCategories, 1, U"To KNN Classifier...", nullptr, 0, NEW1_PatternList_Categories_to_KNN);
-
-///////////
-// DEBUG //
-///////////
-
-/*
-#ifdef _DEBUG
-
-    praat_addAction1 (classKNN, 0, U"_DEBUG: KNN_getNumberOfCPUs", 0, 0, DO_KNN_debug_KNN_getNumberOfCPUs);
-    praat_addAction1 (classKNN, 0, U"_DEBUG: KNN_threadTest", 0, 0, DO_KNN_debug_KNN_threadTest);
-    praat_addAction1 (classPattern, 1, U"_DEBUG: KNN_SA_partition", 0, 1, DO_KNN_debug_KNN_SA_partition);
-
-#endif
-*/
 
 ///////////
 // Hints //

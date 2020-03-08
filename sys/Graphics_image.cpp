@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,22 +84,26 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 				CGContextSetAlpha (my d_macGraphicsContext, 1.0);
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 			#endif
-			autoNUMvector <integer> lefts (ix1, ix2 + 1);
+			autoINTVEC leftsBuffer = newINTVECzero (ix2 - ix1 + 2);
+			integer *lefts = & leftsBuffer [1 - ix1];
 			for (ix = ix1; ix <= ix2 + 1; ix ++)
 				lefts [ix] = x1DC + (integer) ((ix - ix1) * dx);
 			for (iy = iy1; iy <= iy2; iy ++) {
 				integer bottom = y1DC + (integer) ((iy - iy1) * dy), top = bottom - cellHeight;
-				if (top > clipy1 || bottom < clipy2) continue;
-				if (top < clipy2) top = clipy2;
-				if (bottom > clipy1) bottom = clipy1;
+				if (top > clipy1 || bottom < clipy2)
+					continue;
+				Melder_clipLeft (clipy2, & top);
+				Melder_clipRight (& bottom, clipy1);
 				#if gdi
-					rect. bottom = bottom; rect. top = top;
+					rect. bottom = bottom;
+					rect. top = top;
 				#endif
 				for (ix = ix1; ix <= ix2; ix ++) {
 					integer left = lefts [ix], right = lefts [ix + 1];
-					if (right < clipx1 || left > clipx2) continue;
-					if (left < clipx1) left = clipx1;
-					if (right > clipx2) right = clipx2;
+					if (right < clipx1 || left > clipx2)
+						continue;
+					Melder_clipLeft (clipx1, & left);
+					Melder_clipRight (& right, clipx2);
 					if (! NUMisEmpty (z_rgbt)) {
 						#if cairo
 							// NYI
@@ -110,9 +114,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 							double green        = z_rgbt [iy] [ix]. green;
 							double blue         = z_rgbt [iy] [ix]. blue;
 							double transparency = z_rgbt [iy] [ix]. transparency;
-							red =   ( red   <= 0.0 ? 0.0 : red   >= 1.0 ? 1.0 : red   );
-							green = ( green <= 0.0 ? 0.0 : green >= 1.0 ? 1.0 : green );
-							blue =  ( blue  <= 0.0 ? 0.0 : blue  >= 1.0 ? 1.0 : blue  );
+							Melder_clip (0.0, & red,   1.0);
+							Melder_clip (0.0, & green, 1.0);
+							Melder_clip (0.0, & blue,  1.0);
 							CGContextSetRGBFillColor (my d_macGraphicsContext, red, green, blue, 1.0 - transparency);
 							CGContextFillRect (my d_macGraphicsContext, CGRectMake (left, top, right - left, bottom - top));
 						#endif
@@ -267,16 +271,23 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 		#endif
 		if (interpolate) {
 			try {
-				autoNUMvector <integer> ileft (clipx1, clipx2);
-				autoNUMvector <integer> iright (clipx1, clipx2);
-				autoNUMvector <double> rightWeight (clipx1, clipx2);
-				autoNUMvector <double> leftWeight (clipx1, clipx2);
+				autoINTVEC ileftBuffer = newINTVECzero (clipx2 - clipx1 + 1);
+				autoINTVEC irightBuffer = newINTVECzero (clipx2 - clipx1 + 1);
+				autoVEC leftWeightBuffer = newVECzero (clipx2 - clipx1 + 1);
+				autoVEC rightWeightBuffer = newVECzero (clipx2 - clipx1 + 1);
+				integer *ileft  = & ileftBuffer  [1 - clipx1];
+				integer *iright = & irightBuffer [1 - clipx1];
+				double *leftWeight  = & leftWeightBuffer  [1 - clipx1];
+				double *rightWeight = & rightWeightBuffer [1 - clipx1];
 				for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 					double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
 					ileft [xDC] = (integer) floor (ix_real), iright [xDC] = ileft [xDC] + 1;
-					rightWeight [xDC] = ix_real - ileft [xDC], leftWeight [xDC] = 1.0 - rightWeight [xDC];
-					if (ileft [xDC] < ix1) ileft [xDC] = ix1;
-					if (iright [xDC] > ix2) iright [xDC] = ix2;
+					rightWeight [xDC] = ix_real - ileft [xDC];
+					leftWeight [xDC] = 1.0 - rightWeight [xDC];
+					if (ileft [xDC] < ix1)
+						ileft [xDC] = ix1;
+					if (iright [xDC] > ix2)
+						iright [xDC] = ix2;
 				}
 				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
 					double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
@@ -311,10 +322,11 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 							double transparency =
 								rightWeight [xDC] * (topWeight * ztop [iright [xDC]]. transparency + bottomWeight * zbottom [iright [xDC]]. transparency) +
 								leftWeight  [xDC] * (topWeight * ztop [ileft  [xDC]]. transparency + bottomWeight * zbottom [ileft  [xDC]]. transparency);
-							if (red          < 0.0) red          = 0.0; else if (red          > 1.0) red          = 1.0;
-							if (green        < 0.0) green        = 0.0; else if (green        > 1.0) green        = 1.0;
-							if (blue         < 0.0) blue         = 0.0; else if (blue         > 1.0) blue         = 1.0;
-							if (transparency < 0.0) transparency = 0.0; else if (transparency > 1.0) transparency = 1.0;
+							Melder_clip (0.0, & red,          1.0);
+							Melder_clip (0.0, & green,        1.0);
+							Melder_clip (0.0, & blue,         1.0);
+							Melder_clip (0.0, & transparency, 1.0);
+
 							#if cairo
 								*pixelAddress ++ = blue         * 255.0;
 								*pixelAddress ++ = green        * 255.0;
@@ -348,7 +360,8 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 			} catch (MelderError) { Melder_clearError (); }
 		} else {
 			try {
-				autoNUMvector <integer> ix (clipx1, clipx2);
+				autoINTVEC ixBuffer = newINTVECzero (clipx2 - clipx1 + 1);
+				integer *ix = & ixBuffer [1 - clipx1];
 				for (xDC = clipx1; xDC < clipx2; xDC += undersampling)
 					ix [xDC] = Melder_ifloor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
 				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {

@@ -48,14 +48,5 @@ void * KNN_threadDistribution
     int nthreads
 );
 
-// Test threading
-void KNN_threadTest ();
-
-// Test threading aux
-void * KNN_threadTestAux
-(
-    void * dummy
-);
-
 /* End of file KNN_threads.h */
 #endif
