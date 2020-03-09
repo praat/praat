@@ -145,7 +145,7 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_function (g, c.at, 1, numberOfSelected, xmin, xmax);
+	Graphics_function (g, c.asArgumentToFunctionThatExpectsOneBasedArray(), 1, numberOfSelected, xmin, xmax);
 	Graphics_unsetInner (g);
 }
 

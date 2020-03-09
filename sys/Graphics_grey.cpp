@@ -235,7 +235,9 @@ static void makeClosedContour (integer row0, integer col0, integer ori0) {
 
 	/* Find out whether the point is inside or outside the contour. */
 
-	if (! NUMrotationsPointInPolygon (x1, y1, numberOfPoints, x.at, y.at)) up = ! up;
+	if (! NUMrotationsPointInPolygon (x1, y1, numberOfPoints,
+			x.asArgumentToFunctionThatExpectsOneBasedArray(), y.asArgumentToFunctionThatExpectsOneBasedArray()))
+		up = ! up;
 
 	double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
 	c -> grey = up ? iBorder + 1 : iBorder;
@@ -436,7 +438,9 @@ static void smallGrey () {
 							 ci -> xmin > cj -> xmin && ci -> xmax < cj -> xmax && 
 							 ci -> ymin > cj -> ymin && ci -> ymax < cj -> ymax)
 							enclosed = NUMrotationsPointInPolygon (ci -> x [1], ci -> y [1],
-										cj -> numberOfPoints, cj -> x.at, cj -> y.at);
+									cj -> numberOfPoints,
+									cj -> x.asArgumentToFunctionThatExpectsOneBasedArray(),
+									cj -> y.asArgumentToFunctionThatExpectsOneBasedArray());
 						j ++;
 					}
 					if (! enclosed) {

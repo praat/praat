@@ -1042,7 +1042,7 @@ double Sound_localMean (Sound me, double fromTime, double toTime) {
 		if (n2 > my nx)
 			n2 = my nx;
 		Melder_assert (n1 <= n2);
-		mean = NUMmean (constVEC (& my z [1] [n1], n2 - n1 + 1));
+		mean = NUMmean (my z [1]. part (n1, n2));
 	}
 	return mean;
 }
@@ -1625,8 +1625,8 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 	const integer channelFrom = channel == 0 ? 1 : channel;
 	const integer channelTo = channel == 0 ? my ny : channel;
 	
-	integer startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
-	integer endTime = startTime + fadeTime;
+	double startTime = Melder_clipped (my xmin, time, my xmax);
+	double endTime = startTime + fadeTime;
 	if (startTime > endTime)
 		std::swap (startTime, endTime);
 	

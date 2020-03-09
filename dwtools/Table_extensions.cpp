@@ -3700,8 +3700,8 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			Table_setNumericValue (ameans.get(), irow, 2, factorLevelMeans [irow]);
 			Table_setNumericValue (ameans.get(), irow, 3, factorLevelSizes [irow]);
 		}
-		const integer columns [1+1] { 0, 2 };   // sort by column 2
-		Table_sortRows_Assert (ameans.get(), constINTVEC (columns, 1));
+		const integer columns [1] { 2 };   // sort by column 2
+		Table_sortRows_Assert (ameans.get(), constINTVEC (columns, 1, false));
 		_Table_postHocTukeyHSD (ameans.get(), ms_within, degreesOfFreedom_within, meansDiff, meansDiffProbabilities);
 		if (means)
 			*means = ameans.move();
@@ -3977,7 +3977,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 		const double un = pow (0.5, 1.0 / numberOfQuantiles);
 		for (integer irow = 1; irow <= numberOfQuantiles; irow ++) {
 			const double ui = irow == 1 ? 1.0 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
-			const double q = NUMquantile (numberOfData, data.at, ui);
+			const double q = NUMquantile (data.all(), ui);
 			const double zq = - NUMinvGaussQ (ui);
 			thy data [irow] [1] = zq; // along x
 			thy data [irow] [2] = q;  // along y

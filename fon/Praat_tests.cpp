@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2007,2009,2011-2019 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -594,18 +594,18 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					//gg.reset();
 				}
 				{
-					double x [1+2], *px = & x [0];
+					double x [3], *px = & x [0];
 					const double *cpx = px;
-					VEC vx { px, 2 };
-					constVEC cvx { px, 2 };
-					const VEC c_vx { px, 2 };
+					VEC vx { px, 2, false };
+					constVEC cvx { px, 2, false };
+					const VEC c_vx { px, 2, false };
 					double a = c_vx [1];
 					const double b = c_vx [2];
 					const double y = 0.0, *py = & y;
 					//VEC vy { py, 0 };   // should be refused by the compiler
-					constVEC cvy { py, 2 };
+					constVEC cvy { py, 2, false };
 					//const VEC c_vy = VEC (py, 2);
-					const VEC c_vy = (const VEC) VEC (const_cast<double *> (py), 2);
+					const VEC c_vy = (const VEC) VEC (const_cast<double *> (py), 2, false);
 					double c = c_vy [1];
 					const double d = c_vy [2];
 					//VEC c_vy2 = VEC (py, 2);
@@ -639,7 +639,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					//aa = aac;
 					aa = bb;
 					aac = bbc;
-					bbc.at = bb.at;
+					bbc.cells = bb.cells;
 				}
 			}
 		} break;

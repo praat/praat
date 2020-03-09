@@ -599,8 +599,10 @@ static void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, integer c
 	// Determine if all collinear point are within the interval [colstart,colend]
 	integer jstart, jend;
 	bool allPointsInside = ( my x [collstart] != my x [collend] ?
-	                         pointsInsideInterval (my x.at, my numberOfPoints, collstart, collend, &jstart, &jend) :
-	                         pointsInsideInterval (my y.at, my numberOfPoints, collstart, collend, &jstart, &jend) );
+			pointsInsideInterval (my x.asArgumentToFunctionThatExpectsOneBasedArray(),
+					my numberOfPoints, collstart, collend, &jstart, &jend) :
+			pointsInsideInterval (my y.asArgumentToFunctionThatExpectsOneBasedArray(),
+					my numberOfPoints, collstart, collend, &jstart, &jend) );
 	if (not allPointsInside) {
 		if (collstart != jstart) { // also include the extreme point at start
 			thy numberOfPoints ++;

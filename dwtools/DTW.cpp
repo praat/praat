@@ -755,7 +755,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, dmin, dmax);
-	Graphics_function (g, d.at, 1, numberOfSelected, xmin, xmax);
+	Graphics_function (g, d.asArgumentToFunctionThatExpectsOneBasedArray(), 1, numberOfSelected, xmin, xmax);
 	Graphics_unsetInner (g);
 
 	if (garnish) {

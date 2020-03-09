@@ -560,8 +560,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 			Case 3: page 634 use Newton-Raphson root finder
 		*/
 		struct nr_struct me;
-		me.y = y.at;
-		me.delta = delta.at;
+		me.y = y.asArgumentToFunctionThatExpectsOneBasedArray();
+		me.delta = delta.asArgumentToFunctionThatExpectsOneBasedArray();
 
 		double lambda = NUMnrbis (nr_func, delta [1] + eps, delta [2] - eps, & me);
 

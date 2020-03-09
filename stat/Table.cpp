@@ -769,7 +769,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			We will now sort the original table temporarily, by the factors (independent variables) only.
 		*/
-		Table_sortRows_Assert (me, constINTVEC (columns.at, factors.size));   /* This works only because the factors come first. */
+		Table_sortRows_Assert (me, constINTVEC (columns.cells, factors.size, false));   /* This works only because the factors come first. */
 		originalChanged = true;
 		/*
 			Find stretches of identical factors.
@@ -880,8 +880,8 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 			TableRow row = my rows.at [irow];
 			row -> sortingIndex = irow;
 		}
-		integer columns [2] = { 0, column };
-		Table_sortRows_Assert (me, constINTVEC (columns, 1));
+		integer columns [1] = { column };
+		Table_sortRows_Assert (me, constINTVEC (columns, 1, false));
 		integer numberOfLevels = 0;
 		integer irow = 1;
 		while (irow <= my rows.size) {
@@ -1059,7 +1059,7 @@ static int cellCompare (const void *first, const void *second) {
 	const TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
 	const integer ncol = cellCompare_columns->size;
 	for (integer icol = 1; icol <= ncol; icol ++) {
-		const integer cellNumber = cellCompare_columns->at [icol];
+		const integer cellNumber = (*cellCompare_columns) [icol];
 		if (my cells [cellNumber]. number < thy cells [cellNumber]. number)
 			return -1;
 		if (my cells [cellNumber]. number > thy cells [cellNumber]. number)
@@ -1668,8 +1668,8 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	Table_numericize_Assert (ranks.get(), 1);
 	Table_numericize_Assert (ranks.get(), 2);
 	Table_numericize_Assert (ranks.get(), 3);
-	integer columns [1+1] = { 0, 2 };   // we're gonna sort by column 2
-	Table_sortRows_Assert (ranks.get(), constINTVEC (columns, 1));   // we sort by one column only
+	integer columns [1] = { 2 };   // we're gonna sort by column 2
+	Table_sortRows_Assert (ranks.get(), constINTVEC (columns, 1, false));   // we sort by one column only
 	double totalNumberOfTies3 = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		TableRow row = ranks -> rows.at [irow];

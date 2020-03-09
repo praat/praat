@@ -3222,7 +3222,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer n = x->numericVector.size;
-		double *at = x->numericVector.at;
+		VEC at = x->numericVector;
 		if (x->owned) {
 			for (integer i = 1; i <= n; i ++)
 				at [i] = f (at [i]);
