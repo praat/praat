@@ -156,7 +156,7 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, iFrom, iTo, hmin, hmax);
-	Graphics_function (g, my history.at, itmin, itmax, itmin, itmax);
+	Graphics_function (g, my history.asArgumentToFunctionThatExpectsOneBasedArray(), itmin, itmax, itmin, itmax);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -342,9 +342,9 @@ void structVDSmagtMinimizer :: v_minimize () {
 				if ((fc < minimum) || ((fc == minimum) && (grc / gropt > -1))) {
 					gopt_sq = gsq;
 					history [this -> iteration] = minimum = fc;
-					std::swap (p.at, pc.at);
-					std::swap (dp.at, gc.at);
-					if (grc * gropt <= 0)
+					std::swap (p, pc);
+					std::swap (dp, gc);
+					if (grc * gropt <= 0.0)
 						alplim = alphamin;
 					alphamin = alpha;
 					gropt = grc;

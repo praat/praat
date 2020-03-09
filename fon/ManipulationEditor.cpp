@@ -220,34 +220,49 @@ static void menu_cb_addPitchPointAtCursor (ManipulationEditor me, EDITOR_ARGS_DI
 static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
 	PointProcess pulses = ana -> pulses.get();
-	if (! pulses) Melder_throw (U"There are no pulses.");
-	if (! ana -> pitch) return;
+	if (! pulses)
+		Melder_throw (U"There are no pulses.");
+	if (! ana -> pitch)
+		return;
 	integer ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
-	double *t = pulses -> t.at;
+	constVEC t = pulses -> t.get();
 	double f = my pitchTier.cursor;   // default
 	Editor_save (me, U"Add pitch point");
 	if (nt <= 1) {
 		/* Ignore. */
 	} else if (ileft <= 0) {
 		double tright = t [2] - t [1];
-		if (tright > 0.0 && tright <= 0.02) f = YLIN (1.0 / tright);
+		if (tright > 0.0 && tright <= 0.02)
+			f = YLIN (1.0 / tright);
 	} else if (iright > nt) {
 		double tleft = t [nt] - t [nt - 1];
-		if (tleft > 0.0 && tleft <= 0.02) f = YLIN (1.0 / tleft);
+		if (tleft > 0.0 && tleft <= 0.02)
+			f = YLIN (1.0 / tleft);
 	} else {   /* Three-period median. */
 		double tmid = t [iright] - t [ileft], tleft = 0.0, tright = 0.0;
-		if (ileft > 1) tleft = t [ileft] - t [ileft - 1];
-		if (iright < nt) tright = t [iright + 1] - t [iright];
-		if (tleft > 0.02) tleft = 0;
-		if (tmid > 0.02) tmid = 0;
-		if (tright > 0.02) tright = 0;
+		if (ileft > 1)
+			tleft = t [ileft] - t [ileft - 1];
+		if (iright < nt)
+			tright = t [iright + 1] - t [iright];
+		if (tleft > 0.02)
+			tleft = 0;
+		if (tmid > 0.02)
+			tmid = 0;
+		if (tright > 0.02)
+			tright = 0;
 		/* Bubble-sort. */
-		if (tmid < tleft) { double dum = tmid; tmid = tleft; tleft = dum; }
-		if (tright < tleft)  { double dum = tright; tright = tleft; tleft = dum; }
-		if (tright < tmid)  { double dum = tright; tright = tmid; tmid = dum; }
-		if (tleft != 0.0) f = YLIN (1 / tmid);   // median of 3
-		else if (tmid != 0.0) f = YLIN (2 / (tmid + tright));   // median of 2
-		else if (tright != 0.0) f = YLIN (1 / tright);   // median of 1
+		if (tmid < tleft)
+			std::swap (tmid, tleft);
+		if (tright < tleft)
+			std::swap (tright, tleft);
+		if (tright < tmid)
+			std::swap (tright, tmid);
+		if (tleft != 0.0)
+			f = YLIN (1 / tmid);   // median of 3
+		else if (tmid != 0.0)
+			f = YLIN (2 / (tmid + tright));   // median of 2
+		else if (tright != 0.0)
+			f = YLIN (1 / tright);   // median of 1
 	}
 	RealTier_addPoint (ana -> pitch.get(), 0.5 * (my startSelection + my endSelection), YLININV (f));
 	FunctionEditor_redraw (me);

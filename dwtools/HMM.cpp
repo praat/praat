@@ -1414,9 +1414,9 @@ autoHMMStateSequence HMM_HMMObservationSequence_to_HMMStateSequence (HMM me, HMM
 double HMM_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 	autoStringsIndex si = HMM_HMMStateSequence_to_StringsIndex (me, thee);
 	const integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
-	const integer *index = si -> classIndex.at;
+	constINTVEC index = si -> classIndex.get();
 
-	if (index == 0)
+	if (NUMisEmpty (index))
 		return undefined;
 	if (numberOfUnknowns > 0) {
 		Melder_warning (U"Unknown states (# = ", numberOfUnknowns, U").");

@@ -95,7 +95,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		*/
 		Melder_require (f -> nFormants > 0,
 			U"Not enough formants.");
-		double *area = af -> c.at; // TODO
+		VEC area = af -> c.get(); // TODO
 		double lmin = length = 0.10;
 		double plength = refLength;
 		while (length <= 0.25) {

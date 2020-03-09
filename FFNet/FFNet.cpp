@@ -137,7 +137,7 @@ static void bookkeeping (FFNet me) {
 	/*
 		The following test is essential because when an FFNet is read from file the w array already exists
 	*/
-	if (! my w.at)
+	if (NUMisEmpty (my w))
 		my w = newVECzero (my numberOfWeights);
 
 	my activity = newVECzero (my numberOfNodes);

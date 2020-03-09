@@ -139,7 +139,7 @@ autoVEC praat_idsOfAllSelected (ClassInfo klas) {
 	autoVEC result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
 	integer selectedObjectNumber = 0, IOBJECT;
 	WHERE (SELECTED && (! klas || CLASS == klas)) {
-		result.at [++ selectedObjectNumber] = ID;
+		result [++ selectedObjectNumber] = ID;
 	}
 	return result;
 }
@@ -196,24 +196,24 @@ void praat_select (int IOBJECT) {
 	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object);
 	integer readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
-	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
+	if (readableClassId == 0)
+		Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
-	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
+	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding)
 		GuiList_selectItem (praatList_objects, IOBJECT);
-	}
 }
 
 void praat_selectAll () { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
 
 void praat_list_background () {
 	int IOBJECT;
-	WHERE (SELECTED) GuiList_deselectItem (praatList_objects, IOBJECT);
+	WHERE (SELECTED)
+		GuiList_deselectItem (praatList_objects, IOBJECT);
 }
 void praat_list_foreground () {
 	int IOBJECT;
-	WHERE (SELECTED) {
+	WHERE (SELECTED)
 		GuiList_selectItem (praatList_objects, IOBJECT);
-	}
 }
 
 autoCollection praat_getSelectedObjects () {
@@ -244,10 +244,17 @@ void praat_write_do (UiForm dia, conststring32 extension) {
 		*/
 		int IOBJECT, found = 0;
 		Daata data = nullptr;
-		WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
+		WHERE (SELECTED) {
+			if (! data)
+				data = (Daata) OBJECT;
+			found += 1;
+		}
 		if (found == 1) {
 			MelderString_copy (& defaultFileName, data -> name.get());
-			if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
+			if (defaultFileName.length > 200) {
+				defaultFileName.string [200] = U'\0';
+				defaultFileName.length = 200;
+			}
 			MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
 		} else if (! extension) {
 			MelderString_copy (& defaultFileName, U"praat.Collection");
@@ -1726,16 +1733,16 @@ void praat_run () {
 	Melder_assert (str32equ (Melder_colour (MelderColour (0.25, 0.50, 0.875)), U"{0.25,0.5,0.875}"));
 	{
 		VEC xn;   // uninitialized
-		Melder_assert (! xn.at);
+		Melder_assert (! xn.cells);
 		Melder_assert (xn.size == 0);
 		VEC x { };
-		Melder_assert (! x.at);
+		Melder_assert (! x.cells);
 		Melder_assert (x.size == 0);
 		constVEC xnc;   // zero-initialized
-		Melder_assert (! xnc.at);
+		Melder_assert (! xnc.cells);
 		Melder_assert (xnc.size == 0);
 		constVEC xc { };
-		Melder_assert (! xc.at);
+		Melder_assert (! xc.cells);
 		Melder_assert (xc.size == 0);
 		MAT yn;
 		Melder_assert (! yn.cells);

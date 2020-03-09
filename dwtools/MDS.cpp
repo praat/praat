@@ -2385,12 +2385,12 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			const double x = low + dx * (j - 1);
 			double yx;
 			if (splineType == kMDS_splineType::MSpline)
-				yx = NUMmspline (constVEC (knot, numberOfKnots), order, i, x);
+				yx = NUMmspline (constVEC (& knot [1], numberOfKnots, false), order, i, x);
 			else
-				yx = NUMispline (constVEC (knot, numberOfKnots), order, i, x);
+				yx = NUMispline (constVEC (& knot [1], numberOfKnots, false), order, i, x);
 			y [j] = ( yx < ymin ? ymin : ( yx > ymax ? ymax : yx ) );
 		}
-		Graphics_function (g, y.at, 1, numberOfPoints, low, high);
+		Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, numberOfPoints, low, high);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {

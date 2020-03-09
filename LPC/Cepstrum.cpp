@@ -111,7 +111,7 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 		VECclip_inplace (y.get(), minimum, maximum);
 
 	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
-	Graphics_function (g, y.at, 1, numberOfSelected, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
+	Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, numberOfSelected, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
 
 	Graphics_unsetInner (g);
 
@@ -185,7 +185,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 			double q = q1 + (i - 1) * dq;
 			y [i] = a * log (q) + intercept;
 		}
-		Graphics_function (g, y.at, 1, n, qstart, qend);
+		Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, n, qstart, qend);
 	} else {
 		double y1 = a * qstart + intercept, y2 = a * qend + intercept;
 		if (y1 >= dBminimum && y2 >= dBminimum) {

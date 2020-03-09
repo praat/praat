@@ -709,7 +709,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 		*/
 		variable -> numericVectorValue. adoptFromAmbiguousOwner (movedVector);
 	} else if (variable -> numericVectorValue.size == movedVector.size) {
-		if (variable -> numericVectorValue.at == movedVector.at) {
+		if (variable -> numericVectorValue.cells == movedVector.cells) {
 			/*
 				Statement like: a# = a#
 			*/

@@ -270,7 +270,7 @@ double CCA_getCorrelationCoefficient (CCA me, integer index) {
 }
 
 void CCA_getZeroCorrelationProbability (CCA me, integer eigenvalueNumber, double *out_prob, double *out_chisq, double *out_df) {
-	const double *eigenvalues = my y -> eigenvalues.at;
+	constVEC eigenvalues = my y -> eigenvalues.get();
 	const integer numberOfEigenvalues = my y -> numberOfEigenvalues;
 	const integer ny = my y -> dimension, nx = my x -> dimension;
 
