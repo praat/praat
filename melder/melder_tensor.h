@@ -20,37 +20,21 @@
 
 /********** Arrays with one index **********/
 
-byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
-/*
-	Function:
-		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
-	Preconditions:
-		hi >= lo;
-*/
+enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
 
-void NUMvector_free_generic (integer elementSize, byte *v, integer lo) noexcept;
-/*
-	Function:
-		destroy a vector v that was created with NUMvector.
-	Preconditions:
-		lo must have the same values as with the creation of the vector.
-*/
+byte * MelderTensor_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType);
 
 template <class T>
-T* NUMvector (integer from, integer to) {
-	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, true));
+T* MelderTensor (integer numberOfCells, kTensorInitializationType initializationType) {
+	T* result = reinterpret_cast <T*> (MelderTensor_generic (sizeof (T), numberOfCells, initializationType));
 	return result;
 }
 
-template <class T>
-T* NUMvector (integer from, integer to, bool initializeToZero) {
-	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, initializeToZero));
-	return result;
-}
+void MelderTensor_free_generic (byte *cells) noexcept;
 
 template <class T>
-void NUMvector_free (T* ptr, integer from) noexcept {
-	NUMvector_free_generic (sizeof (T), reinterpret_cast <byte *> (ptr), from);
+void MelderTensor_free (T* cells) noexcept {
+	MelderTensor_free_generic (reinterpret_cast <byte *> (cells));
 }
 
 integer NUM_getTotalNumberOfArrays ();   // for debugging
@@ -80,19 +64,17 @@ integer NUM_getTotalNumberOfArrays ();   // for debugging
 		}
 */
 
-enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
-
 template <typename T>
 class autovector;   // forward declaration, needed in the declaration of vector<>
 
 template <typename T>
 class vector {
 public:
-	T *at = nullptr;
+	T *cells = nullptr;
 	integer size = 0;
 public:
 	vector () = default;
-	explicit vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	explicit vector (T *givenCells, integer givenSize, bool dummy): cells (givenCells), size (givenSize) { }
 	vector (const vector& other) = default;
 	/*
 		Letting an autovector convert to a vector would lead to errors such as in
@@ -121,7 +103,7 @@ public:
 	*/
 	vector& operator= (const autovector<T>&) = delete;
 	T& operator[] (integer i) const {
-		return our at [i];
+		return our cells [i - 1];
 	}
 	/*
 		part (first, last) should crash under the exact
@@ -137,12 +119,12 @@ public:
 		if (newSize <= 0) return vector<T> ();
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 1 && last <= our size);
-		return vector<T> (& our at [first - 1], newSize);
+		return vector<T> (& our cells [first - 1], newSize, false);
 	}
-	T *begin () const { return & our at [1]; }
-	T *end () const { return & our at [our size + 1]; }
-	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our at [1]; }
-	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our at [0]; }
+	T *begin () const { return our cells; }
+	T *end () const { return our cells + our size; }
+	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
+	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return our cells - 1; }
 };
 
 template <typename T>
@@ -153,7 +135,7 @@ public:
 	integer stride = 1;
 	vectorview () = default;
 	vectorview (const vector<T>& other) :
-			firstCell (& other.at [1]), size (other.size), stride (1) { }
+			firstCell (other.cells), size (other.size), stride (1) { }
 	vectorview (const autovector<T>& other) = delete;
 	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_) :
 			firstCell (firstCell_), size (size_), stride (stride_) { }
@@ -176,30 +158,31 @@ public:
 template <typename T>
 class constvector {
 public:
-	const T *at = nullptr;
+	const T *cells = nullptr;
 	integer size = 0;
 	constvector () = default;
-	explicit constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
-	//constvector (const constvector& other): at (other.at), size (other.size) { }
+	explicit constvector (const T *givenCells, integer givenSize, bool dummy): cells (givenCells), size (givenSize) { }
+	constvector (vector<T> vec): cells (vec.cells), size (vec.size) { }
+	//constvector (const constvector& other): cells (other.cells), size (other.size) { }
 	//constvector& operator= (const constvector& other) {
-	//	our at = other.at;
+	//	our cells = other.cells;
 	//	our size = other.size;
 	//}
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
-		return our at [i];
+		return our cells [i - 1];
 	}
 	constvector<T> part (integer first, integer last) const {
 		const integer newSize = last - (first - 1);
-		if (newSize <= 0) return constvector<T> (nullptr, 0);
+		if (newSize <= 0)
+			return constvector<T> (nullptr, 0, false);
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 1 && last <= our size);
-		return constvector<T> (& our at [first - 1], newSize);
+		return constvector<T> (& our cells [first - 1], newSize, false);
 	}
-	const T *begin () const { return & our at [1]; }
-	const T *end () const { return & our at [our size + 1]; }
-	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our at [1]; }
-	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our at [0]; }
+	const T *begin () const { return our cells; }
+	const T *end () const { return our cells + our size; }
+	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
+	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return our cells - 1; }
 };
 
 template <typename T>
@@ -210,9 +193,9 @@ public:
 	integer stride = 1;
 	constvectorview () = default;
 	constvectorview (const constvector<T>& other) :
-			firstCell (& other.at [1]), size (other.size), stride (1) { }
+			firstCell (other.cells), size (other.size), stride (1) { }
 	constvectorview (const vector<T>& other) :
-			firstCell (& other.at [1]), size (other.size), stride (1) { }
+			firstCell (other.cells), size (other.size), stride (1) { }
 	constvectorview (const autovector<T>& other) = delete;
 	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_) :
 			firstCell (firstCell_), size (size_), stride (stride_) { }
@@ -244,11 +227,10 @@ template <typename T>
 class autovector : public vector<T> {
 	integer _capacity = 0;
 public:
-	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
+	autovector (): vector<T> (nullptr, 0, false) { }   // come into existence without a payload
 	explicit autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
-		our at = ( givenSize == 0 ? nullptr
-				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
+		our cells = ( givenSize == 0 ? nullptr : MelderTensor <T> (givenSize, initializationType) );
 		our size = givenSize;
 		our _capacity = givenSize;
 	}
@@ -256,20 +238,20 @@ public:
 		our reset ();
 		our _capacity = 0;
 	}
-	vector<T> get () const { return vector<T> (our at, our size); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
-	vectorview<T> all () const { return vectorview<T> (& our at [1], our size, 1); }
+	vector<T> get () const { return vector<T> (our cells, our size, false); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
+	vectorview<T> all () const { return vectorview<T> (our cells, our size, 1); }
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
 		our reset();
-		our at = given.at;
+		our cells = given.cells;
 		our size = given.size;
 		our _capacity = given.size;
 	}
 	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
-		T *oldAt = our at;
-		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		T *oldCells = our cells;
+		our cells = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		integer oldSize = our size;
 		our _capacity = 0;
-		return vector<T> (oldAt, oldSize);
+		return vector<T> (oldCells, oldSize, false);
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
@@ -281,37 +263,37 @@ public:
 		This implements buying a payload from another autovector (which involves destroying our current payload).
 	*/
 	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
-		other.at = nullptr;   // disown source
+		other.cells = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
 		other._capacity = 0;
 	}
 	autovector& operator= (autovector&& other) noexcept {   // enable move assignment
-		if (other.at != our at) {
+		if (other.cells != our cells) {
 			our reset ();
-			our at = other.at;
+			our cells = other.cells;
 			our size = other.size;
 			our _capacity = other._capacity;
-			other.at = nullptr;   // disown source
+			other.cells = nullptr;   // disown source
 			other.size = 0;   // to keep the source in a valid state
 			other._capacity = 0;
 		}
 		return *this;
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
-		if (our at) {
-			NUMvector_free (our at, 1);
-			our at = nullptr;
+		if (our cells) {
+			MelderTensor_free (our cells);
+			our cells = nullptr;
 		}
 		our size = 0;
 	}
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 	/*
-		Some of the following functions are capable of keeping a valid `at` pointer
+		Some of the following functions are capable of keeping a valid `cells` pointer
 		while `size` can at the same time be zero.
 	*/
 	void initWithCapacity (integer capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
 		if (capacity > 0)
-			our at = NUMvector<T> (1, capacity, initializationType == kTensorInitializationType::ZERO);
+			our cells = MelderTensor <T> (capacity, initializationType);
 		our size = 0;
 		our _capacity = capacity;
 	}
@@ -342,15 +324,15 @@ public:
 			/*
 				Create without change.
 			*/
-			T *newAt = NUMvector<T> (1, newCapacity, initializationType == kTensorInitializationType::ZERO);
+			T *newCells = MelderTensor<T> (newCapacity, initializationType);
 			/*
 				Change without error.
 			*/
 			for (integer i = 1; i <= our size; i ++)
-				newAt [i] = std::move (our at [i]);
-			if (our at)
-				NUMvector_free (our at, 1);
-			our at = newAt;
+				newCells [i - 1] = std::move (our cells [i - 1]);
+			if (our cells)
+				MelderTensor_free (our cells);
+			our cells = newCells;
 			our _capacity = newCapacity;
 		}
 		our size = newSize;
@@ -359,17 +341,17 @@ public:
 		resize (our size + 1, kTensorInitializationType::RAW);
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = our size; i > position; i --)
-			our at [i] = std::move (our at [i - 1]);
-		our at [position] = value;
+			our cells [i - 1] = std::move (our cells [i - 2]);
+		our cells [position - 1] = value;
 	}
 	T* append () {
 		resize (our size + 1, kTensorInitializationType::ZERO);
-		return & our at [our size];
+		return & our cells [our size - 1];
 	}
 	void remove (integer position) {
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = position; i < our size; i ++)
-			our at [i] = std::move (our at [i + 1]);
+			our cells [i - 1] = std::move (our cells [i]);
 		resize (our size - 1);
 	}
 };
@@ -415,12 +397,12 @@ public:
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
 	vector<T> operator[] (integer rowNumber) const {
-		return vector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
+		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol, false);
 	}
 	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		Melder_assert (our cells);
-		return vector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
+		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol, false);
 	}
 	vectorview<T> column (integer columnNumber) const {
 		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
@@ -522,12 +504,12 @@ public:
 			cells (mat.cells), nrow (mat.nrow), ncol (mat.ncol) { }
 
 	constvector<T> operator[] (integer rowNumber) const {
-		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
+		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol, false);
 	}
 	constvector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		Melder_assert (our cells);
-		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
+		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol, false);
 	}
 	constvectorview<T> column (integer columnNumber) const {
 		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
@@ -640,14 +622,15 @@ public:
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
 		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: NUMvector<T> (0, givenNrow * givenNcol - 1, initializationType == kTensorInitializationType::ZERO));
+				: MelderTensor <T> (givenNrow * givenNcol, initializationType) );
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
-		if (our cells) NUMvector_free (our cells, 0);
+		if (our cells)
+			MelderTensor_free (our cells);
 	}
-	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	matrixview<T> all () const {
 		return matrixview<T> (our cells, our nrow, our ncol, our ncol, 1);
@@ -679,7 +662,8 @@ public:
 	}
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
-			if (our cells) NUMvector_free (our cells, 0);
+			if (our cells)
+				MelderTensor_free (our cells);
 			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -691,7 +675,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			NUMvector_free (our cells, 0);
+			MelderTensor_free (our cells);
 			our cells = nullptr;
 		}
 		our nrow = 0;
@@ -995,7 +979,7 @@ public:
 		Melder_assert (givenNdim2 >= 0);
 		Melder_assert (givenNdim3 >= 0);
 		our cells = ( givenNdim1 == 0 || givenNdim2 == 0 || givenNdim3 == 0 ? nullptr
-				: NUMvector<T> (0, givenNdim3 * givenNdim2 * givenNdim1 - 1, initializationType == kTensorInitializationType::ZERO));
+				: MelderTensor <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
 		our ndim1 = givenNdim1;
 		our ndim2 = givenNdim2;
 		our ndim3 = givenNdim3;
@@ -1004,7 +988,8 @@ public:
 		our stride1 = givenNdim3 * givenNdim2;
 	}
 	~autotensor3 () {   // destroy the payload (if any)
-		if (our cells) NUMvector_free (our cells, 0);
+		if (our cells)
+			MelderTensor_free (our cells);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	const tensor3<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
@@ -1040,7 +1025,8 @@ public:
 	}
 	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
-			if (our cells) NUMvector_free (our cells, 0);
+			if (our cells)
+				MelderTensor_free (our cells);
 			our cells = other.cells;
 			our ndim1 = other.ndim1;
 			our ndim2 = other.ndim2;
@@ -1054,7 +1040,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			NUMvector_free (our cells, 0);
+			MelderTensor_free (our cells);
 			our cells = nullptr;
 		}
 		our ndim1 = 0;

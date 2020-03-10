@@ -2,7 +2,7 @@
 #define _melder_strvec_h_
 /* melder_strvec.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,20 @@
 template <typename T>
 class _stringvector {
 public:
-	T** at = nullptr;
+	T** elements = nullptr;
 	integer size = 0;
 	_stringvector () { }
-	_stringvector (T** givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	_stringvector (T** givenElements, integer givenSize, bool dummy): elements (givenElements), size (givenSize) { }
 	T* & operator[] (integer i) const {
-		return our at [i];
+		return our elements [i - 1];
 	}
 	_stringvector<T> part (integer firstPosition, integer lastPosition) {
 		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
-		if (newSize <= 0) return _stringvector<T> ();
-		return _stringvector (at + (firstPosition - 1), newSize);
+		if (newSize <= 0)
+			return _stringvector<T> ();
+		return _stringvector (our elements + (firstPosition - 1), newSize);
 	}
 	T* *begin () const { return & our operator[] (1); }
 	T* *end () const { return & our operator[] (our size + 1); }
@@ -47,21 +48,22 @@ class _autostringvectorview;
 template <typename T>
 class _conststringvector {
 public:
-	const T* const * at = nullptr;
+	const T* const * elements = nullptr;
 	integer size = 0;
 	_conststringvector () { }
-	_conststringvector (const T* const * givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	_conststringvector (_stringvector<T> other): at (other.at), size (other.size) { }
-	_conststringvector (_autostringvectorview<T> other): at ((T**) other._ptr), size (other.size) { }
+	_conststringvector (const T* const * givenElements, integer givenSize, bool dummy): elements (givenElements), size (givenSize) { }
+	_conststringvector (_stringvector<T> other): elements (other.elements), size (other.size) { }
+	_conststringvector (_autostringvectorview<T> other): elements ((T**) other._ptr), size (other.size) { }
 	const T* const & operator[] (integer i) const {
-		return our at [i];
+		return our elements [i - 1];
 	}
 	_conststringvector<T> part (integer firstPosition, integer lastPosition) {
 		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
-		if (newSize <= 0) return _conststringvector<T> ();
-		return _conststringvector (at + (firstPosition - 1), newSize);
+		if (newSize <= 0)
+			return _conststringvector<T> ();
+		return _conststringvector (our elements + (firstPosition - 1), newSize);
 	}
 	T* *begin () const { return & our operator[] (1); }
 	T* *end () const { return & our operator[] (our size + 1); }
@@ -72,12 +74,12 @@ using conststring8vector  = _conststringvector <char>;
 template <typename T>
 class _autostringvectorview {
 public:
-	_autostring <T> * _ptr = nullptr;
+	_autostring <T> * _elements = nullptr;
 	integer size = 0;
 	_autostringvectorview<T> () = default;
-	_autostringvectorview<T> (_autostring <T> * givenPtr, integer givenSize): _ptr (givenPtr), size (givenSize) { }
+	_autostringvectorview<T> (_autostring <T> * givenElements, integer givenSize, bool dummy): _elements (givenElements), size (givenSize) { }
 	_autostring <T> & operator[] (integer i) const {
-		return our _ptr [i];
+		return our _elements [i - 1];
 	}
 };
 
@@ -90,31 +92,31 @@ void operator<<= (_autostringvectorview <T> const& target, _autostringvectorview
 
 template <typename T>
 class _autostringautovector {
-	_autostring <T> * _ptr;
+	_autostring <T> * _elements;
 public:
 	integer size;
 	_autostringautovector () {
-		our _ptr = nullptr;
+		our _elements = nullptr;
 		our size = 0;
 	}
 	_autostringautovector<T> (integer initialSize) {
-		our _ptr = NUMvector <_autostring <T>> (1, initialSize, true);
+		our _elements = MelderTensor <_autostring <T>> (initialSize, kTensorInitializationType :: ZERO);
 		our size = initialSize;
 	}
 	_autostringautovector (const _autostringautovector &) = delete;
 	_autostringautovector (_autostringautovector&& other) {
-		our _ptr = other. _ptr;
+		our _elements = other. _elements;
 		our size = other. size;
-		other. _ptr = nullptr;
+		other. _elements = nullptr;
 		other. size = 0;
 	}
 	_autostringautovector& operator= (const _autostringautovector &) = delete;   // disable copy assignment
 	_autostringautovector& operator= (_autostringautovector&& other) noexcept {   // enable move assignment
 		if (& other != this) {
 			our reset ();
-			our _ptr = other. _ptr;
+			our _elements = other. _elements;
 			our size = other. size;
-			other. _ptr = nullptr;
+			other. _elements = nullptr;
 			other. size = 0;
 		}
 		return *this;
@@ -122,25 +124,25 @@ public:
 	~ _autostringautovector<T> () {
 		our reset ();
 	}
-	explicit operator bool () const noexcept { return !! our _ptr; }
+	explicit operator bool () const noexcept { return !! our _elements; }
 	_autostring <T> & operator[] (integer i) {
-		return our _ptr [i];
+		return our _elements [i - 1];
 	}
 	_stringvector<T> get () const {
-		return _stringvector<T> { (T**) our _ptr, our size };
+		return _stringvector<T> { (T**) our _elements, our size, true };
 	}
 	_autostringvectorview<T> all () const {
-		return _autostringvectorview<T> (our _ptr, our size);
+		return _autostringvectorview<T> (our _elements, our size, true);
 	}
 	T** peek2 () const {   // can be assigned to a [const] mutablestring32* and to a const conststring32*, but not to a conststring32*
-		return (T**) our _ptr;
+		return (T**) our _elements - 1;
 	}
 	void reset () {
-		if (our _ptr) {
+		if (our _elements) {
 			for (integer i = 1; i <= our size; i ++)
-				our _ptr [i]. reset ();
-			NUMvector_free (our _ptr, 1);
-			our _ptr = nullptr;
+				our _elements [i - 1]. reset ();
+			MelderTensor_free (our _elements);
+			our _elements = nullptr;
 			our size = 0;
 		}
 	}
@@ -148,8 +150,9 @@ public:
 		Melder_assert (firstPosition >= 1 && firstPosition <= our size);
 		Melder_assert (lastPosition >= 1 && lastPosition <= our size);
 		integer newSize = lastPosition - (firstPosition - 1);
-		if (newSize <= 0) return _autostringvectorview<T> ();
-		return _autostringvectorview<T> (our _ptr + (firstPosition - 1), newSize);
+		if (newSize <= 0)
+			return _autostringvectorview<T> ();
+		return _autostringvectorview<T> (our _elements + (firstPosition - 1), newSize, true);
 	}
 };
 

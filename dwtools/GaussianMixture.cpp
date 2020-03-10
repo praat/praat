@@ -479,7 +479,7 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_function (g, p.at, 1, npoints, x1, xmax - 0.5 * dx);
+	Graphics_function (g, p.asArgumentToFunctionThatExpectsOneBasedArray(), 1, npoints, x1, xmax - 0.5 * dx);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -520,7 +520,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_function (g, p.at, 1, npoints, xmin, xmax);
+	Graphics_function (g, p.asArgumentToFunctionThatExpectsOneBasedArray(), 1, npoints, xmin, xmax);
 	Graphics_unsetInner (g);
 
 	if (garnish) {

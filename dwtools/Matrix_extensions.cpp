@@ -318,7 +318,7 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 
 	for (integer i = iymin; i <= iymax; i ++)
 		y [i - iymin + 1] = my z [i] [ix];
-	Graphics_function (g, y.at, 1, ysize, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
+	Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, ysize, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
 	Graphics_unsetInner (g);
 }
 

@@ -202,7 +202,9 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 				y [i] = ymin;
 				x [i] = xcros_min;
 
-				Graphics_polyline (g, i - index + 1, x.at + index, y.at + index);
+				Graphics_polyline (g, i - index + 1,
+						x.asArgumentToFunctionThatExpectsZeroBasedArray() + index,
+						y.asArgumentToFunctionThatExpectsZeroBasedArray() + index);
 
 				x [index] = xb;
 				y [index] = yb;
@@ -225,7 +227,9 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 				y [i] = ymax;
 				x [i] =  xcros_max;
 
-				Graphics_polyline (g, i - index + 1, x.at + index, y.at + index);
+				Graphics_polyline (g, i - index + 1,
+						x.asArgumentToFunctionThatExpectsZeroBasedArray() + index,
+						y.asArgumentToFunctionThatExpectsZeroBasedArray() + index);
 
 				x [index] = xb;
 				y [index] = yb;
@@ -239,7 +243,9 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 		x1 = x2;
 	}
 	if (index < x.size - 1) {
-		Graphics_polyline (g, x.size - index, x.at + index, y.at + index);
+		Graphics_polyline (g, x.size - index,
+				x.asArgumentToFunctionThatExpectsZeroBasedArray() + index,
+				y.asArgumentToFunctionThatExpectsZeroBasedArray() + index);
 		x [index] = xb;
 		y [index] = yb;
 	}

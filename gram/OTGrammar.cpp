@@ -2488,7 +2488,7 @@ static void OTGrammarTableau_removeCandidate_unstripped (OTGrammarTableau me, in
 	my candidates [candidateNumber]. destroy ();
 	Melder_assert (! my candidates [candidateNumber]. output);   // check leak
 	Melder_assert (my candidates [candidateNumber]. marks.size == 0);
-	Melder_assert (my candidates [candidateNumber]. marks.at == nullptr);   // check leak
+	Melder_assert (my candidates [candidateNumber]. marks.cells == nullptr);   // check leak
 	my candidates. remove (candidateNumber);
 	my numberOfCandidates -= 1;   // maintain invariant
 	Melder_assert (my numberOfCandidates == my candidates.size);

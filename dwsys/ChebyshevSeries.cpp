@@ -127,10 +127,10 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 				if (my coefficients [n + 1] != 0.0)
 					for (integer j = 1; j <= n + 1; j ++)
 						thy coefficients [j] += my coefficients [n + 1] * pn [j];
-				double *t1 = pnm1.at, *t2 = pnm2.at;  // circular swap
-				pnm1.at = pn.at;
-				pnm2.at = t1;
-				pn.at = t2;
+				autoVEC pn_old = std::move (pn);
+				pn = std::move (pnm2);
+				pnm2 = std::move (pnm1);
+				pnm1 = std::move (pn_old);
 			}
 		}
 		if (my xmin != xmin || my xmax != xmax)
