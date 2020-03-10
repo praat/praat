@@ -30,31 +30,11 @@ T* MelderTensor (integer numberOfCells, kTensorInitializationType initialization
 	return result;
 }
 
-byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
-/*
-	Function:
-		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
-	Preconditions:
-		hi >= lo;
-*/
-
 void MelderTensor_free_generic (byte *cells) noexcept;
 
 template <class T>
 void MelderTensor_free (T* cells) noexcept {
 	MelderTensor_free_generic (reinterpret_cast <byte *> (cells));
-}
-
-template <class T>
-T* NUMvector (integer from, integer to) {
-	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, true));
-	return result;
-}
-
-template <class T>
-T* NUMvector (integer from, integer to, bool initializeToZero) {
-	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, initializeToZero));
-	return result;
 }
 
 integer NUM_getTotalNumberOfArrays ();   // for debugging
