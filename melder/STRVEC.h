@@ -1,7 +1,7 @@
 #pragma once
 /* STRVEC.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ inline STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toIndex) {
 	integer rangeSize = toIndex - offsetIndex;
 	if (rangeSize <= 0)
 		return STRVEC();
-	return STRVEC (& strvec [offsetIndex], toIndex - offsetIndex);
+	return STRVEC (& strvec [fromIndex], toIndex - offsetIndex, false);
 }
 
 inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer toIndex) {
@@ -34,7 +34,7 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	integer rangeSize = toIndex - offsetIndex;
 	if (rangeSize <= 0)
 		return constSTRVEC();
-	return constSTRVEC (& strvec [offsetIndex], rangeSize);
+	return constSTRVEC (& strvec [fromIndex], rangeSize, false);
 }
 
 void STRVECsort_inplace (STRVEC const& a);
