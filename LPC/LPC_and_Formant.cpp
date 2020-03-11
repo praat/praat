@@ -92,7 +92,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
 			my maxnCoefficients / 2.
 		*/
-		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : my maxnCoefficients / 2 );
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
 		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
 		integer numberOfSuspectFrames = 0;
 		const integer interval = ( my maxnCoefficients > 20 ? 1 : 10 );
@@ -147,7 +147,7 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
 			int ( my maxnCoefficients / 2 ) because if maxnCoefficients is uneven than at least one of the roots is real.
 		*/
-		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : my maxnCoefficients / 2 );
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1)/ 2 );
 		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
 		const integer numberOfFrames = my nx;
 		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, my dx, my x1, maximumNumberOfFormants);
