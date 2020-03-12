@@ -1,10 +1,10 @@
 # makefile for library "dwsys".
-# David Weenink 20200220
+# David Weenink 2020411
 # Paul Boersma 2018-08-10
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../kar
+CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../external/clapack -I ../kar
 
 all: libdwsys.a
 
