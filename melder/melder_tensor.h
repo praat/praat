@@ -37,7 +37,8 @@ void MelderTensor_free (T* cells) noexcept {
 	MelderTensor_free_generic (reinterpret_cast <byte *> (cells));
 }
 
-integer NUM_getTotalNumberOfArrays ();   // for debugging
+int64 MelderTensor_allocationCount ();
+int64 MelderTensor_deallocationCount ();
 
 #pragma mark - TENSOR
 /*

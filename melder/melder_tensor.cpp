@@ -18,9 +18,10 @@
 
 #include "melder.h"
 
-static integer theTotalNumberOfArrays;
+static int64 theTotalNumberOfAllocations = 0, theTotalNumberOfDeallocations = 0;
 
-integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
+int64 MelderTensor_allocationCount () { return theTotalNumberOfAllocations; }
+int64 MelderTensor_deallocationCount () { return theTotalNumberOfDeallocations; }
 
 #pragma mark - Generic memory functions for vectors
 
@@ -31,7 +32,7 @@ byte * MelderTensor_generic (integer cellSize, integer numberOfCells, kTensorIni
 		byte *result = ( initializationType == kTensorInitializationType :: ZERO ?
 				reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, cellSize)) :
 				reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * cellSize)) );
-		theTotalNumberOfArrays += 1;
+		theTotalNumberOfAllocations += 1;
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Tensor of ", numberOfCells, U" cells not created.");
@@ -42,7 +43,7 @@ void MelderTensor_free_generic (byte *cells) noexcept {
 	if (! cells)
 		return;   // not an error
 	Melder_free (cells);
-	theTotalNumberOfArrays -= 1;
+	theTotalNumberOfDeallocations += 1;
 }
 
 /* End of file melder_tensor.cpp */
