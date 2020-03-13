@@ -7,7 +7,7 @@
 static integer c__1 = 1;
 static doublereal c_b32 = 0.;
 
-doublereal dlamch_(char *cmach)
+doublereal dlamch_(const char *cmach)
 {
     /* Initialized data */
 

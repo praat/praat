@@ -16,10 +16,6 @@ static doublereal c_b71 = .5;
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions
-    double d_lg10(doublereal *), d_sign(doublereal *, doublereal *), pow_di(
-	    doublereal *, integer *); */
-
     /* Local variables */
     integer i__, j, k, l, m;
     doublereal t;

@@ -35,42 +35,11 @@ static integer c__12 = 12;
     integer lwk1, lwk2, lwk3;
     doublereal beta;
     integer kend, kcol, info, nmin, ifst, ilst, ltop, krow;
-    extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *), dgemm_(char *, char *, integer *, integer *
-, integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     logical bulge;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer infqr, kwtop;
-    extern /* Subroutine */ int dlanv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *), dlaqr4_(
-	    logical *, logical *, integer *, integer *, integer *, doublereal 
-	    *, integer *, doublereal *, doublereal *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *), 
-	    dlabad_(doublereal *, doublereal *);
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dgehrd_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *), dlarfg_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *), dlahqr_(logical *, logical *, integer *, 
-	     integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *), dlacpy_(char *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *);
     doublereal safmin;
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     doublereal safmax;
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    dorghr_(integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *), dtrexc_(char *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, integer *, doublereal *, integer *);
-    logical sorted;
+	logical sorted;
     doublereal smlnum;
     integer lwkopt;
 

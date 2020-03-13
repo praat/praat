@@ -14,6 +14,7 @@ form Copy files from CLAPACK to Praat tree
 	comment Also copy
 	boolean BLAS 0
 	boolean LAPACK 0
+	boolean F2CLIBS 0
 endform
 
 
@@ -23,8 +24,9 @@ lapackbase$ = "/home/david/projects/CLAPACK-" + lapack_version$ + "/"
 lapackpraat$ = "/home/david/projects/praat/external/clapack/"
 thisScriptName$ = "CLAPACK_copyFiles_to_Praat.praat"
 
-sources = 0
+sources = 1
 if sources > 0
+	exclude_h$ = "--exclude=f2c.h "
 	excludes$ = exclude_h$ + "--exclude=xerbla.c --exclude=xerbla_array.c  --exclude=dcabs1.c " +
 	... "--exclude=dzasum.c  --exclude=dznrm2.c  --exclude=f2c.h "
 	if bLAS
@@ -54,6 +56,15 @@ if sources > 0
 			... fromdir$ + "slamch.c"
 		runSystem_nocheck: "rsync -v " + excludes$ + includes$ + todir$
 	endif
+	excludes$ = "--exclude=s_stop.c --exclude=s_paus.c "
+	if f2CLIBS
+		todir$ = lapackpraat$ + "f2clib/"
+		fromdir$ = lapackbase$ + "F2CLIBS/libf2c/"
+		includes$ = fromdir$ + "d_*.c " + fromdir$ + "s_*.c " + fromdir$ + "pow_d*.c "
+		runSystem_nocheck: "rsync -v " + excludes$  + includes$ + todir$
+	endif
+endif
+
 endif
 
 modified_blas$ = ""
@@ -75,6 +86,13 @@ endif
 if lAPACK
 	todir$ = lapackpraat$ + "lapack/"
 	@make_makefile: todir$, "liblapack.a", "*.c", ".c"
+	appendInfoLine: makefile$
+	writeFile: todir$ + "Makefile", makefile$
+endif
+
+if f2CLIBS
+	todir$ = lapackpraat$ + "f2clib/"
+	@make_makefile: todir$, "libf2c.a", "*.c", ".c"
 	appendInfoLine: makefile$
 	writeFile: todir$ + "Makefile", makefile$
 endif

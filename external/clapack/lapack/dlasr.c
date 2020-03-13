@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlasr_(char *side, char *pivot, char *direct, integer *m, 
+/* Subroutine */ int dlasr_(const char *side, const char *pivot, const char *direct, integer *m, 
 	 integer *n, doublereal *c__, doublereal *s, doublereal *a, integer *
 	lda)
 {

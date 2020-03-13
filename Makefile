@@ -43,7 +43,8 @@ all:
 		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
 		external/glpk/libglpk.a \
-		external/clapack/liblapack.a external/clapack/libblas.a\
+		external/clapack/liblapack.a external/clapack/libblas.a \
+		external/clapack/libf2c.a \
 		external/gsl/libgsl.a \
 		$(LIBS)
 

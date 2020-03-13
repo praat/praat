@@ -53,7 +53,7 @@ logical disnan_(doublereal *din);
 
 logical dlaisnan_(doublereal *din1, doublereal *din2);
 
-doublereal dlamch_(char *cmach);
+doublereal dlamch_(const char *cmach);
 
 int dlamc1_(integer *beta, integer *t, logical *rnd, logical *ieee1);
 
@@ -71,36 +71,36 @@ int dlamc5_(integer *beta, integer *p, integer *emin,
 integer dlaneg_(integer *n, doublereal *d__, doublereal *lld, doublereal *
 	sigma, doublereal *pivmin, integer *r__);
 
-doublereal dlangb_(char *norm, integer *n, integer *kl, integer *ku, 
+doublereal dlangb_(const char *norm, integer *n, integer *kl, integer *ku, 
 	doublereal *ab, integer *ldab, doublereal *work);
 
-doublereal dlange_(char *norm, integer *m, integer *n, doublereal *a, integer 
+doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, integer 
 	*lda, doublereal *work);
 
-doublereal dlangt_(char *norm, integer *n, doublereal *dl, doublereal *d__, 
+doublereal dlangt_(const char *norm, integer *n, doublereal *dl, doublereal *d__, 
 	doublereal *du);
 
-doublereal dlanhs_(char *norm, integer *n, doublereal *a, integer *lda, 
+doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda, 
 	doublereal *work);
 
-doublereal dlansb_(char *norm, char *uplo, integer *n, integer *k, doublereal 
+doublereal dlansb_(const char *norm, const char *uplo, integer *n, integer *k, doublereal 
 	*ab, integer *ldab, doublereal *work);
 
-doublereal dlansp_(char *norm, char *uplo, integer *n, doublereal *ap, 
+doublereal dlansp_(const char *norm, const char *uplo, integer *n, doublereal *ap, 
 	doublereal *work);
 
 doublereal dlanst_(char *norm, integer *n, doublereal *d__, doublereal *e);
 
-doublereal dlansy_(char *norm, char *uplo, integer *n, doublereal *a, integer 
+doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a, integer 
 	*lda, doublereal *work);
 
-doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k, 
+doublereal dlantb_(const char *norm, char *uplo, char *diag, integer *n, integer *k, 
 	 doublereal *ab, integer *ldab, doublereal *work);
 
-doublereal dlantp_(char *norm, char *uplo, char *diag, integer *n, doublereal 
+doublereal dlantp_(const char *norm, const char *uplo, char *diag, integer *n, doublereal 
 	*ap, doublereal *work);
 
-doublereal dlantr_(char *norm, char *uplo, char *diag, integer *m, integer *n, 
+doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer *m, integer *n, 
 	 doublereal *a, integer *lda, doublereal *work);
 
 doublereal dlapy2_(doublereal *x, doublereal *y);
@@ -194,15 +194,19 @@ int dtrsv_(char *uplo, char *trans, char *diag, integer *n,
 	doublereal *a, integer *lda, doublereal *x, integer *incx);
 
 double d_sign(double *a, double *b);
-double d_lg10(doublereal *);
-integer i_dnnt(doublereal *);
-integer i_nint(real *);
-double pow_dd(doublereal *a, doublereal *b);
-double pow_di(doublereal *, integer *);
+double d_lg10(double *);
+integer i_dnnt(double *);
+inline integer i_nint (float *x) {
+	return (integer)(*x >= 0.0 ? floor(*x + 0.5) : -floor(0.5 - *x));
+}
+inline double pow_dd(double *a, double *b) {
+	return pow (*a, *b);
+}
+double pow_di(double *, integer *);
 integer pow_ii(integer *, integer *);
-int s_cat(char *, char **, integer *, integer *, ftnlen);
-integer s_cmp(char *, char *, ftnlen, ftnlen);
-int s_copy(char *, char *, ftnlen, ftnlen);
+void s_cat(char *, char **, integer *, integer *, integer);
+integer s_cmp (const char *, const char *, integer, integer);
+void s_copy(char *, const char *, integer, integer);
 doublereal slamch_(char *cmach);
 
 /* Missing if you want to compile clapack with g++ */
@@ -213,13 +217,13 @@ integer idamax_(integer *n, doublereal *dx, integer *incx);
 
 integer ieeeck_(integer *ispec, real *zero, real *one);
 
-integer ilaenv_(integer *ispec, char *name__, char *opts, integer *n1, 
+integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1, 
 	integer *n2, integer *n3, integer *n4);
 
-integer iparmq_(integer *ispec, char *name__, char *opts, integer *n, integer 
+integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n, integer 
 	*ilo, integer *ihi, integer *lwork);
 
-logical lsame_(char *ca, char *cb);
+logical lsame_(const char *ca, const char *cb);
 
 logical lsamen_(integer *n, char *ca, char *cb);
 

@@ -2037,7 +2037,7 @@
 	integer *pp, doublereal *dmin__, doublereal *dmin1, doublereal *dmin2,
 	 doublereal *dn, doublereal *dnm1, doublereal *dnm2);
 
-/* Subroutine */ int dlasr_(char *side, char *pivot, char *direct, integer *m,
+/* Subroutine */ int dlasr_(const char *side, const char *pivot, const char *direct, integer *m,
 	 integer *n, doublereal *c__, doublereal *s, doublereal *a, integer *
 	lda);
 

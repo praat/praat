@@ -29,23 +29,7 @@ static integer c__3 = 3;
 	    tau2;
     integer ierr;
     doublereal temp;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
     doublereal scale, dnorm, xnorm;
-    extern /* Subroutine */ int dlanv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *), dlasy2_(
-	    logical *, logical *, integer *, integer *, integer *, doublereal 
-	    *, integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *), dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dlartg_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), dlarfx_(char *, integer *, integer *, doublereal *, 
-	     doublereal *, doublereal *, integer *, doublereal *);
     doublereal thresh, smlnum;
 
 

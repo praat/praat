@@ -8,7 +8,7 @@ static real c_b163 = 0.f;
 static real c_b164 = 1.f;
 static integer c__1 = 1;
 
-integer ilaenv_(integer *ispec, char *name__, char *opts, integer *n1, 
+integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1, 
 	integer *n2, integer *n3, integer *n4)
 {
     /* System generated locals */
@@ -23,8 +23,6 @@ integer ilaenv_(integer *ispec, char *name__, char *opts, integer *n1,
     static logical sname;
 //    extern integer ieeeck_(integer *, real *, real *);
     static char subnam[6];
-    extern integer iparmq_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
 
     ftnlen name_len, opts_len;
 

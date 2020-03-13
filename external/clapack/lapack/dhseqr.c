@@ -27,23 +27,9 @@ static integer c__49 = 49;
     integer i__;
     doublereal hl[2401]	/* was [49][49] */;
     integer kbot, nmin;
-//    extern logical lsame_(char *, char *);
     logical initz;
     doublereal workl[49];
     logical wantt, wantz;
-    extern /* Subroutine */ int dlaqr0_(logical *, logical *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *), dlahqr_(logical *, logical *, 
-	     integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *), dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dlaset_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical lquery;
 
 

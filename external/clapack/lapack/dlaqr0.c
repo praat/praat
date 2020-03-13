@@ -38,31 +38,7 @@ static integer c__3 = 3;
     integer kacc22;
     logical nwinc;
     integer itmax, nsmax, nwmax, kwtop;
-    extern /* Subroutine */ int dlanv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *), dlaqr3_(
-	    logical *, logical *, integer *, integer *, integer *, integer *, 
-	    doublereal *, integer *, integer *, integer *, doublereal *, 
-	    integer *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *), 
-	    dlaqr4_(logical *, logical *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *), dlaqr5_(logical *, logical *, integer *, integer *, 
-	    integer *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *);
     integer nibble;
-    extern /* Subroutine */ int dlahqr_(logical *, logical *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *), dlacpy_(char *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     char jbcmpz[2];
     logical sorted;
     integer lwkopt;

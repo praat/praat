@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-doublereal dlansy_(char *norm, char *uplo, integer *n, doublereal *a, integer 
+doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a, integer 
 	*lda, doublereal *work)
 {
     /* System generated locals */

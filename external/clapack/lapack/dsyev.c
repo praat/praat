@@ -23,33 +23,14 @@ static doublereal c_b17 = 1.;
     doublereal anrm;
     integer imax;
     doublereal rmin, rmax;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical lower, wantz;
-//    extern doublereal dlamch_(char *);
     integer iscale;
-    extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
     doublereal safmin;
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     integer indtau;
-    extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
-	     integer *);
-    extern doublereal dlansy_(char *, char *, integer *, doublereal *, 
-	    integer *, doublereal *);
     integer indwrk;
-    extern /* Subroutine */ int dorgtr_(char *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *), dsteqr_(char *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dsytrd_(char *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *);
     integer llwork;
     doublereal smlnum;
     integer lwkopt;

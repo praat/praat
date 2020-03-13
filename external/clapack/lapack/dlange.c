@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-doublereal dlange_(char *norm, integer *m, integer *n, doublereal *a, integer 
+doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, integer 
 	*lda, doublereal *work)
 {
     /* System generated locals */

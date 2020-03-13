@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-integer iparmq_(integer *ispec, char *name__, char *opts, integer *n, integer 
+integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n, integer 
 	*ilo, integer *ihi, integer *lwork)
 {
     /* System generated locals */

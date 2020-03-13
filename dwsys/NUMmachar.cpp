@@ -50,7 +50,7 @@ ngrd
 		sfmin	'S'		safe minimum, such that 1/sfmin does not overflow
 */
 
-double dlamch_(char *cmach); // blas
+double dlamch_(const char *cmach); // blas
 
 void NUMmachar () {
 	if (NUMfpp)

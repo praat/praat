@@ -18,10 +18,6 @@ static doublereal c_b72 = -1.;
 	    i__2;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions 
-    double pow_dd(doublereal *, doublereal *), sqrt(doublereal), d_sign(
-	    doublereal *, doublereal *);*/
-
     /* Local variables */
     doublereal f, g, h__;
     integer i__, j, m;
@@ -36,19 +32,9 @@ static doublereal c_b72 = -1.;
     doublereal cosl;
     integer isub, iter;
     doublereal unfl, sinl, cosr, smin, smax, sinr;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *), dlas2_(
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
     doublereal oldcs;
-    extern /* Subroutine */ int dlasr_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *);
-    integer oldll;
+     integer oldll;
     doublereal shift, sigmn, oldsn;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer maxit;
     doublereal sminl, sigmx;
     logical lower;
