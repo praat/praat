@@ -15,9 +15,6 @@ static integer c_n1 = -1;
     integer q_dim1, q_offset, t_dim1, t_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer k, n1, n2, kk, nn, ks;
     doublereal est;
@@ -26,26 +23,12 @@ static integer c_n1 = -1;
     integer ierr;
     logical swap;
     doublereal scale;
-    extern logical lsame_(char *, char *);
     integer isave[3], lwmin;
     logical wantq, wants;
     doublereal rnorm;
-    extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *);
-    extern doublereal dlange_(char *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *);
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     logical wantbh;
-    extern /* Subroutine */ int dtrexc_(char *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *, integer *, 
-	    doublereal *, integer *);
     integer liwmin;
     logical wantsp, lquery;
-    extern /* Subroutine */ int dtrsyl_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -304,7 +287,7 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*ldt < max(1,*n)) {
+    } else if (*ldt < max(1_integer,*n)) {
 	*info = -6;
     } else if (*ldq < 1 || wantq && *ldq < *n) {
 	*info = -8;
@@ -348,12 +331,12 @@ static integer c_n1 = -1;
 /* Computing MAX */
 	    i__1 = 1, i__2 = nn << 1;
 	    lwmin = max(i__1,i__2);
-	    liwmin = max(1,nn);
+	    liwmin = max(1_integer,nn);
 	} else if (lsame_(job, "N")) {
-	    lwmin = max(1,*n);
+	    lwmin = max(1_integer,*n);
 	    liwmin = 1;
 	} else if (lsame_(job, "E")) {
-	    lwmin = max(1,nn);
+	    lwmin = max(1_integer,nn);
 	    liwmin = 1;
 	}
 

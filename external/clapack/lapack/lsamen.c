@@ -7,12 +7,9 @@ logical lsamen_(integer *n, char *ca, char *cb)
     integer i__1;
     logical ret_val;
 
-    /* Builtin functions */
-    //integer i_len(char *, ftnlen);
-
     /* Local variables */
     static integer i__;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
 
     ftnlen ca_len, cb_len;
 

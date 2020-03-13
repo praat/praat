@@ -13,19 +13,19 @@ static doublereal c_b11 = 1.;
     integer i__1;
     doublereal d__1;
 
-    /* Builtin functions */
+    /* Builtin functions
     double d_sign(doublereal *, doublereal *);
-    integer i_dnnt(doublereal *);
+    integer i_dnnt(doublereal *); */
 
     /* Local variables */
     static integer i__, j, iter;
     static doublereal temp;
     static integer jump;
-    extern doublereal dasum_(integer *, doublereal *, integer *);
+//    extern doublereal dasum_(integer *, doublereal *, integer *);
     static integer jlast;
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
-    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
     static doublereal altsgn, estold;
 
 

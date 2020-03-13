@@ -14,9 +14,6 @@ static integer c__2 = 2;
     /* System generated locals */
     integer u_dim1, u_offset, vt_dim1, vt_offset, i__1, i__2;
 
-    /* Builtin functions */
-    integer pow_ii(integer *, integer *);
-
     /* Local variables */
     integer i__, j, m, i1, ic, lf, nd, ll, nl, nr, im1, ncc, nlf, nrf, iwk, 
 	    lvl, ndb1, nlp1, nrp1;
@@ -24,16 +21,6 @@ static integer c__2 = 2;
     integer idxq, nlvl;
     doublereal alpha;
     integer inode, ndiml, idxqc, ndimr, itemp, sqrei;
-    extern /* Subroutine */ int dlasd1_(integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, integer *, integer *, integer *, doublereal *, 
-	    integer *), dlasdq_(char *, integer *, integer *, integer *, 
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlasdt_(integer *, integer *, 
-	    integer *, integer *, integer *, integer *, integer *), xerbla_(
-	    char *, integer *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

@@ -16,25 +16,12 @@ static doublereal c_b23 = 0.;
     integer q_dim1, q_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
+    /* Builtin functions
+    double sqrt(doublereal), d_sign(doublereal *, doublereal *);*/
 
     /* Local variables */
     integer i__, j, n2, n12, ii, n23, iq2;
     doublereal temp;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *),
-	     dcopy_(integer *, doublereal *, integer *, doublereal *, integer 
-	    *), dlaed4_(integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *);
-    extern doublereal dlamc3_(doublereal *, doublereal *);
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dlaset_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *), xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -176,7 +163,7 @@ static doublereal c_b23 = 0.;
 	*info = -1;
     } else if (*n < *k) {
 	*info = -2;
-    } else if (*ldq < max(1,*n)) {
+    } else if (*ldq < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

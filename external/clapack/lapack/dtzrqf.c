@@ -15,16 +15,6 @@ static doublereal c_b8 = 1.;
 
     /* Local variables */
     integer i__, k, m1;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *), dgemv_(char *, integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *), dcopy_(integer *, doublereal *, 
-	    integer *, doublereal *, integer *), daxpy_(integer *, doublereal 
-	    *, doublereal *, integer *, doublereal *, integer *), dlarfg_(
-	    integer *, doublereal *, doublereal *, integer *, doublereal *), 
-	    xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -132,7 +122,7 @@ static doublereal c_b8 = 1.;
 	*info = -1;
     } else if (*n < *m) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {

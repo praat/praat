@@ -23,7 +23,7 @@ static doublereal c_b19 = -1.;
     doublereal eps;
     integer kase;
     doublereal safe1, safe2;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer isave[3];
     extern /* Subroutine */ int dtbmv_(char *, char *, char *, integer *, 
 	    integer *, doublereal *, integer *, doublereal *, integer *), dcopy_(integer *, doublereal *, integer *
@@ -34,9 +34,9 @@ static doublereal c_b19 = -1.;
     logical upper;
     extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *, integer *, integer *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
     char transt[1];
     logical nounit;
@@ -194,9 +194,9 @@ static doublereal c_b19 = -1.;
 	*info = -6;
     } else if (*ldab < *kd + 1) {
 	*info = -8;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -10;
-    } else if (*ldx < max(1,*n)) {
+    } else if (*ldx < max(1_integer,*n)) {
 	*info = -12;
     }
     if (*info != 0) {

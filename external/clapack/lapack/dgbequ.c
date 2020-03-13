@@ -13,8 +13,8 @@
     /* Local variables */
     integer i__, j, kd;
     doublereal rcmin, rcmax;
-    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum, smlnum;
 
 
@@ -169,7 +169,7 @@
 /* Computing MIN */
 	i__4 = j + *kl;
 	i__3 = min(i__4,*m);
-	for (i__ = max(i__2,1); i__ <= i__3; ++i__) {
+	for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 	    d__2 = r__[i__], d__3 = (d__1 = ab[kd + i__ - j + j * ab_dim1], 
 		    abs(d__1));
@@ -245,7 +245,7 @@
 /* Computing MIN */
 	i__4 = j + *kl;
 	i__2 = min(i__4,*m);
-	for (i__ = max(i__3,1); i__ <= i__2; ++i__) {
+	for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__2 = c__[j], d__3 = (d__1 = ab[kd + i__ - j + j * ab_dim1], abs(
 		    d__1)) * r__[i__];

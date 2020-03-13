@@ -22,9 +22,9 @@ static doublereal c_b8 = -1.;
     doublereal sfmin;
     extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -107,7 +107,7 @@ static doublereal c_b8 = -1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {

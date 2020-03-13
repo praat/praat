@@ -47,7 +47,7 @@ static integer c__2 = 2;
 	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *), dlabad_(doublereal *, 
 	    doublereal *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *), dlacpy_(char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, integer *);

@@ -8,14 +8,6 @@
     /* System generated locals */
     integer ab_dim1, ab_offset, b_dim1, b_offset, i__1;
 
-    /* Local variables */
-    extern /* Subroutine */ int dgbtrf_(integer *, integer *, integer *, 
-	    integer *, doublereal *, integer *, integer *, integer *), 
-	    xerbla_(char *, integer *), dgbtrs_(char *, integer *, 
-	    integer *, integer *, integer *, doublereal *, integer *, integer 
-	    *, doublereal *, integer *, integer *);
-
-
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
@@ -138,7 +130,7 @@
 	*info = -4;
     } else if (*ldab < (*kl << 1) + *ku + 1) {
 	*info = -6;
-    } else if (*ldb < max(*n,1)) {
+    } else if (*ldb < max(*n,1_integer)) {
 	*info = -9;
     }
     if (*info != 0) {

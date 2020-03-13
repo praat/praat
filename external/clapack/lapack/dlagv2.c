@@ -26,9 +26,9 @@ static integer c__1 = 1;
     extern /* Subroutine */ int dlasv2_(doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *);
-    extern doublereal dlapy2_(doublereal *, doublereal *);
+//    extern doublereal dlapy2_(doublereal *, doublereal *);
     doublereal ascale, bscale;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal safmin;
     extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *);

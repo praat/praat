@@ -8,13 +8,10 @@
     integer i__1;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__;
     doublereal eps, tmp, tmp2, rmin;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal offdig, safmin;
     logical yesrel;
     doublereal smlnum, offdig2;

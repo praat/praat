@@ -21,8 +21,8 @@ static integer c__0 = 0;
     integer i__1, i__2, i__3;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double log(doublereal);
+    /* Builtin functions
+    double log(doublereal); */
 
     /* Local variables */
     integer i__, j, ib, ie, je, nb;
@@ -36,12 +36,12 @@ static integer c__0 = 0;
     integer nwu;
     doublereal tmp1, tmp2;
     integer iend, jblk, ioff, iout, itmp1, itmp2, jdisc;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     doublereal atoli;
     integer iwoff, itmax;
     doublereal wkill, rtoli, uflow, tnorm;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer ibegin;
     extern /* Subroutine */ int dlaebz_(integer *, integer *, integer *, 
 	    integer *, integer *, integer *, doublereal *, doublereal *, 
@@ -305,7 +305,7 @@ static integer c__0 = 0;
 	if (*vl >= *vu) {
 	    *info = -5;
 	}
-    } else if (irange == 3 && (*il < 1 || *il > max(1,*n))) {
+    } else if (irange == 3 && (*il < 1 || *il > max(1_integer,*n))) {
 	*info = -6;
     } else if (irange == 3 && (*iu < min(*n,*il) || *iu > *n)) {
 	*info = -7;

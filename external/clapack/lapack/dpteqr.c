@@ -15,25 +15,12 @@ static integer c__1 = 1;
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     doublereal c__[1]	/* was [1][1] */;
     integer i__;
     doublereal vt[1]	/* was [1][1] */;
     integer nru;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dbdsqr_(char *, integer *, 
-	    integer *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *);
     integer icompz;
-    extern /* Subroutine */ int dpttrf_(integer *, doublereal *, doublereal *, 
-	     integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -160,7 +147,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*ldz < 1 || icompz > 0 && *ldz < max(1,*n)) {
+    } else if (*ldz < 1 || icompz > 0 && *ldz < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

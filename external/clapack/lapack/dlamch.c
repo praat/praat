@@ -17,9 +17,6 @@ doublereal dlamch_(char *cmach)
     integer i__1;
     doublereal ret_val;
 
-    /* Builtin functions */
-    double pow_di(doublereal *, integer *);
-
     /* Local variables */
     static doublereal t;
     integer it;
@@ -30,12 +27,9 @@ doublereal dlamch_(char *cmach)
     logical lrnd;
     static doublereal rmin, rmax;
     doublereal rmach;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal small;
     static doublereal sfmin;
-    extern /* Subroutine */ int dlamc2_(integer *, integer *, logical *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -171,7 +165,7 @@ doublereal dlamch_(char *cmach)
     static logical lrnd;
     static integer lbeta;
     doublereal savec;
-    extern doublereal dlamc3_(doublereal *, doublereal *);
+//    extern doublereal dlamc3_(doublereal *, doublereal *);
     static logical lieee1;
 
 
@@ -381,10 +375,6 @@ L30:
     integer i__1;
     doublereal d__1, d__2, d__3, d__4, d__5;
 
-    /* Builtin functions */
-    double pow_di(doublereal *, integer *);
-    //integer s_wsfe(cilist *), do_fio(integer *, char *, ftnlen), e_wsfe(void);
-
     /* Local variables */
     doublereal a, b, c__;
     integer i__;
@@ -406,7 +396,7 @@ L30:
     doublereal sixth;
     extern /* Subroutine */ int dlamc1_(integer *, integer *, logical *, 
 	    logical *);
-    extern doublereal dlamc3_(doublereal *, doublereal *);
+//    extern doublereal dlamc3_(doublereal *, doublereal *);
     logical lieee1;
     extern /* Subroutine */ int dlamc4_(integer *, doublereal *, integer *), 
 	    dlamc5_(integer *, integer *, integer *, logical *, integer *, 
@@ -738,7 +728,7 @@ doublereal dlamc3_(doublereal *a, doublereal *b)
     doublereal a;
     integer i__;
     doublereal b1, b2, c1, c2, d1, d2, one, zero, rbase;
-    extern doublereal dlamc3_(doublereal *, doublereal *);
+//    extern doublereal dlamc3_(doublereal *, doublereal *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -838,7 +828,7 @@ L10:
     integer try__, lexp;
     doublereal oldy;
     integer uexp, nbits;
-    extern doublereal dlamc3_(doublereal *, doublereal *);
+//    extern doublereal dlamc3_(doublereal *, doublereal *);
     doublereal recbas;
     integer exbits, expsum;
 

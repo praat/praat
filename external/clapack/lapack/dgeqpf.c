@@ -12,15 +12,15 @@ static integer c__1 = 1;
     integer a_dim1, a_offset, i__1, i__2, i__3;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__, j, ma, mn;
     doublereal aii;
     integer pvt;
     doublereal temp;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
+//    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     doublereal temp2, tol3z;
     extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
@@ -32,11 +32,11 @@ static integer c__1 = 1;
 	    dorm2r_(char *, char *, integer *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
 	    doublereal *, integer *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK deprecated driver routine (version 3.1) -- */
@@ -146,7 +146,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {

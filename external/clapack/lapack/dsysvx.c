@@ -18,31 +18,10 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer nb;
-    extern logical lsame_(char *, char *);
     doublereal anorm;
-    extern doublereal dlamch_(char *);
     logical nofact;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern doublereal dlansy_(char *, char *, integer *, doublereal *, 
-	    integer *, doublereal *);
-    extern /* Subroutine */ int dsycon_(char *, integer *, doublereal *, 
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    integer *, integer *), dsyrfs_(char *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *), 
-	    dsytrf_(char *, integer *, doublereal *, integer *, integer *, 
-	    doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
-    extern /* Subroutine */ int dsytrs_(char *, integer *, integer *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *);
-
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -268,13 +247,13 @@ static integer c_n1 = -1;
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldaf < max(1,*n)) {
+    } else if (*ldaf < max(1_integer,*n)) {
 	*info = -8;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -11;
-    } else if (*ldx < max(1,*n)) {
+    } else if (*ldx < max(1_integer,*n)) {
 	*info = -13;
     } else /* if(complicated condition) */ {
 /* Computing MAX */

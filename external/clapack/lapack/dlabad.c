@@ -3,8 +3,8 @@
 
 /* Subroutine */ int dlabad_(doublereal *small, doublereal *large)
 {
-    /* Builtin functions */
-    double d_lg10(doublereal *), sqrt(doublereal);
+    /* Builtin functions
+    double d_lg10(doublereal *), sqrt(doublereal);*/
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

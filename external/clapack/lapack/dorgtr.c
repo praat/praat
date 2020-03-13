@@ -14,10 +14,10 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer i__, j, nb;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dorgql_(integer *, integer *, integer *, 
@@ -120,7 +120,7 @@ static integer c_n1 = -1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     } else /* if(complicated condition) */ {
 /* Computing MAX */

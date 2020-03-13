@@ -7,14 +7,6 @@
     /* System generated locals */
     integer a_dim1, a_offset, i__1;
 
-    /* Local variables */
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *), dlauum_(
-	    char *, integer *, doublereal *, integer *, integer *), 
-	    dtrtri_(char *, char *, integer *, doublereal *, integer *, 
-	    integer *);
-
-
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
@@ -80,7 +72,7 @@
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {

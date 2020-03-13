@@ -12,8 +12,8 @@
     integer i__1;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__;
@@ -22,8 +22,8 @@
     doublereal eps, tmp;
     integer neg1, neg2, indp, inds;
     doublereal dplus;
-    extern doublereal dlamch_(char *);
-    extern logical disnan_(doublereal *);
+//    extern doublereal dlamch_(char *);
+//    extern logical disnan_(doublereal *);
     integer indlpl, indumn;
     doublereal dminus;
     logical sawnan1, sawnan2;

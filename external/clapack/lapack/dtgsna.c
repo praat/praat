@@ -21,16 +21,11 @@ static integer c__3 = 3;
 	    vr_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, k;
     doublereal c1, c2;
     integer n1, n2, ks, iz;
     doublereal eps, beta, cond;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     logical pair;
     integer ierr;
     doublereal uhav, uhbv;
@@ -38,36 +33,15 @@ static integer c__3 = 3;
     doublereal lnrm;
     integer ilst;
     doublereal rnrm;
-    extern /* Subroutine */ int dlag2_(doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *);
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     doublereal root1, root2, scale;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
     doublereal uhavi, uhbvi, tmpii;
     integer lwmin;
     logical wants;
     doublereal tmpir, tmpri, dummy[1], tmprr;
-    extern doublereal dlapy2_(doublereal *, doublereal *);
     doublereal dummy1[1];
-    extern doublereal dlamch_(char *);
     doublereal alphai, alphar;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dtgexc_(logical *, logical *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *, 
-	    integer *, doublereal *, integer *, integer *);
     logical wantbh, wantdf, somcon;
     doublereal alprqt;
-    extern /* Subroutine */ int dtgsyl_(char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *, integer *);
     doublereal smlnum;
     logical lquery;
 
@@ -394,9 +368,9 @@ static integer c__3 = 3;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
     } else if (wants && *ldvl < *n) {
 	*info = -10;

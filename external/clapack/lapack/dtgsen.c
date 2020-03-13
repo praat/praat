@@ -20,9 +20,6 @@ static doublereal c_b28 = 1.;
 	    z_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     integer i__, k, n1, n2, kk, ks, mn2, ijb;
     doublereal eps;
@@ -31,31 +28,13 @@ static doublereal c_b28 = 1.;
     integer ierr;
     doublereal dsum;
     logical swap;
-    extern /* Subroutine */ int dlag2_(doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *);
     integer isave[3];
     logical wantd;
     integer lwmin;
     logical wantp;
-    extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *);
     logical wantd1, wantd2;
-    extern doublereal dlamch_(char *);
     doublereal dscale, rdscal;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dtgexc_(logical *, logical *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *, 
-	    integer *, doublereal *, integer *, integer *), dlassq_(integer *, 
-	     doublereal *, integer *, doublereal *, doublereal *);
     integer liwmin;
-    extern /* Subroutine */ int dtgsyl_(char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *, integer *);
     doublereal smlnum;
     logical lquery;
 
@@ -426,9 +405,9 @@ static doublereal c_b28 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -9;
     } else if (*ldq < 1 || *wantq && *ldq < *n) {
 	*info = -14;

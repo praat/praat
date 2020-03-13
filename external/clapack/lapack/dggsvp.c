@@ -20,24 +20,8 @@ static doublereal c_b22 = 1.;
 
     /* Local variables */
     integer i__, j;
-    extern logical lsame_(char *, char *);
     logical wantq, wantu, wantv;
-    extern /* Subroutine */ int dgeqr2_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *), dgerq2_(
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *), dorg2r_(integer *, integer *, integer *, 
-	     doublereal *, integer *, doublereal *, doublereal *, integer *), 
-	    dorm2r_(char *, char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dormr2_(char *, char *, 
-	    integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *), dgeqpf_(integer *, integer *, doublereal *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *), 
-	    dlacpy_(char *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlaset_(char *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *), xerbla_(char *, integer *), dlapmt_(logical *, 
-	    integer *, integer *, doublereal *, integer *, integer *);
-    logical forwrd;
+	logical forwrd;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -230,9 +214,9 @@ static doublereal c_b22 = 1.;
 	*info = -5;
     } else if (*n < 0) {
 	*info = -6;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -8;
-    } else if (*ldb < max(1,*p)) {
+    } else if (*ldb < max(1_integer,*p)) {
 	*info = -10;
     } else if (*ldu < 1 || wantu && *ldu < *m) {
 	*info = -16;

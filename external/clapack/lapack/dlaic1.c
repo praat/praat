@@ -13,15 +13,15 @@ static doublereal c_b5 = 1.;
     /* System generated locals */
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
+    /* Builtin functions
+    double sqrt(doublereal), d_sign(doublereal *, doublereal *); */
 
     /* Local variables */
     doublereal b, t, s1, s2, eps, tmp;
     extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
 	    integer *);
     doublereal sine, test, zeta1, zeta2, alpha, norma;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal absgam, absalp, cosine, absest;
 
 

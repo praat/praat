@@ -24,23 +24,7 @@ static doublereal c_b26 = 1.;
     integer ib;
     doublereal ei;
     integer nb, nh, nx, iws;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer nbmin, iinfo;
-    extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), daxpy_(
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *), dgehd2_(integer *, integer *, integer *, doublereal *, 
-	     integer *, doublereal *, doublereal *, integer *), dlahr2_(
-	    integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *), 
-	    dlarfb_(char *, char *, char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer ldwork, lwkopt;
     logical lquery;
 
@@ -179,13 +163,13 @@ static doublereal c_b26 = 1.;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
-    } else if (*ilo < 1 || *ilo > max(1,*n)) {
+    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
 	*info = -2;
     } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*lwork < max(1,*n) && ! lquery) {
+    } else if (*lwork < max(1_integer,*n) && ! lquery) {
 	*info = -8;
     }
     if (*info != 0) {
@@ -204,7 +188,7 @@ static doublereal c_b26 = 1.;
 /* L10: */
     }
     i__1 = *n - 1;
-    for (i__ = max(1,*ihi); i__ <= i__1; ++i__) {
+    for (i__ = max(1_integer,*ihi); i__ <= i__1; ++i__) {
 	tau[i__] = 0.;
 /* L20: */
     }

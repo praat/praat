@@ -19,23 +19,9 @@ static integer c__1 = 1;
     integer i__, j, k, l, i2, j1, j2, nq, nr, kd1, ibl, iqb, kdn, jin, nrt, 
 	    kdm1, inca, jend, lend, jinc, incx, last;
     doublereal temp;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
     integer j1end, j1inc, iqend;
-    extern logical lsame_(char *, char *);
     logical initq, wantq, upper;
-    extern /* Subroutine */ int dlar2v_(integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *, doublereal *, doublereal *, integer *);
     integer iqaend;
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    dlartg_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), xerbla_(char *, integer *), dlargv_(
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlartv_(integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -167,7 +153,7 @@ static integer c__1 = 1;
 	*info = -4;
     } else if (*ldab < kd1) {
 	*info = -6;
-    } else if (*ldq < max(1,*n) && wantq) {
+    } else if (*ldq < max(1_integer,*n) && wantq) {
 	*info = -10;
     }
     if (*info != 0) {

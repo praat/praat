@@ -39,7 +39,7 @@
 #include "Eigen.h"
 #include "MAT_numerics.h"
 #include "NUMmachar.h"
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 #include "SVD.h"
 
@@ -160,7 +160,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoMAT ac = newMATtranspose (a);
 	autoMAT bc = newMATtranspose (b);
 
-	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
+	(void) NUMlapack_dggsvd_ (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
 		& ac [1][1], & lda, & bc [1][1], & ldb, alpha.begin(), beta.begin(), u, & ldu,
 		v, & ldv, & q [1][1], & ldq, work.begin(), iwork.begin(), & info);
 	Melder_require (info == 0,

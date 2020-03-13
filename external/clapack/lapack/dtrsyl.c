@@ -30,7 +30,7 @@ static logical c_true = TRUE_;
     doublereal smin, suml, sumr;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer knext, lnext;
     doublereal xnorm;
     extern /* Subroutine */ int dlaln2_(logical *, integer *, integer *, 
@@ -44,7 +44,7 @@ static logical c_true = TRUE_;
     extern doublereal dlamch_(char *), dlange_(char *, integer *, 
 	    integer *, doublereal *, integer *, doublereal *);
     doublereal scaloc;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     logical notrna, notrnb;
     doublereal smlnum;
@@ -180,11 +180,11 @@ static logical c_true = TRUE_;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -7;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -11;
     }
     if (*info != 0) {

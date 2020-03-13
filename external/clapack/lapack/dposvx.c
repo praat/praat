@@ -15,32 +15,12 @@
     /* Local variables */
     integer i__, j;
     doublereal amax, smin, smax;
-    extern logical lsame_(char *, char *);
     doublereal scond, anorm;
     logical equil, rcequ;
-    extern doublereal dlamch_(char *);
     logical nofact;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dpocon_(char *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *, 
-	    integer *);
     integer infequ;
-    extern doublereal dlansy_(char *, char *, integer *, doublereal *, 
-	    integer *, doublereal *);
-    extern /* Subroutine */ int dlaqsy_(char *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, char *), dpoequ_(integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), dporfs_(
-	    char *, integer *, integer *, doublereal *, integer *, doublereal 
-	    *, integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *), dpotrf_(char *, integer *, doublereal *, integer *, 
-	    integer *);
     doublereal smlnum;
-    extern /* Subroutine */ int dpotrs_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *);
-
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -297,9 +277,9 @@
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldaf < max(1,*n)) {
+    } else if (*ldaf < max(1_integer,*n)) {
 	*info = -8;
     } else if (lsame_(fact, "F") && ! (rcequ || lsame_(
 	    equed, "N"))) {
@@ -327,9 +307,9 @@
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1,*n)) {
+	    if (*ldb < max(1_integer,*n)) {
 		*info = -12;
-	    } else if (*ldx < max(1,*n)) {
+	    } else if (*ldx < max(1_integer,*n)) {
 		*info = -14;
 	    }
 	}

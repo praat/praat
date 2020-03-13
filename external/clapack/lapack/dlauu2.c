@@ -19,12 +19,12 @@ static integer c__1 = 1;
 	    integer *);
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -104,7 +104,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {

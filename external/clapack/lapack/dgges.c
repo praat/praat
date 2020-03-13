@@ -21,8 +21,8 @@ static doublereal c_b39 = 1.;
 	    vsr_dim1, vsr_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal);*/
 
     /* Local variables */
     integer i__, ip;
@@ -31,7 +31,7 @@ static doublereal c_b39 = 1.;
     doublereal eps, anrm, bnrm;
     integer idum[1], ierr, itau, iwrk;
     doublereal pvsl, pvsr;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer ileft, icols;
     logical cursl, ilvsl, ilvsr;
     integer irows;
@@ -57,7 +57,7 @@ static doublereal c_b39 = 1.;
     extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, doublereal *, integer *);
     doublereal safmax;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     extern /* Subroutine */ int dhgeqz_(char *, char *, char *, integer *, 
 	    integer *, integer *, doublereal *, integer *, doublereal *, 
@@ -332,9 +332,9 @@ static doublereal c_b39 = 1.;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -9;
     } else if (*ldvsl < 1 || ilvsl && *ldvsl < *n) {
 	*info = -15;

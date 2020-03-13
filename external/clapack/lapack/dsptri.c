@@ -23,7 +23,7 @@ static doublereal c_b13 = 0.;
     extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
 	    integer *);
     doublereal temp, akkp1;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
 	    *, doublereal *, integer *);
@@ -32,7 +32,7 @@ static doublereal c_b13 = 0.;
 	    doublereal *, doublereal *, integer *, doublereal *, doublereal *, 
 	     integer *);
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer kcnext;
 
 

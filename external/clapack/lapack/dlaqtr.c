@@ -30,7 +30,7 @@ static logical c_true = TRUE_;
     doublereal smin, xmax;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern doublereal dasum_(integer *, doublereal *, integer *);
+//    extern doublereal dasum_(integer *, doublereal *, integer *);
     extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
 	    integer *, doublereal *, integer *);
     integer jnext;
@@ -41,7 +41,7 @@ static logical c_true = TRUE_;
 , doublereal *, integer *, doublereal *, doublereal *, integer *);
     extern doublereal dlamch_(char *), dlange_(char *, integer *, 
 	    integer *, doublereal *, integer *, doublereal *);
-    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal scaloc;
     extern /* Subroutine */ int dladiv_(doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *);

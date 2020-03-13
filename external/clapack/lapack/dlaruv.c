@@ -121,7 +121,7 @@
     i3 = iseed[3];
     i4 = iseed[4];
 
-    i__1 = min(*n,128);
+    i__1 = min(*n,128_integer);
     for (i__ = 1; i__ <= i__1; ++i__) {
 
 L20:

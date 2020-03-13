@@ -23,10 +23,10 @@ static doublereal c_b11 = 1.;
     extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
 	    integer *, doublereal *, integer *);
     integer count;
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal lstres;
     extern /* Subroutine */ int dpttrs_(integer *, integer *, doublereal *, 
 	    doublereal *, doublereal *, integer *, integer *);
@@ -147,9 +147,9 @@ static doublereal c_b11 = 1.;
 	*info = -1;
     } else if (*nrhs < 0) {
 	*info = -2;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
-    } else if (*ldx < max(1,*n)) {
+    } else if (*ldx < max(1_integer,*n)) {
 	*info = -10;
     }
     if (*info != 0) {

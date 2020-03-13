@@ -18,21 +18,6 @@ static integer c__33 = 33;
     /* Local variables */
     integer i__, j, i2, i3, ib, nb, ii, jj;
     doublereal work[1056]	/* was [33][32] */;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dsyrk_(
-	    char *, char *, integer *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *),
-	     dpbtf2_(char *, integer *, integer *, doublereal *, integer *, 
-	    integer *), dpotf2_(char *, integer *, doublereal *, 
-	    integer *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -168,7 +153,7 @@ static integer c__33 = 33;
 /*     The block size must not exceed the semi-bandwidth KD, and must not */
 /*     exceed the limit set by the size of the local array WORK. */
 
-    nb = min(nb,32);
+    nb = min(nb,32_integer);
 
     if (nb <= 1 || nb > *kd) {
 

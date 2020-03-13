@@ -1,12 +1,14 @@
 # Makefile of the library liblapack.a
 # David Weenink 
-# Generated on Thu Mar 12 12:19:11 2020
+# Generated on Fri Mar 13 11:53:58 2020
 # with the script "CLAPACK_copyFiles_to_Praat.praat".
 # For CLAPACK version 3.1.1.1.
 
 include ../../../makefile.defs
 
-CPPFLAGS = -I ..
+.SUFFIXES: .c .o
+.c.o:
+	$(CXX) $(CXXFLAGS) -I .. -I ../../../melder -c -o $@ $<
 
 OBJECTS = dbdsdc.o dbdsqr.o ddisna.o \
 	dgbbrd.o dgbcon.o dgbequ.o \
@@ -125,9 +127,9 @@ OBJECTS = dbdsdc.o dbdsqr.o ddisna.o \
 	dtrevc.o dtrexc.o dtrrfs.o \
 	dtrsen.o dtrsna.o dtrsyl.o \
 	dtrti2.o dtrtri.o dtrtrs.o \
-	dtzrqf.o dtzrzf.o icmax1.o \
-	ieeeck.o ilaenv.o ilaver.o \
-	iparmq.o lsame.o lsamen.o 
+	dtzrqf.o dtzrzf.o ieeeck.o \
+	ilaenv.o ilaver.o iparmq.o \
+	lsame.o lsamen.o slamch.o 
 
 .PHONY: all clean
 

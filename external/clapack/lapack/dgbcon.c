@@ -17,24 +17,10 @@ static integer c__1 = 1;
     integer j;
     doublereal t;
     integer kd, lm, jp, ix, kase;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     integer kase1;
     doublereal scale;
-    extern logical lsame_(char *, char *);
     integer isave[3];
-    extern /* Subroutine */ int drscl_(integer *, doublereal *, doublereal *, 
-	    integer *);
     logical lnoti;
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *), dlacn2_(integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *);
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dlatbs_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *), xerbla_(char *, integer *);
     doublereal ainvnm;
     logical onenrm;
     char normin[1];

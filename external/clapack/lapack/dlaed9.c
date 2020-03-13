@@ -14,19 +14,19 @@ static integer c__1 = 1;
     integer q_dim1, q_offset, s_dim1, s_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
+    /* Builtin functions
+    double sqrt(doublereal), d_sign(doublereal *, doublereal *);*/
 
     /* Local variables */
     integer i__, j;
     doublereal temp;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
+//    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *), dlaed4_(integer *, integer *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, integer *);
-    extern doublereal dlamc3_(doublereal *, doublereal *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamc3_(doublereal *, doublereal *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -135,15 +135,15 @@ static integer c__1 = 1;
 
     if (*k < 0) {
 	*info = -1;
-    } else if (*kstart < 1 || *kstart > max(1,*k)) {
+    } else if (*kstart < 1 || *kstart > max(1_integer,*k)) {
 	*info = -2;
-    } else if (max(1,*kstop) < *kstart || *kstop > max(1,*k)) {
+    } else if (max(1_integer,*kstop) < *kstart || *kstop > max(1_integer,*k)) {
 	*info = -3;
     } else if (*n < *k) {
 	*info = -4;
-    } else if (*ldq < max(1,*k)) {
+    } else if (*ldq < max(1_integer,*k)) {
 	*info = -7;
-    } else if (*lds < max(1,*k)) {
+    } else if (*lds < max(1_integer,*k)) {
 	*info = -12;
     }
     if (*info != 0) {

@@ -25,41 +25,14 @@ static doublereal c_b27 = 0.;
     char vect[1];
     logical test;
     integer itmp1, indee;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
     integer iinfo;
     char order[1];
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     logical upper, wantz, alleig, indeig;
     integer indibl;
     logical valeig;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dpbstf_(char *, integer *, 
-	    integer *, doublereal *, integer *, integer *), dsbtrd_(
-	    char *, char *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     integer *);
     integer indisp;
-    extern /* Subroutine */ int dsbgst_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *),
-	     dstein_(integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *, integer *);
     integer indiwo;
-    extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
-	     integer *), dstebz_(char *, char *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, integer *);
     integer indwrk;
-    extern /* Subroutine */ int dsteqr_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *);
     integer nsplit;
 
 
@@ -290,7 +263,7 @@ static doublereal c_b27 = 0.;
 		*info = -14;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1,*n)) {
+	    if (*il < 1 || *il > max(1_integer,*n)) {
 		*info = -15;
 	    } else if (*iu < min(*n,*il) || *iu > *n) {
 		*info = -16;

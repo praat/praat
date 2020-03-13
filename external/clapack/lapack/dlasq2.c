@@ -16,9 +16,6 @@ static integer c__11 = 11;
     integer i__1, i__2, i__3;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     doublereal d__, e;
     integer k;
@@ -44,10 +41,10 @@ static integer c__11 = 11;
 	     integer *, integer *, integer *, logical *, integer *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, doublereal *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer iwhila, iwhilb;
     doublereal oldemn, safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dlasrt_(char *, integer *, doublereal *, 

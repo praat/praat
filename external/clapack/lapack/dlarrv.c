@@ -20,8 +20,8 @@ static integer c__2 = 2;
     doublereal d__1, d__2;
     logical L__1;
 
-    /* Builtin functions */
-    double log(doublereal);
+    /* Builtin functions
+    double log(doublereal); */
 
     /* Local variables */
     integer minwsize, i__, j, k, p, q, miniwsize, ii;
@@ -59,7 +59,7 @@ static integer c__2 = 2;
 	    doublereal *, doublereal *, doublereal *, doublereal *);
     logical stp2ii;
     doublereal lambda;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer ibegin, indeig;
     logical needbs;
     integer indlld;
@@ -691,7 +691,7 @@ L40:
 			windex = wbegin + k - 1;
 /* Computing MAX */
 			i__4 = windex - 1;
-			windmn = max(i__4,1);
+			windmn = max(i__4,1_integer);
 /* Computing MIN */
 			i__4 = windex + 1;
 			windpl = min(i__4,*m);

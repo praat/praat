@@ -14,10 +14,6 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer j, jb, nb;
-    extern /* Subroutine */ int dptts2_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -98,7 +94,7 @@ static integer c_n1 = -1;
 	*info = -1;
     } else if (*nrhs < 0) {
 	*info = -2;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

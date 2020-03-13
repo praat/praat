@@ -17,9 +17,6 @@ static doublereal c_b11 = 1.;
     integer b_dim1, b_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double log(doublereal), d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     integer c__, i__, j, k;
     doublereal r__;
@@ -34,42 +31,9 @@ static doublereal c_b11 = 1.;
     integer difl, difr;
     doublereal rcnd;
     integer perm, nsub;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
-    integer nlvl, sqre, bxst;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *),
-	     dcopy_(integer *, doublereal *, integer *, doublereal *, integer 
-	    *);
+     integer nlvl, sqre, bxst;
     integer poles, sizei, nsize, nwork, icmpq1, icmpq2;
-    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlasda_(integer *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     integer *), dlalsa_(integer *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *), dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dlasdq_(char *, integer *, integer *, integer 
-	    *, integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlacpy_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *), dlartg_(doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *), dlaset_(char *, integer *, integer *, 
-	     doublereal *, doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     integer givcol;
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dlasrt_(char *, integer *, doublereal *, 
-	    integer *);
     doublereal orgnrm;
     integer givnum, givptr, smlszp;
 

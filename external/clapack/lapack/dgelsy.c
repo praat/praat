@@ -25,40 +25,13 @@ static doublereal c_b54 = 1.;
     integer nb, mn, nb1, nb2, nb3, nb4;
     doublereal anrm, bnrm, smin, smax;
     integer iascl, ibscl;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer ismin, ismax;
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dlaic1_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *);
     doublereal wsize;
-    extern /* Subroutine */ int dgeqp3_(integer *, integer *, doublereal *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *), dlabad_(doublereal *, doublereal *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *), dlaset_(char *, integer *, integer 
-	    *, doublereal *, doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     doublereal bignum;
     integer lwkmin;
-    extern /* Subroutine */ int dormqr_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     doublereal sminpr, smaxpr, smlnum;
-    extern /* Subroutine */ int dormrz_(char *, char *, integer *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
-    extern /* Subroutine */ int dtzrzf_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *);
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -225,11 +198,11 @@ static doublereal c_b54 = 1.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -5;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1,*m);
+	i__1 = max(1_integer,*m);
 	if (*ldb < max(i__1,*n)) {
 	    *info = -7;
 	}

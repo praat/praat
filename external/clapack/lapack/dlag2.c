@@ -9,8 +9,8 @@
     integer a_dim1, a_offset, b_dim1, b_offset;
     doublereal d__1, d__2, d__3, d__4, d__5, d__6;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
+    /* Builtin functions
+    double sqrt(doublereal), d_sign(doublereal *, doublereal *); */
 
     /* Local variables */
     doublereal r__, c1, c2, c3, c4, c5, s1, s2, a11, a12, a21, a22, b11, b12, 

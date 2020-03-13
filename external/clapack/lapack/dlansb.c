@@ -12,13 +12,13 @@ doublereal dlansb_(char *norm, char *uplo, integer *n, integer *k, doublereal
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4;
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__, j, l;
     doublereal sum, absa, scale;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal value;
     extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *);
@@ -127,7 +127,7 @@ doublereal dlansb_(char *norm, char *uplo, integer *n, integer *k, doublereal
 /* Computing MAX */
 		i__2 = *k + 2 - j;
 		i__3 = *k + 1;
-		for (i__ = max(i__2,1); i__ <= i__3; ++i__) {
+		for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 		    d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], abs(
 			    d__1));
@@ -219,7 +219,7 @@ doublereal dlansb_(char *norm, char *uplo, integer *n, integer *k, doublereal
 		    i__4 = min(i__3,*k);
 /* Computing MAX */
 		    i__2 = *k + 2 - j;
-		    dlassq_(&i__4, &ab[max(i__2, 1)+ j * ab_dim1], &c__1, &
+		    dlassq_(&i__4, &ab[max(i__2, 1_integer)+ j * ab_dim1], &c__1, &
 			    scale, &sum);
 /* L110: */
 		}

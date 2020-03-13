@@ -20,17 +20,7 @@ static integer c__1 = 1;
     integer np1, isub;
     doublereal smin;
     integer sqre1;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dlasr_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *), dswap_(integer *, doublereal *, integer *
-, doublereal *, integer *);
     integer iuplo;
-    extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), xerbla_(char *, 
-	    integer *), dbdsqr_(char *, integer *, integer *, integer 
-	    *, integer *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     logical rotate;
 
 
@@ -208,11 +198,11 @@ static integer c__1 = 1;
 	*info = -5;
     } else if (*ncc < 0) {
 	*info = -6;
-    } else if (*ncvt == 0 && *ldvt < 1 || *ncvt > 0 && *ldvt < max(1,*n)) {
+    } else if (*ncvt == 0 && *ldvt < 1 || *ncvt > 0 && *ldvt < max(1_integer,*n)) {
 	*info = -10;
-    } else if (*ldu < max(1,*nru)) {
+    } else if (*ldu < max(1_integer,*nru)) {
 	*info = -12;
-    } else if (*ncc == 0 && *ldc < 1 || *ncc > 0 && *ldc < max(1,*n)) {
+    } else if (*ncc == 0 && *ldc < 1 || *ncc > 0 && *ldc < max(1_integer,*n)) {
 	*info = -14;
     }
     if (*info != 0) {

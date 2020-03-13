@@ -20,9 +20,6 @@ static logical c_true = TRUE_;
 	    i__2, i__3;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, k;
     doublereal x[4]	/* was [2][2] */;
@@ -40,7 +37,7 @@ static logical c_true = TRUE_;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     doublereal scale;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *);
@@ -58,9 +55,9 @@ static logical c_true = TRUE_;
 	     doublereal *, doublereal *, integer *, doublereal *, doublereal *
 , doublereal *, integer *, doublereal *, doublereal *, integer *),
 	     dlabad_(doublereal *, doublereal *);
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     logical rightv;
     doublereal smlnum;
@@ -248,7 +245,7 @@ static logical c_true = TRUE_;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*ldt < max(1,*n)) {
+    } else if (*ldt < max(1_integer,*n)) {
 	*info = -6;
     } else if (*ldvl < 1 || leftv && *ldvl < *n) {
 	*info = -8;

@@ -17,8 +17,8 @@ static integer c_n1 = -1;
 	    i__2, i__3;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal);*/
 
     /* Local variables */
     integer i__, k;
@@ -31,45 +31,11 @@ static integer c_n1 = -1;
     char side[1];
     doublereal anrm;
     integer ierr, itau;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
     integer iwrk, nout;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-    extern logical lsame_(char *, char *);
-    extern doublereal dlapy2_(doublereal *, doublereal *);
-    extern /* Subroutine */ int dlabad_(doublereal *, doublereal *), dgebak_(
-	    char *, char *, integer *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *), 
-	    dgebal_(char *, integer *, doublereal *, integer *, integer *, 
-	    integer *, doublereal *, integer *);
     logical scalea;
-    extern doublereal dlamch_(char *);
     doublereal cscale;
-    extern doublereal dlange_(char *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *);
-    extern /* Subroutine */ int dgehrd_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *), dlascl_(char *, integer *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dlartg_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), xerbla_(char *, integer *);
     logical select[1];
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dorghr_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *), dhseqr_(char *, char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *), dtrevc_(char *, char *, logical *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, integer *, integer *, doublereal *, integer *);
     integer minwrk, maxwrk;
     logical wantvl;
     doublereal smlnum;
@@ -225,7 +191,7 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
     } else if (*ldvl < 1 || wantvl && *ldvl < *n) {
 	*info = -9;
@@ -527,13 +493,13 @@ L50:
 	i__1 = *n - *info;
 /* Computing MAX */
 	i__3 = *n - *info;
-	i__2 = max(i__3,1);
+	i__2 = max(i__3,1_integer);
 	dlascl_("G", &c__0, &c__0, &cscale, &anrm, &i__1, &c__1, &wr[*info + 
 		1], &i__2, &ierr);
 	i__1 = *n - *info;
 /* Computing MAX */
 	i__3 = *n - *info;
-	i__2 = max(i__3,1);
+	i__2 = max(i__3,1_integer);
 	dlascl_("G", &c__0, &c__0, &cscale, &anrm, &i__1, &c__1, &wi[*info + 
 		1], &i__2, &ierr);
 	if (*info > 0) {

@@ -13,9 +13,6 @@ static integer c__1 = 1;
     integer ab_dim1, ab_offset, i__1, i__2, i__3;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer j, kn;
     doublereal ajj;
@@ -23,9 +20,9 @@ static integer c__1 = 1;
     extern /* Subroutine */ int dsyr_(char *, integer *, doublereal *, 
 	    doublereal *, integer *, doublereal *, integer *), dscal_(
 	    integer *, doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

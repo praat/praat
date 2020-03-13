@@ -26,30 +26,9 @@ static doublereal c_b56 = 0.;
     integer ie, je, mb, nb, ii, jj, is, js;
     doublereal rhs[8];
     integer isp1, jsp1;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     integer ierr, zdim, ipiv[8], jpiv[8];
     doublereal alpha;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dgemm_(char *, char *, integer *, integer *, integer *
-, doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dcopy_(integer *, 
-	    doublereal *, integer *, doublereal *, integer *), daxpy_(integer 
-	    *, doublereal *, doublereal *, integer *, doublereal *, integer *)
-	    , dgesc2_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *, integer *, doublereal *), dgetc2_(integer *, 
-	    doublereal *, integer *, integer *, integer *, integer *), 
-	    dlatdf_(integer *, integer *, doublereal *, integer *, doublereal 
-	    *, doublereal *, doublereal *, integer *, integer *);
     doublereal scaloc;
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     logical notran;
 
 
@@ -273,17 +252,17 @@ static doublereal c_b56 = 0.;
 	    *info = -3;
 	} else if (*n <= 0) {
 	    *info = -4;
-	} else if (*lda < max(1,*m)) {
+	} else if (*lda < max(1_integer,*m)) {
 	    *info = -5;
-	} else if (*ldb < max(1,*n)) {
+	} else if (*ldb < max(1_integer,*n)) {
 	    *info = -8;
-	} else if (*ldc < max(1,*m)) {
+	} else if (*ldc < max(1_integer,*m)) {
 	    *info = -10;
-	} else if (*ldd < max(1,*m)) {
+	} else if (*ldd < max(1_integer,*m)) {
 	    *info = -12;
-	} else if (*lde < max(1,*n)) {
+	} else if (*lde < max(1_integer,*n)) {
 	    *info = -14;
-	} else if (*ldf < max(1,*m)) {
+	} else if (*ldf < max(1_integer,*m)) {
 	    *info = -16;
 	}
     }

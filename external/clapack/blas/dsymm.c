@@ -12,10 +12,10 @@
     /* Local variables */
     integer i__, j, k, info;
     doublereal temp1, temp2;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer nrowa;
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -189,11 +189,11 @@
 	info = 3;
     } else if (*n < 0) {
 	info = 4;
-    } else if (*lda < max(1,nrowa)) {
+    } else if (*lda < max(1_integer,nrowa)) {
 	info = 7;
-    } else if (*ldb < max(1,*m)) {
+    } else if (*ldb < max(1_integer,*m)) {
 	info = 9;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	info = 12;
     }
     if (info != 0) {

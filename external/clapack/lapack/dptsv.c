@@ -7,13 +7,6 @@
     /* System generated locals */
     integer b_dim1, b_offset, i__1;
 
-    /* Local variables */
-    extern /* Subroutine */ int xerbla_(char *, integer *), dpttrf_(
-	    integer *, doublereal *, doublereal *, integer *), dpttrs_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    integer *, integer *);
-
-
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
@@ -93,7 +86,7 @@
 	*info = -1;
     } else if (*nrhs < 0) {
 	*info = -2;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

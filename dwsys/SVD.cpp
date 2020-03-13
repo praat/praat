@@ -38,7 +38,7 @@
 #include "NUMmachar.h"
 #include "Collection.h"
 #include "../melder/melder.h"
-#include "f2c.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"
@@ -149,12 +149,12 @@ void SVD_compute (SVD me) {
 		integer info, lwork = -1;
 		double wt [2];
 
-		(void) dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
+		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
 		autoVEC work = newVECraw (lwork);
-		(void) dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
+		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 		/*
 			Because we store the eigenvectors row-wise, they must be transposed
@@ -387,7 +387,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		integer k, l, info;
-		NUMlapack_dggsvd (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
+		NUMlapack_dggsvd_ (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
 		    & a [1] [1], & m, & b [1] [1], & p, alpha.begin(), beta.begin(), nullptr, & m,
 		    nullptr, & p, & q [1] [1], & n, work.begin(), iwork.begin(), & info);
 		Melder_require (info == 0,

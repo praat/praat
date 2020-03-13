@@ -36,8 +36,8 @@ static doublereal c_b31 = 1.;
 	    doublereal *, integer *), dgbtf2_(
 	    integer *, integer *, integer *, integer *, doublereal *, integer 
 	    *, integer *, integer *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dlaswp_(integer *, doublereal *, integer *, 
@@ -184,7 +184,7 @@ static doublereal c_b31 = 1.;
 /*     The block size must not exceed the limit set by the size of the */
 /*     local arrays WORK13 and WORK31. */
 
-    nb = min(nb,64);
+    nb = min(nb,64_integer);
 
     if (nb <= 1 || nb > *kl) {
 

@@ -6,8 +6,8 @@ doublereal dlapy3_(doublereal *x, doublereal *y, doublereal *z__)
     /* System generated locals */
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     doublereal w, xabs, yabs, zabs;
@@ -51,7 +51,7 @@ doublereal dlapy3_(doublereal *x, doublereal *y, doublereal *z__)
     d__1 = max(xabs,yabs);
     w = max(d__1,zabs);
     if (w == 0.) {
-/*     W can be zero for max(0,nan,0) */
+/*     W can be zero for max(0_integer,nan,0) */
 /*     adding all three entries together will make sure */
 /*     NaN will not disappear. */
 	ret_val = xabs + yabs + zabs;

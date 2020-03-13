@@ -10,13 +10,8 @@
 
     /* Local variables */
     integer i__, j, ij;
-    extern logical lsame_(char *, char *);
     integer iinfo;
     logical upper;
-    extern /* Subroutine */ int dorg2l_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *), 
-	    dorg2r_(integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -102,7 +97,7 @@
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*ldq < max(1,*n)) {
+    } else if (*ldq < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

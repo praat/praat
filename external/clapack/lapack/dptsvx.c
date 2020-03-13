@@ -15,25 +15,8 @@ static integer c__1 = 1;
     integer b_dim1, b_offset, x_dim1, x_offset, i__1;
 
     /* Local variables */
-    extern logical lsame_(char *, char *);
     doublereal anorm;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-    extern doublereal dlamch_(char *);
     logical nofact;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dptcon_(integer *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *, doublereal *, integer *), dptrfs_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), dpttrf_(
-	    integer *, doublereal *, doublereal *, integer *), dpttrs_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    integer *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -209,9 +192,9 @@ static integer c__1 = 1;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldx < max(1,*n)) {
+    } else if (*ldx < max(1_integer,*n)) {
 	*info = -11;
     }
     if (*info != 0) {

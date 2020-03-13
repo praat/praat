@@ -16,16 +16,13 @@ static integer c__2 = 2;
     integer a_dim1, a_offset, c_dim1, c_offset, i__1[2], i__2, i__3;
     char ch__1[2];
 
-    /* Builtin functions */
-    /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
-
     /* Local variables */
     integer i1, i2, nb, mi, ni, nq, nw;
     logical left;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dormql_(char *, char *, integer *, integer *, 
@@ -180,11 +177,11 @@ static integer c__2 = 2;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1,nq)) {
+    } else if (*lda < max(1_integer,nq)) {
 	*info = -7;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -10;
-    } else if (*lwork < max(1,nw) && ! lquery) {
+    } else if (*lwork < max(1_integer,nw) && ! lquery) {
 	*info = -12;
     }
 
@@ -226,7 +223,7 @@ static integer c__2 = 2;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &i__2, &i__3, &c_n1);
 	    }
 	}
-	lwkopt = max(1,nw) * nb;
+	lwkopt = max(1_integer,nw) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

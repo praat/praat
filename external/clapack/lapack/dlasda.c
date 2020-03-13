@@ -22,9 +22,6 @@ static integer c__2 = 2;
 	    poles_dim1, poles_offset, u_dim1, u_offset, vt_dim1, vt_offset, 
 	    z_dim1, z_offset, i__1, i__2;
 
-    /* Builtin functions */
-    integer pow_ii(integer *, integer *);
-
     /* Local variables */
     integer i__, j, m, i1, ic, lf, nd, ll, nl, vf, nr, vl, im1, ncc, nlf, nrf,
 	     vfi, iwk, vli, lvl, nru, ndb1, nlp1, lvl2, nrp1;
@@ -32,24 +29,9 @@ static integer c__2 = 2;
     integer idxq, nlvl;
     doublereal alpha;
     integer inode, ndiml, ndimr, idxqi, itemp;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer sqrei;
-    extern /* Subroutine */ int dlasd6_(integer *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *);
     integer nwork1, nwork2;
-    extern /* Subroutine */ int dlasdq_(char *, integer *, integer *, integer 
-	    *, integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlasdt_(integer *, integer *, 
-	    integer *, integer *, integer *, integer *, integer *), dlaset_(
-	    char *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *), xerbla_(char *, integer *);
-    integer smlszp;
+	integer smlszp;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

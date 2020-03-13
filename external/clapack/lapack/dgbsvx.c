@@ -21,39 +21,11 @@ static integer c__1 = 1;
     integer i__, j, j1, j2;
     doublereal amax;
     char norm[1];
-    extern logical lsame_(char *, char *);
     doublereal rcmin, rcmax, anorm;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical equil;
-    extern doublereal dlangb_(char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *), dlamch_(char *);
-    extern /* Subroutine */ int dlaqgb_(integer *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, char *), 
-	    dgbcon_(char *, integer *, integer *, integer *, doublereal *, 
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    integer *, integer *);
     doublereal colcnd;
-    extern doublereal dlantb_(char *, char *, char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dgbequ_(integer *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *), dgbrfs_(
-	    char *, integer *, integer *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *), dgbtrf_(integer *, 
-	    integer *, integer *, integer *, doublereal *, integer *, integer 
-	    *, integer *);
     logical nofact;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dgbtrs_(char *, integer *, integer *, integer 
-	    *, integer *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
     integer infequ;
     logical colequ;
     doublereal rowcnd;
@@ -430,9 +402,9 @@ static integer c__1 = 1;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1,*n)) {
+	    if (*ldb < max(1_integer,*n)) {
 		*info = -16;
-	    } else if (*ldx < max(1,*n)) {
+	    } else if (*ldx < max(1_integer,*n)) {
 		*info = -18;
 	    }
 	}
@@ -497,7 +469,7 @@ static integer c__1 = 1;
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MAX */
 	    i__2 = j - *ku;
-	    j1 = max(i__2,1);
+	    j1 = max(i__2,1_integer);
 /* Computing MIN */
 	    i__2 = j + *kl;
 	    j2 = min(i__2,*n);
@@ -524,7 +496,7 @@ static integer c__1 = 1;
 /* Computing MIN */
 		i__4 = *n + *ku + 1 - j, i__5 = *kl + *ku + 1;
 		i__3 = min(i__4,i__5);
-		for (i__ = max(i__2,1); i__ <= i__3; ++i__) {
+		for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 		    d__2 = anorm, d__3 = (d__1 = ab[i__ + j * ab_dim1], abs(
 			    d__1));

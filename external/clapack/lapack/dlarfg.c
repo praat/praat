@@ -8,17 +8,17 @@
     integer i__1;
     doublereal d__1;
 
-    /* Builtin functions */
-    double d_sign(doublereal *, doublereal *);
+    /* Builtin functions
+    double d_sign(doublereal *, doublereal *); */
 
     /* Local variables */
     integer j, knt;
     doublereal beta;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
+//    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     doublereal xnorm;
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
+//    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
     doublereal safmin, rsafmn;
 
 

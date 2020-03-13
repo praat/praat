@@ -13,9 +13,6 @@ static doublereal c_b4 = 1.;
     /* System generated locals */
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     doublereal a, d__, l, m, r__, s, t, fa, ga, ha, ft, gt, ht, mm, tt, clt, 
 	    crt, slt, srt;
@@ -23,7 +20,7 @@ static doublereal c_b4 = 1.;
     doublereal temp;
     logical swap;
     doublereal tsign;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     logical gasmal;
 
 

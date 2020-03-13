@@ -1,5 +1,9 @@
 #ifndef __CLAPACK_H
 #define __CLAPACK_H
+
+#include "f2c.h"
+
+#define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!")
  
 /* Subroutine */ int cbdsqr_(char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, real *d__, real *e, complex *vt, integer *ldvt, 
@@ -4048,7 +4052,7 @@
 /* Subroutine */ int stzrzf_(integer *m, integer *n, real *a, integer *lda, 
 	real *tau, real *work, integer *lwork, integer *info);
 
-/* Subroutine */ int xerbla_(char *srname, integer *info);
+///* Subroutine */ int xerbla_(char *srname, integer *info);
 
 /* Subroutine */ int zbdsqr_(char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, doublereal *d__, doublereal *e, doublecomplex *vt, 

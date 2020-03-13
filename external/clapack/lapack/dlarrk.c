@@ -9,15 +9,15 @@
     integer i__1;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double log(doublereal);
+    /* Builtin functions
+    double log(doublereal); */
 
     /* Local variables */
     integer i__, it;
     doublereal mid, eps, tmp1, tmp2, left, atoli, right;
     integer itmax;
     doublereal rtoli, tnorm;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer negcnt;
 
 

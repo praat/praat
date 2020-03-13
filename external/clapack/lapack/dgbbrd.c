@@ -23,20 +23,9 @@ static integer c__1 = 1;
     integer kk, ml, mn, nr, mu;
     doublereal rs;
     integer kb1, ml0, mu0, klm, kun, nrt, klu1, inca;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
-    extern logical lsame_(char *, char *);
     logical wantb, wantc;
     integer minmn;
     logical wantq;
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    dlartg_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), xerbla_(char *, integer *), dlargv_(
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlartv_(integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *);
     logical wantpt;
 
 
@@ -186,11 +175,11 @@ static integer c__1 = 1;
 	*info = -6;
     } else if (*ldab < klu1) {
 	*info = -8;
-    } else if (*ldq < 1 || wantq && *ldq < max(1,*m)) {
+    } else if (*ldq < 1 || wantq && *ldq < max(1_integer,*m)) {
 	*info = -12;
-    } else if (*ldpt < 1 || wantpt && *ldpt < max(1,*n)) {
+    } else if (*ldpt < 1 || wantpt && *ldpt < max(1_integer,*n)) {
 	*info = -14;
-    } else if (*ldc < 1 || wantc && *ldc < max(1,*m)) {
+    } else if (*ldc < 1 || wantc && *ldc < max(1_integer,*m)) {
 	*info = -16;
     }
     if (*info != 0) {

@@ -17,37 +17,14 @@ static integer c__1 = 1;
 	    x_dim1, x_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, ok;
     doublereal cte, eps, anrm;
     integer ptsa;
     doublereal rnrm, xnrm;
     integer ptsx;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer iiter;
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *), dlag2s_(integer *, integer *, 
-	     doublereal *, integer *, real *, integer *, integer *), slag2d_(
-	    integer *, integer *, real *, integer *, doublereal *, integer *, 
-	    integer *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dgetrf_(integer *, integer *, 
-	    doublereal *, integer *, integer *, integer *);
     doublereal bwdmax;
-    extern /* Subroutine */ int dgetrs_(char *, integer *, integer *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *), sgetrf_(integer *, integer *, real *, integer 
-	    *, integer *, integer *), sgetrs_(char *, integer *, integer *, 
-	    real *, integer *, integer *, real *, integer *, integer *);
     logical doitref;
     integer itermax;
 
@@ -216,11 +193,11 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*nrhs < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldx < max(1,*n)) {
+    } else if (*ldx < max(1_integer,*n)) {
 	*info = -9;
     }
     if (*info != 0) {

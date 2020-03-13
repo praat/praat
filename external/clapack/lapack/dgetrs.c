@@ -15,12 +15,6 @@ static integer c_n1 = -1;
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 
     /* Local variables */
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), xerbla_(
-	    char *, integer *), dlaswp_(integer *, doublereal *, 
-	    integer *, integer *, integer *, integer *, integer *);
     logical notran;
 
 
@@ -114,9 +108,9 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
     }
     if (*info != 0) {

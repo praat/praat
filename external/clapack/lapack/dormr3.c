@@ -11,10 +11,6 @@
     /* Local variables */
     integer i__, i1, i2, i3, ja, ic, jc, mi, ni, nq;
     logical left;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dlarz_(char *, integer *, integer *, integer *
-, doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *), xerbla_(char *, integer *);
     logical notran;
 
 
@@ -160,9 +156,9 @@
 	*info = -5;
     } else if (*l < 0 || left && *l > *m || ! left && *l > *n) {
 	*info = -6;
-    } else if (*lda < max(1,*k)) {
+    } else if (*lda < max(1_integer,*k)) {
 	*info = -8;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -11;
     }
     if (*info != 0) {

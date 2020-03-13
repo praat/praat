@@ -19,9 +19,6 @@ static integer c__0 = 0;
     integer i__1, i__2, i__3;
     doublereal d__1, d__2, d__3, d__4, d__5;
 
-    /* Builtin functions */
-    double sqrt(doublereal), log(doublereal);
-
     /* Local variables */
     integer j, ib, jb, ie, je, nb;
     doublereal gl;
@@ -34,14 +31,14 @@ static integer c__0 = 0;
     integer nwu;
     doublereal tmp1, tmp2;
     integer iend, ioff, iout, itmp1, jdisc;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     doublereal atoli;
     integer iwoff;
     doublereal bnorm;
     integer itmax;
     doublereal wkill, rtoli, tnorm;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer ibegin;
     extern /* Subroutine */ int dlaebz_(integer *, integer *, integer *, 
 	    integer *, integer *, integer *, doublereal *, doublereal *, 
@@ -51,7 +48,7 @@ static integer c__0 = 0;
     integer irange, idiscl;
     doublereal safemn;
     integer idumma[1];
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     integer idiscu, iorder;
@@ -283,7 +280,7 @@ static integer c__0 = 0;
 	if (*vl >= *vu) {
 	    *info = -5;
 	}
-    } else if (irange == 3 && (*il < 1 || *il > max(1,*n))) {
+    } else if (irange == 3 && (*il < 1 || *il > max(1_integer,*n))) {
 	*info = -6;
     } else if (irange == 3 && (*iu < min(*n,*il) || *iu > *n)) {
 	*info = -7;

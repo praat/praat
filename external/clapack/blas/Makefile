@@ -1,12 +1,14 @@
 # Makefile of the library libblas.a
 # David Weenink 
-# Generated on Thu Mar 12 12:19:06 2020
+# Generated on Thu Mar 12 14:16:43 2020
 # with the script "CLAPACK_copyFiles_to_Praat.praat".
 # For CLAPACK version 3.1.1.1.
 
 include ../../../makefile.defs
 
-CPPFLAGS = -I ..
+.SUFFIXES: .c .o
+.c.o:
+	$(CXX) $(CXXFLAGS) -I .. -I ../../../melder -c -o $@ $<
 
 OBJECTS = dasum.o daxpy.o dcopy.o \
 	ddot.o dgbmv.o dgemm.o \

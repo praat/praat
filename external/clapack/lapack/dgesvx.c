@@ -17,36 +17,13 @@
     integer i__, j;
     doublereal amax;
     char norm[1];
-    extern logical lsame_(char *, char *);
     doublereal rcmin, rcmax, anorm;
     logical equil;
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dlaqge_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, char *), dgecon_(char *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *);
     doublereal colcnd;
     logical nofact;
-    extern /* Subroutine */ int dgeequ_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, integer *), dgerfs_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *), 
-	    dgetrf_(integer *, integer *, doublereal *, integer *, integer *, 
-	    integer *), dlacpy_(char *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *), xerbla_(char *, 
-	    integer *);
     doublereal bignum;
-    extern doublereal dlantr_(char *, char *, char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *);
     integer infequ;
     logical colequ;
-    extern /* Subroutine */ int dgetrs_(char *, integer *, integer *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *);
     doublereal rowcnd;
     logical notran;
     doublereal smlnum;
@@ -352,9 +329,9 @@
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldaf < max(1,*n)) {
+    } else if (*ldaf < max(1_integer,*n)) {
 	*info = -8;
     } else if (lsame_(fact, "F") && ! (rowequ || colequ 
 	    || lsame_(equed, "N"))) {
@@ -403,9 +380,9 @@
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1,*n)) {
+	    if (*ldb < max(1_integer,*n)) {
 		*info = -14;
-	    } else if (*ldx < max(1,*n)) {
+	    } else if (*ldx < max(1_integer,*n)) {
 		*info = -16;
 	    }
 	}

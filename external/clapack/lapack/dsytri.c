@@ -20,18 +20,9 @@ static doublereal c_b13 = 0.;
     doublereal t, ak;
     integer kp;
     doublereal akp1;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal temp, akkp1;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     integer kstep;
     logical upper;
-    extern /* Subroutine */ int dsymv_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *), xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -118,7 +109,7 @@ static doublereal c_b13 = 0.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {

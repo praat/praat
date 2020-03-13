@@ -17,25 +17,9 @@ static doublereal c_b13 = 0.;
     /* Local variables */
     integer inde;
     char vect[1];
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
     integer iinfo, lwmin;
     logical upper, wantz;
     integer indwk2, llwrk2;
-    extern /* Subroutine */ int dstedc_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, integer *, integer *), dlacpy_(char *, integer 
-	    *, integer *, doublereal *, integer *, doublereal *, integer *), xerbla_(char *, integer *), dpbstf_(char *, 
-	    integer *, integer *, doublereal *, integer *, integer *),
-	     dsbtrd_(char *, char *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dsbgst_(char *, char *, 
-	    integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *), dsterf_(integer *, doublereal *, 
-	    doublereal *, integer *);
     integer indwrk, liwmin;
     logical lquery;
 

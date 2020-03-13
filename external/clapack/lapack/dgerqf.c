@@ -16,14 +16,6 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer i__, k, ib, nb, ki, kk, mu, nu, nx, iws, nbmin, iinfo;
-    extern /* Subroutine */ int dgerq2_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *), dlarfb_(char *, 
-	     char *, char *, char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *), dlarft_(char *, char *, integer *, integer *, doublereal 
-	    *, integer *, doublereal *, doublereal *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer ldwork, lwkopt;
     logical lquery;
 
@@ -130,7 +122,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
 
@@ -144,7 +136,7 @@ static integer c__2 = 2;
 	}
 	work[1] = (doublereal) lwkopt;
 
-	if (*lwork < max(1,*m) && ! lquery) {
+	if (*lwork < max(1_integer,*m) && ! lquery) {
 	    *info = -7;
 	}
     }

@@ -7,14 +7,14 @@
     /* System generated locals */
     integer i__1, i__2, i__3;
 
-    /* Builtin functions */
-    double log(doublereal), sqrt(doublereal), cos(doublereal);
+    /* Builtin functions
+    double log(doublereal), sqrt(doublereal), cos(doublereal); */
 
     /* Local variables */
     integer i__;
     doublereal u[128];
     integer il, iv, il2;
-    extern /* Subroutine */ int dlaruv_(integer *, integer *, doublereal *);
+//    extern /* Subroutine */ int dlaruv_(integer *, integer *, doublereal *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

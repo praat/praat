@@ -8,8 +8,8 @@
     /* System generated locals */
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     doublereal b, c__, w, del, tau, delsq;

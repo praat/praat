@@ -19,8 +19,8 @@ static integer c__1 = 1;
     integer q_dim1, q_offset, qstore_dim1, qstore_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double log(doublereal);
+    /* Builtin functions
+    double log(doublereal);*/
     integer pow_ii(integer *, integer *);
 
     /* Local variables */
@@ -47,7 +47,7 @@ static integer c__1 = 1;
     extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, integer *);
     integer igivcl;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     integer igivnm, submat, curprb, subpbs, igivpt;
@@ -185,13 +185,13 @@ static integer c__1 = 1;
 
     if (*icompq < 0 || *icompq > 2) {
 	*info = -1;
-    } else if (*icompq == 1 && *qsiz < max(0,*n)) {
+    } else if (*icompq == 1 && *qsiz < max(0_integer,*n)) {
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*ldq < max(1,*n)) {
+    } else if (*ldq < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldqs < max(1,*n)) {
+    } else if (*ldqs < max(1_integer,*n)) {
 	*info = -9;
     }
     if (*info != 0) {

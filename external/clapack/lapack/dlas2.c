@@ -7,8 +7,8 @@
     /* System generated locals */
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     doublereal c__, fa, ga, ha, as, at, au, fhmn, fhmx;

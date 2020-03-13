@@ -13,12 +13,12 @@
     doublereal mul, cto1;
     logical done;
     doublereal ctoc;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer itype;
     doublereal cfrom1;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal cfromc;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum, smlnum;
 
 
@@ -140,17 +140,17 @@
 	*info = -6;
     } else if (*n < 0 || itype == 4 && *n != *m || itype == 5 && *n != *m) {
 	*info = -7;
-    } else if (itype <= 3 && *lda < max(1,*m)) {
+    } else if (itype <= 3 && *lda < max(1_integer,*m)) {
 	*info = -9;
     } else if (itype >= 4) {
 /* Computing MAX */
 	i__1 = *m - 1;
-	if (*kl < 0 || *kl > max(i__1,0)) {
+	if (*kl < 0 || *kl > max(i__1,0_integer)) {
 	    *info = -2;
 	} else /* if(complicated condition) */ {
 /* Computing MAX */
 	    i__1 = *n - 1;
-	    if (*ku < 0 || *ku > max(i__1,0) || (itype == 4 || itype == 5) && 
+	    if (*ku < 0 || *ku > max(i__1,0_integer) || (itype == 4 || itype == 5) && 
 		    *kl != *ku) {
 		*info = -3;
 	    } else if (itype == 4 && *lda < *kl + 1 || itype == 5 && *lda < *
@@ -283,7 +283,7 @@ L10:
 /* Computing MAX */
 	    i__2 = k1 - j;
 	    i__3 = k3;
-	    for (i__ = max(i__2,1); i__ <= i__3; ++i__) {
+	    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
 		a[i__ + j * a_dim1] *= mul;
 /* L120: */
 	    }

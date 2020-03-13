@@ -11,9 +11,9 @@
     /* Local variables */
     integer i__, j, info;
     doublereal temp;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal ctemp, stemp;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -187,7 +187,7 @@
 	info = 4;
     } else if (*n < 0) {
 	info = 5;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	info = 9;
     }
     if (info != 0) {

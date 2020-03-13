@@ -18,8 +18,8 @@ static doublereal c_b29 = 0.;
     integer u_dim1, u_offset, vt_dim1, vt_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double d_sign(doublereal *, doublereal *), log(doublereal);
+    /* Builtin functions 
+    double d_sign(doublereal *, doublereal *), log(doublereal);*/
 
     /* Local variables */
     integer i__, j, k;
@@ -31,7 +31,7 @@ static doublereal c_b29 = 0.;
     integer nm1;
     doublereal eps;
     integer ivt, difl, difr, ierr, perm, mlvl, sqre;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dlasr_(char *, char *, char *, integer *, 
 	    integer *, doublereal *, doublereal *, doublereal *, integer *), dcopy_(integer *, doublereal *, integer *
 , doublereal *, integer *), dswap_(integer *, doublereal *, 
@@ -40,7 +40,7 @@ static doublereal c_b29 = 0.;
     extern /* Subroutine */ int dlasd0_(integer *, integer *, doublereal *, 
 	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    integer *, integer *, doublereal *, integer *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlasda_(integer *, integer *, integer *, 
 	    integer *, doublereal *, doublereal *, doublereal *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
@@ -56,9 +56,9 @@ static doublereal c_b29 = 0.;
 	    doublereal *, doublereal *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer givcol;
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
+//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     integer icompq;
     doublereal orgnrm;
     integer givnum, givptr, qstart, smlsiz, wstart, smlszp;

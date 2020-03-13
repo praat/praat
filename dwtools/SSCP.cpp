@@ -58,7 +58,7 @@
 
 #include "SSCP.h"
 #include "Eigen.h"
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 #include "SVD.h"
 
@@ -705,7 +705,7 @@ void SSCP_setCentroid (SSCP me, integer component, double value) {
 
 autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 	try {
-		char upper = 'L', diag = 'N';
+		char *upper = "L", *diag = "N";
 		integer info;
 		Melder_require (ny > 0 && ny < my numberOfRows,
 			U"Invalid split.");
@@ -731,12 +731,12 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 			Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
 			(Pretend as if colum-major storage)
 		*/
-		(void) NUMlapack_dpotf2 (& upper, & ny, & syy [1] [1], & ny, & info);
+		(void) NUMlapack_dpotf2_ (upper, & ny, & syy [1] [1], & ny, & info);
 		Melder_require (info == 0,
 			U"The leading minor of order ", info, U" is not positive definite, and the "
 			U"factorization of Syy could not be completed.");
 
-		(void) NUMlapack_dpotf2 (& upper, & nx, & sxx [1] [1], & nx, & info);
+		(void) NUMlapack_dpotf2_ (upper, & nx, & sxx [1] [1], & nx, & info);
 		Melder_require (info == 0,
 			U"The leading minor of order ", info, U" is not positive definite, and the "
 			U"factorization of Sxx could not be completed.");
@@ -770,7 +770,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		/*
 			Uxi = inverse(Ux)
 		*/
-		(void) NUMlapack_dtrti2 (& upper, & diag, & nx, & sxx [1] [1], & nx, & info);
+		(void) NUMlapack_dtrti2_ (upper, diag, & nx, & sxx [1] [1], & nx, & info);
 		Melder_require (info == 0,
 			U"Error in inverse for Sxx.");
 		/*
@@ -789,7 +789,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		/*
 			Get X=Q*R**-1
 		*/
-		(void) NUMlapack_dtrti2 (& upper, & diag, & gsvd -> numberOfColumns, &  ri [1] [1], & gsvd -> numberOfColumns, & info);
+		(void) NUMlapack_dtrti2_ (upper, diag, & gsvd -> numberOfColumns, &  ri [1] [1], & gsvd -> numberOfColumns, & info);
 		Melder_require (info == 0,
 			U"Error in inverse for R.");
 		

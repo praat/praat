@@ -11,8 +11,8 @@ static doublereal c_b4 = 1.;
     /* System generated locals */
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
+    /* Builtin functions 
+    double sqrt(doublereal), d_sign(doublereal *, doublereal *);*/
 
     /* Local variables */
     doublereal r__, z__, roe, scale;

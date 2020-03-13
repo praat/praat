@@ -27,23 +27,8 @@ static doublereal c_b20 = -1.;
     integer j1t, j2t;
     doublereal bii;
     integer kbt, nrt, inca;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *), drot_(integer *, doublereal *, integer *, doublereal *
-, integer *, doublereal *, doublereal *), dscal_(integer *, 
-	    doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
     logical upper, wantx;
-    extern /* Subroutine */ int dlar2v_(integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *, doublereal *, doublereal *, integer *), 
-	    dlaset_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *), dlartg_(doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *), xerbla_(
-	    char *, integer *), dlargv_(integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *);
     logical update;
-    extern /* Subroutine */ int dlartv_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -173,7 +158,7 @@ static doublereal c_b20 = -1.;
 	*info = -7;
     } else if (*ldbb < *kb + 1) {
 	*info = -9;
-    } else if (*ldx < 1 || wantx && *ldx < max(1,*n)) {
+    } else if (*ldx < 1 || wantx && *ldx < max(1_integer,*n)) {
 	*info = -11;
     }
     if (*info != 0) {

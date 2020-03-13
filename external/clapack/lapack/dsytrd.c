@@ -19,18 +19,9 @@ static doublereal c_b23 = 1.;
 
     /* Local variables */
     integer i__, j, nb, kk, nx, iws;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer nbmin, iinfo;
     logical upper;
-    extern /* Subroutine */ int dsytd2_(char *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *), dsyr2k_(char *, char *, integer *, integer *, doublereal 
-	    *, doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	     doublereal *, integer *), dlatrd_(char *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *), xerbla_(char *, 
-	    integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer ldwork, lwkopt;
     logical lquery;
 
@@ -188,7 +179,7 @@ static doublereal c_b23 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     } else if (*lwork < 1 && ! lquery) {
 	*info = -9;
@@ -243,7 +234,7 @@ static doublereal c_b23 = 1.;
 
 /* Computing MAX */
 		i__1 = *lwork / ldwork;
-		nb = max(i__1,1);
+		nb = max(i__1,1_integer);
 		nbmin = ilaenv_(&c__2, "DSYTRD", uplo, n, &c_n1, &c_n1, &c_n1);
 		if (nb < nbmin) {
 		    nx = *n;

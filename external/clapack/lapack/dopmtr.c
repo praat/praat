@@ -19,9 +19,9 @@ static integer c__1 = 1;
     extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
 	    doublereal *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran, forwrd;
 
 
@@ -149,7 +149,7 @@ static integer c__1 = 1;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -9;
     }
     if (*info != 0) {

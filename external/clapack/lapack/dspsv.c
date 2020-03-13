@@ -7,14 +7,6 @@
     /* System generated locals */
     integer b_dim1, b_offset, i__1;
 
-    /* Local variables */
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *), dsptrf_(
-	    char *, integer *, doublereal *, integer *, integer *), 
-	    dsptrs_(char *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *);
-
-
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
@@ -138,7 +130,7 @@
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -7;
     }
     if (*info != 0) {

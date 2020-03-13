@@ -15,15 +15,6 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer nb, nb1, nb2, nb3, lopt;
-    extern /* Subroutine */ int dgeqrf_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *), 
-	    dgerqf_(integer *, integer *, doublereal *, integer *, doublereal 
-	    *, doublereal *, integer *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dormqr_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
 
@@ -208,13 +199,13 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*p < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1,*n), i__1 = max(i__1,*m);
+	i__1 = max(1_integer,*n), i__1 = max(i__1,*m);
 	if (*lwork < max(i__1,*p) && ! lquery) {
 	    *info = -11;
 	}

@@ -15,7 +15,7 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer i__, j, nb, nh, iinfo;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dorgqr_(integer *, integer *, integer *, 
@@ -114,19 +114,19 @@ static integer c_n1 = -1;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
-    } else if (*ilo < 1 || *ilo > max(1,*n)) {
+    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
 	*info = -2;
     } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*lwork < max(1,nh) && ! lquery) {
+    } else if (*lwork < max(1_integer,nh) && ! lquery) {
 	*info = -8;
     }
 
     if (*info == 0) {
 	nb = ilaenv_(&c__1, "DORGQR", " ", &nh, &nh, &nh, &c_n1);
-	lwkopt = max(1,nh) * nb;
+	lwkopt = max(1_integer,nh) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

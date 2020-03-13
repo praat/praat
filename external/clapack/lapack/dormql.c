@@ -18,25 +18,12 @@ static integer c__65 = 65;
 	    i__5;
     char ch__1[2];
 
-    /* Builtin functions */
-    /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
-
     /* Local variables */
     integer i__;
     doublereal t[4160]	/* was [65][64] */;
     integer i1, i2, i3, ib, nb, mi, ni, nq, nw, iws;
     logical left;
-    extern logical lsame_(char *, char *);
     integer nbmin, iinfo;
-    extern /* Subroutine */ int dorm2l_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *), dlarfb_(char 
-	    *, char *, char *, char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *), dlarft_(char *, char *, integer *, integer *, doublereal 
-	    *, integer *, doublereal *, doublereal *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     logical notran;
     integer ldwork, lwkopt;
     logical lquery;
@@ -171,10 +158,10 @@ static integer c__65 = 65;
 
     if (left) {
 	nq = *m;
-	nw = max(1,*n);
+	nw = max(1_integer,*n);
     } else {
 	nq = *n;
-	nw = max(1,*m);
+	nw = max(1_integer,*m);
     }
     if (! left && ! lsame_(side, "R")) {
 	*info = -1;
@@ -186,9 +173,9 @@ static integer c__65 = 65;
 	*info = -4;
     } else if (*k < 0 || *k > nq) {
 	*info = -5;
-    } else if (*lda < max(1,nq)) {
+    } else if (*lda < max(1_integer,nq)) {
 	*info = -7;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -10;
     }
 

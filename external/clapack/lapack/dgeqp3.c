@@ -17,26 +17,9 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer j, jb, na, nb, sm, sn, nx, fjb, iws, nfxd;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     integer nbmin, minmn;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer minws;
-    extern /* Subroutine */ int dlaqp2_(integer *, integer *, integer *, 
-	    doublereal *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *), dgeqrf_(integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dlaqps_(integer *, integer *, integer *, 
-	    integer *, integer *, doublereal *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
     integer topbmn, sminmn;
-    extern /* Subroutine */ int dormqr_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
 
@@ -154,7 +137,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
 

@@ -14,28 +14,14 @@ static integer c__0 = 0;
     integer i__1, i__2;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__;
     doublereal eps;
-    extern /* Subroutine */ int dlas2_(doublereal *, doublereal *, doublereal 
-	    *, doublereal *, doublereal *);
     doublereal scale;
     integer iinfo;
     doublereal sigmn;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     doublereal sigmx;
-    extern /* Subroutine */ int dlasq2_(integer *, doublereal *, integer *);
-    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
     doublereal safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *), dlasrt_(
-	    char *, integer *, doublereal *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

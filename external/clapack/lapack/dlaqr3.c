@@ -22,8 +22,8 @@ static integer c__12 = 12;
 	    wv_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4;
     doublereal d__1, d__2, d__3, d__4, d__5, d__6;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__, j, k;
@@ -51,7 +51,7 @@ static integer c__12 = 12;
 	    *, integer *, doublereal *, doublereal *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, integer *, integer *), 
 	    dlabad_(doublereal *, doublereal *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dgehrd_(integer *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
 	    integer *), dlarfg_(integer *, doublereal *, doublereal *, 

@@ -16,17 +16,7 @@ static integer c__1 = 1;
     integer j, jc, jj;
     doublereal ajj;
     integer jjn;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-    extern /* Subroutine */ int dspr_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *), dscal_(integer *, 
-	    doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtpmv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int xerbla_(char *, integer *), dtptri_(
-	    char *, char *, integer *, doublereal *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

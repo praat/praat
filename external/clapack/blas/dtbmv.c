@@ -10,9 +10,9 @@
     /* Local variables */
     integer i__, j, l, ix, jx, kx, info;
     doublereal temp;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer kplus1;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical nounit;
 
 /*     .. Scalar Arguments .. */

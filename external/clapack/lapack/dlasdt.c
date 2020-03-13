@@ -7,9 +7,6 @@
     /* System generated locals */
     integer i__1, i__2;
 
-    /* Builtin functions */
-    double log(doublereal);
-
     /* Local variables */
     integer i__, il, ir, maxn;
     doublereal temp;
@@ -82,7 +79,7 @@
     --inode;
 
     /* Function Body */
-    maxn = max(1,*n);
+    maxn = max(1_integer,*n);
     temp = log((doublereal) maxn / (doublereal) (*msub + 1)) / log(2.);
     *lvl = (integer) temp + 1;
 

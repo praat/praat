@@ -16,39 +16,17 @@ static integer c_n1 = -1;
     integer z_dim1, z_offset, i__1, i__2, i__3;
     doublereal d__1, d__2, d__3, d__4, d__5;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, b1, j1, bn;
     doublereal xj, scl, eps, sep, nrm, tol;
     integer its;
     doublereal xjm, ztr, eps1;
     integer jblk, nblk;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     integer jmax;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     integer iseed[4], gpind, iinfo;
-    extern doublereal dasum_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), daxpy_(integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *);
     doublereal ortol;
     integer indrv1, indrv2, indrv3, indrv4, indrv5;
-    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlagtf_(integer *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *, doublereal *, doublereal *, integer *
-, integer *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *), dlagts_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *);
     integer nrmchk;
-    extern /* Subroutine */ int dlarnv_(integer *, integer *, integer *, 
-	    doublereal *);
     integer blksiz;
     doublereal onenrm, dtpcrt, pertol;
 
@@ -188,7 +166,7 @@ static integer c_n1 = -1;
 	*info = -1;
     } else if (*m < 0 || *m > *n) {
 	*info = -4;
-    } else if (*ldz < max(1,*n)) {
+    } else if (*ldz < max(1_integer,*n)) {
 	*info = -9;
     } else {
 	i__1 = *m;

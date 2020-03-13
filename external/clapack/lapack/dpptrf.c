@@ -13,22 +13,10 @@ static doublereal c_b16 = -1.;
     integer i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer j, jc, jj;
     doublereal ajj;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-    extern /* Subroutine */ int dspr_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *), dscal_(integer *, 
-	    doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
     logical upper;
-    extern /* Subroutine */ int dtpsv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

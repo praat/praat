@@ -21,21 +21,7 @@ static doublereal c_b11 = 1.;
     doublereal akk;
     integer k1k1;
     doublereal bjj, bkk;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-    extern /* Subroutine */ int dspr2_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *), dscal_(integer *, doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *), dspmv_(char *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dtpmv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *), 
-	    dtpsv_(char *, char *, char *, integer *, doublereal *, 
-	    doublereal *, integer *), xerbla_(char *, 
-	    integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

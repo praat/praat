@@ -14,9 +14,6 @@ static doublereal c_b32 = 1.;
     integer i__1;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     doublereal c__;
     integer i__, l, m;
@@ -29,15 +26,15 @@ static doublereal c_b32 = 1.;
     extern /* Subroutine */ int dlae2_(doublereal *, doublereal *, doublereal 
 	    *, doublereal *, doublereal *);
     doublereal gamma, alpha, sigma, anorm;
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
+//    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
     integer iscale;
     extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
 	    integer *, integer *);
     doublereal oldgam, safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal safmax;
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
+//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     extern /* Subroutine */ int dlasrt_(char *, integer *, doublereal *, 
 	    integer *);
     integer lendsv;

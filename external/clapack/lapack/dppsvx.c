@@ -18,33 +18,12 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, j;
     doublereal amax, smin, smax;
-    extern logical lsame_(char *, char *);
     doublereal scond, anorm;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical equil, rcequ;
-    extern doublereal dlamch_(char *);
     logical nofact;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     doublereal bignum;
-    extern doublereal dlansp_(char *, char *, integer *, doublereal *, 
-	    doublereal *);
-    extern /* Subroutine */ int dppcon_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *), dlaqsp_(char *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, char *);
     integer infequ;
-    extern /* Subroutine */ int dppequ_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    dpprfs_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *), 
-	    dpptrf_(char *, integer *, doublereal *, integer *);
     doublereal smlnum;
-    extern /* Subroutine */ int dpptrs_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *);
-
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -333,9 +312,9 @@ static integer c__1 = 1;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1,*n)) {
+	    if (*ldb < max(1_integer,*n)) {
 		*info = -10;
-	    } else if (*ldx < max(1,*n)) {
+	    } else if (*ldx < max(1_integer,*n)) {
 		*info = -12;
 	    }
 	}

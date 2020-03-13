@@ -193,6 +193,18 @@ int dtrsm_(char *side, char *uplo, char *transa, char *diag,
 int dtrsv_(char *uplo, char *trans, char *diag, integer *n, 
 	doublereal *a, integer *lda, doublereal *x, integer *incx);
 
+double d_sign(double *a, double *b);
+double d_lg10(doublereal *);
+integer i_dnnt(doublereal *);
+integer i_nint(real *);
+double pow_dd(doublereal *a, doublereal *b);
+double pow_di(doublereal *, integer *);
+integer pow_ii(integer *, integer *);
+int s_cat(char *, char **, integer *, integer *, ftnlen);
+integer s_cmp(char *, char *, ftnlen, ftnlen);
+int s_copy(char *, char *, ftnlen, ftnlen);
+doublereal slamch_(char *cmach);
+
 /* Missing if you want to compile clapack with g++ */
 
 integer icmax1_(integer *n, complex *cx, integer *incx);

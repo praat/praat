@@ -7,7 +7,7 @@
 #ifndef F2C_INCLUDE
 #define F2C_INCLUDE
 
-#include "../../melder/melder_int.h"
+#include "melder.h"
 
 
 //typedef intptr_t integer;
@@ -159,8 +159,8 @@ typedef struct Namelist Namelist;
 
 //#define abs(x) ((x) >= 0 ? (x) : -(x))
 #define dabs(x) (doublereal)abs(x)
-//#define min(a,b) ((a) <= (b) ? (a) : (b))
-//#define max(a,b) ((a) >= (b) ? (a) : (b))
+#define min(a,b) (std::min(a,b))
+#define max(a,b) (std::max(a,b))
 #define dmin(a,b) (doublereal)min(a,b)
 #define dmax(a,b) (doublereal)max(a,b)
 #define bit_test(a,b)	((a) >> (b) & 1)

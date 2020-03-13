@@ -12,8 +12,8 @@
     integer i__, j, ix, iy, jx, jy, kx, ky, info;
     doublereal temp;
     integer lenx, leny;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern logical lsame_(char *, char *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -140,7 +140,7 @@
 	info = 2;
     } else if (*n < 0) {
 	info = 3;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	info = 6;
     } else if (*incx == 0) {
 	info = 8;

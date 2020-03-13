@@ -42,8 +42,8 @@ static integer c__0 = 0;
 	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
 	    *, doublereal *, integer *);
     logical xswap;
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal smlnum;
 
 

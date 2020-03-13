@@ -16,9 +16,6 @@ static doublereal c_b37 = -1.;
     integer z_dim1, z_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, k;
     doublereal bm, bp, xm[8], xp[8];
@@ -28,7 +25,7 @@ static doublereal c_b37 = -1.;
     doublereal temp, work[32];
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern doublereal dasum_(integer *, doublereal *, integer *);
+//    extern doublereal dasum_(integer *, doublereal *, integer *);
     doublereal pmone;
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *), daxpy_(integer *, doublereal *, 

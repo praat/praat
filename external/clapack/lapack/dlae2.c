@@ -7,8 +7,8 @@
     /* System generated locals */
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal);*/
 
     /* Local variables */
     doublereal ab, df, tb, sm, rt, adf, acmn, acmx;

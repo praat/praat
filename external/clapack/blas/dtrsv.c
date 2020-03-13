@@ -10,8 +10,8 @@
     /* Local variables */
     integer i__, j, ix, jx, kx, info;
     doublereal temp;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern logical lsame_(char *, char *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical nounit;
 
 /*     .. Scalar Arguments .. */
@@ -144,7 +144,7 @@
 	info = 3;
     } else if (*n < 0) {
 	info = 4;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	info = 6;
     } else if (*incx == 0) {
 	info = 8;

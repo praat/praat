@@ -23,9 +23,6 @@ static doublereal c_b52 = 1.;
 	    d_offset, e_dim1, e_offset, f_dim1, f_offset, i__1, i__2, i__3, 
 	    i__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, k, p, q, ie, je, mb, nb, is, js, pq;
     doublereal dsum;
@@ -34,7 +31,7 @@ static doublereal c_b52 = 1.;
 	    integer *), dgemm_(char *, char *, integer *, integer *, integer *
 , doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer ifunc, linfo, lwmin;
     doublereal scale2;
     extern /* Subroutine */ int dtgsy2_(char *, integer *, integer *, integer 
@@ -49,7 +46,7 @@ static doublereal c_b52 = 1.;
 	    doublereal *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer iround;
     logical notran;
     integer isolve;
@@ -294,17 +291,17 @@ static doublereal c_b52 = 1.;
 	    *info = -3;
 	} else if (*n <= 0) {
 	    *info = -4;
-	} else if (*lda < max(1,*m)) {
+	} else if (*lda < max(1_integer,*m)) {
 	    *info = -6;
-	} else if (*ldb < max(1,*n)) {
+	} else if (*ldb < max(1_integer,*n)) {
 	    *info = -8;
-	} else if (*ldc < max(1,*m)) {
+	} else if (*ldc < max(1_integer,*m)) {
 	    *info = -10;
-	} else if (*ldd < max(1,*m)) {
+	} else if (*ldd < max(1_integer,*m)) {
 	    *info = -12;
-	} else if (*lde < max(1,*n)) {
+	} else if (*lde < max(1_integer,*n)) {
 	    *info = -14;
-	} else if (*ldf < max(1,*m)) {
+	} else if (*ldf < max(1_integer,*m)) {
 	    *info = -16;
 	}
     }

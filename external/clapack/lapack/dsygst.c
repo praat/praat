@@ -19,24 +19,7 @@ static doublereal c_b52 = .5;
 
     /* Local variables */
     integer k, kb, nb;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dsymm_(
-	    char *, char *, integer *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *);
     logical upper;
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dsygs2_(
-	    integer *, char *, integer *, doublereal *, integer *, doublereal 
-	    *, integer *, integer *), dsyr2k_(char *, char *, integer 
-	    *, integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	     integer *, doublereal *, doublereal *, integer *)
-	    , xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -137,9 +120,9 @@ static doublereal c_b52 = .5;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -7;
     }
     if (*info != 0) {

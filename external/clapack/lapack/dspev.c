@@ -13,9 +13,6 @@ static integer c__1 = 1;
     integer z_dim1, z_offset, i__1;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     doublereal eps;
     integer inde;
@@ -25,13 +22,13 @@ static integer c__1 = 1;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     doublereal sigma;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical wantz;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer iscale;
     doublereal safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     extern doublereal dlansp_(char *, char *, integer *, doublereal *, 
 	    doublereal *);

@@ -17,9 +17,6 @@ static integer c__2 = 2;
     integer z_dim1, z_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     doublereal b, c__, f, g;
     integer i__, j, k, l, m;
@@ -31,7 +28,7 @@ static integer c__2 = 2;
     integer lend, jtot;
     extern /* Subroutine */ int dlae2_(doublereal *, doublereal *, doublereal 
 	    *, doublereal *, doublereal *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dlasr_(char *, char *, char *, integer *, 
 	    integer *, doublereal *, doublereal *, doublereal *, integer *);
     doublereal anorm;
@@ -40,7 +37,7 @@ static integer c__2 = 2;
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *);
     integer lendm1, lendp1;
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
+//    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
     integer iscale;
     extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
@@ -50,8 +47,8 @@ static integer c__2 = 2;
     extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *);
     doublereal safmax;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     extern /* Subroutine */ int dlasrt_(char *, integer *, doublereal *, 
 	    integer *);
     integer lendsv;
@@ -169,7 +166,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*ldz < 1 || icompz > 0 && *ldz < max(1,*n)) {
+    } else if (*ldz < 1 || icompz > 0 && *ldz < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

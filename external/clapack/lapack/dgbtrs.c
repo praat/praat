@@ -19,7 +19,7 @@ static doublereal c_b23 = 1.;
     extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
 	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *), dswap_(integer *, 
@@ -27,7 +27,7 @@ static doublereal c_b23 = 1.;
 	    char *, char *, integer *, integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
     logical lnoti;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
 
 
@@ -136,7 +136,7 @@ static doublereal c_b23 = 1.;
 	*info = -5;
     } else if (*ldab < (*kl << 1) + *ku + 1) {
 	*info = -7;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -10;
     }
     if (*info != 0) {

@@ -15,23 +15,9 @@ static doublereal c_b14 = -1.;
 
     /* Local variables */
     integer i__;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal taui;
-    extern /* Subroutine */ int dsyr2_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal alpha;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dsymv_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *), dlarfg_(integer *, doublereal *, 
-	     doublereal *, integer *, doublereal *), xerbla_(char *, integer *
-);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -172,7 +158,7 @@ static doublereal c_b14 = -1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {

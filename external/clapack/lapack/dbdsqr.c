@@ -18,9 +18,9 @@ static doublereal c_b72 = -1.;
 	    i__2;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
+    /* Builtin functions 
     double pow_dd(doublereal *, doublereal *), sqrt(doublereal), d_sign(
-	    doublereal *, doublereal *);
+	    doublereal *, doublereal *);*/
 
     /* Local variables */
     doublereal f, g, h__;
@@ -41,7 +41,7 @@ static doublereal c_b72 = -1.;
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *), dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal oldcs;
     extern /* Subroutine */ int dlasr_(char *, char *, char *, integer *, 
 	    integer *, doublereal *, doublereal *, doublereal *, integer *);
@@ -52,14 +52,6 @@ static doublereal c_b72 = -1.;
     integer maxit;
     doublereal sminl, sigmx;
     logical lower;
-    extern /* Subroutine */ int dlasq1_(integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *), dlasv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
-    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), xerbla_(char *, 
-	    integer *);
     doublereal sminoa, thresh;
     logical rotate;
     doublereal tolmul;
@@ -243,11 +235,11 @@ static doublereal c_b72 = -1.;
 	*info = -4;
     } else if (*ncc < 0) {
 	*info = -5;
-    } else if (*ncvt == 0 && *ldvt < 1 || *ncvt > 0 && *ldvt < max(1,*n)) {
+    } else if (*ncvt == 0 && *ldvt < 1 || *ncvt > 0 && *ldvt < max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldu < max(1,*nru)) {
+    } else if (*ldu < max(1_integer,*nru)) {
 	*info = -11;
-    } else if (*ncc == 0 && *ldc < 1 || *ncc > 0 && *ldc < max(1,*n)) {
+    } else if (*ncc == 0 && *ldc < 1 || *ncc > 0 && *ldc < max(1_integer,*n)) {
 	*info = -13;
     }
     if (*info != 0) {

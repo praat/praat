@@ -19,8 +19,8 @@ static integer c__3 = 3;
 	    z_offset, i__1, i__2, i__3, i__4;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions 
+    double sqrt(doublereal);*/
 
     /* Local variables */
     doublereal c__;
@@ -47,7 +47,7 @@ static integer c__3 = 3;
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *);
     doublereal temp2, s1inv, scale;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iiter, ilast, jiter;
     doublereal anorm, bnorm;
     integer maxit;
@@ -59,7 +59,7 @@ static integer c__3 = 3;
 	    doublereal *, doublereal *, doublereal *);
     logical ilazr2;
     doublereal ascale, bscale;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *);
     extern doublereal dlanhs_(char *, integer *, doublereal *, integer *, 
@@ -70,7 +70,7 @@ static integer c__3 = 3;
     extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *);
     doublereal safmax;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal eshift;
     logical ilschr;
     integer icompq, ilastm, ischur;
@@ -355,7 +355,7 @@ static integer c__3 = 3;
 /*     Check Argument Values */
 
     *info = 0;
-    work[1] = (doublereal) max(1,*n);
+    work[1] = (doublereal) max(1_integer,*n);
     lquery = *lwork == -1;
     if (ischur == 0) {
 	*info = -1;
@@ -377,7 +377,7 @@ static integer c__3 = 3;
 	*info = -15;
     } else if (*ldz < 1 || ilz && *ldz < *n) {
 	*info = -17;
-    } else if (*lwork < max(1,*n) && ! lquery) {
+    } else if (*lwork < max(1_integer,*n) && ! lquery) {
 	*info = -19;
     }
     if (*info != 0) {

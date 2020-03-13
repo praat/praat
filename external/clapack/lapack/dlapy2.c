@@ -6,8 +6,8 @@ doublereal dlapy2_(doublereal *x, doublereal *y)
     /* System generated locals */
     doublereal ret_val, d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions 
+    double sqrt(doublereal); */
 
     /* Local variables */
     doublereal w, z__, xabs, yabs;

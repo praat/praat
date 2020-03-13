@@ -20,8 +20,8 @@ static doublereal c_b37 = 1.;
 	    vr_offset, i__1, i__2;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer jc, in, jr, ihi, ilo;
@@ -32,7 +32,7 @@ static doublereal c_b37 = 1.;
     doublereal temp;
     logical ilvl, ilvr;
     integer iwrk;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer ileft, icols, irows;
     extern /* Subroutine */ int dlabad_(doublereal *, doublereal *), dggbak_(
 	    char *, char *, integer *, integer *, integer *, doublereal *, 
@@ -58,21 +58,8 @@ static doublereal c_b37 = 1.;
     logical ldumma[1];
     char chtemp[1];
     doublereal bignum;
-    extern /* Subroutine */ int dhgeqz_(char *, char *, char *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer ijobvl, iright, ijobvr;
-    extern /* Subroutine */ int dorgqr_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *);
     doublereal anrmto, bnrmto;
-    extern /* Subroutine */ int dormqr_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     integer minwrk, maxwrk;
     doublereal smlnum;
     logical lquery;
@@ -279,9 +266,9 @@ static doublereal c_b37 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -7;
     } else if (*ldvl < 1 || ilvl && *ldvl < *n) {
 	*info = -12;

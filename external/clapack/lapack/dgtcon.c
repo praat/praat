@@ -15,17 +15,9 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__, kase, kase1;
-    extern logical lsame_(char *, char *);
     integer isave[3];
-    extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *), xerbla_(char *, 
-	    integer *);
     doublereal ainvnm;
     logical onenrm;
-    extern /* Subroutine */ int dgttrs_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, integer *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

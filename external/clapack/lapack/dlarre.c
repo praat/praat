@@ -18,8 +18,8 @@ static integer c__2 = 2;
     integer i__1, i__2;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal), log(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal), log(doublereal); */
 
     /* Local variables */
     integer i__, j;
@@ -40,13 +40,13 @@ static integer c__2 = 2;
     doublereal rtol;
     integer iseed[4];
     doublereal avgap, sigma;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
     logical norep;
-    extern /* Subroutine */ int dlasq2_(integer *, doublereal *, integer *);
-    extern doublereal dlamch_(char *);
+//    extern /* Subroutine */ int dlasq2_(integer *, doublereal *, integer *);
+//    extern doublereal dlamch_(char *);
     integer ibegin;
     logical forceb;
     integer irange;

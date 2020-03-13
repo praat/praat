@@ -16,9 +16,6 @@ static doublereal c_b17 = 1.;
     integer a_dim1, a_offset, i__1, i__2, i__3;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     doublereal eps;
     integer inde;
@@ -27,11 +24,11 @@ static doublereal c_b17 = 1.;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     doublereal sigma;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo, lwmin, liopt;
     logical lower, wantz;
     integer indwk2, llwrk2;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     integer iscale;
     extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
@@ -43,7 +40,7 @@ static doublereal c_b17 = 1.;
     doublereal safmin;
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     integer indtau;
     extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
@@ -208,7 +205,7 @@ static doublereal c_b17 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
     }
 

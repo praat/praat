@@ -14,11 +14,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j, jc;
-    extern logical lsame_(char *, char *);
     logical upper;
-    extern /* Subroutine */ int dtpsv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     logical nounit;
 
 
@@ -124,7 +120,7 @@ static integer c__1 = 1;
 	*info = -4;
     } else if (*nrhs < 0) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
     }
     if (*info != 0) {

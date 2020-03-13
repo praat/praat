@@ -15,20 +15,9 @@ static doublereal c_b14 = -1.;
 
     /* Local variables */
     integer i__, i1, ii, i1i1;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal taui;
-    extern /* Subroutine */ int dspr2_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *);
     doublereal alpha;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *), dspmv_(char *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *), xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

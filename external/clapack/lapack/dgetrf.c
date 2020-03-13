@@ -16,19 +16,7 @@ static doublereal c_b19 = -1.;
 
     /* Local variables */
     integer i__, j, jb, nb;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer iinfo;
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dgetf2_(
-	    integer *, integer *, doublereal *, integer *, integer *, integer 
-	    *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dlaswp_(integer *, doublereal *, integer *, 
-	    integer *, integer *, integer *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -111,7 +99,7 @@ static doublereal c_b19 = -1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {

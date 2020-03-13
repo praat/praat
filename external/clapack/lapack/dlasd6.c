@@ -37,7 +37,7 @@ static integer c_n1 = -1;
 	    integer *, integer *), dlamrg_(integer *, integer *, 
 	    doublereal *, integer *, integer *, integer *);
     integer isigma;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal orgnrm;
 
 

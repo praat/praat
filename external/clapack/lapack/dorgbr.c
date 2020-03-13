@@ -15,10 +15,10 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer i__, j, nb, mn;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical wantq;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dorglq_(integer *, integer *, integer *, 
@@ -155,9 +155,9 @@ static integer c_n1 = -1;
 	*info = -3;
     } else if (*k < 0) {
 	*info = -4;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -6;
-    } else if (*lwork < max(1,mn) && ! lquery) {
+    } else if (*lwork < max(1_integer,mn) && ! lquery) {
 	*info = -9;
     }
 
@@ -167,7 +167,7 @@ static integer c_n1 = -1;
 	} else {
 	    nb = ilaenv_(&c__1, "DORGLQ", " ", m, n, k, &c_n1);
 	}
-	lwkopt = max(1,mn) * nb;
+	lwkopt = max(1_integer,mn) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

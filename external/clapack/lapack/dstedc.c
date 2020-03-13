@@ -18,11 +18,6 @@ static integer c__1 = 1;
     integer z_dim1, z_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double log(doublereal);
-    integer pow_ii(integer *, integer *);
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, k, m;
     doublereal p;
@@ -31,7 +26,7 @@ static integer c__1 = 1;
     extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
 	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
 	    integer *, doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
     integer lwmin;
@@ -39,7 +34,7 @@ static integer c__1 = 1;
 	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
 	     integer *, doublereal *, integer *, integer *);
     integer start;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
 	    integer *, integer *), dlacpy_(char *, integer *, integer 
@@ -48,9 +43,9 @@ static integer c__1 = 1;
 	    doublereal *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer finish;
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
+//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
 	     integer *), dlasrt_(char *, integer *, doublereal *, integer *);
     integer liwmin, icompz;
@@ -219,7 +214,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*ldz < 1 || icompz > 0 && *ldz < max(1,*n)) {
+    } else if (*ldz < 1 || icompz > 0 && *ldz < max(1_integer,*n)) {
 	*info = -6;
     }
 

@@ -14,10 +14,6 @@ integer ilaenv_(integer *ispec, char *name__, char *opts, integer *n1,
     /* System generated locals */
     integer ret_val;
 
-    /* Builtin functions */
-    /* Subroutine */ int s_copy(char *, char *, ftnlen, ftnlen);
-    integer s_cmp(char *, char *, ftnlen, ftnlen);
-
     /* Local variables */
     static integer i__;
     static char c1[1], c2[2], c3[3], c4[2];
@@ -25,7 +21,7 @@ integer ilaenv_(integer *ispec, char *name__, char *opts, integer *n1,
     static logical cname;
     static integer nbmin;
     static logical sname;
-    extern integer ieeeck_(integer *, real *, real *);
+//    extern integer ieeeck_(integer *, real *, real *);
     static char subnam[6];
     extern integer iparmq_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);

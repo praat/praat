@@ -16,23 +16,11 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j, neig;
-    extern logical lsame_(char *, char *);
     integer lwmin;
     char trans[1];
     logical upper;
-    extern /* Subroutine */ int dtpmv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *), 
-	    dtpsv_(char *, char *, char *, integer *, doublereal *, 
-	    doublereal *, integer *);
     logical wantz;
-    extern /* Subroutine */ int xerbla_(char *, integer *), dspevd_(
-	    char *, char *, integer *, doublereal *, doublereal *, doublereal 
-	    *, integer *, doublereal *, integer *, integer *, integer *, 
-	    integer *);
     integer liwmin;
-    extern /* Subroutine */ int dpptrf_(char *, integer *, doublereal *, 
-	    integer *), dspgst_(integer *, char *, integer *, 
-	    doublereal *, doublereal *, integer *);
     logical lquery;
 
 

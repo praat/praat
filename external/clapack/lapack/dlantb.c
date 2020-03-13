@@ -12,14 +12,14 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4, i__5;
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__, j, l;
     doublereal sum, scale;
     logical udiag;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal value;
     extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *);
@@ -137,7 +137,7 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
 /* Computing MAX */
 		    i__2 = *k + 2 - j;
 		    i__3 = *k;
-		    for (i__ = max(i__2,1); i__ <= i__3; ++i__) {
+		    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], 
 				abs(d__1));
@@ -170,7 +170,7 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
 /* Computing MAX */
 		    i__3 = *k + 2 - j;
 		    i__2 = *k + 1;
-		    for (i__ = max(i__3,1); i__ <= i__2; ++i__) {
+		    for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], 
 				abs(d__1));
@@ -211,7 +211,7 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
 /* Computing MAX */
 		    i__2 = *k + 2 - j;
 		    i__3 = *k;
-		    for (i__ = max(i__2,1); i__ <= i__3; ++i__) {
+		    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
 			sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L90: */
 		    }
@@ -220,7 +220,7 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
 /* Computing MAX */
 		    i__3 = *k + 2 - j;
 		    i__2 = *k + 1;
-		    for (i__ = max(i__3,1); i__ <= i__2; ++i__) {
+		    for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
 			sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L100: */
 		    }
@@ -363,7 +363,7 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
 			i__3 = min(i__4,*k);
 /* Computing MAX */
 			i__2 = *k + 2 - j;
-			dlassq_(&i__3, &ab[max(i__2, 1)+ j * ab_dim1], &c__1, 
+			dlassq_(&i__3, &ab[max(i__2,1_integer)+ j * ab_dim1], &c__1, 
 				&scale, &sum);
 /* L280: */
 		    }
@@ -378,7 +378,7 @@ doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k,
 		    i__3 = min(i__4,i__2);
 /* Computing MAX */
 		    i__5 = *k + 2 - j;
-		    dlassq_(&i__3, &ab[max(i__5, 1)+ j * ab_dim1], &c__1, &
+		    dlassq_(&i__3, &ab[max(i__5,1_integer)+ j * ab_dim1], &c__1, &
 			    scale, &sum);
 /* L290: */
 		}

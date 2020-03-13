@@ -31,7 +31,7 @@
     doublereal bbnd, cmax, ui11r, ui12s, temp, ur11r, ur12s, u22abs;
     integer icmax;
     doublereal bnorm, cnorm, smini;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dladiv_(doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *);
     doublereal bignum, smlnum;

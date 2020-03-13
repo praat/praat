@@ -16,16 +16,7 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer i__, m1, ib, nb, ki, kk, mu, nx, iws, nbmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *), dlarzb_(
-	    char *, char *, char *, char *, integer *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dlarzt_(char *, char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *), dlatrz_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
-    integer ldwork, lwkopt;
+	integer ldwork, lwkopt;
     logical lquery;
 
 
@@ -69,7 +60,7 @@ static integer c__2 = 2;
 /*          orthogonal matrix Z as a product of M elementary reflectors. */
 
 /*  LDA     (input) INTEGER */
-/*          The leading dimension of the array A.  LDA >= max(1,M). */
+/*          The leading dimension of the array A.  LDA >= max(1_integer,M). */
 
 /*  TAU     (output) DOUBLE PRECISION array, dimension (M) */
 /*          The scalar factors of the elementary reflectors. */
@@ -78,7 +69,7 @@ static integer c__2 = 2;
 /*          On exit, if INFO = 0, WORK(1) returns the optimal LWORK. */
 
 /*  LWORK   (input) INTEGER */
-/*          The dimension of the array WORK.  LWORK >= max(1,M). */
+/*          The dimension of the array WORK.  LWORK >= max(1_integer,M). */
 /*          For optimum performance LWORK >= M*NB, where NB is */
 /*          the optimal blocksize. */
 
@@ -153,7 +144,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < *m) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     }
 
@@ -169,7 +160,7 @@ static integer c__2 = 2;
 	}
 	work[1] = (doublereal) lwkopt;
 
-	if (*lwork < max(1,*m) && ! lquery) {
+	if (*lwork < max(1_integer,*m) && ! lquery) {
 	    *info = -7;
 	}
     }

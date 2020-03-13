@@ -17,9 +17,6 @@ static integer c__1 = 1;
     integer q_dim1, q_offset, q2_dim1, q2_offset, i__1;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     doublereal c__;
     integer i__, j;
@@ -27,16 +24,6 @@ static integer c__1 = 1;
     integer k2, n1, n2, jp, n1p1;
     doublereal eps, tau, tol;
     integer jlam, imax, jmax;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *), dscal_(
-	    integer *, doublereal *, doublereal *, integer *), dcopy_(integer 
-	    *, doublereal *, integer *, doublereal *, integer *);
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dlamrg_(integer *, integer *, doublereal *, 
-	    integer *, integer *, integer *), dlacpy_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *), xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -214,11 +201,11 @@ static integer c__1 = 1;
 	*info = -3;
     } else if (*icompq == 1 && *qsiz < *n) {
 	*info = -4;
-    } else if (*ldq < max(1,*n)) {
+    } else if (*ldq < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*cutpnt < min(1,*n) || *cutpnt > *n) {
+    } else if (*cutpnt < min(1_integer,*n) || *cutpnt > *n) {
 	*info = -10;
-    } else if (*ldq2 < max(1,*n)) {
+    } else if (*ldq2 < max(1_integer,*n)) {
 	*info = -14;
     }
     if (*info != 0) {

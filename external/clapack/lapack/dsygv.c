@@ -16,7 +16,7 @@ static doublereal c_b16 = 1.;
 
     /* Local variables */
     integer nb, neig;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
 	    integer *, integer *, doublereal *, doublereal *, integer *, 
 	    doublereal *, integer *);
@@ -28,7 +28,7 @@ static doublereal c_b16 = 1.;
     extern /* Subroutine */ int dsyev_(char *, char *, integer *, doublereal *
 , integer *, doublereal *, doublereal *, integer *, integer *);
     logical wantz;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dpotrf_(char *, integer *, doublereal *, 
@@ -179,9 +179,9 @@ static doublereal c_b16 = 1.;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
     }
 

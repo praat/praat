@@ -19,13 +19,13 @@ static integer c__1 = 1;
     integer ica, ira, iexc;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
     doublereal sfmin1, sfmin2, sfmax1, sfmax2;
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical noconv;
 
 
@@ -153,7 +153,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {

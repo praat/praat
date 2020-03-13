@@ -9,8 +9,8 @@
     integer i__1;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal), log(doublereal), pow_di(doublereal *, integer *);
+    /* Builtin functions
+    double sqrt(doublereal), log(doublereal), pow_di(doublereal *, integer *);*/
 
     /* Local variables */
     doublereal a, b, c__, f;
@@ -21,7 +21,7 @@
     logical scale;
     integer niter;
     doublereal small1, small2, sminv1, sminv2;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal dscale[3], sclfac, zscale[3], erretm, sclinv;
 
 

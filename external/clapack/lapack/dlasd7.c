@@ -23,15 +23,8 @@ static integer c__1 = 1;
     integer jp;
     doublereal eps, tau, tol;
     integer nlp1, nlp2, idxi, idxj;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
     integer idxjp;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer jprev;
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
-    extern /* Subroutine */ int dlamrg_(integer *, integer *, doublereal *, 
-	    integer *, integer *, integer *), xerbla_(char *, integer *);
     doublereal hlftol;
 
 

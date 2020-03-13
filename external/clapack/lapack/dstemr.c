@@ -16,9 +16,6 @@ static doublereal c_b18 = .001;
     integer z_dim1, z_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j;
     doublereal r1, r2;
@@ -32,55 +29,22 @@ static doublereal c_b18 = .001;
     doublereal rmin, rmax;
     integer itmp;
     doublereal tnrm;
-    extern /* Subroutine */ int dlae2_(doublereal *, doublereal *, doublereal 
-	    *, doublereal *, doublereal *);
     integer inde2, itmp2;
     doublereal rtol1, rtol2;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal scale;
     integer indgp;
-    extern logical lsame_(char *, char *);
     integer iinfo, iindw, ilast;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     integer lwmin;
     logical wantz;
-    extern /* Subroutine */ int dlaev2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *);
-    extern doublereal dlamch_(char *);
-    logical alleig;
+	logical alleig;
     integer ibegin;
     logical indeig;
     integer iindbl;
     logical valeig;
-    extern /* Subroutine */ int dlarrc_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     integer *, integer *, integer *), dlarre_(char *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *);
     integer wbegin;
     doublereal safmin;
-    extern /* Subroutine */ int dlarrj_(integer *, doublereal *, doublereal *, 
-	     integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, doublereal *, 
-	     integer *), xerbla_(char *, integer *);
     doublereal bignum;
     integer inderr, iindwk, indgrs, offset;
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dlarrr_(integer *, doublereal *, doublereal *, 
-	     integer *), dlarrv_(integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *, 
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *), dlasrt_(char *, integer *, doublereal *, 
-	    integer *);
     doublereal thresh;
     integer iinspl, ifirst, indwrk, liwmin, nzcmin;
     doublereal pivmin;

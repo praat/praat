@@ -26,17 +26,17 @@ static doublereal c_b36 = .5;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     integer maind;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal tscal, uscal;
-    extern doublereal dasum_(integer *, doublereal *, integer *);
+//    extern doublereal dasum_(integer *, doublereal *, integer *);
     integer jlast;
     extern /* Subroutine */ int dtbsv_(char *, char *, char *, integer *, 
 	    integer *, doublereal *, integer *, doublereal *, integer *), daxpy_(integer *, doublereal *, 
 	    doublereal *, integer *, doublereal *, integer *);
     logical upper;
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     logical notran;
     integer jfirst;

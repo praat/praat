@@ -21,14 +21,7 @@ static integer c__1 = 1;
     logical ilq, ilz;
     integer jcol;
     doublereal temp;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
     integer jrow;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    dlartg_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), xerbla_(char *, integer *);
     integer icompq, icompz;
 
 
@@ -223,9 +216,9 @@ static integer c__1 = 1;
 	*info = -4;
     } else if (*ihi > *n || *ihi < *ilo - 1) {
 	*info = -5;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -9;
     } else if (ilq && *ldq < *n || *ldq < 1) {
 	*info = -11;

@@ -11,9 +11,6 @@
     integer i__1;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     doublereal g, s, t;
     integer j4, nn;
@@ -29,7 +26,7 @@
 	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
 	     doublereal *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal safmin;
 
 

@@ -19,9 +19,6 @@ static doublereal c_b34 = 0.;
 	    i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, jj;
     doublereal eps, vll, vuu, tmp1;
@@ -34,7 +31,7 @@ static doublereal c_b34 = 0.;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     doublereal sigma;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *);
@@ -44,7 +41,7 @@ static doublereal c_b34 = 0.;
 	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
 	    *, doublereal *, integer *);
     logical lower, wantz;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     logical alleig, indeig;
     integer iscale, indibl;
     extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
@@ -56,7 +53,7 @@ static doublereal c_b34 = 0.;
     extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, integer *);
     doublereal safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal abstll, bignum;
     extern /* Subroutine */ int dsbtrd_(char *, char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
@@ -274,7 +271,7 @@ static doublereal c_b34 = 0.;
 	*info = -5;
     } else if (*ldab < *kd + 1) {
 	*info = -7;
-    } else if (wantz && *ldq < max(1,*n)) {
+    } else if (wantz && *ldq < max(1_integer,*n)) {
 	*info = -9;
     } else {
 	if (valeig) {
@@ -282,7 +279,7 @@ static doublereal c_b34 = 0.;
 		*info = -11;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1,*n)) {
+	    if (*il < 1 || *il > max(1_integer,*n)) {
 		*info = -12;
 	    } else if (*iu < min(*n,*il) || *iu > *n) {
 		*info = -13;

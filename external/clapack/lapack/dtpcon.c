@@ -16,7 +16,7 @@ static integer c__1 = 1;
     /* Local variables */
     integer ix, kase, kase1;
     doublereal scale;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer isave[3];
     extern /* Subroutine */ int drscl_(integer *, doublereal *, doublereal *, 
 	    integer *);
@@ -25,9 +25,9 @@ static integer c__1 = 1;
     doublereal xnorm;
     extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *, integer *, integer *);
-    extern doublereal dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern doublereal dlantp_(char *, char *, char *, integer *, doublereal *, 
 	     doublereal *);
     doublereal ainvnm;
@@ -155,7 +155,7 @@ static integer c__1 = 1;
     }
 
     *rcond = 0.;
-    smlnum = dlamch_("Safe minimum") * (doublereal) max(1,*n);
+    smlnum = dlamch_("Safe minimum") * (doublereal) max(1_integer,*n);
 
 /*     Compute the norm of the triangular matrix A. */
 

@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUMmachar.h"
 #include "Polynomial.h"
 #include "Roots.h"
@@ -174,10 +174,10 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 
 		// Find out the working storage needed
 
-		char job = 'E', compz = 'N';
+		char *job = "E", *compz = "N";
 		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
 		double *z = nullptr, wt [1];
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
+		NUMlapack_dhseqr_ (job, compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
 		if (info != 0)
 			Melder_require (info > 0,
 				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
@@ -186,7 +186,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 
 		// Find eigenvalues.
 
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
+		NUMlapack_dhseqr_ (job, compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
 		integer nrootsfound = n;
 		integer ioffset = 0;
 		if (info > 0) {
@@ -246,7 +246,7 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = n, info;
 	double *z = nullptr;
 	VEC work = workspace. part (n * (n + 2) + 1, n * (n + 2) + lwork);
-	NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
+	NUMlapack_dhseqr_ (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
 	integer nrootsfound = n;
 	if (info > 0) {
 		/*

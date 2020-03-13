@@ -10,8 +10,8 @@
     integer i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double log(doublereal);
+    /* Builtin functions
+    double log(doublereal); */
 
     /* Local variables */
     integer i__, j, k, p;

@@ -9,14 +9,11 @@
     integer i__1;
     doublereal d__1, d__2, d__3, d__4, d__5;
 
-    /* Builtin functions */
-    double d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     integer k;
     doublereal ak, eps, temp, pert, absak, sfmin;
-    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern doublereal dlamch_(char *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
 
 

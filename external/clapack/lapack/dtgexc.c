@@ -17,11 +17,7 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer nbf, nbl, here, lwmin;
-    extern /* Subroutine */ int dtgex2_(logical *, logical *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *, integer *, integer 
-	    *, doublereal *, integer *, integer *), xerbla_(char *, integer *);
-    integer nbnext;
+	integer nbnext;
     logical lquery;
 
 
@@ -184,13 +180,13 @@ static integer c__2 = 2;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldq < 1 || *wantq && *ldq < max(1,*n)) {
+    } else if (*ldq < 1 || *wantq && *ldq < max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldz < 1 || *wantz && *ldz < max(1,*n)) {
+    } else if (*ldz < 1 || *wantz && *ldz < max(1_integer,*n)) {
 	*info = -11;
     } else if (*ifst < 1 || *ifst > *n) {
 	*info = -12;

@@ -20,18 +20,7 @@ static doublereal c_b22 = 1.;
     /* Local variables */
     integer i__, j, nb, nx;
     doublereal ws;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer nbmin, iinfo, minmn;
-    extern /* Subroutine */ int dgebd2_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, integer *), dlabrd_(integer *, integer *, integer *
-, doublereal *, integer *, doublereal *, doublereal *, doublereal 
-	    *, doublereal *, doublereal *, integer *, doublereal *, integer *)
-	    , xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer ldwrkx, ldwrky, lwkopt;
     logical lquery;
 
@@ -203,11 +192,11 @@ static doublereal c_b22 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -4;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1,*m);
+	i__1 = max(1_integer,*m);
 	if (*lwork < max(i__1,*n) && ! lquery) {
 	    *info = -10;
 	}

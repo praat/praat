@@ -322,7 +322,7 @@ static integer c__3 = 3;
 /*        .    NWR.GE.3.) ==== */
 
 	nwr = ilaenv_(&c__13, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
-	nwr = max(2,nwr);
+	nwr = max(2_integer,nwr);
 /* Computing MIN */
 	i__1 = *ihi - *ilo + 1, i__2 = (*n - 1) / 3, i__1 = min(i__1,i__2);
 	nwr = min(i__1,nwr);
@@ -368,19 +368,19 @@ static integer c__3 = 3;
 /*        ==== DLAHQR/DLAQR0 crossover point ==== */
 
 	nmin = ilaenv_(&c__12, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
-	nmin = max(11,nmin);
+	nmin = max(11_integer,nmin);
 
 /*        ==== Nibble crossover point ==== */
 
 	nibble = ilaenv_(&c__14, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
-	nibble = max(0,nibble);
+	nibble = max(0_integer,nibble);
 
 /*        ==== Accumulate reflections during ttswp?  Use block */
 /*        .    2-by-2 structure during matrix-matrix multiply? ==== */
 
 	kacc22 = ilaenv_(&c__16, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
-	kacc22 = max(0,kacc22);
-	kacc22 = min(2,kacc22);
+	kacc22 = max(0_integer,kacc22);
+	kacc22 = min(2_integer,kacc22);
 
 /*        ==== NWMAX = the largest possible deflation window for */
 /*        .    which there is sufficient workspace. ==== */

@@ -17,14 +17,6 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer i__, j, l, ib, nb, ki, kk, nx, iws, nbmin, iinfo;
-    extern /* Subroutine */ int dorgl2_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *), 
-	    dlarfb_(char *, char *, char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), dlarft_(char *, char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer ldwork, lwkopt;
     logical lquery;
 
@@ -118,7 +110,7 @@ static integer c__2 = 2;
     /* Function Body */
     *info = 0;
     nb = ilaenv_(&c__1, "DORGLQ", " ", m, n, k, &c_n1);
-    lwkopt = max(1,*m) * nb;
+    lwkopt = max(1_integer,*m) * nb;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
     if (*m < 0) {
@@ -127,9 +119,9 @@ static integer c__2 = 2;
 	*info = -2;
     } else if (*k < 0 || *k > *m) {
 	*info = -3;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -5;
-    } else if (*lwork < max(1,*m) && ! lquery) {
+    } else if (*lwork < max(1_integer,*m) && ! lquery) {
 	*info = -8;
     }
     if (*info != 0) {

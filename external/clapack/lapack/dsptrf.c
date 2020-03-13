@@ -12,9 +12,6 @@ static integer c__1 = 1;
     integer i__1, i__2;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, k;
     doublereal t, r1, d11, d12, d21, d22;
@@ -28,14 +25,14 @@ static integer c__1 = 1;
     doublereal alpha;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
     integer kstep;
     logical upper;
     doublereal absakk;
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal colmax, rowmax;
 
 

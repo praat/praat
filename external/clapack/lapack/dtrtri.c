@@ -17,23 +17,9 @@ static doublereal c_b22 = -1.;
     integer a_dim1, a_offset, i__1, i__2[2], i__3, i__4, i__5;
     char ch__1[2];
 
-    /* Builtin functions */
-    /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
-
     /* Local variables */
     integer j, jb, nb, nn;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dtrsm_(
-	    char *, char *, char *, char *, integer *, integer *, doublereal *
-, doublereal *, integer *, doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dtrti2_(char *, char *, integer *, doublereal 
-	    *, integer *, integer *), xerbla_(char *, integer 
-	    *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     logical nounit;
 
 
@@ -121,7 +107,7 @@ static doublereal c_b22 = -1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
     }
     if (*info != 0) {

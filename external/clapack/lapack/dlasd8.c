@@ -16,29 +16,13 @@ static doublereal c_b8 = 1.;
     integer difr_dim1, difr_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);
-
     /* Local variables */
     integer i__, j;
     doublereal dj, rho;
     integer iwk1, iwk2, iwk3;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-    doublereal temp;
-    extern doublereal dnrm2_(integer *, doublereal *, integer *);
+	doublereal temp;
     integer iwk2i, iwk3i;
     doublereal diflj, difrj, dsigj;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-    extern doublereal dlamc3_(doublereal *, doublereal *);
-    extern /* Subroutine */ int dlasd4_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *), dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *), dlaset_(char *, integer *, integer 
-	    *, doublereal *, doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
     doublereal dsigjp;
 
 

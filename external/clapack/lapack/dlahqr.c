@@ -14,8 +14,8 @@ static integer c__1 = 1;
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__, j, k, l, m;
@@ -36,7 +36,7 @@ static integer c__1 = 1;
 	    dlanv2_(doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, doublereal *), dlabad_(doublereal *, doublereal *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *);
     doublereal safmin, safmax, rtdisc, smlnum;

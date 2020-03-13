@@ -9,8 +9,8 @@
     integer i__1;
     doublereal d__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     doublereal a, b, c__;
@@ -34,7 +34,7 @@
 	    doublereal *, doublereal *, doublereal *);
     doublereal delsq2, dtnsq1;
     logical swtch3;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     logical orgati;
     doublereal erretm, dtipsq, rhoinv;
 

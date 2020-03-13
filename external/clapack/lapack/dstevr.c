@@ -19,9 +19,6 @@ static integer c__4 = 4;
     integer z_dim1, z_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, j, jj;
     doublereal eps, vll, vuu, tmp1;
@@ -33,23 +30,23 @@ static integer c__4 = 4;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
     doublereal sigma;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     char order[1];
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
 	    *, doublereal *, integer *);
     integer lwmin;
     logical wantz;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     logical alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
     logical valeig;
     doublereal safmin;
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
-    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
+//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     integer indisp;
     extern /* Subroutine */ int dstein_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *, integer *, integer *, doublereal *, 
@@ -322,7 +319,7 @@ static integer c__4 = 4;
 		*info = -7;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1,*n)) {
+	    if (*il < 1 || *il > max(1_integer,*n)) {
 		*info = -8;
 	    } else if (*iu < min(*n,*il) || *iu > *n) {
 		*info = -9;

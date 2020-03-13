@@ -15,17 +15,9 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer j, k, kb, nb, iws;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer nbmin, iinfo;
     logical upper;
-    extern /* Subroutine */ int dsytf2_(char *, integer *, doublereal *, 
-	    integer *, integer *, integer *), xerbla_(char *, integer 
-	    *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dlasyf_(char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *);
     integer ldwork, lwkopt;
     logical lquery;
 
@@ -175,7 +167,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -4;
     } else if (*lwork < 1 && ! lquery) {
 	*info = -7;
@@ -205,7 +197,7 @@ static integer c__2 = 2;
 	if (*lwork < iws) {
 /* Computing MAX */
 	    i__1 = *lwork / ldwork;
-	    nb = max(i__1,1);
+	    nb = max(i__1,1_integer);
 /* Computing MAX */
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DSYTRF", uplo, n, &c_n1, &c_n1, &
 		    c_n1);

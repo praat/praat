@@ -25,7 +25,7 @@ static doublereal c_b19 = 1.;
     doublereal eps;
     integer kase;
     doublereal safe1, safe2;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer isave[3];
     extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *), daxpy_(integer *, doublereal *, 
@@ -33,12 +33,12 @@ static doublereal c_b19 = 1.;
     integer count;
     extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
 	     integer *, doublereal *, integer *, integer *);
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     extern /* Subroutine */ int dlagtm_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, doublereal *, doublereal *, 
 	    doublereal *, integer *, doublereal *, doublereal *, integer *);
     doublereal safmin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
     char transn[1];
     extern /* Subroutine */ int dgttrs_(char *, integer *, integer *, 
@@ -200,9 +200,9 @@ static doublereal c_b19 = 1.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -13;
-    } else if (*ldx < max(1,*n)) {
+    } else if (*ldx < max(1_integer,*n)) {
 	*info = -15;
     }
     if (*info != 0) {

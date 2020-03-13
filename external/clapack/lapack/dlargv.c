@@ -7,8 +7,8 @@
     /* System generated locals */
     integer i__1;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     doublereal f, g;

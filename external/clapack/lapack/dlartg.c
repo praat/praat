@@ -8,15 +8,15 @@
     integer i__1;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double log(doublereal), pow_di(doublereal *, integer *), sqrt(doublereal);
+    /* Builtin functions
+    double log(doublereal), pow_di(doublereal *, integer *), sqrt(doublereal); */
 
     /* Local variables */
     integer i__;
     doublereal f1, g1, eps, scale;
     integer count;
     doublereal safmn2, safmx2;
-    extern doublereal dlamch_(char *);
+//    extern doublereal dlamch_(char *);
     doublereal safmin;
 
 

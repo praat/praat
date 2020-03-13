@@ -17,15 +17,12 @@ static integer c__2 = 2;
     integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2];
     char ch__1[2];
 
-    /* Builtin functions */
-    /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
-
     /* Local variables */
     integer i1, i2, nb, mi, ni, nq, nw;
     logical left;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer iinfo;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dormlq_(char *, char *, integer *, integer *, 
@@ -209,11 +206,11 @@ static integer c__2 = 2;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
 	i__1 = 1, i__2 = min(nq,*k);
-	if (applyq && *lda < max(1,nq) || ! applyq && *lda < max(i__1,i__2)) {
+	if (applyq && *lda < max(1_integer,nq) || ! applyq && *lda < max(i__1,i__2)) {
 	    *info = -8;
-	} else if (*ldc < max(1,*m)) {
+	} else if (*ldc < max(1_integer,*m)) {
 	    *info = -11;
-	} else if (*lwork < max(1,nw) && ! lquery) {
+	} else if (*lwork < max(1_integer,nw) && ! lquery) {
 	    *info = -13;
 	}
     }
@@ -256,7 +253,7 @@ static integer c__2 = 2;
 		nb = ilaenv_(&c__1, "DORMLQ", ch__1, m, &i__1, &i__2, &c_n1);
 	    }
 	}
-	lwkopt = max(1,nw) * nb;
+	lwkopt = max(1_integer,nw) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

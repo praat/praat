@@ -618,7 +618,7 @@
 L140:
 /* Computing MAX */
     i__1 = kl + 1 - kf;
-    *info = max(i__1,0);
+    *info = max(i__1,0_integer);
     *mout = kl;
 
     return 0;

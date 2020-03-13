@@ -19,33 +19,11 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, j, j1, j2;
     doublereal amax, smin, smax;
-    extern logical lsame_(char *, char *);
     doublereal scond, anorm;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical equil, rcequ, upper;
-    extern doublereal dlamch_(char *), dlansb_(char *, char *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dpbcon_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *), dlaqsb_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, char *);
     logical nofact;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dpbequ_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dpbrfs_(char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *), dpbtrf_(char *, 
-	    integer *, integer *, doublereal *, integer *, integer *);
     integer infequ;
-    extern /* Subroutine */ int dpbtrs_(char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, integer *);
     doublereal smlnum;
 
 
@@ -366,9 +344,9 @@ static integer c__1 = 1;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1,*n)) {
+	    if (*ldb < max(1_integer,*n)) {
 		*info = -13;
-	    } else if (*ldx < max(1,*n)) {
+	    } else if (*ldx < max(1_integer,*n)) {
 		*info = -15;
 	    }
 	}
@@ -419,7 +397,7 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MAX */
 		i__2 = j - *kd;
-		j1 = max(i__2,1);
+		j1 = max(i__2,1_integer);
 		i__2 = j - j1 + 1;
 		dcopy_(&i__2, &ab[*kd + 1 - j + j1 + j * ab_dim1], &c__1, &
 			afb[*kd + 1 - j + j1 + j * afb_dim1], &c__1);

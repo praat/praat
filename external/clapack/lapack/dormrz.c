@@ -19,28 +19,12 @@ static integer c__65 = 65;
 	    i__5;
     char ch__1[2];
 
-    /* Builtin functions */
-    /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
-
     /* Local variables */
     integer i__;
     doublereal t[4160]	/* was [65][64] */;
     integer i1, i2, i3, ib, ic, ja, jc, nb, mi, ni, nq, nw, iws;
     logical left;
-    extern logical lsame_(char *, char *);
     integer nbmin, iinfo;
-    extern /* Subroutine */ int dormr3_(char *, char *, integer *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *),
-	     xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dlarzb_(char *, char *, char *, char *, 
-	    integer *, integer *, integer *, integer *, doublereal *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	     integer *), dlarzt_(char *, char 
-	    *, integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *);
     logical notran;
     integer ldwork;
     char transt[1];
@@ -188,10 +172,10 @@ static integer c__65 = 65;
 
     if (left) {
 	nq = *m;
-	nw = max(1,*n);
+	nw = max(1_integer,*n);
     } else {
 	nq = *n;
-	nw = max(1,*m);
+	nw = max(1_integer,*m);
     }
     if (! left && ! lsame_(side, "R")) {
 	*info = -1;
@@ -205,9 +189,9 @@ static integer c__65 = 65;
 	*info = -5;
     } else if (*l < 0 || left && *l > *m || ! left && *l > *n) {
 	*info = -6;
-    } else if (*lda < max(1,*k)) {
+    } else if (*lda < max(1_integer,*k)) {
 	*info = -8;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -11;
     }
 
@@ -230,7 +214,7 @@ static integer c__65 = 65;
 	}
 	work[1] = (doublereal) lwkopt;
 
-	if (*lwork < max(1,nw) && ! lquery) {
+	if (*lwork < max(1_integer,nw) && ! lquery) {
 	    *info = -13;
 	}
     }

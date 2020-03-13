@@ -15,9 +15,6 @@ static doublereal c_b9 = 1.;
     integer a_dim1, a_offset, w_dim1, w_offset, i__1, i__2, i__3, i__4, i__5;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer j, k;
     doublereal t, r1, d11, d21, d22;
@@ -27,7 +24,7 @@ static doublereal c_b9 = 1.;
 	    integer *), dgemm_(char *, char *, integer *, integer *, integer *
 , doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
 	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *, integer *), dcopy_(integer *, 
@@ -35,7 +32,7 @@ static doublereal c_b9 = 1.;
 	    *, doublereal *, integer *, doublereal *, integer *);
     integer kstep;
     doublereal absakk;
-    extern integer idamax_(integer *, doublereal *, integer *);
+//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal colmax, rowmax;
 
 

@@ -22,24 +22,10 @@ static integer c__2 = 2;
 	     u_dim1, u_offset, vt_dim1, vt_offset, z_dim1, z_offset, i__1, 
 	    i__2;
 
-    /* Builtin functions */
-    integer pow_ii(integer *, integer *);
-
     /* Local variables */
     integer i__, j, i1, ic, lf, nd, ll, nl, nr, im1, nlf, nrf, lvl, ndb1, 
 	    nlp1, lvl2, nrp1, nlvl, sqre;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
-    integer inode, ndiml, ndimr;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlals0_(integer *, integer *, integer *, 
-	     integer *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, integer *, integer *, integer *, integer *, doublereal 
-	    *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *), dlasdt_(integer *, integer *, integer *, integer *, 
-	    integer *, integer *, integer *), xerbla_(char *, integer *);
+     integer inode, ndiml, ndimr;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -14,11 +14,11 @@
     integer ii;
     extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
 	    integer *);
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
 	    doublereal *, integer *);
     logical leftv;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical rightv;
 
 
@@ -115,13 +115,13 @@
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*ilo < 1 || *ilo > max(1,*n)) {
+    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
 	*info = -4;
     } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
 	*info = -5;
     } else if (*m < 0) {
 	*info = -7;
-    } else if (*ldv < max(1,*n)) {
+    } else if (*ldv < max(1_integer,*n)) {
 	*info = -9;
     }
     if (*info != 0) {

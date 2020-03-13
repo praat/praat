@@ -15,11 +15,6 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer j, jb, nb;
-    extern /* Subroutine */ int dgtts2_(integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer itrans;
     logical notran;
 
@@ -121,7 +116,7 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*ldb < max(*n,1)) {
+    } else if (*ldb < max(*n,1_integer)) {
 	*info = -10;
     }
     if (*info != 0) {

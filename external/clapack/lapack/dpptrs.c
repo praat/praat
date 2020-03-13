@@ -13,11 +13,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__;
-    extern logical lsame_(char *, char *);
     logical upper;
-    extern /* Subroutine */ int dtpsv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -98,7 +94,7 @@ static integer c__1 = 1;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

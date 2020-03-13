@@ -16,8 +16,8 @@ static integer c__1 = 1;
     integer q_dim1, q_offset, i__1, i__2;
     doublereal d__1, d__2, d__3, d__4;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal);*/
 
     /* Local variables */
     doublereal c__;
@@ -26,18 +26,8 @@ static integer c__1 = 1;
     integer k2, n2, ct, nj, pj, js, iq1, iq2, n1p1;
     doublereal eps, tau, tol;
     integer psm[4], imax, jmax;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
     integer ctot[4];
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dcopy_(integer *, doublereal *, integer *, doublereal 
-	    *, integer *);
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
-    extern integer idamax_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dlamrg_(integer *, integer *, doublereal *, 
-	    integer *, integer *, integer *), dlacpy_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *), xerbla_(char *, integer *);
-
+ 
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -196,7 +186,7 @@ static integer c__1 = 1;
 
     if (*n < 0) {
 	*info = -2;
-    } else if (*ldq < max(1,*n)) {
+    } else if (*ldq < max(1_integer,*n)) {
 	*info = -6;
     } else /* if(complicated condition) */ {
 /* Computing MIN */

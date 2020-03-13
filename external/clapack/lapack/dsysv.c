@@ -15,8 +15,8 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer nb;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern logical lsame_(char *, char *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dsytrf_(char *, integer *, doublereal *, 
@@ -156,9 +156,9 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -8;
     } else if (*lwork < 1 && ! lquery) {
 	*info = -10;

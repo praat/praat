@@ -16,13 +16,6 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__, j, info;
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dtrmv_(char *, 
-	    char *, char *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *), xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

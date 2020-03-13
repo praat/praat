@@ -15,11 +15,6 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__;
     doublereal aii;
-    extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *), dlarfg_(integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *), xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -129,11 +124,11 @@ static integer c__1 = 1;
     *info = 0;
     if (*n < 0) {
 	*info = -1;
-    } else if (*ilo < 1 || *ilo > max(1,*n)) {
+    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
 	*info = -2;
     } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
 	*info = -3;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -5;
     }
     if (*info != 0) {

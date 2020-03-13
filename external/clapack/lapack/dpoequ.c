@@ -8,13 +8,10 @@
     integer a_dim1, a_offset, i__1;
     doublereal d__1, d__2;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__;
     doublereal smin;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -94,7 +91,7 @@
     *info = 0;
     if (*n < 0) {
 	*info = -1;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -3;
     }
     if (*info != 0) {

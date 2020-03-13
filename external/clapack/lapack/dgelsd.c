@@ -18,8 +18,8 @@ static doublereal c_b82 = 0.;
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3, i__4;
 
-    /* Builtin functions */
-    double log(doublereal);
+    /* Builtin functions
+    double log(doublereal); */
 
     /* Local variables */
     integer ie, il, mm;
@@ -27,38 +27,9 @@ static doublereal c_b82 = 0.;
     integer itau, nlvl, iascl, ibscl;
     doublereal sfmin;
     integer minmn, maxmn, itaup, itauq, mnthr, nwork;
-    extern /* Subroutine */ int dlabad_(doublereal *, doublereal *), dgebrd_(
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     integer *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dgelqf_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *), 
-	    dlalsd_(char *, integer *, integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *), dlascl_(char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, integer *), dgeqrf_(
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *), dlacpy_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *), dlaset_(char *, integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *), xerbla_(char *, 
-	    integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dormbr_(char *, char *, char *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *);
     integer wlalsd;
-    extern /* Subroutine */ int dormlq_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     integer ldwork;
-    extern /* Subroutine */ int dormqr_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     integer minwrk, maxwrk;
     doublereal smlnum;
     logical lquery;
@@ -230,9 +201,9 @@ static doublereal c_b82 = 0.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -5;
-    } else if (*ldb < max(1,maxmn)) {
+    } else if (*ldb < max(1_integer,maxmn)) {
 	*info = -7;
     }
 
@@ -246,11 +217,11 @@ static doublereal c_b82 = 0.;
 /*     following subroutine, as returned by ILAENV.) */
 
     minwrk = 1;
-    minmn = max(1,minmn);
+    minmn = max(1_integer,minmn);
 /* Computing MAX */
     i__1 = (integer) (log((doublereal) minmn / (doublereal) (smlsiz + 1)) / 
 	    log(2.)) + 1;
-    nlvl = max(i__1,0);
+    nlvl = max(i__1,0_integer);
 
     if (*info == 0) {
 	maxwrk = 0;

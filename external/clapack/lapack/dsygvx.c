@@ -19,7 +19,7 @@ static doublereal c_b19 = 1.;
 
     /* Local variables */
     integer nb;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
 	    integer *, integer *, doublereal *, doublereal *, integer *, 
 	    doublereal *, integer *);
@@ -28,7 +28,7 @@ static doublereal c_b19 = 1.;
 	    integer *, integer *, doublereal *, doublereal *, integer *, 
 	    doublereal *, integer *);
     logical upper, wantz, alleig, indeig, valeig;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
 	    integer *, integer *);
     extern /* Subroutine */ int dpotrf_(char *, integer *, doublereal *, 
@@ -268,9 +268,9 @@ static doublereal c_b19 = 1.;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1,*n)) {
+    } else if (*lda < max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1,*n)) {
+    } else if (*ldb < max(1_integer,*n)) {
 	*info = -9;
     } else {
 	if (valeig) {
@@ -278,7 +278,7 @@ static doublereal c_b19 = 1.;
 		*info = -11;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1,*n)) {
+	    if (*il < 1 || *il > max(1_integer,*n)) {
 		*info = -12;
 	    } else if (*iu < min(*n,*il) || *iu > *n) {
 		*info = -13;

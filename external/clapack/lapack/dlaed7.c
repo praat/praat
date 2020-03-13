@@ -19,29 +19,10 @@ static integer c_n1 = -1;
     /* System generated locals */
     integer q_dim1, q_offset, i__1, i__2;
 
-    /* Builtin functions */
-    integer pow_ii(integer *, integer *);
-
     /* Local variables */
     integer i__, k, n1, n2, is, iw, iz, iq2, ptr, ldq2, indx, curr;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer indxc, indxp;
-    extern /* Subroutine */ int dlaed8_(integer *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *, integer *, 
-	    doublereal *, integer *, integer *, integer *), dlaed9_(integer *, 
-	     integer *, integer *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *), dlaeda_(integer *, integer *, integer *, 
-	    integer *, integer *, integer *, integer *, integer *, doublereal 
-	    *, doublereal *, integer *, doublereal *, doublereal *, integer *)
-	    ;
     integer idlmda;
-    extern /* Subroutine */ int dlamrg_(integer *, integer *, doublereal *, 
-	    integer *, integer *, integer *), xerbla_(char *, integer *);
     integer coltyp;
 
 
@@ -231,9 +212,9 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*icompq == 1 && *qsiz < *n) {
 	*info = -4;
-    } else if (*ldq < max(1,*n)) {
+    } else if (*ldq < max(1_integer,*n)) {
 	*info = -9;
-    } else if (min(1,*n) > *cutpnt || *n < *cutpnt) {
+    } else if (min(1_integer,*n) > *cutpnt || *n < *cutpnt) {
 	*info = -12;
     }
     if (*info != 0) {

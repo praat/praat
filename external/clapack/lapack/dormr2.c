@@ -15,8 +15,8 @@
     extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
 	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
 	    doublereal *);
-    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern logical lsame_(char *, char *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
 
 
@@ -151,9 +151,9 @@
 	*info = -4;
     } else if (*k < 0 || *k > nq) {
 	*info = -5;
-    } else if (*lda < max(1,*k)) {
+    } else if (*lda < max(1_integer,*k)) {
 	*info = -7;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	*info = -10;
     }
     if (*info != 0) {

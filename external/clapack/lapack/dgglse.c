@@ -18,30 +18,9 @@ static doublereal c_b33 = 1.;
 
     /* Local variables */
     integer nb, mn, nr, nb1, nb2, nb3, nb4, lopt;
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dcopy_(integer *, 
-	    doublereal *, integer *, doublereal *, integer *), daxpy_(integer 
-	    *, doublereal *, doublereal *, integer *, doublereal *, integer *)
-	    , dtrmv_(char *, char *, char *, integer *, doublereal *, integer 
-	    *, doublereal *, integer *), dggrqf_(
-	    integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, doublereal *, 
-	     integer *, integer *), xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer lwkmin;
-    extern /* Subroutine */ int dormqr_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *), 
-	    dormrq_(char *, char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
-    extern /* Subroutine */ int dtrtrs_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *);
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -183,9 +162,9 @@ static doublereal c_b33 = 1.;
 	*info = -2;
     } else if (*p < 0 || *p > *n || *p < *n - *m) {
 	*info = -3;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -5;
-    } else if (*ldb < max(1,*p)) {
+    } else if (*ldb < max(1_integer,*p)) {
 	*info = -7;
     }
 
@@ -244,7 +223,7 @@ static doublereal c_b33 = 1.;
 /*     Update c = Z'*c = ( c1 ) N-P */
 /*                       ( c2 ) M+P-N */
 
-    i__1 = max(1,*m);
+    i__1 = max(1_integer,*m);
     i__2 = *lwork - *p - mn;
     dormqr_("Left", "Transpose", m, &c__1, &mn, &a[a_offset], lda, &work[*p + 
 	    1], &c__[1], &i__1, &work[*p + mn + 1], &i__2, info);

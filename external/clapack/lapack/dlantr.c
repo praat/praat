@@ -12,14 +12,14 @@ doublereal dlantr_(char *norm, char *uplo, char *diag, integer *m, integer *n,
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
+    /* Builtin functions
+    double sqrt(doublereal); */
 
     /* Local variables */
     integer i__, j;
     doublereal sum, scale;
     logical udiag;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     doublereal value;
     extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
 	    doublereal *, doublereal *);

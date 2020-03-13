@@ -15,9 +15,9 @@
     logical nota, notb;
     doublereal temp;
     integer ncola;
-    extern logical lsame_(char *, char *);
+//    extern logical lsame_(char *, char *);
     integer nrowa, nrowb;
-    extern /* Subroutine */ int xerbla_(char *, integer *);
+//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -201,11 +201,11 @@
 	info = 4;
     } else if (*k < 0) {
 	info = 5;
-    } else if (*lda < max(1,nrowa)) {
+    } else if (*lda < max(1_integer,nrowa)) {
 	info = 8;
-    } else if (*ldb < max(1,nrowb)) {
+    } else if (*ldb < max(1_integer,nrowb)) {
 	info = 10;
-    } else if (*ldc < max(1,*m)) {
+    } else if (*ldc < max(1_integer,*m)) {
 	info = 13;
     }
     if (info != 0) {

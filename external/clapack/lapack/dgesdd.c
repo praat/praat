@@ -18,52 +18,18 @@ static doublereal c_b248 = 1.;
     integer a_dim1, a_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1, 
 	    i__2, i__3;
 
-    /* Builtin functions */
-    double sqrt(doublereal);
-
     /* Local variables */
     integer i__, ie, il, ir, iu, blk;
     doublereal dum[1], eps;
     integer ivt, iscl;
     doublereal anrm;
     integer idum[1], ierr, itau;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
-    extern logical lsame_(char *, char *);
     integer chunk, minmn, wrkbl, itaup, itauq, mnthr;
     logical wntqa;
     integer nwork;
     logical wntqn, wntqo, wntqs;
-    extern /* Subroutine */ int dbdsdc_(char *, char *, integer *, doublereal 
-	    *, doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	     doublereal *, integer *, doublereal *, integer *, integer *), dgebrd_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
     integer bdspac;
-    extern /* Subroutine */ int dgelqf_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *, integer *), 
-	    dlascl_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    integer *, integer *, doublereal *, integer *, integer *),
-	     dgeqrf_(integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *), dlacpy_(char *, 
-	     integer *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *), dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    xerbla_(char *, integer *), dorgbr_(char *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dormbr_(char *, char *, char *, integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *), dorglq_(integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    integer *), dorgqr_(integer *, integer *, integer *, doublereal *, 
-	     integer *, doublereal *, doublereal *, integer *, integer *);
     integer ldwrkl, ldwrkr, minwrk, ldwrku, maxwrk, ldwkvt;
     doublereal smlnum;
     logical wntqas, lquery;
@@ -251,7 +217,7 @@ static doublereal c_b248 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1,*m)) {
+    } else if (*lda < max(1_integer,*m)) {
 	*info = -5;
     } else if (*ldu < 1 || wntqas && *ldu < *m || wntqo && *m < *n && *ldu < *
 	    m) {
