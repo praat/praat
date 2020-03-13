@@ -9,7 +9,7 @@ static integer c__2 = 2;
 static doublereal c_b18 = 1.;
 static doublereal c_b22 = -1.;
 
-/* Subroutine */ int dtrtri_(char *uplo, char *diag, integer *n, doublereal *
+/* Subroutine */ int dtrtri_(const char *uplo, const char *diag, integer *n, doublereal *
 	a, integer *lda, integer *info)
 {
     /* System generated locals */

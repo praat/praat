@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dtrti2_(char *uplo, char *diag, integer *n, doublereal *
+/* Subroutine */ int dtrti2_(const char *uplo, const char *diag, integer *n, doublereal *
 	a, integer *lda, integer *info)
 {
     /* System generated locals */

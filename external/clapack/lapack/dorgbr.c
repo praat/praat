@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dorgbr_(char *vect, integer *m, integer *n, integer *k, 
+/* Subroutine */ int dorgbr_(const char *vect, integer *m, integer *n, integer *k, 
 	doublereal *a, integer *lda, doublereal *tau, doublereal *work, 
 	integer *lwork, integer *info)
 {

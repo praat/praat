@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlacpy_(char *uplo, integer *m, integer *n, doublereal *
+/* Subroutine */ int dlacpy_(const char *uplo, integer *m, integer *n, doublereal *
 	a, integer *lda, doublereal *b, integer *ldb)
 {
     /* System generated locals */

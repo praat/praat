@@ -21,42 +21,18 @@ static doublereal c_b17 = 1.;
     integer inde;
     doublereal anrm, rmin, rmax;
     integer lopt;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     integer iinfo, lwmin, liopt;
     logical lower, wantz;
     integer indwk2, llwrk2;
-//    extern doublereal dlamch_(char *);
     integer iscale;
-    extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *), dstedc_(char *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     integer *, integer *, integer *, integer *), dlacpy_(
-	    char *, integer *, integer *, doublereal *, integer *, doublereal 
-	    *, integer *);
     doublereal safmin;
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     integer indtau;
-    extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
-	     integer *);
-    extern doublereal dlansy_(char *, char *, integer *, doublereal *, 
-	    integer *, doublereal *);
     integer indwrk, liwmin;
-    extern /* Subroutine */ int dormtr_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *), dsytrd_(char *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     integer *);
     integer llwork;
     doublereal smlnum;
     logical lquery;
-
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

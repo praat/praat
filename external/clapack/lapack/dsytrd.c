@@ -10,7 +10,7 @@ static integer c__2 = 2;
 static doublereal c_b22 = -1.;
 static doublereal c_b23 = 1.;
 
-/* Subroutine */ int dsytrd_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dsytrd_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, doublereal *d__, doublereal *e, doublereal *tau, doublereal *
 	work, integer *lwork, integer *info)
 {
@@ -19,12 +19,10 @@ static doublereal c_b23 = 1.;
 
     /* Local variables */
     integer i__, j, nb, kk, nx, iws;
-//    extern logical lsame_(char *, char *);
     integer nbmin, iinfo;
     logical upper;
     integer ldwork, lwkopt;
     logical lquery;
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

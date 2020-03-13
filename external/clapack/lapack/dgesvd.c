@@ -11,7 +11,7 @@ static integer c_n1 = -1;
 static doublereal c_b421 = 0.;
 static doublereal c_b443 = 1.;
 
-/* Subroutine */ int dgesvd_(char *jobu, char *jobvt, integer *m, integer *n, 
+/* Subroutine */ int dgesvd_(const char *jobu, const char *jobvt, integer *m, integer *n, 
 	doublereal *a, integer *lda, doublereal *s, doublereal *u, integer *
 	ldu, doublereal *vt, integer *ldvt, doublereal *work, integer *lwork, 
 	integer *info)
@@ -239,8 +239,8 @@ static doublereal c_b443 = 1.;
 /*           Compute space needed for DBDSQR */
 
 /* Writing concatenation */
-	    i__1[0] = 1, a__1[0] = jobu;
-	    i__1[1] = 1, a__1[1] = jobvt;
+	    i__1[0] = 1, a__1[0] = const_cast<char *>(jobu);
+	    i__1[1] = 1, a__1[1] = const_cast<char *>(jobvt);
 	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 	    mnthr = ilaenv_(&c__6, "DGESVD", ch__1, m, n, &c__0, &c__0);
 	    bdspac = *n * 5;
@@ -511,8 +511,8 @@ static doublereal c_b443 = 1.;
 /*           Compute space needed for DBDSQR */
 
 /* Writing concatenation */
-	    i__1[0] = 1, a__1[0] = jobu;
-	    i__1[1] = 1, a__1[1] = jobvt;
+	    i__1[0] = 1, a__1[0] = const_cast<char *>(jobu);
+	    i__1[1] = 1, a__1[1] = const_cast<char *>(jobvt);
 	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 	    mnthr = ilaenv_(&c__6, "DGESVD", ch__1, m, n, &c__0, &c__0);
 	    bdspac = *m * 5;

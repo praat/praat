@@ -28,54 +28,23 @@ static integer c_n1 = -1;
     integer imax;
     doublereal rmin, rmax;
     integer inddd, indee;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     integer iinfo;
     char order[1];
     integer indwk;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     integer lwmin;
     logical lower, wantz;
-//    extern doublereal dlamch_(char *);
     logical alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
     logical valeig;
     doublereal safmin;
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal abstll, bignum;
     integer indtau, indisp;
-    extern /* Subroutine */ int dstein_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *, integer *), 
-	    dsterf_(integer *, doublereal *, doublereal *, integer *);
     integer indiwo, indwkn;
-    extern doublereal dlansy_(char *, char *, integer *, doublereal *, 
-	    integer *, doublereal *);
-    extern /* Subroutine */ int dstebz_(char *, char *, integer *, doublereal 
-	    *, doublereal *, integer *, integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, integer *), 
-	    dstemr_(char *, char *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, integer *, 
-	    logical *, doublereal *, integer *, integer *, integer *, integer 
-	    *);
     integer liwmin;
     logical tryrac;
-    extern /* Subroutine */ int dormtr_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
     integer llwrkn, llwork, nsplit;
     doublereal smlnum;
-    extern /* Subroutine */ int dsytrd_(char *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *);
     integer lwkopt;
     logical lquery;
 

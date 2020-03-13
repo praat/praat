@@ -36,7 +36,7 @@
 	is layed out in memory as 1 2 3 4 (row major) or as 1 3 2 4 (column major).
 */
 
-int NUMlapack_dgeev_ (char *jobvl, char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,	double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info);
+int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,	double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info);
 /*  -- LAPACK driver routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -141,11 +141,11 @@ int NUMlapack_dgeev_ (char *jobvl, char *jobvr, integer *n, double *a, integer *
     =====================================================================
 */
 
-integer NUMlapack_dgesvd_query (char jobu, char jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt); 
+integer NUMlapack_dgesvd_query (const char *jobu, const char *jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt); 
 
-integer NUMlapack_dgesvd (char jobu, char jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt, VEC const& work);
+integer NUMlapack_dgesvd (const char *jobu, const char *jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt, VEC const& work);
 
-int NUMlapack_dgesvd_ (char *jobu, char *jobvt, integer *m, integer *n, double *a, integer *lda,
+int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda,
 	double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
 	integer *lwork, integer *info);/*
      DGESVD computes the singular value decomposition (SVD) of a real
@@ -291,7 +291,7 @@ Parameters
                     above for details.
 */
 
-int NUMlapack_dggsvd_ (char *jobu, char *jobv, char *jobq, integer *m, integer *n,	integer *p, integer *k, integer *l, double *a, integer *lda, double *b, integer *ldb, double *alpha, double *beta, double *u, integer *ldu, double *v, integer *ldv, double *q, integer *ldq, double *work, integer *iwork, integer *info);
+int NUMlapack_dggsvd_ (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *n,	integer *p, integer *k, integer *l, double *a, integer *lda, double *b, integer *ldb, double *alpha, double *beta, double *u, integer *ldu, double *v, integer *ldv, double *q, integer *ldq, double *work, integer *iwork, integer *info);
 /*  Purpose
     =======
 
@@ -492,7 +492,7 @@ int NUMlapack_dggsvd_ (char *jobu, char *jobv, char *jobq, integer *m, integer *
     =====================================================================
 */
 
-int NUMlapack_dhseqr_ (char *job, char *compz, integer *n, integer *ilo, integer *ihi, double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz, double *work, integer *lwork, integer *info);
+int NUMlapack_dhseqr_ (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz, double *work, integer *lwork, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -599,7 +599,7 @@ int NUMlapack_dhseqr_ (char *job, char *compz, integer *n, integer *ilo, integer
     =====================================================================
 */
 
-int NUMlapack_dpotf2_ (char *uplo, integer *n, double *a, integer *lda, integer *info);
+int NUMlapack_dpotf2_ (const char *uplo, integer *n, double *a, integer *lda, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -655,7 +655,7 @@ int NUMlapack_dpotf2_ (char *uplo, integer *n, double *a, integer *lda, integer 
 
 */
 
-int NUMlapack_dsyev_ (char *jobz, char *uplo, integer *n, double *a,	integer *lda,
+int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer *n, double *a,	integer *lda,
 	double *w, double *work, integer *lwork, integer *info);
 /* Purpose =======
 
@@ -718,7 +718,7 @@ int NUMlapack_dsyev_ (char *jobz, char *uplo, integer *n, double *a,	integer *ld
 */
 
 
-int NUMlapack_dtrtri_ (char *uplo, char *diag, integer *n, double *
+int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer *n, double *
 	a, integer *lda, integer *info);
 /*  Purpose
     =======
@@ -767,7 +767,7 @@ int NUMlapack_dtrtri_ (char *uplo, char *diag, integer *n, double *
     =====================================================================
 */
 
-int NUMlapack_dtrti2_ (char *uplo, char *diag, integer *n, double *a, integer *lda, integer *info);
+int NUMlapack_dtrti2_ (const char *uplo, const char *diag, integer *n, double *a, integer *lda, integer *info);
 /*  Purpose
     =======
 

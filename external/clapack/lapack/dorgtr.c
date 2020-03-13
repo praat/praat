@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dorgtr_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dorgtr_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, doublereal *tau, doublereal *work, integer *lwork, integer *info)
 {
     /* System generated locals */

@@ -8,7 +8,7 @@ static doublereal c_b6 = 1.;
 static integer c__1 = 1;
 static doublereal c_b16 = 0.;
 
-/* Subroutine */ int dlatrd_(char *uplo, integer *n, integer *nb, doublereal *
+/* Subroutine */ int dlatrd_(const char *uplo, integer *n, integer *nb, doublereal *
 	a, integer *lda, doublereal *e, doublereal *tau, doublereal *w, 
 	integer *ldw)
 {

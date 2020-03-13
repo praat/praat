@@ -163,7 +163,7 @@ int dsyr2_(char *uplo, integer *n, doublereal *alpha,
 	doublereal *x, integer *incx, doublereal *y, integer *incy, 
 	doublereal *a, integer *lda);
 
-int dsyr2k_(char *uplo, char *trans, integer *n, integer *k, 
+int dsyr2k_(const char *uplo, const char *trans, integer *n, integer *k, 
 	doublereal *alpha, doublereal *a, integer *lda, doublereal *b, 
 	integer *ldb, doublereal *beta, doublereal *c__, integer *ldc);
 

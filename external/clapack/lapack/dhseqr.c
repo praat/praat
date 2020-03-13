@@ -9,7 +9,7 @@ static integer c__12 = 12;
 static integer c__2 = 2;
 static integer c__49 = 49;
 
-/* Subroutine */ int dhseqr_(char *job, char *compz, integer *n, integer *ilo, 
+/* Subroutine */ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, 
 	 integer *ihi, doublereal *h__, integer *ldh, doublereal *wr, 
 	doublereal *wi, doublereal *z__, integer *ldz, doublereal *work, 
 	integer *lwork, integer *info)
@@ -19,9 +19,6 @@ static integer c__49 = 49;
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2[2], i__3;
     doublereal d__1;
     char ch__1[2];
-
-    /* Builtin functions
-    int s_cat(char *, char **, integer *, integer *, ftnlen);*/
 
     /* Local variables */
     integer i__;
@@ -377,8 +374,8 @@ static integer c__49 = 49;
 /*        ==== DLAHQR/DLAQR0 crossover point ==== */
 
 /* Writing concatenation */
-	i__2[0] = 1, a__1[0] = job;
-	i__2[1] = 1, a__1[1] = compz;
+	i__2[0] = 1, a__1[0] = const_cast<char *>(job);
+	i__2[1] = 1, a__1[1] = const_cast<char *>(compz);
 	s_cat(ch__1, a__1, i__2, &c__2, (ftnlen)2);
 	nmin = ilaenv_(&c__12, "DHSEQR", ch__1, n, ilo, ihi, lwork);
 	nmin = max(11_integer,nmin);

@@ -9,7 +9,7 @@ static integer c__0 = 0;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dsteqr_(char *compz, integer *n, doublereal *d__, 
+/* Subroutine */ int dsteqr_(const char *compz, integer *n, doublereal *d__, 
 	doublereal *e, doublereal *z__, integer *ldz, doublereal *work, 
 	integer *info)
 {

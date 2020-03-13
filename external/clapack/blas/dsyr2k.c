@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dsyr2k_(char *uplo, char *trans, integer *n, integer *k, 
+/* Subroutine */ int dsyr2k_(const char *uplo, const char *trans, integer *n, integer *k, 
 	doublereal *alpha, doublereal *a, integer *lda, doublereal *b, 
 	integer *ldb, doublereal *beta, doublereal *c__, integer *ldc)
 {
