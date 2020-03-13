@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaset_(char *uplo, integer *m, integer *n, doublereal *
+/* Subroutine */ int dlaset_(const char *uplo, integer *m, integer *n, doublereal *
 	alpha, doublereal *beta, doublereal *a, integer *lda)
 {
     /* System generated locals */

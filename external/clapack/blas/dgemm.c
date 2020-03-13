@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dgemm_(char *transa, char *transb, integer *m, integer *
+/* Subroutine */ int dgemm_(const char *transa, const char *transb, integer *m, integer *
 	n, integer *k, doublereal *alpha, doublereal *a, integer *lda, 
 	doublereal *b, integer *ldb, doublereal *beta, doublereal *c__, 
 	integer *ldc)

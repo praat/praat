@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dtrmv_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtrmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	doublereal *a, integer *lda, doublereal *x, integer *incx)
 {
     /* System generated locals */

@@ -37,23 +37,8 @@ static integer c__2 = 2;
     integer jtop, jrow, mtop;
     doublereal alpha;
     logical accum;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer ndcol, incol, krcol, nbmps;
-    extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dlaqr1_(
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), dlabad_(doublereal *, 
-	    doublereal *);
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *), dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *);
     doublereal safmin;
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *);
     doublereal safmax, refsum;
     integer mstart;
     doublereal smlnum;

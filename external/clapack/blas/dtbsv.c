@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dtbsv_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtbsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *x, integer *incx)
 {
     /* System generated locals */

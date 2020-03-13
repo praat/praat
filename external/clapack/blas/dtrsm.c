@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dtrsm_(char *side, char *uplo, char *transa, char *diag, 
+/* Subroutine */ int dtrsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
 	integer *m, integer *n, doublereal *alpha, doublereal *a, integer *
 	lda, doublereal *b, integer *ldb)
 {

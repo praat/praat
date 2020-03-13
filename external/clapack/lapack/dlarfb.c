@@ -18,14 +18,6 @@ static doublereal c_b25 = -1.;
 
     /* Local variables */
     integer i__, j;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dtrmm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *);
     char transt[1];
 
 

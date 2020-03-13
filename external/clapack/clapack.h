@@ -1276,7 +1276,7 @@
 /* Subroutine */ int dgbtrf_(integer *m, integer *n, integer *kl, integer *ku,
 	 doublereal *ab, integer *ldab, integer *ipiv, integer *info);
 
-/* Subroutine */ int dgbtrs_(char *trans, integer *n, integer *kl, integer *
+/* Subroutine */ int dgbtrs_(const char *trans, integer *n, integer *kl, integer *
 	ku, integer *nrhs, doublereal *ab, integer *ldab, integer *ipiv, 
 	doublereal *b, integer *ldb, integer *info);
 
@@ -2002,7 +2002,7 @@
 	integer *ldgcol, integer *perm, doublereal *givnum, doublereal *c__, 
 	doublereal *s, doublereal *work, integer *iwork, integer *info);
 
-/* Subroutine */ int dlasdq_(char *uplo, integer *sqre, integer *n, integer *
+/* Subroutine */ int dlasdq_(const char *uplo, integer *sqre, integer *n, integer *
 	ncvt, integer *nru, integer *ncc, doublereal *d__, doublereal *e, 
 	doublereal *vt, integer *ldvt, doublereal *u, integer *ldu, 
 	doublereal *c__, integer *ldc, doublereal *work, integer *info);
@@ -2010,7 +2010,7 @@
 /* Subroutine */ int dlasdt_(integer *n, integer *lvl, integer *nd, integer *
 	inode, integer *ndiml, integer *ndimr, integer *msub);
 
-/* Subroutine */ int dlaset_(char *uplo, integer *m, integer *n, doublereal *
+/* Subroutine */ int dlaset_(const char *uplo, integer *m, integer *n, doublereal *
 	alpha, doublereal *beta, doublereal *a, integer *lda);
 
 /* Subroutine */ int dlasq1_(integer *n, doublereal *d__, doublereal *e, 
@@ -2063,7 +2063,7 @@
 	 doublereal *a, integer *lda, integer *ipiv, doublereal *w, integer *
 	ldw, integer *info);
 
-/* Subroutine */ int dlatbs_(char *uplo, char *trans, char *diag, char *
+/* Subroutine */ int dlatbs_(const char *uplo, const char *trans, const char *diag,const  char *
 	normin, integer *n, integer *kd, doublereal *ab, integer *ldab, 
 	doublereal *x, doublereal *scale, doublereal *cnorm, integer *info);
 

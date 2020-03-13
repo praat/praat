@@ -31,34 +31,8 @@ static doublereal c_b29 = 0.;
     integer nm1;
     doublereal eps;
     integer ivt, difl, difr, ierr, perm, mlvl, sqre;
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dlasr_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *), dcopy_(integer *, doublereal *, integer *
-, doublereal *, integer *), dswap_(integer *, doublereal *, 
-	    integer *, doublereal *, integer *);
     integer poles, iuplo, nsize, start;
-    extern /* Subroutine */ int dlasd0_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, integer *, doublereal *, integer *);
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlasda_(integer *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     integer *), dlascl_(char *, integer *, integer *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *), dlasdq_(char *, integer *, integer *, integer 
-	    *, integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlaset_(char *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *), dlartg_(doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer givcol;
-//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     integer icompq;
     doublereal orgnrm;
     integer givnum, givptr, qstart, smlsiz, wstart, smlszp;

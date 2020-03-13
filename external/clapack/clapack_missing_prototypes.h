@@ -36,7 +36,7 @@ int dgbmv_(char *trans, integer *m, integer *n, integer *kl,
 	doublereal *x, integer *incx, doublereal *beta, doublereal *y, 
 	integer *incy);
 
-int dgemm_(char *transa, char *transb, integer *m, integer *
+int dgemm_(const char *transa, const char *transb, integer *m, integer *
 	n, integer *k, doublereal *alpha, doublereal *a, integer *lda, 
 	doublereal *b, integer *ldb, doublereal *beta, doublereal *c__, 
 	integer *ldc);
@@ -170,27 +170,27 @@ int dsyr2k_(char *uplo, char *trans, integer *n, integer *k,
 int dtbmv_(char *uplo, char *trans, char *diag, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *x, integer *incx);
 
-int dtbsv_(char *uplo, char *trans, char *diag, integer *n, 
+int dtbsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *x, integer *incx);
 
-int dtpmv_(char *uplo, char *trans, char *diag, integer *n, 
+int dtpmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	doublereal *ap, doublereal *x, integer *incx);
 
-int dtpsv_(char *uplo, char *trans, char *diag, integer *n, 
+int dtpsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	doublereal *ap, doublereal *x, integer *incx);
 
-int dtrmv_(char *uplo, char *trans, char *diag, integer *n, 
+int dtrmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	doublereal *a, integer *lda, doublereal *x, integer *incx);
 
-int dtrmm_(char *side, char *uplo, char *transa, char *diag, 
+int dtrmm_(const char *side, const char *uplo, const char *transa, const char *diag, 
 	integer *m, integer *n, doublereal *alpha, doublereal *a, integer *
 	lda, doublereal *b, integer *ldb);
 
-int dtrsm_(char *side, char *uplo, char *transa, char *diag, 
+int dtrsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
 	integer *m, integer *n, doublereal *alpha, doublereal *a, integer *
 	lda, doublereal *b, integer *ldb);
 
-int dtrsv_(char *uplo, char *trans, char *diag, integer *n, 
+int dtrsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	doublereal *a, integer *lda, doublereal *x, integer *incx);
 
 double d_sign(double *a, double *b);

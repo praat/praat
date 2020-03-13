@@ -17,13 +17,6 @@ static doublereal c_b8 = 0.;
     /* Local variables */
     integer i__, j;
     doublereal vii;
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dtrmv_(char *, 
-	    char *, char *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
