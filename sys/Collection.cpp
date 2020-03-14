@@ -30,7 +30,7 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 	thy size = my size;
 	if (my _capacity > 0) {
 		thy at._elements = Melder_calloc (Daata, my _capacity);   // filled with null pointers
-		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use MelderTensor
+		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use MelderArray
 	}
 	for (integer i = 1; i <= my size; i ++) {
 		Daata item = my at [i];

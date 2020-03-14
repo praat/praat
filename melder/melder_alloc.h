@@ -68,5 +68,29 @@ int64 Melder_allocationSize ();
 int64 Melder_reallocationsInSituCount ();
 int64 Melder_movingReallocationsCount ();
 
+/********** Arrays. **********/
+
+enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
+
+byte * MelderArray_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType);
+
+template <class T>
+T* MelderArray (integer numberOfCells, kTensorInitializationType initializationType) {
+	T* result = reinterpret_cast <T*> (MelderArray_generic (sizeof (T), numberOfCells, initializationType));
+	return result;
+}
+
+void MelderArray_free_generic (byte *cells, integer numberOfCells) noexcept;
+
+template <class T>
+void MelderArray_free (T* cells, integer numberOfCells) noexcept {
+	MelderArray_free_generic (reinterpret_cast <byte *> (cells), numberOfCells);
+}
+
+int64 MelderArray_allocationCount ();
+int64 MelderArray_deallocationCount ();
+int64 MelderArray_cellAllocationCount ();
+int64 MelderArray_cellDeallocationCount ();
+
 /* End of file melder_alloc.h */
 #endif
