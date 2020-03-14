@@ -141,7 +141,7 @@ public:
 		if (our _elements) {
 			for (integer i = 1; i <= our size; i ++)
 				our _elements [i - 1]. reset ();
-			MelderTensor_free (our _elements);
+			MelderTensor_free (our _elements, our size);
 			our _elements = nullptr;
 			our size = 0;
 		}
