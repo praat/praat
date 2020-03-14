@@ -141,20 +141,21 @@ double SVD_getTolerance (SVD me) {
 */
 void SVD_compute (SVD me) {
 	try {
+		MATVU vt;
 		char jobu = 'S'; // the first min(m,n) columns of U are returned in the array U;
 		char jobvt = 'O'; // the first min(m,n) rows of V**T are overwritten on the array A;
 		integer m = my numberOfColumns; // number of rows of input matrix 
 		integer n = my numberOfRows; // number of columns of input matrix
 		integer lda = m, ldu = m, ldvt = m;
 		integer info, lwork = -1;
-		double wt [2];
+		double wt [2]; // at least 2.
 
-		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
+		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
 		autoVEC work = newVECraw (lwork);
-		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
+		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 		/*
 			Because we store the eigenvectors row-wise, they must be transposed

@@ -141,12 +141,11 @@ int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *
     =====================================================================
 */
 
-integer NUMlapack_dgesvd_query (const char *jobu, const char *jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt); 
+integer NUMlapack_dgesvd_query (conststring8 jobu, conststring8 jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt);
 
-integer NUMlapack_dgesvd (const char *jobu, const char *jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt, VEC const& work);
+void NUMlapack_dgesvd (conststring8 jobu, conststring8 jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt, VEC const& work);
 
-int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda,
-	double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
+int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
 	integer *lwork, integer *info);/*
      DGESVD computes the singular value decomposition (SVD) of a real
      M-by-N matrix A, optionally computing the left and/or right singular

@@ -20,8 +20,16 @@
 
 #include "NUMlapack.h"
 
-integer getLeadingDimension (constMATVU const& m) {
-	return m.rowStride > 1 ? m.rowStride : m.colStride; 
+inline bool startsWith (conststring8 string, conststring8 startCharacter) {
+	return strncmp (string, startCharacter, 1) == 0;
+}
+
+integer getLeadingDimension (constMATVU const& m, integer argumentNumber, conststring32 name) {
+	if (m.nrow == 0 || m.ncol == 0)
+		return 0;
+	if (! (m.rowStride == 1 || m.colStride == 1))
+		Melder_throw (name, U": Argument ", argumentNumber, U" has both row and column strides larger than 1. This is not allowed for LAPACK.");
+	return m.rowStride;
 }
 
 int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi, double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info) {
@@ -31,15 +39,38 @@ int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *
 
 
 
-integer NUMlapack_dgesvd_query (char jobu, char jobvt, MATVU const& inout_a, VEC const& inout_singularValues, MATVU const& inout_u, MATVU const& inout_vt) {
-	
-	integer lwork = -1, info, lda = getLeadingDimension (inout_a);
-	double wt;
-	integer ldu = inout_a.rowStride, ldvt = inout_vt.rowStride;
+integer NUMlapack_dgesvd_query (conststring8 jobu, conststring8 jobvt, MATVU const& inout_a, VEC const& inout_singularValues, MATVU const& inout_u, MATVU const& inout_vt) {
+	conststring32 myName = U"NUMlapack_dgesvd_query";
+	integer lda = getLeadingDimension (inout_a, 2, myName);
+	integer ldu = getLeadingDimension (inout_u, 5, myName);
+	integer ldvt = getLeadingDimension (inout_vt, 6, myName);
 	integer nrow = inout_a.nrow, ncol = inout_a.ncol;
-	dgesvd_ (& jobu, & jobvt, & nrow, & ncol, & inout_a [1] [1], & lda, & inout_singularValues [1], & inout_vt [1] [1], & ldu, nullptr, & ldvt, & wt, & lwork, & info);
+	double *p_vt = ldvt > 0 ? & inout_vt [1] [1] : nullptr;
+	double *p_u = ldu > 0 ? & inout_u [1] [1] : nullptr;
+	Melder_assert (inout_singularValues.size >= std::min (nrow, ncol));
+	Melder_assert (! (ldu == 0 && ldvt == 0));
+	Melder_assert (ldu > 0 || startsWith (jobu, "O") || startsWith (jobu, "N"));
+	Melder_assert (ldvt > 0 || startsWith (jobu, "O") || startsWith (jobu, "N"));
 
-	return info == 0 ? (integer) (wt+0.1) : - info;
+	double wt;
+	integer lwork = -1, info;
+	dgesvd_ (jobu, jobvt, & nrow, & ncol, & inout_a [1] [1], & lda, & inout_singularValues [1], p_u, & ldu, p_vt, & ldvt, & wt, & lwork, & info);
+	Melder_require (info == 0,
+		myName, U" returns error ", info);
+	return (integer) wt;
+}
+
+void NUMlapack_dgesvd (conststring8 jobu, conststring8  jobvt, MATVU const& inout_a, VEC const& inout_singularValues, MATVU const& inout_u, MATVU const& inout_vt, VEC const& work) {
+	conststring32 myName = U"NUMlapack_dgesvd";
+	integer lda = getLeadingDimension (inout_a, 2, myName);
+	integer ldu = getLeadingDimension (inout_u, 5, myName);
+	integer ldvt = getLeadingDimension (inout_vt, 6, myName);
+	integer nrow = inout_a.nrow, ncol = inout_a.ncol;
+	double wt;
+	integer lwork = -1, info;
+	dgesvd_ (jobu,  jobvt, & nrow, & ncol, & inout_a [1] [1], & lda, & inout_singularValues [1], & inout_vt [1] [1], & ldu, nullptr, & ldvt, & wt, & lwork, & info);
+	Melder_require (info == 0,
+		myName, U" return error ", info);
 }
 
 int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work, integer *lwork, integer *info) {
