@@ -1,5 +1,5 @@
 # Praat script runAllPraatTests_leak.praat
-# Paul Boersma 2018-08-30
+# Paul Boersma 2020-03-14
 #
 # This script runs all Praat scripts in its subdirectories.
 
@@ -18,11 +18,11 @@ writeInfoLine: "Running all tests twice..."
 
 # Warm up.
 strings_before = 0
-arrays_before  = 0
+tensors_before  = 0
 things_before  = 0
 other_before   = 0
 strings_after = 0
-arrays_after  = 0
+tensors_after  = 0
 things_after  = 0
 other_after   = 0
 
@@ -36,7 +36,7 @@ procedure doScript: .path$
 	memoryReport$ = Report memory use
 	memoryReport$ = Report memory use
 	strings_before = extractNumber (memoryReport$, "Strings:")
-	arrays_before  = extractNumber (memoryReport$, "Arrays:")
+	arrays_before  = extractNumber (memoryReport$, "Tensors:")
 	things_before  = extractNumber (memoryReport$, "Things:")
 	other_before   = extractNumber (memoryReport$, "Other:")
 
@@ -46,7 +46,7 @@ procedure doScript: .path$
 
 	memoryReport$ = Report memory use
 	strings_after = extractNumber (memoryReport$, "Strings:")
-	arrays_after  = extractNumber (memoryReport$, "Arrays:")
+	arrays_after  = extractNumber (memoryReport$, "Tensors:")
 	things_after  = extractNumber (memoryReport$, "Things:")
 	other_after   = extractNumber (memoryReport$, "Other:")
 
@@ -55,7 +55,7 @@ procedure doScript: .path$
 		appendInfoLine ()
 		leakReport$ = leakReport$ + "Leaking in " + .path$ + ":" + newline$
 		leakReport$ = leakReport$ + "   Strings: " + string$ (strings_before) + " " + string$ (strings_after) + newline$
-		leakReport$ = leakReport$ + "   Arrays: " + string$ (arrays_before) + " " + string$ (arrays_after) + newline$
+		leakReport$ = leakReport$ + "   Tensors: " + string$ (tensors_before) + " " + string$ (tensors_after) + newline$
 		leakReport$ = leakReport$ + "   Things: " + string$ (things_before) + " " + string$ (things_after) + newline$
 		leakReport$ = leakReport$ + "   Other: " + string$ (other_before) + " " + string$ (other_after) + newline$
 	endif

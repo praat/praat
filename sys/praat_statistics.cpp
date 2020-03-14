@@ -209,15 +209,17 @@ void praat_reportMemoryUse () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Memory use by Praat:\n");
 	MelderInfo_writeLine (U"Currently in use:\n"
-			U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount ());
+			U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount (),
+			U" (", Melder_bigInteger (MelderString_allocationSize () - MelderString_deallocationSize ()), U" characters)");
 	MelderInfo_writeLine (
-			U"   Tensors: ", MelderTensor_allocationCount () - MelderTensor_deallocationCount ());
+			U"   Tensors: ", MelderTensor_allocationCount () - MelderTensor_deallocationCount (),
+			U" (", Melder_bigInteger (MelderTensor_cellAllocationCount () - MelderTensor_cellDeallocationCount ()), U" cells)");
 	MelderInfo_writeLine (U"   Things: ", theTotalNumberOfThings,
-		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
+		U" (objects in list: ", Melder_bigInteger (theCurrentPraatObjects -> n), U")");
 	integer numberOfMotifWidgets =
 	#if motif
 		Gui_getNumberOfMotifWidgets ();
-		MelderInfo_writeLine (U"   Motif widgets: ", numberOfMotifWidgets);
+		MelderInfo_writeLine (U"   Motif widgets: ", Melder_bigInteger (numberOfMotifWidgets));
 	#else
 		0;
 	#endif
@@ -226,7 +228,8 @@ void praat_reportMemoryUse () {
 		- theTotalNumberOfThings
 		- (MelderString_allocationCount () - MelderString_deallocationCount ())
 		- (MelderTensor_allocationCount () - MelderTensor_deallocationCount ())
-		- numberOfMotifWidgets);
+		- numberOfMotifWidgets
+	);
 	MelderInfo_writeLine (
 		U"\nMemory history of this session:\n"
 		U"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), U" (", Melder_bigInteger (Melder_allocationSize ()), U" bytes)");
@@ -240,15 +243,17 @@ void praat_reportMemoryUse () {
 			U"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()),
 			U" (", Melder_bigInteger (MelderString_deallocationSize ()), U" characters)");
 	MelderInfo_writeLine (
-			U"   Tensors created: ", Melder_bigInteger (MelderTensor_allocationCount ()));
+			U"   Tensors created: ", Melder_bigInteger (MelderTensor_allocationCount ()),
+			U" (", Melder_bigInteger (MelderTensor_cellAllocationCount ()), U" cells)");
 	MelderInfo_writeLine (
-			U"   Tensors deleted: ", Melder_bigInteger (MelderTensor_deallocationCount ()));
+			U"   Tensors deleted: ", Melder_bigInteger (MelderTensor_deallocationCount ()),
+			U" (", Melder_bigInteger (MelderTensor_cellDeallocationCount ()), U" cells)");
 	MelderInfo_writeLine (U"\nHistory of all sessions from ", statistics.dateOfFirstSession, U" until today:");
-	MelderInfo_writeLine (U"   Sessions: ", statistics.interactiveSessions, U" interactive, ",
-		statistics.batchSessions, U" batch");
+	MelderInfo_writeLine (U"   Sessions: ", Melder_bigInteger (statistics.interactiveSessions), U" interactive, ",
+		Melder_bigInteger (statistics.batchSessions), U" batch");
 	MelderInfo_writeLine (U"   Total memory use: ", Melder_bigInteger ((int64) statistics.memory + Melder_allocationSize ()), U" bytes");
-	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
-	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
+	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", Melder_bigInteger (praat_getNumberOfMenuCommands ()));
+	MelderInfo_writeLine (U"Number of dynamic menu commands: ", Melder_bigInteger (praat_getNumberOfActions ()));
 	MelderInfo_close ();
 }
 

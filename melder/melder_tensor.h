@@ -30,15 +30,17 @@ T* MelderTensor (integer numberOfCells, kTensorInitializationType initialization
 	return result;
 }
 
-void MelderTensor_free_generic (byte *cells) noexcept;
+void MelderTensor_free_generic (byte *cells, integer numberOfCells) noexcept;
 
 template <class T>
-void MelderTensor_free (T* cells) noexcept {
-	MelderTensor_free_generic (reinterpret_cast <byte *> (cells));
+void MelderTensor_free (T* cells, integer numberOfCells) noexcept {
+	MelderTensor_free_generic (reinterpret_cast <byte *> (cells), numberOfCells);
 }
 
 int64 MelderTensor_allocationCount ();
 int64 MelderTensor_deallocationCount ();
+int64 MelderTensor_cellAllocationCount ();
+int64 MelderTensor_cellDeallocationCount ();
 
 #pragma mark - TENSOR
 /*
@@ -282,8 +284,9 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
 		if (our cells) {
-			MelderTensor_free (our cells);
+			MelderTensor_free (our cells, our _capacity);
 			our cells = nullptr;
+			our _capacity = 0;
 		}
 		our size = 0;
 	}
@@ -332,7 +335,7 @@ public:
 			for (integer i = 1; i <= our size; i ++)
 				newCells [i - 1] = std::move (our cells [i - 1]);
 			if (our cells)
-				MelderTensor_free (our cells);
+				MelderTensor_free (our cells, our _capacity);
 			our cells = newCells;
 			our _capacity = newCapacity;
 		}
@@ -629,7 +632,7 @@ public:
 	}
 	~automatrix () {   // destroy the payload (if any)
 		if (our cells)
-			MelderTensor_free (our cells);
+			MelderTensor_free (our cells, our nrow * our ncol);
 	}
 	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
@@ -664,7 +667,7 @@ public:
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells)
-				MelderTensor_free (our cells);
+				MelderTensor_free (our cells, our nrow * our ncol);
 			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -676,7 +679,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			MelderTensor_free (our cells);
+			MelderTensor_free (our cells, our nrow * our ncol);
 			our cells = nullptr;
 		}
 		our nrow = 0;
@@ -990,7 +993,7 @@ public:
 	}
 	~autotensor3 () {   // destroy the payload (if any)
 		if (our cells)
-			MelderTensor_free (our cells);
+			MelderTensor_free (our cells, our ndim1 * our ndim2 * our ndim3);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	const tensor3<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
@@ -1027,7 +1030,7 @@ public:
 	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells)
-				MelderTensor_free (our cells);
+				MelderTensor_free (our cells, our ndim1 * our ndim2 * our ndim3);
 			our cells = other.cells;
 			our ndim1 = other.ndim1;
 			our ndim2 = other.ndim2;
@@ -1041,7 +1044,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			MelderTensor_free (our cells);
+			MelderTensor_free (our cells, our ndim1 * our ndim2 * our ndim3);
 			our cells = nullptr;
 		}
 		our ndim1 = 0;
