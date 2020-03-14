@@ -94,7 +94,7 @@ doublereal dlanst_(char *norm, integer *n, doublereal *d__, doublereal *e);
 doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a, integer 
 	*lda, doublereal *work);
 
-doublereal dlantb_(const char *norm, char *uplo, char *diag, integer *n, integer *k, 
+doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer *n, integer *k, 
 	 doublereal *ab, integer *ldab, doublereal *work);
 
 doublereal dlantp_(const char *norm, const char *uplo, char *diag, integer *n, doublereal 

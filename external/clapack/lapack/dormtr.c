@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dormtr_(char *side, char *uplo, char *trans, integer *m, 
+/* Subroutine */ int dormtr_(const char *side, const char *uplo, const char *trans, integer *m, 
 	integer *n, doublereal *a, integer *lda, doublereal *tau, doublereal *
 	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
 {

@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static doublereal c_b14 = 1.;
 static doublereal c_b25 = -1.;
 
-/* Subroutine */ int dlarfb_(char *side, char *trans, char *direct, char *
+/* Subroutine */ int dlarfb_(const char *side, const char *trans, const char *direct, const char *
 	storev, integer *m, integer *n, integer *k, doublereal *v, integer *
 	ldv, doublereal *t, integer *ldt, doublereal *c__, integer *ldc, 
 	doublereal *work, integer *ldwork)

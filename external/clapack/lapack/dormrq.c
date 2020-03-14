@@ -8,7 +8,7 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 static integer c__65 = 65;
 
-/* Subroutine */ int dormrq_(char *side, char *trans, integer *m, integer *n, 
+/* Subroutine */ int dormrq_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *tau, doublereal *
 	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
 {

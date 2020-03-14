@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dormr2_(char *side, char *trans, integer *m, integer *n, 
+/* Subroutine */ int dormr2_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *tau, doublereal *
 	c__, integer *ldc, doublereal *work, integer *info)
 {

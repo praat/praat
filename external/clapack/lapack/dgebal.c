@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgebal_(char *job, integer *n, doublereal *a, integer *
+/* Subroutine */ int dgebal_(const char *job, integer *n, doublereal *a, integer *
 	lda, integer *ilo, integer *ihi, doublereal *scale, integer *info)
 {
     /* System generated locals */

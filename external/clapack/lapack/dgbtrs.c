@@ -16,18 +16,7 @@ static doublereal c_b23 = 1.;
 
     /* Local variables */
     integer i__, j, l, kd, lm;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dswap_(integer *, 
-	    doublereal *, integer *, doublereal *, integer *), dtbsv_(char *, 
-	    char *, char *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical lnoti;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
 
 

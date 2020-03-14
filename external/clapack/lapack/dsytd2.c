@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static doublereal c_b8 = 0.;
 static doublereal c_b14 = -1.;
 
-/* Subroutine */ int dsytd2_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dsytd2_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, doublereal *d__, doublereal *e, doublereal *tau, integer *info)
 {
     /* System generated locals */

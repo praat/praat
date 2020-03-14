@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static doublereal c_b36 = .5;
 
-/* Subroutine */ int dlatrs_(char *uplo, char *trans, char *diag, char *
+/* Subroutine */ int dlatrs_(const char *uplo, const char *trans, const char *diag, const char *
 	normin, integer *n, doublereal *a, integer *lda, doublereal *x, 
 	doublereal *scale, doublereal *cnorm, integer *info)
 {

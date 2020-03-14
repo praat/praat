@@ -7,7 +7,7 @@ static doublereal c_b4 = 1.;
 static doublereal c_b5 = 0.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dlarf_(char *side, integer *m, integer *n, doublereal *v, 
+/* Subroutine */ int dlarf_(const char *side, integer *m, integer *n, doublereal *v, 
 	 integer *incv, doublereal *tau, doublereal *c__, integer *ldc, 
 	doublereal *work)
 {

@@ -23,20 +23,10 @@ static doublereal c_b32 = 1.;
     integer lsv;
     doublereal eps2, oldc;
     integer lend, jtot;
-    extern /* Subroutine */ int dlae2_(doublereal *, doublereal *, doublereal 
-	    *, doublereal *, doublereal *);
     doublereal gamma, alpha, sigma, anorm;
-//    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
     integer iscale;
-    extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
     doublereal oldgam, safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal safmax;
-//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dlasrt_(char *, integer *, doublereal *, 
-	    integer *);
     integer lendsv;
     doublereal ssfmin;
     integer nmaxit;

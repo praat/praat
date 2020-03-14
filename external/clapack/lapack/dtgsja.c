@@ -8,7 +8,7 @@ static doublereal c_b14 = 1.;
 static integer c__1 = 1;
 static doublereal c_b43 = -1.;
 
-/* Subroutine */ int dtgsja_(char *jobu, char *jobv, char *jobq, integer *m, 
+/* Subroutine */ int dtgsja_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
 	integer *p, integer *n, integer *k, integer *l, doublereal *a, 
 	integer *lda, doublereal *b, integer *ldb, doublereal *tola, 
 	doublereal *tolb, doublereal *alpha, doublereal *beta, doublereal *u, 

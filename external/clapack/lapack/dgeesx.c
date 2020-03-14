@@ -25,19 +25,9 @@ static integer c_n1 = -1;
     integer ibal;
     doublereal anrm;
     integer ierr, itau, iwrk, lwrk, inxt, icond, ieval;
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     logical cursl;
     integer liwrk;
-    extern /* Subroutine */ int dlabad_(doublereal *, doublereal *), dgebak_(
-	    char *, char *, integer *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *), 
-	    dgebal_(char *, integer *, doublereal *, integer *, integer *, 
-	    integer *, doublereal *, integer *);
     logical lst2sl, scalea;
-//    extern doublereal dlamch_(char *);
     doublereal cscale;
     doublereal bignum;
     logical wantsb;

@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dggsvd_(char *jobu, char *jobv, char *jobq, integer *m, 
+/* Subroutine */ int dggsvd_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
 	integer *n, integer *p, integer *k, integer *l, doublereal *a, 
 	integer *lda, doublereal *b, integer *ldb, doublereal *alpha, 
 	doublereal *beta, doublereal *u, integer *ldu, doublereal *v, integer 
@@ -24,8 +24,6 @@ static integer c__1 = 1;
     integer isub;
     doublereal tolb, unfl, temp, smax;
     doublereal anorm, bnorm;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical wantq, wantu, wantv;
     integer ncycle;
 

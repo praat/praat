@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static doublereal c_b8 = 0.;
 
-/* Subroutine */ int dlarft_(char *direct, char *storev, integer *n, integer *
+/* Subroutine */ int dlarft_(const char *direct, const char *storev, integer *n, integer *
 	k, doublereal *v, integer *ldv, doublereal *tau, doublereal *t, 
 	integer *ldt)
 {

@@ -138,8 +138,8 @@ static doublereal c_b22 = -1.;
 /*     Determine the block size for this environment. */
 
 /* Writing concatenation */
-    i__2[0] = 1, a__1[0] = uplo;
-    i__2[1] = 1, a__1[1] = diag;
+    i__2[0] = 1, a__1[0] = const_cast<char *> (uplo);
+    i__2[1] = 1, a__1[1] = const_cast<char *> (diag);
     s_cat(ch__1, a__1, i__2, &c__2, (ftnlen)2);
     nb = ilaenv_(&c__1, "DTRTRI", ch__1, n, &c_n1, &c_n1, &c_n1);
     if (nb <= 1 || nb >= *n) {

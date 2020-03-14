@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-doublereal dlantb_(char *norm, char *uplo, char *diag, integer *n, integer *k, 
+doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer *n, integer *k, 
 	 doublereal *ab, integer *ldab, doublereal *work)
 {
     /* System generated locals */

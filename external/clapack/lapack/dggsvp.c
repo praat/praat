@@ -6,7 +6,7 @@
 static doublereal c_b12 = 0.;
 static doublereal c_b22 = 1.;
 
-/* Subroutine */ int dggsvp_(char *jobu, char *jobv, char *jobq, integer *m, 
+/* Subroutine */ int dggsvp_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
 	integer *p, integer *n, doublereal *a, integer *lda, doublereal *b, 
 	integer *ldb, doublereal *tola, doublereal *tolb, integer *k, integer 
 	*l, doublereal *u, integer *ldu, doublereal *v, integer *ldv, 
