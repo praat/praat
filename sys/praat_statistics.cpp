@@ -212,8 +212,8 @@ void praat_reportMemoryUse () {
 			U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount (),
 			U" (", Melder_bigInteger (MelderString_allocationSize () - MelderString_deallocationSize ()), U" characters)");
 	MelderInfo_writeLine (
-			U"   Tensors: ", MelderTensor_allocationCount () - MelderTensor_deallocationCount (),
-			U" (", Melder_bigInteger (MelderTensor_cellAllocationCount () - MelderTensor_cellDeallocationCount ()), U" cells)");
+			U"   Arrays: ", MelderArray_allocationCount () - MelderArray_deallocationCount (),
+			U" (", Melder_bigInteger (MelderArray_cellAllocationCount () - MelderArray_cellDeallocationCount ()), U" cells)");
 	MelderInfo_writeLine (U"   Things: ", theTotalNumberOfThings,
 		U" (objects in list: ", Melder_bigInteger (theCurrentPraatObjects -> n), U")");
 	integer numberOfMotifWidgets =
@@ -227,7 +227,7 @@ void praat_reportMemoryUse () {
 		Melder_allocationCount () - Melder_deallocationCount ()
 		- theTotalNumberOfThings
 		- (MelderString_allocationCount () - MelderString_deallocationCount ())
-		- (MelderTensor_allocationCount () - MelderTensor_deallocationCount ())
+		- (MelderArray_allocationCount () - MelderArray_deallocationCount ())
 		- numberOfMotifWidgets
 	);
 	MelderInfo_writeLine (
@@ -243,11 +243,11 @@ void praat_reportMemoryUse () {
 			U"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()),
 			U" (", Melder_bigInteger (MelderString_deallocationSize ()), U" characters)");
 	MelderInfo_writeLine (
-			U"   Tensors created: ", Melder_bigInteger (MelderTensor_allocationCount ()),
-			U" (", Melder_bigInteger (MelderTensor_cellAllocationCount ()), U" cells)");
+			U"   Arrays created: ", Melder_bigInteger (MelderArray_allocationCount ()),
+			U" (", Melder_bigInteger (MelderArray_cellAllocationCount ()), U" cells)");
 	MelderInfo_writeLine (
-			U"   Tensors deleted: ", Melder_bigInteger (MelderTensor_deallocationCount ()),
-			U" (", Melder_bigInteger (MelderTensor_cellDeallocationCount ()), U" cells)");
+			U"   Arrays deleted: ", Melder_bigInteger (MelderArray_deallocationCount ()),
+			U" (", Melder_bigInteger (MelderArray_cellDeallocationCount ()), U" cells)");
 	MelderInfo_writeLine (U"\nHistory of all sessions from ", statistics.dateOfFirstSession, U" until today:");
 	MelderInfo_writeLine (U"   Sessions: ", Melder_bigInteger (statistics.interactiveSessions), U" interactive, ",
 		Melder_bigInteger (statistics.batchSessions), U" batch");
@@ -259,7 +259,7 @@ void praat_reportMemoryUse () {
 
 void MelderCasual_memoryUse (integer message) {
 	integer numberOfStrings = MelderString_allocationCount () - MelderString_deallocationCount ();
-	integer numberOfArrays = MelderTensor_allocationCount () - MelderTensor_deallocationCount ();
+	integer numberOfArrays = MelderArray_allocationCount () - MelderArray_deallocationCount ();
 	integer numberOfThings = theTotalNumberOfThings;
 	integer numberOfOther = Melder_allocationCount () - Melder_deallocationCount ()
 			- numberOfStrings - numberOfArrays - numberOfThings;

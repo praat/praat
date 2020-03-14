@@ -18,30 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********** Arrays with one index **********/
-
-enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
-
-byte * MelderTensor_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType);
-
-template <class T>
-T* MelderTensor (integer numberOfCells, kTensorInitializationType initializationType) {
-	T* result = reinterpret_cast <T*> (MelderTensor_generic (sizeof (T), numberOfCells, initializationType));
-	return result;
-}
-
-void MelderTensor_free_generic (byte *cells, integer numberOfCells) noexcept;
-
-template <class T>
-void MelderTensor_free (T* cells, integer numberOfCells) noexcept {
-	MelderTensor_free_generic (reinterpret_cast <byte *> (cells), numberOfCells);
-}
-
-int64 MelderTensor_allocationCount ();
-int64 MelderTensor_deallocationCount ();
-int64 MelderTensor_cellAllocationCount ();
-int64 MelderTensor_cellDeallocationCount ();
-
 #pragma mark - TENSOR
 /*
 	Base-1 tensors, for parallellism with the scripting language.
@@ -233,7 +209,7 @@ public:
 	autovector (): vector<T> (nullptr, 0, false) { }   // come into existence without a payload
 	explicit autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
-		our cells = ( givenSize == 0 ? nullptr : MelderTensor <T> (givenSize, initializationType) );
+		our cells = ( givenSize == 0 ? nullptr : MelderArray <T> (givenSize, initializationType) );
 		our size = givenSize;
 		our _capacity = givenSize;
 	}
@@ -284,7 +260,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
 		if (our cells) {
-			MelderTensor_free (our cells, our _capacity);
+			MelderArray_free (our cells, our _capacity);
 			our cells = nullptr;
 			our _capacity = 0;
 		}
@@ -297,7 +273,7 @@ public:
 	*/
 	void initWithCapacity (integer capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
 		if (capacity > 0)
-			our cells = MelderTensor <T> (capacity, initializationType);
+			our cells = MelderArray <T> (capacity, initializationType);
 		our size = 0;
 		our _capacity = capacity;
 	}
@@ -328,14 +304,14 @@ public:
 			/*
 				Create without change.
 			*/
-			T *newCells = MelderTensor<T> (newCapacity, initializationType);
+			T *newCells = MelderArray<T> (newCapacity, initializationType);
 			/*
 				Change without error.
 			*/
 			for (integer i = 1; i <= our size; i ++)
 				newCells [i - 1] = std::move (our cells [i - 1]);
 			if (our cells)
-				MelderTensor_free (our cells, our _capacity);
+				MelderArray_free (our cells, our _capacity);
 			our cells = newCells;
 			our _capacity = newCapacity;
 		}
@@ -626,13 +602,13 @@ public:
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
 		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: MelderTensor <T> (givenNrow * givenNcol, initializationType) );
+				: MelderArray <T> (givenNrow * givenNcol, initializationType) );
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
 		if (our cells)
-			MelderTensor_free (our cells, our nrow * our ncol);
+			MelderArray_free (our cells, our nrow * our ncol);
 	}
 	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
@@ -667,7 +643,7 @@ public:
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells)
-				MelderTensor_free (our cells, our nrow * our ncol);
+				MelderArray_free (our cells, our nrow * our ncol);
 			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -679,7 +655,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			MelderTensor_free (our cells, our nrow * our ncol);
+			MelderArray_free (our cells, our nrow * our ncol);
 			our cells = nullptr;
 		}
 		our nrow = 0;
@@ -983,7 +959,7 @@ public:
 		Melder_assert (givenNdim2 >= 0);
 		Melder_assert (givenNdim3 >= 0);
 		our cells = ( givenNdim1 == 0 || givenNdim2 == 0 || givenNdim3 == 0 ? nullptr
-				: MelderTensor <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
+				: MelderArray <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
 		our ndim1 = givenNdim1;
 		our ndim2 = givenNdim2;
 		our ndim3 = givenNdim3;
@@ -993,7 +969,7 @@ public:
 	}
 	~autotensor3 () {   // destroy the payload (if any)
 		if (our cells)
-			MelderTensor_free (our cells, our ndim1 * our ndim2 * our ndim3);
+			MelderArray_free (our cells, our ndim1 * our ndim2 * our ndim3);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	const tensor3<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
@@ -1030,7 +1006,7 @@ public:
 	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells)
-				MelderTensor_free (our cells, our ndim1 * our ndim2 * our ndim3);
+				MelderArray_free (our cells, our ndim1 * our ndim2 * our ndim3);
 			our cells = other.cells;
 			our ndim1 = other.ndim1;
 			our ndim2 = other.ndim2;
@@ -1044,7 +1020,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			MelderTensor_free (our cells, our ndim1 * our ndim2 * our ndim3);
+			MelderArray_free (our cells, our ndim1 * our ndim2 * our ndim3);
 			our cells = nullptr;
 		}
 		our ndim1 = 0;

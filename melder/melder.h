@@ -51,9 +51,9 @@
 #include "melder_pointer.h"   // NULL
 #include "melder_real.h"   // longdouble, MelderPoint, MelderRealRange
 #include "NUMmath.h"   // <math.h>, NUMpi, undefined
-#include "complex.h"   // dcomplex
+#include "complex.h"   // <complex>, dcomplex
 
-#include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free
+#include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free, MelderArray
 #include "melder_string32.h"   // char32, conststring32, autostring32 (requires Melder_malloc, our), Melder_dup
 #include "melder_kar.h"   // Melder_hasInk (requires char32), Melder_toLowerCase
 #include "melder_str32.h"   // str32len, str32cpy, str32cmp_caseInsensitive (requires Melder_toLowerCase)
@@ -67,14 +67,14 @@
 #define ALLOW_GDK_DRAWING  (gtk && 1)   /* change to (gtk && 0) if you want to try out GTK 3 */
 /* */
 
-#include "melder_tensor.h"   // MelderTensor, VEC, autoMAT, Melder_VEC
+#include "melder_tensor.h"   // VEC, autoMAT, Melder_VEC
 #include "melder_colour.h"   // MelderColour (requires VEC)
 #include "melder_ftoa.h"   // Melder_double, Melder_pad (require dcomplex, conststring32, MelderColour)
 #include "melder_console.h"   // MelderConsole (requires conststring32)
 #include "melder_textencoding.h"   // str32len_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderDir
-#include "melder_strvec.h"   // STRVEC, autoSTRVEC (requires MelderTensor)
+#include "melder_strvec.h"   // STRVEC, autoSTRVEC (requires MelderArray)
 #include "melder_sort.h"   // VECsort_inplace (requires VEC), STRVECsort_inplace (requires STRVEC)
 
 #include "MelderArg.h"   // MelderArg (requires Melder_double, MelderFile, Melder_VEC)
