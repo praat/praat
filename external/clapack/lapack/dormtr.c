@@ -19,18 +19,8 @@ static integer c__2 = 2;
     /* Local variables */
     integer i1, i2, nb, mi, ni, nq, nw;
     logical left;
-//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dormql_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *), 
-	    dormqr_(char *, char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
 
@@ -189,16 +179,16 @@ static integer c__2 = 2;
 	if (upper) {
 	    if (left) {
 /* Writing concatenation */
-		i__1[0] = 1, a__1[0] = side;
-		i__1[1] = 1, a__1[1] = trans;
+		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 		i__2 = *m - 1;
 		i__3 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQL", ch__1, &i__2, n, &i__3, &c_n1);
 	    } else {
 /* Writing concatenation */
-		i__1[0] = 1, a__1[0] = side;
-		i__1[1] = 1, a__1[1] = trans;
+		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 		i__2 = *n - 1;
 		i__3 = *n - 1;
@@ -207,16 +197,16 @@ static integer c__2 = 2;
 	} else {
 	    if (left) {
 /* Writing concatenation */
-		i__1[0] = 1, a__1[0] = side;
-		i__1[1] = 1, a__1[1] = trans;
+		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 		i__2 = *m - 1;
 		i__3 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, &i__2, n, &i__3, &c_n1);
 	    } else {
 /* Writing concatenation */
-		i__1[0] = 1, a__1[0] = side;
-		i__1[1] = 1, a__1[1] = trans;
+		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 		i__2 = *n - 1;
 		i__3 = *n - 1;

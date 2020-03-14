@@ -6,7 +6,7 @@
 static doublereal c_b7 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dlauu2_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlauu2_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */

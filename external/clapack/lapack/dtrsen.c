@@ -5,7 +5,7 @@
 
 static integer c_n1 = -1;
 
-/* Subroutine */ int dtrsen_(char *job, char *compq, logical *select, integer 
+/* Subroutine */ int dtrsen_(const char *job, const char *compq, logical *select, integer 
 	*n, doublereal *t, integer *ldt, doublereal *q, integer *ldq, 
 	doublereal *wr, doublereal *wi, integer *m, doublereal *s, doublereal 
 	*sep, doublereal *work, integer *lwork, integer *iwork, integer *

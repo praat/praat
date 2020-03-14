@@ -10,7 +10,7 @@ static doublereal c_b26 = 1.;
 static doublereal c_b30 = 0.;
 static logical c_true = TRUE_;
 
-/* Subroutine */ int dtrsyl_(char *trana, char *tranb, integer *isgn, integer 
+/* Subroutine */ int dtrsyl_(const char *trana, const char *tranb, integer *isgn, integer 
 	*m, integer *n, doublereal *a, integer *lda, doublereal *b, integer *
 	ldb, doublereal *c__, integer *ldc, doublereal *scale, integer *info)
 {
@@ -24,27 +24,11 @@ static logical c_true = TRUE_;
     doublereal x[4]	/* was [2][2] */;
     integer k1, k2, l1, l2;
     doublereal a11, db, da11, vec[4]	/* was [2][2] */, dum[1], eps, sgn;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     integer ierr;
     doublereal smin, suml, sumr;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
     integer knext, lnext;
     doublereal xnorm;
-    extern /* Subroutine */ int dlaln2_(logical *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     doublereal *, doublereal *, integer *, doublereal *, doublereal *
-, doublereal *, integer *, doublereal *, doublereal *, integer *),
-	     dlasy2_(logical *, logical *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *), dlabad_(doublereal *, doublereal *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
     doublereal scaloc;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     logical notrna, notrnb;
     doublereal smlnum;

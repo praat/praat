@@ -19,18 +19,8 @@ static integer c__1 = 1;
     doublereal su;
     integer kase, kase1;
     doublereal scale;
-//    extern logical lsame_(char *, char *);
     integer isave[3];
-    extern /* Subroutine */ int drscl_(integer *, doublereal *, doublereal *, 
-	    integer *), dlacn2_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *);
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal ainvnm;
-    extern /* Subroutine */ int dlatrs_(char *, char *, char *, char *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
     logical onenrm;
     char normin[1];
     doublereal smlnum;

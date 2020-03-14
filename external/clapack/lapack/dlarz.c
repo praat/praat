@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static doublereal c_b5 = 1.;
 
-/* Subroutine */ int dlarz_(char *side, integer *m, integer *n, integer *l, 
+/* Subroutine */ int dlarz_(const char *side, integer *m, integer *n, integer *l, 
 	doublereal *v, integer *incv, doublereal *tau, doublereal *c__, 
 	integer *ldc, doublereal *work)
 {

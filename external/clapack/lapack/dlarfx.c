@@ -7,7 +7,7 @@ static doublereal c_b14 = 1.;
 static integer c__1 = 1;
 static doublereal c_b16 = 0.;
 
-/* Subroutine */ int dlarfx_(char *side, integer *m, integer *n, doublereal *
+/* Subroutine */ int dlarfx_(const char *side, integer *m, integer *n, doublereal *
 	v, doublereal *tau, doublereal *c__, integer *ldc, doublereal *work)
 {
     /* System generated locals */
@@ -18,14 +18,6 @@ static doublereal c_b16 = 0.;
     integer j;
     doublereal t1, t2, t3, t4, t5, t6, t7, t8, t9, v1, v2, v3, v4, v5, v6, v7,
 	     v8, v9, t10, v10, sum;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

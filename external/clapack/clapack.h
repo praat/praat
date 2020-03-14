@@ -1280,7 +1280,7 @@
 	ku, integer *nrhs, doublereal *ab, integer *ldab, integer *ipiv, 
 	doublereal *b, integer *ldb, integer *info);
 
-/* Subroutine */ int dgebak_(char *job, char *side, integer *n, integer *ilo, 
+/* Subroutine */ int dgebak_(const char *job, const char *side, integer *n, integer *ilo, 
 	integer *ihi, doublereal *scale, integer *m, doublereal *v, integer *
 	ldv, integer *info);
 
@@ -1319,7 +1319,7 @@
 	integer *ldvl, doublereal *vr, integer *ldvr, doublereal *work, 
 	integer *lwork, integer *info);
 
-/* Subroutine */ int dgeevx_(char *balanc, char *jobvl, char *jobvr, char *
+/* Subroutine */ int dgeevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, doublereal *a, integer *lda, doublereal *wr, 
 	doublereal *wi, doublereal *vl, integer *ldvl, doublereal *vr, 
 	integer *ldvr, integer *ilo, integer *ihi, doublereal *scale, 
@@ -1923,16 +1923,16 @@
 
 /* Subroutine */ int dlaruv_(integer *iseed, integer *n, doublereal *x);
 
-/* Subroutine */ int dlarz_(char *side, integer *m, integer *n, integer *l, 
+/* Subroutine */ int dlarz_(const char *side, integer *m, integer *n, integer *l, 
 	doublereal *v, integer *incv, doublereal *tau, doublereal *c__, 
 	integer *ldc, doublereal *work);
 
-/* Subroutine */ int dlarzb_(char *side, char *trans, char *direct, char *
+/* Subroutine */ int dlarzb_(const char *side, const char *trans, const char *direct, const char *
 	storev, integer *m, integer *n, integer *k, integer *l, doublereal *v,
 	 integer *ldv, doublereal *t, integer *ldt, doublereal *c__, integer *
 	ldc, doublereal *work, integer *ldwork  	);
 
-/* Subroutine */ int dlarzt_(char *direct, char *storev, integer *n, integer *
+/* Subroutine */ int dlarzt_(const char *direct, const char *storev, integer *n, integer *
 	k, doublereal *v, integer *ldv, doublereal *tau, doublereal *t, 
 	integer *ldt);
 
@@ -2071,7 +2071,7 @@
 	integer *ldz, doublereal *rhs, doublereal *rdsum, doublereal *rdscal, 
 	integer *ipiv, integer *jpiv);
 
-/* Subroutine */ int dlatps_(char *uplo, char *trans, char *diag, char *
+/* Subroutine */ int dlatps_(const char *uplo, const char *trans, const char *diag, const char *
 	normin, integer *n, doublereal *ap, doublereal *x, doublereal *scale, 
 	doublereal *cnorm, integer *info);
 
@@ -2086,14 +2086,14 @@
 /* Subroutine */ int dlatrz_(integer *m, integer *n, integer *l, doublereal *
 	a, integer *lda, doublereal *tau, doublereal *work);
 
-/* Subroutine */ int dlatzm_(char *side, integer *m, integer *n, doublereal *
+/* Subroutine */ int dlatzm_(const char *side, integer *m, integer *n, doublereal *
 	v, integer *incv, doublereal *tau, doublereal *c1, doublereal *c2, 
 	integer *ldc, doublereal *work);
 
-/* Subroutine */ int dlauu2_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlauu2_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, integer *info);
 
-/* Subroutine */ int dlauum_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlauum_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, integer *info);
 
 /* Subroutine */ int dlazq3_(integer *i0, integer *n0, doublereal *z__, 
@@ -2663,7 +2663,7 @@
 	doublereal *x, integer *ldx, doublereal *ferr, doublereal *berr, 
 	doublereal *work, integer *iwork, integer *info);
 
-/* Subroutine */ int dtptri_(char *uplo, char *diag, integer *n, doublereal *
+/* Subroutine */ int dtptri_(const char *uplo, const char *diag, integer *n, doublereal *
 	ap, integer *info);
 
 /* Subroutine */ int dtptrs_(char *uplo, char *trans, char *diag, integer *n, 
@@ -2674,12 +2674,12 @@
 	doublereal *a, integer *lda, doublereal *rcond, doublereal *work, 
 	integer *iwork, integer *info);
 
-/* Subroutine */ int dtrevc_(char *side, char *howmny, logical *select, 
+/* Subroutine */ int dtrevc_(const char *side, const char *howmny, logical *select, 
 	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
 	ldvl, doublereal *vr, integer *ldvr, integer *mm, integer *m, 
 	doublereal *work, integer *info);
 
-/* Subroutine */ int dtrexc_(char *compq, integer *n, doublereal *t, integer *
+/* Subroutine */ int dtrexc_(const char *compq, integer *n, doublereal *t, integer *
 	ldt, doublereal *q, integer *ldq, integer *ifst, integer *ilst, 
 	doublereal *work, integer *info);
 
@@ -2688,19 +2688,19 @@
 	ldb, doublereal *x, integer *ldx, doublereal *ferr, doublereal *berr, 
 	doublereal *work, integer *iwork, integer *info);
 
-/* Subroutine */ int dtrsen_(char *job, char *compq, logical *select, integer 
+/* Subroutine */ int dtrsen_(const char *job, const char *compq, logical *select, integer 
 	*n, doublereal *t, integer *ldt, doublereal *q, integer *ldq, 
 	doublereal *wr, doublereal *wi, integer *m, doublereal *s, doublereal 
 	*sep, doublereal *work, integer *lwork, integer *iwork, integer *
 	liwork, integer *info);
 
-/* Subroutine */ int dtrsna_(char *job, char *howmny, logical *select, 
+/* Subroutine */ int dtrsna_(const char *job, const char *howmny, logical *select, 
 	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
 	ldvl, doublereal *vr, integer *ldvr, doublereal *s, doublereal *sep, 
 	integer *mm, integer *m, doublereal *work, integer *ldwork, integer *
 	iwork, integer *info);
 
-/* Subroutine */ int dtrsyl_(char *trana, char *tranb, integer *isgn, integer 
+/* Subroutine */ int dtrsyl_(const char *trana, const char *tranb, integer *isgn, integer 
 	*m, integer *n, doublereal *a, integer *lda, doublereal *b, integer *
 	ldb, doublereal *c__, integer *ldc, doublereal *scale, integer *info);
 

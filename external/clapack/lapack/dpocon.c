@@ -16,22 +16,11 @@ static integer c__1 = 1;
     /* Local variables */
     integer ix, kase;
     doublereal scale;
-//    extern logical lsame_(char *, char *);
     integer isave[3];
-    extern /* Subroutine */ int drscl_(integer *, doublereal *, doublereal *, 
-	    integer *);
     logical upper;
-    extern /* Subroutine */ int dlacn2_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *);
-//    extern doublereal dlamch_(char *);
     doublereal scalel;
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal scaleu;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal ainvnm;
-    extern /* Subroutine */ int dlatrs_(char *, char *, char *, char *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
     char normin[1];
     doublereal smlnum;
 

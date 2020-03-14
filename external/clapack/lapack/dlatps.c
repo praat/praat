@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static doublereal c_b36 = .5;
 
-/* Subroutine */ int dlatps_(char *uplo, char *trans, char *diag, char *
+/* Subroutine */ int dlatps_(const char *uplo, const char *trans, const char *diag, const char *
 	normin, integer *n, doublereal *ap, doublereal *x, doublereal *scale, 
 	doublereal *cnorm, integer *info)
 {
@@ -18,25 +18,12 @@ static doublereal c_b36 = .5;
     integer i__, j, ip;
     doublereal xj, rec, tjj;
     integer jinc, jlen;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal xbnd;
     integer imax;
     doublereal tmax, tjjs, xmax, grow, sumj;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
     doublereal tscal, uscal;
-//    extern doublereal dasum_(integer *, doublereal *, integer *);
     integer jlast;
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dtpsv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *);
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     logical notran;
     integer jfirst;

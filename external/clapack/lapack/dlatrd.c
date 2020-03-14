@@ -17,20 +17,7 @@ static doublereal c_b16 = 0.;
 
     /* Local variables */
     integer i__, iw;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal alpha;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), daxpy_(integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *), 
-	    dsymv_(char *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *), dlarfg_(integer *, doublereal *, doublereal *, integer *, 
-	     doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

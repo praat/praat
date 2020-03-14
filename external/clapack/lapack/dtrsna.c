@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static logical c_true = TRUE_;
 static logical c_false = FALSE_;
 
-/* Subroutine */ int dtrsna_(char *job, char *howmny, logical *select, 
+/* Subroutine */ int dtrsna_(const char *job, const char *howmny, logical *select, 
 	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
 	ldvl, doublereal *vr, integer *ldvr, doublereal *s, doublereal *sep, 
 	integer *mm, integer *m, doublereal *work, integer *ldwork, integer *

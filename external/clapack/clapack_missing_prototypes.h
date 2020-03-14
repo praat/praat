@@ -41,7 +41,7 @@ int dgemm_(const char *transa, const char *transb, integer *m, integer *
 	doublereal *b, integer *ldb, doublereal *beta, doublereal *c__, 
 	integer *ldc);
 
-int dgemv_(char *trans, integer *m, integer *n, doublereal *
+int dgemv_(const char *trans, integer *m, integer *n, doublereal *
 	alpha, doublereal *a, integer *lda, doublereal *x, integer *incx, 
 	doublereal *beta, doublereal *y, integer *incy);
 
@@ -134,11 +134,11 @@ int dspmv_(char *uplo, integer *n, doublereal *alpha,
 	doublereal *ap, doublereal *x, integer *incx, doublereal *beta, 
 	doublereal *y, integer *incy);
 
-int dspr2_(char *uplo, integer *n, doublereal *alpha, 
+int dspr2_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *x, integer *incx, doublereal *y, integer *incy, 
 	doublereal *ap);
 
-int dspr_(char *uplo, integer *n, doublereal *alpha, 
+int dspr_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *x, integer *incx, doublereal *ap);
 
 int dswap_(integer *n, doublereal *dx, integer *incx, 
@@ -148,18 +148,18 @@ int dsyrk_(char *uplo, char *trans, integer *n, integer *k,
 	doublereal *alpha, doublereal *a, integer *lda, doublereal *beta, 
 	doublereal *c__, integer *ldc);
 
-int dsymm_(char *side, char *uplo, integer *m, integer *n, 
+int dsymm_(const char *side, const char *uplo, integer *m, integer *n, 
 	doublereal *alpha, doublereal *a, integer *lda, doublereal *b, 
 	integer *ldb, doublereal *beta, doublereal *c__, integer *ldc);
 
-int dsymv_(char *uplo, integer *n, doublereal *alpha, 
+int dsymv_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *a, integer *lda, doublereal *x, integer *incx, doublereal 
 	*beta, doublereal *y, integer *incy);
 
-int dsyr_(char *uplo, integer *n, doublereal *alpha, 
+int dsyr_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *x, integer *incx, doublereal *a, integer *lda);
 
-int dsyr2_(char *uplo, integer *n, doublereal *alpha, 
+int dsyr2_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *x, integer *incx, doublereal *y, integer *incy, 
 	doublereal *a, integer *lda);
 

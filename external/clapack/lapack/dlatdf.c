@@ -19,28 +19,12 @@ static doublereal c_b37 = -1.;
     /* Local variables */
     integer i__, j, k;
     doublereal bm, bp, xm[8], xp[8];
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     integer info;
     doublereal temp, work[32];
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern doublereal dasum_(integer *, doublereal *, integer *);
     doublereal pmone;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), daxpy_(integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *);
     doublereal sminu;
     integer iwork[8];
     doublereal splus;
-    extern /* Subroutine */ int dgesc2_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *, doublereal *), dgecon_(char *, 
-	     integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *), dlassq_(integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *), dlaswp_(
-	    integer *, doublereal *, integer *, integer *, integer *, integer 
-	    *, integer *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

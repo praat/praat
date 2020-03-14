@@ -191,8 +191,8 @@ static integer c__65 = 65;
 
 /* Computing MIN */
 /* Writing concatenation */
-	    i__3[0] = 1, a__1[0] = side;
-	    i__3[1] = 1, a__1[1] = trans;
+	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 	    i__1 = 64, i__2 = ilaenv_(&c__1, "DORMRQ", ch__1, m, n, k, &c_n1);
 	    nb = min(i__1,i__2);
@@ -227,8 +227,8 @@ static integer c__65 = 65;
 	    nb = *lwork / ldwork;
 /* Computing MAX */
 /* Writing concatenation */
-	    i__3[0] = 1, a__1[0] = side;
-	    i__3[1] = 1, a__1[1] = trans;
+	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DORMRQ", ch__1, m, n, k, &c_n1);
 	    nbmin = max(i__1,i__2);

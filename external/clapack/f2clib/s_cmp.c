@@ -5,7 +5,7 @@
 integer s_cmp(const char *a0, const char *b0, integer la, integer lb)
 
 {
-register unsigned char *a, *aend, *b, *bend;
+unsigned char *a, *aend, *b, *bend;
 a = (unsigned char *)a0;
 b = (unsigned char *)b0;
 aend = a + la;

@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dorml2_(char *side, char *trans, integer *m, integer *n, 
+/* Subroutine */ int dorml2_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *tau, doublereal *
 	c__, integer *ldc, doublereal *work, integer *info)
 {
@@ -12,11 +12,6 @@
     integer i__, i1, i2, i3, ic, jc, mi, ni, nq;
     doublereal aii;
     logical left;
-    extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *);
-//    extern logical lsame_(char *, char *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
 
 

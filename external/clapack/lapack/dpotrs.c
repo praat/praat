@@ -13,13 +13,7 @@ static doublereal c_b9 = 1.;
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 
     /* Local variables */
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

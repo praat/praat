@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dspr_(char *uplo, integer *n, doublereal *alpha, 
+/* Subroutine */ int dspr_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *x, integer *incx, doublereal *ap)
 {
     /* System generated locals */

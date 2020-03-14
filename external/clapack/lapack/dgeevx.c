@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dgeevx_(char *balanc, char *jobvl, char *jobvr, char *
+/* Subroutine */ int dgeevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, doublereal *a, integer *lda, doublereal *wr, 
 	doublereal *wi, doublereal *vl, integer *ldvl, doublereal *vr, 
 	integer *ldvr, integer *ilo, integer *ihi, doublereal *scale, 

@@ -10,7 +10,7 @@ extern "C" {
 extern VOID sig_die();
 integer s_rnge(varn, offset, procn, line) char *varn, *procn; ftnint offset, line;
 #else
-extern VOID sig_die(char*,int);
+extern VOID sig_die(const char*,int);
 integer s_rnge(char *varn, ftnint offset, char *procn, ftnint line)
 #endif
 {

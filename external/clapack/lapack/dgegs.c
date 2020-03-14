@@ -22,24 +22,11 @@ static doublereal c_b37 = 1.;
     integer nb, nb1, nb2, nb3, ihi, ilo;
     doublereal eps, anrm, bnrm;
     integer itau, lopt;
-//    extern logical lsame_(char *, char *);
     integer ileft, iinfo, icols;
     logical ilvsl;
     integer iwork;
     logical ilvsr;
     integer irows;
-    extern /* Subroutine */ int dggbak_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, integer *), dggbal_(char *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, integer *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dgghrd_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *), dlascl_(char *, integer *, integer *, doublereal 
-	    *, doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *);
     logical ilascl, ilbscl;
     doublereal safmin;
     doublereal bignum;

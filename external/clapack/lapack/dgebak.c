@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dgebak_(char *job, char *side, integer *n, integer *ilo, 
+/* Subroutine */ int dgebak_(const char *job, const char *side, integer *n, integer *ilo, 
 	integer *ihi, doublereal *scale, integer *m, doublereal *v, integer *
 	ldv, integer *info)
 {

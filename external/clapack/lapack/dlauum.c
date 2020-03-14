@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static doublereal c_b15 = 1.;
 
-/* Subroutine */ int dlauum_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlauum_(const char *uplo, integer *n, doublereal *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */

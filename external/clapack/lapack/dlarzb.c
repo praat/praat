@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static doublereal c_b13 = 1.;
 static doublereal c_b23 = -1.;
 
-/* Subroutine */ int dlarzb_(char *side, char *trans, char *direct, char *
+/* Subroutine */ int dlarzb_(const char *side, const char *trans, const char *direct, const char *
 	storev, integer *m, integer *n, integer *k, integer *l, doublereal *v, 
 	 integer *ldv, doublereal *t, integer *ldt, doublereal *c__, integer *
 	ldc, doublereal *work, integer *ldwork)

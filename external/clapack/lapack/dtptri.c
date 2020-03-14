@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dtptri_(char *uplo, char *diag, integer *n, doublereal *
+/* Subroutine */ int dtptri_(const char *uplo, const char *diag, integer *n, doublereal *
 	ap, integer *info)
 {
     /* System generated locals */
@@ -14,13 +14,7 @@ static integer c__1 = 1;
     /* Local variables */
     integer j, jc, jj;
     doublereal ajj;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtpmv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer jclast;
     logical nounit;
 
