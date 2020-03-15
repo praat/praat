@@ -136,7 +136,7 @@ integer praat_idOfSelected (ClassInfo klas, integer inplace) {
 }
 
 autoVEC praat_idsOfAllSelected (ClassInfo klas) {
-	autoVEC result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
+	autoVEC result = newVECraw (praat_numberOfSelected (klas));
 	integer selectedObjectNumber = 0, IOBJECT;
 	WHERE (SELECTED && (! klas || CLASS == klas)) {
 		result [++ selectedObjectNumber] = ID;

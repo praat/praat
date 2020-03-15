@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2019 Paul Boersma
+ * Copyright (C) 2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,25 +159,25 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 			fread (buffer, 1, 8, f);
 			buffer [8] = '\0';   // physical dimension of channels
 		}
-		autoVEC physicalMinimum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC physicalMinimum = newVECraw (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			physicalMinimum [ichannel] = atof (buffer);
 		}
-		autoVEC physicalMaximum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC physicalMaximum = newVECraw (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			physicalMaximum [ichannel] = atof (buffer);
 		}
-		autoVEC digitalMinimum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC digitalMinimum = newVECraw (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			digitalMinimum [ichannel] = atof (buffer);
 		}
-		autoVEC digitalMaximum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC digitalMaximum = newVECraw (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f);
 			buffer [8] = '\0';

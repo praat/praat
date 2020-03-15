@@ -100,7 +100,7 @@ public:
 		our size = 0;
 	}
 	_autostringautovector<T> (integer initialSize) {
-		our _elements = MelderArray <_autostring <T>> (initialSize, kTensorInitializationType :: ZERO);
+		our _elements = MelderArray:: _alloc <_autostring <T>> (initialSize, MelderArray::kInitializationType :: ZERO);
 		our size = initialSize;
 	}
 	_autostringautovector (const _autostringautovector &) = delete;
@@ -141,7 +141,7 @@ public:
 		if (our _elements) {
 			for (integer i = 1; i <= our size; i ++)
 				our _elements [i - 1]. reset ();
-			MelderArray_free (our _elements, our size);
+			MelderArray:: _free (our _elements, our size);
 			our _elements = nullptr;
 			our size = 0;
 		}

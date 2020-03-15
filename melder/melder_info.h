@@ -2,7 +2,7 @@
 #define _melder_info_h_
 /* melder_info.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ namespace MelderInfo {
 	void _defaultProc (conststring32 message);
 	extern Proc _p_currentProc;
 	extern MelderString _foregroundBuffer, *_p_currentBuffer;
-};
+}
 
 void MelderInfo_open ();   // clear the Info window in the background
 void MelderInfo_close ();   // drain the background info to the Info window, making sure there is a line break
