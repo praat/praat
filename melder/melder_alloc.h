@@ -70,21 +70,25 @@ int64 Melder_movingReallocationsCount ();
 
 /********** Arrays. **********/
 
-enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
 
-byte * MelderArray_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType);
+namespace MelderArray {
 
-template <class T>
-T* MelderArray (integer numberOfCells, kTensorInitializationType initializationType) {
-	T* result = reinterpret_cast <T*> (MelderArray_generic (sizeof (T), numberOfCells, initializationType));
-	return result;
-}
+	enum class kInitializationType { RAW = 0, ZERO = 1 };
 
-void MelderArray_free_generic (byte *cells, integer numberOfCells) noexcept;
+	byte * _alloc_generic (integer cellSize, integer numberOfCells, kInitializationType initializationType);
+	void _free_generic (byte *cells, integer numberOfCells) noexcept;
 
-template <class T>
-void MelderArray_free (T* cells, integer numberOfCells) noexcept {
-	MelderArray_free_generic (reinterpret_cast <byte *> (cells), numberOfCells);
+	template <class T>
+	T* _alloc (integer numberOfCells, kInitializationType initializationType) {
+		T* result = reinterpret_cast <T*> (MelderArray:: _alloc_generic (sizeof (T), numberOfCells, initializationType));
+		return result;
+	}
+
+	template <class T>
+	void _free (T* cells, integer numberOfCells) noexcept {
+		_free_generic (reinterpret_cast <byte *> (cells), numberOfCells);
+	}
+
 }
 
 int64 MelderArray_allocationCount ();

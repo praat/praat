@@ -2,7 +2,7 @@
 #define _melder_cat_h_
 /* melder_cat.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ namespace MelderCat {
 	constexpr int _k_NUMBER_OF_BUFFERS = 33;
 	extern MelderString _buffers [_k_NUMBER_OF_BUFFERS];
 	extern int _bufferNumber;
-};
+}
 
 template <typename... Args>
 conststring32 Melder_cat (Args... args) {

@@ -396,7 +396,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_ZERO: {
 			integer size = Melder_atoi (arg2);
-			autoVEC result { size, kTensorInitializationType::RAW };
+			autoVEC result = newVECraw (size);
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (integer i = 1; i <= size; i ++)
@@ -580,7 +580,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				const autoVEC f { e, 10 };
 				#endif
 				{
-					autoVEC g { 100, kTensorInitializationType::ZERO };
+					autoVEC g = newVECzero (100);
 					g [1] = 3.0;
 					VEC gg = g.get();
 					gg [2] = 4.0;

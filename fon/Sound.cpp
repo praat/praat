@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -373,7 +373,7 @@ autoSound Sound_upsample (Sound me) {
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * sampleRateFactor,
 				newDx, my x1 - 0.5 * (my dx - newDx));
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			autoVEC data (sampleRateFactor * nfft, kTensorInitializationType::ZERO);   // zeroing is important...
+			autoVEC data = newVECzero (sampleRateFactor * nfft);   // zeroing is important...
 			data.part (antiTurnAround + 1, antiTurnAround + my nx) <<= my z.row (ichan);   // ...because this fills only part of the sound
 			NUMrealft (data.part (1, nfft), 1);
 			integer imin = (integer) (nfft * 0.95);
@@ -406,7 +406,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 			constexpr integer numberOfPaddingSides = 2;   // namely beginning and end
 			integer nfft = 1;
 			while (nfft < my nx + antiTurnAround * numberOfPaddingSides) nfft *= 2;
-			autoVEC data (nfft, kTensorInitializationType::RAW);   // will be zeroed in every turn of the loop
+			autoVEC data = newVECraw (nfft);   // will be zeroed in every turn of the loop
 			filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				for (integer i = 1; i <= nfft; i ++)
@@ -491,7 +491,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 				totalNumberOfSamples, sharedTimeStep, 0.5 * sharedTimeStep);
 		autoVEC smoother;
 		if (numberOfSmoothingSamples > 0) {
-			smoother = autoVEC (numberOfSmoothingSamples, kTensorInitializationType::RAW);
+			smoother = newVECraw (numberOfSmoothingSamples);
 			const double factor = NUMpi / numberOfSmoothingSamples;
 			for (integer i = 1; i <= numberOfSmoothingSamples; i ++)
 				smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
@@ -543,8 +543,8 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 		integer n1 = my nx, n2 = thy nx;
 		integer n3 = n1 + n2 - 1, nfft = 1;
 		while (nfft < n3) nfft *= 2;
-		autoVEC data1 (nfft, kTensorInitializationType::RAW);
-		autoVEC data2 (nfft, kTensorInitializationType::RAW);
+		autoVEC data1 = newVECraw (nfft);
+		autoVEC data2 = newVECraw (nfft);
 		integer numberOfChannels = my ny > thy ny ? my ny : thy ny;
 		autoSound him = Sound_create (numberOfChannels, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
@@ -621,8 +621,8 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 		integer n1 = my nx, n2 = thy nx;
 		integer n3 = n1 + n2 - 1, nfft = 1;
 		while (nfft < n3) nfft *= 2;
-		autoVEC data1 (nfft, kTensorInitializationType::RAW);
-		autoVEC data2 (nfft, kTensorInitializationType::RAW);
+		autoVEC data1 = newVECraw (nfft);
+		autoVEC data2 = newVECraw (nfft);
 		double my_xlast = my x1 + (n1 - 1) * my dx;
 		autoSound him = Sound_create (numberOfChannels, thy xmin - my xmax, thy xmax - my xmin, n3, my dx, thy x1 - my_xlast);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
@@ -694,14 +694,17 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		integer numberOfChannels = my ny, n1 = my nx, n2 = n1 + n1 - 1, nfft = 1;
-		while (nfft < n2) nfft *= 2;
-		autoVEC data (nfft, kTensorInitializationType::RAW);
+		while (nfft < n2)
+			nfft *= 2;
+		autoVEC data = newVECraw (nfft);
 		double my_xlast = my x1 + (n1 - 1) * my dx;
 		autoSound thee = Sound_create (numberOfChannels, my xmin - my xmax, my xmax - my xmin, n2, my dx, my x1 - my_xlast);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			double *a = & my z [channel] [0];
-			for (integer i = n1; i > 0; i --) data [i] = a [i];
-			for (integer i = n1 + 1; i <= nfft; i ++) data [i] = 0.0;
+			for (integer i = n1; i > 0; i --)
+				data [i] = a [i];
+			for (integer i = n1 + 1; i <= nfft; i ++)
+				data [i] = 0.0;
 			NUMrealft (data.get(), 1);
 			data [1] *= data [1];
 			data [2] *= data [2];
@@ -722,10 +725,10 @@ autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSoun
 			} break;
 			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-					double *a = & thy z [channel] [0];
-					double edge = n1;
+					double * const a = & thy z [channel] [0];
+					const double edge = n1;
 					for (integer i = 1; i < edge; i ++) {
-						double factor = edge / i;
+						const double factor = edge / i;
 						a [i] *= factor;
 						a [n2 + 1 - i] *= factor;
 					}
