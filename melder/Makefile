@@ -1,5 +1,5 @@
 # Makefile of the library "melder"
-# Paul Boersma, 4 November 2019
+# Paul Boersma, 14 March 2020
 
 include ../makefile.defs
 
@@ -7,7 +7,7 @@ CPPFLAGS = -I ../melder
 
 OBJECTS = melder.o complex.o melder_alloc.o melder_colour.o \
 	melder_ftoa.o melder_console.o melder_textencoding.o melder_atof.o melder_files.o \
-	melder_tensor.o melder_sort.o melder_debug.o MelderFile.o melder_strings.o \
+	melder_sort.o melder_debug.o MelderFile.o melder_strings.o \
 	melder_search.o \
 	melder_info.o melder_error.o melder_warning.o melder_fatal.o melder_progress.o \
 	melder_play.o melder_help.o melder_time.o \

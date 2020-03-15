@@ -3122,7 +3122,7 @@ static void do_rdiv () {
 			integer nelem1 = x->numericVector.size, nelem2 = y->numericVector.size;
 			if (nelem1 != nelem2)
 				Melder_throw (U"When dividing vectors, their numbers of elements should be equal, instead of ", nelem1, U" and ", nelem2, U".");
-			autoVEC result { nelem1, kTensorInitializationType::RAW };
+			autoVEC result = newVECraw (nelem1);
 			for (integer ielem = 1; ielem <= nelem1; ielem ++)
 				result [ielem] = x->numericVector [ielem] / y->numericVector [ielem];
 			pushNumericVector (result.move());
@@ -3133,7 +3133,7 @@ static void do_rdiv () {
 				result# = x# / y
 			*/
 			integer xn = x->numericVector.size;
-			autoVEC result { xn, kTensorInitializationType::RAW };
+			autoVEC result = newVECraw (xn);
 			double yvalue = y->number;
 			if (yvalue == 0.0) {
 				Melder_throw (U"Cannot divide (/) ", x->whichText(), U" by zero.");
@@ -3227,7 +3227,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 			for (integer i = 1; i <= n; i ++)
 				at [i] = f (at [i]);
 		} else {
-			autoVEC result { n, kTensorInitializationType::RAW };
+			autoVEC result = newVECraw (n);
 			for (integer i = 1; i <= n; i ++)
 				result [i] = f (at [i]);
 			x->numericVector = result. releaseToAmbiguousOwner();
@@ -3338,7 +3338,7 @@ static void do_rectifyH () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
-		autoVEC result { nelm, kTensorInitializationType::RAW };
+		autoVEC result = newVECraw (nelm);
 		for (integer i = 1; i <= nelm; i ++) {
 			double xvalue = x->numericVector [i];
 			result [i] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
@@ -3446,10 +3446,9 @@ static void do_VECexp () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
-		autoVEC result (nelm, kTensorInitializationType::RAW);
-		for (integer i = 1; i <= nelm; i ++) {
+		autoVEC result = newVECraw (nelm);
+		for (integer i = 1; i <= nelm; i ++)
 			result [i] = exp (x->numericVector [i]);
-		}
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
@@ -3459,12 +3458,10 @@ static void do_MATexp () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-		autoMAT result (nrow, ncol, kTensorInitializationType::RAW);
-		for (integer irow = 1; irow <= nrow; irow ++) {
-			for (integer icol = 1; icol <= ncol; icol ++) {
+		autoMAT result = newMATraw (nrow, ncol);
+		for (integer irow = 1; irow <= nrow; irow ++)
+			for (integer icol = 1; icol <= ncol; icol ++)
 				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
-			}
-		}
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
@@ -3577,7 +3574,7 @@ static void do_function_VECdd_d (double (*f) (double, double)) {
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfElements = ( a->which == Stackel_NUMBER ? Melder_iround (a->number) : a->numericVector.size );
-		autoVEC newData (numberOfElements, kTensorInitializationType::RAW);
+		autoVEC newData = newVECraw (numberOfElements);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (x->number, y->number);
 		}
@@ -3596,7 +3593,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (model->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = model->numericMatrix.nrow;
 			integer numberOfColumns = model->numericMatrix.ncol;
-			autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
+			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3611,7 +3608,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (nrow->which == Stackel_NUMBER && ncol->which == Stackel_NUMBER && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = Melder_iround (nrow->number);
 			integer numberOfColumns = Melder_iround (ncol->number);
-			autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
+			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3633,10 +3630,9 @@ static void do_function_VECll_l (integer (*f) (integer, integer)) {
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER) {
 		integer numberOfElements = ( a->which == Stackel_NUMBER ? Melder_iround (a->number) : a->numericVector.size );
-		autoVEC newData (numberOfElements, kTensorInitializationType::RAW);
-		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
+		autoVEC newData = newVECraw (numberOfElements);
+		for (integer ielem = 1; ielem <= numberOfElements; ielem ++)
 			newData [ielem] = f (Melder_iround (x->number), Melder_iround (y->number));
-		}
 		pushNumericVector (newData.move());
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3653,12 +3649,10 @@ static void do_function_MATll_l (integer (*f) (integer, integer)) {
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfRows = a->numericMatrix.nrow;
 		integer numberOfColumns = a->numericMatrix.ncol;
-		autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
-		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+		autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+		for (integer irow = 1; irow <= numberOfRows; irow ++)
+			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				newData [irow] [icol] = f (Melder_iround (x->number), Melder_iround (y->number));
-			}
-		}
 		pushNumericMatrix (newData.move());
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -5631,7 +5625,7 @@ static void do_VECrepeat () {
 	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
 		integer n_old = x->numericVector.size;
 		integer times = Melder_iround (n->number);
-		autoVEC result { n_old * times, kTensorInitializationType::RAW };
+		autoVEC result = newVECraw (n_old * times);
 		for (integer i = 1; i <= times; i ++)
 			for (integer j = 1; j <= n_old; j ++)
 				result [(i - 1) * n_old + j] = x->numericVector [j];

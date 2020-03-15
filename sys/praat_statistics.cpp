@@ -209,22 +209,27 @@ void praat_reportMemoryUse () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Memory use by Praat:\n");
 	MelderInfo_writeLine (U"Currently in use:\n"
-		U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount ());
-	MelderInfo_writeLine (U"   Arrays: ", NUM_getTotalNumberOfArrays ());
+			U"   Strings: ", MelderString_allocationCount () - MelderString_deallocationCount (),
+			U" (", Melder_bigInteger (MelderString_allocationSize () - MelderString_deallocationSize ()), U" characters)");
+	MelderInfo_writeLine (
+			U"   Arrays: ", MelderArray_allocationCount () - MelderArray_deallocationCount (),
+			U" (", Melder_bigInteger (MelderArray_cellAllocationCount () - MelderArray_cellDeallocationCount ()), U" cells)");
 	MelderInfo_writeLine (U"   Things: ", theTotalNumberOfThings,
-		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
+		U" (objects in list: ", Melder_bigInteger (theCurrentPraatObjects -> n), U")");
 	integer numberOfMotifWidgets =
 	#if motif
 		Gui_getNumberOfMotifWidgets ();
-		MelderInfo_writeLine (U"   Motif widgets: ", numberOfMotifWidgets);
+		MelderInfo_writeLine (U"   Motif widgets: ", Melder_bigInteger (numberOfMotifWidgets));
 	#else
 		0;
 	#endif
 	MelderInfo_writeLine (U"   Other: ",
 		Melder_allocationCount () - Melder_deallocationCount ()
-		- theTotalNumberOfThings - NUM_getTotalNumberOfArrays ()
+		- theTotalNumberOfThings
 		- (MelderString_allocationCount () - MelderString_deallocationCount ())
-		- numberOfMotifWidgets);
+		- (MelderArray_allocationCount () - MelderArray_deallocationCount ())
+		- numberOfMotifWidgets
+	);
 	MelderInfo_writeLine (
 		U"\nMemory history of this session:\n"
 		U"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), U" (", Melder_bigInteger (Melder_allocationSize ()), U" bytes)");
@@ -232,23 +237,32 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"   Reallocations: ", Melder_bigInteger (Melder_movingReallocationsCount ()), U" moving, ",
 		Melder_bigInteger (Melder_reallocationsInSituCount ()), U" in situ");
 	MelderInfo_writeLine (
-		U"   Strings created: ", Melder_bigInteger (MelderString_allocationCount ()), U" (", Melder_bigInteger (MelderString_allocationSize ()), U" bytes)");
+			U"   Strings created: ", Melder_bigInteger (MelderString_allocationCount ()),
+			U" (", Melder_bigInteger (MelderString_allocationSize ()), U" characters)");
 	MelderInfo_writeLine (
-		U"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()), U" (", Melder_bigInteger (MelderString_deallocationSize ()), U" bytes)");
+			U"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()),
+			U" (", Melder_bigInteger (MelderString_deallocationSize ()), U" characters)");
+	MelderInfo_writeLine (
+			U"   Arrays created: ", Melder_bigInteger (MelderArray_allocationCount ()),
+			U" (", Melder_bigInteger (MelderArray_cellAllocationCount ()), U" cells)");
+	MelderInfo_writeLine (
+			U"   Arrays deleted: ", Melder_bigInteger (MelderArray_deallocationCount ()),
+			U" (", Melder_bigInteger (MelderArray_cellDeallocationCount ()), U" cells)");
 	MelderInfo_writeLine (U"\nHistory of all sessions from ", statistics.dateOfFirstSession, U" until today:");
-	MelderInfo_writeLine (U"   Sessions: ", statistics.interactiveSessions, U" interactive, ",
-		statistics.batchSessions, U" batch");
+	MelderInfo_writeLine (U"   Sessions: ", Melder_bigInteger (statistics.interactiveSessions), U" interactive, ",
+		Melder_bigInteger (statistics.batchSessions), U" batch");
 	MelderInfo_writeLine (U"   Total memory use: ", Melder_bigInteger ((int64) statistics.memory + Melder_allocationSize ()), U" bytes");
-	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
-	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
+	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", Melder_bigInteger (praat_getNumberOfMenuCommands ()));
+	MelderInfo_writeLine (U"Number of dynamic menu commands: ", Melder_bigInteger (praat_getNumberOfActions ()));
 	MelderInfo_close ();
 }
 
 void MelderCasual_memoryUse (integer message) {
 	integer numberOfStrings = MelderString_allocationCount () - MelderString_deallocationCount ();
-	integer numberOfArrays = NUM_getTotalNumberOfArrays ();
+	integer numberOfArrays = MelderArray_allocationCount () - MelderArray_deallocationCount ();
 	integer numberOfThings = theTotalNumberOfThings;
-	integer numberOfOther = Melder_allocationCount () - Melder_deallocationCount () - numberOfStrings - numberOfArrays - numberOfThings;
+	integer numberOfOther = Melder_allocationCount () - Melder_deallocationCount ()
+			- numberOfStrings - numberOfArrays - numberOfThings;
 	Melder_casual (U"Memory ", message, U": ",
 		numberOfStrings, U" strings, ", numberOfArrays, U" arrays, ", numberOfThings, U" things, ", numberOfOther, U" other.");
 }

@@ -68,5 +68,33 @@ int64 Melder_allocationSize ();
 int64 Melder_reallocationsInSituCount ();
 int64 Melder_movingReallocationsCount ();
 
+/********** Arrays. **********/
+
+
+namespace MelderArray {
+
+	enum class kInitializationType { RAW = 0, ZERO = 1 };
+
+	byte * _alloc_generic (integer cellSize, integer numberOfCells, kInitializationType initializationType);
+	void _free_generic (byte *cells, integer numberOfCells) noexcept;
+
+	template <class T>
+	T* _alloc (integer numberOfCells, kInitializationType initializationType) {
+		T* result = reinterpret_cast <T*> (MelderArray:: _alloc_generic (sizeof (T), numberOfCells, initializationType));
+		return result;
+	}
+
+	template <class T>
+	void _free (T* cells, integer numberOfCells) noexcept {
+		_free_generic (reinterpret_cast <byte *> (cells), numberOfCells);
+	}
+
+}
+
+int64 MelderArray_allocationCount ();
+int64 MelderArray_deallocationCount ();
+int64 MelderArray_cellAllocationCount ();
+int64 MelderArray_cellDeallocationCount ();
+
 /* End of file melder_alloc.h */
 #endif

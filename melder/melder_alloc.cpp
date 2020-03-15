@@ -270,4 +270,37 @@ bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststrin
 	return str32equ (string1 + 1, string2 + 1);
 }
 
+#pragma mark - Generic memory functions for vectors and matrices
+
+static int64 theTotalNumberOfAllocations = 0, theTotalNumberOfDeallocations = 0;
+static int64 theTotalCellAllocationHistory = 0, theTotalCellDeallocationHistory = 0;
+
+int64 MelderArray_allocationCount () { return theTotalNumberOfAllocations; }
+int64 MelderArray_deallocationCount () { return theTotalNumberOfDeallocations; }
+int64 MelderArray_cellAllocationCount () { return theTotalCellAllocationHistory; }
+int64 MelderArray_cellDeallocationCount () { return theTotalCellDeallocationHistory; }
+
+byte * MelderArray:: _alloc_generic (integer cellSize, integer numberOfCells, kInitializationType initializationType) {
+	try {
+		if (numberOfCells <= 0)
+			return nullptr;   // not an error
+		byte *result = ( initializationType == kInitializationType :: ZERO ?
+				reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, cellSize)) :
+				reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * cellSize)) );
+		theTotalNumberOfAllocations += 1;
+		theTotalCellAllocationHistory += numberOfCells;
+		return result;
+	} catch (MelderError) {
+		Melder_throw (U"Tensor of ", numberOfCells, U" cells not created.");
+	}
+}
+
+void MelderArray:: _free_generic (byte *cells, integer numberOfCells) noexcept {
+	if (! cells)
+		return;   // not an error
+	Melder_free (cells);
+	theTotalNumberOfDeallocations += 1;
+	theTotalCellDeallocationHistory += numberOfCells;
+}
+
 /* End of file melder_alloc.cpp */
