@@ -58,8 +58,10 @@ void Roots_Polynomial_polish (Roots me, Polynomial thee);
 autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
 
 /*
-	The size of the workspace must be >= n * (n + 3)
-	for the current LAPACK version of root solving routine.
+	workspace.size >= n * n + 3 * n =
+		n * n		; for hessenberg matrix
+		+ 2 * n 	; for real and imaginary parts
+		+ n			; for dhseqr_
 */
 void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace);
 #endif /* _Roots_h_ */

@@ -124,44 +124,16 @@ double SVD_getTolerance (SVD me) {
 	return my tolerance;
 }
 
-/*
-	Compute svd(A) = U D Vt.
-	The svd routine from CLAPACK uses (fortran) column major storage, while	C uses row major storage.
-	To solve the problem above we have to transpose the matrix A, calculate the
-	solution and transpose the U and Vt matrices of the solution.
-	However, if we solve the transposed problem svd(A') = V D U', we have less work to do:
-	We may call the algorithm with reverted row/column dimensions, and we switch the U and V'
-	output arguments.
-	The only thing that we have to do afterwards is transposing the (small) V matrix
-	because our SVD-object has row vectors in v.
-	The sv's are already sorted.
-	int NUMlapack_dgesvd (char *jobu, char *jobvt, integer *m, integer *n, double *a, integer *lda,
-		double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
-		integer *lwork, integer *info);
-*/
 void SVD_compute (SVD me) {
 	try {
-		MATVU vt;
-		char jobu = 'S'; // the first min(m,n) columns of U are returned in the array U;
-		char jobvt = 'O'; // the first min(m,n) rows of V**T are overwritten on the array A;
-		integer m = my numberOfColumns; // number of rows of input matrix 
-		integer n = my numberOfRows; // number of columns of input matrix
-		integer lda = m, ldu = m, ldvt = m;
-		integer info, lwork = -1;
-		double wt [2]; // at least 2.
-
-		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
-		Melder_require (info == 0, U"SVD could not be precomputed.");
-
-		lwork = wt [0];
-		autoVEC work = newVECraw (lwork);
-		NUMlapack_dgesvd_ (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
-		Melder_require (info == 0, U"SVD could not be computed.");
+		autoMAT a = newMATcopy (my u.get());
+		integer workSize =  NUMlapack_dgesvd_query (a.get(), my u.get(), my d.get(), my v.get());
+		autoVEC work = newVECraw (workSize);
+		NUMlapack_dgesvd (a.get(), my u.get(), my d.get(), my v.transpose (), work.get());		
 		/*
 			Because we store the eigenvectors row-wise, they must be transposed
 		*/
 		MATtranspose_inplace_mustBeSquare (my v.get());
-		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
 	}
