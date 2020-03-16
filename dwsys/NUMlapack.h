@@ -24,16 +24,32 @@
 #undef min
 
 /*
-	The lapack matrix views can only view blocks of a matrix, which means our MATVU's either have rowStride or 
-	columnStride larger than 1 but not both!
-	rowmajor has rowStride == ncol and columnStrid = 1;
-	colmajor has rowStride = 1 and columnStride == nrow
-	The underlying lapack routines always expect colummnmajor matrix layout (fortran) while in C++ rowmajor matrices
-	are default.
+	This interface only works for C++ matrices that have nrow >= ncol!
+	The lapack matrix views can only view "contiguous" blocks of a matrix, which means that we
+	can only make limited use MATVU arguments of the following NUMlapack functions. 
+	either should have rowStride or columnStride larger than 1 but not both!
+	A row major layout has rowStride == ncol and columnStrid = 1;
+	A column major layout has rowStride = 1 and columnStride == nrow
+	The underlying lapack routines always expect colummn major matrix layout (fortran) 
+	while in C++ row major matrices are default.
 	The matrix 
 	1 2
 	3 4
-	is layed out in memory as 1 2 3 4 (row major) or as 1 3 2 4 (column major).
+	is layed out in memory as 1 2 3 4 (row major, C++) or as 1 3 2 4 (column major, fortran).
+	
+	The interfaces only works for matrices that have nrow >= ncol!
+	
+	With some routines we can just input or output standard C++ matrices with row major layout,
+	whenever this is not possible the matrix variable name has the extension _CM and you
+	really need to input the matrix with physical column major layout!
+	(an argument a.transpose() will not work).
+	
+	As this interface is not yet stable I think that the following option is better:
+	Always accept row major layout and in the query part add the extra space 
+	needed for the necessary physical transposes.
+	In the calculation routine do the actual transposes of the matrices in workspace memory!
+	We definitely do don't want to allocate memory in the NUMlapack routines because this would spoil multithreading.
+	
 */
 
 int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,	double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info);
@@ -141,9 +157,9 @@ int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *
     =====================================================================
 */
 
-integer NUMlapack_dgesvd_query (conststring8 jobu, conststring8 jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt);
+integer NUMlapack_dgesvd_query (constMATVU const& a, constMATVU const& u, constVEC const& singularValues, constMATVU const& vt);
 
-void NUMlapack_dgesvd (conststring8 jobu, conststring8 jobvt, MATVU const& a, VEC const& inout_singularValues, MAT const& inout_u, MAT const& inout_vt, VEC const& work);
+void NUMlapack_dgesvd (constMATVU const& a, MATVU const& inout_u, VEC const& inout_singularValues, MATVU const& inout_vt, VEC const& work);
 
 int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
 	integer *lwork, integer *info);/*
@@ -490,6 +506,12 @@ int NUMlapack_dggsvd_ (const char *jobu, const char *jobv, const char *jobq, int
 
     =====================================================================
 */
+
+integer NUMlapack_dhseqr_query (constMATVU const& inout_upperHessenberg_CM, constCOMPVEC const& eigenvalues, constMATVU const& z_CM);
+/* Returns the work space size needed */
+
+integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg_CM, COMPVEC const& inout_eigenvalues, MATVU const& inout_z_CM, VEC const& work);
+/* Returns the number of roots found */
 
 int NUMlapack_dhseqr_ (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz, double *work, integer *lwork, integer *info);
 /*  -- LAPACK routine (version 3.0) --
