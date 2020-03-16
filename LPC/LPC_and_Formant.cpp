@@ -58,6 +58,8 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 			thy formant [++ numberOfFormantsFound]. frequency = frequency;
 			thy formant [numberOfFormantsFound]. bandwidth = bandwidth;
 		}
+		if (numberOfFormantsFound == thy formant.size)
+			break;
 	}
 	Melder_assert (numberOfFormantsFound <= thy formant.size);
 	thy nFormants = numberOfFormantsFound;
@@ -83,7 +85,7 @@ void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double s
 	Roots_into_Formant_Frame (r, thee, 1.0 / samplingPeriod, margin);
 }
 
-autoFormant LPC_to_Formant (LPC me, double margin) {
+autoFormant LPC_to_Formant_old (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		/*
@@ -128,10 +130,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 	}
 }
 
-/*
-	20200404: This routine cannot be used because our version of LAPACK is not thread-safe yet.
-*/
-autoFormant LPC_to_Formant_mt (LPC me, double margin) {
+autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		Melder_require (my maxnCoefficients < 100,
@@ -147,7 +146,7 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
 			int ( my maxnCoefficients / 2 ) because if maxnCoefficients is uneven than at least one of the roots is real.
 		*/
-		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1)/ 2 );
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
 		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
 		const integer numberOfFrames = my nx;
 		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, my dx, my x1, maximumNumberOfFormants);
@@ -162,7 +161,7 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 		/*
 			Reserve working memory for each thread
-			We would like:
+			TODO:
 			autovector<autoPolynomial> polynomials = newveczero<autoPolynomial> (numberOfThreads);
 		*/
 		autoPolynomial polynomials [maximumNumberOfThreads + 1];

@@ -37,7 +37,7 @@ double pow_di (double *ap, integer *bp) {
 	return pow;
 }
 
-void s_cat (char *lp, const char *rpp[], integer rnp[], integer *np, integer ll) {
+void s_cat (char *lp, char **rpp, integer *rnp, integer *np, integer ll) {
 	integer i, nc;
 	char *rp;
 	integer n = *np;

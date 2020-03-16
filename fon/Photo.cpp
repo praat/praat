@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013-2019 Paul Boersma
+ * Copyright (C) 2013-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -447,7 +447,7 @@ static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double x
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	automatrix <MelderColour> z (iymax - (iymin - 1), ixmax - (ixmin - 1), kTensorInitializationType::RAW);
+	automatrix z = newmatrixraw <MelderColour> (iymax - (iymin - 1), ixmax - (ixmin - 1));
 	for (integer iy = iymin; iy <= iymax; iy ++) {
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
 			MelderColour& cell = z [iy - (iymin - 1)] [ix - (ixmin - 1)];

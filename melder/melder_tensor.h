@@ -18,27 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********** Arrays with one index **********/
-
-enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
-
-byte * MelderTensor_generic (integer cellSize, integer numberOfCells, kTensorInitializationType initializationType);
-
-template <class T>
-T* MelderTensor (integer numberOfCells, kTensorInitializationType initializationType) {
-	T* result = reinterpret_cast <T*> (MelderTensor_generic (sizeof (T), numberOfCells, initializationType));
-	return result;
-}
-
-void MelderTensor_free_generic (byte *cells) noexcept;
-
-template <class T>
-void MelderTensor_free (T* cells) noexcept {
-	MelderTensor_free_generic (reinterpret_cast <byte *> (cells));
-}
-
-integer NUM_getTotalNumberOfArrays ();   // for debugging
-
 #pragma mark - TENSOR
 /*
 	Base-1 tensors, for parallellism with the scripting language.
@@ -228,9 +207,9 @@ class autovector : public vector<T> {
 	integer _capacity = 0;
 public:
 	autovector (): vector<T> (nullptr, 0, false) { }   // come into existence without a payload
-	explicit autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+	explicit autovector (integer givenSize, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
-		our cells = ( givenSize == 0 ? nullptr : MelderTensor <T> (givenSize, initializationType) );
+		our cells = ( givenSize == 0 ? nullptr : MelderArray:: _alloc <T> (givenSize, initializationType) );
 		our size = givenSize;
 		our _capacity = givenSize;
 	}
@@ -281,8 +260,9 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
 		if (our cells) {
-			MelderTensor_free (our cells);
+			MelderArray:: _free (our cells, our _capacity);
 			our cells = nullptr;
+			our _capacity = 0;
 		}
 		our size = 0;
 	}
@@ -291,9 +271,9 @@ public:
 		Some of the following functions are capable of keeping a valid `cells` pointer
 		while `size` can at the same time be zero.
 	*/
-	void initWithCapacity (integer capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+	void initWithCapacity (integer capacity, MelderArray::kInitializationType initializationType = MelderArray::kInitializationType::ZERO) {
 		if (capacity > 0)
-			our cells = MelderTensor <T> (capacity, initializationType);
+			our cells = MelderArray:: _alloc <T> (capacity, initializationType);
 		our size = 0;
 		our _capacity = capacity;
 	}
@@ -312,7 +292,7 @@ public:
 		elsewhere than at the head of the vector,
 		you should shift the elements after resizing.
 	*/
-	void resize (integer newSize, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+	void resize (integer newSize, MelderArray::kInitializationType initializationType = MelderArray::kInitializationType::ZERO) {
 		if (newSize > our _capacity) {
 			/*
 				The new capacity is at least twice the old capacity.
@@ -324,28 +304,28 @@ public:
 			/*
 				Create without change.
 			*/
-			T *newCells = MelderTensor<T> (newCapacity, initializationType);
+			T *newCells = MelderArray:: _alloc <T> (newCapacity, initializationType);
 			/*
 				Change without error.
 			*/
 			for (integer i = 1; i <= our size; i ++)
 				newCells [i - 1] = std::move (our cells [i - 1]);
 			if (our cells)
-				MelderTensor_free (our cells);
+				MelderArray:: _free (our cells, our _capacity);
 			our cells = newCells;
 			our _capacity = newCapacity;
 		}
 		our size = newSize;
 	}
 	void insert (integer position, const T& value) {
-		resize (our size + 1, kTensorInitializationType::RAW);
+		resize (our size + 1, MelderArray::kInitializationType::RAW);
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = our size; i > position; i --)
 			our cells [i - 1] = std::move (our cells [i - 2]);
 		our cells [position - 1] = value;
 	}
 	T* append () {
-		resize (our size + 1, kTensorInitializationType::ZERO);
+		resize (our size + 1, MelderArray::kInitializationType::ZERO);
 		return & our cells [our size - 1];
 	}
 	void remove (integer position) {
@@ -358,11 +338,11 @@ public:
 
 template <typename T>
 autovector<T> newvectorraw (integer size) {
-	return autovector<T> (size, kTensorInitializationType::RAW);
+	return autovector<T> (size, MelderArray::kInitializationType::RAW);
 }
 template <typename T>
 autovector<T> newvectorzero (integer size) {
-	return autovector<T> (size, kTensorInitializationType::ZERO);
+	return autovector<T> (size, MelderArray::kInitializationType::ZERO);
 }
 template <typename T>
 autovector<T> newvectorcopy (constvectorview<T> source) {
@@ -618,17 +598,17 @@ template <typename T>
 class automatrix : public matrix<T> {
 public:
 	automatrix (): matrix<T> { nullptr, 0, 0 } { }   // come into existence without a payload
-	explicit automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+	explicit automatrix (integer givenNrow, integer givenNcol, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
 		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: MelderTensor <T> (givenNrow * givenNcol, initializationType) );
+				: MelderArray:: _alloc <T> (givenNrow * givenNcol, initializationType) );
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
 		if (our cells)
-			MelderTensor_free (our cells);
+			MelderArray:: _free (our cells, our nrow * our ncol);
 	}
 	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
@@ -663,7 +643,7 @@ public:
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells)
-				MelderTensor_free (our cells);
+				MelderArray:: _free (our cells, our nrow * our ncol);
 			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -675,7 +655,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			MelderTensor_free (our cells);
+			MelderArray:: _free (our cells, our nrow * our ncol);
 			our cells = nullptr;
 		}
 		our nrow = 0;
@@ -686,11 +666,11 @@ public:
 
 template <typename T>
 automatrix<T> newmatrixraw (integer nrow, integer ncol) {
-	return automatrix<T> (nrow, ncol, kTensorInitializationType::RAW);
+	return automatrix<T> (nrow, ncol, MelderArray::kInitializationType::RAW);
 }
 template <typename T>
 automatrix<T> newmatrixzero (integer nrow, integer ncol) {
-	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
+	return automatrix<T> (nrow, ncol, MelderArray::kInitializationType::ZERO);
 }
 template <typename T>
 void matrixcopy (matrixview<T> const& target, constmatrixview<T> const& source) {
@@ -974,12 +954,12 @@ template <typename T>
 class autotensor3 : public tensor3<T> {
 public:
 	autotensor3 () = default;   // come into existence without a payload
-	explicit autotensor3 (integer givenNdim1, integer givenNdim2, integer givenNdim3, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+	explicit autotensor3 (integer givenNdim1, integer givenNdim2, integer givenNdim3, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNdim1 >= 0);
 		Melder_assert (givenNdim2 >= 0);
 		Melder_assert (givenNdim3 >= 0);
 		our cells = ( givenNdim1 == 0 || givenNdim2 == 0 || givenNdim3 == 0 ? nullptr
-				: MelderTensor <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
+				: MelderArray:: _alloc <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
 		our ndim1 = givenNdim1;
 		our ndim2 = givenNdim2;
 		our ndim3 = givenNdim3;
@@ -989,7 +969,7 @@ public:
 	}
 	~autotensor3 () {   // destroy the payload (if any)
 		if (our cells)
-			MelderTensor_free (our cells);
+			MelderArray:: _free (our cells, our ndim1 * our ndim2 * our ndim3);
 	}
 	//tensor3<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the structure)
 	const tensor3<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the structure)
@@ -1026,7 +1006,7 @@ public:
 	autotensor3& operator= (autotensor3&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {
 			if (our cells)
-				MelderTensor_free (our cells);
+				MelderArray:: _free (our cells, our ndim1 * our ndim2 * our ndim3);
 			our cells = other.cells;
 			our ndim1 = other.ndim1;
 			our ndim2 = other.ndim2;
@@ -1040,7 +1020,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
-			MelderTensor_free (our cells);
+			MelderArray:: _free (our cells, our ndim1 * our ndim2 * our ndim3);
 			our cells = nullptr;
 		}
 		our ndim1 = 0;
@@ -1051,11 +1031,11 @@ public:
 };
 template <typename T>
 autotensor3<T> newtensor3raw (integer ndim1, integer ndim2, integer ndim3) {
-	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::RAW);
+	return autotensor3<T> (ndim1, ndim2, ndim3, MelderArray::kInitializationType::RAW);
 }
 template <typename T>
 autotensor3<T> newtensor3zero (integer ndim1, integer ndim2, integer ndim3) {
-	return autotensor3<T> (ndim1, ndim2, ndim3, kTensorInitializationType::ZERO);
+	return autotensor3<T> (ndim1, ndim2, ndim3, MelderArray::kInitializationType::ZERO);
 }
 template <typename T>
 void tensor3copy (tensor3<T> const& target, consttensor3<T> const& source) {
