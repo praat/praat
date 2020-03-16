@@ -1,6 +1,6 @@
 /* Roots.cpp
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUMmachar.h"
 #include "Polynomial.h"
 #include "Roots.h"
@@ -71,10 +71,9 @@ dcomplex Roots_getRoot (Roots me, integer index) {
 
 void Roots_fixIntoUnitCircle (Roots me) {
 	dcomplex z10 { 1.0, 0.0 };
-	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++) {
+	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++)
 		if (abs (my roots [iroot]) > 1.0)
-			my roots [iroot] = z10 / conj(my roots [iroot]);
-	}
+			my roots [iroot] = z10 / conj (my roots [iroot]);
 }
 
 static void NUMdcvector_extrema_re (COMPVEC const& v, integer lo, integer hi, double *out_min, double *out_max) {
@@ -157,58 +156,29 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		Melder_require (n > 0,
 			U"Cannot find roots of a constant function.");
 		/*
-			Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
-			parts of eigenvalues wr [1..n] and wi [1..n].
+			Allocate storage for Hessenberg matrix (n * n)
 		*/
-		autoVEC hes = newVECzero (n * n);
-		autoVEC wr = newVECraw (n);
-		autoVEC wi = newVECraw (n);
+		autoMAT upperHessenberg = newMATzero (n, n);
+		MATVU uh_CM (upperHessenberg.get());
+		uh_CM.rowStride = 1; uh_CM.colStride = n;
+		// TODO MATVU uh_CM = upperHessenberg.asColumnMajorLayout ();
+		autoRoots thee = Roots_create (n);
+		MATVU z;
+		uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
+		for (integer irow = 2; irow <= n; irow ++) {
+			uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
+			uh_CM [irow][irow - 1] = 1.0;
+		}
 		/*
-			Fill the upper Hessenberg matrix (storage is Fortran)
-			C: [i] [j] -> Fortran: (j-1)*n + i
+			Find out the working storage needed
 		*/
-		for (integer i = 1; i <= n; i ++) {
-			hes [(i - 1) * n + 1] = - (my coefficients [np1 - i] / my coefficients [np1]);
-			if (i < n)
-				hes [(i - 1) * n + 1 + i] = 1.0;
-		}
-
-		// Find out the working storage needed
-
-		char job = 'E', compz = 'N';
-		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
-		double *z = nullptr, wt [1];
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
-		if (info != 0)
-			Melder_require (info > 0,
-				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		lwork = Melder_ifloor (wt [0]);
-		autoVEC work = newVECraw (lwork);
-
-		// Find eigenvalues.
-
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
-		integer nrootsfound = n;
-		integer ioffset = 0;
-		if (info > 0) {
-			/*
-				if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
-				WR and WI contain those eigenvalues which have been successfully computed
-			*/
-			nrootsfound -= info;
-			Melder_require (nrootsfound > 0,
-				U"No roots found.");
-			Melder_warning (U"Calculated only ", nrootsfound, U" roots.");
-			ioffset = info;
-		} else if (info < 0) {
-			Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		}
-
-		autoRoots thee = Roots_create (nrootsfound);
-		for (integer i = 1; i <= nrootsfound; i ++) {
-			thy roots [i]. real (wr [ioffset + i]);
-			thy roots [i]. imag (wi [ioffset + i]);
-		}
+		integer workSpaceSize = NUMlapack_dhseqr_query (upperHessenberg.get(), thy roots.get(), z);
+		autoVEC work = newVECraw (workSpaceSize);
+		/*
+			Find eigenvalues/roots.
+		*/
+		integer numberOfRootsFound = NUMlapack_dhseqr (upperHessenberg.get(), thy roots.get(), z, work.get());
+		thy numberOfRoots = numberOfRootsFound;
 		Roots_Polynomial_polish (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
@@ -216,72 +186,37 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 	}
 }
 
-// workspace.size >= n * (n + 3) with 20200302 version of LAPACK in Praat
+/*
+	workspace.size >= n * n + 3 * n =
+		n * n		; for hessenberg matrix
+		+ 2 * n 	; for real and imaginary parts
+		+ n			; for dhseqr_
+*/
 void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
-	try {
-		integer np1 = my numberOfCoefficients, n = np1 - 1;
-		Melder_require (n > 0,
-			U"Cannot find roots of a constant function.");
-		/*
-			Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
-			parts of eigenvalues wr [1..n] and wi [1..n].
-		*/
-		VEC hes = workspace. part (1, n * n);
-		VEC wr = workspace. part (n * n + 1, n * (n + 1));
-		VEC wi = workspace. part (n * (n + 1) + 1, n * (n + 2));
-		/*
-			Fill the upper Hessenberg matrix (storage is Fortran)
-			C: [i] [j] -> Fortran: (j-1)*n + i
-		*/
-		hes <<= 0.0;
-		for (integer i = 1; i < n; i ++) {
-			hes [(i - 1) * n + 1] = - (my coefficients [np1 - i] / my coefficients [np1]);
-			hes [(i - 1) * n + 1 + i] = 1.0;
-		}
-		hes [(n - 1) * n + 1] = - my coefficients [1] / my coefficients [n + 1];
-		/*
-			Find out the working storage needed
-		*/
-		char job = 'E', compz = 'N';
-		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
-		double *z = nullptr, wt [1];
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, wt, & lwork, & info);
-		if (info != 0)
-			Melder_require (info > 0,
-				U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		lwork = Melder_ifloor (wt [0]);
-		Melder_require (lwork <= n,
-			U"insufficient working memory.");
-		VEC work = workspace. part (n * (n + 2) + 1, n * (n + 2) + lwork);
-		/*
-			Find eigenvalues.
-		*/
-		NUMlapack_dhseqr (& job, & compz, & n, & ilo, & ihi, & hes [1], & ldh, & wr [1], & wi [1], z, & ldz, & work [1], & lwork, & info);
-		integer nrootsfound = n;
-		integer ioffset = 0;
-		if (info > 0) {
-			/*
-				if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
-				WR and WI contain those eigenvalues which have been successfully computed
-			*/
-			nrootsfound -= info;
-			Melder_require (nrootsfound > 0,
-				U"No roots found.");
-			Melder_warning (U"Calculated only ", nrootsfound, U" roots.");
-			ioffset = info;
-		} else if (info < 0) {
-			Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
-		}
-
-		for (integer iroot = 1; iroot <= nrootsfound; iroot ++) {
-			r -> roots [iroot]. real (wr [ioffset + iroot]);
-			r -> roots [iroot]. imag (wi [ioffset + iroot]);
-		}
-		r -> numberOfRoots = nrootsfound;
-		Roots_Polynomial_polish (r, me);
-	} catch (MelderError) {
-		Melder_throw (me, U": no roots can be calculated.");
+	integer np1 = my numberOfCoefficients, n = np1 - 1;
+	r -> numberOfRoots = 0;
+	if (n == 0)
+		return;
+	/*
+		Use the workspace reserve storage for Hessenberg matrix (n * n)
+	*/
+	MAT upperHessenberg (& workspace [1], n, n);
+	MATVU uh_CM (upperHessenberg);
+	uh_CM.rowStride = 1; uh_CM.colStride = n;
+	upperHessenberg <<= 0.0;
+	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
+	for (integer irow = 2; irow <= n; irow ++) {
+		uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
+		uh_CM [irow][irow - 1] = 1.0;
 	}
+	/*
+		We don't need to find out size of the working storage needed because for the current version 
+		of NUMlapack_dhseqr (20200413) its size equals the order of the polynomial.
+	*/
+	VEC work = workspace. part (n * n + 1, n * (n + 3));		
+	MATVU z;
+	r -> numberOfRoots = NUMlapack_dhseqr (uh_CM, r ->  roots.get(), z, work);
+	Roots_Polynomial_polish (r, me);
 }
 
 void Roots_sort (Roots me) {
@@ -307,29 +242,29 @@ static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, 
 		*out_dp = { (double) dpr, (double) dpi };
 }
 
-static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, integer maxit) {
+static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *root, integer maxit) {
 	if (! NUMfpp)
 		NUMmachar ();
-	dcomplex zbest = *z;
-	double pmin = 1e308;
-	for (integer i = 1; i <= maxit; i ++) {
-		dcomplex p, dp;
-		Polynomial_evaluateWithDerivative_z (me, z, &p, &dp);
-		const double fabsp = dcomplex_abs (p);
-		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
+	dcomplex zbest = *root;
+	double ymin = 1e308;
+	for (integer iter = 1; iter <= maxit; iter ++) {
+		dcomplex y, dy;
+		Polynomial_evaluateWithDerivative_z (me, root, & y, & dy);
+		const double fabsy = abs (y);
+		if (fabsy > ymin || fabs (fabsy - ymin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse.
 				Return the previous (hitherto best) value for z.
 			*/
-			*z = zbest;
+			*root = zbest;
 			return;
 		}
-		pmin = fabsp;
-		zbest = *z;
-		if (dcomplex_abs (dp) == 0.0)
+		ymin = fabsy;
+		zbest = *root;
+		if (abs (dy) == 0.0)
 			return;
-		const dcomplex dz = dcomplex_div (p, dp);   // Newton-Raphson
-		*z = dcomplex_sub (*z, dz);
+		const dcomplex dz = y / dy;   // Newton-Raphson
+		*root -= dz;
 	}
 	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
@@ -337,12 +272,12 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, intege
 static double Polynomial_polish_realroot (Polynomial me, double x, integer maxit) {
 	if (! NUMfpp)
 		NUMmachar ();
-	double xbest = x, pmin = 1e308;
-	for (integer i = 1; i <= maxit; i ++) {
-		double p, dp;
-		Polynomial_evaluateWithDerivative (me, x, & p, & dp);
-		const double fabsp = fabs (p);
-		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
+	double xbest = x, ymin = 1e308;
+	for (integer iter = 1; iter <= maxit; iter ++) {
+		double y, dy;
+		Polynomial_evaluateWithDerivative (me, x, & y, & dy);
+		const double fabsy = fabs (y);
+		if (fabsy > ymin || fabs (fabsy - ymin) < NUMfpp -> eps) {
 			/*
 				We stop, because the approximation is getting worse or we cannot get any closer.
 				Return the previous (hitherto best) value for x.
@@ -350,11 +285,11 @@ static double Polynomial_polish_realroot (Polynomial me, double x, integer maxit
 			x = xbest;
 			return x;
 		}
-		pmin = fabsp;
+		ymin = fabsy;
 		xbest = x;
-		if (fabs (dp) == 0.0)
+		if (fabs (dy) == 0.0)
 			return x;
-		const double dx = p / dp;   // Newton-Raphson
+		const double dx = y / dy;   // Newton-Raphson
 		x -= dx;
 	}
 	return x;

@@ -58,6 +58,8 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 			thy formant [++ numberOfFormantsFound]. frequency = frequency;
 			thy formant [numberOfFormantsFound]. bandwidth = bandwidth;
 		}
+		if (numberOfFormantsFound == thy formant.size)
+			break;
 	}
 	Melder_assert (numberOfFormantsFound <= thy formant.size);
 	thy nFormants = numberOfFormantsFound;
@@ -83,7 +85,7 @@ void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double s
 	Roots_into_Formant_Frame (r, thee, 1.0 / samplingPeriod, margin);
 }
 
-autoFormant LPC_to_Formant (LPC me, double margin) {
+autoFormant LPC_to_Formant_old (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		/*
@@ -92,7 +94,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
 			my maxnCoefficients / 2.
 		*/
-		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : my maxnCoefficients / 2 );
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
 		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
 		integer numberOfSuspectFrames = 0;
 		const integer interval = ( my maxnCoefficients > 20 ? 1 : 10 );
@@ -127,7 +129,8 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 		Melder_throw (me, U": no Formant created.");
 	}
 }
-autoFormant LPC_to_Formant_mt (LPC me, double margin) {
+
+autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		Melder_require (my maxnCoefficients < 100,
@@ -135,12 +138,15 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 		Melder_require (margin < samplingFrequency / 4.0,
 			U"Margin should be smaller than ", samplingFrequency / 4.0, U".");
 		/*
-			In very extreme case all roots of the lpc polynomial might be real.
+			In a very extreme case all roots of the lpc polynomial might be real.
 			A real root gives either a frequency at 0 Hz or at the Nyquist frequency.
+			To play it safely, the maximum number of formants is than equal to the number of coefficients.
+			However, to get the acoustically "real" formant frequencies we always neglect frequencies at 0 Hz
+			and at the Nyquist.
 			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
-			my maxnCoefficients / 2.
+			int ( my maxnCoefficients / 2 ) because if maxnCoefficients is uneven than at least one of the roots is real.
 		*/
-		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : my maxnCoefficients / 2 );
+		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
 		const integer maximumNumberOfPolynomialCoefficients = my maxnCoefficients + 1;
 		const integer numberOfFrames = my nx;
 		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, my dx, my x1, maximumNumberOfFormants);
@@ -155,7 +161,7 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 		/*
 			Reserve working memory for each thread
-			We would like:
+			TODO:
 			autovector<autoPolynomial> polynomials = newveczero<autoPolynomial> (numberOfThreads);
 		*/
 		autoPolynomial polynomials [maximumNumberOfThreads + 1];
@@ -168,7 +174,6 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 		autovector<std::thread> thread = newvectorzero<std::thread> (numberOfThreads); // TODO memory leak?
 		std::atomic<integer> numberOfSuspectFrames (0);
 		
-		integer firstFrame = 1, lastFrame = numberOfFramesPerThread;
 		try {
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 				Polynomial p = polynomials [ithread]. get ();
@@ -176,8 +181,9 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 				Formant formant = thee. get ();
 				LPC lpc = me;
 				VEC workspace = workspaces. row (ithread);
-				if (ithread == numberOfThreads)
-					lastFrame = numberOfFrames;
+				const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
+				const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
+
 				thread [ithread] = std::thread ([=, & numberOfSuspectFrames] () {
 					for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 						const LPC_Frame lpcFrame = & lpc -> d_frames [iframe];
@@ -185,13 +191,10 @@ autoFormant LPC_to_Formant_mt (LPC me, double margin) {
 						try {
 							LPC_Frame_into_Formant_Frame_mt (lpcFrame, formantFrame, my samplingPeriod, margin, p, r, workspace);
 						} catch (MelderError) {
-							Melder_clearError(); // this is not thread-safe
 							numberOfSuspectFrames ++;
 						}
 					}
 				});
-				firstFrame = lastFrame + 1;
-				lastFrame += numberOfFramesPerThread;
 			}
 		} catch (MelderError) {
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {

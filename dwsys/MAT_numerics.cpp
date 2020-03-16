@@ -1,6 +1,6 @@
 /* MAT_numerics.cpp
  *
- * Copyright (C) 2018-2019 David Weenink
+ * Copyright (C) 2018-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "MAT_numerics.h"
 #include "SVD.h"
 #include "PAIRWISE_SUM.h"
@@ -27,7 +27,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	Melder_assert (eigenvectors.nrow == eigenvectors.ncol);
 	Melder_assert (m.nrow == eigenvectors.nrow);
 
-	char jobz = 'V', uplo = 'U';
+	char *jobz = "V", *uplo = "U";
 	integer workSize = -1, info, ncol = m.ncol;
 	double wt [1];
 	
@@ -36,15 +36,17 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		0. No need to transpose a because it is a symmetric matrix
 		1. Query for the size of the work array
 	*/
-	(void) NUMlapack_dsyev (& jobz, & uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), wt, & workSize, & info);
-	Melder_require (info == 0, U"dsyev initialization code = ", info, U").");
+	(void) NUMlapack_dsyev_ (jobz, uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), wt, & workSize, & info);
+
+	Melder_require (info == 0,
+		U"dsyev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt [0]);
 	autoVEC work = newVECraw (workSize);
 	/*
 		2. Calculate the eigenvalues and eigenvectors (row-wise)
 	*/
-	(void) NUMlapack_dsyev (& jobz, & uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), work.begin(), & workSize, & info);
+	(void) NUMlapack_dsyev_ (jobz, uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), work.begin(), & workSize, & info); 
 	Melder_require (info == 0, U"dsyev code = ", info, U").");
 	/*
 		3. Eigenvalues are returned in ascending order
@@ -116,14 +118,13 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	autoMAT righteigenvectors = newMATraw (right_nvecs, right_nvecs); // 1x1 if not needed
 	autoMAT lefteigenvectors = newMATraw (left_nvecs, left_nvecs); // 1x1 if not needed
 	
-	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n,	eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
+	(void) NUMlapack_dgeev_ (& jobvl, & jobvr, & n, & data [1] [1], & n,	eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & wt, & workSize, & info);
 	Melder_require (info == 0, U"dgeev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt);
 	autoVEC work = newVECraw (workSize);
-	
-	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n, eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
+	(void) NUMlapack_dgeev_ (& jobvl, & jobvr, & n, & data [1] [1], & n, eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & work [1], & workSize, & info);
 	Melder_require (info == 0,
 		U"dgeev code = ", info, U").");

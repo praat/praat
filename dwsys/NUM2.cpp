@@ -61,7 +61,7 @@
 
 #include "SVD.h"
 #include "Eigen.h"
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 #include "NUMmachar.h"
 #include "melder.h"
@@ -234,7 +234,7 @@ double NUMdeterminant_fromSymmetricMatrix (constMAT m) {
 	*/
 	char uplo = 'U';
 	integer lda = m.nrow, info;
-	NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & lda, & info);
+	NUMlapack_dpotf2_ (& uplo, & a.nrow, & a [1] [1], & lda, & info);
 	Melder_require (info == 0,
 		U"dpotf2 cannot determine Cholesky decomposition.");
 	longdouble lnd = 0.0;
@@ -270,7 +270,7 @@ void MATlowerCholesky_inplace (MAT a, double *out_lnd) {
 		Cholesky decomposition in lower, leave upper intact
 		Fortran storage -> use uplo='U' to get 'L'.
 	*/
-	(void) NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & a.nrow, & info);
+	(void) NUMlapack_dpotf2_ (& uplo, & a.nrow, & a [1] [1], & a.nrow, & info);
 	Melder_require (info == 0,
 		U"dpotf2 fails with code ", info, U".");
 	/*
@@ -292,7 +292,7 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 		Get the inverse
 	*/
 	integer info;
-	(void) NUMlapack_dtrtri (& uplo, & diag, & a.nrow, & a [1] [1], & a.nrow, & info);
+	(void) NUMlapack_dtrtri_ (& uplo, & diag, & a.nrow, & a [1] [1], & a.nrow, & info);
 	Melder_require (info == 0,
 		U"dtrtri fails with code ", info, U".");
 }

@@ -51,7 +51,7 @@
 #include "Graphics_extensions.h"
 #include "SSCP.h"
 #include "Matrix_extensions.h"
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 #include "SVD.h"
 #include "Table_extensions.h"
@@ -1248,12 +1248,12 @@ autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, b
 					thy data [i] [j] = 0.0;
 		}
 		char uplo = upper ? 'L' : 'U';
-		NUMlapack_dpotf2 (& uplo, & n, & thy data [1] [1], & lda, & info);
+		NUMlapack_dpotf2_ (& uplo, & n, & thy data [1] [1], & lda, & info);
 		Melder_require (info == 0,
 			U"dpotf2 fails");
 		
 		if (inverse) {
-			NUMlapack_dtrtri (&uplo, &diag, &n, &thy data [1] [1], &lda, &info);
+			NUMlapack_dtrtri_ (&uplo, &diag, &n, &thy data [1] [1], &lda, &info);
 			Melder_require (info == 0,
 				U"dtrtri fails");
 		}
