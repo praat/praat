@@ -27,7 +27,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	Melder_assert (eigenvectors.nrow == eigenvectors.ncol);
 	Melder_assert (m.nrow == eigenvectors.nrow);
 
-	char *jobz = "V", *uplo = "U";
+	const char *jobz = "V", *uplo = "U";
 	integer workSize = -1, info, ncol = m.ncol;
 	double wt [1];
 	
@@ -47,7 +47,8 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		2. Calculate the eigenvalues and eigenvectors (row-wise)
 	*/
 	(void) NUMlapack_dsyev_ (jobz, uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), work.begin(), & workSize, & info); 
-	Melder_require (info == 0, U"dsyev code = ", info, U").");
+	Melder_require (info == 0,
+		U"dsyev code = ", info, U").");
 	/*
 		3. Eigenvalues are returned in ascending order
 	*/
