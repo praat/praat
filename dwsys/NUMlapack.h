@@ -24,28 +24,39 @@
 #undef min
 
 /*
-	This interface only works for C++ matrices that have nrow >= ncol!
-	The lapack matrix views can only view "contiguous" blocks of a matrix, which means that we
-	can only make limited use MATVU arguments of the following NUMlapack functions. 
-	either should have rowStride or columnStride larger than 1 but not both!
-	A row major layout has rowStride == ncol and columnStrid = 1;
-	A column major layout has rowStride = 1 and columnStride == nrow
-	The underlying lapack routines always expect colummn major matrix layout (fortran) 
-	while in C++ row major matrices are default.
+	Interface for the lapack routines used in Praat.
+	
+	The LAPACK routines all use col major layout of matrices.
 	The matrix 
 	1 2
 	3 4
-	is layed out in memory as 1 2 3 4 (row major, C++) or as 1 3 2 4 (column major, fortran).
+	can be layed out in memory as 1 2 3 4 (row major, C++) or as 1 3 2 4 (column major, fortran).
 	
-	You can save workspace with matrices that already have row major layout,
-	i.e. rowStride = 1 && colStride >= 1;
+	Sometimes you can avoid an explicit matrix conversion to col major layout by using the solution for the transposed problem.
 	
-	The purpose and the parameter descriptions have all been copied from the LAPACK netlib repository.
+	The purpose of a routine and its parameter descriptions have all been copied from the LAPACK netlib repository.
 	
+	Our NUMlapack_<name>_ interface merely removes inconvenient references.
+	We used the following conventions in the interface definitions:
+	1. The interface name is the CLAPACK name with "NUMlapack_" in front.
+		(e.g. the lapack routine dgeev_ becomes NUMlapack_dgeev_)
+	2. We have removed all inconvenient pointers to integers.
+		(e.g. "integer *n, the third argument type of dgeev_, has become
+		"integer n" in NUMlapack_dgeev_)
+	3. Array pointers are made explicit by using [] after the variable name
+		instead of * before the name.
+		(e.g. "double inout_a []" instead of "double *inout_a" as the fourth
+		argument of NUMlapack_dgeev_)
+	4. Scalar pointers should never be the nullptr.
+	5. Array pointers whose name starts with "inout_" should never equal the nullptr.
+		The arrays they point to always have to be of the correct dimension.
+	6. Only an array pointer's name starting with "inoutout_" may contain a nullptr 
+		occasionaly if the rest of the parameter settings allow.
 */
 
-static inline int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer n, double inout_a [], integer lda, double wr [], double wi [], double vl [], integer ldvl, double vr [], integer ldvr, double work [], integer lwork, integer *info) {
-		return dgeev_ (jobvl, jobvr, & n, inout_a, & lda, wr, wi, vl, & ldvl, vr, & ldvr, work, & lwork, info);
+static inline int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer n, double inout_a [], integer lda, double inout_wr [], double inout_wi [], double inoutout_vl [], integer ldvl, double inoutout_vr [], integer ldvr, double inout_work [], integer lwork, integer *info)
+{
+	return dgeev_ (jobvl, jobvr, & n, inout_a, & lda, inout_wr, inout_wi, inoutout_vl, & ldvl, inoutout_vr, & ldvr, inout_work, & lwork, info);
 }
 /*
     NUMlapack_dgeev computes for an N-by-N real nonsymmetric matrix A, the
@@ -141,10 +152,6 @@ static inline int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, intege
                   elements i+1:N of WR and WI contain eigenvalues which
                   have converged.
 */
-
-integer NUMlapack_dgesvd_query (constMATVU const& a, constMATVU const& u, constVEC const& singularValues, constMATVU const& vt);
-
-void NUMlapack_dgesvd (constMATVU const& a, MATVU const& inout_u, VEC const& inout_singularValues, MATVU const& inout_vt, VEC const& work);
 
 static inline int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer m, integer n, double inout_a [], integer lda, double inout_s [], double inout_u [], integer ldu, double inoutout_vt [], integer ldvt, double inout_work [], integer lwork, integer *info) {
 	return dgesvd_ (jobu, jobvt, & m, & n, inout_a, & lda, inout_s, inout_u, & ldu, inoutout_vt, & ldvt, inout_work, & lwork, info);
@@ -500,7 +507,8 @@ integer NUMlapack_dhseqr_query (constMATVU const& inout_upperHessenberg, constCO
 integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg, COMPVECVU const& inout_eigenvalues, MATVU const& inout_z, VEC const& work);
 /* Returns the number of roots found */
 
-static inline int NUMlapack_dhseqr_ (const char *job, const char *compz, integer n, integer ilo, integer ihi, double inout_h [], integer ldh, double inout_wr [], double inout_wi [], double inoutout_z [], integer ldz, double inout_work [], integer lwork, integer *info) {
+static inline int NUMlapack_dhseqr_ (const char *job, const char *compz, integer n, integer ilo, integer ihi, double inout_h [], integer ldh, double inout_wr [], double inout_wi [], double inoutout_z [], integer ldz, double inout_work [], integer lwork, integer *info) 
+{
 	return dhseqr_ (job, compz, & n, & ilo, & ihi, inout_h, & ldh, inout_wr, inout_wi, inoutout_z, & ldz, inout_work, & lwork, info);
 }
 /*  -- LAPACK routine (version 3.0) --
@@ -609,7 +617,8 @@ static inline int NUMlapack_dhseqr_ (const char *job, const char *compz, integer
     =====================================================================
 */
 
-static inline int NUMlapack_dpotf2_ (const char *uplo, integer n, double *inout_a, integer lda, integer *info) {
+static inline int NUMlapack_dpotf2_ (const char *uplo, integer n, double inout_a [], integer lda, integer *info)
+{
 	return dpotf2_ (uplo, & n, inout_a, & lda, info);
 }
 /*
@@ -659,9 +668,11 @@ static inline int NUMlapack_dpotf2_ (const char *uplo, integer n, double *inout_
 
 */
 
-static inline int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer n, double *inout_a, integer lda,
-	double *inout_w, double *inout_work, integer lwork, integer *info) {
-		return dsyev_ (jobz, uplo, & n, inout_a, & lda, inout_w, inout_work, & lwork, info);
+static inline int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer n,
+	double inout_a [], integer lda,	double inout_w [], double inout_work [],
+	integer lwork, integer *info)
+{
+	return dsyev_ (jobz, uplo, & n, inout_a, & lda, inout_w, inout_work, & lwork, info);
 }
 /*
 	NUMlapack_dsyev computes all eigenvalues and, optionally, eigenvectors of a
@@ -723,8 +734,9 @@ static inline int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer 
 */
 
 
-static inline int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer n, double *
-	inout_a, integer lda, integer *inout_info) {
+static inline int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer n, double
+	inout_a [], integer lda, integer *inout_info)
+{
 	return dtrtri_ (uplo, diag, & n, inout_a, & lda, inout_info);
 }
 /*  Purpose
@@ -774,7 +786,8 @@ static inline int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer
     =====================================================================
 */
 
-static inline int NUMlapack_dtrti2_ (const char *uplo, const char *diag, integer n, double *inout_a, integer lda, integer *inout_info) {
+static inline int NUMlapack_dtrti2_ (const char *uplo, const char *diag, integer n, double inout_a [], integer lda, integer *inout_info)
+{
 	return dtrti2_ (uplo, diag, & n, inout_a, & lda, inout_info);
 }
 /*  Purpose

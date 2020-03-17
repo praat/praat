@@ -164,6 +164,8 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 			"Polynomial zero finders based on Szegö polynomials.",
 			Journal of Computational and Applied Mathematics 127: 1-–16.
 		*/
+		autoVEC wr = newVECraw (n);
+		autoVEC wi = newVECraw (n);
 		autoMAT upperHessenberg = newMATzero (n, n);
 		MATVU uh_CM (upperHessenberg.get());
 		uh_CM.rowStride = 1; uh_CM.colStride = n;
@@ -173,18 +175,38 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 			uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
 			uh_CM [irow][irow - 1] = 1.0;
 		}
-		autoRoots thee = Roots_create (n);
-		MATVU z;
 		/*
 			Find out the working storage needed
 		*/
-		integer workSpaceSize = NUMlapack_dhseqr_query (uh_CM, thy roots.get(), z);
-		autoVEC work = newVECraw (workSpaceSize);
+		double wtmp;
+		integer lwork = -1, info;
+		NUMlapack_dhseqr_ ("E", "N", n, 1, n, & upperHessenberg [1] [1], n, & wr [1], & wi [1], nullptr, n, & wtmp, lwork, & info);
+		lwork = Melder_roundUp (wtmp);
+		autoVEC work = newVECraw (lwork);
 		/*
 			Find eigenvalues/roots.
 		*/
-		integer numberOfRootsFound = NUMlapack_dhseqr (uh_CM, thy roots.get(), z, work.get());
-		thy numberOfRoots = numberOfRootsFound;
+		NUMlapack_dhseqr_ ("E", "N", n, 1, n, & upperHessenberg [1] [1], n, & wr [1], & wi [1], nullptr, n, & work [1], lwork, & info);
+
+		integer numberOfEigenvaluesFound = n, ioffset = 0;
+		if (info > 0) {
+			/*
+				if INFO = i, NUMlapack_dhseqr_ failed to compute all of the eigenvalues. Elements i+1:n of
+			WR and WI contain those eigenvalues which have been successfully computed
+			*/
+			numberOfEigenvaluesFound -= info;
+			Melder_require (numberOfEigenvaluesFound > 0,
+				U"No eigenvalues found.");
+			ioffset = info;
+		} else if (info < 0) {
+			Melder_throw (U"NUMlapack_dhseqr_ returns error ", info, U".");
+		}
+
+		autoRoots thee = Roots_create (numberOfEigenvaluesFound);
+		for (integer i = 1; i <= numberOfEigenvaluesFound; i ++) {
+			thy roots [i]. real (wr [ioffset + i]);
+			thy roots [i]. imag (wi [ioffset + i]);
+		}
 		Roots_Polynomial_polish (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
@@ -206,10 +228,11 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	/*
 		Use the workspace reserve storage for Hessenberg matrix (n * n)
 	*/
-	MAT upperHessenberg (& workspace [1], n, n);
+	
+	MAT upperHessenberg = MAT (& workspace [1], n, n);
+	upperHessenberg <<= 0.0;
 	MATVU uh_CM (upperHessenberg);
 	uh_CM.rowStride = 1; uh_CM.colStride = n;
-	upperHessenberg <<= 0.0;
 	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
 	for (integer irow = 2; irow <= n; irow ++) {
 		uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
@@ -217,11 +240,36 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	}
 	/*
 		We don't need to find out size of the working storage needed because for the current version 
-		of NUMlapack_dhseqr (20200413) its size equals the order of the polynomial.
+		of NUMlapack_dhseqr (20200413) its size equals maximally 6*n.
 	*/
-	VEC work = workspace. part (n * n + 1, workspace.size);		
-	MATVU z;
-	r -> numberOfRoots = NUMlapack_dhseqr (uh_CM, r ->  roots.get(), z, work);
+	integer endIndex = n * n;
+	VEC wr = workspace. part (endIndex + 1, endIndex + n);
+	endIndex += n;
+	VEC wi = workspace. part (endIndex + 1, endIndex + n);
+	endIndex += n;
+	VEC work = workspace. part (endIndex + 1, workspace.size);
+	Melder_assert (work.size >= 6 * n);
+	integer lwork = work.size, info;
+	NUMlapack_dhseqr_ ("E", "N", n, 1, n, & uh_CM [1] [1], n, & wr [1], & wi [1], nullptr, n, & work [1], lwork, & info);
+	integer numberOfEigenvaluesFound = n, ioffset = 0;
+	if (info > 0) {
+		/*
+			if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
+		WR and WI contain those eigenvalues which have been successfully computed
+		*/
+		numberOfEigenvaluesFound -= info;
+		Melder_require (numberOfEigenvaluesFound > 0,
+			U"No eigenvalues found.");
+		ioffset = info;
+	} else if (info < 0) {
+		Melder_throw (U"NUMlapack_dhseqr_ returns error ", info, U".");
+	}
+
+	for (integer i = 1; i <= numberOfEigenvaluesFound; i ++) {
+		r -> roots [i]. real (wr [ioffset + i]);
+		r -> roots [i]. imag (wi [ioffset + i]);
+	}
+	r -> numberOfRoots = numberOfEigenvaluesFound;
 	Roots_Polynomial_polish (r, me);
 }
 

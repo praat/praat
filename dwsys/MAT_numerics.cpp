@@ -105,10 +105,7 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 
 void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_left_ev, autoMAT *out_right_ev, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im) {
 	Melder_assert (a.nrow == a.ncol);
-	integer n = a.nrow, info, lwork = -1;
-	conststring8 jobvl = out_left_ev ? "V" : "N";
-	conststring8 jobvr = out_right_ev ? "V" : "N";
-	double wt;
+	integer n = a.nrow;
 	
 	autoMAT data = newMATtranspose (a);   // lapack is fortran storage
 	autoVEC eigenvalues_re = newVECraw (n);
@@ -126,20 +123,21 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_left_ev, auto
 		right_ev = newMATraw (n, n);
 		p_right_ev = & right_ev [1] [1];
 	}
-
-	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n,
-		& eigenvalues_re [1], & eigenvalues_im [1], p_left_ev,
-		n, p_right_ev, n, & wt, lwork, & info);
+	conststring8 jobvl = out_left_ev ? "V" : "N";
+	conststring8 jobvr = out_right_ev ? "V" : "N";
+	double wtmp;
+	integer lwork = -1, info;
+	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n, & eigenvalues_re [1],
+		& eigenvalues_im [1], p_left_ev, n, p_right_ev, n, & wtmp, lwork, & info);
 	Melder_require (info == 0,
-		U"dhseqr_ initialisation returns error ", info, U".");
+		U"NUMlapack_dhseqr_ query returns error ", info, U".");
 	
-	lwork = Melder_iceiling (wt);
+	lwork = Melder_iceiling (wtmp);
 	autoVEC work = newVECraw (lwork);
-	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n, 
-		& eigenvalues_re [1], & eigenvalues_im [1], p_left_ev,
-		n, p_right_ev, n, & work [1], lwork, & info);
+	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n, & eigenvalues_re [1],
+		& eigenvalues_im [1], p_left_ev, n, p_right_ev, n, & work [1], lwork, & info);
 	Melder_require (info == 0,
-		U"dhseqr_ returns error ", info, U".");
+		U"NUMlapack_dhseqr_ returns error ", info, U".");
 	
 	if (out_right_ev)
 		*out_right_ev = right_ev.move();
