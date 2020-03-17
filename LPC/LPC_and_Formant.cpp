@@ -105,7 +105,7 @@ autoFormant LPC_to_Formant_old (LPC me, double margin) {
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
 		autoPolynomial polynomial = Polynomial_create (-1.0, 1.0, my maxnCoefficients);
 		autoRoots roots = Roots_create (my maxnCoefficients);
-		autoVEC workspace = newVECraw (maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 3));
+		autoVEC workspace = newVECraw (maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
 		autoMelderProgress progress (U"LPC to Formant");
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const LPC_Frame lpcFrame = & my d_frames [iframe];
@@ -170,7 +170,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			polynomials [ithread] = Polynomial_create (-1.0, 1.0, my maxnCoefficients);
 			roots [ithread] = Roots_create (my maxnCoefficients);
 		}
-		autoMAT workspaces = newMATraw (numberOfThreads, maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 3));
+		autoMAT workspaces = newMATraw (numberOfThreads, maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
 		autovector<std::thread> thread = newvectorzero<std::thread> (numberOfThreads); // TODO memory leak?
 		std::atomic<integer> numberOfSuspectFrames (0);
 		
