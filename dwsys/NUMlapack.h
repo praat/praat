@@ -37,18 +37,8 @@
 	3 4
 	is layed out in memory as 1 2 3 4 (row major, C++) or as 1 3 2 4 (column major, fortran).
 	
-	The interfaces only works for matrices that have nrow >= ncol!
-	
-	With some routines we can just input or output standard C++ matrices with row major layout,
-	whenever this is not possible the matrix variable name has the extension _CM and you
-	really need to input the matrix with physical column major layout!
-	(an argument a.transpose() will not work).
-	
-	As this interface is not yet stable I think that the following option is better:
-	Always accept row major layout and in the query part add the extra space 
-	needed for the necessary physical transposes.
-	In the calculation routine do the actual transposes of the matrices in workspace memory!
-	We definitely do don't want to allocate memory in the NUMlapack routines because this would spoil multithreading.
+	You can save workspace with matrices that already have row major layout,
+	i.e. rowStride = 1 && colStride >= 1;
 	
 */
 
@@ -507,10 +497,10 @@ int NUMlapack_dggsvd_ (const char *jobu, const char *jobv, const char *jobq, int
     =====================================================================
 */
 
-integer NUMlapack_dhseqr_query (constMATVU const& inout_upperHessenberg_CM, constCOMPVEC const& eigenvalues, constMATVU const& z_CM);
+integer NUMlapack_dhseqr_query (constMATVU const& inout_upperHessenberg, constCOMPVECVU const& eigenvalues, constMATVU const& z);
 /* Returns the work space size needed */
 
-integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg_CM, COMPVEC const& inout_eigenvalues, MATVU const& inout_z_CM, VEC const& work);
+integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg, COMPVECVU const& inout_eigenvalues, MATVU const& inout_z, VEC const& work);
 /* Returns the number of roots found */
 
 int NUMlapack_dhseqr_ (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz, double *work, integer *lwork, integer *info);

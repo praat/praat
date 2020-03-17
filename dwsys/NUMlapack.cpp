@@ -20,8 +20,25 @@
 
 #include "NUMlapack.h"
 
-inline bool startsWith (conststring8 string, conststring8 startCharacter) {
-	return strncmp (string, startCharacter, 1) == 0;
+static inline bool isRowMajor (constMATVU const& m) {
+	return m.firstCell && m.colStride == 1 && m.rowStride >= 1;
+}
+static inline bool isColMajor (constMATVU const& m) {
+	return m.firstCell && m.rowStride == 1 && m.colStride >= 1;
+}
+
+void VEClayout_asColMajor (VEC const& result, constMATVU const& in) {
+	Melder_assert (result.size  == in.nrow * in.ncol);
+	for (integer irow = 1; irow <= in.nrow; irow ++)
+		for (integer icol = 1; icol <= in.ncol; icol ++)
+			result [(icol - 1) * in.nrow + irow] = in [irow] [icol];
+}
+
+void MATlayout_asRowMajor (MATVU result, constVEC in) {
+	Melder_assert (in.size  == result.nrow * result.ncol);
+	for (integer irow = 1; irow <= result.nrow; irow ++)
+		for (integer icol = 1; icol <= result.ncol; icol ++)
+			result [irow] [icol] = in [(icol - 1) * result.nrow + irow];
 }
 
 integer getLeadingDimension (constMATVU const& m) {
@@ -100,40 +117,71 @@ int NUMlapack_dggsvd_ (const char *jobu, const char *jobv, const char *jobq, int
 	return dggsvd_ (jobu, jobv, jobq, m, n, p, k, l, a, lda, b, ldb, alpha, beta, u, ldu, v, ldv, q, ldq, work, iwork, info);
 }
 
-integer NUMlapack_dhseqr_query (constMATVU const& upperHessenberg_CM, constCOMPVEC const& eigenvalues, constMATVU const& z_CM) {
-	Melder_assert (upperHessenberg_CM.nrow == upperHessenberg_CM.ncol);
-	Melder_assert (eigenvalues.size == upperHessenberg_CM.nrow);
-	integer nrow = upperHessenberg_CM.nrow;
-	integer ldh = getLeadingDimension (upperHessenberg_CM);
-	integer ldz = getLeadingDimension (z_CM);
-	Melder_assert (ldz == 0 || z_CM.nrow == z_CM.ncol && z_CM.nrow == upperHessenberg_CM.nrow);
+static integer dhseqr_getColMajorWorkspaceSize (constMATVU const& upperHessenberg, constMATVU const& z) {
+	// TODO only needed if matrices have row major layout!!
+	integer nrow = upperHessenberg.nrow;
+	integer size = 2 * nrow; // extra for the wr and wi arrays
+	if (! isColMajor (upperHessenberg))
+		size += nrow * nrow;
+	size += z.nrow * z.ncol;
+	return size;
+}
+
+integer NUMlapack_dhseqr_query (constMATVU const& upperHessenberg, constCOMPVECVU const& eigenvalues, constMATVU const& z) {
+	Melder_assert (upperHessenberg.nrow == upperHessenberg.ncol);
+	Melder_assert (eigenvalues.size == upperHessenberg.nrow);
+	integer nrow = upperHessenberg.nrow;
+	integer ldh = getLeadingDimension (upperHessenberg);
+	integer ldz = getLeadingDimension (z);
+	Melder_assert (ldz == 0 || z.nrow == z.ncol && z.nrow == upperHessenberg.nrow);
 	conststring8 job = ( ldz == 0 ? "Eigenvalues" : "S" );
 	conststring8 compz = ( ldz == 0 ? "NoSchurvectors" : "IsUnitMatrixBeforeSchurVectorsReturned" );
 	ldz = ldh; // even if not used must be of correct size
-	integer ilo = 1, ihi = nrow, lwork = -1, info = -1;
+	integer ilo = 1, ihi = nrow, lwork = -1, info;
 	double workSize, wr, wi;
-	dhseqr_ (job, compz, & nrow, & ilo, & ihi, const_cast<double *> (& upperHessenberg_CM [1] [1]), & ldh, & wr, & wi, const_cast<double *> (& z_CM [1] [1]), & ldz, & workSize, & lwork, & info);
+	dhseqr_ (job, compz, & nrow, & ilo, & ihi, const_cast<double *> (& upperHessenberg [1] [1]), & ldh, & wr, & wi, const_cast<double *> (& z [1] [1]), & ldz, & workSize, & lwork, & info);
 	Melder_require (info == 0,
 		U"NUMlapack_dhseqr_query returns error ", info, U".");
-	integer result = (integer) workSize + 2 * nrow; // extra for the wr and wi arrays
-	return result;
+	integer workspace = (integer) workSize;
+	integer extraWorkspace = dhseqr_getColMajorWorkspaceSize (upperHessenberg, z);
+	return workspace + extraWorkspace;
 }
 
-integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg_CM, COMPVEC const& inout_eigenvalues, MATVU const& inout_z_CM, VEC const& work) {
-	Melder_assert (inout_upperHessenberg_CM.nrow == inout_upperHessenberg_CM.ncol);
-	Melder_assert (inout_eigenvalues.size == inout_upperHessenberg_CM.nrow);
-	Melder_assert (work.size > 2 * inout_upperHessenberg_CM.nrow);
-	integer nrow = inout_upperHessenberg_CM.nrow;
-	integer ldh = getLeadingDimension (inout_upperHessenberg_CM);
-	integer ldz = getLeadingDimension (inout_z_CM);
-	Melder_assert (ldz == 0 || inout_z_CM.nrow == inout_z_CM.ncol && inout_z_CM.nrow == inout_upperHessenberg_CM.nrow);
+integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg, COMPVECVU const& inout_eigenvalues, MATVU const& inout_z, VEC const& work) {
+	Melder_assert (inout_upperHessenberg.nrow == inout_upperHessenberg.ncol);
+	Melder_assert (inout_eigenvalues.size == inout_upperHessenberg.nrow);
+	integer workSize = NUMlapack_dhseqr_query (inout_upperHessenberg, inout_eigenvalues, inout_z);
+	Melder_assert (work.size >= workSize);
+	integer nrow = inout_upperHessenberg.nrow;
+	integer ldh = nrow, ldz = inout_z.nrow;
+	Melder_assert (ldz == 0 || nrow == inout_z.ncol && inout_z.nrow == nrow);
 	conststring8 job = ( ldz == 0 ? "Eigenvalues" : "S" );
 	conststring8 compz = ( ldz == 0 ? "NoSchurvectorsNeeded" : "IsUnitMatrixBeforeSchurVectorsReturned" );
 	ldz = ldh; // even if not used must be of correct size
-	VEC wr = work.part (1, nrow);
-	VEC wi = work.part (nrow + 1, 2 * nrow);
-	integer ilo = 1, ihi = nrow, lwork = work.size - 2 * nrow, info = 0;
-	dhseqr_ (job, compz, & nrow, & ilo, & ihi, const_cast<double *> (& inout_upperHessenberg_CM [1] [1]), & ldh, & wr [1], & wi [1], & inout_z_CM [1] [1], & ldz, & work [2 * nrow + 1], & lwork, & info);
+	integer endIndex = 0;
+	VEC wr = work.part (endIndex + 1, endIndex + nrow);
+	endIndex += nrow;
+	VEC wi = work.part (endIndex + 1, endIndex + nrow);
+	endIndex += nrow;
+	/*
+		Change to fortran layout if necessary
+	*/
+	double *p_uh = const_cast<double *> (& inout_upperHessenberg [1] [1]);
+	if (! isColMajor (inout_upperHessenberg)) {
+		VEC uh_CM = work.part (endIndex + 1, endIndex + nrow * nrow);
+		endIndex += nrow * nrow;
+		VEClayout_asColMajor (uh_CM, inout_upperHessenberg);
+		p_uh = & uh_CM [1];
+	}
+	double *p_z = & inout_z [1] [1];
+	if (inout_z.nrow > 0) {
+		VEC z_CM (& work [endIndex + 1], inout_z.nrow * inout_z.nrow, false);
+		VEClayout_asColMajor (z_CM, inout_z);
+		p_z = & work [endIndex + 1];
+		endIndex += inout_z.nrow * inout_z.nrow;
+	}
+	integer ilo = 1, ihi = nrow, lwork = work.size - endIndex, info = 0;
+	dhseqr_ (job, compz, & nrow, & ilo, & ihi, p_uh, & ldh, & wr [1], & wi [1], p_z, & ldz, & work [endIndex + 1], & lwork, & info);
 	integer numberOfEigenvaluesFound = nrow, ioffset = 0;
 	if (info > 0) {
 		/*
@@ -152,6 +200,11 @@ integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg_CM, COMPVEC co
 		inout_eigenvalues [i]. real (wr [ioffset + i]);
 		inout_eigenvalues [i]. imag (wi [ioffset + i]);
 	}
+	/*
+		Restore z to row major if necessary
+	*/
+	if (inout_z.nrow > 0)
+		MATlayout_asRowMajor (inout_z, constVEC (p_z, nrow, false));
 	return numberOfEigenvaluesFound;
 }
 
