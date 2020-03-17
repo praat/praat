@@ -156,28 +156,34 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		Melder_require (n > 0,
 			U"Cannot find roots of a constant function.");
 		/*
-			Allocate storage for Hessenberg matrix (n * n)
+			Allocate storage for a special upper Hessenberg matrix (n * n)
+			The roots of a polynomial are the eigenvalues of an
+			upper Hessenberg matrix with the coefficients of the polynomial.
+			See for example the introduction in:
+			G.S. Ammar, D. Calvetti, W.B. Gragg, L. Reichel (2001):
+			"Polynomial zero finders based on Szegö polynomials.",
+			Journal of Computational and Applied Mathematics 127: 1-–16.
 		*/
 		autoMAT upperHessenberg = newMATzero (n, n);
 		MATVU uh_CM (upperHessenberg.get());
 		uh_CM.rowStride = 1; uh_CM.colStride = n;
-		// TODO MATVU uh_CM = upperHessenberg.asColumnMajorLayout ();
-		autoRoots thee = Roots_create (n);
-		MATVU z;
+
 		uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
 		for (integer irow = 2; irow <= n; irow ++) {
 			uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
 			uh_CM [irow][irow - 1] = 1.0;
 		}
+		autoRoots thee = Roots_create (n);
+		MATVU z;
 		/*
 			Find out the working storage needed
 		*/
-		integer workSpaceSize = NUMlapack_dhseqr_query (upperHessenberg.get(), thy roots.get(), z);
+		integer workSpaceSize = NUMlapack_dhseqr_query (uh_CM, thy roots.get(), z);
 		autoVEC work = newVECraw (workSpaceSize);
 		/*
 			Find eigenvalues/roots.
 		*/
-		integer numberOfRootsFound = NUMlapack_dhseqr (upperHessenberg.get(), thy roots.get(), z, work.get());
+		integer numberOfRootsFound = NUMlapack_dhseqr (uh_CM, thy roots.get(), z, work.get());
 		thy numberOfRoots = numberOfRootsFound;
 		Roots_Polynomial_polish (thee.get(), me);
 		return thee;
@@ -187,10 +193,10 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 }
 
 /*
-	workspace.size >= n * n + 3 * n =
+	workspace.size >= n * n + 9 * n =
 		n * n		; for hessenberg matrix
 		+ 2 * n 	; for real and imaginary parts
-		+ n			; for dhseqr_
+		+ 6 * n		; the maximum for dhseqr_
 */
 void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	integer np1 = my numberOfCoefficients, n = np1 - 1;
@@ -213,7 +219,7 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 		We don't need to find out size of the working storage needed because for the current version 
 		of NUMlapack_dhseqr (20200413) its size equals the order of the polynomial.
 	*/
-	VEC work = workspace. part (n * n + 1, n * (n + 3));		
+	VEC work = workspace. part (n * n + 1, workspace.size);		
 	MATVU z;
 	r -> numberOfRoots = NUMlapack_dhseqr (uh_CM, r ->  roots.get(), z, work);
 	Roots_Polynomial_polish (r, me);
