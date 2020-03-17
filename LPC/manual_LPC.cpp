@@ -1,6 +1,6 @@
 /* manual_LPC.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -900,6 +900,10 @@ FORMULA (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i
 NORMAL (U"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (U"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
 NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3\\%  of the input data-points without degradation of its accuracy")
+MAN_END
+
+MAN_BEGIN (U"Ammar et al. (2001)", U"djmw", 20200416)
+NORMAL (U"G.S. Ammar, D. Calvetti, W.B. Gragg, L. Reichel (2001): \"Polynomial zero finders based on Szegö polynomials\", %%Journal of Computational and Applied Mathematics% #127: 1\\-–16.")
 MAN_END
 
 MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)
