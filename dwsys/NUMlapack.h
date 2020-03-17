@@ -19,7 +19,7 @@
  */
 
 #include "melder.h"
-
+#include "clapack.h"
 #undef max
 #undef min
 
@@ -40,17 +40,14 @@
 	You can save workspace with matrices that already have row major layout,
 	i.e. rowStride = 1 && colStride >= 1;
 	
+	The purpose and the parameter descriptions have all been copied from the LAPACK netlib repository.
+	
 */
 
-int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,	double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info);
-/*  -- LAPACK driver routine (version 3.0) --
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-       Courant Institute, Argonne National Lab, and Rice University
-       December 8, 1999
-
-    Purpose
-    =======
-
+static inline int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer n, double inout_a [], integer lda, double wr [], double wi [], double vl [], integer ldvl, double vr [], integer ldvr, double work [], integer lwork, integer *info) {
+		return dgeev_ (jobvl, jobvr, & n, inout_a, & lda, wr, wi, vl, & ldvl, vr, & ldvr, work, & lwork, info);
+}
+/*
     NUMlapack_dgeev computes for an N-by-N real nonsymmetric matrix A, the
     eigenvalues and, optionally, the left and/or right eigenvectors.
 
@@ -143,16 +140,16 @@ int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer *n, double *
                   eigenvalues, and no eigenvectors have been computed;
                   elements i+1:N of WR and WI contain eigenvalues which
                   have converged.
-
-    =====================================================================
 */
 
 integer NUMlapack_dgesvd_query (constMATVU const& a, constMATVU const& u, constVEC const& singularValues, constMATVU const& vt);
 
 void NUMlapack_dgesvd (constMATVU const& a, MATVU const& inout_u, VEC const& inout_singularValues, MATVU const& inout_vt, VEC const& work);
 
-int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
-	integer *lwork, integer *info);/*
+static inline int NUMlapack_dgesvd_ (const char *jobu, const char *jobvt, integer m, integer n, double inout_a [], integer lda, double inout_s [], double inout_u [], integer ldu, double inoutout_vt [], integer ldvt, double inout_work [], integer lwork, integer *info) {
+	return dgesvd_ (jobu, jobvt, & m, & n, inout_a, & lda, inout_s, inout_u, & ldu, inoutout_vt, & ldvt, inout_work, & lwork, info);
+}
+/*
      DGESVD computes the singular value decomposition (SVD) of a real
      M-by-N matrix A, optionally computing the left and/or right singular
      vectors. The SVD is written
@@ -296,11 +293,11 @@ Parameters
                     above for details.
 */
 
-int NUMlapack_dggsvd_ (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *n,	integer *p, integer *k, integer *l, double *a, integer *lda, double *b, integer *ldb, double *alpha, double *beta, double *u, integer *ldu, double *v, integer *ldv, double *q, integer *ldq, double *work, integer *iwork, integer *info);
-/*  Purpose
-    =======
-
-    NUMlapack_dggsvd computes the generalized singular value decomposition (GSVD)
+static inline int NUMlapack_dggsvd_ (const char *jobu, const char *jobv, const char *jobq, integer m, integer n,	integer p, integer *inout_k, integer *inout_l, double inout_a [], integer lda, double b [], integer ldb, double inout_alpha [], double inout_beta [], double out_u [], integer ldu, double out_v [], integer ldv, double out_q [], integer ldq, double inout_work [], integer inout_iwork [], integer *info) {
+		return dggsvd_ (jobu, jobv, jobq, & m, & n,	& p, inout_k, inout_l, inout_a, & lda, b, & ldb, inout_alpha, inout_beta, out_u, & ldu, out_v, & ldv, out_q, & ldq, inout_work, inout_iwork, info);
+}
+/*
+    NUMlapack_dggsvd_ computes the generalized singular value decomposition (GSVD)
     of an M-by-N real matrix A and P-by-N real matrix B:
 
         U'*A*Q = D1*( 0 R ),    V'*B*Q = D2*( 0 R )
@@ -503,7 +500,9 @@ integer NUMlapack_dhseqr_query (constMATVU const& inout_upperHessenberg, constCO
 integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg, COMPVECVU const& inout_eigenvalues, MATVU const& inout_z, VEC const& work);
 /* Returns the number of roots found */
 
-int NUMlapack_dhseqr_ (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz, double *work, integer *lwork, integer *info);
+static inline int NUMlapack_dhseqr_ (const char *job, const char *compz, integer n, integer ilo, integer ihi, double inout_h [], integer ldh, double inout_wr [], double inout_wi [], double inoutout_z [], integer ldz, double inout_work [], integer lwork, integer *info) {
+	return dhseqr_ (job, compz, & n, & ilo, & ihi, inout_h, & ldh, inout_wr, inout_wi, inoutout_z, & ldz, inout_work, & lwork, info);
+}
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -610,16 +609,10 @@ int NUMlapack_dhseqr_ (const char *job, const char *compz, integer *n, integer *
     =====================================================================
 */
 
-int NUMlapack_dpotf2_ (const char *uplo, integer *n, double *a, integer *lda, integer *info);
-/*  -- LAPACK routine (version 3.0) --
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-       Courant Institute, Argonne National Lab, and Rice University
-       February 29, 1992
-
-
-    Purpose
-    =======
-
+static inline int NUMlapack_dpotf2_ (const char *uplo, integer n, double *inout_a, integer lda, integer *info) {
+	return dpotf2_ (uplo, & n, inout_a, & lda, info);
+}
+/*
     NUMlapack_dpotf2 computes the Cholesky factorization of a real symmetric
     positive definite matrix A.
 
@@ -666,10 +659,11 @@ int NUMlapack_dpotf2_ (const char *uplo, integer *n, double *a, integer *lda, in
 
 */
 
-int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer *n, double *a,	integer *lda,
-	double *w, double *work, integer *lwork, integer *info);
-/* Purpose =======
-
+static inline int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer n, double *inout_a, integer lda,
+	double *inout_w, double *inout_work, integer lwork, integer *info) {
+		return dsyev_ (jobz, uplo, & n, inout_a, & lda, inout_w, inout_work, & lwork, info);
+}
+/*
 	NUMlapack_dsyev computes all eigenvalues and, optionally, eigenvectors of a
 	real symmetric matrix A.
 
@@ -729,8 +723,10 @@ int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer *n, double *a,
 */
 
 
-int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer *n, double *
-	a, integer *lda, integer *info);
+static inline int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer n, double *
+	inout_a, integer lda, integer *inout_info) {
+	return dtrtri_ (uplo, diag, & n, inout_a, & lda, inout_info);
+}
 /*  Purpose
     =======
 
@@ -778,7 +774,9 @@ int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer *n, double *
     =====================================================================
 */
 
-int NUMlapack_dtrti2_ (const char *uplo, const char *diag, integer *n, double *a, integer *lda, integer *info);
+static inline int NUMlapack_dtrti2_ (const char *uplo, const char *diag, integer n, double *inout_a, integer lda, integer *inout_info) {
+	return dtrti2_ (uplo, diag, & n, inout_a, & lda, inout_info);
+}
 /*  Purpose
     =======
 

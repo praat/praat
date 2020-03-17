@@ -27,8 +27,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	Melder_assert (eigenvectors.nrow == eigenvectors.ncol);
 	Melder_assert (m.nrow == eigenvectors.nrow);
 
-	const char *jobz = "V", *uplo = "U";
-	integer workSize = -1, info, ncol = m.ncol;
+	integer lwork = -1, info, ncol = m.ncol;
 	double wt [1];
 	
 	eigenvectors <<= m;
@@ -36,17 +35,17 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		0. No need to transpose a because it is a symmetric matrix
 		1. Query for the size of the work array
 	*/
-	(void) NUMlapack_dsyev_ (jobz, uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), wt, & workSize, & info);
+	(void) NUMlapack_dsyev_ ("V", "U", ncol, & eigenvectors [1] [1], ncol, & eigenvalues [1], wt, lwork, & info);
 
 	Melder_require (info == 0,
 		U"dsyev initialization code = ", info, U").");
 	
-	workSize = Melder_iceiling (wt [0]);
-	autoVEC work = newVECraw (workSize);
+	lwork = Melder_iceiling (wt [0]);
+	autoVEC work = newVECraw (lwork);
 	/*
 		2. Calculate the eigenvalues and eigenvectors (row-wise)
 	*/
-	(void) NUMlapack_dsyev_ (jobz, uplo, & ncol, & eigenvectors [1] [1], & ncol, eigenvalues.begin(), work.begin(), & workSize, & info); 
+	(void) NUMlapack_dsyev_ ("V", "U", ncol, & eigenvectors [1] [1], ncol, & eigenvalues [1], & work [1], lwork, & info);
 	Melder_require (info == 0,
 		U"dsyev code = ", info, U").");
 	/*
@@ -104,36 +103,48 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 		*out_eigenvectors_reim = eigenvectors_reim.move();
 }
 
-void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvectors, autoMAT *out_righteigenvectors, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im) {
+void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_left_ev, autoMAT *out_right_ev, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im) {
 	Melder_assert (a.nrow == a.ncol);
-	integer n = a.nrow, info, workSize = -1;
-	char jobvl = out_lefteigenvectors ? 'V' : 'N';
-	const integer left_nvecs = out_lefteigenvectors ? n : 1;   // 1x1 if not wanted
-	char jobvr = out_righteigenvectors ? 'V' : 'N';
-	const integer right_nvecs = out_righteigenvectors ? n : 1;
+	integer n = a.nrow, info, lwork = -1;
+	conststring8 jobvl = out_left_ev ? "V" : "N";
+	conststring8 jobvr = out_right_ev ? "V" : "N";
 	double wt;
 	
 	autoMAT data = newMATtranspose (a);   // lapack is fortran storage
 	autoVEC eigenvalues_re = newVECraw (n);
 	autoVEC eigenvalues_im = newVECraw (n);
-	autoMAT righteigenvectors = newMATraw (right_nvecs, right_nvecs); // 1x1 if not needed
-	autoMAT lefteigenvectors = newMATraw (left_nvecs, left_nvecs); // 1x1 if not needed
-	
-	(void) NUMlapack_dgeev_ (& jobvl, & jobvr, & n, & data [1] [1], & n,	eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
-		& n, & righteigenvectors [1] [1], & n, & wt, & workSize, & info);
-	Melder_require (info == 0, U"dgeev initialization code = ", info, U").");
-	
-	workSize = Melder_iceiling (wt);
-	autoVEC work = newVECraw (workSize);
-	(void) NUMlapack_dgeev_ (& jobvl, & jobvr, & n, & data [1] [1], & n, eigenvalues_re.begin(), eigenvalues_im.begin(),	& lefteigenvectors [1] [1],
-		& n, & righteigenvectors [1] [1], & n, & work [1], & workSize, & info);
+
+	autoMAT left_ev;
+	double *p_left_ev = nullptr;
+	if (out_left_ev) {
+		left_ev = newMATraw (n, n);
+		p_left_ev = & left_ev [1] [1];
+	}
+	autoMAT right_ev;
+	double *p_right_ev = nullptr;
+	if (out_right_ev) {
+		right_ev = newMATraw (n, n);
+		p_right_ev = & right_ev [1] [1];
+	}
+
+	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n,
+		& eigenvalues_re [1], & eigenvalues_im [1], p_left_ev,
+		n, p_right_ev, n, & wt, lwork, & info);
 	Melder_require (info == 0,
-		U"dgeev code = ", info, U").");
+		U"dhseqr_ initialisation returns error ", info, U".");
 	
-	if (out_righteigenvectors)
-		*out_righteigenvectors = righteigenvectors.move();
-	if (out_lefteigenvectors)
-		*out_lefteigenvectors = lefteigenvectors.move();
+	lwork = Melder_iceiling (wt);
+	autoVEC work = newVECraw (lwork);
+	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n, 
+		& eigenvalues_re [1], & eigenvalues_im [1], p_left_ev,
+		n, p_right_ev, n, & work [1], lwork, & info);
+	Melder_require (info == 0,
+		U"dhseqr_ returns error ", info, U".");
+	
+	if (out_right_ev)
+		*out_right_ev = right_ev.move();
+	if (out_left_ev)
+		*out_left_ev = left_ev.move();
 	if (out_eigenvalues_re)
 		*out_eigenvalues_re = eigenvalues_re.move();
 	if (out_eigenvalues_im)

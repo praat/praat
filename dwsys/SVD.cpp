@@ -347,7 +347,6 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 	try {
 		integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
-		integer lwork = std::max (std::max (3 * n, m), p) + n;
 
 		// Store the matrices a and b as column major!
 		autoMAT a = newMATtranspose (m1);
@@ -355,14 +354,14 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		autoMAT q = newMATraw (n, n);
 		autoVEC alpha = newVECraw (n);
 		autoVEC beta = newVECraw (n);
+		integer lwork = std::max (std::max (3 * n, m), p) + n;		
 		autoVEC work = newVECraw (lwork);
 		autoINTVEC iwork = newINTVECraw (n);
 
-		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		integer k, l, info;
-		NUMlapack_dggsvd_ (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
-		    & a [1] [1], & m, & b [1] [1], & p, alpha.begin(), beta.begin(), nullptr, & m,
-		    nullptr, & p, & q [1] [1], & n, work.begin(), iwork.begin(), & info);
+		NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & l,
+		    & a [1] [1], m, & b [1] [1], p, & alpha [1], & beta [1], nullptr, m,
+		    nullptr, p, & q [1] [1], n, & work [1], & iwork [1], & info);
 		Melder_require (info == 0,
 			U"dggsvd failed with error = ", info);
 

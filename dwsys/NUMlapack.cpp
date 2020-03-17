@@ -16,8 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "clapack.h"
-
 #include "NUMlapack.h"
 
 static inline bool isRowMajor (constMATVU const& m) {
@@ -208,24 +206,4 @@ integer NUMlapack_dhseqr (constMATVU const& inout_upperHessenberg, COMPVECVU con
 	return numberOfEigenvaluesFound;
 }
 
-int NUMlapack_dhseqr_ (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz, double *work, integer *lwork, integer *info) {
-	return dhseqr_ (job, compz, n, ilo, ihi, h, ldh, wr, wi, z, ldz, work, lwork, info);
-}
-
-int NUMlapack_dpotf2_ (const char *uplo, integer *n, double *a, integer *lda, integer *info) {
-	return dpotf2_ (uplo, n, a, lda, info);
-}
-
-int NUMlapack_dsyev_ (const char *jobz, const char *uplo, integer *n, double *a,	integer *lda, double *w, double *work, integer *lwork, integer *info) {
-	return dsyev_ (jobz, uplo, n, a, lda, w, work, lwork, info);
-}
-
-int NUMlapack_dtrtri_ (const char *uplo, const char *diag, integer *n, double *
-	a, integer *lda, integer *info) {
-	return dtrtri_ (uplo, diag, n, a, lda, info);
-}
-
-int NUMlapack_dtrti2_ (const char *uplo, const char *diag, integer *n, double *a, integer *lda, integer *info) {
-	return dtrti2_ (uplo, diag, n, a, lda, info);
-}
 /*End of file NUMlapack.cpp */
