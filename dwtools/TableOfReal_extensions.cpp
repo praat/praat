@@ -1230,7 +1230,6 @@ autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 
 autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, bool inverse) {
 	try {
-		char diag = 'N';
 		integer n = my numberOfColumns, lda = my numberOfRows, info;
 
 		Melder_require (n == lda,
@@ -1247,13 +1246,13 @@ autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, b
 				for (integer j = i + 1; j <= n; j ++)
 					thy data [i] [j] = 0.0;
 		}
-		char uplo = upper ? 'L' : 'U';
-		NUMlapack_dpotf2_ (& uplo, & n, & thy data [1] [1], & lda, & info);
+		const char *uplo = ( upper ? "L" : "U" );
+		NUMlapack_dpotf2_ (uplo, n, & thy data [1] [1], lda, & info);
 		Melder_require (info == 0,
 			U"dpotf2 fails");
 		
 		if (inverse) {
-			NUMlapack_dtrtri_ (&uplo, &diag, &n, &thy data [1] [1], &lda, &info);
+			NUMlapack_dtrtri_ (uplo, "N", n, & thy data [1] [1], lda, &info);
 			Melder_require (info == 0,
 				U"dtrtri fails");
 		}
