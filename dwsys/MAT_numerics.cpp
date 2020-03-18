@@ -28,19 +28,19 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	Melder_assert (m.nrow == eigenvectors.nrow);
 
 	integer lwork = -1, info, ncol = m.ncol;
-	double wt [1];
+	double wt;
 	
 	eigenvectors <<= m;
 	/*
 		0. No need to transpose a because it is a symmetric matrix
 		1. Query for the size of the work array
 	*/
-	(void) NUMlapack_dsyev_ ("V", "U", ncol, & eigenvectors [1] [1], ncol, & eigenvalues [1], wt, lwork, & info);
+	(void) NUMlapack_dsyev_ ("V", "U", ncol, & eigenvectors [1] [1], ncol, & eigenvalues [1], & wt, lwork, & info);
 
 	Melder_require (info == 0,
 		U"dsyev initialization code = ", info, U").");
 	
-	lwork = Melder_iceiling (wt [0]);
+	lwork = Melder_iceiling (wt);
 	autoVEC work = newVECraw (lwork);
 	/*
 		2. Calculate the eigenvalues and eigenvectors (row-wise)
@@ -55,8 +55,8 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		for (integer i = 1; i <= m.ncol / 2; i ++) {
 			const integer ilast = m.ncol - i + 1;
 			std::swap (eigenvalues [i], eigenvalues [ilast]);
-				for (integer j = 1; j <= m.ncol; j ++)
-					std::swap (eigenvectors [i] [j], eigenvectors [ilast] [j]);
+			for (integer j = 1; j <= m.ncol; j ++)
+				std::swap (eigenvectors [i] [j], eigenvectors [ilast] [j]);
 		}
 	}
 }
@@ -74,79 +74,72 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 		*out_eigenvalues = eigenvalues.move ();
 }
 
-void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re, constVEC eigenvalues_im, autoMAT *out_eigenvectors_reim) {
-	const integer n = eigenvalues_re.size;	
-	Melder_assert (eigenvalues_im.size == n);
-	Melder_assert (eigenvectors.nrow == n && eigenvectors.ncol == eigenvectors.nrow);
-		
-	autoMAT eigenvectors_reim = newMATzero (n, 2 * n);
-	integer pair_index = 0;
-	for (integer ivec = 1; ivec <= eigenvalues_re.size; ivec ++) {
-		/*
-			Eigenvalues of a real matrix are either real or occur in complex conjugate pairs
-		*/
-		if (eigenvalues_im [ivec] == 0.0) { // real eigenvalue
-			for (integer j = 1; j <= n; j ++)
-				eigenvectors_reim [j] [2 * ivec - 1] = eigenvectors [ivec] [j];
-		} else if (ivec > 1 && eigenvalues_re [ivec] == eigenvalues_re [ivec - 1] &&
-			eigenvalues_im [ivec] == -eigenvalues_im [ivec - 1] && ivec - pair_index > 1) {
-			for (integer j = 1; j <= n; j ++) {
-				eigenvectors_reim [j] [2 * (ivec - 1) - 1]= eigenvectors [ivec - 1] [j];
-				eigenvectors_reim [j] [2 * (ivec - 1)] = eigenvectors [ivec] [j];
-				eigenvectors_reim [j] [2 * ivec - 1]  = eigenvectors [ivec - 1] [j];
-				eigenvectors_reim [j] [2 * ivec] = eigenvectors [ivec] [j] != 0.0 ? -eigenvectors [ivec] [j] : 0.0; // avoid -0
-			}
-			pair_index = ivec; // guard for multiple equal complex conjugate pairs
-		}
+void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVEC *out_eigenvalues, automatrix<dcomplex> *out_eigenvectors) {
+	if (! (out_eigenvalues || out_eigenvectors))
+		return;
+	Melder_assert (data.nrow == data.ncol);
+	autoMAT a = newMATtranspose (data);   // lapack needs column major layout
+	autoVEC eigenvalues_re = newVECraw (a.nrow);
+	autoVEC eigenvalues_im = newVECraw (a.nrow);
+	autoMAT eigenvectors_right;
+	double *p_evec_right = nullptr;
+	if (out_eigenvectors) {
+		eigenvectors_right = newMATraw (a.nrow, a.nrow);
+		p_evec_right = & eigenvectors_right [1] [1];
 	}
-	if (out_eigenvectors_reim)
-		*out_eigenvectors_reim = eigenvectors_reim.move();
-}
 
-void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_left_ev, autoMAT *out_right_ev, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im) {
-	Melder_assert (a.nrow == a.ncol);
-	integer n = a.nrow;
-	
-	autoMAT data = newMATtranspose (a);   // lapack is fortran storage
-	autoVEC eigenvalues_re = newVECraw (n);
-	autoVEC eigenvalues_im = newVECraw (n);
-
-	autoMAT left_ev;
-	double *p_left_ev = nullptr;
-	if (out_left_ev) {
-		left_ev = newMATraw (n, n);
-		p_left_ev = & left_ev [1] [1];
-	}
-	autoMAT right_ev;
-	double *p_right_ev = nullptr;
-	if (out_right_ev) {
-		right_ev = newMATraw (n, n);
-		p_right_ev = & right_ev [1] [1];
-	}
-	conststring8 jobvl = out_left_ev ? "V" : "N";
-	conststring8 jobvr = out_right_ev ? "V" : "N";
 	double wtmp;
 	integer lwork = -1, info;
-	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n, & eigenvalues_re [1],
-		& eigenvalues_im [1], p_left_ev, n, p_right_ev, n, & wtmp, lwork, & info);
+	const char *jobvl = "No vectors";
+	const char *jobvr = ( out_eigenvectors ? "Vectors Yes" : "No vectors" );
+	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
+		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
+		a.nrow, & wtmp, lwork, & info);
 	Melder_require (info == 0,
 		U"NUMlapack_dhseqr_ query returns error ", info, U".");
 	
 	lwork = Melder_iceiling (wtmp);
 	autoVEC work = newVECraw (lwork);
-	NUMlapack_dgeev_ (jobvl, jobvr, n, & data [1] [1], n, & eigenvalues_re [1],
-		& eigenvalues_im [1], p_left_ev, n, p_right_ev, n, & work [1], lwork, & info);
-	Melder_require (info == 0,
-		U"NUMlapack_dhseqr_ returns error ", info, U".");
-	
-	if (out_right_ev)
-		*out_right_ev = right_ev.move();
-	if (out_left_ev)
-		*out_left_ev = left_ev.move();
-	if (out_eigenvalues_re)
-		*out_eigenvalues_re = eigenvalues_re.move();
-	if (out_eigenvalues_im)
-		*out_eigenvalues_im = eigenvalues_im.move();
+	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
+		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
+		a.nrow, & work [1], lwork, & info);
+	integer numberOfEigenvalues = a.nrow, istart = 0;
+	if (info > 0)
+		istart = info; // only evals [info+1: a.nrow], no eigenvectors
+		
+	if (out_eigenvalues) {
+		numberOfEigenvalues -= istart;
+		autoCOMPVEC eigenvalues = newCOMPVECraw (numberOfEigenvalues); // vec in column
+		for (integer ival = 1; ival <= numberOfEigenvalues; ival ++) {
+			eigenvalues [ival] .real (eigenvalues_re [istart + ival]);
+			eigenvalues [ival] .imag (eigenvalues_im [istart + ival]);
+		}
+		*out_eigenvalues = eigenvalues.move();
+	}
+	if (out_eigenvectors && istart == 0) {
+		automatrix<dcomplex> evecs = newmatrixzero<dcomplex> (numberOfEigenvalues, a.nrow);
+		constvector<dcomplex> evals = (*out_eigenvalues).get();
+		/*
+			The following processing is based on the fact that the eigenvalues
+			are either real or occur in pairs (a+ib, a-ib).
+		*/
+		integer ivec = 1;
+		while (ivec <= numberOfEigenvalues) {
+			for (integer icol = 1; icol <= a.nrow; icol ++)
+				evecs [ivec] [icol] .real (eigenvectors_right [icol] [ivec]);
+			// imaginary part is zero by initialisation
+			if (evals [ivec].imag() != 0.0) {
+				for (integer icol = 1; icol <= a.nrow; icol ++) {
+					evecs [ivec    ] [icol] .imag ( eigenvectors_right [icol][ivec + 1]);
+					evecs [ivec + 1] [icol] .real ( eigenvectors_right [icol][ivec    ]);
+					evecs [ivec + 1] [icol] .imag (-eigenvectors_right [icol][ivec + 1]);
+				}
+				ivec ++;
+			}
+			ivec ++;
+		}
+		*out_eigenvectors = evecs.move();
+	}
 }
 
 void MAT_asPrincipalComponents_preallocated (MATVU result, constMATVU const& m, integer numberOfComponents) {
