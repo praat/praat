@@ -565,10 +565,20 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 	}
 }
 
+static bool isSymmetric (Matrix me) {
+	for (integer irow = 1; irow <= my ny - 1; irow ++)
+		for (integer icol = irow + 1; icol <= my nx; icol ++)
+			if (my z [irow] [icol] != my z [icol][irow])
+				return false;
+	return true;
+}
+
 void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
 	try {
 		Melder_require (my nx == my ny, 
 			U"The number of rows (here ", my ny, U") should be equal to the number of columns (here ", my nx, U").");
+		Melder_require (isSymmetric (me),
+			U"The matrix should be symmetric.");
 		autoEigen eigen = Thing_new (Eigen);
 		Eigen_initFromSymmetricMatrix (eigen.get(), my z.get());
 		autoMatrix eigenvectors = Data_copy (me);

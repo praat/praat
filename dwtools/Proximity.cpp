@@ -125,25 +125,25 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		/*
 			Get eigenvalues
 		*/
-		autoVEC eigenvalues_re, eigenvalues_im;
-		MAT_getEigenSystemFromGeneralMatrix (b.get(), nullptr, nullptr, & eigenvalues_re, & eigenvalues_im);
+		autoCOMPVEC eigenvalues;
+		MAT_getEigenSystemFromGeneralSquareMatrix (b.get(), & eigenvalues, nullptr);
 		/*
 			Get largest real eigenvalue
 		*/
-		double largestEigenvalue = - fabs (eigenvalues_re [1]);
 		integer numberOfRealEigenvalues = 0;
+		double largestRealEigenvalue = std::numeric_limits<double>::lowest();
 		for (integer i = 1; i <= nPoints2; i ++) {
-			if (eigenvalues_im [i] == 0.0) {
+			if (eigenvalues [i] .imag() == 0.0) {
 				++ numberOfRealEigenvalues;
-				if (eigenvalues_re [i] > largestEigenvalue)
-					largestEigenvalue = eigenvalues_re [i];
+				if (eigenvalues [i] .real() > largestRealEigenvalue)
+					largestRealEigenvalue = eigenvalues [i] .real();
 			}
 		}
 		
-		Melder_require (largestEigenvalue >= 0,
+		Melder_require (largestRealEigenvalue >= 0,
 			U"The largest eigenvalue should be positive.");
 		
-		additiveConstant = largestEigenvalue;
+		additiveConstant = largestRealEigenvalue;
 		return additiveConstant;
 	} catch (MelderError) {
 		Melder_throw (U"Additive constant not calculated.");

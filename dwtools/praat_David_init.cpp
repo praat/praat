@@ -3634,7 +3634,14 @@ DO
 		double result = NUMnorm (my z.all(), power);
 	NUMBER_ONE_END (U" (norm with power = ", power, U")")
 }
-	
+
+/*
+DIRECT (COMPVEC_Matrix_listEigenvalues) {
+	NUMCOMPVEC_ONE (Matrix)
+		autoCOMPVEC result = Matrix_listEigenvalues (me);
+	NUMCOMPVEC_ONE_END (U"")
+}*/
+
 FORM (MODIFY_Matrix_scale, U"Matrix: Scale", nullptr) {
 	LABEL (U"self[row, col] := self[row, col] / `Scale factor'")
 	RADIO (scaleMethod, U"Scale factor", 1)
@@ -8438,6 +8445,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, REAL_Matrix_getStandardDeviation);
 	praat_addAction1 (classMatrix, 0, U"Mathematical -", U"Get standard deviation...", 1, nullptr);
 	praat_addAction1 (classMatrix, 0, U"Get norm...", U"Mathematical -", 2, REAL_Matrix_getNorm);
+	//praat_addAction1 (classMatrix, 0, U"List eigenvalues", U"Get norm...", 2, COMPVEC_Matrix_listEigenvalues);
 	
 	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, NEW_Matrix_transpose);
 	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, NEW_Matrix_solveEquation);
