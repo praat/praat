@@ -77,6 +77,7 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVEC *out_eigenvalues, automatrix<dcomplex> *out_eigenvectors) {
 	if (! (out_eigenvalues || out_eigenvectors))
 		return;
+	Melder_assert (data.nrow == data.ncol);
 	autoMAT a = newMATtranspose (data);   // lapack needs column major layout
 	autoVEC eigenvalues_re = newVECraw (a.nrow);
 	autoVEC eigenvalues_im = newVECraw (a.nrow);
@@ -89,8 +90,8 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 
 	double wtmp;
 	integer lwork = -1, info;
-	const char *jobvl = ( out_eigenvectors ? "Vectors Yes" : "No vectors" );
-	const char *jobvr = jobvl;
+	const char *jobvl = "No vectors";
+	const char *jobvr = ( out_eigenvectors ? "Vectors Yes" : "No vectors" );
 	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
 		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
 		a.nrow, & wtmp, lwork, & info);

@@ -560,7 +560,7 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 	try {
 		Melder_require (my nx == my ny,
 			U"The Matrix should be square.");
-		Melder_require (! (out_eigenvectors || out_eigenvalues),
+		Melder_require ((out_eigenvectors || out_eigenvalues),
 			U"You should want either eigenvalues or eigenvectors or both to be calculated.");
 		
 		autoCOMPVEC eigenvalues;
