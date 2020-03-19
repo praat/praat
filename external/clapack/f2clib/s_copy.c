@@ -10,7 +10,8 @@
 
 void s_copy(char *a, const char *b, integer la, integer lb)
 {
-	char *aend, *bend;
+	char *aend;
+	const char *bend;
 
 	aend = a + la;
 
@@ -27,7 +28,7 @@ void s_copy(char *a, const char *b, integer la, integer lb)
 #endif
 
 	else {
-		bend = const_cast<char *>(b) + lb;
+		bend = b + lb;
 #ifndef NO_OVERWRITE
 		if (a <= b || a >= bend)
 #endif
