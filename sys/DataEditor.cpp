@@ -554,7 +554,7 @@ void structVectorEditor :: v_showMembers () {
 	integer firstElement = d_minimum + (d_topField - 1) / elementSize;
 
 	for (integer ielement = firstElement; ielement <= d_maximum; ielement ++) {
-		unsigned char *elementAddress = (unsigned char *) our d_address + ielement * our d_description -> size;
+		unsigned char *elementAddress = (unsigned char *) our d_address + (ielement - 1) * our d_description -> size;
 		int skip = ielement == firstElement ? (our d_topField - 1) % elementSize : 0;
 
 		if (++ our d_irow > kDataSubEditor_MAXNUM_ROWS) return;

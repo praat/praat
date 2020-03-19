@@ -13,6 +13,7 @@ include makefile.defs
 
 # Makes the Praat executable in the source directory.
 all:
+	$(MAKE) -C external/clapack
 	$(MAKE) -C external/gsl
 	$(MAKE) -C external/glpk
 	$(MAKE) -C external/mp3
@@ -41,7 +42,10 @@ all:
 		external/espeak/libespeak.a \
 		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
-		external/glpk/libglpk.a external/gsl/libgsl.a \
+		external/glpk/libglpk.a \
+		external/clapack/liblapack.a external/clapack/libblas.a \
+		external/clapack/libf2c.a \
+		external/gsl/libgsl.a \
 		$(LIBS)
 
 clean:

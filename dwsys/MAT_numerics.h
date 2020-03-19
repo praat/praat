@@ -44,26 +44,19 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		eigenvalues, eigenvalues sorted according to sortAscending
 */
 
-void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvectors, autoMAT *out_righteigenvectors, autoVEC *out_eigenvalues_re, autoVEC *out_eigenvalues_im);
+void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& inout_a, autoCOMPVEC *out_eigenvalues, automatrix<dcomplex> *out_eigenvectors);
 /* no standard sorting with complex numbers.
-	Compute eigenvalues of general nxn matrix with optionally the left/right eigenvectors.
+	Compute eigenvalues of general nxn matrix with right eigenvectors.
 	There is no standard sorting with complex numbers.
 	Input:
 	Output:
-		out_eigenvalues_re, out_eigenvalues_im
-			the real and imaginary parts of the eigenvalues.
+		inout_a has been overwriten
+		out_eigenvalues
+			the eigenvalues.
 			Complex conjugate pairs of eigenvalues appear consecutively
             with the eigenvalue having the positive imaginary part first.
-		out_righteigenvectors, out_lefteigenvectors:
-			the left and right eigenvectors (stored row-wise!, compressed)
-			if the j-th eigenvalue is real the eigenvector is real and in row j.
-			if j and j+1 form a complex conjugate pair, the two eigenvectors are 
-			complex conjugates, whose real part is in j and its imaginary part in j+1.
-*/
-
-void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re, constVEC eigenvalues_im, autoMAT *out_eigenvectors_reim);
-/*
-	Decompresses each eigenvector row into two consecutive columns (real and imaginary part)
+		out_eigenvectors
+			the eigenvectors (stored row-wise!)
 */
 
 void MAT_asPrincipalComponents_preallocated (MATVU pc, constMATVU const& m, integer numberOfComponents);

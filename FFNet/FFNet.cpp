@@ -1,6 +1,6 @@
 /* FFNet.cpp
  *
- * Copyright (C) 1997-2019 David Weenink
+ * Copyright (C) 1997-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

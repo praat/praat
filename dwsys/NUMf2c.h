@@ -3,7 +3,7 @@
  /* NUMf2c.h  --  Standard Fortran to C header file
  *                Auxiliary f2c routines.
  *
- * Copyright (C) 1994-2011 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1994-2020 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ integer lsame_(const char *ca, const char *cb);
 
 double pow_di(double *ap, integer *bp);
 
-void s_cat(char *lp, const char *rpp[], integer rnp[], integer *np, integer ll);
+void s_cat(char *lp, char **rpp, integer *rnp, integer *np, integer ll);
 /* Unless compiled with -DNO_OVERWRITE, this variant of s_cat allows the
  * target of a concatenation to appear on its right-hand side (contrary
  * to the Fortran 77 Standard, but in accordance with Fortran 90).

@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,7 @@
 #include "NUMmachar.h"
 #include "Collection.h"
 #include "../melder/melder.h"
-#include "NUMclapack.h"
-#include "NUMcblas.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"
@@ -125,43 +124,26 @@ double SVD_getTolerance (SVD me) {
 	return my tolerance;
 }
 
-/*
-	Compute svd(A) = U D Vt.
-	The svd routine from CLAPACK uses (fortran) column major storage, while	C uses row major storage.
-	To solve the problem above we have to transpose the matrix A, calculate the
-	solution and transpose the U and Vt matrices of the solution.
-	However, if we solve the transposed problem svd(A') = V D U', we have less work to do:
-	We may call the algorithm with reverted row/column dimensions, and we switch the U and V'
-	output arguments.
-	The only thing that we have to do afterwards is transposing the (small) V matrix
-	because our SVD-object has row vectors in v.
-	The sv's are already sorted.
-	int NUMlapack_dgesvd (char *jobu, char *jobvt, integer *m, integer *n, double *a, integer *lda,
-		double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
-		integer *lwork, integer *info);
-*/
 void SVD_compute (SVD me) {
 	try {
-		char jobu = 'S'; // the first min(m,n) columns of U are returned in the array U;
-		char jobvt = 'O'; // the first min(m,n) rows of V**T are overwritten on the array A;
-		integer m = my numberOfColumns; // number of rows of input matrix 
+		autoMAT a = newMATcopy (my u.get());
+		integer m = my numberOfColumns; // number of rows of input matrix
 		integer n = my numberOfRows; // number of columns of input matrix
-		integer lda = m, ldu = m, ldvt = m;
-		integer info, lwork = -1;
-		double wt [2];
-
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
-		Melder_require (info == 0, U"SVD could not be precomputed.");
-
-		lwork = wt [0];
+		double wtmp;
+		integer lwork = -1, info;
+		NUMlapack_dgesvd_ ("S", "O", m, n, & my u [1] [1], m, & my d [1], & my v [1] [1], m, nullptr, m, & wtmp, lwork, & info);
+		Melder_require (info == 0,
+			U"NUMlapack_dgesvd_ query returns error ", info, U".");
+		
+		lwork =  Melder_roundUp (wtmp);
 		autoVEC work = newVECraw (lwork);
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
-		Melder_require (info == 0, U"SVD could not be computed.");
+		NUMlapack_dgesvd_ ("S", "O", m, n, & my u [1] [1], m, & my d [1], & my v [1] [1], m, nullptr, m, & work [1], lwork, & info);		
+		Melder_require (info == 0,
+			U"NUMlapack_dgesvd_ returns error ", info, U".");
 		/*
 			Because we store the eigenvectors row-wise, they must be transposed
 		*/
 		MATtranspose_inplace_mustBeSquare (my v.get());
-		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
 	}
@@ -374,8 +356,7 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 
 autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 	try {
-		integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
-		integer lwork = std::max (std::max (3 * n, m), p) + n;
+		const integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
 
 		// Store the matrices a and b as column major!
 		autoMAT a = newMATtranspose (m1);
@@ -383,14 +364,14 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		autoMAT q = newMATraw (n, n);
 		autoVEC alpha = newVECraw (n);
 		autoVEC beta = newVECraw (n);
+		integer lwork = std::max (std::max (3 * n, m), p) + n;		
 		autoVEC work = newVECraw (lwork);
 		autoINTVEC iwork = newINTVECraw (n);
 
-		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		integer k, l, info;
-		NUMlapack_dggsvd (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
-		    & a [1] [1], & m, & b [1] [1], & p, alpha.begin(), beta.begin(), nullptr, & m,
-		    nullptr, & p, & q [1] [1], & n, work.begin(), iwork.begin(), & info);
+		NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & l,
+		    & a [1] [1], m, & b [1] [1], p, & alpha [1], & beta [1], nullptr, m,
+		    nullptr, p, & q [1] [1], n, & work [1], & iwork [1], & info);
 		Melder_require (info == 0,
 			U"dggsvd failed with error = ", info);
 

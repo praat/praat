@@ -1,6 +1,6 @@
 /* Eigen.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 #include "Eigen.h"
 #include "MAT_numerics.h"
 #include "NUMmachar.h"
-#include "NUMclapack.h"
+#include "NUMlapack.h"
 #include "NUM2.h"
 #include "SVD.h"
 
@@ -142,10 +142,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	Melder_require (a.ncol == b.ncol,
 		U"The numbers of columns should be equal, not ", a.ncol, U" and ", b.ncol, U".");
 	// Eigen has not been inited yet.
-	double *u = nullptr, *v = nullptr;
-	char jobu = 'N', jobv = 'N', jobq = 'Q';
 	integer k, ll, m = a.nrow, n = a.ncol, p = b.nrow;
-	integer lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
 	integer lwork = std::max (std::max (3 * n, m), p) + n, info;
 
 	/*	Melder_assert (numberOfRows >= numberOfColumns || numberOfRows_b >= numberOfColumns);*/
@@ -160,9 +157,9 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoMAT ac = newMATtranspose (a);
 	autoMAT bc = newMATtranspose (b);
 
-	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
-		& ac [1][1], & lda, & bc [1][1], & ldb, alpha.begin(), beta.begin(), u, & ldu,
-		v, & ldv, & q [1][1], & ldq, work.begin(), iwork.begin(), & info);
+	(void) NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & ll,
+		& ac [1][1], m, & bc [1][1], p, & alpha [1], & beta [1], nullptr, m,
+		nullptr, p, & q [1][1], n, work.begin(), iwork.begin(), & info);
 	Melder_require (info == 0,
 		U"dggsvd fails with code ", info, U".");
 	/*

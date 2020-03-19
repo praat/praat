@@ -2,7 +2,7 @@
 #define _NUMcomplex_h_
 /* NUMcomplex.h
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /* Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
  * alpha and x are complex numbers with Re(alpha) > 0
  */
-dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im);
+dcomplex NUMincompleteGammaFunction (const dcomplex alpha, const dcomplex x);
 
 /*
 	Get response of a truncated gammatone filter defined on the interval [0, truncationTime] at the resonance frequency
