@@ -239,8 +239,8 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 		uh_CM [irow][irow - 1] = 1.0;
 	}
 	/*
-		We don't need to find out size of the working storage needed because for the current version 
-		of NUMlapack_dhseqr (20200413) its size equals maximally 6*n.
+		We don't need to find out size of the working storage needed because for the current version 3.1.1.1 
+		of NUMlapack_dhseqr (20200313) its size equals maximally 6*n.
 	*/
 	integer endIndex = n * n;
 	VEC wr = workspace. part (endIndex + 1, endIndex + n);

@@ -26,7 +26,6 @@ static integer c__1 = 1;
     char normin[1];
     doublereal smlnum;
 
-
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
@@ -73,7 +72,6 @@ static integer c__1 = 1;
 /*          matrix with KL+KU superdiagonals in rows 1 to KL+KU+1, and */
 /*          the multipliers used during the factorization are stored in */
 /*          rows KL+KU+2 to 2*KL+KU+1. */
-
 /*  LDAB    (input) INTEGER */
 /*          The leading dimension of the array AB.  LDAB >= 2*KL+KU+1. */
 

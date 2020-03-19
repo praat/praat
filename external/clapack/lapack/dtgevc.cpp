@@ -465,7 +465,6 @@ L10:
 	bnorm = max(bnorm,temp2);
 /* L50: */
     }
-
     ascale = 1. / max(anorm,safmin);
     bscale = 1. / max(bnorm,safmin);
 
@@ -1276,7 +1275,6 @@ L220:
 /* L360: */
 		    }
 		}
-
 		il2by2 = FALSE_;
 L370:
 		;
