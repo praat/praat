@@ -11,7 +11,7 @@ static integer c__1 = 1;
 static doublereal c_b51 = -1.;
 static doublereal c_b52 = 1.;
 
-/* Subroutine */ int dtgsyl_(char *trans, integer *ijob, integer *m, integer *
+/* Subroutine */ int dtgsyl_(const char *trans, integer *ijob, integer *m, integer *
 	n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
 	doublereal *c__, integer *ldc, doublereal *d__, integer *ldd, 
 	doublereal *e, integer *lde, doublereal *f, integer *ldf, doublereal *
@@ -27,26 +27,9 @@ static doublereal c_b52 = 1.;
     integer i__, j, k, p, q, ie, je, mb, nb, is, js, pq;
     doublereal dsum;
     integer ppqq;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dgemm_(char *, char *, integer *, integer *, integer *
-, doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
-//    extern logical lsame_(char *, char *);
     integer ifunc, linfo, lwmin;
     doublereal scale2;
-    extern /* Subroutine */ int dtgsy2_(char *, integer *, integer *, integer 
-	    *, doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	     integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *, integer *);
     doublereal dscale, scaloc;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dlaset_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer iround;
     logical notran;
     integer isolve;

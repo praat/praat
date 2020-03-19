@@ -28,14 +28,9 @@
     doublereal dtisq;
     logical swtch;
     doublereal dtnsq;
-    extern /* Subroutine */ int dlaed6_(integer *, logical *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *)
-	    , dlasd5_(integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
     doublereal delsq2, dtnsq1;
     logical swtch3;
-//    extern doublereal dlamch_(char *);
-    logical orgati;
+   logical orgati;
     doublereal erretm, dtipsq, rhoinv;
 
 

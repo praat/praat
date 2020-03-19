@@ -24,20 +24,9 @@ static doublereal c_b19 = -1.;
     doublereal eps;
     integer kase;
     doublereal safe1, safe2;
-//    extern logical lsame_(char *, char *);
     integer isave[3];
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), daxpy_(integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *), dtpmv_(char *, 
-	    char *, char *, integer *, doublereal *, doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dtpsv_(char *, char *, char *, integer *, 
-	    doublereal *, doublereal *, integer *), 
-	    dlacn2_(integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *, integer *);
-//    extern doublereal dlamch_(char *);
     doublereal safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
     char transt[1];
     logical nounit;

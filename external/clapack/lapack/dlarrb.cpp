@@ -11,16 +11,11 @@
     integer i__1;
     doublereal d__1, d__2;
 
-    /* Builtin functions
-    double log(doublereal); */
-
     /* Local variables */
     integer i__, k, r__, i1, ii, ip;
     doublereal gap, mid, tmp, back, lgap, rgap, left;
     integer iter, nint, prev, next;
     doublereal cvrgd, right, width;
-    extern integer dlaneg_(integer *, doublereal *, doublereal *, doublereal *
-, doublereal *, integer *);
     integer negcnt;
     doublereal mnwdth;
     integer olnint, maxitr;

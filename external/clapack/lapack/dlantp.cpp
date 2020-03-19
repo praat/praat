@@ -5,25 +5,18 @@
 
 static integer c__1 = 1;
 
-doublereal dlantp_(char *norm, char *uplo, char *diag, integer *n, doublereal 
+doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer *n, doublereal 
 	*ap, doublereal *work)
 {
     /* System generated locals */
     integer i__1, i__2;
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions
-    double sqrt(doublereal); */
-
     /* Local variables */
     integer i__, j, k;
     doublereal sum, scale;
     logical udiag;
-//    extern logical lsame_(char *, char *);
     doublereal value;
-    extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

@@ -15,17 +15,7 @@ static doublereal c_b8 = -1.;
 
     /* Local variables */
     integer i__, j, jp;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *), dscal_(integer *, doublereal *, doublereal *, integer 
-	    *);
     doublereal sfmin;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

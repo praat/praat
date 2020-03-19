@@ -20,7 +20,7 @@ static doublereal c_b4 = 1.;
     doublereal temp;
     logical swap;
     doublereal tsign;
-//    extern doublereal dlamch_(char *);
+ 
     logical gasmal;
 
 

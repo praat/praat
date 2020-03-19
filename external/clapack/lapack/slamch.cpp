@@ -1,4 +1,5 @@
 #include "f2c.h"
+#include "clapack_missing_prototypes.h"
 #include "melder.h"
 #include "blaswrap.h"
 
@@ -14,7 +15,7 @@ int slamc4_(integer *emin, real *start, integer *base);
 int slamc5_(integer *beta, integer *p, integer *emin, 
 	logical *ieee, integer *emax, real *rmax);
 
-doublereal slamch_(char *cmach)
+doublereal slamch_(const char *cmach)
 {
     /* Initialized data */
 
@@ -23,9 +24,6 @@ doublereal slamch_(char *cmach)
     /* System generated locals */
     integer i__1;
     real ret_val;
-
-    /* Builtin functions */
-    double pow_ri(real *, integer *);
 
     /* Local variables */
     static real t;
@@ -176,7 +174,6 @@ doublereal slamch_(char *cmach)
     static integer lbeta;
     real savec;
     static logical lieee1;
-    extern doublereal slamc3_(real *, real *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -376,10 +373,6 @@ L30:
     /* System generated locals */
     integer i__1;
     real r__1, r__2, r__3, r__4, r__5;
-
-    /* Builtin functions */
-    double pow_ri(real *, integer *);
-    //integer s_wsfe(cilist *), do_fio(integer *, char *, ftnlen), e_wsfe(void);
 
     /* Local variables */
     real a, b, c__;
@@ -821,7 +814,6 @@ L10:
     integer try__, lexp;
     real oldy;
     integer uexp, nbits;
-    extern doublereal slamc3_(real *, real *);
     real recbas;
     integer exbits, expsum;
 

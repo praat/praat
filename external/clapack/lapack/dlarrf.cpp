@@ -15,9 +15,6 @@ static integer c__1 = 1;
     integer i__1;
     doublereal d__1, d__2, d__3;
 
-    /* Builtin functions
-    double sqrt(doublereal); */
-
     /* Local variables */
     integer i__;
     doublereal s, bestshift, smlgrowth, eps, tmp, max1, max2, rrr1, rrr2, 
@@ -27,14 +24,10 @@ static integer c__1 = 1;
     integer ktry;
     doublereal fail2, avgap, ldmax, rdmax;
     integer shift;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical dorrr1;
-//    extern doublereal dlamch_(char *);
     doublereal ldelta;
     logical nofail;
     doublereal mingap, lsigma, rdelta;
-//    extern logical disnan_(doublereal *);
     logical forcer;
     doublereal rsigma, clwdth;
     logical sawnan1, sawnan2, tryrrr1;

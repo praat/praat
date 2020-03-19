@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "string.h"
 
-logical lsamen_(integer *n, char *ca, char *cb)
+logical lsamen_(integer *n, const char *ca, const char *cb)
 {
     /* System generated locals */
     integer i__1;
@@ -9,7 +9,6 @@ logical lsamen_(integer *n, char *ca, char *cb)
 
     /* Local variables */
     static integer i__;
-//    extern logical lsame_(char *, char *);
 
     ftnlen ca_len, cb_len;
 

@@ -16,13 +16,7 @@ static integer c_n1 = -1;
     /* Local variables */
     integer i__, j;
     doublereal eps, temp;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dlabad_(doublereal *, doublereal *);
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dlaswp_(integer *, doublereal *, integer *, 
-	    integer *, integer *, integer *, integer *);
     doublereal smlnum;
 
 

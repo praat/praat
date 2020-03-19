@@ -13,11 +13,6 @@
     doublereal a, b, c__, d__, r__, s1, s2, ua11, ua12, ua21, ua22, vb11, 
 	    vb12, vb21, vb22, csl, csr, snl, snr, aua11, aua12, aua21, aua22, 
 	    avb11, avb12, avb21, avb22, ua11r, ua22r, vb11r, vb22r;
-    extern /* Subroutine */ int dlasv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), dlartg_(doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

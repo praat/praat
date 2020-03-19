@@ -13,26 +13,13 @@ static integer c__1 = 1;
     integer a_dim1, a_offset, i__1, i__2, i__3;
     doublereal d__1, d__2;
 
-    /* Builtin functions
-    double sqrt(doublereal); */
-
     /* Local variables */
     integer i__, j, mn;
     doublereal aii;
     integer pvt;
     doublereal temp;
-//    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     doublereal temp2, tol3z;
-    extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *);
     integer offpi, itemp;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

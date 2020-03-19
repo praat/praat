@@ -17,30 +17,13 @@ static doublereal c_b16 = 0.;
     integer a_dim1, a_offset, f_dim1, f_offset, i__1, i__2;
     doublereal d__1, d__2;
 
-    /* Builtin functions
-    double sqrt(doublereal);
-    integer i_dnnt(doublereal *); */
-
     /* Local variables */
     integer j, k, rk;
     doublereal akk;
     integer pvt;
     doublereal temp;
-//    extern doublereal dnrm2_(integer *, doublereal *, integer *);
     doublereal temp2, tol3z;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *),
-	     dgemv_(char *, integer *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *);
     integer itemp;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     integer lsticc, lastrk;
 
 

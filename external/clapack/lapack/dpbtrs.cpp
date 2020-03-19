@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dpbtrs_(char *uplo, integer *n, integer *kd, integer *
+/* Subroutine */ int dpbtrs_(const char *uplo, integer *n, integer *kd, integer *
 	nrhs, doublereal *ab, integer *ldab, doublereal *b, integer *ldb, 
 	integer *info)
 {
@@ -14,11 +14,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j;
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtbsv_(char *, char *, char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

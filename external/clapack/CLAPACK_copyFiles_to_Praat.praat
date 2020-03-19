@@ -1,5 +1,5 @@
 # CLAPACK_copyFiles_to_Praat.praat
-# djmw 20200412
+# djmw 20200419
 # 
 # LAPACK sources copied form http://www.netlib.org/clapack/
 #
@@ -69,12 +69,7 @@ endif
 
 modified_blas$ = ""
 modified_clapack$ = ""
-# If we really want the c++ compiler
-make_rule$ = ".SUFFIXES: .c .o" + newline$ +
-	... ".c.o:" + newline$ +
-	... tab$ + "$(CXX) $(CXXFLAGS) -I .. -I ../../../melder -c -o $@ $<" + newline$ + newline$
 
-makerules$ = ""
 if bLAS
 	todir$ = lapackpraat$ + "blas/"
 	@make_makefile: todir$, "libblas.a", "*.c", ".c"
@@ -131,7 +126,7 @@ procedure make_makefile:  .directory$, .lib$, .file_globber$, .extension$
 	... "# with the script """ + thisScriptName$ + """."+ newline$ +
 	... "# For CLAPACK version " +  lapack_version$ + "." + newline$ + newline$ +
 	... "include ../../../makefile.defs" + newline$ + newline$ +
-	... make_rule$ +
+	... "CPPFLAGS = -I ../../../melder -I .." + newline$ + newline$ +
 	... "OBJECTS = "
 	.dlist = Create Strings as file list: .lib$, .directory$  + .file_globber$
 	@add_make_objects: .dlist, .extension$

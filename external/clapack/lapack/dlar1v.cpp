@@ -22,8 +22,8 @@
     doublereal eps, tmp;
     integer neg1, neg2, indp, inds;
     doublereal dplus;
-//    extern doublereal dlamch_(char *);
-//    extern logical disnan_(doublereal *);
+ 
+ 
     integer indlpl, indumn;
     doublereal dminus;
     logical sawnan1, sawnan2;

@@ -16,11 +16,6 @@ static integer c__1 = 1;
     integer i__, i1, i2, i3, mi, ni, nq;
     doublereal aii;
     logical left;
-    extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *);
-//    extern logical lsame_(char *, char *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran;
 
 

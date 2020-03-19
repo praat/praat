@@ -12,10 +12,10 @@
     /* Local variables */
     integer i__, j, l, info;
     doublereal temp1, temp2;
-//    extern logical lsame_(char *, char *);
+ 
     integer nrowa;
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+ 
 
 /*     .. Scalar Arguments .. */
 /*     .. */

@@ -9,15 +9,7 @@
 
     /* Local variables */
     doublereal c__, a11, a12, a22, tau;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
-    extern /* Subroutine */ int dlas2_(doublereal *, doublereal *, doublereal 
-	    *, doublereal *, doublereal *), daxpy_(integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *);
     doublereal ssmax;
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

@@ -14,7 +14,7 @@
     integer i__;
     doublereal u[128];
     integer il, iv, il2;
-//    extern /* Subroutine */ int dlaruv_(integer *, integer *, doublereal *);
+ 
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

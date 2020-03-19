@@ -18,7 +18,7 @@ static doublereal c_b4 = 1.;
     /* Local variables */
     doublereal p, z__, aa, bb, cc, dd, cs1, sn1, sab, sac, eps, tau, temp, 
 	    scale, bcmax, bcmis, sigma;
-//    extern doublereal dlapy2_(doublereal *, doublereal *), dlamch_(char *);
+ 
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

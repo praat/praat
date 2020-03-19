@@ -17,7 +17,7 @@
     doublereal mid, eps, tmp1, tmp2, left, atoli, right;
     integer itmax;
     doublereal rtoli, tnorm;
-//    extern doublereal dlamch_(char *);
+ 
     integer negcnt;
 
 

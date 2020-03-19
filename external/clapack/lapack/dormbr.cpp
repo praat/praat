@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dormbr_(char *vect, char *side, char *trans, integer *m, 
+/* Subroutine */ int dormbr_(const char *vect, const char *side, const char *trans, integer *m, 
 	integer *n, integer *k, doublereal *a, integer *lda, doublereal *tau, 
 	doublereal *c__, integer *ldc, doublereal *work, integer *lwork, 
 	integer *info)
@@ -209,16 +209,16 @@ static integer c__2 = 2;
 	if (applyq) {
 	    if (left) {
 /* Writing concatenation */
-		i__3[0] = 1, a__1[0] = side;
-		i__3[1] = 1, a__1[1] = trans;
+		i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 		i__1 = *m - 1;
 		i__2 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, &i__1, n, &i__2, &c_n1);
 	    } else {
 /* Writing concatenation */
-		i__3[0] = 1, a__1[0] = side;
-		i__3[1] = 1, a__1[1] = trans;
+		i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 		i__1 = *n - 1;
 		i__2 = *n - 1;
@@ -227,16 +227,16 @@ static integer c__2 = 2;
 	} else {
 	    if (left) {
 /* Writing concatenation */
-		i__3[0] = 1, a__1[0] = side;
-		i__3[1] = 1, a__1[1] = trans;
+		i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 		i__1 = *m - 1;
 		i__2 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMLQ", ch__1, &i__1, n, &i__2, &c_n1);
 	    } else {
 /* Writing concatenation */
-		i__3[0] = 1, a__1[0] = side;
-		i__3[1] = 1, a__1[1] = trans;
+		i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+		i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 		s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 		i__1 = *n - 1;
 		i__2 = *n - 1;

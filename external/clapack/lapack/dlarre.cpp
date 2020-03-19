@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dlarre_(char *range, integer *n, doublereal *vl, 
+/* Subroutine */ int dlarre_(const char *range, integer *n, doublereal *vl, 
 	doublereal *vu, integer *il, integer *iu, doublereal *d__, doublereal 
 	*e, doublereal *e2, doublereal *rtol1, doublereal *rtol2, doublereal *
 	spltol, integer *nsplit, integer *isplit, integer *m, doublereal *w, 
@@ -40,40 +40,16 @@ static integer c__2 = 2;
     doublereal rtol;
     integer iseed[4];
     doublereal avgap, sigma;
-//    extern logical lsame_(char *, char *);
     integer iinfo;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical norep;
-//    extern /* Subroutine */ int dlasq2_(integer *, doublereal *, integer *);
-//    extern doublereal dlamch_(char *);
     integer ibegin;
     logical forceb;
     integer irange;
     doublereal sgndef;
-    extern /* Subroutine */ int dlarra_(integer *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *, doublereal *, integer *, integer *, 
-	    integer *), dlarrb_(integer *, doublereal *, doublereal *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, doublereal *, integer *, integer *), dlarrc_(char *
-, integer *, doublereal *, doublereal *, doublereal *, doublereal 
-	    *, doublereal *, integer *, integer *, integer *, integer *);
     integer wbegin;
-    extern /* Subroutine */ int dlarrd_(char *, char *, integer *, doublereal 
-	    *, doublereal *, integer *, integer *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *, doublereal *, doublereal *, integer *
-, integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *);
     doublereal safmin, spdiam;
-    extern /* Subroutine */ int dlarrk_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *);
     logical usedqd;
     doublereal clwdth, isleft;
-    extern /* Subroutine */ int dlarnv_(integer *, integer *, integer *, 
-	    doublereal *);
     doublereal isrght, bsrtol, dpivot;
 
 

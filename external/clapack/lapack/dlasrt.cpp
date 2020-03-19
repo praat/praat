@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlasrt_(char *id, integer *n, doublereal *d__, integer *
+/* Subroutine */ int dlasrt_(const char *id, integer *n, doublereal *d__, integer *
 	info)
 {
     /* System generated locals */
@@ -13,11 +13,11 @@
     integer dir;
     doublereal tmp;
     integer endd;
-//    extern logical lsame_(char *, char *);
+ 
     integer stack[64]	/* was [2][32] */;
     doublereal dmnmx;
     integer start;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+ 
     integer stkpnt;
 
 

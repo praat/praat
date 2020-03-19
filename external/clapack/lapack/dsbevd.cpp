@@ -20,34 +20,14 @@ static integer c__1 = 1;
     doublereal eps;
     integer inde;
     doublereal anrm, rmin, rmax;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dgemm_(char *, char *, integer *, integer *, integer *
-, doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     integer iinfo, lwmin;
     logical lower, wantz;
     integer indwk2, llwrk2;
-//    extern doublereal dlamch_(char *);
     integer iscale;
-    extern /* Subroutine */ int dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
-    extern doublereal dlansb_(char *, char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *);
-    extern /* Subroutine */ int dstedc_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, integer *, integer *), dlacpy_(char *, integer 
-	    *, integer *, doublereal *, integer *, doublereal *, integer *);
     doublereal safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
-    extern /* Subroutine */ int dsbtrd_(char *, char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *), dsterf_(
-	    integer *, doublereal *, doublereal *, integer *);
-    integer indwrk, liwmin;
+	integer indwrk, liwmin;
     doublereal smlnum;
     logical lquery;
 

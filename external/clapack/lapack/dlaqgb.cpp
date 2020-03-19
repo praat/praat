@@ -11,7 +11,7 @@
     /* Local variables */
     integer i__, j;
     doublereal cj, large, small;
-//    extern doublereal dlamch_(char *);
+ 
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

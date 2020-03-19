@@ -17,21 +17,9 @@ static integer c__1 = 1;
 
     /* Local variables */
     doublereal r__, t, h1, h2, h3, wi, qq, rr, wr1, wr2, ulp;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *), dlag2_(
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *);
     doublereal anorm, bnorm, scale1, scale2;
-    extern /* Subroutine */ int dlasv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
-//    extern doublereal dlapy2_(doublereal *, doublereal *);
     doublereal ascale, bscale;
-//    extern doublereal dlamch_(char *);
     doublereal safmin;
-    extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

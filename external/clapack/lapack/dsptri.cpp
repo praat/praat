@@ -20,19 +20,9 @@ static doublereal c_b13 = 0.;
     doublereal t, ak;
     integer kc, kp, kx, kpc, npp;
     doublereal akp1;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal temp, akkp1;
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     integer kstep;
-    extern /* Subroutine */ int dspmv_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, doublereal *, 
-	     integer *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer kcnext;
 
 

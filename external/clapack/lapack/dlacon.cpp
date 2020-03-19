@@ -21,11 +21,7 @@ static doublereal c_b11 = 1.;
     static integer i__, j, iter;
     static doublereal temp;
     static integer jump;
-//    extern doublereal dasum_(integer *, doublereal *, integer *);
     static integer jlast;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     static doublereal altsgn, estold;
 
 

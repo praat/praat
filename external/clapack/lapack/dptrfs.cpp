@@ -20,17 +20,9 @@ static doublereal c_b11 = 1.;
     doublereal s, bi, cx, dx, ex;
     integer ix, nz;
     doublereal eps, safe1, safe2;
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *);
     integer count;
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal lstres;
-    extern /* Subroutine */ int dpttrs_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

@@ -14,7 +14,7 @@ integer dlaneg_(integer *n, doublereal *d__, doublereal *lld, doublereal *
     doublereal tmp;
     integer neg1, neg2;
     doublereal bsav, gamma, dplus;
-//    extern logical disnan_(doublereal *);
+ 
     integer negcnt;
     logical sawnan;
     doublereal dminus;

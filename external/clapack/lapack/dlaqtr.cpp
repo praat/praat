@@ -24,27 +24,11 @@ static logical c_true = TRUE_;
     doublereal v[4]	/* was [2][2] */, z__;
     integer j1, j2, n1, n2;
     doublereal si, xj, sr, rec, eps, tjj, tmp;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     integer ierr;
     doublereal smin, xmax;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern doublereal dasum_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *);
     integer jnext;
     doublereal sminw, xnorm;
-    extern /* Subroutine */ int dlaln2_(logical *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     doublereal *, doublereal *, integer *, doublereal *, doublereal *
-, doublereal *, integer *, doublereal *, doublereal *, integer *);
-    extern doublereal dlamch_(char *), dlange_(char *, integer *, 
-	    integer *, doublereal *, integer *, doublereal *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal scaloc;
-    extern /* Subroutine */ int dladiv_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *);
     doublereal bignum;
     logical notran;
     doublereal smlnum;

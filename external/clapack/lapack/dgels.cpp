@@ -21,7 +21,6 @@ static integer c__0 = 0;
     integer brow;
     logical tpsd;
     integer iascl, ibscl;
-//    extern logical lsame_(char *, char *);
     integer wsize;
     doublereal rwork[1];
     integer scllen;

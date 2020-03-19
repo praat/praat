@@ -18,10 +18,7 @@ doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a
     /* Local variables */
     integer i__, j;
     doublereal sum, absa, scale;
-//    extern logical lsame_(char *, char *);
     doublereal value;
-    extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

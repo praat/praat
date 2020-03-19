@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dtbmv_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtbmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *k, doublereal *a, integer *lda, doublereal *x, integer *incx)
 {
     /* System generated locals */
@@ -10,9 +10,9 @@
     /* Local variables */
     integer i__, j, l, ix, jx, kx, info;
     doublereal temp;
-//    extern logical lsame_(char *, char *);
+ 
     integer kplus1;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+ 
     logical nounit;
 
 /*     .. Scalar Arguments .. */

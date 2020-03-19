@@ -12,17 +12,11 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4, i__5;
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions
-    double sqrt(doublereal); */
-
     /* Local variables */
     integer i__, j, l;
     doublereal sum, scale;
     logical udiag;
-//    extern logical lsame_(char *, char *);
     doublereal value;
-    extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

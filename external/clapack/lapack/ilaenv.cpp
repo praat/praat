@@ -21,7 +21,6 @@ integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n
     static logical cname;
     static integer nbmin;
     static logical sname;
-//    extern integer ieeeck_(integer *, real *, real *);
     static char subnam[6];
 
     ftnlen name_len, opts_len;

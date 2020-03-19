@@ -16,11 +16,7 @@ static doublereal c_b11 = 1.;
     /* Local variables */
     integer i__;
     doublereal temp;
-//    extern doublereal dasum_(integer *, doublereal *, integer *);
     integer jlast;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal altsgn, estold;
 
 

@@ -15,7 +15,7 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer j, k, kb, nb, iws;
-//    extern logical lsame_(char *, char *);
+ 
     integer nbmin, iinfo;
     logical upper;
     integer ldwork, lwkopt;

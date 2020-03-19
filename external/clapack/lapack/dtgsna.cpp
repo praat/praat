@@ -10,7 +10,7 @@ static integer c__2 = 2;
 static logical c_false = FALSE_;
 static integer c__3 = 3;
 
-/* Subroutine */ int dtgsna_(char *job, char *howmny, logical *select, 
+/* Subroutine */ int dtgsna_(const char *job, const char *howmny, logical *select, 
 	integer *n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
 	doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, 
 	doublereal *s, doublereal *dif, integer *mm, integer *m, doublereal *

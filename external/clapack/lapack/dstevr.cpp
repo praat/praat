@@ -27,41 +27,17 @@ static integer c__4 = 4;
     logical test;
     doublereal tnrm;
     integer itmp1;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     char order[1];
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     integer lwmin;
     logical wantz;
-//    extern doublereal dlamch_(char *);
     logical alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
     logical valeig;
     doublereal safmin;
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
-//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
     integer indisp;
-    extern /* Subroutine */ int dstein_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, integer *, integer *), 
-	    dsterf_(integer *, doublereal *, doublereal *, integer *);
     integer indiwo;
-    extern /* Subroutine */ int dstebz_(char *, char *, integer *, doublereal 
-	    *, doublereal *, integer *, integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *, doublereal *, integer *, 
-	    integer *, doublereal *, integer *, integer *), 
-	    dstemr_(char *, char *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, integer *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, integer *, 
-	    logical *, doublereal *, integer *, integer *, integer *, integer 
-	    *);
     integer liwmin;
     logical tryrac;
     integer nsplit;

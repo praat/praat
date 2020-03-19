@@ -20,19 +20,8 @@ static doublereal c_b9 = 1.;
     doublereal t, r1, d11, d21, d22;
     integer jb, jj, kk, jp, kp, kw, kkw, imax, jmax;
     doublereal alpha;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dgemm_(char *, char *, integer *, integer *, integer *
-, doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dcopy_(integer *, 
-	    doublereal *, integer *, doublereal *, integer *), dswap_(integer 
-	    *, doublereal *, integer *, doublereal *, integer *);
     integer kstep;
     doublereal absakk;
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal colmax, rowmax;
 
 

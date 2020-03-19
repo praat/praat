@@ -11,7 +11,7 @@
     /* Local variables */
     integer i__;
     doublereal smin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+ 
 
 
 /*  -- LAPACK routine (version 3.1) -- */

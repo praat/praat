@@ -17,20 +17,11 @@ static integer c__1 = 1;
     doublereal eps;
     integer imax;
     doublereal rmin, rmax, tnrm;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     logical wantz;
-//    extern doublereal dlamch_(char *);
     integer iscale;
     doublereal safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
-//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
-	     integer *), dsteqr_(char *, integer *, doublereal *, doublereal *
-, doublereal *, integer *, doublereal *, integer *);
     doublereal smlnum;
 
 

@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgecon_(char *norm, integer *n, doublereal *a, integer *
+/* Subroutine */ int dgecon_(const char *norm, integer *n, doublereal *a, integer *
 	lda, doublereal *anorm, doublereal *rcond, doublereal *work, integer *
 	iwork, integer *info)
 {

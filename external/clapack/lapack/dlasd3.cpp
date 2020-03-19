@@ -25,8 +25,6 @@ static doublereal c_b26 = 0.;
     integer nlp1, nlp2, nrp1;
     doublereal temp;
     integer ctemp;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer ktemp;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

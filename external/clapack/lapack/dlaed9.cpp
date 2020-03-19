@@ -14,19 +14,9 @@ static integer c__1 = 1;
     integer q_dim1, q_offset, s_dim1, s_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);*/
-
     /* Local variables */
     integer i__, j;
     doublereal temp;
-//    extern doublereal dnrm2_(integer *, doublereal *, integer *);
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlaed4_(integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
-//    extern doublereal dlamc3_(doublereal *, doublereal *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

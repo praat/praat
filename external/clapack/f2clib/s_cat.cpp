@@ -60,7 +60,7 @@ void s_cat(char *lp, char *rpp[], integer rnp[], integer *np, integer ll)
 #ifndef NO_OVERWRITE
 	if (lp0) {
 		memcpy(lp0, lp1, L);
-		free(lp1);
+		Melder_free (lp1);
 		}
 #endif
 	}

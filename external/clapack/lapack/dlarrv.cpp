@@ -37,8 +37,6 @@ static integer c__2 = 2;
     integer wend, iter;
     doublereal bstw;
     integer itmp1;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     integer indld;
     doublereal fudge;
     integer idone;
@@ -47,41 +45,22 @@ static integer c__2 = 2;
     doublereal resid;
     logical eskip;
     doublereal right;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer nclus, zfrom;
     doublereal rqtol;
     integer iindc1, iindc2;
-    extern /* Subroutine */ int dlar1v_(integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, logical *, 
-	     integer *, doublereal *, doublereal *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *);
     logical stp2ii;
     doublereal lambda;
-//    extern doublereal dlamch_(char *);
     integer ibegin, indeig;
     logical needbs;
     integer indlld;
     doublereal sgndef, mingma;
-    extern /* Subroutine */ int dlarrb_(integer *, doublereal *, doublereal *, 
-	     integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, doublereal *, integer *, integer *);
     integer oldien, oldncl, wbegin;
     doublereal spdiam;
     integer negcnt;
-    extern /* Subroutine */ int dlarrf_(integer *, doublereal *, doublereal *, 
-	     doublereal *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *);
     integer oldcls;
     doublereal savgap;
     integer ndepth;
     doublereal ssigma;
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *);
     logical usedbs;
     integer iindwk, offset;
     doublereal gaptol;

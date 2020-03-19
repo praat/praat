@@ -8,7 +8,7 @@ static doublereal c_b6 = 0.;
 static integer c__0 = 0;
 static doublereal c_b11 = 1.;
 
-/* Subroutine */ int dlalsd_(char *uplo, integer *smlsiz, integer *n, integer 
+/* Subroutine */ int dlalsd_(const char *uplo, integer *smlsiz, integer *n, integer 
 	*nrhs, doublereal *d__, doublereal *e, doublereal *b, integer *ldb, 
 	doublereal *rcond, integer *rank, doublereal *work, integer *iwork, 
 	integer *info)

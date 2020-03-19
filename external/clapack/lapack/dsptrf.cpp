@@ -20,19 +20,10 @@ static integer c__1 = 1;
     integer kx, knc, kpc, npp;
     doublereal wkm1, wkp1;
     integer imax, jmax;
-    extern /* Subroutine */ int dspr_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *);
     doublereal alpha;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer kstep;
     logical upper;
     doublereal absakk;
-//    extern integer idamax_(integer *, doublereal *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal colmax, rowmax;
 
 

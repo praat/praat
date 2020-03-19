@@ -19,40 +19,16 @@ static integer c__1 = 1;
     integer q_dim1, q_offset, qstore_dim1, qstore_offset, i__1, i__2;
     doublereal d__1;
 
-    /* Builtin functions
-    double log(doublereal);*/
-    integer pow_ii(integer *, integer *);
-
     /* Local variables */
     integer i__, j, k, iq, lgn, msd2, smm1, spm1, spm2;
     doublereal temp;
     integer curr;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer iperm;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer indxq, iwrem;
-    extern /* Subroutine */ int dlaed1_(integer *, doublereal *, doublereal *, 
-	     integer *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, integer *);
     integer iqptr;
-    extern /* Subroutine */ int dlaed7_(integer *, integer *, integer *, 
-	    integer *, integer *, integer *, doublereal *, doublereal *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, integer *, integer *, integer *, integer *, doublereal 
-	    *, doublereal *, integer *, integer *);
     integer tlvls;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *);
     integer igivcl;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer igivnm, submat, curprb, subpbs, igivpt;
-    extern /* Subroutine */ int dsteqr_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *);
     integer curlvl, matsiz, iprmpt, smlsiz;
 
 

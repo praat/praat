@@ -5,24 +5,17 @@
 
 static integer c__1 = 1;
 
-doublereal dlanhs_(char *norm, integer *n, doublereal *a, integer *lda, 
+doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda, 
 	doublereal *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
     doublereal ret_val, d__1, d__2, d__3;
 
-    /* Builtin functions
-    double sqrt(doublereal); */
-
     /* Local variables */
     integer i__, j;
     doublereal sum, scale;
-//    extern logical lsame_(char *, char *);
     doublereal value;
-    extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

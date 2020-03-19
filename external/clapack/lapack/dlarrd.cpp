@@ -9,7 +9,7 @@ static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dlarrd_(char *range, char *order, integer *n, doublereal 
+/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, doublereal 
 	*vl, doublereal *vu, integer *il, integer *iu, doublereal *gers, 
 	doublereal *reltol, doublereal *d__, doublereal *e, doublereal *e2, 
 	doublereal *pivmin, integer *nsplit, integer *isplit, integer *m, 
@@ -20,9 +20,6 @@ static integer c__0 = 0;
     /* System generated locals */
     integer i__1, i__2, i__3;
     doublereal d__1, d__2;
-
-    /* Builtin functions
-    double log(doublereal); */
 
     /* Local variables */
     integer i__, j, ib, ie, je, nb;
@@ -36,22 +33,13 @@ static integer c__0 = 0;
     integer nwu;
     doublereal tmp1, tmp2;
     integer iend, jblk, ioff, iout, itmp1, itmp2, jdisc;
-//    extern logical lsame_(char *, char *);
     integer iinfo;
     doublereal atoli;
     integer iwoff, itmax;
     doublereal wkill, rtoli, uflow, tnorm;
-//    extern doublereal dlamch_(char *);
     integer ibegin;
-    extern /* Subroutine */ int dlaebz_(integer *, integer *, integer *, 
-	    integer *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *);
     integer irange, idiscl, idumma[1];
     doublereal spdiam;
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
     integer idiscu;
     logical ncnvrg, toofew;
 

@@ -17,16 +17,6 @@
     doublereal eps, tol;
     integer n0in, ipn4;
     doublereal tol2, temp;
-    extern /* Subroutine */ int dlasq5_(integer *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *, doublereal *, logical *), dlasq6_(
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), dlazq4_(integer *, integer *, doublereal *, 
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *, 
-	     doublereal *);
-//    extern doublereal dlamch_(char *);
     doublereal safmin;
 
 

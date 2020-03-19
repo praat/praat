@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-doublereal dlanst_(char *norm, integer *n, doublereal *d__, doublereal *e)
+doublereal dlanst_(const char *norm, integer *n, doublereal *d__, doublereal *e)
 {
     /* System generated locals */
     integer i__1;
@@ -17,10 +17,7 @@ doublereal dlanst_(char *norm, integer *n, doublereal *d__, doublereal *e)
     /* Local variables */
     integer i__;
     doublereal sum, scale;
-//    extern logical lsame_(char *, char *);
     doublereal anorm;
-    extern /* Subroutine */ int dlassq_(integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

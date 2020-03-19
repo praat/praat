@@ -1,8 +1,7 @@
 #
-#  Top Level Makefile for LAPACK
-#  Version 3.4.1
+#  Top Level Makefile for CLAPACK
 #
-# 20200405 Adapted by David Weenink: only the essentials
+# 20200419 David Weenink
 
 include ../../makefile.defs
 
@@ -29,5 +28,5 @@ f2clib:
 clean:
 	$(MAKE) -C blas clean
 	$(MAKE) -C lapack clean
-	$(MAKE) -C libf2c clean
+	$(MAKE) -C f2clib clean
 	rm -f *.a

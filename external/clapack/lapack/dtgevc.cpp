@@ -10,7 +10,7 @@ static integer c__1 = 1;
 static doublereal c_b36 = 0.;
 static logical c_false = FALSE_;
 
-/* Subroutine */ int dtgevc_(char *side, char *howmny, logical *select, 
+/* Subroutine */ int dtgevc_(const char *side, const char *howmny, logical *select, 
 	integer *n, doublereal *s, integer *lds, doublereal *p, integer *ldp, 
 	doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, integer 
 	*mm, integer *m, doublereal *work, integer *info)

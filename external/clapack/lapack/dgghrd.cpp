@@ -7,7 +7,7 @@ static doublereal c_b10 = 0.;
 static doublereal c_b11 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dgghrd_(char *compq, char *compz, integer *n, integer *
+/* Subroutine */ int dgghrd_(const char *compq, const char *compz, integer *n, integer *
 	ilo, integer *ihi, doublereal *a, integer *lda, doublereal *b, 
 	integer *ldb, doublereal *q, integer *ldq, doublereal *z__, integer *
 	ldz, integer *info)

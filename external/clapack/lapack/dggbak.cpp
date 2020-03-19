@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dggbak_(char *job, char *side, integer *n, integer *ilo, 
+/* Subroutine */ int dggbak_(const char *job, const char *side, integer *n, integer *ilo, 
 	integer *ihi, doublereal *lscale, doublereal *rscale, integer *m, 
 	doublereal *v, integer *ldv, integer *info)
 {
@@ -10,13 +10,7 @@
 
     /* Local variables */
     integer i__, k;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical leftv;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical rightv;
 
 

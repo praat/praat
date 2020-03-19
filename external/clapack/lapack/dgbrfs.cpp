@@ -27,9 +27,6 @@ static doublereal c_b17 = 1.;
     doublereal eps;
     integer kase;
     doublereal safe1, safe2;
-    extern /* Subroutine */ int dgbmv_(char *, integer *, integer *, integer *
-, integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
     integer isave[3];
     integer count;
     doublereal safmin;

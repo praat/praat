@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dspmv_(char *uplo, integer *n, doublereal *alpha, 
+/* Subroutine */ int dspmv_(const char *uplo, integer *n, doublereal *alpha, 
 	doublereal *ap, doublereal *x, integer *incx, doublereal *beta, 
 	doublereal *y, integer *incy)
 {
@@ -11,8 +11,8 @@
     /* Local variables */
     integer i__, j, k, kk, ix, iy, jx, jy, kx, ky, info;
     doublereal temp1, temp2;
-//    extern logical lsame_(char *, char *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+ 
+ 
 
 /*     .. Scalar Arguments .. */
 /*     .. */

@@ -20,20 +20,9 @@ static doublereal c_b19 = 1.;
     doublereal ak, bk;
     integer kc, kp;
     doublereal akm1, bkm1;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal akm1k;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
     doublereal denom;
-    extern /* Subroutine */ int dgemv_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *), dswap_(integer *, 
-	    doublereal *, integer *, doublereal *, integer *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

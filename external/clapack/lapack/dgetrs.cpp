@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static doublereal c_b12 = 1.;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dgetrs_(char *trans, integer *n, integer *nrhs, 
+/* Subroutine */ int dgetrs_(const char *trans, integer *n, integer *nrhs, 
 	doublereal *a, integer *lda, integer *ipiv, doublereal *b, integer *
 	ldb, integer *info)
 {

@@ -5,7 +5,7 @@
 
 static doublereal c_b12 = 1.;
 
-/* Subroutine */ int dtrtrs_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtrtrs_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *nrhs, doublereal *a, integer *lda, doublereal *b, integer *
 	ldb, integer *info)
 {

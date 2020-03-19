@@ -23,21 +23,7 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer i__, m, n, n1, n2, iw, idx, idxc, idxp, ivfw, ivlw;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlasd7_(integer *, integer *, integer *, 
-	     integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *, integer *, 
-	    integer *, integer *, integer *, integer *, integer *, doublereal 
-	    *, integer *, doublereal *, doublereal *, integer *), dlasd8_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *, 
-	     doublereal *, integer *), dlascl_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, integer *, integer *, doublereal *, 
-	    integer *, integer *), dlamrg_(integer *, integer *, 
-	    doublereal *, integer *, integer *, integer *);
     integer isigma;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal orgnrm;
 
 

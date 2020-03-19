@@ -9,7 +9,7 @@ static doublereal c_b27 = -1.;
 static doublereal c_b42 = 1.;
 static doublereal c_b56 = 0.;
 
-/* Subroutine */ int dtgsy2_(char *trans, integer *ijob, integer *m, integer *
+/* Subroutine */ int dtgsy2_(const char *trans, integer *ijob, integer *m, integer *
 	n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
 	doublereal *c__, integer *ldc, doublereal *d__, integer *ldd, 
 	doublereal *e, integer *lde, doublereal *f, integer *ldf, doublereal *

@@ -17,13 +17,7 @@ static doublereal c_b10 = -1.;
     integer i__, j, ip, jp;
     doublereal eps;
     integer ipv, jpv;
-    extern /* Subroutine */ int dger_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal smin, xmax;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dlabad_(doublereal *, doublereal *);
-//    extern doublereal dlamch_(char *);
     doublereal bignum, smlnum;
 
 

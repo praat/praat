@@ -8,7 +8,7 @@ static doublereal c_b13 = 1.;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
-/* Subroutine */ int dhgeqz_(char *job, char *compq, char *compz, integer *n, 
+/* Subroutine */ int dhgeqz_(const char *job, char *compq, char *compz, integer *n, 
 	integer *ilo, integer *ihi, doublereal *h__, integer *ldh, doublereal 
 	*t, integer *ldt, doublereal *alphar, doublereal *alphai, doublereal *
 	beta, doublereal *q, integer *ldq, doublereal *z__, integer *ldz, 
@@ -18,9 +18,6 @@ static integer c__3 = 3;
     integer h_dim1, h_offset, q_dim1, q_offset, t_dim1, t_offset, z_dim1, 
 	    z_offset, i__1, i__2, i__3, i__4;
     doublereal d__1, d__2, d__3, d__4;
-
-    /* Builtin functions 
-    double sqrt(doublereal);*/
 
     /* Local variables */
     doublereal c__;
@@ -41,36 +38,15 @@ static integer c__3 = 3;
     logical ilz;
     doublereal ulp, sqr, szi, szr, ad11l, ad12l, ad21l, ad22l, ad32l, wabs, 
 	    atol, btol, temp;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *), dlag2_(
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *);
     doublereal temp2, s1inv, scale;
-//    extern logical lsame_(char *, char *);
     integer iiter, ilast, jiter;
     doublereal anorm, bnorm;
     integer maxit;
     doublereal tempi, tempr;
-    extern doublereal dlapy2_(doublereal *, doublereal *), dlapy3_(doublereal 
-	    *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dlasv2_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
     logical ilazr2;
     doublereal ascale, bscale;
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *);
-    extern doublereal dlanhs_(char *, integer *, doublereal *, integer *, 
-	    doublereal *);
-    extern /* Subroutine */ int dlaset_(char *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *);
     doublereal safmin;
-    extern /* Subroutine */ int dlartg_(doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
     doublereal safmax;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal eshift;
     logical ilschr;
     integer icompq, ilastm, ischur;

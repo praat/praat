@@ -12,13 +12,7 @@
     integer i__, k;
     doublereal s;
     integer ii;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical leftv;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical rightv;
 
 

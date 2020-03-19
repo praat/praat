@@ -17,15 +17,7 @@ static integer c__1 = 1;
     integer i__, j, k, l, m;
     doublereal r__, s, ca, ra;
     integer ica, ira, iexc;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
-    doublereal sfmin1, sfmin2, sfmax1, sfmax2;
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+	doublereal sfmin1, sfmin2, sfmax1, sfmax2;
     logical noconv;
 
 

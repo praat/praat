@@ -31,47 +31,14 @@ static integer c__0 = 0;
     doublereal ddum;
     integer idum;
     doublereal taul[4], dsum;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *);
-    doublereal taur[4], scpy[16]	/* was [4][4] */, tcpy[16]	/* 
-	    was [4][4] */;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
+    doublereal taur[4], scpy[16] /* was [4][4] */, tcpy[16]	/* was [4][4] */;
     doublereal scale, bqra21, brqa21;
-    extern /* Subroutine */ int dgemm_(char *, char *, integer *, integer *, 
-	    integer *, doublereal *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, doublereal *, integer *);
-    doublereal licop[16]	/* was [4][4] */;
+    doublereal licop[16] /* was [4][4] */;
     integer linfo;
-    doublereal ircop[16]	/* was [4][4] */, dnorm;
+    doublereal ircop[16] /* was [4][4] */, dnorm;
     integer iwork[4];
-    extern /* Subroutine */ int dlagv2_(doublereal *, integer *, doublereal *, 
-	     integer *, doublereal *, doublereal *, doublereal *, doublereal *
-, doublereal *, doublereal *, doublereal *), dgeqr2_(integer *, 
-	    integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    integer *), dgerq2_(integer *, integer *, doublereal *, integer *, 
-	     doublereal *, doublereal *, integer *), dorg2r_(integer *, 
-	    integer *, integer *, doublereal *, integer *, doublereal *, 
-	    doublereal *, integer *), dorgr2_(integer *, integer *, integer *, 
-	     doublereal *, integer *, doublereal *, doublereal *, integer *), 
-	    dorm2r_(char *, char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *), dormr2_(char *, char *, 
-	    integer *, integer *, integer *, doublereal *, integer *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *), dtgsy2_(char *, integer *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *, 
-	    integer *, doublereal *, integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     integer *, integer *, integer *);
-//    extern doublereal dlamch_(char *);
     doublereal dscale;
-    extern /* Subroutine */ int dlacpy_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *), 
-	    dlartg_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *), dlaset_(char *, integer *, integer *, doublereal *, 
-	     doublereal *, doublereal *, integer *), dlassq_(integer *
-, doublereal *, integer *, doublereal *, doublereal *);
-    logical dtrong;
+	logical dtrong;
     doublereal thresh, smlnum;
 
 

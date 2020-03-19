@@ -7,9 +7,6 @@
     doublereal mul, cden;
     logical done;
     doublereal cnum, cden1, cnum1;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *), dlabad_(doublereal *, doublereal *);
-//    extern doublereal dlamch_(char *);
     doublereal bignum, smlnum;
 
 

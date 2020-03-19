@@ -8,7 +8,7 @@ static integer c__1 = 1;
 static doublereal c_b49 = 1.;
 static doublereal c_b72 = -1.;
 
-/* Subroutine */ int dbdsqr_(char *uplo, integer *n, integer *ncvt, integer *
+/* Subroutine */ int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, doublereal *d__, doublereal *e, doublereal *vt, 
 	integer *ldvt, doublereal *u, integer *ldu, doublereal *c__, integer *
 	ldc, doublereal *work, integer *info)

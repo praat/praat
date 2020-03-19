@@ -9,11 +9,6 @@
 
     /* Local variables */
     integer i__;
-    extern /* Subroutine */ int dlarz_(char *, integer *, integer *, integer *
-, doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *), dlarfg_(integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *);
-
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

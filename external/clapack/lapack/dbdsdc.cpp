@@ -9,7 +9,7 @@ static doublereal c_b15 = 1.;
 static integer c__1 = 1;
 static doublereal c_b29 = 0.;
 
-/* Subroutine */ int dbdsdc_(char *uplo, char *compq, integer *n, doublereal *
+/* Subroutine */ int dbdsdc_(const char *uplo, const char *compq, integer *n, doublereal *
 	d__, doublereal *e, doublereal *u, integer *ldu, doublereal *vt, 
 	integer *ldvt, doublereal *q, integer *iq, doublereal *work, integer *
 	iwork, integer *info)

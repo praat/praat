@@ -17,30 +17,14 @@ static integer c__1 = 1;
     doublereal eps;
     integer inde;
     doublereal anrm, rmin, rmax;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     integer iinfo, lwmin;
     logical wantz;
-//    extern doublereal dlamch_(char *);
     integer iscale;
-    extern /* Subroutine */ int dstedc_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, integer *, integer *);
     doublereal safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
-    extern doublereal dlansp_(char *, char *, integer *, doublereal *, 
-	    doublereal *);
     integer indtau;
-    extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
-	     integer *);
     integer indwrk, liwmin;
-    extern /* Subroutine */ int dsptrd_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *), 
-	    dopmtr_(char *, char *, char *, integer *, integer *, doublereal *
-, doublereal *, doublereal *, integer *, doublereal *, integer *);
     integer llwork;
     doublereal smlnum;
     logical lquery;

@@ -7,8 +7,6 @@ logical disnan_(doublereal *din)
     logical ret_val;
 
     /* Local variables */
-//    extern logical dlaisnan_(doublereal *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

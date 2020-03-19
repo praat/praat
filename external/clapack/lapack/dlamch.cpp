@@ -27,7 +27,7 @@ doublereal dlamch_(const char *cmach)
     logical lrnd;
     static doublereal rmin, rmax;
     doublereal rmach;
-//    extern logical lsame_(char *, char *);
+ 
     doublereal small;
     static doublereal sfmin;
 
@@ -165,7 +165,7 @@ doublereal dlamch_(const char *cmach)
     static logical lrnd;
     static integer lbeta;
     doublereal savec;
-//    extern doublereal dlamc3_(doublereal *, doublereal *);
+ 
     static logical lieee1;
 
 
@@ -394,13 +394,7 @@ L30:
     doublereal third;
     static doublereal lrmin, lrmax;
     doublereal sixth;
-    extern /* Subroutine */ int dlamc1_(integer *, integer *, logical *, 
-	    logical *);
-//    extern doublereal dlamc3_(doublereal *, doublereal *);
     logical lieee1;
-    extern /* Subroutine */ int dlamc4_(integer *, doublereal *, integer *), 
-	    dlamc5_(integer *, integer *, integer *, logical *, integer *, 
-	    doublereal *);
     integer ngnmin, ngpmin;
 
     /* Fortran I/O blocks */
@@ -728,7 +722,7 @@ doublereal dlamc3_(doublereal *a, doublereal *b)
     doublereal a;
     integer i__;
     doublereal b1, b2, c1, c2, d1, d2, one, zero, rbase;
-//    extern doublereal dlamc3_(doublereal *, doublereal *);
+ 
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -828,7 +822,7 @@ L10:
     integer try__, lexp;
     doublereal oldy;
     integer uexp, nbits;
-//    extern doublereal dlamc3_(doublereal *, doublereal *);
+ 
     doublereal recbas;
     integer exbits, expsum;
 

@@ -15,9 +15,7 @@
     logical nota, notb;
     doublereal temp;
     integer ncola;
-//    extern logical lsame_(char *, char *);
     integer nrowa, nrowb;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 /*     .. Scalar Arguments .. */
 /*     .. */

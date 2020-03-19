@@ -24,18 +24,9 @@ static logical c_true = TRUE_;
     doublereal ulp, wkr, eps3;
     logical pair;
     doublereal unfl;
-//    extern logical lsame_(char *, char *);
     integer iinfo;
     logical leftv, bothv;
     doublereal hnorm;
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlaein_(logical *, logical *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, doublereal *, 
-	     doublereal *, doublereal *, integer *, doublereal *, doublereal *
-, doublereal *, doublereal *, integer *);
-    extern doublereal dlanhs_(char *, integer *, doublereal *, integer *, 
-	    doublereal *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     doublereal bignum;
     logical noinit;
     integer ldwork;

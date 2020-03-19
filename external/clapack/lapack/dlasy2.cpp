@@ -38,12 +38,7 @@ static integer c__0 = 0;
     doublereal xmax;
     integer ipsv, jpsv;
     logical bswap;
-    extern /* Subroutine */ int dcopy_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *), dswap_(integer *, doublereal *, integer 
-	    *, doublereal *, integer *);
     logical xswap;
-//    extern doublereal dlamch_(char *);
-//    extern integer idamax_(integer *, doublereal *, integer *);
     doublereal smlnum;
 
 

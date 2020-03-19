@@ -15,23 +15,12 @@ static integer c__1 = 1;
 
     /* Local variables */
     doublereal eps, rmin, rmax, tnrm;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
     doublereal sigma;
-//    extern logical lsame_(char *, char *);
     integer lwmin;
     logical wantz;
-//    extern doublereal dlamch_(char *);
     integer iscale;
-    extern /* Subroutine */ int dstedc_(char *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *, doublereal *, integer *, 
-	    integer *, integer *, integer *);
-    doublereal safmin;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+	doublereal safmin;
     doublereal bignum;
-//    extern doublereal dlanst_(char *, integer *, doublereal *, doublereal *);
-    extern /* Subroutine */ int dsterf_(integer *, doublereal *, doublereal *, 
-	     integer *);
     integer liwmin;
     doublereal smlnum;
     logical lquery;

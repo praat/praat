@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dopmtr_(char *side, char *uplo, char *trans, integer *m, 
+/* Subroutine */ int dopmtr_(const char *side, const char *uplo, const char *trans, integer *m, 
 	integer *n, doublereal *ap, doublereal *tau, doublereal *c__, integer 
 	*ldc, doublereal *work, integer *info)
 {
@@ -16,12 +16,7 @@ static integer c__1 = 1;
     integer i__, i1, i2, i3, ic, jc, ii, mi, ni, nq;
     doublereal aii;
     logical left;
-    extern /* Subroutine */ int dlarf_(char *, integer *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *);
-//    extern logical lsame_(char *, char *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     logical notran, forwrd;
 
 

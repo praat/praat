@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static doublereal c_b35 = 10.;
 static doublereal c_b71 = .5;
 
-/* Subroutine */ int dggbal_(char *job, integer *n, doublereal *a, integer *
+/* Subroutine */ int dggbal_(const char *job, integer *n, doublereal *a, integer *
 	lda, doublereal *b, integer *ldb, integer *ilo, integer *ihi, 
 	doublereal *lscale, doublereal *rscale, doublereal *work, integer *
 	info)
@@ -29,23 +29,11 @@ static doublereal c_b71 = .5;
     doublereal beta, coef;
     integer irab, lrab;
     doublereal basl, cmax;
-    extern doublereal ddot_(integer *, doublereal *, integer *, doublereal *, 
-	    integer *);
     doublereal coef2, coef5, gamma, alpha;
-    extern /* Subroutine */ int dscal_(integer *, doublereal *, doublereal *, 
-	    integer *);
-//    extern logical lsame_(char *, char *);
     doublereal sfmin, sfmax;
-    extern /* Subroutine */ int dswap_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *);
     integer iflow;
-    extern /* Subroutine */ int daxpy_(integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *, integer *);
-    integer kount;
-//    extern doublereal dlamch_(char *);
+     integer kount;
     doublereal pgamma;
-//    extern integer idamax_(integer *, doublereal *, integer *);
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
     integer lsfmin, lsfmax;
 
 

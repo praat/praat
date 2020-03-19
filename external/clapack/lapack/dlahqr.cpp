@@ -30,16 +30,7 @@ static integer c__1 = 1;
     doublereal det, h21s;
     integer its;
     doublereal ulp, sum, tst, rt1i, rt2i, rt1r, rt2r;
-    extern /* Subroutine */ int drot_(integer *, doublereal *, integer *, 
-	    doublereal *, integer *, doublereal *, doublereal *), dcopy_(
-	    integer *, doublereal *, integer *, doublereal *, integer *), 
-	    dlanv2_(doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *), dlabad_(doublereal *, doublereal *);
-//    extern doublereal dlamch_(char *);
-    extern /* Subroutine */ int dlarfg_(integer *, doublereal *, doublereal *, 
-	     integer *, doublereal *);
-    doublereal safmin, safmax, rtdisc, smlnum;
+	doublereal safmin, safmax, rtdisc, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

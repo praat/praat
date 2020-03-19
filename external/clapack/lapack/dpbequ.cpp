@@ -12,9 +12,7 @@
     /* Local variables */
     integer i__, j;
     doublereal smin;
-//    extern logical lsame_(char *, char *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

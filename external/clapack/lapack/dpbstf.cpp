@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static doublereal c_b9 = -1.;
 
-/* Subroutine */ int dpbstf_(char *uplo, integer *n, integer *kd, doublereal *
+/* Subroutine */ int dpbstf_(const char *uplo, integer *n, integer *kd, doublereal *
 	ab, integer *ldab, integer *info)
 {
     /* System generated locals */
@@ -17,12 +17,7 @@ static doublereal c_b9 = -1.;
     integer j, m, km;
     doublereal ajj;
     integer kld;
-    extern /* Subroutine */ int dsyr_(char *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *, integer *), dscal_(
-	    integer *, doublereal *, doublereal *, integer *);
-//    extern logical lsame_(char *, char *);
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -16,26 +16,10 @@ static doublereal c_b16 = 1.;
 
     /* Local variables */
     integer nb, neig;
-//    extern logical lsame_(char *, char *);
-    extern /* Subroutine */ int dtrmm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *);
     char trans[1];
-    extern /* Subroutine */ int dtrsm_(char *, char *, char *, char *, 
-	    integer *, integer *, doublereal *, doublereal *, integer *, 
-	    doublereal *, integer *);
     logical upper;
-    extern /* Subroutine */ int dsyev_(char *, char *, integer *, doublereal *
-, integer *, doublereal *, doublereal *, integer *, integer *);
     logical wantz;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
-    extern integer ilaenv_(integer *, char *, char *, integer *, integer *, 
-	    integer *, integer *);
-    extern /* Subroutine */ int dpotrf_(char *, integer *, doublereal *, 
-	    integer *, integer *);
     integer lwkmin;
-    extern /* Subroutine */ int dsygst_(integer *, char *, integer *, 
-	    doublereal *, integer *, doublereal *, integer *, integer *);
     integer lwkopt;
     logical lquery;
 

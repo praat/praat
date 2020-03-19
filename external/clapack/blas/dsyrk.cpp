@@ -1,7 +1,7 @@
 #include "f2c.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dsyrk_(char *uplo, char *trans, integer *n, integer *k, 
+/* Subroutine */ int dsyrk_(const char *uplo, const char *trans, integer *n, integer *k, 
 	doublereal *alpha, doublereal *a, integer *lda, doublereal *beta, 
 	doublereal *c__, integer *ldc)
 {
@@ -11,10 +11,10 @@
     /* Local variables */
     integer i__, j, l, info;
     doublereal temp;
-//    extern logical lsame_(char *, char *);
+ 
     integer nrowa;
     logical upper;
-//    extern /* Subroutine */ int xerbla_(char *, integer *);
+ 
 
 /*     .. Scalar Arguments .. */
 /*     .. */
