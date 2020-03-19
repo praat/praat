@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ static void drawNow (FunctionEditor me) {
 	if (endIsVisible && my endSelection != my startSelection)
 		my marker [++ my numberOfMarkers] = my endSelection;
 	my marker [++ my numberOfMarkers] = my endWindow;
-	VECsort_inplace (VEC (& my marker [1], my numberOfMarkers, false));
+	VECsort_inplace (VEC (& my marker [1], my numberOfMarkers));
 
 	/*
 		Update rectangles.
@@ -131,7 +131,7 @@ static void drawNow (FunctionEditor me) {
 	my rect [1]. left = my functionViewerLeft + MARGIN;
 	my rect [1]. right = my functionViewerRight - MARGIN;
 	my rect [1]. bottom = BOTTOM_MARGIN + space;
-	my rect [1]. top = BOTTOM_MARGIN + space * (my numberOfMarkers > 1 ? 2 : 3);
+	my rect [1]. top = BOTTOM_MARGIN + space * ( my numberOfMarkers > 1 ? 2 : 3 );
 
 	/*
 		2: rectangle for left from visible part.
