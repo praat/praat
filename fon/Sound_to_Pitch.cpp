@@ -146,7 +146,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		for (integer i = 1; i <= nsampFFT; i ++)
 			ac [i] = 0.0;
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMfft_forward (fftTable, VEC (& frame [channel] [1], fftTable->n, false));   // complex spectrum
+			NUMfft_forward (fftTable, VEC (& frame [channel] [1], fftTable->n));   // complex spectrum
 			ac [1] += frame [channel] [1] * frame [channel] [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2)
 				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];   // power spectrum
@@ -196,7 +196,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		const double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
 		const integer offset = - brent_ixmax - 1;
 		double strengthOfMaximum = /* method & 1 ? */
-			NUM_interpolate_sinc (constVEC (& r [offset + 1], brent_ixmax - offset, false), 1.0 / my dx / frequencyOfMaximum - offset, 30)
+			NUM_interpolate_sinc (constVEC (& r [offset + 1], brent_ixmax - offset), 1.0 / my dx / frequencyOfMaximum - offset, 30)
 			/* : r [i] + 0.5 * dr * dr / d2r */;
 		/*
 			High values due to short windows are to be reflected around 1.
@@ -247,7 +247,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		if (method != AC_HANNING || pitchFrame -> candidates [i]. frequency > 0.0 / my dx) {
 			double xmid, ymid;
 			const integer offset = - brent_ixmax - 1;
-			ymid = NUMimproveMaximum (constVEC (& r [offset + 1], brent_ixmax - offset, false), imax [i] - offset,
+			ymid = NUMimproveMaximum (constVEC (& r [offset + 1], brent_ixmax - offset), imax [i] - offset,
 					pitchFrame -> candidates [i]. frequency > 0.3 / my dx ? NUM_PEAK_INTERPOLATE_SINC700 : brent_depth, & xmid);
 			xmid += offset;
 			pitchFrame -> candidates [i]. frequency = 1.0 / my dx / xmid;
