@@ -560,27 +560,61 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 	try {
 		Melder_require (my nx == my ny,
 			U"The Matrix should be square.");
-		autoVEC eigenvalues_re, eigenvalues_im;
-		autoMAT right_eigenvectors;
-		MAT_getEigenSystemFromGeneralMatrix (my z.get(), nullptr, & right_eigenvectors, & eigenvalues_re, & eigenvalues_im);
-		autoMAT eigenvectors_reim;
-		MAT_eigenvectors_decompress (right_eigenvectors.get(), eigenvalues_re.get(), eigenvalues_im.get(), & eigenvectors_reim);
+		Melder_require ((out_eigenvectors || out_eigenvalues),
+			U"You should want either eigenvalues or eigenvectors or both to be calculated.");
+		
+		autoCOMPVEC eigenvalues;
+		autoCOMPVEC *p_eigenvalues = ( out_eigenvalues ? & eigenvalues : nullptr );
+		automatrix<dcomplex> eigenvectors;
+		automatrix<dcomplex> *p_eigenvectors = ( out_eigenvectors ? & eigenvectors : nullptr );
+		
+		MAT_getEigenSystemFromGeneralSquareMatrix (my z.get(), p_eigenvalues, p_eigenvectors);
+	
 		if (out_eigenvectors) {
-			autoMatrix eigenvectors = Matrix_createSimple (my ny, 2 * my ny);
-			eigenvectors -> z.all() <<= eigenvectors_reim.all();
-			*out_eigenvectors = eigenvectors.move();
+			autoMatrix eigenvectorsM = Matrix_createSimple (my ny, 2 * my ny);
+			for (integer ivec = 1; ivec <= eigenvectors.ncol; ivec ++)
+				for (long irow = 1; irow <= my ny; irow ++) {
+					eigenvectorsM -> z [irow] [2 * ivec - 1] = eigenvectors [irow] [ivec] .real();
+					eigenvectorsM -> z [irow] [2 * ivec    ] = eigenvectors [irow] [ivec] .imag();
+				}
+			*out_eigenvectors = eigenvectorsM.move();
 		}
 		if (out_eigenvalues) {
-			autoMatrix eigenvalues = Matrix_createSimple (my ny, 2);
+			autoMatrix eigenvaluesM = Matrix_createSimple (my ny, 2);
 			for (long i = 1; i <= my ny; i ++) {
-				eigenvalues -> z [i] [1] = eigenvalues_re [i];
-				eigenvalues -> z [i] [2] = eigenvalues_im [i];
+				eigenvaluesM -> z [i] [1] = eigenvalues [i] .real();
+				eigenvaluesM -> z [i] [2] = eigenvalues [i] .imag();
 			}
-			*out_eigenvalues = eigenvalues.move();	
+			*out_eigenvalues = eigenvaluesM.move();	
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create Eigenvalues from Matrix.");
 	}
+}
+
+autoCOMPVEC Matrix_listEigenvalues (Matrix me) {
+	Melder_require (my nx == my ny,
+		U"The Matrix should be square.");
+	autoCOMPVEC eigenvalues;
+	MAT_getEigenSystemFromGeneralSquareMatrix (my z.get(), & eigenvalues, nullptr);
+	return eigenvalues;
+}
+
+automatrix<dcomplex> Matrix_listEigenvectors (Matrix me) {
+	Melder_require (my nx == my ny,
+		U"The Matrix should be square.");
+	automatrix<dcomplex> eigenvectors;
+	
+	MAT_getEigenSystemFromGeneralSquareMatrix (my z.get(), nullptr,& eigenvectors);
+	integer numberOfEigenvectors = eigenvectors.nrow;
+	automatrix<dcomplex> result = newmatrixraw<dcomplex> (eigenvectors.ncol, eigenvectors.nrow);
+	/*
+		vec's vertical
+	*/
+	for (integer ivec = 1; ivec <= numberOfEigenvectors; ivec ++)
+		for (long irow = 1; irow <= result.nrow; irow ++)
+			result [irow] [ivec] = eigenvectors [ivec] [irow];
+	return result;
 }
 
 autoMatrix SVD_to_Matrix (SVD me, integer from, integer to) {

@@ -2,7 +2,7 @@
 #define _Matrix_extensions_h_
 /* Matrix_extensions.h
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ autoEigen Matrix_to_Eigen (Matrix me);
 
 autoMatrix SVD_to_Matrix (SVD me, integer from, integer to);
 
+autoCOMPVEC Matrix_listEigenvalues (Matrix me);
 void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues);
 /* General square matrix */
 

@@ -1,6 +1,6 @@
 /* NUMcomplex.cpp
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,26 +68,26 @@
 
 */
 
-static double norm1 (const std::complex<double> *x) {
+static double norm1 (const dcomplex *x) {
 	return fabs (real (*x)) + fabs (imag (*x));
 }
 
-static void xShiftTerm (const std::complex<double> *alpha, const std::complex<double> *x, integer i, std::complex<double> *p, std::complex<double> *q) {
+static void xShiftTerm (const dcomplex *alpha, const dcomplex *x, integer i, dcomplex *p, dcomplex *q) {
 // Calculate p*q = (-1)^i (1-x^(alpha+i))/(alpha+i)i! 
-	constexpr std::complex<double> zero = 0.0;
+	constexpr dcomplex zero = 0.0;
 	constexpr double tol = 3e-7, xlim = 39.0;
 	const double di = i;
 
 	if (i == 0)
 		*q = 1.0;
-	const std::complex<double> alphai = *alpha + di;
+	const dcomplex alphai = *alpha + di;
 	if (*x == zero) {
 		*p = 1.0 / alphai;
 		if (i != 0)
 			*q /= -di;
 		return;
 	}
-	const std::complex<double> cdlx = log (*x);
+	const dcomplex cdlx = log (*x);
 	/*
 		If (1-x**alphai) = -x**alphai,
 		then change the inductive scheme to avoid overflow.
@@ -105,24 +105,24 @@ static void xShiftTerm (const std::complex<double> *alpha, const std::complex<do
 		*q /= - di;
 }
 
-static void continuedFractionExpansion (const std::complex<double> *alpha, const std::complex<double> *x, std::complex<double> *result) {
+static void continuedFractionExpansion (const dcomplex *alpha, const dcomplex *x, dcomplex *result) {
 	constexpr double tol1 = 1e10, tol2 = 1e-10, error = 1e-18;
-	constexpr std::complex<double> zero (0.0,0.0);
-	std::complex<double> q0 = 1.0, q1 = 1.0, p0 = *x;
-	std::complex<double> p1 = *x + 1.0 - *alpha, r0;
+	constexpr dcomplex zero (0.0,0.0);
+	dcomplex q0 = 1.0, q1 = 1.0, p0 = *x;
+	dcomplex p1 = *x + 1.0 - *alpha, r0;
 	for (integer i = 1; i <= 100000; i++) {
 		const double di = i;
 		if (p0 != zero && q0 != zero && q1 != zero) {
 			r0 = p0 / q0;
 			*result = p1 / q1;
-			const std::complex<double> r0mr1 = r0 - *result;
+			const dcomplex r0mr1 = r0 - *result;
 			if (norm1 (& r0mr1) < norm1 (result) * error)
 				return;
 			/*
 				Renormalize to avoid underflow or overflow
 			*/
 			if (norm1 (& p0) > tol1 || norm1 (& p0) < tol2 || norm1 (& q0) > tol1 || norm1 (& q0) < tol2) {
-				const std::complex<double> factor = p0 * q0;
+				const dcomplex factor = p0 * q0;
 				p0 /= factor;
 				q0 /= factor;
 				p1 /= factor;
@@ -142,14 +142,14 @@ static void continuedFractionExpansion (const std::complex<double> *alpha, const
 	*result = 0.5 * (r0 + *result);
 }
 
-static void shiftAlphaByOne (const std::complex<double> *alpha, const std::complex<double> *x, std::complex<double> *result) {
-	constexpr std::complex<double> one (1.0, 0.0);
+static void shiftAlphaByOne (const dcomplex *alpha, const dcomplex *x, dcomplex *result) {
+	constexpr dcomplex one (1.0, 0.0);
 	const integer n = (integer) (real (*alpha) - real (*x));
 	if (n > 0) {
-		std::complex<double> cn = n + 1;
-		std::complex<double> term = one / *x;
-		std::complex<double> sum = term;
-		const std::complex<double> alpha1 = *alpha - cn;
+		dcomplex cn = n + 1;
+		dcomplex term = one / *x;
+		dcomplex sum = term;
+		const dcomplex alpha1 = *alpha - cn;
 		for (integer i = 1; i <= n; i ++) {
 			cn = n - i + 1;
 			term *= (alpha1 + cn) / *x;
@@ -164,13 +164,12 @@ static void shiftAlphaByOne (const std::complex<double> *alpha, const std::compl
 }
 
 // Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
-dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im) {
-	const std::complex<double> alpha (alpha_re, alpha_im), x (x_re, x_im);
-	std::complex<double> result;
+dcomplex NUMincompleteGammaFunction (const dcomplex alpha, const dcomplex x) {
+	dcomplex result;
 	constexpr double xlim = 1.0;
 	constexpr integer ibuf = 34;
-	constexpr std::complex<double> re = 0.36787944117144232, one = 1.0;
-	std::complex<double> p, q, r;
+	constexpr dcomplex re = 0.36787944117144232, one = 1.0;
+	dcomplex p, q, r;
 	if (norm1 (& x) < xlim || (real (x) < 0.0 && fabs (imag (x)) < xlim)) {
 		shiftAlphaByOne (& alpha, & one, & r);
 		result = re / r;
@@ -229,12 +228,12 @@ dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_
 dcomplex gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime) {
 	const double b = NUM2pi * bandwidth, w0 = NUM2pi * centre_frequency, theta = atan (2.0 * centre_frequency / bandwidth);
 	const double gamma_n = exp (NUMlnGamma (gamma)), bpow = pow (b, -gamma);
-	const std::complex<double> expiphi (cos (initialPhase), sin (initialPhase)), expmiphi = conj (expiphi);
-	const std::complex<double> expnitheta (cos (gamma * theta), - sin (gamma * theta));
-	const std::complex<double> expiw0T (cos (w0 * truncationTime), sin (w0 * truncationTime));
-	const std::complex<double> peak = expnitheta * pow (1.0 + 4.0 * (w0 / b) * (w0 / b), - 0.5 * gamma);
-	const dcomplex r1 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 0.0);
-	const dcomplex r2 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 2.0 * w0 * truncationTime);
+	const dcomplex expiphi (cos (initialPhase), sin (initialPhase)), expmiphi = conj (expiphi);
+	const dcomplex expnitheta (cos (gamma * theta), - sin (gamma * theta));
+	const dcomplex expiw0T (cos (w0 * truncationTime), sin (w0 * truncationTime));
+	const dcomplex peak = expnitheta * pow (1.0 + 4.0 * (w0 / b) * (w0 / b), - 0.5 * gamma);
+	const dcomplex r1 = NUMincompleteGammaFunction (dcomplex {gamma, 0.0},dcomplex { b * truncationTime, 0.0});
+	const dcomplex r2 = NUMincompleteGammaFunction (dcomplex {gamma, 0.0}, dcomplex {b * truncationTime, 2.0 * w0 * truncationTime});
 	const dcomplex response = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
 		expiw0T * (expiphi * r1 + expmiphi * peak * r2));
 	return response;

@@ -1,6 +1,6 @@
 /* Sound_and_LPC.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& works
 		}
 		a [i + 1] = rc [i];
         thy gain += rc [i] * s;
-		if (thy gain <= 0)
+		if (thy gain <= 0.0)
 			goto end;
 	}
 end:
@@ -505,7 +505,6 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
 		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
 	
-	// Convenience: analyse the whole sound into one LPC_frame
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
 	}
