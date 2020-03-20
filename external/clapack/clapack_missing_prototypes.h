@@ -198,7 +198,9 @@ integer i_dnnt(double *);
 inline integer i_nint (float *x) {
 	return (integer)(*x >= 0.0 ? floor(*x + 0.5) : -floor(0.5 - *x));
 }
-double pow_dd (double *a, double *b);
+inline double pow_dd (double *a, double *b) {
+	return pow (*a, *b);
+}
 
 static inline double d_abs (double *x) {
 	return abs (*x);
