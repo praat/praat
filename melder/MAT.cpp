@@ -18,7 +18,6 @@
 
 #include "melder.h"
 #include "../dwsys/NUM2.h"
-//#include "../dwsys/NUMcblas.h"
 //#include "../external/gsl/gsl_blas.h"
 
 #ifdef macintosh
