@@ -3,8 +3,6 @@
 
 #include "f2c.h"
 
-#define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!")
- 
 /* Subroutine */ int cbdsqr_(char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, real *d__, real *e, complex *vt, integer *ldvt, 
 	complex *u, integer *ldu, complex *c__, integer *ldc, real *rwork, 
@@ -1742,6 +1740,8 @@
 	*nrhs, doublereal *d__, doublereal *e, doublereal *b, integer *ldb, 
 	doublereal *rcond, integer *rank, doublereal *work, integer *iwork, 
 	integer *info);
+
+double dlamch_ (const char *cmach); 
 
 /* Subroutine */ int dlamrg_(integer *n1, integer *n2, doublereal *a, integer 
 	*dtrd1, integer *dtrd2, integer *index);

@@ -1,5 +1,4 @@
 #include "f2c.h"
-#include "clapack_missing_prototypes.h"
 #include "melder.h"
 #include "blaswrap.h"
 
