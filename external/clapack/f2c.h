@@ -209,24 +209,4 @@ typedef doublereal E_f;	/* real function with -R not specified */
 #include "clapack.h"
 #include "clapack_missing_prototypes.h"
 
-#ifndef Skip_f2c_Undefs
-#undef cray
-#undef gcos
-#undef mc68010
-#undef mc68020
-#undef mips
-#undef pdp11
-#undef sgi
-#undef sparc
-#undef sun
-#undef sun2
-#undef sun3
-#undef sun4
-#undef u370
-#undef u3b
-#undef u3b2
-#undef u3b5
-#undef unix
-#undef vax
-#endif
 #endif

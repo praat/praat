@@ -6,9 +6,7 @@
 
 include ../../../makefile.defs
 
-.SUFFIXES: .c .o
-.c.o:
-	$(CXX) $(CXXFLAGS) -I .. -I ../../../melder -c -o $@ $<
+CPPFLAGS = -I ../../../melder -I ..
 
 OBJECTS = dasum.o daxpy.o dcopy.o \
 	ddot.o dgbmv.o dgemm.o \

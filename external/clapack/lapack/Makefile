@@ -6,9 +6,7 @@
 
 include ../../../makefile.defs
 
-.SUFFIXES: .c .o
-.c.o:
-	$(CXX) $(CXXFLAGS) -I .. -I ../../../melder -c -o $@ $<
+CPPFLAGS = -I ../../../melder -I ..
 
 OBJECTS = dbdsdc.o dbdsqr.o ddisna.o \
 	dgbbrd.o dgbcon.o dgbequ.o \
