@@ -18,7 +18,7 @@ static integer c__1 = 1;
     doublereal d__1;
 
     /* Local variables */
-    integer i__, ok;
+    integer i__;
     doublereal cte, eps, anrm;
     integer ptsa;
     doublereal rnrm, xnrm;
@@ -183,7 +183,6 @@ static integer c__1 = 1;
     bwdmax = 1.f;
     doitref = TRUE_;
 
-    ok = 0;
     *info = 0;
     *iter = 0;
 

@@ -23,10 +23,7 @@ integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n
     static logical sname;
     static char subnam[6];
 
-    ftnlen name_len, opts_len;
-
-    name_len = strlen (name__);
-    opts_len = strlen (opts);
+    ftnlen name_len = strlen (name__);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1.1) -- */

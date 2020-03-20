@@ -44,11 +44,11 @@ all:
 		external/flac/libflac.a external/mp3/libmp3.a \
 		external/glpk/libglpk.a \
 		external/clapack/liblapack.a external/clapack/libblas.a \
-		external/clapack/libf2c.a \
 		external/gsl/libgsl.a \
 		$(LIBS)
 
 clean:
+	$(MAKE) -C external/clapack clean
 	$(MAKE) -C external/gsl clean
 	$(MAKE) -C external/glpk clean
 	$(MAKE) -C external/mp3 clean

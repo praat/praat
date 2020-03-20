@@ -14,7 +14,6 @@
     integer i__, j, l, info;
     logical nota, notb;
     doublereal temp;
-    integer ncola;
     integer nrowa, nrowb;
 
 /*     .. Scalar Arguments .. */
@@ -172,16 +171,14 @@
     nota = lsame_(transa, "N");
     notb = lsame_(transb, "N");
     if (nota) {
-	nrowa = *m;
-	ncola = *k;
+		nrowa = *m;
     } else {
-	nrowa = *k;
-	ncola = *m;
+		nrowa = *k;
     }
     if (notb) {
-	nrowb = *k;
+		nrowb = *k;
     } else {
-	nrowb = *n;
+		nrowb = *n;
     }
 
 /*     Test the input parameters. */

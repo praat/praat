@@ -193,113 +193,7 @@ int dtrsm_(const char *side, const char *uplo, const char *transa, const char *d
 int dtrsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	doublereal *a, integer *lda, doublereal *x, integer *incx);
 
-integer i_dnnt(double *);
 
-inline integer i_nint (float *x) {
-	return (integer)(*x >= 0.0 ? floor(*x + 0.5) : -floor(0.5 - *x));
-}
-inline double pow_dd (double *a, double *b) {
-	return pow (*a, *b);
-}
-
-static inline double d_abs (double *x) {
-	return abs (*x);
-}
-static inline double d_acos (double *x) {
-	return acos (*x);
-}
-static inline double d_asin (double *x) {
-	return asin (*x);
-}
-static inline double d_atan (double *x) {
-	return atan (*x);
-}
-static inline double d_atn2 (double *x, double *y) {
-	return atan2 (*x,*y);
-}
-static inline void d_cnjg (doublecomplex *r, doublecomplex *z) {
-	double zi = z->i;
-	r->r = z->r;
-	r->i = -zi;
-}
-static inline double d_cos (double *x) {
-	return cos (*x);
-}
-static inline double d_cosh (double *x) {
-	return cosh (*x);
-}
-static inline double d_dim (double *a, double *b) {
-	return ( *a > *b ? *a - *b : 0 );
-}
-static inline double d_exp (double *x) {
-	return exp (*x);
-}
-static inline double d_imag (doublecomplex *z) {
-	return z->i;
-}
-static inline double d_int (double *x) {
-	return ( *x>0 ? floor(*x) : -floor(- *x) );
-}
-static inline double d_lg10 (double *x) {
-	return log10 (*x);
-}
-static inline double d_log (double *x) {
-	return log (*x);
-}
-// TODO djmw is this std::fmod (*x, *y) ??
-static inline double d_mod (double *x, double *y) {
-#ifdef IEEE_drem
-	double ya = *y;
-	if (ya < 0.0)
-		ya = -ya;
-	double xa = *x;
-	double z = drem (xa, ya);
-	if (xa > 0) {
-		if (z < 0)
-			z += ya;
-		}
-	else if (z > 0)
-		z -= ya;
-	return z;
-#else
-	double quotient = *x / *y;
-	if (quotient >= 0)
-		quotient = floor (quotient);
-	else
-		quotient = -floor(-quotient);
-	return (*x - (*y) * quotient );
-#endif
-}
-
-static inline double d_prod (real *x, real *y) {
-	return  (*x) * (*y);
-}
-static inline double d_sign (double *a, double *b) {
-	double x = (*a >= 0 ? *a : - *a);
-	return ( *b >= 0 ? x : -x );
-}
-static inline double d_sin (double *x) {
-	return sin (*x);
-}
-static inline double d_sinh (double *x) {
-	return sinh (*x);
-}
-static inline double d_sqrt (double *x) {
-	return sqrt (*x);
-}
-static inline double d_tan (double *x) {
-	return tan (*x);
-}
-static inline double d_tanh (double *x) {
-	return tanh (*x);
-}
-
-double pow_di(double *, integer *);
-integer pow_ii(integer *, integer *);
-double pow_ri (real *, integer *);
-void s_cat(char *, char **, integer *, integer *, integer);
-integer s_cmp (const char *, const char *, integer, integer);
-void s_copy(char *, const char *, integer, integer);
 double slamch_(const char *cmach);
 
 /* Missing if you want to compile clapack with g++ */
@@ -320,4 +214,4 @@ logical lsame_(const char *ca, const char *cb);
 
 logical lsamen_(integer *n, const char *ca, const char *cb);
 
-#endif _/* clapack_missing_prototypes_h_ */
+#endif /* clapack_missing_prototypes_h_ */

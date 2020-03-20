@@ -23,9 +23,7 @@
 #include "NUMmachar.h"
 #include "melder.h"
 
-#ifndef _NUMcblas_h_
-#include "NUMcblas.h"
-#endif
+#include "NUMlapack.h"
 
 static struct structmachar_Table machar_table;
 machar_Table NUMfpp = NULL;
@@ -58,16 +56,16 @@ void NUMmachar () {
 
 	NUMfpp = & machar_table;
 
-	NUMfpp -> base  = (int) dlamch_ ("Base");
-	NUMfpp -> t     = (int) dlamch_ ("Number of digits in mantissa");
-	NUMfpp -> emin  = (int) dlamch_ ("Minimum exponent");
-	NUMfpp -> emax  = (int) dlamch_ ("Largest exponent");
-	NUMfpp -> rnd   = (int) dlamch_ ("Rounding mode");
-	NUMfpp -> prec  = dlamch_ ("Precision");
-	NUMfpp -> eps   = dlamch_ ("Epsilon");
-	NUMfpp -> rmin  = dlamch_ ("Underflow threshold");
-	NUMfpp -> sfmin = dlamch_ ("Safe minimum");
-	NUMfpp -> rmax  = dlamch_ ("Overflow threshold");
+	NUMfpp -> base  = (int) NUMlapack_dlamch_ ("Base");
+	NUMfpp -> t     = (int) NUMlapack_dlamch_ ("Number of digits in mantissa");
+	NUMfpp -> emin  = (int) NUMlapack_dlamch_ ("Minimum exponent");
+	NUMfpp -> emax  = (int) NUMlapack_dlamch_ ("Largest exponent");
+	NUMfpp -> rnd   = (int) NUMlapack_dlamch_ ("Rounding mode");
+	NUMfpp -> prec  = NUMlapack_dlamch_ ("Precision");
+	NUMfpp -> eps   = NUMlapack_dlamch_ ("Epsilon");
+	NUMfpp -> rmin  = NUMlapack_dlamch_ ("Underflow threshold");
+	NUMfpp -> sfmin = NUMlapack_dlamch_ ("Safe minimum");
+	NUMfpp -> rmax  = NUMlapack_dlamch_ ("Overflow threshold");
 }
 
 /* End of file NUMmachar.c */

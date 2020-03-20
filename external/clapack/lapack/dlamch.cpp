@@ -1,10 +1,8 @@
 #include "f2c.h"
-#include "stdio.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
 
-static integer c__1 = 1;
 static doublereal c_b32 = 0.;
 
 doublereal dlamch_(const char *cmach)
@@ -364,13 +362,6 @@ L30:
     static logical first = TRUE_;
     static logical iwarn = FALSE_;
 
-    /* Format strings */
-    static char fmt_9999[] = "(//\002 WARNING. The value EMIN may be incorre"
-	    "ct:-\002,\002  EMIN = \002,i8,/\002 If, after inspection, the va"
-	    "lue EMIN looks\002,\002 acceptable please comment out \002,/\002"
-	    " the IF block as marked within the code of routine\002,\002 DLAM"
-	    "C2,\002,/\002 otherwise supply EMIN explicitly.\002,/)";
-
     /* System generated locals */
     integer i__1;
     doublereal d__1, d__2, d__3, d__4, d__5;
@@ -396,11 +387,6 @@ L30:
     doublereal sixth;
     logical lieee1;
     integer ngnmin, ngpmin;
-
-    /* Fortran I/O blocks */
-    static cilist io___58 = { 0, 6, 0, fmt_9999, 0 };
-
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -613,17 +599,7 @@ L10:
 /* Comment out this if block if EMIN is ok */
 	if (iwarn) {
 	    first = TRUE_;
-	    printf("\n\n WARNING. The value EMIN may be incorrect:- ");
-	    printf("EMIN = %8i\n",lemin);
-	    printf("If, after inspection, the value EMIN looks acceptable");
-            printf("please comment out \n the IF block as marked within the"); 
-            printf("code of routine DLAMC2, \n otherwise supply EMIN"); 
-            printf("explicitly.\n");
-         /*
-	    s_wsfe(&io___58);
-	    do_fio(&c__1, (char *)&lemin, (ftnlen)sizeof(integer));
-	    e_wsfe();
-         */
+		Melder_warning (U"DLAMC2 WARNING. The value EMIN may be incorrect:- ", lemin);
 	}
 /* ** */
 

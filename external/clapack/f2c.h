@@ -207,6 +207,7 @@ typedef doublereal E_f;	/* real function with -R not specified */
 	djmw 20200411
 */
 #include "clapack.h"
+#include "f2clib.h"
 #include "clapack_missing_prototypes.h"
 
 #endif

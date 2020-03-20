@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2020 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

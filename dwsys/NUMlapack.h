@@ -54,6 +54,10 @@
 		occasionaly if the rest of the parameter settings allow.
 */
 
+static inline double NUMlapack_dlamch_ (const char *cmach) {
+	return dlamch_(cmach);
+}
+
 static inline int NUMlapack_dgeev_ (const char *jobvl, const char *jobvr, integer n, double inout_a [], integer lda, double inout_wr [], double inout_wi [], double inoutout_vl [], integer ldvl, double inoutout_vr [], integer ldvr, double inout_work [], integer lwork, integer *info)
 {
 	return dgeev_ (jobvl, jobvr, & n, inout_a, & lda, inout_wr, inout_wi, inoutout_vl, & ldvl, inoutout_vr, & ldvr, inout_work, & lwork, info);
