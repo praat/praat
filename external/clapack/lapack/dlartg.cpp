@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlartg_(doublereal *f, doublereal *g, doublereal *cs, 
@@ -104,7 +104,7 @@
 	g1 = *g;
 /* Computing MAX */
 	d__1 = abs(f1), d__2 = abs(g1);
-	scale = max(d__1,d__2);
+	scale = std::max(d__1,d__2);
 	if (scale >= safmx2) {
 	    count = 0;
 L10:
@@ -113,7 +113,7 @@ L10:
 	    g1 *= safmn2;
 /* Computing MAX */
 	    d__1 = abs(f1), d__2 = abs(g1);
-	    scale = max(d__1,d__2);
+	    scale = std::max(d__1,d__2);
 	    if (scale >= safmx2) {
 		goto L10;
 	    }
@@ -137,7 +137,7 @@ L30:
 	    g1 *= safmx2;
 /* Computing MAX */
 	    d__1 = abs(f1), d__2 = abs(g1);
-	    scale = max(d__1,d__2);
+	    scale = std::max(d__1,d__2);
 	    if (scale <= safmn2) {
 		goto L30;
 	    }

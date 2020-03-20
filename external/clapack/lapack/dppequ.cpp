@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dppequ_(char *uplo, integer *n, doublereal *ap, 
@@ -132,10 +132,10 @@
 	    s[i__] = ap[jj];
 /* Computing MIN */
 	    d__1 = smin, d__2 = s[i__];
-	    smin = min(d__1,d__2);
+	    smin = std::min(d__1,d__2);
 /* Computing MAX */
 	    d__1 = *amax, d__2 = s[i__];
-	    *amax = max(d__1,d__2);
+	    *amax = std::max(d__1,d__2);
 /* L10: */
 	}
 
@@ -151,10 +151,10 @@
 	    s[i__] = ap[jj];
 /* Computing MIN */
 	    d__1 = smin, d__2 = s[i__];
-	    smin = min(d__1,d__2);
+	    smin = std::min(d__1,d__2);
 /* Computing MAX */
 	    d__1 = *amax, d__2 = s[i__];
-	    *amax = max(d__1,d__2);
+	    *amax = std::max(d__1,d__2);
 /* L20: */
 	}
     }

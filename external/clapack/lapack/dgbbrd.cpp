@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -175,11 +175,11 @@ static integer c__1 = 1;
 	*info = -6;
     } else if (*ldab < klu1) {
 	*info = -8;
-    } else if (*ldq < 1 || wantq && *ldq < max(1_integer,*m)) {
+    } else if (*ldq < 1 || wantq && *ldq < std::max(1_integer,*m)) {
 	*info = -12;
-    } else if (*ldpt < 1 || wantpt && *ldpt < max(1_integer,*n)) {
+    } else if (*ldpt < 1 || wantpt && *ldpt < std::max(1_integer,*n)) {
 	*info = -14;
-    } else if (*ldc < 1 || wantc && *ldc < max(1_integer,*m)) {
+    } else if (*ldc < 1 || wantc && *ldc < std::max(1_integer,*m)) {
 	*info = -16;
     }
     if (*info != 0) {
@@ -203,7 +203,7 @@ static integer c__1 = 1;
 	return 0;
     }
 
-    minmn = min(*m,*n);
+    minmn = std::min(*m,*n);
 
     if (*kl + *ku > 1) {
 
@@ -225,13 +225,13 @@ static integer c__1 = 1;
 /*        The sines of the plane rotations are stored in WORK(1:max(m,n)) */
 /*        and the cosines in WORK(max(m,n)+1:2*max(m,n)). */
 
-	mn = max(*m,*n);
+	mn = std::max(*m,*n);
 /* Computing MIN */
 	i__1 = *m - 1;
-	klm = min(i__1,*kl);
+	klm = std::min(i__1,*kl);
 /* Computing MIN */
 	i__1 = *n - 1;
-	kun = min(i__1,*ku);
+	kun = std::min(i__1,*ku);
 	kb = klm + kun;
 	kb1 = kb + 1;
 	inca = kb1 * *ldab;
@@ -290,7 +290,7 @@ static integer c__1 = 1;
 			if (i__ < *n) {
 /* Computing MIN */
 			    i__4 = *ku + ml - 2, i__5 = *n - i__;
-			    i__3 = min(i__4,i__5);
+			    i__3 = std::min(i__4,i__5);
 			    i__6 = *ldab - 1;
 			    i__7 = *ldab - 1;
 			    drot_(&i__3, &ab[*ku + ml - 2 + (i__ + 1) * 
@@ -390,7 +390,7 @@ static integer c__1 = 1;
 			ab[*ku - mu + 3 + (i__ + mu - 2) * ab_dim1] = ra;
 /* Computing MIN */
 			i__3 = *kl + mu - 2, i__5 = *m - i__;
-			i__4 = min(i__3,i__5);
+			i__4 = std::min(i__3,i__5);
 			drot_(&i__4, &ab[*ku - mu + 4 + (i__ + mu - 2) * 
 				ab_dim1], &c__1, &ab[*ku - mu + 3 + (i__ + mu 
 				- 1) * ab_dim1], &c__1, &work[mn + i__ + mu - 
@@ -458,7 +458,7 @@ static integer c__1 = 1;
 
 /* Computing MIN */
 	i__2 = *m - 1;
-	i__1 = min(i__2,*n);
+	i__1 = std::min(i__2,*n);
 	for (i__ = 1; i__ <= i__1; ++i__) {
 	    dlartg_(&ab[i__ * ab_dim1 + 1], &ab[i__ * ab_dim1 + 2], &rc, &rs, 
 		    &ra);

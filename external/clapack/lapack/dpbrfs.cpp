@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -179,9 +179,9 @@ static doublereal c_b14 = 1.;
 	*info = -6;
     } else if (*ldafb < *kd + 1) {
 	*info = -8;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -10;
-    } else if (*ldx < max(1_integer,*n)) {
+    } else if (*ldx < std::max(1_integer,*n)) {
 	*info = -12;
     }
     if (*info != 0) {
@@ -206,7 +206,7 @@ static doublereal c_b14 = 1.;
 
 /* Computing MIN */
     i__1 = *n + 1, i__2 = (*kd << 1) + 2;
-    nz = min(i__1,i__2);
+    nz = std::min(i__1,i__2);
     eps = dlamch_("Epsilon");
     safmin = dlamch_("Safe minimum");
     safe1 = nz * safmin;
@@ -255,7 +255,7 @@ L20:
 /* Computing MAX */
 		i__3 = 1, i__4 = k - *kd;
 		i__5 = k - 1;
-		for (i__ = max(i__3,i__4); i__ <= i__5; ++i__) {
+		for (i__ = std::max(i__3,i__4); i__ <= i__5; ++i__) {
 		    work[i__] += (d__1 = ab[l + i__ + k * ab_dim1], abs(d__1))
 			     * xk;
 		    s += (d__1 = ab[l + i__ + k * ab_dim1], abs(d__1)) * (
@@ -275,7 +275,7 @@ L20:
 		l = 1 - k;
 /* Computing MIN */
 		i__3 = *n, i__4 = k + *kd;
-		i__5 = min(i__3,i__4);
+		i__5 = std::min(i__3,i__4);
 		for (i__ = k + 1; i__ <= i__5; ++i__) {
 		    work[i__] += (d__1 = ab[l + i__ + k * ab_dim1], abs(d__1))
 			     * xk;
@@ -294,12 +294,12 @@ L20:
 /* Computing MAX */
 		d__2 = s, d__3 = (d__1 = work[*n + i__], abs(d__1)) / work[
 			i__];
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    } else {
 /* Computing MAX */
 		d__2 = s, d__3 = ((d__1 = work[*n + i__], abs(d__1)) + safe1) 
 			/ (work[i__] + safe1);
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    }
 /* L80: */
 	}
@@ -396,7 +396,7 @@ L100:
 	for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__2 = lstres, d__3 = (d__1 = x[i__ + j * x_dim1], abs(d__1));
-	    lstres = max(d__2,d__3);
+	    lstres = std::max(d__2,d__3);
 /* L130: */
 	}
 	if (lstres != 0.) {

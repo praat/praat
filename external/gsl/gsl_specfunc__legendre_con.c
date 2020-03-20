@@ -170,19 +170,6 @@ static double olver_U2(double beta2, double p)
   return (1.0-p)/(1152.0*(1.0+beta2)) * (poly1 + poly2 + poly3);
 }
 
-static const double U3c1[] = {   -1307.0,   -1647.0,    3375.0,    3675.0 };
-static const double U3c2[] = {   29366.0,   35835.0, -252360.0, -272630.0,
-                                276810.0,  290499.0 };
-static const double U3c3[] = {  -29748.0,   -8840.0, 1725295.0, 1767025.0,
-                              -7313470.0, -754778.0, 6309875.0, 6480045.0 };
-static const double U3c4[] = {    2696.0,    -16740.0,   -524250.0,  -183975.0,
-                              14670540.0,  14172939.0, -48206730.0, -48461985.0,
-                              36756720.0,  37182145.0 };
-static const double U3c5[] = {       9136.0,      22480.0,     12760.0,
-                                  -252480.0,   -4662165.0,   -1705341.0,
-                                 92370135.0,   86244015.0, -263678415.0,
-                               -260275015.0, 185910725.0,  185910725.0 };
-
 #if 0
 static double olver_U3(double beta2, double p)
 {
@@ -872,7 +859,7 @@ gsl_sf_conicalP_1_e(const double lambda, const double x, gsl_sf_result * result)
   }
   else if(lambda == 0.0) {
     gsl_sf_result K, E;
-    int stat_K, stat_E;
+    int stat_K;
     if(x == 1.0) {
       result->val = 0.0;
       result->err = 0.0;
@@ -892,7 +879,7 @@ gsl_sf_conicalP_1_e(const double lambda, const double x, gsl_sf_result * result)
         const double sth = sin(th);
         const double pre = 2.0/(M_PI*sth);
         stat_K = gsl_sf_ellint_Kcomp_e(s, GSL_MODE_DEFAULT, &K);
-        stat_E = gsl_sf_ellint_Ecomp_e(s, GSL_MODE_DEFAULT, &E);
+       (void) gsl_sf_ellint_Ecomp_e(s, GSL_MODE_DEFAULT, &E);
         result->val  = pre * (E.val - c2 * K.val);
         result->err  = pre * (E.err + fabs(c2) * K.err);
         result->err += 2.0 * GSL_DBL_EPSILON * fabs(result->val);
@@ -913,7 +900,7 @@ gsl_sf_conicalP_1_e(const double lambda, const double x, gsl_sf_result * result)
         const double sxi = sinh(xi);
         const double pre = 2.0/(M_PI*sxi) * c;
         stat_K = gsl_sf_ellint_Kcomp_e(t, GSL_MODE_DEFAULT, &K);
-        stat_E = gsl_sf_ellint_Ecomp_e(t, GSL_MODE_DEFAULT, &E);
+        (void) gsl_sf_ellint_Ecomp_e(t, GSL_MODE_DEFAULT, &E);
         result->val  = pre * (E.val - K.val);
         result->err  = pre * (E.err + K.err);
         result->err += 2.0 * GSL_DBL_EPSILON * fabs(result->val);

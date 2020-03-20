@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlarrk_(integer *n, integer *iw, doublereal *gl, 
@@ -112,7 +112,7 @@
     eps = dlamch_("P");
 /* Computing MAX */
     d__1 = abs(*gl), d__2 = abs(*gu);
-    tnorm = max(d__1,d__2);
+    tnorm = std::max(d__1,d__2);
     rtoli = *reltol;
     atoli = *pivmin * 4.;
     itmax = (integer) ((log(tnorm + *pivmin) - log(*pivmin)) / log(2.)) + 2;
@@ -127,10 +127,10 @@ L10:
     tmp1 = (d__1 = right - left, abs(d__1));
 /* Computing MAX */
     d__1 = abs(right), d__2 = abs(left);
-    tmp2 = max(d__1,d__2);
+    tmp2 = std::max(d__1,d__2);
 /* Computing MAX */
-    d__1 = max(atoli,*pivmin), d__2 = rtoli * tmp2;
-    if (tmp1 < max(d__1,d__2)) {
+    d__1 = std::max(atoli,*pivmin), d__2 = rtoli * tmp2;
+    if (tmp1 < std::max(d__1,d__2)) {
 	*info = 0;
 	goto L30;
     }

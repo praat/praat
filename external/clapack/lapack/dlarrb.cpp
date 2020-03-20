@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlarrb_(integer *n, doublereal *d__, doublereal *lld, 
@@ -177,7 +177,7 @@
 	right = w[ii] + werr[ii];
 	lgap = rgap;
 	rgap = wgap[ii];
-	gap = min(lgap,rgap);
+	gap = std::min(lgap,rgap);
 /*        Make sure that [LEFT,RIGHT] contains the desired eigenvalue */
 /*        Compute negcount from dstqds facto L+D+L+^T = L D L^T - LEFT */
 
@@ -206,10 +206,10 @@ L50:
 	width = (d__1 = left - right, abs(d__1)) * .5;
 /* Computing MAX */
 	d__1 = abs(left), d__2 = abs(right);
-	tmp = max(d__1,d__2);
+	tmp = std::max(d__1,d__2);
 /* Computing MAX */
 	d__1 = *rtol1 * gap, d__2 = *rtol2 * tmp;
-	cvrgd = max(d__1,d__2);
+	cvrgd = std::max(d__1,d__2);
 	if (width <= cvrgd || width <= mnwdth) {
 /*           This interval has already converged and does not need refinement. */
 /*           (Note that the gaps might change through refining the */
@@ -252,7 +252,7 @@ L80:
 	if (ii > 1) {
 	    lgap = wgap[ii - 1];
 	}
-	gap = min(lgap,rgap);
+	gap = std::min(lgap,rgap);
 	next = iwork[k - 1];
 	left = work[k - 1];
 	right = work[k];
@@ -261,10 +261,10 @@ L80:
 	width = right - mid;
 /* Computing MAX */
 	d__1 = abs(left), d__2 = abs(right);
-	tmp = max(d__1,d__2);
+	tmp = std::max(d__1,d__2);
 /* Computing MAX */
 	d__1 = *rtol1 * gap, d__2 = *rtol2 * tmp;
-	cvrgd = max(d__1,d__2);
+	cvrgd = std::max(d__1,d__2);
 	if (width <= cvrgd || width <= mnwdth || iter == maxitr) {
 /*           reduce number of unconverged intervals */
 	    --nint;
@@ -323,7 +323,7 @@ L100:
 	ii = i__ - *offset;
 /* Computing MAX */
 	d__1 = 0., d__2 = w[ii] - werr[ii] - w[ii - 1] - werr[ii - 1];
-	wgap[ii - 1] = max(d__1,d__2);
+	wgap[ii - 1] = std::max(d__1,d__2);
 /* L111: */
     }
     return 0;

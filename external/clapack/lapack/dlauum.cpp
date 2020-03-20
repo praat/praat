@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -95,7 +95,7 @@ static doublereal c_b15 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -132,7 +132,7 @@ static doublereal c_b15 = 1.;
 	    for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 /* Computing MIN */
 		i__3 = nb, i__4 = *n - i__ + 1;
-		ib = min(i__3,i__4);
+		ib = std::min(i__3,i__4);
 		i__3 = i__ - 1;
 		dtrmm_("Right", "Upper", "Transpose", "Non-unit", &i__3, &ib, 
 			&c_b15, &a[i__ + i__ * a_dim1], lda, &a[i__ * a_dim1 
@@ -162,7 +162,7 @@ static doublereal c_b15 = 1.;
 	    for (i__ = 1; i__1 < 0 ? i__ >= i__2 : i__ <= i__2; i__ += i__1) {
 /* Computing MIN */
 		i__3 = nb, i__4 = *n - i__ + 1;
-		ib = min(i__3,i__4);
+		ib = std::min(i__3,i__4);
 		i__3 = i__ - 1;
 		dtrmm_("Left", "Lower", "Transpose", "Non-unit", &ib, &i__3, &
 			c_b15, &a[i__ + i__ * a_dim1], lda, &a[i__ + a_dim1], 

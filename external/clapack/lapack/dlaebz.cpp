@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaebz_(integer *ijob, integer *nitmax, integer *n, 
@@ -345,7 +345,7 @@
 		    iwork[ji] = 1;
 /* Computing MIN */
 		    d__1 = work[ji], d__2 = -(*pivmin);
-		    work[ji] = min(d__1,d__2);
+		    work[ji] = std::min(d__1,d__2);
 		}
 
 		i__3 = *n;
@@ -355,7 +355,7 @@
 			++iwork[ji];
 /* Computing MIN */
 			d__1 = work[ji], d__2 = -(*pivmin);
-			work[ji] = min(d__1,d__2);
+			work[ji] = std::min(d__1,d__2);
 		    }
 /* L50: */
 		}
@@ -375,8 +375,8 @@
 /* Computing MIN */
 /* Computing MAX */
 		    i__5 = nab[ji + nab_dim1], i__6 = iwork[ji];
-		    i__3 = nab[ji + (nab_dim1 << 1)], i__4 = max(i__5,i__6);
-		    iwork[ji] = min(i__3,i__4);
+		    i__3 = nab[ji + (nab_dim1 << 1)], i__4 = std::max(i__5,i__6);
+		    iwork[ji] = std::min(i__3,i__4);
 
 /*                 Update the Queue -- add intervals if both halves */
 /*                 contain eigenvalues. */
@@ -457,7 +457,7 @@
 		    itmp1 = 1;
 /* Computing MIN */
 		    d__1 = tmp2, d__2 = -(*pivmin);
-		    tmp2 = min(d__1,d__2);
+		    tmp2 = std::min(d__1,d__2);
 		}
 
 /*              A series of compiler directives to defeat vectorization */
@@ -482,7 +482,7 @@
 			++itmp1;
 /* Computing MIN */
 			d__1 = tmp2, d__2 = -(*pivmin);
-			tmp2 = min(d__1,d__2);
+			tmp2 = std::min(d__1,d__2);
 		    }
 /* L90: */
 		}
@@ -496,8 +496,8 @@
 /* Computing MIN */
 /* Computing MAX */
 		    i__5 = nab[ji + nab_dim1];
-		    i__3 = nab[ji + (nab_dim1 << 1)], i__4 = max(i__5,itmp1);
-		    itmp1 = min(i__3,i__4);
+		    i__3 = nab[ji + (nab_dim1 << 1)], i__4 = std::max(i__5,itmp1);
+		    itmp1 = std::min(i__3,i__4);
 
 /*                 Update the Queue -- add intervals if both halves */
 /*                 contain eigenvalues. */
@@ -563,10 +563,10 @@
 /* Computing MAX */
 	    d__3 = (d__1 = ab[ji + (ab_dim1 << 1)], abs(d__1)), d__4 = (d__2 =
 		     ab[ji + ab_dim1], abs(d__2));
-	    tmp2 = max(d__3,d__4);
+	    tmp2 = std::max(d__3,d__4);
 /* Computing MAX */
-	    d__1 = max(*abstol,*pivmin), d__2 = *reltol * tmp2;
-	    if (tmp1 < max(d__1,d__2) || nab[ji + nab_dim1] >= nab[ji + (
+	    d__1 = std::max(*abstol,*pivmin), d__2 = *reltol * tmp2;
+	    if (tmp1 < std::max(d__1,d__2) || nab[ji + nab_dim1] >= nab[ji + (
 		    nab_dim1 << 1)]) {
 
 /*              Converged -- Swap with position KFNEW, */
@@ -618,7 +618,7 @@
 L140:
 /* Computing MAX */
     i__1 = kl + 1 - kf;
-    *info = max(i__1,0_integer);
+    *info = std::max(i__1,0_integer);
     *mout = kl;
 
     return 0;

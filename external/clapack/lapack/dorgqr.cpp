@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -111,7 +111,7 @@ static integer c__2 = 2;
     /* Function Body */
     *info = 0;
     nb = ilaenv_(&c__1, "DORGQR", " ", m, n, k, &c_n1);
-    lwkopt = max(1_integer,*n) * nb;
+    lwkopt = std::max(1_integer,*n) * nb;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
     if (*m < 0) {
@@ -120,9 +120,9 @@ static integer c__2 = 2;
 	*info = -2;
     } else if (*k < 0 || *k > *n) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
-    } else if (*lwork < max(1_integer,*n) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,*n) && ! lquery) {
 	*info = -8;
     }
     if (*info != 0) {
@@ -149,7 +149,7 @@ static integer c__2 = 2;
 
 /* Computing MAX */
 	i__1 = 0, i__2 = ilaenv_(&c__3, "DORGQR", " ", m, n, k, &c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 	if (nx < *k) {
 
 /*           Determine if workspace is large enough for blocked code. */
@@ -164,7 +164,7 @@ static integer c__2 = 2;
 		nb = *lwork / ldwork;
 /* Computing MAX */
 		i__1 = 2, i__2 = ilaenv_(&c__2, "DORGQR", " ", m, n, k, &c_n1);
-		nbmin = max(i__1,i__2);
+		nbmin = std::max(i__1,i__2);
 	    }
 	}
     }
@@ -177,7 +177,7 @@ static integer c__2 = 2;
 	ki = (*k - nx - 1) / nb * nb;
 /* Computing MIN */
 	i__1 = *k, i__2 = ki + nb;
-	kk = min(i__1,i__2);
+	kk = std::min(i__1,i__2);
 
 /*        Set A(1:kk,kk+1:n) to zero. */
 
@@ -212,7 +212,7 @@ static integer c__2 = 2;
 	for (i__ = ki + 1; i__1 < 0 ? i__ >= 1 : i__ <= 1; i__ += i__1) {
 /* Computing MIN */
 	    i__2 = nb, i__3 = *k - i__ + 1;
-	    ib = min(i__2,i__3);
+	    ib = std::min(i__2,i__3);
 	    if (i__ + ib <= *n) {
 
 /*              Form the triangular factor of the block reflector */

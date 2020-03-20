@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -209,12 +209,12 @@ static integer c__0 = 0;
     }
     m = *n1 + *n2;
 /* Computing MAX */
-    i__1 = 1, i__2 = *n * m, i__1 = max(i__1,i__2), i__2 = m * m << 1;
-    if (*lwork < max(i__1,i__2)) {
+    i__1 = 1, i__2 = *n * m, i__1 = std::max(i__1,i__2), i__2 = m * m << 1;
+    if (*lwork < std::max(i__1,i__2)) {
 	*info = -16;
 /* Computing MAX */
-	i__1 = 1, i__2 = *n * m, i__1 = max(i__1,i__2), i__2 = m * m << 1;
-	work[1] = (doublereal) max(i__1,i__2);
+	i__1 = 1, i__2 = *n * m, i__1 = std::max(i__1,i__2), i__2 = m * m << 1;
+	work[1] = (doublereal) std::max(i__1,i__2);
 	return 0;
     }
 
@@ -243,7 +243,7 @@ static integer c__0 = 0;
     dnorm = dscale * sqrt(dsum);
 /* Computing MAX */
     d__1 = eps * 10. * dnorm;
-    thresh = max(d__1,smlnum);
+    thresh = std::max(d__1,smlnum);
 
     if (m == 2) {
 

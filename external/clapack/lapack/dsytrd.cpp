@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -177,7 +177,7 @@ static doublereal c_b23 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     } else if (*lwork < 1 && ! lquery) {
 	*info = -9;
@@ -217,7 +217,7 @@ static doublereal c_b23 = 1.;
 /* Computing MAX */
 	i__1 = nb, i__2 = ilaenv_(&c__3, "DSYTRD", uplo, n, &c_n1, &c_n1, &
 		c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 	if (nx < *n) {
 
 /*           Determine if workspace is large enough for blocked code. */
@@ -232,7 +232,7 @@ static doublereal c_b23 = 1.;
 
 /* Computing MAX */
 		i__1 = *lwork / ldwork;
-		nb = max(i__1,1_integer);
+		nb = std::max(i__1,1_integer);
 		nbmin = ilaenv_(&c__2, "DSYTRD", uplo, n, &c_n1, &c_n1, &c_n1);
 		if (nb < nbmin) {
 		    nx = *n;

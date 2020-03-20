@@ -74,7 +74,6 @@ FUNCTION(gsl_fft_complex,radix2_transform) (TYPE(gsl_complex_packed_array) data,
   size_t dual;
   size_t bit; 
   size_t logn = 0;
-  int status;
 
   if (n == 1) /* identity operation */
     {
@@ -96,7 +95,7 @@ FUNCTION(gsl_fft_complex,radix2_transform) (TYPE(gsl_complex_packed_array) data,
 
   /* bit reverse the ordering of input data for decimation in time algorithm */
   
-  status = FUNCTION(fft_complex,bitreverse_order) (data, stride, n, logn) ;
+  (void) FUNCTION(fft_complex,bitreverse_order) (data, stride, n, logn) ;
 
   /* apply fft recursion */
 
@@ -231,7 +230,6 @@ FUNCTION(gsl_fft_complex,radix2_dif_transform) (TYPE(gsl_complex_packed_array) d
   size_t dual;
   size_t bit; 
   size_t logn = 0;
-  int status;
 
   if (n == 1) /* identity operation */
     {
@@ -301,7 +299,7 @@ FUNCTION(gsl_fft_complex,radix2_dif_transform) (TYPE(gsl_complex_packed_array) d
   /* bit reverse the ordering of output data for decimation in
      frequency algorithm */
   
-  status = FUNCTION(fft_complex,bitreverse_order)(data, stride, n, logn) ;
+  (void) FUNCTION(fft_complex,bitreverse_order)(data, stride, n, logn) ;
 
   return 0;
 

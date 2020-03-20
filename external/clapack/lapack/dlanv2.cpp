@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -112,13 +112,13 @@ static doublereal c_b4 = 1.;
 	p = temp * .5;
 /* Computing MAX */
 	d__1 = abs(*b), d__2 = abs(*c__);
-	bcmax = max(d__1,d__2);
+	bcmax = std::max(d__1,d__2);
 /* Computing MIN */
 	d__1 = abs(*b), d__2 = abs(*c__);
-	bcmis = min(d__1,d__2) * d_sign(&c_b4, b) * d_sign(&c_b4, c__);
+	bcmis = std::min(d__1,d__2) * d_sign(&c_b4, b) * d_sign(&c_b4, c__);
 /* Computing MAX */
 	d__1 = abs(p);
-	scale = max(d__1,bcmax);
+	scale = std::max(d__1,bcmax);
 	z__ = p / scale * p + bcmax / scale * bcmis;
 
 /*        If Z is of the order of the machine accuracy, postpone the */

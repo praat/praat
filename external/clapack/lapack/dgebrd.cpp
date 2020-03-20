@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -184,7 +184,7 @@ static doublereal c_b22 = 1.;
     *info = 0;
 /* Computing MAX */
     i__1 = 1, i__2 = ilaenv_(&c__1, "DGEBRD", " ", m, n, &c_n1, &c_n1);
-    nb = max(i__1,i__2);
+    nb = std::max(i__1,i__2);
     lwkopt = (*m + *n) * nb;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
@@ -192,12 +192,12 @@ static doublereal c_b22 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1_integer,*m);
-	if (*lwork < max(i__1,*n) && ! lquery) {
+	i__1 = std::max(1_integer,*m);
+	if (*lwork < std::max(i__1,*n) && ! lquery) {
 	    *info = -10;
 	}
     }
@@ -211,13 +211,13 @@ static doublereal c_b22 = 1.;
 
 /*     Quick return if possible */
 
-    minmn = min(*m,*n);
+    minmn = std::min(*m,*n);
     if (minmn == 0) {
 	work[1] = 1.;
 	return 0;
     }
 
-    ws = (doublereal) max(*m,*n);
+    ws = (doublereal) std::max(*m,*n);
     ldwrkx = *m;
     ldwrky = *n;
 
@@ -227,7 +227,7 @@ static doublereal c_b22 = 1.;
 
 /* Computing MAX */
 	i__1 = nb, i__2 = ilaenv_(&c__3, "DGEBRD", " ", m, n, &c_n1, &c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 
 /*        Determine when to switch from blocked to unblocked code. */
 

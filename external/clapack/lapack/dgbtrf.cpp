@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -162,7 +162,7 @@ static doublereal c_b31 = 1.;
 /*     The block size must not exceed the limit set by the size of the */
 /*     local arrays WORK13 and WORK31. */
 
-    nb = min(nb,64_integer);
+    nb = std::min(nb,64_integer);
 
     if (nb <= 1 || nb > *kl) {
 
@@ -201,7 +201,7 @@ static doublereal c_b31 = 1.;
 
 /*        Set fill-in elements in columns KU+2 to KV to zero */
 
-	i__1 = min(kv,*n);
+	i__1 = std::min(kv,*n);
 	for (j = *ku + 2; j <= i__1; ++j) {
 	    i__2 = *kl;
 	    for (i__ = kv - j + 2; i__ <= i__2; ++i__) {
@@ -216,12 +216,12 @@ static doublereal c_b31 = 1.;
 
 	ju = 1;
 
-	i__1 = min(*m,*n);
+	i__1 = std::min(*m,*n);
 	i__2 = nb;
 	for (j = 1; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2) {
 /* Computing MIN */
-	    i__3 = nb, i__4 = min(*m,*n) - j + 1;
-	    jb = min(i__3,i__4);
+	    i__3 = nb, i__4 = std::min(*m,*n) - j + 1;
+	    jb = std::min(i__3,i__4);
 
 /*           The active part of the matrix is partitioned */
 
@@ -237,10 +237,10 @@ static doublereal c_b31 = 1.;
 
 /* Computing MIN */
 	    i__3 = *kl - jb, i__4 = *m - j - jb + 1;
-	    i2 = min(i__3,i__4);
+	    i2 = std::min(i__3,i__4);
 /* Computing MIN */
 	    i__3 = jb, i__4 = *m - j - *kl + 1;
-	    i3 = min(i__3,i__4);
+	    i3 = std::min(i__3,i__4);
 
 /*           J2 and J3 are computed after JU has been updated. */
 
@@ -264,7 +264,7 @@ static doublereal c_b31 = 1.;
 
 /* Computing MIN */
 		i__4 = *kl, i__5 = *m - jj;
-		km = min(i__4,i__5);
+		km = std::min(i__4,i__5);
 		i__4 = km + 1;
 		jp = idamax_(&i__4, &ab[kv + 1 + jj * ab_dim1], &c__1);
 		ipiv[jj] = jp + jj - j;
@@ -272,8 +272,8 @@ static doublereal c_b31 = 1.;
 /* Computing MAX */
 /* Computing MIN */
 		    i__6 = jj + *ku + jp - 1;
-		    i__4 = ju, i__5 = min(i__6,*n);
-		    ju = max(i__4,i__5);
+		    i__4 = ju, i__5 = std::min(i__6,*n);
+		    ju = std::max(i__4,i__5);
 		    if (jp != 1) {
 
 /*                    Apply interchange to columns J to J+JB-1 */
@@ -314,7 +314,7 @@ static doublereal c_b31 = 1.;
 
 /* Computing MIN */
 		    i__4 = ju, i__5 = j + jb - 1;
-		    jm = min(i__4,i__5);
+		    jm = std::min(i__4,i__5);
 		    if (jm > jj) {
 			i__4 = jm - jj;
 			i__5 = *ldab - 1;
@@ -337,7 +337,7 @@ static doublereal c_b31 = 1.;
 
 /* Computing MIN */
 		i__4 = jj - j + 1;
-		nw = min(i__4,i3);
+		nw = std::min(i__4,i3);
 		if (nw > 0) {
 		    dcopy_(&nw, &ab[kv + *kl + 1 - jj + j + jj * ab_dim1], &
 			    c__1, &work31[(jj - j + 1) * 65 - 65], &c__1);
@@ -350,10 +350,10 @@ static doublereal c_b31 = 1.;
 
 /* Computing MIN */
 		i__3 = ju - j + 1;
-		j2 = min(i__3,kv) - jb;
+		j2 = std::min(i__3,kv) - jb;
 /* Computing MAX */
 		i__3 = 0, i__4 = ju - j - kv + 1;
-		j3 = max(i__3,i__4);
+		j3 = std::max(i__3,i__4);
 
 /*              Use DLASWP to apply the row interchanges to A12, A22, and */
 /*              A32. */
@@ -536,7 +536,7 @@ static doublereal c_b31 = 1.;
 
 /* Computing MIN */
 		i__4 = i3, i__5 = jj - j + 1;
-		nw = min(i__4,i__5);
+		nw = std::min(i__4,i__5);
 		if (nw > 0) {
 		    dcopy_(&nw, &work31[(jj - j + 1) * 65 - 65], &c__1, &ab[
 			    kv + *kl + 1 - jj + j + jj * ab_dim1], &c__1);

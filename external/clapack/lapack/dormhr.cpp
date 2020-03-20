@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -13,7 +13,7 @@ static integer c__2 = 2;
 	integer *info)
 {
     /* System generated locals */
-    address a__1[2];
+    char * a__1[2];
     integer a_dim1, a_offset, c_dim1, c_offset, i__1[2], i__2;
     char ch__1[2];
 
@@ -167,15 +167,15 @@ static integer c__2 = 2;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*ilo < 1 || *ilo > max(1_integer,nq)) {
+    } else if (*ilo < 1 || *ilo > std::max(1_integer,nq)) {
 	*info = -5;
-    } else if (*ihi < min(*ilo,nq) || *ihi > nq) {
+    } else if (*ihi < std::min(*ilo,nq) || *ihi > nq) {
 	*info = -6;
-    } else if (*lda < max(1_integer,nq)) {
+    } else if (*lda < std::max(1_integer,nq)) {
 	*info = -8;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	*info = -11;
-    } else if (*lwork < max(1_integer,nw) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,nw) && ! lquery) {
 	*info = -13;
     }
 
@@ -193,7 +193,7 @@ static integer c__2 = 2;
 	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
 	    nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &nh, &nh, &c_n1);
 	}
-	lwkopt = max(1_integer,nw) * nb;
+	lwkopt = std::max(1_integer,nw) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

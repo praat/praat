@@ -335,8 +335,6 @@ rk4_reset (void *vstate, size_t dim)
 static unsigned int
 rk4_order (void *vstate)
 {
-  rk4_state_t *state = (rk4_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 4;
 }
 

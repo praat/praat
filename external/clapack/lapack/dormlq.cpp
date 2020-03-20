@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -13,7 +13,7 @@ static integer c__65 = 65;
 	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
 {
     /* System generated locals */
-    address a__1[2];
+    char * a__1[2];
     integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2], i__4, 
 	    i__5;
     char ch__1[2];
@@ -175,11 +175,11 @@ static integer c__65 = 65;
 	*info = -4;
     } else if (*k < 0 || *k > nq) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*k)) {
+    } else if (*lda < std::max(1_integer,*k)) {
 	*info = -7;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	*info = -10;
-    } else if (*lwork < max(1_integer,nw) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,nw) && ! lquery) {
 	*info = -12;
     }
 
@@ -194,8 +194,8 @@ static integer c__65 = 65;
 	i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 	i__1 = 64, i__2 = ilaenv_(&c__1, "DORMLQ", ch__1, m, n, k, &c_n1);
-	nb = min(i__1,i__2);
-	lwkopt = max(1_integer,nw) * nb;
+	nb = std::min(i__1,i__2);
+	lwkopt = std::max(1_integer,nw) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 
@@ -226,7 +226,7 @@ static integer c__65 = 65;
 	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DORMLQ", ch__1, m, n, k, &c_n1);
-	    nbmin = max(i__1,i__2);
+	    nbmin = std::max(i__1,i__2);
 	}
     } else {
 	iws = nw;
@@ -271,7 +271,7 @@ static integer c__65 = 65;
 	for (i__ = i1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 /* Computing MIN */
 	    i__4 = nb, i__5 = *k - i__ + 1;
-	    ib = min(i__4,i__5);
+	    ib = std::min(i__4,i__5);
 
 /*           Form the triangular factor of the block reflector */
 /*           H = H(i) H(i+1) . . . H(i+ib-1) */

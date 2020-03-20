@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -144,7 +144,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < *m) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
 
@@ -160,7 +160,7 @@ static integer c__2 = 2;
 	}
 	work[1] = (doublereal) lwkopt;
 
-	if (*lwork < max(1_integer,*m) && ! lquery) {
+	if (*lwork < std::max(1_integer,*m) && ! lquery) {
 	    *info = -7;
 	}
     }
@@ -195,7 +195,7 @@ static integer c__2 = 2;
 
 /* Computing MAX */
 	i__1 = 0, i__2 = ilaenv_(&c__3, "DGERQF", " ", m, n, &c_n1, &c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 	if (nx < *m) {
 
 /*           Determine if workspace is large enough for blocked code. */
@@ -211,7 +211,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 		i__1 = 2, i__2 = ilaenv_(&c__2, "DGERQF", " ", m, n, &c_n1, &
 			c_n1);
-		nbmin = max(i__1,i__2);
+		nbmin = std::max(i__1,i__2);
 	    }
 	}
     }
@@ -223,11 +223,11 @@ static integer c__2 = 2;
 
 /* Computing MIN */
 	i__1 = *m + 1;
-	m1 = min(i__1,*n);
+	m1 = std::min(i__1,*n);
 	ki = (*m - nx - 1) / nb * nb;
 /* Computing MIN */
 	i__1 = *m, i__2 = ki + nb;
-	kk = min(i__1,i__2);
+	kk = std::min(i__1,i__2);
 
 	i__1 = *m - kk + 1;
 	i__2 = -nb;
@@ -235,7 +235,7 @@ static integer c__2 = 2;
 		i__ += i__2) {
 /* Computing MIN */
 	    i__3 = *m - i__ + 1;
-	    ib = min(i__3,nb);
+	    ib = std::min(i__3,nb);
 
 /*           Compute the TZ factorization of the current block */
 /*           A(i:i+ib-1,i:n) */

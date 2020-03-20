@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -180,13 +180,13 @@ static integer c__2 = 2;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldq < 1 || *wantq && *ldq < max(1_integer,*n)) {
+    } else if (*ldq < 1 || *wantq && *ldq < std::max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldz < 1 || *wantz && *ldz < max(1_integer,*n)) {
+    } else if (*ldz < 1 || *wantz && *ldz < std::max(1_integer,*n)) {
 	*info = -11;
     } else if (*ifst < 1 || *ifst > *n) {
 	*info = -12;

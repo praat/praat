@@ -221,8 +221,6 @@ rk2_reset (void *vstate, size_t dim)
 static unsigned int
 rk2_order (void *vstate)
 {
-  rk2_state_t *state = (rk2_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 2;
 }
 

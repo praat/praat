@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -167,7 +167,7 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     } else if (*lwork < 1 && ! lquery) {
 	*info = -7;
@@ -197,11 +197,11 @@ static integer c__2 = 2;
 	if (*lwork < iws) {
 /* Computing MAX */
 	    i__1 = *lwork / ldwork;
-	    nb = max(i__1,1_integer);
+	    nb = std::max(i__1,1_integer);
 /* Computing MAX */
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DSYTRF", uplo, n, &c_n1, &c_n1, &
 		    c_n1);
-	    nbmin = max(i__1,i__2);
+	    nbmin = std::max(i__1,i__2);
 	}
     } else {
 	iws = 1;

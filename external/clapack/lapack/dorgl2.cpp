@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dorgl2_(integer *m, integer *n, integer *k, doublereal *
@@ -92,7 +92,7 @@
 	*info = -2;
     } else if (*k < 0 || *k > *m) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
     }
     if (*info != 0) {

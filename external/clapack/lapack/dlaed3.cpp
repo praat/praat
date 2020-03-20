@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -163,7 +163,7 @@ static doublereal c_b23 = 0.;
 	*info = -1;
     } else if (*n < *k) {
 	*info = -2;
-    } else if (*ldq < max(1_integer,*n)) {
+    } else if (*ldq < std::max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

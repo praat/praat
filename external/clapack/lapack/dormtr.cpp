@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -12,7 +12,7 @@ static integer c__2 = 2;
 	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
 {
     /* System generated locals */
-    address a__1[2];
+    char * a__1[2];
     integer a_dim1, a_offset, c_dim1, c_offset, i__1[2], i__2, i__3;
     char ch__1[2];
 
@@ -167,11 +167,11 @@ static integer c__2 = 2;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,nq)) {
+    } else if (*lda < std::max(1_integer,nq)) {
 	*info = -7;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	*info = -10;
-    } else if (*lwork < max(1_integer,nw) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,nw) && ! lquery) {
 	*info = -12;
     }
 
@@ -213,7 +213,7 @@ static integer c__2 = 2;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &i__2, &i__3, &c_n1);
 	    }
 	}
-	lwkopt = max(1_integer,nw) * nb;
+	lwkopt = std::max(1_integer,nw) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -348,7 +348,7 @@ static doublereal c_b18 = .001;
     rmin = sqrt(smlnum);
 /* Computing MIN */
     d__1 = sqrt(bignum), d__2 = 1. / sqrt(sqrt(safmin));
-    rmax = min(d__1,d__2);
+    rmax = std::min(d__1,d__2);
 
     if (*info == 0) {
 	work[1] = (doublereal) lwmin;
@@ -544,7 +544,7 @@ static doublereal c_b18 = .001;
 	rtol1 = sqrt(eps);
 /* Computing MAX */
 	d__1 = sqrt(eps) * .005, d__2 = eps * 4.;
-	rtol2 = max(d__1,d__2);
+	rtol2 = std::max(d__1,d__2);
     }
     dlarre_(range, n, &wl, &wu, &iil, &iiu, &d__[1], &e[1], &work[inde2], &
 	    rtol1, &rtol2, &thresh, &nsplit, &iwork[iinspl], m, &w[1], &work[

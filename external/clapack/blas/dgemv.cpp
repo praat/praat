@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgemv_(const char *trans, integer *m, integer *n, doublereal *
@@ -138,7 +138,7 @@
 	info = 2;
     } else if (*n < 0) {
 	info = 3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	info = 6;
     } else if (*incx == 0) {
 	info = 8;

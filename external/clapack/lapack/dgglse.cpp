@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -154,7 +154,7 @@ static doublereal c_b33 = 1.;
 
     /* Function Body */
     *info = 0;
-    mn = min(*m,*n);
+    mn = std::min(*m,*n);
     lquery = *lwork == -1;
     if (*m < 0) {
 	*info = -1;
@@ -162,9 +162,9 @@ static doublereal c_b33 = 1.;
 	*info = -2;
     } else if (*p < 0 || *p > *n || *p < *n - *m) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*p)) {
+    } else if (*ldb < std::max(1_integer,*p)) {
 	*info = -7;
     }
 
@@ -180,10 +180,10 @@ static doublereal c_b33 = 1.;
 	    nb3 = ilaenv_(&c__1, "DORMQR", " ", m, n, p, &c_n1);
 	    nb4 = ilaenv_(&c__1, "DORMRQ", " ", m, n, p, &c_n1);
 /* Computing MAX */
-	    i__1 = max(nb1,nb2), i__1 = max(i__1,nb3);
-	    nb = max(i__1,nb4);
+	    i__1 = std::max(nb1,nb2), i__1 = std::max(i__1,nb3);
+	    nb = std::max(i__1,nb4);
 	    lwkmin = *m + *n + *p;
-	    lwkopt = *p + mn + max(*m,*n) * nb;
+	    lwkopt = *p + mn + std::max(*m,*n) * nb;
 	}
 	work[1] = (doublereal) lwkopt;
 
@@ -223,13 +223,13 @@ static doublereal c_b33 = 1.;
 /*     Update c = Z'*c = ( c1 ) N-P */
 /*                       ( c2 ) M+P-N */
 
-    i__1 = max(1_integer,*m);
+    i__1 = std::max(1_integer,*m);
     i__2 = *lwork - *p - mn;
     dormqr_("Left", "Transpose", m, &c__1, &mn, &a[a_offset], lda, &work[*p + 
 	    1], &c__[1], &i__1, &work[*p + mn + 1], &i__2, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[*p + mn + 1];
-    lopt = max(i__1,i__2);
+    lopt = std::max(i__1,i__2);
 
 /*     Solve T12*x2 = d for x2 */
 
@@ -298,7 +298,7 @@ static doublereal c_b33 = 1.;
 	    1], n, &work[*p + mn + 1], &i__1, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[*p + mn + 1];
-    work[1] = (doublereal) (*p + mn + max(i__1,i__2));
+    work[1] = (doublereal) (*p + mn + std::max(i__1,i__2));
 
     return 0;
 

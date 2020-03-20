@@ -26,16 +26,13 @@ FUNCTION(fft_halfcomplex,pass_2) (const BASE in[],
                                   const size_t n,
                                   const TYPE(gsl_complex) twiddle[])
 {
-  size_t i, j, k, k1, jump;
+  size_t k, k1;
   size_t factor, q, m, product_1;
-  i = 0;
-  j = 0;
 
   factor = 2;
   m = n / factor;
   q = n / product;
   product_1 = product / factor;
-  jump = (factor - 1) * q;
 
   for (k1 = 0; k1 < product_1; k1++)
     {

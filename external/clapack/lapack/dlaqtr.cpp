@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -170,13 +170,13 @@ static logical c_true = TRUE_;
     xnorm = dlange_("M", n, n, &t[t_offset], ldt, d__);
     if (! (*lreal)) {
 /* Computing MAX */
-	d__1 = xnorm, d__2 = abs(*w), d__1 = max(d__1,d__2), d__2 = dlange_(
+	d__1 = xnorm, d__2 = abs(*w), d__1 = std::max(d__1,d__2), d__2 = dlange_(
 		"M", n, &c__1, &b[1], n, d__);
-	xnorm = max(d__1,d__2);
+	xnorm = std::max(d__1,d__2);
     }
 /* Computing MAX */
     d__1 = smlnum, d__2 = eps * xnorm;
-    smin = max(d__1,d__2);
+    smin = std::max(d__1,d__2);
 
 /*     Compute 1-norm of each column of strictly upper triangular */
 /*     part of T to control overflow in triangular solver. */
@@ -312,12 +312,12 @@ static logical c_true = TRUE_;
 
 /* Computing MAX */
 		    d__1 = abs(v[0]), d__2 = abs(v[1]);
-		    xj = max(d__1,d__2);
+		    xj = std::max(d__1,d__2);
 		    if (xj > 1.) {
 			rec = 1. / xj;
 /* Computing MAX */
 			d__1 = work[j1], d__2 = work[j2];
-			if (max(d__1,d__2) > (bignum - xmax) * rec) {
+			if (std::max(d__1,d__2) > (bignum - xmax) * rec) {
 			    dscal_(n, &rec, &x[1], &c__1);
 			    *scale *= rec;
 			}
@@ -406,7 +406,7 @@ L30:
 		    x[j1] /= tmp;
 /* Computing MAX */
 		    d__2 = xmax, d__3 = (d__1 = x[j1], abs(d__1));
-		    xmax = max(d__2,d__3);
+		    xmax = std::max(d__2,d__3);
 
 		} else {
 
@@ -418,12 +418,12 @@ L30:
 /* Computing MAX */
 		    d__3 = (d__1 = x[j1], abs(d__1)), d__4 = (d__2 = x[j2], 
 			    abs(d__2));
-		    xj = max(d__3,d__4);
+		    xj = std::max(d__3,d__4);
 		    if (xmax > 1.) {
 			rec = 1. / xmax;
 /* Computing MAX */
 			d__1 = work[j2], d__2 = work[j1];
-			if (max(d__1,d__2) > (bignum - xj) * rec) {
+			if (std::max(d__1,d__2) > (bignum - xj) * rec) {
 			    dscal_(n, &rec, &x[1], &c__1);
 			    *scale *= rec;
 			    xmax *= rec;
@@ -452,8 +452,8 @@ L30:
 		    x[j2] = v[1];
 /* Computing MAX */
 		    d__3 = (d__1 = x[j1], abs(d__1)), d__4 = (d__2 = x[j2], 
-			    abs(d__2)), d__3 = max(d__3,d__4);
-		    xmax = max(d__3,xmax);
+			    abs(d__2)), d__3 = std::max(d__3,d__4);
+		    xmax = std::max(d__3,xmax);
 
 		}
 L40:
@@ -465,7 +465,7 @@ L40:
 
 /* Computing MAX */
 	d__1 = eps * abs(*w);
-	sminw = max(d__1,smin);
+	sminw = std::max(d__1,smin);
 	if (notran) {
 
 /*           Solve (T + iB)*(p+iq) = c+id */
@@ -553,7 +553,7 @@ L40:
 /* Computing MAX */
 			    d__3 = xmax, d__4 = (d__1 = x[k], abs(d__1)) + (
 				    d__2 = x[k + *n], abs(d__2));
-			    xmax = max(d__3,d__4);
+			    xmax = std::max(d__3,d__4);
 /* L50: */
 			}
 		    }
@@ -590,12 +590,12 @@ L40:
 /* Computing MAX */
 		    d__1 = abs(v[0]) + abs(v[2]), d__2 = abs(v[1]) + abs(v[3])
 			    ;
-		    xj = max(d__1,d__2);
+		    xj = std::max(d__1,d__2);
 		    if (xj > 1.) {
 			rec = 1. / xj;
 /* Computing MAX */
 			d__1 = work[j1], d__2 = work[j2];
-			if (max(d__1,d__2) > (bignum - xmax) * rec) {
+			if (std::max(d__1,d__2) > (bignum - xmax) * rec) {
 			    dscal_(&n2, &rec, &x[1], &c__1);
 			    *scale *= rec;
 			}
@@ -631,7 +631,7 @@ L40:
 /* Computing MAX */
 			    d__3 = (d__1 = x[k], abs(d__1)) + (d__2 = x[k + *
 				    n], abs(d__2));
-			    xmax = max(d__3,xmax);
+			    xmax = std::max(d__3,xmax);
 /* L60: */
 			}
 		    }
@@ -723,7 +723,7 @@ L70:
 /* Computing MAX */
 		    d__3 = (d__1 = x[j1], abs(d__1)) + (d__2 = x[j1 + *n], 
 			    abs(d__2));
-		    xmax = max(d__3,xmax);
+		    xmax = std::max(d__3,xmax);
 
 		} else {
 
@@ -736,12 +736,12 @@ L70:
 		    d__5 = (d__1 = x[j1], abs(d__1)) + (d__2 = x[*n + j1], 
 			    abs(d__2)), d__6 = (d__3 = x[j2], abs(d__3)) + (
 			    d__4 = x[*n + j2], abs(d__4));
-		    xj = max(d__5,d__6);
+		    xj = std::max(d__5,d__6);
 		    if (xmax > 1.) {
 			rec = 1. / xmax;
 /* Computing MAX */
 			d__1 = work[j1], d__2 = work[j2];
-			if (max(d__1,d__2) > (bignum - xj) / xmax) {
+			if (std::max(d__1,d__2) > (bignum - xj) / xmax) {
 			    dscal_(&n2, &rec, &x[1], &c__1);
 			    *scale *= rec;
 			    xmax *= rec;
@@ -783,9 +783,9 @@ L70:
 /* Computing MAX */
 		    d__5 = (d__1 = x[j1], abs(d__1)) + (d__2 = x[*n + j1], 
 			    abs(d__2)), d__6 = (d__3 = x[j2], abs(d__3)) + (
-			    d__4 = x[*n + j2], abs(d__4)), d__5 = max(d__5,
+			    d__4 = x[*n + j2], abs(d__4)), d__5 = std::max(d__5,
 			    d__6);
-		    xmax = max(d__5,xmax);
+		    xmax = std::max(d__5,xmax);
 
 		}
 

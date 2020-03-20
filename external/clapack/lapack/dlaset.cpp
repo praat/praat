@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaset_(const char *uplo, integer *m, integer *n, doublereal *
@@ -87,7 +87,7 @@
 	for (j = 2; j <= i__1; ++j) {
 /* Computing MIN */
 	    i__3 = j - 1;
-	    i__2 = min(i__3,*m);
+	    i__2 = std::min(i__3,*m);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		a[i__ + j * a_dim1] = *alpha;
 /* L10: */
@@ -100,7 +100,7 @@
 /*        Set the strictly lower triangular or trapezoidal part of the */
 /*        array to ALPHA. */
 
-	i__1 = min(*m,*n);
+	i__1 = std::min(*m,*n);
 	for (j = 1; j <= i__1; ++j) {
 	    i__2 = *m;
 	    for (i__ = j + 1; i__ <= i__2; ++i__) {
@@ -127,7 +127,7 @@
 
 /*     Set the first min(M,N) diagonal elements to BETA. */
 
-    i__1 = min(*m,*n);
+    i__1 = std::min(*m,*n);
     for (i__ = 1; i__ <= i__1; ++i__) {
 	a[i__ + i__ * a_dim1] = *beta;
 /* L70: */

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -108,19 +108,19 @@ static integer c_n1 = -1;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
-    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
+    } else if (*ilo < 1 || *ilo > std::max(1_integer,*n)) {
 	*info = -2;
-    } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
+    } else if (*ihi < std::min(*ilo,*n) || *ihi > *n) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*lwork < max(1_integer,nh) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,nh) && ! lquery) {
 	*info = -8;
     }
 
     if (*info == 0) {
 	nb = ilaenv_(&c__1, "DORGQR", " ", &nh, &nh, &nh, &c_n1);
-	lwkopt = max(1_integer,nh) * nb;
+	lwkopt = std::max(1_integer,nh) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

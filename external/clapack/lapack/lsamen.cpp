@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "string.h"
 
 logical lsamen_(integer *n, const char *ca, const char *cb)
@@ -9,12 +9,6 @@ logical lsamen_(integer *n, const char *ca, const char *cb)
 
     /* Local variables */
     static integer i__;
-
-    ftnlen ca_len, cb_len;
-
-    ca_len = strlen (ca);
-    cb_len = strlen (cb);
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

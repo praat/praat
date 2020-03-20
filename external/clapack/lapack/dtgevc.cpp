@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -326,9 +326,9 @@ static logical c_false = FALSE_;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lds < max(1_integer,*n)) {
+    } else if (*lds < std::max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldp < max(1_integer,*n)) {
+    } else if (*ldp < std::max(1_integer,*n)) {
 	*info = -8;
     }
     if (*info != 0) {
@@ -455,18 +455,18 @@ L10:
 	work[*n + j] = temp2;
 /* Computing MIN */
 	i__3 = j + 1;
-	i__2 = min(i__3,*n);
+	i__2 = std::min(i__3,*n);
 	for (i__ = iend + 1; i__ <= i__2; ++i__) {
 	    temp += (d__1 = s[i__ + j * s_dim1], abs(d__1));
 	    temp2 += (d__1 = p[i__ + j * p_dim1], abs(d__1));
 /* L40: */
 	}
-	anorm = max(anorm,temp);
-	bnorm = max(bnorm,temp2);
+	anorm = std::max(anorm,temp);
+	bnorm = std::max(bnorm,temp2);
 /* L50: */
     }
-    ascale = 1. / max(anorm,safmin);
-    bscale = 1. / max(bnorm,safmin);
+    ascale = 1. / std::max(anorm,safmin);
+    bscale = 1. / std::max(bnorm,safmin);
 
 /*     Left eigenvectors */
 
@@ -545,8 +545,8 @@ L10:
 /* Computing MAX */
 		d__3 = (d__1 = s[je + je * s_dim1], abs(d__1)) * ascale, d__4 
 			= (d__2 = p[je + je * p_dim1], abs(d__2)) * bscale, 
-			d__3 = max(d__3,d__4);
-		temp = 1. / max(d__3,safmin);
+			d__3 = std::max(d__3,d__4);
+		temp = 1. / std::max(d__3,safmin);
 		salfar = temp * s[je + je * s_dim1] * ascale;
 		sbeta = temp * p[je + je * p_dim1] * bscale;
 		acoef = sbeta * ascale;
@@ -559,20 +559,20 @@ L10:
 		lsa = abs(sbeta) >= safmin && abs(acoef) < small;
 		lsb = abs(salfar) >= safmin && abs(bcoefr) < small;
 		if (lsa) {
-		    scale = small / abs(sbeta) * min(anorm,big);
+		    scale = small / abs(sbeta) * std::min(anorm,big);
 		}
 		if (lsb) {
 /* Computing MAX */
-		    d__1 = scale, d__2 = small / abs(salfar) * min(bnorm,big);
-		    scale = max(d__1,d__2);
+		    d__1 = scale, d__2 = small / abs(salfar) * std::min(bnorm,big);
+		    scale = std::max(d__1,d__2);
 		}
 		if (lsa || lsb) {
 /* Computing MIN */
 /* Computing MAX */
-		    d__3 = 1., d__4 = abs(acoef), d__3 = max(d__3,d__4), d__4 
+		    d__3 = 1., d__4 = abs(acoef), d__3 = std::max(d__3,d__4), d__4 
 			    = abs(bcoefr);
-		    d__1 = scale, d__2 = 1. / (safmin * max(d__3,d__4));
-		    scale = min(d__1,d__2);
+		    d__1 = scale, d__2 = 1. / (safmin * std::max(d__3,d__4));
+		    scale = std::min(d__1,d__2);
 		    if (lsa) {
 			acoef = ascale * (scale * sbeta);
 		    } else {
@@ -615,7 +615,7 @@ L10:
 		if (bcoefa * ulp < safmin && bcoefa >= safmin) {
 /* Computing MAX */
 		    d__1 = scale, d__2 = safmin / ulp / bcoefa;
-		    scale = max(d__1,d__2);
+		    scale = std::max(d__1,d__2);
 		}
 		if (safmin * acoefa > ascale) {
 		    scale = ascale / (safmin * acoefa);
@@ -623,7 +623,7 @@ L10:
 		if (safmin * bcoefa > bscale) {
 /* Computing MIN */
 		    d__1 = scale, d__2 = bscale / (safmin * bcoefa);
-		    scale = min(d__1,d__2);
+		    scale = std::min(d__1,d__2);
 		}
 		if (scale != 1.) {
 		    acoef = scale * acoef;
@@ -659,13 +659,13 @@ L10:
 			work[*n * 3 + je], abs(d__2)), d__6 = (d__3 = work[(*
 			n << 1) + je + 1], abs(d__3)) + (d__4 = work[*n * 3 + 
 			je + 1], abs(d__4));
-		xmax = max(d__5,d__6);
+		xmax = std::max(d__5,d__6);
 	    }
 
 /* Computing MAX */
 	    d__1 = ulp * acoefa * anorm, d__2 = ulp * bcoefa * bnorm, d__1 = 
-		    max(d__1,d__2);
-	    dmin__ = max(d__1,safmin);
+		    std::max(d__1,d__2);
+	    dmin__ = std::max(d__1,safmin);
 
 /*                                           T */
 /*           Triangular solve of  (a A - b B)  y = 0 */
@@ -694,18 +694,18 @@ L10:
 
 /*              Check whether scaling is necessary for dot products */
 
-		xscale = 1. / max(1.,xmax);
+		xscale = 1. / std::max(1.,xmax);
 /* Computing MAX */
-		d__1 = work[j], d__2 = work[*n + j], d__1 = max(d__1,d__2), 
+		d__1 = work[j], d__2 = work[*n + j], d__1 = std::max(d__1,d__2), 
 			d__2 = acoefa * work[j] + bcoefa * work[*n + j];
-		temp = max(d__1,d__2);
+		temp = std::max(d__1,d__2);
 		if (il2by2) {
 /* Computing MAX */
-		    d__1 = temp, d__2 = work[j + 1], d__1 = max(d__1,d__2), 
-			    d__2 = work[*n + j + 1], d__1 = max(d__1,d__2), 
+		    d__1 = temp, d__2 = work[j + 1], d__1 = std::max(d__1,d__2), 
+			    d__2 = work[*n + j + 1], d__1 = std::max(d__1,d__2), 
 			    d__2 = acoefa * work[j + 1] + bcoefa * work[*n + 
 			    j + 1];
-		    temp = max(d__1,d__2);
+		    temp = std::max(d__1,d__2);
 		}
 		if (temp > bignum * xscale) {
 		    i__3 = nw - 1;
@@ -831,7 +831,7 @@ L10:
 		    }
 		    xmax = scale * xmax;
 		}
-		xmax = max(xmax,temp);
+		xmax = std::max(xmax,temp);
 L160:
 		;
 	    }
@@ -868,7 +868,7 @@ L160:
 		    d__3 = xmax, d__4 = (d__1 = vl[j + ieig * vl_dim1], abs(
 			    d__1)) + (d__2 = vl[j + (ieig + 1) * vl_dim1], 
 			    abs(d__2));
-		    xmax = max(d__3,d__4);
+		    xmax = std::max(d__3,d__4);
 /* L180: */
 		}
 	    } else {
@@ -877,7 +877,7 @@ L160:
 /* Computing MAX */
 		    d__2 = xmax, d__3 = (d__1 = vl[j + ieig * vl_dim1], abs(
 			    d__1));
-		    xmax = max(d__2,d__3);
+		    xmax = std::max(d__2,d__3);
 /* L190: */
 		}
 	    }
@@ -986,8 +986,8 @@ L220:
 /* Computing MAX */
 		d__3 = (d__1 = s[je + je * s_dim1], abs(d__1)) * ascale, d__4 
 			= (d__2 = p[je + je * p_dim1], abs(d__2)) * bscale, 
-			d__3 = max(d__3,d__4);
-		temp = 1. / max(d__3,safmin);
+			d__3 = std::max(d__3,d__4);
+		temp = 1. / std::max(d__3,safmin);
 		salfar = temp * s[je + je * s_dim1] * ascale;
 		sbeta = temp * p[je + je * p_dim1] * bscale;
 		acoef = sbeta * ascale;
@@ -1000,20 +1000,20 @@ L220:
 		lsa = abs(sbeta) >= safmin && abs(acoef) < small;
 		lsb = abs(salfar) >= safmin && abs(bcoefr) < small;
 		if (lsa) {
-		    scale = small / abs(sbeta) * min(anorm,big);
+		    scale = small / abs(sbeta) * std::min(anorm,big);
 		}
 		if (lsb) {
 /* Computing MAX */
-		    d__1 = scale, d__2 = small / abs(salfar) * min(bnorm,big);
-		    scale = max(d__1,d__2);
+		    d__1 = scale, d__2 = small / abs(salfar) * std::min(bnorm,big);
+		    scale = std::max(d__1,d__2);
 		}
 		if (lsa || lsb) {
 /* Computing MIN */
 /* Computing MAX */
-		    d__3 = 1., d__4 = abs(acoef), d__3 = max(d__3,d__4), d__4 
+		    d__3 = 1., d__4 = abs(acoef), d__3 = std::max(d__3,d__4), d__4 
 			    = abs(bcoefr);
-		    d__1 = scale, d__2 = 1. / (safmin * max(d__3,d__4));
-		    scale = min(d__1,d__2);
+		    d__1 = scale, d__2 = 1. / (safmin * std::max(d__3,d__4));
+		    scale = std::min(d__1,d__2);
 		    if (lsa) {
 			acoef = ascale * (scale * sbeta);
 		    } else {
@@ -1066,7 +1066,7 @@ L220:
 		if (bcoefa * ulp < safmin && bcoefa >= safmin) {
 /* Computing MAX */
 		    d__1 = scale, d__2 = safmin / ulp / bcoefa;
-		    scale = max(d__1,d__2);
+		    scale = std::max(d__1,d__2);
 		}
 		if (safmin * acoefa > ascale) {
 		    scale = ascale / (safmin * acoefa);
@@ -1074,7 +1074,7 @@ L220:
 		if (safmin * bcoefa > bscale) {
 /* Computing MIN */
 		    d__1 = scale, d__2 = bscale / (safmin * bcoefa);
-		    scale = min(d__1,d__2);
+		    scale = std::min(d__1,d__2);
 		}
 		if (scale != 1.) {
 		    acoef = scale * acoef;
@@ -1112,7 +1112,7 @@ L220:
 			work[*n * 3 + je], abs(d__2)), d__6 = (d__3 = work[(*
 			n << 1) + je - 1], abs(d__3)) + (d__4 = work[*n * 3 + 
 			je - 1], abs(d__4));
-		xmax = max(d__5,d__6);
+		xmax = std::max(d__5,d__6);
 
 /*              Compute contribution from columns JE and JE-1 */
 /*              of A and B to the sums. */
@@ -1143,8 +1143,8 @@ L220:
 
 /* Computing MAX */
 	    d__1 = ulp * acoefa * anorm, d__2 = ulp * bcoefa * bnorm, d__1 = 
-		    max(d__1,d__2);
-	    dmin__ = max(d__1,safmin);
+		    std::max(d__1,d__2);
+	    dmin__ = std::max(d__1,safmin);
 
 /*           Columnwise triangular solve of  (a A - b B)  x = 0 */
 
@@ -1189,7 +1189,7 @@ L220:
 		}
 /* Computing MAX */
 		d__1 = scale * xmax;
-		xmax = max(d__1,temp);
+		xmax = std::max(d__1,temp);
 
 		i__1 = nw;
 		for (jw = 1; jw <= i__1; ++jw) {
@@ -1208,17 +1208,17 @@ L220:
 
 /*                 Check whether scaling is necessary for sum. */
 
-		    xscale = 1. / max(1.,xmax);
+		    xscale = 1. / std::max(1.,xmax);
 		    temp = acoefa * work[j] + bcoefa * work[*n + j];
 		    if (il2by2) {
 /* Computing MAX */
 			d__1 = temp, d__2 = acoefa * work[j + 1] + bcoefa * 
 				work[*n + j + 1];
-			temp = max(d__1,d__2);
+			temp = std::max(d__1,d__2);
 		    }
 /* Computing MAX */
-		    d__1 = max(temp,acoefa);
-		    temp = max(d__1,bcoefa);
+		    d__1 = std::max(temp,acoefa);
+		    temp = std::max(d__1,bcoefa);
 		    if (temp > bignum * xscale) {
 
 			i__1 = nw - 1;
@@ -1349,7 +1349,7 @@ L370:
 		    d__3 = xmax, d__4 = (d__1 = vr[j + ieig * vr_dim1], abs(
 			    d__1)) + (d__2 = vr[j + (ieig + 1) * vr_dim1], 
 			    abs(d__2));
-		    xmax = max(d__3,d__4);
+		    xmax = std::max(d__3,d__4);
 /* L460: */
 		}
 	    } else {
@@ -1358,7 +1358,7 @@ L370:
 /* Computing MAX */
 		    d__2 = xmax, d__3 = (d__1 = vr[j + ieig * vr_dim1], abs(
 			    d__1));
-		    xmax = max(d__2,d__3);
+		    xmax = std::max(d__2,d__3);
 /* L470: */
 		}
 	    }

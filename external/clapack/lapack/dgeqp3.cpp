@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -137,12 +137,12 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
 
     if (*info == 0) {
-	minmn = min(*m,*n);
+	minmn = std::min(*m,*n);
 	if (minmn == 0) {
 	    iws = 1;
 	    lwkopt = 1;
@@ -201,12 +201,12 @@ static integer c__2 = 2;
 /*     remaining columns. */
 
     if (nfxd > 0) {
-	na = min(*m,nfxd);
+	na = std::min(*m,nfxd);
 /* CC      CALL DGEQR2( M, NA, A, LDA, TAU, WORK, INFO ) */
 	dgeqrf_(m, &na, &a[a_offset], lda, &tau[1], &work[1], lwork, info);
 /* Computing MAX */
 	i__1 = iws, i__2 = (integer) work[1];
-	iws = max(i__1,i__2);
+	iws = std::max(i__1,i__2);
 	if (na < *n) {
 /* CC         CALL DORM2R( 'Left', 'Transpose', M, N-NA, NA, A, LDA, */
 /* CC  $                   TAU, A( 1, NA+1 ), LDA, WORK, INFO ) */
@@ -216,7 +216,7 @@ static integer c__2 = 2;
 		    info);
 /* Computing MAX */
 	    i__1 = iws, i__2 = (integer) work[1];
-	    iws = max(i__1,i__2);
+	    iws = std::max(i__1,i__2);
 	}
     }
 
@@ -242,7 +242,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 	    i__1 = 0, i__2 = ilaenv_(&c__3, "DGEQRF", " ", &sm, &sn, &c_n1, &
 		    c_n1);
-	    nx = max(i__1,i__2);
+	    nx = std::max(i__1,i__2);
 
 
 	    if (nx < sminmn) {
@@ -250,7 +250,7 @@ static integer c__2 = 2;
 /*              Determine if workspace is large enough for blocked code. */
 
 		minws = (sn << 1) + (sn + 1) * nb;
-		iws = max(iws,minws);
+		iws = std::max(iws,minws);
 		if (*lwork < minws) {
 
 /*                 Not enough workspace to use optimal NB: Reduce NB and */
@@ -260,7 +260,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 		    i__1 = 2, i__2 = ilaenv_(&c__2, "DGEQRF", " ", &sm, &sn, &
 			    c_n1, &c_n1);
-		    nbmin = max(i__1,i__2);
+		    nbmin = std::max(i__1,i__2);
 
 
 		}
@@ -291,7 +291,7 @@ L30:
 	    if (j <= topbmn) {
 /* Computing MIN */
 		i__1 = nb, i__2 = topbmn - j + 1;
-		jb = min(i__1,i__2);
+		jb = std::min(i__1,i__2);
 
 /*              Factorize JB columns among columns J:N. */
 

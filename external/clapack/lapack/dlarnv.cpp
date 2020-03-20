@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlarnv_(integer *idist, integer *iseed, integer *n, 
@@ -84,7 +84,7 @@
     for (iv = 1; iv <= i__1; iv += 64) {
 /* Computing MIN */
 	i__2 = 64, i__3 = *n - iv + 1;
-	il = min(i__2,i__3);
+	il = std::min(i__2,i__3);
 	if (*idist == 3) {
 	    il2 = il << 1;
 	} else {

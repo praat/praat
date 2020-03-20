@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlacpy_(const char *uplo, integer *m, integer *n, doublereal *
@@ -78,7 +78,7 @@
     if (lsame_(uplo, "U")) {
 	i__1 = *n;
 	for (j = 1; j <= i__1; ++j) {
-	    i__2 = min(j,*m);
+	    i__2 = std::min(j,*m);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		b[i__ + j * b_dim1] = a[i__ + j * a_dim1];
 /* L10: */

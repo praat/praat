@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -145,7 +145,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -309,10 +309,10 @@ L150:
 	s = c__ + r__;
 L160:
 /* Computing MAX */
-	d__1 = max(f,c__);
+	d__1 = std::max(f,c__);
 /* Computing MIN */
-	d__2 = min(r__,g);
-	if (c__ >= g || max(d__1,ca) >= sfmax2 || min(d__2,ra) <= sfmin2) {
+	d__2 = std::min(r__,g);
+	if (c__ >= g || std::max(d__1,ca) >= sfmax2 || std::min(d__2,ra) <= sfmin2) {
 	    goto L170;
 	}
 	f *= 2.;
@@ -327,8 +327,8 @@ L170:
 	g = c__ / 2.;
 L180:
 /* Computing MIN */
-	d__1 = min(f,c__), d__1 = min(d__1,g);
-	if (g < r__ || max(r__,ra) >= sfmax2 || min(d__1,ca) <= sfmin2) {
+	d__1 = std::min(f,c__), d__1 = std::min(d__1,g);
+	if (g < r__ || std::max(r__,ra) >= sfmax2 || std::min(d__1,ca) <= sfmin2) {
 	    goto L190;
 	}
 	f /= 2.;

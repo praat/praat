@@ -376,7 +376,7 @@ qrstep (gsl_vector * d, gsl_vector * f, gsl_matrix * U, gsl_matrix * V)
 #endif
   const size_t n = d->size;
   double y, z;
-  double ak, bk, zk, ap, bp, aq, bq;
+  double ak, bk, zk, ap, bp, aq;
   size_t i, k;
 
   if (n == 1)
@@ -423,7 +423,7 @@ qrstep (gsl_vector * d, gsl_vector * f, gsl_matrix * U, gsl_matrix * V)
     double f0 = gsl_vector_get (f, 0);
     
     double d1 = gsl_vector_get (d, 1);
-    double f1 = gsl_vector_get (f, 1);
+    //double f1 = gsl_vector_get (f, 1);
     
     {
       double mu = trailing_eigenvalue (d, f);
@@ -441,7 +441,6 @@ qrstep (gsl_vector * d, gsl_vector * f, gsl_matrix * U, gsl_matrix * V)
     bp = f0;
     
     aq = d1;
-    bq = f1;
   }
 
   for (k = 0; k < n - 1; k++)

@@ -369,7 +369,6 @@ hyperg_2F1_reflect(const double a, const double b, const double c,
     gsl_sf_result lng_c;
     gsl_sf_result lng_ad2;
     gsl_sf_result lng_bd2;
-    int stat_c;
     int stat_ad2;
     int stat_bd2;
 
@@ -384,7 +383,7 @@ hyperg_2F1_reflect(const double a, const double b, const double c,
 
     stat_ad2 = gsl_sf_lngamma_e(a+d2, &lng_ad2);
     stat_bd2 = gsl_sf_lngamma_e(b+d2, &lng_bd2);
-    stat_c   = gsl_sf_lngamma_e(c,    &lng_c);
+    (void) gsl_sf_lngamma_e(c,    &lng_c);
 
     /* Evaluate F1.
      */
@@ -519,7 +518,6 @@ hyperg_2F1_reflect(const double a, const double b, const double c,
     gsl_sf_result pre1, pre2;
     double sgn1, sgn2;
     gsl_sf_result F1, F2;
-    int status_F1, status_F2;
 
     /* These gamma functions appear in the denominator, so we
      * catch their harmless domain errors and set the terms to zero.
@@ -589,8 +587,8 @@ hyperg_2F1_reflect(const double a, const double b, const double c,
       UNDERFLOW_ERROR(result);
     }
 
-    status_F1 = hyperg_2F1_series(  a,   b, 1.0-d, 1.0-x, &F1);
-    status_F2 = hyperg_2F1_series(c-a, c-b, 1.0+d, 1.0-x, &F2);
+    (void) hyperg_2F1_series(  a,   b, 1.0-d, 1.0-x, &F1);
+    (void) hyperg_2F1_series(c-a, c-b, 1.0+d, 1.0-x, &F2);
 
     result->val  = pre1.val*F1.val + pre2.val*F2.val;
     result->err  = fabs(pre1.val*F1.err) + fabs(pre2.val*F2.err);
@@ -687,14 +685,12 @@ gsl_sf_hyperg_2F1_e(double a, double b, const double c,
      * Introduce some new variables ap,bp so that bp is
      * the larger in magnitude.
      */
-    double ap, bp; 
+    double bp; 
     if(fabs(a) > fabs(b)) {
       bp = a;
-      ap = b;
     }
     else {
       bp = b;
-      ap = a;
     }
 
     if(x < 0.0) {

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -119,12 +119,12 @@ doublereal dlangb_(char *norm, integer *n, integer *kl, integer *ku,
 	    i__2 = *ku + 2 - j;
 /* Computing MIN */
 	    i__4 = *n + *ku + 1 - j, i__5 = *kl + *ku + 1;
-	    i__3 = min(i__4,i__5);
-	    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
+	    i__3 = std::min(i__4,i__5);
+	    for (i__ = std::max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 		d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], abs(d__1))
 			;
-		value = max(d__2,d__3);
+		value = std::max(d__2,d__3);
 /* L10: */
 	    }
 /* L20: */
@@ -142,12 +142,12 @@ doublereal dlangb_(char *norm, integer *n, integer *kl, integer *ku,
 	    i__3 = *ku + 2 - j;
 /* Computing MIN */
 	    i__4 = *n + *ku + 1 - j, i__5 = *kl + *ku + 1;
-	    i__2 = min(i__4,i__5);
-	    for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
+	    i__2 = std::min(i__4,i__5);
+	    for (i__ = std::max(i__3,1_integer); i__ <= i__2; ++i__) {
 		sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L30: */
 	    }
-	    value = max(value,sum);
+	    value = std::max(value,sum);
 /* L40: */
 	}
     } else if (lsame_(norm, "I")) {
@@ -166,8 +166,8 @@ doublereal dlangb_(char *norm, integer *n, integer *kl, integer *ku,
 	    i__2 = 1, i__3 = j - *ku;
 /* Computing MIN */
 	    i__5 = *n, i__6 = j + *kl;
-	    i__4 = min(i__5,i__6);
-	    for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+	    i__4 = std::min(i__5,i__6);
+	    for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 		work[i__] += (d__1 = ab[k + i__ + j * ab_dim1], abs(d__1));
 /* L60: */
 	    }
@@ -178,7 +178,7 @@ doublereal dlangb_(char *norm, integer *n, integer *kl, integer *ku,
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__1 = value, d__2 = work[i__];
-	    value = max(d__1,d__2);
+	    value = std::max(d__1,d__2);
 /* L80: */
 	}
     } else if (lsame_(norm, "F") || lsame_(norm, "E")) {
@@ -191,11 +191,11 @@ doublereal dlangb_(char *norm, integer *n, integer *kl, integer *ku,
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MAX */
 	    i__4 = 1, i__2 = j - *ku;
-	    l = max(i__4,i__2);
+	    l = std::max(i__4,i__2);
 	    k = *ku + 1 - j + l;
 /* Computing MIN */
 	    i__2 = *n, i__3 = j + *kl;
-	    i__4 = min(i__2,i__3) - l + 1;
+	    i__4 = std::min(i__2,i__3) - l + 1;
 	    dlassq_(&i__4, &ab[k + j * ab_dim1], &c__1, &scale, &sum);
 /* L90: */
 	}

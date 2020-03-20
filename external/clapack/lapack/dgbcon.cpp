@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -179,7 +179,7 @@ L10:
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__2 = *kl, i__3 = *n - j;
-		    lm = min(i__2,i__3);
+		    lm = std::min(i__2,i__3);
 		    jp = ipiv[j];
 		    t = work[jp];
 		    if (jp != j) {
@@ -214,7 +214,7 @@ L10:
 		for (j = *n - 1; j >= 1; --j) {
 /* Computing MIN */
 		    i__1 = *kl, i__2 = *n - j;
-		    lm = min(i__1,i__2);
+		    lm = std::min(i__1,i__2);
 		    work[j] -= ddot_(&lm, &ab[kd + 1 + j * ab_dim1], &c__1, &
 			    work[j + 1], &c__1);
 		    jp = ipiv[j];

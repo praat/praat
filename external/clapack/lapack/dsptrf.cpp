@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -200,7 +200,7 @@ L10:
 	    colmax = 0.;
 	}
 
-	if (max(absakk,colmax) == 0.) {
+	if (std::max(absakk,colmax) == 0.) {
 
 /*           Column K is zero: set INFO and continue */
 
@@ -238,7 +238,7 @@ L10:
 /* Computing MAX */
 		    d__2 = rowmax, d__3 = (d__1 = ap[kpc + jmax - 1], abs(
 			    d__1));
-		    rowmax = max(d__2,d__3);
+		    rowmax = std::max(d__2,d__3);
 		}
 
 		if (absakk >= alpha * colmax * (colmax / rowmax)) {
@@ -410,7 +410,7 @@ L60:
 	    colmax = 0.;
 	}
 
-	if (max(absakk,colmax) == 0.) {
+	if (std::max(absakk,colmax) == 0.) {
 
 /*           Column K is zero: set INFO and continue */
 
@@ -447,7 +447,7 @@ L60:
 /* Computing MAX */
 		    d__2 = rowmax, d__3 = (d__1 = ap[kpc + jmax - imax], abs(
 			    d__1));
-		    rowmax = max(d__2,d__3);
+		    rowmax = std::max(d__2,d__3);
 		}
 
 		if (absakk >= alpha * colmax * (colmax / rowmax)) {

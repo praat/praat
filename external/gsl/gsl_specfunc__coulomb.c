@@ -1057,13 +1057,10 @@ gsl_sf_coulomb_wave_FG_e(const double eta, const double x,
     double exp_lam_F, exp_lam_G;
     int stat_lam_F;
     int stat_lam_G;
-    int stat_CF1_lam_F;
-    int stat_CF1_lam_G;
     int CF1_count;
     double Fp_over_F_lam_F;
     double Fp_over_F_lam_G;
     double F_sign_lam_F;
-    double F_sign_lam_G;
 
     stat_lam_F = coulomb_jwkb(lam_F, eta, x, &F_lam_F, &G_lam_F, &exp_lam_F);
     if(k_lam_G == 0) {
@@ -1076,14 +1073,9 @@ gsl_sf_coulomb_wave_FG_e(const double eta, const double x,
       stat_lam_G = coulomb_jwkb(lam_G, eta, x, &F_lam_G, &G_lam_G, &exp_lam_G);
     }
 
-    stat_CF1_lam_F = coulomb_CF1(lam_F, eta, x, &F_sign_lam_F, &Fp_over_F_lam_F, &CF1_count);
+   (void) coulomb_CF1(lam_F, eta, x, &F_sign_lam_F, &Fp_over_F_lam_F, &CF1_count);
     if(k_lam_G == 0) {
-      stat_CF1_lam_G  = stat_CF1_lam_F;
-      F_sign_lam_G    = F_sign_lam_F;
       Fp_over_F_lam_G = Fp_over_F_lam_F;
-    }
-    else {
-      stat_CF1_lam_G = coulomb_CF1(lam_G, eta, x, &F_sign_lam_G, &Fp_over_F_lam_G, &CF1_count);
     }
 
     F->val = F_lam_F.val;
@@ -1128,7 +1120,7 @@ gsl_sf_coulomb_wave_FG_e(const double eta, const double x,
     double F_lam_F, Fp_lam_F;
     double G_lam_G, Gp_lam_G;
     double F_lam_min_unnorm, Fp_lam_min_unnorm;
-    double F_lam_min, Fp_lam_min;
+    double F_lam_min;
     double G_lam_min, Gp_lam_min;
     double Fp_over_F_lam_F;
     double Fp_over_F_lam_min;
@@ -1169,7 +1161,7 @@ gsl_sf_coulomb_wave_FG_e(const double eta, const double x,
     F_sign_lam_min = GSL_SIGN(F_lam_min_unnorm) ;
 
     F_lam_min  = F_sign_lam_min / sqrt(alpha*alpha/Q_lam_min + Q_lam_min);
-    Fp_lam_min = Fp_over_F_lam_min * F_lam_min;
+    //Fp_lam_min = Fp_over_F_lam_min * F_lam_min;
     G_lam_min  = gamma * F_lam_min;
     Gp_lam_min = (P_lam_min * gamma - Q_lam_min) * F_lam_min;
 

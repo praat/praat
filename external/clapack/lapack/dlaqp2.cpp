@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -120,7 +120,7 @@ static integer c__1 = 1;
     /* Function Body */
 /* Computing MIN */
     i__1 = *m - *offset;
-    mn = min(i__1,*n);
+    mn = std::min(i__1,*n);
     tol3z = sqrt(dlamch_("Epsilon"));
 
 /*     Compute factorization. */
@@ -181,7 +181,7 @@ static integer c__1 = 1;
 /* Computing 2nd power */
 		d__2 = (d__1 = a[offpi + j * a_dim1], abs(d__1)) / vn1[j];
 		temp = 1. - d__2 * d__2;
-		temp = max(temp,0.);
+		temp = std::max(temp,0.);
 /* Computing 2nd power */
 		d__1 = vn1[j] / vn2[j];
 		temp2 = temp * (d__1 * d__1);

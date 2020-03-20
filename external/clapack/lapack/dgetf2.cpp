@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -97,7 +97,7 @@ static doublereal c_b8 = -1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -116,7 +116,7 @@ static doublereal c_b8 = -1.;
 
     sfmin = dlamch_("S");
 
-    i__1 = min(*m,*n);
+    i__1 = std::min(*m,*n);
     for (j = 1; j <= i__1; ++j) {
 
 /*        Find pivot and test for singularity. */
@@ -153,7 +153,7 @@ static doublereal c_b8 = -1.;
 	    *info = j;
 	}
 
-	if (j < min(*m,*n)) {
+	if (j < std::min(*m,*n)) {
 
 /*           Update trailing submatrix. */
 

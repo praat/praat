@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -122,7 +122,7 @@ static doublereal c_b8 = 1.;
 	*info = -1;
     } else if (*n < *m) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -145,7 +145,7 @@ static doublereal c_b8 = 1.;
     } else {
 /* Computing MIN */
 	i__1 = *m + 1;
-	m1 = min(i__1,*n);
+	m1 = std::min(i__1,*n);
 	for (k = *m; k >= 1; --k) {
 
 /*           Use a Householder reflection to zero the kth row of A. */

@@ -243,8 +243,6 @@ gear1_reset (void *vstate, size_t dim)
 static unsigned int
 gear1_order (void *vstate)
 {
-  gear1_state_t *state = (gear1_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 1;
 }
 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -242,9 +242,9 @@ static doublereal c_b37 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -7;
     } else if (*ldvl < 1 || ilvl && *ldvl < *n) {
 	*info = -12;
@@ -263,20 +263,20 @@ static doublereal c_b37 = 1.;
     if (*info == 0) {
 /* Computing MAX */
 	i__1 = 1, i__2 = *n << 3;
-	minwrk = max(i__1,i__2);
+	minwrk = std::max(i__1,i__2);
 /* Computing MAX */
 	i__1 = 1, i__2 = *n * (ilaenv_(&c__1, "DGEQRF", " ", n, &c__1, n, &
 		c__0) + 7);
-	maxwrk = max(i__1,i__2);
+	maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 	i__1 = maxwrk, i__2 = *n * (ilaenv_(&c__1, "DORMQR", " ", n, &c__1, n, 
 		 &c__0) + 7);
-	maxwrk = max(i__1,i__2);
+	maxwrk = std::max(i__1,i__2);
 	if (ilvl) {
 /* Computing MAX */
 	    i__1 = maxwrk, i__2 = *n * (ilaenv_(&c__1, "DORGQR", " ", n, &
 		    c__1, n, &c_n1) + 7);
-	    maxwrk = max(i__1,i__2);
+	    maxwrk = std::max(i__1,i__2);
 	}
 	work[1] = (doublereal) maxwrk;
 
@@ -475,7 +475,7 @@ static doublereal c_b37 = 1.;
 /* Computing MAX */
 			d__2 = temp, d__3 = (d__1 = vl[jr + jc * vl_dim1], 
 				abs(d__1));
-			temp = max(d__2,d__3);
+			temp = std::max(d__2,d__3);
 /* L10: */
 		    }
 		} else {
@@ -485,7 +485,7 @@ static doublereal c_b37 = 1.;
 			d__3 = temp, d__4 = (d__1 = vl[jr + jc * vl_dim1], 
 				abs(d__1)) + (d__2 = vl[jr + (jc + 1) * 
 				vl_dim1], abs(d__2));
-			temp = max(d__3,d__4);
+			temp = std::max(d__3,d__4);
 /* L20: */
 		    }
 		}
@@ -526,7 +526,7 @@ L50:
 /* Computing MAX */
 			d__2 = temp, d__3 = (d__1 = vr[jr + jc * vr_dim1], 
 				abs(d__1));
-			temp = max(d__2,d__3);
+			temp = std::max(d__2,d__3);
 /* L60: */
 		    }
 		} else {
@@ -536,7 +536,7 @@ L50:
 			d__3 = temp, d__4 = (d__1 = vr[jr + jc * vr_dim1], 
 				abs(d__1)) + (d__2 = vr[jr + (jc + 1) * 
 				vr_dim1], abs(d__2));
-			temp = max(d__3,d__4);
+			temp = std::max(d__3,d__4);
 /* L70: */
 		    }
 		}

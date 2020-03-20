@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -130,7 +130,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -139,7 +139,7 @@ static integer c__1 = 1;
 	return 0;
     }
 
-    mn = min(*m,*n);
+    mn = std::min(*m,*n);
     tol3z = sqrt(dlamch_("Epsilon"));
 
 /*     Move initial columns up front */
@@ -167,7 +167,7 @@ static integer c__1 = 1;
 /*     Compute the QR factorization and update remaining columns */
 
     if (itemp > 0) {
-	ma = min(itemp,*m);
+	ma = std::min(itemp,*m);
 	dgeqr2_(m, &ma, &a[a_offset], lda, &tau[1], &work[1], info);
 	if (ma < *n) {
 	    i__1 = *n - ma;
@@ -246,7 +246,7 @@ static integer c__1 = 1;
 		    temp = (d__1 = a[i__ + j * a_dim1], abs(d__1)) / work[j];
 /* Computing MAX */
 		    d__1 = 0., d__2 = (temp + 1.) * (1. - temp);
-		    temp = max(d__1,d__2);
+		    temp = std::max(d__1,d__2);
 /* Computing 2nd power */
 		    d__1 = work[j] / work[*n + j];
 		    temp2 = temp * (d__1 * d__1);

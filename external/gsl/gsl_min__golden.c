@@ -46,11 +46,9 @@ static int goldensection_iterate (void * vstate, gsl_function * f, double * x_mi
 static int
 goldensection_init (void * vstate, gsl_function * f, double x_minimum, double f_minimum, double x_lower, double f_lower, double x_upper, double f_upper)
 {
-  goldensection_state_t * state = (goldensection_state_t *) vstate;
 
   /* no initialization required, prevent warnings about unused variables */
 
-  state = 0;
   f = 0;
   x_minimum = 0;
   f_minimum = 0;
@@ -65,8 +63,6 @@ goldensection_init (void * vstate, gsl_function * f, double x_minimum, double f_
 static int
 goldensection_iterate (void * vstate, gsl_function * f, double * x_minimum, double * f_minimum, double * x_lower, double * f_lower, double * x_upper, double * f_upper)
 {
-  goldensection_state_t * state = (goldensection_state_t *) vstate;
-
   const double x_center = *x_minimum ;
   const double x_left = *x_lower ;
   const double x_right = *x_upper ;
@@ -79,8 +75,6 @@ goldensection_iterate (void * vstate, gsl_function * f, double * x_minimum, doub
   const double w_upper = (x_right - x_center);
 
   double x_new, f_new;
-
-  state = 0 ; /* avoid warning about unused parameters */
   
   x_new = x_center + golden * ((w_upper > w_lower) ? w_upper : -w_lower) ;
 

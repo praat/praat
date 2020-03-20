@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgbmv_(char *trans, integer *m, integer *n, integer *kl, 
@@ -265,8 +265,8 @@
 		    i__2 = 1, i__3 = j - *ku;
 /* Computing MIN */
 		    i__5 = *m, i__6 = j + *kl;
-		    i__4 = min(i__5,i__6);
-		    for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+		    i__4 = std::min(i__5,i__6);
+		    for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 			y[i__] += temp * a[k + i__ + j * a_dim1];
 /* L50: */
 		    }
@@ -285,8 +285,8 @@
 		    i__4 = 1, i__2 = j - *ku;
 /* Computing MIN */
 		    i__5 = *m, i__6 = j + *kl;
-		    i__3 = min(i__5,i__6);
-		    for (i__ = max(i__4,i__2); i__ <= i__3; ++i__) {
+		    i__3 = std::min(i__5,i__6);
+		    for (i__ = std::max(i__4,i__2); i__ <= i__3; ++i__) {
 			y[iy] += temp * a[k + i__ + j * a_dim1];
 			iy += *incy;
 /* L70: */
@@ -313,8 +313,8 @@
 		i__3 = 1, i__4 = j - *ku;
 /* Computing MIN */
 		i__5 = *m, i__6 = j + *kl;
-		i__2 = min(i__5,i__6);
-		for (i__ = max(i__3,i__4); i__ <= i__2; ++i__) {
+		i__2 = std::min(i__5,i__6);
+		for (i__ = std::max(i__3,i__4); i__ <= i__2; ++i__) {
 		    temp += a[k + i__ + j * a_dim1] * x[i__];
 /* L90: */
 		}
@@ -332,8 +332,8 @@
 		i__2 = 1, i__3 = j - *ku;
 /* Computing MIN */
 		i__5 = *m, i__6 = j + *kl;
-		i__4 = min(i__5,i__6);
-		for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+		i__4 = std::min(i__5,i__6);
+		for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 		    temp += a[k + i__ + j * a_dim1] * x[ix];
 		    ix += *incx;
 /* L110: */

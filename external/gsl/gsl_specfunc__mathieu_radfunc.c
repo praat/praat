@@ -30,7 +30,7 @@
 int gsl_sf_mathieu_Mc(int kind, int order, double qq, double zz,
                       gsl_sf_result *result)
 {
-  int even_odd, kk, mm, status;
+  int even_odd, kk, status;
   double maxerr = 1e-14, amax, pi = M_PI, fn, factor;
   double coeff[GSL_SF_MATHIEU_COEFF], fc;
   double j1c, z2c, j1pc, z2pc;
@@ -48,7 +48,6 @@ int gsl_sf_mathieu_Mc(int kind, int order, double qq, double zz,
       GSL_ERROR("kind must be 1 or 2", GSL_EINVAL);
   }
 
-  mm = 0;
   amax = 0.0;
   fn = 0.0;
   u1 = sqrt(qq)*exp(-1.0*zz);
@@ -136,7 +135,7 @@ int gsl_sf_mathieu_Mc(int kind, int order, double qq, double zz,
 int gsl_sf_mathieu_Ms(int kind, int order, double qq, double zz,
                       gsl_sf_result *result)
 {
-  int even_odd, kk, mm, status;
+  int even_odd, kk, status;
   double maxerr = 1e-14, amax, pi = M_PI, fn, factor;
   double coeff[GSL_SF_MATHIEU_COEFF], fc;
   double j1c, z2c, j1mc, z2mc, j1pc, z2pc;
@@ -154,7 +153,6 @@ int gsl_sf_mathieu_Ms(int kind, int order, double qq, double zz,
       GSL_ERROR("kind must be 1 or 2", GSL_EINVAL);
   }
 
-  mm = 0;
   amax = 0.0;
   fn = 0.0;
   u1 = sqrt(qq)*exp(-1.0*zz);
@@ -247,7 +245,7 @@ int gsl_sf_mathieu_Mc_array(int kind, int nmin, int nmax, double qq,
                             double zz, gsl_sf_mathieu_workspace *work,
                             double result_array[])
 {
-  int even_odd, order, ii, kk, mm, status;
+  int even_odd, order, ii, kk, status;
   double maxerr = 1e-14, amax, pi = M_PI, fn;
   double coeff[GSL_SF_MATHIEU_COEFF], fc;
   double j1c, z2c, j1pc, z2pc;
@@ -269,7 +267,6 @@ int gsl_sf_mathieu_Mc_array(int kind, int nmin, int nmax, double qq,
       GSL_ERROR("kind must be 1 or 2", GSL_EINVAL);
   }
 
-  mm = 0;
   amax = 0.0;
   fn = 0.0;
   u1 = sqrt(qq)*exp(-1.0*zz);
@@ -353,7 +350,7 @@ int gsl_sf_mathieu_Ms_array(int kind, int nmin, int nmax, double qq,
                             double zz, gsl_sf_mathieu_workspace *work,
                             double result_array[])
 {
-  int even_odd, order, ii, kk, mm, status;
+  int even_odd, order, ii, kk, status;
   double maxerr = 1e-14, amax, pi = M_PI, fn;
   double coeff[GSL_SF_MATHIEU_COEFF], fc;
   double j1c, z2c, j1mc, z2mc, j1pc, z2pc;
@@ -375,7 +372,6 @@ int gsl_sf_mathieu_Ms_array(int kind, int nmin, int nmax, double qq,
       GSL_ERROR("kind must be 1 or 2", GSL_EINVAL);
   }
 
-  mm = 0;
   amax = 0.0;
   fn = 0.0;
   u1 = sqrt(qq)*exp(-1.0*zz);

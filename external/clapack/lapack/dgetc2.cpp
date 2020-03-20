@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -132,7 +132,7 @@ static doublereal c_b10 = -1.;
 	if (i__ == 1) {
 /* Computing MAX */
 	    d__1 = eps * xmax;
-	    smin = max(d__1,smlnum);
+	    smin = std::max(d__1,smlnum);
 	}
 
 /*        Swap rows */

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -158,7 +158,7 @@ static doublereal c_b20 = -1.;
 	*info = -7;
     } else if (*ldbb < *kb + 1) {
 	*info = -9;
-    } else if (*ldx < 1 || wantx && *ldx < max(1_integer,*n)) {
+    } else if (*ldx < 1 || wantx && *ldx < std::max(1_integer,*n)) {
 	*info = -11;
     }
     if (*info != 0) {
@@ -255,11 +255,11 @@ L10:
 	--i__;
 /* Computing MIN */
 	i__1 = *kb, i__2 = i__ - 1;
-	kbt = min(i__1,i__2);
+	kbt = std::min(i__1,i__2);
 	i0 = i__ - 1;
 /* Computing MIN */
 	i__1 = *n, i__2 = i__ + *ka;
-	i1 = min(i__1,i__2);
+	i1 = std::min(i__1,i__2);
 	i2 = i__ - kbt + ka1;
 	if (i__ < m + 1) {
 	    update = FALSE_;
@@ -294,7 +294,7 @@ L10:
 /* Computing MAX */
 	    i__1 = 1, i__2 = i__ - *ka;
 	    i__3 = i__;
-	    for (j = max(i__1,i__2); j <= i__3; ++j) {
+	    for (j = std::max(i__1,i__2); j <= i__3; ++j) {
 		ab[j - i__ + ka1 + i__ * ab_dim1] /= bii;
 /* L30: */
 	    }
@@ -314,7 +314,7 @@ L10:
 /* Computing MAX */
 		i__1 = 1, i__2 = i__ - *ka;
 		i__4 = i__ - kbt - 1;
-		for (j = max(i__1,i__2); j <= i__4; ++j) {
+		for (j = std::max(i__1,i__2); j <= i__4; ++j) {
 		    ab[j - k + ka1 + k * ab_dim1] -= bb[k - i__ + kb1 + i__ * 
 			    bb_dim1] * ab[j - i__ + ka1 + i__ * ab_dim1];
 /* L50: */
@@ -326,7 +326,7 @@ L10:
 /* Computing MAX */
 		i__4 = j - *ka, i__1 = i__ - kbt;
 		i__2 = i__ - 1;
-		for (k = max(i__4,i__1); k <= i__2; ++k) {
+		for (k = std::max(i__4,i__1); k <= i__2; ++k) {
 		    ab[k - j + ka1 + j * ab_dim1] -= bb[k - i__ + kb1 + i__ * 
 			    bb_dim1] * ab[i__ - j + ka1 + j * ab_dim1];
 /* L70: */
@@ -388,13 +388,13 @@ L10:
 	    }
 /* Computing MAX */
 	    i__2 = 1, i__4 = k - i0 + 2;
-	    j2 = i__ - k - 1 + max(i__2,i__4) * ka1;
+	    j2 = i__ - k - 1 + std::max(i__2,i__4) * ka1;
 	    nr = (*n - j2 + *ka) / ka1;
 	    j1 = j2 + (nr - 1) * ka1;
 	    if (update) {
 /* Computing MAX */
 		i__2 = j2, i__4 = i__ + (*ka << 1) - k + 1;
-		j2t = max(i__2,i__4);
+		j2t = std::max(i__2,i__4);
 	    } else {
 		j2t = j2;
 	    }
@@ -484,11 +484,11 @@ L10:
 	    if (update) {
 /* Computing MAX */
 		i__3 = 2, i__2 = k - i0 + 1;
-		j2 = i__ - k - 1 + max(i__3,i__2) * ka1;
+		j2 = i__ - k - 1 + std::max(i__3,i__2) * ka1;
 	    } else {
 /* Computing MAX */
 		i__3 = 1, i__2 = k - i0 + 1;
-		j2 = i__ - k - 1 + max(i__3,i__2) * ka1;
+		j2 = i__ - k - 1 + std::max(i__3,i__2) * ka1;
 	    }
 
 /*           finish applying rotations in 2nd set from the left */
@@ -534,7 +534,7 @@ L10:
 	for (k = *kb; k >= 1; --k) {
 /* Computing MAX */
 	    i__3 = 1, i__2 = k - i0 + 1;
-	    j2 = i__ - k - 1 + max(i__3,i__2) * ka1;
+	    j2 = i__ - k - 1 + std::max(i__3,i__2) * ka1;
 	    nr = (*n - j2 + *ka) / ka1;
 	    j1 = j2 + (nr - 1) * ka1;
 	    if (nr > 0) {
@@ -597,7 +597,7 @@ L10:
 	for (k = 1; k <= i__2; ++k) {
 /* Computing MAX */
 	    i__3 = 1, i__4 = k - i0 + 2;
-	    j2 = i__ - k - 1 + max(i__3,i__4) * ka1;
+	    j2 = i__ - k - 1 + std::max(i__3,i__4) * ka1;
 
 /*           finish applying rotations in 1st set from the left */
 
@@ -639,7 +639,7 @@ L10:
 /* Computing MAX */
 	    i__2 = 1, i__3 = i__ - *ka;
 	    i__4 = i__;
-	    for (j = max(i__2,i__3); j <= i__4; ++j) {
+	    for (j = std::max(i__2,i__3); j <= i__4; ++j) {
 		ab[i__ - j + 1 + j * ab_dim1] /= bii;
 /* L260: */
 	    }
@@ -658,7 +658,7 @@ L10:
 /* Computing MAX */
 		i__2 = 1, i__3 = i__ - *ka;
 		i__1 = i__ - kbt - 1;
-		for (j = max(i__2,i__3); j <= i__1; ++j) {
+		for (j = std::max(i__2,i__3); j <= i__1; ++j) {
 		    ab[k - j + 1 + j * ab_dim1] -= bb[i__ - k + 1 + k * 
 			    bb_dim1] * ab[i__ - j + 1 + j * ab_dim1];
 /* L280: */
@@ -670,7 +670,7 @@ L10:
 /* Computing MAX */
 		i__1 = j - *ka, i__2 = i__ - kbt;
 		i__3 = i__ - 1;
-		for (k = max(i__1,i__2); k <= i__3; ++k) {
+		for (k = std::max(i__1,i__2); k <= i__3; ++k) {
 		    ab[j - k + 1 + k * ab_dim1] -= bb[i__ - k + 1 + k * 
 			    bb_dim1] * ab[j - i__ + 1 + i__ * ab_dim1];
 /* L300: */
@@ -733,13 +733,13 @@ L10:
 	    }
 /* Computing MAX */
 	    i__3 = 1, i__1 = k - i0 + 2;
-	    j2 = i__ - k - 1 + max(i__3,i__1) * ka1;
+	    j2 = i__ - k - 1 + std::max(i__3,i__1) * ka1;
 	    nr = (*n - j2 + *ka) / ka1;
 	    j1 = j2 + (nr - 1) * ka1;
 	    if (update) {
 /* Computing MAX */
 		i__3 = j2, i__1 = i__ + (*ka << 1) - k + 1;
-		j2t = max(i__3,i__1);
+		j2t = std::max(i__3,i__1);
 	    } else {
 		j2t = j2;
 	    }
@@ -829,11 +829,11 @@ L10:
 	    if (update) {
 /* Computing MAX */
 		i__4 = 2, i__3 = k - i0 + 1;
-		j2 = i__ - k - 1 + max(i__4,i__3) * ka1;
+		j2 = i__ - k - 1 + std::max(i__4,i__3) * ka1;
 	    } else {
 /* Computing MAX */
 		i__4 = 1, i__3 = k - i0 + 1;
-		j2 = i__ - k - 1 + max(i__4,i__3) * ka1;
+		j2 = i__ - k - 1 + std::max(i__4,i__3) * ka1;
 	    }
 
 /*           finish applying rotations in 2nd set from the right */
@@ -880,7 +880,7 @@ L10:
 	for (k = *kb; k >= 1; --k) {
 /* Computing MAX */
 	    i__4 = 1, i__3 = k - i0 + 1;
-	    j2 = i__ - k - 1 + max(i__4,i__3) * ka1;
+	    j2 = i__ - k - 1 + std::max(i__4,i__3) * ka1;
 	    nr = (*n - j2 + *ka) / ka1;
 	    j1 = j2 + (nr - 1) * ka1;
 	    if (nr > 0) {
@@ -943,7 +943,7 @@ L10:
 	for (k = 1; k <= i__3; ++k) {
 /* Computing MAX */
 	    i__4 = 1, i__1 = k - i0 + 2;
-	    j2 = i__ - k - 1 + max(i__4,i__1) * ka1;
+	    j2 = i__ - k - 1 + std::max(i__4,i__1) * ka1;
 
 /*           finish applying rotations in 1st set from the right */
 
@@ -997,11 +997,11 @@ L490:
 	++i__;
 /* Computing MIN */
 	i__3 = *kb, i__4 = m - i__;
-	kbt = min(i__3,i__4);
+	kbt = std::min(i__3,i__4);
 	i0 = i__ + 1;
 /* Computing MAX */
 	i__3 = 1, i__4 = i__ - *ka;
-	i1 = max(i__3,i__4);
+	i1 = std::max(i__3,i__4);
 	i2 = i__ + kbt - ka1;
 	if (i__ > m) {
 	    update = FALSE_;
@@ -1041,7 +1041,7 @@ L490:
 	    }
 /* Computing MIN */
 	    i__4 = *n, i__1 = i__ + *ka;
-	    i__3 = min(i__4,i__1);
+	    i__3 = std::min(i__4,i__1);
 	    for (j = i__; j <= i__3; ++j) {
 		ab[i__ - j + ka1 + j * ab_dim1] /= bii;
 /* L510: */
@@ -1060,7 +1060,7 @@ L490:
 		}
 /* Computing MIN */
 		i__1 = *n, i__2 = i__ + *ka;
-		i__4 = min(i__1,i__2);
+		i__4 = std::min(i__1,i__2);
 		for (j = i__ + kbt + 1; j <= i__4; ++j) {
 		    ab[k - j + ka1 + j * ab_dim1] -= bb[i__ - k + kb1 + k * 
 			    bb_dim1] * ab[i__ - j + ka1 + j * ab_dim1];
@@ -1072,7 +1072,7 @@ L490:
 	    for (j = i1; j <= i__3; ++j) {
 /* Computing MIN */
 		i__1 = j + *ka, i__2 = i__ + kbt;
-		i__4 = min(i__1,i__2);
+		i__4 = std::min(i__1,i__2);
 		for (k = i__ + 1; k <= i__4; ++k) {
 		    ab[j - k + ka1 + k * ab_dim1] -= bb[i__ - k + kb1 + k * 
 			    bb_dim1] * ab[j - i__ + ka1 + i__ * ab_dim1];
@@ -1131,13 +1131,13 @@ L490:
 	    }
 /* Computing MAX */
 	    i__4 = 1, i__1 = k + i0 - m + 1;
-	    j2 = i__ + k + 1 - max(i__4,i__1) * ka1;
+	    j2 = i__ + k + 1 - std::max(i__4,i__1) * ka1;
 	    nr = (j2 + *ka - 1) / ka1;
 	    j1 = j2 - (nr - 1) * ka1;
 	    if (update) {
 /* Computing MIN */
 		i__4 = j2, i__1 = i__ - (*ka << 1) + k - 1;
-		j2t = min(i__4,i__1);
+		j2t = std::min(i__4,i__1);
 	    } else {
 		j2t = j2;
 	    }
@@ -1227,11 +1227,11 @@ L490:
 	    if (update) {
 /* Computing MAX */
 		i__3 = 2, i__4 = k + i0 - m;
-		j2 = i__ + k + 1 - max(i__3,i__4) * ka1;
+		j2 = i__ + k + 1 - std::max(i__3,i__4) * ka1;
 	    } else {
 /* Computing MAX */
 		i__3 = 1, i__4 = k + i0 - m;
-		j2 = i__ + k + 1 - max(i__3,i__4) * ka1;
+		j2 = i__ + k + 1 - std::max(i__3,i__4) * ka1;
 	    }
 
 /*           finish applying rotations in 2nd set from the right */
@@ -1279,7 +1279,7 @@ L490:
 	for (k = *kb; k >= 1; --k) {
 /* Computing MAX */
 	    i__3 = 1, i__4 = k + i0 - m;
-	    j2 = i__ + k + 1 - max(i__3,i__4) * ka1;
+	    j2 = i__ + k + 1 - std::max(i__3,i__4) * ka1;
 	    nr = (j2 + *ka - 1) / ka1;
 	    j1 = j2 - (nr - 1) * ka1;
 	    if (nr > 0) {
@@ -1343,7 +1343,7 @@ L490:
 	for (k = 1; k <= i__4; ++k) {
 /* Computing MAX */
 	    i__3 = 1, i__1 = k + i0 - m + 1;
-	    j2 = i__ + k + 1 - max(i__3,i__1) * ka1;
+	    j2 = i__ + k + 1 - std::max(i__3,i__1) * ka1;
 
 /*           finish applying rotations in 1st set from the right */
 
@@ -1363,7 +1363,7 @@ L490:
 	if (*kb > 1) {
 /* Computing MIN */
 	    i__3 = i__ + *kb;
-	    i__4 = min(i__3,m) - (*ka << 1) - 1;
+	    i__4 = std::min(i__3,m) - (*ka << 1) - 1;
 	    for (j = 2; j <= i__4; ++j) {
 		work[*n + j] = work[*n + j + *ka];
 		work[j] = work[j + *ka];
@@ -1387,7 +1387,7 @@ L490:
 	    }
 /* Computing MIN */
 	    i__3 = *n, i__1 = i__ + *ka;
-	    i__4 = min(i__3,i__1);
+	    i__4 = std::min(i__3,i__1);
 	    for (j = i__; j <= i__4; ++j) {
 		ab[j - i__ + 1 + i__ * ab_dim1] /= bii;
 /* L740: */
@@ -1406,7 +1406,7 @@ L490:
 		}
 /* Computing MIN */
 		i__1 = *n, i__2 = i__ + *ka;
-		i__3 = min(i__1,i__2);
+		i__3 = std::min(i__1,i__2);
 		for (j = i__ + kbt + 1; j <= i__3; ++j) {
 		    ab[j - k + 1 + k * ab_dim1] -= bb[k - i__ + 1 + i__ * 
 			    bb_dim1] * ab[j - i__ + 1 + i__ * ab_dim1];
@@ -1418,7 +1418,7 @@ L490:
 	    for (j = i1; j <= i__4; ++j) {
 /* Computing MIN */
 		i__1 = j + *ka, i__2 = i__ + kbt;
-		i__3 = min(i__1,i__2);
+		i__3 = std::min(i__1,i__2);
 		for (k = i__ + 1; k <= i__3; ++k) {
 		    ab[k - j + 1 + j * ab_dim1] -= bb[k - i__ + 1 + i__ * 
 			    bb_dim1] * ab[i__ - j + 1 + j * ab_dim1];
@@ -1478,13 +1478,13 @@ L490:
 	    }
 /* Computing MAX */
 	    i__3 = 1, i__1 = k + i0 - m + 1;
-	    j2 = i__ + k + 1 - max(i__3,i__1) * ka1;
+	    j2 = i__ + k + 1 - std::max(i__3,i__1) * ka1;
 	    nr = (j2 + *ka - 1) / ka1;
 	    j1 = j2 - (nr - 1) * ka1;
 	    if (update) {
 /* Computing MIN */
 		i__3 = j2, i__1 = i__ - (*ka << 1) + k - 1;
-		j2t = min(i__3,i__1);
+		j2t = std::min(i__3,i__1);
 	    } else {
 		j2t = j2;
 	    }
@@ -1574,11 +1574,11 @@ L490:
 	    if (update) {
 /* Computing MAX */
 		i__4 = 2, i__3 = k + i0 - m;
-		j2 = i__ + k + 1 - max(i__4,i__3) * ka1;
+		j2 = i__ + k + 1 - std::max(i__4,i__3) * ka1;
 	    } else {
 /* Computing MAX */
 		i__4 = 1, i__3 = k + i0 - m;
-		j2 = i__ + k + 1 - max(i__4,i__3) * ka1;
+		j2 = i__ + k + 1 - std::max(i__4,i__3) * ka1;
 	    }
 
 /*           finish applying rotations in 2nd set from the left */
@@ -1626,7 +1626,7 @@ L490:
 	for (k = *kb; k >= 1; --k) {
 /* Computing MAX */
 	    i__4 = 1, i__3 = k + i0 - m;
-	    j2 = i__ + k + 1 - max(i__4,i__3) * ka1;
+	    j2 = i__ + k + 1 - std::max(i__4,i__3) * ka1;
 	    nr = (j2 + *ka - 1) / ka1;
 	    j1 = j2 - (nr - 1) * ka1;
 	    if (nr > 0) {
@@ -1691,7 +1691,7 @@ L490:
 	for (k = 1; k <= i__3; ++k) {
 /* Computing MAX */
 	    i__4 = 1, i__1 = k + i0 - m + 1;
-	    j2 = i__ + k + 1 - max(i__4,i__1) * ka1;
+	    j2 = i__ + k + 1 - std::max(i__4,i__1) * ka1;
 
 /*           finish applying rotations in 1st set from the left */
 
@@ -1711,7 +1711,7 @@ L490:
 	if (*kb > 1) {
 /* Computing MIN */
 	    i__4 = i__ + *kb;
-	    i__3 = min(i__4,m) - (*ka << 1) - 1;
+	    i__3 = std::min(i__4,m) - (*ka << 1) - 1;
 	    for (j = 2; j <= i__3; ++j) {
 		work[*n + j] = work[*n + j + *ka];
 		work[j] = work[j + *ka];

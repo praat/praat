@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -214,9 +214,9 @@ static doublereal c_b22 = 1.;
 	*info = -5;
     } else if (*n < 0) {
 	*info = -6;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -8;
-    } else if (*ldb < max(1_integer,*p)) {
+    } else if (*ldb < std::max(1_integer,*p)) {
 	*info = -10;
     } else if (*ldu < 1 || wantu && *ldu < *m) {
 	*info = -16;
@@ -248,7 +248,7 @@ static doublereal c_b22 = 1.;
 /*     Determine the effective rank of matrix B. */
 
     *l = 0;
-    i__1 = min(*p,*n);
+    i__1 = std::min(*p,*n);
     for (i__ = 1; i__ <= i__1; ++i__) {
 	if ((d__1 = b[i__ + i__ * b_dim1], abs(d__1)) > *tolb) {
 	    ++(*l);
@@ -266,7 +266,7 @@ static doublereal c_b22 = 1.;
 	    dlacpy_("Lower", &i__1, n, &b[b_dim1 + 2], ldb, &v[v_dim1 + 2], 
 		    ldv);
 	}
-	i__1 = min(*p,*n);
+	i__1 = std::min(*p,*n);
 	dorg2r_(p, p, &i__1, &v[v_offset], ldv, &tau[1], &work[1], info);
     }
 
@@ -350,7 +350,7 @@ static doublereal c_b22 = 1.;
     *k = 0;
 /* Computing MIN */
     i__2 = *m, i__3 = *n - *l;
-    i__1 = min(i__2,i__3);
+    i__1 = std::min(i__2,i__3);
     for (i__ = 1; i__ <= i__1; ++i__) {
 	if ((d__1 = a[i__ + i__ * a_dim1], abs(d__1)) > *tola) {
 	    ++(*k);
@@ -362,7 +362,7 @@ static doublereal c_b22 = 1.;
 
 /* Computing MIN */
     i__2 = *m, i__3 = *n - *l;
-    i__1 = min(i__2,i__3);
+    i__1 = std::min(i__2,i__3);
     dorm2r_("Left", "Transpose", m, l, &i__1, &a[a_offset], lda, &tau[1], &a[(
 	    *n - *l + 1) * a_dim1 + 1], lda, &work[1], info);
 
@@ -379,7 +379,7 @@ static doublereal c_b22 = 1.;
 	}
 /* Computing MIN */
 	i__2 = *m, i__3 = *n - *l;
-	i__1 = min(i__2,i__3);
+	i__1 = std::min(i__2,i__3);
 	dorg2r_(m, m, &i__1, &u[u_offset], ldu, &tau[1], &work[1], info);
     }
 
@@ -457,7 +457,7 @@ static doublereal c_b22 = 1.;
 	    i__1 = *m - *k;
 /* Computing MIN */
 	    i__3 = *m - *k;
-	    i__2 = min(i__3,*l);
+	    i__2 = std::min(i__3,*l);
 	    dorm2r_("Right", "No transpose", m, &i__1, &i__2, &a[*k + 1 + (*n 
 		    - *l + 1) * a_dim1], lda, &tau[1], &u[(*k + 1) * u_dim1 + 
 		    1], ldu, &work[1], info);

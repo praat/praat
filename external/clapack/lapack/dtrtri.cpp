@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -13,7 +13,7 @@ static doublereal c_b22 = -1.;
 	a, integer *lda, integer *info)
 {
     /* System generated locals */
-    address a__1[2];
+    char * a__1[2];
     integer a_dim1, a_offset, i__1, i__2[2], i__3, i__4, i__5;
     char ch__1[2];
 
@@ -107,7 +107,7 @@ static doublereal c_b22 = -1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
     }
     if (*info != 0) {
@@ -160,7 +160,7 @@ static doublereal c_b22 = -1.;
 	    for (j = 1; i__3 < 0 ? j >= i__1 : j <= i__1; j += i__3) {
 /* Computing MIN */
 		i__4 = nb, i__5 = *n - j + 1;
-		jb = min(i__4,i__5);
+		jb = std::min(i__4,i__5);
 
 /*              Compute rows 1:j-1 of current block column */
 
@@ -186,7 +186,7 @@ static doublereal c_b22 = -1.;
 	    for (j = nn; i__3 < 0 ? j >= 1 : j <= 1; j += i__3) {
 /* Computing MIN */
 		i__1 = nb, i__4 = *n - j + 1;
-		jb = min(i__1,i__4);
+		jb = std::min(i__1,i__4);
 		if (j + jb <= *n) {
 
 /*                 Compute rows j+jb:n of current block column */

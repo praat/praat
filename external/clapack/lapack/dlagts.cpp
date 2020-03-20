@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlagts_(integer *job, integer *n, doublereal *a, 
@@ -157,17 +157,17 @@
 	    *tol = abs(a[1]);
 	    if (*n > 1) {
 /* Computing MAX */
-		d__1 = *tol, d__2 = abs(a[2]), d__1 = max(d__1,d__2), d__2 = 
+		d__1 = *tol, d__2 = abs(a[2]), d__1 = std::max(d__1,d__2), d__2 = 
 			abs(b[1]);
-		*tol = max(d__1,d__2);
+		*tol = std::max(d__1,d__2);
 	    }
 	    i__1 = *n;
 	    for (k = 3; k <= i__1; ++k) {
 /* Computing MAX */
-		d__4 = *tol, d__5 = (d__1 = a[k], abs(d__1)), d__4 = max(d__4,
+		d__4 = *tol, d__5 = (d__1 = a[k], abs(d__1)), d__4 = std::max(d__4,
 			d__5), d__5 = (d__2 = b[k - 1], abs(d__2)), d__4 = 
-			max(d__4,d__5), d__5 = (d__3 = d__[k - 2], abs(d__3));
-		*tol = max(d__4,d__5);
+			std::max(d__4,d__5), d__5 = (d__3 = d__[k - 2], abs(d__3));
+		*tol = std::max(d__4,d__5);
 /* L10: */
 	    }
 	    *tol *= eps;

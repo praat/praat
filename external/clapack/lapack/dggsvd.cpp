@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -293,9 +293,9 @@ static integer c__1 = 1;
 	*info = -5;
     } else if (*p < 0) {
 	*info = -6;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -10;
-    } else if (*ldb < max(1_integer,*p)) {
+    } else if (*ldb < std::max(1_integer,*p)) {
 	*info = -12;
     } else if (*ldu < 1 || wantu && *ldu < *m) {
 	*info = -16;
@@ -320,8 +320,8 @@ static integer c__1 = 1;
 
     ulp = dlamch_("Precision");
     unfl = dlamch_("Safe Minimum");
-    tola = max(*m,*n) * max(anorm,unfl) * ulp;
-    tolb = max(*p,*n) * max(bnorm,unfl) * ulp;
+    tola = std::max(*m,*n) * std::max(anorm,unfl) * ulp;
+    tolb = std::max(*p,*n) * std::max(bnorm,unfl) * ulp;
 
 /*     Preprocessing */
 
@@ -341,7 +341,7 @@ static integer c__1 = 1;
     dcopy_(n, &alpha[1], &c__1, &work[1], &c__1);
 /* Computing MIN */
     i__1 = *l, i__2 = *m - *k;
-    ibnd = min(i__1,i__2);
+    ibnd = std::min(i__1,i__2);
     i__1 = ibnd;
     for (i__ = 1; i__ <= i__1; ++i__) {
 

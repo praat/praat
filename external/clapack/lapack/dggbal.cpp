@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -167,9 +167,9 @@ static doublereal c_b71 = .5;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {
@@ -548,26 +548,26 @@ L350:
 /* Computing MAX */
 	d__2 = rab, d__3 = (d__1 = b[i__ + (irab + *ilo - 1) * b_dim1], abs(
 		d__1));
-	rab = max(d__2,d__3);
+	rab = std::max(d__2,d__3);
 	d__1 = rab + sfmin;
 	lrab = (integer) (d_lg10(&d__1) / basl + 1.);
 	ir = (integer) (lscale[i__] + d_sign(&c_b71, &lscale[i__]));
 /* Computing MIN */
-	i__2 = max(ir,lsfmin), i__2 = min(i__2,lsfmax), i__3 = lsfmax - lrab;
-	ir = min(i__2,i__3);
+	i__2 = std::max(ir,lsfmin), i__2 = std::min(i__2,lsfmax), i__3 = lsfmax - lrab;
+	ir = std::min(i__2,i__3);
 	lscale[i__] = pow_di(&c_b35, &ir);
 	icab = idamax_(ihi, &a[i__ * a_dim1 + 1], &c__1);
 	cab = (d__1 = a[icab + i__ * a_dim1], abs(d__1));
 	icab = idamax_(ihi, &b[i__ * b_dim1 + 1], &c__1);
 /* Computing MAX */
 	d__2 = cab, d__3 = (d__1 = b[icab + i__ * b_dim1], abs(d__1));
-	cab = max(d__2,d__3);
+	cab = std::max(d__2,d__3);
 	d__1 = cab + sfmin;
 	lcab = (integer) (d_lg10(&d__1) / basl + 1.);
 	jc = (integer) (rscale[i__] + d_sign(&c_b71, &rscale[i__]));
 /* Computing MIN */
-	i__2 = max(jc,lsfmin), i__2 = min(i__2,lsfmax), i__3 = lsfmax - lcab;
-	jc = min(i__2,i__3);
+	i__2 = std::max(jc,lsfmin), i__2 = std::min(i__2,lsfmax), i__3 = lsfmax - lcab;
+	jc = std::min(i__2,i__3);
 	rscale[i__] = pow_di(&c_b35, &jc);
 /* L360: */
     }

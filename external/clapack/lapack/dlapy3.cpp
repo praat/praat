@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 doublereal dlapy3_(doublereal *x, doublereal *y, doublereal *z__)
@@ -48,8 +48,8 @@ doublereal dlapy3_(doublereal *x, doublereal *y, doublereal *z__)
     yabs = abs(*y);
     zabs = abs(*z__);
 /* Computing MAX */
-    d__1 = max(xabs,yabs);
-    w = max(d__1,zabs);
+    d__1 = std::max(xabs,yabs);
+    w = std::max(d__1,zabs);
     if (w == 0.) {
 /*     W can be zero for max(0_integer,nan,0) */
 /*     adding all three entries together will make sure */

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -213,12 +213,12 @@ L20:
 /* Computing MAX */
 /* Computing MAX */
     d__7 = (d__1 = tl[tl_dim1 + 1], abs(d__1)), d__8 = (d__2 = tr[tr_dim1 + 1]
-	    , abs(d__2)), d__7 = max(d__7,d__8), d__8 = (d__3 = tr[(tr_dim1 <<
-	     1) + 1], abs(d__3)), d__7 = max(d__7,d__8), d__8 = (d__4 = tr[
-	    tr_dim1 + 2], abs(d__4)), d__7 = max(d__7,d__8), d__8 = (d__5 = 
+	    , abs(d__2)), d__7 = std::max(d__7,d__8), d__8 = (d__3 = tr[(tr_dim1 <<
+	     1) + 1], abs(d__3)), d__7 = std::max(d__7,d__8), d__8 = (d__4 = tr[
+	    tr_dim1 + 2], abs(d__4)), d__7 = std::max(d__7,d__8), d__8 = (d__5 = 
 	    tr[(tr_dim1 << 1) + 2], abs(d__5));
-    d__6 = eps * max(d__7,d__8);
-    smin = max(d__6,smlnum);
+    d__6 = eps * std::max(d__7,d__8);
+    smin = std::max(d__6,smlnum);
     tmp[0] = tl[tl_dim1 + 1] + sgn * tr[tr_dim1 + 1];
     tmp[3] = tl[tl_dim1 + 1] + sgn * tr[(tr_dim1 << 1) + 2];
     if (*ltranr) {
@@ -240,12 +240,12 @@ L30:
 /* Computing MAX */
 /* Computing MAX */
     d__7 = (d__1 = tr[tr_dim1 + 1], abs(d__1)), d__8 = (d__2 = tl[tl_dim1 + 1]
-	    , abs(d__2)), d__7 = max(d__7,d__8), d__8 = (d__3 = tl[(tl_dim1 <<
-	     1) + 1], abs(d__3)), d__7 = max(d__7,d__8), d__8 = (d__4 = tl[
-	    tl_dim1 + 2], abs(d__4)), d__7 = max(d__7,d__8), d__8 = (d__5 = 
+	    , abs(d__2)), d__7 = std::max(d__7,d__8), d__8 = (d__3 = tl[(tl_dim1 <<
+	     1) + 1], abs(d__3)), d__7 = std::max(d__7,d__8), d__8 = (d__4 = tl[
+	    tl_dim1 + 2], abs(d__4)), d__7 = std::max(d__7,d__8), d__8 = (d__5 = 
 	    tl[(tl_dim1 << 1) + 2], abs(d__5));
-    d__6 = eps * max(d__7,d__8);
-    smin = max(d__6,smlnum);
+    d__6 = eps * std::max(d__7,d__8);
+    smin = std::max(d__6,smlnum);
     tmp[0] = tl[tl_dim1 + 1] + sgn * tr[tr_dim1 + 1];
     tmp[3] = tl[(tl_dim1 << 1) + 2] + sgn * tr[tr_dim1 + 1];
     if (*ltranl) {
@@ -289,7 +289,7 @@ L40:
 	    abs(u11)) {
 /* Computing MAX */
 	d__1 = abs(btmp[0]), d__2 = abs(btmp[1]);
-	*scale = .5 / max(d__1,d__2);
+	*scale = .5 / std::max(d__1,d__2);
 	btmp[0] *= *scale;
 	btmp[1] *= *scale;
     }
@@ -310,7 +310,7 @@ L40:
 /* Computing MAX */
 	d__3 = (d__1 = x[x_dim1 + 1], abs(d__1)), d__4 = (d__2 = x[x_dim1 + 2]
 		, abs(d__2));
-	*xnorm = max(d__3,d__4);
+	*xnorm = std::max(d__3,d__4);
     }
     return 0;
 
@@ -324,20 +324,20 @@ L40:
 L50:
 /* Computing MAX */
     d__5 = (d__1 = tr[tr_dim1 + 1], abs(d__1)), d__6 = (d__2 = tr[(tr_dim1 << 
-	    1) + 1], abs(d__2)), d__5 = max(d__5,d__6), d__6 = (d__3 = tr[
-	    tr_dim1 + 2], abs(d__3)), d__5 = max(d__5,d__6), d__6 = (d__4 = 
+	    1) + 1], abs(d__2)), d__5 = std::max(d__5,d__6), d__6 = (d__3 = tr[
+	    tr_dim1 + 2], abs(d__3)), d__5 = std::max(d__5,d__6), d__6 = (d__4 = 
 	    tr[(tr_dim1 << 1) + 2], abs(d__4));
-    smin = max(d__5,d__6);
+    smin = std::max(d__5,d__6);
 /* Computing MAX */
-    d__5 = smin, d__6 = (d__1 = tl[tl_dim1 + 1], abs(d__1)), d__5 = max(d__5,
+    d__5 = smin, d__6 = (d__1 = tl[tl_dim1 + 1], abs(d__1)), d__5 = std::max(d__5,
 	    d__6), d__6 = (d__2 = tl[(tl_dim1 << 1) + 1], abs(d__2)), d__5 = 
-	    max(d__5,d__6), d__6 = (d__3 = tl[tl_dim1 + 2], abs(d__3)), d__5 =
-	     max(d__5,d__6), d__6 = (d__4 = tl[(tl_dim1 << 1) + 2], abs(d__4))
+	    std::max(d__5,d__6), d__6 = (d__3 = tl[tl_dim1 + 2], abs(d__3)), d__5 =
+	     std::max(d__5,d__6), d__6 = (d__4 = tl[(tl_dim1 << 1) + 2], abs(d__4))
 	    ;
-    smin = max(d__5,d__6);
+    smin = std::max(d__5,d__6);
 /* Computing MAX */
     d__1 = eps * smin;
-    smin = max(d__1,smlnum);
+    smin = std::max(d__1,smlnum);
     btmp[0] = 0.;
     dcopy_(&c__16, btmp, &c__0, t16, &c__1);
     t16[0] = tl[tl_dim1 + 1] + sgn * tr[tr_dim1 + 1];
@@ -421,9 +421,9 @@ L50:
 	     > abs(t16[5]) || smlnum * 8. * abs(btmp[2]) > abs(t16[10]) || 
 	    smlnum * 8. * abs(btmp[3]) > abs(t16[15])) {
 /* Computing MAX */
-	d__1 = abs(btmp[0]), d__2 = abs(btmp[1]), d__1 = max(d__1,d__2), d__2 
-		= abs(btmp[2]), d__1 = max(d__1,d__2), d__2 = abs(btmp[3]);
-	*scale = .125 / max(d__1,d__2);
+	d__1 = abs(btmp[0]), d__2 = abs(btmp[1]), d__1 = std::max(d__1,d__2), d__2 
+		= abs(btmp[2]), d__1 = std::max(d__1,d__2), d__2 = abs(btmp[3]);
+	*scale = .125 / std::max(d__1,d__2);
 	btmp[0] *= *scale;
 	btmp[1] *= *scale;
 	btmp[2] *= *scale;
@@ -453,7 +453,7 @@ L50:
     x[(x_dim1 << 1) + 2] = tmp[3];
 /* Computing MAX */
     d__1 = abs(tmp[0]) + abs(tmp[2]), d__2 = abs(tmp[1]) + abs(tmp[3]);
-    *xnorm = max(d__1,d__2);
+    *xnorm = std::max(d__1,d__2);
     return 0;
 
 /*     End of DLASY2 */

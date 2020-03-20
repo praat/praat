@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -120,9 +120,9 @@ static doublereal c_b52 = .5;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -7;
     }
     if (*info != 0) {
@@ -160,7 +160,7 @@ static doublereal c_b52 = .5;
 		for (k = 1; i__2 < 0 ? k >= i__1 : k <= i__1; k += i__2) {
 /* Computing MIN */
 		    i__3 = *n - k + 1;
-		    kb = min(i__3,nb);
+		    kb = std::min(i__3,nb);
 
 /*                 Update the upper triangle of A(k:n,k:n) */
 
@@ -200,7 +200,7 @@ static doublereal c_b52 = .5;
 		for (k = 1; i__1 < 0 ? k >= i__2 : k <= i__2; k += i__1) {
 /* Computing MIN */
 		    i__3 = *n - k + 1;
-		    kb = min(i__3,nb);
+		    kb = std::min(i__3,nb);
 
 /*                 Update the lower triangle of A(k:n,k:n) */
 
@@ -242,7 +242,7 @@ static doublereal c_b52 = .5;
 		for (k = 1; i__2 < 0 ? k >= i__1 : k <= i__1; k += i__2) {
 /* Computing MIN */
 		    i__3 = *n - k + 1;
-		    kb = min(i__3,nb);
+		    kb = std::min(i__3,nb);
 
 /*                 Update the upper triangle of A(1:k+kb-1,1:k+kb-1) */
 
@@ -280,7 +280,7 @@ static doublereal c_b52 = .5;
 		for (k = 1; i__1 < 0 ? k >= i__2 : k <= i__2; k += i__1) {
 /* Computing MIN */
 		    i__3 = *n - k + 1;
-		    kb = min(i__3,nb);
+		    kb = std::min(i__3,nb);
 
 /*                 Update the lower triangle of A(1:k+kb-1,1:k+kb-1) */
 

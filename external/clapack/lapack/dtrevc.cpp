@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -225,7 +225,7 @@ static logical c_true = TRUE_;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*ldt < max(1_integer,*n)) {
+    } else if (*ldt < std::max(1_integer,*n)) {
 	*info = -6;
     } else if (*ldvl < 1 || leftv && *ldvl < *n) {
 	*info = -8;
@@ -359,7 +359,7 @@ L40:
 	    }
 /* Computing MAX */
 	    d__1 = ulp * (abs(wr) + abs(wi));
-	    smin = max(d__1,smlnum);
+	    smin = std::max(d__1,smlnum);
 
 	    if (ip == 0) {
 
@@ -441,7 +441,7 @@ L40:
 			if (xnorm > 1.) {
 /* Computing MAX */
 			    d__1 = work[j - 1], d__2 = work[j];
-			    beta = max(d__1,d__2);
+			    beta = std::max(d__1,d__2);
 			    if (beta > bignum / xnorm) {
 				x[0] /= xnorm;
 				x[1] /= xnorm;
@@ -602,7 +602,7 @@ L60:
 			if (xnorm > 1.) {
 /* Computing MAX */
 			    d__1 = work[j - 1], d__2 = work[j];
-			    beta = max(d__1,d__2);
+			    beta = std::max(d__1,d__2);
 			    if (beta > bignum / xnorm) {
 				rec = 1. / xnorm;
 				x[0] *= rec;
@@ -662,7 +662,7 @@ L90:
 			d__3 = emax, d__4 = (d__1 = vr[k + (is - 1) * vr_dim1]
 				, abs(d__1)) + (d__2 = vr[k + is * vr_dim1], 
 				abs(d__2));
-			emax = max(d__3,d__4);
+			emax = std::max(d__3,d__4);
 /* L100: */
 		    }
 
@@ -702,7 +702,7 @@ L90:
 			d__3 = emax, d__4 = (d__1 = vr[k + (ki - 1) * vr_dim1]
 				, abs(d__1)) + (d__2 = vr[k + ki * vr_dim1], 
 				abs(d__2));
-			emax = max(d__3,d__4);
+			emax = std::max(d__3,d__4);
 /* L120: */
 		    }
 		    remax = 1. / emax;
@@ -763,7 +763,7 @@ L150:
 	    }
 /* Computing MAX */
 	    d__1 = ulp * (abs(wr) + abs(wi));
-	    smin = max(d__1,smlnum);
+	    smin = std::max(d__1,smlnum);
 
 	    if (ip == 0) {
 
@@ -836,7 +836,7 @@ L150:
 			work[j + *n] = x[0];
 /* Computing MAX */
 			d__2 = (d__1 = work[j + *n], abs(d__1));
-			vmax = max(d__2,vmax);
+			vmax = std::max(d__2,vmax);
 			vcrit = bignum / vmax;
 
 		    } else {
@@ -848,7 +848,7 @@ L150:
 
 /* Computing MAX */
 			d__1 = work[j], d__2 = work[j + 1];
-			beta = max(d__1,d__2);
+			beta = std::max(d__1,d__2);
 			if (beta > vcrit) {
 			    rec = 1. / vmax;
 			    i__3 = *n - ki + 1;
@@ -885,9 +885,9 @@ L150:
 
 /* Computing MAX */
 			d__3 = (d__1 = work[j + *n], abs(d__1)), d__4 = (d__2 
-				= work[j + 1 + *n], abs(d__2)), d__3 = max(
+				= work[j + 1 + *n], abs(d__2)), d__3 = std::max(
 				d__3,d__4);
-			vmax = max(d__3,vmax);
+			vmax = std::max(d__3,vmax);
 			vcrit = bignum / vmax;
 
 		    }
@@ -1025,9 +1025,9 @@ L170:
 			work[j + n2] = x[2];
 /* Computing MAX */
 			d__3 = (d__1 = work[j + *n], abs(d__1)), d__4 = (d__2 
-				= work[j + n2], abs(d__2)), d__3 = max(d__3,
+				= work[j + n2], abs(d__2)), d__3 = std::max(d__3,
 				d__4);
-			vmax = max(d__3,vmax);
+			vmax = std::max(d__3,vmax);
 			vcrit = bignum / vmax;
 
 		    } else {
@@ -1039,7 +1039,7 @@ L170:
 
 /* Computing MAX */
 			d__1 = work[j], d__2 = work[j + 1];
-			beta = max(d__1,d__2);
+			beta = std::max(d__1,d__2);
 			if (beta > vcrit) {
 			    rec = 1. / vmax;
 			    i__3 = *n - ki + 1;
@@ -1089,10 +1089,10 @@ L170:
 			work[j + 1 + *n] = x[1];
 			work[j + 1 + n2] = x[3];
 /* Computing MAX */
-			d__1 = abs(x[0]), d__2 = abs(x[2]), d__1 = max(d__1,
-				d__2), d__2 = abs(x[1]), d__1 = max(d__1,d__2)
-				, d__2 = abs(x[3]), d__1 = max(d__1,d__2);
-			vmax = max(d__1,vmax);
+			d__1 = abs(x[0]), d__2 = abs(x[2]), d__1 = std::max(d__1,
+				d__2), d__2 = abs(x[1]), d__1 = std::max(d__1,d__2)
+				, d__2 = abs(x[3]), d__1 = std::max(d__1,d__2);
+			vmax = std::max(d__1,vmax);
 			vcrit = bignum / vmax;
 
 		    }
@@ -1117,7 +1117,7 @@ L200:
 			d__3 = emax, d__4 = (d__1 = vl[k + is * vl_dim1], abs(
 				d__1)) + (d__2 = vl[k + (is + 1) * vl_dim1], 
 				abs(d__2));
-			emax = max(d__3,d__4);
+			emax = std::max(d__3,d__4);
 /* L220: */
 		    }
 		    remax = 1. / emax;
@@ -1158,7 +1158,7 @@ L200:
 			d__3 = emax, d__4 = (d__1 = vl[k + ki * vl_dim1], abs(
 				d__1)) + (d__2 = vl[k + (ki + 1) * vl_dim1], 
 				abs(d__2));
-			emax = max(d__3,d__4);
+			emax = std::max(d__3,d__4);
 /* L240: */
 		    }
 		    remax = 1. / emax;

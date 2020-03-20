@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -153,7 +153,7 @@ static integer c__33 = 33;
 /*     The block size must not exceed the semi-bandwidth KD, and must not */
 /*     exceed the limit set by the size of the local array WORK. */
 
-    nb = min(nb,32_integer);
+    nb = std::min(nb,32_integer);
 
     if (nb <= 1 || nb > *kd) {
 
@@ -189,7 +189,7 @@ static integer c__33 = 33;
 	    for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 /* Computing MIN */
 		i__3 = nb, i__4 = *n - i__ + 1;
-		ib = min(i__3,i__4);
+		ib = std::min(i__3,i__4);
 
 /*              Factorize the diagonal block */
 
@@ -217,10 +217,10 @@ static integer c__33 = 33;
 
 /* Computing MIN */
 		    i__3 = *kd - ib, i__4 = *n - i__ - ib + 1;
-		    i2 = min(i__3,i__4);
+		    i2 = std::min(i__3,i__4);
 /* Computing MIN */
 		    i__3 = ib, i__4 = *n - i__ - *kd + 1;
-		    i3 = min(i__3,i__4);
+		    i3 = std::min(i__3,i__4);
 
 		    if (i2 > 0) {
 
@@ -324,7 +324,7 @@ static integer c__33 = 33;
 	    for (i__ = 1; i__1 < 0 ? i__ >= i__2 : i__ <= i__2; i__ += i__1) {
 /* Computing MIN */
 		i__3 = nb, i__4 = *n - i__ + 1;
-		ib = min(i__3,i__4);
+		ib = std::min(i__3,i__4);
 
 /*              Factorize the diagonal block */
 
@@ -352,10 +352,10 @@ static integer c__33 = 33;
 
 /* Computing MIN */
 		    i__3 = *kd - ib, i__4 = *n - i__ - ib + 1;
-		    i2 = min(i__3,i__4);
+		    i2 = std::min(i__3,i__4);
 /* Computing MIN */
 		    i__3 = ib, i__4 = *n - i__ - *kd + 1;
-		    i3 = min(i__3,i__4);
+		    i3 = std::min(i__3,i__4);
 
 		    if (i2 > 0) {
 
@@ -382,7 +382,7 @@ static integer c__33 = 33;
 
 			i__3 = ib;
 			for (jj = 1; jj <= i__3; ++jj) {
-			    i__4 = min(jj,i3);
+			    i__4 = std::min(jj,i3);
 			    for (ii = 1; ii <= i__4; ++ii) {
 				work[ii + jj * 33 - 34] = ab[*kd + 1 - jj + 
 					ii + (jj + i__ - 1) * ab_dim1];
@@ -420,7 +420,7 @@ static integer c__33 = 33;
 
 			i__3 = ib;
 			for (jj = 1; jj <= i__3; ++jj) {
-			    i__4 = min(jj,i3);
+			    i__4 = std::min(jj,i3);
 			    for (ii = 1; ii <= i__4; ++ii) {
 				ab[*kd + 1 - jj + ii + (jj + i__ - 1) * 
 					ab_dim1] = work[ii + jj * 33 - 34];

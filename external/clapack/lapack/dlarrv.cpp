@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -350,10 +350,10 @@ L15:
 	for (i__ = ibegin + 1; i__ <= i__2; ++i__) {
 /* Computing MIN */
 	    d__1 = gers[(i__ << 1) - 1];
-	    gl = min(d__1,gl);
+	    gl = std::min(d__1,gl);
 /* Computing MAX */
 	    d__1 = gers[i__ * 2];
-	    gu = max(d__1,gu);
+	    gu = std::max(d__1,gu);
 /* L20: */
 	}
 	spdiam = gu - gl;
@@ -504,14 +504,14 @@ L40:
 				oldfst - 1] - werr[wbegin + oldfst - 1] - w[
 				wbegin + oldfst - 2] - werr[wbegin + oldfst - 
 				2];
-			wgap[wbegin + oldfst - 2] = max(d__1,d__2);
+			wgap[wbegin + oldfst - 2] = std::max(d__1,d__2);
 		    }
 		    if (wbegin + oldlst - 1 < wend) {
 /* Computing MAX */
 			d__1 = wgap[wbegin + oldlst - 1], d__2 = w[wbegin + 
 				oldlst] - werr[wbegin + oldlst] - w[wbegin + 
 				oldlst - 1] - werr[wbegin + oldlst - 1];
-			wgap[wbegin + oldlst - 1] = max(d__1,d__2);
+			wgap[wbegin + oldlst - 1] = std::max(d__1,d__2);
 		    }
 /*                 Each time the eigenvalues in WORK get refined, we store */
 /*                 the newly found approximation with all shifts applied in W */
@@ -576,7 +576,7 @@ L40:
 			if (newfst == 1) {
 /* Computing MAX */
 			    d__1 = 0., d__2 = w[wbegin] - werr[wbegin] - *vl;
-			    lgap = max(d__1,d__2);
+			    lgap = std::max(d__1,d__2);
 			} else {
 			    lgap = wgap[wbegin + newfst - 2];
 			}
@@ -670,10 +670,10 @@ L40:
 			windex = wbegin + k - 1;
 /* Computing MAX */
 			i__4 = windex - 1;
-			windmn = max(i__4,1_integer);
+			windmn = std::max(i__4,1_integer);
 /* Computing MIN */
 			i__4 = windex + 1;
-			windpl = min(i__4,*m);
+			windpl = std::min(i__4,*m);
 			lambda = work[windex];
 			++done;
 /*                    Check if eigenvector computation is to be skipped */
@@ -701,7 +701,7 @@ L40:
 /*                       Prevent this by forcing a small left gap. */
 /* Computing MAX */
 			    d__1 = abs(left), d__2 = abs(right);
-			    lgap = eps * max(d__1,d__2);
+			    lgap = eps * std::max(d__1,d__2);
 			} else {
 			    lgap = wgap[windmn];
 			}
@@ -713,11 +713,11 @@ L40:
 /*                       Prevent this by forcing a small right gap. */
 /* Computing MAX */
 			    d__1 = abs(left), d__2 = abs(right);
-			    rgap = eps * max(d__1,d__2);
+			    rgap = eps * std::max(d__1,d__2);
 			} else {
 			    rgap = wgap[windex];
 			}
-			gap = min(lgap,rgap);
+			gap = std::min(lgap,rgap);
 			if (k == 1 || k == im) {
 /*                       The eigenvector support can become wrong */
 /*                       because significant entries could be cut off due to a */
@@ -785,10 +785,10 @@ L120:
 			}
 /* Computing MIN */
 			i__4 = isupmn, i__5 = isuppz[(windex << 1) - 1];
-			isupmn = min(i__4,i__5);
+			isupmn = std::min(i__4,i__5);
 /* Computing MAX */
 			i__4 = isupmx, i__5 = isuppz[windex * 2];
-			isupmx = max(i__4,i__5);
+			isupmx = std::max(i__4,i__5);
 			++iter;
 /*                    sin alpha <= |resid|/gap */
 /*                    Note that both the residual and the gap are */
@@ -918,13 +918,13 @@ L125:
 /* Computing MAX */
 				d__1 = wgap[windmn], d__2 = w[windex] - werr[
 					windex] - w[windmn] - werr[windmn];
-				wgap[windmn] = max(d__1,d__2);
+				wgap[windmn] = std::max(d__1,d__2);
 			    }
 			    if (windex < wend) {
 /* Computing MAX */
 				d__1 = savgap, d__2 = w[windpl] - werr[windpl]
 					 - w[windex] - werr[windex];
-				wgap[windex] = max(d__1,d__2);
+				wgap[windex] = std::max(d__1,d__2);
 			    }
 			}
 			++idone;

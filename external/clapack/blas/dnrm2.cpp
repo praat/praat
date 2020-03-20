@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 doublereal dnrm2_(integer *n, doublereal *x, integer *incx)

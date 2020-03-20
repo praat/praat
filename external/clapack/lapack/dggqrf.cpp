@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -186,11 +186,11 @@ static integer c_n1 = -1;
     nb2 = ilaenv_(&c__1, "DGERQF", " ", n, p, &c_n1, &c_n1);
     nb3 = ilaenv_(&c__1, "DORMQR", " ", n, m, p, &c_n1);
 /* Computing MAX */
-    i__1 = max(nb1,nb2);
-    nb = max(i__1,nb3);
+    i__1 = std::max(nb1,nb2);
+    nb = std::max(i__1,nb3);
 /* Computing MAX */
-    i__1 = max(*n,*m);
-    lwkopt = max(i__1,*p) * nb;
+    i__1 = std::max(*n,*m);
+    lwkopt = std::max(i__1,*p) * nb;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
     if (*n < 0) {
@@ -199,14 +199,14 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*p < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -8;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1_integer,*n), i__1 = max(i__1,*m);
-	if (*lwork < max(i__1,*p) && ! lquery) {
+	i__1 = std::max(1_integer,*n), i__1 = std::max(i__1,*m);
+	if (*lwork < std::max(i__1,*p) && ! lquery) {
 	    *info = -11;
 	}
     }
@@ -225,19 +225,19 @@ static integer c_n1 = -1;
 
 /*     Update B := Q'*B. */
 
-    i__1 = min(*n,*m);
+    i__1 = std::min(*n,*m);
     dormqr_("Left", "Transpose", n, p, &i__1, &a[a_offset], lda, &taua[1], &b[
 	    b_offset], ldb, &work[1], lwork, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[1];
-    lopt = max(i__1,i__2);
+    lopt = std::max(i__1,i__2);
 
 /*     RQ factorization of N-by-P matrix B: B = T*Z. */
 
     dgerqf_(n, p, &b[b_offset], ldb, &taub[1], &work[1], lwork, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[1];
-    work[1] = (doublereal) max(i__1,i__2);
+    work[1] = (doublereal) std::max(i__1,i__2);
 
     return 0;
 

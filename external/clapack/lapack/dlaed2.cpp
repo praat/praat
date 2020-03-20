@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -186,12 +186,12 @@ static integer c__1 = 1;
 
     if (*n < 0) {
 	*info = -2;
-    } else if (*ldq < max(1_integer,*n)) {
+    } else if (*ldq < std::max(1_integer,*n)) {
 	*info = -6;
     } else /* if(complicated condition) */ {
 /* Computing MIN */
 	i__1 = 1, i__2 = *n / 2;
-	if (min(i__1,i__2) > *n1 || *n / 2 < *n1) {
+	if (std::min(i__1,i__2) > *n1 || *n / 2 < *n1) {
 	    *info = -3;
 	}
     }
@@ -254,7 +254,7 @@ static integer c__1 = 1;
 /* Computing MAX */
     d__3 = (d__1 = d__[jmax], abs(d__1)), d__4 = (d__2 = z__[imax], abs(d__2))
 	    ;
-    tol = eps * 8. * max(d__3,d__4);
+    tol = eps * 8. * std::max(d__3,d__4);
 
 /*     If the rank-1 modifier is small enough, no more needs to be done */
 /*     except to reorganize Q so that its columns correspond with the */

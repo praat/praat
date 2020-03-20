@@ -24,7 +24,6 @@ FUNCTION(gsl_fft_real,radix2_transform) (BASE data[], const size_t stride,  cons
   size_t p, p_1, q;
   size_t i; 
   size_t logn = 0;
-  int status;
 
   if (n == 1) /* identity operation */
     {
@@ -46,7 +45,7 @@ FUNCTION(gsl_fft_real,radix2_transform) (BASE data[], const size_t stride,  cons
 
   /* bit reverse the ordering of input data for decimation in time algorithm */
   
-  status = FUNCTION(fft_real,bitreverse_order)(data, stride, n, logn) ;
+  (void) FUNCTION(fft_real,bitreverse_order)(data, stride, n, logn) ;
 
   /* apply fft recursion */
 

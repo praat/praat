@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -327,10 +327,10 @@ static doublereal c_b30 = 0.;
     eps = dlamch_("Epsilon");
 /* Computing MAX */
     d__1 = abs(*alpha), d__2 = abs(*beta);
-    tol = max(d__1,d__2);
+    tol = std::max(d__1,d__2);
 /* Computing MAX */
     d__2 = (d__1 = d__[n], abs(d__1));
-    tol = eps * 8. * max(d__2,tol);
+    tol = eps * 8. * std::max(d__2,tol);
 
 /*     There are 2 kinds of deflation -- first a value in the z-vector */
 /*     is small, second two (or more) singular values are very close */

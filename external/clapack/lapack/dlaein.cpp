@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -145,7 +145,7 @@ static integer c__1 = 1;
     growto = .1 / rootn;
 /* Computing MAX */
     d__1 = 1., d__2 = *eps3 * rootn;
-    nrmsml = max(d__1,d__2) * *smlnum;
+    nrmsml = std::max(d__1,d__2) * *smlnum;
 
 /*     Form B = H - (WR,WI)*I (except that the subdiagonal elements and */
 /*     the imaginary parts of the diagonal elements are not stored). */
@@ -179,7 +179,7 @@ static integer c__1 = 1;
 /*           Scale supplied initial vector. */
 
 	    vnorm = dnrm2_(n, &vr[1], &c__1);
-	    d__1 = *eps3 * rootn / max(vnorm,nrmsml);
+	    d__1 = *eps3 * rootn / std::max(vnorm,nrmsml);
 	    dscal_(n, &d__1, &vr[1], &c__1);
 	}
 
@@ -342,7 +342,7 @@ L120:
 	    d__1 = dnrm2_(n, &vr[1], &c__1);
 	    d__2 = dnrm2_(n, &vi[1], &c__1);
 	    norm = dlapy2_(&d__1, &d__2);
-	    rec = *eps3 * rootn / max(norm,nrmsml);
+	    rec = *eps3 * rootn / std::max(norm,nrmsml);
 	    dscal_(n, &rec, &vr[1], &c__1);
 	    dscal_(n, &rec, &vi[1], &c__1);
 	}
@@ -580,7 +580,7 @@ L120:
 /* Computing MAX */
 		    d__3 = (d__1 = vr[i__], abs(d__1)) + (d__2 = vi[i__], abs(
 			    d__2));
-		    vmax = max(d__3,vmax);
+		    vmax = std::max(d__3,vmax);
 		    vcrit = *bignum / vmax;
 		} else {
 		    i__4 = *n;
@@ -635,7 +635,7 @@ L280:
 /* Computing MAX */
 	    d__3 = vnorm, d__4 = (d__1 = vr[i__], abs(d__1)) + (d__2 = vi[i__]
 		    , abs(d__2));
-	    vnorm = max(d__3,d__4);
+	    vnorm = std::max(d__3,d__4);
 /* L290: */
 	}
 	d__1 = 1. / vnorm;

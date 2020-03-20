@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgbequ_(integer *m, integer *n, integer *kl, integer *ku, 
@@ -166,12 +166,12 @@
 	i__2 = j - *ku;
 /* Computing MIN */
 	i__4 = j + *kl;
-	i__3 = min(i__4,*m);
-	for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
+	i__3 = std::min(i__4,*m);
+	for (i__ = std::max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 	    d__2 = r__[i__], d__3 = (d__1 = ab[kd + i__ - j + j * ab_dim1], 
 		    abs(d__1));
-	    r__[i__] = max(d__2,d__3);
+	    r__[i__] = std::max(d__2,d__3);
 /* L20: */
 	}
 /* L30: */
@@ -185,10 +185,10 @@
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	d__1 = rcmax, d__2 = r__[i__];
-	rcmax = max(d__1,d__2);
+	rcmax = std::max(d__1,d__2);
 /* Computing MIN */
 	d__1 = rcmin, d__2 = r__[i__];
-	rcmin = min(d__1,d__2);
+	rcmin = std::min(d__1,d__2);
 /* L40: */
     }
     *amax = rcmax;
@@ -214,14 +214,14 @@
 /* Computing MIN */
 /* Computing MAX */
 	    d__2 = r__[i__];
-	    d__1 = max(d__2,smlnum);
-	    r__[i__] = 1. / min(d__1,bignum);
+	    d__1 = std::max(d__2,smlnum);
+	    r__[i__] = 1. / std::min(d__1,bignum);
 /* L60: */
 	}
 
 /*        Compute ROWCND = min(R(I)) / max(R(I)) */
 
-	*rowcnd = max(rcmin,smlnum) / min(rcmax,bignum);
+	*rowcnd = std::max(rcmin,smlnum) / std::min(rcmax,bignum);
     }
 
 /*     Compute column scale factors */
@@ -242,12 +242,12 @@
 	i__3 = j - *ku;
 /* Computing MIN */
 	i__4 = j + *kl;
-	i__2 = min(i__4,*m);
-	for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
+	i__2 = std::min(i__4,*m);
+	for (i__ = std::max(i__3,1_integer); i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__2 = c__[j], d__3 = (d__1 = ab[kd + i__ - j + j * ab_dim1], abs(
 		    d__1)) * r__[i__];
-	    c__[j] = max(d__2,d__3);
+	    c__[j] = std::max(d__2,d__3);
 /* L80: */
 	}
 /* L90: */
@@ -261,10 +261,10 @@
     for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 	d__1 = rcmin, d__2 = c__[j];
-	rcmin = min(d__1,d__2);
+	rcmin = std::min(d__1,d__2);
 /* Computing MAX */
 	d__1 = rcmax, d__2 = c__[j];
-	rcmax = max(d__1,d__2);
+	rcmax = std::max(d__1,d__2);
 /* L100: */
     }
 
@@ -289,14 +289,14 @@
 /* Computing MIN */
 /* Computing MAX */
 	    d__2 = c__[j];
-	    d__1 = max(d__2,smlnum);
-	    c__[j] = 1. / min(d__1,bignum);
+	    d__1 = std::max(d__2,smlnum);
+	    c__[j] = 1. / std::min(d__1,bignum);
 /* L120: */
 	}
 
 /*        Compute COLCND = min(C(J)) / max(C(J)) */
 
-	*colcnd = max(rcmin,smlnum) / min(rcmax,bignum);
+	*colcnd = std::max(rcmin,smlnum) / std::min(rcmax,bignum);
     }
 
     return 0;

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dormr3_(char *side, char *trans, integer *m, integer *n, 
@@ -156,9 +156,9 @@
 	*info = -5;
     } else if (*l < 0 || left && *l > *m || ! left && *l > *n) {
 	*info = -6;
-    } else if (*lda < max(1_integer,*k)) {
+    } else if (*lda < std::max(1_integer,*k)) {
 	*info = -8;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	*info = -11;
     }
     if (*info != 0) {

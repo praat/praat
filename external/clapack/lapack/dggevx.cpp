@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -388,9 +388,9 @@ static doublereal c_b60 = 1.;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -9;
     } else if (*ldvl < 1 || ilvl && *ldvl < *n) {
 	*info = -14;
@@ -422,22 +422,22 @@ static doublereal c_b60 = 1.;
 	    if (wantsv || wantsb) {
 /* Computing MAX */
 		i__1 = minwrk, i__2 = (*n << 1) * (*n + 4) + 16;
-		minwrk = max(i__1,i__2);
+		minwrk = std::max(i__1,i__2);
 	    }
 	    maxwrk = minwrk;
 /* Computing MAX */
 	    i__1 = maxwrk, i__2 = *n + *n * ilaenv_(&c__1, "DGEQRF", " ", n, &
 		    c__1, n, &c__0);
-	    maxwrk = max(i__1,i__2);
+	    maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 	    i__1 = maxwrk, i__2 = *n + *n * ilaenv_(&c__1, "DORMQR", " ", n, &
 		    c__1, n, &c__0);
-	    maxwrk = max(i__1,i__2);
+	    maxwrk = std::max(i__1,i__2);
 	    if (ilvl) {
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			" ", n, &c__1, n, &c__0);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    }
 	}
 	work[1] = (doublereal) maxwrk;
@@ -722,7 +722,7 @@ L20:
 /* Computing MAX */
 		    d__2 = temp, d__3 = (d__1 = vl[jr + jc * vl_dim1], abs(
 			    d__1));
-		    temp = max(d__2,d__3);
+		    temp = std::max(d__2,d__3);
 /* L30: */
 		}
 	    } else {
@@ -732,7 +732,7 @@ L20:
 		    d__3 = temp, d__4 = (d__1 = vl[jr + jc * vl_dim1], abs(
 			    d__1)) + (d__2 = vl[jr + (jc + 1) * vl_dim1], abs(
 			    d__2));
-		    temp = max(d__3,d__4);
+		    temp = std::max(d__3,d__4);
 /* L40: */
 		}
 	    }
@@ -773,7 +773,7 @@ L70:
 /* Computing MAX */
 		    d__2 = temp, d__3 = (d__1 = vr[jr + jc * vr_dim1], abs(
 			    d__1));
-		    temp = max(d__2,d__3);
+		    temp = std::max(d__2,d__3);
 /* L80: */
 		}
 	    } else {
@@ -783,7 +783,7 @@ L70:
 		    d__3 = temp, d__4 = (d__1 = vr[jr + jc * vr_dim1], abs(
 			    d__1)) + (d__2 = vr[jr + (jc + 1) * vr_dim1], abs(
 			    d__2));
-		    temp = max(d__3,d__4);
+		    temp = std::max(d__3,d__4);
 /* L90: */
 		}
 	    }

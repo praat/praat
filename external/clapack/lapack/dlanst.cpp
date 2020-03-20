@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -101,10 +101,10 @@ doublereal dlanst_(const char *norm, integer *n, doublereal *d__, doublereal *e)
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__2 = anorm, d__3 = (d__1 = d__[i__], abs(d__1));
-	    anorm = max(d__2,d__3);
+	    anorm = std::max(d__2,d__3);
 /* Computing MAX */
 	    d__2 = anorm, d__3 = (d__1 = e[i__], abs(d__1));
-	    anorm = max(d__2,d__3);
+	    anorm = std::max(d__2,d__3);
 /* L10: */
 	}
     } else if (lsame_(norm, "O") || *(unsigned char *)
@@ -118,13 +118,13 @@ doublereal dlanst_(const char *norm, integer *n, doublereal *d__, doublereal *e)
 /* Computing MAX */
 	    d__3 = abs(d__[1]) + abs(e[1]), d__4 = (d__1 = e[*n - 1], abs(
 		    d__1)) + (d__2 = d__[*n], abs(d__2));
-	    anorm = max(d__3,d__4);
+	    anorm = std::max(d__3,d__4);
 	    i__1 = *n - 1;
 	    for (i__ = 2; i__ <= i__1; ++i__) {
 /* Computing MAX */
 		d__4 = anorm, d__5 = (d__1 = d__[i__], abs(d__1)) + (d__2 = e[
 			i__], abs(d__2)) + (d__3 = e[i__ - 1], abs(d__3));
-		anorm = max(d__4,d__5);
+		anorm = std::max(d__4,d__5);
 /* L20: */
 	    }
 	}

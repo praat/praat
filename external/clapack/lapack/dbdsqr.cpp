@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -221,11 +221,11 @@ static doublereal c_b72 = -1.;
 	*info = -4;
     } else if (*ncc < 0) {
 	*info = -5;
-    } else if (*ncvt == 0 && *ldvt < 1 || *ncvt > 0 && *ldvt < max(1_integer,*n)) {
+    } else if (*ncvt == 0 && *ldvt < 1 || *ncvt > 0 && *ldvt < std::max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldu < max(1_integer,*nru)) {
+    } else if (*ldu < std::max(1_integer,*nru)) {
 	*info = -11;
-    } else if (*ncc == 0 && *ldc < 1 || *ncc > 0 && *ldc < max(1_integer,*n)) {
+    } else if (*ncc == 0 && *ldc < 1 || *ncc > 0 && *ldc < std::max(1_integer,*n)) {
 	*info = -13;
     }
     if (*info != 0) {
@@ -295,8 +295,8 @@ static doublereal c_b72 = -1.;
 /* Computing MAX */
 /* Computing MIN */
     d__3 = 100., d__4 = pow_dd(&eps, &c_b15);
-    d__1 = 10., d__2 = min(d__3,d__4);
-    tolmul = max(d__1,d__2);
+    d__1 = 10., d__2 = std::min(d__3,d__4);
+    tolmul = std::max(d__1,d__2);
     tol = tolmul * eps;
 
 /*     Compute approximate maximum, minimum singular values */
@@ -306,14 +306,14 @@ static doublereal c_b72 = -1.;
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	d__2 = smax, d__3 = (d__1 = d__[i__], abs(d__1));
-	smax = max(d__2,d__3);
+	smax = std::max(d__2,d__3);
 /* L20: */
     }
     i__1 = *n - 1;
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	d__2 = smax, d__3 = (d__1 = e[i__], abs(d__1));
-	smax = max(d__2,d__3);
+	smax = std::max(d__2,d__3);
 /* L30: */
     }
     sminl = 0.;
@@ -330,7 +330,7 @@ static doublereal c_b72 = -1.;
 	for (i__ = 2; i__ <= i__1; ++i__) {
 	    mu = (d__2 = d__[i__], abs(d__2)) * (mu / (mu + (d__1 = e[i__ - 1]
 		    , abs(d__1))));
-	    sminoa = min(sminoa,mu);
+	    sminoa = std::min(sminoa,mu);
 	    if (sminoa == 0.) {
 		goto L50;
 	    }
@@ -340,14 +340,14 @@ L50:
 	sminoa /= sqrt((doublereal) (*n));
 /* Computing MAX */
 	d__1 = tol * sminoa, d__2 = *n * 6 * *n * unfl;
-	thresh = max(d__1,d__2);
+	thresh = std::max(d__1,d__2);
     } else {
 
 /*        Absolute accuracy desired */
 
 /* Computing MAX */
 	d__1 = abs(tol) * smax, d__2 = *n * 6 * *n * unfl;
-	thresh = max(d__1,d__2);
+	thresh = std::max(d__1,d__2);
     }
 
 /*     Prepare for main iteration loop for the singular values */
@@ -394,10 +394,10 @@ L60:
 	if (abse <= thresh) {
 	    goto L80;
 	}
-	smin = min(smin,abss);
+	smin = std::min(smin,abss);
 /* Computing MAX */
-	d__1 = max(smax,abss);
-	smax = max(d__1,abse);
+	d__1 = std::max(smax,abss);
+	smax = std::max(d__1,abse);
 /* L70: */
     }
     ll = 0;
@@ -493,7 +493,7 @@ L90:
 		}
 		mu = (d__2 = d__[lll + 1], abs(d__2)) * (mu / (mu + (d__1 = e[
 			lll], abs(d__1))));
-		sminl = min(sminl,mu);
+		sminl = std::min(sminl,mu);
 /* L100: */
 	    }
 	}
@@ -524,7 +524,7 @@ L90:
 		}
 		mu = (d__2 = d__[lll], abs(d__2)) * (mu / (mu + (d__1 = e[lll]
 			, abs(d__1))));
-		sminl = min(sminl,mu);
+		sminl = std::min(sminl,mu);
 /* L110: */
 	    }
 	}
@@ -537,7 +537,7 @@ L90:
 
 /* Computing MAX */
     d__1 = eps, d__2 = tol * .01;
-    if (tol >= 0. && *n * tol * (sminl / smax) <= max(d__1,d__2)) {
+    if (tol >= 0. && *n * tol * (sminl / smax) <= std::max(d__1,d__2)) {
 
 /*        Use a zero shift to avoid loss of relative accuracy */
 

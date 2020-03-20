@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "string.h"
 
 /* Table of constant values */
@@ -23,10 +23,7 @@ integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n
     static logical sname;
     static char subnam[6];
 
-    ftnlen name_len, opts_len;
-
-    name_len = strlen (name__);
-    opts_len = strlen (opts);
+    ftnlen name_len = strlen (name__);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1.1) -- */
@@ -574,7 +571,7 @@ L100:
 
 /*     ISPEC = 6:  crossover point for SVD (used by xGELSS and xGESVD) */
 
-    ret_val = (integer) ((real) min(*n1,*n2) * 1.6f);
+    ret_val = (integer) ((real) std::min(*n1,*n2) * 1.6f);
     return ret_val;
 
 L110:

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -294,9 +294,9 @@ static doublereal c_b39 = 1.;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -9;
     } else if (*ldvsl < 1 || ilvsl && *ldvsl < *n) {
 	*info = -15;
@@ -315,18 +315,18 @@ static doublereal c_b39 = 1.;
 	if (*n > 0) {
 /* Computing MAX */
 	    i__1 = *n << 3, i__2 = *n * 6 + 16;
-	    minwrk = max(i__1,i__2);
+	    minwrk = std::max(i__1,i__2);
 	    maxwrk = minwrk - *n + *n * ilaenv_(&c__1, "DGEQRF", " ", n, &
 		    c__1, n, &c__0);
 /* Computing MAX */
 	    i__1 = maxwrk, i__2 = minwrk - *n + *n * ilaenv_(&c__1, "DORMQR", 
 		    " ", n, &c__1, n, &c_n1);
-	    maxwrk = max(i__1,i__2);
+	    maxwrk = std::max(i__1,i__2);
 	    if (ilvsl) {
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = minwrk - *n + *n * ilaenv_(&c__1, "DOR"
 			"GQR", " ", n, &c__1, n, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    }
 	} else {
 	    minwrk = 1;

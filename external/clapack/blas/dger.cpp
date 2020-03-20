@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dger_(integer *m, integer *n, doublereal *alpha, 
@@ -115,7 +115,7 @@
 	info = 5;
     } else if (*incy == 0) {
 	info = 7;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	info = 9;
     }
     if (info != 0) {

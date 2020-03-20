@@ -357,8 +357,6 @@ rk4imp_reset (void *vstate, size_t dim)
 static unsigned int
 rk4imp_order (void *vstate)
 {
-  rk4imp_state_t *state = (rk4imp_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 4;
 }
 

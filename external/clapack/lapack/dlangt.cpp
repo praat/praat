@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -105,13 +105,13 @@ doublereal dlangt_(char *norm, integer *n, doublereal *dl, doublereal *d__,
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__2 = anorm, d__3 = (d__1 = dl[i__], abs(d__1));
-	    anorm = max(d__2,d__3);
+	    anorm = std::max(d__2,d__3);
 /* Computing MAX */
 	    d__2 = anorm, d__3 = (d__1 = d__[i__], abs(d__1));
-	    anorm = max(d__2,d__3);
+	    anorm = std::max(d__2,d__3);
 /* Computing MAX */
 	    d__2 = anorm, d__3 = (d__1 = du[i__], abs(d__1));
-	    anorm = max(d__2,d__3);
+	    anorm = std::max(d__2,d__3);
 /* L10: */
 	}
     } else if (lsame_(norm, "O") || *(unsigned char *)
@@ -125,13 +125,13 @@ doublereal dlangt_(char *norm, integer *n, doublereal *dl, doublereal *d__,
 /* Computing MAX */
 	    d__3 = abs(d__[1]) + abs(dl[1]), d__4 = (d__1 = d__[*n], abs(d__1)
 		    ) + (d__2 = du[*n - 1], abs(d__2));
-	    anorm = max(d__3,d__4);
+	    anorm = std::max(d__3,d__4);
 	    i__1 = *n - 1;
 	    for (i__ = 2; i__ <= i__1; ++i__) {
 /* Computing MAX */
 		d__4 = anorm, d__5 = (d__1 = d__[i__], abs(d__1)) + (d__2 = 
 			dl[i__], abs(d__2)) + (d__3 = du[i__ - 1], abs(d__3));
-		anorm = max(d__4,d__5);
+		anorm = std::max(d__4,d__5);
 /* L20: */
 	    }
 	}
@@ -145,13 +145,13 @@ doublereal dlangt_(char *norm, integer *n, doublereal *dl, doublereal *d__,
 /* Computing MAX */
 	    d__3 = abs(d__[1]) + abs(du[1]), d__4 = (d__1 = d__[*n], abs(d__1)
 		    ) + (d__2 = dl[*n - 1], abs(d__2));
-	    anorm = max(d__3,d__4);
+	    anorm = std::max(d__3,d__4);
 	    i__1 = *n - 1;
 	    for (i__ = 2; i__ <= i__1; ++i__) {
 /* Computing MAX */
 		d__4 = anorm, d__5 = (d__1 = d__[i__], abs(d__1)) + (d__2 = 
 			du[i__], abs(d__2)) + (d__3 = dl[i__ - 1], abs(d__3));
-		anorm = max(d__4,d__5);
+		anorm = std::max(d__4,d__5);
 /* L30: */
 	    }
 	}

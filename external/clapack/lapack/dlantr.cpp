@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -118,7 +118,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
     --work;
 
     /* Function Body */
-    if (min(*m,*n) == 0) {
+    if (std::min(*m,*n) == 0) {
 	value = 0.;
     } else if (lsame_(norm, "M")) {
 
@@ -131,12 +131,12 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__3 = *m, i__4 = j - 1;
-		    i__2 = min(i__3,i__4);
+		    i__2 = std::min(i__3,i__4);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(
 				d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L10: */
 		    }
 /* L20: */
@@ -149,7 +149,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(
 				d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L30: */
 		    }
 /* L40: */
@@ -160,12 +160,12 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 	    if (lsame_(uplo, "U")) {
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
-		    i__2 = min(*m,j);
+		    i__2 = std::min(*m,j);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(
 				d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L50: */
 		    }
 /* L60: */
@@ -178,7 +178,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(
 				d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L70: */
 		    }
 /* L80: */
@@ -204,13 +204,13 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 		    }
 		} else {
 		    sum = 0.;
-		    i__2 = min(*m,j);
+		    i__2 = std::min(*m,j);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 			sum += (d__1 = a[i__ + j * a_dim1], abs(d__1));
 /* L100: */
 		    }
 		}
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L110: */
 	    }
 	} else {
@@ -231,7 +231,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 /* L130: */
 		    }
 		}
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L140: */
 	    }
 	}
@@ -250,7 +250,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__3 = *m, i__4 = j - 1;
-		    i__2 = min(i__3,i__4);
+		    i__2 = std::min(i__3,i__4);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 			work[i__] += (d__1 = a[i__ + j * a_dim1], abs(d__1));
 /* L160: */
@@ -265,7 +265,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 		}
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
-		    i__2 = min(*m,j);
+		    i__2 = std::min(*m,j);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 			work[i__] += (d__1 = a[i__ + j * a_dim1], abs(d__1));
 /* L190: */
@@ -316,7 +316,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__1 = value, d__2 = work[i__];
-	    value = max(d__1,d__2);
+	    value = std::max(d__1,d__2);
 /* L280: */
 	}
     } else if (lsame_(norm, "F") || lsame_(norm, "E")) {
@@ -326,12 +326,12 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 	if (lsame_(uplo, "U")) {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) min(*m,*n);
+		sum = (doublereal) std::min(*m,*n);
 		i__1 = *n;
 		for (j = 2; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__3 = *m, i__4 = j - 1;
-		    i__2 = min(i__3,i__4);
+		    i__2 = std::min(i__3,i__4);
 		    dlassq_(&i__2, &a[j * a_dim1 + 1], &c__1, &scale, &sum);
 /* L290: */
 		}
@@ -340,7 +340,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 		sum = 1.;
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
-		    i__2 = min(*m,j);
+		    i__2 = std::min(*m,j);
 		    dlassq_(&i__2, &a[j * a_dim1 + 1], &c__1, &scale, &sum);
 /* L300: */
 		}
@@ -348,13 +348,13 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 	} else {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) min(*m,*n);
+		sum = (doublereal) std::min(*m,*n);
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
 		    i__2 = *m - j;
 /* Computing MIN */
 		    i__3 = *m, i__4 = j + 1;
-		    dlassq_(&i__2, &a[min(i__3, i__4)+ j * a_dim1], &c__1, &
+		    dlassq_(&i__2, &a[std::min(i__3, i__4)+ j * a_dim1], &c__1, &
 			    scale, &sum);
 /* L310: */
 		}

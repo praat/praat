@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -217,9 +217,9 @@ static doublereal c_b11 = 1.;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -8;
     }
 
@@ -263,10 +263,10 @@ static doublereal c_b11 = 1.;
 	    1], liwork, info);
 /* Computing MAX */
     d__1 = (doublereal) lopt;
-    lopt = (integer) max(d__1,work[1]);
+    lopt = (integer) std::max(d__1,work[1]);
 /* Computing MAX */
     d__1 = (doublereal) liopt, d__2 = (doublereal) iwork[1];
-    liopt = (integer) max(d__1,d__2);
+    liopt = (integer) std::max(d__1,d__2);
 
     if (wantz && *info == 0) {
 

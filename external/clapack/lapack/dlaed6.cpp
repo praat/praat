@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaed6_(integer *kniter, logical *orgati, doublereal *
@@ -143,8 +143,8 @@
 	    b = c__ * d__[1] * d__[2] + z__[1] * d__[2] + z__[2] * d__[1];
 	}
 /* Computing MAX */
-	d__1 = abs(a), d__2 = abs(b), d__1 = max(d__1,d__2), d__2 = abs(c__);
-	temp = max(d__1,d__2);
+	d__1 = abs(a), d__2 = abs(b), d__1 = std::max(d__1,d__2), d__2 = abs(c__);
+	temp = std::max(d__1,d__2);
 	a /= temp;
 	b /= temp;
 	c__ /= temp;
@@ -198,12 +198,12 @@
 /* Computing MIN */
 	d__3 = (d__1 = d__[2] - *tau, abs(d__1)), d__4 = (d__2 = d__[3] - *
 		tau, abs(d__2));
-	temp = min(d__3,d__4);
+	temp = std::min(d__3,d__4);
     } else {
 /* Computing MIN */
 	d__3 = (d__1 = d__[1] - *tau, abs(d__1)), d__4 = (d__2 = d__[2] - *
 		tau, abs(d__2));
-	temp = min(d__3,d__4);
+	temp = std::min(d__3,d__4);
     }
     scale = FALSE_;
     if (temp <= small1) {
@@ -293,8 +293,8 @@
 	b = temp1 * temp2 * f;
 	c__ = f - (temp1 + temp2) * df + temp1 * temp2 * ddf;
 /* Computing MAX */
-	d__1 = abs(a), d__2 = abs(b), d__1 = max(d__1,d__2), d__2 = abs(c__);
-	temp = max(d__1,d__2);
+	d__1 = abs(a), d__2 = abs(b), d__1 = std::max(d__1,d__2), d__2 = abs(c__);
+	temp = std::max(d__1,d__2);
 	a /= temp;
 	b /= temp;
 	c__ /= temp;

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dsymv_(const char *uplo, integer *n, doublereal *alpha, 
@@ -134,7 +134,7 @@
 	info = 1;
     } else if (*n < 0) {
 	info = 2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	info = 5;
     } else if (*incx == 0) {
 	info = 7;

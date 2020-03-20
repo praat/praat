@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dpbequ_(char *uplo, integer *n, integer *kd, doublereal *
@@ -145,10 +145,10 @@
 	s[i__] = ab[j + i__ * ab_dim1];
 /* Computing MIN */
 	d__1 = smin, d__2 = s[i__];
-	smin = min(d__1,d__2);
+	smin = std::min(d__1,d__2);
 /* Computing MAX */
 	d__1 = *amax, d__2 = s[i__];
-	*amax = max(d__1,d__2);
+	*amax = std::max(d__1,d__2);
 /* L10: */
     }
 

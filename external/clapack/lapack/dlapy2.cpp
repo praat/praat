@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 doublereal dlapy2_(doublereal *x, doublereal *y)
@@ -45,8 +45,8 @@ doublereal dlapy2_(doublereal *x, doublereal *y)
 
     xabs = abs(*x);
     yabs = abs(*y);
-    w = max(xabs,yabs);
-    z__ = min(xabs,yabs);
+    w = std::max(xabs,yabs);
+    z__ = std::min(xabs,yabs);
     if (z__ == 0.) {
 	ret_val = w;
     } else {

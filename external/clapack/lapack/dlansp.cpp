@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -113,7 +113,7 @@ doublereal dlansp_(char *norm, char *uplo, integer *n, doublereal *ap,
 		for (i__ = k; i__ <= i__2; ++i__) {
 /* Computing MAX */
 		    d__2 = value, d__3 = (d__1 = ap[i__], abs(d__1));
-		    value = max(d__2,d__3);
+		    value = std::max(d__2,d__3);
 /* L10: */
 		}
 		k += j;
@@ -127,7 +127,7 @@ doublereal dlansp_(char *norm, char *uplo, integer *n, doublereal *ap,
 		for (i__ = k; i__ <= i__2; ++i__) {
 /* Computing MAX */
 		    d__2 = value, d__3 = (d__1 = ap[i__], abs(d__1));
-		    value = max(d__2,d__3);
+		    value = std::max(d__2,d__3);
 /* L30: */
 		}
 		k = k + *n - j + 1;
@@ -160,7 +160,7 @@ doublereal dlansp_(char *norm, char *uplo, integer *n, doublereal *ap,
 	    for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 		d__1 = value, d__2 = work[i__];
-		value = max(d__1,d__2);
+		value = std::max(d__1,d__2);
 /* L70: */
 	    }
 	} else {
@@ -181,7 +181,7 @@ doublereal dlansp_(char *norm, char *uplo, integer *n, doublereal *ap,
 		    ++k;
 /* L90: */
 		}
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L100: */
 	    }
 	}

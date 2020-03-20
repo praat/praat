@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -270,7 +270,7 @@ static doublereal c_b36 = .5;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		i__2 = *kd, i__3 = j - 1;
-		jlen = min(i__2,i__3);
+		jlen = std::min(i__2,i__3);
 		cnorm[j] = dasum_(&jlen, &ab[*kd + 1 - jlen + j * ab_dim1], &
 			c__1);
 /* L10: */
@@ -283,7 +283,7 @@ static doublereal c_b36 = .5;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		i__2 = *kd, i__3 = *n - j;
-		jlen = min(i__2,i__3);
+		jlen = std::min(i__2,i__3);
 		if (jlen > 0) {
 		    cnorm[j] = dasum_(&jlen, &ab[j * ab_dim1 + 2], &c__1);
 		} else {
@@ -340,7 +340,7 @@ static doublereal c_b36 = .5;
 /*           Compute GROW = 1/G(j) and XBND = 1/M(j). */
 /*           Initially, G(0) = max{x(i), i=1,...,n}. */
 
-	    grow = 1. / max(xbnd,smlnum);
+	    grow = 1. / std::max(xbnd,smlnum);
 	    xbnd = grow;
 	    i__1 = jlast;
 	    i__2 = jinc;
@@ -356,8 +356,8 @@ static doublereal c_b36 = .5;
 
 		tjj = (d__1 = ab[maind + j * ab_dim1], abs(d__1));
 /* Computing MIN */
-		d__1 = xbnd, d__2 = min(1.,tjj) * grow;
-		xbnd = min(d__1,d__2);
+		d__1 = xbnd, d__2 = std::min(1.,tjj) * grow;
+		xbnd = std::min(d__1,d__2);
 		if (tjj + cnorm[j] >= smlnum) {
 
 /*                 G(j) = G(j-1)*( 1 + CNORM(j) / abs(A(j,j)) ) */
@@ -379,8 +379,8 @@ static doublereal c_b36 = .5;
 /*           Compute GROW = 1/G(j), where G(0) = max{x(i), i=1,...,n}. */
 
 /* Computing MIN */
-	    d__1 = 1., d__2 = 1. / max(xbnd,smlnum);
-	    grow = min(d__1,d__2);
+	    d__1 = 1., d__2 = 1. / std::max(xbnd,smlnum);
+	    grow = std::min(d__1,d__2);
 	    i__2 = jlast;
 	    i__1 = jinc;
 	    for (j = jfirst; i__1 < 0 ? j >= i__2 : j <= i__2; j += i__1) {
@@ -428,7 +428,7 @@ L50:
 /*           Compute GROW = 1/G(j) and XBND = 1/M(j). */
 /*           Initially, M(0) = max{x(i), i=1,...,n}. */
 
-	    grow = 1. / max(xbnd,smlnum);
+	    grow = 1. / std::max(xbnd,smlnum);
 	    xbnd = grow;
 	    i__1 = jlast;
 	    i__2 = jinc;
@@ -445,7 +445,7 @@ L50:
 		xj = cnorm[j] + 1.;
 /* Computing MIN */
 		d__1 = grow, d__2 = xbnd / xj;
-		grow = min(d__1,d__2);
+		grow = std::min(d__1,d__2);
 
 /*              M(j) = M(j-1)*( 1 + CNORM(j) ) / abs(A(j,j)) */
 
@@ -455,7 +455,7 @@ L50:
 		}
 /* L60: */
 	    }
-	    grow = min(grow,xbnd);
+	    grow = std::min(grow,xbnd);
 	} else {
 
 /*           A is unit triangular. */
@@ -463,8 +463,8 @@ L50:
 /*           Compute GROW = 1/G(j), where G(0) = max{x(i), i=1,...,n}. */
 
 /* Computing MIN */
-	    d__1 = 1., d__2 = 1. / max(xbnd,smlnum);
-	    grow = min(d__1,d__2);
+	    d__1 = 1., d__2 = 1. / std::max(xbnd,smlnum);
+	    grow = std::min(d__1,d__2);
 	    i__2 = jlast;
 	    i__1 = jinc;
 	    for (j = jfirst; i__1 < 0 ? j >= i__2 : j <= i__2; j += i__1) {
@@ -613,7 +613,7 @@ L100:
 
 /* Computing MIN */
 			i__3 = *kd, i__4 = j - 1;
-			jlen = min(i__3,i__4);
+			jlen = std::min(i__3,i__4);
 			d__1 = -x[j] * tscal;
 			daxpy_(&jlen, &d__1, &ab[*kd + 1 - jlen + j * ab_dim1]
 , &c__1, &x[j - jlen], &c__1);
@@ -629,7 +629,7 @@ L100:
 
 /* Computing MIN */
 		    i__3 = *kd, i__4 = *n - j;
-		    jlen = min(i__3,i__4);
+		    jlen = std::min(i__3,i__4);
 		    if (jlen > 0) {
 			d__1 = -x[j] * tscal;
 			daxpy_(&jlen, &d__1, &ab[j * ab_dim1 + 2], &c__1, &x[
@@ -655,7 +655,7 @@ L100:
 
 		xj = (d__1 = x[j], abs(d__1));
 		uscal = tscal;
-		rec = 1. / max(xmax,1.);
+		rec = 1. / std::max(xmax,1.);
 		if (cnorm[j] > (bignum - xj) * rec) {
 
 /*                 If x(j) could overflow, scale x by 1/(2*XMAX). */
@@ -673,7 +673,7 @@ L100:
 
 /* Computing MIN */
 			d__1 = 1., d__2 = rec * tjj;
-			rec = min(d__1,d__2);
+			rec = std::min(d__1,d__2);
 			uscal /= tjjs;
 		    }
 		    if (rec < 1.) {
@@ -692,13 +692,13 @@ L100:
 		    if (upper) {
 /* Computing MIN */
 			i__3 = *kd, i__4 = j - 1;
-			jlen = min(i__3,i__4);
+			jlen = std::min(i__3,i__4);
 			sumj = ddot_(&jlen, &ab[*kd + 1 - jlen + j * ab_dim1], 
 				 &c__1, &x[j - jlen], &c__1);
 		    } else {
 /* Computing MIN */
 			i__3 = *kd, i__4 = *n - j;
-			jlen = min(i__3,i__4);
+			jlen = std::min(i__3,i__4);
 			if (jlen > 0) {
 			    sumj = ddot_(&jlen, &ab[j * ab_dim1 + 2], &c__1, &
 				    x[j + 1], &c__1);
@@ -711,7 +711,7 @@ L100:
 		    if (upper) {
 /* Computing MIN */
 			i__3 = *kd, i__4 = j - 1;
-			jlen = min(i__3,i__4);
+			jlen = std::min(i__3,i__4);
 			i__3 = jlen;
 			for (i__ = 1; i__ <= i__3; ++i__) {
 			    sumj += ab[*kd + i__ - jlen + j * ab_dim1] * 
@@ -721,7 +721,7 @@ L100:
 		    } else {
 /* Computing MIN */
 			i__3 = *kd, i__4 = *n - j;
-			jlen = min(i__3,i__4);
+			jlen = std::min(i__3,i__4);
 			i__3 = jlen;
 			for (i__ = 1; i__ <= i__3; ++i__) {
 			    sumj += ab[i__ + 1 + j * ab_dim1] * uscal * x[j + 
@@ -805,7 +805,7 @@ L150:
 		}
 /* Computing MAX */
 		d__2 = xmax, d__3 = (d__1 = x[j], abs(d__1));
-		xmax = max(d__2,d__3);
+		xmax = std::max(d__2,d__3);
 /* L160: */
 	    }
 	}

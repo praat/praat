@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -303,10 +303,10 @@ static integer c__3 = 3;
 /*        .    NWR.GE.3.) ==== */
 
 	nwr = ilaenv_(&c__13, "DLAQR4", jbcmpz, n, ilo, ihi, lwork);
-	nwr = max(2_integer,nwr);
+	nwr = std::max(2_integer,nwr);
 /* Computing MIN */
-	i__1 = *ihi - *ilo + 1, i__2 = (*n - 1) / 3, i__1 = min(i__1,i__2);
-	nwr = min(i__1,nwr);
+	i__1 = *ihi - *ilo + 1, i__2 = (*n - 1) / 3, i__1 = std::min(i__1,i__2);
+	nwr = std::min(i__1,nwr);
 	nw = nwr;
 
 /*        ==== NSR = recommended number of simultaneous shifts. */
@@ -316,12 +316,12 @@ static integer c__3 = 3;
 
 	nsr = ilaenv_(&c__15, "DLAQR4", jbcmpz, n, ilo, ihi, lwork);
 /* Computing MIN */
-	i__1 = nsr, i__2 = (*n + 6) / 9, i__1 = min(i__1,i__2), i__2 = *ihi - 
+	i__1 = nsr, i__2 = (*n + 6) / 9, i__1 = std::min(i__1,i__2), i__2 = *ihi - 
 		*ilo;
-	nsr = min(i__1,i__2);
+	nsr = std::min(i__1,i__2);
 /* Computing MAX */
 	i__1 = 2, i__2 = nsr - nsr % 2;
-	nsr = max(i__1,i__2);
+	nsr = std::max(i__1,i__2);
 
 /*        ==== Estimate optimal workspace ==== */
 
@@ -337,7 +337,7 @@ static integer c__3 = 3;
 
 /* Computing MAX */
 	i__1 = nsr * 3 / 2, i__2 = (integer) work[1];
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
 
 /*        ==== Quick return in case of workspace query. ==== */
 
@@ -349,33 +349,33 @@ static integer c__3 = 3;
 /*        ==== DLAHQR/DLAQR0 crossover point ==== */
 
 	nmin = ilaenv_(&c__12, "DLAQR4", jbcmpz, n, ilo, ihi, lwork);
-	nmin = max(11_integer,nmin);
+	nmin = std::max(11_integer,nmin);
 
 /*        ==== Nibble crossover point ==== */
 
 	nibble = ilaenv_(&c__14, "DLAQR4", jbcmpz, n, ilo, ihi, lwork);
-	nibble = max(0_integer,nibble);
+	nibble = std::max(0_integer,nibble);
 
 /*        ==== Accumulate reflections during ttswp?  Use block */
 /*        .    2-by-2 structure during matrix-matrix multiply? ==== */
 
 	kacc22 = ilaenv_(&c__16, "DLAQR4", jbcmpz, n, ilo, ihi, lwork);
-	kacc22 = max(0_integer,kacc22);
-	kacc22 = min(2_integer,kacc22);
+	kacc22 = std::max(0_integer,kacc22);
+	kacc22 = std::min(2_integer,kacc22);
 
 /*        ==== NWMAX = the largest possible deflation window for */
 /*        .    which there is sufficient workspace. ==== */
 
 /* Computing MIN */
 	i__1 = (*n - 1) / 3, i__2 = *lwork / 2;
-	nwmax = min(i__1,i__2);
+	nwmax = std::min(i__1,i__2);
 
 /*        ==== NSMAX = the Largest number of simultaneous shifts */
 /*        .    for which there is sufficient workspace. ==== */
 
 /* Computing MIN */
 	i__1 = (*n + 6) / 9, i__2 = (*lwork << 1) / 3;
-	nsmax = min(i__1,i__2);
+	nsmax = std::min(i__1,i__2);
 	nsmax -= nsmax % 2;
 
 /*        ==== NDFL: an iteration count restarted at deflation. ==== */
@@ -386,7 +386,7 @@ static integer c__3 = 3;
 
 /* Computing MAX */
 	i__1 = 10, i__2 = *ihi - *ilo + 1;
-	itmax = max(i__1,i__2) * 30;
+	itmax = std::max(i__1,i__2) * 30;
 
 /*        ==== Last row and column in the active block ==== */
 
@@ -428,12 +428,12 @@ L20:
 /*              .    entry (a heuristic). ==== */
 
 		nwinc = TRUE_;
-		if (nh <= min(nmin,nwmax)) {
+		if (nh <= std::min(nmin,nwmax)) {
 		    nw = nh;
 		} else {
 /* Computing MIN */
-		    i__2 = min(nwr,nh);
-		    nw = min(i__2,nwmax);
+		    i__2 = std::min(nwr,nh);
+		    nw = std::min(i__2,nwmax);
 		    if (nw < nwmax) {
 			if (nw >= nh - 1) {
 			    nw = nh;
@@ -457,10 +457,10 @@ L20:
 /*              .    window up to the maximum reasonable and possible. */
 /*              .    Then maybe try a slightly smaller window.  ==== */
 
-		if (nwinc && nw < min(nwmax,nh)) {
+		if (nwinc && nw < std::min(nwmax,nh)) {
 /* Computing MIN */
-		    i__2 = min(nwmax,nh), i__3 = nw << 1;
-		    nw = min(i__2,i__3);
+		    i__2 = std::min(nwmax,nh), i__3 = nw << 1;
+		    nw = std::min(i__2,i__3);
 		} else {
 		    nwinc = FALSE_;
 		    if (nw == nh && nh > 2) {
@@ -507,7 +507,7 @@ L20:
 /*           .    skipped if many eigenvalues have just been deflated */
 /*           .    or if the remaining active block is small. */
 
-	    if (ld == 0 || ld * 100 <= nw * nibble && kbot - ktop + 1 > min(
+	    if (ld == 0 || ld * 100 <= nw * nibble && kbot - ktop + 1 > std::min(
 		    nmin,nwmax)) {
 
 /*              ==== NS = nominal number of simultaneous shifts. */
@@ -517,8 +517,8 @@ L20:
 /* Computing MIN */
 /* Computing MAX */
 		i__4 = 2, i__5 = kbot - ktop;
-		i__2 = min(nsmax,nsr), i__3 = max(i__4,i__5);
-		ns = min(i__2,i__3);
+		i__2 = std::min(nsmax,nsr), i__3 = std::max(i__4,i__5);
+		ns = std::min(i__2,i__3);
 		ns -= ns % 2;
 
 /*              ==== If there have been no deflations */
@@ -532,7 +532,7 @@ L20:
 		    ks = kbot - ns + 1;
 /* Computing MAX */
 		    i__3 = ks + 1, i__4 = ktop + 2;
-		    i__2 = max(i__3,i__4);
+		    i__2 = std::max(i__3,i__4);
 		    for (i__ = kbot; i__ >= i__2; i__ += -2) {
 			ss = (d__1 = h__[i__ + (i__ - 1) * h_dim1], abs(d__1))
 				 + (d__2 = h__[i__ - 1 + (i__ - 2) * h_dim1], 
@@ -668,7 +668,7 @@ L60:
 
 /* Computing MIN */
 		i__2 = ns, i__3 = kbot - ks + 1;
-		ns = min(i__2,i__3);
+		ns = std::min(i__2,i__3);
 		ns -= ns % 2;
 		ks = kbot - ns + 1;
 

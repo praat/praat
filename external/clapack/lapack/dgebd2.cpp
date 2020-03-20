@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -163,7 +163,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info < 0) {
@@ -184,7 +184,7 @@ static integer c__1 = 1;
 	    i__2 = *m - i__ + 1;
 /* Computing MIN */
 	    i__3 = i__ + 1;
-	    dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[min(i__3, *m)+ i__ * 
+	    dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[std::min(i__3, *m)+ i__ * 
 		    a_dim1], &c__1, &tauq[i__]);
 	    d__[i__] = a[i__ + i__ * a_dim1];
 	    a[i__ + i__ * a_dim1] = 1.;
@@ -208,7 +208,7 @@ static integer c__1 = 1;
 		i__2 = *n - i__;
 /* Computing MIN */
 		i__3 = i__ + 2;
-		dlarfg_(&i__2, &a[i__ + (i__ + 1) * a_dim1], &a[i__ + min(
+		dlarfg_(&i__2, &a[i__ + (i__ + 1) * a_dim1], &a[i__ + std::min(
 			i__3, *n)* a_dim1], lda, &taup[i__]);
 		e[i__] = a[i__ + (i__ + 1) * a_dim1];
 		a[i__ + (i__ + 1) * a_dim1] = 1.;
@@ -238,7 +238,7 @@ static integer c__1 = 1;
 	    i__2 = *n - i__ + 1;
 /* Computing MIN */
 	    i__3 = i__ + 1;
-	    dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + min(i__3, *n)* 
+	    dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + std::min(i__3, *n)* 
 		    a_dim1], lda, &taup[i__]);
 	    d__[i__] = a[i__ + i__ * a_dim1];
 	    a[i__ + i__ * a_dim1] = 1.;
@@ -261,7 +261,7 @@ static integer c__1 = 1;
 		i__2 = *m - i__;
 /* Computing MIN */
 		i__3 = i__ + 2;
-		dlarfg_(&i__2, &a[i__ + 1 + i__ * a_dim1], &a[min(i__3, *m)+ 
+		dlarfg_(&i__2, &a[i__ + 1 + i__ * a_dim1], &a[std::min(i__3, *m)+ 
 			i__ * a_dim1], &c__1, &tauq[i__]);
 		e[i__] = a[i__ + 1 + i__ * a_dim1];
 		a[i__ + 1 + i__ * a_dim1] = 1.;

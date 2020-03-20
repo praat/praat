@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -131,11 +131,11 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 		    i__2 = *k + 2 - j;
 		    i__3 = *k;
-		    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
+		    for (i__ = std::max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], 
 				abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L10: */
 		    }
 /* L20: */
@@ -145,12 +145,12 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__2 = *n + 1 - j, i__4 = *k + 1;
-		    i__3 = min(i__2,i__4);
+		    i__3 = std::min(i__2,i__4);
 		    for (i__ = 2; i__ <= i__3; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], 
 				abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L30: */
 		    }
 /* L40: */
@@ -164,11 +164,11 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 		    i__3 = *k + 2 - j;
 		    i__2 = *k + 1;
-		    for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
+		    for (i__ = std::max(i__3,1_integer); i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], 
 				abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L50: */
 		    }
 /* L60: */
@@ -178,12 +178,12 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__3 = *n + 1 - j, i__4 = *k + 1;
-		    i__2 = min(i__3,i__4);
+		    i__2 = std::min(i__3,i__4);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ab[i__ + j * ab_dim1], 
 				abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L70: */
 		    }
 /* L80: */
@@ -205,7 +205,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 		    i__2 = *k + 2 - j;
 		    i__3 = *k;
-		    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
+		    for (i__ = std::max(i__2,1_integer); i__ <= i__3; ++i__) {
 			sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L90: */
 		    }
@@ -214,12 +214,12 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 		    i__3 = *k + 2 - j;
 		    i__2 = *k + 1;
-		    for (i__ = max(i__3,1_integer); i__ <= i__2; ++i__) {
+		    for (i__ = std::max(i__3,1_integer); i__ <= i__2; ++i__) {
 			sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L100: */
 		    }
 		}
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L110: */
 	    }
 	} else {
@@ -229,7 +229,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		    sum = 1.;
 /* Computing MIN */
 		    i__3 = *n + 1 - j, i__4 = *k + 1;
-		    i__2 = min(i__3,i__4);
+		    i__2 = std::min(i__3,i__4);
 		    for (i__ = 2; i__ <= i__2; ++i__) {
 			sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L120: */
@@ -238,13 +238,13 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		    sum = 0.;
 /* Computing MIN */
 		    i__3 = *n + 1 - j, i__4 = *k + 1;
-		    i__2 = min(i__3,i__4);
+		    i__2 = std::min(i__3,i__4);
 		    for (i__ = 1; i__ <= i__2; ++i__) {
 			sum += (d__1 = ab[i__ + j * ab_dim1], abs(d__1));
 /* L130: */
 		    }
 		}
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L140: */
 	    }
 	}
@@ -266,7 +266,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 		    i__2 = 1, i__3 = j - *k;
 		    i__4 = j - 1;
-		    for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+		    for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 			work[i__] += (d__1 = ab[l + i__ + j * ab_dim1], abs(
 				d__1));
 /* L160: */
@@ -285,7 +285,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 /* Computing MAX */
 		    i__4 = 1, i__2 = j - *k;
 		    i__3 = j;
-		    for (i__ = max(i__4,i__2); i__ <= i__3; ++i__) {
+		    for (i__ = std::max(i__4,i__2); i__ <= i__3; ++i__) {
 			work[i__] += (d__1 = ab[l + i__ + j * ab_dim1], abs(
 				d__1));
 /* L190: */
@@ -305,7 +305,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		    l = 1 - j;
 /* Computing MIN */
 		    i__4 = *n, i__2 = j + *k;
-		    i__3 = min(i__4,i__2);
+		    i__3 = std::min(i__4,i__2);
 		    for (i__ = j + 1; i__ <= i__3; ++i__) {
 			work[i__] += (d__1 = ab[l + i__ + j * ab_dim1], abs(
 				d__1));
@@ -324,7 +324,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		    l = 1 - j;
 /* Computing MIN */
 		    i__4 = *n, i__2 = j + *k;
-		    i__3 = min(i__4,i__2);
+		    i__3 = std::min(i__4,i__2);
 		    for (i__ = j; i__ <= i__3; ++i__) {
 			work[i__] += (d__1 = ab[l + i__ + j * ab_dim1], abs(
 				d__1));
@@ -338,7 +338,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__1 = value, d__2 = work[i__];
-	    value = max(d__1,d__2);
+	    value = std::max(d__1,d__2);
 /* L270: */
 	}
     } else if (lsame_(norm, "F") || lsame_(norm, "E")) {
@@ -354,10 +354,10 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		    for (j = 2; j <= i__1; ++j) {
 /* Computing MIN */
 			i__4 = j - 1;
-			i__3 = min(i__4,*k);
+			i__3 = std::min(i__4,*k);
 /* Computing MAX */
 			i__2 = *k + 2 - j;
-			dlassq_(&i__3, &ab[max(i__2,1_integer)+ j * ab_dim1], &c__1, 
+			dlassq_(&i__3, &ab[std::max(i__2,1_integer)+ j * ab_dim1], &c__1, 
 				&scale, &sum);
 /* L280: */
 		    }
@@ -369,10 +369,10 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__4 = j, i__2 = *k + 1;
-		    i__3 = min(i__4,i__2);
+		    i__3 = std::min(i__4,i__2);
 /* Computing MAX */
 		    i__5 = *k + 2 - j;
-		    dlassq_(&i__3, &ab[max(i__5,1_integer)+ j * ab_dim1], &c__1, &
+		    dlassq_(&i__3, &ab[std::max(i__5,1_integer)+ j * ab_dim1], &c__1, &
 			    scale, &sum);
 /* L290: */
 		}
@@ -386,7 +386,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 			i__4 = *n - j;
-			i__3 = min(i__4,*k);
+			i__3 = std::min(i__4,*k);
 			dlassq_(&i__3, &ab[j * ab_dim1 + 2], &c__1, &scale, &
 				sum);
 /* L300: */
@@ -399,7 +399,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 		for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		    i__4 = *n - j + 1, i__2 = *k + 1;
-		    i__3 = min(i__4,i__2);
+		    i__3 = std::min(i__4,i__2);
 		    dlassq_(&i__3, &ab[j * ab_dim1 + 1], &c__1, &scale, &sum);
 /* L310: */
 		}

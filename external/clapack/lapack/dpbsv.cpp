@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dpbsv_(char *uplo, integer *n, integer *kd, integer *
@@ -136,7 +136,7 @@
 	*info = -4;
     } else if (*ldab < *kd + 1) {
 	*info = -6;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -8;
     }
     if (*info != 0) {

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -15,7 +15,7 @@ static integer c__49 = 49;
 	integer *lwork, integer *info)
 {
     /* System generated locals */
-    address a__1[2];
+    char * a__1[2];
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2[2], i__3;
     doublereal d__1;
     char ch__1[2];
@@ -290,7 +290,7 @@ static integer c__49 = 49;
     wantt = lsame_(job, "S");
     initz = lsame_(compz, "I");
     wantz = initz || lsame_(compz, "V");
-    work[1] = (doublereal) max(1_integer,*n);
+    work[1] = (doublereal) std::max(1_integer,*n);
     lquery = *lwork == -1;
 
     *info = 0;
@@ -300,15 +300,15 @@ static integer c__49 = 49;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
+    } else if (*ilo < 1 || *ilo > std::max(1_integer,*n)) {
 	*info = -4;
-    } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
+    } else if (*ihi < std::min(*ilo,*n) || *ihi > *n) {
 	*info = -5;
-    } else if (*ldh < max(1_integer,*n)) {
+    } else if (*ldh < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldz < 1 || wantz && *ldz < max(1_integer,*n)) {
+    } else if (*ldz < 1 || wantz && *ldz < std::max(1_integer,*n)) {
 	*info = -11;
-    } else if (*lwork < max(1_integer,*n) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,*n) && ! lquery) {
 	*info = -13;
     }
 
@@ -335,8 +335,8 @@ static integer c__49 = 49;
 /*        ==== Ensure reported workspace size is backward-compatible with */
 /*        .    previous LAPACK versions. ==== */
 /* Computing MAX */
-	d__1 = (doublereal) max(1_integer,*n);
-	work[1] = max(d__1,work[1]);
+	d__1 = (doublereal) std::max(1_integer,*n);
+	work[1] = std::max(d__1,work[1]);
 	return 0;
 
     } else {
@@ -378,7 +378,7 @@ static integer c__49 = 49;
 	i__2[1] = 1, a__1[1] = const_cast<char *>(compz);
 	s_cat(ch__1, a__1, i__2, &c__2, (ftnlen)2);
 	nmin = ilaenv_(&c__12, "DHSEQR", ch__1, n, ilo, ihi, lwork);
-	nmin = max(11_integer,nmin);
+	nmin = std::max(11_integer,nmin);
 
 /*        ==== DLAQR0 for big matrices; DLAHQR for small ones ==== */
 
@@ -443,8 +443,8 @@ static integer c__49 = 49;
 /*        .    previous LAPACK versions. ==== */
 
 /* Computing MAX */
-	d__1 = (doublereal) max(1_integer,*n);
-	work[1] = max(d__1,work[1]);
+	d__1 = (doublereal) std::max(1_integer,*n);
+	work[1] = std::max(d__1,work[1]);
     }
 
 /*     ==== End of DHSEQR ==== */

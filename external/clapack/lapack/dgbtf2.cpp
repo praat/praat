@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -153,7 +153,7 @@ static doublereal c_b9 = -1.;
 
 /*     Set fill-in elements in columns KU+2 to KV to zero. */
 
-    i__1 = min(kv,*n);
+    i__1 = std::min(kv,*n);
     for (j = *ku + 2; j <= i__1; ++j) {
 	i__2 = *kl;
 	for (i__ = kv - j + 2; i__ <= i__2; ++i__) {
@@ -168,7 +168,7 @@ static doublereal c_b9 = -1.;
 
     ju = 1;
 
-    i__1 = min(*m,*n);
+    i__1 = std::min(*m,*n);
     for (j = 1; j <= i__1; ++j) {
 
 /*        Set fill-in elements in column J+KV to zero. */
@@ -186,7 +186,7 @@ static doublereal c_b9 = -1.;
 
 /* Computing MIN */
 	i__2 = *kl, i__3 = *m - j;
-	km = min(i__2,i__3);
+	km = std::min(i__2,i__3);
 	i__2 = km + 1;
 	jp = idamax_(&i__2, &ab[kv + 1 + j * ab_dim1], &c__1);
 	ipiv[j] = jp + j - 1;
@@ -194,8 +194,8 @@ static doublereal c_b9 = -1.;
 /* Computing MAX */
 /* Computing MIN */
 	    i__4 = j + *ku + jp - 1;
-	    i__2 = ju, i__3 = min(i__4,*n);
-	    ju = max(i__2,i__3);
+	    i__2 = ju, i__3 = std::min(i__4,*n);
+	    ju = std::max(i__2,i__3);
 
 /*           Apply interchange to columns J to JU. */
 

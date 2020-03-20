@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -258,7 +258,7 @@ static logical c_false = FALSE_;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*ldt < max(1_integer,*n)) {
+    } else if (*ldt < std::max(1_integer,*n)) {
 	*info = -6;
     } else if (*ldvl < 1 || wants && *ldvl < *n) {
 	*info = -8;
@@ -554,7 +554,7 @@ L50:
 		}
 	    }
 
-	    sep[ks] = scale / max(est,smlnum);
+	    sep[ks] = scale / std::max(est,smlnum);
 	    if (pair) {
 		sep[ks + 1] = sep[ks];
 	    }

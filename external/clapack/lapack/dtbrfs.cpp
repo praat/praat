@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -183,9 +183,9 @@ static doublereal c_b19 = -1.;
 	*info = -6;
     } else if (*ldab < *kd + 1) {
 	*info = -8;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -10;
-    } else if (*ldx < max(1_integer,*n)) {
+    } else if (*ldx < std::max(1_integer,*n)) {
 	*info = -12;
     }
     if (*info != 0) {
@@ -260,7 +260,7 @@ static doublereal c_b19 = -1.;
 /* Computing MAX */
 			i__3 = 1, i__4 = k - *kd;
 			i__5 = k;
-			for (i__ = max(i__3,i__4); i__ <= i__5; ++i__) {
+			for (i__ = std::max(i__3,i__4); i__ <= i__5; ++i__) {
 			    work[i__] += (d__1 = ab[*kd + 1 + i__ - k + k * 
 				    ab_dim1], abs(d__1)) * xk;
 /* L30: */
@@ -274,7 +274,7 @@ static doublereal c_b19 = -1.;
 /* Computing MAX */
 			i__5 = 1, i__3 = k - *kd;
 			i__4 = k - 1;
-			for (i__ = max(i__5,i__3); i__ <= i__4; ++i__) {
+			for (i__ = std::max(i__5,i__3); i__ <= i__4; ++i__) {
 			    work[i__] += (d__1 = ab[*kd + 1 + i__ - k + k * 
 				    ab_dim1], abs(d__1)) * xk;
 /* L50: */
@@ -290,7 +290,7 @@ static doublereal c_b19 = -1.;
 			xk = (d__1 = x[k + j * x_dim1], abs(d__1));
 /* Computing MIN */
 			i__5 = *n, i__3 = k + *kd;
-			i__4 = min(i__5,i__3);
+			i__4 = std::min(i__5,i__3);
 			for (i__ = k; i__ <= i__4; ++i__) {
 			    work[i__] += (d__1 = ab[i__ + 1 - k + k * ab_dim1]
 				    , abs(d__1)) * xk;
@@ -304,7 +304,7 @@ static doublereal c_b19 = -1.;
 			xk = (d__1 = x[k + j * x_dim1], abs(d__1));
 /* Computing MIN */
 			i__5 = *n, i__3 = k + *kd;
-			i__4 = min(i__5,i__3);
+			i__4 = std::min(i__5,i__3);
 			for (i__ = k + 1; i__ <= i__4; ++i__) {
 			    work[i__] += (d__1 = ab[i__ + 1 - k + k * ab_dim1]
 				    , abs(d__1)) * xk;
@@ -327,7 +327,7 @@ static doublereal c_b19 = -1.;
 /* Computing MAX */
 			i__4 = 1, i__5 = k - *kd;
 			i__3 = k;
-			for (i__ = max(i__4,i__5); i__ <= i__3; ++i__) {
+			for (i__ = std::max(i__4,i__5); i__ <= i__3; ++i__) {
 			    s += (d__1 = ab[*kd + 1 + i__ - k + k * ab_dim1], 
 				    abs(d__1)) * (d__2 = x[i__ + j * x_dim1], 
 				    abs(d__2));
@@ -343,7 +343,7 @@ static doublereal c_b19 = -1.;
 /* Computing MAX */
 			i__3 = 1, i__4 = k - *kd;
 			i__5 = k - 1;
-			for (i__ = max(i__3,i__4); i__ <= i__5; ++i__) {
+			for (i__ = std::max(i__3,i__4); i__ <= i__5; ++i__) {
 			    s += (d__1 = ab[*kd + 1 + i__ - k + k * ab_dim1], 
 				    abs(d__1)) * (d__2 = x[i__ + j * x_dim1], 
 				    abs(d__2));
@@ -360,7 +360,7 @@ static doublereal c_b19 = -1.;
 			s = 0.;
 /* Computing MIN */
 			i__3 = *n, i__4 = k + *kd;
-			i__5 = min(i__3,i__4);
+			i__5 = std::min(i__3,i__4);
 			for (i__ = k; i__ <= i__5; ++i__) {
 			    s += (d__1 = ab[i__ + 1 - k + k * ab_dim1], abs(
 				    d__1)) * (d__2 = x[i__ + j * x_dim1], abs(
@@ -376,7 +376,7 @@ static doublereal c_b19 = -1.;
 			s = (d__1 = x[k + j * x_dim1], abs(d__1));
 /* Computing MIN */
 			i__3 = *n, i__4 = k + *kd;
-			i__5 = min(i__3,i__4);
+			i__5 = std::min(i__3,i__4);
 			for (i__ = k + 1; i__ <= i__5; ++i__) {
 			    s += (d__1 = ab[i__ + 1 - k + k * ab_dim1], abs(
 				    d__1)) * (d__2 = x[i__ + j * x_dim1], abs(
@@ -396,12 +396,12 @@ static doublereal c_b19 = -1.;
 /* Computing MAX */
 		d__2 = s, d__3 = (d__1 = work[*n + i__], abs(d__1)) / work[
 			i__];
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    } else {
 /* Computing MAX */
 		d__2 = s, d__3 = ((d__1 = work[*n + i__], abs(d__1)) + safe1) 
 			/ (work[i__] + safe1);
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    }
 /* L190: */
 	}
@@ -479,7 +479,7 @@ L210:
 	for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__2 = lstres, d__3 = (d__1 = x[i__ + j * x_dim1], abs(d__1));
-	    lstres = max(d__2,d__3);
+	    lstres = std::max(d__2,d__3);
 /* L240: */
 	}
 	if (lstres != 0.) {

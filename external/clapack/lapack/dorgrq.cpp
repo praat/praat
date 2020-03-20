@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -117,7 +117,7 @@ static integer c__2 = 2;
 	*info = -2;
     } else if (*k < 0 || *k > *m) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
     }
 
@@ -130,7 +130,7 @@ static integer c__2 = 2;
 	}
 	work[1] = (doublereal) lwkopt;
 
-	if (*lwork < max(1_integer,*m) && ! lquery) {
+	if (*lwork < std::max(1_integer,*m) && ! lquery) {
 	    *info = -8;
 	}
     }
@@ -158,7 +158,7 @@ static integer c__2 = 2;
 
 /* Computing MAX */
 	i__1 = 0, i__2 = ilaenv_(&c__3, "DORGRQ", " ", m, n, k, &c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 	if (nx < *k) {
 
 /*           Determine if workspace is large enough for blocked code. */
@@ -173,7 +173,7 @@ static integer c__2 = 2;
 		nb = *lwork / ldwork;
 /* Computing MAX */
 		i__1 = 2, i__2 = ilaenv_(&c__2, "DORGRQ", " ", m, n, k, &c_n1);
-		nbmin = max(i__1,i__2);
+		nbmin = std::max(i__1,i__2);
 	    }
 	}
     }
@@ -185,7 +185,7 @@ static integer c__2 = 2;
 
 /* Computing MIN */
 	i__1 = *k, i__2 = (*k - nx + nb - 1) / nb * nb;
-	kk = min(i__1,i__2);
+	kk = std::min(i__1,i__2);
 
 /*        Set A(1:m-kk,n-kk+1:n) to zero. */
 
@@ -220,7 +220,7 @@ static integer c__2 = 2;
 		i__2) {
 /* Computing MIN */
 	    i__3 = nb, i__4 = *k - i__ + 1;
-	    ib = min(i__3,i__4);
+	    ib = std::min(i__3,i__4);
 	    ii = *m - *k + i__;
 	    if (ii > 1) {
 

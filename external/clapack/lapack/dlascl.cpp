@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlascl_(const char *type__, integer *kl, integer *ku, 
@@ -140,17 +140,17 @@
 	*info = -6;
     } else if (*n < 0 || itype == 4 && *n != *m || itype == 5 && *n != *m) {
 	*info = -7;
-    } else if (itype <= 3 && *lda < max(1_integer,*m)) {
+    } else if (itype <= 3 && *lda < std::max(1_integer,*m)) {
 	*info = -9;
     } else if (itype >= 4) {
 /* Computing MAX */
 	i__1 = *m - 1;
-	if (*kl < 0 || *kl > max(i__1,0_integer)) {
+	if (*kl < 0 || *kl > std::max(i__1,0_integer)) {
 	    *info = -2;
 	} else /* if(complicated condition) */ {
 /* Computing MAX */
 	    i__1 = *n - 1;
-	    if (*ku < 0 || *ku > max(i__1,0_integer) || (itype == 4 || itype == 5) && 
+	    if (*ku < 0 || *ku > std::max(i__1,0_integer) || (itype == 4 || itype == 5) && 
 		    *kl != *ku) {
 		*info = -3;
 	    } else if (itype == 4 && *lda < *kl + 1 || itype == 5 && *lda < *
@@ -230,7 +230,7 @@ L10:
 
 	i__1 = *n;
 	for (j = 1; j <= i__1; ++j) {
-	    i__2 = min(j,*m);
+	    i__2 = std::min(j,*m);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		a[i__ + j * a_dim1] *= mul;
 /* L60: */
@@ -246,7 +246,7 @@ L10:
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 	    i__3 = j + 1;
-	    i__2 = min(i__3,*m);
+	    i__2 = std::min(i__3,*m);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		a[i__ + j * a_dim1] *= mul;
 /* L80: */
@@ -264,7 +264,7 @@ L10:
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 	    i__3 = k3, i__4 = k4 - j;
-	    i__2 = min(i__3,i__4);
+	    i__2 = std::min(i__3,i__4);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		a[i__ + j * a_dim1] *= mul;
 /* L100: */
@@ -283,7 +283,7 @@ L10:
 /* Computing MAX */
 	    i__2 = k1 - j;
 	    i__3 = k3;
-	    for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
+	    for (i__ = std::max(i__2,1_integer); i__ <= i__3; ++i__) {
 		a[i__ + j * a_dim1] *= mul;
 /* L120: */
 	    }
@@ -304,8 +304,8 @@ L10:
 	    i__3 = k1 - j;
 /* Computing MIN */
 	    i__4 = k3, i__5 = k4 - j;
-	    i__2 = min(i__4,i__5);
-	    for (i__ = max(i__3,k2); i__ <= i__2; ++i__) {
+	    i__2 = std::min(i__4,i__5);
+	    for (i__ = std::max(i__3,k2); i__ <= i__2; ++i__) {
 		a[i__ + j * a_dim1] *= mul;
 /* L140: */
 	    }

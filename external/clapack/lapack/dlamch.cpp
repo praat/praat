@@ -1,10 +1,8 @@
-#include "f2c.h"
-#include "stdio.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
 
-static integer c__1 = 1;
 static doublereal c_b32 = 0.;
 
 doublereal dlamch_(const char *cmach)
@@ -364,13 +362,6 @@ L30:
     static logical first = TRUE_;
     static logical iwarn = FALSE_;
 
-    /* Format strings */
-    static char fmt_9999[] = "(//\002 WARNING. The value EMIN may be incorre"
-	    "ct:-\002,\002  EMIN = \002,i8,/\002 If, after inspection, the va"
-	    "lue EMIN looks\002,\002 acceptable please comment out \002,/\002"
-	    " the IF block as marked within the code of routine\002,\002 DLAM"
-	    "C2,\002,/\002 otherwise supply EMIN explicitly.\002,/)";
-
     /* System generated locals */
     integer i__1;
     doublereal d__1, d__2, d__3, d__4, d__5;
@@ -396,11 +387,6 @@ L30:
     doublereal sixth;
     logical lieee1;
     integer ngnmin, ngpmin;
-
-    /* Fortran I/O blocks */
-    static cilist io___58 = { 0, 6, 0, fmt_9999, 0 };
-
-
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -573,38 +559,38 @@ L10:
 /*            ( Non twos-complement machines, with gradual underflow; */
 /*              e.g., IEEE standard followers ) */
 	    } else {
-		lemin = min(ngpmin,gpmin);
+		lemin = std::min(ngpmin,gpmin);
 /*            ( A guess; no known machine ) */
 		iwarn = TRUE_;
 	    }
 
 	} else if (ngpmin == gpmin && ngnmin == gnmin) {
 	    if ((i__1 = ngpmin - ngnmin, abs(i__1)) == 1) {
-		lemin = max(ngpmin,ngnmin);
+		lemin = std::max(ngpmin,ngnmin);
 /*            ( Twos-complement machines, no gradual underflow; */
 /*              e.g., CYBER 205 ) */
 	    } else {
-		lemin = min(ngpmin,ngnmin);
+		lemin = std::min(ngpmin,ngnmin);
 /*            ( A guess; no known machine ) */
 		iwarn = TRUE_;
 	    }
 
 	} else if ((i__1 = ngpmin - ngnmin, abs(i__1)) == 1 && gpmin == gnmin)
 		 {
-	    if (gpmin - min(ngpmin,ngnmin) == 3) {
-		lemin = max(ngpmin,ngnmin) - 1 + lt;
+	    if (gpmin - std::min(ngpmin,ngnmin) == 3) {
+		lemin = std::max(ngpmin,ngnmin) - 1 + lt;
 /*            ( Twos-complement machines with gradual underflow; */
 /*              no known machine ) */
 	    } else {
-		lemin = min(ngpmin,ngnmin);
+		lemin = std::min(ngpmin,ngnmin);
 /*            ( A guess; no known machine ) */
 		iwarn = TRUE_;
 	    }
 
 	} else {
 /* Computing MIN */
-	    i__1 = min(ngpmin,ngnmin), i__1 = min(i__1,gpmin);
-	    lemin = min(i__1,gnmin);
+	    i__1 = std::min(ngpmin,ngnmin), i__1 = std::min(i__1,gpmin);
+	    lemin = std::min(i__1,gnmin);
 /*         ( A guess; no known machine ) */
 	    iwarn = TRUE_;
 	}
@@ -613,17 +599,7 @@ L10:
 /* Comment out this if block if EMIN is ok */
 	if (iwarn) {
 	    first = TRUE_;
-	    printf("\n\n WARNING. The value EMIN may be incorrect:- ");
-	    printf("EMIN = %8i\n",lemin);
-	    printf("If, after inspection, the value EMIN looks acceptable");
-            printf("please comment out \n the IF block as marked within the"); 
-            printf("code of routine DLAMC2, \n otherwise supply EMIN"); 
-            printf("explicitly.\n");
-         /*
-	    s_wsfe(&io___58);
-	    do_fio(&c__1, (char *)&lemin, (ftnlen)sizeof(integer));
-	    e_wsfe();
-         */
+		Melder_warning (U"DLAMC2 WARNING. The value EMIN may be incorrect:- ", lemin);
 	}
 /* ** */
 

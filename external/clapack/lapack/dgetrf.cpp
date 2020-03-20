@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -99,7 +99,7 @@ static doublereal c_b19 = -1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -117,7 +117,7 @@ static doublereal c_b19 = -1.;
 /*     Determine the block size for this environment. */
 
     nb = ilaenv_(&c__1, "DGETRF", " ", m, n, &c_n1, &c_n1);
-    if (nb <= 1 || nb >= min(*m,*n)) {
+    if (nb <= 1 || nb >= std::min(*m,*n)) {
 
 /*        Use unblocked code. */
 
@@ -126,12 +126,12 @@ static doublereal c_b19 = -1.;
 
 /*        Use blocked code. */
 
-	i__1 = min(*m,*n);
+	i__1 = std::min(*m,*n);
 	i__2 = nb;
 	for (j = 1; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2) {
 /* Computing MIN */
-	    i__3 = min(*m,*n) - j + 1;
-	    jb = min(i__3,nb);
+	    i__3 = std::min(*m,*n) - j + 1;
+	    jb = std::min(i__3,nb);
 
 /*           Factor diagonal and subdiagonal blocks and test for exact */
 /*           singularity. */
@@ -146,7 +146,7 @@ static doublereal c_b19 = -1.;
 	    }
 /* Computing MIN */
 	    i__4 = *m, i__5 = j + jb - 1;
-	    i__3 = min(i__4,i__5);
+	    i__3 = std::min(i__4,i__5);
 	    for (i__ = j; i__ <= i__3; ++i__) {
 		ipiv[i__] = j - 1 + ipiv[i__];
 /* L10: */

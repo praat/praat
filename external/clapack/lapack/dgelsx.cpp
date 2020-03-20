@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -154,7 +154,7 @@ static doublereal c_b36 = 1.;
     --work;
 
     /* Function Body */
-    mn = min(*m,*n);
+    mn = std::min(*m,*n);
     ismin = mn + 1;
     ismax = (mn << 1) + 1;
 
@@ -167,12 +167,12 @@ static doublereal c_b36 = 1.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1_integer,*m);
-	if (*ldb < max(i__1,*n)) {
+	i__1 = std::max(1_integer,*m);
+	if (*ldb < std::max(i__1,*n)) {
 	    *info = -7;
 	}
     }
@@ -186,8 +186,8 @@ static doublereal c_b36 = 1.;
 /*     Quick return if possible */
 
 /* Computing MIN */
-    i__1 = min(*m,*n);
-    if (min(i__1,*nrhs) == 0) {
+    i__1 = std::min(*m,*n);
+    if (std::min(i__1,*nrhs) == 0) {
 	*rank = 0;
 	return 0;
     }
@@ -220,7 +220,7 @@ static doublereal c_b36 = 1.;
 
 /*        Matrix all zero. Return zero solution. */
 
-	i__1 = max(*m,*n);
+	i__1 = std::max(*m,*n);
 	dlaset_("F", &i__1, nrhs, &c_b13, &c_b13, &b[b_offset], ldb);
 	*rank = 0;
 	goto L100;
@@ -260,7 +260,7 @@ static doublereal c_b36 = 1.;
     smin = smax;
     if ((d__1 = a[a_dim1 + 1], abs(d__1)) == 0.) {
 	*rank = 0;
-	i__1 = max(*m,*n);
+	i__1 = std::max(*m,*n);
 	dlaset_("F", &i__1, nrhs, &c_b13, &c_b13, &b[b_offset], ldb);
 	goto L100;
     } else {

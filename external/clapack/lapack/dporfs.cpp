@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -170,13 +170,13 @@ static doublereal c_b14 = 1.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldaf < max(1_integer,*n)) {
+    } else if (*ldaf < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldx < max(1_integer,*n)) {
+    } else if (*ldx < std::max(1_integer,*n)) {
 	*info = -11;
     }
     if (*info != 0) {
@@ -279,12 +279,12 @@ L20:
 /* Computing MAX */
 		d__2 = s, d__3 = (d__1 = work[*n + i__], abs(d__1)) / work[
 			i__];
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    } else {
 /* Computing MAX */
 		d__2 = s, d__3 = ((d__1 = work[*n + i__], abs(d__1)) + safe1) 
 			/ (work[i__] + safe1);
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    }
 /* L80: */
 	}
@@ -381,7 +381,7 @@ L100:
 	for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__2 = lstres, d__3 = (d__1 = x[i__ + j * x_dim1], abs(d__1));
-	    lstres = max(d__2,d__3);
+	    lstres = std::max(d__2,d__3);
 /* L130: */
 	}
 	if (lstres != 0.) {

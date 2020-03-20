@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -201,11 +201,11 @@ static integer c__1 = 1;
 	*info = -3;
     } else if (*icompq == 1 && *qsiz < *n) {
 	*info = -4;
-    } else if (*ldq < max(1_integer,*n)) {
+    } else if (*ldq < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*cutpnt < min(1_integer,*n) || *cutpnt > *n) {
+    } else if (*cutpnt < std::min(1_integer,*n) || *cutpnt > *n) {
 	*info = -10;
-    } else if (*ldq2 < max(1_integer,*n)) {
+    } else if (*ldq2 < std::max(1_integer,*n)) {
 	*info = -14;
     }
     if (*info != 0) {

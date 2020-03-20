@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dtrsv_(char *uplo, char *trans, char *diag, integer *n, 
@@ -144,7 +144,7 @@
 	info = 3;
     } else if (*n < 0) {
 	info = 4;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	info = 6;
     } else if (*incx == 0) {
 	info = 8;

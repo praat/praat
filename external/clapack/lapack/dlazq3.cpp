@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlazq3_(integer *i0, integer *n0, doublereal *z__, 
@@ -209,27 +209,27 @@ L50:
 	    }
 /* Computing MIN */
 	    d__1 = *dmin2, d__2 = z__[(*n0 << 2) + *pp - 1];
-	    *dmin2 = min(d__1,d__2);
+	    *dmin2 = std::min(d__1,d__2);
 /* Computing MIN */
 	    d__1 = z__[(*n0 << 2) + *pp - 1], d__2 = z__[(*i0 << 2) + *pp - 1]
-		    , d__1 = min(d__1,d__2), d__2 = z__[(*i0 << 2) + *pp + 3];
-	    z__[(*n0 << 2) + *pp - 1] = min(d__1,d__2);
+		    , d__1 = std::min(d__1,d__2), d__2 = z__[(*i0 << 2) + *pp + 3];
+	    z__[(*n0 << 2) + *pp - 1] = std::min(d__1,d__2);
 /* Computing MIN */
 	    d__1 = z__[(*n0 << 2) - *pp], d__2 = z__[(*i0 << 2) - *pp], d__1 =
-		     min(d__1,d__2), d__2 = z__[(*i0 << 2) - *pp + 4];
-	    z__[(*n0 << 2) - *pp] = min(d__1,d__2);
+		     std::min(d__1,d__2), d__2 = z__[(*i0 << 2) - *pp + 4];
+	    z__[(*n0 << 2) - *pp] = std::min(d__1,d__2);
 /* Computing MAX */
-	    d__1 = *qmax, d__2 = z__[(*i0 << 2) + *pp - 3], d__1 = max(d__1,
+	    d__1 = *qmax, d__2 = z__[(*i0 << 2) + *pp - 3], d__1 = std::max(d__1,
 		    d__2), d__2 = z__[(*i0 << 2) + *pp + 1];
-	    *qmax = max(d__1,d__2);
+	    *qmax = std::max(d__1,d__2);
 	    *dmin__ = -0.;
 	}
     }
 
 /* Computing MIN */
     d__1 = z__[(*n0 << 2) + *pp - 1], d__2 = z__[(*n0 << 2) + *pp - 9], d__1 =
-	     min(d__1,d__2), d__2 = *dmin2 + z__[(*n0 << 2) - *pp];
-    if (*dmin__ < 0. || safmin * *qmax < min(d__1,d__2)) {
+	     std::min(d__1,d__2), d__2 = *dmin2 + z__[(*n0 << 2) - *pp];
+    if (*dmin__ < 0. || safmin * *qmax < std::min(d__1,d__2)) {
 
 /*        Choose a shift. */
 

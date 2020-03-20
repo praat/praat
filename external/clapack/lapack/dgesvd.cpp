@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -17,7 +17,7 @@ static doublereal c_b443 = 1.;
 	integer *info)
 {
     /* System generated locals */
-    address a__1[2];
+    char * a__1[2];
     integer a_dim1, a_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1[2], 
 	    i__2, i__3, i__4;
     char ch__1[2];
@@ -195,7 +195,7 @@ static doublereal c_b443 = 1.;
 
     /* Function Body */
     *info = 0;
-    minmn = min(*m,*n);
+    minmn = std::min(*m,*n);
     wntua = lsame_(jobu, "A");
     wntus = lsame_(jobu, "S");
     wntuas = wntua || wntus;
@@ -216,7 +216,7 @@ static doublereal c_b443 = 1.;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -6;
     } else if (*ldu < 1 || wntuas && *ldu < *m) {
 	*info = -9;
@@ -254,17 +254,17 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		    if (wntvo || wntvas) {
 /* Computing MAX */
 			i__2 = maxwrk, i__3 = *n * 3 + (*n - 1) * ilaenv_(&
 				c__1, "DORGBR", "P", n, n, n, &c_n1);
-			maxwrk = max(i__2,i__3);
+			maxwrk = std::max(i__2,i__3);
 		    }
-		    maxwrk = max(maxwrk,bdspac);
+		    maxwrk = std::max(maxwrk,bdspac);
 /* Computing MAX */
 		    i__2 = *n << 2;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntuo && wntvn) {
 
 /*                 Path 2 (M much larger than N, JOBU='O', JOBVT='N') */
@@ -274,22 +274,22 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 /* Computing MAX */
 		    i__2 = *n * *n + wrkbl, i__3 = *n * *n + *m * *n + *n;
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntuo && wntvas) {
 
 /*                 Path 3 (M much larger than N, JOBU='O', JOBVT='S' or */
@@ -300,26 +300,26 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 /* Computing MAX */
 		    i__2 = *n * *n + wrkbl, i__3 = *n * *n + *m * *n + *n;
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntus && wntvn) {
 
 /*                 Path 4 (M much larger than N, JOBU='S', JOBVT='N') */
@@ -329,20 +329,20 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *n * *n + wrkbl;
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntus && wntvo) {
 
 /*                 Path 5 (M much larger than N, JOBU='S', JOBVT='O') */
@@ -352,24 +352,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = (*n << 1) * *n + wrkbl;
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntus && wntvas) {
 
 /*                 Path 6 (M much larger than N, JOBU='S', JOBVT='S' or */
@@ -380,24 +380,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *n * *n + wrkbl;
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntua && wntvn) {
 
 /*                 Path 7 (M much larger than N, JOBU='A', JOBVT='N') */
@@ -407,20 +407,20 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *m * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, m, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *n * *n + wrkbl;
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntua && wntvo) {
 
 /*                 Path 8 (M much larger than N, JOBU='A', JOBVT='O') */
@@ -430,24 +430,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *m * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, m, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = (*n << 1) * *n + wrkbl;
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntua && wntvas) {
 
 /*                 Path 9 (M much larger than N, JOBU='A', JOBVT='S' or */
@@ -458,24 +458,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n + *m * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, m, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORGBR"
 , "Q", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", n, n, n, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *n * *n + wrkbl;
 /* Computing MAX */
 		    i__2 = *n * 3 + *m;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		}
 	    } else {
 
@@ -487,24 +487,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *n * 3 + *n * ilaenv_(&c__1, "DORG"
 			    "BR", "Q", m, n, n, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		}
 		if (wntua) {
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *n * 3 + *m * ilaenv_(&c__1, "DORG"
 			    "BR", "Q", m, m, n, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		}
 		if (! wntvn) {
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", n, n, n, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		}
-		maxwrk = max(maxwrk,bdspac);
+		maxwrk = std::max(maxwrk,bdspac);
 /* Computing MAX */
 		i__2 = *n * 3 + *m;
-		minwrk = max(i__2,bdspac);
+		minwrk = std::max(i__2,bdspac);
 	    }
 	} else if (minmn > 0) {
 
@@ -526,17 +526,17 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		    if (wntuo || wntuas) {
 /* Computing MAX */
 			i__2 = maxwrk, i__3 = *m * 3 + *m * ilaenv_(&c__1, 
 				"DORGBR", "Q", m, m, m, &c_n1);
-			maxwrk = max(i__2,i__3);
+			maxwrk = std::max(i__2,i__3);
 		    }
-		    maxwrk = max(maxwrk,bdspac);
+		    maxwrk = std::max(maxwrk,bdspac);
 /* Computing MAX */
 		    i__2 = *m << 2;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntvo && wntun) {
 
 /*                 Path 2t(N much larger than M, JOBU='N', JOBVT='O') */
@@ -546,22 +546,22 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 /* Computing MAX */
 		    i__2 = *m * *m + wrkbl, i__3 = *m * *m + *m * *n + *m;
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntvo && wntuas) {
 
 /*                 Path 3t(N much larger than M, JOBU='S' or 'A', */
@@ -572,26 +572,26 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + *m * ilaenv_(&c__1, "DORGBR"
 , "Q", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 /* Computing MAX */
 		    i__2 = *m * *m + wrkbl, i__3 = *m * *m + *m * *n + *m;
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntvs && wntun) {
 
 /*                 Path 4t(N much larger than M, JOBU='N', JOBVT='S') */
@@ -601,20 +601,20 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *m * *m + wrkbl;
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntvs && wntuo) {
 
 /*                 Path 5t(N much larger than M, JOBU='O', JOBVT='S') */
@@ -624,24 +624,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + *m * ilaenv_(&c__1, "DORGBR"
 , "Q", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = (*m << 1) * *m + wrkbl;
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntvs && wntuas) {
 
 /*                 Path 6t(N much larger than M, JOBU='S' or 'A', */
@@ -652,24 +652,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + *m * ilaenv_(&c__1, "DORGBR"
 , "Q", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *m * *m + wrkbl;
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntva && wntun) {
 
 /*                 Path 7t(N much larger than M, JOBU='N', JOBVT='A') */
@@ -679,20 +679,20 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *n * ilaenv_(&c__1, "DORGLQ", 
 			    " ", n, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *m * *m + wrkbl;
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntva && wntuo) {
 
 /*                 Path 8t(N much larger than M, JOBU='O', JOBVT='A') */
@@ -702,24 +702,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *n * ilaenv_(&c__1, "DORGLQ", 
 			    " ", n, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + *m * ilaenv_(&c__1, "DORGBR"
 , "Q", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = (*m << 1) * *m + wrkbl;
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		} else if (wntva && wntuas) {
 
 /*                 Path 9t(N much larger than M, JOBU='S' or 'A', */
@@ -730,24 +730,24 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m + *n * ilaenv_(&c__1, "DORGLQ", 
 			    " ", n, n, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "P", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
+		    wrkbl = std::max(i__2,i__3);
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *m * 3 + *m * ilaenv_(&c__1, "DORGBR"
 , "Q", m, m, m, &c_n1);
-		    wrkbl = max(i__2,i__3);
-		    wrkbl = max(wrkbl,bdspac);
+		    wrkbl = std::max(i__2,i__3);
+		    wrkbl = std::max(wrkbl,bdspac);
 		    maxwrk = *m * *m + wrkbl;
 /* Computing MAX */
 		    i__2 = *m * 3 + *n;
-		    minwrk = max(i__2,bdspac);
+		    minwrk = std::max(i__2,bdspac);
 		}
 	    } else {
 
@@ -759,27 +759,27 @@ static doublereal c_b443 = 1.;
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *m * 3 + *m * ilaenv_(&c__1, "DORG"
 			    "BR", "P", m, n, m, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		}
 		if (wntva) {
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *m * 3 + *n * ilaenv_(&c__1, "DORG"
 			    "BR", "P", n, n, m, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		}
 		if (! wntun) {
 /* Computing MAX */
 		    i__2 = maxwrk, i__3 = *m * 3 + (*m - 1) * ilaenv_(&c__1, 
 			    "DORGBR", "Q", m, m, m, &c_n1);
-		    maxwrk = max(i__2,i__3);
+		    maxwrk = std::max(i__2,i__3);
 		}
-		maxwrk = max(maxwrk,bdspac);
+		maxwrk = std::max(maxwrk,bdspac);
 /* Computing MAX */
 		i__2 = *m * 3 + *n;
-		minwrk = max(i__2,bdspac);
+		minwrk = std::max(i__2,bdspac);
 	    }
 	}
-	maxwrk = max(maxwrk,minwrk);
+	maxwrk = std::max(maxwrk,minwrk);
 	work[1] = (doublereal) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
@@ -897,14 +897,14 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		i__2 = *n << 2;
-		if (*lwork >= *n * *n + max(i__2,bdspac)) {
+		if (*lwork >= *n * *n + std::max(i__2,bdspac)) {
 
 /*                 Sufficient workspace for a fast algorithm */
 
 		    ir = 1;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *lda * *n + *n;
-		    if (*lwork >= max(i__2,i__3) + *lda * *n) {
+		    if (*lwork >= std::max(i__2,i__3) + *lda * *n) {
 
 /*                    WORK(IU) is LDA by N, WORK(IR) is LDA by N */
 
@@ -913,7 +913,7 @@ static doublereal c_b443 = 1.;
 		    } else /* if(complicated condition) */ {
 /* Computing MAX */
 			i__2 = wrkbl, i__3 = *lda * *n + *n;
-			if (*lwork >= max(i__2,i__3) + *n * *n) {
+			if (*lwork >= std::max(i__2,i__3) + *n * *n) {
 
 /*                    WORK(IU) is LDA by N, WORK(IR) is N by N */
 
@@ -990,7 +990,7 @@ static doublereal c_b443 = 1.;
 			     i__3) {
 /* Computing MIN */
 			i__4 = *m - i__ + 1;
-			chunk = min(i__4,ldwrku);
+			chunk = std::min(i__4,ldwrku);
 			dgemm_("N", "N", &chunk, n, n, &c_b443, &a[i__ + 
 				a_dim1], lda, &work[ir], &ldwrkr, &c_b421, &
 				work[iu], &ldwrku);
@@ -1041,14 +1041,14 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		i__3 = *n << 2;
-		if (*lwork >= *n * *n + max(i__3,bdspac)) {
+		if (*lwork >= *n * *n + std::max(i__3,bdspac)) {
 
 /*                 Sufficient workspace for a fast algorithm */
 
 		    ir = 1;
 /* Computing MAX */
 		    i__3 = wrkbl, i__2 = *lda * *n + *n;
-		    if (*lwork >= max(i__3,i__2) + *lda * *n) {
+		    if (*lwork >= std::max(i__3,i__2) + *lda * *n) {
 
 /*                    WORK(IU) is LDA by N and WORK(IR) is LDA by N */
 
@@ -1057,7 +1057,7 @@ static doublereal c_b443 = 1.;
 		    } else /* if(complicated condition) */ {
 /* Computing MAX */
 			i__3 = wrkbl, i__2 = *lda * *n + *n;
-			if (*lwork >= max(i__3,i__2) + *n * *n) {
+			if (*lwork >= std::max(i__3,i__2) + *n * *n) {
 
 /*                    WORK(IU) is LDA by N and WORK(IR) is N by N */
 
@@ -1148,7 +1148,7 @@ static doublereal c_b443 = 1.;
 			     i__2) {
 /* Computing MIN */
 			i__4 = *m - i__ + 1;
-			chunk = min(i__4,ldwrku);
+			chunk = std::min(i__4,ldwrku);
 			dgemm_("N", "N", &chunk, n, n, &c_b443, &a[i__ + 
 				a_dim1], lda, &work[ir], &ldwrkr, &c_b421, &
 				work[iu], &ldwrku);
@@ -1238,7 +1238,7 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		    i__2 = *n << 2;
-		    if (*lwork >= *n * *n + max(i__2,bdspac)) {
+		    if (*lwork >= *n * *n + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -1386,7 +1386,7 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		    i__2 = *n << 2;
-		    if (*lwork >= (*n << 1) * *n + max(i__2,bdspac)) {
+		    if (*lwork >= (*n << 1) * *n + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -1573,7 +1573,7 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		    i__2 = *n << 2;
-		    if (*lwork >= *n * *n + max(i__2,bdspac)) {
+		    if (*lwork >= *n * *n + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -1749,8 +1749,8 @@ static doublereal c_b443 = 1.;
 /*                 no right singular vectors to be computed */
 
 /* Computing MAX */
-		    i__2 = *n + *m, i__3 = *n << 2, i__2 = max(i__2,i__3);
-		    if (*lwork >= *n * *n + max(i__2,bdspac)) {
+		    i__2 = *n + *m, i__3 = *n << 2, i__2 = std::max(i__2,i__3);
+		    if (*lwork >= *n * *n + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -1905,8 +1905,8 @@ static doublereal c_b443 = 1.;
 /*                 N right singular vectors to be overwritten on A */
 
 /* Computing MAX */
-		    i__2 = *n + *m, i__3 = *n << 2, i__2 = max(i__2,i__3);
-		    if (*lwork >= (*n << 1) * *n + max(i__2,bdspac)) {
+		    i__2 = *n + *m, i__3 = *n << 2, i__2 = std::max(i__2,i__3);
+		    if (*lwork >= (*n << 1) * *n + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -2099,8 +2099,8 @@ static doublereal c_b443 = 1.;
 /*                 N right singular vectors to be computed in VT */
 
 /* Computing MAX */
-		    i__2 = *n + *m, i__3 = *n << 2, i__2 = max(i__2,i__3);
-		    if (*lwork >= *n * *n + max(i__2,bdspac)) {
+		    i__2 = *n + *m, i__3 = *n << 2, i__2 = std::max(i__2,i__3);
+		    if (*lwork >= *n * *n + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -2466,14 +2466,14 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		i__2 = *m << 2;
-		if (*lwork >= *m * *m + max(i__2,bdspac)) {
+		if (*lwork >= *m * *m + std::max(i__2,bdspac)) {
 
 /*                 Sufficient workspace for a fast algorithm */
 
 		    ir = 1;
 /* Computing MAX */
 		    i__2 = wrkbl, i__3 = *lda * *n + *m;
-		    if (*lwork >= max(i__2,i__3) + *lda * *m) {
+		    if (*lwork >= std::max(i__2,i__3) + *lda * *m) {
 
 /*                    WORK(IU) is LDA by N and WORK(IR) is LDA by M */
 
@@ -2483,7 +2483,7 @@ static doublereal c_b443 = 1.;
 		    } else /* if(complicated condition) */ {
 /* Computing MAX */
 			i__2 = wrkbl, i__3 = *lda * *n + *m;
-			if (*lwork >= max(i__2,i__3) + *m * *m) {
+			if (*lwork >= std::max(i__2,i__3) + *m * *m) {
 
 /*                    WORK(IU) is LDA by N and WORK(IR) is M by M */
 
@@ -2562,7 +2562,7 @@ static doublereal c_b443 = 1.;
 			     i__3) {
 /* Computing MIN */
 			i__4 = *n - i__ + 1;
-			blk = min(i__4,chunk);
+			blk = std::min(i__4,chunk);
 			dgemm_("N", "N", m, &blk, m, &c_b443, &work[ir], &
 				ldwrkr, &a[i__ * a_dim1 + 1], lda, &c_b421, &
 				work[iu], &ldwrku);
@@ -2613,14 +2613,14 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		i__3 = *m << 2;
-		if (*lwork >= *m * *m + max(i__3,bdspac)) {
+		if (*lwork >= *m * *m + std::max(i__3,bdspac)) {
 
 /*                 Sufficient workspace for a fast algorithm */
 
 		    ir = 1;
 /* Computing MAX */
 		    i__3 = wrkbl, i__2 = *lda * *n + *m;
-		    if (*lwork >= max(i__3,i__2) + *lda * *m) {
+		    if (*lwork >= std::max(i__3,i__2) + *lda * *m) {
 
 /*                    WORK(IU) is LDA by N and WORK(IR) is LDA by M */
 
@@ -2630,7 +2630,7 @@ static doublereal c_b443 = 1.;
 		    } else /* if(complicated condition) */ {
 /* Computing MAX */
 			i__3 = wrkbl, i__2 = *lda * *n + *m;
-			if (*lwork >= max(i__3,i__2) + *m * *m) {
+			if (*lwork >= std::max(i__3,i__2) + *m * *m) {
 
 /*                    WORK(IU) is LDA by N and WORK(IR) is M by M */
 
@@ -2718,7 +2718,7 @@ static doublereal c_b443 = 1.;
 			     i__2) {
 /* Computing MIN */
 			i__4 = *n - i__ + 1;
-			blk = min(i__4,chunk);
+			blk = std::min(i__4,chunk);
 			dgemm_("N", "N", m, &blk, m, &c_b443, &work[ir], &
 				ldwrkr, &a[i__ * a_dim1 + 1], lda, &c_b421, &
 				work[iu], &ldwrku);
@@ -2804,7 +2804,7 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		    i__2 = *m << 2;
-		    if (*lwork >= *m * *m + max(i__2,bdspac)) {
+		    if (*lwork >= *m * *m + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -2955,7 +2955,7 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		    i__2 = *m << 2;
-		    if (*lwork >= (*m << 1) * *m + max(i__2,bdspac)) {
+		    if (*lwork >= (*m << 1) * *m + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -3141,7 +3141,7 @@ static doublereal c_b443 = 1.;
 
 /* Computing MAX */
 		    i__2 = *m << 2;
-		    if (*lwork >= *m * *m + max(i__2,bdspac)) {
+		    if (*lwork >= *m * *m + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -3313,8 +3313,8 @@ static doublereal c_b443 = 1.;
 /*                 no left singular vectors to be computed */
 
 /* Computing MAX */
-		    i__2 = *n + *m, i__3 = *m << 2, i__2 = max(i__2,i__3);
-		    if (*lwork >= *m * *m + max(i__2,bdspac)) {
+		    i__2 = *n + *m, i__3 = *m << 2, i__2 = std::max(i__2,i__3);
+		    if (*lwork >= *m * *m + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -3469,8 +3469,8 @@ static doublereal c_b443 = 1.;
 /*                 M left singular vectors to be overwritten on A */
 
 /* Computing MAX */
-		    i__2 = *n + *m, i__3 = *m << 2, i__2 = max(i__2,i__3);
-		    if (*lwork >= (*m << 1) * *m + max(i__2,bdspac)) {
+		    i__2 = *n + *m, i__3 = *m << 2, i__2 = std::max(i__2,i__3);
+		    if (*lwork >= (*m << 1) * *m + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 
@@ -3662,8 +3662,8 @@ static doublereal c_b443 = 1.;
 /*                 M left singular vectors to be computed in U */
 
 /* Computing MAX */
-		    i__2 = *n + *m, i__3 = *m << 2, i__2 = max(i__2,i__3);
-		    if (*lwork >= *m * *m + max(i__2,bdspac)) {
+		    i__2 = *n + *m, i__3 = *m << 2, i__2 = std::max(i__2,i__3);
+		    if (*lwork >= *m * *m + std::max(i__2,bdspac)) {
 
 /*                    Sufficient workspace for a fast algorithm */
 

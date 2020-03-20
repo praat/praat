@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -164,11 +164,11 @@ static logical c_true = TRUE_;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -7;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -9;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	*info = -11;
     }
     if (*info != 0) {
@@ -193,9 +193,9 @@ static logical c_true = TRUE_;
     bignum = 1. / smlnum;
 
 /* Computing MAX */
-    d__1 = smlnum, d__2 = eps * dlange_("M", m, m, &a[a_offset], lda, dum), d__1 = max(d__1,d__2), d__2 = eps * dlange_("M", n, n, 
+    d__1 = smlnum, d__2 = eps * dlange_("M", m, m, &a[a_offset], lda, dum), d__1 = std::max(d__1,d__2), d__2 = eps * dlange_("M", n, n, 
 	    &b[b_offset], ldb, dum);
-    smin = max(d__1,d__2);
+    smin = std::max(d__1,d__2);
 
     *scale = 1.;
     sgn = (doublereal) (*isgn);
@@ -267,8 +267,8 @@ static logical c_true = TRUE_;
 		    i__3 = k1 + 1;
 /* Computing MIN */
 		    i__4 = k1 + 1;
-		    suml = ddot_(&i__2, &a[k1 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k1 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l1 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k1 + c_dim1], ldc, &b[l1 * 
 			    b_dim1 + 1], &c__1);
@@ -307,8 +307,8 @@ static logical c_true = TRUE_;
 		    i__3 = k2 + 1;
 /* Computing MIN */
 		    i__4 = k2 + 1;
-		    suml = ddot_(&i__2, &a[k1 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k1 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l1 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k1 + c_dim1], ldc, &b[l1 * 
 			    b_dim1 + 1], &c__1);
@@ -319,8 +319,8 @@ static logical c_true = TRUE_;
 		    i__3 = k2 + 1;
 /* Computing MIN */
 		    i__4 = k2 + 1;
-		    suml = ddot_(&i__2, &a[k2 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k2 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l1 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k2 + c_dim1], ldc, &b[l1 * 
 			    b_dim1 + 1], &c__1);
@@ -352,8 +352,8 @@ static logical c_true = TRUE_;
 		    i__3 = k1 + 1;
 /* Computing MIN */
 		    i__4 = k1 + 1;
-		    suml = ddot_(&i__2, &a[k1 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k1 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l1 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k1 + c_dim1], ldc, &b[l1 * 
 			    b_dim1 + 1], &c__1);
@@ -365,8 +365,8 @@ static logical c_true = TRUE_;
 		    i__3 = k1 + 1;
 /* Computing MIN */
 		    i__4 = k1 + 1;
-		    suml = ddot_(&i__2, &a[k1 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l2 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k1 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l2 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k1 + c_dim1], ldc, &b[l2 * 
 			    b_dim1 + 1], &c__1);
@@ -399,8 +399,8 @@ static logical c_true = TRUE_;
 		    i__3 = k2 + 1;
 /* Computing MIN */
 		    i__4 = k2 + 1;
-		    suml = ddot_(&i__2, &a[k1 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k1 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l1 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k1 + c_dim1], ldc, &b[l1 * 
 			    b_dim1 + 1], &c__1);
@@ -411,8 +411,8 @@ static logical c_true = TRUE_;
 		    i__3 = k2 + 1;
 /* Computing MIN */
 		    i__4 = k2 + 1;
-		    suml = ddot_(&i__2, &a[k1 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l2 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k1 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l2 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k1 + c_dim1], ldc, &b[l2 * 
 			    b_dim1 + 1], &c__1);
@@ -423,8 +423,8 @@ static logical c_true = TRUE_;
 		    i__3 = k2 + 1;
 /* Computing MIN */
 		    i__4 = k2 + 1;
-		    suml = ddot_(&i__2, &a[k2 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k2 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l1 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k2 + c_dim1], ldc, &b[l1 * 
 			    b_dim1 + 1], &c__1);
@@ -435,8 +435,8 @@ static logical c_true = TRUE_;
 		    i__3 = k2 + 1;
 /* Computing MIN */
 		    i__4 = k2 + 1;
-		    suml = ddot_(&i__2, &a[k2 + min(i__3, *m)* a_dim1], lda, &
-			    c__[min(i__4, *m)+ l2 * c_dim1], &c__1);
+		    suml = ddot_(&i__2, &a[k2 + std::min(i__3, *m)* a_dim1], lda, &
+			    c__[std::min(i__4, *m)+ l2 * c_dim1], &c__1);
 		    i__2 = l1 - 1;
 		    sumr = ddot_(&i__2, &c__[k2 + c_dim1], ldc, &b[l2 * 
 			    b_dim1 + 1], &c__1);
@@ -776,8 +776,8 @@ L120:
 		    i__3 = l1 + 1;
 /* Computing MIN */
 		    i__4 = l1 + 1;
-		    sumr = ddot_(&i__2, &c__[k1 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k1 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[0] = c__[k1 + l1 * c_dim1] - (suml + sgn * sumr);
 		    scaloc = 1.;
 
@@ -816,8 +816,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k1 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k1 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[0] = c__[k1 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    i__2 = k1 - 1;
@@ -828,8 +828,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k2 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k2 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[1] = c__[k2 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    d__1 = -sgn * b[l1 + l1 * b_dim1];
@@ -861,8 +861,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k1 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k1 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[0] = sgn * (c__[k1 + l1 * c_dim1] - (suml + sgn * 
 			    sumr));
 
@@ -874,8 +874,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k1 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l2 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k1 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l2 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[1] = sgn * (c__[k1 + l2 * c_dim1] - (suml + sgn * 
 			    sumr));
 
@@ -908,8 +908,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k1 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k1 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[0] = c__[k1 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    i__2 = k1 - 1;
@@ -920,8 +920,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k1 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l2 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k1 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l2 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[2] = c__[k1 + l2 * c_dim1] - (suml + sgn * sumr);
 
 		    i__2 = k1 - 1;
@@ -932,8 +932,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k2 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k2 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[1] = c__[k2 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    i__2 = k1 - 1;
@@ -944,8 +944,8 @@ L120:
 		    i__3 = l2 + 1;
 /* Computing MIN */
 		    i__4 = l2 + 1;
-		    sumr = ddot_(&i__2, &c__[k2 + min(i__3, *n)* c_dim1], ldc, 
-			     &b[l2 + min(i__4, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__2, &c__[k2 + std::min(i__3, *n)* c_dim1], ldc, 
+			     &b[l2 + std::min(i__4, *n)* b_dim1], ldb);
 		    vec[3] = c__[k2 + l2 * c_dim1] - (suml + sgn * sumr);
 
 		    dlasy2_(&c_true, &c_true, isgn, &c__2, &c__2, &a[k1 + k1 *
@@ -1042,15 +1042,15 @@ L180:
 		    i__2 = k1 + 1;
 /* Computing MIN */
 		    i__3 = k1 + 1;
-		    suml = ddot_(&i__1, &a[k1 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k1 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l1 * c_dim1], &c__1);
 		    i__1 = *n - l1;
 /* Computing MIN */
 		    i__2 = l1 + 1;
 /* Computing MIN */
 		    i__3 = l1 + 1;
-		    sumr = ddot_(&i__1, &c__[k1 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k1 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[0] = c__[k1 + l1 * c_dim1] - (suml + sgn * sumr);
 		    scaloc = 1.;
 
@@ -1086,15 +1086,15 @@ L180:
 		    i__2 = k2 + 1;
 /* Computing MIN */
 		    i__3 = k2 + 1;
-		    suml = ddot_(&i__1, &a[k1 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k1 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l1 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k1 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k1 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[0] = c__[k1 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    i__1 = *m - k2;
@@ -1102,15 +1102,15 @@ L180:
 		    i__2 = k2 + 1;
 /* Computing MIN */
 		    i__3 = k2 + 1;
-		    suml = ddot_(&i__1, &a[k2 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k2 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l1 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k2 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k2 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[1] = c__[k2 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    d__1 = -sgn * b[l1 + l1 * b_dim1];
@@ -1139,15 +1139,15 @@ L180:
 		    i__2 = k1 + 1;
 /* Computing MIN */
 		    i__3 = k1 + 1;
-		    suml = ddot_(&i__1, &a[k1 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k1 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l1 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k1 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k1 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[0] = sgn * (c__[k1 + l1 * c_dim1] - (suml + sgn * 
 			    sumr));
 
@@ -1156,15 +1156,15 @@ L180:
 		    i__2 = k1 + 1;
 /* Computing MIN */
 		    i__3 = k1 + 1;
-		    suml = ddot_(&i__1, &a[k1 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l2 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k1 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l2 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k1 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l2 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k1 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l2 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[1] = sgn * (c__[k1 + l2 * c_dim1] - (suml + sgn * 
 			    sumr));
 
@@ -1194,15 +1194,15 @@ L180:
 		    i__2 = k2 + 1;
 /* Computing MIN */
 		    i__3 = k2 + 1;
-		    suml = ddot_(&i__1, &a[k1 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k1 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l1 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k1 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k1 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[0] = c__[k1 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    i__1 = *m - k2;
@@ -1210,15 +1210,15 @@ L180:
 		    i__2 = k2 + 1;
 /* Computing MIN */
 		    i__3 = k2 + 1;
-		    suml = ddot_(&i__1, &a[k1 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l2 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k1 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l2 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k1 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l2 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k1 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l2 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[2] = c__[k1 + l2 * c_dim1] - (suml + sgn * sumr);
 
 		    i__1 = *m - k2;
@@ -1226,15 +1226,15 @@ L180:
 		    i__2 = k2 + 1;
 /* Computing MIN */
 		    i__3 = k2 + 1;
-		    suml = ddot_(&i__1, &a[k2 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l1 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k2 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l1 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k2 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l1 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k2 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l1 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[1] = c__[k2 + l1 * c_dim1] - (suml + sgn * sumr);
 
 		    i__1 = *m - k2;
@@ -1242,15 +1242,15 @@ L180:
 		    i__2 = k2 + 1;
 /* Computing MIN */
 		    i__3 = k2 + 1;
-		    suml = ddot_(&i__1, &a[k2 + min(i__2, *m)* a_dim1], lda, &
-			    c__[min(i__3, *m)+ l2 * c_dim1], &c__1);
+		    suml = ddot_(&i__1, &a[k2 + std::min(i__2, *m)* a_dim1], lda, &
+			    c__[std::min(i__3, *m)+ l2 * c_dim1], &c__1);
 		    i__1 = *n - l2;
 /* Computing MIN */
 		    i__2 = l2 + 1;
 /* Computing MIN */
 		    i__3 = l2 + 1;
-		    sumr = ddot_(&i__1, &c__[k2 + min(i__2, *n)* c_dim1], ldc, 
-			     &b[l2 + min(i__3, *n)* b_dim1], ldb);
+		    sumr = ddot_(&i__1, &c__[k2 + std::min(i__2, *n)* c_dim1], ldc, 
+			     &b[l2 + std::min(i__3, *n)* b_dim1], ldb);
 		    vec[3] = c__[k2 + l2 * c_dim1] - (suml + sgn * sumr);
 
 		    dlasy2_(&c_false, &c_true, isgn, &c__2, &c__2, &a[k1 + k1 

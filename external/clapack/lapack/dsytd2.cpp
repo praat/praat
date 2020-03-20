@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -158,7 +158,7 @@ static doublereal c_b14 = -1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -230,7 +230,7 @@ static doublereal c_b14 = -1.;
 	    i__2 = *n - i__;
 /* Computing MIN */
 	    i__3 = i__ + 2;
-	    dlarfg_(&i__2, &a[i__ + 1 + i__ * a_dim1], &a[min(i__3, *n)+ i__ *
+	    dlarfg_(&i__2, &a[i__ + 1 + i__ * a_dim1], &a[std::min(i__3, *n)+ i__ *
 		     a_dim1], &c__1, &taui);
 	    e[i__] = a[i__ + 1 + i__ * a_dim1];
 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlazq4_(integer *i0, integer *n0, doublereal *z__, 
@@ -127,7 +127,7 @@
 		if (gap1 > 0. && gap1 > b1) {
 /* Computing MAX */
 		    d__1 = *dn - b1 / gap1 * b1, d__2 = *dmin__ * .5;
-		    s = max(d__1,d__2);
+		    s = std::max(d__1,d__2);
 		    *ttype = -2;
 		} else {
 		    s = 0.;
@@ -137,11 +137,11 @@
 		    if (a2 > b1 + b2) {
 /* Computing MIN */
 			d__1 = s, d__2 = a2 - (b1 + b2);
-			s = min(d__1,d__2);
+			s = std::min(d__1,d__2);
 		    }
 /* Computing MAX */
 		    d__1 = s, d__2 = *dmin__ * .333;
-		    s = max(d__1,d__2);
+		    s = std::max(d__1,d__2);
 		    *ttype = -3;
 		}
 	    } else {
@@ -187,7 +187,7 @@
 		    }
 		    b2 *= z__[i4] / z__[i4 - 2];
 		    a2 += b2;
-		    if (max(b2,b1) * 100. < a2 || .563 < a2) {
+		    if (std::max(b2,b1) * 100. < a2 || .563 < a2) {
 			goto L20;
 		    }
 /* L10: */
@@ -235,7 +235,7 @@ L20:
 		    }
 		    b2 *= z__[i4] / z__[i4 - 2];
 		    a2 += b2;
-		    if (max(b2,b1) * 100. < a2 || .563 < a2) {
+		    if (std::max(b2,b1) * 100. < a2 || .563 < a2) {
 			goto L40;
 		    }
 /* L30: */
@@ -288,7 +288,7 @@ L40:
 		}
 		b1 *= z__[i4] / z__[i4 - 2];
 		b2 += b1;
-		if (max(b1,a2) * 100. < b2) {
+		if (std::max(b1,a2) * 100. < b2) {
 		    goto L60;
 		}
 /* L50: */
@@ -302,11 +302,11 @@ L60:
 	    if (gap2 > 0. && gap2 > b2 * a2) {
 /* Computing MAX */
 		d__1 = s, d__2 = a2 * (1. - a2 * 1.01 * (b2 / gap2) * b2);
-		s = max(d__1,d__2);
+		s = std::max(d__1,d__2);
 	    } else {
 /* Computing MAX */
 		d__1 = s, d__2 = a2 * (1. - b2 * 1.01);
-		s = max(d__1,d__2);
+		s = std::max(d__1,d__2);
 		*ttype = -8;
 	    }
 	} else {
@@ -359,11 +359,11 @@ L80:
 	    if (gap2 > 0. && gap2 > b2 * a2) {
 /* Computing MAX */
 		d__1 = s, d__2 = a2 * (1. - a2 * 1.01 * (b2 / gap2) * b2);
-		s = max(d__1,d__2);
+		s = std::max(d__1,d__2);
 	    } else {
 /* Computing MAX */
 		d__1 = s, d__2 = a2 * (1. - b2 * 1.01);
-		s = max(d__1,d__2);
+		s = std::max(d__1,d__2);
 	    }
 	} else {
 	    s = *dmin2 * .25;

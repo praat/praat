@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -297,24 +297,24 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		d__1 = smin, d__2 = s[j];
-		smin = min(d__1,d__2);
+		smin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = smax, d__2 = s[j];
-		smax = max(d__1,d__2);
+		smax = std::max(d__1,d__2);
 /* L10: */
 	    }
 	    if (smin <= 0.) {
 		*info = -8;
 	    } else if (*n > 0) {
-		scond = max(smin,smlnum) / min(smax,bignum);
+		scond = std::max(smin,smlnum) / std::min(smax,bignum);
 	    } else {
 		scond = 1.;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1_integer,*n)) {
+	    if (*ldb < std::max(1_integer,*n)) {
 		*info = -10;
-	    } else if (*ldx < max(1_integer,*n)) {
+	    } else if (*ldx < std::max(1_integer,*n)) {
 		*info = -12;
 	    }
 	}

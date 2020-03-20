@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -347,7 +347,7 @@ static integer c__0 = 0;
 
 /*        Move the deflated rows of BX to B also. */
 
-	if (*k < max(m,n)) {
+	if (*k < std::max(m,n)) {
 	    i__1 = n - *k;
 	    dlacpy_("A", &i__1, nrhs, &bx[*k + 1 + bx_dim1], ldbx, &b[*k + 1 
 		    + b_dim1], ldb);
@@ -409,7 +409,7 @@ static integer c__0 = 0;
 	    drot_(nrhs, &bx[bx_dim1 + 1], ldbx, &bx[m + bx_dim1], ldbx, c__, 
 		    s);
 	}
-	if (*k < max(m,n)) {
+	if (*k < std::max(m,n)) {
 	    i__1 = n - *k;
 	    dlacpy_("A", &i__1, nrhs, &b[*k + 1 + b_dim1], ldb, &bx[*k + 1 + 
 		    bx_dim1], ldbx);
