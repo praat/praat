@@ -1,5 +1,5 @@
 # CLAPACK_copyFiles_to_Praat.praat
-# djmw 20200419
+# djmw 20200319
 # 
 # LAPACK sources copied form http://www.netlib.org/clapack/
 #
@@ -56,11 +56,11 @@ if sources > 0
 			... fromdir$ + "slamch.c"
 		runSystem_nocheck: "rsync -v " + excludes$ + includes$ + todir$
 	endif
-	excludes$ = "--exclude=s_stop.c --exclude=s_paus.c "
+	excludes$ = "--exclude=s_stop.c --exclude=s_paus.c --exclude=d_*.c"
 	if f2CLIBS
 		todir$ = lapackpraat$ + "f2clib/"
 		fromdir$ = lapackbase$ + "F2CLIBS/libf2c/"
-		includes$ = fromdir$ + "d_*.c " + fromdir$ + "s_*.c " + fromdir$ + "pow_d*.c "
+		includes$ =  fromdir$ + "d*.c + "fromdir$ + "s_*.c " + fromdir$ + "pow_d*.c "
 		runSystem_nocheck: "rsync -v " + excludes$  + includes$ + todir$
 	endif
 endif
