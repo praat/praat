@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dsyrk_(const char *uplo, const char *trans, integer *n, integer *k, 
@@ -168,9 +168,9 @@
 	info = 3;
     } else if (*k < 0) {
 	info = 4;
-    } else if (*lda < max(1_integer,nrowa)) {
+    } else if (*lda < std::max(1_integer,nrowa)) {
 	info = 7;
-    } else if (*ldc < max(1_integer,*n)) {
+    } else if (*ldc < std::max(1_integer,*n)) {
 	info = 10;
     }
     if (info != 0) {

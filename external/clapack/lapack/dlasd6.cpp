@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -291,7 +291,7 @@ static integer c_n1 = -1;
 
 /* Computing MAX */
     d__1 = abs(*alpha), d__2 = abs(*beta);
-    orgnrm = max(d__1,d__2);
+    orgnrm = std::max(d__1,d__2);
     d__[*nl + 1] = 0.;
     i__1 = n;
     for (i__ = 1; i__ <= i__1; ++i__) {

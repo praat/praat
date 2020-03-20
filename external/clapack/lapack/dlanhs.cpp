@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -105,11 +105,11 @@ doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda,
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 	    i__3 = *n, i__4 = j + 1;
-	    i__2 = min(i__3,i__4);
+	    i__2 = std::min(i__3,i__4);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 		d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(d__1));
-		value = max(d__2,d__3);
+		value = std::max(d__2,d__3);
 /* L10: */
 	    }
 /* L20: */
@@ -125,12 +125,12 @@ doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda,
 	    sum = 0.;
 /* Computing MIN */
 	    i__3 = *n, i__4 = j + 1;
-	    i__2 = min(i__3,i__4);
+	    i__2 = std::min(i__3,i__4);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		sum += (d__1 = a[i__ + j * a_dim1], abs(d__1));
 /* L30: */
 	    }
-	    value = max(value,sum);
+	    value = std::max(value,sum);
 /* L40: */
 	}
     } else if (lsame_(norm, "I")) {
@@ -146,7 +146,7 @@ doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda,
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 	    i__3 = *n, i__4 = j + 1;
-	    i__2 = min(i__3,i__4);
+	    i__2 = std::min(i__3,i__4);
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 		work[i__] += (d__1 = a[i__ + j * a_dim1], abs(d__1));
 /* L60: */
@@ -158,7 +158,7 @@ doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda,
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__1 = value, d__2 = work[i__];
-	    value = max(d__1,d__2);
+	    value = std::max(d__1,d__2);
 /* L80: */
 	}
     } else if (lsame_(norm, "F") || lsame_(norm, "E")) {
@@ -171,7 +171,7 @@ doublereal dlanhs_(const char *norm, integer *n, doublereal *a, integer *lda,
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 	    i__3 = *n, i__4 = j + 1;
-	    i__2 = min(i__3,i__4);
+	    i__2 = std::min(i__3,i__4);
 	    dlassq_(&i__2, &a[j * a_dim1 + 1], &c__1, &scale, &sum);
 /* L90: */
 	}

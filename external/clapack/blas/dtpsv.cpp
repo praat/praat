@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dtpsv_(const char *uplo, const char *trans, const char *diag, integer *n, 

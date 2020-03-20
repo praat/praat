@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgemm_(const char *transa, const char *transb, integer *m, integer *
@@ -196,11 +196,11 @@
 	info = 4;
     } else if (*k < 0) {
 	info = 5;
-    } else if (*lda < max(1_integer,nrowa)) {
+    } else if (*lda < std::max(1_integer,nrowa)) {
 	info = 8;
-    } else if (*ldb < max(1_integer,nrowb)) {
+    } else if (*ldb < std::max(1_integer,nrowb)) {
 	info = 10;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	info = 13;
     }
     if (info != 0) {

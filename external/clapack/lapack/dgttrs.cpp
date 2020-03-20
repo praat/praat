@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -116,7 +116,7 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*ldb < max(*n,1_integer)) {
+    } else if (*ldb < std::max(*n,1_integer)) {
 	*info = -10;
     }
     if (*info != 0) {
@@ -147,7 +147,7 @@ static integer c_n1 = -1;
 /* Computing MAX */
 	i__1 = 1, i__2 = ilaenv_(&c__1, "DGTTRS", trans, n, nrhs, &c_n1, &
 		c_n1);
-	nb = max(i__1,i__2);
+	nb = std::max(i__1,i__2);
     }
 
     if (nb >= *nrhs) {
@@ -159,7 +159,7 @@ static integer c_n1 = -1;
 	for (j = 1; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2) {
 /* Computing MIN */
 	    i__3 = *nrhs - j + 1;
-	    jb = min(i__3,nb);
+	    jb = std::min(i__3,nb);
 	    dgtts2_(&itrans, n, &jb, &dl[1], &d__[1], &du[1], &du2[1], &ipiv[
 		    1], &b[j * b_dim1 + 1], ldb);
 /* L10: */

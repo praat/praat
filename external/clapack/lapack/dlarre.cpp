@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -306,11 +306,11 @@ static integer c__2 = 2;
 	gers[(i__ << 1) - 1] = d__[i__] - tmp1;
 /* Computing MIN */
 	d__1 = gl, d__2 = gers[(i__ << 1) - 1];
-	gl = min(d__1,d__2);
+	gl = std::min(d__1,d__2);
 	gers[i__ * 2] = d__[i__] + tmp1;
 /* Computing MAX */
 	d__1 = gu, d__2 = gers[i__ * 2];
-	gu = max(d__1,d__2);
+	gu = std::max(d__1,d__2);
 	eold = eabs;
 /* L5: */
     }
@@ -319,7 +319,7 @@ static integer c__2 = 2;
 /* Computing 2nd power */
     d__3 = emax;
     d__1 = 1., d__2 = d__3 * d__3;
-    *pivmin = safmin * max(d__1,d__2);
+    *pivmin = safmin * std::max(d__1,d__2);
 /*     Compute spectral diameter. The Gerschgorin bounds give an */
 /*     estimate that is wrong by at most a factor of SQRT(2) */
     spdiam = gu - gl;
@@ -397,10 +397,10 @@ static integer c__2 = 2;
 	for (i__ = ibegin; i__ <= i__2; ++i__) {
 /* Computing MIN */
 	    d__1 = gers[(i__ << 1) - 1];
-	    gl = min(d__1,gl);
+	    gl = std::min(d__1,gl);
 /* Computing MAX */
 	    d__1 = gers[i__ * 2];
-	    gu = max(d__1,gu);
+	    gu = std::max(d__1,gu);
 /* L15: */
 	}
 	spdiam = gu - gl;
@@ -436,12 +436,12 @@ L21:
 /* Computing MAX */
 		    d__1 = 0., d__2 = w[i__ + 1] - werr[i__ + 1] - (w[i__] + 
 			    werr[i__]);
-		    wgap[i__] = max(d__1,d__2);
+		    wgap[i__] = std::max(d__1,d__2);
 /* L30: */
 		}
 /* Computing MAX */
 		d__1 = 0., d__2 = *vu - sigma - (w[wend] + werr[wend]);
-		wgap[wend] = max(d__1,d__2);
+		wgap[wend] = std::max(d__1,d__2);
 /*              Find local index of the first and last desired evalue. */
 		indl = indexw[wbegin];
 		indu = indexw[wend];
@@ -459,7 +459,7 @@ L21:
 /* Computing MAX */
 	    d__2 = gl, d__3 = tmp - tmp1 - eps * 100. * (d__1 = tmp - tmp1, 
 		    abs(d__1));
-	    isleft = max(d__2,d__3);
+	    isleft = std::max(d__2,d__3);
 	    dlarrk_(&in, &in, &gl, &gu, &d__[ibegin], &e2[ibegin], pivmin, &
 		    rtl, &tmp, &tmp1, &iinfo);
 	    if (iinfo != 0) {
@@ -469,7 +469,7 @@ L21:
 /* Computing MIN */
 	    d__2 = gu, d__3 = tmp + tmp1 + eps * 100. * (d__1 = tmp + tmp1, 
 		    abs(d__1));
-	    isrght = min(d__2,d__3);
+	    isrght = std::min(d__2,d__3);
 /*           Improve the estimate of the spectral diameter */
 	    spdiam = isrght - isleft;
 	} else {
@@ -478,11 +478,11 @@ L21:
 /* Computing MAX */
 	    d__2 = gl, d__3 = w[wbegin] - werr[wbegin] - eps * 100. * (d__1 = 
 		    w[wbegin] - werr[wbegin], abs(d__1));
-	    isleft = max(d__2,d__3);
+	    isleft = std::max(d__2,d__3);
 /* Computing MIN */
 	    d__2 = gu, d__3 = w[wend] + werr[wend] + eps * 100. * (d__1 = w[
 		    wend] + werr[wend], abs(d__1));
-	    isrght = min(d__2,d__3);
+	    isrght = std::min(d__2,d__3);
 	}
 /*        Decide whether the base representation for the current block */
 /*        L_JBLK D_JBLK L_JBLK^T = T_JBLK - sigma_JBLK I */
@@ -512,9 +512,9 @@ L21:
 		s1 = isleft + spdiam * .25;
 		s2 = isrght - spdiam * .25;
 	    } else {
-		tmp = min(isrght,*vu) - max(isleft,*vl);
-		s1 = max(isleft,*vl) + tmp * .25;
-		s2 = min(isrght,*vu) - tmp * .25;
+		tmp = std::min(isrght,*vu) - std::max(isleft,*vl);
+		s1 = std::max(isleft,*vl) + tmp * .25;
+		s2 = std::min(isrght,*vu) - tmp * .25;
 	    }
 	}
 /*        Compute the negcount at the 1/4 and 3/4 points */
@@ -527,7 +527,7 @@ L21:
 	    sgndef = 1.;
 	} else if (cnt1 - indl >= indu - cnt2) {
 	    if (irange == 1 && ! forceb) {
-		sigma = max(isleft,gl);
+		sigma = std::max(isleft,gl);
 	    } else if (usedqd) {
 /*              use Gerschgorin bound as shift to get pos def matrix */
 /*              for dqds */
@@ -535,12 +535,12 @@ L21:
 	    } else {
 /*              use approximation of the first desired eigenvalue of the */
 /*              block as shift */
-		sigma = max(isleft,*vl);
+		sigma = std::max(isleft,*vl);
 	    }
 	    sgndef = 1.;
 	} else {
 	    if (irange == 1 && ! forceb) {
-		sigma = min(isrght,gu);
+		sigma = std::min(isrght,gu);
 	    } else if (usedqd) {
 /*              use Gerschgorin bound as shift to get neg def matrix */
 /*              for dqds */
@@ -548,7 +548,7 @@ L21:
 	    } else {
 /*              use approximation of the first desired eigenvalue of the */
 /*              block as shift */
-		sigma = min(isrght,*vu);
+		sigma = std::min(isrght,*vu);
 	    }
 	    sgndef = -1.;
 	}
@@ -569,17 +569,17 @@ L21:
 		if (sgndef == 1.) {
 /* Computing MAX */
 		    d__1 = wgap[wbegin];
-		    tau = max(d__1,avgap) * .5;
+		    tau = std::max(d__1,avgap) * .5;
 /* Computing MAX */
 		    d__1 = tau, d__2 = werr[wbegin];
-		    tau = max(d__1,d__2);
+		    tau = std::max(d__1,d__2);
 		} else {
 /* Computing MAX */
 		    d__1 = wgap[wend - 1];
-		    tau = max(d__1,avgap) * .5;
+		    tau = std::max(d__1,avgap) * .5;
 /* Computing MAX */
 		    d__1 = tau, d__2 = werr[wend];
-		    tau = max(d__1,d__2);
+		    tau = std::max(d__1,d__2);
 		}
 	    } else {
 		tau = werr[wbegin];
@@ -603,7 +603,7 @@ L21:
 		work[i__ + 1] = dpivot;
 /* Computing MAX */
 		d__1 = dmax__, d__2 = abs(dpivot);
-		dmax__ = max(d__1,d__2);
+		dmax__ = std::max(d__1,d__2);
 		++j;
 /* L70: */
 	    }
@@ -721,7 +721,7 @@ L83:
 /*           Record distance to VU/GU */
 /* Computing MAX */
 	    d__1 = 0., d__2 = *vu - sigma - (w[wend] + werr[wend]);
-	    wgap[wend] = max(d__1,d__2);
+	    wgap[wend] = std::max(d__1,d__2);
 	    i__2 = indu;
 	    for (i__ = indl; i__ <= i__2; ++i__) {
 		++(*m);
@@ -801,12 +801,12 @@ L83:
 /* Computing MAX */
 		d__1 = 0., d__2 = w[i__ + 1] - werr[i__ + 1] - (w[i__] + werr[
 			i__]);
-		wgap[i__] = max(d__1,d__2);
+		wgap[i__] = std::max(d__1,d__2);
 /* L166: */
 	    }
 /* Computing MAX */
 	    d__1 = 0., d__2 = *vu - sigma - (w[*m] + werr[*m]);
-	    wgap[*m] = max(d__1,d__2);
+	    wgap[*m] = std::max(d__1,d__2);
 	}
 /*        proceed with next block */
 	ibegin = iend + 1;

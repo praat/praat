@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "string.h"
 
 /* Table of constant values */
@@ -571,7 +571,7 @@ L100:
 
 /*     ISPEC = 6:  crossover point for SVD (used by xGELSS and xGESVD) */
 
-    ret_val = (integer) ((real) min(*n1,*n2) * 1.6f);
+    ret_val = (integer) ((real) std::min(*n1,*n2) * 1.6f);
     return ret_val;
 
 L110:

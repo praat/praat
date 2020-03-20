@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dopgtr_(char *uplo, integer *n, doublereal *ap, 
@@ -97,7 +97,7 @@
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*ldq < max(1_integer,*n)) {
+    } else if (*ldq < std::max(1_integer,*n)) {
 	*info = -6;
     }
     if (*info != 0) {

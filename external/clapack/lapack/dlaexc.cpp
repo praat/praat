@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -191,7 +191,7 @@ static integer c__3 = 3;
 	smlnum = dlamch_("S") / eps;
 /* Computing MAX */
 	d__1 = eps * 10. * dnorm;
-	thresh = max(d__1,smlnum);
+	thresh = std::max(d__1,smlnum);
 
 /*        Solve T11*X - X*T22 = scale*T12 for X. */
 
@@ -229,9 +229,9 @@ L10:
 /*        Test whether to reject swap. */
 
 /* Computing MAX */
-	d__2 = abs(d__[2]), d__3 = abs(d__[6]), d__2 = max(d__2,d__3), d__3 = 
+	d__2 = abs(d__[2]), d__3 = abs(d__[6]), d__2 = std::max(d__2,d__3), d__3 = 
 		(d__1 = d__[10] - t11, abs(d__1));
-	if (max(d__2,d__3) > thresh) {
+	if (std::max(d__2,d__3) > thresh) {
 	    goto L50;
 	}
 
@@ -278,9 +278,9 @@ L20:
 /*        Test whether to reject swap. */
 
 /* Computing MAX */
-	d__2 = abs(d__[1]), d__3 = abs(d__[2]), d__2 = max(d__2,d__3), d__3 = 
+	d__2 = abs(d__[1]), d__3 = abs(d__[2]), d__2 = std::max(d__2,d__3), d__3 = 
 		(d__1 = d__[0] - t33, abs(d__1));
-	if (max(d__2,d__3) > thresh) {
+	if (std::max(d__2,d__3) > thresh) {
 	    goto L50;
 	}
 
@@ -339,9 +339,9 @@ L30:
 /*        Test whether to reject swap. */
 
 /* Computing MAX */
-	d__1 = abs(d__[2]), d__2 = abs(d__[6]), d__1 = max(d__1,d__2), d__2 = 
-		abs(d__[3]), d__1 = max(d__1,d__2), d__2 = abs(d__[7]);
-	if (max(d__1,d__2) > thresh) {
+	d__1 = abs(d__[2]), d__2 = abs(d__[6]), d__1 = std::max(d__1,d__2), d__2 = 
+		abs(d__[3]), d__1 = std::max(d__1,d__2), d__2 = abs(d__[7]);
+	if (std::max(d__1,d__2) > thresh) {
 	    goto L50;
 	}
 

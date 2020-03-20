@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -139,12 +139,12 @@ static integer c_n1 = -1;
 
     if (*n < 0) {
 	*info = -1;
-    } else if (*ldq < max(1_integer,*n)) {
+    } else if (*ldq < std::max(1_integer,*n)) {
 	*info = -4;
     } else /* if(complicated condition) */ {
 /* Computing MIN */
 	i__1 = 1, i__2 = *n / 2;
-	if (min(i__1,i__2) > *cutpnt || *n / 2 < *cutpnt) {
+	if (std::min(i__1,i__2) > *cutpnt || *n / 2 < *cutpnt) {
 	    *info = -7;
 	}
     }

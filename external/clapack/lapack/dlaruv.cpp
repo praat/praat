@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaruv_(integer *iseed, integer *n, doublereal *x)
@@ -121,7 +121,7 @@
     i3 = iseed[3];
     i4 = iseed[4];
 
-    i__1 = min(*n,128_integer);
+    i__1 = std::min(*n,128_integer);
     for (i__ = 1; i__ <= i__1; ++i__) {
 
 L20:

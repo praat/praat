@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -122,7 +122,7 @@ static doublereal c_b5 = 1.;
 /*        special cases */
 
 	if (*sest == 0.) {
-	    s1 = max(absgam,absalp);
+	    s1 = std::max(absgam,absalp);
 	    if (s1 == 0.) {
 		*s = 0.;
 		*c__ = 1.;
@@ -139,7 +139,7 @@ static doublereal c_b5 = 1.;
 	} else if (absgam <= eps * absest) {
 	    *s = 1.;
 	    *c__ = 0.;
-	    tmp = max(absest,absalp);
+	    tmp = std::max(absest,absalp);
 	    s1 = absest / tmp;
 	    s2 = absalp / tmp;
 	    *sestpr = tmp * sqrt(s1 * s1 + s2 * s2);
@@ -206,7 +206,7 @@ static doublereal c_b5 = 1.;
 
 	if (*sest == 0.) {
 	    *sestpr = 0.;
-	    if (max(absgam,absalp) == 0.) {
+	    if (std::max(absgam,absalp) == 0.) {
 		sine = 1.;
 		cosine = 0.;
 	    } else {
@@ -215,7 +215,7 @@ static doublereal c_b5 = 1.;
 	    }
 /* Computing MAX */
 	    d__1 = abs(sine), d__2 = abs(cosine);
-	    s1 = max(d__1,d__2);
+	    s1 = std::max(d__1,d__2);
 	    *s = sine / s1;
 	    *c__ = cosine / s1;
 	    tmp = sqrt(*s * *s + *c__ * *c__);
@@ -267,7 +267,7 @@ static doublereal c_b5 = 1.;
 /* Computing MAX */
 	    d__3 = zeta1 * zeta1 + 1. + (d__1 = zeta1 * zeta2, abs(d__1)), 
 		    d__4 = (d__2 = zeta1 * zeta2, abs(d__2)) + zeta2 * zeta2;
-	    norma = max(d__3,d__4);
+	    norma = std::max(d__3,d__4);
 
 /*           See if root is closer to zero or to ONE */
 

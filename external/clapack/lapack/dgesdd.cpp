@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -203,7 +203,7 @@ static doublereal c_b248 = 1.;
 
     /* Function Body */
     *info = 0;
-    minmn = min(*m,*n);
+    minmn = std::min(*m,*n);
     wntqa = lsame_(jobz, "A");
     wntqs = lsame_(jobz, "S");
     wntqas = wntqa || wntqs;
@@ -217,7 +217,7 @@ static doublereal c_b248 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
     } else if (*ldu < 1 || wntqas && *ldu < *m || wntqo && *m < *n && *ldu < *
 	    m) {
@@ -257,10 +257,10 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n;
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 		    minwrk = bdspac + *n;
 		} else if (wntqo) {
 
@@ -271,22 +271,22 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "QLN", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + (*n << 1) * *n;
 		    minwrk = bdspac + (*n << 1) * *n + *n * 3;
 		} else if (wntqs) {
@@ -298,22 +298,22 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n + *n * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "QLN", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + *n * *n;
 		    minwrk = bdspac + *n * *n + *n * 3;
 		} else if (wntqa) {
@@ -325,22 +325,22 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n + *m * ilaenv_(&c__1, "DORGQR", 
 			    " ", m, m, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + (*n << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", n, n, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "QLN", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + *n * *n;
 		    minwrk = bdspac + *n * *n + *n * 3;
 		}
@@ -353,50 +353,50 @@ static doublereal c_b248 = 1.;
 		if (wntqn) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n * 3;
-		    maxwrk = max(i__1,i__2);
-		    minwrk = *n * 3 + max(*m,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    minwrk = *n * 3 + std::max(*m,bdspac);
 		} else if (wntqo) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + *m * *n;
 /* Computing MAX */
 		    i__1 = *m, i__2 = *n * *n + bdspac;
-		    minwrk = *n * 3 + max(i__1,i__2);
+		    minwrk = *n * 3 + std::max(i__1,i__2);
 		} else if (wntqs) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *n * 3;
-		    maxwrk = max(i__1,i__2);
-		    minwrk = *n * 3 + max(*m,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    minwrk = *n * 3 + std::max(*m,bdspac);
 		} else if (wntqa) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *n * 3 + *n * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = bdspac + *n * 3;
-		    maxwrk = max(i__1,i__2);
-		    minwrk = *n * 3 + max(*m,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    minwrk = *n * 3 + std::max(*m,bdspac);
 		}
 	    }
 	} else if (minmn > 0) {
@@ -419,10 +419,10 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m;
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 		    minwrk = bdspac + *m;
 		} else if (wntqo) {
 
@@ -433,22 +433,22 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "PRT", m, m, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + (*m << 1) * *m;
 		    minwrk = bdspac + (*m << 1) * *m + *m * 3;
 		} else if (wntqs) {
@@ -460,22 +460,22 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m + *m * ilaenv_(&c__1, "DORGLQ", 
 			    " ", m, n, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "PRT", m, m, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + *m * *m;
 		    minwrk = bdspac + *m * *m + *m * 3;
 		} else if (wntqa) {
@@ -487,22 +487,22 @@ static doublereal c_b248 = 1.;
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m + *n * ilaenv_(&c__1, "DORGLQ", 
 			    " ", n, n, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + (*m << 1) * ilaenv_(&c__1, 
 			    "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "PRT", m, m, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + *m * *m;
 		    minwrk = bdspac + *m * *m + *m * 3;
 		}
@@ -515,54 +515,54 @@ static doublereal c_b248 = 1.;
 		if (wntqn) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    maxwrk = max(i__1,i__2);
-		    minwrk = *m * 3 + max(*n,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    minwrk = *m * 3 + std::max(*n,bdspac);
 		} else if (wntqo) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "PRT", m, n, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 		    maxwrk = wrkbl + *m * *n;
 /* Computing MAX */
 		    i__1 = *n, i__2 = *m * *m + bdspac;
-		    minwrk = *m * 3 + max(i__1,i__2);
+		    minwrk = *m * 3 + std::max(i__1,i__2);
 		} else if (wntqs) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "PRT", m, n, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    maxwrk = max(i__1,i__2);
-		    minwrk = *m * 3 + max(*n,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    minwrk = *m * 3 + std::max(*n,bdspac);
 		} else if (wntqa) {
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "QLN", m, m, n, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORMBR"
 , "PRT", n, n, m, &c_n1);
-		    wrkbl = max(i__1,i__2);
+		    wrkbl = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = wrkbl, i__2 = bdspac + *m * 3;
-		    maxwrk = max(i__1,i__2);
-		    minwrk = *m * 3 + max(*n,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    minwrk = *m * 3 + std::max(*n,bdspac);
 		}
 	    }
 	}
-	maxwrk = max(maxwrk,minwrk);
+	maxwrk = std::max(maxwrk,minwrk);
 	work[1] = (doublereal) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
@@ -739,7 +739,7 @@ static doublereal c_b248 = 1.;
 			i__2) {
 /* Computing MIN */
 		    i__3 = *m - i__ + 1;
-		    chunk = min(i__3,ldwrkr);
+		    chunk = std::min(i__3,ldwrkr);
 		    dgemm_("N", "N", &chunk, n, n, &c_b248, &a[i__ + a_dim1], 
 			    lda, &work[iu], n, &c_b227, &work[ir], &ldwrkr);
 		    dlacpy_("F", &chunk, n, &work[ir], &ldwrkr, &a[i__ + 
@@ -1003,7 +1003,7 @@ static doublereal c_b248 = 1.;
 			     i__1) {
 /* Computing MIN */
 			i__3 = *m - i__ + 1;
-			chunk = min(i__3,ldwrkr);
+			chunk = std::min(i__3,ldwrkr);
 			dgemm_("N", "N", &chunk, n, n, &c_b248, &a[i__ + 
 				a_dim1], lda, &work[iu], &ldwrku, &c_b227, &
 				work[ir], &ldwrkr);
@@ -1207,7 +1207,7 @@ static doublereal c_b248 = 1.;
 			i__2) {
 /* Computing MIN */
 		    i__3 = *n - i__ + 1;
-		    blk = min(i__3,chunk);
+		    blk = std::min(i__3,chunk);
 		    dgemm_("N", "N", m, &blk, m, &c_b248, &work[ivt], m, &a[
 			    i__ * a_dim1 + 1], lda, &c_b227, &work[il], &
 			    ldwrkl);
@@ -1468,7 +1468,7 @@ static doublereal c_b248 = 1.;
 			     i__1) {
 /* Computing MIN */
 			i__3 = *n - i__ + 1;
-			blk = min(i__3,chunk);
+			blk = std::min(i__3,chunk);
 			dgemm_("N", "N", m, &blk, m, &c_b248, &work[ivt], &
 				ldwkvt, &a[i__ * a_dim1 + 1], lda, &c_b227, &
 				work[il], m);

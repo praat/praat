@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dladiv_(doublereal *a, doublereal *b, doublereal *c__, 

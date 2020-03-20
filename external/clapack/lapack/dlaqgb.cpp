@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku, 
@@ -146,8 +146,8 @@
 		i__2 = 1, i__3 = j - *ku;
 /* Computing MIN */
 		i__5 = *m, i__6 = j + *kl;
-		i__4 = min(i__5,i__6);
-		for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+		i__4 = std::min(i__5,i__6);
+		for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 		    ab[*ku + 1 + i__ - j + j * ab_dim1] = cj * ab[*ku + 1 + 
 			    i__ - j + j * ab_dim1];
 /* L10: */
@@ -166,8 +166,8 @@
 	    i__4 = 1, i__2 = j - *ku;
 /* Computing MIN */
 	    i__5 = *m, i__6 = j + *kl;
-	    i__3 = min(i__5,i__6);
-	    for (i__ = max(i__4,i__2); i__ <= i__3; ++i__) {
+	    i__3 = std::min(i__5,i__6);
+	    for (i__ = std::max(i__4,i__2); i__ <= i__3; ++i__) {
 		ab[*ku + 1 + i__ - j + j * ab_dim1] = r__[i__] * ab[*ku + 1 + 
 			i__ - j + j * ab_dim1];
 /* L30: */
@@ -186,8 +186,8 @@
 	    i__3 = 1, i__4 = j - *ku;
 /* Computing MIN */
 	    i__5 = *m, i__6 = j + *kl;
-	    i__2 = min(i__5,i__6);
-	    for (i__ = max(i__3,i__4); i__ <= i__2; ++i__) {
+	    i__2 = std::min(i__5,i__6);
+	    for (i__ = std::max(i__3,i__4); i__ <= i__2; ++i__) {
 		ab[*ku + 1 + i__ - j + j * ab_dim1] = cj * r__[i__] * ab[*ku 
 			+ 1 + i__ - j + j * ab_dim1];
 /* L50: */

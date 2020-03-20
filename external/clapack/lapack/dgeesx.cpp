@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -257,7 +257,7 @@ static integer c_n1 = -1;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -7;
     } else if (*ldvs < 1 || wantvs && *ldvs < *n) {
 	*info = -12;
@@ -294,21 +294,21 @@ static integer c_n1 = -1;
 	    if (! wantvs) {
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n + hswork;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    } else {
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = (*n << 1) + (*n - 1) * ilaenv_(&c__1, 
 			"DORGHR", " ", n, &c__1, n, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n + hswork;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    }
 	    lwrk = maxwrk;
 	    if (! wantsn) {
 /* Computing MAX */
 		i__1 = lwrk, i__2 = *n + *n * *n / 2;
-		lwrk = max(i__1,i__2);
+		lwrk = std::max(i__1,i__2);
 	    }
 	    if (wantsv || wantsb) {
 		liwrk = *n * *n / 4;
@@ -434,7 +434,7 @@ static integer c_n1 = -1;
 	if (! wantsn) {
 /* Computing MAX */
 	    i__1 = maxwrk, i__2 = *n + (*sdim << 1) * (*n - *sdim);
-	    maxwrk = max(i__1,i__2);
+	    maxwrk = std::max(i__1,i__2);
 	}
 	if (icond == -15) {
 
@@ -537,7 +537,7 @@ L20:
 	i__1 = *n - ieval;
 /* Computing MAX */
 	i__3 = *n - ieval;
-	i__2 = max(i__3,1_integer);
+	i__2 = std::max(i__3,1_integer);
 	dlascl_("G", &c__0, &c__0, &cscale, &anrm, &i__1, &c__1, &wi[ieval + 
 		1], &i__2, &ierr);
     }
@@ -592,7 +592,7 @@ L20:
     if (wantsv || wantsb) {
 /* Computing MAX */
 	i__1 = 1, i__2 = *sdim * (*n - *sdim);
-	iwork[1] = max(i__1,i__2);
+	iwork[1] = std::max(i__1,i__2);
     } else {
 	iwork[1] = 1;
     }

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int drotmg_(doublereal *dd1, doublereal *dd2, doublereal *

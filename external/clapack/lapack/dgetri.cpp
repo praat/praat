@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -109,9 +109,9 @@ static doublereal c_b22 = 1.;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -3;
-    } else if (*lwork < max(1_integer,*n) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,*n) && ! lquery) {
 	*info = -6;
     }
     if (*info != 0) {
@@ -141,13 +141,13 @@ static doublereal c_b22 = 1.;
     if (nb > 1 && nb < *n) {
 /* Computing MAX */
 	i__1 = ldwork * nb;
-	iws = max(i__1,1_integer);
+	iws = std::max(i__1,1_integer);
 	if (*lwork < iws) {
 	    nb = *lwork / ldwork;
 /* Computing MAX */
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DGETRI", " ", n, &c_n1, &c_n1, &
 		    c_n1);
-	    nbmin = max(i__1,i__2);
+	    nbmin = std::max(i__1,i__2);
 	}
     } else {
 	iws = *n;
@@ -189,7 +189,7 @@ static doublereal c_b22 = 1.;
 	for (j = nn; i__1 < 0 ? j >= 1 : j <= 1; j += i__1) {
 /* Computing MIN */
 	    i__2 = nb, i__3 = *n - j + 1;
-	    jb = min(i__2,i__3);
+	    jb = std::min(i__2,i__3);
 
 /*           Copy current block column of L to WORK and replace with */
 /*           zeros. */

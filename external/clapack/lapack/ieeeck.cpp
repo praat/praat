@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 integer ieeeck_(integer *ispec, real *zero, real *one)

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -276,10 +276,10 @@ static integer c__4 = 4;
     lquery = *lwork == -1 || *liwork == -1;
 /* Computing MAX */
     i__1 = 1, i__2 = *n * 20;
-    lwmin = max(i__1,i__2);
+    lwmin = std::max(i__1,i__2);
 /* Computing MAX */
     i__1 = 1, i__2 = *n * 10;
-    liwmin = max(i__1,i__2);
+    liwmin = std::max(i__1,i__2);
 
 
     *info = 0;
@@ -295,9 +295,9 @@ static integer c__4 = 4;
 		*info = -7;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1_integer,*n)) {
+	    if (*il < 1 || *il > std::max(1_integer,*n)) {
 		*info = -8;
-	    } else if (*iu < min(*n,*il) || *iu > *n) {
+	    } else if (*iu < std::min(*n,*il) || *iu > *n) {
 		*info = -9;
 	    }
 	}
@@ -359,7 +359,7 @@ static integer c__4 = 4;
     rmin = sqrt(smlnum);
 /* Computing MIN */
     d__1 = sqrt(bignum), d__2 = 1. / sqrt(sqrt(safmin));
-    rmax = min(d__1,d__2);
+    rmax = std::min(d__1,d__2);
 
 
 /*     Scale matrix to allowable range, if necessary. */

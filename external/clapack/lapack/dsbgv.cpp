@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dsbgv_(char *jobz, char *uplo, integer *n, integer *ka, 

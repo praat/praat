@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int ddisna_(char *job, integer *m, integer *n, doublereal *
@@ -111,7 +111,7 @@
     if (eigen) {
 	k = *m;
     } else if (sing) {
-	k = min(*m,*n);
+	k = std::min(*m,*n);
     }
     if (! eigen && ! sing) {
 	*info = -1;
@@ -166,7 +166,7 @@
 	i__1 = k - 1;
 	for (i__ = 2; i__ <= i__1; ++i__) {
 	    newgap = (d__1 = d__[i__ + 1] - d__[i__], abs(d__1));
-	    sep[i__] = min(oldgap,newgap);
+	    sep[i__] = std::min(oldgap,newgap);
 	    oldgap = newgap;
 /* L20: */
 	}
@@ -175,12 +175,12 @@
     if (sing) {
 	if (left && *m > *n || right && *m < *n) {
 	    if (incr) {
-		sep[1] = min(sep[1],d__[1]);
+		sep[1] = std::min(sep[1],d__[1]);
 	    }
 	    if (decr) {
 /* Computing MIN */
 		d__1 = sep[k], d__2 = d__[k];
-		sep[k] = min(d__1,d__2);
+		sep[k] = std::min(d__1,d__2);
 	    }
 	}
     }
@@ -192,19 +192,19 @@
     safmin = dlamch_("S");
 /* Computing MAX */
     d__2 = abs(d__[1]), d__3 = (d__1 = d__[k], abs(d__1));
-    anorm = max(d__2,d__3);
+    anorm = std::max(d__2,d__3);
     if (anorm == 0.) {
 	thresh = eps;
     } else {
 /* Computing MAX */
 	d__1 = eps * anorm;
-	thresh = max(d__1,safmin);
+	thresh = std::max(d__1,safmin);
     }
     i__1 = k;
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	d__1 = sep[i__];
-	sep[i__] = max(d__1,thresh);
+	sep[i__] = std::max(d__1,thresh);
 /* L30: */
     }
 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -227,7 +227,7 @@ static integer c__12 = 12;
     /* Function Body */
 /* Computing MIN */
     i__1 = *nw, i__2 = *kbot - *ktop + 1;
-    jw = min(i__1,i__2);
+    jw = std::min(i__1,i__2);
     if (jw <= 2) {
 	lwkopt = 1;
     } else {
@@ -256,8 +256,8 @@ static integer c__12 = 12;
 /*        ==== Optimal workspace ==== */
 
 /* Computing MAX */
-	i__1 = jw + max(lwk1,lwk2);
-	lwkopt = max(i__1,lwk3);
+	i__1 = jw + std::max(lwk1,lwk2);
+	lwkopt = std::max(i__1,lwk3);
     }
 
 /*     ==== Quick return in case of workspace query. ==== */
@@ -291,7 +291,7 @@ static integer c__12 = 12;
 
 /* Computing MIN */
     i__1 = *nw, i__2 = *kbot - *ktop + 1;
-    jw = min(i__1,i__2);
+    jw = std::min(i__1,i__2);
     kwtop = *kbot - jw + 1;
     if (kwtop == *ktop) {
 	s = 0.;
@@ -310,7 +310,7 @@ static integer c__12 = 12;
 /* Computing MAX */
 	d__2 = smlnum, d__3 = ulp * (d__1 = h__[kwtop + kwtop * h_dim1], abs(
 		d__1));
-	if (abs(s) <= max(d__2,d__3)) {
+	if (abs(s) <= std::max(d__2,d__3)) {
 	    *ns = 0;
 	    *nd = 1;
 	    if (kwtop > *ktop) {
@@ -381,7 +381,7 @@ L20:
 	    }
 /* Computing MAX */
 	    d__2 = smlnum, d__3 = ulp * foo;
-	    if ((d__1 = s * v[*ns * v_dim1 + 1], abs(d__1)) <= max(d__2,d__3))
+	    if ((d__1 = s * v[*ns * v_dim1 + 1], abs(d__1)) <= std::max(d__2,d__3))
 		     {
 
 /*              ==== Deflatable ==== */
@@ -412,7 +412,7 @@ L20:
 		     s * v[(*ns - 1) * v_dim1 + 1], abs(d__2));
 /* Computing MAX */
 	    d__5 = smlnum, d__6 = ulp * foo;
-	    if (max(d__3,d__4) <= max(d__5,d__6)) {
+	    if (std::max(d__3,d__4) <= std::max(d__5,d__6)) {
 
 /*              ==== Deflatable ==== */
 
@@ -605,7 +605,7 @@ L60:
 		i__2) {
 /* Computing MIN */
 	    i__3 = *nv, i__4 = kwtop - krow;
-	    kln = min(i__3,i__4);
+	    kln = std::min(i__3,i__4);
 	    dgemm_("N", "N", &kln, &jw, &jw, &c_b16, &h__[krow + kwtop * 
 		    h_dim1], ldh, &v[v_offset], ldv, &c_b15, &wv[wv_offset], 
 		    ldwv);
@@ -623,7 +623,7 @@ L60:
 		    kcol += i__1) {
 /* Computing MIN */
 		i__3 = *nh, i__4 = *n - kcol + 1;
-		kln = min(i__3,i__4);
+		kln = std::min(i__3,i__4);
 		dgemm_("C", "N", &jw, &kln, &jw, &c_b16, &v[v_offset], ldv, &
 			h__[kwtop + kcol * h_dim1], ldh, &c_b15, &t[t_offset], 
 			 ldt);
@@ -642,7 +642,7 @@ L60:
 		     i__2) {
 /* Computing MIN */
 		i__3 = *nv, i__4 = *ihiz - krow + 1;
-		kln = min(i__3,i__4);
+		kln = std::min(i__3,i__4);
 		dgemm_("N", "N", &kln, &jw, &jw, &c_b16, &z__[krow + kwtop * 
 			z_dim1], ldz, &v[v_offset], ldv, &c_b15, &wv[
 			wv_offset], ldwv);

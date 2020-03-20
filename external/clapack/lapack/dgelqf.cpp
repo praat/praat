@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -122,9 +122,9 @@ static integer c__2 = 2;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
-    } else if (*lwork < max(1_integer,*m) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,*m) && ! lquery) {
 	*info = -7;
     }
     if (*info != 0) {
@@ -137,7 +137,7 @@ static integer c__2 = 2;
 
 /*     Quick return if possible */
 
-    k = min(*m,*n);
+    k = std::min(*m,*n);
     if (k == 0) {
 	work[1] = 1.;
 	return 0;
@@ -152,7 +152,7 @@ static integer c__2 = 2;
 
 /* Computing MAX */
 	i__1 = 0, i__2 = ilaenv_(&c__3, "DGELQF", " ", m, n, &c_n1, &c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 	if (nx < k) {
 
 /*           Determine if workspace is large enough for blocked code. */
@@ -168,7 +168,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 		i__1 = 2, i__2 = ilaenv_(&c__2, "DGELQF", " ", m, n, &c_n1, &
 			c_n1);
-		nbmin = max(i__1,i__2);
+		nbmin = std::max(i__1,i__2);
 	    }
 	}
     }
@@ -182,7 +182,7 @@ static integer c__2 = 2;
 	for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 /* Computing MIN */
 	    i__3 = k - i__ + 1;
-	    ib = min(i__3,nb);
+	    ib = std::min(i__3,nb);
 
 /*           Compute the LQ factorization of the current block */
 /*           A(i:i+ib-1,i:n) */

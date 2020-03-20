@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -366,16 +366,16 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		d__1 = rcmin, d__2 = r__[j];
-		rcmin = min(d__1,d__2);
+		rcmin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = rcmax, d__2 = r__[j];
-		rcmax = max(d__1,d__2);
+		rcmax = std::max(d__1,d__2);
 /* L10: */
 	    }
 	    if (rcmin <= 0.) {
 		*info = -13;
 	    } else if (*n > 0) {
-		rowcnd = max(rcmin,smlnum) / min(rcmax,bignum);
+		rowcnd = std::max(rcmin,smlnum) / std::min(rcmax,bignum);
 	    } else {
 		rowcnd = 1.;
 	    }
@@ -387,24 +387,24 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		d__1 = rcmin, d__2 = c__[j];
-		rcmin = min(d__1,d__2);
+		rcmin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = rcmax, d__2 = c__[j];
-		rcmax = max(d__1,d__2);
+		rcmax = std::max(d__1,d__2);
 /* L20: */
 	    }
 	    if (rcmin <= 0.) {
 		*info = -14;
 	    } else if (*n > 0) {
-		colcnd = max(rcmin,smlnum) / min(rcmax,bignum);
+		colcnd = std::max(rcmin,smlnum) / std::min(rcmax,bignum);
 	    } else {
 		colcnd = 1.;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1_integer,*n)) {
+	    if (*ldb < std::max(1_integer,*n)) {
 		*info = -16;
-	    } else if (*ldx < max(1_integer,*n)) {
+	    } else if (*ldx < std::max(1_integer,*n)) {
 		*info = -18;
 	    }
 	}
@@ -469,10 +469,10 @@ static integer c__1 = 1;
 	for (j = 1; j <= i__1; ++j) {
 /* Computing MAX */
 	    i__2 = j - *ku;
-	    j1 = max(i__2,1_integer);
+	    j1 = std::max(i__2,1_integer);
 /* Computing MIN */
 	    i__2 = j + *kl;
-	    j2 = min(i__2,*n);
+	    j2 = std::min(i__2,*n);
 	    i__2 = j2 - j1 + 1;
 	    dcopy_(&i__2, &ab[*ku + 1 - j + j1 + j * ab_dim1], &c__1, &afb[*
 		    kl + *ku + 1 - j + j1 + j * afb_dim1], &c__1);
@@ -495,22 +495,22 @@ static integer c__1 = 1;
 		i__2 = *ku + 2 - j;
 /* Computing MIN */
 		i__4 = *n + *ku + 1 - j, i__5 = *kl + *ku + 1;
-		i__3 = min(i__4,i__5);
-		for (i__ = max(i__2,1_integer); i__ <= i__3; ++i__) {
+		i__3 = std::min(i__4,i__5);
+		for (i__ = std::max(i__2,1_integer); i__ <= i__3; ++i__) {
 /* Computing MAX */
 		    d__2 = anorm, d__3 = (d__1 = ab[i__ + j * ab_dim1], abs(
 			    d__1));
-		    anorm = max(d__2,d__3);
+		    anorm = std::max(d__2,d__3);
 /* L80: */
 		}
 /* L90: */
 	    }
 /* Computing MIN */
 	    i__3 = *info - 1, i__2 = *kl + *ku;
-	    i__1 = min(i__3,i__2);
+	    i__1 = std::min(i__3,i__2);
 /* Computing MAX */
 	    i__4 = 1, i__5 = *kl + *ku + 2 - *info;
-	    rpvgrw = dlantb_("M", "U", "N", info, &i__1, &afb[max(i__4, i__5)
+	    rpvgrw = dlantb_("M", "U", "N", info, &i__1, &afb[std::max(i__4, i__5)
 		    + afb_dim1], ldafb, &work[1]);
 	    if (rpvgrw == 0.) {
 		rpvgrw = 1.;

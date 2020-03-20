@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int drscl_(integer *n, doublereal *sa, doublereal *sx, 

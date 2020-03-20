@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -201,13 +201,13 @@ static integer c__11 = 11;
 	e += z__[k + 1];
 /* Computing MAX */
 	d__1 = qmax, d__2 = z__[k];
-	qmax = max(d__1,d__2);
+	qmax = std::max(d__1,d__2);
 /* Computing MIN */
 	d__1 = emin, d__2 = z__[k + 1];
-	emin = min(d__1,d__2);
+	emin = std::min(d__1,d__2);
 /* Computing MAX */
-	d__1 = max(qmax,zmax), d__2 = z__[k + 1];
-	zmax = max(d__1,d__2);
+	d__1 = std::max(qmax,zmax), d__2 = z__[k + 1];
+	zmax = std::max(d__1,d__2);
 /* L10: */
     }
     if (z__[(*n << 1) - 1] < 0.) {
@@ -218,8 +218,8 @@ static integer c__11 = 11;
     d__ += z__[(*n << 1) - 1];
 /* Computing MAX */
     d__1 = qmax, d__2 = z__[(*n << 1) - 1];
-    qmax = max(d__1,d__2);
-    zmax = max(qmax,zmax);
+    qmax = std::max(d__1,d__2);
+    zmax = std::max(qmax,zmax);
 
 /*     Check for diagonality. */
 
@@ -319,7 +319,7 @@ static integer c__11 = 11;
 	    }
 /* Computing MIN */
 	    d__1 = emin, d__2 = z__[i4 - (pp << 1)];
-	    emin = min(d__1,d__2);
+	    emin = std::min(d__1,d__2);
 /* L60: */
 	}
 	z__[(n0 << 2) - pp - 2] = d__;
@@ -331,7 +331,7 @@ static integer c__11 = 11;
 	for (i4 = (i0 << 2) - pp + 2; i4 <= i__1; i4 += 4) {
 /* Computing MAX */
 	    d__1 = qmax, d__2 = z__[i4];
-	    qmax = max(d__1,d__2);
+	    qmax = std::max(d__1,d__2);
 /* L70: */
 	}
 
@@ -395,17 +395,17 @@ static integer c__11 = 11;
 	    if (qmin >= emax * 4.) {
 /* Computing MIN */
 		d__1 = qmin, d__2 = z__[i4 - 3];
-		qmin = min(d__1,d__2);
+		qmin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = emax, d__2 = z__[i4 - 5];
-		emax = max(d__1,d__2);
+		emax = std::max(d__1,d__2);
 	    }
 /* Computing MAX */
 	    d__1 = qmax, d__2 = z__[i4 - 7] + z__[i4 - 5];
-	    qmax = max(d__1,d__2);
+	    qmax = std::max(d__1,d__2);
 /* Computing MIN */
 	    d__1 = emin, d__2 = z__[i4 - 5];
-	    emin = min(d__1,d__2);
+	    emin = std::min(d__1,d__2);
 /* L90: */
 	}
 	i4 = 4;
@@ -421,7 +421,7 @@ L100:
 
 /* Computing MAX */
 	d__1 = 0., d__2 = qmin - sqrt(qmin) * 2. * sqrt(emax);
-	dmin__ = -max(d__1,d__2);
+	dmin__ = -std::max(d__1,d__2);
 
 /*        Now I0:N0 is unreduced. PP = 0 for ping, PP = 1 for pong. */
 
@@ -463,13 +463,13 @@ L100:
 			} else {
 /* Computing MAX */
 			    d__1 = qmax, d__2 = z__[i4 + 1];
-			    qmax = max(d__1,d__2);
+			    qmax = std::max(d__1,d__2);
 /* Computing MIN */
 			    d__1 = emin, d__2 = z__[i4 - 1];
-			    emin = min(d__1,d__2);
+			    emin = std::min(d__1,d__2);
 /* Computing MIN */
 			    d__1 = oldemn, d__2 = z__[i4];
-			    oldemn = min(d__1,d__2);
+			    oldemn = std::min(d__1,d__2);
 			}
 /* L110: */
 		    }

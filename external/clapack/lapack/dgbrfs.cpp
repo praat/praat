@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -194,9 +194,9 @@ static doublereal c_b17 = 1.;
 	*info = -7;
     } else if (*ldafb < (*kl << 1) + *ku + 1) {
 	*info = -9;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -12;
-    } else if (*ldx < max(1_integer,*n)) {
+    } else if (*ldx < std::max(1_integer,*n)) {
 	*info = -14;
     }
     if (*info != 0) {
@@ -227,7 +227,7 @@ static doublereal c_b17 = 1.;
 
 /* Computing MIN */
     i__1 = *kl + *ku + 2, i__2 = *n + 1;
-    nz = min(i__1,i__2);
+    nz = std::min(i__1,i__2);
     eps = dlamch_("Epsilon");
     safmin = dlamch_("Safe minimum");
     safe1 = nz * safmin;
@@ -277,8 +277,8 @@ L20:
 		i__3 = 1, i__4 = k - *ku;
 /* Computing MIN */
 		i__6 = *n, i__7 = k + *kl;
-		i__5 = min(i__6,i__7);
-		for (i__ = max(i__3,i__4); i__ <= i__5; ++i__) {
+		i__5 = std::min(i__6,i__7);
+		for (i__ = std::max(i__3,i__4); i__ <= i__5; ++i__) {
 		    work[i__] += (d__1 = ab[kk + i__ + k * ab_dim1], abs(d__1)
 			    ) * xk;
 /* L40: */
@@ -294,8 +294,8 @@ L20:
 		i__5 = 1, i__3 = k - *ku;
 /* Computing MIN */
 		i__6 = *n, i__7 = k + *kl;
-		i__4 = min(i__6,i__7);
-		for (i__ = max(i__5,i__3); i__ <= i__4; ++i__) {
+		i__4 = std::min(i__6,i__7);
+		for (i__ = std::max(i__5,i__3); i__ <= i__4; ++i__) {
 		    s += (d__1 = ab[kk + i__ + k * ab_dim1], abs(d__1)) * (
 			    d__2 = x[i__ + j * x_dim1], abs(d__2));
 /* L60: */
@@ -311,12 +311,12 @@ L20:
 /* Computing MAX */
 		d__2 = s, d__3 = (d__1 = work[*n + i__], abs(d__1)) / work[
 			i__];
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    } else {
 /* Computing MAX */
 		d__2 = s, d__3 = ((d__1 = work[*n + i__], abs(d__1)) + safe1) 
 			/ (work[i__] + safe1);
-		s = max(d__2,d__3);
+		s = std::max(d__2,d__3);
 	    }
 /* L80: */
 	}
@@ -413,7 +413,7 @@ L100:
 	for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__2 = lstres, d__3 = (d__1 = x[i__ + j * x_dim1], abs(d__1));
-	    lstres = max(d__2,d__3);
+	    lstres = std::max(d__2,d__3);
 /* L130: */
 	}
 	if (lstres != 0.) {

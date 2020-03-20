@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -136,20 +136,20 @@ static integer c_n1 = -1;
     /* Function Body */
     *info = 0;
     wantq = lsame_(vect, "Q");
-    mn = min(*m,*n);
+    mn = std::min(*m,*n);
     lquery = *lwork == -1;
     if (! wantq && ! lsame_(vect, "P")) {
 	*info = -1;
     } else if (*m < 0) {
 	*info = -2;
-    } else if (*n < 0 || wantq && (*n > *m || *n < min(*m,*k)) || ! wantq && (
-	    *m > *n || *m < min(*n,*k))) {
+    } else if (*n < 0 || wantq && (*n > *m || *n < std::min(*m,*k)) || ! wantq && (
+	    *m > *n || *m < std::min(*n,*k))) {
 	*info = -3;
     } else if (*k < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -6;
-    } else if (*lwork < max(1_integer,mn) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,mn) && ! lquery) {
 	*info = -9;
     }
 
@@ -159,7 +159,7 @@ static integer c_n1 = -1;
 	} else {
 	    nb = ilaenv_(&c__1, "DORGLQ", " ", m, n, k, &c_n1);
 	}
-	lwkopt = max(1_integer,mn) * nb;
+	lwkopt = std::max(1_integer,mn) * nb;
 	work[1] = (doublereal) lwkopt;
     }
 

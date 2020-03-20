@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -123,7 +123,7 @@ static integer c__0 = 0;
 	d__[i__] = (d__1 = d__[i__], abs(d__1));
 /* Computing MAX */
 	d__2 = sigmx, d__3 = (d__1 = e[i__], abs(d__1));
-	sigmx = max(d__2,d__3);
+	sigmx = std::max(d__2,d__3);
 /* L10: */
     }
     d__[*n] = (d__1 = d__[*n], abs(d__1));
@@ -139,7 +139,7 @@ static integer c__0 = 0;
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	d__1 = sigmx, d__2 = d__[i__];
-	sigmx = max(d__1,d__2);
+	sigmx = std::max(d__1,d__2);
 /* L20: */
     }
 

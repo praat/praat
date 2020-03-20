@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -233,7 +233,7 @@ static doublereal c_b36 = .5;
 	*info = -4;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -7;
     }
     if (*info != 0) {
@@ -326,7 +326,7 @@ static doublereal c_b36 = .5;
 /*           Compute GROW = 1/G(j) and XBND = 1/M(j). */
 /*           Initially, G(0) = max{x(i), i=1,...,n}. */
 
-	    grow = 1. / max(xbnd,smlnum);
+	    grow = 1. / std::max(xbnd,smlnum);
 	    xbnd = grow;
 	    i__1 = jlast;
 	    i__2 = jinc;
@@ -342,8 +342,8 @@ static doublereal c_b36 = .5;
 
 		tjj = (d__1 = a[j + j * a_dim1], abs(d__1));
 /* Computing MIN */
-		d__1 = xbnd, d__2 = min(1.,tjj) * grow;
-		xbnd = min(d__1,d__2);
+		d__1 = xbnd, d__2 = std::min(1.,tjj) * grow;
+		xbnd = std::min(d__1,d__2);
 		if (tjj + cnorm[j] >= smlnum) {
 
 /*                 G(j) = G(j-1)*( 1 + CNORM(j) / abs(A(j,j)) ) */
@@ -365,8 +365,8 @@ static doublereal c_b36 = .5;
 /*           Compute GROW = 1/G(j), where G(0) = max{x(i), i=1,...,n}. */
 
 /* Computing MIN */
-	    d__1 = 1., d__2 = 1. / max(xbnd,smlnum);
-	    grow = min(d__1,d__2);
+	    d__1 = 1., d__2 = 1. / std::max(xbnd,smlnum);
+	    grow = std::min(d__1,d__2);
 	    i__2 = jlast;
 	    i__1 = jinc;
 	    for (j = jfirst; i__1 < 0 ? j >= i__2 : j <= i__2; j += i__1) {
@@ -412,7 +412,7 @@ L50:
 /*           Compute GROW = 1/G(j) and XBND = 1/M(j). */
 /*           Initially, M(0) = max{x(i), i=1,...,n}. */
 
-	    grow = 1. / max(xbnd,smlnum);
+	    grow = 1. / std::max(xbnd,smlnum);
 	    xbnd = grow;
 	    i__1 = jlast;
 	    i__2 = jinc;
@@ -429,7 +429,7 @@ L50:
 		xj = cnorm[j] + 1.;
 /* Computing MIN */
 		d__1 = grow, d__2 = xbnd / xj;
-		grow = min(d__1,d__2);
+		grow = std::min(d__1,d__2);
 
 /*              M(j) = M(j-1)*( 1 + CNORM(j) ) / abs(A(j,j)) */
 
@@ -439,7 +439,7 @@ L50:
 		}
 /* L60: */
 	    }
-	    grow = min(grow,xbnd);
+	    grow = std::min(grow,xbnd);
 	} else {
 
 /*           A is unit triangular. */
@@ -447,8 +447,8 @@ L50:
 /*           Compute GROW = 1/G(j), where G(0) = max{x(i), i=1,...,n}. */
 
 /* Computing MIN */
-	    d__1 = 1., d__2 = 1. / max(xbnd,smlnum);
-	    grow = min(d__1,d__2);
+	    d__1 = 1., d__2 = 1. / std::max(xbnd,smlnum);
+	    grow = std::min(d__1,d__2);
 	    i__2 = jlast;
 	    i__1 = jinc;
 	    for (j = jfirst; i__1 < 0 ? j >= i__2 : j <= i__2; j += i__1) {
@@ -633,7 +633,7 @@ L100:
 
 		xj = (d__1 = x[j], abs(d__1));
 		uscal = tscal;
-		rec = 1. / max(xmax,1.);
+		rec = 1. / std::max(xmax,1.);
 		if (cnorm[j] > (bignum - xj) * rec) {
 
 /*                 If x(j) could overflow, scale x by 1/(2*XMAX). */
@@ -651,7 +651,7 @@ L100:
 
 /* Computing MIN */
 			d__1 = 1., d__2 = rec * tjj;
-			rec = min(d__1,d__2);
+			rec = std::min(d__1,d__2);
 			uscal /= tjjs;
 		    }
 		    if (rec < 1.) {
@@ -769,7 +769,7 @@ L150:
 		}
 /* Computing MAX */
 		d__2 = xmax, d__3 = (d__1 = x[j], abs(d__1));
-		xmax = max(d__2,d__3);
+		xmax = std::max(d__2,d__3);
 /* L160: */
 	    }
 	}

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlasq5_(integer *i0, integer *n0, doublereal *z__, 
@@ -105,11 +105,11 @@
 		z__[j4 - 2] = d__ + z__[j4 - 1];
 		temp = z__[j4 + 1] / z__[j4 - 2];
 		d__ = d__ * temp - *tau;
-		*dmin__ = min(*dmin__,d__);
+		*dmin__ = std::min(*dmin__,d__);
 		z__[j4] = z__[j4 - 1] * temp;
 /* Computing MIN */
 		d__1 = z__[j4];
-		emin = min(d__1,emin);
+		emin = std::min(d__1,emin);
 /* L10: */
 	    }
 	} else {
@@ -118,11 +118,11 @@
 		z__[j4 - 3] = d__ + z__[j4];
 		temp = z__[j4 + 2] / z__[j4 - 3];
 		d__ = d__ * temp - *tau;
-		*dmin__ = min(*dmin__,d__);
+		*dmin__ = std::min(*dmin__,d__);
 		z__[j4 - 1] = z__[j4] * temp;
 /* Computing MIN */
 		d__1 = z__[j4 - 1];
-		emin = min(d__1,emin);
+		emin = std::min(d__1,emin);
 /* L20: */
 	    }
 	}
@@ -136,7 +136,7 @@
 	z__[j4 - 2] = *dnm2 + z__[j4p2];
 	z__[j4] = z__[j4p2 + 2] * (z__[j4p2] / z__[j4 - 2]);
 	*dnm1 = z__[j4p2 + 2] * (*dnm2 / z__[j4 - 2]) - *tau;
-	*dmin__ = min(*dmin__,*dnm1);
+	*dmin__ = std::min(*dmin__,*dnm1);
 
 	*dmin1 = *dmin__;
 	j4 += 4;
@@ -144,7 +144,7 @@
 	z__[j4 - 2] = *dnm1 + z__[j4p2];
 	z__[j4] = z__[j4p2 + 2] * (z__[j4p2] / z__[j4 - 2]);
 	*dn = z__[j4p2 + 2] * (*dnm1 / z__[j4 - 2]) - *tau;
-	*dmin__ = min(*dmin__,*dn);
+	*dmin__ = std::min(*dmin__,*dn);
 
     } else {
 
@@ -160,10 +160,10 @@
 		    z__[j4] = z__[j4 + 1] * (z__[j4 - 1] / z__[j4 - 2]);
 		    d__ = z__[j4 + 1] * (d__ / z__[j4 - 2]) - *tau;
 		}
-		*dmin__ = min(*dmin__,d__);
+		*dmin__ = std::min(*dmin__,d__);
 /* Computing MIN */
 		d__1 = emin, d__2 = z__[j4];
-		emin = min(d__1,d__2);
+		emin = std::min(d__1,d__2);
 /* L30: */
 	    }
 	} else {
@@ -176,10 +176,10 @@
 		    z__[j4 - 1] = z__[j4 + 2] * (z__[j4] / z__[j4 - 3]);
 		    d__ = z__[j4 + 2] * (d__ / z__[j4 - 3]) - *tau;
 		}
-		*dmin__ = min(*dmin__,d__);
+		*dmin__ = std::min(*dmin__,d__);
 /* Computing MIN */
 		d__1 = emin, d__2 = z__[j4 - 1];
-		emin = min(d__1,d__2);
+		emin = std::min(d__1,d__2);
 /* L40: */
 	    }
 	}
@@ -197,7 +197,7 @@
 	    z__[j4] = z__[j4p2 + 2] * (z__[j4p2] / z__[j4 - 2]);
 	    *dnm1 = z__[j4p2 + 2] * (*dnm2 / z__[j4 - 2]) - *tau;
 	}
-	*dmin__ = min(*dmin__,*dnm1);
+	*dmin__ = std::min(*dmin__,*dnm1);
 
 	*dmin1 = *dmin__;
 	j4 += 4;
@@ -209,7 +209,7 @@
 	    z__[j4] = z__[j4p2 + 2] * (z__[j4p2] / z__[j4 - 2]);
 	    *dn = z__[j4p2 + 2] * (*dnm1 / z__[j4 - 2]) - *tau;
 	}
-	*dmin__ = min(*dmin__,*dn);
+	*dmin__ = std::min(*dmin__,*dn);
 
     }
 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -270,9 +270,9 @@ static integer c__0 = 0;
 	if (*vl >= *vu) {
 	    *info = -5;
 	}
-    } else if (irange == 3 && (*il < 1 || *il > max(1_integer,*n))) {
+    } else if (irange == 3 && (*il < 1 || *il > std::max(1_integer,*n))) {
 	*info = -6;
-    } else if (irange == 3 && (*iu < min(*n,*il) || *iu > *n)) {
+    } else if (irange == 3 && (*iu < std::min(*n,*il) || *iu > *n)) {
 	*info = -7;
     }
 
@@ -349,7 +349,7 @@ static integer c__0 = 0;
 	    work[j - 1] = 0.;
 	} else {
 	    work[j - 1] = tmp1;
-	    pivmin = max(pivmin,tmp1);
+	    pivmin = std::max(pivmin,tmp1);
 	}
 /* L10: */
     }
@@ -375,23 +375,23 @@ static integer c__0 = 0;
 	    tmp2 = sqrt(work[j]);
 /* Computing MAX */
 	    d__1 = gu, d__2 = d__[j] + tmp1 + tmp2;
-	    gu = max(d__1,d__2);
+	    gu = std::max(d__1,d__2);
 /* Computing MIN */
 	    d__1 = gl, d__2 = d__[j] - tmp1 - tmp2;
-	    gl = min(d__1,d__2);
+	    gl = std::min(d__1,d__2);
 	    tmp1 = tmp2;
 /* L20: */
 	}
 
 /* Computing MAX */
 	d__1 = gu, d__2 = d__[*n] + tmp1;
-	gu = max(d__1,d__2);
+	gu = std::max(d__1,d__2);
 /* Computing MIN */
 	d__1 = gl, d__2 = d__[*n] - tmp1;
-	gl = min(d__1,d__2);
+	gl = std::min(d__1,d__2);
 /* Computing MAX */
 	d__1 = abs(gl), d__2 = abs(gu);
-	tnorm = max(d__1,d__2);
+	tnorm = std::max(d__1,d__2);
 	gl = gl - tnorm * 2.1 * ulp * *n - pivmin * 4.2000000000000002;
 	gu = gu + tnorm * 2.1 * ulp * *n + pivmin * 2.1;
 
@@ -448,14 +448,14 @@ static integer c__0 = 0;
 /* Computing MAX */
 	d__3 = abs(d__[1]) + abs(e[1]), d__4 = (d__1 = d__[*n], abs(d__1)) + (
 		d__2 = e[*n - 1], abs(d__2));
-	tnorm = max(d__3,d__4);
+	tnorm = std::max(d__3,d__4);
 
 	i__1 = *n - 1;
 	for (j = 2; j <= i__1; ++j) {
 /* Computing MAX */
 	    d__4 = tnorm, d__5 = (d__1 = d__[j], abs(d__1)) + (d__2 = e[j - 1]
 		    , abs(d__2)) + (d__3 = e[j], abs(d__3));
-	    tnorm = max(d__4,d__5);
+	    tnorm = std::max(d__4,d__5);
 /* L30: */
 	}
 
@@ -523,23 +523,23 @@ static integer c__0 = 0;
 		tmp2 = (d__1 = e[j], abs(d__1));
 /* Computing MAX */
 		d__1 = gu, d__2 = d__[j] + tmp1 + tmp2;
-		gu = max(d__1,d__2);
+		gu = std::max(d__1,d__2);
 /* Computing MIN */
 		d__1 = gl, d__2 = d__[j] - tmp1 - tmp2;
-		gl = min(d__1,d__2);
+		gl = std::min(d__1,d__2);
 		tmp1 = tmp2;
 /* L40: */
 	    }
 
 /* Computing MAX */
 	    d__1 = gu, d__2 = d__[iend] + tmp1;
-	    gu = max(d__1,d__2);
+	    gu = std::max(d__1,d__2);
 /* Computing MIN */
 	    d__1 = gl, d__2 = d__[iend] - tmp1;
-	    gl = min(d__1,d__2);
+	    gl = std::min(d__1,d__2);
 /* Computing MAX */
 	    d__1 = abs(gl), d__2 = abs(gu);
-	    bnorm = max(d__1,d__2);
+	    bnorm = std::max(d__1,d__2);
 	    gl = gl - bnorm * 2.1 * ulp * in - pivmin * 2.1;
 	    gu = gu + bnorm * 2.1 * ulp * in + pivmin * 2.1;
 
@@ -548,7 +548,7 @@ static integer c__0 = 0;
 	    if (*abstol <= 0.) {
 /* Computing MAX */
 		d__1 = abs(gl), d__2 = abs(gu);
-		atoli = ulp * max(d__1,d__2);
+		atoli = ulp * std::max(d__1,d__2);
 	    } else {
 		atoli = *abstol;
 	    }
@@ -559,8 +559,8 @@ static integer c__0 = 0;
 		    nwu += in;
 		    goto L70;
 		}
-		gl = max(gl,wl);
-		gu = min(gu,wu);
+		gl = std::max(gl,wl);
+		gu = std::min(gu,wu);
 		if (gl >= gu) {
 		    goto L70;
 		}

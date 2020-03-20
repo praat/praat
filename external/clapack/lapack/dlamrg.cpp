@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlamrg_(integer *n1, integer *n2, doublereal *a, integer 

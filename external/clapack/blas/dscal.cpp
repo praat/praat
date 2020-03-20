@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dscal_(integer *n, doublereal *da, doublereal *dx, 

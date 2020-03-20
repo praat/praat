@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -17,9 +17,6 @@ static doublereal c_b29 = 0.;
     /* System generated locals */
     integer u_dim1, u_offset, vt_dim1, vt_offset, i__1, i__2;
     doublereal d__1;
-
-    /* Builtin functions 
-    double d_sign(doublereal *, doublereal *), log(doublereal);*/
 
     /* Local variables */
     integer i__, j, k;

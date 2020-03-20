@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -181,7 +181,7 @@ static doublereal c_b17 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
     }
 
@@ -204,7 +204,7 @@ static doublereal c_b17 = 1.;
 /* Computing MAX */
 	    i__1 = lwmin, i__2 = (*n << 1) + ilaenv_(&c__1, "DSYTRD", uplo, n, 
 		     &c_n1, &c_n1, &c_n1);
-	    lopt = max(i__1,i__2);
+	    lopt = std::max(i__1,i__2);
 	    liopt = liwmin;
 	}
 	work[1] = (doublereal) lopt;
@@ -294,7 +294,7 @@ static doublereal c_b17 = 1.;
 /* Computing 2nd power */
 	i__3 = *n;
 	i__1 = lopt, i__2 = *n * 6 + 1 + (i__3 * i__3 << 1);
-	lopt = max(i__1,i__2);
+	lopt = std::max(i__1,i__2);
     }
 
 /*     If matrix was scaled, then rescale eigenvalues appropriately. */

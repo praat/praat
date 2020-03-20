@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -122,7 +122,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 		    for (i__ = k; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ap[i__], abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L10: */
 		    }
 		    k += j;
@@ -135,7 +135,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 		    for (i__ = k + 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ap[i__], abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L30: */
 		    }
 		    k = k + *n - j + 1;
@@ -151,7 +151,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 		    for (i__ = k; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ap[i__], abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L50: */
 		    }
 		    k += j;
@@ -164,7 +164,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 		    for (i__ = k; i__ <= i__2; ++i__) {
 /* Computing MAX */
 			d__2 = value, d__3 = (d__1 = ap[i__], abs(d__1));
-			value = max(d__2,d__3);
+			value = std::max(d__2,d__3);
 /* L70: */
 		    }
 		    k = k + *n - j + 1;
@@ -199,7 +199,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 		    }
 		}
 		k += j;
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L110: */
 	    }
 	} else {
@@ -221,7 +221,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 		    }
 		}
 		k = k + *n - j + 1;
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L140: */
 	    }
 	}
@@ -306,7 +306,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__1 = value, d__2 = work[i__];
-	    value = max(d__1,d__2);
+	    value = std::max(d__1,d__2);
 /* L270: */
 	}
     } else if (lsame_(norm, "F") || lsame_(norm, "E")) {

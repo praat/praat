@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -240,7 +240,7 @@ static doublereal c_b34 = 0.;
 	*info = -5;
     } else if (*ldab < *kd + 1) {
 	*info = -7;
-    } else if (wantz && *ldq < max(1_integer,*n)) {
+    } else if (wantz && *ldq < std::max(1_integer,*n)) {
 	*info = -9;
     } else {
 	if (valeig) {
@@ -248,9 +248,9 @@ static doublereal c_b34 = 0.;
 		*info = -11;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1_integer,*n)) {
+	    if (*il < 1 || *il > std::max(1_integer,*n)) {
 		*info = -12;
-	    } else if (*iu < min(*n,*il) || *iu > *n) {
+	    } else if (*iu < std::min(*n,*il) || *iu > *n) {
 		*info = -13;
 	    }
 	}
@@ -304,7 +304,7 @@ static doublereal c_b34 = 0.;
     rmin = sqrt(smlnum);
 /* Computing MIN */
     d__1 = sqrt(bignum), d__2 = 1. / sqrt(sqrt(safmin));
-    rmax = min(d__1,d__2);
+    rmax = std::min(d__1,d__2);
 
 /*     Scale matrix to allowable range, if necessary. */
 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n, integer 
@@ -188,7 +188,7 @@ integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n
 /* Computing MAX */
 	    r__1 = log((real) nh) / log(2.f);
 	    i__1 = 10, i__2 = nh / i_nint(&r__1);
-	    ns = max(i__1,i__2);
+	    ns = std::max(i__1,i__2);
 	}
 	if (nh >= 590) {
 	    ns = 64;
@@ -201,7 +201,7 @@ integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n
 	}
 /* Computing MAX */
 	i__1 = 2, i__2 = ns - ns % 2;
-	ns = max(i__1,i__2);
+	ns = std::max(i__1,i__2);
     }
 
     if (*ispec == 12) {

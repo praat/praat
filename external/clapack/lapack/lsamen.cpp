@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "string.h"
 
 logical lsamen_(integer *n, const char *ca, const char *cb)

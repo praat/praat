@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -191,7 +191,7 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
     } else if (*ldvl < 1 || wantvl && *ldvl < *n) {
 	*info = -9;
@@ -221,44 +221,44 @@ static integer c_n1 = -1;
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = (*n << 1) + (*n - 1) * ilaenv_(&c__1, 
 			"DORGHR", " ", n, &c__1, n, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 		dhseqr_("S", "V", n, &c__1, n, &a[a_offset], lda, &wr[1], &wi[
 			1], &vl[vl_offset], ldvl, &work[1], &c_n1, info);
 		hswork = (integer) work[1];
 /* Computing MAX */
-		i__1 = maxwrk, i__2 = *n + 1, i__1 = max(i__1,i__2), i__2 = *
+		i__1 = maxwrk, i__2 = *n + 1, i__1 = std::max(i__1,i__2), i__2 = *
 			n + hswork;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n << 2;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    } else if (wantvr) {
 		minwrk = *n << 2;
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = (*n << 1) + (*n - 1) * ilaenv_(&c__1, 
 			"DORGHR", " ", n, &c__1, n, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 		dhseqr_("S", "V", n, &c__1, n, &a[a_offset], lda, &wr[1], &wi[
 			1], &vr[vr_offset], ldvr, &work[1], &c_n1, info);
 		hswork = (integer) work[1];
 /* Computing MAX */
-		i__1 = maxwrk, i__2 = *n + 1, i__1 = max(i__1,i__2), i__2 = *
+		i__1 = maxwrk, i__2 = *n + 1, i__1 = std::max(i__1,i__2), i__2 = *
 			n + hswork;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n << 2;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    } else {
 		minwrk = *n * 3;
 		dhseqr_("E", "N", n, &c__1, n, &a[a_offset], lda, &wr[1], &wi[
 			1], &vr[vr_offset], ldvr, &work[1], &c_n1, info);
 		hswork = (integer) work[1];
 /* Computing MAX */
-		i__1 = maxwrk, i__2 = *n + 1, i__1 = max(i__1,i__2), i__2 = *
+		i__1 = maxwrk, i__2 = *n + 1, i__1 = std::max(i__1,i__2), i__2 = *
 			n + hswork;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    }
-	    maxwrk = max(maxwrk,minwrk);
+	    maxwrk = std::max(maxwrk,minwrk);
 	}
 	work[1] = (doublereal) maxwrk;
 
@@ -493,13 +493,13 @@ L50:
 	i__1 = *n - *info;
 /* Computing MAX */
 	i__3 = *n - *info;
-	i__2 = max(i__3,1_integer);
+	i__2 = std::max(i__3,1_integer);
 	dlascl_("G", &c__0, &c__0, &cscale, &anrm, &i__1, &c__1, &wr[*info + 
 		1], &i__2, &ierr);
 	i__1 = *n - *info;
 /* Computing MAX */
 	i__3 = *n - *info;
-	i__2 = max(i__3,1_integer);
+	i__2 = std::max(i__3,1_integer);
 	dlascl_("G", &c__0, &c__0, &cscale, &anrm, &i__1, &c__1, &wi[*info + 
 		1], &i__2, &ierr);
 	if (*info > 0) {

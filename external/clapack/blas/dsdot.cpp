@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 doublereal dsdot_(integer *n, real *sx, integer *incx, real *sy, integer *

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -157,19 +157,19 @@ static doublereal c_b26 = 1.;
     *info = 0;
 /* Computing MIN */
     i__1 = 64, i__2 = ilaenv_(&c__1, "DGEHRD", " ", n, ilo, ihi, &c_n1);
-    nb = min(i__1,i__2);
+    nb = std::min(i__1,i__2);
     lwkopt = *n * nb;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
-    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
+    } else if (*ilo < 1 || *ilo > std::max(1_integer,*n)) {
 	*info = -2;
-    } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
+    } else if (*ihi < std::min(*ilo,*n) || *ihi > *n) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*lwork < max(1_integer,*n) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,*n) && ! lquery) {
 	*info = -8;
     }
     if (*info != 0) {
@@ -188,7 +188,7 @@ static doublereal c_b26 = 1.;
 /* L10: */
     }
     i__1 = *n - 1;
-    for (i__ = max(1_integer,*ihi); i__ <= i__1; ++i__) {
+    for (i__ = std::max(1_integer,*ihi); i__ <= i__1; ++i__) {
 	tau[i__] = 0.;
 /* L20: */
     }
@@ -205,7 +205,7 @@ static doublereal c_b26 = 1.;
 
 /* Computing MIN */
     i__1 = 64, i__2 = ilaenv_(&c__1, "DGEHRD", " ", n, ilo, ihi, &c_n1);
-    nb = min(i__1,i__2);
+    nb = std::min(i__1,i__2);
     nbmin = 2;
     iws = 1;
     if (nb > 1 && nb < nh) {
@@ -215,7 +215,7 @@ static doublereal c_b26 = 1.;
 
 /* Computing MAX */
 	i__1 = nb, i__2 = ilaenv_(&c__3, "DGEHRD", " ", n, ilo, ihi, &c_n1);
-	nx = max(i__1,i__2);
+	nx = std::max(i__1,i__2);
 	if (nx < nh) {
 
 /*           Determine if workspace is large enough for blocked code */
@@ -230,7 +230,7 @@ static doublereal c_b26 = 1.;
 /* Computing MAX */
 		i__1 = 2, i__2 = ilaenv_(&c__2, "DGEHRD", " ", n, ilo, ihi, &
 			c_n1);
-		nbmin = max(i__1,i__2);
+		nbmin = std::max(i__1,i__2);
 		if (*lwork >= *n * nbmin) {
 		    nb = *lwork / *n;
 		} else {
@@ -256,7 +256,7 @@ static doublereal c_b26 = 1.;
 	for (i__ = *ilo; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 /* Computing MIN */
 	    i__3 = nb, i__4 = *ihi - i__;
-	    ib = min(i__3,i__4);
+	    ib = std::min(i__3,i__4);
 
 /*           Reduce columns i:i+ib-1 to Hessenberg form, returning the */
 /*           matrices V and T of the block reflector H = I - V*T*V' */

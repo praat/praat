@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -247,18 +247,18 @@ static integer c_n1 = -1;
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldaf < max(1_integer,*n)) {
+    } else if (*ldaf < std::max(1_integer,*n)) {
 	*info = -8;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -11;
-    } else if (*ldx < max(1_integer,*n)) {
+    } else if (*ldx < std::max(1_integer,*n)) {
 	*info = -13;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
 	i__1 = 1, i__2 = *n * 3;
-	if (*lwork < max(i__1,i__2) && ! lquery) {
+	if (*lwork < std::max(i__1,i__2) && ! lquery) {
 	    *info = -18;
 	}
     }
@@ -266,12 +266,12 @@ static integer c_n1 = -1;
     if (*info == 0) {
 /* Computing MAX */
 	i__1 = 1, i__2 = *n * 3;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
 	if (nofact) {
 	    nb = ilaenv_(&c__1, "DSYTRF", uplo, n, &c_n1, &c_n1, &c_n1);
 /* Computing MAX */
 	    i__1 = lwkopt, i__2 = *n * nb;
-	    lwkopt = max(i__1,i__2);
+	    lwkopt = std::max(i__1,i__2);
 	}
 	work[1] = (doublereal) lwkopt;
     }

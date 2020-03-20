@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -173,7 +173,7 @@ static integer c__1 = 1;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -219,7 +219,7 @@ L10:
 	    colmax = 0.;
 	}
 
-	if (max(absakk,colmax) == 0. || disnan_(&absakk)) {
+	if (std::max(absakk,colmax) == 0. || disnan_(&absakk)) {
 
 /*           Column K is zero or contains a NaN: set INFO and continue */
 
@@ -248,7 +248,7 @@ L10:
 /* Computing MAX */
 		    d__2 = rowmax, d__3 = (d__1 = a[jmax + imax * a_dim1], 
 			    abs(d__1));
-		    rowmax = max(d__2,d__3);
+		    rowmax = std::max(d__2,d__3);
 		}
 
 		if (absakk >= alpha * colmax * (colmax / rowmax)) {
@@ -409,7 +409,7 @@ L40:
 	    colmax = 0.;
 	}
 
-	if (max(absakk,colmax) == 0. || disnan_(&absakk)) {
+	if (std::max(absakk,colmax) == 0. || disnan_(&absakk)) {
 
 /*           Column K is zero or contains a NaN: set INFO and continue */
 
@@ -438,7 +438,7 @@ L40:
 /* Computing MAX */
 		    d__2 = rowmax, d__3 = (d__1 = a[jmax + imax * a_dim1], 
 			    abs(d__1));
-		    rowmax = max(d__2,d__3);
+		    rowmax = std::max(d__2,d__3);
 		}
 
 		if (absakk >= alpha * colmax * (colmax / rowmax)) {

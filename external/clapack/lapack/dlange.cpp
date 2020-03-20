@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -101,7 +101,7 @@ doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, inte
     --work;
 
     /* Function Body */
-    if (min(*m,*n) == 0) {
+    if (std::min(*m,*n) == 0) {
 	value = 0.;
     } else if (lsame_(norm, "M")) {
 
@@ -114,7 +114,7 @@ doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, inte
 	    for (i__ = 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 		d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(d__1));
-		value = max(d__2,d__3);
+		value = std::max(d__2,d__3);
 /* L10: */
 	    }
 /* L20: */
@@ -133,7 +133,7 @@ doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, inte
 		sum += (d__1 = a[i__ + j * a_dim1], abs(d__1));
 /* L30: */
 	    }
-	    value = max(value,sum);
+	    value = std::max(value,sum);
 /* L40: */
 	}
     } else if (lsame_(norm, "I")) {
@@ -159,7 +159,7 @@ doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, inte
 	for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 	    d__1 = value, d__2 = work[i__];
-	    value = max(d__1,d__2);
+	    value = std::max(d__1,d__2);
 /* L80: */
 	}
     } else if (lsame_(norm, "F") || lsame_(norm, "E")) {

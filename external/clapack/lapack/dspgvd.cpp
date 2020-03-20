@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -249,10 +249,10 @@ static integer c__1 = 1;
 	    lwork, &iwork[1], liwork, info);
 /* Computing MAX */
     d__1 = (doublereal) lwmin;
-    lwmin = (integer) max(d__1,work[1]);
+    lwmin = (integer) std::max(d__1,work[1]);
 /* Computing MAX */
     d__1 = (doublereal) liwmin, d__2 = (doublereal) iwork[1];
-    liwmin = (integer) max(d__1,d__2);
+    liwmin = (integer) std::max(d__1,d__2);
 
     if (wantz) {
 

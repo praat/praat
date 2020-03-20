@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgelq2_(integer *m, integer *n, doublereal *a, integer *
@@ -98,7 +98,7 @@
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -107,7 +107,7 @@
 	return 0;
     }
 
-    k = min(*m,*n);
+    k = std::min(*m,*n);
 
     i__1 = k;
     for (i__ = 1; i__ <= i__1; ++i__) {
@@ -117,7 +117,7 @@
 	i__2 = *n - i__ + 1;
 /* Computing MIN */
 	i__3 = i__ + 1;
-	dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + min(i__3, *n)* a_dim1]
+	dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + std::min(i__3, *n)* a_dim1]
 , lda, &tau[i__]);
 	if (i__ < *m) {
 

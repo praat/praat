@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dsymm_(char *side, char *uplo, integer *m, integer *n, 
@@ -189,11 +189,11 @@
 	info = 3;
     } else if (*n < 0) {
 	info = 4;
-    } else if (*lda < max(1_integer,nrowa)) {
+    } else if (*lda < std::max(1_integer,nrowa)) {
 	info = 7;
-    } else if (*ldb < max(1_integer,*m)) {
+    } else if (*ldb < std::max(1_integer,*m)) {
 	info = 9;
-    } else if (*ldc < max(1_integer,*m)) {
+    } else if (*ldc < std::max(1_integer,*m)) {
 	info = 12;
     }
     if (info != 0) {

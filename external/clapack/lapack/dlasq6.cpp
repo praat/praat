@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlasq6_(integer *i0, integer *n0, doublereal *z__, 
@@ -110,10 +110,10 @@
 		z__[j4] = z__[j4 + 1] * (z__[j4 - 1] / z__[j4 - 2]);
 		d__ = z__[j4 + 1] * (d__ / z__[j4 - 2]);
 	    }
-	    *dmin__ = min(*dmin__,d__);
+	    *dmin__ = std::min(*dmin__,d__);
 /* Computing MIN */
 	    d__1 = emin, d__2 = z__[j4];
-	    emin = min(d__1,d__2);
+	    emin = std::min(d__1,d__2);
 /* L10: */
 	}
     } else {
@@ -134,10 +134,10 @@
 		z__[j4 - 1] = z__[j4 + 2] * (z__[j4] / z__[j4 - 3]);
 		d__ = z__[j4 + 2] * (d__ / z__[j4 - 3]);
 	    }
-	    *dmin__ = min(*dmin__,d__);
+	    *dmin__ = std::min(*dmin__,d__);
 /* Computing MIN */
 	    d__1 = emin, d__2 = z__[j4 - 1];
-	    emin = min(d__1,d__2);
+	    emin = std::min(d__1,d__2);
 /* L20: */
 	}
     }
@@ -163,7 +163,7 @@
 	z__[j4] = z__[j4p2 + 2] * (z__[j4p2] / z__[j4 - 2]);
 	*dnm1 = z__[j4p2 + 2] * (*dnm2 / z__[j4 - 2]);
     }
-    *dmin__ = min(*dmin__,*dnm1);
+    *dmin__ = std::min(*dmin__,*dnm1);
 
     *dmin1 = *dmin__;
     j4 += 4;
@@ -183,7 +183,7 @@
 	z__[j4] = z__[j4p2 + 2] * (z__[j4p2] / z__[j4 - 2]);
 	*dn = z__[j4p2 + 2] * (*dnm1 / z__[j4 - 2]);
     }
-    *dmin__ = min(*dmin__,*dn);
+    *dmin__ = std::min(*dmin__,*dn);
 
     z__[j4 + 2] = *dn;
     z__[(*n0 << 2) - *pp] = emin;

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -184,7 +184,7 @@ static doublereal c_b54 = 1.;
     --work;
 
     /* Function Body */
-    mn = min(*m,*n);
+    mn = std::min(*m,*n);
     ismin = mn + 1;
     ismax = (mn << 1) + 1;
 
@@ -198,12 +198,12 @@ static doublereal c_b54 = 1.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1_integer,*m);
-	if (*ldb < max(i__1,*n)) {
+	i__1 = std::max(1_integer,*m);
+	if (*ldb < std::max(i__1,*n)) {
 	    *info = -7;
 	}
     }
@@ -220,16 +220,16 @@ static doublereal c_b54 = 1.;
 	    nb3 = ilaenv_(&c__1, "DORMQR", " ", m, n, nrhs, &c_n1);
 	    nb4 = ilaenv_(&c__1, "DORMRQ", " ", m, n, nrhs, &c_n1);
 /* Computing MAX */
-	    i__1 = max(nb1,nb2), i__1 = max(i__1,nb3);
-	    nb = max(i__1,nb4);
+	    i__1 = std::max(nb1,nb2), i__1 = std::max(i__1,nb3);
+	    nb = std::max(i__1,nb4);
 /* Computing MAX */
-	    i__1 = mn << 1, i__2 = *n + 1, i__1 = max(i__1,i__2), i__2 = mn + 
+	    i__1 = mn << 1, i__2 = *n + 1, i__1 = std::max(i__1,i__2), i__2 = mn + 
 		    *nrhs;
-	    lwkmin = mn + max(i__1,i__2);
+	    lwkmin = mn + std::max(i__1,i__2);
 /* Computing MAX */
-	    i__1 = lwkmin, i__2 = mn + (*n << 1) + nb * (*n + 1), i__1 = max(
+	    i__1 = lwkmin, i__2 = mn + (*n << 1) + nb * (*n + 1), i__1 = std::max(
 		    i__1,i__2), i__2 = (mn << 1) + nb * *nrhs;
-	    lwkopt = max(i__1,i__2);
+	    lwkopt = std::max(i__1,i__2);
 	}
 	work[1] = (doublereal) lwkopt;
 
@@ -281,7 +281,7 @@ static doublereal c_b54 = 1.;
 
 /*        Matrix all zero. Return zero solution. */
 
-	i__1 = max(*m,*n);
+	i__1 = std::max(*m,*n);
 	dlaset_("F", &i__1, nrhs, &c_b31, &c_b31, &b[b_offset], ldb);
 	*rank = 0;
 	goto L70;
@@ -324,7 +324,7 @@ static doublereal c_b54 = 1.;
     smin = smax;
     if ((d__1 = a[a_dim1 + 1], abs(d__1)) == 0.) {
 	*rank = 0;
-	i__1 = max(*m,*n);
+	i__1 = std::max(*m,*n);
 	dlaset_("F", &i__1, nrhs, &c_b31, &c_b31, &b[b_offset], ldb);
 	goto L70;
     } else {
@@ -379,7 +379,7 @@ L10:
 	    b[b_offset], ldb, &work[(mn << 1) + 1], &i__1, info);
 /* Computing MAX */
     d__1 = wsize, d__2 = (mn << 1) + work[(mn << 1) + 1];
-    wsize = max(d__1,d__2);
+    wsize = std::max(d__1,d__2);
 
 /*     workspace: 2*MN+NB*NRHS. */
 

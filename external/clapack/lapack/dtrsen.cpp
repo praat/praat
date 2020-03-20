@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -287,7 +287,7 @@ static integer c_n1 = -1;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*ldt < max(1_integer,*n)) {
+    } else if (*ldt < std::max(1_integer,*n)) {
 	*info = -6;
     } else if (*ldq < 1 || wantq && *ldq < *n) {
 	*info = -8;
@@ -330,13 +330,13 @@ static integer c_n1 = -1;
 	if (wantsp) {
 /* Computing MAX */
 	    i__1 = 1, i__2 = nn << 1;
-	    lwmin = max(i__1,i__2);
-	    liwmin = max(1_integer,nn);
+	    lwmin = std::max(i__1,i__2);
+	    liwmin = std::max(1_integer,nn);
 	} else if (lsame_(job, "N")) {
-	    lwmin = max(1_integer,*n);
+	    lwmin = std::max(1_integer,*n);
 	    liwmin = 1;
 	} else if (lsame_(job, "E")) {
-	    lwmin = max(1_integer,nn);
+	    lwmin = std::max(1_integer,nn);
 	    liwmin = 1;
 	}
 

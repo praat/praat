@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -310,7 +310,7 @@ static integer c__2 = 2;
 
 /* Computing MIN */
 	i__4 = incol + nbmps * 3 - 3, i__5 = *kbot - 2;
-	i__3 = min(i__4,i__5);
+	i__3 = std::min(i__4,i__5);
 	for (krcol = incol; krcol <= i__3; ++krcol) {
 
 /*           ==== Bulges number MTOP to MBOT are active double implicit */
@@ -322,10 +322,10 @@ static integer c__2 = 2;
 
 /* Computing MAX */
 	    i__4 = 1, i__5 = (*ktop - 1 - krcol + 2) / 3 + 1;
-	    mtop = max(i__4,i__5);
+	    mtop = std::max(i__4,i__5);
 /* Computing MIN */
 	    i__4 = nbmps, i__5 = (*kbot - krcol) / 3;
-	    mbot = min(i__4,i__5);
+	    mbot = std::min(i__4,i__5);
 	    m22 = mbot + 1;
 	    bmp22 = mbot < nbmps && krcol + (m22 - 1) * 3 == *kbot - 2;
 
@@ -466,17 +466,17 @@ static integer c__2 = 2;
 /*           ==== Multiply H by reflections from the left ==== */
 
 	    if (accum) {
-		jbot = min(ndcol,*kbot);
+		jbot = std::min(ndcol,*kbot);
 	    } else if (*wantt) {
 		jbot = *n;
 	    } else {
 		jbot = *kbot;
 	    }
 	    i__4 = jbot;
-	    for (j = max(*ktop,krcol); j <= i__4; ++j) {
+	    for (j = std::max(*ktop,krcol); j <= i__4; ++j) {
 /* Computing MIN */
 		i__5 = mbot, i__6 = (j - krcol + 2) / 3;
-		mend = min(i__5,i__6);
+		mend = std::min(i__5,i__6);
 		i__5 = mend;
 		for (m = mtop; m <= i__5; ++m) {
 		    k = krcol + (m - 1) * 3;
@@ -495,7 +495,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 		i__4 = k + 1;
 		i__5 = jbot;
-		for (j = max(i__4,*ktop); j <= i__5; ++j) {
+		for (j = std::max(i__4,*ktop); j <= i__5; ++j) {
 		    refsum = v[m22 * v_dim1 + 1] * (h__[k + 1 + j * h_dim1] + 
 			    v[m22 * v_dim1 + 2] * h__[k + 2 + j * h_dim1]);
 		    h__[k + 1 + j * h_dim1] -= refsum;
@@ -509,7 +509,7 @@ static integer c__2 = 2;
 /*           .    vigilant deflation check is complete. ==== */
 
 	    if (accum) {
-		jtop = max(*ktop,incol);
+		jtop = std::max(*ktop,incol);
 	    } else if (*wantt) {
 		jtop = 1;
 	    } else {
@@ -521,7 +521,7 @@ static integer c__2 = 2;
 		    k = krcol + (m - 1) * 3;
 /* Computing MIN */
 		    i__6 = *kbot, i__7 = k + 3;
-		    i__4 = min(i__6,i__7);
+		    i__4 = std::min(i__6,i__7);
 		    for (j = jtop; j <= i__4; ++j) {
 			refsum = v[m * v_dim1 + 1] * (h__[j + (k + 1) * 
 				h_dim1] + v[m * v_dim1 + 2] * h__[j + (k + 2) 
@@ -545,7 +545,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 			i__4 = 1, i__6 = *ktop - incol;
 			i__7 = kdu;
-			for (j = max(i__4,i__6); j <= i__7; ++j) {
+			for (j = std::max(i__4,i__6); j <= i__7; ++j) {
 			    refsum = v[m * v_dim1 + 1] * (u[j + (kms + 1) * 
 				    u_dim1] + v[m * v_dim1 + 2] * u[j + (kms 
 				    + 2) * u_dim1] + v[m * v_dim1 + 3] * u[j 
@@ -587,7 +587,7 @@ static integer c__2 = 2;
 	    if (bmp22 && v[m22 * v_dim1 + 1] != 0.) {
 /* Computing MIN */
 		i__7 = *kbot, i__4 = k + 3;
-		i__5 = min(i__7,i__4);
+		i__5 = std::min(i__7,i__4);
 		for (j = jtop; j <= i__5; ++j) {
 		    refsum = v[m22 * v_dim1 + 1] * (h__[j + (k + 1) * h_dim1] 
 			    + v[m22 * v_dim1 + 2] * h__[j + (k + 2) * h_dim1])
@@ -602,7 +602,7 @@ static integer c__2 = 2;
 /* Computing MAX */
 		    i__5 = 1, i__7 = *ktop - incol;
 		    i__4 = kdu;
-		    for (j = max(i__5,i__7); j <= i__4; ++j) {
+		    for (j = std::max(i__5,i__7); j <= i__4; ++j) {
 			refsum = v[m22 * v_dim1 + 1] * (u[j + (kms + 1) * 
 				u_dim1] + v[m22 * v_dim1 + 2] * u[j + (kms + 
 				2) * u_dim1]);
@@ -642,7 +642,7 @@ static integer c__2 = 2;
 	    for (m = mstart; m <= i__4; ++m) {
 /* Computing MIN */
 		i__5 = *kbot - 1, i__7 = krcol + (m - 1) * 3;
-		k = min(i__5,i__7);
+		k = std::min(i__5,i__7);
 
 /*              ==== The following convergence test requires that */
 /*              .    the tradition small-compared-to-nearby-diagonals */
@@ -684,34 +684,34 @@ static integer c__2 = 2;
 		    }
 /* Computing MAX */
 		    d__2 = smlnum, d__3 = ulp * tst1;
-		    if ((d__1 = h__[k + 1 + k * h_dim1], abs(d__1)) <= max(
+		    if ((d__1 = h__[k + 1 + k * h_dim1], abs(d__1)) <= std::max(
 			    d__2,d__3)) {
 /* Computing MAX */
 			d__3 = (d__1 = h__[k + 1 + k * h_dim1], abs(d__1)), 
 				d__4 = (d__2 = h__[k + (k + 1) * h_dim1], abs(
 				d__2));
-			h12 = max(d__3,d__4);
+			h12 = std::max(d__3,d__4);
 /* Computing MIN */
 			d__3 = (d__1 = h__[k + 1 + k * h_dim1], abs(d__1)), 
 				d__4 = (d__2 = h__[k + (k + 1) * h_dim1], abs(
 				d__2));
-			h21 = min(d__3,d__4);
+			h21 = std::min(d__3,d__4);
 /* Computing MAX */
 			d__3 = (d__1 = h__[k + 1 + (k + 1) * h_dim1], abs(
 				d__1)), d__4 = (d__2 = h__[k + k * h_dim1] - 
 				h__[k + 1 + (k + 1) * h_dim1], abs(d__2));
-			h11 = max(d__3,d__4);
+			h11 = std::max(d__3,d__4);
 /* Computing MIN */
 			d__3 = (d__1 = h__[k + 1 + (k + 1) * h_dim1], abs(
 				d__1)), d__4 = (d__2 = h__[k + k * h_dim1] - 
 				h__[k + 1 + (k + 1) * h_dim1], abs(d__2));
-			h22 = min(d__3,d__4);
+			h22 = std::min(d__3,d__4);
 			scl = h11 + h12;
 			tst2 = h22 * (h11 / scl);
 
 /* Computing MAX */
 			d__1 = smlnum, d__2 = ulp * tst2;
-			if (tst2 == 0. || h21 * (h12 / scl) <= max(d__1,d__2))
+			if (tst2 == 0. || h21 * (h12 / scl) <= std::max(d__1,d__2))
 				 {
 			    h__[k + 1 + k * h_dim1] = 0.;
 			}
@@ -724,7 +724,7 @@ static integer c__2 = 2;
 
 /* Computing MIN */
 	    i__4 = nbmps, i__5 = (*kbot - krcol - 1) / 3;
-	    mend = min(i__4,i__5);
+	    mend = std::min(i__4,i__5);
 	    i__4 = mend;
 	    for (m = mtop; m <= i__4; ++m) {
 		k = krcol + (m - 1) * 3;
@@ -766,20 +766,20 @@ static integer c__2 = 2;
 
 /* Computing MAX */
 		i__3 = 1, i__4 = *ktop - incol;
-		k1 = max(i__3,i__4);
+		k1 = std::max(i__3,i__4);
 /* Computing MAX */
 		i__3 = 0, i__4 = ndcol - *kbot;
-		nu = kdu - max(i__3,i__4) - k1 + 1;
+		nu = kdu - std::max(i__3,i__4) - k1 + 1;
 
 /*              ==== Horizontal Multiply ==== */
 
 		i__3 = jbot;
 		i__4 = *nh;
-		for (jcol = min(ndcol,*kbot) + 1; i__4 < 0 ? jcol >= i__3 : 
+		for (jcol = std::min(ndcol,*kbot) + 1; i__4 < 0 ? jcol >= i__3 : 
 			jcol <= i__3; jcol += i__4) {
 /* Computing MIN */
 		    i__5 = *nh, i__7 = jbot - jcol + 1;
-		    jlen = min(i__5,i__7);
+		    jlen = std::min(i__5,i__7);
 		    dgemm_("C", "N", &nu, &jlen, &nu, &c_b8, &u[k1 + k1 * 
 			    u_dim1], ldu, &h__[incol + k1 + jcol * h_dim1], 
 			    ldh, &c_b7, &wh[wh_offset], ldwh);
@@ -790,13 +790,13 @@ static integer c__2 = 2;
 
 /*              ==== Vertical multiply ==== */
 
-		i__4 = max(*ktop,incol) - 1;
+		i__4 = std::max(*ktop,incol) - 1;
 		i__3 = *nv;
 		for (jrow = jtop; i__3 < 0 ? jrow >= i__4 : jrow <= i__4; 
 			jrow += i__3) {
 /* Computing MIN */
-		    i__5 = *nv, i__7 = max(*ktop,incol) - jrow;
-		    jlen = min(i__5,i__7);
+		    i__5 = *nv, i__7 = std::max(*ktop,incol) - jrow;
+		    jlen = std::min(i__5,i__7);
 		    dgemm_("N", "N", &jlen, &nu, &nu, &c_b8, &h__[jrow + (
 			    incol + k1) * h_dim1], ldh, &u[k1 + k1 * u_dim1], 
 			    ldu, &c_b7, &wv[wv_offset], ldwv);
@@ -814,7 +814,7 @@ static integer c__2 = 2;
 			     jrow += i__4) {
 /* Computing MIN */
 			i__5 = *nv, i__7 = *ihiz - jrow + 1;
-			jlen = min(i__5,i__7);
+			jlen = std::min(i__5,i__7);
 			dgemm_("N", "N", &jlen, &nu, &nu, &c_b8, &z__[jrow + (
 				incol + k1) * z_dim1], ldz, &u[k1 + k1 * 
 				u_dim1], ldu, &c_b7, &wv[wv_offset], ldwv);
@@ -846,11 +846,11 @@ static integer c__2 = 2;
 
 		i__4 = jbot;
 		i__3 = *nh;
-		for (jcol = min(ndcol,*kbot) + 1; i__3 < 0 ? jcol >= i__4 : 
+		for (jcol = std::min(ndcol,*kbot) + 1; i__3 < 0 ? jcol >= i__4 : 
 			jcol <= i__4; jcol += i__3) {
 /* Computing MIN */
 		    i__5 = *nh, i__7 = jbot - jcol + 1;
-		    jlen = min(i__5,i__7);
+		    jlen = std::min(i__5,i__7);
 
 /*                 ==== Copy bottom of H to top+KZS of scratch ==== */
 /*                  (The first KZS rows get multiplied by zero.) ==== */
@@ -900,13 +900,13 @@ static integer c__2 = 2;
 
 /*              ==== Vertical multiply ==== */
 
-		i__3 = max(incol,*ktop) - 1;
+		i__3 = std::max(incol,*ktop) - 1;
 		i__4 = *nv;
 		for (jrow = jtop; i__4 < 0 ? jrow >= i__3 : jrow <= i__3; 
 			jrow += i__4) {
 /* Computing MIN */
-		    i__5 = *nv, i__7 = max(incol,*ktop) - jrow;
-		    jlen = min(i__5,i__7);
+		    i__5 = *nv, i__7 = std::max(incol,*ktop) - jrow;
+		    jlen = std::min(i__5,i__7);
 
 /*                 ==== Copy right of H to scratch (the first KZS */
 /*                 .    columns get multiplied by zero) ==== */
@@ -965,7 +965,7 @@ static integer c__2 = 2;
 			     jrow += i__3) {
 /* Computing MIN */
 			i__5 = *nv, i__7 = *ihiz - jrow + 1;
-			jlen = min(i__5,i__7);
+			jlen = std::min(i__5,i__7);
 
 /*                    ==== Copy right of Z to left of scratch (first */
 /*                    .     KZS columns get multiplied by zero) ==== */

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -166,7 +166,7 @@ static integer c_n1 = -1;
 	*info = -1;
     } else if (*m < 0 || *m > *n) {
 	*info = -4;
-    } else if (*ldz < max(1_integer,*n)) {
+    } else if (*ldz < std::max(1_integer,*n)) {
 	*info = -9;
     } else {
 	i__1 = *m;
@@ -245,13 +245,13 @@ L30:
 /* Computing MAX */
 	d__3 = onenrm, d__4 = (d__1 = d__[bn], abs(d__1)) + (d__2 = e[bn - 1],
 		 abs(d__2));
-	onenrm = max(d__3,d__4);
+	onenrm = std::max(d__3,d__4);
 	i__2 = bn - 1;
 	for (i__ = b1 + 1; i__ <= i__2; ++i__) {
 /* Computing MAX */
 	    d__4 = onenrm, d__5 = (d__1 = d__[i__], abs(d__1)) + (d__2 = e[
 		    i__ - 1], abs(d__2)) + (d__3 = e[i__], abs(d__3));
-	    onenrm = max(d__4,d__5);
+	    onenrm = std::max(d__4,d__5);
 /* L50: */
 	}
 	ortol = onenrm * .001;
@@ -323,7 +323,7 @@ L70:
 
 /* Computing MAX */
 	    d__2 = eps, d__3 = (d__1 = work[indrv4 + blksiz], abs(d__1));
-	    scl = blksiz * onenrm * max(d__2,d__3) / dasum_(&blksiz, &work[
+	    scl = blksiz * onenrm * std::max(d__2,d__3) / dasum_(&blksiz, &work[
 		    indrv1 + 1], &c__1);
 	    dscal_(&blksiz, &scl, &work[indrv1 + 1], &c__1);
 

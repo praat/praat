@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -125,15 +125,15 @@ static integer c__1 = 1;
 
     if (*k < 0) {
 	*info = -1;
-    } else if (*kstart < 1 || *kstart > max(1_integer,*k)) {
+    } else if (*kstart < 1 || *kstart > std::max(1_integer,*k)) {
 	*info = -2;
-    } else if (max(1_integer,*kstop) < *kstart || *kstop > max(1_integer,*k)) {
+    } else if (std::max(1_integer,*kstop) < *kstart || *kstop > std::max(1_integer,*k)) {
 	*info = -3;
     } else if (*n < *k) {
 	*info = -4;
-    } else if (*ldq < max(1_integer,*k)) {
+    } else if (*ldq < std::max(1_integer,*k)) {
 	*info = -7;
-    } else if (*lds < max(1_integer,*k)) {
+    } else if (*lds < std::max(1_integer,*k)) {
 	*info = -12;
     }
     if (*info != 0) {

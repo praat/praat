@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -101,7 +101,7 @@ static doublereal c_b14 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -2;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -4;
     }
     if (*info != 0) {
@@ -141,7 +141,7 @@ static doublereal c_b14 = 1.;
 
 /* Computing MIN */
 		i__3 = nb, i__4 = *n - j + 1;
-		jb = min(i__3,i__4);
+		jb = std::min(i__3,i__4);
 		i__3 = j - 1;
 		dsyrk_("Upper", "Transpose", &jb, &i__3, &c_b13, &a[j * 
 			a_dim1 + 1], lda, &c_b14, &a[j + j * a_dim1], lda);
@@ -180,7 +180,7 @@ static doublereal c_b14 = 1.;
 
 /* Computing MIN */
 		i__3 = nb, i__4 = *n - j + 1;
-		jb = min(i__3,i__4);
+		jb = std::min(i__3,i__4);
 		i__3 = j - 1;
 		dsyrk_("Lower", "No transpose", &jb, &i__3, &c_b13, &a[j + 
 			a_dim1], lda, &c_b14, &a[j + j * a_dim1], lda);

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -150,7 +150,7 @@ static integer c__1 = 1;
 
 /* Computing MAX */
     i__1 = 1, i__2 = *ldab - 1;
-    kld = max(i__1,i__2);
+    kld = std::max(i__1,i__2);
 
     if (upper) {
 
@@ -173,7 +173,7 @@ static integer c__1 = 1;
 
 /* Computing MIN */
 	    i__2 = *kd, i__3 = *n - j;
-	    kn = min(i__2,i__3);
+	    kn = std::min(i__2,i__3);
 	    if (kn > 0) {
 		d__1 = 1. / ajj;
 		dscal_(&kn, &d__1, &ab[*kd + (j + 1) * ab_dim1], &kld);
@@ -203,7 +203,7 @@ static integer c__1 = 1;
 
 /* Computing MIN */
 	    i__2 = *kd, i__3 = *n - j;
-	    kn = min(i__2,i__3);
+	    kn = std::min(i__2,i__3);
 	    if (kn > 0) {
 		d__1 = 1. / ajj;
 		dscal_(&kn, &d__1, &ab[j * ab_dim1 + 2], &c__1);

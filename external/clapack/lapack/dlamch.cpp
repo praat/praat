@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -559,38 +559,38 @@ L10:
 /*            ( Non twos-complement machines, with gradual underflow; */
 /*              e.g., IEEE standard followers ) */
 	    } else {
-		lemin = min(ngpmin,gpmin);
+		lemin = std::min(ngpmin,gpmin);
 /*            ( A guess; no known machine ) */
 		iwarn = TRUE_;
 	    }
 
 	} else if (ngpmin == gpmin && ngnmin == gnmin) {
 	    if ((i__1 = ngpmin - ngnmin, abs(i__1)) == 1) {
-		lemin = max(ngpmin,ngnmin);
+		lemin = std::max(ngpmin,ngnmin);
 /*            ( Twos-complement machines, no gradual underflow; */
 /*              e.g., CYBER 205 ) */
 	    } else {
-		lemin = min(ngpmin,ngnmin);
+		lemin = std::min(ngpmin,ngnmin);
 /*            ( A guess; no known machine ) */
 		iwarn = TRUE_;
 	    }
 
 	} else if ((i__1 = ngpmin - ngnmin, abs(i__1)) == 1 && gpmin == gnmin)
 		 {
-	    if (gpmin - min(ngpmin,ngnmin) == 3) {
-		lemin = max(ngpmin,ngnmin) - 1 + lt;
+	    if (gpmin - std::min(ngpmin,ngnmin) == 3) {
+		lemin = std::max(ngpmin,ngnmin) - 1 + lt;
 /*            ( Twos-complement machines with gradual underflow; */
 /*              no known machine ) */
 	    } else {
-		lemin = min(ngpmin,ngnmin);
+		lemin = std::min(ngpmin,ngnmin);
 /*            ( A guess; no known machine ) */
 		iwarn = TRUE_;
 	    }
 
 	} else {
 /* Computing MIN */
-	    i__1 = min(ngpmin,ngnmin), i__1 = min(i__1,gpmin);
-	    lemin = min(i__1,gnmin);
+	    i__1 = std::min(ngpmin,ngnmin), i__1 = std::min(i__1,gpmin);
+	    lemin = std::min(i__1,gnmin);
 /*         ( A guess; no known machine ) */
 	    iwarn = TRUE_;
 	}

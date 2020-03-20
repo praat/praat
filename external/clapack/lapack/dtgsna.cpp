@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -368,9 +368,9 @@ static integer c__3 = 3;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -8;
     } else if (wants && *ldvl < *n) {
 	*info = -10;
@@ -585,7 +585,7 @@ static integer c__3 = 3;
 		root1 /= 2.;
 /* Computing MIN */
 		d__1 = sqrt(root1), d__2 = sqrt(root2);
-		cond = min(d__1,d__2);
+		cond = std::min(d__1,d__2);
 	    }
 
 /*           Copy the matrix (A, B) to the array WORK and swap the */
@@ -633,8 +633,8 @@ static integer c__3 = 3;
 
 		    if (pair) {
 /* Computing MIN */
-			d__1 = max(1.,alprqt) * dif[ks];
-			dif[ks] = min(d__1,cond);
+			d__1 = std::max(1.,alprqt) * dif[ks];
+			dif[ks] = std::min(d__1,cond);
 		    }
 		}
 	    }

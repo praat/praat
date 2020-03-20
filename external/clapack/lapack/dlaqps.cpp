@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -144,7 +144,7 @@ static doublereal c_b16 = 0.;
     /* Function Body */
 /* Computing MIN */
     i__1 = *m, i__2 = *n + *offset;
-    lastrk = min(i__1,i__2);
+    lastrk = std::min(i__1,i__2);
     lsticc = 0;
     k = 0;
     tol3z = sqrt(dlamch_("Epsilon"));
@@ -254,7 +254,7 @@ L10:
 		    temp = (d__1 = a[rk + j * a_dim1], abs(d__1)) / vn1[j];
 /* Computing MAX */
 		    d__1 = 0., d__2 = (temp + 1.) * (1. - temp);
-		    temp = max(d__1,d__2);
+		    temp = std::max(d__1,d__2);
 /* Computing 2nd power */
 		    d__1 = vn1[j] / vn2[j];
 		    temp2 = temp * (d__1 * d__1);
@@ -284,7 +284,7 @@ L10:
 
 /* Computing MIN */
     i__1 = *n, i__2 = *m - *offset;
-    if (*kb < min(i__1,i__2)) {
+    if (*kb < std::min(i__1,i__2)) {
 	i__1 = *m - rk;
 	i__2 = *n - *kb;
 	dgemm_("No transpose", "Transpose", &i__1, &i__2, kb, &c_b8, &a[rk + 

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -246,9 +246,9 @@ static integer c__1 = 1;
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -14;
-    } else if (*ldx < max(1_integer,*n)) {
+    } else if (*ldx < std::max(1_integer,*n)) {
 	*info = -16;
     }
     if (*info != 0) {

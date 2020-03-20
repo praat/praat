@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -329,24 +329,24 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		d__1 = smin, d__2 = s[j];
-		smin = min(d__1,d__2);
+		smin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = smax, d__2 = s[j];
-		smax = max(d__1,d__2);
+		smax = std::max(d__1,d__2);
 /* L10: */
 	    }
 	    if (smin <= 0.) {
 		*info = -11;
 	    } else if (*n > 0) {
-		scond = max(smin,smlnum) / min(smax,bignum);
+		scond = std::max(smin,smlnum) / std::min(smax,bignum);
 	    } else {
 		scond = 1.;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1_integer,*n)) {
+	    if (*ldb < std::max(1_integer,*n)) {
 		*info = -13;
-	    } else if (*ldx < max(1_integer,*n)) {
+	    } else if (*ldx < std::max(1_integer,*n)) {
 		*info = -15;
 	    }
 	}
@@ -397,7 +397,7 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MAX */
 		i__2 = j - *kd;
-		j1 = max(i__2,1_integer);
+		j1 = std::max(i__2,1_integer);
 		i__2 = j - j1 + 1;
 		dcopy_(&i__2, &ab[*kd + 1 - j + j1 + j * ab_dim1], &c__1, &
 			afb[*kd + 1 - j + j1 + j * afb_dim1], &c__1);
@@ -408,7 +408,7 @@ static integer c__1 = 1;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		i__2 = j + *kd;
-		j2 = min(i__2,*n);
+		j2 = std::min(i__2,*n);
 		i__2 = j2 - j + 1;
 		dcopy_(&i__2, &ab[j * ab_dim1 + 1], &c__1, &afb[j * afb_dim1 
 			+ 1], &c__1);

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlasr_(const char *side, const char *pivot, const char *direct, integer *m, 
@@ -187,7 +187,7 @@
 	info = 4;
     } else if (*n < 0) {
 	info = 5;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	info = 9;
     }
     if (info != 0) {

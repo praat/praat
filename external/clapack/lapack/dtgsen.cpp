@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -405,9 +405,9 @@ static doublereal c_b28 = 1.;
 	*info = -1;
     } else if (*n < 0) {
 	*info = -5;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -9;
     } else if (*ldq < 1 || *wantq && *ldq < *n) {
 	*info = -14;
@@ -464,25 +464,25 @@ static doublereal c_b28 = 1.;
 
     if (*ijob == 1 || *ijob == 2 || *ijob == 4) {
 /* Computing MAX */
-	i__1 = 1, i__2 = (*n << 2) + 16, i__1 = max(i__1,i__2), i__2 = (*m << 
+	i__1 = 1, i__2 = (*n << 2) + 16, i__1 = std::max(i__1,i__2), i__2 = (*m << 
 		1) * (*n - *m);
-	lwmin = max(i__1,i__2);
+	lwmin = std::max(i__1,i__2);
 /* Computing MAX */
 	i__1 = 1, i__2 = *n + 6;
-	liwmin = max(i__1,i__2);
+	liwmin = std::max(i__1,i__2);
     } else if (*ijob == 3 || *ijob == 5) {
 /* Computing MAX */
-	i__1 = 1, i__2 = (*n << 2) + 16, i__1 = max(i__1,i__2), i__2 = (*m << 
+	i__1 = 1, i__2 = (*n << 2) + 16, i__1 = std::max(i__1,i__2), i__2 = (*m << 
 		2) * (*n - *m);
-	lwmin = max(i__1,i__2);
+	lwmin = std::max(i__1,i__2);
 /* Computing MAX */
-	i__1 = 1, i__2 = (*m << 1) * (*n - *m), i__1 = max(i__1,i__2), i__2 = 
+	i__1 = 1, i__2 = (*m << 1) * (*n - *m), i__1 = std::max(i__1,i__2), i__2 = 
 		*n + 6;
-	liwmin = max(i__1,i__2);
+	liwmin = std::max(i__1,i__2);
     } else {
 /* Computing MAX */
 	i__1 = 1, i__2 = (*n << 2) + 16;
-	lwmin = max(i__1,i__2);
+	lwmin = std::max(i__1,i__2);
 	liwmin = 1;
     }
 

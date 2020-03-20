@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dtrsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
@@ -188,9 +188,9 @@
 	info = 5;
     } else if (*n < 0) {
 	info = 6;
-    } else if (*lda < max(1_integer,nrowa)) {
+    } else if (*lda < std::max(1_integer,nrowa)) {
 	info = 9;
-    } else if (*ldb < max(1_integer,*m)) {
+    } else if (*ldb < std::max(1_integer,*m)) {
 	info = 11;
     }
     if (info != 0) {

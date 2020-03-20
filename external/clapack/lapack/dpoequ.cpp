@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dpoequ_(integer *n, doublereal *a, integer *lda, 
@@ -91,7 +91,7 @@
     *info = 0;
     if (*n < 0) {
 	*info = -1;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -3;
     }
     if (*info != 0) {
@@ -118,10 +118,10 @@
 	s[i__] = a[i__ + i__ * a_dim1];
 /* Computing MIN */
 	d__1 = smin, d__2 = s[i__];
-	smin = min(d__1,d__2);
+	smin = std::min(d__1,d__2);
 /* Computing MAX */
 	d__1 = *amax, d__2 = s[i__];
-	*amax = max(d__1,d__2);
+	*amax = std::max(d__1,d__2);
 /* L10: */
     }
 

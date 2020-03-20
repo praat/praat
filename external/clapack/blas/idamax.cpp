@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 integer idamax_(integer *n, doublereal *dx, integer *incx)

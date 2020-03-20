@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -160,8 +160,8 @@ static doublereal c_b108 = 1.;
 
     /* Function Body */
     *info = 0;
-    minmn = min(*m,*n);
-    maxmn = max(*m,*n);
+    minmn = std::min(*m,*n);
+    maxmn = std::max(*m,*n);
     lquery = *lwork == -1;
     if (*m < 0) {
 	*info = -1;
@@ -169,9 +169,9 @@ static doublereal c_b108 = 1.;
 	*info = -2;
     } else if (*nrhs < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,maxmn)) {
+    } else if (*ldb < std::max(1_integer,maxmn)) {
 	*info = -7;
     }
 
@@ -197,11 +197,11 @@ static doublereal c_b108 = 1.;
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n + *n * ilaenv_(&c__1, "DGEQRF", 
 			" ", m, n, &c_n1, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n + *nrhs * ilaenv_(&c__1, "DORMQR", 
 			"LT", m, nrhs, n, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 	    }
 	    if (*m >= *n) {
 
@@ -211,28 +211,28 @@ static doublereal c_b108 = 1.;
 
 /* Computing MAX */
 		i__1 = 1, i__2 = *n * 5;
-		bdspac = max(i__1,i__2);
+		bdspac = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n * 3 + (mm + *n) * ilaenv_(&c__1, 
 			"DGEBRD", " ", &mm, n, &c_n1, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n * 3 + *nrhs * ilaenv_(&c__1, "DORMBR"
 , "QLT", &mm, nrhs, n, &c_n1);
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n * 3 + (*n - 1) * ilaenv_(&c__1, 
 			"DORGBR", "P", n, n, n, &c_n1);
-		maxwrk = max(i__1,i__2);
-		maxwrk = max(maxwrk,bdspac);
+		maxwrk = std::max(i__1,i__2);
+		maxwrk = std::max(maxwrk,bdspac);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *n * *nrhs;
-		maxwrk = max(i__1,i__2);
+		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
-		i__1 = *n * 3 + mm, i__2 = *n * 3 + *nrhs, i__1 = max(i__1,
+		i__1 = *n * 3 + mm, i__2 = *n * 3 + *nrhs, i__1 = std::max(i__1,
 			i__2);
-		minwrk = max(i__1,bdspac);
-		maxwrk = max(minwrk,maxwrk);
+		minwrk = std::max(i__1,bdspac);
+		maxwrk = std::max(minwrk,maxwrk);
 	    }
 	    if (*n > *m) {
 
@@ -240,11 +240,11 @@ static doublereal c_b108 = 1.;
 
 /* Computing MAX */
 		i__1 = 1, i__2 = *m * 5;
-		bdspac = max(i__1,i__2);
+		bdspac = std::max(i__1,i__2);
 /* Computing MAX */
-		i__1 = *m * 3 + *nrhs, i__2 = *m * 3 + *n, i__1 = max(i__1,
+		i__1 = *m * 3 + *nrhs, i__2 = *m * 3 + *n, i__1 = std::max(i__1,
 			i__2);
-		minwrk = max(i__1,bdspac);
+		minwrk = std::max(i__1,bdspac);
 		if (*n >= mnthr) {
 
 /*                 Path 2a - underdetermined, with many more columns */
@@ -255,31 +255,31 @@ static doublereal c_b108 = 1.;
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m * *m + (*m << 2) + (*m << 1) * 
 			    ilaenv_(&c__1, "DGEBRD", " ", m, m, &c_n1, &c_n1);
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m * *m + (*m << 2) + *nrhs * 
 			    ilaenv_(&c__1, "DORMBR", "QLT", m, nrhs, m, &c_n1);
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m * *m + (*m << 2) + (*m - 1) * 
 			    ilaenv_(&c__1, "DORGBR", "P", m, m, m, &c_n1);
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m * *m + *m + bdspac;
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 		    if (*nrhs > 1) {
 /* Computing MAX */
 			i__1 = maxwrk, i__2 = *m * *m + *m + *m * *nrhs;
-			maxwrk = max(i__1,i__2);
+			maxwrk = std::max(i__1,i__2);
 		    } else {
 /* Computing MAX */
 			i__1 = maxwrk, i__2 = *m * *m + (*m << 1);
-			maxwrk = max(i__1,i__2);
+			maxwrk = std::max(i__1,i__2);
 		    }
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m + *nrhs * ilaenv_(&c__1, "DORMLQ"
 , "LT", n, nrhs, m, &c_n1);
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 		} else {
 
 /*                 Path 2 - underdetermined */
@@ -289,18 +289,18 @@ static doublereal c_b108 = 1.;
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m * 3 + *nrhs * ilaenv_(&c__1, 
 			    "DORMBR", "QLT", m, nrhs, m, &c_n1);
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *m * 3 + *m * ilaenv_(&c__1, "DORG"
 			    "BR", "P", m, n, m, &c_n1);
-		    maxwrk = max(i__1,i__2);
-		    maxwrk = max(maxwrk,bdspac);
+		    maxwrk = std::max(i__1,i__2);
+		    maxwrk = std::max(maxwrk,bdspac);
 /* Computing MAX */
 		    i__1 = maxwrk, i__2 = *n * *nrhs;
-		    maxwrk = max(i__1,i__2);
+		    maxwrk = std::max(i__1,i__2);
 		}
 	    }
-	    maxwrk = max(minwrk,maxwrk);
+	    maxwrk = std::max(minwrk,maxwrk);
 	}
 	work[1] = (doublereal) maxwrk;
 
@@ -354,7 +354,7 @@ static doublereal c_b108 = 1.;
 
 /*        Matrix all zero. Return zero solution. */
 
-	i__1 = max(*m,*n);
+	i__1 = std::max(*m,*n);
 	dlaset_("F", &i__1, nrhs, &c_b74, &c_b74, &b[b_offset], ldb);
 	dlaset_("F", &minmn, &c__1, &c_b74, &c_b74, &s[1], &c__1);
 	*rank = 0;
@@ -463,11 +463,11 @@ static doublereal c_b108 = 1.;
 
 /* Computing MAX */
 	d__1 = *rcond * s[1];
-	thr = max(d__1,sfmin);
+	thr = std::max(d__1,sfmin);
 	if (*rcond < 0.) {
 /* Computing MAX */
 	    d__1 = eps * s[1];
-	    thr = max(d__1,sfmin);
+	    thr = std::max(d__1,sfmin);
 	}
 	*rank = 0;
 	i__1 = *n;
@@ -497,7 +497,7 @@ static doublereal c_b108 = 1.;
 	    for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 /* Computing MIN */
 		i__3 = *nrhs - i__ + 1;
-		bl = min(i__3,chunk);
+		bl = std::min(i__3,chunk);
 		dgemm_("T", "N", n, &bl, n, &c_b108, &a[a_offset], lda, &b[
 			i__ * b_dim1 + 1], ldb, &c_b74, &work[1], n);
 		dlacpy_("G", n, &bl, &work[1], n, &b[i__ * b_dim1 + 1], ldb);
@@ -511,9 +511,9 @@ static doublereal c_b108 = 1.;
 
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__2 = *m, i__1 = (*m << 1) - 4, i__2 = max(i__2,i__1), i__2 = max(
+	i__2 = *m, i__1 = (*m << 1) - 4, i__2 = std::max(i__2,i__1), i__2 = std::max(
 		i__2,*nrhs), i__1 = *n - *m * 3;
-	if (*n >= mnthr && *lwork >= (*m << 2) + *m * *m + max(i__2,i__1)) {
+	if (*n >= mnthr && *lwork >= (*m << 2) + *m * *m + std::max(i__2,i__1)) {
 
 /*        Path 2a - underdetermined, with many more columns than rows */
 /*        and sufficient workspace for an efficient algorithm */
@@ -521,11 +521,11 @@ static doublereal c_b108 = 1.;
 	    ldwork = *m;
 /* Computing MAX */
 /* Computing MAX */
-	    i__3 = *m, i__4 = (*m << 1) - 4, i__3 = max(i__3,i__4), i__3 = 
-		    max(i__3,*nrhs), i__4 = *n - *m * 3;
-	    i__2 = (*m << 2) + *m * *lda + max(i__3,i__4), i__1 = *m * *lda + 
+	    i__3 = *m, i__4 = (*m << 1) - 4, i__3 = std::max(i__3,i__4), i__3 = 
+		    std::max(i__3,*nrhs), i__4 = *n - *m * 3;
+	    i__2 = (*m << 2) + *m * *lda + std::max(i__3,i__4), i__1 = *m * *lda + 
 		    *m + *m * *nrhs;
-	    if (*lwork >= max(i__2,i__1)) {
+	    if (*lwork >= std::max(i__2,i__1)) {
 		ldwork = *lda;
 	    }
 	    itau = 1;
@@ -589,11 +589,11 @@ static doublereal c_b108 = 1.;
 
 /* Computing MAX */
 	    d__1 = *rcond * s[1];
-	    thr = max(d__1,sfmin);
+	    thr = std::max(d__1,sfmin);
 	    if (*rcond < 0.) {
 /* Computing MAX */
 		d__1 = eps * s[1];
-		thr = max(d__1,sfmin);
+		thr = std::max(d__1,sfmin);
 	    }
 	    *rank = 0;
 	    i__2 = *m;
@@ -624,7 +624,7 @@ static doublereal c_b108 = 1.;
 			i__1) {
 /* Computing MIN */
 		    i__3 = *nrhs - i__ + 1;
-		    bl = min(i__3,chunk);
+		    bl = std::min(i__3,chunk);
 		    dgemm_("T", "N", m, &bl, m, &c_b108, &work[il], &ldwork, &
 			    b[i__ * b_dim1 + 1], ldb, &c_b74, &work[iwork], m);
 		    dlacpy_("G", m, &bl, &work[iwork], m, &b[i__ * b_dim1 + 1]
@@ -697,11 +697,11 @@ static doublereal c_b108 = 1.;
 
 /* Computing MAX */
 	    d__1 = *rcond * s[1];
-	    thr = max(d__1,sfmin);
+	    thr = std::max(d__1,sfmin);
 	    if (*rcond < 0.) {
 /* Computing MAX */
 		d__1 = eps * s[1];
-		thr = max(d__1,sfmin);
+		thr = std::max(d__1,sfmin);
 	    }
 	    *rank = 0;
 	    i__1 = *m;
@@ -731,7 +731,7 @@ static doublereal c_b108 = 1.;
 			i__2) {
 /* Computing MIN */
 		    i__3 = *nrhs - i__ + 1;
-		    bl = min(i__3,chunk);
+		    bl = std::min(i__3,chunk);
 		    dgemm_("T", "N", n, &bl, m, &c_b108, &a[a_offset], lda, &
 			    b[i__ * b_dim1 + 1], ldb, &c_b74, &work[1], n);
 		    dlacpy_("F", n, &bl, &work[1], n, &b[i__ * b_dim1 + 1], 

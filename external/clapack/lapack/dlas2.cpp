@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlas2_(doublereal *f, doublereal *g, doublereal *h__, 
@@ -80,16 +80,16 @@
     fa = abs(*f);
     ga = abs(*g);
     ha = abs(*h__);
-    fhmn = min(fa,ha);
-    fhmx = max(fa,ha);
+    fhmn = std::min(fa,ha);
+    fhmx = std::max(fa,ha);
     if (fhmn == 0.) {
 	*ssmin = 0.;
 	if (fhmx == 0.) {
 	    *ssmax = ga;
 	} else {
 /* Computing 2nd power */
-	    d__1 = min(fhmx,ga) / max(fhmx,ga);
-	    *ssmax = max(fhmx,ga) * sqrt(d__1 * d__1 + 1.);
+	    d__1 = std::min(fhmx,ga) / std::max(fhmx,ga);
+	    *ssmax = std::max(fhmx,ga) * sqrt(d__1 * d__1 + 1.);
 	}
     } else {
 	if (ga < fhmx) {

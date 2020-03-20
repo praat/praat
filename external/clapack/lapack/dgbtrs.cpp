@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -125,7 +125,7 @@ static doublereal c_b23 = 1.;
 	*info = -5;
     } else if (*ldab < (*kl << 1) + *ku + 1) {
 	*info = -7;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -10;
     }
     if (*info != 0) {
@@ -159,7 +159,7 @@ static doublereal c_b23 = 1.;
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		i__2 = *kl, i__3 = *n - j;
-		lm = min(i__2,i__3);
+		lm = std::min(i__2,i__3);
 		l = ipiv[j];
 		if (l != j) {
 		    dswap_(nrhs, &b[l + b_dim1], ldb, &b[j + b_dim1], ldb);
@@ -202,7 +202,7 @@ static doublereal c_b23 = 1.;
 	    for (j = *n - 1; j >= 1; --j) {
 /* Computing MIN */
 		i__1 = *kl, i__2 = *n - j;
-		lm = min(i__1,i__2);
+		lm = std::min(i__1,i__2);
 		dgemv_("Transpose", &lm, nrhs, &c_b7, &b[j + 1 + b_dim1], ldb, 
 			 &ab[kd + 1 + j * ab_dim1], &c__1, &c_b23, &b[j + 
 			b_dim1], ldb);

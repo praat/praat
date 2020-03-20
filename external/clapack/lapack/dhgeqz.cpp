@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -331,7 +331,7 @@ static integer c__3 = 3;
 /*     Check Argument Values */
 
     *info = 0;
-    work[1] = (doublereal) max(1_integer,*n);
+    work[1] = (doublereal) std::max(1_integer,*n);
     lquery = *lwork == -1;
     if (ischur == 0) {
 	*info = -1;
@@ -353,7 +353,7 @@ static integer c__3 = 3;
 	*info = -15;
     } else if (*ldz < 1 || ilz && *ldz < *n) {
 	*info = -17;
-    } else if (*lwork < max(1_integer,*n) && ! lquery) {
+    } else if (*lwork < std::max(1_integer,*n) && ! lquery) {
 	*info = -19;
     }
     if (*info != 0) {
@@ -390,12 +390,12 @@ static integer c__3 = 3;
     bnorm = dlanhs_("F", &in, &t[*ilo + *ilo * t_dim1], ldt, &work[1]);
 /* Computing MAX */
     d__1 = safmin, d__2 = ulp * anorm;
-    atol = max(d__1,d__2);
+    atol = std::max(d__1,d__2);
 /* Computing MAX */
     d__1 = safmin, d__2 = ulp * bnorm;
-    btol = max(d__1,d__2);
-    ascale = 1. / max(safmin,anorm);
-    bscale = 1. / max(safmin,bnorm);
+    btol = std::max(d__1,d__2);
+    ascale = 1. / std::max(safmin,anorm);
+    bscale = 1. / std::max(safmin,bnorm);
 
 /*     Set Eigenvalues IHI+1:N */
 
@@ -516,7 +516,7 @@ static integer c__3 = 3;
 		if (! ilazro) {
 		    temp = (d__1 = h__[j + (j - 1) * h_dim1], abs(d__1));
 		    temp2 = (d__1 = h__[j + j * h_dim1], abs(d__1));
-		    tempr = max(temp,temp2);
+		    tempr = std::max(temp,temp2);
 		    if (tempr < 1. && tempr != 0.) {
 			temp /= tempr;
 			temp2 /= tempr;
@@ -743,9 +743,9 @@ L110:
 
 /* Computing MAX */
 /* Computing MAX */
-	    d__3 = 1., d__4 = abs(wr), d__3 = max(d__3,d__4), d__4 = abs(wi);
-	    d__1 = s1, d__2 = safmin * max(d__3,d__4);
-	    temp = max(d__1,d__2);
+	    d__3 = 1., d__4 = abs(wr), d__3 = std::max(d__3,d__4), d__4 = abs(wi);
+	    d__1 = s1, d__2 = safmin * std::max(d__3,d__4);
+	    temp = std::max(d__1,d__2);
 	    if (wi != 0.) {
 		goto L200;
 	    }
@@ -753,18 +753,18 @@ L110:
 
 /*        Fiddle with shift to avoid overflow */
 
-	temp = min(ascale,1.) * (safmax * .5);
+	temp = std::min(ascale,1.) * (safmax * .5);
 	if (s1 > temp) {
 	    scale = temp / s1;
 	} else {
 	    scale = 1.;
 	}
 
-	temp = min(bscale,1.) * (safmax * .5);
+	temp = std::min(bscale,1.) * (safmax * .5);
 	if (abs(wr) > temp) {
 /* Computing MIN */
 	    d__1 = scale, d__2 = temp / abs(wr);
-	    scale = min(d__1,d__2);
+	    scale = std::min(d__1,d__2);
 	}
 	s1 = scale * s1;
 	wr = scale * wr;
@@ -777,7 +777,7 @@ L110:
 	    temp = (d__1 = s1 * h__[j + (j - 1) * h_dim1], abs(d__1));
 	    temp2 = (d__1 = s1 * h__[j + j * h_dim1] - wr * t[j + j * t_dim1],
 		     abs(d__1));
-	    tempr = max(temp,temp2);
+	    tempr = std::max(temp,temp2);
 	    if (tempr < 1. && tempr != 0.) {
 		temp /= tempr;
 		temp2 /= tempr;
@@ -844,7 +844,7 @@ L130:
 
 /* Computing MIN */
 	    i__4 = j + 2;
-	    i__3 = min(i__4,ilast);
+	    i__3 = std::min(i__4,ilast);
 	    for (jr = ifrstm; jr <= i__3; ++jr) {
 		temp = c__ * h__[jr + (j + 1) * h_dim1] + s * h__[jr + j * 
 			h_dim1];
@@ -1193,12 +1193,12 @@ L200:
 /* Computing MAX */
 		d__3 = (d__1 = t[j + 1 + (j + 1) * t_dim1], abs(d__1)), d__4 =
 			 (d__2 = t[j + 1 + (j + 2) * t_dim1], abs(d__2));
-		temp = max(d__3,d__4);
+		temp = std::max(d__3,d__4);
 /* Computing MAX */
 		d__3 = (d__1 = t[j + 2 + (j + 1) * t_dim1], abs(d__1)), d__4 =
 			 (d__2 = t[j + 2 + (j + 2) * t_dim1], abs(d__2));
-		temp2 = max(d__3,d__4);
-		if (max(temp,temp2) < safmin) {
+		temp2 = std::max(d__3,d__4);
+		if (std::max(temp,temp2) < safmin) {
 		    scale = 0.;
 		    u1 = 1.;
 		    u2 = 0.;
@@ -1253,7 +1253,7 @@ L200:
 		if (abs(w11) < abs(u1)) {
 /* Computing MIN */
 		    d__2 = scale, d__3 = (d__1 = w11 / u1, abs(d__1));
-		    scale = min(d__2,d__3);
+		    scale = std::min(d__2,d__3);
 		}
 
 /*              Solve */
@@ -1287,7 +1287,7 @@ L250:
 
 /* Computing MIN */
 		i__4 = j + 3;
-		i__3 = min(i__4,ilast);
+		i__3 = std::min(i__4,ilast);
 		for (jr = ifrstm; jr <= i__3; ++jr) {
 		    temp = tau * (h__[jr + j * h_dim1] + v[1] * h__[jr + (j + 
 			    1) * h_dim1] + v[2] * h__[jr + (j + 2) * h_dim1]);

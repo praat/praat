@@ -18,6 +18,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "f2c.h"
+
 static inline double d_abs (double *x) {
 	return abs (*x);
 }
@@ -38,12 +40,6 @@ static inline double d_atn2 (double *x, double *y) {
 	return atan2 (*x,*y);
 }
 
-static inline void d_cnjg (doublecomplex *r, doublecomplex *z) {
-	double zi = z->i;
-	r->r = z->r;
-	r->i = -zi;
-}
-
 static inline double d_cos (double *x) {
 	return cos (*x);
 }
@@ -58,10 +54,6 @@ static inline double d_dim (double *a, double *b) {
 
 static inline double d_exp (double *x) {
 	return exp (*x);
-}
-
-static inline double d_imag (doublecomplex *z) {
-	return z->i;
 }
 
 static inline double d_int (double *x) {
@@ -101,7 +93,7 @@ static inline double d_mod (double *x, double *y) {
 #endif
 }
 
-static inline double d_prod (real *x, real *y) {
+static inline double d_prod (float *x, float *y) {
 	return  (*x) * (*y);
 }
 
@@ -145,6 +137,10 @@ static inline integer i_dnnt (double *x) {
 static inline integer i_nint (float *x) {
 	return (integer)(*x >= 0.0 ? floor(*x + 0.5) : -floor(0.5 - *x));
 }
+
+logical lsame_(const char *ca, const char *cb);
+
+logical lsamen_(integer *n, const char *ca, const char *cb);
 
 static inline double pow_dd (double *ap, double *bp) {
 	return pow (*ap, *bp);
@@ -318,6 +314,10 @@ static inline integer s_cmp (const char *a0, const char *b0, integer la, integer
 			else	++b;
 	}
 	return 0;
+}
+
+static inline void xerbla_ (const char *src, integer *info) {
+	Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!");
 }
 
 #endif /* _f2clib_h_  */

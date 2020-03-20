@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -268,25 +268,25 @@ L20:
 /* Computing MAX */
 		d__3 = (d__1 = h__[k + (k - 1) * h_dim1], abs(d__1)), d__4 = (
 			d__2 = h__[k - 1 + k * h_dim1], abs(d__2));
-		ab = max(d__3,d__4);
+		ab = std::max(d__3,d__4);
 /* Computing MIN */
 		d__3 = (d__1 = h__[k + (k - 1) * h_dim1], abs(d__1)), d__4 = (
 			d__2 = h__[k - 1 + k * h_dim1], abs(d__2));
-		ba = min(d__3,d__4);
+		ba = std::min(d__3,d__4);
 /* Computing MAX */
 		d__3 = (d__1 = h__[k + k * h_dim1], abs(d__1)), d__4 = (d__2 =
 			 h__[k - 1 + (k - 1) * h_dim1] - h__[k + k * h_dim1], 
 			abs(d__2));
-		aa = max(d__3,d__4);
+		aa = std::max(d__3,d__4);
 /* Computing MIN */
 		d__3 = (d__1 = h__[k + k * h_dim1], abs(d__1)), d__4 = (d__2 =
 			 h__[k - 1 + (k - 1) * h_dim1] - h__[k + k * h_dim1], 
 			abs(d__2));
-		bb = min(d__3,d__4);
+		bb = std::min(d__3,d__4);
 		s = aa + ab;
 /* Computing MAX */
 		d__1 = smlnum, d__2 = ulp * (bb * (aa / s));
-		if (ba * (ab / s) <= max(d__1,d__2)) {
+		if (ba * (ab / s) <= std::max(d__1,d__2)) {
 		    goto L40;
 		}
 	    }
@@ -428,7 +428,7 @@ L60:
 
 /* Computing MIN */
 	    i__2 = 3, i__3 = i__ - k + 1;
-	    nr = min(i__2,i__3);
+	    nr = std::min(i__2,i__3);
 	    if (k > m) {
 		dcopy_(&nr, &h__[k + (k - 1) * h_dim1], &c__1, v, &c__1);
 	    }
@@ -466,7 +466,7 @@ L60:
 
 /* Computing MIN */
 		i__3 = k + 3;
-		i__2 = min(i__3,i__);
+		i__2 = std::min(i__3,i__);
 		for (j = i1; j <= i__2; ++j) {
 		    sum = h__[j + k * h_dim1] + v2 * h__[j + (k + 1) * h_dim1]
 			     + v3 * h__[j + (k + 2) * h_dim1];

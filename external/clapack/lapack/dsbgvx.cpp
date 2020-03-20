@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -263,9 +263,9 @@ static doublereal c_b27 = 0.;
 		*info = -14;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1_integer,*n)) {
+	    if (*il < 1 || *il > std::max(1_integer,*n)) {
 		*info = -15;
-	    } else if (*iu < min(*n,*il) || *iu > *n) {
+	    } else if (*iu < std::min(*n,*il) || *iu > *n) {
 		*info = -16;
 	    }
 	}

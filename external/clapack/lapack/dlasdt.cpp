@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlasdt_(integer *n, integer *lvl, integer *nd, integer *
@@ -79,7 +79,7 @@
     --inode;
 
     /* Function Body */
-    maxn = max(1_integer,*n);
+    maxn = std::max(1_integer,*n);
     temp = log((doublereal) maxn / (doublereal) (*msub + 1)) / log(2.);
     *lvl = (integer) temp + 1;
 

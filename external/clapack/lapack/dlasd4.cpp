@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlasd4_(integer *n, integer *i__, doublereal *d__, 
@@ -619,9 +619,9 @@
 	}
 
 	if (w <= 0.) {
-	    sg2lb = max(sg2lb,tau);
+	    sg2lb = std::max(sg2lb,tau);
 	} else {
-	    sg2ub = min(sg2ub,tau);
+	    sg2ub = std::min(sg2ub,tau);
 	}
 
 /*        Calculate the new step */
@@ -772,9 +772,9 @@
 		abs(tau) * dw;
 
 	if (w <= 0.) {
-	    sg2lb = max(sg2lb,tau);
+	    sg2lb = std::max(sg2lb,tau);
 	} else {
-	    sg2ub = min(sg2ub,tau);
+	    sg2ub = std::min(sg2ub,tau);
 	}
 
 	swtch = FALSE_;
@@ -971,9 +971,9 @@
 	    }
 
 	    if (w <= 0.) {
-		sg2lb = max(sg2lb,tau);
+		sg2lb = std::max(sg2lb,tau);
 	    } else {
-		sg2ub = min(sg2ub,tau);
+		sg2ub = std::min(sg2ub,tau);
 	    }
 
 /* L230: */

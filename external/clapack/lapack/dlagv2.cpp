@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -138,8 +138,8 @@ static integer c__1 = 1;
 /* Computing MAX */
     d__5 = (d__1 = a[a_dim1 + 1], abs(d__1)) + (d__2 = a[a_dim1 + 2], abs(
 	    d__2)), d__6 = (d__3 = a[(a_dim1 << 1) + 1], abs(d__3)) + (d__4 = 
-	    a[(a_dim1 << 1) + 2], abs(d__4)), d__5 = max(d__5,d__6);
-    anorm = max(d__5,safmin);
+	    a[(a_dim1 << 1) + 2], abs(d__4)), d__5 = std::max(d__5,d__6);
+    anorm = std::max(d__5,safmin);
     ascale = 1. / anorm;
     a[a_dim1 + 1] = ascale * a[a_dim1 + 1];
     a[(a_dim1 << 1) + 1] = ascale * a[(a_dim1 << 1) + 1];
@@ -151,8 +151,8 @@ static integer c__1 = 1;
 /* Computing MAX */
     d__4 = (d__3 = b[b_dim1 + 1], abs(d__3)), d__5 = (d__1 = b[(b_dim1 << 1) 
 	    + 1], abs(d__1)) + (d__2 = b[(b_dim1 << 1) + 2], abs(d__2)), d__4 
-	    = max(d__4,d__5);
-    bnorm = max(d__4,safmin);
+	    = std::max(d__4,d__5);
+    bnorm = std::max(d__4,safmin);
     bscale = 1. / bnorm;
     b[b_dim1 + 1] = bscale * b[b_dim1 + 1];
     b[(b_dim1 << 1) + 1] = bscale * b[(b_dim1 << 1) + 1];
@@ -241,12 +241,12 @@ static integer c__1 = 1;
 	    d__5 = (d__1 = a[a_dim1 + 1], abs(d__1)) + (d__2 = a[(a_dim1 << 1)
 		     + 1], abs(d__2)), d__6 = (d__3 = a[a_dim1 + 2], abs(d__3)
 		    ) + (d__4 = a[(a_dim1 << 1) + 2], abs(d__4));
-	    h1 = max(d__5,d__6);
+	    h1 = std::max(d__5,d__6);
 /* Computing MAX */
 	    d__5 = (d__1 = b[b_dim1 + 1], abs(d__1)) + (d__2 = b[(b_dim1 << 1)
 		     + 1], abs(d__2)), d__6 = (d__3 = b[b_dim1 + 2], abs(d__3)
 		    ) + (d__4 = b[(b_dim1 << 1) + 2], abs(d__4));
-	    h2 = max(d__5,d__6);
+	    h2 = std::max(d__5,d__6);
 
 	    if (scale1 * h1 >= abs(wr1) * h2) {
 

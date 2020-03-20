@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 logical dlaisnan_(doublereal *din1, doublereal *din2)

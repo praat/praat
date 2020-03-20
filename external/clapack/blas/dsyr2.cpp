@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dsyr2_(const char *uplo, integer *n, doublereal *alpha, 
@@ -136,7 +136,7 @@
 	info = 5;
     } else if (*incy == 0) {
 	info = 7;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	info = 9;
     }
     if (info != 0) {

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -119,7 +119,7 @@ static doublereal c_b5 = 1.;
     --work;
 
     /* Function Body */
-    if (min(*m,*n) == 0 || *tau == 0.) {
+    if (std::min(*m,*n) == 0 || *tau == 0.) {
 	return 0;
     }
 

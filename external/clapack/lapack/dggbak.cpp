@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dggbak_(const char *job, const char *side, integer *n, integer *ilo, 
@@ -121,13 +121,13 @@
 	*info = -4;
     } else if (*n == 0 && *ihi == 0 && *ilo != 1) {
 	*info = -4;
-    } else if (*n > 0 && (*ihi < *ilo || *ihi > max(1_integer,*n))) {
+    } else if (*n > 0 && (*ihi < *ilo || *ihi > std::max(1_integer,*n))) {
 	*info = -5;
     } else if (*n == 0 && *ilo == 1 && *ihi != 0) {
 	*info = -5;
     } else if (*m < 0) {
 	*info = -8;
-    } else if (*ldv < max(1_integer,*n)) {
+    } else if (*ldv < std::max(1_integer,*n)) {
 	*info = -10;
     }
     if (*info != 0) {

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -155,7 +155,7 @@ static integer c__1 = 1;
     }
 
     *rcond = 0.;
-    smlnum = dlamch_("Safe minimum") * (doublereal) max(1_integer,*n);
+    smlnum = dlamch_("Safe minimum") * (doublereal) std::max(1_integer,*n);
 
 /*     Compute the norm of the triangular matrix A. */
 

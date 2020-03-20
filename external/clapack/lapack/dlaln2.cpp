@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaln2_(logical *ltrans, integer *na, integer *nw, 
@@ -193,7 +193,7 @@
 
     smlnum = 2. * dlamch_("Safe minimum");
     bignum = 1. / smlnum;
-    smini = max(*smin,smlnum);
+    smini = std::max(*smin,smlnum);
 
 /*     Don't check for input errors */
 
@@ -315,7 +315,7 @@
 /* Computing MAX */
 		d__3 = (d__1 = b[b_dim1 + 1], abs(d__1)), d__4 = (d__2 = b[
 			b_dim1 + 2], abs(d__2));
-		bnorm = max(d__3,d__4);
+		bnorm = std::max(d__3,d__4);
 		if (smini < 1. && bnorm > 1.) {
 		    if (bnorm > bignum * smini) {
 			*scale = 1. / bnorm;
@@ -355,7 +355,7 @@
 	    br2 -= lr21 * br1;
 /* Computing MAX */
 	    d__2 = (d__1 = br1 * (ur22 * ur11r), abs(d__1)), d__3 = abs(br2);
-	    bbnd = max(d__2,d__3);
+	    bbnd = std::max(d__2,d__3);
 	    if (bbnd > 1. && abs(ur22) < 1.) {
 		if (bbnd >= bignum * abs(ur22)) {
 		    *scale = 1. / bbnd;
@@ -373,7 +373,7 @@
 	    }
 /* Computing MAX */
 	    d__1 = abs(xr1), d__2 = abs(xr2);
-	    *xnorm = max(d__1,d__2);
+	    *xnorm = std::max(d__1,d__2);
 
 /*           Further scaling if  norm(A) norm(X) > overflow */
 
@@ -416,7 +416,7 @@
 		d__5 = (d__1 = b[b_dim1 + 1], abs(d__1)) + (d__2 = b[(b_dim1 
 			<< 1) + 1], abs(d__2)), d__6 = (d__3 = b[b_dim1 + 2], 
 			abs(d__3)) + (d__4 = b[(b_dim1 << 1) + 2], abs(d__4));
-		bnorm = max(d__5,d__6);
+		bnorm = std::max(d__5,d__6);
 		if (smini < 1. && bnorm > 1.) {
 		    if (bnorm > bignum * smini) {
 			*scale = 1. / bnorm;
@@ -503,7 +503,7 @@
 /* Computing MAX */
 	    d__1 = (abs(br1) + abs(bi1)) * (u22abs * (abs(ur11r) + abs(ui11r))
 		    ), d__2 = abs(br2) + abs(bi2);
-	    bbnd = max(d__1,d__2);
+	    bbnd = std::max(d__1,d__2);
 	    if (bbnd > 1. && u22abs < 1.) {
 		if (bbnd >= bignum * u22abs) {
 		    *scale = 1. / bbnd;
@@ -530,7 +530,7 @@
 	    }
 /* Computing MAX */
 	    d__1 = abs(xr1) + abs(xi1), d__2 = abs(xr2) + abs(xi2);
-	    *xnorm = max(d__1,d__2);
+	    *xnorm = std::max(d__1,d__2);
 
 /*           Further scaling if  norm(A) norm(X) > overflow */
 

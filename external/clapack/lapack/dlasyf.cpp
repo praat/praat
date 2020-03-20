@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -190,7 +190,7 @@ L10:
 	    colmax = 0.;
 	}
 
-	if (max(absakk,colmax) == 0.) {
+	if (std::max(absakk,colmax) == 0.) {
 
 /*           Column K is zero: set INFO and continue */
 
@@ -233,7 +233,7 @@ L10:
 /* Computing MAX */
 		    d__2 = rowmax, d__3 = (d__1 = w[jmax + (kw - 1) * w_dim1],
 			     abs(d__1));
-		    rowmax = max(d__2,d__3);
+		    rowmax = std::max(d__2,d__3);
 		}
 
 		if (absakk >= alpha * colmax * (colmax / rowmax)) {
@@ -368,7 +368,7 @@ L30:
 		i__1) {
 /* Computing MIN */
 	    i__2 = *nb, i__3 = k - j + 1;
-	    jb = min(i__2,i__3);
+	    jb = std::min(i__2,i__3);
 
 /*           Update the upper triangle of the diagonal block */
 
@@ -460,7 +460,7 @@ L70:
 	    colmax = 0.;
 	}
 
-	if (max(absakk,colmax) == 0.) {
+	if (std::max(absakk,colmax) == 0.) {
 
 /*           Column K is zero: set INFO and continue */
 
@@ -504,7 +504,7 @@ L70:
 /* Computing MAX */
 		    d__2 = rowmax, d__3 = (d__1 = w[jmax + (k + 1) * w_dim1], 
 			    abs(d__1));
-		    rowmax = max(d__2,d__3);
+		    rowmax = std::max(d__2,d__3);
 		}
 
 		if (absakk >= alpha * colmax * (colmax / rowmax)) {
@@ -638,7 +638,7 @@ L90:
 	for (j = k; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2) {
 /* Computing MIN */
 	    i__3 = *nb, i__4 = *n - j + 1;
-	    jb = min(i__3,i__4);
+	    jb = std::min(i__3,i__4);
 
 /*           Update the lower triangle of the diagonal block */
 

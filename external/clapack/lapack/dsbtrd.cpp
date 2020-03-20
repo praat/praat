@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -153,7 +153,7 @@ static integer c__1 = 1;
 	*info = -4;
     } else if (*ldab < kd1) {
 	*info = -6;
-    } else if (*ldq < max(1_integer,*n) && wantq) {
+    } else if (*ldq < std::max(1_integer,*n) && wantq) {
 	*info = -10;
     }
     if (*info != 0) {
@@ -183,7 +183,7 @@ static integer c__1 = 1;
     inca = kd1 * *ldab;
 /* Computing MIN */
     i__1 = *n - 1;
-    kdn = min(i__1,*kd);
+    kdn = std::min(i__1,*kd);
     if (upper) {
 
 	if (*kd > 1) {
@@ -314,7 +314,7 @@ static integer c__1 = 1;
 			    }
 /* Computing MIN */
 			    i__2 = kdm1, i__3 = *n - j2;
-			    lend = min(i__2,i__3);
+			    lend = std::min(i__2,i__3);
 			    last = j1end + kd1;
 			    if (lend > 0) {
 				drot_(&lend, &ab[*kd - 1 + (last + 1) * 
@@ -334,15 +334,15 @@ static integer c__1 = 1;
 /*                 take advantage of the fact that Q was */
 /*                 initially the Identity matrix */
 
-			    iqend = max(iqend,j2);
+			    iqend = std::max(iqend,j2);
 /* Computing MAX */
 			    i__2 = 0, i__3 = k - 3;
-			    i2 = max(i__2,i__3);
+			    i2 = std::max(i__2,i__3);
 			    iqaend = i__ * *kd + 1;
 			    if (k == 2) {
 				iqaend += *kd;
 			    }
-			    iqaend = min(iqaend,iqend);
+			    iqaend = std::min(iqaend,iqend);
 			    i__2 = j2;
 			    i__3 = kd1;
 			    for (j = j1; i__3 < 0 ? j >= i__2 : j <= i__2; j 
@@ -351,11 +351,11 @@ static integer c__1 = 1;
 				++i2;
 /* Computing MAX */
 				i__4 = 1, i__5 = j - ibl;
-				iqb = max(i__4,i__5);
+				iqb = std::max(i__4,i__5);
 				nq = iqaend + 1 - iqb;
 /* Computing MIN */
 				i__4 = iqaend + *kd;
-				iqaend = min(i__4,iqend);
+				iqaend = std::min(i__4,iqend);
 				drot_(&nq, &q[iqb + (j - 1) * q_dim1], &c__1, 
 					&q[iqb + j * q_dim1], &c__1, &d__[j], 
 					&work[j]);
@@ -562,7 +562,7 @@ static integer c__1 = 1;
 			    }
 /* Computing MIN */
 			    i__3 = kdm1, i__2 = *n - j2;
-			    lend = min(i__3,i__2);
+			    lend = std::min(i__3,i__2);
 			    last = j1end + kd1;
 			    if (lend > 0) {
 				drot_(&lend, &ab[(last - 1) * ab_dim1 + 3], &
@@ -583,15 +583,15 @@ static integer c__1 = 1;
 /*                 take advantage of the fact that Q was */
 /*                 initially the Identity matrix */
 
-			    iqend = max(iqend,j2);
+			    iqend = std::max(iqend,j2);
 /* Computing MAX */
 			    i__3 = 0, i__2 = k - 3;
-			    i2 = max(i__3,i__2);
+			    i2 = std::max(i__3,i__2);
 			    iqaend = i__ * *kd + 1;
 			    if (k == 2) {
 				iqaend += *kd;
 			    }
-			    iqaend = min(iqaend,iqend);
+			    iqaend = std::min(iqaend,iqend);
 			    i__3 = j2;
 			    i__2 = kd1;
 			    for (j = j1; i__2 < 0 ? j >= i__3 : j <= i__3; j 
@@ -600,11 +600,11 @@ static integer c__1 = 1;
 				++i2;
 /* Computing MAX */
 				i__4 = 1, i__5 = j - ibl;
-				iqb = max(i__4,i__5);
+				iqb = std::max(i__4,i__5);
 				nq = iqaend + 1 - iqb;
 /* Computing MIN */
 				i__4 = iqaend + *kd;
-				iqaend = min(i__4,iqend);
+				iqaend = std::min(i__4,iqend);
 				drot_(&nq, &q[iqb + (j - 1) * q_dim1], &c__1, 
 					&q[iqb + j * q_dim1], &c__1, &d__[j], 
 					&work[j]);

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -320,7 +320,7 @@ static doublereal c_b38 = 0.;
 
 /* Computing MAX */
     i__1 = *n << 3;
-    lwkmin = max(i__1,1_integer);
+    lwkmin = std::max(i__1,1_integer);
     lwkopt = lwkmin;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
@@ -331,9 +331,9 @@ static doublereal c_b38 = 0.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -7;
     } else if (*ldvl < 1 || ilvl && *ldvl < *n) {
 	*info = -12;
@@ -348,11 +348,11 @@ static doublereal c_b38 = 0.;
 	nb2 = ilaenv_(&c__1, "DORMQR", " ", n, n, n, &c_n1);
 	nb3 = ilaenv_(&c__1, "DORGQR", " ", n, n, n, &c_n1);
 /* Computing MAX */
-	i__1 = max(nb1,nb2);
-	nb = max(i__1,nb3);
+	i__1 = std::max(nb1,nb2);
+	nb = std::max(i__1,nb3);
 /* Computing MAX */
 	i__1 = *n * 6, i__2 = *n * (nb + 1);
-	lopt = (*n << 1) + max(i__1,i__2);
+	lopt = (*n << 1) + std::max(i__1,i__2);
 	work[1] = (doublereal) lopt;
     }
 
@@ -452,7 +452,7 @@ static doublereal c_b38 = 0.;
     if (iinfo >= 0) {
 /* Computing MAX */
 	i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
     }
     if (iinfo != 0) {
 	*info = *n + 2;
@@ -466,7 +466,7 @@ static doublereal c_b38 = 0.;
     if (iinfo >= 0) {
 /* Computing MAX */
 	i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
     }
     if (iinfo != 0) {
 	*info = *n + 3;
@@ -486,7 +486,7 @@ static doublereal c_b38 = 0.;
 	if (iinfo >= 0) {
 /* Computing MAX */
 	    i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	    lwkopt = max(i__1,i__2);
+	    lwkopt = std::max(i__1,i__2);
 	}
 	if (iinfo != 0) {
 	    *info = *n + 4;
@@ -534,7 +534,7 @@ static doublereal c_b38 = 0.;
     if (iinfo >= 0) {
 /* Computing MAX */
 	i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
     }
     if (iinfo != 0) {
 	if (iinfo > 0 && iinfo <= *n) {
@@ -590,7 +590,7 @@ static doublereal c_b38 = 0.;
 /* Computing MAX */
 			d__2 = temp, d__3 = (d__1 = vl[jr + jc * vl_dim1], 
 				abs(d__1));
-			temp = max(d__2,d__3);
+			temp = std::max(d__2,d__3);
 /* L10: */
 		    }
 		} else {
@@ -600,7 +600,7 @@ static doublereal c_b38 = 0.;
 			d__3 = temp, d__4 = (d__1 = vl[jr + jc * vl_dim1], 
 				abs(d__1)) + (d__2 = vl[jr + (jc + 1) * 
 				vl_dim1], abs(d__2));
-			temp = max(d__3,d__4);
+			temp = std::max(d__3,d__4);
 /* L20: */
 		    }
 		}
@@ -645,7 +645,7 @@ L50:
 /* Computing MAX */
 			d__2 = temp, d__3 = (d__1 = vr[jr + jc * vr_dim1], 
 				abs(d__1));
-			temp = max(d__2,d__3);
+			temp = std::max(d__2,d__3);
 /* L60: */
 		    }
 		} else {
@@ -655,7 +655,7 @@ L50:
 			d__3 = temp, d__4 = (d__1 = vr[jr + jc * vr_dim1], 
 				abs(d__1)) + (d__2 = vr[jr + (jc + 1) * 
 				vr_dim1], abs(d__2));
-			temp = max(d__3,d__4);
+			temp = std::max(d__3,d__4);
 /* L70: */
 		    }
 		}
@@ -708,13 +708,13 @@ L100:
 /*        Check for significant underflow in ALPHAI */
 
 /* Computing MAX */
-	d__1 = safmin, d__2 = eps * absar, d__1 = max(d__1,d__2), d__2 = eps *
+	d__1 = safmin, d__2 = eps * absar, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absb;
-	if (abs(salfai) < safmin && absai >= max(d__1,d__2)) {
+	if (abs(salfai) < safmin && absai >= std::max(d__1,d__2)) {
 	    ilimit = TRUE_;
 /* Computing MAX */
 	    d__1 = onepls * safmin, d__2 = anrm2 * absai;
-	    scale = onepls * safmin / anrm1 / max(d__1,d__2);
+	    scale = onepls * safmin / anrm1 / std::max(d__1,d__2);
 
 	} else if (salfai == 0.) {
 
@@ -731,38 +731,38 @@ L100:
 /*        Check for significant underflow in ALPHAR */
 
 /* Computing MAX */
-	d__1 = safmin, d__2 = eps * absai, d__1 = max(d__1,d__2), d__2 = eps *
+	d__1 = safmin, d__2 = eps * absai, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absb;
-	if (abs(salfar) < safmin && absar >= max(d__1,d__2)) {
+	if (abs(salfar) < safmin && absar >= std::max(d__1,d__2)) {
 	    ilimit = TRUE_;
 /* Computing MAX */
 /* Computing MAX */
 	    d__3 = onepls * safmin, d__4 = anrm2 * absar;
-	    d__1 = scale, d__2 = onepls * safmin / anrm1 / max(d__3,d__4);
-	    scale = max(d__1,d__2);
+	    d__1 = scale, d__2 = onepls * safmin / anrm1 / std::max(d__3,d__4);
+	    scale = std::max(d__1,d__2);
 	}
 
 /*        Check for significant underflow in BETA */
 
 /* Computing MAX */
-	d__1 = safmin, d__2 = eps * absar, d__1 = max(d__1,d__2), d__2 = eps *
+	d__1 = safmin, d__2 = eps * absar, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absai;
-	if (abs(sbeta) < safmin && absb >= max(d__1,d__2)) {
+	if (abs(sbeta) < safmin && absb >= std::max(d__1,d__2)) {
 	    ilimit = TRUE_;
 /* Computing MAX */
 /* Computing MAX */
 	    d__3 = onepls * safmin, d__4 = bnrm2 * absb;
-	    d__1 = scale, d__2 = onepls * safmin / bnrm1 / max(d__3,d__4);
-	    scale = max(d__1,d__2);
+	    d__1 = scale, d__2 = onepls * safmin / bnrm1 / std::max(d__3,d__4);
+	    scale = std::max(d__1,d__2);
 	}
 
 /*        Check for possible overflow when limiting scaling */
 
 	if (ilimit) {
 /* Computing MAX */
-	    d__1 = abs(salfar), d__2 = abs(salfai), d__1 = max(d__1,d__2), 
+	    d__1 = abs(salfar), d__2 = abs(salfai), d__1 = std::max(d__1,d__2), 
 		    d__2 = abs(sbeta);
-	    temp = scale * safmin * max(d__1,d__2);
+	    temp = scale * safmin * std::max(d__1,d__2);
 	    if (temp > 1.) {
 		scale /= temp;
 	    }

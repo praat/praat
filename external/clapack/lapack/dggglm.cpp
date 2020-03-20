@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -157,7 +157,7 @@ static doublereal c_b34 = 1.;
 
     /* Function Body */
     *info = 0;
-    np = min(*n,*p);
+    np = std::min(*n,*p);
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
@@ -165,9 +165,9 @@ static doublereal c_b34 = 1.;
 	*info = -2;
     } else if (*p < 0 || *p < *n - *m) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -7;
     }
 
@@ -183,10 +183,10 @@ static doublereal c_b34 = 1.;
 	    nb3 = ilaenv_(&c__1, "DORMQR", " ", n, m, p, &c_n1);
 	    nb4 = ilaenv_(&c__1, "DORMRQ", " ", n, m, p, &c_n1);
 /* Computing MAX */
-	    i__1 = max(nb1,nb2), i__1 = max(i__1,nb3);
-	    nb = max(i__1,nb4);
+	    i__1 = std::max(nb1,nb2), i__1 = std::max(i__1,nb3);
+	    nb = std::max(i__1,nb4);
 	    lwkmin = *m + *n + *p;
-	    lwkopt = *m + np + max(*n,*p) * nb;
+	    lwkopt = *m + np + std::max(*n,*p) * nb;
 	}
 	work[1] = (doublereal) lwkopt;
 
@@ -226,13 +226,13 @@ static doublereal c_b34 = 1.;
 /*     Update left-hand-side vector d = Q'*d = ( d1 ) M */
 /*                                             ( d2 ) N-M */
 
-    i__1 = max(1_integer,*n);
+    i__1 = std::max(1_integer,*n);
     i__2 = *lwork - *m - np;
     dormqr_("Left", "Transpose", n, &c__1, m, &a[a_offset], lda, &work[1], &
 	    d__[1], &i__1, &work[*m + np + 1], &i__2, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[*m + np + 1];
-    lopt = max(i__1,i__2);
+    lopt = std::max(i__1,i__2);
 
 /*     Solve T22*y2 = d2 for y2 */
 
@@ -286,13 +286,13 @@ static doublereal c_b34 = 1.;
 
 /* Computing MAX */
     i__1 = 1, i__2 = *n - *p + 1;
-    i__3 = max(1_integer,*p);
+    i__3 = std::max(1_integer,*p);
     i__4 = *lwork - *m - np;
-    dormrq_("Left", "Transpose", p, &c__1, &np, &b[max(i__1, i__2)+ b_dim1], 
+    dormrq_("Left", "Transpose", p, &c__1, &np, &b[std::max(i__1, i__2)+ b_dim1], 
 	    ldb, &work[*m + 1], &y[1], &i__3, &work[*m + np + 1], &i__4, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[*m + np + 1];
-    work[1] = (doublereal) (*m + np + max(i__1,i__2));
+    work[1] = (doublereal) (*m + np + std::max(i__1,i__2));
 
     return 0;
 

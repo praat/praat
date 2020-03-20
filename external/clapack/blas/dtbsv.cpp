@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dtbsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
@@ -231,7 +231,7 @@
 			temp = x[j];
 /* Computing MAX */
 			i__2 = 1, i__3 = j - *k;
-			i__1 = max(i__2,i__3);
+			i__1 = std::max(i__2,i__3);
 			for (i__ = j - 1; i__ >= i__1; --i__) {
 			    x[i__] -= temp * a[l + i__ + j * a_dim1];
 /* L10: */
@@ -253,7 +253,7 @@
 			temp = x[jx];
 /* Computing MAX */
 			i__2 = 1, i__3 = j - *k;
-			i__1 = max(i__2,i__3);
+			i__1 = std::max(i__2,i__3);
 			for (i__ = j - 1; i__ >= i__1; --i__) {
 			    x[ix] -= temp * a[l + i__ + j * a_dim1];
 			    ix -= *incx;
@@ -276,7 +276,7 @@
 			temp = x[j];
 /* Computing MIN */
 			i__3 = *n, i__4 = j + *k;
-			i__2 = min(i__3,i__4);
+			i__2 = std::min(i__3,i__4);
 			for (i__ = j + 1; i__ <= i__2; ++i__) {
 			    x[i__] -= temp * a[l + i__ + j * a_dim1];
 /* L50: */
@@ -298,7 +298,7 @@
 			temp = x[jx];
 /* Computing MIN */
 			i__3 = *n, i__4 = j + *k;
-			i__2 = min(i__3,i__4);
+			i__2 = std::min(i__3,i__4);
 			for (i__ = j + 1; i__ <= i__2; ++i__) {
 			    x[ix] -= temp * a[l + i__ + j * a_dim1];
 			    ix += *incx;
@@ -324,7 +324,7 @@
 /* Computing MAX */
 		    i__2 = 1, i__3 = j - *k;
 		    i__4 = j - 1;
-		    for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+		    for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 			temp -= a[l + i__ + j * a_dim1] * x[i__];
 /* L90: */
 		    }
@@ -344,7 +344,7 @@
 /* Computing MAX */
 		    i__4 = 1, i__2 = j - *k;
 		    i__3 = j - 1;
-		    for (i__ = max(i__4,i__2); i__ <= i__3; ++i__) {
+		    for (i__ = std::max(i__4,i__2); i__ <= i__3; ++i__) {
 			temp -= a[l + i__ + j * a_dim1] * x[ix];
 			ix += *incx;
 /* L110: */
@@ -368,7 +368,7 @@
 /* Computing MIN */
 		    i__1 = *n, i__3 = j + *k;
 		    i__4 = j + 1;
-		    for (i__ = min(i__1,i__3); i__ >= i__4; --i__) {
+		    for (i__ = std::min(i__1,i__3); i__ >= i__4; --i__) {
 			temp -= a[l + i__ + j * a_dim1] * x[i__];
 /* L130: */
 		    }
@@ -388,7 +388,7 @@
 /* Computing MIN */
 		    i__4 = *n, i__1 = j + *k;
 		    i__3 = j + 1;
-		    for (i__ = min(i__4,i__1); i__ >= i__3; --i__) {
+		    for (i__ = std::min(i__4,i__1); i__ >= i__3; --i__) {
 			temp -= a[l + i__ + j * a_dim1] * x[ix];
 			ix -= *incx;
 /* L150: */

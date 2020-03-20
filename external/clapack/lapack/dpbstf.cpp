@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -160,7 +160,7 @@ static doublereal c_b9 = -1.;
 
 /* Computing MAX */
     i__1 = 1, i__2 = *ldab - 1;
-    kld = max(i__1,i__2);
+    kld = std::max(i__1,i__2);
 
 /*     Set the splitting point m. */
 
@@ -183,7 +183,7 @@ static doublereal c_b9 = -1.;
 	    ab[*kd + 1 + j * ab_dim1] = ajj;
 /* Computing MIN */
 	    i__2 = j - 1;
-	    km = min(i__2,*kd);
+	    km = std::min(i__2,*kd);
 
 /*           Compute elements j-km:j-1 of the j-th column and update the */
 /*           the leading submatrix within the band. */
@@ -210,7 +210,7 @@ static doublereal c_b9 = -1.;
 	    ab[*kd + 1 + j * ab_dim1] = ajj;
 /* Computing MIN */
 	    i__2 = *kd, i__3 = m - j;
-	    km = min(i__2,i__3);
+	    km = std::min(i__2,i__3);
 
 /*           Compute elements j+1:j+km of the j-th row and update the */
 /*           trailing submatrix within the band. */
@@ -240,7 +240,7 @@ static doublereal c_b9 = -1.;
 	    ab[j * ab_dim1 + 1] = ajj;
 /* Computing MIN */
 	    i__2 = j - 1;
-	    km = min(i__2,*kd);
+	    km = std::min(i__2,*kd);
 
 /*           Compute elements j-km:j-1 of the j-th row and update the */
 /*           trailing submatrix within the band. */
@@ -267,7 +267,7 @@ static doublereal c_b9 = -1.;
 	    ab[j * ab_dim1 + 1] = ajj;
 /* Computing MIN */
 	    i__2 = *kd, i__3 = m - j;
-	    km = min(i__2,i__3);
+	    km = std::min(i__2,i__3);
 
 /*           Compute elements j+1:j+km of the j-th column and update the */
 /*           trailing submatrix within the band. */

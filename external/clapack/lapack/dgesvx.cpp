@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgesvx_(char *fact, char *trans, integer *n, integer *
@@ -329,9 +329,9 @@
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -6;
-    } else if (*ldaf < max(1_integer,*n)) {
+    } else if (*ldaf < std::max(1_integer,*n)) {
 	*info = -8;
     } else if (lsame_(fact, "F") && ! (rowequ || colequ 
 	    || lsame_(equed, "N"))) {
@@ -344,16 +344,16 @@
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		d__1 = rcmin, d__2 = r__[j];
-		rcmin = min(d__1,d__2);
+		rcmin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = rcmax, d__2 = r__[j];
-		rcmax = max(d__1,d__2);
+		rcmax = std::max(d__1,d__2);
 /* L10: */
 	    }
 	    if (rcmin <= 0.) {
 		*info = -11;
 	    } else if (*n > 0) {
-		rowcnd = max(rcmin,smlnum) / min(rcmax,bignum);
+		rowcnd = std::max(rcmin,smlnum) / std::min(rcmax,bignum);
 	    } else {
 		rowcnd = 1.;
 	    }
@@ -365,24 +365,24 @@
 	    for (j = 1; j <= i__1; ++j) {
 /* Computing MIN */
 		d__1 = rcmin, d__2 = c__[j];
-		rcmin = min(d__1,d__2);
+		rcmin = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = rcmax, d__2 = c__[j];
-		rcmax = max(d__1,d__2);
+		rcmax = std::max(d__1,d__2);
 /* L20: */
 	    }
 	    if (rcmin <= 0.) {
 		*info = -12;
 	    } else if (*n > 0) {
-		colcnd = max(rcmin,smlnum) / min(rcmax,bignum);
+		colcnd = std::max(rcmin,smlnum) / std::min(rcmax,bignum);
 	    } else {
 		colcnd = 1.;
 	    }
 	}
 	if (*info == 0) {
-	    if (*ldb < max(1_integer,*n)) {
+	    if (*ldb < std::max(1_integer,*n)) {
 		*info = -14;
-	    } else if (*ldx < max(1_integer,*n)) {
+	    } else if (*ldx < std::max(1_integer,*n)) {
 		*info = -16;
 	    }
 	}

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "cblas.h"
 #include "blaswrap.h"
 
 doublereal dasum_(integer *n, doublereal *dx, integer *incx)

@@ -76,22 +76,14 @@ int dlamc4_ (integer *emin, double *start, integer *base);
 int dlamc5_ (integer *beta, integer *p, integer *emin,
 	logical *ieee, integer *emax, double *rmax);
 
-integer icmax1_ (integer *n, complex *cx, integer *incx);
+//integer icmax1_ (integer *n, complex *cx, integer *incx);
 
-integer ieeeck_ (integer *ispec, real *zero, real *one);
+integer ieeeck_ (integer *ispec, float *zero, float *one);
 
 integer ilaenv_ (integer *ispec, const char *name__, const char *opts, integer *n1,
 	integer *n2, integer *n3, integer *n4);
 
 integer iparmq_ (integer *ispec, const char *name__, const char *opts, integer *n, integer
 	*ilo, integer *ihi, integer *lwork);
-
-logical lsame_ (const char *ca, const char *cb);
-
-logical lsamen_ (integer *n, const char *ca, const char *cb);
-
-static inline void xerbla_ (const char *src, integer *info) {
-	Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!");
-}
 
 #endif /* clapackP_h_ */

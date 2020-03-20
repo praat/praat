@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -166,14 +166,14 @@ static integer c__1 = 1;
     clwdth = (d__1 = w[*clend] - w[*clstrt], abs(d__1)) + werr[*clend] + werr[
 	    *clstrt];
     avgap = clwdth / (doublereal) (*clend - *clstrt);
-    mingap = min(*clgapl,*clgapr);
+    mingap = std::min(*clgapl,*clgapr);
 /*     Initial values for shifts to both ends of cluster */
 /* Computing MIN */
     d__1 = w[*clstrt], d__2 = w[*clend];
-    lsigma = min(d__1,d__2) - werr[*clstrt];
+    lsigma = std::min(d__1,d__2) - werr[*clstrt];
 /* Computing MAX */
     d__1 = w[*clstrt], d__2 = w[*clend];
-    rsigma = max(d__1,d__2) + werr[*clend];
+    rsigma = std::max(d__1,d__2) + werr[*clend];
 /*     Use a small fudge to make sure that we really shift to the outside */
     lsigma -= abs(lsigma) * 4. * eps;
     rsigma += abs(rsigma) * 4. * eps;
@@ -182,10 +182,10 @@ static integer c__1 = 1;
     rdmax = mingap * .25 + *pivmin * 2.;
 /* Computing MAX */
     d__1 = avgap, d__2 = wgap[*clstrt];
-    ldelta = max(d__1,d__2) / fact;
+    ldelta = std::max(d__1,d__2) / fact;
 /* Computing MAX */
     d__1 = avgap, d__2 = wgap[*clend - 1];
-    rdelta = max(d__1,d__2) / fact;
+    rdelta = std::max(d__1,d__2) / fact;
 
 /*     Initialize the record of the best representation found */
 
@@ -202,8 +202,8 @@ L5:
     sawnan1 = FALSE_;
     sawnan2 = FALSE_;
 /*     Ensure that we do not back off too much of the initial shifts */
-    ldelta = min(ldmax,ldelta);
-    rdelta = min(rdmax,rdelta);
+    ldelta = std::min(ldmax,ldelta);
+    rdelta = std::min(rdmax,rdelta);
 /*     Compute the element growth when shifting to both ends of the cluster */
 /*     accept the shift if there is no element growth at one of the two ends */
 /*     Left end */
@@ -229,7 +229,7 @@ L5:
 	}
 /* Computing MAX */
 	d__2 = max1, d__3 = (d__1 = dplus[i__ + 1], abs(d__1));
-	max1 = max(d__2,d__3);
+	max1 = std::max(d__2,d__3);
 /* L6: */
     }
     sawnan1 = sawnan1 || disnan_(&max1);
@@ -261,7 +261,7 @@ L5:
 	}
 /* Computing MAX */
 	d__2 = max2, d__3 = (d__1 = work[i__ + 1], abs(d__1));
-	max2 = max(d__2,d__3);
+	max2 = std::max(d__2,d__3);
 /* L7: */
     }
     sawnan2 = sawnan2 || disnan_(&max2);
@@ -298,7 +298,7 @@ L5:
 /*     we may still accept the representation, if it passes a */
 /*     refined test for RRR. This test supposes that no NaN occurred. */
 /*     Moreover, we use the refined RRR test only for isolated clusters. */
-    if (clwdth < mingap / 128. && min(max1,max2) < fail2 && ! sawnan1 && ! 
+    if (clwdth < mingap / 128. && std::min(max1,max2) < fail2 && ! sawnan1 && ! 
 	    sawnan2) {
 	dorrr1 = TRUE_;
     } else {
@@ -324,7 +324,7 @@ L5:
 		znm2 += d__1 * d__1;
 /* Computing MAX */
 		d__2 = tmp, d__3 = (d__1 = dplus[i__] * prod, abs(d__1));
-		tmp = max(d__2,d__3);
+		tmp = std::max(d__2,d__3);
 /* L15: */
 	    }
 	    rrr1 = tmp / (*spdiam * sqrt(znm2));
@@ -351,7 +351,7 @@ L5:
 		znm2 += d__1 * d__1;
 /* Computing MAX */
 		d__2 = tmp, d__3 = (d__1 = work[i__] * prod, abs(d__1));
-		tmp = max(d__2,d__3);
+		tmp = std::max(d__2,d__3);
 /* L16: */
 	    }
 	    rrr2 = tmp / (*spdiam * sqrt(znm2));
@@ -368,10 +368,10 @@ L50:
 /*        Back off to the outside */
 /* Computing MAX */
 	d__1 = lsigma - ldelta, d__2 = lsigma - ldmax;
-	lsigma = max(d__1,d__2);
+	lsigma = std::max(d__1,d__2);
 /* Computing MIN */
 	d__1 = rsigma + rdelta, d__2 = rsigma + rdmax;
-	rsigma = min(d__1,d__2);
+	rsigma = std::min(d__1,d__2);
 	ldelta *= 2.;
 	rdelta *= 2.;
 	++ktry;

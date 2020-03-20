@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgebak_(const char *job, const char *side, integer *n, integer *ilo, 
@@ -109,13 +109,13 @@
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*ilo < 1 || *ilo > max(1_integer,*n)) {
+    } else if (*ilo < 1 || *ilo > std::max(1_integer,*n)) {
 	*info = -4;
-    } else if (*ihi < min(*ilo,*n) || *ihi > *n) {
+    } else if (*ihi < std::min(*ilo,*n) || *ihi > *n) {
 	*info = -5;
     } else if (*m < 0) {
 	*info = -7;
-    } else if (*ldv < max(1_integer,*n)) {
+    } else if (*ldv < std::max(1_integer,*n)) {
 	*info = -9;
     }
     if (*info != 0) {

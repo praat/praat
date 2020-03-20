@@ -18,6 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "f2c.h"
+#include "f2clibP.h"
+
 double dasum_ (integer *n, double *dx, integer *incx);
 
 int daxpy_ (integer *n, double *da, double *dx,
@@ -67,7 +70,7 @@ int dsbmv_ (const char *uplo, integer *n, integer *k, double *
 
 int dscal_(integer *n, double *da, double *dx, integer *incx);
 
-double dsdot_(integer *n, real *sx, integer *incx, real *sy, integer *incy);
+double dsdot_(integer *n, float *sx, integer *incx, float *sy, integer *incy);
 
 int dspmv_(const char *uplo, integer *n, double *alpha,
 	double *ap, double *x, integer *incx, double *beta,

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -307,10 +307,10 @@ static integer c_n1 = -1;
 
 /* Computing MAX */
     i__1 = 1, i__2 = *n * 26;
-    lwmin = max(i__1,i__2);
+    lwmin = std::max(i__1,i__2);
 /* Computing MAX */
     i__1 = 1, i__2 = *n * 10;
-    liwmin = max(i__1,i__2);
+    liwmin = std::max(i__1,i__2);
 
     *info = 0;
     if (! (wantz || lsame_(jobz, "N"))) {
@@ -321,7 +321,7 @@ static integer c_n1 = -1;
 	*info = -3;
     } else if (*n < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -6;
     } else {
 	if (valeig) {
@@ -329,9 +329,9 @@ static integer c_n1 = -1;
 		*info = -8;
 	    }
 	} else if (indeig) {
-	    if (*il < 1 || *il > max(1_integer,*n)) {
+	    if (*il < 1 || *il > std::max(1_integer,*n)) {
 		*info = -9;
-	    } else if (*iu < min(*n,*il) || *iu > *n) {
+	    } else if (*iu < std::min(*n,*il) || *iu > *n) {
 		*info = -10;
 	    }
 	}
@@ -351,10 +351,10 @@ static integer c_n1 = -1;
 /* Computing MAX */
 	i__1 = nb, i__2 = ilaenv_(&c__1, "DORMTR", uplo, n, &c_n1, &c_n1, &
 		c_n1);
-	nb = max(i__1,i__2);
+	nb = std::max(i__1,i__2);
 /* Computing MAX */
 	i__1 = (nb + 1) * *n;
-	lwkopt = max(i__1,lwmin);
+	lwkopt = std::max(i__1,lwmin);
 	work[1] = (doublereal) lwkopt;
 	iwork[1] = liwmin;
     }
@@ -401,7 +401,7 @@ static integer c_n1 = -1;
     rmin = sqrt(smlnum);
 /* Computing MIN */
     d__1 = sqrt(bignum), d__2 = 1. / sqrt(sqrt(safmin));
-    rmax = min(d__1,d__2);
+    rmax = std::min(d__1,d__2);
 
 /*     Scale matrix to allowable range, if necessary. */
 

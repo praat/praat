@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dgbsv_(integer *n, integer *kl, integer *ku, integer *
@@ -130,7 +130,7 @@
 	*info = -4;
     } else if (*ldab < (*kl << 1) + *ku + 1) {
 	*info = -6;
-    } else if (*ldb < max(*n,1_integer)) {
+    } else if (*ldb < std::max(*n,1_integer)) {
 	*info = -9;
     }
     if (*info != 0) {

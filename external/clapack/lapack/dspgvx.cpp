@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -226,7 +226,7 @@ static integer c__1 = 1;
 	} else if (indeig) {
 	    if (*il < 1) {
 		*info = -10;
-	    } else if (*iu < min(*n,*il) || *iu > *n) {
+	    } else if (*iu < std::min(*n,*il) || *iu > *n) {
 		*info = -11;
 	    }
 	}

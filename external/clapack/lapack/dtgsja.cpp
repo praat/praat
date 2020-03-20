@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -337,9 +337,9 @@ static doublereal c_b43 = -1.;
 	*info = -5;
     } else if (*n < 0) {
 	*info = -6;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -10;
-    } else if (*ldb < max(1_integer,*p)) {
+    } else if (*ldb < std::max(1_integer,*p)) {
 	*info = -12;
     } else if (*ldu < 1 || wantu && *ldu < *m) {
 	*info = -18;
@@ -423,7 +423,7 @@ static doublereal c_b43 = -1.;
 
 /* Computing MIN */
 		i__4 = *k + *l;
-		i__3 = min(i__4,*m);
+		i__3 = std::min(i__4,*m);
 		drot_(&i__3, &a[(*n - *l + j) * a_dim1 + 1], &c__1, &a[(*n - *
 			l + i__) * a_dim1 + 1], &c__1, &csq, &snq);
 
@@ -475,7 +475,7 @@ static doublereal c_b43 = -1.;
 	    error = 0.;
 /* Computing MIN */
 	    i__2 = *l, i__3 = *m - *k;
-	    i__1 = min(i__2,i__3);
+	    i__1 = std::min(i__2,i__3);
 	    for (i__ = 1; i__ <= i__1; ++i__) {
 		i__2 = *l - i__ + 1;
 		dcopy_(&i__2, &a[*k + i__ + (*n - *l + i__) * a_dim1], lda, &
@@ -485,11 +485,11 @@ static doublereal c_b43 = -1.;
 			l + 1], &c__1);
 		i__2 = *l - i__ + 1;
 		dlapll_(&i__2, &work[1], &c__1, &work[*l + 1], &c__1, &ssmin);
-		error = max(error,ssmin);
+		error = std::max(error,ssmin);
 /* L30: */
 	    }
 
-	    if (abs(error) <= min(*tola,*tolb)) {
+	    if (abs(error) <= std::min(*tola,*tolb)) {
 		goto L50;
 	    }
 	}
@@ -519,7 +519,7 @@ L50:
 
 /* Computing MIN */
     i__2 = *l, i__3 = *m - *k;
-    i__1 = min(i__2,i__3);
+    i__1 = std::min(i__2,i__3);
     for (i__ = 1; i__ <= i__1; ++i__) {
 
 	a1 = a[*k + i__ + (*n - *l + i__) * a_dim1];

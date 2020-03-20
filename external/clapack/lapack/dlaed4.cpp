@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaed4_(integer *n, integer *i__, doublereal *d__, 
@@ -267,9 +267,9 @@
 	}
 
 	if (w <= 0.) {
-	    dltlb = max(dltlb,tau);
+	    dltlb = std::max(dltlb,tau);
 	} else {
-	    dltub = min(dltub,tau);
+	    dltub = std::min(dltub,tau);
 	}
 
 /*        Calculate the new step */
@@ -358,9 +358,9 @@
 	    }
 
 	    if (w <= 0.) {
-		dltlb = max(dltlb,tau);
+		dltlb = std::max(dltlb,tau);
 	    } else {
-		dltub = min(dltub,tau);
+		dltub = std::min(dltub,tau);
 	    }
 
 /*           Calculate the new step */
@@ -596,9 +596,9 @@
 	}
 
 	if (w <= 0.) {
-	    dltlb = max(dltlb,tau);
+	    dltlb = std::max(dltlb,tau);
 	} else {
-	    dltub = min(dltub,tau);
+	    dltub = std::min(dltub,tau);
 	}
 
 /*        Calculate the new step */
@@ -756,9 +756,9 @@
 	    }
 
 	    if (w <= 0.) {
-		dltlb = max(dltlb,tau);
+		dltlb = std::max(dltlb,tau);
 	    } else {
-		dltub = min(dltub,tau);
+		dltub = std::min(dltub,tau);
 	    }
 
 /*           Calculate the new step */

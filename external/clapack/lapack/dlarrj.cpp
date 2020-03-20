@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlarrj_(integer *n, doublereal *d__, doublereal *e2, 
@@ -156,7 +156,7 @@
 	width = right - mid;
 /* Computing MAX */
 	d__1 = abs(left), d__2 = abs(right);
-	tmp = max(d__1,d__2);
+	tmp = std::max(d__1,d__2);
 /*        The following test prevents the test of converged intervals */
 	if (width < *rtol * tmp) {
 /*           This interval has already converged and does not need refinement. */
@@ -253,7 +253,7 @@ L80:
 	width = right - mid;
 /* Computing MAX */
 	d__1 = abs(left), d__2 = abs(right);
-	tmp = max(d__1,d__2);
+	tmp = std::max(d__1,d__2);
 	if (width < *rtol * tmp || iter == maxitr) {
 /*           reduce number of unconverged intervals */
 	    --nint;

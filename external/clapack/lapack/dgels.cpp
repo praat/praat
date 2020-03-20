@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -168,7 +168,7 @@ static integer c__0 = 0;
 
     /* Function Body */
     *info = 0;
-    mn = min(*m,*n);
+    mn = std::min(*m,*n);
     lquery = *lwork == -1;
     if (! (lsame_(trans, "N") || lsame_(trans, "T"))) {
 	*info = -1;
@@ -178,17 +178,17 @@ static integer c__0 = 0;
 	*info = -3;
     } else if (*nrhs < 0) {
 	*info = -4;
-    } else if (*lda < max(1_integer,*m)) {
+    } else if (*lda < std::max(1_integer,*m)) {
 	*info = -6;
     } else /* if(complicated condition) */ {
 /* Computing MAX */
-	i__1 = max(1_integer,*m);
-	if (*ldb < max(i__1,*n)) {
+	i__1 = std::max(1_integer,*m);
+	if (*ldb < std::max(i__1,*n)) {
 	    *info = -8;
 	} else /* if(complicated condition) */ {
 /* Computing MAX */
-	    i__1 = 1, i__2 = mn + max(mn,*nrhs);
-	    if (*lwork < max(i__1,i__2) && ! lquery) {
+	    i__1 = 1, i__2 = mn + std::max(mn,*nrhs);
+	    if (*lwork < std::max(i__1,i__2) && ! lquery) {
 		*info = -10;
 	    }
 	}
@@ -209,12 +209,12 @@ static integer c__0 = 0;
 /* Computing MAX */
 		i__1 = nb, i__2 = ilaenv_(&c__1, "DORMQR", "LN", m, nrhs, n, &
 			c_n1);
-		nb = max(i__1,i__2);
+		nb = std::max(i__1,i__2);
 	    } else {
 /* Computing MAX */
 		i__1 = nb, i__2 = ilaenv_(&c__1, "DORMQR", "LT", m, nrhs, n, &
 			c_n1);
-		nb = max(i__1,i__2);
+		nb = std::max(i__1,i__2);
 	    }
 	} else {
 	    nb = ilaenv_(&c__1, "DGELQF", " ", m, n, &c_n1, &c_n1);
@@ -222,18 +222,18 @@ static integer c__0 = 0;
 /* Computing MAX */
 		i__1 = nb, i__2 = ilaenv_(&c__1, "DORMLQ", "LT", n, nrhs, m, &
 			c_n1);
-		nb = max(i__1,i__2);
+		nb = std::max(i__1,i__2);
 	    } else {
 /* Computing MAX */
 		i__1 = nb, i__2 = ilaenv_(&c__1, "DORMLQ", "LN", n, nrhs, m, &
 			c_n1);
-		nb = max(i__1,i__2);
+		nb = std::max(i__1,i__2);
 	    }
 	}
 
 /* Computing MAX */
-	i__1 = 1, i__2 = mn + max(mn,*nrhs) * nb;
-	wsize = max(i__1,i__2);
+	i__1 = 1, i__2 = mn + std::max(mn,*nrhs) * nb;
+	wsize = std::max(i__1,i__2);
 	work[1] = (doublereal) wsize;
 
     }
@@ -249,9 +249,9 @@ static integer c__0 = 0;
 /*     Quick return if possible */
 
 /* Computing MIN */
-    i__1 = min(*m,*n);
-    if (min(i__1,*nrhs) == 0) {
-	i__1 = max(*m,*n);
+    i__1 = std::min(*m,*n);
+    if (std::min(i__1,*nrhs) == 0) {
+	i__1 = std::max(*m,*n);
 	dlaset_("Full", &i__1, nrhs, &c_b33, &c_b33, &b[b_offset], ldb);
 	return 0;
     }
@@ -284,7 +284,7 @@ static integer c__0 = 0;
 
 /*        Matrix all zero. Return zero solution. */
 
-	i__1 = max(*m,*n);
+	i__1 = std::max(*m,*n);
 	dlaset_("F", &i__1, nrhs, &c_b33, &c_b33, &b[b_offset], ldb);
 	goto L50;
     }

@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -124,7 +124,7 @@ doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a
 /* Computing MAX */
 		    d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(
 			    d__1));
-		    value = max(d__2,d__3);
+		    value = std::max(d__2,d__3);
 /* L10: */
 		}
 /* L20: */
@@ -137,7 +137,7 @@ doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a
 /* Computing MAX */
 		    d__2 = value, d__3 = (d__1 = a[i__ + j * a_dim1], abs(
 			    d__1));
-		    value = max(d__2,d__3);
+		    value = std::max(d__2,d__3);
 /* L30: */
 		}
 /* L40: */
@@ -166,7 +166,7 @@ doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a
 	    for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MAX */
 		d__1 = value, d__2 = work[i__];
-		value = max(d__1,d__2);
+		value = std::max(d__1,d__2);
 /* L70: */
 	    }
 	} else {
@@ -185,7 +185,7 @@ doublereal dlansy_(const char *norm, const char *uplo, integer *n, doublereal *a
 		    work[i__] += absa;
 /* L90: */
 		}
-		value = max(value,sum);
+		value = std::max(value,sum);
 /* L100: */
 	    }
 	}

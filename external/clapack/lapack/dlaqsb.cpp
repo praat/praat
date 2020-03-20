@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaqsb_(char *uplo, integer *n, integer *kd, doublereal *
@@ -138,7 +138,7 @@
 /* Computing MAX */
 		i__2 = 1, i__3 = j - *kd;
 		i__4 = j;
-		for (i__ = max(i__2,i__3); i__ <= i__4; ++i__) {
+		for (i__ = std::max(i__2,i__3); i__ <= i__4; ++i__) {
 		    ab[*kd + 1 + i__ - j + j * ab_dim1] = cj * s[i__] * ab[*
 			    kd + 1 + i__ - j + j * ab_dim1];
 /* L10: */
@@ -154,7 +154,7 @@
 		cj = s[j];
 /* Computing MIN */
 		i__2 = *n, i__3 = j + *kd;
-		i__4 = min(i__2,i__3);
+		i__4 = std::min(i__2,i__3);
 		for (i__ = j; i__ <= i__4; ++i__) {
 		    ab[i__ + 1 - j + j * ab_dim1] = cj * s[i__] * ab[i__ + 1 
 			    - j + j * ab_dim1];

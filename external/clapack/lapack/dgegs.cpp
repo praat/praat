@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -232,7 +232,7 @@ static doublereal c_b37 = 1.;
 
 /* Computing MAX */
     i__1 = *n << 2;
-    lwkmin = max(i__1,1_integer);
+    lwkmin = std::max(i__1,1_integer);
     lwkopt = lwkmin;
     work[1] = (doublereal) lwkopt;
     lquery = *lwork == -1;
@@ -243,9 +243,9 @@ static doublereal c_b37 = 1.;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*lda < max(1_integer,*n)) {
+    } else if (*lda < std::max(1_integer,*n)) {
 	*info = -5;
-    } else if (*ldb < max(1_integer,*n)) {
+    } else if (*ldb < std::max(1_integer,*n)) {
 	*info = -7;
     } else if (*ldvsl < 1 || ilvsl && *ldvsl < *n) {
 	*info = -12;
@@ -260,8 +260,8 @@ static doublereal c_b37 = 1.;
 	nb2 = ilaenv_(&c__1, "DORMQR", " ", n, n, n, &c_n1);
 	nb3 = ilaenv_(&c__1, "DORGQR", " ", n, n, n, &c_n1);
 /* Computing MAX */
-	i__1 = max(nb1,nb2);
-	nb = max(i__1,nb3);
+	i__1 = std::max(nb1,nb2);
+	nb = std::max(i__1,nb3);
 	lopt = (*n << 1) + *n * (nb + 1);
 	work[1] = (doublereal) lopt;
     }
@@ -357,7 +357,7 @@ static doublereal c_b37 = 1.;
     if (iinfo >= 0) {
 /* Computing MAX */
 	i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
     }
     if (iinfo != 0) {
 	*info = *n + 2;
@@ -371,7 +371,7 @@ static doublereal c_b37 = 1.;
     if (iinfo >= 0) {
 /* Computing MAX */
 	i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
     }
     if (iinfo != 0) {
 	*info = *n + 3;
@@ -390,7 +390,7 @@ static doublereal c_b37 = 1.;
 	if (iinfo >= 0) {
 /* Computing MAX */
 	    i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	    lwkopt = max(i__1,i__2);
+	    lwkopt = std::max(i__1,i__2);
 	}
 	if (iinfo != 0) {
 	    *info = *n + 4;
@@ -423,7 +423,7 @@ static doublereal c_b37 = 1.;
     if (iinfo >= 0) {
 /* Computing MAX */
 	i__1 = lwkopt, i__2 = (integer) work[iwork] + iwork - 1;
-	lwkopt = max(i__1,i__2);
+	lwkopt = std::max(i__1,i__2);
     }
     if (iinfo != 0) {
 	if (iinfo > 0 && iinfo <= *n) {

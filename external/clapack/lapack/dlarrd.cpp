@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Table of constant values */
@@ -293,9 +293,9 @@ static integer c__0 = 0;
 	if (*vl >= *vu) {
 	    *info = -5;
 	}
-    } else if (irange == 3 && (*il < 1 || *il > max(1_integer,*n))) {
+    } else if (irange == 3 && (*il < 1 || *il > std::max(1_integer,*n))) {
 	*info = -6;
-    } else if (irange == 3 && (*iu < min(*n,*il) || *iu > *n)) {
+    } else if (irange == 3 && (*iu < std::min(*n,*il) || *iu > *n)) {
 	*info = -7;
     }
 
@@ -345,16 +345,16 @@ static integer c__0 = 0;
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* Computing MIN */
 	d__1 = gl, d__2 = gers[(i__ << 1) - 1];
-	gl = min(d__1,d__2);
+	gl = std::min(d__1,d__2);
 /* Computing MAX */
 	d__1 = gu, d__2 = gers[i__ * 2];
-	gu = max(d__1,d__2);
+	gu = std::max(d__1,d__2);
 /* L5: */
     }
 /*     Compute global Gerschgorin bounds and spectral diameter */
 /* Computing MAX */
     d__1 = abs(gl), d__2 = abs(gu);
-    tnorm = max(d__1,d__2);
+    tnorm = std::max(d__1,d__2);
     gl = gl - tnorm * 2. * eps * *n - *pivmin * 4.;
     gu = gu + tnorm * 2. * eps * *n + *pivmin * 4.;
     spdiam = gu - gl;
@@ -515,10 +515,10 @@ static integer c__0 = 0;
 	    for (j = ibegin; j <= i__2; ++j) {
 /* Computing MIN */
 		d__1 = gl, d__2 = gers[(j << 1) - 1];
-		gl = min(d__1,d__2);
+		gl = std::min(d__1,d__2);
 /* Computing MAX */
 		d__1 = gu, d__2 = gers[j * 2];
-		gu = max(d__1,d__2);
+		gu = std::max(d__1,d__2);
 /* L40: */
 	    }
 	    spdiam = gu - gl;
@@ -533,8 +533,8 @@ static integer c__0 = 0;
 		    goto L70;
 		}
 /*              refine search interval if possible, only range (WL,WU] matters */
-		gl = max(gl,*wl);
-		gu = min(gu,*wu);
+		gl = std::max(gl,*wl);
+		gu = std::min(gu,*wu);
 		if (gl >= gu) {
 		    goto L70;
 		}

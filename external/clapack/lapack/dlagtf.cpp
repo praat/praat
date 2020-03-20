@@ -1,4 +1,4 @@
-#include "f2c.h"
+#include "clapack.h"
 #include "blaswrap.h"
 
 /* Subroutine */ int dlagtf_(integer *n, doublereal *a, doublereal *lambda, 
@@ -151,7 +151,7 @@
 
     eps = dlamch_("Epsilon");
 
-    tl = max(*tol,eps);
+    tl = std::max(*tol,eps);
     scale1 = abs(a[1]) + abs(b[1]);
     i__1 = *n - 1;
     for (k = 1; k <= i__1; ++k) {
@@ -196,7 +196,7 @@
 		c__[k] = mult;
 	    }
 	}
-	if (max(piv1,piv2) <= tl && in[*n] == 0) {
+	if (std::max(piv1,piv2) <= tl && in[*n] == 0) {
 	    in[*n] = k;
 	}
 /* L10: */
