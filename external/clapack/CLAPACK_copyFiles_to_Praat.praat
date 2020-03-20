@@ -1,5 +1,5 @@
 # CLAPACK_copyFiles_to_Praat.praat
-# djmw 20200412
+# djmw 20200319
 # 
 # LAPACK sources copied form http://www.netlib.org/clapack/
 #
@@ -56,11 +56,11 @@ if sources > 0
 			... fromdir$ + "slamch.c"
 		runSystem_nocheck: "rsync -v " + excludes$ + includes$ + todir$
 	endif
-	excludes$ = "--exclude=s_stop.c --exclude=s_paus.c "
+	excludes$ = "--exclude=s_stop.c --exclude=s_paus.c --exclude=d_*.c"
 	if f2CLIBS
 		todir$ = lapackpraat$ + "f2clib/"
 		fromdir$ = lapackbase$ + "F2CLIBS/libf2c/"
-		includes$ = fromdir$ + "d_*.c " + fromdir$ + "s_*.c " + fromdir$ + "pow_d*.c "
+		includes$ =  fromdir$ + "d*.c + "fromdir$ + "s_*.c " + fromdir$ + "pow_d*.c "
 		runSystem_nocheck: "rsync -v " + excludes$  + includes$ + todir$
 	endif
 endif
@@ -69,12 +69,7 @@ endif
 
 modified_blas$ = ""
 modified_clapack$ = ""
-# If we really want the c++ compiler
-make_rule$ = ".SUFFIXES: .c .o" + newline$ +
-	... ".c.o:" + newline$ +
-	... tab$ + "$(CXX) $(CXXFLAGS) -I .. -I ../../../melder -c -o $@ $<" + newline$ + newline$
 
-makerules$ = ""
 if bLAS
 	todir$ = lapackpraat$ + "blas/"
 	@make_makefile: todir$, "libblas.a", "*.c", ".c"
@@ -131,7 +126,7 @@ procedure make_makefile:  .directory$, .lib$, .file_globber$, .extension$
 	... "# with the script """ + thisScriptName$ + """."+ newline$ +
 	... "# For CLAPACK version " +  lapack_version$ + "." + newline$ + newline$ +
 	... "include ../../../makefile.defs" + newline$ + newline$ +
-	... make_rule$ +
+	... "CPPFLAGS = -I ../../../melder -I .." + newline$ + newline$ +
 	... "OBJECTS = "
 	.dlist = Create Strings as file list: .lib$, .directory$  + .file_globber$
 	@add_make_objects: .dlist, .extension$
