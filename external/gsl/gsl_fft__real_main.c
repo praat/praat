@@ -36,7 +36,7 @@ FUNCTION(gsl_fft_real,transform) (BASE data[], const size_t stride, const size_t
 
   size_t i;
 
-  size_t q, product = 1;
+  size_t product = 1;
   size_t tskip;
   size_t product_1;
 
@@ -74,7 +74,6 @@ FUNCTION(gsl_fft_real,transform) (BASE data[], const size_t stride, const size_t
       const size_t factor = wavetable->factor[i];
       product_1 = product;
       product *= factor;
-      q = n / product;
 
       tskip = (product_1 + 1) / 2 - 1;
 

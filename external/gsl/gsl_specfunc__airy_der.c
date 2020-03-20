@@ -592,7 +592,6 @@ airy_deriv_mod_phase(const double x, gsl_mode_t mode,
   gsl_sf_result result_p;
   double a, p;
   double sqx;
-  double x32;
 
   if(x <= -4.0) {
     double z = 128.0/(x*x*x) + 1.0;
@@ -621,7 +620,6 @@ airy_deriv_mod_phase(const double x, gsl_mode_t mode,
   p = -0.625  + result_p.val;
  
   sqx = sqrt(-x);
-  x32   = x*sqx;
 
   ampl->val = sqrt(a * sqx);
   ampl->err = fabs(ampl->val) * (GSL_DBL_EPSILON + fabs(result_a.err/result_a.val));

@@ -504,8 +504,6 @@ rk8pd_reset (void *vstate, size_t dim)
 static unsigned int
 rk8pd_order (void *vstate)
 {
-  rk8pd_state_t *state = (rk8pd_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 8;
 }
 

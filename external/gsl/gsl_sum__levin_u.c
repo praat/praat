@@ -58,7 +58,7 @@ gsl_sum_levin_u_minmax (const double *array, const size_t array_size,
     {
       const double SMALL = 0.01;
       const size_t nmax = GSL_MAX (max_terms, array_size) - 1;
-      double noise_n = 0.0, noise_nm1 = 0.0;
+      double noise_n = 0.0;
       double trunc_n = 0.0, trunc_nm1 = 0.0;
       double actual_trunc_n = 0.0, actual_trunc_nm1 = 0.0;
       double result_n = 0.0, result_nm1 = 0.0;
@@ -113,7 +113,6 @@ gsl_sum_levin_u_minmax (const double *array, const size_t array_size,
           trunc_nm1 = trunc_n;
           trunc_n = 0.5 * (actual_trunc_n + actual_trunc_nm1);
 
-          noise_nm1 = noise_n;
           variance = 0;
 
           for (i = 0; i <= n; i++)

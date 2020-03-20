@@ -298,7 +298,6 @@ hyperg_U_finite_sum(int N, double a, double b, double x, double xeps,
       gsl_sf_result gbm1;
       gsl_sf_result gamr;
       int stat_gbm1;
-      int stat_gamr;
       double t_val = 1.0;
       double t_err = 0.0;
 
@@ -313,7 +312,7 @@ hyperg_U_finite_sum(int N, double a, double b, double x, double xeps,
       }
 
       stat_gbm1 = gsl_sf_gamma_e(b-1.0, &gbm1);
-      stat_gamr = gsl_sf_gammainv_e(a,  &gamr);
+      (void) gsl_sf_gammainv_e(a,  &gamr);
 
       if(stat_gbm1 == GSL_SUCCESS) {
         gsl_sf_result powx1N;

@@ -305,8 +305,6 @@ rk2imp_reset (void *vstate, size_t dim)
 static unsigned int
 rk2imp_order (void *vstate)
 {
-  rk2imp_state_t *state = (rk2imp_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 2;
 }
 

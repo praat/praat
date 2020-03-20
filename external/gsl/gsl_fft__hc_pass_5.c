@@ -30,20 +30,16 @@ FUNCTION(fft_halfcomplex,pass_5) (const BASE in[],
                                   const TYPE(gsl_complex) twiddle4[])
 {
 
-  size_t i, j, k, k1, jump;
+  size_t k, k1;
   size_t factor, q, m, product_1;
 
   const ATOMIC sina = sin (2.0 * M_PI / 5.0);
   const ATOMIC sinb = sin (2.0 * M_PI / 10.0);
 
-  i = 0;
-  j = 0;
-
   factor = 5;
   m = n / factor;
   q = n / product;
   product_1 = product / factor;
-  jump = (factor - 1) * q;
 
   for (k1 = 0; k1 < product_1; k1++)
     {

@@ -105,7 +105,6 @@ static inline unsigned long int uni_get (void *vstate);
 static double uni_get_double (void *vstate);
 static void uni_set (void *state, unsigned long int s);
 
-static const unsigned int MDIG = 16;    /* Machine digits in int */
 static const unsigned int m1 = 32767;   /* 2^(MDIG-1) - 1 */
 static const unsigned int m2 = 256;     /* 2^(MDIG/2) */
 

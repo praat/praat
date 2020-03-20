@@ -79,7 +79,6 @@ FUNCTION(gsl_fft_halfcomplex,transform) (BASE data[], const size_t stride, const
   size_t i;
   size_t nf;
   int state;
-  int product_1;
   int tskip;
   TYPE(gsl_complex) *twiddle1, *twiddle2, *twiddle3, *twiddle4;
 
@@ -110,7 +109,6 @@ FUNCTION(gsl_fft_halfcomplex,transform) (BASE data[], const size_t stride, const
   for (i = 0; i < nf; i++)
     {
       factor = wavetable->factor[i];
-      product_1 = product;
       product *= factor;
       q = n / product;
 

@@ -337,8 +337,6 @@ rkck_reset (void *vstate, size_t dim)
 static unsigned int
 rkck_order (void *vstate)
 {
-  rkck_state_t *state = (rkck_state_t *) vstate;
-  state = 0; /* prevent warnings about unused parameters */
   return 5; /* FIXME: should this be 4? */
 }
 
