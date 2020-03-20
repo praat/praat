@@ -596,16 +596,16 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				{
 					double x [3], *px = & x [0];
 					const double *cpx = px;
-					VEC vx { px, 2, false };
-					constVEC cvx { px, 2, false };
-					const VEC c_vx { px, 2, false };
+					VEC vx { px, 2 };
+					constVEC cvx { px, 2 };
+					const VEC c_vx { px, 2 };
 					double a = c_vx [1];
 					const double b = c_vx [2];
 					const double y = 0.0, *py = & y;
 					//VEC vy { py, 0 };   // should be refused by the compiler
-					constVEC cvy { py, 2, false };
+					constVEC cvy { py, 2 };
 					//const VEC c_vy = VEC (py, 2);
-					const VEC c_vy = (const VEC) VEC (const_cast<double *> (py), 2, false);
+					const VEC c_vy = (const VEC) VEC (const_cast<double *> (py), 2);
 					double c = c_vy [1];
 					const double d = c_vy [2];
 					//VEC c_vy2 = VEC (py, 2);

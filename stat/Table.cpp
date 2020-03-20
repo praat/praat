@@ -769,7 +769,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			We will now sort the original table temporarily, by the factors (independent variables) only.
 		*/
-		Table_sortRows_Assert (me, constINTVEC (columns.cells, factors.size, false));   /* This works only because the factors come first. */
+		Table_sortRows_Assert (me, constINTVEC (columns.cells, factors.size));   /* This works only because the factors come first. */
 		originalChanged = true;
 		/*
 			Find stretches of identical factors.
@@ -881,7 +881,7 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 			row -> sortingIndex = irow;
 		}
 		integer columns [1] = { column };
-		Table_sortRows_Assert (me, constINTVEC (columns, 1, false));
+		Table_sortRows_Assert (me, constINTVEC (columns, 1));
 		integer numberOfLevels = 0;
 		integer irow = 1;
 		while (irow <= my rows.size) {
@@ -1669,7 +1669,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	Table_numericize_Assert (ranks.get(), 2);
 	Table_numericize_Assert (ranks.get(), 3);
 	integer columns [1] = { 2 };   // we're gonna sort by column 2
-	Table_sortRows_Assert (ranks.get(), constINTVEC (columns, 1, false));   // we sort by one column only
+	Table_sortRows_Assert (ranks.get(), constINTVEC (columns, 1));   // we sort by one column only
 	double totalNumberOfTies3 = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		TableRow row = ranks -> rows.at [irow];
