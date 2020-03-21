@@ -406,7 +406,7 @@ static integer c__4 = 4;
 /*     try DSTEBZ. */
 
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
 	    test = true;
@@ -423,7 +423,7 @@ static integer c__4 = 4;
 	    if (*abstol <= *n * 2. * eps) {
 		tryrac = true;
 	    } else {
-		tryrac = FALSE_;
+		tryrac = false;
 	    }
 	    i__1 = *lwork - (*n << 1);
 	    dstemr_(jobz, "A", n, &work[*n + 1], &work[1], vl, vu, il, iu, m, 

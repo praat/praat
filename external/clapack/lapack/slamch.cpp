@@ -145,7 +145,7 @@ double slamch_(const char *cmach)
     }
 
     ret_val = rmach;
-    first = FALSE_;
+    first = false;
     return ret_val;
 
 /*     End of SLAMCH */
@@ -300,14 +300,14 @@ L20:
 	if (c__ == a) {
 	    lrnd = true;
 	} else {
-	    lrnd = FALSE_;
+	    lrnd = false;
 	}
 	r__1 = b / 2;
 	r__2 = b / 100;
 	f = slamc3_(&r__1, &r__2);
 	c__ = slamc3_(&f, &a);
 	if (lrnd && c__ == a) {
-	    lrnd = FALSE_;
+	    lrnd = false;
 	}
 
 /*        Try and decide whether rounding is done in the  IEEE  'round to */
@@ -351,7 +351,7 @@ L30:
     *t = lt;
     *rnd = lrnd;
     *ieee1 = lieee1;
-    first = FALSE_;
+    first = false;
     return 0;
 
 /*     End of SLAMC1 */
@@ -367,7 +367,7 @@ L30:
     /* Initialized data */
 
     static bool first = true;
-    static bool iwarn = FALSE_;
+    static bool iwarn = false;
 
     /* System generated locals */
     integer i__1;
@@ -553,7 +553,7 @@ L10:
 	slamc4_(&gpmin, &a, &lbeta);
 	r__1 = -a;
 	slamc4_(&gnmin, &r__1, &lbeta);
-	ieee = FALSE_;
+	ieee = false;
 
 	if (ngpmin == ngnmin && gpmin == gnmin) {
 	    if (ngpmin == gpmin) {
@@ -601,7 +601,7 @@ L10:
 /*         ( A guess; no known machine ) */
 	    iwarn = true;
 	}
-	first = FALSE_;
+	first = false;
 /* ** */
 /* Comment out this if block if EMIN is ok */
 	if (iwarn) {

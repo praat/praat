@@ -24,7 +24,7 @@ typedef float real;
 //#endif
 
 //#define TRUE_ (1)
-#define FALSE_ (0)
+//#define FALSE_ (0)
 
 /* Extern is for use with -E */
 //#ifndef Extern

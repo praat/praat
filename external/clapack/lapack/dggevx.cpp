@@ -346,24 +346,24 @@ static double c_b60 = 1.;
     /* Function Body */
     if (lsame_(jobvl, "N")) {
 	ijobvl = 1;
-	ilvl = FALSE_;
+	ilvl = false;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
 	ilvl = true;
     } else {
 	ijobvl = -1;
-	ilvl = FALSE_;
+	ilvl = false;
     }
 
     if (lsame_(jobvr, "N")) {
 	ijobvr = 1;
-	ilvr = FALSE_;
+	ilvr = false;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
 	ilvr = true;
     } else {
 	ijobvr = -1;
-	ilvr = FALSE_;
+	ilvr = false;
     }
     ilv = ilvl || ilvr;
 
@@ -474,7 +474,7 @@ static double c_b60 = 1.;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, &work[1]);
-    ilascl = FALSE_;
+    ilascl = false;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
 	ilascl = true;
@@ -490,7 +490,7 @@ static double c_b60 = 1.;
 /*     Scale B if max element outside range [SMLNUM,BIGNUM] */
 
     bnrm = dlange_("M", n, n, &b[b_offset], ldb, &work[1]);
-    ilbscl = FALSE_;
+    ilbscl = false;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
 	ilbscl = true;
@@ -647,12 +647,12 @@ static double c_b60 = 1.;
 /*           to avoid using extra 2*N*N workspace, we have to recalculate */
 /*           eigenvectors and estimate one condition numbers at a time. */
 
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (i__ = 1; i__ <= i__1; ++i__) {
 
 		if (pair) {
-		    pair = FALSE_;
+		    pair = false;
 		    goto L20;
 		}
 		mm = 1;
@@ -665,7 +665,7 @@ static double c_b60 = 1.;
 
 		i__2 = *n;
 		for (j = 1; j <= i__2; ++j) {
-		    bwork[j] = FALSE_;
+		    bwork[j] = false;
 /* L10: */
 		}
 		if (mm == 1) {

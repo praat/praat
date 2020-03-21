@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 static integer c__4 = 4;
-static bool c_false = FALSE_;
+static bool c_false = false;
 static integer c_n1 = -1;
 static integer c__2 = 2;
 static integer c__3 = 3;

@@ -295,7 +295,7 @@ static integer c__1 = 1;
     upper = lsame_(uplo, "U");
     if (nofact || equil) {
 	*(unsigned char *)equed = 'N';
-	rcequ = FALSE_;
+	rcequ = false;
     } else {
 	rcequ = lsame_(equed, "Y");
 	smlnum = dlamch_("Safe minimum");

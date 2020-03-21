@@ -496,7 +496,7 @@ static integer c_n1 = -1;
 	    if (*abstol <= *n * 0. * eps) {
 		tryrac = true;
 	    } else {
-		tryrac = FALSE_;
+		tryrac = false;
 	    }
 	    dstemr_(jobz, "A", n, &work[inddd], &work[indee], vl, vu, il, iu, 
 		    m, &w[1], &z__[z_offset], ldz, n, &isuppz[1], &tryrac, &

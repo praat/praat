@@ -328,7 +328,7 @@ static integer c__2 = 2;
 	    iinfo);
 /*     Can force use of bisection instead of faster DQDS. */
 /*     Option left in the code for future multisection work. */
-    forceb = FALSE_;
+    forceb = false;
     if (irange == 1 && ! forceb) {
 /*        Set interval [VL,VU] that contains all eigenvalues */
 	*vl = gl;
@@ -611,7 +611,7 @@ L21:
 	    if (dmax__ > spdiam * 64.) {
 		norep = true;
 	    } else {
-		norep = FALSE_;
+		norep = false;
 	    }
 	    if (usedqd && ! norep) {
 /*              Ensure the definiteness of the representation */

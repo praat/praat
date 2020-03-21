@@ -182,7 +182,7 @@
 
     /* Function Body */
     *info = 0;
-    tryrac = FALSE_;
+    tryrac = false;
     dstemr_(jobz, range, n, &d__[1], &e[1], vl, vu, il, iu, m, &w[1], &z__[
 	    z_offset], ldz, n, &isuppz[1], &tryrac, &work[1], lwork, &iwork[1]
 , liwork, info);

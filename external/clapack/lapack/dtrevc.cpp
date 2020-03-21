@@ -3,7 +3,7 @@
 
 /* Table of constant values */
 
-static bool c_false = FALSE_;
+static bool c_false = false;
 static integer c__1 = 1;
 static double c_b22 = 1.;
 static double c_b25 = 0.;
@@ -239,12 +239,12 @@ static bool c_true = true;
 
 	if (somev) {
 	    *m = 0;
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (j = 1; j <= i__1; ++j) {
 		if (pair) {
-		    pair = FALSE_;
-		    select[j] = FALSE_;
+		    pair = false;
+		    select[j] = false;
 		} else {
 		    if (j < *n) {
 			if (t[j + 1 + j * t_dim1] == 0.) {

@@ -9,7 +9,7 @@ static integer c_n1 = -1;
 static integer c__12 = 12;
 static integer c__14 = 14;
 static integer c__16 = 16;
-static bool c_false = FALSE_;
+static bool c_false = false;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
@@ -462,7 +462,7 @@ L20:
 		    i__2 = std::min(nwmax,nh), i__3 = nw << 1;
 		    nw = std::min(i__2,i__3);
 		} else {
-		    nwinc = FALSE_;
+		    nwinc = false;
 		    if (nw == nh && nh > 2) {
 			nw = nh - 1;
 		    }
@@ -591,7 +591,7 @@ L20:
 /*                    .    Bubble sort keeps complex conjugate */
 /*                    .    pairs together. ==== */
 
-			sorted = FALSE_;
+			sorted = false;
 			i__2 = ks + 1;
 			for (k = kbot; k >= i__2; --k) {
 			    if (sorted) {
@@ -604,7 +604,7 @@ L20:
 					i__], abs(d__2)) < (d__3 = wr[i__ + 1]
 					, abs(d__3)) + (d__4 = wi[i__ + 1], 
 					abs(d__4))) {
-				    sorted = FALSE_;
+				    sorted = false;
 
 				    swap = wr[i__];
 				    wr[i__] = wr[i__ + 1];

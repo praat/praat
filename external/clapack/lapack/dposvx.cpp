@@ -259,7 +259,7 @@
     equil = lsame_(fact, "E");
     if (nofact || equil) {
 	*(unsigned char *)equed = 'N';
-	rcequ = FALSE_;
+	rcequ = false;
     } else {
 	rcequ = lsame_(equed, "Y");
 	smlnum = dlamch_("Safe minimum");

@@ -295,24 +295,24 @@ static double c_b38 = 0.;
     /* Function Body */
     if (lsame_(jobvl, "N")) {
 	ijobvl = 1;
-	ilvl = FALSE_;
+	ilvl = false;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
 	ilvl = true;
     } else {
 	ijobvl = -1;
-	ilvl = FALSE_;
+	ilvl = false;
     }
 
     if (lsame_(jobvr, "N")) {
 	ijobvr = 1;
-	ilvr = FALSE_;
+	ilvr = false;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
 	ilvr = true;
     } else {
 	ijobvr = -1;
-	ilvr = FALSE_;
+	ilvr = false;
     }
     ilv = ilvl || ilvr;
 
@@ -702,7 +702,7 @@ L100:
 	salfar = anrm * alphar[jc];
 	salfai = anrm * alphai[jc];
 	sbeta = bnrm * beta[jc];
-	ilimit = FALSE_;
+	ilimit = false;
 	scale = 1.;
 
 /*        Check for significant underflow in ALPHAI */
@@ -767,7 +767,7 @@ L100:
 		scale /= temp;
 	    }
 	    if (scale < 1.) {
-		ilimit = FALSE_;
+		ilimit = false;
 	    }
 	}
 

@@ -8,7 +8,7 @@ static integer c__2 = 2;
 static double c_b34 = 1.;
 static integer c__1 = 1;
 static double c_b36 = 0.;
-static bool c_false = FALSE_;
+static bool c_false = false;
 
 /* Subroutine */ int dtgevc_(const char *side, const char *howmny, bool *select, 
 	integer *n, double *s, integer *lds, double *p, integer *ldp, 
@@ -289,11 +289,11 @@ static bool c_false = FALSE_;
     if (lsame_(howmny, "A")) {
 	ihwmny = 1;
 	ilall = true;
-	ilback = FALSE_;
+	ilback = false;
     } else if (lsame_(howmny, "S")) {
 	ihwmny = 2;
-	ilall = FALSE_;
-	ilback = FALSE_;
+	ilall = false;
+	ilback = false;
     } else if (lsame_(howmny, "B")) {
 	ihwmny = 3;
 	ilall = true;
@@ -305,12 +305,12 @@ static bool c_false = FALSE_;
 
     if (lsame_(side, "R")) {
 	iside = 1;
-	compl_x = FALSE_;
+	compl_x = false;
 	compr = true;
     } else if (lsame_(side, "L")) {
 	iside = 2;
 	compl_x = true;
-	compr = FALSE_;
+	compr = false;
     } else if (lsame_(side, "B")) {
 	iside = 3;
 	compl_x = true;
@@ -341,11 +341,11 @@ static bool c_false = FALSE_;
 
     if (! ilall) {
 	im = 0;
-	ilcplx = FALSE_;
+	ilcplx = false;
 	i__1 = *n;
 	for (j = 1; j <= i__1; ++j) {
 	    if (ilcplx) {
-		ilcplx = FALSE_;
+		ilcplx = false;
 		goto L10;
 	    }
 	    if (j < *n) {
@@ -371,8 +371,8 @@ L10:
 
 /*     Check 2-by-2 diagonal blocks of A, B */
 
-    ilabad = FALSE_;
-    ilbbad = FALSE_;
+    ilabad = false;
+    ilbbad = false;
     i__1 = *n - 1;
     for (j = 1; j <= i__1; ++j) {
 	if (s[j + 1 + j * s_dim1] != 0.) {
@@ -475,7 +475,7 @@ L10:
 
 /*        Main loop over eigenvalues */
 
-	ilcplx = FALSE_;
+	ilcplx = false;
 	i__1 = *n;
 	for (je = 1; je <= i__1; ++je) {
 
@@ -485,7 +485,7 @@ L10:
 /*           entry(-ies) of SELECT to look at. */
 
 	    if (ilcplx) {
-		ilcplx = FALSE_;
+		ilcplx = false;
 		goto L220;
 	    }
 	    nw = 1;
@@ -673,12 +673,12 @@ L10:
 /*                                   T */
 /*           (rowwise in  (a A - b B) , or columnwise in (a A - b B) ) */
 
-	    il2by2 = FALSE_;
+	    il2by2 = false;
 
 	    i__2 = *n;
 	    for (j = je + nw; j <= i__2; ++j) {
 		if (il2by2) {
-		    il2by2 = FALSE_;
+		    il2by2 = false;
 		    goto L160;
 		}
 
@@ -910,7 +910,7 @@ L220:
 
 /*        Main loop over eigenvalues */
 
-	ilcplx = FALSE_;
+	ilcplx = false;
 	for (je = *n; je >= 1; --je) {
 
 /*           Skip this iteration if (a) HOWMNY='S' and SELECT=.FALSE., or */
@@ -922,7 +922,7 @@ L220:
 /*           corresponding to the eigenvalue is in rows/columns JE-1:JE */
 
 	    if (ilcplx) {
-		ilcplx = FALSE_;
+		ilcplx = false;
 		goto L500;
 	    }
 	    nw = 1;
@@ -1148,7 +1148,7 @@ L220:
 
 /*           Columnwise triangular solve of  (a A - b B)  x = 0 */
 
-	    il2by2 = FALSE_;
+	    il2by2 = false;
 	    for (j = je - nw; j >= 1; --j) {
 
 /*              If a 2-by-2 block, is in position j-1:j, wait until */
@@ -1275,7 +1275,7 @@ L220:
 /* L360: */
 		    }
 		}
-		il2by2 = FALSE_;
+		il2by2 = false;
 L370:
 		;
 	    }

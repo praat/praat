@@ -285,8 +285,8 @@ static integer c__0 = 0;
 /*     Initialize error flags */
 
     *info = 0;
-    ncnvrg = FALSE_;
-    toofew = FALSE_;
+    ncnvrg = false;
+    toofew = false;
 
 /*     Quick return if possible */
 

@@ -297,11 +297,11 @@ static integer c_n1 = -1;
 /*        and test LWORK and LIWORK. */
 
 	*m = 0;
-	pair = FALSE_;
+	pair = false;
 	i__1 = *n;
 	for (k = 1; k <= i__1; ++k) {
 	    if (pair) {
-		pair = FALSE_;
+		pair = false;
 	    } else {
 		if (k < *n) {
 		    if (t[k + 1 + k * t_dim1] == 0.) {
@@ -375,11 +375,11 @@ static integer c_n1 = -1;
 /*     Collect the selected blocks at the top-left corner of T. */
 
     ks = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	} else {
 	    swap = select[k];
 	    if (k < *n) {

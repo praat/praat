@@ -9,8 +9,8 @@
 {
     /* Initialized data */
 
-    static bool zswap[4] = { FALSE_,FALSE_,true,true };
-    static bool rswap[4] = { FALSE_,true,FALSE_,true };
+    static bool zswap[4] = { false,false,true,true };
+    static bool rswap[4] = { false,true,false,true };
     static integer ipivot[16]	/* was [4][4] */ = { 1,2,3,4,2,1,4,3,3,4,1,2,
 	    4,3,2,1 };
 

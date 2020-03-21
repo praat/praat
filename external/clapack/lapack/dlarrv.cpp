@@ -681,7 +681,7 @@ L40:
 			    eskip = true;
 			    goto L125;
 			} else {
-			    eskip = FALSE_;
+			    eskip = false;
 			}
 			left = work[windex] - werr[windex];
 			right = work[windex] + werr[windex];
@@ -741,8 +741,8 @@ L40:
 /*                    However, the Rayleigh Quotient can have the wrong sign */
 /*                    and lead us away from the desired eigenvalue. In this */
 /*                    case, the best we can do is to use bisection. */
-			usedbs = FALSE_;
-			usedrq = FALSE_;
+			usedbs = false;
+			usedrq = false;
 /*                    Bisection is initially turned off unless it is forced */
 			needbs = ! tryrqc;
 L120:
@@ -858,7 +858,7 @@ L120:
 				return 0;
 			    }
 			} else {
-			    stp2ii = FALSE_;
+			    stp2ii = false;
 			    if (usedrq && usedbs && bstres <= resid) {
 				lambda = bstw;
 				stp2ii = true;

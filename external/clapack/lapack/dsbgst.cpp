@@ -262,7 +262,7 @@ L10:
 	i1 = std::min(i__1,i__2);
 	i2 = i__ - kbt + ka1;
 	if (i__ < m + 1) {
-	    update = FALSE_;
+	    update = false;
 	    ++i__;
 	    i0 = m;
 	    if (*ka == 0) {
@@ -1004,7 +1004,7 @@ L490:
 	i1 = std::max(i__3,i__4);
 	i2 = i__ + kbt - ka1;
 	if (i__ > m) {
-	    update = FALSE_;
+	    update = false;
 	    --i__;
 	    i0 = m + 1;
 	    if (*ka == 0) {

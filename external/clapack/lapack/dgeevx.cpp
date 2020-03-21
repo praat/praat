@@ -402,7 +402,7 @@ static integer c_n1 = -1;
 
     icond = 0;
     anrm = dlange_("M", n, n, &a[a_offset], lda, dum);
-    scalea = FALSE_;
+    scalea = false;
     if (anrm > 0. && anrm < smlnum) {
 	scalea = true;
 	cscale = smlnum;

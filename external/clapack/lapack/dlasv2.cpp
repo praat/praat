@@ -150,7 +150,7 @@ static double c_b4 = 1.;
 
 /*              Case of very large GA */
 
-		gasmal = FALSE_;
+		gasmal = false;
 		*ssmax = ga;
 		if (ha > 1.) {
 		    *ssmin = fa / (ga / ha);

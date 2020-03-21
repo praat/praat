@@ -368,7 +368,7 @@ static double c_b43 = -1.;
 
 /*     Loop until convergence */
 
-    upper = FALSE_;
+    upper = false;
     for (kcycle = 1; kcycle <= 40; ++kcycle) {
 
 	upper = ! upper;

@@ -107,7 +107,7 @@
     offdig = 0.;
     tmp = sqrt((abs(d__[1])));
     if (tmp < rmin) {
-	yesrel = FALSE_;
+	yesrel = false;
     }
     if (! yesrel) {
 	goto L11;
@@ -116,14 +116,14 @@
     for (i__ = 2; i__ <= i__1; ++i__) {
 	tmp2 = sqrt((d__1 = d__[i__], abs(d__1)));
 	if (tmp2 < rmin) {
-	    yesrel = FALSE_;
+	    yesrel = false;
 	}
 	if (! yesrel) {
 	    goto L11;
 	}
 	offdig2 = (d__1 = e[i__ - 1], abs(d__1)) / (tmp * tmp2);
 	if (offdig + offdig2 >= .999) {
-	    yesrel = FALSE_;
+	    yesrel = false;
 	}
 	if (! yesrel) {
 	    goto L11;

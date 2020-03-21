@@ -291,7 +291,7 @@ static integer c__1 = 1;
 /*     call DSTERF or SSTEQR.  If this fails for some eigenvalue, then */
 /*     try DSTEBZ. */
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
 	    test = true;

@@ -148,7 +148,7 @@ static integer c__1 = 1;
     fact = 2.;
     eps = dlamch_("Precision");
     shift = 0;
-    forcer = FALSE_;
+    forcer = false;
 /*     Note that we cannot guarantee that for any of the shifts tried, */
 /*     the factorization has a small or even moderate element growth. */
 /*     There could be Ritz values at both ends of the cluster and despite */
@@ -199,8 +199,8 @@ static integer c__1 = 1;
     ktry = 0;
     growthbound = *spdiam * 8.;
 L5:
-    sawnan1 = FALSE_;
-    sawnan2 = FALSE_;
+    sawnan1 = false;
+    sawnan2 = false;
 /*     Ensure that we do not back off too much of the initial shifts */
     ldelta = std::min(ldmax,ldelta);
     rdelta = std::min(rdmax,rdelta);
@@ -302,7 +302,7 @@ L5:
 	    sawnan2) {
 	dorrr1 = true;
     } else {
-	dorrr1 = FALSE_;
+	dorrr1 = false;
     }
     tryrrr1 = true;
     if (tryrrr1 && dorrr1) {

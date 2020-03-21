@@ -195,7 +195,7 @@
 /*     Compute the stationary transform (using the differential form) */
 /*     until the index R2. */
 
-    sawnan1 = FALSE_;
+    sawnan1 = false;
     neg1 = 0;
     s = work[inds + *b1 - 1] - *lambda;
     i__1 = r1 - 1;
@@ -264,7 +264,7 @@ L60:
 /*     Compute the progressive transform (using the differential form) */
 /*     until the index R1 */
 
-    sawnan2 = FALSE_;
+    sawnan2 = false;
     neg2 = 0;
     work[indp + *bn - 1] = d__[*bn] - *lambda;
     i__1 = r1;

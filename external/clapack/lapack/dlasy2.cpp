@@ -18,8 +18,8 @@ static integer c__0 = 0;
     static integer locu12[4] = { 3,4,1,2 };
     static integer locl21[4] = { 2,1,4,3 };
     static integer locu22[4] = { 4,3,2,1 };
-    static bool xswpiv[4] = { FALSE_,FALSE_,true,true };
-    static bool bswpiv[4] = { FALSE_,true,FALSE_,true };
+    static bool xswpiv[4] = { false,false,true,true };
+    static bool bswpiv[4] = { false,true,false,true };
 
     /* System generated locals */
     integer b_dim1, b_offset, tl_dim1, tl_offset, tr_dim1, tr_offset, x_dim1, 

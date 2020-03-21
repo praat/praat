@@ -495,7 +495,7 @@
 
 /*           We choose d(i+1) as origin. */
 
-	    orgati = FALSE_;
+	    orgati = false;
 	    a = c__ * del - z__[*i__] * z__[*i__] - z__[ip1] * z__[ip1];
 	    b = z__[ip1] * z__[ip1] * del;
 	    if (a < 0.) {
@@ -563,7 +563,7 @@
 /*        W is the value of the secular function with */
 /*        its ii-th element removed. */
 
-	swtch3 = FALSE_;
+	swtch3 = false;
 	if (orgati) {
 	    if (w < 0.) {
 		swtch3 = true;
@@ -574,7 +574,7 @@
 	    }
 	}
 	if (ii == 1 || ii == *n) {
-	    swtch3 = FALSE_;
+	    swtch3 = false;
 	}
 
 	temp = z__[ii] / delta[ii];
@@ -725,7 +725,7 @@
 	erretm = (phi - psi) * 8. + erretm + rhoinv * 2. + abs(temp) * 3. + (
 		d__1 = tau + eta, abs(d__1)) * dw;
 
-	swtch = FALSE_;
+	swtch = false;
 	if (orgati) {
 	    if (-w > abs(prew) / 10.) {
 		swtch = true;

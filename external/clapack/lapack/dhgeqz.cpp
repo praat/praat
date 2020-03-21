@@ -293,7 +293,7 @@ static integer c__3 = 3;
 
     /* Function Body */
     if (lsame_(job, "E")) {
-	ilschr = FALSE_;
+	ilschr = false;
 	ischur = 1;
     } else if (lsame_(job, "S")) {
 	ilschr = true;
@@ -303,7 +303,7 @@ static integer c__3 = 3;
     }
 
     if (lsame_(compq, "N")) {
-	ilq = FALSE_;
+	ilq = false;
 	icompq = 1;
     } else if (lsame_(compq, "V")) {
 	ilq = true;
@@ -316,7 +316,7 @@ static integer c__3 = 3;
     }
 
     if (lsame_(compz, "N")) {
-	ilz = FALSE_;
+	ilz = false;
 	icompz = 1;
     } else if (lsame_(compz, "V")) {
 	ilz = true;
@@ -501,7 +501,7 @@ static integer c__3 = 3;
 		    h__[j + (j - 1) * h_dim1] = 0.;
 		    ilazro = true;
 		} else {
-		    ilazro = FALSE_;
+		    ilazro = false;
 		}
 	    }
 
@@ -512,7 +512,7 @@ static integer c__3 = 3;
 
 /*              Test 1a: Check for 2 consecutive small subdiagonals in A */
 
-		ilazr2 = FALSE_;
+		ilazr2 = false;
 		if (! ilazro) {
 		    temp = (d__1 = h__[j + (j - 1) * h_dim1], abs(d__1));
 		    temp2 = (d__1 = h__[j + j * h_dim1], abs(d__1));
@@ -554,7 +554,7 @@ static integer c__3 = 3;
 			if (ilazr2) {
 			    h__[jch + (jch - 1) * h_dim1] *= c__;
 			}
-			ilazr2 = FALSE_;
+			ilazr2 = false;
 			if ((d__1 = t[jch + 1 + (jch + 1) * t_dim1], abs(d__1)
 				) >= btol) {
 			    if (jch + 1 >= ilast) {
@@ -1189,7 +1189,7 @@ L200:
 
 /*              Swap rows to pivot */
 
-		ilpivt = FALSE_;
+		ilpivt = false;
 /* Computing MAX */
 		d__3 = (d__1 = t[j + 1 + (j + 1) * t_dim1], abs(d__1)), d__4 =
 			 (d__2 = t[j + 1 + (j + 2) * t_dim1], abs(d__2));

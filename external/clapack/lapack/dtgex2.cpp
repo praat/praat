@@ -218,8 +218,8 @@ static integer c__0 = 0;
 	return 0;
     }
 
-    weak = FALSE_;
-    dtrong = FALSE_;
+    weak = false;
+    dtrong = false;
 
 /*     Make a local copy of selected block */
 

@@ -293,7 +293,7 @@ static integer c_n1 = -1;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, dum);
-    scalea = FALSE_;
+    scalea = false;
     if (anrm > 0. && anrm < smlnum) {
 	scalea = true;
 	cscale = smlnum;

@@ -87,14 +87,14 @@ L10:
 /*        Pre-multiply X by SMLNUM if CDEN is large compared to CNUM. */
 
 	mul = smlnum;
-	done = FALSE_;
+	done = false;
 	cden = cden1;
     } else if (abs(cnum1) > abs(cden)) {
 
 /*        Pre-multiply X by BIGNUM if CDEN is small compared to CNUM. */
 
 	mul = bignum;
-	done = FALSE_;
+	done = false;
 	cnum = cnum1;
     } else {
 

@@ -3,7 +3,7 @@
 
 /* Table of constant values */
 
-static bool c_false = FALSE_;
+static bool c_false = false;
 static bool c_true = true;
 
 /* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, bool *
@@ -235,12 +235,12 @@ static bool c_true = true;
 /*     eigenvectors, and standardize the array SELECT. */
 
     *m = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
-	    select[k] = FALSE_;
+	    pair = false;
+	    select[k] = false;
 	} else {
 	    if (wi[k] == 0.) {
 		if (select[k]) {

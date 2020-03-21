@@ -436,11 +436,11 @@ static double c_b28 = 1.;
 /*     subspaces. */
 
     *m = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	} else {
 	    if (k < *n) {
 		if (a[k + 1 + k * a_dim1] == 0.) {
@@ -528,11 +528,11 @@ static double c_b28 = 1.;
 /*     Collect the selected blocks at the top-left corner of (A, B). */
 
     ks = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	} else {
 
 	    swap = select[k];
@@ -736,11 +736,11 @@ L60:
 /*     Compute generalized eigenvalues of reordered pair (A, B) and */
 /*     normalize the generalized Schur form. */
 
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	} else {
 
 	    if (k < *n) {

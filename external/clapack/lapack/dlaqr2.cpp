@@ -347,7 +347,7 @@ static bool c_true = true;
 L20:
     if (ilst <= *ns) {
 	if (*ns == 1) {
-	    bulge = FALSE_;
+	    bulge = false;
 	} else {
 	    bulge = t[*ns + (*ns - 1) * t_dim1] != 0.;
 	}
@@ -430,7 +430,7 @@ L20:
 /*        .    graded matrices.  Bubble sort deals well with */
 /*        .    exchange failures. ==== */
 
-	sorted = FALSE_;
+	sorted = false;
 	i__ = *ns + 1;
 L30:
 	if (sorted) {
@@ -470,7 +470,7 @@ L40:
 	    if (evi >= evk) {
 		i__ = k;
 	    } else {
-		sorted = FALSE_;
+		sorted = false;
 		ifst = i__;
 		ilst = k;
 		dtrexc_("V", &jw, &t[t_offset], ldt, &v[v_offset], ldv, &ifst, 

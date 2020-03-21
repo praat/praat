@@ -185,11 +185,11 @@ L10:
     cto1 = ctoc / bignum;
     if (abs(cfrom1) > abs(ctoc) && ctoc != 0.) {
 	mul = smlnum;
-	done = FALSE_;
+	done = false;
 	cfromc = cfrom1;
     } else if (abs(cto1) > abs(cfromc)) {
 	mul = bignum;
-	done = FALSE_;
+	done = false;
 	ctoc = cto1;
     } else {
 	mul = ctoc / cfromc;

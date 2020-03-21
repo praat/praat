@@ -367,7 +367,7 @@ static integer c_n1 = -1;
 /*     zero, then call DSTERF or DORGTR and SSTEQR.  If this fails for */
 /*     some eigenvalue, then try DSTEBZ. */
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
 	    test = true;

@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b19 = 1.;
 static double c_b21 = 0.;
 static integer c__2 = 2;
-static bool c_false = FALSE_;
+static bool c_false = false;
 static integer c__3 = 3;
 
 /* Subroutine */ int dtgsna_(const char *job, const char *howmny, bool *select, 
@@ -383,11 +383,11 @@ static integer c__3 = 3;
 
 	if (somcon) {
 	    *m = 0;
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (k = 1; k <= i__1; ++k) {
 		if (pair) {
-		    pair = FALSE_;
+		    pair = false;
 		} else {
 		    if (k < *n) {
 			if (a[k + 1 + k * a_dim1] == 0.) {
@@ -448,7 +448,7 @@ static integer c__3 = 3;
     eps = dlamch_("P");
     smlnum = dlamch_("S") / eps;
     ks = 0;
-    pair = FALSE_;
+    pair = false;
 
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
@@ -456,7 +456,7 @@ static integer c__3 = 3;
 /*        Determine whether A(k,k) begins a 1-by-1 or 2-by-2 block. */
 
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	    goto L20;
 	} else {
 	    if (k < *n) {

@@ -211,24 +211,24 @@ static double c_b37 = 1.;
     /* Function Body */
     if (lsame_(jobvl, "N")) {
 	ijobvl = 1;
-	ilvl = FALSE_;
+	ilvl = false;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
 	ilvl = true;
     } else {
 	ijobvl = -1;
-	ilvl = FALSE_;
+	ilvl = false;
     }
 
     if (lsame_(jobvr, "N")) {
 	ijobvr = 1;
-	ilvr = FALSE_;
+	ilvr = false;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
 	ilvr = true;
     } else {
 	ijobvr = -1;
-	ilvr = FALSE_;
+	ilvr = false;
     }
     ilv = ilvl || ilvr;
 
@@ -311,7 +311,7 @@ static double c_b37 = 1.;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, &work[1]);
-    ilascl = FALSE_;
+    ilascl = false;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
 	ilascl = true;
@@ -327,7 +327,7 @@ static double c_b37 = 1.;
 /*     Scale B if max element outside range [SMLNUM,BIGNUM] */
 
     bnrm = dlange_("M", n, n, &b[b_offset], ldb, &work[1]);
-    ilbscl = FALSE_;
+    ilbscl = false;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
 	ilbscl = true;

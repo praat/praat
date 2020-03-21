@@ -354,7 +354,7 @@ static double c_b34 = 0.;
 /*     to zero, then call DSTERF or SSTEQR.  If this fails for some */
 /*     eigenvalue, then try DSTEBZ. */
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
 	    test = true;

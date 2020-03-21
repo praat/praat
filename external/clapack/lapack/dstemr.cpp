@@ -516,7 +516,7 @@ static double c_b18 = .001;
     } else {
 	thresh = -eps;
 /*        relative accuracy is desired but T does not guarantee it */
-	*tryrac = FALSE_;
+	*tryrac = false;
     }
 
     if (*tryrac) {

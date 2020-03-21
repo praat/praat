@@ -276,7 +276,7 @@ L120:
     sfmin2 = sfmin1 * 2.;
     sfmax2 = 1. / sfmin2;
 L140:
-    noconv = FALSE_;
+    noconv = false;
 
     i__1 = l;
     for (i__ = k; i__ <= i__1; ++i__) {

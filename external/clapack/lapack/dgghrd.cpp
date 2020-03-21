@@ -176,7 +176,7 @@ static integer c__1 = 1;
 
     /* Function Body */
     if (lsame_(compq, "N")) {
-	ilq = FALSE_;
+	ilq = false;
 	icompq = 1;
     } else if (lsame_(compq, "V")) {
 	ilq = true;
@@ -191,7 +191,7 @@ static integer c__1 = 1;
 /*     Decode COMPZ */
 
     if (lsame_(compz, "N")) {
-	ilz = FALSE_;
+	ilz = false;
 	icompz = 1;
     } else if (lsame_(compz, "V")) {
 	ilz = true;

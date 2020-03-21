@@ -200,7 +200,7 @@ static integer c__0 = 0;
 
 	tpsd = true;
 	if (lsame_(trans, "N")) {
-	    tpsd = FALSE_;
+	    tpsd = false;
 	}
 
 	if (*m >= *n) {

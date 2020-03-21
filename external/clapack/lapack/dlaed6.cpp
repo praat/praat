@@ -205,7 +205,7 @@
 		tau, abs(d__2));
 	temp = std::min(d__3,d__4);
     }
-    scale = FALSE_;
+    scale = false;
     if (temp <= small1) {
 	scale = true;
 	if (temp <= small2) {

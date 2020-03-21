@@ -47,7 +47,7 @@ bool lsamen_(integer *n, const char *ca, const char *cb)
 /*     .. */
 /*     .. Executable Statements .. */
 
-    ret_val = FALSE_;
+    ret_val = false;
     if (strlen(ca) < *n || strlen(cb) < *n) {
 	goto L20;
     }

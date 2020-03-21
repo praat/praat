@@ -4,7 +4,7 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static bool c_false = FALSE_;
+static bool c_false = false;
 static integer c__2 = 2;
 static double c_b21 = 1.;
 static double c_b25 = 0.;

@@ -307,8 +307,8 @@
     notran = lsame_(trans, "N");
     if (nofact || equil) {
 	*(unsigned char *)equed = 'N';
-	rowequ = FALSE_;
-	colequ = FALSE_;
+	rowequ = false;
+	colequ = false;
     } else {
 	rowequ = lsame_(equed, "R") || lsame_(equed, 
 		"B");

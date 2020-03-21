@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 static bool c_true = true;
-static bool c_false = FALSE_;
+static bool c_false = false;
 
 /* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select, 
 	integer *n, double *t, integer *ldt, double *vl, integer *
@@ -271,11 +271,11 @@ static bool c_false = FALSE_;
 
 	if (somcon) {
 	    *m = 0;
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (k = 1; k <= i__1; ++k) {
 		if (pair) {
-		    pair = FALSE_;
+		    pair = false;
 		} else {
 		    if (k < *n) {
 			if (t[k + 1 + k * t_dim1] == 0.) {
@@ -341,14 +341,14 @@ static bool c_false = FALSE_;
     dlabad_(&smlnum, &bignum);
 
     ks = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 
 /*        Determine whether T(k,k) begins a 1-by-1 or 2-by-2 block. */
 
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	    goto L60;
 	} else {
 	    if (k < *n) {

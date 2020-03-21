@@ -515,7 +515,7 @@
 
 /*           We choose d(i+1) as origin. */
 
-	    orgati = FALSE_;
+	    orgati = false;
 	    sg2lb = -delsq2;
 	    sg2ub = 0.;
 	    a = c__ * delsq - z__[*i__] * z__[*i__] - z__[ip1] * z__[ip1];
@@ -591,7 +591,7 @@
 /*        W is the value of the secular function with */
 /*        its ii-th element removed. */
 
-	swtch3 = FALSE_;
+	swtch3 = false;
 	if (orgati) {
 	    if (w < 0.) {
 		swtch3 = true;
@@ -602,7 +602,7 @@
 	    }
 	}
 	if (ii == 1 || ii == *n) {
-	    swtch3 = FALSE_;
+	    swtch3 = false;
 	}
 
 	temp = z__[ii] / (work[ii] * delta[ii]);
@@ -777,7 +777,7 @@
 	    sg2ub = std::min(sg2ub,tau);
 	}
 
-	swtch = FALSE_;
+	swtch = false;
 	if (orgati) {
 	    if (-w > abs(prew) / 10.) {
 		swtch = true;
