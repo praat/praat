@@ -117,7 +117,7 @@ static double c_b43 = 1.;
 /*          = 'N':  Eigenvalues are not ordered; */
 /*          = 'S':  Eigenvalues are ordered (see SELCTG). */
 
-/*  SELCTG  (external procedure) LOGICAL FUNCTION of three DOUBLE PRECISION arguments */
+/*  SELCTG  (external procedure) bool FUNCTION of three DOUBLE PRECISION arguments */
 /*          SELCTG must be declared EXTERNAL in the calling subroutine. */
 /*          If SORT = 'N', SELCTG is not referenced. */
 /*          If SORT = 'S', SELCTG is used to select eigenvalues to sort */
@@ -248,7 +248,7 @@ static double c_b43 = 1.;
 /*          arrays, and no error message related to LWORK or LIWORK is */
 /*          issued by XERBLA. */
 
-/*  BWORK   (workspace) LOGICAL array, dimension (N) */
+/*  BWORK   (workspace) bool array, dimension (N) */
 /*          Not referenced if SORT = 'N'. */
 
 /*  INFO    (output) INTEGER */

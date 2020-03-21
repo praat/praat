@@ -55,7 +55,7 @@
 /*  KNITER       (input) INTEGER */
 /*               Refer to DLAED4 for its significance. */
 
-/*  ORGATI       (input) LOGICAL */
+/*  ORGATI       (input) bool */
 /*               If ORGATI is true, the needed root is between d(2) and */
 /*               d(3); otherwise it is between d(1) and d(2).  See */
 /*               DLAED4 for further details. */

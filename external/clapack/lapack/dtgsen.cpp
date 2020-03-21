@@ -97,15 +97,15 @@ static double c_b28 = 1.;
 /*               version to get it all. */
 /*           =5: Compute PL, PR and DIF (i.e. 0, 1 and 3 above) */
 
-/*  WANTQ   (input) LOGICAL */
+/*  WANTQ   (input) bool */
 /*          .TRUE. : update the left transformation matrix Q; */
 /*          .FALSE.: do not update Q. */
 
-/*  WANTZ   (input) LOGICAL */
+/*  WANTZ   (input) bool */
 /*          .TRUE. : update the right transformation matrix Z; */
 /*          .FALSE.: do not update Z. */
 
-/*  SELECT  (input) LOGICAL array, dimension (N) */
+/*  SELECT  (input) bool array, dimension (N) */
 /*          SELECT specifies the eigenvalues in the selected cluster. */
 /*          To select a real eigenvalue w(j), SELECT(j) must be set to */
 /*          .TRUE.. To select a complex conjugate pair of eigenvalues */

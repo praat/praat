@@ -49,11 +49,11 @@ static integer c__1 = 1;
 /*  Arguments */
 /*  ========= */
 
-/*  RIGHTV   (input) LOGICAL */
+/*  RIGHTV   (input) bool */
 /*          = .TRUE. : compute right eigenvector; */
 /*          = .FALSE.: compute left eigenvector. */
 
-/*  NOINIT   (input) LOGICAL */
+/*  NOINIT   (input) bool */
 /*          = .TRUE. : no initial vector supplied in (VR,VI). */
 /*          = .FALSE.: initial vector supplied in (VR,VI). */
 

@@ -91,13 +91,13 @@
 /*  Internal Parameters */
 /*  =================== */
 
-/*  Logical variable ORGATI (origin-at-i?) is used for distinguishing */
+/*  bool variable ORGATI (origin-at-i?) is used for distinguishing */
 /*  whether D(i) or D(i+1) is treated as the origin. */
 
 /*            ORGATI = .true.    origin at i */
 /*            ORGATI = .false.   origin at i+1 */
 
-/*   Logical variable SWTCH3 (switch-for-3-poles?) is for noting */
+/*   bool variable SWTCH3 (switch-for-3-poles?) is for noting */
 /*   if we are working with THREE poles! */
 
 /*   MAXIT is the maximum number of iterations allowed for each */

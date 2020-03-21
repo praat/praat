@@ -46,7 +46,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Cepstrumc_def.h"
 
-Thing_implement (Cepstrumc, Sampled, 2);
+Thing_implement (Cepstrumc, Sampled, 1);
 
 void structCepstrumc :: v_info () {
 	structDaata :: v_info ();

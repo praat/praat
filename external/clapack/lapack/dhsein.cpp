@@ -82,7 +82,7 @@ static bool c_true = true;
 /*          = 'U': user-supplied initial vectors are stored in the arrays */
 /*                 VL and/or VR. */
 
-/*  SELECT  (input/output) LOGICAL array, dimension (N) */
+/*  SELECT  (input/output) bool array, dimension (N) */
 /*          Specifies the eigenvectors to be computed. To select the */
 /*          real eigenvector corresponding to a real eigenvalue WR(j), */
 /*          SELECT(j) must be set to .TRUE.. To select the complex */

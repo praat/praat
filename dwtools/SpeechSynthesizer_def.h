@@ -119,7 +119,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_DOUBLE (d_internalSamplingFrequency)
 		oo_INTEGER (d_numberOfSamples)
 		oo_INTEGER (d_wavCapacity)
-		oo_INTVEC (d_wav, d_wavCapacity) // int16??
+		oo_INTVEC16 (d_wav, d_wavCapacity)
 	#endif
 
 	#if oo_DECLARING
