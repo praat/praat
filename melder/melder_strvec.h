@@ -24,7 +24,7 @@ public:
 	T** elements = nullptr;
 	integer size = 0;
 	_stringvector () { }
-	_stringvector (T** givenElements, integer givenSize, bool dummy): elements (givenElements), size (givenSize) { }
+	_stringvector (T** givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	T* & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
@@ -51,7 +51,7 @@ public:
 	const T* const * elements = nullptr;
 	integer size = 0;
 	_conststringvector () { }
-	_conststringvector (const T* const * givenElements, integer givenSize, bool dummy): elements (givenElements), size (givenSize) { }
+	_conststringvector (const T* const * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): elements (other.elements), size (other.size) { }
 	_conststringvector (_autostringvectorview<T> other): elements ((T**) other._ptr), size (other.size) { }
 	const T* const & operator[] (integer i) const {
@@ -77,7 +77,7 @@ public:
 	_autostring <T> * _elements = nullptr;
 	integer size = 0;
 	_autostringvectorview<T> () = default;
-	_autostringvectorview<T> (_autostring <T> * givenElements, integer givenSize, bool dummy): _elements (givenElements), size (givenSize) { }
+	_autostringvectorview<T> (_autostring <T> * givenElements, integer givenSize): _elements (givenElements), size (givenSize) { }
 	_autostring <T> & operator[] (integer i) const {
 		return our _elements [i - 1];
 	}
@@ -129,10 +129,10 @@ public:
 		return our _elements [i - 1];
 	}
 	_stringvector<T> get () const {
-		return _stringvector<T> { (T**) our _elements, our size, true };
+		return _stringvector<T> { (T**) our _elements, our size };
 	}
 	_autostringvectorview<T> all () const {
-		return _autostringvectorview<T> (our _elements, our size, true);
+		return _autostringvectorview<T> (our _elements, our size);
 	}
 	T** peek2 () const {   // can be assigned to a [const] mutablestring32* and to a const conststring32*, but not to a conststring32*
 		return (T**) our _elements - 1;
@@ -152,7 +152,7 @@ public:
 		integer newSize = lastPosition - (firstPosition - 1);
 		if (newSize <= 0)
 			return _autostringvectorview<T> ();
-		return _autostringvectorview<T> (our _elements + (firstPosition - 1), newSize, true);
+		return _autostringvectorview<T> (our _elements + (firstPosition - 1), newSize);
 	}
 };
 

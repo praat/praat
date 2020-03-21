@@ -605,7 +605,7 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to,
 			labels [i - offset] = interval -> text.get();   // shallow copy
 		}
 		autoSTRVEC newLabels = string32vector_searchAndReplace (
-			constSTRVEC (& labels [1], nlabels, true),
+			constSTRVEC (& labels [1], nlabels),
 			//labels.get(),
 			search, replace, 0, nmatches, nstringmatches, use_regexp
 		);
@@ -637,7 +637,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 			marks [i - offset] = point -> mark.get();   // reference copy
 		}
 		autoSTRVEC newMarks = string32vector_searchAndReplace (
-				constSTRVEC (& marks [1], nmarks, true),
+				constSTRVEC (& marks [1], nmarks),
 				search, replace, 0, nmatches, nstringmatches, use_regexp);
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
