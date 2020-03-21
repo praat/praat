@@ -55,11 +55,11 @@ static integer c__2 = 2;
 /*  Arguments */
 /*  ========= */
 
-/*  WANTQ   (input) bool */
+/*  WANTQ   (input) LOGICAL */
 /*          .TRUE. : update the left transformation matrix Q; */
 /*          .FALSE.: do not update Q. */
 
-/*  WANTZ   (input) bool */
+/*  WANTZ   (input) LOGICAL */
 /*          .TRUE. : update the right transformation matrix Z; */
 /*          .FALSE.: do not update Z. */
 

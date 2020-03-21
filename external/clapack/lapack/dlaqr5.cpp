@@ -56,11 +56,11 @@ static integer c__2 = 2;
 /*     This auxiliary subroutine called by DLAQR0 performs a */
 /*     single small-bulge multi-shift QR sweep. */
 
-/*      WANTT  (input) bool scalar */
+/*      WANTT  (input) logical scalar */
 /*             WANTT = .true. if the quasi-triangular Schur factor */
 /*             is being computed.  WANTT is set to .false. otherwise. */
 
-/*      WANTZ  (input) bool scalar */
+/*      WANTZ  (input) logical scalar */
 /*             WANTZ = .true. if the orthogonal Schur factor is being */
 /*             computed.  WANTZ is set to .false. otherwise. */
 

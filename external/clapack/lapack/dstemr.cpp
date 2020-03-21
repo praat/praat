@@ -196,7 +196,7 @@ static double c_b18 = .001;
 /*          ISUPPZ( 2*i ). This is relevant in the case when the matrix */
 /*          is split. ISUPPZ is only accessed when JOBZ is 'V' and N > 0. */
 
-/*  TRYRAC  (input/output) bool */
+/*  TRYRAC  (input/output) LOGICAL */
 /*          If TRYRAC.EQ..TRUE., indicates that the code should check whether */
 /*          the tridiagonal matrix defines its eigenvalues to high relative */
 /*          accuracy.  If so, the code uses relative-accuracy preserving */

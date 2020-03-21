@@ -189,13 +189,13 @@ double dlamch_(const char *cmach)
 /*  T       (output) INTEGER */
 /*          The number of ( BETA ) digits in the mantissa. */
 
-/*  RND     (output) bool */
+/*  RND     (output) LOGICAL */
 /*          Specifies whether proper rounding  ( RND = .TRUE. )  or */
 /*          chopping  ( RND = .FALSE. )  occurs in addition. This may not */
 /*          be a reliable guide to the way in which the machine performs */
 /*          its arithmetic. */
 
-/*  IEEE1   (output) bool */
+/*  IEEE1   (output) LOGICAL */
 /*          Specifies whether rounding appears to be done in the IEEE */
 /*          'round to nearest' style. */
 
@@ -410,7 +410,7 @@ L30:
 /*  T       (output) INTEGER */
 /*          The number of ( BETA ) digits in the mantissa. */
 
-/*  RND     (output) bool */
+/*  RND     (output) LOGICAL */
 /*          Specifies whether proper rounding  ( RND = .TRUE. )  or */
 /*          chopping  ( RND = .FALSE. )  occurs in addition. This may not */
 /*          be a reliable guide to the way in which the machine performs */
@@ -833,8 +833,8 @@ L10:
 /*  EMIN    (input) INTEGER */
 /*          The minimum exponent before (gradual) underflow. */
 
-/*  IEEE    (input) bool */
-/*          A bool flag specifying whether or not the arithmetic */
+/*  IEEE    (input) LOGICAL */
+/*          A logical flag specifying whether or not the arithmetic */
 /*          system is thought to comply with the IEEE standard. */
 
 /*  EMAX    (output) INTEGER */

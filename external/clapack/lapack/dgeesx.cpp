@@ -87,7 +87,7 @@ static integer c_n1 = -1;
 /*          = 'N': Eigenvalues are not ordered; */
 /*          = 'S': Eigenvalues are ordered (see SELECT). */
 
-/*  SELECT  (external procedure) bool FUNCTION of two DOUBLE PRECISION arguments */
+/*  SELECT  (external procedure) LOGICAL FUNCTION of two DOUBLE PRECISION arguments */
 /*          SELECT must be declared EXTERNAL in the calling subroutine. */
 /*          If SORT = 'S', SELECT is used to select eigenvalues to sort */
 /*          to the top left of the Schur form. */
@@ -188,7 +188,7 @@ static integer c_n1 = -1;
 /*          entries of the WORK and IWORK arrays, and no error messages */
 /*          related to LWORK or LIWORK are issued by XERBLA. */
 
-/*  BWORK   (workspace) bool array, dimension (N) */
+/*  BWORK   (workspace) LOGICAL array, dimension (N) */
 /*          Not referenced if SORT = 'N'. */
 
 /*  INFO    (output) INTEGER */

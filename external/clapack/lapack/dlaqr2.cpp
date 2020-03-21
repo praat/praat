@@ -65,14 +65,14 @@ static bool c_true = true;
 /*     entries. */
 
 /*     ****************************************************************** */
-/*     WANTT   (input) bool */
+/*     WANTT   (input) LOGICAL */
 /*          If .TRUE., then the Hessenberg matrix H is fully updated */
 /*          so that the quasi-triangular Schur factor may be */
 /*          computed (in cooperation with the calling subroutine). */
 /*          If .FALSE., then only enough of H is updated to preserve */
 /*          the eigenvalues. */
 
-/*     WANTZ   (input) bool */
+/*     WANTZ   (input) LOGICAL */
 /*          If .TRUE., then the orthogonal matrix Z is updated so */
 /*          so that the orthogonal Schur factor may be computed */
 /*          (in cooperation with the calling subroutine). */
