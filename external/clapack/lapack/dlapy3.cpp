@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 double dlapy3_(double *x, double *y, double *z__)
 {

@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgbequ_(integer *m, integer *n, integer *kl, integer *ku, 
 	 double *ab, integer *ldab, double *r__, double *c__, 

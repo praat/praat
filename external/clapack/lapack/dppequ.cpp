@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dppequ_(char *uplo, integer *n, double *ap, 
 	double *s, double *scond, double *amax, integer *info)

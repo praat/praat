@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlagtf_(integer *n, double *a, double *lambda, 
 	double *b, double *c__, double *tol, double *d__, 

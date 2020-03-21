@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaed5_(integer *i__, double *d__, double *z__, 
 	double *delta, double *rho, double *dlam)

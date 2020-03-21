@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dspr2_(char *uplo, integer *n, double *alpha, 
 	double *x, integer *incx, double *y, integer *incy, 

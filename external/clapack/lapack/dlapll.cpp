@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlapll_(integer *n, double *x, integer *incx, 
 	double *y, integer *incy, double *ssmin)

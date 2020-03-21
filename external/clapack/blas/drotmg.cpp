@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int drotmg_(double *dd1, double *dd2, double *
 	dx1, double *dy1, double *dparam)

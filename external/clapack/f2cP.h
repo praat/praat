@@ -1,6 +1,6 @@
-#ifndef _f2clib_h_
-#define _f2clib_h_
-/* f2clib.h
+#ifndef _f2cP_h_
+#define _f2cP_h_
+/* f2cP.h
  *
  * Copyright (C) 2020 David Weenink
  *
@@ -18,7 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "f2c.h"
+#include "melder.h"
+#include "cblas.h"
+#include "clapackP.h"
 
 static inline double d_abs (double *x) {
 	return abs (*x);
@@ -320,4 +322,4 @@ static inline void xerbla_ (const char *src, integer *info) {
 	Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!");
 }
 
-#endif /* _f2clib_h_  */
+#endif /* _f2cP_h_  */

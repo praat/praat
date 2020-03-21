@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dggbak_(const char *job, const char *side, integer *n, integer *ilo, 
 	integer *ihi, double *lscale, double *rscale, integer *m, 

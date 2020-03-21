@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlapmt_(bool *forwrd, integer *m, integer *n, 
 	double *x, integer *ldx, integer *k)

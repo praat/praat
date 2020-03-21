@@ -1,11 +1,11 @@
 #include "clapack.h"
-#include "string.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__0 = 0;
-static real c_b163 = 0.f;
-static real c_b164 = 1.f;
+static float c_b163 = 0.f;
+static float c_b164 = 1.f;
 static integer c__1 = 1;
 
 integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1, 
@@ -582,7 +582,7 @@ L100:
 
 /*     ISPEC = 6:  crossover point for SVD (used by xGELSS and xGESVD) */
 
-    ret_val = (integer) ((real) std::min(*n1,*n2) * 1.6f);
+    ret_val = (integer) ((float) std::min(*n1,*n2) * 1.6f);
     return ret_val;
 
 L110:

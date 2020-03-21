@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlags2_(bool *upper, double *a1, double *a2, 
 	double *a3, double *b1, double *b2, double *b3, 

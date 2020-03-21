@@ -10,9 +10,9 @@
 //typedef unsigned long int uinteger;
 //typedef char *address;
 //typedef short int shortint;
-typedef float real;
+//typedef float real;
 //typedef double doublereal;
-//typedef struct { real r, i; } complex;
+//typedef struct { float r, i; } complex;
 //typedef struct { double r, i; } doublecomplex;
 //typedef bool logical;
 

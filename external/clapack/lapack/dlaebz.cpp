@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaebz_(integer *ijob, integer *nitmax, integer *n, 
 	integer *mmax, integer *minp, integer *nbmin, double *abstol, 

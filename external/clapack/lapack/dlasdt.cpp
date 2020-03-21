@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlasdt_(integer *n, integer *lvl, integer *nd, integer *
 	inode, integer *ndiml, integer *ndimr, integer *msub)

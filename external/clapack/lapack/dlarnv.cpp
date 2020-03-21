@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlarnv_(integer *idist, integer *iseed, integer *n, 
 	double *x)

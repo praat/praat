@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int drscl_(integer *n, double *sa, double *sx, 
 	integer *incx)

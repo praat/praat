@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dppsv_(char *uplo, integer *n, integer *nrhs, double 
 	*ap, double *b, integer *ldb, integer *info)

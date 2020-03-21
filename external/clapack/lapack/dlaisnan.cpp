@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 bool dlaisnan_(double *din1, double *din2)
 {

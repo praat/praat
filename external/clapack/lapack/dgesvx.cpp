@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgesvx_(char *fact, char *trans, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 

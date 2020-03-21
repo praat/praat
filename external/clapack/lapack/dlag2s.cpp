@@ -1,8 +1,8 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlag2s_(integer *m, integer *n, double *a, integer *
-	lda, real *sa, integer *ldsa, integer *info)
+	lda, float *sa, integer *ldsa, integer *info)
 {
     /* System generated locals */
     integer sa_dim1, sa_offset, a_dim1, a_offset, i__1, i__2;

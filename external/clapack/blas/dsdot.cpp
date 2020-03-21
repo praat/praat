@@ -1,7 +1,7 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-double dsdot_(integer *n, real *sx, integer *incx, real *sy, integer *
+double dsdot_(integer *n, float *sx, integer *incx, float *sy, integer *
 	incy)
 {
     /* System generated locals */

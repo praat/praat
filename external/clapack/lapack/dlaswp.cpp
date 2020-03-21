@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaswp_(integer *n, double *a, integer *lda, integer 
 	*k1, integer *k2, integer *ipiv, integer *incx)

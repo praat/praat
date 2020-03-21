@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaln2_(bool *ltrans, integer *na, integer *nw, 
 	double *smin, double *ca, double *a, integer *lda, 

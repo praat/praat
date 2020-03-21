@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int ddisna_(char *job, integer *m, integer *n, double *
 	d__, double *sep, integer *info)

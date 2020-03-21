@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dsyrk_(const char *uplo, const char *trans, integer *n, integer *k, 
 	double *alpha, double *a, integer *lda, double *beta, 

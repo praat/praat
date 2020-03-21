@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 integer dlaneg_(integer *n, double *d__, double *lld, double *
 	sigma, double *pivmin, integer *r__)

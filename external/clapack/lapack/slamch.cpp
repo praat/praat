@@ -1,18 +1,18 @@
 #include "clapack.h"
 #include "melder.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static real c_b32 = 0.f;
+static float c_b32 = 0.f;
 
 int slamc1_(integer *beta, integer *t, bool *rnd, bool *ieee1);
-int slamc2_(integer *beta, integer *t, bool *rnd, real *
-	eps, integer *emin, real *rmin, integer *emax, real *rmax);
-double slamc3_(real *a, real *b);
-int slamc4_(integer *emin, real *start, integer *base);
+int slamc2_(integer *beta, integer *t, bool *rnd, float *
+	eps, integer *emin, float *rmin, integer *emax, float *rmax);
+double slamc3_(float *a, float *b);
+int slamc4_(integer *emin, float *start, integer *base);
 int slamc5_(integer *beta, integer *p, integer *emin, 
-	bool *ieee, integer *emax, real *rmax);
+	bool *ieee, integer *emax, float *rmax);
 
 double slamch_(const char *cmach)
 {
@@ -22,20 +22,20 @@ double slamch_(const char *cmach)
 
     /* System generated locals */
     integer i__1;
-    real ret_val;
+    float ret_val;
 
     /* Local variables */
-    static real t;
+    static float t;
     integer it;
-    static real rnd, eps, base;
+    static float rnd, eps, base;
     integer beta;
-    static real emin, prec, emax;
+    static float emin, prec, emax;
     integer imin, imax;
     bool lrnd;
-    static real rmin, rmax;
-    real rmach;
-    real small;
-    static real sfmin;
+    static float rmin, rmax;
+    float rmach;
+    float small;
+    static float sfmin;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -97,8 +97,8 @@ double slamch_(const char *cmach)
 
     if (first) {
 	slamc2_(&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
-	base = (real) beta;
-	t = (real) it;
+	base = (float) beta;
+	t = (float) it;
 	if (lrnd) {
 	    rnd = 1.f;
 	    i__1 = 1 - it;
@@ -109,8 +109,8 @@ double slamch_(const char *cmach)
 	    eps = pow_ri(&base, &i__1);
 	}
 	prec = eps * base;
-	emin = (real) imin;
-	emax = (real) imax;
+	emin = (float) imin;
+	emax = (float) imax;
 	sfmin = rmin;
 	small = 1.f / rmax;
 	if (small >= sfmin) {
@@ -163,15 +163,15 @@ double slamch_(const char *cmach)
     static bool first = true;
 
     /* System generated locals */
-    real r__1, r__2;
+    float r__1, r__2;
 
     /* Local variables */
-    real a, b, c__, f, t1, t2;
+    float a, b, c__, f, t1, t2;
     static integer lt;
-    real one, qtr;
+    float one, qtr;
     static bool lrnd;
     static integer lbeta;
-    real savec;
+    float savec;
     static bool lieee1;
 
 
@@ -292,7 +292,7 @@ L20:
 /*        Now determine whether rounding or chopping occurs,  by adding a */
 /*        bit  less  than  beta/2  and a  bit  more  than  beta/2  to  a. */
 
-	b = (real) lbeta;
+	b = (float) lbeta;
 	r__1 = b / 2;
 	r__2 = -b / 100;
 	f = slamc3_(&r__1, &r__2);
@@ -361,8 +361,8 @@ L30:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int slamc2_(integer *beta, integer *t, bool *rnd, real *
-	eps, integer *emin, real *rmin, integer *emax, real *rmax)
+/* Subroutine */ int slamc2_(integer *beta, integer *t, bool *rnd, float *
+	eps, integer *emin, float *rmin, integer *emax, float *rmax)
 {
     /* Initialized data */
 
@@ -371,27 +371,27 @@ L30:
 
     /* System generated locals */
     integer i__1;
-    real r__1, r__2, r__3, r__4, r__5;
+    float r__1, r__2, r__3, r__4, r__5;
 
     /* Local variables */
-    real a, b, c__;
+    float a, b, c__;
     integer i__;
     static integer lt;
-    real one, two;
+    float one, two;
     bool ieee;
-    real half;
+    float half;
     bool lrnd;
-    static real leps;
-    real zero;
+    static float leps;
+    float zero;
     static integer lbeta;
-    real rbase;
+    float rbase;
     static integer lemin, lemax;
     integer gnmin;
-    real small;
+    float small;
     integer gpmin;
-    real third;
-    static real lrmin, lrmax;
-    real sixth;
+    float third;
+    static float lrmin, lrmax;
+    float sixth;
     bool lieee1;
     integer ngnmin, ngpmin;
 
@@ -486,7 +486,7 @@ L30:
 
 /*        Start to find EPS. */
 
-	b = (real) lbeta;
+	b = (float) lbeta;
 	i__1 = -lt;
 	a = pow_ri(&b, &i__1);
 	leps = a;
@@ -657,10 +657,10 @@ L10:
 
 /* *********************************************************************** */
 
-double slamc3_(real *a, real *b)
+double slamc3_(float *a, float *b)
 {
     /* System generated locals */
-    real ret_val;
+    float ret_val;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -699,16 +699,16 @@ double slamc3_(real *a, real *b)
 
 /* *********************************************************************** */
 
-/* Subroutine */ int slamc4_(integer *emin, real *start, integer *base)
+/* Subroutine */ int slamc4_(integer *emin, float *start, integer *base)
 {
     /* System generated locals */
     integer i__1;
-    real r__1;
+    float r__1;
 
     /* Local variables */
-    real a;
+    float a;
     integer i__;
-    real b1, b2, c1, c2, d1, d2, one, zero, rbase;
+    float b1, b2, c1, c2, d1, d2, one, zero, rbase;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -796,19 +796,19 @@ L10:
 /* *********************************************************************** */
 
 /* Subroutine */ int slamc5_(integer *beta, integer *p, integer *emin, 
-	bool *ieee, integer *emax, real *rmax)
+	bool *ieee, integer *emax, float *rmax)
 {
     /* System generated locals */
     integer i__1;
-    real r__1;
+    float r__1;
 
     /* Local variables */
     integer i__;
-    real y, z__;
+    float y, z__;
     integer try__, lexp;
-    real oldy;
+    float oldy;
     integer uexp, nbits;
-    real recbas;
+    float recbas;
     integer exbits, expsum;
 
 

@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dstegr_(char *jobz, char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 

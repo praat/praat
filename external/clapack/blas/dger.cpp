@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dger_(integer *m, integer *n, double *alpha, 
 	double *x, integer *incx, double *y, integer *incy, 

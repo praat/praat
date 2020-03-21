@@ -18,6 +18,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "melder.h"
+
 bool disnan_ (double *din);
 
 bool dlaisnan_ (double *din1, double *din2);

@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dtrsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
 	integer *m, integer *n, double *alpha, double *a, integer *

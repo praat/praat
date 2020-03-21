@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dladiv_(double *a, double *b, double *c__, 
 	double *d__, double *p, double *q)

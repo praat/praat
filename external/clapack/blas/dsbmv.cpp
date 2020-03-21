@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dsbmv_(char *uplo, integer *n, integer *k, double *
 	alpha, double *a, integer *lda, double *x, integer *incx, 

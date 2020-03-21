@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlas2_(double *f, double *g, double *h__, 
 	double *ssmin, double *ssmax)

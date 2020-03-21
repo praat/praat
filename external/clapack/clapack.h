@@ -1,10 +1,7 @@
 #ifndef __CLAPACK_H
 #define __CLAPACK_H
 
-#include "f2c.h"
-#include "clapackP.h"
-#include "f2clibP.h"
-#include "cblas.h"
+#include "melder.h"
 
 	/* double precision version of CLAPACK interface */
 
@@ -1522,4 +1519,3 @@ double dlamch_ (const char *cmach);
 	double *a, integer *lda, integer *info);
 
 #endif /* __CLAPACK_H */
-

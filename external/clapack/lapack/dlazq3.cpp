@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlazq3_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *sigma, double *desig, 

@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dtbmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *k, double *a, integer *lda, double *x, integer *incx)

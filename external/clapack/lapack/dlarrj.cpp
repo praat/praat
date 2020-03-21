@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlarrj_(integer *n, double *d__, double *e2, 
 	integer *ifirst, integer *ilast, double *rtol, integer *offset, 

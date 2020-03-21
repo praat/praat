@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dopgtr_(char *uplo, integer *n, double *ap, 
 	double *tau, double *q, integer *ldq, double *work, 

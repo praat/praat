@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaqsp_(char *uplo, integer *n, double *ap, 
 	double *s, double *scond, double *amax, char *equed)

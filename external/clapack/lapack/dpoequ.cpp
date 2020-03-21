@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dpoequ_(integer *n, double *a, integer *lda, 
 	double *s, double *scond, double *amax, integer *info)

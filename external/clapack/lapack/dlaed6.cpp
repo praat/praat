@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaed6_(integer *kniter, bool *orgati, double *
 	rho, double *d__, double *z__, double *finit, double *

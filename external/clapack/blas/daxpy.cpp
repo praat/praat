@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int daxpy_(integer *n, double *da, double *dx, 
 	integer *incx, double *dy, integer *incy)

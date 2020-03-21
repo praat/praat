@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dptts2_(integer *n, integer *nrhs, double *d__, 
 	double *e, double *b, integer *ldb)

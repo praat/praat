@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dorgl2_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *info)

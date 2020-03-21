@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dorml2_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, double *a, integer *lda, double *tau, double *

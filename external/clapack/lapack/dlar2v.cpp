@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlar2v_(integer *n, double *x, double *y, 
 	double *z__, integer *incx, double *c__, double *s, 

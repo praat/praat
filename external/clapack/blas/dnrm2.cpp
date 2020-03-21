@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 double dnrm2_(integer *n, double *x, integer *incx)
 {

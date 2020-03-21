@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 integer idamax_(integer *n, double *dx, integer *incx)
 {

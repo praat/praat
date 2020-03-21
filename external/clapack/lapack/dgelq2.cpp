@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgelq2_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *info)

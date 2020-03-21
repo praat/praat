@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlatrz_(integer *m, integer *n, integer *l, double *
 	a, integer *lda, double *tau, double *work)

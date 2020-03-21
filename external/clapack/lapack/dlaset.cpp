@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaset_(const char *uplo, integer *m, integer *n, double *
 	alpha, double *beta, double *a, integer *lda)

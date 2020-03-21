@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlasr_(const char *side, const char *pivot, const char *direct, integer *m, 
 	 integer *n, double *c__, double *s, double *a, integer *

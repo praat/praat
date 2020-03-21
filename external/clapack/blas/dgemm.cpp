@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgemm_(const char *transa, const char *transb, integer *m, integer *
 	n, integer *k, double *alpha, double *a, integer *lda, 

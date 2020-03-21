@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -9,7 +9,7 @@ static integer c__1 = 1;
 
 /* Subroutine */ int dsgesv_(integer *n, integer *nrhs, double *a, 
 	integer *lda, integer *ipiv, double *b, integer *ldb, double *
-	x, integer *ldx, double *work, real *swork, integer *iter, 
+	x, integer *ldx, double *work, float *swork, integer *iter, 
 	integer *info)
 {
     /* System generated locals */

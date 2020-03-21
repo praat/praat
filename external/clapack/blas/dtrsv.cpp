@@ -1,5 +1,5 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dtrsv_(char *uplo, char *trans, char *diag, integer *n, 
 	double *a, integer *lda, double *x, integer *incx)

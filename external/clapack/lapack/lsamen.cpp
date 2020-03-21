@@ -1,4 +1,5 @@
 #include "clapack.h"
+#include "f2cP.h"
 #include "string.h"
 
 bool lsamen_(integer *n, const char *ca, const char *cb)

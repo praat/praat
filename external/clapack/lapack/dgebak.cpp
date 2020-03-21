@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgebak_(const char *job, const char *side, integer *n, integer *ilo, 
 	integer *ihi, double *scale, integer *m, double *v, integer *
