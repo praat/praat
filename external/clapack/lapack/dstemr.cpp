@@ -1,56 +1,56 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b18 = .001;
+static double c_b18 = .001;
 
-/* Subroutine */ int dstemr_(char *jobz, char *range, integer *n, doublereal *
-	d__, doublereal *e, doublereal *vl, doublereal *vu, integer *il, 
-	integer *iu, integer *m, doublereal *w, doublereal *z__, integer *ldz, 
-	 integer *nzc, integer *isuppz, logical *tryrac, doublereal *work, 
+/* Subroutine */ int dstemr_(char *jobz, char *range, integer *n, double *
+	d__, double *e, double *vl, double *vu, integer *il, 
+	integer *iu, integer *m, double *w, double *z__, integer *ldz, 
+	 integer *nzc, integer *isuppz, bool *tryrac, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal r1, r2;
+    double r1, r2;
     integer jj;
-    doublereal cs;
+    double cs;
     integer in;
-    doublereal sn, wl, wu;
+    double sn, wl, wu;
     integer iil, iiu;
-    doublereal eps, tmp;
+    double eps, tmp;
     integer indd, iend, jblk, wend;
-    doublereal rmin, rmax;
+    double rmin, rmax;
     integer itmp;
-    doublereal tnrm;
+    double tnrm;
     integer inde2, itmp2;
-    doublereal rtol1, rtol2;
-    doublereal scale;
+    double rtol1, rtol2;
+    double scale;
     integer indgp;
     integer iinfo, iindw, ilast;
     integer lwmin;
-    logical wantz;
-	logical alleig;
+    bool wantz;
+	bool alleig;
     integer ibegin;
-    logical indeig;
+    bool indeig;
     integer iindbl;
-    logical valeig;
+    bool valeig;
     integer wbegin;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer inderr, iindwk, indgrs, offset;
-    doublereal thresh;
+    double thresh;
     integer iinspl, ifirst, indwrk, liwmin, nzcmin;
-    doublereal pivmin;
+    double pivmin;
     integer nsplit;
-    doublereal smlnum;
-    logical lquery, zquery;
+    double smlnum;
+    bool lquery, zquery;
 
 
 /*  -- LAPACK computational routine (version 3.1) -- */
@@ -351,7 +351,7 @@ static doublereal c_b18 = .001;
     rmax = std::min(d__1,d__2);
 
     if (*info == 0) {
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
 
 	if (wantz && alleig) {
@@ -366,7 +366,7 @@ static doublereal c_b18 = .001;
 	    nzcmin = 0;
 	}
 	if (zquery && *info == 0) {
-	    z__[z_dim1 + 1] = (doublereal) nzcmin;
+	    z__[z_dim1 + 1] = (double) nzcmin;
 	} else if (*nzc < nzcmin && ! zquery) {
 	    *info = -14;
 	}
@@ -516,7 +516,7 @@ static doublereal c_b18 = .001;
     } else {
 	thresh = -eps;
 /*        relative accuracy is desired but T does not guarantee it */
-	*tryrac = FALSE_;
+	*tryrac = false;
     }
 
     if (*tryrac) {
@@ -672,7 +672,7 @@ L39:
     }
 
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
     return 0;
 

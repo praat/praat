@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -8,40 +8,40 @@ static integer c__0 = 0;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dgeevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
-	sense, integer *n, doublereal *a, integer *lda, doublereal *wr, 
-	doublereal *wi, doublereal *vl, integer *ldvl, doublereal *vr, 
-	integer *ldvr, integer *ilo, integer *ihi, doublereal *scale, 
-	doublereal *abnrm, doublereal *rconde, doublereal *rcondv, doublereal 
+	sense, integer *n, double *a, integer *lda, double *wr, 
+	double *wi, double *vl, integer *ldvl, double *vr, 
+	integer *ldvr, integer *ilo, integer *ihi, double *scale, 
+	double *abnrm, double *rconde, double *rcondv, double 
 	*work, integer *lwork, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, 
 	    i__2, i__3;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__, k;
-    doublereal r__, cs, sn;
+    double r__, cs, sn;
     char job[1];
-    doublereal scl, dum[1], eps;
+    double scl, dum[1], eps;
     char side[1];
-    doublereal anrm;
+    double anrm;
     integer ierr, itau;
     integer iwrk, nout;
 	integer icond;
-    logical scalea;
-    doublereal cscale;
-    logical select[1];
-    doublereal bignum;
+    bool scalea;
+    double cscale;
+    bool select[1];
+    double bignum;
 	integer minwrk, maxwrk;
-    logical wantvl, wntsnb;
+    bool wantvl, wntsnb;
     integer hswork;
-    logical wntsne;
-    doublereal smlnum;
-    logical lquery, wantvr, wntsnn, wntsnv;
+    bool wntsne;
+    double smlnum;
+    bool lquery, wantvr, wntsnn, wntsnv;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -368,7 +368,7 @@ static integer c_n1 = -1;
 	    }
 	    maxwrk = std::max(maxwrk,minwrk);
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -21;
@@ -402,12 +402,12 @@ static integer c_n1 = -1;
 
     icond = 0;
     anrm = dlange_("M", n, n, &a[a_offset], lda, dum);
-    scalea = FALSE_;
+    scalea = false;
     if (anrm > 0. && anrm < smlnum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = smlnum;
     } else if (anrm > bignum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = bignum;
     }
     if (scalea) {
@@ -646,7 +646,7 @@ L50:
 	}
     }
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     return 0;
 
 /*     End of DGEEVX */

@@ -1,28 +1,28 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dpocon_(char *uplo, integer *n, doublereal *a, integer *
-	lda, doublereal *anorm, doublereal *rcond, doublereal *work, integer *
+/* Subroutine */ int dpocon_(char *uplo, integer *n, double *a, integer *
+	lda, double *anorm, double *rcond, double *work, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer ix, kase;
-    doublereal scale;
+    double scale;
     integer isave[3];
-    logical upper;
-    doublereal scalel;
-    doublereal scaleu;
-    doublereal ainvnm;
+    bool upper;
+    double scalel;
+    double scaleu;
+    double ainvnm;
     char normin[1];
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

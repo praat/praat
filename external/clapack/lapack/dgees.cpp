@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,34 +7,34 @@ static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dgees_(char *jobvs, char *sort, L_fp select, integer *n, 
-	doublereal *a, integer *lda, integer *sdim, doublereal *wr, 
-	doublereal *wi, doublereal *vs, integer *ldvs, doublereal *work, 
-	integer *lwork, logical *bwork, integer *info)
+/* Subroutine */ int dgees_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+	integer *n, double *a, integer *lda, integer *sdim, double *wr, 
+	double *wi, double *vs, integer *ldvs, double *work, 
+	integer *lwork, bool *bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, vs_dim1, vs_offset, i__1, i__2, i__3;
 
     /* Builtin functions
-    double sqrt(doublereal);*/
+    double sqrt(double);*/
 
     /* Local variables */
     integer i__;
-    doublereal s;
+    double s;
     integer i1, i2, ip, ihi, ilo;
-    doublereal dum[1], eps, sep;
+    double dum[1], eps, sep;
     integer ibal;
-    doublereal anrm;
+    double anrm;
     integer idum[1], ierr, itau, iwrk, inxt, icond, ieval;
-    logical cursl;
-    logical lst2sl, scalea;
-    doublereal cscale;
-    doublereal bignum;
-    logical lastsl;
+    bool cursl;
+    bool lst2sl, scalea;
+    double cscale;
+    double bignum;
+    bool lastsl;
     integer minwrk, maxwrk;
-    doublereal smlnum;
+    double smlnum;
     integer hswork;
-    logical wantst, lquery, wantvs;
+    bool wantst, lquery, wantvs;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -247,7 +247,7 @@ static integer c_n1 = -1;
 		maxwrk = std::max(i__1,i__2);
 	    }
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -13;
@@ -281,12 +281,12 @@ static integer c_n1 = -1;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, dum);
-    scalea = FALSE_;
+    scalea = false;
     if (anrm > 0. && anrm < smlnum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = smlnum;
     } else if (anrm > bignum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = bignum;
     }
     if (scalea) {
@@ -458,8 +458,8 @@ L20:
 
 /*        Check if reordering successful */
 
-	lastsl = TRUE_;
-	lst2sl = TRUE_;
+	lastsl = true;
+	lst2sl = true;
 	*sdim = 0;
 	ip = 0;
 	i__1 = *n;
@@ -500,7 +500,7 @@ L20:
 	}
     }
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     return 0;
 
 /*     End of DGEES */

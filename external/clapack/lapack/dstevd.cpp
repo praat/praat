@@ -1,29 +1,29 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dstevd_(char *jobz, integer *n, doublereal *d__, 
-	doublereal *e, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dstevd_(char *jobz, integer *n, double *d__, 
+	double *e, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal eps, rmin, rmax, tnrm;
-    doublereal sigma;
+    double eps, rmin, rmax, tnrm;
+    double sigma;
     integer lwmin;
-    logical wantz;
+    bool wantz;
     integer iscale;
-	doublereal safmin;
-    doublereal bignum;
+	double safmin;
+    double bignum;
     integer liwmin;
-    doublereal smlnum;
-    logical lquery;
+    double smlnum;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -163,7 +163,7 @@ static integer c__1 = 1;
     }
 
     if (*info == 0) {
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -237,7 +237,7 @@ static integer c__1 = 1;
 	dscal_(n, &d__1, &d__[1], &c__1);
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;

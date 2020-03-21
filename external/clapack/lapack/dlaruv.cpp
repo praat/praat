@@ -1,7 +1,7 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlaruv_(integer *iseed, integer *n, doublereal *x)
+/* Subroutine */ int dlaruv_(integer *iseed, integer *n, double *x)
 {
     /* Initialized data */
 
@@ -144,8 +144,8 @@ L20:
 
 /*        Convert 48-bit integer to a real number in the interval (0,1) */
 
-	x[i__] = ((doublereal) it1 + ((doublereal) it2 + ((doublereal) it3 + (
-		doublereal) it4 * 2.44140625e-4) * 2.44140625e-4) * 
+	x[i__] = ((double) it1 + ((double) it2 + ((double) it3 + (
+		double) it4 * 2.44140625e-4) * 2.44140625e-4) * 
 		2.44140625e-4) * 2.44140625e-4;
 
 	if (x[i__] == 1.) {

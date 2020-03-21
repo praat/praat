@@ -1,30 +1,30 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dpbsvx_(char *fact, char *uplo, integer *n, integer *kd, 
-	integer *nrhs, doublereal *ab, integer *ldab, doublereal *afb, 
-	integer *ldafb, char *equed, doublereal *s, doublereal *b, integer *
-	ldb, doublereal *x, integer *ldx, doublereal *rcond, doublereal *ferr, 
-	 doublereal *berr, doublereal *work, integer *iwork, integer *info)
+	integer *nrhs, double *ab, integer *ldab, double *afb, 
+	integer *ldafb, char *equed, double *s, double *b, integer *
+	ldb, double *x, integer *ldx, double *rcond, double *ferr, 
+	 double *berr, double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, afb_dim1, afb_offset, b_dim1, b_offset, 
 	    x_dim1, x_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, j1, j2;
-    doublereal amax, smin, smax;
-    doublereal scond, anorm;
-    logical equil, rcequ, upper;
-    logical nofact;
-    doublereal bignum;
+    double amax, smin, smax;
+    double scond, anorm;
+    bool equil, rcequ, upper;
+    bool nofact;
+    double bignum;
     integer infequ;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -295,7 +295,7 @@ static integer c__1 = 1;
     upper = lsame_(uplo, "U");
     if (nofact || equil) {
 	*(unsigned char *)equed = 'N';
-	rcequ = FALSE_;
+	rcequ = false;
     } else {
 	rcequ = lsame_(equed, "Y");
 	smlnum = dlamch_("Safe minimum");

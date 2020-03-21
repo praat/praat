@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlagtf_(integer *n, doublereal *a, doublereal *lambda, 
-	doublereal *b, doublereal *c__, doublereal *tol, doublereal *d__, 
+/* Subroutine */ int dlagtf_(integer *n, double *a, double *lambda, 
+	double *b, double *c__, double *tol, double *d__, 
 	integer *in, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer k;
-    doublereal tl, eps, piv1, piv2, temp, mult, scale1, scale2;
+    double tl, eps, piv1, piv2, temp, mult, scale1, scale2;
  
  
 

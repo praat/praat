@@ -1,15 +1,15 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dspr_(const char *uplo, integer *n, doublereal *alpha, 
-	doublereal *x, integer *incx, doublereal *ap)
+/* Subroutine */ int dspr_(const char *uplo, integer *n, double *alpha, 
+	double *x, integer *incx, double *ap)
 {
     /* System generated locals */
     integer i__1, i__2;
 
     /* Local variables */
     integer i__, j, k, kk, ix, jx, kx, info;
-    doublereal temp;
+    double temp;
  
  
 

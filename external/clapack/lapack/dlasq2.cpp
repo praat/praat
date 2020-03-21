@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -10,34 +10,34 @@ static integer c__3 = 3;
 static integer c__4 = 4;
 static integer c__11 = 11;
 
-/* Subroutine */ int dlasq2_(integer *n, doublereal *z__, integer *info)
+/* Subroutine */ int dlasq2_(integer *n, double *z__, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal d__, e;
+    double d__, e;
     integer k;
-    doublereal s, t;
+    double s, t;
     integer i0, i4, n0;
-    doublereal dn;
+    double dn;
     integer pp;
-    doublereal dn1, dn2, eps, tau, tol;
+    double dn1, dn2, eps, tau, tol;
     integer ipn4;
-    doublereal tol2;
-    logical ieee;
+    double tol2;
+    bool ieee;
     integer nbig;
-    doublereal dmin__, emin, emax;
+    double dmin__, emin, emax;
     integer ndiv, iter;
-    doublereal qmin, temp, qmax, zmax;
+    double qmin, temp, qmax, zmax;
     integer splt;
-    doublereal dmin1, dmin2;
+    double dmin1, dmin2;
     integer nfail;
-    doublereal desig, trace, sigma;
+    double desig, trace, sigma;
     integer iinfo, ttype;
     integer iwhila, iwhilb;
-    doublereal oldemn, safmin;
+    double oldemn, safmin;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -64,7 +64,7 @@ static integer c__11 = 11;
 /*  Z(1,3,5,,..). The tridiagonal is L*U or, if you prefer, the */
 /*  symmetric tridiagonal to which it is similar. */
 
-/*  Note : DLASQ2 defines a logical variable, IEEE, which is true */
+/*  Note : DLASQ2 defines a bool variable, IEEE, which is true */
 /*  on machines which follow ieee-754 floating-point standard in their */
 /*  handling of infinities and NaNs, and false otherwise. This variable */
 /*  is passed to DLAZQ3. */
@@ -522,11 +522,11 @@ L150:
 
     z__[(*n << 1) + 1] = trace;
     z__[(*n << 1) + 2] = e;
-    z__[(*n << 1) + 3] = (doublereal) iter;
+    z__[(*n << 1) + 3] = (double) iter;
 /* Computing 2nd power */
     i__1 = *n;
-    z__[(*n << 1) + 4] = (doublereal) ndiv / (doublereal) (i__1 * i__1);
-    z__[(*n << 1) + 5] = nfail * 100. / (doublereal) iter;
+    z__[(*n << 1) + 4] = (double) ndiv / (double) (i__1 * i__1);
+    z__[(*n << 1) + 5] = nfail * 100. / (double) iter;
     return 0;
 
 /*     End of DLASQ2 */

@@ -1,8 +1,8 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlasr_(const char *side, const char *pivot, const char *direct, integer *m, 
-	 integer *n, doublereal *c__, doublereal *s, doublereal *a, integer *
+	 integer *n, double *c__, double *s, double *a, integer *
 	lda)
 {
     /* System generated locals */
@@ -10,9 +10,9 @@
 
     /* Local variables */
     integer i__, j, info;
-    doublereal temp;
+    double temp;
  
-    doublereal ctemp, stemp;
+    double ctemp, stemp;
  
 
 

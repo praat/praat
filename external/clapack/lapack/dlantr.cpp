@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer *m, integer *n, 
-	 doublereal *a, integer *lda, doublereal *work)
+double dlantr_(const char *norm, const char *uplo, const char *diag, integer *m, integer *n, 
+	 double *a, integer *lda, double *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
-    doublereal ret_val, d__1, d__2, d__3;
+    double ret_val, d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j;
-    doublereal sum, scale;
-    logical udiag;
-    doublereal value;
+    double sum, scale;
+    bool udiag;
+    double value;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -326,7 +326,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 	if (lsame_(uplo, "U")) {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) std::min(*m,*n);
+		sum = (double) std::min(*m,*n);
 		i__1 = *n;
 		for (j = 2; j <= i__1; ++j) {
 /* Computing MIN */
@@ -348,7 +348,7 @@ doublereal dlantr_(const char *norm, const char *uplo, const char *diag, integer
 	} else {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) std::min(*m,*n);
+		sum = (double) std::min(*m,*n);
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
 		    i__2 = *m - j;

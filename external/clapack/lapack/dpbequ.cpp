@@ -1,18 +1,18 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dpbequ_(char *uplo, integer *n, integer *kd, doublereal *
-	ab, integer *ldab, doublereal *s, doublereal *scond, doublereal *amax, 
+/* Subroutine */ int dpbequ_(char *uplo, integer *n, integer *kd, double *
+	ab, integer *ldab, double *s, double *scond, double *amax, 
 	 integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal smin;
-    logical upper;
+    double smin;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -1,9 +1,9 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgemm_(const char *transa, const char *transb, integer *m, integer *
-	n, integer *k, doublereal *alpha, doublereal *a, integer *lda, 
-	doublereal *b, integer *ldb, doublereal *beta, doublereal *c__, 
+	n, integer *k, double *alpha, double *a, integer *lda, 
+	double *b, integer *ldb, double *beta, double *c__, 
 	integer *ldc)
 {
     /* System generated locals */
@@ -12,8 +12,8 @@
 
     /* Local variables */
     integer i__, j, l, info;
-    logical nota, notb;
-    doublereal temp;
+    bool nota, notb;
+    double temp;
     integer nrowa, nrowb;
 
 /*     .. Scalar Arguments .. */

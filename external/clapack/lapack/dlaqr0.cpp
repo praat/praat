@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -9,38 +9,38 @@ static integer c_n1 = -1;
 static integer c__12 = 12;
 static integer c__14 = 14;
 static integer c__16 = 16;
-static logical c_false = FALSE_;
+static bool c_false = false;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
-/* Subroutine */ int dlaqr0_(logical *wantt, logical *wantz, integer *n, 
-	integer *ilo, integer *ihi, doublereal *h__, integer *ldh, doublereal 
-	*wr, doublereal *wi, integer *iloz, integer *ihiz, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dlaqr0_(bool *wantt, bool *wantz, integer *n, 
+	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
+	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
+	integer *ldz, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, k;
-    doublereal aa, bb, cc, dd;
+    double aa, bb, cc, dd;
     integer ld;
-    doublereal cs;
+    double cs;
     integer nh, it, ks, kt;
-    doublereal sn;
+    double sn;
     integer ku, kv, ls, ns;
-    doublereal ss;
+    double ss;
     integer nw, inf, kdu, nho, nve, kwh, nsr, nwr, kwv, ndfl, kbot, nmin;
-    doublereal swap;
+    double swap;
     integer ktop;
-    doublereal zdum[1]	/* was [1][1] */;
+    double zdum[1]	/* was [1][1] */;
     integer kacc22;
-    logical nwinc;
+    bool nwinc;
     integer itmax, nsmax, nwmax, kwtop;
     integer nibble;
     char jbcmpz[2];
-    logical sorted;
+    bool sorted;
     integer lwkopt;
 
 
@@ -337,7 +337,7 @@ static integer c__3 = 3;
 /*        ==== Quick return in case of workspace query. ==== */
 
 	if (*lwork == -1) {
-	    work[1] = (doublereal) lwkopt;
+	    work[1] = (double) lwkopt;
 	    return 0;
 	}
 
@@ -422,7 +422,7 @@ L20:
 /*              .    which has the smaller corresponding subdiagonal */
 /*              .    entry (a heuristic). ==== */
 
-		nwinc = TRUE_;
+		nwinc = true;
 		if (nh <= std::min(nmin,nwmax)) {
 		    nw = nh;
 		} else {
@@ -457,7 +457,7 @@ L20:
 		    i__2 = std::min(nwmax,nh), i__3 = nw << 1;
 		    nw = std::min(i__2,i__3);
 		} else {
-		    nwinc = FALSE_;
+		    nwinc = false;
 		    if (nw == nh && nh > 2) {
 			nw = nh - 1;
 		    }
@@ -593,20 +593,20 @@ L20:
 /*                    .    Bubble sort keeps complex conjugate */
 /*                    .    pairs together. ==== */
 
-			sorted = FALSE_;
+			sorted = false;
 			i__2 = ks + 1;
 			for (k = kbot; k >= i__2; --k) {
 			    if (sorted) {
 				goto L60;
 			    }
-			    sorted = TRUE_;
+			    sorted = true;
 			    i__3 = k - 1;
 			    for (i__ = ks; i__ <= i__3; ++i__) {
 				if ((d__1 = wr[i__], abs(d__1)) + (d__2 = wi[
 					i__], abs(d__2)) < (d__3 = wr[i__ + 1]
 					, abs(d__3)) + (d__4 = wi[i__ + 1], 
 					abs(d__4))) {
-				    sorted = FALSE_;
+				    sorted = false;
 
 				    swap = wr[i__];
 				    wr[i__] = wr[i__ + 1];
@@ -723,7 +723,7 @@ L90:
 
 /*     ==== Return the optimal value of LWORK. ==== */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
 /*     ==== End of DLAQR0 ==== */
 

@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlags2_(logical *upper, doublereal *a1, doublereal *a2, 
-	doublereal *a3, doublereal *b1, doublereal *b2, doublereal *b3, 
-	doublereal *csu, doublereal *snu, doublereal *csv, doublereal *snv, 
-	doublereal *csq, doublereal *snq)
+/* Subroutine */ int dlags2_(bool *upper, double *a1, double *a2, 
+	double *a3, double *b1, double *b2, double *b3, 
+	double *csu, double *snu, double *csv, double *snv, 
+	double *csq, double *snq)
 {
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal a, b, c__, d__, r__, s1, s2, ua11, ua12, ua21, ua22, vb11, 
+    double a, b, c__, d__, r__, s1, s2, ua11, ua12, ua21, ua22, vb11, 
 	    vb12, vb21, vb22, csl, csr, snl, snr, aua11, aua12, aua21, aua22, 
 	    avb11, avb12, avb21, avb22, ua11r, ua22r, vb11r, vb22r;
 

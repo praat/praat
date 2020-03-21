@@ -1,46 +1,46 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static logical c_true = TRUE_;
-static logical c_false = FALSE_;
+static bool c_true = true;
+static bool c_false = false;
 
-/* Subroutine */ int dtrsna_(const char *job, const char *howmny, logical *select, 
-	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
-	ldvl, doublereal *vr, integer *ldvr, doublereal *s, doublereal *sep, 
-	integer *mm, integer *m, doublereal *work, integer *ldwork, integer *
+/* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select, 
+	integer *n, double *t, integer *ldt, double *vl, integer *
+	ldvl, double *vr, integer *ldvr, double *s, double *sep, 
+	integer *mm, integer *m, double *work, integer *ldwork, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
     integer t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, 
 	    work_dim1, work_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, k, n2;
-    doublereal cs;
+    double cs;
     integer nn, ks;
-    doublereal sn, mu, eps, est;
+    double sn, mu, eps, est;
     integer kase;
-    doublereal cond;
-    logical pair;
+    double cond;
+    bool pair;
     integer ierr;
-    doublereal dumm, prod;
+    double dumm, prod;
     integer ifst;
-    doublereal lnrm;
+    double lnrm;
     integer ilst;
-    doublereal rnrm;
-    doublereal prod1, prod2, scale, delta;
+    double rnrm;
+    double prod1, prod2, scale, delta;
     integer isave[3];
-    logical wants;
-    doublereal dummy[1];
-    doublereal bignum;
-    logical wantbh;
-    logical somcon;
-    doublereal smlnum;
-    logical wantsp;
+    bool wants;
+    double dummy[1];
+    double bignum;
+    bool wantbh;
+    bool somcon;
+    double smlnum;
+    bool wantsp;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -271,11 +271,11 @@ static logical c_false = FALSE_;
 
 	if (somcon) {
 	    *m = 0;
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (k = 1; k <= i__1; ++k) {
 		if (pair) {
-		    pair = FALSE_;
+		    pair = false;
 		} else {
 		    if (k < *n) {
 			if (t[k + 1 + k * t_dim1] == 0.) {
@@ -283,7 +283,7 @@ static logical c_false = FALSE_;
 				++(*m);
 			    }
 			} else {
-			    pair = TRUE_;
+			    pair = true;
 			    if (select[k] || select[k + 1]) {
 				*m += 2;
 			    }
@@ -341,14 +341,14 @@ static logical c_false = FALSE_;
     dlabad_(&smlnum, &bignum);
 
     ks = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 
 /*        Determine whether T(k,k) begins a 1-by-1 or 2-by-2 block. */
 
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	    goto L60;
 	} else {
 	    if (k < *n) {

@@ -1,11 +1,11 @@
 #include "clapack.h"
-#include "string.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__0 = 0;
-static real c_b163 = 0.f;
-static real c_b164 = 1.f;
+static float c_b163 = 0.f;
+static float c_b164 = 1.f;
 static integer c__1 = 1;
 
 integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1, 
@@ -18,12 +18,12 @@ integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n
     static integer i__;
     static char c1[1], c2[2], c3[3], c4[2];
     static integer ic, nb, iz, nx;
-    static logical cname;
+    static bool cname;
     static integer nbmin;
-    static logical sname;
+    static bool sname;
     static char subnam[6];
 
-    ftnlen name_len = strlen (name__);
+    integer name_len = strlen (name__);
 
 
 /*  -- LAPACK auxiliary routine (version 3.1.1) -- */
@@ -163,7 +163,7 @@ L10:
 /*     Convert NAME to upper case if the first character is lower case. */
 
     ret_val = 1;
-    s_copy(subnam, name__, (ftnlen)6, name_len);
+    s_copy(subnam, name__, 6_integer, name_len);
     ic = *(unsigned char *)subnam;
     iz = 'Z';
     if (iz == 90 || iz == 122) {
@@ -220,9 +220,9 @@ L10:
     if (! (cname || sname)) {
 	return ret_val;
     }
-    s_copy(c2, subnam + 1, (ftnlen)2, (ftnlen)2);
-    s_copy(c3, subnam + 3, (ftnlen)3, (ftnlen)3);
-    s_copy(c4, c3 + 1, (ftnlen)2, (ftnlen)2);
+    s_copy(c2, subnam + 1, 2_integer, 2_integer);
+    s_copy(c3, subnam + 3, 3_integer, 3_integer);
+    s_copy(c4, c3 + 1, 2_integer, 2_integer);
 
     switch (*ispec) {
 	case 1:  goto L50;
@@ -240,111 +240,115 @@ L50:
 
     nb = 1;
 
-    if (s_cmp(c2, "GE", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    if (s_cmp(c2, "GE", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 64;
 	    } else {
 		nb = 64;
 	    }
-	} else if (s_cmp(c3, "QRF", (ftnlen)3, (ftnlen)3) == 0 || s_cmp(c3, 
-		"RQF", (ftnlen)3, (ftnlen)3) == 0 || s_cmp(c3, "LQF", (ftnlen)
-		3, (ftnlen)3) == 0 || s_cmp(c3, "QLF", (ftnlen)3, (ftnlen)3) 
-		== 0) {
+	} else if (s_cmp(c3, "QRF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "RQF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "LQF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "QLF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 32;
 	    } else {
 		nb = 32;
 	    }
-	} else if (s_cmp(c3, "HRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "HRD", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 32;
 	    } else {
 		nb = 32;
 	    }
-	} else if (s_cmp(c3, "BRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "BRD", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 32;
 	    } else {
 		nb = 32;
 	    }
-	} else if (s_cmp(c3, "TRI", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "TRI", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 64;
 	    } else {
 		nb = 64;
 	    }
 	}
-    } else if (s_cmp(c2, "PO", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "PO", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 64;
 	    } else {
 		nb = 64;
 	    }
 	}
-    } else if (s_cmp(c2, "SY", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "SY", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 64;
 	    } else {
 		nb = 64;
 	    }
-	} else if (sname && s_cmp(c3, "TRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (sname && s_cmp(c3, "TRD", 3_integer, 3_integer) == 0) {
 	    nb = 32;
-	} else if (sname && s_cmp(c3, "GST", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (sname && s_cmp(c3, "GST", 3_integer, 3_integer) == 0) {
 	    nb = 64;
 	}
-    } else if (cname && s_cmp(c2, "HE", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (cname && s_cmp(c2, "HE", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    nb = 64;
-	} else if (s_cmp(c3, "TRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "TRD", 3_integer, 3_integer) == 0) {
 	    nb = 32;
-	} else if (s_cmp(c3, "GST", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "GST", 3_integer, 3_integer) == 0) {
 	    nb = 64;
 	}
-    } else if (sname && s_cmp(c2, "OR", (ftnlen)2, (ftnlen)2) == 0) {
+    } else if (sname && s_cmp(c2, "OR", 2_integer, 2_integer) == 0) {
 	if (*(unsigned char *)c3 == 'G') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 || 
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nb = 32;
 	    }
 	} else if (*(unsigned char *)c3 == 'M') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nb = 32;
 	    }
 	}
-    } else if (cname && s_cmp(c2, "UN", (ftnlen)2, (ftnlen)2) == 0) {
+    } else if (cname && s_cmp(c2, "UN", 2_integer, 2_integer) == 0) {
 	if (*(unsigned char *)c3 == 'G') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nb = 32;
 	    }
 	} else if (*(unsigned char *)c3 == 'M') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nb = 32;
 	    }
 	}
-    } else if (s_cmp(c2, "GB", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "GB", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		if (*n4 <= 64) {
 		    nb = 1;
@@ -359,8 +363,8 @@ L50:
 		}
 	    }
 	}
-    } else if (s_cmp(c2, "PB", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "PB", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		if (*n2 <= 64) {
 		    nb = 1;
@@ -375,24 +379,24 @@ L50:
 		}
 	    }
 	}
-    } else if (s_cmp(c2, "TR", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRI", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "TR", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRI", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 64;
 	    } else {
 		nb = 64;
 	    }
 	}
-    } else if (s_cmp(c2, "LA", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "UUM", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "LA", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "UUM", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nb = 64;
 	    } else {
 		nb = 64;
 	    }
 	}
-    } else if (sname && s_cmp(c2, "ST", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "EBZ", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (sname && s_cmp(c2, "ST", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "EBZ", 3_integer, 3_integer) == 0) {
 	    nb = 1;
 	}
     }
@@ -404,86 +408,91 @@ L60:
 /*     ISPEC = 2:  minimum block size */
 
     nbmin = 2;
-    if (s_cmp(c2, "GE", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "QRF", (ftnlen)3, (ftnlen)3) == 0 || s_cmp(c3, "RQF", (
-		ftnlen)3, (ftnlen)3) == 0 || s_cmp(c3, "LQF", (ftnlen)3, (
-		ftnlen)3) == 0 || s_cmp(c3, "QLF", (ftnlen)3, (ftnlen)3) == 0)
+    if (s_cmp(c2, "GE", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "QRF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "RQF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "LQF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "QLF", 3_integer, 3_integer) == 0)
 		 {
 	    if (sname) {
 		nbmin = 2;
 	    } else {
 		nbmin = 2;
 	    }
-	} else if (s_cmp(c3, "HRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "HRD", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nbmin = 2;
 	    } else {
 		nbmin = 2;
 	    }
-	} else if (s_cmp(c3, "BRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "BRD", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nbmin = 2;
 	    } else {
 		nbmin = 2;
 	    }
-	} else if (s_cmp(c3, "TRI", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "TRI", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nbmin = 2;
 	    } else {
 		nbmin = 2;
 	    }
 	}
-    } else if (s_cmp(c2, "SY", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRF", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "SY", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nbmin = 8;
 	    } else {
 		nbmin = 8;
 	    }
-	} else if (sname && s_cmp(c3, "TRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (sname && s_cmp(c3, "TRD", 3_integer, 3_integer) == 0) {
 	    nbmin = 2;
 	}
-    } else if (cname && s_cmp(c2, "HE", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRD", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (cname && s_cmp(c2, "HE", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRD", 3_integer, 3_integer) == 0) {
 	    nbmin = 2;
 	}
-    } else if (sname && s_cmp(c2, "OR", (ftnlen)2, (ftnlen)2) == 0) {
+    } else if (sname && s_cmp(c2, "OR", 2_integer, 2_integer) == 0) {
 	if (*(unsigned char *)c3 == 'G') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nbmin = 2;
 	    }
 	} else if (*(unsigned char *)c3 == 'M') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nbmin = 2;
 	    }
 	}
-    } else if (cname && s_cmp(c2, "UN", (ftnlen)2, (ftnlen)2) == 0) {
+    } else if (cname && s_cmp(c2, "UN", 2_integer, 2_integer) == 0) {
 	if (*(unsigned char *)c3 == 'G') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nbmin = 2;
 	    }
 	} else if (*(unsigned char *)c3 == 'M') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nbmin = 2;
 	    }
 	}
@@ -496,56 +505,58 @@ L70:
 /*     ISPEC = 3:  crossover point */
 
     nx = 0;
-    if (s_cmp(c2, "GE", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "QRF", (ftnlen)3, (ftnlen)3) == 0 || s_cmp(c3, "RQF", (
-		ftnlen)3, (ftnlen)3) == 0 || s_cmp(c3, "LQF", (ftnlen)3, (
-		ftnlen)3) == 0 || s_cmp(c3, "QLF", (ftnlen)3, (ftnlen)3) == 0)
-		 {
+    if (s_cmp(c2, "GE", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "QRF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "RQF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "LQF", 3_integer, 3_integer) == 0 ||
+		s_cmp(c3, "QLF", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nx = 128;
 	    } else {
 		nx = 128;
 	    }
-	} else if (s_cmp(c3, "HRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "HRD", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nx = 128;
 	    } else {
 		nx = 128;
 	    }
-	} else if (s_cmp(c3, "BRD", (ftnlen)3, (ftnlen)3) == 0) {
+	} else if (s_cmp(c3, "BRD", 3_integer, 3_integer) == 0) {
 	    if (sname) {
 		nx = 128;
 	    } else {
 		nx = 128;
 	    }
 	}
-    } else if (s_cmp(c2, "SY", (ftnlen)2, (ftnlen)2) == 0) {
-	if (sname && s_cmp(c3, "TRD", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (s_cmp(c2, "SY", 2_integer, 2_integer) == 0) {
+	if (sname && s_cmp(c3, "TRD", 3_integer, 3_integer) == 0) {
 	    nx = 32;
 	}
-    } else if (cname && s_cmp(c2, "HE", (ftnlen)2, (ftnlen)2) == 0) {
-	if (s_cmp(c3, "TRD", (ftnlen)3, (ftnlen)3) == 0) {
+    } else if (cname && s_cmp(c2, "HE", 2_integer, 2_integer) == 0) {
+	if (s_cmp(c3, "TRD", 3_integer, 3_integer) == 0) {
 	    nx = 32;
 	}
-    } else if (sname && s_cmp(c2, "OR", (ftnlen)2, (ftnlen)2) == 0) {
+    } else if (sname && s_cmp(c2, "OR", 2_integer, 2_integer) == 0) {
 	if (*(unsigned char *)c3 == 'G') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nx = 128;
 	    }
 	}
-    } else if (cname && s_cmp(c2, "UN", (ftnlen)2, (ftnlen)2) == 0) {
+    } else if (cname && s_cmp(c2, "UN", 2_integer, 2_integer) == 0) {
 	if (*(unsigned char *)c3 == 'G') {
-	    if (s_cmp(c4, "QR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "RQ", 
-		    (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "LQ", (ftnlen)2, (
-		    ftnlen)2) == 0 || s_cmp(c4, "QL", (ftnlen)2, (ftnlen)2) ==
-		     0 || s_cmp(c4, "HR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(
-		    c4, "TR", (ftnlen)2, (ftnlen)2) == 0 || s_cmp(c4, "BR", (
-		    ftnlen)2, (ftnlen)2) == 0) {
+	    if (s_cmp(c4, "QR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "RQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "LQ", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "QL", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "HR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "TR", 2_integer, 2_integer) == 0 ||
+			s_cmp(c4, "BR", 2_integer, 2_integer) == 0) {
 		nx = 128;
 	    }
 	}
@@ -571,7 +582,7 @@ L100:
 
 /*     ISPEC = 6:  crossover point for SVD (used by xGELSS and xGESVD) */
 
-    ret_val = (integer) ((real) std::min(*n1,*n2) * 1.6f);
+    ret_val = (integer) ((float) std::min(*n1,*n2) * 1.6f);
     return ret_val;
 
 L110:

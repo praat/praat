@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dormr3_(char *side, char *trans, integer *m, integer *n, 
-	integer *k, integer *l, doublereal *a, integer *lda, doublereal *tau, 
-	doublereal *c__, integer *ldc, doublereal *work, integer *info)
+	integer *k, integer *l, double *a, integer *lda, double *tau, 
+	double *c__, integer *ldc, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, i1, i2, i3, ja, ic, jc, mi, ni, nq;
-    logical left;
-    logical notran;
+    bool left;
+    bool notran;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -1,12 +1,12 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n, integer 
 	*ilo, integer *ihi, integer *lwork)
 {
     /* System generated locals */
     integer ret_val, i__1, i__2;
-    real r__1;
+    float r__1;
 
     /* Local variables */
     integer nh, ns;
@@ -186,7 +186,7 @@ integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n
 	}
 	if (nh >= 150) {
 /* Computing MAX */
-	    r__1 = log((real) nh) / log(2.f);
+	    r__1 = log((float) nh) / log(2.f);
 	    i__1 = 10, i__2 = nh / i_nint(&r__1);
 	    ns = std::max(i__1,i__2);
 	}

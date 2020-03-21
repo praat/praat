@@ -1,7 +1,7 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlamrg_(integer *n1, integer *n2, doublereal *a, integer 
+/* Subroutine */ int dlamrg_(integer *n1, integer *n2, double *a, integer 
 	*dtrd1, integer *dtrd2, integer *index)
 {
     /* System generated locals */

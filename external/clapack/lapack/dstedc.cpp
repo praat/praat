@@ -1,34 +1,34 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__9 = 9;
 static integer c__0 = 0;
 static integer c__2 = 2;
-static doublereal c_b17 = 0.;
-static doublereal c_b18 = 1.;
+static double c_b17 = 0.;
+static double c_b18 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dstedc_(const char *compz, integer *n, doublereal *d__, 
-	doublereal *e, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dstedc_(const char *compz, integer *n, double *d__, 
+	double *e, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, k, m;
-    doublereal p;
+    double p;
     integer ii, lgn;
-    doublereal eps, tiny;
+    double eps, tiny;
     integer lwmin;
      integer start;
     integer finish;
     integer liwmin, icompz;
-	doublereal orgnrm;
-    logical lquery;
+	double orgnrm;
+    bool lquery;
     integer smlsiz, storez, strtrw;
 
 
@@ -206,7 +206,7 @@ static integer c__1 = 1;
 	    liwmin = 1;
 	    lwmin = *n - 1 << 1;
 	} else {
-	    lgn = (integer) (log((doublereal) (*n)) / log(2.));
+	    lgn = (integer) (log((double) (*n)) / log(2.));
 	    if (pow_ii(&c__2, &lgn) < *n) {
 		++lgn;
 	    }
@@ -225,7 +225,7 @@ static integer c__1 = 1;
 		liwmin = *n * 5 + 3;
 	    }
 	}
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -437,7 +437,7 @@ L20:
     }
 
 L50:
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;

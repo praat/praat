@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,21 +7,21 @@ static integer c__1 = 1;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dlasq1_(integer *n, doublereal *d__, doublereal *e, 
-	doublereal *work, integer *info)
+/* Subroutine */ int dlasq1_(integer *n, double *d__, double *e, 
+	double *work, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__;
-    doublereal eps;
-    doublereal scale;
+    double eps;
+    double scale;
     integer iinfo;
-    doublereal sigmn;
-    doublereal sigmx;
-    doublereal safmin;
+    double sigmn;
+    double sigmx;
+    double safmin;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

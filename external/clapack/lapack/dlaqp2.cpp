@@ -1,24 +1,24 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dlaqp2_(integer *m, integer *n, integer *offset, 
-	doublereal *a, integer *lda, integer *jpvt, doublereal *tau, 
-	doublereal *vn1, doublereal *vn2, doublereal *work)
+	double *a, integer *lda, integer *jpvt, double *tau, 
+	double *vn1, double *vn2, double *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, mn;
-    doublereal aii;
+    double aii;
     integer pvt;
-    doublereal temp;
-    doublereal temp2, tol3z;
+    double temp;
+    double temp2, tol3z;
     integer offpi, itemp;
 
 

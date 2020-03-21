@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlaqsy_(char *uplo, integer *n, doublereal *a, integer *
-	lda, doublereal *s, doublereal *scond, doublereal *amax, char *equed)
+/* Subroutine */ int dlaqsy_(char *uplo, integer *n, double *a, integer *
+	lda, double *s, double *scond, double *amax, char *equed)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal cj, large;
+    double cj, large;
  
-    doublereal small;
+    double small;
  
 
 

@@ -1,39 +1,39 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b35 = 10.;
-static doublereal c_b71 = .5;
+static double c_b35 = 10.;
+static double c_b71 = .5;
 
-/* Subroutine */ int dggbal_(const char *job, integer *n, doublereal *a, integer *
-	lda, doublereal *b, integer *ldb, integer *ilo, integer *ihi, 
-	doublereal *lscale, doublereal *rscale, doublereal *work, integer *
+/* Subroutine */ int dggbal_(const char *job, integer *n, double *a, integer *
+	lda, double *b, integer *ldb, integer *ilo, integer *ihi, 
+	double *lscale, double *rscale, double *work, integer *
 	info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k, l, m;
-    doublereal t;
+    double t;
     integer jc;
-    doublereal ta, tb, tc;
+    double ta, tb, tc;
     integer ir;
-    doublereal ew;
+    double ew;
     integer it, nr, ip1, jp1, lm1;
-    doublereal cab, rab, ewc, cor, sum;
+    double cab, rab, ewc, cor, sum;
     integer nrp2, icab, lcab;
-    doublereal beta, coef;
+    double beta, coef;
     integer irab, lrab;
-    doublereal basl, cmax;
-    doublereal coef2, coef5, gamma, alpha;
-    doublereal sfmin, sfmax;
+    double basl, cmax;
+    double coef2, coef5, gamma, alpha;
+    double sfmin, sfmax;
     integer iflow;
      integer kount;
-    doublereal pgamma;
+    double pgamma;
     integer lsfmin, lsfmax;
 
 
@@ -300,7 +300,7 @@ L150:
 /*     Permute rows M and I */
 
 L160:
-    lscale[m] = (doublereal) i__;
+    lscale[m] = (double) i__;
     if (i__ == m) {
 	goto L170;
     }
@@ -312,7 +312,7 @@ L160:
 /*     Permute columns M and J */
 
 L170:
-    rscale[m] = (doublereal) j;
+    rscale[m] = (double) j;
     if (j == m) {
 	goto L180;
     }
@@ -388,7 +388,7 @@ L220:
 /* L240: */
     }
 
-    coef = 1. / (doublereal) (nr << 1);
+    coef = 1. / (double) (nr << 1);
     coef2 = coef * coef;
     coef5 = coef2 * .5;
     nrp2 = nr + 2;
@@ -465,7 +465,7 @@ L280:
 L290:
 	    ;
 	}
-	work[i__ + (*n << 1)] = (doublereal) kount * work[i__ + *n] + sum;
+	work[i__ + (*n << 1)] = (double) kount * work[i__ + *n] + sum;
 /* L300: */
     }
 
@@ -489,7 +489,7 @@ L310:
 L320:
 	    ;
 	}
-	work[j + *n * 3] = (doublereal) kount * work[j] + sum;
+	work[j + *n * 3] = (double) kount * work[j] + sum;
 /* L330: */
     }
 

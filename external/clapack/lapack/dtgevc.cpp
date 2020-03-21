@@ -1,52 +1,52 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static logical c_true = TRUE_;
+static bool c_true = true;
 static integer c__2 = 2;
-static doublereal c_b34 = 1.;
+static double c_b34 = 1.;
 static integer c__1 = 1;
-static doublereal c_b36 = 0.;
-static logical c_false = FALSE_;
+static double c_b36 = 0.;
+static bool c_false = false;
 
-/* Subroutine */ int dtgevc_(const char *side, const char *howmny, logical *select, 
-	integer *n, doublereal *s, integer *lds, doublereal *p, integer *ldp, 
-	doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, integer 
-	*mm, integer *m, doublereal *work, integer *info)
+/* Subroutine */ int dtgevc_(const char *side, const char *howmny, bool *select, 
+	integer *n, double *s, integer *lds, double *p, integer *ldp, 
+	double *vl, integer *ldvl, double *vr, integer *ldvr, integer 
+	*mm, integer *m, double *work, integer *info)
 {
     /* System generated locals */
     integer p_dim1, p_offset, s_dim1, s_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
+    double d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Local variables */
     integer i__, j, ja, jc, je, na, im, jr, jw, nw;
-    doublereal big;
-    logical lsa, lsb;
-    doublereal ulp, sum[4]	/* was [2][2] */;
+    double big;
+    bool lsa, lsb;
+    double ulp, sum[4]	/* was [2][2] */;
     integer ibeg, ieig, iend;
-    doublereal dmin__, temp, xmax, sump[4]	/* was [2][2] */, sums[4]	
+    double dmin__, temp, xmax, sump[4]	/* was [2][2] */, sums[4]	
 	    /* was [2][2] */;
-    doublereal cim2a, cim2b, cre2a, cre2b, temp2, bdiag[2], acoef, scale;
-    logical ilall;
+    double cim2a, cim2b, cre2a, cre2b, temp2, bdiag[2], acoef, scale;
+    bool ilall;
     integer iside;
-    doublereal sbeta;
-    logical il2by2;
+    double sbeta;
+    bool il2by2;
     integer iinfo;
-    doublereal small;
-    logical compl_x; // djmw changed variable from "compl" to compl_x because the c++ compiler protested.
-    doublereal anorm, bnorm;
-    logical compr;
-    doublereal temp2i;
-    doublereal temp2r;
-    logical ilabad, ilbbad;
-    doublereal acoefa, bcoefa, cimaga, cimagb;
-    logical ilback;
-    doublereal bcoefi, ascale, bscale, creala, crealb;
-    doublereal bcoefr, salfar, safmin;
-    doublereal xscale, bignum;
-    logical ilcomp, ilcplx;
+    double small;
+    bool compl_x; // djmw changed variable from "compl" to compl_x because the c++ compiler protested.
+    double anorm, bnorm;
+    bool compr;
+    double temp2i;
+    double temp2r;
+    bool ilabad, ilbbad;
+    double acoefa, bcoefa, cimaga, cimagb;
+    bool ilback;
+    double bcoefi, ascale, bscale, creala, crealb;
+    double bcoefr, salfar, safmin;
+    double xscale, bignum;
+    bool ilcomp, ilcplx;
     integer ihwmny;
 
 
@@ -101,7 +101,7 @@ static logical c_false = FALSE_;
 /*          = 'B': compute all right and/or left eigenvectors, */
 /*                 backtransformed by the matrices in VR and/or VL; */
 /*          = 'S': compute selected right and/or left eigenvectors, */
-/*                 specified by the logical array SELECT. */
+/*                 specified by the bool array SELECT. */
 
 /*  SELECT  (input) LOGICAL array, dimension (N) */
 /*          If HOWMNY='S', SELECT specifies the eigenvectors to be */
@@ -288,33 +288,33 @@ static logical c_false = FALSE_;
     /* Function Body */
     if (lsame_(howmny, "A")) {
 	ihwmny = 1;
-	ilall = TRUE_;
-	ilback = FALSE_;
+	ilall = true;
+	ilback = false;
     } else if (lsame_(howmny, "S")) {
 	ihwmny = 2;
-	ilall = FALSE_;
-	ilback = FALSE_;
+	ilall = false;
+	ilback = false;
     } else if (lsame_(howmny, "B")) {
 	ihwmny = 3;
-	ilall = TRUE_;
-	ilback = TRUE_;
+	ilall = true;
+	ilback = true;
     } else {
 	ihwmny = -1;
-	ilall = TRUE_;
+	ilall = true;
     }
 
     if (lsame_(side, "R")) {
 	iside = 1;
-	compl_x = FALSE_;
-	compr = TRUE_;
+	compl_x = false;
+	compr = true;
     } else if (lsame_(side, "L")) {
 	iside = 2;
-	compl_x = TRUE_;
-	compr = FALSE_;
+	compl_x = true;
+	compr = false;
     } else if (lsame_(side, "B")) {
 	iside = 3;
-	compl_x = TRUE_;
-	compr = TRUE_;
+	compl_x = true;
+	compr = true;
     } else {
 	iside = -1;
     }
@@ -341,16 +341,16 @@ static logical c_false = FALSE_;
 
     if (! ilall) {
 	im = 0;
-	ilcplx = FALSE_;
+	ilcplx = false;
 	i__1 = *n;
 	for (j = 1; j <= i__1; ++j) {
 	    if (ilcplx) {
-		ilcplx = FALSE_;
+		ilcplx = false;
 		goto L10;
 	    }
 	    if (j < *n) {
 		if (s[j + 1 + j * s_dim1] != 0.) {
-		    ilcplx = TRUE_;
+		    ilcplx = true;
 		}
 	    }
 	    if (ilcplx) {
@@ -371,18 +371,18 @@ L10:
 
 /*     Check 2-by-2 diagonal blocks of A, B */
 
-    ilabad = FALSE_;
-    ilbbad = FALSE_;
+    ilabad = false;
+    ilbbad = false;
     i__1 = *n - 1;
     for (j = 1; j <= i__1; ++j) {
 	if (s[j + 1 + j * s_dim1] != 0.) {
 	    if (p[j + j * p_dim1] == 0. || p[j + 1 + (j + 1) * p_dim1] == 0. 
 		    || p[j + (j + 1) * p_dim1] != 0.) {
-		ilbbad = TRUE_;
+		ilbbad = true;
 	    }
 	    if (j < *n - 1) {
 		if (s[j + 2 + (j + 1) * s_dim1] != 0.) {
-		    ilabad = TRUE_;
+		    ilabad = true;
 		}
 	    }
 	}
@@ -475,7 +475,7 @@ L10:
 
 /*        Main loop over eigenvalues */
 
-	ilcplx = FALSE_;
+	ilcplx = false;
 	i__1 = *n;
 	for (je = 1; je <= i__1; ++je) {
 
@@ -485,18 +485,18 @@ L10:
 /*           entry(-ies) of SELECT to look at. */
 
 	    if (ilcplx) {
-		ilcplx = FALSE_;
+		ilcplx = false;
 		goto L220;
 	    }
 	    nw = 1;
 	    if (je < *n) {
 		if (s[je + 1 + je * s_dim1] != 0.) {
-		    ilcplx = TRUE_;
+		    ilcplx = true;
 		    nw = 2;
 		}
 	    }
 	    if (ilall) {
-		ilcomp = TRUE_;
+		ilcomp = true;
 	    } else if (ilcplx) {
 		ilcomp = select[je] || select[je + 1];
 	    } else {
@@ -673,12 +673,12 @@ L10:
 /*                                   T */
 /*           (rowwise in  (a A - b B) , or columnwise in (a A - b B) ) */
 
-	    il2by2 = FALSE_;
+	    il2by2 = false;
 
 	    i__2 = *n;
 	    for (j = je + nw; j <= i__2; ++j) {
 		if (il2by2) {
-		    il2by2 = FALSE_;
+		    il2by2 = false;
 		    goto L160;
 		}
 
@@ -686,7 +686,7 @@ L10:
 		bdiag[0] = p[j + j * p_dim1];
 		if (j < *n) {
 		    if (s[j + 1 + j * s_dim1] != 0.) {
-			il2by2 = TRUE_;
+			il2by2 = true;
 			bdiag[1] = p[j + 1 + (j + 1) * p_dim1];
 			na = 2;
 		    }
@@ -910,7 +910,7 @@ L220:
 
 /*        Main loop over eigenvalues */
 
-	ilcplx = FALSE_;
+	ilcplx = false;
 	for (je = *n; je >= 1; --je) {
 
 /*           Skip this iteration if (a) HOWMNY='S' and SELECT=.FALSE., or */
@@ -922,18 +922,18 @@ L220:
 /*           corresponding to the eigenvalue is in rows/columns JE-1:JE */
 
 	    if (ilcplx) {
-		ilcplx = FALSE_;
+		ilcplx = false;
 		goto L500;
 	    }
 	    nw = 1;
 	    if (je > 1) {
 		if (s[je + (je - 1) * s_dim1] != 0.) {
-		    ilcplx = TRUE_;
+		    ilcplx = true;
 		    nw = 2;
 		}
 	    }
 	    if (ilall) {
-		ilcomp = TRUE_;
+		ilcomp = true;
 	    } else if (ilcplx) {
 		ilcomp = select[je] || select[je - 1];
 	    } else {
@@ -1148,7 +1148,7 @@ L220:
 
 /*           Columnwise triangular solve of  (a A - b B)  x = 0 */
 
-	    il2by2 = FALSE_;
+	    il2by2 = false;
 	    for (j = je - nw; j >= 1; --j) {
 
 /*              If a 2-by-2 block, is in position j-1:j, wait until */
@@ -1156,7 +1156,7 @@ L220:
 
 		if (! il2by2 && j > 1) {
 		    if (s[j + (j - 1) * s_dim1] != 0.) {
-			il2by2 = TRUE_;
+			il2by2 = true;
 			goto L370;
 		    }
 		}
@@ -1275,7 +1275,7 @@ L220:
 /* L360: */
 		    }
 		}
-		il2by2 = FALSE_;
+		il2by2 = false;
 L370:
 		;
 	    }

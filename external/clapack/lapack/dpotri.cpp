@@ -1,7 +1,7 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dpotri_(char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dpotri_(char *uplo, integer *n, double *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */

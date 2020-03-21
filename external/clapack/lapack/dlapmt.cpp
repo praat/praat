@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlapmt_(logical *forwrd, integer *m, integer *n, 
-	doublereal *x, integer *ldx, integer *k)
+/* Subroutine */ int dlapmt_(bool *forwrd, integer *m, integer *n, 
+	double *x, integer *ldx, integer *k)
 {
     /* System generated locals */
     integer x_dim1, x_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j, ii, in;
-    doublereal temp;
+    double temp;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

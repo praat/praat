@@ -1,9 +1,9 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dsbgv_(char *jobz, char *uplo, integer *n, integer *ka, 
-	integer *kb, doublereal *ab, integer *ldab, doublereal *bb, integer *
-	ldbb, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	integer *kb, double *ab, integer *ldab, double *bb, integer *
+	ldbb, double *w, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
     /* System generated locals */
@@ -13,7 +13,7 @@
     integer inde;
     char vect[1];
     integer iinfo;
-    logical upper, wantz;
+    bool upper, wantz;
     integer indwrk;
 
 

@@ -1,11 +1,11 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dtrti2_(const char *uplo, const char *diag, integer *n, doublereal *
+/* Subroutine */ int dtrti2_(const char *uplo, const char *diag, integer *n, double *
 	a, integer *lda, integer *info)
 {
     /* System generated locals */
@@ -13,9 +13,9 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j;
-    doublereal ajj;
-    logical upper;
-    logical nounit;
+    double ajj;
+    bool upper;
+    bool nounit;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

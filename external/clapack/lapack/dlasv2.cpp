@@ -1,27 +1,27 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b3 = 2.;
-static doublereal c_b4 = 1.;
+static double c_b3 = 2.;
+static double c_b4 = 1.;
 
-/* Subroutine */ int dlasv2_(doublereal *f, doublereal *g, doublereal *h__, 
-	doublereal *ssmin, doublereal *ssmax, doublereal *snr, doublereal *
-	csr, doublereal *snl, doublereal *csl)
+/* Subroutine */ int dlasv2_(double *f, double *g, double *h__, 
+	double *ssmin, double *ssmax, double *snr, double *
+	csr, double *snl, double *csl)
 {
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal a, d__, l, m, r__, s, t, fa, ga, ha, ft, gt, ht, mm, tt, clt, 
+    double a, d__, l, m, r__, s, t, fa, ga, ha, ft, gt, ht, mm, tt, clt, 
 	    crt, slt, srt;
     integer pmax;
-    doublereal temp;
-    logical swap;
-    doublereal tsign;
+    double temp;
+    bool swap;
+    double tsign;
  
-    logical gasmal;
+    bool gasmal;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -143,14 +143,14 @@ static doublereal c_b4 = 1.;
 	slt = 0.;
 	srt = 0.;
     } else {
-	gasmal = TRUE_;
+	gasmal = true;
 	if (ga > fa) {
 	    pmax = 2;
 	    if (fa / ga < dlamch_("EPS")) {
 
 /*              Case of very large GA */
 
-		gasmal = FALSE_;
+		gasmal = false;
 		*ssmax = ga;
 		if (ha > 1.) {
 		    *ssmin = fa / (ga / ha);

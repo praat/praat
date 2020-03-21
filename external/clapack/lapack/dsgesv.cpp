@@ -1,31 +1,31 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b10 = -1.;
-static doublereal c_b11 = 1.;
+static double c_b10 = -1.;
+static double c_b11 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dsgesv_(integer *n, integer *nrhs, doublereal *a, 
-	integer *lda, integer *ipiv, doublereal *b, integer *ldb, doublereal *
-	x, integer *ldx, doublereal *work, real *swork, integer *iter, 
+/* Subroutine */ int dsgesv_(integer *n, integer *nrhs, double *a, 
+	integer *lda, integer *ipiv, double *b, integer *ldb, double *
+	x, integer *ldx, double *work, float *swork, integer *iter, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, work_dim1, work_offset, 
 	    x_dim1, x_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__;
-    doublereal cte, eps, anrm;
+    double cte, eps, anrm;
     integer ptsa;
-    doublereal rnrm, xnrm;
+    double rnrm, xnrm;
     integer ptsx;
     integer iiter;
-    doublereal bwdmax;
-    logical doitref;
+    double bwdmax;
+    bool doitref;
     integer itermax;
 
 
@@ -181,7 +181,7 @@ static integer c__1 = 1;
     /* Function Body */
     itermax = 30;
     bwdmax = 1.f;
-    doitref = TRUE_;
+    doitref = true;
 
     *info = 0;
     *iter = 0;
@@ -223,7 +223,7 @@ static integer c__1 = 1;
 
     anrm = dlange_("I", n, n, &a[a_offset], lda, &work[work_offset]);
     eps = dlamch_("Epsilon");
-    cte = anrm * eps * sqrt((doublereal) (*n)) * bwdmax;
+    cte = anrm * eps * sqrt((double) (*n)) * bwdmax;
 
 /*     Set the pointers PTSA, PTSX for referencing SA and SX in SWORK. */
 

@@ -1,20 +1,20 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlarrr_(integer *n, doublereal *d__, doublereal *e, 
+/* Subroutine */ int dlarrr_(integer *n, double *d__, double *e, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__;
-    doublereal eps, tmp, tmp2, rmin;
+    double eps, tmp, tmp2, rmin;
  
-    doublereal offdig, safmin;
-    logical yesrel;
-    doublereal smlnum, offdig2;
+    double offdig, safmin;
+    bool yesrel;
+    double smlnum, offdig2;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -103,11 +103,11 @@
 /*     to losing at most 3 decimal digits: 1 / (1 - (OFFDIG + OFFDIG2)) <= 1000 */
 /*     instead of the current OFFDIG + OFFDIG2 < 1 */
 
-    yesrel = TRUE_;
+    yesrel = true;
     offdig = 0.;
     tmp = sqrt((abs(d__[1])));
     if (tmp < rmin) {
-	yesrel = FALSE_;
+	yesrel = false;
     }
     if (! yesrel) {
 	goto L11;
@@ -116,14 +116,14 @@
     for (i__ = 2; i__ <= i__1; ++i__) {
 	tmp2 = sqrt((d__1 = d__[i__], abs(d__1)));
 	if (tmp2 < rmin) {
-	    yesrel = FALSE_;
+	    yesrel = false;
 	}
 	if (! yesrel) {
 	    goto L11;
 	}
 	offdig2 = (d__1 = e[i__ - 1], abs(d__1)) / (tmp * tmp2);
 	if (offdig + offdig2 >= .999) {
-	    yesrel = FALSE_;
+	    yesrel = false;
 	}
 	if (! yesrel) {
 	    goto L11;

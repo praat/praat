@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
-static doublereal c_b18 = 1.;
-static doublereal c_b22 = -1.;
+static double c_b18 = 1.;
+static double c_b22 = -1.;
 
-/* Subroutine */ int dtrtri_(const char *uplo, const char *diag, integer *n, doublereal *
+/* Subroutine */ int dtrtri_(const char *uplo, const char *diag, integer *n, double *
 	a, integer *lda, integer *info)
 {
     /* System generated locals */
@@ -19,8 +19,8 @@ static doublereal c_b22 = -1.;
 
     /* Local variables */
     integer j, jb, nb, nn;
-    logical upper;
-    logical nounit;
+    bool upper;
+    bool nounit;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -140,7 +140,7 @@ static doublereal c_b22 = -1.;
 /* Writing concatenation */
     i__2[0] = 1, a__1[0] = const_cast<char *> (uplo);
     i__2[1] = 1, a__1[1] = const_cast<char *> (diag);
-    s_cat(ch__1, a__1, i__2, &c__2, (ftnlen)2);
+    s_cat(ch__1, a__1, i__2, &c__2, 2_integer);
     nb = ilaenv_(&c__1, "DTRTRI", ch__1, n, &c_n1, &c_n1, &c_n1);
     if (nb <= 1 || nb >= *n) {
 

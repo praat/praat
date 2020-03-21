@@ -1,8 +1,8 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlacpy_(const char *uplo, integer *m, integer *n, doublereal *
-	a, integer *lda, doublereal *b, integer *ldb)
+/* Subroutine */ int dlacpy_(const char *uplo, integer *m, integer *n, double *
+	a, integer *lda, double *b, integer *ldb)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;

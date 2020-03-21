@@ -1,21 +1,21 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-doublereal dlansp_(char *norm, char *uplo, integer *n, doublereal *ap, 
-	doublereal *work)
+double dlansp_(char *norm, char *uplo, integer *n, double *ap, 
+	double *work)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal ret_val, d__1, d__2, d__3;
+    double ret_val, d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal sum, absa, scale;
-    doublereal value;
+    double sum, absa, scale;
+    double value;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

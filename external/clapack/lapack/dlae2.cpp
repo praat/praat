@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlae2_(doublereal *a, doublereal *b, doublereal *c__, 
-	doublereal *rt1, doublereal *rt2)
+/* Subroutine */ int dlae2_(double *a, double *b, double *c__, 
+	double *rt1, double *rt2)
 {
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Builtin functions
-    double sqrt(doublereal);*/
+    double sqrt(double);*/
 
     /* Local variables */
-    doublereal ab, df, tb, sm, rt, adf, acmn, acmx;
+    double ab, df, tb, sm, rt, adf, acmn, acmx;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

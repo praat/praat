@@ -1,10 +1,10 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-logical dlaisnan_(doublereal *din1, doublereal *din2)
+bool dlaisnan_(double *din1, double *din2)
 {
     /* System generated locals */
-    logical ret_val;
+    bool ret_val;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

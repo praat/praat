@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b16 = 1.;
+static double c_b16 = 1.;
 
 /* Subroutine */ int dsygv_(integer *itype, char *jobz, char *uplo, integer *
-	n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *w, doublereal *work, integer *lwork, integer *info)
+	n, double *a, integer *lda, double *b, integer *ldb, 
+	double *w, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
@@ -17,11 +17,11 @@ static doublereal c_b16 = 1.;
     /* Local variables */
     integer nb, neig;
     char trans[1];
-    logical upper;
-    logical wantz;
+    bool upper;
+    bool wantz;
     integer lwkmin;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -177,7 +177,7 @@ static doublereal c_b16 = 1.;
 /* Computing MAX */
 	i__1 = lwkmin, i__2 = (nb + 2) * *n;
 	lwkopt = std::max(i__1,i__2);
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < lwkmin && ! lquery) {
 	    *info = -11;
@@ -249,7 +249,7 @@ static doublereal c_b16 = 1.;
 	}
     }
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DSYGV */

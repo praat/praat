@@ -1,8 +1,8 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dopgtr_(char *uplo, integer *n, doublereal *ap, 
-	doublereal *tau, doublereal *q, integer *ldq, doublereal *work, 
+/* Subroutine */ int dopgtr_(char *uplo, integer *n, double *ap, 
+	double *tau, double *q, integer *ldq, double *work, 
 	integer *info)
 {
     /* System generated locals */
@@ -11,7 +11,7 @@
     /* Local variables */
     integer i__, j, ij;
     integer iinfo;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

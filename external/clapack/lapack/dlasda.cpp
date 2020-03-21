@@ -1,20 +1,20 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__0 = 0;
-static doublereal c_b11 = 0.;
-static doublereal c_b12 = 1.;
+static double c_b11 = 0.;
+static double c_b12 = 1.;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dlasda_(integer *icompq, integer *smlsiz, integer *n, 
-	integer *sqre, doublereal *d__, doublereal *e, doublereal *u, integer 
-	*ldu, doublereal *vt, integer *k, doublereal *difl, doublereal *difr, 
-	doublereal *z__, doublereal *poles, integer *givptr, integer *givcol, 
-	integer *ldgcol, integer *perm, doublereal *givnum, doublereal *c__, 
-	doublereal *s, doublereal *work, integer *iwork, integer *info)
+	integer *sqre, double *d__, double *e, double *u, integer 
+	*ldu, double *vt, integer *k, double *difl, double *difr, 
+	double *z__, double *poles, integer *givptr, integer *givcol, 
+	integer *ldgcol, integer *perm, double *givnum, double *c__, 
+	double *s, double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer givcol_dim1, givcol_offset, perm_dim1, perm_offset, difl_dim1, 
@@ -25,9 +25,9 @@ static integer c__2 = 2;
     /* Local variables */
     integer i__, j, m, i1, ic, lf, nd, ll, nl, vf, nr, vl, im1, ncc, nlf, nrf,
 	     vfi, iwk, vli, lvl, nru, ndb1, nlp1, lvl2, nrp1;
-    doublereal beta;
+    double beta;
     integer idxq, nlvl;
-    doublereal alpha;
+    double alpha;
     integer inode, ndiml, ndimr, idxqi, itemp;
     integer sqrei;
     integer nwork1, nwork2;

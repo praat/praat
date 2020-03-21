@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dstegr_(char *jobz, char *range, integer *n, doublereal *
-	d__, doublereal *e, doublereal *vl, doublereal *vu, integer *il, 
-	integer *iu, doublereal *abstol, integer *m, doublereal *w, 
-	doublereal *z__, integer *ldz, integer *isuppz, doublereal *work, 
+/* Subroutine */ int dstegr_(char *jobz, char *range, integer *n, double *
+	d__, double *e, double *vl, double *vu, integer *il, 
+	integer *iu, double *abstol, integer *m, double *w, 
+	double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset;
 
     /* Local variables */
-    logical tryrac;
+    bool tryrac;
 
 
 /*  -- LAPACK computational routine (version 3.1) -- */
@@ -182,7 +182,7 @@
 
     /* Function Body */
     *info = 0;
-    tryrac = FALSE_;
+    tryrac = false;
     dstemr_(jobz, range, n, &d__[1], &e[1], vl, vu, il, iu, m, &w[1], &z__[
 	    z_offset], ldz, n, &isuppz[1], &tryrac, &work[1], lwork, &iwork[1]
 , liwork, info);

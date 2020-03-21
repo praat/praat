@@ -1,28 +1,28 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b11 = -1.;
-static doublereal c_b13 = 0.;
+static double c_b11 = -1.;
+static double c_b13 = 0.;
 
-/* Subroutine */ int dsptri_(char *uplo, integer *n, doublereal *ap, integer *
-	ipiv, doublereal *work, integer *info)
+/* Subroutine */ int dsptri_(char *uplo, integer *n, double *ap, integer *
+	ipiv, double *work, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal d__;
+    double d__;
     integer j, k;
-    doublereal t, ak;
+    double t, ak;
     integer kc, kp, kx, kpc, npp;
-    doublereal akp1;
-    doublereal temp, akkp1;
+    double akp1;
+    double temp, akkp1;
     integer kstep;
-    logical upper;
+    bool upper;
     integer kcnext;
 
 

@@ -1,14 +1,14 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dspgvx_(integer *itype, char *jobz, char *range, char *
-	uplo, integer *n, doublereal *ap, doublereal *bp, doublereal *vl, 
-	doublereal *vu, integer *il, integer *iu, doublereal *abstol, integer 
-	*m, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	uplo, integer *n, double *ap, double *bp, double *vl, 
+	double *vu, integer *il, integer *iu, double *abstol, integer 
+	*m, double *w, double *z__, integer *ldz, double *work, 
 	integer *iwork, integer *ifail, integer *info)
 {
     /* System generated locals */
@@ -17,8 +17,8 @@ static integer c__1 = 1;
     /* Local variables */
     integer j;
     char trans[1];
-    logical upper;
-	logical wantz, alleig, indeig, valeig;
+    bool upper;
+	bool wantz, alleig, indeig, valeig;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

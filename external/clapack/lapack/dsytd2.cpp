@@ -1,23 +1,23 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = 0.;
-static doublereal c_b14 = -1.;
+static double c_b8 = 0.;
+static double c_b14 = -1.;
 
-/* Subroutine */ int dsytd2_(const char *uplo, integer *n, doublereal *a, integer *
-	lda, doublereal *d__, doublereal *e, doublereal *tau, integer *info)
+/* Subroutine */ int dsytd2_(const char *uplo, integer *n, double *a, integer *
+	lda, double *d__, double *e, double *tau, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
 
     /* Local variables */
     integer i__;
-    doublereal taui;
-    doublereal alpha;
-    logical upper;
+    double taui;
+    double alpha;
+    bool upper;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

@@ -1,13 +1,13 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-integer ieeeck_(integer *ispec, real *zero, real *one)
+integer ieeeck_(integer *ispec, float *zero, float *one)
 {
     /* System generated locals */
     integer ret_val;
 
     /* Local variables */
-    real nan1, nan2, nan3, nan4, nan5, nan6, neginf, posinf, negzro, newzro;
+    float nan1, nan2, nan3, nan4, nan5, nan6, neginf, posinf, negzro, newzro;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

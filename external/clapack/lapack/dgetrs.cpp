@@ -1,21 +1,21 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b12 = 1.;
+static double c_b12 = 1.;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dgetrs_(const char *trans, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, integer *ipiv, doublereal *b, integer *
+	double *a, integer *lda, integer *ipiv, double *b, integer *
 	ldb, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 
     /* Local variables */
-    logical notran;
+    bool notran;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

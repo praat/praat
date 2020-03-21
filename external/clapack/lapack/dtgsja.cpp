@@ -1,32 +1,32 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b13 = 0.;
-static doublereal c_b14 = 1.;
+static double c_b13 = 0.;
+static double c_b14 = 1.;
 static integer c__1 = 1;
-static doublereal c_b43 = -1.;
+static double c_b43 = -1.;
 
 /* Subroutine */ int dtgsja_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
-	integer *p, integer *n, integer *k, integer *l, doublereal *a, 
-	integer *lda, doublereal *b, integer *ldb, doublereal *tola, 
-	doublereal *tolb, doublereal *alpha, doublereal *beta, doublereal *u, 
-	integer *ldu, doublereal *v, integer *ldv, doublereal *q, integer *
-	ldq, doublereal *work, integer *ncycle, integer *info)
+	integer *p, integer *n, integer *k, integer *l, double *a, 
+	integer *lda, double *b, integer *ldb, double *tola, 
+	double *tolb, double *alpha, double *beta, double *u, 
+	integer *ldu, double *v, integer *ldv, double *q, integer *
+	ldq, double *work, integer *ncycle, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, 
 	    u_offset, v_dim1, v_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j;
-    doublereal a1, a2, a3, b1, b2, b3, csq, csu, csv, snq, rwk, snu, snv;
-    doublereal gamma;
-    logical initq, initu, initv, wantq, upper;
-    doublereal error, ssmin;
-    logical wantu, wantv;
+    double a1, a2, a3, b1, b2, b3, csq, csu, csv, snq, rwk, snu, snv;
+    double gamma;
+    bool initq, initu, initv, wantq, upper;
+    double error, ssmin;
+    bool wantu, wantv;
     integer kcycle;
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -368,7 +368,7 @@ static doublereal c_b43 = -1.;
 
 /*     Loop until convergence */
 
-    upper = FALSE_;
+    upper = false;
     for (kcycle = 1; kcycle <= 40; ++kcycle) {
 
 	upper = ! upper;

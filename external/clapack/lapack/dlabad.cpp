@@ -1,10 +1,10 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlabad_(doublereal *small, doublereal *large)
+/* Subroutine */ int dlabad_(double *small, double *large)
 {
     /* Builtin functions
-    double d_lg10(doublereal *), sqrt(doublereal);*/
+    double d_lg10(double *), sqrt(double);*/
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

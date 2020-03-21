@@ -1,23 +1,23 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dgesc2_(integer *n, doublereal *a, integer *lda, 
-	doublereal *rhs, integer *ipiv, integer *jpiv, doublereal *scale)
+/* Subroutine */ int dgesc2_(integer *n, double *a, integer *lda, 
+	double *rhs, integer *ipiv, integer *jpiv, double *scale)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal eps, temp;
-    doublereal bignum;
-    doublereal smlnum;
+    double eps, temp;
+    double bignum;
+    double smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

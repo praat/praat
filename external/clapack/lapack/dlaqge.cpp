@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlaqge_(integer *m, integer *n, doublereal *a, integer *
-	lda, doublereal *r__, doublereal *c__, doublereal *rowcnd, doublereal 
-	*colcnd, doublereal *amax, char *equed)
+/* Subroutine */ int dlaqge_(integer *m, integer *n, double *a, integer *
+	lda, double *r__, double *c__, double *rowcnd, double 
+	*colcnd, double *amax, char *equed)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal cj, large, small;
+    double cj, large, small;
  
 
 

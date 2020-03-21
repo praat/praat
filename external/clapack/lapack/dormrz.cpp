@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -9,8 +9,8 @@ static integer c__2 = 2;
 static integer c__65 = 65;
 
 /* Subroutine */ int dormrz_(char *side, char *trans, integer *m, integer *n, 
-	integer *k, integer *l, doublereal *a, integer *lda, doublereal *tau, 
-	doublereal *c__, integer *ldc, doublereal *work, integer *lwork, 
+	integer *k, integer *l, double *a, integer *lda, double *tau, 
+	double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -21,15 +21,15 @@ static integer c__65 = 65;
 
     /* Local variables */
     integer i__;
-    doublereal t[4160]	/* was [65][64] */;
+    double t[4160]	/* was [65][64] */;
     integer i1, i2, i3, ib, ic, ja, jc, nb, mi, ni, nq, nw, iws;
-    logical left;
+    bool left;
     integer nbmin, iinfo;
-    logical notran;
+    bool notran;
     integer ldwork;
     char transt[1];
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1.1) -- */
@@ -207,12 +207,12 @@ static integer c__65 = 65;
 /* Writing concatenation */
 	    i__3[0] = 1, a__1[0] = side;
 	    i__3[1] = 1, a__1[1] = trans;
-	    s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
 	    i__1 = 64, i__2 = ilaenv_(&c__1, "DORMRQ", ch__1, m, n, k, &c_n1);
 	    nb = std::min(i__1,i__2);
 	    lwkopt = nw * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < std::max(1_integer,nw) && ! lquery) {
 	    *info = -13;
@@ -244,7 +244,7 @@ static integer c__65 = 65;
 /* Writing concatenation */
 	    i__3[0] = 1, a__1[0] = side;
 	    i__3[1] = 1, a__1[1] = trans;
-	    s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DORMRQ", ch__1, m, n, k, &c_n1);
 	    nbmin = std::max(i__1,i__2);
 	}
@@ -325,7 +325,7 @@ static integer c__65 = 65;
 
     }
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

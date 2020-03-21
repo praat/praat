@@ -1,28 +1,28 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = -1.;
-static doublereal c_b9 = 1.;
-static doublereal c_b16 = 0.;
+static double c_b8 = -1.;
+static double c_b9 = 1.;
+static double c_b16 = 0.;
 
 /* Subroutine */ int dlaqps_(integer *m, integer *n, integer *offset, integer 
-	*nb, integer *kb, doublereal *a, integer *lda, integer *jpvt, 
-	doublereal *tau, doublereal *vn1, doublereal *vn2, doublereal *auxv, 
-	doublereal *f, integer *ldf)
+	*nb, integer *kb, double *a, integer *lda, integer *jpvt, 
+	double *tau, double *vn1, double *vn2, double *auxv, 
+	double *f, integer *ldf)
 {
     /* System generated locals */
     integer a_dim1, a_offset, f_dim1, f_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer j, k, rk;
-    doublereal akk;
+    double akk;
     integer pvt;
-    doublereal temp;
-    doublereal temp2, tol3z;
+    double temp;
+    double temp2, tol3z;
     integer itemp;
     integer lsticc, lastrk;
 
@@ -259,7 +259,7 @@ L10:
 		    d__1 = vn1[j] / vn2[j];
 		    temp2 = temp * (d__1 * d__1);
 		    if (temp2 <= tol3z) {
-			vn2[j] = (doublereal) lsticc;
+			vn2[j] = (double) lsticc;
 			lsticc = j;
 		    } else {
 			vn1[j] *= sqrt(temp);

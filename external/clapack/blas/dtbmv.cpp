@@ -1,19 +1,19 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dtbmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
-	integer *k, doublereal *a, integer *lda, doublereal *x, integer *incx)
+	integer *k, double *a, integer *lda, double *x, integer *incx)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
     /* Local variables */
     integer i__, j, l, ix, jx, kx, info;
-    doublereal temp;
+    double temp;
  
     integer kplus1;
  
-    logical nounit;
+    bool nounit;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

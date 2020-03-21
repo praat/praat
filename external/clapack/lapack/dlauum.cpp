@@ -1,13 +1,13 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b15 = 1.;
+static double c_b15 = 1.;
 
-/* Subroutine */ int dlauum_(const char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlauum_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */
@@ -15,7 +15,7 @@ static doublereal c_b15 = 1.;
 
     /* Local variables */
     integer i__, ib, nb;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

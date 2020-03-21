@@ -1,25 +1,25 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int drotmg_(doublereal *dd1, doublereal *dd2, doublereal *
-	dx1, doublereal *dy1, doublereal *dparam)
+/* Subroutine */ int drotmg_(double *dd1, double *dd2, double *
+	dx1, double *dy1, double *dparam)
 {
     /* Initialized data */
 
-    static doublereal zero = 0.;
-    static doublereal one = 1.;
-    static doublereal two = 2.;
-    static doublereal gam = 4096.;
-    static doublereal gamsq = 16777216.;
-    static doublereal rgamsq = 5.9604645e-8;
+    static double zero = 0.;
+    static double one = 1.;
+    static double two = 2.;
+    static double gam = 4096.;
+    static double gamsq = 16777216.;
+    static double rgamsq = 5.9604645e-8;
 
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal du, dp1, dp2, dq1, dq2, dh11, dh12, dh21, dh22;
+    double du, dp1, dp2, dq1, dq2, dh11, dh12, dh21, dh22;
     integer igo;
-    doublereal dflag, dtemp;
+    double dflag, dtemp;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

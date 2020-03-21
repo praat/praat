@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,40 +7,40 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dsyevx_(char *jobz, char *range, char *uplo, integer *n, 
-	doublereal *a, integer *lda, doublereal *vl, doublereal *vu, integer *
-	il, integer *iu, doublereal *abstol, integer *m, doublereal *w, 
-	doublereal *z__, integer *ldz, doublereal *work, integer *lwork, 
+	double *a, integer *lda, double *vl, double *vu, integer *
+	il, integer *iu, double *abstol, integer *m, double *w, 
+	double *z__, integer *ldz, double *work, integer *lwork, 
 	integer *iwork, integer *ifail, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, nb, jj;
-    doublereal eps, vll, vuu, tmp1;
+    double eps, vll, vuu, tmp1;
     integer indd, inde;
-    doublereal anrm;
+    double anrm;
     integer imax;
-    doublereal rmin, rmax;
-    logical test;
+    double rmin, rmax;
+    bool test;
     integer itmp1, indee;
-    doublereal sigma;
+    double sigma;
     integer iinfo;
     char order[1];
-    logical lower, wantz;
-    logical alleig, indeig;
+    bool lower, wantz;
+    bool alleig, indeig;
     integer iscale, indibl;
-    logical valeig;
-    doublereal safmin;
-    doublereal abstll, bignum;
+    bool valeig;
+    double safmin;
+    double abstll, bignum;
     integer indtau, indisp;
     integer indiwo, indwkn;
     integer indwrk, lwkmin;
     integer llwrkn, llwork, nsplit;
-    doublereal smlnum;
+    double smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -252,7 +252,7 @@ static integer c_n1 = -1;
     if (*info == 0) {
 	if (*n <= 1) {
 	    lwkmin = 1;
-	    work[1] = (doublereal) lwkmin;
+	    work[1] = (double) lwkmin;
 	} else {
 	    lwkmin = *n << 3;
 	    nb = ilaenv_(&c__1, "DSYTRD", uplo, n, &c_n1, &c_n1, &c_n1);
@@ -263,7 +263,7 @@ static integer c_n1 = -1;
 /* Computing MAX */
 	    i__1 = lwkmin, i__2 = (nb + 3) * *n;
 	    lwkopt = std::max(i__1,i__2);
-	    work[1] = (doublereal) lwkopt;
+	    work[1] = (double) lwkopt;
 	}
 
 	if (*lwork < lwkmin && ! lquery) {
@@ -367,10 +367,10 @@ static integer c_n1 = -1;
 /*     zero, then call DSTERF or DORGTR and SSTEQR.  If this fails for */
 /*     some eigenvalue, then try DSTEBZ. */
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
-	    test = TRUE_;
+	    test = true;
 	}
     }
     if ((alleig || test) && *abstol <= 0.) {
@@ -481,7 +481,7 @@ L40:
 
 /*     Set WORK(1) to optimal workspace size. */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

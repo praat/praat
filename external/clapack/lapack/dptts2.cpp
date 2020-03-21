@@ -1,12 +1,12 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dptts2_(integer *n, integer *nrhs, doublereal *d__, 
-	doublereal *e, doublereal *b, integer *ldb)
+/* Subroutine */ int dptts2_(integer *n, integer *nrhs, double *d__, 
+	double *e, double *b, integer *ldb)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j;

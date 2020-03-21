@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__3 = 3;
 static integer c__2 = 2;
 
-/* Subroutine */ int dgeqp3_(integer *m, integer *n, doublereal *a, integer *
-	lda, integer *jpvt, doublereal *tau, doublereal *work, integer *lwork, 
+/* Subroutine */ int dgeqp3_(integer *m, integer *n, double *a, integer *
+	lda, integer *jpvt, double *tau, double *work, integer *lwork, 
 	 integer *info)
 {
     /* System generated locals */
@@ -21,7 +21,7 @@ static integer c__2 = 2;
     integer minws;
     integer topbmn, sminmn;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -151,7 +151,7 @@ static integer c__2 = 2;
 	    nb = ilaenv_(&c__1, "DGEQRF", " ", m, n, &c_n1, &c_n1);
 	    lwkopt = (*n << 1) + (*n + 1) * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < iws && ! lquery) {
 	    *info = -8;
@@ -321,7 +321,7 @@ L30:
 
     }
 
-    work[1] = (doublereal) iws;
+    work[1] = (double) iws;
     return 0;
 
 /*     End of DGEQP3 */

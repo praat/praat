@@ -1,27 +1,27 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b11 = 1.;
+static double c_b11 = 1.;
 
 /* Subroutine */ int dsygvd_(integer *itype, char *jobz, char *uplo, integer *
-	n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *w, doublereal *work, integer *lwork, integer *iwork, 
+	n, double *a, integer *lda, double *b, integer *ldb, 
+	double *w, double *work, integer *lwork, integer *iwork, 
 	integer *liwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer lopt;
     integer lwmin;
     char trans[1];
     integer liopt;
-    logical upper, wantz;
+    bool upper, wantz;
     integer liwmin;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -224,7 +224,7 @@ static doublereal c_b11 = 1.;
     }
 
     if (*info == 0) {
-	work[1] = (doublereal) lopt;
+	work[1] = (double) lopt;
 	iwork[1] = liopt;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -262,10 +262,10 @@ static doublereal c_b11 = 1.;
     dsyevd_(jobz, uplo, n, &a[a_offset], lda, &w[1], &work[1], lwork, &iwork[
 	    1], liwork, info);
 /* Computing MAX */
-    d__1 = (doublereal) lopt;
+    d__1 = (double) lopt;
     lopt = (integer) std::max(d__1,work[1]);
 /* Computing MAX */
-    d__1 = (doublereal) liopt, d__2 = (doublereal) iwork[1];
+    d__1 = (double) liopt, d__2 = (double) iwork[1];
     liopt = (integer) std::max(d__1,d__2);
 
     if (wantz && *info == 0) {
@@ -302,7 +302,7 @@ static doublereal c_b11 = 1.;
 	}
     }
 
-    work[1] = (doublereal) lopt;
+    work[1] = (double) lopt;
     iwork[1] = liopt;
 
     return 0;

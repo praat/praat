@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b31 = -1.;
-static doublereal c_b33 = 1.;
+static double c_b31 = -1.;
+static double c_b33 = 1.;
 
-/* Subroutine */ int dgglse_(integer *m, integer *n, integer *p, doublereal *
-	a, integer *lda, doublereal *b, integer *ldb, doublereal *c__, 
-	doublereal *d__, doublereal *x, doublereal *work, integer *lwork, 
+/* Subroutine */ int dgglse_(integer *m, integer *n, integer *p, double *
+	a, integer *lda, double *b, integer *ldb, double *c__, 
+	double *d__, double *x, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -20,7 +20,7 @@ static doublereal c_b33 = 1.;
     integer nb, mn, nr, nb1, nb2, nb3, nb4, lopt;
     integer lwkmin;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -185,7 +185,7 @@ static doublereal c_b33 = 1.;
 	    lwkmin = *m + *n + *p;
 	    lwkopt = *p + mn + std::max(*m,*n) * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < lwkmin && ! lquery) {
 	    *info = -12;
@@ -298,7 +298,7 @@ static doublereal c_b33 = 1.;
 	    1], n, &work[*p + mn + 1], &i__1, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[*p + mn + 1];
-    work[1] = (doublereal) (*p + mn + std::max(i__1,i__2));
+    work[1] = (double) (*p + mn + std::max(i__1,i__2));
 
     return 0;
 

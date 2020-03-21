@@ -1,30 +1,30 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dtpcon_(const char *norm, const char *uplo, const char *diag, integer *n, 
-	doublereal *ap, doublereal *rcond, doublereal *work, integer *iwork, 
+	double *ap, double *rcond, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer ix, kase, kase1;
-    doublereal scale;
+    double scale;
     integer isave[3];
-    doublereal anorm;
-    logical upper;
-    doublereal xnorm;
-    doublereal ainvnm;
-    logical onenrm;
+    double anorm;
+    bool upper;
+    double xnorm;
+    double ainvnm;
+    bool onenrm;
     char normin[1];
-    doublereal smlnum;
-    logical nounit;
+    double smlnum;
+    bool nounit;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -142,7 +142,7 @@ static integer c__1 = 1;
     }
 
     *rcond = 0.;
-    smlnum = dlamch_("Safe minimum") * (doublereal) std::max(1_integer,*n);
+    smlnum = dlamch_("Safe minimum") * (double) std::max(1_integer,*n);
 
 /*     Compute the norm of the triangular matrix A. */
 

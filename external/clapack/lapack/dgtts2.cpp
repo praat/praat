@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgtts2_(integer *itrans, integer *n, integer *nrhs, 
-	doublereal *dl, doublereal *d__, doublereal *du, doublereal *du2, 
-	integer *ipiv, doublereal *b, integer *ldb)
+	double *dl, double *d__, double *du, double *du2, 
+	integer *ipiv, double *b, integer *ldb)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j, ip;
-    doublereal temp;
+    double temp;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

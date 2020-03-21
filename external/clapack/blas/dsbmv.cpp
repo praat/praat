@@ -1,16 +1,16 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dsbmv_(char *uplo, integer *n, integer *k, doublereal *
-	alpha, doublereal *a, integer *lda, doublereal *x, integer *incx, 
-	doublereal *beta, doublereal *y, integer *incy)
+/* Subroutine */ int dsbmv_(char *uplo, integer *n, integer *k, double *
+	alpha, double *a, integer *lda, double *x, integer *incx, 
+	double *beta, double *y, integer *incy)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
     /* Local variables */
     integer i__, j, l, ix, iy, jx, jy, kx, ky, info;
-    doublereal temp1, temp2;
+    double temp1, temp2;
  
     integer kplus1;
  

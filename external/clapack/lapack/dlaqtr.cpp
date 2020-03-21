@@ -1,37 +1,37 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static logical c_false = FALSE_;
+static bool c_false = false;
 static integer c__2 = 2;
-static doublereal c_b21 = 1.;
-static doublereal c_b25 = 0.;
-static logical c_true = TRUE_;
+static double c_b21 = 1.;
+static double c_b25 = 0.;
+static bool c_true = true;
 
-/* Subroutine */ int dlaqtr_(logical *ltran, logical *lreal, integer *n, 
-	doublereal *t, integer *ldt, doublereal *b, doublereal *w, doublereal 
-	*scale, doublereal *x, doublereal *work, integer *info)
+/* Subroutine */ int dlaqtr_(bool *ltran, bool *lreal, integer *n, 
+	double *t, integer *ldt, double *b, double *w, double 
+	*scale, double *x, double *work, integer *info)
 {
     /* System generated locals */
     integer t_dim1, t_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
+    double d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Local variables */
-    doublereal d__[4]	/* was [2][2] */;
+    double d__[4]	/* was [2][2] */;
     integer i__, j, k;
-    doublereal v[4]	/* was [2][2] */, z__;
+    double v[4]	/* was [2][2] */, z__;
     integer j1, j2, n1, n2;
-    doublereal si, xj, sr, rec, eps, tjj, tmp;
+    double si, xj, sr, rec, eps, tjj, tmp;
     integer ierr;
-    doublereal smin, xmax;
+    double smin, xmax;
     integer jnext;
-    doublereal sminw, xnorm;
-    doublereal scaloc;
-    doublereal bignum;
-    logical notran;
-    doublereal smlnum;
+    double sminw, xnorm;
+    double scaloc;
+    double bignum;
+    bool notran;
+    double smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

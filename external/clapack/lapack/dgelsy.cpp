@@ -1,37 +1,37 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__0 = 0;
-static doublereal c_b31 = 0.;
+static double c_b31 = 0.;
 static integer c__2 = 2;
-static doublereal c_b54 = 1.;
+static double c_b54 = 1.;
 
 /* Subroutine */ int dgelsy_(integer *m, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, integer *
-	jpvt, doublereal *rcond, integer *rank, doublereal *work, integer *
+	double *a, integer *lda, double *b, integer *ldb, integer *
+	jpvt, double *rcond, integer *rank, double *work, integer *
 	lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal c1, c2, s1, s2;
+    double c1, c2, s1, s2;
     integer nb, mn, nb1, nb2, nb3, nb4;
-    doublereal anrm, bnrm, smin, smax;
+    double anrm, bnrm, smin, smax;
     integer iascl, ibscl;
     integer ismin, ismax;
-    doublereal wsize;
-    doublereal bignum;
+    double wsize;
+    double bignum;
     integer lwkmin;
-    doublereal sminpr, smaxpr, smlnum;
+    double sminpr, smaxpr, smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -231,7 +231,7 @@ static doublereal c_b54 = 1.;
 		    i__1,i__2), i__2 = (mn << 1) + nb * *nrhs;
 	    lwkopt = std::max(i__1,i__2);
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < lwkmin && ! lquery) {
 	    *info = -12;
@@ -447,7 +447,7 @@ L10:
     }
 
 L70:
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

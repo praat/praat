@@ -1,33 +1,33 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlaein_(logical *rightv, logical *noinit, integer *n, 
-	doublereal *h__, integer *ldh, doublereal *wr, doublereal *wi, 
-	doublereal *vr, doublereal *vi, doublereal *b, integer *ldb, 
-	doublereal *work, doublereal *eps3, doublereal *smlnum, doublereal *
+/* Subroutine */ int dlaein_(bool *rightv, bool *noinit, integer *n, 
+	double *h__, integer *ldh, double *wr, double *wi, 
+	double *vr, double *vi, double *b, integer *ldb, 
+	double *work, double *eps3, double *smlnum, double *
 	bignum, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, h_dim1, h_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, j;
-    doublereal w, x, y;
+    double w, x, y;
     integer i1, i2, i3;
-    doublereal w1, ei, ej, xi, xr, rec;
+    double w1, ei, ej, xi, xr, rec;
     integer its, ierr;
-    doublereal temp, norm, vmax;
-    doublereal scale;
+    double temp, norm, vmax;
+    double scale;
     char trans[1];
-    doublereal vcrit, rootn, vnorm;
-    doublereal absbii, absbjj;
+    double vcrit, rootn, vnorm;
+    double absbii, absbjj;
     char normin[1];
-    doublereal nrmsml, growto;
+    double nrmsml, growto;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -141,7 +141,7 @@ static integer c__1 = 1;
 /*     GROWTO is the threshold used in the acceptance test for an */
 /*     eigenvector. */
 
-    rootn = sqrt((doublereal) (*n));
+    rootn = sqrt((double) (*n));
     growto = .1 / rootn;
 /* Computing MAX */
     d__1 = 1., d__2 = *eps3 * rootn;

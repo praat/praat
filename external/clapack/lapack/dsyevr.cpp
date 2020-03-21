@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -11,42 +11,42 @@ static integer c__4 = 4;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dsyevr_(char *jobz, char *range, char *uplo, integer *n, 
-	doublereal *a, integer *lda, doublereal *vl, doublereal *vu, integer *
-	il, integer *iu, doublereal *abstol, integer *m, doublereal *w, 
-	doublereal *z__, integer *ldz, integer *isuppz, doublereal *work, 
+	double *a, integer *lda, double *vl, double *vu, integer *
+	il, integer *iu, double *abstol, integer *m, double *w, 
+	double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, nb, jj;
-    doublereal eps, vll, vuu, tmp1;
+    double eps, vll, vuu, tmp1;
     integer indd, inde;
-    doublereal anrm;
+    double anrm;
     integer imax;
-    doublereal rmin, rmax;
+    double rmin, rmax;
     integer inddd, indee;
-    doublereal sigma;
+    double sigma;
     integer iinfo;
     char order[1];
     integer indwk;
     integer lwmin;
-    logical lower, wantz;
-    logical alleig, indeig;
+    bool lower, wantz;
+    bool alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
-    logical valeig;
-    doublereal safmin;
-    doublereal abstll, bignum;
+    bool valeig;
+    double safmin;
+    double abstll, bignum;
     integer indtau, indisp;
     integer indiwo, indwkn;
     integer liwmin;
-    logical tryrac;
+    bool tryrac;
     integer llwrkn, llwork, nsplit;
-    doublereal smlnum;
+    double smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -355,7 +355,7 @@ static integer c_n1 = -1;
 /* Computing MAX */
 	i__1 = (nb + 1) * *n;
 	lwkopt = std::max(i__1,lwmin);
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 	iwork[1] = liwmin;
     }
 
@@ -494,9 +494,9 @@ static integer c_n1 = -1;
 	    dcopy_(n, &work[indd], &c__1, &work[inddd], &c__1);
 
 	    if (*abstol <= *n * 0. * eps) {
-		tryrac = TRUE_;
+		tryrac = true;
 	    } else {
-		tryrac = FALSE_;
+		tryrac = false;
 	    }
 	    dstemr_(jobz, "A", n, &work[inddd], &work[indee], vl, vu, il, iu, 
 		    m, &w[1], &z__[z_offset], ldz, n, &isuppz[1], &tryrac, &
@@ -596,7 +596,7 @@ L30:
 
 /*     Set WORK(1) to optimal workspace size. */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     iwork[1] = liwmin;
 
     return 0;

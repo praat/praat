@@ -1,29 +1,29 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dppsvx_(char *fact, char *uplo, integer *n, integer *
-	nrhs, doublereal *ap, doublereal *afp, char *equed, doublereal *s, 
-	doublereal *b, integer *ldb, doublereal *x, integer *ldx, doublereal *
-	rcond, doublereal *ferr, doublereal *berr, doublereal *work, integer *
+	nrhs, double *ap, double *afp, char *equed, double *s, 
+	double *b, integer *ldb, double *x, integer *ldx, double *
+	rcond, double *ferr, double *berr, double *work, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal amax, smin, smax;
-    doublereal scond, anorm;
-    logical equil, rcequ;
-    logical nofact;
-    doublereal bignum;
+    double amax, smin, smax;
+    double scond, anorm;
+    bool equil, rcequ;
+    bool nofact;
+    double bignum;
     integer infequ;
-    doublereal smlnum;
+    double smlnum;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -268,7 +268,7 @@ static integer c__1 = 1;
     equil = lsame_(fact, "E");
     if (nofact || equil) {
 	*(unsigned char *)equed = 'N';
-	rcequ = FALSE_;
+	rcequ = false;
     } else {
 	rcequ = lsame_(equed, "Y");
 	smlnum = dlamch_("Safe minimum");

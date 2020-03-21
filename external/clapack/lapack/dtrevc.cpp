@@ -1,46 +1,46 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static logical c_false = FALSE_;
+static bool c_false = false;
 static integer c__1 = 1;
-static doublereal c_b22 = 1.;
-static doublereal c_b25 = 0.;
+static double c_b22 = 1.;
+static double c_b25 = 0.;
 static integer c__2 = 2;
-static logical c_true = TRUE_;
+static bool c_true = true;
 
-/* Subroutine */ int dtrevc_(const char *side, const char *howmny, logical *select, 
-	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
-	ldvl, doublereal *vr, integer *ldvr, integer *mm, integer *m, 
-	doublereal *work, integer *info)
+/* Subroutine */ int dtrevc_(const char *side, const char *howmny, bool *select, 
+	integer *n, double *t, integer *ldt, double *vl, integer *
+	ldvl, double *vr, integer *ldvr, integer *mm, integer *m, 
+	double *work, integer *info)
 {
     /* System generated locals */
     integer t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, 
 	    i__2, i__3;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal x[4]	/* was [2][2] */;
+    double x[4]	/* was [2][2] */;
     integer j1, j2, n2, ii, ki, ip, is;
-    doublereal wi, wr, rec, ulp, beta, emax;
-    logical pair;
-    logical allv;
+    double wi, wr, rec, ulp, beta, emax;
+    bool pair;
+    bool allv;
     integer ierr;
-    doublereal unfl, ovfl, smin;
-    logical over;
-    doublereal vmax;
+    double unfl, ovfl, smin;
+    bool over;
+    double vmax;
     integer jnxt;
-    doublereal scale;
-    doublereal remax;
-    logical leftv, bothv;
-    doublereal vcrit;
-    logical somev;
-    doublereal xnorm;
-    doublereal bignum;
-    logical rightv;
-    doublereal smlnum;
+    double scale;
+    double remax;
+    bool leftv, bothv;
+    double vcrit;
+    bool somev;
+    double xnorm;
+    double bignum;
+    bool rightv;
+    double smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -88,7 +88,7 @@ static logical c_true = TRUE_;
 /*          = 'B':  compute all right and/or left eigenvectors, */
 /*                  backtransformed by the matrices in VR and/or VL; */
 /*          = 'S':  compute selected right and/or left eigenvectors, */
-/*                  as indicated by the logical array SELECT. */
+/*                  as indicated by the bool array SELECT. */
 
 /*  SELECT  (input/output) LOGICAL array, dimension (N) */
 /*          If HOWMNY = 'S', SELECT specifies the eigenvectors to be */
@@ -239,12 +239,12 @@ static logical c_true = TRUE_;
 
 	if (somev) {
 	    *m = 0;
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (j = 1; j <= i__1; ++j) {
 		if (pair) {
-		    pair = FALSE_;
-		    select[j] = FALSE_;
+		    pair = false;
+		    select[j] = false;
 		} else {
 		    if (j < *n) {
 			if (t[j + 1 + j * t_dim1] == 0.) {
@@ -252,9 +252,9 @@ static logical c_true = TRUE_;
 				++(*m);
 			    }
 			} else {
-			    pair = TRUE_;
+			    pair = true;
 			    if (select[j] || select[j + 1]) {
-				select[j] = TRUE_;
+				select[j] = true;
 				*m += 2;
 			    }
 			}

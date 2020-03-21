@@ -1,30 +1,30 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b3 = -1.;
+static double c_b3 = -1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dlaed2_(integer *k, integer *n, integer *n1, doublereal *
-	d__, doublereal *q, integer *ldq, integer *indxq, doublereal *rho, 
-	doublereal *z__, doublereal *dlamda, doublereal *w, doublereal *q2, 
+/* Subroutine */ int dlaed2_(integer *k, integer *n, integer *n1, double *
+	d__, double *q, integer *ldq, integer *indxq, double *rho, 
+	double *z__, double *dlamda, double *w, double *q2, 
 	integer *indx, integer *indxc, integer *indxp, integer *coltyp, 
 	integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Builtin functions
-    double sqrt(doublereal);*/
+    double sqrt(double);*/
 
     /* Local variables */
-    doublereal c__;
+    double c__;
     integer i__, j;
-    doublereal s, t;
+    double s, t;
     integer k2, n2, ct, nj, pj, js, iq1, iq2, n1p1;
-    doublereal eps, tau, tol;
+    double eps, tau, tol;
     integer psm[4], imax, jmax;
     integer ctot[4];
  

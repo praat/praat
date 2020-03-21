@@ -1,14 +1,14 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dggqrf_(integer *n, integer *m, integer *p, doublereal *
-	a, integer *lda, doublereal *taua, doublereal *b, integer *ldb, 
-	doublereal *taub, doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dggqrf_(integer *n, integer *m, integer *p, double *
+	a, integer *lda, double *taua, double *b, integer *ldb, 
+	double *taub, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
@@ -16,7 +16,7 @@ static integer c_n1 = -1;
     /* Local variables */
     integer nb, nb1, nb2, nb3, lopt;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -191,7 +191,7 @@ static integer c_n1 = -1;
 /* Computing MAX */
     i__1 = std::max(*n,*m);
     lwkopt = std::max(i__1,*p) * nb;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
@@ -237,7 +237,7 @@ static integer c_n1 = -1;
     dgerqf_(n, p, &b[b_offset], ldb, &taub[1], &work[1], lwork, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[1];
-    work[1] = (doublereal) std::max(i__1,i__2);
+    work[1] = (double) std::max(i__1,i__2);
 
     return 0;
 

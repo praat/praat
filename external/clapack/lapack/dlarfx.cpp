@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b14 = 1.;
+static double c_b14 = 1.;
 static integer c__1 = 1;
-static doublereal c_b16 = 0.;
+static double c_b16 = 0.;
 
-/* Subroutine */ int dlarfx_(const char *side, integer *m, integer *n, doublereal *
-	v, doublereal *tau, doublereal *c__, integer *ldc, doublereal *work)
+/* Subroutine */ int dlarfx_(const char *side, integer *m, integer *n, double *
+	v, double *tau, double *c__, integer *ldc, double *work)
 {
     /* System generated locals */
     integer c_dim1, c_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j;
-    doublereal t1, t2, t3, t4, t5, t6, t7, t8, t9, v1, v2, v3, v4, v5, v6, v7,
+    double t1, t2, t3, t4, t5, t6, t7, t8, t9, v1, v2, v3, v4, v5, v6, v7,
 	     v8, v9, t10, v10, sum;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__3 = 3;
 static integer c__2 = 2;
 
-/* Subroutine */ int dorgrq_(integer *m, integer *n, integer *k, doublereal *
-	a, integer *lda, doublereal *tau, doublereal *work, integer *lwork, 
+/* Subroutine */ int dorgrq_(integer *m, integer *n, integer *k, double *
+	a, integer *lda, double *tau, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -18,7 +18,7 @@ static integer c__2 = 2;
     /* Local variables */
     integer i__, j, l, ib, nb, ii, kk, nx, iws, nbmin, iinfo;
     integer ldwork, lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -128,7 +128,7 @@ static integer c__2 = 2;
 	    nb = ilaenv_(&c__1, "DORGRQ", " ", m, n, k, &c_n1);
 	    lwkopt = *m * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < std::max(1_integer,*m) && ! lquery) {
 	    *info = -8;
@@ -261,7 +261,7 @@ static integer c__2 = 2;
 	}
     }
 
-    work[1] = (doublereal) iws;
+    work[1] = (double) iws;
     return 0;
 
 /*     End of DORGRQ */

@@ -1,19 +1,19 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dpptrs_(char *uplo, integer *n, integer *nrhs, 
-	doublereal *ap, doublereal *b, integer *ldb, integer *info)
+	double *ap, double *b, integer *ldb, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1;
 
     /* Local variables */
     integer i__;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

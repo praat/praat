@@ -1,19 +1,19 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__8 = 8;
 static integer c__1 = 1;
-static doublereal c_b27 = -1.;
-static doublereal c_b42 = 1.;
-static doublereal c_b56 = 0.;
+static double c_b27 = -1.;
+static double c_b42 = 1.;
+static double c_b56 = 0.;
 
 /* Subroutine */ int dtgsy2_(const char *trans, integer *ijob, integer *m, integer *
-	n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *c__, integer *ldc, doublereal *d__, integer *ldd, 
-	doublereal *e, integer *lde, doublereal *f, integer *ldf, doublereal *
-	scale, doublereal *rdsum, doublereal *rdscal, integer *iwork, integer 
+	n, double *a, integer *lda, double *b, integer *ldb, 
+	double *c__, integer *ldc, double *d__, integer *ldd, 
+	double *e, integer *lde, double *f, integer *ldf, double *
+	scale, double *rdsum, double *rdscal, integer *iwork, integer 
 	*pq, integer *info)
 {
     /* System generated locals */
@@ -22,14 +22,14 @@ static doublereal c_b56 = 0.;
 
     /* Local variables */
     integer i__, j, k, p, q;
-    doublereal z__[64]	/* was [8][8] */;
+    double z__[64]	/* was [8][8] */;
     integer ie, je, mb, nb, ii, jj, is, js;
-    doublereal rhs[8];
+    double rhs[8];
     integer isp1, jsp1;
     integer ierr, zdim, ipiv[8], jpiv[8];
-    doublereal alpha;
-    doublereal scaloc;
-    logical notran;
+    double alpha;
+    double scaloc;
+    bool notran;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1.1) -- */

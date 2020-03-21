@@ -1,24 +1,24 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b7 = 0.;
-static doublereal c_b8 = 1.;
+static double c_b7 = 0.;
+static double c_b8 = 1.;
 static integer c__0 = 0;
 static integer c__1 = 1;
 
-/* Subroutine */ int dpteqr_(char *compz, integer *n, doublereal *d__, 
-	doublereal *e, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dpteqr_(char *compz, integer *n, double *d__, 
+	double *e, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
 
     /* Local variables */
-    doublereal c__[1]	/* was [1][1] */;
+    double c__[1]	/* was [1][1] */;
     integer i__;
-    doublereal vt[1]	/* was [1][1] */;
+    double vt[1]	/* was [1][1] */;
     integer nru;
     integer icompz;
 

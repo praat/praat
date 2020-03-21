@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dormtr_(const char *side, const char *uplo, const char *trans, integer *m, 
-	integer *n, doublereal *a, integer *lda, doublereal *tau, doublereal *
-	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
+	integer *n, double *a, integer *lda, double *tau, double *
+	c__, integer *ldc, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     char * a__1[2];
@@ -18,11 +18,11 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer i1, i2, nb, mi, ni, nq, nw;
-    logical left;
+    bool left;
     integer iinfo;
-    logical upper;
+    bool upper;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -181,7 +181,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *m - 1;
 		i__3 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQL", ch__1, &i__2, n, &i__3, &c_n1);
@@ -189,7 +189,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *n - 1;
 		i__3 = *n - 1;
 		nb = ilaenv_(&c__1, "DORMQL", ch__1, m, &i__2, &i__3, &c_n1);
@@ -199,7 +199,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *m - 1;
 		i__3 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, &i__2, n, &i__3, &c_n1);
@@ -207,14 +207,14 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *n - 1;
 		i__3 = *n - 1;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &i__2, &i__3, &c_n1);
 	    }
 	}
 	lwkopt = std::max(1_integer,nw) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -262,7 +262,7 @@ static integer c__2 = 2;
 	dormqr_(side, trans, &mi, &ni, &i__2, &a[a_dim1 + 2], lda, &tau[1], &
 		c__[i1 + i2 * c_dim1], ldc, &work[1], lwork, &iinfo);
     }
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORMTR */

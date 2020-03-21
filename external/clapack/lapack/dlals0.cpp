@@ -1,34 +1,34 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b5 = -1.;
+static double c_b5 = -1.;
 static integer c__1 = 1;
-static doublereal c_b11 = 1.;
-static doublereal c_b13 = 0.;
+static double c_b11 = 1.;
+static double c_b13 = 0.;
 static integer c__0 = 0;
 
 /* Subroutine */ int dlals0_(integer *icompq, integer *nl, integer *nr, 
-	integer *sqre, integer *nrhs, doublereal *b, integer *ldb, doublereal 
+	integer *sqre, integer *nrhs, double *b, integer *ldb, double 
 	*bx, integer *ldbx, integer *perm, integer *givptr, integer *givcol, 
-	integer *ldgcol, doublereal *givnum, integer *ldgnum, doublereal *
-	poles, doublereal *difl, doublereal *difr, doublereal *z__, integer *
-	k, doublereal *c__, doublereal *s, doublereal *work, integer *info)
+	integer *ldgcol, double *givnum, integer *ldgnum, double *
+	poles, double *difl, double *difr, double *z__, integer *
+	k, double *c__, double *s, double *work, integer *info)
 {
     /* System generated locals */
     integer givcol_dim1, givcol_offset, b_dim1, b_offset, bx_dim1, bx_offset, 
 	    difr_dim1, difr_offset, givnum_dim1, givnum_offset, poles_dim1, 
 	    poles_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, m, n;
-    doublereal dj;
+    double dj;
     integer nlp1;
-    doublereal temp;
-    doublereal diflj, difrj, dsigj;
-     doublereal dsigjp;
+    double temp;
+    double diflj, difrj, dsigj;
+     double dsigjp;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

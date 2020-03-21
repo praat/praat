@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku, 
-	 doublereal *ab, integer *ldab, doublereal *r__, doublereal *c__, 
-	doublereal *rowcnd, doublereal *colcnd, doublereal *amax, char *equed)
+	 double *ab, integer *ldab, double *r__, double *c__, 
+	double *rowcnd, double *colcnd, double *amax, char *equed)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4, i__5, i__6;
 
     /* Local variables */
     integer i__, j;
-    doublereal cj, large, small;
+    double cj, large, small;
  
 
 

@@ -1,33 +1,33 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspevd_(char *jobz, char *uplo, integer *n, doublereal *
-	ap, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dspevd_(char *jobz, char *uplo, integer *n, double *
+	ap, double *w, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal eps;
+    double eps;
     integer inde;
-    doublereal anrm, rmin, rmax;
-    doublereal sigma;
+    double anrm, rmin, rmax;
+    double sigma;
     integer iinfo, lwmin;
-    logical wantz;
+    bool wantz;
     integer iscale;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer indtau;
     integer indwrk, liwmin;
     integer llwork;
-    doublereal smlnum;
-    logical lquery;
+    double smlnum;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -189,7 +189,7 @@ static integer c__1 = 1;
 	    }
 	}
 	iwork[1] = liwmin;
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 
 	if (*lwork < lwmin && ! lquery) {
 	    *info = -9;
@@ -274,7 +274,7 @@ static integer c__1 = 1;
 	dscal_(n, &d__1, &w[1], &c__1);
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
     return 0;
 

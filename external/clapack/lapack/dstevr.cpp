@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -9,40 +9,40 @@ static integer c__2 = 2;
 static integer c__3 = 3;
 static integer c__4 = 4;
 
-/* Subroutine */ int dstevr_(char *jobz, char *range, integer *n, doublereal *
-	d__, doublereal *e, doublereal *vl, doublereal *vu, integer *il, 
-	integer *iu, doublereal *abstol, integer *m, doublereal *w, 
-	doublereal *z__, integer *ldz, integer *isuppz, doublereal *work, 
+/* Subroutine */ int dstevr_(char *jobz, char *range, integer *n, double *
+	d__, double *e, double *vl, double *vu, integer *il, 
+	integer *iu, double *abstol, integer *m, double *w, 
+	double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, jj;
-    doublereal eps, vll, vuu, tmp1;
+    double eps, vll, vuu, tmp1;
     integer imax;
-    doublereal rmin, rmax;
-    logical test;
-    doublereal tnrm;
+    double rmin, rmax;
+    bool test;
+    double tnrm;
     integer itmp1;
-    doublereal sigma;
+    double sigma;
     char order[1];
     integer lwmin;
-    logical wantz;
-    logical alleig, indeig;
+    bool wantz;
+    bool alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
-    logical valeig;
-    doublereal safmin;
-    doublereal bignum;
+    bool valeig;
+    double safmin;
+    double bignum;
     integer indisp;
     integer indiwo;
     integer liwmin;
-    logical tryrac;
+    bool tryrac;
     integer nsplit;
-    doublereal smlnum;
-    logical lquery;
+    double smlnum;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -309,7 +309,7 @@ static integer c__4 = 4;
     }
 
     if (*info == 0) {
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -406,10 +406,10 @@ static integer c__4 = 4;
 /*     try DSTEBZ. */
 
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
-	    test = TRUE_;
+	    test = true;
 	}
     }
     if ((alleig || test) && ieeeok == 1) {
@@ -421,9 +421,9 @@ static integer c__4 = 4;
 	} else {
 	    dcopy_(n, &d__[1], &c__1, &work[*n + 1], &c__1);
 	    if (*abstol <= *n * 2. * eps) {
-		tryrac = TRUE_;
+		tryrac = true;
 	    } else {
-		tryrac = FALSE_;
+		tryrac = false;
 	    }
 	    i__1 = *lwork - (*n << 1);
 	    dstemr_(jobz, "A", n, &work[*n + 1], &work[1], vl, vu, il, iu, m, 
@@ -502,7 +502,7 @@ L10:
 /*      IF (wantz .and. INDEIG ) Z( 1,1) = Z(1,1) / 1.002 + .002 */
 
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
     return 0;
 

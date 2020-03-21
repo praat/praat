@@ -1,37 +1,37 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b18 = -1.;
-static doublereal c_b19 = 1.;
+static double c_b18 = -1.;
+static double c_b19 = 1.;
 
 /* Subroutine */ int dgtrfs_(char *trans, integer *n, integer *nrhs, 
-	doublereal *dl, doublereal *d__, doublereal *du, doublereal *dlf, 
-	doublereal *df, doublereal *duf, doublereal *du2, integer *ipiv, 
-	doublereal *b, integer *ldb, doublereal *x, integer *ldx, doublereal *
-	ferr, doublereal *berr, doublereal *work, integer *iwork, integer *
+	double *dl, double *d__, double *du, double *dlf, 
+	double *df, double *duf, double *du2, integer *ipiv, 
+	double *b, integer *ldb, double *x, integer *ldx, double *
+	ferr, double *berr, double *work, integer *iwork, integer *
 	info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, j;
-    doublereal s;
+    double s;
     integer nz;
-    doublereal eps;
+    double eps;
     integer kase;
-    doublereal safe1, safe2;
+    double safe1, safe2;
     integer isave[3];
     integer count;
-    doublereal safmin;
-    logical notran;
+    double safmin;
+    bool notran;
     char transn[1];
     char transt[1];
-    doublereal lstres;
+    double lstres;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

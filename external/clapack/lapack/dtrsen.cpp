@@ -1,34 +1,34 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c_n1 = -1;
 
-/* Subroutine */ int dtrsen_(const char *job, const char *compq, logical *select, integer 
-	*n, doublereal *t, integer *ldt, doublereal *q, integer *ldq, 
-	doublereal *wr, doublereal *wi, integer *m, doublereal *s, doublereal 
-	*sep, doublereal *work, integer *lwork, integer *iwork, integer *
+/* Subroutine */ int dtrsen_(const char *job, const char *compq, bool *select, integer 
+	*n, double *t, integer *ldt, double *q, integer *ldq, 
+	double *wr, double *wi, integer *m, double *s, double 
+	*sep, double *work, integer *lwork, integer *iwork, integer *
 	liwork, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, t_dim1, t_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer k, n1, n2, kk, nn, ks;
-    doublereal est;
+    double est;
     integer kase;
-    logical pair;
+    bool pair;
     integer ierr;
-    logical swap;
-    doublereal scale;
+    bool swap;
+    double scale;
     integer isave[3], lwmin;
-    logical wantq, wants;
-    doublereal rnorm;
-    logical wantbh;
+    bool wantq, wants;
+    double rnorm;
+    bool wantbh;
     integer liwmin;
-    logical wantsp, lquery;
+    bool wantsp, lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -297,11 +297,11 @@ static integer c_n1 = -1;
 /*        and test LWORK and LIWORK. */
 
 	*m = 0;
-	pair = FALSE_;
+	pair = false;
 	i__1 = *n;
 	for (k = 1; k <= i__1; ++k) {
 	    if (pair) {
-		pair = FALSE_;
+		pair = false;
 	    } else {
 		if (k < *n) {
 		    if (t[k + 1 + k * t_dim1] == 0.) {
@@ -309,7 +309,7 @@ static integer c_n1 = -1;
 			    ++(*m);
 			}
 		    } else {
-			pair = TRUE_;
+			pair = true;
 			if (select[k] || select[k + 1]) {
 			    *m += 2;
 			}
@@ -348,7 +348,7 @@ static integer c_n1 = -1;
     }
 
     if (*info == 0) {
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
     }
 
@@ -375,16 +375,16 @@ static integer c_n1 = -1;
 /*     Collect the selected blocks at the top-left corner of T. */
 
     ks = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	} else {
 	    swap = select[k];
 	    if (k < *n) {
 		if (t[k + 1 + k * t_dim1] != 0.) {
-		    pair = TRUE_;
+		    pair = true;
 		    swap = swap || select[k + 1];
 		}
 	    }
@@ -491,7 +491,7 @@ L40:
 /* L60: */
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;
