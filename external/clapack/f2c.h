@@ -34,7 +34,7 @@ typedef float real;
 /* I/O stuff */
 
 //typedef long int flag;
-typedef integer ftnlen;
+//typedef integer ftnlen;
 //typedef long int ftnlen;
 //typedef long int ftnint;
 
@@ -60,7 +60,7 @@ typedef integer ftnlen;
 //typedef double (*D_fp)(...), (*E_fp)(...);
 //typedef /* Complex */ void (*C_fp)(...);
 //typedef /* Double Complex */ void (*Z_fp)(...);
-typedef bool (*L_fp)(...);
+//typedef bool (*L_fp)(...);
 //typedef shortlogical (*K_fp)(...);
 //typedef /* Character */ void (*H_fp)(...);
 //typedef /* Subroutine */ int (*S_fp)(...);

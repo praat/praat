@@ -7,8 +7,8 @@ static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dgeesx_(char *jobvs, char *sort, L_fp select, char *
-	sense, integer *n, double *a, integer *lda, integer *sdim, 
+/* Subroutine */ int dgeesx_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+	const char *sense, integer *n, double *a, integer *lda, integer *sdim, 
 	double *wr, double *wi, double *vs, integer *ldvs, 
 	double *rconde, double *rcondv, double *work, integer *
 	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info)

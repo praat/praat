@@ -9,8 +9,9 @@ static integer c_n1 = -1;
 static double c_b42 = 0.;
 static double c_b43 = 1.;
 
-/* Subroutine */ int dggesx_(char *jobvsl, char *jobvsr, char *sort, L_fp 
-	selctg, char *sense, integer *n, double *a, integer *lda, 
+/* Subroutine */ int dggesx_(const char *jobvsl, const char *jobvsr, const char *sort, 
+	bool (*selctg)(const double *, const double *, const double *), 
+	const char *sense, integer *n, double *a, integer *lda, 
 	double *b, integer *ldb, integer *sdim, double *alphar, 
 	double *alphai, double *beta, double *vsl, integer *ldvsl, 
 	 double *vsr, integer *ldvsr, double *rconde, double *

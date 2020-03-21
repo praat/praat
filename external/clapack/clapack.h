@@ -86,13 +86,13 @@
 	lda, double *r__, double *c__, double *rowcnd, double 
 	*colcnd, double *amax, integer *info);
 
-/* Subroutine */ int dgees_(const char *jobvs, const char *sort, L_fp select, integer *n, 
-	double *a, integer *lda, integer *sdim, double *wr, 
+/* Subroutine */ int dgees_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+	integer *n, double *a, integer *lda, integer *sdim, double *wr, 
 	double *wi, double *vs, integer *ldvs, double *work, 
 	integer *lwork, bool *bwork, integer *info);
 
-/* Subroutine */ int dgeesx_(char *jobvs, char *sort, L_fp select, char *
-	sense, integer *n, double *a, integer *lda, integer *sdim, 
+/* Subroutine */ int dgeesx_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+	const char *sense, integer *n, double *a, integer *lda, integer *sdim, 
 	double *wr, double *wi, double *vs, integer *ldvs, 
 	double *rconde, double *rcondv, double *work, integer *
 	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info);
@@ -238,15 +238,17 @@
 	double *lscale, double *rscale, double *work, integer *
 	info);
 
-/* Subroutine */ int dgges_(char *jobvsl, char *jobvsr, char *sort, L_fp 
-	selctg, integer *n, double *a, integer *lda, double *b, 
+/* Subroutine */ int dgges_(const char *jobvsl, const char *jobvsr, const char *sort, 
+	bool (*selctg)(const double *, const double *, const double *),
+	integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, integer *sdim, double *alphar, double *alphai, 
 	double *beta, double *vsl, integer *ldvsl, double *vsr, 
 	integer *ldvsr, double *work, integer *lwork, bool *bwork, 
 	integer *info);
 
-/* Subroutine */ int dggesx_(char *jobvsl, char *jobvsr, char *sort, L_fp 
-	selctg, char *sense, integer *n, double *a, integer *lda, 
+/* Subroutine */ int dggesx_(const char *jobvsl, const char *jobvsr, const char *sort, 
+	bool (*selctg)(const double *, const double *, const double *),
+	const char *sense, integer *n, double *a, integer *lda, 
 	double *b, integer *ldb, integer *sdim, double *alphar, 
 	double *alphai, double *beta, double *vsl, integer *ldvsl,
 	 double *vsr, integer *ldvsr, double *rconde, double *
@@ -339,13 +341,13 @@
 	double *dl, double *d__, double *du, double *du2, 
 	integer *ipiv, double *b, integer *ldb);
 
-/* Subroutine */ int dhgeqz_(const char *job, char *compq, char *compz, integer *n, 
+/* Subroutine */ int dhgeqz_(const char *job, const char *compq, const char *compz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*t, integer *ldt, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
 	double *work, integer *lwork, integer *info);
 
-/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, bool *
+/* Subroutine */ int dhsein_(const char *side, const char *eigsrc, char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *mm, integer *m, double *work, integer *

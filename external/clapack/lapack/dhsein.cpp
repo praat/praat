@@ -6,7 +6,7 @@
 static bool c_false = false;
 static bool c_true = true;
 
-/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, bool *
+/* Subroutine */ int dhsein_(const char *side, const char *eigsrc, const char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *mm, integer *m, double *work, integer *
