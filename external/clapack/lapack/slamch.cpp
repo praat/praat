@@ -843,7 +843,7 @@ L10:
 /*          The minimum exponent before (gradual) underflow. */
 
 /*  IEEE    (input) LOGICAL */
-/*          A bool flag specifying whether or not the arithmetic */
+/*          A logical flag specifying whether or not the arithmetic */
 /*          system is thought to comply with the IEEE standard. */
 
 /*  EMAX    (output) INTEGER */

@@ -148,7 +148,7 @@ static integer c__0 = 0;
 
 /*  In the current code both weak and strong stability tests are */
 /*  performed. The user can omit the strong stability test by changing */
-/*  the internal bool parameter WANDS to .FALSE.. See ref. [2] for */
+/*  the internal logical parameter WANDS to .FALSE.. See ref. [2] for */
 /*  details. */
 
 /*  [1] B. Kagstrom; A Direct Method for Reordering Eigenvalues in the */

@@ -234,7 +234,7 @@ static double c_b20 = -1.;
 
 /*     **************************** Phase 1 ***************************** */
 
-/*     The bool structure of this phase is: */
+/*     The logical structure of this phase is: */
 
 /*     UPDATE = .TRUE. */
 /*     DO I = N, M + 1, -1 */
@@ -976,7 +976,7 @@ L480:
 
 /*     **************************** Phase 2 ***************************** */
 
-/*     The bool structure of this phase is: */
+/*     The logical structure of this phase is: */
 
 /*     UPDATE = .TRUE. */
 /*     DO I = 1, M */
