@@ -45,7 +45,7 @@ void structTextEditor :: v_destroy () noexcept {
 void structTextEditor :: v_nameChanged () {
 	if (v_fileBased ()) {
 		bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
-		static MelderString windowTitle { };
+		static MelderString windowTitle;
 		if (our name [0] == U'\0') {
 			MelderString_copy (& windowTitle, U"(untitled");
 			if (dirty && ! dirtinessAlreadyShown)

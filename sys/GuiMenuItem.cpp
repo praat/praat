@@ -38,7 +38,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 #if motif
 	static void NativeMenuItem_setText (GuiObject me) {
 		int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-		static MelderString title { };
+		static MelderString title;
 		if (acc == 0) {
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()));
 		} else {

@@ -1,6 +1,6 @@
 /* Preferences.cpp
  *
- * Copyright (C) 1996-2013,2015-2019 Paul Boersma
+ * Copyright (C) 1996-2013,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,10 @@ void structPreference :: v_destroy () noexcept {
 }
 
 static SortedSetOfStringOf <structPreference> thePreferences;
-void Preferences_exit_optimizeByLeaking () { thePreferences. _ownItems = false; }
+
+void Preferences_exit_optimizeByLeaking () {
+	thePreferences. _ownItems = false;
+}
 
 static void Preferences_add (conststring32 string, int type, void *value, int min, int max,
 	conststring32 (*getText) (int value), int (*getValue) (conststring32 text))
@@ -169,8 +172,9 @@ void Preferences_read (MelderFile file) {
 }
 
 void Preferences_write (MelderFile file) {
-	if (thePreferences.size == 0) return;
-	static MelderString buffer { };
+	if (thePreferences.size == 0)
+		return;
+	static MelderString buffer;
 	for (integer ipref = 1; ipref <= thePreferences.size; ipref ++) {
 		Preference pref = thePreferences.at [ipref];
 		MelderString_append (& buffer, pref -> string.get(), U": ");

@@ -2020,7 +2020,7 @@ autoTable Table_readFromTableFile (MelderFile file) {
 				Melder_assert (*p != U'\0');
 				p ++;
 			}
-			static MelderString buffer { };
+			static MelderString buffer;
 			MelderString_empty (& buffer);
 			while (*p != U' ' && *p != U'\t' && *p != U'\n') {
 				MelderString_appendCharacter (& buffer, *p);
@@ -2033,7 +2033,7 @@ autoTable Table_readFromTableFile (MelderFile file) {
 			TableRow row = my rows.at [irow];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				while (*p == U' ' || *p == U'\t' || *p == U'\n') { Melder_assert (*p != U'\0'); p ++; }
-				static MelderString buffer { };
+				static MelderString buffer;
 				MelderString_empty (& buffer);
 				while (*p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\0') {
 					MelderString_appendCharacter (& buffer, *p);

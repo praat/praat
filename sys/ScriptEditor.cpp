@@ -41,7 +41,7 @@ void structScriptEditor :: v_destroy () noexcept {
 
 void structScriptEditor :: v_nameChanged () {
 	bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, dirty);
-	static MelderString buffer { };
+	static MelderString buffer;
 	MelderString_copy (& buffer, name [0] ? U"Script" : U"untitled script");
 	if (editorClass)
 		MelderString_append (& buffer, U" [", environmentName.get(), U"]");

@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2018 Paul Boersma
+ * Copyright (C) 2005-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ static void drawTableau (Graphics g) {
 
 void structOTMultiEditor :: v_draw () {
 	const OTMulti grammar = (OTMulti) data;
-	static MelderString buffer { };
+	static MelderString buffer;
 	const double rowHeight = 0.25;
 	longdouble tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (graphics.get());

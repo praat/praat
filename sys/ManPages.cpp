@@ -937,7 +937,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 }
 
 void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file) {
-	static MelderString buffer { };
+	static MelderString buffer;
 	MelderString_empty (& buffer);
 	writePageAsHtml (me, file, ipage, & buffer);
 	MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding::UTF8);
@@ -959,7 +959,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 			str32cpy (fileName, U"_");   // no empty file names please
 		fileName [LONGEST_FILE_NAME] = U'\0';
 		str32cat (fileName, U".html");
-		static MelderString buffer { };
+		static MelderString buffer;
 		MelderString_empty (& buffer);
 		structMelderFile file { };
 		MelderDir_getFile (& dir, fileName, & file);

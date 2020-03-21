@@ -1,6 +1,6 @@
 /* melder_colour.cpp
  *
- * Copyright (C) 2019 Paul Boersma
+ * Copyright (C) 2019,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ MelderColour
 	Melder_WINDOW_BACKGROUND_COLOUR = MelderColour (0.90, 0.90, 0.85);
 
 conststring32 MelderColour_nameRGB (MelderColour colour) {
-	static MelderString buffer { };
+	static MelderString buffer;
 	MelderString_copy (& buffer,
 		U"{", Melder_fixed (colour. red, 6),
 		U",", Melder_fixed (colour. green, 6),

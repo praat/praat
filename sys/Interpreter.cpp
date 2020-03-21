@@ -918,7 +918,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					q ++;   // step over parenthesis or colon
 			}
 			while (*q && *q != U')' && *q != U';') {
-				static MelderString argument { };
+				static MelderString argument;
 				MelderString_empty (& argument);
 				while (Melder_isHorizontalSpace (*p))
 					p ++;
@@ -1077,9 +1077,9 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 						q ++;   // step over parenthesis or colon
 				}
 				++ p;   // first argument
-				while (*q && *q != ')') {
+				while (*q && *q != U')') {
 					char32 *par, save;
-					static MelderString arg { };
+					static MelderString arg;
 					MelderString_empty (& arg);
 					while (Melder_isHorizontalSpace (*p))
 						p ++;
@@ -1143,7 +1143,7 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 
 static void assignToNumericVectorElement (Interpreter me, char32 *& p, const char32* vectorName, MelderString& valueString) {
 	integer indexValue = 0;
-	static MelderString index { };
+	static MelderString index;
 	MelderString_empty (& index);
 	int depth = 0;
 	bool inString = false;
@@ -1222,7 +1222,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	/*
 		Get the row number.
 	*/
-	static MelderString rowFormula { };
+	static MelderString rowFormula;
 	MelderString_empty (& rowFormula);
 	int depth = 0;
 	bool inString = false;
@@ -1251,7 +1251,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	/*
 		Get the column number.
 	*/
-	static MelderString columnFormula { };
+	static MelderString columnFormula;
 	MelderString_empty (& columnFormula);
 	depth = 0;
 	inString = false;
@@ -1334,8 +1334,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 	integer lineNumber = 0;
 	bool assertionFailed = false;
 	try {
-		static MelderString valueString { };   // to divert the info
-		static MelderString assertErrorString { };
+		static MelderString valueString;   // to divert the info
+		static MelderString assertErrorString;
 		char32 *command = text;
 		autoMelderString command2;
 		autoMelderString buffer;
@@ -2079,11 +2079,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								This must be an assignment to an indexed string variable.
 							*/
 							*endOfVariable = U'\0';
-							static MelderString indexedVariableName { };
+							static MelderString indexedVariableName;
 							MelderString_copy (& indexedVariableName, command2.string, U"[");
 							for (;;) {
 								p ++;   // skip opening bracket or comma
-								static MelderString index { };
+								static MelderString index;
 								MelderString_empty (& index);
 								int depth = 0;
 								bool inString = false;
@@ -2207,7 +2207,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							/*
 								Assign to a numeric matrix variable or to a matrix element.
 							*/
-							static MelderString matrixName { };
+							static MelderString matrixName;
 							p ++;   // go to second '#'
 							*p = U'\0';   // erase the last number sign temporarily
 							MelderString_copy (& matrixName, command2.string, U'#');
@@ -2323,7 +2323,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							/*
 								Assign to a numeric vector variable or to a vector element.
 							*/
-							static MelderString vectorName { };
+							static MelderString vectorName;
 							*p = U'\0';   // erase the number sign temporarily
 							MelderString_copy (& vectorName, command2.string, U"#");
 							*p = U'#';   // put the number sign back
@@ -2464,11 +2464,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								This must be an assignment to an indexed numeric variable.
 							*/
 							*endOfVariable = U'\0';
-							static MelderString indexedVariableName { };
+							static MelderString indexedVariableName;
 							MelderString_copy (& indexedVariableName, command2.string, U"[");
 							for (;;) {
 								p ++;   // skip opening bracket or comma
-								static MelderString index { };
+								static MelderString index;
 								MelderString_empty (& index);
 								int depth = 0;
 								bool inString = false;
