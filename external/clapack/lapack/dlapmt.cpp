@@ -37,7 +37,7 @@
 /*  Arguments */
 /*  ========= */
 
-/*  FORWRD  (input) bool */
+/*  FORWRD  (input) LOGICAL */
 /*          = .TRUE., forward permutation */
 /*          = .FALSE., backward permutation */
 

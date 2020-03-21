@@ -76,12 +76,12 @@ static bool c_true = true;
 /*  Arguments */
 /*  ========= */
 
-/*  LTRAN   (input) bool */
+/*  LTRAN   (input) LOGICAL */
 /*          On entry, LTRAN specifies the option of conjugate transpose: */
 /*             = .FALSE.,    op(T+i*B) = T+i*B, */
 /*             = .TRUE.,     op(T+i*B) = (T+i*B)'. */
 
-/*  LREAL   (input) bool */
+/*  LREAL   (input) LOGICAL */
 /*          On entry, LREAL specifies the input matrix structure: */
 /*             = .FALSE.,    the input is complex */
 /*             = .TRUE.,     the input is real */

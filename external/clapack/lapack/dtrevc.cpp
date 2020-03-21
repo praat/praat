@@ -88,9 +88,9 @@ static bool c_true = true;
 /*          = 'B':  compute all right and/or left eigenvectors, */
 /*                  backtransformed by the matrices in VR and/or VL; */
 /*          = 'S':  compute selected right and/or left eigenvectors, */
-/*                  as indicated by the bool array SELECT. */
+/*                  as indicated by the logical array SELECT. */
 
-/*  SELECT  (input/output) bool array, dimension (N) */
+/*  SELECT  (input/output) LOGICAL array, dimension (N) */
 /*          If HOWMNY = 'S', SELECT specifies the eigenvectors to be */
 /*          computed. */
 /*          If w(j) is a real eigenvalue, the corresponding real */

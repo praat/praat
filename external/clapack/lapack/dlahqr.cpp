@@ -53,11 +53,11 @@ static integer c__1 = 1;
 /*     Arguments */
 /*     ========= */
 
-/*     WANTT   (input) bool */
+/*     WANTT   (input) LOGICAL */
 /*          = .TRUE. : the full Schur form T is required; */
 /*          = .FALSE.: only eigenvalues are required. */
 
-/*     WANTZ   (input) bool */
+/*     WANTZ   (input) LOGICAL */
 /*          = .TRUE. : the matrix of Schur vectors Z is required; */
 /*          = .FALSE.: Schur vectors are not required. */
 

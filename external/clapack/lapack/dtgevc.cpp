@@ -103,7 +103,7 @@ static bool c_false = false;
 /*          = 'S': compute selected right and/or left eigenvectors, */
 /*                 specified by the bool array SELECT. */
 
-/*  SELECT  (input) bool array, dimension (N) */
+/*  SELECT  (input) LOGICAL array, dimension (N) */
 /*          If HOWMNY='S', SELECT specifies the eigenvectors to be */
 /*          computed.  If w(j) is a real eigenvalue, the corresponding */
 /*          real eigenvector is computed if SELECT(j) is .TRUE.. */

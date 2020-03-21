@@ -84,7 +84,7 @@ static integer c__3 = 3;
 /*          = 'S': compute condition numbers for selected eigenpairs */
 /*                 specified by the array SELECT. */
 
-/*  SELECT  (input) bool array, dimension (N) */
+/*  SELECT  (input) LOGICAL array, dimension (N) */
 /*          If HOWMNY = 'S', SELECT specifies the eigenpairs for which */
 /*          condition numbers are required. To select condition numbers */
 /*          for the eigenpair corresponding to a real eigenvalue w(j), */
