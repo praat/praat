@@ -68,7 +68,7 @@
 /*     .. Parameters .. */
 /*     .. */
 /*     .. Local Scalars .. */
-/*     LOGICAL            FIRST */
+/*     bool            FIRST */
 /*     .. */
 /*     .. External Functions .. */
 /*     .. */

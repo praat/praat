@@ -52,7 +52,7 @@
 /*  Arguments */
 /*  ========= */
 
-/*  UPPER   (input) LOGICAL */
+/*  UPPER   (input) bool */
 /*          = .TRUE.: the input matrices A and B are upper triangular. */
 /*          = .FALSE.: the input matrices A and B are lower triangular. */
 
