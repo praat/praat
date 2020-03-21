@@ -376,7 +376,7 @@ static integer c__49 = 49;
 /* Writing concatenation */
 	i__2[0] = 1, a__1[0] = const_cast<char *>(job);
 	i__2[1] = 1, a__1[1] = const_cast<char *>(compz);
-	s_cat(ch__1, a__1, i__2, &c__2, (ftnlen)2);
+	s_cat(ch__1, a__1, i__2, &c__2, 2_integer);
 	nmin = ilaenv_(&c__12, "DHSEQR", ch__1, n, ilo, ihi, lwork);
 	nmin = std::max(11_integer,nmin);
 

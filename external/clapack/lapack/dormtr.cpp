@@ -181,7 +181,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *m - 1;
 		i__3 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQL", ch__1, &i__2, n, &i__3, &c_n1);
@@ -189,7 +189,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *n - 1;
 		i__3 = *n - 1;
 		nb = ilaenv_(&c__1, "DORMQL", ch__1, m, &i__2, &i__3, &c_n1);
@@ -199,7 +199,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *m - 1;
 		i__3 = *m - 1;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, &i__2, n, &i__3, &c_n1);
@@ -207,7 +207,7 @@ static integer c__2 = 2;
 /* Writing concatenation */
 		i__1[0] = 1, a__1[0] = const_cast<char *> (side);
 		i__1[1] = 1, a__1[1] = const_cast<char *> (trans);
-		s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+		s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 		i__2 = *n - 1;
 		i__3 = *n - 1;
 		nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &i__2, &i__3, &c_n1);

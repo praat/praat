@@ -192,7 +192,7 @@ static integer c__65 = 65;
 /* Writing concatenation */
 	i__3[0] = 1, a__1[0] = const_cast<char *> (side);
 	i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
-	s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
+	s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
 	i__1 = 64, i__2 = ilaenv_(&c__1, "DORMLQ", ch__1, m, n, k, &c_n1);
 	nb = std::min(i__1,i__2);
 	lwkopt = std::max(1_integer,nw) * nb;
@@ -224,7 +224,7 @@ static integer c__65 = 65;
 /* Writing concatenation */
 	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
 	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
-	    s_cat(ch__1, a__1, i__3, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DORMLQ", ch__1, m, n, k, &c_n1);
 	    nbmin = std::max(i__1,i__2);
 	}

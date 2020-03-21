@@ -241,7 +241,7 @@ static double c_b443 = 1.;
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = const_cast<char *>(jobu);
 	    i__1[1] = 1, a__1[1] = const_cast<char *>(jobvt);
-	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 	    mnthr = ilaenv_(&c__6, "DGESVD", ch__1, m, n, &c__0, &c__0);
 	    bdspac = *n * 5;
 	    if (*m >= mnthr) {
@@ -513,7 +513,7 @@ static double c_b443 = 1.;
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = const_cast<char *>(jobu);
 	    i__1[1] = 1, a__1[1] = const_cast<char *>(jobvt);
-	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 	    mnthr = ilaenv_(&c__6, "DGESVD", ch__1, m, n, &c__0, &c__0);
 	    bdspac = *m * 5;
 	    if (*n >= mnthr) {

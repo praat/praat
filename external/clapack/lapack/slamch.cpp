@@ -611,11 +611,6 @@ L10:
 			U"If, after inspection, the value EMIN looks acceptable please comment out \n"
 			"the IF block as marked within the code of routine SLAMC2, \n "
 			"otherwise supply EMIN explicitly.\n");
-         /*
-	    s_wsfe(&io___58);
-	    do_fio(&c__1, (char *)&lemin, (ftnlen)sizeof(integer));
-	    e_wsfe();
-         */
 	}
 /* ** */
 
