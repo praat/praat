@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlartv_(integer *n, doublereal *x, integer *incx, 
-	doublereal *y, integer *incy, doublereal *c__, doublereal *s, integer 
+/* Subroutine */ int dlartv_(integer *n, double *x, integer *incx, 
+	double *y, integer *incy, double *c__, double *s, integer 
 	*incc)
 {
     /* System generated locals */
@@ -10,7 +10,7 @@
 
     /* Local variables */
     integer i__, ic, ix, iy;
-    doublereal xi, yi;
+    double xi, yi;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

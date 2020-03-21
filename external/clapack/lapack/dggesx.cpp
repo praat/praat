@@ -6,47 +6,47 @@
 static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
-static doublereal c_b42 = 0.;
-static doublereal c_b43 = 1.;
+static double c_b42 = 0.;
+static double c_b43 = 1.;
 
 /* Subroutine */ int dggesx_(char *jobvsl, char *jobvsr, char *sort, L_fp 
-	selctg, char *sense, integer *n, doublereal *a, integer *lda, 
-	doublereal *b, integer *ldb, integer *sdim, doublereal *alphar, 
-	doublereal *alphai, doublereal *beta, doublereal *vsl, integer *ldvsl, 
-	 doublereal *vsr, integer *ldvsr, doublereal *rconde, doublereal *
-	rcondv, doublereal *work, integer *lwork, integer *iwork, integer *
+	selctg, char *sense, integer *n, double *a, integer *lda, 
+	double *b, integer *ldb, integer *sdim, double *alphar, 
+	double *alphai, double *beta, double *vsl, integer *ldvsl, 
+	 double *vsr, integer *ldvsr, double *rconde, double *
+	rcondv, double *work, integer *lwork, integer *iwork, integer *
 	liwork, logical *bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vsl_dim1, vsl_offset, 
 	    vsr_dim1, vsr_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, ip;
-    doublereal pl, pr, dif[2];
+    double pl, pr, dif[2];
     integer ihi, ilo;
-    doublereal eps;
+    double eps;
     integer ijob;
-    doublereal anrm, bnrm;
+    double anrm, bnrm;
     integer ierr, itau, iwrk, lwrk;
     integer ileft, icols;
     logical cursl, ilvsl, ilvsr;
     integer irows;
     logical lst2sl;
     logical ilascl, ilbscl;
-    doublereal safmin;
-    doublereal safmax;
-    doublereal bignum;
+    double safmin;
+    double safmax;
+    double bignum;
 	integer ijobvl, iright;
 	integer ijobvr;
     logical wantsb;
     integer liwmin;
     logical wantse, lastsl;
-    doublereal anrmto, bnrmto;
+    double anrmto, bnrmto;
     integer minwrk, maxwrk;
     logical wantsn;
-    doublereal smlnum;
+    double smlnum;
     logical wantst, lquery, wantsv;
 
 
@@ -418,7 +418,7 @@ static doublereal c_b43 = 1.;
 	    maxwrk = 1;
 	    lwrk = 1;
 	}
-	work[1] = (doublereal) lwrk;
+	work[1] = (double) lwrk;
 	if (wantsn || *n == 0) {
 	    liwmin = 1;
 	} else {
@@ -754,7 +754,7 @@ static doublereal c_b43 = 1.;
 
 L60:
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     iwork[1] = liwmin;
 
     return 0;

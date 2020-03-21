@@ -1,13 +1,13 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int drscl_(integer *n, doublereal *sa, doublereal *sx, 
+/* Subroutine */ int drscl_(integer *n, double *sa, double *sx, 
 	integer *incx)
 {
-    doublereal mul, cden;
+    double mul, cden;
     logical done;
-    doublereal cnum, cden1, cnum1;
-    doublereal bignum, smlnum;
+    double cnum, cden1, cnum1;
+    double bignum, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

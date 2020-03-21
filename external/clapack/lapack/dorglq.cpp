@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__3 = 3;
 static integer c__2 = 2;
 
-/* Subroutine */ int dorglq_(integer *m, integer *n, integer *k, doublereal *
-	a, integer *lda, doublereal *tau, doublereal *work, integer *lwork, 
+/* Subroutine */ int dorglq_(integer *m, integer *n, integer *k, double *
+	a, integer *lda, double *tau, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -111,7 +111,7 @@ static integer c__2 = 2;
     *info = 0;
     nb = ilaenv_(&c__1, "DORGLQ", " ", m, n, k, &c_n1);
     lwkopt = std::max(1_integer,*m) * nb;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     if (*m < 0) {
 	*info = -1;
@@ -252,7 +252,7 @@ static integer c__2 = 2;
 	}
     }
 
-    work[1] = (doublereal) iws;
+    work[1] = (double) iws;
     return 0;
 
 /*     End of DORGLQ */

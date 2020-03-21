@@ -3,12 +3,12 @@
 
 /* Table of constant values */
 
-static doublereal c_b12 = 1.;
-static doublereal c_b13 = 0.;
+static double c_b12 = 1.;
+static double c_b13 = 0.;
 
 /* Subroutine */ int dsbgvd_(char *jobz, char *uplo, integer *n, integer *ka, 
-	integer *kb, doublereal *ab, integer *ldab, doublereal *bb, integer *
-	ldbb, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	integer *kb, double *ab, integer *ldab, double *bb, integer *
+	ldbb, double *w, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
@@ -225,7 +225,7 @@ static doublereal c_b13 = 0.;
     }
 
     if (*info == 0) {
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -289,7 +289,7 @@ static doublereal c_b13 = 0.;
 	dlacpy_("A", n, n, &work[indwk2], n, &z__[z_offset], ldz);
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;

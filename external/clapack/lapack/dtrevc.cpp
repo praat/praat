@@ -5,42 +5,42 @@
 
 static logical c_false = FALSE_;
 static integer c__1 = 1;
-static doublereal c_b22 = 1.;
-static doublereal c_b25 = 0.;
+static double c_b22 = 1.;
+static double c_b25 = 0.;
 static integer c__2 = 2;
 static logical c_true = TRUE_;
 
 /* Subroutine */ int dtrevc_(const char *side, const char *howmny, logical *select, 
-	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
-	ldvl, doublereal *vr, integer *ldvr, integer *mm, integer *m, 
-	doublereal *work, integer *info)
+	integer *n, double *t, integer *ldt, double *vl, integer *
+	ldvl, double *vr, integer *ldvr, integer *mm, integer *m, 
+	double *work, integer *info)
 {
     /* System generated locals */
     integer t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, 
 	    i__2, i__3;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal x[4]	/* was [2][2] */;
+    double x[4]	/* was [2][2] */;
     integer j1, j2, n2, ii, ki, ip, is;
-    doublereal wi, wr, rec, ulp, beta, emax;
+    double wi, wr, rec, ulp, beta, emax;
     logical pair;
     logical allv;
     integer ierr;
-    doublereal unfl, ovfl, smin;
+    double unfl, ovfl, smin;
     logical over;
-    doublereal vmax;
+    double vmax;
     integer jnxt;
-    doublereal scale;
-    doublereal remax;
+    double scale;
+    double remax;
     logical leftv, bothv;
-    doublereal vcrit;
+    double vcrit;
     logical somev;
-    doublereal xnorm;
-    doublereal bignum;
+    double xnorm;
+    double bignum;
     logical rightv;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

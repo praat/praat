@@ -2,8 +2,8 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dlagtm_(char *trans, integer *n, integer *nrhs, 
-	doublereal *alpha, doublereal *dl, doublereal *d__, doublereal *du, 
-	doublereal *x, integer *ldx, doublereal *beta, doublereal *b, integer 
+	double *alpha, double *dl, double *d__, double *du, 
+	double *x, integer *ldx, double *beta, double *b, integer 
 	*ldb)
 {
     /* System generated locals */

@@ -5,33 +5,33 @@
 
 static integer c__1 = 1;
 static integer c__0 = 0;
-static doublereal c_b59 = 0.;
-static doublereal c_b60 = 1.;
+static double c_b59 = 0.;
+static double c_b60 = 1.;
 
 /* Subroutine */ int dggevx_(char *balanc, char *jobvl, char *jobvr, char *
-	sense, integer *n, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *alphar, doublereal *alphai, doublereal *
-	beta, doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, 
-	integer *ilo, integer *ihi, doublereal *lscale, doublereal *rscale, 
-	doublereal *abnrm, doublereal *bbnrm, doublereal *rconde, doublereal *
-	rcondv, doublereal *work, integer *lwork, integer *iwork, logical *
+	sense, integer *n, double *a, integer *lda, double *b, 
+	integer *ldb, double *alphar, double *alphai, double *
+	beta, double *vl, integer *ldvl, double *vr, integer *ldvr, 
+	integer *ilo, integer *ihi, double *lscale, double *rscale, 
+	double *abnrm, double *bbnrm, double *rconde, double *
+	rcondv, double *work, integer *lwork, integer *iwork, logical *
 	bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__, j, m, jc, in, mm, jr;
-    doublereal eps;
+    double eps;
     logical ilv, pair;
-    doublereal anrm, bnrm;
+    double anrm, bnrm;
     integer ierr, itau;
-    doublereal temp;
+    double temp;
     logical ilvl, ilvr;
     integer iwrk, iwrk1;
     integer icols;
@@ -40,16 +40,16 @@ static doublereal c_b60 = 1.;
     logical ilascl, ilbscl;
     logical ldumma[1];
     char chtemp[1];
-    doublereal bignum;
+    double bignum;
     integer ijobvl;
     integer ijobvr;
     logical wantsb;
-    doublereal anrmto;
+    double anrmto;
     logical wantse;
-    doublereal bnrmto;
+    double bnrmto;
     integer minwrk, maxwrk;
     logical wantsn;
-    doublereal smlnum;
+    double smlnum;
     logical lquery, wantsv;
 
 
@@ -440,7 +440,7 @@ static doublereal c_b60 = 1.;
 		maxwrk = std::max(i__1,i__2);
 	    }
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -26;
@@ -825,7 +825,7 @@ L120:
     }
 
 L130:
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
 
     return 0;
 

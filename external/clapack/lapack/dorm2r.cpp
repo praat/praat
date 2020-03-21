@@ -6,15 +6,15 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dorm2r_(const char *side, const char *trans, integer *m, integer *n, 
-	integer *k, doublereal *a, integer *lda, doublereal *tau, doublereal *
-	c__, integer *ldc, doublereal *work, integer *info)
+	integer *k, double *a, integer *lda, double *tau, double *
+	c__, integer *ldc, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, i1, i2, i3, ic, jc, mi, ni, nq;
-    doublereal aii;
+    double aii;
     logical left;
     logical notran;
 

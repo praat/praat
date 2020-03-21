@@ -1,31 +1,31 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlar1v_(integer *n, integer *b1, integer *bn, doublereal 
-	*lambda, doublereal *d__, doublereal *l, doublereal *ld, doublereal *
-	lld, doublereal *pivmin, doublereal *gaptol, doublereal *z__, logical 
-	*wantnc, integer *negcnt, doublereal *ztz, doublereal *mingma, 
-	integer *r__, integer *isuppz, doublereal *nrminv, doublereal *resid, 
-	doublereal *rqcorr, doublereal *work)
+/* Subroutine */ int dlar1v_(integer *n, integer *b1, integer *bn, double 
+	*lambda, double *d__, double *l, double *ld, double *
+	lld, double *pivmin, double *gaptol, double *z__, logical 
+	*wantnc, integer *negcnt, double *ztz, double *mingma, 
+	integer *r__, integer *isuppz, double *nrminv, double *resid, 
+	double *rqcorr, double *work)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__;
-    doublereal s;
+    double s;
     integer r1, r2;
-    doublereal eps, tmp;
+    double eps, tmp;
     integer neg1, neg2, indp, inds;
-    doublereal dplus;
+    double dplus;
  
  
     integer indlpl, indumn;
-    doublereal dminus;
+    double dminus;
     logical sawnan1, sawnan2;
 
 

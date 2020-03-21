@@ -2,14 +2,14 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dtpsv_(const char *uplo, const char *trans, const char *diag, integer *n, 
-	doublereal *ap, doublereal *x, integer *incx)
+	double *ap, double *x, integer *incx)
 {
     /* System generated locals */
     integer i__1, i__2;
 
     /* Local variables */
     integer i__, j, k, kk, ix, jx, kx, info;
-    doublereal temp;
+    double temp;
  
  
     logical nounit;

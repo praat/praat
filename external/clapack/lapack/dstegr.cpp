@@ -1,10 +1,10 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dstegr_(char *jobz, char *range, integer *n, doublereal *
-	d__, doublereal *e, doublereal *vl, doublereal *vu, integer *il, 
-	integer *iu, doublereal *abstol, integer *m, doublereal *w, 
-	doublereal *z__, integer *ldz, integer *isuppz, doublereal *work, 
+/* Subroutine */ int dstegr_(char *jobz, char *range, integer *n, double *
+	d__, double *e, double *vl, double *vu, integer *il, 
+	integer *iu, double *abstol, integer *m, double *w, 
+	double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */

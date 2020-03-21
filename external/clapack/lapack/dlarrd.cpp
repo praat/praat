@@ -9,37 +9,37 @@ static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, doublereal 
-	*vl, doublereal *vu, integer *il, integer *iu, doublereal *gers, 
-	doublereal *reltol, doublereal *d__, doublereal *e, doublereal *e2, 
-	doublereal *pivmin, integer *nsplit, integer *isplit, integer *m, 
-	doublereal *w, doublereal *werr, doublereal *wl, doublereal *wu, 
-	integer *iblock, integer *indexw, doublereal *work, integer *iwork, 
+/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, double 
+	*vl, double *vu, integer *il, integer *iu, double *gers, 
+	double *reltol, double *d__, double *e, double *e2, 
+	double *pivmin, integer *nsplit, integer *isplit, integer *m, 
+	double *w, double *werr, double *wl, double *wu, 
+	integer *iblock, integer *indexw, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, ib, ie, je, nb;
-    doublereal gl;
+    double gl;
     integer im, in;
-    doublereal gu;
+    double gu;
     integer iw, jee;
-    doublereal eps;
+    double eps;
     integer nwl;
-    doublereal wlu, wul;
+    double wlu, wul;
     integer nwu;
-    doublereal tmp1, tmp2;
+    double tmp1, tmp2;
     integer iend, jblk, ioff, iout, itmp1, itmp2, jdisc;
     integer iinfo;
-    doublereal atoli;
+    double atoli;
     integer iwoff, itmax;
-    doublereal wkill, rtoli, uflow, tnorm;
+    double wkill, rtoli, uflow, tnorm;
     integer ibegin;
     integer irange, idiscl, idumma[1];
-    doublereal spdiam;
+    double spdiam;
     integer idiscu;
     logical ncnvrg, toofew;
 

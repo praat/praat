@@ -2,7 +2,7 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dpbsv_(char *uplo, integer *n, integer *kd, integer *
-	nrhs, doublereal *ab, integer *ldab, doublereal *b, integer *ldb, 
+	nrhs, double *ab, integer *ldab, double *b, integer *ldb, 
 	integer *info)
 {
     /* System generated locals */

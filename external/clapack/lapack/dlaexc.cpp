@@ -10,27 +10,27 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 static integer c__3 = 3;
 
-/* Subroutine */ int dlaexc_(logical *wantq, integer *n, doublereal *t, 
-	integer *ldt, doublereal *q, integer *ldq, integer *j1, integer *n1, 
-	integer *n2, doublereal *work, integer *info)
+/* Subroutine */ int dlaexc_(logical *wantq, integer *n, double *t, 
+	integer *ldt, double *q, integer *ldq, integer *j1, integer *n1, 
+	integer *n2, double *work, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, t_dim1, t_offset, i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
-    doublereal d__[16]	/* was [4][4] */;
+    double d__[16]	/* was [4][4] */;
     integer k;
-    doublereal u[3], x[4]	/* was [2][2] */;
+    double u[3], x[4]	/* was [2][2] */;
     integer j2, j3, j4;
-    doublereal u1[3], u2[3];
+    double u1[3], u2[3];
     integer nd;
-    doublereal cs, t11, t22, t33, sn, wi1, wi2, wr1, wr2, eps, tau, tau1, 
+    double cs, t11, t22, t33, sn, wi1, wi2, wr1, wr2, eps, tau, tau1, 
 	    tau2;
     integer ierr;
-    doublereal temp;
-    doublereal scale, dnorm, xnorm;
-    doublereal thresh, smlnum;
+    double temp;
+    double scale, dnorm, xnorm;
+    double thresh, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

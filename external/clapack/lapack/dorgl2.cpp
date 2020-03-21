@@ -1,12 +1,12 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dorgl2_(integer *m, integer *n, integer *k, doublereal *
-	a, integer *lda, doublereal *tau, doublereal *work, integer *info)
+/* Subroutine */ int dorgl2_(integer *m, integer *n, integer *k, double *
+	a, integer *lda, double *tau, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, l;

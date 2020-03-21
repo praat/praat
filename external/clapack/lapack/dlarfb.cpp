@@ -4,13 +4,13 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b14 = 1.;
-static doublereal c_b25 = -1.;
+static double c_b14 = 1.;
+static double c_b25 = -1.;
 
 /* Subroutine */ int dlarfb_(const char *side, const char *trans, const char *direct, const char *
-	storev, integer *m, integer *n, integer *k, doublereal *v, integer *
-	ldv, doublereal *t, integer *ldt, doublereal *c__, integer *ldc, 
-	doublereal *work, integer *ldwork)
+	storev, integer *m, integer *n, integer *k, double *v, integer *
+	ldv, double *t, integer *ldt, double *c__, integer *ldc, 
+	double *work, integer *ldwork)
 {
     /* System generated locals */
     integer c_dim1, c_offset, t_dim1, t_offset, v_dim1, v_offset, work_dim1, 

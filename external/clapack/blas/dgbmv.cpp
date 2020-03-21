@@ -2,8 +2,8 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dgbmv_(char *trans, integer *m, integer *n, integer *kl, 
-	integer *ku, doublereal *alpha, doublereal *a, integer *lda, 
-	doublereal *x, integer *incx, doublereal *beta, doublereal *y, 
+	integer *ku, double *alpha, double *a, integer *lda, 
+	double *x, integer *incx, double *beta, double *y, 
 	integer *incy)
 {
     /* System generated locals */
@@ -11,7 +11,7 @@
 
     /* Local variables */
     integer i__, j, k, ix, iy, jx, jy, kx, ky, kup1, info;
-    doublereal temp;
+    double temp;
     integer lenx, leny;
 
 /*     .. Scalar Arguments .. */

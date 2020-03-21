@@ -1,20 +1,20 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlasq6_(integer *i0, integer *n0, doublereal *z__, 
-	integer *pp, doublereal *dmin__, doublereal *dmin1, doublereal *dmin2, 
-	 doublereal *dn, doublereal *dnm1, doublereal *dnm2)
+/* Subroutine */ int dlasq6_(integer *i0, integer *n0, double *z__, 
+	integer *pp, double *dmin__, double *dmin1, double *dmin2, 
+	 double *dn, double *dnm1, double *dnm2)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal d__;
+    double d__;
     integer j4, j4p2;
-    doublereal emin, temp;
+    double emin, temp;
  
-    doublereal safmin;
+    double safmin;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

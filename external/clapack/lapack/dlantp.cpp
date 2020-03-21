@@ -5,18 +5,18 @@
 
 static integer c__1 = 1;
 
-doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer *n, doublereal 
-	*ap, doublereal *work)
+double dlantp_(const char *norm, const char *uplo, const char *diag, integer *n, double 
+	*ap, double *work)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal ret_val, d__1, d__2, d__3;
+    double ret_val, d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal sum, scale;
+    double sum, scale;
     logical udiag;
-    doublereal value;
+    double value;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -316,7 +316,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 	if (lsame_(uplo, "U")) {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) (*n);
+		sum = (double) (*n);
 		k = 2;
 		i__1 = *n;
 		for (j = 2; j <= i__1; ++j) {
@@ -339,7 +339,7 @@ doublereal dlantp_(const char *norm, const char *uplo, const char *diag, integer
 	} else {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) (*n);
+		sum = (double) (*n);
 		k = 2;
 		i__1 = *n - 1;
 		for (j = 1; j <= i__1; ++j) {

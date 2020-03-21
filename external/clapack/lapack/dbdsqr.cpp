@@ -3,44 +3,44 @@
 
 /* Table of constant values */
 
-static doublereal c_b15 = -.125;
+static double c_b15 = -.125;
 static integer c__1 = 1;
-static doublereal c_b49 = 1.;
-static doublereal c_b72 = -1.;
+static double c_b49 = 1.;
+static double c_b72 = -1.;
 
 /* Subroutine */ int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
-	nru, integer *ncc, doublereal *d__, doublereal *e, doublereal *vt, 
-	integer *ldvt, doublereal *u, integer *ldu, doublereal *c__, integer *
-	ldc, doublereal *work, integer *info)
+	nru, integer *ncc, double *d__, double *e, double *vt, 
+	integer *ldvt, double *u, integer *ldu, double *c__, integer *
+	ldc, double *work, integer *info)
 {
     /* System generated locals */
     integer c_dim1, c_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1, 
 	    i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
-    doublereal f, g, h__;
+    double f, g, h__;
     integer i__, j, m;
-    doublereal r__, cs;
+    double r__, cs;
     integer ll;
-    doublereal sn, mu;
+    double sn, mu;
     integer nm1, nm12, nm13, lll;
-    doublereal eps, sll, tol, abse;
+    double eps, sll, tol, abse;
     integer idir;
-    doublereal abss;
+    double abss;
     integer oldm;
-    doublereal cosl;
+    double cosl;
     integer isub, iter;
-    doublereal unfl, sinl, cosr, smin, smax, sinr;
-    doublereal oldcs;
+    double unfl, sinl, cosr, smin, smax, sinr;
+    double oldcs;
      integer oldll;
-    doublereal shift, sigmn, oldsn;
+    double shift, sigmn, oldsn;
     integer maxit;
-    doublereal sminl, sigmx;
+    double sminl, sigmx;
     logical lower;
-    doublereal sminoa, thresh;
+    double sminoa, thresh;
     logical rotate;
-    doublereal tolmul;
+    double tolmul;
 
 
 /*  -- LAPACK routine (version 3.1.1) -- */
@@ -337,7 +337,7 @@ static doublereal c_b72 = -1.;
 /* L40: */
 	}
 L50:
-	sminoa /= sqrt((doublereal) (*n));
+	sminoa /= sqrt((double) (*n));
 /* Computing MAX */
 	d__1 = tol * sminoa, d__2 = *n * 6 * *n * unfl;
 	thresh = std::max(d__1,d__2);

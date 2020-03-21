@@ -7,33 +7,33 @@ static integer c__6 = 6;
 static integer c_n1 = -1;
 static integer c__1 = 1;
 static integer c__0 = 0;
-static doublereal c_b74 = 0.;
-static doublereal c_b108 = 1.;
+static double c_b74 = 0.;
+static double c_b108 = 1.;
 
 /* Subroutine */ int dgelss_(integer *m, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, doublereal *
-	s, doublereal *rcond, integer *rank, doublereal *work, integer *lwork, 
+	double *a, integer *lda, double *b, integer *ldb, double *
+	s, double *rcond, integer *rank, double *work, integer *lwork, 
 	 integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, bl, ie, il, mm;
-    doublereal eps, thr, anrm, bnrm;
+    double eps, thr, anrm, bnrm;
     integer itau;
-    doublereal vdum[1];
+    double vdum[1];
     integer iascl, ibscl;
     integer chunk;
-    doublereal sfmin;
+    double sfmin;
     integer minmn;
     integer maxmn, itaup, itauq, mnthr, iwork;
     integer bdspac;
-    doublereal bignum;
+    double bignum;
     integer ldwork;
     integer minwrk, maxwrk;
-    doublereal smlnum;
+    double smlnum;
     logical lquery;
 
 
@@ -302,7 +302,7 @@ static doublereal c_b108 = 1.;
 	    }
 	    maxwrk = std::max(minwrk,maxwrk);
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -12;
@@ -768,7 +768,7 @@ static doublereal c_b108 = 1.;
     }
 
 L70:
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     return 0;
 
 /*     End of DGELSS */

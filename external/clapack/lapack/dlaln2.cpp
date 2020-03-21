@@ -2,10 +2,10 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaln2_(logical *ltrans, integer *na, integer *nw, 
-	doublereal *smin, doublereal *ca, doublereal *a, integer *lda, 
-	doublereal *d1, doublereal *d2, doublereal *b, integer *ldb, 
-	doublereal *wr, doublereal *wi, doublereal *x, integer *ldx, 
-	doublereal *scale, doublereal *xnorm, integer *info)
+	double *smin, double *ca, double *a, integer *lda, 
+	double *d1, double *d2, double *b, integer *ldb, 
+	double *wr, double *wi, double *x, integer *ldx, 
+	double *scale, double *xnorm, integer *info)
 {
     /* Initialized data */
 
@@ -16,22 +16,22 @@
 
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, x_dim1, x_offset;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
-    static doublereal equiv_0[4], equiv_1[4];
+    double d__1, d__2, d__3, d__4, d__5, d__6;
+    static double equiv_0[4], equiv_1[4];
 
     /* Local variables */
     integer j;
 #define ci (equiv_0)
 #define cr (equiv_1)
-    doublereal bi1, bi2, br1, br2, xi1, xi2, xr1, xr2, ci21, ci22, cr21, cr22,
+    double bi1, bi2, br1, br2, xi1, xi2, xr1, xr2, ci21, ci22, cr21, cr22,
 	     li21, csi, ui11, lr21, ui12, ui22;
 #define civ (equiv_0)
-    doublereal csr, ur11, ur12, ur22;
+    double csr, ur11, ur12, ur22;
 #define crv (equiv_1)
-    doublereal bbnd, cmax, ui11r, ui12s, temp, ur11r, ur12s, u22abs;
+    double bbnd, cmax, ui11r, ui12s, temp, ur11r, ur12s, u22abs;
     integer icmax;
-    doublereal bnorm, cnorm, smini;
-    doublereal bignum, smlnum;
+    double bnorm, cnorm, smini;
+    double bignum, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

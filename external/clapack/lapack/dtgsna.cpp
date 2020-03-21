@@ -4,45 +4,45 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b19 = 1.;
-static doublereal c_b21 = 0.;
+static double c_b19 = 1.;
+static double c_b21 = 0.;
 static integer c__2 = 2;
 static logical c_false = FALSE_;
 static integer c__3 = 3;
 
 /* Subroutine */ int dtgsna_(const char *job, const char *howmny, logical *select, 
-	integer *n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, 
-	doublereal *s, doublereal *dif, integer *mm, integer *m, doublereal *
+	integer *n, double *a, integer *lda, double *b, integer *ldb, 
+	double *vl, integer *ldvl, double *vr, integer *ldvr, 
+	double *s, double *dif, integer *mm, integer *m, double *
 	work, integer *lwork, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, k;
-    doublereal c1, c2;
+    double c1, c2;
     integer n1, n2, ks, iz;
-    doublereal eps, beta, cond;
+    double eps, beta, cond;
     logical pair;
     integer ierr;
-    doublereal uhav, uhbv;
+    double uhav, uhbv;
     integer ifst;
-    doublereal lnrm;
+    double lnrm;
     integer ilst;
-    doublereal rnrm;
-    doublereal root1, root2, scale;
-    doublereal uhavi, uhbvi, tmpii;
+    double rnrm;
+    double root1, root2, scale;
+    double uhavi, uhbvi, tmpii;
     integer lwmin;
     logical wants;
-    doublereal tmpir, tmpri, dummy[1], tmprr;
-    doublereal dummy1[1];
-    doublereal alphai, alphar;
+    double tmpir, tmpri, dummy[1], tmprr;
+    double dummy1[1];
+    double alphai, alphar;
     logical wantbh, wantdf, somcon;
-    doublereal alprqt;
-    doublereal smlnum;
+    double alprqt;
+    double smlnum;
     logical lquery;
 
 
@@ -420,7 +420,7 @@ static integer c__3 = 3;
 	} else {
 	    lwmin = *n;
 	}
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 
 	if (*mm < *m) {
 	    *info = -15;
@@ -649,7 +649,7 @@ static integer c__3 = 3;
 L20:
 	;
     }
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     return 0;
 
 /*     End of DTGSNA */

@@ -6,9 +6,9 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dlaed1_(integer *n, doublereal *d__, doublereal *q, 
-	integer *ldq, integer *indxq, doublereal *rho, integer *cutpnt, 
-	doublereal *work, integer *iwork, integer *info)
+/* Subroutine */ int dlaed1_(integer *n, double *d__, double *q, 
+	integer *ldq, integer *indxq, double *rho, integer *cutpnt, 
+	double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, i__1, i__2;

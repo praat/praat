@@ -1,23 +1,23 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlarrb_(integer *n, doublereal *d__, doublereal *lld, 
-	integer *ifirst, integer *ilast, doublereal *rtol1, doublereal *rtol2, 
-	 integer *offset, doublereal *w, doublereal *wgap, doublereal *werr, 
-	doublereal *work, integer *iwork, doublereal *pivmin, doublereal *
+/* Subroutine */ int dlarrb_(integer *n, double *d__, double *lld, 
+	integer *ifirst, integer *ilast, double *rtol1, double *rtol2, 
+	 integer *offset, double *w, double *wgap, double *werr, 
+	double *work, integer *iwork, double *pivmin, double *
 	spdiam, integer *twist, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, k, r__, i1, ii, ip;
-    doublereal gap, mid, tmp, back, lgap, rgap, left;
+    double gap, mid, tmp, back, lgap, rgap, left;
     integer iter, nint, prev, next;
-    doublereal cvrgd, right, width;
+    double cvrgd, right, width;
     integer negcnt;
-    doublereal mnwdth;
+    double mnwdth;
     integer olnint, maxitr;
 
 

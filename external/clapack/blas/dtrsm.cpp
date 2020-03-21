@@ -2,15 +2,15 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dtrsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
-	integer *m, integer *n, doublereal *alpha, doublereal *a, integer *
-	lda, doublereal *b, integer *ldb)
+	integer *m, integer *n, double *alpha, double *a, integer *
+	lda, double *b, integer *ldb)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
 
     /* Local variables */
     integer i__, j, k, info;
-    doublereal temp;
+    double temp;
     logical lside;
  
     integer nrowa;

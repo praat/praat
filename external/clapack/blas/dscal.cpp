@@ -1,7 +1,7 @@
 #include "cblas.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dscal_(integer *n, doublereal *da, doublereal *dx, 
+/* Subroutine */ int dscal_(integer *n, double *da, double *dx, 
 	integer *incx)
 {
     /* System generated locals */

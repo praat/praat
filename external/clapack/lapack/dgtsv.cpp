@@ -1,17 +1,17 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dgtsv_(integer *n, integer *nrhs, doublereal *dl, 
-	doublereal *d__, doublereal *du, doublereal *b, integer *ldb, integer 
+/* Subroutine */ int dgtsv_(integer *n, integer *nrhs, double *dl, 
+	double *d__, double *du, double *b, integer *ldb, integer 
 	*info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal fact, temp;
+    double fact, temp;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

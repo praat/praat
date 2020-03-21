@@ -8,12 +8,12 @@ static integer c__0 = 0;
 static integer c__2 = 2;
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b421 = 0.;
-static doublereal c_b443 = 1.;
+static double c_b421 = 0.;
+static double c_b443 = 1.;
 
 /* Subroutine */ int dgesvd_(const char *jobu, const char *jobvt, integer *m, integer *n, 
-	doublereal *a, integer *lda, doublereal *s, doublereal *u, integer *
-	ldu, doublereal *vt, integer *ldvt, doublereal *work, integer *lwork, 
+	double *a, integer *lda, double *s, double *u, integer *
+	ldu, double *vt, integer *ldvt, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -24,16 +24,16 @@ static doublereal c_b443 = 1.;
 
     /* Local variables */
     integer i__, ie, ir, iu, blk, ncu;
-    doublereal dum[1], eps;
+    double dum[1], eps;
     integer nru, iscl;
-    doublereal anrm;
+    double anrm;
     integer ierr, itau, ncvt, nrvt;
     integer chunk, minmn, wrkbl, itaup, itauq, mnthr, iwork;
     logical wntua, wntva, wntun, wntuo, wntvn, wntvo, wntus, wntvs;
     integer bdspac;
-    doublereal bignum;
+    double bignum;
     integer ldwrkr, minwrk, ldwrku, maxwrk;
-    doublereal smlnum;
+    double smlnum;
     logical lquery, wntuas, wntvas;
 
 
@@ -780,7 +780,7 @@ static doublereal c_b443 = 1.;
 	    }
 	}
 	maxwrk = std::max(maxwrk,minwrk);
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -13;
@@ -3993,7 +3993,7 @@ static doublereal c_b443 = 1.;
 
 /*     Return optimal workspace in WORK(1) */
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
 
     return 0;
 

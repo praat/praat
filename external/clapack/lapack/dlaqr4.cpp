@@ -14,27 +14,27 @@ static integer c__1 = 1;
 static integer c__3 = 3;
 
 /* Subroutine */ int dlaqr4_(logical *wantt, logical *wantz, integer *n, 
-	integer *ilo, integer *ihi, doublereal *h__, integer *ldh, doublereal 
-	*wr, doublereal *wi, integer *iloz, integer *ihiz, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *lwork, integer *info)
+	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
+	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
+	integer *ldz, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, k;
-    doublereal aa, bb, cc, dd;
+    double aa, bb, cc, dd;
     integer ld;
-    doublereal cs;
+    double cs;
     integer nh, it, ks, kt;
-    doublereal sn;
+    double sn;
     integer ku, kv, ls, ns;
-    doublereal ss;
+    double ss;
     integer nw, inf, kdu, nho, nve, kwh, nsr, nwr, kwv, ndfl, kbot, nmin;
-    doublereal swap;
+    double swap;
     integer ktop;
-    doublereal zdum[1]	/* was [1][1] */;
+    double zdum[1]	/* was [1][1] */;
     integer kacc22;
     logical nwinc;
     integer itmax, nsmax, nwmax, kwtop;
@@ -342,7 +342,7 @@ static integer c__3 = 3;
 /*        ==== Quick return in case of workspace query. ==== */
 
 	if (*lwork == -1) {
-	    work[1] = (doublereal) lwkopt;
+	    work[1] = (double) lwkopt;
 	    return 0;
 	}
 
@@ -721,7 +721,7 @@ L90:
 
 /*     ==== Return the optimal value of LWORK. ==== */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
 /*     ==== End of DLAQR4 ==== */
 

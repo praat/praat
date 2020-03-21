@@ -1,19 +1,19 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlag2_(doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *safmin, doublereal *scale1, doublereal *
-	scale2, doublereal *wr1, doublereal *wr2, doublereal *wi)
+/* Subroutine */ int dlag2_(double *a, integer *lda, double *b, 
+	integer *ldb, double *safmin, double *scale1, double *
+	scale2, double *wr1, double *wr2, double *wi)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
+    double d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Builtin functions
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *); */
+    double sqrt(double), d_sign(double *, double *); */
 
     /* Local variables */
-    doublereal r__, c1, c2, c3, c4, c5, s1, s2, a11, a12, a21, a22, b11, b12, 
+    double r__, c1, c2, c3, c4, c5, s1, s2, a11, a12, a21, a22, b11, b12, 
 	    b22, pp, qq, ss, as11, as12, as22, sum, abi22, diff, bmin, wbig, 
 	    wabs, wdet, binv11, binv22, discr, anorm, bnorm, bsize, shift, 
 	    rtmin, rtmax, wsize, ascale, bscale, wscale, safmax, wsmall;

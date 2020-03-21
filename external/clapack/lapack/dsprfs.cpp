@@ -4,32 +4,32 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b12 = -1.;
-static doublereal c_b14 = 1.;
+static double c_b12 = -1.;
+static double c_b14 = 1.;
 
 /* Subroutine */ int dsprfs_(char *uplo, integer *n, integer *nrhs, 
-	doublereal *ap, doublereal *afp, integer *ipiv, doublereal *b, 
-	integer *ldb, doublereal *x, integer *ldx, doublereal *ferr, 
-	doublereal *berr, doublereal *work, integer *iwork, integer *info)
+	double *ap, double *afp, integer *ipiv, double *b, 
+	integer *ldb, double *x, integer *ldx, double *ferr, 
+	double *berr, double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal s;
+    double s;
     integer ik, kk;
-    doublereal xk;
+    double xk;
     integer nz;
-    doublereal eps;
+    double eps;
     integer kase;
-    doublereal safe1, safe2;
+    double safe1, safe2;
     integer isave[3];
     integer count;
     logical upper;
-    doublereal safmin;
-    doublereal lstres;
+    double safmin;
+    double lstres;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

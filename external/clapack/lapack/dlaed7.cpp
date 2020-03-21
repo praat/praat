@@ -5,16 +5,16 @@
 
 static integer c__2 = 2;
 static integer c__1 = 1;
-static doublereal c_b10 = 1.;
-static doublereal c_b11 = 0.;
+static double c_b10 = 1.;
+static double c_b11 = 0.;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dlaed7_(integer *icompq, integer *n, integer *qsiz, 
-	integer *tlvls, integer *curlvl, integer *curpbm, doublereal *d__, 
-	doublereal *q, integer *ldq, integer *indxq, doublereal *rho, integer 
-	*cutpnt, doublereal *qstore, integer *qptr, integer *prmptr, integer *
-	perm, integer *givptr, integer *givcol, doublereal *givnum, 
-	doublereal *work, integer *iwork, integer *info)
+	integer *tlvls, integer *curlvl, integer *curpbm, double *d__, 
+	double *q, integer *ldq, integer *indxq, double *rho, integer 
+	*cutpnt, double *qstore, integer *qptr, integer *prmptr, integer *
+	perm, integer *givptr, integer *givcol, double *givnum, 
+	double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, i__1, i__2;

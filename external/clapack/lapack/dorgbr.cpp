@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dorgbr_(const char *vect, integer *m, integer *n, integer *k, 
-	doublereal *a, integer *lda, doublereal *tau, doublereal *work, 
+	double *a, integer *lda, double *tau, double *work, 
 	integer *lwork, integer *info)
 {
     /* System generated locals */
@@ -160,7 +160,7 @@ static integer c_n1 = -1;
 	    nb = ilaenv_(&c__1, "DORGLQ", " ", m, n, k, &c_n1);
 	}
 	lwkopt = std::max(1_integer,mn) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -271,7 +271,7 @@ static integer c_n1 = -1;
 	    }
 	}
     }
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORGBR */

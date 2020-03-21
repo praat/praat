@@ -4,19 +4,19 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = 0.;
-static doublereal c_b14 = -1.;
+static double c_b8 = 0.;
+static double c_b14 = -1.;
 
-/* Subroutine */ int dsptrd_(char *uplo, integer *n, doublereal *ap, 
-	doublereal *d__, doublereal *e, doublereal *tau, integer *info)
+/* Subroutine */ int dsptrd_(char *uplo, integer *n, double *ap, 
+	double *d__, double *e, double *tau, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2;
 
     /* Local variables */
     integer i__, i1, ii, i1i1;
-    doublereal taui;
-    doublereal alpha;
+    double taui;
+    double alpha;
     logical upper;
 
 

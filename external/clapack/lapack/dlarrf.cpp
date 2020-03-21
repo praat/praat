@@ -5,31 +5,31 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlarrf_(integer *n, doublereal *d__, doublereal *l, 
-	doublereal *ld, integer *clstrt, integer *clend, doublereal *w, 
-	doublereal *wgap, doublereal *werr, doublereal *spdiam, doublereal *
-	clgapl, doublereal *clgapr, doublereal *pivmin, doublereal *sigma, 
-	doublereal *dplus, doublereal *lplus, doublereal *work, integer *info)
+/* Subroutine */ int dlarrf_(integer *n, double *d__, double *l, 
+	double *ld, integer *clstrt, integer *clend, double *w, 
+	double *wgap, double *werr, double *spdiam, double *
+	clgapl, double *clgapr, double *pivmin, double *sigma, 
+	double *dplus, double *lplus, double *work, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__;
-    doublereal s, bestshift, smlgrowth, eps, tmp, max1, max2, rrr1, rrr2, 
+    double s, bestshift, smlgrowth, eps, tmp, max1, max2, rrr1, rrr2, 
 	    znm2, growthbound, fail, fact, oldp;
     integer indx;
-    doublereal prod;
+    double prod;
     integer ktry;
-    doublereal fail2, avgap, ldmax, rdmax;
+    double fail2, avgap, ldmax, rdmax;
     integer shift;
     logical dorrr1;
-    doublereal ldelta;
+    double ldelta;
     logical nofail;
-    doublereal mingap, lsigma, rdelta;
+    double mingap, lsigma, rdelta;
     logical forcer;
-    doublereal rsigma, clwdth;
+    double rsigma, clwdth;
     logical sawnan1, sawnan2, tryrrr1;
 
 
@@ -165,7 +165,7 @@ static integer c__1 = 1;
 /*     Compute the average gap length of the cluster */
     clwdth = (d__1 = w[*clend] - w[*clstrt], abs(d__1)) + werr[*clend] + werr[
 	    *clstrt];
-    avgap = clwdth / (doublereal) (*clend - *clstrt);
+    avgap = clwdth / (double) (*clend - *clstrt);
     mingap = std::min(*clgapl,*clgapr);
 /*     Initial values for shifts to both ends of cluster */
 /* Computing MIN */
@@ -191,8 +191,8 @@ static integer c__1 = 1;
 
     s = dlamch_("S");
     smlgrowth = 1. / s;
-    fail = (doublereal) (*n - 1) * mingap / (*spdiam * eps);
-    fail2 = (doublereal) (*n - 1) * mingap / (*spdiam * sqrt(eps));
+    fail = (double) (*n - 1) * mingap / (*spdiam * eps);
+    fail2 = (double) (*n - 1) * mingap / (*spdiam * sqrt(eps));
     bestshift = lsigma;
 
 /*     while (KTRY <= KTRYMAX) */

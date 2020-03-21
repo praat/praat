@@ -6,26 +6,26 @@
 static integer c_n1 = -1;
 
 /* Subroutine */ int dtrsen_(const char *job, const char *compq, logical *select, integer 
-	*n, doublereal *t, integer *ldt, doublereal *q, integer *ldq, 
-	doublereal *wr, doublereal *wi, integer *m, doublereal *s, doublereal 
-	*sep, doublereal *work, integer *lwork, integer *iwork, integer *
+	*n, double *t, integer *ldt, double *q, integer *ldq, 
+	double *wr, double *wi, integer *m, double *s, double 
+	*sep, double *work, integer *lwork, integer *iwork, integer *
 	liwork, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, t_dim1, t_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer k, n1, n2, kk, nn, ks;
-    doublereal est;
+    double est;
     integer kase;
     logical pair;
     integer ierr;
     logical swap;
-    doublereal scale;
+    double scale;
     integer isave[3], lwmin;
     logical wantq, wants;
-    doublereal rnorm;
+    double rnorm;
     logical wantbh;
     integer liwmin;
     logical wantsp, lquery;
@@ -348,7 +348,7 @@ static integer c_n1 = -1;
     }
 
     if (*info == 0) {
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
     }
 
@@ -491,7 +491,7 @@ L40:
 /* L60: */
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;

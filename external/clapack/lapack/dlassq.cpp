@@ -1,16 +1,16 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlassq_(integer *n, doublereal *x, integer *incx, 
-	doublereal *scale, doublereal *sumsq)
+/* Subroutine */ int dlassq_(integer *n, double *x, integer *incx, 
+	double *scale, double *sumsq)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer ix;
-    doublereal absxi;
+    double absxi;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

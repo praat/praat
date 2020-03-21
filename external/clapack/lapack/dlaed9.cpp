@@ -6,17 +6,17 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dlaed9_(integer *k, integer *kstart, integer *kstop, 
-	integer *n, doublereal *d__, doublereal *q, integer *ldq, doublereal *
-	rho, doublereal *dlamda, doublereal *w, doublereal *s, integer *lds, 
+	integer *n, double *d__, double *q, integer *ldq, double *
+	rho, double *dlamda, double *w, double *s, integer *lds, 
 	integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, s_dim1, s_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j;
-    doublereal temp;
+    double temp;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

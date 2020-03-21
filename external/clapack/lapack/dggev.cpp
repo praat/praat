@@ -6,38 +6,38 @@
 static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
-static doublereal c_b36 = 0.;
-static doublereal c_b37 = 1.;
+static double c_b36 = 0.;
+static double c_b37 = 1.;
 
-/* Subroutine */ int dggev_(char *jobvl, char *jobvr, integer *n, doublereal *
-	a, integer *lda, doublereal *b, integer *ldb, doublereal *alphar, 
-	doublereal *alphai, doublereal *beta, doublereal *vl, integer *ldvl, 
-	doublereal *vr, integer *ldvr, doublereal *work, integer *lwork, 
+/* Subroutine */ int dggev_(char *jobvl, char *jobvr, integer *n, double *
+	a, integer *lda, double *b, integer *ldb, double *alphar, 
+	double *alphai, double *beta, double *vl, integer *ldvl, 
+	double *vr, integer *ldvr, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer jc, in, jr, ihi, ilo;
-    doublereal eps;
+    double eps;
     logical ilv;
-    doublereal anrm, bnrm;
+    double anrm, bnrm;
     integer ierr, itau;
-    doublereal temp;
+    double temp;
     logical ilvl, ilvr;
     integer iwrk;
     integer ileft, icols, irows;
     logical ilascl, ilbscl;
     logical ldumma[1];
     char chtemp[1];
-    doublereal bignum;
+    double bignum;
     integer ijobvl, iright, ijobvr;
-    doublereal anrmto, bnrmto;
+    double anrmto, bnrmto;
     integer minwrk, maxwrk;
-    doublereal smlnum;
+    double smlnum;
     logical lquery;
 
 
@@ -278,7 +278,7 @@ static doublereal c_b37 = 1.;
 		    c__1, n, &c_n1) + 7);
 	    maxwrk = std::max(i__1,i__2);
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -16;
@@ -583,7 +583,7 @@ L100:
 
 L110:
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
 
     return 0;
 

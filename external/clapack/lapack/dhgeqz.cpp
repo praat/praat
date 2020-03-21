@@ -3,51 +3,51 @@
 
 /* Table of constant values */
 
-static doublereal c_b12 = 0.;
-static doublereal c_b13 = 1.;
+static double c_b12 = 0.;
+static double c_b13 = 1.;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
 /* Subroutine */ int dhgeqz_(const char *job, char *compq, char *compz, integer *n, 
-	integer *ilo, integer *ihi, doublereal *h__, integer *ldh, doublereal 
-	*t, integer *ldt, doublereal *alphar, doublereal *alphai, doublereal *
-	beta, doublereal *q, integer *ldq, doublereal *z__, integer *ldz, 
-	doublereal *work, integer *lwork, integer *info)
+	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
+	*t, integer *ldt, double *alphar, double *alphai, double *
+	beta, double *q, integer *ldq, double *z__, integer *ldz, 
+	double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer h_dim1, h_offset, q_dim1, q_offset, t_dim1, t_offset, z_dim1, 
 	    z_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
-    doublereal c__;
+    double c__;
     integer j;
-    doublereal s, v[3], s1, s2, t1, u1, u2, a11, a12, a21, a22, b11, b22, c12,
+    double s, v[3], s1, s2, t1, u1, u2, a11, a12, a21, a22, b11, b22, c12,
 	     c21;
     integer jc;
-    doublereal an, bn, cl, cq, cr;
+    double an, bn, cl, cq, cr;
     integer in;
-    doublereal u12, w11, w12, w21;
+    double u12, w11, w12, w21;
     integer jr;
-    doublereal cz, w22, sl, wi, sr, vs, wr, b1a, b2a, a1i, a2i, b1i, b2i, a1r,
+    double cz, w22, sl, wi, sr, vs, wr, b1a, b2a, a1i, a2i, b1i, b2i, a1r,
 	     a2r, b1r, b2r, wr2, ad11, ad12, ad21, ad22, c11i, c22i;
     integer jch;
-    doublereal c11r, c22r;
+    double c11r, c22r;
     logical ilq;
-    doublereal u12l, tau, sqi;
+    double u12l, tau, sqi;
     logical ilz;
-    doublereal ulp, sqr, szi, szr, ad11l, ad12l, ad21l, ad22l, ad32l, wabs, 
+    double ulp, sqr, szi, szr, ad11l, ad12l, ad21l, ad22l, ad32l, wabs, 
 	    atol, btol, temp;
-    doublereal temp2, s1inv, scale;
+    double temp2, s1inv, scale;
     integer iiter, ilast, jiter;
-    doublereal anorm, bnorm;
+    double anorm, bnorm;
     integer maxit;
-    doublereal tempi, tempr;
+    double tempi, tempr;
     logical ilazr2;
-    doublereal ascale, bscale;
-    doublereal safmin;
-    doublereal safmax;
-    doublereal eshift;
+    double ascale, bscale;
+    double safmin;
+    double safmax;
+    double eshift;
     logical ilschr;
     integer icompq, ilastm, ischur;
     logical ilazro;
@@ -331,7 +331,7 @@ static integer c__3 = 3;
 /*     Check Argument Values */
 
     *info = 0;
-    work[1] = (doublereal) std::max(1_integer,*n);
+    work[1] = (double) std::max(1_integer,*n);
     lquery = *lwork == -1;
     if (ischur == 0) {
 	*info = -1;
@@ -719,13 +719,13 @@ L110:
 /*           Exceptional shift.  Chosen for no particularly good reason. */
 /*           (Single shift only.) */
 
-	    if ((doublereal) maxit * safmin * (d__1 = h__[ilast - 1 + ilast * 
+	    if ((double) maxit * safmin * (d__1 = h__[ilast - 1 + ilast * 
 		    h_dim1], abs(d__1)) < (d__2 = t[ilast - 1 + (ilast - 1) * 
 		    t_dim1], abs(d__2))) {
 		eshift += h__[ilast - 1 + ilast * h_dim1] / t[ilast - 1 + (
 			ilast - 1) * t_dim1];
 	    } else {
-		eshift += 1. / (safmin * (doublereal) maxit);
+		eshift += 1. / (safmin * (double) maxit);
 	    }
 	    s1 = 1.;
 	    wr = eshift;
@@ -1453,7 +1453,7 @@ L380:
 /*     Exit (other than argument error) -- return optimal workspace size */
 
 L420:
-    work[1] = (doublereal) (*n);
+    work[1] = (double) (*n);
     return 0;
 
 /*     End of DHGEQZ */

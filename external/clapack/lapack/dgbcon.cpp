@@ -6,25 +6,25 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dgbcon_(char *norm, integer *n, integer *kl, integer *ku, 
-	 doublereal *ab, integer *ldab, integer *ipiv, doublereal *anorm, 
-	doublereal *rcond, doublereal *work, integer *iwork, integer *info)
+	 double *ab, integer *ldab, integer *ipiv, double *anorm, 
+	double *rcond, double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j;
-    doublereal t;
+    double t;
     integer kd, lm, jp, ix, kase;
     integer kase1;
-    doublereal scale;
+    double scale;
     integer isave[3];
     logical lnoti;
-    doublereal ainvnm;
+    double ainvnm;
     logical onenrm;
     char normin[1];
-    doublereal smlnum;
+    double smlnum;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

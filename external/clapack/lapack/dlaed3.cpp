@@ -4,24 +4,24 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b22 = 1.;
-static doublereal c_b23 = 0.;
+static double c_b22 = 1.;
+static double c_b23 = 0.;
 
-/* Subroutine */ int dlaed3_(integer *k, integer *n, integer *n1, doublereal *
-	d__, doublereal *q, integer *ldq, doublereal *rho, doublereal *dlamda, 
-	 doublereal *q2, integer *indx, integer *ctot, doublereal *w, 
-	doublereal *s, integer *info)
+/* Subroutine */ int dlaed3_(integer *k, integer *n, integer *n1, double *
+	d__, double *q, integer *ldq, double *rho, double *dlamda, 
+	 double *q2, integer *indx, integer *ctot, double *w, 
+	double *s, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Builtin functions
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);*/
+    double sqrt(double), d_sign(double *, double *);*/
 
     /* Local variables */
     integer i__, j, n2, n12, ii, n23, iq2;
-    doublereal temp;
+    double temp;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

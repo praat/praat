@@ -6,10 +6,10 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
-static doublereal c_b18 = 1.;
-static doublereal c_b22 = -1.;
+static double c_b18 = 1.;
+static double c_b22 = -1.;
 
-/* Subroutine */ int dtrtri_(const char *uplo, const char *diag, integer *n, doublereal *
+/* Subroutine */ int dtrtri_(const char *uplo, const char *diag, integer *n, double *
 	a, integer *lda, integer *info)
 {
     /* System generated locals */

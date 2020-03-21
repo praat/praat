@@ -3,9 +3,9 @@
 
 /* Table of constant values */
 
-static doublereal c_b32 = 0.;
+static double c_b32 = 0.;
 
-doublereal dlamch_(const char *cmach)
+double dlamch_(const char *cmach)
 {
     /* Initialized data */
 
@@ -13,21 +13,21 @@ doublereal dlamch_(const char *cmach)
 
     /* System generated locals */
     integer i__1;
-    doublereal ret_val;
+    double ret_val;
 
     /* Local variables */
-    static doublereal t;
+    static double t;
     integer it;
-    static doublereal rnd, eps, base;
+    static double rnd, eps, base;
     integer beta;
-    static doublereal emin, prec, emax;
+    static double emin, prec, emax;
     integer imin, imax;
     logical lrnd;
-    static doublereal rmin, rmax;
-    doublereal rmach;
+    static double rmin, rmax;
+    double rmach;
  
-    doublereal small;
-    static doublereal sfmin;
+    double small;
+    static double sfmin;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -88,8 +88,8 @@ doublereal dlamch_(const char *cmach)
 
     if (first) {
 	dlamc2_(&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
-	base = (doublereal) beta;
-	t = (doublereal) it;
+	base = (double) beta;
+	t = (double) it;
 	if (lrnd) {
 	    rnd = 1.;
 	    i__1 = 1 - it;
@@ -100,8 +100,8 @@ doublereal dlamch_(const char *cmach)
 	    eps = pow_di(&base, &i__1);
 	}
 	prec = eps * base;
-	emin = (doublereal) imin;
-	emax = (doublereal) imax;
+	emin = (double) imin;
+	emax = (double) imax;
 	sfmin = rmin;
 	small = 1. / rmax;
 	if (small >= sfmin) {
@@ -154,15 +154,15 @@ doublereal dlamch_(const char *cmach)
     static logical first = TRUE_;
 
     /* System generated locals */
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal a, b, c__, f, t1, t2;
+    double a, b, c__, f, t1, t2;
     static integer lt;
-    doublereal one, qtr;
+    double one, qtr;
     static logical lrnd;
     static integer lbeta;
-    doublereal savec;
+    double savec;
  
     static logical lieee1;
 
@@ -284,7 +284,7 @@ L20:
 /*        Now determine whether rounding or chopping occurs,  by adding a */
 /*        bit  less  than  beta/2  and a  bit  more  than  beta/2  to  a. */
 
-	b = (doublereal) lbeta;
+	b = (double) lbeta;
 	d__1 = b / 2;
 	d__2 = -b / 100;
 	f = dlamc3_(&d__1, &d__2);
@@ -354,8 +354,8 @@ L30:
 /* *********************************************************************** */
 
 /* Subroutine */ int dlamc2_(integer *beta, integer *t, logical *rnd, 
-	doublereal *eps, integer *emin, doublereal *rmin, integer *emax, 
-	doublereal *rmax)
+	double *eps, integer *emin, double *rmin, integer *emax, 
+	double *rmax)
 {
     /* Initialized data */
 
@@ -364,27 +364,27 @@ L30:
 
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3, d__4, d__5;
+    double d__1, d__2, d__3, d__4, d__5;
 
     /* Local variables */
-    doublereal a, b, c__;
+    double a, b, c__;
     integer i__;
     static integer lt;
-    doublereal one, two;
+    double one, two;
     logical ieee;
-    doublereal half;
+    double half;
     logical lrnd;
-    static doublereal leps;
-    doublereal zero;
+    static double leps;
+    double zero;
     static integer lbeta;
-    doublereal rbase;
+    double rbase;
     static integer lemin, lemax;
     integer gnmin;
-    doublereal small;
+    double small;
     integer gpmin;
-    doublereal third;
-    static doublereal lrmin, lrmax;
-    doublereal sixth;
+    double third;
+    static double lrmin, lrmax;
+    double sixth;
     logical lieee1;
     integer ngnmin, ngpmin;
 
@@ -479,7 +479,7 @@ L30:
 
 /*        Start to find EPS. */
 
-	b = (doublereal) lbeta;
+	b = (double) lbeta;
 	i__1 = -lt;
 	a = pow_di(&b, &i__1);
 	leps = a;
@@ -646,10 +646,10 @@ L10:
 
 /* *********************************************************************** */
 
-doublereal dlamc3_(doublereal *a, doublereal *b)
+double dlamc3_(double *a, double *b)
 {
     /* System generated locals */
-    doublereal ret_val;
+    double ret_val;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -688,16 +688,16 @@ doublereal dlamc3_(doublereal *a, doublereal *b)
 
 /* *********************************************************************** */
 
-/* Subroutine */ int dlamc4_(integer *emin, doublereal *start, integer *base)
+/* Subroutine */ int dlamc4_(integer *emin, double *start, integer *base)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal a;
+    double a;
     integer i__;
-    doublereal b1, b2, c1, c2, d1, d2, one, zero, rbase;
+    double b1, b2, c1, c2, d1, d2, one, zero, rbase;
  
 
 
@@ -786,20 +786,20 @@ L10:
 /* *********************************************************************** */
 
 /* Subroutine */ int dlamc5_(integer *beta, integer *p, integer *emin, 
-	logical *ieee, integer *emax, doublereal *rmax)
+	logical *ieee, integer *emax, double *rmax)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__;
-    doublereal y, z__;
+    double y, z__;
     integer try__, lexp;
-    doublereal oldy;
+    double oldy;
     integer uexp, nbits;
  
-    doublereal recbas;
+    double recbas;
     integer exbits, expsum;
 
 

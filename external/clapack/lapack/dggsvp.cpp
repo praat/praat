@@ -3,20 +3,20 @@
 
 /* Table of constant values */
 
-static doublereal c_b12 = 0.;
-static doublereal c_b22 = 1.;
+static double c_b12 = 0.;
+static double c_b22 = 1.;
 
 /* Subroutine */ int dggsvp_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
-	integer *p, integer *n, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *tola, doublereal *tolb, integer *k, integer 
-	*l, doublereal *u, integer *ldu, doublereal *v, integer *ldv, 
-	doublereal *q, integer *ldq, integer *iwork, doublereal *tau, 
-	doublereal *work, integer *info)
+	integer *p, integer *n, double *a, integer *lda, double *b, 
+	integer *ldb, double *tola, double *tolb, integer *k, integer 
+	*l, double *u, integer *ldu, double *v, integer *ldv, 
+	double *q, integer *ldq, integer *iwork, double *tau, 
+	double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, 
 	    u_offset, v_dim1, v_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j;

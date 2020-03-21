@@ -11,7 +11,7 @@
 //typedef char *address;
 //typedef short int shortint;
 typedef float real;
-typedef double doublereal;
+//typedef double doublereal;
 //typedef struct { real r, i; } complex;
 //typedef struct { double r, i; } doublecomplex;
 typedef integer logical;
@@ -43,8 +43,8 @@ typedef integer ftnlen;
 //#define dabs(x) (double)abs(x)
 //#define min(a,b) (std::min(a,b))
 //#define max(a,b) (std::max(a,b))
-//#define dmin(a,b) (doublereal)min(a,b)
-//#define dmax(a,b) (doublereal)max(a,b)
+//#define dmin(a,b) (double)min(a,b)
+//#define dmax(a,b) (double)max(a,b)
 //#define bit_test(a,b)	((a) >> (b) & 1)
 //#define bit_clear(a,b)	((a) & ~((uinteger)1 << (b)))
 //#define bit_set(a,b)	((a) |  ((uinteger)1 << (b)))

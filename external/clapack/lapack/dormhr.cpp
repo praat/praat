@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dormhr_(char *side, char *trans, integer *m, integer *n, 
-	integer *ilo, integer *ihi, doublereal *a, integer *lda, doublereal *
-	tau, doublereal *c__, integer *ldc, doublereal *work, integer *lwork, 
+	integer *ilo, integer *ihi, double *a, integer *lda, double *
+	tau, double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -194,7 +194,7 @@ static integer c__2 = 2;
 	    nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &nh, &nh, &c_n1);
 	}
 	lwkopt = std::max(1_integer,nw) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -227,7 +227,7 @@ static integer c__2 = 2;
     dormqr_(side, trans, &mi, &ni, &nh, &a[*ilo + 1 + *ilo * a_dim1], lda, &
 	    tau[*ilo], &c__[i1 + i2 * c_dim1], ldc, &work[1], lwork, &iinfo);
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORMHR */

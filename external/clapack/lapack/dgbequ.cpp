@@ -2,18 +2,18 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dgbequ_(integer *m, integer *n, integer *kl, integer *ku, 
-	 doublereal *ab, integer *ldab, doublereal *r__, doublereal *c__, 
-	doublereal *rowcnd, doublereal *colcnd, doublereal *amax, integer *
+	 double *ab, integer *ldab, double *r__, double *c__, 
+	double *rowcnd, double *colcnd, double *amax, integer *
 	info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, kd;
-    doublereal rcmin, rcmax;
-    doublereal bignum, smlnum;
+    double rcmin, rcmax;
+    double bignum, smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

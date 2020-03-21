@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dtbtrs_(char *uplo, char *trans, char *diag, integer *n, 
-	integer *kd, integer *nrhs, doublereal *ab, integer *ldab, doublereal 
+	integer *kd, integer *nrhs, double *ab, integer *ldab, double 
 	*b, integer *ldb, integer *info)
 {
     /* System generated locals */

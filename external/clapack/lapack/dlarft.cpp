@@ -4,19 +4,19 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = 0.;
+static double c_b8 = 0.;
 
 /* Subroutine */ int dlarft_(const char *direct, const char *storev, integer *n, integer *
-	k, doublereal *v, integer *ldv, doublereal *tau, doublereal *t, 
+	k, double *v, integer *ldv, double *tau, double *t, 
 	integer *ldt)
 {
     /* System generated locals */
     integer t_dim1, t_offset, v_dim1, v_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j;
-    doublereal vii;
+    double vii;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

@@ -6,9 +6,9 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dspgvx_(integer *itype, char *jobz, char *range, char *
-	uplo, integer *n, doublereal *ap, doublereal *bp, doublereal *vl, 
-	doublereal *vu, integer *il, integer *iu, doublereal *abstol, integer 
-	*m, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	uplo, integer *n, double *ap, double *bp, double *vl, 
+	double *vu, integer *il, integer *iu, double *abstol, integer 
+	*m, double *w, double *z__, integer *ldz, double *work, 
 	integer *iwork, integer *ifail, integer *info)
 {
     /* System generated locals */

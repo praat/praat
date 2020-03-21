@@ -1,17 +1,17 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaqsp_(char *uplo, integer *n, doublereal *ap, 
-	doublereal *s, doublereal *scond, doublereal *amax, char *equed)
+/* Subroutine */ int dlaqsp_(char *uplo, integer *n, double *ap, 
+	double *s, double *scond, double *amax, char *equed)
 {
     /* System generated locals */
     integer i__1, i__2;
 
     /* Local variables */
     integer i__, j, jc;
-    doublereal cj, large;
+    double cj, large;
  
-    doublereal small;
+    double small;
  
 
 

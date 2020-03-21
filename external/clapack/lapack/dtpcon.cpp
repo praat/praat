@@ -6,24 +6,24 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dtpcon_(const char *norm, const char *uplo, const char *diag, integer *n, 
-	doublereal *ap, doublereal *rcond, doublereal *work, integer *iwork, 
+	double *ap, double *rcond, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer ix, kase, kase1;
-    doublereal scale;
+    double scale;
     integer isave[3];
-    doublereal anorm;
+    double anorm;
     logical upper;
-    doublereal xnorm;
-    doublereal ainvnm;
+    double xnorm;
+    double ainvnm;
     logical onenrm;
     char normin[1];
-    doublereal smlnum;
+    double smlnum;
     logical nounit;
 
 
@@ -142,7 +142,7 @@ static integer c__1 = 1;
     }
 
     *rcond = 0.;
-    smlnum = dlamch_("Safe minimum") * (doublereal) std::max(1_integer,*n);
+    smlnum = dlamch_("Safe minimum") * (double) std::max(1_integer,*n);
 
 /*     Compute the norm of the triangular matrix A. */
 

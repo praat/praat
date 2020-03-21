@@ -5,26 +5,26 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dsptrf_(char *uplo, integer *n, doublereal *ap, integer *
+/* Subroutine */ int dsptrf_(char *uplo, integer *n, double *ap, integer *
 	ipiv, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal t, r1, d11, d12, d21, d22;
+    double t, r1, d11, d12, d21, d22;
     integer kc, kk, kp;
-    doublereal wk;
+    double wk;
     integer kx, knc, kpc, npp;
-    doublereal wkm1, wkp1;
+    double wkm1, wkp1;
     integer imax, jmax;
-    doublereal alpha;
+    double alpha;
     integer kstep;
     logical upper;
-    doublereal absakk;
-    doublereal colmax, rowmax;
+    double absakk;
+    double colmax, rowmax;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

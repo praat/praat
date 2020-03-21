@@ -6,9 +6,9 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dlasdq_(const char *uplo, integer *sqre, integer *n, integer *
-	ncvt, integer *nru, integer *ncc, doublereal *d__, doublereal *e, 
-	doublereal *vt, integer *ldvt, doublereal *u, integer *ldu, 
-	doublereal *c__, integer *ldc, doublereal *work, integer *info)
+	ncvt, integer *nru, integer *ncc, double *d__, double *e, 
+	double *vt, integer *ldvt, double *u, integer *ldu, 
+	double *c__, integer *ldc, double *work, integer *info)
 {
     /* System generated locals */
     integer c_dim1, c_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1, 
@@ -16,9 +16,9 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__, j;
-    doublereal r__, cs, sn;
+    double r__, cs, sn;
     integer np1, isub;
-    doublereal smin;
+    double smin;
     integer sqre1;
     integer iuplo;
     logical rotate;

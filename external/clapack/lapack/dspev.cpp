@@ -5,29 +5,29 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspev_(char *jobz, char *uplo, integer *n, doublereal *
-	ap, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dspev_(char *jobz, char *uplo, integer *n, double *
+	ap, double *w, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal eps;
+    double eps;
     integer inde;
-    doublereal anrm;
+    double anrm;
     integer imax;
-    doublereal rmin, rmax;
-    doublereal sigma;
+    double rmin, rmax;
+    double sigma;
     integer iinfo;
     logical wantz;
     integer iscale;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer indtau;
     integer indwrk;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

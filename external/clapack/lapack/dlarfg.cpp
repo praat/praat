@@ -1,18 +1,18 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlarfg_(integer *n, doublereal *alpha, doublereal *x, 
-	integer *incx, doublereal *tau)
+/* Subroutine */ int dlarfg_(integer *n, double *alpha, double *x, 
+	integer *incx, double *tau)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j, knt;
-    doublereal beta;
-    doublereal xnorm;
-    doublereal safmin, rsafmn;
+    double beta;
+    double xnorm;
+    double safmin, rsafmn;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

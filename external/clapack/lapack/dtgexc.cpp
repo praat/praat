@@ -7,9 +7,9 @@ static integer c__1 = 1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dtgexc_(logical *wantq, logical *wantz, integer *n, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, doublereal *
-	q, integer *ldq, doublereal *z__, integer *ldz, integer *ifst, 
-	integer *ilst, doublereal *work, integer *lwork, integer *info)
+	double *a, integer *lda, double *b, integer *ldb, double *
+	q, integer *ldq, double *z__, integer *ldz, integer *ifst, 
+	integer *ilst, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, z_dim1, 
@@ -200,7 +200,7 @@ static integer c__2 = 2;
 	} else {
 	    lwmin = (*n << 2) + 16;
 	}
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 
 	if (*lwork < lwmin && ! lquery) {
 	    *info = -15;
@@ -490,7 +490,7 @@ L20:
 	}
     }
     *ilst = here;
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     return 0;
 
 /*     End of DTGEXC */

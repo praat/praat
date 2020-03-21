@@ -1,16 +1,16 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dppequ_(char *uplo, integer *n, doublereal *ap, 
-	doublereal *s, doublereal *scond, doublereal *amax, integer *info)
+/* Subroutine */ int dppequ_(char *uplo, integer *n, double *ap, 
+	double *s, double *scond, double *amax, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, jj;
-    doublereal smin;
+    double smin;
  
     logical upper;
  

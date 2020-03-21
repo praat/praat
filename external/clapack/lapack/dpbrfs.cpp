@@ -4,32 +4,32 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b12 = -1.;
-static doublereal c_b14 = 1.;
+static double c_b12 = -1.;
+static double c_b14 = 1.;
 
 /* Subroutine */ int dpbrfs_(char *uplo, integer *n, integer *kd, integer *
-	nrhs, doublereal *ab, integer *ldab, doublereal *afb, integer *ldafb, 
-	doublereal *b, integer *ldb, doublereal *x, integer *ldx, doublereal *
-	ferr, doublereal *berr, doublereal *work, integer *iwork, integer *
+	nrhs, double *ab, integer *ldab, double *afb, integer *ldafb, 
+	double *b, integer *ldb, double *x, integer *ldx, double *
+	ferr, double *berr, double *work, integer *iwork, integer *
 	info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, afb_dim1, afb_offset, b_dim1, b_offset, 
 	    x_dim1, x_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k, l;
-    doublereal s, xk;
+    double s, xk;
     integer nz;
-    doublereal eps;
+    double eps;
     integer kase;
-    doublereal safe1, safe2;
+    double safe1, safe2;
     integer isave[3];
     integer count;
     logical upper;
-    doublereal safmin;
-    doublereal lstres;
+    double safmin;
+    double lstres;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

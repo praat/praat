@@ -2,8 +2,8 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dsyr2k_(const char *uplo, const char *trans, integer *n, integer *k, 
-	doublereal *alpha, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *beta, doublereal *c__, integer *ldc)
+	double *alpha, double *a, integer *lda, double *b, 
+	integer *ldb, double *beta, double *c__, integer *ldc)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset, i__1, i__2, 
@@ -11,7 +11,7 @@
 
     /* Local variables */
     integer i__, j, l, info;
-    doublereal temp1, temp2;
+    double temp1, temp2;
  
     integer nrowa;
     logical upper;

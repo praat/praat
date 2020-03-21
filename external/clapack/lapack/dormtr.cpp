@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dormtr_(const char *side, const char *uplo, const char *trans, integer *m, 
-	integer *n, doublereal *a, integer *lda, doublereal *tau, doublereal *
-	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
+	integer *n, double *a, integer *lda, double *tau, double *
+	c__, integer *ldc, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     char * a__1[2];
@@ -214,7 +214,7 @@ static integer c__2 = 2;
 	    }
 	}
 	lwkopt = std::max(1_integer,nw) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -262,7 +262,7 @@ static integer c__2 = 2;
 	dormqr_(side, trans, &mi, &ni, &i__2, &a[a_dim1 + 2], lda, &tau[1], &
 		c__[i1 + i2 * c_dim1], ldc, &work[1], lwork, &iinfo);
     }
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORMTR */

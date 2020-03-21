@@ -1,18 +1,18 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlasd5_(integer *i__, doublereal *d__, doublereal *z__, 
-	doublereal *delta, doublereal *rho, doublereal *dsigma, doublereal *
+/* Subroutine */ int dlasd5_(integer *i__, double *d__, double *z__, 
+	double *delta, double *rho, double *dsigma, double *
 	work)
 {
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
-    doublereal b, c__, w, del, tau, delsq;
+    double b, c__, w, del, tau, delsq;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

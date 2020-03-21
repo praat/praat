@@ -1,10 +1,10 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dladiv_(doublereal *a, doublereal *b, doublereal *c__, 
-	doublereal *d__, doublereal *p, doublereal *q)
+/* Subroutine */ int dladiv_(double *a, double *b, double *c__, 
+	double *d__, double *p, double *q)
 {
-    doublereal e, f;
+    double e, f;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

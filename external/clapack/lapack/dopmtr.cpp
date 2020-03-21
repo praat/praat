@@ -6,15 +6,15 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dopmtr_(const char *side, const char *uplo, const char *trans, integer *m, 
-	integer *n, doublereal *ap, doublereal *tau, doublereal *c__, integer 
-	*ldc, doublereal *work, integer *info)
+	integer *n, double *ap, double *tau, double *c__, integer 
+	*ldc, double *work, integer *info)
 {
     /* System generated locals */
     integer c_dim1, c_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, i1, i2, i3, ic, jc, ii, mi, ni, nq;
-    doublereal aii;
+    double aii;
     logical left;
     logical upper;
     logical notran, forwrd;

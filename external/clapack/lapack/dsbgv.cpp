@@ -2,8 +2,8 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dsbgv_(char *jobz, char *uplo, integer *n, integer *ka, 
-	integer *kb, doublereal *ab, integer *ldab, doublereal *bb, integer *
-	ldbb, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	integer *kb, double *ab, integer *ldab, double *bb, integer *
+	ldbb, double *w, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
     /* System generated locals */

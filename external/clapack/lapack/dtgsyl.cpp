@@ -6,16 +6,16 @@
 static integer c__2 = 2;
 static integer c_n1 = -1;
 static integer c__5 = 5;
-static doublereal c_b14 = 0.;
+static double c_b14 = 0.;
 static integer c__1 = 1;
-static doublereal c_b51 = -1.;
-static doublereal c_b52 = 1.;
+static double c_b51 = -1.;
+static double c_b52 = 1.;
 
 /* Subroutine */ int dtgsyl_(const char *trans, integer *ijob, integer *m, integer *
-	n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *c__, integer *ldc, doublereal *d__, integer *ldd, 
-	doublereal *e, integer *lde, doublereal *f, integer *ldf, doublereal *
-	scale, doublereal *dif, doublereal *work, integer *lwork, integer *
+	n, double *a, integer *lda, double *b, integer *ldb, 
+	double *c__, integer *ldc, double *d__, integer *ldd, 
+	double *e, integer *lde, double *f, integer *ldf, double *
+	scale, double *dif, double *work, integer *lwork, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
@@ -25,11 +25,11 @@ static doublereal c_b52 = 1.;
 
     /* Local variables */
     integer i__, j, k, p, q, ie, je, mb, nb, is, js, pq;
-    doublereal dsum;
+    double dsum;
     integer ppqq;
     integer ifunc, linfo, lwmin;
-    doublereal scale2;
-    doublereal dscale, scaloc;
+    double scale2;
+    double dscale, scaloc;
     integer iround;
     logical notran;
     integer isolve;
@@ -301,7 +301,7 @@ static doublereal c_b52 = 1.;
 	} else {
 	    lwmin = 1;
 	}
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 
 	if (*lwork < lwmin && ! lquery) {
 	    *info = -20;
@@ -362,10 +362,10 @@ static doublereal c_b52 = 1.;
 		    &pq, info);
 	    if (dscale != 0.) {
 		if (*ijob == 1 || *ijob == 3) {
-		    *dif = sqrt((doublereal) ((*m << 1) * *n)) / (dscale * 
+		    *dif = sqrt((double) ((*m << 1) * *n)) / (dscale * 
 			    sqrt(dsum));
 		} else {
-		    *dif = sqrt((doublereal) pq) / (dscale * sqrt(dsum));
+		    *dif = sqrt((double) pq) / (dscale * sqrt(dsum));
 		}
 	    }
 
@@ -539,10 +539,10 @@ L70:
 	    }
 	    if (dscale != 0.) {
 		if (*ijob == 1 || *ijob == 3) {
-		    *dif = sqrt((doublereal) ((*m << 1) * *n)) / (dscale * 
+		    *dif = sqrt((double) ((*m << 1) * *n)) / (dscale * 
 			    sqrt(dsum));
 		} else {
-		    *dif = sqrt((doublereal) pq) / (dscale * sqrt(dsum));
+		    *dif = sqrt((double) pq) / (dscale * sqrt(dsum));
 		}
 	    }
 	    if (isolve == 2 && iround == 1) {
@@ -651,7 +651,7 @@ L70:
 
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
 
     return 0;
 

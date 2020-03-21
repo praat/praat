@@ -1,21 +1,21 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlargv_(integer *n, doublereal *x, integer *incx, 
-	doublereal *y, integer *incy, doublereal *c__, integer *incc)
+/* Subroutine */ int dlargv_(integer *n, double *x, integer *incx, 
+	double *y, integer *incy, double *c__, integer *incc)
 {
     /* System generated locals */
     integer i__1;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
-    doublereal f, g;
+    double f, g;
     integer i__;
-    doublereal t;
+    double t;
     integer ic, ix, iy;
-    doublereal tt;
+    double tt;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

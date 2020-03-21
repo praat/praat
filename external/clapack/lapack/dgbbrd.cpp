@@ -3,14 +3,14 @@
 
 /* Table of constant values */
 
-static doublereal c_b8 = 0.;
-static doublereal c_b9 = 1.;
+static double c_b8 = 0.;
+static double c_b9 = 1.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dgbbrd_(char *vect, integer *m, integer *n, integer *ncc, 
-	 integer *kl, integer *ku, doublereal *ab, integer *ldab, doublereal *
-	d__, doublereal *e, doublereal *q, integer *ldq, doublereal *pt, 
-	integer *ldpt, doublereal *c__, integer *ldc, doublereal *work, 
+	 integer *kl, integer *ku, double *ab, integer *ldab, double *
+	d__, double *e, double *q, integer *ldq, double *pt, 
+	integer *ldpt, double *c__, integer *ldc, double *work, 
 	integer *info)
 {
     /* System generated locals */
@@ -19,9 +19,9 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__, j, l, j1, j2, kb;
-    doublereal ra, rb, rc;
+    double ra, rb, rc;
     integer kk, ml, mn, nr, mu;
-    doublereal rs;
+    double rs;
     integer kb1, ml0, mu0, klm, kun, nrt, klu1, inca;
     logical wantb, wantc;
     integer minmn;

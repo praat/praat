@@ -4,37 +4,37 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b6 = 0.;
+static double c_b6 = 0.;
 static integer c__0 = 0;
-static doublereal c_b11 = 1.;
+static double c_b11 = 1.;
 
 /* Subroutine */ int dlalsd_(const char *uplo, integer *smlsiz, integer *n, integer 
-	*nrhs, doublereal *d__, doublereal *e, doublereal *b, integer *ldb, 
-	doublereal *rcond, integer *rank, doublereal *work, integer *iwork, 
+	*nrhs, double *d__, double *e, double *b, integer *ldb, 
+	double *rcond, integer *rank, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer c__, i__, j, k;
-    doublereal r__;
+    double r__;
     integer s, u, z__;
-    doublereal cs;
+    double cs;
     integer bx;
-    doublereal sn;
+    double sn;
     integer st, vt, nm1, st1;
-    doublereal eps;
+    double eps;
     integer iwk;
-    doublereal tol;
+    double tol;
     integer difl, difr;
-    doublereal rcnd;
+    double rcnd;
     integer perm, nsub;
      integer nlvl, sqre, bxst;
     integer poles, sizei, nsize, nwork, icmpq1, icmpq2;
     integer givcol;
-    doublereal orgnrm;
+    double orgnrm;
     integer givnum, givptr, smlszp;
 
 
@@ -293,7 +293,7 @@ static doublereal c_b11 = 1.;
 
 /*     Book-keeping and setting up some constants. */
 
-    nlvl = (integer) (log((doublereal) (*n) / (doublereal) (*smlsiz + 1)) / 
+    nlvl = (integer) (log((double) (*n) / (double) (*smlsiz + 1)) / 
 	    log(2.)) + 1;
 
     smlszp = *smlsiz + 1;

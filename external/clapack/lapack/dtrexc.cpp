@@ -6,9 +6,9 @@
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dtrexc_(const char *compq, integer *n, doublereal *t, integer *
-	ldt, doublereal *q, integer *ldq, integer *ifst, integer *ilst, 
-	doublereal *work, integer *info)
+/* Subroutine */ int dtrexc_(const char *compq, integer *n, double *t, integer *
+	ldt, double *q, integer *ldq, integer *ifst, integer *ilst, 
+	double *work, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, t_dim1, t_offset, i__1;

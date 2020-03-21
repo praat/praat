@@ -3,26 +3,26 @@
 
 /* Table of constant values */
 
-static doublereal c_b3 = -1.;
+static double c_b3 = -1.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dlaed8_(integer *icompq, integer *k, integer *n, integer 
-	*qsiz, doublereal *d__, doublereal *q, integer *ldq, integer *indxq, 
-	doublereal *rho, integer *cutpnt, doublereal *z__, doublereal *dlamda, 
-	 doublereal *q2, integer *ldq2, doublereal *w, integer *perm, integer 
-	*givptr, integer *givcol, doublereal *givnum, integer *indxp, integer 
+	*qsiz, double *d__, double *q, integer *ldq, integer *indxq, 
+	double *rho, integer *cutpnt, double *z__, double *dlamda, 
+	 double *q2, integer *ldq2, double *w, integer *perm, integer 
+	*givptr, integer *givcol, double *givnum, integer *indxp, integer 
 	*indx, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, q2_dim1, q2_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal c__;
+    double c__;
     integer i__, j;
-    doublereal s, t;
+    double s, t;
     integer k2, n1, n2, jp, n1p1;
-    doublereal eps, tau, tol;
+    double eps, tau, tol;
     integer jlam, imax, jmax;
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -4,18 +4,18 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b16 = -1.;
+static double c_b16 = -1.;
 
-/* Subroutine */ int dpptrf_(char *uplo, integer *n, doublereal *ap, integer *
+/* Subroutine */ int dpptrf_(char *uplo, integer *n, double *ap, integer *
 	info)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j, jc, jj;
-    doublereal ajj;
+    double ajj;
     logical upper;
 
 

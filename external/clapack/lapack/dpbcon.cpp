@@ -5,24 +5,24 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dpbcon_(char *uplo, integer *n, integer *kd, doublereal *
-	ab, integer *ldab, doublereal *anorm, doublereal *rcond, doublereal *
+/* Subroutine */ int dpbcon_(char *uplo, integer *n, integer *kd, double *
+	ab, integer *ldab, double *anorm, double *rcond, double *
 	work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer ix, kase;
-    doublereal scale;
+    double scale;
     integer isave[3];
     logical upper;
-    doublereal scalel;
-    doublereal scaleu;
-    doublereal ainvnm;
+    double scalel;
+    double scaleu;
+    double ainvnm;
     char normin[1];
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

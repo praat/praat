@@ -4,22 +4,22 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b5 = 1.;
+static double c_b5 = 1.;
 
-/* Subroutine */ int dlaic1_(integer *job, integer *j, doublereal *x, 
-	doublereal *sest, doublereal *w, doublereal *gamma, doublereal *
-	sestpr, doublereal *s, doublereal *c__)
+/* Subroutine */ int dlaic1_(integer *job, integer *j, double *x, 
+	double *sest, double *w, double *gamma, double *
+	sestpr, double *s, double *c__)
 {
     /* System generated locals */
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Builtin functions
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *); */
+    double sqrt(double), d_sign(double *, double *); */
 
     /* Local variables */
-    doublereal b, t, s1, s2, eps, tmp;
-    doublereal sine, test, zeta1, zeta2, alpha, norma;
-    doublereal absgam, absalp, cosine, absest;
+    double b, t, s1, s2, eps, tmp;
+    double sine, test, zeta1, zeta2, alpha, norma;
+    double absgam, absalp, cosine, absest;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

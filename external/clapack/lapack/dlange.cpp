@@ -5,20 +5,20 @@
 
 static integer c__1 = 1;
 
-doublereal dlange_(const char *norm, integer *m, integer *n, doublereal *a, integer 
-	*lda, doublereal *work)
+double dlange_(const char *norm, integer *m, integer *n, double *a, integer 
+	*lda, double *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal ret_val, d__1, d__2, d__3;
+    double ret_val, d__1, d__2, d__3;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__, j;
-    doublereal sum, scale;
-    doublereal value;
+    double sum, scale;
+    double value;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlasrt_(const char *id, integer *n, doublereal *d__, integer *
+/* Subroutine */ int dlasrt_(const char *id, integer *n, double *d__, integer *
 	info)
 {
     /* System generated locals */
@@ -9,13 +9,13 @@
 
     /* Local variables */
     integer i__, j;
-    doublereal d1, d2, d3;
+    double d1, d2, d3;
     integer dir;
-    doublereal tmp;
+    double tmp;
     integer endd;
  
     integer stack[64]	/* was [2][32] */;
-    doublereal dmnmx;
+    double dmnmx;
     integer start;
  
     integer stkpnt;

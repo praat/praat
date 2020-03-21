@@ -3,10 +3,10 @@
 
 /* Table of constant values */
 
-static doublereal c_b9 = 1.;
+static double c_b9 = 1.;
 
 /* Subroutine */ int dpotrs_(char *uplo, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, integer *
+	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {
     /* System generated locals */

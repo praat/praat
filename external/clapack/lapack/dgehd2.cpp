@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dgehd2_(integer *n, integer *ilo, integer *ihi, 
-	doublereal *a, integer *lda, doublereal *tau, doublereal *work, 
+	double *a, integer *lda, double *tau, double *work, 
 	integer *info)
 {
     /* System generated locals */
@@ -14,7 +14,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__;
-    doublereal aii;
+    double aii;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

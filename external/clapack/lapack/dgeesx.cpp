@@ -8,9 +8,9 @@ static integer c__0 = 0;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dgeesx_(char *jobvs, char *sort, L_fp select, char *
-	sense, integer *n, doublereal *a, integer *lda, integer *sdim, 
-	doublereal *wr, doublereal *wi, doublereal *vs, integer *ldvs, 
-	doublereal *rconde, doublereal *rcondv, doublereal *work, integer *
+	sense, integer *n, double *a, integer *lda, integer *sdim, 
+	double *wr, double *wi, double *vs, integer *ldvs, 
+	double *rconde, double *rcondv, double *work, integer *
 	lwork, integer *iwork, integer *liwork, logical *bwork, integer *info)
 {
     /* System generated locals */
@@ -18,20 +18,20 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer i__, i1, i2, ip, ihi, ilo;
-    doublereal dum[1], eps;
+    double dum[1], eps;
     integer ibal;
-    doublereal anrm;
+    double anrm;
     integer ierr, itau, iwrk, lwrk, inxt, icond, ieval;
     logical cursl;
     integer liwrk;
     logical lst2sl, scalea;
-    doublereal cscale;
-    doublereal bignum;
+    double cscale;
+    double bignum;
     logical wantsb;
     logical wantse, lastsl;
     integer minwrk, maxwrk;
     logical wantsn;
-    doublereal smlnum;
+    double smlnum;
     integer hswork;
     logical wantst, lquery, wantsv, wantvs;
 
@@ -315,7 +315,7 @@ static integer c_n1 = -1;
 	    }
 	}
 	iwork[1] = liwrk;
-	work[1] = (doublereal) lwrk;
+	work[1] = (double) lwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -16;
@@ -588,7 +588,7 @@ L20:
 	}
     }
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     if (wantsv || wantsb) {
 /* Computing MAX */
 	i__1 = 1, i__2 = *sdim * (*n - *sdim);

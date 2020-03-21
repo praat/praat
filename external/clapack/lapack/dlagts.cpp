@@ -1,20 +1,20 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlagts_(integer *job, integer *n, doublereal *a, 
-	doublereal *b, doublereal *c__, doublereal *d__, integer *in, 
-	doublereal *y, doublereal *tol, integer *info)
+/* Subroutine */ int dlagts_(integer *job, integer *n, double *a, 
+	double *b, double *c__, double *d__, integer *in, 
+	double *y, double *tol, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3, d__4, d__5;
+    double d__1, d__2, d__3, d__4, d__5;
 
     /* Local variables */
     integer k;
-    doublereal ak, eps, temp, pert, absak, sfmin;
+    double ak, eps, temp, pert, absak, sfmin;
  
  
-    doublereal bignum;
+    double bignum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

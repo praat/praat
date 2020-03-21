@@ -3,16 +3,16 @@
 
 /* Table of constant values */
 
-static doublereal c_b7 = 1.;
-static doublereal c_b8 = 0.;
+static double c_b7 = 1.;
+static double c_b8 = 0.;
 static integer c__2 = 2;
 
 /* Subroutine */ int dlalsa_(integer *icompq, integer *smlsiz, integer *n, 
-	integer *nrhs, doublereal *b, integer *ldb, doublereal *bx, integer *
-	ldbx, doublereal *u, integer *ldu, doublereal *vt, integer *k, 
-	doublereal *difl, doublereal *difr, doublereal *z__, doublereal *
+	integer *nrhs, double *b, integer *ldb, double *bx, integer *
+	ldbx, double *u, integer *ldu, double *vt, integer *k, 
+	double *difl, double *difr, double *z__, double *
 	poles, integer *givptr, integer *givcol, integer *ldgcol, integer *
-	perm, doublereal *givnum, doublereal *c__, doublereal *s, doublereal *
+	perm, double *givnum, double *c__, double *s, double *
 	work, integer *iwork, integer *info)
 {
     /* System generated locals */

@@ -3,38 +3,38 @@
 
 /* Table of constant values */
 
-static doublereal c_b9 = 0.;
-static doublereal c_b10 = 1.;
+static double c_b9 = 0.;
+static double c_b10 = 1.;
 static integer c__0 = 0;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dsteqr_(const char *compz, integer *n, doublereal *d__, 
-	doublereal *e, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dsteqr_(const char *compz, integer *n, double *d__, 
+	double *e, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal b, c__, f, g;
+    double b, c__, f, g;
     integer i__, j, k, l, m;
-    doublereal p, r__, s;
+    double p, r__, s;
     integer l1, ii, mm, lm1, mm1, nm1;
-    doublereal rt1, rt2, eps;
+    double rt1, rt2, eps;
     integer lsv;
-    doublereal tst, eps2;
+    double tst, eps2;
     integer lend, jtot;
-    doublereal anorm;
+    double anorm;
     integer lendm1, lendp1;
     integer iscale;
-    doublereal safmin;
-    doublereal safmax;
+    double safmin;
+    double safmax;
     integer lendsv;
-    doublereal ssfmin;
+    double ssfmin;
     integer nmaxit, icompz;
-    doublereal ssfmax;
+    double ssfmax;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

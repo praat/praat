@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-logical dlaisnan_(doublereal *din1, doublereal *din2)
+logical dlaisnan_(double *din1, double *din2)
 {
     /* System generated locals */
     logical ret_val;

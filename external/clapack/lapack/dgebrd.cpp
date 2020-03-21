@@ -7,19 +7,19 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__3 = 3;
 static integer c__2 = 2;
-static doublereal c_b21 = -1.;
-static doublereal c_b22 = 1.;
+static double c_b21 = -1.;
+static double c_b22 = 1.;
 
-/* Subroutine */ int dgebrd_(integer *m, integer *n, doublereal *a, integer *
-	lda, doublereal *d__, doublereal *e, doublereal *tauq, doublereal *
-	taup, doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dgebrd_(integer *m, integer *n, double *a, integer *
+	lda, double *d__, double *e, double *tauq, double *
+	taup, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
     /* Local variables */
     integer i__, j, nb, nx;
-    doublereal ws;
+    double ws;
     integer nbmin, iinfo, minmn;
     integer ldwrkx, ldwrky, lwkopt;
     logical lquery;
@@ -186,7 +186,7 @@ static doublereal c_b22 = 1.;
     i__1 = 1, i__2 = ilaenv_(&c__1, "DGEBRD", " ", m, n, &c_n1, &c_n1);
     nb = std::max(i__1,i__2);
     lwkopt = (*m + *n) * nb;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     if (*m < 0) {
 	*info = -1;
@@ -217,7 +217,7 @@ static doublereal c_b22 = 1.;
 	return 0;
     }
 
-    ws = (doublereal) std::max(*m,*n);
+    ws = (double) std::max(*m,*n);
     ldwrkx = *m;
     ldwrky = *n;
 
@@ -232,8 +232,8 @@ static doublereal c_b22 = 1.;
 /*        Determine when to switch from blocked to unblocked code. */
 
 	if (nx < minmn) {
-	    ws = (doublereal) ((*m + *n) * nb);
-	    if ((doublereal) (*lwork) < ws) {
+	    ws = (double) ((*m + *n) * nb);
+	    if ((double) (*lwork) < ws) {
 
 /*              Not enough work space for the optimal NB, consider using */
 /*              a smaller block size. */

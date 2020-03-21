@@ -6,32 +6,32 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__0 = 0;
-static doublereal c_b17 = 1.;
+static double c_b17 = 1.;
 
-/* Subroutine */ int dsyevd_(char *jobz, char *uplo, integer *n, doublereal *
-	a, integer *lda, doublereal *w, doublereal *work, integer *lwork, 
+/* Subroutine */ int dsyevd_(char *jobz, char *uplo, integer *n, double *
+	a, integer *lda, double *w, double *work, integer *lwork, 
 	integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal eps;
+    double eps;
     integer inde;
-    doublereal anrm, rmin, rmax;
+    double anrm, rmin, rmax;
     integer lopt;
-    doublereal sigma;
+    double sigma;
     integer iinfo, lwmin, liopt;
     logical lower, wantz;
     integer indwk2, llwrk2;
     integer iscale;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer indtau;
     integer indwrk, liwmin;
     integer llwork;
-    doublereal smlnum;
+    double smlnum;
     logical lquery;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -207,7 +207,7 @@ static doublereal c_b17 = 1.;
 	    lopt = std::max(i__1,i__2);
 	    liopt = liwmin;
 	}
-	work[1] = (doublereal) lopt;
+	work[1] = (double) lopt;
 	iwork[1] = liopt;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -304,7 +304,7 @@ static doublereal c_b17 = 1.;
 	dscal_(n, &d__1, &w[1], &c__1);
     }
 
-    work[1] = (doublereal) lopt;
+    work[1] = (double) lopt;
     iwork[1] = liopt;
 
     return 0;

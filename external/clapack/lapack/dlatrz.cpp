@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlatrz_(integer *m, integer *n, integer *l, doublereal *
-	a, integer *lda, doublereal *tau, doublereal *work)
+/* Subroutine */ int dlatrz_(integer *m, integer *n, integer *l, double *
+	a, integer *lda, double *tau, double *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;

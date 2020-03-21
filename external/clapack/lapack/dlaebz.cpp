@@ -2,20 +2,20 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dlaebz_(integer *ijob, integer *nitmax, integer *n, 
-	integer *mmax, integer *minp, integer *nbmin, doublereal *abstol, 
-	doublereal *reltol, doublereal *pivmin, doublereal *d__, doublereal *
-	e, doublereal *e2, integer *nval, doublereal *ab, doublereal *c__, 
-	integer *mout, integer *nab, doublereal *work, integer *iwork, 
+	integer *mmax, integer *minp, integer *nbmin, double *abstol, 
+	double *reltol, double *pivmin, double *d__, double *
+	e, double *e2, integer *nval, double *ab, double *c__, 
+	integer *mout, integer *nab, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer nab_dim1, nab_offset, ab_dim1, ab_offset, i__1, i__2, i__3, i__4, 
 	    i__5, i__6;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer j, kf, ji, kl, jp, jit;
-    doublereal tmp1, tmp2;
+    double tmp1, tmp2;
     integer itmp1, itmp2, kfnew, klnew;
 
 

@@ -5,18 +5,18 @@
 
 static integer c__1 = 1;
 
-doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer *n, integer *k, 
-	 doublereal *ab, integer *ldab, doublereal *work)
+double dlantb_(const char *norm, const char *uplo, const char *diag, integer *n, integer *k, 
+	 double *ab, integer *ldab, double *work)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal ret_val, d__1, d__2, d__3;
+    double ret_val, d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, l;
-    doublereal sum, scale;
+    double sum, scale;
     logical udiag;
-    doublereal value;
+    double value;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -348,7 +348,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 	if (lsame_(uplo, "U")) {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) (*n);
+		sum = (double) (*n);
 		if (*k > 0) {
 		    i__1 = *n;
 		    for (j = 2; j <= i__1; ++j) {
@@ -380,7 +380,7 @@ doublereal dlantb_(const char *norm, const char *uplo, const char *diag, integer
 	} else {
 	    if (lsame_(diag, "U")) {
 		scale = 1.;
-		sum = (doublereal) (*n);
+		sum = (double) (*n);
 		if (*k > 0) {
 		    i__1 = *n - 1;
 		    for (j = 1; j <= i__1; ++j) {

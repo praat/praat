@@ -1,16 +1,16 @@
 #include "cblas.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dgemv_(const char *trans, integer *m, integer *n, doublereal *
-	alpha, doublereal *a, integer *lda, doublereal *x, integer *incx, 
-	doublereal *beta, doublereal *y, integer *incy)
+/* Subroutine */ int dgemv_(const char *trans, integer *m, integer *n, double *
+	alpha, double *a, integer *lda, double *x, integer *incx, 
+	double *beta, double *y, integer *incy)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j, ix, iy, jx, jy, kx, ky, info;
-    doublereal temp;
+    double temp;
     integer lenx, leny;
 
 /*     .. Scalar Arguments .. */

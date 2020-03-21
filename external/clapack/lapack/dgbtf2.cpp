@@ -4,14 +4,14 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b9 = -1.;
+static double c_b9 = -1.;
 
 /* Subroutine */ int dgbtf2_(integer *m, integer *n, integer *kl, integer *ku, 
-	 doublereal *ab, integer *ldab, integer *ipiv, integer *info)
+	 double *ab, integer *ldab, integer *ipiv, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, km, jp, ju, kv;

@@ -5,9 +5,9 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgtcon_(char *norm, integer *n, doublereal *dl, 
-	doublereal *d__, doublereal *du, doublereal *du2, integer *ipiv, 
-	doublereal *anorm, doublereal *rcond, doublereal *work, integer *
+/* Subroutine */ int dgtcon_(char *norm, integer *n, double *dl, 
+	double *d__, double *du, double *du2, integer *ipiv, 
+	double *anorm, double *rcond, double *work, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
@@ -16,7 +16,7 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, kase, kase1;
     integer isave[3];
-    doublereal ainvnm;
+    double ainvnm;
     logical onenrm;
 
 /*  -- LAPACK routine (version 3.1) -- */

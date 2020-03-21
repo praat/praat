@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dtrti2_(const char *uplo, const char *diag, integer *n, doublereal *
+/* Subroutine */ int dtrti2_(const char *uplo, const char *diag, integer *n, double *
 	a, integer *lda, integer *info)
 {
     /* System generated locals */
@@ -13,7 +13,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j;
-    doublereal ajj;
+    double ajj;
     logical upper;
     logical nounit;
 

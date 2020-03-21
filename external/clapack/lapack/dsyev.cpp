@@ -6,33 +6,33 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__0 = 0;
-static doublereal c_b17 = 1.;
+static double c_b17 = 1.;
 
-/* Subroutine */ int dsyev_(const char *jobz, const char *uplo, integer *n, doublereal *a, 
-	 integer *lda, doublereal *w, doublereal *work, integer *lwork, 
+/* Subroutine */ int dsyev_(const char *jobz, const char *uplo, integer *n, double *a, 
+	 integer *lda, double *w, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer nb;
-    doublereal eps;
+    double eps;
     integer inde;
-    doublereal anrm;
+    double anrm;
     integer imax;
-    doublereal rmin, rmax;
-    doublereal sigma;
+    double rmin, rmax;
+    double sigma;
     integer iinfo;
     logical lower, wantz;
     integer iscale;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer indtau;
     integer indwrk;
     integer llwork;
-    doublereal smlnum;
+    double smlnum;
     integer lwkopt;
     logical lquery;
 
@@ -148,7 +148,7 @@ static doublereal c_b17 = 1.;
 /* Computing MAX */
 	i__1 = 1, i__2 = (nb + 2) * *n;
 	lwkopt = std::max(i__1,i__2);
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 /* Computing MAX */
 	i__1 = 1, i__2 = *n * 3 - 1;
@@ -240,7 +240,7 @@ static doublereal c_b17 = 1.;
 
 /*     Set WORK(1) to optimal workspace size. */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

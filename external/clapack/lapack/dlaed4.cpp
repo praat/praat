@@ -1,31 +1,31 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaed4_(integer *n, integer *i__, doublereal *d__, 
-	doublereal *z__, doublereal *delta, doublereal *rho, doublereal *dlam, 
+/* Subroutine */ int dlaed4_(integer *n, integer *i__, double *d__, 
+	double *z__, double *delta, double *rho, double *dlam, 
 	 integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal a, b, c__;
+    double a, b, c__;
     integer j;
-    doublereal w;
+    double w;
     integer ii;
-    doublereal dw, zz[3];
+    double dw, zz[3];
     integer ip1;
-    doublereal del, eta, phi, eps, tau, psi;
+    double del, eta, phi, eps, tau, psi;
     integer iim1, iip1;
-    doublereal dphi, dpsi;
+    double dphi, dpsi;
     integer iter;
-    doublereal temp, prew, temp1, dltlb, dltub, midpt;
+    double temp, prew, temp1, dltlb, dltub, midpt;
     integer niter;
     logical swtch;
     logical swtch3;
     logical orgati;
-    doublereal erretm, rhoinv;
+    double erretm, rhoinv;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

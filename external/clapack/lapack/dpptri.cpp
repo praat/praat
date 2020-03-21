@@ -3,10 +3,10 @@
 
 /* Table of constant values */
 
-static doublereal c_b8 = 1.;
+static double c_b8 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dpptri_(char *uplo, integer *n, doublereal *ap, integer *
+/* Subroutine */ int dpptri_(char *uplo, integer *n, double *ap, integer *
 	info)
 {
     /* System generated locals */
@@ -14,7 +14,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j, jc, jj;
-    doublereal ajj;
+    double ajj;
     integer jjn;
     logical upper;
 

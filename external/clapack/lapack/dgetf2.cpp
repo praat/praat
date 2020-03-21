@@ -4,18 +4,18 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = -1.;
+static double c_b8 = -1.;
 
-/* Subroutine */ int dgetf2_(integer *m, integer *n, doublereal *a, integer *
+/* Subroutine */ int dgetf2_(integer *m, integer *n, double *a, integer *
 	lda, integer *ipiv, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, jp;
-    doublereal sfmin;
+    double sfmin;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

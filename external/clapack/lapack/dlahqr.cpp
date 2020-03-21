@@ -6,31 +6,31 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dlahqr_(logical *wantt, logical *wantz, integer *n, 
-	integer *ilo, integer *ihi, doublereal *h__, integer *ldh, doublereal 
-	*wr, doublereal *wi, integer *iloz, integer *ihiz, doublereal *z__, 
+	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
+	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, integer *info)
 {
     /* System generated locals */
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__, j, k, l, m;
-    doublereal s, v[3];
+    double s, v[3];
     integer i1, i2;
-    doublereal t1, t2, t3, v2, v3, aa, ab, ba, bb, h11, h12, h21, h22, cs;
+    double t1, t2, t3, v2, v3, aa, ab, ba, bb, h11, h12, h21, h22, cs;
     integer nh;
-    doublereal sn;
+    double sn;
     integer nr;
-    doublereal tr;
+    double tr;
     integer nz;
-    doublereal det, h21s;
+    double det, h21s;
     integer its;
-    doublereal ulp, sum, tst, rt1i, rt2i, rt1r, rt2r;
-	doublereal safmin, safmax, rtdisc, smlnum;
+    double ulp, sum, tst, rt1i, rt2i, rt1r, rt2r;
+	double safmin, safmax, rtdisc, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -213,7 +213,7 @@ static integer c__1 = 1;
     safmax = 1. / safmin;
     dlabad_(&safmin, &safmax);
     ulp = dlamch_("PRECISION");
-    smlnum = safmin * ((doublereal) nh / ulp);
+    smlnum = safmin * ((double) nh / ulp);
 
 /*     I1 and I2 are the indices of the first row and last column of H */
 /*     to which transformations must be applied. If eigenvalues only are */

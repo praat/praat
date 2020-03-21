@@ -4,19 +4,19 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b10 = -1.;
-static doublereal c_b12 = 1.;
+static double c_b10 = -1.;
+static double c_b12 = 1.;
 
-/* Subroutine */ int dpotf2_(const char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dpotf2_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j;
-    doublereal ajj;
+    double ajj;
     logical upper;
 
 

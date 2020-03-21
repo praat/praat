@@ -9,8 +9,8 @@ static integer c__2 = 2;
 static integer c__65 = 65;
 
 /* Subroutine */ int dormrz_(char *side, char *trans, integer *m, integer *n, 
-	integer *k, integer *l, doublereal *a, integer *lda, doublereal *tau, 
-	doublereal *c__, integer *ldc, doublereal *work, integer *lwork, 
+	integer *k, integer *l, double *a, integer *lda, double *tau, 
+	double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -21,7 +21,7 @@ static integer c__65 = 65;
 
     /* Local variables */
     integer i__;
-    doublereal t[4160]	/* was [65][64] */;
+    double t[4160]	/* was [65][64] */;
     integer i1, i2, i3, ib, ic, ja, jc, nb, mi, ni, nq, nw, iws;
     logical left;
     integer nbmin, iinfo;
@@ -212,7 +212,7 @@ static integer c__65 = 65;
 	    nb = std::min(i__1,i__2);
 	    lwkopt = nw * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < std::max(1_integer,nw) && ! lquery) {
 	    *info = -13;
@@ -325,7 +325,7 @@ static integer c__65 = 65;
 
     }
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

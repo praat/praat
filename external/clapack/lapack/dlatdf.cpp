@@ -5,26 +5,26 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b23 = 1.;
-static doublereal c_b37 = -1.;
+static double c_b23 = 1.;
+static double c_b37 = -1.;
 
-/* Subroutine */ int dlatdf_(integer *ijob, integer *n, doublereal *z__, 
-	integer *ldz, doublereal *rhs, doublereal *rdsum, doublereal *rdscal, 
+/* Subroutine */ int dlatdf_(integer *ijob, integer *n, double *z__, 
+	integer *ldz, double *rhs, double *rdsum, double *rdscal, 
 	integer *ipiv, integer *jpiv)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal bm, bp, xm[8], xp[8];
+    double bm, bp, xm[8], xp[8];
     integer info;
-    doublereal temp, work[32];
-    doublereal pmone;
-    doublereal sminu;
+    double temp, work[32];
+    double pmone;
+    double sminu;
     integer iwork[8];
-    doublereal splus;
+    double splus;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

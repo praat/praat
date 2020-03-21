@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlag2s_(integer *m, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlag2s_(integer *m, integer *n, double *a, integer *
 	lda, real *sa, integer *ldsa, integer *info)
 {
     /* System generated locals */
@@ -9,7 +9,7 @@
 
     /* Local variables */
     integer i__, j;
-    doublereal rmax;
+    double rmax;
 
 
 /*  -- LAPACK PROTOTYPE auxiliary routine (version 3.1.1) -- */

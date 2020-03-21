@@ -3,13 +3,13 @@
 
 /* Table of constant values */
 
-static doublereal c_b5 = -1.;
-static doublereal c_b6 = 1.;
+static double c_b5 = -1.;
+static double c_b6 = 1.;
 static integer c__1 = 1;
-static doublereal c_b16 = 0.;
+static double c_b16 = 0.;
 
-/* Subroutine */ int dlatrd_(const char *uplo, integer *n, integer *nb, doublereal *
-	a, integer *lda, doublereal *e, doublereal *tau, doublereal *w, 
+/* Subroutine */ int dlatrd_(const char *uplo, integer *n, integer *nb, double *
+	a, integer *lda, double *e, double *tau, double *w, 
 	integer *ldw)
 {
     /* System generated locals */
@@ -17,7 +17,7 @@ static doublereal c_b16 = 0.;
 
     /* Local variables */
     integer i__, iw;
-    doublereal alpha;
+    double alpha;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

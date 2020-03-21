@@ -5,27 +5,27 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b33 = 0.;
+static double c_b33 = 0.;
 static integer c__0 = 0;
 
 /* Subroutine */ int dgels_(char *trans, integer *m, integer *n, integer *
-	nrhs, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *work, integer *lwork, integer *info)
+	nrhs, double *a, integer *lda, double *b, integer *ldb, 
+	double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j, nb, mn;
-    doublereal anrm, bnrm;
+    double anrm, bnrm;
     integer brow;
     logical tpsd;
     integer iascl, ibscl;
     integer wsize;
-    doublereal rwork[1];
+    double rwork[1];
     integer scllen;
-    doublereal bignum;
-    doublereal smlnum;
+    double bignum;
+    double smlnum;
     logical lquery;
 
 
@@ -234,7 +234,7 @@ static integer c__0 = 0;
 /* Computing MAX */
 	i__1 = 1, i__2 = mn + std::max(mn,*nrhs) * nb;
 	wsize = std::max(i__1,i__2);
-	work[1] = (doublereal) wsize;
+	work[1] = (double) wsize;
 
     }
 
@@ -471,7 +471,7 @@ static integer c__0 = 0;
     }
 
 L50:
-    work[1] = (doublereal) wsize;
+    work[1] = (double) wsize;
 
     return 0;
 

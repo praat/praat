@@ -5,13 +5,13 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b36 = 0.;
-static doublereal c_b37 = 1.;
+static double c_b36 = 0.;
+static double c_b37 = 1.;
 
 /* Subroutine */ int dgegs_(char *jobvsl, char *jobvsr, integer *n, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, doublereal *
-	alphar, doublereal *alphai, doublereal *beta, doublereal *vsl, 
-	integer *ldvsl, doublereal *vsr, integer *ldvsr, doublereal *work, 
+	double *a, integer *lda, double *b, integer *ldb, double *
+	alphar, double *alphai, double *beta, double *vsl, 
+	integer *ldvsl, double *vsr, integer *ldvsr, double *work, 
 	integer *lwork, integer *info)
 {
     /* System generated locals */
@@ -20,7 +20,7 @@ static doublereal c_b37 = 1.;
 
     /* Local variables */
     integer nb, nb1, nb2, nb3, ihi, ilo;
-    doublereal eps, anrm, bnrm;
+    double eps, anrm, bnrm;
     integer itau, lopt;
     integer ileft, iinfo, icols;
     logical ilvsl;
@@ -28,13 +28,13 @@ static doublereal c_b37 = 1.;
     logical ilvsr;
     integer irows;
     logical ilascl, ilbscl;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer ijobvl, iright, ijobvr;
-    doublereal anrmto;
+    double anrmto;
     integer lwkmin;
-    doublereal bnrmto;
-    doublereal smlnum;
+    double bnrmto;
+    double smlnum;
     integer lwkopt;
     logical lquery;
 
@@ -234,7 +234,7 @@ static doublereal c_b37 = 1.;
     i__1 = *n << 2;
     lwkmin = std::max(i__1,1_integer);
     lwkopt = lwkmin;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     *info = 0;
     if (ijobvl <= 0) {
@@ -263,7 +263,7 @@ static doublereal c_b37 = 1.;
 	i__1 = std::max(nb1,nb2);
 	nb = std::max(i__1,nb3);
 	lopt = (*n << 1) + *n * (nb + 1);
-	work[1] = (doublereal) lopt;
+	work[1] = (double) lopt;
     }
 
     if (*info != 0) {
@@ -494,7 +494,7 @@ static doublereal c_b37 = 1.;
     }
 
 L10:
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

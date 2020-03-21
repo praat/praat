@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaswp_(integer *n, doublereal *a, integer *lda, integer 
+/* Subroutine */ int dlaswp_(integer *n, double *a, integer *lda, integer 
 	*k1, integer *k2, integer *ipiv, integer *incx)
 {
     /* System generated locals */
@@ -9,7 +9,7 @@
 
     /* Local variables */
     integer i__, j, k, i1, i2, n32, ip, ix, ix0, inc;
-    doublereal temp;
+    double temp;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

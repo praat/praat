@@ -9,9 +9,9 @@ static integer c__16 = 16;
 static integer c__0 = 0;
 
 /* Subroutine */ int dlasy2_(logical *ltranl, logical *ltranr, integer *isgn, 
-	integer *n1, integer *n2, doublereal *tl, integer *ldtl, doublereal *
-	tr, integer *ldtr, doublereal *b, integer *ldb, doublereal *scale, 
-	doublereal *x, integer *ldx, doublereal *xnorm, integer *info)
+	integer *n1, integer *n2, double *tl, integer *ldtl, double *
+	tr, integer *ldtr, double *b, integer *ldb, double *scale, 
+	double *x, integer *ldx, double *xnorm, integer *info)
 {
     /* Initialized data */
 
@@ -24,22 +24,22 @@ static integer c__0 = 0;
     /* System generated locals */
     integer b_dim1, b_offset, tl_dim1, tl_offset, tr_dim1, tr_offset, x_dim1, 
 	    x_offset;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6, d__7, d__8;
+    double d__1, d__2, d__3, d__4, d__5, d__6, d__7, d__8;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal x2[2], l21, u11, u12;
+    double x2[2], l21, u11, u12;
     integer ip, jp;
-    doublereal u22, t16[16]	/* was [4][4] */, gam, bet, eps, sgn, tmp[4], 
+    double u22, t16[16]	/* was [4][4] */, gam, bet, eps, sgn, tmp[4], 
 	    tau1, btmp[4], smin;
     integer ipiv;
-    doublereal temp;
+    double temp;
     integer jpiv[4];
-    doublereal xmax;
+    double xmax;
     integer ipsv, jpsv;
     logical bswap;
     logical xswap;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -173,7 +173,7 @@ static integer c__0 = 0;
 
     eps = dlamch_("P");
     smlnum = dlamch_("S") / eps;
-    sgn = (doublereal) (*isgn);
+    sgn = (double) (*isgn);
 
     k = *n1 + *n1 + *n2 - 2;
     switch (k) {

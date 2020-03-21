@@ -4,14 +4,14 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b25 = 1.;
-static doublereal c_b27 = 0.;
+static double c_b25 = 1.;
+static double c_b27 = 0.;
 
 /* Subroutine */ int dsbgvx_(char *jobz, char *range, char *uplo, integer *n, 
-	integer *ka, integer *kb, doublereal *ab, integer *ldab, doublereal *
-	bb, integer *ldbb, doublereal *q, integer *ldq, doublereal *vl, 
-	doublereal *vu, integer *il, integer *iu, doublereal *abstol, integer 
-	*m, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	integer *ka, integer *kb, double *ab, integer *ldab, double *
+	bb, integer *ldbb, double *q, integer *ldq, double *vl, 
+	double *vu, integer *il, integer *iu, double *abstol, integer 
+	*m, double *w, double *z__, integer *ldz, double *work, 
 	integer *iwork, integer *ifail, integer *info)
 {
     /* System generated locals */
@@ -20,7 +20,7 @@ static doublereal c_b27 = 0.;
 
     /* Local variables */
     integer i__, j, jj;
-    doublereal tmp1;
+    double tmp1;
     integer indd, inde;
     char vect[1];
     logical test;

@@ -5,37 +5,37 @@
 
 static integer c__1 = 1;
 static integer c__2 = 2;
-static doublereal c_b28 = 1.;
+static double c_b28 = 1.;
 
 /* Subroutine */ int dtgsen_(integer *ijob, logical *wantq, logical *wantz, 
-	logical *select, integer *n, doublereal *a, integer *lda, doublereal *
-	b, integer *ldb, doublereal *alphar, doublereal *alphai, doublereal *
-	beta, doublereal *q, integer *ldq, doublereal *z__, integer *ldz, 
-	integer *m, doublereal *pl, doublereal *pr, doublereal *dif, 
-	doublereal *work, integer *lwork, integer *iwork, integer *liwork, 
+	logical *select, integer *n, double *a, integer *lda, double *
+	b, integer *ldb, double *alphar, double *alphai, double *
+	beta, double *q, integer *ldq, double *z__, integer *ldz, 
+	integer *m, double *pl, double *pr, double *dif, 
+	double *work, integer *lwork, integer *iwork, integer *liwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, z_dim1, 
 	    z_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, k, n1, n2, kk, ks, mn2, ijb;
-    doublereal eps;
+    double eps;
     integer kase;
     logical pair;
     integer ierr;
-    doublereal dsum;
+    double dsum;
     logical swap;
     integer isave[3];
     logical wantd;
     integer lwmin;
     logical wantp;
     logical wantd1, wantd2;
-    doublereal dscale, rdscal;
+    double dscale, rdscal;
     integer liwmin;
-    doublereal smlnum;
+    double smlnum;
     logical lquery;
 
 
@@ -486,7 +486,7 @@ static doublereal c_b28 = 1.;
 	liwmin = 1;
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     if (*lwork < lwmin && ! lquery) {
@@ -790,7 +790,7 @@ L60:
 /* L80: */
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;

@@ -5,47 +5,47 @@
 
 static logical c_true = TRUE_;
 static integer c__2 = 2;
-static doublereal c_b34 = 1.;
+static double c_b34 = 1.;
 static integer c__1 = 1;
-static doublereal c_b36 = 0.;
+static double c_b36 = 0.;
 static logical c_false = FALSE_;
 
 /* Subroutine */ int dtgevc_(const char *side, const char *howmny, logical *select, 
-	integer *n, doublereal *s, integer *lds, doublereal *p, integer *ldp, 
-	doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, integer 
-	*mm, integer *m, doublereal *work, integer *info)
+	integer *n, double *s, integer *lds, double *p, integer *ldp, 
+	double *vl, integer *ldvl, double *vr, integer *ldvr, integer 
+	*mm, integer *m, double *work, integer *info)
 {
     /* System generated locals */
     integer p_dim1, p_offset, s_dim1, s_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
+    double d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Local variables */
     integer i__, j, ja, jc, je, na, im, jr, jw, nw;
-    doublereal big;
+    double big;
     logical lsa, lsb;
-    doublereal ulp, sum[4]	/* was [2][2] */;
+    double ulp, sum[4]	/* was [2][2] */;
     integer ibeg, ieig, iend;
-    doublereal dmin__, temp, xmax, sump[4]	/* was [2][2] */, sums[4]	
+    double dmin__, temp, xmax, sump[4]	/* was [2][2] */, sums[4]	
 	    /* was [2][2] */;
-    doublereal cim2a, cim2b, cre2a, cre2b, temp2, bdiag[2], acoef, scale;
+    double cim2a, cim2b, cre2a, cre2b, temp2, bdiag[2], acoef, scale;
     logical ilall;
     integer iside;
-    doublereal sbeta;
+    double sbeta;
     logical il2by2;
     integer iinfo;
-    doublereal small;
+    double small;
     logical compl_x; // djmw changed variable from "compl" to compl_x because the c++ compiler protested.
-    doublereal anorm, bnorm;
+    double anorm, bnorm;
     logical compr;
-    doublereal temp2i;
-    doublereal temp2r;
+    double temp2i;
+    double temp2r;
     logical ilabad, ilbbad;
-    doublereal acoefa, bcoefa, cimaga, cimagb;
+    double acoefa, bcoefa, cimaga, cimagb;
     logical ilback;
-    doublereal bcoefi, ascale, bscale, creala, crealb;
-    doublereal bcoefr, salfar, safmin;
-    doublereal xscale, bignum;
+    double bcoefi, ascale, bscale, creala, crealb;
+    double bcoefr, salfar, safmin;
+    double xscale, bignum;
     logical ilcomp, ilcplx;
     integer ihwmny;
 

@@ -6,38 +6,38 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dspevx_(char *jobz, char *range, char *uplo, integer *n, 
-	doublereal *ap, doublereal *vl, doublereal *vu, integer *il, integer *
-	iu, doublereal *abstol, integer *m, doublereal *w, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *iwork, integer *ifail, 
+	double *ap, double *vl, double *vu, integer *il, integer *
+	iu, double *abstol, integer *m, double *w, double *z__, 
+	integer *ldz, double *work, integer *iwork, integer *ifail, 
 	integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, jj;
-    doublereal eps, vll, vuu, tmp1;
+    double eps, vll, vuu, tmp1;
     integer indd, inde;
-    doublereal anrm;
+    double anrm;
     integer imax;
-    doublereal rmin, rmax;
+    double rmin, rmax;
     logical test;
     integer itmp1, indee;
-    doublereal sigma;
+    double sigma;
     integer iinfo;
     char order[1];
     logical wantz;
     logical alleig, indeig;
     integer iscale, indibl;
     logical valeig;
-    doublereal safmin;
-    doublereal abstll, bignum;
+    double safmin;
+    double abstll, bignum;
     integer indtau, indisp;
     integer indiwo;
     integer indwrk;
     integer nsplit;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

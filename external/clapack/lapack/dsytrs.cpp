@@ -3,25 +3,25 @@
 
 /* Table of constant values */
 
-static doublereal c_b7 = -1.;
+static double c_b7 = -1.;
 static integer c__1 = 1;
-static doublereal c_b19 = 1.;
+static double c_b19 = 1.;
 
 /* Subroutine */ int dsytrs_(char *uplo, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, integer *ipiv, doublereal *b, integer *
+	double *a, integer *lda, integer *ipiv, double *b, integer *
 	ldb, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j, k;
-    doublereal ak, bk;
+    double ak, bk;
     integer kp;
-    doublereal akm1, bkm1;
-    doublereal akm1k;
-    doublereal denom;
+    double akm1, bkm1;
+    double akm1k;
+    double denom;
     logical upper;
 
 

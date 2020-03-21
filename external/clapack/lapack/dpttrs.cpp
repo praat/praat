@@ -6,8 +6,8 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dpttrs_(integer *n, integer *nrhs, doublereal *d__, 
-	doublereal *e, doublereal *b, integer *ldb, integer *info)
+/* Subroutine */ int dpttrs_(integer *n, integer *nrhs, double *d__, 
+	double *e, double *b, integer *ldb, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2, i__3;

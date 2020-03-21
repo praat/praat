@@ -5,24 +5,24 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dsytf2_(const char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dsytf2_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *ipiv, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal t, r1, d11, d12, d21, d22;
+    double t, r1, d11, d12, d21, d22;
     integer kk, kp;
-    doublereal wk, wkm1, wkp1;
+    double wk, wkm1, wkp1;
     integer imax, jmax;
-    doublereal alpha;
+    double alpha;
     integer kstep;
     logical upper;
-    doublereal absakk;
-    doublereal colmax, rowmax;
+    double absakk;
+    double colmax, rowmax;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

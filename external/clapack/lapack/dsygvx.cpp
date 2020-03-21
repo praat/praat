@@ -5,13 +5,13 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b19 = 1.;
+static double c_b19 = 1.;
 
 /* Subroutine */ int dsygvx_(integer *itype, char *jobz, char *range, char *
-	uplo, integer *n, doublereal *a, integer *lda, doublereal *b, integer 
-	*ldb, doublereal *vl, doublereal *vu, integer *il, integer *iu, 
-	doublereal *abstol, integer *m, doublereal *w, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *lwork, integer *iwork, 
+	uplo, integer *n, double *a, integer *lda, double *b, integer 
+	*ldb, double *vl, double *vu, integer *il, integer *iu, 
+	double *abstol, integer *m, double *w, double *z__, 
+	integer *ldz, double *work, integer *lwork, integer *iwork, 
 	integer *ifail, integer *info)
 {
     /* System generated locals */
@@ -279,7 +279,7 @@ static doublereal c_b19 = 1.;
 /* Computing MAX */
 	i__1 = lwkmin, i__2 = (nb + 3) * *n;
 	lwkopt = std::max(i__1,i__2);
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < lwkmin && ! lquery) {
 	    *info = -20;
@@ -355,7 +355,7 @@ static doublereal c_b19 = 1.;
 
 /*     Set WORK(1) to optimal workspace size. */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

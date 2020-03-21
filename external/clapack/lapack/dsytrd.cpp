@@ -7,11 +7,11 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__3 = 3;
 static integer c__2 = 2;
-static doublereal c_b22 = -1.;
-static doublereal c_b23 = 1.;
+static double c_b22 = -1.;
+static double c_b23 = 1.;
 
-/* Subroutine */ int dsytrd_(const char *uplo, integer *n, doublereal *a, integer *
-	lda, doublereal *d__, doublereal *e, doublereal *tau, doublereal *
+/* Subroutine */ int dsytrd_(const char *uplo, integer *n, double *a, integer *
+	lda, double *d__, double *e, double *tau, double *
 	work, integer *lwork, integer *info)
 {
     /* System generated locals */
@@ -189,7 +189,7 @@ static doublereal c_b23 = 1.;
 
 	nb = ilaenv_(&c__1, "DSYTRD", uplo, n, &c_n1, &c_n1, &c_n1);
 	lwkopt = *n * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -329,7 +329,7 @@ static doublereal c_b23 = 1.;
 		&tau[i__], &iinfo);
     }
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DSYTRD */

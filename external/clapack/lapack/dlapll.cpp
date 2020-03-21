@@ -1,15 +1,15 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlapll_(integer *n, doublereal *x, integer *incx, 
-	doublereal *y, integer *incy, doublereal *ssmin)
+/* Subroutine */ int dlapll_(integer *n, double *x, integer *incx, 
+	double *y, integer *incy, double *ssmin)
 {
     /* System generated locals */
     integer i__1;
 
     /* Local variables */
-    doublereal c__, a11, a12, a22, tau;
-    doublereal ssmax;
+    double c__, a11, a12, a22, tau;
+    double ssmax;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

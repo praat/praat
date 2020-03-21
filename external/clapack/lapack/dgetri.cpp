@@ -6,11 +6,11 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
-static doublereal c_b20 = -1.;
-static doublereal c_b22 = 1.;
+static double c_b20 = -1.;
+static double c_b22 = 1.;
 
-/* Subroutine */ int dgetri_(integer *n, doublereal *a, integer *lda, integer 
-	*ipiv, doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dgetri_(integer *n, double *a, integer *lda, integer 
+	*ipiv, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
@@ -105,7 +105,7 @@ static doublereal c_b22 = 1.;
     *info = 0;
     nb = ilaenv_(&c__1, "DGETRI", " ", n, &c_n1, &c_n1, &c_n1);
     lwkopt = *n * nb;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
@@ -229,7 +229,7 @@ static doublereal c_b22 = 1.;
 /* L60: */
     }
 
-    work[1] = (doublereal) iws;
+    work[1] = (double) iws;
     return 0;
 
 /*     End of DGETRI */

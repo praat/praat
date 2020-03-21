@@ -5,33 +5,33 @@
 
 static integer c__9 = 9;
 static integer c__0 = 0;
-static doublereal c_b15 = 1.;
+static double c_b15 = 1.;
 static integer c__1 = 1;
-static doublereal c_b29 = 0.;
+static double c_b29 = 0.;
 
-/* Subroutine */ int dbdsdc_(const char *uplo, const char *compq, integer *n, doublereal *
-	d__, doublereal *e, doublereal *u, integer *ldu, doublereal *vt, 
-	integer *ldvt, doublereal *q, integer *iq, doublereal *work, integer *
+/* Subroutine */ int dbdsdc_(const char *uplo, const char *compq, integer *n, double *
+	d__, double *e, double *u, integer *ldu, double *vt, 
+	integer *ldvt, double *q, integer *iq, double *work, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
     integer u_dim1, u_offset, vt_dim1, vt_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal p, r__;
+    double p, r__;
     integer z__, ic, ii, kk;
-    doublereal cs;
+    double cs;
     integer is, iu;
-    doublereal sn;
+    double sn;
     integer nm1;
-    doublereal eps;
+    double eps;
     integer ivt, difl, difr, ierr, perm, mlvl, sqre;
     integer poles, iuplo, nsize, start;
     integer givcol;
     integer icompq;
-    doublereal orgnrm;
+    double orgnrm;
     integer givnum, givptr, qstart, smlsiz, wstart, smlszp;
 
 
@@ -323,7 +323,7 @@ static doublereal c_b29 = 0.;
 
     eps = dlamch_("Epsilon");
 
-    mlvl = (integer) (log((doublereal) (*n) / (doublereal) (smlsiz + 1)) / 
+    mlvl = (integer) (log((double) (*n) / (double) (smlsiz + 1)) / 
 	    log(2.)) + 1;
     smlszp = smlsiz + 1;
 

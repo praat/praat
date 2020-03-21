@@ -4,24 +4,24 @@
 /* Table of constant values */
 
 static integer c__0 = 0;
-static doublereal c_b7 = 1.;
+static double c_b7 = 1.;
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dlasd1_(integer *nl, integer *nr, integer *sqre, 
-	doublereal *d__, doublereal *alpha, doublereal *beta, doublereal *u, 
-	integer *ldu, doublereal *vt, integer *ldvt, integer *idxq, integer *
-	iwork, doublereal *work, integer *info)
+	double *d__, double *alpha, double *beta, double *u, 
+	integer *ldu, double *vt, integer *ldvt, integer *idxq, integer *
+	iwork, double *work, integer *info)
 {
     /* System generated locals */
     integer u_dim1, u_offset, vt_dim1, vt_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, k, m, n, n1, n2, iq, iz, iu2, ldq, idx, ldu2, ivt2, idxc, 
 	    idxp, ldvt2;
     integer isigma;
-    doublereal orgnrm;
+    double orgnrm;
     integer coltyp;
 
 

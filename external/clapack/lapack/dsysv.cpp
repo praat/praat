@@ -6,9 +6,9 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dsysv_(char *uplo, integer *n, integer *nrhs, doublereal 
-	*a, integer *lda, integer *ipiv, doublereal *b, integer *ldb, 
-	doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dsysv_(char *uplo, integer *n, integer *nrhs, double 
+	*a, integer *lda, integer *ipiv, double *b, integer *ldb, 
+	double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
@@ -161,7 +161,7 @@ static integer c_n1 = -1;
 	    nb = ilaenv_(&c__1, "DSYTRF", uplo, n, &c_n1, &c_n1, &c_n1);
 	    lwkopt = *n * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -184,7 +184,7 @@ static integer c_n1 = -1;
 
     }
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

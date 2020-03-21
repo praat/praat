@@ -4,28 +4,28 @@
 /* Table of constant values */
 
 static integer c__0 = 0;
-static doublereal c_b13 = 0.;
+static double c_b13 = 0.;
 static integer c__2 = 2;
 static integer c__1 = 1;
-static doublereal c_b36 = 1.;
+static double c_b36 = 1.;
 
 /* Subroutine */ int dgelsx_(integer *m, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, integer *
-	jpvt, doublereal *rcond, integer *rank, doublereal *work, integer *
+	double *a, integer *lda, double *b, integer *ldb, integer *
+	jpvt, double *rcond, integer *rank, double *work, integer *
 	info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal c1, c2, s1, s2, t1, t2;
+    double c1, c2, s1, s2, t1, t2;
     integer mn;
-    doublereal anrm, bnrm, smin, smax;
+    double anrm, bnrm, smin, smax;
     integer iascl, ibscl, ismin, ismax;
-	doublereal bignum;
-    doublereal sminpr, smaxpr, smlnum;
+	double bignum;
+    double sminpr, smaxpr, smlnum;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

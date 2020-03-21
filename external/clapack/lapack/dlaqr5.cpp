@@ -3,45 +3,45 @@
 
 /* Table of constant values */
 
-static doublereal c_b7 = 0.;
-static doublereal c_b8 = 1.;
+static double c_b7 = 0.;
+static double c_b8 = 1.;
 static integer c__3 = 3;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dlaqr5_(logical *wantt, logical *wantz, integer *kacc22, 
-	integer *n, integer *ktop, integer *kbot, integer *nshfts, doublereal 
-	*sr, doublereal *si, doublereal *h__, integer *ldh, integer *iloz, 
-	integer *ihiz, doublereal *z__, integer *ldz, doublereal *v, integer *
-	ldv, doublereal *u, integer *ldu, integer *nv, doublereal *wv, 
-	integer *ldwv, integer *nh, doublereal *wh, integer *ldwh)
+	integer *n, integer *ktop, integer *kbot, integer *nshfts, double 
+	*sr, double *si, double *h__, integer *ldh, integer *iloz, 
+	integer *ihiz, double *z__, integer *ldz, double *v, integer *
+	ldv, double *u, integer *ldu, integer *nv, double *wv, 
+	integer *ldwv, integer *nh, double *wh, integer *ldwh)
 {
     /* System generated locals */
     integer h_dim1, h_offset, u_dim1, u_offset, v_dim1, v_offset, wh_dim1, 
 	    wh_offset, wv_dim1, wv_offset, z_dim1, z_offset, i__1, i__2, i__3,
 	     i__4, i__5, i__6, i__7;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer i__, j, k, m, i2, j2, i4, j4, k1;
-    doublereal h11, h12, h21, h22;
+    double h11, h12, h21, h22;
     integer m22, ns, nu;
-    doublereal vt[3], scl;
+    double vt[3], scl;
     integer kdu, kms;
-    doublereal ulp;
+    double ulp;
     integer knz, kzs;
-    doublereal tst1, tst2, beta;
+    double tst1, tst2, beta;
     logical blk22, bmp22;
     integer mend, jcol, jlen, jbot, mbot;
-    doublereal swap;
+    double swap;
     integer jtop, jrow, mtop;
-    doublereal alpha;
+    double alpha;
     logical accum;
     integer ndcol, incol, krcol, nbmps;
-    doublereal safmin;
-    doublereal safmax, refsum;
+    double safmin;
+    double safmax, refsum;
     integer mstart;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -260,7 +260,7 @@ static integer c__2 = 2;
     safmax = 1. / safmin;
     dlabad_(&safmin, &safmax);
     ulp = dlamch_("PRECISION");
-    smlnum = safmin * ((doublereal) (*n) / ulp);
+    smlnum = safmin * ((double) (*n) / ulp);
 
 /*     ==== Use accumulated reflections to update far-from-diagonal */
 /*     .    entries ? ==== */

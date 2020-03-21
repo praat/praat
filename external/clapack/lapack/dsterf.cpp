@@ -5,32 +5,32 @@
 
 static integer c__0 = 0;
 static integer c__1 = 1;
-static doublereal c_b32 = 1.;
+static double c_b32 = 1.;
 
-/* Subroutine */ int dsterf_(integer *n, doublereal *d__, doublereal *e, 
+/* Subroutine */ int dsterf_(integer *n, double *d__, double *e, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
-    doublereal c__;
+    double c__;
     integer i__, l, m;
-    doublereal p, r__, s;
+    double p, r__, s;
     integer l1;
-    doublereal bb, rt1, rt2, eps, rte;
+    double bb, rt1, rt2, eps, rte;
     integer lsv;
-    doublereal eps2, oldc;
+    double eps2, oldc;
     integer lend, jtot;
-    doublereal gamma, alpha, sigma, anorm;
+    double gamma, alpha, sigma, anorm;
     integer iscale;
-    doublereal oldgam, safmin;
-    doublereal safmax;
+    double oldgam, safmin;
+    double safmax;
     integer lendsv;
-    doublereal ssfmin;
+    double ssfmin;
     integer nmaxit;
-    doublereal ssfmax;
+    double ssfmax;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

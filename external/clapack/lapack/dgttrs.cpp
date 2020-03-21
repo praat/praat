@@ -7,8 +7,8 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dgttrs_(const char *trans, integer *n, integer *nrhs, 
-	doublereal *dl, doublereal *d__, doublereal *du, doublereal *du2, 
-	integer *ipiv, doublereal *b, integer *ldb, integer *info)
+	double *dl, double *d__, double *du, double *du2, 
+	integer *ipiv, double *b, integer *ldb, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2, i__3;

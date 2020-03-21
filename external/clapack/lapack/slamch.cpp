@@ -9,12 +9,12 @@ static real c_b32 = 0.f;
 int slamc1_(integer *beta, integer *t, logical *rnd, logical *ieee1);
 int slamc2_(integer *beta, integer *t, logical *rnd, real *
 	eps, integer *emin, real *rmin, integer *emax, real *rmax);
-doublereal slamc3_(real *a, real *b);
+double slamc3_(real *a, real *b);
 int slamc4_(integer *emin, real *start, integer *base);
 int slamc5_(integer *beta, integer *p, integer *emin, 
 	logical *ieee, integer *emax, real *rmax);
 
-doublereal slamch_(const char *cmach)
+double slamch_(const char *cmach)
 {
     /* Initialized data */
 
@@ -662,7 +662,7 @@ L10:
 
 /* *********************************************************************** */
 
-doublereal slamc3_(real *a, real *b)
+double slamc3_(real *a, real *b)
 {
     /* System generated locals */
     real ret_val;

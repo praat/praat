@@ -1,20 +1,20 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlarrc_(char *jobt, integer *n, doublereal *vl, 
-	doublereal *vu, doublereal *d__, doublereal *e, doublereal *pivmin, 
+/* Subroutine */ int dlarrc_(char *jobt, integer *n, double *vl, 
+	double *vu, double *d__, double *e, double *pivmin, 
 	integer *eigcnt, integer *lcnt, integer *rcnt, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__;
-    doublereal sl, su, tmp, tmp2;
+    double sl, su, tmp, tmp2;
     logical matt;
  
-    doublereal lpivot, rpivot;
+    double lpivot, rpivot;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

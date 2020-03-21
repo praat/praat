@@ -6,45 +6,45 @@
 static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
-static doublereal c_b38 = 0.;
-static doublereal c_b39 = 1.;
+static double c_b38 = 0.;
+static double c_b39 = 1.;
 
 /* Subroutine */ int dgges_(char *jobvsl, char *jobvsr, char *sort, L_fp 
-	selctg, integer *n, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, integer *sdim, doublereal *alphar, doublereal *alphai, 
-	doublereal *beta, doublereal *vsl, integer *ldvsl, doublereal *vsr, 
-	integer *ldvsr, doublereal *work, integer *lwork, logical *bwork, 
+	selctg, integer *n, double *a, integer *lda, double *b, 
+	integer *ldb, integer *sdim, double *alphar, double *alphai, 
+	double *beta, double *vsl, integer *ldvsl, double *vsr, 
+	integer *ldvsr, double *work, integer *lwork, logical *bwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vsl_dim1, vsl_offset, 
 	    vsr_dim1, vsr_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Builtin functions
-    double sqrt(doublereal);*/
+    double sqrt(double);*/
 
     /* Local variables */
     integer i__, ip;
-    doublereal dif[2];
+    double dif[2];
     integer ihi, ilo;
-    doublereal eps, anrm, bnrm;
+    double eps, anrm, bnrm;
     integer idum[1], ierr, itau, iwrk;
-    doublereal pvsl, pvsr;
+    double pvsl, pvsr;
     integer ileft, icols;
     logical cursl, ilvsl, ilvsr;
     integer irows;
     logical lst2sl;
     logical ilascl, ilbscl;
-    doublereal safmin;
-     doublereal safmax;
-    doublereal bignum;
+    double safmin;
+     double safmax;
+    double bignum;
     integer ijobvl, iright;
     integer ijobvr;
-    doublereal anrmto, bnrmto;
+    double anrmto, bnrmto;
     logical lastsl;
     integer minwrk, maxwrk;
-    doublereal smlnum;
+    double smlnum;
     logical wantst, lquery;
 
 
@@ -332,7 +332,7 @@ static doublereal c_b39 = 1.;
 	    minwrk = 1;
 	    maxwrk = 1;
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -19;
@@ -633,7 +633,7 @@ static doublereal c_b39 = 1.;
 
 L50:
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
 
     return 0;
 

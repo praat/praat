@@ -5,12 +5,12 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b32 = -1.;
-static doublereal c_b34 = 1.;
+static double c_b32 = -1.;
+static double c_b34 = 1.;
 
-/* Subroutine */ int dggglm_(integer *n, integer *m, integer *p, doublereal *
-	a, integer *lda, doublereal *b, integer *ldb, doublereal *d__, 
-	doublereal *x, doublereal *y, doublereal *work, integer *lwork, 
+/* Subroutine */ int dggglm_(integer *n, integer *m, integer *p, double *
+	a, integer *lda, double *b, integer *ldb, double *d__, 
+	double *x, double *y, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -188,7 +188,7 @@ static doublereal c_b34 = 1.;
 	    lwkmin = *m + *n + *p;
 	    lwkopt = *m + np + std::max(*n,*p) * nb;
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 
 	if (*lwork < lwkmin && ! lquery) {
 	    *info = -12;
@@ -292,7 +292,7 @@ static doublereal c_b34 = 1.;
 	    ldb, &work[*m + 1], &y[1], &i__3, &work[*m + np + 1], &i__4, info);
 /* Computing MAX */
     i__1 = lopt, i__2 = (integer) work[*m + np + 1];
-    work[1] = (doublereal) (*m + np + std::max(i__1,i__2));
+    work[1] = (double) (*m + np + std::max(i__1,i__2));
 
     return 0;
 

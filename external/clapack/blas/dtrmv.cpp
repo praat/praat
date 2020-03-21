@@ -2,14 +2,14 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dtrmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
-	doublereal *a, integer *lda, doublereal *x, integer *incx)
+	double *a, integer *lda, double *x, integer *incx)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j, ix, jx, kx, info;
-    doublereal temp;
+    double temp;
  
  
     logical nounit;

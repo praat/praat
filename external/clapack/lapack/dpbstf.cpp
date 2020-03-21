@@ -4,18 +4,18 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b9 = -1.;
+static double c_b9 = -1.;
 
-/* Subroutine */ int dpbstf_(const char *uplo, integer *n, integer *kd, doublereal *
+/* Subroutine */ int dpbstf_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j, m, km;
-    doublereal ajj;
+    double ajj;
     integer kld;
     logical upper;
 

@@ -2,8 +2,8 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dggbak_(const char *job, const char *side, integer *n, integer *ilo, 
-	integer *ihi, doublereal *lscale, doublereal *rscale, integer *m, 
-	doublereal *v, integer *ldv, integer *info)
+	integer *ihi, double *lscale, double *rscale, integer *m, 
+	double *v, integer *ldv, integer *info)
 {
     /* System generated locals */
     integer v_dim1, v_offset, i__1;

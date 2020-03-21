@@ -3,23 +3,23 @@
 
 /* Table of constant values */
 
-static doublereal c_b3 = 2.;
-static doublereal c_b4 = 1.;
+static double c_b3 = 2.;
+static double c_b4 = 1.;
 
-/* Subroutine */ int dlasv2_(doublereal *f, doublereal *g, doublereal *h__, 
-	doublereal *ssmin, doublereal *ssmax, doublereal *snr, doublereal *
-	csr, doublereal *snl, doublereal *csl)
+/* Subroutine */ int dlasv2_(double *f, double *g, double *h__, 
+	double *ssmin, double *ssmax, double *snr, double *
+	csr, double *snl, double *csl)
 {
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal a, d__, l, m, r__, s, t, fa, ga, ha, ft, gt, ht, mm, tt, clt, 
+    double a, d__, l, m, r__, s, t, fa, ga, ha, ft, gt, ht, mm, tt, clt, 
 	    crt, slt, srt;
     integer pmax;
-    doublereal temp;
+    double temp;
     logical swap;
-    doublereal tsign;
+    double tsign;
  
     logical gasmal;
 

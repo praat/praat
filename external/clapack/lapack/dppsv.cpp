@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dppsv_(char *uplo, integer *n, integer *nrhs, doublereal 
-	*ap, doublereal *b, integer *ldb, integer *info)
+/* Subroutine */ int dppsv_(char *uplo, integer *n, integer *nrhs, double 
+	*ap, double *b, integer *ldb, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, i__1;

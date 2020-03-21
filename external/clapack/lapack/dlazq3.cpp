@@ -1,23 +1,23 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlazq3_(integer *i0, integer *n0, doublereal *z__, 
-	integer *pp, doublereal *dmin__, doublereal *sigma, doublereal *desig, 
-	 doublereal *qmax, integer *nfail, integer *iter, integer *ndiv, 
-	logical *ieee, integer *ttype, doublereal *dmin1, doublereal *dmin2, 
-	doublereal *dn, doublereal *dn1, doublereal *dn2, doublereal *tau)
+/* Subroutine */ int dlazq3_(integer *i0, integer *n0, double *z__, 
+	integer *pp, double *dmin__, double *sigma, double *desig, 
+	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
+	logical *ieee, integer *ttype, double *dmin1, double *dmin2, 
+	double *dn, double *dn1, double *dn2, double *tau)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal g, s, t;
+    double g, s, t;
     integer j4, nn;
-    doublereal eps, tol;
+    double eps, tol;
     integer n0in, ipn4;
-    doublereal tol2, temp;
-    doublereal safmin;
+    double tol2, temp;
+    double safmin;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

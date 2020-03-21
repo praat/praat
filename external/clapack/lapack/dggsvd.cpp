@@ -6,10 +6,10 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dggsvd_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
-	integer *n, integer *p, integer *k, integer *l, doublereal *a, 
-	integer *lda, doublereal *b, integer *ldb, doublereal *alpha, 
-	doublereal *beta, doublereal *u, integer *ldu, doublereal *v, integer 
-	*ldv, doublereal *q, integer *ldq, doublereal *work, integer *iwork, 
+	integer *n, integer *p, integer *k, integer *l, double *a, 
+	integer *lda, double *b, integer *ldb, double *alpha, 
+	double *beta, double *u, integer *ldu, double *v, integer 
+	*ldv, double *q, integer *ldq, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -18,12 +18,12 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__, j;
-    doublereal ulp;
+    double ulp;
     integer ibnd;
-    doublereal tola;
+    double tola;
     integer isub;
-    doublereal tolb, unfl, temp, smax;
-    doublereal anorm, bnorm;
+    double tolb, unfl, temp, smax;
+    double anorm, bnorm;
     logical wantq, wantu, wantv;
     integer ncycle;
 

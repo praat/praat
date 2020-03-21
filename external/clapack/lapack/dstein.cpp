@@ -7,28 +7,28 @@ static integer c__2 = 2;
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dstein_(integer *n, doublereal *d__, doublereal *e, 
-	integer *m, doublereal *w, integer *iblock, integer *isplit, 
-	doublereal *z__, integer *ldz, doublereal *work, integer *iwork, 
+/* Subroutine */ int dstein_(integer *n, double *d__, double *e, 
+	integer *m, double *w, integer *iblock, integer *isplit, 
+	double *z__, integer *ldz, double *work, integer *iwork, 
 	integer *ifail, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3, d__4, d__5;
+    double d__1, d__2, d__3, d__4, d__5;
 
     /* Local variables */
     integer i__, j, b1, j1, bn;
-    doublereal xj, scl, eps, sep, nrm, tol;
+    double xj, scl, eps, sep, nrm, tol;
     integer its;
-    doublereal xjm, ztr, eps1;
+    double xjm, ztr, eps1;
     integer jblk, nblk;
     integer jmax;
     integer iseed[4], gpind, iinfo;
-    doublereal ortol;
+    double ortol;
     integer indrv1, indrv2, indrv3, indrv4, indrv5;
     integer nrmchk;
     integer blksiz;
-    doublereal onenrm, dtpcrt, pertol;
+    double onenrm, dtpcrt, pertol;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

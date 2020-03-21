@@ -6,20 +6,20 @@
 static integer c__2 = 2;
 static integer c__1 = 1;
 
-/* Subroutine */ int dlagv2_(doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *alphar, doublereal *alphai, doublereal *
-	beta, doublereal *csl, doublereal *snl, doublereal *csr, doublereal *
+/* Subroutine */ int dlagv2_(double *a, integer *lda, double *b, 
+	integer *ldb, double *alphar, double *alphai, double *
+	beta, double *csl, double *snl, double *csr, double *
 	snr)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
+    double d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Local variables */
-    doublereal r__, t, h1, h2, h3, wi, qq, rr, wr1, wr2, ulp;
-    doublereal anorm, bnorm, scale1, scale2;
-    doublereal ascale, bscale;
-    doublereal safmin;
+    double r__, t, h1, h2, h3, wi, qq, rr, wr1, wr2, ulp;
+    double anorm, bnorm, scale1, scale2;
+    double ascale, bscale;
+    double safmin;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

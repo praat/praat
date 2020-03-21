@@ -5,19 +5,19 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgebal_(const char *job, integer *n, doublereal *a, integer *
-	lda, integer *ilo, integer *ihi, doublereal *scale, integer *info)
+/* Subroutine */ int dgebal_(const char *job, integer *n, double *a, integer *
+	lda, integer *ilo, integer *ihi, double *scale, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal c__, f, g;
+    double c__, f, g;
     integer i__, j, k, l, m;
-    doublereal r__, s, ca, ra;
+    double r__, s, ca, ra;
     integer ica, ira, iexc;
-	doublereal sfmin1, sfmin2, sfmax1, sfmax2;
+	double sfmin1, sfmin2, sfmax1, sfmax2;
     logical noconv;
 
 
@@ -181,7 +181,7 @@ static integer c__1 = 1;
 /*     Row and column exchange. */
 
 L20:
-    scale[m] = (doublereal) j;
+    scale[m] = (double) j;
     if (j == m) {
 	goto L30;
     }

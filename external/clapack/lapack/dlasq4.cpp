@@ -1,23 +1,23 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlasq4_(integer *i0, integer *n0, doublereal *z__, 
-	integer *pp, integer *n0in, doublereal *dmin__, doublereal *dmin1, 
-	doublereal *dmin2, doublereal *dn, doublereal *dn1, doublereal *dn2, 
-	doublereal *tau, integer *ttype)
+/* Subroutine */ int dlasq4_(integer *i0, integer *n0, double *z__, 
+	integer *pp, integer *n0in, double *dmin__, double *dmin1, 
+	double *dmin2, double *dn, double *dn1, double *dn2, 
+	double *tau, integer *ttype)
 {
     /* Initialized data */
 
-    static doublereal g = 0.;
+    static double g = 0.;
 
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal s, a2, b1, b2;
+    double s, a2, b1, b2;
     integer i4, nn, np;
-    doublereal gam, gap1, gap2;
+    double gam, gap1, gap2;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

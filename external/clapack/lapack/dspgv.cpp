@@ -6,8 +6,8 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dspgv_(integer *itype, char *jobz, char *uplo, integer *
-	n, doublereal *ap, doublereal *bp, doublereal *w, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *info)
+	n, double *ap, double *bp, double *w, double *z__, 
+	integer *ldz, double *work, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;

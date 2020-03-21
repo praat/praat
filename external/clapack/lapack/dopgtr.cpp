@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dopgtr_(char *uplo, integer *n, doublereal *ap, 
-	doublereal *tau, doublereal *q, integer *ldq, doublereal *work, 
+/* Subroutine */ int dopgtr_(char *uplo, integer *n, double *ap, 
+	double *tau, double *q, integer *ldq, double *work, 
 	integer *info)
 {
     /* System generated locals */

@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaset_(const char *uplo, integer *m, integer *n, doublereal *
-	alpha, doublereal *beta, doublereal *a, integer *lda)
+/* Subroutine */ int dlaset_(const char *uplo, integer *m, integer *n, double *
+	alpha, double *beta, double *a, integer *lda)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;

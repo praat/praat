@@ -1,24 +1,24 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int ddisna_(char *job, integer *m, integer *n, doublereal *
-	d__, doublereal *sep, integer *info)
+/* Subroutine */ int ddisna_(char *job, integer *m, integer *n, double *
+	d__, double *sep, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, k;
-    doublereal eps;
+    double eps;
     logical decr, left, incr, sing, eigen;
  
-    doublereal anorm;
+    double anorm;
     logical right;
  
-    doublereal oldgap, safmin;
+    double oldgap, safmin;
  
-    doublereal newgap, thresh;
+    double newgap, thresh;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

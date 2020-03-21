@@ -3,10 +3,10 @@
 
 /* Table of constant values */
 
-static doublereal c_b12 = 1.;
+static double c_b12 = 1.;
 
 /* Subroutine */ int dtrtrs_(const char *uplo, const char *trans, const char *diag, integer *n, 
-	integer *nrhs, doublereal *a, integer *lda, doublereal *b, integer *
+	integer *nrhs, double *a, integer *lda, double *b, integer *
 	ldb, integer *info)
 {
     /* System generated locals */

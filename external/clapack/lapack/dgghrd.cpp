@@ -3,13 +3,13 @@
 
 /* Table of constant values */
 
-static doublereal c_b10 = 0.;
-static doublereal c_b11 = 1.;
+static double c_b10 = 0.;
+static double c_b11 = 1.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dgghrd_(const char *compq, const char *compz, integer *n, integer *
-	ilo, integer *ihi, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *q, integer *ldq, doublereal *z__, integer *
+	ilo, integer *ihi, double *a, integer *lda, double *b, 
+	integer *ldb, double *q, integer *ldq, double *z__, integer *
 	ldz, integer *info)
 {
     /* System generated locals */
@@ -17,10 +17,10 @@ static integer c__1 = 1;
 	    z_offset, i__1, i__2, i__3;
 
     /* Local variables */
-    doublereal c__, s;
+    double c__, s;
     logical ilq, ilz;
     integer jcol;
-    doublereal temp;
+    double temp;
     integer jrow;
     integer icompq, icompz;
 

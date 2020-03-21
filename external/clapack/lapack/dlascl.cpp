@@ -2,24 +2,24 @@
 #include "blaswrap.h"
 
 /* Subroutine */ int dlascl_(const char *type__, integer *kl, integer *ku, 
-	doublereal *cfrom, doublereal *cto, integer *m, integer *n, 
-	doublereal *a, integer *lda, integer *info)
+	double *cfrom, double *cto, integer *m, integer *n, 
+	double *a, integer *lda, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
 
     /* Local variables */
     integer i__, j, k1, k2, k3, k4;
-    doublereal mul, cto1;
+    double mul, cto1;
     logical done;
-    doublereal ctoc;
+    double ctoc;
  
     integer itype;
-    doublereal cfrom1;
+    double cfrom1;
  
-    doublereal cfromc;
+    double cfromc;
  
-    doublereal bignum, smlnum;
+    double bignum, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

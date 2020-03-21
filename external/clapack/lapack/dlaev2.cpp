@@ -1,19 +1,19 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaev2_(doublereal *a, doublereal *b, doublereal *c__, 
-	doublereal *rt1, doublereal *rt2, doublereal *cs1, doublereal *sn1)
+/* Subroutine */ int dlaev2_(double *a, double *b, double *c__, 
+	double *rt1, double *rt2, double *cs1, double *sn1)
 {
     /* System generated locals */
-    doublereal d__1;
+    double d__1;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
-    doublereal ab, df, cs, ct, tb, sm, tn, rt, adf, acs;
+    double ab, df, cs, ct, tb, sm, tn, rt, adf, acs;
     integer sgn1, sgn2;
-    doublereal acmn, acmx;
+    double acmn, acmx;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

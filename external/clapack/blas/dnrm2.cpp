@@ -1,18 +1,18 @@
 #include "cblas.h"
 #include "blaswrap.h"
 
-doublereal dnrm2_(integer *n, doublereal *x, integer *incx)
+double dnrm2_(integer *n, double *x, integer *incx)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal ret_val, d__1;
+    double ret_val, d__1;
 
     /* Builtin functions 
-    double sqrt(doublereal);*/
+    double sqrt(double);*/
 
     /* Local variables */
     integer ix;
-    doublereal ssq, norm, scale, absxi;
+    double ssq, norm, scale, absxi;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

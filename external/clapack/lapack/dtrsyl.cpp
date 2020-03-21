@@ -6,32 +6,32 @@
 static integer c__1 = 1;
 static logical c_false = FALSE_;
 static integer c__2 = 2;
-static doublereal c_b26 = 1.;
-static doublereal c_b30 = 0.;
+static double c_b26 = 1.;
+static double c_b30 = 0.;
 static logical c_true = TRUE_;
 
 /* Subroutine */ int dtrsyl_(const char *trana, const char *tranb, integer *isgn, integer 
-	*m, integer *n, doublereal *a, integer *lda, doublereal *b, integer *
-	ldb, doublereal *c__, integer *ldc, doublereal *scale, integer *info)
+	*m, integer *n, double *a, integer *lda, double *b, integer *
+	ldb, double *c__, integer *ldc, double *scale, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset, i__1, i__2, 
 	    i__3, i__4;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer j, k, l;
-    doublereal x[4]	/* was [2][2] */;
+    double x[4]	/* was [2][2] */;
     integer k1, k2, l1, l2;
-    doublereal a11, db, da11, vec[4]	/* was [2][2] */, dum[1], eps, sgn;
+    double a11, db, da11, vec[4]	/* was [2][2] */, dum[1], eps, sgn;
     integer ierr;
-    doublereal smin, suml, sumr;
+    double smin, suml, sumr;
     integer knext, lnext;
-    doublereal xnorm;
-    doublereal scaloc;
-    doublereal bignum;
+    double xnorm;
+    double scaloc;
+    double bignum;
     logical notrna, notrnb;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -189,7 +189,7 @@ static logical c_true = TRUE_;
     smlnum = dlamch_("S");
     bignum = 1. / smlnum;
     dlabad_(&smlnum, &bignum);
-    smlnum = smlnum * (doublereal) (*m * *n) / eps;
+    smlnum = smlnum * (double) (*m * *n) / eps;
     bignum = 1. / smlnum;
 
 /* Computing MAX */
@@ -198,7 +198,7 @@ static logical c_true = TRUE_;
     smin = std::max(d__1,d__2);
 
     *scale = 1.;
-    sgn = (doublereal) (*isgn);
+    sgn = (double) (*isgn);
 
     if (notrna && notrnb) {
 

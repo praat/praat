@@ -9,8 +9,8 @@ static integer c__2 = 2;
 static integer c__65 = 65;
 
 /* Subroutine */ int dormlq_(const char *side, const char *trans, integer *m, integer *n, 
-	integer *k, doublereal *a, integer *lda, doublereal *tau, doublereal *
-	c__, integer *ldc, doublereal *work, integer *lwork, integer *info)
+	integer *k, double *a, integer *lda, double *tau, double *
+	c__, integer *ldc, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     char * a__1[2];
@@ -20,7 +20,7 @@ static integer c__65 = 65;
 
     /* Local variables */
     integer i__;
-    doublereal t[4160]	/* was [65][64] */;
+    double t[4160]	/* was [65][64] */;
     integer i1, i2, i3, ib, ic, jc, nb, mi, ni, nq, nw, iws;
     logical left;
     integer nbmin, iinfo;
@@ -196,7 +196,7 @@ static integer c__65 = 65;
 	i__1 = 64, i__2 = ilaenv_(&c__1, "DORMLQ", ch__1, m, n, k, &c_n1);
 	nb = std::min(i__1,i__2);
 	lwkopt = std::max(1_integer,nw) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -301,7 +301,7 @@ static integer c__65 = 65;
 /* L10: */
 	}
     }
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORMLQ */

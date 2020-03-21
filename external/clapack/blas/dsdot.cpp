@@ -1,12 +1,12 @@
 #include "cblas.h"
 #include "blaswrap.h"
 
-doublereal dsdot_(integer *n, real *sx, integer *incx, real *sy, integer *
+double dsdot_(integer *n, real *sx, integer *incx, real *sy, integer *
 	incy)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal ret_val;
+    double ret_val;
 
     /* Local variables */
     integer i__, ns, kx, ky;
@@ -102,7 +102,7 @@ doublereal dsdot_(integer *n, real *sx, integer *incx, real *sy, integer *
     }
     i__1 = *n;
     for (i__ = 1; i__ <= i__1; ++i__) {
-	ret_val += (doublereal) sx[kx] * (doublereal) sy[ky];
+	ret_val += (double) sx[kx] * (double) sy[ky];
 	kx += *incx;
 	ky += *incy;
 /* L10: */
@@ -116,7 +116,7 @@ L20:
     i__1 = ns;
     i__2 = *incx;
     for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
-	ret_val += (doublereal) sx[i__] * (doublereal) sy[i__];
+	ret_val += (double) sx[i__] * (double) sy[i__];
 /* L30: */
     }
     return ret_val;

@@ -1,27 +1,27 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlarrj_(integer *n, doublereal *d__, doublereal *e2, 
-	integer *ifirst, integer *ilast, doublereal *rtol, integer *offset, 
-	doublereal *w, doublereal *werr, doublereal *work, integer *iwork, 
-	doublereal *pivmin, doublereal *spdiam, integer *info)
+/* Subroutine */ int dlarrj_(integer *n, double *d__, double *e2, 
+	integer *ifirst, integer *ilast, double *rtol, integer *offset, 
+	double *w, double *werr, double *work, integer *iwork, 
+	double *pivmin, double *spdiam, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double log(doublereal); */
+    double log(double); */
 
     /* Local variables */
     integer i__, j, k, p;
-    doublereal s;
+    double s;
     integer i1, i2, ii;
-    doublereal fac, mid;
+    double fac, mid;
     integer cnt;
-    doublereal tmp, left;
+    double tmp, left;
     integer iter, nint, prev, next, savi1;
-    doublereal right, width, dplus;
+    double right, width, dplus;
     integer olnint, maxitr;
 
 

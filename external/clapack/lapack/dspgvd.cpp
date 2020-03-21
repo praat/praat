@@ -6,13 +6,13 @@
 static integer c__1 = 1;
 
 /* Subroutine */ int dspgvd_(integer *itype, char *jobz, char *uplo, integer *
-	n, doublereal *ap, doublereal *bp, doublereal *w, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *lwork, integer *iwork, 
+	n, double *ap, double *bp, double *w, double *z__, 
+	integer *ldz, double *work, integer *lwork, integer *iwork, 
 	integer *liwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer j, neig;
@@ -210,7 +210,7 @@ static integer c__1 = 1;
 		lwmin = *n << 1;
 	    }
 	}
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 	iwork[1] = liwmin;
 
 	if (*lwork < lwmin && ! lquery) {
@@ -248,10 +248,10 @@ static integer c__1 = 1;
     dspevd_(jobz, uplo, n, &ap[1], &w[1], &z__[z_offset], ldz, &work[1], 
 	    lwork, &iwork[1], liwork, info);
 /* Computing MAX */
-    d__1 = (doublereal) lwmin;
+    d__1 = (double) lwmin;
     lwmin = (integer) std::max(d__1,work[1]);
 /* Computing MAX */
-    d__1 = (doublereal) liwmin, d__2 = (doublereal) iwork[1];
+    d__1 = (double) liwmin, d__2 = (double) iwork[1];
     liwmin = (integer) std::max(d__1,d__2);
 
     if (wantz) {
@@ -300,7 +300,7 @@ static integer c__1 = 1;
 	}
     }
 
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     iwork[1] = liwmin;
 
     return 0;

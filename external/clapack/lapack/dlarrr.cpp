@@ -1,20 +1,20 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlarrr_(integer *n, doublereal *d__, doublereal *e, 
+/* Subroutine */ int dlarrr_(integer *n, double *d__, double *e, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__;
-    doublereal eps, tmp, tmp2, rmin;
+    double eps, tmp, tmp2, rmin;
  
-    doublereal offdig, safmin;
+    double offdig, safmin;
     logical yesrel;
-    doublereal smlnum, offdig2;
+    double smlnum, offdig2;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

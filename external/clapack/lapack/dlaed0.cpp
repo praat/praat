@@ -6,22 +6,22 @@
 static integer c__9 = 9;
 static integer c__0 = 0;
 static integer c__2 = 2;
-static doublereal c_b23 = 1.;
-static doublereal c_b24 = 0.;
+static double c_b23 = 1.;
+static double c_b24 = 0.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dlaed0_(integer *icompq, integer *qsiz, integer *n, 
-	doublereal *d__, doublereal *e, doublereal *q, integer *ldq, 
-	doublereal *qstore, integer *ldqs, doublereal *work, integer *iwork, 
+	double *d__, double *e, double *q, integer *ldq, 
+	double *qstore, integer *ldqs, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, qstore_dim1, qstore_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, k, iq, lgn, msd2, smm1, spm1, spm2;
-    doublereal temp;
+    double temp;
     integer curr;
     integer iperm;
     integer indxq, iwrem;
@@ -226,7 +226,7 @@ L10:
 /*        Set up workspaces for eigenvalues only/accumulate new vectors */
 /*        routine */
 
-	temp = log((doublereal) (*n)) / log(2.);
+	temp = log((double) (*n)) / log(2.);
 	lgn = (integer) temp;
 	if (pow_ii(&c__2, &lgn) < *n) {
 	    ++lgn;

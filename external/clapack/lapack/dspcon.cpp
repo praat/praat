@@ -5,8 +5,8 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspcon_(char *uplo, integer *n, doublereal *ap, integer *
-	ipiv, doublereal *anorm, doublereal *rcond, doublereal *work, integer 
+/* Subroutine */ int dspcon_(char *uplo, integer *n, double *ap, integer *
+	ipiv, double *anorm, double *rcond, double *work, integer 
 	*iwork, integer *info)
 {
     /* System generated locals */
@@ -16,7 +16,7 @@ static integer c__1 = 1;
     integer i__, ip, kase;
     integer isave[3];
     logical upper;
-    doublereal ainvnm;
+    double ainvnm;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

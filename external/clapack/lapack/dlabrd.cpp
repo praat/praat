@@ -3,14 +3,14 @@
 
 /* Table of constant values */
 
-static doublereal c_b4 = -1.;
-static doublereal c_b5 = 1.;
+static double c_b4 = -1.;
+static double c_b5 = 1.;
 static integer c__1 = 1;
-static doublereal c_b16 = 0.;
+static double c_b16 = 0.;
 
-/* Subroutine */ int dlabrd_(integer *m, integer *n, integer *nb, doublereal *
-	a, integer *lda, doublereal *d__, doublereal *e, doublereal *tauq, 
-	doublereal *taup, doublereal *x, integer *ldx, doublereal *y, integer 
+/* Subroutine */ int dlabrd_(integer *m, integer *n, integer *nb, double *
+	a, integer *lda, double *d__, double *e, double *tauq, 
+	double *taup, double *x, integer *ldx, double *y, integer 
 	*ldy)
 {
     /* System generated locals */

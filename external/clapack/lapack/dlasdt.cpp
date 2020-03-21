@@ -9,7 +9,7 @@
 
     /* Local variables */
     integer i__, il, ir, maxn;
-    doublereal temp;
+    double temp;
     integer nlvl, llst, ncrnt;
 
 
@@ -80,7 +80,7 @@
 
     /* Function Body */
     maxn = std::max(1_integer,*n);
-    temp = log((doublereal) maxn / (doublereal) (*msub + 1)) / log(2.);
+    temp = log((double) maxn / (double) (*msub + 1)) / log(2.);
     *lvl = (integer) temp + 1;
 
     i__ = *n / 2;

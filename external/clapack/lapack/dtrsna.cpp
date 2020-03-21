@@ -8,38 +8,38 @@ static logical c_true = TRUE_;
 static logical c_false = FALSE_;
 
 /* Subroutine */ int dtrsna_(const char *job, const char *howmny, logical *select, 
-	integer *n, doublereal *t, integer *ldt, doublereal *vl, integer *
-	ldvl, doublereal *vr, integer *ldvr, doublereal *s, doublereal *sep, 
-	integer *mm, integer *m, doublereal *work, integer *ldwork, integer *
+	integer *n, double *t, integer *ldt, double *vl, integer *
+	ldvl, double *vr, integer *ldvr, double *s, double *sep, 
+	integer *mm, integer *m, double *work, integer *ldwork, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
     integer t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, 
 	    work_dim1, work_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, k, n2;
-    doublereal cs;
+    double cs;
     integer nn, ks;
-    doublereal sn, mu, eps, est;
+    double sn, mu, eps, est;
     integer kase;
-    doublereal cond;
+    double cond;
     logical pair;
     integer ierr;
-    doublereal dumm, prod;
+    double dumm, prod;
     integer ifst;
-    doublereal lnrm;
+    double lnrm;
     integer ilst;
-    doublereal rnrm;
-    doublereal prod1, prod2, scale, delta;
+    double rnrm;
+    double prod1, prod2, scale, delta;
     integer isave[3];
     logical wants;
-    doublereal dummy[1];
-    doublereal bignum;
+    double dummy[1];
+    double bignum;
     logical wantbh;
     logical somcon;
-    doublereal smlnum;
+    double smlnum;
     logical wantsp;
 
 

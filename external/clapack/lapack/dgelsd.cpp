@@ -8,30 +8,30 @@ static integer c_n1 = -1;
 static integer c__9 = 9;
 static integer c__0 = 0;
 static integer c__1 = 1;
-static doublereal c_b82 = 0.;
+static double c_b82 = 0.;
 
 /* Subroutine */ int dgelsd_(integer *m, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, doublereal *
-	s, doublereal *rcond, integer *rank, doublereal *work, integer *lwork, 
+	double *a, integer *lda, double *b, integer *ldb, double *
+	s, double *rcond, integer *rank, double *work, integer *lwork, 
 	 integer *iwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3, i__4;
 
     /* Builtin functions
-    double log(doublereal); */
+    double log(double); */
 
     /* Local variables */
     integer ie, il, mm;
-    doublereal eps, anrm, bnrm;
+    double eps, anrm, bnrm;
     integer itau, nlvl, iascl, ibscl;
-    doublereal sfmin;
+    double sfmin;
     integer minmn, maxmn, itaup, itauq, mnthr, nwork;
-    doublereal bignum;
+    double bignum;
     integer wlalsd;
     integer ldwork;
     integer minwrk, maxwrk;
-    doublereal smlnum;
+    double smlnum;
     logical lquery;
     integer smlsiz;
 
@@ -219,7 +219,7 @@ static doublereal c_b82 = 0.;
     minwrk = 1;
     minmn = std::max(1_integer,minmn);
 /* Computing MAX */
-    i__1 = (integer) (log((doublereal) minmn / (doublereal) (smlsiz + 1)) / 
+    i__1 = (integer) (log((double) minmn / (double) (smlsiz + 1)) / 
 	    log(2.)) + 1;
     nlvl = std::max(i__1,0_integer);
 
@@ -332,7 +332,7 @@ static doublereal c_b82 = 0.;
 	    minwrk = std::max(i__1,i__2);
 	}
 	minwrk = std::min(minwrk,maxwrk);
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -12;
 	}
@@ -636,7 +636,7 @@ static doublereal c_b82 = 0.;
     }
 
 L10:
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     return 0;
 
 /*     End of DGELSD */

@@ -5,17 +5,17 @@
 
 static integer c__1 = 1;
 
-doublereal dlansb_(char *norm, char *uplo, integer *n, integer *k, doublereal 
-	*ab, integer *ldab, doublereal *work)
+double dlansb_(char *norm, char *uplo, integer *n, integer *k, double 
+	*ab, integer *ldab, double *work)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4;
-    doublereal ret_val, d__1, d__2, d__3;
+    double ret_val, d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, l;
-    doublereal sum, absa, scale;
-    doublereal value;
+    double sum, absa, scale;
+    double value;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

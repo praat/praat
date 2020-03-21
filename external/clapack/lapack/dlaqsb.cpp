@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaqsb_(char *uplo, integer *n, integer *kd, doublereal *
-	ab, integer *ldab, doublereal *s, doublereal *scond, doublereal *amax, 
+/* Subroutine */ int dlaqsb_(char *uplo, integer *n, integer *kd, double *
+	ab, integer *ldab, double *s, double *scond, double *amax, 
 	 char *equed)
 {
     /* System generated locals */
@@ -10,9 +10,9 @@
 
     /* Local variables */
     integer i__, j;
-    doublereal cj, large;
+    double cj, large;
  
-    doublereal small;
+    double small;
  
 
 

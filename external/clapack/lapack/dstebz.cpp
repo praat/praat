@@ -9,41 +9,41 @@ static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dstebz_(char *range, char *order, integer *n, doublereal 
-	*vl, doublereal *vu, integer *il, integer *iu, doublereal *abstol, 
-	doublereal *d__, doublereal *e, integer *m, integer *nsplit, 
-	doublereal *w, integer *iblock, integer *isplit, doublereal *work, 
+/* Subroutine */ int dstebz_(char *range, char *order, integer *n, double 
+	*vl, double *vu, integer *il, integer *iu, double *abstol, 
+	double *d__, double *e, integer *m, integer *nsplit, 
+	double *w, integer *iblock, integer *isplit, double *work, 
 	integer *iwork, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3, d__4, d__5;
+    double d__1, d__2, d__3, d__4, d__5;
 
     /* Local variables */
     integer j, ib, jb, ie, je, nb;
-    doublereal gl;
+    double gl;
     integer im, in;
-    doublereal gu;
+    double gu;
     integer iw;
-    doublereal wl, wu;
+    double wl, wu;
     integer nwl;
-    doublereal ulp, wlu, wul;
+    double ulp, wlu, wul;
     integer nwu;
-    doublereal tmp1, tmp2;
+    double tmp1, tmp2;
     integer iend, ioff, iout, itmp1, jdisc;
     integer iinfo;
-    doublereal atoli;
+    double atoli;
     integer iwoff;
-    doublereal bnorm;
+    double bnorm;
     integer itmax;
-    doublereal wkill, rtoli, tnorm;
+    double wkill, rtoli, tnorm;
     integer ibegin;
     integer irange, idiscl;
-    doublereal safemn;
+    double safemn;
     integer idumma[1];
     integer idiscu, iorder;
     logical ncnvrg;
-    doublereal pivmin;
+    double pivmin;
     logical toofew;
 
 

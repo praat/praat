@@ -3,10 +3,10 @@
 
 /* Table of constant values */
 
-static doublereal c_b7 = 1.;
+static double c_b7 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dlauu2_(const char *uplo, integer *n, doublereal *a, integer *
+/* Subroutine */ int dlauu2_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */
@@ -14,7 +14,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__;
-    doublereal aii;
+    double aii;
     logical upper;
 
 

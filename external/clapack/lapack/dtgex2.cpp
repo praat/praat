@@ -4,42 +4,42 @@
 /* Table of constant values */
 
 static integer c__4 = 4;
-static doublereal c_b5 = 0.;
+static double c_b5 = 0.;
 static integer c__1 = 1;
 static integer c__2 = 2;
-static doublereal c_b42 = 1.;
-static doublereal c_b48 = -1.;
+static double c_b42 = 1.;
+static double c_b48 = -1.;
 static integer c__0 = 0;
 
 /* Subroutine */ int dtgex2_(logical *wantq, logical *wantz, integer *n, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, doublereal *
-	q, integer *ldq, doublereal *z__, integer *ldz, integer *j1, integer *
-	n1, integer *n2, doublereal *work, integer *lwork, integer *info)
+	double *a, integer *lda, double *b, integer *ldb, double *
+	q, integer *ldq, double *z__, integer *ldz, integer *j1, integer *
+	n1, integer *n2, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, z_dim1, 
 	    z_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal f, g;
+    double f, g;
     integer i__, m;
-    doublereal s[16]	/* was [4][4] */, t[16]	/* was [4][4] */, be[2], ai[2]
+    double s[16]	/* was [4][4] */, t[16]	/* was [4][4] */, be[2], ai[2]
 	    , ar[2], sa, sb, li[16]	/* was [4][4] */, ir[16]	/* 
 	    was [4][4] */, ss, ws, eps;
     logical weak;
-    doublereal ddum;
+    double ddum;
     integer idum;
-    doublereal taul[4], dsum;
-    doublereal taur[4], scpy[16] /* was [4][4] */, tcpy[16]	/* was [4][4] */;
-    doublereal scale, bqra21, brqa21;
-    doublereal licop[16] /* was [4][4] */;
+    double taul[4], dsum;
+    double taur[4], scpy[16] /* was [4][4] */, tcpy[16]	/* was [4][4] */;
+    double scale, bqra21, brqa21;
+    double licop[16] /* was [4][4] */;
     integer linfo;
-    doublereal ircop[16] /* was [4][4] */, dnorm;
+    double ircop[16] /* was [4][4] */, dnorm;
     integer iwork[4];
-    doublereal dscale;
+    double dscale;
 	logical dtrong;
-    doublereal thresh, smlnum;
+    double thresh, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -214,7 +214,7 @@ static integer c__0 = 0;
 	*info = -16;
 /* Computing MAX */
 	i__1 = 1, i__2 = *n * m, i__1 = std::max(i__1,i__2), i__2 = m * m << 1;
-	work[1] = (doublereal) std::max(i__1,i__2);
+	work[1] = (double) std::max(i__1,i__2);
 	return 0;
     }
 
