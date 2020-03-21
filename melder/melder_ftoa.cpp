@@ -456,7 +456,7 @@ conststring32 Melder_colour (MelderColour colour) noexcept {
 /********** TENSOR TO STRING CONVERSION **********/
 
 #define NUMBER_OF_TENSOR_BUFFERS  3
-static MelderString theTensorBuffers [NUMBER_OF_TENSOR_BUFFERS] { };
+static MelderString theTensorBuffers [NUMBER_OF_TENSOR_BUFFERS];
 static int iTensorBuffer { 0 };
 
 conststring32 Melder_VEC (constVECVU const& value) {

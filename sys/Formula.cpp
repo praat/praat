@@ -319,7 +319,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 #define oldread  (-- ilexan)
 
 static void formulaError (conststring32 message, int position) {
-	static MelderString truncatedExpression { };
+	static MelderString truncatedExpression;
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
 	Melder_throw (message, U":\n« ", truncatedExpression.string);
 }
@@ -375,7 +375,7 @@ static void Formula_lexan () {
 #define toknumber(g)  lexan [itok]. content.number = (g)
 #define tokmatrix(m)  lexan [itok]. content.object = (m)
 
-	static MelderString token { };   /* String to collect a symbol name in. */
+	static MelderString token;   // string to collect a symbol name in
 #define stringtokon MelderString_empty (& token);
 #define stringtokchar { MelderString_appendCharacter (& token, kar); newchar; }
 #define stringtokoff (void) 0
@@ -872,11 +872,11 @@ static void fit (int symbol) {
 		const conststring32 symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
 		const bool needQuotes1 = ! str32chr (symbolName1, U' ');
 		const bool needQuotes2 = ! str32chr (symbolName2, U' ');
-		static MelderString melding { };
-		MelderString_copy (& melding,
+		static MelderString message;
+		MelderString_copy (& message,
 			U"Expected ", ( needQuotes1 ? U"\"" : nullptr ), symbolName1, ( needQuotes1 ? U"\"" : nullptr ),
 			U", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
-		formulaError (melding.string, lexan [ilexan]. position);
+		formulaError (message.string, lexan [ilexan]. position);
 	}
 }
 
@@ -886,10 +886,10 @@ static bool fitArguments () {
     if (symbol == COLON_) return false;   // success: a function call like: myFunction: ...
     const conststring32 symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
     bool needQuotes2 = ! str32chr (symbolName2, U' ');
-    static MelderString melding { };
-    MelderString_copy (& melding,
+    static MelderString message;
+    MelderString_copy (& message,
 		U"Expected \"(\" or \":\", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
-    formulaError (melding.string, lexan [ilexan]. position);
+    formulaError (message.string, lexan [ilexan]. position);
     return false;   // will never occur
 }
 
@@ -1969,7 +1969,7 @@ static int praat_findObjectById (integer id) {
 static int praat_findObjectByName (conststring32 name) {
 	int IOBJECT;
 	if (*name >= U'A' && *name <= U'Z') {
-		static MelderString buffer { };
+		static MelderString buffer;
 		MelderString_copy (& buffer, name);
 		char32 *spaceLocation = str32chr (buffer.string, U' ');
 		if (! spaceLocation)
@@ -4562,7 +4562,7 @@ static void do_indexedNumericVariable () {
 	if (nindex < 1)
 		Melder_throw (U"Indexed variables require at least one index.");
 	char32 *indexedVariableName = parse [programPointer]. content.string;
-	static MelderString totalVariableName { };
+	static MelderString totalVariableName;
 	MelderString_copy (& totalVariableName, indexedVariableName, U"[");
 	w -= nindex;
 	for (int iindex = 1; iindex <= nindex; iindex ++) {
@@ -4587,7 +4587,7 @@ static void do_indexedStringVariable () {
 	if (nindex < 1)
 		Melder_throw (U"Indexed variables require at least one index.");
 	char32 *indexedVariableName = parse [programPointer]. content.string;
-	static MelderString totalVariableName { };
+	static MelderString totalVariableName;
 	MelderString_copy (& totalVariableName, indexedVariableName, U"[");
 	w -= nindex;
 	for (int iindex = 1; iindex <= nindex; iindex ++) {

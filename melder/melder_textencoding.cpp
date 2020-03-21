@@ -200,7 +200,7 @@ size_t str32len_utf16 (conststring32 string, bool nativizeNewlines) {
 conststring32 Melder_peek8to32 (conststring8 textA) {
 	if (! textA)
 		return nullptr;
-	static MelderString buffers [19] { };
+	static MelderString buffers [19];
 	static int ibuffer = 0;
 	if (++ ibuffer == 11)
 		ibuffer = 0;
@@ -433,7 +433,7 @@ autostring32 Melder_8to32 (const char *string) {
 
 conststring32 Melder_peek16to32 (conststring16 text) {
 	if (! text) return nullptr;
-	static MelderString buffers [19] { };
+	static MelderString buffers [19];
 	static int bufferNumber = 0;
 	if (++ bufferNumber == 19)
 		bufferNumber = 0;

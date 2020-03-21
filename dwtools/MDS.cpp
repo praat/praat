@@ -2394,7 +2394,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		static MelderString ts { };
+		static MelderString ts;
 		const integer lastKnot = ( splineType == kMDS_splineType::ISpline ? numberOfKnots - 2 : numberOfKnots );
 		Graphics_drawInnerBox (g);
 		Graphics_textLeft (g, false, ( splineType == kMDS_splineType::MSpline ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline" ));

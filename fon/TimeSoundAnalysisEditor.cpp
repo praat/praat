@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,14 +319,14 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 				Melder_sprint (formattedNumber,400, value);
 			}
 			integer arglen = str32len (formattedNumber);
-			static MelderString buffer { };
+			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			str32cpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue) {
 			integer varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
-			static MelderString buffer { };
+			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, stringValue, p + varlen + 2);
 			str32cpy (format, buffer.string);

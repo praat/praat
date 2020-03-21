@@ -95,7 +95,7 @@ static bool waitWhileProgress (double progress, conststring32 message, GuiDialog
 		GuiThing_show (dia);   // TODO: prevent raising to the front
 		const char32 *newline = str32chr (message, U'\n');
 		if (newline) {
-			static MelderString buffer { };
+			static MelderString buffer;
 			MelderString_copy (& buffer, message);
 			buffer.string [newline - message] = U'\0';
 			GuiLabel_setText (label1, buffer.string);

@@ -1,6 +1,6 @@
 /* melder_info.cpp
  *
- * Copyright (C) 1992-2007,2011-2018 Paul Boersma
+ * Copyright (C) 1992-2007,2011-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ void Melder_setInformationProc (MelderInfo::Proc proc) {
 	MelderInfo::_p_currentProc = ( proc ? proc : MelderInfo::_defaultProc );
 }
 
-MelderString MelderInfo::_foregroundBuffer = { 0, 0, nullptr };
+MelderString MelderInfo::_foregroundBuffer;
 MelderString *MelderInfo::_p_currentBuffer = & MelderInfo::_foregroundBuffer;
 
 void MelderInfo_open () {

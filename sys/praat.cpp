@@ -229,8 +229,8 @@ autoCollection praat_getSelectedObjects () {
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
 void praat_write_do (UiForm dia, conststring32 extension) {
-	static MelderString defaultFileName { };
-	if (extension && str32chr (extension, '.')) {
+	static MelderString defaultFileName;
+	if (extension && str32chr (extension, U'.')) {
 		/*
 			Apparently, the "extension" is a complete file name.
 			This should be used as the default file name.
@@ -395,7 +395,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, conststring32 myName) {
 	theCurrentPraatObjects -> totalBeingCreated ++;
 }
 
-static MelderString thePraatNewName { };
+static MelderString thePraatNewName;
 void praat_new (autoDaata me) {
 	praat_newWithFile (me.move(), nullptr, U"");
 }
