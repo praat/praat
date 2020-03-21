@@ -1,12 +1,12 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspcon_(char *uplo, integer *n, doublereal *ap, integer *
-	ipiv, doublereal *anorm, doublereal *rcond, doublereal *work, integer 
+/* Subroutine */ int dspcon_(char *uplo, integer *n, double *ap, integer *
+	ipiv, double *anorm, double *rcond, double *work, integer 
 	*iwork, integer *info)
 {
     /* System generated locals */
@@ -15,8 +15,8 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, ip, kase;
     integer isave[3];
-    logical upper;
-    doublereal ainvnm;
+    bool upper;
+    double ainvnm;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

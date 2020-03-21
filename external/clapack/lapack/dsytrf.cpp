@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,8 +7,8 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dsytrf_(char *uplo, integer *n, doublereal *a, integer *
-	lda, integer *ipiv, doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dsytrf_(char *uplo, integer *n, double *a, integer *
+	lda, integer *ipiv, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
@@ -17,9 +17,9 @@ static integer c__2 = 2;
     integer j, k, kb, nb, iws;
  
     integer nbmin, iinfo;
-    logical upper;
+    bool upper;
     integer ldwork, lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -179,7 +179,7 @@ static integer c__2 = 2;
 
 	nb = ilaenv_(&c__1, "DSYTRF", uplo, n, &c_n1, &c_n1, &c_n1);
 	lwkopt = *n * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -313,7 +313,7 @@ L20:
     }
 
 L40:
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DSYTRF */

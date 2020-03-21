@@ -1,35 +1,35 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b12 = -1.;
-static doublereal c_b14 = 1.;
+static double c_b12 = -1.;
+static double c_b14 = 1.;
 
 /* Subroutine */ int dporfs_(char *uplo, integer *n, integer *nrhs, 
-	doublereal *a, integer *lda, doublereal *af, integer *ldaf, 
-	doublereal *b, integer *ldb, doublereal *x, integer *ldx, doublereal *
-	ferr, doublereal *berr, doublereal *work, integer *iwork, integer *
+	double *a, integer *lda, double *af, integer *ldaf, 
+	double *b, integer *ldb, double *x, integer *ldx, double *
+	ferr, double *berr, double *work, integer *iwork, integer *
 	info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, af_dim1, af_offset, b_dim1, b_offset, x_dim1, 
 	    x_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal s, xk;
+    double s, xk;
     integer nz;
-    doublereal eps;
+    double eps;
     integer kase;
-    doublereal safe1, safe2;
+    double safe1, safe2;
     integer isave[3];
     integer count;
-    logical upper;
-    doublereal safmin;
-    doublereal lstres;
+    bool upper;
+    double safmin;
+    double lstres;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

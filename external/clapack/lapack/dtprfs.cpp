@@ -1,36 +1,36 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b19 = -1.;
+static double c_b19 = -1.;
 
 /* Subroutine */ int dtprfs_(char *uplo, char *trans, char *diag, integer *n, 
-	integer *nrhs, doublereal *ap, doublereal *b, integer *ldb, 
-	doublereal *x, integer *ldx, doublereal *ferr, doublereal *berr, 
-	doublereal *work, integer *iwork, integer *info)
+	integer *nrhs, double *ap, double *b, integer *ldb, 
+	double *x, integer *ldx, double *ferr, double *berr, 
+	double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal s;
+    double s;
     integer kc;
-    doublereal xk;
+    double xk;
     integer nz;
-    doublereal eps;
+    double eps;
     integer kase;
-    doublereal safe1, safe2;
+    double safe1, safe2;
     integer isave[3];
-    logical upper;
-    doublereal safmin;
-    logical notran;
+    bool upper;
+    double safmin;
+    bool notran;
     char transt[1];
-    logical nounit;
-    doublereal lstres;
+    bool nounit;
+    double lstres;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

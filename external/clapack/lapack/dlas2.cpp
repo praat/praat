@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlas2_(doublereal *f, doublereal *g, doublereal *h__, 
-	doublereal *ssmin, doublereal *ssmax)
+/* Subroutine */ int dlas2_(double *f, double *g, double *h__, 
+	double *ssmin, double *ssmax)
 {
     /* System generated locals */
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
-    doublereal c__, fa, ga, ha, as, at, au, fhmn, fhmx;
+    double c__, fa, ga, ha, as, at, au, fhmn, fhmx;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

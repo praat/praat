@@ -1,8 +1,8 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int daxpy_(integer *n, doublereal *da, doublereal *dx, 
-	integer *incx, doublereal *dy, integer *incy)
+/* Subroutine */ int daxpy_(integer *n, double *da, double *dx, 
+	integer *incx, double *dy, integer *incy)
 {
     /* System generated locals */
     integer i__1;

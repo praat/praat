@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b4 = 1.;
+static double c_b4 = 1.;
 
-/* Subroutine */ int dlanv2_(doublereal *a, doublereal *b, doublereal *c__, 
-	doublereal *d__, doublereal *rt1r, doublereal *rt1i, doublereal *rt2r, 
-	 doublereal *rt2i, doublereal *cs, doublereal *sn)
+/* Subroutine */ int dlanv2_(double *a, double *b, double *c__, 
+	double *d__, double *rt1r, double *rt1i, double *rt2r, 
+	 double *rt2i, double *cs, double *sn)
 {
     /* System generated locals */
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double d_sign(doublereal *, doublereal *), sqrt(doublereal); */
+    double d_sign(double *, double *), sqrt(double); */
 
     /* Local variables */
-    doublereal p, z__, aa, bb, cc, dd, cs1, sn1, sab, sac, eps, tau, temp, 
+    double p, z__, aa, bb, cc, dd, cs1, sn1, sab, sac, eps, tau, temp, 
 	    scale, bcmax, bcmis, sigma;
  
 

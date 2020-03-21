@@ -10,11 +10,11 @@
 //typedef unsigned long int uinteger;
 //typedef char *address;
 //typedef short int shortint;
-typedef float real;
-typedef double doublereal;
-//typedef struct { real r, i; } complex;
+//typedef float real;
+//typedef double doublereal;
+//typedef struct { float r, i; } complex;
 //typedef struct { double r, i; } doublecomplex;
-typedef integer logical;
+//typedef bool logical;
 
 //#ifdef INTEGER_STAR_8	/* Adjust for integer*8. */
 //typedef long long longint;		/* system-dependent */
@@ -23,8 +23,8 @@ typedef integer logical;
 //#define qbit_set(a,b)	((a) |  ((ulongint)1 << (b)))
 //#endif
 
-#define TRUE_ (1)
-#define FALSE_ (0)
+//#define TRUE_ (1)
+//#define FALSE_ (0)
 
 /* Extern is for use with -E */
 //#ifndef Extern
@@ -34,7 +34,7 @@ typedef integer logical;
 /* I/O stuff */
 
 //typedef long int flag;
-typedef integer ftnlen;
+//typedef integer ftnlen;
 //typedef long int ftnlen;
 //typedef long int ftnint;
 
@@ -43,8 +43,8 @@ typedef integer ftnlen;
 //#define dabs(x) (double)abs(x)
 //#define min(a,b) (std::min(a,b))
 //#define max(a,b) (std::max(a,b))
-//#define dmin(a,b) (doublereal)min(a,b)
-//#define dmax(a,b) (doublereal)max(a,b)
+//#define dmin(a,b) (double)min(a,b)
+//#define dmax(a,b) (double)max(a,b)
 //#define bit_test(a,b)	((a) >> (b) & 1)
 //#define bit_clear(a,b)	((a) & ~((uinteger)1 << (b)))
 //#define bit_set(a,b)	((a) |  ((uinteger)1 << (b)))
@@ -60,7 +60,7 @@ typedef integer ftnlen;
 //typedef double (*D_fp)(...), (*E_fp)(...);
 //typedef /* Complex */ void (*C_fp)(...);
 //typedef /* Double Complex */ void (*Z_fp)(...);
-typedef logical (*L_fp)(...);
+//typedef bool (*L_fp)(...);
 //typedef shortlogical (*K_fp)(...);
 //typedef /* Character */ void (*H_fp)(...);
 //typedef /* Subroutine */ int (*S_fp)(...);

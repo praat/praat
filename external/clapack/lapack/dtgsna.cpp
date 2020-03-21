@@ -1,49 +1,49 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b19 = 1.;
-static doublereal c_b21 = 0.;
+static double c_b19 = 1.;
+static double c_b21 = 0.;
 static integer c__2 = 2;
-static logical c_false = FALSE_;
+static bool c_false = false;
 static integer c__3 = 3;
 
-/* Subroutine */ int dtgsna_(const char *job, const char *howmny, logical *select, 
-	integer *n, doublereal *a, integer *lda, doublereal *b, integer *ldb, 
-	doublereal *vl, integer *ldvl, doublereal *vr, integer *ldvr, 
-	doublereal *s, doublereal *dif, integer *mm, integer *m, doublereal *
+/* Subroutine */ int dtgsna_(const char *job, const char *howmny, bool *select, 
+	integer *n, double *a, integer *lda, double *b, integer *ldb, 
+	double *vl, integer *ldvl, double *vr, integer *ldvr, 
+	double *s, double *dif, integer *mm, integer *m, double *
 	work, integer *lwork, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, k;
-    doublereal c1, c2;
+    double c1, c2;
     integer n1, n2, ks, iz;
-    doublereal eps, beta, cond;
-    logical pair;
+    double eps, beta, cond;
+    bool pair;
     integer ierr;
-    doublereal uhav, uhbv;
+    double uhav, uhbv;
     integer ifst;
-    doublereal lnrm;
+    double lnrm;
     integer ilst;
-    doublereal rnrm;
-    doublereal root1, root2, scale;
-    doublereal uhavi, uhbvi, tmpii;
+    double rnrm;
+    double root1, root2, scale;
+    double uhavi, uhbvi, tmpii;
     integer lwmin;
-    logical wants;
-    doublereal tmpir, tmpri, dummy[1], tmprr;
-    doublereal dummy1[1];
-    doublereal alphai, alphar;
-    logical wantbh, wantdf, somcon;
-    doublereal alprqt;
-    doublereal smlnum;
-    logical lquery;
+    bool wants;
+    double tmpir, tmpri, dummy[1], tmprr;
+    double dummy1[1];
+    double alphai, alphar;
+    bool wantbh, wantdf, somcon;
+    double alprqt;
+    double smlnum;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -383,11 +383,11 @@ static integer c__3 = 3;
 
 	if (somcon) {
 	    *m = 0;
-	    pair = FALSE_;
+	    pair = false;
 	    i__1 = *n;
 	    for (k = 1; k <= i__1; ++k) {
 		if (pair) {
-		    pair = FALSE_;
+		    pair = false;
 		} else {
 		    if (k < *n) {
 			if (a[k + 1 + k * a_dim1] == 0.) {
@@ -395,7 +395,7 @@ static integer c__3 = 3;
 				++(*m);
 			    }
 			} else {
-			    pair = TRUE_;
+			    pair = true;
 			    if (select[k] || select[k + 1]) {
 				*m += 2;
 			    }
@@ -420,7 +420,7 @@ static integer c__3 = 3;
 	} else {
 	    lwmin = *n;
 	}
-	work[1] = (doublereal) lwmin;
+	work[1] = (double) lwmin;
 
 	if (*mm < *m) {
 	    *info = -15;
@@ -448,7 +448,7 @@ static integer c__3 = 3;
     eps = dlamch_("P");
     smlnum = dlamch_("S") / eps;
     ks = 0;
-    pair = FALSE_;
+    pair = false;
 
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
@@ -456,7 +456,7 @@ static integer c__3 = 3;
 /*        Determine whether A(k,k) begins a 1-by-1 or 2-by-2 block. */
 
 	if (pair) {
-	    pair = FALSE_;
+	    pair = false;
 	    goto L20;
 	} else {
 	    if (k < *n) {
@@ -649,7 +649,7 @@ static integer c__3 = 3;
 L20:
 	;
     }
-    work[1] = (doublereal) lwmin;
+    work[1] = (double) lwmin;
     return 0;
 
 /*     End of DTGSNA */

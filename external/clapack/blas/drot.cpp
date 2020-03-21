@@ -1,15 +1,15 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int drot_(integer *n, doublereal *dx, integer *incx, 
-	doublereal *dy, integer *incy, doublereal *c__, doublereal *s)
+/* Subroutine */ int drot_(integer *n, double *dx, integer *incx, 
+	double *dy, integer *incy, double *c__, double *s)
 {
     /* System generated locals */
     integer i__1;
 
     /* Local variables */
     integer i__, ix, iy;
-    doublereal dtemp;
+    double dtemp;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

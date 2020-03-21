@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,10 +7,10 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dsysvx_(char *fact, char *uplo, integer *n, integer *
-	nrhs, doublereal *a, integer *lda, doublereal *af, integer *ldaf, 
-	integer *ipiv, doublereal *b, integer *ldb, doublereal *x, integer *
-	ldx, doublereal *rcond, doublereal *ferr, doublereal *berr, 
-	doublereal *work, integer *lwork, integer *iwork, integer *info)
+	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
+	integer *ipiv, double *b, integer *ldb, double *x, integer *
+	ldx, double *rcond, double *ferr, double *berr, 
+	double *work, integer *lwork, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, af_dim1, af_offset, b_dim1, b_offset, x_dim1, 
@@ -18,10 +18,10 @@ static integer c_n1 = -1;
 
     /* Local variables */
     integer nb;
-    doublereal anorm;
-    logical nofact;
+    double anorm;
+    bool nofact;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
@@ -273,7 +273,7 @@ static integer c_n1 = -1;
 	    i__1 = lwkopt, i__2 = *n * nb;
 	    lwkopt = std::max(i__1,i__2);
 	}
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -328,7 +328,7 @@ static integer c_n1 = -1;
 	*info = *n + 1;
     }
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

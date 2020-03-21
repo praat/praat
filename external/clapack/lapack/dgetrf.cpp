@@ -1,14 +1,14 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b16 = 1.;
-static doublereal c_b19 = -1.;
+static double c_b16 = 1.;
+static double c_b19 = -1.;
 
-/* Subroutine */ int dgetrf_(integer *m, integer *n, doublereal *a, integer *
+/* Subroutine */ int dgetrf_(integer *m, integer *n, double *a, integer *
 	lda, integer *ipiv, integer *info)
 {
     /* System generated locals */

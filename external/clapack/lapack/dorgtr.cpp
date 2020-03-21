@@ -1,13 +1,13 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dorgtr_(const char *uplo, integer *n, doublereal *a, integer *
-	lda, doublereal *tau, doublereal *work, integer *lwork, integer *info)
+/* Subroutine */ int dorgtr_(const char *uplo, integer *n, double *a, integer *
+	lda, double *tau, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
@@ -15,9 +15,9 @@ static integer c_n1 = -1;
     /* Local variables */
     integer i__, j, nb;
     integer iinfo;
-    logical upper;
+    bool upper;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -137,7 +137,7 @@ static integer c_n1 = -1;
 /* Computing MAX */
 	i__1 = 1, i__2 = *n - 1;
 	lwkopt = std::max(i__1,i__2) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -222,7 +222,7 @@ static integer c_n1 = -1;
 		    &work[1], lwork, &iinfo);
 	}
     }
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORGTR */

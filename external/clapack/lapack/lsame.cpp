@@ -1,10 +1,10 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-logical lsame_(const char *ca, const char *cb)
+bool lsame_(const char *ca, const char *cb)
 {
     /* System generated locals */
-    logical ret_val;
+    bool ret_val;
 
     /* Local variables */
     integer inta, intb, zcode;

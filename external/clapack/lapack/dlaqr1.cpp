@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlaqr1_(integer *n, doublereal *h__, integer *ldh, 
-	doublereal *sr1, doublereal *si1, doublereal *sr2, doublereal *si2, 
-	doublereal *v)
+/* Subroutine */ int dlaqr1_(integer *n, double *h__, integer *ldh, 
+	double *sr1, double *si1, double *sr2, double *si2, 
+	double *v)
 {
     /* System generated locals */
     integer h_dim1, h_offset;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
-    doublereal s, h21s, h31s;
+    double s, h21s, h31s;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

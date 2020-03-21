@@ -1,23 +1,23 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b11 = 1.;
+static double c_b11 = 1.;
 
-/* Subroutine */ int dlacn2_(integer *n, doublereal *v, doublereal *x, 
-	integer *isgn, doublereal *est, integer *kase, integer *isave)
+/* Subroutine */ int dlacn2_(integer *n, double *v, double *x, 
+	integer *isgn, double *est, integer *kase, integer *isave)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__;
-    doublereal temp;
+    double temp;
     integer jlast;
-    doublereal altsgn, estold;
+    double altsgn, estold;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -110,7 +110,7 @@ static doublereal c_b11 = 1.;
     if (*kase == 0) {
 	i__1 = *n;
 	for (i__ = 1; i__ <= i__1; ++i__) {
-	    x[i__] = 1. / (doublereal) (*n);
+	    x[i__] = 1. / (double) (*n);
 /* L10: */
 	}
 	*kase = 1;
@@ -219,7 +219,7 @@ L120:
     altsgn = 1.;
     i__1 = *n;
     for (i__ = 1; i__ <= i__1; ++i__) {
-	x[i__] = altsgn * ((doublereal) (i__ - 1) / (doublereal) (*n - 1) + 
+	x[i__] = altsgn * ((double) (i__ - 1) / (double) (*n - 1) + 
 		1.);
 	altsgn = -altsgn;
 /* L130: */
@@ -232,7 +232,7 @@ L120:
 /*     X HAS BEEN OVERWRITTEN BY A*X. */
 
 L140:
-    temp = dasum_(n, &x[1], &c__1) / (doublereal) (*n * 3) * 2.;
+    temp = dasum_(n, &x[1], &c__1) / (double) (*n * 3) * 2.;
     if (temp > *est) {
 	dcopy_(n, &x[1], &c__1, &v[1], &c__1);
 	*est = temp;

@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b14 = 1.;
-static doublereal c_b16 = -.5;
-static doublereal c_b19 = -1.;
-static doublereal c_b52 = .5;
+static double c_b14 = 1.;
+static double c_b16 = -.5;
+static double c_b19 = -1.;
+static double c_b52 = .5;
 
 /* Subroutine */ int dsygst_(integer *itype, char *uplo, integer *n, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, integer *
+	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {
     /* System generated locals */
@@ -19,7 +19,7 @@ static doublereal c_b52 = .5;
 
     /* Local variables */
     integer k, kb, nb;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -1,15 +1,15 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-integer idamax_(integer *n, doublereal *dx, integer *incx)
+integer idamax_(integer *n, double *dx, integer *incx)
 {
     /* System generated locals */
     integer ret_val, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, ix;
-    doublereal dmax__;
+    double dmax__;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

@@ -1,15 +1,15 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-doublereal dasum_(integer *n, doublereal *dx, integer *incx)
+double dasum_(integer *n, double *dx, integer *incx)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal ret_val, d__1, d__2, d__3, d__4, d__5, d__6;
+    double ret_val, d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Local variables */
     integer i__, m, mp1;
-    doublereal dtemp;
+    double dtemp;
     integer nincx;
 
 /*     .. Scalar Arguments .. */

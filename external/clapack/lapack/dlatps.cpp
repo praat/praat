@@ -1,34 +1,34 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b36 = .5;
+static double c_b36 = .5;
 
 /* Subroutine */ int dlatps_(const char *uplo, const char *trans, const char *diag, const char *
-	normin, integer *n, doublereal *ap, doublereal *x, doublereal *scale, 
-	doublereal *cnorm, integer *info)
+	normin, integer *n, double *ap, double *x, double *scale, 
+	double *cnorm, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, ip;
-    doublereal xj, rec, tjj;
+    double xj, rec, tjj;
     integer jinc, jlen;
-    doublereal xbnd;
+    double xbnd;
     integer imax;
-    doublereal tmax, tjjs, xmax, grow, sumj;
-    doublereal tscal, uscal;
+    double tmax, tjjs, xmax, grow, sumj;
+    double tscal, uscal;
     integer jlast;
-    logical upper;
-    doublereal bignum;
-    logical notran;
+    bool upper;
+    double bignum;
+    bool notran;
     integer jfirst;
-    doublereal smlnum;
-    logical nounit;
+    double smlnum;
+    bool nounit;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

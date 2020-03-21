@@ -1,29 +1,29 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c__0 = 0;
-static doublereal c_b13 = 1.;
-static doublereal c_b26 = 0.;
+static double c_b13 = 1.;
+static double c_b26 = 0.;
 
 /* Subroutine */ int dlasd3_(integer *nl, integer *nr, integer *sqre, integer 
-	*k, doublereal *d__, doublereal *q, integer *ldq, doublereal *dsigma, 
-	doublereal *u, integer *ldu, doublereal *u2, integer *ldu2, 
-	doublereal *vt, integer *ldvt, doublereal *vt2, integer *ldvt2, 
-	integer *idxc, integer *ctot, doublereal *z__, integer *info)
+	*k, double *d__, double *q, integer *ldq, double *dsigma, 
+	double *u, integer *ldu, double *u2, integer *ldu2, 
+	double *vt, integer *ldvt, double *vt2, integer *ldvt2, 
+	integer *idxc, integer *ctot, double *z__, integer *info)
 {
     /* System generated locals */
     integer q_dim1, q_offset, u_dim1, u_offset, u2_dim1, u2_offset, vt_dim1, 
 	    vt_offset, vt2_dim1, vt2_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, m, n, jc;
-    doublereal rho;
+    double rho;
     integer nlp1, nlp2, nrp1;
-    doublereal temp;
+    double temp;
     integer ctemp;
     integer ktemp;
 

@@ -1,22 +1,22 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int drotm_(integer *n, doublereal *dx, integer *incx, 
-	doublereal *dy, integer *incy, doublereal *dparam)
+/* Subroutine */ int drotm_(integer *n, double *dx, integer *incx, 
+	double *dy, integer *incy, double *dparam)
 {
     /* Initialized data */
 
-    static doublereal zero = 0.;
-    static doublereal two = 2.;
+    static double zero = 0.;
+    static double two = 2.;
 
     /* System generated locals */
     integer i__1, i__2;
 
     /* Local variables */
     integer i__;
-    doublereal w, z__;
+    double w, z__;
     integer kx, ky;
-    doublereal dh11, dh12, dh21, dh22, dflag;
+    double dh11, dh12, dh21, dh22, dflag;
     integer nsteps;
 
 /*     .. Scalar Arguments .. */

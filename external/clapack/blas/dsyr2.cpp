@@ -1,16 +1,16 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dsyr2_(const char *uplo, integer *n, doublereal *alpha, 
-	doublereal *x, integer *incx, doublereal *y, integer *incy, 
-	doublereal *a, integer *lda)
+/* Subroutine */ int dsyr2_(const char *uplo, integer *n, double *alpha, 
+	double *x, integer *incx, double *y, integer *incy, 
+	double *a, integer *lda)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j, ix, iy, jx, jy, kx, ky, info;
-    doublereal temp1, temp2;
+    double temp1, temp2;
  
  
 

@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-doublereal dlapy2_(doublereal *x, doublereal *y)
+double dlapy2_(double *x, double *y)
 {
     /* System generated locals */
-    doublereal ret_val, d__1;
+    double ret_val, d__1;
 
     /* Builtin functions 
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
-    doublereal w, z__, xabs, yabs;
+    double w, z__, xabs, yabs;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

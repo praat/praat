@@ -1,8 +1,8 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dgebak_(const char *job, const char *side, integer *n, integer *ilo, 
-	integer *ihi, doublereal *scale, integer *m, doublereal *v, integer *
+	integer *ihi, double *scale, integer *m, double *v, integer *
 	ldv, integer *info)
 {
     /* System generated locals */
@@ -10,10 +10,10 @@
 
     /* Local variables */
     integer i__, k;
-    doublereal s;
+    double s;
     integer ii;
-    logical leftv;
-    logical rightv;
+    bool leftv;
+    bool rightv;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

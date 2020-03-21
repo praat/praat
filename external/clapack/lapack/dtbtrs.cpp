@@ -1,12 +1,12 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dtbtrs_(char *uplo, char *trans, char *diag, integer *n, 
-	integer *kd, integer *nrhs, doublereal *ab, integer *ldab, doublereal 
+	integer *kd, integer *nrhs, double *ab, integer *ldab, double 
 	*b, integer *ldb, integer *info)
 {
     /* System generated locals */
@@ -14,8 +14,8 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer j;
-    logical upper;
-    logical nounit;
+    bool upper;
+    bool nounit;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

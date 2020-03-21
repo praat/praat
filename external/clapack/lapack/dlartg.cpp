@@ -1,20 +1,20 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlartg_(doublereal *f, doublereal *g, doublereal *cs, 
-	doublereal *sn, doublereal *r__)
+/* Subroutine */ int dlartg_(double *f, double *g, double *cs, 
+	double *sn, double *r__)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__;
-    doublereal f1, g1, eps, scale;
+    double f1, g1, eps, scale;
     integer count;
-    doublereal safmn2, safmx2;
+    double safmn2, safmx2;
  
-    doublereal safmin;
+    double safmin;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

@@ -1,25 +1,25 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlaed6_(integer *kniter, logical *orgati, doublereal *
-	rho, doublereal *d__, doublereal *z__, doublereal *finit, doublereal *
+/* Subroutine */ int dlaed6_(integer *kniter, bool *orgati, double *
+	rho, double *d__, double *z__, double *finit, double *
 	tau, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
-    doublereal a, b, c__, f;
+    double a, b, c__, f;
     integer i__;
-    doublereal fc, df, ddf, lbd, eta, ubd, eps, base;
+    double fc, df, ddf, lbd, eta, ubd, eps, base;
     integer iter;
-    doublereal temp, temp1, temp2, temp3, temp4;
-    logical scale;
+    double temp, temp1, temp2, temp3, temp4;
+    bool scale;
     integer niter;
-    doublereal small1, small2, sminv1, sminv2;
+    double small1, small2, sminv1, sminv2;
  
-    doublereal dscale[3], sclfac, zscale[3], erretm, sclinv;
+    double dscale[3], sclfac, zscale[3], erretm, sclinv;
 
 
 /*  -- LAPACK routine (version 3.1.1) -- */
@@ -205,9 +205,9 @@
 		tau, abs(d__2));
 	temp = std::min(d__3,d__4);
     }
-    scale = FALSE_;
+    scale = false;
     if (temp <= small1) {
-	scale = TRUE_;
+	scale = true;
 	if (temp <= small2) {
 
 /*        Scale up by power of radix nearest 1/SAFMIN**(2/3) */

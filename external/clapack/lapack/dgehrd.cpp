@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -8,11 +8,11 @@ static integer c_n1 = -1;
 static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__65 = 65;
-static doublereal c_b25 = -1.;
-static doublereal c_b26 = 1.;
+static double c_b25 = -1.;
+static double c_b26 = 1.;
 
 /* Subroutine */ int dgehrd_(integer *n, integer *ilo, integer *ihi, 
-	doublereal *a, integer *lda, doublereal *tau, doublereal *work, 
+	double *a, integer *lda, double *tau, double *work, 
 	integer *lwork, integer *info)
 {
     /* System generated locals */
@@ -20,13 +20,13 @@ static doublereal c_b26 = 1.;
 
     /* Local variables */
     integer i__, j;
-    doublereal t[4160]	/* was [65][64] */;
+    double t[4160]	/* was [65][64] */;
     integer ib;
-    doublereal ei;
+    double ei;
     integer nb, nh, nx, iws;
     integer nbmin, iinfo;
     integer ldwork, lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -159,7 +159,7 @@ static doublereal c_b26 = 1.;
     i__1 = 64, i__2 = ilaenv_(&c__1, "DGEHRD", " ", n, ilo, ihi, &c_n1);
     nb = std::min(i__1,i__2);
     lwkopt = *n * nb;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     if (*n < 0) {
 	*info = -1;
@@ -305,7 +305,7 @@ static doublereal c_b26 = 1.;
 /*     Use unblocked code to reduce the rest of the matrix */
 
     dgehd2_(n, &i__, ihi, &a[a_offset], lda, &tau[1], &work[1], &iinfo);
-    work[1] = (doublereal) iws;
+    work[1] = (double) iws;
 
     return 0;
 

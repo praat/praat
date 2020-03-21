@@ -1,18 +1,18 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b5 = 1.;
+static double c_b5 = 1.;
 
 /* Subroutine */ int dlarz_(const char *side, integer *m, integer *n, integer *l, 
-	doublereal *v, integer *incv, doublereal *tau, doublereal *c__, 
-	integer *ldc, doublereal *work)
+	double *v, integer *incv, double *tau, double *c__, 
+	integer *ldc, double *work)
 {
     /* System generated locals */
     integer c_dim1, c_offset;
-    doublereal d__1;
+    double d__1;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

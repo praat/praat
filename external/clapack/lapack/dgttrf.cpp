@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dgttrf_(integer *n, doublereal *dl, doublereal *d__, 
-	doublereal *du, doublereal *du2, integer *ipiv, integer *info)
+/* Subroutine */ int dgttrf_(integer *n, double *dl, double *d__, 
+	double *du, double *du2, integer *ipiv, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__;
-    doublereal fact, temp;
+    double fact, temp;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

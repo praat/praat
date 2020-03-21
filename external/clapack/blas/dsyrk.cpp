@@ -1,19 +1,19 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dsyrk_(const char *uplo, const char *trans, integer *n, integer *k, 
-	doublereal *alpha, doublereal *a, integer *lda, doublereal *beta, 
-	doublereal *c__, integer *ldc)
+	double *alpha, double *a, integer *lda, double *beta, 
+	double *c__, integer *ldc)
 {
     /* System generated locals */
     integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3;
 
     /* Local variables */
     integer i__, j, l, info;
-    doublereal temp;
+    double temp;
  
     integer nrowa;
-    logical upper;
+    bool upper;
  
 
 /*     .. Scalar Arguments .. */

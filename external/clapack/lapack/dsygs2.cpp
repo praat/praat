@@ -1,24 +1,24 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b6 = -1.;
+static double c_b6 = -1.;
 static integer c__1 = 1;
-static doublereal c_b27 = 1.;
+static double c_b27 = 1.;
 
 /* Subroutine */ int dsygs2_(integer *itype, char *uplo, integer *n, 
-	doublereal *a, integer *lda, doublereal *b, integer *ldb, integer *
+	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer k;
-    doublereal ct, akk, bkk;
-    logical upper;
+    double ct, akk, bkk;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

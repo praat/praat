@@ -1,8 +1,8 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlar2v_(integer *n, doublereal *x, doublereal *y, 
-	doublereal *z__, integer *incx, doublereal *c__, doublereal *s, 
+/* Subroutine */ int dlar2v_(integer *n, double *x, double *y, 
+	double *z__, integer *incx, double *c__, double *s, 
 	integer *incc)
 {
     /* System generated locals */
@@ -10,11 +10,11 @@
 
     /* Local variables */
     integer i__;
-    doublereal t1, t2, t3, t4, t5, t6;
+    double t1, t2, t3, t4, t5, t6;
     integer ic;
-    doublereal ci, si;
+    double ci, si;
     integer ix;
-    doublereal xi, yi, zi;
+    double xi, yi, zi;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

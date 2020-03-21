@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dgtsvx_(char *fact, char *trans, integer *n, integer *
-	nrhs, doublereal *dl, doublereal *d__, doublereal *du, doublereal *
-	dlf, doublereal *df, doublereal *duf, doublereal *du2, integer *ipiv, 
-	doublereal *b, integer *ldb, doublereal *x, integer *ldx, doublereal *
-	rcond, doublereal *ferr, doublereal *berr, doublereal *work, integer *
+	nrhs, double *dl, double *d__, double *du, double *
+	dlf, double *df, double *duf, double *du2, integer *ipiv, 
+	double *b, integer *ldb, double *x, integer *ldx, double *
+	rcond, double *ferr, double *berr, double *work, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
@@ -17,9 +17,9 @@ static integer c__1 = 1;
 
     /* Local variables */
     char norm[1];
-    doublereal anorm;
-    logical nofact;
-    logical notran;
+    double anorm;
+    bool nofact;
+    bool notran;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

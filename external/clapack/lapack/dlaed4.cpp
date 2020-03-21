@@ -1,31 +1,31 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlaed4_(integer *n, integer *i__, doublereal *d__, 
-	doublereal *z__, doublereal *delta, doublereal *rho, doublereal *dlam, 
+/* Subroutine */ int dlaed4_(integer *n, integer *i__, double *d__, 
+	double *z__, double *delta, double *rho, double *dlam, 
 	 integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal a, b, c__;
+    double a, b, c__;
     integer j;
-    doublereal w;
+    double w;
     integer ii;
-    doublereal dw, zz[3];
+    double dw, zz[3];
     integer ip1;
-    doublereal del, eta, phi, eps, tau, psi;
+    double del, eta, phi, eps, tau, psi;
     integer iim1, iip1;
-    doublereal dphi, dpsi;
+    double dphi, dpsi;
     integer iter;
-    doublereal temp, prew, temp1, dltlb, dltub, midpt;
+    double temp, prew, temp1, dltlb, dltub, midpt;
     integer niter;
-    logical swtch;
-    logical swtch3;
-    logical orgati;
-    doublereal erretm, rhoinv;
+    bool swtch;
+    bool swtch3;
+    bool orgati;
+    double erretm, rhoinv;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -477,7 +477,7 @@
 
 /*           We choose d(i) as origin. */
 
-	    orgati = TRUE_;
+	    orgati = true;
 	    a = c__ * del + z__[*i__] * z__[*i__] + z__[ip1] * z__[ip1];
 	    b = z__[*i__] * z__[*i__] * del;
 	    if (a > 0.) {
@@ -495,7 +495,7 @@
 
 /*           We choose d(i+1) as origin. */
 
-	    orgati = FALSE_;
+	    orgati = false;
 	    a = c__ * del - z__[*i__] * z__[*i__] - z__[ip1] * z__[ip1];
 	    b = z__[ip1] * z__[ip1] * del;
 	    if (a < 0.) {
@@ -563,18 +563,18 @@
 /*        W is the value of the secular function with */
 /*        its ii-th element removed. */
 
-	swtch3 = FALSE_;
+	swtch3 = false;
 	if (orgati) {
 	    if (w < 0.) {
-		swtch3 = TRUE_;
+		swtch3 = true;
 	    }
 	} else {
 	    if (w > 0.) {
-		swtch3 = TRUE_;
+		swtch3 = true;
 	    }
 	}
 	if (ii == 1 || ii == *n) {
-	    swtch3 = FALSE_;
+	    swtch3 = false;
 	}
 
 	temp = z__[ii] / delta[ii];
@@ -725,14 +725,14 @@
 	erretm = (phi - psi) * 8. + erretm + rhoinv * 2. + abs(temp) * 3. + (
 		d__1 = tau + eta, abs(d__1)) * dw;
 
-	swtch = FALSE_;
+	swtch = false;
 	if (orgati) {
 	    if (-w > abs(prew) / 10.) {
-		swtch = TRUE_;
+		swtch = true;
 	    }
 	} else {
 	    if (w > abs(prew) / 10.) {
-		swtch = TRUE_;
+		swtch = true;
 	    }
 	}
 

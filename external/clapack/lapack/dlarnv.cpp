@@ -1,18 +1,18 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlarnv_(integer *idist, integer *iseed, integer *n, 
-	doublereal *x)
+	double *x)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
 
     /* Builtin functions
-    double log(doublereal), sqrt(doublereal), cos(doublereal); */
+    double log(double), sqrt(double), cos(double); */
 
     /* Local variables */
     integer i__;
-    doublereal u[128];
+    double u[128];
     integer il, iv, il2;
  
 

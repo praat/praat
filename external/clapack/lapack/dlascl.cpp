@@ -1,25 +1,25 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int dlascl_(const char *type__, integer *kl, integer *ku, 
-	doublereal *cfrom, doublereal *cto, integer *m, integer *n, 
-	doublereal *a, integer *lda, integer *info)
+	double *cfrom, double *cto, integer *m, integer *n, 
+	double *a, integer *lda, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
 
     /* Local variables */
     integer i__, j, k1, k2, k3, k4;
-    doublereal mul, cto1;
-    logical done;
-    doublereal ctoc;
+    double mul, cto1;
+    bool done;
+    double ctoc;
  
     integer itype;
-    doublereal cfrom1;
+    double cfrom1;
  
-    doublereal cfromc;
+    double cfromc;
  
-    doublereal bignum, smlnum;
+    double bignum, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -185,15 +185,15 @@ L10:
     cto1 = ctoc / bignum;
     if (abs(cfrom1) > abs(ctoc) && ctoc != 0.) {
 	mul = smlnum;
-	done = FALSE_;
+	done = false;
 	cfromc = cfrom1;
     } else if (abs(cto1) > abs(cfromc)) {
 	mul = bignum;
-	done = FALSE_;
+	done = false;
 	ctoc = cto1;
     } else {
 	mul = ctoc / cfromc;
-	done = TRUE_;
+	done = true;
     }
 
     if (itype == 0) {

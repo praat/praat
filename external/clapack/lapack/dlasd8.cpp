@@ -1,29 +1,29 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c__0 = 0;
-static doublereal c_b8 = 1.;
+static double c_b8 = 1.;
 
-/* Subroutine */ int dlasd8_(integer *icompq, integer *k, doublereal *d__, 
-	doublereal *z__, doublereal *vf, doublereal *vl, doublereal *difl, 
-	doublereal *difr, integer *lddifr, doublereal *dsigma, doublereal *
+/* Subroutine */ int dlasd8_(integer *icompq, integer *k, double *d__, 
+	double *z__, double *vf, double *vl, double *difl, 
+	double *difr, integer *lddifr, double *dsigma, double *
 	work, integer *info)
 {
     /* System generated locals */
     integer difr_dim1, difr_offset, i__1, i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j;
-    doublereal dj, rho;
+    double dj, rho;
     integer iwk1, iwk2, iwk3;
-	doublereal temp;
+	double temp;
     integer iwk2i, iwk3i;
-    doublereal diflj, difrj, dsigj;
-    doublereal dsigjp;
+    double diflj, difrj, dsigj;
+    double dsigjp;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,33 +7,33 @@ static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dgeesx_(char *jobvs, char *sort, L_fp select, char *
-	sense, integer *n, doublereal *a, integer *lda, integer *sdim, 
-	doublereal *wr, doublereal *wi, doublereal *vs, integer *ldvs, 
-	doublereal *rconde, doublereal *rcondv, doublereal *work, integer *
-	lwork, integer *iwork, integer *liwork, logical *bwork, integer *info)
+/* Subroutine */ int dgeesx_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+	const char *sense, integer *n, double *a, integer *lda, integer *sdim, 
+	double *wr, double *wi, double *vs, integer *ldvs, 
+	double *rconde, double *rcondv, double *work, integer *
+	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, vs_dim1, vs_offset, i__1, i__2, i__3;
 
     /* Local variables */
     integer i__, i1, i2, ip, ihi, ilo;
-    doublereal dum[1], eps;
+    double dum[1], eps;
     integer ibal;
-    doublereal anrm;
+    double anrm;
     integer ierr, itau, iwrk, lwrk, inxt, icond, ieval;
-    logical cursl;
+    bool cursl;
     integer liwrk;
-    logical lst2sl, scalea;
-    doublereal cscale;
-    doublereal bignum;
-    logical wantsb;
-    logical wantse, lastsl;
+    bool lst2sl, scalea;
+    double cscale;
+    double bignum;
+    bool wantsb;
+    bool wantse, lastsl;
     integer minwrk, maxwrk;
-    logical wantsn;
-    doublereal smlnum;
+    bool wantsn;
+    double smlnum;
     integer hswork;
-    logical wantst, lquery, wantsv, wantvs;
+    bool wantst, lquery, wantsv, wantvs;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -315,7 +315,7 @@ static integer c_n1 = -1;
 	    }
 	}
 	iwork[1] = liwrk;
-	work[1] = (doublereal) lwrk;
+	work[1] = (double) lwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -16;
@@ -349,12 +349,12 @@ static integer c_n1 = -1;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, dum);
-    scalea = FALSE_;
+    scalea = false;
     if (anrm > 0. && anrm < smlnum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = smlnum;
     } else if (anrm > bignum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = bignum;
     }
     if (scalea) {
@@ -546,8 +546,8 @@ L20:
 
 /*        Check if reordering successful */
 
-	lastsl = TRUE_;
-	lst2sl = TRUE_;
+	lastsl = true;
+	lst2sl = true;
 	*sdim = 0;
 	ip = 0;
 	i__1 = *n;
@@ -588,7 +588,7 @@ L20:
 	}
     }
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
     if (wantsv || wantsb) {
 /* Computing MAX */
 	i__1 = 1, i__2 = *sdim * (*n - *sdim);

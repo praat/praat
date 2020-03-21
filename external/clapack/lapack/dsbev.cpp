@@ -1,33 +1,33 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b11 = 1.;
+static double c_b11 = 1.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dsbev_(char *jobz, char *uplo, integer *n, integer *kd, 
-	doublereal *ab, integer *ldab, doublereal *w, doublereal *z__, 
-	integer *ldz, doublereal *work, integer *info)
+	double *ab, integer *ldab, double *w, double *z__, 
+	integer *ldz, double *work, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, z_dim1, z_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal eps;
+    double eps;
     integer inde;
-    doublereal anrm;
+    double anrm;
     integer imax;
-    doublereal rmin, rmax;
-    doublereal sigma;
+    double rmin, rmax;
+    double sigma;
     integer iinfo;
-    logical lower, wantz;
+    bool lower, wantz;
     integer iscale;
-    doublereal safmin;
-    doublereal bignum;
+    double safmin;
+    double bignum;
     integer indwrk;
-    doublereal smlnum;
+    double smlnum;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

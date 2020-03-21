@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b18 = 1.;
-static doublereal c_b21 = -1.;
+static double c_b18 = 1.;
+static double c_b21 = -1.;
 static integer c__33 = 33;
 
-/* Subroutine */ int dpbtrf_(char *uplo, integer *n, integer *kd, doublereal *
+/* Subroutine */ int dpbtrf_(char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, integer *info)
 {
     /* System generated locals */
@@ -17,7 +17,7 @@ static integer c__33 = 33;
 
     /* Local variables */
     integer i__, j, i2, i3, ib, nb, ii, jj;
-    doublereal work[1056]	/* was [33][32] */;
+    double work[1056]	/* was [33][32] */;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

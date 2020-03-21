@@ -1,56 +1,56 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dlarre_(const char *range, integer *n, doublereal *vl, 
-	doublereal *vu, integer *il, integer *iu, doublereal *d__, doublereal 
-	*e, doublereal *e2, doublereal *rtol1, doublereal *rtol2, doublereal *
-	spltol, integer *nsplit, integer *isplit, integer *m, doublereal *w, 
-	doublereal *werr, doublereal *wgap, integer *iblock, integer *indexw, 
-	doublereal *gers, doublereal *pivmin, doublereal *work, integer *
+/* Subroutine */ int dlarre_(const char *range, integer *n, double *vl, 
+	double *vu, integer *il, integer *iu, double *d__, double 
+	*e, double *e2, double *rtol1, double *rtol2, double *
+	spltol, integer *nsplit, integer *isplit, integer *m, double *w, 
+	double *werr, double *wgap, integer *iblock, integer *indexw, 
+	double *gers, double *pivmin, double *work, integer *
 	iwork, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Builtin functions
-    double sqrt(doublereal), log(doublereal); */
+    double sqrt(double), log(double); */
 
     /* Local variables */
     integer i__, j;
-    doublereal s1, s2;
+    double s1, s2;
     integer mb;
-    doublereal gl;
+    double gl;
     integer in, mm;
-    doublereal gu;
+    double gu;
     integer cnt;
-    doublereal eps, tau, tmp, rtl;
+    double eps, tau, tmp, rtl;
     integer cnt1, cnt2;
-    doublereal tmp1, eabs;
+    double tmp1, eabs;
     integer iend, jblk;
-    doublereal eold;
+    double eold;
     integer indl;
-    doublereal dmax__, emax;
+    double dmax__, emax;
     integer wend, idum, indu;
-    doublereal rtol;
+    double rtol;
     integer iseed[4];
-    doublereal avgap, sigma;
+    double avgap, sigma;
     integer iinfo;
-    logical norep;
+    bool norep;
     integer ibegin;
-    logical forceb;
+    bool forceb;
     integer irange;
-    doublereal sgndef;
+    double sgndef;
     integer wbegin;
-    doublereal safmin, spdiam;
-    logical usedqd;
-    doublereal clwdth, isleft;
-    doublereal isrght, bsrtol, dpivot;
+    double safmin, spdiam;
+    bool usedqd;
+    double clwdth, isleft;
+    double isrght, bsrtol, dpivot;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -328,7 +328,7 @@ static integer c__2 = 2;
 	    iinfo);
 /*     Can force use of bisection instead of faster DQDS. */
 /*     Option left in the code for future multisection work. */
-    forceb = FALSE_;
+    forceb = false;
     if (irange == 1 && ! forceb) {
 /*        Set interval [VL,VU] that contains all eigenvalues */
 	*vl = gl;
@@ -425,7 +425,7 @@ L21:
 		goto L170;
 	    } else {
 /*              Decide whether dqds or bisection is more efficient */
-		usedqd = (doublereal) mb > in * .5 && ! forceb;
+		usedqd = (double) mb > in * .5 && ! forceb;
 		wend = wbegin + mb - 1;
 /*              Calculate gaps for the current block */
 /*              In later stages, when representations for individual */
@@ -494,7 +494,7 @@ L21:
 /*        eigenvalues to be computed is large compared to the blocksize. */
 	if (irange == 1 && ! forceb) {
 /*           If all the eigenvalues have to be computed, we use dqd */
-	    usedqd = TRUE_;
+	    usedqd = true;
 /*           INDL is the local index of the first eigenvalue to compute */
 	    indl = 1;
 	    indu = in;
@@ -564,7 +564,7 @@ L21:
 	} else {
 	    if (mb > 1) {
 		clwdth = w[wend] + werr[wend] - w[wbegin] - werr[wbegin];
-		avgap = (d__1 = clwdth / (doublereal) (wend - wbegin), abs(
+		avgap = (d__1 = clwdth / (double) (wend - wbegin), abs(
 			d__1));
 		if (sgndef == 1.) {
 /* Computing MAX */
@@ -609,9 +609,9 @@ L21:
 	    }
 /*           check for element growth */
 	    if (dmax__ > spdiam * 64.) {
-		norep = TRUE_;
+		norep = true;
 	    } else {
-		norep = FALSE_;
+		norep = false;
 	    }
 	    if (usedqd && ! norep) {
 /*              Ensure the definiteness of the representation */
@@ -620,7 +620,7 @@ L21:
 		for (i__ = 1; i__ <= i__2; ++i__) {
 		    tmp = sgndef * work[i__];
 		    if (tmp < 0.) {
-			norep = TRUE_;
+			norep = true;
 		    }
 /* L71: */
 		}
@@ -741,7 +741,7 @@ L83:
 /*           This is an ESTIMATED error, the worst case bound is 4*N*EPS */
 /*           which is usually too large and requires unnecessary work to be */
 /*           done by bisection when computing the eigenvectors */
-	    rtol = log((doublereal) in) * 4. * eps;
+	    rtol = log((double) in) * 4. * eps;
 	    j = ibegin;
 	    i__2 = in - 1;
 	    for (i__ = 1; i__ <= i__2; ++i__) {

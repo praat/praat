@@ -1,23 +1,23 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-integer dlaneg_(integer *n, doublereal *d__, doublereal *lld, doublereal *
-	sigma, doublereal *pivmin, integer *r__)
+integer dlaneg_(integer *n, double *d__, double *lld, double *
+	sigma, double *pivmin, integer *r__)
 {
     /* System generated locals */
     integer ret_val, i__1, i__2, i__3, i__4;
 
     /* Local variables */
     integer j;
-    doublereal p, t;
+    double p, t;
     integer bj;
-    doublereal tmp;
+    double tmp;
     integer neg1, neg2;
-    doublereal bsav, gamma, dplus;
+    double bsav, gamma, dplus;
  
     integer negcnt;
-    logical sawnan;
-    doublereal dminus;
+    bool sawnan;
+    double dminus;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

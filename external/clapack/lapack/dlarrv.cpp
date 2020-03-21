@@ -1,76 +1,76 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b5 = 0.;
+static double c_b5 = 0.;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dlarrv_(integer *n, doublereal *vl, doublereal *vu, 
-	doublereal *d__, doublereal *l, doublereal *pivmin, integer *isplit, 
-	integer *m, integer *dol, integer *dou, doublereal *minrgp, 
-	doublereal *rtol1, doublereal *rtol2, doublereal *w, doublereal *werr, 
-	 doublereal *wgap, integer *iblock, integer *indexw, doublereal *gers, 
-	 doublereal *z__, integer *ldz, integer *isuppz, doublereal *work, 
+/* Subroutine */ int dlarrv_(integer *n, double *vl, double *vu, 
+	double *d__, double *l, double *pivmin, integer *isplit, 
+	integer *m, integer *dol, integer *dou, double *minrgp, 
+	double *rtol1, double *rtol2, double *w, double *werr, 
+	 double *wgap, integer *iblock, integer *indexw, double *gers, 
+	 double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *iwork, integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2;
-    logical L__1;
+    double d__1, d__2;
+    bool L__1;
 
     /* Builtin functions
-    double log(doublereal); */
+    double log(double); */
 
     /* Local variables */
     integer minwsize, i__, j, k, p, q, miniwsize, ii;
-    doublereal gl;
+    double gl;
     integer im, in;
-    doublereal gu, gap, eps, tau, tol, tmp;
+    double gu, gap, eps, tau, tol, tmp;
     integer zto;
-    doublereal ztz;
+    double ztz;
     integer iend, jblk;
-    doublereal lgap;
+    double lgap;
     integer done;
-    doublereal rgap, left;
+    double rgap, left;
     integer wend, iter;
-    doublereal bstw;
+    double bstw;
     integer itmp1;
     integer indld;
-    doublereal fudge;
+    double fudge;
     integer idone;
-    doublereal sigma;
+    double sigma;
     integer iinfo, iindr;
-    doublereal resid;
-    logical eskip;
-    doublereal right;
+    double resid;
+    bool eskip;
+    double right;
     integer nclus, zfrom;
-    doublereal rqtol;
+    double rqtol;
     integer iindc1, iindc2;
-    logical stp2ii;
-    doublereal lambda;
+    bool stp2ii;
+    double lambda;
     integer ibegin, indeig;
-    logical needbs;
+    bool needbs;
     integer indlld;
-    doublereal sgndef, mingma;
+    double sgndef, mingma;
     integer oldien, oldncl, wbegin;
-    doublereal spdiam;
+    double spdiam;
     integer negcnt;
     integer oldcls;
-    doublereal savgap;
+    double savgap;
     integer ndepth;
-    doublereal ssigma;
-    logical usedbs;
+    double ssigma;
+    bool usedbs;
     integer iindwk, offset;
-    doublereal gaptol;
+    double gaptol;
     integer newcls, oldfst, indwrk, windex, oldlst;
-    logical usedrq;
+    bool usedrq;
     integer newfst, newftt, parity, windmn, windpl, isupmn, newlst, zusedl;
-    doublereal bstres;
+    double bstres;
     integer newsiz, zusedu, zusedw;
-    doublereal nrminv, rqcorr;
-    logical tryrqc;
+    double nrminv, rqcorr;
+    bool tryrqc;
     integer isupmx;
 
 
@@ -303,7 +303,7 @@ static integer c__2 = 2;
     rqtol = eps * 2.;
 
 /*     Set expert flags for standard code. */
-    tryrqc = TRUE_;
+    tryrqc = true;
     if (*dol == 1 && *dou == *m) {
     } else {
 /*        Only selected eigenpairs are computed. Since the other evalues */
@@ -664,7 +664,7 @@ L40:
 
 			iter = 0;
 
-			tol = log((doublereal) in) * 4. * eps;
+			tol = log((double) in) * 4. * eps;
 
 			k = newfst;
 			windex = wbegin + k - 1;
@@ -678,10 +678,10 @@ L40:
 			++done;
 /*                    Check if eigenvector computation is to be skipped */
 			if (windex < *dol || windex > *dou) {
-			    eskip = TRUE_;
+			    eskip = true;
 			    goto L125;
 			} else {
-			    eskip = FALSE_;
+			    eskip = false;
 			}
 			left = work[windex] - werr[windex];
 			right = work[windex] + werr[windex];
@@ -741,15 +741,15 @@ L40:
 /*                    However, the Rayleigh Quotient can have the wrong sign */
 /*                    and lead us away from the desired eigenvalue. In this */
 /*                    case, the best we can do is to use bisection. */
-			usedbs = FALSE_;
-			usedrq = FALSE_;
+			usedbs = false;
+			usedrq = false;
 /*                    Bisection is initially turned off unless it is forced */
 			needbs = ! tryrqc;
 L120:
 /*                    Check if bisection should be used to refine eigenvalue */
 			if (needbs) {
 /*                       Take the bisection as new iterate */
-			    usedbs = TRUE_;
+			    usedbs = true;
 			    itmp1 = iwork[iindr + windex];
 			    offset = indexw[wbegin] - 1;
 			    d__1 = eps * 2.;
@@ -814,7 +814,7 @@ L120:
 /*                       the iterate reasonably. */
 			    if (rqcorr * sgndef >= 0. && lambda + rqcorr <= 
 				    right && lambda + rqcorr >= left) {
-				usedrq = TRUE_;
+				usedrq = true;
 /*                          Store new midpoint of bisection interval in WORK */
 				if (sgndef == 1.) {
 /*                             The current LAMBDA is on the left of the true */
@@ -841,27 +841,27 @@ L120:
 /*                          Update width of error interval */
 				werr[windex] = (right - left) * .5;
 			    } else {
-				needbs = TRUE_;
+				needbs = true;
 			    }
 			    if (right - left < rqtol * abs(lambda)) {
 /*                             The eigenvalue is computed to bisection accuracy */
 /*                             compute eigenvector and stop */
-				usedbs = TRUE_;
+				usedbs = true;
 				goto L120;
 			    } else if (iter < 10) {
 				goto L120;
 			    } else if (iter == 10) {
-				needbs = TRUE_;
+				needbs = true;
 				goto L120;
 			    } else {
 				*info = 5;
 				return 0;
 			    }
 			} else {
-			    stp2ii = FALSE_;
+			    stp2ii = false;
 			    if (usedrq && usedbs && bstres <= resid) {
 				lambda = bstw;
-				stp2ii = TRUE_;
+				stp2ii = true;
 			    }
 			    if (stp2ii) {
 /*                          improve error angle by second step */

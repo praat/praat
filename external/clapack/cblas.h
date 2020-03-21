@@ -18,8 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "f2c.h"
-#include "f2clibP.h"
+#include "melder.h"
 
 double dasum_ (integer *n, double *dx, integer *incx);
 
@@ -137,6 +136,5 @@ int dtrsv_ (const char *uplo, const char *trans, const char *diag, integer *n,
 	double *a, integer *lda, double *x, integer *incx);
 
 integer idamax_ (integer *n, double *dx, integer *incx);
-
 
 #endif /* _cblas_h_  */

@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dspsvx_(char *fact, char *uplo, integer *n, integer *
-	nrhs, doublereal *ap, doublereal *afp, integer *ipiv, doublereal *b, 
-	integer *ldb, doublereal *x, integer *ldx, doublereal *rcond, 
-	doublereal *ferr, doublereal *berr, doublereal *work, integer *iwork, 
+	nrhs, double *ap, double *afp, integer *ipiv, double *b, 
+	integer *ldb, double *x, integer *ldx, double *rcond, 
+	double *ferr, double *berr, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1;
 
     /* Local variables */
-    doublereal anorm;
-    logical nofact;
+    double anorm;
+    bool nofact;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

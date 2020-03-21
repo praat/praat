@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dptsvx_(char *fact, integer *n, integer *nrhs, 
-	doublereal *d__, doublereal *e, doublereal *df, doublereal *ef, 
-	doublereal *b, integer *ldb, doublereal *x, integer *ldx, doublereal *
-	rcond, doublereal *ferr, doublereal *berr, doublereal *work, integer *
+	double *d__, double *e, double *df, double *ef, 
+	double *b, integer *ldb, double *x, integer *ldx, double *
+	rcond, double *ferr, double *berr, double *work, integer *
 	info)
 {
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1;
 
     /* Local variables */
-    doublereal anorm;
-    logical nofact;
+    double anorm;
+    bool nofact;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

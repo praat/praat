@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -8,8 +8,8 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 
 /* Subroutine */ int dormhr_(char *side, char *trans, integer *m, integer *n, 
-	integer *ilo, integer *ihi, doublereal *a, integer *lda, doublereal *
-	tau, doublereal *c__, integer *ldc, doublereal *work, integer *lwork, 
+	integer *ilo, integer *ihi, double *a, integer *lda, double *
+	tau, double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -19,10 +19,10 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer i1, i2, nb, mi, nh, ni, nq, nw;
-    logical left;
+    bool left;
     integer iinfo;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -184,17 +184,17 @@ static integer c__2 = 2;
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = side;
 	    i__1[1] = 1, a__1[1] = trans;
-	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 	    nb = ilaenv_(&c__1, "DORMQR", ch__1, &nh, n, &nh, &c_n1);
 	} else {
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = side;
 	    i__1[1] = 1, a__1[1] = trans;
-	    s_cat(ch__1, a__1, i__1, &c__2, (ftnlen)2);
+	    s_cat(ch__1, a__1, i__1, &c__2, 2_integer);
 	    nb = ilaenv_(&c__1, "DORMQR", ch__1, m, &nh, &nh, &c_n1);
 	}
 	lwkopt = std::max(1_integer,nw) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -227,7 +227,7 @@ static integer c__2 = 2;
     dormqr_(side, trans, &mi, &ni, &nh, &a[*ilo + 1 + *ilo * a_dim1], lda, &
 	    tau[*ilo], &c__[i1 + i2 * c_dim1], ldc, &work[1], lwork, &iinfo);
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORMHR */

@@ -1,42 +1,42 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b10 = 0.;
-static doublereal c_b11 = 1.;
-static logical c_true = TRUE_;
+static double c_b10 = 0.;
+static double c_b11 = 1.;
+static bool c_true = true;
 
-/* Subroutine */ int dlaqr2_(logical *wantt, logical *wantz, integer *n, 
-	integer *ktop, integer *kbot, integer *nw, doublereal *h__, integer *
-	ldh, integer *iloz, integer *ihiz, doublereal *z__, integer *ldz, 
-	integer *ns, integer *nd, doublereal *sr, doublereal *si, doublereal *
-	v, integer *ldv, integer *nh, doublereal *t, integer *ldt, integer *
-	nv, doublereal *wv, integer *ldwv, doublereal *work, integer *lwork)
+/* Subroutine */ int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
+	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
+	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
+	integer *ns, integer *nd, double *sr, double *si, double *
+	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
+	nv, double *wv, integer *ldwv, double *work, integer *lwork)
 {
     /* System generated locals */
     integer h_dim1, h_offset, t_dim1, t_offset, v_dim1, v_offset, wv_dim1, 
 	    wv_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4;
-    doublereal d__1, d__2, d__3, d__4, d__5, d__6;
+    double d__1, d__2, d__3, d__4, d__5, d__6;
 
     /* Local variables */
     integer i__, j, k;
-    doublereal s, aa, bb, cc, dd, cs, sn;
+    double s, aa, bb, cc, dd, cs, sn;
     integer jw;
-    doublereal evi, evk, foo;
+    double evi, evk, foo;
     integer kln;
-    doublereal tau, ulp;
+    double tau, ulp;
     integer lwk1, lwk2;
-    doublereal beta;
+    double beta;
     integer kend, kcol, info, ifst, ilst, ltop, krow;
-    logical bulge;
+    bool bulge;
     integer infqr, kwtop;
-    doublereal safmin;
-    doublereal safmax;
-    logical sorted;
-    doublereal smlnum;
+    double safmin;
+    double safmax;
+    bool sorted;
+    double smlnum;
     integer lwkopt;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -253,7 +253,7 @@ static logical c_true = TRUE_;
 /*     ==== Quick return in case of workspace query. ==== */
 
     if (*lwork == -1) {
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
 	return 0;
     }
 
@@ -275,7 +275,7 @@ static logical c_true = TRUE_;
     safmax = 1. / safmin;
     dlabad_(&safmin, &safmax);
     ulp = dlamch_("PRECISION");
-    smlnum = safmin * ((doublereal) (*n) / ulp);
+    smlnum = safmin * ((double) (*n) / ulp);
 
 /*     ==== Setup deflation window ==== */
 
@@ -347,7 +347,7 @@ static logical c_true = TRUE_;
 L20:
     if (ilst <= *ns) {
 	if (*ns == 1) {
-	    bulge = FALSE_;
+	    bulge = false;
 	} else {
 	    bulge = t[*ns + (*ns - 1) * t_dim1] != 0.;
 	}
@@ -430,13 +430,13 @@ L20:
 /*        .    graded matrices.  Bubble sort deals well with */
 /*        .    exchange failures. ==== */
 
-	sorted = FALSE_;
+	sorted = false;
 	i__ = *ns + 1;
 L30:
 	if (sorted) {
 	    goto L50;
 	}
-	sorted = TRUE_;
+	sorted = true;
 
 	kend = i__ - 1;
 	i__ = infqr + 1;
@@ -470,7 +470,7 @@ L40:
 	    if (evi >= evk) {
 		i__ = k;
 	    } else {
-		sorted = FALSE_;
+		sorted = false;
 		ifst = i__;
 		ilst = k;
 		dtrexc_("V", &jw, &t[t_offset], ldt, &v[v_offset], ldv, &ifst, 
@@ -650,7 +650,7 @@ L60:
 
 /*      ==== Return optimal workspace. ==== */
 
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
 /*     ==== End of DLAQR2 ==== */
 

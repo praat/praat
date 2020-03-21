@@ -1,44 +1,44 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
-static doublereal c_b36 = 0.;
-static doublereal c_b37 = 1.;
+static double c_b36 = 0.;
+static double c_b37 = 1.;
 
-/* Subroutine */ int dggev_(char *jobvl, char *jobvr, integer *n, doublereal *
-	a, integer *lda, doublereal *b, integer *ldb, doublereal *alphar, 
-	doublereal *alphai, doublereal *beta, doublereal *vl, integer *ldvl, 
-	doublereal *vr, integer *ldvr, doublereal *work, integer *lwork, 
+/* Subroutine */ int dggev_(char *jobvl, char *jobvr, integer *n, double *
+	a, integer *lda, double *b, integer *ldb, double *alphar, 
+	double *alphai, double *beta, double *vl, integer *ldvl, 
+	double *vr, integer *ldvr, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer jc, in, jr, ihi, ilo;
-    doublereal eps;
-    logical ilv;
-    doublereal anrm, bnrm;
+    double eps;
+    bool ilv;
+    double anrm, bnrm;
     integer ierr, itau;
-    doublereal temp;
-    logical ilvl, ilvr;
+    double temp;
+    bool ilvl, ilvr;
     integer iwrk;
     integer ileft, icols, irows;
-    logical ilascl, ilbscl;
-    logical ldumma[1];
+    bool ilascl, ilbscl;
+    bool ldumma[1];
     char chtemp[1];
-    doublereal bignum;
+    double bignum;
     integer ijobvl, iright, ijobvr;
-    doublereal anrmto, bnrmto;
+    double anrmto, bnrmto;
     integer minwrk, maxwrk;
-    doublereal smlnum;
-    logical lquery;
+    double smlnum;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -211,24 +211,24 @@ static doublereal c_b37 = 1.;
     /* Function Body */
     if (lsame_(jobvl, "N")) {
 	ijobvl = 1;
-	ilvl = FALSE_;
+	ilvl = false;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
-	ilvl = TRUE_;
+	ilvl = true;
     } else {
 	ijobvl = -1;
-	ilvl = FALSE_;
+	ilvl = false;
     }
 
     if (lsame_(jobvr, "N")) {
 	ijobvr = 1;
-	ilvr = FALSE_;
+	ilvr = false;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
-	ilvr = TRUE_;
+	ilvr = true;
     } else {
 	ijobvr = -1;
-	ilvr = FALSE_;
+	ilvr = false;
     }
     ilv = ilvl || ilvr;
 
@@ -278,7 +278,7 @@ static doublereal c_b37 = 1.;
 		    c__1, n, &c_n1) + 7);
 	    maxwrk = std::max(i__1,i__2);
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -16;
@@ -311,13 +311,13 @@ static doublereal c_b37 = 1.;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, &work[1]);
-    ilascl = FALSE_;
+    ilascl = false;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
-	ilascl = TRUE_;
+	ilascl = true;
     } else if (anrm > bignum) {
 	anrmto = bignum;
-	ilascl = TRUE_;
+	ilascl = true;
     }
     if (ilascl) {
 	dlascl_("G", &c__0, &c__0, &anrm, &anrmto, n, n, &a[a_offset], lda, &
@@ -327,13 +327,13 @@ static doublereal c_b37 = 1.;
 /*     Scale B if max element outside range [SMLNUM,BIGNUM] */
 
     bnrm = dlange_("M", n, n, &b[b_offset], ldb, &work[1]);
-    ilbscl = FALSE_;
+    ilbscl = false;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     } else if (bnrm > bignum) {
 	bnrmto = bignum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     }
     if (ilbscl) {
 	dlascl_("G", &c__0, &c__0, &bnrm, &bnrmto, n, n, &b[b_offset], ldb, &
@@ -583,7 +583,7 @@ L100:
 
 L110:
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
 
     return 0;
 

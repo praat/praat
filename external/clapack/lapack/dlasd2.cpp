@@ -1,35 +1,35 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b30 = 0.;
+static double c_b30 = 0.;
 
 /* Subroutine */ int dlasd2_(integer *nl, integer *nr, integer *sqre, integer 
-	*k, doublereal *d__, doublereal *z__, doublereal *alpha, doublereal *
-	beta, doublereal *u, integer *ldu, doublereal *vt, integer *ldvt, 
-	doublereal *dsigma, doublereal *u2, integer *ldu2, doublereal *vt2, 
+	*k, double *d__, double *z__, double *alpha, double *
+	beta, double *u, integer *ldu, double *vt, integer *ldvt, 
+	double *dsigma, double *u2, integer *ldu2, double *vt2, 
 	integer *ldvt2, integer *idxp, integer *idx, integer *idxc, integer *
 	idxq, integer *coltyp, integer *info)
 {
     /* System generated locals */
     integer u_dim1, u_offset, u2_dim1, u2_offset, vt_dim1, vt_offset, 
 	    vt2_dim1, vt2_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
-    doublereal c__;
+    double c__;
     integer i__, j, m, n;
-    doublereal s;
+    double s;
     integer k2;
-    doublereal z1;
+    double z1;
     integer ct, jp;
-    doublereal eps, tau, tol;
+    double eps, tau, tol;
     integer psm[4], nlp1, nlp2, idxi, idxj;
     integer ctot[4], idxjp;
     integer jprev;
-    doublereal hlftol;
+    double hlftol;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

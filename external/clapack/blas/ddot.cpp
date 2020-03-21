@@ -1,16 +1,16 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-doublereal ddot_(integer *n, doublereal *dx, integer *incx, doublereal *dy, 
+double ddot_(integer *n, double *dx, integer *incx, double *dy, 
 	integer *incy)
 {
     /* System generated locals */
     integer i__1;
-    doublereal ret_val;
+    double ret_val;
 
     /* Local variables */
     integer i__, m, ix, iy, mp1;
-    doublereal dtemp;
+    double dtemp;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

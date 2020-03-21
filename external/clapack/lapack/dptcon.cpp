@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dptcon_(integer *n, doublereal *d__, doublereal *e, 
-	doublereal *anorm, doublereal *rcond, doublereal *work, integer *info)
+/* Subroutine */ int dptcon_(integer *n, double *d__, double *e, 
+	double *anorm, double *rcond, double *work, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, ix;
  
  
-    doublereal ainvnm;
+    double ainvnm;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

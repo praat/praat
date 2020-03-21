@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__2 = 2;
 static integer c__1 = 1;
-static doublereal c_b24 = 1.;
-static doublereal c_b26 = 0.;
+static double c_b24 = 1.;
+static double c_b26 = 0.;
 
 /* Subroutine */ int dlaeda_(integer *n, integer *tlvls, integer *curlvl, 
 	integer *curpbm, integer *prmptr, integer *perm, integer *givptr, 
-	integer *givcol, doublereal *givnum, doublereal *q, integer *qptr, 
-	doublereal *z__, doublereal *ztemp, integer *info)
+	integer *givcol, double *givnum, double *q, integer *qptr, 
+	double *z__, double *ztemp, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
@@ -166,8 +166,8 @@ static doublereal c_b26 = 0.;
 /*     the SQRT in case the machine underestimates one of these square */
 /*     roots. */
 
-    bsiz1 = (integer) (sqrt((doublereal) (qptr[curr + 1] - qptr[curr])) + .5);
-    bsiz2 = (integer) (sqrt((doublereal) (qptr[curr + 2] - qptr[curr + 1])) + 
+    bsiz1 = (integer) (sqrt((double) (qptr[curr + 1] - qptr[curr])) + .5);
+    bsiz2 = (integer) (sqrt((double) (qptr[curr + 2] - qptr[curr + 1])) + 
 	    .5);
     i__1 = mid - bsiz1 - 1;
     for (k = 1; k <= i__1; ++k) {
@@ -234,9 +234,9 @@ static doublereal c_b26 = 0.;
 /*        the SQRT in case the machine underestimates one of these */
 /*        square roots. */
 
-	bsiz1 = (integer) (sqrt((doublereal) (qptr[curr + 1] - qptr[curr])) + 
+	bsiz1 = (integer) (sqrt((double) (qptr[curr + 1] - qptr[curr])) + 
 		.5);
-	bsiz2 = (integer) (sqrt((doublereal) (qptr[curr + 2] - qptr[curr + 1])
+	bsiz2 = (integer) (sqrt((double) (qptr[curr + 2] - qptr[curr + 1])
 		) + .5);
 	if (bsiz1 > 0) {
 	    dgemv_("T", &bsiz1, &bsiz1, &c_b24, &q[qptr[curr]], &bsiz1, &

@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Subroutine */ int ilaver_(integer *vers_major__, integer *vers_minor__, 
 	integer *vers_patch__)

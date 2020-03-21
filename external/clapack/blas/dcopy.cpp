@@ -1,8 +1,8 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dcopy_(integer *n, doublereal *dx, integer *incx, 
-	doublereal *dy, integer *incy)
+/* Subroutine */ int dcopy_(integer *n, double *dx, integer *incx, 
+	double *dy, integer *incy)
 {
     /* System generated locals */
     integer i__1;

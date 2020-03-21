@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b25 = 1.;
-static doublereal c_b27 = 0.;
+static double c_b25 = 1.;
+static double c_b27 = 0.;
 
 /* Subroutine */ int dsbgvx_(char *jobz, char *range, char *uplo, integer *n, 
-	integer *ka, integer *kb, doublereal *ab, integer *ldab, doublereal *
-	bb, integer *ldbb, doublereal *q, integer *ldq, doublereal *vl, 
-	doublereal *vu, integer *il, integer *iu, doublereal *abstol, integer 
-	*m, doublereal *w, doublereal *z__, integer *ldz, doublereal *work, 
+	integer *ka, integer *kb, double *ab, integer *ldab, double *
+	bb, integer *ldbb, double *q, integer *ldq, double *vl, 
+	double *vu, integer *il, integer *iu, double *abstol, integer 
+	*m, double *w, double *z__, integer *ldz, double *work, 
 	integer *iwork, integer *ifail, integer *info)
 {
     /* System generated locals */
@@ -20,16 +20,16 @@ static doublereal c_b27 = 0.;
 
     /* Local variables */
     integer i__, j, jj;
-    doublereal tmp1;
+    double tmp1;
     integer indd, inde;
     char vect[1];
-    logical test;
+    bool test;
     integer itmp1, indee;
     integer iinfo;
     char order[1];
-    logical upper, wantz, alleig, indeig;
+    bool upper, wantz, alleig, indeig;
     integer indibl;
-    logical valeig;
+    bool valeig;
     integer indisp;
     integer indiwo;
     integer indwrk;
@@ -319,10 +319,10 @@ static doublereal c_b27 = 0.;
 /*     to zero, then call DSTERF or SSTEQR.  If this fails for some */
 /*     eigenvalue, then try DSTEBZ. */
 
-    test = FALSE_;
+    test = false;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
-	    test = TRUE_;
+	    test = true;
 	}
     }
     if ((alleig || test) && *abstol <= 0.) {

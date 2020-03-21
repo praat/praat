@@ -1,22 +1,22 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlarrk_(integer *n, integer *iw, doublereal *gl, 
-	doublereal *gu, doublereal *d__, doublereal *e2, doublereal *pivmin, 
-	doublereal *reltol, doublereal *w, doublereal *werr, integer *info)
+/* Subroutine */ int dlarrk_(integer *n, integer *iw, double *gl, 
+	double *gu, double *d__, double *e2, double *pivmin, 
+	double *reltol, double *w, double *werr, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double log(doublereal); */
+    double log(double); */
 
     /* Local variables */
     integer i__, it;
-    doublereal mid, eps, tmp1, tmp2, left, atoli, right;
+    double mid, eps, tmp1, tmp2, left, atoli, right;
     integer itmax;
-    doublereal rtoli, tnorm;
+    double rtoli, tnorm;
  
     integer negcnt;
 

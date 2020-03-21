@@ -1,38 +1,38 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
 /* Subroutine */ int dgbsvx_(char *fact, char *trans, integer *n, integer *kl, 
-	 integer *ku, integer *nrhs, doublereal *ab, integer *ldab, 
-	doublereal *afb, integer *ldafb, integer *ipiv, char *equed, 
-	doublereal *r__, doublereal *c__, doublereal *b, integer *ldb, 
-	doublereal *x, integer *ldx, doublereal *rcond, doublereal *ferr, 
-	doublereal *berr, doublereal *work, integer *iwork, integer *info)
+	 integer *ku, integer *nrhs, double *ab, integer *ldab, 
+	double *afb, integer *ldafb, integer *ipiv, char *equed, 
+	double *r__, double *c__, double *b, integer *ldb, 
+	double *x, integer *ldx, double *rcond, double *ferr, 
+	double *berr, double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, afb_dim1, afb_offset, b_dim1, b_offset, 
 	    x_dim1, x_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, j, j1, j2;
-    doublereal amax;
+    double amax;
     char norm[1];
-    doublereal rcmin, rcmax, anorm;
-    logical equil;
-    doublereal colcnd;
-    logical nofact;
-    doublereal bignum;
+    double rcmin, rcmax, anorm;
+    bool equil;
+    double colcnd;
+    bool nofact;
+    double bignum;
     integer infequ;
-    logical colequ;
-    doublereal rowcnd;
-    logical notran;
-    doublereal smlnum;
-    logical rowequ;
-    doublereal rpvgrw;
+    bool colequ;
+    double rowcnd;
+    bool notran;
+    double smlnum;
+    bool rowequ;
+    double rpvgrw;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -325,8 +325,8 @@ static integer c__1 = 1;
     notran = lsame_(trans, "N");
     if (nofact || equil) {
 	*(unsigned char *)equed = 'N';
-	rowequ = FALSE_;
-	colequ = FALSE_;
+	rowequ = false;
+	colequ = false;
     } else {
 	rowequ = lsame_(equed, "R") || lsame_(equed, 
 		"B");

@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -9,39 +9,39 @@ static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, doublereal 
-	*vl, doublereal *vu, integer *il, integer *iu, doublereal *gers, 
-	doublereal *reltol, doublereal *d__, doublereal *e, doublereal *e2, 
-	doublereal *pivmin, integer *nsplit, integer *isplit, integer *m, 
-	doublereal *w, doublereal *werr, doublereal *wl, doublereal *wu, 
-	integer *iblock, integer *indexw, doublereal *work, integer *iwork, 
+/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, double 
+	*vl, double *vu, integer *il, integer *iu, double *gers, 
+	double *reltol, double *d__, double *e, double *e2, 
+	double *pivmin, integer *nsplit, integer *isplit, integer *m, 
+	double *w, double *werr, double *wl, double *wu, 
+	integer *iblock, integer *indexw, double *work, integer *iwork, 
 	integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, j, ib, ie, je, nb;
-    doublereal gl;
+    double gl;
     integer im, in;
-    doublereal gu;
+    double gu;
     integer iw, jee;
-    doublereal eps;
+    double eps;
     integer nwl;
-    doublereal wlu, wul;
+    double wlu, wul;
     integer nwu;
-    doublereal tmp1, tmp2;
+    double tmp1, tmp2;
     integer iend, jblk, ioff, iout, itmp1, itmp2, jdisc;
     integer iinfo;
-    doublereal atoli;
+    double atoli;
     integer iwoff, itmax;
-    doublereal wkill, rtoli, uflow, tnorm;
+    double wkill, rtoli, uflow, tnorm;
     integer ibegin;
     integer irange, idiscl, idumma[1];
-    doublereal spdiam;
+    double spdiam;
     integer idiscu;
-    logical ncnvrg, toofew;
+    bool ncnvrg, toofew;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -304,8 +304,8 @@ static integer c__0 = 0;
     }
 /*     Initialize error flags */
     *info = 0;
-    ncnvrg = FALSE_;
-    toofew = FALSE_;
+    ncnvrg = false;
+    toofew = false;
 /*     Quick return if possible */
     *m = 0;
     if (*n == 0) {
@@ -578,7 +578,7 @@ static integer c__0 = 0;
 			.5;
 		if (j > iout - iinfo) {
 /*                 Flag non-convergence. */
-		    ncnvrg = TRUE_;
+		    ncnvrg = true;
 		    ib = -jblk;
 		} else {
 		    ib = jblk;
@@ -709,12 +709,12 @@ L70:
 	    *m = im;
 	}
 	if (idiscl < 0 || idiscu < 0) {
-	    toofew = TRUE_;
+	    toofew = true;
 	}
     }
 
     if (irange == 1 && *m != *n || irange == 3 && *m != *iu - *il + 1) {
-	toofew = TRUE_;
+	toofew = true;
     }
 /*     If ORDER='B', do nothing the eigenvalues are already sorted by */
 /*        block. */

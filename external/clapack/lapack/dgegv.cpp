@@ -1,48 +1,48 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static doublereal c_b27 = 1.;
-static doublereal c_b38 = 0.;
+static double c_b27 = 1.;
+static double c_b38 = 0.;
 
-/* Subroutine */ int dgegv_(char *jobvl, char *jobvr, integer *n, doublereal *
-	a, integer *lda, doublereal *b, integer *ldb, doublereal *alphar, 
-	doublereal *alphai, doublereal *beta, doublereal *vl, integer *ldvl, 
-	doublereal *vr, integer *ldvr, doublereal *work, integer *lwork, 
+/* Subroutine */ int dgegv_(char *jobvl, char *jobvr, integer *n, double *
+	a, integer *lda, double *b, integer *ldb, double *alphar, 
+	double *alphai, double *beta, double *vl, integer *ldvl, 
+	double *vr, integer *ldvr, double *work, integer *lwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;
-    doublereal d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4;
 
     /* Local variables */
     integer jc, nb, in, jr, nb1, nb2, nb3, ihi, ilo;
-    doublereal eps;
-    logical ilv;
-    doublereal absb, anrm, bnrm;
+    double eps;
+    bool ilv;
+    double absb, anrm, bnrm;
     integer itau;
-    doublereal temp;
-    logical ilvl, ilvr;
+    double temp;
+    bool ilvl, ilvr;
     integer lopt;
-    doublereal anrm1, anrm2, bnrm1, bnrm2, absai, scale, absar, sbeta;
+    double anrm1, anrm2, bnrm1, bnrm2, absai, scale, absar, sbeta;
     integer ileft, iinfo, icols, iwork, irows;
-    doublereal salfai;
-    doublereal salfar;
-    doublereal safmin;
-    doublereal safmax;
+    double salfai;
+    double salfar;
+    double safmin;
+    double safmax;
     char chtemp[1];
-    logical ldumma[1];
+    bool ldumma[1];
     integer ijobvl, iright;
-    logical ilimit;
+    bool ilimit;
     integer ijobvr;
-    doublereal onepls;
+    double onepls;
     integer lwkmin;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -295,24 +295,24 @@ static doublereal c_b38 = 0.;
     /* Function Body */
     if (lsame_(jobvl, "N")) {
 	ijobvl = 1;
-	ilvl = FALSE_;
+	ilvl = false;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
-	ilvl = TRUE_;
+	ilvl = true;
     } else {
 	ijobvl = -1;
-	ilvl = FALSE_;
+	ilvl = false;
     }
 
     if (lsame_(jobvr, "N")) {
 	ijobvr = 1;
-	ilvr = FALSE_;
+	ilvr = false;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
-	ilvr = TRUE_;
+	ilvr = true;
     } else {
 	ijobvr = -1;
-	ilvr = FALSE_;
+	ilvr = false;
     }
     ilv = ilvl || ilvr;
 
@@ -322,7 +322,7 @@ static doublereal c_b38 = 0.;
     i__1 = *n << 3;
     lwkmin = std::max(i__1,1_integer);
     lwkopt = lwkmin;
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     lquery = *lwork == -1;
     *info = 0;
     if (ijobvl <= 0) {
@@ -353,7 +353,7 @@ static doublereal c_b38 = 0.;
 /* Computing MAX */
 	i__1 = *n * 6, i__2 = *n * (nb + 1);
 	lopt = (*n << 1) + std::max(i__1,i__2);
-	work[1] = (doublereal) lopt;
+	work[1] = (double) lopt;
     }
 
     if (*info != 0) {
@@ -702,7 +702,7 @@ L100:
 	salfar = anrm * alphar[jc];
 	salfai = anrm * alphai[jc];
 	sbeta = bnrm * beta[jc];
-	ilimit = FALSE_;
+	ilimit = false;
 	scale = 1.;
 
 /*        Check for significant underflow in ALPHAI */
@@ -711,7 +711,7 @@ L100:
 	d__1 = safmin, d__2 = eps * absar, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absb;
 	if (abs(salfai) < safmin && absai >= std::max(d__1,d__2)) {
-	    ilimit = TRUE_;
+	    ilimit = true;
 /* Computing MAX */
 	    d__1 = onepls * safmin, d__2 = anrm2 * absai;
 	    scale = onepls * safmin / anrm1 / std::max(d__1,d__2);
@@ -734,7 +734,7 @@ L100:
 	d__1 = safmin, d__2 = eps * absai, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absb;
 	if (abs(salfar) < safmin && absar >= std::max(d__1,d__2)) {
-	    ilimit = TRUE_;
+	    ilimit = true;
 /* Computing MAX */
 /* Computing MAX */
 	    d__3 = onepls * safmin, d__4 = anrm2 * absar;
@@ -748,7 +748,7 @@ L100:
 	d__1 = safmin, d__2 = eps * absar, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absai;
 	if (abs(sbeta) < safmin && absb >= std::max(d__1,d__2)) {
-	    ilimit = TRUE_;
+	    ilimit = true;
 /* Computing MAX */
 /* Computing MAX */
 	    d__3 = onepls * safmin, d__4 = bnrm2 * absb;
@@ -767,7 +767,7 @@ L100:
 		scale /= temp;
 	    }
 	    if (scale < 1.) {
-		ilimit = FALSE_;
+		ilimit = false;
 	    }
 	}
 
@@ -785,7 +785,7 @@ L100:
     }
 
 L120:
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
 
     return 0;
 

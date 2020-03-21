@@ -1,28 +1,28 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = -1.;
-static doublereal c_b9 = 1.;
+static double c_b8 = -1.;
+static double c_b9 = 1.;
 
 /* Subroutine */ int dlasyf_(char *uplo, integer *n, integer *nb, integer *kb, 
-	 doublereal *a, integer *lda, integer *ipiv, doublereal *w, integer *
+	 double *a, integer *lda, integer *ipiv, double *w, integer *
 	ldw, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, w_dim1, w_offset, i__1, i__2, i__3, i__4, i__5;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer j, k;
-    doublereal t, r1, d11, d21, d22;
+    double t, r1, d11, d21, d22;
     integer jb, jj, kk, jp, kp, kw, kkw, imax, jmax;
-    doublereal alpha;
+    double alpha;
     integer kstep;
-    doublereal absakk;
-    doublereal colmax, rowmax;
+    double absakk;
+    double colmax, rowmax;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

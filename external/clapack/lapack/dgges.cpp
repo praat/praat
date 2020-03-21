@@ -1,51 +1,52 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c_n1 = -1;
-static doublereal c_b38 = 0.;
-static doublereal c_b39 = 1.;
+static double c_b38 = 0.;
+static double c_b39 = 1.;
 
-/* Subroutine */ int dgges_(char *jobvsl, char *jobvsr, char *sort, L_fp 
-	selctg, integer *n, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, integer *sdim, doublereal *alphar, doublereal *alphai, 
-	doublereal *beta, doublereal *vsl, integer *ldvsl, doublereal *vsr, 
-	integer *ldvsr, doublereal *work, integer *lwork, logical *bwork, 
+/* Subroutine */ int dgges_(const char *jobvsl, const char *jobvsr, const char *sort, 
+	bool (*selctg)(const double *, const double *, const double *),
+	integer *n, double *a, integer *lda, double *b, 
+	integer *ldb, integer *sdim, double *alphar, double *alphai, 
+	double *beta, double *vsl, integer *ldvsl, double *vsr, 
+	integer *ldvsr, double *work, integer *lwork, bool *bwork, 
 	integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vsl_dim1, vsl_offset, 
 	    vsr_dim1, vsr_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Builtin functions
-    double sqrt(doublereal);*/
+    double sqrt(double);*/
 
     /* Local variables */
     integer i__, ip;
-    doublereal dif[2];
+    double dif[2];
     integer ihi, ilo;
-    doublereal eps, anrm, bnrm;
+    double eps, anrm, bnrm;
     integer idum[1], ierr, itau, iwrk;
-    doublereal pvsl, pvsr;
+    double pvsl, pvsr;
     integer ileft, icols;
-    logical cursl, ilvsl, ilvsr;
+    bool cursl, ilvsl, ilvsr;
     integer irows;
-    logical lst2sl;
-    logical ilascl, ilbscl;
-    doublereal safmin;
-     doublereal safmax;
-    doublereal bignum;
+    bool lst2sl;
+    bool ilascl, ilbscl;
+    double safmin;
+     double safmax;
+    double bignum;
     integer ijobvl, iright;
     integer ijobvr;
-    doublereal anrmto, bnrmto;
-    logical lastsl;
+    double anrmto, bnrmto;
+    bool lastsl;
     integer minwrk, maxwrk;
-    doublereal smlnum;
-    logical wantst, lquery;
+    double smlnum;
+    bool wantst, lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */
@@ -260,24 +261,24 @@ static doublereal c_b39 = 1.;
     /* Function Body */
     if (lsame_(jobvsl, "N")) {
 	ijobvl = 1;
-	ilvsl = FALSE_;
+	ilvsl = false;
     } else if (lsame_(jobvsl, "V")) {
 	ijobvl = 2;
-	ilvsl = TRUE_;
+	ilvsl = true;
     } else {
 	ijobvl = -1;
-	ilvsl = FALSE_;
+	ilvsl = false;
     }
 
     if (lsame_(jobvsr, "N")) {
 	ijobvr = 1;
-	ilvsr = FALSE_;
+	ilvsr = false;
     } else if (lsame_(jobvsr, "V")) {
 	ijobvr = 2;
-	ilvsr = TRUE_;
+	ilvsr = true;
     } else {
 	ijobvr = -1;
-	ilvsr = FALSE_;
+	ilvsr = false;
     }
 
     wantst = lsame_(sort, "S");
@@ -332,7 +333,7 @@ static doublereal c_b39 = 1.;
 	    minwrk = 1;
 	    maxwrk = 1;
 	}
-	work[1] = (doublereal) maxwrk;
+	work[1] = (double) maxwrk;
 
 	if (*lwork < minwrk && ! lquery) {
 	    *info = -19;
@@ -366,13 +367,13 @@ static doublereal c_b39 = 1.;
 /*     Scale A if max element outside range [SMLNUM,BIGNUM] */
 
     anrm = dlange_("M", n, n, &a[a_offset], lda, &work[1]);
-    ilascl = FALSE_;
+    ilascl = false;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
-	ilascl = TRUE_;
+	ilascl = true;
     } else if (anrm > bignum) {
 	anrmto = bignum;
-	ilascl = TRUE_;
+	ilascl = true;
     }
     if (ilascl) {
 	dlascl_("G", &c__0, &c__0, &anrm, &anrmto, n, n, &a[a_offset], lda, &
@@ -382,13 +383,13 @@ static doublereal c_b39 = 1.;
 /*     Scale B if max element outside range [SMLNUM,BIGNUM] */
 
     bnrm = dlange_("M", n, n, &b[b_offset], ldb, &work[1]);
-    ilbscl = FALSE_;
+    ilbscl = false;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     } else if (bnrm > bignum) {
 	bnrmto = bignum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     }
     if (ilbscl) {
 	dlascl_("G", &c__0, &c__0, &bnrm, &bnrmto, n, n, &b[b_offset], ldb, &
@@ -588,8 +589,8 @@ static doublereal c_b39 = 1.;
 
 /*        Check if reordering is correct */
 
-	lastsl = TRUE_;
-	lst2sl = TRUE_;
+	lastsl = true;
+	lst2sl = true;
 	*sdim = 0;
 	ip = 0;
 	i__1 = *n;
@@ -633,7 +634,7 @@ static doublereal c_b39 = 1.;
 
 L50:
 
-    work[1] = (doublereal) maxwrk;
+    work[1] = (double) maxwrk;
 
     return 0;
 

@@ -1,28 +1,28 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dstev_(char *jobz, integer *n, doublereal *d__, 
-	doublereal *e, doublereal *z__, integer *ldz, doublereal *work, 
+/* Subroutine */ int dstev_(char *jobz, integer *n, double *d__, 
+	double *e, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
-    doublereal eps;
+    double eps;
     integer imax;
-    doublereal rmin, rmax, tnrm;
-    doublereal sigma;
-    logical wantz;
+    double rmin, rmax, tnrm;
+    double sigma;
+    bool wantz;
     integer iscale;
-    doublereal safmin;
-    doublereal bignum;
-    doublereal smlnum;
+    double safmin;
+    double bignum;
+    double smlnum;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

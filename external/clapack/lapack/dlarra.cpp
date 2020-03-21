@@ -1,20 +1,20 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dlarra_(integer *n, doublereal *d__, doublereal *e, 
-	doublereal *e2, doublereal *spltol, doublereal *tnrm, integer *nsplit, 
+/* Subroutine */ int dlarra_(integer *n, double *d__, double *e, 
+	double *e2, double *spltol, double *tnrm, integer *nsplit, 
 	 integer *isplit, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__;
-    doublereal tmp1, eabs;
+    double tmp1, eabs;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

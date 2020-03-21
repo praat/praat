@@ -1,17 +1,17 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b8 = 1.;
+static double c_b8 = 1.;
 
-/* Subroutine */ int dtzrqf_(integer *m, integer *n, doublereal *a, integer *
-	lda, doublereal *tau, integer *info)
+/* Subroutine */ int dtzrqf_(integer *m, integer *n, double *a, integer *
+	lda, double *tau, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, k, m1;

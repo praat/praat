@@ -1,27 +1,27 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
-static doublereal c_b9 = -1.;
-static doublereal c_b11 = 1.;
+static double c_b9 = -1.;
+static double c_b11 = 1.;
 
 /* Subroutine */ int dspgst_(integer *itype, char *uplo, integer *n, 
-	doublereal *ap, doublereal *bp, integer *info)
+	double *ap, double *bp, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer j, k, j1, k1, jj, kk;
-    doublereal ct, ajj;
+    double ct, ajj;
     integer j1j1;
-    doublereal akk;
+    double akk;
     integer k1k1;
-    doublereal bjj, bkk;
-    logical upper;
+    double bjj, bkk;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -1,6 +1,6 @@
-#ifndef _f2clib_h_
-#define _f2clib_h_
-/* f2clib.h
+#ifndef _f2cP_h_
+#define _f2cP_h_
+/* f2cP.h
  *
  * Copyright (C) 2020 David Weenink
  *
@@ -18,7 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "f2c.h"
+#include "melder.h"
+#include "cblas.h"
+#include "clapackP.h"
 
 static inline double d_abs (double *x) {
 	return abs (*x);
@@ -138,9 +140,9 @@ static inline integer i_nint (float *x) {
 	return (integer)(*x >= 0.0 ? floor(*x + 0.5) : -floor(0.5 - *x));
 }
 
-logical lsame_(const char *ca, const char *cb);
+bool lsame_(const char *ca, const char *cb);
 
-logical lsamen_(integer *n, const char *ca, const char *cb);
+bool lsamen_(integer *n, const char *ca, const char *cb);
 
 static inline double pow_dd (double *ap, double *bp) {
 	return pow (*ap, *bp);
@@ -320,4 +322,4 @@ static inline void xerbla_ (const char *src, integer *info) {
 	Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!");
 }
 
-#endif /* _f2clib_h_  */
+#endif /* _f2cP_h_  */

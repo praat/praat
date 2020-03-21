@@ -1,14 +1,14 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__0 = 0;
 static integer c__2 = 2;
 
-/* Subroutine */ int dlasd0_(integer *n, integer *sqre, doublereal *d__, 
-	doublereal *e, doublereal *u, integer *ldu, doublereal *vt, integer *
-	ldvt, integer *smlsiz, integer *iwork, doublereal *work, integer *
+/* Subroutine */ int dlasd0_(integer *n, integer *sqre, double *d__, 
+	double *e, double *u, integer *ldu, double *vt, integer *
+	ldvt, integer *smlsiz, integer *iwork, double *work, integer *
 	info)
 {
     /* System generated locals */
@@ -17,9 +17,9 @@ static integer c__2 = 2;
     /* Local variables */
     integer i__, j, m, i1, ic, lf, nd, ll, nl, nr, im1, ncc, nlf, nrf, iwk, 
 	    lvl, ndb1, nlp1, nrp1;
-    doublereal beta;
+    double beta;
     integer idxq, nlvl;
-    doublereal alpha;
+    double alpha;
     integer inode, ndiml, idxqc, ndimr, itemp, sqrei;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

@@ -1,34 +1,34 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b8 = 0.;
-static doublereal c_b9 = 1.;
+static double c_b8 = 0.;
+static double c_b9 = 1.;
 static integer c__1 = 1;
-static doublereal c_b20 = -1.;
+static double c_b20 = -1.;
 
 /* Subroutine */ int dsbgst_(char *vect, char *uplo, integer *n, integer *ka, 
-	integer *kb, doublereal *ab, integer *ldab, doublereal *bb, integer *
-	ldbb, doublereal *x, integer *ldx, doublereal *work, integer *info)
+	integer *kb, double *ab, integer *ldab, double *bb, integer *
+	ldbb, double *x, integer *ldx, double *work, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, bb_dim1, bb_offset, x_dim1, x_offset, i__1, 
 	    i__2, i__3, i__4;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, k, l, m;
-    doublereal t;
+    double t;
     integer i0, i1, i2, j1, j2;
-    doublereal ra;
+    double ra;
     integer nr, nx, ka1, kb1;
-    doublereal ra1;
+    double ra1;
     integer j1t, j2t;
-    doublereal bii;
+    double bii;
     integer kbt, nrt, inca;
-    logical upper, wantx;
-    logical update;
+    bool upper, wantx;
+    bool update;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -234,7 +234,7 @@ static doublereal c_b20 = -1.;
 
 /*     **************************** Phase 1 ***************************** */
 
-/*     The logical structure of this phase is: */
+/*     The bool structure of this phase is: */
 
 /*     UPDATE = .TRUE. */
 /*     DO I = N, M + 1, -1 */
@@ -248,7 +248,7 @@ static doublereal c_b20 = -1.;
 
 /*     To avoid duplicating code, the two loops are merged. */
 
-    update = TRUE_;
+    update = true;
     i__ = *n + 1;
 L10:
     if (update) {
@@ -262,7 +262,7 @@ L10:
 	i1 = std::min(i__1,i__2);
 	i2 = i__ - kbt + ka1;
 	if (i__ < m + 1) {
-	    update = FALSE_;
+	    update = false;
 	    ++i__;
 	    i0 = m;
 	    if (*ka == 0) {
@@ -976,7 +976,7 @@ L480:
 
 /*     **************************** Phase 2 ***************************** */
 
-/*     The logical structure of this phase is: */
+/*     The bool structure of this phase is: */
 
 /*     UPDATE = .TRUE. */
 /*     DO I = 1, M */
@@ -990,7 +990,7 @@ L480:
 
 /*     To avoid duplicating code, the two loops are merged. */
 
-    update = TRUE_;
+    update = true;
     i__ = 0;
 L490:
     if (update) {
@@ -1004,7 +1004,7 @@ L490:
 	i1 = std::max(i__3,i__4);
 	i2 = i__ + kbt - ka1;
 	if (i__ > m) {
-	    update = FALSE_;
+	    update = false;
 	    --i__;
 	    i0 = m + 1;
 	    if (*ka == 0) {

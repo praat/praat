@@ -1,13 +1,13 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int drscl_(integer *n, doublereal *sa, doublereal *sx, 
+/* Subroutine */ int drscl_(integer *n, double *sa, double *sx, 
 	integer *incx)
 {
-    doublereal mul, cden;
-    logical done;
-    doublereal cnum, cden1, cnum1;
-    doublereal bignum, smlnum;
+    double mul, cden;
+    bool done;
+    double cnum, cden1, cnum1;
+    double bignum, smlnum;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -87,21 +87,21 @@ L10:
 /*        Pre-multiply X by SMLNUM if CDEN is large compared to CNUM. */
 
 	mul = smlnum;
-	done = FALSE_;
+	done = false;
 	cden = cden1;
     } else if (abs(cnum1) > abs(cden)) {
 
 /*        Pre-multiply X by BIGNUM if CDEN is small compared to CNUM. */
 
 	mul = bignum;
-	done = FALSE_;
+	done = false;
 	cnum = cnum1;
     } else {
 
 /*        Multiply X by CNUM / CDEN and return. */
 
 	mul = cnum / cden;
-	done = TRUE_;
+	done = true;
     }
 
 /*     Scale the vector X by MUL */

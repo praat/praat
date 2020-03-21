@@ -1,16 +1,16 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dpoequ_(integer *n, doublereal *a, integer *lda, 
-	doublereal *s, doublereal *scond, doublereal *amax, integer *info)
+/* Subroutine */ int dpoequ_(integer *n, double *a, integer *lda, 
+	double *s, double *scond, double *amax, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__;
-    doublereal smin;
+    double smin;
  
 
 

@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b9 = 0.;
-static doublereal c_b10 = 1.;
+static double c_b9 = 0.;
+static double c_b10 = 1.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dsbtrd_(char *vect, char *uplo, integer *n, integer *kd, 
-	doublereal *ab, integer *ldab, doublereal *d__, doublereal *e, 
-	doublereal *q, integer *ldq, doublereal *work, integer *info)
+	double *ab, integer *ldab, double *d__, double *e, 
+	double *q, integer *ldq, double *work, integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, q_dim1, q_offset, i__1, i__2, i__3, i__4, 
@@ -18,9 +18,9 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, j, k, l, i2, j1, j2, nq, nr, kd1, ibl, iqb, kdn, jin, nrt, 
 	    kdm1, inca, jend, lend, jinc, incx, last;
-    doublereal temp;
+    double temp;
     integer j1end, j1inc, iqend;
-    logical initq, wantq, upper;
+    bool initq, wantq, upper;
     integer iqaend;
 
 /*  -- LAPACK routine (version 3.1) -- */

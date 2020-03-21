@@ -1,24 +1,24 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int ddisna_(char *job, integer *m, integer *n, doublereal *
-	d__, doublereal *sep, integer *info)
+/* Subroutine */ int ddisna_(char *job, integer *m, integer *n, double *
+	d__, double *sep, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__, k;
-    doublereal eps;
-    logical decr, left, incr, sing, eigen;
+    double eps;
+    bool decr, left, incr, sing, eigen;
  
-    doublereal anorm;
-    logical right;
+    double anorm;
+    bool right;
  
-    doublereal oldgap, safmin;
+    double oldgap, safmin;
  
-    doublereal newgap, thresh;
+    double newgap, thresh;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -120,8 +120,8 @@
     } else if (k < 0) {
 	*info = -3;
     } else {
-	incr = TRUE_;
-	decr = TRUE_;
+	incr = true;
+	decr = true;
 	i__1 = k - 1;
 	for (i__ = 1; i__ <= i__1; ++i__) {
 	    if (incr) {

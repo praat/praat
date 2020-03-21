@@ -1,11 +1,12 @@
 #include "clapack.h"
+#include "f2cP.h"
 #include "string.h"
 
-logical lsamen_(integer *n, const char *ca, const char *cb)
+bool lsamen_(integer *n, const char *ca, const char *cb)
 {
     /* System generated locals */
     integer i__1;
-    logical ret_val;
+    bool ret_val;
 
     /* Local variables */
     static integer i__;
@@ -47,7 +48,7 @@ logical lsamen_(integer *n, const char *ca, const char *cb)
 /*     .. */
 /*     .. Executable Statements .. */
 
-    ret_val = FALSE_;
+    ret_val = false;
     if (strlen(ca) < *n || strlen(cb) < *n) {
 	goto L20;
     }
@@ -65,7 +66,7 @@ logical lsamen_(integer *n, const char *ca, const char *cb)
 
 /* L10: */
     }
-    ret_val = TRUE_;
+    ret_val = true;
 
 L20:
     return ret_val;

@@ -1,18 +1,18 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b8 = 0.;
+static double c_b8 = 0.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dlarzt_(const char *direct, const char *storev, integer *n, integer *
-	k, doublereal *v, integer *ldv, doublereal *tau, doublereal *t, 
+	k, double *v, integer *ldv, double *tau, double *t, 
 	integer *ldt)
 {
     /* System generated locals */
     integer t_dim1, t_offset, v_dim1, v_offset, i__1;
-    doublereal d__1;
+    double d__1;
 
     /* Local variables */
     integer i__, j, info;

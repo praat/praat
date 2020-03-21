@@ -1,5 +1,5 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dorghr_(integer *n, integer *ilo, integer *ihi, 
-	doublereal *a, integer *lda, doublereal *tau, doublereal *work, 
+	double *a, integer *lda, double *tau, double *work, 
 	integer *lwork, integer *info)
 {
     /* System generated locals */
@@ -16,7 +16,7 @@ static integer c_n1 = -1;
     /* Local variables */
     integer i__, j, nb, nh, iinfo;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -121,7 +121,7 @@ static integer c_n1 = -1;
     if (*info == 0) {
 	nb = ilaenv_(&c__1, "DORGQR", " ", &nh, &nh, &nh, &c_n1);
 	lwkopt = std::max(1_integer,nh) * nb;
-	work[1] = (doublereal) lwkopt;
+	work[1] = (double) lwkopt;
     }
 
     if (*info != 0) {
@@ -190,7 +190,7 @@ static integer c_n1 = -1;
 	dorgqr_(&nh, &nh, &nh, &a[*ilo + 1 + (*ilo + 1) * a_dim1], lda, &tau[*
 		ilo], &work[1], lwork, &iinfo);
     }
-    work[1] = (doublereal) lwkopt;
+    work[1] = (double) lwkopt;
     return 0;
 
 /*     End of DORGHR */

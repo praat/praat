@@ -1,21 +1,21 @@
 #include "cblas.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b4 = 1.;
+static double c_b4 = 1.;
 
-/* Subroutine */ int drotg_(doublereal *da, doublereal *db, doublereal *c__, 
-	doublereal *s)
+/* Subroutine */ int drotg_(double *da, double *db, double *c__, 
+	double *s)
 {
     /* System generated locals */
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions 
-    double sqrt(doublereal), d_sign(doublereal *, doublereal *);*/
+    double sqrt(double), d_sign(double *, double *);*/
 
     /* Local variables */
-    doublereal r__, z__, roe, scale;
+    double r__, z__, roe, scale;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

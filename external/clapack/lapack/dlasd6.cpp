@@ -1,30 +1,30 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__0 = 0;
-static doublereal c_b7 = 1.;
+static double c_b7 = 1.;
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
 /* Subroutine */ int dlasd6_(integer *icompq, integer *nl, integer *nr, 
-	integer *sqre, doublereal *d__, doublereal *vf, doublereal *vl, 
-	doublereal *alpha, doublereal *beta, integer *idxq, integer *perm, 
-	integer *givptr, integer *givcol, integer *ldgcol, doublereal *givnum, 
-	 integer *ldgnum, doublereal *poles, doublereal *difl, doublereal *
-	difr, doublereal *z__, integer *k, doublereal *c__, doublereal *s, 
-	doublereal *work, integer *iwork, integer *info)
+	integer *sqre, double *d__, double *vf, double *vl, 
+	double *alpha, double *beta, integer *idxq, integer *perm, 
+	integer *givptr, integer *givcol, integer *ldgcol, double *givnum, 
+	 integer *ldgnum, double *poles, double *difl, double *
+	difr, double *z__, integer *k, double *c__, double *s, 
+	double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer givcol_dim1, givcol_offset, givnum_dim1, givnum_offset, 
 	    poles_dim1, poles_offset, i__1;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, m, n, n1, n2, iw, idx, idxc, idxp, ivfw, ivlw;
     integer isigma;
-    doublereal orgnrm;
+    double orgnrm;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

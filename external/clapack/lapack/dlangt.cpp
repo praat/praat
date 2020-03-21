@@ -1,24 +1,24 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-doublereal dlangt_(char *norm, integer *n, doublereal *dl, doublereal *d__, 
-	doublereal *du)
+double dlangt_(char *norm, integer *n, double *dl, double *d__, 
+	double *du)
 {
     /* System generated locals */
     integer i__1;
-    doublereal ret_val, d__1, d__2, d__3, d__4, d__5;
+    double ret_val, d__1, d__2, d__3, d__4, d__5;
 
     /* Builtin functions 
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__;
-    doublereal sum, scale;
-    doublereal anorm;
+    double sum, scale;
+    double anorm;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

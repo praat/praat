@@ -1,37 +1,37 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static logical c_false = FALSE_;
-static logical c_true = TRUE_;
+static bool c_false = false;
+static bool c_true = true;
 
-/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, logical *
-	select, integer *n, doublereal *h__, integer *ldh, doublereal *wr, 
-	doublereal *wi, doublereal *vl, integer *ldvl, doublereal *vr, 
-	integer *ldvr, integer *mm, integer *m, doublereal *work, integer *
+/* Subroutine */ int dhsein_(const char *side, const char *eigsrc, const char *initv, bool *
+	select, integer *n, double *h__, integer *ldh, double *wr, 
+	double *wi, double *vl, integer *ldvl, double *vr, 
+	integer *ldvr, integer *mm, integer *m, double *work, integer *
 	ifaill, integer *ifailr, integer *info)
 {
     /* System generated locals */
     integer h_dim1, h_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, 
 	    i__2;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Local variables */
     integer i__, k, kl, kr, kln, ksi;
-    doublereal wki;
+    double wki;
     integer ksr;
-    doublereal ulp, wkr, eps3;
-    logical pair;
-    doublereal unfl;
+    double ulp, wkr, eps3;
+    bool pair;
+    double unfl;
     integer iinfo;
-    logical leftv, bothv;
-    doublereal hnorm;
-    doublereal bignum;
-    logical noinit;
+    bool leftv, bothv;
+    double hnorm;
+    double bignum;
+    bool noinit;
     integer ldwork;
-    logical rightv, fromqr;
-    doublereal smlnum;
+    bool rightv, fromqr;
+    double smlnum;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -235,21 +235,21 @@ static logical c_true = TRUE_;
 /*     eigenvectors, and standardize the array SELECT. */
 
     *m = 0;
-    pair = FALSE_;
+    pair = false;
     i__1 = *n;
     for (k = 1; k <= i__1; ++k) {
 	if (pair) {
-	    pair = FALSE_;
-	    select[k] = FALSE_;
+	    pair = false;
+	    select[k] = false;
 	} else {
 	    if (wi[k] == 0.) {
 		if (select[k]) {
 		    ++(*m);
 		}
 	    } else {
-		pair = TRUE_;
+		pair = true;
 		if (select[k] || select[k + 1]) {
-		    select[k] = TRUE_;
+		    select[k] = true;
 		    *m += 2;
 		}
 	    }

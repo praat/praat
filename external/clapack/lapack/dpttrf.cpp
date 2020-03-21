@@ -1,7 +1,7 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
-/* Subroutine */ int dpttrf_(integer *n, doublereal *d__, doublereal *e, 
+/* Subroutine */ int dpttrf_(integer *n, double *d__, double *e, 
 	integer *info)
 {
     /* System generated locals */
@@ -9,7 +9,7 @@
 
     /* Local variables */
     integer i__, i4;
-    doublereal ei;
+    double ei;
  
 
 

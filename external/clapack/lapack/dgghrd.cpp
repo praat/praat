@@ -1,15 +1,15 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
-static doublereal c_b10 = 0.;
-static doublereal c_b11 = 1.;
+static double c_b10 = 0.;
+static double c_b11 = 1.;
 static integer c__1 = 1;
 
 /* Subroutine */ int dgghrd_(const char *compq, const char *compz, integer *n, integer *
-	ilo, integer *ihi, doublereal *a, integer *lda, doublereal *b, 
-	integer *ldb, doublereal *q, integer *ldq, doublereal *z__, integer *
+	ilo, integer *ihi, double *a, integer *lda, double *b, 
+	integer *ldb, double *q, integer *ldq, double *z__, integer *
 	ldz, integer *info)
 {
     /* System generated locals */
@@ -17,10 +17,10 @@ static integer c__1 = 1;
 	    z_offset, i__1, i__2, i__3;
 
     /* Local variables */
-    doublereal c__, s;
-    logical ilq, ilz;
+    double c__, s;
+    bool ilq, ilz;
     integer jcol;
-    doublereal temp;
+    double temp;
     integer jrow;
     integer icompq, icompz;
 
@@ -176,13 +176,13 @@ static integer c__1 = 1;
 
     /* Function Body */
     if (lsame_(compq, "N")) {
-	ilq = FALSE_;
+	ilq = false;
 	icompq = 1;
     } else if (lsame_(compq, "V")) {
-	ilq = TRUE_;
+	ilq = true;
 	icompq = 2;
     } else if (lsame_(compq, "I")) {
-	ilq = TRUE_;
+	ilq = true;
 	icompq = 3;
     } else {
 	icompq = 0;
@@ -191,13 +191,13 @@ static integer c__1 = 1;
 /*     Decode COMPZ */
 
     if (lsame_(compz, "N")) {
-	ilz = FALSE_;
+	ilz = false;
 	icompz = 1;
     } else if (lsame_(compz, "V")) {
-	ilz = TRUE_;
+	ilz = true;
 	icompz = 2;
     } else if (lsame_(compz, "I")) {
-	ilz = TRUE_;
+	ilz = true;
 	icompz = 3;
     } else {
 	icompz = 0;

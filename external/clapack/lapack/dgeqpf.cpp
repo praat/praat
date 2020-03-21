@@ -1,26 +1,26 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgeqpf_(integer *m, integer *n, doublereal *a, integer *
-	lda, integer *jpvt, doublereal *tau, doublereal *work, integer *info)
+/* Subroutine */ int dgeqpf_(integer *m, integer *n, double *a, integer *
+	lda, integer *jpvt, double *tau, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
-    doublereal d__1, d__2;
+    double d__1, d__2;
 
     /* Builtin functions
-    double sqrt(doublereal); */
+    double sqrt(double); */
 
     /* Local variables */
     integer i__, j, ma, mn;
-    doublereal aii;
+    double aii;
     integer pvt;
-    doublereal temp;
-    doublereal temp2, tol3z;
+    double temp;
+    double temp2, tol3z;
     integer itemp;
 
 /*  -- LAPACK deprecated driver routine (version 3.1) -- */

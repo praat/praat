@@ -1,36 +1,36 @@
 #include "clapack.h"
-#include "blaswrap.h"
+#include "f2cP.h"
 
 /* Table of constant values */
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlarrf_(integer *n, doublereal *d__, doublereal *l, 
-	doublereal *ld, integer *clstrt, integer *clend, doublereal *w, 
-	doublereal *wgap, doublereal *werr, doublereal *spdiam, doublereal *
-	clgapl, doublereal *clgapr, doublereal *pivmin, doublereal *sigma, 
-	doublereal *dplus, doublereal *lplus, doublereal *work, integer *info)
+/* Subroutine */ int dlarrf_(integer *n, double *d__, double *l, 
+	double *ld, integer *clstrt, integer *clend, double *w, 
+	double *wgap, double *werr, double *spdiam, double *
+	clgapl, double *clgapr, double *pivmin, double *sigma, 
+	double *dplus, double *lplus, double *work, integer *info)
 {
     /* System generated locals */
     integer i__1;
-    doublereal d__1, d__2, d__3;
+    double d__1, d__2, d__3;
 
     /* Local variables */
     integer i__;
-    doublereal s, bestshift, smlgrowth, eps, tmp, max1, max2, rrr1, rrr2, 
+    double s, bestshift, smlgrowth, eps, tmp, max1, max2, rrr1, rrr2, 
 	    znm2, growthbound, fail, fact, oldp;
     integer indx;
-    doublereal prod;
+    double prod;
     integer ktry;
-    doublereal fail2, avgap, ldmax, rdmax;
+    double fail2, avgap, ldmax, rdmax;
     integer shift;
-    logical dorrr1;
-    doublereal ldelta;
-    logical nofail;
-    doublereal mingap, lsigma, rdelta;
-    logical forcer;
-    doublereal rsigma, clwdth;
-    logical sawnan1, sawnan2, tryrrr1;
+    bool dorrr1;
+    double ldelta;
+    bool nofail;
+    double mingap, lsigma, rdelta;
+    bool forcer;
+    double rsigma, clwdth;
+    bool sawnan1, sawnan2, tryrrr1;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -148,7 +148,7 @@ static integer c__1 = 1;
     fact = 2.;
     eps = dlamch_("Precision");
     shift = 0;
-    forcer = FALSE_;
+    forcer = false;
 /*     Note that we cannot guarantee that for any of the shifts tried, */
 /*     the factorization has a small or even moderate element growth. */
 /*     There could be Ritz values at both ends of the cluster and despite */
@@ -160,12 +160,12 @@ static integer c__1 = 1;
 /*     whether the element growth caused bad residuals/orthogonality. */
 /*     Decide whether the code should accept the best among all */
 /*     representations despite large element growth or signal INFO=1 */
-    nofail = TRUE_;
+    nofail = true;
 
 /*     Compute the average gap length of the cluster */
     clwdth = (d__1 = w[*clend] - w[*clstrt], abs(d__1)) + werr[*clend] + werr[
 	    *clstrt];
-    avgap = clwdth / (doublereal) (*clend - *clstrt);
+    avgap = clwdth / (double) (*clend - *clstrt);
     mingap = std::min(*clgapl,*clgapr);
 /*     Initial values for shifts to both ends of cluster */
 /* Computing MIN */
@@ -191,16 +191,16 @@ static integer c__1 = 1;
 
     s = dlamch_("S");
     smlgrowth = 1. / s;
-    fail = (doublereal) (*n - 1) * mingap / (*spdiam * eps);
-    fail2 = (doublereal) (*n - 1) * mingap / (*spdiam * sqrt(eps));
+    fail = (double) (*n - 1) * mingap / (*spdiam * eps);
+    fail2 = (double) (*n - 1) * mingap / (*spdiam * sqrt(eps));
     bestshift = lsigma;
 
 /*     while (KTRY <= KTRYMAX) */
     ktry = 0;
     growthbound = *spdiam * 8.;
 L5:
-    sawnan1 = FALSE_;
-    sawnan2 = FALSE_;
+    sawnan1 = false;
+    sawnan2 = false;
 /*     Ensure that we do not back off too much of the initial shifts */
     ldelta = std::min(ldmax,ldelta);
     rdelta = std::min(rdmax,rdelta);
@@ -213,7 +213,7 @@ L5:
 	dplus[1] = -(*pivmin);
 /*        Need to set SAWNAN1 because refined RRR test should not be used */
 /*        in this case */
-	sawnan1 = TRUE_;
+	sawnan1 = true;
     }
     max1 = abs(dplus[1]);
     i__1 = *n - 1;
@@ -225,7 +225,7 @@ L5:
 	    dplus[i__ + 1] = -(*pivmin);
 /*           Need to set SAWNAN1 because refined RRR test should not be used */
 /*           in this case */
-	    sawnan1 = TRUE_;
+	    sawnan1 = true;
 	}
 /* Computing MAX */
 	d__2 = max1, d__3 = (d__1 = dplus[i__ + 1], abs(d__1));
@@ -245,7 +245,7 @@ L5:
 	work[1] = -(*pivmin);
 /*        Need to set SAWNAN2 because refined RRR test should not be used */
 /*        in this case */
-	sawnan2 = TRUE_;
+	sawnan2 = true;
     }
     max2 = abs(work[1]);
     i__1 = *n - 1;
@@ -257,7 +257,7 @@ L5:
 	    work[i__ + 1] = -(*pivmin);
 /*           Need to set SAWNAN2 because refined RRR test should not be used */
 /*           in this case */
-	    sawnan2 = TRUE_;
+	    sawnan2 = true;
 	}
 /* Computing MAX */
 	d__2 = max2, d__3 = (d__1 = work[i__ + 1], abs(d__1));
@@ -300,11 +300,11 @@ L5:
 /*     Moreover, we use the refined RRR test only for isolated clusters. */
     if (clwdth < mingap / 128. && std::min(max1,max2) < fail2 && ! sawnan1 && ! 
 	    sawnan2) {
-	dorrr1 = TRUE_;
+	dorrr1 = true;
     } else {
-	dorrr1 = FALSE_;
+	dorrr1 = false;
     }
-    tryrrr1 = TRUE_;
+    tryrrr1 = true;
     if (tryrrr1 && dorrr1) {
 	if (indx == 1) {
 	    tmp = (d__1 = dplus[*n], abs(d__1));
@@ -382,7 +382,7 @@ L50:
 	if (smlgrowth < fail || nofail) {
 	    lsigma = bestshift;
 	    rsigma = bestshift;
-	    forcer = TRUE_;
+	    forcer = true;
 	    goto L5;
 	} else {
 	    *info = 1;
