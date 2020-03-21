@@ -72,11 +72,11 @@ static integer c__0 = 0;
 /*  Arguments */
 /*  ========= */
 
-/*  WANTQ   (input) bool */
+/*  WANTQ   (input) LOGICAL */
 /*          .TRUE. : update the left transformation matrix Q; */
 /*          .FALSE.: do not update Q. */
 
-/*  WANTZ   (input) bool */
+/*  WANTZ   (input) LOGICAL */
 /*          .TRUE. : update the right transformation matrix Z; */
 /*          .FALSE.: do not update Z. */
 

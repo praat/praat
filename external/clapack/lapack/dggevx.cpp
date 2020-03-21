@@ -262,7 +262,7 @@ static double c_b60 = 1.;
 /*  IWORK   (workspace) INTEGER array, dimension (N+6) */
 /*          If SENSE = 'E', IWORK is not referenced. */
 
-/*  BWORK   (workspace) bool array, dimension (N) */
+/*  BWORK   (workspace) LOGICAL array, dimension (N) */
 /*          If SENSE = 'N', BWORK is not referenced. */
 
 /*  INFO    (output) INTEGER */

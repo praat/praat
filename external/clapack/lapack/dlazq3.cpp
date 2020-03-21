@@ -72,7 +72,7 @@
 /*  NDIV   (output) INTEGER */
 /*         Number of divisions. */
 
-/*  IEEE   (input) bool */
+/*  IEEE   (input) LOGICAL */
 /*         Flag for IEEE or non IEEE arithmetic (passed to DLASQ5). */
 
 /*  TTYPE  (input/output) INTEGER */

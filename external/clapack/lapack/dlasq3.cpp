@@ -84,7 +84,7 @@
 /*  TTYPE  (output) INTEGER */
 /*         Shift type. */
 
-/*  IEEE   (input) bool */
+/*  IEEE   (input) LOGICAL */
 /*         Flag for IEEE or non IEEE arithmetic (passed to DLASQ5). */
 
 /*  ===================================================================== */

@@ -99,7 +99,7 @@
 /*           On output, Z contains the (scaled) r-th column of the */
 /*           inverse. The scaling is such that Z(R) equals 1. */
 
-/*  WANTNC   (input) bool */
+/*  WANTNC   (input) LOGICAL */
 /*           Specifies whether NEGCNT has to be computed. */
 
 /*  NEGCNT   (output) INTEGER */
