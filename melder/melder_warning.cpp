@@ -1,6 +1,6 @@
 /* melder_warning.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2016,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ void MelderWarning::_defaultProc (conststring32 message) {
 
 MelderWarning::Proc MelderWarning::_p_currentProc = & MelderWarning::_defaultProc;
 
-MelderString MelderWarning::_buffer = { 0, 0, nullptr };
+MelderString MelderWarning::_buffer;
 
 void Melder_warningOff () { MelderWarning::_depth --; }
 void Melder_warningOn () { MelderWarning::_depth ++; }

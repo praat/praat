@@ -47,7 +47,7 @@ void MelderString_free (MelderString *me) {
 void MelderString_expand (MelderString *me, int64 sizeNeeded) {
 	Melder_assert (my bufferSize >= 0);
 	Melder_assert (sizeNeeded >= 0);
-	sizeNeeded = (int64) (1.618034 * sizeNeeded) + 100;
+	sizeNeeded = (int64) (2.0 /*1.618034*/ * sizeNeeded) + 100;
 	Melder_assert (sizeNeeded > 0);
 	if (my string) {
 		totalNumberOfDeallocations += 1;

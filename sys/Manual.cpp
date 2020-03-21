@@ -257,7 +257,7 @@ static double searchToken (ManPages me, integer ipage, conststring32 token) {
 	/*
 		Try to find a match in the title, case-insensitively.
 	*/
-	static MelderString buffer { };
+	static MelderString buffer;
 	MelderString_copy (& buffer, page -> title.get());
 	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++)
 		*p = Melder_toLowerCase (*p);
@@ -290,7 +290,7 @@ static double searchToken (ManPages me, integer ipage, conststring32 token) {
 static void search (Manual me, conststring32 query) {
 	ManPages manPages = (ManPages) my data;
 	integer numberOfPages = manPages -> pages.size;
-	static MelderString searchText { };
+	static MelderString searchText;
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
 		if (*p == U'\n')

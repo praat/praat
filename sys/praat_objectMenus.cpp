@@ -51,7 +51,7 @@ DO
 	static MelderString string;
 	MelderString_copy (& string, newName);
 	praat_cleanUpName (string.string);
-	static MelderString fullName { };
+	static MelderString fullName;
 	MelderString_copy (& fullName, Thing_className (OBJECT), U" ", string.string);
 	if (! str32equ (fullName.string, FULL_NAME)) {
 		theCurrentPraatObjects -> list [IOBJECT]. name = Melder_dup_f (fullName.string);
@@ -569,7 +569,7 @@ static void searchProc () {
 	HELP_SearchManual (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 }
 
-static MelderString itemTitle_about { };
+static MelderString itemTitle_about;
 
 static autoDaata scriptRecognizer (integer nread, const char *header, MelderFile file) {
 	conststring32 name = MelderFile_name (file);

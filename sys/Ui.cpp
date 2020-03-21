@@ -299,7 +299,7 @@ static void UiField_widgetToValue (UiField me) {
 
 /***** History mechanism. *****/
 
-static MelderString theHistory { };
+static MelderString theHistory;
 void UiHistory_write (conststring32 string) {
 	MelderString_append (& theHistory, string);
 }
@@ -745,7 +745,7 @@ UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableN
 #define HELP_BUTTON_X  20
 #define LIST_HEIGHT  192
 
-static MelderString theFinishBuffer { };
+static MelderString theFinishBuffer;
 
 static void appendColon () {
 	integer length = theFinishBuffer.length;
@@ -2061,7 +2061,7 @@ MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
 }
 
 void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
-	static MelderString lowerCaseFieldName { };
+	static MelderString lowerCaseFieldName;
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield].get();
 		MelderString_copy (& lowerCaseFieldName, field -> name.get());

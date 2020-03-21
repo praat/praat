@@ -293,7 +293,7 @@ static int getEnum (MelderReadText me, int (*getValue) (conststring32)) {
 }
 
 static char32 * peekString (MelderReadText me) {
-	static MelderString buffer { };
+	static MelderString buffer;
 	MelderString_empty (& buffer);
 	for (char32 c = MelderReadText_getChar (me); c != U'\"'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')

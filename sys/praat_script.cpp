@@ -29,9 +29,9 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 		while (*string == U' ') string ++;
 		if (*string >= U'A' && *string <= U'Z') {
 			/*
-			 * Find the object by its name.
-			 */
-			static MelderString buffer { };
+				Find the object by its name.
+			*/
+			static MelderString buffer;
 			MelderString_copy (& buffer, string);
 			char32 *space = str32chr (buffer.string, U' ');
 			if (! space)
@@ -44,8 +44,8 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 					return IOBJECT;
 			}
 			/*
-			 * No object with that name. Perhaps the class name was wrong?
-			 */
+				No object with that name. Perhaps the class name was wrong?
+			*/
 			ClassInfo klas = Thing_classFromClassName (className, nullptr);
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
@@ -55,8 +55,8 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 			Melder_throw (U"No object with that name.");
 		} else {
 			/*
-			 * Find the object by its ID.
-			 */
+				Find the object by its ID.
+			*/
 			double value;
 			Interpreter_numericExpression (interpreter, string, & value);
 			integer id = (integer) value;

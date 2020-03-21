@@ -2,7 +2,7 @@
 #define _melder_string_h_
 /* MelderString.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +28,14 @@
 */
 
 typedef struct {
-	int64 length;
-	int64 bufferSize;
-	char16 *string;   // a growing buffer, rarely shrunk (can only be freed by MelderString16_free)
+	int64 length = 0;
+	int64 bufferSize = 0;
+	char16 *string = nullptr;   // a growing buffer, rarely shrunk (can only be freed by MelderString16_free)
 } MelderString16;
 typedef struct {
-	int64 length;
-	int64 bufferSize;
-	char32 *string;   // a growing buffer, rarely shrunk (can only be freed by MelderString_free)
+	int64 length = 0;
+	int64 bufferSize = 0;
+	char32 *string = nullptr;   // a growing buffer, rarely shrunk (can only be freed by MelderString_free)
 } MelderString;
 
 void MelderString16_free (MelderString16 *me);   // frees the buffer (and sets other attributes to zero)
@@ -75,7 +75,8 @@ void MelderString_append (MelderString *me, const MelderArg& first, Args... rest
 template <typename... Args>
 void MelderString_copy (MelderString *me, const MelderArg& first, Args... rest) {
 	constexpr int64 FREE_THRESHOLD_BYTES = 10'000;
-	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
+	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
+		MelderString_free (me);
 	integer length = MelderArg__length (first, rest...);
 	integer sizeNeeded = length + 1;
 	if (sizeNeeded > my bufferSize)
@@ -94,8 +95,12 @@ int64 MelderString_allocationSize ();
 int64 MelderString_deallocationSize ();
 
 struct autoMelderString : MelderString {
-	autoMelderString () { length = 0; bufferSize = 0; string = nullptr; }
-	~autoMelderString () { MelderString_free (this); }
+	autoMelderString () {
+		// inherited zero initialization suffices
+	}
+	~autoMelderString () {
+		MelderString_free (this);
+	}
 };
 
 /* End of file MelderString.h */

@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2019 Paul Boersma
+ * Copyright (C) 1993-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -470,7 +470,7 @@ static void NativeMenuItem_setSensitive (GuiObject me) {
 
 static void NativeMenuItem_setText (GuiObject me) {
 	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	static MelderString title { };
+	static MelderString title;
 	if (acc == 0) {
 		MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()));
 	} else {
