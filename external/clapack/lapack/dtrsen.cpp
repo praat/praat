@@ -73,7 +73,7 @@ static integer c_n1 = -1;
 /*          = 'V': update the matrix Q of Schur vectors; */
 /*          = 'N': do not update Q. */
 
-/*  SELECT  (input) LOGICAL array, dimension (N) */
+/*  SELECT  (input) bool array, dimension (N) */
 /*          SELECT specifies the eigenvalues in the selected cluster. To */
 /*          select a real eigenvalue w(j), SELECT(j) must be set to */
 /*          .TRUE.. To select a complex conjugate pair of eigenvalues */

@@ -68,7 +68,7 @@
 /*  DNM2  (output) DOUBLE PRECISION */
 /*        d(N0-2). */
 
-/*  IEEE  (input) LOGICAL */
+/*  IEEE  (input) bool */
 /*        Flag for IEEE or non IEEE arithmetic. */
 
 /*  ===================================================================== */

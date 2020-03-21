@@ -80,7 +80,7 @@
 /*  Arguments */
 /*  ========== */
 
-/*  LTRANS  (input) LOGICAL */
+/*  LTRANS  (input) bool */
 /*          =.TRUE.:  A-transpose will be used. */
 /*          =.FALSE.: A will be used (not transposed.) */
 

@@ -64,12 +64,12 @@ static integer c__0 = 0;
 /*  Arguments */
 /*  ========= */
 
-/*  LTRANL  (input) LOGICAL */
+/*  LTRANL  (input) bool */
 /*          On entry, LTRANL specifies the op(TL): */
 /*             = .FALSE., op(TL) = TL, */
 /*             = .TRUE., op(TL) = TL'. */
 
-/*  LTRANR  (input) LOGICAL */
+/*  LTRANR  (input) bool */
 /*          On entry, LTRANR specifies the op(TR): */
 /*            = .FALSE., op(TR) = TR, */
 /*            = .TRUE., op(TR) = TR'. */

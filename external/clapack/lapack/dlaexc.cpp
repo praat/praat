@@ -57,7 +57,7 @@ static integer c__3 = 3;
 /*  Arguments */
 /*  ========= */
 
-/*  WANTQ   (input) LOGICAL */
+/*  WANTQ   (input) bool */
 /*          = .TRUE. : accumulate the transformation in the matrix Q; */
 /*          = .FALSE.: do not accumulate the transformation. */
 

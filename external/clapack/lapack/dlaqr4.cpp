@@ -76,11 +76,11 @@ static integer c__3 = 3;
 /*     Arguments */
 /*     ========= */
 
-/*     WANTT   (input) LOGICAL */
+/*     WANTT   (input) bool */
 /*          = .TRUE. : the full Schur form T is required; */
 /*          = .FALSE.: only eigenvalues are required. */
 
-/*     WANTZ   (input) LOGICAL */
+/*     WANTZ   (input) bool */
 /*          = .TRUE. : the matrix of Schur vectors Z is required; */
 /*          = .FALSE.: Schur vectors are not required. */
 
