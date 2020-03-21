@@ -1,6 +1,6 @@
 /* melder_time.cpp
  *
- * Copyright (C) 1992-2008,2011,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,25 +83,24 @@ uint64 GetPIDTimeInNanoseconds(void)
 double Melder_clock () {
 	#if defined (macintosh) || defined (UNIX)
 		/*
-		 * The clock counts the number of seconds elapsed since 1969.
-		 */
+			The clock counts the number of seconds elapsed since 1969.
+		*/
 		struct timeval timeVal;
 		struct timezone timeZone;
 		gettimeofday (& timeVal, & timeZone);
 		return timeVal. tv_sec + 1e-6 * timeVal. tv_usec;
 	#elif defined (_WIN32)
 		/*
-		 * The clock counts the number of ticks since system start-up.
-		 */
+			The clock counts the number of ticks since system start-up.
+		*/
 		static double clockFrequency = -1.0;   // we can use a static, because the clock frequency does not change while the computer is running
 		if (clockFrequency == -1.0) {   // not initialized?
 			LARGE_INTEGER clockFrequency_longlong;
 			QueryPerformanceFrequency (& clockFrequency_longlong);   // returns 0 if the system does not have a performance counter
 			clockFrequency = (double) clockFrequency_longlong.QuadPart;   // the compiler has to support 64-bit integers
 		}
-		if (clockFrequency == 0.0) {   // this will be true if the system does not have a performance counter
+		if (clockFrequency == 0.0)   // this will be true if the system does not have a performance counter
 			return GetTickCount () / 1000.0;   // fallback: only millisecond resolution, and potentially jumpy
-		}
 		LARGE_INTEGER clockCount;
 		QueryPerformanceCounter (& clockCount);
 		return (double) clockCount.QuadPart / clockFrequency;
@@ -120,14 +119,17 @@ double Melder_stopwatch () {
 }
 
 void Melder_sleep (double duration) {
-	if (duration <= 0.0) return;   // already past end time
+	if (duration <= 0.0)
+		return;   // already past end time
 	#if defined (_WIN32)
 		Sleep (duration * 1e3);
 	#elif defined (macintosh) || defined (UNIX)
 		unsigned int seconds = (unsigned int) duration;
 		unsigned int microseconds = (unsigned int) ((duration - seconds) * 1e6);
-		if (seconds > 0) sleep (seconds);
-		if (microseconds > 0) usleep (microseconds);
+		if (seconds > 0)
+			sleep (seconds);
+		if (microseconds > 0)
+			usleep (microseconds);
 	#endif
 }
 
@@ -135,7 +137,8 @@ autostring32 STRdate () {
 	time_t today = time (nullptr);
 	autostring32 date = Melder_8to32 (ctime (& today));
 	mutablestring32 newline = str32chr (date.get(), U'\n');
-	if (newline) *newline = U'\0';
+	if (newline)
+		*newline = U'\0';
 	return date;
 }
 
