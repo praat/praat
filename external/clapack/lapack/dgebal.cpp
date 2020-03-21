@@ -357,7 +357,7 @@ L190:
 	}
 	g = 1. / f;
 	scale[i__] *= f;
-	noconv = TRUE_;
+	noconv = true;
 
 	i__2 = *n - k + 1;
 	dscal_(&i__2, &g, &a[i__ + k * a_dim1], lda);

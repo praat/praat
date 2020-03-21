@@ -448,7 +448,7 @@ static double c_b28 = 1.;
 			++(*m);
 		    }
 		} else {
-		    pair = TRUE_;
+		    pair = true;
 		    if (select[k] || select[k + 1]) {
 			*m += 2;
 		    }
@@ -538,7 +538,7 @@ static double c_b28 = 1.;
 	    swap = select[k];
 	    if (k < *n) {
 		if (a[k + 1 + k * a_dim1] != 0.) {
-		    pair = TRUE_;
+		    pair = true;
 		    swap = swap || select[k + 1];
 		}
 	    }
@@ -745,7 +745,7 @@ L60:
 
 	    if (k < *n) {
 		if (a[k + 1 + k * a_dim1] != 0.) {
-		    pair = TRUE_;
+		    pair = true;
 		}
 	    }
 

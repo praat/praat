@@ -314,7 +314,7 @@ static integer c__1 = 1;
     test = FALSE_;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
-	    test = TRUE_;
+	    test = true;
 	}
     }
     if ((alleig || test) && *abstol <= 0.) {

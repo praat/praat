@@ -248,7 +248,7 @@ static double c_b20 = -1.;
 
 /*     To avoid duplicating code, the two loops are merged. */
 
-    update = TRUE_;
+    update = true;
     i__ = *n + 1;
 L10:
     if (update) {
@@ -990,7 +990,7 @@ L480:
 
 /*     To avoid duplicating code, the two loops are merged. */
 
-    update = TRUE_;
+    update = true;
     i__ = 0;
 L490:
     if (update) {

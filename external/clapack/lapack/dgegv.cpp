@@ -298,7 +298,7 @@ static double c_b38 = 0.;
 	ilvl = FALSE_;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
-	ilvl = TRUE_;
+	ilvl = true;
     } else {
 	ijobvl = -1;
 	ilvl = FALSE_;
@@ -309,7 +309,7 @@ static double c_b38 = 0.;
 	ilvr = FALSE_;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
-	ilvr = TRUE_;
+	ilvr = true;
     } else {
 	ijobvr = -1;
 	ilvr = FALSE_;
@@ -711,7 +711,7 @@ L100:
 	d__1 = safmin, d__2 = eps * absar, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absb;
 	if (abs(salfai) < safmin && absai >= std::max(d__1,d__2)) {
-	    ilimit = TRUE_;
+	    ilimit = true;
 /* Computing MAX */
 	    d__1 = onepls * safmin, d__2 = anrm2 * absai;
 	    scale = onepls * safmin / anrm1 / std::max(d__1,d__2);
@@ -734,7 +734,7 @@ L100:
 	d__1 = safmin, d__2 = eps * absai, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absb;
 	if (abs(salfar) < safmin && absar >= std::max(d__1,d__2)) {
-	    ilimit = TRUE_;
+	    ilimit = true;
 /* Computing MAX */
 /* Computing MAX */
 	    d__3 = onepls * safmin, d__4 = anrm2 * absar;
@@ -748,7 +748,7 @@ L100:
 	d__1 = safmin, d__2 = eps * absar, d__1 = std::max(d__1,d__2), d__2 = eps *
 		 absai;
 	if (abs(sbeta) < safmin && absb >= std::max(d__1,d__2)) {
-	    ilimit = TRUE_;
+	    ilimit = true;
 /* Computing MAX */
 /* Computing MAX */
 	    d__3 = onepls * safmin, d__4 = bnrm2 * absb;

@@ -578,7 +578,7 @@ static integer c__0 = 0;
 			.5;
 		if (j > iout - iinfo) {
 /*                 Flag non-convergence. */
-		    ncnvrg = TRUE_;
+		    ncnvrg = true;
 		    ib = -jblk;
 		} else {
 		    ib = jblk;
@@ -709,12 +709,12 @@ L70:
 	    *m = im;
 	}
 	if (idiscl < 0 || idiscu < 0) {
-	    toofew = TRUE_;
+	    toofew = true;
 	}
     }
 
     if (irange == 1 && *m != *n || irange == 3 && *m != *iu - *il + 1) {
-	toofew = TRUE_;
+	toofew = true;
     }
 /*     If ORDER='B', do nothing the eigenvalues are already sorted by */
 /*        block. */

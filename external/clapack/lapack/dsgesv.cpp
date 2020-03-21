@@ -181,7 +181,7 @@ static integer c__1 = 1;
     /* Function Body */
     itermax = 30;
     bwdmax = 1.f;
-    doitref = TRUE_;
+    doitref = true;
 
     *info = 0;
     *iter = 0;

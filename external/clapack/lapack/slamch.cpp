@@ -18,7 +18,7 @@ double slamch_(const char *cmach)
 {
     /* Initialized data */
 
-    static bool first = TRUE_;
+    static bool first = true;
 
     /* System generated locals */
     integer i__1;
@@ -160,7 +160,7 @@ double slamch_(const char *cmach)
 {
     /* Initialized data */
 
-    static bool first = TRUE_;
+    static bool first = true;
 
     /* System generated locals */
     real r__1, r__2;
@@ -298,7 +298,7 @@ L20:
 	f = slamc3_(&r__1, &r__2);
 	c__ = slamc3_(&f, &a);
 	if (c__ == a) {
-	    lrnd = TRUE_;
+	    lrnd = true;
 	} else {
 	    lrnd = FALSE_;
 	}
@@ -366,7 +366,7 @@ L30:
 {
     /* Initialized data */
 
-    static bool first = TRUE_;
+    static bool first = true;
     static bool iwarn = FALSE_;
 
     /* System generated locals */
@@ -562,13 +562,13 @@ L10:
 /*              e.g.,  VAX ) */
 	    } else if (gpmin - ngpmin == 3) {
 		lemin = ngpmin - 1 + lt;
-		ieee = TRUE_;
+		ieee = true;
 /*            ( Non twos-complement machines, with gradual underflow; */
 /*              e.g., IEEE standard followers ) */
 	    } else {
 		lemin = std::min(ngpmin,gpmin);
 /*            ( A guess; no known machine ) */
-		iwarn = TRUE_;
+		iwarn = true;
 	    }
 
 	} else if (ngpmin == gpmin && ngnmin == gnmin) {
@@ -579,7 +579,7 @@ L10:
 	    } else {
 		lemin = std::min(ngpmin,ngnmin);
 /*            ( A guess; no known machine ) */
-		iwarn = TRUE_;
+		iwarn = true;
 	    }
 
 	} else if ((i__1 = ngpmin - ngnmin, abs(i__1)) == 1 && gpmin == gnmin)
@@ -591,7 +591,7 @@ L10:
 	    } else {
 		lemin = std::min(ngpmin,ngnmin);
 /*            ( A guess; no known machine ) */
-		iwarn = TRUE_;
+		iwarn = true;
 	    }
 
 	} else {
@@ -599,13 +599,13 @@ L10:
 	    i__1 = std::min(ngpmin,ngnmin), i__1 = std::min(i__1,gpmin);
 	    lemin = std::min(i__1,gnmin);
 /*         ( A guess; no known machine ) */
-	    iwarn = TRUE_;
+	    iwarn = true;
 	}
 	first = FALSE_;
 /* ** */
 /* Comment out this if block if EMIN is ok */
 	if (iwarn) {
-	    first = TRUE_;
+	    first = true;
 		Melder_warning (U"WARNING. The value EMIN may be incorrect:- \n"
 			"EMIN = ",lemin, 
 			U"If, after inspection, the value EMIN looks acceptable please comment out \n"

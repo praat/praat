@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static double c_b10 = 0.;
 static double c_b11 = 1.;
-static bool c_true = TRUE_;
+static bool c_true = true;
 
 /* Subroutine */ int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
 	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
@@ -436,7 +436,7 @@ L30:
 	if (sorted) {
 	    goto L50;
 	}
-	sorted = TRUE_;
+	sorted = true;
 
 	kend = i__ - 1;
 	i__ = infqr + 1;

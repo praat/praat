@@ -120,8 +120,8 @@
     } else if (k < 0) {
 	*info = -3;
     } else {
-	incr = TRUE_;
-	decr = TRUE_;
+	incr = true;
+	decr = true;
 	i__1 = k - 1;
 	for (i__ = 1; i__ <= i__1; ++i__) {
 	    if (incr) {

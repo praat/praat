@@ -494,7 +494,7 @@ static integer c_n1 = -1;
 	    dcopy_(n, &work[indd], &c__1, &work[inddd], &c__1);
 
 	    if (*abstol <= *n * 0. * eps) {
-		tryrac = TRUE_;
+		tryrac = true;
 	    } else {
 		tryrac = FALSE_;
 	    }

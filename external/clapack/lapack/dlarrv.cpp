@@ -303,7 +303,7 @@ static integer c__2 = 2;
     rqtol = eps * 2.;
 
 /*     Set expert flags for standard code. */
-    tryrqc = TRUE_;
+    tryrqc = true;
     if (*dol == 1 && *dou == *m) {
     } else {
 /*        Only selected eigenpairs are computed. Since the other evalues */
@@ -678,7 +678,7 @@ L40:
 			++done;
 /*                    Check if eigenvector computation is to be skipped */
 			if (windex < *dol || windex > *dou) {
-			    eskip = TRUE_;
+			    eskip = true;
 			    goto L125;
 			} else {
 			    eskip = FALSE_;
@@ -749,7 +749,7 @@ L120:
 /*                    Check if bisection should be used to refine eigenvalue */
 			if (needbs) {
 /*                       Take the bisection as new iterate */
-			    usedbs = TRUE_;
+			    usedbs = true;
 			    itmp1 = iwork[iindr + windex];
 			    offset = indexw[wbegin] - 1;
 			    d__1 = eps * 2.;
@@ -814,7 +814,7 @@ L120:
 /*                       the iterate reasonably. */
 			    if (rqcorr * sgndef >= 0. && lambda + rqcorr <= 
 				    right && lambda + rqcorr >= left) {
-				usedrq = TRUE_;
+				usedrq = true;
 /*                          Store new midpoint of bisection interval in WORK */
 				if (sgndef == 1.) {
 /*                             The current LAMBDA is on the left of the true */
@@ -841,17 +841,17 @@ L120:
 /*                          Update width of error interval */
 				werr[windex] = (right - left) * .5;
 			    } else {
-				needbs = TRUE_;
+				needbs = true;
 			    }
 			    if (right - left < rqtol * abs(lambda)) {
 /*                             The eigenvalue is computed to bisection accuracy */
 /*                             compute eigenvector and stop */
-				usedbs = TRUE_;
+				usedbs = true;
 				goto L120;
 			    } else if (iter < 10) {
 				goto L120;
 			    } else if (iter == 10) {
-				needbs = TRUE_;
+				needbs = true;
 				goto L120;
 			    } else {
 				*info = 5;
@@ -861,7 +861,7 @@ L120:
 			    stp2ii = FALSE_;
 			    if (usedrq && usedbs && bstres <= resid) {
 				lambda = bstw;
-				stp2ii = TRUE_;
+				stp2ii = true;
 			    }
 			    if (stp2ii) {
 /*                          improve error angle by second step */

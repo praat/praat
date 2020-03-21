@@ -103,7 +103,7 @@
 /*     to losing at most 3 decimal digits: 1 / (1 - (OFFDIG + OFFDIG2)) <= 1000 */
 /*     instead of the current OFFDIG + OFFDIG2 < 1 */
 
-    yesrel = TRUE_;
+    yesrel = true;
     offdig = 0.;
     tmp = sqrt((abs(d__[1])));
     if (tmp < rmin) {

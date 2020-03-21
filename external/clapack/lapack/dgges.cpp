@@ -263,7 +263,7 @@ static double c_b39 = 1.;
 	ilvsl = FALSE_;
     } else if (lsame_(jobvsl, "V")) {
 	ijobvl = 2;
-	ilvsl = TRUE_;
+	ilvsl = true;
     } else {
 	ijobvl = -1;
 	ilvsl = FALSE_;
@@ -274,7 +274,7 @@ static double c_b39 = 1.;
 	ilvsr = FALSE_;
     } else if (lsame_(jobvsr, "V")) {
 	ijobvr = 2;
-	ilvsr = TRUE_;
+	ilvsr = true;
     } else {
 	ijobvr = -1;
 	ilvsr = FALSE_;
@@ -369,10 +369,10 @@ static double c_b39 = 1.;
     ilascl = FALSE_;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
-	ilascl = TRUE_;
+	ilascl = true;
     } else if (anrm > bignum) {
 	anrmto = bignum;
-	ilascl = TRUE_;
+	ilascl = true;
     }
     if (ilascl) {
 	dlascl_("G", &c__0, &c__0, &anrm, &anrmto, n, n, &a[a_offset], lda, &
@@ -385,10 +385,10 @@ static double c_b39 = 1.;
     ilbscl = FALSE_;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     } else if (bnrm > bignum) {
 	bnrmto = bignum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     }
     if (ilbscl) {
 	dlascl_("G", &c__0, &c__0, &bnrm, &bnrmto, n, n, &b[b_offset], ldb, &
@@ -588,8 +588,8 @@ static double c_b39 = 1.;
 
 /*        Check if reordering is correct */
 
-	lastsl = TRUE_;
-	lst2sl = TRUE_;
+	lastsl = true;
+	lst2sl = true;
 	*sdim = 0;
 	ip = 0;
 	i__1 = *n;

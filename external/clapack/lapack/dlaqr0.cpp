@@ -422,7 +422,7 @@ L20:
 /*              .    which has the smaller corresponding subdiagonal */
 /*              .    entry (a heuristic). ==== */
 
-		nwinc = TRUE_;
+		nwinc = true;
 		if (nh <= std::min(nmin,nwmax)) {
 		    nw = nh;
 		} else {
@@ -599,7 +599,7 @@ L20:
 			    if (sorted) {
 				goto L60;
 			    }
-			    sorted = TRUE_;
+			    sorted = true;
 			    i__3 = k - 1;
 			    for (i__ = ks; i__ <= i__3; ++i__) {
 				if ((d__1 = wr[i__], abs(d__1)) + (d__2 = wi[

@@ -491,7 +491,7 @@
 
 /*           We choose d(i) as origin. */
 
-	    orgati = TRUE_;
+	    orgati = true;
 	    sg2lb = 0.;
 	    sg2ub = delsq2;
 	    a = c__ * delsq + z__[*i__] * z__[*i__] + z__[ip1] * z__[ip1];
@@ -594,11 +594,11 @@
 	swtch3 = FALSE_;
 	if (orgati) {
 	    if (w < 0.) {
-		swtch3 = TRUE_;
+		swtch3 = true;
 	    }
 	} else {
 	    if (w > 0.) {
-		swtch3 = TRUE_;
+		swtch3 = true;
 	    }
 	}
 	if (ii == 1 || ii == *n) {
@@ -780,11 +780,11 @@
 	swtch = FALSE_;
 	if (orgati) {
 	    if (-w > abs(prew) / 10.) {
-		swtch = TRUE_;
+		swtch = true;
 	    }
 	} else {
 	    if (w > abs(prew) / 10.) {
-		swtch = TRUE_;
+		swtch = true;
 	    }
 	}
 

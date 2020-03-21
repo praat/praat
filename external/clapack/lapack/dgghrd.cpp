@@ -179,10 +179,10 @@ static integer c__1 = 1;
 	ilq = FALSE_;
 	icompq = 1;
     } else if (lsame_(compq, "V")) {
-	ilq = TRUE_;
+	ilq = true;
 	icompq = 2;
     } else if (lsame_(compq, "I")) {
-	ilq = TRUE_;
+	ilq = true;
 	icompq = 3;
     } else {
 	icompq = 0;
@@ -194,10 +194,10 @@ static integer c__1 = 1;
 	ilz = FALSE_;
 	icompz = 1;
     } else if (lsame_(compz, "V")) {
-	ilz = TRUE_;
+	ilz = true;
 	icompz = 2;
     } else if (lsame_(compz, "I")) {
-	ilz = TRUE_;
+	ilz = true;
 	icompz = 3;
     } else {
 	icompz = 0;

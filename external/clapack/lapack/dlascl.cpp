@@ -193,7 +193,7 @@ L10:
 	ctoc = cto1;
     } else {
 	mul = ctoc / cfromc;
-	done = TRUE_;
+	done = true;
     }
 
     if (itype == 0) {

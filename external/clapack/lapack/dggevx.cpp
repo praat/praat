@@ -349,7 +349,7 @@ static double c_b60 = 1.;
 	ilvl = FALSE_;
     } else if (lsame_(jobvl, "V")) {
 	ijobvl = 2;
-	ilvl = TRUE_;
+	ilvl = true;
     } else {
 	ijobvl = -1;
 	ilvl = FALSE_;
@@ -360,7 +360,7 @@ static double c_b60 = 1.;
 	ilvr = FALSE_;
     } else if (lsame_(jobvr, "V")) {
 	ijobvr = 2;
-	ilvr = TRUE_;
+	ilvr = true;
     } else {
 	ijobvr = -1;
 	ilvr = FALSE_;
@@ -477,10 +477,10 @@ static double c_b60 = 1.;
     ilascl = FALSE_;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
-	ilascl = TRUE_;
+	ilascl = true;
     } else if (anrm > bignum) {
 	anrmto = bignum;
-	ilascl = TRUE_;
+	ilascl = true;
     }
     if (ilascl) {
 	dlascl_("G", &c__0, &c__0, &anrm, &anrmto, n, n, &a[a_offset], lda, &
@@ -493,10 +493,10 @@ static double c_b60 = 1.;
     ilbscl = FALSE_;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     } else if (bnrm > bignum) {
 	bnrmto = bignum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     }
     if (ilbscl) {
 	dlascl_("G", &c__0, &c__0, &bnrm, &bnrmto, n, n, &b[b_offset], ldb, &
@@ -658,7 +658,7 @@ static double c_b60 = 1.;
 		mm = 1;
 		if (i__ < *n) {
 		    if (a[i__ + 1 + i__ * a_dim1] != 0.) {
-			pair = TRUE_;
+			pair = true;
 			mm = 2;
 		    }
 		}
@@ -669,10 +669,10 @@ static double c_b60 = 1.;
 /* L10: */
 		}
 		if (mm == 1) {
-		    bwork[i__] = TRUE_;
+		    bwork[i__] = true;
 		} else if (mm == 2) {
-		    bwork[i__] = TRUE_;
-		    bwork[i__ + 1] = TRUE_;
+		    bwork[i__] = true;
+		    bwork[i__ + 1] = true;
 		}
 
 		iwrk = mm * *n + 1;

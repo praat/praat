@@ -207,7 +207,7 @@
     }
     scale = FALSE_;
     if (temp <= small1) {
-	scale = TRUE_;
+	scale = true;
 	if (temp <= small2) {
 
 /*        Scale up by power of radix nearest 1/SAFMIN**(2/3) */

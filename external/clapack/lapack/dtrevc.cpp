@@ -8,7 +8,7 @@ static integer c__1 = 1;
 static double c_b22 = 1.;
 static double c_b25 = 0.;
 static integer c__2 = 2;
-static bool c_true = TRUE_;
+static bool c_true = true;
 
 /* Subroutine */ int dtrevc_(const char *side, const char *howmny, bool *select, 
 	integer *n, double *t, integer *ldt, double *vl, integer *
@@ -252,9 +252,9 @@ static bool c_true = TRUE_;
 				++(*m);
 			    }
 			} else {
-			    pair = TRUE_;
+			    pair = true;
 			    if (select[j] || select[j + 1]) {
-				select[j] = TRUE_;
+				select[j] = true;
 				*m += 2;
 			    }
 			}

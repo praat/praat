@@ -3,7 +3,7 @@
 
 /* Table of constant values */
 
-static bool c_true = TRUE_;
+static bool c_true = true;
 static integer c__2 = 2;
 static double c_b34 = 1.;
 static integer c__1 = 1;
@@ -288,7 +288,7 @@ static bool c_false = FALSE_;
     /* Function Body */
     if (lsame_(howmny, "A")) {
 	ihwmny = 1;
-	ilall = TRUE_;
+	ilall = true;
 	ilback = FALSE_;
     } else if (lsame_(howmny, "S")) {
 	ihwmny = 2;
@@ -296,25 +296,25 @@ static bool c_false = FALSE_;
 	ilback = FALSE_;
     } else if (lsame_(howmny, "B")) {
 	ihwmny = 3;
-	ilall = TRUE_;
-	ilback = TRUE_;
+	ilall = true;
+	ilback = true;
     } else {
 	ihwmny = -1;
-	ilall = TRUE_;
+	ilall = true;
     }
 
     if (lsame_(side, "R")) {
 	iside = 1;
 	compl_x = FALSE_;
-	compr = TRUE_;
+	compr = true;
     } else if (lsame_(side, "L")) {
 	iside = 2;
-	compl_x = TRUE_;
+	compl_x = true;
 	compr = FALSE_;
     } else if (lsame_(side, "B")) {
 	iside = 3;
-	compl_x = TRUE_;
-	compr = TRUE_;
+	compl_x = true;
+	compr = true;
     } else {
 	iside = -1;
     }
@@ -350,7 +350,7 @@ static bool c_false = FALSE_;
 	    }
 	    if (j < *n) {
 		if (s[j + 1 + j * s_dim1] != 0.) {
-		    ilcplx = TRUE_;
+		    ilcplx = true;
 		}
 	    }
 	    if (ilcplx) {
@@ -378,11 +378,11 @@ L10:
 	if (s[j + 1 + j * s_dim1] != 0.) {
 	    if (p[j + j * p_dim1] == 0. || p[j + 1 + (j + 1) * p_dim1] == 0. 
 		    || p[j + (j + 1) * p_dim1] != 0.) {
-		ilbbad = TRUE_;
+		ilbbad = true;
 	    }
 	    if (j < *n - 1) {
 		if (s[j + 2 + (j + 1) * s_dim1] != 0.) {
-		    ilabad = TRUE_;
+		    ilabad = true;
 		}
 	    }
 	}
@@ -491,12 +491,12 @@ L10:
 	    nw = 1;
 	    if (je < *n) {
 		if (s[je + 1 + je * s_dim1] != 0.) {
-		    ilcplx = TRUE_;
+		    ilcplx = true;
 		    nw = 2;
 		}
 	    }
 	    if (ilall) {
-		ilcomp = TRUE_;
+		ilcomp = true;
 	    } else if (ilcplx) {
 		ilcomp = select[je] || select[je + 1];
 	    } else {
@@ -686,7 +686,7 @@ L10:
 		bdiag[0] = p[j + j * p_dim1];
 		if (j < *n) {
 		    if (s[j + 1 + j * s_dim1] != 0.) {
-			il2by2 = TRUE_;
+			il2by2 = true;
 			bdiag[1] = p[j + 1 + (j + 1) * p_dim1];
 			na = 2;
 		    }
@@ -928,12 +928,12 @@ L220:
 	    nw = 1;
 	    if (je > 1) {
 		if (s[je + (je - 1) * s_dim1] != 0.) {
-		    ilcplx = TRUE_;
+		    ilcplx = true;
 		    nw = 2;
 		}
 	    }
 	    if (ilall) {
-		ilcomp = TRUE_;
+		ilcomp = true;
 	    } else if (ilcplx) {
 		ilcomp = select[je] || select[je - 1];
 	    } else {
@@ -1156,7 +1156,7 @@ L220:
 
 		if (! il2by2 && j > 1) {
 		    if (s[j + (j - 1) * s_dim1] != 0.) {
-			il2by2 = TRUE_;
+			il2by2 = true;
 			goto L370;
 		    }
 		}

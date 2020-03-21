@@ -409,7 +409,7 @@ static integer c__4 = 4;
     test = FALSE_;
     if (indeig) {
 	if (*il == 1 && *iu == *n) {
-	    test = TRUE_;
+	    test = true;
 	}
     }
     if ((alleig || test) && ieeeok == 1) {
@@ -421,7 +421,7 @@ static integer c__4 = 4;
 	} else {
 	    dcopy_(n, &d__[1], &c__1, &work[*n + 1], &c__1);
 	    if (*abstol <= *n * 2. * eps) {
-		tryrac = TRUE_;
+		tryrac = true;
 	    } else {
 		tryrac = FALSE_;
 	    }

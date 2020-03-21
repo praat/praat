@@ -143,7 +143,7 @@ static double c_b4 = 1.;
 	slt = 0.;
 	srt = 0.;
     } else {
-	gasmal = TRUE_;
+	gasmal = true;
 	if (ga > fa) {
 	    pmax = 2;
 	    if (fa / ga < dlamch_("EPS")) {

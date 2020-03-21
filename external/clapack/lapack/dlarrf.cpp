@@ -160,7 +160,7 @@ static integer c__1 = 1;
 /*     whether the element growth caused bad residuals/orthogonality. */
 /*     Decide whether the code should accept the best among all */
 /*     representations despite large element growth or signal INFO=1 */
-    nofail = TRUE_;
+    nofail = true;
 
 /*     Compute the average gap length of the cluster */
     clwdth = (d__1 = w[*clend] - w[*clstrt], abs(d__1)) + werr[*clend] + werr[
@@ -213,7 +213,7 @@ L5:
 	dplus[1] = -(*pivmin);
 /*        Need to set SAWNAN1 because refined RRR test should not be used */
 /*        in this case */
-	sawnan1 = TRUE_;
+	sawnan1 = true;
     }
     max1 = abs(dplus[1]);
     i__1 = *n - 1;
@@ -225,7 +225,7 @@ L5:
 	    dplus[i__ + 1] = -(*pivmin);
 /*           Need to set SAWNAN1 because refined RRR test should not be used */
 /*           in this case */
-	    sawnan1 = TRUE_;
+	    sawnan1 = true;
 	}
 /* Computing MAX */
 	d__2 = max1, d__3 = (d__1 = dplus[i__ + 1], abs(d__1));
@@ -245,7 +245,7 @@ L5:
 	work[1] = -(*pivmin);
 /*        Need to set SAWNAN2 because refined RRR test should not be used */
 /*        in this case */
-	sawnan2 = TRUE_;
+	sawnan2 = true;
     }
     max2 = abs(work[1]);
     i__1 = *n - 1;
@@ -257,7 +257,7 @@ L5:
 	    work[i__ + 1] = -(*pivmin);
 /*           Need to set SAWNAN2 because refined RRR test should not be used */
 /*           in this case */
-	    sawnan2 = TRUE_;
+	    sawnan2 = true;
 	}
 /* Computing MAX */
 	d__2 = max2, d__3 = (d__1 = work[i__ + 1], abs(d__1));
@@ -300,11 +300,11 @@ L5:
 /*     Moreover, we use the refined RRR test only for isolated clusters. */
     if (clwdth < mingap / 128. && std::min(max1,max2) < fail2 && ! sawnan1 && ! 
 	    sawnan2) {
-	dorrr1 = TRUE_;
+	dorrr1 = true;
     } else {
 	dorrr1 = FALSE_;
     }
-    tryrrr1 = TRUE_;
+    tryrrr1 = true;
     if (tryrrr1 && dorrr1) {
 	if (indx == 1) {
 	    tmp = (d__1 = dplus[*n], abs(d__1));
@@ -382,7 +382,7 @@ L50:
 	if (smlgrowth < fail || nofail) {
 	    lsigma = bestshift;
 	    rsigma = bestshift;
-	    forcer = TRUE_;
+	    forcer = true;
 	    goto L5;
 	} else {
 	    *info = 1;

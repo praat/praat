@@ -211,7 +211,7 @@ static double c_b37 = 1.;
 	ilvsl = FALSE_;
     } else if (lsame_(jobvsl, "V")) {
 	ijobvl = 2;
-	ilvsl = TRUE_;
+	ilvsl = true;
     } else {
 	ijobvl = -1;
 	ilvsl = FALSE_;
@@ -222,7 +222,7 @@ static double c_b37 = 1.;
 	ilvsr = FALSE_;
     } else if (lsame_(jobvsr, "V")) {
 	ijobvr = 2;
-	ilvsr = TRUE_;
+	ilvsr = true;
     } else {
 	ijobvr = -1;
 	ilvsr = FALSE_;
@@ -293,10 +293,10 @@ static double c_b37 = 1.;
     ilascl = FALSE_;
     if (anrm > 0. && anrm < smlnum) {
 	anrmto = smlnum;
-	ilascl = TRUE_;
+	ilascl = true;
     } else if (anrm > bignum) {
 	anrmto = bignum;
-	ilascl = TRUE_;
+	ilascl = true;
     }
 
     if (ilascl) {
@@ -314,10 +314,10 @@ static double c_b37 = 1.;
     ilbscl = FALSE_;
     if (bnrm > 0. && bnrm < smlnum) {
 	bnrmto = smlnum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     } else if (bnrm > bignum) {
 	bnrmto = bignum;
-	ilbscl = TRUE_;
+	ilbscl = true;
     }
 
     if (ilbscl) {

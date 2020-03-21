@@ -4,7 +4,7 @@
 /* Table of constant values */
 
 static bool c_false = FALSE_;
-static bool c_true = TRUE_;
+static bool c_true = true;
 
 /* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
@@ -247,9 +247,9 @@ static bool c_true = TRUE_;
 		    ++(*m);
 		}
 	    } else {
-		pair = TRUE_;
+		pair = true;
 		if (select[k] || select[k + 1]) {
-		    select[k] = TRUE_;
+		    select[k] = true;
 		    *m += 2;
 		}
 	    }

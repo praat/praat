@@ -8,7 +8,7 @@ static bool c_false = FALSE_;
 static integer c__2 = 2;
 static double c_b21 = 1.;
 static double c_b25 = 0.;
-static bool c_true = TRUE_;
+static bool c_true = true;
 
 /* Subroutine */ int dlaqtr_(bool *ltran, bool *lreal, integer *n, 
 	double *t, integer *ldt, double *b, double *w, double 

@@ -199,7 +199,7 @@ static double c_b22 = 1.;
     wantu = lsame_(jobu, "U");
     wantv = lsame_(jobv, "V");
     wantq = lsame_(jobq, "Q");
-    forwrd = TRUE_;
+    forwrd = true;
 
     *info = 0;
     if (! (wantu || lsame_(jobu, "N"))) {

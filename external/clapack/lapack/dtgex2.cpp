@@ -280,7 +280,7 @@ static integer c__0 = 0;
 	    goto L70;
 	}
 
-	if (TRUE_) {
+	if (true) {
 
 /*           Strong stability test: */
 /*             F-norm((A-QL'*S*QR, B-QL'*T*QR)) <= O(EPS*F-norm((A,B))) */
@@ -498,7 +498,7 @@ static integer c__0 = 0;
 	i__2 = m - 1;
 	dlaset_("Lower", &i__1, &i__2, &c_b5, &c_b5, &t[1], &c__4);
 
-	if (TRUE_) {
+	if (true) {
 
 /*           Strong stability test: */
 /*              F-norm((A-QL*S*QR', B-QL*T*QR')) <= O(EPS*F-norm((A,B))) */

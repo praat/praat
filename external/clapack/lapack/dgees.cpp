@@ -283,10 +283,10 @@ static integer c_n1 = -1;
     anrm = dlange_("M", n, n, &a[a_offset], lda, dum);
     scalea = FALSE_;
     if (anrm > 0. && anrm < smlnum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = smlnum;
     } else if (anrm > bignum) {
-	scalea = TRUE_;
+	scalea = true;
 	cscale = bignum;
     }
     if (scalea) {
@@ -458,8 +458,8 @@ L20:
 
 /*        Check if reordering successful */
 
-	lastsl = TRUE_;
-	lst2sl = TRUE_;
+	lastsl = true;
+	lst2sl = true;
 	*sdim = 0;
 	ip = 0;
 	i__1 = *n;

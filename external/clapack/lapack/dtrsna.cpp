@@ -4,7 +4,7 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static bool c_true = TRUE_;
+static bool c_true = true;
 static bool c_false = FALSE_;
 
 /* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select, 
@@ -283,7 +283,7 @@ static bool c_false = FALSE_;
 				++(*m);
 			    }
 			} else {
-			    pair = TRUE_;
+			    pair = true;
 			    if (select[k] || select[k + 1]) {
 				*m += 2;
 			    }

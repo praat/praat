@@ -395,7 +395,7 @@ static integer c__3 = 3;
 				++(*m);
 			    }
 			} else {
-			    pair = TRUE_;
+			    pair = true;
 			    if (select[k] || select[k + 1]) {
 				*m += 2;
 			    }

@@ -494,7 +494,7 @@ L21:
 /*        eigenvalues to be computed is large compared to the blocksize. */
 	if (irange == 1 && ! forceb) {
 /*           If all the eigenvalues have to be computed, we use dqd */
-	    usedqd = TRUE_;
+	    usedqd = true;
 /*           INDL is the local index of the first eigenvalue to compute */
 	    indl = 1;
 	    indu = in;
@@ -609,7 +609,7 @@ L21:
 	    }
 /*           check for element growth */
 	    if (dmax__ > spdiam * 64.) {
-		norep = TRUE_;
+		norep = true;
 	    } else {
 		norep = FALSE_;
 	    }
@@ -620,7 +620,7 @@ L21:
 		for (i__ = 1; i__ <= i__2; ++i__) {
 		    tmp = sgndef * work[i__];
 		    if (tmp < 0.) {
-			norep = TRUE_;
+			norep = true;
 		    }
 /* L71: */
 		}

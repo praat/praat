@@ -309,7 +309,7 @@ static integer c_n1 = -1;
 			    ++(*m);
 			}
 		    } else {
-			pair = TRUE_;
+			pair = true;
 			if (select[k] || select[k + 1]) {
 			    *m += 2;
 			}
@@ -384,7 +384,7 @@ static integer c_n1 = -1;
 	    swap = select[k];
 	    if (k < *n) {
 		if (t[k + 1 + k * t_dim1] != 0.) {
-		    pair = TRUE_;
+		    pair = true;
 		    swap = swap || select[k + 1];
 		}
 	    }

@@ -598,7 +598,7 @@ static integer c__0 = 0;
 /*              Flag non-convergence. */
 
 		if (j > iout - iinfo) {
-		    ncnvrg = TRUE_;
+		    ncnvrg = true;
 		    ib = -jb;
 		} else {
 		    ib = jb;
@@ -702,7 +702,7 @@ L70:
 	    *m = im;
 	}
 	if (idiscl < 0 || idiscu < 0) {
-	    toofew = TRUE_;
+	    toofew = true;
 	}
     }
 

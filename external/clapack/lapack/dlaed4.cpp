@@ -477,7 +477,7 @@
 
 /*           We choose d(i) as origin. */
 
-	    orgati = TRUE_;
+	    orgati = true;
 	    a = c__ * del + z__[*i__] * z__[*i__] + z__[ip1] * z__[ip1];
 	    b = z__[*i__] * z__[*i__] * del;
 	    if (a > 0.) {
@@ -566,11 +566,11 @@
 	swtch3 = FALSE_;
 	if (orgati) {
 	    if (w < 0.) {
-		swtch3 = TRUE_;
+		swtch3 = true;
 	    }
 	} else {
 	    if (w > 0.) {
-		swtch3 = TRUE_;
+		swtch3 = true;
 	    }
 	}
 	if (ii == 1 || ii == *n) {
@@ -728,11 +728,11 @@
 	swtch = FALSE_;
 	if (orgati) {
 	    if (-w > abs(prew) / 10.) {
-		swtch = TRUE_;
+		swtch = true;
 	    }
 	} else {
 	    if (w > abs(prew) / 10.) {
-		swtch = TRUE_;
+		swtch = true;
 	    }
 	}
 

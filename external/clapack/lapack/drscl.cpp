@@ -101,7 +101,7 @@ L10:
 /*        Multiply X by CNUM / CDEN and return. */
 
 	mul = cnum / cden;
-	done = TRUE_;
+	done = true;
     }
 
 /*     Scale the vector X by MUL */

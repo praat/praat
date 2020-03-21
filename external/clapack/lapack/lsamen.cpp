@@ -65,7 +65,7 @@ bool lsamen_(integer *n, const char *ca, const char *cb)
 
 /* L10: */
     }
-    ret_val = TRUE_;
+    ret_val = true;
 
 L20:
     return ret_val;

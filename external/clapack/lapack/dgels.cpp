@@ -198,7 +198,7 @@ static integer c__0 = 0;
 
     if (*info == 0 || *info == -10) {
 
-	tpsd = TRUE_;
+	tpsd = true;
 	if (lsame_(trans, "N")) {
 	    tpsd = FALSE_;
 	}

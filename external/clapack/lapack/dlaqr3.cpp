@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static bool c_true = TRUE_;
+static bool c_true = true;
 static double c_b15 = 0.;
 static double c_b16 = 1.;
 static integer c__12 = 12;
@@ -453,7 +453,7 @@ L30:
 	if (sorted) {
 	    goto L50;
 	}
-	sorted = TRUE_;
+	sorted = true;
 
 	kend = i__ - 1;
 	i__ = infqr + 1;

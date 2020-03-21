@@ -296,7 +296,7 @@ static integer c__3 = 3;
 	ilschr = FALSE_;
 	ischur = 1;
     } else if (lsame_(job, "S")) {
-	ilschr = TRUE_;
+	ilschr = true;
 	ischur = 2;
     } else {
 	ischur = 0;
@@ -306,10 +306,10 @@ static integer c__3 = 3;
 	ilq = FALSE_;
 	icompq = 1;
     } else if (lsame_(compq, "V")) {
-	ilq = TRUE_;
+	ilq = true;
 	icompq = 2;
     } else if (lsame_(compq, "I")) {
-	ilq = TRUE_;
+	ilq = true;
 	icompq = 3;
     } else {
 	icompq = 0;
@@ -319,10 +319,10 @@ static integer c__3 = 3;
 	ilz = FALSE_;
 	icompz = 1;
     } else if (lsame_(compz, "V")) {
-	ilz = TRUE_;
+	ilz = true;
 	icompz = 2;
     } else if (lsame_(compz, "I")) {
-	ilz = TRUE_;
+	ilz = true;
 	icompz = 3;
     } else {
 	icompz = 0;
@@ -495,11 +495,11 @@ static integer c__3 = 3;
 /*           Test 1: for H(j,j-1)=0 or j=ILO */
 
 	    if (j == *ilo) {
-		ilazro = TRUE_;
+		ilazro = true;
 	    } else {
 		if ((d__1 = h__[j + (j - 1) * h_dim1], abs(d__1)) <= atol) {
 		    h__[j + (j - 1) * h_dim1] = 0.;
-		    ilazro = TRUE_;
+		    ilazro = true;
 		} else {
 		    ilazro = FALSE_;
 		}
@@ -523,7 +523,7 @@ static integer c__3 = 3;
 		    }
 		    if (temp * (ascale * (d__1 = h__[j + 1 + j * h_dim1], abs(
 			    d__1))) <= temp2 * (ascale * atol)) {
-			ilazr2 = TRUE_;
+			ilazr2 = true;
 		    }
 		}
 
@@ -1222,7 +1222,7 @@ L200:
 /*              Swap columns if nec. */
 
 		if (abs(w12) > abs(w11)) {
-		    ilpivt = TRUE_;
+		    ilpivt = true;
 		    temp = w12;
 		    temp2 = w22;
 		    w12 = w11;
