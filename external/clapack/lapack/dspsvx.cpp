@@ -16,7 +16,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     double anorm;
-    logical nofact;
+    bool nofact;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

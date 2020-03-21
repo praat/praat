@@ -14,7 +14,7 @@ static double c_b60 = 1.;
 	beta, double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	integer *ilo, integer *ihi, double *lscale, double *rscale, 
 	double *abnrm, double *bbnrm, double *rconde, double *
-	rcondv, double *work, integer *lwork, integer *iwork, logical *
+	rcondv, double *work, integer *lwork, integer *iwork, bool *
 	bwork, integer *info)
 {
     /* System generated locals */
@@ -28,29 +28,29 @@ static double c_b60 = 1.;
     /* Local variables */
     integer i__, j, m, jc, in, mm, jr;
     double eps;
-    logical ilv, pair;
+    bool ilv, pair;
     double anrm, bnrm;
     integer ierr, itau;
     double temp;
-    logical ilvl, ilvr;
+    bool ilvl, ilvr;
     integer iwrk, iwrk1;
     integer icols;
-    logical noscl;
+    bool noscl;
     integer irows;
-    logical ilascl, ilbscl;
-    logical ldumma[1];
+    bool ilascl, ilbscl;
+    bool ldumma[1];
     char chtemp[1];
     double bignum;
     integer ijobvl;
     integer ijobvr;
-    logical wantsb;
+    bool wantsb;
     double anrmto;
-    logical wantse;
+    bool wantse;
     double bnrmto;
     integer minwrk, maxwrk;
-    logical wantsn;
+    bool wantsn;
     double smlnum;
-    logical lquery, wantsv;
+    bool lquery, wantsv;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

@@ -18,7 +18,7 @@ static double c_b27 = 1.;
     /* Local variables */
     integer k;
     double ct, akk, bkk;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

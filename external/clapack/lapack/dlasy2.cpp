@@ -8,7 +8,7 @@ static integer c__1 = 1;
 static integer c__16 = 16;
 static integer c__0 = 0;
 
-/* Subroutine */ int dlasy2_(logical *ltranl, logical *ltranr, integer *isgn, 
+/* Subroutine */ int dlasy2_(bool *ltranl, bool *ltranr, integer *isgn, 
 	integer *n1, integer *n2, double *tl, integer *ldtl, double *
 	tr, integer *ldtr, double *b, integer *ldb, double *scale, 
 	double *x, integer *ldx, double *xnorm, integer *info)
@@ -18,8 +18,8 @@ static integer c__0 = 0;
     static integer locu12[4] = { 3,4,1,2 };
     static integer locl21[4] = { 2,1,4,3 };
     static integer locu22[4] = { 4,3,2,1 };
-    static logical xswpiv[4] = { FALSE_,FALSE_,TRUE_,TRUE_ };
-    static logical bswpiv[4] = { FALSE_,TRUE_,FALSE_,TRUE_ };
+    static bool xswpiv[4] = { FALSE_,FALSE_,TRUE_,TRUE_ };
+    static bool bswpiv[4] = { FALSE_,TRUE_,FALSE_,TRUE_ };
 
     /* System generated locals */
     integer b_dim1, b_offset, tl_dim1, tl_offset, tr_dim1, tr_offset, x_dim1, 
@@ -37,8 +37,8 @@ static integer c__0 = 0;
     integer jpiv[4];
     double xmax;
     integer ipsv, jpsv;
-    logical bswap;
-    logical xswap;
+    bool bswap;
+    bool xswap;
     double smlnum;
 
 

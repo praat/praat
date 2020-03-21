@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlaein_(logical *rightv, logical *noinit, integer *n, 
+/* Subroutine */ int dlaein_(bool *rightv, bool *noinit, integer *n, 
 	double *h__, integer *ldh, double *wr, double *wi, 
 	double *vr, double *vi, double *b, integer *ldb, 
 	double *work, double *eps3, double *smlnum, double *

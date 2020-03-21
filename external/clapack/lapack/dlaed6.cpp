@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaed6_(integer *kniter, logical *orgati, double *
+/* Subroutine */ int dlaed6_(integer *kniter, bool *orgati, double *
 	rho, double *d__, double *z__, double *finit, double *
 	tau, integer *info)
 {
@@ -15,7 +15,7 @@
     double fc, df, ddf, lbd, eta, ubd, eps, base;
     integer iter;
     double temp, temp1, temp2, temp3, temp4;
-    logical scale;
+    bool scale;
     integer niter;
     double small1, small2, sminv1, sminv2;
  

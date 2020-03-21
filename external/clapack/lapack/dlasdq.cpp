@@ -21,7 +21,7 @@ static integer c__1 = 1;
     double smin;
     integer sqre1;
     integer iuplo;
-    logical rotate;
+    bool rotate;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

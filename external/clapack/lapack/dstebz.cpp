@@ -42,9 +42,9 @@ static integer c__0 = 0;
     double safemn;
     integer idumma[1];
     integer idiscu, iorder;
-    logical ncnvrg;
+    bool ncnvrg;
     double pivmin;
-    logical toofew;
+    bool toofew;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

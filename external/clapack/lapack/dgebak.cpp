@@ -12,8 +12,8 @@
     integer i__, k;
     double s;
     integer ii;
-    logical leftv;
-    logical rightv;
+    bool leftv;
+    bool rightv;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

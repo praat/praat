@@ -24,12 +24,12 @@ static double c_b36 = .5;
     integer maind;
     double tscal, uscal;
     integer jlast;
-    logical upper;
+    bool upper;
     double bignum;
-    logical notran;
+    bool notran;
     integer jfirst;
     double smlnum;
-    logical nounit;
+    bool nounit;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

@@ -19,9 +19,9 @@ static double c_b11 = 1.;
     integer lwmin;
     char trans[1];
     integer liopt;
-    logical upper, wantz;
+    bool upper, wantz;
     integer liwmin;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

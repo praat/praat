@@ -27,7 +27,7 @@ static double c_b14 = 1.;
     double safe1, safe2;
     integer isave[3];
     integer count;
-    logical upper;
+    bool upper;
     double safmin;
     double lstres;
 

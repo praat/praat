@@ -26,7 +26,7 @@ static double c_b26 = 1.;
     integer nb, nh, nx, iws;
     integer nbmin, iinfo;
     integer ldwork, lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

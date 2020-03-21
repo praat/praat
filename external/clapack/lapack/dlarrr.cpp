@@ -13,7 +13,7 @@
     double eps, tmp, tmp2, rmin;
  
     double offdig, safmin;
-    logical yesrel;
+    bool yesrel;
     double smlnum, offdig2;
 
 

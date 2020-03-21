@@ -11,10 +11,10 @@
     /* Local variables */
     integer i__, k;
     double eps;
-    logical decr, left, incr, sing, eigen;
+    bool decr, left, incr, sing, eigen;
  
     double anorm;
-    logical right;
+    bool right;
  
     double oldgap, safmin;
  

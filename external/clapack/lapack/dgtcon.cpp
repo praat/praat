@@ -17,7 +17,7 @@ static integer c__1 = 1;
     integer i__, kase, kase1;
     integer isave[3];
     double ainvnm;
-    logical onenrm;
+    bool onenrm;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

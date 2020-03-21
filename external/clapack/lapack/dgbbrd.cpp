@@ -23,10 +23,10 @@ static integer c__1 = 1;
     integer kk, ml, mn, nr, mu;
     double rs;
     integer kb1, ml0, mu0, klm, kun, nrt, klu1, inca;
-    logical wantb, wantc;
+    bool wantb, wantc;
     integer minmn;
-    logical wantq;
-    logical wantpt;
+    bool wantq;
+    bool wantpt;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

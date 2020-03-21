@@ -20,10 +20,10 @@ static double c_b19 = 1.;
     /* Local variables */
     integer nb;
     char trans[1];
-    logical upper, wantz, alleig, indeig, valeig;
+    bool upper, wantz, alleig, indeig, valeig;
     integer lwkmin;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

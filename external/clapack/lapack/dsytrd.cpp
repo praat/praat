@@ -20,9 +20,9 @@ static double c_b23 = 1.;
     /* Local variables */
     integer i__, j, nb, kk, nx, iws;
     integer nbmin, iinfo;
-    logical upper;
+    bool upper;
     integer ldwork, lwkopt;
-    logical lquery;
+    bool lquery;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

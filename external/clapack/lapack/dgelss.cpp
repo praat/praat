@@ -34,7 +34,7 @@ static double c_b108 = 1.;
     integer ldwork;
     integer minwrk, maxwrk;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

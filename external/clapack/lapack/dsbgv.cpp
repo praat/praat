@@ -13,7 +13,7 @@
     integer inde;
     char vect[1];
     integer iinfo;
-    logical upper, wantz;
+    bool upper, wantz;
     integer indwrk;
 
 

@@ -19,14 +19,14 @@ static integer c__0 = 0;
     integer i__, j, nb, mn;
     double anrm, bnrm;
     integer brow;
-    logical tpsd;
+    bool tpsd;
     integer iascl, ibscl;
     integer wsize;
     double rwork[1];
     integer scllen;
     double bignum;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

@@ -27,8 +27,8 @@ static double c_b20 = -1.;
     integer j1t, j2t;
     double bii;
     integer kbt, nrt, inca;
-    logical upper, wantx;
-    logical update;
+    bool upper, wantx;
+    bool update;
 
 
 /*  -- LAPACK routine (version 3.1) -- */
@@ -234,7 +234,7 @@ static double c_b20 = -1.;
 
 /*     **************************** Phase 1 ***************************** */
 
-/*     The logical structure of this phase is: */
+/*     The bool structure of this phase is: */
 
 /*     UPDATE = .TRUE. */
 /*     DO I = N, M + 1, -1 */
@@ -976,7 +976,7 @@ L480:
 
 /*     **************************** Phase 2 ***************************** */
 
-/*     The logical structure of this phase is: */
+/*     The bool structure of this phase is: */
 
 /*     UPDATE = .TRUE. */
 /*     DO I = 1, M */

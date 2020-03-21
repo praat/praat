@@ -5,7 +5,7 @@
 	integer *incx)
 {
     double mul, cden;
-    logical done;
+    bool done;
     double cnum, cden1, cnum1;
     double bignum, smlnum;
 

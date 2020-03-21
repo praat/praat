@@ -18,10 +18,10 @@ static integer c__1 = 1;
     integer j, neig;
     integer lwmin;
     char trans[1];
-    logical upper;
-    logical wantz;
+    bool upper;
+    bool wantz;
     integer liwmin;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

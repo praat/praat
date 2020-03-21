@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlapmt_(logical *forwrd, integer *m, integer *n, 
+/* Subroutine */ int dlapmt_(bool *forwrd, integer *m, integer *n, 
 	double *x, integer *ldx, integer *k)
 {
     /* System generated locals */

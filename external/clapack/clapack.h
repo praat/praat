@@ -89,13 +89,13 @@
 /* Subroutine */ int dgees_(const char *jobvs, const char *sort, L_fp select, integer *n, 
 	double *a, integer *lda, integer *sdim, double *wr, 
 	double *wi, double *vs, integer *ldvs, double *work, 
-	integer *lwork, logical *bwork, integer *info);
+	integer *lwork, bool *bwork, integer *info);
 
 /* Subroutine */ int dgeesx_(char *jobvs, char *sort, L_fp select, char *
 	sense, integer *n, double *a, integer *lda, integer *sdim, 
 	double *wr, double *wi, double *vs, integer *ldvs, 
 	double *rconde, double *rcondv, double *work, integer *
-	lwork, integer *iwork, integer *liwork, logical *bwork, integer *info);
+	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info);
 
 /* Subroutine */ int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *
 	a, integer *lda, double *wr, double *wi, double *vl, 
@@ -242,7 +242,7 @@
 	selctg, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, integer *sdim, double *alphar, double *alphai, 
 	double *beta, double *vsl, integer *ldvsl, double *vsr, 
-	integer *ldvsr, double *work, integer *lwork, logical *bwork, 
+	integer *ldvsr, double *work, integer *lwork, bool *bwork, 
 	integer *info);
 
 /* Subroutine */ int dggesx_(char *jobvsl, char *jobvsr, char *sort, L_fp 
@@ -251,7 +251,7 @@
 	double *alphai, double *beta, double *vsl, integer *ldvsl,
 	 double *vsr, integer *ldvsr, double *rconde, double *
 	rcondv, double *work, integer *lwork, integer *iwork, integer * 	
-	liwork, logical *bwork, integer *info);
+	liwork, bool *bwork, integer *info);
 
 /* Subroutine */ int dggev_(char *jobvl, char *jobvr, integer *n, double *
 	a, integer *lda, double *b, integer *ldb, double *alphar, 
@@ -265,7 +265,7 @@
 	beta, double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	integer *ilo, integer *ihi, double *lscale, double *rscale, 
 	double *abnrm, double *bbnrm, double *rconde, double *
-	rcondv, double *work, integer *lwork, integer *iwork, logical * 	
+	rcondv, double *work, integer *lwork, integer *iwork, bool * 	
 	bwork, integer *info);
 
 /* Subroutine */ int dggglm_(integer *n, integer *m, integer *p, double *
@@ -345,7 +345,7 @@
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
 	double *work, integer *lwork, integer *info);
 
-/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, logical *
+/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *mm, integer *m, double *work, integer *
@@ -412,7 +412,7 @@
 /* Subroutine */ int dlaed5_(integer *i__, double *d__, double *z__, 
 	double *delta, double *rho, double *dlam);
 
-/* Subroutine */ int dlaed6_(integer *kniter, logical *orgati, double *
+/* Subroutine */ int dlaed6_(integer *kniter, bool *orgati, double *
 	rho, double *d__, double *z__, double *finit, double *
 	tau, integer *info);
 
@@ -440,7 +440,7 @@
 	integer *givcol, double *givnum, double *q, integer *qptr, 
 	double *z__, double *ztemp, integer *info);
 
-/* Subroutine */ int dlaein_(logical *rightv, logical *noinit, integer *n, 
+/* Subroutine */ int dlaein_(bool *rightv, bool *noinit, integer *n, 
 	double *h__, integer *ldh, double *wr, double *wi, 
 	double *vr, double *vi, double *b, integer *ldb, 
 	double *work, double *eps3, double *smlnum, double *
@@ -449,7 +449,7 @@
 /* Subroutine */ int dlaev2_(double *a, double *b, double *c__, 
 	double *rt1, double *rt2, double *cs1, double *sn1);
 
-/* Subroutine */ int dlaexc_(logical *wantq, integer *n, double *t, 
+/* Subroutine */ int dlaexc_(bool *wantq, integer *n, double *t, 
 	integer *ldt, double *q, integer *ldq, integer *j1, integer *n1, 
 	integer *n2, double *work, integer *info);
 
@@ -460,7 +460,7 @@
 /* Subroutine */ int dlag2s_(integer *m, integer *n, double *a, integer *
 	lda, float *sa, integer *ldsa, integer *info);
 
-/* Subroutine */ int dlags2_(logical *upper, double *a1, double *a2, 
+/* Subroutine */ int dlags2_(bool *upper, double *a1, double *a2, 
 	double *a3, double *b1, double *b2, double *b3, 
 	double *csu, double *snu, double *csv, double *snv, 
 	double *csq, double *snq);
@@ -483,7 +483,7 @@
 	beta, double *csl, double *snl, double *csr, double *
 	snr);
 
-/* Subroutine */ int dlahqr_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlahqr_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, integer *info);
@@ -500,7 +500,7 @@
 	double *sest, double *w, double *gamma, double *
 	sestpr, double *s, double *c__);
 
-/* Subroutine */ int dlaln2_(logical *ltrans, integer *na, integer *nw, 
+/* Subroutine */ int dlaln2_(bool *ltrans, integer *na, integer *nw, 
 	double *smin, double *ca, double *a, integer *lda, 
 	double *d1, double *d2, double *b, integer *ldb, 
 	double *wr, double *wi, double *x, integer *ldx, 
@@ -538,7 +538,7 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dlapll_(integer *n, double *x, integer *incx, 
 	double *y, integer *incy, double *ssmin);
 
-/* Subroutine */ int dlapmt_(logical *forwrd, integer *m, integer *n, 
+/* Subroutine */ int dlapmt_(bool *forwrd, integer *m, integer *n, 
 	double *x, integer *ldx, integer *k);
 
 /* Subroutine */ int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku,
@@ -558,7 +558,7 @@ double dlamch_ (const char *cmach);
 	double *tau, double *vn1, double *vn2, double *auxv, 
 	double *f, integer *ldf);
 
-/* Subroutine */ int dlaqr0_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlaqr0_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, double *work, integer *lwork, integer *info);
@@ -567,26 +567,26 @@ double dlamch_ (const char *cmach);
 	double *sr1, double *si1, double *sr2, double *si2, 
 	double *v);
 
-/* Subroutine */ int dlaqr2_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
 	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
 	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
 	integer *ns, integer *nd, double *sr, double *si, double *
 	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
 	nv, double *wv, integer *ldwv, double *work, integer *lwork);
 
-/* Subroutine */ int dlaqr3_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlaqr3_(bool *wantt, bool *wantz, integer *n, 
 	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
 	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
 	integer *ns, integer *nd, double *sr, double *si, double *
 	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
 	nv, double *wv, integer *ldwv, double *work, integer *lwork);
 
-/* Subroutine */ int dlaqr4_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlaqr4_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, double *work, integer *lwork, integer *info);
 
-/* Subroutine */ int dlaqr5_(logical *wantt, logical *wantz, integer *kacc22, 
+/* Subroutine */ int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22, 
 	integer *n, integer *ktop, integer *kbot, integer *nshfts, double 
 	*sr, double *si, double *h__, integer *ldh, integer *iloz, 
 	integer *ihiz, double *z__, integer *ldz, double *v, integer *
@@ -603,13 +603,13 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dlaqsy_(char *uplo, integer *n, double *a, integer *
 	lda, double *s, double *scond, double *amax, char *equed);
 
-/* Subroutine */ int dlaqtr_(logical *ltran, logical *lfloat, integer *n, 
+/* Subroutine */ int dlaqtr_(bool *ltran, bool *lfloat, integer *n, 
 	double *t, integer *ldt, double *b, double *w, double 
 	*scale, double *x, double *work, integer *info);
 
 /* Subroutine */ int dlar1v_(integer *n, integer *b1, integer *bn, double 
 	*lambda, double *d__, double *l, double *ld, double *
-	lld, double *pivmin, double *gaptol, double *z__, logical 
+	lld, double *pivmin, double *gaptol, double *z__, bool 
 	*wantnc, integer *negcnt, double *ztz, double *mingma, 
 	integer *r__, integer *isuppz, double *nrminv, double *resid, 
 	double *rqcorr, double *work);
@@ -806,7 +806,7 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dlasq3_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *sigma, double *desig,
 	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
-	logical *ieee);
+	bool *ieee);
 
 /* Subroutine */ int dlasq4_(integer *i0, integer *n0, double *z__, 
 	integer *pp, integer *n0in, double *dmin__, double *dmin1, 
@@ -816,7 +816,7 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dlasq5_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *tau, double *dmin__, double *dmin1, 
 	double *dmin2, double *dn, double *dnm1, double *dnm2,
-	 logical *ieee);
+	 bool *ieee);
 
 /* Subroutine */ int dlasq6_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *dmin1, double *dmin2,
@@ -839,7 +839,7 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dlaswp_(integer *n, double *a, integer *lda, integer 
 	*k1, integer *k2, integer *ipiv, integer *incx);
 
-/* Subroutine */ int dlasy2_(logical *ltranl, logical *ltranr, integer *isgn, 
+/* Subroutine */ int dlasy2_(bool *ltranl, bool *ltranr, integer *isgn, 
 	integer *n1, integer *n2, double *tl, integer *ldtl, double *
 	tr, integer *ldtr, double *b, integer *ldb, double *scale, 
 	double *x, integer *ldx, double *xnorm, integer *info);
@@ -884,7 +884,7 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dlazq3_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *sigma, double *desig,
 	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
-	logical *ieee, integer *ttype, double *dmin1, double *dmin2, 
+	bool *ieee, integer *ttype, double *dmin1, double *dmin2, 
 	double *dn, double *dn1, double *dn2, double *tau);
 
 /* Subroutine */ int dlazq4_(integer *i0, integer *n0, double *z__, 
@@ -1262,7 +1262,7 @@ double dlamch_ (const char *cmach);
 /* Subroutine */ int dstemr_(const char *jobz, const char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, integer *m, double *w, double *z__, integer *ldz,
-	 integer *nzc, integer *isuppz, logical *tryrac, double *work, 
+	 integer *nzc, integer *isuppz, bool *tryrac, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info);
 
 /* Subroutine */ int dsteqr_(const char *compz, integer *n, double *d__, 
@@ -1389,23 +1389,23 @@ double dlamch_ (const char *cmach);
 	integer *kd, integer *nrhs, double *ab, integer *ldab, double 
 	*b, integer *ldb, integer *info);
 
-/* Subroutine */ int dtgevc_(const char *side, const char *howmny, logical *select, 
+/* Subroutine */ int dtgevc_(const char *side, const char *howmny, bool *select, 
 	integer *n, double *s, integer *lds, double *p, integer *ldp, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, integer 
 	*mm, integer *m, double *work, integer *info);
 
-/* Subroutine */ int dtgex2_(logical *wantq, logical *wantz, integer *n, 
+/* Subroutine */ int dtgex2_(bool *wantq, bool *wantz, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, double *
 	q, integer *ldq, double *z__, integer *ldz, integer *j1, integer *
 	n1, integer *n2, double *work, integer *lwork, integer *info);
 
-/* Subroutine */ int dtgexc_(logical *wantq, logical *wantz, integer *n, 
+/* Subroutine */ int dtgexc_(bool *wantq, bool *wantz, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, double *
 	q, integer *ldq, double *z__, integer *ldz, integer *ifst, 
 	integer *ilst, double *work, integer *lwork, integer *info);
 
-/* Subroutine */ int dtgsen_(integer *ijob, logical *wantq, logical *wantz, 
-	logical *select, integer *n, double *a, integer *lda, double *
+/* Subroutine */ int dtgsen_(integer *ijob, bool *wantq, bool *wantz, 
+	bool *select, integer *n, double *a, integer *lda, double *
 	b, integer *ldb, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
 	integer *m, double *pl, double *pr, double *dif, 
@@ -1419,7 +1419,7 @@ double dlamch_ (const char *cmach);
 	integer *ldu, double *v, integer *ldv, double *q, integer *
 	ldq, double *work, integer *ncycle, integer *info);
 
-/* Subroutine */ int dtgsna_(const char *job, const char *howmny, logical *select, 
+/* Subroutine */ int dtgsna_(const char *job, const char *howmny, bool *select, 
 	integer *n, double *a, integer *lda, double *b, integer *ldb, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	double *s, double *dif, integer *mm, integer *m, double *
@@ -1459,7 +1459,7 @@ double dlamch_ (const char *cmach);
 	double *a, integer *lda, double *rcond, double *work, 
 	integer *iwork, integer *info);
 
-/* Subroutine */ int dtrevc_(const char *side, const char *howmny, logical *select, 
+/* Subroutine */ int dtrevc_(const char *side, const char *howmny, bool *select, 
 	integer *n, double *t, integer *ldt, double *vl, integer *
 	ldvl, double *vr, integer *ldvr, integer *mm, integer *m, 
 	double *work, integer *info);
@@ -1473,13 +1473,13 @@ double dlamch_ (const char *cmach);
 	ldb, double *x, integer *ldx, double *ferr, double *berr, 
 	double *work, integer *iwork, integer *info);
 
-/* Subroutine */ int dtrsen_(const char *job, const char *compq, logical *select, integer 
+/* Subroutine */ int dtrsen_(const char *job, const char *compq, bool *select, integer 
 	*n, double *t, integer *ldt, double *q, integer *ldq, 
 	double *wr, double *wi, integer *m, double *s, double 
 	*sep, double *work, integer *lwork, integer *iwork, integer *
 	liwork, integer *info);
 
-/* Subroutine */ int dtrsna_(const char *job, const char *howmny, logical *select, 
+/* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select, 
 	integer *n, double *t, integer *ldt, double *vl, integer *
 	ldvl, double *vr, integer *ldvr, double *s, double *sep, 
 	integer *mm, integer *m, double *work, integer *ldwork, integer *

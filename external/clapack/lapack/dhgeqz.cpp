@@ -33,9 +33,9 @@ static integer c__3 = 3;
 	     a2r, b1r, b2r, wr2, ad11, ad12, ad21, ad22, c11i, c22i;
     integer jch;
     double c11r, c22r;
-    logical ilq;
+    bool ilq;
     double u12l, tau, sqi;
-    logical ilz;
+    bool ilz;
     double ulp, sqr, szi, szr, ad11l, ad12l, ad21l, ad22l, ad32l, wabs, 
 	    atol, btol, temp;
     double temp2, s1inv, scale;
@@ -43,16 +43,16 @@ static integer c__3 = 3;
     double anorm, bnorm;
     integer maxit;
     double tempi, tempr;
-    logical ilazr2;
+    bool ilazr2;
     double ascale, bscale;
     double safmin;
     double safmax;
     double eshift;
-    logical ilschr;
+    bool ilschr;
     integer icompq, ilastm, ischur;
-    logical ilazro;
+    bool ilazro;
     integer icompz, ifirst, ifrstm, istart;
-    logical ilpivt, lquery;
+    bool ilpivt, lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

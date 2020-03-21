@@ -21,7 +21,7 @@ static double c_b11 = 1.;
     double akk;
     integer k1k1;
     double bjj, bkk;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

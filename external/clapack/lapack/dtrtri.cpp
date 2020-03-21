@@ -19,8 +19,8 @@ static double c_b22 = -1.;
 
     /* Local variables */
     integer j, jb, nb, nn;
-    logical upper;
-    logical nounit;
+    bool upper;
+    bool nounit;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

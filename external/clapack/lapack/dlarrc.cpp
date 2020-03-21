@@ -12,7 +12,7 @@
     /* Local variables */
     integer i__;
     double sl, su, tmp, tmp2;
-    logical matt;
+    bool matt;
  
     double lpivot, rpivot;
 

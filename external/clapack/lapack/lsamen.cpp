@@ -1,11 +1,11 @@
 #include "clapack.h"
 #include "string.h"
 
-logical lsamen_(integer *n, const char *ca, const char *cb)
+bool lsamen_(integer *n, const char *ca, const char *cb)
 {
     /* System generated locals */
     integer i__1;
-    logical ret_val;
+    bool ret_val;
 
     /* Local variables */
     static integer i__;

@@ -22,7 +22,7 @@ static integer c__1 = 1;
     integer imax, jmax;
     double alpha;
     integer kstep;
-    logical upper;
+    bool upper;
     double absakk;
     double colmax, rowmax;
 

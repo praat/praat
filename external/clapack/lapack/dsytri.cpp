@@ -22,7 +22,7 @@ static double c_b13 = 0.;
     double akp1;
     double temp, akkp1;
     integer kstep;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -24,10 +24,10 @@ static integer c__49 = 49;
     integer i__;
     double hl[2401]	/* was [49][49] */;
     integer kbot, nmin;
-    logical initz;
+    bool initz;
     double workl[49];
-    logical wantt, wantz;
-    logical lquery;
+    bool wantt, wantz;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

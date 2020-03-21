@@ -5,12 +5,12 @@
 
 static integer c__1 = 1;
 static integer c__4 = 4;
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 static integer c_n1 = -1;
 static integer c__2 = 2;
 static integer c__3 = 3;
 
-/* Subroutine */ int dlaexc_(logical *wantq, integer *n, double *t, 
+/* Subroutine */ int dlaexc_(bool *wantq, integer *n, double *t, 
 	integer *ldt, double *q, integer *ldq, integer *j1, integer *n1, 
 	integer *n2, double *work, integer *info)
 {

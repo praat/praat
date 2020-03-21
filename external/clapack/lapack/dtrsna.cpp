@@ -4,10 +4,10 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static logical c_true = TRUE_;
-static logical c_false = FALSE_;
+static bool c_true = TRUE_;
+static bool c_false = FALSE_;
 
-/* Subroutine */ int dtrsna_(const char *job, const char *howmny, logical *select, 
+/* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select, 
 	integer *n, double *t, integer *ldt, double *vl, integer *
 	ldvl, double *vr, integer *ldvr, double *s, double *sep, 
 	integer *mm, integer *m, double *work, integer *ldwork, integer *
@@ -25,7 +25,7 @@ static logical c_false = FALSE_;
     double sn, mu, eps, est;
     integer kase;
     double cond;
-    logical pair;
+    bool pair;
     integer ierr;
     double dumm, prod;
     integer ifst;
@@ -34,13 +34,13 @@ static logical c_false = FALSE_;
     double rnrm;
     double prod1, prod2, scale, delta;
     integer isave[3];
-    logical wants;
+    bool wants;
     double dummy[1];
     double bignum;
-    logical wantbh;
-    logical somcon;
+    bool wantbh;
+    bool somcon;
     double smlnum;
-    logical wantsp;
+    bool wantsp;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

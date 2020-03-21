@@ -9,7 +9,7 @@ double dlamch_(const char *cmach)
 {
     /* Initialized data */
 
-    static logical first = TRUE_;
+    static bool first = TRUE_;
 
     /* System generated locals */
     integer i__1;
@@ -22,7 +22,7 @@ double dlamch_(const char *cmach)
     integer beta;
     static double emin, prec, emax;
     integer imin, imax;
-    logical lrnd;
+    bool lrnd;
     static double rmin, rmax;
     double rmach;
  
@@ -146,12 +146,12 @@ double dlamch_(const char *cmach)
 
 /* *********************************************************************** */
 
-/* Subroutine */ int dlamc1_(integer *beta, integer *t, logical *rnd, logical 
+/* Subroutine */ int dlamc1_(integer *beta, integer *t, bool *rnd, bool 
 	*ieee1)
 {
     /* Initialized data */
 
-    static logical first = TRUE_;
+    static bool first = TRUE_;
 
     /* System generated locals */
     double d__1, d__2;
@@ -160,11 +160,11 @@ double dlamch_(const char *cmach)
     double a, b, c__, f, t1, t2;
     static integer lt;
     double one, qtr;
-    static logical lrnd;
+    static bool lrnd;
     static integer lbeta;
     double savec;
  
-    static logical lieee1;
+    static bool lieee1;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -353,14 +353,14 @@ L30:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int dlamc2_(integer *beta, integer *t, logical *rnd, 
+/* Subroutine */ int dlamc2_(integer *beta, integer *t, bool *rnd, 
 	double *eps, integer *emin, double *rmin, integer *emax, 
 	double *rmax)
 {
     /* Initialized data */
 
-    static logical first = TRUE_;
-    static logical iwarn = FALSE_;
+    static bool first = TRUE_;
+    static bool iwarn = FALSE_;
 
     /* System generated locals */
     integer i__1;
@@ -371,9 +371,9 @@ L30:
     integer i__;
     static integer lt;
     double one, two;
-    logical ieee;
+    bool ieee;
     double half;
-    logical lrnd;
+    bool lrnd;
     static double leps;
     double zero;
     static integer lbeta;
@@ -385,7 +385,7 @@ L30:
     double third;
     static double lrmin, lrmax;
     double sixth;
-    logical lieee1;
+    bool lieee1;
     integer ngnmin, ngpmin;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -786,7 +786,7 @@ L10:
 /* *********************************************************************** */
 
 /* Subroutine */ int dlamc5_(integer *beta, integer *p, integer *emin, 
-	logical *ieee, integer *emax, double *rmax)
+	bool *ieee, integer *emax, double *rmax)
 {
     /* System generated locals */
     integer i__1;
@@ -834,7 +834,7 @@ L10:
 /*          The minimum exponent before (gradual) underflow. */
 
 /*  IEEE    (input) LOGICAL */
-/*          A logical flag specifying whether or not the arithmetic */
+/*          A bool flag specifying whether or not the arithmetic */
 /*          system is thought to comply with the IEEE standard. */
 
 /*  EMAX    (output) INTEGER */

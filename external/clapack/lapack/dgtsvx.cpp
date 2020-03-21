@@ -18,8 +18,8 @@ static integer c__1 = 1;
     /* Local variables */
     char norm[1];
     double anorm;
-    logical nofact;
-    logical notran;
+    bool nofact;
+    bool notran;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

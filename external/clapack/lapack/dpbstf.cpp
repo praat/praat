@@ -17,7 +17,7 @@ static double c_b9 = -1.;
     integer j, m, km;
     double ajj;
     integer kld;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

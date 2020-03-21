@@ -9,7 +9,7 @@ static integer c__3 = 3;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dlaqr5_(logical *wantt, logical *wantz, integer *kacc22, 
+/* Subroutine */ int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22, 
 	integer *n, integer *ktop, integer *kbot, integer *nshfts, double 
 	*sr, double *si, double *h__, integer *ldh, integer *iloz, 
 	integer *ihiz, double *z__, integer *ldz, double *v, integer *
@@ -31,12 +31,12 @@ static integer c__2 = 2;
     double ulp;
     integer knz, kzs;
     double tst1, tst2, beta;
-    logical blk22, bmp22;
+    bool blk22, bmp22;
     integer mend, jcol, jlen, jbot, mbot;
     double swap;
     integer jtop, jrow, mtop;
     double alpha;
-    logical accum;
+    bool accum;
     integer ndcol, incol, krcol, nbmps;
     double safmin;
     double safmax, refsum;
@@ -56,11 +56,11 @@ static integer c__2 = 2;
 /*     This auxiliary subroutine called by DLAQR0 performs a */
 /*     single small-bulge multi-shift QR sweep. */
 
-/*      WANTT  (input) logical scalar */
+/*      WANTT  (input) bool scalar */
 /*             WANTT = .true. if the quasi-triangular Schur factor */
 /*             is being computed.  WANTT is set to .false. otherwise. */
 
-/*      WANTZ  (input) logical scalar */
+/*      WANTZ  (input) bool scalar */
 /*             WANTZ = .true. if the orthogonal Schur factor is being */
 /*             computed.  WANTZ is set to .false. otherwise. */
 

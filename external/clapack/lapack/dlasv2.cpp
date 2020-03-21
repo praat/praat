@@ -18,10 +18,10 @@ static double c_b4 = 1.;
 	    crt, slt, srt;
     integer pmax;
     double temp;
-    logical swap;
+    bool swap;
     double tsign;
  
-    logical gasmal;
+    bool gasmal;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

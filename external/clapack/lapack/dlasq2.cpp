@@ -26,7 +26,7 @@ static integer c__11 = 11;
     double dn1, dn2, eps, tau, tol;
     integer ipn4;
     double tol2;
-    logical ieee;
+    bool ieee;
     integer nbig;
     double dmin__, emin, emax;
     integer ndiv, iter;
@@ -64,7 +64,7 @@ static integer c__11 = 11;
 /*  Z(1,3,5,,..). The tridiagonal is L*U or, if you prefer, the */
 /*  symmetric tridiagonal to which it is similar. */
 
-/*  Note : DLASQ2 defines a logical variable, IEEE, which is true */
+/*  Note : DLASQ2 defines a bool variable, IEEE, which is true */
 /*  on machines which follow ieee-754 floating-point standard in their */
 /*  handling of infinities and NaNs, and false otherwise. This variable */
 /*  is passed to DLAZQ3. */

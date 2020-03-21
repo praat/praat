@@ -15,7 +15,7 @@ double dlantb_(const char *norm, const char *uplo, const char *diag, integer *n,
     /* Local variables */
     integer i__, j, l;
     double sum, scale;
-    logical udiag;
+    bool udiag;
     double value;
 
 

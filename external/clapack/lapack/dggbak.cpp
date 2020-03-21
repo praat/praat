@@ -10,8 +10,8 @@
 
     /* Local variables */
     integer i__, k;
-    logical leftv;
-    logical rightv;
+    bool leftv;
+    bool rightv;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

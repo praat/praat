@@ -13,7 +13,7 @@
     double temp;
  
     integer nrowa;
-    logical upper;
+    bool upper;
  
 
 /*     .. Scalar Arguments .. */

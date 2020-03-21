@@ -12,7 +12,7 @@
     integer i__, jj;
     double smin;
  
-    logical upper;
+    bool upper;
  
 
 

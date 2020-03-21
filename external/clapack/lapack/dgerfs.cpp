@@ -28,7 +28,7 @@ static double c_b17 = 1.;
     integer isave[3];
     integer count;
     double safmin;
-    logical notran;
+    bool notran;
     char transt[1];
     double lstres;
 

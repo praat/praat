@@ -32,16 +32,16 @@ static integer c_n1 = -1;
     integer ierr, itau;
     integer iwrk, nout;
 	integer icond;
-    logical scalea;
+    bool scalea;
     double cscale;
-    logical select[1];
+    bool select[1];
     double bignum;
 	integer minwrk, maxwrk;
-    logical wantvl, wntsnb;
+    bool wantvl, wntsnb;
     integer hswork;
-    logical wntsne;
+    bool wntsne;
     double smlnum;
-    logical lquery, wantvr, wntsnn, wntsnv;
+    bool lquery, wantvr, wntsnn, wntsnv;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

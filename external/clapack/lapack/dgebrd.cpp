@@ -22,7 +22,7 @@ static double c_b22 = 1.;
     double ws;
     integer nbmin, iinfo, minmn;
     integer ldwrkx, ldwrky, lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

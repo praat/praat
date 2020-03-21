@@ -11,7 +11,7 @@
     /* Local variables */
     integer i__, j, k1, k2, k3, k4;
     double mul, cto1;
-    logical done;
+    bool done;
     double ctoc;
  
     integer itype;

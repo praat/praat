@@ -11,12 +11,12 @@
     /* Local variables */
     integer i__, j, k, info;
     double temp;
-    logical lside;
+    bool lside;
  
     integer nrowa;
-    logical upper;
+    bool upper;
  
-    logical nounit;
+    bool nounit;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

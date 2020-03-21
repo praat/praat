@@ -3,10 +3,10 @@
 
 /* Table of constant values */
 
-static logical c_false = FALSE_;
-static logical c_true = TRUE_;
+static bool c_false = FALSE_;
+static bool c_true = TRUE_;
 
-/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, logical *
+/* Subroutine */ int dhsein_(char *side, char *eigsrc, char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *mm, integer *m, double *work, integer *
@@ -22,15 +22,15 @@ static logical c_true = TRUE_;
     double wki;
     integer ksr;
     double ulp, wkr, eps3;
-    logical pair;
+    bool pair;
     double unfl;
     integer iinfo;
-    logical leftv, bothv;
+    bool leftv, bothv;
     double hnorm;
     double bignum;
-    logical noinit;
+    bool noinit;
     integer ldwork;
-    logical rightv, fromqr;
+    bool rightv, fromqr;
     double smlnum;
 
 

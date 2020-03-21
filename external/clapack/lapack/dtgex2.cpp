@@ -11,7 +11,7 @@ static double c_b42 = 1.;
 static double c_b48 = -1.;
 static integer c__0 = 0;
 
-/* Subroutine */ int dtgex2_(logical *wantq, logical *wantz, integer *n, 
+/* Subroutine */ int dtgex2_(bool *wantq, bool *wantz, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, double *
 	q, integer *ldq, double *z__, integer *ldz, integer *j1, integer *
 	n1, integer *n2, double *work, integer *lwork, integer *info)
@@ -27,7 +27,7 @@ static integer c__0 = 0;
     double s[16]	/* was [4][4] */, t[16]	/* was [4][4] */, be[2], ai[2]
 	    , ar[2], sa, sb, li[16]	/* was [4][4] */, ir[16]	/* 
 	    was [4][4] */, ss, ws, eps;
-    logical weak;
+    bool weak;
     double ddum;
     integer idum;
     double taul[4], dsum;
@@ -38,7 +38,7 @@ static integer c__0 = 0;
     double ircop[16] /* was [4][4] */, dnorm;
     integer iwork[4];
     double dscale;
-	logical dtrong;
+	bool dtrong;
     double thresh, smlnum;
 
 
@@ -148,7 +148,7 @@ static integer c__0 = 0;
 
 /*  In the current code both weak and strong stability tests are */
 /*  performed. The user can omit the strong stability test by changing */
-/*  the internal logical parameter WANDS to .FALSE.. See ref. [2] for */
+/*  the internal bool parameter WANDS to .FALSE.. See ref. [2] for */
 /*  details. */
 
 /*  [1] B. Kagstrom; A Direct Method for Reordering Eigenvalues in the */

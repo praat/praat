@@ -16,7 +16,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     double anorm;
-    logical nofact;
+    bool nofact;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

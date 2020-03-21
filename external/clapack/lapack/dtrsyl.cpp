@@ -4,11 +4,11 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 static integer c__2 = 2;
 static double c_b26 = 1.;
 static double c_b30 = 0.;
-static logical c_true = TRUE_;
+static bool c_true = TRUE_;
 
 /* Subroutine */ int dtrsyl_(const char *trana, const char *tranb, integer *isgn, integer 
 	*m, integer *n, double *a, integer *lda, double *b, integer *
@@ -30,7 +30,7 @@ static logical c_true = TRUE_;
     double xnorm;
     double scaloc;
     double bignum;
-    logical notrna, notrnb;
+    bool notrna, notrnb;
     double smlnum;
 
 

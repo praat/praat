@@ -24,7 +24,7 @@ static integer c__1 = 1;
     integer isub;
     double tolb, unfl, temp, smax;
     double anorm, bnorm;
-    logical wantq, wantu, wantv;
+    bool wantq, wantu, wantv;
     integer ncycle;
 
 /*  -- LAPACK driver routine (version 3.1) -- */

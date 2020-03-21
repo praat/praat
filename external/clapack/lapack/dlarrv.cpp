@@ -18,7 +18,7 @@ static integer c__2 = 2;
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2, i__3, i__4, i__5;
     double d__1, d__2;
-    logical L__1;
+    bool L__1;
 
     /* Builtin functions
     double log(double); */
@@ -43,15 +43,15 @@ static integer c__2 = 2;
     double sigma;
     integer iinfo, iindr;
     double resid;
-    logical eskip;
+    bool eskip;
     double right;
     integer nclus, zfrom;
     double rqtol;
     integer iindc1, iindc2;
-    logical stp2ii;
+    bool stp2ii;
     double lambda;
     integer ibegin, indeig;
-    logical needbs;
+    bool needbs;
     integer indlld;
     double sgndef, mingma;
     integer oldien, oldncl, wbegin;
@@ -61,16 +61,16 @@ static integer c__2 = 2;
     double savgap;
     integer ndepth;
     double ssigma;
-    logical usedbs;
+    bool usedbs;
     integer iindwk, offset;
     double gaptol;
     integer newcls, oldfst, indwrk, windex, oldlst;
-    logical usedrq;
+    bool usedrq;
     integer newfst, newftt, parity, windmn, windpl, isupmn, newlst, zusedl;
     double bstres;
     integer newsiz, zusedu, zusedw;
     double nrminv, rqcorr;
-    logical tryrqc;
+    bool tryrqc;
     integer isupmx;
 
 

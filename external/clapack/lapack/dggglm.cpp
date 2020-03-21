@@ -20,7 +20,7 @@ static double c_b34 = 1.;
     integer i__, nb, np, nb1, nb2, nb3, nb4, lopt;
     integer lwkmin;
      integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

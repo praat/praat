@@ -7,10 +7,10 @@ static integer c__1 = 1;
 static double c_b19 = 1.;
 static double c_b21 = 0.;
 static integer c__2 = 2;
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 static integer c__3 = 3;
 
-/* Subroutine */ int dtgsna_(const char *job, const char *howmny, logical *select, 
+/* Subroutine */ int dtgsna_(const char *job, const char *howmny, bool *select, 
 	integer *n, double *a, integer *lda, double *b, integer *ldb, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	double *s, double *dif, integer *mm, integer *m, double *
@@ -26,7 +26,7 @@ static integer c__3 = 3;
     double c1, c2;
     integer n1, n2, ks, iz;
     double eps, beta, cond;
-    logical pair;
+    bool pair;
     integer ierr;
     double uhav, uhbv;
     integer ifst;
@@ -36,14 +36,14 @@ static integer c__3 = 3;
     double root1, root2, scale;
     double uhavi, uhbvi, tmpii;
     integer lwmin;
-    logical wants;
+    bool wants;
     double tmpir, tmpri, dummy[1], tmprr;
     double dummy1[1];
     double alphai, alphar;
-    logical wantbh, wantdf, somcon;
+    bool wantbh, wantdf, somcon;
     double alprqt;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -17,9 +17,9 @@ static integer c__2 = 2;
     integer j, k, kb, nb, iws;
  
     integer nbmin, iinfo;
-    logical upper;
+    bool upper;
     integer ldwork, lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -41,7 +41,7 @@ static integer c__0 = 0;
     integer irange, idiscl, idumma[1];
     double spdiam;
     integer idiscu;
-    logical ncnvrg, toofew;
+    bool ncnvrg, toofew;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

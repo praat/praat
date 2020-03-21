@@ -4,13 +4,13 @@
 /* Table of constant values */
 
 static integer c__1 = 1;
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 static integer c__2 = 2;
 static double c_b21 = 1.;
 static double c_b25 = 0.;
-static logical c_true = TRUE_;
+static bool c_true = TRUE_;
 
-/* Subroutine */ int dlaqtr_(logical *ltran, logical *lreal, integer *n, 
+/* Subroutine */ int dlaqtr_(bool *ltran, bool *lreal, integer *n, 
 	double *t, integer *ldt, double *b, double *w, double 
 	*scale, double *x, double *work, integer *info)
 {
@@ -30,7 +30,7 @@ static logical c_true = TRUE_;
     double sminw, xnorm;
     double scaloc;
     double bignum;
-    logical notran;
+    bool notran;
     double smlnum;
 
 

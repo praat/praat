@@ -16,8 +16,8 @@
     integer i__, j;
     double amax, smin, smax;
     double scond, anorm;
-    logical equil, rcequ;
-    logical nofact;
+    bool equil, rcequ;
+    bool nofact;
     double bignum;
     integer infequ;
     double smlnum;

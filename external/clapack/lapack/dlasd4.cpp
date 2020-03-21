@@ -26,11 +26,11 @@
     double temp, prew, sg2lb, sg2ub, temp1, temp2, dtiim, delsq, dtiip;
     integer niter;
     double dtisq;
-    logical swtch;
+    bool swtch;
     double dtnsq;
     double delsq2, dtnsq1;
-    logical swtch3;
-   logical orgati;
+    bool swtch3;
+   bool orgati;
     double erretm, dtipsq, rhoinv;
 
 

@@ -21,7 +21,7 @@ static integer c__1 = 1;
     double rmin, rmax;
     double sigma;
     integer iinfo;
-    logical wantz;
+    bool wantz;
     integer iscale;
     double safmin;
     double bignum;

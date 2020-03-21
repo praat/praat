@@ -25,7 +25,7 @@ static integer c__1 = 1;
     integer ptsx;
     integer iiter;
     double bwdmax;
-    logical doitref;
+    bool doitref;
     integer itermax;
 
 

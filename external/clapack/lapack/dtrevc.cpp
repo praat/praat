@@ -3,14 +3,14 @@
 
 /* Table of constant values */
 
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 static integer c__1 = 1;
 static double c_b22 = 1.;
 static double c_b25 = 0.;
 static integer c__2 = 2;
-static logical c_true = TRUE_;
+static bool c_true = TRUE_;
 
-/* Subroutine */ int dtrevc_(const char *side, const char *howmny, logical *select, 
+/* Subroutine */ int dtrevc_(const char *side, const char *howmny, bool *select, 
 	integer *n, double *t, integer *ldt, double *vl, integer *
 	ldvl, double *vr, integer *ldvr, integer *mm, integer *m, 
 	double *work, integer *info)
@@ -25,21 +25,21 @@ static logical c_true = TRUE_;
     double x[4]	/* was [2][2] */;
     integer j1, j2, n2, ii, ki, ip, is;
     double wi, wr, rec, ulp, beta, emax;
-    logical pair;
-    logical allv;
+    bool pair;
+    bool allv;
     integer ierr;
     double unfl, ovfl, smin;
-    logical over;
+    bool over;
     double vmax;
     integer jnxt;
     double scale;
     double remax;
-    logical leftv, bothv;
+    bool leftv, bothv;
     double vcrit;
-    logical somev;
+    bool somev;
     double xnorm;
     double bignum;
-    logical rightv;
+    bool rightv;
     double smlnum;
 
 
@@ -88,7 +88,7 @@ static logical c_true = TRUE_;
 /*          = 'B':  compute all right and/or left eigenvectors, */
 /*                  backtransformed by the matrices in VR and/or VL; */
 /*          = 'S':  compute selected right and/or left eigenvectors, */
-/*                  as indicated by the logical array SELECT. */
+/*                  as indicated by the bool array SELECT. */
 
 /*  SELECT  (input/output) LOGICAL array, dimension (N) */
 /*          If HOWMNY = 'S', SELECT specifies the eigenvectors to be */

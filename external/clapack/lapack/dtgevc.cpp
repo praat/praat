@@ -3,14 +3,14 @@
 
 /* Table of constant values */
 
-static logical c_true = TRUE_;
+static bool c_true = TRUE_;
 static integer c__2 = 2;
 static double c_b34 = 1.;
 static integer c__1 = 1;
 static double c_b36 = 0.;
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 
-/* Subroutine */ int dtgevc_(const char *side, const char *howmny, logical *select, 
+/* Subroutine */ int dtgevc_(const char *side, const char *howmny, bool *select, 
 	integer *n, double *s, integer *lds, double *p, integer *ldp, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, integer 
 	*mm, integer *m, double *work, integer *info)
@@ -23,30 +23,30 @@ static logical c_false = FALSE_;
     /* Local variables */
     integer i__, j, ja, jc, je, na, im, jr, jw, nw;
     double big;
-    logical lsa, lsb;
+    bool lsa, lsb;
     double ulp, sum[4]	/* was [2][2] */;
     integer ibeg, ieig, iend;
     double dmin__, temp, xmax, sump[4]	/* was [2][2] */, sums[4]	
 	    /* was [2][2] */;
     double cim2a, cim2b, cre2a, cre2b, temp2, bdiag[2], acoef, scale;
-    logical ilall;
+    bool ilall;
     integer iside;
     double sbeta;
-    logical il2by2;
+    bool il2by2;
     integer iinfo;
     double small;
-    logical compl_x; // djmw changed variable from "compl" to compl_x because the c++ compiler protested.
+    bool compl_x; // djmw changed variable from "compl" to compl_x because the c++ compiler protested.
     double anorm, bnorm;
-    logical compr;
+    bool compr;
     double temp2i;
     double temp2r;
-    logical ilabad, ilbbad;
+    bool ilabad, ilbbad;
     double acoefa, bcoefa, cimaga, cimagb;
-    logical ilback;
+    bool ilback;
     double bcoefi, ascale, bscale, creala, crealb;
     double bcoefr, salfar, safmin;
     double xscale, bignum;
-    logical ilcomp, ilcplx;
+    bool ilcomp, ilcplx;
     integer ihwmny;
 
 
@@ -101,7 +101,7 @@ static logical c_false = FALSE_;
 /*          = 'B': compute all right and/or left eigenvectors, */
 /*                 backtransformed by the matrices in VR and/or VL; */
 /*          = 'S': compute selected right and/or left eigenvectors, */
-/*                 specified by the logical array SELECT. */
+/*                 specified by the bool array SELECT. */
 
 /*  SELECT  (input) LOGICAL array, dimension (N) */
 /*          If HOWMNY='S', SELECT specifies the eigenvectors to be */

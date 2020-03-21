@@ -13,7 +13,7 @@ static double c_b39 = 1.;
 	selctg, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, integer *sdim, double *alphar, double *alphai, 
 	double *beta, double *vsl, integer *ldvsl, double *vsr, 
-	integer *ldvsr, double *work, integer *lwork, logical *bwork, 
+	integer *ldvsr, double *work, integer *lwork, bool *bwork, 
 	integer *info)
 {
     /* System generated locals */
@@ -32,20 +32,20 @@ static double c_b39 = 1.;
     integer idum[1], ierr, itau, iwrk;
     double pvsl, pvsr;
     integer ileft, icols;
-    logical cursl, ilvsl, ilvsr;
+    bool cursl, ilvsl, ilvsr;
     integer irows;
-    logical lst2sl;
-    logical ilascl, ilbscl;
+    bool lst2sl;
+    bool ilascl, ilbscl;
     double safmin;
      double safmax;
     double bignum;
     integer ijobvl, iright;
     integer ijobvr;
     double anrmto, bnrmto;
-    logical lastsl;
+    bool lastsl;
     integer minwrk, maxwrk;
     double smlnum;
-    logical wantst, lquery;
+    bool wantst, lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

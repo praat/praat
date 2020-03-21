@@ -23,22 +23,22 @@ static double c_b37 = 1.;
     /* Local variables */
     integer jc, in, jr, ihi, ilo;
     double eps;
-    logical ilv;
+    bool ilv;
     double anrm, bnrm;
     integer ierr, itau;
     double temp;
-    logical ilvl, ilvr;
+    bool ilvl, ilvr;
     integer iwrk;
     integer ileft, icols, irows;
-    logical ilascl, ilbscl;
-    logical ldumma[1];
+    bool ilascl, ilbscl;
+    bool ldumma[1];
     char chtemp[1];
     double bignum;
     integer ijobvl, iright, ijobvr;
     double anrmto, bnrmto;
     integer minwrk, maxwrk;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

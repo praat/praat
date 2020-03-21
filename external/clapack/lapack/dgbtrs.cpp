@@ -16,8 +16,8 @@ static double c_b23 = 1.;
 
     /* Local variables */
     integer i__, j, l, kd, lm;
-    logical lnoti;
-    logical notran;
+    bool lnoti;
+    bool notran;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

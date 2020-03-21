@@ -23,11 +23,11 @@ static double c_b37 = 1.;
     double eps, anrm, bnrm;
     integer itau, lopt;
     integer ileft, iinfo, icols;
-    logical ilvsl;
+    bool ilvsl;
     integer iwork;
-    logical ilvsr;
+    bool ilvsr;
     integer irows;
-    logical ilascl, ilbscl;
+    bool ilascl, ilbscl;
     double safmin;
     double bignum;
     integer ijobvl, iright, ijobvr;
@@ -36,7 +36,7 @@ static double c_b37 = 1.;
     double bnrmto;
     double smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

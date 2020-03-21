@@ -25,14 +25,14 @@ static double c_b248 = 1.;
     double anrm;
     integer idum[1], ierr, itau;
     integer chunk, minmn, wrkbl, itaup, itauq, mnthr;
-    logical wntqa;
+    bool wntqa;
     integer nwork;
-    logical wntqn, wntqo, wntqs;
+    bool wntqn, wntqo, wntqs;
     integer bdspac;
     double bignum;
     integer ldwrkl, ldwrkr, minwrk, ldwrku, maxwrk, ldwkvt;
     double smlnum;
-    logical wntqas, lquery;
+    bool wntqas, lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

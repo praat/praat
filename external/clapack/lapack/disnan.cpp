@@ -1,10 +1,10 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-logical disnan_(double *din)
+bool disnan_(double *din)
 {
     /* System generated locals */
-    logical ret_val;
+    bool ret_val;
 
     /* Local variables */
 

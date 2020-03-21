@@ -4,7 +4,7 @@
 /* Subroutine */ int dlasq5_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *tau, double *dmin__, double *dmin1, 
 	double *dmin2, double *dn, double *dnm1, double *dnm2, 
-	 logical *ieee)
+	 bool *ieee)
 {
     /* System generated locals */
     integer i__1;

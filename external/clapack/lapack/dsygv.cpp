@@ -17,11 +17,11 @@ static double c_b16 = 1.;
     /* Local variables */
     integer nb, neig;
     char trans[1];
-    logical upper;
-    logical wantz;
+    bool upper;
+    bool wantz;
     integer lwkmin;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

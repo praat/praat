@@ -6,19 +6,19 @@
 
 static real c_b32 = 0.f;
 
-int slamc1_(integer *beta, integer *t, logical *rnd, logical *ieee1);
-int slamc2_(integer *beta, integer *t, logical *rnd, real *
+int slamc1_(integer *beta, integer *t, bool *rnd, bool *ieee1);
+int slamc2_(integer *beta, integer *t, bool *rnd, real *
 	eps, integer *emin, real *rmin, integer *emax, real *rmax);
 double slamc3_(real *a, real *b);
 int slamc4_(integer *emin, real *start, integer *base);
 int slamc5_(integer *beta, integer *p, integer *emin, 
-	logical *ieee, integer *emax, real *rmax);
+	bool *ieee, integer *emax, real *rmax);
 
 double slamch_(const char *cmach)
 {
     /* Initialized data */
 
-    static logical first = TRUE_;
+    static bool first = TRUE_;
 
     /* System generated locals */
     integer i__1;
@@ -31,7 +31,7 @@ double slamch_(const char *cmach)
     integer beta;
     static real emin, prec, emax;
     integer imin, imax;
-    logical lrnd;
+    bool lrnd;
     static real rmin, rmax;
     real rmach;
     real small;
@@ -155,12 +155,12 @@ double slamch_(const char *cmach)
 
 /* *********************************************************************** */
 
-/* Subroutine */ int slamc1_(integer *beta, integer *t, logical *rnd, logical 
+/* Subroutine */ int slamc1_(integer *beta, integer *t, bool *rnd, bool 
 	*ieee1)
 {
     /* Initialized data */
 
-    static logical first = TRUE_;
+    static bool first = TRUE_;
 
     /* System generated locals */
     real r__1, r__2;
@@ -169,10 +169,10 @@ double slamch_(const char *cmach)
     real a, b, c__, f, t1, t2;
     static integer lt;
     real one, qtr;
-    static logical lrnd;
+    static bool lrnd;
     static integer lbeta;
     real savec;
-    static logical lieee1;
+    static bool lieee1;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -361,13 +361,13 @@ L30:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int slamc2_(integer *beta, integer *t, logical *rnd, real *
+/* Subroutine */ int slamc2_(integer *beta, integer *t, bool *rnd, real *
 	eps, integer *emin, real *rmin, integer *emax, real *rmax)
 {
     /* Initialized data */
 
-    static logical first = TRUE_;
-    static logical iwarn = FALSE_;
+    static bool first = TRUE_;
+    static bool iwarn = FALSE_;
 
     /* System generated locals */
     integer i__1;
@@ -378,9 +378,9 @@ L30:
     integer i__;
     static integer lt;
     real one, two;
-    logical ieee;
+    bool ieee;
     real half;
-    logical lrnd;
+    bool lrnd;
     static real leps;
     real zero;
     static integer lbeta;
@@ -392,7 +392,7 @@ L30:
     real third;
     static real lrmin, lrmax;
     real sixth;
-    logical lieee1;
+    bool lieee1;
     integer ngnmin, ngpmin;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -801,7 +801,7 @@ L10:
 /* *********************************************************************** */
 
 /* Subroutine */ int slamc5_(integer *beta, integer *p, integer *emin, 
-	logical *ieee, integer *emax, real *rmax)
+	bool *ieee, integer *emax, real *rmax)
 {
     /* System generated locals */
     integer i__1;
@@ -848,7 +848,7 @@ L10:
 /*          The minimum exponent before (gradual) underflow. */
 
 /*  IEEE    (input) LOGICAL */
-/*          A logical flag specifying whether or not the arithmetic */
+/*          A bool flag specifying whether or not the arithmetic */
 /*          system is thought to comply with the IEEE standard. */
 
 /*  EMAX    (output) INTEGER */

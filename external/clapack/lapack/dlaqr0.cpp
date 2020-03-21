@@ -9,11 +9,11 @@ static integer c_n1 = -1;
 static integer c__12 = 12;
 static integer c__14 = 14;
 static integer c__16 = 16;
-static logical c_false = FALSE_;
+static bool c_false = FALSE_;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
-/* Subroutine */ int dlaqr0_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlaqr0_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, double *work, integer *lwork, integer *info)
@@ -36,11 +36,11 @@ static integer c__3 = 3;
     integer ktop;
     double zdum[1]	/* was [1][1] */;
     integer kacc22;
-    logical nwinc;
+    bool nwinc;
     integer itmax, nsmax, nwmax, kwtop;
     integer nibble;
     char jbcmpz[2];
-    logical sorted;
+    bool sorted;
     integer lwkopt;
 
 

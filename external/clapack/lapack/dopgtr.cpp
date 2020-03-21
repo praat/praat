@@ -11,7 +11,7 @@
     /* Local variables */
     integer i__, j, ij;
     integer iinfo;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

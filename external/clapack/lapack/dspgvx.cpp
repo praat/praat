@@ -17,8 +17,8 @@ static integer c__1 = 1;
     /* Local variables */
     integer j;
     char trans[1];
-    logical upper;
-	logical wantz, alleig, indeig, valeig;
+    bool upper;
+	bool wantz, alleig, indeig, valeig;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

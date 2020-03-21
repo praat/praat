@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dtgexc_(logical *wantq, logical *wantz, integer *n, 
+/* Subroutine */ int dtgexc_(bool *wantq, bool *wantz, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, double *
 	q, integer *ldq, double *z__, integer *ldz, integer *ifst, 
 	integer *ilst, double *work, integer *lwork, integer *info)
@@ -18,7 +18,7 @@ static integer c__2 = 2;
     /* Local variables */
     integer nbf, nbl, here, lwmin;
 	integer nbnext;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

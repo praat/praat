@@ -32,7 +32,7 @@ static double c_b82 = 0.;
     integer ldwork;
     integer minwrk, maxwrk;
     double smlnum;
-    logical lquery;
+    bool lquery;
     integer smlsiz;
 
 

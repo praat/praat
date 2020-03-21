@@ -23,7 +23,7 @@ static double c_b17 = 1.;
     integer lopt;
     double sigma;
     integer iinfo, lwmin, liopt;
-    logical lower, wantz;
+    bool lower, wantz;
     integer indwk2, llwrk2;
     integer iscale;
     double safmin;
@@ -32,7 +32,7 @@ static double c_b17 = 1.;
     integer indwrk, liwmin;
     integer llwork;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

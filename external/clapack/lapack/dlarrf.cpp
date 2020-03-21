@@ -24,13 +24,13 @@ static integer c__1 = 1;
     integer ktry;
     double fail2, avgap, ldmax, rdmax;
     integer shift;
-    logical dorrr1;
+    bool dorrr1;
     double ldelta;
-    logical nofail;
+    bool nofail;
     double mingap, lsigma, rdelta;
-    logical forcer;
+    bool forcer;
     double rsigma, clwdth;
-    logical sawnan1, sawnan2, tryrrr1;
+    bool sawnan1, sawnan2, tryrrr1;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

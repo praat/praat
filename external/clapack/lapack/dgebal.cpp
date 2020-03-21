@@ -18,7 +18,7 @@ static integer c__1 = 1;
     double r__, s, ca, ra;
     integer ica, ira, iexc;
 	double sfmin1, sfmin2, sfmax1, sfmax2;
-    logical noconv;
+    bool noconv;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

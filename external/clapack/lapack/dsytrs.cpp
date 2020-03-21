@@ -22,7 +22,7 @@ static double c_b19 = 1.;
     double akm1, bkm1;
     double akm1k;
     double denom;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

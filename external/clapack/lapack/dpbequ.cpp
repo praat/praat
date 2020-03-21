@@ -12,7 +12,7 @@
     /* Local variables */
     integer i__, j;
     double smin;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

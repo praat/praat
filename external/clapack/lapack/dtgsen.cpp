@@ -7,8 +7,8 @@ static integer c__1 = 1;
 static integer c__2 = 2;
 static double c_b28 = 1.;
 
-/* Subroutine */ int dtgsen_(integer *ijob, logical *wantq, logical *wantz, 
-	logical *select, integer *n, double *a, integer *lda, double *
+/* Subroutine */ int dtgsen_(integer *ijob, bool *wantq, bool *wantz, 
+	bool *select, integer *n, double *a, integer *lda, double *
 	b, integer *ldb, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
 	integer *m, double *pl, double *pr, double *dif, 
@@ -24,19 +24,19 @@ static double c_b28 = 1.;
     integer i__, k, n1, n2, kk, ks, mn2, ijb;
     double eps;
     integer kase;
-    logical pair;
+    bool pair;
     integer ierr;
     double dsum;
-    logical swap;
+    bool swap;
     integer isave[3];
-    logical wantd;
+    bool wantd;
     integer lwmin;
-    logical wantp;
-    logical wantd1, wantd2;
+    bool wantp;
+    bool wantd1, wantd2;
     double dscale, rdscal;
     integer liwmin;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1.1) -- */

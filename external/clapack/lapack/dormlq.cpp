@@ -22,13 +22,13 @@ static integer c__65 = 65;
     integer i__;
     double t[4160]	/* was [65][64] */;
     integer i1, i2, i3, ib, ic, jc, nb, mi, ni, nq, nw, iws;
-    logical left;
+    bool left;
     integer nbmin, iinfo;
-    logical notran;
+    bool notran;
     integer ldwork;
     char transt[1];
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

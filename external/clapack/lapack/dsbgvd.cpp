@@ -18,10 +18,10 @@ static double c_b13 = 0.;
     integer inde;
     char vect[1];
     integer iinfo, lwmin;
-    logical upper, wantz;
+    bool upper, wantz;
     integer indwk2, llwrk2;
     integer indwrk, liwmin;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

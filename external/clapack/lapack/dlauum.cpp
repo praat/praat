@@ -15,7 +15,7 @@ static double c_b15 = 1.;
 
     /* Local variables */
     integer i__, ib, nb;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

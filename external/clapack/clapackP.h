@@ -18,9 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-logical disnan_ (double *din);
+bool disnan_ (double *din);
 
-logical dlaisnan_ (double *din1, double *din2);
+bool dlaisnan_ (double *din1, double *din2);
 
 integer dlaneg_ (integer *n, double *d__, double *lld, double *
 	sigma, double *pivmin, integer *r__);
@@ -64,9 +64,9 @@ double dnrm2_ (integer *n, double *x, integer *incx);
 
 double slamch_ (const char *cmach);
 
-int dlamc1_ (integer *beta, integer *t, logical *rnd, logical *ieee1);
+int dlamc1_ (integer *beta, integer *t, bool *rnd, bool *ieee1);
 
-int dlamc2_ (integer *beta, integer *t, logical *rnd,
+int dlamc2_ (integer *beta, integer *t, bool *rnd,
 	double *eps, integer *emin, double *rmin, integer *emax, double *rmax);
 
 double dlamc3_ (double *a, double *b);
@@ -74,7 +74,7 @@ double dlamc3_ (double *a, double *b);
 int dlamc4_ (integer *emin, double *start, integer *base);
 
 int dlamc5_ (integer *beta, integer *p, integer *emin,
-	logical *ieee, integer *emax, double *rmax);
+	bool *ieee, integer *emax, double *rmax);
 
 //integer icmax1_ (integer *n, complex *cx, integer *incx);
 

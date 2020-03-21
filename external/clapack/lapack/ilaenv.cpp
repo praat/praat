@@ -18,9 +18,9 @@ integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n
     static integer i__;
     static char c1[1], c2[2], c3[3], c4[2];
     static integer ic, nb, iz, nx;
-    static logical cname;
+    static bool cname;
     static integer nbmin;
-    static logical sname;
+    static bool sname;
     static char subnam[6];
 
     ftnlen name_len = strlen (name__);

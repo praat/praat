@@ -15,8 +15,8 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, i1, i2, i3, mi, ni, nq;
     double aii;
-    logical left;
-    logical notran;
+    bool left;
+    bool notran;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

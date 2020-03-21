@@ -17,7 +17,7 @@ static integer c__1 = 1;
     integer j, kn;
     double ajj;
     integer kld;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

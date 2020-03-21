@@ -17,7 +17,7 @@ static integer c__1 = 1;
     integer ix, kase;
     double scale;
     integer isave[3];
-    logical upper;
+    bool upper;
     double scalel;
     double scaleu;
     double ainvnm;

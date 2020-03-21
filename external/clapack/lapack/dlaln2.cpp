@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "blaswrap.h"
 
-/* Subroutine */ int dlaln2_(logical *ltrans, integer *na, integer *nw, 
+/* Subroutine */ int dlaln2_(bool *ltrans, integer *na, integer *nw, 
 	double *smin, double *ca, double *a, integer *lda, 
 	double *d1, double *d2, double *b, integer *ldb, 
 	double *wr, double *wi, double *x, integer *ldx, 
@@ -9,8 +9,8 @@
 {
     /* Initialized data */
 
-    static logical zswap[4] = { FALSE_,FALSE_,TRUE_,TRUE_ };
-    static logical rswap[4] = { FALSE_,TRUE_,FALSE_,TRUE_ };
+    static bool zswap[4] = { FALSE_,FALSE_,TRUE_,TRUE_ };
+    static bool rswap[4] = { FALSE_,TRUE_,FALSE_,TRUE_ };
     static integer ipivot[16]	/* was [4][4] */ = { 1,2,3,4,2,1,4,3,3,4,1,2,
 	    4,3,2,1 };
 

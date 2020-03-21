@@ -22,11 +22,11 @@ static double c_b38 = 0.;
     /* Local variables */
     integer jc, nb, in, jr, nb1, nb2, nb3, ihi, ilo;
     double eps;
-    logical ilv;
+    bool ilv;
     double absb, anrm, bnrm;
     integer itau;
     double temp;
-    logical ilvl, ilvr;
+    bool ilvl, ilvr;
     integer lopt;
     double anrm1, anrm2, bnrm1, bnrm2, absai, scale, absar, sbeta;
     integer ileft, iinfo, icols, iwork, irows;
@@ -35,14 +35,14 @@ static double c_b38 = 0.;
     double safmin;
     double safmax;
     char chtemp[1];
-    logical ldumma[1];
+    bool ldumma[1];
     integer ijobvl, iright;
-    logical ilimit;
+    bool ilimit;
     integer ijobvr;
     double onepls;
     integer lwkmin;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

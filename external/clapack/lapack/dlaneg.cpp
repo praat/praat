@@ -16,7 +16,7 @@ integer dlaneg_(integer *n, double *d__, double *lld, double *
     double bsav, gamma, dplus;
  
     integer negcnt;
-    logical sawnan;
+    bool sawnan;
     double dminus;
 
 

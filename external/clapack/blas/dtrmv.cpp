@@ -12,7 +12,7 @@
     double temp;
  
  
-    logical nounit;
+    bool nounit;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

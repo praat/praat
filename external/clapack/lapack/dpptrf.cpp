@@ -16,7 +16,7 @@ static double c_b16 = -1.;
     /* Local variables */
     integer j, jc, jj;
     double ajj;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -20,9 +20,9 @@ static integer c__1 = 1;
     integer kase1;
     double scale;
     integer isave[3];
-    logical lnoti;
+    bool lnoti;
     double ainvnm;
-    logical onenrm;
+    bool onenrm;
     char normin[1];
     double smlnum;
 

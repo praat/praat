@@ -22,9 +22,9 @@
     integer iter;
     double temp, prew, temp1, dltlb, dltub, midpt;
     integer niter;
-    logical swtch;
-    logical swtch3;
-    logical orgati;
+    bool swtch;
+    bool swtch3;
+    bool orgati;
     double erretm, rhoinv;
 
 

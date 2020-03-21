@@ -15,7 +15,7 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer nbf, nbl, here;
-    logical wantq;
+    bool wantq;
     integer nbnext;
 
 

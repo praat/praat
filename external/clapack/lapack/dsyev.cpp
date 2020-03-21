@@ -25,7 +25,7 @@ static double c_b17 = 1.;
     double rmin, rmax;
     double sigma;
     integer iinfo;
-    logical lower, wantz;
+    bool lower, wantz;
     integer iscale;
     double safmin;
     double bignum;
@@ -34,7 +34,7 @@ static double c_b17 = 1.;
     integer llwork;
     double smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

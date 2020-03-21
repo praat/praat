@@ -18,13 +18,13 @@ static integer c__1 = 1;
     double scale;
     integer isave[3];
     double anorm;
-    logical upper;
+    bool upper;
     double xnorm;
     double ainvnm;
-    logical onenrm;
+    bool onenrm;
     char normin[1];
     double smlnum;
-    logical nounit;
+    bool nounit;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

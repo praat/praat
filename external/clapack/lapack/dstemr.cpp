@@ -9,7 +9,7 @@ static double c_b18 = .001;
 /* Subroutine */ int dstemr_(char *jobz, char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, integer *m, double *w, double *z__, integer *ldz, 
-	 integer *nzc, integer *isuppz, logical *tryrac, double *work, 
+	 integer *nzc, integer *isuppz, bool *tryrac, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
     /* System generated locals */
@@ -35,12 +35,12 @@ static double c_b18 = .001;
     integer indgp;
     integer iinfo, iindw, ilast;
     integer lwmin;
-    logical wantz;
-	logical alleig;
+    bool wantz;
+	bool alleig;
     integer ibegin;
-    logical indeig;
+    bool indeig;
     integer iindbl;
-    logical valeig;
+    bool valeig;
     integer wbegin;
     double safmin;
     double bignum;
@@ -50,7 +50,7 @@ static double c_b18 = .001;
     double pivmin;
     integer nsplit;
     double smlnum;
-    logical lquery, zquery;
+    bool lquery, zquery;
 
 
 /*  -- LAPACK computational routine (version 3.1) -- */

@@ -13,7 +13,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     integer i__;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -21,7 +21,7 @@ static integer c__2 = 2;
     integer minws;
     integer topbmn, sminmn;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -11,7 +11,7 @@ static integer c_n1 = -1;
 	sense, integer *n, double *a, integer *lda, integer *sdim, 
 	double *wr, double *wi, double *vs, integer *ldvs, 
 	double *rconde, double *rcondv, double *work, integer *
-	lwork, integer *iwork, integer *liwork, logical *bwork, integer *info)
+	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, vs_dim1, vs_offset, i__1, i__2, i__3;
@@ -22,18 +22,18 @@ static integer c_n1 = -1;
     integer ibal;
     double anrm;
     integer ierr, itau, iwrk, lwrk, inxt, icond, ieval;
-    logical cursl;
+    bool cursl;
     integer liwrk;
-    logical lst2sl, scalea;
+    bool lst2sl, scalea;
     double cscale;
     double bignum;
-    logical wantsb;
-    logical wantse, lastsl;
+    bool wantsb;
+    bool wantse, lastsl;
     integer minwrk, maxwrk;
-    logical wantsn;
+    bool wantsn;
     double smlnum;
     integer hswork;
-    logical wantst, lquery, wantsv, wantvs;
+    bool wantst, lquery, wantsv, wantvs;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

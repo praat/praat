@@ -41,14 +41,14 @@ static integer c__2 = 2;
     integer iseed[4];
     double avgap, sigma;
     integer iinfo;
-    logical norep;
+    bool norep;
     integer ibegin;
-    logical forceb;
+    bool forceb;
     integer irange;
     double sgndef;
     integer wbegin;
     double safmin, spdiam;
-    logical usedqd;
+    bool usedqd;
     double clwdth, isleft;
     double isrght, bsrtol, dpivot;
 

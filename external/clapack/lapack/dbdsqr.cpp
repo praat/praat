@@ -37,9 +37,9 @@ static double c_b72 = -1.;
     double shift, sigmn, oldsn;
     integer maxit;
     double sminl, sigmx;
-    logical lower;
+    bool lower;
     double sminoa, thresh;
-    logical rotate;
+    bool rotate;
     double tolmul;
 
 

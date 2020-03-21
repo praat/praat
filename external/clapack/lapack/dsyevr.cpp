@@ -33,20 +33,20 @@ static integer c_n1 = -1;
     char order[1];
     integer indwk;
     integer lwmin;
-    logical lower, wantz;
-    logical alleig, indeig;
+    bool lower, wantz;
+    bool alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
-    logical valeig;
+    bool valeig;
     double safmin;
     double abstll, bignum;
     integer indtau, indisp;
     integer indiwo, indwkn;
     integer liwmin;
-    logical tryrac;
+    bool tryrac;
     integer llwrkn, llwork, nsplit;
     double smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

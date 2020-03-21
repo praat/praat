@@ -14,9 +14,9 @@ static integer c__1 = 1;
     /* Local variables */
     integer j, jc, jj;
     double ajj;
-    logical upper;
+    bool upper;
     integer jclast;
-    logical nounit;
+    bool nounit;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

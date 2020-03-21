@@ -16,7 +16,7 @@ static integer c_n1 = -1;
     /* Local variables */
     integer nb;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

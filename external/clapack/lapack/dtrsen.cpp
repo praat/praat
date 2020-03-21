@@ -5,7 +5,7 @@
 
 static integer c_n1 = -1;
 
-/* Subroutine */ int dtrsen_(const char *job, const char *compq, logical *select, integer 
+/* Subroutine */ int dtrsen_(const char *job, const char *compq, bool *select, integer 
 	*n, double *t, integer *ldt, double *q, integer *ldq, 
 	double *wr, double *wi, integer *m, double *s, double 
 	*sep, double *work, integer *lwork, integer *iwork, integer *
@@ -19,16 +19,16 @@ static integer c_n1 = -1;
     integer k, n1, n2, kk, nn, ks;
     double est;
     integer kase;
-    logical pair;
+    bool pair;
     integer ierr;
-    logical swap;
+    bool swap;
     double scale;
     integer isave[3], lwmin;
-    logical wantq, wants;
+    bool wantq, wants;
     double rnorm;
-    logical wantbh;
+    bool wantbh;
     integer liwmin;
-    logical wantsp, lquery;
+    bool wantsp, lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

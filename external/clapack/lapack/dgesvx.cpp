@@ -18,16 +18,16 @@
     double amax;
     char norm[1];
     double rcmin, rcmax, anorm;
-    logical equil;
+    bool equil;
     double colcnd;
-    logical nofact;
+    bool nofact;
     double bignum;
     integer infequ;
-    logical colequ;
+    bool colequ;
     double rowcnd;
-    logical notran;
+    bool notran;
     double smlnum;
-    logical rowequ;
+    bool rowequ;
     double rpvgrw;
 
 

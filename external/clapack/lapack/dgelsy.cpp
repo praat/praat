@@ -31,7 +31,7 @@ static double c_b54 = 1.;
     integer lwkmin;
     double sminpr, smaxpr, smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

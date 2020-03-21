@@ -19,7 +19,7 @@ static double c_b52 = .5;
 
     /* Local variables */
     integer k, kb, nb;
-    logical upper;
+    bool upper;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

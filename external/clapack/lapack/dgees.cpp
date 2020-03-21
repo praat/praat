@@ -10,7 +10,7 @@ static integer c_n1 = -1;
 /* Subroutine */ int dgees_(char *jobvs, char *sort, L_fp select, integer *n, 
 	double *a, integer *lda, integer *sdim, double *wr, 
 	double *wi, double *vs, integer *ldvs, double *work, 
-	integer *lwork, logical *bwork, integer *info)
+	integer *lwork, bool *bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, vs_dim1, vs_offset, i__1, i__2, i__3;
@@ -26,15 +26,15 @@ static integer c_n1 = -1;
     integer ibal;
     double anrm;
     integer idum[1], ierr, itau, iwrk, inxt, icond, ieval;
-    logical cursl;
-    logical lst2sl, scalea;
+    bool cursl;
+    bool lst2sl, scalea;
     double cscale;
     double bignum;
-    logical lastsl;
+    bool lastsl;
     integer minwrk, maxwrk;
     double smlnum;
     integer hswork;
-    logical wantst, lquery, wantvs;
+    bool wantst, lquery, wantvs;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

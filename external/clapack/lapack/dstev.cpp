@@ -18,7 +18,7 @@ static integer c__1 = 1;
     integer imax;
     double rmin, rmax, tnrm;
     double sigma;
-    logical wantz;
+    bool wantz;
     integer iscale;
     double safmin;
     double bignum;

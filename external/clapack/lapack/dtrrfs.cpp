@@ -24,11 +24,11 @@ static double c_b19 = -1.;
     integer kase;
     double safe1, safe2;
     integer isave[3];
-    logical upper;
+    bool upper;
     double safmin;
-    logical notran;
+    bool notran;
     char transt[1];
-    logical nounit;
+    bool nounit;
     double lstres;
 
 

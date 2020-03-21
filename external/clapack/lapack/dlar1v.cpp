@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlar1v_(integer *n, integer *b1, integer *bn, double 
 	*lambda, double *d__, double *l, double *ld, double *
-	lld, double *pivmin, double *gaptol, double *z__, logical 
+	lld, double *pivmin, double *gaptol, double *z__, bool 
 	*wantnc, integer *negcnt, double *ztz, double *mingma, 
 	integer *r__, integer *isuppz, double *nrminv, double *resid, 
 	double *rqcorr, double *work)
@@ -26,7 +26,7 @@
  
     integer indlpl, indumn;
     double dminus;
-    logical sawnan1, sawnan2;
+    bool sawnan1, sawnan2;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

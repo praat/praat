@@ -20,7 +20,7 @@ static integer c__1 = 1;
 	    kdm1, inca, jend, lend, jinc, incx, last;
     double temp;
     integer j1end, j1inc, iqend;
-    logical initq, wantq, upper;
+    bool initq, wantq, upper;
     integer iqaend;
 
 /*  -- LAPACK routine (version 3.1) -- */

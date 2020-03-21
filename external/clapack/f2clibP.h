@@ -138,9 +138,9 @@ static inline integer i_nint (float *x) {
 	return (integer)(*x >= 0.0 ? floor(*x + 0.5) : -floor(0.5 - *x));
 }
 
-logical lsame_(const char *ca, const char *cb);
+bool lsame_(const char *ca, const char *cb);
 
-logical lsamen_(integer *n, const char *ca, const char *cb);
+bool lsamen_(integer *n, const char *ca, const char *cb);
 
 static inline double pow_dd (double *ap, double *bp) {
 	return pow (*ap, *bp);

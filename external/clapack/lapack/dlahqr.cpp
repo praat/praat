@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlahqr_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlahqr_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, integer *info)

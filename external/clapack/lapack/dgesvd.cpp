@@ -29,12 +29,12 @@ static double c_b443 = 1.;
     double anrm;
     integer ierr, itau, ncvt, nrvt;
     integer chunk, minmn, wrkbl, itaup, itauq, mnthr, iwork;
-    logical wntua, wntva, wntun, wntuo, wntvn, wntvo, wntus, wntvs;
+    bool wntua, wntva, wntun, wntuo, wntvn, wntvo, wntus, wntvs;
     integer bdspac;
     double bignum;
     integer ldwrkr, minwrk, ldwrku, maxwrk;
     double smlnum;
-    logical lquery, wntuas, wntvas;
+    bool lquery, wntuas, wntvas;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

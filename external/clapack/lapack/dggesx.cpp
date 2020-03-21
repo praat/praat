@@ -15,7 +15,7 @@ static double c_b43 = 1.;
 	double *alphai, double *beta, double *vsl, integer *ldvsl, 
 	 double *vsr, integer *ldvsr, double *rconde, double *
 	rcondv, double *work, integer *lwork, integer *iwork, integer *
-	liwork, logical *bwork, integer *info)
+	liwork, bool *bwork, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vsl_dim1, vsl_offset, 
@@ -31,23 +31,23 @@ static double c_b43 = 1.;
     double anrm, bnrm;
     integer ierr, itau, iwrk, lwrk;
     integer ileft, icols;
-    logical cursl, ilvsl, ilvsr;
+    bool cursl, ilvsl, ilvsr;
     integer irows;
-    logical lst2sl;
-    logical ilascl, ilbscl;
+    bool lst2sl;
+    bool ilascl, ilbscl;
     double safmin;
     double safmax;
     double bignum;
 	integer ijobvl, iright;
 	integer ijobvr;
-    logical wantsb;
+    bool wantsb;
     integer liwmin;
-    logical wantse, lastsl;
+    bool wantse, lastsl;
     double anrmto, bnrmto;
     integer minwrk, maxwrk;
-    logical wantsn;
+    bool wantsn;
     double smlnum;
-    logical wantst, lquery, wantsv;
+    bool wantst, lquery, wantsv;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

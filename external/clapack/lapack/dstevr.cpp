@@ -24,25 +24,25 @@ static integer c__4 = 4;
     double eps, vll, vuu, tmp1;
     integer imax;
     double rmin, rmax;
-    logical test;
+    bool test;
     double tnrm;
     integer itmp1;
     double sigma;
     char order[1];
     integer lwmin;
-    logical wantz;
-    logical alleig, indeig;
+    bool wantz;
+    bool alleig, indeig;
     integer iscale, ieeeok, indibl, indifl;
-    logical valeig;
+    bool valeig;
     double safmin;
     double bignum;
     integer indisp;
     integer indiwo;
     integer liwmin;
-    logical tryrac;
+    bool tryrac;
     integer nsplit;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

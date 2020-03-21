@@ -23,15 +23,15 @@ static integer c_n1 = -1;
     double anrm;
     integer imax;
     double rmin, rmax;
-    logical test;
+    bool test;
     integer itmp1, indee;
     double sigma;
     integer iinfo;
     char order[1];
-    logical lower, wantz;
-    logical alleig, indeig;
+    bool lower, wantz;
+    bool alleig, indeig;
     integer iscale, indibl;
-    logical valeig;
+    bool valeig;
     double safmin;
     double abstll, bignum;
     integer indtau, indisp;
@@ -40,7 +40,7 @@ static integer c_n1 = -1;
     integer llwrkn, llwork, nsplit;
     double smlnum;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

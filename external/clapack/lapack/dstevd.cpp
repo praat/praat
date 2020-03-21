@@ -17,13 +17,13 @@ static integer c__1 = 1;
     double eps, rmin, rmax, tnrm;
     double sigma;
     integer lwmin;
-    logical wantz;
+    bool wantz;
     integer iscale;
 	double safmin;
     double bignum;
     integer liwmin;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

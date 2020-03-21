@@ -18,7 +18,7 @@ static integer c__1 = 1;
 
     /* Local variables */
     double c__, s;
-    logical ilq, ilz;
+    bool ilq, ilz;
     integer jcol;
     double temp;
     integer jrow;

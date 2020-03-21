@@ -20,8 +20,8 @@ static double c_b22 = 1.;
 
     /* Local variables */
     integer i__, j;
-    logical wantq, wantu, wantv;
-	logical forwrd;
+    bool wantq, wantu, wantv;
+	bool forwrd;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

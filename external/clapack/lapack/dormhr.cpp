@@ -19,10 +19,10 @@ static integer c__2 = 2;
 
     /* Local variables */
     integer i1, i2, nb, mi, nh, ni, nq, nw;
-    logical left;
+    bool left;
     integer iinfo;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

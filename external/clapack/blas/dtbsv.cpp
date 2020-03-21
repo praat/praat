@@ -13,7 +13,7 @@
  
     integer kplus1;
  
-    logical nounit;
+    bool nounit;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

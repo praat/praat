@@ -16,7 +16,7 @@ static integer c_n1 = -1;
     /* Local variables */
     integer nb, nb1, nb2, nb3, lopt;
     integer lwkopt;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

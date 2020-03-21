@@ -5,12 +5,12 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static logical c_true = TRUE_;
+static bool c_true = TRUE_;
 static double c_b15 = 0.;
 static double c_b16 = 1.;
 static integer c__12 = 12;
 
-/* Subroutine */ int dlaqr3_(logical *wantt, logical *wantz, integer *n, 
+/* Subroutine */ int dlaqr3_(bool *wantt, bool *wantz, integer *n, 
 	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
 	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
 	integer *ns, integer *nd, double *sr, double *si, double *
@@ -35,11 +35,11 @@ static integer c__12 = 12;
     integer lwk1, lwk2, lwk3;
     double beta;
     integer kend, kcol, info, nmin, ifst, ilst, ltop, krow;
-    logical bulge;
+    bool bulge;
     integer infqr, kwtop;
     double safmin;
     double safmax;
-	logical sorted;
+	bool sorted;
     double smlnum;
     integer lwkopt;
 

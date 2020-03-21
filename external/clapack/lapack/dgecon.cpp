@@ -21,7 +21,7 @@ static integer c__1 = 1;
     double scale;
     integer isave[3];
     double ainvnm;
-    logical onenrm;
+    bool onenrm;
     char normin[1];
     double smlnum;
 

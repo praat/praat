@@ -19,7 +19,7 @@ static integer c__1 = 1;
     double anrm, rmin, rmax;
     double sigma;
     integer iinfo, lwmin;
-    logical wantz;
+    bool wantz;
     integer iscale;
     double safmin;
     double bignum;
@@ -27,7 +27,7 @@ static integer c__1 = 1;
     integer indwrk, liwmin;
     integer llwork;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

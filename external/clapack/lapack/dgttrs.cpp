@@ -16,7 +16,7 @@ static integer c_n1 = -1;
     /* Local variables */
     integer j, jb, nb;
     integer itrans;
-    logical notran;
+    bool notran;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

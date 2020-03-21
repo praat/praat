@@ -29,7 +29,7 @@ static double c_b56 = 0.;
     integer ierr, zdim, ipiv[8], jpiv[8];
     double alpha;
     double scaloc;
-    logical notran;
+    bool notran;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1.1) -- */

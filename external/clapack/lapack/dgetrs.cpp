@@ -15,7 +15,7 @@ static integer c_n1 = -1;
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 
     /* Local variables */
-    logical notran;
+    bool notran;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

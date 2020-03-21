@@ -15,7 +15,7 @@ double dlantr_(const char *norm, const char *uplo, const char *diag, integer *m,
     /* Local variables */
     integer i__, j;
     double sum, scale;
-    logical udiag;
+    bool udiag;
     double value;
 
 

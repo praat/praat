@@ -11,7 +11,7 @@
     integer z_dim1, z_offset;
 
     /* Local variables */
-    logical tryrac;
+    bool tryrac;
 
 
 /*  -- LAPACK computational routine (version 3.1) -- */

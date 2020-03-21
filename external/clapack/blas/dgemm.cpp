@@ -12,7 +12,7 @@
 
     /* Local variables */
     integer i__, j, l, info;
-    logical nota, notb;
+    bool nota, notb;
     double temp;
     integer nrowa, nrowb;
 

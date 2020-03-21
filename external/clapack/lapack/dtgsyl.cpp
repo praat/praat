@@ -31,9 +31,9 @@ static double c_b52 = 1.;
     double scale2;
     double dscale, scaloc;
     integer iround;
-    logical notran;
+    bool notran;
     integer isolve;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK routine (version 3.1) -- */

@@ -17,7 +17,7 @@ static double c_b14 = -1.;
     integer i__;
     double taui;
     double alpha;
-    logical upper;
+    bool upper;
 
 /*  -- LAPACK routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

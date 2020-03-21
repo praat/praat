@@ -22,14 +22,14 @@ static integer c__1 = 1;
     double anrm, rmin, rmax;
     double sigma;
     integer iinfo, lwmin;
-    logical lower, wantz;
+    bool lower, wantz;
     integer indwk2, llwrk2;
     integer iscale;
     double safmin;
     double bignum;
 	integer indwrk, liwmin;
     double smlnum;
-    logical lquery;
+    bool lquery;
 
 
 /*  -- LAPACK driver routine (version 3.1) -- */

@@ -4,7 +4,7 @@
 /* Subroutine */ int dlasq3_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *sigma, double *desig, 
 	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
-	logical *ieee)
+	bool *ieee)
 {
     /* Initialized data */
 

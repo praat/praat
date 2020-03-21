@@ -28,7 +28,7 @@ static integer c__1 = 1;
     integer finish;
     integer liwmin, icompz;
 	double orgnrm;
-    logical lquery;
+    bool lquery;
     integer smlsiz, storez, strtrw;
 
 

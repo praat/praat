@@ -24,9 +24,9 @@ static double c_b43 = -1.;
     integer i__, j;
     double a1, a2, a3, b1, b2, b3, csq, csu, csv, snq, rwk, snu, snv;
     double gamma;
-    logical initq, initu, initv, wantq, upper;
+    bool initq, initu, initv, wantq, upper;
     double error, ssmin;
-    logical wantu, wantv;
+    bool wantu, wantv;
     integer kcycle;
 
 /*  -- LAPACK routine (version 3.1) -- */

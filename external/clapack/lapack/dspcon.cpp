@@ -15,7 +15,7 @@ static integer c__1 = 1;
     /* Local variables */
     integer i__, ip, kase;
     integer isave[3];
-    logical upper;
+    bool upper;
     double ainvnm;
 
 /*  -- LAPACK routine (version 3.1) -- */

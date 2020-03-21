@@ -14,7 +14,7 @@ typedef float real;
 //typedef double doublereal;
 //typedef struct { real r, i; } complex;
 //typedef struct { double r, i; } doublecomplex;
-typedef integer logical;
+//typedef bool logical;
 
 //#ifdef INTEGER_STAR_8	/* Adjust for integer*8. */
 //typedef long long longint;		/* system-dependent */
@@ -60,7 +60,7 @@ typedef integer ftnlen;
 //typedef double (*D_fp)(...), (*E_fp)(...);
 //typedef /* Complex */ void (*C_fp)(...);
 //typedef /* Double Complex */ void (*Z_fp)(...);
-typedef logical (*L_fp)(...);
+typedef bool (*L_fp)(...);
 //typedef shortlogical (*K_fp)(...);
 //typedef /* Character */ void (*H_fp)(...);
 //typedef /* Subroutine */ int (*S_fp)(...);
