@@ -2,7 +2,7 @@
 #define _melder_time_h_
 /* melder_time.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2016,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ double Melder_stopwatch ();
 
 void Melder_sleep (double duration);
 
-double Melder_clock ();   // seconds since 1969
+double Melder_clock ();   // seconds since 1969 or system start-up
 
 autostring32 STRdate ();
 

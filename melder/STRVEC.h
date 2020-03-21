@@ -24,7 +24,7 @@ inline STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toIndex) {
 	integer rangeSize = toIndex - offsetIndex;
 	if (rangeSize <= 0)
 		return STRVEC();
-	return STRVEC (& strvec [fromIndex], toIndex - offsetIndex, false);
+	return STRVEC (& strvec [fromIndex], toIndex - offsetIndex);
 }
 
 inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer toIndex) {
@@ -34,7 +34,7 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	integer rangeSize = toIndex - offsetIndex;
 	if (rangeSize <= 0)
 		return constSTRVEC();
-	return constSTRVEC (& strvec [fromIndex], rangeSize, false);
+	return constSTRVEC (& strvec [fromIndex], rangeSize);
 }
 
 void STRVECsort_inplace (STRVEC const& a);
