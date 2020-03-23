@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2020 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2063,7 +2063,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
 
 		double optimalCeiling = minFreq;
-		integer i_best = 0;
+		integer istep_best = 0;
 		
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
@@ -2075,8 +2075,8 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
-		for (integer i = 1; i <= numberOfFrequencySteps; i ++) {
-			const double currentCeiling = minFreq + (i - 1) * df;
+		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
+			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_burg (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
@@ -2087,10 +2087,12 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
 				optimalCeiling = currentCeiling;
-				i_best = i;
+				istep_best = istep;
 			}
 		}
-		autoFormant thee = Formant_extractPart (formants.at [i_best], startTime, endTime);
+		Melder_require (istep_best > 0,
+			U"No optimal ceiling found.");
+		autoFormant thee = Formant_extractPart (formants.at [istep_best], startTime, endTime);
 		Melder_progressOn ();
 		if (out_optimalCeiling)
 			*out_optimalCeiling = optimalCeiling;
@@ -2120,7 +2122,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		else
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
 
-		integer i_best = 0;
+		integer istep_best = 0;
 		double optimalCeiling = minFreq;
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
@@ -2132,8 +2134,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
-		for (integer i = 1; i <= numberOfFrequencySteps; i ++) {
-			const double currentCeiling = minFreq + (i - 1) * df;
+		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
+			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
@@ -2144,10 +2146,12 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
 				optimalCeiling = currentCeiling;
-				i_best = i;
+				istep_best = istep;
 			}
 		}
-		autoFormant thee = Formant_extractPart (formants.at [i_best], startTime, endTime);
+		Melder_require (istep_best > 0,
+			U"No optimal ceiling found.");
+		autoFormant thee = Formant_extractPart (formants.at [istep_best], startTime, endTime);
 		Melder_progressOn ();
 		if (out_optimalCeiling)
 			*out_optimalCeiling = optimalCeiling;
