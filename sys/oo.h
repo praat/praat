@@ -43,6 +43,7 @@
 #define oo_BYTE(x)  oo_SIMPLE (signed char, i8, x)
 #define oo_INT(x)  oo_SIMPLE (int, i16, x)
 #define oo_INTEGER(x)  oo_SIMPLE (integer, integer32BE, x)
+#define oo_INTEGER16(x)  oo_SIMPLE (integer, integer16BE, x)
 #define oo_UBYTE(x)  oo_SIMPLE (unsigned char, u8, x)
 #define oo_UINT(x)  oo_SIMPLE (unsigned int, u16, x)
 #define oo_UINTEGER(x)  oo_SIMPLE (uinteger, u32, x)

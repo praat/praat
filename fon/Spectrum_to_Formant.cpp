@@ -1,6 +1,6 @@
 /* Spectrum_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2015-2017,2019 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2017,2019,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 				if (nform == maxnFormants)
 					break;
 			}
-		thy frames [1]. nFormants = nform;
+		thy frames [1]. numberOfFormants = nform;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");

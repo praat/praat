@@ -542,18 +542,23 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 			Melder_throw (U"The sampling frequencies of the two sounds have to be equal.");
 		integer n1 = my nx, n2 = thy nx;
 		integer n3 = n1 + n2 - 1, nfft = 1;
-		while (nfft < n3) nfft *= 2;
+		while (nfft < n3)
+			nfft *= 2;
 		autoVEC data1 = newVECraw (nfft);
 		autoVEC data2 = newVECraw (nfft);
-		integer numberOfChannels = my ny > thy ny ? my ny : thy ny;
+		integer numberOfChannels = std::max (my ny, thy ny);
 		autoSound him = Sound_create (numberOfChannels, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			double *a = & my z [my ny == 1 ? 1 : channel] [0];
-			for (integer i = n1; i > 0; i --) data1 [i] = a [i];
-			for (integer i = n1 + 1; i <= nfft; i ++) data1 [i] = 0.0;
+			for (integer i = n1; i > 0; i --)
+				data1 [i] = a [i];
+			for (integer i = n1 + 1; i <= nfft; i ++)
+				data1 [i] = 0.0;
 			a = & thy z [thy ny == 1 ? 1 : channel] [0];
-			for (integer i = n2; i > 0; i --) data2 [i] = a [i];
-			for (integer i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
+			for (integer i = n2; i > 0; i --)
+				data2 [i] = a [i];
+			for (integer i = n2 + 1; i <= nfft; i ++)
+				data2 [i] = 0.0;
 			NUMrealft (data1.get(), 1);
 			NUMrealft (data2.get(), 1);
 			data2 [1] *= data1 [1];
@@ -574,10 +579,10 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 			} break;
 			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-					double *a = & his z [channel] [0];
-					double edge = n1 < n2 ? n1 : n2;
+					double * const a = & his z [channel] [0];
+					double const edge = std::min (n1, n2);
 					for (integer i = 1; i < edge; i ++) {
-						double factor = edge / i;
+						double const factor = edge / i;
 						a [i] *= factor;
 						a [n3 + 1 - i] *= factor;
 					}
@@ -620,18 +625,23 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 		integer numberOfChannels = my ny > thy ny ? my ny : thy ny;
 		integer n1 = my nx, n2 = thy nx;
 		integer n3 = n1 + n2 - 1, nfft = 1;
-		while (nfft < n3) nfft *= 2;
+		while (nfft < n3)
+			nfft *= 2;
 		autoVEC data1 = newVECraw (nfft);
 		autoVEC data2 = newVECraw (nfft);
 		double my_xlast = my x1 + (n1 - 1) * my dx;
 		autoSound him = Sound_create (numberOfChannels, thy xmin - my xmax, thy xmax - my xmin, n3, my dx, thy x1 - my_xlast);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			double *a = & my z [my ny == 1 ? 1 : channel] [0];
-			for (integer i = n1; i > 0; i --) data1 [i] = a [i];
-			for (integer i = n1 + 1; i <= nfft; i ++) data1 [i] = 0.0;
+			for (integer i = n1; i > 0; i --)
+				data1 [i] = a [i];
+			for (integer i = n1 + 1; i <= nfft; i ++)
+				data1 [i] = 0.0;
 			a = & thy z [thy ny == 1 ? 1 : channel] [0];
-			for (integer i = n2; i > 0; i --) data2 [i] = a [i];
-			for (integer i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
+			for (integer i = n2; i > 0; i --)
+				data2 [i] = a [i];
+			for (integer i = n2 + 1; i <= nfft; i ++)
+				data2 [i] = 0.0;
 			NUMrealft (data1.get(), 1);
 			NUMrealft (data2.get(), 1);
 			data2 [1] *= data1 [1];
@@ -654,10 +664,10 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 			} break;
 			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-					double *a = & his z [channel] [0];
-					double edge = n1 < n2 ? n1 : n2;
+					double * const a = & his z [channel] [0];
+					double const edge = std::min (n1, n2);
 					for (integer i = 1; i < edge; i ++) {
-						double factor = edge / i;
+						const double factor = edge / i;
 						a [i] *= factor;
 						a [n3 + 1 - i] *= factor;
 					}
@@ -815,8 +825,8 @@ void Sound_draw (Sound me, Graphics g,
 			}
 		} else {
 			/*
-			 * The default: draw as a curve.
-			 */
+				The default: draw as a curve.
+			*/
 			Graphics_function (g, & my z [channel] [0], ixmin, ixmax,
 					Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 		}
@@ -892,11 +902,15 @@ void Sound_setZero (Sound me, double tmin_in, double tmax_in, bool roundTimesToN
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		double tmin = tmin_in, tmax = tmax_in;
 		if (roundTimesToNearestZeroCrossing) {
-			if (tmin > my xmin) tmin = Sound_getNearestZeroCrossing (me, tmin_in, channel);
-			if (tmax < my xmax) tmax = Sound_getNearestZeroCrossing (me, tmax_in, channel);
+			if (tmin > my xmin)
+				tmin = Sound_getNearestZeroCrossing (me, tmin_in, channel);
+			if (tmax < my xmax)
+				tmax = Sound_getNearestZeroCrossing (me, tmax_in, channel);
 		}
-		if (isundef (tmin)) tmin = my xmin;
-		if (isundef (tmax)) tmax = my xmax;
+		if (isundef (tmin))
+			tmin = my xmin;
+		if (isundef (tmax))
+			tmax = my xmax;
 		integer imin, imax;
 		Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		for (integer i = imin; i <= imax; i ++)

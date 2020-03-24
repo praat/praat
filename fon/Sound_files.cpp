@@ -214,7 +214,7 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 			Melder_throw (U"Not a correct Kay file.");
 		int16 tmp1 = bingeti16LE (f);
 		int16 tmp2 = bingeti16LE (f);
-		integer numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
+		integer numberOfChannels = ( tmp1 == -1 || tmp2 == -1 ? 1 : 2 );
 		if (chunkSize == 44) {
 			int16 tmp3 = bingeti16LE (f);
 			if (tmp3 != -1) numberOfChannels ++;
@@ -239,11 +239,13 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 				if (feof ((FILE *) f))
 					Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
 				chunkSize = bingetu32LE (f);
-				if (chunkSize & 1) ++ chunkSize;
+				if (chunkSize & 1)
+					++ chunkSize;
 				Melder_casual (U"Chunk ",
 					data [0], U" ", data [1], U" ", data [2], U" ", data [3], U" ", chunkSize);
 				fseek (f, chunkSize, SEEK_CUR);
-				if (fread (data, 1, 4, f) < 4) readError ();
+				if (fread (data, 1, 4, f) < 4)
+					readError ();
 			}
 			chunkSize = bingetu32LE (f);
 			integer residual = chunkSize - numberOfSamples * 2;
@@ -251,9 +253,8 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 				Melder_throw (U"Incomplete SD chunk: attested size ", chunkSize, U" bytes,"
 					U" announced size ", numberOfSamples * 2, U" bytes. Please report to paul.boersma@uva.nl.");
 
-			for (integer i = 1; i <= numberOfSamples; i ++) {
+			for (integer i = 1; i <= numberOfSamples; i ++)
 				my z [ichan] [i] = (double) bingeti16LE (f) / 32768.0;
-			}
 			fseek (f, residual, SEEK_CUR);
 		}
 		//Melder_casual (ftell (f));
@@ -311,11 +312,15 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 		/* Sesam header. */
 			header [126] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
 			header [127] = my nx;   // number of samples
-		for (integer i = 1; i <= 128; i ++) binputi32LE (header [i], f);
-		for (integer i = 1; i <= my nx; i ++) binputi16LE (Melder_iround_tieDown (my z [1] [i] * 2048.0), f);
+		for (integer i = 1; i <= 128; i ++)
+			binputi32LE (header [i], f);
+		for (integer i = 1; i <= my nx; i ++)
+			binputi16LE (Melder_iround_tieDown (my z [1] [i] * 2048.0), f);
 		integer tail = 256 - my nx % 256;
-		if (tail == 256) tail = 0;
-		for (integer i = 1; i <= tail; i ++) binputi16LE (0, f);   // pad last block with zeroes
+		if (tail == 256)
+			tail = 0;
+		for (integer i = 1; i <= tail; i ++)
+			binputi16LE (0, f);   // pad last block with zeroes
 		f.close (file);
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to Sesam file ", file, U".");

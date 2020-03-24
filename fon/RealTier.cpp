@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,11 +313,13 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (me, tmin);
 		double fright = RealTier_getValueAtTime (me, tmax);
-		if (drawLines) Graphics_line (g, tmin, fleft, tmax, fright);
+		if (drawLines)
+			Graphics_line (g, tmin, fleft, tmax, fright);
 	} else for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
 		const double t = point -> number, f = point -> value;
-		if (drawSpeckles) Graphics_speckle (g, t, f);
+		if (drawSpeckles)
+			Graphics_speckle (g, t, f);
 		if (drawLines) {
 			if (i == 1)
 				Graphics_line (g, tmin, f, t, f);
@@ -339,7 +341,8 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 		Graphics_textBottom (g, true, my v_getUnitText (0, 0, 0));
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
-		if (quantity) Graphics_textLeft (g, true, quantity);
+		if (quantity)
+			Graphics_textLeft (g, true, quantity);
 	}
 }
 
@@ -367,30 +370,35 @@ void RealTier_interpolateQuadratically (RealTier me, integer numberOfPointsPerPa
 			double time1 = point1 -> number, time2 = point2 -> number, tmid = 0.5 * (time1 + time2);
 			double value1 = point1 -> value, value2 = point2 -> value, valuemid;
 			double timeStep = (tmid - time1) / (numberOfPointsPerParabola + 1);
-			if (logarithmically) value1 = log (value1), value2 = log (value2);
+			if (logarithmically) {
+				value1 = log (value1);
+				value2 = log (value2);
+			}
 			valuemid = 0.5 * (value1 + value2);
 			/*
-			 * Left from the midpoint.
-			 */
+				Left from the midpoint.
+			*/
 			for (integer inewpoint = 1; inewpoint <= numberOfPointsPerParabola; inewpoint ++) {
 				double newTime = time1 + inewpoint * timeStep;
 				double phase = (newTime - time1) / (tmid - time1);
 				double newValue = value1 + (valuemid - value1) * phase * phase;
-				if (logarithmically) newValue = exp (newValue);
+				if (logarithmically)
+					newValue = exp (newValue);
 				RealTier_addPoint (thee.get(), newTime, newValue);
 			}
 			/*
-			 * The midpoint.
-			 */
+				The midpoint.
+			*/
 			RealTier_addPoint (thee.get(), tmid, logarithmically ? exp (valuemid) : valuemid);
 			/*
-			 * Right from the midpoint.
-			 */
+				Right from the midpoint.
+			*/
 			for (integer inewpoint = 1; inewpoint <= numberOfPointsPerParabola; inewpoint ++) {
 				double newTime = tmid + inewpoint * timeStep;
 				double phase = (time2 - newTime) / (time2 - tmid);
 				double newValue = value2 + (valuemid - value2) * phase * phase;
-				if (logarithmically) newValue = exp (newValue);
+				if (logarithmically)
+					newValue = exp (newValue);
 				RealTier_addPoint (thee.get(), newTime, newValue);
 			}
 		}
@@ -424,9 +432,8 @@ autoTable RealTier_downto_Table (RealTier me, conststring32 indexText, conststri
 autoRealTier Vector_to_RealTier (Vector me, integer channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
-		for (integer i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++)
 			RealTier_addPoint (thee.get(), Sampled_indexToX (me, i), my z [channel] [i]);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ", klas -> className, U".");
@@ -472,9 +479,8 @@ autoRealTier Vector_to_RealTier_valleys (Vector me, integer channel, ClassInfo k
 autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
-		for (integer i = 1; i <= my nt; i ++) {
+		for (integer i = 1; i <= my nt; i ++)
 			RealTier_addPoint (thee.get(), my t [i], value);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to RealTier.");

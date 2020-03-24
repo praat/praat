@@ -1599,7 +1599,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 				const Formant_Frame curFrame = & my frames [iframe];
 				ffi -> x [++ idata] = Sampled_indexToX (me, iframe);
 				ffi -> dataPointStatus [idata] = DataModeler_DATA_INVALID;
-				if (iformant <= curFrame -> nFormants) {
+				if (iformant <= curFrame -> numberOfFormants) {
 					const double frequency = curFrame -> formant [iformant]. frequency;
 					if (isdefined (frequency)) {
 						const double bandwidth = curFrame -> formant [iformant]. bandwidth;

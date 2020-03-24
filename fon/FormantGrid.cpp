@@ -1,6 +1,6 @@
 /* FormantGrid.cpp
  *
- * Copyright (C) 2008-2011,2014,2015,2016,2017 Paul Boersma & David Weenink
+ * Copyright (C) 2008,2009,2011,2012,2014-2020 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -295,7 +295,7 @@ autoFormantGrid Formant_downto_FormantGrid (Formant me) {
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
 			const double t = Sampled_indexToX (me, iframe);
-			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++) {
+			for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++) {
 				Formant_Formant pair = & frame -> formant [iformant];
 				FormantGrid_addFormantPoint (thee.get(), iformant, t, pair -> frequency);
 				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, pair -> bandwidth);
@@ -317,7 +317,7 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 		for (integer iframe = 1; iframe <= nt; iframe ++) {
 			const Formant_Frame frame = & thy frames [iframe];
 			frame -> intensity = intensity;
-			frame -> nFormants = my formants.size;
+			frame -> numberOfFormants = my formants.size;
 			frame -> formant = newvectorzero <structFormant_Formant> (my formants.size);
 			const double t = t1 + (iframe - 1) * dt;
 			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
