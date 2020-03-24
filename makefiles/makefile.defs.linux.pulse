@@ -1,15 +1,15 @@
 # File: makefile.defs.linux.pulse
 
 # System: Linux
-# David Weenink and Paul Boersma, 23 February 2020
+# David Weenink and Paul Boersma, 23 March 2020
 
 CC = gcc
 
 CXX = g++
 
-COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-2.0` -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
 
-CFLAGS = -std=gnu99 $(COMMONFLAGS)
+CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
