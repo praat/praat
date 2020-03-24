@@ -1,6 +1,6 @@
 /* Formant_def.h
  *
- * Copyright (C) 1992-2005,2008,2011,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ oo_DEFINE_STRUCT (Formant_Frame)
 		oo_DOUBLE (intensity)
 	oo_ENDFROM
 
-	oo_INT16 (nFormants)
-	oo_STRUCTVEC (Formant_Formant, formant, nFormants)
+	oo_INTEGER16 (numberOfFormants)
+	oo_STRUCTVEC (Formant_Formant, formant, numberOfFormants)
 
 oo_END_STRUCT (Formant_Frame)
 #undef ooSTRUCT

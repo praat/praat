@@ -52,7 +52,7 @@ static void burg (constVEC samples, VEC coefficients,
 	autoRoots roots = Polynomial_to_Roots (polynomial.get());
 	Roots_fixIntoUnitCircle (roots.get());
 
-	Melder_assert (frame -> nFormants == 0 && NUMisEmpty (frame -> formant.get()));
+	Melder_assert (frame -> numberOfFormants == 0 && NUMisEmpty (frame -> formant.get()));
 
 	/*
 		First pass: count the formants.
@@ -62,14 +62,14 @@ static void burg (constVEC samples, VEC coefficients,
 		if (roots -> roots [iroot].imag() >= 0.0) {
 			double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
-				frame -> nFormants ++;
+				frame -> numberOfFormants ++;
 		}
 
 	/*
 		Create space for formant data.
 	 */
-	if (frame -> nFormants > 0)
-		frame -> formant = newvectorzero <structFormant_Formant> (frame -> nFormants);
+	if (frame -> numberOfFormants > 0)
+		frame -> formant = newvectorzero <structFormant_Formant> (frame -> numberOfFormants);
 
 	/*
 		Second pass: fill in the formants.
@@ -85,13 +85,12 @@ static void burg (constVEC samples, VEC coefficients,
 					log (norm (roots -> roots [iroot])) * nyquistFrequency / NUMpi;
 			}
 		}
-	Melder_assert (iformant == frame -> nFormants);   // may fail if some frequency is NaN
+	Melder_assert (iformant == frame -> numberOfFormants);   // may fail if some frequency is NaN
 }
 
-static int findOneZero (int ijt, double vcx [], double a, double b, double *zero) {
+static int findOneZero (integer ijt, double vcx [], double a, double b, double *zero) {
 	double x = 0.5 * (a + b), fa = 0.0, fb = 0.0, fx = 0.0;
-	integer k;
-	for (k = ijt; k >= 0; k --) {
+	for (integer k = ijt; k >= 0; k --) {
 		fa = vcx [k] + a * fa;
 		fb = vcx [k] + b * fb;
 	}
@@ -109,14 +108,21 @@ static int findOneZero (int ijt, double vcx [], double a, double b, double *zero
 		fx = 0.0;
 		/*x = fa == fb ? 0.5 * (a + b) : a + fa * (a - b) / (fb - fa);*/
 		x = 0.5 * (a + b);   // simple bisection
-		for (k = ijt; k >= 0; k --) fx = vcx [k] + x * fx;
-		if (fa * fx > 0.0) { a = x; fa = fx; } else { b = x; fb = fx; }
+		for (integer k = ijt; k >= 0; k --)
+			fx = vcx [k] + x * fx;
+		if (fa * fx > 0.0) {
+			a = x;
+			fa = fx;
+		} else {
+			b = x;
+			fb = fx;
+		}
 	} while (fabs (fx) > 1e-5);
 	*zero = x;
 	return 1;   // OK
 }
 
-static int findNewZeroes (int ijt, double ppORIG [], int degree,
+static int findNewZeroes (integer ijt, double ppORIG [], integer degree,
 	double zeroes [])   // In / out
 {
 	static double cosa [7] [7] = {
@@ -128,18 +134,20 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 		{  0,  10,   0, -40,   0,  32,   0 },
 		{ -2,   0,  36,   0, -96,   0,  64 } };
 	double pp [33], newZeroes [33], px [33];
-	int pt, vt, i, half_degree = (degree + 1) / 2;
-	for (vt = 0; vt <= half_degree; vt ++) pp [vt] = ppORIG [vt];
+	integer const half_degree = (degree + 1) / 2;
+	for (integer vt = 0; vt <= half_degree; vt ++)
+		pp [vt] = ppORIG [vt];
 	if (! (degree & 1))
-		for (vt = 1; vt <= half_degree; vt ++) pp [vt] -= pp [vt - 1];
-	for (i = 0; i <= half_degree; i ++)
+		for (integer vt = 1; vt <= half_degree; vt ++)
+			pp [vt] -= pp [vt - 1];
+	for (integer i = 0; i <= half_degree; i ++)
 		px [i] = cosa [half_degree] [i];
-	for (pt = half_degree - 1; pt >= 0; pt --)
-		for (vt = 0; vt <= half_degree; vt ++)
+	for (integer pt = half_degree - 1; pt >= 0; pt --)
+		for (integer vt = 0; vt <= half_degree; vt ++)
 			px [vt] += pp [half_degree - pt] * cosa [pt] [vt];
 	/* Fill an array with the new zeroes, which lie between the old zeroes. */
 	newZeroes [0] = 1.0;
-	for (i = 1; i <= half_degree; i ++) {
+	for (integer i = 1; i <= half_degree; i ++) {
 		if (! findOneZero (ijt, px, zeroes [i - 1], zeroes [i], & newZeroes [i])) {
 			Melder_casual (
 				U"Degree ", degree,
@@ -149,8 +157,10 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 		}
 	}
 	newZeroes [half_degree + 1] = -1.0;
-	/* Grow older. */
-	for (i = 0; i <= half_degree + 1; i ++)
+	/*
+		Grow older.
+	*/
+	for (integer i = 0; i <= half_degree + 1; i ++)
 		zeroes [i] = newZeroes [i];
 	return 1;
 }
@@ -162,37 +172,47 @@ static int splitLevinson (
 {
 	int result = 1;
 	double rx [100], zeroes [33];
-	for (int i = 0; i <= 32; i ++)
+	for (integer i = 0; i <= 32; i ++)
 		zeroes [i] = 0.0;
-	/* Compute the autocorrelation of the windowed signal. */
-	for (int i = 0; i < ncof; i ++) {
+	/*
+		Compute the autocorrelation of the windowed signal.
+	*/
+	for (integer i = 0; i < ncof; i ++) {
 		rx [i] = 0.0;
-		for (int j = 1; j <= samples.size - i; j ++)
+		for (integer j = 1; j <= samples.size - i; j ++)
 			rx [i] += samples [j] * samples [j + i];
 	}
-	/* Normalize autocorrelation; (should we also divide by the autocorrelation of the window?). */
-	for (int i = 1; i < ncof; i ++)
+	/*
+		Normalize autocorrelation;
+		(should we also divide by the autocorrelation of the window?).
+	*/
+	for (integer i = 1; i < ncof; i ++)
 		rx [i] /= rx [0]; rx [0] = 1.0;
 
-	/* Compute zeroes. */
+	/*
+		Compute zeroes.
+	*/
 	{
 		double tau = 0.5 * rx [0];
 		double pnu [33], pk [33], pkz [33];
-		for (int i = 0; i <= 32; i ++)
+		for (integer i = 0; i <= 32; i ++)
 			pkz [i] = pk [i] = 0.0;
-		pkz [0] = 1.0; pk [0] = 1.0; pk [1] = 1.0;
-		for (int degree = 1; degree < ncof; degree ++) {
-			int t = degree / 2;
+		pkz [0] = 1.0;
+		pk [0] = 1.0;
+		pk [1] = 1.0;
+		for (integer degree = 1; degree < ncof; degree ++) {
+			integer t = degree / 2;
 			double tauk = rx [0] + rx [degree], alfak;
-			for (int it = 1; it <= t; it ++)
+			for (integer it = 1; it <= t; it ++)
 				tauk += pk [it] * ( 2 * it == degree ? rx [it] : rx [it] + rx [degree - it] );
 			alfak = tauk / tau;
 			tau = tauk;
 			pnu [0] = 1.0;
-			int ijt = (degree + 1) / 2;
-			for (int it = ijt; it > 0; it --)
+			integer ijt = (degree + 1) / 2;
+			for (integer it = ijt; it > 0; it --)
 				pnu [it] = pk [it] + pk [it - 1] - alfak * pkz [it - 1];
-			if (2 * ijt == degree) pnu [ijt + 1] = pnu [ijt];
+			if (2 * ijt == degree)
+				pnu [ijt + 1] = pnu [ijt];
 			if (degree == 1) {
 				(void) 0;
 			} else if (degree == 2) {
@@ -205,28 +225,34 @@ static int splitLevinson (
 					result = 0;
 					goto loopEnd;
 				}
-			/* Grow older. */
-			for (int i = 0; i <= 32; i ++) {
+			/*
+				Grow older.
+			*/
+			for (integer i = 0; i <= 32; i ++) {
 				pkz [i] = pk [i];
 				pk [i] = pnu [i];
 			}
 		}
 	}
 loopEnd:
-	/* First pass: count the poles. */
-	for (int i = 1; i <= ncof / 2; i ++) {
+	/*
+		First pass: count the poles.
+	*/
+	for (integer i = 1; i <= ncof / 2; i ++) {
 		if (zeroes [i] == 0.0 || zeroes [i] == -1.0)
 			break;
-		frame -> nFormants ++;
+		frame -> numberOfFormants ++;
 	}
-
-	/* Create space for formant data. */
-	if (frame -> nFormants > 0)
-	    frame -> formant = newvectorzero <structFormant_Formant> (frame -> nFormants);
-
-	/* Second pass: fill in the poles. */
-	int iformant = 0;
-	for (int i = 1; i <= ncof / 2; i ++) {
+	/*
+		Create space for formant data.
+	*/
+	if (frame -> numberOfFormants > 0)
+	    frame -> formant = newvectorzero <structFormant_Formant> (frame -> numberOfFormants);
+	/*
+		Second pass: fill in the poles.
+	*/
+	integer iformant = 0;
+	for (integer i = 1; i <= ncof / 2; i ++) {
 		Formant_Formant formant = & frame -> formant [++ iformant];
 		if (zeroes [i] == 0.0 || zeroes [i] == -1.0)
 			break;
@@ -247,7 +273,7 @@ static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 void Formant_sort (Formant me) {
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frames [iframe];
-		integer n = frame -> nFormants;
+		integer n = frame -> numberOfFormants;
 		for (integer i = 1; i < n; i ++) {
 			double min = frame -> formant [i]. frequency;
 			integer imin = i;

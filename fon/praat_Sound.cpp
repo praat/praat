@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2063,14 +2063,21 @@ static autoDaata macSoundOrEmptyFileRecognizer (integer nread, const char * /* h
 }
 
 static autoDaata soundFileRecognizer (integer nread, const char *header, MelderFile file) {
-	if (nread < 16) return autoDaata ();
-	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file);
-	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file);
-	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
-	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
-	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
+	if (nread < 16)
+		return autoDaata ();
+	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3))
+		return Sound_readFromSoundFile (file);
+	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4)))
+		return Sound_readFromSoundFile (file);
+	if (strnequ (header, ".snd", 4))
+		return Sound_readFromSoundFile (file);
+	if (strnequ (header, "NIST_1A", 7))
+		return Sound_readFromSoundFile (file);
+	if (strnequ (header, "fLaC", 4))
+		return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
 	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".mp3", false))
-		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
+			&& mp3_recognize (nread, header))
+		return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
 	return autoDaata ();
 }
 
@@ -2081,24 +2088,28 @@ static autoDaata movieFileRecognizer (integer nread, const char * /* header */, 
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
 	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".mov", false) &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi", false))) return autoDaata ();
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi", false)))
+		return autoDaata ();
 	Melder_throw (U"This Praat version cannot open movie files.");
 	return autoDaata ();
 }
 
 static autoDaata sesamFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	conststring32 fileName = MelderFile_name (file);
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf", false))) return autoDaata ();
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf", false)))
+		return autoDaata ();
 	return Sound_readFromSesamFile (file);
 }
 
 static autoDaata bellLabsFileRecognizer (integer nread, const char *header, MelderFile file) {
-	if (nread < 16 || ! strnequ (& header [0], "SIG\n", 4)) return autoDaata ();
+	if (nread < 16 || ! strnequ (& header [0], "SIG\n", 4))
+		return autoDaata ();
 	return Sound_readFromBellLabsFile (file);
 }
 
 static autoDaata kayFileRecognizer (integer nread, const char *header, MelderFile file) {
-	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8)) return autoDaata ();
+	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8))
+		return autoDaata ();
 	return Sound_readFromKayFile (file);
 }
 
@@ -2107,20 +2118,27 @@ static autoDaata kayFileRecognizer (integer nread, const char *header, MelderFil
 static autoSound melderSound, melderSoundFromFile;
 static Sound last;
 static int recordProc (double duration) {
-	if (last == melderSound.get()) last = nullptr;
+	if (last == melderSound.get())
+		last = nullptr;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	melderSound = Sound_record_fixedTime (1, 1.0, 0.5, 44100, duration);
-	if (! melderSound) return 0;
+	if (! melderSound)
+		return 0;
 	last = melderSound.get();
 	return 1;
 }
 static int recordFromFileProc (MelderFile file) {
-	if (last == melderSoundFromFile.get()) last = nullptr;
+	if (last == melderSoundFromFile.get())
+		last = nullptr;
 	Melder_warningOff ();   // like "missing samples"
 	melderSoundFromFile = Data_readFromFile (file). static_cast_move<structSound>();
 	Melder_warningOn ();
-	if (! melderSoundFromFile) return 0;
-	if (! Thing_isa (melderSoundFromFile.get(), classSound)) { melderSoundFromFile.reset(); return 0; }
+	if (! melderSoundFromFile)
+		return 0;
+	if (! Thing_isa (melderSoundFromFile.get(), classSound)) {
+		melderSoundFromFile.reset();
+		return 0;
+	}
 	last = melderSoundFromFile.get();
 	Sound_play (melderSoundFromFile.get(), nullptr, nullptr);
 	return 1;
@@ -2135,7 +2153,8 @@ static void playReverseProc () {
 	/*if (melderSound) Sound_playReverse (melderSound);*/
 }
 static int publishPlayedProc () {
-	if (! last) return 0;
+	if (! last)
+		return 0;
 	autoSound sound = Data_copy (last);
 	return Data_publish (sound.move());
 }

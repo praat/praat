@@ -33,9 +33,9 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 		autoMatrix fb = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 2 * numberOfPossibleFormants, 2 * numberOfPossibleFormants, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			const integer numberOfFormants = std::min (integer (frame -> nFormants), numberOfPossibleFormants);
+			const integer numberOfFormants = std::min (frame -> numberOfFormants, numberOfPossibleFormants);
 			for (integer iformant = 1; iformant <= numberOfFormants; iformant++)
-				if (iformant <= frame -> nFormants) {
+				if (iformant <= frame -> numberOfFormants) {
 					fb -> z [2 * iformant - 1] [iframe] = frame -> formant [iformant]. frequency;
 					fb -> z [2 * iformant    ] [iframe] = frame -> formant [iformant]. bandwidth;
 				}
@@ -57,7 +57,7 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 				If some of the formant frequencies are set to zero => remove the formant
 			*/
 			const Formant_Frame frame = & my frames [iframe];
-			const integer numberOfFormants = std::min (integer (frame -> nFormants), formantmax);
+			const integer numberOfFormants = std::min (frame -> numberOfFormants, formantmax);
 			integer iformantto = ( formantmin > 1 ? formantmin - 1 : 0 );
 			for (integer iformant = formantmin; iformant <= numberOfFormants; iformant++) {
 				const double frequency = fb -> z [2 * iformant - 1] [iframe];
@@ -72,7 +72,7 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 			/*
 				Shift the (higher) formants down if necessary.
 			*/
-			for (integer iformant = formantmax + 1; iformant <= frame -> nFormants; iformant ++) {
+			for (integer iformant = formantmax + 1; iformant <= frame -> numberOfFormants; iformant ++) {
 				const double frequency = fb -> z [2 * iformant - 1] [iframe];
 				const double bandWidth = fb -> z [2 * iformant    ] [iframe];
 				if (frequency > 0 && bandWidth > 0) {
@@ -82,7 +82,7 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 				} else
 					frame -> formant [iformant]. frequency = frame -> formant [iformant]. bandwidth = 0.0;
 			}
-			frame -> nFormants = iformantto;
+			frame -> numberOfFormants = iformantto;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered.");
@@ -100,7 +100,7 @@ autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 		double previousTime = my xmin;
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			const integer numberOfFormants = frame -> nFormants;
+			const integer numberOfFormants = frame -> numberOfFormants;
 			const double time = Sampled_indexToX (me, iframe);
 			double value = 0.0;
 			if (iformant <= numberOfFormants) {

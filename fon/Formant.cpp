@@ -59,7 +59,7 @@ void structFormant :: v_info () {
 double structFormant :: v_getValueAtSample (integer iframe, integer which, int units) {
 	const Formant_Frame frame = & our frames [iframe];
 	const integer iformant = which >> 1;
-	if (iformant < 1 || iformant > frame -> nFormants)
+	if (iformant < 1 || iformant > frame -> numberOfFormants)
 		return undefined;
 	const double frequency = frame -> formant [iformant]. frequency;
 	if ((which & 1) == 0) {
@@ -94,16 +94,16 @@ autoFormant Formant_create (double tmin, double tmax, integer nt, double dt, dou
 integer Formant_getMinNumFormants (Formant me) {
 	integer minNumFormants = 100000000;
 	for (integer iframe = 1; iframe <= my nx; iframe ++)
-		if (my frames [iframe]. nFormants < minNumFormants)
-			minNumFormants = my frames [iframe]. nFormants;
+		if (my frames [iframe]. numberOfFormants < minNumFormants)
+			minNumFormants = my frames [iframe]. numberOfFormants;
 	return minNumFormants;
 }
 
 integer Formant_getMaxNumFormants (Formant me) {
 	integer maxNumFormants = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++)
-		if (my frames [iframe]. nFormants > maxNumFormants)
-			maxNumFormants = my frames [iframe]. nFormants;
+		if (my frames [iframe]. numberOfFormants > maxNumFormants)
+			maxNumFormants = my frames [iframe]. numberOfFormants;
 	return maxNumFormants;
 }
 
@@ -160,7 +160,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 		const double x = Sampled_indexToX (me, iframe);
 		if (frame -> intensity < minimumIntensity)
 			continue;
-		for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++) {
+		for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++) {
 			const double frequency = frame -> formant [iformant]. frequency;
 			if (frequency >= fmin && frequency <= fmax)
 				Graphics_speckle (g, x, frequency);
@@ -191,13 +191,13 @@ void Formant_formula_bandwidths (Formant me, conststring32 formula, Interpreter 
 		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
 		}
 		Matrix_formula (mat.get(), formula, interpreter, nullptr);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++)
 				frame -> formant [iformant]. bandwidth = mat -> z [iformant] [iframe];
 		}
 	} catch (MelderError) {
@@ -213,13 +213,13 @@ void Formant_formula_frequencies (Formant me, conststring32 formula, Interpreter
 		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
 		}
 		Matrix_formula (mat.get(), formula, interpreter, nullptr);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++)
 				frame -> formant [iformant]. frequency = mat -> z [iformant] [iframe];
 		}
 	} catch (MelderError) {
@@ -240,7 +240,7 @@ void Formant_getExtrema (Formant me, integer iformant, double tmin, double tmax,
 		return;
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		const Formant_Frame frame = & my frames [iframe];
-		if (iformant > frame -> nFormants)
+		if (iformant > frame -> numberOfFormants)
 			continue;
 		const double f = frame -> formant [iformant]. frequency;
 		if (f == 0.0)
@@ -312,7 +312,7 @@ double Formant_getStandardDeviation (Formant me, integer iformant, double tmin, 
 	integer n = 0;
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		const Formant_Frame frame = & my frames [iframe];
-		if (iformant > frame -> nFormants)
+		if (iformant > frame -> numberOfFormants)
 			continue;
 		double f = frame -> formant [iformant]. frequency;
 		if (f == 0.0)
@@ -361,7 +361,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	Graphics_setWindow (g, fmin1, fmax1, fmin2, fmax2);
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		const Formant_Frame frame = & my frames [iframe];
-		if (iformant1 > frame -> nFormants || iformant2 > frame -> nFormants)
+		if (iformant1 > frame -> numberOfFormants || iformant2 > frame -> numberOfFormants)
 			continue;
 		double x = frame -> formant [iformant1]. frequency;
 		double y = frame -> formant [iformant2]. frequency;
@@ -384,8 +384,7 @@ autoMatrix Formant_to_Matrix (Formant me, integer iformant) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			thy z [1] [iframe] = iformant <= frame -> nFormants ?
-					frame -> formant [iformant]. frequency : 0.0;
+			thy z [1] [iframe] = ( iformant <= frame -> numberOfFormants ? frame -> formant [iformant]. frequency : 0.0 );
 		}
 		return thee;
 	} catch (MelderError) {
@@ -398,8 +397,7 @@ autoMatrix Formant_to_Matrix_bandwidths (Formant me, integer iformant) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
-			thy z [1] [iframe] = iformant <= frame -> nFormants ?
-					frame -> formant [iformant]. bandwidth : 0.0;
+			thy z [1] [iframe] = ( iformant <= frame -> numberOfFormants ? frame -> formant [iformant]. bandwidth : 0.0 );
 		}
 		return thee;
 	} catch (MelderError) {
@@ -414,7 +412,7 @@ struct fparm { Formant me, thee; double dfCost, bfCost, octaveJumpCost, refF [1 
 static double getLocalCost (integer iframe, integer icand, integer itrack, void *closure) {
 	struct fparm *me = (struct fparm *) closure;
 	const Formant_Frame frame = & my my frames [iframe];
-	if (icand > frame -> nFormants)
+	if (icand > frame -> numberOfFormants)
 		return 1e30;
 	Formant_Formant candidate = & frame -> formant [icand];
 	/*if (candidate -> frequency <= 0.0) candidate -> frequency = 0.001;
@@ -427,7 +425,7 @@ static double getLocalCost (integer iframe, integer icand, integer itrack, void 
 static double getTransitionCost (integer iframe, integer icand1, integer icand2, integer /* itrack */, void *closure) {
 	struct fparm *me = (struct fparm *) closure;
 	const Formant_Frame prevFrame = & my my frames [iframe - 1], curFrame = & my my frames [iframe];
-	if (icand1 > prevFrame -> nFormants || icand2 > curFrame -> nFormants)
+	if (icand1 > prevFrame -> numberOfFormants || icand2 > curFrame -> numberOfFormants)
 		return 1e30;
 	const double f1 = prevFrame -> formant [icand1]. frequency;
 	const double f2 = curFrame -> formant [icand2]. frequency;
@@ -440,7 +438,7 @@ static void putResult (integer iframe, integer place, integer itrack, void *clos
 	Melder_assert (iframe > 0 && iframe <= my my nx);
 	Melder_assert (itrack > 0 && itrack <= 5);
 	Melder_assert (place > 0);
-	Melder_assert (place <= my my frames [iframe]. nFormants);
+	Melder_assert (place <= my my frames [iframe]. numberOfFormants);
 	my thy frames [iframe]. formant [itrack] = my my frames [iframe]. formant [place];
 }
 
@@ -456,7 +454,7 @@ autoFormant Formant_tracker (Formant me, integer ntrack,
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, ntrack);
 		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 			thy frames [iframe]. formant = newvectorzero <structFormant_Formant> (ntrack);
-			thy frames [iframe]. nFormants = ntrack;
+			thy frames [iframe]. numberOfFormants = ntrack;
 			thy frames [iframe]. intensity = my frames [iframe]. intensity;
 		}
 		/* BUG: limit costs to 1e10 or so */
@@ -506,14 +504,14 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 			if (includeIntensity)
 				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (frame -> intensity, intensityDecimals));
 			if (includeNumberOfFormants)
-				Table_setNumericValue (thee.get(), iframe, ++ icol, frame -> nFormants);
-			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++) {
+				Table_setNumericValue (thee.get(), iframe, ++ icol, frame -> numberOfFormants);
+			for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++) {
 				const Formant_Formant formant = & frame -> formant [iformant];
 				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (formant -> frequency, frequencyDecimals));
 				if (includeBandwidths)
 					Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (formant -> bandwidth, frequencyDecimals));
 			}
-			for (integer iformant = frame -> nFormants + 1; iformant <= my maxnFormants; iformant ++) {
+			for (integer iformant = frame -> numberOfFormants + 1; iformant <= my maxnFormants; iformant ++) {
 				Table_setNumericValue (thee.get(), iframe, ++ icol, undefined);
 				if (includeBandwidths)
 					Table_setNumericValue (thee.get(), iframe, ++ icol, undefined);

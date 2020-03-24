@@ -93,7 +93,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		/*
 			LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !!
 		*/
-		Melder_require (f -> nFormants > 0,
+		Melder_require (f -> numberOfFormants > 0,
 			U"Not enough formants.");
 		VEC area = af -> c.get(); // TODO
 		double lmin = length = 0.10;
@@ -103,7 +103,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 				Step 3
 			*/
 			const double fscale = plength / length;
-			for (integer i = 1; i <= f -> nFormants; i ++) {
+			for (integer i = 1; i <= f -> numberOfFormants; i ++) {
 				f -> formant [i]. frequency *= fscale;
 				f -> formant [i]. bandwidth *= fscale;
 			}

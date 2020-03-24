@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -498,7 +498,7 @@ DO
 	NUMBER_ONE (Formant)
 		if (frameNumber > my nx)
 			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
-		const integer result = my frames [frameNumber]. nFormants;
+		const integer result = my frames [frameNumber]. numberOfFormants;
 	NUMBER_ONE_END (U" formants")
 }
 
