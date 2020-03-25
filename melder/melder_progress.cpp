@@ -43,7 +43,8 @@ MelderString MelderProgress::_buffer;
 void * MelderProgress::_doMonitor (double progress, conststring32 message) {
 	if (! Melder_batch && MelderProgress::_depth >= 0) {
 		void *result = MelderProgress::_p_monitorProc (progress, message);
-		if (result) return result;
+		if (result)
+			return result;
 	}
 	return progress <= 0.0 ? nullptr /* no Graphics */ : (void *) -1 /* any non-null pointer */;
 }

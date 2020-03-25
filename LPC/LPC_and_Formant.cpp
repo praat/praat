@@ -29,13 +29,13 @@
 #include <atomic>
 
 void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
-	my nFormants = numberOfFormants;
+	my numberOfFormants = numberOfFormants;
 	if (numberOfFormants > 0)
 		my formant = newvectorzero <structFormant_Formant> (numberOfFormants);
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale) {
-	for (integer iformant = 1; iformant <= my nFormants; iformant ++) {
+	for (integer iformant = 1; iformant <= my numberOfFormants; iformant ++) {
 		my formant [iformant]. frequency *= scale;
 		my formant [iformant]. bandwidth *= scale;
 	}
@@ -62,7 +62,7 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 			break;
 	}
 	Melder_assert (numberOfFormantsFound <= thy formant.size);
-	thy nFormants = numberOfFormantsFound;
+	thy numberOfFormants = numberOfFormantsFound;
 }
 
 void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin) {
@@ -217,14 +217,14 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 }
 
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod) {
-	if (my nFormants < 1)
+	if (my numberOfFormants < 1)
 		return;
 	const double nyquistFrequency = 0.5 / samplingPeriod;
-	integer numberOfPoles = 2 * my nFormants;
+	integer numberOfPoles = 2 * my numberOfFormants;
 	autoVEC lpc = newVECzero (numberOfPoles + 2);   // all odd coefficients have to be initialized to zero
 	lpc [2] = 1.0;
 	integer m = 2;
-	for (integer iformant = 1; iformant <= my nFormants; iformant ++) {
+	for (integer iformant = 1; iformant <= my numberOfFormants; iformant ++) {
 		const double formantFrequency = my formant [iformant]. frequency;
 		if (formantFrequency > nyquistFrequency)
 			continue;
@@ -256,7 +256,7 @@ autoLPC Formant_to_LPC (Formant me, double samplingPeriod) {
 		for (integer i = 1; i <= my nx; i ++) {
 			const Formant_Frame f = & my frames [i];
 			const LPC_Frame lpc = & thy d_frames [i];
-			const integer numberOfCoefficients = 2 * f -> nFormants;
+			const integer numberOfCoefficients = 2 * f -> numberOfFormants;
 			LPC_Frame_init (lpc, numberOfCoefficients);
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		}

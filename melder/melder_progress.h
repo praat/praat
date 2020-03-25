@@ -2,7 +2,7 @@
 #define _melder_progress_h_
 /* melder_progress.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020s Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,8 +152,12 @@ public:
 };
 
 struct autoMelderProgressOff {
-	autoMelderProgressOff () { Melder_progressOff (); }
-	~autoMelderProgressOff () { Melder_progressOn (); }
+	autoMelderProgressOff () {
+		Melder_progressOff ();
+	}
+	~autoMelderProgressOff () {
+		Melder_progressOn ();
+	}
 };
 
 void Melder_setProgressProc (MelderProgress::ProgressProc p_proc);
