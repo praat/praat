@@ -609,6 +609,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
+	
+#define FIND_THREE_WITH_IOBJECT(klas1,klas2,klas3)  \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; int _klas1_position = 0;\
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; } \
+	IOBJECT = _klas1_position;
 
 #define FIND_FOUR(klas1,klas2,klas3,klas4)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr; \

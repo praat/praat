@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 20 February 2020
+# 24 March 2020
 
 include ../makefile.defs
 
@@ -22,6 +22,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_SSCP.o Excitations.o \
 	espeakdata_FileInMemory.o \
 	FilterBank.o FormantGrid_extensions.o \
+	FormantAnalyzer.o \
 	GaussianMixture.o  \
 	HMM.o \
 	ICA.o Intensity_extensions.o \
