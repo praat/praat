@@ -477,7 +477,7 @@ static void cb_FormantAnalyzer_publication (Editor /* editor */, autoDaata publi
 
 DIRECT (WINDOW_FormantAnalyzer_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
 	FIND_THREE_WITH_IOBJECT (Sound, Formant, TextGrid)
 		autoFormantAnalyzer editor = FormantAnalyzer_create (ID_AND_FULL_NAME, me, true, you, him, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantAnalyzer_publication);

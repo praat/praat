@@ -18,18 +18,21 @@
 
 prefs_begin (FormantAnalyzer)
 
-	prefs_override_int         (FormantAnalyzer, shellWidth,				1, U"800")
-	prefs_override_int         (FormantAnalyzer, shellHeight,				1, U"600")
-	prefs_override_bool        (FormantAnalyzer, picture_garnish,			1, true)
-	prefs_override_bool        (FormantAnalyzer, showSelectionViewer,		1, true)	
-	prefs_add_double_with_data (FormantAnalyzer, modeler_minimumCeiling_Hz,	1, U"4000.0")
-	prefs_add_double_with_data (FormantAnalyzer, modeler_maximumCeiling_Hz,	1, U"6000.0")
-	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfModels,	1, U"9")
+	prefs_override_int         (FormantAnalyzer, shellWidth,						1, U"800")
+	prefs_override_int         (FormantAnalyzer, shellHeight,						1, U"600")
+	prefs_override_bool        (FormantAnalyzer, picture_garnish,					1, true)
+	prefs_override_bool        (FormantAnalyzer, showSelectionViewer,				1, true)	
+	prefs_add_double_with_data (FormantAnalyzer, modeler_minimumCeiling_Hz,			1, U"4000.0")
+	prefs_add_double_with_data (FormantAnalyzer, modeler_maximumCeiling_Hz,			1, U"6000.0")
+	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfModels,			1, U"9")
 	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfParametersF1Track,	1, U"3")
 	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfParametersF2Track,	1, U"3")
 	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfParametersF3Track,	1, U"2")
 	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfParametersF4Track,	1, U"2")
 	prefs_add_int_with_data    (FormantAnalyzer, modeler_numberOfParametersF5Track,	1, U"2")
+	prefs_add_bool_with_data   (FormantAnalyzer, modeler_draw_errorBars,			1, true)
+	prefs_add_double_with_data (FormantAnalyzer, modeler_draw_errorBarWidth_mm,		1, U"1.0")
+	prefs_add_double_with_data (FormantAnalyzer, modeler_draw_trackOffsetX_mm,		1, U"0.5")
 
 prefs_end (FormantAnalyzer)
 

@@ -894,6 +894,7 @@ static void do_find (FormantAnalyzer me) {
 		}
 	}
 }
+
 static void menu_cb_formantModelerSettings (FormantAnalyzer me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler settings", nullptr)
 		POSITIVE (minimumCeiling_Hz, U"Minimum ceiling (Hz)", my default_modeler_minimumCeiling_Hz ())
@@ -2162,16 +2163,15 @@ void structFormantAnalyzer :: v_createMenuItems_pitch_picture (EditorMenu menu) 
 
 void structFormantAnalyzer :: v_updateMenuItems_file () {
 	FormantAnalyzer_Parent :: v_updateMenuItems_file ();
-	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection > our startSelection);
-	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
 /********** EXPORTED **********/
 
 void FormantAnalyzer_init (FormantAnalyzer me, conststring32 title, Sampled sound, bool ownSound, Formant formant, TextGrid grid, SpellingChecker spellingChecker, conststring32 callbackSocket) {
-	TextGridEditor_init (me, title, grid, sound, ownSound, spellingChecker, callbackSocket);
 	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax ==  formant -> xmax,
 		U"The time domain of the Sound and the Formant should be equal.");
+	
+	TextGridEditor_init (me, title, grid, sound, ownSound, spellingChecker, callbackSocket);
 }
 
 autoFormantAnalyzer FormantAnalyzer_create (conststring32 title, Sampled sound, bool ownSound, Formant formant, TextGrid grid, SpellingChecker spellingChecker, conststring32 callbackSocket) {
