@@ -1,5 +1,5 @@
 # test_DataModeler.praat
-# djmw 20161011
+# djmw 20161011, 20200326
 
 appendInfoLine: "test_DataModeler.praat"
 
@@ -70,12 +70,12 @@ procedure testDataModelerInterface
 	.sumOfSquares_res = Get residual sum of squares
 	.dataStdDev = Get data standard deviation
 	.coef = Get coefficient of determination
-	.chiSqReport$ = Report chi squared: "Equally"
+	.chiSqReport$ = Report chi squared: "Equal"
 	.ndf = Get degrees of freedom
 	#
 	# Modify -
 	#
-	Set data weighing: "Equally"
+	Set data weighing: "Equal"
 	Set tolerance: 1e-5
 	# Set parameter value: see query part
 	Set parameter free: 0, 0

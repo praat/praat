@@ -21,7 +21,7 @@
 	20200325 Draw variances crashed, 
 	info FormantModeler:Datamodeler crahed
 	DataModeler_getDataPointInverseWeight is inconsistent
-
+	signmaY = undefined  if not known, 0 if fixed.
  djmw 20140217
 */
 
@@ -728,6 +728,8 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 		U"The number of parameters should not exceed the number of data points");
 	
 	my parameters = newvectorzero<structDataModelerParameter> (numberOfParameters);
+	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++)
+		my parameters [ipar] .status = kDataModelerParameter::Free;
 	my parameterNames = Strings_createFixedLength (numberOfParameters);
 	my parameterCovariances = Covariance_create (numberOfParameters);
 	my type = type;
@@ -803,7 +805,7 @@ void DataModeler_fit (DataModeler me) {
 				my f_evaluateBasisFunctions (me, xi, term.get());
 				integer ipar = 0;
 				for (integer j = 1; j <= my numberOfParameters; j ++)
-					if (my parameters [j] .status!= kDataModelerParameter::Fixed)
+					if (my parameters [j] .status != kDataModelerParameter::Fixed)
 						design [idata] [++ ipar] = term [j] / si;
 
 				// only 'residual variance' must be explained by the model
@@ -825,7 +827,7 @@ void DataModeler_fit (DataModeler me) {
 		integer ipar = 0;
 		for (integer j = 1; j <= my numberOfParameters; j ++) {
 			if (my parameters [j] .status != kDataModelerParameter::Fixed)
-				my parameters [j] .value = parameters [++ ipar] .value;
+				my parameters [j] .value = result [++ ipar];
 			cov -> centroid [j] = my parameters [j] .value;
 		}
 		cov -> numberOfObservations = numberOfDataPoints;
