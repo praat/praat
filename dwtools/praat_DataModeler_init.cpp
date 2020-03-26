@@ -19,6 +19,7 @@
 #include "praatP.h"
 #include "DataModeler.h"
 #include "Formant_extensions.h"
+#include "FormantModeler.h"
 #include "OptimalCeilingTierEditor.h"
 #include "Pitch.h"
 #include "Table_extensions.h"
@@ -35,14 +36,11 @@ FORM (NEW1_DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
 	NATURAL (numberOfDataPoints, U"Number of data points", U"20")
 	SENTENCE (parameter_string, U"Parameters", U"0.0 1.0 1.0")
 	POSITIVE (standardDeviation, U"Gaussian noise stdev", U"0.2")
-	OPTIONMENU (functionType, U"Basis functions", 2)
-		OPTION (U"Polynomial")
-		OPTION (U"Legendre")
-		
+	OPTIONMENU_ENUM (kDataModelerFunction, type, U"Basis functions", kDataModelerFunction::DEFAULT)		
 	OK
 DO
 	CREATE_ONE
-		autoDataModeler result = DataModeler_createSimple (xmin, xmax, numberOfDataPoints, parameter_string, standardDeviation, functionType - 1);
+		autoDataModeler result = DataModeler_createSimple (xmin, xmax, numberOfDataPoints, parameter_string, standardDeviation, type);
 	CREATE_ONE_END (name)
 }
 
@@ -106,9 +104,9 @@ FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status",
 	OK
 DO
 	STRING_ONE (DataModeler)
-		int status = DataModeler_getParameterStatus (me, parameterNumber);
-		conststring32 result = ( status == DataModeler_PARAMETER_FREE ? U"Free" :
-			status == DataModeler_PARAMETER_FIXED ? U"Fixed" : U"Undefined" );
+		kDataModelerParameter status = DataModeler_getParameterStatus (me, parameterNumber);
+		conststring32 result = ( status == kDataModelerParameter::Free ? U"Free" :
+			status == kDataModelerParameter::Fixed ? U"Fixed" : U"Undefined" );
 	STRING_ONE_END
 }
 
@@ -200,8 +198,8 @@ FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status"
 	OK
 DO
 	STRING_ONE (DataModeler)
-		int status = DataModeler_getDataPointStatus (me, index);
-		conststring32 result = ( status == DataModeler_DATA_INVALID ? U"Invalid" : U"Valid" );
+		kDataModelerData status = DataModeler_getDataPointStatus (me, index);
+		conststring32 result = ( status == kDataModelerData::Invalid ? U"Invalid" : U"Valid" );
 	STRING_ONE_END
 }
 
@@ -213,16 +211,12 @@ DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
 
 
 FORM (INFO_DataModeler_reportChiSquared, U"DataModeler: Report chi squared", nullptr) {
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Sigma")
-		OPTION (U"Relative")
-		OPTION (U"Sqrt sigma")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	INFO_ONE (DataModeler)
 		MelderInfo_open();
-		DataModeler_reportChiSquared (me, weighDataType);
+		DataModeler_reportChiSquared (me, weighData);
 		MelderInfo_close();
 	INFO_ONE_END
 }
@@ -235,11 +229,7 @@ DIRECT (REAL_DataModeler_getDegreesOfFreedom) {
 
 
 FORM (MODIFY_DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nullptr) {
-	OPTIONMENUx (weighDataType, U"Weigh data", 1, 0)
-		OPTION (U"Equally")
-		OPTION (U"Sigma")
-		OPTION (U"Relative")
-		OPTION (U"Sqrt sigma")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighDataType, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -259,13 +249,11 @@ DO
 FORM (MODIFY_DataModeler_setParameterValue, U"DataModeler: Set parameter value", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	REAL (value, U"Value", U"0.0")
-	OPTIONMENU (parameterStatus, U"Status", 1)
-		OPTION (U"Free")
-		OPTION (U"Fixed")
+	OPTIONMENU_ENUM (kDataModelerParameter, parameterStatus, U"Status", kDataModelerParameter::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (DataModeler)
-		DataModeler_setParameterValue (me, parameterNumber, value, parameterStatus - 1);
+		DataModeler_setParameterValue (me, parameterNumber, value, parameterStatus);
 	MODIFY_EACH_END
 }
 
@@ -295,7 +283,7 @@ FORM (MODIFY_DataModeler_setDataPointStatus, U"DataModeler: Set data point statu
 		OPTION (U"Invalid")
 	OK
 DO
-	int status = dataStatus == 2 ? DataModeler_DATA_INVALID : DataModeler_DATA_VALID;
+	kDataModelerData status = dataStatus == 2 ? kDataModelerData::Invalid : kDataModelerData::Valid;
 	MODIFY_EACH (DataModeler)
 		DataModeler_setDataPointStatus (me, index, status);
 	MODIFY_EACH_END
@@ -359,7 +347,7 @@ FORM (NEW_DataModeler_to_Table_zscores, U"DataModeler: To Table (z-scores)", nul
 	OK
 DO
 	CONVERT_EACH (DataModeler)
-		autoTable result = DataModeler_to_Table_zscores (me, useSigmaY);
+		autoTable result = DataModeler_to_Table_zscores (me, ( useSigmaY ? kDataModelerWeights::OneOverSigma : kDataModelerWeights::EqualWeights ));
 	CONVERT_EACH_END (my name.get(), U"_z");
 }
 
@@ -369,16 +357,11 @@ FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 	REAL (toTime, U"right End time", U"0.1")
 	NATURAL (numberOfFormants, U"Number of formants", U"3")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
 	OK
 DO
 	Melder_require (order >= 0, U"The order should be at least zero.");
 	CONVERT_EACH (Formant)
-		autoFormantModeler result = Formant_to_FormantModeler (me, fromTime, toTime, numberOfFormants, order + 1, weighDataType);
+		autoFormantModeler result = Formant_to_FormantModeler (me, fromTime, toTime, numberOfFormants, order + 1);
 	CONVERT_EACH_END (my name.get(), U"_o", order);
 }
 
@@ -388,11 +371,7 @@ FORM (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
 	LABEL (U"Use bandwidths to model the formant tracks:")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Zero parameter values whose range include zero:")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
@@ -403,7 +382,7 @@ DO
 		iam (Formant);
 		formants. addItem_ref (me);
 	}
-	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
+	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighData, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	integer iselected = 0;
 	Formant him = nullptr;
@@ -424,11 +403,7 @@ FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smooth
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
 	LABEL (U"Use bandwidths to model the formant tracks:")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Zero parameter values whose range include zero:")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
@@ -445,7 +420,7 @@ DO
 		iam (Formant);
 		formants. addItem_ref (me);
 	}
-	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
+	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighData, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	integer iselected = 0;
 	Formant him = nullptr;
@@ -520,11 +495,7 @@ FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outlier
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"3")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	WORD (mark_string, U"Mark", U"o")
 	POSITIVE (fontSize, U"Mark font size", U"12")
 	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
@@ -532,7 +503,7 @@ FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outlier
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_drawOutliersMarked (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, numberOfSigmas, weighDataType, mark_string, fontSize, xOffset_mm, garnish);
+		FormantModeler_drawOutliersMarked (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, numberOfSigmas, weighData, mark_string, fontSize, xOffset_mm, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -541,10 +512,7 @@ FORM (GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Dr
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromVariance, U"left Variance range", U"0.0")
 	REAL (toVariance, U"right Variance range", U"0.0")
-	OPTIONMENU (shiftTracks, U"Shift tracks", 1)
-		OPTION (U"No")
-		OPTION (U"Up")
-		OPTION (U"Down")
+	OPTIONMENU_ENUM (kFormantModelerTrackShift, shiftTracks, U"Shift tracks", kFormantModelerTrackShift::DEFAULT)
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"4")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -560,27 +528,19 @@ FORM (GRAPHICS_FormantModeler_drawCumulativeChisqScores, U"FormantModeler: Draw 
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromChisq, U"left Chisq range", U"0.0")
 	REAL (toChisq, U"right Chisq range", U"0.0")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_drawCumulativeChiScores (me, GRAPHICS, fromTime, toTime, fromChisq, toChisq, weighDataType, garnish);
+		FormantModeler_drawCumulativeChiScores (me, GRAPHICS, fromTime, toTime, fromChisq, toChisq, weighData, garnish);
 	GRAPHICS_EACH_END
 }
 
 
 FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
 	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
 	POSITIVE (fontSize, U"Label size", U"12")
@@ -589,7 +549,7 @@ FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal pr
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_normalProbabilityPlot (me, GRAPHICS, formantNumber, weighDataType, numberOfQuantiles, numberOfSigmas, fontSize, label, garnish);
+		FormantModeler_normalProbabilityPlot (me, GRAPHICS, formantNumber, weighData, numberOfQuantiles, numberOfSigmas, fontSize, label, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -598,7 +558,6 @@ FORM (GRAPHICS_FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis fu
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (ymin, U"left Amplitude range (Hz)", U"0.0")
 	REAL (ymax, U"right Amplitude range (Hz)", U"5500.0")
-	//integer iterm, bool scaled, integer numberOfPoints, bool garnish
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (basisFunctionIndex, U"Basis function", U"2")
 	BOOLEAN (scale, U"Scale function with parameter value", false)
@@ -649,8 +608,8 @@ FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point s
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		int status = FormantModeler_getDataPointStatus (me, formantNumber, index);
-		conststring32 result = ( status == DataModeler_DATA_INVALID ? U"Invalid" : U"Valid" );
+		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
+		conststring32 result = ( status == kDataModelerData::Invalid ? U"Invalid" : U"Valid" );
 	INTEGER_ONE_END (U"")
 }
 
@@ -711,9 +670,9 @@ FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter st
 	OK
 DO
 	STRING_ONE (FormantModeler)
-		int status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
+		kDataModelerParameter status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		conststring32 result = Melder_cat (
-			status == DataModeler_PARAMETER_FREE ? U"Free" : status == DataModeler_PARAMETER_FIXED ? U"Fixed" : U"Undefined",
+			status == kDataModelerParameter::Free ? U"Free" : status == kDataModelerParameter::Fixed ? U"Fixed" : U"Undefined",
 			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
 		);
 	STRING_ONE_END
@@ -774,11 +733,7 @@ DO
 }
 
 FORM (INFO_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighDataType, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	INFO_ONE (FormantModeler)
@@ -802,10 +757,11 @@ FORM (REAL_FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness v
 	INTEGER (toFormant, U"right Formant range", U"0")
 	INTEGER (order, U"Order of polynomials", U"3")
 	REAL (power, U"Parameter variance power", U"1.5")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getSmoothnessValue (me, fromFormant, toFormant, order, power);
+		double result = FormantModeler_getSmoothnessValue (me, fromFormant, toFormant, order, power, weighData);
 	NUMBER_ONE_END (U" (= smoothness)")
 }
 
@@ -838,15 +794,11 @@ DO
 FORM (MODIFY_FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
 	INTEGER (toFormant, U"right Formant range", U"0")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
-		FormantModeler_setDataWeighing (me, fromFormant, toFormant, weighDataType);
+		FormantModeler_setDataWeighing (me, fromFormant, toFormant, weighData);
 	MODIFY_EACH_END
 }
 
@@ -919,12 +871,9 @@ DO
 FORM (MODIFY_FormantModeler_setDataPointStatus, U"FormantModeler: Set data point status", nullptr) {
 	NATURAL (formantNumber, U"Formant index", U"1")
 	NATURAL (dataNumber, U"Data index", U"1")
-	OPTIONMENU (dataStatus, U"Status", 1)
-		OPTION (U"Valid")
-		OPTION (U"Invalid")
+	OPTIONMENU_ENUM (kDataModelerData, status, U"Status", kDataModelerData::DEFAULT)
 	OK
 DO
-	int status = dataStatus == 2 ? DataModeler_DATA_INVALID : DataModeler_DATA_VALID;
 	MODIFY_EACH (FormantModeler)
 		FormantModeler_setDataPointStatus (me, formantNumber,  dataNumber, status);
 	MODIFY_EACH_END
@@ -955,21 +904,21 @@ DO
 }
 
 FORM (NEW_FormantModeler_to_Table_zscores, U"", nullptr) {
-	BOOLEAN (useBandwidth, U"Bandwidths as standard deviation", true)
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (FormantModeler)
-		autoTable result = FormantModeler_to_Table_zscores (me, useBandwidth);
+		autoTable result = FormantModeler_to_Table_zscores (me, weighData);
 	CONVERT_EACH_END (my name.get(), U"_z")
 }
 
 FORM (NEW_FormantModeler_to_FormantModeler_processOutliers, U"", nullptr) {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
-	BOOLEAN (useBandwidth, U"Bandwidths as standard deviation", true)
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (FormantModeler)
-		autoFormantModeler result = FormantModeler_processOutliers (me, numberOfSigmas, useBandwidth);
+		autoFormantModeler result = FormantModeler_processOutliers (me, numberOfSigmas, weighData);
 	CONVERT_EACH_END (my name.get(), U"_outliers");
 }
 
@@ -985,7 +934,7 @@ DIRECT (WINDOW_OptimalCeilingTier_edit) {
 
 
 /*************************** PitchModeler *************************************/
-
+/*
 FORM (NEW_Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
 	REAL (fromTime, U"left Start time (s)", U"0.0")
 	REAL (toTime, U"right End time (s)", U"0.1")
@@ -1010,6 +959,7 @@ DO
 		PitchModeler_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, order + 1,  garnish);
 	GRAPHICS_EACH_END
 }
+*/
 
 FORM (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.1")
@@ -1022,18 +972,14 @@ FORM (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling"
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getOptimalFormantCeiling (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power);
+		double result = Sound_getOptimalFormantCeiling (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighData, numberOfSigmas, power);
 	NUMBER_ONE_END (U" Hz");
 }
 
@@ -1048,11 +994,7 @@ FORM (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
@@ -1060,7 +1002,7 @@ FORM (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power, 0, 1, 1, 1, 1, 1, &ceiling);
+		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighData, numberOfSigmas, power, 0, 1, 1, 1, 1, 1, &ceiling);
 	CONVERT_EACH_END (my name.get(), U"_", Melder_fixed (ceiling, 0))
 }
 
@@ -1075,11 +1017,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, 
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
@@ -1093,7 +1031,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, 
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency,  toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3, & ceiling);
+		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency,  toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighData, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3, & ceiling);
 	CONVERT_EACH_END (my name.get(), U"_", Melder_fixed (ceiling, 0));
 }
 
@@ -1108,11 +1046,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (int
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
@@ -1126,7 +1060,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (int
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval_robust (me, fromTime, toTime, windowLength, timeStep, fromFrequency, fromFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, minimumF2, minimumF3, &ceiling);
+		autoFormant result = Sound_to_Formant_interval_robust (me, fromTime, toTime, windowLength, timeStep, fromFrequency, fromFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighData, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, minimumF2, minimumF3, &ceiling);
 	CONVERT_EACH_END (my name.get(), U"_", Melder_fixed (ceiling, 0))
 }
 
@@ -1140,18 +1074,14 @@ FORM (NEW_Sound_to_OptimalCeilingTier, U"", nullptr) {
 	REAL (smoothingWindow_s, U"Formant smoothing window (s)", U"0.05")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"2")
-	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
-		OPTION (U"Equally")
-		OPTION (U"Bandwidth")
-		OPTION (U"Bandwidth / frequency")
-		OPTION (U"Sqrt bandwidth")
+	OPTIONMENU_ENUM (kDataModelerWeights, weighData, U"Weigh data", kDataModelerWeights::DEFAULT)
 	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoOptimalCeilingTier result = Sound_to_OptimalCeilingTier (me, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, smoothingWindow_s, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power);
+		autoOptimalCeilingTier result = Sound_to_OptimalCeilingTier (me, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, smoothingWindow_s, numberOfFormantTracks, order + 1, weighData, numberOfSigmas, power);
 	CONVERT_EACH_END (my name.get());
 }
 
@@ -1161,8 +1091,7 @@ FORM (NEW_Table_to_DataModeler, U"", nullptr) {
 	WORD (columnWithX_string, U"Column with X data", U"")
 	WORD (columnWithY_string, U"Column with Y data", U"")
 	WORD (columnEithSigma_string, U"Column with sigmas", U"")
-	OPTIONMENU (functionType, U"Model functions", 1)
-		OPTION (U"Legendre polynomials")
+	OPTIONMENU_ENUM (kDataModelerFunction, type, U"Basis functions", kDataModelerFunction::DEFAULT)		
 	INTEGER (maximumOrder, U"Maximum order", U"3")
 	OK
 DO
@@ -1170,13 +1099,13 @@ DO
 		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, columnWithX_string);
 		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, columnWithY_string);
 		integer scolumn = Table_findColumnIndexFromColumnLabel (me, columnEithSigma_string);
-		autoDataModeler result = Table_to_DataModeler (me, xmin, xmax, xcolumn, ycolumn, scolumn, maximumOrder + 1, functionType);
+		autoDataModeler result = Table_to_DataModeler (me, xmin, xmax, xcolumn, ycolumn, scolumn, maximumOrder + 1, type);
 	CONVERT_EACH_END (my name.get())
 }
 
 void praat_DataModeler_init ();
 void praat_DataModeler_init () {
-	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, classPitchModeler, nullptr);
+	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, NEW1_DataModeler_createSimple);
 
@@ -1287,9 +1216,9 @@ void praat_DataModeler_init () {
 
 	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, WINDOW_OptimalCeilingTier_edit);
 	
-	praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, NEW_Pitch_to_PitchModeler);
+	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, NEW_Pitch_to_PitchModeler);
 
-	praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_PitchModeler_draw);
+	//praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_PitchModeler_draw);
 
 	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN, REAL_Sound_getOptimalFormantCeiling);
 	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval);
