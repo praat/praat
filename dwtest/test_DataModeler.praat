@@ -16,7 +16,7 @@ procedure testDataModelerInterface
 	@createData: .xmin, .xmax, .nx, 0
 	.table = selected ("Table")
 	.maximumPolynomialOrder = 3
-	.dm = To DataModeler: .xmin, .xmax, "x", "y", "", "Legendre polynomials", .maximumPolynomialOrder
+	.dm = To DataModeler: .xmin, .xmax, "x", "y", "sy", "Legendre polynomials", .maximumPolynomialOrder
 	#
 	# Query -
 	#
@@ -88,14 +88,16 @@ procedure testDataModelerInterface
 endproc
 
 procedure createData: .xmin, .xmax, .nx, .ynoise_stdev
-	.model = Create Table with column names: "table", .nx, "x y"
+	.model = Create Table with column names: "table", .nx, "x y sy"
 	# linear
 	.dx = (.xmax -.xmin) / (.nx - 1)
 	for .row to .nx
 		.x = .xmin + (.row -1) * .dx
 		.y = 2 * .x + 3 + randomGauss (0, .ynoise_stdev)
+		.sy = randomGauss (0.35, 0.05) 
 		Set numeric value: .row, "x", .x
 		Set numeric value: .row, "y", .y
+		Set numeric value: .row, "sy", .sy
 	endfor
 endproc
 

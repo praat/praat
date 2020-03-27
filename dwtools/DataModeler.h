@@ -121,6 +121,13 @@ void DataModeler_setDataPointValueAndStatus (DataModeler me, integer index, doub
 void DataModeler_setDataPointYSigma (DataModeler me, integer index, double sigma);
 
 double DataModeler_getDataPointYSigma (DataModeler me, integer index);
+
+autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights weighData);
+/*
+	Interpret the values in sigmaY as 1 / sigmay or 1 / sqrt (sigmaY) or y/sigmaY.
+	If equal weighing than get sigma from the residual sum of squares between model and data.
+*/
+
 double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDataPoints);
 
 autoVEC DataModeler_getZScores (DataModeler me, kDataModelerWeights weighData);

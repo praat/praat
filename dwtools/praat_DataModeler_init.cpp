@@ -87,7 +87,7 @@ DIRECT (INTEGER_DataModeler_getNumberOfParameters) {
 DIRECT (INTEGER_DataModeler_getNumberOfFixedParameters) {
 	INTEGER_ONE (DataModeler)
 		integer result = DataModeler_getNumberOfFixedParameters (me);
-	INTEGER_ONE_END (U"(= number of parameters)")
+	INTEGER_ONE_END (U" (= number of fixed parameters)")
 }
 
 FORM (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
