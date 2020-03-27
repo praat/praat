@@ -22,5 +22,11 @@ enums_begin (kFormantModelerTrackShift, 1)
 	enums_add (kFormantModelerTrackShift, 3, Down, U"Down")
 enums_end (kFormantModelerTrackShift, 3, Down)
 
+enums_begin (kFormantModelerWeights, 1)
+	enums_add (kFormantModelerWeights, 1, EqualWeights, U"Equal")
+	enums_add (kFormantModelerWeights, 2, OneOverBandwidth, U"One over bandwidth")
+	enums_add (kFormantModelerWeights, 3, OneOverSqrtBandwidth, U"One over sqrt(bandwidth)")
+	enums_add (kFormantModelerWeights, 4, QFactor, U"Q-factor")
+enums_end (kFormantModelerWeights, 4, QFactor)
 
 /* End of file FormantModeler_enums.h */

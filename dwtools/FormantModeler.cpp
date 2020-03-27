@@ -70,7 +70,7 @@ double FormantModeler_getStandardDeviation (FormantModeler me, integer iformant)
 	double sigma = undefined;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		const DataModeler ff = my trackmodelers.at [iformant];
-		sigma = DataModeler_estimateSigmaY (ff);
+		sigma = DataModeler_getDataStandardDeviation (ff);
 	}
 	return sigma;
 }
@@ -152,7 +152,7 @@ void FormantModeler_setParametersFree (FormantModeler me, integer fromFormant, i
 	}
 }
 
-void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, integer toFormant, kDataModelerWeights weighData) {
+void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, integer toFormant, kFormantModelerWeights weighFormants) {
 	integer numberOfFormants = my trackmodelers.size;
 	if (toFormant < fromFormant || (fromFormant == toFormant && fromFormant == 0)) {
 		fromFormant = 1;
@@ -163,7 +163,14 @@ void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, int
 
 	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
 		const DataModeler ffi = my trackmodelers.at [iformant];
-		DataModeler_setDataWeighing (ffi, weighData);
+		kDataModelerWeights dataWeights = kDataModelerWeights::EqualWeights;
+		if (weighFormants == kFormantModelerWeights::OneOverBandwidth)
+			dataWeights = kDataModelerWeights::OneOverSigma;
+		else if (weighFormants == kFormantModelerWeights::OneOverSqrtBandwidth)
+			dataWeights = kDataModelerWeights::OneOverSqrtSigma;
+		else
+			dataWeights = kDataModelerWeights::Relative;
+		DataModeler_setDataWeighing (ffi, dataWeights);
 	}
 }
 
@@ -201,13 +208,13 @@ static integer FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xm
 	return DataModeler_drawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
 }
 
-static void FormantModeler_getCumulativeChiScores (FormantModeler me, kDataModelerWeights weighData, VEC chisq) {
+static void FormantModeler_getCumulativeChiScores (FormantModeler me, VEC chisq) {
 	try {
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		const integer numberOfFormants = my trackmodelers.size;
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			const DataModeler fm = my trackmodelers.at [iformant];
-			autoVEC zscores = DataModeler_getZScores (fm, weighData);
+			autoVEC zscores = DataModeler_getZScores (fm);
 			autoVEC chisqif = DataModeler_getChisqScoresFromZScores (fm, zscores.get(), true); // undefined -> average
 			for (integer i = 1; i <= numberOfDataPoints; i ++)
 				chisq [i] += chisqif [i];
@@ -319,14 +326,14 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 	}
 }
 
-void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, kDataModelerWeights weighData, bool garnish) {
+void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	try {
 		integer ixmin, ixmax;
 		Melder_require (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) > 0,
 			U"Not enough data points in drawing range.");
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoVEC chisq = newVECzero (numberOfDataPoints);
-		FormantModeler_getCumulativeChiScores (me, weighData, chisq.get());
+		FormantModeler_getCumulativeChiScores (me, chisq.get());
 		if (ymax <= ymin)
 			NUMextrema (chisq.part (ixmin, ixmax), & ymin, & ymax);
 		Graphics_setInner (g);
@@ -346,7 +353,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 }
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, kDataModelerWeights weighData, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish)
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const integer maxTrack = my trackmodelers.size;
@@ -363,7 +370,7 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
 		const DataModeler ffi = my trackmodelers.at [iformant];
 		const double xOffset_mm = ( iformant % 2 == 1 ? horizontalOffset_mm : -horizontalOffset_mm );
-		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, weighData, mark, marksFontSize, xOffset_mm);
+		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize, xOffset_mm);
 	}
 	Graphics_setFontSize (g, currectFontSize);
 	Graphics_unsetInner (g);
@@ -376,11 +383,11 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	}
 }
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, kDataModelerWeights weighData,
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant,
 	integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish) {
 	if (iformant > 0 || iformant <= my trackmodelers.size) {
 		const DataModeler ff = my trackmodelers.at [iformant];
-		DataModeler_normalProbabilityPlot (ff, g, weighData, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
+		DataModeler_normalProbabilityPlot (ff, g,  numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	}
 }
 
@@ -591,7 +598,7 @@ integer FormantModeler_getNumberOfDataPoints (FormantModeler me) {
 	return thy numberOfDataPoints;
 }
 
-autoTable FormantModeler_to_Table_zscores (FormantModeler me, kDataModelerWeights weighData) {
+autoTable FormantModeler_to_Table_zscores (FormantModeler me) {
 	try {
 		const integer icolt = 1, numberOfFormants = my trackmodelers.size;
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
@@ -605,7 +612,7 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me, kDataModelerWeight
 				for (integer i = 1; i <= numberOfDataPoints; i ++)   // only once all tracks have same x-values
 					Table_setNumericValue (ztable.get(), i, icolt, ffi -> data [i] .x);
 			}
-			autoVEC zscores = DataModeler_getZScores (ffi, weighData);
+			autoVEC zscores = DataModeler_getZScores (ffi);
 			for (integer i = 1; i <= numberOfDataPoints; i ++)
 				Table_setNumericValue (ztable.get(), i, icolz, zscores [i]);
 		}
@@ -739,7 +746,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 	}
 }
 
-double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, kDataModelerWeights weighData, double *out_probability, double *out_ndf) {
+double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, double *out_probability, double *out_ndf) {
 	double chisq = undefined, ndfTotal = 0.0;
 	if (toFormant < fromFormant || (fromFormant == 0 && toFormant == 0)) {
 		fromFormant = 1;
@@ -751,7 +758,7 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, in
 		for (integer iformant= fromFormant; iformant <= toFormant; iformant ++) {
 			const DataModeler ffi = my trackmodelers.at [iformant];
 			double p, df;
-			const double chisqi = DataModeler_getChiSquaredQ (ffi, weighData, & p, & df);
+			const double chisqi = DataModeler_getChiSquaredQ (ffi, & p, & df);
 			if (isdefined (chisqi)) {
 				chisq += df * chisqi;
 				ndfTotal += df;
@@ -815,7 +822,7 @@ void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromFor
 }
 
 
-autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas, kDataModelerWeights weighData) {
+autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas) {
 	try {
 		const integer numberOfFormants = my trackmodelers.size;
 		Melder_require (numberOfFormants > 2,
@@ -832,7 +839,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 			x [idata] = ff -> data [idata] .x;
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			const DataModeler ffi = my trackmodelers.at [iformant];
-			autoVEC zscores = DataModeler_getZScores (ffi, weighData);
+			autoVEC zscores = DataModeler_getZScores (ffi);
 			z.row (iformant) <<= zscores.get ();
 		}
 		// 2. Do the manipulation in a copy
@@ -860,7 +867,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 }
 
 
-double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant, integer numberOfParametersPerTrack, double power, kDataModelerWeights weighData) {
+double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant, integer numberOfParametersPerTrack, double power) {
 	double smoothness = undefined;
 	if (toFormant < fromFormant || (toFormant == 0 && fromFormant == 0)) {
 		fromFormant = 1;
@@ -870,7 +877,7 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant
 		integer nofp;
 		const double var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, & nofp);
 		double ndof;
-		const double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, weighData, nullptr, &ndof);
+		const double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, nullptr, &ndof);
 		if (isdefined (var) && isdefined (chisq) && nofp > 0)
 			smoothness = log10 (pow (var / nofp, power) * (chisq / ndof));
 	}
@@ -915,22 +922,22 @@ double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double mi
 	return minF1Factor * maxF1Factor * minF2Factor * maxF2Factor * minF3Factor;
 }
 
-void FormantModeler_reportChiSquared (FormantModeler me, kDataModelerWeights weighData) {
+void FormantModeler_reportChiSquared (FormantModeler me) {
 	const integer numberOfFormants = my trackmodelers.size;
 	double ndf = 0, probability;
 	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfFormants, U" formant track:");
-	MelderInfo_writeLine (( weighData == kDataModelerWeights::EqualWeights ? U"Standard deviation is estimated from the data." :
-		( weighData == kDataModelerWeights::OneOverSigma ? U"\tBandwidths are used as estimate for local standard deviations." :
-		( weighData == kDataModelerWeights::Relative ? U"\t1/Q's are used as estimate for local standard deviations." :
+	MelderInfo_writeLine (( my weighFormants == kFormantModelerWeights::EqualWeights ? U"Standard deviation is estimated from the data." :
+		( my weighFormants == kFormantModelerWeights::OneOverBandwidth ? U"\tBandwidths are used as estimate for local standard deviations." :
+		( my weighFormants == kFormantModelerWeights::QFactor ? U"\t1/Q's are used as estimate for local standard deviations." :
 		U"\tSquare root of bandwidths are used as estimate for local standard deviations." ) ) ));
 	for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
-		const double chisq_f = FormantModeler_getChiSquaredQ (me, iformant, iformant, weighData, & probability, & ndf);
+		const double chisq_f = FormantModeler_getChiSquaredQ (me, iformant, iformant, & probability, & ndf);
 		MelderInfo_writeLine (U"Formant track ", iformant, U":");
 		MelderInfo_writeLine (U"\tChi squared (F", iformant, U") = ", chisq_f);
 		MelderInfo_writeLine (U"\tProbability (F", iformant, U") = ", probability);
 		MelderInfo_writeLine (U"\tNumber of degrees of freedom (F", iformant, U") = ", ndf);
 	}
-	const double chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, weighData, & probability, & ndf);
+	const double chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, & probability, & ndf);
 	MelderInfo_writeLine (U"Chi squared test for the complete model with ", numberOfFormants, U" formants:");
 	MelderInfo_writeLine (U"\tChi squared = ", chisq);
 	MelderInfo_writeLine (U"\tProbability = ", probability);
@@ -939,7 +946,7 @@ void FormantModeler_reportChiSquared (FormantModeler me, kDataModelerWeights wei
 
 integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax,
 	integer numberOfFormantTracks, integer numberOfParametersPerTrack,
-	kDataModelerWeights weighData, bool useConstraints, double numberOfSigmas, double power,
+	kFormantModelerWeights weighData, bool useConstraints, double numberOfSigmas, double power,
 	double minF1, double maxF1, double minF2, double maxF2, double minF3)
 {
 	try {
@@ -999,7 +1006,7 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 				autoFormantModeler fs = Formant_to_FormantModeler (fi, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack);
 				FormantModeler_setParameterValuesToZero (fs.get(), 1, numberOfFormantTracks, numberOfSigmas);
 				const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fs.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-				const double chiVar = FormantModeler_getSmoothnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power, weighData);
+				const double chiVar = FormantModeler_getSmoothnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 				if (isdefined (chiVar) && cf * chiVar < minChiVar) {
 					minChiVar = cf * chiVar;
 					index = iobject;
@@ -1033,10 +1040,10 @@ autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
 }
 
 autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax,
-	integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData, double numberOfSigmas, double power) {
+	integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants, double numberOfSigmas, double power) {
 	try {
 		const integer index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,
-			weighData, false, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0); // last five are just fillers
+			weighFormants, false, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0); // last five are just fillers
 		const Formant bestfit = my at [index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
 		return thee;
@@ -1046,11 +1053,11 @@ autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, doub
 }
 
 autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax,
-	integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3)
 {
 	try {
-		const integer index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack, weighData, 1, numberOfSigmas, power, minF1, maxF1, minF2, maxF2, minF3);
+		const integer index = Formants_getSmoothestInInterval (me, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack, weighFormants, 1, numberOfSigmas, power, minF1, maxF1, minF2, maxF2, minF3);
 		const Formant bestfit = my at [index];
 		autoFormant thee = Formant_extractPart (bestfit, tmin, tmax);
 		return thee;
@@ -1061,17 +1068,17 @@ autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
-	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power)
 {
 	double optimalCeiling;
-	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighData,  numberOfSigmas, power, false, 0.0, 5000.0, 0.0, 5000.0, 0.0, & optimalCeiling);
+	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighFormants,  numberOfSigmas, power, false, 0.0, 5000.0, 0.0, 5000.0, 0.0, & optimalCeiling);
 	return optimalCeiling;
 }
 
 autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
-	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
 	double *out_optimalCeiling)
 {
@@ -1105,10 +1112,11 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_burg (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack);
+			//TODO FormantModeler_setFormantWeighting (me, weighFormants);
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
 			const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-			const double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power, weighData);
+			const double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			const double criterium = chiVar * cf;
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
@@ -1130,7 +1138,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 
 autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
-	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
 	double *out_optimalCeiling)
 {
@@ -1164,10 +1172,11 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack);
+			// TODO set weighing
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
 			const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-			const double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power, weighData);
+			const double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			const double criterium = chiVar * cf;
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
@@ -1201,7 +1210,7 @@ static void FormantModeler_correctFormantsProbablyIndexedFalsely (FormantModeler
 
 autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 	double windowLength, double timeStep, double minCeiling, double maxCeiling, integer numberOfFrequencySteps,
-	double preemphasisFrequency, double smoothingWindow, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData, double numberOfSigmas, double power) {
+	double preemphasisFrequency, double smoothingWindow, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants, double numberOfSigmas, double power) {
 	try {
 		OrderedOf<structFormant> formants;
 		const double frequencyStep = ( numberOfFrequencySteps > 1 ? (maxCeiling - minCeiling) / (numberOfFrequencySteps - 1) : 0.0 );
@@ -1219,7 +1228,7 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 			const double time = firstTime + (iframe - 1) * modelingTimeStep;
 			const double tmin = time - smoothingWindow / 2.0;
 			const double tmax = tmin + smoothingWindow;
-			const integer index = Formants_getSmoothestInInterval (& formants, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,	weighData,
+			const integer index = Formants_getSmoothestInInterval (& formants, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,	weighFormants,
 				false, numberOfSigmas, power, 200.0, 1500.0, 300.0, 3000.0, 1000.0);   // min/max values are not used
 			const double ceiling = minCeiling + (index - 1) * frequencyStep;
 			RealTier_addPoint (octier.get(), time, ceiling);

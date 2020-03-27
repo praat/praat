@@ -1,6 +1,6 @@
 /* FormantModeler_def.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2014 - 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 #define ooSTRUCT FormantModeler
 oo_DEFINE_CLASS (FormantModeler, Function)
-
+	
+	oo_ENUM (kFormantModelerWeights, weighFormants)
 	oo_COLLECTION_OF (OrderedOf, trackmodelers, DataModeler, 0)
 
 	#if oo_DECLARING

@@ -40,7 +40,7 @@ void FormantModeler_fit (FormantModeler me);
 void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax,
 	integer iformant, integer iterm, bool scaled, integer numberOfPoints, bool garnish);
 
-void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, integer toFormant, kDataModelerWeights weighData);
+void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, integer toFormant, kFormantModelerWeights weighFormants);
 
 void FormantModeler_setParameterValueFixed (FormantModeler me, integer iformant, integer index, double value);
 
@@ -54,26 +54,23 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
 	bool errorBars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
 
-void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
+void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, kDataModelerWeights weighData, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish);
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish);
 
-void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	kDataModelerWeights weighData, bool garnish);
+void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
 
 void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	kFormantModelerTrackShift shiftDirection, integer fromFormant, integer toFormant, bool garnish);
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant,
-	kDataModelerWeights weighData, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 
-autoTable FormantModeler_to_Table_zscores (FormantModeler me, kDataModelerWeights weighData);
+autoTable FormantModeler_to_Table_zscores (FormantModeler me);
 
 autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer iformant);
 
-double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, kDataModelerWeights weighData, double *probability, double *ndf);
+double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, double *probability, double *ndf);
 
 double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer fromFormant, integer toFormant);
 
@@ -126,22 +123,22 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 
 autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool estimateUndefined);
 
-autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas, kDataModelerWeights weighData);
+autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas);
 
 double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant,
-	integer numberOfParametersPerTrack, double power, kDataModelerWeights weighData);
+	integer numberOfParametersPerTrack, double power);
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type);
 
-void FormantModeler_reportChiSquared (FormantModeler me, kDataModelerWeights weighData);
+void FormantModeler_reportChiSquared (FormantModeler me);
 
-integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData, bool useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants, bool useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
 double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
-autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData, double numberOfSigmas, double power);
+autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants, double numberOfSigmas, double power);
 
-autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
 autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer iformant);
 
@@ -150,27 +147,27 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax,
 
 autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
-	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
 	double *out_optimalCeiling
 );
 
 autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
-	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
 	double *out_optimalCeiling
 );
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
-	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power
 );
 
 autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 	double windowLength, double timeStep, double minCeiling, double maxCeiling, integer numberOfFrequencySteps,
-	double preemphasisFrequency, double smoothingWindow, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kDataModelerWeights weighData,
+	double preemphasisFrequency, double smoothingWindow, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
 	double numberOfSigmas, double power
 );
 
