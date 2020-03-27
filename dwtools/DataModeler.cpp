@@ -67,7 +67,7 @@ void structDataModeler :: v_info () {
 	MelderInfo_writeLine (U"      End time: ", xmax, U" seconds");
 	MelderInfo_writeLine (U"      Total duration: ", xmax - xmin, U" seconds");
 	double ndf, rSquared = DataModeler_getCoefficientOfDetermination (this, nullptr, nullptr);
-	double probability, chisq = DataModeler_getChiSquaredQ (this, weighData, & probability, & ndf);
+	double probability, chisq = DataModeler_getChiSquaredQ (this, & probability, & ndf);
 	MelderInfo_writeLine (U"   Fit:");
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
@@ -382,12 +382,14 @@ double DataModeler_getDegreesOfFreedom (DataModeler me) {
 autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights weighData) {
 	autoVEC weights = newVECzero (my numberOfDataPoints);
 	if (weighData == kDataModelerWeights::EqualWeights) {
-			integer numberOfValidDataPoints;
-			const double residualSS = DataModeler_getResidualSumOfSquares (me, & numberOfValidDataPoints);
-			Melder_require (numberOfValidDataPoints > 1,
-				U"Not enough data points to calculate sigma.");
-			const double estimatedSigmas = residualSS / (numberOfValidDataPoints - 1);
-			weights.get() <<= 1.0 / estimatedSigmas;
+			/*
+				We weigh with the inverse of the standard deviation of the data to give
+				subsequent Chi squared tests a meaningful interpretation. 
+			*/
+			const double stdev = DataModeler_getDataStandardDeviation (me);
+			Melder_require (isdefined (stdev),
+				U"Not enough data points to calculate standard deviation.");
+			weights.get() <<= 1.0 / stdev;
 	} else {	
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			if (my data [ipoint] .status == kDataModelerData::Invalid)
@@ -409,10 +411,10 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 	return weights;
 }
 
-autoVEC DataModeler_getZScores (DataModeler me, kDataModelerWeights weighData) {
+autoVEC DataModeler_getZScores (DataModeler me) {
 	try {
 		autoVEC zscores = newVECraw (my numberOfDataPoints);
-		autoVEC weights = DataModeler_getDataPointsWeights (me, weighData);
+		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			double z = undefined;
 			if (my data [ipoint] .status != kDataModelerData::Invalid) {
@@ -449,13 +451,12 @@ autoVEC DataModeler_getChisqScoresFromZScores (DataModeler me, constVEC zscores,
 	return chisq;
 }
 
-double DataModeler_getChiSquaredQ (DataModeler me, kDataModelerWeights weighData, double *out_prob, double *out_df) {
+double DataModeler_getChiSquaredQ (DataModeler me, double *out_prob, double *out_df) {
 	double chisq;
 	integer numberOfValidZScores;
-	autoVEC zscores = DataModeler_getZScores (me, weighData);
+	autoVEC zscores = DataModeler_getZScores (me);
 	chisqFromZScores (zscores.get(), & chisq, & numberOfValidZScores);
 	const double ndf = DataModeler_getDegreesOfFreedom (me);
-	//( weighData == kDataModelerWeights::EqualWeights ? numberOfValidZScores - 1.0 : numberOfValidZScores );   // we lose one df if sigma is estimated from the data
 	
 	if (out_prob)
 		*out_prob = NUMchiSquareQ (chisq, ndf);
@@ -549,11 +550,11 @@ integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *x
 }
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, kDataModelerWeights weighData, conststring32 mark, double marksFontSize, double horizontalOffset_mm)
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm)
 {
 	integer ixmin, ixmax;
 	if (DataModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1) return;
-	autoVEC zscores = DataModeler_getZScores (me, weighData);
+	autoVEC zscores = DataModeler_getZScores (me);
 	const double horizontalOffset_wc = Graphics_dxMMtoWC (g, horizontalOffset_mm);
 	
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -688,10 +689,10 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 	}
 }
 
-autoTable DataModeler_to_Table_zscores (DataModeler me, kDataModelerWeights weighData) {
+autoTable DataModeler_to_Table_zscores (DataModeler me) {
 	try {
 		autoTable ztable = Table_createWithColumnNames (my numberOfDataPoints, U"x z");
-		autoVEC zscores = DataModeler_getZScores (me, weighData);
+		autoVEC zscores = DataModeler_getZScores (me);
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			Table_setNumericValue (ztable.get(), ipoint, 1, my  data [ipoint] .x);
 			Table_setNumericValue (ztable.get(), ipoint, 2, zscores [ipoint]);
@@ -702,9 +703,9 @@ autoTable DataModeler_to_Table_zscores (DataModeler me, kDataModelerWeights weig
 	}	
 }
 
-void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g,	kDataModelerWeights weighData, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish) {
+void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish) {
 	try {
-		autoTable thee = DataModeler_to_Table_zscores (me, weighData);
+		autoTable thee = DataModeler_to_Table_zscores (me);
 		Table_normalProbabilityPlot (thee.get(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	} catch (MelderError) {
 		Melder_clearError ();
@@ -961,20 +962,20 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, integer *out_numberO
 	return ( numberOfValidDataPoints > 0 ? (double) residualSS : undefined );
 }
 
-void DataModeler_reportChiSquared (DataModeler me, kDataModelerWeights weighData) {
+void DataModeler_reportChiSquared (DataModeler me) {
 	MelderInfo_writeLine (U"Chi squared test:");
-	MelderInfo_writeLine (( weighData == kDataModelerWeights::EqualWeights ? U"Standard deviation is estimated from the data." :
-		( weighData == kDataModelerWeights::OneOverSigma ? U"Sigmas are used as estimate for local standard deviations." :
-		( weighData == kDataModelerWeights::Relative ? U"1/Q's are used as estimate for local standard deviations." :
+	MelderInfo_writeLine (( my weighData == kDataModelerWeights::EqualWeights ? U"Standard deviation is estimated from the data." :
+		( my weighData == kDataModelerWeights::OneOverSigma ? U"Sigmas are used as estimate for local standard deviations." :
+		( my weighData == kDataModelerWeights::Relative ? U"1/Q's are used as estimate for local standard deviations." :
 		U"Sqrt sigmas are used as estimate for local standard deviations." ) ) ));
 	double ndf, probability;
-	const double chisq = DataModeler_getChiSquaredQ (me, weighData, & probability, & ndf);
+	const double chisq = DataModeler_getChiSquaredQ (me, & probability, & ndf);
 	MelderInfo_writeLine (U"Chi squared = ", chisq);
 	MelderInfo_writeLine (U"Probability = ", probability);
 	MelderInfo_writeLine (U"Number of degrees of freedom = ", ndf);	
 }
 
-double DataModeler_estimateSigmaY (DataModeler me) {
+double DataModeler_getDataStandardDeviation (DataModeler me) {
 	try {
 		integer numberOfDataPoints = 0;
 		autoVEC y = newVECraw (my numberOfDataPoints);

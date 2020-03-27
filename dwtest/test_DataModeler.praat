@@ -70,7 +70,7 @@ procedure testDataModelerInterface
 	.sumOfSquares_res = Get residual sum of squares
 	.dataStdDev = Get data standard deviation
 	.coef = Get coefficient of determination
-	.chiSqReport$ = Report chi squared: "Equal"
+	.chiSqReport$ = Report chi squared
 	.ndf = Get degrees of freedom
 	#
 	# Modify -
@@ -83,7 +83,7 @@ procedure testDataModelerInterface
 	Fit model
 	.covar = To Covariance (parameters)
 	selectObject: .dm
-	.zscores = To Table (z-scores): "yes"
+	.zscores = To Table (z-scores)
 	removeObject: .zscores, .covar, .table, .dm
 endproc
 

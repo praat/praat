@@ -63,9 +63,9 @@ void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, doub
 	bool estimated, integer numberOfParameters, double horizontalOffset_mm);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, kDataModelerWeights weighData, conststring32 mark, double marksFontSize, double horizontalOffset_mm);
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm);
 
-void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g,	kDataModelerWeights weighData, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
+void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 /* Get the y-value of the fitted function at x */
 
 void DataModeler_setTolerance (DataModeler me, double tolerance);
@@ -94,7 +94,7 @@ double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, i
 
 void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas);
 
-double DataModeler_estimateSigmaY (DataModeler me);
+double DataModeler_getDataStandardDeviation (DataModeler me);
 
 void DataModeler_getExtremaY (DataModeler me, double *ymin, double *ymax);
 
@@ -130,20 +130,20 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 
 double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDataPoints);
 
-autoVEC DataModeler_getZScores (DataModeler me, kDataModelerWeights weighData);
+autoVEC DataModeler_getZScores (DataModeler me);
 
 autoVEC DataModeler_getChisqScoresFromZScores (DataModeler me, constVEC zscores, bool substituteAverage);
 
 double DataModeler_getDegreesOfFreedom (DataModeler me);
 
-double DataModeler_getChiSquaredQ (DataModeler me, kDataModelerWeights weighData, double *out_probability, double *out_ndf);
+double DataModeler_getChiSquaredQ (DataModeler me, double *out_probability, double *out_ndf);
 
 double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg, double *sstot);
 
-void DataModeler_reportChiSquared (DataModeler me, kDataModelerWeights weighData);
+void DataModeler_reportChiSquared (DataModeler me);
 
 autoCovariance DataModeler_to_Covariance_parameters (DataModeler me);
 
-autoTable DataModeler_to_Table_zscores (DataModeler me, kDataModelerWeights weighData);
+autoTable DataModeler_to_Table_zscores (DataModeler me);
 
 #endif /* _DataModeler_h_ */
