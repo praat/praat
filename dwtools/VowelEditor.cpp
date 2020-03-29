@@ -946,7 +946,7 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Show trajectory time marks every", nullptr);
-		REAL (distance, U"Distance (s)", my default_trajectory_markEvery ())
+		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery ())
 	EDITOR_OK
 		SET_REAL (distance, my p_trajectory_markEvery)
 	EDITOR_DO
@@ -1296,23 +1296,25 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			my p_marks_speakerType = my default_marks_speakerType ();
 		}
 		VowelEditor_getMarks (me.get());
-		if (my p_synthesis_f3 <= 0)
+		if (my p_synthesis_f3 <= 0 || my p_synthesis_b3 <= 0) {
 			my p_synthesis_f3 = Melder_atof (my default_synthesis_f3 ());
-		if (my p_synthesis_b3 <= 0)
 			my p_synthesis_b3 = Melder_atof (my default_synthesis_b3 ());
-		if (my p_synthesis_f4 <= 0)
+		}
+		if (my p_synthesis_f4 <= 0 || my p_synthesis_b4 <= 0) {
 			my p_synthesis_f4 = Melder_atof (my default_synthesis_f4 ());
-		if (my p_synthesis_b4 <= 0)
 			my p_synthesis_b4 = Melder_atof (my default_synthesis_b4 ());
+		}
 		my p_soundFollowsMouse = true; // No real preference yet
 		if (my p_synthesis_samplingFrequency <= 0.0)
 			my p_synthesis_samplingFrequency = Melder_atof (my default_synthesis_samplingFrequency ());
-		if (my p_trajectory_minimumDuration <= 0.0)
+		if (my p_trajectory_minimumDuration <= 0.0 || my p_trajectory_maximumDuration <= 0.0) {
 			my p_trajectory_minimumDuration = Melder_atof (my default_trajectory_minimumDuration ());
-		if (my p_trajectory_maximumDuration <= 0.0)
 			my p_trajectory_maximumDuration = Melder_atof (my default_trajectory_maximumDuration ());
-		if (my p_trajectory_extendDuration <= 0.0)
+		}
+		if (my p_trajectory_extendDuration <= 0.0 || my p_trajectory_markEvery <= 0.0) {
 			my p_trajectory_extendDuration = Melder_atof (my default_trajectory_extendDuration ());
+			my p_trajectory_markEvery = Melder_atof (my default_trajectory_markEvery ());
+		}
 		if (my data)
 			my vowel = Data_copy (static_cast<VowelSpecification> (data));
 		else
