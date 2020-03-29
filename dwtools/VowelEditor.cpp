@@ -99,6 +99,7 @@ Thing_implement (VowelEditor, Editor, 0);
 
 static structVowelEditor_F0 f0default { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
 static structVowelEditor_F1F2Grid griddefault { 200.0, 500.0, 0, 1, 0, 1, 0.5 };
+void VowelEditor_setMarks (VowelEditor me, kVowelEditor_marksDataSet marksDataSet, kVowelEditor_speakerType speakerType, double fontSize);
 
 #include "oo_DESTROY.h"
 #include "Vowel_def.h"
@@ -124,6 +125,7 @@ static structVowelEditor_F1F2Grid griddefault { 200.0, 500.0, 0, 1, 0, 1, 0.5 };
 struct markInfo {
 	double f1, f2;
 	int size;
+	MelderColour colour;
 	char32 vowel [Preferences_STRING_BUFFER_SIZE];
 };
 
@@ -137,6 +139,7 @@ static struct {
 	kVowelEditor_marksDataSet marksDataSet;
 	int numberOfMarks;
 	double marksFontSize;
+	char32 marksColour [Preferences_STRING_BUFFER_SIZE];
 	char32 mark [VowelEditor_MAXIMUM_MARKERS] [Preferences_STRING_BUFFER_SIZE];
 } prefs;
 
@@ -154,9 +157,11 @@ void VowelEditor_prefs () {
 	Preferences_addDouble (U"VowelEditor.b4", & prefs.b4, 350.0);
 	Preferences_addDouble (U"VowelEditor.markTraceEvery", & prefs.markTraceEvery, 0.05);
 	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
-	Preferences_addEnum (U"VowelEditor.speakerType2", & prefs.speakerType, kVowelEditor_speakerType, kVowelEditor_speakerType::Man);
-	Preferences_addEnum (U"VowelEditor.marksDataSet", & prefs.marksDataSet, kVowelEditor_marksDataSet, kVowelEditor_marksDataSet::AmericanEnglish);
-	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
+	Preferences_addEnum (U"VowelEditor.speakerType", & prefs.speakerType, kVowelEditor_speakerType, kVowelEditor_speakerType::Man);
+	Preferences_addEnum (U"VowelEditor.marks.DataSet", & prefs.marksDataSet, kVowelEditor_marksDataSet, kVowelEditor_marksDataSet::AmericanEnglish);
+	Preferences_addDouble (U"VowelEditor.marks.Fontsize", & prefs.marksFontSize, 14.0);
+	
+	Preferences_addString (U"VowelEditor.marks.Colour", prefs.marksColour, MelderColour_name (Melder_GREY));
 	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
 	/*
 		We don't know how many markers there will be, so the prefs file needs to have the maximum number.
@@ -601,13 +606,15 @@ static void copyVowelMarksInPreferences_volatile (Table me) {
 		const integer col_f1 = Table_getColumnIndexFromColumnLabel (me, U"F1");
 		const integer col_f2 = Table_getColumnIndexFromColumnLabel (me, U"F2");
 		const integer col_size = Table_getColumnIndexFromColumnLabel (me, U"Size");
+		const integer col_colour = Table_getColumnIndexFromColumnLabel (me, U"Colour");
 		autoMelderString mark;
 		for (integer imark = 1; imark <= VowelEditor_MAXIMUM_MARKERS; imark ++) {
 			if (imark <= numberOfRows) {
 				MelderString_copy (& mark, Table_getStringValue_Assert (me, imark, col_vowel), U"\t",
 					Table_getStringValue_Assert (me, imark, col_f1), U"\t",
 					Table_getStringValue_Assert (me, imark, col_f2), U"\t",
-					Table_getStringValue_Assert (me, imark, col_size));
+					Table_getStringValue_Assert (me, imark, col_size), U"\t",
+					Table_getStringValue_Assert (me, imark, col_colour));
 				const integer length = str32len (mark.string);
 				Melder_require (length < Preferences_STRING_BUFFER_SIZE,
 					U"Preference mark ", imark, U" contains too many characters");
@@ -619,7 +626,7 @@ static void copyVowelMarksInPreferences_volatile (Table me) {
 	}
 }
 
-static void Table_addColumn_size (Table me, double size) {
+static void Table_addColumnIfNotExist_size (Table me, double size) {
 	const integer col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
@@ -628,20 +635,46 @@ static void Table_addColumn_size (Table me, double size) {
 	}
 }
 
-/*
-static void Table_addColumn_colour (Table me, MelderColour colour) {
+static void Table_addColumnIfNotExist_colour (Table me, conststring32 colour) {
 	integer col_colour = Table_findColumnIndexFromColumnLabel (me, U"Colour");
 	if (col_colour == 0) {
 		Table_appendColumn (me, U"Colour");
-		conststring32 string = Graphics_Colour_asString ();
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			Table_setStringValue (me, irow, my numberOfColumns, string);
+			Table_setStringValue (me, irow, my numberOfColumns, colour);
 		}
 	}
 }
-*/
 
-static void VowelEditor_setMarks (VowelEditor me, kVowelEditor_marksDataSet marksDataSet, kVowelEditor_speakerType speakerType, double fontSize) {
+static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me) {
+	const integer numberOfRows = VowelEditor_MAXIMUM_MARKERS;
+	try {
+		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size Colour");
+		integer nmarksFound = 0;
+		for (integer i = 1; i <= numberOfRows; i ++) {
+			autoSTRVEC marki = newSTRVECtokenize (prefs.mark [i - 1]);
+			if (marki.size < 5)
+				break;
+			Table_appendRow (newMarks.get());
+			for (integer j = 1; j <= marki.size; j ++)
+				Table_setStringValue (newMarks.get(), i, j, marki [j].get());
+			nmarksFound ++;
+		}
+		if (nmarksFound == 0) {
+			my speakerType = prefs.speakerType = kVowelEditor_speakerType::Man;
+			my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
+			VowelEditor_setMarks (me, my marksDataSet, my speakerType, prefs.marksFontSize);
+		} else {
+			my marks = newMarks.move();
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Cannot create Table from preferences. Default marks set.");
+		my speakerType = prefs.speakerType = kVowelEditor_speakerType::Man;
+		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
+		VowelEditor_setMarks (me, my marksDataSet, my speakerType, prefs.marksFontSize);
+	}
+}
+
+void VowelEditor_setMarks (VowelEditor me, kVowelEditor_marksDataSet marksDataSet, kVowelEditor_speakerType speakerType, double fontSize) {
 	autoTable te;
 	const char32 *speaker = ( speakerType == kVowelEditor_speakerType::Man ? U"m" :
 		speakerType == kVowelEditor_speakerType::Woman ? U"w" :
@@ -663,46 +696,16 @@ static void VowelEditor_setMarks (VowelEditor me, kVowelEditor_marksDataSet mark
 		my marks.reset();
 		return;
 	} else {   // leave as is
+		VowelEditor_createTableFromVowelMarksInPreferences (me);
 		return;
 	}
 	autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
 	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
-	Table_addColumn_size (newMarks.get(), fontSize);
-	//Table_addColumn_colour (newMarks.get(), Graphics_Grey);
+	Table_addColumnIfNotExist_size (newMarks.get(), fontSize);
+	Table_addColumnIfNotExist_colour (newMarks.get(), MelderColour_name (Melder_GREY));
 	my marks = newMarks.move();
 	copyVowelMarksInPreferences_volatile (my marks.get());
-}
-
-static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
-{
-	const integer numberOfRows = VowelEditor_MAXIMUM_MARKERS;
-	try {
-		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
-		integer nmarksFound = 0;
-		for (integer i = 1; i <= numberOfRows; i ++) {
-			autoSTRVEC rowi = newSTRVECtokenize (prefs.mark [i - 1]);
-			const integer numberOfTokens = rowi.size;
-			if (numberOfTokens < 4)
-				break;
-			Table_appendRow (newMarks.get());
-			for (integer j = 1; j <= 4; j ++)
-				Table_setStringValue (newMarks.get(), i, j, rowi [j].get());
-			nmarksFound ++;
-		}
-		if (nmarksFound == 0) {
-			my speakerType = prefs.speakerType = kVowelEditor_speakerType::Man;
-			my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
-			VowelEditor_setMarks (me, my marksDataSet, my speakerType, prefs.marksFontSize);
-		} else {
-			my marks = newMarks.move();
-		}
-	} catch (MelderError) {
-		Melder_throw (U"Cannot create Table from preferences. Default marks set.");
-		my speakerType = prefs.speakerType = kVowelEditor_speakerType::Man;
-		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
-		VowelEditor_setMarks (me, my marksDataSet, my speakerType, prefs.marksFontSize);
-	}
 }
 
 static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile file) {
@@ -718,9 +721,11 @@ static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile f
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"Vowel");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F1");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F2");
-		Table_addColumn_size (newMarks.get(), prefs.marksFontSize);
+		Table_addColumnIfNotExist_size (newMarks.get(), prefs.marksFontSize);
+		Table_addColumnIfNotExist_colour (newMarks.get(), prefs.marksColour);
 		my marks = newMarks.move();
 		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::Other;
+		my speakerType = prefs.speakerType = kVowelEditor_speakerType::Unknown;
 		/*
 			Our marks preferences are dynamic, save each time
 		*/
@@ -1472,11 +1477,7 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		my marksDataSet = prefs.marksDataSet;
 		my marksFontSize = prefs.marksFontSize;
 		my soundFollowsMouse = prefs.soundFollowsMouse;
-		if (my marksDataSet == kVowelEditor_marksDataSet::Other)
-			VowelEditor_createTableFromVowelMarksInPreferences (me.get());
-		else
-			VowelEditor_setMarks (me.get(), my marksDataSet, my speakerType, 14);
-
+		VowelEditor_setMarks (me.get(), my marksDataSet, my speakerType, 14);
 		VowelEditor_setF3F4 (me.get(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
 		my maximumDuration = BUFFER_SIZE_SEC;
 		my extendDuration = prefs.extendDuration;
