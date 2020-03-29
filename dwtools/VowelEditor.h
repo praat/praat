@@ -23,10 +23,10 @@
  djmw 20110306 Latest modification.
 */
 
+#include "Editor.h"
 #include "FormantTier.h"
 #include "PitchTier.h"
 #include "TableOfReal.h"
-#include "Editor.h"
 
 #include "Vowel_def.h"
 
@@ -47,19 +47,13 @@ struct structVowelEditor_F1F2Grid {
 };
 
 Thing_define (VowelEditor, Editor) {
-	int soundFollowsMouse, shiftKeyPressed;
-	double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
+	int shiftKeyPressed;
 	autoMatrix f3, b3, f4, b4;
-	int frequencyScale;   // 0: lin, 1: log, 2: bark, 3: mel
-	int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
-	kVowelEditor_marksDataSet marksDataSet;
-	kVowelEditor_speakerType speakerType;
 	double marksFontSize;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour...
 	autoVowel vowel;
-	double markTraceEvery;
 	structVowelEditor_F0 f0;
 	double maximumDuration, extendDuration;
 	GuiDrawingArea drawingArea;
@@ -78,6 +72,9 @@ Thing_define (VowelEditor, Editor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
+
+	#include "VowelEditor_prefs.h"
+
 };
 
 autoVowelEditor VowelEditor_create (conststring32 title, Daata data);
