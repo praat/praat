@@ -28,39 +28,25 @@
 #include "PitchTier.h"
 #include "TableOfReal.h"
 
-#include "Vowel_def.h"
+//#include "Vowel_def.h"
 
 #include "VowelEditor_enums.h"
 
-struct structVowelEditor_F0 {
-	double start;
-	double slopeOctPerSec;
-	double minimum, maximum;
-	double samplingFrequency, adaptFactor, adaptTime;
-	integer interpolationDepth;
-};
-
-struct structVowelEditor_F1F2Grid {
-	double df1, df2;
-	int text_left, text_right, text_bottom, text_top;
-	double grey;
+Thing_define (VowelSpecification, Function) {
+	autoPitchTier pitchTier;
+	autoFormantTier formantTier;
 };
 
 Thing_define (VowelEditor, Editor) {
 	int shiftKeyPressed;
-	autoMatrix f3, b3, f4, b4;
-	double marksFontSize;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour...
-	autoVowel vowel;
-	structVowelEditor_F0 f0;
-	double maximumDuration, extendDuration;
+	autoVowelSpecification vowel;
 	GuiDrawingArea drawingArea;
 	GuiButton playButton, reverseButton, publishButton;
 	GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
 	GuiLabel startInfo, endInfo;
-	structVowelEditor_F1F2Grid grid;
 
 	void v_destroy () noexcept
 		override;
@@ -78,7 +64,5 @@ Thing_define (VowelEditor, Editor) {
 };
 
 autoVowelEditor VowelEditor_create (conststring32 title, Daata data);
-
-void VowelEditor_prefs ();
 
 #endif /* _VowelEditor_h_ */
