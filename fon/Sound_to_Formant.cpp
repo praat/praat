@@ -42,7 +42,7 @@ static void burg (constVEC samples, VEC coefficients,
 		Convert LP coefficients to polynomial.
 	 */
 	autoPolynomial polynomial = Polynomial_create (-1, 1, coefficients.size);
-	for (int i = 1; i <= coefficients.size; i ++)
+	for (integer i = 1; i <= coefficients.size; i ++)
 		polynomial -> coefficients [i] = - coefficients [coefficients.size - i + 1];
 	polynomial -> coefficients [coefficients.size + 1] = 1.0;
 
