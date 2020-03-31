@@ -358,7 +358,7 @@ void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
 autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		autoVEC roots = VEC_createFromString (s);
+		autoVEC roots = newVECfromString (s);
 		FunctionSeries_init (me.get(), xmin, xmax, roots.size + 1);
 		Polynomial_initFromRealRoots (me.get(), roots.get());
 		return me;
@@ -390,7 +390,7 @@ void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
 autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		autoVEC a = VEC_createFromString (s);
+		autoVEC a = newVECfromString (s);
 		FunctionSeries_init (me.get(), xmin, xmax, 2 * a.size + 1);
 		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.get());
 		return me;

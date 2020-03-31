@@ -23,7 +23,7 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-autoVEC VEC_createFromString (conststring32 s) {
+autoVEC newVECfromString (conststring32 s) {
 	autoSTRVEC tokens = newSTRVECtokenize (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");

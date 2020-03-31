@@ -31,7 +31,7 @@
 /* machine precision */
 #define NUMeps 2.2e-16
 
-autoVEC VEC_createFromString (conststring32 s);
+autoVEC newVECfromString (conststring32 s);
 /* return array with the numbers found */
 
 /*

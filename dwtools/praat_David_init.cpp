@@ -7965,8 +7965,6 @@ void praat_uvafon_David_init () {
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
-	VowelEditor_prefs ();
-
 	espeakdata_praat_init ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);

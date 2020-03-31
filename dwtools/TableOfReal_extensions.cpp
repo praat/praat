@@ -270,7 +270,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 	Melder_require (colb > 0 && colb <= cole && cole <= my numberOfColumns,
 		U"Invalid columns");
 
-	autoVEC irows = VEC_createFromString (rows);
+	autoVEC irows = newVECfromString (rows);
 	for (integer i = 1; i <= irows.size; i ++) {
 		const integer irow = Melder_ifloor (irows [i]);
 		Melder_require (irow > 0 && irow <= my numberOfRows,
@@ -290,7 +290,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 		}
 	}
 
-	autoVEC igreys = VEC_createFromString (greys);
+	autoVEC igreys = newVECfromString (greys);
 
 	Graphics_setWindow (g, 0.0, 1.0, ymin, ymax);
 	Graphics_setInner (g);
