@@ -1,7 +1,7 @@
 #include "cblas.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dspr2_(char *uplo, integer *n, double *alpha, 
+/* Subroutine */ int dspr2_(const char *uplo, integer *n, double *alpha, 
 	double *x, integer *incx, double *y, integer *incy, 
 	double *ap)
 {

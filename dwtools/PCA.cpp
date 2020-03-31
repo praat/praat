@@ -296,7 +296,7 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 
 autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 coefficients) {
 	try {
-		autoVEC pc = VEC_createFromString (coefficients);
+		autoVEC pc = newVECfromString (coefficients);
 		Melder_require (pc.size == my numberOfEigenvalues,
 			U"The number of coefficients should equal the number of eigenvectors (", my numberOfEigenvalues, U").");
 		autoConfiguration c = Configuration_create (1, pc.size);

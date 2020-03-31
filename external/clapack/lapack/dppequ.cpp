@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dppequ_(char *uplo, integer *n, double *ap, 
+/* Subroutine */ int dppequ_(const char *uplo, integer *n, double *ap, 
 	double *s, double *scond, double *amax, integer *info)
 {
     /* System generated locals */

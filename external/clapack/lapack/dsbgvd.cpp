@@ -6,7 +6,7 @@
 static double c_b12 = 1.;
 static double c_b13 = 0.;
 
-/* Subroutine */ int dsbgvd_(char *jobz, char *uplo, integer *n, integer *ka, 
+/* Subroutine */ int dsbgvd_(const char *jobz, const char *uplo, integer *n, integer *ka, 
 	integer *kb, double *ab, integer *ldab, double *bb, integer *
 	ldbb, double *w, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)

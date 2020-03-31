@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dormr3_(char *side, char *trans, integer *m, integer *n, 
+/* Subroutine */ int dormr3_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, integer *l, double *a, integer *lda, double *tau, 
 	double *c__, integer *ldc, double *work, integer *info)
 {

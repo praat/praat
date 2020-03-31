@@ -5636,7 +5636,7 @@ NORMAL (U"The text corpus design was done by the Massachusetts Institute of "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
 
-MAN_BEGIN (U"VowelEditor", U"djmw", 20111124)
+MAN_BEGIN (U"VowelEditor", U"djmw", 20200331)
 INTRO (U"An Editor for generating vowel-like @@sound|Sound@s from mouse movements.")
 ENTRY (U"How to get a sound")
 NORMAL (U"With the mouse button down, you can move the mouse cursor around in the plane "
@@ -5665,8 +5665,6 @@ NORMAL (U"The bottom line in the Editor displays the first and second formant fr
 ENTRY (U"Edit menu")
 TAG (U"##Set F0...")
 DEFINITION (U"Set pitch and slope.")
-TAG (U"##Set F3 & F4...")
-DEFINITION (U"Set the frequencies and bandwidths for the third and fourth formant.")
 TAG (U"##Reverse trajectory")
 DEFINITION (U"Reverses the trajectory (like editor button).")   // ??
 TAG (U"##Modify trajectory duration...")
@@ -5690,13 +5688,16 @@ DEFINITION (U"Put your own marks in the editor. The Table needs to have at least
 	"the font size of the vowel markers.")
 TAG (U"##Show trajectory time markers every...")
 DEFINITION (U"Shows time markers as small bars orthogonal to the trajectory. ")
-ENTRY (U"Publishing")
+ENTRY (U"File menu")
+TAG (U"##Preferences...#")
+DEFINITION (U"Here you can modify the sharpness of the F1 and F2 peaks and also add a number of higher formants.")
 TAG (U"##Publish Sound")
+DEFINITION (U"Make the synthesized sound available in the object menu.")
 TAG (U"##Extract FormantTier")
 TAG (U"##Extract PitchTier")
 DEFINITION (U"Publish the Sound, the PitchTier and the FormantTier from the trajectory.")
 TAG (U"##Draw trajectory...")
-DEFINITION (U"Draws the trajectory in the picture window")
+DEFINITION (U"Draws the trajectory in the picture window.")
 MAN_END
 
 MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20111124)

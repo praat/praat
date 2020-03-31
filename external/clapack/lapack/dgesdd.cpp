@@ -9,7 +9,7 @@ static integer c__0 = 0;
 static double c_b227 = 0.;
 static double c_b248 = 1.;
 
-/* Subroutine */ int dgesdd_(char *jobz, integer *m, integer *n, double *
+/* Subroutine */ int dgesdd_(const char *jobz, integer *m, integer *n, double *
 	a, integer *lda, double *s, double *u, integer *ldu, 
 	double *vt, integer *ldvt, double *work, integer *lwork, 
 	integer *iwork, integer *info)

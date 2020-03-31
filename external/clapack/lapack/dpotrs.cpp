@@ -5,7 +5,7 @@
 
 static double c_b9 = 1.;
 
-/* Subroutine */ int dpotrs_(char *uplo, integer *n, integer *nrhs, 
+/* Subroutine */ int dpotrs_(const char *uplo, integer *n, integer *nrhs, 
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {

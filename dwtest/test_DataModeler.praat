@@ -1,5 +1,5 @@
 # test_DataModeler.praat
-# djmw 20161011
+# djmw 20161011, 20200326
 
 appendInfoLine: "test_DataModeler.praat"
 
@@ -16,7 +16,7 @@ procedure testDataModelerInterface
 	@createData: .xmin, .xmax, .nx, 0
 	.table = selected ("Table")
 	.maximumPolynomialOrder = 3
-	.dm = To DataModeler: .xmin, .xmax, "x", "y", "", "Legendre polynomials", .maximumPolynomialOrder
+	.dm = To DataModeler: .xmin, .xmax, "x", "y", "sy", "Legendre polynomials", .maximumPolynomialOrder
 	#
 	# Query -
 	#
@@ -70,12 +70,12 @@ procedure testDataModelerInterface
 	.sumOfSquares_res = Get residual sum of squares
 	.dataStdDev = Get data standard deviation
 	.coef = Get coefficient of determination
-	.chiSqReport$ = Report chi squared: "Equally"
+	.chiSqReport$ = Report chi squared
 	.ndf = Get degrees of freedom
 	#
 	# Modify -
 	#
-	Set data weighing: "Equally"
+	Set data weighing: "Equal"
 	Set tolerance: 1e-5
 	# Set parameter value: see query part
 	Set parameter free: 0, 0
@@ -83,19 +83,21 @@ procedure testDataModelerInterface
 	Fit model
 	.covar = To Covariance (parameters)
 	selectObject: .dm
-	.zscores = To Table (z-scores): "yes"
+	.zscores = To Table (z-scores)
 	removeObject: .zscores, .covar, .table, .dm
 endproc
 
 procedure createData: .xmin, .xmax, .nx, .ynoise_stdev
-	.model = Create Table with column names: "table", .nx, "x y"
+	.model = Create Table with column names: "table", .nx, "x y sy"
 	# linear
 	.dx = (.xmax -.xmin) / (.nx - 1)
 	for .row to .nx
 		.x = .xmin + (.row -1) * .dx
 		.y = 2 * .x + 3 + randomGauss (0, .ynoise_stdev)
+		.sy = randomGauss (0.35, 0.05) 
 		Set numeric value: .row, "x", .x
 		Set numeric value: .row, "y", .y
+		Set numeric value: .row, "sy", .sy
 	endfor
 endproc
 

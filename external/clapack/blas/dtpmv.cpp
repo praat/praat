@@ -1,7 +1,7 @@
 #include "cblas.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dtpmv_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtpmv_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	double *ap, double *x, integer *incx)
 {
     /* System generated locals */

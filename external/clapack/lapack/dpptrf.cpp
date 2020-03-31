@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static double c_b16 = -1.;
 
-/* Subroutine */ int dpptrf_(char *uplo, integer *n, double *ap, integer *
+/* Subroutine */ int dpptrf_(const char *uplo, integer *n, double *ap, integer *
 	info)
 {
     /* System generated locals */

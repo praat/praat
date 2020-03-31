@@ -10,7 +10,7 @@ static double c_b16 = -.5;
 static double c_b19 = -1.;
 static double c_b52 = .5;
 
-/* Subroutine */ int dsygst_(integer *itype, char *uplo, integer *n, 
+/* Subroutine */ int dsygst_(integer *itype, const char *uplo, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {

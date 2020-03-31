@@ -84,7 +84,7 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, const
 }
 
 static autoVEC getTimesFromRelativeTimesString (double tmin, double tmax, conststring32 times_string, int time_offset) {
-	autoVEC times = VEC_createFromString (times_string);
+	autoVEC times = newVECfromString (times_string);
 	/*
 		translate the "times" to real time
 	*/
@@ -293,7 +293,7 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 			U"The lowest frequency should be lower than the highest frequency.");
 
 		autoVEC times = getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset);
-		autoVEC pitches = VEC_createFromString (pitches_string);
+		autoVEC pitches = newVECfromString (pitches_string);
 		Melder_require (times.size == pitches.size,
 			U"The number of items in the times and the pitches string have to be equal.");
 

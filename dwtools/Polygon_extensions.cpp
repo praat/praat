@@ -58,7 +58,7 @@ void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double 
 
 autoPolygon Polygon_createSimple (conststring32 xystring) {
 	try {
-		autoVEC xys = VEC_createFromString (xystring);
+		autoVEC xys = newVECfromString (xystring);
 		Melder_require (xys.size >= 6,
 			U"There should be at least 3 points (= x,y pairs) in the Polygon");
 		Melder_require (xys.size % 2 == 0,

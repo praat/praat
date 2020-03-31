@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b8 = -1.;
 static double c_b9 = 1.;
 
-/* Subroutine */ int dlasyf_(char *uplo, integer *n, integer *nb, integer *kb, 
+/* Subroutine */ int dlasyf_(const char *uplo, integer *n, integer *nb, integer *kb, 
 	 double *a, integer *lda, integer *ipiv, double *w, integer *
 	ldw, integer *info)
 {

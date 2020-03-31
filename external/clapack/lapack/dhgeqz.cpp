@@ -8,7 +8,7 @@ static double c_b13 = 1.;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
-/* Subroutine */ int dhgeqz_(const char *job, char *compq, char *compz, integer *n, 
+/* Subroutine */ int dhgeqz_(const char *job, const char *compq, const char *compz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*t, integer *ldt, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 

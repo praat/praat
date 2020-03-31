@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlagtm_(char *trans, integer *n, integer *nrhs, 
+/* Subroutine */ int dlagtm_(const char *trans, integer *n, integer *nrhs, 
 	double *alpha, double *dl, double *d__, double *du, 
 	double *x, integer *ldx, double *beta, double *b, integer 
 	*ldb)

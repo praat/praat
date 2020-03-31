@@ -8,7 +8,7 @@ static integer c_n1 = -1;
 static double c_b13 = -1.;
 static double c_b14 = 1.;
 
-/* Subroutine */ int dpotrf_(char *uplo, integer *n, double *a, integer *
+/* Subroutine */ int dpotrf_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *info)
 {
     /* System generated locals */

@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dsysvx_(char *fact, char *uplo, integer *n, integer *
+/* Subroutine */ int dsysvx_(const char *fact, const char *uplo, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
 	integer *ipiv, double *b, integer *ldb, double *x, integer *
 	ldx, double *rcond, double *ferr, double *berr, 

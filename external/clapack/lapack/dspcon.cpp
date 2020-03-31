@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspcon_(char *uplo, integer *n, double *ap, integer *
+/* Subroutine */ int dspcon_(const char *uplo, integer *n, double *ap, integer *
 	ipiv, double *anorm, double *rcond, double *work, integer 
 	*iwork, integer *info)
 {

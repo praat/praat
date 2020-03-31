@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dorm2l_(char *side, char *trans, integer *m, integer *n, 
+/* Subroutine */ int dorm2l_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *info)
 {

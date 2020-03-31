@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dpbsv_(char *uplo, integer *n, integer *kd, integer *
+/* Subroutine */ int dpbsv_(const char *uplo, integer *n, integer *kd, integer *
 	nrhs, double *ab, integer *ldab, double *b, integer *ldb, 
 	integer *info)
 {

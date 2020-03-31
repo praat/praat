@@ -9,7 +9,7 @@ static double c_b18 = 1.;
 static double c_b21 = -1.;
 static integer c__33 = 33;
 
-/* Subroutine */ int dpbtrf_(char *uplo, integer *n, integer *kd, double *
+/* Subroutine */ int dpbtrf_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, integer *info)
 {
     /* System generated locals */

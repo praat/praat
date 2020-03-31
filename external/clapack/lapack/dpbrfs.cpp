@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b12 = -1.;
 static double c_b14 = 1.;
 
-/* Subroutine */ int dpbrfs_(char *uplo, integer *n, integer *kd, integer *
+/* Subroutine */ int dpbrfs_(const char *uplo, integer *n, integer *kd, integer *
 	nrhs, double *ab, integer *ldab, double *afb, integer *ldafb, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	ferr, double *berr, double *work, integer *iwork, integer *
