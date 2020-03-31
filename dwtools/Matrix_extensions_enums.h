@@ -19,8 +19,8 @@
 enums_begin (kGraphicsMatrixCellDrawingOrder, 1)
 	enums_add (kGraphicsMatrixCellDrawingOrder, 1, Rows, U"rows")
 	enums_add (kGraphicsMatrixCellDrawingOrder, 2, Columns, U"columns")
-	enums_add (kGraphicsMatrixCellDrawingOrder, 3, IncreasingValues, U"increasing-values")
-	enums_add (kGraphicsMatrixCellDrawingOrder, 4, DecreasingValues, U"decreasing-values")
+	enums_add (kGraphicsMatrixCellDrawingOrder, 3, IncreasingValues, U"increasing values")
+	enums_add (kGraphicsMatrixCellDrawingOrder, 4, DecreasingValues, U"decreasing values")
 	enums_add (kGraphicsMatrixCellDrawingOrder, 5, Random, U"random")
 enums_end (kGraphicsMatrixCellDrawingOrder, 5, Rows)
 
