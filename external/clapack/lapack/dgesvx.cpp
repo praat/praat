@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dgesvx_(const char *fact, const char *trans, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
-	integer *ipiv, const char *equed, double *r__, double *c__, 
+	integer *ipiv, char *equed, double *r__, double *c__, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	rcond, double *ferr, double *berr, double *work, integer *
 	iwork, integer *info)

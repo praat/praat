@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dlaqsp_(const char *uplo, integer *n, double *ap, 
-	double *s, double *scond, double *amax, const char *equed)
+	double *s, double *scond, double *amax, char *equed)
 {
     /* System generated locals */
     integer i__1, i__2;

@@ -45,7 +45,7 @@
 
 /* Subroutine */ int dgbsvx_(const char *fact, const char *trans, integer *n, integer *kl,
 	 integer *ku, integer *nrhs, double *ab, integer *ldab, 
-	double *afb, integer *ldafb, integer *ipiv, const char *equed, 
+	double *afb, integer *ldafb, integer *ipiv, char *equed, 
 	double *r__, double *c__, double *b, integer *ldb, 
 	double *x, integer *ldx, double *rcond, double *ferr, 
 	double *berr, double *work, integer *iwork, integer *info);
@@ -205,7 +205,7 @@
 
 /* Subroutine */ int dgesvx_(const char *fact, const char *trans, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
-	integer *ipiv, const char *equed, double *r__, double *c__, 
+	integer *ipiv, char *equed, double *r__, double *c__, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	rcond, double *ferr, double *berr, double *work, integer *
 	iwork, integer *info);
@@ -542,11 +542,11 @@ double dlamch_ (const char *cmach);
 
 /* Subroutine */ int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku,
 	 double *ab, integer *ldab, double *r__, double *c__, 
-	double *rowcnd, double *colcnd, double *amax, const char *equed);
+	double *rowcnd, double *colcnd, double *amax, char *equed);
 
 /* Subroutine */ int dlaqge_(integer *m, integer *n, double *a, integer *
 	lda, double *r__, double *c__, double *rowcnd, double 
-	*colcnd, double *amax, const char *equed);
+	*colcnd, double *amax, char *equed);
 
 /* Subroutine */ int dlaqp2_(integer *m, integer *n, integer *offset, 
 	double *a, integer *lda, integer *jpvt, double *tau, 
@@ -597,10 +597,10 @@ double dlamch_ (const char *cmach);
 	 const char *equed);
 
 /* Subroutine */ int dlaqsp_(const char *uplo, integer *n, double *ap, 
-	double *s, double *scond, double *amax, const char *equed);
+	double *s, double *scond, double *amax, char *equed);
 
 /* Subroutine */ int dlaqsy_(const char *uplo, integer *n, double *a, integer *
-	lda, double *s, double *scond, double *amax, const char *equed);
+	lda, double *s, double *scond, double *amax, char *equed);
 
 /* Subroutine */ int dlaqtr_(bool *ltran, bool *lfloat, integer *n, 
 	double *t, integer *ldt, double *b, double *w, double 
@@ -1016,7 +1016,7 @@ double dlamch_ (const char *cmach);
 
 /* Subroutine */ int dpbsvx_(const char *fact, const char *uplo, integer *n, integer *kd, 
 	integer *nrhs, double *ab, integer *ldab, double *afb, 
-	integer *ldafb, const char *equed, double *s, double *b, integer *
+	integer *ldafb, char *equed, double *s, double *b, integer *
 	ldb, double *x, integer *ldx, double *rcond, double *ferr,
 	 double *berr, double *work, integer *iwork, integer *info);
 
@@ -1081,7 +1081,7 @@ double dlamch_ (const char *cmach);
 	*ap, double *b, integer *ldb, integer *info);
 
 /* Subroutine */ int dppsvx_(const char *fact, const char *uplo, integer *n, integer *
-	nrhs, double *ap, double *afp, const char *equed, double *s, 
+	nrhs, double *ap, double *afp, char *equed, double *s, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	rcond, double *ferr, double *berr, double *work, integer *
 	iwork, integer *info);
