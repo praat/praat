@@ -1081,7 +1081,7 @@ void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, int
 	integer numberOfFormants = my trackmodelers.size;
 	if (toFormant < fromFormant || (fromFormant == toFormant && fromFormant == 0)) {
 		fromFormant = 1;
-		toFormant= numberOfFormants;
+		toFormant = numberOfFormants;
 	}
 	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant, 
 		U"Formant number(s) should be in the interval [1, ", numberOfFormants, U"].");
