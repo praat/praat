@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgtcon_(char *norm, integer *n, double *dl, 
+/* Subroutine */ int dgtcon_(const char *norm, integer *n, double *dl, 
 	double *d__, double *du, double *du2, integer *ipiv, 
 	double *anorm, double *rcond, double *work, integer *
 	iwork, integer *info)

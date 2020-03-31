@@ -7,7 +7,7 @@ static double c_b7 = -1.;
 static integer c__1 = 1;
 static double c_b19 = 1.;
 
-/* Subroutine */ int dsytrs_(char *uplo, integer *n, integer *nrhs, 
+/* Subroutine */ int dsytrs_(const char *uplo, integer *n, integer *nrhs, 
 	double *a, integer *lda, integer *ipiv, double *b, integer *
 	ldb, integer *info)
 {

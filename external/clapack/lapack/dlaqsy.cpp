@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dlaqsy_(const char *uplo, integer *n, double *a, integer *
-	lda, double *s, double *scond, double *amax, char *equed)
+	lda, double *s, double *scond, double *amax, const char *equed)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;

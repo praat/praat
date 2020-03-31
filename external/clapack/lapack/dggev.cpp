@@ -9,7 +9,7 @@ static integer c_n1 = -1;
 static double c_b36 = 0.;
 static double c_b37 = 1.;
 
-/* Subroutine */ int dggev_(char *jobvl, char *jobvr, integer *n, double *
+/* Subroutine */ int dggev_(const char *jobvl, const char *jobvr, integer *n, double *
 	a, integer *lda, double *b, integer *ldb, double *alphar, 
 	double *alphai, double *beta, double *vl, integer *ldvl, 
 	double *vr, integer *ldvr, double *work, integer *lwork, 

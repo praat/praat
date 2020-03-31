@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dsycon_(char *uplo, integer *n, double *a, integer *
+/* Subroutine */ int dsycon_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *ipiv, double *anorm, double *rcond, double *
 	work, integer *iwork, integer *info)
 {

@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dsyevx_(char *jobz, char *range, char *uplo, integer *n, 
+/* Subroutine */ int dsyevx_(const char *jobz, const char *range, const char *uplo, integer *n, 
 	double *a, integer *lda, double *vl, double *vu, integer *
 	il, integer *iu, double *abstol, integer *m, double *w, 
 	double *z__, integer *ldz, double *work, integer *lwork, 

@@ -6,7 +6,7 @@
 static integer c__1 = 1;
 static double c_b19 = -1.;
 
-/* Subroutine */ int dtrrfs_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtrrfs_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *nrhs, double *a, integer *lda, double *b, integer *
 	ldb, double *x, integer *ldx, double *ferr, double *berr, 
 	double *work, integer *iwork, integer *info)

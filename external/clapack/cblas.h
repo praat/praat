@@ -31,7 +31,7 @@ int dcopy_ (integer *n, double *dx, integer *incx,
 double ddot_ (integer *n, double *dx, integer *incx, double *dy,
 	integer *incy);
 
-int dgbmv_ (char *trans, integer *m, integer *n, integer *kl,
+int dgbmv_ (const char *trans, integer *m, integer *n, integer *kl,
 	integer *ku, double *alpha, double *a, integer *lda,
 	double *x, integer *incx, double *beta, double *y,
 	integer *incy);

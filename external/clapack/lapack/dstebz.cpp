@@ -9,7 +9,7 @@ static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dstebz_(char *range, char *order, integer *n, double 
+/* Subroutine */ int dstebz_(const char *range, const char *order, integer *n, double 
 	*vl, double *vu, integer *il, integer *iu, double *abstol, 
 	double *d__, double *e, integer *m, integer *nsplit, 
 	double *w, integer *iblock, integer *isplit, double *work, 

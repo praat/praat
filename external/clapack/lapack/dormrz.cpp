@@ -8,7 +8,7 @@ static integer c_n1 = -1;
 static integer c__2 = 2;
 static integer c__65 = 65;
 
-/* Subroutine */ int dormrz_(char *side, char *trans, integer *m, integer *n, 
+/* Subroutine */ int dormrz_(const char *side, const char *trans, integer *m, integer *n, 
 	integer *k, integer *l, double *a, integer *lda, double *tau, 
 	double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info)
@@ -205,8 +205,8 @@ static integer c__65 = 65;
 
 /* Computing MIN */
 /* Writing concatenation */
-	    i__3[0] = 1, a__1[0] = side;
-	    i__3[1] = 1, a__1[1] = trans;
+	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
 	    i__1 = 64, i__2 = ilaenv_(&c__1, "DORMRQ", ch__1, m, n, k, &c_n1);
 	    nb = std::min(i__1,i__2);
@@ -242,8 +242,8 @@ static integer c__65 = 65;
 	    nb = *lwork / ldwork;
 /* Computing MAX */
 /* Writing concatenation */
-	    i__3[0] = 1, a__1[0] = side;
-	    i__3[1] = 1, a__1[1] = trans;
+	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
+	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DORMRQ", ch__1, m, n, k, &c_n1);
 	    nbmin = std::max(i__1,i__2);

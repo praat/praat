@@ -7,7 +7,7 @@ static double c_b8 = 0.;
 static double c_b9 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dgbbrd_(char *vect, integer *m, integer *n, integer *ncc, 
+/* Subroutine */ int dgbbrd_(const char *vect, integer *m, integer *n, integer *ncc, 
 	 integer *kl, integer *ku, double *ab, integer *ldab, double *
 	d__, double *e, double *q, integer *ldq, double *pt, 
 	integer *ldpt, double *c__, integer *ldc, double *work, 

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dstegr_(char *jobz, char *range, integer *n, double *
+/* Subroutine */ int dstegr_(const char *jobz, const char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, double *abstol, integer *m, double *w, 
 	double *z__, integer *ldz, integer *isuppz, double *work, 

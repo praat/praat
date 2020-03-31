@@ -9,7 +9,7 @@ static integer c__2 = 2;
 static integer c__3 = 3;
 static integer c__4 = 4;
 
-/* Subroutine */ int dstevr_(char *jobz, char *range, integer *n, double *
+/* Subroutine */ int dstevr_(const char *jobz, const char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, double *abstol, integer *m, double *w, 
 	double *z__, integer *ldz, integer *isuppz, double *work, 

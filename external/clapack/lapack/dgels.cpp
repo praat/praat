@@ -8,7 +8,7 @@ static integer c_n1 = -1;
 static double c_b33 = 0.;
 static integer c__0 = 0;
 
-/* Subroutine */ int dgels_(char *trans, integer *m, integer *n, integer *
+/* Subroutine */ int dgels_(const char *trans, integer *m, integer *n, integer *
 	nrhs, double *a, integer *lda, double *b, integer *ldb, 
 	double *work, integer *lwork, integer *info)
 {

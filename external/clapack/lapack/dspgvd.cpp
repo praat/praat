@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspgvd_(integer *itype, char *jobz, char *uplo, integer *
+/* Subroutine */ int dspgvd_(integer *itype, const char *jobz, const char *uplo, integer *
 	n, double *ap, double *bp, double *w, double *z__, 
 	integer *ldz, double *work, integer *lwork, integer *iwork, 
 	integer *liwork, integer *info)

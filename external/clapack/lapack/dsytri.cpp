@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b11 = -1.;
 static double c_b13 = 0.;
 
-/* Subroutine */ int dsytri_(char *uplo, integer *n, double *a, integer *
+/* Subroutine */ int dsytri_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *ipiv, double *work, integer *info)
 {
     /* System generated locals */

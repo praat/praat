@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dsytrf_(char *uplo, integer *n, double *a, integer *
+/* Subroutine */ int dsytrf_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *ipiv, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */

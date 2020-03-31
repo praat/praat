@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int ddisna_(char *job, integer *m, integer *n, double *
+/* Subroutine */ int ddisna_(const char *job, integer *m, integer *n, double *
 	d__, double *sep, integer *info)
 {
     /* System generated locals */
