@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dstevx_(char *jobz, char *range, integer *n, double *
+/* Subroutine */ int dstevx_(const char *jobz, const char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, double *abstol, integer *m, double *w, 
 	double *z__, integer *ldz, double *work, integer *iwork, 

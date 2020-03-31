@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dpbequ_(char *uplo, integer *n, integer *kd, double *
+/* Subroutine */ int dpbequ_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, double *s, double *scond, double *amax, 
 	 integer *info)
 {

@@ -6,7 +6,7 @@
 static double c_b8 = -1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dpbtf2_(char *uplo, integer *n, integer *kd, double *
+/* Subroutine */ int dpbtf2_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, integer *info)
 {
     /* System generated locals */

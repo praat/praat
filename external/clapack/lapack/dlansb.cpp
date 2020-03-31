@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-double dlansb_(char *norm, char *uplo, integer *n, integer *k, double 
+double dlansb_(const char *norm, const char *uplo, integer *n, integer *k, double 
 	*ab, integer *ldab, double *work)
 {
     /* System generated locals */

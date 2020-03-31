@@ -7,7 +7,7 @@ static double c_b9 = 0.;
 static double c_b10 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dsbtrd_(char *vect, char *uplo, integer *n, integer *kd, 
+/* Subroutine */ int dsbtrd_(const char *vect, const char *uplo, integer *n, integer *kd, 
 	double *ab, integer *ldab, double *d__, double *e, 
 	double *q, integer *ldq, double *work, integer *info)
 {

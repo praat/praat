@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b25 = 1.;
 static double c_b27 = 0.;
 
-/* Subroutine */ int dsbgvx_(char *jobz, char *range, char *uplo, integer *n, 
+/* Subroutine */ int dsbgvx_(const char *jobz, const char *range, const char *uplo, integer *n, 
 	integer *ka, integer *kb, double *ab, integer *ldab, double *
 	bb, integer *ldbb, double *q, integer *ldq, double *vl, 
 	double *vu, integer *il, integer *iu, double *abstol, integer 

@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dstevd_(char *jobz, integer *n, double *d__, 
+/* Subroutine */ int dstevd_(const char *jobz, integer *n, double *d__, 
 	double *e, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {

@@ -105,7 +105,7 @@ autoFunctionSeries FunctionSeries_create (double xmin, double xmax, integer numb
 }
 
 void FunctionSeries_initFromString (FunctionSeries me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros) {
-	autoVEC numbers = VEC_createFromString (s);
+	autoVEC numbers = newVECfromString (s);
 	integer numberOfCoefficients = numbers.size;
 	if (! allowTrailingZeros)
 		while (numbers [numberOfCoefficients] == 0.0 && numberOfCoefficients > 1)

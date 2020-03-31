@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dopgtr_(char *uplo, integer *n, double *ap, 
+/* Subroutine */ int dopgtr_(const char *uplo, integer *n, double *ap, 
 	double *tau, double *q, integer *ldq, double *work, 
 	integer *info)
 {

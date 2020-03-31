@@ -7,7 +7,7 @@ static double c_b6 = -1.;
 static integer c__1 = 1;
 static double c_b27 = 1.;
 
-/* Subroutine */ int dsygs2_(integer *itype, char *uplo, integer *n, 
+/* Subroutine */ int dsygs2_(integer *itype, const char *uplo, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {

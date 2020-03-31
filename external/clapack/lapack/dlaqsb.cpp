@@ -1,9 +1,9 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlaqsb_(char *uplo, integer *n, integer *kd, double *
+/* Subroutine */ int dlaqsb_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, double *s, double *scond, double *amax, 
-	 char *equed)
+	 const char *equed)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4;

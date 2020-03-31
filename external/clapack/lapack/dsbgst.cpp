@@ -8,7 +8,7 @@ static double c_b9 = 1.;
 static integer c__1 = 1;
 static double c_b20 = -1.;
 
-/* Subroutine */ int dsbgst_(char *vect, char *uplo, integer *n, integer *ka, 
+/* Subroutine */ int dsbgst_(const char *vect, const char *uplo, integer *n, integer *ka, 
 	integer *kb, double *ab, integer *ldab, double *bb, integer *
 	ldbb, double *x, integer *ldx, double *work, integer *info)
 {

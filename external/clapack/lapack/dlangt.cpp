@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-double dlangt_(char *norm, integer *n, double *dl, double *d__, 
+double dlangt_(const char *norm, integer *n, double *dl, double *d__, 
 	double *du)
 {
     /* System generated locals */

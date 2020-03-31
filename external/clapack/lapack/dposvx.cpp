@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dposvx_(char *fact, char *uplo, integer *n, integer *
+/* Subroutine */ int dposvx_(const char *fact, const char *uplo, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
 	char *equed, double *s, double *b, integer *ldb, double *
 	x, integer *ldx, double *rcond, double *ferr, double *

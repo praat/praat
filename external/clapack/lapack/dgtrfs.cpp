@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b18 = -1.;
 static double c_b19 = 1.;
 
-/* Subroutine */ int dgtrfs_(char *trans, integer *n, integer *nrhs, 
+/* Subroutine */ int dgtrfs_(const char *trans, integer *n, integer *nrhs, 
 	double *dl, double *d__, double *du, double *dlf, 
 	double *df, double *duf, double *du2, integer *ipiv, 
 	double *b, integer *ldb, double *x, integer *ldx, double *

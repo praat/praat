@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlaqge_(integer *m, integer *n, double *a, integer *
 	lda, double *r__, double *c__, double *rowcnd, double 
-	*colcnd, double *amax, char *equed)
+	*colcnd, double *amax, const char *equed)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;

@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b8 = 0.;
 static double c_b14 = -1.;
 
-/* Subroutine */ int dsptrd_(char *uplo, integer *n, double *ap, 
+/* Subroutine */ int dsptrd_(const char *uplo, integer *n, double *ap, 
 	double *d__, double *e, double *tau, integer *info)
 {
     /* System generated locals */

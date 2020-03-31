@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku, 
 	 double *ab, integer *ldab, double *r__, double *c__, 
-	double *rowcnd, double *colcnd, double *amax, char *equed)
+	double *rowcnd, double *colcnd, double *amax, const char *equed)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4, i__5, i__6;

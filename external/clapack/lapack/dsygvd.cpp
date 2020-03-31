@@ -5,7 +5,7 @@
 
 static double c_b11 = 1.;
 
-/* Subroutine */ int dsygvd_(integer *itype, char *jobz, char *uplo, integer *
+/* Subroutine */ int dsygvd_(integer *itype, const char *jobz, const char *uplo, integer *
 	n, double *a, integer *lda, double *b, integer *ldb, 
 	double *w, double *work, integer *lwork, integer *iwork, 
 	integer *liwork, integer *info)

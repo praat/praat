@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-double dlangb_(char *norm, integer *n, integer *kl, integer *ku, 
+double dlangb_(const char *norm, integer *n, integer *kl, integer *ku, 
 	double *ab, integer *ldab, double *work)
 {
     /* System generated locals */

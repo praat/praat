@@ -6,7 +6,7 @@
 static double c_b8 = 1.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dpptri_(char *uplo, integer *n, double *ap, integer *
+/* Subroutine */ int dpptri_(const char *uplo, integer *n, double *ap, integer *
 	info)
 {
     /* System generated locals */
