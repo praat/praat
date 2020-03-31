@@ -43,6 +43,7 @@ Thing_define (VowelEditor, Editor) {
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour...
 	autoVowelSpecification vowel;
+	autoVEC extraFrequencyBandwidthPairs;
 	GuiDrawingArea drawingArea;
 	GuiButton playButton, reverseButton, publishButton;
 	GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
