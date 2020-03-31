@@ -91,19 +91,17 @@ static autoVEC getLPCAnalysisWorkspace (integer numberOfSamples, integer numberO
 }
 
 static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& workspace) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer numberOfCoefficients = thy nCoefficients, np1 = numberOfCoefficients + 1;
 
 	//workspace <<= 0.0; not necessary !
 	VEC r = workspace. part (1, np1); // autoVEC r = newVECzero (numberOfCoefficients + 1);
 	VEC a = workspace. part (np1 + 1, 2 * np1); // autoVEC a = newVECzero (numberOfCoefficients + 1);
 	VEC rc = workspace. part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = newVECzero (numberOfCoefficients);
-	const VEC x = my z.row (1);
+	const VECVU x = my z.row (1);
 	integer i = 1; // For error condition at end
-	for (i = 1; i <= numberOfCoefficients + 1; i ++) {
-		r [i] = 0.0;
-		for (integer j = 1; j <= my nx - i + 1; j ++)
-			r [i] += x [j] * x [j + i - 1];
-	}
+	for (i = 1; i <= numberOfCoefficients + 1; i ++)
+		r [i] = NUMinner (x.part (1, my nx - i + 1), x.part (i, my nx));
 	if (r [1] == 0.0) {
 		i = 1; // !
 		goto end;
@@ -130,13 +128,10 @@ end:
 	i--;
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
-
 	if (i == numberOfCoefficients)
 		return 1;
-
-	thy nCoefficients = i;
-	for (integer j = i + 1; j <= numberOfCoefficients; j ++)
-		thy a [j] = 0.0;
+	thy a.resize (i);
+	thy nCoefficients = thy a.size; // maintain invariant
 	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
@@ -145,6 +140,7 @@ end:
 	work [1..m(m+1)/2+m+m+1+m+m+1]
 */
 static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& workspace) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer n = my nx, m = thy nCoefficients;
 	constVEC x = my z.row (1);
 	
@@ -184,7 +180,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 		for (integer j = 1; j <= i; j ++)
 			cc [i - j + 2] = cc [i - j + 1] + x [m - i + 1] * x [m - i + j] - x [n - i + 1] * x [n - i + j];
 
-		cc [1] = 0.0;
+		cc [1] = 0.0; // TODO NUMinner
 		for (integer j = m + 1; j <= n; j ++)
 			cc [1] += x [j - i] * x [j]; // 30
 
@@ -224,14 +220,12 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 	}
 end:
 	i--;
-
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
 	if (i == m)
 		return 1;
-
-	thy nCoefficients = i;
-    thy a.part (i + 1, m) <<= 0.0;
+	thy a.resize (i);
+	thy nCoefficients = thy a.size;
 	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
@@ -251,9 +245,9 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 		p += x [j] * x [j];
 
 	longdouble xms = p / n;
-	if (xms <= 0.0)
+	if (xms <= 0.0) {
 		return xms;	// warning empty
-
+	}
 	// (9)
 
 	b1 [1] = x [1];
@@ -300,7 +294,13 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee, VEC const& workspace) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	thy gain = VECburg_buffered (thy a.get(), my z.row(1), workspace);
+	if (thy gain <= 0.0) {
+		thy a.resize (0);
+		thy nCoefficients = thy a.size; // maintain invariant
+		return 0;
+	}
 	thy gain *= my nx;
 	for (integer i = 1; i <= thy nCoefficients; i ++)
 		thy a [i] = -thy a [i];
@@ -318,9 +318,9 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	double e0 = 2.0 * NUMsum2 (x);
 	integer m = 1;
 	if (e0 == 0.0) {
-		m = 0;
-		thy gain *= 0.5; // because e0 is twice the energy
-		thy nCoefficients = m;
+		thy a.resize (0);
+		thy nCoefficients = thy a.size; // maintain invariant
+		thy gain = 0.0;
 		return 0; // warning no signal
 	}
 	double q1 = 1.0 / e0;
@@ -441,7 +441,8 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	}
 end:
 	thy gain *= 0.5; // because e0 is twice the energy
-	thy nCoefficients = m;
+	thy a.resize (m);
+	thy nCoefficients = thy a.size; // maintain invariant
 	return status == 1 || status == 4 || status == 5;
 }
 
@@ -516,6 +517,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
 	/*
 		Because of threading we initialise the frames beforehand.
+		We initialize the coefficient vector with a size equal to the prediction order.
 	*/
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const LPC_Frame lpcFrame = & thy d_frames [iframe];

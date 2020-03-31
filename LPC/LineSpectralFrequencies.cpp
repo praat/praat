@@ -1,6 +1,6 @@
 /* LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016-2019 David Weenink
+ * Copyright (C) 2016-2020 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,9 +124,7 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maximumNumberOfFrequencies, my maximumNumberOfFrequencies, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
 			const LineSpectralFrequencies_Frame lsf = & my d_frames [j];
-			for (integer i = 1; i <= lsf -> numberOfFrequencies; i ++) {
-				thy z [i] [j] = lsf -> frequencies [i];
-			}
+			thy z . column (j) .part (1, lsf -> numberOfFrequencies) <<= lsf -> frequencies.get();
 		}
 		return thee;
 	} catch (MelderError) {

@@ -106,6 +106,8 @@ static void huber_struct_solvelpc (struct huber_struct *hs) {
 }
 
 void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
+	Melder_assert (my nCoefficients == my a.size); // check invariant
+//	Melder_assert (his nCoefficients == his a.size); // check invariant
 	const integer p = std::min (my nCoefficients, his nCoefficients);
 
 	hs -> iter = 0;
@@ -132,12 +134,13 @@ void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct hub
 			huber_struct_solvelpc (hs);
 		} catch (MelderError) {
 			// Copy the starting lpc coeffs */
-			his a.part (1, p) <<= my a.part (1, p); 
+			his a.part (1, p) <<= my a.part (1, p);
 			throw MelderError();
 		}
 		his a.part (1, p) <<= hs -> a.part (1, p);
 		hs -> iter ++;
 	} while (hs -> iter < hs -> itermax && fabs (scale0 - hs -> scale) > hs -> tol * scale0);
+	his nCoefficients = his a.size; // maintain invariant
 }
 
 autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
@@ -183,7 +186,7 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.get());
 			Sounds_multiply (sframe.get(), window.get());
-
+// TODO 20200331 djmw resize struct_huber according to p
 			try {
 				LPC_Frames_Sound_huber (lpc, sframe.get(), lpcto, & struct_huber);
 			} catch (MelderError) {
