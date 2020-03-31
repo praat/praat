@@ -51,7 +51,7 @@ autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormant
 				if (thy frames [1]. formant.size == thy maxnFormants)
 					break;
 			}
-		thy frames [1]. numberOfFormants = thy frames [1]. formant.size;
+		thy frames [1]. numberOfFormants = thy frames [1]. formant.size;   // maintain invariant
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");
