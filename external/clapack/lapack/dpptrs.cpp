@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dpptrs_(char *uplo, integer *n, integer *nrhs, 
+/* Subroutine */ int dpptrs_(const char *uplo, integer *n, integer *nrhs, 
 	double *ap, double *b, integer *ldb, integer *info)
 {
     /* System generated locals */

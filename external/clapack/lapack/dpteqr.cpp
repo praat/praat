@@ -8,7 +8,7 @@ static double c_b8 = 1.;
 static integer c__0 = 0;
 static integer c__1 = 1;
 
-/* Subroutine */ int dpteqr_(char *compz, integer *n, double *d__, 
+/* Subroutine */ int dpteqr_(const char *compz, integer *n, double *d__, 
 	double *e, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
