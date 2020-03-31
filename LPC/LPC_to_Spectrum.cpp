@@ -34,6 +34,7 @@
 */
 
 void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction, double deEmphasisFrequency) {
+	Melder_assert (my nCoefficients == my a.size); // check invariant
 	if (my nCoefficients == 0) {
 		thy z.get() <<= 0.0;
 		return;

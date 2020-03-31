@@ -25,8 +25,11 @@
 #include "NUM2.h"
 
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
-
+	Melder_assert (my nCoefficients == my a.size); // check invariant
+	thy c.resize (my nCoefficients);
+	thy numberOfCoefficients = thy c.size; // maintain invariant
 	thy c0 = 0.5 * log (my gain);
+	
 	if (my nCoefficients < 1)
 		return;
 
@@ -46,13 +49,14 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 }
 
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
-	const integer numberOfCoefficients = std::min (my numberOfCoefficients, (integer) thy nCoefficients);
-	if (numberOfCoefficients < 1)
+	Melder_assert (my numberOfCoefficients == my c.size); // check invariant
+	thy a.resize (my numberOfCoefficients);
+	thy nCoefficients = thy a.size; // maintain invariant
+	if (my numberOfCoefficients < 1)
 		return;
 	thy gain = exp (2.0 * my c0);
-
 	thy a [1] = - my c [1];
-	for (integer i = 2; i <= numberOfCoefficients; i ++) {
+	for (integer i = 2; i <= my numberOfCoefficients; i ++) {
 		longdouble ai = my c [i] * i;
 		for (integer j = 1; j < i; j ++)
 			ai += thy a [j] * my c [i - j] * (i - j);

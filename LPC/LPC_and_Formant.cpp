@@ -29,9 +29,9 @@
 #include <atomic>
 
 void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
-	my numberOfFormants = numberOfFormants;
 	if (numberOfFormants > 0)
 		my formant = newvectorzero <structFormant_Formant> (numberOfFormants);
+	my numberOfFormants = my formant.size; // maintain invariant
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale) {
@@ -45,8 +45,8 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 	/*
 		Determine the formants and bandwidths
 	*/
-	Melder_assert (my roots.size <= 2 * thy formant.size);
-	integer numberOfFormantsFound = 0;
+	Melder_assert (my numberOfRoots == my roots.size); // check invariant
+	thy formant.resize (0);
 	const double nyquistFrequency = 0.5 * samplingFrequency;
 	const double fLow = margin, fHigh = nyquistFrequency - margin;
 	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++) {
@@ -55,20 +55,22 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 		const double frequency = fabs (atan2 (my roots [iroot].imag(), my roots [iroot].real())) * nyquistFrequency / NUMpi;
 		if (frequency >= fLow && frequency <= fHigh) {
 			const double bandwidth = - log (norm (my roots [iroot])) * nyquistFrequency / NUMpi;
-			thy formant [++ numberOfFormantsFound]. frequency = frequency;
-			thy formant [numberOfFormantsFound]. bandwidth = bandwidth;
+			Formant_Formant newff = thy formant . append ();
+			newff -> frequency = frequency;
+			newff -> bandwidth = bandwidth;
 		}
-		if (numberOfFormantsFound == thy formant.size)
-			break;
 	}
-	Melder_assert (numberOfFormantsFound <= thy formant.size);
-	thy numberOfFormants = numberOfFormantsFound;
+	thy numberOfFormants = thy formant.size; // maintain invariant
 }
 
 void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin) {
+	Melder_assert (my nCoefficients == my a.size); // check invariant
 	thy intensity = my gain;
-	if (my nCoefficients == 0)
+	if (my nCoefficients == 0) {
+		thy formant.resize (0);
+		thy numberOfFormants = thy formant.size; // maintain invariant
 		return;
+	}
 	autoPolynomial p = LPC_Frame_to_Polynomial (me);
 	autoRoots r = Polynomial_to_Roots (p.get());
 	Roots_fixIntoUnitCircle (r.get());
@@ -76,9 +78,13 @@ void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samp
 }
 
 void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace) {
+	Melder_assert (my nCoefficients == my a.size); // check invariant
 	thy intensity = my gain;
-	if (my nCoefficients == 0)
+	if (my nCoefficients == 0) {
+		thy formant.resize (0);
+		thy numberOfFormants = thy formant.size; // maintain invariant
 		return;
+	}
 	LPC_Frame_into_Polynomial (me, p);
 	Polynomial_into_Roots (p, r, workspace);
 	Roots_fixIntoUnitCircle (r);
