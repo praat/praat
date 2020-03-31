@@ -759,7 +759,7 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 {
 	try {
 
-		autoVEC parameter = newVECfromString (parameters);
+		autoVEC parameterValues = newVECfromString (parameters);
 		Melder_require (xmin < xmax,
 			U"The domain should be defined properly.");
 		

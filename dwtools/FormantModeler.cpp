@@ -679,7 +679,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 				const Formant_Frame curFrame = & my frames [iframe];
 				ffi -> data [++ idata] .x = Sampled_indexToX (me, iframe);
 				ffi -> data [idata] .status = kDataModelerData::Invalid;
-				if (iformant <= curFrame -> nFormants) {
+				if (iformant <= curFrame -> numberOfFormants) {
 					const double frequency = curFrame -> formant [iformant]. frequency;
 					if (isdefined (frequency)) {
 						const double bandwidth = curFrame -> formant [iformant]. bandwidth;

@@ -587,7 +587,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::None) {   // none
 		my marks.reset();
 		return;
-	} else {  // other 
+	} else {  // other
 		VowelEditor_getVowelMarksFromFile (me);
 
 		return;
@@ -1299,7 +1299,6 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		Melder_assert (my graphics);
 		Graphics_setFontSize (my graphics.get(), 12);
 
-
 		if (my p_window_f1min >= my p_window_f1max) {
 			my p_window_f1min = Melder_atof (my default_window_f1min ());
 			my p_window_f1max = Melder_atof (my default_window_f1max ());
@@ -1336,7 +1335,6 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			my p_trajectory_extendDuration = Melder_atof (my default_trajectory_extendDuration ());
 			my p_trajectory_markEvery = Melder_atof (my default_trajectory_markEvery ());
 		}
-
 		if (my data)
 			my vowel = Data_copy (static_cast<VowelSpecification> (data));
 		else
