@@ -1,6 +1,6 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -454,7 +454,7 @@ autoFormant Formant_tracker (Formant me, integer ntrack,
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, ntrack);
 		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 			thy frames [iframe]. formant = newvectorzero <structFormant_Formant> (ntrack);
-			thy frames [iframe]. numberOfFormants = ntrack;
+			thy frames [iframe]. numberOfFormants = ntrack;   // maintain invariant
 			thy frames [iframe]. intensity = my frames [iframe]. intensity;
 		}
 		/* BUG: limit costs to 1e10 or so */

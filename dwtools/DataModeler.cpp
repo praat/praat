@@ -19,8 +19,7 @@
 /*
  * TODO:
 	20200325 Draw variances crashed, 
-	info FormantModeler:Datamodeler crahed
-	DataModeler_getDataPointInverseWeight is inconsistent
+	info FormantModeler:Datamodeler crashes
 	signmaY = undefined  if not known, 0 if fixed.
  djmw 20140217
 */
