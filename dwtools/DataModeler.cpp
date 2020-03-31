@@ -744,7 +744,7 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 	integer numberOfDataPoints, conststring32 parameters, double gaussianNoiseStd, int type)
 {
 	try {
-		autoVEC parameter = VEC_createFromString (parameters);
+		autoVEC parameter = newVECfromString (parameters);
 		Melder_require (xmin < xmax,
 			U"The domain should be defined properly.");
 		

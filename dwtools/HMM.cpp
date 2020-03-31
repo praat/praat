@@ -97,7 +97,7 @@ static autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
 
 // evaluate the numbers given to probabilities
 static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
-	autoVEC numbers = VEC_createFromString (s);
+	autoVEC numbers = newVECfromString (s);
 	if (numbers.size != nwanted)
 		Melder_throw (U"You supplied ", numbers.size, U", while ", nwanted, U" numbers needed.");
 	longdouble sum = 0.0;
