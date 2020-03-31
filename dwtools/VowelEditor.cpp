@@ -367,11 +367,14 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 		integer numberOfExtraFormants = my p_synthesis_numberOfFormants - 2;
 		for (integer ipoint = 1; ipoint <= formantTier -> points.size; ipoint ++) {
 			FormantPoint point = formantTier -> points.at [ipoint];
-			if (point -> numberOfFormants > my p_synthesis_numberOfFormants)
-				point -> numberOfFormants = my p_synthesis_numberOfFormants;
+			Melder_clipRight (& point -> numberOfFormants, my p_synthesis_numberOfFormants);
 			/*
-				The preferences might have changed
+				Since the time that the FormantTier was created the synthesis preferences might
+				have been changed by the user. E.g. the user moves the mouse, hears the sound and then
+				changes the Preferences and hits the Play button again. We have to synthesize now according 
+				to the new preferences.
 			*/
+			point->formant.resize (point -> numberOfFormants); // maintain invariant
 			point -> bandwidth [1] = point -> formant [1] / my p_synthesis_q1;
 			if (point -> numberOfFormants < 2)
 				continue;
@@ -755,8 +758,9 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		}
 		const integer numberOfPairs = extraFrequencyBandwidthPairs.size / 2;
 		Melder_require (numberOfFormants <= numberOfPairs + 2,
-			U"The \"Number of formant for sythesis\" should not exceed the number of formants specified. "
-			"Either lower this number or specify more frequency bandwidth pairs.");
+			U"The \"Number of formants for synthesis\" should not exceed the number of formants specified (",
+			numberOfPairs + 2, U"). Either lower the number of formants for synthesis or specify more "
+			"frequency bandwidth pairs.");
 		/*
 			Formants and bandwidths are valid. It is save to copy them.
 		*/
