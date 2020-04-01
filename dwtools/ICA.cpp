@@ -589,7 +589,7 @@ void structCrossCorrelationTable :: v_info () {
 autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 	try {
 		autoCrossCorrelationTable me = Thing_new (CrossCorrelationTable);
-		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
+		SSCP_init (me.get(), dimension, kSSCPstorage::COMPLETE);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTable not created.");

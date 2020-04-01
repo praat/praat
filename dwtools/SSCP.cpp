@@ -282,7 +282,7 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, constVECVU const& v1, constVECVU const& 
 }
 
 void SSCP_init (SSCP me, integer dimension, kSSCPstorage storage) {
-	const integer numberOfRows = storage == kSSCPstorage::Diagonal ? 1 : dimension;
+	const integer numberOfRows = storage == kSSCPstorage::DIAGONAL ? 1 : dimension;
 	TableOfReal_init (me, numberOfRows, dimension);
 	my centroid = newVECzero (dimension);
 }
@@ -290,7 +290,7 @@ void SSCP_init (SSCP me, integer dimension, kSSCPstorage storage) {
 autoSSCP SSCP_create (integer dimension) {
 	try {
 		autoSSCP me = Thing_new (SSCP);
-		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
+		SSCP_init (me.get(), dimension, kSSCPstorage::COMPLETE);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SSCP not created.");
@@ -1058,7 +1058,7 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 autoCovariance Covariance_create (integer dimension) {
 	try {
 		autoCovariance me = Thing_new (Covariance);
-		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
+		SSCP_init (me.get(), dimension, kSSCPstorage::COMPLETE);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
@@ -1166,7 +1166,7 @@ autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststr
 autoCorrelation Correlation_create (integer dimension) {
 	try {
 		autoCorrelation me = Thing_new (Correlation);
-		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
+		SSCP_init (me.get(), dimension, kSSCPstorage::COMPLETE);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Correlation not created.");

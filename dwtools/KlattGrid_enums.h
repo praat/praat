@@ -1,6 +1,6 @@
 /* KlattGrid_enums.h
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,18 @@
  */
 
 enums_begin (kKlattGridFormantType, 1)
-	enums_add (kKlattGridFormantType, 1, Oral, U"Oral formant")
-	enums_add (kKlattGridFormantType, 2, Nasal, U"Nasal formant")
-	enums_add (kKlattGridFormantType, 3, Frication, U"Frication Formant")
-	enums_add (kKlattGridFormantType, 4, Tracheal, U"Tracheal formant")
-	enums_add (kKlattGridFormantType, 5, NasalAnti, U"Nasal Antiformant")
-	enums_add (kKlattGridFormantType, 6, TrachealAnti, U"Tracheal antiformant")
-	enums_add (kKlattGridFormantType, 7, Delta, U"Delta formant")
-enums_end (kKlattGridFormantType, 7, Oral)
+	enums_add (kKlattGridFormantType, 1, ORAL, U"Oral formant")
+	enums_add (kKlattGridFormantType, 2, NASAL, U"Nasal formant")
+	enums_add (kKlattGridFormantType, 3, FRICATION, U"Frication Formant")
+	enums_add (kKlattGridFormantType, 4, TRACHEAL, U"Tracheal formant")
+	enums_add (kKlattGridFormantType, 5, NASAL_ANTI, U"Nasal Antiformant")
+	enums_add (kKlattGridFormantType, 6, TRACHEALANTI, U"Tracheal antiformant")
+	enums_add (kKlattGridFormantType, 7, DELTA, U"Delta formant")
+enums_end (kKlattGridFormantType, 7, ORAL)
 
 enums_begin (kKlattGridFilterModel, 1)
-	enums_add (kKlattGridFilterModel, 1, Cascade, U"Cascade")
-	enums_add (kKlattGridFilterModel, 2, Parallel, U"Parallel")
-enums_end (kKlattGridFilterModel, 2, Cascade)
+	enums_add (kKlattGridFilterModel, 1, CASCADE, U"Cascade")
+	enums_add (kKlattGridFilterModel, 2, PARALLEL, U"Parallel")
+enums_end (kKlattGridFilterModel, 2, CASCADE)
 
 /* End of file KlattGrid_enums.h */

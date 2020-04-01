@@ -1,6 +1,6 @@
 /* Graphics_extensions_enums.h
  *
- * Copyright (C) 2018 David Weenink
+ * Copyright (C) 2018-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,18 @@
  */
 
 enums_begin (kGraphicsMatrixCellDrawingOrder, 1)
-	enums_add (kGraphicsMatrixCellDrawingOrder, 1, Rows, U"rows")
-	enums_add (kGraphicsMatrixCellDrawingOrder, 2, Columns, U"columns")
-	enums_add (kGraphicsMatrixCellDrawingOrder, 3, IncreasingValues, U"increasing values")
-	enums_add (kGraphicsMatrixCellDrawingOrder, 4, DecreasingValues, U"decreasing values")
-	enums_add (kGraphicsMatrixCellDrawingOrder, 5, Random, U"random")
-enums_end (kGraphicsMatrixCellDrawingOrder, 5, Rows)
+	enums_add (kGraphicsMatrixCellDrawingOrder, 1, ROWS, U"rows")
+	enums_add (kGraphicsMatrixCellDrawingOrder, 2, COLUMNS, U"columns")
+	enums_add (kGraphicsMatrixCellDrawingOrder, 3, INCREASING_VALUES, U"increasing values")
+	enums_add (kGraphicsMatrixCellDrawingOrder, 4, DECREASING_VALUES, U"decreasing values")
+	enums_add (kGraphicsMatrixCellDrawingOrder, 5, RANDOM, U"random")
+enums_end (kGraphicsMatrixCellDrawingOrder, 5, RANDOM)
 
 enums_begin (kGraphicsMatrixOrigin, 1)
-	enums_add (kGraphicsMatrixOrigin, 1, TopLeft, U"top-left")
-	enums_add (kGraphicsMatrixOrigin, 2, TopRight, U"top-right")
-	enums_add (kGraphicsMatrixOrigin, 3, BottomLeft, U"bottom-left")
-	enums_add (kGraphicsMatrixOrigin, 4, BottomRight, U"bottom-right")
-enums_end (kGraphicsMatrixOrigin, 4, TopLeft)
+	enums_add (kGraphicsMatrixOrigin, 1, TOP_LEFT, U"top-left")
+	enums_add (kGraphicsMatrixOrigin, 2, TOP_RIGHT, U"top-right")
+	enums_add (kGraphicsMatrixOrigin, 3, BOTTOM_LEFT, U"bottom-left")
+	enums_add (kGraphicsMatrixOrigin, 4, BOTTOM_RIGHT, U"bottom-right")
+enums_end (kGraphicsMatrixOrigin, 4, BOTTOM_RIGHT)
 
 /* End of file Graphics_extensions_enums.h */

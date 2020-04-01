@@ -22,7 +22,7 @@ prefs_begin (VowelEditor)
 	prefs_add_int_with_data    (VowelEditor, shell_width,     		1, U"700")
 	prefs_add_int_with_data    (VowelEditor, shell_height,     		1, U"700")
 	prefs_add_bool_with_data   (VowelEditor, soundFollowsMouse,		1, true)
-	prefs_add_enum_with_data   (VowelEditor, window_frequencyScale,	1, kVowelEditor_frequencyScale, Logarithmic)
+	prefs_add_enum_with_data   (VowelEditor, window_frequencyScale,	1, kVowelEditor_frequencyScale, LOGARITHMIC)
 	prefs_add_double_with_data (VowelEditor, window_f1min,			1, U"200.0")	// Hz
 	prefs_add_double_with_data (VowelEditor, window_f1max,			1, U"1200.0")	// Hz
 	prefs_add_double_with_data (VowelEditor, window_f2min,			1, U"500.0")	// Hz
@@ -37,8 +37,8 @@ prefs_begin (VowelEditor)
 	prefs_add_double_with_data (VowelEditor, trajectory_minimumDuration,	1, U"0.01") // s
 	prefs_add_double_with_data (VowelEditor, trajectory_maximumDuration,	1, U"4.0") // s
 	prefs_add_double_with_data (VowelEditor, trajectory_duration,	1, U"0.1") // s
-	prefs_add_enum_with_data   (VowelEditor, marks_speakerType,		1, kVowelEditor_speakerType, Man)
-	prefs_add_enum_with_data   (VowelEditor, marks_dataSet,			1, kVowelEditor_marksDataSet, AmericanEnglish)
+	prefs_add_enum_with_data   (VowelEditor, marks_speakerType,		1, kVowelEditor_speakerType, MAN)
+	prefs_add_enum_with_data   (VowelEditor, marks_dataSet,			1, kVowelEditor_marksDataSet, AMERICAN_ENGLISH)
 	prefs_add_string_with_data (VowelEditor, marks_fileName,		1, U"")
 	prefs_add_string_with_data (VowelEditor, marks_colour,			1, U"grey")
 	prefs_add_double_with_data (VowelEditor, marks_fontSize,		1, U"14.0")

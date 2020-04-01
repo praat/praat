@@ -1,6 +1,6 @@
 /* HMM_enums.h
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 enums_begin (kHMMstorage, 1)
-	enums_add (kHMMstorage, 1, Complete, U"Complete")
-	enums_add (kHMMstorage, 2, Diagonals, U"Diagonals")
-enums_end (kHMMstorage, 2, Diagonals)
+	enums_add (kHMMstorage, 1, COMPLETE, U"Complete")
+	enums_add (kHMMstorage, 2, DIAGONALS, U"Diagonals")
+enums_end (kHMMstorage, 2, DIAGONALS)
 
 
 /* End of file HMM_enums.h */
