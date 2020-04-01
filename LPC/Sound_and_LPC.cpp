@@ -58,19 +58,6 @@ static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
 	}
 }
 
-void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
-	autoVEC y = newVECzero (my nCoefficients);
-	for (integer i = 1; i <= thy nx; i ++) {
-		const double y0 = thy z [channel] [i];
-		for (integer j = 1; j <= my nCoefficients; j ++)
-			thy z [channel] [i] += my a [j] * y [j];
-		for (integer j = my nCoefficients; j > 1; j --)
-			y [j] = y [j - 1];
-		y [1] = y0;
-	}
-}
-
-
 static integer getLPCAnalysisWorkspaceSize (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
 	integer size = 0;
 	if (method == kLPC_Analysis :: AUTOCORRELATION)
@@ -761,11 +748,13 @@ void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, intege
 		Melder_clip (1_integer, & frameIndex, my nx);   // constant extrapolation
 		if (channel > thy ny)
 			channel = 1;
+		LPC_Frame lpc = & my d_frames [frameIndex];
+		autoVEC work = newVECraw (lpc -> nCoefficients);
 		if (channel > 0)
-			LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, channel);
+			VECfilterInverse_inplace (thy z.row (channel), lpc -> a.get(), work);
 		else
 			for (integer ichan = 1; ichan <= thy ny; ichan ++)
-				LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, ichan);
+				VECfilterInverse_inplace (thy z.row (ichan), lpc -> a.get(), work);
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");
 	}
