@@ -35,126 +35,132 @@
 #include "NUM2.h"
 
 struct huber_struct {
-	autoSound e;
+	autoVEC error;
 	double k_stdev, tol, tol_svd;
+	integer numberOfSamples, predictionOrder, maximumPredictionOrder;
 	integer iter, itermax;
-	int wantlocation, wantscale;
+	bool wantlocation, wantscale;
 	double location, scale;
-	integer n, p;
-	autoVEC w, work, a, c;
-	autoMAT covar;
+	autoVEC weights, work, coefficients, covariancesw;
+	autoMAT covarmatrixw;
 	autoSVD svd;
 };
 
-static void huber_struct_init (struct huber_struct *hs, double windowDuration, integer p, double samplingFrequency, double location, int wantlocation) {
-	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
-	hs -> k_stdev = hs -> tol = hs -> tol_svd = hs -> scale = 0.0;
-	hs -> iter = 1;
-	hs -> itermax = 1;
-	hs -> wantlocation = wantlocation;
+static void huber_struct_init (struct huber_struct *me, integer numberOfSamples, integer maximumPredictionOrder, double location, bool wantlocation) {
+	my numberOfSamples = numberOfSamples;
+	my error = newVECzero (numberOfSamples);
+	my k_stdev = my tol = my tol_svd = my scale = 0.0;
+	my iter = my itermax = 1;
+	my wantlocation = wantlocation;
 	if (! wantlocation)
-		hs -> location = location;
-	hs -> wantscale = 1;
-	integer n = hs -> e -> nx;
-	hs -> n = n;
-	hs -> p = p;
-	hs -> w = newVECzero (n);
-	hs -> work = newVECraw (n);
-	hs -> a = newVECraw (p);
-	hs -> c = newVECzero (p);
-	hs -> covar = newMATzero (p, p);
-	hs -> svd = SVD_create (p, p);
+		my location = location;
+	my wantscale = true;
+	my predictionOrder = my maximumPredictionOrder = maximumPredictionOrder;
+	my weights = newVECzero (numberOfSamples);
+	my work = newVECraw (maximumPredictionOrder);
+	my coefficients = newVECraw (maximumPredictionOrder);
+	my covariancesw = newVECzero (maximumPredictionOrder);
+	my covarmatrixw = newMATzero (maximumPredictionOrder, maximumPredictionOrder);
+	//my covarmatrixw = matrixview(my covarmatrixstaticAllocation.get(), 1, my predictionOrder, 1, my predictionOrder);
+	my svd = SVD_create (maximumPredictionOrder, maximumPredictionOrder);
 }
 
-static void huber_struct_getWeights (struct huber_struct *hs, constVEC e) {
-	Melder_assert (e.size == hs -> n);
-	const double kstdev = hs -> k_stdev * hs -> scale;
+void huber_struct_resize (struct huber_struct *me, integer newPredictionOrder) {
+	Melder_assert (newPredictionOrder <= my maximumPredictionOrder);
+	if (newPredictionOrder == my predictionOrder)
+		return;
+	my coefficients.resize (newPredictionOrder);
+	my covariancesw.resize (newPredictionOrder);
+	my svd -> numberOfColumns = my svd -> numberOfRows = newPredictionOrder;
+	// TODO also resize the u, v and d matrices
+	// temporary solution do svd on the complete matrix with zeros added.
+}
 
-	for (integer i = 1 ; i <= hs -> n; i ++) {
-		const double abs_ei = fabs (e [i] - hs -> location);
-		hs -> w [i] = abs_ei < kstdev ? 1.0 : kstdev / abs_ei;
+static void huber_struct_getWeights (struct huber_struct *me, constVEC const& error) {
+	Melder_assert (error.size == my numberOfSamples);
+	const double kstdev = my k_stdev * my scale;
+
+	for (integer isamp = 1 ; isamp <= my numberOfSamples; isamp ++) {
+		const double absDiff = fabs (error [isamp] - my location);
+		my weights [isamp] = absDiff < kstdev ? 1.0 : kstdev / absDiff;
 	}
 }
 
-static void huber_struct_getWeightedCovars (struct huber_struct *hs, VEC s) {
-	Melder_assert (s.size == hs -> n);
-	const integer p = hs -> p;
-
-	for (integer i = 1; i <= p; i ++) {
-		for (integer j = i; j <= p; j ++) {
+static void huber_struct_getWeightedCovars (struct huber_struct *me, constVEC const& s) {
+	Melder_assert (s.size == my numberOfSamples);
+	MATVU covar = MATVU (my covarmatrixw.part (1, my predictionOrder, 1, my predictionOrder));
+	for (integer i = 1; i <= my predictionOrder; i ++) {
+		for (integer j = i; j <= my predictionOrder; j ++) {
 			longdouble cv1 = 0.0;
-			for (integer k = p + 1; k <= s.size; k ++)
-				cv1 += s [k - j] * s [k - i] *  hs -> w [k];
-			hs -> covar [i] [j] = hs -> covar [j] [i] = (double) cv1;
+			for (integer k = my predictionOrder + 1; k <= my numberOfSamples; k ++)
+				cv1 += s [k - j] * s [k - i] *  my weights [k];
+			covar [i] [j] = covar [j] [i] = (double) cv1;
 		}
-
 		longdouble cv2 = 0.0;
-		for (integer k = p + 1; k <= s.size; k ++)
-			cv2 += s [k - i] * s [k] *  hs -> w [k];
-		hs -> c [i] = - cv2;
+		for (integer k = my predictionOrder + 1; k <= my numberOfSamples; k ++)
+			cv2 += s [k - i] * s [k] *  my weights [k];
+		my covariancesw [i] = - cv2;
 	}
 }
 
-static void huber_struct_solvelpc (struct huber_struct *hs) {
-	SVD me = hs -> svd.get();
-	my u.get() <<= hs -> covar.get();
-	SVD_setTolerance (me, hs -> tol_svd);
-	SVD_compute (me);
-
-	hs -> a = SVD_solve (me, hs -> c.get());
-	//hs -> a.all() <<= x.all();
+static void huber_struct_solvelpc (struct huber_struct *me) {
+	// we cannot resize the svd-matrices therefore add zero's and svd the full matrix
+	if (my predictionOrder < my maximumPredictionOrder) {
+		my covarmatrixw. part (my predictionOrder + 1, my maximumPredictionOrder, 1, my maximumPredictionOrder) <<= 0.0;
+		my covarmatrixw. part (1, my predictionOrder, my predictionOrder + 1, my maximumPredictionOrder) <<= 0.0;
+		my coefficients.resize (my maximumPredictionOrder);
+	}
+	my svd -> u.get() <<= my covarmatrixw.get();
+	SVD_setTolerance (my svd.get(), my tol_svd);
+	SVD_compute (my svd.get());
+	SVD_solve_preallocated (my svd.get(), my covariancesw.get(), my coefficients.get());
+	my coefficients.resize (my predictionOrder); // maintain invariant
 }
 
-void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
-	Melder_assert (my nCoefficients == my a.size); // check invariant
-//	Melder_assert (his nCoefficients == his a.size); // check invariant
-	const integer p = std::min (my nCoefficients, his nCoefficients);
+void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, constVEC const& lpcFrom, VEC const& lpcTo) {
+	Melder_assert (lpcFrom.size == lpcTo.size);
+	Melder_assert (lpcFrom.size <= my predictionOrder);
+	Melder_assert (sound.size == my numberOfSamples);
 
-	hs -> iter = 0;
-	hs -> scale = 1e308;
-	hs -> p = p;
+	my iter = 0;
+	my scale = 1e308;
 
 	double scale0;
 	do {
-		Sound hse = hs -> e.get();
-		hse -> z.row (1) <<= thy z.row (1);
-		
-		LPC_Frame_Sound_filterInverse (him, hse, 1);
+		my error.get() <<= sound;
+		VECfilterInverse_inplace (my error.get(), lpcTo, my work); // lpcTo has alreay a copy of lpcFrom
+		scale0 = my scale;
+		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tol, 5);
 
-		scale0 = hs -> scale;
-		//VEC work = hs -> work.get();
-		NUMstatistics_huber (hs -> e -> z.row (1), & hs -> location, hs -> wantlocation, & hs -> scale, hs -> wantscale, hs -> k_stdev, hs -> tol, 5);
-
-		huber_struct_getWeights (hs, hs -> e -> z.row (1));
-		huber_struct_getWeightedCovars (hs, thy z.row (1));
+		huber_struct_getWeights (me, my error.get());
+		huber_struct_getWeightedCovars (me, sound);
 		/*
 			Solve C a = [-] c
 		*/
 		try {
-			huber_struct_solvelpc (hs);
+			huber_struct_solvelpc (me);
 		} catch (MelderError) {
-			// Copy the starting lpc coeffs */
-			his a.part (1, p) <<= my a.part (1, p);
+			// Copy the starting lpc coeffs, because we couldn't modify them */
+			lpcTo <<= lpcFrom;
 			throw MelderError();
 		}
-		his a.part (1, p) <<= hs -> a.part (1, p);
-		hs -> iter ++;
-	} while (hs -> iter < hs -> itermax && fabs (scale0 - hs -> scale) > hs -> tol * scale0);
-	his nCoefficients = his a.size; // maintain invariant
+		lpcTo <<= my coefficients.get();
+		my iter ++;
+	} while (my iter < my itermax && fabs (scale0 - my scale) > my tol * scale0);
 }
 
 autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
-	int itermax, double tol, bool wantlocation) {
+	integer itermax, double tol, bool wantlocation) {
 	struct huber_struct struct_huber;
 	try {
 		const double samplingFrequency = 1.0 / my dx, tol_svd = 0.000001;
 		const double windowDuration = 2 * analysisWidth; /* Gaussian window */
-		const integer p = thy maxnCoefficients;
+		const integer predictionOrder = thy maxnCoefficients;
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 			U"Time domains should be equal.");
 		Melder_require (my dx == thy samplingPeriod,
 			U"Sampling intervals should be equal.");
-		Melder_require (Melder_roundDown (windowDuration / my dx) > p,
+		Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
 			U"Analysis window too short.");
 		double t1;
 		integer numberOfFrames;
@@ -167,8 +173,7 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoLPC him = Data_copy (thee);
 		double location = 0.0;
-		huber_struct_init (& struct_huber, windowDuration, p, samplingFrequency, location, wantlocation);
-
+		huber_struct_init (& struct_huber, window -> nx, predictionOrder, location, wantlocation);
 		struct_huber.k_stdev = k_stdev;
 		struct_huber.tol = tol;
 		struct_huber.tol_svd = tol_svd;
@@ -186,9 +191,9 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.get());
 			Sounds_multiply (sframe.get(), window.get());
-// TODO 20200331 djmw resize struct_huber according to p
+			//huber_struct_resize (& struct_huber, lpc -> nCoefficients);
 			try {
-				LPC_Frames_Sound_huber (lpc, sframe.get(), lpcto, & struct_huber);
+				huber_struct_minimize (& struct_huber, sframe -> z.row(1), lpc -> a.get(), lpcto -> a.get());
 			} catch (MelderError) {
 				frameErrorCount ++;
 			}
@@ -200,8 +205,9 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 					U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
 		}
 
-		if (frameErrorCount) Melder_warning (U"Results of ", frameErrorCount,
-			U" frame(s) out of ", numberOfFrames, U" could not be optimised.");
+		if (frameErrorCount > 0)
+			Melder_warning (U"Results of ", frameErrorCount, U" frame(s) out of ", numberOfFrames, 
+				U" could not be optimised.");
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC created.");
@@ -209,7 +215,7 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 }
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, int itermax, double tol, bool wantlocation) {
+	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, integer itermax, double tol, bool wantlocation) {
 	const double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	const double nyquist = 0.5 / my dx;
 	const integer predictionOrder = Melder_ifloor (2 * numberOfFormants);
