@@ -1461,6 +1461,19 @@ autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, d
 	return a;
 }
 
+void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& work) {
+	Melder_assert (work.size >= filter.size);
+	work <<= 0.0;
+	for (integer i = 1; i <= s.size; i ++) {
+		const double y0 = s [i];
+		for (integer j = 1; j <= filter.size; j ++)
+			s [i] += filter [j] * work [j];
+		for (integer j = filter.size; j > 1; j --)
+			work [j] = work [j - 1];
+		work [1] = y0;
+	}
+}
+
 void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor) {
 	const double factor10 = factor * 10.0;
 	MelderExtremaWithInit extrema;
