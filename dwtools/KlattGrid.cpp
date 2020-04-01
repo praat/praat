@@ -91,19 +91,19 @@
 
 conststring32 KlattGrid_getFormantName (kKlattGridFormantType formantType) {
 	conststring32 result;
-	if (formantType == kKlattGridFormantType::Oral)
+	if (formantType == kKlattGridFormantType::ORAL)
 		result = U"Oral formant";
-	else if (formantType == kKlattGridFormantType::Nasal)
+	else if (formantType == kKlattGridFormantType::NASAL)
 		result = U"Nasal formant";
-	else if (formantType == kKlattGridFormantType::Frication)
+	else if (formantType == kKlattGridFormantType::FRICATION)
 		result = U"Frication Formant";
-	else if (formantType == kKlattGridFormantType::Tracheal)
+	else if (formantType == kKlattGridFormantType::TRACHEAL)
 		result = U"Tracheal formant";
-	else if (formantType == kKlattGridFormantType::NasalAnti)
+	else if (formantType == kKlattGridFormantType::NASAL_ANTI)
 		result = U"Nasal Antiformant";
-	else if (formantType == kKlattGridFormantType::TrachealAnti)
+	else if (formantType == kKlattGridFormantType::TRACHEALANTI)
 		result = U"Tracheal antiformant";
-	else if (formantType == kKlattGridFormantType::Delta)
+	else if (formantType == kKlattGridFormantType::DELTA)
 		result = U"Delta formant";
 	else
 		result = U"Unknown formant";
@@ -1209,7 +1209,7 @@ static void formantsAmplitudes_create (OrderedOf<structIntensityTier>* me, doubl
 Thing_implement (VocalTractGridPlayOptions, Daata, 0);
 
 static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me, VocalTractGrid thee) {
-	my filterModel = kKlattGridFilterModel::Cascade;
+	my filterModel = kKlattGridFilterModel::CASCADE;
 	my endOralFormant = std::min (thy oral_formants -> formants.size, thy oral_formants -> bandwidths.size);
 	my startOralFormant = 1;
 	my endNasalFormant = std::min (thy nasal_formants -> formants.size, thy nasal_formants -> bandwidths.size);
@@ -1482,9 +1482,9 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 }
 
 static void VocalTractGrid_CouplingGrid_draw_inside (VocalTractGrid me, CouplingGrid thee, Graphics g, kKlattGridFilterModel filterModel, double xmin, double xmax, double ymin, double ymax, double dy, double *out_yin, double *out_yout) {
-	if (filterModel == kKlattGridFilterModel::Cascade)
+	if (filterModel == kKlattGridFilterModel::CASCADE)
 		VocalTractGrid_CouplingGrid_drawCascade_inplace (me, thee, g, xmin, xmax, ymin, ymax, out_yin, out_yout);
-	else if (filterModel == kKlattGridFilterModel::Parallel)
+	else if (filterModel == kKlattGridFilterModel::PARALLEL)
 		VocalTractGrid_CouplingGrid_drawParallel_inplace (me, thee, g, xmin, xmax, ymin, ymax, dy, out_yin, out_yout);
 	else
 		;// Not valid
@@ -1707,7 +1707,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 }
 
 autoSound Sound_VocalTractGrid_CouplingGrid_filter (Sound me, VocalTractGrid thee, CouplingGrid coupling) {
-	return thy options -> filterModel == kKlattGridFilterModel::Cascade ?
+	return thy options -> filterModel == kKlattGridFilterModel::CASCADE ?
 	       Sound_VocalTractGrid_CouplingGrid_filter_cascade (me, thee, coupling) :
 	       Sound_VocalTractGrid_CouplingGrid_filter_parallel (me, thee, coupling);
 }
@@ -2222,7 +2222,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 	double xw [6] = {0, 1.75, 0.125, 3.0, 0.25, 0.125 };
 	rel_to_abs (xw, xws, 5, xmax2 - xmin);
 	
-	if (filterModel == kKlattGridFilterModel::Cascade) { // Cascade section
+	if (filterModel == kKlattGridFilterModel::CASCADE) { // Cascade section
 		/*
 			limit height of frication unit dy !
 		*/
@@ -2354,20 +2354,20 @@ PhonationGrid_QUERY_ADD_REMOVE_EXTRACT_REPLACE (AspirationAmplitude, aspirationA
 PhonationGrid_QUERY_ADD_REMOVE_EXTRACT_REPLACE (BreathinessAmplitude, breathinessAmplitude, IntensityTier)
 
 autoFormantGrid* KlattGrid_getAddressOfFormantGrid (KlattGrid me, kKlattGridFormantType formantType) {
-	return formantType == kKlattGridFormantType::Oral ? & my vocalTract -> oral_formants :
-	       formantType == kKlattGridFormantType::Nasal ? & my vocalTract -> nasal_formants :
-	       formantType == kKlattGridFormantType::Frication ? & my frication -> frication_formants :
-	       formantType == kKlattGridFormantType::Tracheal ? & my coupling -> tracheal_formants :
-	       formantType == kKlattGridFormantType::NasalAnti ? & my vocalTract -> nasal_antiformants :
-	       formantType == kKlattGridFormantType::TrachealAnti ? & my coupling -> tracheal_antiformants :
+	return formantType == kKlattGridFormantType::ORAL ? & my vocalTract -> oral_formants :
+	       formantType == kKlattGridFormantType::NASAL ? & my vocalTract -> nasal_formants :
+	       formantType == kKlattGridFormantType::FRICATION ? & my frication -> frication_formants :
+	       formantType == kKlattGridFormantType::TRACHEAL ? & my coupling -> tracheal_formants :
+	       formantType == kKlattGridFormantType::NASAL_ANTI ? & my vocalTract -> nasal_antiformants :
+	       formantType == kKlattGridFormantType::TRACHEALANTI ? & my coupling -> tracheal_antiformants :
 		   & my coupling -> delta_formants; // kKlattGridFormantType::Delta
 }
 
 OrderedOf<structIntensityTier>* KlattGrid_getAddressOfAmplitudes (KlattGrid me, kKlattGridFormantType formantType) {
-	return formantType == kKlattGridFormantType::Oral ? & my vocalTract -> oral_formants_amplitudes :
-	       formantType == kKlattGridFormantType::Nasal ? & my vocalTract -> nasal_formants_amplitudes :
-	       formantType == kKlattGridFormantType::Frication ? & my frication -> frication_formants_amplitudes :
-	       formantType == kKlattGridFormantType::Tracheal ? & my coupling -> tracheal_formants_amplitudes : nullptr;
+	return formantType == kKlattGridFormantType::ORAL ? & my vocalTract -> oral_formants_amplitudes :
+	       formantType == kKlattGridFormantType::NASAL ? & my vocalTract -> nasal_formants_amplitudes :
+	       formantType == kKlattGridFormantType::FRICATION ? & my frication -> frication_formants_amplitudes :
+	       formantType == kKlattGridFormantType::TRACHEAL ? & my coupling -> tracheal_formants_amplitudes : nullptr;
 }
 
 #define KlattGrid_QUERY_ADD_REMOVE(Name) \
@@ -2497,7 +2497,7 @@ void KlattGrid_replaceFormantGrid (KlattGrid me, kKlattGridFormantType formantTy
 
 void KlattGrid_addFormantAmplitudeTier (KlattGrid me, kKlattGridFormantType formantType, integer position) {
 	try {
-		Melder_require (formantType != kKlattGridFormantType::NasalAnti && formantType != kKlattGridFormantType::TrachealAnti && formantType != kKlattGridFormantType::Delta,
+		Melder_require (formantType != kKlattGridFormantType::NASAL_ANTI && formantType != kKlattGridFormantType::TRACHEALANTI && formantType != kKlattGridFormantType::DELTA,
 			U"Cannot add amplitude tier to this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		const integer noa = ordered->size;
@@ -2512,7 +2512,7 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, kKlattGridFormantType form
 
 void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, kKlattGridFormantType formantType, integer position) {
 	try {
-		Melder_require (formantType != kKlattGridFormantType::NasalAnti && formantType != kKlattGridFormantType::TrachealAnti && formantType != kKlattGridFormantType::Delta, 
+		Melder_require (formantType != kKlattGridFormantType::NASAL_ANTI && formantType != kKlattGridFormantType::TRACHEALANTI && formantType != kKlattGridFormantType::DELTA, 
 			U"Cannot remove amplitude tier from this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		if (position > 0 && position <= ordered->size) {
@@ -2534,8 +2534,8 @@ void KlattGrid_addFormant (KlattGrid me, kKlattGridFormantType formantType, inte
 			position = nof + 1;
 		}
 
-		if (formantType == kKlattGridFormantType::NasalAnti || formantType == kKlattGridFormantType::TrachealAnti ||
-			formantType == kKlattGridFormantType::Delta) {
+		if (formantType == kKlattGridFormantType::NASAL_ANTI || formantType == kKlattGridFormantType::TRACHEALANTI ||
+			formantType == kKlattGridFormantType::DELTA) {
 			FormantGrid_addFormantAndBandwidthTiers (fg->get(), position);
 			return;
 		}
@@ -2560,8 +2560,8 @@ void KlattGrid_addFormant (KlattGrid me, kKlattGridFormantType formantType, inte
 void KlattGrid_removeFormant (KlattGrid me, kKlattGridFormantType formantType, integer position) {
 	autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
 	const integer nof = (*fg) -> formants.size;
-	if (formantType == kKlattGridFormantType::NasalAnti || formantType == kKlattGridFormantType::TrachealAnti ||
-        formantType == kKlattGridFormantType::Delta) {
+	if (formantType == kKlattGridFormantType::NASAL_ANTI || formantType == kKlattGridFormantType::TRACHEALANTI ||
+        formantType == kKlattGridFormantType::DELTA) {
 		if (position < 1 || position > nof) {
 			return;
 		}
@@ -2614,7 +2614,7 @@ void KlattGrid_removeDeltaBandwidthPoints (KlattGrid me, integer iformant, doubl
 
 autoFormantGrid KlattGrid_extractDeltaFormantGrid (KlattGrid me) {
 	try {
-		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, kKlattGridFormantType::Delta);
+		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, kKlattGridFormantType::DELTA);
 		autoFormantGrid thee = Data_copy (fg->get());
 		return thee;
 	} catch (MelderError) {
@@ -2626,7 +2626,7 @@ void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 			U"Domains should be equal");
-		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, kKlattGridFormantType::Delta);
+		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, kKlattGridFormantType::DELTA);
 		autoFormantGrid him = Data_copy (thee);
 		*fg = him.move();
 	} catch (MelderError) {
@@ -2975,7 +2975,7 @@ autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maxi
 		autoIntensityTier itier = Intensity_downto_IntensityTier (i.get());
 		autoKlattGrid thee = KlattGrid_create (my xmin, my xmax, numberOfFormants, numberOfNasalFormants,                            numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants);
 		KlattGrid_replacePitchTier (thee.get(), ptier.get());
-		KlattGrid_replaceFormantGrid (thee.get(), kKlattGridFormantType::Oral, fgrid.get());
+		KlattGrid_replaceFormantGrid (thee.get(), kKlattGridFormantType::ORAL, fgrid.get());
 		KlattGrid_replaceVoicingAmplitudeTier (thee.get(), itier.get());
 		return thee;
 	} catch (MelderError) {
@@ -2990,27 +2990,27 @@ autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double
 	KlattGrid_addPitchPoint (me.get(), tstart, f0start);
 	KlattGrid_addVoicingAmplitudePoint (me.get(), tstart, 90.0);
 	if (f1 > 0.0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 1, tstart, f1);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 1, tstart, b1);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 1, tstart, f1);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 1, tstart, b1);
 	}
 	if (f2 > 0.0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 2, tstart, f2);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 2, tstart, b2);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 2, tstart, f2);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 2, tstart, b2);
 	}
 	if (f3 > 0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 3, tstart, f3);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 3, tstart, b3);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 3, tstart, f3);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 3, tstart, b3);
 	}
 	if (f4 > 0) {
-		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, 4, tstart, f4);
-		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, 4, tstart, f4 * bandWidthFraction);
+		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 4, tstart, f4);
+		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 4, tstart, f4 * bandWidthFraction);
 	}
 	if (formantFrequencyInterval > 0) {
 		double startFrequency = std::max (std::max (f1, f2), std::max (f3, f4));
 		for (integer iformant = 5; iformant <= numberOfOralFormants; iformant ++) {
 			double frequency =  startFrequency + (iformant - 4) * formantFrequencyInterval;
-			KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::Oral, iformant, tstart, frequency);
-			KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::Oral, iformant, tstart, frequency * bandWidthFraction);
+			KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, iformant, tstart, frequency);
+			KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, iformant, tstart, frequency * bandWidthFraction);
 		}
 	}
 	return me;

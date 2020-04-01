@@ -17,16 +17,16 @@
  */
 
 enums_begin (kFormantModelerTrackShift, 1)
-	enums_add (kFormantModelerTrackShift, 1, No, U"No")
-	enums_add (kFormantModelerTrackShift, 2, Up, U"Up")
-	enums_add (kFormantModelerTrackShift, 3, Down, U"Down")
-enums_end (kFormantModelerTrackShift, 3, Down)
+	enums_add (kFormantModelerTrackShift, 1, NO, U"No")
+	enums_add (kFormantModelerTrackShift, 2, UP, U"Up")
+	enums_add (kFormantModelerTrackShift, 3, DOWN, U"Down")
+enums_end (kFormantModelerTrackShift, 3, DOWN)
 
 enums_begin (kFormantModelerWeights, 1)
-	enums_add (kFormantModelerWeights, 1, EqualWeights, U"Equal")
-	enums_add (kFormantModelerWeights, 2, OneOverBandwidth, U"One over bandwidth")
-	enums_add (kFormantModelerWeights, 3, OneOverSqrtBandwidth, U"One over sqrt(bandwidth)")
-	enums_add (kFormantModelerWeights, 4, QFactor, U"Q-factor")
-enums_end (kFormantModelerWeights, 4, QFactor)
+	enums_add (kFormantModelerWeights, 1, EQUAL_WEIGHTS, U"Equal")
+	enums_add (kFormantModelerWeights, 2, ONE_OVER_BANDWIDTH, U"One over bandwidth")
+	enums_add (kFormantModelerWeights, 3, ONE_OVER_SQRTBANDWIDTH, U"One over sqrt(bandwidth)")
+	enums_add (kFormantModelerWeights, 4, Q_FACTOR, U"Q-factor")
+enums_end (kFormantModelerWeights, 4, Q_FACTOR)
 
 /* End of file FormantModeler_enums.h */

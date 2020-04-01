@@ -1,6 +1,6 @@
 /* Cepstrum_enums.h
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
  */
 
 enums_begin (kCepstrumTrendType, 1)
-	enums_add (kCepstrumTrendType, 1, Linear, U"Straight")
-	enums_add (kCepstrumTrendType, 2, ExponentialDecay, U"Exponential decay")
-enums_end (kCepstrumTrendType, 2, ExponentialDecay)
+	enums_add (kCepstrumTrendType, 1, LINEAR, U"Straight")
+	enums_add (kCepstrumTrendType, 2, EXPONENTIAL_DECAY, U"Exponential decay")
+enums_end (kCepstrumTrendType, 2, EXPONENTIAL_DECAY)
 
 enums_begin (kCepstrumTrendFit, 1)
-	enums_add (kCepstrumTrendFit, 1, RobustFast, U"Robust")
-	enums_add (kCepstrumTrendFit, 2, LeastSquares, U"Least squares")
-	enums_add (kCepstrumTrendFit, 3, RobustSlow, U"Robust slow")
-enums_end (kCepstrumTrendFit, 3, RobustSlow)
+	enums_add (kCepstrumTrendFit, 1, ROBUST_FAST, U"Robust")
+	enums_add (kCepstrumTrendFit, 2, LEAST_SQUARES, U"Least squares")
+	enums_add (kCepstrumTrendFit, 3, ROBUST_SLOW, U"Robust slow")
+enums_end (kCepstrumTrendFit, 3, ROBUST_SLOW)
 
 /* End of file Cepstrum_enums.h */

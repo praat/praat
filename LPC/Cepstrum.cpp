@@ -171,7 +171,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 	 */
 	double lineWidth =  Graphics_inqLineWidth (g);
 	Graphics_setLineWidth (g, 2);
-	if (lineType == kCepstrumTrendType::ExponentialDecay ) {
+	if (lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ) {
 		integer n = 500;
 		double dq = (qend - qstart) / (n + 1);
 		double q1 = qstart;
@@ -218,7 +218,7 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		integer imin, imax;
 		if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 			return;
-		if (imin == 1 && lineType == kCepstrumTrendType::ExponentialDecay)
+		if (imin == 1 && lineType == kCepstrumTrendType::EXPONENTIAL_DECAY)
 			imin = 2; // because log(0) is undefined
 		integer numberOfPoints = imax - imin + 1;
 		Melder_require (numberOfPoints > 1,
@@ -229,15 +229,15 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
-			if (lineType == kCepstrumTrendType::ExponentialDecay)
+			if (lineType == kCepstrumTrendType::EXPONENTIAL_DECAY)
 				x [i] = log (x [i]);
 			y [i] = my v_getValueAtSample (isamp, 1, 0);
 		}
-		if (method == kCepstrumTrendFit::LeastSquares)
+		if (method == kCepstrumTrendFit::LEAST_SQUARES)
 			NUMlineFit_LS (x.get(), y.get(), & a, & intercept);
-		else if (method == kCepstrumTrendFit::RobustFast)
+		else if (method == kCepstrumTrendFit::ROBUST_FAST)
 			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, false);
-		else if (method == kCepstrumTrendFit::RobustSlow)
+		else if (method == kCepstrumTrendFit::ROBUST_SLOW)
 			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, true);
 		else {
 			Melder_throw (U"Invalid method.");
@@ -271,7 +271,7 @@ static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double sl
 	for (integer j = 1; j <= my nx; j ++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
-		double xq = lineType == kCepstrumTrendType::ExponentialDecay ? log(q) : q;
+		double xq = lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ? log(q) : q;
 		double db_background = slope * xq + intercept;
 		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
 		double diff = db_cepstrum - db_background;
@@ -378,9 +378,9 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *out_qpeak) {
 	double slope, intercept, quefrency, peakdB;
-	PowerCepstrum_fitTrendLine (me, 0.001, 0, & slope, & intercept, kCepstrumTrendType::Linear, kCepstrumTrendFit::LeastSquares);
+	PowerCepstrum_fitTrendLine (me, 0.001, 0, & slope, & intercept, kCepstrumTrendType::LINEAR, kCepstrumTrendFit::LEAST_SQUARES);
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_subtractTrendLine_inplace (thee.get(), slope, intercept, kCepstrumTrendType::Linear);
+	PowerCepstrum_subtractTrendLine_inplace (thee.get(), slope, intercept, kCepstrumTrendType::LINEAR);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);
 	if (out_qpeak)
 		*out_qpeak = quefrency;
@@ -391,7 +391,7 @@ double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, dou
 	double slope, intercept, qpeak, peakdB;
 	PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, & peakdB, & qpeak);
-	double xq = lineType == kCepstrumTrendType::ExponentialDecay ? log(qpeak) : qpeak;
+	double xq = lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;
 	if (out_qpeak)

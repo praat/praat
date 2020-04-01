@@ -26,7 +26,7 @@
 #include "Matrix.h"
 #include "Eigen.h"
 #include "Graphics.h"
-#include "Matrix_extensions_enums.h"
+#include "Graphics_extensions.h"
 #include "SVD.h"
 
 autoMatrix Matrix_readFromIDXFormatFile (MelderFile file);

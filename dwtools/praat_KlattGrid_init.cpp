@@ -209,13 +209,13 @@ DIRECT (WINDOW_KlattGrid_edit##Name##FormantGrid) { \
 	} \
 END }
 
-KlattGRID_EDIT_FORMANTGRID (Oral, kKlattGridFormantType::Oral)
-KlattGRID_EDIT_FORMANTGRID (Nasal, kKlattGridFormantType::Nasal)
-KlattGRID_EDIT_FORMANTGRID (Tracheal, kKlattGridFormantType::Tracheal)
-KlattGRID_EDIT_FORMANTGRID (NasalAnti, kKlattGridFormantType::NasalAnti)
-KlattGRID_EDIT_FORMANTGRID (TrachealAnti, kKlattGridFormantType::TrachealAnti)
-KlattGRID_EDIT_FORMANTGRID (Delta, kKlattGridFormantType::Delta)
-KlattGRID_EDIT_FORMANTGRID (Frication, kKlattGridFormantType::Frication)
+KlattGRID_EDIT_FORMANTGRID (Oral, kKlattGridFormantType::ORAL)
+KlattGRID_EDIT_FORMANTGRID (Nasal, kKlattGridFormantType::NASAL)
+KlattGRID_EDIT_FORMANTGRID (Tracheal, kKlattGridFormantType::TRACHEAL)
+KlattGRID_EDIT_FORMANTGRID (NasalAnti, kKlattGridFormantType::NASAL_ANTI)
+KlattGRID_EDIT_FORMANTGRID (TrachealAnti, kKlattGridFormantType::TRACHEALANTI)
+KlattGRID_EDIT_FORMANTGRID (Delta, kKlattGridFormantType::DELTA)
+KlattGRID_EDIT_FORMANTGRID (Frication, kKlattGridFormantType::FRICATION)
 
 #undef KlattGRID_EDIT_FORMANTGRID
 
@@ -237,10 +237,10 @@ DO \
 	} \
 END }
 
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, kKlattGridFormantType::Oral)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, kKlattGridFormantType::Nasal)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Tracheal, tracheal, kKlattGridFormantType::Tracheal)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, kKlattGridFormantType::Frication)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, kKlattGridFormantType::ORAL)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, kKlattGridFormantType::NASAL)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Tracheal, tracheal, kKlattGridFormantType::TRACHEAL)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, kKlattGridFormantType::FRICATION)
 
 #undef KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER
 
@@ -452,13 +452,13 @@ KlattGrid_REMOVE_FORMANT_FREQUENCYANDBANDWIDTHTIERS (Name, namef, formantType) \
 KlattGrid_ADD_FORMANT (Name, namef, formantType) \
 KlattGrid_REMOVE_FORMANT (Name, namef, formantType)
 
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Oral, oral f, kKlattGridFormantType::Oral)
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Nasal, nasal f, kKlattGridFormantType::Nasal)
-KlattGrid_FORMULA_ADD_REMOVE_FB (NasalAnti, nasal antif, kKlattGridFormantType::NasalAnti)
-KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA (Delta, delta f, kKlattGridFormantType::Delta)
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Tracheal, tracheal f, kKlattGridFormantType::Tracheal)
-KlattGrid_FORMULA_ADD_REMOVE_FB (TrachealAnti, tracheal antif, kKlattGridFormantType::TrachealAnti)
-KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, kKlattGridFormantType::Frication)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Oral, oral f, kKlattGridFormantType::ORAL)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Nasal, nasal f, kKlattGridFormantType::NASAL)
+KlattGrid_FORMULA_ADD_REMOVE_FB (NasalAnti, nasal antif, kKlattGridFormantType::NASAL_ANTI)
+KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA (Delta, delta f, kKlattGridFormantType::DELTA)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Tracheal, tracheal f, kKlattGridFormantType::TRACHEAL)
+KlattGrid_FORMULA_ADD_REMOVE_FB (TrachealAnti, tracheal antif, kKlattGridFormantType::TRACHEALANTI)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, kKlattGridFormantType::FRICATION)
 
 #undef KlattGrid_FORMULA_ADD_REMOVE_FB
 #undef KlattGrid_FORMULA_ADD_REMOVE
@@ -521,17 +521,17 @@ END }
 KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Frequency, frequency, Formant, formantType) \
 KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Bandwidth, bandwidth, Bandwidth, formantType)
 
-KlattGrid_FORMANT_GET_FB_VALUES (Oral, oral, kKlattGridFormantType::Oral)
-KlattGrid_FORMANT_GET_A_VALUE (Oral, oral, kKlattGridFormantType::Oral)
-KlattGrid_FORMANT_GET_FB_VALUES (Nasal, nasal, kKlattGridFormantType::Nasal)
-KlattGrid_FORMANT_GET_A_VALUE (Nasal, nasal, kKlattGridFormantType::Nasal)
-KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal anti, kKlattGridFormantType::NasalAnti)
-KlattGrid_FORMANT_GET_FB_VALUES (Tracheal, tracheal f, kKlattGridFormantType::Tracheal)
-KlattGrid_FORMANT_GET_A_VALUE (Tracheal, tracheal f, kKlattGridFormantType::Tracheal)
-KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta f, kKlattGridFormantType::Delta)
-KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antif, kKlattGridFormantType::TrachealAnti)
-KlattGrid_FORMANT_GET_FB_VALUES (Frication, frication, kKlattGridFormantType::Frication)
-KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, kKlattGridFormantType::Frication)
+KlattGrid_FORMANT_GET_FB_VALUES (Oral, oral, kKlattGridFormantType::ORAL)
+KlattGrid_FORMANT_GET_A_VALUE (Oral, oral, kKlattGridFormantType::ORAL)
+KlattGrid_FORMANT_GET_FB_VALUES (Nasal, nasal, kKlattGridFormantType::NASAL)
+KlattGrid_FORMANT_GET_A_VALUE (Nasal, nasal, kKlattGridFormantType::NASAL)
+KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal anti, kKlattGridFormantType::NASAL_ANTI)
+KlattGrid_FORMANT_GET_FB_VALUES (Tracheal, tracheal f, kKlattGridFormantType::TRACHEAL)
+KlattGrid_FORMANT_GET_A_VALUE (Tracheal, tracheal f, kKlattGridFormantType::TRACHEAL)
+KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta f, kKlattGridFormantType::DELTA)
+KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antif, kKlattGridFormantType::TRACHEALANTI)
+KlattGrid_FORMANT_GET_FB_VALUES (Frication, frication, kKlattGridFormantType::FRICATION)
+KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, kKlattGridFormantType::FRICATION)
 
 #undef KlattGrid_FORMANT_GET_FB_VALUES
 #undef KlattGrid_FORMANT_GET_A_VALUE
@@ -553,17 +553,17 @@ DO \
 	} \
 END }
 
-KlattGrid_EXTRACT_FORMANT_GRID (Oral, kKlattGridFormantType::Oral)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::Oral)
-KlattGrid_EXTRACT_FORMANT_GRID (Nasal, kKlattGridFormantType::Nasal)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Nasal, nasal, kKlattGridFormantType::Nasal)
-KlattGrid_EXTRACT_FORMANT_GRID (Frication, kKlattGridFormantType::Frication)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType::Frication)
-KlattGrid_EXTRACT_FORMANT_GRID (Tracheal, kKlattGridFormantType::Tracheal)
-KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Tracheal, tracheal, kKlattGridFormantType::Tracheal)
-KlattGrid_EXTRACT_FORMANT_GRID (NasalAnti, kKlattGridFormantType::NasalAnti)
-KlattGrid_EXTRACT_FORMANT_GRID (TrachealAnti, kKlattGridFormantType::TrachealAnti)
-KlattGrid_EXTRACT_FORMANT_GRID (Delta, kKlattGridFormantType::Delta)
+KlattGrid_EXTRACT_FORMANT_GRID (Oral, kKlattGridFormantType::ORAL)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::ORAL)
+KlattGrid_EXTRACT_FORMANT_GRID (Nasal, kKlattGridFormantType::NASAL)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Nasal, nasal, kKlattGridFormantType::NASAL)
+KlattGrid_EXTRACT_FORMANT_GRID (Frication, kKlattGridFormantType::FRICATION)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType::FRICATION)
+KlattGrid_EXTRACT_FORMANT_GRID (Tracheal, kKlattGridFormantType::TRACHEAL)
+KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Tracheal, tracheal, kKlattGridFormantType::TRACHEAL)
+KlattGrid_EXTRACT_FORMANT_GRID (NasalAnti, kKlattGridFormantType::NASAL_ANTI)
+KlattGrid_EXTRACT_FORMANT_GRID (TrachealAnti, kKlattGridFormantType::TRACHEALANTI)
+KlattGrid_EXTRACT_FORMANT_GRID (Delta, kKlattGridFormantType::DELTA)
 
 #undef KlattGrid_EXTRACT_FORMANTGRID
 
@@ -584,17 +584,17 @@ DO \
 	MODIFY_FIRST_OF_TWO_END \
 }
 
-KlattGrid_REPLACE_FORMANT_GRID (Oral, kKlattGridFormantType::Oral)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::Oral)
-KlattGrid_REPLACE_FORMANT_GRID (Nasal, kKlattGridFormantType::Nasal)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Nasal, nasal, kKlattGridFormantType::Nasal)
-KlattGrid_REPLACE_FORMANT_GRID (NasalAnti, kKlattGridFormantType::NasalAnti)
-KlattGrid_REPLACE_FORMANT_GRID (Tracheal, kKlattGridFormantType::Tracheal)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Tracheal, tracheal, kKlattGridFormantType::Tracheal)
-KlattGrid_REPLACE_FORMANT_GRID (TrachealAnti, kKlattGridFormantType::TrachealAnti)
-KlattGrid_REPLACE_FORMANT_GRID (Delta, kKlattGridFormantType::Delta)
-KlattGrid_REPLACE_FORMANT_GRID (Frication, kKlattGridFormantType::Frication)
-KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType::Frication)
+KlattGrid_REPLACE_FORMANT_GRID (Oral, kKlattGridFormantType::ORAL)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::ORAL)
+KlattGrid_REPLACE_FORMANT_GRID (Nasal, kKlattGridFormantType::NASAL)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Nasal, nasal, kKlattGridFormantType::NASAL)
+KlattGrid_REPLACE_FORMANT_GRID (NasalAnti, kKlattGridFormantType::NASAL_ANTI)
+KlattGrid_REPLACE_FORMANT_GRID (Tracheal, kKlattGridFormantType::TRACHEAL)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Tracheal, tracheal, kKlattGridFormantType::TRACHEAL)
+KlattGrid_REPLACE_FORMANT_GRID (TrachealAnti, kKlattGridFormantType::TRACHEALANTI)
+KlattGrid_REPLACE_FORMANT_GRID (Delta, kKlattGridFormantType::DELTA)
+KlattGrid_REPLACE_FORMANT_GRID (Frication, kKlattGridFormantType::FRICATION)
+KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType::FRICATION)
 
 #undef KlattGrid_REPLACE_FORMANT_AMPLITUDE
 #undef KlattGrid_REPLACE_FORMANTGRID

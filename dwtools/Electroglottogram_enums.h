@@ -1,6 +1,6 @@
 /* Electroglottogram_enums.h
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
  */
 
 enums_begin (kElectroglottogram_findClosedIntervalMethod, 1)
-	enums_add (kElectroglottogram_findClosedIntervalMethod, 1, Peaks, U"Peaks")
-	enums_add (kElectroglottogram_findClosedIntervalMethod, 2, Derivative, U"Derivative")
-enums_end (kElectroglottogram_findClosedIntervalMethod, 2, Derivative)
+	enums_add (kElectroglottogram_findClosedIntervalMethod, 1, PEAKS, U"Peaks")
+	enums_add (kElectroglottogram_findClosedIntervalMethod, 2, DERIVATIVE, U"Derivative")
+enums_end (kElectroglottogram_findClosedIntervalMethod, 2, DERIVATIVE)
 
 enums_begin (kElectroglottogram_extract, 1)
-	enums_add (kElectroglottogram_extract, 1, Electroglottogram, U"Electroglottogram")
-	enums_add (kElectroglottogram_extract, 2, Sound, U"Sound")
-enums_end (kElectroglottogram_extract, 2, Sound)
+	enums_add (kElectroglottogram_extract, 1, ELECTROGLOTTOGRAM, U"Electroglottogram")
+	enums_add (kElectroglottogram_extract, 2, SOUND, U"Sound")
+enums_end (kElectroglottogram_extract, 2, SOUND)
 
 /* End of file Electroglottogram_enums.h */

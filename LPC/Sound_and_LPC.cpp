@@ -73,13 +73,13 @@ void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
 
 static integer getLPCAnalysisWorkspaceSize (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
 	integer size = 0;
-	if (method == kLPC_Analysis :: Autocorrelation)
+	if (method == kLPC_Analysis :: AUTOCORRELATION)
 		size = 3 * numberOfCoefficients + 2;
-	else if (method == kLPC_Analysis :: Covariance)
+	else if (method == kLPC_Analysis :: COVARIANCE)
 		size = numberOfCoefficients * (numberOfCoefficients + 1) / 2 + 4 * numberOfCoefficients + 2; 
-	else if (method == kLPC_Analysis :: Burg)
+	else if (method == kLPC_Analysis :: BURG)
 		size = 3 * numberOfSamples;
-	else if (method == kLPC_Analysis :: Marple)
+	else if (method == kLPC_Analysis :: MARPLE)
 		size = 3 * (numberOfCoefficients + 1);
 	return size;
 }
@@ -482,13 +482,13 @@ static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analy
 		Vector_subtractMean (sframe.get());
 		Sounds_multiply (sframe.get(), window.get());
 		integer status = 1;
-		if (method == kLPC_Analysis :: Autocorrelation)
+		if (method == kLPC_Analysis :: AUTOCORRELATION)
 			status = Sound_into_LPC_Frame_auto (sframe.get(), lpcframe, workspace.get());
-		else if (method == kLPC_Analysis :: Covariance)
+		else if (method == kLPC_Analysis :: COVARIANCE)
 			status = Sound_into_LPC_Frame_covar (sframe.get(), lpcframe, workspace.get());
-		else if (method == kLPC_Analysis :: Burg)
+		else if (method == kLPC_Analysis :: BURG)
 			status = Sound_into_LPC_Frame_burg (sframe.get(), lpcframe, workspace.get());
-		else if (method == kLPC_Analysis :: Marple)
+		else if (method == kLPC_Analysis :: MARPLE)
 			status = Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2, workspace.get());
 		if (status != 0)
 			frameErrorCount ++;
@@ -567,13 +567,13 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 					Vector_subtractMean (soundFrame);
 					Sounds_multiply (soundFrame, windowFrame);
 					integer status = 1;
-					if (method == kLPC_Analysis :: Autocorrelation)
+					if (method == kLPC_Analysis :: AUTOCORRELATION)
 						status = Sound_into_LPC_Frame_auto (soundFrame, lpcframe, threadWorkspace);
-					else if (method == kLPC_Analysis :: Covariance)
+					else if (method == kLPC_Analysis :: COVARIANCE)
 						status = Sound_into_LPC_Frame_covar (soundFrame, lpcframe, threadWorkspace);
-					else if (method == kLPC_Analysis :: Burg)
+					else if (method == kLPC_Analysis :: BURG)
 						status = Sound_into_LPC_Frame_burg (soundFrame, lpcframe, threadWorkspace);
-					else if (method == kLPC_Analysis :: Marple)
+					else if (method == kLPC_Analysis :: MARPLE)
 						status = Sound_into_LPC_Frame_marple (soundFrame, lpcframe, tol1, tol2, threadWorkspace);
 					if (status != 0)
 						++ frameErrorCount;
@@ -595,7 +595,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Autocorrelation, 0.0, 0.0);
+		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: AUTOCORRELATION, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (auto) created.");
@@ -604,7 +604,7 @@ autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, 
 
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Covariance, 0.0, 0.0);
+		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: COVARIANCE, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (covar) created.");
@@ -613,7 +613,7 @@ autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth,
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Burg, 0.0, 0.0);
+		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: BURG, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (burg) created.");
@@ -622,7 +622,7 @@ autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, 
 
 autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Marple, tol1, tol2);
+		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: MARPLE, tol1, tol2);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (marple) created.");

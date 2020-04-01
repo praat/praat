@@ -149,7 +149,7 @@ static void NMF_initializeFactorization_svd (NMF me, constMATVU const& data, kNM
 }
 
 void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
-	if (initializationMethod == kNMF_Initialization::RandomUniform) {
+	if (initializationMethod == kNMF_Initialization::RANDOM_UNIFORM) {
 		const double rmin = 0.0, rmax = 1.0;
 		MATrandomUniform (my features.all(), rmin, rmax);
 		MATrandomUniform (my weights.all(), rmin, rmax);

@@ -259,7 +259,7 @@ autoMonotoneTransformator MonotoneTransformator_create (integer numberOfPoints) 
 	try {
 		autoMonotoneTransformator me = Thing_new (MonotoneTransformator);
 		Transformator_init (me.get(), numberOfPoints);
-		my tiesHandling = kMDS_TiesHandling::PrimaryApproach;
+		my tiesHandling = kMDS_TiesHandling::PRIMARY_APPROACH;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MonotoneTransformator not created.");
@@ -936,7 +936,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, kMDS_
 		for (integer i = 1; i <= numberOfProximities; i ++)
 			distances [i] = thy data [my rowIndex [i]] [my columnIndex [i]];
 
-		if (tiesHandling == kMDS_TiesHandling::PrimaryApproach || tiesHandling == kMDS_TiesHandling::SecondaryApproach) {
+		if (tiesHandling == kMDS_TiesHandling::PRIMARY_APPROACH || tiesHandling == kMDS_TiesHandling::SECONDARY_APPROACH) {
 			/*
 				Kruskal's primary approach to tie-blocks:
 					Sort corresponding distances, with rowIndex, and columnIndex.
@@ -948,9 +948,9 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, kMDS_
 				if (my proximity [i] == my proximity [i - 1])
 					continue;
 				if (i - ib > 1) {
-					if (tiesHandling == kMDS_TiesHandling::PrimaryApproach) {
+					if (tiesHandling == kMDS_TiesHandling::PRIMARY_APPROACH) {
 						// all equal
-					} else if (tiesHandling == kMDS_TiesHandling::SecondaryApproach) {
+					} else if (tiesHandling == kMDS_TiesHandling::SECONDARY_APPROACH) {
 						const double mean = NUMmean (distances.part (ib, i - 1));
 						distances.part (ib, i - 1) <<= mean;
 					}
@@ -1205,18 +1205,18 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, kMDS_
 		scale of the configuration, i.e., the distances conf [i] [j].
 	*/
 
-	if (stressMeasure == kMDS_stressMeasure::Normalized) {
+	if (stressMeasure == kMDS_stressMeasure::NORMALIZED) {
 		const double denum = eta_fit * eta_conf;
 		if (denum > 0.0)
 			stress = 1.0 - rho * rho / denum;
-	} else if (stressMeasure == kMDS_stressMeasure::Kruskal_1) {
+	} else if (stressMeasure == kMDS_stressMeasure::KRUSKAL_1) {
 		const double denum = eta_fit * eta_conf;
 		if (denum > 0.0) {
 			const double tmp = 1.0 - rho * rho / denum;
 			if (tmp > 0.0)
 				stress = sqrt (tmp);
 		}
-	} else if (stressMeasure == kMDS_stressMeasure::Kruskal_2) {
+	} else if (stressMeasure == kMDS_stressMeasure::KRUSKAL_2) {
 		/*
 			Get average distance.
 		*/
@@ -1243,7 +1243,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, kMDS_
 			if (denum > 0.0)
 				stress = sqrt ((eta_fit * eta_conf - rho * rho) / denum);
 		}
-	} else if (stressMeasure == kMDS_stressMeasure::Raw) {
+	} else if (stressMeasure == kMDS_stressMeasure::RAW) {
 		stress = eta_fit + eta_conf - 2.0 * rho;
 	}
 	return stress;
@@ -1405,7 +1405,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			*/
 			autoDistance cdist = Configuration_to_Distance (conf);
 
-			stress = Distance_Weight_stress (fit.get(), cdist.get(), weight, kMDS_stressMeasure::Normalized);
+			stress = Distance_Weight_stress (fit.get(), cdist.get(), weight, kMDS_stressMeasure::NORMALIZED);
 			/*
 				Check stop criterium
 			*/
@@ -1517,7 +1517,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity 
 
 autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Absolute);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::ABSOLUTE);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_absolute_mds (me, cstart.get(), w, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c;
@@ -1528,7 +1528,7 @@ autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w,
 
 autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_interval_mds (me, cstart.get(), w, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c;
@@ -1539,7 +1539,7 @@ autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w,
 
 autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, integer numberOfDimensions, kMDS_TiesHandling tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_monotone_mds (me, cstart.get(), w, tiesHandling, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c;
@@ -1550,7 +1550,7 @@ autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w,
 
 autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_ratio_mds (me, cstart.get(), w, tolerance,
 		    numberOfIterations, numberOfRepetitions, showProgress);
@@ -1562,7 +1562,7 @@ autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, in
 
 autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, integer numberOfDimensions, integer numberOfInteriorKnots, integer order, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_ispline_mds (me, cstart.get(), w,
 		    numberOfInteriorKnots, order, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -1578,7 +1578,7 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 	
 	longdouble s = 0.0, t = 0.0, dbar = 0.0;
 
-	if (stress_formula == kMDS_KruskalStress::Kruskal_1) {
+	if (stress_formula == kMDS_KruskalStress::KRUSKAL_1) {
 		for (integer i = 1; i <= my numberOfProximities; i ++) {
 			dbar += ddist -> data [my rowIndex [i]] [my columnIndex [i]];
 		}
@@ -1609,8 +1609,8 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
 		my proximities = ProximityList_create ();
 		my dx = newMATraw (numberOfPoints, numberOfDimensions);
-		my tiesHandling = kMDS_TiesHandling::PrimaryApproach;
-		my stress_formula = kMDS_KruskalStress::Kruskal_1;
+		my tiesHandling = kMDS_TiesHandling::PRIMARY_APPROACH;
+		my stress_formula = kMDS_KruskalStress::KRUSKAL_1;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Kruskal not created.");
@@ -1619,8 +1619,8 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 
 autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, integer numberOfDimensions, integer /* metric */, kMDS_TiesHandling tiesHandling, kMDS_KruskalStress stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
-		//autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
-		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
+		//autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::RATIO);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::ORDINAL);
 		autoConfiguration c = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		Configuration_normalize (c.get(), 1.0, false);
 		autoConfiguration thee = Dissimilarity_Configuration_kruskal (me, c.get(), tiesHandling, stress_formula, tolerance, numberOfIterations, numberOfRepetitions);
@@ -1727,7 +1727,7 @@ double Dissimilarity_Configuration_Weight_Transformator_normalizedStress (Dissim
 	autoDistance cdist = Configuration_to_Distance (conf);
 	autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 	autoDistance fdist = Transformator_transform (t, vec.get(), cdist.get(), weight);
-	const double stress = Distance_Weight_stress (fdist.get(), cdist.get(), weight, kMDS_stressMeasure::Normalized);
+	const double stress = Distance_Weight_stress (fdist.get(), cdist.get(), weight, kMDS_stressMeasure::NORMALIZED);
 	return stress;
 }
 
@@ -2118,7 +2118,7 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 	try {
 		const bool showSingle = (showProgress && numberOfRepetitions == 1);
 
-		autoDistanceList distances = DissimilarityList_to_DistanceList (me, kMDS_AnalysisScale::Ordinal);
+		autoDistanceList distances = DissimilarityList_to_DistanceList (me, kMDS_AnalysisScale::ORDINAL);
 		autoConfiguration cstart; autoSalience wstart;
 		DistanceList_to_Configuration_ytl (distances.get(), numberOfDimensions, normalizeScalarProducts, & cstart, & wstart);
 		autoConfiguration conf = Data_copy (cstart.get());
@@ -2338,7 +2338,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	double knot [maximumNumberOfKnots + 1];
 	if (k > maximumNumberOfKnots)
 		return;
-	if (splineType == kMDS_splineType::ISpline)
+	if (splineType == kMDS_splineType::I_SPLINE)
 		k ++;
 	for (integer i = 1; i <= k; i ++)
 		knot [i] = low;
@@ -2384,7 +2384,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		for (integer j = 1; j <= numberOfPoints; j ++) {
 			const double x = low + dx * (j - 1);
 			double yx;
-			if (splineType == kMDS_splineType::MSpline)
+			if (splineType == kMDS_splineType::M_SPLINE)
 				yx = NUMmspline (constVEC (& knot [1], numberOfKnots), order, i, x);
 			else
 				yx = NUMispline (constVEC (& knot [1], numberOfKnots), order, i, x);
@@ -2395,9 +2395,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		static MelderString ts;
-		const integer lastKnot = ( splineType == kMDS_splineType::ISpline ? numberOfKnots - 2 : numberOfKnots );
+		const integer lastKnot = ( splineType == kMDS_splineType::I_SPLINE ? numberOfKnots - 2 : numberOfKnots );
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, false, ( splineType == kMDS_splineType::MSpline ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline" ));
+		Graphics_textLeft (g, false, ( splineType == kMDS_splineType::M_SPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline" ));
 		Graphics_marksTop (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot [order]) {

@@ -156,8 +156,8 @@ static double HMM_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observatio
 
 static void HMMObservation_init (HMMObservation me, conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage) {
 	my label = Melder_dup (label);
-	my gm = GaussianMixture_create (numberOfComponents, dimension, storage == kHMMstorage::Diagonals ?
-		kGaussianMixtureStorage::Diagonals : kGaussianMixtureStorage::Complete);
+	my gm = GaussianMixture_create (numberOfComponents, dimension, storage == kHMMstorage::DIAGONALS ?
+		kGaussianMixtureStorage::DIAGONALS : kGaussianMixtureStorage::COMPLETE);
 }
 
 autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage) {
@@ -395,7 +395,7 @@ void structHMM :: v_info () {
 static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservationSymbols, int leftToRight) {
 	my numberOfStates = numberOfStates;
 	my numberOfObservationSymbols = numberOfObservationSymbols;
-	my componentStorage = kHMMstorage::Diagonals;
+	my componentStorage = kHMMstorage::DIAGONALS;
 	my leftToRight = leftToRight;
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
@@ -483,7 +483,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 			HMM_addState_move (me.get(), state.move());
 		}
 		for (integer isymbol = 1; isymbol <= symbols.size; isymbol ++) {
-			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, kHMMstorage::Diagonals);
+			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, kHMMstorage::DIAGONALS);
 			HMM_addObservation_move (me.get(), symbol.move());
 		}
 		return me;
@@ -495,7 +495,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 void HMM_setDefaultObservations (HMM me) {
 	const conststring32 def = ( my notHidden ? U"S" : U"s" );
 	for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
-		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, kHMMstorage::Diagonals);
+		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, kHMMstorage::DIAGONALS);
 		HMM_addObservation_move (me, hmms.move());
 	}
 }
@@ -1549,7 +1549,7 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer
 
 		for (integer i = 1; i <= numberOfObservationSymbols; i ++) {
 			const conststring32 label = d -> rowLabels [i].get();
-			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, kHMMstorage::Diagonals);
+			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, kHMMstorage::DIAGONALS);
 			HMM_addObservation_move (thee.get(), hmmo.move());
 			if (thy notHidden) {
 				autoHMMState hmms = HMMState_create (label);

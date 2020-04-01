@@ -108,7 +108,7 @@ void FormantModeler_setDataPointSigma (FormantModeler me, integer iformant, inte
 }
 
 kDataModelerData FormantModeler_getDataPointStatus (FormantModeler me, integer iformant, integer index) {
-	kDataModelerData value =kDataModelerData::Invalid;
+	kDataModelerData value =kDataModelerData::INVALID;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		const DataModeler ff = my trackmodelers.at [iformant];
 		value = DataModeler_getDataPointStatus (ff, index);
@@ -163,13 +163,13 @@ void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, int
 
 	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
 		const DataModeler ffi = my trackmodelers.at [iformant];
-		kDataModelerWeights dataWeights = kDataModelerWeights::EqualWeights;
-		if (weighFormants == kFormantModelerWeights::OneOverBandwidth)
-			dataWeights = kDataModelerWeights::OneOverSigma;
-		else if (weighFormants == kFormantModelerWeights::OneOverSqrtBandwidth)
-			dataWeights = kDataModelerWeights::OneOverSqrtSigma;
+		kDataModelerWeights dataWeights = kDataModelerWeights::EQUAL_WEIGHTS;
+		if (weighFormants == kFormantModelerWeights::ONE_OVER_BANDWIDTH)
+			dataWeights = kDataModelerWeights::ONE_OVER_SIGMA;
+		else if (weighFormants == kFormantModelerWeights::ONE_OVER_SQRTBANDWIDTH)
+			dataWeights = kDataModelerWeights::ONE_OVER_SQRTSIGMA;
 		else
-			dataWeights = kDataModelerWeights::Relative;
+			dataWeights = kDataModelerWeights::RELATIVE;
 		DataModeler_setDataWeighing (ffi, dataWeights);
 	}
 }
@@ -236,7 +236,7 @@ static autoVEC FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (Formant
 		const DataModeler fe = my trackmodelers.at [estimatedFormant];
 		for (integer i = 1; i <= numberOfDataPoints; i ++) {
 			var [i] = undefined;
-			if (fi -> data [i] .status != kDataModelerData::Invalid) {
+			if (fi -> data [i] .status != kDataModelerData::INVALID) {
 				const double ye = fe -> f_evaluate (fe, fe -> data [i] .x, fe -> parameters.get());
 				const double diff = ye - fi -> data [i] .y;
 				var [i] = diff * diff;
@@ -258,11 +258,11 @@ static autoVEC FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks 
 			*fromFormant = numberOfFormants;
 		}
 		integer formantTrack = *fromFormant, estimatedFormantTrack = *fromFormant; // FormantModeler_NOSHIFT_TRACKS
-		if (shiftDirection == kFormantModelerTrackShift::Down) {
+		if (shiftDirection == kFormantModelerTrackShift::DOWN) {
 			estimatedFormantTrack = *fromFormant;
 			formantTrack = *fromFormant + 1;
 			*fromFormant = ( *fromFormant == 1 ? 2 : *fromFormant );
-		} else if (shiftDirection == kFormantModelerTrackShift::Up) {
+		} else if (shiftDirection == kFormantModelerTrackShift::UP) {
 			formantTrack = *fromFormant;
 			estimatedFormantTrack = *fromFormant + 1;
 			*toFormant = ( *toFormant == numberOfFormants ? numberOfFormants - 1 : *toFormant );
@@ -294,7 +294,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoVEC varShifted = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, & fromFormant, & toFormant);
-		autoVEC var = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, kFormantModelerTrackShift::No, & fromFormant, & toFormant);
+		autoVEC var = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, kFormantModelerTrackShift::NO, & fromFormant, & toFormant);
 		for (integer i = ixmin + 1; i <= ixmax; i ++) {
 			if (isdefined (varShifted [i]) && isdefined (var [i]))
 				var [i] -= varShifted [i];
@@ -466,7 +466,7 @@ autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numb
 		my xmin = tmin;
 		my xmax = tmax;
 		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
-			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters, kDataModelerFunction::Legendre);
+			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters, kDataModelerFunction::LEGENDRE);
 			my trackmodelers. addItem_move (ff.move());
 		}
 		return me;
@@ -545,7 +545,7 @@ double FormantModeler_getParameterValue (FormantModeler me, integer iformant, in
 }
 
 kDataModelerParameter FormantModeler_getParameterStatus (FormantModeler me, integer iformant, integer index) {
-	kDataModelerParameter status = kDataModelerParameter::Undefined;
+	kDataModelerParameter status = kDataModelerParameter::NOT_DEFINED;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		const DataModeler ff = my trackmodelers.at [iformant];
 		status = DataModeler_getParameterStatus (ff, index);
@@ -678,19 +678,19 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
 				const Formant_Frame curFrame = & my frames [iframe];
 				ffi -> data [++ idata] .x = Sampled_indexToX (me, iframe);
-				ffi -> data [idata] .status = kDataModelerData::Invalid;
+				ffi -> data [idata] .status = kDataModelerData::INVALID;
 				if (iformant <= curFrame -> numberOfFormants) {
 					const double frequency = curFrame -> formant [iformant]. frequency;
 					if (isdefined (frequency)) {
 						const double bandwidth = curFrame -> formant [iformant]. bandwidth;
 						ffi -> data [idata] .y = curFrame -> formant [iformant]. frequency;
 						ffi -> data [idata] .sigmaY = bandwidth;
-						ffi -> data [idata] .status = kDataModelerData::Valid;
+						ffi -> data [idata] .status = kDataModelerData::VALID;
 						validData ++;
 					}
 				}
 			}
-			ffi -> weighData = kDataModelerWeights::OneOverSigma;
+			ffi -> weighData = kDataModelerWeights::ONE_OVER_SIGMA;
 			ffi -> tolerance = 1e-5;
 			if (validData < numberOfParametersPerTrack) {   // remove don't throw exception
 				thy trackmodelers. removeItem (posInCollection);
@@ -726,7 +726,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 			for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 				DataModeler ffi = my trackmodelers.at [iformant];
 				double f = undefined, b = f;
-				if (ffi -> data [iframe] .status != kDataModelerData::Invalid) {
+				if (ffi -> data [iframe] .status != kDataModelerData::INVALID) {
 					f = ( useEstimates ? DataModeler_getModelValueAtX (ffi, ffi -> data [iframe] .x) :
 						ffi -> data [iframe] .y);
 					b = ff -> data [iframe] .sigmaY; // copy original value
@@ -853,9 +853,9 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 					// try if f2 <- F1 and f3 <- F2 reduces chisq
 					const double f2 = FormantModeler_getDataPointValue (me, 1, i); // F1
 					const double f3 = FormantModeler_getDataPointValue (me, 2, i); // F2
-					FormantModeler_setDataPointStatus (thee.get(), 1, i, kDataModelerData::Invalid);
-					FormantModeler_setDataPointValueAndStatus (thee.get(), 2, i, f2, kDataModelerData::Valid);
-					FormantModeler_setDataPointValueAndStatus (thee.get(), 3, i, f3, kDataModelerData::Valid);
+					FormantModeler_setDataPointStatus (thee.get(), 1, i, kDataModelerData::INVALID);
+					FormantModeler_setDataPointValueAndStatus (thee.get(), 2, i, f2, kDataModelerData::VALID);
+					FormantModeler_setDataPointValueAndStatus (thee.get(), 3, i, f3, kDataModelerData::VALID);
 				}
 			}
 		}
@@ -900,7 +900,7 @@ double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, intege
 				const double fje = fj -> f_evaluate (fj, fj -> data [i] .x, fj -> parameters.get());
 				diff += fabs (fie - fje);
 				numberOfDataPoints ++;
-			} else if (fi -> data [i] .status != kDataModelerData::Invalid && fj -> data [i] .status != kDataModelerData::Invalid) {
+			} else if (fi -> data [i] .status != kDataModelerData::INVALID && fj -> data [i] .status != kDataModelerData::INVALID) {
 				diff += fabs (fi -> data [i] .y - fj -> data [i] .y);
 				numberOfDataPoints ++;
 			}
@@ -926,9 +926,9 @@ void FormantModeler_reportChiSquared (FormantModeler me) {
 	const integer numberOfFormants = my trackmodelers.size;
 	double ndf = 0, probability;
 	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfFormants, U" formant track:");
-	MelderInfo_writeLine (( my weighFormants == kFormantModelerWeights::EqualWeights ? U"Standard deviation is estimated from the data." :
-		( my weighFormants == kFormantModelerWeights::OneOverBandwidth ? U"\tBandwidths are used as estimate for local standard deviations." :
-		( my weighFormants == kFormantModelerWeights::QFactor ? U"\t1/Q's are used as estimate for local standard deviations." :
+	MelderInfo_writeLine (( my weighFormants == kFormantModelerWeights::EQUAL_WEIGHTS ? U"Standard deviation is estimated from the data." :
+		( my weighFormants == kFormantModelerWeights::ONE_OVER_BANDWIDTH ? U"\tBandwidths are used as estimate for local standard deviations." :
+		( my weighFormants == kFormantModelerWeights::Q_FACTOR ? U"\t1/Q's are used as estimate for local standard deviations." :
 		U"\tSquare root of bandwidths are used as estimate for local standard deviations." ) ) ));
 	for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 		const double chisq_f = FormantModeler_getChiSquaredQ (me, iformant, iformant, & probability, & ndf);

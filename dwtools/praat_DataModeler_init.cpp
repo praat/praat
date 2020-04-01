@@ -105,8 +105,8 @@ FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status",
 DO
 	STRING_ONE (DataModeler)
 		kDataModelerParameter status = DataModeler_getParameterStatus (me, parameterNumber);
-		conststring32 result = ( status == kDataModelerParameter::Free ? U"Free" :
-			status == kDataModelerParameter::Fixed ? U"Fixed" : U"Undefined" );
+		conststring32 result = ( status == kDataModelerParameter::FREE ? U"Free" :
+			status == kDataModelerParameter::FIXED ? U"Fixed" : U"Undefined" );
 	STRING_ONE_END
 }
 
@@ -199,7 +199,7 @@ FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status"
 DO
 	STRING_ONE (DataModeler)
 		kDataModelerData status = DataModeler_getDataPointStatus (me, index);
-		conststring32 result = ( status == kDataModelerData::Invalid ? U"Invalid" : U"Valid" );
+		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
 	STRING_ONE_END
 }
 
@@ -280,7 +280,7 @@ FORM (MODIFY_DataModeler_setDataPointStatus, U"DataModeler: Set data point statu
 		OPTION (U"Invalid")
 	OK
 DO
-	kDataModelerData status = dataStatus == 2 ? kDataModelerData::Invalid : kDataModelerData::Valid;
+	kDataModelerData status = dataStatus == 2 ? kDataModelerData::INVALID : kDataModelerData::VALID;
 	MODIFY_EACH (DataModeler)
 		DataModeler_setDataPointStatus (me, index, status);
 	MODIFY_EACH_END
@@ -600,7 +600,7 @@ FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point s
 DO
 	INTEGER_ONE (FormantModeler)
 		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
-		conststring32 result = ( status == kDataModelerData::Invalid ? U"Invalid" : U"Valid" );
+		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
 	INTEGER_ONE_END (U"")
 }
 
@@ -663,7 +663,7 @@ DO
 	STRING_ONE (FormantModeler)
 		kDataModelerParameter status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		conststring32 result = Melder_cat (
-			status == kDataModelerParameter::Free ? U"Free" : status == kDataModelerParameter::Fixed ? U"Fixed" : U"Undefined",
+			status == kDataModelerParameter::FREE ? U"Free" : status == kDataModelerParameter::FIXED ? U"Fixed" : U"Undefined",
 			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
 		);
 	STRING_ONE_END

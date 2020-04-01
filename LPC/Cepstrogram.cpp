@@ -441,7 +441,7 @@ double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractT
 	try {
 		autoPowerCepstrogram him;
 		if (subtractTiltBeforeSmoothing)
-			him = PowerCepstrogram_subtractTrend (me, 0.001, 0, kCepstrumTrendType::Linear, kCepstrumTrendFit::LeastSquares);
+			him = PowerCepstrogram_subtractTrend (me, 0.001, 0, kCepstrumTrendType::LINEAR, kCepstrumTrendFit::LEAST_SQUARES);
 
 		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTiltBeforeSmoothing ? him.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
 		autoTable table = PowerCepstrogram_to_Table_hillenbrand (smooth.get(), pitchFloor, pitchCeiling);

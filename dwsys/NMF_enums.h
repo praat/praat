@@ -1,6 +1,6 @@
 /* NMF_enums.h
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  */
 
 enums_begin (kNMF_Initialization, 1)
-	enums_add (kNMF_Initialization, 1, RandomUniform, U"RandomUniform")
-	enums_add (kNMF_Initialization, 2, SVDAbsNegatives, U"SVDAbsNegatives")	
-enums_end (kNMF_Initialization, 2, SVDAbsNegatives)
+	enums_add (kNMF_Initialization, 1, RANDOM_UNIFORM, U"RandomUniform")
+	enums_add (kNMF_Initialization, 2, SVD_ABS_NEGATIVES, U"SVDAbsNegatives")	
+enums_end (kNMF_Initialization, 2, SVD_ABS_NEGATIVES)
 
 /* End of file NMF_enums.h */
