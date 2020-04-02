@@ -18,7 +18,7 @@
 
 enums_begin (kVowelEditor_speakerType, 0)
 	enums_add (kVowelEditor_speakerType, 0, MAN, U"Man")
-	enums_add (kVowelEditor_speakerType, 1, WOMAN, U"Women")
+	enums_add (kVowelEditor_speakerType, 1, WOMAN, U"Woman")
 	enums_add (kVowelEditor_speakerType, 2, CHILD, U"Child")
 	enums_add (kVowelEditor_speakerType, 3, UNKNOWN, U"Unknown")
 enums_end (kVowelEditor_speakerType, 3, UNKNOWN)
