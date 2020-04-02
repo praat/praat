@@ -367,11 +367,14 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 		integer numberOfExtraFormants = my p_synthesis_numberOfFormants - 2;
 		for (integer ipoint = 1; ipoint <= formantTier -> points.size; ipoint ++) {
 			FormantPoint point = formantTier -> points.at [ipoint];
-			if (point -> numberOfFormants > my p_synthesis_numberOfFormants)
-				point -> numberOfFormants = my p_synthesis_numberOfFormants;
+			Melder_clipRight (& point -> numberOfFormants, my p_synthesis_numberOfFormants);
 			/*
-				The preferences might have changed
+				Since the time that the FormantTier was created the synthesis preferences might
+				have been changed by the user. E.g. the user moves the mouse, hears the sound and then
+				changes the Preferences and hits the Play button again. We have to synthesize now according 
+				to the new preferences.
 			*/
+			point->formant.resize (point -> numberOfFormants); // maintain invariant
 			point -> bandwidth [1] = point -> formant [1] / my p_synthesis_q1;
 			if (point -> numberOfFormants < 2)
 				continue;
@@ -569,14 +572,14 @@ static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 
 static void VowelEditor_getMarks (VowelEditor me) {
 	autoTable te;
-	const char32 *speaker = ( my p_marks_speakerType == kVowelEditor_speakerType::Man ? U"m" :
-		my p_marks_speakerType == kVowelEditor_speakerType::Woman ? U"w" :
-		my p_marks_speakerType == kVowelEditor_speakerType::Child ? U"c": U"m" );
-	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AmericanEnglish) {   // American-English
+	const char32 *speaker = ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" :
+		my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"w" :
+		my p_marks_speakerType == kVowelEditor_speakerType::CHILD ? U"c": U"m" );
+	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {   // American-English
 		autoTable thee = Table_create_petersonBarney1952 ();
 		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
-	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::Dutch) {
-		if (my p_marks_speakerType == kVowelEditor_speakerType::Child) {
+	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::DUTCH) {
+		if (my p_marks_speakerType == kVowelEditor_speakerType::CHILD) {
 			autoTable thee = Table_create_weenink1983 ();
 			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
 		}
@@ -584,7 +587,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 			autoTable thee = Table_create_polsVanNierop1973 ();
 			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
 		}
-	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::None) {   // none
+	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::NONE) {   // none
 		my marks.reset();
 		return;
 	} else {  // other
@@ -755,8 +758,9 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		}
 		const integer numberOfPairs = extraFrequencyBandwidthPairs.size / 2;
 		Melder_require (numberOfFormants <= numberOfPairs + 2,
-			U"The \"Number of formant for sythesis\" should not exceed the number of formants specified. "
-			"Either lower this number or specify more frequency bandwidth pairs.");
+			U"The \"Number of formants for synthesis\" should not exceed the number of formants specified (",
+			numberOfPairs + 2, U"). Either lower the number of formants for synthesis or specify more "
+			"frequency bandwidth pairs.");
 		/*
 			Formants and bandwidths are valid. It is save to copy them.
 		*/
@@ -804,7 +808,7 @@ static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.get(), fg -> xmin, 90.0);
 	KlattGrid_replacePitchTier (publish.get(), my vowel -> pitchTier.get());
-	KlattGrid_replaceFormantGrid (publish.get(), kKlattGridFormantType::Oral, fg.get());
+	KlattGrid_replaceFormantGrid (publish.get(), kKlattGridFormantType::ORAL, fg.get());
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -879,8 +883,8 @@ static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FOR
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
-		my pref_marks_speakerType () = my p_marks_speakerType = kVowelEditor_speakerType::Unknown;
-		my pref_marks_dataSet () = my p_marks_dataSet = kVowelEditor_marksDataSet::Other;
+		my pref_marks_speakerType () = my p_marks_speakerType = kVowelEditor_speakerType::UNKNOWN;
+		my pref_marks_dataSet () = my p_marks_dataSet = kVowelEditor_marksDataSet::OTHER;
 		VowelEditor_getVowelMarksFromFile (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END

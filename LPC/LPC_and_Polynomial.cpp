@@ -23,6 +23,7 @@
 #include "LPC_and_Polynomial.h"
 
 autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
+	Melder_assert (my nCoefficients == my a.size); // check invariant
 	const integer numberOfPolynomialCoefficients = my nCoefficients + 1;
 	autoPolynomial thee = Polynomial_create (-1, 1, my nCoefficients);
 	for (integer icof = 1; icof <= my nCoefficients; icof ++)
@@ -32,12 +33,13 @@ autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 }
 
 void LPC_Frame_into_Polynomial (LPC_Frame me, Polynomial p) {
-	const integer numberOfPolynomialCoefficients = my nCoefficients + 1;
-	Melder_assert (p -> _capacity >= numberOfPolynomialCoefficients);
+	Melder_assert (my nCoefficients  == my a.size); // check invariant
+
+	p -> coefficients.resize (my nCoefficients + 1);
 	for (integer icof = 1; icof <= my nCoefficients; icof ++)
-		p -> coefficients [icof] = my a [numberOfPolynomialCoefficients - icof];
-	p -> coefficients [numberOfPolynomialCoefficients] = 1.0;
-	p -> numberOfCoefficients = numberOfPolynomialCoefficients;
+		p -> coefficients [icof] = my a [my nCoefficients + 1 - icof];
+	p -> coefficients [my nCoefficients + 1] = 1.0;
+	p -> numberOfCoefficients = p -> coefficients.size; // maintain invariant
 }
 
 autoPolynomial LPC_to_Polynomial (LPC me, double time) {

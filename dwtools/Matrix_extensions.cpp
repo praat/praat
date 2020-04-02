@@ -25,16 +25,10 @@
  djmw 20080122 float -> double
 */
 
-#include "Graphics_extensions.h"
 #include "Matrix_extensions.h"
 #include "Eigen.h"
 #include "NUM2.h"
 #include "Permutation.h"
-
-#include "enums_getText.h"
-#include "Matrix_extensions_enums.h"
-#include "enums_getValue.h"
-#include "Graphics_extensions_enums.h"
 
 void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 	double xmin, double xmax, double ymin, double ymax,
@@ -97,16 +91,16 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	const integer numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	
-	if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Rows) {
+	if (drawingOrder == kGraphicsMatrixCellDrawingOrder::ROWS) {
 		// identity permutation
-	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Random) {
+	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::RANDOM) {
 		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
-	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
+	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::INCREASING_VALUES || drawingOrder == kGraphicsMatrixCellDrawingOrder::DECREASING_VALUES) {
 		autoVEC v = nummat_vectorize (my z.get(), rowmin, rowmax, colmin, colmax);
 		NUMsortTogether (v.get(), p -> p.get());
-		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues)
+		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DECREASING_VALUES)
 			Permutation_reverse_inline (p.get(), 1, numberOfCells);
-	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Columns) {
+	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::COLUMNS) {
 		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
 	}
 	
@@ -122,13 +116,13 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		const double halfCellWidth = xfraction * 0.5 * my dx * scaleFactor;
 		const double halfCellHeight = yfraction * 0.5 * my dy * scaleFactor;
 		double cellLeft, cellTop;
-		if (origin == kGraphicsMatrixOrigin::TopLeft) {
+		if (origin == kGraphicsMatrixOrigin::TOP_LEFT) {
 			cellLeft = Matrix_columnToX (me, icol) - halfCellWidth;
 			cellTop = Matrix_rowToY (me, rowmax - irow + rowmin) + halfCellHeight;
-		} else if (origin == kGraphicsMatrixOrigin::TopRight) {
+		} else if (origin == kGraphicsMatrixOrigin::TOP_RIGHT) {
 			cellLeft = Matrix_columnToX (me, colmax - icol + colmin) - halfCellWidth;
 			cellTop = Matrix_rowToY (me, rowmax - irow + rowmin) + halfCellHeight;
-		} else if (origin == kGraphicsMatrixOrigin::BottomLeft) {
+		} else if (origin == kGraphicsMatrixOrigin::BOTTOM_LEFT) {
 			cellLeft = Matrix_columnToX (me, icol) - halfCellWidth;
 			cellTop = Matrix_rowToY (me, irow) + halfCellHeight;
 		} else { // origin == kGraphicsMatrixOrigin::BottomRight
@@ -158,7 +152,7 @@ void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, doub
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	
-	Matrix_drawAsSquares_inside (me, g, xmin, xmax, ymin, ymax, kGraphicsMatrixOrigin::BottomLeft, 0.95 * 0.95, kGraphicsMatrixCellDrawingOrder::Rows);
+	Matrix_drawAsSquares_inside (me, g, xmin, xmax, ymin, ymax, kGraphicsMatrixOrigin::BOTTOM_LEFT, 0.95 * 0.95, kGraphicsMatrixCellDrawingOrder::ROWS);
 	
 	Graphics_setGrey (g, 0.0);
 	Graphics_unsetInner (g);

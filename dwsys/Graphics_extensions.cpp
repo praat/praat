@@ -1,6 +1,6 @@
 /* Graphics_extensions.cpp
  *
- * Copyright (C) 2012-2019 David Weenink
+ * Copyright (C) 2012-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,11 @@
 #include "NUM2.h"
 #include "Permutation.h"
 #include "Graphics_extensions.h"
+
+#include "enums_getText.h"
+#include "Graphics_extensions_enums.h"
+#include "enums_getValue.h"
+#include "Graphics_extensions_enums.h"
 
 /*
 	Draw a box plot of x[1..x.size]. The vertical center line of the plot

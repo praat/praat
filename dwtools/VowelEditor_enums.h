@@ -17,21 +17,21 @@
  */
 
 enums_begin (kVowelEditor_speakerType, 0)
-	enums_add (kVowelEditor_speakerType, 0, Man, U"Man")
-	enums_add (kVowelEditor_speakerType, 1, Woman, U"Women")
-	enums_add (kVowelEditor_speakerType, 2, Child, U"Child")
-	enums_add (kVowelEditor_speakerType, 3, Unknown, U"Unknown")
-enums_end (kVowelEditor_speakerType, 3, Unknown)
+	enums_add (kVowelEditor_speakerType, 0, MAN, U"Man")
+	enums_add (kVowelEditor_speakerType, 1, WOMAN, U"Women")
+	enums_add (kVowelEditor_speakerType, 2, CHILD, U"Child")
+	enums_add (kVowelEditor_speakerType, 3, UNKNOWN, U"Unknown")
+enums_end (kVowelEditor_speakerType, 3, UNKNOWN)
 
 enums_begin (kVowelEditor_marksDataSet, 1)
-	enums_add (kVowelEditor_marksDataSet, 1, AmericanEnglish, U"American English")
-	enums_add (kVowelEditor_marksDataSet, 2, Dutch, U"Dutch")
-	enums_add (kVowelEditor_marksDataSet, 3, None, U"None")
-	enums_add (kVowelEditor_marksDataSet, 4, Other, U"Other")
-enums_end (kVowelEditor_marksDataSet, 4, Other)
+	enums_add (kVowelEditor_marksDataSet, 1, AMERICAN_ENGLISH, U"American English")
+	enums_add (kVowelEditor_marksDataSet, 2, DUTCH, U"Dutch")
+	enums_add (kVowelEditor_marksDataSet, 3, NONE, U"None")
+	enums_add (kVowelEditor_marksDataSet, 4, OTHER, U"Other")
+enums_end (kVowelEditor_marksDataSet, 4, OTHER)
 
 enums_begin (kVowelEditor_frequencyScale, 1)
-	enums_add (kVowelEditor_frequencyScale, 1, Logarithmic, U"Logaritmic")
-enums_end (kVowelEditor_frequencyScale, 1, Logarithmic)
+	enums_add (kVowelEditor_frequencyScale, 1, LOGARITHMIC, U"Logaritmic")
+enums_end (kVowelEditor_frequencyScale, 1, LOGARITHMIC)
 
 /* End of file VowelEditor_enums.h */

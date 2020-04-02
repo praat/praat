@@ -53,9 +53,11 @@ static inline autoVEC LineSpectralFrequencies_listFrequenciesInFrame (LineSpectr
 }
 
 static inline autoMAT LineSpectralFrequencies_listAllFrequencies (LineSpectralFrequencies me) {
-	autoMAT result = newMATraw (my maximumNumberOfFrequencies, my nx);
-	for (integer iframe = 1; iframe <= my nx; iframe ++)
-		result.column (iframe) <<= my d_frames [iframe]. frequencies.get();
+	autoMAT result = newMATzero (my maximumNumberOfFrequencies, my nx);
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		LineSpectralFrequencies_Frame lsf = & my d_frames [iframe];
+		result.column (iframe) . part (1, lsf ->numberOfFrequencies) <<= lsf -> frequencies.get();
+	}
 	return result;
 }
 

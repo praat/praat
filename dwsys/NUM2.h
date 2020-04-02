@@ -872,6 +872,8 @@ double VECburg (VEC const& a, constVEC const& x);
 
 autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, double *out_xms);
 
+void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& work);
+
 void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's

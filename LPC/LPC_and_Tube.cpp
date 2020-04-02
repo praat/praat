@@ -33,8 +33,10 @@
 // IEEE: Programs fo digital signal processing section 4.3 LPTRN
 
 void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee) {
-	Melder_assert (my nCoefficients <= thy numberOfSegments);
-	VECrc_from_lpc (thy c.part (1, my nCoefficients), my a.part (1, my nCoefficients));
+	Melder_assert (my nCoefficients == my a.size); // check invariant
+	thy c.resize (my nCoefficients);
+	thy numberOfSegments = thy c.size; // maintain invariant
+	VECrc_from_lpc (thy c.get(), my a.get());
 }
 
 void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee) {
@@ -89,7 +91,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		/*
 			Step 2
 		*/
-		LPC_Frame_into_Formant_Frame (me, f, samplingPeriod, 0);
+		LPC_Frame_into_Formant_Frame (me, f, samplingPeriod, 0.0);
 		/*
 			LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !!
 		*/

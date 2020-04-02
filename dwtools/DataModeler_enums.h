@@ -17,26 +17,26 @@
  */
 
 enums_begin (kDataModelerData, 1)
-	enums_add (kDataModelerData, 1, Valid, U"Valid")
-	enums_add (kDataModelerData, 2, Invalid, U"Invalid")
-enums_end (kDataModelerData, 2, Invalid)
+	enums_add (kDataModelerData, 1, VALID, U"Valid")
+	enums_add (kDataModelerData, 2, INVALID, U"Invalid")
+enums_end (kDataModelerData, 2, INVALID)
 
 enums_begin (kDataModelerFunction, 2)
-	enums_add (kDataModelerFunction, 1, Polynome, U"Standard polynomials")
-	enums_add (kDataModelerFunction, 2, Legendre, U"Legendre polynomials")
-enums_end (kDataModelerFunction, 2, Legendre)
+	enums_add (kDataModelerFunction, 1, POLYNOME, U"Standard polynomials")
+	enums_add (kDataModelerFunction, 2, LEGENDRE, U"Legendre polynomials")
+enums_end (kDataModelerFunction, 2, LEGENDRE)
 
 enums_begin (kDataModelerParameter, 1)
-	enums_add (kDataModelerParameter, 1, Free, U"Free")
-	enums_add (kDataModelerParameter, 2, Fixed, U"Fixed")
-	enums_add (kDataModelerParameter, 3, Undefined, U"Undefined")
-enums_end (kDataModelerParameter, 3, Undefined)
+	enums_add (kDataModelerParameter, 1, FREE, U"Free")
+	enums_add (kDataModelerParameter, 2, FIXED, U"Fixed")
+	enums_add (kDataModelerParameter, 3, NOT_DEFINED, U"Undefined")
+enums_end (kDataModelerParameter, 3, NOT_DEFINED)
 
 enums_begin (kDataModelerWeights, 1)
-	enums_add (kDataModelerWeights, 1, EqualWeights, U"Equal")
-	enums_add (kDataModelerWeights, 2, OneOverSigma, U"One over sigma")
-	enums_add (kDataModelerWeights, 3, OneOverSqrtSigma, U"One over sqrt(sigma)")
-	enums_add (kDataModelerWeights, 4, Relative, U"Relative")
-enums_end (kDataModelerWeights, 4, Relative)
+	enums_add (kDataModelerWeights, 1, EQUAL_WEIGHTS, U"Equal")
+	enums_add (kDataModelerWeights, 2, ONE_OVER_SIGMA, U"One over sigma")
+	enums_add (kDataModelerWeights, 3, ONE_OVER_SQRTSIGMA, U"One over sqrt(sigma)")
+	enums_add (kDataModelerWeights, 4, RELATIVE, U"Relative")
+enums_end (kDataModelerWeights, 4, RELATIVE)
 
 /* End of file DataModeler_enums.h */

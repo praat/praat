@@ -202,6 +202,7 @@ static integer Roots_fromPolynomial_grid (Roots me, Polynomial thee, double grid
 }
 
 static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFrequencies_Frame me, LPC_Frame thee, Polynomial g1, Polynomial g2, Roots roots, double gridSize, double maximumFrequency) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	/*
 		Construct Fs and Fa
 		divide out the zeros
@@ -240,6 +241,7 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 		else
 			my numberOfFrequencies --;
 	}
+	my frequencies.resize (my numberOfFrequencies); // maintain invariant
 }
 
 autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridSize) {

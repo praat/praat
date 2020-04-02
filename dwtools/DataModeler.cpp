@@ -70,16 +70,16 @@ void structDataModeler :: v_info () {
 	MelderInfo_writeLine (U"   Fit:");
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
-	MelderInfo_writeLine (U"      Each data point has ",  (weighData == kDataModelerWeights::EqualWeights ? U" the same weight (estimated)." :
-		( weighData == kDataModelerWeights::OneOverSigma ? U"a different weight (sigmaY)." : 
-		( weighData == kDataModelerWeights::Relative ? U"a different relative weight (Y_value/sigmaY)." :
+	MelderInfo_writeLine (U"      Each data point has ",  (weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U" the same weight (estimated)." :
+		( weighData == kDataModelerWeights::ONE_OVER_SIGMA ? U"a different weight (sigmaY)." : 
+		( weighData == kDataModelerWeights::RELATIVE ? U"a different relative weight (Y_value/sigmaY)." :
 		U"a different weight (SQRT(sigmaY))." ) ) ));
 	MelderInfo_writeLine (U"      Chi squared: ", chisq);
 	MelderInfo_writeLine (U"      Number of degrees of freedom: ", ndf);
 	MelderInfo_writeLine (U"      Probability: ", probability);
 	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++) {
-		double sigma = ( parameters [ipar] .status == kDataModelerParameter::Fixed ? 0 : sqrt (parameterCovariances -> data [ipar] [ipar]) );
+		double sigma = ( parameters [ipar] .status == kDataModelerParameter::FIXED ? 0 : sqrt (parameterCovariances -> data [ipar] [ipar]) );
 		MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar] .value, U"; sigma = ", sigma);
 	}
 }
@@ -181,7 +181,7 @@ double DataModeler_getModelValueAtIndex (DataModeler me, integer index) {
 void DataModeler_getExtremaY (DataModeler me, double *out_ymin, double *out_ymax) {
 	MelderExtremaWithInit extrema;
 	for (integer i = 1; i <= my numberOfDataPoints; i++)
-		if (my data [i] .status != kDataModelerData::Invalid)
+		if (my data [i] .status != kDataModelerData::INVALID)
 			extrema.update (my data [i] .y);
 
 	if (out_ymin)
@@ -192,14 +192,14 @@ void DataModeler_getExtremaY (DataModeler me, double *out_ymin, double *out_ymax
 
 double DataModeler_getDataPointYValue (DataModeler me, integer index) {
 	double value = undefined;
-	if (index > 0 && index <= my numberOfDataPoints && my data [index] .status != kDataModelerData::Invalid)
+	if (index > 0 && index <= my numberOfDataPoints && my data [index] .status != kDataModelerData::INVALID)
 		value = my data [index] .y;
 	return value;
 }
 
 double DataModeler_getDataPointXValue (DataModeler me, integer index) {
 	double value = undefined;
-	if (index > 0 && index <= my numberOfDataPoints && my data [index] .status != kDataModelerData::Invalid)
+	if (index > 0 && index <= my numberOfDataPoints && my data [index] .status != kDataModelerData::INVALID)
 		value = my data [index] .x;
 	return value;
 }
@@ -234,7 +234,7 @@ double DataModeler_getDataPointYSigma (DataModeler me, integer index) {
 }
 
 kDataModelerData DataModeler_getDataPointStatus (DataModeler me, integer index) {
-	kDataModelerData value = kDataModelerData::Invalid;
+	kDataModelerData value = kDataModelerData::INVALID;
 	if (index > 0 && index <= my numberOfDataPoints)
 		value = my data [index] .status;
 	return value;
@@ -242,7 +242,7 @@ kDataModelerData DataModeler_getDataPointStatus (DataModeler me, integer index) 
 
 void DataModeler_setDataPointStatus (DataModeler me, integer index, kDataModelerData status) {
 	if (index > 0 && index <= my numberOfDataPoints) {
-		if (status == kDataModelerData::Valid && isundef (my data [index] .y))
+		if (status == kDataModelerData::VALID && isundef (my data [index] .y))
 			Melder_throw (U"Your data value is undefined. First set the value and then its status.");
 		my data [index] .status = status;
 	}
@@ -263,7 +263,7 @@ void DataModeler_setParameterValue (DataModeler me, integer index, double value,
 }
 
 void DataModeler_setParameterValueFixed (DataModeler me, integer index, double value) {
-	DataModeler_setParameterValue (me, index, value, kDataModelerParameter::Fixed);
+	DataModeler_setParameterValue (me, index, value, kDataModelerParameter::FIXED);
 }
 
 double DataModeler_getParameterValue (DataModeler me, integer index) {
@@ -274,7 +274,7 @@ double DataModeler_getParameterValue (DataModeler me, integer index) {
 }
 
 kDataModelerParameter DataModeler_getParameterStatus (DataModeler me, integer index) {
-	kDataModelerParameter status = kDataModelerParameter::Undefined;
+	kDataModelerParameter status = kDataModelerParameter::UNDEFINED;
 	if (index > 0 && index <= my numberOfParameters)
 		status = my parameters [index] .status;
 	return status;
@@ -297,7 +297,7 @@ double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, i
 	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
 		variance = 0;
 		for (integer ipar = fromIndex; ipar <= toIndex; ipar ++) {
-			if (my parameters [ipar] .status != kDataModelerParameter::Fixed) {
+			if (my parameters [ipar] .status != kDataModelerParameter::FIXED) {
 				variance += my parameterCovariances -> data [ipar] [ipar];
 				numberOfFreeParameters ++;
 			}
@@ -316,14 +316,14 @@ void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer t
 	}
 	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
 		for (integer ipar = fromIndex; ipar <= toIndex; ipar ++)
-			my parameters [ipar] .status = kDataModelerParameter::Free;
+			my parameters [ipar] .status = kDataModelerParameter::FREE;
 	}
 }
 
 void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas) {
 	integer numberOfChangedParameters = 0;
 	for (integer ipar = my numberOfParameters; ipar > 0; ipar --) {
-		if (my parameters [ipar] .status != kDataModelerParameter::Fixed) {
+		if (my parameters [ipar] .status != kDataModelerParameter::FIXED) {
 			const double value = my parameters [ipar] .value;
 			double sigmas = numberOfSigmas * DataModeler_getParameterStandardDeviation (me, ipar);
 			if ((value - sigmas) * (value + sigmas) < 0) {
@@ -337,7 +337,7 @@ void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas
 integer DataModeler_getNumberOfFreeParameters (DataModeler me) {
 	integer numberOfFreeParameters = 0;
 	for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-		if (my parameters [ipar] .status == kDataModelerParameter::Free)
+		if (my parameters [ipar] .status == kDataModelerParameter::FREE)
 			numberOfFreeParameters ++;
 	}
 	return numberOfFreeParameters;
@@ -350,7 +350,7 @@ integer DataModeler_getNumberOfFixedParameters (DataModeler me) {
 static integer DataModeler_getNumberOfValidDataPoints (DataModeler me) {
 	integer numberOfValidDataPoints = 0;
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::Invalid)
+		if (my data [ipoint] .status != kDataModelerData::INVALID)
 			numberOfValidDataPoints ++;
 	}
 	return numberOfValidDataPoints;
@@ -367,7 +367,7 @@ void DataModeler_setTolerance (DataModeler me, double tolerance) {
 double DataModeler_getDegreesOfFreedom (DataModeler me) {
 	integer numberOfDataPoints = 0;
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::Invalid)
+		if (my data [ipoint] .status != kDataModelerData::INVALID)
 			numberOfDataPoints ++;
 	}
 	const double ndf = numberOfDataPoints - DataModeler_getNumberOfFreeParameters (me);
@@ -380,7 +380,7 @@ double DataModeler_getDegreesOfFreedom (DataModeler me) {
 */
 autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights weighData) {
 	autoVEC weights = newVECzero (my numberOfDataPoints);
-	if (weighData == kDataModelerWeights::EqualWeights) {
+	if (weighData == kDataModelerWeights::EQUAL_WEIGHTS) {
 			/*
 				We weigh with the inverse of the standard deviation of the data to give
 				subsequent Chi squared tests a meaningful interpretation. 
@@ -391,16 +391,16 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 			weights.get() <<= 1.0 / stdev;
 	} else {	
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-			if (my data [ipoint] .status == kDataModelerData::Invalid)
+			if (my data [ipoint] .status == kDataModelerData::INVALID)
 				continue; // invalid points get weight 0.
 			double sigma = my data [ipoint] .sigmaY;
 			double weight = 1.0;
 			if (isdefined (sigma) && sigma > 0.0) {
-				if (weighData == kDataModelerWeights::OneOverSigma)
+				if (weighData == kDataModelerWeights::ONE_OVER_SIGMA)
 					weight = 1.0 / sigma;
-				else if (weighData == kDataModelerWeights::Relative)
+				else if (weighData == kDataModelerWeights::RELATIVE)
 					weight = my data [ipoint] .y / sigma;
-				else if (weighData == kDataModelerWeights::OneOverSqrtSigma) {
+				else if (weighData == kDataModelerWeights::ONE_OVER_SQRTSIGMA) {
 					weight = 1.0 / sqrt (sigma);
 				}
 			}
@@ -416,7 +416,7 @@ autoVEC DataModeler_getZScores (DataModeler me) {
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			double z = undefined;
-			if (my data [ipoint] .status != kDataModelerData::Invalid) {
+			if (my data [ipoint] .status != kDataModelerData::INVALID) {
 				const double estimate = my f_evaluate (me, my data [ipoint] .x, my parameters.get());
 				z = (my data [ipoint] .y - estimate) * weights [ipoint]; // 1/sigma
 			}
@@ -468,7 +468,7 @@ double DataModeler_getWeightedMean (DataModeler me) {
 	double ysum = 0.0, wsum = 0.0;
 	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::Invalid) {
+		if (my data [ipoint] .status != kDataModelerData::INVALID) {
 			ysum += my data [ipoint] .y * weights [ipoint];
 			wsum += weights [ipoint];
 		}
@@ -489,7 +489,7 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *out_ss
 	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 	longdouble sstot = 0.0, ssreg = 0.0;
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::Invalid) {
+		if (my data [ipoint] .status != kDataModelerData::INVALID) {
 			double diff = (my data [ipoint] .y - ymean) * weights [ipoint];
 			sstot += diff * diff; // total sum of squares
 			const double estimate = my f_evaluate (me, my data [ipoint] .x, my parameters.get());
@@ -561,7 +561,7 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	const double currentFontSize = Graphics_inqFontSize (g);
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::Invalid) {
+		if (my data [ipoint] .status != kDataModelerData::INVALID) {
 			const double x = my data [ipoint] .x, y = my data [ipoint] .y;
 			if (x >= xmin && x <= xmax && y >= ymin && y <= ymax)
 				if (fabs (zscores [ipoint]) > numberOfSigmas)
@@ -594,7 +594,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	double x1, y1, x2, y2;
 	bool x1defined = false, x2defined = false;
 	for (integer ipoint = ixmin; ipoint <= ixmax; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::Invalid) {
+		if (my data [ipoint] .status != kDataModelerData::INVALID) {
 			const double x = my  data [ipoint] .x, y = my data [ipoint].y;
 			if (! x1defined) {
 				x1 = x;
@@ -712,7 +712,7 @@ void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, integer numb
 }
 
 void DataModeler_setBasisFunctions (DataModeler me, kDataModelerFunction type) {
-	if (type == kDataModelerFunction::Legendre) {
+	if (type == kDataModelerFunction::LEGENDRE) {
 		my f_evaluate = legendre_evaluate;
 		my f_evaluateBasisFunctions = legendre_evaluateBasisFunctions;
 	} else {
@@ -737,7 +737,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	
 	my parameters = newvectorzero<structDataModelerParameter> (numberOfParameters);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++)
-		my parameters [ipar] .status = kDataModelerParameter::Free;
+		my parameters [ipar] .status = kDataModelerParameter::FREE;
 	my parameterNames = Strings_createFixedLength (numberOfParameters);
 	my parameterCovariances = Covariance_create (numberOfParameters);
 	my type = type;
@@ -772,7 +772,7 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 			my data [ipoint] .y = modelY + NUMrandomGauss (0.0, gaussianNoiseStd);
 			my data [ipoint] .sigmaY = undefined;
 		}
-		my weighData = kDataModelerWeights::EqualWeights;
+		my weighData = kDataModelerWeights::EQUAL_WEIGHTS;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"No simple DataModeler created.");
@@ -797,7 +797,7 @@ void DataModeler_fit (DataModeler me) {
 			For function evaluation with only the FIXED parameters
 		*/
 		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
-			if (my parameters [ipar] .status != kDataModelerParameter::Fixed)
+			if (my parameters [ipar] .status != kDataModelerParameter::FIXED)
 				fixedParameters [ipar] .value = 0.0;
 
 		/*
@@ -815,13 +815,13 @@ void DataModeler_fit (DataModeler me) {
 		*/
 		integer idata = 1;
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-			if (my data [ipoint] .status != kDataModelerData::Invalid) {
+			if (my data [ipoint] .status != kDataModelerData::INVALID) {
 				const double xi = my data [ipoint] .x, yi = my data [ipoint] .y;
 				const double yFixed = my f_evaluate (me, xi, fixedParameters.get());
 				// individual terms of the function
 				my f_evaluateBasisFunctions (me, xi, term.get());
 				for (integer icol = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++)
-					if (my parameters [ipar] .status == kDataModelerParameter::Free)
+					if (my parameters [ipar] .status == kDataModelerParameter::FREE)
 						designMatrix [idata] [icol ++] = term [ipar] * weights [ipoint];
 				/*
 					Only 'residual variance' must be explained by the model
@@ -839,7 +839,7 @@ void DataModeler_fit (DataModeler me) {
 		*/
 		Covariance cov = my parameterCovariances.get();
 		for (integer kpar = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			if (my parameters [ipar] .status != kDataModelerParameter::Fixed)
+			if (my parameters [ipar] .status != kDataModelerParameter::FIXED)
 				my parameters [ipar] .value = parameters [kpar ++];
 			cov -> centroid [ipar] = my parameters [ipar] .value;
 		}
@@ -851,9 +851,9 @@ void DataModeler_fit (DataModeler me) {
 			autoMAT covtmp = SVD_getSquared (thee.get(), true);
 			cov -> data.all() <<= 0.0; // Set fixed parameters variances and covariances to zero.
 			for (integer irow = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-				if (my parameters [ipar] .status != kDataModelerParameter::Fixed) {
+				if (my parameters [ipar] .status != kDataModelerParameter::FIXED) {
 					for (integer icol = 1, jpar = 1; jpar <= my numberOfParameters; jpar ++) {
-						if (my parameters [jpar] .status != kDataModelerParameter::Fixed)
+						if (my parameters [jpar] .status != kDataModelerParameter::FIXED)
 							cov -> data [ipar] [jpar] = covtmp [irow] [icol ++];
 					}
 					irow ++;
@@ -925,11 +925,11 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		for (integer i = 1; i <= numberOfData; i ++) {
 			if (x [i] >= xmin && x [i] <= xmax) {
 				thy data [++ numberOfDataPoints] .x = x [i];
-				thy data [numberOfDataPoints] .status = kDataModelerData::Invalid;
+				thy data [numberOfDataPoints] .status = kDataModelerData::INVALID;
 				if (isdefined (y [i])) {
 					thy data [numberOfDataPoints] .y = y [i];
 					thy data [numberOfDataPoints] .sigmaY = sy [i];
-					thy data [numberOfDataPoints] .status = kDataModelerData::Valid;
+					thy data [numberOfDataPoints] .status = kDataModelerData::VALID;
 					validData ++;
 				}
 			}
@@ -938,7 +938,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		Melder_require (validData >= numberOfParameters,
 			U"The number of parameters should not exceed the number of data points.");
 		
-		DataModeler_setDataWeighing (thee.get(), ( hasSigmaColumn ? kDataModelerWeights::OneOverSigma : kDataModelerWeights::EqualWeights));
+		DataModeler_setDataWeighing (thee.get(), ( hasSigmaColumn ? kDataModelerWeights::ONE_OVER_SIGMA : kDataModelerWeights::EQUAL_WEIGHTS));
 		thy tolerance = 1e-8;
 		DataModeler_fit (thee.get());
 		return thee;
@@ -951,7 +951,7 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, integer *out_numberO
 	integer numberOfValidDataPoints = 0;
 	longdouble residualSS = 0.0;
 	for (integer i = 1; i <= my numberOfDataPoints; i ++) {
-		if (my data [i] .status != kDataModelerData::Invalid) {
+		if (my data [i] .status != kDataModelerData::INVALID) {
 			++ numberOfValidDataPoints;
 			const double dif = my data [i] .y - my f_evaluate (me, my data [i] .x, my parameters.get());
 			residualSS += dif * dif;
@@ -964,9 +964,9 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, integer *out_numberO
 
 void DataModeler_reportChiSquared (DataModeler me) {
 	MelderInfo_writeLine (U"Chi squared test:");
-	MelderInfo_writeLine (( my weighData == kDataModelerWeights::EqualWeights ? U"Standard deviation is estimated from the data." :
-		( my weighData == kDataModelerWeights::OneOverSigma ? U"Sigmas are used as estimate for local standard deviations." :
-		( my weighData == kDataModelerWeights::Relative ? U"1/Q's are used as estimate for local standard deviations." :
+	MelderInfo_writeLine (( my weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U"Standard deviation is estimated from the data." :
+		( my weighData == kDataModelerWeights::ONE_OVER_SIGMA ? U"Sigmas are used as estimate for local standard deviations." :
+		( my weighData == kDataModelerWeights::RELATIVE ? U"1/Q's are used as estimate for local standard deviations." :
 		U"Sqrt sigmas are used as estimate for local standard deviations." ) ) ));
 	double ndf, probability;
 	const double chisq = DataModeler_getChiSquaredQ (me, & probability, & ndf);
@@ -980,7 +980,7 @@ double DataModeler_getDataStandardDeviation (DataModeler me) {
 		integer numberOfDataPoints = 0;
 		autoVEC y = newVECraw (my numberOfDataPoints);
 		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
-			if (my data [i] .status != kDataModelerData::Invalid)
+			if (my data [i] .status != kDataModelerData::INVALID)
 				y [++ numberOfDataPoints] = my data [i] .y;
 		}
 		y.size = numberOfDataPoints;   // fake shrink
