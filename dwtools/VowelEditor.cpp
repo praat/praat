@@ -368,13 +368,13 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 		for (integer ipoint = 1; ipoint <= formantTier -> points.size; ipoint ++) {
 			FormantPoint point = formantTier -> points.at [ipoint];
 			Melder_clipRight (& point -> numberOfFormants, my p_synthesis_numberOfFormants);
+			point -> formant. resize (point -> numberOfFormants);   // maintain invariant
 			/*
-				Since the time that the FormantTier was created the synthesis preferences might
+				Since the time that the FormantTier was created, the synthesis preferences might
 				have been changed by the user. E.g. the user moves the mouse, hears the sound and then
 				changes the Preferences and hits the Play button again. We have to synthesize now according 
 				to the new preferences.
 			*/
-			point->formant.resize (point -> numberOfFormants); // maintain invariant
 			point -> bandwidth [1] = point -> formant [1] / my p_synthesis_q1;
 			if (point -> numberOfFormants < 2)
 				continue;
@@ -441,8 +441,7 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	// Too short too hear ?
-	if ( (thy xmax - thy xmin) < 0.005)
+	if (thy xmax - thy xmin < 0.005)   // too short to hear?
 		Graphics_setColour (g, Melder_RED);
 	
 	auto getx = [=](double f) { return log (f / my p_window_f2max) / log (my p_window_f2min / my p_window_f2max); };
@@ -666,7 +665,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		Draw the horizontal grid lines
 	*/
 	if (my p_grid_df1 < (my p_window_f1max - my p_window_f1min)) {
-		integer iline = floor ((my p_window_f1min + my p_grid_df1) / my p_grid_df1);
+		integer iline = Melder_iroundDown ((my p_window_f1min + my p_grid_df1) / my p_grid_df1);
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		double f1_gridLine, xg1, yg1, xg2, yg2;
@@ -685,7 +684,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		Draw the vertical grid lines
 	*/
 	if (my p_grid_df2 < (my p_window_f2max - my p_window_f2min)) {
-		integer iline = floor ((my p_window_f2min + my p_grid_df2) / my p_grid_df2);
+		integer iline = Melder_iroundDown ((my p_window_f2min + my p_grid_df2) / my p_grid_df2);
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		double f2_gridLine, xg1, yg1, xg2, yg2;
@@ -745,8 +744,8 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		Melder_require (extraFrequencyBandwidthPairs.size % 2 == 0,
 			U"There should be an even number of values in the \"Frequencies and bandwidths pairs\" list.");
 		/*
-			All items should be positive numbers and frequencies must be lower than the Nyquist.
-			Bandwidths must be larger than zero.
+			All items should be positive numbers and frequencies should be lower than the Nyquist.
+			Bandwidths should be greater than zero.
 		*/
 		for (integer item = 1; item <= extraFrequencyBandwidthPairs.size; item ++) {
 			Melder_require (extraFrequencyBandwidthPairs [item] > 0,
@@ -762,7 +761,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 			numberOfPairs + 2, U"). Either lower the number of formants for synthesis or specify more "
 			"frequency bandwidth pairs.");
 		/*
-			Formants and bandwidths are valid. It is save to copy them.
+			Formants and bandwidths are valid. It is safe to copy them.
 		*/
 		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, fbpairs);
 		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
@@ -1291,7 +1290,7 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
 		Melder_assert (me.get());
-		if (my p_shell_width <=0 || my p_shell_height <= 0) {
+		if (my p_shell_width <= 0 || my p_shell_height <= 0) {
 			my p_shell_width = Melder_atof (my default_shell_width ());
 			my p_shell_height = Melder_atof (my default_shell_height ());
 		}

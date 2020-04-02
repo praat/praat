@@ -1436,7 +1436,7 @@ INTRO (U"A command to create a @Table object filled with the "
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 9 columns:")
 TAG (U"Column 1, labelled as %Type")
-DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %women or %child).")
+DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %woman or %child).")
 TAG (U"Column 2, labelled as %Sex")
 DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TAG (U"Column 3, labelled as %Speaker")
@@ -1496,7 +1496,7 @@ INTRO (U"A command to create a @Table object filled with the "
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 9 columns:")
 TAG (U"Column 1, labelled as %Type")
-DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %women or %child).")
+DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %woman or %child).")
 TAG (U"Column 2, labelled as %Sex")
 DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TAG (U"Column 3, labelled as %Speaker")
@@ -5131,7 +5131,7 @@ CODE (U"        iy       270       136       231       212")
 CODE (U"        uh       273       136       234       214")
 CODE (U"        uw       278       139       235       218")
 CODE (U"      Mean       264       131       223       206")
-NORMAL (U"The first column of this table shows the vowel codes while the first row shows the speaker types (child, man, women). "
+NORMAL (U"The first column of this table shows the vowel codes while the first row shows the speaker types (child, man, woman). "
 	"The last row and the last column of the table shows the averages for the factors Type and Vowel, respectively. The actual "
 	"data are unbalanced because we have 300, 660 and 560 replications per column respectively (for each speaker we have two replcations of the data).")
 ENTRY (U"Algorithm")
