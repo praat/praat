@@ -69,8 +69,8 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 		integer iter = 0;
 		bool farFromLocation = false, farFromScale = false;
 		do {
-			double previousLocation = location;
-			double previousScale = scale;
+			const double previousLocation = location;
+			const double previousScale = scale;
 
 			work  <<=  x;
 			VECclip_inplace (work, location - k_stdev * scale, location + k_stdev * scale); // winsorize

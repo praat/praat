@@ -127,7 +127,7 @@ void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, cons
 	my scale = 1e308;
 	bool farFromScale = true;
 	do {
-		double previousScale = my scale;
+		const double previousScale = my scale;
 		my error.get() <<= sound;
 		VECfilterInverse_inplace (my error.get(), lpcTo, my workSpace); // lpcTo has alreay a copy of lpcFrom
 		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tol, my huber_iterations, my workSpace);
@@ -140,8 +140,7 @@ void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, cons
 		try {
 			huber_struct_solvelpc (me);
 		} catch (MelderError) {
-			// Copy the starting lpc coeffs, because we couldn't modify them */
-			lpcTo <<= lpcFrom;
+			lpcTo <<= lpcFrom; // No change could be made
 			throw MelderError();
 		}
 		lpcTo <<= my coefficients.get();
