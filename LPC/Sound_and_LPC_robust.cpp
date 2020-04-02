@@ -38,10 +38,11 @@ struct huber_struct {
 	autoVEC error;
 	double k_stdev, tol, tol_svd;
 	integer numberOfSamples, predictionOrder, maximumPredictionOrder;
-	integer iter, itermax;
+	integer iter, itermax, huber_iterations = 5;
 	bool wantlocation, wantscale;
 	double location, scale;
-	autoVEC weights, work, coefficients, covariancesw;
+	autoVEC workSpace;
+	autoVEC weights, coefficients, covariancesw;
 	autoMAT covarmatrixw;
 	autoSVD svd;
 };
@@ -57,7 +58,7 @@ static void huber_struct_init (struct huber_struct *me, integer numberOfSamples,
 	my wantscale = true;
 	my predictionOrder = my maximumPredictionOrder = maximumPredictionOrder;
 	my weights = newVECzero (numberOfSamples);
-	my work = newVECraw (maximumPredictionOrder);
+	my workSpace = newVECraw (numberOfSamples);
 	my coefficients = newVECraw (maximumPredictionOrder);
 	my covariancesw = newVECzero (maximumPredictionOrder);
 	my covarmatrixw = newMATzero (maximumPredictionOrder, maximumPredictionOrder);
@@ -124,13 +125,12 @@ void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, cons
 
 	my iter = 0;
 	my scale = 1e308;
-
-	double scale0;
+	bool farFromScale = true;
 	do {
+		double previousScale = my scale;
 		my error.get() <<= sound;
-		VECfilterInverse_inplace (my error.get(), lpcTo, my work); // lpcTo has alreay a copy of lpcFrom
-		scale0 = my scale;
-		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tol, 5);
+		VECfilterInverse_inplace (my error.get(), lpcTo, my workSpace); // lpcTo has alreay a copy of lpcFrom
+		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tol, my huber_iterations, my workSpace);
 
 		huber_struct_getWeights (me, my error.get());
 		huber_struct_getWeightedCovars (me, sound);
@@ -145,8 +145,8 @@ void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, cons
 			throw MelderError();
 		}
 		lpcTo <<= my coefficients.get();
-		my iter ++;
-	} while (my iter < my itermax && fabs (scale0 - my scale) > my tol * scale0);
+		farFromScale = ( fabs (my scale - previousScale) > std::max (my tol * fabs (my scale), NUMeps) );
+	} while (++ my iter < my itermax && farFromScale);
 }
 
 autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,

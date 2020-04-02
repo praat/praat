@@ -20,14 +20,15 @@ procedure mad
 endproc
 		
 procedure location_scale
-	.chem# ={2.20, 2.20, 2.4, 2.4, 2.5, 2.7, 2.8, 2.9, 3.03, 3.03, 3.10, 3.37, 3.4, 3.4, 3.4, 3.5, 3.6, 3.7, 3.7, 3.7, 3.7,3.77, 5.28, 28.95}
-	.tab = Create Table with column names: "tabel", 24, "chem"
-	for .irow to 24
-		Set numeric value: .irow, "chem", .chem# [.irow]
-	endfor
-	.report$ = Report robust statistics: "chem", 1.5, 1e-8, 30
-	appendInfoLine: .report$
-	removeObject: .tab
+	.tab = Create Table with column names: "tabel", 14, "data"
+	Formula: "data", "row"
+	Set numeric value: 14, "data", 20
+	.report$ = Report robust statistics: "data", 1.5, 1e-8, 30
+	.location = extractNumber (.report$, "Location:")
+	.scale = extractNumber (.report$, "Scale:")
+	;# compare with R: hubers(c(1:13, 20))
+	assert abs(.location - 7.56108) < 0.00001
+	assert abs(.scale - 4.86268) < 0.00001
 endproc
 
 appendInfoLine: "test_robustStatistics.praat OK"
