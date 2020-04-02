@@ -3396,7 +3396,8 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber) {
 	try {
 		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double mad, location;
-		NUMmad (data.get(), & location, true, & mad);
+		autoVEC workSpace = newVECraw (data.size);
+		NUMmad (data.get(), & location, true, & mad, workSpace);
 		return mad;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
@@ -3426,7 +3427,8 @@ void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std,
 	try {
 		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double location, scale;
-		NUMstatistics_huber (data.get(), & location, true, & scale, true, k_std, tol, maximumNumberOfIterations);
+		autoVEC workSpace = newVECraw (data.size);
+		NUMstatistics_huber (data.get(), & location, true, & scale, true, k_std, tol, maximumNumberOfIterations, workSpace);
 		if (out_location)
 			*out_location = location;
 		if (out_scale)

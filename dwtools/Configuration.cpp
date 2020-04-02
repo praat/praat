@@ -253,7 +253,7 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 		varianceSq_old = varianceSq;
 		varianceSq = NUMsquaredVariance (ym, quartimax);
 
-	} while (fabs (varianceSq_old - varianceSq) / varianceSq_old > tolerance &&
+	} while (fabs (varianceSq_old - varianceSq) > std::max (tolerance * varianceSq_old, NUMeps) &&
 	         numberOfIterations < maximumNumberOfIterations);
 
 	if (normalizeRows)

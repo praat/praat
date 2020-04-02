@@ -403,9 +403,9 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 	autoVEC r = newVECraw (y.size);
 	const double normSquared_y = NUMsum2 (y);
 	integer iter = 1;
-	bool convergence = false;
+	bool farFromConvergence = true;
 	double difsq, difsq_previous = 1e100; // large enough
-	while (iter <= maximumNumberOfIterations && ! convergence) {
+	while (iter <= maximumNumberOfIterations && farFromConvergence) {
 		/*
 			Alternating Least Squares: Fixate all except x [icol]
 		*/
@@ -424,7 +424,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		VECmul (r.get(), a, x);
 		r.get()  -=  y;
 		difsq = NUMsum2 (r.all());
-		convergence = fabs (difsq - difsq_previous) < tol * normSquared_y;
+		farFromConvergence = ( fabs (difsq - difsq_previous) > std::max (tol * normSquared_y, NUMeps) );
 		if (infoLevel > 1)
 			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
 		difsq_previous = difsq;
@@ -1461,16 +1461,16 @@ autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, d
 	return a;
 }
 
-void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& work) {
-	Melder_assert (work.size >= filter.size);
-	work <<= 0.0;
+void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& filterMemory) {
+	Melder_assert (filterMemory.size >= filter.size);
+	filterMemory <<= 0.0;
 	for (integer i = 1; i <= s.size; i ++) {
 		const double y0 = s [i];
 		for (integer j = 1; j <= filter.size; j ++)
-			s [i] += filter [j] * work [j];
+			s [i] += filter [j] * filterMemory [j];
 		for (integer j = filter.size; j > 1; j --)
-			work [j] = work [j - 1];
-		work [1] = y0;
+			filterMemory [j] = filterMemory [j - 1];
+		filterMemory [1] = y0;
 	}
 }
 
