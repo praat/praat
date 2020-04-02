@@ -368,13 +368,13 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 		for (integer ipoint = 1; ipoint <= formantTier -> points.size; ipoint ++) {
 			FormantPoint point = formantTier -> points.at [ipoint];
 			Melder_clipRight (& point -> numberOfFormants, my p_synthesis_numberOfFormants);
+			point -> formant. resize (point -> numberOfFormants);   // maintain invariant
 			/*
-				Since the time that the FormantTier was created the synthesis preferences might
+				Since the time that the FormantTier was created, the synthesis preferences might
 				have been changed by the user. E.g. the user moves the mouse, hears the sound and then
 				changes the Preferences and hits the Play button again. We have to synthesize now according 
 				to the new preferences.
 			*/
-			point->formant.resize (point -> numberOfFormants); // maintain invariant
 			point -> bandwidth [1] = point -> formant [1] / my p_synthesis_q1;
 			if (point -> numberOfFormants < 2)
 				continue;
@@ -441,8 +441,7 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	// Too short too hear ?
-	if ( (thy xmax - thy xmin) < 0.005)
+	if (thy xmax - thy xmin < 0.005)   // too short to hear?
 		Graphics_setColour (g, Melder_RED);
 	
 	auto getx = [=](double f) { return log (f / my p_window_f2max) / log (my p_window_f2min / my p_window_f2max); };
