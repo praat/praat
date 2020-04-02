@@ -37,7 +37,7 @@ prefs_begin (VowelEditor)
 	prefs_add_double_with_data (VowelEditor, trajectory_minimumDuration,  1, U"0.01")  // s
 	prefs_add_double_with_data (VowelEditor, trajectory_maximumDuration,  1, U"4.0")  // s
 	prefs_add_double_with_data (VowelEditor, trajectory_duration,         1, U"0.1")   // s
-	prefs_add_enum_with_data   (VowelEditor, marks_speakerType,           1, kVowelEditor_speakerType, MAN)
+	prefs_add_enum_with_data   (VowelEditor, marks_speakerType,           1, kVowelEditor_speakerType, WOMAN)
 	prefs_add_enum_with_data   (VowelEditor, marks_dataSet,               1, kVowelEditor_marksDataSet, AMERICAN_ENGLISH)
 	prefs_add_string_with_data (VowelEditor, marks_fileName,              1, U"")
 	prefs_add_string_with_data (VowelEditor, marks_colour,                1, U"grey")
