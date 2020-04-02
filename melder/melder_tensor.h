@@ -666,6 +666,31 @@ public:
 		}
 		return *this;
 	}
+	void resize (integer newNrow, integer newNcol, MelderArray::kInitializationType initializationType = MelderArray::kInitializationType::ZERO) {
+		if (newNrow > our nrow || newNcol > our ncol) {
+			integer const newNumberOfCells = newNrow * newNcol;
+			T *newCells = MelderArray:: _alloc <T> (newNumberOfCells, initializationType);
+			integer const numberOfRowsToCopy = std::min (our nrow, newNrow);
+			integer const numberOfColumnsToCopy = std::min (our ncol, newNcol);
+			for (integer irow = 1; irow <= numberOfRowsToCopy; irow ++)
+				for (integer icol = 1; icol <= numberOfColumnsToCopy; icol ++)
+					newCells [(irow - 1) * newNcol + (icol - 1)] = std::move (our cells [(irow - 1) * our ncol + (icol - 1)]);
+			if (our cells)
+				MelderArray:: _free (our cells, our nrow * our ncol);
+			our cells = newCells;
+		} else if (newNcol == our ncol) {
+			// do nothing
+		} else {
+			/*
+				The cells of the first new row already have the correct values.
+			*/
+			for (integer irow = 2; irow <= newNrow; irow ++)
+				for (integer icol = 1; icol <= newNcol; icol ++)
+					our cells [(irow - 1) * newNcol + (icol - 1)] = std::move (our cells [(irow - 1) * our ncol + (icol - 1)]);
+		}
+		our nrow = newNrow;
+		our ncol = newNcol;
+	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our cells) {
 			MelderArray:: _free (our cells, our nrow * our ncol);
