@@ -305,18 +305,12 @@ static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
 		double f1 = fp -> formant [1], f2 = fp -> formant [2];
 
 		f1 *= pow (2, f1_st / 12.0);
-		if (f1 < my p_window_f1min)
-			f1 = my p_window_f1min;
-		if (f1 > my p_window_f1max)
-			f1 = my p_window_f1max;
+		Melder_clip (my p_window_f1min, & f1, my p_window_f1max);
 		fp -> formant [1] = f1;
 		fp -> bandwidth [1] = f1 / my p_synthesis_q1;
 
 		f2 *= pow (2, f2_st / 12.0);
-		if (f2 < my p_window_f2min)
-			f2 = my p_window_f2min;
-		if (f2 > my p_window_f2max)
-			f2 = my p_window_f2max;
+		Melder_clip (my p_window_f2min, & f2, my p_window_f2max);
 		fp -> formant [2] = f2;
 		fp -> bandwidth [2] = f2 / my p_synthesis_q2;
 	}
@@ -339,13 +333,13 @@ static void VowelEditor_updateVowelSpecification (VowelEditor me) {
 	*/
 	const double newDuration = VowelEditor_updateFromDurationTextWidget (me);
 	VowelEditor_updateFromF0StartAndSlopeTextWidgets (me);
-	VowelSpecification thee = my vowel.get();
+	const VowelSpecification thee = my vowel.get();
 	if (newDuration != thy xmax) {
 		const double multiplier = newDuration / thy xmax;
 		FormantTier_newDuration (thy formantTier.get(), newDuration);
 		thy xmax *= multiplier;
 	}
-	PitchTier him = my vowel -> pitchTier.get();
+	const PitchTier him = my vowel -> pitchTier.get();
 	const double multiplier = newDuration / his xmax;
 	for (integer i = 1; i <= his points.size; i ++) {
 		const RealPoint pp = his points.at [i];
@@ -353,20 +347,19 @@ static void VowelEditor_updateVowelSpecification (VowelEditor me) {
 		pp -> value = VowelEditor_getF0AtTime (me, pp -> number);
 	}
 	his xmax *= multiplier;
-	
 }
 
 static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 	try {
 		VowelEditor_updateVowelSpecification (me);   // update pitch and duration
-		autoFormantTier formantTier = Data_copy (my vowel -> formantTier.get());
-		autoSound thee = PitchTier_to_Sound_pulseTrain (my vowel -> pitchTier.get(), my p_synthesis_samplingFrequency, 0.7, 0.05, 30, false);
+		const autoFormantTier formantTier = Data_copy (my vowel -> formantTier.get());
+		/* mutable return */ autoSound thee = PitchTier_to_Sound_pulseTrain (my vowel -> pitchTier.get(), my p_synthesis_samplingFrequency, 0.7, 0.05, 30, false);
 		/*
 			Modify the formant point size if p_numberOfFormants < size
 		*/
-		integer numberOfExtraFormants = my p_synthesis_numberOfFormants - 2;
+		const integer numberOfExtraFormants = my p_synthesis_numberOfFormants - 2;
 		for (integer ipoint = 1; ipoint <= formantTier -> points.size; ipoint ++) {
-			FormantPoint point = formantTier -> points.at [ipoint];
+			const FormantPoint point = formantTier -> points.at [ipoint];
 			Melder_clipRight (& point -> numberOfFormants, my p_synthesis_numberOfFormants);
 			point -> formant. resize (point -> numberOfFormants);   // maintain invariant
 			/*
@@ -397,7 +390,7 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 }
 
 static void VowelEditor_VowelSpecification_addPoint (VowelEditor me, double time, double x, double y, bool transFromXYToFrequencies) {
-	VowelSpecification thee = my vowel.get();
+	const VowelSpecification thee = my vowel.get();
 	if (time > thy xmax) {
 		thy xmax = time;
 		thy formantTier -> xmax = time;
@@ -407,8 +400,8 @@ static void VowelEditor_VowelSpecification_addPoint (VowelEditor me, double time
 	/*
 		We reserve storage for all formants, during play we may filter.
 	*/
-	integer numberOfExtraFormants = my extraFrequencyBandwidthPairs.size / 2;
-	autoFormantPoint point = FormantPoint_create (time, 2 + numberOfExtraFormants);
+	const integer numberOfExtraFormants = my extraFrequencyBandwidthPairs.size / 2;
+	/* mutable move */ autoFormantPoint point = FormantPoint_create (time, 2 + numberOfExtraFormants);
 	double f1 = x, f2 = y;
 	if (transFromXYToFrequencies)
 		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
@@ -427,7 +420,7 @@ static void VowelEditor_VowelSpecification_addPoint (VowelEditor me, double time
 
 static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 // Our FormantTiers always have a FormantPoint at t=xmin and t=xmax;
-	FormantTier thee = my vowel -> formantTier.get();
+	const FormantTier thee = my vowel -> formantTier.get();
 	Melder_assert (thy points.size >= 2);
 
 	const integer glt = Graphics_inqLineType (g);
@@ -539,9 +532,8 @@ static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
 	integer col_colour = Table_findColumnIndexFromColumnLabel (me, U"Colour");
 	if (col_colour == 0) {
 		Table_appendColumn (me, U"Colour");
-		for (integer irow = 1; irow <= my rows.size; irow ++) {
+		for (integer irow = 1; irow <= my rows.size; irow ++)
 			Table_setStringValue (me, irow, my numberOfColumns, colour);
-		}
 	}
 }
 
@@ -575,15 +567,15 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"w" :
 		my p_marks_speakerType == kVowelEditor_speakerType::CHILD ? U"c": U"m" );
 	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {   // American-English
-		autoTable thee = Table_create_petersonBarney1952 ();
+		const autoTable thee = Table_create_petersonBarney1952 ();
 		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
 	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::DUTCH) {
 		if (my p_marks_speakerType == kVowelEditor_speakerType::CHILD) {
-			autoTable thee = Table_create_weenink1983 ();
+			const autoTable thee = Table_create_weenink1983 ();
 			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
 		}
 		else {   // male + female from Pols van Nierop
-			autoTable thee = Table_create_polsVanNierop1973 ();
+			const autoTable thee = Table_create_polsVanNierop1973 ();
 			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
 		}
 	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::NONE) {   // none
@@ -591,10 +583,9 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		return;
 	} else {  // other
 		VowelEditor_getVowelMarksFromFile (me);
-
 		return;
 	}
-	autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
+	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
 	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 
