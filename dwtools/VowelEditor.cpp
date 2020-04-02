@@ -666,7 +666,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		Draw the horizontal grid lines
 	*/
 	if (my p_grid_df1 < (my p_window_f1max - my p_window_f1min)) {
-		integer iline = floor ((my p_window_f1min + my p_grid_df1) / my p_grid_df1);
+		integer iline = Melder_iroundDown ((my p_window_f1min + my p_grid_df1) / my p_grid_df1);
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		double f1_gridLine, xg1, yg1, xg2, yg2;
@@ -685,7 +685,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		Draw the vertical grid lines
 	*/
 	if (my p_grid_df2 < (my p_window_f2max - my p_window_f2min)) {
-		integer iline = floor ((my p_window_f2min + my p_grid_df2) / my p_grid_df2);
+		integer iline = Melder_iroundDown ((my p_window_f2min + my p_grid_df2) / my p_grid_df2);
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		double f2_gridLine, xg1, yg1, xg2, yg2;
@@ -745,8 +745,8 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		Melder_require (extraFrequencyBandwidthPairs.size % 2 == 0,
 			U"There should be an even number of values in the \"Frequencies and bandwidths pairs\" list.");
 		/*
-			All items should be positive numbers and frequencies must be lower than the Nyquist.
-			Bandwidths must be larger than zero.
+			All items should be positive numbers and frequencies should be lower than the Nyquist.
+			Bandwidths should be greater than zero.
 		*/
 		for (integer item = 1; item <= extraFrequencyBandwidthPairs.size; item ++) {
 			Melder_require (extraFrequencyBandwidthPairs [item] > 0,
@@ -762,7 +762,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 			numberOfPairs + 2, U"). Either lower the number of formants for synthesis or specify more "
 			"frequency bandwidth pairs.");
 		/*
-			Formants and bandwidths are valid. It is save to copy them.
+			Formants and bandwidths are valid. It is safe to copy them.
 		*/
 		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, fbpairs);
 		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
