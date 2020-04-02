@@ -1291,7 +1291,7 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
 		Melder_assert (me.get());
-		if (my p_shell_width <=0 || my p_shell_height <= 0) {
+		if (my p_shell_width <= 0 || my p_shell_height <= 0) {
 			my p_shell_width = Melder_atof (my default_shell_width ());
 			my p_shell_height = Melder_atof (my default_shell_height ());
 		}
