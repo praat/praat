@@ -17,7 +17,7 @@
  */
 
 enums_begin (kFormantModelerTrackShift, 1)
-	enums_add (kFormantModelerTrackShift, 1, NO, U"No")
+	enums_add (kFormantModelerTrackShift, 1, NO_, U"No")
 	enums_add (kFormantModelerTrackShift, 2, UP, U"Up")
 	enums_add (kFormantModelerTrackShift, 3, DOWN, U"Down")
 enums_end (kFormantModelerTrackShift, 3, DOWN)

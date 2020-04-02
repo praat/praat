@@ -294,7 +294,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoVEC varShifted = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, & fromFormant, & toFormant);
-		autoVEC var = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, kFormantModelerTrackShift::NO, & fromFormant, & toFormant);
+		autoVEC var = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, kFormantModelerTrackShift::NO_, & fromFormant, & toFormant);
 		for (integer i = ixmin + 1; i <= ixmax; i ++) {
 			if (isdefined (varShifted [i]) && isdefined (var [i]))
 				var [i] -= varShifted [i];
