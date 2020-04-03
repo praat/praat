@@ -1,6 +1,6 @@
 /* Cepstrogram.cpp
  *
- * Copyright (C) 2013 - 2019 David Weenink
+ * Copyright (C) 2013 - 2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,24 +187,16 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 			1. average across time
 		*/
 		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
-		if (numberOfFrames > 1) {
-			autoVEC qin = newVECraw (my nx);
-			for (integer iq = 1; iq <= my ny; iq ++) {
-				qin.all() <<= thy z.row (iq);   // ppgb: why this extra copying?
-				VECsmoothByMovingAverage_preallocated (thy z.row (iq), qin.get(), numberOfFrames);
-			}
-		}
+		if (numberOfFrames > 1)
+			for (integer iq = 1; iq <= my ny; iq ++)
+				VECsmoothByMovingAverage_preallocated (thy z.row (iq), my z.row (iq), numberOfFrames);
 		/*
 			2. average across quefrencies
 		*/
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
-		if (numberOfQuefrencyBins > 1) {
-			autoVEC qin = newVECraw (thy ny);
-			for (integer iframe = 1; iframe <= my nx; iframe ++) {
-				qin.get() <<= thy z.column (iframe);
-				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), qin.get(), numberOfQuefrencyBins);
-			}
-		}
+		if (numberOfQuefrencyBins > 1)
+			for (integer iframe = 1; iframe <= my nx; iframe ++)
+				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), my z.column (iframe), numberOfQuefrencyBins);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
