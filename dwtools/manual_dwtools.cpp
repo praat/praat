@@ -5683,7 +5683,7 @@ DEFINITION (U"Show the vowel marks in the editor from a fixed set of vowel inven
 TAG (U"##Show vowel marks from Table file...#")
 DEFINITION (U"Put your own marks in the editor. The Table needs to have at least three mandatory columns "
 	"labeled \"Vowel\", \"F1\" and  \"F2\" and "
-	"and two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
+	" two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
 	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
 TAG (U"##Show trajectory time markers every...")
