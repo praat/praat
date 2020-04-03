@@ -5636,7 +5636,7 @@ NORMAL (U"The text corpus design was done by the Massachusetts Institute of "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
 
-MAN_BEGIN (U"VowelEditor", U"djmw", 20200331)
+MAN_BEGIN (U"VowelEditor", U"djmw", 20200403)
 INTRO (U"An Editor for generating vowel-like @@sound|Sound@s from mouse movements.")
 ENTRY (U"How to get a sound")
 NORMAL (U"With the mouse button down, you can move the mouse cursor around in the plane "
@@ -5683,9 +5683,9 @@ DEFINITION (U"Show the vowel marks in the editor from a fixed set of vowel inven
 TAG (U"##Show vowel marks from Table file...#")
 DEFINITION (U"Put your own marks in the editor. The Table needs to have at least three mandatory columns "
 	"labeled \"Vowel\", \"F1\" and  \"F2\" and "
-	"one optional column labeled \"Size\". The Vowel column contains the vowel marker labels, the F1 and "
+	"and two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
-	"the font size of the vowel markers.")
+	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
 TAG (U"##Show trajectory time markers every...")
 DEFINITION (U"Shows time markers as small bars orthogonal to the trajectory. ")
 ENTRY (U"File menu")
@@ -5700,13 +5700,13 @@ TAG (U"##Draw trajectory...")
 DEFINITION (U"Draws the trajectory in the picture window.")
 MAN_END
 
-MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20111124)
+MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20200403)
 INTRO (U"A command in the @@VowelEditor@ that lets you set your own vowel marks. ")
 ENTRY (U"Layout of the Table")
 NORMAL (U"The Table needs at least three mandatory columns labeled \"Vowel\", \"F1\" and  \"F2\" and "
-	"one optional column labeled \"Size\". The Vowel column contains the vowel marker labels, the F1 and "
+	"two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
-	"the font size of the vowel markers.")
+	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
 MAN_END
 
 /********************** GSL ********************************************/
