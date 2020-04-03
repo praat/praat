@@ -377,6 +377,11 @@ public:
 			cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
+	explicit matrix (vector<T> const& vec, integer nrow, integer ncol) :
+			matrix (vec. cells, nrow, ncol)
+	{
+		Melder_assert (nrow * ncol <= vec. size);
+	}
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
 	vector<T> operator[] (integer rowNumber) const {
@@ -434,12 +439,48 @@ public:
 	T * firstCell = nullptr;
 	integer nrow = 0, ncol = 0;
 	/*mutable*/ integer rowStride = 0, colStride = 1;   // mutable perhaps once an automatrix has strides
+	/*
+		Make sure that each of the following creates an appropriately initialized matrixview:
+			matrixview<double> matvu;   // OK
+			auto matvu = matrixview<double>();
+	*/
 	matrixview () = default;
-	matrixview (const matrix<T>& other) :
-			firstCell (other.cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-	matrixview (const automatrix<T>& other) = delete;
-	explicit matrixview (T * const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_) :
+	/*
+		The following constructors is explicit, i.e.,
+		it cannot be used as an implicit conversion from an initializer list,
+		as in any of the following:
+			matrixview<double> mat = { p, 10, 100, 100, 1 };   // not OK
+			myFunction ({ p, 10, 100, 100, 1 });   // not OK
+		whereas any of the following is fine:
+			matrixview<double> mat { p, 10, 100, 100, 1 };   // OK
+			matrixview<double> mat (p, 10, 100, 100, 1);   // OK
+			auto mat = matrixview<double> { p, 10, 100, 100, 1 };   // OK
+			auto mat = matrixview<double> (p, 10, 100, 100, 1);   // OK
+			myFunction (matrixview<double> { p, 10, 100, 100, 1 });   // OK
+			myFunction (matrixview<double> (p, 10, 100, 100, 1));   // OK
+	*/
+	explicit matrixview (T * firstCell_, integer nrow_, integer ncol_, integer rowStride_, integer colStride_) :
 			firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
+	/*
+		The following constructor is implicit, i.e.,
+		you can assign a matrix to a matrixview.
+	*/
+	matrixview (matrix<T> const& other) :
+			matrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
+	/*
+		You cannot assign an automatrix to a matrixview:
+			auto mat = automatrix<double> (10, 100);
+			void myFunction (matrixview<double> const&);
+			myFunction (mat);   // not OK
+		Instead, you will have to do
+			myFunction (mat.all());   // not OK
+	*/
+	matrixview (automatrix<T> const& other) = delete;
+	explicit matrixview (vector<T> const& vec, integer nrow, integer ncol) :
+			matrixview (vec. cells, nrow, ncol, ncol, 1_integer)
+	{
+		Melder_assert (nrow * ncol <= vec. size);
+	}
 	vectorview<T> operator[] (integer rowNumber) const {
 		return vectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
 	}
