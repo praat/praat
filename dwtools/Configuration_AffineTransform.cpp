@@ -131,7 +131,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 		do_steps45 (w.all(), t, c.all(), & f);
 
-	} while (fabs (f_old - f) / f_old > tolerance && numberOfIterations < maximumNumberOfIterations);
+	} while (fabs (f_old - f) > std::max (tolerance * fabs (f_old), NUMeps) && numberOfIterations < maximumNumberOfIterations);
 }
 
 autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me, Configuration thee, integer maximumNumberOfIterations, double tolerance) {

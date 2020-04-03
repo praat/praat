@@ -920,7 +920,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				
 				lnp = GaussianMixture_getLikelihoodValue (me, probabilities.get(), criterion);
 				Melder_progress ((double) iter / (double) maxNumberOfIterations, criterionText, U": ", lnp / thy numberOfRows, U", L0: ", lnp_start);
-			} while (fabs ((lnp - lnp_prev) / lnp_prev) > delta_lnp && iter < maxNumberOfIterations);
+			} while (fabs (lnp - lnp_prev) > std::max (fabs (delta_lnp * lnp_prev), NUMeps) && iter < maxNumberOfIterations);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -1047,7 +1047,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 				lnew = GaussianMixture_getLikelihoodValue (him.get(), probabilities.get(), criterion);
 				if (info)
 					MelderInfo_writeLine (U"iter = ", iter, U", ML = ", lnew);
-			} while (lnew > lprev && fabs ((lprev - lnew) / lnew) > tolerance && iter < maxNumberOfIterations);
+			} while (lnew > lprev && fabs (lprev - lnew) > std::max (tolerance * fabs (lnew), NUMeps) && iter < maxNumberOfIterations);
 			if (lnew > lmax) {
 				best = Data_copy (him.get());
 				lmax = lnew;

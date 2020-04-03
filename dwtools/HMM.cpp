@@ -977,8 +977,8 @@ void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee
 			iter ++;
 			HMM_HMMBaumWelch_reestimate (me, bw.get());
 			if (info)
-				MelderInfo_writeLine (U"Iteration: ", iter, U" ln(prob): ", bw -> lnProb); 
-		} while (fabs ((lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
+				MelderInfo_writeLine (U"Iteration: ", iter, U" ln(prob): ", bw -> lnProb);
+		} while (fabs (lnp - bw -> lnProb) > std::max (fabs (delta_lnp * bw -> lnProb), NUMeps));
 		if (info) {
 			MelderInfo_writeLine (U"******** Learning summary *********");
 			MelderInfo_writeLine (U"  Processed ", thy size, U" sequence", ( thy size > 1 ? U"s," : U"," ));

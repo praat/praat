@@ -303,7 +303,6 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			const double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
 			const double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
 			const double delta = std::max (df, dw);
-			
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
 			if (info)
 				MelderInfo_writeLine (U"Iteration: ", iter, U", dnorm: ", dnorm, U", delta: ", delta);

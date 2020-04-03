@@ -258,10 +258,10 @@ static void Sound_fadeIn (Sound me, double duration, bool fromFirstNonZeroSample
 static void Sound_fadeOut (Sound me, double duration) {
 	integer numberOfSamples = Melder_ifloor (duration / my dx);
 
-	if (numberOfSamples < 2)
-		return;
 	if (numberOfSamples > my nx)
 		numberOfSamples = my nx;
+	if (numberOfSamples < 2)
+		return;
 	const integer istart = my nx - numberOfSamples;
 	/*
 		Only one channel
