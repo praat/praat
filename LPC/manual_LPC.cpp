@@ -207,7 +207,7 @@ TAG (U"##Garnish")
 DEFINITION (U"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190909)
+MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20200403)
 INTRO (U"Smoothes the selected @PowerCepstrogram by averaging. The smoothed PowerCepstrogram is the result of two separate steps. "
 	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
@@ -219,7 +219,7 @@ ENTRY (U"Note")
 NORMAL (U"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
 CODE (U"selectObject (\"Sound xxx\")")
-CODE (U"To PowerCepstrogram: 0.041, 0.002, 5000.0")
+CODE (U"To PowerCepstrogram: 60.0, 0.041, 0.002, 5000.0")
 CODE (U"Smooth: 0.02, 0.001")
 MAN_END
 
