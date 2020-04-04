@@ -5923,8 +5923,8 @@ FORM (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint e
 	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (xFromTime, U"left Horizontal time range (s)", U"0.0")
 	REAL (xToTime, U"right Horizontal time range (s)", U"0.0")
-	REAL (yFromTime, U"left Vertical time range", U"0.0")
-	REAL (yToTime, U"right Vertical time range", U"0.0")
+	REAL (yFromTime, U"left Vertical range", U"0.0")
+	REAL (yToTime, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
