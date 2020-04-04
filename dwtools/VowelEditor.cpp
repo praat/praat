@@ -870,7 +870,7 @@ static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {  // deprecated 20200404
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
@@ -897,7 +897,7 @@ static void menu_cb_setF0 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
 	EDITOR_FORM (U"Set F3 & F4", nullptr);
 		POSITIVE (f3, U"F3 (Hz)", U"2500.0")
 		POSITIVE (b3, U"B3 (Hz)", U"250.0")
@@ -984,7 +984,7 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
 	EDITOR_FORM (U"Show trajectory time marks every", nullptr);
 		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery ())
 	EDITOR_OK
