@@ -23,16 +23,16 @@
 	Base-1 tensors, for parallellism with the scripting language.
 
 	Initialization (tested in praat.cpp):
-		VEC x;               // initializes x.at to nullptr and x.size to 0
+		VEC x;               // initializes x.cells to nullptr and x.size to 0
 		double a [] = { undefined, 3.14, 2.718, ... };
 		VEC x3 { a, 100 };   // initializes x to 100 values from a base-1 array
 
-		autoVEC y;                     // initializes y.at to nullptr and y.size to 0
+		autoVEC y;                     // initializes y.cells to nullptr and y.size to 0
 		autoVEC y2 = newVECzero (100); // initializes y to 100 zeroes, having ownership
 		autoVEC y1 = newVECraw (100);  // initializes y to 100 uninitialized values (caution!), having ownership
 		y.adoptFromAmbiguousOwner (x); // initializes y to the content of x, taking ownership (explicit, so not "y = x")
-		VEC z = y.releaseToAmbiguousOwner();   // releases ownership, y.at becoming nullptr
-		"}"                            // end of scope destroys y.at if not nullptr
+		VEC z = y.releaseToAmbiguousOwner();   // releases ownership, y.cells becoming nullptr
+		"}"                            // end of scope destroys y.cells if not nullptr
 		autoVEC z1 = y2.move()         // moves the content of y2 to z1, emptying y2
 
 	To return an autoVEC from a function, transfer ownership like this:
@@ -43,8 +43,19 @@
 		}
 */
 
-template <typename T>
-class autovector;   // forward declaration, needed in the declaration of vector<>
+/*
+	Forward declarations, needed because of all the conversions and deletions.
+*/
+template <typename T> class vector;
+template <typename T> class constvector;
+template <typename T> class vectorview;
+template <typename T> class constvectorview;
+template <typename T> class autovector;
+template <typename T> class matrix;
+template <typename T> class constmatrix;
+template <typename T> class matrixview;
+template <typename T> class constmatrixview;
+template <typename T> class automatrix;
 
 template <typename T>
 class vector {
@@ -53,8 +64,25 @@ public:
 	integer size = 0;
 public:
 	vector () = default;
-	explicit vector (T *givenCells, integer givenSize): cells (givenCells), size (givenSize) { }
-	vector (const vector& other) = default;
+	explicit vector (T *givenCells, integer givenSize)
+		: cells (givenCells), size (givenSize) { }
+	explicit vector (matrix<T> const& mat)
+		: vector (mat.cells, mat.nrow * mat.ncol) { }
+	/*
+		An initialization such as
+			VEC vec1 = vec2;
+		should be allowed.
+	 */
+	vector (vector const& other)
+		= default;
+	/*
+		Likewise, an assignment like
+			VEC vec1, vec2;
+			vec1 = vec2;
+		should be allowed.
+	*/
+	vector& operator= (vector const& other)
+		= default;
 	/*
 		Letting an autovector convert to a vector would lead to errors such as in
 			VEC vec = newVECzero (10);
@@ -62,17 +90,10 @@ public:
 		after the initialization of vec.
 		So we rule out this initialization.
 	*/
-	vector (const autovector<T>& other) = delete;
+	vector (autovector<T> const& other)
+		= delete;
 	/*
 		Likewise, an assignment like
-			VEC vec1, vec2;
-			vec1 = vec2;
-		should be allowed...
-	*/
-	//vector& operator= (const vector&) = delete;
-	vector& operator= (const vector&) = default;
-	/*
-		but an assignment like
 			autoVEC x = newVECzero (10);
 			VEC y;
 			y = x;
@@ -80,7 +101,8 @@ public:
 			y = x.get();
 		explicitly.
 	*/
-	vector& operator= (const autovector<T>&) = delete;
+	vector& operator= (const autovector<T>&)
+		= delete;
 	T& operator[] (integer i) const {
 		return our cells [i - 1];
 	}
@@ -101,6 +123,10 @@ public:
 		Melder_assert (last >= 1 && last <= our size);
 		return vector<T> (& our cells [first - 1], newSize);
 	}
+	matrix<T> asmatrix (integer nrow, integer ncol) {
+		Melder_assert (nrow * ncol <= our size);
+		return matrix (our cells, nrow, ncol);
+	}
 	T *begin () const { return our cells; }
 	T *end () const { return our cells + our size; }
 	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
@@ -113,12 +139,14 @@ public:
 	T * firstCell = nullptr;
 	integer size = 0;
 	integer stride = 1;
-	vectorview () = default;
-	vectorview (const vector<T>& other) :
-			firstCell (other.cells), size (other.size), stride (1) { }
-	vectorview (const autovector<T>& other) = delete;
-	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_) :
-			firstCell (firstCell_), size (size_), stride (stride_) { }
+	vectorview ()
+		= default;
+	vectorview (const vector<T>& other)
+		: firstCell (other.cells), size (other.size), stride (1) { }
+	vectorview (const autovector<T>& other)
+		= delete;
+	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_)
+		: firstCell (firstCell_), size (size_), stride (stride_) { }
 	T& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
@@ -129,6 +157,10 @@ public:
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 1 && last <= our size);
 		return vectorview<T> (& our operator[] (first), newSize, our stride);
+	}
+	matrixview<T> asmatrixview (integer nrow, integer ncol) {
+		Melder_assert (nrow * ncol <= our size);
+		return matrixview (our cells, nrow, ncol, ncol * our stride, our stride);
 	}
 	T *begin () const { return & our operator[] (1); }
 	T *end () const { return & our operator[] (our size + 1); }
@@ -141,14 +173,17 @@ class constvector {
 public:
 	const T *cells = nullptr;
 	integer size = 0;
-	constvector () = default;
-	explicit constvector (const T *givenCells, integer givenSize): cells (givenCells), size (givenSize) { }
-	constvector (vector<T> vec): cells (vec.cells), size (vec.size) { }
-	//constvector (const constvector& other): cells (other.cells), size (other.size) { }
-	//constvector& operator= (const constvector& other) {
-	//	our cells = other.cells;
-	//	our size = other.size;
-	//}
+public:
+	constvector ()
+		= default;
+	explicit constvector (const T *givenCells, integer givenSize)
+		: cells (givenCells), size (givenSize) { }
+	explicit constvector (constmatrix<T> const& mat)
+		: constvector (mat.cells, mat.nrow * mat.ncol) { }
+	constvector (vector<T> const& other)
+		: constvector (other.cells, other.size) { }
+	//constvector (constvector const& other) = default;
+	//constvector& operator= (constvector const& other) = default;
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our cells [i - 1];
 	}
@@ -159,6 +194,10 @@ public:
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 1 && last <= our size);
 		return constvector<T> (& our cells [first - 1], newSize);
+	}
+	constmatrix<T> asmatrix (integer nrow, integer ncol) {
+		Melder_assert (nrow * ncol <= our size);
+		return constmatrix (our cells, nrow, ncol);
 	}
 	const T *begin () const { return our cells; }
 	const T *end () const { return our cells + our size; }
@@ -173,14 +212,16 @@ public:
 	integer size = 0;
 	integer stride = 1;
 	constvectorview () = default;
-	constvectorview (const constvector<T>& other) :
-			firstCell (other.cells), size (other.size), stride (1) { }
-	constvectorview (const vector<T>& other) :
-			firstCell (other.cells), size (other.size), stride (1) { }
-	constvectorview (const autovector<T>& other) = delete;
-	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_) :
-			firstCell (firstCell_), size (size_), stride (stride_) { }
-	constvectorview (vectorview<T> vec): firstCell (vec.firstCell), size (vec.size), stride (vec.stride) { }
+	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_)
+		: firstCell (firstCell_), size (size_), stride (stride_) { }
+	constvectorview (vectorview<T> const& other)
+		: constvectorview (other.firstCell, other.size, other.stride) { }
+	constvectorview (constvector<T> const& other)
+		: constvectorview (other.cells, other.size, 1) { }
+	constvectorview (vector<T> const& other)
+		: constvectorview (other.cells, other.size, 1) { }
+	constvectorview (autovector<T> const& other)   // TODO: should be superfluous
+		= delete;
 	T const& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
@@ -191,6 +232,10 @@ public:
 		Melder_assert (first >= 1 && first <= our size);
 		Melder_assert (last >= 1 && last <= our size);
 		return constvectorview<T> (& our operator[] (first), newSize, our stride);
+	}
+	constmatrixview<T> asmatrixview (integer nrow, integer ncol) {
+		Melder_assert (nrow * ncol <= our size);
+		return constmatrixview (our cells, nrow, ncol, ncol * our stride, our stride);
 	}
 	const T *begin () const { return & our operator[] (1); }
 	const T *end () const { return & our operator[] (our size + 1); }
@@ -209,7 +254,8 @@ template <typename T>
 class autovector : public vector<T> {
 	integer _capacity = 0;
 public:
-	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
+	autovector ()   // come into existence without a payload
+		: vector<T> (nullptr, 0) { }
 	explicit autovector (integer givenSize, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
 		our cells = ( givenSize == 0 ? nullptr : MelderArray:: _alloc <T> (givenSize, initializationType) );
@@ -238,8 +284,8 @@ public:
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
 	*/
-	autovector (const autovector&) = delete;   // disable copy constructor
-	autovector& operator= (const autovector&) = delete;   // disable copy assignment
+	autovector (autovector const& other) = delete;   // disable copy constructor
+	autovector& operator= (autovector const& other) = delete;   // disable copy assignment
 	/*
 		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
 		This implements buying a payload from another autovector (which involves destroying our current payload).
@@ -360,30 +406,28 @@ autovector<T> newvectorcopy (vectorview<T> source) {
 }
 
 template <typename T>
-class automatrix;   // forward declaration, needed in the declaration of matrix
-template <typename T>
-class matrixview;
-template <typename T>
-class constmatrixview;
-
-template <typename T>
 class matrix {
 public:
 	T *cells = nullptr;
 	integer nrow = 0, ncol = 0;
 public:
-	matrix () = default;
-	explicit matrix (T *givenCells, integer givenNrow, integer givenNcol) :
-			cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	matrix (const matrix& other) = default;
-	matrix (const automatrix<T>& other) = delete;
-	explicit matrix (vector<T> const& vec, integer nrow, integer ncol) :
-			matrix (vec. cells, nrow, ncol)
+	matrix ()
+		= default;
+	explicit matrix (T *givenCells, integer givenNrow, integer givenNcol)
+		: cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	matrix (matrix const& other)
+		= default;
+	matrix& operator= (matrix const& other)
+		= default;
+	matrix (automatrix<T> const& other)
+		= delete;
+	matrix& operator= (automatrix<T> const& other)
+		= delete;
+	explicit matrix (vector<T> const& vec, integer nrow, integer ncol)
+		: matrix (vec.cells, nrow, ncol)
 	{
 		Melder_assert (nrow * ncol <= vec. size);
 	}
-	matrix& operator= (const matrix&) = default;
-	matrix& operator= (const automatrix<T>&) = delete;
 	vector<T> operator[] (integer rowNumber) const {
 		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
 	}
@@ -431,6 +475,13 @@ public:
 	matrixview<T> transpose () const {
 		return matrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
+	vector<T> asvector () const {
+		return vector<T> (our cells, our nrow * our ncol);
+	}
+	vector<T> asvector (integer size) const {
+		Melder_assert (size <= our nrow * our ncol);
+		return vector<T> (our cells, size);
+	}
 };
 
 template <typename T>
@@ -442,15 +493,16 @@ public:
 	/*
 		Make sure that each of the following creates an appropriately initialized matrixview:
 			matrixview<double> matvu;   // OK
-			auto matvu = matrixview<double>();
+			auto matvu = matrixview<double>();   // OK
 	*/
-	matrixview () = default;
+	matrixview ()
+		= default;
 	/*
-		The following constructors is explicit, i.e.,
+		The following constructor is explicit, i.e.,
 		it cannot be used as an implicit conversion from an initializer list,
 		as in any of the following:
-			matrixview<double> mat = { p, 10, 100, 100, 1 };   // not OK
-			myFunction ({ p, 10, 100, 100, 1 });   // not OK
+			matrixview<double> mat = { p, 10, 100, 100, 1 };   // WRONG
+			myFunction ({ p, 10, 100, 100, 1 });   // WRONG
 		whereas any of the following is fine:
 			matrixview<double> mat { p, 10, 100, 100, 1 };   // OK
 			matrixview<double> mat (p, 10, 100, 100, 1);   // OK
@@ -459,25 +511,26 @@ public:
 			myFunction (matrixview<double> { p, 10, 100, 100, 1 });   // OK
 			myFunction (matrixview<double> (p, 10, 100, 100, 1));   // OK
 	*/
-	explicit matrixview (T * firstCell_, integer nrow_, integer ncol_, integer rowStride_, integer colStride_) :
-			firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
+	explicit matrixview (T * firstCell_, integer nrow_, integer ncol_, integer rowStride_, integer colStride_)
+		: firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
 	/*
 		The following constructor is implicit, i.e.,
 		you can assign a matrix to a matrixview.
 	*/
-	matrixview (matrix<T> const& other) :
-			matrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
+	matrixview (matrix<T> const& other)
+		: matrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
 	/*
 		You cannot assign an automatrix to a matrixview:
 			auto mat = automatrix<double> (10, 100);
 			void myFunction (matrixview<double> const&);
-			myFunction (mat);   // not OK
+			myFunction (mat);   // WRONG
 		Instead, you will have to do
-			myFunction (mat.all());   // not OK
+			myFunction (mat.all());   // OK
 	*/
-	matrixview (automatrix<T> const& other) = delete;
-	explicit matrixview (vector<T> const& vec, integer nrow, integer ncol) :
-			matrixview (vec. cells, nrow, ncol, ncol, 1_integer)
+	matrixview (automatrix<T> const& other)
+		= delete;
+	explicit matrixview (vectorview<T> const& vec, integer nrow, integer ncol) :
+			matrixview (vec.cells, nrow, ncol, ncol * vec.stride, vec.stride)
 	{
 		Melder_assert (nrow * ncol <= vec. size);
 	}
@@ -528,10 +581,15 @@ public:
 	const T *cells = nullptr;
 	integer nrow = 0, ncol = 0;
 	constmatrix () = default;
-	//explicit constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	constmatrix (matrix<T> mat) :
-			cells (mat.cells), nrow (mat.nrow), ncol (mat.ncol) { }
-
+	explicit constmatrix (const T *givenCells, integer givenNrow, integer givenNcol)
+		: cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	constmatrix (matrix<T> const& other)
+		: constmatrix (other.cells, other.nrow, other.ncol) { }
+	explicit constmatrix (vector<T> const& vec, integer nrow, integer ncol)
+		: constmatrix (vec.cells, nrow, ncol)
+	{
+		Melder_assert (nrow * ncol <= vec. size);
+	}
 	constvector<T> operator[] (integer rowNumber) const {
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
 	}
@@ -579,6 +637,13 @@ public:
 	constmatrixview<T> transpose () const {
 		return constmatrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
+	constvector<T> asvector () const {
+		return constvector<T> (our cells, our nrow * our ncol);
+	}
+	constvector<T> asvector (integer size) const {
+		Melder_assert (size <= our nrow * our ncol);
+		return constvector<T> (our cells, size);
+	}
 };
 
 template <typename T>
@@ -587,16 +652,18 @@ public:
 	const T * firstCell = nullptr;
 	integer nrow = 0, ncol = 0;
 	integer rowStride = 0, colStride = 1;
-	constmatrixview () = default;
-	constmatrixview (const constmatrix<T>& other) :
-			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-	constmatrixview (const matrix<T>& other) :
-			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-	constmatrixview (const automatrix<T>& other) = delete;
-	explicit constmatrixview (const T * const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_) :
-			firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
-	constmatrixview (matrixview<T> mat) :
-			firstCell (mat.firstCell), nrow (mat.nrow), ncol (mat.ncol), rowStride (mat.rowStride), colStride (mat.colStride) { }
+	constmatrixview ()
+		= default;
+	explicit constmatrixview (const T * const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_)
+		: firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
+	constmatrixview (const constmatrix<T>& other)
+		: constmatrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
+	constmatrixview (const matrix<T>& other)   // shortcut the otherwise double conversion
+		: constmatrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
+	constmatrixview (const automatrix<T>& other)
+		= delete;
+	constmatrixview (matrixview<T> const& other)
+		: constmatrixview (other.firstCell, other.nrow, other.ncol, other.rowStride, other.colStride) { }
 	constvectorview<T> operator[] (integer i) const {
 		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
 	}
@@ -651,7 +718,8 @@ public:
 template <typename T>
 class automatrix : public matrix<T> {
 public:
-	automatrix (): matrix<T> { nullptr, 0, 0 } { }   // come into existence without a payload
+	automatrix ()   // come into existence without a payload
+		: matrix<T> (nullptr, 0, 0) { }
 	explicit automatrix (integer givenNrow, integer givenNcol, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
@@ -664,12 +732,13 @@ public:
 		if (our cells)
 			MelderArray:: _free (our cells, our nrow * our ncol);
 	}
-	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	const matrix<T>& get () const { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the cell pointer, nrow or ncol)
+	const matrix<T>& get () const   // let the public use the payload (they may change the values in the cells but not the cell pointer, nrow or ncol)
+		{ return *this; }
 	matrixview<T> all () const {
 		return matrixview<T> (our cells, our nrow, our ncol, our ncol, 1);
 	}
-	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
+	void adoptFromAmbiguousOwner (matrix<T> const& given) {   // buy the payload from a non-automatrix
 		our reset();
 		our cells = given.cells;
 		our nrow = given.nrow;
@@ -683,13 +752,17 @@ public:
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
 	*/
-	automatrix (const automatrix&) = delete;   // disable copy constructor
-	automatrix& operator= (const automatrix&) = delete;   // disable copy assignment
+	automatrix (automatrix const& other)   // disable copy constructor
+		= delete;
+	automatrix& operator= (automatrix const& other)   // disable copy assignment
+		= delete;
 	/*
 		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
 		This implements buying a payload from another automatrix (which involves destroying our current payload).
 	*/
-	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor
+	automatrix (automatrix&& other) noexcept   // enable move constructor
+			: matrix<T> (other.get())
+	{
 		other.cells = nullptr;   // disown source
 		other.nrow = 0;   // to keep the source in a valid state
 		other.ncol = 0;   // to keep the source in a valid state
@@ -818,8 +891,10 @@ public:
 	T * cells = nullptr;
 	integer ndim1 = 0, ndim2 = 0, ndim3 = 0;
 	integer stride1 = 0, stride2 = 0, stride3 = 1;
-	tensor3 () = default;
-	tensor3 (const autotensor3<T>& other) = delete;
+	tensor3 ()
+		= default;
+	tensor3 (autotensor3<T> const& other)
+		= delete;
 	explicit tensor3 (T * cells_,
 		integer ndim1_, integer ndim2_, integer ndim3_,
 		integer stride1_, integer stride2_, integer stride3_
@@ -924,8 +999,10 @@ public:
 	const T * cells = nullptr;
 	integer ndim1 = 0, ndim2 = 0, ndim3 = 0;
 	integer stride1 = 0, stride2 = 0, stride3 = 1;
-	consttensor3 () = default;
-	consttensor3 (const autotensor3<T>& other) = delete;
+	consttensor3 ()
+		= default;
+	consttensor3 (const autotensor3<T>& other)
+		= delete;
 	explicit consttensor3 (const T * cells_,
 		integer ndim1_, integer ndim2_, integer ndim3_,
 		integer stride1_, integer stride2_, integer stride3_
