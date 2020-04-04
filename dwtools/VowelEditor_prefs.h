@@ -33,10 +33,11 @@ prefs_begin (VowelEditor)
 	prefs_add_double_with_data (VowelEditor, synthesis_q2,                1, U"10.0")   // F/B
 	prefs_add_string_with_data (VowelEditor, synthesis_extraFBPairs,      1, U"2500 250 3500 350 4500 450")   // Hz
 	prefs_add_double_with_data (VowelEditor, trajectory_markEvery,        1, U"0.05")   // s
-	prefs_add_double_with_data (VowelEditor, trajectory_extendDuration,   1, U"0.05")   // s
+	prefs_add_string_with_data (VowelEditor, trajectory_colour,           1, U"Black")   // Colour
 	prefs_add_double_with_data (VowelEditor, trajectory_minimumDuration,  1, U"0.01")  // s
 	prefs_add_double_with_data (VowelEditor, trajectory_maximumDuration,  1, U"4.0")  // s
 	prefs_add_double_with_data (VowelEditor, trajectory_duration,         1, U"0.1")   // s
+	prefs_add_double_with_data (VowelEditor, trajectory_extendDuration,   1, U"0.05")   // s
 	prefs_add_enum_with_data   (VowelEditor, marks_speakerType,           1, kVowelEditor_speakerType, WOMAN)
 	prefs_add_enum_with_data   (VowelEditor, marks_dataSet,               1, kVowelEditor_marksDataSet, AMERICAN_ENGLISH)
 	prefs_add_string_with_data (VowelEditor, marks_fileName,              1, U"")
