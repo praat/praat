@@ -434,6 +434,7 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
+	Graphics_setColour (g, MelderColour_fromColourName (my p_trajectory_colour));
 	if (thy xmax - thy xmin < 0.005)   // too short to hear?
 		Graphics_setColour (g, Melder_RED);
 	
@@ -994,6 +995,22 @@ static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FO
 	EDITOR_END
 }
 
+static void menu_cb_trajectory_settings (VowelEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Trajectory settings", nullptr);
+		LABEL (U"Show trajectory time marks every")
+		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery ())
+		WORD (colour, U"Trajectory coulour", my default_trajectory_colour ())
+	EDITOR_OK
+		SET_REAL (distance, my p_trajectory_markEvery)
+		SET_STRING (colour, my p_trajectory_colour)  // TODO SET_COLOUR
+	EDITOR_DO
+		my pref_trajectory_markEvery () = my p_trajectory_markEvery = distance;
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour);
+		Graphics_updateWs (my graphics.get());
+	EDITOR_END
+
+}
+
 #pragma mark - button methods
 
 static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
@@ -1186,7 +1203,8 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"View", U"Show vowel marks from fixed set...", 0, menu_cb_showVowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_showVowelMarksFromTableFile);
 	Editor_addCommand (this, U"View", U"--show trajectory time marks--", 0, nullptr);
-	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", 0, menu_cb_showTrajectoryTimeMarksEvery);
+	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", Editor_HIDDEN, menu_cb_showTrajectoryTimeMarksEvery);
+	Editor_addCommand (this, U"View", U"Trajectory settings...", 0, menu_cb_trajectory_settings);
 }
 
 void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
