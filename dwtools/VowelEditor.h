@@ -23,6 +23,7 @@
  djmw 20110306 Latest modification.
 */
 
+#include "AnyTier.h"
 #include "Editor.h"
 #include "FormantTier.h"
 #include "PitchTier.h"
@@ -31,6 +32,15 @@
 //#include "Vowel_def.h"
 
 #include "VowelEditor_enums.h"
+
+Thing_define (TrajectoryPoint, AnyPoint) {
+	double x, y;
+	MelderColour colour;
+};
+
+Thing_define (Trajectory, Function) {
+	SortedSetOfDoubleOf<TrajectoryPoint> points;
+};
 
 Thing_define (VowelSpecification, Function) {
 	autoPitchTier pitchTier;
@@ -41,8 +51,9 @@ Thing_define (VowelEditor, Editor) {
 	int shiftKeyPressed;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
-	autoTable marks;   // Vowel, F1, F2, Colour...
-	autoVowelSpecification vowel;
+	autoTable marks;   // Vowel, F1, F2, Colour
+	autoVowelSpecification vowel; // TODO remove
+	autoTrajectory trajectory;
 	autoVEC extraFrequencyBandwidthPairs;
 	GuiDrawingArea drawingArea;
 	GuiButton playButton, reverseButton, publishButton;

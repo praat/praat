@@ -54,9 +54,7 @@ trajectory --> path ????
 #include "EditorM.h"
 #include "FormantGrid.h"
 #include "KlattGrid.h"
-#include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"
-#include "PointProcess_and_Sound.h"
 #include "Polygon.h"
 #include "Preferences.h"
 #include "TableOfReal_extensions.h"
@@ -94,6 +92,40 @@ Thing_implement (VowelEditor, Editor, 0);
 #define MARGIN_BOTTOM (60+STATUS_INFO)
 
 #define MICROSECPRECISION(x) (round((x)*1000000)/1000000)
+
+#pragma mark - class TrajectoryPointTier
+
+Thing_implement (TrajectoryPoint, AnyPoint, 0);
+
+static autoTrajectoryPoint TrajectoryPoint_create (double time, double x, double y, MelderColour colour) {
+	autoTrajectoryPoint thee = Thing_new (TrajectoryPoint);
+	thy number = time;
+	thy x =  x;
+	thy y = y;
+	thy colour = colour;
+	return thee;
+}
+
+Thing_implement (Trajectory, Function, 0);
+
+static autoTrajectory Trajectory_create (double duration) {
+	try {
+		autoTrajectory me = Thing_new (Trajectory);
+		Function_init (me.get(), 0.0, duration);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"trajectory not created.");
+	}
+}
+
+static void Trajectory_addPoint (Trajectory me, double time, double x, double y, MelderColour colour) {
+	try {
+		autoTrajectoryPoint point = TrajectoryPoint_create (time, x, y, colour);
+		my points . addItem_move (std::move (& point));
+	} catch (MelderError) {
+		Melder_throw (me, U" no point added.");
+	}
+}
 
 #pragma mark - class Vowel
 
