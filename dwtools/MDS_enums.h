@@ -20,7 +20,7 @@
  */
 
 enums_begin (kMDS_AnalysisScale, 0)
-	enums_add (kMDS_AnalysisScale, 0, ABSOLUTE, U"Absolute")
+	enums_add (kMDS_AnalysisScale, 0, ABSOLUTE_, U"Absolute")
 	enums_add (kMDS_AnalysisScale, 1, RATIO, U"Ratio")
 	enums_add (kMDS_AnalysisScale, 2, INTERVAL, U"Interval")
 	enums_add (kMDS_AnalysisScale, 3, SPLINE, U"Spline")
