@@ -28,7 +28,7 @@ enums_end (kDataModelerFunction, 2, LEGENDRE)
 
 enums_begin (kDataModelerParameter, 1)
 	enums_add (kDataModelerParameter, 1, FREE, U"Free")
-	enums_add (kDataModelerParameter, 2, FIXED, U"Fixed")
+	enums_add (kDataModelerParameter, 2, FIXED_, U"Fixed")
 	enums_add (kDataModelerParameter, 3, NOT_DEFINED, U"Undefined")
 enums_end (kDataModelerParameter, 3, NOT_DEFINED)
 
@@ -36,7 +36,7 @@ enums_begin (kDataModelerWeights, 1)
 	enums_add (kDataModelerWeights, 1, EQUAL_WEIGHTS, U"Equal")
 	enums_add (kDataModelerWeights, 2, ONE_OVER_SIGMA, U"One over sigma")
 	enums_add (kDataModelerWeights, 3, ONE_OVER_SQRTSIGMA, U"One over sqrt(sigma)")
-	enums_add (kDataModelerWeights, 4, RELATIVE, U"Relative")
-enums_end (kDataModelerWeights, 4, RELATIVE)
+	enums_add (kDataModelerWeights, 4, RELATIVE_, U"Relative")
+enums_end (kDataModelerWeights, 4, RELATIVE_)
 
 /* End of file DataModeler_enums.h */

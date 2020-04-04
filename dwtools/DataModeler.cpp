@@ -72,14 +72,14 @@ void structDataModeler :: v_info () {
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
 	MelderInfo_writeLine (U"      Each data point has ",  (weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U" the same weight (estimated)." :
 		( weighData == kDataModelerWeights::ONE_OVER_SIGMA ? U"a different weight (sigmaY)." : 
-		( weighData == kDataModelerWeights::RELATIVE ? U"a different relative weight (Y_value/sigmaY)." :
+		( weighData == kDataModelerWeights::RELATIVE_ ? U"a different relative weight (Y_value/sigmaY)." :
 		U"a different weight (SQRT(sigmaY))." ) ) ));
 	MelderInfo_writeLine (U"      Chi squared: ", chisq);
 	MelderInfo_writeLine (U"      Number of degrees of freedom: ", ndf);
 	MelderInfo_writeLine (U"      Probability: ", probability);
 	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++) {
-		double sigma = ( parameters [ipar] .status == kDataModelerParameter::FIXED ? 0 : sqrt (parameterCovariances -> data [ipar] [ipar]) );
+		double sigma = ( parameters [ipar] .status == kDataModelerParameter::FIXED_ ? 0 : sqrt (parameterCovariances -> data [ipar] [ipar]) );
 		MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar] .value, U"; sigma = ", sigma);
 	}
 }
@@ -263,7 +263,7 @@ void DataModeler_setParameterValue (DataModeler me, integer index, double value,
 }
 
 void DataModeler_setParameterValueFixed (DataModeler me, integer index, double value) {
-	DataModeler_setParameterValue (me, index, value, kDataModelerParameter::FIXED);
+	DataModeler_setParameterValue (me, index, value, kDataModelerParameter::FIXED_);
 }
 
 double DataModeler_getParameterValue (DataModeler me, integer index) {
@@ -297,7 +297,7 @@ double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, i
 	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
 		variance = 0;
 		for (integer ipar = fromIndex; ipar <= toIndex; ipar ++) {
-			if (my parameters [ipar] .status != kDataModelerParameter::FIXED) {
+			if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
 				variance += my parameterCovariances -> data [ipar] [ipar];
 				numberOfFreeParameters ++;
 			}
@@ -323,7 +323,7 @@ void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer t
 void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas) {
 	integer numberOfChangedParameters = 0;
 	for (integer ipar = my numberOfParameters; ipar > 0; ipar --) {
-		if (my parameters [ipar] .status != kDataModelerParameter::FIXED) {
+		if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
 			const double value = my parameters [ipar] .value;
 			double sigmas = numberOfSigmas * DataModeler_getParameterStandardDeviation (me, ipar);
 			if ((value - sigmas) * (value + sigmas) < 0) {
@@ -398,7 +398,7 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 			if (isdefined (sigma) && sigma > 0.0) {
 				if (weighData == kDataModelerWeights::ONE_OVER_SIGMA)
 					weight = 1.0 / sigma;
-				else if (weighData == kDataModelerWeights::RELATIVE)
+				else if (weighData == kDataModelerWeights::RELATIVE_)
 					weight = my data [ipoint] .y / sigma;
 				else if (weighData == kDataModelerWeights::ONE_OVER_SQRTSIGMA) {
 					weight = 1.0 / sqrt (sigma);
@@ -797,7 +797,7 @@ void DataModeler_fit (DataModeler me) {
 			For function evaluation with only the FIXED parameters
 		*/
 		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
-			if (my parameters [ipar] .status != kDataModelerParameter::FIXED)
+			if (my parameters [ipar] .status != kDataModelerParameter::FIXED_)
 				fixedParameters [ipar] .value = 0.0;
 
 		/*
@@ -839,7 +839,7 @@ void DataModeler_fit (DataModeler me) {
 		*/
 		Covariance cov = my parameterCovariances.get();
 		for (integer kpar = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			if (my parameters [ipar] .status != kDataModelerParameter::FIXED)
+			if (my parameters [ipar] .status != kDataModelerParameter::FIXED_)
 				my parameters [ipar] .value = parameters [kpar ++];
 			cov -> centroid [ipar] = my parameters [ipar] .value;
 		}
@@ -851,9 +851,9 @@ void DataModeler_fit (DataModeler me) {
 			autoMAT covtmp = SVD_getSquared (thee.get(), true);
 			cov -> data.all() <<= 0.0; // Set fixed parameters variances and covariances to zero.
 			for (integer irow = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-				if (my parameters [ipar] .status != kDataModelerParameter::FIXED) {
+				if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
 					for (integer icol = 1, jpar = 1; jpar <= my numberOfParameters; jpar ++) {
-						if (my parameters [jpar] .status != kDataModelerParameter::FIXED)
+						if (my parameters [jpar] .status != kDataModelerParameter::FIXED_)
 							cov -> data [ipar] [jpar] = covtmp [irow] [icol ++];
 					}
 					irow ++;
@@ -966,7 +966,7 @@ void DataModeler_reportChiSquared (DataModeler me) {
 	MelderInfo_writeLine (U"Chi squared test:");
 	MelderInfo_writeLine (( my weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U"Standard deviation is estimated from the data." :
 		( my weighData == kDataModelerWeights::ONE_OVER_SIGMA ? U"Sigmas are used as estimate for local standard deviations." :
-		( my weighData == kDataModelerWeights::RELATIVE ? U"1/Q's are used as estimate for local standard deviations." :
+		( my weighData == kDataModelerWeights::RELATIVE_ ? U"1/Q's are used as estimate for local standard deviations." :
 		U"Sqrt sigmas are used as estimate for local standard deviations." ) ) ));
 	double ndf, probability;
 	const double chisq = DataModeler_getChiSquaredQ (me, & probability, & ndf);
@@ -981,9 +981,9 @@ double DataModeler_getDataStandardDeviation (DataModeler me) {
 		autoVEC y = newVECraw (my numberOfDataPoints);
 		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
 			if (my data [i] .status != kDataModelerData::INVALID)
-				y [++ numberOfDataPoints] = my data [i] .y;
+				y [++ numberOfDataPoints] = my data [i]. y;
 		}
-		y.size = numberOfDataPoints;   // fake shrink
+		y. resize (numberOfDataPoints);   // fake shrink
 		return NUMstdev (y.get());
 	} catch (MelderError) {
 		Melder_throw (U"Cannot estimate sigma.");

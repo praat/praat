@@ -106,7 +106,7 @@ DO
 	STRING_ONE (DataModeler)
 		kDataModelerParameter status = DataModeler_getParameterStatus (me, parameterNumber);
 		conststring32 result = ( status == kDataModelerParameter::FREE ? U"Free" :
-			status == kDataModelerParameter::FIXED ? U"Fixed" : U"Undefined" );
+			status == kDataModelerParameter::FIXED_ ? U"Fixed" : U"Undefined" );
 	STRING_ONE_END
 }
 
@@ -663,7 +663,7 @@ DO
 	STRING_ONE (FormantModeler)
 		kDataModelerParameter status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		conststring32 result = Melder_cat (
-			status == kDataModelerParameter::FREE ? U"Free" : status == kDataModelerParameter::FIXED ? U"Fixed" : U"Undefined",
+			status == kDataModelerParameter::FREE ? U"Free" : status == kDataModelerParameter::FIXED_ ? U"Fixed" : U"Undefined",
 			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
 		);
 	STRING_ONE_END

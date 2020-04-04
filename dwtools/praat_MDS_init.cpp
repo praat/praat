@@ -903,7 +903,7 @@ FORM (NEW_Dissimilarity_to_Distance, U"Dissimilarity: To Distance", U"Dissimilar
 	OK
 DO
 	CONVERT_EACH (Dissimilarity)
-		autoDistance result = Dissimilarity_to_Distance (me, scale ? kMDS_AnalysisScale::ORDINAL : kMDS_AnalysisScale::ABSOLUTE);
+		autoDistance result = Dissimilarity_to_Distance (me, scale ? kMDS_AnalysisScale::ORDINAL : kMDS_AnalysisScale::ABSOLUTE_);
 	CONVERT_EACH_END (my name.get())
 }
 

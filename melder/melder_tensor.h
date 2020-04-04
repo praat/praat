@@ -423,10 +423,10 @@ public:
 		= delete;
 	matrix& operator= (automatrix<T> const& other)
 		= delete;
-	explicit matrix (vector<T> const& vec, integer nrow, integer ncol)
-		: matrix (vec.cells, nrow, ncol)
+	explicit matrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
+		: matrix (vec.cells, givenNrow, givenNcol)
 	{
-		Melder_assert (nrow * ncol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec. size);
 	}
 	vector<T> operator[] (integer rowNumber) const {
 		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
@@ -529,10 +529,10 @@ public:
 	*/
 	matrixview (automatrix<T> const& other)
 		= delete;
-	explicit matrixview (vectorview<T> const& vec, integer nrow, integer ncol) :
-			matrixview (vec.cells, nrow, ncol, ncol * vec.stride, vec.stride)
+	explicit matrixview (vectorview<T> const& vec, integer givenNrow, integer givenNcol) :
+			matrixview (vec.cells, givenNrow, givenNcol, givenNcol * vec.stride, vec.stride)
 	{
-		Melder_assert (nrow * ncol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec. size);
 	}
 	vectorview<T> operator[] (integer rowNumber) const {
 		return vectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
@@ -585,10 +585,10 @@ public:
 		: cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> const& other)
 		: constmatrix (other.cells, other.nrow, other.ncol) { }
-	explicit constmatrix (vector<T> const& vec, integer nrow, integer ncol)
-		: constmatrix (vec.cells, nrow, ncol)
+	explicit constmatrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
+		: constmatrix (vec.cells, givenNrow, givenNcol)
 	{
-		Melder_assert (nrow * ncol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec. size);
 	}
 	constvector<T> operator[] (integer rowNumber) const {
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
@@ -664,6 +664,11 @@ public:
 		= delete;
 	constmatrixview (matrixview<T> const& other)
 		: constmatrixview (other.firstCell, other.nrow, other.ncol, other.rowStride, other.colStride) { }
+	explicit constmatrixview (constvectorview<T> const& vec, integer givenNrow, integer givenNcol) :
+			constmatrixview (vec.cells, givenNrow, givenNcol, givenNcol * vec.stride, vec.stride)
+	{
+		Melder_assert (givenNrow * givenNcol <= vec. size);
+	}
 	constvectorview<T> operator[] (integer i) const {
 		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
 	}

@@ -23,10 +23,10 @@
  djmw 20110306 Latest modification.
 */
 
-#include "Editor.h"
 #include "FormantTier.h"
 #include "PitchTier.h"
 #include "TableOfReal.h"
+#include "Editor.h"
 
 //#include "Vowel_def.h"
 

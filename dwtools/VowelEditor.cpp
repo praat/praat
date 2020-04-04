@@ -51,7 +51,6 @@ trajectory --> path ????
  Make sound-follows-mouse real time!
 */
 
-#include "EditorM.h"
 #include "FormantGrid.h"
 #include "KlattGrid.h"
 #include "PitchTier_to_PointProcess.h"
@@ -61,7 +60,8 @@ trajectory --> path ????
 #include "Preferences.h"
 #include "TableOfReal_extensions.h"
 #include "Table_extensions.h"
-#include "VowelEditor.h"
+#include "VowelEditor.h"   // this includes windows.h
+#include "EditorM.h"   // include this *after* including windows.h (it redefines BOOLEAN)
 #include "machine.h"
 #include <time.h>
 
