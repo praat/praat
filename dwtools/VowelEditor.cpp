@@ -997,8 +997,7 @@ static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FO
 
 static void menu_cb_trajectory_settings (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Trajectory settings", nullptr);
-		LABEL (U"Show trajectory time marks every")
-		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery ())
+		POSITIVE (distance, U"Distance between time marks (s)", my default_trajectory_markEvery ())
 		WORD (colour, U"Trajectory coulour", my default_trajectory_colour ())
 	EDITOR_OK
 		SET_REAL (distance, my p_trajectory_markEvery)
@@ -1202,9 +1201,9 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"View", U"Show vowel marks...", Editor_HIDDEN, menu_cb_showVowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from fixed set...", 0, menu_cb_showVowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_showVowelMarksFromTableFile);
-	Editor_addCommand (this, U"View", U"--show trajectory time marks--", 0, nullptr);
-	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", Editor_HIDDEN, menu_cb_showTrajectoryTimeMarksEvery);
+	Editor_addCommand (this, U"View", U"--show trajectory settings--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Trajectory settings...", 0, menu_cb_trajectory_settings);
+	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", Editor_HIDDEN, menu_cb_showTrajectoryTimeMarksEvery);
 }
 
 void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
