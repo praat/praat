@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ int32 Melder_systemVersion;
 void Melder_init () {
 	NUMmachar ();
 	gsl_set_error_handler_off ();
-	NUMrandom_init ();
+	NUMrandom_initializeSafelyAndUnpredictably ();
 	Melder_alloc_init ();
 	Melder_message_init ();
 	#ifdef macintosh

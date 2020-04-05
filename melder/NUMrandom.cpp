@@ -96,7 +96,7 @@ class NUMrandom_State { public:
 	int index;
 	NUMrandom_State () : index (NN + 1) {}
 		// this initialization will lead to an immediate crash
-		// when NUMrandomFraction() is called without NUMrandom_init() having been called before;
+		// when NUMrandomFraction() is called without NUMrandom_initXXX() having been called before;
 		// without this initialization, it would be detected only after 312 calls to NUMrandomFraction()
 
 	bool secondAvailable;
@@ -107,13 +107,14 @@ class NUMrandom_State { public:
 		This can be used for testing whether our implementation is correct (i.e. predicts the correct published sequence)
 		and perhaps for generating reproducible sequences.
 	 */
-	void init_genrand64 (uint64 seed) {
+	uint64 init_genrand64 (uint64 seed) {
 		array [0] = seed;
 		for (index = 1; index < NN; index ++) {
 			array [index] =
 				(UINT64_C (6364136223846793005) * (array [index - 1] ^ (array [index - 1] >> 62))
 				+ (uint64) index);
 		}
+		return array [NN - 1];
 	}
 
 	/* initialize by an array with array-length */
@@ -165,7 +166,7 @@ static uint64 getTicksSinceBoot () {
 }
 
 static bool theInited = false;
-void NUMrandom_init () {
+void NUMrandom_initializeSafelyAndUnpredictably () {
 	const uint64 ticksSince1969 = getTicksSince1969 ();   // possibly microseconds
 	const uint64 ticksSinceBoot = getTicksSinceBoot ();   // possibly nanoseconds
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
@@ -199,6 +200,11 @@ void NUMrandom_init () {
 	}
 	theInited = true;
 }
+void NUMrandom_initializeWithSeedUnsafelyButPredictably (uint64 seed) {
+	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++)
+		seed = states [threadNumber]. init_genrand64 (seed);
+	theInited = true;
+}
 
 /* Throughout the years, several versions for "zero or magic" have been proposed. Choose the fastest. */
 
@@ -219,7 +225,7 @@ double NUMrandomFraction () {
 
 	if (my index >= NN) {   // generate NN words at a time
 
-		Melder_assert (theInited);   // if NUMrandom_init() hasn't been called, we'll detect that here, probably in the first call
+		Melder_assert (theInited);   // if NUMrandom_initXXX() hasn't been called, we'll detect that here, probably in the first call
 
 		int i;
 		for (i = 0; i < NN - MM; i ++) {
