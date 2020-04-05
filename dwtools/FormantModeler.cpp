@@ -169,7 +169,7 @@ void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, int
 		else if (weighFormants == kFormantModelerWeights::ONE_OVER_SQRTBANDWIDTH)
 			dataWeights = kDataModelerWeights::ONE_OVER_SQRTSIGMA;
 		else
-			dataWeights = kDataModelerWeights::RELATIVE;
+			dataWeights = kDataModelerWeights::RELATIVE_;
 		DataModeler_setDataWeighing (ffi, dataWeights);
 	}
 }

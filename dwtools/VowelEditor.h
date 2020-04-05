@@ -23,18 +23,17 @@
  djmw 20110306 Latest modification.
 */
 
-#include "AnyTier.h"
-#include "Editor.h"
 #include "FormantTier.h"
 #include "PitchTier.h"
 #include "TableOfReal.h"
+#include "Editor.h"
 
 //#include "Vowel_def.h"
 
 #include "VowelEditor_enums.h"
 
 Thing_define (TrajectoryPoint, AnyPoint) {
-	double x, y;
+	double f1, f2;
 	MelderColour colour;
 };
 
@@ -52,7 +51,6 @@ Thing_define (VowelEditor, Editor) {
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour
-	autoVowelSpecification vowel; // TODO remove
 	autoTrajectory trajectory;
 	autoVEC extraFrequencyBandwidthPairs;
 	GuiDrawingArea drawingArea;

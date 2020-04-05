@@ -76,6 +76,7 @@
 #endif
 #include <unistd.h>
 #include "melder.h"
+#include <chrono>
 
 #define NN  312
 #define MM  156
@@ -147,13 +148,31 @@ void NUMrandom_State :: init_by_array64 (uint64 init_key [], unsigned int key_le
 	array [0] = UINT64_C (1) << 63;   // MSB is 1; assuring non-zero initial array
 }
 
+static uint64 getTicksSince1969 () {
+	using namespace std::chrono;
+	const auto timePoint = system_clock::now ();
+	const auto duration = timePoint. time_since_epoch ();
+	return uint64 (duration. count ());
+	//Melder_casual (U"ticks since 1969: ", ticksSince1969);
+}
+
+static uint64 getTicksSinceBoot () {
+	using namespace std::chrono;
+	const auto timePoint = high_resolution_clock::now ();
+	const auto duration = timePoint. time_since_epoch ();
+	return uint64 (duration. count ());
+	//Melder_casual (U"ticks since boot: ", ticksSinceBoot);
+}
+
 static bool theInited = false;
 void NUMrandom_init () {
+	const uint64 ticksSince1969 = getTicksSince1969 ();   // possibly microseconds
+	const uint64 ticksSinceBoot = getTicksSinceBoot ();   // possibly nanoseconds
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
-		const int numberOfKeys = 6;
+		constexpr integer numberOfKeys = 6;
 		uint64 keys [numberOfKeys];
-		keys [0] = (uint64) llround (1e6 * Melder_clock ());   // TODO: make unique between boots of the same computer
-		keys [1] = UINT64_C (7320321686725470078) + (uint64) threadNumber;   // unique between threads in the same process
+		keys [0] = ticksSince1969;   // unique between boots of the same computer
+		keys [1] = UINT64_C (7320321686725470078) + uint64 (threadNumber);   // unique between threads in the same process
 		switch (threadNumber) {
 			case  0: keys [2] = UINT64_C  (4492812493098689432); keys [3] = UINT64_C  (8902321878452586268); break;
 			case  1: keys [2] = UINT64_C  (1875086582568685862); keys [3] = UINT64_C (12243257483652989599); break;
@@ -175,9 +194,7 @@ void NUMrandom_init () {
 			default: Melder_fatal (U"Thread number too high.");
 		}
 		keys [4] = (uint64) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
-		#ifndef _WIN32
-		//keys [5] = (uint64) (int64) gethostid ();   // unique between computers; but can be SLOW because it could have to access the internet
-		#endif
+		keys [5] = ticksSinceBoot;   // some extra randomness
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
 	theInited = true;
