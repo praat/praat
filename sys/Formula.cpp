@@ -4027,22 +4027,23 @@ static void do_appendFileLine () {
 static void do_pauseScript () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw (U"The function \"pause\" is not available inside manuals.");
-	if (theCurrentPraatApplication -> batch) return;   // in batch we ignore pause statements
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
-	autoMelderString buffer;
-	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
-			MelderString_append (& buffer, arg->number);
-		else if (arg->which == Stackel_STRING)
-			MelderString_append (& buffer, arg->getString());
+	if (! theCurrentPraatApplication -> batch) {   // in batch we ignore pause statements
+		autoMelderString buffer;
+		for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+			Stackel arg = & theStack [w + iarg];
+			if (arg->which == Stackel_NUMBER)
+				MelderString_append (& buffer, arg->number);
+			else if (arg->which == Stackel_STRING)
+				MelderString_append (& buffer, arg->getString());
+		}
+		UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
+		UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
+		UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
 	}
-	UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
-	UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
-	UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
 	pushNumber (1);
 }
 static void do_exitScript () {
