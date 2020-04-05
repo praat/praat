@@ -41,11 +41,6 @@ Thing_define (Trajectory, Function) {
 	SortedSetOfDoubleOf<TrajectoryPoint> points;
 };
 
-Thing_define (VowelSpecification, Function) {
-	autoPitchTier pitchTier;
-	autoFormantTier formantTier;
-};
-
 Thing_define (VowelEditor, Editor) {
 	int shiftKeyPressed;
 	autoGraphics graphics;   // the drawing
