@@ -194,9 +194,13 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 			2. average across quefrencies
 		*/
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
-		if (numberOfQuefrencyBins > 1)
-			for (integer iframe = 1; iframe <= my nx; iframe ++)
-				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), my z.column (iframe), numberOfQuefrencyBins);
+		if (numberOfQuefrencyBins > 1) {
+			autoVEC qin = newVECraw (thy ny);
+			for (integer iframe = 1; iframe <= my nx; iframe ++) {
+				qin.all() <<= thy z.column (iframe);
+				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), qin.all(), numberOfQuefrencyBins);
+			}
+		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
