@@ -93,7 +93,7 @@ Thing_implement (GuiList, GuiControl, 0);
 
 			NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame: frameRect];
 			[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-			[scrollView setBorderType: NSGrooveBorder];
+			[scrollView setBorderType: NSBezelBorder];
 			[scrollView setDocumentView: _tableView];   // this retains the table view
 			[scrollView setHasVerticalScroller: YES];
 			//[scrollView setHasHorizontalScroller: YES];
