@@ -593,13 +593,13 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 						else
 							Melder_throw (U"You are trying to record in stereo, but you do not seem to have a stereo microphone.\nPerhaps you could try to record in mono instead.");
 					else
-						Melder_throw (U"open ", errorText);
+						Melder_throw (U"Error opening audio input stream: ", errorText, U".");
 				}
 				Pa_StartStream (my portaudioStream);
 				if (Melder_debug == 20)
 					Melder_casual (U"Pa_StartStream returns ", (int) err);
 				if (err)
-					Melder_throw (U"start ", Melder_peek8to32 (Pa_GetErrorText (err)));
+					Melder_throw (U"Error starting audio input stream: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 			} else {
 				#if defined (_WIN32)
 					win_fillFormat (me);
