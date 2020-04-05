@@ -160,20 +160,6 @@ static void Trajectory_shift_semitones (Trajectory me, double f1_st, double f2_s
 
 #pragma mark - class Vowel
 
-Thing_implement (VowelSpecification, Function, 0);
-
-static autoVowelSpecification VowelSpecification_create (double duration) {
-	try {
-		autoVowelSpecification me = Thing_new (VowelSpecification);
-		Function_init (me.get(), 0.0, duration);
-		my formantTier = FormantTier_create (0.0, duration);
-		my pitchTier = PitchTier_create (0.0, duration);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"VowelSpecification not created.");
-	}
-}
-
 static void VowelEditor_create_twoFormantSchwa (VowelEditor me) {
 	try {
 		my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
@@ -328,7 +314,7 @@ static double VowelEditor_getF0AtTime (VowelEditor me, double time) {
 	return f0;
 }
 
-static void VowelEditor_updateVowelSpecification (VowelEditor me) {
+static void VowelEditor_updateTrajectorySpecification (VowelEditor me) {
 	/*
 		Always update; GuiObject text might have changed
 	*/
@@ -377,7 +363,7 @@ static autoPitchTier VowelEditor_to_PitchTier (VowelEditor me) {
 }
 static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 	try {
-		VowelEditor_updateVowelSpecification (me); // update pitch and duration
+		VowelEditor_updateTrajectorySpecification (me); // update pitch and duration
 		autoFormantGrid formantGrid = VowelEditor_to_FormantGrid (me);
 		autoPitchTier pitchTier = VowelEditor_to_PitchTier (me);
 		autoSound thee = PitchTier_to_Sound_pulseTrain (pitchTier.get(), my p_synthesis_samplingFrequency, 0.7, 0.05, 30, false);
@@ -759,13 +745,13 @@ static void menu_cb_publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateVowelSpecification (me);
+	VowelEditor_updateTrajectorySpecification (me);
 	autoFormantGrid publish = VowelEditor_to_FormantGrid (me);
 	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateVowelSpecification (me);
+	VowelEditor_updateTrajectorySpecification (me);
 	autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.get(), fg -> xmin, 90.0);
@@ -776,7 +762,7 @@ static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateVowelSpecification (me);
+	VowelEditor_updateTrajectorySpecification (me);
 	autoPitchTier publish = VowelEditor_to_PitchTier (me);
 	Editor_broadcastPublication (me, publish.move());
 }
