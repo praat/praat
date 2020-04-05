@@ -23,7 +23,6 @@ totalNumberOfTests = 0
 @createAllPraatTestsInFolder: "gram"
 @createAllPraatTestsInFolder: "artsynth"
 @createAllPraatTestsInFolder: "EEG"
-@createAllPraatTestsInFolder: "contrib/ola"
 @createAllPraatTestsInFolder: "main"
 
 procedure createAllPraatTestsInFolder: .folder$

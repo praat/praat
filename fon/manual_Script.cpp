@@ -789,7 +789,7 @@ TAG (U"##undefined")
 DEFINITION (U"a special value, see @undefined")
 MAN_END
 
-MAN_BEGIN (U"Formulas 5. Mathematical functions", U"ppgb", 20170718)
+MAN_BEGIN (U"Formulas 5. Mathematical functions", U"ppgb", 20200405)
 TAG (U"##abs (%x)")
 DEFINITION (U"absolute value")
 TAG (U"##round (%x)")
@@ -855,20 +855,23 @@ DEFINITION (U"the error function: 2/\\Vr%\\pi __0_\\in^%x exp(-%t^2) %dt")
 TAG (U"##erfc (%x)")
 DEFINITION (U"the complement of the error function: 1 - erf (%x)")
 TAG (U"##randomUniform (%min, %max)")
-DEFINITION (U"uniform random real number between %min (inclusive) and %max (exclusive)")
+DEFINITION (U"a uniform random real number between %min (inclusive) and %max (exclusive)")
 TAG (U"##randomInteger (%min, %max)")
-DEFINITION (U"uniform random integer number between %min and %max (inclusive)")
+DEFINITION (U"a uniform random integer number between %min and %max (inclusive)")
 TAG (U"##randomGauss (%\\mu, %\\si)")
-DEFINITION (U"Gaussian random real number with mean %\\mu and standard deviation %\\si")
+DEFINITION (U"a Gaussian random real number with mean %\\mu and standard deviation %\\si")
 TAG (U"##randomPoisson (%mean)")
-DEFINITION (U"Poisson random real number")
+DEFINITION (U"a Poisson random real number")
 TAG (U"##randomGamma (%%shape%, %%rate%)")
-DEFINITION (U"Generates a random numbers drawn from a Gamma distribution with shape parameter \\al "
-	"and rate parameter \\be."
-	"The Gamma distribution with shape parameter %\\al and rate parameter %\\be is defined as:"
-	" %f(%x; %\\al, %\\be) = (1 / \\Ga (%\\al)) %\\be%^^%\\al^ %x^^%\\al\\-m1^ %e^^\\-m%\\be %x^),"
-	" for %x > 0, %\\al > 0 and %\\be > 0. "
-	" The method to generate these numbers is described in @@Marsaglia & Tsang (2000)@.")
+DEFINITION (U"a random number drawn from a Gamma distribution with shape parameter %\\al "
+	"and rate parameter %\\be, which is defined as "
+	"%f(%x; %\\al, %\\be) = (1 / \\Ga (%\\al)) %\\be%^^%\\al^ %x^^%\\al\\-m1^ %e^^\\-m%\\be %x^, "
+	"for %x > 0, %\\al > 0 and %\\be > 0, following the method by @@Marsaglia & Tsang (2000)@")
+TAG (U"##random\\_ initializeWithSeedUnsafelyButPredictably (%seed)")
+DEFINITION (U"can be used in a script to create a reproducible sequence of random numbers "
+	"(warning: this exceptional situation will continue to exist throughout Praat until you call the following function)")
+TAG (U"##random\\_ initializeSafelyAndPredictably ()")
+DEFINITION (U"undoes the exceptional situation caused by the previous function")
 TAG (U"##lnGamma (%x)")
 DEFINITION (U"logarithm of the \\Ga function")
 TAG (U"##gaussP (%z)")
