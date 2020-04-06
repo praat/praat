@@ -92,7 +92,7 @@ void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double s
 	Roots_into_Formant_Frame (r, thee, 1.0 / samplingPeriod, margin);
 }
 
-autoFormant LPC_to_Formant_old (LPC me, double margin) {
+autoFormant LPC_to_Formant_noThreads (LPC me, double margin) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		/*
@@ -139,6 +139,13 @@ autoFormant LPC_to_Formant_old (LPC me, double margin) {
 
 autoFormant LPC_to_Formant (LPC me, double margin) {
 	try {
+		const integer numberOfProcessors = std::thread::hardware_concurrency ();
+		if (numberOfProcessors  <= 1) {
+			/*
+				We cannot use multithreading.
+			*/
+			return LPC_to_Formant_noThreads (me, margin);
+		}
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		Melder_require (my maxnCoefficients < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
@@ -164,7 +171,6 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 		
 		constexpr integer maximumNumberOfThreads = 16;
 		integer numberOfThreads, numberOfFramesPerThread = 25;
-		const integer numberOfProcessors = std::thread::hardware_concurrency ();
 		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 		/*
 			Reserve working memory for each thread
