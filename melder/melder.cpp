@@ -40,7 +40,6 @@ void Melder_init () {
 	gsl_set_error_handler_off ();
 	NUMrandom_initializeSafelyAndUnpredictably ();
 	Melder_alloc_init ();
-	Melder_message_init ();
 	#ifdef macintosh
 		SInt32 sys1, sys2, sys3;
 		Gestalt ('sys1', & sys1);

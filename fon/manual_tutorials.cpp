@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200323)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200406)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.11# (6 April 2020)")
+LIST_ITEM (U"• Better messages.")
+LIST_ITEM (U"• Overhauled VowelEditor.")
+LIST_ITEM (U"• Repaired crashes after creating a Formant from a Spectrum or an Excitation.")
 NORMAL (U"##6.1.10# (23 March 2020)")
 LIST_ITEM (U"• Faster formant computation.")
 LIST_ITEM (U"• More LPC queries.")
