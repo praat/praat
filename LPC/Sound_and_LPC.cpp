@@ -434,7 +434,7 @@ end:
 	return status == 1 || status == 4 || status == 5;
 }
 
-static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+static autoLPC Sound_to_LPC_noThreads (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const double samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
@@ -487,7 +487,14 @@ static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analy
 	return thee;
 }
 
-static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+	const integer numberOfProcessors = std::thread::hardware_concurrency ();
+	if (numberOfProcessors <= 1) {
+		/*
+			We cannot use multithreading.
+		*/
+		return Sound_to_LPC_noThreads (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, method, tol1, tol2);
+	}
 	const double samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
@@ -516,16 +523,9 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	
 	constexpr integer maximumNumberOfThreads = 16;
 	integer numberOfThreads, numberOfFramesPerThread = 25;
-	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 	/*
 		We have to reserve all the needed working memory for each thread beforehand.
-		20200304 djmw: We cannot allocate
-		autovector<autoSound> sounds = newvectorzero<autoSound> (numberOfThreads);
-		because this is not completely functional. If this will be fuctional we
-		1. can use this dynamic allocation
-		2. don't need the maximumNumberOfThreads variable anymore (because we don't need
-		the random generator which can handle only 16 threads)
 	*/
 	autoSound sframe [maximumNumberOfThreads + 1];
 	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
@@ -583,7 +583,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: AUTOCORRELATION, 0.0, 0.0);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: AUTOCORRELATION, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (auto) created.");
@@ -592,7 +592,7 @@ autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, 
 
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: COVARIANCE, 0.0, 0.0);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: COVARIANCE, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (covar) created.");
@@ -601,7 +601,7 @@ autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth,
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: BURG, 0.0, 0.0);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: BURG, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (burg) created.");
@@ -610,7 +610,7 @@ autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, 
 
 autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: MARPLE, tol1, tol2);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: MARPLE, tol1, tol2);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (marple) created.");

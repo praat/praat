@@ -3,8 +3,8 @@
 
 appendInfoLine: "test_Matrix_solve.praat"
 
-@solve_undetermined: 10, 100
-@solve3x3
+;@solve_undetermined: 10, 100
+;@solve3x3
 for i to 200
 @solve_sparse_system
 endfor
@@ -25,6 +25,7 @@ procedure solve_sparse_system
 	if inner >1e-7
 ; TODO find out why this occurs
 		appendInfoLine: "******** Warning: ""assert inner < 1e-7"" failed."
+		@save_matrix_and_vector_as_file: .phi##, .y#, "test_Matrix_solve_badSolution1.Collection"
 	endif
 	.xs2# = solveSparse# (.phi##, .y#, .xs#, 10, 10, 1e-20, 1) ; 7 arguments
 	dif# = .x# - .xs2#
@@ -32,7 +33,30 @@ procedure solve_sparse_system
 	;assert inner < 1e-7; 'inner'
 	if inner > 1e-7
 		appendInfoLine: "******** Warning: ""assert inner < 1e-7"" failed."
+		@save_matrix_and_vector_as_file: .phi##, .y#, "test_Matrix_solve_badSolution2.Collection"
 	endif
+endproc
+
+procedure save_matrix_and_vector_as_file: .matrix##, .vec#, .filename$
+	.nrow = numberOfRows (.matrix##);
+	.ncol = numberOfColumns (.matrix##);
+	.tor1	 = Create TableOfReal: "mat", .nrow, .ncol
+	for .irow to .nrow
+		for .icol to .ncol
+			Set value: .irow, .icol, .matrix## [.irow, .icol]
+			;object [.tor1, .irow, .icol] = .matrix## [.irow, .icol]
+		endfor
+	endfor
+	.ncol = 1;
+	.nrow = size (.vec#)
+	.tor2 =  Create TableOfReal: "vec", .nrow, .ncol
+	for .irow to .nrow
+		Set value: .irow, 1, .vec# [.irow]
+		;object [.tor2, .irow, 1] = .vec# [.irow]
+	endfor
+	plusObject: .tor1
+	Save as binary file: .filename$
+	removeObject: .tor2, .tor1
 endproc
 
 procedure matrix_solve: .ncol
