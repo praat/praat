@@ -131,7 +131,9 @@ Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ..
 `~/builds/mac_products/Configuration64`, overwriting the non-notarized
 Praat.app that was already there. If on the way you receive an error
 “App Store Connect Operation Error -- You must first sign the relevant contracts online”,
-you have to log in to `developer.apple.com` and do Review Agreement -> Agree.
+you have to log in to `developer.apple.com` and do Review Agreement -> Agree;
+you may then also have to go to App Store Connect, log in, then Agreements, Tax, and Banking
+-> View and Agree to Terms (even if you have no paid apps).
 
 ### 3.3. Compiling on Linux and other Unixes
 

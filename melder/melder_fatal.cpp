@@ -17,14 +17,9 @@
  */
 
 #include "melder.h"
-#include "../sys/MelderThread.h"
+#include <mutex>
 
-MelderThread_MUTEX (theMelder_fatal_mutex);
-
-void Melder_message_init () {
-	static bool inited = false;
-	if (! inited) { MelderThread_MUTEX_INIT (theMelder_fatal_mutex); inited = true; }
-}
+static std::mutex theMelder_fatal_mutex;
 
 static void defaultFatal (conststring32 message) {
 	MelderConsole::write (U"Fatal error: ", true);
@@ -43,7 +38,7 @@ void Melder_fatal (const MelderArg& arg1,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7,
 	const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10)
 {
-	MelderThread_LOCK (theMelder_fatal_mutex);
+	std::lock_guard <std::mutex> lock (theMelder_fatal_mutex);
 	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
 	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
 	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
@@ -73,11 +68,11 @@ void Melder_fatal (const MelderArg& arg1,
 
 void Melder_assert_ (const char *fileName, int lineNumber, const char *condition) {
 	/*
-	 * This function tries to make sure that it allocates no heap memory.
-	 * Hence, character conversion is done in place rather than with Melder_peek8to32(),
-	 * and Melder_integer() is also avoided.
-	 */
-	MelderThread_LOCK (theMelder_fatal_mutex);
+		This function tries to make sure that it allocates no heap memory.
+		Hence, character conversion is done in place rather than with Melder_peek8to32(),
+		and Melder_integer() is also avoided.
+	*/
+	std::lock_guard <std::mutex> lock (theMelder_fatal_mutex);
 	static char32 fileNameBuffer [1000], conditionBuffer [1000], lineNumberBuffer [40];
 	Melder_8to32_inplace (fileName, fileNameBuffer, kMelder_textInputEncoding::UTF8);
 	Melder_8to32_inplace (condition, conditionBuffer, kMelder_textInputEncoding::UTF8);

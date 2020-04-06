@@ -279,10 +279,7 @@ Thing_define (Sound_into_Pitch_Args, Thing) { public:
 
 Thing_implement (Sound_into_Pitch_Args, Thing, 0);
 
-MelderThread_MUTEX (mutex);
-bool mutex_inited;
-
-static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
+static void Sound_into_Pitch (Sound_into_Pitch_Args me)
 {
 	for (integer iframe = my firstFrame; iframe <= my lastFrame; iframe ++) {
 		const Pitch_Frame pitchFrame = & my pitch -> frames [iframe];
@@ -296,7 +293,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 				throw;
 			}
 		} else if (*my cancelled) {
-			MelderThread_RETURN;
+			return;
 		}
 		Sound_into_PitchFrame (my sound, pitchFrame, t,
 			my minimumPitch, my maxnCandidates, my method, my voicingThreshold, my octaveCost,
@@ -307,7 +304,6 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 			my r, my imax.get(), my localMean.get()
 		);
 	}
-	MelderThread_RETURN;
 }
 
 autoPitch Sound_to_Pitch_any (Sound me,
@@ -486,15 +482,13 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		autoMelderProgress progress (U"Sound to Pitch...");
 
 		integer numberOfFramesPerThread = 20;
-		int numberOfThreads = (numberOfFrames - 1) / numberOfFramesPerThread + 1;
-		const int numberOfProcessors = MelderThread_getNumberOfProcessors ();
+		integer numberOfThreads = (numberOfFrames - 1) / numberOfFramesPerThread + 1;
+		const integer numberOfProcessors = MelderThread_getNumberOfProcessors ();
 		trace (numberOfProcessors, U" processors");
-		if (numberOfThreads > numberOfProcessors) numberOfThreads = numberOfProcessors;
-		if (numberOfThreads > 16) numberOfThreads = 16;
-		if (numberOfThreads < 1) numberOfThreads = 1;
+		Melder_clipRight (& numberOfThreads, numberOfProcessors);
+		Melder_clip (1_integer, & numberOfThreads, 16_integer);
 		numberOfFramesPerThread = (numberOfFrames - 1) / numberOfThreads + 1;
 
-		if (! mutex_inited) { MelderThread_MUTEX_INIT (mutex); mutex_inited = true; }
 		autoSound_into_Pitch_Args args [16];
 		integer firstFrame = 1, lastFrame = numberOfFramesPerThread;
 		volatile int cancelled = 0;
@@ -537,13 +531,6 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			arg -> imax = newINTVECzero (maxnCandidates);
 			arg -> localMean = newVECzero (my ny);
 			args [ithread - 1] = std::move (arg);
-			/*args [ithread - 1] = Sound_into_Pitch_Args_create (me, thee.get(),
-				firstFrame, lastFrame, minimumPitch, maxnCandidates, method,
-				voicingThreshold, octaveCost,
-				dt_window, nsamp_window, halfnsamp_window, maximumLag,
-				nsampFFT, nsamp_period, halfnsamp_period, brent_ixmax, brent_depth,
-				globalPeak, window.get(), windowR.get(),
-				ithread == numberOfThreads, & cancelled);*/
 			firstFrame = lastFrame + 1;
 			lastFrame += numberOfFramesPerThread;
 		}
