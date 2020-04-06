@@ -62,7 +62,6 @@ trajectory --> path ????
 	#include <signal.h>
 #endif
 
-
 #include "enums_getText.h"
 #include "VowelEditor_enums.h"
 #include "enums_getValue.h"
@@ -168,24 +167,6 @@ static void VowelEditor_create_twoFormantSchwa (VowelEditor me) {
 		Trajectory_addPoint (my trajectory.get (), my p_trajectory_minimumDuration, 500.0, 1500.0, colour);
 	} catch (MelderError) {
 		Melder_throw (U"Schwa Vowel not created");
-	}
-}
-
-static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
-	try {
-		const integer numberOfFormants = FormantTier_getMaxNumFormants (me);
-		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, numberOfFormants);
-		for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
-			const FormantPoint fp = my points.at [ipoint];
-			const double t = fp -> number;
-			for (integer iformant = 1; iformant <= fp -> numberOfFormants; iformant ++) {
-				FormantGrid_addFormantPoint (thee.get(), iformant, t, fp -> formant [iformant]);
-				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, fp -> bandwidth [iformant]);
-			}
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no FormantGrid created.");
 	}
 }
 
@@ -378,7 +359,6 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 }
 
 static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
-// Our FormantTiers always have a FormantPoint at t=xmin and t=xmax;
 	Melder_assert (my trajectory -> points.size >= 2);
 
 	const integer glt = Graphics_inqLineType (g);

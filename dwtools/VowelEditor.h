@@ -23,23 +23,13 @@
  djmw 20110306 Latest modification.
 */
 
-#include "FormantTier.h"
-#include "PitchTier.h"
-#include "TableOfReal.h"
+#include "RealTier.h"
+#include "Table.h"
 #include "Editor.h"
 
-//#include "Vowel_def.h"
+#include "VowelEditor_def.h"
 
 #include "VowelEditor_enums.h"
-
-Thing_define (TrajectoryPoint, AnyPoint) {
-	double f1, f2;
-	MelderColour colour;
-};
-
-Thing_define (Trajectory, Function) {
-	SortedSetOfDoubleOf<TrajectoryPoint> points;
-};
 
 Thing_define (VowelEditor, Editor) {
 	int shiftKeyPressed;
