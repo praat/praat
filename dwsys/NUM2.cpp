@@ -2845,20 +2845,20 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 	3. Make all elements of v zero, except the numberOfNonZeros largest elements.
 	4. Set the support of these largest elements to 1 and the rest to zero.
 */
-static void VECupdateDataAndSupport_inplace (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
+static void VECupdateDataAndSupport_inplace (VECVU const& v, BOOLVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
 	autoVEC abs = newVECabs (v);
 	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
 	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
 		v [index [i]] = 0.0;
-		support [index [i]] = 0;
+		support [index [i]] = false;
 	}
 	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++)
-		support [index [i]] = 1;
+		support [index [i]] = true;
 }
 
-static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
+static double update (VEC const& x_new, VEC const& y_new, BOOLVECVU const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
 	Melder_assert (x_new.size == xn.size && buffer.size == x_new.size);
 	Melder_assert (gradient.size == support_new.size && gradient.size == x_new.size);
 	Melder_assert (y_new.size == yn.size);
@@ -2888,6 +2888,13 @@ autoVEC newVECsolveSparse_IHT (constMATVU const& dictionary, constVECVU const& y
 	}
 }
 
+/* temporarily until present in melder_tensor.h */
+inline void operator<<= (BOOLVECVU const& target, constBOOLVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+
 void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel) {
 	try {
 		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
@@ -2900,8 +2907,8 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		autoVEC yfromx_new = newVECraw (y.size); // D.x(n+1)
 		autoVEC ydif = newVECraw (y.size); // y - D.x(n)
 		autoVEC buffer = newVECraw (x.size);
-		autoINTVEC support = newINTVECraw (x.size);
-		autoINTVEC support_new = newINTVECraw (x.size);
+		autoBOOLVEC support = newBOOLVECraw (x.size);
+		autoBOOLVEC support_new = newBOOLVECraw (x.size);
 		
 		const double xnormSq = NUMsum2 (x);
 		const double rms_y = NUMsum2 (y) / y.size;
@@ -2939,14 +2946,14 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			*/
 			longdouble normsq_gs = 0.0; // squared norm of the sparse gradient
 			for (integer ig = 1; ig <= gradient.size; ig ++) {
-				if (support [ig] != 0)
+				if (support [ig])
 					normsq_gs += gradient [ig] * gradient [ig];
 			}
 			longdouble normsq_dgs = 0.0; // squared norm of the transformed sparse gradient
 			for (integer irow = 1; irow <= dictionary.nrow; irow ++) {
 				longdouble sum = 0.0;
 				for (integer icol = 1; icol <= dictionary.ncol; icol ++)
-					if (support [icol] != 0)
+					if (support [icol])
 						sum += dictionary [irow] [icol] * gradient [icol];
 				normsq_dgs += sum * sum;
 			}
