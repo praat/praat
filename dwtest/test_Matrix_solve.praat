@@ -2,21 +2,17 @@
 # djmw 20031020, 20171211,20180918,20100406
 
 appendInfoLine: "test_Matrix_solve.praat"
-testBadSolution = 0
-if testBadSolution == 0
-	@solve_undetermined: 10, 100
-	@solve3x3
-	for i to 200
-		@solve_sparse_system
-	endfor
 
-	@solve2by3
-	@matrix_solve: 1
-	@matrix_solve: 10
-	@matrix_solve: 100
-else
-	@test_bad_solution1:  "test_Matrix_solve_badSolution1.Collection"
-endif
+@solve_undetermined: 10, 100
+@solve3x3
+for i to 200
+	@solve_sparse_system
+endfor
+
+@solve2by3
+@matrix_solve: 1
+@matrix_solve: 10
+@matrix_solve: 100
 
 procedure solve_sparse_system
 	.nrow = 100
@@ -30,97 +26,20 @@ procedure solve_sparse_system
 			.numberOfNonZeros += 1;
 		endif
 	endfor
-	.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
-	.y# = mul# (.phi##, .x#)
-	.numberOfNonzerosToSearch = .numberOfNonZeros + 5
-	.xs# = solveSparse# (.phi##, .y#, .numberOfNonzerosToSearch, 200, 1e-17, 0) ; 6 arguments
-	dif# = .x# - .xs#
-	inner = inner (dif#, dif#)
-	# fails only once in a while, until resolved we issue a warning
-	;assert inner < 1e-7; 'inner'
-	if inner >1e-7
-		appendInfoLine: "******** Warning: ""assert inner < 1e-7"" failed."
-		@save_matrix_and_vectors_as_file: .phi##, .x#, .y#, "test_Matrix_solve_badSolution1.Collection"
+	if .numberOfNonZeros > 0
+		.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
+		.y# = mul# (.phi##, .x#)
+		.numberOfNonzerosToSearch = .numberOfNonZeros + 5
+		appendInfoLine: "Sparse 100x100: solve for ",  .numberOfNonZeros, " non zero elements."
+		.xs# = solveSparse# (.phi##, .y#, .numberOfNonzerosToSearch, 200, 1e-17, 0) ; 6 arguments
+		.dif# = .x# - .xs#
+		.inner = inner (.dif#, .dif#)
+		assert .inner < 1e-7; '.inner'
+		.xs2# = solveSparse# (.phi##, .y#, .xs#,  .numberOfNonzerosToSearch, 10, 1e-20, 1) ; 7 arguments
+		.dif# = .x# - .xs2#
+		.inner = inner (.dif#, .dif#)
+		assert .inner < 1e-7; '.inner'
 	endif
-	.xs2# = solveSparse# (.phi##, .y#, .xs#,  .numberOfNonzerosToSearch, 10, 1e-20, 1) ; 7 arguments
-	dif# = .x# - .xs2#
-	inner = inner (dif#, dif#)
-	;assert inner < 1e-7; 'inner'
-	if inner > 1e-7
-		appendInfoLine: "******** Warning: ""assert inner < 1e-7"" failed."
-		@save_matrix_and_vectors_as_file: .phi##, .x#, .y#, "test_Matrix_solve_badSolution2.Collection"
-	endif
-endproc
-
-procedure save_matrix_and_vectors_as_file: .m##, .x#, .y#, .filename$
-	.nrowm = numberOfRows (.m##);
-	.ncolm = numberOfColumns (.m##);
-	.tor1 = Create TableOfReal: "mat", .nrowm, .ncolm
-	for .irow to .nrowm
-		for .icol to .ncolm
-			Set value: .irow, .icol, .m## [.irow, .icol]
-		endfor
-	endfor
-
-	.nrowx = size (.x#)
-	assert .nrowx == .ncolm
-	.tor2 =  Create TableOfReal: "x", .nrowx, 1
-	for .irow to .nrowx
-		Set value: .irow, 1, .x# [.irow]
-	endfor
-
-	.nrowy = size (.y#)
-	assert .nrowy == .nrowm
-	.tor3 =  Create TableOfReal: "y", .nrowy, 1
-	for .irow to .nrowy
-		Set value: .irow, 1, .y# [.irow]
-	endfor
-
-	plusObject: .tor1, .tor2
-	Save as binary file: .filename$
-	removeObject: .tor2, .tor1
-endproc
-
-procedure test_bad_solution1: .filename$
-	Read from file: .filename$
-	.tablemat = selected ("TableOfReal", 1)
-	.tablex = selected ("TableOfReal", 2)
-	.tabley = selected ("TableOfReal", 3)
-	selectObject: .tablemat
-	.nrowm = Get number of rows
-	.ncolm = Get number of columns
-	.m## = zero## (.nrowm,.ncolm)
-	for .irow to .nrowm
-		for .icol to .ncolm
-			.m## [.irow, .icol] = Get value: .irow, .icol
-		endfor
-	endfor
-	selectObject: .tablex
-	.nrowx = Get number of rows
-	assert .nrowx == .ncolm
-	.x# = zero# (.nrowx)
-	for .irow to .nrowx
-		.x# [.irow] = Get value: .irow, 1
-	endfor
-
-	selectObject: .tabley
-	.nrowy = Get number of rows
-	assert .nrowy == .nrowm
-	.y# = zero# (.nrowy)
-	for .irow to .nrowy
-		.y# [.irow] = Get value: .irow, 1
-	endfor
-
-	.xs# = solveSparse# (.m##, .y#, 10, 200, 1e-21, 0) ; 6 arguments
-	.dif# = .x# - .xs#
-	.inner = inner (.dif#, .dif#)
-	appendInfoLine: .inner
-	.tor = Create Table with column names: "s", .nrowx, "s x dif"
-	for .irow to .nrowx
-		Set numeric value: .irow, "s", .xs# [.irow]
-		Set numeric value: .irow, "x", .x# [.irow]
-		Set numeric value: .irow, "dif", .x# [.irow] - .xs# [.irow]
-	endfor
 endproc
 
 procedure matrix_solve: .ncol

@@ -174,8 +174,6 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 		/*
 			Reserve working memory for each thread
-			TODO:
-			autovector<autoPolynomial> polynomials = newveczero<autoPolynomial> (numberOfThreads);
 		*/
 		autoPolynomial polynomials [maximumNumberOfThreads + 1];
 		autoRoots roots [maximumNumberOfThreads + 1];
