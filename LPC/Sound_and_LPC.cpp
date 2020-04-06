@@ -32,6 +32,7 @@
 #include <thread>
 #include <atomic>
 #include <functional>
+#include <vector>
 #include "NUM2.h"
 
 #define LPC_METHOD_AUTO 1
@@ -521,7 +522,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		We have to reserve all the needed working memory for each thread beforehand.
 		20200304 djmw: We cannot allocate
 		autovector<autoSound> sounds = newvectorzero<autoSound> (numberOfThreads);
-		because this is not completely functional yet. If this will be fuctional we
+		because this is not completely functional. If this will be fuctional we
 		1. can use this dynamic allocation
 		2. don't need the maximumNumberOfThreads variable anymore (because we don't need
 		the random generator which can handle only 16 threads)
@@ -535,7 +536,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		U"The workspace size is not properly defined.");
 	autoMAT workspace = newMATraw (numberOfThreads, worspaceSize);
 
-	autovector <std::thread> thread = newvectorzero <std::thread> (numberOfThreads); // TODO memory leak?
+	std::vector <std::thread> thread (numberOfThreads);
 	std::atomic<integer> frameErrorCount (0);
 	
 	try {
@@ -546,7 +547,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 			const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 			const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 			
-			thread [ithread] = std::thread ([=, & frameErrorCount]() {
+			thread [ithread - 1] = std::thread ([=, & frameErrorCount]() {
 				for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 					const LPC_Frame lpcframe = & lpc -> d_frames [iframe];
 					const double t = Sampled_indexToX (lpc, iframe);
@@ -569,13 +570,13 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		}
 	} catch (MelderError) {
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-			if (thread [ithread]. joinable ())
-				thread [ithread]. join ();
+			if (thread [ithread - 1]. joinable ())
+				thread [ithread - 1]. join ();
 		}
 		throw;
 	}
 	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
-		thread [ithread]. join ();
+		thread [ithread - 1]. join ();
 	
 	return thee;
 }

@@ -27,6 +27,7 @@
 #include "NUM2.h"
 #include <thread>
 #include <atomic>
+#include <vector>
 
 void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 	if (numberOfFormants > 0)
@@ -177,7 +178,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			roots [ithread] = Roots_create (my maxnCoefficients);
 		}
 		autoMAT workspaces = newMATraw (numberOfThreads, maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
-		autovector<std::thread> thread = newvectorzero<std::thread> (numberOfThreads); // TODO memory leak?
+		std::vector <std::thread> thread (numberOfThreads);
 		std::atomic<integer> numberOfSuspectFrames (0);
 		
 		try {
@@ -190,7 +191,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 				const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 				const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 
-				thread [ithread] = std::thread ([=, & numberOfSuspectFrames] () {
+				thread [ithread - 1] = std::thread ([=, & numberOfSuspectFrames] () {
 					for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 						const LPC_Frame lpcFrame = & lpc -> d_frames [iframe];
 						const Formant_Frame formantFrame = & formant -> frames [iframe];
@@ -204,13 +205,13 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			}
 		} catch (MelderError) {
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-				if (thread [ithread]. joinable ())
-					thread [ithread]. join ();
+				if (thread [ithread - 1]. joinable ())
+					thread [ithread - 1]. join ();
 			}
 			throw;
 		}
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
-			thread [ithread]. join ();
+			thread [ithread - 1]. join ();
 	
 				
 		Formant_sort (thee. get ());
