@@ -2,7 +2,7 @@
 #define _CCA_and_Correlation_h_
 /* CCA_and_Correlation.h
  * 
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  */
 
 #include "CCA.h"
-#include "SSCP.h"
+#include "Correlation.h"
 
 autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee);
 /*

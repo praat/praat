@@ -30,6 +30,7 @@
 
 #include "CCA_and_Correlation.h"
 #include "NUM2.h"
+#include "NUMlapack.h"
 #include "SVD.h"
 #include "Strings_extensions.h"
 #include "TableOfReal_extensions.h"
@@ -291,6 +292,140 @@ void CCA_getZeroCorrelationProbability (CCA me, integer eigenvalueNumber, double
 		*out_df = df;
 	if (out_prob)
 		*out_prob = prob;
+}
+
+autoCCA SSCP_to_CCA (SSCP me, integer ny) {
+	try {
+		integer info;
+		Melder_require (ny > 0 && ny < my numberOfRows,
+			U"Invalid split.");
+		Melder_require (my numberOfRows > 1,
+			U"Matrix should not be diagonal.");
+
+		integer nx = my numberOfRows - ny;
+		const bool xy_interchanged = ( nx < ny );
+		integer yof = 1, xof = ny + 1;
+		if (xy_interchanged) {
+			yof = ny + 1;
+			xof = 1;
+			nx = ny;
+			ny = my numberOfRows - nx;
+		}
+		/*
+			Copy Syy and Sxx into upper part of syy and sxx matrices.
+		*/
+		autoMAT syy = newMATpart (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
+		autoMAT sxx = newMATpart (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
+		autoMAT syx = newMATpart (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
+		/*
+			Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
+			(Pretend as if colum-major storage)
+		*/
+		(void) NUMlapack_dpotf2_ ("L", ny, & syy [1] [1], ny, & info);
+		Melder_require (info == 0,
+			U"The leading minor of order ", info, U" is not positive definite, and the "
+			U"factorization of Syy could not be completed.");
+
+		(void) NUMlapack_dpotf2_ ("L", nx, & sxx [1] [1], nx, & info);
+		Melder_require (info == 0,
+			U"The leading minor of order ", info, U" is not positive definite, and the "
+			U"factorization of Sxx could not be completed.");
+		/*
+			With Cholesky decomps Sxx = Ux'* Ux, Syy = Uy * Uy'
+			Sxx**-1 = Uxi * Uxi' and Syy**-1 = Uyi * Uyi', where
+			Uxi = Ux**-1 and Uyi = Uy**-1, the equations
+			(1)  (Syx * Sxx**-1 * Syx' - lambda Syy) y = 0
+			(1') (Syx' * Syy**-1 * Syx - lambda Sxx) x = 0
+			can be written as:
+			(2)  (Syx  * Uxi * Uxi' * Syx' - lambda Uy' * Uy) y = 0
+			(2') (Syx' * Uyi * Uyi' * Syx  - lambda Ux' * Ux) x = 0
+			More explicitly as:
+			(3)  (Uxi' * Syx')' * (Uxi' * Syx') - lambda Uy' * Uy) y = 0
+			(3') (Uyi' * Syx )' * (Uyi' * Syx ) - lambda Ux' * Ux) x = 0
+			They are now in the form (A'A - lambda B'B) x = 0 and both can be solved with the GSVD.
+			However, these equations are not independent. Both have the same
+			eigenvalues and given the eigenvectors for one, the eigenvectors for
+			the other can be calculated.
+			If nx >= ny use eq. (3)
+				GSVD (Uxi' * Syx', Uy) gives lambda's and y.
+				To get x multiply (1) from the left by Syx'*Syy**-1
+				(4) (Syx'*Syy**-1*Syx * Sxx**-1 - lambda ) Syx' * y = 0
+				Split off Sxx**-1
+				(5) (Syx'*Syy**-1*Syx -lambda Sxx) * Sxx**-1 * Syx' * y = 0
+				It follows that x = Sxx**-1 * Syx' * y = Uxi * Uxi' * Sxy * y
+			If ny > nx use eq. (3')
+				We switch the role of x and y.
+		*/
+
+		/*
+			Uxi = inverse(Ux)
+		*/
+		(void) NUMlapack_dtrti2_ ("L", "N", nx, & sxx [1] [1], nx, & info);
+		Melder_require (info == 0,
+			U"Error in inverse for Sxx.");
+		/*
+			Prepare Uxi' * Syx' = (Syx * Uxi)'
+		*/
+		autoMAT a = newMATmul (sxx.transpose(), syx.transpose());
+		Melder_assert (a.nrow == nx && a.ncol == ny);
+
+		autoGSVD gsvd = GSVD_create (a.get(), syy.get());
+		autoMAT ri = newMATcopy (gsvd -> r.get());
+		
+		autoCCA thee = Thing_new (CCA);
+
+		thy y = Eigen_create (gsvd -> numberOfColumns, gsvd -> numberOfColumns);
+		thy x = Eigen_create (thy y -> numberOfEigenvalues, nx);
+		/*
+			Get X=Q*R**-1
+		*/
+		NUMlapack_dtrti2_ ("L", "N", gsvd -> numberOfColumns, & ri [1] [1], gsvd -> numberOfColumns, & info);
+		Melder_require (info == 0,
+			U"Error in inverse for R.");
+		
+		for (integer i = 1; i <= gsvd -> numberOfColumns; i ++) {
+			const double t = gsvd -> d1 [i] / gsvd -> d2 [i];
+			thy y -> eigenvalues [i] = t * t;
+			for (integer j = 1; j <= gsvd -> numberOfColumns; j ++) {
+				const double sum = NUMinner (gsvd -> q.row (i).part (1, j), ri.column (j).part (1, j));
+				thy y -> eigenvectors [j] [i] = sum;
+			}
+		}
+
+		MATnormalizeRows_inplace (thy y -> eigenvectors.get(), 2.0, 1.0);
+
+		thy numberOfCoefficients = thy y -> numberOfEigenvalues;
+		thy numberOfObservations = Melder_ifloor (my numberOfObservations);
+
+		// x = Sxx**-1 * Syx' * y
+
+		for (integer i = 1; i <= thy numberOfCoefficients; i ++) {
+			constVEC evecy = thy y -> eigenvectors.row (i);
+			VEC evecx = thy x -> eigenvectors.row (i);
+			for (integer j = 1; j <= nx; j ++) {
+				longdouble t = 0.0;
+				for (integer k = j; k <= nx; k ++) {
+					for (integer l = 1; l <= nx; l ++) {
+						for (integer n = 1; n <= ny; n ++) {
+							t += sxx [j] [k] * sxx [l] [k] * syx [n] [l] * evecy [n];
+						}
+					}
+				}
+				evecx [j] = double (t);
+			}
+		}
+
+		MATnormalizeRows_inplace (thy x -> eigenvectors.get(), 2.0, 1.0);
+
+		if (ny < nx) {
+			autoEigen t = thy x.move();
+			thy x = thy y.move();
+			thy y = t.move();
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": CCA not created.");
+	}
 }
 
 /* End of file CCA.c */

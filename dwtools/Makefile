@@ -9,7 +9,7 @@ CPPFLAGS = -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ..
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
-	Covariance.o CC.o CCs_to_DTW.o \
+	Correlation.o Covariance.o CC.o CCs_to_DTW.o \
 	ClassificationTable.o Confusion.o \
 	ComplexSpectrogram.o Configuration.o ContingencyTable.o \
 	Configuration_AffineTransform.o \

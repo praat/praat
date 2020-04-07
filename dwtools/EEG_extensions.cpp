@@ -16,8 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#include "ICA.h"
+#include "Correlation.h"
 #include "EEG_extensions.h"
 #include "NUM2.h"
 #include "Sound_and_PCA.h"
