@@ -23,10 +23,10 @@
 */
 
 #include "Collection.h"
+#include "Covariance.h"
 #include "Pitch.h"
 #include "OptimalCeilingTier.h"
 #include "Sound_to_Formant.h"
-#include "SSCP.h"
 #include "Table.h"
 
 #include "DataModeler_enums.h"

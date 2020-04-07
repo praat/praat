@@ -2,7 +2,7 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2020 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
   djmw 20120406 Latest modification.
 */
 
-#include "SSCP.h"
+#include "Covariance.h"
 #include "Sound_and_MixingMatrix.h"
 
 

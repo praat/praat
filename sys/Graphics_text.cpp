@@ -851,7 +851,7 @@ static int numberOfLinks = 0;
 static Graphics_Link links [100];    // a maximum of 100 links per string
 
 static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEachCharacterSeparately) {
-	if (my postScript || (cairo && my duringXor)) {
+	if (my postScript || (cairo && my duringXor) || (cairo && ! my screen)) {   // TODO: use Pango measurements even without Cairo context (if no screen)
 		for (_Graphics_widechar *character = string; character -> kar > U'\t'; character ++)
 			charSize (me, character);
 	} else {
@@ -954,6 +954,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 						Fortunately, a PangoLayout is 1.5 to 2 times faster than the two low-level methods
 						(measured 20170527).
 					*/
+					Melder_assert (my screen);
 					PangoLayout *layout = pango_cairo_create_layout (((GraphicsScreen) me) -> d_cairoGraphicsContext);
 					pango_layout_set_font_description (layout, fontDescription);
 					pango_layout_set_text (layout, codes8, -1);

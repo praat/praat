@@ -1,6 +1,6 @@
 /* Confusion.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,7 +238,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin - rmax, xmax + rmax, ymin - rmax, ymax + rmax);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		Graphics_text (g, thy z [i] [1], thy z [i] [2], my rowLabels [i].get());
 	}

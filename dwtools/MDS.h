@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2019 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 1993-2020 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
  djmw 20110306 Latest modification.
 */
 
+#include "Covariance.h"
+#include "Correlation.h"
 #include "Graphics.h"
 #include "Minimizers.h"
 #include "Confusion.h"
@@ -34,7 +36,6 @@
 #include "Proximity.h"
 #include "Distance.h"
 #include "Configuration.h"
-#include "SSCP.h"
 #include "MDS_enums.h"
 
 /************************** class Weight **************************************/
