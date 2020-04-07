@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2019 David Weenink
+ * Copyright (C) 2011-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -533,7 +533,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 }
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale,
-	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
+	bool confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	Melder_require (my dimension == his dimension,
 		U"The numbers of dimensions should agree.");
 	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
@@ -562,8 +562,8 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	}
 }
 
-void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label,
-	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
+void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, bool confidence, char32 *label,
+	bool pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
 	Melder_require (dim1 >= 1 && dim1 <= my dimension && dim2 >= 1 && dim2 <= my dimension,
 		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");

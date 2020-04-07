@@ -48,8 +48,8 @@
  djmw 20111123 Always use Melder_wcscmp
 */
 
+#include "Covariance.h"
 #include "Graphics_extensions.h"
-#include "SSCP.h"
 #include "Matrix_extensions.h"
 #include "NUMlapack.h"
 #include "NUM2.h"
@@ -381,7 +381,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	Graphics_setInner (g);
 	if (labelsize > 0)
 		Graphics_setFontSize (g, labelsize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= nPoints; i ++) {
 		char32 const *label;
@@ -651,7 +651,7 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 	Graphics_setInner (g);
 	Graphics_line (g, 0.0, numberOfColumns, numberOfColumns, numberOfColumns);
 	Graphics_line (g, 0.0, 0.0, 0.0, numberOfColumns);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 
 	for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 		const integer ycol = colb + icol - 1;
@@ -730,7 +730,7 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integ
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
 
 	for (integer i = rowb; i <= rowe; i ++) {
@@ -1034,7 +1034,7 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 
 	if (labelsize > 0)
 		Graphics_setFontSize (g, labelsize);

@@ -693,7 +693,7 @@ void HMM_draw (HMM me, Graphics g, bool garnish) {
 		max_width = Graphics_textWidth (g, widest_label);
 	}
 	Graphics_setFontSize (g, new_fontSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		const HMMState hmms = my states->at [is];
 		Graphics_circle (g, xs [is], ys [is], rstate);
@@ -1072,30 +1072,30 @@ void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
 
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__1_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__%i1_");
 
 		y1 = 0.9 - dy;
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__2_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__%i2_");
 
 		y1 = 0.9 - (np - 1) * dy;
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__%N_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__%%iN%_");
 
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x0 - 1.5 * r, y0, U"%s__%i_");
 
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, x0, 0.0, U"%t");
 		Graphics_text (g, x, 0.0, U"%t+1");
 
 		const double y3 = 0.10;
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x0, y3, U"%\\be__%t_(%i)%");
 		Graphics_text (g, x, y3, U"%\\be__%t+1_(%j)");
 	}
@@ -1132,30 +1132,30 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
 
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__1_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__1%j_");
 
 		const double y2 = 0.9 - dy;
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x1, y2, U"%s__2_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y2, U"%a__2%j_");
 
 		const double y3 = 0.9 - (np - 1) * dy;
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x1, y3, U"%s__%N_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y3, U"%a__%%Nj%_");
 
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x0 + 1.5 * r, y0, U"%s__%j_");
 
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, x, 0.0, U"%t");
 		Graphics_text (g, x0, 0.0, U"%t+1");
 
 		const double y4 = 0.10;
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x, y4, U"%\\al__%t_(%i)%");
 		Graphics_text (g, x0, y4, U"%\\al__%t+1_(%j)");
 	}
@@ -1173,12 +1173,12 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 	if (garnish) {
 		const double rx1 = 1.0 + xs * 2.0 * xfrac + 0.1, rx2 = rx1 + 0.9 - 0.1, y1 = 0.1;
 		Graphics_line (g, 0.9 + r, 0.5, rx1 - r, 0.5);
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, 0.9, 0.5 + r, U"%s__%i_");
 		Graphics_text (g, rx1, 0.5 + r, U"%s__%j_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 		Graphics_text (g, 1.0 + xfrac * xs, 0.5, U"%a__%%ij%_%b__%j_(O__%t+1_)");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, 0.1, 0.0, U"%t-1");
 		Graphics_text (g, 0.9, 0.0, U"%t");
 		Graphics_text (g, rx1, 0.0, U"%t+1");

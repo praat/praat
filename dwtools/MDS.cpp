@@ -608,7 +608,7 @@ void Salience_draw (Salience me, Graphics g, integer ix, integer iy, bool garnis
 	double ymax, xmax = ymax = wmax;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= my numberOfRows; i ++)
 		if (my rowLabels [i])
@@ -2439,7 +2439,7 @@ void drawMDSClassRelations (Graphics g) {
 	const conststring32 text [7] = {U"", U"Confusion", U"Dissimilarity  %\\de__%%ij%_",  U"Similarity", U"Distance  %d__%%ij%_, %d\\'p__%%ij%_", U"ScalarProduct", U"Configuration" };
 
 	Graphics_setWindow (g, -0.05, 1.05, -0.05, 1.05);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	for (integer i = 1; i <= nBoxes; i ++) {
 		x2 = x [i] + boxWidth;
 		y2 = y [i] + boxHeight;
@@ -2527,9 +2527,9 @@ void drawMDSClassRelations (Graphics g) {
 	Graphics_line (g, x13, y1, x23, y1);
 	Graphics_arrow (g, x23, y1, x23, y [6] + boxHeight);
 	x1 = x [6] + boxWidth + dboxx / 2;
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 	Graphics_text (g, x1, y1, U"\\s{TORSCA}");
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 	Graphics_text (g, x1, y1, U"\\s{YTL}");
 
 	Graphics_setLineType (g, Graphics_DOTTED);
@@ -2539,7 +2539,7 @@ void drawMDSClassRelations (Graphics g) {
 	Graphics_line (g, x23, y [5], x23, ym);
 	Graphics_arrow (g, x23, ym, x [6] + boxWidth, ym);
 	x1 = x [6] + boxWidth + dboxx / 2 + boxWidth3;
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 	Graphics_text (g, x1, ym, U"\\s{INDSCAL}");
 
 	// Dissimilarity to Configuration

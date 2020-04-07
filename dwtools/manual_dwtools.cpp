@@ -149,7 +149,7 @@ static void drawPartionedMatrix (Graphics g) {
 	x1 = 1.5;
 	y1 = 7.0 + 3.0 / 2.0;
 	Graphics_setFontSize (g, 14.0);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_text (g, x1, y1, U"##S__yy_#");
 	x1 = 3.0 + 7.0 / 2.0;
 	Graphics_text (g, x1, y1, U"##S__yx_#");

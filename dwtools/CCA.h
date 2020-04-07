@@ -2,7 +2,7 @@
 #define _CCA_h_
 /* CCA.h
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 */
 
 #include "Eigen.h"
+#include "SSCP.h"
 #include "TableOfReal.h"
 
 #include "CCA_def.h"
@@ -121,5 +122,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 	Given independent table, predict the dependent one, on the basis of
 	the canonical correlations.
 */
+
+autoCCA SSCP_to_CCA (SSCP me, integer ny);
 
 #endif /* CCA.h */

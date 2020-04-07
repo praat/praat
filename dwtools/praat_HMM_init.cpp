@@ -1,6 +1,6 @@
 /* praat_HMM_init.cpp
  *
- * Copyright (C) 2010-2018 David Weenink
+ * Copyright (C) 2010-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ FORM (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Dra
 	OK
 DO
 	GRAPHICS_EACH (GaussianMixture)
-		GaussianMixture_drawConcentrationEllipses (me, GRAPHICS, numberOfSigmas, 0, 0, principalComponentPlane, xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
+		GaussianMixture_drawConcentrationEllipses (me, GRAPHICS, numberOfSigmas, false, nullptr, principalComponentPlane, xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -57,7 +57,7 @@ FORM (GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses, U"GaussianMixture 
 	OK
 DO
 	GRAPHICS_TWO (GaussianMixture, PCA)
-		GaussianMixture_PCA_drawConcentrationEllipses (me, you, GRAPHICS, numberOfSigmas, 0, nullptr,
+		GaussianMixture_PCA_drawConcentrationEllipses (me, you, GRAPHICS, numberOfSigmas, false, nullptr,
 				xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
 	GRAPHICS_TWO_END	
 }

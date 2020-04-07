@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 26 March 2020
+# 7 April 2020
 
 include ../makefile.defs
 
@@ -9,7 +9,7 @@ CPPFLAGS = -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ..
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
-	CC.o CCs_to_DTW.o \
+	Correlation.o Covariance.o CC.o CCs_to_DTW.o \
 	ClassificationTable.o Confusion.o \
 	ComplexSpectrogram.o Configuration.o ContingencyTable.o \
 	Configuration_AffineTransform.o \

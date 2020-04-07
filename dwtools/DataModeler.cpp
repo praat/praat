@@ -558,7 +558,7 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setFontSize (g, marksFontSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	const double currentFontSize = Graphics_inqFontSize (g);
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 		if (my data [ipoint] .status != kDataModelerData::INVALID) {

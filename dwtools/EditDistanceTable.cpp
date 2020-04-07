@@ -1,6 +1,6 @@
 /* EditDistanceTable.c
  *
- * Copyright (C) 2012-2019 David Weenink
+ * Copyright (C) 2012-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -453,7 +453,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 		if (my rowLabels && my rowLabels [irow] && my rowLabels [irow] [0])
 			Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow].get());
-		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (graphics, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			char text [40];
 			print4 (text, my data [irow] [icol], iformat, 0, precision);
@@ -479,7 +479,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 		y -= 0.3 * lineSpacing;
 	} else {
-		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_TOP);
+		Graphics_setTextAlignment (graphics, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (my columnLabels && my columnLabels [icol] && my columnLabels [icol] [0])
@@ -496,7 +496,7 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 	Graphics_setWindow (graphics, 0.5, my warpingPath -> pathLength - 0.5, 0.0, 1.0); // pathLength-1 symbols
 	const double lineSpacing = getLineSpacing (graphics);
 	const double ytarget = 1 - lineSpacing, ysource = ytarget - 2 * lineSpacing, yoper = ysource - lineSpacing;
-	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
+	Graphics_setTextAlignment (graphics, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 	for (integer i = 2; i <= my warpingPath -> pathLength; i ++) {
 		const structPairOfInteger p = my warpingPath -> path [i], p1 = my warpingPath -> path [i - 1];
 		const double x = i - 1;
