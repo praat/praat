@@ -2018,7 +2018,7 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 				numberOfCombinations = (x.size - 1) * x.size / 2;
 				mbs = newVECzero (numberOfCombinations);
 				integer index = 0;
-				for (integer i = 1; i < x.size - 1; i ++)
+				for (integer i = 1; i < x.size; i ++)
 					for (integer j = i + 1; j <= x.size; j ++)
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);
