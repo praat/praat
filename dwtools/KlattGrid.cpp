@@ -799,7 +799,7 @@ void PhonationGrid_draw (PhonationGrid me, Graphics g) {
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	double yout;
 	PhonationGrid_draw_inside (me, g, xmin, xmax2, ymin, ymax, dy, & yout);
 
@@ -1495,7 +1495,7 @@ static void VocalTractGrid_CouplingGrid_draw (VocalTractGrid me, CouplingGrid th
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setLineWidth (g, 2);
 	double yin, yout;
 	VocalTractGrid_CouplingGrid_draw_inside (me, thee, g, filterModel, xmin1, xmax1, ymin, ymax, dy, & yin, & yout);
@@ -1943,7 +1943,7 @@ void FricationGrid_draw (FricationGrid me, Graphics g) {
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setLineWidth (g, 2);
 
 	double yout;
@@ -2206,7 +2206,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 	Graphics_setInner (g);
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setLineWidth (g, 2);
 
 	const integer nff = my frication -> frication_formants -> formants.size - 1 + 1;

@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,10 +235,10 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 			x [i] = my centroid [1] + xt;
 		}
 		Graphics_polyline (g, nsteps + 1, & x [1], & y [1]);
-		if (label && fontSize > 0) {
+		if (label && fontSize > 0.0) {
 			const double oldFontSize = Graphics_inqFontSize (g);
 			Graphics_setFontSize (g, fontSize);
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 			Graphics_text (g, my centroid [1], my centroid [2], label);
 			Graphics_setFontSize (g, oldFontSize);
 		}

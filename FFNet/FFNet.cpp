@@ -563,7 +563,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			x2 = dx2 / 2.0;
 		}
 		if (layer == 0) {
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 			x2WC = x2;
 			for (integer input = 1; input <= my numberOfInputs; input ++) {
 				Graphics_arrow (g, x2WC, y2WC - radius - dy / 4.0, x2WC, y2WC - radius);
@@ -603,7 +603,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 		}
 		if (layer == my numberOfLayers) {
 			x2WC = x2;
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 			for (integer output = 1; output <= my numberOfOutputs; output ++) {
 				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
 				if (my outputCategories)

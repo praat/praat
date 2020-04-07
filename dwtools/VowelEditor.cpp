@@ -630,7 +630,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 					Graphics_setColour (g, colour);
 				}
 				Graphics_setFontSize (g, size);
-				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 				Graphics_text (g, x1, y1, label);
 			}
 		}

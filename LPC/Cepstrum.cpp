@@ -86,9 +86,7 @@ autoPowerCepstrum PowerCepstrum_create (double qmax, integer nq) {
 	}
 }
 
-static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int power, bool garnish) {
-	int autoscaling = minimum >= maximum;
-
+static void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool power, bool garnish) {
 	Graphics_setInner (g);
 
 	if (qmax <= qmin) {
@@ -97,15 +95,15 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 	}
 
 	integer imin, imax;
-	if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
+	integer numberOfSelected = Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax);
+	if (numberOfSelected == 0)
 		return;
-	integer numberOfSelected = imax - imin + 1;
 	autoVEC y = newVECraw (numberOfSelected);
 
 	for (integer i = 1; i <= numberOfSelected; i ++)
 		y [i] = my v_getValueAtSample (imin + i - 1, (power ? 1 : 0), 0);
 
-	if (autoscaling)
+	if (minimum >= maximum) // autoscaling
 		NUMextrema (y.get(), & minimum, & maximum);
 	else
 		VECclip_inplace (y.get(), minimum, maximum);
@@ -125,11 +123,11 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 }
 
 void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish) {
-	_Cepstrum_draw (me, g, qmin, qmax, minimum, maximum, 0, garnish);
+	Cepstrum_draw (me, g, qmin, qmax, minimum, maximum, false, garnish);
 }
 
 void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, bool garnish) {
-	_Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, 1, garnish);
+	Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, true, garnish);
 }
 
 void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTrendType lineType, kCepstrumTrendFit method) {
@@ -143,26 +141,24 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 
 	if (dBminimum >= dBmaximum) { // autoscaling
 		integer imin, imax;
-		if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
+		integer numberOfPoints = Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax);
+		if (numberOfPoints == 0)
 			return;
-		integer numberOfPoints = imax - imin + 1;
-		dBminimum = dBmaximum = my v_getValueAtSample (imin, 1, 0);
-		for (integer i = 2; i <= numberOfPoints; i ++) {
-			integer isamp = imin + i - 1;
-			double y = my v_getValueAtSample (isamp, 1, 0);
-			dBmaximum = y > dBmaximum ? y : dBmaximum;
-			dBminimum = y < dBminimum ? y : dBminimum;
-		}
+		MelderExtremaWithInit extrema_db;
+		for (integer i = 1; i <= numberOfPoints; i ++)
+			extrema_db.update (my v_getValueAtSample (imin + i - 1, 1, 0));
+		dBmaximum = extrema_db.max;
+		dBminimum = extrema_db.min;
 	}
 
 	Graphics_setWindow (g, qmin, qmax, dBminimum, dBmaximum);
-	qend = qend == 0 ? my xmax : qend;
+	qend = ( qend == 0 ? my xmax : qend );
 	if (qend <= qstart) {
 		qend = my xmax;
 		qstart = my xmin;
 	}
-	qstart = qstart < my xmin ? my xmin : qstart;
-	qend = qend > my xmax ? my xmax : qend;
+	Melder_clipLeft (my xmin, & qstart);
+	Melder_clipRight (& qend, my xmax);
 
 	double a, intercept;
 	PowerCepstrum_fitTrendLine (me, qstart, qend, & a, & intercept, lineType, method);
@@ -173,21 +169,22 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 	Graphics_setLineWidth (g, 2);
 	if (lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ) {
 		integer n = 500;
-		double dq = (qend - qstart) / (n + 1);
-		double q1 = qstart;
-		if (qstart <= 0) {
+		const double dq = (qend - qstart) / (n + 1);
+		const double q1 = qstart;
+		if (qstart <= 0.0) {
 			qstart = 0.1 * dq; // some small offset to avoid log(0)
 			n--; 
 		}
 		autoVEC y = newVECraw (n);
 		
 		for (integer i = 1; i <= n; i ++) {
-			double q = q1 + (i - 1) * dq;
+			const double q = q1 + (i - 1) * dq;
 			y [i] = a * log (q) + intercept;
 		}
 		Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, n, qstart, qend);
 	} else {
-		double y1 = a * qstart + intercept, y2 = a * qend + intercept;
+		const double y1 = a * qstart + intercept;
+		const double y2 = a * qend + intercept;
 		if (y1 >= dBminimum && y2 >= dBminimum) {
 			Graphics_line (g, qstart, y1, qend, y2);
 		} else if (y1 < dBminimum) {

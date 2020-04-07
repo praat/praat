@@ -129,7 +129,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	Graphics_setInner (g);
 	Graphics_setWindow (g, rmin, rmax, imin, imax);
 	Graphics_setFontSize (g, fontSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	for (integer i = 1; i <= my numberOfRoots; i ++) {
 		const double re = my roots [i].real(), im = my roots [i].imag();
 		if (re >= rmin && re <= rmax && im >= imin && im <= imax)

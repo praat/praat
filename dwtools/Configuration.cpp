@@ -325,7 +325,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {

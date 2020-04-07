@@ -1993,7 +1993,7 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 		/*
 			Theil's incomplete method:
 			Split (x [i],y [i]) as
-			(x [i],y [i]), (x [N+i],y [N=i], i=1..numberOfPoints/2
+			(x [i],y [i]), (x [N+i],y [N+i], i=1..numberOfPoints/2
 			m [i] = (y [N+i]-y [i])/(x [N+i]-x [i])
 			m = median (m [i])
 			b = median(y [i]-m*x [i])
@@ -2010,7 +2010,7 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 			autoVEC mbs;
 			if (! completeMethod) {
 				numberOfCombinations = x.size / 2;
-				mbs = newVECzero (x.size); // allocate twice to get the intercepts
+				mbs = newVECzero (x.size); // allocate for the intercept calculation too
 				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
 				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
@@ -2018,7 +2018,7 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 				numberOfCombinations = (x.size - 1) * x.size / 2;
 				mbs = newVECzero (numberOfCombinations);
 				integer index = 0;
-				for (integer i = 1; i < x.size; i ++)
+				for (integer i = 1; i < x.size - 1; i ++)
 					for (integer j = i + 1; j <= x.size; j ++)
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);

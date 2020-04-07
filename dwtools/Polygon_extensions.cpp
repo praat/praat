@@ -144,7 +144,7 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (graphics, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
 		SimpleString category = thy at [i];
