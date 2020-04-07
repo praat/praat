@@ -57,7 +57,6 @@
 */
 
 #include "Covariance.h"
-#include "Correlation.h"
 #include "Eigen.h"
 #include "NUMlapack.h"
 #include "NUM2.h"
@@ -91,6 +90,7 @@
 
 Thing_implement (SSCP, TableOfReal, 0);
 Thing_implement (SSCPList, TableOfRealList, 0);
+Thing_implement (Correlation, SSCP, 0);
 
 void structSSCP :: v_info () {
 	structTableOfReal :: v_info ();
@@ -474,6 +474,26 @@ autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfR
 	}
 }
 
+autoCorrelation TableOfReal_to_Correlation (TableOfReal me) {
+	try {
+		autoSSCP sscp = TableOfReal_to_SSCP (me, 0, 0, 0, 0);
+		autoCorrelation thee = SSCP_to_Correlation (sscp.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": correlations not created.");
+	}
+}
+
+autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me) {
+	try {
+		autoTableOfReal t = TableOfReal_rankColumns (me, 1, my numberOfColumns);
+		autoCorrelation thee = TableOfReal_to_Correlation (t.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": rank correlations not created.");
+	}
+}
+
 autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
@@ -577,6 +597,140 @@ void SSCP_setCentroid (SSCP me, integer component, double value) {
 	my centroid [component] = value;
 }
 
+autoCCA SSCP_to_CCA (SSCP me, integer ny) {
+	try {
+		integer info;
+		Melder_require (ny > 0 && ny < my numberOfRows,
+			U"Invalid split.");
+		Melder_require (my numberOfRows > 1,
+			U"Matrix should not be diagonal.");
+
+		integer nx = my numberOfRows - ny;
+		const bool xy_interchanged = ( nx < ny );
+		integer yof = 1, xof = ny + 1;
+		if (xy_interchanged) {
+			yof = ny + 1;
+			xof = 1;
+			nx = ny;
+			ny = my numberOfRows - nx;
+		}
+		/*
+			Copy Syy and Sxx into upper part of syy and sxx matrices.
+		*/
+		autoMAT syy = newMATpart (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
+		autoMAT sxx = newMATpart (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
+		autoMAT syx = newMATpart (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
+		/*
+			Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
+			(Pretend as if colum-major storage)
+		*/
+		(void) NUMlapack_dpotf2_ ("L", ny, & syy [1] [1], ny, & info);
+		Melder_require (info == 0,
+			U"The leading minor of order ", info, U" is not positive definite, and the "
+			U"factorization of Syy could not be completed.");
+
+		(void) NUMlapack_dpotf2_ ("L", nx, & sxx [1] [1], nx, & info);
+		Melder_require (info == 0,
+			U"The leading minor of order ", info, U" is not positive definite, and the "
+			U"factorization of Sxx could not be completed.");
+		/*
+			With Cholesky decomps Sxx = Ux'* Ux, Syy = Uy * Uy'
+			Sxx**-1 = Uxi * Uxi' and Syy**-1 = Uyi * Uyi', where
+			Uxi = Ux**-1 and Uyi = Uy**-1, the equations
+			(1)  (Syx * Sxx**-1 * Syx' - lambda Syy) y = 0
+			(1') (Syx' * Syy**-1 * Syx - lambda Sxx) x = 0
+			can be written as:
+			(2)  (Syx  * Uxi * Uxi' * Syx' - lambda Uy' * Uy) y = 0
+			(2') (Syx' * Uyi * Uyi' * Syx  - lambda Ux' * Ux) x = 0
+			More explicitly as:
+			(3)  (Uxi' * Syx')' * (Uxi' * Syx') - lambda Uy' * Uy) y = 0
+			(3') (Uyi' * Syx )' * (Uyi' * Syx ) - lambda Ux' * Ux) x = 0
+			They are now in the form (A'A - lambda B'B) x = 0 and both can be solved with the GSVD.
+			However, these equations are not independent. Both have the same
+			eigenvalues and given the eigenvectors for one, the eigenvectors for
+			the other can be calculated.
+			If nx >= ny use eq. (3)
+				GSVD (Uxi' * Syx', Uy) gives lambda's and y.
+				To get x multiply (1) from the left by Syx'*Syy**-1
+				(4) (Syx'*Syy**-1*Syx * Sxx**-1 - lambda ) Syx' * y = 0
+				Split off Sxx**-1
+				(5) (Syx'*Syy**-1*Syx -lambda Sxx) * Sxx**-1 * Syx' * y = 0
+				It follows that x = Sxx**-1 * Syx' * y = Uxi * Uxi' * Sxy * y
+			If ny > nx use eq. (3')
+				We switch the role of x and y.
+		*/
+
+		/*
+			Uxi = inverse(Ux)
+		*/
+		(void) NUMlapack_dtrti2_ ("L", "N", nx, & sxx [1] [1], nx, & info);
+		Melder_require (info == 0,
+			U"Error in inverse for Sxx.");
+		/*
+			Prepare Uxi' * Syx' = (Syx * Uxi)'
+		*/
+		autoMAT a = newMATmul (sxx.transpose(), syx.transpose());
+		Melder_assert (a.nrow == nx && a.ncol == ny);
+
+		autoGSVD gsvd = GSVD_create (a.get(), syy.get());
+		autoMAT ri = newMATcopy (gsvd -> r.get());
+		
+		autoCCA thee = Thing_new (CCA);
+
+		thy y = Eigen_create (gsvd -> numberOfColumns, gsvd -> numberOfColumns);
+		thy x = Eigen_create (thy y -> numberOfEigenvalues, nx);
+		/*
+			Get X=Q*R**-1
+		*/
+		NUMlapack_dtrti2_ ("L", "N", gsvd -> numberOfColumns, & ri [1] [1], gsvd -> numberOfColumns, & info);
+		Melder_require (info == 0,
+			U"Error in inverse for R.");
+		
+		for (integer i = 1; i <= gsvd -> numberOfColumns; i ++) {
+			const double t = gsvd -> d1 [i] / gsvd -> d2 [i];
+			thy y -> eigenvalues [i] = t * t;
+			for (integer j = 1; j <= gsvd -> numberOfColumns; j ++) {
+				const double sum = NUMinner (gsvd -> q.row (i).part (1, j), ri.column (j).part (1, j));
+				thy y -> eigenvectors [j] [i] = sum;
+			}
+		}
+
+		MATnormalizeRows_inplace (thy y -> eigenvectors.get(), 2.0, 1.0);
+
+		thy numberOfCoefficients = thy y -> numberOfEigenvalues;
+		thy numberOfObservations = Melder_ifloor (my numberOfObservations);
+
+		// x = Sxx**-1 * Syx' * y
+
+		for (integer i = 1; i <= thy numberOfCoefficients; i ++) {
+			constVEC evecy = thy y -> eigenvectors.row (i);
+			VEC evecx = thy x -> eigenvectors.row (i);
+			for (integer j = 1; j <= nx; j ++) {
+				longdouble t = 0.0;
+				for (integer k = j; k <= nx; k ++) {
+					for (integer l = 1; l <= nx; l ++) {
+						for (integer n = 1; n <= ny; n ++) {
+							t += sxx [j] [k] * sxx [l] [k] * syx [n] [l] * evecy [n];
+						}
+					}
+				}
+				evecx [j] = double (t);
+			}
+		}
+
+		MATnormalizeRows_inplace (thy x -> eigenvectors.get(), 2.0, 1.0);
+
+		if (ny < nx) {
+			autoEigen t = thy x.move();
+			thy x = thy y.move();
+			thy y = t.move();
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": CCA not created.");
+	}
+}
+
 /************ SSCPList ***********************************************/
 
 autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
@@ -649,6 +803,7 @@ autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVECVU const& v1, constV
 	}
 }
 
+
 void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, conststring32 label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	const SSCP t = my at [1];
 
@@ -674,6 +829,7 @@ void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, 
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
+
 
 	for (integer i = 1; i <= thy size; i ++) {
 		const SSCP ti = thy at [i];
@@ -716,6 +872,59 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	}
 }
 
+autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststring32 s_centroid, integer numberOfObservations) {
+	try {
+		autoVEC centroids = newVECfromString (s_centroid);
+		autoVEC correlations = newVECfromString (s_correlations);
+		integer numberOfCorrelations_wanted = centroids.size * (centroids.size + 1) / 2;
+		Melder_require (correlations.size == numberOfCorrelations_wanted,
+			U"The number of correlation matrix elements and the number of centroid elements should agree. "
+			"There should be d(d+1)/2 correlation values and d centroid values.");
+
+		autoCorrelation me = Correlation_create (centroids.size);
+		/*
+			Construct the full correlation matrix from the upper-diagonal elements
+		*/
+		integer rowNumber = 1;
+		for (integer inum = 1; inum <= correlations.size; inum ++) {
+			const integer nmissing = (rowNumber - 1) * rowNumber / 2;
+			const integer inumc = inum + nmissing;
+			rowNumber = (inumc - 1) / centroids.size + 1;
+			const integer icol = ( (inumc - 1) % centroids.size) + 1;
+			my data [rowNumber] [icol] = my data [icol] [rowNumber] = correlations [inum];
+			if (icol == centroids.size)
+				rowNumber ++;
+		}
+		/*
+			Check if a valid correlations, first check diagonal then off-diagonals
+		*/
+		for (integer irow = 1; irow <= centroids.size; irow ++)
+			Melder_require (my data [irow] [irow] == 1.0,
+				U"The diagonal matrix elements should all equal 1.0.");
+		for (integer irow = 1; irow <= centroids.size; irow ++)
+			for (integer icol = irow + 1; icol <= centroids.size; icol ++)
+				Melder_require (fabs (my data [irow] [icol]) <= 1.0,
+					U"The correlation in cell [", irow, U",", icol, U"], i.e. input item ",
+					(irow - 1) * centroids.size + icol - (irow - 1) * irow / 2, U" should not exceed 1.0.");
+		for (integer inum = 1; inum <= centroids.size; inum ++)
+			my centroid [inum] = centroids [inum];
+		my numberOfObservations = numberOfObservations;
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Simple Correlation not created.");
+	}
+}
+
+autoCorrelation Correlation_create (integer dimension) {
+	try {
+		autoCorrelation me = Thing_new (Correlation);
+		SSCP_init (me.get(), dimension, kSSCPstorage::COMPLETE);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Correlation not created.");
+	}
+}
+
 autoSSCP Covariance_to_SSCP (Covariance me) {
 	try {
 		autoSSCP thee = Thing_new (SSCP);
@@ -729,6 +938,19 @@ autoSSCP Covariance_to_SSCP (Covariance me) {
 	}
 }
 
+autoCorrelation SSCP_to_Correlation (SSCP me) {
+	try {
+		autoCorrelation thee = Thing_new (Correlation);
+		my structSSCP :: v_copy (thee.get());
+		for (integer i = 1; i <= my numberOfRows; i ++)
+			for (integer j = i; j <= my numberOfColumns; j ++)
+				thy data [j] [i] = thy data [i] [j] /= sqrt (my data [i] [i] * my data [j] [j]);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": Correlation not created.");
+	}
+}
+
 double SSCP_getLnDeterminant (SSCP me) {
 	try {
 		return NUMdeterminant_fromSymmetricMatrix (my data.get());
@@ -737,9 +959,115 @@ double SSCP_getLnDeterminant (SSCP me) {
 	}
 }
 
+autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, integer numberOfTests, int method) {
+	try {
+		const integer m_bonferroni = my numberOfRows * (my numberOfRows - 1) / 2;
+		Melder_require (confidenceLevel > 0 && confidenceLevel <= 1.0,
+			U"Confidence level should be in interval (0-1).");
+		Melder_require (my numberOfObservations > 4,
+			U"The number of observations should be greater than 4.");
+		Melder_require (numberOfTests >= 0,
+			U"The \"number of tests\" should not be less than zero.");
+
+		if (numberOfTests == 0)
+			numberOfTests = m_bonferroni;
+		if (numberOfTests > m_bonferroni)
+			Melder_warning (U"The \"number of tests\" should not exceed the number of elements in the Correlation object.");
+
+		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfRows);
+
+		TableOfReal_copyLabels (me, thee.get(), 1, 1);
+		/*
+			Obtain large-sample conservative multiple tests and intervals by the
+			Bonferroni inequality and the Fisher z transformation.
+			Put upper value of confidence intervals in upper part and lower
+			values of confidence intervals in lower part of resulting table.
+		*/
+		const double z = NUMinvGaussQ ( (1 - confidenceLevel) / (2.0 * numberOfTests));
+		const double zf = z / sqrt (my numberOfObservations - 3.0);
+		const double two_n = 2.0 * my numberOfObservations;
+
+		for (integer i = 1; i <= my numberOfRows; i ++) {
+			for (integer j = i + 1; j <= my numberOfRows; j ++) {
+				const double rij = my data [i] [j];
+				double rmin, rmax;
+				if (method == 2) {
+					/*
+						Fisher's approximation
+					*/
+					const double zij = 0.5 * log ( (1 + rij) / (1 - rij));
+					rmax = tanh (zij + zf);
+					rmin = tanh (zij - zf);
+				} else if (method == 1) {
+					/*
+						Ruben's approximation
+					*/
+					const double rs = rij / sqrt (1.0 - rij * rij);
+					const double a = two_n - 3.0 - z * z;
+					const double b = rs * sqrt ( (two_n - 3.0) * (two_n - 5.0));
+					const double c = (a - 2.0) * rs * rs - 2.0 * z * z;
+					/*
+						Solve:  a y^2 - 2b y + c = 0
+						q = -0.5((-2b) + sgn(-2b) sqrt((-2b)^2 - 4ac))
+						y1 = q/a; y2 = c/q;
+					*/
+					double d = sqrt (b * b - a * c);
+					if (b > 0)
+						d = - d;
+					double q = b - d;
+					rmin = q / a;
+					rmin /= sqrt (1.0 + rmin * rmin);
+					rmax = c / q; 
+					rmax /= sqrt (1.0 + rmax * rmax);
+					if (rmin > rmax) {
+						double t = rmin;
+						rmin = rmax;
+						rmax = t;
+					}
+				} else {
+					rmax = rmin = 0;
+				}
+				thy data [i] [j] = rmax;
+				thy data [j] [i] = rmin;
+			}
+			thy data [i] [i] = 1;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": confidence intervals not created.");
+	}
+}
+
 void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *out_chisq, double *out_prob, double *out_df) {
 	autoCorrelation c = SSCP_to_Correlation (me);
 	Correlation_testDiagonality_bartlett (c.get(), numberOfContraints, out_chisq, out_prob, out_df);
+}
+
+/* Morrison, page 118 */
+void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *out_chisq, double *out_prob, double *out_df) {
+	const integer p = my numberOfRows;
+	double chisq = undefined, prob = undefined;
+	const double df = p * (p -1) / 2.0;
+
+	if (numberOfContraints <= 0)
+		numberOfContraints = 1;
+
+	if (numberOfContraints > my numberOfObservations) {
+		Melder_warning (U"Correlation_testDiagonality_bartlett: number of constraints cannot exceed the number of observations.");
+		return;
+	}
+	if (my numberOfObservations >= numberOfContraints) {
+		const double ln_determinant = NUMdeterminant_fromSymmetricMatrix (my data.get());
+		chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2.0 * p + 5.0) / 6.0);
+		if (out_prob)
+			prob = NUMchiSquareQ (chisq, df);
+	}
+	if (out_chisq)
+		*out_chisq = chisq;
+	if (out_prob)
+		*out_prob = prob;
+	if (out_df)
+		*out_df = df;
 }
 
 void SSCP_expand (SSCP me) {

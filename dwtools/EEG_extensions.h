@@ -18,7 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Covariance.h"
 #include "ICA.h"
 #include "EEG.h"
 
