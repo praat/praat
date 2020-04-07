@@ -18,16 +18,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CCA.h"
 #include "PCA.h"
 #include "TableOfReal_extensions.h"
 
 #include "SSCP_def.h"
 
 #include "SSCP_enums.h"
-
-Thing_define (Correlation, SSCP) {
-};
 
 /*
 	Ordered collection of SSCP's
@@ -74,10 +70,6 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 
 autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
 
-autoCorrelation TableOfReal_to_Correlation (TableOfReal me);
-
-autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me);
-
 autoTableOfReal SSCP_to_TableOfReal (SSCP me);
 
 autoTableOfReal SSCP_extractCentroid (SSCP me);
@@ -90,32 +82,7 @@ void SSCP_expandPCA (SSCP me);
 
 void SSCP_unExpandPCA (SSCP me);
 
-autoCCA SSCP_to_CCA (SSCP me, integer ny);
-
-autoCorrelation Correlation_create (integer dimension);
-
-autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststring32 s_centroid, integer numberOfObservations);
-
-autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, integer numberOfTests, int method);
-/*
-	if (method == 1)
-		Confidence intervals by Ruben's approximation
-	if (method == 2)
-		Obtain large-sample conservative multiple tests and intervals by the
-		Bonferroni inequality and the Fisher z transformation.
-
-	Put upper value of confidence intervals in upper matrix and lower
-	values of confidence intervals in lower part of resulting table.
-	Diagonal values are 1 (and represent both upper and lower c.i.).
-*/
-
 void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *out_chisq, double *out_prob, double *out_df);
-
-void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *out_chisq, double *out_prob, double *out_df);
-/* Test if a Correlation matrix is diagonal, Morrison pp. 116-118 */
-
-autoCorrelation SSCP_to_Correlation (SSCP me);
-
 
 autoSSCP SSCPList_to_SSCP_sum (SSCPList me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */

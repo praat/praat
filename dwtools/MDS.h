@@ -26,6 +26,7 @@
 */
 
 #include "Covariance.h"
+#include "Correlation.h"
 #include "Graphics.h"
 #include "Minimizers.h"
 #include "Confusion.h"
