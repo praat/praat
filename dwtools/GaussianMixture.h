@@ -25,7 +25,7 @@
 
 #include "ClassificationTable.h"
 #include "Matrix.h"
-#include "SSCP.h"
+#include "Covariance.h"
 #include "TableOfReal_extensions.h"
 
 #include "GaussianMixture_def.h"

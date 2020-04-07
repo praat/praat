@@ -38,7 +38,7 @@
 #include "Matrix_extensions.h"
 #include "NUM2.h"
 #include "Strings_extensions.h"
-#include "SSCP.h"
+#include "Covariance.h"
 #include "Table_extensions.h"
 
 static bool Table_selectedColumnPartIsNumeric (Table me, integer column, constINTVEC selectedRows) {

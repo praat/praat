@@ -48,8 +48,8 @@
  djmw 20111123 Always use Melder_wcscmp
 */
 
+#include "Covariance.h"
 #include "Graphics_extensions.h"
-#include "SSCP.h"
 #include "Matrix_extensions.h"
 #include "NUMlapack.h"
 #include "NUM2.h"
