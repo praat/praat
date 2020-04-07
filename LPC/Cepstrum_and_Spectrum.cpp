@@ -1,6 +1,6 @@
 /* Cepstrum_and_Spectrum.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +82,31 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");
+	}
+}
+
+autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
+	try {
+		autoNUMfft_Table fftTable;
+		// originalNumberOfSamplesProbablyOdd irrelevant
+		Melder_require (my x1 == 0.0,
+			U"A Fourier-transformable Spectrum should have a first frequency of 0 Hz, not ", my x1, U" Hz.");
+		const integer numberOfSamples = my nx - 1;
+		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
+		NUMfft_Table_init (& fftTable, my nx);
+		autoVEC amp = newVECraw (my nx);
+		
+		for (integer i = 1; i <= my nx; i ++)
+			amp [i] = my v_getValueAtSample (i, 0, 2);
+		NUMfft_forward (& fftTable, amp.get());
+		
+		for (integer i = 1; i <= my nx; i ++) {
+			double val = amp [i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
+			thy z [1] [i] = val * val; // power cepstrum
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
