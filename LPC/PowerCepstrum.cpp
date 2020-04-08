@@ -75,8 +75,8 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 		if (numberOfPoints == 0)
 			return;
 		MelderExtremaWithInit extrema_db;
-		for (integer i = 1; i <= numberOfPoints; i ++)
-			extrema_db.update (my v_getValueAtSample (imin + i - 1, 1, 0));
+		for (integer i = imin; i <= imax; i ++)
+			extrema_db.update (my v_getValueAtSample (i, 1, 0));
 		dBmaximum = extrema_db.max;
 		dBminimum = extrema_db.min;
 	}
