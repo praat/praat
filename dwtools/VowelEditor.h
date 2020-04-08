@@ -27,7 +27,14 @@
 #include "Table.h"
 #include "Editor.h"
 
-#include "VowelEditor_def.h"
+Thing_define (TrajectoryPoint, AnyPoint) {
+	double f1, f2;
+	struct MelderColour colour;
+};
+
+Thing_define (Trajectory, Function) {
+	SortedSetOfDoubleOf<structTrajectoryPoint> points;
+};
 
 #include "VowelEditor_enums.h"
 

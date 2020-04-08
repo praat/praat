@@ -112,6 +112,7 @@ static autoTrajectory Trajectory_create (double duration) {
 static void Trajectory_addPoint (Trajectory me, double time, double f1, double f2, MelderColour colour) {
 	try {
 		autoTrajectoryPoint point = TrajectoryPoint_create (time, f1, f2, colour);
+		my xmax = std::max (my xmax, time);
 		my points . addItem_move (point.move());
 	} catch (MelderError) {
 		Melder_throw (me, U" no point added.");
@@ -154,6 +155,52 @@ static void Trajectory_shift_semitones (Trajectory me, double f1_st, double f2_s
 		point -> f1 = f1;	
 		f2 *= pow (2.0, f2_st / 12.0);
 		point -> f2 = f2;
+	}
+}
+
+static void Trajectory_setColour (Trajectory me, double startTime, double endTime, MelderColour colour) {
+	Function_bidirectionalAutowindow (me, & startTime, & endTime);
+	Melder_require (Function_intersectRangeWithDomain (me, & startTime, & endTime),
+		U"The time interval is not part of the trajectory.");
+	/*
+		Find start/end point
+	*/
+	integer startPoint = 1;
+	while (startPoint < my points.size) {
+		TrajectoryPoint point = my points.at [startPoint];
+		if (point -> number < startTime)
+			startPoint ++;
+		else
+			break;
+	}
+	integer endPoint = my points.size;
+	while (endPoint > startPoint) {
+		TrajectoryPoint point = my points.at [endPoint];
+		if (point -> number > endTime)
+			endPoint --;
+		else
+			break;
+	}		
+	for (integer ipoint = startPoint; ipoint <= endPoint; ipoint ++) {
+		TrajectoryPoint point = my points.at [ipoint];
+		point -> colour = colour;
+	}
+	
+	TrajectoryPoint p2, p1 = my points.at [endPoint];
+	if (p1 -> number < endTime) {
+		p2 = my points.at [endPoint + 1];
+		double t = (endTime - p1 -> number) / (p2 -> number - p1 -> number);
+		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
+		double f1 = p1 -> f1 + (p2 -> f1 - p1 -> f1) * t;
+		Trajectory_addPoint (me, endTime, f1, f2, colour);
+	}
+	p2 = my points.at [startPoint];
+	if (p2 -> number < startTime) {
+		p1 = my points.at [startPoint - 1];
+		double t = (startTime - p1 -> number) / (p2 -> number - p1 -> number);
+		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
+		double f1 = p1 -> f1 + (p2 -> f1 - p1 -> f1) * t;
+		Trajectory_addPoint (me, startTime, f1, f2, colour);
 	}
 }
 
@@ -241,6 +288,7 @@ static double VowelEditor_updateFromDurationTextWidget (VowelEditor me) {
 		duration = my p_trajectory_minimumDuration;
 	my pref_trajectory_duration () = my p_trajectory_duration = duration;
 	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
+	Trajectory_newDuration (my trajectory.get(), duration);
 	return duration;
 }
 
@@ -363,13 +411,12 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 
 	const integer glt = Graphics_inqLineType (g);
 	const double glw = Graphics_inqLineWidth (g);
-	const MelderColour colour = Graphics_inqColour (g);
+	const MelderColour colour_save = Graphics_inqColour (g);
 	const double markLength = 0.01;
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	Graphics_setColour (g, MelderColour_fromColourName (my p_trajectory_colour));
 	if (my trajectory -> xmax - my trajectory -> xmin < 0.005)   // too short to hear?
 		Graphics_setColour (g, Melder_RED);
 	
@@ -381,21 +428,24 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	double y1 = gety (firstPoint -> f1);
 	double x1p = x1, y1p = y1;
 	double t1 = firstPoint -> number;
+	MelderColour colour1 = firstPoint -> colour;
+	Graphics_setColour (g, colour1);
 	integer imark = 1;
 	for (integer it = 2; it <= my trajectory -> points.size; it ++) {
 		const TrajectoryPoint point = my trajectory -> points.at [it];
 		const double x2 = getx (point -> f2);
 		const double y2 = gety (point -> f1);
 		const double t2 = point -> number;
-		Graphics_setLineWidth (g, 3);
+		const MelderColour colour2 = point -> colour;
 		if (x1 == x2 && y1 == y2) {
 			x1 = x1p;
 			y1 = y1p;
 		} else {
+			Graphics_setLineWidth (g, 3);
 			Graphics_line (g, x1, y1, x2, y2);
 		}
 		double tm;
-		while (my p_trajectory_markEvery > 0 && (tm = my p_trajectory_markEvery * imark) < t2) {
+		while (my p_trajectory_markEvery > 0.0 && (tm = my p_trajectory_markEvery * imark) < t2) {
 			// line orthogonal to y = (y1/x1)*x is y = -(x1/y1)*x
 			const double fraction = (tm - t1) / (t2 - t1);
 			const double dx = x2 - x1, dy = y2 - y1;
@@ -428,6 +478,11 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 		x1 = x2;
 		y1 = y2;
 		t1 = t2;
+		if (! MelderColour_equal (colour1, colour2)) {
+			Graphics_setColour (g, colour2);
+			colour1 = colour2;
+		}
+
 	}
 	// Arrow at end
 	{
@@ -452,7 +507,7 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 		Graphics_setArrowSize (g, gas);
 	}
 	Graphics_unsetInner (g);
-	Graphics_setColour (g, colour);
+	Graphics_setColour (g, colour_save);
 	Graphics_setLineType (g, glt);
 	Graphics_setLineWidth (g, glw);
 }
@@ -645,6 +700,21 @@ static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"VowelEditor");
 }
 
+static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_FORM) {
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"Trajectory info:");
+	MelderInfo_writeLine (U"Number of points: ", my trajectory -> points.size);
+	MelderInfo_writeLine (U"Start time: ", my trajectory -> xmin, U" s");
+	TrajectoryPoint p1 = my trajectory -> points.at [1];
+	MelderInfo_writeLine (U"    F1: ", p1 -> f1, U" Hz");
+	MelderInfo_writeLine (U"    F2: ", p1 -> f2, U" Hz");
+	MelderInfo_writeLine (U"End time: ", my trajectory -> xmax, U" s");
+	TrajectoryPoint p2 = my trajectory -> points.at [my trajectory -> points.size];
+	MelderInfo_writeLine (U"    F1: ", p2 -> f1, U" Hz");
+	MelderInfo_writeLine (U"    F2: ", p2 -> f2, U" Hz");
+	MelderInfo_close ();
+}
+
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr);
 		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse ())
@@ -744,6 +814,19 @@ static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateTrajectorySpecification (me);
 	autoPitchTier publish = VowelEditor_to_PitchTier (me);
+	Editor_broadcastPublication (me, publish.move());
+}
+
+static void menu_cb_extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	VowelEditor_updateTrajectorySpecification (me);
+	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, U"time F1 F2 Colour");
+	for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
+		TrajectoryPoint point = my trajectory -> points.at [ipoint];
+		Table_setNumericValue (publish.get(), ipoint, 1, point -> number);
+		Table_setNumericValue (publish.get(), ipoint, 2, point -> f1);
+		Table_setNumericValue (publish.get(), ipoint, 3, point -> f2);
+		Table_setStringValue  (publish.get(), ipoint, 4, MelderColour_namePrettyOrNull (point -> colour));
+	}
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -865,16 +948,20 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (endF1, U"End F1 (Hz)", U"350.0")
 		POSITIVE (endF2, U"End F2 (Hz)", U"800.0")
 		POSITIVE (duration, U"Duration (s)", my default_trajectory_duration ())
+		WORD (colour_string, U"Colour", my default_trajectory_colour ());
 	EDITOR_OK
 		SET_REAL (duration, my p_trajectory_duration)
+		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
 	EDITOR_DO
 		clipF1F2 (me, & startF1, & startF2);
-		MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
+		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
+		my trajectory = Trajectory_create (duration);
 		Trajectory_addPoint (my trajectory.get(), 0.0, startF1, startF2, colour);
 		clipF1F2 (me, & endF1, & endF2);
 		Trajectory_addPoint (my trajectory.get(), duration, endF1, endF2, colour);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
 		my pref_trajectory_duration () = my p_trajectory_duration = duration;
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -884,17 +971,24 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (toF1, U"To F1 (Hz)", U"500.0")
 		POSITIVE (toF2, U"To F2 (Hz)", U"1500.0")
 		POSITIVE (extendDuration, U"Extend duration (s)", my default_trajectory_extendDuration ())
+		WORD (colour_string, U"Colour", my default_trajectory_colour ());
 	EDITOR_OK
 		SET_REAL (extendDuration, my p_trajectory_extendDuration)
+		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
 	EDITOR_DO
-		const double endTime = my trajectory -> xmax + extendDuration;
+		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
+		TrajectoryPoint startPoint = my trajectory -> points.at [my trajectory -> points.size];
+		const double startTime = startPoint -> number;
+		const double endTime = startTime + extendDuration;
 		clipF1F2 (me, & toF1, & toF2);
-		MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
+		const double veryNearStartTime = startTime + std::min (0.0001, extendDuration); // coloured line from startTime
+		Trajectory_addPoint (my trajectory.get(), veryNearStartTime, startPoint -> f1, startPoint -> f2, colour);
 		Trajectory_addPoint (my trajectory.get(), endTime, toF1, toF2, colour);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (endTime)));
 		GuiText_setString (my extendTextField, Melder_double (MICROSECPRECISION (extendDuration)));
 		my pref_trajectory_extendDuration () = my p_trajectory_extendDuration = extendDuration;
 		my pref_trajectory_duration () = my p_trajectory_duration = endTime;
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -908,6 +1002,7 @@ static void menu_cb_modifyTrajectoryDuration (VowelEditor me, EDITOR_ARGS_FORM) 
 		Melder_require (newDuration > my p_trajectory_minimumDuration,
 			U"The duration should be larger than ", my p_trajectory_minimumDuration, U" s.");
 		my pref_trajectory_duration () = my p_trajectory_duration = newDuration;
+		Trajectory_newDuration (my trajectory.get(), newDuration);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
 	EDITOR_END
 }
@@ -923,8 +1018,8 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
-	EDITOR_FORM (U"Show trajectory time marks every", nullptr);
+static void menu_cb_trajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
+	EDITOR_FORM (U"Trajectory time marks every", nullptr);
 		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery ())
 	EDITOR_OK
 		SET_REAL (distance, my p_trajectory_markEvery)
@@ -934,16 +1029,17 @@ static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FO
 	EDITOR_END
 }
 
-static void menu_cb_trajectory_settings (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Trajectory settings", nullptr);
-		POSITIVE (distance, U"Distance between time marks (s)", my default_trajectory_markEvery ())
-		WORD (colour, U"Trajectory coulour", my default_trajectory_colour ())
+static void menu_cb_trajectory_colour (VowelEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Trajectory colour settings", nullptr);
+		REAL (startTime, U"left Time range (s)", U"0.0")
+		REAL (endTime, U"right Time range (s)", my default_trajectory_duration ())
+		WORD (colour_string, U"Colour", my default_trajectory_colour ())
 	EDITOR_OK
-		SET_REAL (distance, my p_trajectory_markEvery)
-		SET_STRING (colour, my p_trajectory_colour)  // TODO SET_COLOUR
+		SET_REAL (endTime, my p_trajectory_duration)
+		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
 	EDITOR_DO
-		my pref_trajectory_markEvery () = my p_trajectory_markEvery = distance;
-		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour);
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
+		Trajectory_setColour (my trajectory.get(), startTime, endTime, MelderColour_fromColourNameOrRGBString(colour_string));
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 
@@ -1056,14 +1152,14 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 
 	Graphics_xorOn (my graphics.get(), Melder_BLUE);
 	while (Graphics_mouseStillDown (my graphics.get())) {
-		const double xp = x, yp = y, tp = t;
+		const double yp = y, xp = x, f1p = f1, f2p = f2, tp = t;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock
 		Graphics_getMouseLocation (my graphics.get(), & x, & y);
 		clipXY (& x, & y);
 		/*
 			If the new point equals the previous one: no tier update
 		*/
-		if (xp == x && yp == y) {
+		if (xp == x && y == y) {
 			iskipped ++;
 			continue;
 		}
@@ -1071,7 +1167,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 			Add previous point only if at least one previous event was skipped...
 		*/
 		if (iskipped > 0)
-			Trajectory_addPoint (my trajectory.get(), tp, f1, f2, colour);
+			Trajectory_addPoint (my trajectory.get(), tp, f1p, f2p, colour);
 		iskipped = 0;
 		Graphics_line (my graphics.get(), xp, yp, x, y);
 
@@ -1124,6 +1220,7 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
 	Editor_addCommand (this, U"File", U"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
 	Editor_addCommand (this, U"File", U"Extract PitchTier", 0, menu_cb_extract_PitchTier);
+	Editor_addCommand (this, U"File", U"Extract Trajectory as Table", 0, menu_cb_extract_TrajectoryAsTable);
 	Editor_addCommand (this, U"File", U"-- drawing --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Draw trajectory...", 0, menu_cb_drawTrajectory);
 	Editor_addCommand (this, U"File", U"-- scripting --", 0, nullptr);
@@ -1136,6 +1233,7 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"New trajectory...", 0, menu_cb_newTrajectory);
 	Editor_addCommand (this, U"Edit", U"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (this, U"Edit", U"Shift trajectory...", 0, menu_cb_shiftTrajectory);
+	Editor_addCommand (this, U"Query", U"Trajectory info", 0, menu_cb_trajectoryInfo);
 	Editor_addCommand (this, U"View", U"F1 & F2 range...", 0, menu_cb_ranges_f1f2);
 	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Show one vowel mark...", Editor_HIDDEN, menu_cb_showOneVowelMark);
@@ -1143,8 +1241,8 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"View", U"Show vowel marks from fixed set...", 0, menu_cb_showVowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_showVowelMarksFromTableFile);
 	Editor_addCommand (this, U"View", U"--show trajectory settings--", 0, nullptr);
-	Editor_addCommand (this, U"View", U"Trajectory settings...", 0, menu_cb_trajectory_settings);
-	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", Editor_HIDDEN, menu_cb_showTrajectoryTimeMarksEvery);
+	Editor_addCommand (this, U"View", U"Trajectory colour...", 0, menu_cb_trajectory_colour);
+	Editor_addCommand (this, U"View", U"Trajectory time marks every...", 0, menu_cb_trajectoryTimeMarksEvery);
 }
 
 void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
