@@ -497,12 +497,12 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *out_ss
 			ssreg += diff * diff; // regression sum of squares
 		}
 	}
-	const double rSquared = ( sstot > 0.0 ? 1.0 - ssreg / sstot : 1.0 );
+	const double rSquared = ( sstot > 0.0 ? 1.0 - double (ssreg / sstot) : 1.0 );
 	
 	if (out_ssreg)
-		*out_ssreg = sstot - ssreg;
+		*out_ssreg = double (sstot - ssreg);
 	if (out_sstot)
-		*out_sstot = sstot;
+		*out_sstot = double (sstot);
 	return rSquared;
 }
 

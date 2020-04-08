@@ -4507,7 +4507,7 @@ static void do_editor () {
 static void do_random_initializeWithSeedUnsafelyButPredictably () {
 	/*@praat
 		#
-		# The published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
+		# A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
 		# should be 9981545732273789042.
 		#
 		random_initializeWithSeedUnsafelyButPredictably (5489)
