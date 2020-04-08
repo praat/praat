@@ -146,4 +146,6 @@ autoCovariance DataModeler_to_Covariance_parameters (DataModeler me);
 
 autoTable DataModeler_to_Table_zscores (DataModeler me);
 
+autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, integer xcolumn, integer ycolumn, integer scolumn, integer numberOfParameters, kDataModelerFunction type);
+
 #endif /* _DataModeler_h_ */

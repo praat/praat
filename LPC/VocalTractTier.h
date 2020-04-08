@@ -2,7 +2,7 @@
 #define _VocalTractTier_h_
 /* VocalTractTier.h
  *
- * Copyright (C) 2012-2019 David Weenink
+ * Copyright (C) 2012-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, double maxArea, bool closedAtGlottis);
 
-autoVocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time);
+autoVocalTractPoint VocalTractPoint_create (VocalTract me, double time);
 
 autoVocalTractTier VocalTractTier_create (double fromTime, double toTime);
 
