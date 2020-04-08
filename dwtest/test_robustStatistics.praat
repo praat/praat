@@ -29,6 +29,7 @@ procedure location_scale
 	;# compare with R: hubers(c(1:13, 20))
 	assert abs(.location - 7.56108) < 0.00001
 	assert abs(.scale - 4.86268) < 0.00001
+	removeObject: .tab
 endproc
 
 appendInfoLine: "test_robustStatistics.praat OK"

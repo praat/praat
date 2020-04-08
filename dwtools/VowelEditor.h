@@ -23,26 +23,27 @@
  djmw 20110306 Latest modification.
 */
 
-#include "FormantTier.h"
-#include "PitchTier.h"
-#include "TableOfReal.h"
+#include "RealTier.h"
+#include "Table.h"
 #include "Editor.h"
 
-//#include "Vowel_def.h"
+Thing_define (TrajectoryPoint, AnyPoint) {
+	double f1, f2;
+	struct MelderColour colour;
+};
+
+Thing_define (Trajectory, Function) {
+	SortedSetOfDoubleOf<structTrajectoryPoint> points;
+};
 
 #include "VowelEditor_enums.h"
-
-Thing_define (VowelSpecification, Function) {
-	autoPitchTier pitchTier;
-	autoFormantTier formantTier;
-};
 
 Thing_define (VowelEditor, Editor) {
 	int shiftKeyPressed;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
-	autoTable marks;   // Vowel, F1, F2, Colour...
-	autoVowelSpecification vowel;
+	autoTable marks;   // Vowel, F1, F2, Colour
+	autoTrajectory trajectory;
 	autoVEC extraFrequencyBandwidthPairs;
 	GuiDrawingArea drawingArea;
 	GuiButton playButton, reverseButton, publishButton;

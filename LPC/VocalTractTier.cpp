@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012-2018 David Weenink
+ * Copyright (C) 2012-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,19 @@
 #include "oo_DESCRIPTION.h"
 #include "VocalTractTier_def.h"
 
+Thing_implement (VocalTractPoint, AnyPoint, 0);
+
+autoVocalTractPoint VocalTractPoint_create (VocalTract me, double time) {
+	try {
+		autoVocalTractPoint thee = Thing_new (VocalTractPoint);
+		thy number = time;
+		thy d_vocalTract = Data_copy (me);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": VocalTractPoint not created.");
+	}
+}
+
 void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, double maxArea, bool closedAtGlottis)
 {
 	Graphics_setInner (g);
@@ -59,23 +72,6 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 	}
 	Graphics_unsetInner (g);
 }
-
-/***** VocalTractPoint *****/
-
-Thing_implement (VocalTractPoint, AnyPoint, 0);
-
-autoVocalTractPoint VocalTract_to_VocalTractPoint (VocalTract me, double time) {
-	try {
-		autoVocalTractPoint thee = Thing_new (VocalTractPoint);
-		thy number = time;
-		thy d_vocalTract = Data_copy (me);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": not converted to VocalTractPoint.");
-	}
-}
-
-/***** VocalTractTier *****/
 
 Thing_implement (VocalTractTier, Function, 0);
 
@@ -101,7 +97,7 @@ autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime
 
 void VocalTractTier_addVocalTract (VocalTractTier me, double time, VocalTract vocaltract) {
 	try {
-		autoVocalTractPoint thee = VocalTract_to_VocalTractPoint (vocaltract, time);
+		autoVocalTractPoint thee = VocalTractPoint_create (vocaltract, time);
 		my d_vocalTracts. addItem_move (thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract added.");
