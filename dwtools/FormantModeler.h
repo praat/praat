@@ -142,9 +142,6 @@ autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<
 
 autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer iformant);
 
-autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax,
-	integer xcolumn, integer ycolumn, integer scolumn, integer numberOfParameters, kDataModelerFunction type);
-
 autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
 	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, kFormantModelerWeights weighFormants,
