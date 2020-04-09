@@ -159,11 +159,12 @@ static void Trajectory_shift_semitones (Trajectory me, double f1_st, double f2_s
 }
 
 static void Trajectory_setColour (Trajectory me, double startTime, double endTime, MelderColour colour) {
-	Function_bidirectionalAutowindow (me, & startTime, & endTime);
 	Melder_require (Function_intersectRangeWithDomain (me, & startTime, & endTime),
 		U"The time interval is not part of the trajectory.");
 	/*
-		Find start/end point
+		Now: startTime <= endTime
+		
+		Find the points within [startTime, endTime]
 	*/
 	integer startPoint = 1;
 	while (startPoint < my points.size) {
@@ -185,9 +186,19 @@ static void Trajectory_setColour (Trajectory me, double startTime, double endTim
 		TrajectoryPoint point = my points.at [ipoint];
 		point -> colour = colour;
 	}
-	
+	/*
+		If the startTime and endTime are too far away from a trajectory point,
+		as could happen if a trajectory was created by the 'New trajectory' and/or
+		'Extend trajectory' menu items, then we have to include a new trajectory point.
+		The (time,f1,f2) numbers are obtained by linear interpolation, where we 
+		use that the two points in the trajectory never bear the same time.
+		
+		We also have to guard against rounding down in the forms. For example an endTime
+		of 0.4632200000000007 might be shown in the form as '0.46322'
+	*/
+	double timeMargin = 1e-14; // guards against rounding down by the representation in the forms;
 	TrajectoryPoint p2, p1 = my points.at [endPoint];
-	if (p1 -> number < endTime) {
+	if (endTime - timeMargin > p1 -> number && endPoint < my points.size) {
 		p2 = my points.at [endPoint + 1];
 		double t = (endTime - p1 -> number) / (p2 -> number - p1 -> number);
 		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
@@ -195,7 +206,7 @@ static void Trajectory_setColour (Trajectory me, double startTime, double endTim
 		Trajectory_addPoint (me, endTime, f1, f2, colour);
 	}
 	p2 = my points.at [startPoint];
-	if (p2 -> number < startTime) {
+	if (startTime + timeMargin < p2 -> number && startPoint > 1) {
 		p1 = my points.at [startPoint - 1];
 		double t = (startTime - p1 -> number) / (p2 -> number - p1 -> number);
 		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
@@ -444,33 +455,28 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 			Graphics_setLineWidth (g, 3);
 			Graphics_line (g, x1, y1, x2, y2);
 		}
-		double tm;
-		while (my p_trajectory_markEvery > 0.0 && (tm = my p_trajectory_markEvery * imark) < t2) {
-			// line orthogonal to y = (y1/x1)*x is y = -(x1/y1)*x
-			const double fraction = (tm - t1) / (t2 - t1);
+		double markTime;
+		while ((markTime = my p_trajectory_markEvery * imark) < t2) {
+			/*
+				The parametrization of the line running from (x1,y1) to (x2,y2) is
+				(1)   (x1, y1) + s * (x2 - x1, y2 - y1), where 0 <= s <= 1;
+				The mark position (xm,ym) is at s = (markTime - t1) / (t2 - t1).
+				The line perpendicular to this line can be parametrized as
+				(2)   (xm, ym) + v * (-(y2 - y1), x2 - x1). 
+				We need the startpoint, M1, and endpoint, M2, of the mark line. These are parametrized as
+				(xl1,yl1) = (xm,ym) + V * (y1 - y2, x2 - x1) and (xl2,yl2) = (xm , ym) - V * (y1 - y2, x2 - x1).
+				The length of the vector mark line constrains the value of V.
+			*/
+			const double s = (markTime - t1) / (t2 - t1);
 			const double dx = x2 - x1, dy = y2 - y1;
-			const double xm = x1 + fraction * dx;
-			const double ym = y1 + fraction * dy;
+			const double xm = x1 + s * dx;
+			const double ym = y1 + s * dy;
 			const double d = sqrt (dx * dx + dy * dy);
-			if (d > 0.0) {
-				double xl1 = dy * markLength / d, xl2 = - xl1;
-				double yl1 = dx * markLength / d, yl2 = - yl1;
-
-				if (dx * dy > 0.0) {
-					xl1 = -fabs (xl1);
-					yl1 = fabs (yl1);
-					xl2 = fabs (xl1);
-					yl2 = -fabs (yl1);
-				} else if (dx * dy < 0.0) {
-					xl1 = -fabs (xl1);
-					yl1 = -fabs (yl1);
-					xl2 = fabs (xl1);
-					yl2 = fabs (yl1);
-				}
-				Graphics_setLineWidth (g, 1);
-				trace (xm, U" ", ym, U" ", xl1, U" ", xl2, U" ", yl1, U" ", yl2);
-				Graphics_line (g, xm + xl1, ym + yl1, xm + xl2, ym + yl2);
-			}
+			double v = my p_trajectory_markLength / (2.0 * d); // d > 0
+			double xl1 = xm - v * dy, yl1 = ym + v * dx;
+			double xl2 = xm + v * dy, yl2 = ym - v * dx;
+			Graphics_setLineWidth (g, 1);
+			Graphics_line (g, xl1, yl1, xl2, yl2);
 			imark ++;
 		}
 		x1p = x1;
@@ -556,20 +562,20 @@ static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 
 static void VowelEditor_getMarks (VowelEditor me) {
 	autoTable te;
-	const char32 *speaker = ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" :
-		my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"w" :
-		my p_marks_speakerType == kVowelEditor_speakerType::CHILD ? U"c": U"m" );
 	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {   // American-English
 		const autoTable thee = Table_create_petersonBarney1952 ();
-		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
+		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO,
+		  ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" :
+			my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"w" :
+			my p_marks_speakerType == kVowelEditor_speakerType::CHILD ? U"c": U"m" ));
 	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::DUTCH) {
 		if (my p_marks_speakerType == kVowelEditor_speakerType::CHILD) {
 			const autoTable thee = Table_create_weenink1983 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, U"c");
 		}
 		else {   // male + female from Pols van Nierop
 			const autoTable thee = Table_create_polsVanNierop1973 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" : my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"f" : U"f") );
 		}
 	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::NONE) {   // none
 		my marks.reset();
@@ -873,25 +879,28 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Show vowel marks", nullptr);
 		OPTIONMENU_ENUM (kVowelEditor_marksDataSet, dataSet, U"Data set", my default_marks_dataSet ())
 		OPTIONMENU_ENUM (kVowelEditor_speakerType, speaker, U"Speaker", my default_marks_speakerType ())
 		POSITIVE (fontSize, U"Font size (points)", my default_marks_fontSize ())
+		WORD (colour_string, U"Colour", my default_marks_colour ());
 	EDITOR_OK
 		SET_ENUM (dataSet, kVowelEditor_marksDataSet, my p_marks_dataSet)
 		SET_ENUM (speaker, kVowelEditor_speakerType, my p_marks_speakerType)
 		SET_REAL (fontSize, my p_marks_fontSize)
+		SET_STRING (colour_string, my p_trajectory_colour)
 	EDITOR_DO
 		my pref_marks_dataSet		() = my p_marks_dataSet = dataSet;
 		my pref_marks_speakerType	() = my p_marks_speakerType = speaker;
 		my pref_marks_fontSize		() = my p_marks_fontSize = fontSize;
+		pref_str32cpy2 (my pref_marks_colour (), my p_marks_colour, colour_string);
 		VowelEditor_getMarks (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
-static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {  // deprecated 20200404
+static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {  // deprecated 20200404
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
@@ -1237,9 +1246,9 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"View", U"F1 & F2 range...", 0, menu_cb_ranges_f1f2);
 	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Show one vowel mark...", Editor_HIDDEN, menu_cb_showOneVowelMark);
-	Editor_addCommand (this, U"View", U"Show vowel marks...", Editor_HIDDEN, menu_cb_showVowelMarks);
-	Editor_addCommand (this, U"View", U"Show vowel marks from fixed set...", 0, menu_cb_showVowelMarks);
-	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_showVowelMarksFromTableFile);
+	Editor_addCommand (this, U"View", U"Vowel marks...", Editor_HIDDEN, menu_cb_vowelMarks);
+	Editor_addCommand (this, U"View", U"Vowel marks from fixed set...", 0, menu_cb_vowelMarks);
+	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_vowelMarksFromTableFile);
 	Editor_addCommand (this, U"View", U"--show trajectory settings--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Trajectory colour...", 0, menu_cb_trajectory_colour);
 	Editor_addCommand (this, U"View", U"Trajectory time marks every...", 0, menu_cb_trajectoryTimeMarksEvery);
