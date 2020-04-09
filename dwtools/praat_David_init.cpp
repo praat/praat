@@ -7710,9 +7710,8 @@ static void cb_publish (Editor /*editor*/, autoDaata publish) {
 }
 
 DIRECT (WINDOW_VowelEditor_create) {
-	if (theCurrentPraatApplication -> batch) {
+	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot edit from batch.");
-	}
 	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
 	Editor_setPublicationCallback (vowelEditor.get(), cb_publish);
 	vowelEditor.releaseToUser();
@@ -7964,6 +7963,8 @@ void praat_uvafon_David_init () {
 	Thing_recognizeClassByOtherName (classActivationList, U"Activation");
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
+
+	structVowelEditor  :: f_preferences ();
 
 	espeakdata_praat_init ();
 
