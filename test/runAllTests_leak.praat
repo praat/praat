@@ -1,7 +1,10 @@
-# Praat script runAllPraatTests_leak.praat
-# Paul Boersma 2020-03-14
+# Praat script runAllTests_leak.praat
+# Paul Boersma 2020-04-09
 #
-# This script runs all Praat scripts in its subdirectories.
+# This script runs all Praat scripts in its subdirectories twice,
+# and reports its suspicions of memory leaks.
+# To see whether a leak actually exists, run the suspected script
+# multiple times from the script window, each time followed by `Report memory use`.
 
 Text writing preferences: "try ASCII, then UTF-16"
 if macintosh
