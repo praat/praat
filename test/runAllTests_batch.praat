@@ -1,9 +1,18 @@
 # Praat script runAllTests_batch.praat
-# Paul Boersma 2020-05-08
+# Paul Boersma 2020-05-09
 #
 # This script runs all Praat scripts in its subdirectories.
+# This script is to be called from the command line:
+#     praat --run runAllTests.praat
+#
+# The subdirectories `manual` and `speed` are ignored,
+# and scripts containing `_GUI_` in their names are ignored.
 
-executable$ = "~/builds/mac_products/Configuration64/Praat.app/Contents/MacOS/Praat"
+if macintosh
+	executable$ = "~/builds/mac_products/Configuration64/Praat.app/Contents/MacOS/Praat --no-pref-files"
+else
+	executable$ = "../praat --no-pref-files"
+endif
 
 writeInfoLine: "Running all tests..."
 
@@ -18,7 +27,7 @@ for directory to numberOfDirectories
 		for file to numberOfFiles
 			selectObject: files
 			file$ = Get string: file
-			if not index (file$, "_GUI_.praat")
+			if not index (file$, "_GUI_")
 				path$ = directory$ + "/" + file$
 				appendInfoLine: "### executing ", path$, ":"
 				runSystem: executable$, " --run """, path$, """"
@@ -45,7 +54,7 @@ for directory1 to numberOfDirectories1
 			for file to numberOfFiles
 				selectObject: files
 				file$ = Get string: file
-				if not index (file$, "_GUI_.praat")
+				if not index (file$, "_GUI_")
 					path$ = directory1$ + "/" + directory2$ + "/" + file$
 					appendInfoLine: "### executing ", path$, ":"
 					runSystem: executable$, " --run """, path$, """"
