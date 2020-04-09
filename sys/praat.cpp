@@ -1410,9 +1410,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 			}
 		#endif
 		#ifdef UNIX
-			if (! praatP.ignorePreferenceFiles) {
+			if (! praatP.ignorePreferenceFiles)
 				Preferences_read (& prefsFile);
-			}
 		#endif
 		#if ! defined (macintosh)
 			trace (U"initializing the Gui late");
@@ -1508,7 +1507,8 @@ void praat_run () {
 	 */
 	if (! praatP.ignorePreferenceFiles) {
 		Preferences_read (& prefsFile);
-		if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
+		if (! praatP.dontUsePictureWindow)
+			praat_picture_prefsChanged ();
 		praat_statistics_prefsChanged ();
 	}
 
@@ -1825,7 +1825,8 @@ void praat_run () {
 						} catch (MelderError) {
 							Melder_clearError ();   // ignore this line, but not necessarily the next
 						}
-						if (! newline) break;
+						if (! newline)
+							break;
 						line = newline + 1;
 					}
 				}
