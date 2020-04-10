@@ -162,52 +162,47 @@ static void Trajectory_setColour (Trajectory me, double startTime, double endTim
 	Melder_require (Function_intersectRangeWithDomain (me, & startTime, & endTime),
 		U"The time interval is not part of the trajectory.");
 	/*
-		Now: startTime <= endTime
-		
-		Find the points within [startTime, endTime]
+		If a segment runs from p1 to p2 then its colour is detemined by p1.
 	*/
-	integer startPoint = 1;
-	while (startPoint < my points.size) {
-		TrajectoryPoint point = my points.at [startPoint];
-		if (point -> number < startTime)
-			startPoint ++;
-		else
-			break;
-	}
-	integer endPoint = my points.size;
-	while (endPoint > startPoint) {
-		TrajectoryPoint point = my points.at [endPoint];
-		if (point -> number > endTime)
-			endPoint --;
-		else
-			break;
-	}		
-	for (integer ipoint = startPoint; ipoint <= endPoint; ipoint ++) {
+	integer startIndex = AnyTier_timeToHighIndex (my asAnyTier (), startTime);
+	integer endIndex = AnyTier_timeToLowIndex (my asAnyTier (), endTime);
+			
+	for (integer ipoint = startIndex; ipoint <= endIndex; ipoint ++) {
 		TrajectoryPoint point = my points.at [ipoint];
 		point -> colour = colour;
 	}
 	/*
+		We just add the points to the tier.
 		If the startTime and endTime are too far away from a trajectory point,
 		as could happen if a trajectory was created by the 'New trajectory' and/or
 		'Extend trajectory' menu items, then we have to include a new trajectory point.
 		The (time,f1,f2) numbers are obtained by linear interpolation, where we 
-		use that the two points in the trajectory never bear the same time.
+		use that two points in a trajectory never bear the same time.
 		
 		We also have to guard against rounding down in the forms. For example an endTime
 		of 0.4632200000000007 might be shown in the form as '0.46322'
 	*/
-	double timeMargin = 1e-14; // guards against rounding down by the representation in the forms;
-	TrajectoryPoint p2, p1 = my points.at [endPoint];
-	if (endTime - timeMargin > p1 -> number && endPoint < my points.size) {
-		p2 = my points.at [endPoint + 1];
+	TrajectoryPoint p2, p1 = my points.at [endIndex];
+	if (p1 -> number == endTime) {
+		if (endIndex < my points.size) {
+			p2 = my points.at [endIndex + 1];
+			p1 -> colour = p2 -> colour;
+		}
+	} else {
+		p2 = my points.at [endIndex + 1];
 		double t = (endTime - p1 -> number) / (p2 -> number - p1 -> number);
 		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
 		double f1 = p1 -> f1 + (p2 -> f1 - p1 -> f1) * t;
-		Trajectory_addPoint (me, endTime, f1, f2, colour);
+		Trajectory_addPoint (me, endTime, f1, f2, ( startIndex > endIndex ? p1 -> colour : p2 -> colour ));
 	}
-	p2 = my points.at [startPoint];
-	if (startTime + timeMargin < p2 -> number && startPoint > 1) {
-		p1 = my points.at [startPoint - 1];
+	p2 = my points.at [startIndex];
+	if (p2 -> number == startTime) {
+		if (startIndex > 1) {
+			p1 = my points.at [startIndex - 1];
+			p2 -> colour = colour;
+		}
+	} else {
+		p1 = my points.at [startIndex - 1];
 		double t = (startTime - p1 -> number) / (p2 -> number - p1 -> number);
 		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
 		double f1 = p1 -> f1 + (p2 -> f1 - p1 -> f1) * t;
@@ -287,7 +282,7 @@ static void VowelEditor_updateFromF0StartAndSlopeTextWidgets (VowelEditor me) {
 
 static void VowelEditor_updateFromExtendDurationTextWidget (VowelEditor me) {
 	double extend = getRealFromTextWidget (my extendTextField);
-	if (isundef (extend) || extend <= my p_trajectory_minimumDuration || extend > my p_trajectory_maximumDuration)
+	if (isundef (extend) || extend <= my p_trajectory_minimumDuration)
 		extend = my p_trajectory_minimumDuration;
 	GuiText_setString (my extendTextField, Melder_double (extend));
 	my pref_trajectory_extendDuration () = my p_trajectory_extendDuration = extend;
@@ -365,7 +360,6 @@ static void VowelEditor_updateTrajectorySpecification (VowelEditor me) {
 static autoFormantGrid VowelEditor_to_FormantGrid (VowelEditor me) {
 	try {
 		autoFormantGrid thee = FormantGrid_createEmpty (my trajectory -> xmin, my trajectory -> xmax, my p_synthesis_numberOfFormants);
-		const integer numberOfExtraFormants = my p_synthesis_numberOfFormants - 2;
 		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 			const TrajectoryPoint tp = my trajectory -> points.at [ipoint];
 			const double time = tp -> number;
@@ -373,13 +367,13 @@ static autoFormantGrid VowelEditor_to_FormantGrid (VowelEditor me) {
 			FormantGrid_addBandwidthPoint (thee.get(), 1, time, tp -> f1 / my p_synthesis_q1);
 			if (my p_synthesis_numberOfFormants < 2)
 				continue;
-			FormantGrid_addFormantPoint (thee.get(), 2, time, tp ->f2);
-			FormantGrid_addBandwidthPoint (thee.get(), 1, time, tp ->f2 / my p_synthesis_q2);
-			for (integer ifor = 1; ifor <= numberOfExtraFormants; ifor ++) {
+			FormantGrid_addFormantPoint (thee.get(), 2, time, tp -> f2);
+			FormantGrid_addBandwidthPoint (thee.get(), 2, time, tp -> f2 / my p_synthesis_q2);
+			for (integer ifor = 1; ifor <= my p_synthesis_numberOfFormants - 2; ifor ++) {
 				if (my p_synthesis_numberOfFormants < 2 + ifor)
 					break;
 				FormantGrid_addFormantPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor - 1]);
-				FormantGrid_addBandwidthPoint (thee.get(), 1, time, my extraFrequencyBandwidthPairs [2 * ifor]);
+				FormantGrid_addBandwidthPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor]);
 			}
 		}
 		return thee;
@@ -417,13 +411,13 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 	}
 }
 
+/* Precondition: trajectory points are all different */
 static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	Melder_assert (my trajectory -> points.size >= 2);
 
 	const integer glt = Graphics_inqLineType (g);
 	const double glw = Graphics_inqLineWidth (g);
 	const MelderColour colour_save = Graphics_inqColour (g);
-	const double markLength = 0.01;
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
@@ -437,24 +431,20 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	const TrajectoryPoint firstPoint = my trajectory -> points.at [1];
 	double x1 = getx (firstPoint -> f2);
 	double y1 = gety (firstPoint -> f1);
-	double x1p = x1, y1p = y1;
 	double t1 = firstPoint -> number;
-	MelderColour colour1 = firstPoint -> colour;
-	Graphics_setColour (g, colour1);
+	MelderColour colour = firstPoint -> colour; // firstpoint determines colour of segment
+	Graphics_setColour (g, colour);
 	integer imark = 1;
 	for (integer it = 2; it <= my trajectory -> points.size; it ++) {
 		const TrajectoryPoint point = my trajectory -> points.at [it];
 		const double x2 = getx (point -> f2);
 		const double y2 = gety (point -> f1);
 		const double t2 = point -> number;
-		const MelderColour colour2 = point -> colour;
-		if (x1 == x2 && y1 == y2) {
-			x1 = x1p;
-			y1 = y1p;
-		} else {
-			Graphics_setLineWidth (g, 3);
-			Graphics_line (g, x1, y1, x2, y2);
-		}
+		Graphics_setLineWidth (g, my p_trajectory_lineWidth);
+		Graphics_line (g, x1, y1, x2, y2);
+		/*
+			draw line orthogonal to the trajectory at regular points
+		*/
 		double markTime;
 		while ((markTime = my p_trajectory_markEvery * imark) < t2) {
 			/*
@@ -479,16 +469,13 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 			Graphics_line (g, xl1, yl1, xl2, yl2);
 			imark ++;
 		}
-		x1p = x1;
-		y1p = y1;
 		x1 = x2;
 		y1 = y2;
 		t1 = t2;
-		if (! MelderColour_equal (colour1, colour2)) {
-			Graphics_setColour (g, colour2);
-			colour1 = colour2;
+		if (! MelderColour_equal (colour, point -> colour)) {
+			Graphics_setColour (g, point -> colour);
+			colour = point -> colour;
 		}
-
 	}
 	// Arrow at end
 	{
@@ -825,7 +812,7 @@ static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateTrajectorySpecification (me);
-	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, U"time F1 F2 Colour");
+	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, U"Time F1 F2 Colour");
 	for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 		TrajectoryPoint point = my trajectory -> points.at [ipoint];
 		Table_setNumericValue (publish.get(), ipoint, 1, point -> number);
@@ -956,20 +943,20 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (startF2, U"Start F2 (Hz)", U"1200.0")
 		POSITIVE (endF1, U"End F1 (Hz)", U"350.0")
 		POSITIVE (endF2, U"End F2 (Hz)", U"800.0")
-		POSITIVE (duration, U"Duration (s)", my default_trajectory_duration ())
+		POSITIVE (newDuration, U"Duration (s)", my default_trajectory_newDuration ())
 		WORD (colour_string, U"Colour", my default_trajectory_colour ());
 	EDITOR_OK
-		SET_REAL (duration, my p_trajectory_duration)
+		SET_REAL (newDuration, my p_trajectory_newDuration)
 		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
 	EDITOR_DO
 		clipF1F2 (me, & startF1, & startF2);
 		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
-		my trajectory = Trajectory_create (duration);
+		my trajectory = Trajectory_create (newDuration);
 		Trajectory_addPoint (my trajectory.get(), 0.0, startF1, startF2, colour);
 		clipF1F2 (me, & endF1, & endF2);
-		Trajectory_addPoint (my trajectory.get(), duration, endF1, endF2, colour);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
-		my pref_trajectory_duration () = my p_trajectory_duration = duration;
+		Trajectory_addPoint (my trajectory.get(), newDuration, endF1, endF2, colour);
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
+		my pref_trajectory_newDuration () = my p_trajectory_newDuration = newDuration;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -987,11 +974,10 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
 		TrajectoryPoint startPoint = my trajectory -> points.at [my trajectory -> points.size];
+		startPoint -> colour = colour;
 		const double startTime = startPoint -> number;
 		const double endTime = startTime + extendDuration;
 		clipF1F2 (me, & toF1, & toF2);
-		const double veryNearStartTime = startTime + std::min (0.0001, extendDuration); // coloured line from startTime
-		Trajectory_addPoint (my trajectory.get(), veryNearStartTime, startPoint -> f1, startPoint -> f2, colour);
 		Trajectory_addPoint (my trajectory.get(), endTime, toF1, toF2, colour);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (endTime)));
 		GuiText_setString (my extendTextField, Melder_double (MICROSECPRECISION (extendDuration)));
@@ -1140,8 +1126,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 	if (event -> shiftKeyPressed) {
 		VowelEditor_updateFromExtendDurationTextWidget (me);
 		(my shiftKeyPressed) ++;
-		dt = my trajectory -> xmax + my p_trajectory_extendDuration;
-		t = 0.0 + dt;
+		t = dt = my trajectory -> xmax + my p_trajectory_extendDuration;
 		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
 		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
 		GuiText_setString (my durationTextField, Melder_double (t));
@@ -1158,10 +1143,9 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 			goto end;
 		}
 	}
-
-	Graphics_xorOn (my graphics.get(), Melder_BLUE);
+	Graphics_xorOn (my graphics.get(), colour);
 	while (Graphics_mouseStillDown (my graphics.get())) {
-		const double yp = y, xp = x, f1p = f1, f2p = f2, tp = t;
+		double xp = x, yp = y;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock
 		Graphics_getMouseLocation (my graphics.get(), & x, & y);
 		clipXY (& x, & y);
@@ -1172,11 +1156,6 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 			iskipped ++;
 			continue;
 		}
-		/*
-			Add previous point only if at least one previous event was skipped...
-		*/
-		if (iskipped > 0)
-			Trajectory_addPoint (my trajectory.get(), tp, f1p, f2p, colour);
 		iskipped = 0;
 		Graphics_line (my graphics.get(), xp, yp, x, y);
 
@@ -1186,14 +1165,16 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 	}
 	t = Melder_clock () - t0;
 	/*
-		To prevent ultra short clicks we set a minimum duration
+		If there is only one point in the trajectory this could have two causes:
+		1. only one click, too short for mouse-down to catch
+		2. a mouse-down with no movement.
+		Add a point with a slightly modified second formant because successive points should not have equal f1 and f2 values.
 	*/
-	Melder_clipLeft (my p_trajectory_minimumDuration, & t);
-	t += dt;
-	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
-	VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
-	Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
-
+	if (my trajectory -> points.size == 1) {
+		Melder_clipLeft (my p_trajectory_minimumDuration, & t);
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
+		Trajectory_addPoint (my trajectory.get(), t, f1, 1.00001 * f2, colour); // points have to be different
+	}
 	Graphics_xorOff (my graphics.get());
 
 end:
@@ -1386,10 +1367,8 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		my p_soundFollowsMouse = true; // No real preference yet
 		if (my p_synthesis_samplingFrequency <= 0.0)
 			my p_synthesis_samplingFrequency = Melder_atof (my default_synthesis_samplingFrequency ());
-		if (my p_trajectory_minimumDuration <= 0.0 || my p_trajectory_maximumDuration <= 0.0) {
+		if (my p_trajectory_minimumDuration <= 0.0)
 			my p_trajectory_minimumDuration = Melder_atof (my default_trajectory_minimumDuration ());
-			my p_trajectory_maximumDuration = Melder_atof (my default_trajectory_maximumDuration ());
-		}
 		if (my p_trajectory_extendDuration <= 0.0 || my p_trajectory_markEvery <= 0.0) {
 			my p_trajectory_extendDuration = Melder_atof (my default_trajectory_extendDuration ());
 			my p_trajectory_markEvery = Melder_atof (my default_trajectory_markEvery ());

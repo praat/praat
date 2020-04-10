@@ -34,6 +34,8 @@ Thing_define (TrajectoryPoint, AnyPoint) {
 
 Thing_define (Trajectory, Function) {
 	SortedSetOfDoubleOf<structTrajectoryPoint> points;
+	
+	AnyTier_METHODS
 };
 
 #include "VowelEditor_enums.h"
