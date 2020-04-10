@@ -19,7 +19,7 @@
 #include "praatP.h"
 #include "DataModeler.h"
 #include "Formant_extensions.h"
-#include "FormantAnalyzer.h"
+#include "FormantEditor.h"
 #include "OptimalCeilingTierEditor.h"
 #include "Pitch.h"
 #include "Table_extensions.h"
@@ -430,7 +430,7 @@ DO
 	praat_new (result.move(), his name.get(), U"_part");
 END }
 
-static void cb_FormantAnalyzer_publication (Editor /* editor */, autoDaata publication) {
+static void cb_FormantEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
 	 */
@@ -443,12 +443,12 @@ static void cb_FormantAnalyzer_publication (Editor /* editor */, autoDaata publi
 	}
 }
 
-DIRECT (WINDOW_FormantAnalyzer_viewAndEdit) {
+DIRECT (WINDOW_FormantEditor_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
 	FIND_THREE_WITH_IOBJECT (Sound, Formant, TextGrid)
-		autoFormantAnalyzer editor = FormantAnalyzer_create (ID_AND_FULL_NAME, me, true, you, him, nullptr, nullptr);
-		Editor_setPublicationCallback (editor.get(), cb_FormantAnalyzer_publication);
+		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, true, you, him, nullptr, nullptr);
+		Editor_setPublicationCallback (editor.get(), cb_FormantEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	END
@@ -1238,7 +1238,7 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
 		praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval_constrained_robust);
 	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, NEW_Table_to_DataModeler);
-	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormant, 1, U"FormantAnalyzer...", nullptr, praat_ATTRACTIVE, WINDOW_FormantAnalyzer_viewAndEdit);
+	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormant, 1, U"FormantEditor...", nullptr, praat_ATTRACTIVE, WINDOW_FormantEditor_viewAndEdit);
 }
 
 /* End of file praat_DataModeler_init.cpp 1566*/
