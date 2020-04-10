@@ -1,5 +1,5 @@
-# Praat script runAllPraatTests.praat
-# Paul Boersma 2018-08-30
+# Praat script runAllTests.praat
+# Paul Boersma 2020-04-09
 #
 # This script runs all Praat scripts in its subdirectories.
 

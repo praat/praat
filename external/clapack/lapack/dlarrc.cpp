@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlarrc_(char *jobt, integer *n, double *vl, 
+/* Subroutine */ int dlarrc_(const char *jobt, integer *n, double *vl, 
 	double *vu, double *d__, double *e, double *pivmin, 
 	integer *eigcnt, integer *lcnt, integer *rcnt, integer *info)
 {

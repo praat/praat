@@ -112,9 +112,9 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 			w [i] [i] = 1.0;
 
 		autoMelderProgress progress (U"Simultaneous diagonalization of many CrossCorrelationTables...");
-		longdouble dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
+		double dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
 		try {
-			longdouble dm_old, theta = 1.0, dm_start = dm_new;
+			double dm_old, theta = 1.0, dm_start = dm_new;
 			do {
 				dm_old = dm_new;
 				for (integer i = 1; i <= dimension; i ++) {
@@ -172,7 +172,7 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 				dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
 				iter ++;
 				Melder_progress ((double) iter / (double) maxNumberOfIterations, U"Iteration: ", iter, U", measure: ", (double) dm_new, U"\n fractional measure: ", (double)(dm_new / dm_start));
-			} while (fabs ((dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
+			} while (fabs (dm_old - dm_new) > std::max (fabs (delta * dm_new), NUMeps) && iter < maxNumberOfIterations);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -589,7 +589,7 @@ void structCrossCorrelationTable :: v_info () {
 autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 	try {
 		autoCrossCorrelationTable me = Thing_new (CrossCorrelationTable);
-		SSCP_init (me.get(), dimension, kSSCPstorage::Complete);
+		SSCP_init (me.get(), dimension, kSSCPstorage::COMPLETE);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTable not created.");

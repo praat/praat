@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dppsvx_(char *fact, char *uplo, integer *n, integer *
+/* Subroutine */ int dppsvx_(const char *fact, const char *uplo, integer *n, integer *
 	nrhs, double *ap, double *afp, char *equed, double *s, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	rcond, double *ferr, double *berr, double *work, integer *

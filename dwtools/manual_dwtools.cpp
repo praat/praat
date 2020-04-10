@@ -149,7 +149,7 @@ static void drawPartionedMatrix (Graphics g) {
 	x1 = 1.5;
 	y1 = 7.0 + 3.0 / 2.0;
 	Graphics_setFontSize (g, 14.0);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_text (g, x1, y1, U"##S__yy_#");
 	x1 = 3.0 + 7.0 / 2.0;
 	Graphics_text (g, x1, y1, U"##S__yx_#");
@@ -1436,7 +1436,7 @@ INTRO (U"A command to create a @Table object filled with the "
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 9 columns:")
 TAG (U"Column 1, labelled as %Type")
-DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %women or %child).")
+DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %woman or %child).")
 TAG (U"Column 2, labelled as %Sex")
 DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TAG (U"Column 3, labelled as %Speaker")
@@ -1496,7 +1496,7 @@ INTRO (U"A command to create a @Table object filled with the "
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 9 columns:")
 TAG (U"Column 1, labelled as %Type")
-DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %women or %child).")
+DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %woman or %child).")
 TAG (U"Column 2, labelled as %Sex")
 DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TAG (U"Column 3, labelled as %Speaker")
@@ -5131,7 +5131,7 @@ CODE (U"        iy       270       136       231       212")
 CODE (U"        uh       273       136       234       214")
 CODE (U"        uw       278       139       235       218")
 CODE (U"      Mean       264       131       223       206")
-NORMAL (U"The first column of this table shows the vowel codes while the first row shows the speaker types (child, man, women). "
+NORMAL (U"The first column of this table shows the vowel codes while the first row shows the speaker types (child, man, woman). "
 	"The last row and the last column of the table shows the averages for the factors Type and Vowel, respectively. The actual "
 	"data are unbalanced because we have 300, 660 and 560 replications per column respectively (for each speaker we have two replcations of the data).")
 ENTRY (U"Algorithm")
@@ -5236,8 +5236,8 @@ DEFINITION (U"determines in what order the squares will be drawn. The order is o
 	"i.e. if the cell area scale factor is larger than 1.0.")
 TAG1 (U"%%rows%: start with the first row, cell [1][1] to cell [1][%%ncol%], next the second row, etc...")
 TAG1 (U"%%columns% start with column 1, cell [1][1] to cell [%%nrow%][1], next column 2 etc...")
-TAG1 (U"%%increasing-values%: first sort the cell values in increasing order and then start drawing them, the cell with the smallest value first. ")
-TAG1 (U"%%decreasing-values%: first sort the cell values in decreasing order and then start drawing them, the cell with the largest value first.")
+TAG1 (U"%%increasing values%: first sort the cell values in increasing order and then start drawing them, the cell with the smallest value first. ")
+TAG1 (U"%%decreasing values%: first sort the cell values in decreasing order and then start drawing them, the cell with the largest value first.")
 TAG1 (U"%%random%: draw cells in random order. If the cell area scale factor is larger than 1.0 this may result in a different graph of the same table for each successive call.")
 MAN_END
 
@@ -5636,7 +5636,7 @@ NORMAL (U"The text corpus design was done by the Massachusetts Institute of "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
 
-MAN_BEGIN (U"VowelEditor", U"djmw", 20111124)
+MAN_BEGIN (U"VowelEditor", U"djmw", 20200403)
 INTRO (U"An Editor for generating vowel-like @@sound|Sound@s from mouse movements.")
 ENTRY (U"How to get a sound")
 NORMAL (U"With the mouse button down, you can move the mouse cursor around in the plane "
@@ -5665,8 +5665,6 @@ NORMAL (U"The bottom line in the Editor displays the first and second formant fr
 ENTRY (U"Edit menu")
 TAG (U"##Set F0...")
 DEFINITION (U"Set pitch and slope.")
-TAG (U"##Set F3 & F4...")
-DEFINITION (U"Set the frequencies and bandwidths for the third and fourth formant.")
 TAG (U"##Reverse trajectory")
 DEFINITION (U"Reverses the trajectory (like editor button).")   // ??
 TAG (U"##Modify trajectory duration...")
@@ -5685,27 +5683,30 @@ DEFINITION (U"Show the vowel marks in the editor from a fixed set of vowel inven
 TAG (U"##Show vowel marks from Table file...#")
 DEFINITION (U"Put your own marks in the editor. The Table needs to have at least three mandatory columns "
 	"labeled \"Vowel\", \"F1\" and  \"F2\" and "
-	"one optional column labeled \"Size\". The Vowel column contains the vowel marker labels, the F1 and "
+	" two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
-	"the font size of the vowel markers.")
+	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
 TAG (U"##Show trajectory time markers every...")
 DEFINITION (U"Shows time markers as small bars orthogonal to the trajectory. ")
-ENTRY (U"Publishing")
+ENTRY (U"File menu")
+TAG (U"##Preferences...#")
+DEFINITION (U"Here you can modify the sharpness of the F1 and F2 peaks and also add a number of higher formants.")
 TAG (U"##Publish Sound")
+DEFINITION (U"Make the synthesized sound available in the object menu.")
 TAG (U"##Extract FormantTier")
 TAG (U"##Extract PitchTier")
 DEFINITION (U"Publish the Sound, the PitchTier and the FormantTier from the trajectory.")
 TAG (U"##Draw trajectory...")
-DEFINITION (U"Draws the trajectory in the picture window")
+DEFINITION (U"Draws the trajectory in the picture window.")
 MAN_END
 
-MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20111124)
+MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20200403)
 INTRO (U"A command in the @@VowelEditor@ that lets you set your own vowel marks. ")
 ENTRY (U"Layout of the Table")
 NORMAL (U"The Table needs at least three mandatory columns labeled \"Vowel\", \"F1\" and  \"F2\" and "
-	"one optional column labeled \"Size\". The Vowel column contains the vowel marker labels, the F1 and "
+	"two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
-	"the font size of the vowel markers.")
+	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
 MAN_END
 
 /********************** GSL ********************************************/

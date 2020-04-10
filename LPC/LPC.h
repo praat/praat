@@ -60,9 +60,11 @@ static inline autoVEC LPC_listCoefficientsInFrame (LPC me, integer frameNumber) 
 }
 
 static inline autoMAT LPC_listAllCoefficients (LPC me) {
-	autoMAT result = newMATraw (my maxnCoefficients, my nx);
-	for (integer iframe = 1; iframe <= my nx; iframe ++)
-		result.column (iframe) <<= my d_frames [iframe]. a.get();
+	autoMAT result = newMATzero (my maxnCoefficients, my nx);
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		LPC_Frame f = & my d_frames [iframe];
+		result.column (iframe).part (1, f -> nCoefficients) <<= f -> a.get();
+	}
 	return result;
 }
 

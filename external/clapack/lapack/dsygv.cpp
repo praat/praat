@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static integer c_n1 = -1;
 static double c_b16 = 1.;
 
-/* Subroutine */ int dsygv_(integer *itype, char *jobz, char *uplo, integer *
+/* Subroutine */ int dsygv_(integer *itype, const char *jobz, const char *uplo, integer *
 	n, double *a, integer *lda, double *b, integer *ldb, 
 	double *w, double *work, integer *lwork, integer *info)
 {

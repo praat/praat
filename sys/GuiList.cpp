@@ -1,6 +1,6 @@
 /* GuiList.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2020 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,11 +79,10 @@ Thing_implement (GuiList, GuiControl, 0);
 		self = [super initWithFrame: frameRect];
 		if (self) {
 			_tableView = [[NSTableView alloc] initWithFrame: frameRect];
-			Melder_assert ([_tableView retainCount] == 1);   // this asserts that ARC is off (if ARC were on, the retain count would be 2, because tableView is a retain property)
-			NSTableColumn *tc = [[NSTableColumn alloc] initWithIdentifier: @"list"];
-			tc.width = frameRect. size. width;
-			[tc setEditable: NO];
-			[_tableView addTableColumn: tc];
+			NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier: @"list"];
+			tableColumn.width = frameRect. size. width;
+			[tableColumn setEditable: NO];
+			[_tableView addTableColumn: tableColumn];
 
 			_tableView. delegate = self;
 			_tableView. dataSource = self;
@@ -92,17 +91,15 @@ Thing_implement (GuiList, GuiControl, 0);
 			_tableView. target = self;
 			_tableView. action = @selector (_GuiCocoaList_clicked:);
 
-			NSScrollView *sv = [[NSScrollView alloc] initWithFrame: frameRect];
-			[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-			[sv setBorderType: NSGrooveBorder];
-			[sv setDocumentView: _tableView];   // this retains the table view
-			[sv setHasVerticalScroller: YES];
-			//[sv setHasHorizontalScroller: YES];
+			NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame: frameRect];
+			[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+			[scrollView setBorderType: NSBezelBorder];
+			[scrollView setDocumentView: _tableView];   // this retains the table view
+			[scrollView setHasVerticalScroller: YES];
+			//[scrollView setHasHorizontalScroller: YES];
 
-			[self addSubview: sv];   // this retains the scroll view
-			//Melder_assert ([sv retainCount] == 2);   // not always true on 10.6
-			[sv release];
-			//Melder_assert ([_tableView retainCount] == 2);   // not always true on 10.11
+			[self addSubview: scrollView];   // this retains the scroll view
+			[scrollView release];
 			[_tableView release];
 
 			_contents = [[NSMutableArray alloc] init];

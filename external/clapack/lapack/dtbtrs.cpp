@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dtbtrs_(char *uplo, char *trans, char *diag, integer *n, 
+/* Subroutine */ int dtbtrs_(const char *uplo, const char *trans, const char *diag, integer *n, 
 	integer *kd, integer *nrhs, double *ab, integer *ldab, double 
 	*b, integer *ldb, integer *info)
 {

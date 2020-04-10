@@ -19,7 +19,7 @@
  */
 
 #include "Collection.h"
-#include "DataModeler.h"
+#include "FormantModeler.h"
 #include "TextGridEditor.h"
 #include "Formant.h"
 #include "melder.h"

@@ -20,19 +20,18 @@
 
 autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 	try {
-		integer nfreq = my nx, nform = 0;
+		integer nfreq = my nx;
 		autoVEC power = newVECzero (nfreq);
 		constexpr double fakeDuration = 1.0;
 		constexpr double fakeTimeStep = 1.0;
 		autoFormant thee = Formant_create (0.0, fakeDuration, 1, fakeTimeStep, 0.5 * fakeDuration, maxnFormants);
-		thy frames [1]. formant = newvectorzero <structFormant_Formant> (maxnFormants);
 		for (integer i = 1; i <= nfreq; i ++)
 			power [i] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		for (integer i = 2; i < nfreq; i ++)
 			if (power [i] > power [i - 1] && power [i] >= power [i + 1]) {
 				const double firstDerivative = power [i + 1] - power [i - 1];
 				const double secondDerivative = 2.0 * power [i] - power [i - 1] - power [i + 1];
-				const Formant_Formant formant = & thy frames [1]. formant [++ nform];
+				const Formant_Formant formant = thy frames [1]. formant. append();
 				formant -> frequency = my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative);
 				const double min3dB = 0.5 * (power [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative);
 				/*
@@ -59,10 +58,10 @@ autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 					formant -> bandwidth +=
 							my dx * (j - 1 - (min3dB - power [j]) / (power [j - 1] - power [j])) -
 							formant -> frequency;
-				if (nform == maxnFormants)
+				if (thy frames [1]. formant.size == maxnFormants)
 					break;
 			}
-		thy frames [1]. numberOfFormants = nform;
+		thy frames [1]. numberOfFormants = thy frames [1]. formant.size;   // maintain invariant
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Formant.");

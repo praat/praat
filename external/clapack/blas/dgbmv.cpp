@@ -1,7 +1,7 @@
 #include "cblas.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dgbmv_(char *trans, integer *m, integer *n, integer *kl, 
+/* Subroutine */ int dgbmv_(const char *trans, integer *m, integer *n, integer *kl, 
 	integer *ku, double *alpha, double *a, integer *lda, 
 	double *x, integer *incx, double *beta, double *y, 
 	integer *incy)

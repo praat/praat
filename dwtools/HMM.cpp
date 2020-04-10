@@ -97,7 +97,7 @@ static autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
 
 // evaluate the numbers given to probabilities
 static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
-	autoVEC numbers = VEC_createFromString (s);
+	autoVEC numbers = newVECfromString (s);
 	if (numbers.size != nwanted)
 		Melder_throw (U"You supplied ", numbers.size, U", while ", nwanted, U" numbers needed.");
 	longdouble sum = 0.0;
@@ -156,8 +156,8 @@ static double HMM_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observatio
 
 static void HMMObservation_init (HMMObservation me, conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage) {
 	my label = Melder_dup (label);
-	my gm = GaussianMixture_create (numberOfComponents, dimension, storage == kHMMstorage::Diagonals ?
-		kGaussianMixtureStorage::Diagonals : kGaussianMixtureStorage::Complete);
+	my gm = GaussianMixture_create (numberOfComponents, dimension, storage == kHMMstorage::DIAGONALS ?
+		kGaussianMixtureStorage::DIAGONALS : kGaussianMixtureStorage::COMPLETE);
 }
 
 autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage) {
@@ -395,7 +395,7 @@ void structHMM :: v_info () {
 static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservationSymbols, int leftToRight) {
 	my numberOfStates = numberOfStates;
 	my numberOfObservationSymbols = numberOfObservationSymbols;
-	my componentStorage = kHMMstorage::Diagonals;
+	my componentStorage = kHMMstorage::DIAGONALS;
 	my leftToRight = leftToRight;
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
@@ -483,7 +483,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 			HMM_addState_move (me.get(), state.move());
 		}
 		for (integer isymbol = 1; isymbol <= symbols.size; isymbol ++) {
-			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, kHMMstorage::Diagonals);
+			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, kHMMstorage::DIAGONALS);
 			HMM_addObservation_move (me.get(), symbol.move());
 		}
 		return me;
@@ -495,7 +495,7 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 void HMM_setDefaultObservations (HMM me) {
 	const conststring32 def = ( my notHidden ? U"S" : U"s" );
 	for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
-		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, kHMMstorage::Diagonals);
+		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, kHMMstorage::DIAGONALS);
 		HMM_addObservation_move (me, hmms.move());
 	}
 }
@@ -693,7 +693,7 @@ void HMM_draw (HMM me, Graphics g, bool garnish) {
 		max_width = Graphics_textWidth (g, widest_label);
 	}
 	Graphics_setFontSize (g, new_fontSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		const HMMState hmms = my states->at [is];
 		Graphics_circle (g, xs [is], ys [is], rstate);
@@ -977,8 +977,8 @@ void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee
 			iter ++;
 			HMM_HMMBaumWelch_reestimate (me, bw.get());
 			if (info)
-				MelderInfo_writeLine (U"Iteration: ", iter, U" ln(prob): ", bw -> lnProb); 
-		} while (fabs ((lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
+				MelderInfo_writeLine (U"Iteration: ", iter, U" ln(prob): ", bw -> lnProb);
+		} while (fabs (lnp - bw -> lnProb) > std::max (fabs (delta_lnp * bw -> lnProb), NUMeps));
 		if (info) {
 			MelderInfo_writeLine (U"******** Learning summary *********");
 			MelderInfo_writeLine (U"  Processed ", thy size, U" sequence", ( thy size > 1 ? U"s," : U"," ));
@@ -1072,30 +1072,30 @@ void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
 
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__1_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__%i1_");
 
 		y1 = 0.9 - dy;
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__2_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__%i2_");
 
 		y1 = 0.9 - (np - 1) * dy;
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__%N_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__%%iN%_");
 
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x0 - 1.5 * r, y0, U"%s__%i_");
 
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, x0, 0.0, U"%t");
 		Graphics_text (g, x, 0.0, U"%t+1");
 
 		const double y3 = 0.10;
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x0, y3, U"%\\be__%t_(%i)%");
 		Graphics_text (g, x, y3, U"%\\be__%t+1_(%j)");
 	}
@@ -1132,30 +1132,30 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
 
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x1, y1, U"%s__1_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y1, U"%a__1%j_");
 
 		const double y2 = 0.9 - dy;
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x1, y2, U"%s__2_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y2, U"%a__2%j_");
 
 		const double y3 = 0.9 - (np - 1) * dy;
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (g, x1, y3, U"%s__%N_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x2, y3, U"%a__%%Nj%_");
 
 		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 		Graphics_text (g, x0 + 1.5 * r, y0, U"%s__%j_");
 
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, x, 0.0, U"%t");
 		Graphics_text (g, x0, 0.0, U"%t+1");
 
 		const double y4 = 0.10;
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		Graphics_text (g, x, y4, U"%\\al__%t_(%i)%");
 		Graphics_text (g, x0, y4, U"%\\al__%t+1_(%j)");
 	}
@@ -1173,12 +1173,12 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 	if (garnish) {
 		const double rx1 = 1.0 + xs * 2.0 * xfrac + 0.1, rx2 = rx1 + 0.9 - 0.1, y1 = 0.1;
 		Graphics_line (g, 0.9 + r, 0.5, rx1 - r, 0.5);
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, 0.9, 0.5 + r, U"%s__%i_");
 		Graphics_text (g, rx1, 0.5 + r, U"%s__%j_");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 		Graphics_text (g, 1.0 + xfrac * xs, 0.5, U"%a__%%ij%_%b__%j_(O__%t+1_)");
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 		Graphics_text (g, 0.1, 0.0, U"%t-1");
 		Graphics_text (g, 0.9, 0.0, U"%t");
 		Graphics_text (g, rx1, 0.0, U"%t+1");
@@ -1549,7 +1549,7 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer
 
 		for (integer i = 1; i <= numberOfObservationSymbols; i ++) {
 			const conststring32 label = d -> rowLabels [i].get();
-			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, kHMMstorage::Diagonals);
+			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, kHMMstorage::DIAGONALS);
 			HMM_addObservation_move (thee.get(), hmmo.move());
 			if (thy notHidden) {
 				autoHMMState hmms = HMMState_create (label);

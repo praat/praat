@@ -75,6 +75,7 @@
 #include "Collection_extensions.h"
 #include "ComplexSpectrogram.h"
 #include "Confusion.h"
+#include "Covariance.h"
 #include "Discriminant.h"
 #include "EditDistanceTable.h"
 #include "Editor.h"
@@ -115,7 +116,6 @@
 #include "SpeechSynthesizer.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
 #include "Spline.h"
-#include "SSCP.h"
 #include "Strings_extensions.h"
 #include "SVD.h"
 #include "Table_extensions.h"
@@ -3754,7 +3754,7 @@ FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...
 	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"400")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
-	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RANDOM_UNIFORM)
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
@@ -3769,7 +3769,7 @@ FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)..."
 	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"20")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
-	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RANDOM_UNIFORM)
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
@@ -3784,7 +3784,7 @@ FORM (NEW_Matrix_to_NMF_is, U"Matrix: To NMF (IS)", U"Matrix: To NMF (IS)...") {
 	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"20")
 	REAL (tolx, U"Change tolerance", U"1e-9")
 	REAL (told, U"Approximation tolerance", U"1e-9")
-	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RandomUniform)
+	OPTIONMENU_ENUM (kNMF_Initialization, initializationMethod, U"Initialisation method", kNMF_Initialization::RANDOM_UNIFORM)
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
@@ -5923,8 +5923,8 @@ FORM (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint e
 	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (xFromTime, U"left Horizontal time range (s)", U"0.0")
 	REAL (xToTime, U"right Horizontal time range (s)", U"0.0")
-	REAL (yFromTime, U"left Vertical time range", U"0.0")
-	REAL (yToTime, U"right Vertical time range", U"0.0")
+	REAL (yFromTime, U"left Vertical range", U"0.0")
+	REAL (yToTime, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -7710,9 +7710,8 @@ static void cb_publish (Editor /*editor*/, autoDaata publish) {
 }
 
 DIRECT (WINDOW_VowelEditor_create) {
-	if (theCurrentPraatApplication -> batch) {
+	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot edit from batch.");
-	}
 	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
 	Editor_setPublicationCallback (vowelEditor.get(), cb_publish);
 	vowelEditor.releaseToUser();
@@ -7965,7 +7964,7 @@ void praat_uvafon_David_init () {
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
-	VowelEditor_prefs ();
+	structVowelEditor  :: f_preferences ();
 
 	espeakdata_praat_init ();
 

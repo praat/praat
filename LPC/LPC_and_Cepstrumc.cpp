@@ -24,12 +24,14 @@
 #include "LPC_and_Cepstrumc.h"
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
-	const integer n = std::min (my nCoefficients, thy nCoefficients);
+	Melder_assert (my nCoefficients == my a.size); // check invariant
+	thy c.resize (my nCoefficients);
+	thy nCoefficients = thy c.size; // maintain invariant
 	thy c0 = 0.5 * log (my gain);
-	if (n == 0)
+	if (my nCoefficients == 0)
 		return;
 	thy c [1] = - my a [1];
-	for (integer i = 2; i <= n; i ++) {
+	for (integer i = 2; i <= my nCoefficients; i ++) {
 		thy c [i] = 0.0;
 		for (integer k = 1; k < i; k ++)
 			thy c [i] += my a [i - k] * thy c [k] * k;
@@ -38,10 +40,13 @@ void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
 }
 
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
+	Melder_assert (my nCoefficients == my c.size); // Check invariant
+	thy a.resize (my nCoefficients);
+	thy nCoefficients = thy a.size; // maintain invariant
 	thy gain = exp (2.0 * my c0);
 	if (thy nCoefficients == 0)
 		return;
-	thy a [1] = -my c [1];
+	thy a [1] = - my c [1];
 	for (integer i = 2; i <= thy nCoefficients; i ++)
 		my c [i] *= i;
 	for (integer i = 2; i <= thy nCoefficients; i ++) {
@@ -59,7 +64,7 @@ void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
 
 autoCepstrumc LPC_to_Cepstrumc (LPC me) {
 	try {
-		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1,  my maxnCoefficients, 1.0 / my samplingPeriod);
+		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1, my maxnCoefficients, 1.0 / my samplingPeriod);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Cepstrumc_Frame_init (& thy frame [iframe], my d_frames [iframe]. nCoefficients);
 			LPC_Frame_into_Cepstrumc_Frame (& my d_frames [iframe], & thy frame [iframe]);

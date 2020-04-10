@@ -157,7 +157,9 @@ enum { NO_SYMBOL_,
 		VEC_RANDOM_GAMMA_, MAT_RANDOM_GAMMA_,
 		VEC_SOLVE_SPARSE_, VEC_SOLVE_NONNEGATIVE_,
 		MAT_PEAKS_,
-		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_, HASH_,
+		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
+		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
+		HASH_,
 	#define HIGH_FUNCTION_N  HASH_
 
 	/* String functions. */
@@ -280,7 +282,9 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"randomGauss#", U"randomGauss##",
 	U"randomGamma#", U"randomGamma##", U"solveSparse#", U"solveNonnegative#",
 	U"peaks##",
-	U"size", U"numberOfRows", U"numberOfColumns", U"editor", U"hash",
+	U"size", U"numberOfRows", U"numberOfColumns", U"editor",
+	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
+	U"hash",
 
 	U"length", U"number", U"fileReadable",	U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -4023,22 +4027,23 @@ static void do_appendFileLine () {
 static void do_pauseScript () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw (U"The function \"pause\" is not available inside manuals.");
-	if (theCurrentPraatApplication -> batch) return;   // in batch we ignore pause statements
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
-	autoMelderString buffer;
-	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
-			MelderString_append (& buffer, arg->number);
-		else if (arg->which == Stackel_STRING)
-			MelderString_append (& buffer, arg->getString());
+	if (! theCurrentPraatApplication -> batch) {   // in batch we ignore pause statements
+		autoMelderString buffer;
+		for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+			Stackel arg = & theStack [w + iarg];
+			if (arg->which == Stackel_NUMBER)
+				MelderString_append (& buffer, arg->number);
+			else if (arg->which == Stackel_STRING)
+				MelderString_append (& buffer, arg->getString());
+		}
+		UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
+		UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
+		UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
 	}
-	UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
-	UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
-	UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
 	pushNumber (1);
 }
 static void do_exitScript () {
@@ -4496,6 +4501,48 @@ static void do_editor () {
 	} else {
 		Melder_throw (U"The function \"editor\" requires 0 or 1 arguments, not ", n->number, U".");
 	}
+	pushNumber (1);
+}
+
+static void do_random_initializeWithSeedUnsafelyButPredictably () {
+	/*@praat
+		#
+		# A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
+		# should be 9981545732273789042.
+		#
+		random_initializeWithSeedUnsafelyButPredictably (5489)
+		for i to 10000
+			a = randomUniform (0, 1)
+		endfor
+		random_initializeSafelyAndUnpredictably ()
+		a *= 2 ^ 64
+		roundingError = a - 9981545732273789042
+		writeInfoLine: fixed$ (a, 0), " ", roundingError
+		assert roundingError <= 2048   ; actually usually zero
+	@*/
+	Stackel n = pop;
+	if (n->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_NUMBER) {
+			double seed = s->number;
+			if (seed < 0.0 || seed > double (INT54_MAX))
+				Melder_throw (U"For the function \"random_initializeWithSeedUnsafelyButPredictably\", "
+						"the seed should be between 0 and ", double (INT54_MAX), U".");
+			NUMrandom_initializeWithSeedUnsafelyButPredictably (uint64 (round (seed)));
+		} else {
+			Melder_throw (U"The function \"hash\" requires a string, not ", s->whichText(), U".");
+		}
+	} else {
+		Melder_throw (U"The function \"random_initializeWithSeedUnsafelyButPredictably\" requires 1 argument (the seed), not ", n->number, U".");
+	}
+	pushNumber (1);
+}
+
+static void do_random_initializeSafelyAndUnpredictably () {
+	Stackel n = pop;
+	if (n->number != 0)
+		Melder_throw (U"The function \"random_initializeSafelyAndUnpredictably\" requires 0 arguments, not ", n->number, U".");
+	NUMrandom_initializeSafelyAndUnpredictably ();
 	pushNumber (1);
 }
 
@@ -7005,6 +7052,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();
 } break; case EDITOR_: { do_editor ();
+} break; case RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_: { do_random_initializeWithSeedUnsafelyButPredictably ();
+} break; case RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_: { do_random_initializeSafelyAndUnpredictably ();
 } break; case HASH_: { do_hash ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();

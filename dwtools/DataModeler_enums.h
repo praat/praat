@@ -1,6 +1,3 @@
-#ifndef _DataModeler_enums_h_
-#define _DataModeler_enums_h_
-
 /* DataModeler_enums.h
  *
  * Copyright (C) 2020 David Weenink
@@ -14,20 +11,33 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
+
  *
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kDataModeler_AnalysisScale, 0)
-	enums_add (kMDS_AnalysisScale, 0, Absolute, U"Absolute")
-	enums_add (kMDS_AnalysisScale, 1, Ratio, U"Ratio")
-	enums_add (kMDS_AnalysisScale, 2, Interval, U"Interval")
-	enums_add (kMDS_AnalysisScale, 3, Spline, U"Spline")
-	enums_add (kMDS_AnalysisScale, 4, Ordinal, U"Ordinal")
-	enums_add (kMDS_AnalysisScale, 5, Nominal, U"Nominal")
-enums_end (kMDS_AnalysisScale, 5, Nominal)
+enums_begin (kDataModelerData, 1)
+	enums_add (kDataModelerData, 1, VALID, U"Valid")
+	enums_add (kDataModelerData, 2, INVALID, U"Invalid")
+enums_end (kDataModelerData, 2, INVALID)
 
-e
+enums_begin (kDataModelerFunction, 2)
+	enums_add (kDataModelerFunction, 1, POLYNOME, U"Standard polynomials")
+	enums_add (kDataModelerFunction, 2, LEGENDRE, U"Legendre polynomials")
+enums_end (kDataModelerFunction, 2, LEGENDRE)
 
-#endif /* _DataModeler_enums_h_ */
+enums_begin (kDataModelerParameter, 1)
+	enums_add (kDataModelerParameter, 1, FREE, U"Free")
+	enums_add (kDataModelerParameter, 2, FIXED_, U"Fixed")
+	enums_add (kDataModelerParameter, 3, NOT_DEFINED, U"Undefined")
+enums_end (kDataModelerParameter, 3, NOT_DEFINED)
+
+enums_begin (kDataModelerWeights, 1)
+	enums_add (kDataModelerWeights, 1, EQUAL_WEIGHTS, U"Equal")
+	enums_add (kDataModelerWeights, 2, ONE_OVER_SIGMA, U"One over sigma")
+	enums_add (kDataModelerWeights, 3, ONE_OVER_SQRTSIGMA, U"One over sqrt(sigma)")
+	enums_add (kDataModelerWeights, 4, RELATIVE_, U"Relative")
+enums_end (kDataModelerWeights, 4, RELATIVE_)
+
+/* End of file DataModeler_enums.h */

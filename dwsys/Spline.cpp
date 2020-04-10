@@ -151,7 +151,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
-	autoVEC interiorKnots = VEC_createFromString (interiorKnots_string);
+	autoVEC interiorKnots = newVECfromString (interiorKnots_string);
 
 	VECsort_inplace (interiorKnots.get());
 	Melder_require (interiorKnots [1] > my xmin && interiorKnots [interiorKnots.size] <= my xmax,

@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dpbcon_(char *uplo, integer *n, integer *kd, double *
+/* Subroutine */ int dpbcon_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, double *anorm, double *rcond, double *
 	work, integer *iwork, integer *info)
 {

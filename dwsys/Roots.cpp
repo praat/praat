@@ -129,7 +129,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	Graphics_setInner (g);
 	Graphics_setWindow (g, rmin, rmax, imin, imax);
 	Graphics_setFontSize (g, fontSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	for (integer i = 1; i <= my numberOfRoots; i ++) {
 		const double re = my roots [i].real(), im = my roots [i].imag();
 		if (re >= rmin && re <= rmax && im >= imin && im <= imax)
@@ -152,6 +152,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 
 autoRoots Polynomial_to_Roots (Polynomial me) {
 	try {
+		Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
 		integer np1 = my numberOfCoefficients, n = np1 - 1;
 		Melder_require (n > 0,
 			U"Cannot find roots of a constant function.");
@@ -221,8 +222,10 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		+ 6 * n		; the maximum for dhseqr_
 */
 void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
+	Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
+	r -> roots.resize (0);
+	r -> numberOfRoots = r -> roots.size; 	
 	integer np1 = my numberOfCoefficients, n = np1 - 1;
-	r -> numberOfRoots = 0;
 	if (n == 0)
 		return;
 	/*
@@ -266,10 +269,11 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	}
 
 	for (integer i = 1; i <= numberOfEigenvaluesFound; i ++) {
-		r -> roots [i]. real (wr [ioffset + i]);
-		r -> roots [i]. imag (wi [ioffset + i]);
+		dcomplex *root = r -> roots . append();
+		(*root) . real (wr [ioffset + i]);
+		(*root) . imag (wi [ioffset + i]);
 	}
-	r -> numberOfRoots = numberOfEigenvaluesFound;
+	r -> numberOfRoots = r -> roots . size; // maintain invariant
 	Roots_Polynomial_polish (r, me);
 }
 

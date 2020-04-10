@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dspgvx_(integer *itype, char *jobz, char *range, char *
+/* Subroutine */ int dspgvx_(integer *itype, const char *jobz, const char *range, const char *
 	uplo, integer *n, double *ap, double *bp, double *vl, 
 	double *vu, integer *il, integer *iu, double *abstol, integer 
 	*m, double *w, double *z__, integer *ldz, double *work, 

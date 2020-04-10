@@ -28,10 +28,15 @@
 #include "melder.h"
 #include "MAT_numerics.h"
 
-/* machine precision */
-#define NUMeps 2.2e-16
+/* slightly more than machine precision, so minimization algorithms that use something like
+	do {
+		get new
+	while (fabs(new - old) > std::max (tol * new, NUMeps);
+	can succed even when new == 0, because the real eps = 2.2...e-16.
+*/
+#define NUMeps 2.3e-16
 
-autoVEC VEC_createFromString (conststring32 s);
+autoVEC newVECfromString (conststring32 s);
 /* return array with the numbers found */
 
 /*
@@ -161,10 +166,7 @@ inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_ma
 */
 inline void VECclip_inplace (VEC x, double min, double max) {
 	for (integer i = 1; i <= x.size; i ++)
-		if (x [i] < min)
-			x [i] = min;
-		else if (x [i] > max) 
-			x [i] = max;
+		Melder_clip (min, & x [i], max);
 }
 
 inline void VECabs (VECVU const& result, constVECVU const& v) {
@@ -277,22 +279,25 @@ double NUMmultivariateKurtosis (constMATVU const& x, integer method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad);
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad, VEC const& workSpace);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
 	asymptotically normal consistency, i.e. the returned value is 1.4826*mad which
 	makes the returned value "equal" to the standard deviation if the data is normally distributed.
-	You either GIVE the median location (if wantlocation = 0) or it
-	will be calculated (if wantlocation = 1);
+	You either GIVE the median location (if wantlocation = false) or it
+	will be calculated (if wantlocation = true);
+	
+	Precondition: workSpace.size >= x.size
  */
 
-void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
-	double *inout_scale, bool wantscale, double k_stdev, double tol, integer maximumNumberOfiterations);
+void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation, double *inout_scale, bool wantscale, double k_stdev, double tol, integer maximumNumberOfiterations, VEC const& workSpace);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.
 	k_stdev Winsorizes at `k_stdev' standard deviations.
+	
+	Precondition: workSpace.size >= x.size
 */
 
 autoVEC newVECmonotoneRegression (constVEC x);
@@ -872,6 +877,8 @@ double VECburg (VEC const& a, constVEC const& x);
 
 autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, double *out_xms);
 
+void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& filterMemory);
+
 void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's
@@ -1370,14 +1377,13 @@ void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_r
 
 void NUMpolynomial_recurrence (VEC const& pn, double a, double b, double c, constVEC const& pnm1, constVEC const& pnm2);
 
+
+/* 20200405 djmw This functions resides here temporarily until MelderThread.h copes with lambda's */
 static inline void NUMgetThreadingInfo (integer numberOfFrames, integer maximumNumberOfThreads, integer *inout_numberOfFramesPerThread, integer * out_numberOfThreads) {
 	if (*inout_numberOfFramesPerThread <= 0)
 		*inout_numberOfFramesPerThread = 25;
 	integer numberOfThreads = (numberOfFrames - 1) / *inout_numberOfFramesPerThread + 1;
-	if (numberOfThreads > maximumNumberOfThreads)
-		numberOfThreads = maximumNumberOfThreads;
-	if (numberOfThreads < 1)
-		numberOfThreads = 1;
+	Melder_clip (1_integer, & numberOfThreads, maximumNumberOfThreads);
 	*inout_numberOfFramesPerThread = (numberOfFrames - 1) / numberOfThreads + 1;
 	if (out_numberOfThreads)
 		*out_numberOfThreads = numberOfThreads;

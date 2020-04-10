@@ -207,7 +207,7 @@ TAG (U"##Garnish")
 DEFINITION (U"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20190909)
+MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20200403)
 INTRO (U"Smoothes the selected @PowerCepstrogram by averaging. The smoothed PowerCepstrogram is the result of two separate steps. "
 	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
@@ -219,7 +219,7 @@ ENTRY (U"Note")
 NORMAL (U"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
 CODE (U"selectObject (\"Sound xxx\")")
-CODE (U"To PowerCepstrogram: 0.041, 0.002, 5000.0")
+CODE (U"To PowerCepstrogram: 60.0, 0.041, 0.002, 5000.0")
 CODE (U"Smooth: 0.02, 0.001")
 MAN_END
 
@@ -229,10 +229,10 @@ ENTRY (U"Description")
 NORMAL (U"A Cepstrum is the log spectrum of the log power spectrum.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrum", U"djmw", 20130616)
+MAN_BEGIN (U"PowerCepstrum", U"djmw", 20200403)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (U"Description")
-NORMAL (U"A PowerCepstrum is the log power spectrum of the log power spectrum. The vertical scale "
+NORMAL (U"A PowerCepstrum is the power spectrum of the log power spectrum. When drawn the vertical scale "
 	"will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds. It is calculated from the ##Spectrum# by a method described at @@Spectrum: To PowerCepstrum@.")
 MAN_END
 
@@ -756,7 +756,7 @@ NORMAL (U"where %N represents the number of filters that were used to get the MF
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To PowerCepstrogram...", U"djmw", 20190908)
+MAN_BEGIN (U"Sound: To PowerCepstrogram...", U"djmw", 20200403)
 INTRO (U"A command that creates a @@PowerCepstrogram@ from every selected @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)")
@@ -768,8 +768,8 @@ DEFINITION (U"the maximum frequency subject to analysis.")
 TAG (U"##Pre-emphasis from (Hz)")
 ENTRY (U"Algorithm")
 NORMAL (U"The sound will first be resampled to twice the value of the %%Maximum frequency%, with "
-	"the algorithm described at @@Sound: Resample...@. After this, pre-emphasis is applied with the "
-	"algorithm described at @@Sound: Pre-emphasize (in-place)...@. For each analysis window a Gaussian "
+	"the algorithm described at @@Sound: Resample...|Sound: Resample@. After this, pre-emphasis is applied with the "
+	"algorithm described at @@Sound: Pre-emphasize (in-place)...|Sound: Pre-emphasize (in-place)@. For each analysis window a Gaussian "
 	"window is applied and the ##Spectrum# is calculated. The Spectrum is then transformed to a ##PowerCepstrum# with the procedure described at @@Spectrum: To PowerCepstrum@. Finally the values from the PowerCepstrum are stored in the vertical slice of the PowerCepstrogram.")
 
 MAN_END

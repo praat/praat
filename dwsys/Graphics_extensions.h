@@ -2,7 +2,7 @@
 #define _Graphics_extensions_h_
 /* Graphics_extensions.h
  *
- * Copyright (C) 2012-2018 David Weenink
+ * Copyright (C) 2012-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
  */
 
 #include "Graphics.h"
+#include "Graphics_extensions_enums.h"
 
 /**
 	Draw a box plot of data[1..ndata]. The vertical center line of the plot

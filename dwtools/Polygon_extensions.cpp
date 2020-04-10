@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double 
 
 autoPolygon Polygon_createSimple (conststring32 xystring) {
 	try {
-		autoVEC xys = VEC_createFromString (xystring);
+		autoVEC xys = newVECfromString (xystring);
 		Melder_require (xys.size >= 6,
 			U"There should be at least 3 points (= x,y pairs) in the Polygon");
 		Melder_require (xys.size % 2 == 0,
@@ -144,7 +144,7 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
-	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (graphics, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
 		SimpleString category = thy at [i];

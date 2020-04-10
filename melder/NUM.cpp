@@ -413,15 +413,6 @@ double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean) {
 	return double (NUMsumOfSquaredDifferences_longdouble (vec, mean));
 }
 
-double NUMsumsq (const constVECVU& vec) noexcept {
-	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
-	return double (stats.sumsq);
-}
-double NUMsumsq (const constMATVU& mat) noexcept {
-	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
-	return double (stats.sumsq);
-}
-
 double NUMvariance (const constVECVU& vec) noexcept {
 	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
 	const longdouble variance = stats.sumsq / (vec.size - 1);

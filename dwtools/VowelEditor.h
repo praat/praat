@@ -23,50 +23,32 @@
  djmw 20110306 Latest modification.
 */
 
-#include "FormantTier.h"
-#include "PitchTier.h"
-#include "TableOfReal.h"
+#include "RealTier.h"
+#include "Table.h"
 #include "Editor.h"
 
-#include "Vowel_def.h"
+Thing_define (TrajectoryPoint, AnyPoint) {
+	double f1, f2;
+	struct MelderColour colour;
+};
+
+Thing_define (Trajectory, Function) {
+	SortedSetOfDoubleOf<structTrajectoryPoint> points;
+};
 
 #include "VowelEditor_enums.h"
 
-struct structVowelEditor_F0 {
-	double start;
-	double slopeOctPerSec;
-	double minimum, maximum;
-	double samplingFrequency, adaptFactor, adaptTime;
-	integer interpolationDepth;
-};
-
-struct structVowelEditor_F1F2Grid {
-	double df1, df2;
-	int text_left, text_right, text_bottom, text_top;
-	double grey;
-};
-
 Thing_define (VowelEditor, Editor) {
-	int soundFollowsMouse, shiftKeyPressed;
-	double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
-	autoMatrix f3, b3, f4, b4;
-	int frequencyScale;   // 0: lin, 1: log, 2: bark, 3: mel
-	int axisOrientation;  // 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up
-	kVowelEditor_marksDataSet marksDataSet;
-	kVowelEditor_speakerType speakerType;
-	double marksFontSize;
+	int shiftKeyPressed;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
-	autoTable marks;   // Vowel, F1, F2, Colour...
-	autoVowel vowel;
-	double markTraceEvery;
-	structVowelEditor_F0 f0;
-	double maximumDuration, extendDuration;
+	autoTable marks;   // Vowel, F1, F2, Colour
+	autoTrajectory trajectory;
+	autoVEC extraFrequencyBandwidthPairs;
 	GuiDrawingArea drawingArea;
 	GuiButton playButton, reverseButton, publishButton;
 	GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
 	GuiLabel startInfo, endInfo;
-	structVowelEditor_F1F2Grid grid;
 
 	void v_destroy () noexcept
 		override;
@@ -78,10 +60,11 @@ Thing_define (VowelEditor, Editor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
+
+	#include "VowelEditor_prefs.h"
+
 };
 
 autoVowelEditor VowelEditor_create (conststring32 title, Daata data);
-
-void VowelEditor_prefs ();
 
 #endif /* _VowelEditor_h_ */

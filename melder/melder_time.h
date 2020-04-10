@@ -22,7 +22,7 @@ double Melder_stopwatch ();
 
 void Melder_sleep (double duration);
 
-double Melder_clock ();   // seconds since 1969 or system start-up
+double Melder_clock ();   // typically the number of seconds since system start-up, with microsecond precision
 
 autostring32 STRdate ();
 

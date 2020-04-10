@@ -32,6 +32,7 @@
 #include <thread>
 #include <atomic>
 #include <functional>
+#include <vector>
 #include "NUM2.h"
 
 #define LPC_METHOD_AUTO 1
@@ -58,28 +59,15 @@ static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
 	}
 }
 
-void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
-	autoVEC y = newVECzero (my nCoefficients);
-	for (integer i = 1; i <= thy nx; i ++) {
-		const double y0 = thy z [channel] [i];
-		for (integer j = 1; j <= my nCoefficients; j ++)
-			thy z [channel] [i] += my a [j] * y [j];
-		for (integer j = my nCoefficients; j > 1; j --)
-			y [j] = y [j - 1];
-		y [1] = y0;
-	}
-}
-
-
 static integer getLPCAnalysisWorkspaceSize (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
 	integer size = 0;
-	if (method == kLPC_Analysis :: Autocorrelation)
+	if (method == kLPC_Analysis :: AUTOCORRELATION)
 		size = 3 * numberOfCoefficients + 2;
-	else if (method == kLPC_Analysis :: Covariance)
+	else if (method == kLPC_Analysis :: COVARIANCE)
 		size = numberOfCoefficients * (numberOfCoefficients + 1) / 2 + 4 * numberOfCoefficients + 2; 
-	else if (method == kLPC_Analysis :: Burg)
+	else if (method == kLPC_Analysis :: BURG)
 		size = 3 * numberOfSamples;
-	else if (method == kLPC_Analysis :: Marple)
+	else if (method == kLPC_Analysis :: MARPLE)
 		size = 3 * (numberOfCoefficients + 1);
 	return size;
 }
@@ -91,19 +79,17 @@ static autoVEC getLPCAnalysisWorkspace (integer numberOfSamples, integer numberO
 }
 
 static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& workspace) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer numberOfCoefficients = thy nCoefficients, np1 = numberOfCoefficients + 1;
 
 	//workspace <<= 0.0; not necessary !
 	VEC r = workspace. part (1, np1); // autoVEC r = newVECzero (numberOfCoefficients + 1);
 	VEC a = workspace. part (np1 + 1, 2 * np1); // autoVEC a = newVECzero (numberOfCoefficients + 1);
 	VEC rc = workspace. part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = newVECzero (numberOfCoefficients);
-	const VEC x = my z.row (1);
+	const VECVU x = my z.row (1);
 	integer i = 1; // For error condition at end
-	for (i = 1; i <= numberOfCoefficients + 1; i ++) {
-		r [i] = 0.0;
-		for (integer j = 1; j <= my nx - i + 1; j ++)
-			r [i] += x [j] * x [j + i - 1];
-	}
+	for (i = 1; i <= numberOfCoefficients + 1; i ++)
+		r [i] = NUMinner (x.part (1, my nx - i + 1), x.part (i, my nx));
 	if (r [1] == 0.0) {
 		i = 1; // !
 		goto end;
@@ -130,13 +116,10 @@ end:
 	i--;
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
-
 	if (i == numberOfCoefficients)
 		return 1;
-
-	thy nCoefficients = i;
-	for (integer j = i + 1; j <= numberOfCoefficients; j ++)
-		thy a [j] = 0.0;
+	thy a.resize (i);
+	thy nCoefficients = thy a.size; // maintain invariant
 	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
@@ -145,6 +128,7 @@ end:
 	work [1..m(m+1)/2+m+m+1+m+m+1]
 */
 static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& workspace) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer n = my nx, m = thy nCoefficients;
 	constVEC x = my z.row (1);
 	
@@ -184,7 +168,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 		for (integer j = 1; j <= i; j ++)
 			cc [i - j + 2] = cc [i - j + 1] + x [m - i + 1] * x [m - i + j] - x [n - i + 1] * x [n - i + j];
 
-		cc [1] = 0.0;
+		cc [1] = 0.0; // TODO NUMinner
 		for (integer j = m + 1; j <= n; j ++)
 			cc [1] += x [j - i] * x [j]; // 30
 
@@ -224,14 +208,12 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 	}
 end:
 	i--;
-
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
 	if (i == m)
 		return 1;
-
-	thy nCoefficients = i;
-    thy a.part (i + 1, m) <<= 0.0;
+	thy a.resize (i);
+	thy nCoefficients = thy a.size;
 	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
@@ -251,9 +233,9 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 		p += x [j] * x [j];
 
 	longdouble xms = p / n;
-	if (xms <= 0.0)
+	if (xms <= 0.0) {
 		return xms;	// warning empty
-
+	}
 	// (9)
 
 	b1 [1] = x [1];
@@ -300,7 +282,13 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee, VEC const& workspace) {
+	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	thy gain = VECburg_buffered (thy a.get(), my z.row(1), workspace);
+	if (thy gain <= 0.0) {
+		thy a.resize (0);
+		thy nCoefficients = thy a.size; // maintain invariant
+		return 0;
+	}
 	thy gain *= my nx;
 	for (integer i = 1; i <= thy nCoefficients; i ++)
 		thy a [i] = -thy a [i];
@@ -318,9 +306,9 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	double e0 = 2.0 * NUMsum2 (x);
 	integer m = 1;
 	if (e0 == 0.0) {
-		m = 0;
-		thy gain *= 0.5; // because e0 is twice the energy
-		thy nCoefficients = m;
+		thy a.resize (0);
+		thy nCoefficients = thy a.size; // maintain invariant
+		thy gain = 0.0;
 		return 0; // warning no signal
 	}
 	double q1 = 1.0 / e0;
@@ -441,11 +429,12 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	}
 end:
 	thy gain *= 0.5; // because e0 is twice the energy
-	thy nCoefficients = m;
+	thy a.resize (m);
+	thy nCoefficients = thy a.size; // maintain invariant
 	return status == 1 || status == 4 || status == 5;
 }
 
-static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+static autoLPC Sound_to_LPC_noThreads (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const double samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
@@ -481,13 +470,13 @@ static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analy
 		Vector_subtractMean (sframe.get());
 		Sounds_multiply (sframe.get(), window.get());
 		integer status = 1;
-		if (method == kLPC_Analysis :: Autocorrelation)
+		if (method == kLPC_Analysis :: AUTOCORRELATION)
 			status = Sound_into_LPC_Frame_auto (sframe.get(), lpcframe, workspace.get());
-		else if (method == kLPC_Analysis :: Covariance)
+		else if (method == kLPC_Analysis :: COVARIANCE)
 			status = Sound_into_LPC_Frame_covar (sframe.get(), lpcframe, workspace.get());
-		else if (method == kLPC_Analysis :: Burg)
+		else if (method == kLPC_Analysis :: BURG)
 			status = Sound_into_LPC_Frame_burg (sframe.get(), lpcframe, workspace.get());
-		else if (method == kLPC_Analysis :: Marple)
+		else if (method == kLPC_Analysis :: MARPLE)
 			status = Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2, workspace.get());
 		if (status != 0)
 			frameErrorCount ++;
@@ -498,7 +487,14 @@ static autoLPC _Sound_to_LPC_single (Sound me, int predictionOrder, double analy
 	return thee;
 }
 
-static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
+	const integer numberOfProcessors = std::thread::hardware_concurrency ();
+	if (numberOfProcessors <= 1) {
+		/*
+			We cannot use multithreading.
+		*/
+		return Sound_to_LPC_noThreads (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, method, tol1, tol2);
+	}
 	const double samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
@@ -516,6 +512,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
 	/*
 		Because of threading we initialise the frames beforehand.
+		We initialize the coefficient vector with a size equal to the prediction order.
 	*/
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const LPC_Frame lpcFrame = & thy d_frames [iframe];
@@ -526,16 +523,9 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	
 	constexpr integer maximumNumberOfThreads = 16;
 	integer numberOfThreads, numberOfFramesPerThread = 25;
-	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 	/*
 		We have to reserve all the needed working memory for each thread beforehand.
-		20200304 djmw: We cannot allocate
-		autovector<autoSound> sounds = newvectorzero<autoSound> (numberOfThreads);
-		because this is not completely functional yet. If this will be fuctional we
-		1. can use this dynamic allocation
-		2. don't need the maximumNumberOfThreads variable anymore (because we don't need
-		the random generator which can handle only 16 threads)
 	*/
 	autoSound sframe [maximumNumberOfThreads + 1];
 	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
@@ -546,7 +536,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		U"The workspace size is not properly defined.");
 	autoMAT workspace = newMATraw (numberOfThreads, worspaceSize);
 
-	autovector <std::thread> thread = newvectorzero <std::thread> (numberOfThreads); // TODO memory leak?
+	std::vector <std::thread> thread (numberOfThreads);
 	std::atomic<integer> frameErrorCount (0);
 	
 	try {
@@ -557,7 +547,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 			const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 			const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 			
-			thread [ithread] = std::thread ([=, & frameErrorCount]() {
+			thread [ithread - 1] = std::thread ([=, & frameErrorCount]() {
 				for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 					const LPC_Frame lpcframe = & lpc -> d_frames [iframe];
 					const double t = Sampled_indexToX (lpc, iframe);
@@ -565,13 +555,13 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 					Vector_subtractMean (soundFrame);
 					Sounds_multiply (soundFrame, windowFrame);
 					integer status = 1;
-					if (method == kLPC_Analysis :: Autocorrelation)
+					if (method == kLPC_Analysis :: AUTOCORRELATION)
 						status = Sound_into_LPC_Frame_auto (soundFrame, lpcframe, threadWorkspace);
-					else if (method == kLPC_Analysis :: Covariance)
+					else if (method == kLPC_Analysis :: COVARIANCE)
 						status = Sound_into_LPC_Frame_covar (soundFrame, lpcframe, threadWorkspace);
-					else if (method == kLPC_Analysis :: Burg)
+					else if (method == kLPC_Analysis :: BURG)
 						status = Sound_into_LPC_Frame_burg (soundFrame, lpcframe, threadWorkspace);
-					else if (method == kLPC_Analysis :: Marple)
+					else if (method == kLPC_Analysis :: MARPLE)
 						status = Sound_into_LPC_Frame_marple (soundFrame, lpcframe, tol1, tol2, threadWorkspace);
 					if (status != 0)
 						++ frameErrorCount;
@@ -580,20 +570,20 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		}
 	} catch (MelderError) {
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-			if (thread [ithread]. joinable ())
-				thread [ithread]. join ();
+			if (thread [ithread - 1]. joinable ())
+				thread [ithread - 1]. join ();
 		}
 		throw;
 	}
 	for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
-		thread [ithread]. join ();
+		thread [ithread - 1]. join ();
 	
 	return thee;
 }
 
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Autocorrelation, 0.0, 0.0);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: AUTOCORRELATION, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (auto) created.");
@@ -602,7 +592,7 @@ autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, 
 
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Covariance, 0.0, 0.0);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: COVARIANCE, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (covar) created.");
@@ -611,7 +601,7 @@ autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth,
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Burg, 0.0, 0.0);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: BURG, 0.0, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (burg) created.");
@@ -620,7 +610,7 @@ autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, 
 
 autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2) {
 	try {
-		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: Marple, tol1, tol2);
+		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: MARPLE, tol1, tol2);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (marple) created.");
@@ -759,11 +749,13 @@ void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, intege
 		Melder_clip (1_integer, & frameIndex, my nx);   // constant extrapolation
 		if (channel > thy ny)
 			channel = 1;
+		LPC_Frame lpc = & my d_frames [frameIndex];
+		autoVEC work = newVECraw (lpc -> nCoefficients);
 		if (channel > 0)
-			LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, channel);
+			VECfilterInverse_inplace (thy z.row (channel), lpc -> a.get(), work);
 		else
 			for (integer ichan = 1; ichan <= thy ny; ichan ++)
-				LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, ichan);
+				VECfilterInverse_inplace (thy z.row (ichan), lpc -> a.get(), work);
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");
 	}

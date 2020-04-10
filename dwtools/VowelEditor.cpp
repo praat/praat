@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2019 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 2008-2020 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
-  djmw 20080202, 20080330
-  djmw 20090114 FormantTier_to_FormantGrid.
-  djmw 20090613 Extract KlattGrid
-  djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
-  djmw 20110331 Corrected a typo
-*/
 
 /*
 trajectory --> path ????
@@ -53,17 +45,14 @@ trajectory --> path ????
 
 #include "FormantGrid.h"
 #include "KlattGrid.h"
-#include "../external/portaudio/portaudio.h"
-#include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"
-#include "PointProcess_and_Sound.h"
 #include "Polygon.h"
+#include "Preferences.h"
 #include "TableOfReal_extensions.h"
 #include "Table_extensions.h"
-#include "VowelEditor.h"
+#include "VowelEditor.h"   // this includes windows.h
+#include "EditorM.h"   // include this *after* including windows.h (it redefines BOOLEAN)
 #include "machine.h"
-#include "Preferences.h"
-#include "EditorM.h"
 #include <time.h>
 
 #if defined (macintosh)
@@ -73,7 +62,6 @@ trajectory --> path ????
 	#include <signal.h>
 #endif
 
-
 #include "enums_getText.h"
 #include "VowelEditor_enums.h"
 #include "enums_getValue.h"
@@ -81,168 +69,181 @@ trajectory --> path ????
 
 Thing_implement (VowelEditor, Editor, 0);
 
+#include "prefs_define.h"
+#include "VowelEditor_prefs.h"
+#include "prefs_install.h"
+#include "VowelEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "VowelEditor_prefs.h"
+
 #define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)
 #define MARGIN_RIGHT 10
 #define MARGIN_LEFT 50
 #define MARGIN_TOP 50
 #define MARGIN_BOTTOM (60+STATUS_INFO)
-#define BUFFER_SIZE_SEC 4
-#define SAMPLING_FREQUENCY 44100
 
 #define MICROSECPRECISION(x) (round((x)*1000000)/1000000)
 
-// To prevent the generation of inaudible short Sounds we set a minimum duration
-#define MINIMUM_SOUND_DURATION 0.01
+#pragma mark - class TrajectoryPointTier
 
-// maximum number of marks
-#define VowelEditor_MAXIMUM_MARKERS 30
+Thing_implement (TrajectoryPoint, AnyPoint, 0);
 
-static structVowelEditor_F0 f0default { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
-static structVowelEditor_F1F2Grid griddefault { 200.0, 500.0, 0, 1, 0, 1, 0.5 };
+static autoTrajectoryPoint TrajectoryPoint_create (double time, double f1, double f2, MelderColour colour) {
+	autoTrajectoryPoint thee = Thing_new (TrajectoryPoint);
+	thy number = time;
+	thy f1 =  f1;
+	thy f2 = f2;
+	thy colour = colour;
+	return thee;
+}
 
-#include "oo_DESTROY.h"
-#include "Vowel_def.h"
-#include "oo_COPY.h"
-#include "Vowel_def.h"
-#include "oo_EQUAL.h"
-#include "Vowel_def.h"
-#include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "Vowel_def.h"
-#include "oo_WRITE_TEXT.h"
-#include "Vowel_def.h"
-#include "oo_READ_TEXT.h"
-#include "Vowel_def.h"
-#include "oo_WRITE_BINARY.h"
-#include "Vowel_def.h"
-#include "oo_READ_BINARY.h"
-#include "Vowel_def.h"
-#include "oo_DESCRIPTION.h"
-#include "Vowel_def.h"
+Thing_implement (Trajectory, Function, 0);
 
-#pragma mark - preferences
+static autoTrajectory Trajectory_create (double duration) {
+	try {
+		autoTrajectory me = Thing_new (Trajectory);
+		Function_init (me.get(), 0.0, duration);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Trajectory not created.");
+	}
+}
 
-struct markInfo {
-	double f1, f2;
-	int size;
-	char32 vowel [Preferences_STRING_BUFFER_SIZE];
-};
+static void Trajectory_addPoint (Trajectory me, double time, double f1, double f2, MelderColour colour) {
+	try {
+		autoTrajectoryPoint point = TrajectoryPoint_create (time, f1, f2, colour);
+		my xmax = std::max (my xmax, time);
+		my points . addItem_move (point.move());
+	} catch (MelderError) {
+		Melder_throw (me, U" no point added.");
+	}
+}
 
-static struct {
-	int shellWidth, shellHeight;
-	bool soundFollowsMouse;
-	double f1min, f1max, f2min, f2max;
-	double f3, b3, f4, b4;
-	double markTraceEvery, extendDuration;
-	kVowelEditor_speakerType speakerType;
-	kVowelEditor_marksDataSet marksDataSet;
-	int numberOfMarks;
-	double marksFontSize;
-	char32 mark [VowelEditor_MAXIMUM_MARKERS] [Preferences_STRING_BUFFER_SIZE];
-} prefs;
+static void Trajectory_newDuration (Trajectory me, double newDuration) {
+	if (newDuration != my xmax) {
+		const double multiplier = newDuration / my xmax;
+		for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
+			TrajectoryPoint point = my points.at [ipoint];
+			point -> number *= multiplier;
+		}
+		my xmax = newDuration;
+	}
+}
 
-void VowelEditor_prefs () {
-	Preferences_addInt (U"VowelEditor.shellWidth", & prefs.shellWidth, 500);
-	Preferences_addInt (U"VowelEditor.shellHeight", & prefs.shellHeight, 500);
-	Preferences_addBool (U"VowelEditor.soundFollowsMouse", & prefs.soundFollowsMouse, true);
-	Preferences_addDouble (U"VowelEditor.f1min", & prefs.f1min, 200.0);
-	Preferences_addDouble (U"VowelEditor.f1max", & prefs.f1max, 1200.0);
-	Preferences_addDouble (U"VowelEditor.f2min", & prefs.f2min, 500.0);
-	Preferences_addDouble (U"VowelEditor.f2max", & prefs.f2max, 3500.0);
-	Preferences_addDouble (U"VowelEditor.f3", & prefs.f3, 2500.0);
-	Preferences_addDouble (U"VowelEditor.b3", & prefs.b3, 250.0);
-	Preferences_addDouble (U"VowelEditor.f4", & prefs.f4, 3500.0);
-	Preferences_addDouble (U"VowelEditor.b4", & prefs.b4, 350.0);
-	Preferences_addDouble (U"VowelEditor.markTraceEvery", & prefs.markTraceEvery, 0.05);
-	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
-	Preferences_addEnum (U"VowelEditor.speakerType2", & prefs.speakerType, kVowelEditor_speakerType, kVowelEditor_speakerType::Man);
-	Preferences_addEnum (U"VowelEditor.marksDataSet", & prefs.marksDataSet, kVowelEditor_marksDataSet, kVowelEditor_marksDataSet::AmericanEnglish);
-	Preferences_addDouble (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14.0);
-	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
+static void Trajectory_reverse (Trajectory me) {
+	const double duration = my xmax;
+	const integer np = my points.size, np_2 = np / 2;
+
+	for (integer ipoint = 1; ipoint <= np_2; ipoint ++) {
+		std::swap (my points.at [ipoint], my points.at [np - ipoint + 1]);
+		TrajectoryPoint point = my points.at [ipoint];
+		point -> number = duration - point -> number;
+		point = my points.at [np - ipoint + 1];
+		point -> number = duration - point -> number;
+	}
+	if (np % 2 == 1) {
+		TrajectoryPoint point = my points.at [np_2 + 1];
+		point -> number = duration - point -> number;
+	}
+}
+
+static void Trajectory_shift_semitones (Trajectory me, double f1_st, double f2_st) {
+	for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
+		TrajectoryPoint point = my points.at [ipoint];
+		double f1 = point -> f1, f2 = point -> f2;
+		f1 *= pow (2.0, f1_st / 12.0);
+		point -> f1 = f1;	
+		f2 *= pow (2.0, f2_st / 12.0);
+		point -> f2 = f2;
+	}
+}
+
+static void Trajectory_setColour (Trajectory me, double startTime, double endTime, MelderColour colour) {
+	Melder_require (Function_intersectRangeWithDomain (me, & startTime, & endTime),
+		U"The time interval is not part of the trajectory.");
 	/*
-		We don't know how many markers there will be, so the prefs file needs to have the maximum number.
-	 */
-	for (integer i = 1; i <= VowelEditor_MAXIMUM_MARKERS; i ++) {
-		Preferences_addString (Melder_cat (U"VowelEditor.mark", (i < 10 ? U"0" : U""), i), & prefs.mark [i - 1] [0], U"x");
+		Now: startTime <= endTime
+		
+		Find the points within [startTime, endTime]
+	*/
+	integer startPoint = 1;
+	while (startPoint < my points.size) {
+		TrajectoryPoint point = my points.at [startPoint];
+		if (point -> number < startTime)
+			startPoint ++;
+		else
+			break;
+	}
+	integer endPoint = my points.size;
+	while (endPoint > startPoint) {
+		TrajectoryPoint point = my points.at [endPoint];
+		if (point -> number > endTime)
+			endPoint --;
+		else
+			break;
+	}		
+	for (integer ipoint = startPoint; ipoint <= endPoint; ipoint ++) {
+		TrajectoryPoint point = my points.at [ipoint];
+		point -> colour = colour;
+	}
+	/*
+		If the startTime and endTime are too far away from a trajectory point,
+		as could happen if a trajectory was created by the 'New trajectory' and/or
+		'Extend trajectory' menu items, then we have to include a new trajectory point.
+		The (time,f1,f2) numbers are obtained by linear interpolation, where we 
+		use that the two points in the trajectory never bear the same time.
+		
+		We also have to guard against rounding down in the forms. For example an endTime
+		of 0.4632200000000007 might be shown in the form as '0.46322'
+	*/
+	double timeMargin = 1e-14; // guards against rounding down by the representation in the forms;
+	TrajectoryPoint p2, p1 = my points.at [endPoint];
+	if (endTime - timeMargin > p1 -> number && endPoint < my points.size) {
+		p2 = my points.at [endPoint + 1];
+		double t = (endTime - p1 -> number) / (p2 -> number - p1 -> number);
+		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
+		double f1 = p1 -> f1 + (p2 -> f1 - p1 -> f1) * t;
+		Trajectory_addPoint (me, endTime, f1, f2, colour);
+	}
+	p2 = my points.at [startPoint];
+	if (startTime + timeMargin < p2 -> number && startPoint > 1) {
+		p1 = my points.at [startPoint - 1];
+		double t = (startTime - p1 -> number) / (p2 -> number - p1 -> number);
+		double f2 = p1 -> f2 + (p2 -> f2 - p1 -> f2) * t;
+		double f1 = p1 -> f1 + (p2 -> f1 - p1 -> f1) * t;
+		Trajectory_addPoint (me, startTime, f1, f2, colour);
 	}
 }
 
 #pragma mark - class Vowel
 
-Thing_implement (Vowel, Function, 0);
-
-static autoVowel Vowel_create (double duration) {
+static void VowelEditor_create_twoFormantSchwa (VowelEditor me) {
 	try {
-		autoVowel me = Thing_new (Vowel);
-		Function_init (me.get(), 0.0, duration);
-		my ft = FormantTier_create (0.0, duration);
-		my pt = PitchTier_create (0.0, duration);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Vowel not created.");
-	}
-}
-
-static autoVowel Vowel_create_twoFormantSchwa (double duration) {
-	try {
-		autoVowel me = Vowel_create (duration);
-		autoFormantPoint fp = FormantPoint_create (0.0, 2);
-		fp -> formant [1] = 500.0;
-		fp -> bandwidth [1] = 50.0;
-		fp -> formant [2] = 1500.0;
-		fp -> bandwidth [2] = 150.0;
-		my ft -> points. addItem_move (fp.move());
-		RealTier_addPoint (my pt.get(), 0.0, 140.0);
-
-		fp = FormantPoint_create (duration, 2);
-		fp -> formant [1] = 500.0;
-		fp -> bandwidth [1] = 50.0;
-		fp -> formant [2] = 1500.0;
-		fp -> bandwidth [2] = 150.0;
-		my ft -> points. addItem_move (fp.move());
-		RealTier_addPoint (my pt.get(), duration, 140.0);
-		return me;
+		my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
+		MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
+		Trajectory_addPoint (my trajectory.get (), 0.0, 500.0, 1500.0, colour);
+		Trajectory_addPoint (my trajectory.get (), my p_trajectory_minimumDuration, 500.0, 1500.0, colour);
 	} catch (MelderError) {
 		Melder_throw (U"Schwa Vowel not created");
 	}
 }
 
-static autoSound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, integer interpolationDepth) {
-	try {
-		autoPointProcess pp = PitchTier_to_PointProcess (my pt.get());
-		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.get(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
-		Sound_FormantTier_filter_inplace (thee.get(), my ft.get());
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": Sound with pulses not created.");
-	}
+static inline double VowelEditor_getXFromF2 (VowelEditor me, double f2) {
+	return log (f2 / my p_window_f2max) / log (my p_window_f2min / my p_window_f2max);
 }
 
-static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
-	try {
-		const integer numberOfFormants = FormantTier_getMaxNumFormants (me);
-		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, numberOfFormants);
-		for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
-			const FormantPoint fp = my points.at [ipoint];
-			const double t = fp -> number;
-			for (integer iformant = 1; iformant <= fp -> numberOfFormants; iformant ++) {
-				FormantGrid_addFormantPoint (thee.get(), iformant, t, fp -> formant [iformant]);
-				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, fp -> bandwidth [iformant]);
-			}
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no FormantGrid created.");
-	}
+static inline double VowelEditor_getYFromF1 (VowelEditor me, double f1) {
+	return log (f1 / my p_window_f1max) / log (my p_window_f1min / my p_window_f1max);
 }
 
 static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, double *x, double *y) {
-	*x = log (f2 / my f2max) / log (my f2min / my f2max);
-	*y = log (f1 / my f1max) / log (my f1min / my f1max);
+	*y = VowelEditor_getYFromF1 (me, f1);
+	*x = VowelEditor_getXFromF2 (me, f2);
 }
 
 static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, double *f1, double *f2) {
-	*f2 = my f2min * pow (my f2max / my f2min, 1.0 - x);
-	*f1 = my f1min * pow (my f1max / my f1min, 1.0 - y);
+	*f2 = my p_window_f2min * pow (my p_window_f2max / my p_window_f2min, 1.0 - x);
+	*f1 = my p_window_f1min * pow (my p_window_f1max / my p_window_f1min, 1.0 - y);
 }
 
 #define REPRESENTNUMBER(x,i) (isundef (x) ? U" undef" : Melder_pad (6, Melder_fixed (x, 1)))
@@ -262,74 +263,43 @@ static double getRealFromTextWidget (GuiText me) {
 	return value;
 }
 
-static void checkF1F2 (VowelEditor me, double *f1, double *f2) {
-	if (*f1 < my f1min)
-		*f1 = my f1min;
-	if (*f1 > my f1max)
-		*f1 = my f1max;
-	if (*f2 < my f2min)
-		*f2 = my f2min;
-	if (*f2 > my f2max)
-		*f1 = my f2max;
+static void clipF1F2 (VowelEditor me, double *f1, double *f2) {
+	Melder_clip (my p_window_f1min, f1, my p_window_f1max);
+	Melder_clip (my p_window_f2min, f2, my p_window_f2max);
 }
 
-static void checkF0 (structVowelEditor_F0 *f0p, double *f0) {
-	if (isundef (*f0))
-		*f0 = f0p -> start;
-	if (*f0 > f0p -> maximum)
-		*f0 = f0p -> maximum;
-	if (*f0 < f0p -> minimum)
-		*f0 = f0p -> minimum;
+static void	clipXY (double *x, double *y) {
+	Melder_clip (0.0, x, 1.0);
+	Melder_clip (0.0, y, 1.0);
 }
 
-static void	checkXY (double *x, double *y) {
-	if (*x < 0.0)
-		*x = 0.0;
-	else if (*x > 1.0)
-		*x = 1.0;
-
-	if (*y < 0.0)
-		*y = 0.0;
-	else if (*y > 1.0)
-		*y = 1.0;
-}
-
-static double Matrix_getValue (Matrix me, double /* x */, double /* y */) {
-	return my z [1] [1];
-}
-
-static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f3, double *b3, double *f4, double *b4) {
-	*f3 = Matrix_getValue (my f3.get(), f2, f1);
-	*b3 = Matrix_getValue (my b3.get(), f2, f1);
-	*f4 = Matrix_getValue (my f4.get(), f2, f1);
-	*b4 = Matrix_getValue (my b4.get(), f2, f1);
-}
-
-static void VowelEditor_updateF0Info (VowelEditor me) {
+static void VowelEditor_updateFromF0StartAndSlopeTextWidgets (VowelEditor me) {
 	double f0 = getRealFromTextWidget (my f0TextField);
-	checkF0 (& my f0, & f0);
+	Melder_clip (my p_f0_minimum, & f0, my p_f0_maximum);
 	GuiText_setString (my f0TextField, Melder_double (f0));
-	my f0.start = f0;
-	double slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);
-	if (isundef (slopeOctPerSec))
-		slopeOctPerSec = f0default.slopeOctPerSec;
-	my f0.slopeOctPerSec = slopeOctPerSec;
-	GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
+	my pref_f0_start () = my p_f0_start = f0;
+	double slope = getRealFromTextWidget (my f0SlopeTextField);
+	if (isundef (slope))
+		slope = 0.0;
+	my pref_f0_slope () = my p_f0_slope = slope;
+	GuiText_setString (my f0SlopeTextField, Melder_double (slope));
 }
 
-static void VowelEditor_updateExtendDuration (VowelEditor me) {
+static void VowelEditor_updateFromExtendDurationTextWidget (VowelEditor me) {
 	double extend = getRealFromTextWidget (my extendTextField);
-	if (isundef (extend) || extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration)
-		extend = MINIMUM_SOUND_DURATION;
+	if (isundef (extend) || extend <= my p_trajectory_minimumDuration || extend > my p_trajectory_maximumDuration)
+		extend = my p_trajectory_minimumDuration;
 	GuiText_setString (my extendTextField, Melder_double (extend));
-	my extendDuration = prefs.extendDuration = extend;
+	my pref_trajectory_extendDuration () = my p_trajectory_extendDuration = extend;
 }
 
-static double VowelEditor_updateDurationInfo (VowelEditor me) {
+static double VowelEditor_updateFromDurationTextWidget (VowelEditor me) {
 	double duration = getRealFromTextWidget (my durationTextField);
-	if (isundef (duration) || duration < MINIMUM_SOUND_DURATION)
-		duration = MINIMUM_SOUND_DURATION;
+	if (isundef (duration) || duration < my p_trajectory_minimumDuration)
+		duration = my p_trajectory_minimumDuration;
+	my pref_trajectory_duration () = my p_trajectory_duration = duration;
 	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
+	Trajectory_newDuration (my trajectory.get(), duration);
 	return duration;
 }
 
@@ -364,10 +334,10 @@ static void Sound_fadeIn (Sound me, double duration, bool fromFirstNonZeroSample
 static void Sound_fadeOut (Sound me, double duration) {
 	integer numberOfSamples = Melder_ifloor (duration / my dx);
 
-	if (numberOfSamples < 2)
-		return;
 	if (numberOfSamples > my nx)
 		numberOfSamples = my nx;
+	if (numberOfSamples < 2)
+		return;
 	const integer istart = my nx - numberOfSamples;
 	/*
 		Only one channel
@@ -378,112 +348,66 @@ static void Sound_fadeOut (Sound me, double duration) {
 	}
 }
 
-static double getF0 (structVowelEditor_F0 *f0p, double time) {
-	double f0 = f0p -> start * pow (2.0, f0p -> slopeOctPerSec * time);
-	if (f0 < f0p -> minimum)
-		f0 = f0p -> minimum;
-	else if (f0 > f0p -> maximum)
-		f0 = f0p -> maximum;
+static double VowelEditor_getF0AtTime (VowelEditor me, double time) {
+	double f0 = my p_f0_start * pow (2.0, my p_f0_slope * time);
+	Melder_clip (my p_f0_minimum, & f0, my p_f0_maximum);
 	return f0;
 }
 
-static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
-	const FormantTier ft = my vowel -> ft.get();
-	const double duration = ft -> xmax;
-	const integer np = ft -> points.size, np_2 = np / 2;
-
-	for (integer i = 1; i <= np_2; i ++) {
-		FormantPoint fpt = ft -> points.at [i];
-		ft -> points.at [i] = ft -> points.at [np - i + 1];
-		ft -> points.at [np - i + 1] = fpt;
-		fpt = ft -> points.at [i];
-		fpt -> number = duration - fpt -> number;
-		fpt = ft -> points.at [np - i + 1];
-		fpt -> number = duration - fpt -> number;
-	}
-	if (np % 2 == 1) {
-		const FormantPoint fpt = ft -> points.at [np_2 + 1];
-		fpt -> number = duration - fpt -> number;
-	}
-}
-
-static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
-	FormantTier ft = my vowel -> ft.get();
-	for (integer i = 1; i <= ft -> points.size; i ++) {
-		const FormantPoint fp = ft -> points.at [i];
-		double f1 = fp -> formant [1], f2 = fp -> formant [2];
-
-		f1 *= pow (2, f1_st / 12.0);
-		if (f1 < my f1min)
-			f1 = my f1min;
-		if (f1 > my f1max)
-			f1 = my f1max;
-		fp -> formant [1] = f1;
-		fp -> bandwidth [1] = f1 / 10.0;
-
-		f2 *= pow (2, f2_st / 12.0);
-		if (f2 < my f2min)
-			f2 = my f2min;
-		if (f2 > my f2max)
-			f2 = my f2max;
-		fp -> formant [2] = f2;
-		fp -> bandwidth [2] = f2 / 10.0;
-		double f3, b3, f4, b4;
-		VowelEditor_getF3F4 (me, f1, f2, & f3, & b3, & f4, & b4);
-		fp -> formant [3] = f3;
-		fp -> bandwidth [3] = b3;
-		fp -> formant [4] = f4;
-		fp -> bandwidth [4] = b4;
-	}
-}
-
-static void FormantTier_newDuration (FormantTier me, double newDuration) {
-	if (newDuration != my xmax) {
-		const double multiplier = newDuration / my xmax;
-		for (integer i = 1; i <= my points.size; i ++) {
-			const FormantPoint fp = my points.at [i];
-			fp -> number *= multiplier;
-		}
-		my xmax *= multiplier;
-	}
-}
-
-static void PitchTier_newDuration (PitchTier me, structVowelEditor_F0 *f0p, double newDuration) {
+static void VowelEditor_updateTrajectorySpecification (VowelEditor me) {
 	/*
 		Always update; GuiObject text might have changed
 	*/
-	const double multiplier = newDuration / my xmax;
-	for (integer i = 1; i <= my points.size; i ++) {
-		const RealPoint pp = my points.at [i];
-		pp -> number *= multiplier;
-		pp -> value = getF0 (f0p, pp -> number);
-	}
-	my xmax *= multiplier;
+	VowelEditor_updateFromDurationTextWidget (me);
+	VowelEditor_updateFromF0StartAndSlopeTextWidgets (me);
 }
 
-static void Vowel_newDuration (Vowel me, structVowelEditor_F0 *f0p, double newDuration) {
-	if (newDuration != my xmax) {
-		const double multiplier = newDuration / my xmax;
-		FormantTier_newDuration (my ft.get(), newDuration);
-		my xmax *= multiplier;
-	}
-	PitchTier_newDuration (my pt.get(), f0p, newDuration);   // always update
-}
-
-static void VowelEditor_updateVowel (VowelEditor me) {
-	const double newDuration = VowelEditor_updateDurationInfo (me); // Get new duration from TextWidget
-	VowelEditor_updateF0Info (me);   // get new pitch and slope values from TextWidgets
-	Vowel_newDuration (my vowel.get(), & my f0, newDuration);
-}
-
-static double getCoordinate (double fmin, double fmax, double f) {
-	return log (f / fmax) / log (fmin / fmax);
-}
-
-static autoSound VowelEditor_createTarget (VowelEditor me) {
+static autoFormantGrid VowelEditor_to_FormantGrid (VowelEditor me) {
 	try {
-		VowelEditor_updateVowel (me);   // update pitch and duration
-		autoSound thee = Vowel_to_Sound_pulses (my vowel.get(), 44100.0, 0.7, 0.05, 30);
+		autoFormantGrid thee = FormantGrid_createEmpty (my trajectory -> xmin, my trajectory -> xmax, my p_synthesis_numberOfFormants);
+		const integer numberOfExtraFormants = my p_synthesis_numberOfFormants - 2;
+		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
+			const TrajectoryPoint tp = my trajectory -> points.at [ipoint];
+			const double time = tp -> number;
+			FormantGrid_addFormantPoint (thee.get(), 1, time, tp -> f1);
+			FormantGrid_addBandwidthPoint (thee.get(), 1, time, tp -> f1 / my p_synthesis_q1);
+			if (my p_synthesis_numberOfFormants < 2)
+				continue;
+			FormantGrid_addFormantPoint (thee.get(), 2, time, tp ->f2);
+			FormantGrid_addBandwidthPoint (thee.get(), 1, time, tp ->f2 / my p_synthesis_q2);
+			for (integer ifor = 1; ifor <= numberOfExtraFormants; ifor ++) {
+				if (my p_synthesis_numberOfFormants < 2 + ifor)
+					break;
+				FormantGrid_addFormantPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor - 1]);
+				FormantGrid_addBandwidthPoint (thee.get(), 1, time, my extraFrequencyBandwidthPairs [2 * ifor]);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"No FormantGrid created.");
+	}
+}
+
+static autoPitchTier VowelEditor_to_PitchTier (VowelEditor me) {
+	try {
+		autoPitchTier thee = PitchTier_create (my trajectory -> xmin, my trajectory -> xmax);
+		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
+			const TrajectoryPoint point = my trajectory -> points.at [ipoint];
+			const double f0 = VowelEditor_getF0AtTime (me, point -> number);
+			RealTier_addPoint (thee.get(), point -> number, f0);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"PitchTier not created.");
+	}	
+}
+static autoSound VowelEditor_createTargetSound (VowelEditor me) {
+	try {
+		VowelEditor_updateTrajectorySpecification (me); // update pitch and duration
+		autoFormantGrid formantGrid = VowelEditor_to_FormantGrid (me);
+		autoPitchTier pitchTier = VowelEditor_to_PitchTier (me);
+		autoSound thee = PitchTier_to_Sound_pulseTrain (pitchTier.get(), my p_synthesis_samplingFrequency, 0.7, 0.05, 30, false);
+		Sound_FormantGrid_filter_inplace (thee.get(), formantGrid.get());
 		Vector_scale (thee.get(), 0.99);
 		Sound_fadeIn (thee.get(), 0.005, true);
 		Sound_fadeOut (thee.get(), 0.005);
@@ -493,70 +417,66 @@ static autoSound VowelEditor_createTarget (VowelEditor me) {
 	}
 }
 
-#define GETX(x) (getCoordinate (f2min, f2max, x))
-#define GETY(y) (getCoordinate (f1min, f1max, y))
-static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f1min, double f1max, double f2min, double f2max, double markTraceEvery, double width) {
-// Our FormantTiers always have a FormantPoint at t=xmin and t=xmax;
-	Melder_assert (my points.size >= 2);
+static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
+	Melder_assert (my trajectory -> points.size >= 2);
 
 	const integer glt = Graphics_inqLineType (g);
 	const double glw = Graphics_inqLineWidth (g);
-	const MelderColour colour = Graphics_inqColour (g);
-	const integer nfp = my points.size;
-	trace (U"number of points ", nfp);
-	const FormantPoint fp1 = my points.at [1];
+	const MelderColour colour_save = Graphics_inqColour (g);
 	const double markLength = 0.01;
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	// Too short too hear ?
-	if ( (my xmax - my xmin) < 0.005)
+	if (my trajectory -> xmax - my trajectory -> xmin < 0.005)   // too short to hear?
 		Graphics_setColour (g, Melder_RED);
-	double x1 = GETX (fp1 -> formant [2]);
-	double y1 = GETY (fp1 -> formant [1]);
+	
+	auto getx = [=](double f) { return log (f / my p_window_f2max) / log (my p_window_f2min / my p_window_f2max); };
+	auto gety = [=](double f) { return log (f / my p_window_f1max) / log (my p_window_f1min / my p_window_f1max); };
+
+	const TrajectoryPoint firstPoint = my trajectory -> points.at [1];
+	double x1 = getx (firstPoint -> f2);
+	double y1 = gety (firstPoint -> f1);
 	double x1p = x1, y1p = y1;
-	double t1 = fp1 -> number;
+	double t1 = firstPoint -> number;
+	MelderColour colour1 = firstPoint -> colour;
+	Graphics_setColour (g, colour1);
 	integer imark = 1;
-	for (integer it = 2; it <= nfp; it ++) {
-		const FormantPoint fp = my points.at [it];
-		const double x2 = GETX (fp -> formant [2]);
-		const double y2 = GETY (fp -> formant [1]);
-		const double t2 = fp -> number;
-		Graphics_setLineWidth (g, 3);
+	for (integer it = 2; it <= my trajectory -> points.size; it ++) {
+		const TrajectoryPoint point = my trajectory -> points.at [it];
+		const double x2 = getx (point -> f2);
+		const double y2 = gety (point -> f1);
+		const double t2 = point -> number;
+		const MelderColour colour2 = point -> colour;
 		if (x1 == x2 && y1 == y2) {
 			x1 = x1p;
 			y1 = y1p;
 		} else {
+			Graphics_setLineWidth (g, 3);
 			Graphics_line (g, x1, y1, x2, y2);
 		}
-		double tm;
-		while (markTraceEvery > 0 && (tm = markTraceEvery * imark) < t2) {
-			// line orthogonal to y = (y1/x1)*x is y = -(x1/y1)*x
-			const double fraction = (tm - t1) / (t2 - t1);
+		double markTime;
+		while ((markTime = my p_trajectory_markEvery * imark) < t2) {
+			/*
+				The parametrization of the line running from (x1,y1) to (x2,y2) is
+				(1)   (x1, y1) + s * (x2 - x1, y2 - y1), where 0 <= s <= 1;
+				The mark position (xm,ym) is at s = (markTime - t1) / (t2 - t1).
+				The line perpendicular to this line can be parametrized as
+				(2)   (xm, ym) + v * (-(y2 - y1), x2 - x1). 
+				We need the startpoint, M1, and endpoint, M2, of the mark line. These are parametrized as
+				(xl1,yl1) = (xm,ym) + V * (y1 - y2, x2 - x1) and (xl2,yl2) = (xm , ym) - V * (y1 - y2, x2 - x1).
+				The length of the vector mark line constrains the value of V.
+			*/
+			const double s = (markTime - t1) / (t2 - t1);
 			const double dx = x2 - x1, dy = y2 - y1;
-			const double xm = x1 + fraction * dx;
-			const double ym = y1 + fraction * dy;
+			const double xm = x1 + s * dx;
+			const double ym = y1 + s * dy;
 			const double d = sqrt (dx * dx + dy * dy);
-			if (d > 0.0) {
-				double xl1 = dy * markLength / d, xl2 = - xl1;
-				double yl1 = dx * markLength / d, yl2 = - yl1;
-
-				if (dx * dy > 0.0) {
-					xl1 = -fabs (xl1);
-					yl1 = fabs (yl1);
-					xl2 = fabs (xl1);
-					yl2 = -fabs (yl1);
-				} else if (dx * dy < 0.0) {
-					xl1 = -fabs (xl1);
-					yl1 = -fabs (yl1);
-					xl2 = fabs (xl1);
-					yl2 = fabs (yl1);
-				}
-				Graphics_setLineWidth (g, 1);
-				trace (xm, U" ", ym, U" ", xl1, U" ", xl2, U" ", yl1, U" ", yl2);
-				Graphics_line (g, xm + xl1, ym + yl1, xm + xl2, ym + yl2);
-			}
+			double v = my p_trajectory_markLength / (2.0 * d); // d > 0
+			double xl1 = xm - v * dy, yl1 = ym + v * dx;
+			double xl2 = xm + v * dy, yl2 = ym - v * dx;
+			Graphics_setLineWidth (g, 1);
+			Graphics_line (g, xl1, yl1, xl2, yl2);
 			imark ++;
 		}
 		x1p = x1;
@@ -564,62 +484,41 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 		x1 = x2;
 		y1 = y2;
 		t1 = t2;
+		if (! MelderColour_equal (colour1, colour2)) {
+			Graphics_setColour (g, colour2);
+			colour1 = colour2;
+		}
+
 	}
 	// Arrow at end
 	{
+		const integer n = my trajectory -> points.size;
 		const double gas = Graphics_inqArrowSize (g), arrowSize = 1.0;
-		const double size = 10.0 * arrowSize * Graphics_getResolution (g) / 75.0 / width;
+		const double size = 10.0 * arrowSize * Graphics_getResolution (g) / 75.0 / my width;
 		const double sizeSquared = size * size;
 		Graphics_setArrowSize (g, arrowSize);
 		integer it = 1;
-		const FormantPoint fpn = my points.at [nfp];
-		FormantPoint fpi;
-		while (it <= nfp - 1) {
-			fpi = my points.at [nfp - it];
-			const double dx = GETX (fpn -> formant [2]) - GETX (fpi -> formant [2]);
-			const double dy = GETY (fpn -> formant [1]) - GETY (fpi -> formant [1]);
+		const TrajectoryPoint lastPoint = my trajectory -> points.at [n];
+		TrajectoryPoint point;
+		while (it <= n - 1) {
+			point = my trajectory -> points.at [n - it];
+			const double dx = getx (lastPoint -> f2) - getx (point -> f2);
+			const double dy = gety (lastPoint -> f1) - gety (point -> f1);
 			const double d2 = dx * dx + dy * dy;
 			if (d2 > sizeSquared)
 				break;
 			it ++;
 		}
-		Graphics_arrow (g, GETX (fpi -> formant [2]), GETY (fpi -> formant [1]), GETX (fpn -> formant [2]), GETY (fpn -> formant [1]));
+		Graphics_arrow (g, getx (point -> f2), gety (point -> f1), getx (lastPoint -> f2), gety (lastPoint -> f1));
 		Graphics_setArrowSize (g, gas);
 	}
 	Graphics_unsetInner (g);
-	Graphics_setColour (g, colour);
+	Graphics_setColour (g, colour_save);
 	Graphics_setLineType (g, glt);
 	Graphics_setLineWidth (g, glw);
 }
-#undef GETX
-#undef GETY
 
-static void copyVowelMarksInPreferences_volatile (Table me) {
-	integer numberOfRows = prefs.numberOfMarks = my rows.size;
-	if (numberOfRows > 0) {
-		const integer col_vowel = Table_getColumnIndexFromColumnLabel (me, U"Vowel");
-		const integer col_f1 = Table_getColumnIndexFromColumnLabel (me, U"F1");
-		const integer col_f2 = Table_getColumnIndexFromColumnLabel (me, U"F2");
-		const integer col_size = Table_getColumnIndexFromColumnLabel (me, U"Size");
-		autoMelderString mark;
-		for (integer imark = 1; imark <= VowelEditor_MAXIMUM_MARKERS; imark ++) {
-			if (imark <= numberOfRows) {
-				MelderString_copy (& mark, Table_getStringValue_Assert (me, imark, col_vowel), U"\t",
-					Table_getStringValue_Assert (me, imark, col_f1), U"\t",
-					Table_getStringValue_Assert (me, imark, col_f2), U"\t",
-					Table_getStringValue_Assert (me, imark, col_size));
-				const integer length = str32len (mark.string);
-				Melder_require (length < Preferences_STRING_BUFFER_SIZE,
-					U"Preference mark ", imark, U" contains too many characters");
-				str32cpy (prefs.mark [imark - 1], mark.string);
-			} else {
-				str32cpy (prefs.mark [imark - 1], U"x");
-			}
-		}
-	}
-}
-
-static void Table_addColumn_size (Table me, double size) {
+static void Table_addColumnIfNotExists_size (Table me, double size) {
 	const integer col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
@@ -628,88 +527,24 @@ static void Table_addColumn_size (Table me, double size) {
 	}
 }
 
-/*
-static void Table_addColumn_colour (Table me, MelderColour colour) {
+static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
 	integer col_colour = Table_findColumnIndexFromColumnLabel (me, U"Colour");
 	if (col_colour == 0) {
 		Table_appendColumn (me, U"Colour");
-		conststring32 string = Graphics_Colour_asString ();
-		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			Table_setStringValue (me, irow, my numberOfColumns, string);
-		}
+		for (integer irow = 1; irow <= my rows.size; irow ++)
+			Table_setStringValue (me, irow, my numberOfColumns, colour);
 	}
 }
-*/
 
-static void VowelEditor_setMarks (VowelEditor me, kVowelEditor_marksDataSet marksDataSet, kVowelEditor_speakerType speakerType, double fontSize) {
-	autoTable te;
-	const char32 *speaker = ( speakerType == kVowelEditor_speakerType::Man ? U"m" :
-		speakerType == kVowelEditor_speakerType::Woman ? U"w" :
-		speakerType == kVowelEditor_speakerType::Child ? U"c": U"m" );
-	if (marksDataSet == kVowelEditor_marksDataSet::AmericanEnglish) {   // American-English
-		autoTable thee = Table_create_petersonBarney1952 ();
-		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
-	} else if (marksDataSet == kVowelEditor_marksDataSet::Dutch) {
-		if (speakerType == kVowelEditor_speakerType::Child) {
-			autoTable thee = Table_create_weenink1983 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, speaker);
-		}
-		else {   // male + female from Pols van Nierop
-			autoTable thee = Table_create_polsVanNierop1973 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, 
-				( speakerType == kVowelEditor_speakerType::Man ? U"m" : U"f" ));
-		}
-	} else if (marksDataSet == kVowelEditor_marksDataSet::None) {   // none
-		my marks.reset();
-		return;
-	} else {   // leave as is
-		return;
-	}
-	autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
-	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
-	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
-	Table_addColumn_size (newMarks.get(), fontSize);
-	//Table_addColumn_colour (newMarks.get(), Graphics_Grey);
-	my marks = newMarks.move();
-	copyVowelMarksInPreferences_volatile (my marks.get());
-}
-
-static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
-{
-	const integer numberOfRows = VowelEditor_MAXIMUM_MARKERS;
+static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 	try {
-		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
-		integer nmarksFound = 0;
-		for (integer i = 1; i <= numberOfRows; i ++) {
-			autoSTRVEC rowi = newSTRVECtokenize (prefs.mark [i - 1]);
-			const integer numberOfTokens = rowi.size;
-			if (numberOfTokens < 4)
-				break;
-			Table_appendRow (newMarks.get());
-			for (integer j = 1; j <= 4; j ++)
-				Table_setStringValue (newMarks.get(), i, j, rowi [j].get());
-			nmarksFound ++;
-		}
-		if (nmarksFound == 0) {
-			my speakerType = prefs.speakerType = kVowelEditor_speakerType::Man;
-			my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
-			VowelEditor_setMarks (me, my marksDataSet, my speakerType, prefs.marksFontSize);
-		} else {
-			my marks = newMarks.move();
-		}
-	} catch (MelderError) {
-		Melder_throw (U"Cannot create Table from preferences. Default marks set.");
-		my speakerType = prefs.speakerType = kVowelEditor_speakerType::Man;
-		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::AmericanEnglish;
-		VowelEditor_setMarks (me, my marksDataSet, my speakerType, prefs.marksFontSize);
-	}
-}
-
-static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile file) {
-	try {
-		autoDaata data = Data_readFromFile (file);
+		Melder_require (str32len (my p_marks_fileName) > 0,
+			U"There is no file defined with vowel marks.");
+		structMelderFile file { };
+		Melder_pathToFile (my p_marks_fileName, & file);
+		autoDaata data = Data_readFromFile (& file);
 		Melder_require (Thing_isa (data.get(), classTable),
-			U"\"", MelderFile_name (file), U"\" is not a Table file");
+			U"\"", MelderFile_name (& file), U"\" is not a Table file");
 
 		autoTable newMarks = data.static_cast_move <structTable> ();
 		/*
@@ -718,49 +553,57 @@ static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile f
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"Vowel");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F1");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F2");
-		Table_addColumn_size (newMarks.get(), prefs.marksFontSize);
+		Table_addColumnIfNotExists_size (newMarks.get(), my p_marks_fontSize);
 		my marks = newMarks.move();
-		my marksDataSet = prefs.marksDataSet = kVowelEditor_marksDataSet::Other;
-		/*
-			Our marks preferences are dynamic, save each time
-		*/
-		copyVowelMarksInPreferences_volatile (my marks.get());
 	} catch (MelderError) {
-		Melder_throw (U"Vowel marks from Table not shown.");
+		Melder_throw (U"Vowel marks from file cannot be shown.");
 	}
 }
 
-static void VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4) {
-	const double xmin = my f2min, xmax = my f2max, dx = my f2max - my f2min, x1 = dx / 2.0;
-	const double dy = my f1max - my f1min, y1 = dy / 2;
+static void VowelEditor_getMarks (VowelEditor me) {
+	autoTable te;
+	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {   // American-English
+		const autoTable thee = Table_create_petersonBarney1952 ();
+		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO,
+		  ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" :
+			my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"w" :
+			my p_marks_speakerType == kVowelEditor_speakerType::CHILD ? U"c": U"m" ));
+	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::DUTCH) {
+		if (my p_marks_speakerType == kVowelEditor_speakerType::CHILD) {
+			const autoTable thee = Table_create_weenink1983 ();
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, U"c");
+		}
+		else {   // male + female from Pols van Nierop
+			const autoTable thee = Table_create_polsVanNierop1973 ();
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" : my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"f" : U"f") );
+		}
+	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::NONE) {   // none
+		my marks.reset();
+		return;
+	} else {  // other
+		VowelEditor_getVowelMarksFromFile (me);
+		return;
+	}
+	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
+	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
+	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 
-	if (! my f3)
-		my f3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
-	if (! my b3)
-		my b3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
-	if (! my f4)
-		my f4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
-	if (! my b4)
-		my b4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
-	my f3 -> z [1] [1] = f3;
-	my b3 -> z [1] [1] = b3;
-	my f4 -> z [1] [1] = f4;
-	my b4 -> z [1] [1] = b4;
+	Table_addColumnIfNotExists_size (newMarks.get(), my p_marks_fontSize);
+	Table_addColumnIfNotExists_colour (newMarks.get(), my p_marks_colour);
+	my marks = newMarks.move();
 }
 
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
-	double x1, y1, x2, y2;
-
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setGrey (g, 0.0);
 	Graphics_setLineType (g, Graphics_DRAWN);
-	Graphics_setLineWidth (g, 2.0);
-	Graphics_rectangle (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setLineWidth (g, 1.0);
 	Graphics_setGrey (g, 0.5);
 	const double fontSize = Graphics_inqFontSize (g);
-	// draw the marks
+	/*
+		Draw the marks
+	*/
 	if (my marks) {
 		const integer col_vowel = Table_getColumnIndexFromColumnLabel (my marks.get(), U"Vowel");
 		const integer col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
@@ -771,20 +614,21 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 			const conststring32 label = Table_getStringValue_Assert (my marks.get(), irow, col_vowel);
 			const double f1 = Table_getNumericValue_Assert (my marks.get(), irow, col_f1);
 			const double f2 = Table_getNumericValue_Assert (my marks.get(), irow, col_f2);
-			if (f1 >= my f1min && f1 <= my f1max && f2 >= my f2min && f2 <= my f2max) {
+			if (f1 >= my p_window_f1min && f1 <= my p_window_f1max && f2 >= my p_window_f2min && f2 <= my p_window_f2max) {
+				double x1, y1;
 				VowelEditor_getXYFromF1F2 (me, f1, f2, & x1, & y1);
-				int size = prefs.marksFontSize;
+				double size = my p_marks_fontSize;
 				if (col_size != 0)
-					size = Melder_ifloor (Table_getNumericValue_Assert (my marks.get(), irow, col_size));
+					size = Table_getNumericValue_Assert (my marks.get(), irow, col_size);
 				if (col_colour != 0) {
 					conststring32 colourString = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
 					MelderColour colour = MelderColour_fromColourNameOrNumberStringOrRGBString (colourString);
 					if (! colour. valid())
-						colour = Melder_GREY;
+						colour = MelderColour_fromColourName (my p_marks_colour);
 					Graphics_setColour (g, colour);
 				}
 				Graphics_setFontSize (g, size);
-				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 				Graphics_text (g, x1, y1, label);
 			}
 		}
@@ -794,94 +638,67 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 	/*
 		Draw the line F1=F2
 	*/
-	VowelEditor_getXYFromF1F2 (me, my f2min, my f2min, & x1, & y1);
-	if (y1 >= 0.0 && y1 <= 1.0) {
-		VowelEditor_getXYFromF1F2 (me, my f1max, my f1max, & x2, & y2);
-		if (x2 >= 0.0 && x2 <= 1.0) {
-			autoPolygon p = Polygon_create (3);
-			p -> x [1] = x1;
-			p -> y [1] = y1;
-			p -> x [2] = x2;
-			p -> y [2] = y2;
-			p -> x [3] = 1.0;
-			p -> y [3] = 0.0;
+	double xl1, yl1, xl2, yl2;
+	VowelEditor_getXYFromF1F2 (me, my p_window_f2min, my p_window_f2min, & xl1, & yl1);
+	if (yl1 >= 0.0 && yl1 <= 1.0) {
+		VowelEditor_getXYFromF1F2 (me, my p_window_f1max, my p_window_f1max, & xl2, & yl2);
+		if (xl2 >= 0.0 && xl2 <= 1.0) {
+			double x [] = { xl1, xl2, 1.0 };
+			double y [] = { yl1, yl2, 0.0 };
 			Graphics_setGrey (g, 0.6);
-			Graphics_fillArea (g, p -> numberOfPoints, & p -> x [1], & p -> y [1]);
-			/*
-				Polygon_paint does not work because of use of Graphics_setInner.
-			*/
+			Graphics_fillArea (g, 3, x , y);
 			Graphics_setGrey (g, 0.0); // black
-			Graphics_line (g, x1, y1, x2, y2);
+			Graphics_line (g, xl1, yl1, xl2, yl2);
 		}
 	}
 	/*
-		Draw the grid
+		Draw the horizontal grid lines
 	*/
-	if (my grid.df1 < (my f1max - my f1min)) { // Horizontal lines
-		integer iline = floor ((my f1min + my grid.df1) / my grid.df1);
+	if (my p_grid_df1 < (my p_window_f1max - my p_window_f1min)) {
+		integer iline = Melder_iroundDown ((my p_window_f1min + my p_grid_df1) / my p_grid_df1);
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
-		double f1_gridLine;
-		while ( (f1_gridLine = iline * my grid.df1) < my f1max) {
-			if (f1_gridLine > my f1min) {
-				VowelEditor_getXYFromF1F2 (me, f1_gridLine, my f2min, & x1, & y1);
-				VowelEditor_getXYFromF1F2 (me, f1_gridLine, my f2max, & x2, & y2);
-				Graphics_line (g, x1, y1, x2, y2);
+		double f1_gridLine, xg1, yg1, xg2, yg2;
+		while ( (f1_gridLine = iline * my p_grid_df1) < my p_window_f1max) {
+			if (f1_gridLine > my p_window_f1min) {
+				VowelEditor_getXYFromF1F2 (me, f1_gridLine, my p_window_f2min, & xg1, & yg1);
+				VowelEditor_getXYFromF1F2 (me, f1_gridLine, my p_window_f2max, & xg2, & yg2);
+				Graphics_line (g, xg1, yg1, xg2, yg2);
 			}
 			iline ++;
 		}
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setGrey (g, 0.0); // black
 	}
-	if (my grid.df2 < (my f2max - my f2min)) {
-		integer iline = floor ((my f2min + my grid.df2) / my grid.df2);
+	/*
+		Draw the vertical grid lines
+	*/
+	if (my p_grid_df2 < (my p_window_f2max - my p_window_f2min)) {
+		integer iline = Melder_iroundDown ((my p_window_f2min + my p_grid_df2) / my p_grid_df2);
 		Graphics_setGrey (g, 0.5);
 		Graphics_setLineType (g, Graphics_DOTTED);
-		double f2_gridLine;
-		while ( (f2_gridLine = iline * my grid.df2) < my f2max) { // vert line
-			if (f2_gridLine > my f2min) {
-				VowelEditor_getXYFromF1F2 (me, my f1min, f2_gridLine, & x1, & y1);
-				VowelEditor_getXYFromF1F2 (me, my f1max, f2_gridLine, & x2, & y2);
-				Graphics_line (g, x1, y1, x2, y2);
+		double f2_gridLine, xg1, yg1, xg2, yg2;
+		while ( (f2_gridLine = iline * my p_grid_df2) < my p_window_f2max) { // vert line
+			if (f2_gridLine > my p_window_f2min) {
+				VowelEditor_getXYFromF1F2 (me, my p_window_f1min, f2_gridLine, & xg1, & yg1);
+				VowelEditor_getXYFromF1F2 (me, my p_window_f1max, f2_gridLine, & xg2, & yg2);
+				Graphics_line (g, xg1, yg1, xg2, yg2);
 			}
 			iline ++;
 		}
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setGrey (g, 0.0); // black
 	}
+	Graphics_setLineWidth (g, 2.0);
+	Graphics_rectangle (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_unsetInner (g);
 	Graphics_setGrey (g, 0.0); // black
-	Graphics_markLeft (g, 0.0, false, true, false, Melder_double (my f1max));
-	Graphics_markLeft (g, 1.0, false, true, false, Melder_double (my f1min));
-	Graphics_markTop (g, 0.0, false, true, false, Melder_double (my f2max));
-	Graphics_markTop (g, 1.0, false, true, false, Melder_double (my f2min));
+	Graphics_markLeft (g, 0.0, false, true, false, Melder_double (my p_window_f1max));
+	Graphics_markLeft (g, 1.0, false, true, false, Melder_double (my p_window_f1min));
+	Graphics_markTop (g, 0.0, false, true, false, Melder_double (my p_window_f2max));
+	Graphics_markTop (g, 1.0, false, true, false, Melder_double (my p_window_f2min));
 
 }
-
-#if 0
-typedef struct {
-	integer some_check_value;
-	integer istart;
-	float *z;
-} *paVowelData;
-/* This routine will be called by the PortAudio engine when audio is needed.
-** It may called at interrupt level on some machines so don't do anything
-** that could mess up the system like calling malloc() or free().
-*/
-
-static int paCallback (const void* /*inputBuffer*/, void* outputBuffer, unsigned integer framesPerBuffer,
-                       const PaStreamCallbackTimeInfo* /*timeInfo*/, PaStreamCallbackFlags /*statusFlags*/, void *void_me) {
-	iam (paVowelData);
-	float* out = (float*) outputBuffer;
-
-	for (unsigned int i = 0; i < framesPerBuffer; i ++) {
-		*out ++ = my z [my istart + i]; /* left */
-		*out ++ = my z [my istart + i]; /* right */
-	}
-	my istart += framesPerBuffer;
-	return 0;
-}
-#endif
 
 #pragma mark - menu methods
 
@@ -889,61 +706,133 @@ static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"VowelEditor");
 }
 
+static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_FORM) {
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"Trajectory info:");
+	MelderInfo_writeLine (U"Number of points: ", my trajectory -> points.size);
+	MelderInfo_writeLine (U"Start time: ", my trajectory -> xmin, U" s");
+	TrajectoryPoint p1 = my trajectory -> points.at [1];
+	MelderInfo_writeLine (U"    F1: ", p1 -> f1, U" Hz");
+	MelderInfo_writeLine (U"    F2: ", p1 -> f2, U" Hz");
+	MelderInfo_writeLine (U"End time: ", my trajectory -> xmax, U" s");
+	TrajectoryPoint p2 = my trajectory -> points.at [my trajectory -> points.size];
+	MelderInfo_writeLine (U"    F1: ", p2 -> f1, U" Hz");
+	MelderInfo_writeLine (U"    F2: ", p2 -> f2, U" Hz");
+	MelderInfo_close ();
+}
+
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr);
-		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", true)
+		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse ())
+		LABEL (U"F1 and F2 frequencies are specified by the trajectory.")
+		LABEL (U"The bandwidths of a formant can be specified by its Q-value")
+		LABEL (U"which defines the sharpness of the peak: Q = frequency / bandwidth. ")
+		POSITIVE (q1, U"F1 sharpness", my default_synthesis_q1 ())
+		POSITIVE (q2, U"F2 sharpness", my default_synthesis_q2 ())
+		LABEL (U"You can define extra fixed formants for the synthesis by supplying")
+		LABEL (U"formant frequency bandwidth pairs.")
+		SENTENCE (fbpairs, U"Frequency bandwidth pairs", my default_synthesis_extraFBPairs ())
+		LABEL (U"The total number of formants used for synthesis")
+		NATURAL (numberOfFormants, U"Number of formants for synthesis", my default_synthesis_numberOfFormants ())
 	EDITOR_OK
-		SET_BOOLEAN (soundFollowsMouse, prefs.soundFollowsMouse)
+		SET_BOOLEAN (soundFollowsMouse, my p_soundFollowsMouse)
+		SET_REAL (q1, my p_synthesis_q1)
+		SET_REAL (q2, my p_synthesis_q2)
+		SET_STRING (fbpairs, my p_synthesis_extraFBPairs)
+		SET_INTEGER (numberOfFormants, my p_synthesis_numberOfFormants)
 	EDITOR_DO
-		my soundFollowsMouse = prefs.soundFollowsMouse = soundFollowsMouse;
+		my pref_soundFollowsMouse () = my p_soundFollowsMouse = soundFollowsMouse;
+		my pref_synthesis_q1 () = my p_synthesis_q1 = q1;
+		my pref_synthesis_q2 () = my p_synthesis_q2 = q2;
+		autoVEC extraFrequencyBandwidthPairs = newVECfromString (fbpairs);
+
+		Melder_require (extraFrequencyBandwidthPairs.size % 2 == 0,
+			U"There should be an even number of values in the \"Frequencies and bandwidths pairs\" list.");
+		/*
+			All items should be positive numbers and frequencies should be lower than the Nyquist.
+			Bandwidths should be greater than zero.
+		*/
+		for (integer item = 1; item <= extraFrequencyBandwidthPairs.size; item ++) {
+			Melder_require (extraFrequencyBandwidthPairs [item] > 0,
+				U"All values frequency bandwidth values should be positive.");
+			if (item % 2 == 1)
+				Melder_require (extraFrequencyBandwidthPairs [item] < 0.5 * my p_synthesis_samplingFrequency,
+					U"All formant frequencies should be below the Nyquist frequency (",
+					0.5 * my p_synthesis_samplingFrequency, U" Hz.");
+		}
+		const integer numberOfPairs = extraFrequencyBandwidthPairs.size / 2;
+		Melder_require (numberOfFormants <= numberOfPairs + 2,
+			U"The \"Number of formants for synthesis\" should not exceed the number of formants specified (",
+			numberOfPairs + 2, U"). Either lower the number of formants for synthesis or specify more "
+			"frequency bandwidth pairs.");
+		/*
+			Formants and bandwidths are valid. It is safe to copy them.
+		*/
+		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, fbpairs);
+		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
+		my extraFrequencyBandwidthPairs = extraFrequencyBandwidthPairs.move();
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
 static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"F1 (vert) and F2 (hor) view ranges", nullptr);
-		POSITIVE (f1min, U"left F1 range (Hz)", U"200.0")
-		POSITIVE (f1max, U"right F1 range (Hz)", U"1000.0")
-		POSITIVE (f2min, U"left F2 range (Hz)", U"500.0")
-		POSITIVE (f2max, U"right F2 range (Hz)", U"2500.0")
+		POSITIVE (f1min, U"left F1 range (Hz)", my default_window_f1min ())
+		POSITIVE (f1max, U"right F1 range (Hz)", my default_window_f1max ())
+		POSITIVE (f2min, U"left F2 range (Hz)", my default_window_f2min ())
+		POSITIVE (f2max, U"right F2 range (Hz)", my default_window_f2max ())
 	EDITOR_OK
-		SET_REAL (f1min, prefs.f1min)
-		SET_REAL (f1max, prefs.f1max)
-		SET_REAL (f2min, prefs.f2min)
-		SET_REAL (f2max, prefs.f2max)
+		SET_REAL (f1min, my p_window_f1min)
+		SET_REAL (f1max, my p_window_f1max)
+		SET_REAL (f2min, my p_window_f2min)
+		SET_REAL (f2max, my p_window_f2max)
 	EDITOR_DO
-		my f1min = prefs.f1min = f1min;
-		my f1max = prefs.f1max = f1max;
-		my f2min = prefs.f2min = f2min;
-		my f2max = prefs.f2max = f2max;
+		my pref_window_f1min () = my p_window_f1min = f1min;
+		my pref_window_f1max () = my p_window_f1max = f1max;
+		my pref_window_f2min () = my p_window_f2min = f2min;
+		my pref_window_f2max () = my p_window_f2max = f2max;
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
 static void menu_cb_publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	autoSound publish = VowelEditor_createTarget (me);
+	autoSound publish = VowelEditor_createTargetSound (me);
 	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateVowel (me);
-	autoFormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft.get());
+	VowelEditor_updateTrajectorySpecification (me);
+	autoFormantGrid publish = VowelEditor_to_FormantGrid (me);
 	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateVowel (me);
-	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft.get());
+	VowelEditor_updateTrajectorySpecification (me);
+	autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.get(), fg -> xmin, 90.0);
-	KlattGrid_replacePitchTier (publish.get(), my vowel -> pt.get());
-	KlattGrid_replaceFormantGrid (publish.get(), kKlattGridFormantType::Oral, fg.get());
+	autoPitchTier pitchTier = VowelEditor_to_PitchTier (me);
+	KlattGrid_replacePitchTier (publish.get(), pitchTier.get());
+	KlattGrid_replaceFormantGrid (publish.get(), kKlattGridFormantType::ORAL, fg.get());
 	Editor_broadcastPublication (me, publish.move());
 }
 
 static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateVowel (me);
-	autoPitchTier publish = Data_copy (my vowel -> pt.get());
+	VowelEditor_updateTrajectorySpecification (me);
+	autoPitchTier publish = VowelEditor_to_PitchTier (me);
+	Editor_broadcastPublication (me, publish.move());
+}
+
+static void menu_cb_extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	VowelEditor_updateTrajectorySpecification (me);
+	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, U"time F1 F2 Colour");
+	for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
+		TrajectoryPoint point = my trajectory -> points.at [ipoint];
+		Table_setNumericValue (publish.get(), ipoint, 1, point -> number);
+		Table_setNumericValue (publish.get(), ipoint, 2, point -> f1);
+		Table_setNumericValue (publish.get(), ipoint, 3, point -> f2);
+		Table_setStringValue  (publish.get(), ipoint, 4, MelderColour_namePrettyOrNull (point -> colour));
+	}
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -958,75 +847,87 @@ static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		Editor_openPraatPicture (me);
 		if (garnish)
 			VowelEditor_drawBackground (me, my pictureGraphics);
-		FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my pictureGraphics, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
+		VowelEditor_drawF1F2Trajectory (me, my pictureGraphics);
 		Editor_closePraatPicture (me);
 	EDITOR_END
 }
 
 static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Show one vowel mark", nullptr);
+		WORD (mark, U"Mark", U"u")
 		POSITIVE (f1, U"F1 (Hz)", U"300.0")
 		POSITIVE (f2, U"F2 (Hz)", U"600.0")
-		WORD (mark, U"Mark", U"u")
+		POSITIVE (fontSize, U"Font size", U"14.0")
+		COLOUR (colour, U"Colour", U"Green")
 	EDITOR_OK
 	EDITOR_DO
-		if (f1 >= my f1min && f1 <= my f1max && f2 >= my f2min && f2 <= my f2max) {
-			integer irow = 1;
-			if (! my marks)
-				my marks = Table_createWithColumnNames (1, U"IPA F1 F2 Colour");
-			else
-				Table_appendRow (my marks.get());
-			irow = my marks -> rows.size;
-			Table_setStringValue (my marks.get(), irow, 1, mark);
-			Table_setNumericValue (my marks.get(), irow, 2, f1);
-			Table_setNumericValue (my marks.get(), irow, 3, f2);
-			Graphics_updateWs (my graphics.get());
-		}
-	EDITOR_END
-}
-
-static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Show vowel marks", nullptr);
-		OPTIONMENU_ENUM (kVowelEditor_marksDataSet, dataSet, U"Data set", kVowelEditor_marksDataSet::DEFAULT)
-		OPTIONMENU_ENUM (kVowelEditor_speakerType, speaker, U"Speaker", kVowelEditor_speakerType::DEFAULT)
-		POSITIVE (fontSize, U"Font size (points)", U"14")
-	EDITOR_OK
-//		if (my marksDataSet == 9999) SET_STRING (note, U"(Warning: the current vowel marks are not from one of these data sets.)")
-//		SET_OPTION (dataSet, my marksDataSet)
-//		SET_OPTION (speaker, my speakerType)
-//		SET_REAL (fontSize, my marksFontSize)
-	EDITOR_DO
-		my marksDataSet = prefs.marksDataSet = dataSet;
-		my speakerType = prefs.speakerType = speaker;
-		my marksFontSize = prefs.marksFontSize = fontSize;
-		VowelEditor_setMarks (me, my marksDataSet, my speakerType, my marksFontSize);
+		Melder_require (f1 >= my p_window_f1min && f1 <= my p_window_f1max,
+			U"The first formant should be in the range from ", my p_window_f1min, U" to ", my p_window_f1max, U" Hz.");
+		Melder_require (f2 >= my p_window_f2min && f2 <= my p_window_f1max,
+			U"The second formant should be in the range from ", my p_window_f2min, U" to ", my p_window_f2max, U" Hz.");
+		if (! my marks)
+			my marks = Table_createWithColumnNames (1, U"IPA F1 F2 Size Colour");
+		else
+			Table_appendRow (my marks.get());
+		integer irow = my marks -> rows.size;
+		Table_setStringValue (my marks.get(), irow, 1, mark);
+		Table_setNumericValue (my marks.get(), irow, 2, f1);
+		Table_setNumericValue (my marks.get(), irow, 3, f2);
+		Table_setNumericValue (my marks.get(), irow, 4, fontSize);
+		Table_setStringValue (my marks.get(), irow, 5, MelderColour_name (colour));
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
-static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Show vowel marks", nullptr);
+		OPTIONMENU_ENUM (kVowelEditor_marksDataSet, dataSet, U"Data set", my default_marks_dataSet ())
+		OPTIONMENU_ENUM (kVowelEditor_speakerType, speaker, U"Speaker", my default_marks_speakerType ())
+		POSITIVE (fontSize, U"Font size (points)", my default_marks_fontSize ())
+		WORD (colour_string, U"Colour", my default_marks_colour ());
+	EDITOR_OK
+		SET_ENUM (dataSet, kVowelEditor_marksDataSet, my p_marks_dataSet)
+		SET_ENUM (speaker, kVowelEditor_speakerType, my p_marks_speakerType)
+		SET_REAL (fontSize, my p_marks_fontSize)
+		SET_STRING (colour_string, my p_trajectory_colour)
+	EDITOR_DO
+		my pref_marks_dataSet		() = my p_marks_dataSet = dataSet;
+		my pref_marks_speakerType	() = my p_marks_speakerType = speaker;
+		my pref_marks_fontSize		() = my p_marks_fontSize = fontSize;
+		pref_str32cpy2 (my pref_marks_colour (), my p_marks_colour, colour_string);
+		VowelEditor_getMarks (me);
+		Graphics_updateWs (my graphics.get());
+	EDITOR_END
+}
+
+static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {  // deprecated 20200404
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
-		VowelEditor_getVowelMarksFromTableFile (me, file);
+		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
+		my pref_marks_speakerType () = my p_marks_speakerType = kVowelEditor_speakerType::UNKNOWN;
+		my pref_marks_dataSet () = my p_marks_dataSet = kVowelEditor_marksDataSet::OTHER;
+		VowelEditor_getVowelMarksFromFile (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
 static void menu_cb_setF0 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set f0", nullptr);
-		POSITIVE (startF0, U"Start f0 (Hz)", U"150.0")
-		REAL (slope, U"Slope (oct/s)", U"0.0")
+		POSITIVE (f0Start, U"Start f0 (Hz)", my default_f0_start ())
+		REAL (f0Slope, U"Slope (oct/s)", my default_f0_slope ())
 	EDITOR_OK
+		SET_REAL (f0Start, my p_f0_start)
+		SET_REAL (f0Slope, my p_f0_slope)
 	EDITOR_DO
-		checkF0 (& my f0, & startF0);
-		my f0.start = startF0;
-		my f0.slopeOctPerSec = slope;
-		GuiText_setString (my f0TextField, Melder_double (my f0.start));
-		GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
+		Melder_clip (my p_f0_minimum, & f0Start, my p_f0_maximum);
+		my pref_f0_start () = my p_f0_start = f0Start;
+		my pref_f0_slope () = my p_f0_slope = f0Slope;
+		GuiText_setString (my f0TextField, Melder_double (f0Start));
+		GuiText_setString (my f0SlopeTextField, Melder_double (f0Slope));
 	EDITOR_END
 }
 
-static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
 	EDITOR_FORM (U"Set F3 & F4", nullptr);
 		POSITIVE (f3, U"F3 (Hz)", U"2500.0")
 		POSITIVE (b3, U"B3 (Hz)", U"250.0")
@@ -1034,30 +935,19 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (b4, U"B4 (Hz)", U"350.0")
 	EDITOR_OK
 	EDITOR_DO
-		Melder_require (f3 < f4, U"F4 should be larger than F3.");
-		VowelEditor_setF3F4 (me, f3, b3, f4, b4);
+		Melder_require (f3 < f4,
+			U"F4 should be larger than F3.");
+		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = 4;
+		my extraFrequencyBandwidthPairs [1] = f3;
+		my extraFrequencyBandwidthPairs [2] = b3;
+		my extraFrequencyBandwidthPairs [3] = f4;
+		my extraFrequencyBandwidthPairs [4] = b4;
 	EDITOR_END
 }
+
 static void menu_cb_reverseTrajectory (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_Vowel_reverseFormantTier (me);
+	Trajectory_reverse (my trajectory.get());
 	Graphics_updateWs (my graphics.get());
-}
-
-static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, double f1, double f2, double f0) {
-	autoFormantPoint fp = FormantPoint_create (time, 4);
-	double f3, b3, f4, b4;
-	fp -> formant [1] = f1;
-	fp -> bandwidth [1] = f1 / 10.0;
-	fp -> formant [2] = f2;
-	fp -> bandwidth [2] = f2 / 10.0;
-	VowelEditor_getF3F4 (me, f1, f2, & f3, & b3, & f4, & b4);
-	fp -> formant [3] = f3;
-	fp -> bandwidth [3] = b3;
-	fp -> formant [4] = f4;
-	fp -> bandwidth [4] = b4;
-
-	thy ft -> points. addItem_move (fp.move());
-	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
 static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -1066,22 +956,21 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (startF2, U"Start F2 (Hz)", U"1200.0")
 		POSITIVE (endF1, U"End F1 (Hz)", U"350.0")
 		POSITIVE (endF2, U"End F2 (Hz)", U"800.0")
-		POSITIVE (duration, U"Duration (s)", U"0.25")
+		POSITIVE (duration, U"Duration (s)", my default_trajectory_duration ())
+		WORD (colour_string, U"Colour", my default_trajectory_colour ());
 	EDITOR_OK
+		SET_REAL (duration, my p_trajectory_duration)
+		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
 	EDITOR_DO
-		autoVowel newVowel = Vowel_create (duration);
-		const double startTime = 0.0;
-		const double endTime = duration;
-		const double startF0 = getF0 (& my f0, startTime);
-		const double endF0 = getF0 (& my f0, endTime);
-		checkF1F2 (me, & startF1, & startF2);
-		VowelEditor_Vowel_addData (me, newVowel.get(), startTime, startF1, startF2, startF0);
-		checkF1F2 (me, & endF1, & endF2);
-		VowelEditor_Vowel_addData (me, newVowel.get(), endTime, endF1, endF2, endF0);
-
+		clipF1F2 (me, & startF1, & startF2);
+		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
+		my trajectory = Trajectory_create (duration);
+		Trajectory_addPoint (my trajectory.get(), 0.0, startF1, startF2, colour);
+		clipF1F2 (me, & endF1, & endF2);
+		Trajectory_addPoint (my trajectory.get(), duration, endF1, endF2, colour);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
-		my vowel = newVowel.move();
-
+		my pref_trajectory_duration () = my p_trajectory_duration = duration;
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -1090,91 +979,117 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extend Trajectory", nullptr);
 		POSITIVE (toF1, U"To F1 (Hz)", U"500.0")
 		POSITIVE (toF2, U"To F2 (Hz)", U"1500.0")
-		POSITIVE (extraDuration, U"Extra duration (s)", U"0.1")
+		POSITIVE (extendDuration, U"Extend duration (s)", my default_trajectory_extendDuration ())
+		WORD (colour_string, U"Colour", my default_trajectory_colour ());
 	EDITOR_OK
+		SET_REAL (extendDuration, my p_trajectory_extendDuration)
+		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
 	EDITOR_DO
-		Vowel thee = my vowel.get();
-		const double newDuration = thy xmax + extraDuration;
-		const double toF0 = getF0 (& my f0, newDuration);
-		thy xmax = thy pt -> xmax = thy ft -> xmax = newDuration;
-		checkF1F2 (me, & toF1, & toF2);
-		VowelEditor_Vowel_addData (me, thee, newDuration, toF1, toF2, toF0);
-
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
+		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
+		TrajectoryPoint startPoint = my trajectory -> points.at [my trajectory -> points.size];
+		const double startTime = startPoint -> number;
+		const double endTime = startTime + extendDuration;
+		clipF1F2 (me, & toF1, & toF2);
+		const double veryNearStartTime = startTime + std::min (0.0001, extendDuration); // coloured line from startTime
+		Trajectory_addPoint (my trajectory.get(), veryNearStartTime, startPoint -> f1, startPoint -> f2, colour);
+		Trajectory_addPoint (my trajectory.get(), endTime, toF1, toF2, colour);
+		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (endTime)));
+		GuiText_setString (my extendTextField, Melder_double (MICROSECPRECISION (extendDuration)));
+		my pref_trajectory_extendDuration () = my p_trajectory_extendDuration = extendDuration;
+		my pref_trajectory_duration () = my p_trajectory_duration = endTime;
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
 static void menu_cb_modifyTrajectoryDuration (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Modify duration", nullptr);
-		POSITIVE (newDuration, U"New duration (s)", U"0.5")
+		POSITIVE (newDuration, U"New duration (s)", my default_trajectory_duration ())
 	EDITOR_OK
+		SET_REAL (newDuration, my p_trajectory_duration)
 	EDITOR_DO
+		Melder_require (newDuration > my p_trajectory_minimumDuration,
+			U"The duration should be larger than ", my p_trajectory_minimumDuration, U" s.");
+		my pref_trajectory_duration () = my p_trajectory_duration = newDuration;
+		Trajectory_newDuration (my trajectory.get(), newDuration);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
 	EDITOR_END
 }
 
 static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Shift trajectory", nullptr);
-		REAL (f1, U"F1 (semitones)", U"0.5")
-		REAL (f2, U"F2 (semitones)", U"0.5")
+		REAL (f1_st, U"F1 (semitones)", U"0.5")
+		REAL (f2_st, U"F2 (semitones)", U"0.5")
 	EDITOR_OK
 	EDITOR_DO
-		VowelEditor_shiftF1F2 (me, f1, f2);
+		Trajectory_shift_semitones (my trajectory.get(), f1_st, f2_st);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
-static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Show trajectory time marks every", nullptr);
-		REAL (distance, U"Distance (s)", U"0.05")
+static void menu_cb_trajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
+	EDITOR_FORM (U"Trajectory time marks every", nullptr);
+		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery ())
 	EDITOR_OK
-		SET_REAL (distance, my markTraceEvery)
+		SET_REAL (distance, my p_trajectory_markEvery)
 	EDITOR_DO
-		my markTraceEvery = distance;
-		if (my markTraceEvery < 0.0)
-			my markTraceEvery = 0.0;
+		my pref_trajectory_markEvery () = my p_trajectory_markEvery = distance;
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
+}
+
+static void menu_cb_trajectory_colour (VowelEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Trajectory colour settings", nullptr);
+		REAL (startTime, U"left Time range (s)", U"0.0")
+		REAL (endTime, U"right Time range (s)", my default_trajectory_duration ())
+		WORD (colour_string, U"Colour", my default_trajectory_colour ())
+	EDITOR_OK
+		SET_REAL (endTime, my p_trajectory_duration)
+		SET_STRING (colour_string, my p_trajectory_colour)  // TODO SET_COLOUR
+	EDITOR_DO
+		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
+		Trajectory_setColour (my trajectory.get(), startTime, endTime, MelderColour_fromColourNameOrRGBString(colour_string));
+		Graphics_updateWs (my graphics.get());
+	EDITOR_END
+
 }
 
 #pragma mark - button methods
 
 static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
-	autoSound thee = VowelEditor_createTarget (me);
+	autoSound thee = VowelEditor_createTargetSound (me);
 	Sound_play (thee.get(), nullptr, nullptr);
 	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
-	autoSound publish = VowelEditor_createTarget (me);
+	autoSound publish = VowelEditor_createTargetSound (me);
 	Editor_broadcastPublication (me, publish.move());
 }
 
 static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
-	VowelEditor_Vowel_reverseFormantTier (me);
+	Trajectory_reverse (my trajectory.get());
 	structGuiButtonEvent play_event { };
 	gui_button_cb_play (me, & play_event);
 }
 
 static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	Melder_assert (me);
-	Melder_assert (my vowel);
-	double ts = my vowel -> xmin, te = my vowel -> xmax;
-	const FormantTier ft = my vowel -> ft.get();
-	Melder_assert (ft);
+	Melder_assert (my trajectory);
+	const double startF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmin);
+	const double endF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmax);
+	const TrajectoryPoint startPoint = my trajectory -> points.at [1];
+	const TrajectoryPoint endPoint = my trajectory -> points.at [my trajectory -> points.size];
 	static MelderString statusInfo;
 	if (! my graphics)
 		return;   // could be the case in the very beginning
 	Graphics_clearWs (my graphics.get());
 
-	appendF1F2F0 (& statusInfo, U"Start (F1,F2,f0) = (", FormantTier_getValueAtTime (ft, 1, ts),
-		FormantTier_getValueAtTime (ft, 2, ts), getF0 (& my f0, ts), U")");
+	appendF1F2F0 (& statusInfo, U"Start (F1,F2,f0) = (", startPoint -> f1, startPoint -> f2, startF0, U")");
 	GuiLabel_setText (my startInfo, statusInfo.string);
 	MelderString_empty (& statusInfo);
 
-	appendF1F2F0 (& statusInfo, U"End (F1,F2,f0) = (", FormantTier_getValueAtTime (ft, 1, te),
-		FormantTier_getValueAtTime (ft, 2, te), getF0 (& my f0, te), U")");
+	appendF1F2F0 (& statusInfo, U"End (F1,F2,f0) = (", endPoint -> f1, endPoint -> f2, endF0, U")");
 	GuiLabel_setText (my endInfo, statusInfo.string);
 	MelderString_empty (& statusInfo);
 
@@ -1189,100 +1104,71 @@ static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEven
 
 	VowelEditor_drawBackground (me, my graphics.get());
 	Melder_assert (me);
-	Melder_assert (my vowel);
-	Melder_assert (my vowel -> ft);
-	FormantTier_drawF1F2Trajectory (my vowel -> ft.get(), my graphics.get(), my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
+	Melder_assert (my trajectory);
+	VowelEditor_drawF1F2Trajectory (me, my graphics.get());
 }
 
 static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEvent event) {
 	Melder_assert (me);
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
 	my width = event -> width;
 	my height = event -> height;
+	Graphics_setWsViewport (my graphics.get(), 0.0, my width, 0.0, my height);
 	Graphics_setWsWindow (my graphics.get(), 0.0, my width, 0.0, my height);
 	Graphics_setViewport (my graphics.get(), 0.0, my width, 0.0, my height);
 	Graphics_updateWs (my graphics.get());
 
-	/* Save the current shell size as the user's preference for a new VowelEditor. */
+	/* Save the current shell size as the user's preference */
 
-	prefs.shellWidth  = GuiShell_getShellWidth  (my windowForm);
-	prefs.shellHeight = GuiShell_getShellHeight (my windowForm);
-}
-
-static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y) {
-	if (time > thy xmax) {
-		thy xmax = time;
-		thy ft -> xmax = time;
-		thy pt -> xmax = time;
-	}
-	const double f0 = getF0 (& my f0, time);
-	autoFormantPoint point = FormantPoint_create (time, 4);
-	double f1, f2;
-	VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
-	double f3, b3, f4, b4;
-	VowelEditor_getF3F4 (me, f1, f2, & f3, & b3, & f4, & b4);
-
-	point -> formant [1] = f1;
-	point -> bandwidth [1] = f1 / 10.0;
-	point -> formant [2] = f2;
-	point -> bandwidth [2] = f2 / 10.0;
-	point -> formant [3] = f3;
-	point -> bandwidth [3] = b3;
-	point -> formant [4] = f4;
-	point -> bandwidth [4] = b4;
-	thy ft -> points. addItem_move (point.move());
-	RealTier_addPoint (thy pt.get(), time, f0);
+	my pref_shell_width () = my p_shell_width = GuiShell_getShellWidth  (my windowForm);
+	my pref_shell_height () = my p_shell_height = GuiShell_getShellHeight (my windowForm);
 }
 
 // shift key always extends what already is.
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
 static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent event) {
-	Vowel thee = nullptr; 
-	autoVowel athee;
 	const double t0 = Melder_clock ();
 	integer iskipped = 0;
 	struct structGuiButtonEvent gb_event { 0 };
 	Graphics_setInner (my graphics.get());
 
-	double x, y, t, dt = 0.0;
+	double x, y, t, f1, f2, dt = 0.0;
 	Graphics_getMouseLocation (my graphics.get(), & x, & y);
-	checkXY (& x, & y);
-
+	clipXY (& x, & y);
+	MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
 	if (event -> shiftKeyPressed) {
-		VowelEditor_updateExtendDuration (me);
+		VowelEditor_updateFromExtendDurationTextWidget (me);
 		(my shiftKeyPressed) ++;
-		thee = my vowel.get();
-		dt = thy xmax + my extendDuration;
+		dt = my trajectory -> xmax + my p_trajectory_extendDuration;
 		t = 0.0 + dt;
-		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
+		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
+		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
 		GuiText_setString (my durationTextField, Melder_double (t));
-		if (! my soundFollowsMouse)
-			goto end;
+		goto end;
 	} else {
 		t = 0.0;
 		my shiftKeyPressed = 0;
-		athee = Vowel_create (MINIMUM_SOUND_DURATION);
-		thee = athee.get();
-		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
+		my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
+		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
+		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
 		GuiText_setString (my durationTextField, Melder_double (t));
-		if (! my soundFollowsMouse) {
-			VowelEditor_Vowel_updateTiers (me, thee, MINIMUM_SOUND_DURATION, x, y);
+		if (! my p_soundFollowsMouse) {
+			Trajectory_addPoint (my trajectory.get(), my p_trajectory_minimumDuration, f1, f2, colour);
 			goto end;
 		}
 	}
 
 	Graphics_xorOn (my graphics.get(), Melder_BLUE);
 	while (Graphics_mouseStillDown (my graphics.get())) {
-		const double xb = x, yb = y, tb = t;
+		const double yp = y, xp = x, f1p = f1, f2p = f2, tp = t;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock
 		Graphics_getMouseLocation (my graphics.get(), & x, & y);
-		checkXY (& x, & y);
+		clipXY (& x, & y);
 		/*
 			If the new point equals the previous one: no tier update
 		*/
-		if (xb == x && yb == y) {
+		if (xp == x && y == y) {
 			iskipped ++;
 			continue;
 		}
@@ -1290,31 +1176,32 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 			Add previous point only if at least one previous event was skipped...
 		*/
 		if (iskipped > 0)
-			VowelEditor_Vowel_updateTiers (me, thee, tb, xb, yb);
+			Trajectory_addPoint (my trajectory.get(), tp, f1p, f2p, colour);
 		iskipped = 0;
-		Graphics_line (my graphics.get(), xb, yb, x, y);
+		Graphics_line (my graphics.get(), xp, yp, x, y);
 
-		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
+		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
+		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
 	}
 	t = Melder_clock () - t0;
 	/*
 		To prevent ultra short clicks we set a minimum duration
 	*/
-	if (t < MINIMUM_SOUND_DURATION)
-		t = MINIMUM_SOUND_DURATION;
+	Melder_clipLeft (my p_trajectory_minimumDuration, & t);
 	t += dt;
 	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
-	VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
+	VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
+	Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
 
 	Graphics_xorOff (my graphics.get());
 
 end:
 	Graphics_unsetInner (my graphics.get());
 
-	if (! my shiftKeyPressed)
-		my vowel = athee.move();
-	Melder_assert (! athee);
+	//if (! my shiftKeyPressed)
+	//	my vowel = athee.move();
+	//Melder_assert (! athee);
 	gui_button_cb_play (me, & gb_event);
 }
 
@@ -1342,26 +1229,29 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
 	Editor_addCommand (this, U"File", U"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
 	Editor_addCommand (this, U"File", U"Extract PitchTier", 0, menu_cb_extract_PitchTier);
+	Editor_addCommand (this, U"File", U"Extract Trajectory as Table", 0, menu_cb_extract_TrajectoryAsTable);
 	Editor_addCommand (this, U"File", U"-- drawing --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Draw trajectory...", 0, menu_cb_drawTrajectory);
 	Editor_addCommand (this, U"File", U"-- scripting --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"-- f0 --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Set f0...", 0, menu_cb_setF0);
-	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", 0, menu_cb_setF3F4);
+	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", Editor_HIDDEN, menu_cb_setF3F4);
 	Editor_addCommand (this, U"Edit", U"-- trajectory commands --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Reverse trajectory", 0, menu_cb_reverseTrajectory);
 	Editor_addCommand (this, U"Edit", U"Modify trajectory duration...", 0, menu_cb_modifyTrajectoryDuration);
 	Editor_addCommand (this, U"Edit", U"New trajectory...", 0, menu_cb_newTrajectory);
 	Editor_addCommand (this, U"Edit", U"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (this, U"Edit", U"Shift trajectory...", 0, menu_cb_shiftTrajectory);
+	Editor_addCommand (this, U"Query", U"Trajectory info", 0, menu_cb_trajectoryInfo);
 	Editor_addCommand (this, U"View", U"F1 & F2 range...", 0, menu_cb_ranges_f1f2);
 	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Show one vowel mark...", Editor_HIDDEN, menu_cb_showOneVowelMark);
-	Editor_addCommand (this, U"View", U"Show vowel marks...", Editor_HIDDEN, menu_cb_showVowelMarks);
-	Editor_addCommand (this, U"View", U"Show vowel marks from fixed set...", 0, menu_cb_showVowelMarks);
-	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_showVowelMarksFromTableFile);
-	Editor_addCommand (this, U"View", U"--show trajectory time marks--", 0, nullptr);
-	Editor_addCommand (this, U"View", U"Show trajectory time marks every...", 0, menu_cb_showTrajectoryTimeMarksEvery);
+	Editor_addCommand (this, U"View", U"Vowel marks...", Editor_HIDDEN, menu_cb_vowelMarks);
+	Editor_addCommand (this, U"View", U"Vowel marks from fixed set...", 0, menu_cb_vowelMarks);
+	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_vowelMarksFromTableFile);
+	Editor_addCommand (this, U"View", U"--show trajectory settings--", 0, nullptr);
+	Editor_addCommand (this, U"View", U"Trajectory colour...", 0, menu_cb_trajectory_colour);
+	Editor_addCommand (this, U"View", U"Trajectory time marks every...", 0, menu_cb_trajectoryTimeMarksEvery);
 }
 
 void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -1456,7 +1346,11 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
 		Melder_assert (me.get());
-		Editor_init (me.get(), 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
+		if (my p_shell_width <= 0 || my p_shell_height <= 0) {
+			my p_shell_width = Melder_atof (my default_shell_width ());
+			my p_shell_height = Melder_atof (my default_shell_height ());
+		}
+		Editor_init (me.get(), 0, 0, my p_shell_width, my p_shell_height, title, data);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
@@ -1464,34 +1358,59 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		Melder_assert (my graphics);
 		Graphics_setFontSize (my graphics.get(), 12);
 
-		my f1min = prefs.f1min;
-		my f1max = prefs.f1max;
-		my f2min = prefs.f2min;
-		my f2max = prefs.f2max;
-		my speakerType = prefs.speakerType;
-		my marksDataSet = prefs.marksDataSet;
-		my marksFontSize = prefs.marksFontSize;
-		my soundFollowsMouse = prefs.soundFollowsMouse;
-		if (my marksDataSet == kVowelEditor_marksDataSet::Other)
-			VowelEditor_createTableFromVowelMarksInPreferences (me.get());
-		else
-			VowelEditor_setMarks (me.get(), my marksDataSet, my speakerType, 14);
-
-		VowelEditor_setF3F4 (me.get(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
-		my maximumDuration = BUFFER_SIZE_SEC;
-		my extendDuration = prefs.extendDuration;
-		if (my data)
-			my vowel = Data_copy (static_cast<Vowel> (data));
-		else
-			my vowel = Vowel_create_twoFormantSchwa (0.2);
-
-		my markTraceEvery = prefs.markTraceEvery;
-		my f0 = f0default;
-		GuiText_setString (my f0TextField, Melder_double (my f0.start));
-		GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
+		if (my p_window_f1min >= my p_window_f1max) {
+			my p_window_f1min = Melder_atof (my default_window_f1min ());
+			my p_window_f1max = Melder_atof (my default_window_f1max ());
+		}
+		if (my p_window_f2min >= my p_window_f2max) {
+			my p_window_f2min = Melder_atof (my default_window_f2min ());
+			my p_window_f2max = Melder_atof (my default_window_f2max ());
+		}
+		if (my p_marks_fontSize <= 0)
+			my p_marks_fontSize = Melder_atof (my default_marks_fontSize ());
+		if (Melder_equ (my p_marks_fileName, U"") && my p_marks_dataSet < kVowelEditor_marksDataSet::MIN) {
+			my p_marks_dataSet = my default_marks_dataSet ();
+			my p_marks_speakerType = my default_marks_speakerType ();
+		}
+		VowelEditor_getMarks (me.get());
+		if (my p_synthesis_numberOfFormants <= 0)
+			my p_synthesis_numberOfFormants = Melder_atoi (my default_synthesis_numberOfFormants ());
+		if (my p_synthesis_q1 <= 0 || my p_synthesis_q2 <= 0) {
+			my p_synthesis_q1 = Melder_atof (my default_synthesis_q1 ());
+			my p_synthesis_q2 = Melder_atof (my default_synthesis_q2 ());
+		}
+		if (str32len (my p_synthesis_extraFBPairs) == 0)
+			pref_str32cpy (my p_synthesis_extraFBPairs, my default_synthesis_extraFBPairs ());
+		my extraFrequencyBandwidthPairs = newVECfromString (my p_synthesis_extraFBPairs);
+		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4); // For deprecated Set F3 & F4
+		my p_soundFollowsMouse = true; // No real preference yet
+		if (my p_synthesis_samplingFrequency <= 0.0)
+			my p_synthesis_samplingFrequency = Melder_atof (my default_synthesis_samplingFrequency ());
+		if (my p_trajectory_minimumDuration <= 0.0 || my p_trajectory_maximumDuration <= 0.0) {
+			my p_trajectory_minimumDuration = Melder_atof (my default_trajectory_minimumDuration ());
+			my p_trajectory_maximumDuration = Melder_atof (my default_trajectory_maximumDuration ());
+		}
+		if (my p_trajectory_extendDuration <= 0.0 || my p_trajectory_markEvery <= 0.0) {
+			my p_trajectory_extendDuration = Melder_atof (my default_trajectory_extendDuration ());
+			my p_trajectory_markEvery = Melder_atof (my default_trajectory_markEvery ());
+		}
+		VowelEditor_create_twoFormantSchwa (me.get());
+		if (my p_f0_start <= 0)
+			my p_f0_start = Melder_atof (my default_f0_start ());
+		GuiText_setString (my f0TextField, Melder_double (my p_f0_start));
+		if (my p_f0_slope <= 0)
+			my p_f0_slope = Melder_atof (my default_f0_slope ());
+		if (my p_f0_minimum <= 0 || my p_f0_maximum <= 0) {
+			my p_f0_minimum = Melder_atof (my default_f0_minimum ());
+			my p_f0_maximum = Melder_atof (my default_f0_maximum ());
+		}
+		GuiText_setString (my f0SlopeTextField, Melder_double (my p_f0_slope));
 		GuiText_setString (my durationTextField, U"0.2"); // Source has been created
-		GuiText_setString (my extendTextField, Melder_double (my extendDuration));
-		my grid = griddefault;
+		GuiText_setString (my extendTextField, Melder_double (my p_trajectory_extendDuration));
+		if (my p_grid_df1 <= 0)
+			my p_grid_df1 = Melder_atof (my default_grid_df1 ());
+		if (my p_grid_df2 <= 0)
+			my p_grid_df2 = Melder_atof (my default_grid_df2 ());
 {
 	/*
 		This exdents because it's a hack:

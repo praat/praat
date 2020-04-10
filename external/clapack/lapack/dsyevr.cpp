@@ -10,7 +10,7 @@ static integer c__3 = 3;
 static integer c__4 = 4;
 static integer c_n1 = -1;
 
-/* Subroutine */ int dsyevr_(char *jobz, char *range, char *uplo, integer *n, 
+/* Subroutine */ int dsyevr_(const char *jobz, const char *range, const char *uplo, integer *n, 
 	double *a, integer *lda, double *vl, double *vu, integer *
 	il, integer *iu, double *abstol, integer *m, double *w, 
 	double *z__, integer *ldz, integer *isuppz, double *work, 

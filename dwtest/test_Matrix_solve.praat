@@ -1,29 +1,45 @@
 # test_Matrix_solve.praat
-# djmw 20031020, 20171211,20180918
+# djmw 20031020, 20171211,20180918,20100406
 
 appendInfoLine: "test_Matrix_solve.praat"
 
-@solve_sparse_system
 @solve_undetermined: 10, 100
 @solve3x3
+for i to 200
+	@solve_sparse_system
+endfor
+
+@solve2by3
+@matrix_solve: 1
+@matrix_solve: 10
+@matrix_solve: 100
 
 procedure solve_sparse_system
 	.nrow = 100
 	.ncol = 1000
 	.x# = zero# (.ncol)
+	.numberOfNonZeros = 0
 	for .i to size (.x#)
-	 	.x# [.i] =  if randomUniform (0,1) < 0.005 then randomUniform (0.1, 10)  else 0.0 fi
+		.x# [.i] = 0.0
+	 	if randomUniform (0,1) < 0.005
+		 	.x# [.i] = randomUniform (0.1, 10)
+			.numberOfNonZeros += 1;
+		endif
 	endfor
-	.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
-	.y# = mul# (.phi##, .x#)	
-	.xs# = solveSparse# (.phi##, .y#, 10, 200, 1e-17, 0) ; 6 arguments
-	dif# = .x# - .xs#
-	inner = inner (dif#, dif#)
-	assert inner < 1e-7
-	.xs2# = solveSparse# (.phi##, .y#, .xs#, 10, 10, 1e-20, 1) ; 7 arguments
-	dif# = .x# - .xs2#
-	inner = inner (dif#, dif#)
-	assert inner < 1e-7
+	if .numberOfNonZeros > 0
+		.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
+		.y# = mul# (.phi##, .x#)
+		.numberOfNonzerosToSearch = .numberOfNonZeros + 5
+		appendInfoLine: "Sparse 100x100: solve for ",  .numberOfNonZeros, " non zero elements."
+		.xs# = solveSparse# (.phi##, .y#, .numberOfNonzerosToSearch, 200, 1e-17, 0) ; 6 arguments
+		.dif# = .x# - .xs#
+		.inner = inner (.dif#, .dif#)
+		assert .inner < 1e-7; '.inner'
+		.xs2# = solveSparse# (.phi##, .y#, .xs#,  .numberOfNonzerosToSearch, 10, 1e-20, 1) ; 7 arguments
+		.dif# = .x# - .xs2#
+		.inner = inner (.dif#, .dif#)
+		assert .inner < 1e-7; '.inner'
+	endif
 endproc
 
 procedure matrix_solve: .ncol
@@ -62,11 +78,6 @@ procedure solve_undetermined: .nrow, .ncol
 endproc
 
 # test for several dimensions
-
-@solve2by3
-@matrix_solve: 1
-@matrix_solve: 10
-@matrix_solve: 100
 
 procedure solve2by3
 	.nrow = 2

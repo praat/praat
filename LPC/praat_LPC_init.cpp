@@ -45,6 +45,8 @@
 #include "LPC_to_Spectrogram.h"
 #include "LPC_to_Spectrum.h"
 #include "NUM2.h"
+#include "PowerCepstrum.h"
+#include "PowerCepstrogram.h"
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
 #include "Sound_and_Cepstrum.h"
@@ -193,7 +195,7 @@ DO
 	NUMBER_ONE (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, & result, nullptr, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTrendType::Linear ? U"s" : U"ln (s)");
+	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTrendType::LINEAR ? U"s" : U"ln (s)");
 }
 
 FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {

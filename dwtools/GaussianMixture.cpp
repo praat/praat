@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2019 David Weenink
+ * Copyright (C) 2011-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 	const integer numberOfData = probabilities.nrow;
 	Melder_require (numberOfData > my numberOfComponents,
 		U"The number of rows in the probabilities should be larger than the number of components.");
-	if (criterion == kGaussianMixtureCriterion::CompleteDataML) {
+	if (criterion == kGaussianMixtureCriterion::COMPLETE_DATA_ML) {
 		/*
 			Bishop eq. 9.40 (we rewrote ln(a)+ln(b) = ln (a*b)):
 			ln(p(X,Z|μ,S,π)= sum(n=1...N, sum (k=1...K, gamma [n][k])*ln (π [k]*N(x [n]|μ [k],S [k])),
@@ -102,12 +102,12 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 			lnp += (longdouble) log (psum);
 	}
 
-	if (criterion == kGaussianMixtureCriterion::Likelihood)
+	if (criterion == kGaussianMixtureCriterion::LIKELIHOOD)
 		return lnp;
 
 	const double numberOfParametersPerComponent = GaussianMixture_getNumberOfParametersInComponent (me);
 	const double numberOfParametersTotal = numberOfParametersPerComponent * my numberOfComponents;
-	if (criterion == kGaussianMixtureCriterion::MessageLength) {
+	if (criterion == kGaussianMixtureCriterion::MESSAGE_LENGTH) {
 		/*
 			Equation (15) in
 			Figueiredo & Jain, Unsupervised Learning of Finite Mixture Models :
@@ -128,11 +128,11 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 		*/
 		return lnp - 0.5 * numberOfNonZeroComponents * (numberOfParametersPerComponent + 1) * (log (numberOfData / 12.0) + 1.0)
 		       - 0.5 * numberOfParametersPerComponent * logmpn;
-	} else if (criterion == kGaussianMixtureCriterion::BayesInformation)
+	} else if (criterion == kGaussianMixtureCriterion::BAYES_INFORMATION)
 		return 2.0 * lnp - numberOfParametersTotal * log (numberOfData);
-	else if (criterion == kGaussianMixtureCriterion::AkaikeInformation)
+	else if (criterion == kGaussianMixtureCriterion::AKAIKE_INFORMATION)
 		return 2.0 * (lnp - numberOfParametersTotal);
-	else if (criterion == kGaussianMixtureCriterion::AkaikeCorrected) {
+	else if (criterion == kGaussianMixtureCriterion::AKAIKE_CORRECTED) {
 		return 2.0 * (lnp - numberOfParametersTotal * (numberOfData / (numberOfData - numberOfParametersTotal - 1.0)));
 	}
 	return lnp;
@@ -259,17 +259,17 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 }
 
 conststring32 GaussianMixture_criterionText (kGaussianMixtureCriterion criterion) {
-	if (criterion == kGaussianMixtureCriterion::Likelihood)
+	if (criterion == kGaussianMixtureCriterion::LIKELIHOOD)
 		return U"(1/n)*Likelihood";
-	else if (criterion == kGaussianMixtureCriterion::MessageLength)
+	else if (criterion == kGaussianMixtureCriterion::MESSAGE_LENGTH)
 		return U"(1/n)*Messagelength";
-	else if (criterion == kGaussianMixtureCriterion::BayesInformation)
+	else if (criterion == kGaussianMixtureCriterion::BAYES_INFORMATION)
 		return U"(1/n)*BayesInformation";
-	else if (criterion == kGaussianMixtureCriterion::AkaikeInformation)
+	else if (criterion == kGaussianMixtureCriterion::AKAIKE_INFORMATION)
 		return U"(1/n)*AkaikeInformation";
-	else if (criterion == kGaussianMixtureCriterion::AkaikeCorrected)
+	else if (criterion == kGaussianMixtureCriterion::AKAIKE_CORRECTED)
 		return U"(1/n)*AkaikeCorrected";
-	else if (criterion == kGaussianMixtureCriterion::CompleteDataML)
+	else if (criterion == kGaussianMixtureCriterion::COMPLETE_DATA_ML)
 		return U"(1/n)*CompleteDataML";
 	else
 		return U"???";
@@ -296,7 +296,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 		my mixingProbabilities = newVECraw (numberOfComponents);
 		my mixingProbabilities.all() <<= 1.0 / numberOfComponents;
 		my covariances = CovarianceList_create ();
-		kSSCPstorage sscpStorage = storage == kGaussianMixtureStorage::Diagonals ? kSSCPstorage::Diagonal : kSSCPstorage::Complete;
+		kSSCPstorage sscpStorage = storage == kGaussianMixtureStorage::DIAGONALS ? kSSCPstorage::DIAGONAL : kSSCPstorage::COMPLETE;
 		for (integer component = 1; component <= numberOfComponents; component ++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, sscpStorage);
 			my covariances -> addItemAtPosition_move (cov.move(), component);
@@ -533,7 +533,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 }
 
 void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale,
-	int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
+	bool confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	Melder_require (my dimension == his dimension,
 		U"The numbers of dimensions should agree.");
 	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
@@ -562,8 +562,8 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	}
 }
 
-void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, int confidence, char32 *label,
-	int pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
+void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, double scale, bool confidence, char32 *label,
+	bool pcaDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
 	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
 	Melder_require (dim1 >= 1 && dim1 <= my dimension && dim2 >= 1 && dim2 <= my dimension,
 		U"The dimensions should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");
@@ -920,7 +920,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				
 				lnp = GaussianMixture_getLikelihoodValue (me, probabilities.get(), criterion);
 				Melder_progress ((double) iter / (double) maxNumberOfIterations, criterionText, U": ", lnp / thy numberOfRows, U", L0: ", lnp_start);
-			} while (fabs ((lnp - lnp_prev) / lnp_prev) > delta_lnp && iter < maxNumberOfIterations);
+			} while (fabs (lnp - lnp_prev) > std::max (fabs (delta_lnp * lnp_prev), NUMeps) && iter < maxNumberOfIterations);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -975,7 +975,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 			U"The number of columns in the TableOfReal and the dimension of the model should agree.");
 		Melder_require (my numberOfComponents < thy numberOfRows / 2,
 			U"Not enough data points.");
-		kGaussianMixtureCriterion criterion = kGaussianMixtureCriterion::MessageLength;
+		kGaussianMixtureCriterion criterion = kGaussianMixtureCriterion::MESSAGE_LENGTH;
 		const conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		const bool deleteWeakComponents = minimumNumberOfComponents > 0;
 		autoGaussianMixture him = Data_copy (me);
@@ -1047,7 +1047,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 				lnew = GaussianMixture_getLikelihoodValue (him.get(), probabilities.get(), criterion);
 				if (info)
 					MelderInfo_writeLine (U"iter = ", iter, U", ML = ", lnew);
-			} while (lnew > lprev && fabs ((lprev - lnew) / lnew) > tolerance && iter < maxNumberOfIterations);
+			} while (lnew > lprev && fabs (lprev - lnew) > std::max (tolerance * fabs (lnew), NUMeps) && iter < maxNumberOfIterations);
 			if (lnew > lmax) {
 				best = Data_copy (him.get());
 				lmax = lnew;

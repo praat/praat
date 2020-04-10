@@ -1,6 +1,6 @@
 /* Graphics_extensions.cpp
  *
- * Copyright (C) 2012-2019 David Weenink
+ * Copyright (C) 2012-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,11 @@
 #include "NUM2.h"
 #include "Permutation.h"
 #include "Graphics_extensions.h"
+
+#include "enums_getText.h"
+#include "Graphics_extensions_enums.h"
+#include "enums_getValue.h"
+#include "Graphics_extensions_enums.h"
 
 /*
 	Draw a box plot of x[1..x.size]. The vertical center line of the plot
@@ -75,7 +80,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	integer i = 1;
 	while (i <= sorted.size && sorted [i] < ymin)
 		i ++;
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	while (i <= sorted.size && sorted [i] < lowerOuterFence)
 		Graphics_text (g, x, sorted [i ++], U"o");
 
@@ -161,7 +166,7 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 	double xmin, double xmax, double ymin, double ymax, double labelSize, conststring32 plotLabel) {
 	const double fontSize = Graphics_inqFontSize (g);
 
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
 	autoVEC xsorted = newVECsort (x);
 	autoVEC ysorted = newVECsort (y);
@@ -198,7 +203,7 @@ void Graphics_lagPlot (Graphics g, constVEC data, double xmin, double xmax, inte
 		return;
 	const double fontSize = Graphics_inqFontSize (g);
 	Graphics_setFontSize (g, labelSize);
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	/*
 		Plot x [i] vertically and x [i-lag] horizontally
 	*/

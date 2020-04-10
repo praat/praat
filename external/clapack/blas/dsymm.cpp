@@ -1,7 +1,7 @@
 #include "cblas.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dsymm_(char *side, char *uplo, integer *m, integer *n, 
+/* Subroutine */ int dsymm_(const char *side, const char *uplo, integer *m, integer *n, 
 	double *alpha, double *a, integer *lda, double *b, 
 	integer *ldb, double *beta, double *c__, integer *ldc)
 {

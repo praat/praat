@@ -585,13 +585,21 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 					theControlPanel. sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) me);
 				if (Melder_debug == 20)
 					Melder_casual (U"Pa_OpenStream returns ", (int) err);
-				if (err)
-					Melder_throw (U"open ", Melder_peek8to32 (Pa_GetErrorText (err)));
+				if (err) {
+					conststring32 errorText = Melder_peek8to32 (Pa_GetErrorText (err));
+					if (Melder_equ (errorText, U"Invalid number of channels"))
+						if (my numberOfChannels == 1)
+							Melder_throw (U"You are trying to record in mono, but your microphone does not seem to support that.\nPerhaps you could try to record in stereo instead.");
+						else
+							Melder_throw (U"You are trying to record in stereo, but you do not seem to have a stereo microphone.\nPerhaps you could try to record in mono instead.");
+					else
+						Melder_throw (U"Error opening audio input stream: ", errorText, U".");
+				}
 				Pa_StartStream (my portaudioStream);
 				if (Melder_debug == 20)
 					Melder_casual (U"Pa_StartStream returns ", (int) err);
 				if (err)
-					Melder_throw (U"start ", Melder_peek8to32 (Pa_GetErrorText (err)));
+					Melder_throw (U"Error starting audio input stream: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 			} else {
 				#if defined (_WIN32)
 					win_fillFormat (me);
@@ -612,7 +620,7 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		my recording = false;
-		Melder_flushError (U"Cannot record.");
+		Melder_flushError (U"The recording was not started.");
 	}
 }
 

@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dsptrf_(char *uplo, integer *n, double *ap, integer *
+/* Subroutine */ int dsptrf_(const char *uplo, integer *n, double *ap, integer *
 	ipiv, integer *info)
 {
     /* System generated locals */

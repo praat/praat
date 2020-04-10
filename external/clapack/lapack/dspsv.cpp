@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dspsv_(char *uplo, integer *n, integer *nrhs, double 
+/* Subroutine */ int dspsv_(const char *uplo, integer *n, integer *nrhs, double 
 	*ap, integer *ipiv, double *b, integer *ldb, integer *info)
 {
     /* System generated locals */

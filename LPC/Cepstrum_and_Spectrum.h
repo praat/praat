@@ -2,7 +2,7 @@
 #define _Cepstrum_and_Spectrum_h_
 /* Cepstrum_and_Spectrum.h
  *
- * Copyright (C) 1994-2012, 2015 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,14 @@
 
 #include "Spectrum.h"
 #include "Cepstrum.h"
+#include "PowerCepstrum.h"
 
 autoCepstrum Spectrum_to_Cepstrum (Spectrum me);
 
 autoSpectrum Cepstrum_to_Spectrum (Cepstrum me);
 
 autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me);
+
+autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me);
 
 #endif /* _Cepstrum_and_Spectrum_h_ */

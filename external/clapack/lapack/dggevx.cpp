@@ -8,7 +8,7 @@ static integer c__0 = 0;
 static double c_b59 = 0.;
 static double c_b60 = 1.;
 
-/* Subroutine */ int dggevx_(char *balanc, char *jobvl, char *jobvr, char *
+/* Subroutine */ int dggevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, double *alphar, double *alphai, double *
 	beta, double *vl, integer *ldvl, double *vr, integer *ldvr, 

@@ -8,7 +8,7 @@ static integer c_n1 = -1;
 static double c_b36 = 0.;
 static double c_b37 = 1.;
 
-/* Subroutine */ int dgegs_(char *jobvsl, char *jobvsr, integer *n, 
+/* Subroutine */ int dgegs_(const char *jobvsl, const char *jobvsr, integer *n, 
 	double *a, integer *lda, double *b, integer *ldb, double *
 	alphar, double *alphai, double *beta, double *vsl, 
 	integer *ldvsl, double *vsr, integer *ldvsr, double *work, 

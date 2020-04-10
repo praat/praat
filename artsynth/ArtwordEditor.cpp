@@ -61,18 +61,16 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 
 	/* Optimization instead of "updateList (me)". */
 
-	if (tim < 0) tim = 0.0;
-	if (tim > artword -> totalTime) tim = artword -> totalTime;
+	Melder_clip (0.0, & tim, artword -> totalTime);
 	while (tim != a -> times [i]) {
 		i ++;
 		Melder_assert (i <= a -> numberOfTargets);   // can fail if tim is in an extended precision register
 	}
 	const conststring32 itemText = Melder_cat (Melder_single (tim), U"  ", Melder_single (value));
-	if (a -> numberOfTargets == oldCount) {
+	if (a -> numberOfTargets == oldCount)
 		GuiList_replaceItem (my list, itemText, i);
-	} else {
+	else
 		GuiList_insertItem (my list, itemText, i);
-	}
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }

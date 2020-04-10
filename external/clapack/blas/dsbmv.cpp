@@ -1,7 +1,7 @@
 #include "cblas.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dsbmv_(char *uplo, integer *n, integer *k, double *
+/* Subroutine */ int dsbmv_(const char *uplo, integer *n, integer *k, double *
 	alpha, double *a, integer *lda, double *x, integer *incx, 
 	double *beta, double *y, integer *incy)
 {

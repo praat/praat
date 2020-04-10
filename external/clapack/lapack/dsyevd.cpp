@@ -8,7 +8,7 @@ static integer c_n1 = -1;
 static integer c__0 = 0;
 static double c_b17 = 1.;
 
-/* Subroutine */ int dsyevd_(char *jobz, char *uplo, integer *n, double *
+/* Subroutine */ int dsyevd_(const char *jobz, const char *uplo, integer *n, double *
 	a, integer *lda, double *w, double *work, integer *lwork, 
 	integer *iwork, integer *liwork, integer *info)
 {

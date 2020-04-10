@@ -7,7 +7,7 @@ static integer c__1 = 1;
 static double c_b9 = -1.;
 static double c_b11 = 1.;
 
-/* Subroutine */ int dspgst_(integer *itype, char *uplo, integer *n, 
+/* Subroutine */ int dspgst_(integer *itype, const char *uplo, integer *n, 
 	double *ap, double *bp, integer *info)
 {
     /* System generated locals */

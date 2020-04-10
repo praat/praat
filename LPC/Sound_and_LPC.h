@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,6 @@ autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth
  *	tol1 : stop iteration when E(m) / E(0) < tol1
  *	tol2 : stop iteration when (E(m)-E(m-1)) / E(m-1) < tol2,
  */
-
-void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel);
 
 autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain);
 /*

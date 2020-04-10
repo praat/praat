@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dgesvx_(char *fact, char *trans, integer *n, integer *
+/* Subroutine */ int dgesvx_(const char *fact, const char *trans, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
 	integer *ipiv, char *equed, double *r__, double *c__, 
 	double *b, integer *ldb, double *x, integer *ldx, double *

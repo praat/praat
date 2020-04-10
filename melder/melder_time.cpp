@@ -80,33 +80,13 @@ uint64 GetPIDTimeInNanoseconds(void)
 }
 */
 
+#include <chrono>
+
 double Melder_clock () {
-	#if defined (macintosh) || defined (UNIX)
-		/*
-			The clock counts the number of seconds elapsed since 1969.
-		*/
-		struct timeval timeVal;
-		struct timezone timeZone;
-		gettimeofday (& timeVal, & timeZone);
-		return timeVal. tv_sec + 1e-6 * timeVal. tv_usec;
-	#elif defined (_WIN32)
-		/*
-			The clock counts the number of ticks since system start-up.
-		*/
-		static double clockFrequency = -1.0;   // we can use a static, because the clock frequency does not change while the computer is running
-		if (clockFrequency == -1.0) {   // not initialized?
-			LARGE_INTEGER clockFrequency_longlong;
-			QueryPerformanceFrequency (& clockFrequency_longlong);   // returns 0 if the system does not have a performance counter
-			clockFrequency = (double) clockFrequency_longlong.QuadPart;   // the compiler has to support 64-bit integers
-		}
-		if (clockFrequency == 0.0)   // this will be true if the system does not have a performance counter
-			return GetTickCount () / 1000.0;   // fallback: only millisecond resolution, and potentially jumpy
-		LARGE_INTEGER clockCount;
-		QueryPerformanceCounter (& clockCount);
-		return (double) clockCount.QuadPart / clockFrequency;
-	#else
-		return 0;
-	#endif
+	using namespace std::chrono;
+	auto timePoint = high_resolution_clock::now ();
+	auto duration = timePoint. time_since_epoch ();
+	return duration. count () * double (high_resolution_clock::period::num) / double (high_resolution_clock::period::den);
 }
 
 double Melder_stopwatch () {

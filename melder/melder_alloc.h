@@ -24,7 +24,6 @@
 /* These functions also maintain a count of the total number of blocks allocated. */
 
 void Melder_alloc_init ();   // to be called around program start-up
-void Melder_message_init ();   // to be called around program start-up
 void * _Melder_malloc (int64 size);
 #define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64) sizeof (type))
 void * _Melder_malloc_f (int64 size);

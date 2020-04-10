@@ -1,5 +1,6 @@
 # Makefile of the library "LPC"
-# David Weenink and Paul Boersma 2018-08-10
+# David Weenink and Paul Boersma
+# 20200407
 
 include ../makefile.defs
 
@@ -11,7 +12,7 @@ OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	LPC.o LPC_and_Cepstrumc.o LPC_and_Formant.o LPC_and_LFCC.o \
 	LPC_and_LineSpectralFrequencies.o LPC_and_Polynomial.o \
 	LPC_to_Spectrum.o  LPC_to_Spectrogram.o \
-	LPC_and_Tube.o \
+	LPC_and_Tube.o PowerCepstrum.o PowerCepstrogram.o \
 	Sound_and_LPC.o  Sound_and_LPC_robust.o \
 	Sound_and_Cepstrum.o Tube.o \
 	VocalTractTier.o \

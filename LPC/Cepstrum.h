@@ -2,7 +2,7 @@
 #define _Cepstrum_h_
 /* Cepstrum.h
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,17 +36,6 @@ Thing_define (Cepstrum, Matrix) {
 		override;
 };
 
-/*
-	The Cepstrum is a sequence of real numbers.
-	It is the power spectrum of the power spectrum of a (sound) signal.
-*/
-
-Thing_define (PowerCepstrum, Cepstrum) {
-	double v_getValueAtSample (integer isamp, integer which, int units)
-		override;
-};
-
-
 #include "Cepstrum_enums.h"
 
 /*
@@ -62,62 +51,8 @@ Thing_define (PowerCepstrum, Cepstrum) {
 
 autoCepstrum Cepstrum_create (double qmax, integer nq);
 
-autoPowerCepstrum PowerCepstrum_create (double qmax, integer nq);
-/* Preconditions:
-		nq >= 2;
-	Postconditions:
-		my xmin == 0;					my ymin == 1;
-		my xmax == qmax;				my ymax == 1;
-		my nx == nq;					my ny == 1;
-		my dx == qmax / (nq -1);		my dy == 1;
-		my x1 == 0.0;					my y1 == 1.0;
-		my z [1..ny] [1..nx] == 0.0;
-*/
-
-void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, bool garnish);
+void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool power, bool garnish);
 
 void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish);
-
-void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTrendType lineType, kCepstrumTrendFit method);
-/*
-	Function:
-		Draw a Cepstrum
-	Preconditions:
-		maximum > minimum;
-	Arguments:
-		[qmin, qmax]: quefrencies; x domain of drawing;
-		Autowindowing: if qmax <= qmin, x domain of drawing is
-			[my xmin, my xmax].
-		[minimum, maximum]: amplitude; y range of drawing.
-*/
-
-void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *maximum, double *quefrency);
-
-// The standard of Hillenbrand with fitting options
-double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *qpeak);
-
-double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth);
-
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod, double *qpeak);
-
-void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_slope, double *out_intercept, kCepstrumTrendType lineType, kCepstrumTrendFit method);
-
-autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType  lineType, kCepstrumTrendFit fitMethod);
-
-void PowerCepstrum_subtractTrend_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod);
-
-void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations);
-
-autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations);
-
-autoMatrix PowerCepstrum_to_Matrix (PowerCepstrum me);
-
-autoPowerCepstrum Matrix_to_PowerCepstrum (Matrix me);
-
-autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, integer row);
-
-autoPowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, integer col);
-
-autoPowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me);
 
 #endif /* _Cepstrum_h_ */

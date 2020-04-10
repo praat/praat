@@ -24,7 +24,7 @@
 */
 
 #include "Eigen.h"
-#include "SSCP.h"
+#include "Covariance.h"
 
 autoSSCP Eigen_SSCP_project (Eigen me, SSCP thee);
 

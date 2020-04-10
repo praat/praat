@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 24 March 2020
+# 7 April 2020
 
 include ../makefile.defs
 
@@ -9,11 +9,11 @@ CPPFLAGS = -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ..
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
-	CC.o CCs_to_DTW.o \
+	Correlation.o Covariance.o CC.o CCs_to_DTW.o \
 	ClassificationTable.o Confusion.o \
 	ComplexSpectrogram.o Configuration.o ContingencyTable.o \
 	Configuration_AffineTransform.o \
-	Configuration_and_Procrustes.o  DataModeler.o Distance.o \
+	Configuration_and_Procrustes.o DataModeler.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_PatternList_Categories.o \
 	Electroglottogram.o EditDistanceTable.o EEG_extensions.o \
@@ -22,7 +22,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_SSCP.o Excitations.o \
 	espeakdata_FileInMemory.o \
 	FilterBank.o FormantGrid_extensions.o \
-	FormantAnalyzer.o \
+	FormantAnalyzer.o FormantModeler.o \
 	GaussianMixture.o  \
 	HMM.o \
 	ICA.o Intensity_extensions.o \

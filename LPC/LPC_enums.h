@@ -20,11 +20,11 @@
  */
 
 enums_begin (kLPC_Analysis, 1)
-	enums_add (kLPC_Analysis, 1, Autocorrelation, U"Autocorrelation")
-	enums_add (kLPC_Analysis, 2, Covariance, U"Covariance")
-	enums_add (kLPC_Analysis, 3, Burg, U"Burg")
-	enums_add (kLPC_Analysis, 4, Marple, U"Marple")
-	enums_add (kLPC_Analysis, 5, Robust, U"Robust")
-enums_end (kLPC_Analysis, 5, Robust)
+	enums_add (kLPC_Analysis, 1, AUTOCORRELATION, U"Autocorrelation")
+	enums_add (kLPC_Analysis, 2, COVARIANCE, U"Covariance")
+	enums_add (kLPC_Analysis, 3, BURG, U"Burg")
+	enums_add (kLPC_Analysis, 4, MARPLE, U"Marple")
+	enums_add (kLPC_Analysis, 5, ROBUST, U"Robust")
+enums_end (kLPC_Analysis, 5, ROBUST)
 
 #endif /* _LPC_enums_h_ */

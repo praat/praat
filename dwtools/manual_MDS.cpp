@@ -54,7 +54,7 @@ static void drawLetterRRegression (Graphics g)
 {
 	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
 	autoConfiguration c = Configuration_createLetterRExample (2);
-	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, kMDS_TiesHandling::PrimaryApproach, 0, 200, 0, 2.2, 1, U"+", true);
+	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, kMDS_TiesHandling::PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, U"+", true);
 }
 
 static void drawCarrollWishConfigurationExample (Graphics g)
@@ -72,12 +72,12 @@ static void drawCarrollWishSalienceExample (Graphics g)
 
 static void drawMsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 10, kMDS_splineType::MSpline, 3, U"0.3 0.5 0.6", true);
+	drawSplines (g, 0, 1, 0, 10, kMDS_splineType::M_SPLINE, 3, U"0.3 0.5 0.6", true);
 }
 
 static void drawIsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 1.5, kMDS_splineType::ISpline, 3, U"0.3 0.5 0.6", true);
+	drawSplines (g, 0, 1, 0, 1.5, kMDS_splineType::I_SPLINE, 3, U"0.3 0.5 0.6", true);
 }
 
 void manual_MDS_init (ManPages me);

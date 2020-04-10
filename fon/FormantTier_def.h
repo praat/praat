@@ -1,6 +1,6 @@
 /* FormantTier_def.h
  *
- * Copyright (C) 1992-2002,2015,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2006,2011,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT FormantPoint
 oo_DEFINE_CLASS (FormantPoint, AnyPoint)
 
-	oo_INT16 (numberOfFormants)
+	oo_INTEGER16 (numberOfFormants)
 	oo_VEC (formant, numberOfFormants)
 	oo_VEC (bandwidth, numberOfFormants)
 

@@ -116,10 +116,8 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 		integer jfrom = i - window / 2, jto = i + window / 2;
 		if (window % 2 == 0)
 			jto --;
-		if (jfrom < 1)
-			jfrom = 1;
-		if (jto > out.size)
-			jto = out.size;
+		Melder_clipLeft (1_integer, & jfrom);
+		Melder_clipRight (& jto, out.size);
 		out [i] = NUMmean (in.part (jfrom, jto));
 	}
 }
@@ -403,9 +401,9 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 	autoVEC r = newVECraw (y.size);
 	const double normSquared_y = NUMsum2 (y);
 	integer iter = 1;
-	bool convergence = false;
+	bool farFromConvergence = true;
 	double difsq, difsq_previous = 1e100; // large enough
-	while (iter <= maximumNumberOfIterations && ! convergence) {
+	while (iter <= maximumNumberOfIterations && farFromConvergence) {
 		/*
 			Alternating Least Squares: Fixate all except x [icol]
 		*/
@@ -424,7 +422,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		VECmul (r.get(), a, x);
 		r.get()  -=  y;
 		difsq = NUMsum2 (r.all());
-		convergence = fabs (difsq - difsq_previous) < tol * normSquared_y;
+		farFromConvergence = ( fabs (difsq - difsq_previous) > std::max (tol * normSquared_y, NUMeps) );
 		if (infoLevel > 1)
 			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
 		difsq_previous = difsq;
@@ -1461,6 +1459,19 @@ autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, d
 	return a;
 }
 
+void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& filterMemory) {
+	Melder_assert (filterMemory.size >= filter.size);
+	filterMemory <<= 0.0;
+	for (integer i = 1; i <= s.size; i ++) {
+		const double y0 = s [i];
+		for (integer j = 1; j <= filter.size; j ++)
+			s [i] += filter [j] * filterMemory [j];
+		for (integer j = filter.size; j > 1; j --)
+			filterMemory [j] = filterMemory [j - 1];
+		filterMemory [1] = y0;
+	}
+}
+
 void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor) {
 	const double factor10 = factor * 10.0;
 	MelderExtremaWithInit extrema;
@@ -1982,7 +1993,7 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 		/*
 			Theil's incomplete method:
 			Split (x [i],y [i]) as
-			(x [i],y [i]), (x [N+i],y [N=i], i=1..numberOfPoints/2
+			(x [i],y [i]), (x [N+i],y [N+i], i=1..numberOfPoints/2
 			m [i] = (y [N+i]-y [i])/(x [N+i]-x [i])
 			m = median (m [i])
 			b = median(y [i]-m*x [i])
@@ -1999,7 +2010,7 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 			autoVEC mbs;
 			if (! completeMethod) {
 				numberOfCombinations = x.size / 2;
-				mbs = newVECzero (x.size); // allocate twice to get the intercepts
+				mbs = newVECzero (x.size); // allocate for the intercept calculation too
 				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
 				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
@@ -2834,20 +2845,20 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 	3. Make all elements of v zero, except the numberOfNonZeros largest elements.
 	4. Set the support of these largest elements to 1 and the rest to zero.
 */
-static void VECupdateDataAndSupport_inplace (VECVU const& v, INTVECVU const& support, integer numberOfNonZeros) {
+static void VECupdateDataAndSupport_inplace (VECVU const& v, BOOLVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
 	autoVEC abs = newVECabs (v);
 	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
 	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
 		v [index [i]] = 0.0;
-		support [index [i]] = 0;
+		support [index [i]] = false;
 	}
 	for (integer i = v.size - numberOfNonZeros + 1; i <= v.size; i ++)
-		support [index [i]] = 1;
+		support [index [i]] = true;
 }
 
-static double update (VEC const& x_new, VEC const& y_new, INTVEC const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
+static double update (VEC const& x_new, VEC const& y_new, BOOLVECVU const& support_new, constVECVU const& xn, double stepSize, constVEC const& gradient, constMATVU const& dictionary, constVEC const& yn, integer numberOfNonZeros, VEC buffer) {
 	Melder_assert (x_new.size == xn.size && buffer.size == x_new.size);
 	Melder_assert (gradient.size == support_new.size && gradient.size == x_new.size);
 	Melder_assert (y_new.size == yn.size);
@@ -2877,6 +2888,13 @@ autoVEC newVECsolveSparse_IHT (constMATVU const& dictionary, constVECVU const& y
 	}
 }
 
+/* temporarily until present in melder_tensor.h */
+inline void operator<<= (BOOLVECVU const& target, constBOOLVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+
 void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel) {
 	try {
 		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
@@ -2889,8 +2907,8 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		autoVEC yfromx_new = newVECraw (y.size); // D.x(n+1)
 		autoVEC ydif = newVECraw (y.size); // y - D.x(n)
 		autoVEC buffer = newVECraw (x.size);
-		autoINTVEC support = newINTVECraw (x.size);
-		autoINTVEC support_new = newINTVECraw (x.size);
+		autoBOOLVEC support = newBOOLVECraw (x.size);
+		autoBOOLVEC support_new = newBOOLVECraw (x.size);
 		
 		const double xnormSq = NUMsum2 (x);
 		const double rms_y = NUMsum2 (y) / y.size;
@@ -2928,14 +2946,14 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			*/
 			longdouble normsq_gs = 0.0; // squared norm of the sparse gradient
 			for (integer ig = 1; ig <= gradient.size; ig ++) {
-				if (support [ig] != 0)
+				if (support [ig])
 					normsq_gs += gradient [ig] * gradient [ig];
 			}
 			longdouble normsq_dgs = 0.0; // squared norm of the transformed sparse gradient
 			for (integer irow = 1; irow <= dictionary.nrow; irow ++) {
 				longdouble sum = 0.0;
 				for (integer icol = 1; icol <= dictionary.ncol; icol ++)
-					if (support [icol] != 0)
+					if (support [icol])
 						sum += dictionary [irow] [icol] * gradient [icol];
 				normsq_dgs += sum * sum;
 			}

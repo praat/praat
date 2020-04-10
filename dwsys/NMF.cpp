@@ -149,7 +149,7 @@ static void NMF_initializeFactorization_svd (NMF me, constMATVU const& data, kNM
 }
 
 void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
-	if (initializationMethod == kNMF_Initialization::RandomUniform) {
+	if (initializationMethod == kNMF_Initialization::RANDOM_UNIFORM) {
 		const double rmin = 0.0, rmax = 1.0;
 		MATrandomUniform (my features.all(), rmin, rmax);
 		MATrandomUniform (my weights.all(), rmin, rmax);
@@ -303,7 +303,6 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			const double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
 			const double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);
 			const double delta = std::max (df, dw);
-			
 			convergence = ( iter > 1 && (delta < changeTolerance || dnorm < dnorm0 * approximationTolerance) );
 			if (info)
 				MelderInfo_writeLine (U"Iteration: ", iter, U", dnorm: ", dnorm, U", delta: ", delta);

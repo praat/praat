@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dsbgv_(char *jobz, char *uplo, integer *n, integer *ka, 
+/* Subroutine */ int dsbgv_(const char *jobz, const char *uplo, integer *n, integer *ka, 
 	integer *kb, double *ab, integer *ldab, double *bb, integer *
 	ldbb, double *w, double *z__, integer *ldz, double *work, 
 	integer *info)

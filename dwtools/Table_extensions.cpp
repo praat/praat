@@ -38,7 +38,7 @@
 #include "Matrix_extensions.h"
 #include "NUM2.h"
 #include "Strings_extensions.h"
-#include "SSCP.h"
+#include "Covariance.h"
 #include "Table_extensions.h"
 
 static bool Table_selectedColumnPartIsNumeric (Table me, integer column, constINTVEC selectedRows) {
@@ -3396,7 +3396,8 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber) {
 	try {
 		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double mad, location;
-		NUMmad (data.get(), & location, true, & mad);
+		autoVEC workSpace = newVECraw (data.size);
+		NUMmad (data.get(), & location, true, & mad, workSpace);
 		return mad;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
@@ -3426,7 +3427,8 @@ void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std,
 	try {
 		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double location, scale;
-		NUMstatistics_huber (data.get(), & location, true, & scale, true, k_std, tol, maximumNumberOfIterations);
+		autoVEC workSpace = newVECraw (data.size);
+		NUMstatistics_huber (data.get(), & location, true, & scale, true, k_std, tol, maximumNumberOfIterations, workSpace);
 		if (out_location)
 			*out_location = location;
 		if (out_scale)
@@ -4371,7 +4373,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 					Graphics_setFontSize (g, currentFontSize - ( currentFontSize > 12.0 ? 2.0 : 1.0 ));
 					Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_TOP);
 				} else {
-					Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+					Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 				}
 				for (integer irow = 1; irow <= numberOfGroups; irow ++) {
 					conststring32 label = Table_getStringValue_Assert (me, selectedRows [irow], labelIndex);
@@ -4439,7 +4441,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 		}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		const double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
 		//double symbolHeight = lineSpacing / 1.5;
 		double x1, y1;
@@ -4478,7 +4480,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 				Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
 				Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_TOP);
 			} else {
-				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 			}
 			for (integer i = 1; i <= selectedRows.size; i ++) {
 				const double x2 = double (i);
