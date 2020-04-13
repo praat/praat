@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200406)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200413)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.12# (13 April 2020)")
+LIST_ITEM (U"• All non-GUI tests can be automated from batch.")
+LIST_ITEM (U"• Repaired a bug introduced in 6.0 whereby a KlattGrid-generated Sound would always be peak-scaled.")
 NORMAL (U"##6.1.11# (6 April 2020)")
 LIST_ITEM (U"• Better messages.")
 LIST_ITEM (U"• Overhauled VowelEditor.")
