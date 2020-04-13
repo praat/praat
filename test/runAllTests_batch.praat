@@ -1,5 +1,5 @@
 # Praat script runAllTests_batch.praat
-# Paul Boersma 2020-05-09
+# Paul Boersma 2020-04-09
 #
 # This script runs all Praat scripts in its subdirectories.
 # This script is to be called from the command line:
