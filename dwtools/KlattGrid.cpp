@@ -2760,10 +2760,11 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 				thee = frication.move();
 		}
 
-		if (thee)
-			Vector_scale (thee.get(), 0.99);
-		else if (my options -> scalePeak)
+		if (! thee)
 			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
+
+		if (my options -> scalePeak)
+			Vector_scale (thee.get(), 0.99);
 
 		return thee;
 	} catch (MelderError) {

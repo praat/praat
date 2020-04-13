@@ -2,7 +2,7 @@
 #define _FileInMemoryManager_h_
 /* FileInMemoryManager.h
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream);
 
 int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const char * format, ... );
+/* only returns number of bytes that would have been written or -1 in case of failure */
 
 int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * stream);
 
