@@ -25,8 +25,33 @@
 
 Thing_implement (FormantListWithHistory, Function, 0);
 
+#include "oo_DESTROY.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_COPY.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_EQUAL.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_READ_TEXT.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_READ_BINARY.h"
+#include "FormantListWithHistory_def.h"
+#include "oo_DESCRIPTION.h"
+#include "FormantListWithHistory_def.h"
+
 void structFormantListWithHistory :: v_info () {
-	
+	structDaata :: v_info ();
+	MelderInfo_writeLine (U"Time domain:");
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
+	MelderInfo_writeLine (U"Formants:");
+	MelderInfo_writeLine (U"   Number of Formants: ", our numberOfElements);
 
 }
 

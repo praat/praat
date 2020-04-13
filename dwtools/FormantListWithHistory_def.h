@@ -40,6 +40,11 @@ oo_DEFINE_CLASS (FormantListWithHistory, Function)
 	oo_VEC (ceilings, numberOfElements) // the 'Maximum formant's
 	oo_COLLECTION_OF (OrderedOf, formants, Formant, 0)
 	
+	#if oo_DECLARING
+		void v_info ()
+			override;
+	#endif
+			
 oo_END_CLASS (FormantListWithHistory)	
 #undef ooSTRUCT
 
