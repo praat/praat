@@ -107,10 +107,11 @@ autoFormantListWithHistory Sound_to_FormantListWithHistory_any (Sound me, kLPC_A
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			thy formants. addItem_move (formant.move());
+			thy sounds. addItem_move (resampled.move());
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U"FormantListWithHistory not created.");
+		Melder_throw (me, U": FormantListWithHistory not created.");
 	}
 }
 

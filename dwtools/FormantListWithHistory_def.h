@@ -39,7 +39,7 @@ oo_DEFINE_CLASS (FormantListWithHistory, Function)
 	oo_STRUCT (FormantAnalysisHistory, formantAnalysisHistory)
 	oo_VEC (ceilings, numberOfElements) // the 'Maximum formant's
 	oo_COLLECTION_OF (OrderedOf, formants, Formant, 0)
-	
+	oo_COLLECTION_OF (OrderedOf, sounds, Sound, 2)
 	#if oo_DECLARING
 		void v_info ()
 			override;
