@@ -20,39 +20,75 @@
 
 #include "Collection.h"
 #include "FormantModeler.h"
-#include "TextGridEditor.h"
 #include "FormantListWithHistory.h"
 #include "melder.h"
 #include "Preferences.h"
 #include "Sound.h"
 #include "LPC.h"
+#include "TextGrid.h"
+#include "TimeSoundAnalysisEditor.h"
 
+#include "TextGridEditor_enums.h"
 /*
-	Analysis parameter tiers have names '<Fh>_<fl>_<n>_<method>',
-	where <Fh> is the upper ceiling en <Fl> lower ceiling, <n> is the number of ceilings
-	and <method> is one of (auto,covar,burg, marple, robust) as these are fixed for a
-	partular FormantList. 
-	Also fixed for the tier are the formant analysis parameters, i.e.,
-	number of formants, window length, time step, pre-emphasis, ...
+	For each analysis we add two tiers. Both tiers have a common first part <name> that can be chosen by the user.
+	The tier names are <name>-master and <name>-slave.
+	
+	1. The <name>-master tier has only one interval and contains the info which is fixed for the analysis that is
+	associated with <name>, i.e. it first lists all ceiling frequencies, then it has a ';' separator and next the <lpc-method> with its parameters are listed (with an x for the maximum formant frequency). 
+	Its content could be, for example, '4000 4250 4500 4750 5000 5250 5500 5750 6000; burg 0.05 5.0 x 0.025 50'.
+	This content shows that for the analyses 9 different ceilings were used, and for each of these ceilings
+	a Formant has been calculated with the Burg algorithm, with a 'Time step (s)' of 0.05, a 'Max. number of formants' of 5.0, a 'Maximum formant (Hz)' of x (where x is one of the nine ceilings), a 'Window length (s)' of 0.025, and a 'Pre-emphasis from (Hz)' of 40.0.
+	
+	Because the information is generic this tier can only have one interval.
+	This tier cannot be modified by the user directly because this would invalidate the <name>-slave tier.
+	
+	2. The <name>-slave tier shows for each interval separately first a <ceiling> that was selected by the user, then a ';' separatior and finally the number of parameters per track of the formant modeler.
+	Its content could be, for example '5000; 3 3 2', which means that the analysis with a ceiling of 5000 Hz was chosen and the Formant modeler used F1, F2, and F3 in the modeling and reserved 3 coefficients to model F1, 3 coefficients to model F2 and 2 coefficients to model F3. The <ceiling> number must exaclty match one of the 
 
-	There is no need for the downsampled Sounds, and its LPC in our data structures because
-	once the Formants have been calculated we can dispose of them.
-	There is also no need to permanently store the FormantModelers because they can easily
-	be recalculated whenever they are needed
+	We also store the downsampled Sounds because downsampling is still relatively slow. Once it becomes faster we could throw away the resampled sounds after use.
+	LPC's are not needed because they need to be recalculated for order/method changes and this is relatively fast
+
+	There is no need to permanently store the FormantModelers because they can easily
+	be calculated whenever they are needed from the information in the tiers.
+	
+	We only accept a mono Sound.
+	
+	Menus:
+	File:
+		Extract Formant...
+		Save Formant...
+	View:
+		
+	Select:
+		Keep all menu items
+	Interval: only one item:
+		Add interval on slave tier (ctrl 1)
+	Boundary:
+		Move to nearest zero crossing
+		Add on sklave tier
+		Remove
+	
 */
 
-// Identical for all FormantModelers of the same segment
-Thing_define (FormantModelParameters, Function) {
-	integer maximumNumberOfFormantTracks = 5;
-	integer numberOfFormantTracks;
+// Identical for all FormantModelers on the same segment
+Thing_define (FormantModelerList, Function) {
+	integer numberOfModelers;
 	autoINTVEC numberOfParametersPerTrack; // .size = (numberOfFormantTracks)
+	OrderedOf<structFormantModeler> formantModelers;
+	autoINTVEC smoothest3; // bestF1, bestF1F2, bestF1F2F3.
+	autoBOOLVEC visibility;
 };
 
-Thing_define (FormantEditor, TextGridEditor) {
+Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormant synthesis; // extra for "optimum" formants
-	autoFormantListWithHistory formantList;
-	OrderedOf<structFormantModeler> formantModelers; // 'numberOfModels' models
+	autoFormantListWithHistory formantListWithHistory;
+	autoFormantModelerList formantModelerList;
+	autoTextGrid masterSlave;
 	
+	integer selectedTier;
+	bool suppressRedraw;
+	autostring32 findString;
+	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	void v_info ()
 		override;
 	void v_createChildren ()
@@ -76,7 +112,7 @@ Thing_define (FormantEditor, TextGridEditor) {
 	void v_drawSelectionViewer ()
 		override;
 	bool v_hasText ()
-		override { return true; }
+		override { return false; }
 	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
 		override;
 	bool v_clickB (double xWC, double yWC)
@@ -115,10 +151,9 @@ Thing_define (FormantEditor, TextGridEditor) {
 	#include "FormantEditor_prefs.h"
 };
 
-void FormantEditor_init (FormantEditor me, conststring32 title, Sound sound, bool ownSound, TextGrid grid, Formant formant, SpellingChecker spellingChecker, conststring32 callbackSocket);
+void FormantEditor_init (FormantEditor me, conststring32 title, Sound sound, bool ownSound, Formant formant, TextGrid grid, conststring32 callbackSocket);
 
 autoFormantEditor FormantEditor_create (conststring32 title, Sound sound, bool ownSound, Formant formant, TextGrid grid,
-	SpellingChecker spellingChecker,
 	conststring32 callbackSocket);
 
 /* End of file FormantEditor.h */
