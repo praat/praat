@@ -1580,13 +1580,14 @@ void structFormantEditor :: v_drawSelectionViewer () {
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	if (! our formantModelerList.get())
 			return;
-	FormantModelerList_selectBest3 (formantModelerList.get(), p_modeler_variancePower);
-	our formantModelerList -> visibility.get() <<= true;
-	integer numberOfVisible = our formantModelerList -> numberOfModelers;
+	FormantModelerList fml = our formantModelerList.get();
+	FormantModelerList_selectBest3 (fml, p_modeler_variancePower);
+	fml -> visibility.get() <<= true;
+	integer numberOfVisible = fml -> numberOfModelers;
 	if (! p_modeler_draw_allModels) {
-		our formantModelerList -> visibility [our best3 [1]] = true;
-		our formantModelerList -> visibility [our best3 [2]] = true;
-		our formantModelerList -> visibility [our best3 [3]] = true;
+		fml -> visibility [our best3 [1]] = true;
+		fml -> visibility [our best3 [2]] = true;
+		fml -> visibility [our best3 [3]] = true;
 		numberOfVisible = 3;
 	}
 
