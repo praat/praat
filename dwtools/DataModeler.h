@@ -33,6 +33,28 @@
 
 #include "DataModeler_def.h"
 
+static inline void getAutoNaturalNumbersWithinRange (integer *from, integer *to, integer maximum, conststring32 text) {
+	if (*from <= 0)
+		*from = 1;
+	if (*to == 0)
+		*to = maximum;
+	if (*to < *from) {
+		*from = 1;
+		*to = maximum;
+	}
+	if (*to > maximum)
+		*to = maximum;
+	Melder_require (*from <= maximum,
+		U"The start index of the ", text, U" range should not be larger than ", maximum, U".");
+}
+
+static inline void getAutoNaturalNumberWithinRange (integer *number, integer maximum) {
+	if (*number <= 0)
+		*number = 1;
+	if (*number > maximum)
+		*number = maximum;
+}
+
 void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type);
 
 autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type);

@@ -76,6 +76,7 @@
 #include "ComplexSpectrogram.h"
 #include "Confusion.h"
 #include "Covariance.h"
+#include "DataModeler.h"
 #include "Discriminant.h"
 #include "EditDistanceTable.h"
 #include "Editor.h"
@@ -90,8 +91,8 @@
 #include "FileInMemoryManager.h"
 #include "FilterBank.h"
 #include "Formula.h"
+#include "FormantEditor.h"
 #include "FormantGridEditor.h"
-#include "DataModeler.h"
 #include "FormantGrid_extensions.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
@@ -7953,7 +7954,8 @@ void praat_uvafon_David_init () {
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classElectroglottogram,
-		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
+		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
+		classFormantFilter, classFormantListWithHistory,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
@@ -7965,7 +7967,8 @@ void praat_uvafon_David_init () {
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
 	structVowelEditor  :: f_preferences ();
-
+	structFormantEditor :: f_preferences ();
+	
 	espeakdata_praat_init ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);

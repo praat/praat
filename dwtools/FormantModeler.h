@@ -32,7 +32,9 @@
 
 autoFormant Formant_extractPart (Formant me, double tmin, double tmax);
 
-autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfFormants, integer numberOfDataPoints, integer numberOfParameters);
+autoFormantModeler FormantModeler_create (double tmin, double tmax, double fmax, integer numberOfDataPoints, integer numberOfFormants, integer numberOfParameters);
+
+autoFormantModeler FormantModeler_create (double tmin, double tmax, double fmax, integer numberOfDataPoints, constINTVEC const& numberOfParaneters);
 
 double FormantModeler_indexToTime (FormantModeler me, integer index);
 
@@ -71,6 +73,11 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me);
 
 autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer iformant);
 
+
+/*
+	Precondition: fromFormant >= 1
+	toFormant == 0 signals 'all' data
+*/
 double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, double *probability, double *ndf);
 
 double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer fromFormant, integer toFormant);
@@ -87,6 +94,10 @@ integer FormantModeler_getNumberOfFixedParameters (FormantModeler me, integer if
 
 double FormantModeler_getParameterStandardDeviation ( FormantModeler me, integer iformant, integer index);
 
+/*
+	Precondition: fromIndex >= 1 && fromFormant >= 1
+	toFormant == 0 && toIndex == 0 signal 'all' data
+*/
 double FormantModeler_getVarianceOfParameters (FormantModeler me, integer fromFormant, integer toFormant, integer fromIndex, integer toIndex, integer *numberOfFreeParameters);
 
 kDataModelerParameter FormantModeler_getParameterStatus (FormantModeler me, integer iformant, integer index);
@@ -121,6 +132,8 @@ double FormantModeler_getParameterValue (FormantModeler me, integer iformant, in
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, integer numberOfFormants,
 	integer numberOfParametersPerTrack);
+
+autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, double fmax, constINTVEC const& numberOfParametersPerTrack);
 
 autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool estimateUndefined);
 

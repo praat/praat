@@ -121,8 +121,8 @@ DO
 }
 
 FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
-	INTEGER (fromParameter, U"left Parameter range", U"0")
-	INTEGER (toParameter, U"right Parameter range", U"0")
+	NATURAL (fromParameter, U"left Parameter range", U"1")
+	INTEGER (toParameter, U"right Parameter range", U"0 (=all)")
 	OK
 DO
 	integer nofp;
@@ -447,7 +447,7 @@ DIRECT (WINDOW_FormantEditor_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
 	FIND_THREE_WITH_IOBJECT (Sound, Formant, TextGrid)
-		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, true, you, him, nullptr, nullptr);
+		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, true, you, him, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();

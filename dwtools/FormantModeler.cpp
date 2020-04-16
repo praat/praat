@@ -66,6 +66,13 @@ void structFormantModeler :: v_info () {
 	}
 }
 
+autoINTVEC newINTVECasNumbers (integer size, integer number) {
+	autoINTVEC target = newINTVECraw (size);
+	for (integer i = 1; i <= size; i++)
+		target [i] = number;
+	return target;
+}
+
 double FormantModeler_getStandardDeviation (FormantModeler me, integer iformant) {
 	double sigma = undefined;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
@@ -459,13 +466,19 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	}
 }
 
-autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfFormants, integer numberOfDataPoints, integer numberOfParameters) {
+autoFormantModeler FormantModeler_create (double tmin, double tmax, double fmax, integer numberOfDataPoints, integer numberOfFormants, integer numberOfParameters) {
+	autoINTVEC npar = newINTVECasNumbers (numberOfFormants, numberOfParameters);
+	return FormantModeler_create (tmin, tmax, fmax, numberOfDataPoints, npar.get());
+}
+
+autoFormantModeler FormantModeler_create (double tmin, double tmax, double fmax, integer numberOfDataPoints, constINTVEC const& numberOfParameters) {
 	try {
 		autoFormantModeler me = Thing_new (FormantModeler);
 		my xmin = tmin;
 		my xmax = tmax;
-		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
-			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters, kDataModelerFunction::LEGENDRE);
+		my maximumFrequency = fmax;
+		for (integer itrack = 1; itrack <= numberOfParameters.size; itrack ++) {
+			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters [itrack], kDataModelerFunction::LEGENDRE);
 			my trackmodelers. addItem_move (ff.move());
 		}
 		return me;
@@ -571,22 +584,18 @@ double FormantModeler_getDegreesOfFreedom (FormantModeler me, integer iformant) 
 }
 
 double FormantModeler_getVarianceOfParameters (FormantModeler me, integer fromFormant, integer toFormant, integer fromIndex, integer toIndex, integer *out_numberOfFreeParameters) {
-	double variance = undefined;
-	integer numberOfFormants = my trackmodelers.size, numberOfParameters = 0, nofp;
-	if (toFormant < fromFormant || (toFormant == 0 && fromFormant == 0)) {
-		fromFormant = 1;
-		toFormant = numberOfFormants;
+	getAutoNaturalNumbersWithinRange (& fromFormant, & toFormant, my trackmodelers.size, U"formant");
+	double variance = 0.0;
+	integer numberOfFreeParameters = 0;
+	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
+		const DataModeler ff = my trackmodelers.at [iformant];
+		integer free;
+		variance += DataModeler_getVarianceOfParameters (ff, fromIndex, toIndex, & free);
+		numberOfFreeParameters += free;
 	}
-	if (fromFormant <= toFormant && fromFormant > 0 && toFormant <= numberOfFormants) {
-		variance = 0.0;
-		for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
-			const DataModeler ff = my trackmodelers.at [iformant];
-			variance += DataModeler_getVarianceOfParameters (ff, fromIndex, toIndex, &nofp);
-			numberOfParameters += nofp;
-		}
-	}
+
 	if (out_numberOfFreeParameters)
-		*out_numberOfFreeParameters = numberOfParameters;
+		*out_numberOfFreeParameters = numberOfFreeParameters;
 	return variance;
 }
 
@@ -660,17 +669,24 @@ double FormantModeler_indexToTime (FormantModeler me, integer index) {
 }
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax,
-	integer numberOfFormants, integer numberOfParametersPerTrack)
-{
+	integer numberOfFormants, integer numberOfParametersPerTrack) {
+	integer maxFormant = Formant_getMaxNumFormants (me);
+	double fmax = Formant_getMaximum (me, maxFormant, 0.0, 0.0, kFormant_unit::HERTZ, 1);
+	autoINTVEC npar = newINTVECasNumbers (numberOfFormants, numberOfParametersPerTrack);
+	return Formant_to_FormantModeler (me, tmin, tmax, fmax, npar.get());
+}
+
+autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, double fmax, constINTVEC const& numberOfParametersPerTrack) {
 	try {
 		integer ifmin, ifmax, posInCollection = 0;
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack,
+		const integer maximumNumberOfParameters = NUMmax (numberOfParametersPerTrack);
+		Melder_require (numberOfDataPoints >= maximumNumberOfParameters,
 			U"There are not enough data points, please extend the selection.");
 		
-		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfFormants, numberOfDataPoints, numberOfParametersPerTrack);
-		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
+		autoFormantModeler thee = FormantModeler_create (tmin, tmax, fmax, numberOfDataPoints, numberOfParametersPerTrack);
+		for (integer iformant = 1; iformant <= numberOfParametersPerTrack.size; iformant ++) {
 			posInCollection ++;
 			const DataModeler ffi = thy trackmodelers.at [posInCollection];
 			integer idata = 0, validData = 0;
@@ -691,7 +707,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			}
 			ffi -> weighData = kDataModelerWeights::ONE_OVER_SIGMA;
 			ffi -> tolerance = 1e-5;
-			if (validData < numberOfParametersPerTrack) {   // remove don't throw exception
+			if (validData < numberOfParametersPerTrack [iformant]) {   // remove don't throw exception
 				thy trackmodelers. removeItem (posInCollection);
 				posInCollection --;
 			}
@@ -747,7 +763,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 
 double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, double *out_probability, double *out_ndf) {
 	double chisq = undefined, ndfTotal = 0.0;
-	if (toFormant < fromFormant || (fromFormant == 0 && toFormant == 0)) {
+	if (toFormant < fromFormant || toFormant == 0) {
 		fromFormant = 1;
 		toFormant = my trackmodelers.size;
 	}
@@ -867,20 +883,15 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 
 
 double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant, integer numberOfParametersPerTrack, double power) {
+	getAutoNaturalNumbersWithinRange (& fromFormant, & toFormant, my trackmodelers.size, U"formant");
+	integer numberOfFreeParameters;
+	const double var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
+	double degreesOfFreedom;
+	const double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, nullptr, & degreesOfFreedom);
 	double smoothness = undefined;
-	if (toFormant < fromFormant || (toFormant == 0 && fromFormant == 0)) {
-		fromFormant = 1;
-		toFormant = my trackmodelers.size;
-	}
-	if (fromFormant > 0 && fromFormant <= toFormant && toFormant <= my trackmodelers.size) {
-		integer nofp;
-		const double var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, & nofp);
-		double ndof;
-		const double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, nullptr, &ndof);
-		if (isdefined (var) && isdefined (chisq) && nofp > 0)
-			smoothness = log10 (pow (var / nofp, power) * (chisq / ndof));
-	}
-	return smoothness;
+	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
+		log10 (pow (var / numberOfFreeParameters, power) * (chisq / degreesOfFreedom)) :
+		undefined );
 }
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type) {
@@ -1087,7 +1098,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		const double nyquistFrequency = 0.5 / my dx;
 		Melder_require (maxFreq <= nyquistFrequency,
 			U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");
-		
+		autoINTVEC noPararametersPerTrack = newINTVECasNumbers (numberOfFormantTracks, numberOfParametersPerTrack);
 		double df = 0, mincriterium = 1e28;
 		if (minFreq >= maxFreq)
 			numberOfFrequencySteps = 1;
@@ -1103,14 +1114,13 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0, kSound_windowShape::RECTANGULAR, 1, 1);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
-		
 		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_burg (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
-			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack);
+			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, currentCeiling,  noPararametersPerTrack.get());
 			//TODO FormantModeler_setFormantWeighting (me, weighFormants);
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
@@ -1154,6 +1164,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			numberOfFrequencySteps = 1;
 		else
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
+		
+		autoINTVEC noPararametersPerTrack = newINTVECasNumbers (numberOfFormantTracks, numberOfParametersPerTrack);
 
 		integer istep_best = 0;
 		double optimalCeiling = minFreq;
@@ -1170,7 +1182,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
-			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack);
+			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, currentCeiling, noPararametersPerTrack.get());
 			// TODO set weighing
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());

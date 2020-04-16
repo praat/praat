@@ -289,35 +289,24 @@ double DataModeler_getParameterStandardDeviation (DataModeler me, integer index)
 
 double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, integer toIndex, integer *out_numberOfFreeParameters) {
 	double variance = undefined;
-	if (toIndex < fromIndex || (toIndex == 0 && fromIndex == 0)) {
-		fromIndex = 1;
-		toIndex = my numberOfParameters;
-	}
-	integer numberOfFreeParameters = 0;
-	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
-		variance = 0;
-		for (integer ipar = fromIndex; ipar <= toIndex; ipar ++) {
-			if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
-				variance += my parameterCovariances -> data [ipar] [ipar];
-				numberOfFreeParameters ++;
-			}
+	getAutoNaturalNumbersWithinRange (& fromIndex, & toIndex, my numberOfParameters, U"parameter");
+	integer numberOfFreeParameters = 0;	
+	variance = 0;
+	for (integer ipar = fromIndex; ipar <= toIndex; ipar ++) {
+		if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
+			variance += my parameterCovariances -> data [ipar] [ipar];
+			numberOfFreeParameters ++;
 		}
-	}
-	
+	}	
 	if (out_numberOfFreeParameters)
 		*out_numberOfFreeParameters = numberOfFreeParameters;
 	return variance;
 }
 
 void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer toIndex) {
-	if (toIndex < fromIndex || (toIndex == 0 && fromIndex == 0)) {
-		fromIndex = 1;
-		toIndex = my numberOfParameters;
-	}
-	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
-		for (integer ipar = fromIndex; ipar <= toIndex; ipar ++)
-			my parameters [ipar] .status = kDataModelerParameter::FREE;
-	}
+	getAutoNaturalNumbersWithinRange (& fromIndex, & toIndex, my numberOfParameters, U"parameter");
+	for (integer ipar = fromIndex; ipar <= toIndex; ipar ++)
+		my parameters [ipar] .status = kDataModelerParameter::FREE;
 }
 
 void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas) {
@@ -349,10 +338,9 @@ integer DataModeler_getNumberOfFixedParameters (DataModeler me) {
 
 static integer DataModeler_getNumberOfValidDataPoints (DataModeler me) {
 	integer numberOfValidDataPoints = 0;
-	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
+	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++)
 		if (my data [ipoint] .status != kDataModelerData::INVALID)
 			numberOfValidDataPoints ++;
-	}
 	return numberOfValidDataPoints;
 }
 
@@ -366,10 +354,9 @@ void DataModeler_setTolerance (DataModeler me, double tolerance) {
 
 double DataModeler_getDegreesOfFreedom (DataModeler me) {
 	integer numberOfDataPoints = 0;
-	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
+	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++)
 		if (my data [ipoint] .status != kDataModelerData::INVALID)
 			numberOfDataPoints ++;
-	}
 	const double ndf = numberOfDataPoints - DataModeler_getNumberOfFreeParameters (me);
 	return ndf;
 }
@@ -383,7 +370,7 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 	if (weighData == kDataModelerWeights::EQUAL_WEIGHTS) {
 			/*
 				We weigh with the inverse of the standard deviation of the data to give
-				subsequent Chi squared tests a meaningful interpretation. 
+				subsequent Chi squared tests a meaningful interpretation.
 			*/
 			const double stdev = DataModeler_getDataStandardDeviation (me);
 			Melder_require (isdefined (stdev),
@@ -467,12 +454,11 @@ double DataModeler_getChiSquaredQ (DataModeler me, double *out_prob, double *out
 double DataModeler_getWeightedMean (DataModeler me) {
 	double ysum = 0.0, wsum = 0.0;
 	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
-	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
+	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++)
 		if (my data [ipoint] .status != kDataModelerData::INVALID) {
 			ysum += my data [ipoint] .y * weights [ipoint];
 			wsum += weights [ipoint];
 		}
-	}
 	return ysum / wsum;
 }
 
@@ -548,11 +534,11 @@ integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *x
 	return *ixmax - *ixmin + 1;
 }
 
-void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm)
+void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm)
 {
 	integer ixmin, ixmax;
-	if (DataModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1) return;
+	if (DataModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1)
+		return;
 	autoVEC zscores = DataModeler_getZScores (me);
 	const double horizontalOffset_wc = Graphics_dxMMtoWC (g, horizontalOffset_mm);
 	
@@ -585,7 +571,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	ixmax ++;
 	if (ixmin >= ixmax)
 		return; // nothing to draw
-	numberOfParameters = ( numberOfParameters > my numberOfParameters ? my numberOfParameters : numberOfParameters );
+	getAutoNaturalNumberWithinRange (& numberOfParameters, my numberOfParameters);	
 	autovector<structDataModelerParameter> parameters = newvectorcopy (my parameters.all());
 	
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
