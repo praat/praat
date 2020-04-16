@@ -62,15 +62,15 @@ autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantList
 			autoFormantModeler fm = Formant_to_FormantModeler (my formants.at [imodel], startTime, endTime, my ceilings [imodel], numberOfParameters);
 			thy formantModelers. addItem_move (fm.move());
 		}
-		autoINTVEC smoothest3 = newVECzero (3);
-		autoBOOLVEC isVisible = newBOOLVECzero (thy numberOfModelers);
+		thy best3 = newINTVECzero (3);
+		thy visibility = newBOOLVECzero (thy numberOfModelers);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantModelerList not created.");
 	}
 }
 
-void FormantModelerList_selectSmoothest3 (FormantModelerList me, double variancePower) {
+void FormantModelerList_selectBest3 (FormantModelerList me, double variancePower) {
 	/*
 		1 The smoothest F1 score
 		2 The smoothest F1 & F2 score
@@ -84,17 +84,17 @@ void FormantModelerList_selectSmoothest3 (FormantModelerList me, double variance
 		double smoothness = FormantModeler_getSmoothnessValue (fm, 1, 1, 0, variancePower);
 		if (smoothness < smoothnessF1) {
 			smoothnessF1 = smoothness;
-			smoothest3 [1] = imodel;
+			my best3 [1] = imodel;
 		}
 		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 2, 0, variancePower);
 		if (smoothness < smoothnessF1F2) {
 			smoothnessF1F2 = smoothness;
-			smoothest3 [2]  = imodel;
+			my best3 [2]  = imodel;
 		}
 		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 3, 0, variancePower);
 		if (smoothness < smoothnessF1F2F3) {
 			smoothnessF1F2F3 = smoothness;
-			smoothest3 [3]  = imodel;
+			my best3 [3]  = imodel;
 		}
 	}
 }
@@ -1580,17 +1580,15 @@ void structFormantEditor :: v_drawSelectionViewer () {
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	if (! our formantModelerList.get())
 			return;
-	FormantModelerList_selectSmoothest3 (formantModelerList.get(), p_modeler_variancePower);
-	our visibility.get() <<= true;
-	integer numberOfVisible = our formantModelerList -> numberOfElements
+	FormantModelerList_selectBest3 (formantModelerList.get(), p_modeler_variancePower);
+	our formantModelerList -> visibility.get() <<= true;
+	integer numberOfVisible = our formantModelerList -> numberOfModelers;
 	if (! p_modeler_draw_allModels) {
-		our visibility [our smoothest3 [1]] = true;
-		our visibility [our smoothest3 [2]] = true;
-		our visibility [our smoothest3 [3]] = true;
+		our formantModelerList -> visibility [our best3 [1]] = true;
+		our formantModelerList -> visibility [our best3 [2]] = true;
+		our formantModelerList -> visibility [our best3 [3]] = true;
 		numberOfVisible = 3;
 	}
-
-	const integer numberOfVisible = FormantModelerList_setVisibility (formantModelerList.get());
 
 	integer numberOfRows = std::max (3_integer, Melder_iround_tieUp (sqrt (numberOfVisible)));
 	integer numberOfColums = numberOfVisible / numberOfRows;
