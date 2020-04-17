@@ -1,6 +1,6 @@
 Making Clapack 3.1.1.1 ready for Praat
 
-20200321 David Weenink
+20200321, 20200417 David Weenink
 
 I Intro.
 
@@ -94,3 +94,9 @@ Regular expressions are very powerful. Nowadays computers are very fast.
 You can change a lot of files very easily and very fast. By using regular expressions 
 you can very easily make a mess of hundreds of files. A 'git reset' is very useful
 for these cases.
+
++++++ Upgrading to clapack version 3.2.1 ++++++
+To test this version we  added the -fno-stack-protector to the CFLAGS. Without this flag the testing routines throw "stack smashing errors" and the testing cannot be completed. Adding this flag made all tests succeed.
+
+In blas only two routines were changed: dtrsv.cpp, dtpmv.cpp
+

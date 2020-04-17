@@ -1,22 +1,18 @@
 #include "cblas.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dtrsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
-	integer *m, integer *n, double *alpha, double *a, integer *
-	lda, double *b, integer *ldb)
+int strsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
+	integer *m, integer *n, float *alpha, float *a, integer *lda, float *b, integer *ldb)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
 
     /* Local variables */
     integer i__, j, k, info;
-    double temp;
+    float temp;
     bool lside;
- 
     integer nrowa;
-    bool upper;
- 
-    bool nounit;
+    bool upper, nounit;
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -26,7 +22,7 @@
 /*  Purpose */
 /*  ======= */
 
-/*  DTRSM  solves one of the matrix equations */
+/*  STRSM  solves one of the matrix equations */
 
 /*     op( A )*X = alpha*B,   or   X*op( A ) = alpha*B, */
 
@@ -93,13 +89,13 @@
 /*           at least zero. */
 /*           Unchanged on exit. */
 
-/*  ALPHA  - DOUBLE PRECISION. */
+/*  ALPHA  - REAL            . */
 /*           On entry,  ALPHA specifies the scalar  alpha. When  alpha is */
 /*           zero then  A is not referenced and  B need not be set before */
 /*           entry. */
 /*           Unchanged on exit. */
 
-/*  A      - DOUBLE PRECISION array of DIMENSION ( LDA, k ), where k is m */
+/*  A      - REAL             array of DIMENSION ( LDA, k ), where k is m */
 /*           when  SIDE = 'L' or 'l'  and is  n  when  SIDE = 'R' or 'r'. */
 /*           Before entry  with  UPLO = 'U' or 'u',  the  leading  k by k */
 /*           upper triangular part of the array  A must contain the upper */
@@ -120,7 +116,7 @@
 /*           then LDA must be at least max( 1, n ). */
 /*           Unchanged on exit. */
 
-/*  B      - DOUBLE PRECISION array of DIMENSION ( LDB, n ). */
+/*  B      - REAL             array of DIMENSION ( LDB, n ). */
 /*           Before entry,  the leading  m by n part of the array  B must */
 /*           contain  the  right-hand  side  matrix  B,  and  on exit  is */
 /*           overwritten by the solution matrix  X. */
@@ -194,24 +190,24 @@
 	info = 11;
     }
     if (info != 0) {
-	xerbla_("DTRSM ", &info);
+	xerbla_("STRSM ", &info);
 	return 0;
     }
 
 /*     Quick return if possible. */
 
-    if (*m == 0 || *n == 0) { // changed in lapack 3.2.1
+    if (*m == 0 || *n == 0) {
 	return 0;
     }
 
 /*     And when  alpha.eq.zero. */
 
-    if (*alpha == 0.) {
+    if (*alpha == 0.f) {
 	i__1 = *n;
 	for (j = 1; j <= i__1; ++j) {
 	    i__2 = *m;
 	    for (i__ = 1; i__ <= i__2; ++i__) {
-		b[i__ + j * b_dim1] = 0.;
+		b[i__ + j * b_dim1] = 0.f;
 /* L10: */
 	    }
 /* L20: */
@@ -229,7 +225,7 @@
 	    if (upper) {
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
-		    if (*alpha != 1.) {
+		    if (*alpha != 1.f) {
 			i__2 = *m;
 			for (i__ = 1; i__ <= i__2; ++i__) {
 			    b[i__ + j * b_dim1] = *alpha * b[i__ + j * b_dim1]
@@ -238,7 +234,7 @@
 			}
 		    }
 		    for (k = *m; k >= 1; --k) {
-			if (b[k + j * b_dim1] != 0.) {
+			if (b[k + j * b_dim1] != 0.f) {
 			    if (nounit) {
 				b[k + j * b_dim1] /= a[k + k * a_dim1];
 			    }
@@ -256,7 +252,7 @@
 	    } else {
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
-		    if (*alpha != 1.) {
+		    if (*alpha != 1.f) {
 			i__2 = *m;
 			for (i__ = 1; i__ <= i__2; ++i__) {
 			    b[i__ + j * b_dim1] = *alpha * b[i__ + j * b_dim1]
@@ -266,7 +262,7 @@
 		    }
 		    i__2 = *m;
 		    for (k = 1; k <= i__2; ++k) {
-			if (b[k + j * b_dim1] != 0.) {
+			if (b[k + j * b_dim1] != 0.f) {
 			    if (nounit) {
 				b[k + j * b_dim1] /= a[k + k * a_dim1];
 			    }
@@ -333,7 +329,7 @@
 	    if (upper) {
 		i__1 = *n;
 		for (j = 1; j <= i__1; ++j) {
-		    if (*alpha != 1.) {
+		    if (*alpha != 1.f) {
 			i__2 = *m;
 			for (i__ = 1; i__ <= i__2; ++i__) {
 			    b[i__ + j * b_dim1] = *alpha * b[i__ + j * b_dim1]
@@ -343,7 +339,7 @@
 		    }
 		    i__2 = j - 1;
 		    for (k = 1; k <= i__2; ++k) {
-			if (a[k + j * a_dim1] != 0.) {
+			if (a[k + j * a_dim1] != 0.f) {
 			    i__3 = *m;
 			    for (i__ = 1; i__ <= i__3; ++i__) {
 				b[i__ + j * b_dim1] -= a[k + j * a_dim1] * b[
@@ -354,7 +350,7 @@
 /* L190: */
 		    }
 		    if (nounit) {
-			temp = 1. / a[j + j * a_dim1];
+			temp = 1.f / a[j + j * a_dim1];
 			i__2 = *m;
 			for (i__ = 1; i__ <= i__2; ++i__) {
 			    b[i__ + j * b_dim1] = temp * b[i__ + j * b_dim1];
@@ -365,7 +361,7 @@
 		}
 	    } else {
 		for (j = *n; j >= 1; --j) {
-		    if (*alpha != 1.) {
+		    if (*alpha != 1.f) {
 			i__1 = *m;
 			for (i__ = 1; i__ <= i__1; ++i__) {
 			    b[i__ + j * b_dim1] = *alpha * b[i__ + j * b_dim1]
@@ -375,7 +371,7 @@
 		    }
 		    i__1 = *n;
 		    for (k = j + 1; k <= i__1; ++k) {
-			if (a[k + j * a_dim1] != 0.) {
+			if (a[k + j * a_dim1] != 0.f) {
 			    i__2 = *m;
 			    for (i__ = 1; i__ <= i__2; ++i__) {
 				b[i__ + j * b_dim1] -= a[k + j * a_dim1] * b[
@@ -386,7 +382,7 @@
 /* L240: */
 		    }
 		    if (nounit) {
-			temp = 1. / a[j + j * a_dim1];
+			temp = 1.f / a[j + j * a_dim1];
 			i__1 = *m;
 			for (i__ = 1; i__ <= i__1; ++i__) {
 			    b[i__ + j * b_dim1] = temp * b[i__ + j * b_dim1];
@@ -403,7 +399,7 @@
 	    if (upper) {
 		for (k = *n; k >= 1; --k) {
 		    if (nounit) {
-			temp = 1. / a[k + k * a_dim1];
+			temp = 1.f / a[k + k * a_dim1];
 			i__1 = *m;
 			for (i__ = 1; i__ <= i__1; ++i__) {
 			    b[i__ + k * b_dim1] = temp * b[i__ + k * b_dim1];
@@ -412,7 +408,7 @@
 		    }
 		    i__1 = k - 1;
 		    for (j = 1; j <= i__1; ++j) {
-			if (a[j + k * a_dim1] != 0.) {
+			if (a[j + k * a_dim1] != 0.f) {
 			    temp = a[j + k * a_dim1];
 			    i__2 = *m;
 			    for (i__ = 1; i__ <= i__2; ++i__) {
@@ -423,7 +419,7 @@
 			}
 /* L290: */
 		    }
-		    if (*alpha != 1.) {
+		    if (*alpha != 1.f) {
 			i__1 = *m;
 			for (i__ = 1; i__ <= i__1; ++i__) {
 			    b[i__ + k * b_dim1] = *alpha * b[i__ + k * b_dim1]
@@ -437,7 +433,7 @@
 		i__1 = *n;
 		for (k = 1; k <= i__1; ++k) {
 		    if (nounit) {
-			temp = 1. / a[k + k * a_dim1];
+			temp = 1.f / a[k + k * a_dim1];
 			i__2 = *m;
 			for (i__ = 1; i__ <= i__2; ++i__) {
 			    b[i__ + k * b_dim1] = temp * b[i__ + k * b_dim1];
@@ -446,7 +442,7 @@
 		    }
 		    i__2 = *n;
 		    for (j = k + 1; j <= i__2; ++j) {
-			if (a[j + k * a_dim1] != 0.) {
+			if (a[j + k * a_dim1] != 0.f) {
 			    temp = a[j + k * a_dim1];
 			    i__3 = *m;
 			    for (i__ = 1; i__ <= i__3; ++i__) {
@@ -457,7 +453,7 @@
 			}
 /* L340: */
 		    }
-		    if (*alpha != 1.) {
+		    if (*alpha != 1.f) {
 			i__2 = *m;
 			for (i__ = 1; i__ <= i__2; ++i__) {
 			    b[i__ + k * b_dim1] = *alpha * b[i__ + k * b_dim1]
@@ -473,6 +469,6 @@
 
     return 0;
 
-/*     End of DTRSM . */
+/*     End of STRSM . */
 
-} /* dtrsm_ */
+} /* strsm_ */
