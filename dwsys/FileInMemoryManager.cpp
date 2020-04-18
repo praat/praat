@@ -679,24 +679,14 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const char *format, ... ) {
 	(void) me;
 	va_list args;
-	size_t bufferSize = -1;
 	if (stream == stderr) {
 		va_start (args, format);
-		bufferSize = 256;
-		autovector<char> buf = newvectorraw <char> (bufferSize);
-		int sizeNeeded = vsnprintf (buf.asArgumentToFunctionThatExpectsZeroBasedArray (), bufferSize, format, args); // find the size of the needed buffer (without terminating null byte)
+		int sizeNeeded = vsnprintf (nullptr, 0, format, args); // find size of needed buffer (without final null byte)
+		const size_t bufferSize = sizeNeeded + 1;
 		va_end (args);
-		if (++ sizeNeeded > bufferSize) { 
-			buf.resize (sizeNeeded);
-			va_start (args, format);
-			(void) vsnprintf (buf.asArgumentToFunctionThatExpectsZeroBasedArray (), sizeNeeded, format, args);
-			va_end (args);
-		}
-		bufferSize = sizeNeeded;
-	} else {
-		//integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream); // 
+		return bufferSize;
 	}
-	return bufferSize;
+	return -1;
 }
 
 void test_FileInMemoryManager_io (void) {

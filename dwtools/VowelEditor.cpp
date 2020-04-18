@@ -549,7 +549,7 @@ static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 
 static void VowelEditor_getMarks (VowelEditor me) {
 	autoTable te;
-	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {   // American-English
+	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {
 		const autoTable thee = Table_create_petersonBarney1952 ();
 		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO,
 		  ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" :
@@ -887,7 +887,7 @@ static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {  // deprecated 20200404
+static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
