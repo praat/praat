@@ -32,7 +32,9 @@ for file to numberOfFiles
 		file$ = Get string: file
 		if not index (file$, "runAllTests") and not index (file$, "_GUI_")
 			appendInfoLine: "### executing ", file$, ":"
+			random_initializeWithSeedUnsafelyButPredictably (5489)
 			runScript: file$
+			random_initializeSafelyAndUnpredictably()
 		endif
 	endfor
 	removeObject: files

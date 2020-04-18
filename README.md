@@ -229,7 +229,7 @@ so that the `bash` shell will automatically execute them whenever you start your
 
     # in Cygwin:~/.profile
     PRAAT_SOURCES="/cygdrive/z/Praats/src"
-    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
+    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
     alias praat-build="( cd ~/praats &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.mingw64 makefile.defs &&\
@@ -273,7 +273,7 @@ assuming that it uses the `bash` shell):
 
     # in Ubuntu:~/.bash_aliases
     PRAAT_SOURCES="/media/psf/Home/Praats/src"
-    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
+    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
     alias praat-build="( cd ~/praats &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.linux.pulse makefile.defs &&\
@@ -397,25 +397,29 @@ If any reader of these lines has precise instructions, we would like to know abo
 (the main problem is how to install the GTK etc libraries in the Raspberry Pi toolchain,
 or how to get `dpkg` under Ubuntu-buster to actually find `armhf` libraries).
 
-Till then, you build on the Raspberry Pi itself. On your intermediary computer, you created a folder `~/sources`.
-You send the sources there from your Mac with
+Till then, you build on the Raspberry Pi itself. Your could do that via an intermediary computer
+(analogously to what we described above for Chromebook), but you can also do it directly
+if you include your Raspberry Pi in the same local network as your Mac and switch on SSH
+on your Raspberry Pi (via Raspberry ->  `Preferences` -> `Raspberry Pi Configuration`
+-> `Interfaces` -> `SSH` -> `Enable`. You add your Mac’s public SSH key to your Raspberry Pi with
+
+    # on Mac command line
+    ssh-keygen   # only if you have no SSH key yet
+    ssh-copy-id pi@192.168.1.2   # or whatever your Pi’s static IP address is
+
+On your Raspberry Pi, you create a folder `~/praats`,
+after which you can push the sources from your Mac to your Raspberry Pi with
 
     # in Mac:~/.bash_profile
     PRAAT_SOURCES="~/Praats/src"
-    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*"'
-    alias praats-mid="rsync -rptvz -e ssh $PRAAT_EXCLUDES \
-        $PRAAT_SOURCES/ yourname@fon.hum.uva.nl:~/sources"
+    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
+    alias praats-putpi="rsync -rptvz -e ssh $PRAAT_EXCLUDES \
+        $PRAAT_SOURCES/ pi@192.168.1.2:~/praats"
 
-and
-
-    # on Mac command line
-    praats-mid
-
-On your Raspberry Pi, you create a folder `~/praats`, and you fetch the sources there with
+On the Raspberry Pi, you define
 
     # in RaspberryPi:~/.bash_aliases
     alias praat-build="( cd ~/praats &&\
-        rsync -rptvz -e ssh yourname@fon.hum.uva.nl:~/sources/ . &&\
         cp makefiles/makefile.defs.linux.rpi makefile.defs &&\
         make -j4 )"
     alias praat="~/praats/praat"
@@ -426,11 +430,11 @@ after which you can build and run Praat with
     # on Raspberry Pi command line
     praat-run
 
-Thus, the cycle from editing Praat on the Mac to running it on your Chromebook therefore takes three steps:
+Thus, the cycle from editing Praat on the Mac to running it on your Raspberry Pi therefore takes three steps:
 
 1. edit and save the source code in Xcode on your Mac;
-2. type `praats-mid` on your Mac;
-3. type `praat-run` on your Raspberry Pi.
+2. type `praats-putpi` on your Mac;
+3. type `praat-run` on your Raspberry Pi, perhaps via `ssh -X pi@192.168.1.2` in your Mac terminal.
 
 From clean sources this takes around 19 minutes (on a Raspberry Pi 4B),
 but if no header files change, then it can be done in approximately 20 seconds.
@@ -498,22 +502,10 @@ so that you can “upload” the four executables to the Mac with
     praatn-dist
     praatc-dist
 
-On the Raspberry Pi, you send the executable to the intermediary computer,
-which has a folder `~/builds/rpi_armv7`. On your Raspberry Pi, you define
-
-    # in RaspberryPi:~/.bash_aliases
-    alias praat-mid="rsync -tpvz ~/praats/praat yourname@fon.hum.uva.nl:/builds/rpi_armv7"
-
-so that you can “upload” the executable to the computer-in-the-middle with
-
-    # on Raspberry Pi command line
-    praat-mid
-
-After all this, you execute the following lines in the Mac `Terminal`.
-First you fetch the Raspberry Pi edition from the intermediary computer:
+You can fetch the Raspberry Pi edition directly from your Raspberry Pi:
 
     # on Mac command line
-    rsync -tpvz yourname@fon.hum.uva.nl:~/builds/rpi_armv7/praat ~/builds/rpi_armv7
+    rsync -tpvz pi@192.168.1.2:~/praats/praat ~/builds/rpi_armv7
 
 When the folders under `~/builds`, namely `win64`, `win32`, `linux64`, `chrome64` and `rpi_armv7`
 all contain enough new executables (there should be 1, 1, 3, 1 and 1, respectively),
