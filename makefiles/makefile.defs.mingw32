@@ -1,7 +1,7 @@
 # File: makefile.defs.mingw32
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma 2020-04-17
+# Paul Boersma 2020-04-18
 
 PREFIX = i686-w64-mingw32-
 
@@ -9,7 +9,7 @@ CC = $(PREFIX)gcc
 
 CXX = $(PREFIX)g++
 
-COMMONFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O1
+COMMONFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
 # Probably implicit: -m32 -mwin32 -march=i686 -mtune=generic
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS)

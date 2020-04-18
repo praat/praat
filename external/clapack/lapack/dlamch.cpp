@@ -649,7 +649,7 @@ L10:
 double dlamc3_(double *a, double *b)
 {
     /* System generated locals */
-    double ret_val;
+    volatile double ret_val;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
