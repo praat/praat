@@ -40,7 +40,9 @@ for directory to numberOfDirectories
 			if not index (file$, "_GUI_")
 				path$ = directory$ + "/" + file$
 				appendInfoLine: "### executing ", path$, ":"
+				random_initializeWithSeedUnsafelyButPredictably (5489)
 				runScript: path$
+				random_initializeSafelyAndUnpredictably()
 			endif
 		endfor
 		removeObject: files
@@ -67,7 +69,9 @@ for directory1 to numberOfDirectories1
 				if not index (file$, "_GUI_")
 					path$ = directory1$ + "/" + directory2$ + "/" + file$
 					appendInfoLine: "### executing ", path$, ":"
+					random_initializeWithSeedUnsafelyButPredictably (5489)
 					runScript: path$
+					random_initializeSafelyAndUnpredictably()
 				endif
 			endfor
 			removeObject: files
