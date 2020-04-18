@@ -19,7 +19,7 @@ appendInfoLine: tab$ + "Query old and new Discriminant"
 appendInfoLine: tab$ + "Assert old and new Discriminant classify the same"
 @classify: discriminant[1], tableOfReal, 1
 @classify: discriminant[2], tableOfReal, 2
-assert classify.fc[1] = classify.fc[2]
+assert classify.fc[1] = classify.fc[2]   ; 'classify.fc[1]' 'classify.fc[2]'
 
 procedure classify: .discriminant, .tableOfReal, .index
 	selectObject: .discriminant, .tableOfReal
@@ -32,7 +32,7 @@ endproc
 
 procedure query: .discriminant
 	for .ieigen to 3
-		.eigenvalue[.ieigen] = Get eigenvalue: .ieigen
+		.eigenvalue[.ieigen] = Get eigenvalue: .ieigen   ; 
 	endfor
 	.numberOfEigenvectors = Get number of eigenvectors
 	.dimension = Get eigenvector dimension

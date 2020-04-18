@@ -1,17 +1,27 @@
 # Praat script runAllTests_batch.praat
-# Paul Boersma 2020-04-09
+# Paul Boersma 2020-04-16
 #
 # This script runs all Praat scripts in its subdirectories.
 # This script is to be called from the command line:
-#     praat --run runAllTests.praat
+#     praat --run runAllTests_batch.praat
 #
-# The subdirectories `manual` and `speed` are ignored,
+# The subdirectories `manually` and `speed` are ignored,
 # and scripts containing `_GUI_` in their names are ignored.
+#
 
+#
+# Some tests require standard settings for the text input encoding:
+# files in UTF-8 format should always be readable.
+#
+Text writing preferences: "try ASCII, then UTF-16"
 if macintosh
-	executable$ = "~/builds/mac_products/Configuration64/Praat.app/Contents/MacOS/Praat --no-pref-files"
+	Text reading preferences: "try UTF-8, then MacRoman"
+elif windows
+	Text reading preferences: "try UTF-8, then Windows Latin-1"
+elif unix
+	Text reading preferences: "try UTF-8, then ISO Latin-1"
 else
-	executable$ = "../praat --no-pref-files"
+	exitScript: "Unknown operating system."
 endif
 
 writeInfoLine: "Running all tests..."
@@ -30,7 +40,7 @@ for directory to numberOfDirectories
 			if not index (file$, "_GUI_")
 				path$ = directory$ + "/" + file$
 				appendInfoLine: "### executing ", path$, ":"
-				runSystem: executable$, " --run """, path$, """"
+				runScript: path$
 			endif
 		endfor
 		removeObject: files
@@ -57,7 +67,7 @@ for directory1 to numberOfDirectories1
 				if not index (file$, "_GUI_")
 					path$ = directory1$ + "/" + directory2$ + "/" + file$
 					appendInfoLine: "### executing ", path$, ":"
-					runSystem: executable$, " --run """, path$, """"
+					runScript: path$
 				endif
 			endfor
 			removeObject: files
