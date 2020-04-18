@@ -1,29 +1,32 @@
 # fisherQ
-# Paul Boersma, August 27, 2003
-# April 7, 2008: more accuracy in fisherQ because of GSL (n.b. GSL not to be used in invFisherQ)
+# Paul Boersma 2003-08-23
+# 2008-04-07: more accuracy in fisherQ because of GSL (n.b. GSL not to be used in invFisherQ)
 # Computes a significance from zero, given a measured F value.
+# 2020-04-17: checks on behalf of i386
+
 df1 = 2
 df2 = 70
 f = 33.59
 fisherQ = fisherQ (f, df1, df2)
 fisherQ$ = fixed$ (fisherQ, 20)
-echo fisherQ test: 'fisherQ' 'fisherQ$'
+writeInfoLine: "fisherQ test: ", fisherQ, " ", fisherQ$
 assert fisherQ$ = "0.00000000005932714540"
 for i to 10000
-   assert fisherQ (randomUniform (3, 4), 1, 100000) <> undefined
+	a = randomUniform (3, 4)
+	assert fisherQ (a, 1, 100000) <> undefined   ; 'i' 'a'
 endfor
 
-echo invFisherQ
-call invFisherQ 2 70 1e-14
-call invFisherQ 70 2 1e-14
-call invFisherQ 1 if(windows)then(100)else(100000)fi 1e-11
+appendInfoLine: "invFisherQ"
+@invFisherQ: 2, 70, 1e-14
+@invFisherQ: 70, 2, 1e-14
+@invFisherQ: 1, if windows then 100 else 100000 fi, 1e-11
 if not windows
-	call invFisherQ 1 1 1e-14
-	call invFisherQ 100000 1 1e-11
+	@invFisherQ: 1, 1, 1e-14
+	@invFisherQ: 100000, 1, 1e-11
 endif
-call invFisherQ 100 100 1e-9
-procedure invFisherQ df1 df2 precision
-   # Known values.
+@invFisherQ: 100, 100, 1e-9
+procedure invFisherQ: df1, df2, precision
+	# Known values.
    assert invFisherQ (0, 'df1', 'df2') = undefined
    assert invFisherQ (1, 'df1', 'df2') = 0
    # We should be able to draw a curve of invFisherQ.
@@ -42,7 +45,7 @@ procedure invFisherQ df1 df2 precision
       q = 10 ^ -power
       f = invFisherQ (q, df1, df2)
       if f = undefined and not mentioned
-         printline 'df1' 'df2' 'power'
+         appendInfoLine: "stopped at invFisherQ (", q, ", ", df1, ", ", df2, ")"
          mentioned = 1
       endif
       assert f = undefined or abs (fisherQ (f, 'df1', 'df2') - 'q') < 'q'*'precision'*300 ; 'power' 'f'
@@ -82,15 +85,24 @@ assert invFisherQ (0.159, 2, 70) <> undefined ; used to exceed 60 iterations
 #
 # Things that still go wrong.
 #
-assert fisherQ (1, 1e19, 1e19) = undefined
+a = fisherQ (1, 1e19, 1e19)
+if a = undefined
+	appendInfoLine: "WARNING: fisherQ (1, 1e19, 1e19) is still undefined"
+else
+	appendInfoLine: "fisherQ (1, 1e19, 1e19) = ", a
+endif
 #
 # Check that we invert better than GSL does.
 #
-Debug... no 29   ; set invFisherQ to GSL
+Debug: "no", 29   ; set invFisherQ to GSL
 f = invFisherQ (0.01, 1, 10000)   ; not such an unusual case
-Debug... no 0   ; quickly (i.e. before the assert!) undo the debug-29 option
-assert "'f'" = "--undefined--" or "'f:5'" = "6.63743"
+Debug: "no", 0   ; quickly (i.e. before the assert!) undo the debug-29 option
+if f = undefined
+	appendInfoLine: "WARNING: GSL would still have computed invFisherQ (0.01, 1, 10000) as undefined"
+else
+	assert "'f:5'" = "6.63743"
+endif
 f = invFisherQ (0.01, 1, 10000)   ; same case, but using our corrected NUMridders again
 assert "'f:5'" = "6.63743"
 #
-printline OK
+appendInfoLine: "OK"
