@@ -127,7 +127,7 @@ OBJECTS = dbdsdc.o dbdsqr.o ddisna.o \
 	dtrsen.o dtrsna.o dtrsyl.o \
 	dtrti2.o dtrtri.o dtrtrs.o dtrttf.o dtrttp.o \
 	dtzrqf.o dtzrzf.o ieeeck.o \
-	ilaenv.o ilaver.o iparmq.o \
+	iladlc.o iladlr.o ilaenv.o ilaver.o iparmq.o \
 	lsame.o lsamen.o slamch.o \
 	sisnan.o slaisnan.o \
 	spotf2.o spotrf.o spotrs.o ssfrk.o

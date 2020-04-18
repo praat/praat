@@ -6,8 +6,7 @@
 static integer c__1 = 1;
 static double c_b8 = 1.;
 
-/* Subroutine */ int dtzrqf_(integer *m, integer *n, double *a, integer *
-	lda, double *tau, integer *info)
+int dtzrqf_(integer *m, integer *n, double *a, integer *lda, double *tau, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
@@ -16,7 +15,7 @@ static double c_b8 = 1.;
     /* Local variables */
     integer i__, k, m1;
 
-/*  -- LAPACK routine (version 3.1) -- */
+/*  -- LAPACK routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -152,7 +151,7 @@ static double c_b8 = 1.;
 /*           First set up the reflection. */
 
 	    i__1 = *n - *m + 1;
-	    dlarfg_(&i__1, &a[k + k * a_dim1], &a[k + m1 * a_dim1], lda, &tau[
+	    dlarfp_(&i__1, &a[k + k * a_dim1], &a[k + m1 * a_dim1], lda, &tau[
 		    k]);
 
 	    if (tau[k] != 0. && k > 1) {

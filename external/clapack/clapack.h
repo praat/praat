@@ -848,17 +848,17 @@ int dlascl2_(integer *m, integer *n, double *d__, double *x, integer *ldx);
  int dlasq1_(integer *n, double *d__, double *e, 
 	double *work, integer *info);
 
- int dlasq2_(integer *n, double *z__, integer *info);
+int dlasq2_(integer *n, double *z__, integer *info);
 
- int dlasq3_(integer *i0, integer *n0, double *z__, 
-	integer *pp, double *dmin__, double *sigma, double *desig,
-	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
-	bool *ieee);
+int dlasq3_(integer *i0, integer *n0, double *z__, integer *pp, double *dmin__, double *sigma,
+	double *desig, double *qmax, integer *nfail, integer *iter, integer *ndiv, bool *ieee,
+	integer *ttype, double *dmin1, double *dmin2, double *dn, double *dn1, double *dn2,
+	double *g, double *tau);
 
- int dlasq4_(integer *i0, integer *n0, double *z__, 
+int dlasq4_(integer *i0, integer *n0, double *z__, 
 	integer *pp, integer *n0in, double *dmin__, double *dmin1, 
 	double *dmin2, double *dn, double *dn1, double *dn2, 
-	double *tau, integer *ttype);
+	double *tau, integer *ttype, double *g);
 
  int dlasq5_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *tau, double *dmin__, double *dmin1, 
@@ -1545,6 +1545,13 @@ int dtrttp_(const char *uplo, integer *n, double *a, integer *lda, double *ap, i
 int dtzrqf_(integer *m, integer *n, double *a, integer *lda, double *tau, integer *info);
 
 int dtzrzf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork, integer *info);
+
+integer iladlc_(integer *m, integer *n, double *a, integer *lda);
+
+integer iladlr_(integer *m, integer *n, double *a, integer *lda);
+
+integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1, 
+	integer *n2, integer *n3, integer *n4);
 
 integer ilaprec_(const char *prec);
 

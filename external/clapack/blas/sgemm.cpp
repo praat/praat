@@ -12,8 +12,7 @@ int sgemm_(const char *transa, const char *transb, integer *m, integer *n, integ
     integer i__, j, l, info;
     bool nota, notb;
     float temp;
-    integer ncola;
-    integer nrowa, nrowb;
+    integer ncola, nrowa, nrowb;
 
 /*     .. Scalar Arguments .. */
 /*     .. */

@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlahqr_(bool *wantt, bool *wantz, integer *n, 
+int dlahqr_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, integer *info)
@@ -13,9 +13,6 @@ static integer c__1 = 1;
     /* System generated locals */
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3;
     double d__1, d__2, d__3, d__4;
-
-    /* Builtin functions
-    double sqrt(double); */
 
     /* Local variables */
     integer i__, j, k, l, m;
@@ -33,7 +30,7 @@ static integer c__1 = 1;
 	double safmin, safmax, rtdisc, smlnum;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -316,19 +313,30 @@ L40:
 	    i2 = i__;
 	}
 
-	if (its == 10 || its == 20) {
+	if (its == 10) {
 
 /*           Exceptional shift. */
 
+		s = (d__1 = h__[l + 1 + l * h_dim1], abs(d__1)) + (d__2 = h__[l + 
+		2 + (l + 1) * h_dim1], abs(d__2));
+	    h11 = s * .75 + h__[l + l * h_dim1];
+	    h12 = s * -.4375;
+	    h21 = s;
+	    h22 = h11;
+	} else if (its == 20) {
+		
+/*           Exceptional shift. */
+
+	    s = (d__1 = h__[i__ + (i__ - 1) * h_dim1], abs(d__1)) + (d__2 = 
+		    h__[i__ - 1 + (i__ - 2) * h_dim1], abs(d__2));
 	    h11 = s * .75 + h__[i__ + i__ * h_dim1];
 	    h12 = s * -.4375;
 	    h21 = s;
 	    h22 = h11;
 	} else {
-
+		
 /*           Prepare to use Francis' double shift */
 /*           (i.e. 2nd degree generalized Rayleigh quotient) */
-
 	    h11 = h__[i__ - 1 + (i__ - 1) * h_dim1];
 	    h21 = h__[i__ + (i__ - 1) * h_dim1];
 	    h12 = h__[i__ - 1 + i__ * h_dim1];
@@ -440,7 +448,11 @@ L60:
 		    h__[k + 2 + (k - 1) * h_dim1] = 0.;
 		}
 	    } else if (m > l) {
-		h__[k + (k - 1) * h_dim1] = -h__[k + (k - 1) * h_dim1];
+/*               ==== Use the following instead of */
+/*               .    H( K, K-1 ) = -H( K, K-1 ) to */
+/*               .    avoid a bug when v(2) and v(3) */
+/*               .    underflow. ==== */
+		h__[k + (k - 1) * h_dim1] *= 1. - t1;
 	    }
 	    v2 = v[1];
 	    t2 = t1 * v2;

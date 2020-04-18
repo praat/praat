@@ -1,8 +1,8 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlarfg_(integer *n, double *alpha, double *x, 
-	integer *incx, double *tau)
+
+int dlarfg_(integer *n, double *alpha, double *x, integer *incx, double *tau)
 {
     /* System generated locals */
     integer i__1;
@@ -10,12 +10,10 @@
 
     /* Local variables */
     integer j, knt;
-    double beta;
-    double xnorm;
-    double safmin, rsafmn;
+    double beta, xnorm, safmin, rsafmn;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -106,12 +104,12 @@
 	d__1 = dlapy2_(alpha, &xnorm);
 	beta = -d_sign(&d__1, alpha);
 	safmin = dlamch_("S") / dlamch_("E");
+	knt = 0;
 	if (abs(beta) < safmin) {
 
 /*           XNORM, BETA may be inaccurate; scale X and recompute them */
 
 	    rsafmn = 1. / safmin;
-	    knt = 0;
 L10:
 	    ++knt;
 	    i__1 = *n - 1;
@@ -128,26 +126,20 @@ L10:
 	    xnorm = dnrm2_(&i__1, &x[1], incx);
 	    d__1 = dlapy2_(alpha, &xnorm);
 	    beta = -d_sign(&d__1, alpha);
-	    *tau = (beta - *alpha) / beta;
-	    i__1 = *n - 1;
-	    d__1 = 1. / (*alpha - beta);
-	    dscal_(&i__1, &d__1, &x[1], incx);
-
-/*           If ALPHA is subnormal, it may lose relative accuracy */
-
-	    *alpha = beta;
-	    i__1 = knt;
-	    for (j = 1; j <= i__1; ++j) {
-		*alpha *= safmin;
-/* L20: */
-	    }
-	} else {
-	    *tau = (beta - *alpha) / beta;
-	    i__1 = *n - 1;
-	    d__1 = 1. / (*alpha - beta);
-	    dscal_(&i__1, &d__1, &x[1], incx);
-	    *alpha = beta;
 	}
+	*tau = (beta - *alpha) / beta;
+	i__1 = *n - 1;
+	d__1 = 1. / (*alpha - beta);
+	dscal_(&i__1, &d__1, &x[1], incx);
+
+/*        If ALPHA is subnormal, it may lose relative accuracy */
+
+	i__1 = knt;
+	for (j = 1; j <= i__1; ++j) {
+	    beta *= safmin;
+/* L20: */
+	}
+	*alpha = beta;
     }
 
     return 0;

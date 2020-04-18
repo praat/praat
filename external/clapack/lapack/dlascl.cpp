@@ -1,9 +1,9 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlascl_(const char *type__, integer *kl, integer *ku, 
-	double *cfrom, double *cto, integer *m, integer *n, 
-	double *a, integer *lda, integer *info)
+
+int dlascl_(const char *type__, integer *kl, integer *ku, double *cfrom, double *cto, 
+	integer *m,	integer *n, double *a, integer *lda, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
@@ -13,16 +13,13 @@
     double mul, cto1;
     bool done;
     double ctoc;
- 
     integer itype;
     double cfrom1;
- 
     double cfromc;
- 
     double bignum, smlnum;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -134,23 +131,25 @@
 
     if (itype == -1) {
 	*info = -1;
-    } else if (*cfrom == 0.) {
+    } else if (*cfrom == 0. || disnan_(cfrom)) {
 	*info = -4;
+    } else if (disnan_(cto)) {
+	*info = -5;
     } else if (*m < 0) {
 	*info = -6;
     } else if (*n < 0 || itype == 4 && *n != *m || itype == 5 && *n != *m) {
 	*info = -7;
-    } else if (itype <= 3 && *lda < std::max(1_integer,*m)) {
+    } else if (itype <= 3 && *lda <  std::max(1_integer,*m)) {
 	*info = -9;
     } else if (itype >= 4) {
 /* Computing MAX */
 	i__1 = *m - 1;
-	if (*kl < 0 || *kl > std::max(i__1,0_integer)) {
+	if (*kl < 0 || *kl >  std::max(i__1,0_integer)) {
 	    *info = -2;
 	} else /* if(complicated condition) */ {
 /* Computing MAX */
 	    i__1 = *n - 1;
-	    if (*ku < 0 || *ku > std::max(i__1,0_integer) || (itype == 4 || itype == 5) && 
+	    if (*ku < 0 || *ku >  std::max(i__1,0_integer) || (itype == 4 || itype == 5) && 
 		    *kl != *ku) {
 		*info = -3;
 	    } else if (itype == 4 && *lda < *kl + 1 || itype == 5 && *lda < *
@@ -182,18 +181,32 @@
 
 L10:
     cfrom1 = cfromc * smlnum;
-    cto1 = ctoc / bignum;
-    if (abs(cfrom1) > abs(ctoc) && ctoc != 0.) {
-	mul = smlnum;
-	done = false;
-	cfromc = cfrom1;
-    } else if (abs(cto1) > abs(cfromc)) {
-	mul = bignum;
-	done = false;
-	ctoc = cto1;
-    } else {
+    if (cfrom1 == cfromc) {
+/*        CFROMC is an inf.  Multiply by a correctly signed zero for */
+/*        finite CTOC, or a NaN if CTOC is infinite. */
 	mul = ctoc / cfromc;
 	done = true;
+	cto1 = ctoc;
+    } else {
+	cto1 = ctoc / bignum;
+	if (cto1 == ctoc) {
+/*           CTOC is either 0 or an inf.  In both cases, CTOC itself */
+/*           serves as the correct multiplication factor. */
+	    mul = ctoc;
+	    done = true;
+	    cfromc = 1.;
+	} else if (abs(cfrom1) > abs(ctoc) && ctoc != 0.) {
+	    mul = smlnum;
+	    done = false;
+	    cfromc = cfrom1;
+	} else if (abs(cto1) > abs(cfromc)) {
+	    mul = bignum;
+	    done = false;
+	    ctoc = cto1;
+	} else {
+	    mul = ctoc / cfromc;
+	    done = true;
+	}
     }
 
     if (itype == 0) {

@@ -23,25 +23,15 @@ static integer c__3 = 3;
     double d__1, d__2, d__3, d__4;
 
     /* Local variables */
-    integer i__, k;
+    integer i__, k, ld, nh, it, ks, kt, ku, kv, ls, ns;
     double aa, bb, cc, dd;
-    integer ld;
-    double cs;
-    integer nh, it, ks, kt;
-    double sn;
-    integer ku, kv, ls, ns;
-    double ss;
-    integer nw, inf, kdu, nho, nve, kwh, nsr, nwr, kwv, ndfl, kbot, nmin;
-    double swap;
-    integer ktop;
+    double cs, sn, ss, swap;
+    integer nw, inf, kdu, nho, nve, kwh, nsr, nwr, kwv, ndec, ndfl, kbot, nmin;
+    integer ktop, kacc22;
     double zdum[1]	/* was [1][1] */;
-    integer kacc22;
-    bool nwinc;
-    integer itmax, nsmax, nwmax, kwtop;
-    integer nibble;
-    char jbcmpz[2];
     bool sorted;
-    integer lwkopt;
+    integer itmax, nsmax, nwmax, kwtop, lwkopt, nibble, nwupbd;
+    char jbcmpz[2];
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
@@ -263,24 +253,8 @@ static integer c__3 = 3;
 	return 0;
     }
 
-/*     ==== Set up job flags for ILAENV. ==== */
-
-    if (*wantt) {
-	*(unsigned char *)jbcmpz = 'S';
-    } else {
-	*(unsigned char *)jbcmpz = 'E';
-    }
-    if (*wantz) {
-	*(unsigned char *)&jbcmpz[1] = 'V';
-    } else {
-	*(unsigned char *)&jbcmpz[1] = 'N';
-    }
-
-/*     ==== Tiny matrices must use DLAHQR. ==== */
-
     if (*n <= 11) {
-
-/*        ==== Estimate optimal workspace. ==== */
+/*        ==== Tiny matrices must use DLAHQR. ==== */
 
 	lwkopt = 1;
 	if (*lwork != -1) {
@@ -295,6 +269,19 @@ static integer c__3 = 3;
 /*        ==== Hope for the best. ==== */
 
 	*info = 0;
+	
+/*        ==== Set up job flags for ILAENV. ==== */
+
+	if (*wantt) {
+	    *(unsigned char *)jbcmpz = 'S';
+	} else {
+	    *(unsigned char *)jbcmpz = 'E';
+	}
+	if (*wantz) {
+	    *(unsigned char *)&jbcmpz[1] = 'V';
+	} else {
+	    *(unsigned char *)&jbcmpz[1] = 'N';
+	}
 
 /*        ==== NWR = recommended deflation window size.  At this */
 /*        .    point,  N .GT. NTINY = 11, so there is enough */
@@ -307,7 +294,6 @@ static integer c__3 = 3;
 /* Computing MIN */
 	i__1 = *ihi - *ilo + 1, i__2 = (*n - 1) / 3, i__1 = std::min(i__1,i__2);
 	nwr = std::min(i__1,nwr);
-	nw = nwr;
 
 /*        ==== NSR = recommended number of simultaneous shifts. */
 /*        .    At this point N .GT. NTINY = 11, so there is at */
@@ -369,6 +355,7 @@ static integer c__3 = 3;
 /* Computing MIN */
 	i__1 = (*n - 1) / 3, i__2 = *lwork / 2;
 	nwmax = std::min(i__1,i__2);
+	nw = nwmax;
 
 /*        ==== NSMAX = the Largest number of simultaneous shifts */
 /*        .    for which there is sufficient workspace. ==== */
@@ -416,58 +403,52 @@ static integer c__3 = 3;
 L20:
 	    ktop = k;
 
-/*           ==== Select deflation window size ==== */
+/*           ==== Select deflation window size: */
+/*           .    Typical Case: */
+/*           .      If possible and advisable, nibble the entire */
+/*           .      active block.  If not, use size MIN(NWR,NWMAX) */
+/*           .      or MIN(NWR+1,NWMAX) depending upon which has */
+/*           .      the smaller corresponding subdiagonal entry */
+/*           .      (a heuristic). */
+/*           . */
+/*           .    Exceptional Case: */
+/*           .      If there have been no deflations in KEXNW or */
+/*           .      more iterations, then vary the deflation window */
+/*           .      size.   At first, because, larger windows are, */
+/*           .      in general, more powerful than smaller ones, */
+/*           .      rapidly increase the window to the maximum possible. */
+/*           .      Then, gradually reduce the window size. ==== */
 
 	    nh = kbot - ktop + 1;
-	    if (ndfl < 5 || nh < nw) {
-
-/*              ==== Typical deflation window.  If possible and */
-/*              .    advisable, nibble the entire active block. */
-/*              .    If not, use size NWR or NWR+1 depending upon */
-/*              .    which has the smaller corresponding subdiagonal */
-/*              .    entry (a heuristic). ==== */
-
-		nwinc = true;
-		if (nh <= std::min(nmin,nwmax)) {
-		    nw = nh;
+		nwupbd = std::min(nh,nwmax);
+	    if (ndfl < 5) {
+			nw = std::min(nwupbd,nwr);
 		} else {
 /* Computing MIN */
-		    i__2 = std::min(nwr,nh);
-		    nw = std::min(i__2,nwmax);
-		    if (nw < nwmax) {
-			if (nw >= nh - 1) {
-			    nw = nh;
-			} else {
-			    kwtop = kbot - nw + 1;
-			    if ((d__1 = h__[kwtop + (kwtop - 1) * h_dim1], 
-				    abs(d__1)) > (d__2 = h__[kwtop - 1 + (
-				    kwtop - 2) * h_dim1], abs(d__2))) {
-				++nw;
-			    }
+		i__2 = nwupbd, i__3 = nw << 1;
+		nw = std::min(i__2,i__3);
+		}
+		if (nw < nwmax) {
+		if (nw >= nh - 1) {
+			nw = nh;
+		} else {
+			kwtop = kbot - nw + 1;
+			if ((d__1 = h__[kwtop + (kwtop - 1) * h_dim1], abs(d__1))
+				> (d__2 = h__[kwtop - 1 + (kwtop - 2) * h_dim1],
+				abs(d__2))) {
+			++nw;
 			}
-		    }
 		}
-	    } else {
-
-/*              ==== Exceptional deflation window.  If there have */
-/*              .    been no deflations in KEXNW or more iterations, */
-/*              .    then vary the deflation window size.   At first, */
-/*              .    because, larger windows are, in general, more */
-/*              .    powerful than smaller ones, rapidly increase the */
-/*              .    window up to the maximum reasonable and possible. */
-/*              .    Then maybe try a slightly smaller window.  ==== */
-
-		if (nwinc && nw < std::min(nwmax,nh)) {
-/* Computing MIN */
-		    i__2 = std::min(nwmax,nh), i__3 = nw << 1;
-		    nw = std::min(i__2,i__3);
-		} else {
-		    nwinc = false;
-		    if (nw == nh && nh > 2) {
-			nw = nh - 1;
-		    }
 		}
-	    }
+	    if (ndfl < 5) {
+		ndec = -1;
+	    } else if (ndec >= 0 || nw >= nwupbd) {
+		++ndec;
+		if (nw - ndec < 2) {
+		    ndec = 0;
+		}
+		nw -= ndec;
+		}
 
 /*           ==== Aggressive early deflation: */
 /*           .    split workspace under the subdiagonal into */

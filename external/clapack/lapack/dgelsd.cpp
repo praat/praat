@@ -10,7 +10,7 @@ static integer c__0 = 0;
 static integer c__1 = 1;
 static double c_b82 = 0.;
 
-/* Subroutine */ int dgelsd_(integer *m, integer *n, integer *nrhs, 
+int dgelsd_(integer *m, integer *n, integer *nrhs, 
 	double *a, integer *lda, double *b, integer *ldb, double *
 	s, double *rcond, integer *rank, double *work, integer *lwork, 
 	 integer *iwork, integer *info)
@@ -36,7 +36,7 @@ static double c_b82 = 0.;
     integer smlsiz;
 
 
-/*  -- LAPACK driver routine (version 3.1) -- */
+/*  -- LAPACK driver routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -307,6 +307,14 @@ static double c_b82 = 0.;
 		maxwrk = std::max(i__1,i__2);
 /* Computing MAX */
 		i__1 = maxwrk, i__2 = *m * *m + (*m << 2) + wlalsd;
+		maxwrk = std::max(i__1,i__2);
+/*     XXX: Ensure the Path 2a case below is triggered.  The workspace */
+/*     calculation should use queries for all routines eventually. */
+/* Computing MAX */
+/* Computing MAX */
+		i__3 = *m, i__4 = (*m << 1) - 4, i__3 = std::max(i__3,i__4), i__3 =
+			 std::max(i__3,*nrhs), i__4 = *n - *m * 3;
+		i__1 = maxwrk, i__2 = (*m << 2) + *m * *m + std::max(i__3,i__4);		
 		maxwrk = std::max(i__1,i__2);
 	    } else {
 

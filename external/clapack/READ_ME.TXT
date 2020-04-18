@@ -98,5 +98,8 @@ for these cases.
 +++++ Upgrading to clapack version 3.2.1 ++++++
 To test this version we  added the -fno-stack-protector to the CFLAGS. Without this flag the testing routines throw "stack smashing errors" and the testing cannot be completed. Adding this flag made all tests succeed.
 
-In blas only two routines were changed: dtrsv.cpp, dtpmv.cpp
+Changes in blas: dtrsv.cpp, dtpmv.cpp
+Changes in lapack: dgelq2, dgelsd, dgeql2, dgeqpf, dgerq2, dlag2s, dlahqr, dlaqp2, dlaqps, dlaqr0, 
+dlaqr2, dlaqr3, dlaqr4, dlarfb, dlarfg, dlarft, dlarfx, dlascl, dlascl2, dlasq2, dlasq3,dlasq4, dlatrz,
+dpotf2, dtzrqf.
 

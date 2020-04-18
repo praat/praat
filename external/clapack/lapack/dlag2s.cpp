@@ -88,15 +88,16 @@ int dlag2s_(integer *m, integer *n, double *a, integer *lda, float *sa, integer 
 	i__2 = *m;
 	for (i__ = 1; i__ <= i__2; ++i__) {
 	    if (a[i__ + j * a_dim1] < -rmax || a[i__ + j * a_dim1] > rmax) {
-		*info = (i__ - 1) * *lda + j;
-		goto L10;
+		*info = 1;
+		goto L30;
 	    }
 	    sa[i__ + j * sa_dim1] = a[i__ + j * a_dim1];
-/* L30: */
+/* L10: */
 	}
 /* L20: */
     }
-L10:
+    *info = 0;
+L30:
     return 0;
 
 /*     End of DLAG2S */

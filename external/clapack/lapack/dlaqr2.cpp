@@ -5,11 +5,11 @@
 
 static integer c__1 = 1;
 static integer c_n1 = -1;
-static double c_b10 = 0.;
-static double c_b11 = 1.;
+static double c_b12 = 0.;
+static double c_b13 = 1.;
 static bool c_true = true;
 
-/* Subroutine */ int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
+int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
 	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
 	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
 	integer *ns, integer *nd, double *sr, double *si, double *
@@ -241,8 +241,8 @@ static bool c_true = true;
 /*        ==== Workspace query call to DORGHR ==== */
 
 	i__1 = jw - 1;
-	dorghr_(&jw, &c__1, &i__1, &t[t_offset], ldt, &work[1], &work[1], &
-		c_n1, &info);
+	dormhr_("R", "N", &jw, &jw, &c__1, &i__1, &t[t_offset], ldt, &work[1], 
+		 &v[v_offset], ldv, &work[1], &c_n1, &info);
 	lwk2 = (integer) work[1];
 
 /*        ==== Optimal workspace ==== */
@@ -261,6 +261,7 @@ static bool c_true = true;
 /*     ... for an empty active block ... ==== */
     *ns = 0;
     *nd = 0;
+	work[1] = 1.;
     if (*ktop > *kbot) {
 	return 0;
     }
@@ -307,6 +308,7 @@ static bool c_true = true;
 		h__[kwtop + (kwtop - 1) * h_dim1] = 0.;
 	    }
 	}
+	work[1] = 1.;
 	return 0;
     }
 
@@ -324,7 +326,7 @@ static bool c_true = true;
     dcopy_(&i__1, &h__[kwtop + 1 + kwtop * h_dim1], &i__2, &t[t_dim1 + 2], &
 	    i__3);
 
-    dlaset_("A", &jw, &jw, &c_b10, &c_b11, &v[v_offset], ldv);
+    dlaset_("A", &jw, &jw, &c_b12, &c_b13, &v[v_offset], ldv);
     dlahqr_(&c_true, &c_true, &jw, &c__1, &jw, &t[t_offset], ldt, &sr[kwtop], 
 	    &si[kwtop], &c__1, &jw, &v[v_offset], ldv, &infqr);
 
@@ -533,7 +535,7 @@ L60:
 
 	    i__1 = jw - 2;
 	    i__2 = jw - 2;
-	    dlaset_("L", &i__1, &i__2, &c_b10, &c_b10, &t[t_dim1 + 3], ldt);
+	    dlaset_("L", &i__1, &i__2, &c_b12, &c_b12, &t[t_dim1 + 3], ldt);
 
 	    dlarf_("L", ns, &jw, &work[1], &c__1, &tau, &t[t_offset], ldt, &
 		    work[jw + 1]);
@@ -562,17 +564,11 @@ L60:
 
 /*        ==== Accumulate orthogonal matrix in order update */
 /*        .    H and Z, if requested.  (A modified version */
-/*        .    of  DORGHR that accumulates block Householder */
-/*        .    transformations into V directly might be */
-/*        .    marginally more efficient than the following.) ==== */
 
 	if (*ns > 1 && s != 0.) {
 	    i__1 = *lwork - jw;
-	    dorghr_(&jw, &c__1, ns, &t[t_offset], ldt, &work[1], &work[jw + 1]
-, &i__1, &info);
-	    dgemm_("N", "N", &jw, ns, ns, &c_b11, &v[v_offset], ldv, &t[
-		    t_offset], ldt, &c_b10, &wv[wv_offset], ldwv);
-	    dlacpy_("A", &jw, ns, &wv[wv_offset], ldwv, &v[v_offset], ldv);
+	    dormhr_("R", "N", &jw, ns, &c__1, ns, &t[t_offset], ldt, &work[1], 
+		     &v[v_offset], ldv, &work[jw + 1], &i__1, &info);
 	}
 
 /*        ==== Update vertical slab in H ==== */
@@ -589,8 +585,8 @@ L60:
 /* Computing MIN */
 	    i__3 = *nv, i__4 = kwtop - krow;
 	    kln = std::min(i__3,i__4);
-	    dgemm_("N", "N", &kln, &jw, &jw, &c_b11, &h__[krow + kwtop * 
-		    h_dim1], ldh, &v[v_offset], ldv, &c_b10, &wv[wv_offset], 
+	    dgemm_("N", "N", &kln, &jw, &jw, &c_b13, &h__[krow + kwtop * 
+		    h_dim1], ldh, &v[v_offset], ldv, &c_b12, &wv[wv_offset], 
 		    ldwv);
 	    dlacpy_("A", &kln, &jw, &wv[wv_offset], ldwv, &h__[krow + kwtop * 
 		    h_dim1], ldh);
@@ -607,8 +603,8 @@ L60:
 /* Computing MIN */
 		i__3 = *nh, i__4 = *n - kcol + 1;
 		kln = std::min(i__3,i__4);
-		dgemm_("C", "N", &jw, &kln, &jw, &c_b11, &v[v_offset], ldv, &
-			h__[kwtop + kcol * h_dim1], ldh, &c_b10, &t[t_offset], 
+		dgemm_("C", "N", &jw, &kln, &jw, &c_b13, &v[v_offset], ldv, &
+			h__[kwtop + kcol * h_dim1], ldh, &c_b12, &t[t_offset], 
 			 ldt);
 		dlacpy_("A", &jw, &kln, &t[t_offset], ldt, &h__[kwtop + kcol *
 			 h_dim1], ldh);
@@ -626,8 +622,8 @@ L60:
 /* Computing MIN */
 		i__3 = *nv, i__4 = *ihiz - krow + 1;
 		kln = std::min(i__3,i__4);
-		dgemm_("N", "N", &kln, &jw, &jw, &c_b11, &z__[krow + kwtop * 
-			z_dim1], ldz, &v[v_offset], ldv, &c_b10, &wv[
+		dgemm_("N", "N", &kln, &jw, &jw, &c_b13, &z__[krow + kwtop * 
+			z_dim1], ldz, &v[v_offset], ldv, &c_b12, &wv[
 			wv_offset], ldwv);
 		dlacpy_("A", &kln, &jw, &wv[wv_offset], ldwv, &z__[krow + 
 			kwtop * z_dim1], ldz);

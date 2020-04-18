@@ -15,7 +15,7 @@ static integer c__1 = 1;
     integer i__, k;
     double aii;
 
-/*  -- LAPACK routine (version 3.1) -- */
+/*  -- LAPACK routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -121,7 +121,7 @@ static integer c__1 = 1;
 /*        A(1:m-k+i-1,n-k+i) */
 
 	i__1 = *m - k + i__;
-	dlarfg_(&i__1, &a[*m - k + i__ + (*n - k + i__) * a_dim1], &a[(*n - k 
+	dlarfp_(&i__1, &a[*m - k + i__ + (*n - k + i__) * a_dim1], &a[(*n - k 
 		+ i__) * a_dim1 + 1], &c__1, &tau[i__]);
 
 /*        Apply H(i) to A(1:m-k+i,1:n-k+i-1) from the left */

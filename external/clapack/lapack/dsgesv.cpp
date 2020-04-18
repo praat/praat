@@ -1,41 +1,28 @@
 #include "clapack.h"
 #include "f2cP.h"
 
+
 /* Table of constant values */
 
 static double c_b10 = -1.;
 static double c_b11 = 1.;
 static integer c__1 = 1;
 
-int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb, 
+int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb,
 	double *x, integer *ldx, double *work, float *swork, integer *iter, integer *info)
 {
     /* System generated locals */
-    integer a_dim1, a_offset, b_dim1, b_offset, work_dim1, work_offset, 
-	    x_dim1, x_offset, i__1, i__2;
+    integer a_dim1, a_offset, b_dim1, b_offset, work_dim1, work_offset, x_dim1, x_offset, i__1;
     double d__1;
 
+
     /* Local variables */
-    integer i__;
-    double cte, eps, anrm;
-    integer ptsa;
-    double rnrm, xnrm;
-    integer ptsx;
-    integer iiter;
-    double bwdmax;
-    bool doitref;
-    integer itermax;
+    double cte, eps, anrm, rnrm, xnrm;
+    integer i__, ptsa, ptsx, iiter;
 
-
-/*  -- LAPACK PROTOTYPE driver routine (version 3.1.1) -- */
+/*  -- LAPACK PROTOTYPE driver routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     February 2007 */
-
-/*     .. */
-/*     .. WARNING: PROTOTYPE .. */
-/*     This is an LAPACK PROTOTYPE routine which means that the */
-/*     interface of this routine is likely to be changed in the future */
-/*     based on community feedback. */
 
 /*     .. */
 /*     .. Scalar Arguments .. */
@@ -51,16 +38,17 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 /*  where A is an N-by-N matrix and X and B are N-by-NRHS matrices. */
 
 /*  DSGESV first attempts to factorize the matrix in SINGLE PRECISION */
-/*  and use this factorization within an iterative refinement procedure to */
-/*  produce a solution with DOUBLE PRECISION normwise backward error */
+/*  and use this factorization within an iterative refinement procedure */
+/*  to produce a solution with DOUBLE PRECISION normwise backward error */
 /*  quality (see below). If the approach fails the method switches to a */
 /*  DOUBLE PRECISION factorization and solve. */
 
 /*  The iterative refinement is not going to be a winning strategy if */
-/*  the ratio SINGLE PRECISION performance over DOUBLE PRECISION performance */
-/*  is too small. A reasonable strategy should take the number of right-hand */
-/*  sides and the size of the matrix into account. This might be done with a */
-/*  call to ILAENV in the future. Up to now, we always try iterative refinement. */
+/*  the ratio SINGLE PRECISION performance over DOUBLE PRECISION */
+/*  performance is too small. A reasonable strategy should take the */
+/*  number of right-hand sides and the size of the matrix into account. */
+/*  This might be done with a call to ILAENV in the future. Up to now, we */
+/*  always try iterative refinement. */
 
 /*  The iterative refinement process is stopped if */
 /*      ITER > ITERMAX */
@@ -73,7 +61,8 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 /*      o XNRM is the infinity-norm of the solution */
 /*      o ANRM is the infinity-operator-norm of the matrix A */
 /*      o EPS is the machine epsilon returned by DLAMCH('Epsilon') */
-/*  The value ITERMAX and BWDMAX are fixed to 30 and 1.0D+00 respectively. */
+/*  The value ITERMAX and BWDMAX are fixed to 30 and 1.0D+00 */
+/*  respectively. */
 
 /*  Arguments */
 /*  ========= */
@@ -107,7 +96,7 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 /*          factorization (if INFO.EQ.0 and ITER.LT.0). */
 
 /*  B       (input) DOUBLE PRECISION array, dimension (LDB,NRHS) */
-/*          The N-by-NRHS matrix of right hand side matrix B. */
+/*          The N-by-NRHS right hand side matrix B. */
 
 /*  LDB     (input) INTEGER */
 /*          The leading dimension of the array B.  LDB >= max(1,N). */
@@ -128,10 +117,10 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 /*  ITER    (output) INTEGER */
 /*          < 0: iterative refinement has failed, double precision */
 /*               factorization has been performed */
-/*               -1 : taking into account machine parameters, N, NRHS, it */
-/*                    is a priori not worth working in SINGLE PRECISION */
-/*               -2 : overflow of an entry when moving from double to */
-/*                    SINGLE PRECISION */
+/*               -1 : the routine fell back to full precision for */
+/*                    implementation- or machine-specific reasons */
+/*               -2 : narrowing the precision induced an overflow, */
+/*                    the routine fell back to full precision */
 /*               -3 : failure of SGETRF */
 /*               -31: stop the iterative refinement after the 30th */
 /*                    iterations */
@@ -149,6 +138,9 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 /*  ========= */
 
 /*     .. Parameters .. */
+
+
+
 
 /*     .. Local Scalars .. */
 
@@ -177,10 +169,6 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
     --swork;
 
     /* Function Body */
-    itermax = 30;
-    bwdmax = 1.f;
-    doitref = true;
-
     *info = 0;
     *iter = 0;
 
@@ -212,7 +200,7 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 /*     Skip single precision iterative refinement if a priori slower */
 /*     than double precision factorization. */
 
-    if (! doitref) {
+    if (false) {
 	*iter = -1;
 	goto L40;
     }
@@ -221,9 +209,9 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 
     anrm = dlange_("I", n, n, &a[a_offset], lda, &work[work_offset]);
     eps = dlamch_("Epsilon");
-    cte = anrm * eps * sqrt((double) (*n)) * bwdmax;
+    cte = anrm * eps * sqrt((double) (*n)) * 1.;
 
-/*     Set the pointers PTSA, PTSX for referencing SA and SX in SWORK. */
+/*     Set the indices PTSA, PTSX for referencing SA and SX in SWORK. */
 
     ptsa = 1;
     ptsx = ptsa + *n * *n;
@@ -273,7 +261,7 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
     dgemm_("No Transpose", "No Transpose", n, nrhs, n, &c_b10, &a[a_offset], 
 	    lda, &x[x_offset], ldx, &c_b11, &work[work_offset], n);
 
-/*     Check whether the NRHS normwised backward errors satisfy the */
+/*     Check whether the NRHS normwise backward errors satisfy the */
 /*     stopping criterion. If yes, set ITER=0 and return. */
 
     i__1 = *nrhs;
@@ -287,7 +275,7 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 	}
     }
 
-/*     If we are here, the NRHS normwised backward errors satisfy the */
+/*     If we are here, the NRHS normwise backward errors satisfy the */
 /*     stopping criterion. We are good to exit. */
 
     *iter = 0;
@@ -295,11 +283,10 @@ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, d
 
 L10:
 
-    i__1 = itermax;
-    for (iiter = 1; iiter <= i__1; ++iiter) {
+    for (iiter = 1; iiter <= 30; ++iiter) {
 
-/*         Convert R (in WORK) from double precision to single precision */
-/*         and store the result in SX. */
+/*        Convert R (in WORK) from double precision to single precision */
+/*        and store the result in SX. */
 
 	dlag2s_(n, nrhs, &work[work_offset], n, &swork[ptsx], n, info);
 
@@ -308,20 +295,23 @@ L10:
 	    goto L40;
 	}
 
-/*         Solve the system SA*SX = SR. */
+/*        Solve the system SA*SX = SR. */
 
 	sgetrs_("No transpose", n, nrhs, &swork[ptsa], n, &ipiv[1], &swork[
 		ptsx], n, info);
 
-/*         Convert SX back to double precision and update the current */
-/*         iterate. */
+/*        Convert SX back to double precision and update the current */
+/*        iterate. */
 
 	slag2d_(n, nrhs, &swork[ptsx], n, &work[work_offset], n, info);
 
-	i__2 = *n * *nrhs;
-	daxpy_(&i__2, &c_b11, &work[work_offset], &c__1, &x[x_offset], &c__1);
+	i__1 = *nrhs;
+	for (i__ = 1; i__ <= i__1; ++i__) {
+	    daxpy_(n, &c_b11, &work[i__ * work_dim1 + 1], &c__1, &x[i__ * 
+		    x_dim1 + 1], &c__1);
+	}
 
-/*         Compute R = B - AX (R is WORK). */
+/*        Compute R = B - AX (R is WORK). */
 
 	dlacpy_("All", n, nrhs, &b[b_offset], ldb, &work[work_offset], n);
 
@@ -329,11 +319,11 @@ L10:
 		a_offset], lda, &x[x_offset], ldx, &c_b11, &work[work_offset], 
 		 n);
 
-/*         Check whether the NRHS normwised backward errors satisfy the */
-/*         stopping criterion. If yes, set ITER=IITER>0 and return. */
+/*        Check whether the NRHS normwise backward errors satisfy the */
+/*        stopping criterion. If yes, set ITER=IITER>0 and return. */
 
-	i__2 = *nrhs;
-	for (i__ = 1; i__ <= i__2; ++i__) {
+	i__1 = *nrhs;
+	for (i__ = 1; i__ <= i__1; ++i__) {
 	    xnrm = (d__1 = x[idamax_(n, &x[i__ * x_dim1 + 1], &c__1) + i__ * 
 		    x_dim1], abs(d__1));
 	    rnrm = (d__1 = work[idamax_(n, &work[i__ * work_dim1 + 1], &c__1) 
@@ -343,8 +333,8 @@ L10:
 	    }
 	}
 
-/*         If we are here, the NRHS normwised backward errors satisfy the */
-/*         stopping criterion, we are good to exit. */
+/*        If we are here, the NRHS normwise backward errors satisfy the */
+/*        stopping criterion, we are good to exit. */
 
 	*iter = iiter;
 
@@ -357,11 +347,11 @@ L20:
     }
 
 /*     If we are at this place of the code, this is because we have */
-/*     performed ITER=ITERMAX iterations and never satisified the stopping */
-/*     criterion, set up the ITER flag accordingly and follow up on double */
-/*     precision routine. */
+/*     performed ITER=ITERMAX iterations and never satisified the */
+/*     stopping criterion, set up the ITER flag accordingly and follow up */
+/*     on double precision routine. */
 
-    *iter = -itermax - 1;
+    *iter = -31;
 
 L40:
 
@@ -370,12 +360,13 @@ L40:
 
     dgetrf_(n, n, &a[a_offset], lda, &ipiv[1], info);
 
-    dlacpy_("All", n, nrhs, &b[b_offset], ldb, &x[x_offset], ldx);
-
-    if (*info == 0) {
-	dgetrs_("No transpose", n, nrhs, &a[a_offset], lda, &ipiv[1], &x[
-		x_offset], ldx, info);
+    if (*info != 0) {
+	return 0;
     }
+
+    dlacpy_("All", n, nrhs, &b[b_offset], ldb, &x[x_offset], ldx);
+    dgetrs_("No transpose", n, nrhs, &a[a_offset], lda, &ipiv[1], &x[x_offset]
+, ldx, info);
 
     return 0;
 
