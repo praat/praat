@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200413)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200419)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.13# (19 April 2020)")
+LIST_ITEM (U"• Repaired discriminant analysis on i386 processors.")
+LIST_ITEM (U"• Scripting: enabled predictability by setting random seeds.")
+LIST_ITEM (U"• Automated batch testing on x86_64, i386 and ARMv7 processors.")
 NORMAL (U"##6.1.12# (13 April 2020)")
 LIST_ITEM (U"• All non-GUI tests can be automated from batch.")
 LIST_ITEM (U"• Repaired a bug introduced in 6.0 whereby a KlattGrid-generated Sound would always be peak-scaled.")
