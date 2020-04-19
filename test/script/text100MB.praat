@@ -1,10 +1,13 @@
 # text100MB.praat
-# Paul Boersma, 9 November 2008
+# Paul Boersma 2020-04-19
+
+integerProperties$ = Report integer properties
+bits = extractNumber (integerProperties$, "A pointer is")
 
 echo Text 100 MB:
 stopwatch
 a$ = "a"
-for i to 8
+for i to if bits = 32 then 7 else 8 fi
 	a$ = a$ + a$ + a$ + a$ + a$ + a$ + a$ + a$ + a$ + a$
 endfor
 t = stopwatch
