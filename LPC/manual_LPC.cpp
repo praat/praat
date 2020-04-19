@@ -768,8 +768,8 @@ DEFINITION (U"the maximum frequency subject to analysis.")
 TAG (U"##Pre-emphasis from (Hz)")
 ENTRY (U"Algorithm")
 NORMAL (U"The sound will first be resampled to twice the value of the %%Maximum frequency%, with "
-	"the algorithm described at @@Sound: Resample...|Sound: Resample@. After this, pre-emphasis is applied with the "
-	"algorithm described at @@Sound: Pre-emphasize (in-place)...|Sound: Pre-emphasize (in-place)@. For each analysis window a Gaussian "
+	"the algorithm described at @@Sound: Resample...@. After this, pre-emphasis is applied with the "
+	"algorithm described at @@Sound: Pre-emphasize (in-place)...@. For each analysis window a Gaussian "
 	"window is applied and the ##Spectrum# is calculated. The Spectrum is then transformed to a ##PowerCepstrum# with the procedure described at @@Spectrum: To PowerCepstrum@. Finally the values from the PowerCepstrum are stored in the vertical slice of the PowerCepstrogram.")
 
 MAN_END
