@@ -9,13 +9,12 @@ static integer c__12 = 12;
 static integer c__2 = 2;
 static integer c__49 = 49;
 
-/* Subroutine */ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, 
-	 integer *ihi, double *h__, integer *ldh, double *wr, 
-	double *wi, double *z__, integer *ldz, double *work, 
+int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h__,
+	integer *ldh, double *wr, double *wi, double *z__, integer *ldz, double *work,
 	integer *lwork, integer *info)
 {
     /* System generated locals */
-    char * a__1[2];
+    char *a__1[2];
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2[2], i__3;
     double d__1;
     char ch__1[2];
@@ -30,8 +29,8 @@ static integer c__49 = 49;
     bool lquery;
 
 
-/*  -- LAPACK driver routine (version 3.1) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
+/*  -- LAPACK driver routine (version 3.2) -- */
+/*     Univ. of Tennessee, Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd.. */
 /*     November 2006 */
 
 /*     .. Scalar Arguments .. */
@@ -132,9 +131,11 @@ static integer c__49 = 49;
 
 /*     LWORK (input) INTEGER */
 /*           The dimension of the array WORK.  LWORK .GE. max(1,N) */
-/*           is sufficient, but LWORK typically as large as 6*N may */
-/*           be required for optimal performance.  A workspace query */
-/*           to determine the optimal workspace size is recommended. */
+/*           is sufficient and delivers very good and sometimes */
+/*           optimal performance.  However, LWORK as large as 11*N */
+/*           may be required for optimal performance.  A workspace */
+/*           query is recommended to determine the optimal workspace */
+/*           size. */
 
 /*           If LWORK = -1, then DHSEQR does a workspace query. */
 /*           In this case, DHSEQR checks the input parameters and */
@@ -189,30 +190,30 @@ static integer c__49 = 49;
 /*             to attain best performance in each particular */
 /*             computational environment. */
 
-/*            ISPEC=1:  The DLAHQR vs DLAQR0 crossover point. */
+/*            ISPEC=12: The DLAHQR vs DLAQR0 crossover point. */
 /*                      Default: 75. (Must be at least 11.) */
 
-/*            ISPEC=2:  Recommended deflation window size. */
+/*            ISPEC=13: Recommended deflation window size. */
 /*                      This depends on ILO, IHI and NS.  NS is the */
 /*                      number of simultaneous shifts returned */
-/*                      by ILAENV(ISPEC=4).  (See ISPEC=4 below.) */
+/*                      by ILAENV(ISPEC=15).  (See ISPEC=15 below.) */
 /*                      The default for (IHI-ILO+1).LE.500 is NS. */
 /*                      The default for (IHI-ILO+1).GT.500 is 3*NS/2. */
 
-/*            ISPEC=3:  Nibble crossover point. (See ILAENV for */
+/*            ISPEC=14: Nibble crossover point. (See IPARMQ for */
 /*                      details.)  Default: 14% of deflation window */
 /*                      size. */
 
-/*            ISPEC=4:  Number of simultaneous shifts, NS, in */
-/*                      a multi-shift QR iteration. */
+/*            ISPEC=15: Number of simultaneous shifts in a multishift */
+/*                      QR iteration. */
 
 /*                      If IHI-ILO+1 is ... */
 
 /*                      greater than      ...but less    ... the */
 /*                      or equal to ...      than        default is */
 
-/*                           1               30          NS -   2(+) */
-/*                          30               60          NS -   4(+) */
+/*                           1               30          NS =   2(+) */
+/*                          30               60          NS =   4(+) */
 /*                          60              150          NS =  10(+) */
 /*                         150              590          NS =  ** */
 /*                         590             3000          NS =  64 */
@@ -221,14 +222,18 @@ static integer c__49 = 49;
 
 /*                  (+)  By default some or all matrices of this order */
 /*                       are passed to the implicit double shift routine */
-/*                       DLAHQR and NS is ignored.  See ISPEC=1 above */
-/*                       and comments in IPARM for details. */
+/*                       DLAHQR and this parameter is ignored.  See */
+/*                       ISPEC=12 above and comments in IPARMQ for */
+/*                       details. */
 
-/*                       The asterisks (**) indicate an ad-hoc */
+/*                 (**)  The asterisks (**) indicate an ad-hoc */
 /*                       function of N increasing from 10 to 64. */
 
-/*            ISPEC=5:  Select structured matrix multiply. */
-/*                      (See ILAENV for details.) Default: 3. */
+/*            ISPEC=16: Select structured matrix multiply. */
+/*                      If the number of simultaneous shifts (specified */
+/*                      by ISPEC=15) is less than 14, then the default */
+/*                      for ISPEC=16 is 0.  Otherwise the default for */
+/*                      ISPEC=16 is 2. */
 
 /*     ================================================================ */
 /*     Based on contributions by */
@@ -255,11 +260,10 @@ static integer c__49 = 49;
 
 /*     ==== NL allocates some local workspace to help small matrices */
 /*     .    through a rare DLAHQR failure.  NL .GT. NTINY = 11 is */
-/*     .    required and NL .LE. NMIN = ILAENV(ISPEC=1,...) is recom- */
+/*     .    required and NL .LE. NMIN = ILAENV(ISPEC=12,...) is recom- */
 /*     .    mended.  (The default value of NMIN is 75.)  Using NL = 49 */
 /*     .    allows up to six simultaneous shifts and a 16-by-16 */
 /*     .    deflation window.  ==== */
-
 /*     .. */
 /*     .. Local Arrays .. */
 /*     .. */
@@ -290,7 +294,7 @@ static integer c__49 = 49;
     wantt = lsame_(job, "S");
     initz = lsame_(compz, "I");
     wantz = initz || lsame_(compz, "V");
-    work[1] = (double) std::max(1_integer,*n);
+    work[1] = (double)std::max(1_integer,*n);
     lquery = *lwork == -1;
 
     *info = 0;
@@ -300,15 +304,15 @@ static integer c__49 = 49;
 	*info = -2;
     } else if (*n < 0) {
 	*info = -3;
-    } else if (*ilo < 1 || *ilo > std::max(1_integer,*n)) {
+    } else if (*ilo < 1 || *ilo >std::max(1_integer,*n)) {
 	*info = -4;
-    } else if (*ihi < std::min(*ilo,*n) || *ihi > *n) {
+    } else if (*ihi <std::min(*ilo,*n) || *ihi > *n) {
 	*info = -5;
-    } else if (*ldh < std::max(1_integer,*n)) {
+    } else if (*ldh <std::max(1_integer,*n)) {
 	*info = -7;
-    } else if (*ldz < 1 || wantz && *ldz < std::max(1_integer,*n)) {
+    } else if (*ldz < 1 || wantz && *ldz <std::max(1_integer,*n)) {
 	*info = -11;
-    } else if (*lwork < std::max(1_integer,*n) && ! lquery) {
+    } else if (*lwork <std::max(1_integer,*n) && ! lquery) {
 	*info = -13;
     }
 
@@ -335,8 +339,8 @@ static integer c__49 = 49;
 /*        ==== Ensure reported workspace size is backward-compatible with */
 /*        .    previous LAPACK versions. ==== */
 /* Computing MAX */
-	d__1 = (double) std::max(1_integer,*n);
-	work[1] = std::max(d__1,work[1]);
+	d__1 = (double)std::max(1_integer,*n);
+	work[1] =std::max(d__1,work[1]);
 	return 0;
 
     } else {
@@ -378,7 +382,7 @@ static integer c__49 = 49;
 	i__2[1] = 1, a__1[1] = const_cast<char *>(compz);
 	s_cat(ch__1, a__1, i__2, &c__2, 2_integer);
 	nmin = ilaenv_(&c__12, "DHSEQR", ch__1, n, ilo, ihi, lwork);
-	nmin = std::max(11_integer,nmin);
+	nmin =std::max(11_integer,nmin);
 
 /*        ==== DLAQR0 for big matrices; DLAHQR for small ones ==== */
 
@@ -443,8 +447,8 @@ static integer c__49 = 49;
 /*        .    previous LAPACK versions. ==== */
 
 /* Computing MAX */
-	d__1 = (double) std::max(1_integer,*n);
-	work[1] = std::max(d__1,work[1]);
+	d__1 = (double)std::max(1_integer,*n);
+	work[1] =std::max(d__1,work[1]);
     }
 
 /*     ==== End of DHSEQR ==== */

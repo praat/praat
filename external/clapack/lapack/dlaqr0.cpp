@@ -42,7 +42,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
     integer lwkopt;
 
 
-/*  -- LAPACK auxiliary routine (version 3.2.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -110,7 +110,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 /*     WR    (output) DOUBLE PRECISION array, dimension (IHI) */
 /*     WI    (output) DOUBLE PRECISION array, dimension (IHI) */
 /*           The real and imaginary parts, respectively, of the computed */
-/*           eigenvalues of H(ILO:IHI,ILO:IHI) are stored WR(ILO:IHI) */
+/*           eigenvalues of H(ILO:IHI,ILO:IHI) are stored in WR(ILO:IHI) */
 /*           and WI(ILO:IHI). If two eigenvalues are computed as a */
 /*           complex conjugate pair, they are stored in consecutive */
 /*           elements of WR and WI, say the i-th and (i+1)th, with */
@@ -215,14 +215,15 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 /*     .    (This is a hard limit.) ==== */
 
 /*     ==== Exceptional deflation windows:  try to cure rare */
-/*     .    slow convergence by increasing the size of the */
+/*     .    slow convergence by varying the size of the */
 /*     .    deflation window after KEXNW iterations. ===== */
 
 /*     ==== Exceptional shifts: try to cure rare slow convergence */
 /*     .    with ad-hoc exceptional shifts every KEXSH iterations. */
-/*     .    The constants WILK1 and WILK2 are used to form the */
-/*     .    exceptional shifts. ==== */
+/*     .    ==== */
 
+/*     ==== The constants WILK1 and WILK2 are used to form the */
+/*     .    exceptional shifts. ==== */
 /*     .. */
 /*     .. Local Scalars .. */
 /*     .. */
@@ -256,11 +257,9 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 	return 0;
     }
 
-/*     ==== Tiny matrices must use DLAHQR. ==== */
-
     if (*n <= 11) {
 
-/*        ==== Estimate optimal workspace. ==== */
+/*     ==== Tiny matrices must use DLAHQR. ==== */
 
 	lwkopt = 1;
 	if (*lwork != -1) {
@@ -442,7 +441,7 @@ L20:
 				> (d__2 = h__[kwtop - 1 + (kwtop - 2) * h_dim1],
 				abs(d__2))) {
 			++nw;
-			}
+				}
 			}
 		    }
 		    if (ndfl < 5) {
@@ -453,7 +452,7 @@ L20:
 		    ndec = 0;
 			}
 			nw -= ndec;
-		}
+			}
 
 /*           ==== Aggressive early deflation: */
 /*           .    split workspace under the subdiagonal into */

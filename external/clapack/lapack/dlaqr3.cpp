@@ -10,12 +10,10 @@ static double c_b17 = 0.;
 static double c_b18 = 1.;
 static integer c__12 = 12;
 
-int dlaqr3_(bool *wantt, bool *wantz, integer *n, 
-	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
-	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
-	integer *ns, integer *nd, double *sr, double *si, double *
-	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
-	nv, double *wv, integer *ldwv, double *work, integer *lwork)
+int dlaqr3_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
+	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
+	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh,
+	double *t, integer *ldt, integer *nv, double *wv, integer *ldwv, double *work, integer *lwork)
 {
     /* System generated locals */
     integer h_dim1, h_offset, t_dim1, t_offset, v_dim1, v_offset, wv_dim1, 
@@ -41,9 +39,9 @@ int dlaqr3_(bool *wantt, bool *wantz, integer *n,
     integer lwkopt;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
-/*     November 2006 */
+/*  -- LAPACK auxiliary routine (version 3.2.1)                        -- */
+/*     Univ. of Tennessee, Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd.. */
+/*  -- April 2009                                                                            -- */
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -268,7 +266,7 @@ int dlaqr3_(bool *wantt, bool *wantz, integer *n,
 /*     ... for an empty active block ... ==== */
     *ns = 0;
     *nd = 0;
-	work[1] = 1.0;
+	work[1] = 1.;
     if (*ktop > *kbot) {
 	return 0;
     }

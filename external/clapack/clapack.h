@@ -120,10 +120,9 @@ int dbdsdc_(const char *uplo, const char *compq, integer *n, double *
 	double *rconde, double *rcondv, double *work, integer *
 	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info);
 
- int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *
-	a, integer *lda, double *wr, double *wi, double *vl, 
-	integer *ldvl, double *vr, integer *ldvr, double *work, 
-	integer *lwork, integer *info);
+ int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda,
+	double *wr,	double *wi, double *vl, integer *ldvl, double *vr, integer *ldvr, 
+	double *work, integer *lwork, integer *info);
 
  int dgeevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, double *a, integer *lda, double *wr, 
@@ -372,10 +371,9 @@ int dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, in
 	integer *ldvr, integer *mm, integer *m, double *work, integer *
 	ifaill, integer *ifailr, integer *info);
 
- int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo,
-	 integer *ihi, double *h__, integer *ldh, double *wr, 
-	double *wi, double *z__, integer *ldz, double *work, 
-	integer *lwork, integer *info);
+ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi,
+	double *h__, integer *ldh, double *wr, double *wi, double *z__, integer *ldz,
+	double *work, integer *lwork, integer *info);
 
 double dla_gbrcond__(const char *trans, integer *n, integer *kl, integer *ku, 
 	double *ab, integer *ldab, double *afb, integer *ldafb, 
@@ -612,19 +610,15 @@ int dlanv2_(double *a, double *b, double *c__,
 	double *sr1, double *si1, double *sr2, double *si2, 
 	double *v);
 
- int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
-	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
-	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
-	integer *ns, integer *nd, double *sr, double *si, double *
-	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
-	nv, double *wv, integer *ldwv, double *work, integer *lwork);
+ int dlaqr2_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
+	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
+	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh, 
+	double *t, integer *ldt, integer *nv, double *wv, integer *ldwv, double *work, integer *lwork);
 
- int dlaqr3_(bool *wantt, bool *wantz, integer *n, 
-	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
-	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
-	integer *ns, integer *nd, double *sr, double *si, double *
-	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
-	nv, double *wv, integer *ldwv, double *work, integer *lwork);
+int dlaqr3_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
+	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
+	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh,
+	double *t, integer *ldt, integer *nv, double *wv, integer *ldwv, double *work, integer *lwork);
 
  int dlaqr4_(bool *wantt, bool *wantz, integer *n, 
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
@@ -667,10 +661,9 @@ int dlanv2_(double *a, double *b, double *c__,
 	 integer *incv, double *tau, double *c__, integer *ldc, 
 	double *work);
 
- int dlarfb_(const char *side, const char *trans, const char *direct, const char *
-	storev, integer *m, integer *n, integer *k, double *v, integer *
-	ldv, double *t, integer *ldt, double *c__, integer *ldc, 
-	double *work, integer *ldwork);
+int dlarfb_(const char *side, const char *trans, const char *direct, const char *storev, integer *m,
+	integer *n, integer *k, double *v, integer *ldv, double *t, integer *ldt, double *c__, 
+	integer *ldc, double *work, integer *ldwork);
 
 int dlarfg_(integer *n, double *alpha, double *x, integer *incx, double *tau);
 
@@ -757,21 +750,17 @@ int dlarz_(const char *side, integer *m, integer *n, integer *l,
 	double *v, integer *incv, double *tau, double *c__, 
 	integer *ldc, double *work);
 
- int dlarzb_(const char *side, const char *trans, const char *direct, const char *
-	storev, integer *m, integer *n, integer *k, integer *l, double *v,
-	 integer *ldv, double *t, integer *ldt, double *c__, integer *
-	ldc, double *work, integer *ldwork  	);
+ int dlarzb_(const char *side, const char *trans, const char *direct, const char *storev,
+	integer *m, integer *n, integer *k, integer *l, double *v, integer *ldv, double *t,
+	integer *ldt, double *c__, integer *ldc, double *work, integer *ldwork);
 
  int dlarzt_(const char *direct, const char *storev, integer *n, integer *
-	k, double *v, integer *ldv, double *tau, double *t, 
-	integer *ldt);
+	k, double *v, integer *ldv, double *tau, double *t, integer *ldt);
 
- int dlas2_(double *f, double *g, double *h__, 
-	double *ssmin, double *ssmax);
+ int dlas2_(double *f, double *g, double *h__, double *ssmin, double *ssmax);
 
- int dlascl_(const char *type__, integer *kl, integer *ku, 
-	double *cfrom, double *cto, integer *m, integer *n, 
-	double *a, integer *lda, integer *info);
+ int dlascl_(const char *type__, integer *kl, integer *ku, double *cfrom, double *cto, 
+	integer *m, integer *n, double *a, integer *lda, integer *info);
 
 int dlascl2_(integer *m, integer *n, double *d__, double *x, integer *ldx);
 

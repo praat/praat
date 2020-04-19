@@ -36,7 +36,6 @@ static double c_b443 = 1.;
     double smlnum;
     bool lquery, wntuas, wntvas;
 
-
 /*  -- LAPACK driver routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */

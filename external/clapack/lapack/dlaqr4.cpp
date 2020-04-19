@@ -13,9 +13,8 @@ static bool c_false = false;
 static integer c__1 = 1;
 static integer c__3 = 3;
 
-/* Subroutine */ int dlaqr4_(bool *wantt, bool *wantz, integer *n, 
-	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
-	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
+int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, double *h__,
+	integer *ldh, double *wr, double *wi, integer *iloz, integer *ihiz, double *z__,
 	integer *ldz, double *work, integer *lwork, integer *info)
 {
     /* System generated locals */
@@ -34,8 +33,8 @@ static integer c__3 = 3;
     char jbcmpz[2];
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
+/*     Univ. of Tennessee, Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd.. */
 /*     November 2006 */
 
 /*     .. Scalar Arguments .. */
@@ -109,7 +108,7 @@ static integer c__3 = 3;
 /*     WR    (output) DOUBLE PRECISION array, dimension (IHI) */
 /*     WI    (output) DOUBLE PRECISION array, dimension (IHI) */
 /*           The real and imaginary parts, respectively, of the computed */
-/*           eigenvalues of H(ILO:IHI,ILO:IHI) are stored WR(ILO:IHI) */
+/*           eigenvalues of H(ILO:IHI,ILO:IHI) are stored in WR(ILO:IHI) */
 /*           and WI(ILO:IHI). If two eigenvalues are computed as a */
 /*           complex conjugate pair, they are stored in consecutive */
 /*           elements of WR and WI, say the i-th and (i+1)th, with */
@@ -212,14 +211,15 @@ static integer c__3 = 3;
 /*     .    (This is a hard limit.) ==== */
 
 /*     ==== Exceptional deflation windows:  try to cure rare */
-/*     .    slow convergence by increasing the size of the */
+/*     .    slow convergence by varying the size of the */
 /*     .    deflation window after KEXNW iterations. ===== */
 
 /*     ==== Exceptional shifts: try to cure rare slow convergence */
 /*     .    with ad-hoc exceptional shifts every KEXSH iterations. */
-/*     .    The constants WILK1 and WILK2 are used to form the */
-/*     .    exceptional shifts. ==== */
+/*     .    ==== */
 
+/*     .====    The constants WILK1 and WILK2 are used to form the */
+/*     .    exceptional shifts. ==== */
 /*     .. */
 /*     .. Local Scalars .. */
 /*     .. */

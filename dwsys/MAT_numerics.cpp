@@ -92,17 +92,15 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 	integer lwork = -1, info;
 	const char *jobvl = "No vectors";
 	const char *jobvr = ( out_eigenvectors ? "Vectors Yes" : "No vectors" );
-	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
-		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
-		a.nrow, & wtmp, lwork, & info);
+	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow, & eigenvalues_re [1], & eigenvalues_im [1],
+		nullptr, a.nrow, p_evec_right, a.nrow, & wtmp, lwork, & info);
 	Melder_require (info == 0,
 		U"NUMlapack_dhseqr_ query returns error ", info, U".");
 	
 	lwork = Melder_iceiling (wtmp);
 	autoVEC work = newVECraw (lwork);
-	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
-		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
-		a.nrow, & work [1], lwork, & info);
+	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow, & eigenvalues_re [1], & eigenvalues_im [1],
+		nullptr, a.nrow, p_evec_right, a.nrow, & work [1], lwork, & info);
 	integer numberOfEigenvalues = a.nrow, istart = 0;
 	if (info > 0)
 		istart = info; // only evals [info+1: a.nrow], no eigenvectors

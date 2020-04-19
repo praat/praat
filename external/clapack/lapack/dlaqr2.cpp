@@ -9,12 +9,10 @@ static double c_b12 = 0.;
 static double c_b13 = 1.;
 static bool c_true = true;
 
-int dlaqr2_(bool *wantt, bool *wantz, integer *n, 
-	integer *ktop, integer *kbot, integer *nw, double *h__, integer *
-	ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz, 
-	integer *ns, integer *nd, double *sr, double *si, double *
-	v, integer *ldv, integer *nh, double *t, integer *ldt, integer *
-	nv, double *wv, integer *ldwv, double *work, integer *lwork)
+int dlaqr2_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
+	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
+	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh,
+	double *t, integer *ldt, integer *nv, double *wv, integer *ldwv, double *work, integer *lwork)
 {
     /* System generated locals */
     integer h_dim1, h_offset, t_dim1, t_offset, v_dim1, v_offset, wv_dim1, 
@@ -39,9 +37,9 @@ int dlaqr2_(bool *wantt, bool *wantz, integer *n,
     double smlnum;
     integer lwkopt;
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
-/*     November 2006 */
+/*  -- LAPACK auxiliary routine (version 3.2.1)                        -- */
+/*     Univ. of Tennessee, Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd.. */
+/*  -- April 2009                                                      -- */
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -238,7 +236,7 @@ int dlaqr2_(bool *wantt, bool *wantz, integer *n,
 		c_n1, &info);
 	lwk1 = (integer) work[1];
 
-/*        ==== Workspace query call to DORGHR ==== */
+/*        ==== Workspace query call to DORMHR ==== */
 
 	i__1 = jw - 1;
 	dormhr_("R", "N", &jw, &jw, &c__1, &i__1, &t[t_offset], ldt, &work[1], 
