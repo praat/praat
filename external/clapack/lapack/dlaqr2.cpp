@@ -111,7 +111,7 @@ int dlaqr2_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, 
 /*          Specify the rows of Z to which transformations must be */
 /*          applied if WANTZ is .TRUE.. 1 .LE. ILOZ .LE. IHIZ .LE. N. */
 
-/*     Z       (input/output) DOUBLE PRECISION array, dimension (LDZ,IHI) */
+/*     Z       (input/output) DOUBLE PRECISION array, dimension (LDZ,N) */
 /*          IF WANTZ is .TRUE., then on output, the orthogonal */
 /*          similarity transformation mentioned above has been */
 /*          accumulated into Z(ILOZ:IHIZ,ILO:IHI) from the right. */
@@ -561,7 +561,7 @@ L60:
 		 &i__3);
 
 /*        ==== Accumulate orthogonal matrix in order update */
-/*        .    H and Z, if requested.  (A modified version */
+/*        .    H and Z, if requested.  ==== */
 
 	if (*ns > 1 && s != 0.) {
 	    i__1 = *lwork - jw;

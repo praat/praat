@@ -109,7 +109,7 @@ int dlaqr3_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, 
 /*          Specify the rows of Z to which transformations must be */
 /*          applied if WANTZ is .TRUE.. 1 .LE. ILOZ .LE. IHIZ .LE. N. */
 
-/*     Z       (input/output) DOUBLE PRECISION array, dimension (LDZ,IHI) */
+/*     Z       (input/output) DOUBLE PRECISION array, dimension (LDZ,N) */
 /*          IF WANTZ is .TRUE., then on output, the orthogonal */
 /*          similarity transformation mentioned above has been */
 /*          accumulated into Z(ILOZ:IHIZ,ILO:IHI) from the right. */
@@ -313,7 +313,7 @@ int dlaqr3_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, 
 		h__[kwtop + (kwtop - 1) * h_dim1] = 0.;
 	    }
 	}
-	work[1]=1.;
+	work[1] = 1.;
 	return 0;
     }
 
@@ -416,7 +416,7 @@ L20:
 		*ns += -2;
 	    } else {
 
-/*              ==== Undflatable. Move them up out of the way. */
+/*              ==== Undeflatable. Move them up out of the way. */
 /*              .    Fortunately, DTREXC does the right thing with */
 /*              .    ILST in case of a rare exchange failure. ==== */
 
@@ -575,7 +575,7 @@ L60:
 		 &i__3);
 
 /*        ==== Accumulate orthogonal matrix in order update */
-/*        .    H and Z, if requested.  (A modified version */
+/*        .    H and Z, if requested. ====  */
 
 	if (*ns > 1 && s != 0.) {
 	    i__1 = *lwork - jw;

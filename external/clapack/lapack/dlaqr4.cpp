@@ -212,13 +212,13 @@ int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, do
 
 /*     ==== Exceptional deflation windows:  try to cure rare */
 /*     .    slow convergence by varying the size of the */
-/*     .    deflation window after KEXNW iterations. ===== */
+/*     .    deflation window after KEXNW iterations. ==== */
 
 /*     ==== Exceptional shifts: try to cure rare slow convergence */
 /*     .    with ad-hoc exceptional shifts every KEXSH iterations. */
 /*     .    ==== */
 
-/*     .====    The constants WILK1 and WILK2 are used to form the */
+/*     ==== The constants WILK1 and WILK2 are used to form the */
 /*     .    exceptional shifts. ==== */
 /*     .. */
 /*     .. Local Scalars .. */
