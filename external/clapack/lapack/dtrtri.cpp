@@ -15,7 +15,7 @@ static double c_b22 = -1.;
     /* System generated locals */
     char * a__1[2];
     integer a_dim1, a_offset, i__1, i__2[2], i__3, i__4, i__5;
-    char ch__1[2];
+    char ch__1[3] = { 0 };
 
     /* Local variables */
     integer j, jb, nb, nn;

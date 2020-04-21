@@ -14,7 +14,7 @@ static integer c__2 = 2;
     /* System generated locals */
     char * a__1[2];
     integer a_dim1, a_offset, c_dim1, c_offset, i__1[2], i__2, i__3;
-    char ch__1[2];
+    char ch__1[3] = { 0 };
 
     /* Local variables */
     integer i1, i2, nb, mi, ni, nq, nw;

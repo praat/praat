@@ -30,7 +30,7 @@ int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, do
     double zdum[1]	/* was [1][1] */;
     bool sorted;
     integer itmax, nsmax, nwmax, kwtop, lwkopt, nibble, nwupbd;
-    char jbcmpz[2];
+    char jbcmpz[3] = { 0 };
 
 
 /*  -- LAPACK auxiliary routine (version 3.2) -- */
