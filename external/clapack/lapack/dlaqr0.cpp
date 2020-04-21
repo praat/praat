@@ -37,7 +37,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
     double zdum[1]	/* was [1][1] */;
     integer kacc22, itmax, nsmax, nwmax, kwtop;
     integer nibble, nwupbd;
-    char jbcmpz[1];
+    char jbcmpz[3] = { 0 };
     bool sorted;
     integer lwkopt;
 
@@ -189,14 +189,12 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 /*                If INFO .GT. 0 and WANTZ is .FALSE., then Z is not */
 /*                accessed. */
 
-
 /*     ================================================================ */
 /*     Based on contributions by */
 /*        Karen Braman and Ralph Byers, Department of Mathematics, */
 /*        University of Kansas, USA */
 
 /*     ================================================================ */
-
 /*     References: */
 /*       K. Braman, R. Byers and R. Mathias, The Multi-Shift QR */
 /*       Algorithm Part I: Maintaining Well Focused Shifts, and Level 3 */
@@ -216,7 +214,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 
 /*     ==== Exceptional deflation windows:  try to cure rare */
 /*     .    slow convergence by varying the size of the */
-/*     .    deflation window after KEXNW iterations. ===== */
+/*     .    deflation window after KEXNW iterations. ==== */
 
 /*     ==== Exceptional shifts: try to cure rare slow convergence */
 /*     .    with ad-hoc exceptional shifts every KEXSH iterations. */
@@ -259,7 +257,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 
     if (*n <= 11) {
 
-/*     ==== Tiny matrices must use DLAHQR. ==== */
+/*        ==== Tiny matrices must use DLAHQR. ==== */
 
 	lwkopt = 1;
 	if (*lwork != -1) {
@@ -275,18 +273,18 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 
 	*info = 0;
 
-/*     ==== Set up job flags for ILAENV. ==== */
+/*        ==== Set up job flags for ILAENV. ==== */
 
-    if (*wantt) {
-		*(unsigned char *)jbcmpz = 'S';
-    } else {
-		*(unsigned char *)jbcmpz = 'E';
-    }
-    if (*wantz) {
-		*(unsigned char *)&jbcmpz[1] = 'V';
-    } else {
-		*(unsigned char *)&jbcmpz[1] = 'N';
-    }
+	if (*wantt) {
+	    *(unsigned char *)jbcmpz = 'S';
+	} else {
+	    *(unsigned char *)jbcmpz = 'E';
+	}
+	if (*wantz) {
+	    *(unsigned char *)&jbcmpz[1] = 'V';
+	} else {
+	    *(unsigned char *)&jbcmpz[1] = 'N';
+	}
 
 /*        ==== NWR = recommended deflation window size.  At this */
 /*        .    point,  N .GT. NTINY = 11, so there is enough */
@@ -307,8 +305,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 
 	nsr = ilaenv_(&c__15, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
 /* Computing MIN */
-	i__1 = nsr, i__2 = (*n + 6) / 9, i__1 = std::min(i__1,i__2), i__2 = *ihi - 
-		*ilo;
+	i__1 = nsr, i__2 = (*n + 6) / 9, i__1 = std::min(i__1,i__2), i__2 = *ihi - *ilo;
 	nsr = std::min(i__1,i__2);
 /* Computing MAX */
 	i__1 = 2, i__2 = nsr - nsr % 2;
@@ -408,7 +405,7 @@ int dlaqr0_(bool *wantt, bool *wantz, integer *n,
 L20:
 	    ktop = k;
 
-/*           ==== Select deflation window size ==== */
+/*           ==== Select deflation window size: */
 /*           .    Typical Case: */
 /*           .      If possible and advisable, nibble the entire */
 /*           .      active block.  If not, use size MIN(NWR,NWMAX) */
@@ -423,14 +420,15 @@ L20:
 /*           .      in general, more powerful than smaller ones, */
 /*           .      rapidly increase the window to the maximum possible. */
 /*           .      Then, gradually reduce the window size. ==== */
-	    nh = kbot - ktop + 1;
+
+		nh = kbot - ktop + 1;
 		nwupbd = std::min(nh,nwmax);
 	    if (ndfl < 5) {
 		nw = std::min(nwupbd,nwr);
 		} else {
 /* Computing MIN */
-		    i__2 =nwupbd, i__3 = nw << 1;
-		    nw = std::min(i__2,i__3);
+		i__2 =nwupbd, i__3 = nw << 1;
+		nw = std::min(i__2,i__3);
 		}
 		if (nw < nwmax) {
 		if (nw >= nh - 1) {
