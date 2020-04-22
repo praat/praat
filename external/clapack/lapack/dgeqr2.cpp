@@ -121,7 +121,7 @@ static integer c__1 = 1;
 	i__2 = *m - i__ + 1;
 /* Computing MIN */
 	i__3 = i__ + 1;
-	dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[std::min(i__3, *m)+ i__ * a_dim1]
+	dlarfp_(&i__2, &a[i__ + i__ * a_dim1], &a[std::min(i__3, *m)+ i__ * a_dim1]
 , &c__1, &tau[i__]);
 	if (i__ < *n) {
 

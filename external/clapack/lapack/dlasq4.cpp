@@ -1,15 +1,11 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlasq4_(integer *i0, integer *n0, double *z__, 
+int dlasq4_(integer *i0, integer *n0, double *z__, 
 	integer *pp, integer *n0in, double *dmin__, double *dmin1, 
 	double *dmin2, double *dn, double *dn1, double *dn2, 
-	double *tau, integer *ttype)
+	double *tau, integer *ttype, double *g)
 {
-    /* Initialized data */
-
-    static double g = 0.;
-
     /* System generated locals */
     integer i__1;
     double d__1, d__2;
@@ -20,9 +16,15 @@
     double gam, gap1, gap2;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
-/*     November 2006 */
+/*  -- LAPACK routine (version 3.2)                                    -- */
+
+/*  -- Contributed by Osni Marques of the Lawrence Berkeley National   -- */
+/*  -- Laboratory and Beresford Parlett of the Univ. of California at  -- */
+/*  -- Berkeley                                                        -- */
+/*  -- November 2008                                                   -- */
+
+/*  -- LAPACK is a software package provided by Univ. of Tennessee,    -- */
+/*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..-- */
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -47,7 +49,7 @@
 /*  PP    (input) INTEGER */
 /*        PP=0 for ping, PP=1 for pong. */
 
-/*  N0IN  (input) INTEGER */
+/*  NOIN  (input) INTEGER */
 /*        The value of N0 at start of EIGTEST. */
 
 /*  DMIN  (input) DOUBLE PRECISION */
@@ -74,6 +76,10 @@
 /*  TTYPE (output) INTEGER */
 /*        Shift type. */
 
+/*  G     (input/output) REAL */
+/*        G is passed as an argument in order to save its value between */
+/*        calls to DLASQ4. */
+
 /*  Further Details */
 /*  =============== */
 /*  CNST1 = 9/16 */
@@ -86,19 +92,15 @@
 /*     .. */
 /*     .. Intrinsic Functions .. */
 /*     .. */
-/*     .. Save statement .. */
-/*     .. */
-/*     .. Data statement .. */
-    /* Parameter adjustments */
-    --z__;
-
-    /* Function Body */
-/*     .. */
 /*     .. Executable Statements .. */
 
 /*     A negative DMIN forces the shift to take that absolute value */
 /*     TTYPE records the type of shift. */
 
+    /* Parameter adjustments */
+    --z__;
+
+    /* Function Body */
     if (*dmin__ <= 0.) {
 	*tau = -(*dmin__);
 	*ttype = -1;
@@ -253,13 +255,13 @@ L40:
 /*           Case 6, no information to guide us. */
 
 	    if (*ttype == -6) {
-		g += (1. - g) * .333;
+		*g += (1. - *g) * .333;
 	    } else if (*ttype == -18) {
-		g = .083250000000000005;
+		*g = .083250000000000005;
 	    } else {
-		g = .25;
+		*g = .25;
 	    }
-	    s = g * *dmin__;
+	    s = *g * *dmin__;
 	    *ttype = -6;
 	}
 

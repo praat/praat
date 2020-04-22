@@ -9,7 +9,7 @@ static integer c__3 = 3;
 static integer c__1 = 1;
 static integer c__2 = 2;
 
-/* Subroutine */ int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22, 
+int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22, 
 	integer *n, integer *ktop, integer *kbot, integer *nshfts, double 
 	*sr, double *si, double *h__, integer *ldh, integer *iloz, 
 	integer *ihiz, double *z__, integer *ldz, double *v, integer *
@@ -20,7 +20,7 @@ static integer c__2 = 2;
     integer h_dim1, h_offset, u_dim1, u_offset, v_dim1, v_offset, wh_dim1, 
 	    wh_offset, wv_dim1, wv_offset, z_dim1, z_offset, i__1, i__2, i__3,
 	     i__4, i__5, i__6, i__7;
-    double d__1, d__2, d__3, d__4;
+    double d__1, d__2, d__3, d__4, d__5;
 
     /* Local variables */
     integer i__, j, k, m, i2, j2, i4, j4, k1;
@@ -31,20 +31,14 @@ static integer c__2 = 2;
     double ulp;
     integer knz, kzs;
     double tst1, tst2, beta;
-    bool blk22, bmp22;
-    integer mend, jcol, jlen, jbot, mbot;
-    double swap;
-    integer jtop, jrow, mtop;
-    double alpha;
-    bool accum;
+    bool blk22, bmp22, accum;
+    integer mend, jcol, jlen, jbot, mbot, jtop, jrow, mtop;
     integer ndcol, incol, krcol, nbmps;
-    double safmin;
-    double safmax, refsum;
+    double swap, alpha, safmin, safmax, refsum, smlnum;
     integer mstart;
-    double smlnum;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -94,11 +88,12 @@ static integer c__2 = 2;
 /*             NSHFTS gives the number of simultaneous shifts.  NSHFTS */
 /*             must be positive and even. */
 
-/*      SR     (input) DOUBLE PRECISION array of size (NSHFTS) */
-/*      SI     (input) DOUBLE PRECISION array of size (NSHFTS) */
+/*      SR     (input/output) DOUBLE PRECISION array of size (NSHFTS) */
+/*      SI     (input/output) DOUBLE PRECISION array of size (NSHFTS) */
 /*             SR contains the real parts and SI contains the imaginary */
 /*             parts of the NSHFTS shifts of origin that define the */
-/*             multi-shift QR sweep. */
+/*             multi-shift QR sweep.  On output SR and SI may be */
+/*             reordered. */
 
 /*      H      (input/output) DOUBLE PRECISION array of size (LDH,N) */
 /*             On input H contains a Hessenberg matrix.  On output a */
@@ -159,13 +154,12 @@ static integer c__2 = 2;
 /*             LDWV is the leading dimension of WV as declared in the */
 /*             in the calling subroutine.  LDWV.GE.NV. */
 
-
 /*     ================================================================ */
 /*     Based on contributions by */
 /*        Karen Braman and Ralph Byers, Department of Mathematics, */
 /*        University of Kansas, USA */
 
-/*     ============================================================ */
+/*     ================================================================ */
 /*     Reference: */
 
 /*     K. Braman, R. Byers and R. Mathias, The Multi-Shift QR */
@@ -173,7 +167,7 @@ static integer c__2 = 2;
 /*     Level 3 Performance, SIAM Journal of Matrix Analysis, */
 /*     volume 23, pages 929--947, 2002. */
 
-/*     ============================================================ */
+/*     ================================================================ */
 /*     .. Parameters .. */
 /*     .. */
 /*     .. Local Scalars .. */
@@ -247,7 +241,7 @@ static integer c__2 = 2;
 /* L10: */
     }
 
-/*     ==== NSHFTS is supposed to be even, but if is odd, */
+/*     ==== NSHFTS is supposed to be even, but if it is odd, */
 /*     .    then simply reduce it by one.  The shuffle above */
 /*     .    ensures that the dropped shift is real and that */
 /*     .    the remaining shifts are paired. ==== */
@@ -350,18 +344,13 @@ static integer c__2 = 2;
 			    v_dim1 + 1]);
 
 /*                 ==== A Bulge may collapse because of vigilant */
-/*                 .    deflation or destructive underflow.  (The */
-/*                 .    initial bulge is always collapsed.) Use */
-/*                 .    the two-small-subdiagonals trick to try */
-/*                 .    to get it started again. If V(2,M).NE.0 and */
-/*                 .    V(3,M) = H(K+3,K+1) = H(K+3,K+2) = 0, then */
-/*                 .    this bulge is collapsing into a zero */
-/*                 .    subdiagonal.  It will be restarted next */
-/*                 .    trip through the loop.) */
+/*                 .    deflation or destructive underflow.  In the */
+/*                 .    underflow case, try the two-small-subdiagonals */
+/*                 .    trick to try to reinflate the bulge.  ==== */
 
-		    if (v[m * v_dim1 + 1] != 0. && (v[m * v_dim1 + 3] != 0. ||
-			     h__[k + 3 + (k + 1) * h_dim1] == 0. && h__[k + 3 
-			    + (k + 2) * h_dim1] == 0.)) {
+		    if (h__[k + 3 + k * h_dim1] != 0. || h__[k + 3 + (k + 1) *
+			     h_dim1] != 0. || h__[k + 3 + (k + 2) * h_dim1] ==
+			     0.) {
 
 /*                    ==== Typical case: not collapsed (yet). ==== */
 
@@ -371,47 +360,33 @@ static integer c__2 = 2;
 		    } else {
 
 /*                    ==== Atypical case: collapsed.  Attempt to */
-/*                    .    reintroduce ignoring H(K+1,K).  If the */
-/*                    .    fill resulting from the new reflector */
-/*                    .    is too large, then abandon it. */
+/*                    .    reintroduce ignoring H(K+1,K) and H(K+2,K). */
+/*                    .    If the fill resulting from the new */
+/*                    .    reflector is too large, then abandon it. */
 /*                    .    Otherwise, use the new one. ==== */
 
 			dlaqr1_(&c__3, &h__[k + 1 + (k + 1) * h_dim1], ldh, &
 				sr[(m << 1) - 1], &si[(m << 1) - 1], &sr[m * 
 				2], &si[m * 2], vt);
-			scl = abs(vt[0]) + abs(vt[1]) + abs(vt[2]);
-			if (scl != 0.) {
-			    vt[0] /= scl;
-			    vt[1] /= scl;
-			    vt[2] /= scl;
-			}
+			alpha = vt[0];
+			dlarfg_(&c__3, &alpha, &vt[1], &c__1, vt);
+			refsum = vt[0] * (h__[k + 1 + k * h_dim1] + vt[1] * 
+				h__[k + 2 + k * h_dim1]);
 
-/*                    ==== The following is the traditional and */
-/*                    .    conservative two-small-subdiagonals */
-/*                    .    test.  ==== */
-/*                    . */
-			if ((d__1 = h__[k + 1 + k * h_dim1], abs(d__1)) * (
-				abs(vt[1]) + abs(vt[2])) > ulp * abs(vt[0]) * 
-				((d__2 = h__[k + k * h_dim1], abs(d__2)) + (
-				d__3 = h__[k + 1 + (k + 1) * h_dim1], abs(
-				d__3)) + (d__4 = h__[k + 2 + (k + 2) * h_dim1]
-				, abs(d__4)))) {
+			if ((d__1 = h__[k + 2 + k * h_dim1] - refsum * vt[1], 
+				abs(d__1)) + (d__2 = refsum * vt[2], abs(d__2)
+				) > ulp * ((d__3 = h__[k + k * h_dim1], abs(
+				d__3)) + (d__4 = h__[k + 1 + (k + 1) * h_dim1]
+				, abs(d__4)) + (d__5 = h__[k + 2 + (k + 2) * 
+				h_dim1], abs(d__5)))) {
 
 /*                       ==== Starting a new bulge here would */
-/*                       .    create non-negligible fill.   If */
-/*                       .    the old reflector is diagonal (only */
-/*                       .    possible with underflows), then */
-/*                       .    change it to I.  Otherwise, use */
-/*                       .    it with trepidation. ==== */
+/*                       .    create non-negligible fill.  Use */
+/*                       .    the old one with trepidation. ==== */
 
-			    if (v[m * v_dim1 + 2] == 0. && v[m * v_dim1 + 3] 
-				    == 0.) {
-				v[m * v_dim1 + 1] = 0.;
-			    } else {
-				h__[k + 1 + k * h_dim1] = beta;
-				h__[k + 2 + k * h_dim1] = 0.;
-				h__[k + 3 + k * h_dim1] = 0.;
-			    }
+			    h__[k + 1 + k * h_dim1] = beta;
+			    h__[k + 2 + k * h_dim1] = 0.;
+			    h__[k + 3 + k * h_dim1] = 0.;
 			} else {
 
 /*                       ==== Stating a new bulge here would */
@@ -419,12 +394,7 @@ static integer c__2 = 2;
 /*                       .    Replace the old reflector with */
 /*                       .    the new one. ==== */
 
-			    alpha = vt[0];
-			    dlarfg_(&c__3, &alpha, &vt[1], &c__1, vt);
-			    refsum = h__[k + 1 + k * h_dim1] + h__[k + 2 + k *
-				     h_dim1] * vt[1] + h__[k + 3 + k * h_dim1]
-				     * vt[2];
-			    h__[k + 1 + k * h_dim1] -= vt[0] * refsum;
+			    h__[k + 1 + k * h_dim1] -= refsum;
 			    h__[k + 2 + k * h_dim1] = 0.;
 			    h__[k + 3 + k * h_dim1] = 0.;
 			    v[m * v_dim1 + 1] = vt[0];
@@ -455,12 +425,6 @@ static integer c__2 = 2;
 		    h__[k + 1 + k * h_dim1] = beta;
 		    h__[k + 2 + k * h_dim1] = 0.;
 		}
-	    } else {
-
-/*              ==== Initialize V(1,M22) here to avoid possible undefined */
-/*              .    variable problems later. ==== */
-
-		v[m22 * v_dim1 + 1] = 0.;
 	    }
 
 /*           ==== Multiply H by reflections from the left ==== */
@@ -872,7 +836,7 @@ static integer c__2 = 2;
 			    ldu, &h__[incol + 1 + jcol * h_dim1], ldh, &c_b8, 
 			    &wh[wh_offset], ldwh);
 
-/*                 ==== Copy top of H bottom of WH ==== */
+/*                 ==== Copy top of H to bottom of WH ==== */
 
 		    dlacpy_("ALL", &j2, &jlen, &h__[incol + 1 + jcol * h_dim1]
 , ldh, &wh[i2 + 1 + wh_dim1], ldwh);

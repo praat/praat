@@ -8,7 +8,7 @@ static double c_b8 = -1.;
 static double c_b9 = 1.;
 static double c_b16 = 0.;
 
-/* Subroutine */ int dlaqps_(integer *m, integer *n, integer *offset, integer 
+int dlaqps_(integer *m, integer *n, integer *offset, integer 
 	*nb, integer *kb, double *a, integer *lda, integer *jpvt, 
 	double *tau, double *vn1, double *vn2, double *auxv, 
 	double *f, integer *ldf)
@@ -27,7 +27,7 @@ static double c_b16 = 0.;
     integer lsticc, lastrk;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -185,10 +185,10 @@ L10:
 
 	if (rk < *m) {
 	    i__1 = *m - rk + 1;
-	    dlarfg_(&i__1, &a[rk + k * a_dim1], &a[rk + 1 + k * a_dim1], &
+	    dlarfp_(&i__1, &a[rk + k * a_dim1], &a[rk + 1 + k * a_dim1], &
 		    c__1, &tau[k]);
 	} else {
-	    dlarfg_(&c__1, &a[rk + k * a_dim1], &a[rk + k * a_dim1], &c__1, &
+	    dlarfp_(&c__1, &a[rk + k * a_dim1], &a[rk + k * a_dim1], &c__1, &
 		    tau[k]);
 	}
 

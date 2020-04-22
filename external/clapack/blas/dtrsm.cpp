@@ -200,7 +200,7 @@
 
 /*     Quick return if possible. */
 
-    if (*n == 0) {
+    if (*m == 0 || *n == 0) { // changed in lapack 3.2.1
 	return 0;
     }
 

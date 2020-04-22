@@ -88,21 +88,18 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 		p_evec_right = & eigenvectors_right [1] [1];
 	}
 
-	double wtmp;
+	double wtmp[3];
 	integer lwork = -1, info;
-	const char *jobvl = "No vectors";
-	const char *jobvr = ( out_eigenvectors ? "Vectors Yes" : "No vectors" );
-	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
-		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
-		a.nrow, & wtmp, lwork, & info);
+	const char *jobvr = ( out_eigenvectors ? "V" : "N" );
+	NUMlapack_dgeev_ ("N", jobvr, a.nrow, & a [1] [1], a.nrow, & eigenvalues_re [1], & eigenvalues_im [1],
+		nullptr, a.nrow, p_evec_right, a.nrow, & wtmp [1], lwork, & info);
 	Melder_require (info == 0,
-		U"NUMlapack_dhseqr_ query returns error ", info, U".");
+		U"NUMlapack_dgeev_ query returns error ", info, U".");
 	
-	lwork = Melder_iceiling (wtmp);
+	lwork = Melder_iceiling (wtmp [1]);
 	autoVEC work = newVECraw (lwork);
-	NUMlapack_dgeev_ (jobvl, jobvr, a.nrow, & a [1] [1], a.nrow,
-		& eigenvalues_re [1], & eigenvalues_im [1], nullptr, a.nrow, p_evec_right,
-		a.nrow, & work [1], lwork, & info);
+	NUMlapack_dgeev_ ("N", jobvr, a.nrow, & a [1] [1], a.nrow, & eigenvalues_re [1], & eigenvalues_im [1],
+		nullptr, a.nrow, p_evec_right, a.nrow, & work [1], lwork, & info);
 	integer numberOfEigenvalues = a.nrow, istart = 0;
 	if (info > 0)
 		istart = info; // only evals [info+1: a.nrow], no eigenvectors

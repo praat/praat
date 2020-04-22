@@ -7,15 +7,20 @@ static double c_b4 = 1.;
 static double c_b5 = 0.;
 static integer c__1 = 1;
 
-/* Subroutine */ int dlarf_(const char *side, integer *m, integer *n, double *v, 
-	 integer *incv, double *tau, double *c__, integer *ldc, 
-	double *work)
+int dlarf_(const char *side, integer *m, integer *n, double *v, integer *incv, double *tau, double *c__, 
+	integer *ldc, double *work)
 {
     /* System generated locals */
     integer c_dim1, c_offset;
     double d__1;
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+    /* Local variables */
+    integer i__;
+    bool applyleft;
+     integer lastc, lastv;
+
+
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -77,6 +82,8 @@ static integer c__1 = 1;
 
 /*     .. Parameters .. */
 /*     .. */
+/*     .. Local Scalars .. */
+/*     .. */
 /*     .. External Subroutines .. */
 /*     .. */
 /*     .. External Functions .. */
@@ -91,39 +98,70 @@ static integer c__1 = 1;
     --work;
 
     /* Function Body */
-    if (lsame_(side, "L")) {
+    applyleft = lsame_(side, "L");
+    lastv = 0;
+    lastc = 0;
+    if (*tau != 0.) {
+/*     Set up variables for scanning V.  LASTV begins pointing to the end */
+/*     of V. */
+	if (applyleft) {
+	    lastv = *m;
+	} else {
+	    lastv = *n;
+	}
+	if (*incv > 0) {
+	    i__ = (lastv - 1) * *incv + 1;
+	} else {
+	    i__ = 1;
+	}
+/*     Look for the last non-zero row in V. */
+	while(lastv > 0 && v[i__] == 0.) {
+	    --lastv;
+	    i__ -= *incv;
+	}
+	if (applyleft) {
+/*     Scan for the last non-zero column in C(1:lastv,:). */
+	    lastc = iladlc_(&lastv, n, &c__[c_offset], ldc);
+	} else {
+/*     Scan for the last non-zero row in C(:,1:lastv). */
+	    lastc = iladlr_(m, &lastv, &c__[c_offset], ldc);
+	}
+    }
+/*     Note that lastc.eq.0 renders the BLAS operations null; no special */
+/*     case is needed at this level. */
+    if (applyleft) {
 
 /*        Form  H * C */
 
-	if (*tau != 0.) {
+	if (lastv > 0) {
 
-/*           w := C' * v */
+/*           w(1:lastc,1) := C(1:lastv,1:lastc)' * v(1:lastv,1) */
 
-	    dgemv_("Transpose", m, n, &c_b4, &c__[c_offset], ldc, &v[1], incv, 
-		     &c_b5, &work[1], &c__1);
+	    dgemv_("Transpose", &lastv, &lastc, &c_b4, &c__[c_offset], ldc, &
+		    v[1], incv, &c_b5, &work[1], &c__1);
 
-/*           C := C - v * w' */
+/*           C(1:lastv,1:lastc) := C(...) - v(1:lastv,1) * w(1:lastc,1)' */
 
 	    d__1 = -(*tau);
-	    dger_(m, n, &d__1, &v[1], incv, &work[1], &c__1, &c__[c_offset], 
-		    ldc);
+	    dger_(&lastv, &lastc, &d__1, &v[1], incv, &work[1], &c__1, &c__[
+		    c_offset], ldc);
 	}
     } else {
 
 /*        Form  C * H */
 
-	if (*tau != 0.) {
+	if (lastv > 0) {
 
-/*           w := C * v */
+/*           w(1:lastc,1) := C(1:lastc,1:lastv) * v(1:lastv,1) */
 
-	    dgemv_("No transpose", m, n, &c_b4, &c__[c_offset], ldc, &v[1], 
-		    incv, &c_b5, &work[1], &c__1);
+	    dgemv_("No transpose", &lastc, &lastv, &c_b4, &c__[c_offset], ldc, 
+		     &v[1], incv, &c_b5, &work[1], &c__1);
 
-/*           C := C - w * v' */
+/*           C(1:lastc,1:lastv) := C(...) - w(1:lastc,1) * v(1:lastv,1)' */
 
 	    d__1 = -(*tau);
-	    dger_(m, n, &d__1, &work[1], &c__1, &v[1], incv, &c__[c_offset], 
-		    ldc);
+	    dger_(&lastc, &lastv, &d__1, &work[1], &c__1, &v[1], incv, &c__[
+		    c_offset], ldc);
 	}
     }
     return 0;
