@@ -9,7 +9,7 @@ bool lsamen_(integer *n, const char *ca, const char *cb)
     bool ret_val;
 
     /* Local variables */
-    static integer i__;
+   integer i__;
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */

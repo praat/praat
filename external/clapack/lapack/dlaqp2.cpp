@@ -5,7 +5,7 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dlaqp2_(integer *m, integer *n, integer *offset, 
+int dlaqp2_(integer *m, integer *n, integer *offset, 
 	double *a, integer *lda, integer *jpvt, double *tau, 
 	double *vn1, double *vn2, double *work)
 {
@@ -22,7 +22,7 @@ static integer c__1 = 1;
     integer offpi, itemp;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -149,14 +149,14 @@ static integer c__1 = 1;
 
 	if (offpi < *m) {
 	    i__2 = *m - offpi + 1;
-	    dlarfg_(&i__2, &a[offpi + i__ * a_dim1], &a[offpi + 1 + i__ * 
+	    dlarfp_(&i__2, &a[offpi + i__ * a_dim1], &a[offpi + 1 + i__ * 
 		    a_dim1], &c__1, &tau[i__]);
 	} else {
-	    dlarfg_(&c__1, &a[*m + i__ * a_dim1], &a[*m + i__ * a_dim1], &
+	    dlarfp_(&c__1, &a[*m + i__ * a_dim1], &a[*m + i__ * a_dim1], &
 		    c__1, &tau[i__]);
 	}
 
-	if (i__ < *n) {
+	if (i__ <= *n) {
 
 /*           Apply H(i)' to A(offset+i:m,i+1:n) from the left. */
 

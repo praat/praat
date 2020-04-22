@@ -137,4 +137,20 @@ int dtrsv_ (const char *uplo, const char *trans, const char *diag, integer *n,
 
 integer idamax_ (integer *n, double *dx, integer *incx);
 
+double sdot_(integer *n, float *sx, integer *incx, float *sy, integer *incy);
+
+int sgemm_(const char *transa, const char *transb, integer *m, integer *n, integer *k, float *alpha,
+	float *a, integer *lda, float *b, integer *ldb, float *beta, float *c__, integer *ldc);
+
+int sgemv_(const char *trans, integer *m, integer *n, float *alpha, float *a, integer *lda, float *x,
+	integer *incx, float *beta, float *y, integer *incy);
+
+int sscal_(integer *n, float *sa, float *sx, integer *incx);
+
+int ssyrk_(const char *uplo, const char *trans, integer *n, integer *k, 
+	float *alpha, float *a, integer *lda, float *beta, float *c__, integer *ldc);
+
+int strsm_(const char *side, const char *uplo, const char *transa, const char *diag, 
+	integer *m, integer *n, float *alpha, float *a, integer *lda, float *b, integer *ldb);
+
 #endif /* _cblas_h_  */

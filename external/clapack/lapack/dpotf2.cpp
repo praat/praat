@@ -7,8 +7,7 @@ static integer c__1 = 1;
 static double c_b10 = -1.;
 static double c_b12 = 1.;
 
-/* Subroutine */ int dpotf2_(const char *uplo, integer *n, double *a, integer *
-	lda, integer *info)
+int dpotf2_(const char *uplo, integer *n, double *a, integer *lda, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
@@ -20,7 +19,7 @@ static double c_b12 = 1.;
     bool upper;
 
 
-/*  -- LAPACK routine (version 3.1) -- */
+/*  -- LAPACK routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -131,7 +130,7 @@ static double c_b12 = 1.;
 	    i__2 = j - 1;
 	    ajj = a[j + j * a_dim1] - ddot_(&i__2, &a[j * a_dim1 + 1], &c__1, 
 		    &a[j * a_dim1 + 1], &c__1);
-	    if (ajj <= 0.) {
+	    if (ajj <= 0. || disnan_(&ajj)) {
 		a[j + j * a_dim1] = ajj;
 		goto L30;
 	    }
@@ -164,7 +163,7 @@ static double c_b12 = 1.;
 	    i__2 = j - 1;
 	    ajj = a[j + j * a_dim1] - ddot_(&i__2, &a[j + a_dim1], lda, &a[j 
 		    + a_dim1], lda);
-	    if (ajj <= 0.) {
+	    if (ajj <= 0. || disnan_(&ajj)) {
 		a[j + j * a_dim1] = ajj;
 		goto L30;
 	    }

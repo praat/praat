@@ -1,8 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dgerq2_(integer *m, integer *n, double *a, integer *
-	lda, double *tau, double *work, integer *info)
+int dgerq2_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
@@ -11,7 +10,7 @@
     integer i__, k;
     double aii;
 
-/*  -- LAPACK routine (version 3.1) -- */
+/*  -- LAPACK routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -117,7 +116,7 @@
 /*        A(m-k+i,1:n-k+i-1) */
 
 	i__1 = *n - k + i__;
-	dlarfg_(&i__1, &a[*m - k + i__ + (*n - k + i__) * a_dim1], &a[*m - k 
+	dlarfp_(&i__1, &a[*m - k + i__ + (*n - k + i__) * a_dim1], &a[*m - k 
 		+ i__ + a_dim1], lda, &tau[i__]);
 
 /*        Apply H(i) to A(1:m-k+i-1,1:n-k+i) from the right */
