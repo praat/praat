@@ -9,13 +9,10 @@ static integer c__3 = 3;
 static integer c__2 = 2;
 static integer c__0 = 0;
 
-/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, double 
-	*vl, double *vu, integer *il, integer *iu, double *gers, 
-	double *reltol, double *d__, double *e, double *e2, 
-	double *pivmin, integer *nsplit, integer *isplit, integer *m, 
-	double *w, double *werr, double *wl, double *wu, 
-	integer *iblock, integer *indexw, double *work, integer *iwork, 
-	integer *info)
+int dlarrd_(const char *range, const char *order, integer *n, double *vl, double *vu, integer *il,
+	integer *iu, double *gers, double *reltol, double *d__, double *e, double *e2,	double *pivmin, 
+	integer *nsplit, integer *isplit, integer *m, double *w, double *werr, double *wl, double *wu,
+	integer *iblock, integer *indexw, double *work, integer *iwork, integer *info)
 {
     /* System generated locals */
     integer i__1, i__2, i__3;
@@ -32,21 +29,18 @@ static integer c__0 = 0;
     double wlu, wul;
     integer nwu;
     double tmp1, tmp2;
-    integer iend, jblk, ioff, iout, itmp1, itmp2, jdisc;
-    integer iinfo;
+    integer iend, jblk, ioff, iout, itmp1, itmp2, jdisc, iinfo;
     double atoli;
     integer iwoff, itmax;
     double wkill, rtoli, uflow, tnorm;
-    integer ibegin;
-    integer irange, idiscl, idumma[1];
-    double spdiam;
-    integer idiscu;
+    integer ibegin,irange, idiscl, idumma[1], idiscu;
     bool ncnvrg, toofew;
 
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
-/*     November 2006 */
+/*  -- LAPACK auxiliary routine (version 3.2.1)                        -- */
+/*  -- LAPACK is a software package provided by Univ. of Tennessee,    -- */
+/*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..-- */
+/*  -- April 2009                                                      -- */
 
 /*     .. Scalar Arguments .. */
 /*     .. */
@@ -357,7 +351,8 @@ static integer c__0 = 0;
     tnorm = std::max(d__1,d__2);
     gl = gl - tnorm * 2. * eps * *n - *pivmin * 4.;
     gu = gu + tnorm * 2. * eps * *n + *pivmin * 4.;
-    spdiam = gu - gl;
+/*     [JAN/28/2009] remove the line below since SPDIAM variable not use */
+/*     SPDIAM = GU - GL */
 /*     Input arguments for DLAEBZ: */
 /*     The relative tolerance.  An interval (a,b] lies within */
 /*     "relative tolerance" if  b-a < RELTOL*max(|a|,|b|), */
@@ -521,9 +516,14 @@ static integer c__0 = 0;
 		gu = std::max(d__1,d__2);
 /* L40: */
 	    }
-	    spdiam = gu - gl;
-	    gl = gl - spdiam * 2. * eps * in - *pivmin * 2.;
-	    gu = gu + spdiam * 2. * eps * in + *pivmin * 2.;
+/*           [JAN/28/2009] */
+/*           change SPDIAM by TNORM in lines 2 and 3 thereafter */
+/*           line 1: remove computation of SPDIAM (not useful anymore) */
+/*           SPDIAM = GU - GL */
+/*           GL = GL - FUDGE*SPDIAM*EPS*IN - FUDGE*PIVMIN */
+/*           GU = GU + FUDGE*SPDIAM*EPS*IN + FUDGE*PIVMIN */
+	    gl = gl - tnorm * 2. * eps * in - *pivmin * 2.;
+	    gu = gu + tnorm * 2. * eps * in + *pivmin * 2.;
 
 	    if (irange > 1) {
 		if (gu < *wl) {

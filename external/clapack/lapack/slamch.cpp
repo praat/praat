@@ -660,7 +660,7 @@ L10:
 double slamc3_(float *a, float *b)
 {
     /* System generated locals */
-    float ret_val;
+    volatile float ret_val;
 
 
 /*  -- LAPACK auxiliary routine (version 3.1) -- */

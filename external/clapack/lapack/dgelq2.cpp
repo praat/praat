@@ -11,7 +11,7 @@
     integer i__, k;
     double aii;
 
-/*  -- LAPACK routine (version 3.1) -- */
+/*  -- LAPACK routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -117,7 +117,7 @@
 	i__2 = *n - i__ + 1;
 /* Computing MIN */
 	i__3 = i__ + 1;
-	dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + std::min(i__3, *n)* a_dim1]
+	dlarfp_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + std::min(i__3, *n)* a_dim1]
 , lda, &tau[i__]);
 	if (i__ < *m) {
 

@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,63 +22,63 @@
 // Vector::getVector () returns a channel or the average of all the channels.
 //
 double structVector :: v_getVector (integer irow, integer icol) {
-	if (icol < 1 || icol > nx)
+	if (icol < 1 || icol > our nx)
 		return 0.0;
 	if (ny == 1)
-		return z [1] [icol];   // optimization
+		return our z [1] [icol];   // optimization
 	if (irow == 0) {
-		if (ny == 2)
-			return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
+		if (our ny == 2)
+			return 0.5 * (our z [1] [icol] + our z [2] [icol]);   // optimization
 		longdouble sum = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++)
-			sum += z [channel] [icol];
-		return double (sum / ny);
+		for (integer channel = 1; channel <= our ny; channel ++)
+			sum += our z [channel] [icol];
+		return double (sum / our ny);
 	}
-	Melder_assert (irow > 0 && irow <= ny);
-	return z [irow] [icol];
+	Melder_assert (irow > 0 && irow <= our ny);
+	return our z [irow] [icol];
 }
 
 //
 // Vector::getFunction1 () returns a channel or the average of all the channels.
 //
 double structVector :: v_getFunction1 (integer irow, double x) {
-	double rcol = (x - x1) / dx + 1.0;
+	double rcol = (x - our x1) / our dx + 1.0;
 	integer icol = Melder_ifloor (rcol);
 	double dcol = rcol - icol;
 	double z1;
-	if (icol < 1 || icol > nx) {
+	if (icol < 1 || icol > our nx) {
 		z1 = 0.0;   // outside the definition region, Formula is expected to return zero
-	} else if (ny == 1) {
+	} else if (our ny == 1) {
 		z1 = z [1] [icol];   // optimization
 	} else if (irow == 0) {
-		if (ny == 2) {
-			z1 = 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
+		if (our ny == 2) {
+			z1 = 0.5 * (our z [1] [icol] + our z [2] [icol]);   // optimization
 		} else {
 			longdouble sum = 0.0;
 			for (integer channel = 1; channel <= ny; channel ++)
-				sum += z [channel] [icol];
-			z1 = double (sum / ny);
+				sum += our z [channel] [icol];
+			z1 = double (sum / our ny);
 		}
 	} else {
-		Melder_assert (irow > 0 && irow <= ny);
-		z1 = z [irow] [icol];
+		Melder_assert (irow > 0 && irow <= our ny);
+		z1 = our z [irow] [icol];
 	}
 	double z2;
-	if (icol < 0 || icol >= nx) {
+	if (icol < 0 || icol >= our nx) {
 		z2 = 0.0;   // outside the definition region, Formula is expected to return zero
-	} else if (ny == 1) {
+	} else if (our ny == 1) {
 		z2 = z [1] [icol + 1];   // optimization
 	} else if (irow == 0) {
-		if (ny == 2) {
-			z2 = 0.5 * (z [1] [icol + 1] + z [2] [icol + 1]);   // optimization
+		if (our ny == 2) {
+			z2 = 0.5 * (our z [1] [icol + 1] + our z [2] [icol + 1]);   // optimization
 		} else {
 			longdouble sum = 0.0;
-			for (integer channel = 1; channel <= ny; channel ++)
-				sum += z [channel] [icol + 1];
-			z2 = double (sum / ny);
+			for (integer channel = 1; channel <= our ny; channel ++)
+				sum += our z [channel] [icol + 1];
+			z2 = double (sum / our ny);
 		}
 	} else {
-		Melder_assert (irow > 0 && irow <= ny);
+		Melder_assert (irow > 0 && irow <= our ny);
 		z2 = z [irow] [icol + 1];
 	}
 	return (1.0 - dcol) * z1 + dcol * z2;
@@ -90,18 +90,18 @@ double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int un
 //    0 <= ilevel <= my ny
 	double value;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
-		value = z [ilevel] [isamp];
-	} else if (ny == 1) {
-		value = z [1] [isamp];   // optimization
-	} else if (ny == 2) {
-		value = 0.5 * (z [1] [isamp] + z [2] [isamp]);   // optimization
+		value = our z [ilevel] [isamp];
+	} else if (our ny == 1) {
+		value = our z [1] [isamp];   // optimization
+	} else if (our ny == 2) {
+		value = 0.5 * (our z [1] [isamp] + our z [2] [isamp]);   // optimization
 	} else {
 		longdouble sum = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++)
-			sum += z [channel] [isamp];
-		value = double (sum / ny);
+		for (integer channel = 1; channel <= our ny; channel ++)
+			sum += our z [channel] [isamp];
+		value = double (sum / our ny);
 	}
-	return isdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
+	return isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
 }
 
 Thing_implement (Vector, Matrix, 2);
@@ -117,14 +117,16 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 		return undefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		return NUM_interpolate_sinc (my z.row (ilevel), Sampled_xToIndex (me, x),
+		double index_real = (x - my x1) / my dx + 1.0;
+		return NUM_interpolate_sinc (my z.row (ilevel), index_real,
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
 	longdouble sum = 0.0;
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
-		sum += NUM_interpolate_sinc (my z.row (ichan), Sampled_xToIndex (me, x),
+		double index_real = (x - my x1) / my dx + 1.0;
+		sum += NUM_interpolate_sinc (my z.row (ichan), index_real,
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);

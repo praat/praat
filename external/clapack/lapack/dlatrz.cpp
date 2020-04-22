@@ -1,8 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Subroutine */ int dlatrz_(integer *m, integer *n, integer *l, double *
-	a, integer *lda, double *tau, double *work)
+int dlatrz_(integer *m, integer *n, integer *l, double *a, integer *lda, double *tau, double *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
@@ -10,7 +9,7 @@
     /* Local variables */
     integer i__;
 
-/*  -- LAPACK routine (version 3.1) -- */
+/*  -- LAPACK routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -126,7 +125,7 @@
 /*        [ A(i,i) A(i,n-l+1:n) ] */
 
 	i__1 = *l + 1;
-	dlarfg_(&i__1, &a[i__ + i__ * a_dim1], &a[i__ + (*n - *l + 1) * 
+	dlarfp_(&i__1, &a[i__ + i__ * a_dim1], &a[i__ + (*n - *l + 1) * 
 		a_dim1], lda, &tau[i__]);
 
 /*        Apply H(i) to A(1:i-1,i:n) from the right */

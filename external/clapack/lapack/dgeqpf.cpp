@@ -5,15 +5,12 @@
 
 static integer c__1 = 1;
 
-/* Subroutine */ int dgeqpf_(integer *m, integer *n, double *a, integer *
+int dgeqpf_(integer *m, integer *n, double *a, integer *
 	lda, integer *jpvt, double *tau, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
     double d__1, d__2;
-
-    /* Builtin functions
-    double sqrt(double); */
 
     /* Local variables */
     integer i__, j, ma, mn;
@@ -23,7 +20,7 @@ static integer c__1 = 1;
     double temp2, tol3z;
     integer itemp;
 
-/*  -- LAPACK deprecated driver routine (version 3.1) -- */
+/*  -- LAPACK deprecated driver routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -213,10 +210,10 @@ static integer c__1 = 1;
 
 	    if (i__ < *m) {
 		i__2 = *m - i__ + 1;
-		dlarfg_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + 1 + i__ * 
+		dlarfp_(&i__2, &a[i__ + i__ * a_dim1], &a[i__ + 1 + i__ * 
 			a_dim1], &c__1, &tau[i__]);
 	    } else {
-		dlarfg_(&c__1, &a[*m + *m * a_dim1], &a[*m + *m * a_dim1], &
+		dlarfp_(&c__1, &a[*m + *m * a_dim1], &a[*m + *m * a_dim1], &
 			c__1, &tau[*m]);
 	    }
 

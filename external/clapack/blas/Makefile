@@ -19,7 +19,8 @@ OBJECTS = dasum.o daxpy.o dcopy.o \
 	dsyr2k.o dsyrk.o dtbmv.o \
 	dtbsv.o dtpmv.o dtpsv.o \
 	dtrmm.o dtrmv.o dtrsm.o \
-	dtrsv.o idamax.o 
+	dtrsv.o idamax.o \
+	sdot.o sgemm.o sgemv.o sscal.o ssyrk.o strsm.o
 
 .PHONY: all clean
 

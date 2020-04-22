@@ -3,23 +3,19 @@
 
 /* Table of constant values */
 
-static double c_b14 = 1.;
 static integer c__1 = 1;
-static double c_b16 = 0.;
 
-/* Subroutine */ int dlarfx_(const char *side, integer *m, integer *n, double *
-	v, double *tau, double *c__, integer *ldc, double *work)
+int dlarfx_(const char *side, integer *m, integer *n, double *v, double *tau, double *c__, integer *ldc, double *work)
 {
     /* System generated locals */
     integer c_dim1, c_offset, i__1;
-    double d__1;
 
     /* Local variables */
     integer j;
     double t1, t2, t3, t4, t5, t6, t7, t8, t9, v1, v2, v3, v4, v5, v6, v7,
 	     v8, v9, t10, v10, sum;
 
-/*  -- LAPACK auxiliary routine (version 3.1) -- */
+/*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
 
@@ -118,16 +114,7 @@ static double c_b16 = 0.;
 
 /*        Code for general M */
 
-/*        w := C'*v */
-
-	dgemv_("Transpose", m, n, &c_b14, &c__[c_offset], ldc, &v[1], &c__1, &
-		c_b16, &work[1], &c__1);
-
-/*        C := C - tau * v * w' */
-
-	d__1 = -(*tau);
-	dger_(m, n, &d__1, &v[1], &c__1, &work[1], &c__1, &c__[c_offset], ldc)
-		;
+	dlarf_(side, m, n, &v[1], &c__1, tau, &c__[c_offset], ldc, &work[1]);
 	goto L410;
 L10:
 
@@ -431,16 +418,7 @@ L190:
 
 /*        Code for general N */
 
-/*        w := C * v */
-
-	dgemv_("No transpose", m, n, &c_b14, &c__[c_offset], ldc, &v[1], &
-		c__1, &c_b16, &work[1], &c__1);
-
-/*        C := C - tau * w * v' */
-
-	d__1 = -(*tau);
-	dger_(m, n, &d__1, &work[1], &c__1, &v[1], &c__1, &c__[c_offset], ldc)
-		;
+	dlarf_(side, m, n, &v[1], &c__1, tau, &c__[c_offset], ldc, &work[1]);
 	goto L410;
 L210:
 

@@ -1,16 +1,26 @@
 # Praat script runAllTests_batch.praat
-# Paul Boersma 2020-04-13
+# Paul Boersma 2020-04-18
 #
 # This script runs all Praat scripts in its subdirectories.
 # This script is to be called from the command line:
-#     praat --run runAllTests.praat
+#     praat --run runAllTests_batch.praat
 #
 # Scripts containing `_GUI_` in their names are ignored.
+#
 
+#
+# Some tests require standard settings for the text input encoding:
+# files in UTF-8 format should always be readable.
+#
+Text writing preferences: "try ASCII, then UTF-16"
 if macintosh
-	executable$ = "~/builds/mac_products/Configuration64/Praat.app/Contents/MacOS/Praat --no-pref-files"
+	Text reading preferences: "try UTF-8, then MacRoman"
+elif windows
+	Text reading preferences: "try UTF-8, then Windows Latin-1"
+elif unix
+	Text reading preferences: "try UTF-8, then ISO Latin-1"
 else
-	executable$ = "../praat --no-pref-files"
+	exitScript: "Unknown operating system."
 endif
 
 writeInfoLine: "Running all tests..."
@@ -22,7 +32,9 @@ for file to numberOfFiles
 		file$ = Get string: file
 		if not index (file$, "runAllTests") and not index (file$, "_GUI_")
 			appendInfoLine: "### executing ", file$, ":"
-			runSystem: executable$, " --run """, file$, """"
+			random_initializeWithSeedUnsafelyButPredictably (5489)
+			runScript: file$
+			random_initializeSafelyAndUnpredictably()
 		endif
 	endfor
 	removeObject: files
