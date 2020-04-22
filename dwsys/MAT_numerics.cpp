@@ -94,7 +94,7 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 	NUMlapack_dgeev_ ("N", jobvr, a.nrow, & a [1] [1], a.nrow, & eigenvalues_re [1], & eigenvalues_im [1],
 		nullptr, a.nrow, p_evec_right, a.nrow, & wtmp [1], lwork, & info);
 	Melder_require (info == 0,
-		U"NUMlapack_dhseqr_ query returns error ", info, U".");
+		U"NUMlapack_dgeev_ query returns error ", info, U".");
 	
 	lwork = Melder_iceiling (wtmp [1]);
 	autoVEC work = newVECraw (lwork);
