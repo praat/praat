@@ -96,10 +96,39 @@ you can very easily make a mess of hundreds of files. A 'git reset' is very usef
 for these cases.
 
 +++++ Upgrading to clapack version 3.2.1 ++++++
-To test this version we  added the -fno-stack-protector to the CFLAGS. Without this flag the testing routines throw "stack smashing errors" and the testing cannot be completed. Adding this flag made all tests succeed.
+To test this version we first had to ad the -fno-stack-protector to the CFLAGS. Without this flag the testing routines throw "stack smashing errors" and the testing cannot be completed. Adding this flag made all tests succeed.
 
-Changes in blas: dtrsv.cpp, dtpmv.cpp
-Changes in lapack: dgelq2, dgelsd, dgeql2, dgeqpf, dgerq2, dlag2s, dlahqr, dlaqp2, dlaqps, dlaqr0, 
-dlaqr2, dlaqr3, dlaqr4, dlarfb, dlarfg, dlarft, dlarfx, dlascl, dlascl2, dlasq2, dlasq3,dlasq4, dlatrz,
-dpotf2, dtzrqf.
+This stack smashing error occured in dlaqr0.c where an "array" dimensioned as char jbcmpz[1] was used as follows:
 
+	char jbcmpz[1];
+	....
+	if (*wantz) {
+	    *(unsigned char *)jbcmpz[1] = 'V'; // illegal write to memory into one byte of the canary
+	} else {
+	    *(unsigned char *)jbcmpz[1] = 'N'; // illegal write to memory
+	}
+	nwr = ilaenv_(&c__13, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
+	
+Clearly jbcmpz[1] = .. is outside the boundary. This string is passed as the third argument of the ilaenv_ routine where a strlen is executed on it. So 'jbcmpz' is not properly closed too.
+To correct these bugs we have to dimension jbcmpz[3] and always close the string with a null byte. 
+
+	char jbcmpz[3];
+	....
+	if (*wantz) {
+	    *(unsigned char *)jbcmpz[1] = 'V';
+	} else {
+	    *(unsigned char *)jbcmpz[1] = 'N';
+	}
+	jbcmpz [2] = '\0';
+	nwr = ilaenv_(&c__13, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
+
+There are more occasions in clapack that don't properly close the third argument passed to ilaenv. In routines dhseqr dgesvd, dormbr, dormqr, dormlq, dormql, dormqr, dormrq, dormtr, and dormrz, character arrays of dimension 2 are passed without proper closing the string with a null byte. We corrected this too.
+
+Two other bugs were found by Paul Boersma: 
+The return value in dlamch has to be declared volatile, otherwise the whole routine is optimezed away and wrong result may occur.
+double dlamc3_(double *a, double *b) {
+	volatile double ret_val;
+	ret_val = *a + *b;
+	return ret_val;
+}
+The same of course for the single and complex routines.
