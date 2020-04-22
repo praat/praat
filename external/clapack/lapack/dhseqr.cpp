@@ -17,7 +17,7 @@ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, intege
     char *a__1[2];
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2[2], i__3;
     double d__1;
-    char ch__1[2];
+    char ch__1[3];
 
     /* Local variables */
     integer i__;
@@ -381,6 +381,7 @@ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, intege
 	i__2[0] = 1, a__1[0] = const_cast<char *>(job);
 	i__2[1] = 1, a__1[1] = const_cast<char *>(compz);
 	s_cat(ch__1, a__1, i__2, &c__2, 2_integer);
+	ch__1 [2] = '\0';
 	nmin = ilaenv_(&c__12, "DHSEQR", ch__1, n, ilo, ihi, lwork);
 	nmin =std::max(11_integer,nmin);
 

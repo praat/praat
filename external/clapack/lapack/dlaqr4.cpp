@@ -30,7 +30,7 @@ int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, do
     double zdum[1]	/* was [1][1] */;
     bool sorted;
     integer itmax, nsmax, nwmax, kwtop, lwkopt, nibble, nwupbd;
-    char jbcmpz[3] = { 0 };
+    char jbcmpz[3];
 
 
 /*  -- LAPACK auxiliary routine (version 3.2) -- */
@@ -273,16 +273,16 @@ int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, do
 /*        ==== Set up job flags for ILAENV. ==== */
 
 	if (*wantt) {
-	    *(unsigned char *)jbcmpz = 'S';
+	    *(unsigned char *)jbcmpz[0] = 'S';
 	} else {
-	    *(unsigned char *)jbcmpz = 'E';
+	    *(unsigned char *)jbcmpz[0] = 'E';
 	}
 	if (*wantz) {
-	    *(unsigned char *)&jbcmpz[1] = 'V';
+	    *(unsigned char *)jbcmpz[1] = 'V';
 	} else {
-	    *(unsigned char *)&jbcmpz[1] = 'N';
+	    *(unsigned char *)jbcmpz[1] = 'N';
 	}
-
+	jbcmpz [2] = '\0';
 /*        ==== NWR = recommended deflation window size.  At this */
 /*        .    point,  N .GT. NTINY = 11, so there is enough */
 /*        .    subdiagonal workspace for NWR.GE.2 as required. */

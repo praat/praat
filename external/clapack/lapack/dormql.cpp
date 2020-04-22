@@ -16,7 +16,7 @@ static integer c__65 = 65;
     char * a__1[2];
     integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2], i__4, 
 	    i__5;
-    char ch__1[3] = { 0 };
+    char ch__1[3];
 
     /* Local variables */
     integer i__;
@@ -192,6 +192,7 @@ static integer c__65 = 65;
 	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
 	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
+		ch__1 [2] = '\0';
 	    i__1 = 64, i__2 = ilaenv_(&c__1, "DORMQL", ch__1, m, n, k, &c_n1);
 	    nb = std::min(i__1,i__2);
 	    lwkopt = nw * nb;
@@ -228,6 +229,7 @@ static integer c__65 = 65;
 	    i__3[0] = 1, a__1[0] = const_cast<char *> (side);
 	    i__3[1] = 1, a__1[1] = const_cast<char *> (trans);
 	    s_cat(ch__1, a__1, i__3, &c__2, 2_integer);
+		ch__1 [2] = '\0';
 	    i__1 = 2, i__2 = ilaenv_(&c__2, "DORMQL", ch__1, m, n, k, &c_n1);
 	    nbmin = std::max(i__1,i__2);
 	}
