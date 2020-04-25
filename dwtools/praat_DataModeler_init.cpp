@@ -51,14 +51,14 @@ FORM (GRAPHICS_DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
 	BOOLEAN (errorBars, U"Draw error bars", 1)
-	REAL (barWidth_mm, U"Bar width (mm)", U"1.0")
-	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	REAL (barWidth_wc, U"Bar width (wc)", U"1.0")
+	REAL (xOffset_wc, U"Horizontal offset (wc)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	integer order = 6;
 	GRAPHICS_EACH (DataModeler)
-		DataModeler_speckle (me, GRAPHICS, xmin, xmax,ymin, ymax, 0, order + 1, errorBars, barWidth_mm, xOffset_mm, garnish);
+		DataModeler_speckle (me, GRAPHICS, xmin, xmax,ymin, ymax, 0, order + 1, errorBars, barWidth_wc, xOffset_wc, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -69,7 +69,7 @@ FORM (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated tra
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
 	INTEGER (order, U"Order of polynomials for estimation", U"3")
-	REAL (xOffset, U"Horizontal offset (mm)", U"0.0")
+	REAL (xOffset, U"Horizontal offset (wc)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -463,13 +463,13 @@ FORM (GRAPHICS_FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estima
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"3")
 	INTEGER (order, U"Order of polynomials for estimation", U"3")
-	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	REAL (xOffset, U"Horizontal offset (s)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	Melder_require (order >= 0, U"The order should be at least zero.");
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 1, order + 1, xOffset_mm, garnish);
+		FormantModeler_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 1, order + 1, xOffset, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -479,13 +479,13 @@ FORM (GRAPHICS_FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullpt
 	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"3")
-	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	REAL (xOffset_s, U"Horizontal offset (s)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	integer order = 6;
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 0, order + 1, xOffset_mm, garnish);
+		FormantModeler_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 0, order + 1, xOffset_s, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -496,14 +496,14 @@ FORM (GRAPHICS_FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"3")
 	BOOLEAN (errorBars, U"Draw error bars", true)
-	REAL (barWidth_mm, U"Bar width (mm)", U"1.0")
-	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	REAL (barWidth_s, U"Bar width (s)", U"1.0")
+	REAL (xOffset_s, U"Horizontal offset (s)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	integer order = 6;
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_speckle (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 0, order + 1, errorBars, barWidth_mm, xOffset_mm, garnish);
+		FormantModeler_speckle (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 0, order + 1, errorBars, barWidth_s, xOffset_s, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -516,12 +516,12 @@ FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outlier
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
 	WORD (mark_string, U"Mark", U"o")
 	POSITIVE (fontSize, U"Mark font size", U"12")
-	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	REAL (xOffset_s, U"Horizontal offset (s)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_drawOutliersMarked (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, numberOfSigmas, mark_string, fontSize, xOffset_mm, garnish);
+		FormantModeler_drawOutliersMarked (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, numberOfSigmas, mark_string, fontSize, xOffset_s, garnish);
 	GRAPHICS_EACH_END
 }
 
