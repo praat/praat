@@ -47,8 +47,9 @@ prefs_begin (FormantEditor)
 	prefs_add_integer_with_data(FormantEditor, modeler_numberInSelectionViewer,   1, U"3")
 	prefs_add_bool_with_data   (FormantEditor, modeler_draw_allModels,            1, false)
 	prefs_add_bool_with_data   (FormantEditor, modeler_draw_maximumFrequency,     1, U"5000.0")
+	prefs_add_bool_with_data   (FormantEditor, modeler_draw_estimatedTracks,      1, false)
 	prefs_add_bool_with_data   (FormantEditor, modeler_draw_errorBars,            1, true)
-	prefs_add_double_with_data (FormantEditor, modeler_draw_errorBarWidth_mm,     1, U"1.0")
+	prefs_add_double_with_data (FormantEditor, modeler_draw_errorBarWidth_s,      1, U"0.001")
 	prefs_add_double_with_data (FormantEditor, modeler_draw_trackOffsetX_s,       1, U"-0.001") // s
 	prefs_add_string_with_data (FormantEditor, modeler_draw_best3colour,          1, U"green pink blue") //
 	

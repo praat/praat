@@ -39,6 +39,15 @@ void structFormantEditor :: v_info () {
 	FormantEditor_Parent :: v_info ();
 }
 
+void operator<<= (BOOLVECVU const& target, bool value) {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = value;
+}
+void operator<<= (INTVECVU const& target, integer value) {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = value;
+}
+
 autoINTVEC newINTVECfromString (conststring32 string) {
 	autoVEC reals = newVECfromString (string);
 	autoINTVEC result = newINTVECraw (reals.size);
@@ -62,8 +71,7 @@ autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantList
 			autoFormantModeler fm = Formant_to_FormantModeler (my formants.at [imodel], startTime, endTime, my ceilings [imodel], numberOfParameters);
 			thy formantModelers. addItem_move (fm.move());
 		}
-		thy best3 = newINTVECzero (3);
-		thy visibility = newBOOLVECzero (thy numberOfModelers);
+		thy displayOrder = newINTVEClinear (thy numberOfModelers, 1, 1);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantModelerList not created.");
@@ -84,17 +92,53 @@ void FormantModelerList_selectBest3 (FormantModelerList me, double variancePower
 		double smoothness = FormantModeler_getSmoothnessValue (fm, 1, 1, 0, variancePower);
 		if (smoothness < smoothnessF1) {
 			smoothnessF1 = smoothness;
-			my best3 [1] = imodel;
+			my displayOrder [1] = imodel;
 		}
 		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 2, 0, variancePower);
 		if (smoothness < smoothnessF1F2) {
 			smoothnessF1F2 = smoothness;
-			my best3 [2]  = imodel;
+			my displayOrder [2]  = imodel;
 		}
 		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 3, 0, variancePower);
 		if (smoothness < smoothnessF1F2F3) {
 			smoothnessF1F2F3 = smoothness;
-			my best3 [3]  = imodel;
+			my displayOrder [3]  = imodel;
+		}
+	}
+	my displayOrder.resize (3);
+}
+
+inline integer FormantModelerList_getNumberOfVisible (FormantModelerList me) {
+	return my displayOrder.size;
+}
+
+void FormantModelerList_getDisplayLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
+	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
+	const integer nrow = 1 + Melder_ifloor (sqrt (numberOfVisible - 0.5));
+	if (out_numberOfRows)
+		*out_numberOfRows = nrow;
+	if (out_numberOfColums)
+		*out_numberOfColums = 1 + Melder_ifloor ((numberOfVisible - 1) / nrow);
+}
+
+integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList me, integer irow, integer icol) {
+	integer numberOfRows, numberOfColums;
+	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
+	FormantModelerList_getDisplayLayout (me, & numberOfRows, & numberOfColums);
+	integer index = (irow - 1) * numberOfColums + icol;
+	if (index > numberOfVisible)
+		index = 0;
+	return ( index > 0 ? my displayOrder [index] : 0 );
+}
+
+void FormantModelerList_getRowColumnIndexFromModelerIndex (FormantModelerList me, integer imodel, integer *irow, integer *icol) {
+	integer numberOfRows, numberOfColumns;
+	FormantModelerList_getDisplayLayout (me, & numberOfRows, & numberOfColumns);
+	irow = icol = 0;
+	for (integer id = 1; imodel <= my displayOrder.size; imodel ++) {
+		if (my displayOrder [id] == imodel) {
+			*irow = 1 + (id - 1) / numberOfColumns;
+			*icol = 1 + (id - 1) % numberOfColumns;
 		}
 	}
 }
@@ -1581,26 +1625,21 @@ void structFormantEditor :: v_drawSelectionViewer () {
 	if (! our formantModelerList.get())
 			return;
 	FormantModelerList fml = our formantModelerList.get();
-	FormantModelerList_selectBest3 (fml, p_modeler_variancePower);
-	fml -> visibility.get() <<= true;
-	integer numberOfVisible = fml -> numberOfModelers;
-	if (! p_modeler_draw_allModels) {
-		fml -> visibility [our best3 [1]] = true;
-		fml -> visibility [our best3 [2]] = true;
-		fml -> visibility [our best3 [3]] = true;
-		numberOfVisible = 3;
-	}
-
-	integer numberOfRows = std::max (3_integer, Melder_iround_tieUp (sqrt (numberOfVisible)));
-	integer numberOfColums = numberOfVisible / numberOfRows;
+	if (! p_modeler_draw_allModels)
+		FormantModelerList_selectBest3 (fml, p_modeler_variancePower);
+	
+	integer numberOfRows, numberOfColums;
+	FormantModelerList_getDisplayLayout (fml, & numberOfRows, & numberOfColums);
 	double vp_dx = (vp_right - vp_left) / numberOfColums;
 	double vp_dy = (vp_top - vp_bottom) / numberOfRows;
-	for (integer imodel = 1; imodel <= numberOfVisible; imodel ++) {
-		const integer icol = (imodel - 1) / numberOfRows + 1;
-		integer irow = imodel - (icol -1) * numberOfRows;
+	for (integer index = 1; index <= fml -> displayOrder.size; index ++) {
+		FormantModeler fm = fml -> formantModelers.at [fml -> displayOrder [index]];
+		const integer icol = (index - 1) / numberOfRows + 1;
+		integer irow = index - (icol -1) * numberOfRows;
 		Graphics_setViewport (our graphics.get(), vp_left + (icol - 1) * vp_dx, vp_left + icol * vp_dx,
 			vp_top - (irow - 1) *vp_dy, vp_top - irow *vp_dy);
 		Graphics_setWindow (our graphics.get(), 0, 1, 0, 1);
+		FormantModeler_drawTracks (fm, our graphics.get(), tmin, tmax, our p_modeler_draw_maximumFrequency, 1, our p_modeler_numberOfTracks, our p_modeler_draw_estimatedTracks, 0, our p_modeler_draw_trackOffsetX_s, false);
 		Graphics_drawInnerBox (our graphics.get());
 	}
 }
@@ -1982,40 +2021,20 @@ bool structFormantEditor :: v_clickE (double t, double yWC) {
 
 void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	const TextGrid grid = (TextGrid) our data;
-	integer rowNumber, columnNumber = 1;
-	if (p_modeler_draw_allModels) {
-		// nrow ncol
-	} else {
-		rowNumber = 1 + (int) ((1.0-yWC) * 3);
-		if (rowNumber < 1 || rowNumber > 3)
-			return;
-		if (rowNumber > formantModelerList -> numberOfModelers)
-			return;
-	}
-	FormantModeler fm = inSelectionViewer -> formantModelers.at [rowNumber];
-	if (our text) {
-		integer first = 0, last = 0;
-		autostring32 oldText = GuiText_getStringAndSelectionPosition (our text, & first, & last);
-		static MelderString newText;
-		MelderString_empty (& newText);
-		if (our selectedTier) {
-			IntervalTier intervalTier;
-			integer selectedInterval = getSelectedInterval (this);
-			if (selectedInterval) {
-				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
-				TextInterval_setText (interval, newText.string);
-
-				our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
-				trace (U"setting new text ", newText.string);
-				GuiText_setString (text, newText.string);
-					GuiText_setSelection (text, first + 1, first + 1);
-					our suppressRedraw = false;
-
-					FunctionEditor_redraw (this);
-					Editor_broadcastDataChanged (this);
-				}
-		}
-	}
+	integer numberOfRows, numberOfColums;
+	/*
+		On which of the modelers was the click?
+	*/
+	FormantModelerList fml = formantModelerList.get();
+	FormantModelerList_getDisplayLayout (fml, & numberOfRows, & numberOfColums);
+	integer numberOfVisible = FormantModelerList_getNumberOfVisible (fml);
+	const integer columnNumber = 1 + (int) (xWC * numberOfColums);
+	if (columnNumber < 1 || columnNumber > numberOfColums)
+		return;
+	const integer rowNumber = 1 + (int) ((1.0 - yWC) * numberOfRows);
+	if (rowNumber < 1 || rowNumber > numberOfRows)
+		return;
+	
 }
 
 void structFormantEditor :: v_play (double tmin, double tmax) {

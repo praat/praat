@@ -75,8 +75,7 @@ Thing_define (FormantModelerList, Function) {
 	integer numberOfModelers;
 	autoINTVEC numberOfParametersPerTrack; // .size = (numberOfFormantTracks)
 	OrderedOf<structFormantModeler> formantModelers;
-	autoINTVEC best3; // bestF1, bestF1F2, bestF1F2F3.
-	autoBOOLVEC visibility;
+	autoINTVEC displayOrder; // models are displayed in this order
 };
 
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
