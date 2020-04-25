@@ -55,12 +55,12 @@ void FormantModeler_setTolerance (FormantModeler me, double tolerance);
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
-	bool errorBars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
+	bool errorBars, double barWidth_mm, double horizontalOffset_wc, bool garnish);
 
-void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
+void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_wc, bool garnish);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish);
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish);
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
 
