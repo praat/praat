@@ -39,19 +39,21 @@ prefs_begin (FormantEditor)
 	prefs_add_bool_with_data   (FormantEditor, align_allowSilences,    1, false)	
 //end from TextGridEditor	
 	
-	prefs_add_bool_with_data   (FormantEditor, formant_draw_showBandWidths, 1, true)
-	prefs_add_double_with_data (FormantEditor, formant_draw_trackOffsetX_s, 1, U"0.001")
+	prefs_add_bool_with_data   (FormantEditor, formant_draw_showBandWidths,       1, true)
+	prefs_add_double_with_data (FormantEditor, formant_draw_trackOffsetX_s,       1, U"0.001")
 	prefs_add_integer_with_data(FormantEditor, modeler_numberOfTracks,            1, U"3")
 	prefs_add_string_with_data (FormantEditor, modeler_numberOfParametersPerTrack,1, U"3 3 2")
-	prefs_add_double_with_data (FormantEditor, modeler_variancePower,           1, U"1.25")
-	prefs_add_integer_with_data(FormantEditor, modeler_numberInSelectionViewer,   1, U"3")
-	prefs_add_bool_with_data   (FormantEditor, modeler_draw_allModels,            1, false)
-	prefs_add_bool_with_data   (FormantEditor, modeler_draw_maximumFrequency,     1, U"5000.0")
+	prefs_add_double_with_data (FormantEditor, modeler_varianceExponent,          1, U"1.25")
+	prefs_add_bool_with_data   (FormantEditor, modeler_draw_allModels,            1, true)
+	prefs_add_double_with_data (FormantEditor, modeler_draw_xSpace_fraction,      1, U"0.1")
+	prefs_add_double_with_data (FormantEditor, modeler_draw_ySpace_fraction,      1, U"0.1")
+	prefs_add_double_with_data (FormantEditor, modeler_draw_maximumFrequency,     1, U"5000.0")
 	prefs_add_bool_with_data   (FormantEditor, modeler_draw_estimatedTracks,      1, false)
 	prefs_add_bool_with_data   (FormantEditor, modeler_draw_errorBars,            1, true)
 	prefs_add_double_with_data (FormantEditor, modeler_draw_errorBarWidth_s,      1, U"0.001")
-	prefs_add_double_with_data (FormantEditor, modeler_draw_trackOffsetX_s,       1, U"-0.001") // s
+	prefs_add_double_with_data (FormantEditor, modeler_draw_xTrackShift_s,        1, U"-0.001") // s
 	prefs_add_string_with_data (FormantEditor, modeler_draw_best3colour,          1, U"green pink blue") //
+	prefs_add_double_with_data (FormantEditor, modeler_draw_yGridLineEvery_Hz,    1, U"1000.0") // Hz
 	
 	prefs_add_enum_with_data   (FormantEditor, analysisHistory_lpcType,           1, kLPC_Analysis, BURG)
 	prefs_add_double_with_data (FormantEditor, analysisHistory_timeStep,          1, U"0.005") // s

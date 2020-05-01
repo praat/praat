@@ -1,6 +1,6 @@
 /* FormantEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2020 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,62 +63,97 @@ autoINTVEC newINTVECfromString (conststring32 string) {
 	return result;
 }
 
-autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantListWithHistory me, double startTime, double endTime, constINTVEC const& numberOfParameters) {
+autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantListWithHistory me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
 	try {
 		autoFormantModelerList thee = Thing_new (FormantModelerList);
+		thy xmin = startTime;
+		thy xmax = endTime;
+		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
+		Melder_require (numberOfParametersPerTrack.size > 0 ,
+			U"The number of items in the parameter list should be larger than zero.");
+		integer maximumNumberOfFormants = my formantAnalysisHistory . maximumNumberOfFormants;
+		Melder_require (numberOfParametersPerTrack.size <= maximumNumberOfFormants,
+			U"The number of items cannot exceed the maximum number of formants (", maximumNumberOfFormants, U").");
+		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
+		integer numberOfZeros = 0;
+		for (integer ipar = 1; ipar <= thy numberOfParametersPerTrack.size; ipar ++) {
+			const integer value = thy numberOfParametersPerTrack [ipar];
+			Melder_require (value >= 0,
+				U"");
+			if (value == 0)
+				numberOfZeros += 1;
+		}
+		//Melder_require (thy numberOfParametersPerTrack.size - numberOfZeros > 0,
+		//	U"Not all 'number of paramters' should be zero.");
+		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
+		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
 		thy numberOfModelers = my numberOfElements;
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
-			autoFormantModeler fm = Formant_to_FormantModeler (my formants.at [imodel], startTime, endTime, my ceilings [imodel], numberOfParameters);
+			autoFormantModeler fm = Formant_to_FormantModeler (my formants.at [imodel], startTime, endTime, my ceilings [imodel], thy numberOfParametersPerTrack.get());
 			thy formantModelers. addItem_move (fm.move());
 		}
-		thy displayOrder = newINTVEClinear (thy numberOfModelers, 1, 1);
+		thy selected = newINTVEClinear (thy numberOfModelers, 1, 1);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantModelerList not created.");
 	}
 }
 
-void FormantModelerList_selectBest3 (FormantModelerList me, double variancePower) {
+void FormantModelerList_selectAll (FormantModelerList me) {
+	my selected.resize (my numberOfModelers);
+	INTVEClinear (my selected.get(), 1, 1);
+}
+
+static inline void FormantModelerList_setVarianceExponent (FormantModelerList me, double varianceExponent) {
+	my varianceExponent = varianceExponent;
+}
+
+autoINTVEC FormantModelerList_selectBest3 (FormantModelerList me) {
 	/*
-		1 The smoothest F1 score
+		3 The smoothest F1 score
 		2 The smoothest F1 & F2 score
-		3 the smoothest F1 & F2 & F3 score
+		1 the smoothest F1 & F2 & F3 score
 	*/
 	double smoothnessF1, smoothnessF1F2, smoothnessF1F2F3;
 	smoothnessF1 = smoothnessF1F2 = smoothnessF1F2F3 = std::numeric_limits<double>::max();
-	integer indexF1, indexF1F2, indexF1F2F3;
+	autoINTVEC best = newINTVECraw (3);
 	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
 		FormantModeler fm = my formantModelers.at [imodel];
-		double smoothness = FormantModeler_getSmoothnessValue (fm, 1, 1, 0, variancePower);
+		double smoothness = FormantModeler_getSmoothnessValue (fm, 1, 1, 0, my varianceExponent);
 		if (smoothness < smoothnessF1) {
 			smoothnessF1 = smoothness;
-			my displayOrder [1] = imodel;
+			best [3] = imodel;
 		}
-		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 2, 0, variancePower);
+		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 2, 0, my varianceExponent);
 		if (smoothness < smoothnessF1F2) {
 			smoothnessF1F2 = smoothness;
-			my displayOrder [2]  = imodel;
+			best [2]  = imodel;
 		}
-		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 3, 0, variancePower);
+		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 3, 0, my varianceExponent);
 		if (smoothness < smoothnessF1F2F3) {
 			smoothnessF1F2F3 = smoothness;
-			my displayOrder [3]  = imodel;
+			best [1]  = imodel;
 		}
 	}
-	my displayOrder.resize (3);
+	return best;
 }
 
 inline integer FormantModelerList_getNumberOfVisible (FormantModelerList me) {
-	return my displayOrder.size;
+	return my selected.size;
 }
 
 void FormantModelerList_getDisplayLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
 	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
-	const integer nrow = 1 + Melder_ifloor (sqrt (numberOfVisible - 0.5));
+	integer ncol = 1;
+	integer nrow = 3;
+	if (numberOfVisible > 3) {
+		nrow = 1 + Melder_ifloor (sqrt (numberOfVisible - 0.5));
+		ncol = 1 + Melder_ifloor ((numberOfVisible - 1) / nrow);
+	}
 	if (out_numberOfRows)
 		*out_numberOfRows = nrow;
 	if (out_numberOfColums)
-		*out_numberOfColums = 1 + Melder_ifloor ((numberOfVisible - 1) / nrow);
+		*out_numberOfColums = ncol;
 }
 
 integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList me, integer irow, integer icol) {
@@ -128,21 +163,130 @@ integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList
 	integer index = (irow - 1) * numberOfColums + icol;
 	if (index > numberOfVisible)
 		index = 0;
-	return ( index > 0 ? my displayOrder [index] : 0 );
+	return ( index > 0 ? my selected [index] : 0 );
 }
 
-void FormantModelerList_getRowColumnIndexFromModelerIndex (FormantModelerList me, integer imodel, integer *irow, integer *icol) {
-	integer numberOfRows, numberOfColumns;
-	FormantModelerList_getDisplayLayout (me, & numberOfRows, & numberOfColumns);
-	irow = icol = 0;
-	for (integer id = 1; imodel <= my displayOrder.size; imodel ++) {
-		if (my displayOrder [id] == imodel) {
-			*irow = 1 + (id - 1) / numberOfColumns;
-			*icol = 1 + (id - 1) % numberOfColumns;
+void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, bool garnish) {
+	if (nrow <= 0 || ncol <= 0)
+		FormantModelerList_getDisplayLayout (me, & nrow, & ncol);
+	double x1NDC, x2NDC, y1NDC, y2NDC;
+	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
+	double fontSize_old = Graphics_inqFontSize (g), fontSize = 8.0;
+	auto getXtick = [] (Graphics g, double fontSize) {
+		const double margin = 2.8 * fontSize * g -> resolution / 72.0;
+		const double wDC = (g -> d_x2DC - g -> d_x1DC) / (g -> d_x2wNDC - g -> d_x1wNDC) * (g -> d_x2NDC - g -> d_x1NDC);
+		double dx = 1.5 * margin / wDC;
+		double xTick = 0.06 * dx;
+		if (dx > 0.4) dx = 0.4;
+		return xTick /= 1.0 - 2.0 * dx;
+	};
+	auto getYtick = [] (Graphics g, double fontSize) {
+		double margin = 2.8 * fontSize * g -> resolution / 72.0;
+		double hDC = integer_abs (g->d_y2DC - g->d_y1DC) / (g->d_y2wNDC - g->d_y1wNDC) * (g->d_y2NDC - g-> d_y1NDC);
+		double dy = margin / hDC;
+		double yTick = 0.09 * dy;
+		if (dy > 0.4) dy = 0.4;
+		yTick /= 1.0 - 2.0 * dy;
+		return yTick;
+	};
+	const bool fillUp = ( origin == kGraphicsMatrixOrigin::BOTTOM_LEFT || origin == kGraphicsMatrixOrigin::BOTTOM_RIGHT );
+	const bool rightToLeft = ( origin == kGraphicsMatrixOrigin::TOP_RIGHT || origin ==kGraphicsMatrixOrigin:: BOTTOM_RIGHT );
+	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
+	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
+	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
+	autoINTVEC best3 = FormantModelerList_selectBest3 (me);
+	for (integer id = 1; id <= my selected.size; id ++) {
+		const integer irow1 = 1 + (id - 1) / ncol; // left-to-right + top-to-bottom
+		const integer icol1 = 1 + (id - 1) % ncol;
+		const integer icol = ( rightToLeft ? ncol - icol1 + 1 : icol1 );
+		const integer irow = ( fillUp ? nrow - irow1 + 1 : irow1 );
+		double vpi_x1 = x1NDC + (icol - 1) * vpi_width * (1.0 + spaceBetweenFraction_x);
+		double vpi_x2 = vpi_x1 + vpi_width;
+		double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
+		double vpi_y1 = vpi_y2 - vpi_height;
+		FormantModeler fm = my formantModelers.at [abs(my selected [id])];
+		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
+		Graphics_setWindow (g, fm -> xmin, fm -> xmax, 0.0, fmax);
+		FormantModeler_speckle_inside (fm, g, fm -> xmin, fm -> xmax, fmax, fromFormant, toFormant,
+			drawEstimated, 0, drawErrorBars, barwidth_s, xTrackOffset_s);
+		Graphics_setLineWidth (g, 2.0);
+		Graphics_setColour (g, ( my selected [id] < 0 ? Melder_MAROON : Melder_BLACK ));
+		Graphics_rectangle (g, fm -> xmin, fm -> xmax, 0.0, fmax);
+		Graphics_setColour (g, Melder_BLACK);
+		Graphics_setLineWidth (g, 1.0);
+		/*
+			Mark ceilings & smoothness
+		*/
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
+		Graphics_text (g, fm -> xmax - 0.05 * (fm -> xmax - fm -> xmin),
+			fmax - 0.05 * fmax, Melder_integer (fm -> maximumFrequency));
+		double w = FormantModeler_getSmoothnessValue (fm, fromFormant, toFormant, 0, my varianceExponent);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
+		Graphics_text (g, fm -> xmin + 0.05 * (fm -> xmax - fm -> xmin),
+			fmax - 0.05 * fmax, Melder_fixed (w, 2));
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+		autoMelderString best;
+		if (best3 [1] == abs (my selected [id]))
+			MelderString_append (& best, U"F123");
+		if (best3 [2] == abs (my selected [id]))
+			MelderString_append (& best, ( best.string && best.string [0] ? U"&F12" : U"F12" ));
+		if (best3 [3] == abs (my selected [id]))
+			MelderString_append (& best, ( best.string && best.string [0] ? U"&F1" : U"F1" ));
+		
+		if (best.string && best.string [0]) {
+			Graphics_text (g, fm -> xmin + 0.5 * (fm -> xmax - fm -> xmin),
+				fmax - 0.05 * fmax, best.string);
+			MelderString_empty (& best);
+		}
+		if (garnish) {
+			double xTick = (double) getXtick (g, fontSize) * (fm -> xmax - fm -> xmin);
+			double yTick = (double) getYtick (g, fontSize) * (fmax - 0.0);
+			if (icol == 1 && irow % 2 == 1) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
+				Graphics_line (g, fm -> xmin - xTick, fmax, fm -> xmin, fmax);
+				Graphics_text (g, fm -> xmin - xTick, fmax, Melder_iround (fmax));
+				Graphics_line (g, fm -> xmin - xTick, 0.0, fm -> xmin, 0.0);
+				Graphics_text (g, fm -> xmin - xTick, 0.0, U"0.0");
+			} else if (icol == ncol && irow % 2 == 0) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
+				Graphics_text (g, fm -> xmax, fmax, Melder_iround (fmax));
+				Graphics_text (g, fm -> xmax, 0.0, U"0.0");
+			}
+			if (irow == 1 && icol % 2 == 0) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
+				Graphics_line (g, fm -> xmin, fmax, fm -> xmin, fmax + yTick);
+				Graphics_text (g, fm -> xmin, fmax + yTick, Melder_fixed (fm -> xmin, 3));
+				Graphics_line (g, fm -> xmax, fmax, fm -> xmax, fmax + yTick);
+				Graphics_text (g, fm -> xmax, fmax + yTick, Melder_fixed (fm -> xmax, 3));
+			} else if (irow == nrow && icol % 2 == 1) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
+				Graphics_line (g, fm -> xmin, 0.0, fm -> xmin, 0.0 - yTick);
+				Graphics_text (g, fm -> xmin, 0.0 - yTick, Melder_fixed (fm -> xmin, 3));
+				Graphics_line (g, fm -> xmax, 0.0, fm -> xmax, 0.0 - yTick);
+				Graphics_text (g, fm -> xmax, 0.0 - yTick, Melder_fixed (fm -> xmax, 3));
+			}
+			double yGridLine_Hz = yGridLineEvery_Hz;
+			Graphics_setLineType (g, Graphics_DOTTED);
+			while (yGridLine_Hz < 0.95 * fmax) {
+				Graphics_line (g, fm -> xmin, yGridLine_Hz, fm -> xmax, yGridLine_Hz);
+				yGridLine_Hz += yGridLineEvery_Hz;
+			}
+			/*
+				Cursors
+			*/
+			Graphics_setColour (g, Melder_RED);
+			Graphics_setLineType (g, Graphics_DASHED);
+			if (xCursor > fm -> xmin && xCursor <= fm -> xmax)
+				Graphics_line (g, xCursor, 0.0, xCursor, fmax);
+			if (yCursor > 0.0 && yCursor < fmax)
+				Graphics_line (g, fm -> xmin, yCursor, fm -> xmax, yCursor);
+			Graphics_setColour (g, Melder_BLACK);
+			Graphics_setLineType (g, Graphics_DRAWN);
 		}
 	}
+	Graphics_setFontSize (g, fontSize_old);
+	Graphics_setViewport (g, x1NDC, x2NDC, y1NDC, y2NDC);
 }
-
 /********** UTILITIES **********/
 
 static double _FormantEditor_computeSoundY (FormantEditor me) {
@@ -1013,18 +1157,59 @@ static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastPublication (me, publish.move());
 }
 
-static void menu_cb_modelerSettings (FormantEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_modeler_modelSettings (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler settings", nullptr)		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
+		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
 		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
 	EDITOR_DO
-	autoINTVEC numberOfParametersPerTrack = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
-	Melder_require (numberOfParametersPerTrack.size <= my p_analysisHistory_maximumNumberOfFormants,
-		U"The number of tracks cannot be larger than the number of measured formants (", my p_analysisHistory_maximumNumberOfFormants, U").");
-	if (my formantModelerList.get ())
-		my formantModelerList -> numberOfParametersPerTrack = numberOfParametersPerTrack.move();
+	double startTime = my formantModelerList -> xmin, endTime = my formantModelerList -> xmax;
+	my formantModelerList = FormantListWithHistory_to_FormantModelerList (my formantListWithHistory.get(), startTime, endTime, parameters_string);
+	FormantModelerList_setVarianceExponent (my formantModelerList.get(), varianceExponent);
 	pref_str32cpy2 (my pref_modeler_numberOfParametersPerTrack (), my p_modeler_numberOfParametersPerTrack, parameters_string);
+	my pref_modeler_varianceExponent () = my p_modeler_varianceExponent = varianceExponent;
+	my v_drawSelectionViewer ();
+	EDITOR_END
+}
+
+static void menu_cb_modeler_modelSettingsDrawBest3 (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = false;
+	my v_drawSelectionViewer ();
+}
+
+static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Formant modeler drawing settings", nullptr)
+		BOOLEAN (drawAllModels, U"Draw all models", my default_modeler_draw_allModels ())
+		BOOLEAN (drawEstimatedTracks, U"Draw estimated tracks", my default_modeler_draw_estimatedTracks ())
+		REAL (xSpaceFraction, U"Column separation (fraction)", my default_modeler_draw_xSpace_fraction ())
+		REAL (ySpaceFraction, U"Row separation (fraction)", my default_modeler_draw_ySpace_fraction ())
+		POSITIVE (yGridLineEvery_Hz, U"Horizontal grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
+		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
+		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_errorBars ())
+		REAL (errorBarWidth_s, U"Error bar width (s)", my default_modeler_draw_errorBarWidth_s ())
+		REAL (xTrackShift_s, U"Shift even formant tracks by (s)", my default_modeler_draw_xTrackShift_s ())
+	EDITOR_OK
+		SET_BOOLEAN (drawAllModels, my p_modeler_draw_allModels)
+		SET_BOOLEAN (drawEstimatedTracks, my p_modeler_draw_estimatedTracks)
+		SET_REAL (xSpaceFraction, my p_modeler_draw_xSpace_fraction)
+		SET_REAL (ySpaceFraction, my p_modeler_draw_ySpace_fraction)
+		SET_REAL (yGridLineEvery_Hz, my p_modeler_draw_yGridLineEvery_Hz)
+		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
+		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_errorBars)
+		SET_REAL (errorBarWidth_s, my p_modeler_draw_errorBarWidth_s)
+		SET_REAL (xTrackShift_s, my p_modeler_draw_xTrackShift_s)
+	EDITOR_DO
+	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = drawAllModels;
+	my pref_modeler_draw_estimatedTracks () = my p_modeler_draw_estimatedTracks = drawEstimatedTracks;
+	my pref_modeler_draw_xSpace_fraction () = my p_modeler_draw_xSpace_fraction = xSpaceFraction;
+	my pref_modeler_draw_ySpace_fraction () = my p_modeler_draw_ySpace_fraction = ySpaceFraction;
+	my pref_modeler_draw_maximumFrequency () = my p_modeler_draw_maximumFrequency = maximumFrequency;
+	my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
+	my pref_modeler_draw_errorBars () = my p_modeler_draw_errorBars = drawErrorBars;
+	my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
+	my pref_modeler_draw_xTrackShift_s () = my p_modeler_draw_xTrackShift_s = xTrackShift_s;
+	my v_drawSelectionViewer ();
 	EDITOR_END
 }
 
@@ -1195,7 +1380,9 @@ void structFormantEditor :: v_createMenus () {
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
 	menu = Editor_addMenu (this, U"Modeling", 0);
-	EditorMenu_addCommand (menu, U"Modeler settings...", 0, menu_cb_modelerSettings);
+	EditorMenu_addCommand (menu, U"Model settings...", 0, menu_cb_modeler_modelSettings);
+	EditorMenu_addCommand (menu, U"Draw best three", 0, menu_cb_modeler_modelSettingsDrawBest3);
+	EditorMenu_addCommand (menu, U"Drawing settings...", 0, menu_cb_modelerDrawingSettings);
 }
 
 void structFormantEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -1601,6 +1788,23 @@ void structFormantEditor :: v_draw () {
 	v_updateMenuItems_file ();
 }
 
+void FormantEditor_setSelectionViewerViewportAndWindow (FormantEditor me) {
+	/*
+		BOTTOM_MARGIN = 2; TOP_MARGIN = 3; MARGIN = 107; space = 30
+		The FunctionEditor defines the selectionViewer viewport as
+		Graphics_setViewport (my graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+		my v_drawSelectionViewer ();
+		We need somewhat more space; idealy we could override the values above, for now they are hard-coded
+	*/
+	double space = 30.0, margin = 107.0;
+	double vp_left = my selectionViewerLeft + 0.5 * margin ;
+	double vp_right = my selectionViewerRight - 0.75 * margin;
+	double vp_bottom = space;
+	double vp_top = my height - space;
+	Graphics_setViewport (my graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
+	Graphics_setWindow (my graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
+}
+
 void structFormantEditor :: v_drawSelectionViewer () {
 	/*
 		BOTTOM_MARGIN = 2; TOP_MARGIN = 3; MARGIN = 107; space = 30
@@ -1608,40 +1812,43 @@ void structFormantEditor :: v_drawSelectionViewer () {
 		Graphics_setViewport (my graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		my v_drawSelectionViewer ();
 		We need somewhat more space; idealy we could override the values above, for now they are hard-coded
-	}*/
+	*/
 	double space = 30.0, margin = 107.0;
 	double vp_left = selectionViewerLeft + 0.5 * margin ;
 	double vp_right = selectionViewerRight - 0.75 * margin;
 	double vp_bottom = space;
 	double vp_top = height - space;
 	Graphics_setViewport (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
-	Graphics_setWindow (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setWindow (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_fillRectangle (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 	Graphics_setFontSize (our graphics.get(), 9.0);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	if (! our formantModelerList.get())
 			return;
-	FormantModelerList fml = our formantModelerList.get();
-	if (! p_modeler_draw_allModels)
-		FormantModelerList_selectBest3 (fml, p_modeler_variancePower);
-	
-	integer numberOfRows, numberOfColums;
-	FormantModelerList_getDisplayLayout (fml, & numberOfRows, & numberOfColums);
-	double vp_dx = (vp_right - vp_left) / numberOfColums;
-	double vp_dy = (vp_top - vp_bottom) / numberOfRows;
-	for (integer index = 1; index <= fml -> displayOrder.size; index ++) {
-		FormantModeler fm = fml -> formantModelers.at [fml -> displayOrder [index]];
-		const integer icol = (index - 1) / numberOfRows + 1;
-		integer irow = index - (icol -1) * numberOfRows;
-		Graphics_setViewport (our graphics.get(), vp_left + (icol - 1) * vp_dx, vp_left + icol * vp_dx,
-			vp_top - (irow - 1) *vp_dy, vp_top - irow *vp_dy);
-		Graphics_setWindow (our graphics.get(), 0, 1, 0, 1);
-		FormantModeler_drawTracks (fm, our graphics.get(), tmin, tmax, our p_modeler_draw_maximumFrequency, 1, our p_modeler_numberOfTracks, our p_modeler_draw_estimatedTracks, 0, our p_modeler_draw_trackOffsetX_s, false);
-		Graphics_drawInnerBox (our graphics.get());
+	double startTime = startWindow, endTime = endWindow;
+	if (startSelection < endSelection) {
+		startTime = startSelection;
+		endTime = endSelection;
 	}
+	if (startSelection < endSelection && (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax))
+		our formantModelerList = FormantListWithHistory_to_FormantModelerList (our formantListWithHistory.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
+
+	FormantModelerList fml = our formantModelerList.get();
+	FormantModelerList_selectAll (fml);
+	FormantModelerList_setVarianceExponent (fml, our p_modeler_varianceExponent);
+	if (! p_modeler_draw_allModels)
+		fml -> selected = FormantModelerList_selectBest3 (fml);
+	const double xCursor = ( startSelection == endSelection ? startSelection : fml -> xmin - 10.0 );
+	const double yCursor = ( our d_spectrogram_cursor > our p_spectrogram_viewFrom && our d_spectrogram_cursor < our p_spectrogram_viewTo ? our d_spectrogram_cursor : -1000.0 );
+	FormantModelerList_drawAsMatrix (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
+		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
+		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
+		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_errorBars,
+		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_xTrackShift_s,
+		our p_modeler_draw_estimatedTracks, true);
 }
 
 static void do_drawWhileDragging (FormantEditor me, double numberOfTiers, bool selectedTier [], double x, double soundY) {
@@ -2028,12 +2235,14 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	FormantModelerList fml = formantModelerList.get();
 	FormantModelerList_getDisplayLayout (fml, & numberOfRows, & numberOfColums);
 	integer numberOfVisible = FormantModelerList_getNumberOfVisible (fml);
-	const integer columnNumber = 1 + (int) (xWC * numberOfColums);
-	if (columnNumber < 1 || columnNumber > numberOfColums)
+	const integer icol = 1 + (int) (xWC * numberOfColums);
+	if (icol < 1 || icol > numberOfColums)
 		return;
-	const integer rowNumber = 1 + (int) ((1.0 - yWC) * numberOfRows);
-	if (rowNumber < 1 || rowNumber > numberOfRows)
+	const integer irow = 1 + (int) ((1.0 - yWC) * numberOfRows);
+	if (irow < 1 || irow > numberOfRows)
 		return;
+	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
+	fml -> selected [index] = - abs (fml -> selected [index]);
 	
 }
 
@@ -2221,13 +2430,51 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Sound sound, boo
 			U"to shift the starting time of the TextGrid to zero.");		
 	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax ==  formant -> xmax,
 		U"The time domain of the Sound and the Formant should be equal.");
-	my formantListWithHistory = Sound_to_FormantListWithHistory_any (sound, my p_analysisHistory_lpcType, my p_analysisHistory_timeStep, my p_analysisHistory_maximumNumberOfFormants, my p_analysisHistory_windowLength, my p_analysisHistory_preemphasisFrequency, my p_analysisHistory_minimumCeiling, my p_analysisHistory_maximumCeiling, my p_analysisHistory_numberOfCeilings, my p_analysisHistory_tol1, my p_analysisHistory_tol2, my p_analysisHistory_numberOfStdDev, my p_analysisHistory_tol, my p_analysisHistory_maximumNumberOfIterations);
+
 }
 
 autoFormantEditor FormantEditor_create (conststring32 title, Sound sound, bool ownSound, Formant formant, TextGrid grid, conststring32 callbackSocket) {
 	try {
 		autoFormantEditor me = Thing_new (FormantEditor);
 		FormantEditor_init (me.get(), title, sound, ownSound, formant, grid, callbackSocket);
+		if (my p_analysisHistory_lpcType < kLPC_Analysis::AUTOCORRELATION ||
+			my p_analysisHistory_lpcType > kLPC_Analysis::BURG)
+			my p_analysisHistory_lpcType = my default_analysisHistory_lpcType ();
+		if (my p_analysisHistory_timeStep < 0.0)
+			my p_analysisHistory_timeStep = Melder_atof (my default_analysisHistory_timeStep ());
+		if (my p_analysisHistory_maximumNumberOfFormants <= 0)
+			my p_analysisHistory_maximumNumberOfFormants = Melder_atof (my default_analysisHistory_maximumNumberOfFormants ());
+		if (my p_analysisHistory_windowLength <= 0.0)
+			my p_analysisHistory_windowLength = Melder_atof (my default_analysisHistory_windowLength ());
+		if (my p_analysisHistory_preemphasisFrequency <= 0.0)
+			my p_analysisHistory_preemphasisFrequency = Melder_atof (my default_analysisHistory_preemphasisFrequency ());
+		if (my p_analysisHistory_minimumCeiling <= 0.0)
+			my p_analysisHistory_minimumCeiling = Melder_atof (my default_analysisHistory_minimumCeiling ());
+		if (my p_analysisHistory_maximumCeiling <= 0.0)
+			my p_analysisHistory_maximumCeiling = Melder_atof (my default_analysisHistory_maximumCeiling ());
+		if (my p_analysisHistory_numberOfCeilings <= 0)
+			my p_analysisHistory_numberOfCeilings = Melder_atoi (my default_analysisHistory_numberOfCeilings ());
+		if (my p_analysisHistory_tol1 <= 0.0)
+			my p_analysisHistory_tol1 = Melder_atof (my default_analysisHistory_tol1 ());
+		if (my p_analysisHistory_tol2 <= 0.0)
+			my p_analysisHistory_tol2 = Melder_atof (my default_analysisHistory_tol2 ());
+		if (my p_analysisHistory_numberOfStdDev <= 0.0)
+			my p_analysisHistory_numberOfStdDev = Melder_atof (my default_analysisHistory_numberOfStdDev ());
+		if (my p_analysisHistory_tol <= 0.0)
+			my p_analysisHistory_tol = Melder_atof (my default_analysisHistory_tol ());
+		if (my p_analysisHistory_maximumNumberOfIterations <= 0)
+			my p_analysisHistory_maximumNumberOfIterations = Melder_atoi (my default_analysisHistory_maximumNumberOfIterations ());
+		my formantListWithHistory = Sound_to_FormantListWithHistory_any (sound, my p_analysisHistory_lpcType,
+			my p_analysisHistory_timeStep, my p_analysisHistory_maximumNumberOfFormants,
+			my p_analysisHistory_windowLength, my p_analysisHistory_preemphasisFrequency,
+			my p_analysisHistory_minimumCeiling, my p_analysisHistory_maximumCeiling,
+			my p_analysisHistory_numberOfCeilings, my p_analysisHistory_tol1, my p_analysisHistory_tol2,
+			my p_analysisHistory_numberOfStdDev, my p_analysisHistory_tol,
+			my p_analysisHistory_maximumNumberOfIterations);
+		if (my p_modeler_numberOfParametersPerTrack == U"")
+			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
+		my formantModelerList = FormantListWithHistory_to_FormantModelerList (my formantListWithHistory.get(), my tmin, my tmax, my p_modeler_numberOfParametersPerTrack);
+		
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantEditor window not created.");

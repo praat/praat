@@ -49,10 +49,10 @@ static inline void getAutoNaturalNumbersWithinRange (integer *from, integer *to,
 }
 
 static inline void getAutoNaturalNumberWithinRange (integer *number, integer maximum) {
-	if (*number <= 0)
-		*number = 1;
-	if (*number > maximum)
+	if (*number == 0 || *number > maximum)
 		*number = maximum;
+	if (*number < 0)
+		*number = 1;
 }
 
 void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type);

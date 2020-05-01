@@ -307,6 +307,10 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 		}
 		if (ymax <= ymin)
 			NUMextrema (var.part (ixmin, ixmax), & ymin, & ymax);
+		if (ymin == ymax) {
+			ymin -= 0.5;
+			ymax += 0.5;
+		}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		const DataModeler thee = my trackmodelers.at [1];
@@ -397,11 +401,11 @@ void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, intege
 	}
 }
 
-static void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_wc) {
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_wc) {
 	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
 		DataModeler ffi = my trackmodelers.at [iformant];
-		double xOffset_wc = ( iformant % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
-		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0, fmax, estimated, numberOfParameters, xOffset_wc);
+		double xOffset_wc = ( iformant % 2 == 0 ? horizontalOffset_wc : 0.0 );
+		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, estimated, numberOfParameters, xOffset_wc);
 	}
 }
 
@@ -430,18 +434,18 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	}
 }
 
-static void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, int errorBars, double barWidth_mm, double horizontalOffset_wc) {
+void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
+	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc) {
 	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
 		const DataModeler ffi = my trackmodelers.at [iformant];
 		const double xOffset_wc = ( iformant % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
-		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, estimated, numberOfParameters, errorBars, barWidth_mm, xOffset_wc);
+		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, estimated, numberOfParameters, errorBars, barWidth_wc, xOffset_wc);
 	}
 }
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
-	bool errorBars, double barWidth_mm, double horizontalOffset_wc, bool garnish)
+	bool errorBars, double barWidth_wc, double horizontalOffset_wc, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const integer maxTrack = my trackmodelers.size;
@@ -454,7 +458,7 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	if (toTrack > maxTrack)
 		toTrack = maxTrack;
 	Graphics_setInner (g);
-	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, estimated, numberOfParameters, errorBars, barWidth_mm, horizontalOffset_wc);
+	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, estimated, numberOfParameters, errorBars, barWidth_wc, horizontalOffset_wc);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -889,7 +893,7 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant
 	const double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, nullptr, & degreesOfFreedom);
 	double smoothness = undefined;
 	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
-		log10 (pow (var / numberOfFreeParameters, power) * (chisq / degreesOfFreedom)) :
+		power * log10 ((var / numberOfFreeParameters) * (chisq / degreesOfFreedom)) :
 		undefined );
 }
 

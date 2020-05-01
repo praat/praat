@@ -72,10 +72,11 @@
 
 // Identical for all FormantModelers on the same segment
 Thing_define (FormantModelerList, Function) {
-	integer numberOfModelers;
+	integer numberOfModelers, numberOfTracksPerModel;
+	double varianceExponent;
 	autoINTVEC numberOfParametersPerTrack; // .size = (numberOfFormantTracks)
 	OrderedOf<structFormantModeler> formantModelers;
-	autoINTVEC displayOrder; // models are displayed in this order
+	autoINTVEC selected; // models are displayed in this order
 };
 
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
@@ -83,7 +84,7 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormantListWithHistory formantListWithHistory;
 	autoFormantModelerList formantModelerList;
 	autoTextGrid masterSlave;
-	
+	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier;
 	bool suppressRedraw;
 	autostring32 findString;

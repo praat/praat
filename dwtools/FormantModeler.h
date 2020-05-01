@@ -57,7 +57,11 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
 	bool errorBars, double barWidth_mm, double horizontalOffset_wc, bool garnish);
 
+void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
+	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc);
+
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_wc, bool garnish);
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_wc);
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
 	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish);
@@ -139,6 +143,18 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool es
 
 autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas);
 
+/*
+	Get smoothness criterion value according to Weenink's (2015) measure
+	W = (var/k)^t * (chi^2/d), where
+	var is the sum of all variances of all parameters of all modelled formants,
+	k is the total number of parameters to mode all tracks, chi^2 is the combined chi-squared of all
+	the modeled tracks, d is the combined degrees of freedom, and t is a number that if chosen
+	larger than 1 guarantees that for tracks that only differ in bandwidth the one with the largest
+	bandwidth obtains a higher value for W.
+	A lower value for W means a smoother track.
+	
+	The routine returns log10 (W).
+*/
 double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant,
 	integer numberOfParametersPerTrack, double power);
 
