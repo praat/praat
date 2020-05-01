@@ -210,7 +210,7 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 		FormantModeler_speckle_inside (fm, g, fm -> xmin, fm -> xmax, fmax, fromFormant, toFormant,
 			drawEstimated, 0, drawErrorBars, barwidth_s, xTrackOffset_s);
 		Graphics_setLineWidth (g, 2.0);
-		Graphics_setColour (g, ( my selected [id] < 0 ? Melder_MAROON : Melder_BLACK ));
+		Graphics_setColour (g, ( my selected [id] < 0 ? Melder_BLUE : Melder_BLACK ));
 		Graphics_rectangle (g, fm -> xmin, fm -> xmax, 0.0, fmax);
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
@@ -1837,10 +1837,7 @@ void structFormantEditor :: v_drawSelectionViewer () {
 		our formantModelerList = FormantListWithHistory_to_FormantModelerList (our formantListWithHistory.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
 
 	FormantModelerList fml = our formantModelerList.get();
-	FormantModelerList_selectAll (fml);
 	FormantModelerList_setVarianceExponent (fml, our p_modeler_varianceExponent);
-	if (! p_modeler_draw_allModels)
-		fml -> selected = FormantModelerList_selectBest3 (fml);
 	const double xCursor = ( startSelection == endSelection ? startSelection : fml -> xmin - 10.0 );
 	const double yCursor = ( our d_spectrogram_cursor > our p_spectrogram_viewFrom && our d_spectrogram_cursor < our p_spectrogram_viewTo ? our d_spectrogram_cursor : -1000.0 );
 	FormantModelerList_drawAsMatrix (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
@@ -2242,7 +2239,8 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	if (irow < 1 || irow > numberOfRows)
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
-	fml -> selected [index] = - abs (fml -> selected [index]);
+	for (integer id = 1; id <= fml -> selected.size; id ++)
+		fml -> selected [id] = ( index == id ? - abs (fml -> selected [id]) : abs (fml -> selected [id]) );
 	
 }
 
