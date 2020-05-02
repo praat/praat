@@ -21,21 +21,15 @@ Select outer viewport: 0.0, 5.0, 0.0, 5.0
 Draw scatter plot: 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, "yes", "+", "yes"
 
 discriminant = To Discriminant
-test = Read from file: "Pols.text.Discriminant"
-if macintosh
-	assert objectsAreIdentical (test, discriminant)
-endif
-Remove
-test = Read from file: "Pols.binary.Discriminant"
-if macintosh
-	assert objectsAreIdentical (test, discriminant)
-endif
+test1 = Read from file: "Pols.text.Discriminant"
+test2 = Read from file: "Pols.binary.Discriminant"
+assert objectsAreIdentical (test1, test2)
 
 plusObject: table
 configuration = To Configuration: 0
 Erase all
 Draw: 1, 2, -2.9, 2.9, -2.9, 2.9, 12, "yes", "+", "yes"
 
-removeObject: table, discriminant, test, configuration
+removeObject: table, discriminant, test1, test2, configuration
 
 appendInfoLine: "OK"

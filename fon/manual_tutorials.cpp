@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200419)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200502)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.14# (2 May 2020)")
+LIST_ITEM (U"• Repaired a bug in drawing ranges introduced in 6.1.06.")
 NORMAL (U"##6.1.13# (19 April 2020)")
 LIST_ITEM (U"• Repaired discriminant analysis on i386 processors.")
 LIST_ITEM (U"• Scripting: enabled predictability by setting random seeds.")
