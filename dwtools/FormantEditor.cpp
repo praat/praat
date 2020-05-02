@@ -1175,6 +1175,9 @@ static void menu_cb_modeler_modelSettings (FormantEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_modeler_modelSettingsDrawBest3 (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = false;
+	autoINTVEC best3 = FormantModelerList_selectBest3 (my formantModelerList.get());
+	my formantModelerList -> selected.part (1,3) <<= best3.get();
+	my formantModelerList -> selected.resize (3);
 	my v_drawSelectionViewer ();
 }
 
@@ -1209,6 +1212,8 @@ static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) 
 	my pref_modeler_draw_errorBars () = my p_modeler_draw_errorBars = drawErrorBars;
 	my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
 	my pref_modeler_draw_xTrackShift_s () = my p_modeler_draw_xTrackShift_s = xTrackShift_s;
+	if (drawAllModels)
+		FormantModelerList_selectAll (my formantModelerList.get());
 	my v_drawSelectionViewer ();
 	EDITOR_END
 }
