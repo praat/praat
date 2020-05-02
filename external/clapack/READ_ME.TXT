@@ -96,7 +96,7 @@ you can very easily make a mess of hundreds of files. A 'git reset' is very usef
 for these cases.
 
 +++++ Upgrading to clapack version 3.2.1 ++++++
-To test this version we first had to ad the -fno-stack-protector to the CFLAGS. Without this flag the testing routines throw "stack smashing errors" and the testing cannot be completed. Adding this flag made all tests succeed.
+To test this version we first had to add the -fno-stack-protector to the CFLAGS. Without this flag the testing routines throw "stack smashing errors" and the testing cannot be completed. Adding this flag made all tests succeed.
 
 This stack smashing error occured in dlaqr0.c where an "array" dimensioned as char jbcmpz[1] was used as follows:
 
@@ -109,7 +109,7 @@ This stack smashing error occured in dlaqr0.c where an "array" dimensioned as ch
 	}
 	nwr = ilaenv_(&c__13, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
 	
-Clearly jbcmpz[1] = .. is outside the boundary. This string is passed as the third argument of the ilaenv_ routine where a strlen is executed on it. So 'jbcmpz' is not properly closed too.
+Clearly jbcmpz[1] = .. is outside the boundary. This string is passed as the third argument of the ilaenv_ routine where a strlen is executed on it. So 'jbcmpz' is not properly closed either.
 To correct these bugs we have to dimension jbcmpz[3] and always close the string with a null byte. 
 
 	char jbcmpz[3];
@@ -125,7 +125,7 @@ To correct these bugs we have to dimension jbcmpz[3] and always close the string
 There are more occasions in clapack that don't properly close the third argument passed to ilaenv. In routines dhseqr dgesvd, dormbr, dormqr, dormlq, dormql, dormqr, dormrq, dormtr, and dormrz, character arrays of dimension 2 are passed without proper closing the string with a null byte. We corrected this too.
 
 Two other bugs were found by Paul Boersma: 
-The return value in dlamch has to be declared volatile, otherwise the whole routine is optimezed away and wrong result may occur.
+The return value in dlamch has to be declared volatile, otherwise the whole routine is optimized away and a wrong result may occur.
 double dlamc3_(double *a, double *b) {
 	volatile double ret_val;
 	ret_val = *a + *b;
