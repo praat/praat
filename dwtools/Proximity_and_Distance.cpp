@@ -27,7 +27,7 @@ autoDistance Dissimilarity_to_Distance (Dissimilarity me, kMDS_AnalysisScale sca
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		if (scale == kMDS_AnalysisScale::ORDINAL) {
 			additiveConstant = Dissimilarity_getAdditiveConstant (me);
-			Melder_require (additiveConstant != undefined,
+			Melder_require (isdefined (additiveConstant),
 				U"The additive constant could not be determined. Something is wrong with your Dissimilarity.");
 		}
 		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
