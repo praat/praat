@@ -290,7 +290,7 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 /********** UTILITIES **********/
 
 static double _FormantEditor_computeSoundY (FormantEditor me) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	bool showAnalysis = my v_hasAnalysis () &&
 			(my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) &&
@@ -312,7 +312,7 @@ static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier
 }
 
 static integer _FormantEditor_yWCtoTier (FormantEditor me, double yWC) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	const double soundY = _FormantEditor_computeSoundY (me);
 	integer tierNumber = numberOfTiers - Melder_ifloor (yWC / soundY * (double) numberOfTiers);
@@ -326,7 +326,7 @@ static integer _FormantEditor_yWCtoTier (FormantEditor me, double yWC) {
 static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer tierNumber,
 	double *tmin, double *tmax)
 {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	const Function tier = grid -> tiers->at [tierNumber];
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -363,13 +363,13 @@ static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer t
 }
 
 static void checkTierSelection (FormantEditor me, conststring32 verbPhrase) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
 static integer getSelectedInterval (FormantEditor me) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
@@ -377,7 +377,7 @@ static integer getSelectedInterval (FormantEditor me) {
 }
 
 static integer getSelectedLeftBoundary (FormantEditor me) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
@@ -385,7 +385,7 @@ static integer getSelectedLeftBoundary (FormantEditor me) {
 }
 
 static integer getSelectedPoint (FormantEditor me) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const TextTier tier = (TextTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
@@ -415,14 +415,14 @@ static void scrollToView (FormantEditor me, double t) {
 static void menu_cb_ExtractSelectedTextGrid_preserveTimes (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, true);
+	autoTextGrid extract = TextGrid_extractPart (my masterSlave.get(), my startSelection, my endSelection, true);
 	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, false);
+	autoTextGrid extract = TextGrid_extractPart (my masterSlave.get(), my startSelection, my endSelection, false);
 	Editor_broadcastPublication (me, extract.move());
 }
 
@@ -436,9 +436,9 @@ void structFormantEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 
 static void menu_cb_WriteToTextFile (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
-		Melder_sprint (defaultName,300, my data -> name.get(), U".TextGrid");
+		Melder_sprint (defaultName,300, my masterSlave -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
-		Data_writeToTextFile (my data, file);
+		Data_writeToTextFile (my masterSlave.get(), file);
 	EDITOR_END
 }
 
@@ -464,7 +464,7 @@ static void menu_cb_DrawVisibleTextGrid (FormantEditor me, EDITOR_ARGS_FORM) {
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
+		TextGrid_Sound_draw (my masterSlave.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -493,7 +493,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantEditor me, EDITOR_ARGS_F
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 					kSound_windowShape::RECTANGULAR, 1.0, true);
-			TextGrid_Sound_draw ((TextGrid) my data, sound.get(), my pictureGraphics,
+			TextGrid_Sound_draw (my masterSlave.get(), sound.get(), my pictureGraphics,
 				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
 		}
 		FunctionEditor_garnish (me);
@@ -528,7 +528,7 @@ static void menu_cb_Erase (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** QUERY MENU *****/
 
 static void menu_cb_GetStartingPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	checkTierSelection (me, U"query the starting point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -543,7 +543,7 @@ static void menu_cb_GetStartingPointOfInterval (FormantEditor me, EDITOR_ARGS_DI
 }
 
 static void menu_cb_GetEndPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	checkTierSelection (me, U"query the end point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -558,7 +558,7 @@ static void menu_cb_GetEndPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_GetLabelOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	checkTierSelection (me, U"query the label of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -575,7 +575,7 @@ static void menu_cb_GetLabelOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** VIEW MENU *****/
 
 static void do_selectAdjacentTier (FormantEditor me, bool previous) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	const integer n = grid -> tiers->size;
 	if (n >= 2) {
 		my selectedTier = ( previous ?
@@ -595,7 +595,7 @@ static void menu_cb_SelectNextTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void do_selectAdjacentInterval (FormantEditor me, bool previous, bool shift) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	IntervalTier intervalTier;
 	TextTier textTier;
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
@@ -743,7 +743,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantEditor me, EDITOR_ARGS_FORM) {
 		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
 		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
+		TextGrid_Pitch_drawSeparately (my masterSlave.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
 			speckle, my p_pitch_unit
 		);
@@ -755,7 +755,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantEditor me, EDITOR_ARGS_FORM) {
 /***** INTERVAL MENU *****/
 
 static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, double t2, bool insertSecond) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	if (itier < 1 || itier > numberOfTiers)
 		Melder_throw (U"No tier ", itier, U".");
@@ -875,7 +875,7 @@ static void do_insertIntervalOnTier (FormantEditor me, int itier) {
 static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 1); }
 
 static void menu_cb_AlignInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid = my masterSlave.get();
 	checkTierSelection (me, U"align words");
 	const AnyTier tier = static_cast <AnyTier> (grid -> tiers->at [my selectedTier]);
 	if (tier -> classInfo != classIntervalTier)
@@ -925,7 +925,7 @@ static void menu_cb_AlignmentSettings (FormantEditor me, EDITOR_ARGS_FORM) {
 /***** BOUNDARY/POINT MENU *****/
 
 static void menu_cb_RemovePointOrBoundary (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	checkTierSelection (me, U"remove a point or boundary");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -951,7 +951,7 @@ static void menu_cb_RemovePointOrBoundary (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void do_movePointOrBoundary (FormantEditor me, int where) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	if (where == 0 && ! my d_sound.data)
 		return;
 	checkTierSelection (me, U"move a point or boundary");
@@ -1028,7 +1028,7 @@ static void menu_cb_InsertOnSelectedTier (FormantEditor me, EDITOR_ARGS_DIRECT) 
 static void menu_cb_InsertOnTier1 (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 1); }
 
 static void menu_cb_InsertOnAllTiers (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	const integer saveTier = my selectedTier;
 	for (integer itier = 1; itier <= grid -> tiers->size; itier ++)
 		do_insertOnTier (me, itier);
@@ -1038,7 +1038,7 @@ static void menu_cb_InsertOnAllTiers (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantEditor me) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	checkTierSelection (me, U"find a text");
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -1129,12 +1129,12 @@ static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Rename tier", nullptr)
 		SENTENCE (newName, U"New name", U"");
 	EDITOR_OK
-		const TextGrid grid = (TextGrid) my data;
+		const TextGrid grid =  my masterSlave.get();
 		checkTierSelection (me, U"rename a tier");
 		const Daata tier = grid -> tiers->at [my selectedTier];
 		SET_STRING (newName, tier -> name ? tier -> name.get() : U"")
 	EDITOR_DO
-		const TextGrid grid = (TextGrid) my data;
+		const TextGrid grid =  my masterSlave.get();
 		checkTierSelection (me, U"rename a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
 
@@ -1148,7 +1148,7 @@ static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	checkTierSelection (me, U"publish a tier");
 	const Function tier = grid -> tiers->at [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
@@ -1214,7 +1214,7 @@ static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) 
 }
 
 static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	checkTierSelection (me, U"remove all text from a tier");
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -1232,7 +1232,7 @@ static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_RemoveTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	if (grid -> tiers->size <= 1) {
 		Melder_throw (U"Sorry, I refuse to remove the last tier.");
 	}
@@ -1252,11 +1252,11 @@ static void menu_cb_AddIntervalTier (FormantEditor me, EDITOR_ARGS_FORM) {
 		NATURAL (position, U"Position", U"1 (= at top)")
 		SENTENCE (name, U"Name", U"")
 	EDITOR_OK
-		const TextGrid grid = (TextGrid) my data;
+		const TextGrid grid =  my masterSlave.get();
 		SET_INTEGER_AS_STRING (position, Melder_cat (grid -> tiers->size + 1, U" (= at bottom)"))
 		SET_STRING (name, U"")
 	EDITOR_DO
-		const TextGrid grid = (TextGrid) my data;
+		const TextGrid grid =  my masterSlave.get();
 		{// scope
 			autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 			if (position > grid -> tiers->size)
@@ -1279,13 +1279,13 @@ static void menu_cb_DuplicateTier (FormantEditor me, EDITOR_ARGS_FORM) {
 		NATURAL (position, U"Position", U"1 (= at top)")
 		SENTENCE (name, U"Name", U"")
 	EDITOR_OK
-		const TextGrid grid = (TextGrid) my data;
+		const TextGrid grid =  my masterSlave.get();
 		if (my selectedTier) {
 			SET_INTEGER (position, my selectedTier + 1)
 			SET_STRING (name, grid -> tiers->at [my selectedTier] -> name.get())
 		}
 	EDITOR_DO
-		const TextGrid grid = (TextGrid) my data;
+		const TextGrid grid =  my masterSlave.get();
 		checkTierSelection (me, U"duplicate a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
 		{// scope
@@ -1396,7 +1396,7 @@ void structFormantEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /***** CHILDREN *****/
 
 static void gui_text_cb_changed (FormantEditor me, GuiTextEvent /* event */) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	//Melder_casual (U"gui_text_cb_change 1 in editor ", Melder_pointer (me));
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString. */
 	//Melder_casual (U"gui_text_cb_change 2 in editor ", me);
@@ -1438,7 +1438,7 @@ void structFormantEditor :: v_createChildren () {
 }
 
 void structFormantEditor :: v_dataChanged () {
-	const TextGrid grid = (TextGrid) our data;
+	const TextGrid grid = our masterSlave.get();
 	/*
 		Perform a minimal selection change.
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
@@ -1651,7 +1651,7 @@ static void do_drawTextTier (FormantEditor me, TextTier tier, integer itier) {
 }
 
 void structFormantEditor :: v_draw () {
-	const TextGrid grid = (TextGrid) data;
+	const TextGrid grid = our masterSlave.get();
 	Graphics_Viewport vp1, vp2;
 	const integer ntier = grid -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
@@ -1863,7 +1863,7 @@ static void do_drawWhileDragging (FormantEditor me, double numberOfTiers, bool s
 }
 
 static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTier, int shiftKeyPressed) {
-	const TextGrid grid = (TextGrid) my data;
+	const TextGrid grid =  my masterSlave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	double xWC = xbegin, yWC;
 	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
@@ -2034,7 +2034,7 @@ static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTi
 }
 
 bool structFormantEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
-	const TextGrid grid = (TextGrid) our data;
+	const TextGrid grid = our masterSlave.get();
 
 	/*
 		In answer to a click in the sound part,
@@ -2224,7 +2224,7 @@ bool structFormantEditor :: v_clickE (double t, double yWC) {
 }
 
 void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
-	const TextGrid grid = (TextGrid) our data;
+	const TextGrid grid = our masterSlave.get();
 	integer numberOfRows, numberOfColums;
 	/*
 		On which of the modelers was the click?
@@ -2277,37 +2277,7 @@ void structFormantEditor :: v_play (double tmin, double tmax) {
 }
 
 void structFormantEditor :: v_updateText () {
-	const TextGrid grid = (TextGrid) our data;
-	conststring32 newText = U"";
-	trace (U"selected tier ", our selectedTier);
-	if (our selectedTier) {
-		IntervalTier intervalTier;
-		TextTier textTier;
-		_AnyTier_identifyClass (grid -> tiers->at [selectedTier], & intervalTier, & textTier);
-		if (intervalTier) {
-			integer iinterval = IntervalTier_timeToIndex (intervalTier, our startSelection);
-			if (iinterval) {
-				TextInterval interval = intervalTier -> intervals.at [iinterval];
-				if (interval -> text)
-					newText = interval -> text.get();
-			}
-		} else {
-			integer ipoint = AnyTier_hasPoint (textTier->asAnyTier(), our startSelection);
-			if (ipoint) {
-				TextPoint point = textTier -> points.at [ipoint];
-				if (point -> mark)
-					newText = point -> mark.get();
-			}
-		}
-	}
-	if (our text) {
-		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
-		trace (U"setting new text ", newText);
-		GuiText_setString (text, newText);
-		integer cursor = str32len (newText);   // at end
-		GuiText_setSelection (text, cursor, cursor);
-		our suppressRedraw = false;
-	}
+
 }
 
 POSITIVE_VARIABLE (v_prefs_addFields_fontSize)
@@ -2406,11 +2376,11 @@ void structFormantEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void FormantEditor_init (FormantEditor me, conststring32 title, Sound sound, bool ownSound, Formant formant, TextGrid grid, conststring32 callbackSocket)
+void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
 {
 	my callbackSocket = Melder_dup (callbackSocket);
 
-	TimeSoundAnalysisEditor_init (me, title, grid, sound, ownSound);
+	TimeSoundAnalysisEditor_init (me, title, formant, sound, ownSound);
 
 	my selectedTier = 1;
 	my v_updateText ();   // to reflect changed tier selection
@@ -2428,13 +2398,103 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Sound sound, boo
 			U"to shift the starting time of the TextGrid to zero.");		
 	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax ==  formant -> xmax,
 		U"The time domain of the Sound and the Formant should be equal.");
-
+	my masterSlave = Data_copy (grid);
 }
 
-autoFormantEditor FormantEditor_create (conststring32 title, Sound sound, bool ownSound, Formant formant, TextGrid grid, conststring32 callbackSocket) {
+void FormantEditor_setMasterSlaveTierPair (FormantEditor me) {
+	/*
+		Set up the master-slave pair.
+	*/
+	if (my masterSlave.get() == nullptr) {
+		my masterSlave = TextGrid_create (my tmin, my tmax, U"formant-slave formant-master", U"");
+		my slaveTierNumber = 1;
+		my masterTierNumber = 2;
+		return;
+	}
+	/*
+		Does the textgid have a master-slave pair ?
+	*/
+	const integer numberOfTiers = my masterSlave -> tiers -> size;
+	autoSTRVEC tierNames = autoSTRVEC (numberOfTiers);
+	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+		const Function anyTier = my masterSlave -> tiers->at [itier];
+		tierNames [itier] = Melder_dup (anyTier -> name.get());
+	}
+	autoSTRVEC toMatch = newSTRVECcopy (tierNames.get());
+	STRVECsort_inplace (toMatch.get());
+	/*
+		<name>-master and <name>-slave are now consecutive
+	*/
+	integer tierNumber = 0;
+	for (integer istr = 1; istr < numberOfTiers; istr ++) {
+		const conststring32 isMaster = toMatch [istr] . get();
+		const conststring32 isSlave = toMatch [istr + 1] . get();
+		if (Melder_stringMatchesCriterion (isMaster, kMelder_string::ENDS_WITH, U"-master", true) &&
+			Melder_stringMatchesCriterion (isSlave, kMelder_string::ENDS_WITH, U"-slave", true)) {
+				tierNumber = istr;
+				break;
+		}
+	}
+	if (tierNumber > 0) {
+		integer masterTierNumber, slaveTierNumber = 0;
+		const conststring32 master = toMatch [masterTierNumber].get();
+		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+			const Function anyTier = my masterSlave -> tiers->at [itier];			
+			if (Melder_stringMatchesCriterion (anyTier -> name.get(), kMelder_string::EQUAL_TO, master, true)) {
+				masterTierNumber = itier;
+				break;
+			}
+		}
+		const conststring32 slave = toMatch [tierNumber + 1].get();
+		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+			const Function anyTier = my masterSlave -> tiers->at [itier];			
+			if (Melder_stringMatchesCriterion (anyTier -> name.get(), kMelder_string::EQUAL_TO, slave, true)) {
+				slaveTierNumber = itier;
+				break;
+			}
+		}
+		Melder_assert (slaveTierNumber > 0 && masterTierNumber > 0);
+		my masterTierNumber = masterTierNumber;
+		my slaveTierNumber = slaveTierNumber;
+		return;
+	}
+	/*
+		We didn't find a master-slave pair.
+		Add them on top.
+	*/
+	autoIntervalTier slaveTier = IntervalTier_create (my masterSlave -> xmin, my masterSlave -> xmax);
+	my masterSlave -> tiers -> addItemAtPosition_move (slaveTier.move(), 1);
+	TextGrid_setTierName (my masterSlave.get(), 1, U"formant-slave");
+	my slaveTierNumber = 1;
+	autoIntervalTier masterTier = IntervalTier_create (my masterSlave -> xmin, my masterSlave -> xmax);
+	my masterSlave -> tiers -> addItemAtPosition_move (masterTier.move(), 2);
+	TextGrid_setTierName (my masterSlave.get(), 2, U"formant-master");
+	my masterTierNumber = 2;
+}
+
+void VowelEditor_setMasterTierLabel (FormantEditor me) {
+	FormantAnalysisHistory fah = & my formantListWithHistory -> formantAnalysisHistory;
+	kLPC_Analysis lpcType = fah -> lpcType;
+	VEC ceilings = my formantListWithHistory -> ceilings.get();
+	autoMelderString label;
+	for (integer ic = 1; ic <= ceilings.size; ic ++)
+		MelderString_append (& label, Melder_iround (ceilings [ic]), U" ");
+	MelderString_append (& label, U"; ");
+	MelderString_append (& label, kLPC_Analysis_getText (lpcType), U" ");
+	MelderString_append (& label, fah -> timeStep, U" ", fah -> maximumNumberOfFormants, U" xxxx ",
+		fah -> windowLength, U" ", fah -> preemphasisFrequency);
+	if (lpcType == kLPC_Analysis::MARPLE)
+		MelderString_append (& label, U" ", fah -> tol1, U" ", fah -> tol2);
+	if (lpcType == kLPC_Analysis::ROBUST)
+		MelderString_append (& label, U" ", fah -> huberNumberOfStdDev, U" ", fah -> maximumNumberOfIterations,
+			U" ", fah -> tol);
+	TextGrid_setIntervalText (my masterSlave.get(), 2, 1, label.string);
+}
+
+autoFormantEditor FormantEditor_create (conststring32 title, Formant formant, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
 	try {
 		autoFormantEditor me = Thing_new (FormantEditor);
-		FormantEditor_init (me.get(), title, sound, ownSound, formant, grid, callbackSocket);
+		FormantEditor_init (me.get(), title, formant, sound, ownSound, grid, callbackSocket);
 		if (my p_analysisHistory_lpcType < kLPC_Analysis::AUTOCORRELATION ||
 			my p_analysisHistory_lpcType > kLPC_Analysis::BURG)
 			my p_analysisHistory_lpcType = my default_analysisHistory_lpcType ();
@@ -2462,6 +2522,7 @@ autoFormantEditor FormantEditor_create (conststring32 title, Sound sound, bool o
 			my p_analysisHistory_tol = Melder_atof (my default_analysisHistory_tol ());
 		if (my p_analysisHistory_maximumNumberOfIterations <= 0)
 			my p_analysisHistory_maximumNumberOfIterations = Melder_atoi (my default_analysisHistory_maximumNumberOfIterations ());
+		FormantEditor_setMasterSlaveTierPair (me.get());
 		my formantListWithHistory = Sound_to_FormantListWithHistory_any (sound, my p_analysisHistory_lpcType,
 			my p_analysisHistory_timeStep, my p_analysisHistory_maximumNumberOfFormants,
 			my p_analysisHistory_windowLength, my p_analysisHistory_preemphasisFrequency,
@@ -2469,6 +2530,7 @@ autoFormantEditor FormantEditor_create (conststring32 title, Sound sound, bool o
 			my p_analysisHistory_numberOfCeilings, my p_analysisHistory_tol1, my p_analysisHistory_tol2,
 			my p_analysisHistory_numberOfStdDev, my p_analysisHistory_tol,
 			my p_analysisHistory_maximumNumberOfIterations);
+		VowelEditor_setMasterTierLabel (me.get());
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		my formantModelerList = FormantListWithHistory_to_FormantModelerList (my formantListWithHistory.get(), my tmin, my tmax, my p_modeler_numberOfParametersPerTrack);

@@ -446,8 +446,8 @@ static void cb_FormantEditor_publication (Editor /* editor */, autoDaata publica
 DIRECT (WINDOW_FormantEditor_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_THREE_WITH_IOBJECT (Sound, Formant, TextGrid)
-		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, true, you, him, nullptr);
+	FIND_THREE_WITH_IOBJECT (Formant, Sound, TextGrid)
+		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, you, true, him, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
