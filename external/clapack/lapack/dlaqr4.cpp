@@ -273,14 +273,14 @@ int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, do
 /*        ==== Set up job flags for ILAENV. ==== */
 
 	if (*wantt) {
-	    *(unsigned char *)jbcmpz[0] = 'S';
+	    * (unsigned char *) & jbcmpz [0] = 'S';
 	} else {
-	    *(unsigned char *)jbcmpz[0] = 'E';
+	    * (unsigned char *) & jbcmpz [0] = 'E';
 	}
 	if (*wantz) {
-	    *(unsigned char *)jbcmpz[1] = 'V';
+	    * (unsigned char *) & jbcmpz [1] = 'V';
 	} else {
-	    *(unsigned char *)jbcmpz[1] = 'N';
+	    * (unsigned char *) & jbcmpz [1] = 'N';
 	}
 	jbcmpz [2] = '\0';
 /*        ==== NWR = recommended deflation window size.  At this */
