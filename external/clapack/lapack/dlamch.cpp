@@ -648,19 +648,15 @@ L10:
 
 double dlamc3_(double *a, double *b)
 {
-<<<<<<< HEAD
-    /* System generated locals */
-=======
-    /* 
-		According to Paul Boersma 20200418:
-		
-		How the authors of CLAPACK could have thought that optimizers cannot optimize away the whole call to this function, is a mystery to me.
-
-		As a result, the floating-point epsilon was estimated (by dlamch) not as 2.2e-16 but as 2048 times lower on i386 gcc (using an 80-bit register rather than a 64-bit memory position), so that an iterative procedure used in our discriminant analysis did not converge.
-
-		I solved it by changing the 7th line to "volatile double ret_val", just as I did back in the nineties with a similar external function. This trick survives -O3.
+    /*
+		FIX by Paul Boersma 20200418:
+		Some optimizers can optimize away the whole call to this function if ret_val is not declared volatile.
+		In case this function is optimized away,
+		the floating-point epsilon may be estimated (by dlamch) not as 2.2e-16
+		but as 2048 times lower on i386 gcc (using an 80-bit register rather than a 64-bit memory position),
+		so that an iterative procedure used in our discriminant analysis did not converge on 32-bit Windows
+		and on 32-bit i386 Linux.
 	*/
->>>>>>> clapack
     volatile double ret_val;
 
 
