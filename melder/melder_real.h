@@ -2,7 +2,7 @@
 #define _melder_real_h_
 /* melder_real.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ struct MelderExtremaWithInit {
 	void update (double val) {
 		if (val < min)
 			min = val;
-		else if (val > max)
+		if (val > max)
 			max = val;
 	}
 	bool isValid () const {

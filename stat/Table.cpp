@@ -1727,6 +1727,25 @@ bool Table_getExtrema (Table me, integer icol, double *minimum, double *maximum)
 	return true;
 }
 
+/*@praat
+	#
+	# Paul Boersma 2002-05-02
+	#
+	# bug reported by Michelle Porter on 2002-05-01
+	#
+
+	Create Table with column names: "table", 4, "A B"
+	Set numeric value: 1, "A", 1
+	Set numeric value: 2, "A", 2
+	Set numeric value: 3, "A", 3
+	Set numeric value: 4, "A", 4
+	Set numeric value: 1, "B", 4
+	Set numeric value: 2, "B", 3
+	Set numeric value: 3, "B", 2
+	Set numeric value: 4, "B", 1
+	Scatter plot (mark): "A", 0, 0, "B", 0, 0, 1, "yes", "+"
+	Remove
+@*/
 void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, conststring32 mark, bool garnish)
 {
