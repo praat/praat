@@ -124,7 +124,7 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	void v_play (double tmin, double tmax)
 		override;
 	void v_updateText ()
-		override;
+		override {};
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
 	void v_prefs_setValues (EditorCommand cmd)

@@ -166,6 +166,27 @@ integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList
 	return ( index > 0 ? my selected [index] : 0 );
 }
 
+autoMelderString FormantModelerList_getSelectedModelParameterString (FormantModelerList me) {
+	autoMelderString modelParameters;
+	integer iselected = 0;
+	for (integer id = 1; id <= my selected.size; id ++)
+		if (my selected [id] < 0) {
+			iselected = id;
+			break;
+		}
+	if (iselected > 0) {		
+		FormantModeler fm = my formantModelers.at [abs(my selected [iselected])];
+		MelderString_append (& modelParameters, Melder_iround (fm -> maximumFrequency));
+		MelderString_append (& modelParameters, U" ; ");
+		for (integer itrack = 1; itrack <= fm -> trackmodelers.size; itrack ++) {
+			DataModeler track = fm -> trackmodelers.at [itrack];
+			MelderString_append (& modelParameters, U" ", Melder_integer (track -> numberOfParameters));
+		}
+	} else 
+		MelderString_append (& modelParameters, U"");
+	return modelParameters;
+}
+
 void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, bool garnish) {
 	if (nrow <= 0 || ncol <= 0)
 		FormantModelerList_getDisplayLayout (me, & nrow, & ncol);
@@ -288,6 +309,21 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 	Graphics_setViewport (g, x1NDC, x2NDC, y1NDC, y2NDC);
 }
 /********** UTILITIES **********/
+
+void VowelEditor_setSlaveTierLabel (FormantEditor me) {
+	FormantModelerList fml = my formantModelerList.get();
+	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml);
+	if (modelParameters.string && modelParameters.string [0]) {
+		IntervalTier slave = (IntervalTier) my masterSlave -> tiers -> at [my slaveTierNumber];
+		if (my startSelection == fml -> xmin && my endSelection == fml -> xmax) {
+			double time = 0.5 * (my startSelection + my endSelection);
+			integer intervalNumber = IntervalTier_timeToIndex (slave, time);
+			TextInterval interval = slave -> intervals . at [intervalNumber];
+			if (interval -> xmin == fml -> xmin && interval -> xmax == fml -> xmax)
+				TextInterval_setText (interval, modelParameters.string);
+		}
+	}
+}
 
 static double _FormantEditor_computeSoundY (FormantEditor me) {
 	const TextGrid grid = my masterSlave.get();
@@ -754,111 +790,120 @@ static void menu_cb_DrawTextGridAndPitch (FormantEditor me, EDITOR_ARGS_FORM) {
 
 /***** INTERVAL MENU *****/
 
+static void do_removeBoundariesBetween (IntervalTier me, double fromTime, double toTime) {
+	if (fromTime == toTime)
+		return;
+	Melder_assert (fromTime < toTime);
+	integer fromIntervalNumber = IntervalTier_timeToLowIndex (me, fromTime);
+	integer toIntervalNumber = IntervalTier_timeToHighIndex (me, toTime);
+	if (fromIntervalNumber == toIntervalNumber)
+		return;
+	integer numberOfBoundariesToRemove = toIntervalNumber - fromIntervalNumber;
+	for (integer iint = 1; iint <= numberOfBoundariesToRemove; iint ++) {
+		IntervalTier_removeLeftBoundary (me, toIntervalNumber --);
+	}
+	TextInterval_setText (my intervals.at [fromIntervalNumber], U"");
+}
+
 static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, double t2, bool insertSecond) {
 	const TextGrid grid = my masterSlave.get();
 	const integer numberOfTiers = grid -> tiers->size;
-	if (itier < 1 || itier > numberOfTiers)
-		Melder_throw (U"No tier ", itier, U".");
-	IntervalTier intervalTier;
-	TextTier textTier;
-	_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
+	if (itier != my slaveTierNumber)
+		Melder_throw (U"You are only allowed to modify the slave tier (", my slaveTierNumber, U").");
+	IntervalTier intervalTier = (IntervalTier) grid -> tiers->at [itier];
 	Melder_assert (t1 <= t2);
+	/*
+		Policy:
+		Insertion of an interval should always occur if the boundaries are within the window.
+		"Old" intervals within the new boundaries have to be removed.
+		No messages are necesary if new times are on existing boundaries.
+	*/
+	const bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1);
+	const bool t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
+	do_removeBoundariesBetween (intervalTier, t1, t2);
+	if ((t1 == t2 && t1IsABoundary) || (t1IsABoundary && t2IsABoundary))
+		return; // no need to do anything more
+		
+	autoTextInterval rightNewInterval, midNewInterval;
+	const integer iinterval = IntervalTier_timeToIndex (intervalTier, t1);
+	const integer iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
+	if (iinterval == 0 || iinterval2 == 0)
+		Melder_throw (U"The selection is outside the time domain of the intervals.");
+	const integer correctedIinterval2 = ( t2IsABoundary && iinterval2 == intervalTier -> intervals.size ? iinterval2 + 1 : iinterval2 );
+	if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary))
+		Melder_throw (U"The selection straddles a boundary.");
+	const TextInterval interval = intervalTier -> intervals.at [iinterval];
 
-	if (intervalTier) {
-		autoTextInterval rightNewInterval, midNewInterval;
-		const bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1);
-		const bool t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
-		if (t1 == t2 && t1IsABoundary)
-			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (t1, 6), U" seconds, because there is already a boundary there.");
-		if (t1IsABoundary && t2IsABoundary)
-			Melder_throw (U"Cannot add boundaries at ", Melder_fixed (t1, 6), U" and ", Melder_fixed (t2, 6), U" seconds, because there are already boundaries there.");
-		const integer iinterval = IntervalTier_timeToIndex (intervalTier, t1);
-		const integer iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
-		if (iinterval == 0 || iinterval2 == 0)
-			Melder_throw (U"The selection is outside the time domain of the intervals.");
-		const integer correctedIinterval2 = ( t2IsABoundary && iinterval2 == intervalTier -> intervals.size ? iinterval2 + 1 : iinterval2 );
-		if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary))
-			Melder_throw (U"The selection straddles a boundary.");
-		const TextInterval interval = intervalTier -> intervals.at [iinterval];
-
-		if (t1 == t2) {
-			Editor_save (me, U"Add boundary");
-		} else {
-			Editor_save (me, U"Add interval");
-		}
-
-		if (itier == my selectedTier) {
-			/*
-				Divide up the label text into left, mid and right, depending on where the text selection is.
-			*/
-			autostring32 text = Melder_dup (interval -> text.get());
-			rightNewInterval = TextInterval_create (t2, interval -> xmax, text.get());
-			midNewInterval = TextInterval_create (t1, t2, text.get());
-			TextInterval_setText (interval, U"");
-		} else {
-			/*
-				Move the text to the left of the boundary.
-			*/
-			rightNewInterval = TextInterval_create (t2, interval -> xmax, U"");
-			midNewInterval = TextInterval_create (t1, t2, U"");
-		}
-		if (t1IsABoundary) {
-			/*
-				Merge mid with left interval.
-			*/
-			if (interval -> xmin != t1)
-				Melder_fatal (U"Boundary unequal: ", interval -> xmin, U" versus ", t1, U".");
-			interval -> xmax = t2;
-			TextInterval_setText (interval, Melder_cat (interval -> text.get(), midNewInterval -> text.get()));
-		} else if (t2IsABoundary) {
-			/*
-				Merge mid and right interval.
-			*/
-			if (interval -> xmax != t2)
-				Melder_fatal (U"Boundary unequal: ", interval -> xmax, U" versus ", t2, U".");
-			interval -> xmax = t1;
-			Melder_assert (rightNewInterval -> xmin == t2);
-			Melder_assert (rightNewInterval -> xmax == t2);
-			rightNewInterval -> xmin = t1;
-			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text.get(), rightNewInterval -> text.get()));
-		} else {
-			interval -> xmax = t1;
-			if (t1 != t2)
-				intervalTier -> intervals.addItem_move (midNewInterval.move());
-		}
-		intervalTier -> intervals.addItem_move (rightNewInterval.move());
-		if (insertSecond && numberOfTiers >= 2 && t1 == t2) {
-			/*
-				Find the last time before t on another tier.
-			*/
-			double tlast = interval -> xmin;
-			for (integer jtier = 1; jtier <= numberOfTiers; jtier ++) {
-				if (jtier != itier) {
-					double tmin, tmax;
-					_FormantEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
-					if (tmin > tlast)
-						tlast = tmin;
-				}
-			}
-			if (tlast > interval -> xmin && tlast < t1) {
-				autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
-				interval -> xmax = tlast;
-				intervalTier -> intervals.addItem_move (newInterval.move());
-			}
-		}
+	if (t1 == t2) {
+		Editor_save (me, U"Add boundary");
 	} else {
-		if (AnyTier_hasPoint (textTier->asAnyTier(), t1))
-			Melder_throw (U"Cannot add a point at ", Melder_fixed (t1, 6), U" seconds, because there is already a point there.");
-
-		Editor_save (me, U"Add point");
-
-		autoTextPoint newPoint = TextPoint_create (t1, U"");
-		textTier -> points. addItem_move (newPoint.move());
+		Editor_save (me, U"Add interval");
 	}
+
+	if (itier == my selectedTier) {
+		/*
+			Divide up the label text into left, mid and right, depending on where the text selection is.
+		*/
+		autostring32 text = Melder_dup (interval -> text.get());
+		rightNewInterval = TextInterval_create (t2, interval -> xmax, text.get());
+		midNewInterval = TextInterval_create (t1, t2, text.get());
+		TextInterval_setText (interval, U"");
+	} else {
+		/*
+			Move the text to the left of the boundary.
+		*/
+		rightNewInterval = TextInterval_create (t2, interval -> xmax, U"");
+		midNewInterval = TextInterval_create (t1, t2, U"");
+	}
+	if (t1IsABoundary) {
+		/*
+			Merge mid with left interval.
+		*/
+		if (interval -> xmin != t1)
+			Melder_fatal (U"Boundary unequal: ", interval -> xmin, U" versus ", t1, U".");
+		interval -> xmax = t2;
+		TextInterval_setText (interval, Melder_cat (interval -> text.get(), midNewInterval -> text.get()));
+	} else if (t2IsABoundary) {
+		/*
+			Merge mid and right interval.
+		*/
+		if (interval -> xmax != t2)
+			Melder_fatal (U"Boundary unequal: ", interval -> xmax, U" versus ", t2, U".");
+		interval -> xmax = t1;
+		Melder_assert (rightNewInterval -> xmin == t2);
+		Melder_assert (rightNewInterval -> xmax == t2);
+		rightNewInterval -> xmin = t1;
+		TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text.get(), rightNewInterval -> text.get()));
+	} else {
+		interval -> xmax = t1;
+		if (t1 != t2)
+			intervalTier -> intervals.addItem_move (midNewInterval.move());
+	}
+	intervalTier -> intervals.addItem_move (rightNewInterval.move());
+	if (insertSecond && numberOfTiers >= 2 && t1 == t2) {
+		/*
+			Find the last time before t on another tier.
+		*/
+		double tlast = interval -> xmin;
+		for (integer jtier = 1; jtier <= numberOfTiers; jtier ++) {
+			if (jtier != itier) {
+				double tmin, tmax;
+				_FormantEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
+				if (tmin > tlast)
+					tlast = tmin;
+			}
+		}
+		if (tlast > interval -> xmin && tlast < t1) {
+			autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
+			interval -> xmax = tlast;
+			intervalTier -> intervals.addItem_move (newInterval.move());
+		}
+	}
+	
 	my startSelection = my endSelection = t1;
 }
 
-static void do_insertIntervalOnTier (FormantEditor me, int itier) {
+static void do_insertIntervalOnSlaveTier (FormantEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
 				my playingCursor || my playingSelection ? my playCursor : my startSelection,
@@ -872,61 +917,17 @@ static void do_insertIntervalOnTier (FormantEditor me, int itier) {
 	}
 }
 
-static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 1); }
+static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnSlaveTier (me, 1); }
 
-static void menu_cb_AlignInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my masterSlave.get();
-	checkTierSelection (me, U"align words");
-	const AnyTier tier = static_cast <AnyTier> (grid -> tiers->at [my selectedTier]);
-	if (tier -> classInfo != classIntervalTier)
-		Melder_throw (U"Alignment works only for interval tiers, whereas tier ", my selectedTier, U" is a point tier.\nSelect an interval tier instead.");
-	integer intervalNumber = getSelectedInterval (me);
-	if (! intervalNumber)
-		Melder_throw (U"Select an interval first");
-	if (! my p_align_includeWords && ! my p_align_includePhonemes)
-		Melder_throw (U"Nothing to be done.\nPlease switch on \"Include words\" and/or \"Include phonemes\" in the \"Alignment settings\".");
-	{// scope
-		const autoMelderProgressOff noprogress;
-		Function anySound = my d_sound.data;
-		if (my d_longSound.data)
-			anySound = my d_longSound.data;
-		Editor_save (me, U"Align interval");
-		TextGrid_anySound_alignInterval (grid, anySound, my selectedTier, intervalNumber,
-			my p_align_language, my p_align_includeWords, my p_align_includePhonemes);
-	}
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_AlignmentSettings (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Alignment settings", nullptr)
-		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-		for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION ((conststring32) espeakdata_languages_names -> strings [i].get());
-		}
-		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
-		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
-		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
-	EDITOR_OK
-		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my p_align_language);
-		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
-		SET_OPTION (language, prefVoice)
-		SET_BOOLEAN (includeWords, my p_align_includeWords)
-		SET_BOOLEAN (includePhonemes, my p_align_includePhonemes)
-		SET_BOOLEAN (allowSilences, my p_align_allowSilences)
-	EDITOR_DO
-		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_languages_names -> strings [language].get());
-		my pref_align_includeWords    () = my p_align_includeWords    = includeWords;
-		my pref_align_includePhonemes () = my p_align_includePhonemes = includePhonemes;
-		my pref_align_allowSilences   () = my p_align_allowSilences   = allowSilences;
-	EDITOR_END
-}
 
 /***** BOUNDARY/POINT MENU *****/
 
 static void menu_cb_RemovePointOrBoundary (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid =  my masterSlave.get();
 	checkTierSelection (me, U"remove a point or boundary");
+	if (my selectedTier != my slaveTierNumber)
+		Melder_throw (U"You are only allowed to modify the slave tier (", my slaveTierNumber, U").");
+	
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		const IntervalTier tier = (IntervalTier) anyTier;
@@ -955,6 +956,8 @@ static void do_movePointOrBoundary (FormantEditor me, int where) {
 	if (where == 0 && ! my d_sound.data)
 		return;
 	checkTierSelection (me, U"move a point or boundary");
+	if (my selectedTier != my slaveTierNumber)
+		Melder_throw (U"You are only allowed to modify the slave tier (", my slaveTierNumber, U").");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		const IntervalTier tier = (IntervalTier) anyTier;
@@ -1110,19 +1113,6 @@ static void menu_cb_FindAgain (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	do_find (me);
 }
 
-static void checkSpellingInTier (FormantEditor me) {
-
-}
-
-static void menu_cb_CheckSpelling (FormantEditor me, EDITOR_ARGS_DIRECT) {
-}
-
-static void menu_cb_CheckSpellingInInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-}
-
-static void menu_cb_AddToUserDictionary (FormantEditor me, EDITOR_ARGS_DIRECT) {
-}
-
 /***** TIER MENU *****/
 
 static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
@@ -1146,6 +1136,20 @@ static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
+static void menu_cb_RemoveBoundariesBetween (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U" Remove boundaries between", nullptr)
+		REAL (fromTime, U"left Interval (s)", U"0.1")
+		REAL (toTime, U"right Interval (s)", U"0.1")
+	EDITOR_OK
+		SET_REAL (fromTime, my startSelection)
+		SET_REAL (toTime, my endSelection)
+	EDITOR_DO
+		IntervalTier slaveTier = (IntervalTier) my masterSlave -> tiers ->at [my slaveTierNumber];
+		do_removeBoundariesBetween (slaveTier, fromTime, toTime);
+		FunctionEditor_redraw (me);
+		Editor_broadcastDataChanged (me);
+	EDITOR_END
+}
 
 static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid =  my masterSlave.get();
@@ -1157,7 +1161,7 @@ static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastPublication (me, publish.move());
 }
 
-static void menu_cb_modeler_modelSettings (FormantEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_modeler_modelParameterSettings (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler settings", nullptr)		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
@@ -1173,7 +1177,7 @@ static void menu_cb_modeler_modelSettings (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_modeler_modelSettingsDrawBest3 (FormantEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_modeler_showBest3Models (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = false;
 	autoINTVEC best3 = FormantModelerList_selectBest3 (my formantModelerList.get());
 	my formantModelerList -> selected.part (1,3) <<= best3.get();
@@ -1181,9 +1185,14 @@ static void menu_cb_modeler_modelSettingsDrawBest3 (FormantEditor me, EDITOR_ARG
 	my v_drawSelectionViewer ();
 }
 
-static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_modeler_showAllModels (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = true;
+	FormantModelerList_selectAll (my formantModelerList.get());
+	my v_drawSelectionViewer ();
+}
+
+static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler drawing settings", nullptr)
-		BOOLEAN (drawAllModels, U"Draw all models", my default_modeler_draw_allModels ())
 		BOOLEAN (drawEstimatedTracks, U"Draw estimated tracks", my default_modeler_draw_estimatedTracks ())
 		REAL (xSpaceFraction, U"Column separation (fraction)", my default_modeler_draw_xSpace_fraction ())
 		REAL (ySpaceFraction, U"Row separation (fraction)", my default_modeler_draw_ySpace_fraction ())
@@ -1193,7 +1202,6 @@ static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) 
 		REAL (errorBarWidth_s, U"Error bar width (s)", my default_modeler_draw_errorBarWidth_s ())
 		REAL (xTrackShift_s, U"Shift even formant tracks by (s)", my default_modeler_draw_xTrackShift_s ())
 	EDITOR_OK
-		SET_BOOLEAN (drawAllModels, my p_modeler_draw_allModels)
 		SET_BOOLEAN (drawEstimatedTracks, my p_modeler_draw_estimatedTracks)
 		SET_REAL (xSpaceFraction, my p_modeler_draw_xSpace_fraction)
 		SET_REAL (ySpaceFraction, my p_modeler_draw_ySpace_fraction)
@@ -1203,7 +1211,6 @@ static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) 
 		SET_REAL (errorBarWidth_s, my p_modeler_draw_errorBarWidth_s)
 		SET_REAL (xTrackShift_s, my p_modeler_draw_xTrackShift_s)
 	EDITOR_DO
-	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = drawAllModels;
 	my pref_modeler_draw_estimatedTracks () = my p_modeler_draw_estimatedTracks = drawEstimatedTracks;
 	my pref_modeler_draw_xSpace_fraction () = my p_modeler_draw_xSpace_fraction = xSpaceFraction;
 	my pref_modeler_draw_ySpace_fraction () = my p_modeler_draw_ySpace_fraction = ySpaceFraction;
@@ -1212,8 +1219,6 @@ static void menu_cb_modelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) 
 	my pref_modeler_draw_errorBars () = my p_modeler_draw_errorBars = drawErrorBars;
 	my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
 	my pref_modeler_draw_xTrackShift_s () = my p_modeler_draw_xTrackShift_s = xTrackShift_s;
-	if (drawAllModels)
-		FormantModelerList_selectAll (my formantModelerList.get());
 	my v_drawSelectionViewer ();
 	EDITOR_END
 }
@@ -1250,33 +1255,6 @@ static void menu_cb_RemoveTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_AddIntervalTier (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Add interval tier", nullptr)
-		NATURAL (position, U"Position", U"1 (= at top)")
-		SENTENCE (name, U"Name", U"")
-	EDITOR_OK
-		const TextGrid grid =  my masterSlave.get();
-		SET_INTEGER_AS_STRING (position, Melder_cat (grid -> tiers->size + 1, U" (= at bottom)"))
-		SET_STRING (name, U"")
-	EDITOR_DO
-		const TextGrid grid =  my masterSlave.get();
-		{// scope
-			autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
-			if (position > grid -> tiers->size)
-				position = grid -> tiers->size + 1;
-			Thing_setName (tier.get(), name);
-
-			Editor_save (me, U"Add interval tier");
-			grid -> tiers -> addItemAtPosition_move (tier.move(), position);
-		}
-
-		my selectedTier = position;
-		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastDataChanged (me);
-	EDITOR_END
 }
 
 static void menu_cb_DuplicateTier (FormantEditor me, EDITOR_ARGS_FORM) {
@@ -1350,11 +1328,6 @@ void structFormantEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
 	menu = Editor_addMenu (this, U"Interval", 0);
-	if (our d_sound.data || our d_longSound.data) {
-		EditorMenu_addCommand (menu, U"Align interval", 'D', menu_cb_AlignInterval);
-		EditorMenu_addCommand (menu, U"Alignment settings...", 0, menu_cb_AlignmentSettings);
-		EditorMenu_addCommand (menu, U"-- add interval --", 0, nullptr);
-	}
 	EditorMenu_addCommand (menu, U"Add interval on slave tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnSlaveTier);
 
 	menu = Editor_addMenu (this, U"Boundary", 0);
@@ -1370,10 +1343,10 @@ void structFormantEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE, menu_cb_RemovePointOrBoundary);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
-	EditorMenu_addCommand (menu, U"Add interval tier...", 0, menu_cb_AddIntervalTier);
 	EditorMenu_addCommand (menu, U"Duplicate tier...", 0, menu_cb_DuplicateTier);
 	EditorMenu_addCommand (menu, U"Rename tier...", 0, menu_cb_RenameTier);
 	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Remove boundaries between...", 0, menu_cb_RemoveBoundariesBetween);
 	EditorMenu_addCommand (menu, U"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
 	EditorMenu_addCommand (menu, U"Remove entire tier", 0, menu_cb_RemoveTier);
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
@@ -1385,9 +1358,10 @@ void structFormantEditor :: v_createMenus () {
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
 	menu = Editor_addMenu (this, U"Modeling", 0);
-	EditorMenu_addCommand (menu, U"Model settings...", 0, menu_cb_modeler_modelSettings);
-	EditorMenu_addCommand (menu, U"Draw best three", 0, menu_cb_modeler_modelSettingsDrawBest3);
-	EditorMenu_addCommand (menu, U"Drawing settings...", 0, menu_cb_modelerDrawingSettings);
+	EditorMenu_addCommand (menu, U"Model parameter settings...", 0, menu_cb_modeler_modelParameterSettings);
+	EditorMenu_addCommand (menu, U"Show best three models", 0, menu_cb_modeler_showBest3Models);
+	EditorMenu_addCommand (menu, U"Show all models", 0, menu_cb_modeler_showAllModels);
+	EditorMenu_addCommand (menu, U"Advanced modeler settings...", 0, menu_cb_modelerAdvancedSettings);
 }
 
 void structFormantEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -1888,7 +1862,7 @@ static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTi
 			IntervalTier intervalTier;
 			TextTier textTier;
 			_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
-			if (intervalTier) {
+			if (intervalTier && itier == my slaveTierNumber) {
 				integer ibound = IntervalTier_hasBoundary (intervalTier, xbegin);
 				if (ibound) {
 					TextInterval leftInterval = intervalTier -> intervals.at [ibound - 1];
@@ -1901,14 +1875,6 @@ static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTi
 						leftDraggingBoundary = leftInterval -> xmin;
 					if (rightInterval -> xmax < rightDraggingBoundary)
 						rightDraggingBoundary = rightInterval -> xmax;
-				}
-			} else {
-				if (AnyTier_hasPoint (textTier->asAnyTier(), xbegin)) {
-					/*
-						Other than with boundaries on interval tiers,
-						points on text tiers can be dragged past their neighbours.
-					*/
-					selectedTier [itier] = true;
 				}
 			}
 		}
@@ -2246,7 +2212,7 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
 	for (integer id = 1; id <= fml -> selected.size; id ++)
 		fml -> selected [id] = ( index == id ? - abs (fml -> selected [id]) : abs (fml -> selected [id]) );
-	
+	VowelEditor_setSlaveTierLabel (this);
 }
 
 void structFormantEditor :: v_play (double tmin, double tmax) {
@@ -2279,10 +2245,6 @@ void structFormantEditor :: v_play (double tmin, double tmax) {
 			Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 		}
 	}
-}
-
-void structFormantEditor :: v_updateText () {
-
 }
 
 POSITIVE_VARIABLE (v_prefs_addFields_fontSize)
@@ -2387,23 +2349,24 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant,
 
 	TimeSoundAnalysisEditor_init (me, title, formant, sound, ownSound);
 
-	my selectedTier = 1;
-	my v_updateText ();   // to reflect changed tier selection
-	if (my endWindow - my startWindow > 30.0) {
-		my endWindow = my startWindow + 30.0;
-		if (my startWindow == my tmin)
-			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-		FunctionEditor_marksChanged (me, false);
-	}
+	
+	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax ==  formant -> xmax,
+		U"The time domain of the Formant and the Sound should be equal.");
 	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
 		Melder_warning (U"The time domain of the TextGrid (starting at ",
 			Melder_fixed (grid -> xmin, 6), U" seconds) does not overlap with that of the sound "
 			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
 			U"and choose “Shift times to...” from the Modify menu "
-			U"to shift the starting time of the TextGrid to zero.");		
-	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax ==  formant -> xmax,
-		U"The time domain of the Sound and the Formant should be equal.");
+			U"to shift the starting time of the TextGrid to zero.");
 	my masterSlave = Data_copy (grid);
+	
+	my selectedTier = 1;
+	if (my endWindow - my startWindow > 5.0) {
+		my endWindow = my startWindow + 5.0;
+		if (my startWindow == my tmin)
+			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+		FunctionEditor_marksChanged (me, false);
+	}
 }
 
 void FormantEditor_setMasterSlaveTierPair (FormantEditor me) {
@@ -2442,7 +2405,7 @@ void FormantEditor_setMasterSlaveTierPair (FormantEditor me) {
 	}
 	if (tierNumber > 0) {
 		integer masterTierNumber, slaveTierNumber = 0;
-		const conststring32 master = toMatch [masterTierNumber].get();
+		const conststring32 master = toMatch [tierNumber].get();
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			const Function anyTier = my masterSlave -> tiers->at [itier];			
 			if (Melder_stringMatchesCriterion (anyTier -> name.get(), kMelder_string::EQUAL_TO, master, true)) {
