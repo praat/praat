@@ -435,7 +435,6 @@ static void cb_FormantEditor_publication (Editor /* editor */, autoDaata publica
 	 * Keep the gate for error handling.
 	 */
 	try {
-		bool isaFormant = Thing_isa (publication.get(), classFormant) && str32equ (Thing_getName (publication.get()), U"slice");
 		praat_new (publication.move());
 		praat_updateSelection ();
 	} catch (MelderError) {
@@ -446,7 +445,7 @@ static void cb_FormantEditor_publication (Editor /* editor */, autoDaata publica
 DIRECT (WINDOW_FormantEditor_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_THREE_WITH_IOBJECT (Formant, Sound, TextGrid)
+	FIND_THREE_WITH_IOBJECT (FormantList, Sound, TextGrid)
 		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, you, true, him, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -1238,7 +1237,7 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
 		praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval_constrained_robust);
 	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, NEW_Table_to_DataModeler);
-	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormant, 1, U"FormantEditor...", nullptr, praat_ATTRACTIVE, WINDOW_FormantEditor_viewAndEdit);
+	praat_addAction3 (classFormantList, 1, classSound, 1, classTextGrid, 1,  U"View & Edit...", nullptr, praat_ATTRACTIVE, WINDOW_FormantEditor_viewAndEdit);
 }
 
 /* End of file praat_DataModeler_init.cpp 1566*/

@@ -23,7 +23,7 @@
 #include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrogram.h"
 #include "TextGrid_Sound.h"
-#include "SpeechSynthesizer_and_TextGrid.h"
+#include "TextGrid_extensions.h"
 
 Thing_implement (FormantEditor, TimeSoundAnalysisEditor, 0);
 Thing_implement (FormantModelerList, Function, 0);
@@ -63,7 +63,7 @@ autoINTVEC newINTVECfromString (conststring32 string) {
 	return result;
 }
 
-autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantListWithHistory me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
+autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
 	try {
 		autoFormantModelerList thee = Thing_new (FormantModelerList);
 		thy xmin = startTime;
@@ -71,7 +71,8 @@ autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantList
 		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
 		Melder_require (numberOfParametersPerTrack.size > 0 ,
 			U"The number of items in the parameter list should be larger than zero.");
-		integer maximumNumberOfFormants = my formantAnalysisHistory . maximumNumberOfFormants;
+		Formant formant = my at [1];
+		integer maximumNumberOfFormants = formant -> maxnFormants;
 		Melder_require (numberOfParametersPerTrack.size <= maximumNumberOfFormants,
 			U"The number of items cannot exceed the maximum number of formants (", maximumNumberOfFormants, U").");
 		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
@@ -87,9 +88,9 @@ autoFormantModelerList FormantListWithHistory_to_FormantModelerList (FormantList
 		//	U"Not all 'number of paramters' should be zero.");
 		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
 		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
-		thy numberOfModelers = my numberOfElements;
+		thy numberOfModelers = my size;
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
-			autoFormantModeler fm = Formant_to_FormantModeler (my formants.at [imodel], startTime, endTime, my ceilings [imodel], thy numberOfParametersPerTrack.get());
+			autoFormantModeler fm = Formant_to_FormantModeler (my at [imodel], startTime, endTime,  thy numberOfParametersPerTrack.get());
 			thy formantModelers. addItem_move (fm.move());
 		}
 		thy selected = newINTVEClinear (thy numberOfModelers, 1, 1);
@@ -176,7 +177,7 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 		}
 	if (iselected > 0) {		
 		FormantModeler fm = my formantModelers.at [abs(my selected [iselected])];
-		MelderString_append (& modelParameters, Melder_iround (fm -> maximumFrequency));
+		MelderString_append (& modelParameters, fm -> name.get());
 		MelderString_append (& modelParameters, U" ; ");
 		for (integer itrack = 1; itrack <= fm -> trackmodelers.size; itrack ++) {
 			DataModeler track = fm -> trackmodelers.at [itrack];
@@ -192,18 +193,18 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 		FormantModelerList_getDisplayLayout (me, & nrow, & ncol);
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	double fontSize_old = Graphics_inqFontSize (g), fontSize = 8.0;
-	auto getXtick = [] (Graphics g, double fontSize) {
-		const double margin = 2.8 * fontSize * g -> resolution / 72.0;
-		const double wDC = (g -> d_x2DC - g -> d_x1DC) / (g -> d_x2wNDC - g -> d_x1wNDC) * (g -> d_x2NDC - g -> d_x1NDC);
+	double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;
+	auto getXtick = [] (Graphics gg, double fontSize) {
+		const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
+		const double wDC = (gg -> d_x2DC - gg -> d_x1DC) / (gg -> d_x2wNDC - gg -> d_x1wNDC) * (gg -> d_x2NDC - gg -> d_x1NDC);
 		double dx = 1.5 * margin / wDC;
 		double xTick = 0.06 * dx;
 		if (dx > 0.4) dx = 0.4;
 		return xTick /= 1.0 - 2.0 * dx;
 	};
-	auto getYtick = [] (Graphics g, double fontSize) {
-		double margin = 2.8 * fontSize * g -> resolution / 72.0;
-		double hDC = integer_abs (g->d_y2DC - g->d_y1DC) / (g->d_y2wNDC - g->d_y1wNDC) * (g->d_y2NDC - g-> d_y1NDC);
+	auto getYtick = [] (Graphics gg, double fontSize) {
+		double margin = 2.8 * fontSize * gg -> resolution / 72.0;
+		double hDC = integer_abs (gg->d_y2DC - gg->d_y1DC) / (gg->d_y2wNDC - gg->d_y1wNDC) * (gg->d_y2NDC - gg-> d_y1NDC);
 		double dy = margin / hDC;
 		double yTick = 0.09 * dy;
 		if (dy > 0.4) dy = 0.4;
@@ -236,11 +237,11 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
-			Mark ceilings & smoothness
+			Mark name & smoothness
 		*/
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 		Graphics_text (g, fm -> xmax - 0.05 * (fm -> xmax - fm -> xmin),
-			fmax - 0.05 * fmax, Melder_integer (fm -> maximumFrequency));
+			fmax - 0.05 * fmax, fm -> name.get());
 		double w = FormantModeler_getSmoothnessValue (fm, fromFormant, toFormant, 0, my varianceExponent);
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 		Graphics_text (g, fm -> xmin + 0.05 * (fm -> xmax - fm -> xmin),
@@ -260,8 +261,8 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 			MelderString_empty (& best);
 		}
 		if (garnish) {
-			double xTick = (double) getXtick (g, fontSize) * (fm -> xmax - fm -> xmin);
-			double yTick = (double) getYtick (g, fontSize) * (fmax - 0.0);
+			double xTick = (double) getXtick (g, newFontSize) * (fm -> xmax - fm -> xmin);
+			double yTick = (double) getYtick (g, newFontSize) * (fmax - 0.0);
 			if (icol == 1 && irow % 2 == 1) {
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 				Graphics_line (g, fm -> xmin - xTick, fmax, fm -> xmin, fmax);
@@ -314,7 +315,7 @@ void VowelEditor_setSlaveTierLabel (FormantEditor me) {
 	FormantModelerList fml = my formantModelerList.get();
 	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml);
 	if (modelParameters.string && modelParameters.string [0]) {
-		IntervalTier slave = (IntervalTier) my masterSlave -> tiers -> at [my slaveTierNumber];
+		IntervalTier slave = (IntervalTier) my slave -> tiers -> at [my slaveTierNumber];
 		if (my startSelection == fml -> xmin && my endSelection == fml -> xmax) {
 			double time = 0.5 * (my startSelection + my endSelection);
 			integer intervalNumber = IntervalTier_timeToIndex (slave, time);
@@ -326,7 +327,7 @@ void VowelEditor_setSlaveTierLabel (FormantEditor me) {
 }
 
 static double _FormantEditor_computeSoundY (FormantEditor me) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	bool showAnalysis = my v_hasAnalysis () &&
 			(my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) &&
@@ -348,7 +349,7 @@ static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier
 }
 
 static integer _FormantEditor_yWCtoTier (FormantEditor me, double yWC) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	const double soundY = _FormantEditor_computeSoundY (me);
 	integer tierNumber = numberOfTiers - Melder_ifloor (yWC / soundY * (double) numberOfTiers);
@@ -362,7 +363,7 @@ static integer _FormantEditor_yWCtoTier (FormantEditor me, double yWC) {
 static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer tierNumber,
 	double *tmin, double *tmax)
 {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	const Function tier = grid -> tiers->at [tierNumber];
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -399,13 +400,13 @@ static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer t
 }
 
 static void checkTierSelection (FormantEditor me, conststring32 verbPhrase) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
 static integer getSelectedInterval (FormantEditor me) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
@@ -413,7 +414,7 @@ static integer getSelectedInterval (FormantEditor me) {
 }
 
 static integer getSelectedLeftBoundary (FormantEditor me) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
@@ -421,7 +422,7 @@ static integer getSelectedLeftBoundary (FormantEditor me) {
 }
 
 static integer getSelectedPoint (FormantEditor me) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const TextTier tier = (TextTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
@@ -451,14 +452,14 @@ static void scrollToView (FormantEditor me, double t) {
 static void menu_cb_ExtractSelectedTextGrid_preserveTimes (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart (my masterSlave.get(), my startSelection, my endSelection, true);
+	autoTextGrid extract = TextGrid_extractPart (my slave.get(), my startSelection, my endSelection, true);
 	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart (my masterSlave.get(), my startSelection, my endSelection, false);
+	autoTextGrid extract = TextGrid_extractPart (my slave.get(), my startSelection, my endSelection, false);
 	Editor_broadcastPublication (me, extract.move());
 }
 
@@ -472,9 +473,9 @@ void structFormantEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 
 static void menu_cb_WriteToTextFile (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
-		Melder_sprint (defaultName,300, my masterSlave -> name.get(), U".TextGrid");
+		Melder_sprint (defaultName,300, my slave -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
-		Data_writeToTextFile (my masterSlave.get(), file);
+		Data_writeToTextFile (my slave.get(), file);
 	EDITOR_END
 }
 
@@ -500,7 +501,7 @@ static void menu_cb_DrawVisibleTextGrid (FormantEditor me, EDITOR_ARGS_FORM) {
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my masterSlave.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
+		TextGrid_Sound_draw (my slave.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -529,7 +530,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantEditor me, EDITOR_ARGS_F
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 					kSound_windowShape::RECTANGULAR, 1.0, true);
-			TextGrid_Sound_draw (my masterSlave.get(), sound.get(), my pictureGraphics,
+			TextGrid_Sound_draw (my slave.get(), sound.get(), my pictureGraphics,
 				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
 		}
 		FunctionEditor_garnish (me);
@@ -564,7 +565,7 @@ static void menu_cb_Erase (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** QUERY MENU *****/
 
 static void menu_cb_GetStartingPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	checkTierSelection (me, U"query the starting point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -579,7 +580,7 @@ static void menu_cb_GetStartingPointOfInterval (FormantEditor me, EDITOR_ARGS_DI
 }
 
 static void menu_cb_GetEndPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	checkTierSelection (me, U"query the end point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -594,7 +595,7 @@ static void menu_cb_GetEndPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_GetLabelOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	checkTierSelection (me, U"query the label of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -611,7 +612,7 @@ static void menu_cb_GetLabelOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** VIEW MENU *****/
 
 static void do_selectAdjacentTier (FormantEditor me, bool previous) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	const integer n = grid -> tiers->size;
 	if (n >= 2) {
 		my selectedTier = ( previous ?
@@ -631,7 +632,7 @@ static void menu_cb_SelectNextTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void do_selectAdjacentInterval (FormantEditor me, bool previous, bool shift) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	IntervalTier intervalTier;
 	TextTier textTier;
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
@@ -779,7 +780,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantEditor me, EDITOR_ARGS_FORM) {
 		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
 		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my masterSlave.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
+		TextGrid_Pitch_drawSeparately (my slave.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
 			speckle, my p_pitch_unit
 		);
@@ -806,7 +807,7 @@ static void do_removeBoundariesBetween (IntervalTier me, double fromTime, double
 }
 
 static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, double t2, bool insertSecond) {
-	const TextGrid grid = my masterSlave.get();
+	const TextGrid grid = my slave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	if (itier != my slaveTierNumber)
 		Melder_throw (U"You are only allowed to modify the slave tier (", my slaveTierNumber, U").");
@@ -923,7 +924,7 @@ static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIR
 /***** BOUNDARY/POINT MENU *****/
 
 static void menu_cb_RemovePointOrBoundary (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	checkTierSelection (me, U"remove a point or boundary");
 	if (my selectedTier != my slaveTierNumber)
 		Melder_throw (U"You are only allowed to modify the slave tier (", my slaveTierNumber, U").");
@@ -952,7 +953,7 @@ static void menu_cb_RemovePointOrBoundary (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void do_movePointOrBoundary (FormantEditor me, int where) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	if (where == 0 && ! my d_sound.data)
 		return;
 	checkTierSelection (me, U"move a point or boundary");
@@ -1031,7 +1032,7 @@ static void menu_cb_InsertOnSelectedTier (FormantEditor me, EDITOR_ARGS_DIRECT) 
 static void menu_cb_InsertOnTier1 (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 1); }
 
 static void menu_cb_InsertOnAllTiers (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	const integer saveTier = my selectedTier;
 	for (integer itier = 1; itier <= grid -> tiers->size; itier ++)
 		do_insertOnTier (me, itier);
@@ -1041,7 +1042,7 @@ static void menu_cb_InsertOnAllTiers (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantEditor me) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	checkTierSelection (me, U"find a text");
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -1119,19 +1120,16 @@ static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Rename tier", nullptr)
 		SENTENCE (newName, U"New name", U"");
 	EDITOR_OK
-		const TextGrid grid =  my masterSlave.get();
+		const TextGrid grid =  my slave.get();
 		checkTierSelection (me, U"rename a tier");
 		const Daata tier = grid -> tiers->at [my selectedTier];
 		SET_STRING (newName, tier -> name ? tier -> name.get() : U"")
 	EDITOR_DO
-		const TextGrid grid =  my masterSlave.get();
+		const TextGrid grid =  my slave.get();
 		checkTierSelection (me, U"rename a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
-
 		Editor_save (me, U"Rename tier");
-
 		Thing_setName (tier, newName);
-
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -1144,7 +1142,7 @@ static void menu_cb_RemoveBoundariesBetween (FormantEditor me, EDITOR_ARGS_FORM)
 		SET_REAL (fromTime, my startSelection)
 		SET_REAL (toTime, my endSelection)
 	EDITOR_DO
-		IntervalTier slaveTier = (IntervalTier) my masterSlave -> tiers ->at [my slaveTierNumber];
+		IntervalTier slaveTier = (IntervalTier) my slave -> tiers ->at [my slaveTierNumber];
 		do_removeBoundariesBetween (slaveTier, fromTime, toTime);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -1152,7 +1150,7 @@ static void menu_cb_RemoveBoundariesBetween (FormantEditor me, EDITOR_ARGS_FORM)
 }
 
 static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	checkTierSelection (me, U"publish a tier");
 	const Function tier = grid -> tiers->at [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
@@ -1169,7 +1167,7 @@ static void menu_cb_modeler_modelParameterSettings (FormantEditor me, EDITOR_ARG
 		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
 	EDITOR_DO
 	double startTime = my formantModelerList -> xmin, endTime = my formantModelerList -> xmax;
-	my formantModelerList = FormantListWithHistory_to_FormantModelerList (my formantListWithHistory.get(), startTime, endTime, parameters_string);
+	my formantModelerList = FormantList_to_FormantModelerList (my formantList.get(), startTime, endTime, parameters_string);
 	FormantModelerList_setVarianceExponent (my formantModelerList.get(), varianceExponent);
 	pref_str32cpy2 (my pref_modeler_numberOfParametersPerTrack (), my p_modeler_numberOfParametersPerTrack, parameters_string);
 	my pref_modeler_varianceExponent () = my p_modeler_varianceExponent = varianceExponent;
@@ -1224,7 +1222,7 @@ static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM)
 }
 
 static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	checkTierSelection (me, U"remove all text from a tier");
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -1242,7 +1240,7 @@ static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_RemoveTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	if (grid -> tiers->size <= 1) {
 		Melder_throw (U"Sorry, I refuse to remove the last tier.");
 	}
@@ -1262,13 +1260,13 @@ static void menu_cb_DuplicateTier (FormantEditor me, EDITOR_ARGS_FORM) {
 		NATURAL (position, U"Position", U"1 (= at top)")
 		SENTENCE (name, U"Name", U"")
 	EDITOR_OK
-		const TextGrid grid =  my masterSlave.get();
+		const TextGrid grid =  my slave.get();
 		if (my selectedTier) {
 			SET_INTEGER (position, my selectedTier + 1)
 			SET_STRING (name, grid -> tiers->at [my selectedTier] -> name.get())
 		}
 	EDITOR_DO
-		const TextGrid grid =  my masterSlave.get();
+		const TextGrid grid =  my slave.get();
 		checkTierSelection (me, U"duplicate a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
 		{// scope
@@ -1331,12 +1329,15 @@ void structFormantEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Add interval on slave tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnSlaveTier);
 
 	menu = Editor_addMenu (this, U"Boundary", 0);
+	
+	
 	/*EditorMenu_addCommand (menu, U"Move to B", 0, menu_cb_MoveToB);
 	EditorMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
 	if (our d_sound.data) {
 		EditorMenu_addCommand (menu, U"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
 		EditorMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr);
 	}
+	
 	EditorMenu_addCommand (menu, U"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
 	EditorMenu_addCommand (menu, U"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1, menu_cb_InsertOnTier1);
 	EditorMenu_addCommand (menu, U"-- remove mark --", 0, nullptr);
@@ -1362,6 +1363,7 @@ void structFormantEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Show best three models", 0, menu_cb_modeler_showBest3Models);
 	EditorMenu_addCommand (menu, U"Show all models", 0, menu_cb_modeler_showAllModels);
 	EditorMenu_addCommand (menu, U"Advanced modeler settings...", 0, menu_cb_modelerAdvancedSettings);
+
 }
 
 void structFormantEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -1375,7 +1377,7 @@ void structFormantEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /***** CHILDREN *****/
 
 static void gui_text_cb_changed (FormantEditor me, GuiTextEvent /* event */) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	//Melder_casual (U"gui_text_cb_change 1 in editor ", Melder_pointer (me));
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString. */
 	//Melder_casual (U"gui_text_cb_change 2 in editor ", me);
@@ -1417,7 +1419,7 @@ void structFormantEditor :: v_createChildren () {
 }
 
 void structFormantEditor :: v_dataChanged () {
-	const TextGrid grid = our masterSlave.get();
+	const TextGrid grid = our slave.get();
 	/*
 		Perform a minimal selection change.
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
@@ -1630,7 +1632,7 @@ static void do_drawTextTier (FormantEditor me, TextTier tier, integer itier) {
 }
 
 void structFormantEditor :: v_draw () {
-	const TextGrid grid = our masterSlave.get();
+	const TextGrid grid = our slave.get();
 	Graphics_Viewport vp1, vp2;
 	const integer ntier = grid -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
@@ -1813,7 +1815,7 @@ void structFormantEditor :: v_drawSelectionViewer () {
 		endTime = endSelection;
 	}
 	if (startSelection < endSelection && (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax))
-		our formantModelerList = FormantListWithHistory_to_FormantModelerList (our formantListWithHistory.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
+		our formantModelerList = FormantList_to_FormantModelerList (our formantList.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
 
 	FormantModelerList fml = our formantModelerList.get();
 	FormantModelerList_setVarianceExponent (fml, our p_modeler_varianceExponent);
@@ -1842,7 +1844,7 @@ static void do_drawWhileDragging (FormantEditor me, double numberOfTiers, bool s
 }
 
 static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTier, int shiftKeyPressed) {
-	const TextGrid grid =  my masterSlave.get();
+	const TextGrid grid =  my slave.get();
 	const integer numberOfTiers = grid -> tiers->size;
 	double xWC = xbegin, yWC;
 	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
@@ -2005,7 +2007,7 @@ static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTi
 }
 
 bool structFormantEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
-	const TextGrid grid = our masterSlave.get();
+	const TextGrid grid = our slave.get();
 
 	/*
 		In answer to a click in the sound part,
@@ -2195,7 +2197,6 @@ bool structFormantEditor :: v_clickE (double t, double yWC) {
 }
 
 void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
-	const TextGrid grid = our masterSlave.get();
 	integer numberOfRows, numberOfColums;
 	/*
 		On which of the modelers was the click?
@@ -2343,22 +2344,22 @@ void structFormantEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
+void FormantEditor_init (FormantEditor me, conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
 {
 	my callbackSocket = Melder_dup (callbackSocket);
-
-	TimeSoundAnalysisEditor_init (me, title, formant, sound, ownSound);
+	autoFormant formant = Data_copy (formantList -> at [formantList -> defaultFormant]);
+	TimeSoundAnalysisEditor_init (me, title, formant.get(), sound, ownSound);
 
 	
 	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax ==  formant -> xmax,
-		U"The time domain of the Formant and the Sound should be equal.");
+		U"The time domain of the Sound and the Formants should be equal.");
 	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
 		Melder_warning (U"The time domain of the TextGrid (starting at ",
 			Melder_fixed (grid -> xmin, 6), U" seconds) does not overlap with that of the sound "
 			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
 			U"and choose “Shift times to...” from the Modify menu "
 			U"to shift the starting time of the TextGrid to zero.");
-	my masterSlave = Data_copy (grid);
+	my slave = Data_copy (grid);
 	
 	my selectedTier = 1;
 	if (my endWindow - my startWindow > 5.0) {
@@ -2369,139 +2370,50 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant,
 	}
 }
 
-void FormantEditor_setMasterSlaveTierPair (FormantEditor me) {
+void FormantEditor_setSlaveTier (FormantEditor me) {
 	/*
 		Set up the master-slave pair.
 	*/
-	if (my masterSlave.get() == nullptr) {
-		my masterSlave = TextGrid_create (my tmin, my tmax, U"formant-slave formant-master", U"");
+	if (my slave.get() == nullptr) {
+		my slave = TextGrid_create (my tmin, my tmax, U"formant-slave", U"");
 		my slaveTierNumber = 1;
-		my masterTierNumber = 2;
 		return;
 	}
 	/*
-		Does the textgid have a master-slave pair ?
+		Does the textgid have a slave pair ?
 	*/
-	const integer numberOfTiers = my masterSlave -> tiers -> size;
-	autoSTRVEC tierNames = autoSTRVEC (numberOfTiers);
+	const integer numberOfTiers = my slave -> tiers -> size;
+	integer slaveTierNumber = 0;
 	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-		const Function anyTier = my masterSlave -> tiers->at [itier];
-		tierNames [itier] = Melder_dup (anyTier -> name.get());
-	}
-	autoSTRVEC toMatch = newSTRVECcopy (tierNames.get());
-	STRVECsort_inplace (toMatch.get());
-	/*
-		<name>-master and <name>-slave are now consecutive
-	*/
-	integer tierNumber = 0;
-	for (integer istr = 1; istr < numberOfTiers; istr ++) {
-		const conststring32 isMaster = toMatch [istr] . get();
-		const conststring32 isSlave = toMatch [istr + 1] . get();
-		if (Melder_stringMatchesCriterion (isMaster, kMelder_string::ENDS_WITH, U"-master", true) &&
-			Melder_stringMatchesCriterion (isSlave, kMelder_string::ENDS_WITH, U"-slave", true)) {
-				tierNumber = istr;
-				break;
+		const Function anyTier = my slave -> tiers->at [itier];
+		conststring32 tierName = anyTier -> name.get();
+		if (Melder_stringMatchesCriterion (tierName, kMelder_string::ENDS_WITH, U"-slave", true)) {
+			slaveTierNumber = itier;
+			break;
 		}
 	}
-	if (tierNumber > 0) {
-		integer masterTierNumber, slaveTierNumber = 0;
-		const conststring32 master = toMatch [tierNumber].get();
-		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-			const Function anyTier = my masterSlave -> tiers->at [itier];			
-			if (Melder_stringMatchesCriterion (anyTier -> name.get(), kMelder_string::EQUAL_TO, master, true)) {
-				masterTierNumber = itier;
-				break;
-			}
-		}
-		const conststring32 slave = toMatch [tierNumber + 1].get();
-		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-			const Function anyTier = my masterSlave -> tiers->at [itier];			
-			if (Melder_stringMatchesCriterion (anyTier -> name.get(), kMelder_string::EQUAL_TO, slave, true)) {
-				slaveTierNumber = itier;
-				break;
-			}
-		}
-		Melder_assert (slaveTierNumber > 0 && masterTierNumber > 0);
-		my masterTierNumber = masterTierNumber;
+	if (slaveTierNumber > 0) {
 		my slaveTierNumber = slaveTierNumber;
 		return;
 	}
 	/*
-		We didn't find a master-slave pair.
+		We didn't find a -slave pair.
 		Add them on top.
 	*/
-	autoIntervalTier slaveTier = IntervalTier_create (my masterSlave -> xmin, my masterSlave -> xmax);
-	my masterSlave -> tiers -> addItemAtPosition_move (slaveTier.move(), 1);
-	TextGrid_setTierName (my masterSlave.get(), 1, U"formant-slave");
+	autoIntervalTier slaveTier = IntervalTier_create (my slave -> xmin, my slave -> xmax);
+	my slave -> tiers -> addItemAtPosition_move (slaveTier.move(), 1);
+	TextGrid_setTierName (my slave.get(), 1, U"formant-slave");
 	my slaveTierNumber = 1;
-	autoIntervalTier masterTier = IntervalTier_create (my masterSlave -> xmin, my masterSlave -> xmax);
-	my masterSlave -> tiers -> addItemAtPosition_move (masterTier.move(), 2);
-	TextGrid_setTierName (my masterSlave.get(), 2, U"formant-master");
-	my masterTierNumber = 2;
 }
 
-void VowelEditor_setMasterTierLabel (FormantEditor me) {
-	FormantAnalysisHistory fah = & my formantListWithHistory -> formantAnalysisHistory;
-	kLPC_Analysis lpcType = fah -> lpcType;
-	VEC ceilings = my formantListWithHistory -> ceilings.get();
-	autoMelderString label;
-	for (integer ic = 1; ic <= ceilings.size; ic ++)
-		MelderString_append (& label, Melder_iround (ceilings [ic]), U" ");
-	MelderString_append (& label, U"; ");
-	MelderString_append (& label, kLPC_Analysis_getText (lpcType), U" ");
-	MelderString_append (& label, fah -> timeStep, U" ", fah -> maximumNumberOfFormants, U" xxxx ",
-		fah -> windowLength, U" ", fah -> preemphasisFrequency);
-	if (lpcType == kLPC_Analysis::MARPLE)
-		MelderString_append (& label, U" ", fah -> tol1, U" ", fah -> tol2);
-	if (lpcType == kLPC_Analysis::ROBUST)
-		MelderString_append (& label, U" ", fah -> huberNumberOfStdDev, U" ", fah -> maximumNumberOfIterations,
-			U" ", fah -> tol);
-	TextGrid_setIntervalText (my masterSlave.get(), 2, 1, label.string);
-}
-
-autoFormantEditor FormantEditor_create (conststring32 title, Formant formant, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
+autoFormantEditor FormantEditor_create (conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
 	try {
 		autoFormantEditor me = Thing_new (FormantEditor);
-		FormantEditor_init (me.get(), title, formant, sound, ownSound, grid, callbackSocket);
-		if (my p_analysisHistory_lpcType < kLPC_Analysis::AUTOCORRELATION ||
-			my p_analysisHistory_lpcType > kLPC_Analysis::BURG)
-			my p_analysisHistory_lpcType = my default_analysisHistory_lpcType ();
-		if (my p_analysisHistory_timeStep < 0.0)
-			my p_analysisHistory_timeStep = Melder_atof (my default_analysisHistory_timeStep ());
-		if (my p_analysisHistory_maximumNumberOfFormants <= 0)
-			my p_analysisHistory_maximumNumberOfFormants = Melder_atof (my default_analysisHistory_maximumNumberOfFormants ());
-		if (my p_analysisHistory_windowLength <= 0.0)
-			my p_analysisHistory_windowLength = Melder_atof (my default_analysisHistory_windowLength ());
-		if (my p_analysisHistory_preemphasisFrequency <= 0.0)
-			my p_analysisHistory_preemphasisFrequency = Melder_atof (my default_analysisHistory_preemphasisFrequency ());
-		if (my p_analysisHistory_minimumCeiling <= 0.0)
-			my p_analysisHistory_minimumCeiling = Melder_atof (my default_analysisHistory_minimumCeiling ());
-		if (my p_analysisHistory_maximumCeiling <= 0.0)
-			my p_analysisHistory_maximumCeiling = Melder_atof (my default_analysisHistory_maximumCeiling ());
-		if (my p_analysisHistory_numberOfCeilings <= 0)
-			my p_analysisHistory_numberOfCeilings = Melder_atoi (my default_analysisHistory_numberOfCeilings ());
-		if (my p_analysisHistory_tol1 <= 0.0)
-			my p_analysisHistory_tol1 = Melder_atof (my default_analysisHistory_tol1 ());
-		if (my p_analysisHistory_tol2 <= 0.0)
-			my p_analysisHistory_tol2 = Melder_atof (my default_analysisHistory_tol2 ());
-		if (my p_analysisHistory_numberOfStdDev <= 0.0)
-			my p_analysisHistory_numberOfStdDev = Melder_atof (my default_analysisHistory_numberOfStdDev ());
-		if (my p_analysisHistory_tol <= 0.0)
-			my p_analysisHistory_tol = Melder_atof (my default_analysisHistory_tol ());
-		if (my p_analysisHistory_maximumNumberOfIterations <= 0)
-			my p_analysisHistory_maximumNumberOfIterations = Melder_atoi (my default_analysisHistory_maximumNumberOfIterations ());
-		FormantEditor_setMasterSlaveTierPair (me.get());
-		my formantListWithHistory = Sound_to_FormantListWithHistory_any (sound, my p_analysisHistory_lpcType,
-			my p_analysisHistory_timeStep, my p_analysisHistory_maximumNumberOfFormants,
-			my p_analysisHistory_windowLength, my p_analysisHistory_preemphasisFrequency,
-			my p_analysisHistory_minimumCeiling, my p_analysisHistory_maximumCeiling,
-			my p_analysisHistory_numberOfCeilings, my p_analysisHistory_tol1, my p_analysisHistory_tol2,
-			my p_analysisHistory_numberOfStdDev, my p_analysisHistory_tol,
-			my p_analysisHistory_maximumNumberOfIterations);
-		VowelEditor_setMasterTierLabel (me.get());
+		FormantEditor_init (me.get(), title, formantList, sound, ownSound, grid, callbackSocket);
+		FormantEditor_setSlaveTier (me.get());
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
-		my formantModelerList = FormantListWithHistory_to_FormantModelerList (my formantListWithHistory.get(), my tmin, my tmax, my p_modeler_numberOfParametersPerTrack);
+		my formantModelerList = FormantList_to_FormantModelerList (my formantList.get(), my tmin, my tmax, my p_modeler_numberOfParametersPerTrack);
 		
 		return me;
 	} catch (MelderError) {

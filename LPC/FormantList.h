@@ -1,6 +1,6 @@
-#ifndef _FormantListWithHistory_h_
-#define _FormantListWithHistory_h_
-/* FormantListWithHistory.h
+#ifndef _FormantList_h_
+#define _FormantList_h_
+/* FormantList.h
  *
  * Copyright (C) 2020 David Weenink
  *
@@ -23,14 +23,16 @@
 #include "LPC.h"
 #include "Sound.h"
 
-#include "FormantListWithHistory_def.h"
+Collection_define (FormantList, OrderedOf, Formant) {
+	integer defaultFormant;
+	void v_info () override;
+};
 
 /*
-	A FormantListWithHistory is an ordered collection of Formants, where
+	A FormantList is an ordered collection of Formants, where
 	all Formants in the list have the same domain and the same sampling.
-	They have all been analysed with the same parameters except 'Maximum formant (Hz)'
 */
 
-autoFormantListWithHistory Sound_to_FormantListWithHistory_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double minimumCeiling, double maximumCeiling, integer numberOfCeilings, double tol1, double tol2, double huberNumberOfStdDev, double tol, integer maximumNumberOfIterations);
+autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFormantFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double minimumCeiling, double maximumCeiling, double ceilingStep, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations);
 
-#endif /* _FormantListWithHistory_h_ */
+#endif /* _FormantList_h_ */

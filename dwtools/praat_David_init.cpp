@@ -91,9 +91,9 @@
 #include "FileInMemoryManager.h"
 #include "FilterBank.h"
 #include "Formula.h"
-#include "FormantEditor.h"
 #include "FormantGridEditor.h"
 #include "FormantGrid_extensions.h"
+#include "FormantModeler.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
 #include "Matrix_Categories.h"
@@ -7955,7 +7955,7 @@ void praat_uvafon_David_init () {
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
-		classFormantFilter, classFormantListWithHistory,
+		classFormantFilter, classFormantModeler,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
@@ -7967,7 +7967,6 @@ void praat_uvafon_David_init () {
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
 	structVowelEditor  :: f_preferences ();
-	structFormantEditor :: f_preferences ();
 	
 	espeakdata_praat_init ();
 

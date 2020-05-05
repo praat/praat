@@ -19,8 +19,8 @@
  */
 
 #include "Collection.h"
-#include "FormantModeler.h"
-#include "FormantListWithHistory.h"
+#include "../dwtools/FormantModeler.h"
+#include "FormantList.h"
 #include "melder.h"
 #include "Preferences.h"
 #include "Sound.h"
@@ -81,11 +81,11 @@ Thing_define (FormantModelerList, Function) {
 
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormant synthesis; // extra for "optimum" formants
-	autoFormantListWithHistory formantListWithHistory;
+	autoFormantList formantList;
 	autoFormantModelerList formantModelerList;
-	autoTextGrid masterSlave;
+	autoTextGrid slave;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, masterTierNumber, slaveTierNumber;
+	integer selectedTier, slaveTierNumber;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
@@ -151,9 +151,9 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	#include "FormantEditor_prefs.h"
 };
 
-void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket);
+void FormantEditor_init (FormantEditor me, conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket);
 
-autoFormantEditor FormantEditor_create (conststring32 title, Formant formant, Sound sound, bool ownSound, TextGrid grid,
+autoFormantEditor FormantEditor_create (conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid,
 	conststring32 callbackSocket);
 
 /* End of file FormantEditor.h */

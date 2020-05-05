@@ -19,7 +19,6 @@
 #define ooSTRUCT FormantModeler
 oo_DEFINE_CLASS (FormantModeler, Function)
 	
-	oo_DOUBLE (maximumFrequency)
 	oo_ENUM (kFormantModelerWeights, weighFormants)
 	oo_COLLECTION_OF (OrderedOf, trackmodelers, DataModeler, 0)
 

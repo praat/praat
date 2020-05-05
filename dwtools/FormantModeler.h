@@ -32,9 +32,9 @@
 
 autoFormant Formant_extractPart (Formant me, double tmin, double tmax);
 
-autoFormantModeler FormantModeler_create (double tmin, double tmax, double fmax, integer numberOfDataPoints, integer numberOfFormants, integer numberOfParameters);
+autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfDataPoints, integer numberOfFormants, integer numberOfParameters);
 
-autoFormantModeler FormantModeler_create (double tmin, double tmax, double fmax, integer numberOfDataPoints, constINTVEC const& numberOfParaneters);
+autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfDataPoints, constINTVEC const& numberOfParameters);
 
 double FormantModeler_indexToTime (FormantModeler me, integer index);
 
@@ -137,7 +137,7 @@ double FormantModeler_getParameterValue (FormantModeler me, integer iformant, in
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, integer numberOfFormants,
 	integer numberOfParametersPerTrack);
 
-autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, double fmax, constINTVEC const& numberOfParametersPerTrack);
+autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, constINTVEC const& numberOfParametersPerTrack);
 
 autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool estimateUndefined);
 
