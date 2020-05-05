@@ -35,6 +35,12 @@ Thing_implement (FormantModelerList, Function, 0);
 #include "prefs_copyToInstance.h"
 #include "FormantEditor_prefs.h"
 
+// forward definitions
+
+void do_insertIntervalOnSlaveTier (FormantEditor me, int tierNumber);
+
+// end forward
+
 void structFormantEditor :: v_info () {
 	FormantEditor_Parent :: v_info ();
 }
@@ -71,7 +77,7 @@ autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double
 		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
 		Melder_require (numberOfParametersPerTrack.size > 0 ,
 			U"The number of items in the parameter list should be larger than zero.");
-		Formant formant = my at [1];
+		Formant formant = (Formant) my formants.at [1];
 		integer maximumNumberOfFormants = formant -> maxnFormants;
 		Melder_require (numberOfParametersPerTrack.size <= maximumNumberOfFormants,
 			U"The number of items cannot exceed the maximum number of formants (", maximumNumberOfFormants, U").");
@@ -80,17 +86,16 @@ autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double
 		for (integer ipar = 1; ipar <= thy numberOfParametersPerTrack.size; ipar ++) {
 			const integer value = thy numberOfParametersPerTrack [ipar];
 			Melder_require (value >= 0,
-				U"");
+				U"Numbers in the 'Number of parameter list' should be positive.");
 			if (value == 0)
 				numberOfZeros += 1;
 		}
-		//Melder_require (thy numberOfParametersPerTrack.size - numberOfZeros > 0,
-		//	U"Not all 'number of paramters' should be zero.");
 		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
 		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
-		thy numberOfModelers = my size;
+		thy numberOfModelers = my formants . size;
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
-			autoFormantModeler fm = Formant_to_FormantModeler (my at [imodel], startTime, endTime,  thy numberOfParametersPerTrack.get());
+			Formant formant = (Formant) my formants.at [imodel];
+			autoFormantModeler fm = Formant_to_FormantModeler (formant, startTime, endTime,  thy numberOfParametersPerTrack.get());
 			thy formantModelers. addItem_move (fm.move());
 		}
 		thy selected = newINTVEClinear (thy numberOfModelers, 1, 1);
@@ -256,8 +261,10 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 			MelderString_append (& best, ( best.string && best.string [0] ? U"&F1" : U"F1" ));
 		
 		if (best.string && best.string [0]) {
+			Graphics_setColour (g, Melder_BLUE);
 			Graphics_text (g, fm -> xmin + 0.5 * (fm -> xmax - fm -> xmin),
 				fmax - 0.05 * fmax, best.string);
+			Graphics_setColour (g, Melder_BLACK);
 			MelderString_empty (& best);
 		}
 		if (garnish) {
@@ -309,6 +316,7 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 	Graphics_setFontSize (g, fontSize_old);
 	Graphics_setViewport (g, x1NDC, x2NDC, y1NDC, y2NDC);
 }
+
 /********** UTILITIES **********/
 
 void VowelEditor_setSlaveTierLabel (FormantEditor me) {
@@ -318,6 +326,11 @@ void VowelEditor_setSlaveTierLabel (FormantEditor me) {
 		IntervalTier slave = (IntervalTier) my slave -> tiers -> at [my slaveTierNumber];
 		if (my startSelection == fml -> xmin && my endSelection == fml -> xmax) {
 			double time = 0.5 * (my startSelection + my endSelection);
+			if (my shiftKeyPressed) {
+				do_insertIntervalOnSlaveTier (me, my slaveTierNumber);
+				my startSelection = fml -> xmin;
+				my endSelection = fml -> xmax;
+			}
 			integer intervalNumber = IntervalTier_timeToIndex (slave, time);
 			TextInterval interval = slave -> intervals . at [intervalNumber];
 			if (interval -> xmin == fml -> xmin && interval -> xmax == fml -> xmax)
@@ -904,7 +917,7 @@ static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, d
 	my startSelection = my endSelection = t1;
 }
 
-static void do_insertIntervalOnSlaveTier (FormantEditor me, int itier) {
+void do_insertIntervalOnSlaveTier (FormantEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
 				my playingCursor || my playingSelection ? my playCursor : my startSelection,
@@ -918,8 +931,22 @@ static void do_insertIntervalOnSlaveTier (FormantEditor me, int itier) {
 	}
 }
 
-static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnSlaveTier (me, 1); }
+static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	do_insertIntervalOnSlaveTier (me, 1);
+}
 
+static void menu_cb_ClearText (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	if (my selectedTier != my slaveTierNumber)
+		return;
+	if (my startSelection < my endSelection) {
+		IntervalTier slaveTier = (IntervalTier) my slave -> tiers->at [my selectedTier];
+		const double midtime = 0.5 * (my startSelection + my endSelection);
+		const integer intervalNumber = IntervalTier_timeToIndex (slaveTier, midtime);
+		TextInterval_removeText (slaveTier -> intervals .at [intervalNumber]);
+		FunctionEditor_redraw (me);
+		Editor_broadcastDataChanged (me);
+	}
+}
 
 /***** BOUNDARY/POINT MENU *****/
 
@@ -1224,6 +1251,9 @@ static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM)
 static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid =  my slave.get();
 	checkTierSelection (me, U"remove all text from a tier");
+	Melder_require (my selectedTier == my slaveTierNumber,
+		U"You can only remove text from the slave tier.");
+		
 	IntervalTier intervalTier;
 	TextTier textTier;
 	_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
@@ -1327,6 +1357,7 @@ void structFormantEditor :: v_createMenus () {
 
 	menu = Editor_addMenu (this, U"Interval", 0);
 	EditorMenu_addCommand (menu, U"Add interval on slave tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnSlaveTier);
+	EditorMenu_addCommand (menu, U"Clear text", 0, menu_cb_ClearText);
 
 	menu = Editor_addMenu (this, U"Boundary", 0);
 	
@@ -2197,11 +2228,11 @@ bool structFormantEditor :: v_clickE (double t, double yWC) {
 }
 
 void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
-	integer numberOfRows, numberOfColums;
 	/*
 		On which of the modelers was the click?
 	*/
 	FormantModelerList fml = formantModelerList.get();
+	integer numberOfRows, numberOfColums;
 	FormantModelerList_getDisplayLayout (fml, & numberOfRows, & numberOfColums);
 	integer numberOfVisible = FormantModelerList_getNumberOfVisible (fml);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
@@ -2347,7 +2378,10 @@ void structFormantEditor :: v_updateMenuItems_file () {
 void FormantEditor_init (FormantEditor me, conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
 {
 	my callbackSocket = Melder_dup (callbackSocket);
-	autoFormant formant = Data_copy (formantList -> at [formantList -> defaultFormant]);
+	integer defaultFormant = formantList -> defaultFormant;
+	Melder_require (defaultFormant > 0,
+		U"The FormantList has an invalid default formant index.");
+	autoFormant formant = Data_copy (formantList -> formants.at [defaultFormant]);
 	TimeSoundAnalysisEditor_init (me, title, formant.get(), sound, ownSound);
 
 	
@@ -2360,7 +2394,7 @@ void FormantEditor_init (FormantEditor me, conststring32 title, FormantList form
 			U"and choose “Shift times to...” from the Modify menu "
 			U"to shift the starting time of the TextGrid to zero.");
 	my slave = Data_copy (grid);
-	
+	my formantList = Data_copy (formantList);
 	my selectedTier = 1;
 	if (my endWindow - my startWindow > 5.0) {
 		my endWindow = my startWindow + 5.0;

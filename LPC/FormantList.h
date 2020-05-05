@@ -20,13 +20,11 @@
 
 #include "Collection.h"
 #include "Formant.h"
+#include "Function.h"
 #include "LPC.h"
 #include "Sound.h"
 
-Collection_define (FormantList, OrderedOf, Formant) {
-	integer defaultFormant;
-	void v_info () override;
-};
+#include "FormantList_def.h"
 
 /*
 	A FormantList is an ordered collection of Formants, where

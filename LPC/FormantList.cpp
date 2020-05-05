@@ -23,18 +23,37 @@
 #include "Sound.h"
 #include "Sound_and_LPC_robust.h"
 
-Thing_implement (FormantList, Ordered, 0);
+#include "oo_DESTROY.h"
+#include "FormantList_def.h"
+#include "oo_COPY.h"
+#include "FormantList_def.h"
+#include "oo_EQUAL.h"
+#include "FormantList_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "FormantList_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "FormantList_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "FormantList_def.h"
+#include "oo_READ_TEXT.h"
+#include "FormantList_def.h"
+#include "oo_READ_BINARY.h"
+#include "FormantList_def.h"
+#include "oo_DESCRIPTION.h"
+#include "FormantList_def.h"
 
 void structFormantList :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Formants:");
-	MelderInfo_writeLine (U"   Number of Formants: ", size);
+	MelderInfo_writeLine (U"   Number of Formants: ", formants . size);
 
 }
 
+Thing_implement (FormantList, Ordered, 2);
 
 autoFormantList FormantList_create (double fromTime, double toTime) {
 	autoFormantList me = Thing_new (FormantList);
+	Function_init (me.get(), fromTime, toTime);
 	return me;
 }
 
@@ -50,6 +69,7 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 			U"There should be more than one ceiling.");
 		autoFormantList thee = FormantList_create (my xmin, my xmax);
 		thy defaultFormant = 0;
+
 		for (integer ic = 1; ic <= ceilings.size; ic ++)
 			if (Melder_iround (ceilings [ic]) == Melder_iround (maximumFrequency)) {
 				thy defaultFormant = ic;
@@ -76,7 +96,7 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			Thing_setName (formant.get(), Melder_double (ceilings [ic]));
-			thy addItem_move (formant.move());
+			thy formants . addItem_move (formant.move());
 		}
 		return thee;
 	} catch (MelderError) {
