@@ -96,6 +96,7 @@ autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
 			Formant formant = (Formant) my formants.at [imodel];
 			autoFormantModeler fm = Formant_to_FormantModeler (formant, startTime, endTime,  thy numberOfParametersPerTrack.get());
+			Thing_setName (fm.get(), my identification [imodel].get());
 			thy formantModelers. addItem_move (fm.move());
 		}
 		thy selected = newINTVEClinear (thy numberOfModelers, 1, 1);
@@ -1248,6 +1249,39 @@ static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM)
 	EDITOR_END
 }
 
+static void menu_cb_drawModels (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw modelers", nullptr)
+		my v_form_pictureWindow (cmd);
+		BOOLEAN (crossHairs, U"Draw cross hairs", 0)
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
+	EDITOR_OK
+		my v_ok_pictureWindow (cmd);
+		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+	EDITOR_DO
+		my v_do_pictureWindow (cmd);
+		my pref_picture_garnish () = garnish;
+		Editor_openPraatPicture (me);
+		{// scope
+			FormantModelerList fml = my formantModelerList.get();
+			FormantModelerList_setVarianceExponent (fml, my p_modeler_varianceExponent);
+			const double xCursor = (my startSelection == my endSelection ? my startSelection : fml -> xmin - 10.0 );
+			const double yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
+			Graphics_setInner (my pictureGraphics);
+			FormantModelerList_drawAsMatrix (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
+			my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
+			my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
+			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_errorBars,
+			my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
+			my p_modeler_draw_estimatedTracks, true);
+			Graphics_unsetInner (my pictureGraphics);
+
+		}
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+		
+	EDITOR_END
+}
+
 static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid =  my slave.get();
 	checkTierSelection (me, U"remove all text from a tier");
@@ -1394,6 +1428,8 @@ void structFormantEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Show best three models", 0, menu_cb_modeler_showBest3Models);
 	EditorMenu_addCommand (menu, U"Show all models", 0, menu_cb_modeler_showAllModels);
 	EditorMenu_addCommand (menu, U"Advanced modeler settings...", 0, menu_cb_modelerAdvancedSettings);
+	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
+	EditorMenu_addCommand (menu, U"Draw models...", 0, menu_cb_drawModels);
 
 }
 
@@ -2378,10 +2414,10 @@ void structFormantEditor :: v_updateMenuItems_file () {
 void FormantEditor_init (FormantEditor me, conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
 {
 	my callbackSocket = Melder_dup (callbackSocket);
-	integer defaultFormant = formantList -> defaultFormant;
-	Melder_require (defaultFormant > 0,
+	integer defaultFormantObject = formantList -> defaultFormantObject;
+	Melder_require (defaultFormantObject > 0,
 		U"The FormantList has an invalid default formant index.");
-	autoFormant formant = Data_copy (formantList -> formants.at [defaultFormant]);
+	autoFormant formant = Data_copy (formantList -> formants.at [defaultFormantObject]);
 	TimeSoundAnalysisEditor_init (me, title, formant.get(), sound, ownSound);
 
 	

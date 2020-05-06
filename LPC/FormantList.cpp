@@ -51,9 +51,11 @@ void structFormantList :: v_info () {
 
 Thing_implement (FormantList, Function, 0);
 
-autoFormantList FormantList_create (double fromTime, double toTime) {
+autoFormantList FormantList_create (double fromTime, double toTime, integer numberOfFormantObjects) {
 	autoFormantList me = Thing_new (FormantList);
 	Function_init (me.get(), fromTime, toTime);
+	my identification = autoSTRVEC (numberOfFormantObjects);
+	my numberOfFormantObjects = numberOfFormantObjects;
 	return me;
 }
 
@@ -67,15 +69,15 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 		autoVEC ceilings = newVECfrom_to_by (minimumCeiling, maximumCeiling, ceilingStep);
 		Melder_require (ceilings.size > 1,
 			U"There should be more than one ceiling.");
-		autoFormantList thee = FormantList_create (my xmin, my xmax);
-		thy defaultFormant = 0;
+		autoFormantList thee = FormantList_create (my xmin, my xmax, ceilings.size);
+		thy defaultFormantObject = 0;
 
 		for (integer ic = 1; ic <= ceilings.size; ic ++)
 			if (Melder_iround (ceilings [ic]) == Melder_iround (maximumFrequency)) {
-				thy defaultFormant = ic;
+				thy defaultFormantObject = ic;
 				break;
 			}
-		Melder_require (thy defaultFormant > 0,
+		Melder_require (thy defaultFormantObject > 0,
 			U"The 'Maximum formant' frequency (", maximumFrequency, U") should also occur as a in the list of frequencies between 'Minimum ceiling' and 'Maximum ceiling'.");
 		const double formantSafetyMargin = 50.0;
 		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
@@ -95,9 +97,10 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			Thing_setName (formant.get(), Melder_double (ceilings [ic]));
+			thy identification [ic] =  Melder_dup (Melder_double (ceilings [ic]));
 			thy formants . addItem_move (formant.move());
 		}
+		Melder_assert (thy formants.size == thy numberOfFormantObjects); // maintain invariant
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantList not created.");
