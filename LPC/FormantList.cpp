@@ -49,7 +49,7 @@ void structFormantList :: v_info () {
 
 }
 
-Thing_implement (FormantList, Ordered, 2);
+Thing_implement (FormantList, Function, 0);
 
 autoFormantList FormantList_create (double fromTime, double toTime) {
 	autoFormantList me = Thing_new (FormantList);
