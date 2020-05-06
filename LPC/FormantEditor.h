@@ -20,6 +20,7 @@
 
 #include "Collection.h"
 #include "../dwtools/FormantModeler.h"
+#include "Formant.h"
 #include "FormantList.h"
 #include "melder.h"
 #include "Preferences.h"
