@@ -54,7 +54,7 @@ Thing_implement (FormantList, Function, 0);
 autoFormantList FormantList_create (double fromTime, double toTime, integer numberOfFormantObjects) {
 	autoFormantList me = Thing_new (FormantList);
 	Function_init (me.get(), fromTime, toTime);
-	my identification = autoSTRVEC (numberOfFormantObjects);
+	my identifier = autoSTRVEC (numberOfFormantObjects);
 	my numberOfFormantObjects = numberOfFormantObjects;
 	return me;
 }
@@ -97,7 +97,7 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			thy identification [ic] =  Melder_dup (Melder_double (ceilings [ic]));
+			thy identifier [ic] =  Melder_dup (Melder_double (ceilings [ic]));
 			thy formants . addItem_move (formant.move());
 		}
 		Melder_assert (thy formants.size == thy numberOfFormantObjects); // maintain invariant

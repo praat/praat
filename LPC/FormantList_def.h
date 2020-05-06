@@ -21,7 +21,7 @@ oo_DEFINE_CLASS (FormantList, Function)
 	oo_INTEGER (numberOfFormantObjects)
 	oo_INTEGER (defaultFormantObject)
 	oo_COLLECTION_OF (OrderedOf, formants, Formant, 2)
-	oo_STRING_VECTOR (identification, numberOfFormantObjects)
+	oo_STRING_VECTOR (identifier, numberOfFormantObjects)
 	
 	#if oo_DECLARING
 		virtual void v_info ();
