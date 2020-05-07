@@ -194,12 +194,13 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 	return modelParameters;
 }
 
-void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, bool garnish) {
+void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, integer defaultBox, bool garnish) {
 	if (nrow <= 0 || ncol <= 0)
 		FormantModelerList_getDisplayLayout (me, & nrow, & ncol);
+	const double fmin = 0.0;
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;
+	const double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;
 	auto getXtick = [] (Graphics gg, double fontSize) {
 		const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
 		const double wDC = (gg -> d_x2DC - gg -> d_x1DC) / (gg -> d_x2wNDC - gg -> d_x1wNDC) * (gg -> d_x2NDC - gg -> d_x1NDC);
@@ -232,14 +233,32 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 		double vpi_x2 = vpi_x1 + vpi_width;
 		double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
 		double vpi_y1 = vpi_y2 - vpi_height;
-		FormantModeler fm = my formantModelers.at [abs(my selected [id])];
+		integer currentModel = abs(my selected [id]);
+		FormantModeler fm = my formantModelers.at [currentModel];
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, fm -> xmin, fm -> xmax, 0.0, fmax);
 		FormantModeler_speckle_inside (fm, g, fm -> xmin, fm -> xmax, fmax, fromFormant, toFormant,
-			drawEstimated, 0, drawErrorBars, barwidth_s, xTrackOffset_s);
-		Graphics_setLineWidth (g, 2.0);
-		Graphics_setColour (g, ( my selected [id] < 0 ? Melder_BLUE : Melder_BLACK ));
-		Graphics_rectangle (g, fm -> xmin, fm -> xmax, 0.0, fmax);
+			drawEstimated, 0.0, drawErrorBars, barwidth_s, xTrackOffset_s);
+		if (currentModel == defaultBox) {
+			/*
+				To mark the default analysis.
+				Red box with blue or black box "inside" works well for a
+				non colour blind person like me.
+				With a blue box we get some purple,
+			*/
+			Graphics_setColour (g, Melder_RED);
+			Graphics_setLineWidth (g, 4.0);
+			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
+			if (my selected [id] < 0) { // also selected
+				Graphics_setLineWidth (g, 2.0);
+				Graphics_setColour (g, Melder_BLUE);
+				Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
+			}
+		} else {
+			Graphics_setLineWidth (g, 2.0);
+			Graphics_setColour (g, ( my selected [id] < 0 ? Melder_BLUE : Melder_BLACK ));
+			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
+		}
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
@@ -939,8 +958,7 @@ static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIR
 	do_insertIntervalOnSlaveTier (me, 1);
 }
 
-static integer FormantEditor_identifyFromIntervalLabel (FormantEditor me, conststring32 label) {
-	STRVEC identifier = my formantList->identifier.get();
+static Formant FormantEditor_identifyFromIntervalLabel (FormantEditor me, conststring32 label) {
 	/*
 		Find part before ';'
 	*/
@@ -952,28 +970,15 @@ static integer FormantEditor_identifyFromIntervalLabel (FormantEditor me, consts
 			found --;
 		*(++ found) = U'\0';
 	}
-	
-	for (integer istr = 1; istr <= identifier.size; istr ++)
-		if (Melder_stringMatchesCriterion (formantId.string, kMelder_string::EQUAL_TO, identifier [istr], true))
-			return istr;
-	return 0;
+	return FormantList_identifyFormantByCriterion (my formantList.get(), kMelder_string::EQUAL_TO, label, true);
 }
 
-void VowelEditor_modifySynthesisFrames (FormantEditor me, double fromTime, double toTime, Formant source) {
-	integer ifmin, ifmax;
-	const integer numberOfFrames = Sampled_getWindowSamples (source, fromTime, toTime, & ifmin, & ifmax);
-	Melder_require (numberOfFrames > 0,
-		U"The interval was too short.");
-	for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
-		Formant_Frame toFrame = & my synthesis -> frames [iframe];
-		Formant_Frame fromFrame = & source -> frames [iframe];
-		toFrame -> intensity = fromFrame -> intensity;
-		toFrame -> numberOfFormants = fromFrame -> numberOfFormants;
-		toFrame -> formant = newvectorcopy<structFormant_Formant> (fromFrame -> formant.all());
-	}
+void VowelEditor_modifySynthesisFormantFrames (FormantEditor me, double fromTime, double toTime, integer formantIndex) {
+	Formant formant = reinterpret_cast<Formant> (my data);
+	Formant_and_FormantList_replaceFrames (formant, my formantList.get(), fromTime, toTime, formantIndex);
 }
 
-static void menu_cb_ClearText (FormantEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_ResetTextAndFormants (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my selectedTier != my slaveTierNumber)
 		return;
 	if (my startSelection < my endSelection) {
@@ -988,7 +993,7 @@ static void menu_cb_ClearText (FormantEditor me, EDITOR_ARGS_DIRECT) {
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 		
-		VowelEditor_modifySynthesisFrames (me, my startSelection, my endSelection, my formantList -> formants.at [my formantList -> defaultFormantObject]);
+		VowelEditor_modifySynthesisFormantFrames (me, my startSelection, my endSelection, my formantList -> defaultFormantObject);
 	}
 }
 
@@ -1314,12 +1319,13 @@ static void menu_cb_DrawModels (FormantEditor me, EDITOR_ARGS_FORM) {
 			const double xCursor = (my startSelection == my endSelection ? my startSelection : fml -> xmin - 10.0 );
 			const double yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
 			Graphics_setInner (my pictureGraphics);
+			integer defaultModel = my formantList -> defaultFormantObject;
 			FormantModelerList_drawAsMatrix (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 			my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
 			my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
 			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_errorBars,
 			my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
-			my p_modeler_draw_estimatedTracks, garnish);
+			my p_modeler_draw_estimatedTracks, defaultModel, garnish);
 			Graphics_unsetInner (my pictureGraphics);
 // TODO this repeats almost everything in Editor_closePraatPicture
 			if (my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
@@ -1450,7 +1456,7 @@ void structFormantEditor :: v_createMenus () {
 
 	menu = Editor_addMenu (this, U"Interval", 0);
 	EditorMenu_addCommand (menu, U"Add interval on slave tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnSlaveTier);
-	EditorMenu_addCommand (menu, U"Clear text", 0, menu_cb_ClearText);
+	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
 
 	menu = Editor_addMenu (this, U"Boundary", 0);
 	
@@ -1940,19 +1946,48 @@ void structFormantEditor :: v_drawSelectionViewer () {
 		startTime = startSelection;
 		endTime = endSelection;
 	}
-	if (startSelection < endSelection && (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax))
-		our formantModelerList = FormantList_to_FormantModelerList (our formantList.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
-
+	if ((startSelection < endSelection) && (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax)) {
+		try {
+			our formantModelerList = FormantList_to_FormantModelerList (our formantList.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
+		} catch (MelderError) {
+			Melder_clearError ();
+			Graphics_setColour (our graphics.get(), Melder_WHITE);
+			Graphics_fillRectangle (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);			
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
+			Graphics_setFontSize (our graphics.get(), 10.0);
+			Graphics_text (our graphics.get(), 0.5 * (vp_left + vp_right), 0.5 * (vp_top + vp_bottom),
+				U"(Not enough formant points in selected interval)");
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
+			Graphics_setFontSize (our graphics.get(), 9.0);
+			return;
+		}
+	}
 	FormantModelerList fml = our formantModelerList.get();
 	FormantModelerList_setVarianceExponent (fml, our p_modeler_varianceExponent);
 	const double xCursor = ( startSelection == endSelection ? startSelection : fml -> xmin - 10.0 );
 	const double yCursor = ( our d_spectrogram_cursor > our p_spectrogram_viewFrom && our d_spectrogram_cursor < our p_spectrogram_viewTo ? our d_spectrogram_cursor : -1000.0 );
+	integer defaultModel = our formantList -> defaultFormantObject;
 	FormantModelerList_drawAsMatrix (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
 		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
 		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_errorBars,
 		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_xTrackShift_s,
-		our p_modeler_draw_estimatedTracks, true);
+		our p_modeler_draw_estimatedTracks, defaultModel, true);
+}
+
+void structFormantEditor :: v_draw_analysis_formants () {
+	Formant data = reinterpret_cast<Formant> (our data);
+	Formant defaultFormant = our formantList->formants.at [our formantList->defaultFormantObject];
+	if (our p_formant_show) {
+		Graphics_setColour (our graphics.get(), Melder_GREEN);
+		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
+		Formant_drawSpeckles_inside (defaultFormant, our graphics.get(), our startWindow, our endWindow,
+			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
+		Graphics_setColour (our graphics.get(), Melder_RED);
+		Formant_drawSpeckles_inside (data, our graphics.get(), our startWindow, our endWindow,
+			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
+	}
 }
 
 static void do_drawWhileDragging (FormantEditor me, double numberOfTiers, bool selectedTier [], double x, double soundY) {
@@ -2341,10 +2376,8 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 		integer formantIndex = abs (fml -> selected [index]);
 		for (integer id = 1; id <= fml -> selected.size; id ++)
 			fml -> selected [id] = ( index == id ? - abs (fml -> selected [id]) : abs (fml -> selected [id]) );
-		if (VowelEditor_setSlaveTierLabel (this)) {
-			Formant source = our formantList -> formants.at [formantIndex];
-			VowelEditor_modifySynthesisFrames (this, fml -> xmin, fml -> xmax, source);
-		}
+		if (VowelEditor_setSlaveTierLabel (this))
+			VowelEditor_modifySynthesisFormantFrames (this, fml -> xmin, fml -> xmax, formantIndex);
 	}
 }
 
@@ -2482,13 +2515,10 @@ void FormantEditor_init (FormantEditor me, conststring32 title, FormantList form
 	integer defaultFormantObject = formantList -> defaultFormantObject;
 	Melder_require (defaultFormantObject > 0 && defaultFormantObject <= formantList -> formants.size,
 		U"The FormantList has an invalid default formant index.");
-	autoFormant formant = Data_copy (formantList -> formants.at [defaultFormantObject]);
+	autoFormant formant = Data_copy (formantList -> formants.at [defaultFormantObject]); // our data
 	TimeSoundAnalysisEditor_init (me, title, formant. releaseToAmbiguousOwner (), sound, ownSound);
-	my synthesis = Data_copy (formantList -> formants.at [defaultFormantObject]);
-	// TODO once Formant_menu and Formant_analysis have been virtualized and overwritten, formant can be a link to
-	// the FormantList.
-	
-	Melder_require (sound -> xmin == my synthesis -> xmin && sound -> xmax ==  my synthesis -> xmax,
+	Formant mydata = reinterpret_cast<Formant> (my data);
+	Melder_require (sound -> xmin == mydata -> xmin && sound -> xmax ==  mydata -> xmax,
 		U"The time domain of the Sound and the Formants should be equal.");
 	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
 		Melder_warning (U"The time domain of the TextGrid (starting at ",

@@ -81,7 +81,6 @@ Thing_define (FormantModelerList, Function) {
 };
 
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
-	autoFormant synthesis; // extra for "optimum" formants
 	autoFormantList formantList;
 	autoFormantModelerList formantModelerList;
 	autoTextGrid slave;
@@ -121,6 +120,8 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	bool v_clickE (double xWC, double yWC)
 		override;
 	void v_clickSelectionViewer (double xWC, double yWC)
+		override;
+	void v_draw_analysis_formants ()
 		override;
 	void v_play (double tmin, double tmax)
 		override;
