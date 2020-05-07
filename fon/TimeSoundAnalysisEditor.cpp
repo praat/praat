@@ -1767,14 +1767,9 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setLineWidth (my graphics.get(), 1.0);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 	}
-	TimeSoundAnalysisEditor_computeFormants (me);
-	if (my p_formant_show && my d_formant) {
-		Graphics_setColour (my graphics.get(), Melder_RED);
-		Graphics_setSpeckleSize (my graphics.get(), my p_formant_dotSize);
-		Formant_drawSpeckles_inside (my d_formant.get(), my graphics.get(), my startWindow, my endWindow,
-			my p_spectrogram_viewFrom, my p_spectrogram_viewTo, my p_formant_dynamicRange);
-		Graphics_setColour (my graphics.get(), Melder_BLACK);
-	}
+	
+	my v_draw_analysis_formants ();
+	
 	/*
 	 * Draw vertical scales.
 	 */
@@ -1909,6 +1904,17 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 }
 void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 	TimeSoundAnalysisEditor_v_draw_analysis (this);
+}
+
+void structTimeSoundAnalysisEditor :: v_draw_analysis_formants () {
+	TimeSoundAnalysisEditor_computeFormants (this);
+	if (our p_formant_show && our d_formant) {
+		Graphics_setColour (our graphics.get(), Melder_RED);
+		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
+		Formant_drawSpeckles_inside (our d_formant.get(), our graphics.get(), our startWindow, our endWindow,
+			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
+	}
 }
 
 void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
