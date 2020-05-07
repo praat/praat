@@ -59,31 +59,55 @@ autoFormantList FormantList_create (double fromTime, double toTime, integer numb
 	return me;
 }
 
-autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double minimumCeiling, double maximumCeiling, double ceilingStep, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations) {
-	try {
-		const double nyquistFrequency = 0.5 / my dx;		
-		Melder_require (minimumCeiling < maximumCeiling,
-			U"The minimum ceiling must be smaller than the maximum ceiling.");
-		Melder_require (maximumCeiling <= nyquistFrequency,
-			U"The maximum ceiling should not be larger than ", nyquistFrequency, U" Hz.");		
-		autoVEC ceilings = newVECfrom_to_by (minimumCeiling, maximumCeiling, ceilingStep);
-		Melder_require (ceilings.size > 1,
-			U"There should be more than one ceiling.");
-		autoFormantList thee = FormantList_create (my xmin, my xmax, ceilings.size);
-		thy defaultFormantObject = 0;
+Formant FormantList_identifyFormantByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
+	for (integer istr = 1; istr <= my identifier.size; istr ++)
+		if (Melder_stringMatchesCriterion (my identifier [istr].get(), which, criterion, caseSensitive))
+			return my formants.at [istr];
+	return nullptr;
+}
 
-		for (integer ic = 1; ic <= ceilings.size; ic ++)
-			if (Melder_iround (ceilings [ic]) == Melder_iround (maximumFrequency)) {
-				thy defaultFormantObject = ic;
-				break;
-			}
-		Melder_require (thy defaultFormantObject > 0,
-			U"The 'Maximum formant' frequency (", maximumFrequency, U") should also occur as a in the list of frequencies between 'Minimum ceiling' and 'Maximum ceiling'.");
+static void Formant_replaceFrames (Formant target, Formant source, double fromTime, double toTime) {
+	integer ifmin, ifmax, ifmin2, ifmax2;
+	const integer numberOfFrames = Sampled_getWindowSamples (target, fromTime, toTime, & ifmin, & ifmax);
+	const integer numberOfFrames2 = Sampled_getWindowSamples (source, fromTime, toTime, & ifmin2, & ifmax2);
+	Melder_require (numberOfFrames == numberOfFrames2 && numberOfFrames > 0,
+		U"The number of frames for the selected intervals should be equal.");
+	for (integer iframe = ifmin ; iframe <= ifmax; iframe ++, ifmin2 ++) {
+		Formant_Frame targetFrame = & target -> frames [iframe];
+		Formant_Frame sourceFrame = & source -> frames [ifmin2];
+		targetFrame -> intensity = sourceFrame -> intensity;
+		targetFrame -> numberOfFormants = sourceFrame -> numberOfFormants;
+		targetFrame -> formant = newvectorcopy<structFormant_Formant> (sourceFrame -> formant.all());
+	}
+}
+
+void Formant_and_FormantList_replaceFrames (Formant target, FormantList sourceList, double fromTime, double toTime, integer sourceIndex) {
+	Melder_assert (sourceIndex > 0 && sourceIndex <= sourceList -> numberOfFormantObjects);
+	Formant source = sourceList -> formants.at [sourceIndex];	
+	Formant_replaceFrames (target, source, fromTime, toTime);
+}
+
+autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations) {
+	try {
+		
+		const double nyquistFrequency = 0.5 / my dx;
+		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
+		double minimumCeiling = maximumFrequency - numberOfStepsToACeiling * ceilingStep;
+		Melder_require (minimumCeiling > 0,
+			U"The minim ceiling should be positive. Decrease the 'ceiling step' or the 'number of steps' or both.");
+		double maximumCeiling = maximumFrequency + numberOfStepsToACeiling * ceilingStep;		
+		Melder_require (maximumCeiling <= nyquistFrequency,
+			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
+			"Decrease the 'ceiling step' or the 'number of steps' or both.");		
+		autoFormantList thee = FormantList_create (my xmin, my xmax, numberOfCeilings);
+		thy defaultFormantObject = numberOfStepsToACeiling + 1;
+
 		const double formantSafetyMargin = 50.0;
 		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
-		for (integer ic  = 1; ic <= ceilings.size; ic ++) {
-			autoSound resampled = Sound_resample (me, 2.0 * ceilings [ic], 50);
+		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
 			autoLPC lpc;
+			const double ceiling = minimumCeiling + (ic -1) * ceilingStep;
+			autoSound resampled = Sound_resample (me, 2.0 * ceiling, 50);
 			if (lpcType == kLPC_Analysis::BURG)
 				lpc = Sound_to_LPC_burg (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
 			else if (lpcType == kLPC_Analysis::AUTOCORRELATION)
@@ -97,7 +121,7 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			thy identifier [ic] =  Melder_dup (Melder_double (ceilings [ic]));
+			thy identifier [ic] =  Melder_dup (Melder_double (ceiling));
 			thy formants . addItem_move (formant.move());
 		}
 		Melder_assert (thy formants.size == thy numberOfFormantObjects); // maintain invariant
