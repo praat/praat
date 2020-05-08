@@ -37,9 +37,7 @@ Thing_implement (FormantModelerList, Function, 0);
 #include "FormantEditor_prefs.h"
 
 // forward definitions
-
-void do_insertIntervalOnSlaveTier (FormantEditor me, int tierNumber);
-
+static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, double t2, bool insertSecond);
 // end forward
 
 void structFormantEditor :: v_info () {
@@ -169,9 +167,7 @@ integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList
 	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
 	FormantModelerList_getDisplayLayout (me, & numberOfRows, & numberOfColums);
 	integer index = (irow - 1) * numberOfColums + icol;
-	if (index > numberOfVisible)
-		index = 0;
-	return ( index > 0 ? my selected [index] : 0 );
+	return ( index >= 1 && index <= numberOfVisible ? my selected [index] : 0 );
 }
 
 autoMelderString FormantModelerList_getSelectedModelParameterString (FormantModelerList me) {
@@ -190,7 +186,7 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 			DataModeler track = fm -> trackmodelers.at [itrack];
 			MelderString_append (& modelParameters, U" ", Melder_integer (track -> numberOfParameters));
 		}
-	} else 
+	} else
 		MelderString_append (& modelParameters, U"");
 	return modelParameters;
 }
@@ -338,6 +334,20 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 
 /********** UTILITIES **********/
 
+static void do_insertIntervalOnLogTier (FormantEditor me, int itier) {
+	try {
+		insertBoundaryOrPoint (me, itier,
+				my playingCursor || my playingSelection ? my playCursor : my startSelection,
+				my playingCursor || my playingSelection ? my playCursor : my endSelection,
+				true);
+		my selectedTier = itier;
+		FunctionEditor_marksChanged (me, true);
+		Editor_broadcastDataChanged (me);
+	} catch (MelderError) {
+		Melder_throw (U"Interval not inserted.");
+	}
+}
+
 bool VowelEditor_setLogTierLabel (FormantEditor me) {
 	FormantModelerList fml = my formantModelerList.get();
 	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml);
@@ -346,7 +356,7 @@ bool VowelEditor_setLogTierLabel (FormantEditor me) {
 		if (my startSelection == fml -> xmin && my endSelection == fml -> xmax) {
 			double time = 0.5 * (my startSelection + my endSelection);
 			if (my shiftKeyPressed) {
-				do_insertIntervalOnSlaveTier (me, my logTierNumber);
+				do_insertIntervalOnLogTier (me, my logTierNumber);
 				my startSelection = fml -> xmin;
 				my endSelection = fml -> xmax;
 			}
@@ -939,22 +949,8 @@ static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, d
 	my startSelection = my endSelection = t1;
 }
 
-void do_insertIntervalOnSlaveTier (FormantEditor me, int itier) {
-	try {
-		insertBoundaryOrPoint (me, itier,
-				my playingCursor || my playingSelection ? my playCursor : my startSelection,
-				my playingCursor || my playingSelection ? my playCursor : my endSelection,
-				true);
-		my selectedTier = itier;
-		FunctionEditor_marksChanged (me, true);
-		Editor_broadcastDataChanged (me);
-	} catch (MelderError) {
-		Melder_throw (U"Interval not inserted.");
-	}
-}
-
 static void menu_cb_InsertIntervalOnLogTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	do_insertIntervalOnSlaveTier (me, 1);
+	do_insertIntervalOnLogTier (me, 1);
 }
 
 static integer FormantEditor_identifyModelFromIntervalLabel (FormantEditor me, conststring32 label) {
