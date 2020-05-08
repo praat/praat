@@ -59,11 +59,16 @@ autoFormantList FormantList_create (double fromTime, double toTime, integer numb
 	return me;
 }
 
-Formant FormantList_identifyFormantByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
+integer FormantList_identifyFormantIndexByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
 	for (integer istr = 1; istr <= my identifier.size; istr ++)
 		if (Melder_stringMatchesCriterion (my identifier [istr].get(), which, criterion, caseSensitive))
-			return my formants.at [istr];
-	return nullptr;
+			return istr;
+	return 0;
+}
+
+Formant FormantList_identifyFormantByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
+	const integer index = FormantList_identifyFormantIndexByCriterion (me, which, criterion, caseSensitive);
+	return ( index > 0 ? my formants.at [index] : nullptr );
 }
 
 static void Formant_replaceFrames (Formant target, Formant source, double fromTime, double toTime) {

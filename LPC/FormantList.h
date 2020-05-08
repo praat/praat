@@ -32,6 +32,8 @@
 */
 autoFormantList FormantList_create (double fromTime, double toTime, integer numberOfFormantObjects);
 
+integer FormantList_identifyFormantIndexByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive);
+
 Formant FormantList_identifyFormantByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive);
 
 void Formant_and_FormantList_replaceFrames (Formant target, FormantList sourceList, double fromTime, double toTime, integer sourceIndex);
