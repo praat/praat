@@ -19,6 +19,7 @@
 #include "FormantEditor.h"
 #include "EditorM.h"
 #include "praat.h"
+#include "melder_kar.h"
 #include "SoundEditor.h"
 #include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrogram.h"
@@ -242,11 +243,9 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 		if (currentModel == defaultBox) {
 			/*
 				To mark the default analysis.
-				Red box with blue or black box "inside" works well for a
-				non colour blind person like me.
-				With a blue box we get some purple,
+				This is also the colour of the default formants in the spectrogram
 			*/
-			Graphics_setColour (g, Melder_RED);
+			Graphics_setColour (g, Melder_GREEN);
 			Graphics_setLineWidth (g, 4.0);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 			if (my selected [id] < 0) { // also selected
@@ -867,8 +866,8 @@ static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, d
 	if (iinterval == 0 || iinterval2 == 0)
 		Melder_throw (U"The selection is outside the time domain of the intervals.");
 	const integer correctedIinterval2 = ( t2IsABoundary && iinterval2 == intervalTier -> intervals.size ? iinterval2 + 1 : iinterval2 );
-	if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary))
-		Melder_throw (U"The selection straddles a boundary.");
+//	if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary))
+//		Melder_throw (U"The selection straddles a boundary.");
 	const TextInterval interval = intervalTier -> intervals.at [iinterval];
 
 	if (t1 == t2) {
@@ -954,11 +953,11 @@ void do_insertIntervalOnSlaveTier (FormantEditor me, int itier) {
 	}
 }
 
-static void menu_cb_InsertIntervalOnSlaveTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_InsertIntervalOnLogTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	do_insertIntervalOnSlaveTier (me, 1);
 }
 
-static Formant FormantEditor_identifyFromIntervalLabel (FormantEditor me, conststring32 label) {
+static integer FormantEditor_identifyModelFromIntervalLabel (FormantEditor me, conststring32 label) {
 	/*
 		Find part before ';'
 	*/
@@ -966,14 +965,17 @@ static Formant FormantEditor_identifyFromIntervalLabel (FormantEditor me, consts
 	MelderString_copy (& formantId, label);
 	char32 *found = str32chr (formantId.string, U';');
 	if (found) {
-		while (found >= & formantId.string [0] && (*found == U' ' || *found == U'\t'))
+		-- found;
+		while (Melder_isHorizontalOrVerticalSpace (*found) && found >= & formantId.string [0])
 			found --;
 		*(++ found) = U'\0';
 	}
-	return FormantList_identifyFormantByCriterion (my formantList.get(), kMelder_string::EQUAL_TO, label, true);
+	return FormantList_identifyFormantIndexByCriterion (my formantList.get(), kMelder_string::EQUAL_TO, formantId.string, true);
 }
 
 void VowelEditor_modifySynthesisFormantFrames (FormantEditor me, double fromTime, double toTime, integer formantIndex) {
+	if (fromTime >= toTime)
+		return;
 	Formant formant = reinterpret_cast<Formant> (my data);
 	Formant_and_FormantList_replaceFrames (formant, my formantList.get(), fromTime, toTime, formantIndex);
 }
@@ -990,43 +992,60 @@ static void menu_cb_ResetTextAndFormants (FormantEditor me, EDITOR_ARGS_DIRECT) 
 		*/
 		TextInterval textInterval = logTier -> intervals .at [intervalNumber];
 		TextInterval_removeText (textInterval);
-		FunctionEditor_redraw (me);
-		Editor_broadcastDataChanged (me);
-		
 		VowelEditor_modifySynthesisFormantFrames (me, my startSelection, my endSelection, my formantList -> defaultFormantObject);
+		Editor_broadcastDataChanged (me);
 	}
+}
+
+void menu_cb_RemoveInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	if (my startSelection == my endSelection || my selectedTier != my logTierNumber)
+		return;
+	/*
+		We only remove an interval if the text in the left and right intervals are equal.
+		The new interval will be longer than the selected one. 
+	*/
+	IntervalTier logTier =  reinterpret_cast<IntervalTier> (my logGrid -> tiers->at [my logTierNumber]);
+	if (logTier -> intervals.size == 1)
+		return;
+	integer iinterval = IntervalTier_timeToIndex (logTier, my startSelection);
+	TextInterval left  = logTier -> intervals.at [std::max (iinterval - 1, 1_integer)];
+	TextInterval middle = logTier -> intervals.at [iinterval];
+	TextInterval right = logTier -> intervals.at [std::min (iinterval + 1, logTier -> intervals.size)];
+	if (iinterval > 1 && iinterval < logTier -> intervals.size) {
+		Melder_require (Melder_equ (left -> text.get(), right -> text.get()),
+			U"We cannot remove this interval because the left and right interval texts are not equal.");		
+		TextInterval_removeText (middle);
+		IntervalTier_removeLeftBoundary (logTier, iinterval);
+	} else if (iinterval == 1) {
+		Melder_require (Melder_equ (right -> text.get(), middle -> text.get()) || str32len (right -> text.get()) == 0,
+			U"We cannot remove this interval because the right interval text is not empty or differs from the selected interval text.");
+		iinterval = 2;
+	} else if (iinterval == logTier -> intervals.size) {
+		Melder_require (Melder_equ (left -> text.get(), middle -> text.get()) || str32len (left -> text.get()) == 0,
+			U"We cannot remove this interval because the left interval text is not empty or differ from the selected interval text.");
+	}
+	// TextInterval_removeText (left);
+	middle = logTier -> intervals.at [iinterval];
+	TextInterval_removeText (middle);
+	IntervalTier_removeLeftBoundary (logTier, iinterval);
+	/*
+		The interval has been removed.
+		The new interval may be empty or not.
+		Empty implies default analysis.
+	*/
+	iinterval = IntervalTier_timeToIndex (logTier, my startSelection);
+	middle = logTier -> intervals.at [iinterval];
+	integer formantModel;
+	if (middle -> text && middle -> text [0])
+		formantModel = FormantEditor_identifyModelFromIntervalLabel (me, middle -> text.get());
+	if (formantModel == 0)
+		formantModel = my formantList -> defaultFormantObject;
+	VowelEditor_modifySynthesisFormantFrames (me, middle -> xmin, middle -> xmax, formantModel);
+	FunctionEditor_marksChanged (me, true);
+	Editor_broadcastDataChanged (me);
 }
 
 /***** BOUNDARY/POINT MENU *****/
-
-static void menu_cb_RemovePointOrBoundary (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my logGrid.get();
-	checkTierSelection (me, U"remove a point or boundary");
-	if (my selectedTier != my logTierNumber)
-		Melder_throw (U"You are only allowed to modify the log tier (", my logTierNumber, U").");
-	
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
-		const IntervalTier tier = (IntervalTier) anyTier;
-		const integer selectedLeftBoundary = getSelectedLeftBoundary (me);
-		if (selectedLeftBoundary == 0)
-			Melder_throw (U"To remove a boundary, first click on it.");
-
-		Editor_save (me, U"Remove boundary");
-		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary);
-	} else {
-		const TextTier tier = (TextTier) anyTier;
-		const integer selectedPoint = getSelectedPoint (me);
-		if (selectedPoint == 0)
-			Melder_throw (U"To remove a point, first click on it.");
-
-		Editor_save (me, U"Remove point");
-		tier -> points. removeItem (selectedPoint);
-	}
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
 
 static void do_movePointOrBoundary (FormantEditor me, int where) {
 	const TextGrid grid =  my logGrid.get();
@@ -1054,65 +1073,9 @@ static void do_movePointOrBoundary (FormantEditor me, int where) {
 		Editor_save (me, boundarySaveText [where]);
 
 		left -> xmax = right -> xmin = my startSelection = my endSelection = position;
-	} else {
-		TextTier tier = (TextTier) anyTier;
-		static const conststring32 pointSaveText [3] { U"Move point to zero crossing", U"Move point to B", U"Move point to E" };
-		const integer selectedPoint = getSelectedPoint (me);
-		if (selectedPoint == 0)
-			Melder_throw (U"To move a point, first click on it.");
-		const TextPoint point = tier -> points.at [selectedPoint];
-		const double position = ( where == 1 ? my startSelection : where == 2 ? my endSelection :
-				Sound_getNearestZeroCrossing (my d_sound.data, point -> number, 1) );   // STEREO BUG
-		if (isundef (position))
-			Melder_throw (U"There is no zero crossing to move to.");
-
-		Editor_save (me, pointSaveText [where]);
-
-		point -> number = my startSelection = my endSelection = position;
 	}
 	FunctionEditor_marksChanged (me, true);   // because cursor has moved
 	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_MoveToB (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	do_movePointOrBoundary (me, 1);
-}
-
-static void menu_cb_MoveToE (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	do_movePointOrBoundary (me, 2);
-}
-
-static void menu_cb_MoveToZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	do_movePointOrBoundary (me, 0);
-}
-
-static void do_insertOnTier (FormantEditor me, integer itier) {
-	try {
-		insertBoundaryOrPoint (me, itier,
-			my playingCursor || my playingSelection ? my playCursor : my startSelection,
-			my playingCursor || my playingSelection ? my playCursor : my endSelection,
-			false
-		);
-		my selectedTier = itier;
-		FunctionEditor_marksChanged (me, true);
-		Editor_broadcastDataChanged (me);
-	} catch (MelderError) {
-		Melder_throw (U"Boundary or point not inserted.");
-	}
-}
-
-static void menu_cb_InsertOnSelectedTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	do_insertOnTier (me, my selectedTier);
-}
-
-static void menu_cb_InsertOnTier1 (FormantEditor me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 1); }
-
-static void menu_cb_InsertOnAllTiers (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my logGrid.get();
-	const integer saveTier = my selectedTier;
-	for (integer itier = 1; itier <= grid -> tiers->size; itier ++)
-		do_insertOnTier (me, itier);
-	my selectedTier = saveTier;   // only if everything went right; otherwise, the tier where something went wrong will stand selected
 }
 
 /***** SEARCH MENU *****/
@@ -1455,23 +1418,9 @@ void structFormantEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
 	menu = Editor_addMenu (this, U"Interval", 0);
-	EditorMenu_addCommand (menu, U"Add interval on log tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnSlaveTier);
+	EditorMenu_addCommand (menu, U"Add interval on log tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnLogTier);
 	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
-
-	menu = Editor_addMenu (this, U"Boundary", 0);
-	
-	
-	/*EditorMenu_addCommand (menu, U"Move to B", 0, menu_cb_MoveToB);
-	EditorMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
-	if (our d_sound.data) {
-		EditorMenu_addCommand (menu, U"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
-		EditorMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr);
-	}
-	
-	EditorMenu_addCommand (menu, U"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
-	EditorMenu_addCommand (menu, U"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1, menu_cb_InsertOnTier1);
-	EditorMenu_addCommand (menu, U"-- remove mark --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE, menu_cb_RemovePointOrBoundary);
+	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
 	EditorMenu_addCommand (menu, U"Duplicate tier...", 0, menu_cb_DuplicateTier);

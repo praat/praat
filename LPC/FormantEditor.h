@@ -31,23 +31,12 @@
 
 #include "TextGridEditor_enums.h"
 /*
-	For each analysis we add two tiers. Both tiers have a common first part <name> that can be chosen by the user.
-	The tier names are <name>-master and <name>-slave.
+	We add one tier which ends with -log.
 	
-	1. The <name>-master tier has only one interval and contains the info which is fixed for the analysis that is
-	associated with <name>, i.e. it first lists all sorted ceiling frequencies, then it has a ';' separator and next the <lpc-method> with its parameters are listed (with an xxxx for the maximum formant frequency).
-	Its content could be, for example, '4000 4250 4500 4750 5000 5250 5500 5750 6000; burg 0.05 5.0 xxxx 0.025 50'.
-	This content shows that for the analyses 9 different ceilings were used, and for each of these ceilings
-	a Formant has been calculated with the Burg algorithm, with a 'Time step (s)' of 0.05, a 'Max. number of formants' of 5.0, a 'Maximum formant (Hz)' of x (where x is one of the nine ceilings), a 'Window length (s)' of 0.025, and a 'Pre-emphasis from (Hz)' of 40.0.
-	
-	Because the information is generic this tier can only have one interval.
-	This tier cannot be modified by the user directly because this would invalidate the <name>-slave tier.
-	
-	2. The <name>-slave tier can have multiple intervals. Each interval shows a particular analysi prefered by the user. It shows first the <ceiling> that was selected by the user, then a ';' separatior and finally the number of parameters per track of the formant modeler.
-	Its content could be, for example '5000; 3 3 2', which means that the analysis with a ceiling of 5000 Hz was chosen and the Formant modeler used F1, F2, and F3 in the modeling and reserved 3 coefficients to model F1, 3 coefficients to model F2 and 2 coefficients to model F3. The <ceiling> number must match one of the possible ceilings (rounded to integer Hz values)
-
-	We also store the downsampled Sounds because downsampling is still relatively slow. Once it becomes faster we could throw away the resampled sounds after use.
-	LPC's are not needed because they have to be recalculated for order/method changes and this is relatively fast
+	The explanation following is for analyses with different maximum formant frequencies (i.e. different ceilings).
+	The <name>-log tier can have multiple intervals. Each interval shows a particular analysis prefered by the user. It shows first the <ceiling> that was selected by the user, then a ';' separator and finally the number of parameters per track of the formant modeler. 
+	Its content could be, for example '5000; 5 5 5', which means that the analysis with a ceiling of 5000 Hz was chosen and the Formant modeler used F1, F2, and F3 in the modeling and reserved 5 coefficients to model F1, 5 coefficients to model F2 and 5 coefficients to model F3. The <ceiling> number must match one of the possible ceilings (rounded to integer Hz values)
+	An empty interval always implies the default analysis. Therefore only intervals where you want a non-default have to be specified.
 
 	There is no need to permanently store the FormantModelers because they can easily
 	be calculated whenever they are needed from the information in the tiers.
