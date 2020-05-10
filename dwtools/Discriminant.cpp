@@ -500,20 +500,17 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		/*
 			Scale the sscp to become a covariance matrix.
 		*/
-		
 		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - numberOfGroups);
 		
 		double lnd;
 		autoSSCPList agroups;
 		SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
 		if (poolCovarianceMatrices) {
-			
 			/*
 				Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 				L^-1 will be used later in the Mahalanobis distance calculation:
 				v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 			*/
-
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				ln_determinant [j] = lnd;
@@ -521,12 +518,10 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			}
 			groups = my groups.get();
 		} else {
-			
 			/*
 				Calculate the inverses of all group covariance matrices.
 				In case of a singular matrix, substitute inverse of pooled.
 			*/
-
 			agroups = Data_copy (my groups.get());
 			groups = agroups.get();
 			integer npool = 0;
@@ -539,12 +534,10 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
-					
 					/*
 						Clear the error.
 						Try the alternative: the pooled covariance matrix.
 					*/
-
 					Melder_clearError ();
 					if (npool == 0)
 						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
@@ -560,7 +553,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		/*
 			Labels for columns in ClassificationTable
 		*/
-
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			conststring32 name = Thing_getName (my groups->at [j]);
 			if (! name)
@@ -572,7 +564,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			Normalize the sum of the apriori probabilities to 1.
 			Next take ln (p) because otherwise probabilities might be too small to represent.
 		*/
-
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		const double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++)
@@ -582,7 +573,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			Generalized squared distance function:
 			D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
 		*/
-
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
@@ -595,7 +585,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			}
 			for (integer j = 1; j <= numberOfGroups; j ++)
 				norm += log_p [j] = exp (log_p [j] - pt_max);
-
 			for (integer j = 1; j <= numberOfGroups; j ++)
 				his data [i] [j] = log_p [j] / norm;
 		}
