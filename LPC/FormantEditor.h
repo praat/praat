@@ -138,13 +138,15 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createMenuItems_pitch_picture (EditorMenu menu)
 		override;
-
+	void v_createMenus_analysis_formant (EditorMenu menu)
+		override;
+		
 	#include "FormantEditor_prefs.h"
 };
 
-void FormantEditor_init (FormantEditor me, conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket);
+void FormantEditor_init (FormantEditor me, conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket);
 
-autoFormantEditor FormantEditor_create (conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid,
+autoFormantEditor FormantEditor_create (conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid,
 	conststring32 callbackSocket);
 
 /* End of file FormantEditor.h */

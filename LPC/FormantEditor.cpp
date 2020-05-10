@@ -1374,6 +1374,15 @@ static void menu_cb_DuplicateTier (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
+void structFormantEditor :: v_createMenus_analysis_formant (EditorMenu menu) {
+	EditorMenu_addCommand (menu, U"Model parameter settings...", 0, menu_cb_modeler_modelParameterSettings);
+	EditorMenu_addCommand (menu, U"Show best three models", 0, menu_cb_modeler_showBest3Models);
+	EditorMenu_addCommand (menu, U"Show all models", 0, menu_cb_modeler_showAllModels);
+	EditorMenu_addCommand (menu, U"Advanced modeler settings...", 0, menu_cb_modelerAdvancedSettings);
+	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
+	EditorMenu_addCommand (menu, U"Draw models...", 0, menu_cb_DrawModels);
+}
+
 /***** HELP MENU *****/
 
 static void menu_cb_FormantEditorHelp (FormantEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"FormantEditor"); }
@@ -1414,6 +1423,7 @@ void structFormantEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
 	menu = Editor_addMenu (this, U"Interval", 0);
+	EditorMenu_addCommand (menu, U"Boundaries to nearest zero crossings", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnLogTier);
 	EditorMenu_addCommand (menu, U"Add interval on log tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnLogTier);
 	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
@@ -1433,13 +1443,9 @@ void structFormantEditor :: v_createMenus () {
 		if (our v_hasAnalysis ())
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
-	menu = Editor_addMenu (this, U"Modeling", 0);
-	EditorMenu_addCommand (menu, U"Model parameter settings...", 0, menu_cb_modeler_modelParameterSettings);
-	EditorMenu_addCommand (menu, U"Show best three models", 0, menu_cb_modeler_showBest3Models);
-	EditorMenu_addCommand (menu, U"Show all models", 0, menu_cb_modeler_showAllModels);
-	EditorMenu_addCommand (menu, U"Advanced modeler settings...", 0, menu_cb_modelerAdvancedSettings);
-	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
-	EditorMenu_addCommand (menu, U"Draw models...", 0, menu_cb_DrawModels);
+	
+	our v_createMenus_analysis_formant (menu);
+
 
 }
 
@@ -2454,24 +2460,28 @@ void structFormantEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void FormantEditor_init (FormantEditor me, conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
+void FormantEditor_init (FormantEditor me, conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
 {
 	my callbackSocket = Melder_dup (callbackSocket);
 	integer defaultFormantObject = formantList -> defaultFormantObject;
 	Melder_require (defaultFormantObject > 0 && defaultFormantObject <= formantList -> formants.size,
 		U"The FormantList has an invalid default formant index.");
-	autoFormant formant = Data_copy (formantList -> formants.at [defaultFormantObject]); // our data
-	TimeSoundAnalysisEditor_init (me, title, formant. releaseToAmbiguousOwner (), sound, ownSound);
-	Formant mydata = reinterpret_cast<Formant> (my data);
-	Melder_require (sound -> xmin == mydata -> xmin && sound -> xmax ==  mydata -> xmax,
-		U"The time domain of the Sound and the Formants should be equal.");
-	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
-		Melder_warning (U"The time domain of the TextGrid (starting at ",
-			Melder_fixed (grid -> xmin, 6), U" seconds) does not overlap with that of the sound "
-			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
-			U"and choose “Shift times to...” from the Modify menu "
-			U"to shift the starting time of the TextGrid to zero.");
-	my logGrid = Data_copy (grid);
+	Melder_require (data -> xmin == formantList ->xmin && data -> xmax == formantList ->xmax,
+		U"The time domain of the Formant and the FormantList should be equal.");
+	Melder_require (sound -> xmin == data -> xmin && sound -> xmax ==  data -> xmax,
+		U"The time domain of the Sound and the Formant should be equal.");
+	TimeSoundAnalysisEditor_init (me, title, data, sound, ownSound);
+	if (! grid) {
+			my logGrid = TextGrid_create (data -> xmin, data -> xmax, U"formant-log", U"");
+	} else {
+		if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
+			Melder_warning (U"The time domain of the TextGrid (starting at ",
+				Melder_fixed (grid -> xmin, 6), U" seconds) does not overlap with that of the sound "
+				U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
+				U"and choose “Shift times to...” from the Modify menu "
+				U"to shift the starting time of the TextGrid to zero.");
+		my logGrid = Data_copy (grid);
+	}
 	my formantList = Data_copy (formantList);
 	my selectedTier = 1;
 	if (my endWindow - my startWindow > 5.0) {
@@ -2482,7 +2492,7 @@ void FormantEditor_init (FormantEditor me, conststring32 title, FormantList form
 	}
 }
 
-void FormantEditor_setSlaveTier (FormantEditor me) {
+void FormantEditor_setLogTier (FormantEditor me) {
 	/*
 		Set up the log.
 	*/
@@ -2518,11 +2528,11 @@ void FormantEditor_setSlaveTier (FormantEditor me) {
 	my logTierNumber = 1;
 }
 
-autoFormantEditor FormantEditor_create (conststring32 title, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
+autoFormantEditor FormantEditor_create (conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
 	try {
 		autoFormantEditor me = Thing_new (FormantEditor);
-		FormantEditor_init (me.get(), title, formantList, sound, ownSound, grid, callbackSocket);
-		FormantEditor_setSlaveTier (me.get());
+		FormantEditor_init (me.get(), title, data, formantList, sound, ownSound, grid, callbackSocket);
+		FormantEditor_setLogTier (me.get());
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		my formantModelerList = FormantList_to_FormantModelerList (my formantList.get(), my tmin, my tmax, my p_modeler_numberOfParametersPerTrack);
