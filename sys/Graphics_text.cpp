@@ -1412,11 +1412,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = nullptr;
 		out -> font.integer_ = my fontStyle == Graphics_CODE || wordCode || globalCode ||
-			kar == U'/' || kar == U'|' ? (int) kGraphics_font::COURIER : (int) my font;
+			(kar == U'/' || kar == U'|') && my font != kGraphics_font::PALATINO ? (int) kGraphics_font::COURIER : (int) my font;
 		out -> link = wordLink | globalLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
 		out -> size = globalSmall || out -> baseline != 0 ? 80 : 100;
-		if (kar == U'/') {
+		if (kar == U'/' && my font != kGraphics_font::PALATINO) {
 			out -> baseline -= out -> size / 12;
 			out -> size += out -> size / 10;
 			if (my screen) out -> font.integer_ = (int) kGraphics_font::PALATINO;
