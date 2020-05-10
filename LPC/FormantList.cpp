@@ -77,12 +77,10 @@ static void Formant_replaceFrames (Formant target, Formant source, double fromTi
 	const integer numberOfFrames2 = Sampled_getWindowSamples (source, fromTime, toTime, & ifmin2, & ifmax2);
 	Melder_require (numberOfFrames == numberOfFrames2 && numberOfFrames > 0,
 		U"The number of frames for the selected intervals should be equal.");
-	for (integer iframe = ifmin ; iframe <= ifmax; iframe ++, ifmin2 ++) {
+	for (integer iframe = ifmin ; iframe <= ifmax; iframe ++) {
 		Formant_Frame targetFrame = & target -> frames [iframe];
-		Formant_Frame sourceFrame = & source -> frames [ifmin2];
-		targetFrame -> intensity = sourceFrame -> intensity;
-		targetFrame -> numberOfFormants = sourceFrame -> numberOfFormants;
-		targetFrame -> formant = newvectorcopy<structFormant_Formant> (sourceFrame -> formant.all());
+		Formant_Frame sourceFrame = & source -> frames [iframe];
+		sourceFrame -> copy (targetFrame);
 	}
 }
 
@@ -92,7 +90,7 @@ void Formant_and_FormantList_replaceFrames (Formant target, FormantList sourceLi
 	Formant_replaceFrames (target, source, fromTime, toTime);
 }
 
-autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations) {
+autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
 	try {
 		
 		const double nyquistFrequency = 0.5 / my dx;
@@ -106,7 +104,7 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");		
 		autoFormantList thee = FormantList_create (my xmin, my xmax, numberOfCeilings);
 		thy defaultFormantObject = numberOfStepsToACeiling + 1;
-
+		autoSound sources [1 + numberOfCeilings];
 		const double formantSafetyMargin = 50.0;
 		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
 		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
@@ -128,8 +126,22 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			thy identifier [ic] =  Melder_dup (Melder_double (ceiling));
 			thy formants . addItem_move (formant.move());
+			if (sourcesMultiChannel) {
+				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
+				sources [ic] = Sound_resample (source.get(), 2.0 * maximumFrequency, 50).move();
+			}
 		}
 		Melder_assert (thy formants.size == thy numberOfFormantObjects); // maintain invariant
+		if (sourcesMultiChannel) {
+			Sound mid = sources [numberOfStepsToACeiling].get();
+			autoSound multiChannel = Sound_create (numberOfCeilings, mid -> xmin, mid -> xmax, mid -> nx, mid -> dx, mid -> x1);
+			for (integer ic = 1; ic <= numberOfCeilings; ic ++) {
+				Sound him = sources [ic] . get();
+				const integer numberOfSamples = std::min (mid -> nx, his nx);
+				multiChannel -> z.row (ic).part (1, numberOfSamples) <<= his z.row (1).part (1, numberOfSamples);
+			}
+			*sourcesMultiChannel = multiChannel.move();
+		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantList not created.");
