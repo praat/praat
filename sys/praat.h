@@ -622,6 +622,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
 	if (me && you && him && she) break; }
 
+#define FIND_FOUR_WITH_IOBJECT(klas1,klas2,klas3,klas4)  \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr;  int _klas1_position = 0; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
+	if (me && you && him && she) break; } \
+	IOBJECT = _klas1_position;
+
 #define FIND_LIST(klas)  \
 	OrderedOf<struct##klas> list; \
 	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
