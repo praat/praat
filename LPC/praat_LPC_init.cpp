@@ -855,14 +855,19 @@ FORM (NEW_Sound_to_FormantList, U"Sound: To FormantList", nullptr) {
 	POSITIVE (huber_numberOfStdDev, U"Number of std. dev.", U"1.5")
 	NATURAL (huber_maximumNumberOfIterations, U"Maximum number of iterations", U"5")
 	REAL (huber_tolerance, U"Tolerance", U"0.000001")
+	BOOLEAN (sourcesAsMultichannel, U"Get sources as multi channel sound", false)
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormantList result = Sound_to_FormantList_any (me, lpcModel, timeStep, maximumFormantFrequency,  maximumNumberOfFormants, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations);
+		autoSound multichannel;
+		autoFormantList result = Sound_to_FormantList_any (me, lpcModel, timeStep, maximumFormantFrequency,  maximumNumberOfFormants, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations, 
+			( sourcesAsMultichannel ? & multichannel : nullptr ));
+		if (sourcesAsMultichannel)
+			praat_new (multichannel.move(), my name.get(), U"_sources");
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (NEW_Sound_to_FormantList_burg, U"Sound: To FormantList (burg)", nullptr) {
+FORM (NEW_Sound_to_FormantAndFormantList_burg, U"Sound: To Formant and FormantList (burg)", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
 	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
@@ -876,10 +881,10 @@ FORM (NEW_Sound_to_FormantList_burg, U"Sound: To FormantList (burg)", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		double marple_tol1 = 1e-6, marple_tol2 = 1e-6, huber_numberOfStdDev = 1.5, huber_tolerance = 0.000001;
-		double minimumCeiling = maximumFormantFrequency - numberOfStepsToACeiling * ceilingStep;
-		double maximumCeiling = maximumFormantFrequency + numberOfStepsToACeiling * ceilingStep;
-		autoFormantList result = Sound_to_FormantList_any (me, kLPC_Analysis::BURG, timeStep, maximumFormantFrequency,  maximumNumberOfFormants, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, 5);
-	CONVERT_EACH_END (my name.get())
+		autoFormantList result = Sound_to_FormantList_any (me, kLPC_Analysis::BURG, timeStep, maximumFormantFrequency,  maximumNumberOfFormants, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, 5, nullptr);
+		autoFormant burg = Data_copy (result -> formants.at [result -> defaultFormantObject]);
+		praat_new (burg.move(), my name.get(), U"_burg");
+	CONVERT_EACH_END (my name.get(), U"_burg")
 }
 
 #define Sound_to_LPC_addWarning \
@@ -1221,19 +1226,17 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter with filter at time...", 0, 0, NEW1_LPC_Sound_filterWithFilterAtTime);
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse) with filter at time...", 0, 0, NEW1_LPC_Sound_filterInverseWithFilterAtTime);
 
-
+	praat_addAction1 (classSound, 0, U"To PowerCepstrogram...", U"To Harmonicity (gne)...", 1, NEW_Sound_to_PowerCepstrogram);
+	praat_addAction1 (classSound, 0, U"To PowerCepstrogram (hillenbrand)...", U"To Harmonicity (gne)...", praat_HIDDEN + praat_DEPTH_1, NEW_Sound_to_PowerCepstrogram_hillenbrand);
 	praat_addAction1 (classSound, 0, U"To Formant (robust)...", U"To Formant (sl)...", 2, NEW_Sound_to_Formant_robust);
 	praat_addAction1 (classSound, 0, U"To FormantList...", U"To Formant (robust)...", 2, NEW_Sound_to_FormantList);
-	praat_addAction1 (classSound, 0, U"To FormantList (burg)...", U"To FormantList...", 1, NEW_Sound_to_FormantList_burg);
-	praat_addAction1 (classSound, 0, U"To LPC", U"To FormantList (burg)...", 1, nullptr);
+	praat_addAction1 (classSound, 0, U"To Formant and FormantList (burg)...", U"To FormantList...", 1, NEW_Sound_to_FormantAndFormantList_burg);
+	praat_addAction1 (classSound, 0, U"To LPC", U"To Formant and FormantList (burg)...", 1, nullptr);
 	praat_addAction1 (classSound, 0, U"To LPC (autocorrelation)...", U"To LPC", 2, NEW_Sound_to_LPC_autocorrelation);
 	praat_addAction1 (classSound, 0, U"To LPC (covariance)...", U"To LPC (autocorrelation)...", 2, NEW_Sound_to_LPC_covariance);
 	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 2, NEW_Sound_to_LPC_burg);
 	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 2, NEW_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
-	
-	
-	praat_addAction1 (classSound, 0, U"To PowerCepstrogram (hillenbrand)...", U"To Harmonicity (gne)...", praat_HIDDEN + praat_DEPTH_1, NEW_Sound_to_PowerCepstrogram_hillenbrand);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, GRAPHICS_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0, REAL_VocalTract_getLength);
