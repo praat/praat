@@ -1420,30 +1420,27 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu me
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis_formant (EditorMenu menu) {
-	if (v_hasFormants ()) {
-		menu = Editor_addMenu (this, U"Formant", 0);
-		formantToggle = EditorMenu_addCommand (menu, U"Show formants",
-			GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
-		EditorMenu_addCommand (menu, U"Formant settings...", 0, menu_cb_formantSettings);
-		EditorMenu_addCommand (menu, U"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
-		EditorMenu_addCommand (menu, U"-- formant query --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-		EditorMenu_addCommand (menu, U"Formant listing", 0, menu_cb_formantListing);
-		EditorMenu_addCommand (menu, U"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
-		EditorMenu_addCommand (menu, U"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
-		EditorMenu_addCommand (menu, U"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
-		EditorMenu_addCommand (menu, U"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
-		EditorMenu_addCommand (menu, U"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
-		EditorMenu_addCommand (menu, U"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
-		EditorMenu_addCommand (menu, U"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
-		EditorMenu_addCommand (menu, U"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
-		EditorMenu_addCommand (menu, U"Get formant...", 0, menu_cb_getFormant);
-		EditorMenu_addCommand (menu, U"Get bandwidth...", 0, menu_cb_getBandwidth);
-		v_createMenuItems_formant_picture (menu);
-		EditorMenu_addCommand (menu, U"-- formant extract --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
-		EditorMenu_addCommand (menu, U"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
-	}	
+	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
+		GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
+	EditorMenu_addCommand (menu, U"Formant settings...", 0, menu_cb_formantSettings);
+	EditorMenu_addCommand (menu, U"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
+	EditorMenu_addCommand (menu, U"-- formant query --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, U"Formant listing", 0, menu_cb_formantListing);
+	EditorMenu_addCommand (menu, U"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
+	EditorMenu_addCommand (menu, U"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
+	EditorMenu_addCommand (menu, U"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
+	EditorMenu_addCommand (menu, U"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
+	EditorMenu_addCommand (menu, U"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
+	EditorMenu_addCommand (menu, U"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
+	EditorMenu_addCommand (menu, U"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
+	EditorMenu_addCommand (menu, U"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
+	EditorMenu_addCommand (menu, U"Get formant...", 0, menu_cb_getFormant);
+	EditorMenu_addCommand (menu, U"Get bandwidth...", 0, menu_cb_getBandwidth);
+	v_createMenuItems_formant_picture (menu);
+	EditorMenu_addCommand (menu, U"-- formant extract --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, U"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);	
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
@@ -1507,8 +1504,10 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
 	}
-
-	v_createMenus_analysis_formant (menu);
+	if (v_hasFormants ()) {
+		menu = Editor_addMenu (this, U"Formant", 0);
+		v_createMenus_analysis_formant (menu);
+	}
 	
 	if (v_hasPulses ()) {
 		menu = Editor_addMenu (this, U"Pulses", 0);
