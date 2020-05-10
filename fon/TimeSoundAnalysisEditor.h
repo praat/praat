@@ -69,6 +69,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	virtual void v_draw_analysis_formants ();
 	virtual void v_createMenuItems_query_log (EditorMenu menu);
 	virtual void v_createMenus_analysis ();
+	virtual void v_createMenus_analysis_formant (EditorMenu menu);
 	virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 
 	#include "TimeSoundAnalysisEditor_prefs.h"
