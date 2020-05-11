@@ -1419,7 +1419,7 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu me
 	EditorMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4);
 }
 
-void structTimeSoundAnalysisEditor :: v_createMenus_analysis_formant (EditorMenu menu) {
+void structTimeSoundAnalysisEditor :: v_createMenuItems_formant (EditorMenu menu) {
 	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
 		GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
 	EditorMenu_addCommand (menu, U"Formant settings...", 0, menu_cb_formantSettings);
@@ -1506,7 +1506,7 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 	}
 	if (v_hasFormants ()) {
 		menu = Editor_addMenu (this, U"Formant", 0);
-		v_createMenus_analysis_formant (menu);
+		v_createMenuItems_formant (menu);
 	}
 	
 	if (v_hasPulses ()) {
