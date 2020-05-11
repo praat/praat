@@ -8,7 +8,7 @@ CPPFLAGS = -I ../kar -I ../melder -I ../dwtools -I ../fon -I ../sys -I ../dwsys 
 
 OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	Cepstrogram.o \
-	Formant_extensions.o FormantEditor.o FormantList.o \
+	Formant_extensions.o FormantEditor.o FormantList.o FormantList_and_TextGrid.o \
 	LineSpectralFrequencies.o \
 	LPC.o LPC_and_Cepstrumc.o LPC_and_Formant.o LPC_and_LFCC.o \
 	LPC_and_LineSpectralFrequencies.o LPC_and_Polynomial.o \
