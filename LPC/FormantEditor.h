@@ -72,7 +72,7 @@ Thing_define (FormantModelerList, Function) {
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormantList formantList;
 	autoFormantModelerList formantModelerList;
-	autoTextGrid logGrid;
+	TextGrid logGrid; // changed by the editor
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier, logTierNumber;
 	bool suppressRedraw;
@@ -138,7 +138,7 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createMenuItems_pitch_picture (EditorMenu menu)
 		override;
-	void v_createMenus_analysis_formant (EditorMenu menu)
+	void v_createMenuItems_formant (EditorMenu menu)
 		override;
 		
 	#include "FormantEditor_prefs.h"
