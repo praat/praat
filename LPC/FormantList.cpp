@@ -44,9 +44,11 @@
 
 void structFormantList :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Formants:");
-	MelderInfo_writeLine (U"   Number of Formants: ", formants . size);
-
+	MelderInfo_writeLine (U"Number of Formant objects: ", formants . size);
+	MelderInfo_writeLine (U"  Identifiers:");
+	for (integer iformant = 1; iformant <= formants . size; iformant ++)
+		MelderInfo_writeLine (U"  ", iformant, U": ", identifier [iformant].get(),
+			( iformant == defaultFormantObject ? U" (default)" : U"" ));
 }
 
 Thing_implement (FormantList, Function, 0);
