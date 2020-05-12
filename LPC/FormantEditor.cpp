@@ -28,6 +28,7 @@
 
 Thing_implement (FormantEditor, TimeSoundAnalysisEditor, 0);
 Thing_implement (FormantModelerList, Function, 0);
+Thing_implement (FormantEditorData, Function, 0);
 
 #include "prefs_define.h"
 #include "FormantEditor_prefs.h"
@@ -39,6 +40,30 @@ Thing_implement (FormantModelerList, Function, 0);
 // forward definitions
 static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, double t2, bool insertSecond);
 // end forward
+
+void structFormantEditor :: v_restoreData () {
+	if (our data && our previousData) {
+		FormantEditorData current = static_cast<FormantEditorData> (our data);
+		FormantEditorData previous = static_cast<FormantEditorData> (our previousData.get());
+		Thing_swap (current -> logTier, previous -> logTier);
+		Thing_swap (current -> formant, previous -> formant);
+	}
+}
+
+void structFormantEditorData :: v_copy (Daata data_to) {
+	FormantEditorData thee = static_cast<FormantEditorData> (data_to);
+	structFunction :: v_copy (thee);
+	autoIntervalTier tier = Data_copy (logTier);
+	thy logTier = tier.releaseToAmbiguousOwner ();
+	autoFormant fcopy = Data_copy (formant);
+	thy formant = fcopy.releaseToAmbiguousOwner ();
+}
+
+bool structFormantEditorData :: v_equal (Daata otherData) {
+	FormantEditorData thee = static_cast<FormantEditorData> (otherData);
+	return this->formant->structFormant::v_equal (thy formant) &&
+		this->logTier->structIntervalTier::v_equal (logTier);
+}
 
 void structFormantEditor :: v_info () {
 	FormantEditor_Parent :: v_info ();
@@ -241,7 +266,7 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 				To mark the default analysis.
 				This is also the colour of the default formants in the spectrogram
 			*/
-			Graphics_setColour (g, Melder_GREEN);
+			Graphics_setColour (g, Melder_BLUE);
 			Graphics_setLineWidth (g, 4.0);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 			if (my selected [id] < 0) { // also selected
@@ -943,7 +968,7 @@ static integer FormantEditor_identifyModelFromIntervalLabel (FormantEditor me, c
 void VowelEditor_modifySynthesisFormantFrames (FormantEditor me, double fromTime, double toTime, integer formantIndex) {
 	if (fromTime >= toTime)
 		return;
-	Formant formant = reinterpret_cast<Formant> (my data);
+	Formant formant = reinterpret_cast<FormantEditorData> (my data) -> formant;
 	Formant_and_FormantList_replaceFrames (formant, my formantList.get(), fromTime, toTime, formantIndex);
 }
 
@@ -1878,10 +1903,10 @@ void structFormantEditor :: v_drawSelectionViewer () {
 }
 
 void structFormantEditor :: v_draw_analysis_formants () {
-	Formant formant = reinterpret_cast<Formant> (our data);
+	Formant formant = reinterpret_cast<FormantEditorData> (our data)->formant;
 	Formant defaultFormant = our formantList->formants.at [our formantList->defaultFormantObject];
 	if (our p_formant_show) {
-		Graphics_setColour (our graphics.get(), Melder_GREEN);
+		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
 		Formant_drawSpeckles_inside (defaultFormant, our graphics.get(), our startWindow, our endWindow,
 			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
@@ -2409,38 +2434,7 @@ void structFormantEditor :: v_updateMenuItems_file () {
 	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
-/********** EXPORTED **********/
-
-void FormantEditor_init (FormantEditor me, conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
-{
-	my callbackSocket = Melder_dup (callbackSocket);
-	integer defaultFormantObject = formantList -> defaultFormantObject;
-	Melder_require (defaultFormantObject > 0 && defaultFormantObject <= formantList -> formants.size,
-		U"The FormantList has an invalid default formant index.");
-	Melder_require (data -> xmin == formantList ->xmin && data -> xmax == formantList ->xmax,
-		U"The time domain of the Formant and the FormantList should be equal.");
-	Melder_require (sound -> xmin == data -> xmin && sound -> xmax ==  data -> xmax,
-		U"The time domain of the Sound and the Formant should be equal.");
-	TimeSoundAnalysisEditor_init (me, title, data, sound, ownSound);
-
-	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
-		Melder_warning (U"The time domain of the TextGrid (starting at ",
-			Melder_fixed (grid -> xmin, 6), U" seconds) does not overlap with that of the sound "
-			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
-			U"and choose “Shift times to...” from the Modify menu "
-			U"to shift the starting time of the TextGrid to zero.");
-	my logGrid = grid; // In list of objects, also data
-	my formantList = Data_copy (formantList);
-	my selectedTier = 1;
-	if (my endWindow - my startWindow > 5.0) {
-		my endWindow = my startWindow + 5.0;
-		if (my startWindow == my tmin)
-			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-		FunctionEditor_marksChanged (me, false);
-	}
-}
-
-void FormantEditor_setLogTier (FormantEditor me) {
+static void FormantEditor_setLogTier (FormantEditor me) {
 	/*
 		Does the textgid have a log tier ?
 	*/
@@ -2459,8 +2453,8 @@ void FormantEditor_setLogTier (FormantEditor me) {
 		return;
 	}
 	/*
-		We didn't find a -log pair.
-		Add them on top.
+		We didn't find a -log tier.
+		Add it on top.
 	*/
 	autoIntervalTier logTier = IntervalTier_create (my logGrid -> xmin, my logGrid -> xmax);
 	my logGrid -> tiers -> addItemAtPosition_move (logTier.move(), 1);
@@ -2468,15 +2462,50 @@ void FormantEditor_setLogTier (FormantEditor me) {
 	my logTierNumber = 1;
 }
 
-autoFormantEditor FormantEditor_create (conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
+/********** EXPORTED **********/
+
+void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket)
+{
+	my callbackSocket = Melder_dup (callbackSocket);
+	integer defaultFormantObject = formantList -> defaultFormantObject;
+	Melder_require (defaultFormantObject > 0 && defaultFormantObject <= formantList -> formants.size,
+		U"The FormantList has an invalid default formant index.");
+	Melder_require (formant -> xmin == formantList -> xmin && formant -> xmax == formantList -> xmax,
+		U"The time domain of the Formant and the FormantList should be equal.");
+	Melder_require (sound -> xmin == formant -> xmin && sound -> xmax == formant -> xmax,
+		U"The time domain of the Sound and the Formant should be equal.");
+
+	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
+		Melder_warning (U"The time domain of the TextGrid (starting at ",
+			Melder_fixed (grid -> xmin, 6), U" seconds) does not overlap with that of the sound "
+			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
+			U"and choose “Shift times to...” from the Modify menu "
+			U"to shift the starting time of the TextGrid to zero.");
+	my logGrid = grid;
+	my formantList = Data_copy (formantList);
+	FormantEditor_setLogTier (me);
+	autoFormantEditorData myData = Thing_new (FormantEditorData);
+	myData -> xmin = formant -> xmin;
+	myData -> xmax = formant -> xmax;
+	myData -> formant = formant;
+	myData -> logTier = reinterpret_cast<IntervalTier> (my logGrid -> tiers->at [my logTierNumber]);
+	TimeSoundAnalysisEditor_init (me, title, myData.releaseToAmbiguousOwner(), sound, ownSound);
+}
+
+autoFormantEditor FormantEditor_create (conststring32 title, Formant formant, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket) {
 	try {
 		autoFormantEditor me = Thing_new (FormantEditor);
-		FormantEditor_init (me.get(), title, data, formantList, sound, ownSound, grid, callbackSocket);
-		FormantEditor_setLogTier (me.get());
+		FormantEditor_init (me.get(), title, formant, formantList, sound, ownSound, grid, callbackSocket);
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
-		my formantModelerList = FormantList_to_FormantModelerList (my formantList.get(), my tmin, my tmax, my p_modeler_numberOfParametersPerTrack);
-		
+		my formantModelerList = FormantList_to_FormantModelerList (my formantList.get(), my startWindow, my endWindow, my p_modeler_numberOfParametersPerTrack);
+		my selectedTier = my logTierNumber;
+		if (my endWindow - my startWindow > 5.0) {
+			my endWindow = my startWindow + 5.0;
+			if (my startWindow == my tmin)
+				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+			FunctionEditor_marksChanged (me.get(), false);
+		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantEditor window not created.");

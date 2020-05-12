@@ -69,6 +69,15 @@ Thing_define (FormantModelerList, Function) {
 	autoINTVEC selected; // models are displayed in this order
 };
 
+Thing_define (FormantEditorData, Function) {
+	IntervalTier logTier;
+	Formant formant;
+	void v_copy (Daata data_to)
+		override;
+	bool v_equal (Daata otherData)
+		override;
+};
+
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormantList formantList;
 	autoFormantModelerList formantModelerList;
@@ -140,7 +149,8 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createMenuItems_formant (EditorMenu menu)
 		override;
-		
+	void v_restoreData ()
+		override;
 	#include "FormantEditor_prefs.h"
 };
 
