@@ -52,4 +52,51 @@ autoFormant FormantList_and_TextGrid_to_Formant (FormantList me, TextGrid thee, 
 	}
 }
 
+/*
+	A log tier starts with '<id>;'
+*/
+integer TextGrid_and_FormantList_findLogTier (TextGrid me, FormantList thee) {
+	STRVEC validLabels = thy formantIdentifier.get();
+	autoINTVEC minimumValidLabelLengths = newINTVECraw (validLabels.size);
+	for (integer ilabel = 1; ilabel <= validLabels.size; ilabel ++)
+		minimumValidLabelLengths [ilabel] = str32len (validLabels [ilabel]) + 1; // +1 for the ';'
+	const integer minimumLabelLength = NUMmin (minimumValidLabelLengths.get());
+	
+	for (integer itier = 1; itier <= my tiers->size; itier ++) {
+		const Function tier = my tiers->at [itier];
+		if (tier -> classInfo != classIntervalTier)
+			continue;
+		bool tierIsLogTier = true;
+		const IntervalTier intervalTier = reinterpret_cast<IntervalTier> (tier);
+		for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
+			const TextInterval textInterval = intervalTier -> intervals.at [interval];
+			conststring32 label = textInterval -> text.get();
+			bool labelMatches = true; // empty interval is ok.
+			if (label && label [0]) {
+				integer validIndex = 0;
+				const integer labelLength = str32len (label);
+				if (labelLength >= minimumLabelLength) {
+					for (integer index = 1; index <= validLabels.size; index ++) {
+						const integer validLabelLength = minimumValidLabelLengths [index];
+						if (labelLength >= validLabelLength && Melder_stringMatchesCriterion
+							(label, kMelder_string::STARTS_WITH, validLabels [index], false) &&
+							label [validLabelLength - 1] == U';') {
+							validIndex = index;
+							break;
+						}
+					}
+				}
+				labelMatches = validIndex != 0;
+			}
+			if (! labelMatches) {
+				tierIsLogTier = false;
+				break;
+			}
+		}
+		if (tierIsLogTier)
+				return itier;
+	}
+	return 0;
+}
+
 /* End of file FormantList_and_TextGrid.cpp */

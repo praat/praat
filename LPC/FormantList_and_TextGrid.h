@@ -22,6 +22,8 @@
 #include "FormantList.h"
 #include "TextGrid.h"
 
+integer TextGrid_and_FormantList_findLogTier (TextGrid me, FormantList thee);
+
 autoFormant FormantList_and_TextGrid_to_Formant (FormantList me, TextGrid thee, integer logTierNumber);
 
 #endif /* _FormantList_and_TextGrid_h_ */
