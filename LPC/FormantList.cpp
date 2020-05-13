@@ -47,7 +47,7 @@ void structFormantList :: v_info () {
 	MelderInfo_writeLine (U"Number of Formant objects: ", formants . size);
 	MelderInfo_writeLine (U"  Identifiers:");
 	for (integer iformant = 1; iformant <= formants . size; iformant ++)
-		MelderInfo_writeLine (U"  ", iformant, U": ", identifier [iformant].get(),
+		MelderInfo_writeLine (U"  ", iformant, U": ", formantIdentifier [iformant].get(),
 			( iformant == defaultFormantObject ? U" (default)" : U"" ));
 }
 
@@ -56,14 +56,14 @@ Thing_implement (FormantList, Function, 0);
 autoFormantList FormantList_create (double fromTime, double toTime, integer numberOfFormantObjects) {
 	autoFormantList me = Thing_new (FormantList);
 	Function_init (me.get(), fromTime, toTime);
-	my identifier = autoSTRVEC (numberOfFormantObjects);
+	my formantIdentifier = autoSTRVEC (numberOfFormantObjects);
 	my numberOfFormantObjects = numberOfFormantObjects;
 	return me;
 }
 
 integer FormantList_identifyFormantIndexByCriterion (FormantList me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
-	for (integer istr = 1; istr <= my identifier.size; istr ++)
-		if (Melder_stringMatchesCriterion (my identifier [istr].get(), which, criterion, caseSensitive))
+	for (integer istr = 1; istr <= my formantIdentifier.size; istr ++)
+		if (Melder_stringMatchesCriterion (my formantIdentifier [istr].get(), which, criterion, caseSensitive))
 			return istr;
 	return 0;
 }
@@ -126,7 +126,7 @@ autoFormantList Sound_to_FormantList_any (Sound me, kLPC_Analysis lpcType, doubl
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			thy identifier [ic] =  Melder_dup (Melder_double (ceiling));
+			thy formantIdentifier [ic] =  Melder_dup (Melder_double (ceiling));
 			thy formants . addItem_move (formant.move());
 			if (sourcesMultiChannel) {
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
