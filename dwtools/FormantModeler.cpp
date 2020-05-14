@@ -667,7 +667,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		const integer maximumNumberOfParameters = NUMmax (numberOfParametersPerTrack);
 		Melder_require (numberOfDataPoints >= maximumNumberOfParameters,
-			U"There are not enough data points, please extend the selection.");
+			U"There are not enough data points, please reduce the number of parameters or extend the selection.");
 		
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfDataPoints, numberOfParametersPerTrack);
 		Thing_setName (thee.get(), my name.get());
