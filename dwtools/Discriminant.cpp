@@ -28,7 +28,7 @@
  djmw 20050405 Modified column label: eigenvector->Eigenvector
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
  djmw 20100107 +Discriminant_TableOfReal_mahalanobis
@@ -511,7 +511,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				L^-1 will be used later in the Mahalanobis distance calculation:
 				v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 			*/
+			if (Melder_debug == 52)
+				Melder_casual (U"***** before lower Cholesky inverse: \n", pool -> data.all());
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
+			if (Melder_debug == 52)
+				Melder_casual (U"***** after lower Cholesky inverse: \n", pool -> data.all());
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -564,7 +568,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			Normalize the sum of the apriori probabilities to 1.
 			Next take ln (p) because otherwise probabilities might be too small to represent.
 		*/
+		if (Melder_debug == 52)
+			Melder_casual (U"***** before normalizing priors: \n", my aprioriProbabilities.all());
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
+		if (Melder_debug == 52)
+			Melder_casual (U"***** after normalizing priors: \n", my aprioriProbabilities.all());
 		const double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++)
 			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
@@ -578,6 +586,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				const SSCP t = groups->at [j];
 				const double md = NUMmahalanobisDistanceSquared (sscpvec [j] -> data.get(), thy data.row (i), t -> centroid.get());
+				if (Melder_debug == 52)
+					Melder_casual (U"***** Mahalanobis distance (squared): ", i, U" ", j, U" ", md);
 				const double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max)
 					pt_max = pt;
