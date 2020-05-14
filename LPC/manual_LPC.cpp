@@ -65,8 +65,39 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
+MAN_BEGIN (U"FormantList", U"djmw", 20200514)
+INTRO (U"A FormantList is a collection of @@Formant@s that all have the same domain.")
+MAN_END
+
+MAN_BEGIN (U"FormantEditor", U"djmw", 20200514)
+INTRO (U"One of the @@Editors@ in Praat, for editing a @@Formant@ object.")
+NORMAL (U"To create a ##FormantEditor# you first need to select a @@Formant@, a @@FormantList@, a @@Sound@ and a @@TextGrid@ together. Then you choose ##View & Edit# and the editor will appear.")
+NORMAL (U"%%With the FormantEditor you can, for each interval that you select, replace its formant frequencies and bandwidths by the corresponding data from one of the alternative Formant objects in the FormantList.")
+TAG (U"The ##Formant#")
+DEFINITION (U"defines the object that is to be edited / changed. It might be the result of a standard  @@Sound: To Formant (burg)...@ analysis with a 5500 Hz value for the \"Maximum formant (Hz)\" parameter (the default frequency to use for a female voice).")
+TAG (U"The ##FormantList#")
+DEFINITION (U"is a collection of Formant objects. Each of these Formant objects is the result of a formant analysis with a different parameter setting. For example, consider a FormantList object with nine Formant objects. The formant object were the result of @@Sound: To Formant (burg)...@ analyses on the same sound. The only difference in  each analyses was the \"Maximum formant (Hz)\" parameter setting. It was chosen as 4500, 4750, 5000, 5250, 5500, 6750, 6000, 6250 and 6500 Hz, respectively. Therefore, the FormantList functions as a collection of alternative analyses. One of the Formants in this list is also equal to the \"standard\" analysis. To facilitate this you should use the command @@Sound: To Formant and FormantList (burg)...@ that creates the Formant and a FormantList with an optional number of Formant objects.")
+TAG (U"The ##Sound#,")
+DEFINITION (U"of course, is the reference.")
+TAG (U"The #TextGrid#")
+DEFINITION (U"is used for bookkeeping. On a special tier, the %%log tier%, all the intervals where you have chosen an alternative analysis to apply are marked with special text that identifies the alternative. This bookkeeping information can only be modified by the editor itself. The other tier, if they are present, will never be modified.  Basically this means that, with exception of the %%log tier%, the TextGrid is read-only.")
+
+ENTRY (U"Editor layout")
+NORMAL (U"The left part of the editor is familiar from other editors in Praat that also show a Sound. The right part is the special part in the FormantEditor. In this part, the %%selection viewer%, you see a matrix of alternative formant analysis intervals. What you see here depends on the context. If you have a selection in the sound part, the selectionViewer shows the formant tracks of the alternative analyses on the same domain. If you don't have a selection in the sound part, the alternatives' domains are equal to the domain of interval in the %%log tier% where your cursor happens to be. In the selection viewer, the alternative within the blue rectangle corresponds to the %%default% analysis, i.e. in the example given above, the one with a \"Maximum frequency (Hz)\" of 5500 Hz. A big difference between the representation of the formants in the left and right part of the editor is that in the right part the bandwidths of the formants are shown as vertical lines. Well defined formants have small bandwidths and therefore show very short lines. In the left part only the formant frequencies are shown and therefore no indication of the formant's \"presence\" can be made.")
+NORMAL (U"In the left part of the editor the %%default% formant's points will also be marked with a blue dot. The formant points of the edited formant are drawn with a red colour. You will only see the blue points if the formant frequencies of the two are different.")
+
+ENTRY (U"How to operate")
+NORMAL (U"Select an interval in the sound. This can be done either by dragging the cursor in the sound part or by clicking any interval in the text grid. In the selectionViewer on the right you see the alternative formant analysis results. If you SHIFT-click in one of the alternatives' rectangles, you will notice several changes. 1. The rectangle turned to a red colour. 2. A new interval with some text appeared on the %%log tier%. 3. Possibly some blue formant dots appeared in the formant display part in the left part of the editor window (of course, only if the alternative's formant frequencies differ enough from the \"default\").")
+
+ENTRY (U"Do not forget...")
+NORMAL (U"##...to save the TextGrid as well as Formant# because both have been changed by the editor. However, you will be able to recover the Formant by selecting the TextGrid and the FormantList together and choose ##To Formant#")
+
+ENTRY (U"Details")
+NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selectionViewer are explained in my paper @@Weenink (2015)@. Basically this number is a combine roughness score of the individual formant track within this rectangle. Each track's roughness score quantifies how bad a track can be modeled with a smooth curve. The lower this number the better the track is modeled by this smooth curve. Each track is modeled by a polynomial of a certain order. The higher the order the more flexible the curve is and the better it can adapt to the data. The higher the order of the polynomial, the more parameters are needed in the model. Of course, you can change the number of paramaters to model the tracks. You might notice that the rectangles change if the current parameter settings do not correspond to the parameter settings of the current interval on the log tier. ")
+MAN_END
+
 MAN_BEGIN (U"Formants: Extract smoothest part...", U"djmw", 20140313)
-INTRO (U"Extracts the part from one of the selected formants which shows the smoothest formant tracks in a given interval.")
+INTRO (U"Extracts the part from one of the selected formants which shows the smoothest formant tracks in a given interval. ")
 ENTRY (U"Settings")
 SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 	Manual_DRAW_SETTINGS_WINDOW (U"Formants: Extract smoothest part", 5)
@@ -958,6 +989,10 @@ MAN_BEGIN (U"Wakita (1977)", U"djmw", 19980114)
 NORMAL (U"H. Wakita (1977): \"Normalization of vowels by vocal-tract "
 	"length and its application to vowel identification.\" %%IEEE Trans. on ASSP% "
 	"#25: 183\\--192.")
+MAN_END
+
+MAN_BEGIN (U"Weenink (2015)", U"djmw", 20200514)
+NORMAL (U"D. Weenink (2015): \"Improved formant frequency measurements of short segments\", %%Proceedings of the 18th International Congress of Phonetic Sciences%, Brighton. ")
 MAN_END
 
 }
