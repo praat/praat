@@ -1,7 +1,9 @@
 # Discriminant3.praat
-# Paul Boersma 2020-05-10
+# Paul Boersma 2020-05-14
 
 writeInfoLine: "Discriminant2"
+
+Debug: 52
 
 table = Create TableOfReal (Pols 1973): "no"
 Save as text file: "kanweg.Table"
@@ -16,5 +18,7 @@ Save as text file: "kanweg.Confusion"
 fractionCorrect = Get fraction correct
 appendInfoLine: "Computed correct: ", fractionCorrect
 removeObject: classificationTable, confusion, computedDiscriminant, table
+
+Debug: 0
 
 appendInfoLine: "Discriminant3 OK"
