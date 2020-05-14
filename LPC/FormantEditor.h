@@ -60,7 +60,9 @@
 	
 */
 
-// Identical for all FormantModelers on the same segment
+/*
+	FormantModelers on the same segment
+*/
 Thing_define (FormantModelerList, Function) {
 	integer numberOfModelers, numberOfTracksPerModel;
 	double varianceExponent;
@@ -69,13 +71,19 @@ Thing_define (FormantModelerList, Function) {
 	autoINTVEC selected; // models are displayed in this order
 };
 
+/*
+	To save / restore the state of the data part of the editor.
+	We don't save the state of FormantModelerList because this part
+	is always recalculated.
+*/
 Thing_define (FormantEditorData, Function) {
+	double startWindow, endWindow, startSelection, endSelection;
 	IntervalTier logTier;
 	Formant formant;
 	void v_copy (Daata data_to)
 		override;
-	bool v_equal (Daata otherData)
-		override;
+	//bool v_equal (Daata otherData)
+	//	override;
 };
 
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {

@@ -1,6 +1,6 @@
 # Makefile of the library "LPC"
 # David Weenink and Paul Boersma
-# 20200407
+# 20200513
 
 include ../makefile.defs
 

@@ -15,8 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
+// TODO Undo insert interval
 #include "FormantEditor.h"
+#include "FormantList_and_TextGrid.h"
 #include "EditorM.h"
 #include "praat.h"
 #include "melder_kar.h"
@@ -45,6 +46,10 @@ void structFormantEditor :: v_restoreData () {
 	if (our data && our previousData) {
 		FormantEditorData current = static_cast<FormantEditorData> (our data);
 		FormantEditorData previous = static_cast<FormantEditorData> (our previousData.get());
+		current -> startWindow = previous -> startWindow;
+		current -> endWindow = previous -> endWindow;
+		current -> startSelection = previous -> startSelection;
+		current -> endSelection = previous -> endSelection;
 		Thing_swap (current -> logTier, previous -> logTier);
 		Thing_swap (current -> formant, previous -> formant);
 	}
@@ -53,17 +58,21 @@ void structFormantEditor :: v_restoreData () {
 void structFormantEditorData :: v_copy (Daata data_to) {
 	FormantEditorData thee = static_cast<FormantEditorData> (data_to);
 	structFunction :: v_copy (thee);
+	thy startWindow = startWindow;
+	thy endWindow = endWindow;
+	thy startSelection = startSelection;
+	thy endSelection = endSelection;
 	autoIntervalTier tier = Data_copy (logTier);
 	thy logTier = tier.releaseToAmbiguousOwner ();
 	autoFormant fcopy = Data_copy (formant);
 	thy formant = fcopy.releaseToAmbiguousOwner ();
 }
 
-bool structFormantEditorData :: v_equal (Daata otherData) {
+/*bool structFormantEditorData :: v_equal (Daata otherData) {
 	FormantEditorData thee = static_cast<FormantEditorData> (otherData);
 	return this->formant->structFormant::v_equal (thy formant) &&
 		this->logTier->structIntervalTier::v_equal (logTier);
-}
+}*/
 
 void structFormantEditor :: v_info () {
 	FormantEditor_Parent :: v_info ();
@@ -120,7 +129,7 @@ autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
 			Formant formanti = (Formant) my formants.at [imodel];
 			autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  thy numberOfParametersPerTrack.get());
-			Thing_setName (fm.get(), my identifier [imodel].get());
+			Thing_setName (fm.get(), my formantIdentifier [imodel].get());
 			thy formantModelers. addItem_move (fm.move());
 		}
 		thy selected = newINTVEClinear (thy numberOfModelers, 1, 1);
@@ -130,9 +139,38 @@ autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double
 	}
 }
 
+integer FormantModelerList_getSelected (FormantModelerList me) {
+	for (integer id = 1; id <= my selected.size; id ++)
+		if (my selected [id] < 0)
+			return abs (my selected [id]);
+	return 0;
+}
+
 void FormantModelerList_selectAll (FormantModelerList me) {
 	my selected.resize (my numberOfModelers);
 	INTVEClinear (my selected.get(), 1, 1);
+}
+
+void FormantModelerList_deselect (FormantModelerList me) {
+	for (integer id = 1; id <= my selected.size; id ++)
+		my selected [id] = abs (my selected [id]);
+}
+
+integer FormantModelerList_selectModelerFromIndexInMatrix (FormantModelerList me, integer index) {
+	Melder_require (index > 0 && index <= my selected.size,
+		U"Index out of range.");
+	integer formantIndex = abs (my selected [index]);
+	for (integer id = 1; id <= my selected.size; id ++)
+			my selected [id] = abs (my selected [id]); // reset
+	my selected [formantIndex] = - my selected [formantIndex]; // set
+	return formantIndex;
+}
+
+void FormantModelerList_selectModeler (FormantModelerList me, integer modelIndex) {
+	for (integer id = 1; id <= my selected.size; id ++) {
+		integer index = abs (my selected [id]);
+		my selected [id] = ( index == modelIndex ? -index : index);
+	}
 }
 
 static inline void FormantModelerList_setVarianceExponent (FormantModelerList me, double varianceExponent) {
@@ -173,7 +211,7 @@ inline integer FormantModelerList_getNumberOfVisible (FormantModelerList me) {
 	return my selected.size;
 }
 
-void FormantModelerList_getDisplayLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
+void FormantModelerList_getMatrixLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
 	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
 	integer ncol = 1;
 	integer nrow = 3;
@@ -190,21 +228,15 @@ void FormantModelerList_getDisplayLayout (FormantModelerList me, integer *out_nu
 integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList me, integer irow, integer icol) {
 	integer numberOfRows, numberOfColums;
 	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
-	FormantModelerList_getDisplayLayout (me, & numberOfRows, & numberOfColums);
+	FormantModelerList_getMatrixLayout (me, & numberOfRows, & numberOfColums);
 	integer index = (irow - 1) * numberOfColums + icol;
 	return ( index >= 1 && index <= numberOfVisible ? my selected [index] : 0 );
 }
 
-autoMelderString FormantModelerList_getSelectedModelParameterString (FormantModelerList me) {
+autoMelderString FormantModelerList_getSelectedModelParameterString (FormantModelerList me, integer imodel) {
 	autoMelderString modelParameters;
-	integer iselected = 0;
-	for (integer id = 1; id <= my selected.size; id ++)
-		if (my selected [id] < 0) {
-			iselected = id;
-			break;
-		}
-	if (iselected > 0) {		
-		FormantModeler fm = my formantModelers.at [abs(my selected [iselected])];
+	if (imodel > 0) {		
+		FormantModeler fm = my formantModelers.at [abs (my selected [imodel])];
 		MelderString_append (& modelParameters, fm -> name.get());
 		MelderString_append (& modelParameters, U"; ");
 		for (integer itrack = 1; itrack <= fm -> trackmodelers.size; itrack ++) {
@@ -216,9 +248,16 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 	return modelParameters;
 }
 
-void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, integer defaultBox, bool garnish) {
+bool FormantModelerList_parametersChanged (FormantModelerList me, integer imodel, conststring32 label) {
+	if (! label || ! label [0])
+		return false;
+	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (me, imodel);
+	return Melder_stringMatchesCriterion (modelParameters.string, kMelder_string::NOT_EQUAL_TO, label, true);
+}
+
+void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, integer defaultBox, int box_lineType, bool garnish) {
 	if (nrow <= 0 || ncol <= 0)
-		FormantModelerList_getDisplayLayout (me, & nrow, & ncol);
+		FormantModelerList_getMatrixLayout (me, & nrow, & ncol);
 	const double fmin = 0.0;
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
@@ -261,6 +300,7 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 		Graphics_setWindow (g, fm -> xmin, fm -> xmax, 0.0, fmax);
 		FormantModeler_speckle_inside (fm, g, fm -> xmin, fm -> xmax, fmax, fromFormant, toFormant,
 			drawEstimated, 0.0, drawErrorBars, barwidth_s, xTrackOffset_s);
+		Graphics_setLineType (g, box_lineType);
 		if (currentModel == defaultBox) {
 			/*
 				To mark the default analysis.
@@ -279,6 +319,7 @@ void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer
 			Graphics_setColour (g, ( my selected [id] < 0 ? Melder_RED : Melder_BLACK ));
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		}
+		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
@@ -374,17 +415,27 @@ static void do_insertIntervalOnLogTier (FormantEditor me, int itier) {
 }
 
 bool VowelEditor_setLogTierLabel (FormantEditor me) {
+	/*
+		We only modify the interval if the shiftKey has been pressed, otherwise it would be too easy to
+		modify an existing label by an accidental click;
+	*/
 	FormantModelerList fml = my formantModelerList.get();
-	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml);
-	if (modelParameters.string && modelParameters.string [0]) {
+	integer imodel = FormantModelerList_getSelected (my formantModelerList.get());
+	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml, imodel);
+	if (modelParameters.string && modelParameters.string [0] && my shiftKeyPressed) {
 		IntervalTier logTier = (IntervalTier) my logGrid -> tiers -> at [my logTierNumber];
-		if (my startSelection == fml -> xmin && my endSelection == fml -> xmax) {
+		if (my startSelection == my endSelection && my startSelection > fml -> xmin && my startSelection < fml -> xmax) {
+			my startSelection = fml -> xmin;
+			my endSelection = fml -> xmax;
+		}
+		if ((my startSelection == fml -> xmin && my endSelection == fml -> xmax) ||
+			(my startSelection == my endSelection && my startSelection > fml -> xmin && 
+			my startSelection < fml -> xmax)) {
 			double time = 0.5 * (my startSelection + my endSelection);
-			if (my shiftKeyPressed) {
-				do_insertIntervalOnLogTier (me, my logTierNumber);
-				my startSelection = fml -> xmin;
-				my endSelection = fml -> xmax;
-			}
+			do_insertIntervalOnLogTier (me, my logTierNumber);
+			my startSelection = fml -> xmin;
+			my endSelection = fml -> xmax;
+
 			integer intervalNumber = IntervalTier_timeToIndex (logTier, time);
 			TextInterval interval = logTier -> intervals . at [intervalNumber];
 			if (interval -> xmin == fml -> xmin && interval -> xmax == fml -> xmax) {
@@ -433,8 +484,7 @@ static integer _FormantEditor_yWCtoTier (FormantEditor me, double yWC) {
 static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer tierNumber,
 	double *tmin, double *tmax)
 {
-	const TextGrid grid = my logGrid;
-	const Function tier = grid -> tiers->at [tierNumber];
+	const Function tier = my logGrid -> tiers->at [tierNumber];
 	IntervalTier intervalTier;
 	TextTier textTier;
 	_AnyTier_identifyClass (tier, & intervalTier, & textTier);
@@ -470,23 +520,26 @@ static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer t
 }
 
 static void checkTierSelection (FormantEditor me, conststring32 verbPhrase) {
-	const TextGrid grid = my logGrid;
-	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
+	if (my selectedTier < 1 || my selectedTier > my logGrid -> tiers->size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
+static void checkTierSelection_hard (FormantEditor me, conststring32 verbPhrase) {
+	checkTierSelection (me, verbPhrase);
+	if (my selectedTier != my logTierNumber)
+		Melder_throw (U"To ", verbPhrase, U", first select the log tier.");
+}
+
 static integer getSelectedInterval (FormantEditor me) {
-	const TextGrid grid = my logGrid;
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
-	const IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my logGrid -> tiers->size);
+	const IntervalTier tier = (IntervalTier) my logGrid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
 	return IntervalTier_timeToIndex (tier, my startSelection);
 }
 
 static integer getSelectedPoint (FormantEditor me) {
-	const TextGrid grid = my logGrid;
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
-	const TextTier tier = (TextTier) grid -> tiers->at [my selectedTier];
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my logGrid -> tiers->size);
+	const TextTier tier = (TextTier) my logGrid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
 	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection);
 }
@@ -760,6 +813,7 @@ static void menu_cb_ExtendSelectNextInterval (FormantEditor me, EDITOR_ARGS_DIRE
 static void menu_cb_MoveBtoZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
+		Editor_save (me, U"Move start of selection to nearest zero crossing");
 		my startSelection = zero;
 		if (my startSelection > my endSelection)
 			std::swap (my startSelection, my endSelection);
@@ -770,6 +824,7 @@ static void menu_cb_MoveBtoZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_MoveCursorToZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (isdefined (zero)) {
+		Editor_save (me, U"Move cursor to nearest zero crossing");
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me, true);
 	}
@@ -778,6 +833,7 @@ static void menu_cb_MoveCursorToZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_MoveEtoZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
+		Editor_save (me, U"Move end of selection to nearest zero crossing");
 		my endSelection = zero;
 		if (my startSelection > my endSelection)
 			std::swap (my startSelection, my endSelection);
@@ -877,12 +933,6 @@ static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, d
 		U"The selection is outside the time domain of the intervals.");
 	const TextInterval interval = intervalTier -> intervals.at [iinterval];
 
-	if (t1 == t2) {
-		Editor_save (me, U"Add boundary");
-	} else {
-		Editor_save (me, U"Add interval");
-	}
-
 	if (itier == my selectedTier) {
 		/*
 			Divide up the label text into left, mid and right, depending on where the text selection is.
@@ -946,7 +996,8 @@ static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, d
 	my startSelection = my endSelection = t1;
 }
 
-static void menu_cb_InsertIntervalOnLogTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_InsertInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	Editor_save (me, U"Insert interval");
 	do_insertIntervalOnLogTier (me, 1);
 }
 
@@ -983,8 +1034,10 @@ static void menu_cb_ResetTextAndFormants (FormantEditor me, EDITOR_ARGS_DIRECT) 
 			Identify which formant "belong" to this interval
 		*/
 		TextInterval textInterval = logTier -> intervals .at [intervalNumber];
+		Editor_save (me, U"Reset text and formants");
 		TextInterval_removeText (textInterval);
 		VowelEditor_modifySynthesisFormantFrames (me, my startSelection, my endSelection, my formantList -> defaultFormantObject);
+		FormantModelerList_deselect (my formantModelerList.get());
 		Editor_broadcastDataChanged (me);
 		FunctionEditor_redraw (me);
 	}
@@ -1004,6 +1057,7 @@ void menu_cb_RemoveInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	TextInterval left  = logTier -> intervals.at [std::max (iinterval - 1, 1_integer)];
 	TextInterval middle = logTier -> intervals.at [iinterval];
 	TextInterval right = logTier -> intervals.at [std::min (iinterval + 1, logTier -> intervals.size)];
+	Editor_save (me, U"Remove interval");
 	if (iinterval > 1 && iinterval < logTier -> intervals.size) {
 		Melder_require (Melder_equ (left -> text.get(), right -> text.get()),
 			U"We cannot remove this interval because its left and right interval texts are not equal.");		
@@ -1119,12 +1173,12 @@ static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
 		SENTENCE (newName, U"New name", U"");
 	EDITOR_OK
 		const TextGrid grid =  my logGrid;
-		checkTierSelection (me, U"rename a tier");
-		const Daata tier = grid -> tiers->at [my selectedTier];
+		checkTierSelection_hard (me, U"rename a tier");
+		const Function tier = grid -> tiers->at [my selectedTier];
 		SET_STRING (newName, tier -> name ? tier -> name.get() : U"")
 	EDITOR_DO
 		const TextGrid grid =  my logGrid;
-		checkTierSelection (me, U"rename a tier");
+		checkTierSelection_hard (me, U"rename a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
 		Editor_save (me, U"Rename tier");
 		Thing_setName (tier, newName);
@@ -1157,8 +1211,8 @@ static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastPublication (me, publish.move());
 }
 
-static void menu_cb_modeler_modelParameterSettings (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Formant modeler settings", nullptr)		
+static void menu_cb_modeler_parameterSettings (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Formant modeler parameter settings", nullptr)		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
@@ -1173,28 +1227,28 @@ static void menu_cb_modeler_modelParameterSettings (FormantEditor me, EDITOR_ARG
 	EDITOR_END
 }
 
-static void menu_cb_modeler_showBest3Models (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = false;
+static void menu_cb_modeler_showBest3 (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = false;
 	autoINTVEC best3 = FormantModelerList_selectBest3 (my formantModelerList.get());
 	my formantModelerList -> selected.part (1,3) <<= best3.get();
 	my formantModelerList -> selected.resize (3);
 	my v_drawSelectionViewer ();
 }
 
-static void menu_cb_modeler_showAllModels (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	my pref_modeler_draw_allModels () = my p_modeler_draw_allModels = true;
+static void menu_cb_ShowAllModels (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = true;
 	FormantModelerList_selectAll (my formantModelerList.get());
 	my v_drawSelectionViewer ();
 }
 
-static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Formant modeler drawing settings", nullptr)
+static void menu_cb_AdvancedModelerDrawingSettings (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
 		BOOLEAN (drawEstimatedTracks, U"Draw estimated tracks", my default_modeler_draw_estimatedTracks ())
 		REAL (xSpaceFraction, U"Column separation (fraction)", my default_modeler_draw_xSpace_fraction ())
 		REAL (ySpaceFraction, U"Row separation (fraction)", my default_modeler_draw_ySpace_fraction ())
 		POSITIVE (yGridLineEvery_Hz, U"Horizontal grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
-		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_errorBars ())
+		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_showErrorBars ())
 		REAL (errorBarWidth_s, U"Error bar width (s)", my default_modeler_draw_errorBarWidth_s ())
 		REAL (xTrackShift_s, U"Shift even formant tracks by (s)", my default_modeler_draw_xTrackShift_s ())
 	EDITOR_OK
@@ -1203,7 +1257,7 @@ static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM)
 		SET_REAL (ySpaceFraction, my p_modeler_draw_ySpace_fraction)
 		SET_REAL (yGridLineEvery_Hz, my p_modeler_draw_yGridLineEvery_Hz)
 		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
-		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_errorBars)
+		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showErrorBars)
 		SET_REAL (errorBarWidth_s, my p_modeler_draw_errorBarWidth_s)
 		SET_REAL (xTrackShift_s, my p_modeler_draw_xTrackShift_s)
 	EDITOR_DO
@@ -1212,15 +1266,15 @@ static void menu_cb_modelerAdvancedSettings (FormantEditor me, EDITOR_ARGS_FORM)
 	my pref_modeler_draw_ySpace_fraction () = my p_modeler_draw_ySpace_fraction = ySpaceFraction;
 	my pref_modeler_draw_maximumFrequency () = my p_modeler_draw_maximumFrequency = maximumFrequency;
 	my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
-	my pref_modeler_draw_errorBars () = my p_modeler_draw_errorBars = drawErrorBars;
+	my pref_modeler_draw_showErrorBars () = my p_modeler_draw_showErrorBars = drawErrorBars;
 	my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
 	my pref_modeler_draw_xTrackShift_s () = my p_modeler_draw_xTrackShift_s = xTrackShift_s;
 	my v_drawSelectionViewer ();
 	EDITOR_END
 }
 
-static void menu_cb_DrawModels (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw modelers", nullptr)
+static void menu_cb_DrawVisibleModels (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw visible modelers", nullptr)
 		my v_form_pictureWindow (cmd);
 		SENTENCE (nameOnTop, U"Name on top", U"")
 		my v_form_pictureMargins (cmd);
@@ -1245,9 +1299,9 @@ static void menu_cb_DrawModels (FormantEditor me, EDITOR_ARGS_FORM) {
 			FormantModelerList_drawAsMatrix (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 			my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
 			my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
-			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_errorBars,
+			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_showErrorBars,
 			my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
-			my p_modeler_draw_estimatedTracks, defaultModel, garnish);
+			my p_modeler_draw_estimatedTracks, defaultModel, Graphics_DRAWN, garnish);
 			Graphics_unsetInner (my pictureGraphics);
 // TODO this repeats almost everything in Editor_closePraatPicture
 			if (my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
@@ -1271,9 +1325,7 @@ static void menu_cb_DrawModels (FormantEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid =  my logGrid;
-	checkTierSelection (me, U"remove all text from a tier");
-	Melder_require (my selectedTier == my logTierNumber,
-		U"You can only remove text from the log tier.");
+	checkTierSelection_hard (me, U"remove all text from a tier");
 		
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -1288,53 +1340,6 @@ static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT)
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_RemoveTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my logGrid;
-	if (grid -> tiers->size <= 1) {
-		Melder_throw (U"Sorry, I refuse to remove the last tier.");
-	}
-	checkTierSelection (me, U"remove a tier");
-
-	Editor_save (me, U"Remove tier");
-	grid -> tiers-> removeItem (my selectedTier);
-
-	my selectedTier = 1;
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_DuplicateTier (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Duplicate tier", nullptr)
-		NATURAL (position, U"Position", U"1 (= at top)")
-		SENTENCE (name, U"Name", U"")
-	EDITOR_OK
-		const TextGrid grid =  my logGrid;
-		if (my selectedTier) {
-			SET_INTEGER (position, my selectedTier + 1)
-			SET_STRING (name, grid -> tiers->at [my selectedTier] -> name.get())
-		}
-	EDITOR_DO
-		const TextGrid grid =  my logGrid;
-		checkTierSelection (me, U"duplicate a tier");
-		const Function tier = grid -> tiers->at [my selectedTier];
-		{// scope
-			autoFunction newTier = Data_copy (tier);
-			if (position > grid -> tiers->size)
-				position = grid -> tiers->size + 1;
-			Thing_setName (newTier.get(), name);
-
-			Editor_save (me, U"Duplicate tier");
-			grid -> tiers -> addItemAtPosition_move (newTier.move(), position);
-		}
-
-		my selectedTier = position;
-		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastDataChanged (me);
-	EDITOR_END
 }
 
 static void menu_cb_showFormants (FormantEditor me, EDITOR_ARGS_DIRECT) {
@@ -1375,6 +1380,9 @@ static void menu_cb_BoundariesToNearestZeroCrossing (FormantEditor me, EDITOR_AR
 		U"The new left boundary should not move to the right of the old right boundary.");
 	Melder_require (zeroRight > midInterval -> xmin,
 		U"The new right boundary should not move to the left of the old left boundary.");
+	
+	Editor_save (me, U"Boundaries to nearest zero crossings");
+	
 	if (midIndex == 1) { // Only move right boundary
 		rightInterval = logTier -> intervals.at [rightIndex];
 		Melder_require (zeroRight < rightInterval -> xmax,
@@ -1403,12 +1411,12 @@ static void menu_cb_BoundariesToNearestZeroCrossing (FormantEditor me, EDITOR_AR
 void structFormantEditor :: v_createMenuItems_formant (EditorMenu menu) {
 	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
 		GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
-	EditorMenu_addCommand (menu, U"Model parameter settings...", 0, menu_cb_modeler_modelParameterSettings);
-	EditorMenu_addCommand (menu, U"Show best three models", 0, menu_cb_modeler_showBest3Models);
-	EditorMenu_addCommand (menu, U"Show all models", 0, menu_cb_modeler_showAllModels);
-	EditorMenu_addCommand (menu, U"Advanced modeler settings...", 0, menu_cb_modelerAdvancedSettings);
+	EditorMenu_addCommand (menu, U"Modeler parameter settings...", 0, menu_cb_modeler_parameterSettings);
+	EditorMenu_addCommand (menu, U"Show best three modelers", 0, menu_cb_modeler_showBest3);
+	EditorMenu_addCommand (menu, U"Show all modelers", 0, menu_cb_ShowAllModels);
+	EditorMenu_addCommand (menu, U"Advanced modeler drawing settings...", 0, menu_cb_AdvancedModelerDrawingSettings);
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
-	EditorMenu_addCommand (menu, U"Draw models...", 0, menu_cb_DrawModels);
+	EditorMenu_addCommand (menu, U"Draw visible modelers...", 0, menu_cb_DrawVisibleModels);
 }
 
 /***** HELP MENU *****/
@@ -1440,17 +1448,15 @@ void structFormantEditor :: v_createMenus () {
 
 	menu = Editor_addMenu (this, U"Interval", 0);
 	EditorMenu_addCommand (menu, U"Boundaries to nearest zero crossings", GuiMenu_COMMAND | '0', menu_cb_BoundariesToNearestZeroCrossing);
-	EditorMenu_addCommand (menu, U"Add interval on log tier", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnLogTier);
+	EditorMenu_addCommand (menu, U"Insert interval", GuiMenu_COMMAND | '1', menu_cb_InsertInterval);
 	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
-	EditorMenu_addCommand (menu, U"Duplicate tier...", 0, menu_cb_DuplicateTier);
 	EditorMenu_addCommand (menu, U"Rename tier...", 0, menu_cb_RenameTier);
 	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Remove boundaries between...", 0, menu_cb_RemoveBoundariesBetween);
 	EditorMenu_addCommand (menu, U"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
-	EditorMenu_addCommand (menu, U"Remove entire tier", 0, menu_cb_RemoveTier);
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
@@ -1691,9 +1697,8 @@ static void do_drawTextTier (FormantEditor me, TextTier tier, integer itier) {
 }
 
 void structFormantEditor :: v_draw () {
-	const TextGrid grid = our logGrid;
 	Graphics_Viewport vp1, vp2;
-	const integer ntier = grid -> tiers->size;
+	const integer ntier = our logGrid -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
 	const bool showAnalysis = v_hasAnalysis () &&
@@ -1725,7 +1730,7 @@ void structFormantEditor :: v_draw () {
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	for (integer itier = 1; itier <= ntier; itier ++) {
-		const Function anyTier = grid -> tiers->at [itier];
+		const Function anyTier = our logGrid -> tiers->at [itier];
 		const bool tierIsSelected = ( itier == selectedTier );
 		const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
 		vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
@@ -1869,11 +1874,19 @@ void structFormantEditor :: v_drawSelectionViewer () {
 	if (! our formantModelerList.get())
 			return;
 	double startTime = startWindow, endTime = endWindow;
-	if (startSelection < endSelection) {
+	if (startSelection == endSelection) {
+		
+		const IntervalTier logTier = reinterpret_cast<IntervalTier> (our logGrid->tiers->at [our logTierNumber]);
+		const integer selectedInterval = IntervalTier_timeToIndex (logTier, our startSelection);
+		const TextInterval textInterval = logTier -> intervals .at [selectedInterval];
+		startTime = textInterval -> xmin;
+		endTime = textInterval -> xmax;
+
+	} else {
 		startTime = startSelection;
 		endTime = endSelection;
 	}
-	if ((startSelection < endSelection) && (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax)) {
+	if (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax) {
 		try {
 			our formantModelerList = FormantList_to_FormantModelerList (our formantList.get(), startTime, endTime, our p_modeler_numberOfParametersPerTrack);
 		} catch (MelderError) {
@@ -1894,17 +1907,38 @@ void structFormantEditor :: v_drawSelectionViewer () {
 	const double xCursor = ( startSelection == endSelection ? startSelection : fml -> xmin - 10.0 );
 	const double yCursor = ( our d_spectrogram_cursor > our p_spectrogram_viewFrom && our d_spectrogram_cursor < our p_spectrogram_viewTo ? our d_spectrogram_cursor : -1000.0 );
 	integer defaultModel = our formantList -> defaultFormantObject;
+	/*
+		Mark RED if label of interval matches one of the modelers. This should only occur if
+		a sound interval is exactly selected and matches a textgrid interval
+	*/
+	const IntervalTier logTier = reinterpret_cast<IntervalTier> (our logGrid->tiers->at [our logTierNumber]);
+	const integer selectedInterval = IntervalTier_timeToIndex (logTier, our startSelection);
+	const TextInterval textInterval = logTier -> intervals .at [selectedInterval];
+	const integer imodel = FormantEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
+	bool parametersChanged = FormantModelerList_parametersChanged (fml, imodel, textInterval -> text.get());
+	int box_lineType = ( parametersChanged ? Graphics_DASHED : Graphics_DRAWN );
+	if (imodel > 0)
+		FormantModelerList_selectModeler (fml, imodel);
+	/*if (our selectedTier == our logTierNumber || our startSelection < our endSelection) {
+		const IntervalTier logTier = reinterpret_cast<IntervalTier> (our logGrid->tiers->at [our logTierNumber]);
+		const integer selectedInterval = IntervalTier_timeToIndex (logTier, our startSelection);
+		const TextInterval textInterval = logTier -> intervals .at [selectedInterval];
+		const integer imodel = FormantEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
+		if (imodel > 0 || ((fml -> xmin == our startSelection && fml -> xmax == our endSelection) &&
+			! (textInterval -> text && textInterval -> text[0])))
+			FormantModelerList_deselect (our formantModelerList.get());
+	}*/
 	FormantModelerList_drawAsMatrix (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
 		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
-		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_errorBars,
+		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_showErrorBars,
 		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_xTrackShift_s,
-		our p_modeler_draw_estimatedTracks, defaultModel, true);
+		our p_modeler_draw_estimatedTracks, defaultModel, box_lineType, true);
 }
 
 void structFormantEditor :: v_draw_analysis_formants () {
-	Formant formant = reinterpret_cast<FormantEditorData> (our data)->formant;
-	Formant defaultFormant = our formantList->formants.at [our formantList->defaultFormantObject];
+	const Formant formant = reinterpret_cast<FormantEditorData> (our data)->formant;
+	const Formant defaultFormant = our formantList->formants.at [our formantList->defaultFormantObject];
 	if (our p_formant_show) {
 		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
@@ -2290,7 +2324,7 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	*/
 	FormantModelerList fml = formantModelerList.get();
 	integer numberOfRows, numberOfColums;
-	FormantModelerList_getDisplayLayout (fml, & numberOfRows, & numberOfColums);
+	FormantModelerList_getMatrixLayout (fml, & numberOfRows, & numberOfColums);
 	integer numberOfVisible = FormantModelerList_getNumberOfVisible (fml);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
 	if (icol < 1 || icol > numberOfColums)
@@ -2299,10 +2333,9 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	if (irow < 1 || irow > numberOfRows)
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
-	if (index > 0 && index <= numberOfVisible) {
-		integer formantIndex = abs (fml -> selected [index]);
-		for (integer id = 1; id <= fml -> selected.size; id ++)
-			fml -> selected [id] = ( index == id ? - abs (fml -> selected [id]) : abs (fml -> selected [id]) );
+	if (index > 0 && index <= numberOfVisible && our shiftKeyPressed) {
+		integer formantIndex = FormantModelerList_selectModelerFromIndexInMatrix (fml, index);
+		Editor_save (this, U"insert interval by selection viewer");
 		if (VowelEditor_setLogTierLabel (this))
 			VowelEditor_modifySynthesisFormantFrames (this, fml -> xmin, fml -> xmax, formantIndex);
 	}
@@ -2438,22 +2471,13 @@ static void FormantEditor_setLogTier (FormantEditor me) {
 	/*
 		Does the textgid have a log tier ?
 	*/
-	const integer numberOfTiers = my logGrid -> tiers -> size;
-	integer logTierNumber = 0;
-	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-		const Function anyTier = my logGrid -> tiers->at [itier];
-		conststring32 tierName = anyTier -> name.get();
-		if (Melder_stringMatchesCriterion (tierName, kMelder_string::ENDS_WITH, U"-log", true)) {
-			logTierNumber = itier;
-			break;
-		}
-	}
+	integer logTierNumber = TextGrid_and_FormantList_findLogTier (my logGrid, my formantList.get());
 	if (logTierNumber > 0) {
 		my logTierNumber = logTierNumber;
 		return;
 	}
 	/*
-		We didn't find a -log tier.
+		We didn't find a log tier.
 		Add it on top.
 	*/
 	autoIntervalTier logTier = IntervalTier_create (my logGrid -> xmin, my logGrid -> xmax);
@@ -2487,6 +2511,10 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant,
 	autoFormantEditorData myData = Thing_new (FormantEditorData);
 	myData -> xmin = formant -> xmin;
 	myData -> xmax = formant -> xmax;
+	myData -> startWindow = my startWindow;
+	myData -> endWindow = my endWindow;
+	myData -> startSelection = my startSelection;
+	myData -> endSelection = my endSelection;
 	myData -> formant = formant;
 	myData -> logTier = reinterpret_cast<IntervalTier> (my logGrid -> tiers->at [my logTierNumber]);
 	TimeSoundAnalysisEditor_init (me, title, myData.releaseToAmbiguousOwner(), sound, ownSound);
@@ -2506,6 +2534,7 @@ autoFormantEditor FormantEditor_create (conststring32 title, Formant formant, Fo
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 			FunctionEditor_marksChanged (me.get(), false);
 		}
+		my selectedTier = my logTierNumber;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantEditor window not created.");
