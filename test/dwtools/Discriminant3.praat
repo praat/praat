@@ -3,7 +3,7 @@
 
 writeInfoLine: "Discriminant2"
 
-Debug: 52
+Debug: 0, 52
 
 table = Create TableOfReal (Pols 1973): "no"
 Save as text file: "kanweg.Table"
@@ -19,6 +19,6 @@ fractionCorrect = Get fraction correct
 appendInfoLine: "Computed correct: ", fractionCorrect
 removeObject: classificationTable, confusion, computedDiscriminant, table
 
-Debug: 0
+Debug: 0, 0
 
 appendInfoLine: "Discriminant3 OK"
