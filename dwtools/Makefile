@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../kar
+CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG
 
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -21,7 +21,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	espeakdata_FileInMemory.o \
-	FilterBank.o FormantGrid_extensions.o FormantModeler.o \
+	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o  \
 	HMM.o \
 	ICA.o Intensity_extensions.o \

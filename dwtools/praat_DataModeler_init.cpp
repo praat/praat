@@ -20,6 +20,7 @@
 #include "DataModeler.h"
 #include "Formant_extensions.h"
 #include "FormantEditor.h"
+#include "FormantModeler.h"
 #include "OptimalCeilingTierEditor.h"
 #include "Pitch.h"
 #include "Table_extensions.h"

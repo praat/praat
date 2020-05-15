@@ -87,58 +87,6 @@ void operator<<= (INTVECVU const& target, integer value) {
 		target [i] = value;
 }
 
-autoINTVEC newINTVECfromString (conststring32 string) {
-	autoVEC reals = newVECfromString (string);
-	autoINTVEC result = newINTVECraw (reals.size);
-	for (integer i = 1; i <= reals.size; i ++) {
-		result [i]  = reals [i];
-	}
-	integer last = reals.size;
-	while (result [last] == 0 && last > 0)
-		last --;
-	Melder_require (last > 0,
-		U"There must be at least one integer in the list");
-	result.resize (last);
-	return result;
-}
-
-autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
-	try {
-		autoFormantModelerList thee = Thing_new (FormantModelerList);
-		thy xmin = startTime;
-		thy xmax = endTime;
-		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
-		Melder_require (numberOfParametersPerTrack.size > 0 ,
-			U"The number of items in the parameter list should be larger than zero.");
-		Formant formant = (Formant) my formants.at [1];
-		integer maximumNumberOfFormants = formant -> maxnFormants;
-		Melder_require (numberOfParametersPerTrack.size <= maximumNumberOfFormants,
-			U"The number of items cannot exceed the maximum number of formants (", maximumNumberOfFormants, U").");
-		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
-		integer numberOfZeros = 0;
-		for (integer ipar = 1; ipar <= thy numberOfParametersPerTrack.size; ipar ++) {
-			const integer value = thy numberOfParametersPerTrack [ipar];
-			Melder_require (value >= 0,
-				U"Numbers in the 'Number of parameter list' should be positive.");
-			if (value == 0)
-				numberOfZeros += 1;
-		}
-		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
-		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
-		thy numberOfModelers = my formants . size;
-		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
-			Formant formanti = (Formant) my formants.at [imodel];
-			autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  thy numberOfParametersPerTrack.get());
-			Thing_setName (fm.get(), my formantIdentifier [imodel].get());
-			thy formantModelers. addItem_move (fm.move());
-		}
-		thy selected = newINTVEClinear (thy numberOfModelers, 1, 1);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": FormantModelerList not created.");
-	}
-}
-
 integer FormantModelerList_getSelected (FormantModelerList me) {
 	for (integer id = 1; id <= my selected.size; id ++)
 		if (my selected [id] < 0)
@@ -156,7 +104,7 @@ void FormantModelerList_deselect (FormantModelerList me) {
 		my selected [id] = abs (my selected [id]);
 }
 
-integer FormantModelerList_selectModelerFromIndexInMatrix (FormantModelerList me, integer index) {
+integer FormantModelerList_selectModelerFromIndexInMatrixGrid (FormantModelerList me, integer index) {
 	Melder_require (index > 0 && index <= my selected.size,
 		U"Index out of range.");
 	integer formantIndex = abs (my selected [index]);
@@ -211,7 +159,7 @@ inline integer FormantModelerList_getNumberOfVisible (FormantModelerList me) {
 	return my selected.size;
 }
 
-void FormantModelerList_getMatrixLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
+void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
 	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
 	integer ncol = 1;
 	integer nrow = 3;
@@ -228,7 +176,7 @@ void FormantModelerList_getMatrixLayout (FormantModelerList me, integer *out_num
 integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList me, integer irow, integer icol) {
 	integer numberOfRows, numberOfColums;
 	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
-	FormantModelerList_getMatrixLayout (me, & numberOfRows, & numberOfColums);
+	FormantModelerList_getMatrixGridLayout (me, & numberOfRows, & numberOfColums);
 	integer index = (irow - 1) * numberOfColums + icol;
 	return ( index >= 1 && index <= numberOfVisible ? my selected [index] : 0 );
 }
@@ -255,9 +203,9 @@ bool FormantModelerList_parametersChanged (FormantModelerList me, integer imodel
 	return Melder_stringMatchesCriterion (modelParameters.string, kMelder_string::NOT_EQUAL_TO, label, true);
 }
 
-void FormantModelerList_drawAsMatrix (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, integer defaultBox, int box_lineType, bool garnish) {
+void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, integer defaultBox, int box_lineType, bool garnish) {
 	if (nrow <= 0 || ncol <= 0)
-		FormantModelerList_getMatrixLayout (me, & nrow, & ncol);
+		FormantModelerList_getMatrixGridLayout (me, & nrow, & ncol);
 	const double fmin = 0.0;
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
@@ -1296,7 +1244,7 @@ static void menu_cb_DrawVisibleModels (FormantEditor me, EDITOR_ARGS_FORM) {
 			const double yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
 			Graphics_setInner (my pictureGraphics);
 			integer defaultModel = my formantList -> defaultFormantObject;
-			FormantModelerList_drawAsMatrix (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
+			FormantModelerList_drawInMatrixGrid (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 			my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
 			my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
 			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_showErrorBars,
@@ -1928,7 +1876,7 @@ void structFormantEditor :: v_drawSelectionViewer () {
 			! (textInterval -> text && textInterval -> text[0])))
 			FormantModelerList_deselect (our formantModelerList.get());
 	}*/
-	FormantModelerList_drawAsMatrix (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
+	FormantModelerList_drawInMatrixGrid (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
 		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
 		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_showErrorBars,
@@ -2324,7 +2272,7 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	*/
 	FormantModelerList fml = formantModelerList.get();
 	integer numberOfRows, numberOfColums;
-	FormantModelerList_getMatrixLayout (fml, & numberOfRows, & numberOfColums);
+	FormantModelerList_getMatrixGridLayout (fml, & numberOfRows, & numberOfColums);
 	integer numberOfVisible = FormantModelerList_getNumberOfVisible (fml);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
 	if (icol < 1 || icol > numberOfColums)
@@ -2334,7 +2282,7 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
 	if (index > 0 && index <= numberOfVisible && our shiftKeyPressed) {
-		integer formantIndex = FormantModelerList_selectModelerFromIndexInMatrix (fml, index);
+		integer formantIndex = FormantModelerList_selectModelerFromIndexInMatrixGrid (fml, index);
 		Editor_save (this, U"insert interval by selection viewer");
 		if (VowelEditor_setLogTierLabel (this))
 			VowelEditor_modifySynthesisFormantFrames (this, fml -> xmin, fml -> xmax, formantIndex);

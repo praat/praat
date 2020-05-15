@@ -1,14 +1,15 @@
 # Makefile of the library "LPC"
 # David Weenink and Paul Boersma
-# 20200513
+# 20200515
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
+CPPFLAGS = -I . -I ../kar -I ../melder -I ../fon -I ../dwtools -I ../sys -I ../dwsys -I ../stat
 
 OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	Cepstrogram.o \
 	Formant_extensions.o FormantEditor.o FormantList.o FormantList_and_TextGrid.o \
+	FormantModeler.o FormantModelerList.o \
 	LineSpectralFrequencies.o \
 	LPC.o LPC_and_Cepstrumc.o LPC_and_Formant.o LPC_and_LFCC.o \
 	LPC_and_LineSpectralFrequencies.o LPC_and_Polynomial.o \

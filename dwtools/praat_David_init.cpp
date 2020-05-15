@@ -93,7 +93,6 @@
 #include "Formula.h"
 #include "FormantGridEditor.h"
 #include "FormantGrid_extensions.h"
-#include "FormantModeler.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
 #include "Matrix_Categories.h"
@@ -7955,7 +7954,7 @@ void praat_uvafon_David_init () {
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
-		classFormantFilter, classFormantModeler,
+		classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,

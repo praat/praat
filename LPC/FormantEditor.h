@@ -19,7 +19,7 @@
  */
 
 #include "Collection.h"
-#include "../dwtools/FormantModeler.h"
+#include "FormantModelerList.h"
 #include "Formant.h"
 #include "FormantList.h"
 #include "melder.h"
@@ -61,21 +61,11 @@
 */
 
 /*
-	FormantModelers on the same segment
-*/
-Thing_define (FormantModelerList, Function) {
-	integer numberOfModelers, numberOfTracksPerModel;
-	double varianceExponent;
-	autoINTVEC numberOfParametersPerTrack; // .size = (numberOfFormantTracks)
-	OrderedOf<structFormantModeler> formantModelers;
-	autoINTVEC selected; // models are displayed in this order
-};
-
-/*
 	To save / restore the state of the data part of the editor.
 	We don't save the state of FormantModelerList because this part
 	is always recalculated.
 */
+
 Thing_define (FormantEditorData, Function) {
 	double startWindow, endWindow, startSelection, endSelection;
 	IntervalTier logTier;

@@ -21,6 +21,7 @@
 #include "Collection.h"
 #include "Covariance.h"
 #include "DataModeler.h"
+#include "Formant.h"
 #include "OptimalCeilingTier.h"
 #include "Pitch.h"
 #include "Sound_to_Formant.h"
