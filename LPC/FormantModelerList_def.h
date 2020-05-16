@@ -23,12 +23,8 @@ oo_DEFINE_CLASS (FormantModelerListDrawingSpecification, Daata)
 	oo_INTVEC (drawingOrder, numberOfModelers)
 	oo_INTEGER (selected)
 	oo_INTEGER (special)
-	oo_INT (selected_boxLineType) // {Graphics_DRAWN};
-	oo_INT (special_boxLineType) // {Graphics_DRAWN} ;
-	oo_INT (default_boxLineType) // {Graphics_DRAWN};
-	oo_DOUBLE (selected_boxLineWidth) // {2.0};
-	oo_DOUBLE (special_boxLineWidth) // {4.0};
-	oo_DOUBLE (default_boxLineWidth) // {2.0};		
+	oo_DOUBLE (boxLineWidth) // {3.0};
+	oo_BOOLEAN (markOutdated)
 	oo_INTVEC (showOrder, numberOfModelers)
 	oo_STRING_VECTOR (midTopText, numberOfModelers)
 	

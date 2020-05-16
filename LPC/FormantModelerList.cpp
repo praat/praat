@@ -194,12 +194,8 @@ autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerL
 		thy special = special;
 		thy drawingOrder = newINTVEClinear (my numberOfModelers, 1, 1);
 		thy numberOfModelsToDraw = my numberOfModelers;
-		thy selected_boxLineType = Graphics_DRAWN;
-		thy special_boxLineType = Graphics_DRAWN;
-		thy default_boxLineWidth = Graphics_DRAWN;
-		thy selected_boxLineWidth = 2.0;
-		thy special_boxLineWidth = 4.0;
-		thy default_boxLineWidth = 2.0;
+		thy boxLineWidth = 4.0;
+		thy markOutdated = false;
 		thy selected_boxColour = Melder_RED;
 		thy special_boxColour = Melder_BLUE;
 		thy default_boxColour = Melder_BLACK;
@@ -259,35 +255,30 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 		FormantModeler_speckle_inside (fm, g, fm -> xmin, fm -> xmax, fmax, fromFormant, toFormant,
 			drawEstimated, 0.0, drawErrorBars, barwidth_s, xTrackOffset_s);
 
+		Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
 		if (imodel == my drawingSpecification -> special) {
 			Graphics_setColour (g, my drawingSpecification -> special_boxColour);
-			Graphics_setLineWidth (g, my drawingSpecification -> special_boxLineWidth);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-			Graphics_setLineWidth (g, std::max(my drawingSpecification -> special_boxLineWidth - 1.0, 1.0));
-			Graphics_setLineType (g, my drawingSpecification -> special_boxLineType);
-			Graphics_setColour (g, Melder_WHITE);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-			Graphics_setLineType (g, Graphics_DRAWN);
-			Graphics_setLineType (g, Graphics_DRAWN);
 		}
 		if (imodel == my drawingSpecification -> selected) {
 			Graphics_setColour (g, my drawingSpecification -> selected_boxColour);
-			Graphics_setLineWidth (g, my drawingSpecification -> selected_boxLineWidth);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-			Graphics_setLineWidth (g, 1.0);
-			Graphics_setColour (g, Melder_WHITE);
-			Graphics_setLineType (g, my drawingSpecification -> selected_boxLineType);
+			const double lineWidth = my drawingSpecification -> boxLineWidth;
+			const double newLineWidth = ( imodel == my drawingSpecification -> special ? lineWidth - 1.0 : lineWidth );
+			Graphics_setLineWidth (g, newLineWidth);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		} else {
-			Graphics_setColour (g, my drawingSpecification -> default_boxColour);
-			Graphics_setLineWidth (g, my drawingSpecification -> default_boxLineWidth);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
+			if (imodel != my drawingSpecification -> special) {
+				Graphics_setColour (g, my drawingSpecification -> default_boxColour);
+				Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
+				Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
+			}
+		}
+		if (my drawingSpecification -> markOutdated) {
 			Graphics_setLineWidth (g, 1.0);
 			Graphics_setColour (g, Melder_WHITE);
-			Graphics_setLineType (g, my drawingSpecification -> default_boxLineType);
+			Graphics_setLineType (g, Graphics_DASHED);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		}
-			
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);

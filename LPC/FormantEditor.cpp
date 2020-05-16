@@ -139,14 +139,12 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 
 void FormantEditor_markParameterChange (FormantEditor me) {
 	FormantModelerListDrawingSpecification drawingSpecification = my formantModelerList -> drawingSpecification.get();
-	drawingSpecification -> selected_boxLineType = drawingSpecification -> default_boxLineType = 
-	drawingSpecification -> special_boxLineType = Graphics_DASHED;
+	drawingSpecification -> markOutdated = true;
 }
 
 void FormantEditor_unmarkParameterChange (FormantEditor me) {
 	FormantModelerListDrawingSpecification drawingSpecification = my formantModelerList -> drawingSpecification.get();
-	drawingSpecification -> selected_boxLineType = drawingSpecification -> default_boxLineType = 
-	drawingSpecification -> special_boxLineType = Graphics_DASHED;
+	drawingSpecification -> markOutdated = false;
 }
 
 bool FormantEditor_parametersChanged (FormantEditor me, integer imodel, conststring32 label) {
