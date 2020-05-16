@@ -28,7 +28,7 @@
  djmw 20050405 Modified column label: eigenvector->Eigenvector
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
  djmw 20100107 +Discriminant_TableOfReal_mahalanobis
@@ -500,33 +500,32 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		/*
 			Scale the sscp to become a covariance matrix.
 		*/
-		
 		pool -> data.get()  *=  1.0 / (pool -> numberOfObservations - numberOfGroups);
 		
 		double lnd;
 		autoSSCPList agroups;
 		SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
 		if (poolCovarianceMatrices) {
-			
 			/*
 				Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 				L^-1 will be used later in the Mahalanobis distance calculation:
 				v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 			*/
-
+			if (Melder_debug == 52)
+				Melder_casual (U"***** before lower Cholesky inverse: \n", pool -> data.all());
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
+			if (Melder_debug == 52)
+				Melder_casual (U"***** after lower Cholesky inverse: \n", pool -> data.all());
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
 			}
 			groups = my groups.get();
 		} else {
-			
 			/*
 				Calculate the inverses of all group covariance matrices.
 				In case of a singular matrix, substitute inverse of pooled.
 			*/
-
 			agroups = Data_copy (my groups.get());
 			groups = agroups.get();
 			integer npool = 0;
@@ -539,12 +538,10 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				try {
 					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
-					
 					/*
 						Clear the error.
 						Try the alternative: the pooled covariance matrix.
 					*/
-
 					Melder_clearError ();
 					if (npool == 0)
 						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
@@ -560,7 +557,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		/*
 			Labels for columns in ClassificationTable
 		*/
-
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			conststring32 name = Thing_getName (my groups->at [j]);
 			if (! name)
@@ -572,8 +568,11 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			Normalize the sum of the apriori probabilities to 1.
 			Next take ln (p) because otherwise probabilities might be too small to represent.
 		*/
-
+		if (Melder_debug == 52)
+			Melder_casual (U"***** before normalizing priors: \n", my aprioriProbabilities.all());
 		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
+		if (Melder_debug == 52)
+			Melder_casual (U"***** after normalizing priors: \n", my aprioriProbabilities.all());
 		const double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++)
 			log_apriori [j] = ( useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg );
@@ -582,12 +581,13 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			Generalized squared distance function:
 			D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
 		*/
-
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				const SSCP t = groups->at [j];
 				const double md = NUMmahalanobisDistanceSquared (sscpvec [j] -> data.get(), thy data.row (i), t -> centroid.get());
+				if (Melder_debug == 52)
+					Melder_casual (U"***** Mahalanobis distance (squared): ", i, U" ", j, U" ", md);
 				const double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max)
 					pt_max = pt;
@@ -595,7 +595,6 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			}
 			for (integer j = 1; j <= numberOfGroups; j ++)
 				norm += log_p [j] = exp (log_p [j] - pt_max);
-
 			for (integer j = 1; j <= numberOfGroups; j ++)
 				his data [i] [j] = log_p [j] / norm;
 		}
