@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2020 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1993-2020 David Weenink, Paul Boersma 2017,2020
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ autoMAT newMATlowerCholeslyInverse_fromLowerCholesky (constMAT const& m) {
 	return result;
 }
 
-void MATlowerCholesky_inplace (MAT a, double *out_lnd) {
+void MATlowerCholesky_inplace (MAT a, double *out_lnDeterminant) {
 	Melder_assert (a.nrow == a.ncol);
 	/*
 		Cholesky decomposition in lower, leave upper intact
@@ -272,11 +272,12 @@ void MATlowerCholesky_inplace (MAT a, double *out_lnd) {
 	/*
 		Determinant from diagonal, diagonal is now sqrt (a [i] [i]) !
 	*/
-	if (out_lnd) {
-		longdouble lnd = 0.0;
+	if (out_lnDeterminant) {
+		longdouble lnDeterminant = 0.0;
 		for (integer i = 1; i <= a.nrow; i ++)
-			lnd += log (a [i] [i]);
-		*out_lnd *= 2.0 * lnd; /* because A = L . L' */
+			lnDeterminant += log (a [i] [i]);
+		lnDeterminant *= 2.0;   /* because A = L . L' */
+		*out_lnDeterminant = double (lnDeterminant);
 	}
 }
 

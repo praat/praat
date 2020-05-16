@@ -1,7 +1,7 @@
 # Discriminant3.praat
 # Paul Boersma 2020-05-14
 
-writeInfoLine: "Discriminant2"
+writeInfoLine: "Discriminant3"
 
 Debug: 0, 52
 
