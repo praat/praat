@@ -107,14 +107,13 @@ class NUMrandom_State { public:
 		This can be used for testing whether our implementation is correct (i.e. predicts the correct published sequence)
 		and perhaps for generating reproducible sequences.
 	 */
-	uint64 init_genrand64 (uint64 seed) {
+	void init_genrand64 (uint64 seed) {
 		array [0] = seed;
 		for (index = 1; index < NN; index ++) {
 			array [index] =
 				(UINT64_C (6364136223846793005) * (array [index - 1] ^ (array [index - 1] >> 62))
 				+ (uint64) index);
 		}
-		return array [NN - 1];
 	}
 
 	/* initialize by an array with array-length */
@@ -202,7 +201,7 @@ void NUMrandom_initializeSafelyAndUnpredictably () {
 }
 void NUMrandom_initializeWithSeedUnsafelyButPredictably (uint64 seed) {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++)
-		seed = states [threadNumber]. init_genrand64 (seed);
+		states [threadNumber]. init_genrand64 (seed);
 	theInited = true;
 }
 
