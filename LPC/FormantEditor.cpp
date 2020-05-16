@@ -28,7 +28,6 @@
 #include "TextGrid_extensions.h"
 
 Thing_implement (FormantEditor, TimeSoundAnalysisEditor, 0);
-Thing_implement (FormantModelerList, Function, 0);
 Thing_implement (FormantEditorData, Function, 0);
 
 #include "prefs_define.h"
@@ -87,104 +86,46 @@ void operator<<= (INTVECVU const& target, integer value) {
 		target [i] = value;
 }
 
-integer FormantModelerList_getSelected (FormantModelerList me) {
-	for (integer id = 1; id <= my selected.size; id ++)
-		if (my selected [id] < 0)
-			return abs (my selected [id]);
-	return 0;
+void FormantEditor_selectAll (FormantEditor me) {
+	FormantModelerListDrawingSpecification_showAll (my formantModelerList -> drawingSpecification.get());
 }
 
-void FormantModelerList_selectAll (FormantModelerList me) {
-	my selected.resize (my numberOfModelers);
-	INTVEClinear (my selected.get(), 1, 1);
+void FormantEditor_deselect (FormantEditor me) {
+	my formantModelerList -> drawingSpecification -> selected = 0;
 }
 
-void FormantModelerList_deselect (FormantModelerList me) {
-	for (integer id = 1; id <= my selected.size; id ++)
-		my selected [id] = abs (my selected [id]);
+integer FormantEditor_selectModelerFromIndexInMatrixGrid (FormantEditor me, integer index) {
+	FormantModelerListDrawingSpecification drawingSpecification = my formantModelerList -> drawingSpecification.get();
+	Melder_require (index > 0 && index <= drawingSpecification->numberOfModelsToDraw,
+		U"Oops no match for index =", index, U".");
+	return drawingSpecification -> drawingOrder [index];
 }
 
-integer FormantModelerList_selectModelerFromIndexInMatrixGrid (FormantModelerList me, integer index) {
-	Melder_require (index > 0 && index <= my selected.size,
-		U"Index out of range.");
-	integer formantIndex = abs (my selected [index]);
-	for (integer id = 1; id <= my selected.size; id ++)
-			my selected [id] = abs (my selected [id]); // reset
-	my selected [formantIndex] = - my selected [formantIndex]; // set
-	return formantIndex;
-}
-
-void FormantModelerList_selectModeler (FormantModelerList me, integer modelIndex) {
-	for (integer id = 1; id <= my selected.size; id ++) {
-		integer index = abs (my selected [id]);
-		my selected [id] = ( index == modelIndex ? -index : index);
-	}
+void FormantEditor_selectModeler (FormantEditor me, integer modelIndex) {
+	if (modelIndex > 0 && modelIndex <= my formantModelerList -> numberOfModelers)
+		my formantModelerList -> drawingSpecification -> selected = modelIndex;
 }
 
 static inline void FormantModelerList_setVarianceExponent (FormantModelerList me, double varianceExponent) {
 	my varianceExponent = varianceExponent;
 }
 
-autoINTVEC FormantModelerList_selectBest3 (FormantModelerList me) {
-	/*
-		3 The smoothest F1 score
-		2 The smoothest F1 & F2 score
-		1 the smoothest F1 & F2 & F3 score
-	*/
-	double smoothnessF1, smoothnessF1F2, smoothnessF1F2F3;
-	smoothnessF1 = smoothnessF1F2 = smoothnessF1F2F3 = std::numeric_limits<double>::max();
-	autoINTVEC best = newINTVECraw (3);
-	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
-		FormantModeler fm = my formantModelers.at [imodel];
-		double smoothness = FormantModeler_getSmoothnessValue (fm, 1, 1, 0, my varianceExponent);
-		if (smoothness < smoothnessF1) {
-			smoothnessF1 = smoothness;
-			best [3] = imodel;
-		}
-		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 2, 0, my varianceExponent);
-		if (smoothness < smoothnessF1F2) {
-			smoothnessF1F2 = smoothness;
-			best [2]  = imodel;
-		}
-		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 3, 0, my varianceExponent);
-		if (smoothness < smoothnessF1F2F3) {
-			smoothnessF1F2F3 = smoothness;
-			best [1]  = imodel;
-		}
-	}
-	return best;
+inline integer FormantEditor_getNumberOfVisible (FormantEditor me) {
+	return FormantModelerListDrawingSpecification_getNumberOfShown (my formantModelerList -> drawingSpecification.get());
 }
 
-inline integer FormantModelerList_getNumberOfVisible (FormantModelerList me) {
-	return my selected.size;
-}
-
-void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
-	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
-	integer ncol = 1;
-	integer nrow = 3;
-	if (numberOfVisible > 3) {
-		nrow = 1 + Melder_ifloor (sqrt (numberOfVisible - 0.5));
-		ncol = 1 + Melder_ifloor ((numberOfVisible - 1) / nrow);
-	}
-	if (out_numberOfRows)
-		*out_numberOfRows = nrow;
-	if (out_numberOfColums)
-		*out_numberOfColums = ncol;
-}
-
-integer FormantModelerList_getModelerIndexFromRowColumnIndex (FormantModelerList me, integer irow, integer icol) {
+/*integer FormantEditor_getModelerIndexFromRowColumnIndex (FormantEditor me, integer irow, integer icol) {
 	integer numberOfRows, numberOfColums;
-	const integer numberOfVisible = FormantModelerList_getNumberOfVisible (me);
-	FormantModelerList_getMatrixGridLayout (me, & numberOfRows, & numberOfColums);
+	const integer numberOfVisible = FormantEditor_getNumberOfVisible (me);
+	FormantModelerList_getMatrixGridLayout (numberOfVisible, & numberOfRows, & numberOfColums);
 	integer index = (irow - 1) * numberOfColums + icol;
 	return ( index >= 1 && index <= numberOfVisible ? my selected [index] : 0 );
-}
+}*/
 
 autoMelderString FormantModelerList_getSelectedModelParameterString (FormantModelerList me, integer imodel) {
 	autoMelderString modelParameters;
 	if (imodel > 0) {		
-		FormantModeler fm = my formantModelers.at [abs (my selected [imodel])];
+		FormantModeler fm = my formantModelers.at [imodel];
 		MelderString_append (& modelParameters, fm -> name.get());
 		MelderString_append (& modelParameters, U"; ");
 		for (integer itrack = 1; itrack <= fm -> trackmodelers.size; itrack ++) {
@@ -196,13 +137,26 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 	return modelParameters;
 }
 
-bool FormantModelerList_parametersChanged (FormantModelerList me, integer imodel, conststring32 label) {
+void FormantEditor_markParameterChange (FormantEditor me) {
+	FormantModelerListDrawingSpecification drawingSpecification = my formantModelerList -> drawingSpecification.get();
+	drawingSpecification -> selected_boxLineType = drawingSpecification -> default_boxLineType = 
+	drawingSpecification -> special_boxLineType = Graphics_DASHED;
+}
+
+void FormantEditor_unmarkParameterChange (FormantEditor me) {
+	FormantModelerListDrawingSpecification drawingSpecification = my formantModelerList -> drawingSpecification.get();
+	drawingSpecification -> selected_boxLineType = drawingSpecification -> default_boxLineType = 
+	drawingSpecification -> special_boxLineType = Graphics_DASHED;
+}
+
+bool FormantEditor_parametersChanged (FormantEditor me, integer imodel, conststring32 label) {
 	if (! label || ! label [0])
 		return false;
-	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (me, imodel);
+	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (my formantModelerList.get(), imodel);
 	return Melder_stringMatchesCriterion (modelParameters.string, kMelder_string::NOT_EQUAL_TO, label, true);
 }
 
+#if 0
 void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, integer defaultBox, int box_lineType, bool garnish) {
 	if (nrow <= 0 || ncol <= 0)
 		FormantModelerList_getMatrixGridLayout (me, & nrow, & ncol);
@@ -345,7 +299,8 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 	Graphics_setFontSize (g, fontSize_old);
 	Graphics_setViewport (g, x1NDC, x2NDC, y1NDC, y2NDC);
 }
-
+#endif
+			
 /********** UTILITIES **********/
 
 static void do_insertIntervalOnLogTier (FormantEditor me, int itier) {
@@ -368,7 +323,7 @@ bool VowelEditor_setLogTierLabel (FormantEditor me) {
 		modify an existing label by an accidental click;
 	*/
 	FormantModelerList fml = my formantModelerList.get();
-	integer imodel = FormantModelerList_getSelected (my formantModelerList.get());
+	integer imodel = my formantModelerList -> drawingSpecification -> selected;
 	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml, imodel);
 	if (modelParameters.string && modelParameters.string [0] && my shiftKeyPressed) {
 		IntervalTier logTier = (IntervalTier) my logGrid -> tiers -> at [my logTierNumber];
@@ -985,7 +940,7 @@ static void menu_cb_ResetTextAndFormants (FormantEditor me, EDITOR_ARGS_DIRECT) 
 		Editor_save (me, U"Reset text and formants");
 		TextInterval_removeText (textInterval);
 		VowelEditor_modifySynthesisFormantFrames (me, my startSelection, my endSelection, my formantList -> defaultFormantObject);
-		FormantModelerList_deselect (my formantModelerList.get());
+		FormantEditor_deselect (me);
 		Editor_broadcastDataChanged (me);
 		FunctionEditor_redraw (me);
 	}
@@ -1177,15 +1132,13 @@ static void menu_cb_modeler_parameterSettings (FormantEditor me, EDITOR_ARGS_FOR
 
 static void menu_cb_modeler_showBest3 (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = false;
-	autoINTVEC best3 = FormantModelerList_selectBest3 (my formantModelerList.get());
-	my formantModelerList -> selected.part (1,3) <<= best3.get();
-	my formantModelerList -> selected.resize (3);
+	FormantModelerList_showBest3 (my formantModelerList.get());
 	my v_drawSelectionViewer ();
 }
 
 static void menu_cb_ShowAllModels (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = true;
-	FormantModelerList_selectAll (my formantModelerList.get());
+	FormantEditor_selectAll (me);
 	my v_drawSelectionViewer ();
 }
 
@@ -1249,7 +1202,7 @@ static void menu_cb_DrawVisibleModels (FormantEditor me, EDITOR_ARGS_FORM) {
 			my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
 			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_showErrorBars,
 			my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
-			my p_modeler_draw_estimatedTracks, defaultModel, Graphics_DRAWN, garnish);
+			my p_modeler_draw_estimatedTracks, garnish);
 			Graphics_unsetInner (my pictureGraphics);
 // TODO this repeats almost everything in Editor_closePraatPicture
 			if (my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
@@ -1863,10 +1816,10 @@ void structFormantEditor :: v_drawSelectionViewer () {
 	const integer selectedInterval = IntervalTier_timeToIndex (logTier, our startSelection);
 	const TextInterval textInterval = logTier -> intervals .at [selectedInterval];
 	const integer imodel = FormantEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
-	bool parametersChanged = FormantModelerList_parametersChanged (fml, imodel, textInterval -> text.get());
-	int box_lineType = ( parametersChanged ? Graphics_DASHED : Graphics_DRAWN );
+	if (FormantEditor_parametersChanged (this, imodel, textInterval -> text.get()))
+		FormantEditor_markParameterChange (this);
 	if (imodel > 0)
-		FormantModelerList_selectModeler (fml, imodel);
+		FormantEditor_selectModeler (this, imodel);
 	/*if (our selectedTier == our logTierNumber || our startSelection < our endSelection) {
 		const IntervalTier logTier = reinterpret_cast<IntervalTier> (our logGrid->tiers->at [our logTierNumber]);
 		const integer selectedInterval = IntervalTier_timeToIndex (logTier, our startSelection);
@@ -1874,14 +1827,15 @@ void structFormantEditor :: v_drawSelectionViewer () {
 		const integer imodel = FormantEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
 		if (imodel > 0 || ((fml -> xmin == our startSelection && fml -> xmax == our endSelection) &&
 			! (textInterval -> text && textInterval -> text[0])))
-			FormantModelerList_deselect (our formantModelerList.get());
+			FormantEditor_deselect (me);
 	}*/
+	FormantModelerList_markBest3 (fml);
 	FormantModelerList_drawInMatrixGrid (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
 		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
 		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_showErrorBars,
 		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_xTrackShift_s,
-		our p_modeler_draw_estimatedTracks, defaultModel, box_lineType, true);
+		our p_modeler_draw_estimatedTracks, true);
 }
 
 void structFormantEditor :: v_draw_analysis_formants () {
@@ -2273,7 +2227,7 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	FormantModelerList fml = formantModelerList.get();
 	integer numberOfRows, numberOfColums;
 	FormantModelerList_getMatrixGridLayout (fml, & numberOfRows, & numberOfColums);
-	integer numberOfVisible = FormantModelerList_getNumberOfVisible (fml);
+	integer numberOfVisible = FormantEditor_getNumberOfVisible (this);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
 	if (icol < 1 || icol > numberOfColums)
 		return;
@@ -2282,10 +2236,12 @@ void structFormantEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
 	if (index > 0 && index <= numberOfVisible && our shiftKeyPressed) {
-		integer formantIndex = FormantModelerList_selectModelerFromIndexInMatrixGrid (fml, index);
+		integer imodel = FormantEditor_selectModelerFromIndexInMatrixGrid (this, index);
+		fml -> drawingSpecification -> selected = imodel;
 		Editor_save (this, U"insert interval by selection viewer");
 		if (VowelEditor_setLogTierLabel (this))
-			VowelEditor_modifySynthesisFormantFrames (this, fml -> xmin, fml -> xmax, formantIndex);
+			VowelEditor_modifySynthesisFormantFrames (this, fml -> xmin, fml -> xmax, imodel);
+		FormantEditor_unmarkParameterChange (this);
 	}
 }
 

@@ -161,7 +161,6 @@ void FormantModeler_setParameterValueFixed (FormantModeler me, integer itrack, i
 }
 
 void FormantModeler_setParametersFree (FormantModeler me, integer fromTrack, integer toTrack, integer fromIndex, integer toIndex) {
-	const integer numberOfFormants = my trackmodelers.size;
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {

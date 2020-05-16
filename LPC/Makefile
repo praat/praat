@@ -1,7 +1,7 @@
 # Makefile of the library "LPC"
 # David Weenink and Paul Boersma
 # 20200515
-
+#  -save-temps=cwd
 include ../makefile.defs
 
 CPPFLAGS = -I . -I ../kar -I ../melder -I ../fon -I ../dwtools -I ../sys -I ../dwsys -I ../stat

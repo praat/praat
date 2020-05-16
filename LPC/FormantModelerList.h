@@ -23,26 +23,27 @@
 #include "FormantModeler.h"
 #include "FormantList.h"
 #include "Graphics.h"
+#include "melder.h"
 
-Thing_define (FormantModelerList, Function) {
-	integer numberOfModelers, numberOfTracksPerModel;
-	double varianceExponent;
-	autoINTVEC numberOfParametersPerTrack; // .size == (numberOfFormantTracks)
-	OrderedOf<structFormantModeler> formantModelers;
-	autoINTVEC selected; // models are displayed in this order
-};
-
-typedef struct FormantModelerList_drawingSpecification {
-	double box_lineWidth;
-	int box_lineType;
-	MelderColour box_colour;
-	autostring32 midTopText;
-	MelderColour midTopText_colour;
-} structFormantModelerList_drawingSpecification;
-
-autovector<structFormantModelerList_drawingSpecification> FormantModelerList_getDefaultDrawingSpecification (FormantModelerList me);
+#include "FormantModelerList_def.h"
 
 autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string);
 
+
+/* For special drawings, like the FormantEditor */
+
+autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerListDrawingSpecification (FormantModelerList me, integer special);
+
+integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerListDrawingSpecification me);
+
+void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me);
+
+void FormantModelerList_markBest3 (FormantModelerList me);
+void FormantModelerList_showBest3 (FormantModelerList me);
+autoINTVEC FormantModelerList_getBest3 (FormantModelerList me);
+
+void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums);
+
+void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, bool garnish);
 
 #endif /* _FormantModelerList_h_ */
