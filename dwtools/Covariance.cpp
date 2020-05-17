@@ -371,7 +371,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	
 	Melder_require (df2 >= 1.0, 
 		U"Not enough observations (", N, U") for this test.");
-	Melder_require (p >= N1 && p >= N2,
+	Melder_require (p <= N1 && p <= N2,
 		U"The number of observations should be larger than the number of variables.");
 	double dif = 0.0;
 	for (integer i = 1; i <= p; i ++) {
