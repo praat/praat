@@ -45,6 +45,7 @@ FUNCTION (double, r32)
 FUNCTION (double, r64)
 FUNCTION (dcomplex, c64)
 FUNCTION (dcomplex, c128)
+FUNCTION (bool, eb)
 #undef FUNCTION
 
 /*
