@@ -6,7 +6,7 @@ appendInfoLine: tab$, "Morrison_example_7.3"
 @test_Morrison_example_7_3
 appendInfoLine: tab$, "Morrison_example_3.5"
 @test_Morrison_example_3_5
-appendInfoLine: tab$, "Morrison_example_3.5"
+appendInfoLine: tab$, "Morrison_example_4.3"
 @test_Morrison_example_4_3
 appendInfoLine: "test_Covariance OK"
 
