@@ -1068,12 +1068,14 @@ DO
 		MelderInfo_open ();
 		difference = Covariances_getMultivariateCentroidDifference (me, you, covariancesAreEqual, & prob, & fisher, & df1, & df2);
 		MelderInfo_writeLine (U"Under the assumption that the two covariances are", (covariancesAreEqual ? U" " : U" not "), U"equal:");
-		MelderInfo_writeLine (U"Difference between multivariate means = ", difference);
-		MelderInfo_writeLine (U"Fisher's F = ", fisher);
-		MelderInfo_writeLine (U"Significance from zero = ", prob);
-		MelderInfo_writeLine (U"Degrees of freedom = ", df1, U", ", df2);
-		MelderInfo_writeLine (U"(Number of observations = ", me -> numberOfObservations, U", ", you -> numberOfObservations);
-		MelderInfo_writeLine (U"Dimension of covariance matrices = ", me -> numberOfRows, U")");
+		MelderInfo_writeLine (U"Difference between multivariate means: ", difference);
+		MelderInfo_writeLine (U"Fisher's F: ", fisher);
+		MelderInfo_writeLine (U"Significance from zero: ", prob);
+		MelderInfo_writeLine (U"Degrees of freedom 1: ", df1);
+		MelderInfo_writeLine (U"Degrees of freedom 2: ", df2);
+		MelderInfo_writeLine (U"Number of observations 1: ", me -> numberOfObservations);
+		MelderInfo_writeLine (U"Number of observations 2: ", you -> numberOfObservations);
+		MelderInfo_writeLine (U"Number of variables: ", me -> numberOfRows);
 		MelderInfo_close ();
 	INFO_COUPLE_END
 }
