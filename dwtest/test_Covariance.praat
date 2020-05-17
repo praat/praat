@@ -1,12 +1,36 @@
 # test_Covariance.praat
-# djmw 2015
+# djmw 2015, 2020
 
 appendInfoLine: "test_Covariance"
 appendInfoLine: tab$, "Morrison_example_7.3"
 @test_Morrison_example_7_3
 appendInfoLine: tab$, "Morrison_example_3.5"
 @test_Morrison_example_3_5
+appendInfoLine: tab$, "Morrison_example_3.5"
+@test_Morrison_example_4_3
 appendInfoLine: "test_Covariance OK"
+
+procedure test_Morrison_example_4_3
+	.covariances$ = "11.264 9.4060 7.1550 3.3791 13.5265 7.3784 2.5014 11.5796 2.6167 5.8133"
+	.means1$ = "12.57 9.57 11.49 7.97"
+	.means2$ = "8.75 5.33 8.50 4.75"
+	.covariance1 = Create simple Covariance: "4_3_1", .covariances$, .means1$, 37
+	.covariance2 = Create simple Covariance: "4_3_2", .covariances$, .means2$, 12
+	selectObject: .covariance1, .covariance2
+	.report$ =  Report multivariate mean difference: "yes"
+	.fisher = extractNumber (.report$, "Fisher's F:")
+	assert abs (.fisher - 5.18) < 0.005
+	.p = extractNumber (.report$, "Significance from zero:")
+	assert .p < 0.005
+	.numberOfObservations1 = extractNumber (.report$, "Number of observations 1:")
+	assert .numberOfObservations1 = 37
+	.numberOfObservations2 = extractNumber (.report$, "Number of observations 2:")
+	assert .numberOfObservations2 = 12
+	.dof1 = 	extractNumber (.report$, "Degrees of freedom 1:")
+	assert .dof1 == 4
+	.dof2 = 	extractNumber (.report$, "Degrees of freedom 2:")
+	assert .dof2 = 44
+endproc
 
 procedure test_Morrison_example_7_3
 	.p = 2
@@ -41,7 +65,7 @@ procedure test_Morrison_example_7_3
 	.chisq$ = fixed$ (.chisq, 2)
 	assert .chisq$ = "2.72" 
 	.cInv = 1 - (2*.p^2+3*.p-1)/(6*(.p+1)*(.k-1))*(1/31+1/31-1/62)
-	appendInfoLine: "C^-1 = ", .cInv
+	appendInfoLine: tab$, "C^-1 = ", .cInv
 	removeObject: .sm, .sf
 endproc
 
