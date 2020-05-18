@@ -31,7 +31,7 @@
 
 #include "TextGridEditor_enums.h"
 /*
-	We add one tier which ends with -log.
+	We might add one tier named formant-log if the input textgrid does not have our specific log tier.
 	
 	The explanation following is for analyses with different maximum formant frequencies (i.e. different ceilings).
 	The <name>-log tier can have multiple intervals. Each interval shows a particular analysis prefered by the user. It shows first the <ceiling> that was selected by the user, then a ';' separator and finally the number of parameters per track of the formant modeler. 
@@ -41,43 +41,29 @@
 	There is no need to permanently store the FormantModelers because they can easily
 	be calculated whenever they are needed from the information in the tiers.
 	
-	We only accept a mono Sound.
-	
-	Menus:
-	File:
-		Extract Formant...
-		Save Formant...
-	View:
-		
-	Select:
-		Keep all menu items
-	Interval: only one item:
-		Add interval on slave tier (ctrl 1)
-	Boundary:
-		Move to nearest zero crossing
-		Add on sklave tier
-		Remove
-	
+	Multichannel sounds don't make sense with respect to the analysis part. If both channels are the same sound, one is resundant.
+	If two different sounds?. May be only copy channel 1?
 */
 
 /*
-	To save / restore the state of the data part of the editor.
-	We don't save the state of FormantModelerList because this part
-	is always recalculated.
+	A TextGridView does not own its data
 */
 Thing_define (TextGridView, TextGrid) {
 	TextGrid origin;
 	autoINTVEC tierNumbers;
 };
 
+/*
+	To save / restore the state of the data part of the editor.
+	No need to save the FormantModelerList because this part
+	is always recalculated.
+*/
 Thing_define (FormantEditorData, Function) {
 	double startWindow, endWindow, startSelection, endSelection;
 	IntervalTier logTier;
 	Formant formant;
 	void v_copy (Daata data_to)
 		override;
-	//bool v_equal (Daata otherData)
-	//	override;
 };
 
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
@@ -157,10 +143,7 @@ Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	#include "FormantEditor_prefs.h"
 };
 
-void FormantEditor_init (FormantEditor me, conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket);
-
-autoFormantEditor FormantEditor_create (conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid,
-	conststring32 callbackSocket);
+autoFormantEditor FormantEditor_create (conststring32 title, Formant data, FormantList formantList, Sound sound, bool ownSound, TextGrid grid, conststring32 callbackSocket);
 
 /* End of file FormantEditor.h */
 #endif
