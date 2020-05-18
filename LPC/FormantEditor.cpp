@@ -1342,7 +1342,6 @@ static void menu_cb_AdvancedModelerDrawingSettings (FormantEditor me, EDITOR_ARG
 static void menu_cb_DrawVisibleModels (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible modelers", nullptr)
 		my v_form_pictureWindow (cmd);
-		SENTENCE (nameOnTop, U"Name on top", U"")
 		my v_form_pictureMargins (cmd);
 		BOOLEAN (crossHairs, U"Draw cross hairs", 0)
 		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
@@ -1355,37 +1354,48 @@ static void menu_cb_DrawVisibleModels (FormantEditor me, EDITOR_ARGS_FORM) {
 		my v_do_pictureMargins (cmd);
 		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
-		{// scope
-			FormantModelerList fml = my formantModelerList.get();
-			FormantModelerList_setVarianceExponent (fml, my p_modeler_varianceExponent);
-			const double xCursor = (my startSelection == my endSelection ? my startSelection : fml -> xmin - 10.0 );
-			const double yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
-			Graphics_setInner (my pictureGraphics);
-			integer defaultModel = my formantList -> defaultFormantObject;
-			FormantModelerList_drawInMatrixGrid (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
-			my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
-			my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
-			my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_showErrorBars,
-			my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
-			my p_modeler_draw_estimatedTracks, garnish);
-			Graphics_unsetInner (my pictureGraphics);
-// TODO this repeats almost everything in Editor_closePraatPicture
-			if (my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
-				Graphics_setNumberSignIsBold (my pictureGraphics, false);
-				Graphics_setPercentSignIsItalic (my pictureGraphics, false);
-				Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
-				Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
-				Graphics_textTop (my pictureGraphics, my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop::FAR_,
-					nameOnTop);
-				Graphics_setNumberSignIsBold (my pictureGraphics, true);
-				Graphics_setPercentSignIsItalic (my pictureGraphics, true);
-				Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);
-				Graphics_setUnderscoreIsSubscript (my pictureGraphics, true);
-			}
-		}
-		praat_picture_close ();
-		// Editor_closePraatPicture (me); not needed 
-		
+		FormantModelerList fml = my formantModelerList.get();
+		FormantModelerList_setVarianceExponent (fml, my p_modeler_varianceExponent);
+		const double xCursor = (my startSelection == my endSelection ? my startSelection : fml -> xmin - 10.0 );
+		const double yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
+		Graphics_setInner (my pictureGraphics);
+		FormantModelerList_drawInMatrixGrid (fml, my pictureGraphics, 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
+		my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
+		my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
+		my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_showErrorBars,
+		my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
+		my p_modeler_draw_estimatedTracks, garnish);
+		Graphics_unsetInner (my pictureGraphics);
+		Editor_closePraatPicture (me);	
+	EDITOR_END
+}
+
+static void menu_cb_DrawVisibleFormantContour (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw visible formant contour", nullptr)
+		my v_form_pictureWindow (cmd);
+		my v_form_pictureMargins (cmd);
+		my v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", true)
+	EDITOR_OK
+		my v_ok_pictureWindow (cmd);
+		my v_ok_pictureMargins (cmd);
+		my v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my p_formant_picture_garnish)
+	EDITOR_DO
+		my v_do_pictureWindow (cmd);
+		my v_do_pictureMargins (cmd);
+		my v_do_pictureSelection (cmd);
+		my pref_formant_picture_garnish () = my p_formant_picture_garnish = garnish;
+		if (! my p_formant_show)
+			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
+		Editor_openPraatPicture (me);
+		const Formant formant = reinterpret_cast<FormantEditorData> (my data) -> formant;
+		const Formant defaultFormant = my formantList->formants.at [my formantList->defaultFormantObject];
+		Formant_drawSpeckles (formant, my pictureGraphics, my startWindow, my endWindow,
+			my p_spectrogram_viewTo, my p_formant_dynamicRange,
+			my p_formant_picture_garnish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -1483,6 +1493,7 @@ void structFormantEditor :: v_createMenuItems_formant (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Advanced modeler drawing settings...", 0, menu_cb_AdvancedModelerDrawingSettings);
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
 	EditorMenu_addCommand (menu, U"Draw visible modelers...", 0, menu_cb_DrawVisibleModels);
+	EditorMenu_addCommand (menu, U"Draw visible formant contour...", 0, menu_cb_DrawVisibleFormantContour);
 }
 
 /***** HELP MENU *****/
@@ -2596,6 +2607,7 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant,
 	my logGrid = TextGridView_create (grid);
 	my logTierNumber = my originalLogTierNumber;
 	autoFormantEditorData myData = Thing_new (FormantEditorData);
+	Thing_setName (myData.get(), formant -> name.get()); // for Editor_closePraatPicture
 	myData -> xmin = formant -> xmin;
 	myData -> xmax = formant -> xmax;
 	myData -> startWindow = my startWindow;

@@ -883,8 +883,8 @@ DO
 		double marple_tol1 = 1e-6, marple_tol2 = 1e-6, huber_numberOfStdDev = 1.5, huber_tolerance = 0.000001;
 		autoFormantList result = Sound_to_FormantList_any (me, kLPC_Analysis::BURG, timeStep, maximumFormantFrequency,  maximumNumberOfFormants, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, 5, nullptr);
 		autoFormant burg = Data_copy (result -> formants.at [result -> defaultFormantObject]);
-		praat_new (burg.move(), my name.get(), U"_burg");
-	CONVERT_EACH_END (my name.get(), U"_burg")
+		praat_new (burg.move(), my name.get());
+	CONVERT_EACH_END (my name.get())
 }
 
 #define Sound_to_LPC_addWarning \
