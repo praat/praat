@@ -79,9 +79,10 @@ Thing_define (FormantEditorData, Function) {
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormantList formantList;
 	autoFormantModelerList formantModelerList;
-	TextGrid logGrid; // changed by the editor
+	autoTextGrid logGrid; // changed by the editor
+	TextGrid originalGrid;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, logTierNumber;
+	integer selectedTier, originalLogTierNumber, logTierNumber;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;

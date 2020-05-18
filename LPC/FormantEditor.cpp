@@ -86,6 +86,64 @@ void operator<<= (INTVECVU const& target, integer value) {
 		target [i] = value;
 }
 
+autoTextGrid TextGrid_createWithNoOwnershipOfTiers (TextGrid me, constINTVEC const & tiersShown) {
+	try {
+		Melder_require (tiersShown.size <= my tiers -> size,
+			U"Too many elements in the selection list.");
+		const integer min = NUMmin (tiersShown);
+		const integer max = NUMmax (tiersShown);
+		Melder_require (min > 0 && max <= my tiers -> size,
+			U"Element(s) in selection list out of range.");
+		autoTextGrid thee = Thing_new (TextGrid);
+		thy tiers = FunctionList_create ();
+		thy tiers -> _ownItems = false;
+		thy xmin = my xmin;
+		thy xmax = my xmax;
+		for (integer itier = 1; itier <= tiersShown.size; itier ++) {
+			Function anyTier = my tiers->at [tiersShown [itier]];
+			thy tiers -> addItem_ref (anyTier);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"TextGrid with no ownership of tiers not created.");
+	}	
+}
+
+void FormantEditor_setTierOrder (FormantEditor me, conststring32 tierOrder, bool reset, bool originalNumbers) {
+	const integer numberOfTiers = ( (originalNumbers || reset) ? my originalGrid -> tiers -> size : my logGrid -> tiers -> size );
+	const integer logTierNumber = ( (originalNumbers || reset) ? my originalLogTierNumber : my logTierNumber );
+	integer newLogTierNumber;
+	autoINTVEC order;
+	if (reset) {
+		order = newINTVEClinear (numberOfTiers, 1, 1);
+		newLogTierNumber = my originalLogTierNumber;
+	} else {
+		autoSTRVEC tokens = newSTRVECtokenize (tierOrder);
+		Melder_require (tokens.size > 0 && tokens.size <= numberOfTiers,
+		U"The number of tokens should not exceed ", numberOfTiers, U".");
+		integer logTierNumberFound = 0;
+		for (integer itoken = 1; itoken <= tokens.size; itoken ++) {
+			const integer value = Melder_atoi (tokens [itoken].get());
+			Melder_require (value > 0 && value <= numberOfTiers,
+				U"Number ", value, U" is out of range. It should be in the interval from 1 to ", numberOfTiers, U".");
+			integer *next = order.append ();
+			*next = value;
+			if (value == logTierNumber)
+				logTierNumberFound = itoken;
+		}
+		Melder_require (order.size > 0,
+			U"The tier list is empty");
+		Melder_require (logTierNumberFound > 0,
+			U"The log tier number (", logTierNumber, U") is not present. You have chosen ",
+				(originalNumbers ? U"original" : U"displayed" ), U" tier numbering.");
+		newLogTierNumber = logTierNumberFound;
+	}
+	TextGrid source = ( (originalNumbers || reset) ? my originalGrid : my logGrid.get() );
+	autoTextGrid newLogGrid = TextGrid_createWithNoOwnershipOfTiers (source, order.get());
+	my logGrid = newLogGrid.move();
+	my logTierNumber = newLogTierNumber;
+}
+
 void FormantEditor_selectAll (FormantEditor me) {
 	FormantModelerListDrawingSpecification_showAll (my formantModelerList -> drawingSpecification.get());
 }
@@ -349,8 +407,7 @@ bool VowelEditor_setLogTierLabel (FormantEditor me) {
 }
 
 static double _FormantEditor_computeSoundY (FormantEditor me) {
-	const TextGrid grid = my logGrid;
-	const integer numberOfTiers = grid -> tiers->size;
+	const integer numberOfTiers = my logGrid -> tiers -> size;
 	bool showAnalysis = my v_hasAnalysis () &&
 			(my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) &&
 			(my d_longSound.data || my d_sound.data);
@@ -371,8 +428,7 @@ static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier
 }
 
 static integer _FormantEditor_yWCtoTier (FormantEditor me, double yWC) {
-	const TextGrid grid = my logGrid;
-	const integer numberOfTiers = grid -> tiers->size;
+	const integer numberOfTiers =  my logGrid -> tiers -> size;
 	const double soundY = _FormantEditor_computeSoundY (me);
 	integer tierNumber = numberOfTiers - Melder_ifloor (yWC / soundY * (double) numberOfTiers);
 	if (tierNumber < 1)
@@ -421,7 +477,7 @@ static void _FormantEditor_timeToInterval (FormantEditor me, double t, integer t
 }
 
 static void checkTierSelection (FormantEditor me, conststring32 verbPhrase) {
-	if (my selectedTier < 1 || my selectedTier > my logGrid -> tiers->size)
+	if (my selectedTier < 1 || my selectedTier > my logGrid -> tiers -> size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
@@ -432,14 +488,14 @@ static void checkTierSelection_hard (FormantEditor me, conststring32 verbPhrase)
 }
 
 static integer getSelectedInterval (FormantEditor me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my logGrid -> tiers->size);
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my logGrid -> tiers -> size);
 	const IntervalTier tier = (IntervalTier) my logGrid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
 	return IntervalTier_timeToIndex (tier, my startSelection);
 }
 
 static integer getSelectedPoint (FormantEditor me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my logGrid -> tiers->size);
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my logGrid -> tiers -> size);
 	const TextTier tier = (TextTier) my logGrid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
 	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection);
@@ -468,14 +524,14 @@ static void scrollToView (FormantEditor me, double t) {
 static void menu_cb_ExtractSelectedTextGrid_preserveTimes (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart (my logGrid, my startSelection, my endSelection, true);
+	autoTextGrid extract = TextGrid_extractPart (my originalGrid, my startSelection, my endSelection, true);
 	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (FormantEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart (my logGrid, my startSelection, my endSelection, false);
+	autoTextGrid extract = TextGrid_extractPart (my originalGrid, my startSelection, my endSelection, false);
 	Editor_broadcastPublication (me, extract.move());
 }
 
@@ -491,7 +547,7 @@ static void menu_cb_WriteToTextFile (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
 		Melder_sprint (defaultName,300, my logGrid -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
-		Data_writeToTextFile (my logGrid, file);
+		Data_writeToTextFile (my originalGrid, file);
 	EDITOR_END
 }
 
@@ -517,7 +573,7 @@ static void menu_cb_DrawVisibleTextGrid (FormantEditor me, EDITOR_ARGS_FORM) {
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my logGrid, nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
+		TextGrid_Sound_draw (my logGrid.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -546,7 +602,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantEditor me, EDITOR_ARGS_F
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 					kSound_windowShape::RECTANGULAR, 1.0, true);
-			TextGrid_Sound_draw (my logGrid, sound.get(), my pictureGraphics,
+			TextGrid_Sound_draw (my logGrid.get(), sound.get(), my pictureGraphics,
 				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
 		}
 		FunctionEditor_garnish (me);
@@ -564,7 +620,7 @@ void structFormantEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 /***** QUERY MENU *****/
 
 static void menu_cb_GetStartingPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my logGrid;
+	const TextGrid grid = my logGrid.get();
 	checkTierSelection (me, U"query the starting point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -579,7 +635,7 @@ static void menu_cb_GetStartingPointOfInterval (FormantEditor me, EDITOR_ARGS_DI
 }
 
 static void menu_cb_GetEndPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my logGrid;
+	const TextGrid grid = my logGrid.get();
 	checkTierSelection (me, U"query the end point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -594,7 +650,7 @@ static void menu_cb_GetEndPointOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_GetLabelOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my logGrid;
+	const TextGrid grid = my logGrid.get();
 	checkTierSelection (me, U"query the label of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -611,8 +667,7 @@ static void menu_cb_GetLabelOfInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** VIEW MENU *****/
 
 static void do_selectAdjacentTier (FormantEditor me, bool previous) {
-	const TextGrid grid = my logGrid;
-	const integer n = grid -> tiers->size;
+	const integer n = my logGrid -> tiers -> size;
 	if (n >= 2) {
 		my selectedTier = ( previous ?
 				my selectedTier > 1 ? my selectedTier - 1 : n :
@@ -631,7 +686,7 @@ static void menu_cb_SelectNextTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void do_selectAdjacentInterval (FormantEditor me, bool previous, bool shift) {
-	const TextGrid grid = my logGrid;
+	const TextGrid grid = my logGrid.get();
 	IntervalTier intervalTier;
 	TextTier textTier;
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
@@ -782,7 +837,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantEditor me, EDITOR_ARGS_FORM) {
 		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
 		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my logGrid, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
+		TextGrid_Pitch_drawSeparately (my logGrid.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
 			speckle, my p_pitch_unit
 		);
@@ -809,12 +864,14 @@ static void do_removeBoundariesBetween (IntervalTier me, double fromTime, double
 }
 
 static void insertBoundaryOrPoint (FormantEditor me, integer itier, double t1, double t2, bool insertSecond) {
-	const TextGrid grid = my logGrid;
-	const integer numberOfTiers = grid -> tiers->size;
+	const TextGrid grid = my logGrid.get();
+	const integer numberOfTiers = my logGrid -> tiers -> size;
 	Melder_require (itier == my logTierNumber,
-		U"You are only allowed to modify the log tier (", my logTierNumber, U").");
+		U"You are only allowed to modify the log tier.");
 	IntervalTier intervalTier = (IntervalTier) grid -> tiers->at [itier];
 	Melder_assert (t1 <= t2);
+	if (t1 == t2)
+		return; // only intervals
 	/*
 		Policy:
 		Insertion of an interval should always occur if the boundaries are within the window.
@@ -995,7 +1052,7 @@ void menu_cb_RemoveInterval (FormantEditor me, EDITOR_ARGS_DIRECT) {
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantEditor me) {
-	const TextGrid grid =  my logGrid;
+	const TextGrid grid =  my logGrid.get();
 	checkTierSelection (me, U"find a text");
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -1069,16 +1126,16 @@ static void menu_cb_FindAgain (FormantEditor me, EDITOR_ARGS_DIRECT) {
 
 /***** TIER MENU *****/
 
-static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Rename tier", nullptr)
+static void menu_cb_RenameLogTier (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Rename log tier", nullptr)
 		SENTENCE (newName, U"New name", U"");
 	EDITOR_OK
-		const TextGrid grid =  my logGrid;
+		const TextGrid grid =  my logGrid.get();
 		checkTierSelection_hard (me, U"rename a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
 		SET_STRING (newName, tier -> name ? tier -> name.get() : U"")
 	EDITOR_DO
-		const TextGrid grid =  my logGrid;
+		const TextGrid grid =  my logGrid.get();
 		checkTierSelection_hard (me, U"rename a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
 		Editor_save (me, U"Rename tier");
@@ -1088,7 +1145,7 @@ static void menu_cb_RenameTier (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 static void menu_cb_RemoveBoundariesBetween (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U" Remove boundaries between", nullptr)
+	EDITOR_FORM (U"Remove boundaries between", nullptr)
 		REAL (fromTime, U"left Interval (s)", U"0.1")
 		REAL (toTime, U"right Interval (s)", U"0.1")
 	EDITOR_OK
@@ -1102,8 +1159,21 @@ static void menu_cb_RemoveBoundariesBetween (FormantEditor me, EDITOR_ARGS_FORM)
 	EDITOR_END
 }
 
+static void menu_cb_LimitTierDisplay (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Limit tiers to display", nullptr)
+	BOOLEAN (resetToNormal, U"All tiers", true)
+	SENTENCE (newOrder_string, U"Display order", U"1 2 3")
+	BOOLEAN (editorOrder, U"Numbering from editor", false)
+	EDITOR_OK
+	EDITOR_DO
+	FormantEditor_setTierOrder (me, newOrder_string, resetToNormal, ! editorOrder);
+	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);
+	EDITOR_END
+}
+
 static void menu_cb_PublishTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my logGrid;
+	const TextGrid grid =  my logGrid.get();
 	checkTierSelection (me, U"publish a tier");
 	const Function tier = grid -> tiers->at [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
@@ -1223,7 +1293,7 @@ static void menu_cb_DrawVisibleModels (FormantEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_RemoveAllTextFromTier (FormantEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my logGrid;
+	const TextGrid grid =  my logGrid.get();
 	checkTierSelection_hard (me, U"remove all text from a tier");
 		
 	IntervalTier intervalTier;
@@ -1352,13 +1422,14 @@ void structFormantEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
-	EditorMenu_addCommand (menu, U"Rename tier...", 0, menu_cb_RenameTier);
+	EditorMenu_addCommand (menu, U"Rename log tier...", 0, menu_cb_RenameLogTier);
 	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Remove boundaries between...", 0, menu_cb_RemoveBoundariesBetween);
 	EditorMenu_addCommand (menu, U"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
+	EditorMenu_addCommand (menu, U"Limit tier display...", 0, menu_cb_LimitTierDisplay);
 
 	if (our d_sound.data || our d_longSound.data) {
 		if (our v_hasAnalysis ())
@@ -1383,7 +1454,7 @@ void structFormantEditor :: v_createChildren () {
 }
 
 void structFormantEditor :: v_dataChanged () {
-	const TextGrid grid = our logGrid;
+	const TextGrid grid = our logGrid.get();
 	/*
 		Perform a minimal selection change.
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
@@ -1489,7 +1560,7 @@ static void do_drawIntervalTier (FormantEditor me, IntervalTier tier, integer it
 			Draw left boundary.
 		*/
 		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
-			const bool boundaryIsSelected = ( my selectedTier == itier && tmin == my startSelection );
+			const bool boundaryIsSelected = ( my selectedTier == my logTierNumber && my selectedTier == itier && tmin == my startSelection );
 			Graphics_setColour (my graphics.get(), boundaryIsSelected ? Melder_RED : Melder_BLUE);
 			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
@@ -1597,7 +1668,7 @@ static void do_drawTextTier (FormantEditor me, TextTier tier, integer itier) {
 
 void structFormantEditor :: v_draw () {
 	Graphics_Viewport vp1, vp2;
-	const integer ntier = our logGrid -> tiers->size;
+	const integer ntiers = our logGrid -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
 	const bool showAnalysis = v_hasAnalysis () &&
@@ -1628,13 +1699,13 @@ void structFormantEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	for (integer itier = 1; itier <= ntier; itier ++) {
+	for (integer itier = 1; itier <= ntiers; itier ++) {
 		const Function anyTier = our logGrid -> tiers->at [itier];
 		const bool tierIsSelected = ( itier == selectedTier );
 		const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
 		vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
-			1.0 - (double) itier / (double) ntier,
-			1.0 - (double) (itier - 1) / (double) ntier);
+			1.0 - (double) itier / (double) ntiers,
+			1.0 - (double) (itier - 1) / (double) ntiers);
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		if (itier != 1)
 			Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
@@ -1646,7 +1717,7 @@ void structFormantEditor :: v_draw () {
 		Graphics_setFont (our graphics.get(), oldFont);
 		Graphics_setFontSize (our graphics.get(), 14);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (our graphics.get(), our startWindow, 0.5,   tierIsSelected ? U"☞ " : U"", itier);
+		Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, U"");
 		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
@@ -1866,7 +1937,9 @@ static void do_drawWhileDragging (FormantEditor me, double numberOfTiers, bool s
 }
 
 static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTier, int shiftKeyPressed) {
-	const TextGrid grid =  my logGrid;
+	const TextGrid grid =  my logGrid.get();
+	if (iClickedTier != my logTierNumber)
+		return;
 	const integer numberOfTiers = grid -> tiers->size;
 	double xWC = xbegin, yWC;
 	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
@@ -2019,17 +2092,15 @@ static void do_dragBoundary (FormantEditor me, double xbegin, integer iClickedTi
 		my startSelection = xWC;
 	if (my endSelection == xbegin)
 		my endSelection = xWC;
-	if (my startSelection > my endSelection) {
-		double dummy = my startSelection;
-		my startSelection = my endSelection;
-		my endSelection = dummy;
-	}
+	if (my startSelection > my endSelection)
+		std::swap (my startSelection, my endSelection);
+
 	FunctionEditor_marksChanged (me, true);
 	Editor_broadcastDataChanged (me);
 }
 
 bool structFormantEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
-	const TextGrid grid = our logGrid;
+	const TextGrid grid = our logGrid.get();
 
 	/*
 		In answer to a click in the sound part,
@@ -2056,8 +2127,8 @@ bool structFormantEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 
-	double tmin, tmax;
-	_FormantEditor_timeToInterval (this, xclick, clickedTierNumber, & tmin, & tmax);
+	double tmin_, tmax_;
+	_FormantEditor_timeToInterval (this, xclick, clickedTierNumber, & tmin_, & tmax_);
 	IntervalTier intervalTier;
 	TextTier textTier;
 	_AnyTier_identifyClass (grid -> tiers->at [clickedTierNumber], & intervalTier, & textTier);
@@ -2170,8 +2241,8 @@ bool structFormantEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 			Possibility 3: the user clicked in empty space.
 		*/
 		if (intervalTier) {
-			our startSelection = tmin;
-			our endSelection = tmax;
+			our startSelection = tmin_;
+			our endSelection = tmax_;
 		}
 		selectedTier = clickedTierNumber;
 	}
@@ -2282,6 +2353,7 @@ OPTIONMENU_VARIABLE (v_prefs_addFields_shiftDragMultiple)
 OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
 OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel)
 SENTENCE_VARIABLE (v_prefs_addFields_theText)
+BOOLEAN_VARIABLE(v_prefs_textgrid_logtier_onTop)
 void structFormantEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
@@ -2298,6 +2370,7 @@ void structFormantEditor :: v_prefs_addFields (EditorCommand cmd) {
 	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
 	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
+	BOOLEAN_FIELD (v_prefs_textgrid_logtier_onTop, U"Show log tier on top", our default_textgrid_logTier_onTop ())
 }
 void structFormantEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
@@ -2307,6 +2380,7 @@ void structFormantEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
 	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
 	SET_STRING (v_prefs_addFields_theText, our p_greenString)
+	SET_BOOLEAN (v_prefs_textgrid_logtier_onTop, our p_textgrid_logTier_onTop)
 }
 
 void structFormantEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
@@ -2317,6 +2391,7 @@ void structFormantEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
 	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
 	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
+	our pref_textgrid_logTier_onTop () = our p_textgrid_logTier_onTop = v_prefs_textgrid_logtier_onTop;
 	FunctionEditor_redraw (this);
 }
 
@@ -2373,19 +2448,19 @@ static void FormantEditor_setLogTier (FormantEditor me) {
 	/*
 		Does the textgid have a log tier ?
 	*/
-	integer logTierNumber = TextGrid_and_FormantList_findLogTier (my logGrid, my formantList.get());
+	integer logTierNumber = TextGrid_and_FormantList_findLogTier (my originalGrid, my formantList.get());
 	if (logTierNumber > 0) {
-		my logTierNumber = logTierNumber;
+		my originalLogTierNumber = logTierNumber;
 		return;
 	}
 	/*
 		We didn't find a log tier.
 		Add it on top.
 	*/
-	autoIntervalTier logTier = IntervalTier_create (my logGrid -> xmin, my logGrid -> xmax);
-	my logGrid -> tiers -> addItemAtPosition_move (logTier.move(), 1);
-	TextGrid_setTierName (my logGrid, 1, U"formant-log");
-	my logTierNumber = 1;
+	autoIntervalTier logTier = IntervalTier_create (my originalGrid -> xmin, my originalGrid -> xmax);
+	my originalGrid -> tiers -> addItemAtPosition_move (logTier.move(), 0); // at end;
+	my originalLogTierNumber = my originalGrid -> tiers -> size;
+	TextGrid_setTierName (my originalGrid, my originalLogTierNumber, U"formant-log");
 }
 
 /********** EXPORTED **********/
@@ -2407,9 +2482,14 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant,
 			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
 			U"and choose “Shift times to...” from the Modify menu "
 			U"to shift the starting time of the TextGrid to zero.");
-	my logGrid = grid;
+	my originalGrid = grid;
 	my formantList = Data_copy (formantList);
 	FormantEditor_setLogTier (me);
+	autoINTVEC linear = newINTVEClinear (my originalGrid -> tiers -> size, 1, 1);
+	/*
+		Always start with default
+	*/
+	FormantEditor_setTierOrder (me, nullptr, true, true);
 	autoFormantEditorData myData = Thing_new (FormantEditorData);
 	myData -> xmin = formant -> xmin;
 	myData -> xmax = formant -> xmax;
@@ -2436,7 +2516,7 @@ autoFormantEditor FormantEditor_create (conststring32 title, Formant formant, Fo
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 			FunctionEditor_marksChanged (me.get(), false);
 		}
-		my selectedTier = my logTierNumber;
+		my selectedTier = 1;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantEditor window not created.");
