@@ -29,6 +29,7 @@
 
 Thing_implement (FormantEditor, TimeSoundAnalysisEditor, 0);
 Thing_implement (FormantEditorData, Function, 0);
+Thing_implement (TextGridView, TextGrid, 0);
 
 #include "prefs_define.h"
 #include "FormantEditor_prefs.h"
@@ -86,62 +87,140 @@ void operator<<= (INTVECVU const& target, integer value) {
 		target [i] = value;
 }
 
-autoTextGrid TextGrid_createWithNoOwnershipOfTiers (TextGrid me, constINTVEC const & tiersShown) {
+void TextGridView_setDefault (TextGridView me) {
+	my tierNumbers.resize (my origin -> tiers -> size);
+	my tiers -> size = 0;
+	for (integer itier = 1; itier <= my origin -> tiers -> size; itier ++) {
+		Function anyTier = my origin -> tiers -> at [itier];
+		my tiers -> _insertItem_ref (anyTier, itier);
+		my tierNumbers [itier] = itier;
+	}
+}
+
+integer TextGridView_getViewTierNumber (TextGridView me, integer originTierNumber) {
+	if (originTierNumber < 1 || originTierNumber > my origin -> tiers -> size)
+		return 0;
+	for (integer inum = 1; inum <= my tierNumbers.size; inum ++)
+		if (my tierNumbers [inum] == originTierNumber)
+			return inum;
+	return 0;
+}
+
+integer TextGridView_getOriginTierNumber (TextGridView me, integer viewTierNumber) {
+	if (viewTierNumber < 1 || viewTierNumber > my tiers -> size)
+		return 0;
+	return my tierNumbers [viewTierNumber];
+}
+
+bool TextGridView_isDefaultView (TextGridView me) {
+	if (my tiers -> size != my origin -> tiers -> size)
+		return false;
+	for (integer itier = 1; itier <= my tiers -> size; itier ++)
+		if (my tierNumbers [itier] != itier)
+			return false;
+	return true;
+}
+
+bool TextGridView_hasTierInView (TextGridView me, integer tierNumber) {
+	return TextGridView_getViewTierNumber (me, tierNumber) != 0;
+}
+
+autoTextGridView TextGridView_create (TextGrid me) {
 	try {
-		Melder_require (tiersShown.size <= my tiers -> size,
-			U"Too many elements in the selection list.");
-		const integer min = NUMmin (tiersShown);
-		const integer max = NUMmax (tiersShown);
-		Melder_require (min > 0 && max <= my tiers -> size,
-			U"Element(s) in selection list out of range.");
-		autoTextGrid thee = Thing_new (TextGrid);
+		autoTextGridView thee = Thing_new (TextGridView);
 		thy tiers = FunctionList_create ();
-		thy tiers -> _ownItems = false;
+		thy tiers -> _initializeOwnership (false);
 		thy xmin = my xmin;
 		thy xmax = my xmax;
-		for (integer itier = 1; itier <= tiersShown.size; itier ++) {
-			Function anyTier = my tiers->at [tiersShown [itier]];
-			thy tiers -> addItem_ref (anyTier);
-		}
+		thy origin = me;
+		TextGridView_setDefault (thee.get());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"TextGrid with no ownership of tiers not created.");
+		Melder_throw (U"TextGridView not created.");
 	}	
 }
 
-void FormantEditor_setTierOrder (FormantEditor me, conststring32 tierOrder, bool reset, bool originalNumbers) {
-	const integer numberOfTiers = ( (originalNumbers || reset) ? my originalGrid -> tiers -> size : my logGrid -> tiers -> size );
-	const integer logTierNumber = ( (originalNumbers || reset) ? my originalLogTierNumber : my logTierNumber );
-	integer newLogTierNumber;
-	autoINTVEC order;
-	if (reset) {
-		order = newINTVEClinear (numberOfTiers, 1, 1);
-		newLogTierNumber = my originalLogTierNumber;
-	} else {
-		autoSTRVEC tokens = newSTRVECtokenize (tierOrder);
-		Melder_require (tokens.size > 0 && tokens.size <= numberOfTiers,
-		U"The number of tokens should not exceed ", numberOfTiers, U".");
-		integer logTierNumberFound = 0;
-		for (integer itoken = 1; itoken <= tokens.size; itoken ++) {
-			const integer value = Melder_atoi (tokens [itoken].get());
-			Melder_require (value > 0 && value <= numberOfTiers,
-				U"Number ", value, U" is out of range. It should be in the interval from 1 to ", numberOfTiers, U".");
-			integer *next = order.append ();
-			*next = value;
-			if (value == logTierNumber)
-				logTierNumberFound = itoken;
-		}
-		Melder_require (order.size > 0,
-			U"The tier list is empty");
-		Melder_require (logTierNumberFound > 0,
-			U"The log tier number (", logTierNumber, U") is not present. You have chosen ",
-				(originalNumbers ? U"original" : U"displayed" ), U" tier numbering.");
-		newLogTierNumber = logTierNumberFound;
+void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbers) {
+	const integer size = my origin -> tiers -> size;
+	const integer min = NUMmin (newTierNumbers);
+	const integer max = NUMmax (newTierNumbers);
+	Melder_require (min > 0,
+		U"A tier number should be positive.");
+	Melder_require (max <= my tiers -> size,
+		U"A tier number should not exceed ", size, U" (the number of tiers in the original TextGrid).");
+}
+
+void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers) {
+	TextGridView_checkNewView (me, newTierNumbers);
+	autoINTVEC newOriginTierNumbers = newINTVECcopy (newTierNumbers);
+	my tierNumbers.resize (newTierNumbers.size);
+	my tiers -> size = 0;
+	for (integer itier = 1; itier <= newTierNumbers.size; itier ++) {
+		const integer originNumber = newOriginTierNumbers [itier];
+		Function anyTier = my origin -> tiers -> at [originNumber];
+		my tiers -> _insertItem_ref (anyTier, itier);
+		my tierNumbers [itier] = originNumber;
 	}
-	TextGrid source = ( (originalNumbers || reset) ? my originalGrid : my logGrid.get() );
-	autoTextGrid newLogGrid = TextGrid_createWithNoOwnershipOfTiers (source, order.get());
-	my logGrid = newLogGrid.move();
-	my logTierNumber = newLogTierNumber;
+}
+
+void TextGridView_viewAllWithSelectedOnTop (TextGridView me, integer selected) {
+	const integer originSize = my origin -> tiers -> size;
+	Melder_require (selected >= 0 && selected <= originSize,
+		U"The selected tier number should not exceed ", originSize, U".");
+	autoINTVEC tierNumbers = newINTVEClinear (originSize, 1, 1);
+	if (selected > 0) {
+		integer selectedPosition = 0;
+		for (integer inum = 1; inum <= tierNumbers.size; inum ++)
+			if (tierNumbers [inum] == selected) {
+				selectedPosition = inum;
+				break;
+			}
+		if (selectedPosition != 1) {
+			for (integer inum = selectedPosition; inum > 1; inum --)
+				tierNumbers [inum] = tierNumbers [inum - 1];
+			tierNumbers [1] = selected;
+		}
+	}
+	TextGridView_modifyView (me, tierNumbers.get());
+}
+
+
+void FormantEditor_setTierOrder (FormantEditor me, conststring32 tierNumber_string) {
+	bool logTierNumberFound = false;
+	autoSTRVEC tokens = newSTRVECtokenize (tierNumber_string);
+	autoINTVEC tierNumbers;
+	const integer logTierNumber =  my originalLogTierNumber;
+	for (integer itoken = 1; itoken <= tokens.size; itoken ++) {
+		integer value;
+		if (Melder_equ_caseInsensitive (tokens [itoken].get(), U"L")) {
+			value = logTierNumber;
+			logTierNumberFound = true;
+		} else
+			value = Melder_atoi (tokens [itoken].get());
+		integer *next = tierNumbers.append ();
+		*next = value;
+	}
+	Melder_require (tierNumbers.size > 0,
+		U"There should at least be one tier number present.");
+	/*
+		The logTier should always be present
+	*/
+	if (! logTierNumberFound) {
+		for (integer inum = 1; inum <= tierNumbers.size; inum ++)
+			if (tierNumbers [inum] == logTierNumber) {
+				logTierNumberFound = true;
+				break;
+			}
+		Melder_require (logTierNumberFound,
+			U"The log tier number (", logTierNumber, U") should be present.");
+	}
+	/*
+		Rest of checks is done in the following routine
+	*/
+	integer selectedTier = TextGridView_getOriginTierNumber (my logGrid.get(), my selectedTier);
+	TextGridView_modifyView (my logGrid.get(), tierNumbers);
+	my selectedTier = TextGridView_getViewTierNumber (my logGrid.get(), selectedTier);
+	my logTierNumber = TextGridView_getViewTierNumber (my logGrid.get(), logTierNumber);
 }
 
 void FormantEditor_selectAll (FormantEditor me) {
@@ -1159,14 +1238,32 @@ static void menu_cb_RemoveBoundariesBetween (FormantEditor me, EDITOR_ARGS_FORM)
 	EDITOR_END
 }
 
-static void menu_cb_LimitTierDisplay (FormantEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Limit tiers to display", nullptr)
-	BOOLEAN (resetToNormal, U"All tiers", true)
-	SENTENCE (newOrder_string, U"Display order", U"1 2 3")
-	BOOLEAN (editorOrder, U"Numbering from editor", false)
+static void menu_cb_ViewAllTiers (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	const integer selectedTier = TextGridView_getOriginTierNumber (my logGrid.get(), my selectedTier);
+	TextGridView_viewAllWithSelectedOnTop (my logGrid.get(), 0);
+	my logTierNumber = my originalLogTierNumber;
+	my selectedTier = TextGridView_getViewTierNumber (my logGrid.get(), selectedTier);
+	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);
+}
+
+static void menu_cb_ViewAllTiersLogOnTop (FormantEditor me, EDITOR_ARGS_DIRECT) {
+	const integer selectedTier = TextGridView_getOriginTierNumber (my logGrid.get(), my selectedTier);
+	TextGridView_viewAllWithSelectedOnTop (my logGrid.get(), my originalLogTierNumber);
+	my logTierNumber = 1;
+	my selectedTier = TextGridView_getViewTierNumber (my logGrid.get(), selectedTier);
+	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);
+}
+
+static void menu_cb_ViewTierSelection (FormantEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"View tier selection", nullptr)
+	LABEL (U"Use the original TextGrid numbers that you find on the left side of te grid.")
+	LABEL (U"You can use an 'L' instead og the log tier number.")
+	SENTENCE (newOrder_string, U"Viewing order", U"L 1")
 	EDITOR_OK
 	EDITOR_DO
-	FormantEditor_setTierOrder (me, newOrder_string, resetToNormal, ! editorOrder);
+	FormantEditor_setTierOrder (me, newOrder_string);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -1429,7 +1526,9 @@ void structFormantEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
-	EditorMenu_addCommand (menu, U"Limit tier display...", 0, menu_cb_LimitTierDisplay);
+	EditorMenu_addCommand (menu, U"View all tiers", 0, menu_cb_ViewAllTiers);
+	EditorMenu_addCommand (menu, U"View all tiers (log on top)", 0, menu_cb_ViewAllTiersLogOnTop);
+	EditorMenu_addCommand (menu, U"View tier selection...", 0, menu_cb_ViewTierSelection);
 
 	if (our d_sound.data || our d_longSound.data) {
 		if (our v_hasAnalysis ())
@@ -1699,6 +1798,7 @@ void structFormantEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+	bool isDefaultView = TextGridView_isDefaultView (our logGrid.get());
 	for (integer itier = 1; itier <= ntiers; itier ++) {
 		const Function anyTier = our logGrid -> tiers->at [itier];
 		const bool tierIsSelected = ( itier == selectedTier );
@@ -1717,7 +1817,11 @@ void structFormantEditor :: v_draw () {
 		Graphics_setFont (our graphics.get(), oldFont);
 		Graphics_setFontSize (our graphics.get(), 14);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, U"");
+		if (isDefaultView)
+			Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, U"");
+		else
+			Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, 
+				U" → ", our logGrid -> tierNumbers [itier], U"");
 		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
@@ -2489,7 +2593,8 @@ void FormantEditor_init (FormantEditor me, conststring32 title, Formant formant,
 	/*
 		Always start with default
 	*/
-	FormantEditor_setTierOrder (me, nullptr, true, true);
+	my logGrid = TextGridView_create (grid);
+	my logTierNumber = my originalLogTierNumber;
 	autoFormantEditorData myData = Thing_new (FormantEditorData);
 	myData -> xmin = formant -> xmin;
 	myData -> xmax = formant -> xmax;

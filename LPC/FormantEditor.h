@@ -65,6 +65,10 @@
 	We don't save the state of FormantModelerList because this part
 	is always recalculated.
 */
+Thing_define (TextGridView, TextGrid) {
+	TextGrid origin;
+	autoINTVEC tierNumbers;
+};
 
 Thing_define (FormantEditorData, Function) {
 	double startWindow, endWindow, startSelection, endSelection;
@@ -79,7 +83,7 @@ Thing_define (FormantEditorData, Function) {
 Thing_define (FormantEditor, TimeSoundAnalysisEditor) {
 	autoFormantList formantList;
 	autoFormantModelerList formantModelerList;
-	autoTextGrid logGrid; // changed by the editor
+	autoTextGridView logGrid;
 	TextGrid originalGrid;
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier, originalLogTierNumber, logTierNumber;
