@@ -146,7 +146,7 @@ void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbe
 	const integer max = NUMmax (newTierNumbers);
 	Melder_require (min > 0,
 		U"A tier number should be positive.");
-	Melder_require (max <= my tiers -> size,
+	Melder_require (max <= my origin -> tiers -> size,
 		U"A tier number should not exceed ", size, U" (the number of tiers in the original TextGrid).");
 }
 
@@ -1258,8 +1258,8 @@ static void menu_cb_ViewAllTiersLogOnTop (FormantEditor me, EDITOR_ARGS_DIRECT) 
 
 static void menu_cb_ViewTierSelection (FormantEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"View tier selection", nullptr)
-	LABEL (U"Use the original TextGrid numbers that you find on the left side of te grid.")
-	LABEL (U"You can use an 'L' instead og the log tier number.")
+	LABEL (U"Use original TextGrid tier numbers.")
+	LABEL (U"You can use an 'L' instead of the log tier number.")
 	SENTENCE (newOrder_string, U"Viewing order", U"L 1")
 	EDITOR_OK
 	EDITOR_DO
