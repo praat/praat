@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 7 April 2020
+# 21 May 2020
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../kar
+CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG
 
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -21,7 +21,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	espeakdata_FileInMemory.o \
-	FilterBank.o FormantGrid_extensions.o FormantModeler.o \
+	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o  \
 	HMM.o \
 	ICA.o Intensity_extensions.o \
@@ -50,7 +50,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
-	VowelEditor.o \
+	TextGridView.o VowelEditor.o \
 	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o \
 	praat_KlattGrid_init.o praat_DataModeler_init.o praat_David_init.o
 

@@ -76,6 +76,7 @@
 #include "ComplexSpectrogram.h"
 #include "Confusion.h"
 #include "Covariance.h"
+#include "DataModeler.h"
 #include "Discriminant.h"
 #include "EditDistanceTable.h"
 #include "Editor.h"
@@ -91,7 +92,6 @@
 #include "FilterBank.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
-#include "DataModeler.h"
 #include "FormantGrid_extensions.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
@@ -1075,7 +1075,11 @@ DO
 		MelderInfo_writeLine (U"Degrees of freedom 2: ", df2);
 		MelderInfo_writeLine (U"Number of observations 1: ", me -> numberOfObservations);
 		MelderInfo_writeLine (U"Number of observations 2: ", you -> numberOfObservations);
+<<<<<<< HEAD
 		MelderInfo_writeLine (U"Number of varoables: ", me -> numberOfRows);
+=======
+		MelderInfo_writeLine (U"Number of variables: ", me -> numberOfRows);
+>>>>>>> FormantEditor
 		MelderInfo_close ();
 	INFO_COUPLE_END
 }
@@ -7955,7 +7959,8 @@ void praat_uvafon_David_init () {
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classElectroglottogram,
-		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
+		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
+		classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
@@ -7967,7 +7972,7 @@ void praat_uvafon_David_init () {
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
 	structVowelEditor  :: f_preferences ();
-
+	
 	espeakdata_praat_init ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);

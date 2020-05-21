@@ -37,6 +37,7 @@ autoTable espeakdata_voices_propertiesTable;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_languages_names;
 
+#if 0
 static integer Table_getRownumberOfStringInColumn (Table me, conststring32 string, integer icol) {
 	integer row = 0;
 	if (icol > 0 && icol <= my numberOfColumns) {
@@ -49,7 +50,7 @@ static integer Table_getRownumberOfStringInColumn (Table me, conststring32 strin
 	}
 	return row;
 }
-
+#endif
 void espeakdata_praat_init () {
 	try {
 		espeak_ng_FileInMemoryManager = create_espeak_ng_FileInMemoryManager ();

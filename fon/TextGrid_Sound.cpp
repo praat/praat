@@ -345,9 +345,8 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 }
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
-	bool showBoundaries, bool useTextStyles, bool garnish)   // STEREO BUG
-{
-	integer numberOfTiers = my tiers->size;
+	bool showBoundaries, bool useTextStyles, bool garnish) {
+	integer numberOfTiers = my tiers ->size;
 
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 

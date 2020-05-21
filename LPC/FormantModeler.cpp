@@ -66,103 +66,114 @@ void structFormantModeler :: v_info () {
 	}
 }
 
-double FormantModeler_getStandardDeviation (FormantModeler me, integer iformant) {
+void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrack) {
+	if (*fromTrack == 0 && *toTrack == 0) { // auto
+		*fromTrack = 1;
+		*toTrack = my trackmodelers.size;
+		return;
+	}
+	if (*toTrack == 0)
+		*toTrack = my trackmodelers.size; // auto
+	Melder_require (*fromTrack <= *toTrack,
+		U"\"FromTrack\" should not exceed \"toTrack\".");
+	if (*toTrack > my trackmodelers.size) // questionable because 0 is an alternative
+		*toTrack = my trackmodelers.size;
+	Melder_require (*fromTrack >= 1 && *toTrack <= my trackmodelers.size,
+		U"1 \\=< \"fromTrack\" \\=< \"toTrack\" \\=< ", my trackmodelers.size, U".");
+}
+
+autoINTVEC newINTVECasNumbers (integer size, integer number) {
+	autoINTVEC target = newINTVECraw (size);
+	for (integer i = 1; i <= size; i++)
+		target [i] = number;
+	return target;
+}
+
+double FormantModeler_getStandardDeviation (FormantModeler me, integer itrack) {
 	double sigma = undefined;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		sigma = DataModeler_getDataStandardDeviation (ff);
 	}
 	return sigma;
 }
 
-double FormantModeler_getDataPointValue (FormantModeler me, integer iformant, integer index) {
+double FormantModeler_getDataPointValue (FormantModeler me, integer itrack, integer index) {
 	double value = undefined;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		value = DataModeler_getDataPointYValue (ff, index);
 	}
 	return value;
 }
 
-void FormantModeler_setDataPointValue (FormantModeler me, integer iformant, integer index, double value) {
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+void FormantModeler_setDataPointValue (FormantModeler me, integer itrack, integer index, double value) {
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
  		DataModeler_setDataPointYValue (ff, index, value);
 	}
 }
 
-double FormantModeler_getDataPointSigma (FormantModeler me, integer iformant, integer index) {
+double FormantModeler_getDataPointSigma (FormantModeler me, integer itrack, integer index) {
 	double sigma = undefined;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = (DataModeler) my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = (DataModeler) my trackmodelers.at [itrack];
 		sigma = DataModeler_getDataPointYSigma (ff, index);
 	}
 	return sigma;
 }
 
-void FormantModeler_setDataPointSigma (FormantModeler me, integer iformant, integer index, double sigma) {
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+void FormantModeler_setDataPointSigma (FormantModeler me, integer itrack, integer index, double sigma) {
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
  		DataModeler_setDataPointYSigma (ff, index, sigma);
 	}
 }
 
-kDataModelerData FormantModeler_getDataPointStatus (FormantModeler me, integer iformant, integer index) {
+kDataModelerData FormantModeler_getDataPointStatus (FormantModeler me, integer itrack, integer index) {
 	kDataModelerData value =kDataModelerData::INVALID;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		value = DataModeler_getDataPointStatus (ff, index);
 	}
 	return value;
 }
 
-void FormantModeler_setDataPointStatus (FormantModeler me, integer iformant, integer index, kDataModelerData status) {
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+void FormantModeler_setDataPointStatus (FormantModeler me, integer itrack, integer index, kDataModelerData status) {
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		DataModeler_setDataPointStatus (ff, index, status);
 	}
 }
 
-static void FormantModeler_setDataPointValueAndStatus (FormantModeler me, integer iformant, integer index, double value, kDataModelerData dataStatus) {
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+static void FormantModeler_setDataPointValueAndStatus (FormantModeler me, integer itrack, integer index, double value, kDataModelerData dataStatus) {
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		DataModeler_setDataPointValueAndStatus (ff, index, value, dataStatus);
 	}
 }
 
-void FormantModeler_setParameterValueFixed (FormantModeler me, integer iformant, integer index, double value) {
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
+void FormantModeler_setParameterValueFixed (FormantModeler me, integer itrack, integer index, double value) {
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
 		DataModeler_setParameterValueFixed (ffi, index, value);
 	}
 }
 
-void FormantModeler_setParametersFree (FormantModeler me, integer fromFormant, integer toFormant, integer fromIndex, integer toIndex) {
-	const integer numberOfFormants = my trackmodelers.size;
-	if (toFormant < fromFormant || (fromFormant == toFormant && fromFormant == 0)) {
-		fromFormant = 1;
-		toFormant = numberOfFormants;
-	}
-	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant,
-		U"Formant number(s) should be in the interval [1, ", numberOfFormants, U"].");
+void FormantModeler_setParametersFree (FormantModeler me, integer fromTrack, integer toTrack, integer fromIndex, integer toIndex) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
 
-	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
 		DataModeler_setParametersFree (ffi, fromIndex, toIndex);
 	}
 }
 
-void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, integer toFormant, kFormantModelerWeights weighFormants) {
-	integer numberOfFormants = my trackmodelers.size;
-	if (toFormant < fromFormant || (fromFormant == toFormant && fromFormant == 0)) {
-		fromFormant = 1;
-		toFormant= numberOfFormants;
-	}
-	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant, 
-		U"Formant number(s) should be in the interval [1, ", numberOfFormants, U"].");
+void FormantModeler_setDataWeighing (FormantModeler me, integer fromTrack, integer toTrack, kFormantModelerWeights weighFormants) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
 
-	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
 		kDataModelerWeights dataWeights = kDataModelerWeights::EQUAL_WEIGHTS;
 		if (weighFormants == kFormantModelerWeights::ONE_OVER_BANDWIDTH)
 			dataWeights = kDataModelerWeights::ONE_OVER_SIGMA;
@@ -175,20 +186,20 @@ void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, int
 }
 
 void FormantModeler_fit (FormantModeler me) {
-	for (integer iformant = 1; iformant <= my trackmodelers.size; iformant ++) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
+	for (integer itrack = 1; itrack <= my trackmodelers.size; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
 		DataModeler_fit (ffi);
 	}
 }
 
 void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax,
- 	integer iformant, integer iterm, bool scaled, integer numberOfPoints, bool garnish)
+ 	integer itrack, integer iterm, bool scaled, integer numberOfPoints, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	if (iformant < 1 || iformant > my trackmodelers.size)
+	if (itrack < 1 || itrack > my trackmodelers.size)
 		return;
 	Graphics_setInner (g);
-	const DataModeler ffi = my trackmodelers.at [iformant];
+	const DataModeler ffi = my trackmodelers.at [itrack];
 	DataModeler_drawBasisFunction_inside (ffi, g, tmin, tmax, fmin, fmax, iterm, scaled, numberOfPoints);
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -211,35 +222,35 @@ static integer FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xm
 static void FormantModeler_getCumulativeChiScores (FormantModeler me, VEC chisq) {
 	try {
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		const integer numberOfFormants = my trackmodelers.size;
-		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
-			const DataModeler fm = my trackmodelers.at [iformant];
+		const integer numberOfTracks = my trackmodelers.size;
+		for (integer itrack = 1; itrack <= numberOfTracks; itrack ++) {
+			const DataModeler fm = my trackmodelers.at [itrack];
 			autoVEC zscores = DataModeler_getZScores (fm);
 			autoVEC chisqif = DataModeler_getChisqScoresFromZScores (fm, zscores.get(), true); // undefined -> average
-			for (integer i = 1; i <= numberOfDataPoints; i ++)
-				chisq [i] += chisqif [i];
+			for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++)
+				chisq [ipoint] += chisqif [ipoint];
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U"cannot determine cumulative chi squares.");
 	}
 }
 
-static autoVEC FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (FormantModeler me, integer iformant, integer estimatedFormant) {
+static autoVEC FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (FormantModeler me, integer itrack, integer estimatedTrack) {
 	try {
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		const integer numberOfFormants = my trackmodelers.size;
+		const integer numberOfTracks = my trackmodelers.size;
 		autoVEC var;
-		if (iformant < 1 || iformant > numberOfFormants || estimatedFormant < 1 || estimatedFormant > numberOfFormants)
+		if (itrack < 1 || itrack > numberOfTracks || estimatedTrack < 1 || estimatedTrack > numberOfTracks)
 			return var;
 		var. resize (numberOfDataPoints);
-		const DataModeler fi = my trackmodelers.at [iformant];
-		const DataModeler fe = my trackmodelers.at [estimatedFormant];
-		for (integer i = 1; i <= numberOfDataPoints; i ++) {
-			var [i] = undefined;
-			if (fi -> data [i] .status != kDataModelerData::INVALID) {
-				const double ye = fe -> f_evaluate (fe, fe -> data [i] .x, fe -> parameters.get());
-				const double diff = ye - fi -> data [i] .y;
-				var [i] = diff * diff;
+		const DataModeler fi = my trackmodelers.at [itrack];
+		const DataModeler fe = my trackmodelers.at [estimatedTrack];
+		for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++) {
+			var [ipoint] = undefined;
+			if (fi -> data [ipoint] .status != kDataModelerData::INVALID) {
+				const double ye = fe -> f_evaluate (fe, fe -> data [ipoint] .x, fe -> parameters.get());
+				const double diff = ye - fi -> data [ipoint] .y;
+				var [ipoint] = diff * diff;
 			}
 		}
 		return var;
@@ -249,34 +260,34 @@ static autoVEC FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (Formant
 }
 
 static autoVEC FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (FormantModeler me,
-	kFormantModelerTrackShift shiftDirection, integer *fromFormant, integer *toFormant)
+	kFormantModelerTrackShift shiftDirection, integer *fromTrack, integer *toTrack)
 {
 	try {
-		const integer numberOfFormants = my trackmodelers.size;
-		if (*fromFormant < 1 || *fromFormant > numberOfFormants || *toFormant < 1 || *toFormant > numberOfFormants || *toFormant < *fromFormant) {
-			*toFormant = 1;
-			*fromFormant = numberOfFormants;
+		const integer numberOfTracks = my trackmodelers.size;
+		if (*fromTrack < 1 || *fromTrack > numberOfTracks || *toTrack < 1 || *toTrack > numberOfTracks || *toTrack < *fromTrack) {
+			*toTrack = 1;
+			*fromTrack = numberOfTracks;
 		}
-		integer formantTrack = *fromFormant, estimatedFormantTrack = *fromFormant; // FormantModeler_NOSHIFT_TRACKS
+		integer formantTrack = *fromTrack, estimatedTrack = *fromTrack; // FormantModeler_NOSHIFT_TRACKS
 		if (shiftDirection == kFormantModelerTrackShift::DOWN) {
-			estimatedFormantTrack = *fromFormant;
-			formantTrack = *fromFormant + 1;
-			*fromFormant = ( *fromFormant == 1 ? 2 : *fromFormant );
+			estimatedTrack = *fromTrack;
+			formantTrack = *fromTrack + 1;
+			*fromTrack = ( *fromTrack == 1 ? 2 : *fromTrack );
 		} else if (shiftDirection == kFormantModelerTrackShift::UP) {
-			formantTrack = *fromFormant;
-			estimatedFormantTrack = *fromFormant + 1;
-			*toFormant = ( *toFormant == numberOfFormants ? numberOfFormants - 1 : *toFormant );
+			formantTrack = *fromTrack;
+			estimatedTrack = *fromTrack + 1;
+			*toTrack = ( *toTrack == numberOfTracks ? numberOfTracks - 1 : *toTrack );
 		}
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoVEC sumOfVariances = newVECzero (numberOfDataPoints);
-		for (integer iformant = *fromFormant; iformant <= *toFormant; iformant ++) {
-			autoVEC vari = FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (me, formantTrack, estimatedFormantTrack);
-			for (integer i = 1; i <= numberOfDataPoints; i ++) {
-				if (isdefined (vari [i]))
-					sumOfVariances [i] += vari [i];
+		for (integer itrack = *fromTrack; itrack <= *toTrack; itrack ++) {
+			autoVEC vari = FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (me, formantTrack, estimatedTrack);
+			for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++) {
+				if (isdefined (vari [ipoint]))
+					sumOfVariances [ipoint] += vari [ipoint];
 			}
 			formantTrack ++;
-			estimatedFormantTrack ++;
+			estimatedTrack ++;
 		}
 		return sumOfVariances;
 	} catch (MelderError) {
@@ -285,33 +296,37 @@ static autoVEC FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks 
 }
 
 void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, kFormantModelerTrackShift shiftDirection, integer fromFormant, integer toFormant, bool garnish)
+	double ymin, double ymax, kFormantModelerTrackShift shiftDirection, integer fromTrack, integer toTrack, bool garnish)
 {
 	try {
 		integer ixmin, ixmax;
+		checkTrackAutoRange (me, & fromTrack, & toTrack);
 		Melder_require (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) > 0,
 			U"The are not enough data points in the drawing range.");
 
-		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoVEC varShifted = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, & fromFormant, & toFormant);
-		autoVEC var = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, kFormantModelerTrackShift::NO_, & fromFormant, & toFormant);
-		for (integer i = ixmin + 1; i <= ixmax; i ++) {
-			if (isdefined (varShifted [i]) && isdefined (var [i]))
-				var [i] -= varShifted [i];
+		autoVEC varShifted = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, & fromTrack, & toTrack);
+		autoVEC var = FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, kFormantModelerTrackShift::NO_, & fromTrack, & toTrack);
+		for (integer ipoint = ixmin + 1; ipoint <= ixmax; ipoint ++) {
+			if (isdefined (varShifted [ipoint]) && isdefined (var [ipoint]))
+				var [ipoint] -= varShifted [ipoint];
 		}
 		if (ymax <= ymin)
 			NUMextrema (var.part (ixmin, ixmax), & ymin, & ymax);
+		if (ymin == ymax) {
+			ymin -= 0.5;
+			ymax += 0.5;
+		}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		const DataModeler thee = my trackmodelers.at [1];
 		while (isundef (var [ixmin]) && ixmin <= ixmax)
 			ixmin ++;
 		double xp = thy data [ixmin] .x, yp = var [ixmin];
-		for (integer i = ixmin + 1; i <= ixmax; i ++) {
-			if (isdefined (var [i])) {
-				Graphics_line (g, xp, yp, thy data [i] .x, var [i]);
-				xp = thy data [i] .x;
-				yp = var [i];
+		for (integer ipoint = ixmin + 1; ipoint <= ixmax; ipoint ++) {
+			if (isdefined (var [ipoint])) {
+				Graphics_line (g, xp, yp, thy data [ipoint] .x, var [ipoint]);
+				xp = thy data [ipoint] .x;
+				yp = var [ipoint];
 			}
 		}
 		Graphics_unsetInner (g);
@@ -339,8 +354,8 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];
-		for (integer i = ixmin + 1; i <= ixmax; i ++)
-			Graphics_line (g, thy data [i - 1] .x, chisq [i - 1], thy data [i] .x, chisq [i]);
+		for (integer ipoint = ixmin + 1; ipoint <= ixmax; ipoint ++)
+			Graphics_line (g, thy data [ipoint - 1] .x, chisq [ipoint - 1], thy data [ipoint] .x, chisq [ipoint]);
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
@@ -353,24 +368,16 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 }
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm, bool garnish)
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	const integer maxTrack = my trackmodelers.size;
-	if (toTrack == 0 && fromTrack == 0) {
-		fromTrack = 1;
-		toTrack = maxTrack;
-	}
-	if (fromTrack > maxTrack)
-		return;
-	if (toTrack > maxTrack)
-		toTrack = maxTrack;
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
 	double currectFontSize = Graphics_inqFontSize (g);
-	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
-		const double xOffset_mm = ( iformant % 2 == 1 ? horizontalOffset_mm : -horizontalOffset_mm );
-		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize, xOffset_mm);
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
+		const double xOffset_wc = ( itrack % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
+		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize, xOffset_wc);
 	}
 	Graphics_setFontSize (g, currectFontSize);
 	Graphics_unsetInner (g);
@@ -383,38 +390,30 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	}
 }
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant,
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer itrack,
 	integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish) {
-	if (iformant > 0 || iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 || itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		DataModeler_normalProbabilityPlot (ff, g,  numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	}
 }
 
-static void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_mm) {
-	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
-		DataModeler ffi = my trackmodelers.at [iformant];
-		double xOffset_mm = ( iformant % 2 == 1 ? horizontalOffset_mm : -horizontalOffset_mm );
-		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0, fmax, estimated, numberOfParameters, xOffset_mm);
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		DataModeler ffi = my trackmodelers.at [itrack];
+		double xOffset_wc = ( itrack % 2 == 0 ? horizontalOffset_wc : 0.0 );
+		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack, numberOfParameters, xOffset_wc);
 	}
 }
 
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish)
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	const integer maxTrack = my trackmodelers.size;
-	if (toTrack == 0 && fromTrack == 0) {
-		fromTrack = 1;
-		toTrack = maxTrack;
-	}
-	if (fromTrack > maxTrack)
-		return;
-	if (toTrack > maxTrack)
-		toTrack = maxTrack;
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_drawTracks_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, estimated, numberOfParameters, horizontalOffset_mm);
+	FormantModeler_drawTracks_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, horizontalOffset_wc);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -425,31 +424,24 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 	}
 }
 
-static void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, int errorBars, double barWidth_mm, double horizontalOffset_mm) {
-	for (integer iformant = fromTrack; iformant <= toTrack; iformant ++) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
-		const double xOffset_mm = ( iformant % 2 == 1 ? horizontalOffset_mm : -horizontalOffset_mm );
-		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, estimated, numberOfParameters, errorBars, barWidth_mm, xOffset_mm);
+void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
+		const double xOffset_wc = ( itrack % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
+		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, numberOfParameters, errorBars, barWidth_wc, xOffset_wc);
 	}
 }
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, bool estimated, integer numberOfParameters,
-	bool errorBars, double barWidth_mm, double horizontalOffset_mm, bool garnish)
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters,
+	bool errorBars, double barWidth_wc, double horizontalOffset_wc, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	const integer maxTrack = my trackmodelers.size;
-	if (toTrack == 0 && fromTrack == 0) {
-		fromTrack = 1;
-		toTrack = maxTrack;
-	}
-	if (fromTrack > maxTrack)
-		return;
-	if (toTrack > maxTrack)
-		toTrack = maxTrack;
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, estimated, numberOfParameters, errorBars, barWidth_mm, horizontalOffset_mm);
+	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, errorBars, barWidth_wc, horizontalOffset_wc);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -460,13 +452,18 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	}
 }
 
-autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfFormants, integer numberOfDataPoints, integer numberOfParameters) {
+autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfDataPoints, integer numberOfTracks, integer numberOfParameters) {
+	autoINTVEC npar = newINTVECasNumbers (numberOfTracks, numberOfParameters);
+	return FormantModeler_create (tmin, tmax, numberOfDataPoints, npar.get());
+}
+
+autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfDataPoints, constINTVEC const& numberOfParameters) {
 	try {
 		autoFormantModeler me = Thing_new (FormantModeler);
 		my xmin = tmin;
 		my xmax = tmax;
-		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
-			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters, kDataModelerFunction::LEGENDRE);
+		for (integer itrack = 1; itrack <= numberOfParameters.size; itrack ++) {
+			autoDataModeler ff = DataModeler_create (tmin, tmax, numberOfDataPoints, numberOfParameters [itrack], kDataModelerFunction::LEGENDRE);
 			my trackmodelers. addItem_move (ff.move());
 		}
 		return me;
@@ -475,28 +472,28 @@ autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numb
 	}
 }
 
-double FormantModeler_getModelValueAtTime (FormantModeler me, integer iformant, double time) {
+double FormantModeler_getModelValueAtTime (FormantModeler me, integer itrack, double time) {
 	double f = undefined;
-	if (iformant >= 1 && iformant <= my trackmodelers.size) {
-		const DataModeler thee = my trackmodelers.at [iformant];
+	if (itrack >= 1 && itrack <= my trackmodelers.size) {
+		const DataModeler thee = my trackmodelers.at [itrack];
 		f = DataModeler_getModelValueAtX (thee, time);
 	}
 	return f;
 }
 
-double FormantModeler_getModelValueAtIndex (FormantModeler me, integer iformant, integer index) {
+double FormantModeler_getModelValueAtIndex (FormantModeler me, integer itrack, integer index) {
 	double f = undefined;
-	if (iformant >= 1 && iformant <= my trackmodelers.size) {
-		const DataModeler thee = my trackmodelers.at [iformant];
+	if (itrack >= 1 && itrack <= my trackmodelers.size) {
+		const DataModeler thee = my trackmodelers.at [itrack];
 		f = DataModeler_getModelValueAtIndex (thee, index);
 	}
 	return f;
 }
 
-double FormantModeler_getWeightedMean (FormantModeler me, integer iformant) {
+double FormantModeler_getWeightedMean (FormantModeler me, integer itrack) {
 	double f = undefined;
-	if (iformant >= 1 && iformant <= my trackmodelers.size) {
-		const DataModeler thee = my trackmodelers.at [iformant];
+	if (itrack >= 1 && itrack <= my trackmodelers.size) {
+		const DataModeler thee = my trackmodelers.at [itrack];
 		f = DataModeler_getWeightedMean (thee);
 	}
 	return f;
@@ -506,19 +503,19 @@ integer FormantModeler_getNumberOfTracks (FormantModeler me) {
 	return my trackmodelers.size;
 }
 
-integer FormantModeler_getNumberOfParameters (FormantModeler me, integer iformant) {
+integer FormantModeler_getNumberOfParameters (FormantModeler me, integer itrack) {
 	integer numberOfParameters = 0;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		numberOfParameters = ff -> numberOfParameters;
 	}
 	return numberOfParameters;
 }
 
-integer FormantModeler_getNumberOfFixedParameters (FormantModeler me, integer iformant) {
+integer FormantModeler_getNumberOfFixedParameters (FormantModeler me, integer itrack) {
 	integer numberOfParameters = 0;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		numberOfParameters = ff -> numberOfParameters;
 		numberOfParameters -= DataModeler_getNumberOfFreeParameters (ff);
 	}
@@ -526,68 +523,64 @@ integer FormantModeler_getNumberOfFixedParameters (FormantModeler me, integer if
 }
 
 
-integer FormantModeler_getNumberOfInvalidDataPoints (FormantModeler me, integer iformant) {
+integer FormantModeler_getNumberOfInvalidDataPoints (FormantModeler me, integer itrack) {
 	integer numberOfInvalidDataPoints = 0;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		numberOfInvalidDataPoints = DataModeler_getNumberOfInvalidDataPoints (ff);
 	}
 	return numberOfInvalidDataPoints;
 }
 
-double FormantModeler_getParameterValue (FormantModeler me, integer iformant, integer iparameter) {
+double FormantModeler_getParameterValue (FormantModeler me, integer itrack, integer iparameter) {
 	double value = undefined;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		DataModeler ff = my trackmodelers.at [itrack];
 		value = DataModeler_getParameterValue (ff, iparameter);
 	}
 	return value;
 }
 
-kDataModelerParameter FormantModeler_getParameterStatus (FormantModeler me, integer iformant, integer index) {
+kDataModelerParameter FormantModeler_getParameterStatus (FormantModeler me, integer itrack, integer index) {
 	kDataModelerParameter status = kDataModelerParameter::NOT_DEFINED;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		status = DataModeler_getParameterStatus (ff, index);
 	}
 	return status;
 }
 
-double FormantModeler_getParameterStandardDeviation ( FormantModeler me, integer iformant, integer index) {
+double FormantModeler_getParameterStandardDeviation ( FormantModeler me, integer itrack, integer index) {
 	double stdev = undefined;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		stdev = DataModeler_getParameterStandardDeviation (ff, index);
 	}
 	return stdev;
 }
 
-double FormantModeler_getDegreesOfFreedom (FormantModeler me, integer iformant) {
+double FormantModeler_getDegreesOfFreedom (FormantModeler me, integer itrack) {
 	double dof = 0.0;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
+	if (itrack > 0 && itrack <= my trackmodelers.size) {
+		const DataModeler ff = my trackmodelers.at [itrack];
 		dof = DataModeler_getDegreesOfFreedom (ff);
 	}
 	return dof;
 }
 
-double FormantModeler_getVarianceOfParameters (FormantModeler me, integer fromFormant, integer toFormant, integer fromIndex, integer toIndex, integer *out_numberOfFreeParameters) {
-	double variance = undefined;
-	integer numberOfFormants = my trackmodelers.size, numberOfParameters = 0, nofp;
-	if (toFormant < fromFormant || (toFormant == 0 && fromFormant == 0)) {
-		fromFormant = 1;
-		toFormant = numberOfFormants;
+double FormantModeler_getVarianceOfParameters (FormantModeler me, integer fromTrack, integer toTrack, integer fromIndex, integer toIndex, integer *out_numberOfFreeParameters) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	double variance = 0.0;
+	integer numberOfFreeParameters = 0;
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ff = my trackmodelers.at [itrack];
+		integer free;
+		variance += DataModeler_getVarianceOfParameters (ff, fromIndex, toIndex, & free);
+		numberOfFreeParameters += free;
 	}
-	if (fromFormant <= toFormant && fromFormant > 0 && toFormant <= numberOfFormants) {
-		variance = 0.0;
-		for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
-			const DataModeler ff = my trackmodelers.at [iformant];
-			variance += DataModeler_getVarianceOfParameters (ff, fromIndex, toIndex, &nofp);
-			numberOfParameters += nofp;
-		}
-	}
+
 	if (out_numberOfFreeParameters)
-		*out_numberOfFreeParameters = numberOfParameters;
+		*out_numberOfFreeParameters = numberOfFreeParameters;
 	return variance;
 }
 
@@ -604,11 +597,11 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me) {
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoTable ztable = Table_createWithoutColumnNames (numberOfDataPoints, numberOfFormants + 1);
 		Table_setColumnLabel (ztable.get(), icolt, U"time");
-		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
-			const integer icolz = iformant + 1;
-			Table_setColumnLabel (ztable.get(), icolz, Melder_cat (U"z", iformant));
-			DataModeler ffi = my trackmodelers.at [iformant];
-			if (iformant == 1) {
+		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
+			const integer icolz = itrack + 1;
+			Table_setColumnLabel (ztable.get(), icolz, Melder_cat (U"z", itrack));
+			DataModeler ffi = my trackmodelers.at [itrack];
+			if (itrack == 1) {
 				for (integer i = 1; i <= numberOfDataPoints; i ++)   // only once all tracks have same x-values
 					Table_setNumericValue (ztable.get(), i, icolt, ffi -> data [i] .x);
 			}
@@ -622,11 +615,11 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me) {
 	}	
 }
 
-autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer iformant) {
+autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer itrack) {
 	try {
-		Melder_require (iformant > 0 && iformant<= my trackmodelers.size, 
+		Melder_require (itrack > 0 && itrack<= my trackmodelers.size, 
 			U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
-		const DataModeler ff = my trackmodelers.at [iformant];
+		const DataModeler ff = my trackmodelers.at [itrack];
 		autoDataModeler thee = Data_copy (ff);
 		return thee;
 	} catch (MelderError) {
@@ -634,11 +627,11 @@ autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer if
 	}	
 }
 
-autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer iformant) {
+autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer itrack) {
 	try {
-		Melder_require (iformant > 0 && iformant<= my trackmodelers.size, 
+		Melder_require (itrack > 0 && itrack<= my trackmodelers.size, 
 			U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
-		const DataModeler dm = my trackmodelers.at [iformant];
+		const DataModeler dm = my trackmodelers.at [itrack];
 		autoCovariance thee = Data_copy (dm -> parameterCovariances.get());
 		return thee;
 	} catch (MelderError) {
@@ -648,8 +641,8 @@ autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integ
 }
 
 void FormantModeler_setTolerance (FormantModeler me, double tolerance) {
-	for (integer iformant = 1; iformant <= my trackmodelers.size; iformant ++) {
-		const DataModeler ffi = my trackmodelers.at [iformant];
+	for (integer itrack = 1; itrack <= my trackmodelers.size; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
 		DataModeler_setTolerance (ffi, tolerance);
 	}
 }
@@ -661,17 +654,23 @@ double FormantModeler_indexToTime (FormantModeler me, integer index) {
 }
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax,
-	integer numberOfFormants, integer numberOfParametersPerTrack)
-{
+	integer numberOfFormants, integer numberOfParametersPerTrack) {
+	autoINTVEC npar = newINTVECasNumbers (numberOfFormants, numberOfParametersPerTrack);
+	return Formant_to_FormantModeler (me, tmin, tmax, npar.get());
+}
+
+autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, constINTVEC const& numberOfParametersPerTrack) {
 	try {
 		integer ifmin, ifmax, posInCollection = 0;
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack,
-			U"There are not enough data points, please extend the selection.");
+		const integer maximumNumberOfParameters = NUMmax (numberOfParametersPerTrack);
+		Melder_require (numberOfDataPoints >= maximumNumberOfParameters,
+			U"There are not enough data points, please reduce the number of parameters or extend the selection.");
 		
-		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfFormants, numberOfDataPoints, numberOfParametersPerTrack);
-		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
+		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfDataPoints, numberOfParametersPerTrack);
+		Thing_setName (thee.get(), my name.get());
+		for (integer iformant = 1; iformant <= numberOfParametersPerTrack.size; iformant ++) {
 			posInCollection ++;
 			const DataModeler ffi = thy trackmodelers.at [posInCollection];
 			integer idata = 0, validData = 0;
@@ -692,7 +691,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			}
 			ffi -> weighData = kDataModelerWeights::ONE_OVER_SIGMA;
 			ffi -> tolerance = 1e-5;
-			if (validData < numberOfParametersPerTrack) {   // remove don't throw exception
+			if (validData < numberOfParametersPerTrack [iformant]) {   // remove don't throw exception
 				thy trackmodelers. removeItem (posInCollection);
 				posInCollection --;
 			}
@@ -715,16 +714,16 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, numberOfFormants);
 		autoVEC sigma = newVECraw (numberOfFormants);
 		if (useEstimates || estimateUndefineds) {
-			for (integer iformant = 1; iformant <= numberOfFormants; iformant ++)
-				sigma [iformant] = FormantModeler_getStandardDeviation (me, iformant);
+			for (integer itrack = 1; itrack <= numberOfFormants; itrack ++)
+				sigma [itrack] = FormantModeler_getStandardDeviation (me, itrack);
 		}
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const Formant_Frame thyFrame = & thy frames [iframe];
 			thyFrame -> intensity = 1.0; //???
 			thyFrame -> formant = newvectorzero <structFormant_Formant> (numberOfFormants);
 			
-			for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
-				DataModeler ffi = my trackmodelers.at [iformant];
+			for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
+				DataModeler ffi = my trackmodelers.at [itrack];
 				double f = undefined, b = f;
 				if (ffi -> data [iframe] .status != kDataModelerData::INVALID) {
 					f = ( useEstimates ? DataModeler_getModelValueAtX (ffi, ffi -> data [iframe] .x) :
@@ -732,12 +731,12 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 					b = ff -> data [iframe] .sigmaY; // copy original value
 				} else {
 					if (estimateUndefineds) {
-						f = FormantModeler_getModelValueAtTime (me, iformant, ffi -> data [iframe] .x);
-						b = sigma [iformant];
+						f = FormantModeler_getModelValueAtTime (me, itrack, ffi -> data [iframe] .x);
+						b = sigma [itrack];
 					}
 				}
-				thyFrame -> formant [iformant]. frequency = f;
-				thyFrame -> formant [iformant]. bandwidth = b;
+				thyFrame -> formant [itrack]. frequency = f;
+				thyFrame -> formant [itrack]. bandwidth = b;
 			}
 		}
 		return thee;
@@ -746,78 +745,63 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 	}
 }
 
-double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, double *out_probability, double *out_ndf) {
+double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromTrack, integer toTrack, double *out_probability, double *out_ndf) {
 	double chisq = undefined, ndfTotal = 0.0;
-	if (toFormant < fromFormant || (fromFormant == 0 && toFormant == 0)) {
-		fromFormant = 1;
-		toFormant = my trackmodelers.size;
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	chisq = 0.0;
+	integer numberOfDefined = 0;
+	for (integer itrack= fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
+		double p, df;
+		const double chisqi = DataModeler_getChiSquaredQ (ffi, & p, & df);
+		if (isdefined (chisqi)) {
+			chisq += df * chisqi;
+			ndfTotal += df;
+			numberOfDefined ++;
+		}
 	}
-	if (fromFormant >= 1 && toFormant <= my trackmodelers.size) {
-		chisq = 0.0;
-		integer numberOfDefined = 0;
-		for (integer iformant= fromFormant; iformant <= toFormant; iformant ++) {
-			const DataModeler ffi = my trackmodelers.at [iformant];
-			double p, df;
-			const double chisqi = DataModeler_getChiSquaredQ (ffi, & p, & df);
-			if (isdefined (chisqi)) {
-				chisq += df * chisqi;
-				ndfTotal += df;
-				numberOfDefined ++;
-			}
-		}
-		if (numberOfDefined == toFormant - fromFormant + 1) {   // chisq of all tracks defined
-			chisq /= ndfTotal;
-			if (out_ndf)
-				*out_ndf = ndfTotal;
-			if (out_probability)
-				*out_probability = NUMchiSquareQ (chisq, ndfTotal);
-		}
+	if (numberOfDefined == toTrack - fromTrack + 1) {   // chisq of all tracks defined
+		chisq /= ndfTotal;
+		if (out_ndf)
+			*out_ndf = ndfTotal;
+		if (out_probability)
+			*out_probability = NUMchiSquareQ (chisq, ndfTotal);
 	}
 	return chisq;
 }
 
-double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer fromFormant, integer toFormant) {
+double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer fromTrack, integer toTrack) {
 	double rSquared = undefined;
-	if (fromFormant == 0 && toFormant == 0) {
-		fromFormant = 1;
-		toFormant = my trackmodelers.size;
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	double ssreg = 0.0, sstot = 0.0;
+	for (integer itrack= fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
+		double ssregi, sstoti;
+		DataModeler_getCoefficientOfDetermination (ffi, & ssregi, & sstoti);
+		sstot += sstoti;
+		ssreg += ssregi;
 	}
-	if (fromFormant >= 1 && toFormant <= my trackmodelers.size) {
-		double ssreg = 0.0, sstot = 0.0;
-		for (integer iformant= fromFormant; iformant <= toFormant; iformant ++) {
-			const DataModeler ffi = my trackmodelers.at [iformant];
-			double ssregi, sstoti;
-			DataModeler_getCoefficientOfDetermination (ffi, & ssregi, & sstoti);
-			sstot += sstoti;
-			ssreg += ssregi;
-		}
-		rSquared = ( sstot > 0.0 ? ssreg / sstot : 1.0 );
-	}
+	rSquared = ( sstot > 0.0 ? ssreg / sstot : 1.0 );
 	return rSquared;
 }
 
-double FormantModeler_getResidualSumOfSquares (FormantModeler me, integer iformant, integer *out_numberOfDataPoints) {
+double FormantModeler_getResidualSumOfSquares (FormantModeler me, integer itrack, integer *out_numberOfDataPoints) {
 	double rss = undefined;
 	integer numberOfDataPoints = -1;
-	if (iformant > 0 && iformant <= my trackmodelers.size) {
-		const DataModeler ff = my trackmodelers.at [iformant];
-		rss = DataModeler_getResidualSumOfSquares (ff, & numberOfDataPoints);
-	}
+	if (itrack < 1 || itrack > my trackmodelers.size)
+		return undefined;
+	const DataModeler ff = my trackmodelers.at [itrack];
+	rss = DataModeler_getResidualSumOfSquares (ff, & numberOfDataPoints);
 	if (out_numberOfDataPoints)
 		*out_numberOfDataPoints = numberOfDataPoints;
 	return rss;
 }
 
-void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromFormant, integer toFormant, double numberOfSigmas) {
-	if (fromFormant == 0 && toFormant == 0) {
-		fromFormant = 1;
-		toFormant = my trackmodelers.size;
-	}
-	if (fromFormant >= 1 && toFormant <= my trackmodelers.size) {
-		for (integer iformant= fromFormant; iformant <= toFormant; iformant ++) {
-			const DataModeler ffi = my trackmodelers.at [iformant];
-			DataModeler_setParameterValuesToZero (ffi, numberOfSigmas);
-		}
+void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromTrack, integer toTrack, double numberOfSigmas) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	for (integer itrack= fromTrack; itrack <= toTrack; itrack ++) {
+		const DataModeler ffi = my trackmodelers.at [itrack];
+		DataModeler_setParameterValuesToZero (ffi, numberOfSigmas);
 	}
 }
 
@@ -835,27 +819,27 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 
 		// 1. calculate z-scores for each formant and sort them in descending order
 		DataModeler ff = my trackmodelers.at [1];
-		for (integer idata = 1; idata <= numberOfDataPoints; idata ++)
-			x [idata] = ff -> data [idata] .x;
-		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
-			const DataModeler ffi = my trackmodelers.at [iformant];
+		for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++)
+			x [ipoint] = ff -> data [ipoint] .x;
+		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
+			const DataModeler ffi = my trackmodelers.at [itrack];
 			autoVEC zscores = DataModeler_getZScores (ffi);
-			z.row (iformant) <<= zscores.get ();
+			z.row (itrack) <<= zscores.get ();
 		}
 		// 2. Do the manipulation in a copy
 		autoFormantModeler thee = Data_copy (me);
-		for (integer i = 1; i <= numberOfDataPoints; i ++) {
+		for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++) {
 			// First the easy one: first formant missing: F1' = F2; F2' = F3
-			if (isdefined (z [1] [i]) && isdefined (z [1] [i]) && isdefined (z [3] [i])) {
-				if (z [1] [i] > numberOfSigmas && z [2] [i] > numberOfSigmas && z [3] [i] > numberOfSigmas) {
+			if (isdefined (z [1] [ipoint]) && isdefined (z [1] [ipoint]) && isdefined (z [3] [ipoint])) {
+				if (z [1] [ipoint] > numberOfSigmas && z [2] [ipoint] > numberOfSigmas && z [3] [ipoint] > numberOfSigmas) {
 					// all deviations have the same sign:
 					// probably F1 is missing
 					// try if f2 <- F1 and f3 <- F2 reduces chisq
-					const double f2 = FormantModeler_getDataPointValue (me, 1, i); // F1
-					const double f3 = FormantModeler_getDataPointValue (me, 2, i); // F2
-					FormantModeler_setDataPointStatus (thee.get(), 1, i, kDataModelerData::INVALID);
-					FormantModeler_setDataPointValueAndStatus (thee.get(), 2, i, f2, kDataModelerData::VALID);
-					FormantModeler_setDataPointValueAndStatus (thee.get(), 3, i, f3, kDataModelerData::VALID);
+					const double f2 = FormantModeler_getDataPointValue (me, 1, ipoint); // F1
+					const double f3 = FormantModeler_getDataPointValue (me, 2, ipoint); // F2
+					FormantModeler_setDataPointStatus (thee.get(), 1, ipoint, kDataModelerData::INVALID);
+					FormantModeler_setDataPointValueAndStatus (thee.get(), 2, ipoint, f2, kDataModelerData::VALID);
+					FormantModeler_setDataPointValueAndStatus (thee.get(), 3, ipoint, f3, kDataModelerData::VALID);
 				}
 			}
 		}
@@ -867,21 +851,15 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 }
 
 
-double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant, integer numberOfParametersPerTrack, double power) {
-	double smoothness = undefined;
-	if (toFormant < fromFormant || (toFormant == 0 && fromFormant == 0)) {
-		fromFormant = 1;
-		toFormant = my trackmodelers.size;
-	}
-	if (fromFormant > 0 && fromFormant <= toFormant && toFormant <= my trackmodelers.size) {
-		integer nofp;
-		const double var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, & nofp);
-		double ndof;
-		const double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, nullptr, &ndof);
-		if (isdefined (var) && isdefined (chisq) && nofp > 0)
-			smoothness = log10 (pow (var / nofp, power) * (chisq / ndof));
-	}
-	return smoothness;
+double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	integer numberOfFreeParameters;
+	const double var = FormantModeler_getVarianceOfParameters (me, fromTrack, toTrack, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
+	double degreesOfFreedom;
+	const double chisq = FormantModeler_getChiSquaredQ (me, fromTrack, toTrack, nullptr, & degreesOfFreedom);
+	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
+		power * log10 ((var / numberOfFreeParameters) * (chisq / degreesOfFreedom)) :
+		undefined );
 }
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type) {
@@ -894,14 +872,14 @@ double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, intege
 		// fi and fj have equal number of data points
 		integer numberOfDataPoints = 0;
 		diff = 0.0;
-		for (integer i = 1; i <= fi -> numberOfDataPoints; i ++) {
+		for (integer ipoint = 1; ipoint <= fi -> numberOfDataPoints; ipoint ++) {
 			if (type != 0) {
-				const double fie = fi -> f_evaluate (fi, fi -> data [i] .x, fi -> parameters.get());
-				const double fje = fj -> f_evaluate (fj, fj -> data [i] .x, fj -> parameters.get());
+				const double fie = fi -> f_evaluate (fi, fi -> data [ipoint] .x, fi -> parameters.get());
+				const double fje = fj -> f_evaluate (fj, fj -> data [ipoint] .x, fj -> parameters.get());
 				diff += fabs (fie - fje);
 				numberOfDataPoints ++;
-			} else if (fi -> data [i] .status != kDataModelerData::INVALID && fj -> data [i] .status != kDataModelerData::INVALID) {
-				diff += fabs (fi -> data [i] .y - fj -> data [i] .y);
+			} else if (fi -> data [ipoint] .status != kDataModelerData::INVALID && fj -> data [ipoint] .status != kDataModelerData::INVALID) {
+				diff += fabs (fi -> data [ipoint] .y - fj -> data [ipoint] .y);
 				numberOfDataPoints ++;
 			}
 		}
@@ -923,22 +901,22 @@ double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double mi
 }
 
 void FormantModeler_reportChiSquared (FormantModeler me) {
-	const integer numberOfFormants = my trackmodelers.size;
+	const integer numberOfTracks = my trackmodelers.size;
 	double ndf = 0, probability;
-	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfFormants, U" formant track:");
+	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfTracks, U" formant track:");
 	MelderInfo_writeLine (( my weighFormants == kFormantModelerWeights::EQUAL_WEIGHTS ? U"Standard deviation is estimated from the data." :
 		( my weighFormants == kFormantModelerWeights::ONE_OVER_BANDWIDTH ? U"\tBandwidths are used as estimate for local standard deviations." :
 		( my weighFormants == kFormantModelerWeights::Q_FACTOR ? U"\t1/Q's are used as estimate for local standard deviations." :
 		U"\tSquare root of bandwidths are used as estimate for local standard deviations." ) ) ));
-	for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
-		const double chisq_f = FormantModeler_getChiSquaredQ (me, iformant, iformant, & probability, & ndf);
-		MelderInfo_writeLine (U"Formant track ", iformant, U":");
-		MelderInfo_writeLine (U"\tChi squared (F", iformant, U") = ", chisq_f);
-		MelderInfo_writeLine (U"\tProbability (F", iformant, U") = ", probability);
-		MelderInfo_writeLine (U"\tNumber of degrees of freedom (F", iformant, U") = ", ndf);
+	for (integer itrack = 1; itrack <= numberOfTracks; itrack ++) {
+		const double chisq_f = FormantModeler_getChiSquaredQ (me, itrack, itrack, & probability, & ndf);
+		MelderInfo_writeLine (U"Formant track ", itrack, U":");
+		MelderInfo_writeLine (U"\tChi squared (F", itrack, U") = ", chisq_f);
+		MelderInfo_writeLine (U"\tProbability (F", itrack, U") = ", probability);
+		MelderInfo_writeLine (U"\tNumber of degrees of freedom (F", itrack, U") = ", ndf);
 	}
-	const double chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, & probability, & ndf);
-	MelderInfo_writeLine (U"Chi squared test for the complete model with ", numberOfFormants, U" formants:");
+	const double chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfTracks, & probability, & ndf);
+	MelderInfo_writeLine (U"Chi squared test for the complete model with ", numberOfTracks, U" formants:");
 	MelderInfo_writeLine (U"\tChi squared = ", chisq);
 	MelderInfo_writeLine (U"\tProbability = ", probability);
 	MelderInfo_writeLine (U"\tNumber of degrees of freedom = ", ndf);
@@ -1088,7 +1066,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		const double nyquistFrequency = 0.5 / my dx;
 		Melder_require (maxFreq <= nyquistFrequency,
 			U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");
-		
+		autoINTVEC noPararametersPerTrack = newINTVECasNumbers (numberOfFormantTracks, numberOfParametersPerTrack);
 		double df = 0, mincriterium = 1e28;
 		if (minFreq >= maxFreq)
 			numberOfFrequencySteps = 1;
@@ -1104,14 +1082,13 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0, kSound_windowShape::RECTANGULAR, 1, 1);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
-		
 		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_burg (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
-			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack);
+			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, noPararametersPerTrack.get());
 			//TODO FormantModeler_setFormantWeighting (me, weighFormants);
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
@@ -1155,6 +1132,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			numberOfFrequencySteps = 1;
 		else
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
+		
+		autoINTVEC noPararametersPerTrack = newINTVECasNumbers (numberOfFormantTracks, numberOfParametersPerTrack);
 
 		integer istep_best = 0;
 		double optimalCeiling = minFreq;
@@ -1171,7 +1150,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
 			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
-			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack);
+			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, noPararametersPerTrack.get());
 			// TODO set weighing
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());

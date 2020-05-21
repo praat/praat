@@ -625,12 +625,13 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 			U"The domains of LPC and Sound should be equal.");
 		
 		autoSound him = Data_copy (thee);
-
+		VEC source = his z.row (1);
+		VEC sound = thy z.row (1);
 		for (integer isamp = 1; isamp <= his nx; isamp ++) {
 			const double sampleTime = Sampled_indexToX (him.get(), isamp);
 			const integer frameNumber = Sampled_xToNearestIndex (me, sampleTime);
 			if (frameNumber < 1 || frameNumber > my nx) {
-				his z [1] [isamp] = 0.0;
+				source [isamp] = 0.0;
 				continue;
 			}
 			const LPC_Frame frame = & my d_frames [frameNumber];
@@ -638,7 +639,7 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 			const integer maximumSoundDepth = isamp - 1;
 			const integer usableDepth = std::min (maximumFilterDepth, maximumSoundDepth);
 			for (integer icoef = 1; icoef <= usableDepth; icoef ++)
-				his z [1] [isamp] += frame -> a [icoef] * thy z [1] [isamp - icoef];
+				source [isamp] += frame -> a [icoef] * sound [isamp - icoef];
 		}
 		return him;
 	} catch (MelderError) {
