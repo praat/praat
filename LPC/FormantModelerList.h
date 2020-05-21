@@ -21,13 +21,15 @@
 #include "Collection.h"
 #include "Function.h"
 #include "FormantModeler.h"
+#include "FormantPath.h"
 #include "FormantList.h"
 #include "Graphics.h"
 #include "melder.h"
 
 #include "FormantModelerList_def.h"
 
-autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string);
+autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string);
+autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string); // to be removed
 
 
 /* For special drawings, like the FormantEditor */

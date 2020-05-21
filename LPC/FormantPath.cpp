@@ -63,6 +63,55 @@ autoFormantPath FormantPath_create (double fromTime, double toTime, integer numb
 	return me;
 }
 
+integer FormantPath_findPathTier (FormantPath me, TextGrid thee) {
+	STRVEC validLabels = my formantIdentifiers.get();
+	autoINTVEC minimumValidLabelLengths = newINTVECraw (validLabels.size);
+	for (integer ilabel = 1; ilabel <= validLabels.size; ilabel ++)
+		minimumValidLabelLengths [ilabel] = str32len (validLabels [ilabel]) + 1; // +1 for the extra ';' at end
+	const integer minimumLabelLength = NUMmin (minimumValidLabelLengths.get());
+	
+	for (integer itier = 1; itier <= thy tiers -> size; itier ++) {
+		const Function anyTier = thy tiers -> at [itier];
+		if (anyTier -> classInfo != classIntervalTier)
+			continue;
+		const IntervalTier maybePathTier = reinterpret_cast<IntervalTier> (anyTier);
+		if (Melder_stringMatchesCriterion (maybePathTier -> name.get(), kMelder_string::DOES_NOT_END_WITH, U"/formant", false))
+			continue;
+		/*
+			We have a potential pathTier, check if all labeled intervals are consistent with our Formant id's.
+		*/
+		bool tierIsPathTier = true;
+		for (integer interval = 1; interval <= maybePathTier -> intervals.size; interval ++) {
+			const TextInterval textInterval = maybePathTier -> intervals.at [interval];
+			conststring32 label = textInterval -> text.get();
+			bool labelMatches = true; // empty interval is ok.
+			if (label && label [0]) {
+				integer validIndex = 0;
+				const integer labelLength = str32len (label);
+				if (labelLength >= minimumLabelLength) {
+					for (integer index = 1; index <= validLabels.size; index ++) {
+						const integer validLabelLength = minimumValidLabelLengths [index];
+						if (labelLength >= validLabelLength && Melder_stringMatchesCriterion
+							(label, kMelder_string::STARTS_WITH, validLabels [index], false) &&
+							label [validLabelLength - 1] == U';') {
+							validIndex = index;
+							break;
+						}
+					}
+				}
+				labelMatches = validIndex != 0;
+			}
+			if (! labelMatches) {
+				tierIsPathTier = false;
+				break;
+			}
+		}
+		if (tierIsPathTier)
+			return itier;
+	}
+	return 0;
+}
+
 integer FormantPath_identifyFormantIndexByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
 	for (integer istr = 1; istr <= my formantIdentifiers.size; istr ++)
 		if (Melder_stringMatchesCriterion (my formantIdentifiers [istr].get(), which, criterion, caseSensitive))
@@ -88,10 +137,10 @@ static void Formant_replaceFrames (Formant target, double fromTime, double toTim
 	}
 }
 
-void Formant_replaceFrames (Formant target, double fromTime, double toTime, FormantPath sources, integer sourceIndex) {
-	Melder_assert (sourceIndex > 0 && sourceIndex <= sources -> numberOfFormants);
-	Formant source = sources -> formants.at [sourceIndex];	
-	Formant_replaceFrames (target, fromTime, toTime, source);
+void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex) {
+	Melder_assert (formantIndex > 0 && formantIndex <= my numberOfFormants);
+	Formant_replaceFrames (my formant.get(), fromTime, toTime, my formants . at [formantIndex]);
+
 }
 
 integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label) {
@@ -128,7 +177,7 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 	return Data_copy (my formant.get());
 }
 
-autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
+autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
 	try {
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
@@ -189,10 +238,18 @@ void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee) {
 	/*
 		Is there already a log/formant tier in the grid.
 	*/
-	my pathTierNumber = 1;
+	autoTextGrid copy = Data_copy (thee);
+	integer pathTierNumber = FormantPath_findPathTier (me, copy.get());
+	if (pathTierNumber == 0) {
+		TextGrid_addTier_copy (copy.get(), my path -> tiers -> at [my pathTierNumber]);
+		my pathTierNumber = copy -> tiers -> size;
+	} else {
+		my pathTierNumber = pathTierNumber;
+	}
+	my path = copy.move();
 }
 
-autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumFormantFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
+autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
 	/*
 		The domain of the TextGid can differ a little from the domain of the SOund,
 		e.g. TextGrids derived form Timit label files.
@@ -201,11 +258,10 @@ autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, 
 	Melder_require (fabs (my xmin - thy xmin) < margin && fabs (my xmax - thy xmax) < margin,
 		U"The domains of the Sound and the TextGrid ");
 	
-	autoFormantPath him = Sound_to_FormantPath_any (me, lpcType, timeStep, maximumFormantFrequency, maximumNumberOfFormants, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tol, huber_maximumNumberOfIterations, sourcesMultiChannel);
+	autoFormantPath him = Sound_to_FormantPath_any (me, lpcType, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tol, huber_maximumNumberOfIterations, sourcesMultiChannel);
 	/*
 		Merge the TextGrid into path
 	*/
-	
 	FormantPath_mergeTextGrid (him.get(), thee);
 	return him;
 }

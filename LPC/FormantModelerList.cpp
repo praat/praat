@@ -65,6 +65,42 @@ autoINTVEC newINTVECfromString (conststring32 string) {
 Thing_implement (FormantModelerList, Function, 0);
 Thing_implement (FormantModelerListDrawingSpecification, Daata, 0);
 
+autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
+	try {
+		autoFormantModelerList thee = Thing_new (FormantModelerList);
+		thy xmin = startTime;
+		thy xmax = endTime;
+		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
+		Melder_require (numberOfParametersPerTrack.size > 0 ,
+			U"The number of items in the parameter list should be larger than zero.");
+		Formant formant = (Formant) my formants.at [1];
+		integer maximumNumberOfFormants = formant -> maxnFormants;
+		Melder_require (numberOfParametersPerTrack.size <= maximumNumberOfFormants,
+			U"The number of items cannot exceed the maximum number of formants (", maximumNumberOfFormants, U").");
+		thy numberOfTracksPerModel = numberOfParametersPerTrack.size;
+		integer numberOfZeros = 0;
+		for (integer ipar = 1; ipar <= numberOfParametersPerTrack.size; ipar ++) {
+			const integer value = numberOfParametersPerTrack [ipar];
+			Melder_require (value >= 0,
+				U"Numbers in the 'Number of parameter list' should be positive.");
+			if (value == 0)
+				numberOfZeros += 1;
+		}
+		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
+		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
+		thy numberOfModelers = my formants . size;
+		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
+			Formant formanti = (Formant) my formants.at [imodel];
+			autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  thy numberOfParametersPerTrack.get());
+			Thing_setName (fm.get(), my formantIdentifiers [imodel].get());
+			thy formantModelers. addItem_move (fm.move());
+		}
+		thy drawingSpecification = FormantModelerList_to_FormantModelerListDrawingSpecification (thee.get(), my defaultFormant);		
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": FormantModelerList not created.");
+	}
+}
 autoFormantModelerList FormantList_to_FormantModelerList (FormantList me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
 	try {
 		autoFormantModelerList thee = Thing_new (FormantModelerList);

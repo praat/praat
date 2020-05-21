@@ -35,6 +35,8 @@
 #include "FormantEditor.h"
 #include "Formant_extensions.h"
 #include "FormantList.h"
+#include "FormantPath.h"
+#include "FormantPathEditor.h"
 #include "LPC.h"
 #include "MFCC.h"
 #include "LFCC.h"
@@ -68,6 +70,40 @@ static const conststring32 MODIFY_BUTTON   = U"Modify -";
 
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
+
+static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata publication) {
+	/*
+	 * Keep the gate for error handling.
+	 */
+	try {
+		praat_new (publication.move());
+		praat_updateSelection ();
+	} catch (MelderError) {
+		Melder_flushError ();
+	}
+}
+
+DIRECT (WINDOW_FormantPath_viewAndEdit) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	FIND_ONE_WITH_IOBJECT (FormantPath)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
+}
+
+DIRECT (NEW_Formant_and_FormantList_and_Sound_to_TextGrid) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	CONVERT_THREE (Formant, FormantList, Sound)
+		Melder_require (my xmin == your xmin && my xmax == your xmax && my xmin == his xmin && my xmax == his xmax,
+			U"All three domains have to be equal.");
+		autoTextGrid result = TextGrid_create (my xmin, my xmax, U"formant-log", U"");
+	CONVERT_THREE_END (my name.get())
+}
+
 
 /********************** Cepstrum  ****************************************/
 
@@ -867,6 +903,41 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nullptr) {
+	REAL (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	LABEL (U"The minimum and maximum ceilings are determined as:")
+	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
+	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps to a ceiling", U"4")
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+	CONVERT_EACH_END (my name.get())	
+}
+
+
+FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", nullptr) {
+	REAL (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	LABEL (U"The minimum and maximum ceilings are determined as:")
+	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
+	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps to a ceiling", U"4")
+	OK
+DO
+	CONVERT_TWO (Sound, TextGrid)
+		autoFormantPath result = Sound_and_TextGrid_to_FormantPath_burg (me, you, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+	CONVERT_TWO_END (my name.get())
+}
+
 FORM (NEW_Sound_to_FormantAndFormantList_burg, U"Sound: To Formant and FormantList (burg)", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
@@ -1099,8 +1170,8 @@ extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init ();
 void praat_uvafon_LPC_init () {
-	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantEditor, classFormantList, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
-
+	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantEditor, classFormantList, classFormantPath, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
+	
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, HELP_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, GRAPHICS_PowerCepstrum_draw);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line...", 0, 0, GRAPHICS_PowerCepstrum_drawTrendLine);
@@ -1167,8 +1238,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
-
 	
+	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
 	
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);
@@ -1228,12 +1299,14 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classSound, 0, U"To Formant (robust)...", U"To Formant (sl)...", 2, NEW_Sound_to_Formant_robust);
 	praat_addAction1 (classSound, 0, U"To FormantList...", U"To Formant (robust)...", 2, NEW_Sound_to_FormantList);
 	praat_addAction1 (classSound, 0, U"To Formant and FormantList (burg)...", U"To FormantList...", 1, NEW_Sound_to_FormantAndFormantList_burg);
+	praat_addAction1 (classSound, 0, U"To FormantPath (burg)...", U"To FormantList...", 1, NEW_Sound_to_FormantPath_burg);
 	praat_addAction1 (classSound, 0, U"To LPC", U"To Formant and FormantList (burg)...", 1, nullptr);
 	praat_addAction1 (classSound, 0, U"To LPC (autocorrelation)...", U"To LPC", 2, NEW_Sound_to_LPC_autocorrelation);
 	praat_addAction1 (classSound, 0, U"To LPC (covariance)...", U"To LPC (autocorrelation)...", 2, NEW_Sound_to_LPC_covariance);
 	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 2, NEW_Sound_to_LPC_burg);
 	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 2, NEW_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"To FormantPath (burg)", 0, 0, NEW_Sound_and_TextGrid_to_FormantPath_burg);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, GRAPHICS_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0, REAL_VocalTract_getLength);

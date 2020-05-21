@@ -454,16 +454,6 @@ DIRECT (WINDOW_FormantEditor_viewAndEdit4) {
 	END
 }
 
-DIRECT (NEW_Formant_and_FormantList_and_Sound_to_TextGrid) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	CONVERT_THREE (Formant, FormantList, Sound)
-		Melder_require (my xmin == your xmin && my xmax == your xmax && my xmin == his xmin && my xmax == his xmax,
-			U"All three domains have to be equal.");
-		autoTextGrid result = TextGrid_create (my xmin, my xmax, U"formant-log", U"");
-	CONVERT_THREE_END (my name.get())
-}
-
 /********************** FormantModeler ******************************/
 
 FORM (GRAPHICS_FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr) {
@@ -1250,7 +1240,6 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
 		praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval_constrained_robust);
 	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, NEW_Table_to_DataModeler);
-	praat_addAction3 (classFormant, 1, classFormantList, 1, classSound, 1, U"To TextGrid", nullptr, 0, NEW_Formant_and_FormantList_and_Sound_to_TextGrid);
 	praat_addAction4 (classFormant, 1, classFormantList, 1, classSound, 1, classTextGrid, 1, U"View & Edit...", nullptr, praat_ATTRACTIVE, WINDOW_FormantEditor_viewAndEdit4);
 }
 

@@ -27,9 +27,9 @@
 #include "Sound.h"
 #include "LPC.h"
 #include "TextGrid.h"
+#include "TextGridView.h"
 #include "TimeSoundAnalysisEditor.h"
 
-#include "TextGridEditor_enums.h"
 /*
 	We might add one tier named formant-log if the input textgrid does not have our specific log tier.
 	
@@ -44,14 +44,6 @@
 	Multichannel sounds don't make sense with respect to the analysis part. If both channels are the same sound, one is resundant.
 	If two different sounds?. May be only copy channel 1?
 */
-
-/*
-	A TextGridView does not own its data
-*/
-Thing_define (TextGridView, TextGrid) {
-	TextGrid origin;
-	autoINTVEC tierNumbers;
-};
 
 /*
 	To save / restore the state of the data part of the editor.

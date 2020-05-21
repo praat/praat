@@ -41,21 +41,25 @@ Formant FormantPath_identifyFormantByCriterion (FormantPath me, kMelder_string w
 
 integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label);
 
-void Formant_replaceFrames (Formant target, double fromTime, double toTime, FormantPath source, integer sourceIndex);
+void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex);
+
+integer FormantPath_findPathTier (FormantPath me, TextGrid thee);
+
+void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee);
 
 autoFormant FormantPath_extractFormant (FormantPath me);
 
 void FormantPath_reconstructFormant (FormantPath me);
 
-autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFormantFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
+autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
 
-static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumFormantFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling) {
+static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling) {
 	return Sound_to_FormantPath_any (me, kLPC_Analysis::BURG, timeStep, maximumFormantFrequency, maximumNumberOfFormants, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
-autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumFormantFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
+autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
 
-static inline autoFormantPath Sound_and_TextGrid_to_FormantPath_burg (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumFormantFrequency, double maximumNumberOfFormants, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling) {
+static inline autoFormantPath Sound_and_TextGrid_to_FormantPath_burg (Sound me, TextGrid thee, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling) {
 	return Sound_and_TextGrid_to_FormantPath_any (me, thee, kLPC_Analysis::BURG, timeStep, maximumFormantFrequency, maximumNumberOfFormants, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
