@@ -19,7 +19,6 @@
 #include "praatP.h"
 #include "DataModeler.h"
 #include "Formant_extensions.h"
-#include "FormantEditor.h"
 #include "FormantModeler.h"
 #include "OptimalCeilingTierEditor.h"
 #include "Pitch.h"
@@ -430,29 +429,6 @@ DO
 	autoFormant result = Formant_extractPart (him, fromTime, toTime);
 	praat_new (result.move(), his name.get(), U"_part");
 END }
-
-static void cb_FormantEditor_publication (Editor /* editor */, autoDaata publication) {
-	/*
-	 * Keep the gate for error handling.
-	 */
-	try {
-		praat_new (publication.move());
-		praat_updateSelection ();
-	} catch (MelderError) {
-		Melder_flushError ();
-	}
-}
-
-DIRECT (WINDOW_FormantEditor_viewAndEdit4) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_FOUR_WITH_IOBJECT (Formant, FormantList, Sound, TextGrid)
-		autoFormantEditor editor = FormantEditor_create (ID_AND_FULL_NAME, me, you, him, true, she, nullptr);
-		Editor_setPublicationCallback (editor.get(), cb_FormantEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
-}
 
 /********************** FormantModeler ******************************/
 
@@ -1113,10 +1089,8 @@ DO
 
 void praat_DataModeler_init ();
 void praat_DataModeler_init () {
-	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classFormantEditorData, classOptimalCeilingTier, classOptimalCeilingTierEditor, nullptr);
+	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, nullptr);
 	
-	structFormantEditor  :: f_preferences ();
-
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, NEW1_DataModeler_createSimple);
 
 	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, GRAPHICS_DataModeler_speckle);
@@ -1240,7 +1214,6 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
 		praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval_constrained_robust);
 	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, NEW_Table_to_DataModeler);
-	praat_addAction4 (classFormant, 1, classFormantList, 1, classSound, 1, classTextGrid, 1, U"View & Edit...", nullptr, praat_ATTRACTIVE, WINDOW_FormantEditor_viewAndEdit4);
 }
 
 /* End of file praat_DataModeler_init.cpp 1566*/

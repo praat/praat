@@ -17,7 +17,6 @@
  */
 
 #include "FormantPathEditor.h"
-#include "FormantList_and_TextGrid.h"
 #include "EditorM.h"
 #include "praat.h"
 #include "melder_kar.h"
@@ -28,7 +27,8 @@
 #include "TextGrid_extensions.h"
 
 Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
-Thing_implement (FormantPathEditorData, Function, 0);
+Thing_implement (FormantPathEditorStateData, Function, 0);
+Thing_implement (FormantPathEditorStateHistory, Ordered, 0);
 
 #include "prefs_define.h"
 #include "FormantPathEditor_prefs.h"
@@ -41,35 +41,14 @@ Thing_implement (FormantPathEditorData, Function, 0);
 static void insertBoundaryOrPoint (FormantPathEditor me, integer itier, double t1, double t2, bool insertSecond);
 // end forward
 
-/* 
-	The Editor_save is way too heavy.
-	We would only need tio save the IntervalTier, the rest Formant can be restored fronm the data.
-*/
-#if 0
-void structFormantPathEditor :: v_restoreData () {
-	if (our data && our previousData) {
-		FormantPathEditorData current = static_cast<FormantPathEditorData> (our data);
-		FormantPathEditorData previous = static_cast<FormantPathEditorData> (our previousData.get());
-		current -> startWindow = previous -> startWindow;
-		current -> endWindow = previous -> endWindow;
-		current -> startSelection = previous -> startSelection;
-		current -> endSelection = previous -> endSelection;
-		Thing_swap (current -> pathTier, previous -> pathTierTier);
-		FormantPath_reconstructFormant (this);
-	}
+
+void FormantPathEditor_save (FormantPathEditor me, conststring32 command) {
+	
 }
 
-void structFormantPathEditorData :: v_copy (Daata data_to) {
-	FormantPathEditorData thee = static_cast<FormantPathEditorData> (data_to);
-	structFunction :: v_copy (thee);
-	thy startWindow = startWindow;
-	thy endWindow = endWindow;
-	thy startSelection = startSelection;
-	thy endSelection = endSelection;
-	autoIntervalTier tier = Data_copy (pathTier);
-	thy pathTier = tier.releaseToAmbiguousOwner ();
+void FormantPathEditor_undo (FormantPathEditor me) {
+	
 }
-#endif
 
 void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
@@ -92,7 +71,7 @@ void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNum
 	const integer pathTierNumber =  formantPath -> pathTierNumber;
 	for (integer itoken = 1; itoken <= tokens.size; itoken ++) {
 		integer value;
-		if (Melder_equ_caseInsensitive (tokens [itoken].get(), U"L")) {
+		if (Melder_equ_caseInsensitive (tokens [itoken].get(), U"P")) {
 			value = pathTierNumber;
 			pathTierNumberFound = true;
 		} else
@@ -593,7 +572,7 @@ static void menu_cb_ExtendSelectNextInterval (FormantPathEditor me, EDITOR_ARGS_
 static void menu_cb_MoveBtoZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
-		Editor_save (me, U"Move start of selection to nearest zero crossing");
+		FormantPathEditor_save (me, U"Move start of selection to nearest zero crossing");
 		my startSelection = zero;
 		if (my startSelection > my endSelection)
 			std::swap (my startSelection, my endSelection);
@@ -604,7 +583,7 @@ static void menu_cb_MoveBtoZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_MoveCursorToZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (isdefined (zero)) {
-		Editor_save (me, U"Move cursor to nearest zero crossing");
+		FormantPathEditor_save (me, U"Move cursor to nearest zero crossing");
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me, true);
 	}
@@ -613,7 +592,7 @@ static void menu_cb_MoveCursorToZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) 
 static void menu_cb_MoveEtoZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
-		Editor_save (me, U"Move end of selection to nearest zero crossing");
+		FormantPathEditor_save (me, U"Move end of selection to nearest zero crossing");
 		my endSelection = zero;
 		if (my startSelection > my endSelection)
 			std::swap (my startSelection, my endSelection);
@@ -779,7 +758,7 @@ static void insertBoundaryOrPoint (FormantPathEditor me, integer itier, double t
 }
 
 static void menu_cb_InsertInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	Editor_save (me, U"Insert interval");
+	FormantPathEditor_save (me, U"Insert interval");
 	do_insertIntervalOnPathTier (me, my pathTierNumber);
 }
 
@@ -810,7 +789,7 @@ static void menu_cb_ResetTextAndFormants (FormantPathEditor me, EDITOR_ARGS_DIRE
 			Identify which formant "belong" to this interval
 		*/
 		TextInterval textInterval = pathTier -> intervals .at [intervalNumber];
-		Editor_save (me, U"Reset text and formants");
+		FormantPathEditor_save (me, U"Reset text and formants");
 		TextInterval_removeText (textInterval);
 		FormantPath_replaceFrames (formantPath, my startSelection, my endSelection, formantPath -> defaultFormant);
 		FormantPathEditor_deselect (me);
@@ -833,7 +812,7 @@ void menu_cb_RemoveInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	TextInterval left  = pathTier -> intervals.at [std::max (iinterval - 1, 1_integer)];
 	TextInterval middle = pathTier -> intervals.at [iinterval];
 	TextInterval right = pathTier -> intervals.at [std::min (iinterval + 1, pathTier -> intervals.size)];
-	Editor_save (me, U"Remove interval");
+	FormantPathEditor_save (me, U"Remove interval");
 	if (iinterval > 1 && iinterval < pathTier -> intervals.size) {
 		Melder_require (Melder_equ (left -> text.get(), right -> text.get()),
 			U"We cannot remove this interval because its left and right interval texts are not equal.");		
@@ -957,7 +936,7 @@ static void menu_cb_RenameLogTier (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		const TextGrid grid =  my pathGridView.get();
 		checkTierSelection_hard (me, U"rename a tier");
 		const Function tier = grid -> tiers->at [my selectedTier];
-		Editor_save (me, U"Rename tier");
+		FormantPathEditor_save (me, U"Rename tier");
 		Thing_setName (tier, newName);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -1001,7 +980,7 @@ static void menu_cb_ViewTierSelection (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"View tier selection", nullptr)
 	LABEL (U"Use original TextGrid tier numbers.")
 	LABEL (U"You can use an 'P' instead of the path tier number.")
-	SENTENCE (newOrder_string, U"Viewing order", U"L 1")
+	SENTENCE (newOrder_string, U"Viewing order", U"P 1")
 	EDITOR_OK
 	EDITOR_DO
 	FormantPathEditor_setTierOrder (me, newOrder_string);
@@ -1149,7 +1128,7 @@ static void menu_cb_RemoveAllTextFromTier (FormantPathEditor me, EDITOR_ARGS_DIR
 	TextTier textTier;
 	_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 
-	Editor_save (me, U"Remove text from tier");
+	FormantPathEditor_save (me, U"Remove text from tier");
 	if (intervalTier)
 		IntervalTier_removeText (intervalTier);
 	else
@@ -1199,7 +1178,7 @@ static void menu_cb_BoundariesToNearestZeroCrossing (FormantPathEditor me, EDITO
 	Melder_require (zeroRight > midInterval -> xmin,
 		U"The new right boundary should not move to the left of the old left boundary.");
 	
-	Editor_save (me, U"Boundaries to nearest zero crossings");
+	FormantPathEditor_save (me, U"Boundaries to nearest zero crossings");
 	
 	if (midIndex == 1) { // Only move right boundary
 		rightInterval = pathTier -> intervals.at [rightIndex];
@@ -1898,7 +1877,7 @@ static void do_dragBoundary (FormantPathEditor me, double xbegin, integer iClick
 		return;
 	}
 
-	Editor_save (me, U"Drag");
+	FormantPathEditor_save (me, U"Drag");
 
 	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 		if (selectedTier [itier]) {
@@ -2158,7 +2137,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		FormantPath formantPath = (FormantPath) our data;
 		integer imodel = FormantPathEditor_selectModelerFromIndexInMatrixGrid (this, index);
 		fml -> drawingSpecification -> selected = imodel;
-		Editor_save (this, U"insert interval by selection viewer");
+		FormantPathEditor_save (this, U"insert interval by selection viewer");
 		if (FormantPathEditor_setPathTierLabel (this))
 			FormantPath_replaceFrames (formantPath, fml -> xmin, fml -> xmax, imodel);
 		FormantPathEditor_unmarkParameterChange (this);
@@ -2300,8 +2279,10 @@ void structFormantPathEditor :: v_updateMenuItems_file () {
 autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
-		TimeSoundAnalysisEditor_init (me.get(), title, formantPath, formantPath -> sound.get(), true);
+		
+		TimeSoundAnalysisEditor_init (me.get(), title, formantPath, formantPath -> sound.get(), false);
 		my pathGridView = TextGridView_create (formantPath -> path.get());
+		my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), formantPath -> pathTierNumber);
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		my formantModelerList = FormantPath_to_FormantModelerList ((FormantPath) my data, my startWindow, my endWindow, my p_modeler_numberOfParametersPerTrack);
@@ -2312,7 +2293,6 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 			FunctionEditor_marksChanged (me.get(), false);
 		}
-		my selectedTier = 1;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantPathEditor window not created.");

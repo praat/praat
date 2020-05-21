@@ -1075,11 +1075,7 @@ DO
 		MelderInfo_writeLine (U"Degrees of freedom 2: ", df2);
 		MelderInfo_writeLine (U"Number of observations 1: ", me -> numberOfObservations);
 		MelderInfo_writeLine (U"Number of observations 2: ", you -> numberOfObservations);
-<<<<<<< HEAD
-		MelderInfo_writeLine (U"Number of varoables: ", me -> numberOfRows);
-=======
 		MelderInfo_writeLine (U"Number of variables: ", me -> numberOfRows);
->>>>>>> FormantEditor
 		MelderInfo_close ();
 	INFO_COUPLE_END
 }

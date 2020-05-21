@@ -22,6 +22,8 @@ prefs_begin (FormantPathEditor)
 	prefs_override_int         (FormantPathEditor, shellHeight,                       1, U"600")	
 	prefs_override_bool        (FormantPathEditor, picture_garnish,                   1, true)
 	prefs_override_bool        (FormantPathEditor, showSelectionViewer,               1, true)
+	prefs_override_bool        (FormantPathEditor, spectrogram_show,                  1, true)
+	prefs_override_bool        (FormantPathEditor, formant_show,                      1, true)
 	
 // from TextGridEditor
 	prefs_add_bool_with_data   (FormantPathEditor, useTextStyles,          1, false)

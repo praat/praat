@@ -52,16 +52,24 @@
 	No need to save the FormantModelerList because this part
 	is always recalculated.
 */
-Thing_define (FormantPathEditorData, Function) {
-	double startWindow, endWindow, startSelection, endSelection;
+Thing_define (FormantPathEditorStateData, Function) { // (startWindow, endWindow)
+	conststring32 givenCommand;
+	double startSelection, endSelection;
 	IntervalTier pathTier;
-	void v_copy (Daata data_to)
-		override;
+	conststring32 parameters;
+	conststring32 varianceExponent;
+	INTVEC tierNumbers;
 };
+
+Collection_define (FormantPathEditorStateHistory, OrderedOf, FormantPathEditorStateData) {
+	integer current;
+};
+	
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	autoFormantModelerList formantModelerList;
 	autoTextGridView pathGridView;
+	autoFormantPathEditorStateHistory stateHistory;
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier, pathTierNumber;
 	bool suppressRedraw;
@@ -128,8 +136,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	void v_createMenuItems_pitch_picture (EditorMenu menu)
 		override;
 	void v_createMenuItems_formant (EditorMenu menu)
-		override;
-	void v_restoreData ()
 		override;
 	#include "FormantPathEditor_prefs.h"
 };

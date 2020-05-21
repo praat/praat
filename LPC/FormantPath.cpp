@@ -58,7 +58,7 @@ autoFormantPath FormantPath_create (double fromTime, double toTime, integer numb
 	Function_init (me.get(), fromTime, toTime);
 	my formantIdentifiers = autoSTRVEC (numberOfFormantObjects);
 	my numberOfFormants = numberOfFormantObjects;
-	my path = TextGrid_create (fromTime, toTime, U"log/formant", U"");
+	my path = TextGrid_create (fromTime, toTime, U"path/formant", U"");
 	my pathTierNumber = 1;
 	return me;
 }
@@ -183,12 +183,13 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
 		double minimumCeiling = maximumFrequency - numberOfStepsToACeiling * ceilingStep;
 		Melder_require (minimumCeiling > 0,
-			U"The minim ceiling should be positive. Decrease the 'ceiling step' or the 'number of steps' or both.");
+			U"The minimum ceiling should be positive. Decrease the 'ceiling step' or the 'number of steps' or both.");
 		double maximumCeiling = maximumFrequency + numberOfStepsToACeiling * ceilingStep;		
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");		
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfCeilings);
+		thy sound = Data_copy (me);
 		thy defaultFormant = numberOfStepsToACeiling + 1;
 		autoSound sources [1 + numberOfCeilings];
 		const double formantSafetyMargin = 50.0;
@@ -218,6 +219,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			}
 		}
 		Melder_assert (thy formants.size == thy numberOfFormants); // maintain invariant
+		thy formant = Data_copy (thy formants. at [thy defaultFormant]);
 		if (sourcesMultiChannel) {
 			Sound mid = sources [numberOfStepsToACeiling].get();
 			autoSound multiChannel = Sound_create (numberOfCeilings, mid -> xmin, mid -> xmax, mid -> nx, mid -> dx, mid -> x1);
@@ -239,14 +241,14 @@ void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee) {
 		Is there already a log/formant tier in the grid.
 	*/
 	autoTextGrid copy = Data_copy (thee);
+	integer oldPathTierNumber = my pathTierNumber;
 	integer pathTierNumber = FormantPath_findPathTier (me, copy.get());
 	if (pathTierNumber == 0) {
 		TextGrid_addTier_copy (copy.get(), my path -> tiers -> at [my pathTierNumber]);
-		my pathTierNumber = copy -> tiers -> size;
-	} else {
-		my pathTierNumber = pathTierNumber;
+		pathTierNumber = copy -> tiers -> size;
 	}
 	my path = copy.move();
+	my pathTierNumber = pathTierNumber;
 }
 
 autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
@@ -254,9 +256,9 @@ autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, 
 		The domain of the TextGid can differ a little from the domain of the SOund,
 		e.g. TextGrids derived form Timit label files.
 	*/
-	double margin = 1.0 / 8000.0;
+	double margin = 0.004;
 	Melder_require (fabs (my xmin - thy xmin) < margin && fabs (my xmax - thy xmax) < margin,
-		U"The domains of the Sound and the TextGrid ");
+		U"The domains of the Sound and the TextGrid should be equal within 0.003 s.");
 	
 	autoFormantPath him = Sound_to_FormantPath_any (me, lpcType, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tol, huber_maximumNumberOfIterations, sourcesMultiChannel);
 	/*
