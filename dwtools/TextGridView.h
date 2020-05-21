@@ -50,6 +50,8 @@ static inline bool TextGridView_hasTierInView (TextGridView me, integer tierNumb
 
 autoTextGridView TextGridView_create (TextGrid me);
 
+autoTextGrid TextGridView_to_TextGrid (TextGridView me);
+
 void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbers);
 
 void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers);

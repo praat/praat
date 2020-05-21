@@ -71,6 +71,15 @@ autoTextGridView TextGridView_create (TextGrid me) {
 	}	
 }
 
+autoTextGrid TextGridView_to_TextGrid (TextGridView me) {
+	autoTextGrid thee = TextGrid_createWithoutTiers (my xmin, my xmax);
+	for (integer itier = 1; itier <= my tiers -> size; itier ++) {
+		autoFunction tierCopy = Data_copy (my tiers -> at [itier]);
+		thy tiers ->  addItem_move (tierCopy.move());
+	}
+	return thee;
+}
+
 void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbers) {
 	const integer size = my origin -> tiers -> size;
 	const integer min = NUMmin (newTierNumbers);
