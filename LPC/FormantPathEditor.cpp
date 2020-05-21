@@ -327,14 +327,16 @@ static void scrollToView (FormantPathEditor me, double t) {
 static void menu_cb_ExtractSelectedTextGrid_preserveTimes (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart (my pathGridView.get(), my startSelection, my endSelection, true);
+	autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+	autoTextGrid extract = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, true);
 	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart (my pathGridView.get(), my startSelection, my endSelection, false);
+	autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+	autoTextGrid extract = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, false);
 	Editor_broadcastPublication (me, extract.move());
 }
 
@@ -350,7 +352,8 @@ static void menu_cb_WriteToTextFile (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
 		Melder_sprint (defaultName,300, my pathGridView -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
-		Data_writeToTextFile (my pathGridView.get(), file);
+		autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+		Data_writeToTextFile (grid.get(), file);
 	EDITOR_END
 }
 
@@ -2200,7 +2203,6 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
 	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
-	BOOLEAN_FIELD (v_prefs_textgrid_pathtier_onTop, U"Show path tier on top", our default_textgrid_pathTier_onTop ())
 }
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
@@ -2210,7 +2212,6 @@ void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
 	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
 	SET_STRING (v_prefs_addFields_theText, our p_greenString)
-	SET_BOOLEAN (v_prefs_textgrid_pathtier_onTop, our p_textgrid_pathTier_onTop)
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
@@ -2221,7 +2222,6 @@ void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
 	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
 	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
-	our pref_textgrid_pathTier_onTop () = our p_textgrid_pathTier_onTop = v_prefs_textgrid_pathtier_onTop;
 	FunctionEditor_redraw (this);
 }
 

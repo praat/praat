@@ -43,7 +43,7 @@ integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 labe
 
 void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex);
 
-integer FormantPath_findPathTier (FormantPath me, TextGrid thee);
+integer FormantPath_searchPathTier (FormantPath me, TextGrid thee);
 
 void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee);
 

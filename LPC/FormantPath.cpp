@@ -63,7 +63,7 @@ autoFormantPath FormantPath_create (double fromTime, double toTime, integer numb
 	return me;
 }
 
-integer FormantPath_findPathTier (FormantPath me, TextGrid thee) {
+integer FormantPath_searchPathTier (FormantPath me, TextGrid thee) {
 	STRVEC validLabels = my formantIdentifiers.get();
 	autoINTVEC minimumValidLabelLengths = newINTVECraw (validLabels.size);
 	for (integer ilabel = 1; ilabel <= validLabels.size; ilabel ++)
@@ -242,7 +242,7 @@ void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee) {
 	*/
 	autoTextGrid copy = Data_copy (thee);
 	integer oldPathTierNumber = my pathTierNumber;
-	integer pathTierNumber = FormantPath_findPathTier (me, copy.get());
+	integer pathTierNumber = FormantPath_searchPathTier (me, copy.get());
 	if (pathTierNumber == 0) {
 		TextGrid_addTier_copy (copy.get(), my path -> tiers -> at [my pathTierNumber]);
 		pathTierNumber = copy -> tiers -> size;
