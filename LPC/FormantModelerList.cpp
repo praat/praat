@@ -131,6 +131,20 @@ void FormantModelerList_markBest3 (FormantModelerList me) {
 	}
 }
 
+integer FormantModelerList_getBestModelIndex (FormantModelerList me, integer fromTrack, integer toTrack) {
+	double wmin = std::numeric_limits<double>::max();
+	integer best = 0;
+	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
+		FormantModeler fm = my formantModelers.at [imodel];
+		double w = FormantModeler_getSmoothnessValue (fm, fromTrack, toTrack, 0, my varianceExponent);
+		if (w < wmin) {
+			wmin = w;
+			best = imodel;
+		}
+	}
+	return best;
+}
+
 autoINTVEC FormantModelerList_getBest3 (FormantModelerList me) {
 	/*
 		3 The smoothest F1 score
