@@ -37,6 +37,8 @@ integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerL
 
 void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me);
 
+void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedModelerColour_string, conststring32 otherModelerColour_string);
+
 void FormantModelerList_markBest3 (FormantModelerList me);
 void FormantModelerList_showBest3 (FormantModelerList me);
 autoINTVEC FormantModelerList_getBest3 (FormantModelerList me);

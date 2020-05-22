@@ -71,17 +71,36 @@ NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a 
 NORMAL (U"Because many object are combined in a FormantPath we have created some commands to facilitate its creation. The two most important ones are: @@Sound & TextGrid: To FormantPath (burg)...@ and @@Sound: To FormantPath (burg)...")
 MAN_END
 
+MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20200523)
+MAN_END
+
+MAN_BEGIN (U"Sound & TextGrid: To FormantPath (burg)...", U"djmw", 20200523)
+MAN_END
+
 MAN_BEGIN (U"FormantPathEditor", U"djmw", 20200521)
 INTRO (U"One of the @@Editors@ in Praat, for editing a @@FormantPath@ object.")
 NORMAL (U"To create a ##FormantPathEditor# you first need to select a @@FormantPath@, then you choose ##View & Edit# and the editor will appear.")
-NORMAL (U"%%With the FormantPathEditor you can, for each interval that you select, replace its formant frequencies and bandwidths by the corresponding data from one of the alternative Formant objects in the Formant collection.")
+NORMAL (U"%%With the FormantPathEditor you can, for each interval that you select, replace its formant frequencies and bandwidths by the corresponding data from one of the alternative Formant objects in the FormantPath's collection.")
 
 ENTRY (U"Editor layout")
-NORMAL (U"The left part of the editor is familiar from other editors in Praat that also show a Sound. The right part is the special part in the FormantPathEditor. In this part, the %%selection viewer%, you see a matrix of alternative formant analysis intervals. What you see here depends on the context. If you have a selection in the sound part, the selectionViewer shows the formant tracks of the alternative analyses on the same domain. If you don't have a selection in the sound part, the alternatives' domains are equal to the domain of interval in the %%path tier% where your cursor happens to be. In the selection viewer, the alternative within the blue rectangle corresponds to the %%default% analysis, i.e. in the example given above, the one with a \"Maximum frequency (Hz)\" of 5500 Hz. A big difference between the representation of the formants in the left and right part of the editor is that in the right part the bandwidths of the formants are shown as vertical lines. Well defined formants have small bandwidths and therefore show very short lines. In the left part only the formant frequencies are shown and therefore no indication of the formant's \"presence\" can be made.")
-NORMAL (U"In the left part of the editor the %%default% formant's points will also be marked with a blue dot. The formant points of the edited formant are drawn with a red colour. You will only see the blue points if the formant frequencies of the two are different.")
+NORMAL (U"The left part of the editor is very familiar to the layout of the @@TextGridEditor@. The main difference is in the spectrogram window where the formants might be displayed with three different colours. The use of these colours and their meaning will be explained below.")
+NORMAL (U"The right part, called the %%selection viewer%, is the special part of the FormantPathEditor. Here you see alternative formant frequency analyses of a sound %%interval% layed out in a grid. This interval corresponds either to a visible selection in the Sound, or to an interval in the TextGrid part that also implies an interval.")
+NORMAL (U"In the selection viewer not only a formant's frequency is shown but also its bandwidth as a vertical line. Well defined formants have small bandwidths and therefore show very short lines. In the left part only the formant frequencies are shown and therefore no indication of the formant's \"presence\" can be made.")
+NORMAL (U"In the selection viewer, the alternative formant analyses are drawn in boxes that can have different colours. The meanings of the colours in the default setting are:")
+TAG (U"##Blue colour#")
+DEFINITION (U" means that the formant frequency analysis corresponds to the default analysis. I.e. the values you would get with a default analysis of the sound.")
+TAG (U"##Red colour#")
+DEFINITION (U"means that you have selected the formants in this box to be part of the path. Its frequencies will be shown permanently with the same colour in the left part of the editor.")
+TAG (U"##Pink colour#")
+DEFINITION (U"means that you have clicked this box and its formants will be temporarily shown in the same colour in the left part until you click on another box.")
+TAG (U"##Black colour#")
+DEFINITION (U"means nothing special.")
+TAG (U"##Dotted white inside#")
+DEFINITION (U"shows that the parameter settings have changed. I.e. the current parameter settings do not correspond to the parameter settings that existed at the time when this analysis was inserted in the path.")
 
 ENTRY (U"How to operate")
-NORMAL (U"Select an interval in the sound. This can be done either by dragging the cursor in the sound part or by clicking any interval in the text grid. In the selectionViewer on the right you see the alternative formant analysis results. If you SHIFT-click in one of the alternatives' rectangles, you will notice several changes. 1. The rectangle turned to a red colour. 2. A new interval with some text appeared on the %%path tier%. 3. Possibly some blue formant dots appeared in the formant display part in the left part of the editor window (of course, only if the alternative's formant frequencies differ enough from the \"default\" ones).")
+NORMAL (U"When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default analysis. This guarantees that there always is a path at the start. The formant frequencies of the path are displayed in red and the formant frequencies of the default are drawn in blue. At the start you will only see the red dots of the path because the blue dots are drawn first and then the red dots. If they overlap perfectly no blue can be seen.")
+NORMAL (U"Start by selecting an interval. This can be done either by dragging the cursor in the sound part or by clicking any interval in the text grid. In the selection viewer on the right you see the alternative formant analysis results. Now if you click on one of these alternatives you see two things happening at different parts of the editor: on the right, the box turns pink and on the left, pink dots appear in spectrogram display only in the \"selected\" interval. Depending on the chosen box the pink and the red dots completerly or partilaly overlap. If you click in another box you the pink dots change. This makes it very easy to see how any alternative analysis differs with the formants in the path. You deselect a box by either clicking a new box or by clicking it again. If you want to make a selection permanent, i.e.you want to include its formants in the path, you can use SHIFT-click in box of your choice. You will notice several changes. 1. The rectangle turned to a red colour. 2. A new interval with some text appeared on the %%path tier%. 3. Possibly some blue formant dots appeared in the formant display part in the left part of the editor window (of course, only if the alternative's formant frequencies differ enough from the \"default\" ones).")
 
 ENTRY (U"Details")
 NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selectionViewer are explained in my paper @@Weenink (2015)@. Basically this number is a combined roughness score of the individual formant tracks within this rectangle. Each track's roughness score quantifies how bad a track can be modeled with a smooth curve. The lower this number is, the better the track is modeled by this smooth curve. Each track is modeled by a polynomial of a certain order. The higher the order, the more flexible the curve is and the better it can adapt to the data. The higher the order of the polynomial, the more parameters are needed in the model. Of course, you can change the number of paramaters to model the tracks. You might notice that the rectangle boxes change if the current parameter settings do not correspond to the parameter settings of the current interval on the log tier. ")

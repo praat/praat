@@ -106,7 +106,7 @@ void FormantModelerList_showBest3 (FormantModelerList me) {
 	autoINTVEC best3 = FormantModelerList_getBest3 (me);
 	INTVEC drawingOrder = my drawingSpecification -> drawingOrder.get();
 	drawingOrder.part (1,3) <<= best3.part (1,3);
-	my drawingSpecification -> numberOfModelsToDraw = 3;
+	my drawingSpecification -> numberOfModelersToDraw = 3;
 }
 
 void FormantModelerList_markBest3 (FormantModelerList me) {
@@ -175,31 +175,39 @@ static void getMatrixGridLayout (integer numberOfModels, integer *out_numberOfRo
 }
 
 void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums) {
-	getMatrixGridLayout (my drawingSpecification -> numberOfModelsToDraw, out_numberOfRows, out_numberOfColums);
+	getMatrixGridLayout (my drawingSpecification -> numberOfModelersToDraw, out_numberOfRows, out_numberOfColums);
 }
 
 void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me) {
-	my numberOfModelsToDraw = my numberOfModelers;
+	my numberOfModelersToDraw = my numberOfModelers;
 	INTVEClinear (my drawingOrder.get(), 1, 1);
 }
 
 integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerListDrawingSpecification me) {
-	return my numberOfModelsToDraw;
+	return my numberOfModelersToDraw;
 }
 
-autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerListDrawingSpecification (FormantModelerList me, integer special) {
+void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedModelerColour_string, conststring32 otherModelerColour_string) {
+	my pathModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (pathModelerColour_string);
+	my defaultModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (defaultModelerColour_string);
+	my selectedModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (selectedModelerColour_string);
+	my otherModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (otherModelerColour_string);
+}
+
+autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerListDrawingSpecification (FormantModelerList me, integer defaultModeler) {
 	try {
 		autoFormantModelerListDrawingSpecification thee = Thing_new (FormantModelerListDrawingSpecification);
 		thy numberOfModelers = my numberOfModelers;
-		thy special = special;
+		thy defaultModeler = defaultModeler;
 		thy drawingOrder = newINTVEClinear (my numberOfModelers, 1, 1);
-		thy numberOfModelsToDraw = my numberOfModelers;
+		thy numberOfModelersToDraw = my numberOfModelers;
 		thy boxLineWidth = 4.0;
 		thy markOutdated = false;
-		thy selected_boxColour = Melder_RED;
-		thy special_boxColour = Melder_BLUE;
-		thy default_boxColour = Melder_BLACK;
-		thy midTopText_colour = Melder_BLUE;
+		thy pathModelerColour = Melder_RED;
+		thy defaultModelerColour = Melder_BLUE;
+		thy selectedModelerColour = Melder_PINK;
+		thy otherModelerColour = Melder_BLACK;
+		thy midTopText_colour = Melder_PURPLE;
 		autoSTRVEC midTopText (my numberOfModelers);
 		for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++)
 			midTopText [imodel] = Melder_dup (U"");
@@ -239,7 +247,7 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	for (integer index = 1; index <= my drawingSpecification->numberOfModelsToDraw; index ++) {
+	for (integer index = 1; index <= my drawingSpecification->numberOfModelersToDraw; index ++) {
 		const integer irow1 = 1 + (index - 1) / ncol; // left-to-right + top-to-bottom
 		const integer icol1 = 1 + (index - 1) % ncol;
 		const integer icol = ( rightToLeft ? ncol - icol1 + 1 : icol1 );
@@ -256,22 +264,27 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 			drawEstimated, 0.0, drawErrorBars, barwidth_s, xTrackOffset_s);
 
 		Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
-		if (imodel == my drawingSpecification -> special) {
-			Graphics_setColour (g, my drawingSpecification -> special_boxColour);
+		if (imodel == my drawingSpecification -> defaultModeler) {
+			Graphics_setColour (g, my drawingSpecification -> defaultModelerColour);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		}
-		if (imodel == my drawingSpecification -> selected) {
-			Graphics_setColour (g, my drawingSpecification -> selected_boxColour);
+		if (imodel == my drawingSpecification -> pathModeler) {
+			Graphics_setColour (g, my drawingSpecification -> pathModelerColour);
 			const double lineWidth = my drawingSpecification -> boxLineWidth;
-			const double newLineWidth = ( imodel == my drawingSpecification -> special ? lineWidth - 1.0 : lineWidth );
+			const double newLineWidth = ( imodel == my drawingSpecification -> defaultModeler ? lineWidth - 1.0 : lineWidth );
 			Graphics_setLineWidth (g, newLineWidth);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-		} else {
-			if (imodel != my drawingSpecification -> special) {
-				Graphics_setColour (g, my drawingSpecification -> default_boxColour);
-				Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
-				Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-			}
+		}
+		if (imodel == my drawingSpecification -> selectedModeler) {
+			Graphics_setColour (g, my drawingSpecification -> selectedModelerColour);
+			const double lineWidth = my drawingSpecification -> boxLineWidth;
+			Graphics_setLineWidth (g, lineWidth);
+			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
+		}
+		if (imodel != my drawingSpecification -> pathModeler && imodel != my drawingSpecification -> defaultModeler && imodel != my drawingSpecification -> selectedModeler) {
+			Graphics_setColour (g, my drawingSpecification -> otherModelerColour);
+			Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
+			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		}
 		if (my drawingSpecification -> markOutdated) {
 			Graphics_setLineWidth (g, 1.0);

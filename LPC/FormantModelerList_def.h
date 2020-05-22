@@ -19,19 +19,21 @@
 #define ooSTRUCT FormantModelerListDrawingSpecification
 oo_DEFINE_CLASS (FormantModelerListDrawingSpecification, Daata)
 	oo_INTEGER (numberOfModelers)
-	oo_INTEGER (numberOfModelsToDraw)
+	oo_INTEGER (numberOfModelersToDraw)
 	oo_INTVEC (drawingOrder, numberOfModelers)
-	oo_INTEGER (selected)
-	oo_INTEGER (special)
+	oo_INTEGER (pathModeler)
+	oo_INTEGER (defaultModeler)
+	oo_INTEGER (selectedModeler)
 	oo_DOUBLE (boxLineWidth) // {3.0};
 	oo_BOOLEAN (markOutdated)
 	oo_INTVEC (showOrder, numberOfModelers)
 	oo_STRING_VECTOR (midTopText, numberOfModelers)
 	
 	#if oo_DECLARING
-		MelderColour selected_boxColour; // {Melder_RED};
-		MelderColour special_boxColour; // {Melder_BLUE};
-		MelderColour default_boxColour; // {Melder_BLACK};
+		MelderColour pathModelerColour; // {Melder_RED};
+		MelderColour defaultModelerColour; // {Melder_BLUE};
+		MelderColour selectedModelerColour; // {Melder_PINK}
+		MelderColour otherModelerColour; // {Melder_BLACK};
 		MelderColour midTopText_colour; // {Melder_BLUE};
 	#endif
 

@@ -46,32 +46,11 @@
 	If two different sounds?. May be only copy channel 1?
 */
 
-
-/*
-	To save / restore the state of the data part of the editor.
-	No need to save the FormantModelerList because this part
-	is always recalculated.
-*/
-Thing_define (FormantPathEditorStateData, Function) { // (startWindow, endWindow)
-	conststring32 givenCommand;
-	double startSelection, endSelection;
-	IntervalTier pathTier;
-	conststring32 parameters;
-	conststring32 varianceExponent;
-	INTVEC tierNumbers;
-};
-
-Collection_define (FormantPathEditorStateHistory, OrderedOf, FormantPathEditorStateData) {
-	integer current;
-};
-	
-
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	autoFormantModelerList formantModelerList;
 	autoTextGridView pathGridView;
-	autoFormantPathEditorStateHistory stateHistory;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, pathTierNumber;
+	integer selectedTier, pathTierNumber, selectedModeler;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
