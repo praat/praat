@@ -1090,12 +1090,22 @@ static void menu_cb_DrawVisibleModels (FormantPathEditor me, EDITOR_ARGS_FORM) {
 }
 static void menu_cb_FormantColourSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
-		COLOUR (inPathColour_string, U"Dots in the path", my default_formant_path_colour ())
-		COLOUR (inDefaultColour_string, U"Dots in default", my default_formant_default_colour ())
-		COLOUR (inSelectedColour_string, U"Dots in selected", my default_formant_selected_colour ())
+		WORD (pathColour_string, U"Dots in the path", my default_formant_path_colour ())
+		WORD (defaultColour_string, U"Dots in default", my default_formant_default_colour ())
+		WORD (selectedColour_string, U"Dots in selected", my default_formant_selected_colour ())
 	EDITOR_OK
+		SET_STRING (pathColour_string, my p_formant_path_colour)
+		SET_STRING (defaultColour_string, my p_formant_default_colour)
+		SET_STRING (selectedColour_string, my p_formant_selected_colour)
 	EDITOR_DO
-		
+		Melder_require (! (Melder_equ (pathColour_string, defaultColour_string) || Melder_equ (pathColour_string, selectedColour_string) || Melder_equ (defaultColour_string, selectedColour_string)),
+			U"All colours must be different.");
+		pref_str32cpy2 (my pref_formant_path_colour (), my p_formant_path_colour, pathColour_string);
+		pref_str32cpy2 (my pref_formant_default_colour (), my p_formant_default_colour, defaultColour_string);
+		pref_str32cpy2 (my pref_formant_selected_colour (), my p_formant_selected_colour, selectedColour_string);
+		FormantModelerListDrawingSpecification_setModelerColours (my formantModelerList -> drawingSpecification.get(), my p_formant_path_colour, my p_formant_default_colour, my p_formant_selected_colour, U"black");
+		FunctionEditor_redraw (me);
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -2245,7 +2255,6 @@ OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
 OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
 OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel)
 SENTENCE_VARIABLE (v_prefs_addFields_theText)
-BOOLEAN_VARIABLE(v_prefs_textgrid_pathtier_onTop)
 void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
