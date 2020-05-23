@@ -7,7 +7,7 @@
 	double *vlw, double *alpha, double *beta, double *
 	dsigma, integer *idx, integer *idxp, integer *idxq, integer *perm, 
 	integer *givptr, integer *givcol, integer *ldgcol, double *givnum, 
-	 integer *ldgnum, double *c__, double *s, integer *info)
+	integer *ldgnum, double *c__, double *s, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

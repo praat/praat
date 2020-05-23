@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1,
+/* Subroutine */ integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1,
 	integer *n2, integer *n3, integer *n4)
 {
 	/* Table of constant values */

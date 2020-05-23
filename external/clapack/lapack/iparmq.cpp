@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n, integer 
+/* Subroutine */ integer iparmq_(integer *ispec, const char *name__, const char *opts, integer *n, integer 
 	*ilo, integer *ihi, integer *lwork)
 {
     /* System generated locals */

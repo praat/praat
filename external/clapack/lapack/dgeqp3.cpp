@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dgeqp3_(integer *m, integer *n, double *a, integer *
 	lda, integer *jpvt, double *tau, double *work, integer *lwork, 
-	 integer *info)
+	integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

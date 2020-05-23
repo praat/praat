@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dpbequ_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, double *s, double *scond, double *amax, 
-	 integer *info)
+	integer *info)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1;

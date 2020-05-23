@@ -5,7 +5,7 @@
 	integer *nrhs, double *ab, integer *ldab, double *afb, 
 	integer *ldafb, char *equed, double *s, double *b, integer *
 	ldb, double *x, integer *ldx, double *rcond, double *ferr, 
-	 double *berr, double *work, integer *iwork, integer *info)
+	double *berr, double *work, integer *iwork, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

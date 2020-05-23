@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dgbtf2_(integer *m, integer *n, integer *kl, integer *ku,
-	 double *ab, integer *ldab, integer *ipiv, integer *info)
+	double *ab, integer *ldab, integer *ipiv, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

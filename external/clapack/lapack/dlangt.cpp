@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-double dlangt_(const char *norm, integer *n, double *dl, double *d__,
+/* Subroutine */ double dlangt_(const char *norm, integer *n, double *dl, double *d__,
 	double *du)
 {
 	/* Table of constant values */

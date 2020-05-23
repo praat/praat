@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-double dlanhs_(const char *norm, integer *n, double *a, integer *lda,
+/* Subroutine */ double dlanhs_(const char *norm, integer *n, double *a, integer *lda,
 	double *work)
 {
 	/* Table of constant values */

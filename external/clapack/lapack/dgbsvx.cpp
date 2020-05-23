@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dgbsvx_(const char *fact, const char *trans, integer *n, integer *kl,
-	 integer *ku, integer *nrhs, double *ab, integer *ldab, 
+	integer *ku, integer *nrhs, double *ab, integer *ldab, 
 	double *afb, integer *ldafb, integer *ipiv, char *equed, 
 	double *r__, double *c__, double *b, integer *ldb, 
 	double *x, integer *ldx, double *rcond, double *ferr, 

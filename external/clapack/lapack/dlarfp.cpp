@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlarfp_(integer *n, double *alpha, double *x, integer *incx, double *tau)
+/* Subroutine */ int dlarfp_(integer *n, double *alpha, double *x, integer *incx, double *tau)
 {
     /* System generated locals */
     integer i__1;

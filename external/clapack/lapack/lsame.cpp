@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-bool lsame_(const char *ca, const char *cb)
+/* Subroutine */ bool lsame_(const char *ca, const char *cb)
 {
     /* System generated locals */
     bool ret_val;

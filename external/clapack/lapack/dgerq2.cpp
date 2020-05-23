@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dgerq2_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info)
+/* Subroutine */ int dgerq2_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;

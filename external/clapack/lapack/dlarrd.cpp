@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlarrd_(const char *range, const char *order, integer *n, double *vl, double *vu, integer *il,
+/* Subroutine */ int dlarrd_(const char *range, const char *order, integer *n, double *vl, double *vu, integer *il,
 	integer *iu, double *gers, double *reltol, double *d__, double *e, double *e2,	double *pivmin, 
 	integer *nsplit, integer *isplit, integer *m, double *w, double *werr, double *wl, double *wu,
 	integer *iblock, integer *indexw, double *work, integer *iwork, integer *info)

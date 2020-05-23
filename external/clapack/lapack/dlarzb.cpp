@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlarzb_(const char *side, const char *trans, const char *direct, const char *
 	storev, integer *m, integer *n, integer *k, integer *l, double *v, 
-	 integer *ldv, double *t, integer *ldt, double *c__, integer *
+	integer *ldv, double *t, integer *ldt, double *c__, integer *
 	ldc, double *work, integer *ldwork)
 {
 	/* Table of constant values */

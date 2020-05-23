@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlaqp2_(integer *m, integer *n, integer *offset,
+/* Subroutine */ int dlaqp2_(integer *m, integer *n, integer *offset,
 	double *a, integer *lda, integer *jpvt, double *tau, 
 	double *vn1, double *vn2, double *work)
 {

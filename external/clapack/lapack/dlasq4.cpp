@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlasq4_(integer *i0, integer *n0, double *z__, 
+/* Subroutine */ int dlasq4_(integer *i0, integer *n0, double *z__, 
 	integer *pp, integer *n0in, double *dmin__, double *dmin1, 
 	double *dmin2, double *dn, double *dn1, double *dn2, 
 	double *tau, integer *ttype, double *g)

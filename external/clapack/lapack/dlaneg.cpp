@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-integer dlaneg_(integer *n, double *d__, double *lld, double *
+/* Subroutine */ integer dlaneg_(integer *n, double *d__, double *lld, double *
 	sigma, double *pivmin, integer *r__)
 {
     /* System generated locals */

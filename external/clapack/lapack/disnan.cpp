@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-bool disnan_(double *din)
+/* Subroutine */ bool disnan_(double *din)
 {
     /* System generated locals */
     bool ret_val;

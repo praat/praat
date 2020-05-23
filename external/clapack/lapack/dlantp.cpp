@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-double dlantp_(const char *norm, const char *uplo, const char *diag, integer *n, double
+/* Subroutine */ double dlantp_(const char *norm, const char *uplo, const char *diag, integer *n, double
 	*ap, double *work)
 {
 	/* Table of constant values */

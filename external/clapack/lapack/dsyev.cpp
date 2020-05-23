@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dsyev_(const char *jobz, const char *uplo, integer *n, double *a,
-	 integer *lda, double *w, double *work, integer *lwork, 
+	integer *lda, double *w, double *work, integer *lwork, 
 	integer *info)
 {
 	/* Table of constant values */

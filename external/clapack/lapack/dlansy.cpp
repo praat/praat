@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-double dlansy_(const char *norm, const char *uplo, integer *n, double *a, integer
+/* Subroutine */ double dlansy_(const char *norm, const char *uplo, integer *n, double *a, integer
 	*lda, double *work)
 {
 	/* Table of constant values */

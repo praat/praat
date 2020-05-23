@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-integer iladlc_(integer *m, integer *n, double *a, integer *lda)
+/* Subroutine */ integer iladlc_(integer *m, integer *n, double *a, integer *lda)
 {
     /* System generated locals */
     integer a_dim1, a_offset, ret_val, i__1;

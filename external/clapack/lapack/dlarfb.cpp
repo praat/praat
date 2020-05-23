@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlarfb_(const char *side, const char *trans, const char *direct, const char *storev, integer *m,
+/* Subroutine */ int dlarfb_(const char *side, const char *trans, const char *direct, const char *storev, integer *m,
 	integer *n, integer *k, double *v, integer *ldv, double *t, integer *ldt, double *c__, 
 	integer *ldc, double *work, integer *ldwork)
 {

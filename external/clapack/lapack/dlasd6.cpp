@@ -5,7 +5,7 @@
 	integer *sqre, double *d__, double *vf, double *vl, 
 	double *alpha, double *beta, integer *idxq, integer *perm, 
 	integer *givptr, integer *givcol, integer *ldgcol, double *givnum, 
-	 integer *ldgnum, double *poles, double *difl, double *
+	integer *ldgnum, double *poles, double *difl, double *
 	difr, double *z__, integer *k, double *c__, double *s, 
 	double *work, integer *iwork, integer *info)
 {

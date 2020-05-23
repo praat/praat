@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dtzrqf_(integer *m, integer *n, double *a, integer *lda, double *tau, integer *info)
+/* Subroutine */ int dtzrqf_(integer *m, integer *n, double *a, integer *lda, double *tau, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;
