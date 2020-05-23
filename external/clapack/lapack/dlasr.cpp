@@ -2,8 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dlasr_(const char *side, const char *pivot, const char *direct, integer *m, 
-	 integer *n, double *c__, double *s, double *a, integer *
-	lda)
+	integer *n, double *c__, double *s, double *a, integer *lda)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;

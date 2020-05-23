@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b35 = 10.;
-static double c_b71 = .5;
-
 /* Subroutine */ int dggbal_(const char *job, integer *n, double *a, integer *
 	lda, double *b, integer *ldb, integer *ilo, integer *ihi, 
 	double *lscale, double *rscale, double *work, integer *
 	info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b35 = 10.;
+	static double c_b71 = .5;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
     double d__1, d__2, d__3;

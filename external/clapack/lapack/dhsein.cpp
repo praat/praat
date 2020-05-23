@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static bool c_false = false;
-static bool c_true = true;
-
 /* Subroutine */ int dhsein_(const char *side, const char *eigsrc, const char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *mm, integer *m, double *work, integer *
 	ifaill, integer *ifailr, integer *info)
 {
+	/* Table of constant values */
+	static bool c_false = false;
+	static bool c_true = true;
+
     /* System generated locals */
     integer h_dim1, h_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, 
 	    i__2;

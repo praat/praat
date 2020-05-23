@@ -1,13 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b5 = 0.;
-static integer c__1 = 1;
-static integer c__2 = 2;
-
-/* Subroutine */ int dlarrv_(integer *n, double *vl, double *vu, 
+/* Subroutine */ int dlarrv_(integer *n, double *vl, double *vu,
 	double *d__, double *l, double *pivmin, integer *isplit, 
 	integer *m, integer *dol, integer *dou, double *minrgp, 
 	double *rtol1, double *rtol2, double *w, double *werr, 
@@ -15,6 +9,11 @@ static integer c__2 = 2;
 	 double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static double c_b5 = 0.;
+	static integer c__1 = 1;
+	static integer c__2 = 2;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2, i__3, i__4, i__5;
     double d__1, d__2;

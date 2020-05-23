@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__2 = 2;
-static integer c__1 = 1;
-
-/* Subroutine */ int dlagv2_(double *a, integer *lda, double *b, 
+/* Subroutine */ int dlagv2_(double *a, integer *lda, double *b,
 	integer *ldb, double *alphar, double *alphai, double *
 	beta, double *csl, double *snl, double *csr, double *
 	snr)
 {
+	/* Table of constant values */
+	static integer c__2 = 2;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset;
     double d__1, d__2, d__3, d__4, d__5, d__6;

@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b4 = 1.;
-
-/* Subroutine */ int dlanv2_(double *a, double *b, double *c__, 
+/* Subroutine */ int dlanv2_(double *a, double *b, double *c__,
 	double *d__, double *rt1r, double *rt1i, double *rt2r, 
 	 double *rt2i, double *cs, double *sn)
 {
+	/* Table of constant values */
+	static double c_b4 = 1.;
+
     /* System generated locals */
     double d__1, d__2;
 

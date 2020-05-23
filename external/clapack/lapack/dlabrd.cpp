@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b4 = -1.;
-static double c_b5 = 1.;
-static integer c__1 = 1;
-static double c_b16 = 0.;
-
 /* Subroutine */ int dlabrd_(integer *m, integer *n, integer *nb, double *
 	a, integer *lda, double *d__, double *e, double *tauq, 
 	double *taup, double *x, integer *ldx, double *y, integer 
 	*ldy)
 {
+	/* Table of constant values */
+	static double c_b4 = -1.;
+	static double c_b5 = 1.;
+	static integer c__1 = 1;
+	static double c_b16 = 0.;
+
     /* System generated locals */
     integer a_dim1, a_offset, x_dim1, x_offset, y_dim1, y_offset, i__1, i__2, 
 	    i__3;

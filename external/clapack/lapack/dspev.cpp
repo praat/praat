@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
 /* Subroutine */ int dspev_(const char *jobz, const char *uplo, integer *n, double *
 	ap, double *w, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
     double d__1;

@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b9 = 0.;
-static double c_b10 = 1.;
-static integer c__1 = 1;
-
-/* Subroutine */ int dsbtrd_(const char *vect, const char *uplo, integer *n, integer *kd, 
+/* Subroutine */ int dsbtrd_(const char *vect, const char *uplo, integer *n, integer *kd,
 	double *ab, integer *ldab, double *d__, double *e, 
 	double *q, integer *ldq, double *work, integer *info)
 {
+	/* Table of constant values */
+	static double c_b9 = 0.;
+	static double c_b10 = 1.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer ab_dim1, ab_offset, q_dim1, q_offset, i__1, i__2, i__3, i__4, 
 	    i__5;

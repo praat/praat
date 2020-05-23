@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b18 = .001;
-
 /* Subroutine */ int dstemr_(const char *jobz, const char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, integer *m, double *w, double *z__, integer *ldz, 
 	 integer *nzc, integer *isuppz, bool *tryrac, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b18 = .001;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
     double d__1, d__2;

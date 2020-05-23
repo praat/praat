@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b10 = -1.;
-static double c_b12 = 1.;
-
 int dpotf2_(const char *uplo, integer *n, double *a, integer *lda, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b10 = -1.;
+	static double c_b12 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
     double d__1;

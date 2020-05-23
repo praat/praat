@@ -1,12 +1,11 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
 int dlarfx_(const char *side, integer *m, integer *n, double *v, double *tau, double *c__, integer *ldc, double *work)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer c_dim1, c_offset, i__1;
 

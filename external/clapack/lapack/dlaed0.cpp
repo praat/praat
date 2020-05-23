@@ -1,20 +1,19 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__9 = 9;
-static integer c__0 = 0;
-static integer c__2 = 2;
-static double c_b23 = 1.;
-static double c_b24 = 0.;
-static integer c__1 = 1;
-
-/* Subroutine */ int dlaed0_(integer *icompq, integer *qsiz, integer *n, 
+/* Subroutine */ int dlaed0_(integer *icompq, integer *qsiz, integer *n,
 	double *d__, double *e, double *q, integer *ldq, 
 	double *qstore, integer *ldqs, double *work, integer *iwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__9 = 9;
+	static integer c__0 = 0;
+	static integer c__2 = 2;
+	static double c_b23 = 1.;
+	static double c_b24 = 0.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer q_dim1, q_offset, qstore_dim1, qstore_offset, i__1, i__2;
     double d__1;

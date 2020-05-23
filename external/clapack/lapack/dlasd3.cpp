@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__0 = 0;
-static double c_b13 = 1.;
-static double c_b26 = 0.;
-
-/* Subroutine */ int dlasd3_(integer *nl, integer *nr, integer *sqre, integer 
+/* Subroutine */ int dlasd3_(integer *nl, integer *nr, integer *sqre, integer
 	*k, double *d__, double *q, integer *ldq, double *dsigma, 
 	double *u, integer *ldu, double *u2, integer *ldu2, 
 	double *vt, integer *ldvt, double *vt2, integer *ldvt2, 
 	integer *idxc, integer *ctot, double *z__, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__0 = 0;
+	static double c_b13 = 1.;
+	static double c_b26 = 0.;
+
     /* System generated locals */
     integer q_dim1, q_offset, u_dim1, u_offset, u2_dim1, u2_offset, vt_dim1, 
 	    vt_offset, vt2_dim1, vt2_offset, i__1, i__2;

@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-int dlaqp2_(integer *m, integer *n, integer *offset, 
+int dlaqp2_(integer *m, integer *n, integer *offset,
 	double *a, integer *lda, integer *jpvt, double *tau, 
 	double *vn1, double *vn2, double *work)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
     double d__1, d__2;

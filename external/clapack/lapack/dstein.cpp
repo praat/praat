@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__2 = 2;
-static integer c__1 = 1;
-static integer c_n1 = -1;
-
-/* Subroutine */ int dstein_(integer *n, double *d__, double *e, 
+/* Subroutine */ int dstein_(integer *n, double *d__, double *e,
 	integer *m, double *w, integer *iblock, integer *isplit, 
 	double *z__, integer *ldz, double *work, integer *iwork, 
 	integer *ifail, integer *info)
 {
+	/* Table of constant values */
+	static integer c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2, i__3;
     double d__1, d__2, d__3, d__4, d__5;

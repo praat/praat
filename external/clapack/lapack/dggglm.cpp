@@ -1,25 +1,24 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static double c_b32 = -1.;
-static double c_b34 = 1.;
-
 /* Subroutine */ int dggglm_(integer *n, integer *m, integer *p, double *
 	a, integer *lda, double *b, integer *ldb, double *d__, 
 	double *x, double *y, double *work, integer *lwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static double c_b32 = -1.;
+	static double c_b34 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3, i__4;
 
     /* Local variables */
     integer i__, nb, np, nb1, nb2, nb3, nb4, lopt;
     integer lwkmin;
-     integer lwkopt;
+	integer lwkopt;
     bool lquery;
 
 

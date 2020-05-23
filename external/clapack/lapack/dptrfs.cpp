@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b11 = 1.;
-
-/* Subroutine */ int dptrfs_(integer *n, integer *nrhs, double *d__, 
+/* Subroutine */ int dptrfs_(integer *n, integer *nrhs, double *d__,
 	double *e, double *df, double *ef, double *b, integer 
 	*ldb, double *x, integer *ldx, double *ferr, double *berr, 
 	 double *work, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b11 = 1.;
+
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2;
     double d__1, d__2, d__3;

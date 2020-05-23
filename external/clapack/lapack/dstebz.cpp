@@ -1,20 +1,19 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static integer c__3 = 3;
-static integer c__2 = 2;
-static integer c__0 = 0;
-
-/* Subroutine */ int dstebz_(const char *range, const char *order, integer *n, double 
+/* Subroutine */ int dstebz_(const char *range, const char *order, integer *n, double
 	*vl, double *vu, integer *il, integer *iu, double *abstol, 
 	double *d__, double *e, integer *m, integer *nsplit, 
 	double *w, integer *iblock, integer *isplit, double *work, 
 	integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
+	static integer c__0 = 0;
+
     /* System generated locals */
     integer i__1, i__2, i__3;
     double d__1, d__2, d__3, d__4, d__5;

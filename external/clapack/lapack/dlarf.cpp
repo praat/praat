@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b4 = 1.;
-static double c_b5 = 0.;
-static integer c__1 = 1;
-
-int dlarf_(const char *side, integer *m, integer *n, double *v, integer *incv, double *tau, double *c__, 
+int dlarf_(const char *side, integer *m, integer *n, double *v, integer *incv, double *tau, double *c__,
 	integer *ldc, double *work)
 {
+	/* Table of constant values */
+	static double c_b4 = 1.;
+	static double c_b5 = 0.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer c_dim1, c_offset;
     double d__1;
@@ -17,7 +16,7 @@ int dlarf_(const char *side, integer *m, integer *n, double *v, integer *incv, d
     /* Local variables */
     integer i__;
     bool applyleft;
-     integer lastc, lastv;
+	integer lastc, lastv;
 
 
 /*  -- LAPACK auxiliary routine (version 3.2) -- */

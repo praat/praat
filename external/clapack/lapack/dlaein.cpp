@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-/* Subroutine */ int dlaein_(bool *rightv, bool *noinit, integer *n, 
+/* Subroutine */ int dlaein_(bool *rightv, bool *noinit, integer *n,
 	double *h__, integer *ldh, double *wr, double *wi, 
 	double *vr, double *vi, double *b, integer *ldb, 
 	double *work, double *eps3, double *smlnum, double *
 	bignum, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer b_dim1, b_offset, h_dim1, h_offset, i__1, i__2, i__3, i__4;
     double d__1, d__2, d__3, d__4;

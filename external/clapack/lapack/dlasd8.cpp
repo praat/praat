@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__0 = 0;
-static double c_b8 = 1.;
-
-/* Subroutine */ int dlasd8_(integer *icompq, integer *k, double *d__, 
+/* Subroutine */ int dlasd8_(integer *icompq, integer *k, double *d__,
 	double *z__, double *vf, double *vl, double *difl, 
 	double *difr, integer *lddifr, double *dsigma, double *
 	work, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__0 = 0;
+	static double c_b8 = 1.;
+
     /* System generated locals */
     integer difr_dim1, difr_offset, i__1, i__2;
     double d__1, d__2;

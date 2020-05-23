@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__2 = 2;
-static integer c__1 = 1;
-static double c_b24 = 1.;
-static double c_b26 = 0.;
-
-/* Subroutine */ int dlaeda_(integer *n, integer *tlvls, integer *curlvl, 
+/* Subroutine */ int dlaeda_(integer *n, integer *tlvls, integer *curlvl,
 	integer *curpbm, integer *prmptr, integer *perm, integer *givptr, 
 	integer *givcol, double *givnum, double *q, integer *qptr, 
 	double *z__, double *ztemp, integer *info)
 {
+	/* Table of constant values */
+	static integer c__2 = 2;
+	static integer c__1 = 1;
+	static double c_b24 = 1.;
+	static double c_b26 = 0.;
+
     /* System generated locals */
     integer i__1, i__2, i__3;
 

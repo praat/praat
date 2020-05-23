@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b8 = 0.;
-
-int dlarft_(const char *direct, const char *storev, integer *n, integer *k, double *v, integer *ldv, 
+int dlarft_(const char *direct, const char *storev, integer *n, integer *k, double *v, integer *ldv,
 	double *tau, double *t, integer *ldt)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b8 = 0.;
+
     /* System generated locals */
     integer t_dim1, t_offset, v_dim1, v_offset, i__1, i__2, i__3;
     double d__1;

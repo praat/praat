@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__2 = 2;
-static integer c__10 = 10;
-static integer c__3 = 3;
-static integer c__4 = 4;
-static integer c__11 = 11;
-
 int dlasq2_(integer *n, double *z__, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__2 = 2;
+	static integer c__10 = 10;
+	static integer c__3 = 3;
+	static integer c__4 = 4;
+	static integer c__11 = 11;
+
     /* System generated locals */
     integer i__1, i__2, i__3;
     double d__1, d__2;

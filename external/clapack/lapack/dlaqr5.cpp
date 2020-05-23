@@ -1,21 +1,20 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b7 = 0.;
-static double c_b8 = 1.;
-static integer c__3 = 3;
-static integer c__1 = 1;
-static integer c__2 = 2;
-
-int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22, 
+int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22,
 	integer *n, integer *ktop, integer *kbot, integer *nshfts, double 
 	*sr, double *si, double *h__, integer *ldh, integer *iloz, 
 	integer *ihiz, double *z__, integer *ldz, double *v, integer *
 	ldv, double *u, integer *ldu, integer *nv, double *wv, 
 	integer *ldwv, integer *nh, double *wh, integer *ldwh)
 {
+	/* Table of constant values */
+	static double c_b7 = 0.;
+	static double c_b8 = 1.;
+	static integer c__3 = 3;
+	static integer c__1 = 1;
+	static integer c__2 = 2;
+
     /* System generated locals */
     integer h_dim1, h_offset, u_dim1, u_offset, v_dim1, v_offset, wh_dim1, 
 	    wh_offset, wv_dim1, wv_offset, z_dim1, z_offset, i__1, i__2, i__3,

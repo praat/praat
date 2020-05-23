@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b18 = -1.;
-static double c_b19 = 1.;
-
-/* Subroutine */ int dgtrfs_(const char *trans, integer *n, integer *nrhs, 
+/* Subroutine */ int dgtrfs_(const char *trans, integer *n, integer *nrhs,
 	double *dl, double *d__, double *du, double *dlf, 
 	double *df, double *duf, double *du2, integer *ipiv, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	ferr, double *berr, double *work, integer *iwork, integer *
 	info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b18 = -1.;
+	static double c_b19 = 1.;
+
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2;
     double d__1, d__2, d__3, d__4;

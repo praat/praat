@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b12 = 0.;
-static double c_b13 = 1.;
-static integer c__1 = 1;
-static integer c__3 = 3;
-
-/* Subroutine */ int dhgeqz_(const char *job, const char *compq, const char *compz, integer *n, 
+/* Subroutine */ int dhgeqz_(const char *job, const char *compq, const char *compz, integer *n,
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*t, integer *ldt, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
 	double *work, integer *lwork, integer *info)
 {
+	/* Table of constant values */
+	static double c_b12 = 0.;
+	static double c_b13 = 1.;
+	static integer c__1 = 1;
+	static integer c__3 = 3;
+
     /* System generated locals */
     integer h_dim1, h_offset, q_dim1, q_offset, t_dim1, t_offset, z_dim1, 
 	    z_offset, i__1, i__2, i__3, i__4;

@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b8 = 1.;
-static integer c__1 = 1;
-
 /* Subroutine */ int dpptri_(const char *uplo, integer *n, double *ap, integer *
 	info)
 {
+	/* Table of constant values */
+	static double c_b8 = 1.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer i__1, i__2;
 

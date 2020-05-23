@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b19 = -1.;
-
-/* Subroutine */ int dtprfs_(const char *uplo, const char *trans, const char *diag, integer *n, 
+/* Subroutine */ int dtprfs_(const char *uplo, const char *trans, const char *diag, integer *n,
 	integer *nrhs, double *ap, double *b, integer *ldb, 
 	double *x, integer *ldx, double *ferr, double *berr, 
 	double *work, integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b19 = -1.;
+
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1, i__2, i__3;
     double d__1, d__2, d__3;

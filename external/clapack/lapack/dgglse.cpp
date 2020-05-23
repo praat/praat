@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static double c_b31 = -1.;
-static double c_b33 = 1.;
-
 /* Subroutine */ int dgglse_(integer *m, integer *n, integer *p, double *
 	a, integer *lda, double *b, integer *ldb, double *c__, 
 	double *d__, double *x, double *work, integer *lwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static double c_b31 = -1.;
+	static double c_b33 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
 

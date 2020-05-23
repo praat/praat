@@ -1,20 +1,19 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static bool c_true = true;
-static double c_b17 = 0.;
-static double c_b18 = 1.;
-static integer c__12 = 12;
-
 int dlaqr3_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
 	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
 	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh,
 	double *t, integer *ldt, integer *nv, double *wv, integer *ldwv, double *work, integer *lwork)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static bool c_true = true;
+	static double c_b17 = 0.;
+	static double c_b18 = 1.;
+	static integer c__12 = 12;
+
     /* System generated locals */
     integer h_dim1, h_offset, t_dim1, t_offset, v_dim1, v_offset, wv_dim1, 
 	    wv_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4;

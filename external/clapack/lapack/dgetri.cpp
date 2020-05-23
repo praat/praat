@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static integer c__2 = 2;
-static double c_b20 = -1.;
-static double c_b22 = 1.;
-
-/* Subroutine */ int dgetri_(integer *n, double *a, integer *lda, integer 
+/* Subroutine */ int dgetri_(integer *n, double *a, integer *lda, integer
 	*ipiv, double *work, integer *lwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
+	static double c_b20 = -1.;
+	static double c_b22 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2, i__3;
 

@@ -1,21 +1,20 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b19 = 1.;
-static double c_b21 = 0.;
-static integer c__2 = 2;
-static bool c_false = false;
-static integer c__3 = 3;
-
-/* Subroutine */ int dtgsna_(const char *job, const char *howmny, bool *select, 
+/* Subroutine */ int dtgsna_(const char *job, const char *howmny, bool *select,
 	integer *n, double *a, integer *lda, double *b, integer *ldb, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	double *s, double *dif, integer *mm, integer *m, double *
 	work, integer *lwork, integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b19 = 1.;
+	static double c_b21 = 0.;
+	static integer c__2 = 2;
+	static bool c_false = false;
+	static integer c__3 = 3;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;

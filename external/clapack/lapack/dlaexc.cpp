@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__4 = 4;
-static bool c_false = false;
-static integer c_n1 = -1;
-static integer c__2 = 2;
-static integer c__3 = 3;
-
-/* Subroutine */ int dlaexc_(bool *wantq, integer *n, double *t, 
+/* Subroutine */ int dlaexc_(bool *wantq, integer *n, double *t,
 	integer *ldt, double *q, integer *ldq, integer *j1, integer *n1, 
 	integer *n2, double *work, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__4 = 4;
+	static bool c_false = false;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
+	static integer c__3 = 3;
+
     /* System generated locals */
     integer q_dim1, q_offset, t_dim1, t_offset, i__1;
     double d__1, d__2, d__3;

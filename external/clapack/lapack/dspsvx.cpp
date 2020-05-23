@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
 /* Subroutine */ int dspsvx_(const char *fact, const char *uplo, integer *n, integer *
 	nrhs, double *ap, double *afp, integer *ipiv, double *b, 
 	integer *ldb, double *x, integer *ldx, double *rcond, 
 	double *ferr, double *berr, double *work, integer *iwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer b_dim1, b_offset, x_dim1, x_offset, i__1;
 

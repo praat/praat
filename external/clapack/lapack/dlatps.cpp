@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b36 = .5;
-
 /* Subroutine */ int dlatps_(const char *uplo, const char *trans, const char *diag, const char *
 	normin, integer *n, double *ap, double *x, double *scale, 
 	double *cnorm, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b36 = .5;
+
     /* System generated locals */
     integer i__1, i__2, i__3;
     double d__1, d__2, d__3;

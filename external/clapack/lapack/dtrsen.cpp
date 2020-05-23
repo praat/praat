@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c_n1 = -1;
-
-/* Subroutine */ int dtrsen_(const char *job, const char *compq, bool *select, integer 
+/* Subroutine */ int dtrsen_(const char *job, const char *compq, bool *select, integer
 	*n, double *t, integer *ldt, double *q, integer *ldq, 
 	double *wr, double *wi, integer *m, double *s, double 
 	*sep, double *work, integer *lwork, integer *iwork, integer *
 	liwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c_n1 = -1;
+
     /* System generated locals */
     integer q_dim1, q_offset, t_dim1, t_offset, i__1, i__2;
     double d__1, d__2;

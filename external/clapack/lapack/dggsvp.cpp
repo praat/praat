@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b12 = 0.;
-static double c_b22 = 1.;
-
-/* Subroutine */ int dggsvp_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
+/* Subroutine */ int dggsvp_(const char *jobu, const char *jobv, const char *jobq, integer *m,
 	integer *p, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, double *tola, double *tolb, integer *k, integer 
 	*l, double *u, integer *ldu, double *v, integer *ldv, 
 	double *q, integer *ldq, integer *iwork, double *tau, 
 	double *work, integer *info)
 {
+	/* Table of constant values */
+	static double c_b12 = 0.;
+	static double c_b22 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, 
 	    u_offset, v_dim1, v_offset, i__1, i__2, i__3;

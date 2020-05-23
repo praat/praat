@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b15 = -.125;
-static integer c__1 = 1;
-static double c_b49 = 1.;
-static double c_b72 = -1.;
-
-/* Subroutine */ int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
+	/* Subroutine */ int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, double *d__, double *e, double *vt, 
 	integer *ldvt, double *u, integer *ldu, double *c__, integer *
 	ldc, double *work, integer *info)
 {
+	/* Table of constant values */
+	static double c_b15 = -.125;
+	static integer c__1 = 1;
+	static double c_b49 = 1.;
+	static double c_b72 = -1.;
+
     /* System generated locals */
     integer c_dim1, c_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1, 
 	    i__2;

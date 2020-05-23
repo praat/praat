@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-
-/* Subroutine */ int dgesc2_(integer *n, double *a, integer *lda, 
+/* Subroutine */ int dgesc2_(integer *n, double *a, integer *lda,
 	double *rhs, integer *ipiv, integer *jpiv, double *scale)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
     double d__1, d__2;

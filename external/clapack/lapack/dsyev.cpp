@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static integer c__0 = 0;
-static double c_b17 = 1.;
-
-/* Subroutine */ int dsyev_(const char *jobz, const char *uplo, integer *n, double *a, 
+/* Subroutine */ int dsyev_(const char *jobz, const char *uplo, integer *n, double *a,
 	 integer *lda, double *w, double *work, integer *lwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__0 = 0;
+	static double c_b17 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;
     double d__1;

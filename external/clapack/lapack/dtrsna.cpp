@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static bool c_true = true;
-static bool c_false = false;
-
-/* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select, 
+/* Subroutine */ int dtrsna_(const char *job, const char *howmny, bool *select,
 	integer *n, double *t, integer *ldt, double *vl, integer *
 	ldvl, double *vr, integer *ldvr, double *s, double *sep, 
 	integer *mm, integer *m, double *work, integer *ldwork, integer *
 	iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static bool c_true = true;
+	static bool c_false = false;
+
     /* System generated locals */
     integer t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, 
 	    work_dim1, work_offset, i__1, i__2;

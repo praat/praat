@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-/* Subroutine */ int dtrcon_(const char *norm, const char *uplo, const char *diag, integer *n, 
+/* Subroutine */ int dtrcon_(const char *norm, const char *uplo, const char *diag, integer *n,
 	double *a, integer *lda, double *rcond, double *work, 
 	integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer a_dim1, a_offset, i__1;
     double d__1;

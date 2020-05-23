@@ -1,11 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-/* Subroutine */ int dlasd7_(integer *icompq, integer *nl, integer *nr, 
+/* Subroutine */ int dlasd7_(integer *icompq, integer *nl, integer *nr,
 	integer *sqre, integer *k, double *d__, double *z__, 
 	double *zw, double *vf, double *vfw, double *vl, 
 	double *vlw, double *alpha, double *beta, double *
@@ -13,6 +9,9 @@ static integer c__1 = 1;
 	integer *givptr, integer *givcol, integer *ldgcol, double *givnum, 
 	 integer *ldgnum, double *c__, double *s, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer givcol_dim1, givcol_offset, givnum_dim1, givnum_offset, i__1;
     double d__1, d__2;

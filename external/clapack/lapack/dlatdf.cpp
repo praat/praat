@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static double c_b23 = 1.;
-static double c_b37 = -1.;
-
-/* Subroutine */ int dlatdf_(integer *ijob, integer *n, double *z__, 
+/* Subroutine */ int dlatdf_(integer *ijob, integer *n, double *z__,
 	integer *ldz, double *rhs, double *rdsum, double *rdscal, 
 	integer *ipiv, integer *jpiv)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static double c_b23 = 1.;
+	static double c_b37 = -1.;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
     double d__1;

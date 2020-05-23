@@ -1,16 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b8 = -1.;
-static double c_b9 = 1.;
-
-/* Subroutine */ int dlasyf_(const char *uplo, integer *n, integer *nb, integer *kb, 
-	 double *a, integer *lda, integer *ipiv, double *w, integer *
-	ldw, integer *info)
+/* Subroutine */ int dlasyf_(const char *uplo, integer *n, integer *nb, integer *kb,
+	double *a, integer *lda, integer *ipiv, double *w, integer *ldw, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b8 = -1.;
+	static double c_b9 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, w_dim1, w_offset, i__1, i__2, i__3, i__4, i__5;
     double d__1, d__2, d__3;

@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b5 = 1.;
-
 /* Subroutine */ int dlatzm_(const char *side, integer *m, integer *n, double *
 	v, integer *incv, double *tau, double *c1, double *c2, 
 	integer *ldc, double *work)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b5 = 1.;
+
     /* System generated locals */
     integer c1_dim1, c1_offset, c2_dim1, c2_offset, i__1;
     double d__1;

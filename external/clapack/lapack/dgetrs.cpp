@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b12 = 1.;
-static integer c_n1 = -1;
-
-/* Subroutine */ int dgetrs_(const char *trans, integer *n, integer *nrhs, 
+/* Subroutine */ int dgetrs_(const char *trans, integer *n, integer *nrhs,
 	double *a, integer *lda, integer *ipiv, double *b, integer *
 	ldb, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b12 = 1.;
+	static integer c_n1 = -1;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 

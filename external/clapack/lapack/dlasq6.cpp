@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlasq6_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *dmin1, double *dmin2, 
-	 double *dn, double *dnm1, double *dnm2)
+	double *dn, double *dnm1, double *dnm2)
 {
     /* System generated locals */
     integer i__1;

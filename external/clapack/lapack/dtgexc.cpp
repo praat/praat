@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__2 = 2;
-
-/* Subroutine */ int dtgexc_(bool *wantq, bool *wantz, integer *n, 
+/* Subroutine */ int dtgexc_(bool *wantq, bool *wantz, integer *n,
 	double *a, integer *lda, double *b, integer *ldb, double *
 	q, integer *ldq, double *z__, integer *ldz, integer *ifst, 
 	integer *ilst, double *work, integer *lwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__2 = 2;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, z_dim1, 
 	    z_offset, i__1;

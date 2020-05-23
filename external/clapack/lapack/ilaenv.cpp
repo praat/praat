@@ -1,17 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-
-/* Table of constant values */
-
-static integer c__1 = 1;
-static float c_b163 = 0.f;
-static float c_b164 = 1.f;
-static integer c__0 = 0;
-
-integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1, 
+integer ilaenv_(integer *ispec, const char *name__, const char *opts, integer *n1,
 	integer *n2, integer *n3, integer *n4)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static float c_b163 = 0.f;
+	static float c_b164 = 1.f;
+	static integer c__0 = 0;
+
     /* System generated locals */
     integer ret_val;
 

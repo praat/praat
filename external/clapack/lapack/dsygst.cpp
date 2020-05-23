@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static double c_b14 = 1.;
-static double c_b16 = -.5;
-static double c_b19 = -1.;
-static double c_b52 = .5;
-
-/* Subroutine */ int dsygst_(integer *itype, const char *uplo, integer *n, 
+/* Subroutine */ int dsygst_(integer *itype, const char *uplo, integer *n,
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static double c_b14 = 1.;
+	static double c_b16 = -.5;
+	static double c_b19 = -1.;
+	static double c_b52 = .5;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
 

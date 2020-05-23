@@ -1,13 +1,12 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-double dlangt_(const char *norm, integer *n, double *dl, double *d__, 
+double dlangt_(const char *norm, integer *n, double *dl, double *d__,
 	double *du)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer i__1;
     double ret_val, d__1, d__2, d__3, d__4, d__5;

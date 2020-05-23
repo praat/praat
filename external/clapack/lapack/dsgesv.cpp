@@ -1,16 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-
-/* Table of constant values */
-
-static double c_b10 = -1.;
-static double c_b11 = 1.;
-static integer c__1 = 1;
-
 int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb,
 	double *x, integer *ldx, double *work, float *swork, integer *iter, integer *info)
 {
+	/* Table of constant values */
+	static double c_b10 = -1.;
+	static double c_b11 = 1.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, work_dim1, work_offset, x_dim1, x_offset, i__1;
     double d__1;
