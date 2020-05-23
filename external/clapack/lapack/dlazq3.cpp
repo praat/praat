@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlazq3_(integer *i0, integer *n0, double *z__, 
 	integer *pp, double *dmin__, double *sigma, double *desig, 
-	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
+	double *qmax, integer *nfail, integer *iter, integer *ndiv, 
 	bool *ieee, integer *ttype, double *dmin1, double *dmin2, 
 	double *dn, double *dn1, double *dn2, double *tau)
 {

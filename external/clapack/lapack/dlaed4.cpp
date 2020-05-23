@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlaed4_(integer *n, integer *i__, double *d__, 
 	double *z__, double *delta, double *rho, double *dlam, 
-	 integer *info)
+	integer *info)
 {
     /* System generated locals */
     integer i__1;

@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dgbcon_(const char *norm, integer *n, integer *kl, integer *ku,
-	 double *ab, integer *ldab, integer *ipiv, double *anorm, 
+	double *ab, integer *ldab, integer *ipiv, double *anorm, 
 	double *rcond, double *work, integer *iwork, integer *info)
 {
 	/* Table of constant values */

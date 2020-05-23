@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlarfx_(const char *side, integer *m, integer *n, double *v, double *tau, double *c__, integer *ldc, double *work)
+/* Subroutine */ int dlarfx_(const char *side, integer *m, integer *n, double *v, double *tau, double *c__, integer *ldc, double *work)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

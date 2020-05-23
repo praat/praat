@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb,
+/* Subroutine */ int dsgesv_(integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb,
 	double *x, integer *ldx, double *work, float *swork, integer *iter, integer *info)
 {
 	/* Table of constant values */

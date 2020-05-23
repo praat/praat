@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, double *h__,
+/* Subroutine */ int dlaqr4_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, double *h__,
 	integer *ldh, double *wr, double *wi, integer *iloz, integer *ihiz, double *z__,
 	integer *ldz, double *work, integer *lwork, integer *info)
 {

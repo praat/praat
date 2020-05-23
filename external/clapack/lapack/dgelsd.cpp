@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dgelsd_(integer *m, integer *n, integer *nrhs,
+/* Subroutine */ int dgelsd_(integer *m, integer *n, integer *nrhs,
 	double *a, integer *lda, double *b, integer *ldb, double *
 	s, double *rcond, integer *rank, double *work, integer *lwork, 
 	 integer *iwork, integer *info)

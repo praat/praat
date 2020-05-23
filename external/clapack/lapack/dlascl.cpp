@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlascl_(const char *type__, integer *kl, integer *ku, double *cfrom, double *cto, 
+/* Subroutine */ int dlascl_(const char *type__, integer *kl, integer *ku, double *cfrom, double *cto, 
 	integer *m,	integer *n, double *a, integer *lda, integer *info)
 {
     /* System generated locals */

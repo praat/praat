@@ -5,8 +5,8 @@
 	double *d__, double *l, double *pivmin, integer *isplit, 
 	integer *m, integer *dol, integer *dou, double *minrgp, 
 	double *rtol1, double *rtol2, double *w, double *werr, 
-	 double *wgap, integer *iblock, integer *indexw, double *gers, 
-	 double *z__, integer *ldz, integer *isuppz, double *work, 
+	double *wgap, integer *iblock, integer *indexw, double *gers,
+	double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *iwork, integer *info)
 {
 	/* Table of constant values */

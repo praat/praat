@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-bool dlaisnan_(double *din1, double *din2)
+/* Subroutine */ bool dlaisnan_(double *din1, double *din2)
 {
     /* System generated locals */
     bool ret_val;

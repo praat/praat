@@ -4,7 +4,7 @@
 /* Subroutine */ int dstemr_(const char *jobz, const char *range, integer *n, double *
 	d__, double *e, double *vl, double *vu, integer *il, 
 	integer *iu, integer *m, double *w, double *z__, integer *ldz, 
-	 integer *nzc, integer *isuppz, bool *tryrac, double *work, 
+	integer *nzc, integer *isuppz, bool *tryrac, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
 	/* Table of constant values */

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22,
+/* Subroutine */ int dlaqr5_(bool *wantt, bool *wantz, integer *kacc22,
 	integer *n, integer *ktop, integer *kbot, integer *nshfts, double 
 	*sr, double *si, double *h__, integer *ldh, integer *iloz, 
 	integer *ihiz, double *z__, integer *ldz, double *v, integer *

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlasq2_(integer *n, double *z__, integer *info)
+/* Subroutine */ int dlasq2_(integer *n, double *z__, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-integer ieeeck_(integer *ispec, float *zero, float *one)
+/* Subroutine */ integer ieeeck_(integer *ispec, float *zero, float *one)
 {
     /* System generated locals */
     integer ret_val;

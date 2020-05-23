@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dpotf2_(const char *uplo, integer *n, double *a, integer *lda, integer *info)
+/* Subroutine */ int dpotf2_(const char *uplo, integer *n, double *a, integer *lda, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

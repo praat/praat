@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-	/* Subroutine */ int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
+/* Subroutine */ int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, double *d__, double *e, double *vt, 
 	integer *ldvt, double *u, integer *ldu, double *c__, integer *
 	ldc, double *work, integer *info)

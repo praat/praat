@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dgeqpf_(integer *m, integer *n, double *a, integer *
+/* Subroutine */ int dgeqpf_(integer *m, integer *n, double *a, integer *
 	lda, integer *jpvt, double *tau, double *work, integer *info)
 {
 	/* Table of constant values */

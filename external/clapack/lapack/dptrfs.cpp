@@ -4,7 +4,7 @@
 /* Subroutine */ int dptrfs_(integer *n, integer *nrhs, double *d__,
 	double *e, double *df, double *ef, double *b, integer 
 	*ldb, double *x, integer *ldx, double *ferr, double *berr, 
-	 double *work, integer *info)
+	double *work, integer *info)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dlatrz_(integer *m, integer *n, integer *l, double *a, integer *lda, double *tau, double *work)
+/* Subroutine */ int dlatrz_(integer *m, integer *n, integer *l, double *a, integer *lda, double *tau, double *work)
 {
     /* System generated locals */
     integer a_dim1, a_offset, i__1, i__2;

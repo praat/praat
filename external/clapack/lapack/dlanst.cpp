@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-double dlanst_(const char *norm, integer *n, double *d__, double *e)
+/* Subroutine */ double dlanst_(const char *norm, integer *n, double *d__, double *e)
 {
 	/* Table of constant values */
 	static integer c__1 = 1;

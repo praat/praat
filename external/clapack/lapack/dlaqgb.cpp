@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku, 
-	 double *ab, integer *ldab, double *r__, double *c__, 
+	double *ab, integer *ldab, double *r__, double *c__, 
 	double *rowcnd, double *colcnd, double *amax, char *equed)
 {
     /* System generated locals */

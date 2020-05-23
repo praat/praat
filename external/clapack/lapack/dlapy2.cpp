@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-double dlapy2_(double *x, double *y)
+/* Subroutine */ double dlapy2_(double *x, double *y)
 {
     /* System generated locals */
     double ret_val, d__1;

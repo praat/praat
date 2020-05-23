@@ -2,7 +2,7 @@
 #include "f2cP.h"
 
 /* Subroutine */ int dgbbrd_(const char *vect, integer *m, integer *n, integer *ncc,
-	 integer *kl, integer *ku, double *ab, integer *ldab, double *
+	integer *kl, integer *ku, double *ab, integer *ldab, double *
 	d__, double *e, double *q, integer *ldq, double *pt, 
 	integer *ldpt, double *c__, integer *ldc, double *work, 
 	integer *info)

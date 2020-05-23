@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h__,
+/* Subroutine */ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h__,
 	integer *ldh, double *wr, double *wi, double *z__, integer *ldz, double *work,
 	integer *lwork, integer *info)
 {

@@ -1,7 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,
+/* Subroutine */ int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,
 	double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info)
 {
 	/* Table of constant values */

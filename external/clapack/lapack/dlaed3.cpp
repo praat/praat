@@ -3,7 +3,7 @@
 
 /* Subroutine */ int dlaed3_(integer *k, integer *n, integer *n1, double *
 	d__, double *q, integer *ldq, double *rho, double *dlamda, 
-	 double *q2, integer *indx, integer *ctot, double *w, 
+	double *q2, integer *indx, integer *ctot, double *w, 
 	double *s, integer *info)
 {
 	/* Table of constant values */
