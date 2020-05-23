@@ -1,14 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b9 = 1.;
-
-/* Subroutine */ int dpotrs_(const char *uplo, integer *n, integer *nrhs, 
+/* Subroutine */ int dpotrs_(const char *uplo, integer *n, integer *nrhs,
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info)
 {
+	/* Table of constant values */
+
+	static double c_b9 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 

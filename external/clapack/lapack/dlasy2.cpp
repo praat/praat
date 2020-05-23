@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__4 = 4;
-static integer c__1 = 1;
-static integer c__16 = 16;
-static integer c__0 = 0;
-
-/* Subroutine */ int dlasy2_(bool *ltranl, bool *ltranr, integer *isgn, 
+/* Subroutine */ int dlasy2_(bool *ltranl, bool *ltranr, integer *isgn,
 	integer *n1, integer *n2, double *tl, integer *ldtl, double *
 	tr, integer *ldtr, double *b, integer *ldb, double *scale, 
 	double *x, integer *ldx, double *xnorm, integer *info)
 {
+	/* Table of constant values */
+	static integer c__4 = 4;
+	static integer c__1 = 1;
+	static integer c__16 = 16;
+	static integer c__0 = 0;
+
     /* Initialized data */
 
     static integer locu12[4] = { 3,4,1,2 };

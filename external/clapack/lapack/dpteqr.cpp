@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b7 = 0.;
-static double c_b8 = 1.;
-static integer c__0 = 0;
-static integer c__1 = 1;
-
-/* Subroutine */ int dpteqr_(const char *compz, integer *n, double *d__, 
+/* Subroutine */ int dpteqr_(const char *compz, integer *n, double *d__,
 	double *e, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
+	/* Table of constant values */
+	static double c_b7 = 0.;
+	static double c_b8 = 1.;
+	static integer c__0 = 0;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1;
 

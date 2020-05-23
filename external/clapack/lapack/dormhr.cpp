@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static integer c__2 = 2;
-
-/* Subroutine */ int dormhr_(const char *side, const char *trans, integer *m, integer *n, 
+/* Subroutine */ int dormhr_(const char *side, const char *trans, integer *m, integer *n,
 	integer *ilo, integer *ihi, double *a, integer *lda, double *
 	tau, double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
+
     /* System generated locals */
     char * a__1[2];
     integer a_dim1, a_offset, c_dim1, c_offset, i__1[2], i__2;

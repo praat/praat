@@ -1,13 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__2 = 2;
-static double c_b28 = 1.;
-
-/* Subroutine */ int dtgsen_(integer *ijob, bool *wantq, bool *wantz, 
+/* Subroutine */ int dtgsen_(integer *ijob, bool *wantq, bool *wantz,
 	bool *select, integer *n, double *a, integer *lda, double *
 	b, integer *ldb, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
@@ -15,6 +9,11 @@ static double c_b28 = 1.;
 	double *work, integer *lwork, integer *iwork, integer *liwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__2 = 2;
+	static double c_b28 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, z_dim1, 
 	    z_offset, i__1, i__2;

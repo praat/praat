@@ -1,21 +1,20 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b5 = -1.;
-static integer c__1 = 1;
-static double c_b11 = 1.;
-static double c_b13 = 0.;
-static integer c__0 = 0;
-
-/* Subroutine */ int dlals0_(integer *icompq, integer *nl, integer *nr, 
+/* Subroutine */ int dlals0_(integer *icompq, integer *nl, integer *nr,
 	integer *sqre, integer *nrhs, double *b, integer *ldb, double 
 	*bx, integer *ldbx, integer *perm, integer *givptr, integer *givcol, 
 	integer *ldgcol, double *givnum, integer *ldgnum, double *
 	poles, double *difl, double *difr, double *z__, integer *
 	k, double *c__, double *s, double *work, integer *info)
 {
+	/* Table of constant values */
+	static double c_b5 = -1.;
+	static integer c__1 = 1;
+	static double c_b11 = 1.;
+	static double c_b13 = 0.;
+	static integer c__0 = 0;
+
     /* System generated locals */
     integer givcol_dim1, givcol_offset, b_dim1, b_offset, bx_dim1, bx_offset, 
 	    difr_dim1, difr_offset, givnum_dim1, givnum_offset, poles_dim1, 

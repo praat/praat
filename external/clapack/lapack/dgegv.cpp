@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static double c_b27 = 1.;
-static double c_b38 = 0.;
-
 /* Subroutine */ int dgegv_(const char *jobvl, const char *jobvr, integer *n, double *
 	a, integer *lda, double *b, integer *ldb, double *alphar, 
 	double *alphai, double *beta, double *vl, integer *ldvl, 
 	double *vr, integer *ldvr, double *work, integer *lwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static double c_b27 = 1.;
+	static double c_b38 = 0.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;

@@ -2,10 +2,6 @@
 #include "melder.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static float c_b32 = 0.f;
-
 int slamc1_(integer *beta, integer *t, bool *rnd, bool *ieee1);
 int slamc2_(integer *beta, integer *t, bool *rnd, float *
 	eps, integer *emin, float *rmin, integer *emax, float *rmax);
@@ -607,10 +603,10 @@ L10:
 	if (iwarn) {
 	    first = true;
 		Melder_warning (U"WARNING. The value EMIN may be incorrect:- \n"
-			"EMIN = ",lemin, 
+			"EMIN = ", lemin,
 			U"If, after inspection, the value EMIN looks acceptable please comment out \n"
-			"the IF block as marked within the code of routine SLAMC2, \n "
-			"otherwise supply EMIN explicitly.\n");
+			"the IF block as marked within the code of routine SLAMC2; \n "
+			"otherwise, supply EMIN explicitly.\n");
 	}
 /* ** */
 
@@ -798,6 +794,9 @@ L10:
 /* Subroutine */ int slamc5_(integer *beta, integer *p, integer *emin, 
 	bool *ieee, integer *emax, float *rmax)
 {
+	/* Table of constant values */
+	static float c_b32 = 0.f;
+
     /* System generated locals */
     integer i__1;
     float r__1;

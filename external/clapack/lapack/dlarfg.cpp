@@ -1,7 +1,6 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-
 int dlarfg_(integer *n, double *alpha, double *x, integer *incx, double *tau)
 {
     /* System generated locals */

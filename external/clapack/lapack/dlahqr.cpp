@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-int dlahqr_(bool *wantt, bool *wantz, integer *n, 
+int dlahqr_(bool *wantt, bool *wantz, integer *n,
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3;
     double d__1, d__2, d__3, d__4;

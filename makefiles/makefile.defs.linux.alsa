@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.alsa
 
 # System: Linux
-# Paul Boersma 2020-04-16
+# Paul Boersma 2020-05-20
 
 CC = gcc
 
@@ -19,7 +19,7 @@ LINK = g++
 
 EXECUTABLE = praat
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-2.0` -lm -lasound -lpthread
+LIBS = `$(PKG_CONFIG) --libs gtk+-2.0` -lm -lasound -static-libgcc -static-libstdc++ -lpthread
 
 AR = ar
 RANLIB = ls

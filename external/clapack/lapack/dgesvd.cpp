@@ -1,21 +1,20 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__6 = 6;
-static integer c__0 = 0;
-static integer c__2 = 2;
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static double c_b421 = 0.;
-static double c_b443 = 1.;
-
-/* Subroutine */ int dgesvd_(const char *jobu, const char *jobvt, integer *m, integer *n, 
+/* Subroutine */ int dgesvd_(const char *jobu, const char *jobvt, integer *m, integer *n,
 	double *a, integer *lda, double *s, double *u, integer *
 	ldu, double *vt, integer *ldvt, double *work, integer *lwork, 
 	integer *info)
 {
+	/* Table of constant values */
+	static integer c__6 = 6;
+	static integer c__0 = 0;
+	static integer c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static double c_b421 = 0.;
+	static double c_b443 = 1.;
+
     /* System generated locals */
     char * a__1[2];
     integer a_dim1, a_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1[2], 

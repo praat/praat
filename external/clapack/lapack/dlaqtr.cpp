@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static bool c_false = false;
-static integer c__2 = 2;
-static double c_b21 = 1.;
-static double c_b25 = 0.;
-static bool c_true = true;
-
-/* Subroutine */ int dlaqtr_(bool *ltran, bool *lreal, integer *n, 
+/* Subroutine */ int dlaqtr_(bool *ltran, bool *lreal, integer *n,
 	double *t, integer *ldt, double *b, double *w, double 
 	*scale, double *x, double *work, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static bool c_false = false;
+	static integer c__2 = 2;
+	static double c_b21 = 1.;
+	static double c_b25 = 0.;
+	static bool c_true = true;
+
     /* System generated locals */
     integer t_dim1, t_offset, i__1, i__2;
     double d__1, d__2, d__3, d__4, d__5, d__6;

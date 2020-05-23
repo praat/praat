@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-/* Subroutine */ int dopmtr_(const char *side, const char *uplo, const char *trans, integer *m, 
+/* Subroutine */ int dopmtr_(const char *side, const char *uplo, const char *trans, integer *m,
 	integer *n, double *ap, double *tau, double *c__, integer 
 	*ldc, double *work, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer c_dim1, c_offset, i__1, i__2;
 

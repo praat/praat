@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-
-/* Subroutine */ int dsysv_(const char *uplo, integer *n, integer *nrhs, double 
+/* Subroutine */ int dsysv_(const char *uplo, integer *n, integer *nrhs, double
 	*a, integer *lda, integer *ipiv, double *b, integer *ldb, 
 	double *work, integer *lwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 

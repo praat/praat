@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b3 = -1.;
-static integer c__1 = 1;
-
 /* Subroutine */ int dlaed2_(integer *k, integer *n, integer *n1, double *
 	d__, double *q, integer *ldq, integer *indxq, double *rho, 
 	double *z__, double *dlamda, double *w, double *q2, 
 	integer *indx, integer *indxc, integer *indxp, integer *coltyp, 
 	integer *info)
 {
+	/* Table of constant values */
+	static double c_b3 = -1.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer q_dim1, q_offset, i__1, i__2;
     double d__1, d__2, d__3, d__4;

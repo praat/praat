@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b11 = 1.;
-
 /* Subroutine */ int dsygvd_(integer *itype, const char *jobz, const char *uplo, integer *
 	n, double *a, integer *lda, double *b, integer *ldb, 
 	double *w, double *work, integer *lwork, integer *iwork, 
 	integer *liwork, integer *info)
 {
+	/* Table of constant values */
+	static double c_b11 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1;
     double d__1, d__2;

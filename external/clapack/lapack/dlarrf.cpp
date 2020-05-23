@@ -1,16 +1,15 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-/* Subroutine */ int dlarrf_(integer *n, double *d__, double *l, 
+/* Subroutine */ int dlarrf_(integer *n, double *d__, double *l,
 	double *ld, integer *clstrt, integer *clend, double *w, 
 	double *wgap, double *werr, double *spdiam, double *
 	clgapl, double *clgapr, double *pivmin, double *sigma, 
 	double *dplus, double *lplus, double *work, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer i__1;
     double d__1, d__2, d__3;

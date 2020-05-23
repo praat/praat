@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b3 = 2.;
-static double c_b4 = 1.;
-
-/* Subroutine */ int dlasv2_(double *f, double *g, double *h__, 
+/* Subroutine */ int dlasv2_(double *f, double *g, double *h__,
 	double *ssmin, double *ssmax, double *snr, double *
 	csr, double *snl, double *csl)
 {
+	/* Table of constant values */
+	static double c_b3 = 2.;
+	static double c_b4 = 1.;
+
     /* System generated locals */
     double d__1;
 

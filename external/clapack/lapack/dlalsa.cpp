@@ -1,13 +1,7 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b7 = 1.;
-static double c_b8 = 0.;
-static integer c__2 = 2;
-
-/* Subroutine */ int dlalsa_(integer *icompq, integer *smlsiz, integer *n, 
+/* Subroutine */ int dlalsa_(integer *icompq, integer *smlsiz, integer *n,
 	integer *nrhs, double *b, integer *ldb, double *bx, integer *
 	ldbx, double *u, integer *ldu, double *vt, integer *k, 
 	double *difl, double *difr, double *z__, double *
@@ -15,6 +9,11 @@ static integer c__2 = 2;
 	perm, double *givnum, double *c__, double *s, double *
 	work, integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static double c_b7 = 1.;
+	static double c_b8 = 0.;
+	static integer c__2 = 2;
+
     /* System generated locals */
     integer givcol_dim1, givcol_offset, perm_dim1, perm_offset, b_dim1, 
 	    b_offset, bx_dim1, bx_offset, difl_dim1, difl_offset, difr_dim1, 

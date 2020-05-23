@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b9 = -1.;
-static double c_b11 = 1.;
-
-/* Subroutine */ int dspgst_(integer *itype, const char *uplo, integer *n, 
+/* Subroutine */ int dspgst_(integer *itype, const char *uplo, integer *n,
 	double *ap, double *bp, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b9 = -1.;
+	static double c_b11 = 1.;
+
     /* System generated locals */
     integer i__1, i__2;
     double d__1;

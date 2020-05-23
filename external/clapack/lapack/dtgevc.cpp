@@ -1,20 +1,19 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static bool c_true = true;
-static integer c__2 = 2;
-static double c_b34 = 1.;
-static integer c__1 = 1;
-static double c_b36 = 0.;
-static bool c_false = false;
-
-/* Subroutine */ int dtgevc_(const char *side, const char *howmny, bool *select, 
+/* Subroutine */ int dtgevc_(const char *side, const char *howmny, bool *select,
 	integer *n, double *s, integer *lds, double *p, integer *ldp, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, integer 
 	*mm, integer *m, double *work, integer *info)
 {
+	/* Table of constant values */
+	static bool c_true = true;
+	static integer c__2 = 2;
+	static double c_b34 = 1.;
+	static integer c__1 = 1;
+	static double c_b36 = 0.;
+	static bool c_false = false;
+
     /* System generated locals */
     integer p_dim1, p_offset, s_dim1, s_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2, i__3, i__4, i__5;

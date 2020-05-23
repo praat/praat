@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static bool c_false = false;
-static integer c__2 = 2;
-static double c_b26 = 1.;
-static double c_b30 = 0.;
-static bool c_true = true;
-
-/* Subroutine */ int dtrsyl_(const char *trana, const char *tranb, integer *isgn, integer 
+/* Subroutine */ int dtrsyl_(const char *trana, const char *tranb, integer *isgn, integer
 	*m, integer *n, double *a, integer *lda, double *b, integer *
 	ldb, double *c__, integer *ldc, double *scale, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static bool c_false = false;
+	static integer c__2 = 2;
+	static double c_b26 = 1.;
+	static double c_b30 = 0.;
+	static bool c_true = true;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset, i__1, i__2, 
 	    i__3, i__4;

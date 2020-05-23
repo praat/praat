@@ -1,17 +1,16 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-/* Subroutine */ int dgbsvx_(const char *fact, const char *trans, integer *n, integer *kl, 
+/* Subroutine */ int dgbsvx_(const char *fact, const char *trans, integer *n, integer *kl,
 	 integer *ku, integer *nrhs, double *ab, integer *ldab, 
 	double *afb, integer *ldafb, integer *ipiv, char *equed, 
 	double *r__, double *c__, double *b, integer *ldb, 
 	double *x, integer *ldx, double *rcond, double *ferr, 
 	double *berr, double *work, integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer ab_dim1, ab_offset, afb_dim1, afb_offset, b_dim1, b_offset, 
 	    x_dim1, x_offset, i__1, i__2, i__3, i__4, i__5;

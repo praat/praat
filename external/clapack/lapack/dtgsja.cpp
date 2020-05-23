@@ -1,20 +1,19 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b13 = 0.;
-static double c_b14 = 1.;
-static integer c__1 = 1;
-static double c_b43 = -1.;
-
-/* Subroutine */ int dtgsja_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
+/* Subroutine */ int dtgsja_(const char *jobu, const char *jobv, const char *jobq, integer *m,
 	integer *p, integer *n, integer *k, integer *l, double *a, 
 	integer *lda, double *b, integer *ldb, double *tola, 
 	double *tolb, double *alpha, double *beta, double *u, 
 	integer *ldu, double *v, integer *ldv, double *q, integer *
 	ldq, double *work, integer *ncycle, integer *info)
 {
+	/* Table of constant values */
+	static double c_b13 = 0.;
+	static double c_b14 = 1.;
+	static integer c__1 = 1;
+	static double c_b43 = -1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, 
 	    u_offset, v_dim1, v_offset, i__1, i__2, i__3, i__4;

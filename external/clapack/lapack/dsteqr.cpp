@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b9 = 0.;
-static double c_b10 = 1.;
-static integer c__0 = 0;
-static integer c__1 = 1;
-static integer c__2 = 2;
-
-/* Subroutine */ int dsteqr_(const char *compz, integer *n, double *d__, 
+/* Subroutine */ int dsteqr_(const char *compz, integer *n, double *d__,
 	double *e, double *z__, integer *ldz, double *work, 
 	integer *info)
 {
+	/* Table of constant values */
+	static double c_b9 = 0.;
+	static double c_b10 = 1.;
+	static integer c__0 = 0;
+	static integer c__1 = 1;
+	static integer c__2 = 2;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
     double d__1, d__2;

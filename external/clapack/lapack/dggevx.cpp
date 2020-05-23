@@ -1,13 +1,6 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c__0 = 0;
-static double c_b59 = 0.;
-static double c_b60 = 1.;
-
 /* Subroutine */ int dggevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, double *alphar, double *alphai, double *
@@ -17,6 +10,12 @@ static double c_b60 = 1.;
 	rcondv, double *work, integer *lwork, integer *iwork, bool *
 	bwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c__0 = 0;
+	static double c_b59 = 0.;
+	static double c_b60 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, vl_dim1, vl_offset, vr_dim1, 
 	    vr_offset, i__1, i__2;

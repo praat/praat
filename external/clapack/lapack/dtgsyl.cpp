@@ -1,16 +1,6 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__2 = 2;
-static integer c_n1 = -1;
-static integer c__5 = 5;
-static double c_b14 = 0.;
-static integer c__1 = 1;
-static double c_b51 = -1.;
-static double c_b52 = 1.;
-
 /* Subroutine */ int dtgsyl_(const char *trans, integer *ijob, integer *m, integer *
 	n, double *a, integer *lda, double *b, integer *ldb, 
 	double *c__, integer *ldc, double *d__, integer *ldd, 
@@ -18,6 +8,16 @@ static double c_b52 = 1.;
 	scale, double *dif, double *work, integer *lwork, integer *
 	iwork, integer *info)
 {
+	/* Table of constant values */
+
+	static integer c__2 = 2;
+	static integer c_n1 = -1;
+	static integer c__5 = 5;
+	static double c_b14 = 0.;
+	static integer c__1 = 1;
+	static double c_b51 = -1.;
+	static double c_b52 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset, d_dim1, 
 	    d_offset, e_dim1, e_offset, f_dim1, f_offset, i__1, i__2, i__3, 

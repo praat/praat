@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static double c_b9 = -1.;
-
-/* Subroutine */ int dgbtf2_(integer *m, integer *n, integer *kl, integer *ku, 
+/* Subroutine */ int dgbtf2_(integer *m, integer *n, integer *kl, integer *ku,
 	 double *ab, integer *ldab, integer *ipiv, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static double c_b9 = -1.;
+
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3, i__4;
     double d__1;

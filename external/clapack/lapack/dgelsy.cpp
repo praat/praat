@@ -1,20 +1,19 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-static integer c_n1 = -1;
-static integer c__0 = 0;
-static double c_b31 = 0.;
-static integer c__2 = 2;
-static double c_b54 = 1.;
-
 /* Subroutine */ int dgelsy_(integer *m, integer *n, integer *nrhs, 
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	jpvt, double *rcond, integer *rank, double *work, integer *
 	lwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__0 = 0;
+	static double c_b31 = 0.;
+	static integer c__2 = 2;
+	static double c_b54 = 1.;
+
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
     double d__1, d__2;

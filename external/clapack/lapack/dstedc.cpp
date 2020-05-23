@@ -1,19 +1,18 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__9 = 9;
-static integer c__0 = 0;
-static integer c__2 = 2;
-static double c_b17 = 0.;
-static double c_b18 = 1.;
-static integer c__1 = 1;
-
-/* Subroutine */ int dstedc_(const char *compz, integer *n, double *d__, 
+/* Subroutine */ int dstedc_(const char *compz, integer *n, double *d__,
 	double *e, double *z__, integer *ldz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c__9 = 9;
+	static integer c__0 = 0;
+	static integer c__2 = 2;
+	static double c_b17 = 0.;
+	static double c_b18 = 1.;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
     double d__1, d__2;

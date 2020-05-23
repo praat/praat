@@ -1,18 +1,17 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b11 = 0.;
-static double c_b12 = 1.;
-static integer c__12 = 12;
-static integer c__2 = 2;
-static integer c__49 = 49;
-
 int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h__,
 	integer *ldh, double *wr, double *wi, double *z__, integer *ldz, double *work,
 	integer *lwork, integer *info)
 {
+	/* Table of constant values */
+	static double c_b11 = 0.;
+	static double c_b12 = 1.;
+	static integer c__12 = 12;
+	static integer c__2 = 2;
+	static integer c__49 = 49;
+
     /* System generated locals */
     char *a__1[2];
     integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2[2], i__3;

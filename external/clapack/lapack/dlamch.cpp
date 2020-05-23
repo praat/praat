@@ -1,14 +1,12 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b32 = 0.;
-
 double dlamch_(const char *cmach)
 {
-    /* Initialized data */
+	/* Table of constant values */
+	static double c_b32 = 0.;
 
+    /* Initialized data */
     static bool first = true;
 
     /* System generated locals */
@@ -796,6 +794,9 @@ L10:
 /* Subroutine */ int dlamc5_(integer *beta, integer *p, integer *emin, 
 	bool *ieee, integer *emax, double *rmax)
 {
+	/* Table of constant values */
+	static double c_b32 = 0.;
+
     /* System generated locals */
     integer i__1;
     double d__1;
