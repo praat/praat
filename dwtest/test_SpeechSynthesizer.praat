@@ -18,7 +18,6 @@ for ilang to numberOfLanguages
 		selectObject: voiceslist
 		voice$ = Get value: randomInteger (1, numberOfVoices), "name"
 		appendInfo:  " ", voice$
-		# some voices have spaces!
 		ss = Create SpeechSynthesizer: language$, voice$
 		sound = To Sound: "a e u", "no"
 		;Play

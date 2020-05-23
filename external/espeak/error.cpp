@@ -162,12 +162,12 @@ espeak_ng_PrintStatusCodeMessage(espeak_ng_STATUS status,
 			break;
 		case ERROR_CONTEXT_VERSION:
 			//fprintf(out, "Error: %s at '%s' (expected 0x%x, got 0x%x).\n", error, context->name, context->expected_version, context->version);
-			Melder_throw (U"Error: ", Melder_peek8to32  (error), U" at \"", Melder_peek8to32 (context->name), U"\" (expected ", context->expected_version, U", got ", context->version);
+			Melder_throw (U"eSpeak error: ", Melder_peek8to32  (error), U" at \"", Melder_peek8to32 (context->name), U"\" (expected ", context->expected_version, U", got ", context->version);
 			break;
 		}
 	} else
 		//fprintf(out, "Error: %s.\n", error);
-		Melder_throw (U"Error: ", Melder_peek8to32  (error));
+		Melder_throw (U"eSpeak error: ", Melder_peek8to32  (error));
 }
 
 #pragma GCC visibility pop
