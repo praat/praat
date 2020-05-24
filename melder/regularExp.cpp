@@ -514,12 +514,11 @@ static char32 *shortcut_escape (char32 c, int *flag_param, int emit);
  * some of the structure of the compiled regexp.
  *----------------------------------------------------------------------*/
 
-regexp *CompileRE_throwable (conststring32 exp, int defaultFlags) {
+regexp *CompileRE_throwable (conststring32 expression, int defaultFlags) {
 	conststring32 compileMessage;
-	regexp *compiledRE = CompileRE (exp, & compileMessage, defaultFlags);
-	if (compiledRE == NULL) {
-		Melder_throw (U"Regular expression: ", compileMessage, U".");
-	}
+	regexp *compiledRE = CompileRE (expression, & compileMessage, defaultFlags);
+	if (compiledRE == NULL)
+		Melder_throw (U"Regular expression: ", compileMessage, U" (", expression, U").");
 	return compiledRE;
 }
 
