@@ -59,11 +59,12 @@ autoFormantPath FormantPath_create (double fromTime, double toTime, integer numb
 	my formantIdentifiers = autoSTRVEC (numberOfFormantObjects);
 	my numberOfFormants = numberOfFormantObjects;
 	my path = TextGrid_create (fromTime, toTime, U"path/formant", U"");
+	my textGridNavigator = TextGridNavigator_create (my path.get(), nullptr, kMelder_string::DEFAULT);
 	my pathTierNumber = 1;
 	return me;
 }
 
-integer FormantPath_searchPathTier (FormantPath me, TextGrid thee) {
+integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee) {
 	STRVEC validLabels = my formantIdentifiers.get();
 	autoINTVEC minimumValidLabelLengths = newINTVECraw (validLabels.size);
 	for (integer ilabel = 1; ilabel <= validLabels.size; ilabel ++)
@@ -143,6 +144,15 @@ void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, 
 
 }
 
+void FormantPath_replaceNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion) {
+	try {
+		my textGridNavigator -> navigationLabels = Data_copy (navigationLabels);
+		my textGridNavigator -> criterion = criterion;
+	} catch (MelderError) {
+		Melder_throw (me, U": navigation labels not replaced with ", navigationLabels, U".");
+	}
+}
+
 integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label) {
 	/*
 		Find part before ';'
@@ -171,10 +181,6 @@ void FormantPath_reconstructFormant (FormantPath me) {
 		Formant_replaceFrames (thee.get(), textInterval -> xmin, textInterval -> xmax, my formants.at [formantIndex]);
 	}
 	my formant = thee.move();
-}
-
-autoFormant FormantPath_extractFormant (FormantPath me) {
-	return Data_copy (my formant.get());
 }
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
@@ -242,7 +248,7 @@ void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee) {
 	*/
 	autoTextGrid copy = Data_copy (thee);
 	integer oldPathTierNumber = my pathTierNumber;
-	integer pathTierNumber = FormantPath_searchPathTier (me, copy.get());
+	integer pathTierNumber = FormantPath_identifyPathTier (me, copy.get());
 	if (pathTierNumber == 0) {
 		TextGrid_addTier_copy (copy.get(), my path -> tiers -> at [my pathTierNumber]);
 		pathTierNumber = copy -> tiers -> size;

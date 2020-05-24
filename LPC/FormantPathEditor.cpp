@@ -28,6 +28,7 @@
 
 Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
 
+
 #include "prefs_define.h"
 #include "FormantPathEditor_prefs.h"
 #include "prefs_install.h"
@@ -38,6 +39,7 @@ Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
 // forward definitions
 static void insertBoundaryOrPoint (FormantPathEditor me, integer itier, double t1, double t2, bool insertSecond);
 // end forward
+
 
 void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
@@ -206,14 +208,16 @@ bool FormantPathEditor_setPathTierLabel (FormantPathEditor me) {
 }
 
 static double _FormantPathEditor_computeSoundY (FormantPathEditor me) {
-	const integer numberOfTiers = my pathGridView -> tiers -> size;
-	bool showAnalysis = my v_hasAnalysis () &&
-			(my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) &&
-			(my d_longSound.data || my d_sound.data);
-	integer numberOfVisibleChannels =
-		my d_sound.data ? (my d_sound.data -> ny > 8 ? 8 : my d_sound.data -> ny) :
-		my d_longSound.data ? (my d_longSound.data -> numberOfChannels > 8 ? 8 : my d_longSound.data -> numberOfChannels) : 1;
-	return (my d_sound.data || my d_longSound.data) ? numberOfTiers / (2.0 * numberOfVisibleChannels + numberOfTiers * (showAnalysis ? 1.8 : 1.3)) : 1.0;
+	/*
+		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
+	*/
+	return 1.0 / 8.0;
+}
+static double _FormantPathEditor_computeSoundY2 (FormantPathEditor me) {
+	/*
+		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
+	*/
+	return 5.0 / 8.0;
 }
 
 static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier, TextTier *textTier) {
@@ -1088,6 +1092,7 @@ static void menu_cb_DrawVisibleModels (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		Editor_closePraatPicture (me);	
 	EDITOR_END
 }
+
 static void menu_cb_FormantColourSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
 		WORD (pathColour_string, U"Dots in the path", my default_formant_path_colour ())
@@ -1526,7 +1531,7 @@ void structFormantPathEditor :: v_draw () {
 	const bool showAnalysis = v_hasAnalysis () &&
 			(p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) &&
 			(d_longSound.data || d_sound.data);
-	const double soundY = _FormantPathEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
+	double soundY = _FormantPathEditor_computeSoundY (this), soundY2 = _FormantPathEditor_computeSoundY2 (this);
 
 	/*
 		Draw the sound.
@@ -2267,7 +2272,7 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
 	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
-	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
+	SENTENCE_FIELD (v_prefs_addFields_theText, U"...one of the elements in", our default_greenString ())
 }
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
@@ -2301,7 +2306,7 @@ void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 
 void structFormantPathEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY = _FormantPathEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
+		const double soundY2 = _FormantPathEditor_computeSoundY2 (this);
 		//Graphics_highlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_highlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
@@ -2311,7 +2316,7 @@ void structFormantPathEditor :: v_highlightSelection (double left, double right,
 
 void structFormantPathEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY = _FormantPathEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
+		const double soundY2 = _FormantPathEditor_computeSoundY2 (this);
 		//Graphics_unhighlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_unhighlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {

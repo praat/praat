@@ -24,6 +24,7 @@
 #include "LPC.h"
 #include "Sound.h"
 #include "TextGrid.h"
+#include "TextGridNavigator.h"
 
 #include "FormantPath_def.h"
 
@@ -43,11 +44,21 @@ integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 labe
 
 void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex);
 
-integer FormantPath_searchPathTier (FormantPath me, TextGrid thee);
+void FormantPath_replaceNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
+
+integer FormantPath_nextNavigationInterval (FormantPath me, integer preferedTierNumber);
+
+integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee);
 
 void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee);
 
-autoFormant FormantPath_extractFormant (FormantPath me);
+static inline autoFormant FormantPath_extractFormant (FormantPath me) {
+	return Data_copy (my formant.get());
+}
+
+static inline autoTextGrid FormantPath_extractTextGrid (FormantPath me) {
+	return Data_copy (my path.get());
+}
 
 void FormantPath_reconstructFormant (FormantPath me);
 

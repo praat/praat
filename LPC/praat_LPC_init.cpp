@@ -92,6 +92,27 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 	END
 }
 
+DIRECT (NEW_FormantPath_extractFormant) {
+	CONVERT_EACH (FormantPath)
+		autoFormant result = FormantPath_extractFormant (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_FormantPath_extractTextGrid) {
+	CONVERT_EACH (FormantPath)
+		autoTextGrid result = FormantPath_extractTextGrid (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (MODIFY_FormantPath_replaceNavigationlabels, U"FormantPath: Replace navigation labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
+		FormantPath_replaceNavigationLabels (me, you, criterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
 /********************** Cepstrum  ****************************************/
 
 DIRECT (NEW_Cepstrum_downto_PowerCepstrum) {
@@ -1208,6 +1229,10 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
+	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
+	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
+	
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Replace Strings", 0, 0, MODIFY_FormantPath_replaceNavigationlabels);
 	
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);

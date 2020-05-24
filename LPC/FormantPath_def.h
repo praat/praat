@@ -32,6 +32,7 @@ oo_DEFINE_CLASS (FormantPath, Function)
 	#endif
 	#if oo_DECLARING
 		oo_OBJECT (Formant, 2, formant)
+		oo_OBJECT (TextGridNavigator, 0, textGridNavigator)
 		virtual void v_info ();
 	#endif
 
