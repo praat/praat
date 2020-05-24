@@ -651,7 +651,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
 		
-		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
+		status = espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
 		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
 			const conststring32 phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
@@ -695,7 +695,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		return thee;
 	} catch (MelderError) {
 		espeak_Terminate ();
-		Melder_throw (U"Text not played.");
+		Melder_throw (U"SpeechSynthesizer: text not converted to Sound.");
 	}
 }
 

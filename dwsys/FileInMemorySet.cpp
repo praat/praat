@@ -216,15 +216,14 @@ integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_st
 
 bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name) {
 	bool match = false;
-	autoMelderString regex;
+	autoMelderString searchString;
+	MelderString_append (& searchString, U"/", name, U"/");
 	for (integer i = 1; i <= my size; i ++) {
 		const FileInMemory fim = (FileInMemory) my at [i];
-		MelderString_append (& regex, U".*/", name, U"/.*"); 
-		if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: MATCH_REGEXP, regex.string, true)) {
+		if (str32str (fim -> d_path.get(), searchString.string)) {
 			match = true;
 			break;
 		}
-		MelderString_empty (& regex);
 	}
 	return match;
 }
