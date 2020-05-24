@@ -1,25 +1,25 @@
-#
-#  Top Level Makefile for CLAPACK
-#
-# 20200320 David Weenink
+# Makefile of the library "external/clapack"
+# David Weenink, 13 March 2020
+# Paul Boersma, 24 May 2020
 
 include ../../makefile.defs
 
-.PHONY: all
-all: blaslib lapacklib
-	cp blas/libblas.a .
-	cp lapack/liblapack.a .
+CPPFLAGS = -I ../../melder
 
-.PHONY: blaslib
-blaslib:
-	$(MAKE) -C blas
+OBJECTS = lapack.o blas.o
 
-.PHONY: lapacklib
-lapacklib:
-	$(MAKE) -C lapack
+.PHONY: all clean
 
-.PHONY: clean
+all: libclapack.a
+
 clean:
-	$(MAKE) -C blas clean
-	$(MAKE) -C lapack clean
-	rm -f *.a
+	$(RM) $(OBJECTS)
+	$(RM) libclapack.a
+
+libclapack.a: $(OBJECTS)
+	touch libclapack.a
+	rm libclapack.a
+	$(AR) cq libclapack.a $(OBJECTS)
+	$(RANLIB) libclapack.a
+
+$(OBJECTS): *.h ../../melder/*.h

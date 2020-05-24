@@ -103,7 +103,7 @@ This stack smashing error occured in dlaqr0.c where an "array" dimensioned as ch
 	char jbcmpz[1];
 	....
 	if (*wantz) {
-	    *(unsigned char *)jbcmpz[1] = 'V'; // illegal write to memory into one byte of the canary
+	    *(unsigned char *)jbcmpz[1] = 'V'; // illegal write to memory into one byte of the array
 	} else {
 	    *(unsigned char *)jbcmpz[1] = 'N'; // illegal write to memory
 	}
@@ -122,10 +122,10 @@ To correct these bugs we have to dimension jbcmpz[3] and always close the string
 	jbcmpz [2] = '\0';
 	nwr = ilaenv_(&c__13, "DLAQR0", jbcmpz, n, ilo, ihi, lwork);
 
-There are more occasions in clapack that don't properly close the third argument passed to ilaenv. In routines dhseqr dgesvd, dormbr, dormqr, dormlq, dormql, dormqr, dormrq, dormtr, and dormrz, character arrays of dimension 2 are passed without proper closing the string with a null byte. We corrected this too.
+There are more occasions in clapack that don't properly close the third argument passed to ilaenv. In routines dhseqr, dgesvd, dormbr, dormqr, dormlq, dormql, dormqr, dormrq, dormtr, and dormrz, character arrays of dimension 2 are passed without proper closing the string with a null byte. We corrected this too.
 
 Two other bugs were found by Paul Boersma: 
-The return value in dlamch has to be declared volatile, otherwise the whole routine is optimized away and a wrong result may occur.
+The return value in dlamc3_ has to be declared volatile, otherwise the whole routine is optimized away and a wrong result may occur.
 double dlamc3_(double *a, double *b) {
 	volatile double ret_val;
 	ret_val = *a + *b;
