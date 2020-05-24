@@ -1,5 +1,5 @@
-#ifndef __CLAPACK_H
-#define __CLAPACK_H
+#ifndef _clapack_h_
+#define _clapack_h_
 
 #include "melder.h"
 
@@ -373,7 +373,9 @@ int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, intege
 	double *h__, integer *ldh, double *wr, double *wi, double *z__, integer *ldz,
 	double *work, integer *lwork, integer *info);
 
-double dla_gbrcond__(const char *trans, integer *n, integer *kl, integer *ku, 
+bool disnan_(double *din);
+
+double dla_gbrcond__(const char *trans, integer *n, integer *kl, integer *ku,
 	double *ab, integer *ldab, double *afb, integer *ldafb, 
 	integer *ipiv, integer *cmode, double *c__, integer *info, 
 	double *work, integer *iwork, integer trans_len);
@@ -539,6 +541,8 @@ int dlaic1_(integer *job, integer *j, double *x,
 	double *sest, double *w, double *gamma, double *
 	sestpr, double *s, double *c__);
 
+bool dlaisnan_(double *din1, double *din2);
+
 int dlaln2_(bool *ltrans, integer *na, integer *nw,
 	double *smin, double *ca, double *a, integer *lda, 
 	double *d1, double *d2, double *b, integer *ldb, 
@@ -565,10 +569,56 @@ int dlalsd_(const char *uplo, integer *smlsiz, integer *n, integer
 	double *rcond, integer *rank, double *work, integer *iwork, 
 	integer *info);
 
-double dlamch_ (const char *cmach); 
+int dlamc1_ (integer *beta, integer *t, bool *rnd, bool *ieee1);
+
+int dlamc2_ (integer *beta, integer *t, bool *rnd,
+	double *eps, integer *emin, double *rmin, integer *emax, double *rmax);
+
+double dlamc3_ (double *a, double *b);
+
+int dlamc4_ (integer *emin, double *start, integer *base);
+
+int dlamc5_ (integer *beta, integer *p, integer *emin,
+	bool *ieee, integer *emax, double *rmax);
+
+double dlamch_ (const char *cmach);
 
 int dlamrg_(integer *n1, integer *n2, double *a, integer 
 	*dtrd1, integer *dtrd2, integer *index);
+
+integer dlaneg_(integer *n, double *d__, double *lld, double *
+	sigma, double *pivmin, integer *r__);
+
+double dlangb_(const char *norm, integer *n, integer *kl, integer *ku,
+	double *ab, integer *ldab, double *work);
+
+double dlange_(const char *norm, integer *m, integer *n, double *a, integer
+	*lda, double *work);
+
+double dlangt_(const char *norm, integer *n, double *dl, double *d__,
+	double *du);
+
+double dlanhs_ (const char *norm, integer *n, double *a, integer *lda,
+	double *work);
+
+double dlansb_(const char *norm, const char *uplo, integer *n, integer *k, double
+	*ab, integer *ldab, double *work);
+
+double dlansp_(const char *norm, const char *uplo, integer *n, double *ap,
+	double *work);
+
+double dlanst_(const char *norm, integer *n, double *d__, double *e);
+
+double dlansy_(const char *norm, const char *uplo, integer *n, double *a, integer
+	*lda, double *work);
+
+double dlantb_(const char *norm, const char *uplo, const char *diag, integer *n, integer *k,
+	 double *ab, integer *ldab, double *work);
+
+double dlantp_(const char *norm, const char *uplo, const char *diag, integer *n, double *ap, double *work);
+
+double dlantr_(const char *norm, const char *uplo, const char *diag, integer *m, integer *n,
+	 double *a, integer *lda, double *work);
 
 double dlansf_(const char *norm, char *transr, char *uplo, integer *n, double *a, double *work);
 
@@ -581,6 +631,10 @@ int dlapll_(integer *n, double *x, integer *incx,
 
 int dlapmt_(bool *forwrd, integer *m, integer *n,
 	double *x, integer *ldx, integer *k);
+
+double dlapy2_(double *x, double *y);
+
+double dlapy3_(double *x, double *y, double *z__);
 
 int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku,
 	 double *ab, integer *ldab, double *r__, double *c__, 
@@ -894,6 +948,8 @@ int dlazq4_(integer *i0, integer *n0, double *z__, integer *pp, integer *n0in, d
 	double *dmin1, double *dmin2, double *dn, double *dn1, double *dn2, double *tau, integer *ttype, double *g);
 
 integer dmaxloc_(double *a, integer *dimm);
+
+double dnrm2_(integer *n, double *x, integer *incx);
 
 int dopgtr_(const char *uplo, integer *n, double *ap, double *tau, double *q, integer *ldq, double *work, integer *info);
 
@@ -1502,6 +1558,8 @@ int dtzrqf_(integer *m, integer *n, double *a, integer *lda, double *tau, intege
 
 int dtzrzf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork, integer *info);
 
+integer ieeeck_(integer *ispec, float *zero, float *one);
+
 integer iladlc_(integer *m, integer *n, double *a, integer *lda);
 
 integer iladlr_(integer *m, integer *n, double *a, integer *lda);
@@ -1515,6 +1573,9 @@ integer ilatrans_(const char *trans);
 
 int ilaver_(integer *vers_major__, integer *vers_minor__, integer *vers_patch__);
 
+integer iparmq_ (integer *ispec, const char *name__, const char *opts, integer *n, integer
+	*ilo, integer *ihi, integer *lwork);
+
 	/* Some single precision routines needed in approximations */
 	
 int sgetrf_(integer *m, integer *n, float *a, integer *lda, integer *ipiv, integer *info);
@@ -1524,4 +1585,6 @@ int sgetrs_(const char *trans, integer *n, integer *nrhs, float *a, integer *lda
 
 int slag2d_(integer *m, integer *n, float *sa, integer *ldsa, double *a, integer *lda, integer *info);
 
-#endif /* __CLAPACK_H */
+double slamch_(const char *cmach);
+
+#endif /* _clapack_h_ */

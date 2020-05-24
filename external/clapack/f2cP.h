@@ -20,7 +20,6 @@
 
 #include "melder.h"
 #include "cblas.h"
-#include "clapackP.h"
 
 static inline double d_abs (double *x) {
 	return abs (*x);
