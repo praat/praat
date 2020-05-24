@@ -1,12 +1,11 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b11 = 1.;
-
 int dpftri_(const char *transr, const char *uplo, integer *n, double *a, integer *info)
 {
+	/* Table of constant values */
+	static double c_b11 = 1.;
+
     /* System generated locals */
     integer i__1, i__2;
 

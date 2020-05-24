@@ -1,15 +1,14 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-double dla_gbrcond__(const char *trans, integer *n, integer *kl, integer *ku, 
+double dla_gbrcond__(const char *trans, integer *n, integer *kl, integer *ku,
 	double *ab, integer *ldab, double *afb, integer *ldafb, 
 	integer *ipiv, integer *cmode, double *c__, integer *info, 
 	double *work, integer *iwork, integer trans_len)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer ab_dim1, ab_offset, afb_dim1, afb_offset, i__1, i__2, i__3, i__4;
     double ret_val, d__1;

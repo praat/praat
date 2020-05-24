@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c__1 = 1;
-
-double dla_porcond__(const char *uplo, integer *n, double *a, integer *lda, 
+double dla_porcond__(const char *uplo, integer *n, double *a, integer *lda,
 	double *af, integer *ldaf, integer *cmode, double *c__, 
 	integer *info, double *work, integer *iwork, integer uplo_len)
 {
+	/* Table of constant values */
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer a_dim1, a_offset, af_dim1, af_offset, i__1, i__2;
     double ret_val, d__1;

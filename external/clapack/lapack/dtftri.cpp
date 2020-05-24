@@ -1,13 +1,12 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b13 = -1.;
-static double c_b18 = 1.;
-
 int dtftri_(const char *transr, const char *uplo, const char *diag, integer *n, double *a, integer *info)
 {
+	/* Table of constant values */
+	static double c_b13 = -1.;
+	static double c_b18 = 1.;
+
     /* System generated locals */
     integer i__1, i__2;
 

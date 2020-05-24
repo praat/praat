@@ -1,7 +1,6 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-
 int dlat2s_(const char *uplo, integer *n, double *a, integer *lda, float *sa, integer *ldsa, integer *info)
 {
     /* System generated locals */

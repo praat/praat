@@ -1,12 +1,6 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static integer c_n1 = -1;
-static integer c__0 = 0;
-static integer c__1 = 1;
-
 /* Subroutine */ int dgbrfsx_(const char *trans, const char *equed, integer *n, integer *
 	kl, integer *ku, integer *nrhs, double *ab, integer *ldab, 
 	double *afb, integer *ldafb, integer *ipiv, double *r__, 
@@ -15,6 +9,11 @@ static integer c__1 = 1;
 	double *err_bnds_norm__, double *err_bnds_comp__, integer *
 	nparams, double *params, double *work, integer *iwork, integer *info)
 {
+	/* Table of constant values */
+	static integer c_n1 = -1;
+	static integer c__0 = 0;
+	static integer c__1 = 1;
+
     /* System generated locals */
     integer ab_dim1, ab_offset, afb_dim1, afb_offset, b_dim1, b_offset, 
 	    x_dim1, x_offset, err_bnds_norm_dim1, err_bnds_norm_offset, 

@@ -105,7 +105,7 @@ OBJECTS = dbdsdc.o dbdsqr.o ddisna.o \
 	dsbtrd.o dsfrk.o dsgesv.o dspcon.o \
 	dspev.o dspevd.o dspevx.o \
 	dspgst.o dspgv.o dspgvd.o \
-	dspgvx.o dsposv.o dsprfs.o dspsv.o \
+	dspgvx.o dsprfs.o dspsv.o \
 	dspsvx.o dsptrd.o dsptrf.o \
 	dsptri.o dsptrs.o dstebz.o \
 	dstedc.o dstegr.o dstein.o \
@@ -128,9 +128,7 @@ OBJECTS = dbdsdc.o dbdsqr.o ddisna.o \
 	dtrti2.o dtrtri.o dtrtrs.o dtrttf.o dtrttp.o \
 	dtzrqf.o dtzrzf.o ieeeck.o \
 	iladlc.o iladlr.o ilaenv.o ilaver.o iparmq.o \
-	lsame.o lsamen.o slamch.o \
-	sisnan.o slaisnan.o \
-	spotf2.o spotrf.o spotrs.o ssfrk.o
+	lsame.o lsamen.o slamch.o
 
 .PHONY: all clean
 

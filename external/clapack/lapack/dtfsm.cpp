@@ -1,14 +1,13 @@
 #include "clapack.h"
 #include "f2cP.h"
 
-/* Table of constant values */
-
-static double c_b23 = -1.;
-static double c_b27 = 1.;
-
 int dtfsm_(const char *transr, const char *side, const char *uplo, const char *trans,
 	 const char *diag, integer *m, integer *n, double *alpha, double *a, double *b, integer *ldb)
 {
+	/* Table of constant values */
+	static double c_b23 = -1.;
+	static double c_b27 = 1.;
+
     /* System generated locals */
     integer b_dim1, b_offset, i__1, i__2;
 

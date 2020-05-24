@@ -12,39 +12,39 @@ int dbdsdc_(const char *uplo, const char *compq, integer *n, double *
 	integer *ldvt, double *q, integer *iq, double *work, integer *
 	iwork, integer *info);
 
- int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
+int dbdsqr_(const char *uplo, integer *n, integer *ncvt, integer *
 	nru, integer *ncc, double *d__, double *e, double *vt, 
 	integer *ldvt, double *u, integer *ldu, double *c__, integer *
 	ldc, double *work, integer *info);
 
 int ddisna_(const char *job, integer *m, integer *n, double *d__, double *sep, integer *info);
 
- int dgbbrd_(const char *vect, integer *m, integer *n, integer *ncc,
-	 integer *kl, integer *ku, double *ab, integer *ldab, double *
+int dgbbrd_(const char *vect, integer *m, integer *n, integer *ncc,
+	integer *kl, integer *ku, double *ab, integer *ldab, double *
 	d__, double *e, double *q, integer *ldq, double *pt, 
 	integer *ldpt, double *c__, integer *ldc, double *work, 
 	integer *info);
 
- int dgbcon_(const char *norm, integer *n, integer *kl, integer *ku,
-	 double *ab, integer *ldab, integer *ipiv, double *anorm, 
+int dgbcon_(const char *norm, integer *n, integer *kl, integer *ku,
+	double *ab, integer *ldab, integer *ipiv, double *anorm,
 	double *rcond, double *work, integer *iwork, integer *info);
 
- int dgbequ_(integer *m, integer *n, integer *kl, integer *ku,
-	 double *ab, integer *ldab, double *r__, double *c__, 
+int dgbequ_(integer *m, integer *n, integer *kl, integer *ku,
+	double *ab, integer *ldab, double *r__, double *c__,
 	double *rowcnd, double *colcnd, double *amax, integer *
 	info);
 
- int dgbequb_(integer *m, integer *n, integer *kl, integer *
+int dgbequb_(integer *m, integer *n, integer *kl, integer *
 	ku, double *ab, integer *ldab, double *r__, double *c__,
 	double *rowcnd, double *colcnd, double *amax, integer *info);
 
- int dgbrfs_(const char *trans, integer *n, integer *kl, integer *
+int dgbrfs_(const char *trans, integer *n, integer *kl, integer *
 	ku, integer *nrhs, double *ab, integer *ldab, double *afb, 
 	integer *ldafb, integer *ipiv, double *b, integer *ldb, 
 	double *x, integer *ldx, double *ferr, double *berr, 
 	double *work, integer *iwork, integer *info);
 
- int dgbrfsx_(const char *trans, const char *equed, integer *n, integer *
+int dgbrfsx_(const char *trans, const char *equed, integer *n, integer *
 	kl, integer *ku, integer *nrhs, double *ab, integer *ldab, 
 	double *afb, integer *ldafb, integer *ipiv, double *r__, 
 	double *c__, double *b, integer *ldb, double *x, integer *
@@ -55,7 +55,7 @@ int ddisna_(const char *job, integer *m, integer *n, double *d__, double *sep, i
 int dgbsv_(integer *n, integer *kl, integer *ku, integer *nrhs, double *ab, integer *ldab,
 	integer *ipiv, double *b, integer *ldb, integer *info);
 
- int dgbsvxx_(const char *fact, const char *trans, integer *n, integer *
+int dgbsvxx_(const char *fact, const char *trans, integer *n, integer *
 	kl, integer *ku, integer *nrhs, double *ab, integer *ldab, 
 	double *afb, integer *ldafb, integer *ipiv, char *equed, 
 	double *r__, double *c__, double *b, integer *ldb, 
@@ -64,169 +64,169 @@ int dgbsv_(integer *n, integer *kl, integer *ku, integer *nrhs, double *ab, inte
 	double *err_bnds_comp__, integer *nparams, double *params, 
 	double *work, integer *iwork, integer *info);
 
- int dgbsvx_(const char *fact, const char *trans, integer *n, integer *kl,
-	 integer *ku, integer *nrhs, double *ab, integer *ldab, 
+int dgbsvx_(const char *fact, const char *trans, integer *n, integer *kl,
+	integer *ku, integer *nrhs, double *ab, integer *ldab,
 	double *afb, integer *ldafb, integer *ipiv, char *equed, 
 	double *r__, double *c__, double *b, integer *ldb, 
 	double *x, integer *ldx, double *rcond, double *ferr, 
 	double *berr, double *work, integer *iwork, integer *info);
 
- int dgbtf2_(integer *m, integer *n, integer *kl, integer *ku,
-	 double *ab, integer *ldab, integer *ipiv, integer *info);
+int dgbtf2_(integer *m, integer *n, integer *kl, integer *ku,
+	double *ab, integer *ldab, integer *ipiv, integer *info);
 
- int dgbtrf_(integer *m, integer *n, integer *kl, integer *ku,
-	 double *ab, integer *ldab, integer *ipiv, integer *info);
+int dgbtrf_(integer *m, integer *n, integer *kl, integer *ku,
+	double *ab, integer *ldab, integer *ipiv, integer *info);
 
- int dgbtrs_(const char *trans, integer *n, integer *kl, integer *
+int dgbtrs_(const char *trans, integer *n, integer *kl, integer *
 	ku, integer *nrhs, double *ab, integer *ldab, integer *ipiv, 
 	double *b, integer *ldb, integer *info);
 
- int dgebak_(const char *job, const char *side, integer *n, integer *ilo, 
+int dgebak_(const char *job, const char *side, integer *n, integer *ilo,
 	integer *ihi, double *scale, integer *m, double *v, integer *
 	ldv, integer *info);
 
- int dgebal_(const char *job, integer *n, double *a, integer *
+int dgebal_(const char *job, integer *n, double *a, integer *
 	lda, integer *ilo, integer *ihi, double *scale, integer *info);
 
- int dgebd2_(integer *m, integer *n, double *a, integer *
+int dgebd2_(integer *m, integer *n, double *a, integer *
 	lda, double *d__, double *e, double *tauq, double *
 	taup, double *work, integer *info);
 
- int dgebrd_(integer *m, integer *n, double *a, integer *
+int dgebrd_(integer *m, integer *n, double *a, integer *
 	lda, double *d__, double *e, double *tauq, double *
 	taup, double *work, integer *lwork, integer *info);
 
- int dgecon_(const char *norm, integer *n, double *a, integer *
+int dgecon_(const char *norm, integer *n, double *a, integer *
 	lda, double *anorm, double *rcond, double *work, integer *
 	iwork, integer *info);
 
- int dgeequ_(integer *m, integer *n, double *a, integer *
+int dgeequ_(integer *m, integer *n, double *a, integer *
 	lda, double *r__, double *c__, double *rowcnd, double 
 	*colcnd, double *amax, integer *info);
 
- int dgeequb_(integer *m, integer *n, double *a, integer *lda, double *r__, double *c__,
+int dgeequb_(integer *m, integer *n, double *a, integer *lda, double *r__, double *c__,
 	double *rowcnd, double *colcnd, double *amax, integer *info);
 
- int dgees_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+int dgees_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
 	integer *n, double *a, integer *lda, integer *sdim, double *wr, 
 	double *wi, double *vs, integer *ldvs, double *work, 
 	integer *lwork, bool *bwork, integer *info);
 
- int dgeesx_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
+int dgeesx_(const char *jobvs, const char *sort, bool (*select)(const double *, const double *),
 	const char *sense, integer *n, double *a, integer *lda, integer *sdim, 
 	double *wr, double *wi, double *vs, integer *ldvs, 
 	double *rconde, double *rcondv, double *work, integer *
 	lwork, integer *iwork, integer *liwork, bool *bwork, integer *info);
 
- int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda,
+int dgeev_(const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda,
 	double *wr,	double *wi, double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	double *work, integer *lwork, integer *info);
 
- int dgeevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
+int dgeevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, double *a, integer *lda, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *ilo, integer *ihi, double *scale, 
 	double *abnrm, double *rconde, double *rcondv, double  	
 	*work, integer *lwork, integer *iwork, integer *info);
 
- int dgegs_(const char *jobvsl, const char *jobvsr, integer *n, 
+int dgegs_(const char *jobvsl, const char *jobvsr, integer *n,
 	double *a, integer *lda, double *b, integer *ldb, double *
 	alphar, double *alphai, double *beta, double *vsl, 
 	integer *ldvsl, double *vsr, integer *ldvsr, double *work, 
 	integer *lwork, integer *info);
 
- int dgegv_(const char *jobvl, const char *jobvr, integer *n, double *
+int dgegv_(const char *jobvl, const char *jobvr, integer *n, double *
 	a, integer *lda, double *b, integer *ldb, double *alphar, 
 	double *alphai, double *beta, double *vl, integer *ldvl, 
 	double *vr, integer *ldvr, double *work, integer *lwork, 
 	integer *info);
 
- int dgehd2_(integer *n, integer *ilo, integer *ihi, 
+int dgehd2_(integer *n, integer *ilo, integer *ihi,
 	double *a, integer *lda, double *tau, double *work, 
 	integer *info);
 
- int dgehrd_(integer *n, integer *ilo, integer *ihi, 
+int dgehrd_(integer *n, integer *ilo, integer *ihi,
 	double *a, integer *lda, double *tau, double *work, 
 	integer *lwork, integer *info);
 
- int dgelq2_(integer *m, integer *n, double *a, integer *
+int dgelq2_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *info);
 
- int dgelqf_(integer *m, integer *n, double *a, integer *
+int dgelqf_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *lwork, integer *info);
 
- int dgels_(const char *trans, integer *m, integer *n, integer *
+int dgels_(const char *trans, integer *m, integer *n, integer *
 	nrhs, double *a, integer *lda, double *b, integer *ldb, 
 	double *work, integer *lwork, integer *info);
 
- int dgelsd_(integer *m, integer *n, integer *nrhs, 
+int dgelsd_(integer *m, integer *n, integer *nrhs,
 	double *a, integer *lda, double *b, integer *ldb, double *
 	s, double *rcond, integer *rank, double *work, integer *lwork,
 	 integer *iwork, integer *info);
 
- int dgelss_(integer *m, integer *n, integer *nrhs, 
+int dgelss_(integer *m, integer *n, integer *nrhs,
 	double *a, integer *lda, double *b, integer *ldb, double *
 	s, double *rcond, integer *rank, double *work, integer *lwork,
 	 integer *info);
 
- int dgelsx_(integer *m, integer *n, integer *nrhs, 
+int dgelsx_(integer *m, integer *n, integer *nrhs,
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	jpvt, double *rcond, integer *rank, double *work, integer *
 	info);
 
- int dgelsy_(integer *m, integer *n, integer *nrhs, 
+int dgelsy_(integer *m, integer *n, integer *nrhs,
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	jpvt, double *rcond, integer *rank, double *work, integer *
 	lwork, integer *info);
 
- int dgeql2_(integer *m, integer *n, double *a, integer *
+int dgeql2_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *info);
 
- int dgeqlf_(integer *m, integer *n, double *a, integer *
+int dgeqlf_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *lwork, integer *info);
 
- int dgeqp3_(integer *m, integer *n, double *a, integer *
+int dgeqp3_(integer *m, integer *n, double *a, integer *
 	lda, integer *jpvt, double *tau, double *work, integer *lwork,
-	 integer *info);
+	integer *info);
 
- int dgeqpf_(integer *m, integer *n, double *a, integer *
+int dgeqpf_(integer *m, integer *n, double *a, integer *
 	lda, integer *jpvt, double *tau, double *work, integer *info);
 
- int dgeqr2_(integer *m, integer *n, double *a, integer *
+int dgeqr2_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *info);
 
- int dgeqrf_(integer *m, integer *n, double *a, integer *
+int dgeqrf_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *lwork, integer *info);
 
- int dgerfs_(const char *trans, integer *n, integer *nrhs, 
+int dgerfs_(const char *trans, integer *n, integer *nrhs,
 	double *a, integer *lda, double *af, integer *ldaf, integer *
 	ipiv, double *b, integer *ldb, double *x, integer *ldx, 
 	double *ferr, double *berr, double *work, integer *iwork, 
 	integer *info);
 
- int dgerq2_(integer *m, integer *n, double *a, integer *
+int dgerq2_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *info);
 
- int dgerqf_(integer *m, integer *n, double *a, integer *
+int dgerqf_(integer *m, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *lwork, integer *info);
 
- int dgesc2_(integer *n, double *a, integer *lda, 
+int dgesc2_(integer *n, double *a, integer *lda,
 	double *rhs, integer *ipiv, integer *jpiv, double *scale);
 
- int dgesdd_(const char *jobz, integer *m, integer *n, double *
+int dgesdd_(const char *jobz, integer *m, integer *n, double *
 	a, integer *lda, double *s, double *u, integer *ldu, 
 	double *vt, integer *ldvt, double *work, integer *lwork, 
 	integer *iwork, integer *info);
 
- int dgesv_(integer *n, integer *nrhs, double *a, integer 
+int dgesv_(integer *n, integer *nrhs, double *a, integer
 	*lda, integer *ipiv, double *b, integer *ldb, integer *info);
 
- int dgesvd_(const char *jobu, const char *jobvt, integer *m, integer *n, 
+int dgesvd_(const char *jobu, const char *jobvt, integer *m, integer *n,
 	double *a, integer *lda, double *s, double *u, integer *
 	ldu, double *vt, integer *ldvt, double *work, integer *lwork, 
 	integer *info);
 
- int dgesvx_(const char *fact, const char *trans, integer *n, integer *
+int dgesvx_(const char *fact, const char *trans, integer *n, integer *
 	nrhs, double *a, integer *lda, double *af, integer *ldaf, 
 	integer *ipiv, char *equed, double *r__, double *c__, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
@@ -241,20 +241,20 @@ int dgetrf_(integer *m, integer *n, double *a, integer *lda, integer *ipiv, inte
 
 int dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, integer *lwork, integer *info);
 
- int dgetrs_(const char *trans, integer *n, integer *nrhs, 
+int dgetrs_(const char *trans, integer *n, integer *nrhs,
 	double *a, integer *lda, integer *ipiv, double *b, integer *
 	ldb, integer *info);
 
- int dggbak_(const char *job, const char *side, integer *n, integer *ilo, 
+int dggbak_(const char *job, const char *side, integer *n, integer *ilo,
 	integer *ihi, double *lscale, double *rscale, integer *m, 
 	double *v, integer *ldv, integer *info);
 
- int dggbal_(const char *job, integer *n, double *a, integer *
+int dggbal_(const char *job, integer *n, double *a, integer *
 	lda, double *b, integer *ldb, integer *ilo, integer *ihi, 
 	double *lscale, double *rscale, double *work, integer *
 	info);
 
- int dgges_(const char *jobvsl, const char *jobvsr, const char *sort, 
+int dgges_(const char *jobvsl, const char *jobvsr, const char *sort,
 	bool (*selctg)(const double *, const double *, const double *),
 	integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, integer *sdim, double *alphar, double *alphai, 
@@ -262,7 +262,7 @@ int dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, in
 	integer *ldvsr, double *work, integer *lwork, bool *bwork, 
 	integer *info);
 
- int dggesx_(const char *jobvsl, const char *jobvsr, const char *sort, 
+int dggesx_(const char *jobvsl, const char *jobvsr, const char *sort,
 	bool (*selctg)(const double *, const double *, const double *),
 	const char *sense, integer *n, double *a, integer *lda, 
 	double *b, integer *ldb, integer *sdim, double *alphar, 
@@ -271,13 +271,13 @@ int dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, in
 	rcondv, double *work, integer *lwork, integer *iwork, integer * 	
 	liwork, bool *bwork, integer *info);
 
- int dggev_(const char *jobvl, const char *jobvr, integer *n, double *
+int dggev_(const char *jobvl, const char *jobvr, integer *n, double *
 	a, integer *lda, double *b, integer *ldb, double *alphar, 
 	double *alphai, double *beta, double *vl, integer *ldvl, 
 	double *vr, integer *ldvr, double *work, integer *lwork, 
 	integer *info);
 
- int dggevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
+int dggevx_(const char *balanc, const char *jobvl, const char *jobvr, const char *
 	sense, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, double *alphar, double *alphai, double *
 	beta, double *vl, integer *ldvl, double *vr, integer *ldvr, 
@@ -286,90 +286,90 @@ int dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, in
 	rcondv, double *work, integer *lwork, integer *iwork, bool * 	
 	bwork, integer *info);
 
- int dggglm_(integer *n, integer *m, integer *p, double *
+int dggglm_(integer *n, integer *m, integer *p, double *
 	a, integer *lda, double *b, integer *ldb, double *d__, 
 	double *x, double *y, double *work, integer *lwork, 
 	integer *info);
 
- int dgghrd_(const char *compq, const char *compz, integer *n, integer *
+int dgghrd_(const char *compq, const char *compz, integer *n, integer *
 	ilo, integer *ihi, double *a, integer *lda, double *b, 
 	integer *ldb, double *q, integer *ldq, double *z__, integer *
 	ldz, integer *info);
 
- int dgglse_(integer *m, integer *n, integer *p, double *
+int dgglse_(integer *m, integer *n, integer *p, double *
 	a, integer *lda, double *b, integer *ldb, double *c__, 
 	double *d__, double *x, double *work, integer *lwork, 
 	integer *info);
 
- int dggqrf_(integer *n, integer *m, integer *p, double *
+int dggqrf_(integer *n, integer *m, integer *p, double *
 	a, integer *lda, double *taua, double *b, integer *ldb, 
 	double *taub, double *work, integer *lwork, integer *info);
 
- int dggrqf_(integer *m, integer *p, integer *n, double *
+int dggrqf_(integer *m, integer *p, integer *n, double *
 	a, integer *lda, double *taua, double *b, integer *ldb, 
 	double *taub, double *work, integer *lwork, integer *info);
 
- int dggsvd_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
+int dggsvd_(const char *jobu, const char *jobv, const char *jobq, integer *m,
 	integer *n, integer *p, integer *k, integer *l, double *a, 
 	integer *lda, double *b, integer *ldb, double *alpha, 
 	double *beta, double *u, integer *ldu, double *v, integer 
 	*ldv, double *q, integer *ldq, double *work, integer *iwork, 
 	integer *info);
 
- int dggsvp_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
+int dggsvp_(const char *jobu, const char *jobv, const char *jobq, integer *m,
 	integer *p, integer *n, double *a, integer *lda, double *b, 
 	integer *ldb, double *tola, double *tolb, integer *k, integer 
 	*l, double *u, integer *ldu, double *v, integer *ldv, 
 	double *q, integer *ldq, integer *iwork, double *tau, 
 	double *work, integer *info);
 
- int dgtcon_(const char *norm, integer *n, double *dl, 
+int dgtcon_(const char *norm, integer *n, double *dl,
 	double *d__, double *du, double *du2, integer *ipiv, 
 	double *anorm, double *rcond, double *work, integer *
 	iwork, integer *info);
 
- int dgtrfs_(const char *trans, integer *n, integer *nrhs, 
+int dgtrfs_(const char *trans, integer *n, integer *nrhs,
 	double *dl, double *d__, double *du, double *dlf, 
 	double *df, double *duf, double *du2, integer *ipiv, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	ferr, double *berr, double *work, integer *iwork, integer *
 	info);
 
- int dgtsv_(integer *n, integer *nrhs, double *dl, 
+int dgtsv_(integer *n, integer *nrhs, double *dl,
 	double *d__, double *du, double *b, integer *ldb, integer 
 	*info);
 
- int dgtsvx_(const char *fact, const char *trans, integer *n, integer *
+int dgtsvx_(const char *fact, const char *trans, integer *n, integer *
 	nrhs, double *dl, double *d__, double *du, double *
 	dlf, double *df, double *duf, double *du2, integer *ipiv, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	rcond, double *ferr, double *berr, double *work, integer *
 	iwork, integer *info);
 
- int dgttrf_(integer *n, double *dl, double *d__, 
+int dgttrf_(integer *n, double *dl, double *d__,
 	double *du, double *du2, integer *ipiv, integer *info);
 
- int dgttrs_(const char *trans, integer *n, integer *nrhs, 
+int dgttrs_(const char *trans, integer *n, integer *nrhs,
 	double *dl, double *d__, double *du, double *du2,  	
 	integer *ipiv, double *b, integer *ldb, integer *info);
 
- int dgtts2_(integer *itrans, integer *n, integer *nrhs, 
+int dgtts2_(integer *itrans, integer *n, integer *nrhs,
 	double *dl, double *d__, double *du, double *du2, 
 	integer *ipiv, double *b, integer *ldb);
 
- int dhgeqz_(const char *job, const char *compq, const char *compz, integer *n, 
+int dhgeqz_(const char *job, const char *compq, const char *compz, integer *n,
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*t, integer *ldt, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
 	double *work, integer *lwork, integer *info);
 
- int dhsein_(const char *side, const char *eigsrc, const char *initv, bool *
+int dhsein_(const char *side, const char *eigsrc, const char *initv, bool *
 	select, integer *n, double *h__, integer *ldh, double *wr, 
 	double *wi, double *vl, integer *ldvl, double *vr, 
 	integer *ldvr, integer *mm, integer *m, double *work, integer *
 	ifaill, integer *ifailr, integer *info);
 
- int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi,
+int dhseqr_(const char *job, const char *compz, integer *n, integer *ilo, integer *ihi,
 	double *h__, integer *ldh, double *wr, double *wi, double *z__, integer *ldz,
 	double *work, integer *lwork, integer *info);
 
@@ -404,93 +404,93 @@ int dlabrd_(integer *m, integer *n, integer *nb, double *
 	double *taup, double *x, integer *ldx, double *y, integer 
 	*ldy);
 
- int dlacn2_(integer *n, double *v, double *x, 
+int dlacn2_(integer *n, double *v, double *x,
 	integer *isgn, double *est, integer *kase, integer *isave);
 
- int dlacon_(integer *n, double *v, double *x, 
+int dlacon_(integer *n, double *v, double *x,
 	integer *isgn, double *est, integer *kase);
 
- int dlacpy_(const char *uplo, integer *m, integer *n, double *
+int dlacpy_(const char *uplo, integer *m, integer *n, double *
 	a, integer *lda, double *b, integer *ldb);
 
- int dladiv_(double *a, double *b, double *c__, 
+int dladiv_(double *a, double *b, double *c__,
 	double *d__, double *p, double *q);
 
- int dlae2_(double *a, double *b, double *c__, 
+int dlae2_(double *a, double *b, double *c__,
 	double *rt1, double *rt2);
 
- int dlaebz_(integer *ijob, integer *nitmax, integer *n, 
+int dlaebz_(integer *ijob, integer *nitmax, integer *n,
 	integer *mmax, integer *minp, integer *nbmin, double *abstol, 
 	double *reltol, double *pivmin, double *d__, double *
 	e, double *e2, integer *nval, double *ab, double *c__, 
 	integer *mout, integer *nab, double *work, integer *iwork, 
 	integer *info);
 
- int dlaed0_(integer *icompq, integer *qsiz, integer *n, 
+int dlaed0_(integer *icompq, integer *qsiz, integer *n,
 	double *d__, double *e, double *q, integer *ldq, 
 	double *qstore, integer *ldqs, double *work, integer *iwork, 
 	integer *info);
 
- int dlaed1_(integer *n, double *d__, double *q, 
+int dlaed1_(integer *n, double *d__, double *q,
 	integer *ldq, integer *indxq, double *rho, integer *cutpnt, 
 	double *work, integer *iwork, integer *info);
 
- int dlaed2_(integer *k, integer *n, integer *n1, double *
+int dlaed2_(integer *k, integer *n, integer *n1, double *
 	d__, double *q, integer *ldq, integer *indxq, double *rho, 
 	double *z__, double *dlamda, double *w, double *q2, 
 	integer *indx, integer *indxc, integer *indxp, integer *coltyp, 
 	integer *info);
 
- int dlaed3_(integer *k, integer *n, integer *n1, double *
+int dlaed3_(integer *k, integer *n, integer *n1, double *
 	d__, double *q, integer *ldq, double *rho, double *dlamda,
-	 double *q2, integer *indx, integer *ctot, double *w, 
+	double *q2, integer *indx, integer *ctot, double *w,
 	double *s, integer *info);
 
- int dlaed4_(integer *n, integer *i__, double *d__, 
+int dlaed4_(integer *n, integer *i__, double *d__,
 	double *z__, double *delta, double *rho, double *dlam,
-	 integer *info);
+	integer *info);
 
- int dlaed5_(integer *i__, double *d__, double *z__, 
+int dlaed5_(integer *i__, double *d__, double *z__,
 	double *delta, double *rho, double *dlam);
 
- int dlaed6_(integer *kniter, bool *orgati, double *
+int dlaed6_(integer *kniter, bool *orgati, double *
 	rho, double *d__, double *z__, double *finit, double *
 	tau, integer *info);
 
- int dlaed7_(integer *icompq, integer *n, integer *qsiz, 
+int dlaed7_(integer *icompq, integer *n, integer *qsiz,
 	integer *tlvls, integer *curlvl, integer *curpbm, double *d__, 
 	double *q, integer *ldq, integer *indxq, double *rho, integer 
 	*cutpnt, double *qstore, integer *qptr, integer *prmptr, integer *
 	perm, integer *givptr, integer *givcol, double *givnum, 
 	double *work, integer *iwork, integer *info);
 
- int dlaed8_(integer *icompq, integer *k, integer *n, integer 
+int dlaed8_(integer *icompq, integer *k, integer *n, integer
 	*qsiz, double *d__, double *q, integer *ldq, integer *indxq, 
 	double *rho, integer *cutpnt, double *z__, double *dlamda,
-	 double *q2, integer *ldq2, double *w, integer *perm, integer 
+	double *q2, integer *ldq2, double *w, integer *perm, integer
 	*givptr, integer *givcol, double *givnum, integer *indxp, integer 
 	*indx, integer *info);
 
- int dlaed9_(integer *k, integer *kstart, integer *kstop, 
+int dlaed9_(integer *k, integer *kstart, integer *kstop,
 	integer *n, double *d__, double *q, integer *ldq, double *
 	rho, double *dlamda, double *w, double *s, integer *lds, 
 	integer *info);
 
- int dlaeda_(integer *n, integer *tlvls, integer *curlvl, 
+int dlaeda_(integer *n, integer *tlvls, integer *curlvl,
 	integer *curpbm, integer *prmptr, integer *perm, integer *givptr, 
 	integer *givcol, double *givnum, double *q, integer *qptr, 
 	double *z__, double *ztemp, integer *info);
 
- int dlaein_(bool *rightv, bool *noinit, integer *n, 
+int dlaein_(bool *rightv, bool *noinit, integer *n,
 	double *h__, integer *ldh, double *wr, double *wi, 
 	double *vr, double *vi, double *b, integer *ldb, 
 	double *work, double *eps3, double *smlnum, double *
 	bignum, integer *info);
 
- int dlaev2_(double *a, double *b, double *c__, 
+int dlaev2_(double *a, double *b, double *c__,
 	double *rt1, double *rt2, double *cs1, double *sn1);
 
- int dlaexc_(bool *wantq, integer *n, double *t, 
+int dlaexc_(bool *wantq, integer *n, double *t,
 	integer *ldt, double *q, integer *ldq, integer *j1, integer *n1, 
 	integer *n2, double *work, integer *info);
 
@@ -499,60 +499,60 @@ int dlag2_(double *a, integer *lda, double *b, integer *ldb, double *safmin, dou
 
 int dlag2s_(integer *m, integer *n, double *a, integer *lda, float *sa, integer *ldsa, integer *info);
 
- int dlags2_(bool *upper, double *a1, double *a2, 
+int dlags2_(bool *upper, double *a1, double *a2,
 	double *a3, double *b1, double *b2, double *b3, 
 	double *csu, double *snu, double *csv, double *snv, 
 	double *csq, double *snq);
 
- int dlagtf_(integer *n, double *a, double *lambda, 
+int dlagtf_(integer *n, double *a, double *lambda,
 	double *b, double *c__, double *tol, double *d__, 
 	integer *in, integer *info);
 
- int dlagtm_(const char *trans, integer *n, integer *nrhs, 
+int dlagtm_(const char *trans, integer *n, integer *nrhs,
 	double *alpha, double *dl, double *d__, double *du, 
 	double *x, integer *ldx, double *beta, double *b, integer 
 	*ldb);
 
- int dlagts_(integer *job, integer *n, double *a, 
+int dlagts_(integer *job, integer *n, double *a,
 	double *b, double *c__, double *d__, integer *in, 
 	double *y, double *tol, integer *info);
 
- int dlagv2_(double *a, integer *lda, double *b, 
+int dlagv2_(double *a, integer *lda, double *b,
 	integer *ldb, double *alphar, double *alphai, double *
 	beta, double *csl, double *snl, double *csr, double *
 	snr);
 
- int dlahqr_(bool *wantt, bool *wantz, integer *n, 
+int dlahqr_(bool *wantt, bool *wantz, integer *n,
 	integer *ilo, integer *ihi, double *h__, integer *ldh, double 
 	*wr, double *wi, integer *iloz, integer *ihiz, double *z__, 
 	integer *ldz, integer *info);
 
- int dlahr2_(integer *n, integer *k, integer *nb, double *
+int dlahr2_(integer *n, integer *k, integer *nb, double *
 	a, integer *lda, double *tau, double *t, integer *ldt, 
 	double *y, integer *ldy);
 
- int dlahrd_(integer *n, integer *k, integer *nb, double *
+int dlahrd_(integer *n, integer *k, integer *nb, double *
 	a, integer *lda, double *tau, double *t, integer *ldt, 
 	double *y, integer *ldy);
 
- int dlaic1_(integer *job, integer *j, double *x, 
+int dlaic1_(integer *job, integer *j, double *x,
 	double *sest, double *w, double *gamma, double *
 	sestpr, double *s, double *c__);
 
- int dlaln2_(bool *ltrans, integer *na, integer *nw, 
+int dlaln2_(bool *ltrans, integer *na, integer *nw,
 	double *smin, double *ca, double *a, integer *lda, 
 	double *d1, double *d2, double *b, integer *ldb, 
 	double *wr, double *wi, double *x, integer *ldx, 
 	double *scale, double *xnorm, integer *info);
 
- int dlals0_(integer *icompq, integer *nl, integer *nr, 
+int dlals0_(integer *icompq, integer *nl, integer *nr,
 	integer *sqre, integer *nrhs, double *b, integer *ldb, double 
 	*bx, integer *ldbx, integer *perm, integer *givptr, integer *givcol, 
 	integer *ldgcol, double *givnum, integer *ldgnum, double *
 	poles, double *difl, double *difr, double *z__, integer *
 	k, double *c__, double *s, double *work, integer *info);
 
- int dlalsa_(integer *icompq, integer *smlsiz, integer *n, 
+int dlalsa_(integer *icompq, integer *smlsiz, integer *n,
 	integer *nrhs, double *b, integer *ldb, double *bx, integer *
 	ldbx, double *u, integer *ldu, double *vt, integer *k, 
 	double *difl, double *difr, double *z__, double *
@@ -560,7 +560,7 @@ int dlag2s_(integer *m, integer *n, double *a, integer *lda, float *sa, integer 
 	perm, double *givnum, double *c__, double *s, double *
 	work, integer *iwork, integer *info);
 
- int dlalsd_(const char *uplo, integer *smlsiz, integer *n, integer 
+int dlalsd_(const char *uplo, integer *smlsiz, integer *n, integer
 	*nrhs, double *d__, double *e, double *b, integer *ldb, 
 	double *rcond, integer *rank, double *work, integer *iwork, 
 	integer *info);
@@ -576,41 +576,40 @@ int dlanv2_(double *a, double *b, double *c__,
 	double *d__, double *rt1r, double *rt1i, double *rt2r,
 	 double *rt2i, double *cs, double *sn);
 
- int dlapll_(integer *n, double *x, integer *incx, 
+int dlapll_(integer *n, double *x, integer *incx,
 	double *y, integer *incy, double *ssmin);
 
- int dlapmt_(bool *forwrd, integer *m, integer *n, 
+int dlapmt_(bool *forwrd, integer *m, integer *n,
 	double *x, integer *ldx, integer *k);
 
- int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku,
+int dlaqgb_(integer *m, integer *n, integer *kl, integer *ku,
 	 double *ab, integer *ldab, double *r__, double *c__, 
 	double *rowcnd, double *colcnd, double *amax, char *equed);
 
- int dlaqge_(integer *m, integer *n, double *a, integer *
+int dlaqge_(integer *m, integer *n, double *a, integer *
 	lda, double *r__, double *c__, double *rowcnd, double 
 	*colcnd, double *amax, char *equed);
 
- int dlaqp2_(integer *m, integer *n, integer *offset, 
+int dlaqp2_(integer *m, integer *n, integer *offset,
 	double *a, integer *lda, integer *jpvt, double *tau, 
 	double *vn1, double *vn2, double *work);
 
- int dlaqps_(integer *m, integer *n, integer *offset, integer 
+int dlaqps_(integer *m, integer *n, integer *offset, integer
 	*nb, integer *kb, double *a, integer *lda, integer *jpvt, 
 	double *tau, double *vn1, double *vn2, double *auxv, 
 	double *f, integer *ldf);
 
- int dlaqr0_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, double *h__,
+int dlaqr0_(bool *wantt, bool *wantz, integer *n, integer *ilo, integer *ihi, double *h__,
 	integer *ldh, double *wr, double *wi, integer *iloz, integer *ihiz, double *z__,
 	integer *ldz, double *work, integer *lwork, integer *info);
 
- int dlaqr1_(integer *n, double *h__, integer *ldh, double *sr1, double *si1,
+int dlaqr1_(integer *n, double *h__, integer *ldh, double *sr1, double *si1,
 	double *sr2, double *si2, double *v);
 
- int dlaqr2_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
+int dlaqr2_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
 	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
 	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh, 
 	double *t, integer *ldt, integer *nv, double *wv, integer *ldwv, double *work, integer *lwork);
-
 int dlaqr3_(bool *wantt, bool *wantz, integer *n, integer *ktop, integer *kbot, integer *nw,
 	double *h__, integer *ldh, integer *iloz, integer *ihiz, double *z__, integer *ldz,
 	integer *ns, integer *nd, double *sr, double *si, double *v, integer *ldv, integer *nh,
@@ -718,52 +717,52 @@ int dlarz_(const char *side, integer *m, integer *n, integer *l,
 	double *v, integer *incv, double *tau, double *c__, 
 	integer *ldc, double *work);
 
- int dlarzb_(const char *side, const char *trans, const char *direct, const char *storev,
+int dlarzb_(const char *side, const char *trans, const char *direct, const char *storev,
 	integer *m, integer *n, integer *k, integer *l, double *v, integer *ldv, double *t,
 	integer *ldt, double *c__, integer *ldc, double *work, integer *ldwork);
 
- int dlarzt_(const char *direct, const char *storev, integer *n, integer *
+int dlarzt_(const char *direct, const char *storev, integer *n, integer *
 	k, double *v, integer *ldv, double *tau, double *t, integer *ldt);
 
- int dlas2_(double *f, double *g, double *h__, double *ssmin, double *ssmax);
+int dlas2_(double *f, double *g, double *h__, double *ssmin, double *ssmax);
 
- int dlascl_(const char *type__, integer *kl, integer *ku, double *cfrom, double *cto, 
+int dlascl_(const char *type__, integer *kl, integer *ku, double *cfrom, double *cto,
 	integer *m, integer *n, double *a, integer *lda, integer *info);
 
 int dlascl2_(integer *m, integer *n, double *d__, double *x, integer *ldx);
 
- int dlasd0_(integer *n, integer *sqre, double *d__, 
+int dlasd0_(integer *n, integer *sqre, double *d__,
 	double *e, double *u, integer *ldu, double *vt, integer *
 	ldvt, integer *smlsiz, integer *iwork, double *work, integer *
 	info);
 
- int dlasd1_(integer *nl, integer *nr, integer *sqre, 
+int dlasd1_(integer *nl, integer *nr, integer *sqre,
 	double *d__, double *alpha, double *beta, double *u, 
 	integer *ldu, double *vt, integer *ldvt, integer *idxq, integer *
 	iwork, double *work, integer *info);
 
- int dlasd2_(integer *nl, integer *nr, integer *sqre, integer 
+int dlasd2_(integer *nl, integer *nr, integer *sqre, integer
 	*k, double *d__, double *z__, double *alpha, double *
 	beta, double *u, integer *ldu, double *vt, integer *ldvt, 
 	double *dsigma, double *u2, integer *ldu2, double *vt2, 
 	integer *ldvt2, integer *idxp, integer *idx, integer *idxc, integer *
 	idxq, integer *coltyp, integer *info);
 
- int dlasd3_(integer *nl, integer *nr, integer *sqre, integer 
+int dlasd3_(integer *nl, integer *nr, integer *sqre, integer
 	*k, double *d__, double *q, integer *ldq, double *dsigma, 
 	double *u, integer *ldu, double *u2, integer *ldu2, 
 	double *vt, integer *ldvt, double *vt2, integer *ldvt2, 
 	integer *idxc, integer *ctot, double *z__, integer *info);
 
- int dlasd4_(integer *n, integer *i__, double *d__, 
+int dlasd4_(integer *n, integer *i__, double *d__,
 	double *z__, double *delta, double *rho, double *
 	sigma, double *work, integer *info);
 
- int dlasd5_(integer *i__, double *d__, double *z__, 
+int dlasd5_(integer *i__, double *d__, double *z__,
 	double *delta, double *rho, double *dsigma, double *
 	work);
 
- int dlasd6_(integer *icompq, integer *nl, integer *nr, 
+int dlasd6_(integer *icompq, integer *nl, integer *nr,
 	integer *sqre, double *d__, double *vf, double *vl, 
 	double *alpha, double *beta, integer *idxq, integer *perm, 
 	integer *givptr, integer *givcol, integer *ldgcol, double *givnum,
@@ -771,7 +770,7 @@ int dlascl2_(integer *m, integer *n, double *d__, double *x, integer *ldx);
 	difr, double *z__, integer *k, double *c__, double *s, 
 	double *work, integer *iwork, integer *info);
 
- int dlasd7_(integer *icompq, integer *nl, integer *nr, 
+int dlasd7_(integer *icompq, integer *nl, integer *nr,
 	integer *sqre, integer *k, double *d__, double *z__, 
 	double *zw, double *vf, double *vfw, double *vl, 
 	double *vlw, double *alpha, double *beta, double *
@@ -779,30 +778,30 @@ int dlascl2_(integer *m, integer *n, double *d__, double *x, integer *ldx);
 	integer *givptr, integer *givcol, integer *ldgcol, double *givnum,
 	 integer *ldgnum, double *c__, double *s, integer *info);
 
- int dlasd8_(integer *icompq, integer *k, double *d__, 
+int dlasd8_(integer *icompq, integer *k, double *d__,
 	double *z__, double *vf, double *vl, double *difl, 
 	double *difr, integer *lddifr, double *dsigma, double *
 	work, integer *info);
 
- int dlasda_(integer *icompq, integer *smlsiz, integer *n, 
+int dlasda_(integer *icompq, integer *smlsiz, integer *n,
 	integer *sqre, double *d__, double *e, double *u, integer 
 	*ldu, double *vt, integer *k, double *difl, double *difr, 
 	double *z__, double *poles, integer *givptr, integer *givcol, 
 	integer *ldgcol, integer *perm, double *givnum, double *c__, 
 	double *s, double *work, integer *iwork, integer *info);
 
- int dlasdq_(const char *uplo, integer *sqre, integer *n, integer *
+int dlasdq_(const char *uplo, integer *sqre, integer *n, integer *
 	ncvt, integer *nru, integer *ncc, double *d__, double *e, 
 	double *vt, integer *ldvt, double *u, integer *ldu, 
 	double *c__, integer *ldc, double *work, integer *info);
 
- int dlasdt_(integer *n, integer *lvl, integer *nd, integer *
+int dlasdt_(integer *n, integer *lvl, integer *nd, integer *
 	inode, integer *ndiml, integer *ndimr, integer *msub);
 
- int dlaset_(const char *uplo, integer *m, integer *n, double *
+int dlaset_(const char *uplo, integer *m, integer *n, double *
 	alpha, double *beta, double *a, integer *lda);
 
- int dlasq1_(integer *n, double *d__, double *e, 
+int dlasq1_(integer *n, double *d__, double *e,
 	double *work, integer *info);
 
 int dlasq2_(integer *n, double *z__, integer *info);
@@ -817,33 +816,33 @@ int dlasq4_(integer *i0, integer *n0, double *z__,
 	double *dmin2, double *dn, double *dn1, double *dn2, 
 	double *tau, integer *ttype, double *g);
 
- int dlasq5_(integer *i0, integer *n0, double *z__, 
+int dlasq5_(integer *i0, integer *n0, double *z__,
 	integer *pp, double *tau, double *dmin__, double *dmin1, 
 	double *dmin2, double *dn, double *dnm1, double *dnm2,
 	 bool *ieee);
 
- int dlasq6_(integer *i0, integer *n0, double *z__, 
+int dlasq6_(integer *i0, integer *n0, double *z__,
 	integer *pp, double *dmin__, double *dmin1, double *dmin2,
 	 double *dn, double *dnm1, double *dnm2);
 
- int dlasr_(const char *side, const char *pivot, const char *direct, integer *m,
+int dlasr_(const char *side, const char *pivot, const char *direct, integer *m,
 	 integer *n, double *c__, double *s, double *a, integer *
 	lda);
 
- int dlasrt_(const char *id, integer *n, double *d__, integer *
+int dlasrt_(const char *id, integer *n, double *d__, integer *
 	info);
 
- int dlassq_(integer *n, double *x, integer *incx, 
+int dlassq_(integer *n, double *x, integer *incx,
 	double *scale, double *sumsq);
 
- int dlasv2_(double *f, double *g, double *h__, 
+int dlasv2_(double *f, double *g, double *h__,
 	double *ssmin, double *ssmax, double *snr, double *
 	csr, double *snl, double *csl);
 
- int dlaswp_(integer *n, double *a, integer *lda, integer 
+int dlaswp_(integer *n, double *a, integer *lda, integer
 	*k1, integer *k2, integer *ipiv, integer *incx);
 
- int dlasy2_(bool *ltranl, bool *ltranr, integer *isgn, 
+int dlasy2_(bool *ltranl, bool *ltranr, integer *isgn,
 	integer *n1, integer *n2, double *tl, integer *ldtl, double *
 	tr, integer *ldtr, double *b, integer *ldb, double *scale, 
 	double *x, integer *ldx, double *xnorm, integer *info);
@@ -856,36 +855,36 @@ int dlat2s_(const char *uplo, integer *n, double *a, integer *lda, float *sa, in
 int dlatbs_(const char *uplo, const char *trans, const char *diag,const  char *normin, integer *n,
 	integer *kd, double *ab, integer *ldab, double *x, double *scale, double *cnorm, integer *info);
 
- int dlatdf_(integer *ijob, integer *n, double *z__, 
+int dlatdf_(integer *ijob, integer *n, double *z__,
 	integer *ldz, double *rhs, double *rdsum, double *rdscal, 
 	integer *ipiv, integer *jpiv);
 
- int dlatps_(const char *uplo, const char *trans, const char *diag, const char *
+int dlatps_(const char *uplo, const char *trans, const char *diag, const char *
 	normin, integer *n, double *ap, double *x, double *scale, 
 	double *cnorm, integer *info);
 
- int dlatrd_(const char *uplo, integer *n, integer *nb, double *
+int dlatrd_(const char *uplo, integer *n, integer *nb, double *
 	a, integer *lda, double *e, double *tau, double *w, 
 	integer *ldw);
 
- int dlatrs_(const char *uplo, const char *trans, const char *diag, const char *
+int dlatrs_(const char *uplo, const char *trans, const char *diag, const char *
 	normin, integer *n, double *a, integer *lda, double *x, 
 	double *scale, double *cnorm, integer *info);
 
- int dlatrz_(integer *m, integer *n, integer *l, double *
+int dlatrz_(integer *m, integer *n, integer *l, double *
 	a, integer *lda, double *tau, double *work);
 
- int dlatzm_(const char *side, integer *m, integer *n, double *
+int dlatzm_(const char *side, integer *m, integer *n, double *
 	v, integer *incv, double *tau, double *c1, double *c2, 
 	integer *ldc, double *work);
 
- int dlauu2_(const char *uplo, integer *n, double *a, integer *
+int dlauu2_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *info);
 
- int dlauum_(const char *uplo, integer *n, double *a, integer *
+int dlauum_(const char *uplo, integer *n, double *a, integer *
 	lda, integer *info);
 
- int dlazq3_(integer *i0, integer *n0, double *z__, 
+int dlazq3_(integer *i0, integer *n0, double *z__,
 	integer *pp, double *dmin__, double *sigma, double *desig,
 	 double *qmax, integer *nfail, integer *iter, integer *ndiv, 
 	bool *ieee, integer *ttype, double *dmin1, double *dmin2, 
@@ -905,122 +904,122 @@ int dorg2l_(integer *m, integer *n, integer *k, double *a, integer *lda, double 
 
 int dorg2r_(integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *info);
 
- int dorgbr_(const char *vect, integer *m, integer *n, integer *k, 
+int dorgbr_(const char *vect, integer *m, integer *n, integer *k,
 	double *a, integer *lda, double *tau, double *work, 
 	integer *lwork, integer *info);
 
- int dorghr_(integer *n, integer *ilo, integer *ihi, 
+int dorghr_(integer *n, integer *ilo, integer *ihi,
 	double *a, integer *lda, double *tau, double *work, 
 	integer *lwork, integer *info);
 
- int dorgl2_(integer *m, integer *n, integer *k, double *
+int dorgl2_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *info);
 
- int dorglq_(integer *m, integer *n, integer *k, double *
+int dorglq_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *lwork, 
 	integer *info);
 
- int dorgql_(integer *m, integer *n, integer *k, double *
+int dorgql_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *lwork, 
 	integer *info);
 
- int dorgqr_(integer *m, integer *n, integer *k, double *
+int dorgqr_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *lwork, 
 	integer *info);
 
- int dorgr2_(integer *m, integer *n, integer *k, double *
+int dorgr2_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *info);
 
- int dorgrq_(integer *m, integer *n, integer *k, double *
+int dorgrq_(integer *m, integer *n, integer *k, double *
 	a, integer *lda, double *tau, double *work, integer *lwork, 
 	integer *info);
 
- int dorgtr_(const char *uplo, integer *n, double *a, integer *
+int dorgtr_(const char *uplo, integer *n, double *a, integer *
 	lda, double *tau, double *work, integer *lwork, integer *info);
 
- int dorm2l_(const char *side, const char *trans, integer *m, integer *n, 
+int dorm2l_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *info);
 
- int dorm2r_(const char *side, const char *trans, integer *m, integer *n, 
+int dorm2r_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *info);
 
- int dormbr_(const char *vect, const char *side, const char *trans, integer *m, 
+int dormbr_(const char *vect, const char *side, const char *trans, integer *m,
 	integer *n, integer *k, double *a, integer *lda, double *tau, 
 	double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info);
 
- int dormhr_(const char *side, const char *trans, integer *m, integer *n, 
+int dormhr_(const char *side, const char *trans, integer *m, integer *n,
 	integer *ilo, integer *ihi, double *a, integer *lda, double *
 	tau, double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info);
 
- int dorml2_(const char *side, const char *trans, integer *m, integer *n, 
+int dorml2_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *info);
 
- int dormlq_(const char *side, const char *trans, integer *m, integer *n, 
+int dormlq_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *lwork, integer *info);
 
- int dormql_(const char *side, const char *trans, integer *m, integer *n, 
+int dormql_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *lwork, integer *info);
 
- int dormqr_(const char *side, const char *trans, integer *m, integer *n, 
+int dormqr_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *lwork, integer *info);
 
- int dormr2_(const char *side, const char *trans, integer *m, integer *n, 
+int dormr2_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *info);
 
- int dormr3_(const char *side, const char *trans, integer *m, integer *n, 
+int dormr3_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, integer *l, double *a, integer *lda, double *tau, 
 	double *c__, integer *ldc, double *work, integer *info);
 
- int dormrq_(const char *side, const char *trans, integer *m, integer *n, 
+int dormrq_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *lwork, integer *info);
 
- int dormrz_(const char *side, const char *trans, integer *m, integer *n, 
+int dormrz_(const char *side, const char *trans, integer *m, integer *n,
 	integer *k, integer *l, double *a, integer *lda, double *tau, 
 	double *c__, integer *ldc, double *work, integer *lwork, 
 	integer *info);
 
- int dormtr_(const char *side, const char *uplo, const char *trans, integer *m, 
+int dormtr_(const char *side, const char *uplo, const char *trans, integer *m,
 	integer *n, double *a, integer *lda, double *tau, double *
 	c__, integer *ldc, double *work, integer *lwork, integer *info);
 
- int dpbcon_(const char *uplo, integer *n, integer *kd, double *
+int dpbcon_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, double *anorm, double *rcond, double *
 	work, integer *iwork, integer *info);
 
- int dpbequ_(const char *uplo, integer *n, integer *kd, double *
+int dpbequ_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, double *s, double *scond, double *amax,
 	 integer *info);
 
- int dpbrfs_(const char *uplo, integer *n, integer *kd, integer *
+int dpbrfs_(const char *uplo, integer *n, integer *kd, integer *
 	nrhs, double *ab, integer *ldab, double *afb, integer *ldafb, 
 	double *b, integer *ldb, double *x, integer *ldx, double *
 	ferr, double *berr, double *work, integer *iwork, integer *
 	info);
 
- int dpbstf_(const char *uplo, integer *n, integer *kd, double *
+int dpbstf_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, integer *info);
 
- int dpbsv_(const char *uplo, integer *n, integer *kd, integer *
+int dpbsv_(const char *uplo, integer *n, integer *kd, integer *
 	nrhs, double *ab, integer *ldab, double *b, integer *ldb, 
 	integer *info);
 
- int dpbsvx_(const char *fact, const char *uplo, integer *n, integer *kd, 
+int dpbsvx_(const char *fact, const char *uplo, integer *n, integer *kd,
 	integer *nrhs, double *ab, integer *ldab, double *afb, 
 	integer *ldafb, char *equed, double *s, double *b, integer *
 	ldb, double *x, integer *ldx, double *rcond, double *ferr,
-	 double *berr, double *work, integer *iwork, integer *info);
+	double *berr, double *work, integer *iwork, integer *info);
 
- int dpbtf2_(const char *uplo, integer *n, integer *kd, double *
+int dpbtf2_(const char *uplo, integer *n, integer *kd, double *
 	ab, integer *ldab, integer *info);
 
 int dpbtrf_(const char *uplo, integer *n, integer *kd, double *ab, integer *ldab, integer *info);
@@ -1307,17 +1306,17 @@ int dsyevr_(const char *jobz, const char *range, const char *uplo, integer *n, d
 	double *w, double *z__, integer *ldz, integer *isuppz, double *work, 
 	integer *lwork, integer *iwork, integer *liwork, integer *info);
 
- int dsyevx_(const char *jobz, const char *range, const char *uplo, integer *n, 
+int dsyevx_(const char *jobz, const char *range, const char *uplo, integer *n,
 	double *a, integer *lda, double *vl, double *vu, integer *
 	il, integer *iu, double *abstol, integer *m, double *w, 
 	double *z__, integer *ldz, double *work, integer *lwork, 
 	integer *iwork, integer *ifail, integer *info);
 
- int dsygs2_(integer *itype, const char *uplo, integer *n, 
+int dsygs2_(integer *itype, const char *uplo, integer *n,
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info);
 
- int dsygst_(integer *itype, const char *uplo, integer *n, 
+int dsygst_(integer *itype, const char *uplo, integer *n,
 	double *a, integer *lda, double *b, integer *ldb, integer *
 	info);
 
@@ -1408,7 +1407,7 @@ int dtgexc_(bool *wantq, bool *wantz, integer *n,
 	q, integer *ldq, double *z__, integer *ldz, integer *ifst, 
 	integer *ilst, double *work, integer *lwork, integer *info);
 
- int dtgsen_(integer *ijob, bool *wantq, bool *wantz, 
+int dtgsen_(integer *ijob, bool *wantq, bool *wantz,
 	bool *select, integer *n, double *a, integer *lda, double *
 	b, integer *ldb, double *alphar, double *alphai, double *
 	beta, double *q, integer *ldq, double *z__, integer *ldz, 
@@ -1416,34 +1415,34 @@ int dtgexc_(bool *wantq, bool *wantz, integer *n,
 	double *work, integer *lwork, integer *iwork, integer *liwork, 
 	integer *info);
 
- int dtgsja_(const char *jobu, const char *jobv, const char *jobq, integer *m, 
+int dtgsja_(const char *jobu, const char *jobv, const char *jobq, integer *m,
 	integer *p, integer *n, integer *k, integer *l, double *a, 
 	integer *lda, double *b, integer *ldb, double *tola, 
 	double *tolb, double *alpha, double *beta, double *u, 
 	integer *ldu, double *v, integer *ldv, double *q, integer *
 	ldq, double *work, integer *ncycle, integer *info);
 
- int dtgsna_(const char *job, const char *howmny, bool *select, 
+int dtgsna_(const char *job, const char *howmny, bool *select,
 	integer *n, double *a, integer *lda, double *b, integer *ldb, 
 	double *vl, integer *ldvl, double *vr, integer *ldvr, 
 	double *s, double *dif, integer *mm, integer *m, double *
 	work, integer *lwork, integer *iwork, integer *info);
 
- int dtgsy2_(const char *trans, integer *ijob, integer *m, integer *
+int dtgsy2_(const char *trans, integer *ijob, integer *m, integer *
 	n, double *a, integer *lda, double *b, integer *ldb, 
 	double *c__, integer *ldc, double *d__, integer *ldd, 
 	double *e, integer *lde, double *f, integer *ldf, double *
 	scale, double *rdsum, double *rdscal, integer *iwork, integer 
 	*pq, integer *info);
 
- int dtgsyl_(const char *trans, integer *ijob, integer *m, integer *
+int dtgsyl_(const char *trans, integer *ijob, integer *m, integer *
 	n, double *a, integer *lda, double *b, integer *ldb, 
 	double *c__, integer *ldc, double *d__, integer *ldd, 
 	double *e, integer *lde, double *f, integer *ldf, double *
 	scale, double *dif, double *work, integer *lwork, integer *
 	iwork, integer *info);
 
- int dtpcon_(const char *norm, const char *uplo, const char *diag, integer *n, 
+int dtpcon_(const char *norm, const char *uplo, const char *diag, integer *n,
 	double *ap, double *rcond, double *work, integer *iwork, 
 	integer *info);
 
@@ -1475,7 +1474,7 @@ int dtrrfs_(const char *uplo, const char *trans, const char *diag, integer *n, i
 	double *a, integer *lda, double *b, integer *ldb, double *x, integer *ldx, double *ferr,
 	double *berr, double *work, integer *iwork, integer *info);
 
- int dtrsen_(const char *job, const char *compq, bool *select, integer 
+int dtrsen_(const char *job, const char *compq, bool *select, integer
 	*n, double *t, integer *ldt, double *q, integer *ldq, 
 	double *wr, double *wi, integer *m, double *s, double 
 	*sep, double *work, integer *lwork, integer *iwork, integer *
@@ -1523,21 +1522,6 @@ int sgetrf_(integer *m, integer *n, float *a, integer *lda, integer *ipiv, integ
 int sgetrs_(const char *trans, integer *n, integer *nrhs, float *a, integer *lda, integer *ipiv, 
 	float *b, integer *ldb, integer *info);
 
-bool sisnan_(float *sin__);
-bool slaisnan_(float *sin1, float *sin2);
-
 int slag2d_(integer *m, integer *n, float *sa, integer *ldsa, double *a, integer *lda, integer *info);
-
-integer smaxloc_(float *a, integer *dimm);
-
-int spotf2_(const char *uplo, integer *n, float *a, integer *lda, integer *info);
-
-int spotrf_(const char *uplo, integer *n, float *a, integer *lda, integer *info);
-
-int spotrs_(const char *uplo, integer *n, integer *nrhs, float *a, integer *lda, float *b, integer *ldb, integer *info);
-
-int ssfrk_(const char *transr, const char *uplo, const char *trans, integer *n, 
-	 integer *k, float *alpha, float *a, integer *lda, float *beta, float *c__);
-
 
 #endif /* __CLAPACK_H */
