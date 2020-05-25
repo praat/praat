@@ -54,6 +54,13 @@ void operator<<= (INTVECVU const& target, integer value) {
 		target [i] = value;
 }
 
+void FormantPathEditor_sensitizeGreenNavigationButtons (FormantPathEditor me) {
+	FormantPath formantPath = (FormantPath) my data;
+	bool sensitive = ( formantPath -> intervalTierNavigator && formantPath -> intervalTierNavigator -> navigationLabels && TextGridView_hasTierInView (my pathGridView.get(), formantPath -> navigationTierNumber) );
+	Editor_setMenuSensitive (me, U"Next green interval", sensitive);
+	Editor_setMenuSensitive (me, U"Previous green interval", sensitive);
+}
+
 void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNumber_string) {
 	FormantPath formantPath = (FormantPath) my data;
 	bool pathTierNumberFound = false;
@@ -91,6 +98,10 @@ void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNum
 	TextGridView_modifyView (my pathGridView.get(), tierNumbers);
 	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
 	my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), pathTierNumber);
+	/*
+		If there is an IntervalTierNavigator working on a tier not in view, make the green jumps insensitive
+	*/
+	FormantPathEditor_sensitizeGreenNavigationButtons (me);
 }
 
 void FormantPathEditor_selectAll (FormantPathEditor me) {
@@ -851,13 +862,13 @@ void menu_cb_RemoveInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get(); 
-	if (! navigator)
+	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
+	if (! navigator || ! navigator -> navigationLabels)
 		return;
 	IntervalTierNavigator_setBeginPosition (navigator, my endSelection);
 	TextInterval textInterval = IntervalTierNavigator_nextInterval (navigator);
-	if (! textInterval)
-		return;
+	Melder_require (textInterval,
+		U"No more matching labels on the right.");
 	my startSelection = textInterval -> xmin;
 	my endSelection = textInterval -> xmax;
 	const double selectionDuration = my endSelection - my startSelection;
@@ -882,12 +893,12 @@ void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 
 void menu_cb_PreviousGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
-	if (! navigator)
+	if (! navigator || ! navigator -> navigationLabels)
 		return;
 	IntervalTierNavigator_setBeginPosition (navigator, my startSelection);
 	TextInterval textInterval = IntervalTierNavigator_previousInterval (navigator);
-	if (! textInterval)
-		return;
+	Melder_require (textInterval,
+		U"No more matching labels on the left.");
 	my startSelection = textInterval -> xmin;
 	my endSelection = textInterval -> xmax;
 	const double selectionDuration = my endSelection - my startSelection;
@@ -2432,6 +2443,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 			FunctionEditor_marksChanged (me.get(), false);
 		}
+		FormantPathEditor_sensitizeGreenNavigationButtons (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantPathEditor window not created.");

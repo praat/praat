@@ -144,14 +144,15 @@ void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, 
 
 }
 
-void FormantPath_modifyIntervalTierNavigation (FormantPath me, Strings navigationLabels, integer navigationTier, kMelder_string criterion) {
+void FormantPath_modifyIntervalTierNavigation (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion) {
 	try {
-		autoIntervalTierNavigator thee = IntervalTierNavigator_createFromTextGrid (my path.get(), navigationTier);
+		autoIntervalTierNavigator thee = IntervalTierNavigator_createFromTextGrid (my path.get(), navigationTierNumber);
 		IntervalTierNavigator_setNavigationLabels (thee.get(), navigationLabels, criterion);
 		integer numberOfMatches = IntervalTierNavigator_getNumberOfMatches (thee.get());
 		Melder_require (numberOfMatches > 0,
 			U"Not a single navigation label matches with the labels in the selected tier.");
 		my intervalTierNavigator = thee.move();
+		my navigationTierNumber = navigationTierNumber;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not reset our IntervalTierNavigator.");
 	}
@@ -192,7 +193,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
 		double minimumCeiling = maximumFrequency - numberOfStepsToACeiling * ceilingStep;
-		Melder_require (minimumCeiling > 0,
+		Melder_require (minimumCeiling > 0.0,
 			U"The minimum ceiling should be positive. Decrease the 'ceiling step' or the 'number of steps' or both.");
 		double maximumCeiling = maximumFrequency + numberOfStepsToACeiling * ceilingStep;		
 		Melder_require (maximumCeiling <= nyquistFrequency,
@@ -246,7 +247,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
-void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee, integer navigationTier) {
+void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee, integer navigationTierNumber) {
 	/*
 		Is there already a log/formant tier in the grid.
 	*/
@@ -258,8 +259,8 @@ void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee, integer navigatio
 	}
 	my path = thycopy.move();
 	my pathTierNumber = pathTierNumber;
-	if (navigationTier > 0)
-		my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (thee, navigationTier);
+	if (navigationTierNumber > 0)
+		my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (thee, navigationTierNumber);
 }
 
 autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
