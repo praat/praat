@@ -59,7 +59,7 @@ autoFormantPath FormantPath_create (double fromTime, double toTime, integer numb
 	my formantIdentifiers = autoSTRVEC (numberOfFormantObjects);
 	my numberOfFormants = numberOfFormantObjects;
 	my path = TextGrid_create (fromTime, toTime, U"path/formant", U"");
-	my textGridNavigator = TextGridNavigator_create (my path.get(), nullptr, kMelder_string::DEFAULT);
+	my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (my path.get(), 1);
 	my pathTierNumber = 1;
 	return me;
 }
@@ -144,12 +144,16 @@ void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, 
 
 }
 
-void FormantPath_replaceNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion) {
+void FormantPath_modifyIntervalTierNavigation (FormantPath me, Strings navigationLabels, integer navigationTier, kMelder_string criterion) {
 	try {
-		my textGridNavigator -> navigationLabels = Data_copy (navigationLabels);
-		my textGridNavigator -> criterion = criterion;
+		autoIntervalTierNavigator thee = IntervalTierNavigator_createFromTextGrid (my path.get(), navigationTier);
+		IntervalTierNavigator_setNavigationLabels (thee.get(), navigationLabels, criterion);
+		integer numberOfMatches = IntervalTierNavigator_getNumberOfMatches (thee.get());
+		Melder_require (numberOfMatches > 0,
+			U"Not a single navigation label matches with the labels in the selected tier.");
+		my intervalTierNavigator = thee.move();
 	} catch (MelderError) {
-		Melder_throw (me, U": navigation labels not replaced with ", navigationLabels, U".");
+		Melder_throw (me, U": could not reset our IntervalTierNavigator.");
 	}
 }
 
@@ -242,19 +246,20 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
-void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee) {
+void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee, integer navigationTier) {
 	/*
 		Is there already a log/formant tier in the grid.
 	*/
-	autoTextGrid copy = Data_copy (thee);
-	integer oldPathTierNumber = my pathTierNumber;
-	integer pathTierNumber = FormantPath_identifyPathTier (me, copy.get());
+	autoTextGrid thycopy = Data_copy (thee);
+	integer pathTierNumber = FormantPath_identifyPathTier (me, thycopy.get());
 	if (pathTierNumber == 0) {
-		TextGrid_addTier_copy (copy.get(), my path -> tiers -> at [my pathTierNumber]);
-		pathTierNumber = copy -> tiers -> size;
+		TextGrid_addTier_copy (thycopy.get(), my path -> tiers -> at [my pathTierNumber]);
+		pathTierNumber = thycopy -> tiers -> size;
 	}
-	my path = copy.move();
+	my path = thycopy.move();
 	my pathTierNumber = pathTierNumber;
+	if (navigationTier > 0)
+		my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (thee, navigationTier);
 }
 
 autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
@@ -270,7 +275,7 @@ autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, 
 	/*
 		Merge the TextGrid into path
 	*/
-	FormantPath_mergeTextGrid (him.get(), thee);
+	FormantPath_mergeTextGrid (him.get(), thee, 0); // no navigation.
 	return him;
 }
 
