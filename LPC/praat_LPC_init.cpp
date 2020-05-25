@@ -104,12 +104,13 @@ DIRECT (NEW_FormantPath_extractTextGrid) {
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (MODIFY_FormantPath_replaceNavigationlabels, U"FormantPath: Replace navigation labels", nullptr) {
+FORM (MODIFY_FormantPath_modifyIntervalTierNavigation, U"FormantPath: Modify interval tier navigation", nullptr) {
+	NATURAL (intervalTierNumber, U"Interval tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
-		FormantPath_replaceNavigationLabels (me, you, criterion);
+		FormantPath_modifyIntervalTierNavigation (me, you, intervalTierNumber, criterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -1232,7 +1233,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
 	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
 	
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Replace Strings", 0, 0, MODIFY_FormantPath_replaceNavigationlabels);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Modify interval tier navigation...", 0, 0, MODIFY_FormantPath_modifyIntervalTierNavigation);
 	
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);

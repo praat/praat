@@ -28,7 +28,6 @@
 #include "LPC.h"
 #include "TextGrid.h"
 #include "TextGridView.h"
-#include "TextGridNavigator.h"
 #include "TimeSoundAnalysisEditor.h"
 
 #include "TextGridEditor_enums.h"
@@ -50,7 +49,6 @@
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	autoFormantModelerList formantModelerList;
 	autoTextGridView pathGridView;
-	autoTextGridNavigator gridNavigator;
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier, pathTierNumber, selectedModeler;
 	bool suppressRedraw;

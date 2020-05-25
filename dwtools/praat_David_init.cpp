@@ -95,6 +95,7 @@
 #include "FormantGrid_extensions.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
+#include "IntervalTierNavigator.h"
 #include "Matrix_Categories.h"
 #include "Matrix_extensions.h"
 #include "LongSound_extensions.h"
@@ -7957,7 +7958,7 @@ void praat_uvafon_David_init () {
 		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
 		classFormantFilter,
-		classIndex, classKlattTable, classNMF,
+		classIndex, classIntervalTierNavigator, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,

@@ -850,6 +850,66 @@ void menu_cb_RemoveInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastDataChanged (me);
 }
 
+void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get(); 
+	if (! navigator)
+		return;
+	IntervalTierNavigator_setBeginPosition (navigator, my endSelection);
+	TextInterval textInterval = IntervalTierNavigator_nextInterval (navigator);
+	if (! textInterval)
+		return;
+	my startSelection = textInterval -> xmin;
+	my endSelection = textInterval -> xmax;
+	const double selectionDuration = my endSelection - my startSelection;
+	const double windowDuration = my endWindow - my startWindow;
+	if (my startSelection > my startWindow && my endSelection <= my endWindow) {
+		// ok 
+	} else if (windowDuration > selectionDuration) {
+		my startWindow = my startSelection - 0.5 * (windowDuration - selectionDuration);
+		my startWindow = std::max (my tmin, my startWindow);
+		my endWindow = my startWindow + windowDuration;
+		my endWindow = std::min (my tmax, my endWindow);
+	} else {
+		const double newWindowDuration = 2.5 * selectionDuration;
+		my startWindow = my startSelection - 0.5 * (newWindowDuration - selectionDuration);
+		my startWindow = std::max (my tmin, my startWindow);
+		my endWindow = my startWindow + newWindowDuration;
+		my endWindow = std::min (my tmax, my endWindow);
+	}
+	FunctionEditor_marksChanged (me, true);
+	Editor_broadcastDataChanged (me);
+}
+
+void menu_cb_PreviousGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
+	if (! navigator)
+		return;
+	IntervalTierNavigator_setBeginPosition (navigator, my startSelection);
+	TextInterval textInterval = IntervalTierNavigator_previousInterval (navigator);
+	if (! textInterval)
+		return;
+	my startSelection = textInterval -> xmin;
+	my endSelection = textInterval -> xmax;
+	const double selectionDuration = my endSelection - my startSelection;
+	const double windowDuration = my endWindow - my startWindow;
+	if (my startSelection > my startWindow && my endSelection <= my endWindow) {
+		// ok 
+	} else if (windowDuration > selectionDuration) {
+		my startWindow = my startSelection - 0.5 * (windowDuration - selectionDuration);
+		my startWindow = std::max (my tmin, my startWindow);
+		my endWindow = my startWindow + windowDuration;
+		my endWindow = std::min (my tmax, my endWindow);
+	} else {
+		const double newWindowDuration = 2.5 * selectionDuration;
+		my startWindow = my startSelection - 0.5 * (newWindowDuration - selectionDuration);
+		my startWindow = std::max (my tmin, my startWindow);
+		my endWindow = my startWindow + newWindowDuration;
+		my endWindow = std::min (my tmax, my endWindow);
+	}
+	FunctionEditor_marksChanged (me, true);
+	Editor_broadcastDataChanged (me);
+}
+
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantPathEditor me) {
@@ -1268,6 +1328,9 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Insert interval", GuiMenu_COMMAND | '1', menu_cb_InsertInterval);
 	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
+	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
+	EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
 	EditorMenu_addCommand (menu, U"Rename path tier...", 0, menu_cb_RenameLogTier);
@@ -1352,12 +1415,13 @@ static void do_drawIntervalTier (FormantPathEditor me, IntervalTier tier, intege
 		Highlight interval: yellow (selected) or green (matching label).
 	*/
 	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 ), ninterval = tier -> intervals.size;
+	IntervalTierNavigator navigator = ((FormantPath) (my data )) -> intervalTierNavigator.get();
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(), my p_greenMethod, my p_greenString, true);
+			const bool labelDoesMatch = ( navigator && IntervalTierNavigator_isLabelMatch (navigator, interval -> text.get()) );
 			if (tmin < my startWindow)
 				tmin = my startWindow;
 			if (tmax > my endWindow)
@@ -2272,7 +2336,7 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
 	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
-	SENTENCE_FIELD (v_prefs_addFields_theText, U"...one of the elements in", our default_greenString ())
+	LABEL (U"... one of the navigation labels")
 }
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
@@ -2280,7 +2344,7 @@ void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
 	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
-	SET_STRING (v_prefs_addFields_theText, our p_greenString)
+	//SET_STRING (v_prefs_addFields_theText, our p_greenString)
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
@@ -2290,7 +2354,7 @@ void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_shiftDragMultiple () = our p_shiftDragMultiple = false;
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
 	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
-	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
+	//pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
 	FunctionEditor_redraw (this);
 }
 
