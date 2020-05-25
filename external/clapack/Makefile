@@ -6,7 +6,9 @@ include ../../makefile.defs
 
 CPPFLAGS = -I ../../melder
 
-OBJECTS = blas.o lapack.o lapack_dg.o lapack_dla.o lapack_ds.o
+OBJECTS = blas.o \
+	lapack.o lapack_dg.o lapack_dlaq.o \
+	lapack_dlar.o lapack_ds.o lapack_dt.o
 
 .PHONY: all clean
 
