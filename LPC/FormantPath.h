@@ -44,7 +44,13 @@ integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 labe
 
 void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex);
 
-void FormantPath_modifyIntervalTierNavigation (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion);
+void FormantPath_setNavigationLabels (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion);
+
+void FormantPath_setLeftContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
+
+void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
+
+void FormantPath_setNavigationContextUse (FormantPath me,  kContextUse criterion);
 
 integer FormantPath_nextNavigationInterval (FormantPath me, integer preferedTierNumber);
 

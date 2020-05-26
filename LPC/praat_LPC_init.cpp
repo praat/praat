@@ -91,6 +91,14 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 		editor.releaseToUser();
 	END
 }
+FORM (MODIFY_FormantPath_setNavigationContextUse, U"FormantPath: Set navigation context use", nullptr) {
+	OPTIONMENU_ENUM (kContextUse, contextUse, U"Context use", kContextUse::DEFAULT)
+	OK
+DO
+	MODIFY_EACH (FormantPath)
+		FormantPath_setNavigationContextUse (me, contextUse);
+	MODIFY_EACH_END
+}
 
 DIRECT (NEW_FormantPath_extractFormant) {
 	CONVERT_EACH (FormantPath)
@@ -104,13 +112,31 @@ DIRECT (NEW_FormantPath_extractTextGrid) {
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (MODIFY_FormantPath_modifyIntervalTierNavigation, U"FormantPath: Modify interval tier navigation", nullptr) {
+FORM (MODIFY_FormantPath_modifyNavigationLabels, U"FormantPath: Modify navigation labels", nullptr) {
 	NATURAL (intervalTierNumber, U"Interval tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
-		FormantPath_modifyIntervalTierNavigation (me, you, intervalTierNumber, criterion);
+		FormantPath_setNavigationLabels (me, you, intervalTierNumber, criterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_FormantPath_setLeftContextNavigationLabels, U"FormantPath: Set left context navigation labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (FormantPath, Strings)
+		FormantPath_setLeftContextNavigationLabels (me, you, criterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_FormantPath_setRightContextNavigationLabels, U"FormantPath: Set right context navigation labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
+		FormantPath_setRightContextNavigationLabels (me, you, criterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -1230,11 +1256,15 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
+	praat_addAction1 (classFormantPath, 0, U"Set navigation context use...", 0, 0, MODIFY_FormantPath_setNavigationContextUse);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
 	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
 	
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Modify interval tier navigation...", 0, 0, MODIFY_FormantPath_modifyIntervalTierNavigation);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set interval tier navigation...", 0, 0, MODIFY_FormantPath_modifyNavigationLabels);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set left context navigation labels...", 0, 0, MODIFY_FormantPath_setLeftContextNavigationLabels);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set right context navigation labels...", 0, 0, MODIFY_FormantPath_setRightContextNavigationLabels);
 	
+
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);
 	praat_addAction1 (classLFCC, 0, U"To LPC...", 0, 0, NEW_LFCC_to_LPC);

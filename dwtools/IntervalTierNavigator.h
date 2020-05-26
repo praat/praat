@@ -32,11 +32,11 @@
 
 Thing_define (IntervalTierNavigator, Function) {
 	IntervalTier intervalTier;
-	autoSTRVEC leftContextLabels;
+	autoStrings leftContextLabels;
 	kMelder_string leftContextCriterion;
-	autoSTRVEC rightContextLabels;
+	autoStrings rightContextLabels;
 	kMelder_string rightContextCriterion;
-	autoSTRVEC navigationLabels;
+	autoStrings navigationLabels;
 	integer currentIntervalNumber;
 	kMelder_string criterion;
 	kContextUse contextUse;
@@ -72,8 +72,8 @@ integer IntervalTierNavigator_previousIntervalNumber (IntervalTierNavigator me);
 TextInterval IntervalTierNavigator_previousInterval (IntervalTierNavigator me);
 
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
-void IntervalTierNavigator_setLeftContextLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
-void IntervalTierNavigator_setRightContextLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
-void IntervalTierNavigator_modifyContextUse (IntervalTierNavigator me, kContextUse contextUse);
+void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
+void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
+void IntervalTierNavigator_setNavigationContextUse (IntervalTierNavigator me, kContextUse contextUse);
 
 #endif /* _IntervalTierNavigator_h_ */

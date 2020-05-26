@@ -49,6 +49,9 @@ void structFormantPath :: v_info () {
 	for (integer iformant = 1; iformant <= formants . size; iformant ++)
 		MelderInfo_writeLine (U"  ", iformant, U": ", formantIdentifiers [iformant].get(),
 			( iformant == defaultFormant ? U" (default)" : U"" ));
+	if (intervalTierNavigator) {
+		our intervalTierNavigator -> v_info ();
+	}
 }
 
 Thing_implement (FormantPath, Function, 0);
@@ -144,7 +147,7 @@ void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, 
 
 }
 
-void FormantPath_modifyIntervalTierNavigation (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion) {
+void FormantPath_setNavigationLabels (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion) {
 	try {
 		autoIntervalTierNavigator thee = IntervalTierNavigator_createFromTextGrid (my path.get(), navigationTierNumber);
 		IntervalTierNavigator_setNavigationLabels (thee.get(), navigationLabels, criterion);
@@ -154,8 +157,26 @@ void FormantPath_modifyIntervalTierNavigation (FormantPath me, Strings navigatio
 		my intervalTierNavigator = thee.move();
 		my navigationTierNumber = navigationTierNumber;
 	} catch (MelderError) {
-		Melder_throw (me, U": could not reset our IntervalTierNavigator.");
+		Melder_throw (me, U": could not set the  navigation labels.");
 	}
+}
+
+void FormantPath_setLeftContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion) {
+	Melder_require (my intervalTierNavigator && my intervalTierNavigator -> navigationLabels,
+		U"There is no navigation posible. First use the \"Set navigation labels\" to make it happen.");
+	IntervalTierNavigator_setLeftContextNavigationLabels (my intervalTierNavigator.get(), navigationLabels, criterion);
+}
+
+void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion) {
+	Melder_require (my intervalTierNavigator && my intervalTierNavigator -> navigationLabels,
+			U"There is no navigation posible. First use the \"Set navigation labels\" to make it happen.");
+	IntervalTierNavigator_setRightContextNavigationLabels (my intervalTierNavigator.get(), navigationLabels, criterion);
+}
+
+void FormantPath_setNavigationContextUse (FormantPath me,  kContextUse contextUse) {
+	Melder_require (my intervalTierNavigator && my intervalTierNavigator -> navigationLabels,
+		U"There is no navigation posible. First use the \"Set navigation labels\" to make it happen.");
+	IntervalTierNavigator_setNavigationContextUse (my intervalTierNavigator.get(), contextUse);
 }
 
 integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label) {

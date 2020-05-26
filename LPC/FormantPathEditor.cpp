@@ -54,11 +54,11 @@ void operator<<= (INTVECVU const& target, integer value) {
 		target [i] = value;
 }
 
-void FormantPathEditor_sensitizeGreenNavigationButtons (FormantPathEditor me) {
+void FormantPathEditor_sensitivizeNavigationMenuItems (FormantPathEditor me) {
 	FormantPath formantPath = (FormantPath) my data;
 	bool sensitive = ( formantPath -> intervalTierNavigator && formantPath -> intervalTierNavigator -> navigationLabels && TextGridView_hasTierInView (my pathGridView.get(), formantPath -> navigationTierNumber) );
-	Editor_setMenuSensitive (me, U"Next green interval", sensitive);
-	Editor_setMenuSensitive (me, U"Previous green interval", sensitive);
+	// How to ??
+	//
 }
 
 void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNumber_string) {
@@ -101,7 +101,7 @@ void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNum
 	/*
 		If there is an IntervalTierNavigator working on a tier not in view, make the green jumps insensitive
 	*/
-	FormantPathEditor_sensitizeGreenNavigationButtons (me);
+	FormantPathEditor_sensitivizeNavigationMenuItems (me);
 }
 
 void FormantPathEditor_selectAll (FormantPathEditor me) {
@@ -1427,12 +1427,13 @@ static void do_drawIntervalTier (FormantPathEditor me, IntervalTier tier, intege
 	*/
 	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 ), ninterval = tier -> intervals.size;
 	IntervalTierNavigator navigator = ((FormantPath) (my data )) -> intervalTierNavigator.get();
+	integer navigationTierNumber = ((FormantPath) (my data )) -> navigationTierNumber;
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = ( navigator && IntervalTierNavigator_isLabelMatch (navigator, interval -> text.get()) );
+			const bool labelDoesMatch = ( itier == navigationTierNumber && navigator && IntervalTierNavigator_isLabelMatch (navigator, iinterval) );
 			if (tmin < my startWindow)
 				tmin = my startWindow;
 			if (tmax > my endWindow)
@@ -2443,7 +2444,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 			FunctionEditor_marksChanged (me.get(), false);
 		}
-		FormantPathEditor_sensitizeGreenNavigationButtons (me.get());
+		FormantPathEditor_sensitivizeNavigationMenuItems (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantPathEditor window not created.");
