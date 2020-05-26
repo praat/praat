@@ -22,6 +22,8 @@
 #include "TextGridView.h"
 #include "melder.h"
 
+#include "IntervalTierNavigator_enums.h"
+
 /*
 	Behaviour: if no navigationLabels are defined then next/previous simply do currentIntervalNumber ++ / --.
 	If navigationLabels are present the move is to the next/previous interval that matches the criterion.
@@ -30,10 +32,14 @@
 
 Thing_define (IntervalTierNavigator, Function) {
 	IntervalTier intervalTier;
-	//autoStrings leftContext, rightContext;
-	autoStrings navigationLabels;
+	autoSTRVEC leftContextLabels;
+	kMelder_string leftContextCriterion;
+	autoSTRVEC rightContextLabels;
+	kMelder_string rightContextCriterion;
+	autoSTRVEC navigationLabels;
 	integer currentIntervalNumber;
 	kMelder_string criterion;
+	kContextUse contextUse;
 	void v_info ()
 		override;
 	bool offLeft () {
@@ -55,7 +61,7 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me);
 */
 void IntervalTierNavigator_setBeginPosition (IntervalTierNavigator me, double time);
 
-bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, conststring32 label);
+bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber);
 
 integer IntervalTierNavigator_getNumberOfMatches (IntervalTierNavigator me);
 
@@ -66,5 +72,8 @@ integer IntervalTierNavigator_previousIntervalNumber (IntervalTierNavigator me);
 TextInterval IntervalTierNavigator_previousInterval (IntervalTierNavigator me);
 
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
+void IntervalTierNavigator_setLeftContextLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
+void IntervalTierNavigator_setRightContextLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
+void IntervalTierNavigator_modifyContextUse (IntervalTierNavigator me, kContextUse contextUse);
 
 #endif /* _IntervalTierNavigator_h_ */
