@@ -45,20 +45,31 @@ void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
 }
 
+void structFormantPathEditor :: v_updateMenuItems_navigation () {
+	FormantPath formantPath = (FormantPath) our data;
+	bool navigationPossible = ( formantPath -> intervalTierNavigator && formantPath -> intervalTierNavigator -> navigationLabels && 
+		our pathGridView && TextGridView_hasTierInView (our pathGridView.get(), formantPath -> navigationTierNumber) );
+	bool nextSensitive = false;
+	bool previousSensitive = false;
+	if (navigationPossible) {
+		IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
+		if (IntervalTierNavigator_getPreviousMatchingIntervalNumber (navigator, our startSelection) > 0)
+			previousSensitive = true;
+		if (IntervalTierNavigator_getNextMatchingIntervalNumber (navigator, our endSelection) > 0)
+			nextSensitive = true;
+	}
+	GuiThing_setSensitive (our navigateNextButton, nextSensitive);
+	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);
+}
+
 void operator<<= (BOOLVECVU const& target, bool value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
 }
+
 void operator<<= (INTVECVU const& target, integer value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
-}
-
-void FormantPathEditor_sensitivizeNavigationMenuItems (FormantPathEditor me) {
-	FormantPath formantPath = (FormantPath) my data;
-	bool sensitive = ( formantPath -> intervalTierNavigator && formantPath -> intervalTierNavigator -> navigationLabels && TextGridView_hasTierInView (my pathGridView.get(), formantPath -> navigationTierNumber) );
-	// How to ??
-	//
 }
 
 void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNumber_string) {
@@ -98,10 +109,6 @@ void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNum
 	TextGridView_modifyView (my pathGridView.get(), tierNumbers);
 	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
 	my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), pathTierNumber);
-	/*
-		If there is an IntervalTierNavigator working on a tier not in view, make the green jumps insensitive
-	*/
-	FormantPathEditor_sensitivizeNavigationMenuItems (me);
 }
 
 void FormantPathEditor_selectAll (FormantPathEditor me) {
@@ -865,8 +872,7 @@ void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
 	if (! navigator || ! navigator -> navigationLabels)
 		return;
-	IntervalTierNavigator_setBeginPosition (navigator, my endSelection);
-	TextInterval textInterval = IntervalTierNavigator_nextInterval (navigator);
+	TextInterval textInterval = IntervalTierNavigator_getNextMatchingInterval (navigator, my endSelection);
 	Melder_require (textInterval,
 		U"No more matching labels on the right.");
 	my startSelection = textInterval -> xmin;
@@ -895,8 +901,7 @@ void menu_cb_PreviousGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
 	if (! navigator || ! navigator -> navigationLabels)
 		return;
-	IntervalTierNavigator_setBeginPosition (navigator, my startSelection);
-	TextInterval textInterval = IntervalTierNavigator_previousInterval (navigator);
+	TextInterval textInterval = IntervalTierNavigator_getPreviousMatchingInterval (navigator, my startSelection);
 	Melder_require (textInterval,
 		U"No more matching labels on the left.");
 	my startSelection = textInterval -> xmin;
@@ -1340,8 +1345,9 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
-	EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
+	
+	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
+	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
 	EditorMenu_addCommand (menu, U"Rename path tier...", 0, menu_cb_RenameLogTier);
@@ -1393,6 +1399,7 @@ void structFormantPathEditor :: v_dataChanged () {
 	*/
 	if (our selectedTier > grid -> tiers->size)
 		our selectedTier = grid -> tiers->size;
+	our v_updateMenuItems_navigation ();
 	FormantPathEditor_Parent :: v_dataChanged ();   // does all the updating
 }
 
@@ -1739,6 +1746,7 @@ void structFormantPathEditor :: v_draw () {
 		Finally, us usual, update the menus.
 	*/
 	v_updateMenuItems_file ();
+	v_updateMenuItems_navigation ();
 }
 
 void FormantPathEditor_setSelectionViewerViewportAndWindow (FormantPathEditor me) {
@@ -2444,7 +2452,6 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 			FunctionEditor_marksChanged (me.get(), false);
 		}
-		FormantPathEditor_sensitivizeNavigationMenuItems (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantPathEditor window not created.");
