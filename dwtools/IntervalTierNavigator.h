@@ -25,9 +25,12 @@
 #include "IntervalTierNavigator_enums.h"
 
 /*
-	Behaviour: if no navigationLabels are defined then next/previous simply do currentIntervalNumber ++ / --.
-	If navigationLabels are present the move is to the next/previous interval that matches the criterion.
-	(offLeft) 0 <= currentIntervalNumber <=  intervals.size + 1 (offRight)
+	Invariants:
+	0 <= currentIntervalNumber <= intervals.size + 1;
+	
+	Behaviour:
+	
+	
 */
 
 Thing_define (IntervalTierNavigator, Function) {
@@ -37,17 +40,10 @@ Thing_define (IntervalTierNavigator, Function) {
 	autoStrings rightContextLabels;
 	kMelder_string rightContextCriterion;
 	autoStrings navigationLabels;
-	integer currentIntervalNumber;
 	kMelder_string criterion;
 	kContextUse contextUse;
 	void v_info ()
 		override;
-	bool offLeft () {
-		return currentIntervalNumber == 0;
-	}
-	bool offRight () {
-		return currentIntervalNumber == intervalTier -> intervals . size + 1;
-	}
 };
 
 autoIntervalTierNavigator IntervalTierNavigator_createFromTextGrid (TextGrid me, integer navigationTier);
@@ -65,11 +61,14 @@ bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer inter
 
 integer IntervalTierNavigator_getNumberOfMatches (IntervalTierNavigator me);
 
-integer IntervalTierNavigator_nextIntervalNumber (IntervalTierNavigator me);
-TextInterval IntervalTierNavigator_nextInterval (IntervalTierNavigator me);
+integer IntervalTierNavigator_getNextMatchingIntervalNumber (IntervalTierNavigator me, double time);
+TextInterval IntervalTierNavigator_getNextMatchingInterval (IntervalTierNavigator me, double time);
 
-integer IntervalTierNavigator_previousIntervalNumber (IntervalTierNavigator me);
-TextInterval IntervalTierNavigator_previousInterval (IntervalTierNavigator me);
+integer IntervalTierNavigator_getPreviousMatchingIntervalNumber (IntervalTierNavigator me, double time);
+TextInterval IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavigator me, double time);
+
+bool IntervalTierNavigator_atMatchingEnd (IntervalTierNavigator me, double time);
+bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double time);
 
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);

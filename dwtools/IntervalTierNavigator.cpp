@@ -42,12 +42,11 @@ void structIntervalTierNavigator :: v_info () {
 			MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (rightContextCriterion));
 			MelderInfo_writeLine (U"\tNumber of labels: ", rightContextLabels -> strings.size);
 		}
-		MelderInfo_writeLine (U"\tContext use: ", kContextUse_getText (contextUse), U" matches");
+		MelderInfo_writeLine (U"\tContext use: ", kContextUse_getText (contextUse));
 		MelderInfo_writeLine (U"\tMatches: ", IntervalTierNavigator_getNumberOfMatches (this), U" out  of ", intervalTier -> intervals . size);
 	} else {
 		MelderInfo_writeLine (U"\tNo navigation labels defined");
 	}
-	MelderInfo_writeLine (U"\tCurrent interval number: ", currentIntervalNumber);
 }
 
 autoIntervalTierNavigator IntervalTierNavigator_createFromTextGrid (TextGrid me, integer navigationTier) {
@@ -79,18 +78,6 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me) {
 	return thee;
 }
 
-
-void IntervalTierNavigator_setBeginPosition (IntervalTierNavigator me, double time) {
-	integer intervalNumber = IntervalTier_timeToIndex (my intervalTier, time);
-	if (intervalNumber == 0) {
-		if (time <= my xmin)
-			intervalNumber = 0; // offLeft
-		else if (time > my xmax)
-			intervalNumber = my intervalTier -> intervals .size + 1; // offRight
-	}
-	my currentIntervalNumber = intervalNumber;
-
-}
 
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion) {
 	try {
@@ -149,17 +136,17 @@ bool STRVEChasMatch (constSTRVEC const& labels, kMelder_string criterion, consts
 
 static bool IntervalTierNavigator_isNavigationMatch (IntervalTierNavigator me, integer intervalNumber) {
 	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my criterion, label);
+	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my criterion, label) );
 }
 
 static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, integer intervalNumber) {
 	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return my leftContextLabels && STRVEChasMatch (my leftContextLabels -> strings.get(), my leftContextCriterion, label);
+	return ( my leftContextLabels && STRVEChasMatch (my leftContextLabels -> strings.get(), my leftContextCriterion, label) );
 }
 
 static bool IntervalTierNavigator_isRightContextMatch (IntervalTierNavigator me, integer intervalNumber) {
 	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return my rightContextLabels && STRVEChasMatch (my rightContextLabels -> strings.get(), my rightContextCriterion, label);
+	return ( my rightContextLabels && STRVEChasMatch (my rightContextLabels -> strings.get(), my rightContextCriterion, label) );
 }
 
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber) {
@@ -213,52 +200,61 @@ integer IntervalTierNavigator_getNumberOfMatches (IntervalTierNavigator me) {
 	return numberOfMatches;
 }
 
-integer IntervalTierNavigator_nextIntervalNumber (IntervalTierNavigator me) {
-	Melder_require (! my offRight (),
-		U"The current position is already past the end of the tier.");
-	if (my navigationLabels) {
-		for (integer interval =  my currentIntervalNumber + 1; interval <= my intervalTier -> intervals . size; interval ++) {
-			if (IntervalTierNavigator_isLabelMatch (me, interval)) {
-				my currentIntervalNumber = interval;
-				return interval;
-			}
-		}
-		my currentIntervalNumber = my intervalTier -> intervals . size + 1; // offRight
-		return 0;
+/*
+	return 0 if time < my xmin
+	return intervals .size + 1 if time > my xmax
+*/
+integer IntervalTierNavigator_getNavigationStartInterval (IntervalTierNavigator me, double time) {
+	integer intervalNumber = IntervalTier_timeToIndex (my intervalTier, time);
+	if (intervalNumber == 0) {
+		if (time < my xmin) {
+			intervalNumber = 0; // start
+		} else if (time > my xmax)
+			intervalNumber = my intervalTier -> intervals .size + 1; // end
 	}
-	my currentIntervalNumber ++;
-	return ( my currentIntervalNumber > my intervalTier -> intervals . size ? 0 : my currentIntervalNumber );
+	return intervalNumber;
 }
 
-TextInterval IntervalTierNavigator_nextInterval (IntervalTierNavigator me) {
-	const integer interval = IntervalTierNavigator_nextIntervalNumber (me);
+integer IntervalTierNavigator_getNextMatchingIntervalNumber (IntervalTierNavigator me, double time) {
+	if (! my navigationLabels)
+		return 0;
+	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
+	for (integer interval = startInterval + 1; interval <= my intervalTier -> intervals . size; interval ++)
+		if (IntervalTierNavigator_isLabelMatch (me, interval))
+			return interval;
+	return 0;
+}
+
+TextInterval IntervalTierNavigator_getNextMatchingInterval (IntervalTierNavigator me, double time) {
+	const integer interval = IntervalTierNavigator_getNextMatchingIntervalNumber (me, time);
 	if (interval == 0)
 		return nullptr;
 	return my intervalTier -> intervals . at [interval];
 }
 
-integer IntervalTierNavigator_previousIntervalNumber (IntervalTierNavigator me) {
-	Melder_require (! my offLeft (),
-		U"The current position is already before the start of the tier.");
-	if (my navigationLabels) {
-		for (integer interval = my currentIntervalNumber - 1; interval > 0; interval --) {
-			if (IntervalTierNavigator_isLabelMatch (me, interval)) {
-				my currentIntervalNumber = interval;
-				return interval;
-			}
-		}
-		my currentIntervalNumber = 0; // offLeft
+integer IntervalTierNavigator_getPreviousMatchingIntervalNumber (IntervalTierNavigator me, double time) {
+	if (! my navigationLabels)
 		return 0;
-	}
-	my currentIntervalNumber --; // always 0 or <= size
-	return my currentIntervalNumber;
+	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
+	for (integer interval = startInterval - 1; interval > 0; interval --)
+		if (IntervalTierNavigator_isLabelMatch (me, interval))
+			return interval;
+	return 0;
 }
 
-TextInterval IntervalTierNavigator_previousInterval (IntervalTierNavigator me) {
-	const integer interval = IntervalTierNavigator_previousIntervalNumber (me);
+TextInterval IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavigator me, double time) {
+	const integer interval = IntervalTierNavigator_getPreviousMatchingIntervalNumber (me, time);
 	if (interval == 0)
 		return nullptr;
 	return my intervalTier -> intervals . at [interval];
+}
+
+bool IntervalTierNavigator_atMatchingEnd (IntervalTierNavigator me, double time) {
+	return ( IntervalTierNavigator_getNextMatchingIntervalNumber (me, time) == 0 );
+}
+
+bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double time) {
+	return ( IntervalTierNavigator_getPreviousMatchingIntervalNumber (me, time) == 0 );
 }
 
 /* End of file IntervalTierNavigator.cpp */
