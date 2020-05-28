@@ -34,7 +34,8 @@ oo_DEFINE_CLASS (FormantPath, Function)
 		oo_OBJECT (Formant, 2, formant)
 		oo_OBJECT (IntervalTierNavigator, 0, intervalTierNavigator)
 		oo_INTEGER (navigationTierNumber);
-		virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (FormantPath)
