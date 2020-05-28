@@ -28,7 +28,7 @@ void structTextGridView :: v_info () {
 }
 
 
-void TextGridView_setDefault (TextGridView me) {
+void TextGridView_setDefaultView (TextGridView me) {
 	my tierNumbers.resize (my origin -> tiers -> size);
 	my tiers -> size = 0;
 	for (integer itier = 1; itier <= my origin -> tiers -> size; itier ++) {
@@ -64,7 +64,7 @@ autoTextGridView TextGridView_create (TextGrid me) {
 		thy xmin = my xmin;
 		thy xmax = my xmax;
 		thy origin = me;
-		TextGridView_setDefault (thee.get());
+		TextGridView_setDefaultView (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridView not created.");
@@ -87,16 +87,15 @@ void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbe
 	Melder_require (min > 0,
 		U"A tier number should be positive.");
 	Melder_require (max <= my origin -> tiers -> size,
-		U"A tier number should not exceed ", size, U" (the number of tiers in the original TextGrid).");
+		U"A tier number should not exceed ", size, U" (=the number of tiers in the original TextGrid).");
 }
 
 void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers) {
 	TextGridView_checkNewView (me, newTierNumbers);
-	autoINTVEC newOriginTierNumbers = newINTVECcopy (newTierNumbers);
 	my tierNumbers.resize (newTierNumbers.size);
 	my tiers -> size = 0;
 	for (integer itier = 1; itier <= newTierNumbers.size; itier ++) {
-		const integer originNumber = newOriginTierNumbers [itier];
+		const integer originNumber = newTierNumbers [itier];
 		Function anyTier = my origin -> tiers -> at [originNumber];
 		my tiers -> _insertItem_ref (anyTier, itier);
 		my tierNumbers [itier] = originNumber;
