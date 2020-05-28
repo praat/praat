@@ -33,6 +33,8 @@
 #include "DTW.h"
 #include "FilterBank.h"
 #include "Formant_extensions.h"
+#include "FormantPath.h"
+#include "FormantPathEditor.h"
 #include "LPC.h"
 #include "MFCC.h"
 #include "LFCC.h"
@@ -66,6 +68,78 @@ static const conststring32 MODIFY_BUTTON   = U"Modify -";
 
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
+
+static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata publication) {
+	/*
+	 * Keep the gate for error handling.
+	 */
+	try {
+		praat_new (publication.move());
+		praat_updateSelection ();
+	} catch (MelderError) {
+		Melder_flushError ();
+	}
+}
+
+DIRECT (WINDOW_FormantPath_viewAndEdit) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	FIND_ONE_WITH_IOBJECT (FormantPath)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
+}
+FORM (MODIFY_FormantPath_setNavigationContext, U"FormantPath: Set navigation context", nullptr) {
+	OPTIONMENU_ENUM (kContextMatch, contextMatchCriterion, U"Match", kContextMatch::DEFAULT)
+	BOOLEAN (matchContextOnly, U"Match context only", false)
+	OK
+DO
+	MODIFY_EACH (FormantPath)
+		FormantPath_setNavigationContext (me, contextMatchCriterion, matchContextOnly);
+	MODIFY_EACH_END
+}
+
+DIRECT (NEW_FormantPath_extractFormant) {
+	CONVERT_EACH (FormantPath)
+		autoFormant result = FormantPath_extractFormant (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_FormantPath_extractTextGrid) {
+	CONVERT_EACH (FormantPath)
+		autoTextGrid result = FormantPath_extractTextGrid (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (MODIFY_FormantPath_setNavigationLabels, U"FormantPath: Set navigation labels", nullptr) {
+	NATURAL (intervalTierNumber, U"Interval tier number", U"1")
+	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
+		FormantPath_setNavigationLabels (me, you, intervalTierNumber, criterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_FormantPath_setLeftContextNavigationLabels, U"FormantPath: Set left context navigation labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (FormantPath, Strings)
+		FormantPath_setLeftContextNavigationLabels (me, you, criterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_FormantPath_setRightContextNavigationLabels, U"FormantPath: Set right context navigation labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
+		FormantPath_setRightContextNavigationLabels (me, you, criterion);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 /********************** Cepstrum  ****************************************/
 
@@ -834,6 +908,70 @@ DO
 		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
 	CONVERT_EACH_END (my name.get())
 }
+FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
+	REAL (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
+	LABEL (U"The minimum and maximum ceilings are determined as:")
+	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
+	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
+	LABEL (U"For Marple analysis:")
+	POSITIVE (marple_tol1, U"Tolerance 1", U"1e-6")
+	POSITIVE (marple_tol2, U"Tolerance 2", U"1e-6")
+	LABEL (U"For Robust analysis:")
+	POSITIVE (huber_numberOfStdDev, U"Number of std. dev.", U"1.5")
+	NATURAL (huber_maximumNumberOfIterations, U"Maximum number of iterations", U"5")
+	REAL (huber_tolerance, U"Tolerance", U"0.000001")
+	BOOLEAN (sourcesAsMultichannel, U"Get sources as multi channel sound", false)
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoSound multichannel;
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumFormantFrequency,  maximumNumberOfFormants, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations, 
+			( sourcesAsMultichannel ? & multichannel : nullptr ));
+		if (sourcesAsMultichannel)
+			praat_new (multichannel.move(), my name.get(), U"_sources");
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nullptr) {
+	REAL (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	LABEL (U"The maximum and minimum ceilings are determined as:")
+	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
+	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+	CONVERT_EACH_END (my name.get())	
+}
+
+
+FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", U"Sound & TextGrid: To FormantPath (burg)...") {
+	REAL (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	LABEL (U"The maximum and minimum ceilings are determined as:")
+	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
+	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps to up / down", U"4")
+	OK
+DO
+	CONVERT_TWO (Sound, TextGrid)
+		autoFormantPath result = Sound_and_TextGrid_to_FormantPath_burg (me, you, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+	CONVERT_TWO_END (my name.get())
+}
 
 #define Sound_to_LPC_addWarning \
 	LABEL (U"Warning 1:  for formant analysis, use \"To Formant\" instead.") \
@@ -1047,8 +1185,10 @@ extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init ();
 void praat_uvafon_LPC_init () {
-	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
-
+	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantPath, classFormantPathEditor, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
+	
+	structFormantPathEditor  :: f_preferences ();
+	
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, HELP_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, GRAPHICS_PowerCepstrum_draw);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line...", 0, 0, GRAPHICS_PowerCepstrum_drawTrendLine);
@@ -1115,9 +1255,17 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
+	
+	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
+	praat_addAction1 (classFormantPath, 0, U"Set navigation context...", 0, 0, MODIFY_FormantPath_setNavigationContext);
+	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
+	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
+	
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set navigation labels...", 0, 0, MODIFY_FormantPath_setNavigationLabels);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set left context navigation labels...", 0, 0, MODIFY_FormantPath_setLeftContextNavigationLabels);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set right context navigation labels...", 0, 0, MODIFY_FormantPath_setRightContextNavigationLabels);
+	
 
-	
-	
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);
 	praat_addAction1 (classLFCC, 0, U"To LPC...", 0, 0, NEW_LFCC_to_LPC);
@@ -1163,7 +1311,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLPC, 0, U"To LFCC...", 0, 0, NEW_LPC_to_LFCC);
 	praat_addAction1 (classLPC, 0, U"To Spectrogram...", 0, 0, NEW_LPC_to_Spectrogram);
 	praat_addAction1 (classLPC, 0, U"To LineSpectralFrequencies...", 0, 0, NEW_LPC_to_LineSpectralFrequencies);
-
+	
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Analyse", 0, 0, 0);
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter...", 0, 0, NEW1_LPC_Sound_filter);
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse)", 0, 0, NEW1_LPC_Sound_filterInverse);
@@ -1171,15 +1319,18 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter with filter at time...", 0, 0, NEW1_LPC_Sound_filterWithFilterAtTime);
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse) with filter at time...", 0, 0, NEW1_LPC_Sound_filterInverseWithFilterAtTime);
 
-
-	praat_addAction1 (classSound, 0, U"To LPC (autocorrelation)...", U"To Formant (sl)...", 1, NEW_Sound_to_LPC_autocorrelation);
-	praat_addAction1 (classSound, 0, U"To LPC (covariance)...", U"To LPC (autocorrelation)...", 1, NEW_Sound_to_LPC_covariance);
-	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 1, NEW_Sound_to_LPC_burg);
-	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 1, NEW_Sound_to_LPC_marple);
-	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
-	praat_addAction1 (classSound, 0, U"To Formant (robust)...", U"To Formant (sl)...", 2, NEW_Sound_to_Formant_robust);
 	praat_addAction1 (classSound, 0, U"To PowerCepstrogram...", U"To Harmonicity (gne)...", 1, NEW_Sound_to_PowerCepstrogram);
 	praat_addAction1 (classSound, 0, U"To PowerCepstrogram (hillenbrand)...", U"To Harmonicity (gne)...", praat_HIDDEN + praat_DEPTH_1, NEW_Sound_to_PowerCepstrogram_hillenbrand);
+	praat_addAction1 (classSound, 0, U"To Formant (robust)...", U"To Formant (sl)...", 2, NEW_Sound_to_Formant_robust);
+	praat_addAction1 (classSound, 0, U"To FormantPath...", U"To Formant (robust)...", 2, NEW_Sound_to_FormantPath);
+	praat_addAction1 (classSound, 0, U"To FormantPath (burg)...", U"To FormantPath...", 1, NEW_Sound_to_FormantPath_burg);
+	praat_addAction1 (classSound, 0, U"To LPC", U"To FormantPath...", 1, nullptr);
+	praat_addAction1 (classSound, 0, U"To LPC (autocorrelation)...", U"To LPC", 2, NEW_Sound_to_LPC_autocorrelation);
+	praat_addAction1 (classSound, 0, U"To LPC (covariance)...", U"To LPC (autocorrelation)...", 2, NEW_Sound_to_LPC_covariance);
+	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 2, NEW_Sound_to_LPC_burg);
+	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 2, NEW_Sound_to_LPC_marple);
+	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"To FormantPath (burg)...", 0, 0, NEW_Sound_and_TextGrid_to_FormantPath_burg);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, GRAPHICS_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0, REAL_VocalTract_getLength);

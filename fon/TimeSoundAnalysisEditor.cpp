@@ -1419,6 +1419,30 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu me
 	EditorMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4);
 }
 
+void structTimeSoundAnalysisEditor :: v_createMenuItems_formant (EditorMenu menu) {
+	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
+		GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
+	EditorMenu_addCommand (menu, U"Formant settings...", 0, menu_cb_formantSettings);
+	EditorMenu_addCommand (menu, U"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
+	EditorMenu_addCommand (menu, U"-- formant query --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, U"Formant listing", 0, menu_cb_formantListing);
+	EditorMenu_addCommand (menu, U"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
+	EditorMenu_addCommand (menu, U"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
+	EditorMenu_addCommand (menu, U"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
+	EditorMenu_addCommand (menu, U"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
+	EditorMenu_addCommand (menu, U"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
+	EditorMenu_addCommand (menu, U"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
+	EditorMenu_addCommand (menu, U"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
+	EditorMenu_addCommand (menu, U"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
+	EditorMenu_addCommand (menu, U"Get formant...", 0, menu_cb_getFormant);
+	EditorMenu_addCommand (menu, U"Get bandwidth...", 0, menu_cb_getBandwidth);
+	v_createMenuItems_formant_picture (menu);
+	EditorMenu_addCommand (menu, U"-- formant extract --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, U"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);	
+}
+
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 	EditorMenu menu;
 
@@ -1480,32 +1504,11 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
 		EditorMenu_addCommand (menu, U"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
 	}
-
 	if (v_hasFormants ()) {
 		menu = Editor_addMenu (this, U"Formant", 0);
-		formantToggle = EditorMenu_addCommand (menu, U"Show formants",
-			GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
-		EditorMenu_addCommand (menu, U"Formant settings...", 0, menu_cb_formantSettings);
-		EditorMenu_addCommand (menu, U"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
-		EditorMenu_addCommand (menu, U"-- formant query --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-		EditorMenu_addCommand (menu, U"Formant listing", 0, menu_cb_formantListing);
-		EditorMenu_addCommand (menu, U"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
-		EditorMenu_addCommand (menu, U"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
-		EditorMenu_addCommand (menu, U"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
-		EditorMenu_addCommand (menu, U"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
-		EditorMenu_addCommand (menu, U"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
-		EditorMenu_addCommand (menu, U"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
-		EditorMenu_addCommand (menu, U"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
-		EditorMenu_addCommand (menu, U"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
-		EditorMenu_addCommand (menu, U"Get formant...", 0, menu_cb_getFormant);
-		EditorMenu_addCommand (menu, U"Get bandwidth...", 0, menu_cb_getBandwidth);
-		v_createMenuItems_formant_picture (menu);
-		EditorMenu_addCommand (menu, U"-- formant extract --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
-		EditorMenu_addCommand (menu, U"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
+		v_createMenuItems_formant (menu);
 	}
-
+	
 	if (v_hasPulses ()) {
 		menu = Editor_addMenu (this, U"Pulses", 0);
 		pulsesToggle = EditorMenu_addCommand (menu, U"Show pulses",
@@ -1767,14 +1770,9 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setLineWidth (my graphics.get(), 1.0);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 	}
-	TimeSoundAnalysisEditor_computeFormants (me);
-	if (my p_formant_show && my d_formant) {
-		Graphics_setColour (my graphics.get(), Melder_RED);
-		Graphics_setSpeckleSize (my graphics.get(), my p_formant_dotSize);
-		Formant_drawSpeckles_inside (my d_formant.get(), my graphics.get(), my startWindow, my endWindow,
-			my p_spectrogram_viewFrom, my p_spectrogram_viewTo, my p_formant_dynamicRange);
-		Graphics_setColour (my graphics.get(), Melder_BLACK);
-	}
+	
+	my v_draw_analysis_formants ();
+	
 	/*
 	 * Draw vertical scales.
 	 */
@@ -1909,6 +1907,17 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 }
 void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 	TimeSoundAnalysisEditor_v_draw_analysis (this);
+}
+
+void structTimeSoundAnalysisEditor :: v_draw_analysis_formants () {
+	TimeSoundAnalysisEditor_computeFormants (this);
+	if (our p_formant_show && our d_formant) {
+		Graphics_setColour (our graphics.get(), Melder_RED);
+		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
+		Formant_drawSpeckles_inside (our d_formant.get(), our graphics.get(), our startWindow, our endWindow,
+			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
+	}
 }
 
 void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {

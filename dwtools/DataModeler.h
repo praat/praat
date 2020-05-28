@@ -33,6 +33,28 @@
 
 #include "DataModeler_def.h"
 
+static inline void getAutoNaturalNumbersWithinRange (integer *from, integer *to, integer maximum, conststring32 text) {
+	if (*from <= 0)
+		*from = 1;
+	if (*to == 0)
+		*to = maximum;
+	if (*to < *from) {
+		*from = 1;
+		*to = maximum;
+	}
+	if (*to > maximum)
+		*to = maximum;
+	Melder_require (*from <= maximum,
+		U"The start index of the ", text, U" range should not be larger than ", maximum, U".");
+}
+
+static inline void getAutoNaturalNumberWithinRange (integer *number, integer maximum) {
+	if (*number == 0 || *number > maximum)
+		*number = maximum;
+	if (*number < 0)
+		*number = 1;
+}
+
 void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type);
 
 autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type);
@@ -47,23 +69,21 @@ integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *x
 void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	integer iterm, bool scale, integer numberOfPoints);
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, double horizontalOffset_mm, bool drawDots);
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, double horizontalOffset_wc, bool drawDots);
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_mm);
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_wc);
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_mm, bool garnish);
+	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_wc, bool garnish);
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, double horizontalOffset_mm, bool garnish);
+	bool estimated, integer numberOfParameters, double horizontalOffset_wc, bool garnish);
 
 void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, double horizontalOffset_mm);
+	bool estimated, integer numberOfParameters, double horizontalOffset_wc);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_mm);
+	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc);
 
 void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
 /* Get the y-value of the fitted function at x */
