@@ -69,7 +69,7 @@ MAN_BEGIN (U"FormantPath", U"djmw", 20200528)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
 NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a TextGrid. For example, consider a collection with nine Formant objects. The formant objects could be the result of @@Sound: To Formant (burg)...@ analyses on the same sound. The only difference in  each analyses was the \"Maximum formant (Hz)\" parameter setting. Suppose it was chosen as 4500, 4750, 5000, 5250, 5500, 6750, 6000, 6250 and 6500 Hz, respectively. In this way, the collection functions as a set of alternative analyses. One of the Formants in this set equals the result of a \"standard\" analysis. One of the tiers in the FormantPath's TextGrid keeps tract of which alternative has been chosen for a particular interval in time.")
 NORMAL (U"Because many different object are combined in a FormantPath some specialized commands facilitate its creation. The two most important ones are: @@Sound & TextGrid: To FormantPath (burg)...@ and @@Sound: To FormantPath (burg)...")
-NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantpathEditor@.")
+NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
 MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20200523)
