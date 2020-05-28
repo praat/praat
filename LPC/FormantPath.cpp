@@ -50,6 +50,8 @@ void structFormantPath :: v_info () {
 		MelderInfo_writeLine (U"  ", iformant, U": ", formantIdentifiers [iformant].get(),
 			( iformant == defaultFormant ? U" (default)" : U"" ));
 	if (intervalTierNavigator) {
+		if (navigationTierNumber > 0)
+			MelderInfo_writeLine (U"Navigation on tier number: ", navigationTierNumber);
 		our intervalTierNavigator -> v_info ();
 	}
 }
@@ -173,10 +175,10 @@ void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings naviga
 	IntervalTierNavigator_setRightContextNavigationLabels (my intervalTierNavigator.get(), navigationLabels, criterion);
 }
 
-void FormantPath_setNavigationContextUse (FormantPath me,  kContextUse contextUse) {
-	Melder_require (my intervalTierNavigator && my intervalTierNavigator -> navigationLabels,
-		U"There is no navigation posible. First use the \"Set navigation labels\" to make it happen.");
-	IntervalTierNavigator_setNavigationContextUse (my intervalTierNavigator.get(), contextUse);
+void FormantPath_setNavigationContext (FormantPath me,  kContextMatch contextMatchCriterion, bool matchContextOnly) {
+	Melder_require (my intervalTierNavigator,
+		U"Navigation is not possible.");
+	IntervalTierNavigator_setNavigationContext (my intervalTierNavigator.get(), contextMatchCriterion, matchContextOnly);
 }
 
 integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label) {
