@@ -91,12 +91,13 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 		editor.releaseToUser();
 	END
 }
-FORM (MODIFY_FormantPath_setNavigationContextUse, U"FormantPath: Set navigation context use", nullptr) {
-	OPTIONMENU_ENUM (kContextUse, contextUse, U"Context use", kContextUse::DEFAULT)
+FORM (MODIFY_FormantPath_setNavigationContext, U"FormantPath: Set navigation context", nullptr) {
+	OPTIONMENU_ENUM (kContextMatch, contextMatchCriterion, U"Match", kContextMatch::DEFAULT)
+	BOOLEAN (matchContextOnly, U"Match context only", false)
 	OK
 DO
 	MODIFY_EACH (FormantPath)
-		FormantPath_setNavigationContextUse (me, contextUse);
+		FormantPath_setNavigationContext (me, contextMatchCriterion, matchContextOnly);
 	MODIFY_EACH_END
 }
 
@@ -112,7 +113,7 @@ DIRECT (NEW_FormantPath_extractTextGrid) {
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (MODIFY_FormantPath_modifyNavigationLabels, U"FormantPath: Modify navigation labels", nullptr) {
+FORM (MODIFY_FormantPath_setNavigationLabels, U"FormantPath: Set navigation labels", nullptr) {
 	NATURAL (intervalTierNumber, U"Interval tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
 	OK
@@ -917,7 +918,7 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	LABEL (U"The minimum and maximum ceilings are determined as:")
 	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
 	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
-	NATURAL (numberOfStepsToACeiling, U"Number of steps to a ceiling", U"4")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	LABEL (U"For Marple analysis:")
 	POSITIVE (marple_tol1, U"Tolerance 1", U"1e-6")
 	POSITIVE (marple_tol2, U"Tolerance 2", U"1e-6")
@@ -943,10 +944,10 @@ FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nul
 	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	LABEL (U"The minimum and maximum ceilings are determined as:")
+	LABEL (U"The maximum and minimum ceilings are determined as:")
 	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
 	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
-	NATURAL (numberOfStepsToACeiling, U"Number of steps to a ceiling", U"4")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -955,16 +956,16 @@ DO
 }
 
 
-FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", nullptr) {
+FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", U"Sound & TextGrid: To FormantPath (burg)...") {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
 	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	LABEL (U"The minimum and maximum ceilings are determined as:")
+	LABEL (U"The maximum and minimum ceilings are determined as:")
 	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
 	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
-	NATURAL (numberOfStepsToACeiling, U"Number of steps to a ceiling", U"4")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps to up / down", U"4")
 	OK
 DO
 	CONVERT_TWO (Sound, TextGrid)
@@ -1256,11 +1257,11 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
-	praat_addAction1 (classFormantPath, 0, U"Set navigation context use...", 0, 0, MODIFY_FormantPath_setNavigationContextUse);
+	praat_addAction1 (classFormantPath, 0, U"Set navigation context...", 0, 0, MODIFY_FormantPath_setNavigationContext);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
 	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
 	
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set interval tier navigation...", 0, 0, MODIFY_FormantPath_modifyNavigationLabels);
+	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set navigation labels...", 0, 0, MODIFY_FormantPath_setNavigationLabels);
 	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set left context navigation labels...", 0, 0, MODIFY_FormantPath_setLeftContextNavigationLabels);
 	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set right context navigation labels...", 0, 0, MODIFY_FormantPath_setRightContextNavigationLabels);
 	
