@@ -46,7 +46,7 @@ void structIntervalTierNavigator :: v_info () {
 		} else {
 			MelderInfo_writeLine (U"\tNo right context navigation labels defined");
 		}
-		MelderInfo_writeLine (U"\tMatch context: ", kContextMatch_getText (contextMatchCriterion));
+		MelderInfo_writeLine (U"\tMatch context: ", kContextCombination_getText (contextCombination));
 		MelderInfo_writeLine (U"\tMatch context only: ", ( matchContextOnly ? U"yes" : U"no" ));
 		MelderInfo_writeLine (U"\tNumber of interval matches: ", IntervalTierNavigator_getNumberOfMatches (this), U" out  of ", intervalTier -> intervals . size);
 	} else {
@@ -99,7 +99,7 @@ void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator
 		my leftContextLabels = Data_copy (leftContextLabels);
 		Thing_setName (my leftContextLabels.get(), leftContextLabels -> name.get());
 		my leftContextCriterion = criterion;
-		my contextMatchCriterion = kContextMatch::LEFT;
+		my contextCombination = kContextCombination::LEFT;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set left context labels from ", leftContextLabels, U".");
 	}
@@ -110,30 +110,30 @@ void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigato
 		my rightContextLabels = Data_copy (rightContextLabels);
 		Thing_setName (my rightContextLabels.get(), rightContextLabels -> name.get());
 		my rightContextCriterion = criterion;
-		my contextMatchCriterion = kContextMatch::RIGHT;
+		my contextCombination = kContextCombination::RIGHT;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set right context labels from ", rightContextLabels, U".");
 	}
 }
 
-void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextMatch contextMatchCriterion, bool matchContextOnly) {
+void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextCombination contextCombination, bool matchContextOnly) {
 	bool hasLeftContext = ( my leftContextLabels && my leftContextLabels -> strings.size > 0 );
 	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
-	if (contextMatchCriterion == kContextMatch::LEFT)
+	if (contextCombination == kContextCombination::LEFT)
 		Melder_require (hasLeftContext,
 			U"For this option you should have left context labels installed.");
-	if (contextMatchCriterion == kContextMatch::RIGHT)
+	if (contextCombination == kContextCombination::RIGHT)
 		Melder_require (hasRightContext,
 			U"For this option you should have right context labels installed.");
-	if (contextMatchCriterion == kContextMatch::LEFT_AND_RIGHT || contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_NOT_BOTH || 
-		contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_OR_BOTH)
+	if (contextCombination == kContextCombination::LEFT_AND_RIGHT || contextCombination == kContextCombination::LEFT_OR_RIGHT_NOT_BOTH || 
+		contextCombination == kContextCombination::LEFT_OR_RIGHT_OR_BOTH)
 		Melder_require (hasLeftContext && hasRightContext,
 			U"For this option you should have left and right context labels installed.");
 	if (matchContextOnly)
 		Melder_require (hasLeftContext || hasRightContext,
 			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
 	my matchContextOnly = matchContextOnly;
-	my contextMatchCriterion = contextMatchCriterion;
+	my contextCombination = contextCombination;
 }
 
 /*
@@ -179,27 +179,27 @@ bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer inter
 	Melder_require (intervalNumber > 0 && intervalNumber <= my intervalTier -> intervals . size,
 		U"The interval number should be in the range from 1 to ",  my intervalTier -> intervals . size, U".");
 	const bool isNavigationMatch = ( my matchContextOnly ? true : IntervalTierNavigator_isNavigationMatch (me, intervalNumber) );
-	if (! isNavigationMatch || my contextMatchCriterion == kContextMatch::NO_LEFT_AND_NO_RIGHT)
+	if (! isNavigationMatch || my contextCombination == kContextCombination::NO_LEFT_AND_NO_RIGHT)
 		return isNavigationMatch;
 	
 	bool leftContextMatch = false, rightContextMatch = false;
-	if (my contextMatchCriterion == kContextMatch::LEFT_AND_RIGHT) {
+	if (my contextCombination == kContextCombination::LEFT_AND_RIGHT) {
 		if (intervalNumber == 1 || intervalNumber == my intervalTier -> intervals . size)
 			return false;
 		leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return leftContextMatch && rightContextMatch;
-	} else if (my contextMatchCriterion == kContextMatch::RIGHT) {
+	} else if (my contextCombination == kContextCombination::RIGHT) {
 		if (intervalNumber == my intervalTier -> intervals . size)
 			return false;
 		rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return rightContextMatch;
-	} else if (my contextMatchCriterion == kContextMatch::LEFT) {
+	} else if (my contextCombination == kContextCombination::LEFT) {
 		if (intervalNumber == 1)
 			return false;
 		leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		return leftContextMatch;
-	} else if (my contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_OR_BOTH) {
+	} else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_OR_BOTH) {
 		if (intervalNumber > 1)
 			leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		if (leftContextMatch)
@@ -207,7 +207,7 @@ bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer inter
 		if (intervalNumber < my intervalTier -> intervals . size)
 			rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return rightContextMatch;
-	} else if (my contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_NOT_BOTH) {
+	} else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_NOT_BOTH) {
 		if (intervalNumber > 1)
 			leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		if (intervalNumber < my intervalTier -> intervals . size)

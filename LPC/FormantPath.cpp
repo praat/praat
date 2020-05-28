@@ -175,10 +175,10 @@ void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings naviga
 	IntervalTierNavigator_setRightContextNavigationLabels (my intervalTierNavigator.get(), navigationLabels, criterion);
 }
 
-void FormantPath_setNavigationContext (FormantPath me,  kContextMatch contextMatchCriterion, bool matchContextOnly) {
+void FormantPath_setNavigationContext (FormantPath me,  kContextCombination contextCombination, bool matchContextOnly) {
 	Melder_require (my intervalTierNavigator,
 		U"Navigation is not possible.");
-	IntervalTierNavigator_setNavigationContext (my intervalTierNavigator.get(), contextMatchCriterion, matchContextOnly);
+	IntervalTierNavigator_setNavigationContext (my intervalTierNavigator.get(), contextCombination, matchContextOnly);
 }
 
 integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label) {
