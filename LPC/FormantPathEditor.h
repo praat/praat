@@ -53,7 +53,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	integer selectedTier, pathTierNumber, selectedModeler;
 	bool suppressRedraw;
 	autostring32 findString;
-	GuiMenuItem navigateNextButton, navigatePreviousButton;
+	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	void v_info ()
 		override;

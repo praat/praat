@@ -16,6 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	TODO: 28/5/20
+	1. claim somewhat more space for the selection viewer
+	2. the scroll bar should be shorter, only go to the end the sound view.
+	3. navigation aid buttons? next and previous buttons at the side of the navigation tier?
+	4. Adapt Select menu and File menu, the navigation aid should have accelerators.
+	5. The formant menu can use some logging
+	6. ..
+*/
 #include "FormantPathEditor.h"
 #include "EditorM.h"
 #include "praat.h"
@@ -27,7 +36,6 @@
 #include "TextGrid_extensions.h"
 
 Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
-
 
 #include "prefs_define.h"
 #include "FormantPathEditor_prefs.h"
@@ -47,17 +55,18 @@ void structFormantPathEditor :: v_info () {
 
 void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	FormantPath formantPath = (FormantPath) our data;
-	bool navigationPossible = ( formantPath -> intervalTierNavigator && formantPath -> intervalTierNavigator -> navigationLabels && 
+	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
+	bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator) &&
 		our pathGridView && TextGridView_hasTierInView (our pathGridView.get(), formantPath -> navigationTierNumber) );
 	bool nextSensitive = false;
 	bool previousSensitive = false;
 	if (navigationPossible) {
-		IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 		if (IntervalTierNavigator_getPreviousMatchingIntervalNumber (navigator, our startSelection) > 0)
 			previousSensitive = true;
 		if (IntervalTierNavigator_getNextMatchingIntervalNumber (navigator, our endSelection) > 0)
 			nextSensitive = true;
 	}
+	GuiThing_setSensitive (our navigateSettingsButton, navigationPossible);
 	GuiThing_setSensitive (our navigateNextButton, nextSensitive);
 	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);
 }
@@ -105,7 +114,7 @@ void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNum
 	/*
 		Rest of checks is done in the following routine
 	*/
-	integer selectedTier = TextGridView_getOriginTierNumber (my pathGridView.get(), my selectedTier);
+	const integer selectedTier = TextGridView_getOriginTierNumber (my pathGridView.get(), my selectedTier);
 	TextGridView_modifyView (my pathGridView.get(), tierNumbers);
 	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
 	my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), pathTierNumber);
@@ -868,8 +877,53 @@ void menu_cb_RemoveInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastDataChanged (me);
 }
 
+void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Navigation settings", nullptr)
+		MUTABLE_LABEL (navigationNote, U"")
+		OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation matching criterion", kMelder_string::DEFAULT)
+		MUTABLE_LABEL (leftContextNote, U"")
+		OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context matching criterion", kMelder_string::DEFAULT)
+		MUTABLE_LABEL (rightContextNote, U"")
+		OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"Right context matching criterion", kMelder_string::DEFAULT)
+		MUTABLE_LABEL (contextmatchNote, U"")
+		OPTIONMENU_ENUM (kContextMatch, contextMatchCriterion, U"Match", kContextMatch::DEFAULT)
+		BOOLEAN (matchContextOnly, U"Match context only", false)
+	EDITOR_OK
+		FormantPath formantPath = (FormantPath) my data;
+		IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
+		autoMelderString note;
+		if (navigator -> navigationLabels)
+			MelderString_append (& note, U"You have \'", navigator -> navigationLabels -> name.get(), U"\' labels installed.");
+		else
+			MelderString_append (& note, U"You have NO labels installed.");
+		SET_STRING (navigationNote, note . string)
+		MelderString_empty (& note);
+		if (navigator -> leftContextLabels)
+			MelderString_append (& note, U"You have \'", navigator -> leftContextLabels -> name.get(), U"\' left context labels installed.");
+		else
+			MelderString_append (& note, U"You have NO left context labels installed.");
+		SET_STRING (leftContextNote, note . string)
+		MelderString_empty (& note);
+		if (navigator -> rightContextLabels)
+			MelderString_append (& note, U"You have \'", navigator -> rightContextLabels -> name.get(), U"\' right context labels installed.");
+		else
+			MelderString_append (& note, U"You have NO right context labels installed.");
+		SET_STRING (rightContextNote, note . string)
+	EDITOR_DO
+		FormantPath formantPath = (FormantPath) my data;
+		IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
+		navigator -> navigationCriterion = navigationCriterion;
+		navigator -> leftContextCriterion = leftContextCriterion;
+		navigator -> rightContextCriterion = rightContextCriterion;
+		FormantPath_setNavigationContext (formantPath, contextMatchCriterion, matchContextOnly);
+		FunctionEditor_marksChanged (me, true);
+		Editor_broadcastDataChanged (me);
+	EDITOR_END
+}
+
 void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
+	FormantPath formantPath = (FormantPath) my data;
+	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 	if (! navigator || ! navigator -> navigationLabels)
 		return;
 	TextInterval textInterval = IntervalTierNavigator_getNextMatchingInterval (navigator, my endSelection);
@@ -893,12 +947,14 @@ void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 		my endWindow = my startWindow + newWindowDuration;
 		my endWindow = std::min (my tmax, my endWindow);
 	}
+	my selectedTier = formantPath -> navigationTierNumber;
 	FunctionEditor_marksChanged (me, true);
 	Editor_broadcastDataChanged (me);
 }
 
 void menu_cb_PreviousGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	IntervalTierNavigator navigator = ((FormantPath) my data) -> intervalTierNavigator.get();
+	FormantPath formantPath = (FormantPath) my data;
+	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 	if (! navigator || ! navigator -> navigationLabels)
 		return;
 	TextInterval textInterval = IntervalTierNavigator_getPreviousMatchingInterval (navigator, my startSelection);
@@ -922,6 +978,7 @@ void menu_cb_PreviousGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 		my endWindow = my startWindow + newWindowDuration;
 		my endWindow = std::min (my tmax, my endWindow);
 	}
+	my selectedTier = formantPath -> navigationTierNumber;
 	FunctionEditor_marksChanged (me, true);
 	Editor_broadcastDataChanged (me);
 }
@@ -1346,6 +1403,7 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
 	
+	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigate settings...", 0, menu_cb_NavigationSettings);
 	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
 	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
 
@@ -1440,7 +1498,7 @@ static void do_drawIntervalTier (FormantPathEditor me, IntervalTier tier, intege
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = ( itier == navigationTierNumber && navigator && IntervalTierNavigator_isLabelMatch (navigator, iinterval) );
+			const bool labelDoesMatch = ( itier == TextGridView_getViewTierNumber (my pathGridView.get(), navigationTierNumber) && navigator && IntervalTierNavigator_isLabelMatch (navigator, iinterval) );
 			if (tmin < my startWindow)
 				tmin = my startWindow;
 			if (tmax > my endWindow)
@@ -2343,7 +2401,6 @@ OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields_textA
 OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
 OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
 OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel)
-SENTENCE_VARIABLE (v_prefs_addFields_theText)
 void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
