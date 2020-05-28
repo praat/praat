@@ -40,8 +40,9 @@ Thing_define (IntervalTierNavigator, Function) {
 	autoStrings rightContextLabels;
 	kMelder_string rightContextCriterion;
 	autoStrings navigationLabels;
-	kMelder_string criterion;
-	kContextUse contextUse;
+	kMelder_string navigationCriterion;
+	kContextMatch contextMatchCriterion;
+	bool matchContextOnly;
 	void v_info ()
 		override;
 };
@@ -56,6 +57,10 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me);
 	Especially for editors where the TextGrid(View) is not stable
 */
 void IntervalTierNavigator_setBeginPosition (IntervalTierNavigator me, double time);
+
+static inline bool IntervalTierNavigator_isNavigationPossible (IntervalTierNavigator me) {
+	return my navigationLabels || my leftContextLabels || my rightContextLabels;
+}
 
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber);
 
@@ -73,6 +78,6 @@ bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double tim
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
 void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
-void IntervalTierNavigator_setNavigationContextUse (IntervalTierNavigator me, kContextUse contextUse);
+void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextMatch contextMatchCriterion, bool matchContextOnly);
 
 #endif /* _IntervalTierNavigator_h_ */

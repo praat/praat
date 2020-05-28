@@ -36,14 +36,19 @@ void structIntervalTierNavigator :: v_info () {
 			MelderInfo_writeLine (U"\tLeft context name: ", leftContextLabels -> name.get());
 			MelderInfo_writeLine (U"\tLeft criterion: ", kMelder_string_getText (leftContextCriterion));
 			MelderInfo_writeLine (U"\tNumber of labels: ", leftContextLabels -> strings.size);
+		} else {
+			MelderInfo_writeLine (U"\tNo left context navigation labels defined");
 		}
 		if (rightContextLabels) {
 			MelderInfo_writeLine (U"\tRight context name: ", rightContextLabels -> name.get());
 			MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (rightContextCriterion));
 			MelderInfo_writeLine (U"\tNumber of labels: ", rightContextLabels -> strings.size);
+		} else {
+			MelderInfo_writeLine (U"\tNo right context navigation labels defined");
 		}
-		MelderInfo_writeLine (U"\tContext use: ", kContextUse_getText (contextUse));
-		MelderInfo_writeLine (U"\tMatches: ", IntervalTierNavigator_getNumberOfMatches (this), U" out  of ", intervalTier -> intervals . size);
+		MelderInfo_writeLine (U"\tMatch context: ", kContextMatch_getText (contextMatchCriterion));
+		MelderInfo_writeLine (U"\tMatch context only: ", ( matchContextOnly ? U"yes" : U"no" ));
+		MelderInfo_writeLine (U"\tNumber of interval matches: ", IntervalTierNavigator_getNumberOfMatches (this), U" out  of ", intervalTier -> intervals . size);
 	} else {
 		MelderInfo_writeLine (U"\tNo navigation labels defined");
 	}
@@ -83,7 +88,7 @@ void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, String
 	try {
 		my navigationLabels = Data_copy (navigationLabels);
 		Thing_setName (my navigationLabels.get(), navigationLabels -> name.get());
-		my criterion = criterion;
+		my navigationCriterion = criterion;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set navigation labels from ", navigationLabels, U".");
 	}
@@ -94,7 +99,7 @@ void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator
 		my leftContextLabels = Data_copy (leftContextLabels);
 		Thing_setName (my leftContextLabels.get(), leftContextLabels -> name.get());
 		my leftContextCriterion = criterion;
-		my contextUse = kContextUse::LEFT;
+		my contextMatchCriterion = kContextMatch::LEFT;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set left context labels from ", leftContextLabels, U".");
 	}
@@ -105,38 +110,59 @@ void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigato
 		my rightContextLabels = Data_copy (rightContextLabels);
 		Thing_setName (my rightContextLabels.get(), rightContextLabels -> name.get());
 		my rightContextCriterion = criterion;
-		my contextUse = kContextUse::RIGHT;
+		my contextMatchCriterion = kContextMatch::RIGHT;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set right context labels from ", rightContextLabels, U".");
 	}
 }
 
-void IntervalTierNavigator_setNavigationContextUse (IntervalTierNavigator me, kContextUse contextUse) {
+void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextMatch contextMatchCriterion, bool matchContextOnly) {
 	bool hasLeftContext = ( my leftContextLabels && my leftContextLabels -> strings.size > 0 );
 	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
-	if (contextUse == kContextUse::LEFT)
+	if (contextMatchCriterion == kContextMatch::LEFT)
 		Melder_require (hasLeftContext,
-			U"For this option you should have a left context installed.");
-	if (contextUse == kContextUse::RIGHT)
+			U"For this option you should have left context labels installed.");
+	if (contextMatchCriterion == kContextMatch::RIGHT)
 		Melder_require (hasRightContext,
-			U"For this option you should have a right context installed.");
-	if (contextUse == kContextUse::LEFT_AND_RIGHT || contextUse == kContextUse::LEFT_OR_RIGHT_NOT_BOTH || 
-		contextUse == kContextUse::LEFT_OR_RIGHT_OR_BOTH)
+			U"For this option you should have right context labels installed.");
+	if (contextMatchCriterion == kContextMatch::LEFT_AND_RIGHT || contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_NOT_BOTH || 
+		contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_OR_BOTH)
 		Melder_require (hasLeftContext && hasRightContext,
-			U"For this option you should have a left and a right context installed.");
-	my contextUse = contextUse;
+			U"For this option you should have left and right context labels installed.");
+	if (matchContextOnly)
+		Melder_require (hasLeftContext || hasRightContext,
+			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
+	my matchContextOnly = matchContextOnly;
+	my contextMatchCriterion = contextMatchCriterion;
 }
 
+/*
+	1. To determine if an item is in a set, we can simply start to test whether it is equal to the first element
+		if so we are done. If not check the second element etc until we get a match (or not).
+	2. To determine whether an item is not in the set, we need to reverse the test until it fails.
+		
+*/
 bool STRVEChasMatch (constSTRVEC const& labels, kMelder_string criterion, conststring32 label) {
-	for (integer istring = 1; istring <= labels.size; istring ++)
+	if (criterion == kMelder_string :: EQUAL_TO                   || criterion == kMelder_string :: CONTAINS ||
+		criterion == kMelder_string :: STARTS_WITH                || criterion == kMelder_string :: ENDS_WITH ||
+		criterion == kMelder_string :: CONTAINS_WORD              || criterion == kMelder_string :: CONTAINS_WORD_STARTING_WITH || 
+		criterion == kMelder_string :: CONTAINS_WORD_ENDING_WITH  || criterion == kMelder_string :: CONTAINS_INK ||
+		criterion == kMelder_string :: CONTAINS_INK_STARTING_WITH || criterion == kMelder_string :: CONTAINS_INK_ENDING_WITH) {
+		for (integer istring = 1; istring <= labels.size; istring ++)
 			if (Melder_stringMatchesCriterion (label, criterion, labels [istring], true))
 				return true;
+	} else {
+		for (integer istring = 1; istring <= labels.size; istring ++)
+			if (! Melder_stringMatchesCriterion (label, criterion, labels [istring], true))
+				return false;
+		return true;
+	}
 	return false;
 }
 
 static bool IntervalTierNavigator_isNavigationMatch (IntervalTierNavigator me, integer intervalNumber) {
 	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my criterion, label) );
+	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my navigationCriterion, label) );
 }
 
 static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, integer intervalNumber) {
@@ -152,28 +178,28 @@ static bool IntervalTierNavigator_isRightContextMatch (IntervalTierNavigator me,
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber) {
 	Melder_require (intervalNumber > 0 && intervalNumber <= my intervalTier -> intervals . size,
 		U"The interval number should be in the range from 1 to ",  my intervalTier -> intervals . size, U".");
-	const bool isNavigationMatch = IntervalTierNavigator_isNavigationMatch (me, intervalNumber);
-	if (! isNavigationMatch || my contextUse == kContextUse::NO_LEFT_AND_NO_RIGHT)
+	const bool isNavigationMatch = ( my matchContextOnly ? true : IntervalTierNavigator_isNavigationMatch (me, intervalNumber) );
+	if (! isNavigationMatch || my contextMatchCriterion == kContextMatch::NO_LEFT_AND_NO_RIGHT)
 		return isNavigationMatch;
 	
 	bool leftContextMatch = false, rightContextMatch = false;
-	if (my contextUse == kContextUse::LEFT_AND_RIGHT) {
+	if (my contextMatchCriterion == kContextMatch::LEFT_AND_RIGHT) {
 		if (intervalNumber == 1 || intervalNumber == my intervalTier -> intervals . size)
 			return false;
 		leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return leftContextMatch && rightContextMatch;
-	} else if (my contextUse == kContextUse::RIGHT) {
+	} else if (my contextMatchCriterion == kContextMatch::RIGHT) {
 		if (intervalNumber == my intervalTier -> intervals . size)
 			return false;
 		rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return rightContextMatch;
-	} else if (my contextUse == kContextUse::LEFT) {
+	} else if (my contextMatchCriterion == kContextMatch::LEFT) {
 		if (intervalNumber == 1)
 			return false;
 		leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		return leftContextMatch;
-	} else if (my contextUse == kContextUse::LEFT_OR_RIGHT_OR_BOTH) {
+	} else if (my contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_OR_BOTH) {
 		if (intervalNumber > 1)
 			leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		if (leftContextMatch)
@@ -181,13 +207,14 @@ bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer inter
 		if (intervalNumber < my intervalTier -> intervals . size)
 			rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return rightContextMatch;
-	} else if (my contextUse == kContextUse::LEFT_OR_RIGHT_NOT_BOTH) {
+	} else if (my contextMatchCriterion == kContextMatch::LEFT_OR_RIGHT_NOT_BOTH) {
 		if (intervalNumber > 1)
 			leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
 		if (intervalNumber < my intervalTier -> intervals . size)
 			rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
 		return ( leftContextMatch  == ! rightContextMatch);
 	}
+	return false;
 }
 
 integer IntervalTierNavigator_getNumberOfMatches (IntervalTierNavigator me) {
