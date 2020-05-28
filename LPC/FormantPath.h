@@ -50,7 +50,7 @@ void FormantPath_setLeftContextNavigationLabels (FormantPath me, Strings navigat
 
 void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
 
-void FormantPath_setNavigationContext (FormantPath me,  kContextMatch criterion, bool matchContextOnly);
+void FormantPath_setNavigationContext (FormantPath me,  kContextCombination criterion, bool matchContextOnly);
 
 integer FormantPath_nextNavigationInterval (FormantPath me, integer preferedTierNumber);
 

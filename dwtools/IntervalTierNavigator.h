@@ -24,15 +24,6 @@
 
 #include "IntervalTierNavigator_enums.h"
 
-/*
-	Invariants:
-	0 <= currentIntervalNumber <= intervals.size + 1;
-	
-	Behaviour:
-	
-	
-*/
-
 Thing_define (IntervalTierNavigator, Function) {
 	IntervalTier intervalTier;
 	autoStrings leftContextLabels;
@@ -41,7 +32,7 @@ Thing_define (IntervalTierNavigator, Function) {
 	kMelder_string rightContextCriterion;
 	autoStrings navigationLabels;
 	kMelder_string navigationCriterion;
-	kContextMatch contextMatchCriterion;
+	kContextCombination contextCombination;
 	bool matchContextOnly;
 	void v_info ()
 		override;
@@ -78,6 +69,6 @@ bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double tim
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
 void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
-void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextMatch contextMatchCriterion, bool matchContextOnly);
+void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextCombination contextCombination, bool matchContextOnly);
 
 #endif /* _IntervalTierNavigator_h_ */

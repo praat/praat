@@ -886,7 +886,7 @@ void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		MUTABLE_LABEL (rightContextNote, U"")
 		OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"Right context matching criterion", kMelder_string::DEFAULT)
 		MUTABLE_LABEL (contextmatchNote, U"")
-		OPTIONMENU_ENUM (kContextMatch, contextMatchCriterion, U"Match", kContextMatch::DEFAULT)
+		OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
 		BOOLEAN (matchContextOnly, U"Match context only", false)
 	EDITOR_OK
 		FormantPath formantPath = (FormantPath) my data;
@@ -915,7 +915,7 @@ void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		navigator -> navigationCriterion = navigationCriterion;
 		navigator -> leftContextCriterion = leftContextCriterion;
 		navigator -> rightContextCriterion = rightContextCriterion;
-		FormantPath_setNavigationContext (formantPath, contextMatchCriterion, matchContextOnly);
+		FormantPath_setNavigationContext (formantPath, contextCombination, matchContextOnly);
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -1403,7 +1403,7 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
 	
-	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigate settings...", 0, menu_cb_NavigationSettings);
+	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigation settings...", 0, menu_cb_NavigationSettings);
 	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
 	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
 
@@ -2400,7 +2400,6 @@ POSITIVE_VARIABLE (v_prefs_addFields_fontSize)
 OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals)
 OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
 OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
-OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel)
 void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
@@ -2411,17 +2410,12 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 		OPTION (U"mean italic/bold/sub/super")
 	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf,
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
-	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
-			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
-	LABEL (U"... one of the navigation labels")
 }
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
 	SET_REAL (v_prefs_addFields_fontSize, our p_fontSize)
 	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
-	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
-	//SET_STRING (v_prefs_addFields_theText, our p_greenString)
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
@@ -2430,8 +2424,6 @@ void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
 	our pref_shiftDragMultiple () = our p_shiftDragMultiple = false;
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
-	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
-	//pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
 	FunctionEditor_redraw (this);
 }
 

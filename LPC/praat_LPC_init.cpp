@@ -92,12 +92,12 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 	END
 }
 FORM (MODIFY_FormantPath_setNavigationContext, U"FormantPath: Set navigation context", nullptr) {
-	OPTIONMENU_ENUM (kContextMatch, contextMatchCriterion, U"Match", kContextMatch::DEFAULT)
+	OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
 	BOOLEAN (matchContextOnly, U"Match context only", false)
 	OK
 DO
 	MODIFY_EACH (FormantPath)
-		FormantPath_setNavigationContext (me, contextMatchCriterion, matchContextOnly);
+		FormantPath_setNavigationContext (me, contextCombination, matchContextOnly);
 	MODIFY_EACH_END
 }
 
