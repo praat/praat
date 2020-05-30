@@ -19,7 +19,6 @@
  */
 
 #include "TextGrid.h"
-#include "TextGridView.h"
 #include "melder.h"
 
 #include "IntervalTierNavigator_enums.h"
@@ -28,10 +27,14 @@ Thing_define (IntervalTierNavigator, Function) {
 	IntervalTier intervalTier;
 	autoStrings leftContextLabels;
 	kMelder_string leftContextCriterion;
+	integer lookBackFrom, lookBackTo;
 	autoStrings rightContextLabels;
 	kMelder_string rightContextCriterion;
+	integer lookForwardFrom, lookForwardTo;
 	autoStrings navigationLabels;
 	kMelder_string navigationCriterion;
+	autoStrings neverMatchLabels;
+	kMelder_string neverMatchCriterion;
 	kContextCombination contextCombination;
 	bool matchContextOnly;
 	void v_info ()
@@ -50,25 +53,31 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me);
 void IntervalTierNavigator_setBeginPosition (IntervalTierNavigator me, double time);
 
 static inline bool IntervalTierNavigator_isNavigationPossible (IntervalTierNavigator me) {
-	return my navigationLabels || my leftContextLabels || my rightContextLabels;
+	return my navigationLabels || my leftContextLabels || my rightContextLabels || my neverMatchLabels;
 }
 
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber);
 
 integer IntervalTierNavigator_getNumberOfMatches (IntervalTierNavigator me);
 
-integer IntervalTierNavigator_getNextMatchingIntervalNumber (IntervalTierNavigator me, double time);
+integer IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (IntervalTierNavigator me, integer intervalNumber);
+integer IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (IntervalTierNavigator me, double time);
 TextInterval IntervalTierNavigator_getNextMatchingInterval (IntervalTierNavigator me, double time);
 
-integer IntervalTierNavigator_getPreviousMatchingIntervalNumber (IntervalTierNavigator me, double time);
+integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (IntervalTierNavigator me, integer intervalNumber);
+integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (IntervalTierNavigator me, double time);
 TextInterval IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavigator me, double time);
 
 bool IntervalTierNavigator_atMatchingEnd (IntervalTierNavigator me, double time);
 bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double time);
 
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
+void IntervalTierNavigator_setNavigationNeverMatchLabels (IntervalTierNavigator me, Strings neverMatchLabels, kMelder_string criterion);
+
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
+
 void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
-void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextCombination contextCombination, bool matchContextOnly);
+
+void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, integer lookBackFrom, integer lookBackTo, integer lookForwardFrom, integer lookForwardTo, kContextCombination contextCombination, bool matchContextOnly);
 
 #endif /* _IntervalTierNavigator_h_ */

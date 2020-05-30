@@ -35,14 +35,14 @@ void structIntervalTierNavigator :: v_info () {
 		if (leftContextLabels) {
 			MelderInfo_writeLine (U"\tLeft context name: ", leftContextLabels -> name.get());
 			MelderInfo_writeLine (U"\tLeft criterion: ", kMelder_string_getText (leftContextCriterion));
-			MelderInfo_writeLine (U"\tNumber of labels: ", leftContextLabels -> strings.size);
+			MelderInfo_writeLine (U"\tNumber of left context labels: ", leftContextLabels -> strings.size);
 		} else {
 			MelderInfo_writeLine (U"\tNo left context navigation labels defined");
 		}
 		if (rightContextLabels) {
 			MelderInfo_writeLine (U"\tRight context name: ", rightContextLabels -> name.get());
 			MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (rightContextCriterion));
-			MelderInfo_writeLine (U"\tNumber of labels: ", rightContextLabels -> strings.size);
+			MelderInfo_writeLine (U"\tNumber of right context labels: ", rightContextLabels -> strings.size);
 		} else {
 			MelderInfo_writeLine (U"\tNo right context navigation labels defined");
 		}
@@ -89,9 +89,21 @@ void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, String
 		my navigationLabels = Data_copy (navigationLabels);
 		Thing_setName (my navigationLabels.get(), navigationLabels -> name.get());
 		my navigationCriterion = criterion;
+		my contextCombination = kContextCombination::NO_LEFT_AND_NO_RIGHT;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set navigation labels from ", navigationLabels, U".");
 	}
+}
+void IntervalTierNavigator_setNavigationNeverMatchLabels (IntervalTierNavigator me, Strings neverMatchLabels, kMelder_string criterion) {
+	try {
+		my neverMatchLabels = Data_copy (neverMatchLabels);
+		Thing_setName (my neverMatchLabels.get(), neverMatchLabels -> name.get());
+		my neverMatchCriterion = criterion;
+		my contextCombination = kContextCombination::NO_LEFT_AND_NO_RIGHT;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot set 'no match' navigation labels from ", neverMatchLabels, U".");
+	}
+	
 }
 
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion) {
@@ -100,6 +112,8 @@ void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator
 		Thing_setName (my leftContextLabels.get(), leftContextLabels -> name.get());
 		my leftContextCriterion = criterion;
 		my contextCombination = kContextCombination::LEFT;
+		my lookBackFrom = 1;
+		my lookBackTo = 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set left context labels from ", leftContextLabels, U".");
 	}
@@ -111,12 +125,14 @@ void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigato
 		Thing_setName (my rightContextLabels.get(), rightContextLabels -> name.get());
 		my rightContextCriterion = criterion;
 		my contextCombination = kContextCombination::RIGHT;
+		my lookForwardFrom = 1;
+		my lookForwardTo = 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set right context labels from ", rightContextLabels, U".");
 	}
 }
 
-void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kContextCombination contextCombination, bool matchContextOnly) {
+void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, integer lookBackFrom, integer lookBackTo, integer lookForwardFrom, integer lookForwardTo, kContextCombination contextCombination, bool matchContextOnly) {
 	bool hasLeftContext = ( my leftContextLabels && my leftContextLabels -> strings.size > 0 );
 	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
 	if (contextCombination == kContextCombination::LEFT)
@@ -132,15 +148,22 @@ void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, kCont
 	if (matchContextOnly)
 		Melder_require (hasLeftContext || hasRightContext,
 			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
+	Melder_require (lookBackFrom > 0 &&  lookBackTo > 0,
+		U"The left context interval distance should be positive.");
+	Melder_require (lookForwardFrom > 0 && lookForwardTo > 0,
+		U"The right context interval distance should be positive.");
 	my matchContextOnly = matchContextOnly;
 	my contextCombination = contextCombination;
+	my lookBackFrom = std::min (lookBackFrom, lookBackTo);
+	my lookBackTo = std::max (lookBackFrom, lookBackTo);
+	my lookForwardFrom = std::min (lookForwardFrom, lookForwardTo);
+	my lookForwardTo = std::max (lookForwardFrom, lookForwardTo);
 }
 
 /*
 	1. To determine if an item is in a set, we can simply start to test whether it is equal to the first element
 		if so we are done. If not check the second element etc until we get a match (or not).
 	2. To determine whether an item is not in the set, we need to reverse the test until it fails.
-		
 */
 bool STRVEChasMatch (constSTRVEC const& labels, kMelder_string criterion, conststring32 label) {
 	if (criterion == kMelder_string :: EQUAL_TO                   || criterion == kMelder_string :: CONTAINS ||
@@ -165,55 +188,63 @@ static bool IntervalTierNavigator_isNavigationMatch (IntervalTierNavigator me, i
 	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my navigationCriterion, label) );
 }
 
-static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, integer intervalNumber) {
+
+static bool IntervalTierNavigator_isNavigationNeverMatch (IntervalTierNavigator me, integer intervalNumber) {
 	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return ( my leftContextLabels && STRVEChasMatch (my leftContextLabels -> strings.get(), my leftContextCriterion, label) );
+	return ( my neverMatchLabels && STRVEChasMatch (my neverMatchLabels -> strings.get(), my neverMatchCriterion, label) );
+}
+
+static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, integer intervalNumber) {
+	if (! my leftContextLabels)
+		return false;
+	if (intervalNumber - my lookBackFrom < 1)
+		return false;
+	integer startInterval = std::max (1_integer, intervalNumber - my lookBackFrom);
+	integer endInterval = std::max (1_integer, intervalNumber - my lookBackTo);
+	for (integer interval = startInterval; interval >= endInterval; interval --) {
+		conststring32 label = my intervalTier -> intervals . at [interval] -> text.get();
+		if (STRVEChasMatch (my leftContextLabels -> strings.get(), my leftContextCriterion, label))
+			return true;
+	}
+	return false;
 }
 
 static bool IntervalTierNavigator_isRightContextMatch (IntervalTierNavigator me, integer intervalNumber) {
-	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return ( my rightContextLabels && STRVEChasMatch (my rightContextLabels -> strings.get(), my rightContextCriterion, label) );
+	if (! my rightContextLabels)
+		return false;
+	if (intervalNumber + my lookForwardFrom > my intervalTier -> intervals.size)
+		return false;
+	const integer startInterval = std::min (my intervalTier -> intervals.size, intervalNumber + my lookForwardFrom);
+	const integer endInterval = std::min (my intervalTier -> intervals.size, intervalNumber + my lookForwardTo);
+	for (integer interval = startInterval; interval <= endInterval; interval ++) {
+		conststring32 label = my intervalTier -> intervals . at [interval] -> text.get();
+		if (STRVEChasMatch (my rightContextLabels -> strings.get(), my rightContextCriterion, label))
+			return true;
+	}
+	return false;
 }
 
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber) {
 	Melder_require (intervalNumber > 0 && intervalNumber <= my intervalTier -> intervals . size,
 		U"The interval number should be in the range from 1 to ",  my intervalTier -> intervals . size, U".");
+	if (IntervalTierNavigator_isNavigationNeverMatch (me, intervalNumber))
+		return false;
 	const bool isNavigationMatch = ( my matchContextOnly ? true : IntervalTierNavigator_isNavigationMatch (me, intervalNumber) );
 	if (! isNavigationMatch || my contextCombination == kContextCombination::NO_LEFT_AND_NO_RIGHT)
 		return isNavigationMatch;
 	
-	bool leftContextMatch = false, rightContextMatch = false;
-	if (my contextCombination == kContextCombination::LEFT_AND_RIGHT) {
-		if (intervalNumber == 1 || intervalNumber == my intervalTier -> intervals . size)
-			return false;
-		leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
-		rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
-		return leftContextMatch && rightContextMatch;
-	} else if (my contextCombination == kContextCombination::RIGHT) {
-		if (intervalNumber == my intervalTier -> intervals . size)
-			return false;
-		rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
-		return rightContextMatch;
-	} else if (my contextCombination == kContextCombination::LEFT) {
-		if (intervalNumber == 1)
-			return false;
-		leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
-		return leftContextMatch;
-	} else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_OR_BOTH) {
-		if (intervalNumber > 1)
-			leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
-		if (leftContextMatch)
-			return true;
-		if (intervalNumber < my intervalTier -> intervals . size)
-			rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
-		return rightContextMatch;
-	} else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_NOT_BOTH) {
-		if (intervalNumber > 1)
-			leftContextMatch = IntervalTierNavigator_isLeftContextMatch (me, intervalNumber - 1);
-		if (intervalNumber < my intervalTier -> intervals . size)
-			rightContextMatch = IntervalTierNavigator_isRightContextMatch (me, intervalNumber + 1);
-		return ( leftContextMatch  == ! rightContextMatch);
-	}
+	if (my contextCombination == kContextCombination::LEFT_AND_RIGHT)
+		return ( IntervalTierNavigator_isLeftContextMatch (me, intervalNumber) &&
+			IntervalTierNavigator_isRightContextMatch (me, intervalNumber) );
+	else if (my contextCombination == kContextCombination::RIGHT)
+		return IntervalTierNavigator_isRightContextMatch (me, intervalNumber);
+	else if (my contextCombination == kContextCombination::LEFT)
+		return IntervalTierNavigator_isLeftContextMatch (me, intervalNumber);
+	else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_OR_BOTH)
+		return ( IntervalTierNavigator_isLeftContextMatch (me, intervalNumber) ||
+			IntervalTierNavigator_isRightContextMatch (me, intervalNumber) );
+	else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_NOT_BOTH)
+		return ( IntervalTierNavigator_isLeftContextMatch (me, intervalNumber)  == ! IntervalTierNavigator_isRightContextMatch (me, intervalNumber) );
 	return false;
 }
 
@@ -242,46 +273,61 @@ integer IntervalTierNavigator_getNavigationStartInterval (IntervalTierNavigator 
 	return intervalNumber;
 }
 
-integer IntervalTierNavigator_getNextMatchingIntervalNumber (IntervalTierNavigator me, double time) {
+integer IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (IntervalTierNavigator me, integer intervalNumber) {
 	if (! my navigationLabels)
 		return 0;
-	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
+	const integer startInterval = std::min (std::max (0_integer, intervalNumber), my intervalTier -> intervals .size + 1);
 	for (integer interval = startInterval + 1; interval <= my intervalTier -> intervals . size; interval ++)
 		if (IntervalTierNavigator_isLabelMatch (me, interval))
 			return interval;
 	return 0;
 }
 
+integer IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (IntervalTierNavigator me, double time) {
+	if (! my navigationLabels)
+		return 0;
+	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
+	return IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (me, startInterval);
+}
+
+
 TextInterval IntervalTierNavigator_getNextMatchingInterval (IntervalTierNavigator me, double time) {
-	const integer interval = IntervalTierNavigator_getNextMatchingIntervalNumber (me, time);
+	const integer interval = IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (me, time);
 	if (interval == 0)
 		return nullptr;
 	return my intervalTier -> intervals . at [interval];
 }
 
-integer IntervalTierNavigator_getPreviousMatchingIntervalNumber (IntervalTierNavigator me, double time) {
+integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (IntervalTierNavigator me, integer intervalNumber) {
 	if (! my navigationLabels)
 		return 0;
-	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
+	const integer startInterval = std::min (std::max (0_integer, intervalNumber), my intervalTier -> intervals .size + 1);
 	for (integer interval = startInterval - 1; interval > 0; interval --)
 		if (IntervalTierNavigator_isLabelMatch (me, interval))
 			return interval;
 	return 0;
 }
 
+integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (IntervalTierNavigator me, double time) {
+	if (! my navigationLabels)
+		return 0;
+	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
+	return IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (me, startInterval);
+}
+
 TextInterval IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavigator me, double time) {
-	const integer interval = IntervalTierNavigator_getPreviousMatchingIntervalNumber (me, time);
+	const integer interval = IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (me, time);
 	if (interval == 0)
 		return nullptr;
 	return my intervalTier -> intervals . at [interval];
 }
 
 bool IntervalTierNavigator_atMatchingEnd (IntervalTierNavigator me, double time) {
-	return ( IntervalTierNavigator_getNextMatchingIntervalNumber (me, time) == 0 );
+	return ( IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (me, time) == 0 );
 }
 
 bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double time) {
-	return ( IntervalTierNavigator_getPreviousMatchingIntervalNumber (me, time) == 0 );
+	return ( IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (me, time) == 0 );
 }
 
 /* End of file IntervalTierNavigator.cpp */
