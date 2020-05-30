@@ -66,7 +66,7 @@ void structFormantModeler :: v_info () {
 	}
 }
 
-void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrack) {
+static void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrack) {
 	if (*fromTrack == 0 && *toTrack == 0) { // auto
 		*fromTrack = 1;
 		*toTrack = my trackmodelers.size;
@@ -82,7 +82,7 @@ void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrac
 		U"1 \\=< \"fromTrack\" \\=< \"toTrack\" \\=< ", my trackmodelers.size, U".");
 }
 
-autoINTVEC newINTVECasNumbers (integer size, integer number) {
+static autoINTVEC newINTVECasNumbers (integer size, integer number) {
 	autoINTVEC target = newINTVECraw (size);
 	for (integer i = 1; i <= size; i++)
 		target [i] = number;
@@ -629,7 +629,7 @@ autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer it
 
 autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer itrack) {
 	try {
-		Melder_require (itrack > 0 && itrack<= my trackmodelers.size, 
+		Melder_require (itrack > 0 && itrack <= my trackmodelers.size,
 			U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
 		const DataModeler dm = my trackmodelers.at [itrack];
 		autoCovariance thee = Data_copy (dm -> parameterCovariances.get());
@@ -750,7 +750,7 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromTrack, inte
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	chisq = 0.0;
 	integer numberOfDefined = 0;
-	for (integer itrack= fromTrack; itrack <= toTrack; itrack ++) {
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
 		double p, df;
 		const double chisqi = DataModeler_getChiSquaredQ (ffi, & p, & df);
@@ -1218,4 +1218,4 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 	}
 }
 
-/* End of file DataModeler.cpp */
+/* End of file FormantModeler.cpp */
