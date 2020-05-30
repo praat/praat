@@ -1140,7 +1140,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
-		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0, kSound_windowShape::RECTANGULAR, 1, 1);
+		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0,
+				kSound_windowShape::RECTANGULAR, 1, true);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
@@ -1149,7 +1150,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
-			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
+			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0,
+					currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, true);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, noPararametersPerTrack.get());
 			// TODO set weighing
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
