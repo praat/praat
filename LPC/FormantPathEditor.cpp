@@ -1943,7 +1943,7 @@ static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double t
 void structFormantPathEditor :: v_draw_analysis_formants () {
 	FormantPath formantPath = (FormantPath) our data;
 	const Formant formant = formantPath -> formant.get();
-	const Formant defaultFormant = formantPath -> formants.at [formantPath -> defaultFormant];
+	const Formant defaultFormant = (Formant) formantPath -> formants-> at [formantPath -> defaultFormant];
 	if (our p_formant_show) {
 		Graphics_setColour (our graphics.get(), MelderColour_fromColourNameOrNumberStringOrRGBString (our p_formant_default_colour));
 		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
@@ -1959,7 +1959,7 @@ void structFormantPathEditor :: v_draw_analysis_formants () {
 			*/
 			if (drawingSpecification -> selectedModeler > 0 && our selectedModeler > 0) {
 				Graphics_setColour (our graphics.get(), MelderColour_fromColourNameOrNumberStringOrRGBString (our p_formant_selected_colour));
-				Formant selectedFormant = formantPath -> formants.at [drawingSpecification -> selectedModeler];
+				Formant selectedFormant = (Formant) formantPath -> formants -> at [drawingSpecification -> selectedModeler];
 				Formant_drawSpeckles_insideOverlap (selectedFormant, our graphics.get(), our startWindow, our endWindow, our startSelection, our endSelection, our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
 			}
 		}

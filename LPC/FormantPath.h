@@ -34,7 +34,7 @@
 	All Formant have the same sampling.
 */
 
-autoFormantPath FormantPath_create (double fromTime, double toTime, integer numberOfFormantObjects);
+autoFormantPath FormantPath_create (double fromTime, double toTime);
 
 integer FormantPath_identifyFormantIndexByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive);
 

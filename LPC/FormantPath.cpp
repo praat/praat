@@ -44,10 +44,10 @@
 
 void structFormantPath :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of Formant objects: ", formants . size);
+	MelderInfo_writeLine (U"Number of Formant objects: ", formants -> size);
 	MelderInfo_writeLine (U"  Identifiers:");
-	for (integer iformant = 1; iformant <= formants . size; iformant ++)
-		MelderInfo_writeLine (U"  ", iformant, U": ", formantIdentifiers [iformant].get(),
+	for (integer iformant = 1; iformant <= formants -> size; iformant ++)
+		MelderInfo_writeLine (U"  ", iformant, U": ", formants->at [iformant]->name.get(),
 			( iformant == defaultFormant ? U" (default)" : U"" ));
 	if (intervalTierNavigator) {
 		if (navigationTierNumber > 0)
@@ -58,11 +58,10 @@ void structFormantPath :: v_info () {
 
 Thing_implement (FormantPath, Function, 0);
 
-autoFormantPath FormantPath_create (double fromTime, double toTime, integer numberOfFormantObjects) {
+autoFormantPath FormantPath_create (double fromTime, double toTime) {
 	autoFormantPath me = Thing_new (FormantPath);
 	Function_init (me.get(), fromTime, toTime);
-	my formantIdentifiers = autoSTRVEC (numberOfFormantObjects);
-	my numberOfFormants = numberOfFormantObjects;
+	my formants = FunctionList_create ();
 	my path = TextGrid_create (fromTime, toTime, U"path/formant", U"");
 	my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (my path.get(), 1);
 	my pathTierNumber = 1;
@@ -70,10 +69,12 @@ autoFormantPath FormantPath_create (double fromTime, double toTime, integer numb
 }
 
 integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee) {
-	STRVEC validLabels = my formantIdentifiers.get();
+	autoSTRVEC validLabels (my formants -> size);
+	for (integer ilabel = 1; ilabel <= my formants -> size; ilabel ++)
+		validLabels [ilabel] = Melder_dup (my formants -> at [ilabel] -> name.get());
 	autoINTVEC minimumValidLabelLengths = newINTVECraw (validLabels.size);
 	for (integer ilabel = 1; ilabel <= validLabels.size; ilabel ++)
-		minimumValidLabelLengths [ilabel] = str32len (validLabels [ilabel]) + 1; // +1 for the extra ';' at end
+		minimumValidLabelLengths [ilabel] = str32len (validLabels [ilabel].get()) + 1; // +1 for the extra ';' at end
 	const integer minimumLabelLength = NUMmin (minimumValidLabelLengths.get());
 	
 	for (integer itier = 1; itier <= thy tiers -> size; itier ++) {
@@ -98,7 +99,7 @@ integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee) {
 					for (integer index = 1; index <= validLabels.size; index ++) {
 						const integer validLabelLength = minimumValidLabelLengths [index];
 						if (labelLength >= validLabelLength && Melder_stringMatchesCriterion
-							(label, kMelder_string::STARTS_WITH, validLabels [index], false) &&
+							(label, kMelder_string::STARTS_WITH, validLabels [index].get(), false) &&
 							label [validLabelLength - 1] == U';') {
 							validIndex = index;
 							break;
@@ -119,15 +120,17 @@ integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee) {
 }
 
 integer FormantPath_identifyFormantIndexByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
-	for (integer istr = 1; istr <= my formantIdentifiers.size; istr ++)
-		if (Melder_stringMatchesCriterion (my formantIdentifiers [istr].get(), which, criterion, caseSensitive))
-			return istr;
+	for (integer iformant = 1; iformant <= my formants -> size; iformant ++) {
+		conststring32 name = my formants -> at [iformant]-> name.get();
+		if (Melder_stringMatchesCriterion (name, which, criterion, caseSensitive))
+			return iformant;
+	}
 	return 0;
 }
 
 Formant FormantPath_identifyFormantByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
 	const integer index = FormantPath_identifyFormantIndexByCriterion (me, which, criterion, caseSensitive);
-	return ( index > 0 ? my formants.at [index] : nullptr );
+	return ( index > 0 ? (Formant) my formants -> at [index] : nullptr );
 }
 
 static void Formant_replaceFrames (Formant target, double fromTime, double toTime, Formant source) {
@@ -144,8 +147,8 @@ static void Formant_replaceFrames (Formant target, double fromTime, double toTim
 }
 
 void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex) {
-	Melder_assert (formantIndex > 0 && formantIndex <= my numberOfFormants);
-	Formant_replaceFrames (my formant.get(), fromTime, toTime, my formants . at [formantIndex]);
+	Melder_assert (formantIndex > 0 && formantIndex <= my formants -> size);
+	Formant_replaceFrames (my formant.get(), fromTime, toTime, (Formant) my formants -> at [formantIndex]);
 
 }
 
@@ -196,7 +199,7 @@ integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 labe
 }
 
 void FormantPath_reconstructFormant (FormantPath me) {
-	autoFormant thee = Data_copy (my formants .at [my defaultFormant]);
+	autoFunction thee = Data_copy (my formants -> at [my defaultFormant]);
 	IntervalTier pathTier = reinterpret_cast<IntervalTier> (my path -> tiers -> at [my pathTierNumber]);
 	for (integer interval = 1; interval <= pathTier -> intervals.size; interval ++) {
 		TextInterval textInterval = pathTier -> intervals . at [interval];
@@ -206,9 +209,9 @@ void FormantPath_reconstructFormant (FormantPath me) {
 		const integer formantIndex = FormantPath_getFormantIndexFromLabel (me, label);
 		Melder_require (formantIndex > 0,
 			U"Interval ", interval, U" has invalid data: \"", label, U"\".");
-		Formant_replaceFrames (thee.get(), textInterval -> xmin, textInterval -> xmax, my formants.at [formantIndex]);
+		Formant_replaceFrames ((Formant) thee.get(), textInterval -> xmin, textInterval -> xmax, (Formant)my formants -> at [formantIndex]);
 	}
-	my formant = thee.move();
+	my formant = thee.static_cast_move<structFormant>();
 }
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
@@ -222,7 +225,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");		
-		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfCeilings);
+		autoFormantPath thee = FormantPath_create (my xmin, my xmax);
 		thy sound = Data_copy (me);
 		thy defaultFormant = numberOfStepsToACeiling + 1;
 		autoSound sources [1 + numberOfCeilings];
@@ -245,15 +248,15 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			thy formantIdentifiers [ic] =  Melder_dup (Melder_double (ceiling));
-			thy formants . addItem_move (formant.move());
+			Thing_setName (formant.get(), Melder_fixed (ceiling, 0));
+			thy formants -> addItem_move (formant.move());
 			if (sourcesMultiChannel) {
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
 				sources [ic] = Sound_resample (source.get(), 2.0 * maximumFrequency, 50).move();
 			}
 		}
-		Melder_assert (thy formants.size == thy numberOfFormants); // maintain invariant
-		thy formant = Data_copy (thy formants. at [thy defaultFormant]);
+		Melder_assert (thy formants -> size == numberOfCeilings); // maintain invariant
+		thy formant = Data_copy (thy formants -> at [thy defaultFormant]).static_cast_move<structFormant> ();
 		if (sourcesMultiChannel) {
 			Sound mid = sources [numberOfStepsToACeiling].get();
 			autoSound multiChannel = Sound_create (numberOfCeilings, mid -> xmin, mid -> xmax, mid -> nx, mid -> dx, mid -> x1);

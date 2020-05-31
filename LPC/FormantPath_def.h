@@ -19,13 +19,12 @@
 #define ooSTRUCT FormantPath
 oo_DEFINE_CLASS (FormantPath, Function)
 
-	oo_INTEGER (numberOfFormants)
+	oo_OBJECT (FunctionList, 0, formants)
 	oo_INTEGER (defaultFormant)
-	oo_COLLECTION_OF (OrderedOf, formants, Formant, 2)
-	oo_STRING_VECTOR (formantIdentifiers, numberOfFormants)
 	oo_OBJECT (TextGrid, 0, path)
 	oo_INTEGER (pathTierNumber)
 	oo_OBJECT (Sound, 2, sound)
+
 	
 	#if oo_READING
 		FormantPath_reconstructFormant (this);
